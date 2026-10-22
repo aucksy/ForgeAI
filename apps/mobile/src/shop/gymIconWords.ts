@@ -13,6 +13,10 @@ export const GYM_ICON_WORDS = {
   addBody: (gym: string) => `${gym}'s logo opens ForgeAI in your gym's look.`,
   add: 'Add to home screen',
   notNow: 'Not now',
+  confirmBody: "Tap Add on your phone's question. Then come back here.",
+  checkAgain: 'I added it',
+  notAddedTitle: 'Not added',
+  notAddedBody: "Your gym's icon was not added. You can add it any time in Settings → Your gym.",
   removeTitle: 'Last step: remove the ForgeAI icon',
   removeSteps: [
     'Go to your home screen.',
@@ -23,3 +27,7 @@ export const GYM_ICON_WORDS = {
   done: 'Done',
   close: 'Close',
 } as const;
+
+/** When the gym lets this phone go (the Gym tab disappears): the title of the notice. PURE. */
+export const UNLINKED_TITLE = (gym: string): string => `No longer in ${gym}`;
+

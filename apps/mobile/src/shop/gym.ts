@@ -323,7 +323,7 @@ export function refreshErrorText(err: GymError, hasCache: boolean): string {
   if (hasCache) return "Couldn't refresh — showing the last list.";
   if (err.kind === 'offline') return OFFLINE;
   if (err.kind === 'timeout') return SLOW;
-  return "Couldn't load the shop. Try again.";
+  return "Couldn't reach your gym. Try again.";
 }
 
 /** What the bag does after a failed order, and the words it shows. PURE. */

@@ -16,10 +16,20 @@ import { placeGymOrder, refreshProducts } from './gymActions';
 import { displayName, itemsText, priceBag, rupees, type PricedLine } from './money';
 import { ProductPicture } from './ProductPicture';
 import { DEMO_ORDER_LINE, DemoNote, PAY_AT_DESK_LINE, QtyStepper, QuietLine, leave } from './ShopParts';
+import { GymOnly } from './GymOnly';
 import { useShopSource } from './shopSource';
 import { useShop } from './shopStore';
 
+/** R-77: only with a gym joined (GymOnly). */
 export function BagScreen() {
+  return (
+    <GymOnly>
+      <BagPage />
+    </GymOnly>
+  );
+}
+
+function BagPage() {
   const router = useRouter();
   const source = useShopSource();
   const gym = source.mode === 'gym';

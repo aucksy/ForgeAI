@@ -250,7 +250,24 @@ export async function refreshGymIfDue(now: number = Date.now()): Promise<void> {
 }
 
 /** Fetch the gym's list. Returns words when it failed (with or without a cached list), else null. */
-export async function refreshProducts(): Promise<ActionWords> {
+/** A list on its way: a second ask meanwhile shares it (the tab's own refresh and its gym check, R-77 review). */
+let productsInFlight: { key: string | undefined; p: Promise<ActionWords> } | null = null;
+
+export function refreshProducts(): Promise<ActionWords> {
+  const key = useGymShop.getState().link?.memberKey;
+  // Another gym's list on its way (a switch) is not this one's: ask again.
+  if (productsInFlight && productsInFlight.key === key) return productsInFlight.p;
+  const mine = { key, p: fetchProducts() };
+  productsInFlight = mine;
+  const done = (): void => {
+    if (productsInFlight === mine) productsInFlight = null;
+  };
+  // Both ways clear it; the caller gets the answer (or the failure) from `mine.p` itself.
+  mine.p.then(done, done);
+  return mine.p;
+}
+
+async function fetchProducts(): Promise<ActionWords> {
   const key = useGymShop.getState().link?.memberKey;
   if (!key) return null;
   const r = await apiProducts(key);

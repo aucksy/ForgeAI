@@ -3,7 +3,7 @@
  *  - Joined (S2): the gym's own record (member_orders), fetched when the page opens, on pull, and
  *    every 10 s while it is open — so Ready ("Collect it at the desk") arrives while the member
  *    looks. The pill says the state; the sentence under it only adds what the pill does not. Cancel only while Ordered (the server's rule); after that it is the desk's call.
- *  - Sample shop (S1): the pretend orders on the phone, each marked "Demo order".
+ *  - No gym joined: Workout (GymOnly, R-77; the sample shop and its pretend orders are gone).
  */
 import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
@@ -16,10 +16,10 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { canCancelGymOrder, gymPayText, gymStatusBadge, gymStatusText, visibleFlash } from './gym';
 import { cancelGymOrder, refreshOrders } from './gymActions';
+import { GymOnly } from './GymOnly';
 import { useGymShop } from './gymStore';
-import { ORDER_STATUS_TEXT, canCancel, displayName, itemsText, orderTimeText, rupees } from './money';
-import { DEMO_ORDER_LINE, QuietLine, leave } from './ShopParts';
-import { useShop } from './shopStore';
+import { displayName, itemsText, orderTimeText, rupees } from './money';
+import { QuietLine, leave } from './ShopParts';
 import type { GymOrder, Order, OrderLine } from './types';
 
 const STATUS_TONE: Record<Order['status'], 'accent' | 'good' | 'neutral'> = {
@@ -32,9 +32,13 @@ const STATUS_TONE: Record<Order['status'], 'accent' | 'good' | 'neutral'> = {
 /** How often an open My orders asks the gym for news (ms). */
 const POLL_MS = 10000;
 
+/** R-77: only with a gym joined (GymOnly): no gym, no orders page (the sample shop is gone). */
 export function OrdersScreen() {
-  const joined = useGymShop((s) => s.link != null);
-  return joined ? <GymOrders /> : <SampleOrders />;
+  return (
+    <GymOnly>
+      <GymOrders />
+    </GymOnly>
+  );
 }
 
 // ------------------------------------------------------------------ the gym's own orders
@@ -155,55 +159,6 @@ function GymOrders() {
   );
 }
 
-// ------------------------------------------------------------------ the sample shop's demo orders
-
-function SampleOrders() {
-  const router = useRouter();
-  const orders = useShop((s) => s.orders);
-  const cancelOrder = useShop((s) => s.cancelOrder);
-
-  const onCancel = async (o: Order) => {
-    const ok = await askConfirm({
-      title: 'Cancel this order?',
-      body: `${itemsText(o.lines.reduce((s, l) => s + l.qty, 0))} · ${rupees(o.totalP)}`,
-      confirmLabel: 'Cancel order',
-      cancelLabel: 'Keep order',
-      destructive: true,
-    });
-    if (ok) cancelOrder(o.id);
-  };
-
-  return (
-    <Screen title="My orders" subtitle="Sample shop" onBack={() => leave(router, '/shop')}>
-      {orders.length === 0 ? (
-        <View>
-          <EmptyState icon="list" title="No orders yet" body="Orders you place in the sample shop show here." />
-          <GhostButton label="Browse the shop" onPress={() => leave(router, '/shop')} />
-        </View>
-      ) : (
-        <View style={{ gap: space.md }}>
-          {orders.map((o) => (
-            <OrderCard
-              key={o.id}
-              title={null}
-              when={orderTimeText(o.createdAt)}
-              badge={ORDER_STATUS_TEXT[o.status]}
-              tone={STATUS_TONE[o.status]}
-              sentence={null}
-              demoLine={o.demo ? DEMO_ORDER_LINE : null}
-              lines={o.lines}
-              totalP={o.totalP}
-              cancelled={o.status === 'cancelled'}
-              foot={o.status === 'ordered' ? 'Demo only: your gym does not see this order.' : null}
-            >
-              {canCancel(o) ? <GhostButton label="Cancel order" onPress={() => void onCancel(o)} /> : null}
-            </OrderCard>
-          ))}
-        </View>
-      )}
-    </Screen>
-  );
-}
 
 // ------------------------------------------------------------------ one order card
 

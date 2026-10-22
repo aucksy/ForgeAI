@@ -5,24 +5,31 @@
  * icon: gymIconWords.ts). Offered once per gym ("Not now" too); Settings → Your gym keeps "Add to
  * your home screen". Lives beside the opening in the root layout, outside the re-drawn screens, so
  * the join's re-draw never loses it.
+ *
+ * Review fixes: Android's "asked" only means its question was shown, so the remove step comes only
+ * once the gym's icon is really pinned (checked when the app comes back from Android's question) —
+ * a member who tapped Cancel is never told to take the ForgeAI icon off. And when the gym lets this
+ * phone go (the tab disappears), the member is told why.
  */
 import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { AppState, Text, View } from 'react-native';
 
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
+import { tell } from '@/lib/tell';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, space, type } from '@/theme/tokens';
 
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered, shortcutOffered } from './gymShortcut';
-import { GYM_ICON_WORDS as W } from './gymIconWords';
+import { GYM_ICON_WORDS as W, UNLINKED_TITLE } from './gymIconWords';
 import { useGymShop } from './gymStore';
 import type { GymLink } from './types';
 
 /** After the opening goes, wait this long (the screens settle) before the pop-up comes up. */
 const AFTER_OPENING_MS = 500;
 
-type Step = 'add' | 'remove';
+/** add: the offer · confirm: Android's question is up · remove: pinned, take ForgeAI's off · notAdded. */
+type Step = 'add' | 'confirm' | 'remove' | 'notAdded';
 
 export function GymIconOfferHost() {
   const [pending, setPending] = useState<GymLink | null>(null);
@@ -31,19 +38,21 @@ export function GymIconOfferHost() {
   const [busy, setBusy] = useState(false);
   const [words, setWords] = useState<string | null>(null);
   const opening = useGymTheme((s) => s.opening);
-  const subscribed = useRef(false);
+  const checking = useRef(false);
 
-  // A NEW gym on this phone (the member's own join or switch; reading the saved link at start is not one).
+  // A NEW gym on this phone (the member's own join or switch; reading the saved link at start is not
+  // one), and the gym letting this phone go (its words in `notice`).
   useEffect(() => {
-    if (subscribed.current) return undefined;
-    subscribed.current = true;
     let unsub: (() => void) | null = null;
+    let live = true;
     const watch = () => {
+      if (!live) return;
       unsub = useGymShop.subscribe((s, prev) => {
         if (s.link && s.link.joinCode !== prev.link?.joinCode) setPending(s.link);
         if (!s.link) {
           setPending(null);
           setShown(null);
+          if (prev.link && s.notice) void tell(UNLINKED_TITLE(prev.link.gymName), s.notice);
         }
       });
     };
@@ -54,7 +63,10 @@ export function GymIconOfferHost() {
         watch();
       });
     }
-    return () => unsub?.();
+    return () => {
+      live = false;
+      unsub?.();
+    };
   }, []);
 
   // Once the welcome opening has gone: offer it, if this phone can pin it and it was never offered.
@@ -84,8 +96,29 @@ export function GymIconOfferHost() {
     };
   }, [pending, opening]);
 
+  // Is the gym's icon on the home screen now? Asked without asking Android again (ask=false).
+  const check = async (link: GymLink): Promise<void> => {
+    if (checking.current) return;
+    checking.current = true;
+    const r = await addGymShortcut(link, false);
+    checking.current = false;
+    if (useGymShop.getState().link?.joinCode !== link.joinCode) return;
+    setStep(r === 'updated' ? 'remove' : 'notAdded');
+  };
+
+  // Back from Android's question (it covers the app): see whether the member added it.
+  useEffect(() => {
+    if (!shown || step !== 'confirm') return undefined;
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') void check(shown);
+    });
+    return () => sub.remove();
+    // `check` reads only refs and setters, so it is not a dependency.
+  }, [shown, step]);
+
   if (!shown) return null;
   const close = (): void => {
+    if (busy) return;
     void markShortcutOffered(shown.joinCode);
     setShown(null);
   };
@@ -94,8 +127,13 @@ export function GymIconOfferHost() {
     setBusy(true);
     const r = await addGymShortcut(shown);
     setBusy(false);
-    if (r === 'asked' || r === 'updated') {
-      void markShortcutOffered(shown.joinCode);
+    void markShortcutOffered(shown.joinCode);
+    if (r === 'asked') {
+      setWords(null);
+      setStep('confirm');
+      return;
+    }
+    if (r === 'updated') {
       setWords(null);
       setStep('remove');
       return;
@@ -104,20 +142,27 @@ export function GymIconOfferHost() {
   };
 
   const body = { fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 } as const;
+  const title =
+    step === 'add' || step === 'confirm' ? W.addTitle(shown.gymName) : step === 'remove' ? W.removeTitle : W.notAddedTitle;
   return (
     <Sheet
       visible
-      title={step === 'add' ? W.addTitle(shown.gymName) : W.removeTitle}
+      title={title}
       onClose={close}
-      closeLabel={step === 'add' ? W.notNow : W.done}
+      closeLabel={W.close}
       footer={
         step === 'add' ? (
           <View style={{ gap: space.sm }}>
             <PrimaryButton label={W.add} loading={busy} onPress={() => void add()} />
+            {busy ? null : <GhostButton label={W.notNow} onPress={close} />}
+          </View>
+        ) : step === 'confirm' ? (
+          <View style={{ gap: space.sm }}>
+            <PrimaryButton label={W.checkAgain} onPress={() => void check(shown)} />
             <GhostButton label={W.notNow} onPress={close} />
           </View>
         ) : (
-          <PrimaryButton label={W.done} onPress={close} />
+          <PrimaryButton label={step === 'remove' ? W.done : W.close} onPress={close} />
         )
       }
     >
@@ -126,7 +171,9 @@ export function GymIconOfferHost() {
           <Text style={body}>{W.addBody(shown.gymName)}</Text>
           <InlineError message={words} />
         </View>
-      ) : (
+      ) : step === 'confirm' ? (
+        <Text style={body}>{W.confirmBody}</Text>
+      ) : step === 'remove' ? (
         <View style={{ gap: space.sm }}>
           {W.removeSteps.map((line, i) => (
             <View key={line} style={{ flexDirection: 'row', gap: space.sm }}>
@@ -136,6 +183,8 @@ export function GymIconOfferHost() {
           ))}
           <Text style={{ ...body, marginTop: space.xs }}>{W.removeNote}</Text>
         </View>
+      ) : (
+        <Text style={body}>{W.notAddedBody}</Text>
       )}
     </Sheet>
   );

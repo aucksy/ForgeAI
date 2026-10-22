@@ -17,10 +17,20 @@ import { useGymShop } from './gymStore';
 import { bagBadgeCount, clampQty, defaultOptionId, displayName, lineKey, maxQty, picturesOf, rupees, stockFor, stockText, unitPriceP } from './money';
 import { ProductPicture } from './ProductPicture';
 import { BagButton, QtyStepper, leave } from './ShopParts';
+import { GymOnly } from './GymOnly';
 import { useShopSource } from './shopSource';
 import type { Product } from './types';
 
+/** R-77: only with a gym joined (GymOnly). */
 export function ProductScreen() {
+  return (
+    <GymOnly>
+      <ProductPage />
+    </GymOnly>
+  );
+}
+
+function ProductPage() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : '';
