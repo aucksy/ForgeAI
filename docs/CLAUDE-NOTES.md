@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-53. From the tracker page, 22 Oct 08:04-08:07: landing page yes; chat renamed; branches and pricing — 22 Oct 2026
+**Owner said (page):** #40 "A: Yes, now" (put the landing page live). Renamed this chat "ForgeAI Local Chat".
+Feature comment on "Separate app per gym": "We need to plan it. Even small GYMs have 2 branches sometimes -
+But I need your input on how the pricing should work. per GYM per XX members or just XX members across any
+number of GYMs".
+**What I did:** landing page: wrangler.jsonc vars.LANDING "live", checked deploy (tsc, vitest, journeys,
+build), then checked /home/ and /api/lead on the live site. Read his comment as being about branches (one
+owner, 2+ locations), not one app per gym: "Several branches" moved Not doing -> Planned; pricing is his call
+(#18: prices), so inbox entry #41 with my research and pick, plus a row in the decisions table.
+
 ## R-52. "For all items in features backlog, add a short summary on how a feature will work" — 22 Oct 2026
 **Owner said:** "For all items in features backlog, add a short summary on how a feature will work as per
 your understanding".

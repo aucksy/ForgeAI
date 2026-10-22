@@ -2,7 +2,21 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
-## PC session, 21-22 Oct 2026 (night, owner asleep, R-51) — RESUME HERE after a compaction
+## PC session, 22 Oct 2026 (morning, "ForgeAI Local Chat") — RESUME HERE after a compaction
+- Tracker: every backlog row not built has a "How it will work" column (R-52; page script reads an
+  optional 4th cell). Owner answered on the page: #40 A (landing live), renamed this chat, and a
+  comment on branches + pricing -> "Several branches" now Planned, decision #41 (branch pricing).
+- Landing LIVE: wrangler.jsonc vars.LANDING "live"; Worker version d88dc22f (checked deploy: tsc,
+  vitest 929, journeys 45 with E2E_CHROME = installed Chrome, build). /home/ 200 with the CSP,
+  /api/lead answers (400 bad number, 201 bot path, 405 GET); no test lead written. Rollback:
+  `npx wrangler rollback 7739d985...` or LANDING "off" + deploy.
+- Leads: `python scripts/leads.py` at the start of every session; tell the owner each new one
+  (0 on 22 Oct). Email alert waits for the contact email (#37).
+- One vitest run went red once (1 of 929, unnamed; colour output hid it) then 5 green runs: watch for a
+  flaky admin unit test; next red run, save the reporter output.
+- Next: notification-card workout time (native, with the owner awake), then Planned items.
+
+## PC session, 21-22 Oct 2026 (night, owner asleep, R-51)
 - v0.49.0 RELEASED (tag 61bed3d, run 39638183366); APK links 200.
 - v0.50.0 RELEASED 22 Oct (tag fe2542f = 5a8375b + PROGRESS; run 39680117943). It was candidate 5a8375b: What's new (shows from 0.51), Save as routine after a
   first free workout, rest change moves the running timer, Machine in use, automatic Drive backup

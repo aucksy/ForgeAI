@@ -16,8 +16,9 @@
   "routes": [{ "pattern": "forgeai.aakashpahuja.in", "custom_domain": true }],
   // Launch H7 (21 Oct 2026): "Send feedback" from both apps (feedback.js). Cloudflare's free
   // database, not the gym server. Tables: migrations/ (npx wrangler d1 migrations apply forgeai-web --remote).
-  // Launch I2: the landing page (/home/) stays hidden (404) until the owner says yes; then "live".
-  "vars": { "LANDING": "off" },
+  // Launch I2: the landing page (/home/) stayed hidden (404) until the owner said yes: "live" since
+  // 22 Oct 2026 (Project Tracker #40, A). "off" hides it again (and its lead form) on the next deploy.
+  "vars": { "LANDING": "live" },
   "d1_databases": [
     { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "migrations" }
   ]

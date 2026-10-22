@@ -2484,6 +2484,14 @@
     Tag commit = 5a8375b + this entry (main moved on with the U-Q6 script fix, not paperwork).
   - PUBLISHED 22 Oct (release run 39680117943; CI 39680118695 dispatched on the tag): phone APK
     69,012,182 B and watch APK 2,033,849 B answer 200; GitHub's latest release is v0.50.0.
+- 2026-10-22: **Landing page live** (owner's yes, Project Tracker #40). deploy/panel wrangler.jsonc
+  vars.LANDING "live"; Worker forgeai-panel version d88dc22f (no asset changed; dist built after the
+  last admin change 0379acf). Checked deploy: tsc, vitest 929 (one unnamed red on the first run, then
+  5 green), journeys 45 passed (E2E_CHROME = the installed Chrome: Playwright's own chromium-1187 is
+  incomplete on this PC), build. Live: /home/ 200 with the CSP, no console errors at 375 px, the top
+  form refuses a short number in the page; /api/lead 400 / 201 (bot) / 405 (GET). No test lead written.
+  Tracker: "How it will work" column for every backlog row not built (R-52); "Several branches"
+  Planned; decision #41 (branch pricing).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

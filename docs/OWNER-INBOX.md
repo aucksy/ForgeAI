@@ -19,7 +19,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
-| 40 | Put the new-gym landing page live | A: yes, now |
+| 41 | Price for an owner with 2 or more branches | A: per branch, no member limit, lower price from the 2nd branch |
 
 ---
 
@@ -37,7 +37,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
 | 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
 | 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
-| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Doing | "Get started" list live. Landing page rebuilt on your note (member app first), reviewed twice by a design reviewer; off on the live site until your yes (#40). |
+| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
 | 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
 | 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
@@ -140,7 +140,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Member progress for the gym | Planned | Owner and trainers see if a member is progressing: first a graph of total kg lifted per workout, shared only with the member's OK. | In the app, the member turns on "Share my progress with my gym" (off until they choose; they can turn it off any time). After each workout the phone sends only the date and the total kg lifted: no exercise weights, body weight or photos. The member's page in the admin app shows a graph and "going up / flat / going down", so a trainer can step in before the member gives up. Needs a live server change (your yes). |
 | AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
 | Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
-| Several branches | Not doing | Left out on purpose for now; our target gyms have one branch. | Not planned: each branch would be its own gym today. If needed later: one owner sign-in that switches between branches, with reports for all of them together. |
+| Several branches | Planned | One owner runs 2 or more branches from one sign-in (owner, 22 Oct: even small gyms sometimes have 2). Pricing waits for your pick (#41). | The owner signs in once and switches branch at the top of the admin app. Each branch keeps its own members, plans, desk staff, receipt numbers, QR poster and shop stock; the owner also sees money and member reports for all branches together. A plan can allow a member into every branch, and check-in works at whichever branch they visit. Needs a live server change (your yes). |
 | Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. | Not planned: the admin app stays in plain English. The desk cheat sheet is in Hindi and English. |
 
 ### Gym ↔ member links
@@ -185,7 +185,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
 | Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. | After you open the Play account (#28, #35): first an internal test for the gym's staff, then a closed test with 12 testers for 14 days (gym members can be the testers), then public. Members then get updates by themselves. The GitHub download link stays as a backup. |
-| Landing page, leads and new-gym onboarding | Waiting for you | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. | Built, switched off until your yes (#40). A gym owner opens forgeai.aakashpahuja.in/home/, types their gym's name and sees the member app in their colours, then fills in "Free demo". The request is saved privately in Cloudflare and I tell you about each one. Later the page moves to the site's front door, and clients reach the admin app through "Sign in". |
+| Landing page, leads and new-gym onboarding | Live | Live since 22 Oct at https://forgeai.aakashpahuja.in/home/ (Hindi + English): a gym owner types their gym's name and sees the member app in their colours, then asks for a free demo (saved privately in Cloudflare; I tell you each one). "Open the demo gym" and "Sign in" lead to the admin app; new gyms get a "Get started" checklist. |
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
 | Test server before live | Planned | A second server where every change is tried before it reaches the gym. | A second, free Supabase project, "forgeai-staging", with the same tables. Every database change goes there first and runs all the server checks; only then does it go live, with your yes. You make the project (Supabase lets only the owner do it); I fill it. |
 | Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. | Crash reports from both apps (Sentry, free) tell me the screen, the app version and the error, with no member names. A check every minute (Better Stack, free) tries the admin app and the database and alerts your phone if either is down. You make the two free accounts; I wire them in. |
@@ -198,9 +198,43 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 40. Launch decision: put the new-gym landing page live — 21 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+## 41. How do we price an owner with 2 or more branches? — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**You asked (comment on the feature backlog, 22 Oct):** "We need to plan it. Even small GYMs have 2
+branches sometimes - But I need your input on how the pricing should work. per GYM per XX members or just
+XX members across any number of GYMs". (You wrote it on "Separate app per gym"; I read it as being about
+branches: one owner, 2 or more places. "Several branches" is now Planned.)
+**My answer:** I would not count members at all. Price per branch, and make the 2nd branch cheaper.
+- **What the market does:** most gym software charges per location (for example, Mindbody about $99 a
+  month per location). Indian tools move a multi-branch gym into a higher plan. Some charge by member
+  count, and their own reviewers point out the catch: the bill grows every time the gym grows.
+- **Why members are the wrong thing to count for us:** our selling point is the member app. We want the
+  owner to put EVERY member on it. A member limit makes him do the opposite: keep members off, or argue
+  about who counts. Our cost per member is also tiny, because workouts stay on members' phones.
+- **What a branch really costs us:** a second desk to set up, train and support, a second QR poster,
+  maybe a second entry machine. That is per branch, so the price should be per branch too.
+- **Members across all branches (your second idea)** is simple for a chain of small branches, but a
+  2-branch owner with 300 members in total would pay the same as a 1-branch gym, while we do double the
+  setup and support.
+- Numbers follow your pick on #30 (the price for one gym). Example with ₹1,499 a month: 2nd and later
+  branches ₹999 a month each.
+**Decide:** How do we price an owner with 2 or more branches?
+- A: Per branch, with no member limit: each branch pays the normal price, and the 2nd and later branches pay less (for example ₹999 a month each, if one gym pays ₹1,499) (recommended)
+- B: By the total number of members across all branches, any number of branches (for example up to 300 members ₹1,499 a month, up to 700 members ₹2,499)
+**Sources:** dupple.com, "Best gym management software in 2026" (Mindbody per location, Gymdesk by member
+count); houseofgrapplers.com, gym software pricing (per-member pricing grows with the gym);
+codingclave.com, gym software cost India 2026 (branch count moves the price); Easy Gym Software (multi-branch
+plans). Reviews and vendor pages, not price sheets.
+
+## 40. Launch decision: put the new-gym landing page live — 21 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** DONE
+**READ (22 Oct, 08:04 am, via the page)**
+**DECIDED (22 Oct, on the page):** A: yes, now. **Live since 22 Oct:** https://forgeai.aakashpahuja.in/home/
+(the admin app keeps its address). Checked on the live site: the page and its pictures open, no errors,
+the security rules on, and the demo form refuses a wrong number with plain words. The save of a real
+request is proven by its tests; I did not send a fake one into your list.
 **What it is (rebuilt 21 Oct on your note "our USP is the member app"):** a page for gym owners
 who don't use ForgeAI yet, designed like a supplement tub label (the thing every owner sells from his
 own shelf). It leads with "Keeps members coming back": the visitor types their gym's name and picks
@@ -208,15 +242,12 @@ its colour, and the member app on the page turns into theirs. Then a member's wo
 tick, "kg to beat" counts down, NEW RECORD), a "Member Facts" panel (live features ticked, planned
 ones marked "Coming"), your shop inside the app, messages to every member, the desk work in one
 line, and a "Free demo" form. Three real, sourced numbers on why progress keeps members. English and
-Hindi. No prices (you have not picked one, #30). Built and tested; switched OFF on the live site.
-**Where:** it would live at forgeai.aakashpahuja.in/home/ first; the admin app keeps its address.
+Hindi. No prices (you have not picked one, #30).
+**Where:** forgeai.aakashpahuja.in/home/; the admin app keeps its address.
 New demo requests reach me; I tell you each one so you or I can call back.
-**Decide:** Put the landing page live now?
-- A: Yes, now (recommended). It costs nothing and you can share the link with gym owners today.
-- B: Not yet. It stays off until you say so.
 
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** DECIDED
 **You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
 feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
@@ -252,20 +283,20 @@ If someone reports a problem, it stops and waits for me to look. You never need 
 Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
 **Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
 **Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
 
 ## 37. Launch task: name the complaints contact for members — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** Tell Claude one name and one email address that members can write to about their data (it can be you and a new address such as privacy.forgeai@gmail.com; one you will check weekly).
 **Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
 
 ## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** Visit the gym with the one-page question sheet (about 45 minutes): https://github.com/aucksy/ForgeAI/blob/main/docs/launch/GYM-VISIT.md
 **Your task:** Ask the desk to export from GGMS whatever it can (members, plans, dues, payment history, attendance; Excel best) and get a copy, plus photos of 2 receipts.
@@ -273,14 +304,14 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why:** everything after this depends on it: the data move, the training plan, whether the desk needs the offline mode, FitPass, receipts with GST. We have never asked the gym these questions. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (F1, F2).
 
 ## 35. Launch task: open the Google Play developer account ($25 once) — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** After you answer #28: go to https://play.google.com/console/signup and make the account type you picked. It needs your government ID, a card in your name and an Android phone. Pay the $25 once.
 **Your task:** Tell Claude "Play account ready". Claude then prepares the store listing, the data safety answers and the internal test for you to submit.
 **Why:** members get updates by themselves from the Play Store; the GitHub download link will be blocked by Google for unregistered apps from 2027. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (C1-C3).
 
 ## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** If you say yes in #27: in Supabase (https://supabase.com/dashboard), open the project → Billing → upgrade the organisation to Pro. Leave "Spend cap" ON.
 **Your task:** In Supabase, create a second, free project named `forgeai-staging`, region Mumbai (Claude fills it with the same tables, for testing changes before they reach the gym).
@@ -290,7 +321,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why:** today the server pauses after a quiet week, has no backups, and nobody hears about a crash or an outage until the gym calls. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (A1-A7, B1-B2).
 
 ## 33. Launch decision: your support hours during the trial — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Decide:** When will you answer the gym's WhatsApp support group during the 8-week trial?
 - A: Gym rush hours (about 6-10 am and 5-9 pm) on gym days: payment problems answered within 15 minutes, everything else the same day (recommended)
@@ -298,7 +329,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why it matters:** this promise goes into the pilot agreement (#38). A desk that cannot take a payment and gets no answer is the most common reason a gym gives up on new software. Claude watches the alerts all day; you are the human the gym talks to.
 
 ## 32. Launch decision: should ForgeAI register for GST now? — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Decide:** Register ForgeAI for GST now?
 - A: Not now: registration is required only above ₹20 lakh a year; gyms cannot claim back GST since Sep 2025, so our 18% GST would be a straight extra cost to the gym (recommended)
@@ -306,13 +337,13 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why it matters:** it changes the price the gym pays by 18%. Check with your accountant before the second or third gym. The gym's own receipts already use 5% GST and number by financial year.
 
 ## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** DONE
 **DECIDED (20 Oct):** A: Claude's checked documents for the trial; a lawyer before the second gym (you left the legal calls to Claude, R-45, 20 Oct).
 **Why it matters:** the law (DPDP) applies in full from May 2027; penalties are large, but the risk in a one-gym, 8-week trial with a signed agreement is low. Legal wording is your decision.
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Decide:** What does the gym pay after a free 8-week trial? (It goes into the agreement before the trial starts.)
 - A: ₹1,499 a month, or ₹14,999 a year (about GGMS's price, with the member app included) (recommended)
@@ -320,13 +351,13 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** DONE
 **DECIDED (20 Oct):** A: the member app is for 18 and over during the trial (you left the legal calls to Claude, R-45, 20 Oct).
 **Why it matters:** India's data law needs a parent's verified consent for anyone under 18, and bans tracking them. A builds in a day; B takes about a week and slows joining for everyone.
 
 ## 28. Launch decision: which Google Play account — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Decide:** Which kind of Google Play developer account?
 - A: Personal account ($25 once, ready in days). Before going public, the app needs 12 testers using it for 14 days in a row: the gym's members can be those testers (recommended)
@@ -334,7 +365,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why it matters:** the Play Store gives members automatic updates and keeps the app installable after Google's 2027 rule against unregistered downloads. You can move to an organisation account later when you form a company.
 
 ## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Decide:** When do we move the live server to the paid plan (Supabase Pro, $25 a month, about ₹2,100)?
 - A: Now, before the gym's real data goes in (recommended)
@@ -342,7 +373,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **Why it matters:** the free plan pauses after 7 quiet days (the app and the admin app stop working until someone wakes it) and keeps no backups we can restore. With the gym's real data, one bad day without a backup could lose their records. A means real data is safe from the first import.
 
 ## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** Install v0.48.0 on your phone: https://github.com/aucksy/ForgeAI/releases/download/v0.48.0/forgeai-v0.48.0.apk
 **Your task:** Do one real workout with it, and tell me anything that looks or feels wrong (a screenshot helps).
@@ -350,7 +381,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 version (new: gym workout plans, kg to beat per exercise, My membership, check-in offers the workout).
 
 ## 25. Set up Google Test Lab (free, about 10 minutes) — 18 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Your task:** Follow the 5 short steps in `docs/uat/TEST-LAB-SETUP.md` (on GitHub: https://github.com/aucksy/ForgeAI/blob/main/docs/uat/TEST-LAB-SETUP.md): make a free Firebase project `forgeai-testlab`, turn on 2 services, make a key, and add `TEST_LAB_PROJECT` and `TEST_LAB_KEY` to the GitHub secrets.
 **Your task:** Then tap "I have done it" here (or tell me "Test Lab is set up").
@@ -359,7 +390,7 @@ vivo, OPPO, OnePlus or Pixel) and 2 virtual ones, free. Only you can make the pr
 Then I run the first test on v0.48.0 and tell you what it found.
 
 ## 24. Is Google Test Lab free, and will it use many tokens? — 18 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** ANSWERED
 **READ (18 Oct, 09:53 pm, via the page)**
 **You asked:** whether testing on Google's test lab (Firebase Test Lab) is free, and whether the
@@ -379,7 +410,7 @@ work is token heavy.
   start the tests (about 10 minutes; I write the steps). Nothing is paid.
 
 ## 23. Does the audit also cover all possible UAT scenarios? — 16 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** DONE
 **READ (16 Oct, answered in chat)**
 **You asked:** whether the audit covers every UAT scenario (UAT = checking each real user can do
@@ -394,7 +425,7 @@ marked "automatic" or "owner check", tests for the gaps, and a short report ever
 plan and its work packages (docs/uat/), now part of every release.
 
 ## 22. What is this: Camera "No" was not logged? — 16 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** ANSWERED
 **READ (16 Oct, answered in chat)**
 **You asked:** what the audit line "Camera No was not logged" meant.
@@ -406,7 +437,7 @@ button, like progress photos, and logs it as a normal note. Found by the 12,000 
 Shipped in v0.46.0.
 
 ## 21. What is this concept of receipts that were taken back? — 16 Oct 2026
-**Chat:** PC chat (desktop app), 10-18 Oct: audit, UAT, releases
+**Chat:** ForgeAI Local Chat
 **Status:** DONE
 **READ (16 Oct, answered in chat)**
 **You asked:** what "receipts that were taken back" means.

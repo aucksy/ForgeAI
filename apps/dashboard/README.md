@@ -51,6 +51,8 @@ cd apps/dashboard
 npx tsc -b                    # never `npm run build | tail`: a piped failure looks green
 npx vitest run
 npx playwright test           # every journey runs under the live security policy (J29)
+                              # owner's PC: E2E_CHROME="C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+                              # (Playwright's own browser download is broken there: launch errors, not test fails)
 npm run build
 cd ../../deploy/panel
 npx wrangler deploy
