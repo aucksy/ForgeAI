@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-52. "For all items in features backlog, add a short summary on how a feature will work" — 22 Oct 2026
+**Owner said:** "For all items in features backlog, add a short summary on how a feature will work as per
+your understanding".
+**What I did:** a 4th column "How it will work" in the tracker's Feature backlog tables, filled for every
+row not yet built (Planned, Waiting for you, Idea, Not doing; 41 rows): 1-4 plain sentences each, from
+my notes (R-25, R-30, R-37, R-40-R-43), the launch plan and the code. Where my understanding has a gap,
+the line says so (member data export: workouts live on the phone). The page shows it under each
+feature as "How it will work:". Rule for new rows: CLAUDE.md (a row that is not built gets the column).
+
 ## R-51. "Keep building what you can... feel free to take the best decisions.. I am going to sleep" — 21 Oct 2026 (night)
 **Owner said:** keep building, decide myself, he is asleep.
 **My plan for the night (my decisions, cheapest risk first; nothing LIVE on the gym server, no money):**

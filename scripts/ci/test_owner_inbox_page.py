@@ -160,9 +160,9 @@ Every feature, built and pending.
 | Workout logging | Live | A repeat is ignored. |
 
 ### Admin app
-| Feature | Status | Details |
-|---|---|---|
-| Staff salaries | Planned | Pay staff from the app. |
+| Feature | Status | Details | How it will work |
+|---|---|---|---|
+| Staff salaries | Planned | Pay staff from the app. | A pay screen per staff member. |
 | Webcam photo | Something new | Take a photo at the desk. |
 
 ---
@@ -181,6 +181,9 @@ class Backlog(unittest.TestCase):
         self.assertEqual([f["kind"] for f in b], ["done", "built", "planned", "idea"])
         self.assertEqual(b[0]["id"], "member-app/workout-logging")
         self.assertEqual(b[2]["group"], "Admin app")
+        # R-52: the optional 4th cell, "How it will work"; a 3-cell row has none.
+        self.assertEqual(b[2]["how"], "A pay screen per staff member.")
+        self.assertEqual((b[0]["how"], b[3]["how"]), ("", ""))
         # The backlog is not an entry, and entries still parse after it.
         self.assertEqual([e["num"] for e in d["entries"]], [3])
 
@@ -194,6 +197,8 @@ class Backlog(unittest.TestCase):
         self.assertNotIn('id="decisions"', html)
         self.assertIn('"notes":{}', html)
         self.assertIn("Staff salaries", html)
+        self.assertIn("A pay screen per staff member.", html)
+        self.assertIn("How it will work:", html)
 
     def test_rename_chats_keeps_links_and_other_chats(self):
         # R-28: the owner renames a chat on the page; --absorb writes it into every **Chat:** line.

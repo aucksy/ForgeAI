@@ -143,7 +143,8 @@ def parse_mine(text):
 
 
 def parse_backlog(text):
-    """[{id, group, name, status, kind, details}] from the "## Feature backlog" section ([] without one)."""
+    """[{id, group, name, status, kind, details, how}] from the "## Feature backlog" section ([] without one).
+    R-52 (owner, 22 Oct 2026): an optional 4th cell, "How it will work", for features not built yet."""
     m = BACKLOG_RE.search(text)
     if not m:
         return []
@@ -154,14 +155,15 @@ def parse_backlog(text):
             group = hm.group(1).strip()
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if not line.strip().startswith("|") or len(cells) != 3 or cells[0] in ("Feature", "") or set(cells[0]) <= set("-: "):
+        if not line.strip().startswith("|") or len(cells) not in (3, 4) or cells[0] in ("Feature", "") or set(cells[0]) <= set("-: "):
             continue
         fid = slug(group) + "/" + slug(cells[0])
         if fid in seen:
             continue
         seen.add(fid)
         items.append({"id": fid, "group": group, "name": cells[0], "status": cells[1],
-                      "kind": BACKLOG_KIND.get(cells[1].lower(), "idea"), "details": cells[2]})
+                      "kind": BACKLOG_KIND.get(cells[1].lower(), "idea"), "details": cells[2],
+                      "how": cells[3] if len(cells) == 4 else ""})
     return items
 
 
@@ -335,6 +337,8 @@ button.status[aria-pressed="true"] { border-color: currentColor; box-shadow: 0 0
 .feat .row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
 .feat .name { font-weight: 700; overflow-wrap: anywhere; }
 .feat .det { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; overflow-wrap: anywhere; }
+.feat .how { margin: 6px 0 0; font-size: 0.92rem; overflow-wrap: anywhere; }
+.feat .how b { font-weight: 600; }
 .feat details { margin-top: 6px; }
 details { margin-top: 10px; }
 summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
@@ -583,6 +587,7 @@ function featHtml(f, i) {
     const sent = DATA.notes[f.id];
     return '<div class="feat"><div class="row"><span class="name">' + esc(f.name) + '</span><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
       '<p class="det">' + esc(f.details) + "</p>" +
+      (f.how ? '<p class="how"><b>How it will work:</b> ' + esc(f.how) + "</p>" : "") +
       (sent
         ? '<div class="form sent"><p class="sentline">Comment sent ' + esc(sent.at) + ". Claude acts on it next time it looks at your inbox.</p><pre>" + esc(sent.text) + "</pre>" +
           '<div class="actions"><button class="btn ghost" data-act="renote" data-i="' + i + '">Write another</button></div></div>'

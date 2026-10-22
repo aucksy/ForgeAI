@@ -33,9 +33,10 @@ holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it
 - **A decision only he can make** (the #18 list below): `**Decide:** <question>` + `- A: <option>`
   lines (mark one "(recommended)") in the entry, plus a row in the "Waiting for your decision" table;
   when he decides, write `**DECIDED (date):** ...`, drop the `**Decide:**` lines and the table row.
-- **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details |`,
+- **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details | How it will work |`,
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
-  sentence each): his map of every feature; the page splits it into "Feature backlog" (not built)
+  sentence each; every row not built yet also fills "How it will work" in 1-4 plain sentences, R-52):
+  his map of every feature; the page splits it into "Feature backlog" (not built)
   and "Built" (Live + Next release). Add a row only when he confirms a feature; move it when it ships.
 - **A task waiting on HIM** (a setup step, a key to make, a phone check, anything in a chat "Needs
   you" block): in the SAME turn, an inbox entry with `**Status:** WAITING FOR YOU` and one

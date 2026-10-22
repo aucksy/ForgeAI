@@ -58,19 +58,19 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 ---
 
 ## Feature backlog
-Every feature, built and pending, in one line each. On the page: the "Feature backlog" tab, with a
-Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.
+Every feature, built and pending, in one line each; every feature not built yet also says how it will
+work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.
 
 ### Member app
-| Feature | Status | Details |
-|---|---|---|
+| Feature | Status | Details | How it will work |
+|---|---|---|---|
 | Workout logging | Live | Log sets of weight and reps, time or distance, with last time's numbers shown beside each set. |
 | Set types and effort (RPE) | Live | Mark warm-up, drop and failure sets; one tap on RPE ticks the set and starts the rest. |
 | Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
 | Rest timer and rest alerts | Live | A rest timer starts after every set, and "Rest is over" sounds and buzzes on time, even with the screen off. |
 | Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
-| Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. |
-| Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. |
+| Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. | The card shows a clock, for example "Workout 42:15", beside the exercise name. Android itself ticks it, so it stays right with the screen off and uses no extra battery. While the workout is paused, the clock stops. |
+| Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. | Settings → Rest timer gets a "Rest-over sound" list: the ForgeAI sound (default), 3 or 4 others, and "Vibrate only". A tap on each one plays it. The sound you pick also plays with the screen off. |
 | Changing the rest time also changes the running timer | Live | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
 | "Machine in use" screen during rest | Live | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
 | Save a free workout as a routine | Live | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
@@ -80,7 +80,7 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
 | Kg to beat per exercise | Live | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
 | Exercise library and your own exercises | Live | 402 exercises with steps and drawings; add your own and hide the ones you don't use. |
-| Moving exercise demo clips | Waiting for you | Our own clip maker has made 2 clips; a paid ready-made set (about $405) needs your OK. |
+| Moving exercise demo clips | Waiting for you | Our own clip maker has made 2 clips; a paid ready-made set (about $405) needs your OK. | Each exercise page shows a short looping clip at the top: a grey 3D figure doing the move, with the worked muscles in red. A clip downloads the first time you open that exercise, then works offline. The 402 clips come from our own clip maker (free, made in batches) or the ready-made set (about $405, your yes). |
 | Routines and folders | Live | Build routines, group them in folders, and press-and-hold to drag them into order. |
 | Ready programs and plan builder | Live | Push Pull Legs, Upper/Lower and Full Body, or a plan built for your equipment and sore joints. |
 | Easy weeks | Live | A lighter week every 6 weeks, kept out of records and targets. |
@@ -104,14 +104,14 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Workout reminders | Live | Reminders on the days and times you pick. |
 | Watch app (Wear OS) | Live | Rest countdown and buzz on the watch, plus heart rate during a workout. |
 | Demo data | Live | An optional 3-month sample history to try the app; never loaded by itself. |
-| AI coach chat | Planned | Built earlier but hidden from members until the AI phase is switched on. |
-| Food and calorie log | Planned | Built earlier but hidden from members until its own phase. |
-| Hindi screens | Idea | Not built; the member app is in English today. |
-| Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. |
+| AI coach chat | Planned | Built earlier but hidden from members until the AI phase is switched on. | A Coach tab where members ask in plain words ("why is my bench stuck?", "make me a 3-day plan"). It reads only the member's own history on the phone and can build a routine for them. It runs on a paid AI service, so before it goes on you decide who pays (for example, a premium add-on for the gym). |
+| Food and calorie log | Planned | Built earlier but hidden from members until its own phase. | Members log meals with calories and protein, by typing or by telling the coach. Home shows two rings: today's calories and protein against the member's target. Everything stays on the phone, like workouts. |
+| Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
+| Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
 
 ### Admin app (gym owner and staff)
-| Feature | Status | Details |
-|---|---|---|
+| Feature | Status | Details | How it will work |
+|---|---|---|---|
 | Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
@@ -130,51 +130,51 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Gym branding | Live | Upload the gym's logo and colours, which members' apps then use. |
 | Gym workout plans | Live | Trainers build or pick a plan, add starting weights, and send it to members or a whole membership plan. |
 | Works on phone and computer | Live | One website that installs like an app, with dark and light looks. |
-| Offline front desk | Planned | Keep the desk working without internet and send everything once it comes back. |
-| Full GST tax invoices | Planned | Proper tax invoices on top of today's payment receipts. |
-| Entry machine (turnstile, face or fingerprint) | Planned | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. |
-| Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. |
-| Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. |
-| Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. |
-| Body measurements taken by the gym | Idea | Let trainers record measurements; members already log their own. |
-| Member progress for the gym | Planned | Owner and trainers see if a member is progressing: first a graph of total kg lifted per workout, shared only with the member's OK. |
-| AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. |
-| Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. |
-| Several branches | Not doing | Left out on purpose for now; our target gyms have one branch. |
-| Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. |
+| Offline front desk | Planned | Keep the desk working without internet and send everything once it comes back. | The admin app (installed, or in Chrome on the desk computer) keeps a copy of the gym's members, plans and dues on that device. When the internet drops, an "Offline mode" bar appears; check-ins, new members and payments still save, and go to the server once, by themselves, when the internet is back. Anything that can't work offline is greyed out. |
+| Full GST tax invoices | Planned | Proper tax invoices on top of today's payment receipts. | For gyms registered for GST: a payment can print as a proper tax invoice with the gym's GST number, the service code for gyms, and the 5% tax split into CGST and SGST. A company that pays for a member can add its own GST number. Invoices number by financial year, like receipts do today. |
+| Entry machine (turnstile, face or fingerprint) | Planned | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. | The gym buys the machine; it talks to our server over the internet. A new member added in the admin app goes to the machine by itself and the desk scans the finger or face once; an expired or frozen member is blocked even when the internet is down, and a renewal unblocks them at once. Every entry becomes a check-in in the attendance register, and the desk gets an "Open door" button. |
+| Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
+| Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
+| Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
+| Body measurements taken by the gym | Idea | Let trainers record measurements; members already log their own. | Trainers record weight, body fat and measurements (waist, chest, arms) on the member's page, with dates and a chart. With the member's OK, the numbers also show in the member's own app beside the ones they log. |
+| Member progress for the gym | Planned | Owner and trainers see if a member is progressing: first a graph of total kg lifted per workout, shared only with the member's OK. | In the app, the member turns on "Share my progress with my gym" (off until they choose; they can turn it off any time). After each workout the phone sends only the date and the total kg lifted: no exercise weights, body weight or photos. The member's page in the admin app shows a graph and "going up / flat / going down", so a trainer can step in before the member gives up. Needs a live server change (your yes). |
+| AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
+| Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
+| Several branches | Not doing | Left out on purpose for now; our target gyms have one branch. | Not planned: each branch would be its own gym today. If needed later: one owner sign-in that switches between branches, with reports for all of them together. |
+| Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. | Not planned: the admin app stays in plain English. The desk cheat sheet is in Hindi and English. |
 
 ### Gym ↔ member links
-| Feature | Status | Details |
-|---|---|---|
+| Feature | Status | Details | How it will work |
+|---|---|---|---|
 | Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
 | Join from the welcome screen | Live | "Have a gym code? Join your gym" on the very first screen. |
 | Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
 | Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| Member data export by the gym, on request | Planned | When a member asks, the owner exports that member's workout history from the admin app as a readable report in our own format (not an import file for Hevy, Strong or other apps). |
-| A member's own history from before joining a gym | Waiting for you | Someone who used ForgeAI on their own and then joins a gym: their earlier workouts stay theirs, never tied to the membership. Rules to work out with you (export, leaving, what the gym sees). |
-| FitPass and other pass members | Planned | Members who come through FitPass (or a similar pass) and don't pay the gym: join without a plan, get workout plans and the shop, and the owner sees their visits apart from paying members. |
+| Member data export by the gym, on request | Planned | When a member asks, the owner exports that member's workout history from the admin app as a readable report in our own format (not an import file for Hevy, Strong or other apps). | Catch: workouts live on the member's phone, not on our server. So I see it like this: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable PDF or Excel report in our own layout (not a file Hevy or Strong can import) and the desk downloads it. Members can already save their own Excel today; whether that stays is your call. |
+| A member's own history from before joining a gym | Waiting for you | Someone who used ForgeAI on their own and then joins a gym: their earlier workouts stay theirs, never tied to the membership. Rules to work out with you (export, leaving, what the gym sees). | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off, and what a gym export may include. |
+| FitPass and other pass members | Planned | Members who come through FitPass (or a similar pass) and don't pay the gym: join without a plan, get workout plans and the shop, and the owner sees their visits apart from paying members. | The desk adds the person as a "Pass member" (FitPass, cultpass and so on): no plan, no dues, never on the renewal list. They join in the app with the gym code and get the gym's plans, shop and messages. Each check-in counts as a pass visit, and a monthly count per pass company lets the owner match that company's payment. Needs a live server change (your yes). |
 | After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
-| QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. |
+| QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. | The member scans the gate QR; our server checks the plan is active and tells a networked door lock to open for a few seconds. The QR on a small gate screen changes every 30 seconds, so a forwarded photo does not work. The desk button and a keypad PIN still work when the internet is down, and the lock opens on power loss (fire safety). |
 | Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
-| Paying in the app | Idea | Shop orders are paid at the desk today; paying in the app may come later. |
+| Paying in the app | Idea | Shop orders are paid at the desk today; paying in the app may come later. | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
 | Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
-| Messages in the phone's notification shade | Waiting for you | Needs your Firebase (Google) project set up before messages can pop up on phones. |
+| Messages in the phone's notification shade | Waiting for you | Needs your Firebase (Google) project set up before messages can pop up on phones. | When the gym sends a message, it also pops up on members' phones like a WhatsApp message; a tap opens it in the app's inbox. It uses Google's free Firebase messaging: you make the Firebase project once, and a live server change (your yes) lets the server remember each phone. Members can turn it off in Settings. |
 | My membership | Live | Members see their plan, end date, days left, personal training used and visits this month. |
-| Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. |
+| Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
-| Busy times by exercise | Planned | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. |
-| Google login | Planned | Research sign-in with Google first, then come back to you with options. |
-| Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. |
-| Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. |
-| Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. |
+| Busy times by exercise | Planned | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. | Members choose to share "which exercise, at what hour" (no weights, no names; off until they agree). On an exercise or a routine, the app then shows "Other members also plan this between 6 and 8 pm", and members judge for themselves. It needs a few weeks of shared data before it shows anything, and a live server change (your yes). |
+| Google login | Planned | Research sign-in with Google first, then come back to you with options. | An optional "Continue with Google" on the first screen; the app still works without it. Signed in, the member's gym link is tied to a checked Google account instead of a typed phone number, and the same account finds their Drive backup on a new phone. Research comes first, then options for you. |
+| Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
+| Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. | Like workout plans: the trainer builds a simple day plan (meals, times, a protein target) or picks a ready one, and sends it to a member or a whole membership plan. It shows in the member's app to read; the member can't change it. |
+| Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
 
 ### Platform and quality
-| Feature | Status | Details |
-|---|---|---|
-| New brand name with a free domain | Planned | Research a new product name whose .com (or .in / .app) domain is still available at a normal price; forge.ai and forgeai.com are taken and too expensive. |
-| Block-proof server address | Planned | The apps reach our database through forgeai.aakashpahuja.in (Cloudflare) instead of Supabase's own address, so a block like Feb 2026 can't stop them. |
+| Feature | Status | Details | How it will work |
+|---|---|---|---|
+| New brand name with a free domain | Planned | Research a new product name whose .com (or .in / .app) domain is still available at a normal price; forge.ai and forgeai.com are taken and too expensive. | I make a short list of about 5 names, each checked for a free .com (or .in / .app) at a normal price, for Indian trademark clashes and for Play Store clashes, with the yearly cost. You pick one and buy the domain (your money). Then I rename the app, the website and the store listing. |
+| Block-proof server address | Planned | The apps reach our database through forgeai.aakashpahuja.in (Cloudflare) instead of Supabase's own address, so a block like Feb 2026 can't stop them. | Both apps talk to forgeai.aakashpahuja.in, and our Cloudflare Worker passes every request on to Supabase. If an Indian network blocks Supabase's own address again (as in Feb 2026), our address still works; if ours fails, the member app falls back to the direct one. No database change, free. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
 | Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
 | Release gate | Live | A new app version can't be published unless every test, phone run and review is green. |
@@ -184,17 +184,17 @@ Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned 
 | Works without internet | Live | The member app logs workouts fully offline. |
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
-| Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. |
-| Landing page, leads and new-gym onboarding | Waiting for you | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. |
-| Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). |
-| Test server before live | Planned | A second server where every change is tried before it reaches the gym. |
-| Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. |
-| Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). |
+| Play Store release | Planned | Google's pre-launch tests and the Play Store listing are not started yet. | After you open the Play account (#28, #35): first an internal test for the gym's staff, then a closed test with 12 testers for 14 days (gym members can be the testers), then public. Members then get updates by themselves. The GitHub download link stays as a backup. |
+| Landing page, leads and new-gym onboarding | Waiting for you | A modern Hindi + English page at forgeai.aakashpahuja.in: "Book a free demo" (leads saved privately for you), "Try the demo gym", "Sign in" for clients; then a "Get started" checklist for each new gym. | Built, switched off until your yes (#40). A gym owner opens forgeai.aakashpahuja.in/home/, types their gym's name and sees the member app in their colours, then fills in "Free demo". The request is saved privately in Cloudflare and I tell you about each one. Later the page moves to the site's front door, and clients reach the admin app through "Sign in". |
+| Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
+| Test server before live | Planned | A second server where every change is tried before it reaches the gym. | A second, free Supabase project, "forgeai-staging", with the same tables. Every database change goes there first and runs all the server checks; only then does it go live, with your yes. You make the project (Supabase lets only the owner do it); I fill it. |
+| Crash and outage alerts | Planned | Crash reports from both apps and a "site is down" alert to your phone, so we hear before the gym calls. | Crash reports from both apps (Sentry, free) tell me the screen, the app version and the error, with no member names. A check every minute (Better Stack, free) tries the admin app and the database and alerts your phone if either is down. You make the two free accounts; I wire them in. |
+| Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
 | "New version ready" in the app | Live | Members are told when an update is ready. |
-| Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. |
+| Privacy notice, terms and consent | Planned | Plain-English (and Hindi) notice in both apps, a consent screen when joining a gym, a named complaints contact. | Mostly done: the notice (English + Hindi) and the terms are final, and the "I'm 18 or older and I agree" tick is in the app since v0.49.0. The pages go live on the website, linked from both apps, once you give the complaints contact (#37). |
 | Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
 | Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
-| Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). |
+| Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
 
