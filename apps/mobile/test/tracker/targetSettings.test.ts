@@ -318,10 +318,10 @@ describe('per-set goals at the same weight', () => {
     expect(perSetGoals([], 3, 12, false)).toEqual([]);
   });
 
-  it('bodyweight, assisted and pyramids keep one goal for every set', () => {
+  it("bodyweight sets never aim under last time's same set (review v0.52.0); pyramids keep one goal", () => {
     const pull = ex({ name: 'Pull Up', equipment: 'bodyweight' });
     const b = run(pull, [sess('2026-10-03', [[0, 6], [0, 5], [0, 4]])]);
-    expect(new Set(b.setGoals).size).toBe(1);
+    expect(b.setGoals).toEqual([6, 5, 5]);
     const ramp = run(ex(), [sess('2026-10-03', [[60, 10], [70, 8], [80, 5]])], { min: 5, max: 8 });
     expect(ramp.topSetOnly).toBe(true);
     expect(new Set(ramp.setGoals).size).toBe(1);

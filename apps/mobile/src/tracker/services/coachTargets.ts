@@ -458,7 +458,8 @@ async function newestAnywhere(items: readonly TargetItem[], includeToday: boolea
   try {
     const rows = await getProgressionHistoryMany(
       items.map((it) => ({ exerciseId: it.exerciseId ?? it.pe.exerciseId })),
-      2,
+      // Review: a lift done twice today must still find the day before.
+      6,
       { scope: null },
     );
     return rows.map((h) => h.find((s) => (includeToday ? s.dateISO <= today : s.dateISO < today))?.dateISO ?? null);

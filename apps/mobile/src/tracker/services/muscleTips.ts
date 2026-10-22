@@ -143,13 +143,19 @@ export async function muscleTipFor(
     if (!prefs.on) return null;
     const folder = await folderOfRoutine(routine.id);
     if (!folder || folder.settings.fromGym || folder.settings.program) return null;
-    const plan = await getPlanNow(today).catch(() => null);
+    const plan = await getPlanNow(today).catch((e: unknown) => {
+      console.warn('[ForgeErr] muscle tip: the plan week could not be read', e);
+      return null;
+    });
     if (plan?.easy) return null;
     const first = await getDb().getFirstAsync<{ d: string | null }>("SELECT MIN(date_iso) AS d FROM workout_sessions WHERE source != 'seed'");
     if (!first?.d || daysBetween(first.d, today) < 21) return null;
     const { sets, workouts } = await getBalanceSets(addDays(today, -21), addDays(today, -1));
     if (workouts < 4) return null;
-    const profile = await getProfile().catch(() => null);
+    const profile = await getProfile().catch((e: unknown) => {
+      console.warn('[ForgeErr] muscle tip: the profile could not be read', e);
+      return null;
+    });
     const beginner = profile?.experience === 'beginner';
     const missing = missingGroups(weekFromLogged(sets, 3), { beginner, quiet: quietGroups(prefs, today) });
     const group = groupForDay(missing, routine.dayType, prefs.shown, today);

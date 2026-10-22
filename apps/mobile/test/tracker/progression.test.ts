@@ -226,10 +226,11 @@ describe('rules', () => {
     expect(run(ex(), range(5, 8), h).rule).toBe('R5');
   });
 
-  it('R3: a weight with nowhere lighter to go holds', () => {
+  it('a weight with nowhere lighter to go holds (review v0.52.0: far under the range, aim for its bottom)', () => {
     const h = [sess('2026-10-03', [[2.5, 4], [2.5, 4]]), sess('2026-09-30', [[2.5, 4], [2.5, 4]])];
     const t = run(ex({ equipment: 'dumbbell' }), range(8, 12, 2), h);
-    expect(t.rule).toBe('R3');
+    expect(t.rule).toBe('R6');
+    expect(t.repGoal).toBe(8);
     expect(t.targetWeightKg).toBe(2.5);
     expect(t.change).toBeNull();
   });

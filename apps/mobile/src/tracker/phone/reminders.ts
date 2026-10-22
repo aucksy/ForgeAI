@@ -342,7 +342,17 @@ export function refreshReminders(opts: { ask?: boolean; force?: boolean } = {}):
   return run;
 }
 
-async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Promise<ReminderResult> {
+/**
+ * v0.52.0 (phone run 39722663191): a read can hit a passing native database hiccup ("Cannot use shared
+ * object that was already released" from expo-sqlite's statement clean-up). Such a failure is tried
+ * once more a moment later; only a second failure is logged and reported. PURE.
+ */
+export function isPassingDbHiccup(e: unknown): boolean {
+  const text = e instanceof Error ? `${e.message} ${String((e as { cause?: unknown }).cause ?? '')}` : String(e);
+  return /already released|NativeStatement\.finalizeAsync/i.test(text);
+}
+
+async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }, again = false): Promise<ReminderResult> {
   const n = N();
   if (!n) return null;
   try {
@@ -395,6 +405,11 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }): Pr
     }
     return planReminders({ days: p.reminderDays, minutes: p.reminderMinutes, now, trainedToday: skipToday })[0] ?? null;
   } catch (e) {
+    if (!again && isPassingDbHiccup(e)) {
+      // quiet: tried once more below; a second failure is logged.
+      await new Promise((r) => setTimeout(r, 500));
+      return refreshRemindersNow(opts, true);
+    }
     // Audit H2: the old ones may already be cancelled — say so, never "Set.".
     console.warn('[ForgeErr] workout reminders could not be set', e);
     return REMINDERS_FAILED;

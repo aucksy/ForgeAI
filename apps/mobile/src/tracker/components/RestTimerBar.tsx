@@ -26,6 +26,7 @@ import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
+import { useWorkoutUi } from '../store/workoutUiStore';
 
 /** The three pills share one width, so the row reads as a set; 52 dp holds "Skip" at large text. */
 const PILL_W = 52;
@@ -134,6 +135,9 @@ function useAlertChecks(endsAt: number | null): {
   };
 }
 
+/** R-70 review: how long after a rest starts "In use" opens by itself. */
+const IN_USE_DELAY_MS = 300;
+
 export function RestTimerBar() {
   const endsAt = useRestTimer((s) => s.endsAt);
   const durationSec = useRestTimer((s) => s.durationSec);
@@ -158,8 +162,15 @@ export function RestTimerBar() {
   useEffect(() => {
     if (startedAt == null || startedAt === seenStart.current) return;
     seenStart.current = startedAt;
-    if (autoInUse && endsAt != null) setInUse(true);
-  }, [startedAt, endsAt, autoInUse]);
+    // Review: not after the last set (Finish comes next), and never over a question the tick asked
+    // ("Is 1000 kg right?"). It opens a moment later, so a sheet closing in the same moment (a hold's
+    // timer) never swallows it.
+    if (!autoInUse || endsAt == null || !nextLabel) return undefined;
+    const t = setTimeout(() => {
+      if (useWorkoutUi.getState().typoAsk == null && useRestTimer.getState().endsAt != null) setInUse(true);
+    }, IN_USE_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [startedAt, endsAt, autoInUse, nextLabel]);
 
   const ask = (
     <ConfirmSheet
@@ -200,7 +211,11 @@ export function RestTimerBar() {
           <TimerBtn label="−15" a11y="15 seconds less" onPress={() => addSec(-15)} />
           {/* Backlog (21 Oct): tapping the clock shows "Machine in use" full screen (MachineInUse). */}
           <Pressable
-            onPress={() => setInUse(true)}
+            onPress={() => {
+              // Review: a screen Android dropped can't leave this tap dead: close, then open again.
+              setInUse(false);
+              setTimeout(() => setInUse(true), 0);
+            }}
             accessibilityRole="button"
             accessibilityLabel={`Rest, ${remaining} seconds left. Show machine in use`}
             style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}

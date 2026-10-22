@@ -11,6 +11,7 @@
  * know the member is coming back. The set's pop-up (a record, better than last time) shows on top.
  */
 import { Modal, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -36,6 +37,7 @@ export function MachineInUse({
   machine: string | null;
   onClose: () => void;
 }) {
+  const insets = useSafeAreaInsets();
   return (
     <Modal visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <Pressable
@@ -73,8 +75,11 @@ export function MachineInUse({
         </View>
         <AutoTick />
       </Pressable>
-      {/* The set's own pop-up (a record, better than last time) stays readable over this screen. */}
-      <RecordToast />
+      {/* The set's own pop-up (a record, better than last time) stays readable over this screen, below
+          the status bar (this screen draws behind it). */}
+      <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, top: 0, paddingTop: insets.top }}>
+        <RecordToast />
+      </View>
     </Modal>
   );
 }

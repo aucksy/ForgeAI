@@ -252,18 +252,23 @@ export function pastSendAsk(
   if (s.count === 0 || !s.firstISO || !s.lastISO) return { notice: 'No workouts to send yet.' };
   const n = s.count === 1 ? '1 workout' : `${fmtInt(s.count)} workouts`;
   const span =
-    s.firstISO === s.lastISO
-      ? `Your workout of ${tinyDateWithYear(s.firstISO, today)}`
-      : `Your workouts from ${tinyDateWithYear(s.firstISO, today)} to ${tinyDateWithYear(s.lastISO, today)}`;
+    s.count === 1
+      ? `Your workout of ${tinyDateWithYear(s.firstISO, today)} goes`
+      : s.firstISO === s.lastISO
+        ? `Your ${fmtInt(s.count)} workouts of ${tinyDateWithYear(s.firstISO, today)} go`
+        : `Your workouts from ${tinyDateWithYear(s.firstISO, today)} to ${tinyDateWithYear(s.lastISO, today)} go`;
   return {
     title: `Send ${n} to Health Connect?`,
     body:
-      `${span} go in as strength training, each with its time and calories (an estimate). ` +
+      `${span} in as strength training, each with its time and calories (an estimate). ` +
       'Google Health, Samsung Health and other apps you allow there can show them. ' +
       'Sending again replaces them, so nothing is counted twice.',
     confirm: `Send ${n}`,
   };
 }
+
+/** R-72 review: when the workouts could not even be counted (a phone error, not Health Connect's). */
+export const COUNT_FAILED = "Couldn't read your workouts on this phone. Please try again.";
 
 /** R-72: "Sending… 200 of 480". PURE. */
 export function sendProgressText(sent: number, total: number): string {
@@ -350,7 +355,8 @@ async function sendInParts(ids: readonly string[]): Promise<SendResult> {
     }
     if (r.kind === 'failed') failed ??= r.reason;
   }
-  noteLastSent(sent, true);
+  // "Send again" and imports: "workouts", never "past workouts" (only "Send past workouts" says that).
+  noteLastSent(sent, false);
   if (failed) return { kind: 'failed', sent, total, reason: failed };
   if (demo && total === 0) return { kind: 'demo' };
   return total === 0 ? { kind: 'none' } : { kind: 'sent', sent, total };

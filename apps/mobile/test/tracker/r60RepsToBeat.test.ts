@@ -76,3 +76,19 @@ describe('R-60: reps to beat', () => {
     for (const w of [repsToBeatLine(p), ...repSetLines(p)]) expect(w).not.toMatch(/\b(volume|PR|session)\b/i);
   });
 });
+
+describe('R-60 review: a bodyweight Target never asks for fewer reps in all than last time', () => {
+  it('push-ups 12, 10, 9 last time: 12, 10, 10 (32 to beat, +1)', async () => {
+    const { computeProgressionTarget } = await import('@/tracker/engine/progression');
+    const t = computeProgressionTarget({
+      exercise: { id: 'pu', name: 'Push-up', aliases: [], muscleGroup: 'chest', secondaryMuscles: [], equipment: 'bodyweight', isCompound: true, incrementKg: 0 },
+      target: { targetSets: 3, repRangeMin: 8, repRangeMax: 12 },
+      history: [{ dateISO: '2026-10-20', sets: [12, 10, 9].map((reps) => ({ weightKg: 0, reps, rpe: null, setType: 'normal' as const })) }],
+      todayISO: '2026-10-22',
+      logType: 'reps',
+    });
+    expect(t.setGoals).toEqual([12, 10, 10]);
+    const p = repPlan(t, [12, 10, 9].map((reps) => ({ weightKg: 0, reps })))!;
+    expect(repsToBeatLine(p)).toBe('32 reps to beat · +1 on last time');
+  });
+});

@@ -466,6 +466,15 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   // B1 / B2 / B2cap — bodyweight the member has never loaded: reps only, never kilos.
   if (bodyweightOnly) {
     const cap = Math.max(input.repCap && input.repCap > 0 ? input.repCap : bodyweightCap(name), max + 2);
+    // Review (v0.52.0, reps to beat): with the same number of sets as last time, a set never aims for
+    // fewer reps than it did then (12, 10, 9 aims 12, 10, 10 — never 10, 10, 10 = fewer in all).
+    const sameCount = L.mainSets.length === target.targetSets;
+    const floorAt = (goal: number): number[] | undefined =>
+      sameCount ? L.mainSets.map((s) => Math.max(goal, s.reps)) : undefined;
+    const aimWords = (goal: number): string => {
+      const per = floorAt(goal);
+      return per && per.some((g) => g !== per[0]) ? `aim for ${per.join(', ')}` : `aim for ${goal} on every set`;
+    };
     if (enoughSets && minScore >= cap) {
       // Never fill fewer reps than were just done (20, 20, 20 against a cap of 15 keeps 20).
       const keep = Math.max(cap, lowestReps);
@@ -478,11 +487,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
           { kind: 'harder', ...input.harder },
         );
       }
-      return out('B2cap', 0, keep, `You did ${repsList}. That's plenty — ready for a harder version, or a little added weight.`);
+      return out('B2cap', 0, keep, `You did ${repsList}. That's plenty — ready for a harder version, or a little added weight.`, null, floorAt(keep));
     }
     const goal = Math.min(cap, Math.max(1, lowestReps + 1));
     if (enoughSets && minScore >= max) {
-      return out('B2', 0, goal, `You did ${repsList}. Keep adding reps: aim for ${goal} on every set.`);
+      return out('B2', 0, goal, `You did ${repsList}. Keep adding reps: ${aimWords(goal)}.`, null, floorAt(goal));
     }
     // Four workouts running under the range at body weight → an easier version builds up to it.
     if (input.easier && sessions.length >= RULE_WINDOW && sessions.every((s) => s.mainWeight <= 0 && best(s) < min)) {
@@ -494,7 +503,8 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
         { kind: 'easier', ...input.easier },
       );
     }
-    return out('B1', 0, goal, `Last time ${repsList}. Aim for ${goal} on every set.`);
+    const aim = aimWords(goal);
+    return out('B1', 0, goal, `Last time ${repsList}. ${aim.charAt(0).toUpperCase()}${aim.slice(1)}.`, null, floorAt(goal));
   }
 
   // R6 — 16 Oct 2026 audit (C3-9): last time was far UNDER this rep range (the member changed
@@ -508,7 +518,6 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     const e1 = w * (1 + topReps / 30);
     const want = e1 / (1 + min / 30);
     const down = want < w - 1e-6 ? both(downRungKg(w / per, ladder, 1 - want / w)) : null;
-    // Nowhere lighter to go: the usual rules (R3 holds the weight).
     if (down != null) {
       return out(
         'R6',
@@ -517,6 +526,9 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
         `Last time ${repsList}${atLast}, well under ${min}–${max} reps. Start at ${targetKgText(down)} and aim for ${min}.`,
       );
     }
+    // Review (v0.52.0): nothing lighter on his rack or stack (a 7.5 kg dumbbell's next is half): keep
+    // the weight and aim for the bottom of the new range — never "Reps fell" or "match 5".
+    return out('R6', same, min, `Last time ${repsList}${atLast}, well under ${min}–${max} reps. Same weight: aim for ${min}.`);
   }
 
   // R2 / R2b / R2c — ready to add weight (or, assisted, to take help away).

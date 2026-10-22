@@ -21,7 +21,10 @@ describe('R-72: Send past workouts asks first', () => {
     });
     const one = pastSendAsk({ count: 1, firstISO: '2026-10-20', lastISO: '2026-10-20', demo: false }, TODAY);
     expect(one).toMatchObject({ title: 'Send 1 workout to Health Connect?', confirm: 'Send 1 workout' });
-    expect('body' in one && one.body.startsWith('Your workout of 20 Oct go')).toBe(true);
+    expect('body' in one && one.body.startsWith('Your workout of 20 Oct goes in as strength training')).toBe(true);
+    // Review: several workouts on one day say so.
+    const sameDay = pastSendAsk({ count: 3, firstISO: '2026-10-20', lastISO: '2026-10-20', demo: false }, TODAY);
+    expect('body' in sameDay && sameDay.body.startsWith('Your 3 workouts of 20 Oct go in as strength training')).toBe(true);
   });
 
   it('nothing to send, or demo data: a plain notice, never a question', () => {

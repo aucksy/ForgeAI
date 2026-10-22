@@ -18,6 +18,7 @@ import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
+  COUNT_FAILED,
   HC_OPEN_FAILED,
   SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
@@ -100,7 +101,7 @@ function HealthRow() {
       return null;
     });
     if (!summary) {
-      setSent({ kind: 'failed', sent: 0, total: 0, reason: 'error' });
+      setNotice(COUNT_FAILED);
       return;
     }
     const ask = pastSendAsk(summary);
