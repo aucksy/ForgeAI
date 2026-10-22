@@ -49,6 +49,9 @@ export function isAadhaar(text: string): boolean {
   const t = text.trim();
   if (!/^\d{4}[\s-]?\d{4}[\s-]?\d{4}$/.test(t)) return false;
   const digits = t.replace(/\D/g, '');
+  // Review of #47: "91" + a 10-digit mobile written as one number is a mobile, not an Aadhaar
+  // (about 1 in 10 of them pass the check digit by chance). Written 4-4-4 it is still an Aadhaar.
+  if (/^91[6-9]\d{9}$/.test(t)) return false;
   return /^[2-9]/.test(digits) && verhoeffValid(digits);
 }
 
@@ -74,19 +77,24 @@ export function isIdHeader(header: string): boolean {
   return ID_HEADER.test(header.toLowerCase());
 }
 
-/** Is this column ID numbers? Its name says so, or 60% of its filled cells are one. PURE. */
-export function idColumnKind(header: string, cells: readonly string[]): IdKind | 'id' | null {
+/**
+ * Is this column ID numbers? Only by what is IN it: 60% of its filled cells are an Aadhaar or a PAN.
+ * Review of #47: a NAME alone ("Name as per Aadhaar", "Aadhaar linked mobile", "Member UID") is not
+ * enough; such a column only gets a note (`isIdHeader`), and any ID number in it is cut out anyway.
+ * PURE.
+ */
+export function idColumnKind(cells: readonly string[]): IdKind | null {
   const filled = cells.map((c) => c.trim()).filter(Boolean);
+  if (filled.length === 0) return null;
   const kinds = filled.map(idNumberKind);
   const aadhaar = kinds.filter((k) => k === 'aadhaar').length;
   const pan = kinds.filter((k) => k === 'pan').length;
-  if (filled.length >= 2 && aadhaar / filled.length >= 0.6) return 'aadhaar';
-  if (filled.length >= 2 && pan / filled.length >= 0.6) return 'pan';
-  if (isIdHeader(header)) return aadhaar >= pan && aadhaar > 0 ? 'aadhaar' : pan > 0 ? 'pan' : 'id';
+  if (aadhaar / filled.length >= 0.6) return 'aadhaar';
+  if (pan / filled.length >= 0.6) return 'pan';
   return null;
 }
 
-const AADHAAR_IN_TEXT = /(?<!\d)(?:\d{4}[\s-]?\d{4}[\s-]?\d{4}|[xX*]{4}[\s-]?[xX*]{4}[\s-]?\d{4})(?!\d)/g;
+const AADHAAR_IN_TEXT = /(?<![\d+])(?:\d{4}[\s-]?\d{4}[\s-]?\d{4}|[xX*]{4}[\s-]?[xX*]{4}[\s-]?\d{4})(?!\d)/g;
 const PAN_IN_TEXT = /(?<![A-Za-z0-9])[A-Za-z]{5}\d{4}[A-Za-z](?![A-Za-z0-9])/g;
 
 export const ID_REMOVED = '[ID number removed]';

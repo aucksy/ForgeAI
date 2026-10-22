@@ -2,6 +2,7 @@
 // Every network call is a stand-in: the gym server, Google and Anthropic are never reached.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { test } from 'node:test';
 
 import {
@@ -10,6 +11,8 @@ import {
   FIELD_NAMES,
   GEMINI_MODEL,
   PER_GYM_PER_DAY,
+  isRealDate,
+  takeOne,
   buildPrompt,
   checkRequest,
   extraLabel,
@@ -36,14 +39,12 @@ function fakeD1() {
         bind(...args) {
           return {
             async first() {
-              if (/^SELECT COALESCE\(SUM\(calls\)/.test(sql)) {
-                const [day] = args;
-                return { n: [...rows.values()].filter((r) => r.day === day).reduce((s, r) => s + r.calls, 0) };
-              }
               if (/^INSERT INTO ai_usage/.test(sql)) {
-                const [day, gym, limit] = args;
+                const [day, gym, limit, all] = args;
                 const k = `${day}|${gym}`;
                 const r = rows.get(k);
+                const today = [...rows.values()].filter((x) => x.day === day).reduce((sum, x) => sum + x.calls, 0);
+                if (today >= all) return null;
                 if (!r) {
                   rows.set(k, { day, gym, calls: 1, failed: 0, tokens_in: 0, tokens_out: 0, provider: '' });
                   return { calls: 1 };
@@ -70,6 +71,7 @@ function fakeD1() {
   };
 }
 
+const jsonText = (status, text) => new Response(text, { status, headers: { 'Content-Type': 'application/json' } });
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
 const GOOD = { columns: [{ column: 0, target: 'fullName', confidence: 0.98 }, { column: 1, target: 'phone', confidence: 0.97 }, { column: 2, target: 'extra:Locker No.', confidence: 0.8 }] };
@@ -151,13 +153,25 @@ test('masks mobiles, Aadhaar, long numbers, emails and PAN; keeps dates, money a
   assert.equal(maskCell('2345 6789 0123'), '23XXXXXXXX23');
   assert.equal(maskCell('ramesh.g@gmail.com'), '[email]');
   assert.equal(maskCell('pan ABCDE1234F ok'), 'pan [PAN] ok');
-  assert.equal(maskCell('Call 9829012345 / 9414054321'), 'Call 98XXXXXX45 / 94XXXXXX21');
+  assert.equal(maskCell('Call 9829012345 / 9414054321'), 'Call 98XXXXXXXXXXXXXXXX21'); // two numbers: one run, all hidden
   assert.equal(maskCell('15-08-2026'), '15-08-2026');
   assert.equal(maskCell('15/08/2026'), '15/08/2026');
   assert.equal(maskCell('Rs. 1,500/-'), 'Rs. 1,500/-');
   assert.equal(maskCell('45123'), '45123');
   assert.equal(maskCell('Ramesh Gupta'), 'Ramesh Gupta');
   assert.equal(maskCell('x'.repeat(200)).length, 60);
+});
+
+test('review of #47: digits in any script and with any separator; only real dates are kept', () => {
+  assert.equal(maskCell('९८२९० १२३४५'), '९८XXXXXX४५');
+  assert.equal(maskCell('98765/43210'), '98XXXXXX10');
+  assert.equal(maskCell('9876.54.3210'), '98XXXXXX10');
+  assert.equal(maskCell('१५/०८/२०२६'), '१५/०८/२०२६');
+  assert.equal(maskCell('2026-08-15'), '2026-08-15');
+  assert.equal(maskCell('01-08-2026 - 31-10-2026'), '01-08-2026 - 31-10-2026');
+  assert.equal(maskCell('31/02/2026'), '31XXXX26');
+  assert.equal(isRealDate('12/25/2025'), true);
+  assert.equal(isRealDate('9876.54.3210'), false);
 });
 
 test('the request is re-masked here, whatever the browser sent', () => {
@@ -240,6 +254,10 @@ test('Gemini first: Claude is not called when Gemini answers', async () => {
   assert.ok(!net.calls[0].url.includes(GEMINI_KEY), 'the key travels in a header, never the address');
   const sent = JSON.parse(net.calls[0].body);
   assert.equal(sent.generationConfig.responseMimeType, 'application/json');
+  // Review of #47: the lowest thinking level, room for the answer, no temperature.
+  assert.deepEqual(sent.generationConfig.thinkingConfig, { thinkingLevel: 'minimal' });
+  assert.equal(sent.generationConfig.maxOutputTokens, 8192);
+  assert.equal('temperature' in sent.generationConfig, false);
   assert.ok(!net.calls[0].body.includes('12345'));
 });
 
@@ -300,6 +318,21 @@ test('a provider without its key is skipped; no keys at all = off', async () => 
   const none = fakeNet();
   assert.deepEqual(await runChain({}, cols, { fetchImpl: none.fetchImpl }), { error: 'off', tried: [] });
   assert.equal(none.calls.length, 0);
+});
+
+test('a model that refuses the "minimal" thinking level is asked again with "low"', async () => {
+  let n = 0;
+  const net = fakeNet({ gemini: () => (++n === 1 ? json(400, { error: { message: 'thinking_level minimal is not supported for this model' } }) : geminiOk()) });
+  const logs = [];
+  const r = await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: net.fetchImpl, log: (m) => logs.push(m) });
+  assert.equal(r.provider, 'gemini');
+  assert.deepEqual(net.calls.map((c) => JSON.parse(c.body).generationConfig.thinkingConfig.thinkingLevel), ['minimal', 'low']);
+  assert.equal(logs.length, 1);
+  // Any other 400 is a plain failure: Claude next, no second Gemini call.
+  const other = fakeNet({ gemini: () => json(400, { error: { message: 'bad request' } }) });
+  const r2 = await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: other.fetchImpl, log: quiet });
+  assert.equal(r2.provider, 'claude');
+  assert.deepEqual(other.calls.map((c) => c.who), ['gemini', 'claude']);
 });
 
 test('a Gemini model can be swapped without a code change', async () => {
@@ -372,6 +405,13 @@ test('only an owner: no key 401, a wrong key 401, the front desk 403, gym server
   const res = await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: down.fetchImpl, log: quiet });
   assert.equal(res.status, 503);
   assert.equal((await res.json()).reason, 'unreachable');
+  // Review of #47: only a BAD_KEY refusal means "sign in"; any other refusal is "try again".
+  const odd = fakeNet({ me: () => jsonText(404, '{"message":"function not found"}') });
+  const r404 = await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: odd.fetchImpl, log: quiet });
+  assert.equal(r404.status, 503);
+  assert.equal((await r404.json()).reason, 'unreachable');
+  const other400 = fakeNet({ me: () => jsonText(400, '{"message":"something else"}') });
+  assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: other400.fetchImpl, log: quiet })).status, 503);
   // An old owner key (no person) is the owner.
   const oldKey = fakeNet({ me: () => json(200, { gymId: 'gym-2', person: null }) });
   assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: oldKey.fetchImpl, log: quiet })).status, 200);
@@ -406,4 +446,30 @@ test('plain answers for a wrong method, a bad body, a big body', async () => {
   assert.equal((await run(post('not json'))).status, 400);
   assert.equal((await run(post({ nope: 1 }))).status, 400);
   assert.equal((await run(post({ columns: [{ header: 'x'.repeat(50_000) }] }))).status, 413);
+});
+
+// Review of #47: the real SQL, on a real SQLite (Node 22.5+ has one built in; skipped on older Node).
+const sqlite = (() => {
+  try {
+    return createRequire(import.meta.url)('node:sqlite');
+  } catch {
+    return null; // quiet: Node 20 (CI) has no built-in SQLite; the fake D1 tests above still run
+  }
+})();
+
+test('the usage table and the one-statement allowance work on real SQLite', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const db = new sqlite.DatabaseSync(':memory:');
+  db.exec(readFileSync(new URL('./migrations/0003_ai_usage.sql', import.meta.url), 'utf8'));
+  // The D1 surface takeOne uses: prepare(sql).bind(...).first().
+  const d1 = {
+    prepare: (sql) => ({ bind: (...args) => ({ first: async () => db.prepare(sql).get(...args) ?? null }) }),
+  };
+  for (let i = 1; i <= PER_GYM_PER_DAY; i++) assert.equal(await takeOne(d1, 'gym-a', '2026-10-23'), i);
+  assert.equal(await takeOne(d1, 'gym-a', '2026-10-23'), null);
+  assert.equal(await takeOne(d1, 'gym-a', '2026-10-24'), 1);
+  // All gyms together: fill the day to the cap, then nobody gets one.
+  db.prepare("INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES ('2026-10-25', 'big', 'columns', ?)").run(ALL_PER_DAY - 1);
+  assert.equal(await takeOne(d1, 'gym-b', '2026-10-25'), 1);
+  assert.equal(await takeOne(d1, 'gym-c', '2026-10-25'), null);
+  assert.equal(await takeOne(d1, 'gym-b', '2026-10-25'), null);
 });

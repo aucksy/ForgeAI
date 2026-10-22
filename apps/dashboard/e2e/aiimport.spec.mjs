@@ -52,7 +52,7 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   const main = page.getByRole('main');
 
   // Asked first, in one line; the Aadhaar column is already set aside.
-  await expect(main).toContainText('Ask AI to match the columns? It sends the column names and 5 example rows, with phone numbers hidden.');
+  await expect(main).toContainText('Ask AI to match the columns? It sends the column names and 5 example rows. Phone numbers, emails and ID numbers are hidden.');
   await expect(main).toContainText('Not imported: Column D “Aadhaar No.” has Aadhaar numbers. ID numbers are never imported.');
   expect(sent).toHaveLength(0);
   await expectFitsPhone(page, 'on the AI question');

@@ -12,6 +12,8 @@ import {
   askAiForColumns,
   findIdColumns,
   freeColumns,
+  idNamedColumns,
+  isRealDate,
   maskCell,
   parseAiPicks,
 } from '../../src/crm/logic/aiImport';
@@ -44,16 +46,46 @@ describe('Aadhaar and PAN', () => {
     expect(isAadhaar(AADHAAR)).toBe(true);
     expect(isAadhaar('123456789012')).toBe(false); // never starts with 1
     expect(isAadhaar('919829012345')).toBe(false); // a +91 mobile written as 12 digits
+    // Review of #47: "91" + a mobile is a mobile even when its last digit happens to pass the check.
+    expect(verhoeffValid('919829012343')).toBe(true);
+    expect(isAadhaar('919829012343')).toBe(false);
+    expect(isAadhaar('9198 2901 2343')).toBe(true); // written 4-4-4 it is an Aadhaar
+    expect(scrubIds('call +919829012343 or 919829012343').removed).toBe(false);
   });
 
-  it('a column is ID numbers by its name or by most of its cells', () => {
-    expect(idColumnKind('aadhaar no', ['', ''])).toBe('id');
-    expect(idColumnKind('pan card', ['ABCDE1234F'])).toBe('pan');
-    expect(idColumnKind('id', [AADHAAR, AADHAAR_PLAIN, ''])).toBe('aadhaar');
-    expect(idColumnKind('code', ['ABCDE1234F', 'PQRST6789Z'])).toBe('pan');
-    expect(idColumnKind('company', ['Infosys', 'TCS'])).toBeNull(); // "pan" inside a word is not PAN
-    expect(idColumnKind('mobile', ['9829012345', '9414054321'])).toBeNull();
+  it('a column is ID numbers only by what is in it, never by its name alone', () => {
+    expect(idColumnKind([AADHAAR, AADHAAR_PLAIN, ''])).toBe('aadhaar');
+    expect(idColumnKind(['ABCDE1234F', 'PQRST6789Z'])).toBe('pan');
+    expect(idColumnKind(['ABCDE1234F'])).toBe('pan');
+    expect(idColumnKind(['', ''])).toBeNull();
+    expect(idColumnKind(['Infosys', 'TCS'])).toBeNull();
+    expect(idColumnKind(['9829012345', '9414054321'])).toBeNull();
+    expect(idColumnKind(['919829012343', '919414054321'])).toBeNull(); // +91 mobiles, one passing the check
     expect(findIdColumns(SHEET, 0, 6)).toEqual([{ col: 3, kind: 'aadhaar' }]);
+  });
+
+  it('review of #47: a column only NAMED like an ID column imports normally (name, mobile, uid)', () => {
+    const rows = [
+      ['Name as per Aadhaar', 'Aadhaar linked mobile', 'Member UID'],
+      ['Ramesh Gupta', '9829012345', 'M-001'],
+      ['Sita Devi', '9414054321', 'M-002'],
+    ];
+    expect(findIdColumns(rows, 0, 3)).toEqual([]);
+    expect(idNamedColumns(rows, 0, 3, [])).toEqual([0, 1, 2]);
+    const guess = guessColumns(rows[0]!);
+    expect(guess.fullName).toBe(0);
+    expect(guess.phone).toBe(1);
+    const plan = planImport(rows, 0, guess, [], TODAY, { idCols: [] });
+    expect(plan.counts).toEqual({ add: 2, duplicate: 0, problem: 0 });
+    expect(plan.rows[0]!.draft!.fullName).toBe('Ramesh Gupta');
+    expect(plan.rows[0]!.draft!.phone).toBe('+919829012345');
+  });
+
+  it('an ID-number column picked by hand still comes in with the numbers cut out', () => {
+    const plan = planImport(SHEET, 0, map({ fullName: 0, phone: 1, address: 3 }), [], TODAY, { idCols: [3] });
+    expect(plan.rows[0]!.draft!.address).toBe('[ID number removed]');
+    expect(plan.rows[0]!.warnings).toContain('An Aadhaar or PAN number was left out. ID numbers are never imported.');
+    expect(plan.rows[1]!.draft!.address).toBeNull();
   });
 
   it('an ID number inside a note is cut out, and the row says so', () => {
@@ -66,6 +98,7 @@ describe('Aadhaar and PAN', () => {
   it('the import never brings an ID number in, whatever column it was pointed at', () => {
     const plan = planImport(SHEET, 0, map({ fullName: 0, phone: 1, notes: 3 }), [], TODAY, { idCols: [3] });
     for (const r of plan.rows) expect(JSON.stringify(r.draft)).not.toMatch(/\d{4} \d{4} \d{4}|ABCDE1234F|234567890124/);
+    expect(plan.rows[0]!.draft!.notes).toBe('[ID number removed]');
     const notes = planImport(SHEET, 0, map({ fullName: 0, phone: 1, notes: 5 }), [], TODAY, { idCols: [3] });
     expect(notes.rows[0]!.draft!.notes).toBe('Aadhaar [ID number removed] given');
     expect(notes.rows[0]!.warnings).toContain('An Aadhaar or PAN number was left out. ID numbers are never imported.');
@@ -86,6 +119,22 @@ describe('what the AI is shown', () => {
     expect(maskCell(new Date(Date.UTC(2026, 7, 15)))).toBe('2026-08-15');
     expect(maskCell('Rs. 1,500/-')).toBe('Rs. 1,500/-');
     expect(maskCell('Ramesh Gupta')).toBe('Ramesh Gupta');
+  });
+
+  it('review of #47: digits in any script, any separator; only real dates are kept', () => {
+    expect(maskCell('९८२९० १२३४५')).toBe('९८XXXXXX४५'); // Devanagari digits
+    expect(maskCell('98765/43210')).toBe('98XXXXXX10');
+    expect(maskCell('9876.54.3210')).toBe('98XXXXXX10');
+    expect(maskCell('98.76.543210')).toBe('98XXXXXX10');
+    expect(maskCell('15/08/2026')).toBe('15/08/2026');
+    expect(maskCell('१५/०८/२०२६')).toBe('१५/०८/२०२६');
+    expect(maskCell('2026-08-15')).toBe('2026-08-15');
+    expect(maskCell('01-08-2026 - 31-10-2026')).toBe('01-08-2026 - 31-10-2026');
+    expect(maskCell('31/02/2026')).toBe('31XXXX26'); // not a real day
+    expect(isRealDate('12/25/2025')).toBe(true); // month-first
+    expect(isRealDate('15.08.26')).toBe(true);
+    expect(isRealDate('9876.54.3210')).toBe(false);
+    expect(isRealDate('29/02/2025')).toBe(false);
   });
 
   it('only the column names and 5 example rows, masked; an ID column shows only that it is one', () => {

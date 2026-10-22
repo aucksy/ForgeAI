@@ -79,24 +79,58 @@ export const FIELD_NAMES = Object.keys(FIELDS);
 
 const EMAIL = /[^\s@<>()[\],;:"]+@[^\s@<>()[\],;:"]+/g;
 const PAN = /\b[A-Za-z]{5}\d{4}[A-Za-z]\b/g;
-const DIGIT_RUN = /\+?\d[\d\s\-().]*\d/g;
-const DATE_SHAPE = /^\d{1,4}[-./]\d{1,2}[-./]\d{1,4}$/;
+/**
+ * A run of digits in ANY script (Devanagari ९८७६…, too) with spaces, dashes, dots, slashes or
+ * brackets between them: "98765/43210" and "9876.54.3210" are one run (review of #47).
+ */
+const DIGIT_RUN = /\+?\p{Nd}(?:[\p{Nd}\s\-()./]*\p{Nd})?/gu;
+const ONE_DIGIT = /\p{Nd}/u;
+const DATE_SHAPE = /^(\p{Nd}{1,4})[-./](\p{Nd}{1,2})[-./](\p{Nd}{1,4})$/u;
+/** The zero of each common digit script (ASCII, Arabic-Indic, Devanagari, Bengali … full-width). */
+const DIGIT_ZEROS = [0x30, 0x660, 0x6f0, 0x966, 0x9e6, 0xa66, 0xae6, 0xb66, 0xbe6, 0xc66, 0xce6, 0xd66, 0xde6, 0xe50, 0xed0, 0x1040, 0xff10];
+
+/** "२०२६" -> 2026; null when a character is no digit we know. PURE. */
+function digitsValue(text) {
+  let n = 0;
+  for (const ch of text) {
+    const cp = ch.codePointAt(0);
+    const zero = DIGIT_ZEROS.find((z) => cp >= z && cp <= z + 9);
+    if (zero === undefined) return null;
+    n = n * 10 + (cp - zero);
+  }
+  return n;
+}
+
+/** Is this a real calendar day written d/m/y, m/d/y or y-m-d (two- or four-digit year)? PURE. */
+export function isRealDate(text) {
+  const m = DATE_SHAPE.exec(String(text).trim());
+  if (!m) return false;
+  const [a, b, c] = [m[1], m[2], m[3]].map(digitsValue);
+  if (a === null || b === null || c === null) return false;
+  const ok = (y, mo, d) => y >= 1900 && y <= 2100 && mo >= 1 && mo <= 12 && d >= 1 && d <= new Date(Date.UTC(y, mo, 0)).getUTCDate();
+  if (m[1].length === 4) return m[3].length <= 2 && ok(a, b, c);
+  if (m[1].length > 2 || (m[3].length !== 2 && m[3].length !== 4)) return false;
+  const y = m[3].length === 2 ? 2000 + c : c;
+  return ok(y, b, a) || ok(y, a, b);
+}
 
 /**
  * One cell made safe to show an AI: emails -> [email], PAN numbers -> [PAN], any run of 7 or more
- * digits (a mobile, an Aadhaar, a long account number) -> its first 2 and last 2 digits with X in
- * between ("98XXXXXX45"). Dates (15-08-2026) are kept: they tell a joining column from an expiry
- * column. Cut to MAX_CELL letters. PURE. Mirrored in apps/dashboard/src/crm/logic/aiImport.ts.
+ * digits (a mobile, an Aadhaar, a long account number), in any script and with any separators ->
+ * its first 2 and last 2 digits with X in between ("98XXXXXX45"). A run is kept only when it is real
+ * dates ("15-08-2026"): they tell a joining column from an expiry column. Cut to MAX_CELL letters.
+ * PURE. The same rule as maskCell in apps/dashboard/src/crm/logic/aiImport.ts.
  */
 export function maskCell(value) {
   let s = String(value ?? '').replace(/\s+/g, ' ').trim();
   s = s.replace(EMAIL, '[email]');
   s = s.replace(PAN, '[PAN]');
   s = s.replace(DIGIT_RUN, (run) => {
-    const digits = run.replace(/\D/g, '');
+    const digits = [...run].filter((ch) => ONE_DIGIT.test(ch));
     if (digits.length < 7) return run;
-    if (DATE_SHAPE.test(run.trim())) return run;
-    return `${digits.slice(0, 2)}${'X'.repeat(digits.length - 4)}${digits.slice(-2)}`;
+    const parts = run.trim().split(/\s+[-–]\s+|\s+/).filter(Boolean);
+    if (parts.length > 0 && parts.every(isRealDate)) return run;
+    return `${digits.slice(0, 2).join('')}${'X'.repeat(digits.length - 4)}${digits.slice(-2).join('')}`;
   });
   return s.length > MAX_CELL ? `${s.slice(0, MAX_CELL - 1)}…` : s;
 }
@@ -240,23 +274,49 @@ function parseJsonText(text) {
   return JSON.parse(t);
 }
 
-async function askGemini(env, columns, fetchImpl, timeoutMs) {
-  const model = typeof env.GEMINI_MODEL === 'string' && env.GEMINI_MODEL ? env.GEMINI_MODEL : GEMINI_MODEL;
-  const res = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: [{ role: 'user', parts: [{ text: buildPrompt(columns) }] }],
-      generationConfig: { responseMimeType: 'application/json', responseSchema: GEMINI_SCHEMA, maxOutputTokens: 4096, temperature: 0 },
-    }),
-    signal: AbortSignal.timeout(timeoutMs),
+/**
+ * Gemini 3.x thinks by default. The lowest level is asked for: "minimal" (Google's thinking docs list
+ * minimal / low / medium / high for its Flash-Lite models). Review of #47: should a model refuse
+ * "minimal" (an HTTP 400 that names thinking), "low" is tried once more, inside the same provider.
+ */
+export const GEMINI_THINKING = ['minimal', 'low'];
+
+function geminiBody(columns, level) {
+  return JSON.stringify({
+    systemInstruction: { parts: [{ text: SYSTEM }] },
+    contents: [{ role: 'user', parts: [{ text: buildPrompt(columns) }] }],
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: GEMINI_SCHEMA,
+      maxOutputTokens: 8192,
+      thinkingConfig: { thinkingLevel: level },
+    },
   });
+}
+
+async function askGemini(env, columns, fetchImpl, timeoutMs, log = console.warn) {
+  const model = typeof env.GEMINI_MODEL === 'string' && env.GEMINI_MODEL ? env.GEMINI_MODEL : GEMINI_MODEL;
+  const signal = AbortSignal.timeout(timeoutMs);
+  let res;
+  for (const level of GEMINI_THINKING) {
+    res = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
+      body: geminiBody(columns, level),
+      signal,
+    });
+    if (res.status !== 400 || level === GEMINI_THINKING[GEMINI_THINKING.length - 1]) break;
+    // quiet: an unreadable error body is treated as "not about thinking", and fails below.
+    const text = await res.clone().text().catch(() => '');
+    if (!/thinking/i.test(text)) break;
+    log(`[ai-match] gemini refused thinking level ${level}, trying the next: ${text.slice(0, 160)}`);
+  }
   // quiet: an unreadable error body still fails with its status, and the chain logs that line.
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`);
   const data = await res.json();
   const cand = data?.candidates?.[0];
   if (!cand) throw new Error(`no answer${data?.promptFeedback?.blockReason ? ` (${data.promptFeedback.blockReason})` : ''}`);
+  // MAX_TOKENS (the answer was cut short), SAFETY, …: logged by the chain, then Claude is asked.
   if (cand.finishReason && cand.finishReason !== 'STOP') throw new Error(`stopped: ${cand.finishReason}`);
   const text = (cand.content?.parts ?? []).filter((p) => !p.thought && typeof p.text === 'string').map((p) => p.text).join('');
   const usage = data.usageMetadata ?? {};
@@ -310,7 +370,7 @@ export async function runChain(env, columns, { fetchImpl = fetch, timeoutMs = TI
   for (const p of on) {
     tried.push(p.name);
     try {
-      const r = await p.ask(env, columns, fetchImpl, timeoutMs);
+      const r = await p.ask(env, columns, fetchImpl, timeoutMs, log);
       const mapping = validateAnswer(r.json, columns.length);
       if (!mapping) throw new Error('answer is not the JSON shape asked for');
       return { provider: p.name, model: r.model, mapping, tokensIn: r.tokensIn, tokensOut: r.tokensOut };
@@ -349,7 +409,13 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
     console.warn('[ai-match] gym server error on staff_me', res.status);
     return { unreachable: true };
   }
-  if (!res.ok) return { denied: true };
+  if (!res.ok) {
+    // quiet: an unreadable error body is not BAD_KEY, so it is logged below as a server problem.
+    const body = await res.text().catch(() => '');
+    if (res.status === 400 && /BAD_KEY/.test(body)) return { denied: true };
+    console.warn('[ai-match] gym server refused staff_me', res.status, body.slice(0, 160));
+    return { unreachable: true };
+  }
   const me = await res.json().catch((e) => {
     console.warn('[ai-match] staff_me answer was not JSON', safeMessage(e));
     return null;
@@ -366,14 +432,17 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
  * asking at once cannot both take the last read.
  */
 export async function takeOne(db, gymId, day) {
-  const all = await db.prepare('SELECT COALESCE(SUM(calls), 0) AS n FROM ai_usage WHERE day = ?').bind(day).first();
-  if (all && Number(all.n) >= ALL_PER_DAY) return null;
+  // One statement: the gym's allowance and all gyms' together are checked and taken at once, so two
+  // tabs (or two gyms) asking at the same moment cannot both take the last read.
   const row = await db
     .prepare(
-      "INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES (?, ?, 'columns', 1) " +
-        "ON CONFLICT (day, gym_id, kind) DO UPDATE SET calls = calls + 1 WHERE calls < ? RETURNING calls",
+      "INSERT INTO ai_usage (day, gym_id, kind, calls) SELECT ?1, ?2, 'columns', 1 " +
+        'WHERE (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
+        'ON CONFLICT (day, gym_id, kind) DO UPDATE SET calls = calls + 1 ' +
+        'WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
+        'RETURNING calls',
     )
-    .bind(day, gymId, PER_GYM_PER_DAY)
+    .bind(day, gymId, PER_GYM_PER_DAY, ALL_PER_DAY)
     .first();
   return row ? Number(row.calls) : null;
 }

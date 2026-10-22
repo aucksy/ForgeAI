@@ -51,6 +51,7 @@ import {
   columnName,
   columnSamples,
   findIdColumns,
+  idNamedColumns,
   freeColumns,
   type IdColumn,
 } from '../../logic/aiImport';
@@ -156,6 +157,7 @@ export function ImportMembersScreen() {
   const width = useMemo(() => (file ? sheetWidth(file.rows) : 0), [file]);
   const idCols = useMemo(() => (file ? findIdColumns(file.rows, headerRow, width) : []), [file, headerRow, width]);
   const idColNums = useMemo(() => idCols.map((c) => c.col), [idCols]);
+  const idNamed = useMemo(() => (file ? idNamedColumns(file.rows, headerRow, width, idColNums) : []), [file, headerRow, width, idColNums]);
   const free = useMemo(() => (file ? freeColumns(file.rows, headerRow, width, map, idColNums) : []), [file, headerRow, width, map, idColNums]);
   const extras = useMemo<ExtraColumn[]>(
     () =>
@@ -488,19 +490,24 @@ export function ImportMembersScreen() {
                   onChange={(v) => pickColumn(field, v)}
                   options={[
                     { value: '', label: '— Not in the file —' },
-                    ...Array.from({ length: width }, (_, i) => i)
-                      .filter((i) => !idColNums.includes(i))
-                      .map((i) => ({
-                        value: String(i),
-                        label: `${columnLetter(i)} · ${(headers[i] || '(no name)').slice(0, 40)}`,
-                      })),
+                    // Review of #47: every column can be picked by hand, an ID-number one too (its
+                    // Aadhaar / PAN numbers are cut out of whatever is read).
+                    ...Array.from({ length: width }, (_, i) => ({
+                      value: String(i),
+                      label: `${columnLetter(i)} · ${(headers[i] || '(no name)').slice(0, 40)}${idColNums.includes(i) ? ' (ID numbers)' : ''}`,
+                    })),
                   ]}
                 />
               ))}
             </Grid>
             {idCols.map((c) => (
               <p key={c.col} style={{ ...muted, marginTop: space.md, color: color.warning }}>
-                {`Not imported: ${columnName(headers, c.col)} has ${c.kind === 'aadhaar' ? 'Aadhaar' : c.kind === 'pan' ? 'PAN' : 'ID'} numbers. ID numbers are never imported.`}
+                {`Not imported: ${columnName(headers, c.col)} has ${c.kind === 'aadhaar' ? 'Aadhaar' : 'PAN'} numbers. ID numbers are never imported.`}
+              </p>
+            ))}
+            {idNamed.map((col) => (
+              <p key={`named-${col}`} style={{ ...muted, marginTop: space.md }}>
+                {`${columnName(headers, col)} is read as usual. Any Aadhaar or PAN number in it is left out.`}
               </p>
             ))}
             {(map.plan !== null || map.amount !== null || map.expiry !== null) && map.expiry === null && map.startDate === null && (
@@ -826,7 +833,7 @@ function ActionBar({
 }
 
 /**
- * #47: the owner is asked before every AI read, in one line (wording approved with option A). "I'll
+ * #47: the owner is asked before every AI read, in one line (honest wording per the review). "I'll
  * match them myself" sends nothing; the column boxes below always work without the AI.
  */
 function AiCard({ ai, onAsk, onSkip }: { ai: AiState; onAsk: () => void; onSkip: () => void }) {

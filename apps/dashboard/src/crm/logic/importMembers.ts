@@ -797,7 +797,10 @@ export function usableExtras(extras: readonly ExtraColumn[]): { col: number; lab
 export interface PlanOptions {
   /** #47: columns kept as extra details. */
   extras?: readonly ExtraColumn[];
-  /** #47: columns of Aadhaar / PAN numbers: never read, whatever field they were pointed at. */
+  /**
+   * #47: columns of Aadhaar / PAN numbers: never kept as an extra detail. Review of #47: the owner
+   * may still point a box at one by hand; every value read is cut free of ID numbers anyway.
+   */
   idCols?: readonly number[];
 }
 
@@ -817,12 +820,7 @@ export function planImport(
   today: DateISO,
   options: PlanOptions = {},
 ): ImportPlan {
-  // #47: an ID-number column is never read, even if a field was pointed at it.
   const idCols = new Set(options.idCols ?? []);
-  if (idCols.size > 0) {
-    map = { ...map };
-    for (const f of IMPORT_FIELDS) if (map[f] !== null && idCols.has(map[f]!)) map[f] = null;
-  }
   const fieldCols = new Set(IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null));
   const extraCols = usableExtras(options.extras ?? []).filter((e) => !idCols.has(e.col) && !fieldCols.has(e.col));
   const data: { row: readonly unknown[]; rowNumber: number }[] = [];
@@ -857,7 +855,15 @@ export function planImport(
   for (const { row, rowNumber } of taken) {
     const problems: string[] = [];
     const warnings: string[] = [];
-    const text = (f: ImportField) => cellText(cellAt(row, map[f]));
+    // #47: an Aadhaar or PAN number in any cell this row reads (a note, an address, a name, an extra
+    // detail, a column picked by hand) is cut out, and the row says so.
+    let idCut = false;
+    const safe = (s: string) => {
+      const r = scrubIds(s);
+      if (r.removed) idCut = true;
+      return r.text;
+    };
+    const text = (f: ImportField) => safe(cellText(cellAt(row, map[f])));
 
     // Name: a title in front is left out ("Mr. Ramesh Gupta" joins the app as "Ramesh", R-67).
     const written = normalizeName(text('fullName'));
@@ -997,19 +1003,12 @@ export function planImport(
       if (text('expiry')) extras.push(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`);
     }
     if (phoneRead.ok && phoneRead.extra) extras.push(`Other number: ${phoneRead.extra}`);
-    // #47: an Aadhaar or PAN number written into a note, an address or an extra detail is cut out.
-    let idCut = false;
-    const safe = (s: string) => {
-      const r = scrubIds(s);
-      if (r.removed) idCut = true;
-      return r.text;
-    };
     const notes = safe(
       [text('notes'), extras.length ? `From Excel — ${extras.join(' · ')}` : '']
         .filter(Boolean)
         .join('\n'),
     );
-    const address = safe(text('address'));
+    const address = text('address');
     const extra: Record<string, string> = {};
     for (const e of extraCols) {
       const v = safe(cellText(row[e.col]).replace(/\s+/g, ' ').trim());

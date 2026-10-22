@@ -13,7 +13,7 @@
  */
 
 import { cellText, columnLetter, fieldLabel, IMPORT_FIELDS, normalizeHeader, type ColumnMap, type ExtraColumn, type ImportField } from './importMembers';
-import { idColumnKind, type IdKind } from './importIds';
+import { idColumnKind, isIdHeader, type IdKind } from './importIds';
 
 export const AI_EXAMPLE_ROWS = 5;
 export const AI_MAX_COLUMNS = 60;
@@ -25,23 +25,59 @@ export const AI_SURE = 0.6;
 
 const EMAIL = /[^\s@<>()[\],;:"]+@[^\s@<>()[\],;:"]+/g;
 const PAN = /\b[A-Za-z]{5}\d{4}[A-Za-z]\b/g;
-const DIGIT_RUN = /\+?\d[\d\s\-().]*\d/g;
-const DATE_SHAPE = /^\d{1,4}[-./]\d{1,2}[-./]\d{1,4}$/;
+/**
+ * A run of digits in ANY script (Devanagari ९८७६…, too) with spaces, dashes, dots, slashes or
+ * brackets between them: "98765/43210" and "9876.54.3210" are one run (review of #47).
+ */
+const DIGIT_RUN = /\+?\p{Nd}(?:[\p{Nd}\s\-()./]*\p{Nd})?/gu;
+const ONE_DIGIT = /\p{Nd}/u;
+const DATE_SHAPE = /^(\p{Nd}{1,4})[-./](\p{Nd}{1,2})[-./](\p{Nd}{1,4})$/u;
+/** The zero of each common digit script (ASCII, Arabic-Indic, Devanagari, Bengali … full-width). */
+const DIGIT_ZEROS = [0x30, 0x660, 0x6f0, 0x966, 0x9e6, 0xa66, 0xae6, 0xb66, 0xbe6, 0xc66, 0xce6, 0xd66, 0xde6, 0xe50, 0xed0, 0x1040, 0xff10];
+
+/** "२०२६" -> 2026; null when a character is no digit we know. PURE. */
+function digitsValue(text: string): number | null {
+  let n = 0;
+  for (const ch of text) {
+    const cp = ch.codePointAt(0)!;
+    const zero = DIGIT_ZEROS.find((z) => cp >= z && cp <= z + 9);
+    if (zero === undefined) return null;
+    n = n * 10 + (cp - zero);
+  }
+  return n;
+}
+
+/** Is this a real calendar day written d/m/y, m/d/y or y-m-d (two- or four-digit year)? PURE. */
+export function isRealDate(text: string): boolean {
+  const m = DATE_SHAPE.exec(text.trim());
+  if (!m) return false;
+  const [a, b, c] = [m[1]!, m[2]!, m[3]!].map(digitsValue);
+  if (a === null || b === null || c === null) return false;
+  const ok = (y: number, mo: number, d: number) =>
+    y >= 1900 && y <= 2100 && mo >= 1 && mo <= 12 && d >= 1 && d <= new Date(Date.UTC(y, mo, 0)).getUTCDate();
+  if (m[1]!.length === 4) return m[3]!.length <= 2 && ok(a, b, c);
+  if (m[1]!.length > 2 || (m[3]!.length !== 2 && m[3]!.length !== 4)) return false;
+  const y = m[3]!.length === 2 ? 2000 + c : c;
+  return ok(y, b, a) || ok(y, a, b);
+}
 
 /**
  * One cell made safe to show an AI: emails -> [email], PAN -> [PAN], any run of 7+ digits (a
- * mobile, an Aadhaar) -> first 2 and last 2 digits with X between ("98XXXXXX45"). Dates are kept.
- * Cut to 60 letters. PURE. The same rule as maskCell in deploy/panel/aiMatch.js.
+ * mobile, an Aadhaar), in any script and with any separators -> its first 2 and last 2 digits with X
+ * between ("98XXXXXX45"). A run kept as it is only when it is real dates ("15/08/2026",
+ * "01-08-2026 - 31-10-2026"). Cut to 60 letters. PURE. The same rule as maskCell in
+ * deploy/panel/aiMatch.js.
  */
 export function maskCell(value: unknown): string {
   let s = cellText(value).replace(/\s+/g, ' ').trim();
   s = s.replace(EMAIL, '[email]');
   s = s.replace(PAN, '[PAN]');
   s = s.replace(DIGIT_RUN, (run) => {
-    const digits = run.replace(/\D/g, '');
+    const digits = [...run].filter((ch) => ONE_DIGIT.test(ch));
     if (digits.length < 7) return run;
-    if (DATE_SHAPE.test(run.trim())) return run;
-    return `${digits.slice(0, 2)}${'X'.repeat(digits.length - 4)}${digits.slice(-2)}`;
+    const parts = run.trim().split(/\s+[-–]\s+|\s+/).filter(Boolean);
+    if (parts.length > 0 && parts.every(isRealDate)) return run;
+    return `${digits.slice(0, 2).join('')}${'X'.repeat(digits.length - 4)}${digits.slice(-2).join('')}`;
   });
   return s.length > MAX_CELL ? `${s.slice(0, MAX_CELL - 1)}…` : s;
 }
@@ -64,18 +100,32 @@ function dataRows(rows: readonly (readonly unknown[])[], headerRow: number, n: n
 
 export interface IdColumn {
   col: number;
-  kind: IdKind | 'id';
+  kind: IdKind;
 }
 
-/** Columns of Aadhaar or PAN numbers (by name, or by what most cells are). PURE. */
+/**
+ * Columns whose CELLS are mostly Aadhaar or PAN numbers. Not guessed into any box and not sent to
+ * the AI; the owner can still pick one by hand, and the ID numbers are cut out of it. PURE.
+ */
 export function findIdColumns(rows: readonly (readonly unknown[])[], headerRow: number, width: number): IdColumn[] {
-  const header = rows[headerRow] ?? [];
   const body = dataRows(rows, headerRow, 60);
   const out: IdColumn[] = [];
   for (let c = 0; c < width; c += 1) {
-    const kind = idColumnKind(normalizeHeader(header[c]), body.map((r) => cellText(r[c])));
+    const kind = idColumnKind(body.map((r) => cellText(r[c])));
     if (kind) out.push({ col: c, kind });
   }
+  return out;
+}
+
+/**
+ * Review of #47: columns only NAMED like ID columns ("Name as per Aadhaar", "Member UID") whose
+ * cells are not ID numbers. They import normally; the screen only says that any ID number in them
+ * is cut out. PURE.
+ */
+export function idNamedColumns(rows: readonly (readonly unknown[])[], headerRow: number, width: number, idCols: readonly number[]): number[] {
+  const header = rows[headerRow] ?? [];
+  const out: number[] = [];
+  for (let c = 0; c < width; c += 1) if (!idCols.includes(c) && isIdHeader(normalizeHeader(header[c]))) out.push(c);
   return out;
 }
 
@@ -219,7 +269,7 @@ export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: r
 // ---------------------------------------------------------------- asking the server
 
 export const AI_WORDS = {
-  ask: 'Ask AI to match the columns? It sends the column names and 5 example rows, with phone numbers hidden.',
+  ask: 'Ask AI to match the columns? It sends the column names and 5 example rows. Phone numbers, emails and ID numbers are hidden.',
   asking: 'Asking AI…',
   off: 'AI matching is not switched on yet. Match the columns yourself below.',
   limit: 'Today’s AI matches for your gym are used up. Match the columns yourself below, or try tomorrow.',
