@@ -21,6 +21,7 @@ import { OwnerOnly } from './auth/OwnerOnly';
 import { canOpen, navFor, roleOf } from './auth/permissions';
 import { PeopleScreen } from './auth/PeopleScreen';
 import { CloudCrmData } from './data/cloud';
+import { browserSavedCopy } from './data/savedCopy';
 
 import { BrandingScreen } from './brand/BrandingScreen';
 import { atRiskList } from './logic/attendance';
@@ -65,7 +66,7 @@ function SessionRoot() {
   // UAT F-02: the desk's 31-day limit on receipt dates is checked before anything is sent.
   const role = roleOf(session);
   const data = useMemo(
-    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role }) : undefined),
+    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role, saved: browserSavedCopy() }) : undefined),
     [onlineKey, role],
   );
   return (

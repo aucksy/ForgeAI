@@ -3,7 +3,7 @@
  * in the public bucket with a one-time upload ticket. Rules live in `photo.ts`.
  */
 
-import { supabase } from '../../lib/supabase';
+import { savedPictureUrl, supabase } from '../../lib/supabase';
 import { photoTicket } from './api';
 import {
   checkEncodedPhoto,
@@ -96,7 +96,8 @@ export async function uploadProductPhoto(ownerKey: string, file: File): Promise<
       .from(PHOTO_BUCKET)
       .upload(path, blob, { contentType: 'image/jpeg', upsert: false, cacheControl: '31536000' });
     if (error) throw error;
-    return supabase.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
+    // Not getPublicUrl: on our site the client's address is ours (/sb), and the server pins the host.
+    return savedPictureUrl(PHOTO_BUCKET, path);
   } catch (e) {
     if (e instanceof PhotoError) throw e;
     throw new PhotoError(uploadErrorWords(e));

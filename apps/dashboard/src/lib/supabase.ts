@@ -14,6 +14,15 @@ const key =
 
 let client: SupabaseClient | null = null;
 
+/**
+ * The link a gym logo or product photo is SAVED with (review of R-55, MUST-FIX): always Supabase's own
+ * address, whatever address the client talks to. The server accepts only that host (0004, 0005, 0018),
+ * and the member app loads it through our address anyway (mobile cloud/picture.ts).
+ */
+export function savedPictureUrl(bucket: string, path: string): string {
+  return `${direct}/storage/v1/object/public/${bucket}/${path}`;
+}
+
 function real(): SupabaseClient {
   // R-55: our own address on our site (serverAddress.ts), the direct one anywhere else.
   const here = typeof location === 'undefined' ? null : location;

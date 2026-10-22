@@ -30,6 +30,7 @@ import type {
   UndoImportResult,
 } from './data/adapter';
 import { DamagedDataError } from './data/adapter';
+import type { OfflineState } from './data/cloud';
 import { demoSnapshot } from './data/demo';
 import { downloadTextFile } from './ui/download';
 import { emptySnapshot, LocalCrmData } from './data/local';
@@ -128,6 +129,8 @@ export function useCrm(): CrmContextValue {
 export type CrmBackend = CrmData & {
   replaceAll?: (snapshot: CrmSnapshot) => void;
   refresh?: () => Promise<boolean>;
+  /** R-55 (offline front desk, step 1): set while the server cannot be reached. */
+  offlineState?: () => OfflineState | null;
 };
 
 /** How often an online gym looks for changes made on other phones and computers. */
@@ -163,6 +166,9 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   }, []);
 
   const [snapshot, setSnapshot] = useState<CrmSnapshot | null>(null);
+  // R-55: the offline bar (an online gym whose server cannot be reached: the device's copy shows).
+  const [offline, setOffline] = useState<OfflineState | null>(null);
+  const syncOffline = useCallback(() => setOffline(db.offlineState?.() ?? null), [db]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // UAT U-A13: the gym saved in this browser can't be read (its own screen, below).
@@ -178,8 +184,9 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       setDamaged(e instanceof DamagedDataError ? e : null);
     } finally {
       setLoading(false);
+      syncOffline();
     }
-  }, [db]);
+  }, [db, syncOffline]);
 
   useEffect(() => {
     void reload();
@@ -197,21 +204,25 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       try {
         if (await refresh()) setSnapshot(await db.load());
       } catch {
-        // Offline for a moment: the next tick tries again; a save shows its own error.
+        // quiet: offline for a moment; the next tick tries again, the bar says so, a save says why.
       } finally {
         busy = false;
+        syncOffline();
       }
     };
     const timer = window.setInterval(() => void tick(), REFRESH_MS);
     const onShow = () => void tick();
     window.addEventListener('focus', onShow);
     document.addEventListener('visibilitychange', onShow);
+    // R-55: the internet is back: look at once (not up to 15 s later).
+    window.addEventListener('online', onShow);
     return () => {
       window.clearInterval(timer);
       window.removeEventListener('focus', onShow);
       document.removeEventListener('visibilitychange', onShow);
+      window.removeEventListener('online', onShow);
     };
-  }, [db]);
+  }, [db, syncOffline]);
 
   /**
    * Run a write, then re-read. Errors are re-thrown so the calling form can show
@@ -226,12 +237,14 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
         // Online records: a failed action can still have brought news (a late save, another
         // desk's change). Show the truth before the form shows why it failed.
         if (db.refresh) await db.load().then(setSnapshot, () => undefined);
+        syncOffline();
         throw e;
       }
       setSnapshot(await db.load());
+      syncOffline();
       return result;
     },
-    [db],
+    [db, syncOffline],
   );
 
   // ---------------------------------------------------------------- derived
@@ -365,7 +378,39 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
     return <>{loading ? <Booting /> : <BootFailed message={error} onRetry={() => void reload()} />}</>;
   }
 
-  return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;
+  return (
+    <CrmContext.Provider value={value}>
+      {offline && <OfflineBar state={offline} />}
+      {children}
+    </CrmContext.Provider>
+  );
+}
+
+/**
+ * R-55 (owner #7: "a persistent Offline mode banner tells staff only some things work"). Step 1:
+ * every screen reads the copy kept on this device; saving waits for the internet (the form says so).
+ */
+function OfflineBar({ state }: { state: OfflineState }) {
+  const at = new Date(state.savedAt || state.since).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+  return (
+    <div
+      role="status"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: color.surfaceSunken,
+        color: color.ink,
+        borderBottom: `2px solid ${color.warning}`,
+        padding: '8px 16px',
+        fontSize: 14,
+        lineHeight: 1.4,
+      }}
+    >
+      <strong>Offline mode.</strong> No internet. You can look up members, plans and dues (as of {at}). Saving waits
+      until the internet is back.
+    </div>
+  );
 }
 
 function Booting() {

@@ -28,27 +28,42 @@ export function sessionKey(direct: string): string {
 
 type Fetch = typeof fetch;
 
+/** The header our Worker puts on every answer that really came from the gym server (proxy.js). */
+export const STAMP = 'X-Forge-Proxy';
+
 /**
- * A fetch that turns to the direct address for a while after our address failed to answer.
- * Typed loosely inside, so it compiles whatever the `fetch` type of the lib in use says.
+ * Did our address fail with this answer? An answer without our Worker's stamp is Cloudflare's own
+ * page (the free plan's daily limit, a Worker failure); "unreachable" is our Worker's 502. PURE.
+ */
+export function proxyFailed(res: { headers: { get(name: string): string | null } }): boolean {
+  const stamp = res.headers.get(STAMP);
+  return stamp === null || stamp === 'unreachable';
+}
+
+/**
+ * A fetch that turns to the direct address for 10 minutes after our address failed: no answer, or
+ * an answer that is not the gym server's. The failed request is never sent again (a payment or a
+ * check-in is never saved twice). Typed loosely inside, whatever the lib's `fetch` type says.
  */
 export function routedFetch(proxyBase: string, direct: string, base: Fetch, now: () => number = Date.now): Fetch {
   let directUntil = 0;
   const call = base as unknown as (input: unknown, init?: RequestInit) => Promise<Response>;
+  const fail = (why: string, e?: unknown) => {
+    directUntil = now() + FALLBACK_MS;
+    console.warn(`[server] our address failed (${why}); the direct one for 10 minutes`, e ?? '');
+  };
   return (async (input: unknown, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as Request).url;
     const viaProxy = url.startsWith(proxyBase + '/');
-    if (viaProxy && now() < directUntil) {
-      const swapped = direct + url.slice(proxyBase.length);
-      return call(input instanceof Request ? new Request(swapped, input) : swapped, init);
+    if (viaProxy && now() < directUntil && (typeof input === 'string' || input instanceof URL)) {
+      return call(direct + url.slice(proxyBase.length), init);
     }
     try {
-      return await call(input, init);
+      const res = await call(input, init);
+      if (viaProxy && proxyFailed(res)) fail(`answer ${res.status} without the gym server's stamp`);
+      return res;
     } catch (e) {
-      if (viaProxy && !(e instanceof DOMException && e.name === 'AbortError')) {
-        directUntil = now() + FALLBACK_MS;
-        console.warn('[server] our address did not answer; the direct one for 10 minutes', e);
-      }
+      if (viaProxy && !(e instanceof DOMException && e.name === 'AbortError')) fail('no answer', e);
       throw e;
     }
   }) as unknown as Fetch;

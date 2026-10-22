@@ -13,6 +13,13 @@ class WorkoutClockTest {
   }
 
   @Test
+  fun `the paused text matches the running Chronometer`() {
+    assertEquals("00:00", WorkoutCard.clockText(0L))
+    assertEquals("42:15", WorkoutCard.clockText((42L * 60 + 15) * 1000))
+    assertEquals("1:02:30", WorkoutCard.clockText((3600L + 150) * 1000))
+  }
+
+  @Test
   fun `paused stands still and a clock gone backwards never shows below zero`() {
     assertEquals(20L * 60_000, WorkoutCard.trainedMs(WorkoutCard.Clock.Paused(20L * 60_000), 99_999_999L))
     assertEquals(0L, WorkoutCard.trainedMs(WorkoutCard.Clock.Running(5_000L), 1_000L))

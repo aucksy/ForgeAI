@@ -1,9 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FALLBACK_MS, routedFetch, serverBase, sessionKey } from '../../src/lib/serverAddress';
+import { isLogoUrl, logoPath } from '../../src/crm/brand/brandLogic';
+import { isPhotoUrl, photoPath } from '../../src/crm/shop/photo';
+import { savedPictureUrl } from '../../src/lib/supabase';
+import { FALLBACK_MS, routedFetch, serverBase, sessionKey, STAMP } from '../../src/lib/serverAddress';
 
 const DIRECT = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 const PROXY = 'https://forgeai.aakashpahuja.in/sb';
+const served = (body = 'ok', status = 200) => new Response(body, { status, headers: { [STAMP]: '1' } });
 
 describe('R-55: the block-proof server address (admin app)', () => {
   it('our own site uses our address; anywhere else keeps the direct one', () => {
@@ -14,6 +18,12 @@ describe('R-55: the block-proof server address (admin app)', () => {
 
   it('the sign-in is kept under the name the direct address gives (no desk is signed out)', () => {
     expect(sessionKey(DIRECT)).toBe('sb-hdxzqbdiokjklnypfisq-auth-token');
+  });
+
+  it("review MUST-FIX: a logo or photo is SAVED with Supabase's own address, which the server accepts", () => {
+    const ticket = 'a'.repeat(48);
+    expect(isLogoUrl(savedPictureUrl('gym-logos', logoPath(ticket, 'logo-1.png')))).toBe(true);
+    expect(isPhotoUrl(savedPictureUrl('product-photos', photoPath(ticket, 'p-1.jpg')))).toBe(true);
   });
 
   it('our address failing to answer: the request is NOT sent again, the next ones go direct for 10 minutes', async () => {
@@ -35,16 +45,21 @@ describe('R-55: the block-proof server address (admin app)', () => {
     expect(calls[2]).toBe(`${PROXY}/rest/v1/members`); // back to ours after the 10 minutes
   });
 
-  it('an error ANSWER from the server is not a reason to switch', async () => {
+  it("an answer without the gym server's stamp (Cloudflare's own page) switches; a real error answer does not", async () => {
     const calls: string[] = [];
+    let n = 0;
     const base = vi.fn(async (input: RequestInfo | URL) => {
       calls.push(String(input));
-      return new Response('{"message":"no"}', { status: 401 });
+      n += 1;
+      if (n === 1) return served('{"message":"no"}', 401); // the server's own refusal: stay
+      if (n === 2) return new Response('error code: 1027', { status: 429 }); // Cloudflare's page: switch
+      return served();
     });
     const f = routedFetch(PROXY, DIRECT, base as unknown as typeof fetch);
     expect((await f(`${PROXY}/auth/v1/token`)).status).toBe(401);
-    await f(`${PROXY}/rest/v1/x`);
-    expect(calls.every((u) => u.startsWith(PROXY))).toBe(true);
+    expect((await f(`${PROXY}/rest/v1/x`)).status).toBe(429);
+    await f(`${PROXY}/rest/v1/y`);
+    expect(calls).toEqual([`${PROXY}/auth/v1/token`, `${PROXY}/rest/v1/x`, `${DIRECT}/rest/v1/y`]);
   });
 
   it('a cancelled request (the screen closed) is not a failure of our address', async () => {
@@ -52,7 +67,7 @@ describe('R-55: the block-proof server address (admin app)', () => {
     const base = vi.fn(async (input: RequestInfo | URL) => {
       calls.push(String(input));
       if (calls.length === 1) throw new DOMException('aborted', 'AbortError');
-      return new Response('ok');
+      return served();
     });
     const f = routedFetch(PROXY, DIRECT, base as unknown as typeof fetch);
     await expect(f(`${PROXY}/rest/v1/a`)).rejects.toThrow();

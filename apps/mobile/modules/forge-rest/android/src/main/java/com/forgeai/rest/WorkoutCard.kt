@@ -22,7 +22,8 @@ import org.json.JSONObject
  * while a workout is open, replacing the quiet "Workout in progress · 4 of 14 sets done" card:
  *  - title: the exercise being trained ("Bench Press"); text: its next open set ("Set 3 of 5 ·
  *    35 kg × 11" — what a tick would save; the app works the words out);
- *  - the exercise's picture as the large icon, when there is one;
+ *  - the exercise's picture, when there is one (in the card's own view with the workout time, R-55;
+ *    as the large icon on the plain card);
  *  - "Complete set": the rest card's own Done ([RestCard.doneIntent] → [RestActionReceiver]), so it
  *    ticks exactly that set with those numbers and starts the rest, also with the app stopped
  *    (v0.37.1: then the rest starts here at once from the app's plan, [OfflineTick], and the app
@@ -293,6 +294,16 @@ object WorkoutCard {
     }
   }
 
+  /** "42:15", or "1:02:30" past an hour (as the running Chronometer shows it). PURE. */
+  internal fun clockText(ms: Long): String {
+    val s = maxOf(0L, ms) / 1000
+    val h = s / 3600
+    val m = (s % 3600) / 60
+    val sec = s % 60
+    return if (h > 0) String.format(java.util.Locale.US, "%d:%02d:%02d", h, m, sec)
+    else String.format(java.util.Locale.US, "%02d:%02d", m, sec)
+  }
+
   /** Time trained so far by [c] at wall time [now] (never below 0). PURE. */
   internal fun trainedMs(c: Clock, now: Long): Long = when (c) {
     is Clock.Running -> maxOf(0L, now - c.base)
@@ -324,6 +335,9 @@ object WorkoutCard {
       }
       val base = SystemClock.elapsedRealtime() - trainedMs(c, System.currentTimeMillis())
       v.setChronometer(timeId, base, null, c is Clock.Running)
+      // Review of R-55: a stopped Chronometer works its text out again from the base on every redraw
+      // (dark mode, a font change), so a paused 42:15 could come back as 58:40. Its text is fixed here.
+      if (c is Clock.Paused) v.setTextViewText(timeId, clockText(c.ms))
       v
     } catch (e: Exception) {
       android.util.Log.w("ForgeRest", "live card view not made; the plain card instead", e)

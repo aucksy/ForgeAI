@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { SUPABASE, forwardHeaders, handleProxy, isProxyPath, targetUrl } from './proxy.js';
+import { STAMP, SUPABASE, forwardHeaders, handleProxy, isProxyPath, targetUrl } from './proxy.js';
 
 test('only /sb and /sb/... are ours', () => {
   assert.equal(isProxyPath('/sb'), true);
@@ -49,6 +49,7 @@ test('a POST is passed on with its body, method and status; the answer comes bac
   assert.deepEqual(seen, { target: `${SUPABASE}/rest/v1/rpc/member_check_in`, method: 'POST', body: '{"p_code":"FORGE1"}', apikey: 'k' });
   assert.equal(res.status, 201);
   assert.equal(res.headers.get('x-test'), 'y');
+  assert.equal(res.headers.get(STAMP), '1'); // a real answer from Supabase
   assert.equal(await res.text(), '{"ok":1}');
 });
 
@@ -58,5 +59,6 @@ test('Supabase not answering: a plain 502, never a hang or a crash', async () =>
     throw new Error('down');
   });
   assert.equal(res.status, 502);
+  assert.equal(res.headers.get(STAMP), 'unreachable');
   assert.match(await res.text(), /could not be reached/);
 });

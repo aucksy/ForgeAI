@@ -46,6 +46,7 @@ import { authErrorWords, RECEIPT_REFUSALS } from '../auth/signin';
 import type { Role } from '../logic/receiptRules';
 import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
+import { isNetworkFailure, keyId, rowsToRecords, type SavedCopyStore } from './savedCopy';
 
 export type RecordKind =
   | 'gym'
@@ -262,6 +263,21 @@ export interface CloudCrmOptions {
   role?: Role;
   /** India's day; injected so tests are fixed in time. */
   today?: () => DateISO;
+  /**
+   * Offline front desk, step 1 (owner #7, R-55): where this device keeps a copy of the gym
+   * (savedCopy.ts). Without one the panel behaves as before: no internet at start, no panel.
+   */
+  saved?: SavedCopyStore;
+}
+
+/** Saving while offline (step 1 keeps the desk able to LOOK; saving waits for the internet). */
+export const OFFLINE_SAVE_WORDS =
+  "No internet right now, so this can't be saved yet. You can still look everything up. Try again when the internet is back.";
+
+/** What the offline bar says: since when, and how old the copy on screen is. */
+export interface OfflineState {
+  since: number;
+  savedAt: number;
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
@@ -311,6 +327,10 @@ export class CloudCrmData implements CrmData {
   /** A push that never got an answer: sent again (same id) before anything else. */
   private pending: PendingPush | null = null;
   private readonly wait: (ms: number) => Promise<void>;
+  /** R-55: set while the server cannot be reached (the screens show the kept copy). */
+  private offlineSince: number | null = null;
+  /** When the copy on screen was last brought up to date by the server. */
+  private savedAt = 0;
 
   constructor(
     private readonly key: string,
@@ -330,7 +350,40 @@ export class CloudCrmData implements CrmData {
 
   private signedOutCheck(e: unknown): void {
     const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { message?: unknown }).message ?? '') : '';
-    if (/\bBAD_KEY\b/.test(msg)) this.opts.onSignedOut?.();
+    if (/\bBAD_KEY\b/.test(msg)) {
+      // The key no longer opens the gym: the copy on this device goes too.
+      this.opts.saved?.clear().catch((err: unknown) => console.warn('[offline copy] not cleared', err));
+      this.opts.onSignedOut?.();
+    }
+  }
+
+  /** R-55: offline (with when the copy on screen is from), or null when the server answers. */
+  offlineState(): OfflineState | null {
+    return this.offlineSince === null ? null : { since: this.offlineSince, savedAt: this.savedAt };
+  }
+
+  /** R-55: keep the gym as it is now on this device (never waited for; a failure is logged). */
+  private keep(): void {
+    const saved = this.opts.saved;
+    if (!saved || !this.gym) return;
+    const copy = { v: 1 as const, savedAt: this.savedAt, version: this.version, gym: this.gym, records: rowsToRecords(this.rows) };
+    saved.save(keyId(this.key), copy).catch((err: unknown) => console.warn('[offline copy] not saved', err));
+  }
+
+  /** R-55: no internet at start: open the copy kept on this device, if there is one. */
+  private async openKeptCopy(): Promise<boolean> {
+    const copy = await this.opts.saved?.load(keyId(this.key)).catch((err: unknown) => {
+      console.warn('[offline copy] could not be read', err);
+      return null;
+    });
+    if (!copy) return false;
+    this.rows = emptyRows();
+    applyRecords(this.rows, copy.records);
+    this.gym = copy.gym;
+    this.version = copy.version;
+    this.savedAt = copy.savedAt;
+    this.offlineSince = this.now();
+    return true;
   }
 
   /** Bring this copy up to date. True when anything changed. Runs inside the queue. */
@@ -340,7 +393,12 @@ export class CloudCrmData implements CrmData {
       r = await this.api.pull(this.key, this.gym ? this.version : 0);
     } catch (e) {
       this.signedOutCheck(e);
-      throw plainError(e);
+      // R-55: no internet: the screens keep the copy they have, under the offline bar.
+      const offline = isNetworkFailure(e);
+      if (offline && this.gym && this.offlineSince === null) this.offlineSince = this.now();
+      const err = plainError(e) as Error & { offline?: boolean };
+      err.offline = offline;
+      throw err;
     }
     const first = this.gym === null;
     if (first) this.rows = emptyRows();
@@ -348,7 +406,11 @@ export class CloudCrmData implements CrmData {
     const changed = applyRecords(this.rows, r.records);
     this.gym = r.gym;
     this.version = r.version;
-    return first || changed || gymChanged;
+    this.savedAt = this.now();
+    const wasOffline = this.offlineSince !== null;
+    this.offlineSince = null;
+    if (first || changed || gymChanged) this.keep();
+    return first || changed || gymChanged || wasOffline;
   }
 
   private current(): CrmSnapshot {
@@ -425,7 +487,14 @@ export class CloudCrmData implements CrmData {
 
   load(): Promise<CrmSnapshot> {
     return this.serial(async () => {
-      if (!this.gym) await this.pullNow();
+      if (!this.gym) {
+        try {
+          await this.pullNow();
+        } catch (e) {
+          // R-55: no internet at start: the copy kept on this device, under the offline bar.
+          if (!(e as { offline?: boolean }).offline || !(await this.openKeptCopy())) throw e;
+        }
+      }
       return clone(this.current());
     });
   }
@@ -438,6 +507,15 @@ export class CloudCrmData implements CrmData {
   private run<T>(op: (d: LocalCrmData) => Promise<T>, { lateSaveIsSafe = false }: { lateSaveIsSafe?: boolean } = {}): Promise<T> {
     return this.serial(async () => {
       if (!this.gym) await this.pullNow();
+      // R-55: showing the kept copy: only once the server answers again can anything be saved.
+      if (this.offlineSince !== null) {
+        try {
+          await this.pullNow();
+        } catch (e) {
+          if ((e as { offline?: boolean }).offline) throw new Error(OFFLINE_SAVE_WORDS);
+          throw e;
+        }
+      }
       // A change that never got an answer goes first. If it lands now, STOP: the person is most
       // likely pressing the same button again because the first time "failed", and doing this
       // action too would save it twice. They see it on screen and decide.
@@ -478,6 +556,8 @@ export class CloudCrmData implements CrmData {
     if (g && this.gym && isRecordObject(g.d) && typeof g.d.name === 'string' && g.d.name.trim()) {
       this.gym = { ...this.gym, name: g.d.name.trim().slice(0, 60) };
     }
+    this.savedAt = this.now();
+    this.keep();
   }
 
   updateGym(patch: Partial<Omit<GymRecord, 'gymId' | 'createdAt'>>): Promise<GymRecord> {

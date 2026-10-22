@@ -87,8 +87,14 @@ export class FakeServer {
     this.passed.set(fn, 0);
   }
 
+  /** R-55: no internet at all (every call fails as the browser's offline mode would). */
+  disconnect() {
+    this.allOffline = true;
+  }
+
   /** The internet is back for every function. */
   reconnect() {
+    this.allOffline = false;
     this.offline.clear();
     this.dropAfter.clear();
   }
@@ -315,7 +321,7 @@ export class FakeServer {
 
   /** True when this call's internet is off right now (and counts the calls that get through). */
   dropped(fn) {
-    if (this.offline.has(fn)) return true;
+    if (this.allOffline || this.offline.has(fn)) return true;
     if (!this.dropAfter.has(fn)) return false;
     const n = this.passed.get(fn) ?? 0;
     if (n >= this.dropAfter.get(fn)) return true;

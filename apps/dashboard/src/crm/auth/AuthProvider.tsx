@@ -14,9 +14,15 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
+import { browserSavedCopy } from '../data/savedCopy';
 import * as authApi from './api';
 import { can, roleOf, type Action } from './permissions';
 import { lostWords, SIGNED_OUT_WORDS, type Role, type SignedIn } from './signin';
+
+/** R-55: signing out (or losing the key) deletes this device's copy of the gym (savedCopy.ts). */
+function forgetOfflineCopy(): void {
+  browserSavedCopy()?.clear().catch((e: unknown) => console.warn('[offline copy] not cleared', e));
+}
 
 interface AuthContextValue {
   /** This device's cloud gym and key, or null for a browser-only gym. */
@@ -114,6 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const key = readCloudGym()?.ownerKey;
     if (key) await authApi.signOut(key);
     clearCloudGym();
+    forgetOfflineCopy();
     setNotice('You are signed out of this device.');
     setSession(null);
   }, []);
@@ -121,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const lost = useCallback(() => {
     const key = readCloudGym()?.ownerKey ?? null;
     clearCloudGym();
+    forgetOfflineCopy();
     setSession(null);
     // Several polls can find the dead key at once: only the first one (with the key) sets the words.
     if (!key) return;

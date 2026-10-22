@@ -39,8 +39,11 @@ that use your data, we ask you first.
 
 ### Where it is kept
 Our main database is in **Mumbai, India** (Supabase). Some service providers may process limited
-data outside India: Cloudflare (delivers the desk app), Google Play and GitHub (app downloads)
-[and Sentry (crash reports), once added]. They process it only to provide their service to us.
+data outside India: Cloudflare (delivers the desk app and passes both apps' requests on to our
+database), Google Play and GitHub (app downloads) [and Sentry (crash reports), once added]. They
+process it only to provide their service to us. So that the desk can keep working when the internet
+drops, the desk app keeps a copy of the gym's records on each device a staff member signs in on;
+signing that device out deletes the copy.
 
 ### Your rights
 You can:

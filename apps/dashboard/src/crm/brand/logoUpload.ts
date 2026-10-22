@@ -5,7 +5,7 @@
  * decode step as product photos (shop/photoUpload.ts). Rules live in `brandLogic.ts`.
  */
 
-import { supabase } from '../../lib/supabase';
+import { savedPictureUrl, supabase } from '../../lib/supabase';
 import { photoTicket } from '../shop/api';
 import { checkSourceFile, fitWithin } from '../shop/photo';
 import { brandErrorWords, checkEncodedLogo, LOGO_BUCKET, LOGO_EDGE, logoPath, newLogoName } from './brandLogic';
@@ -83,7 +83,8 @@ export async function uploadGymLogo(ownerKey: string, file: File): Promise<strin
       .from(LOGO_BUCKET)
       .upload(path, blob, { contentType: 'image/png', upsert: false, cacheControl: '31536000' });
     if (error) throw error;
-    return supabase.storage.from(LOGO_BUCKET).getPublicUrl(path).data.publicUrl;
+    // Not getPublicUrl: on our site the client's address is ours (/sb), and the server pins the host.
+    return savedPictureUrl(LOGO_BUCKET, path);
   } catch (e) {
     if (e instanceof LogoError) throw e;
     throw new LogoError(brandErrorWords(e));

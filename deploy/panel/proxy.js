@@ -10,6 +10,12 @@
 
 export const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 export const PREFIX = '/sb';
+/**
+ * Review of R-55: an answer the apps can trust carries this header. Cloudflare's own error pages
+ * (the free plan's daily limit, a Worker failure) do not, and our 502 says "unreachable"; the apps
+ * then use Supabase's own address for a while (never sending the same request twice).
+ */
+export const STAMP = 'X-Forge-Proxy';
 
 /** Is this one of ours? `/sb` and `/sb/...` only (never `/sbx`). PURE. */
 export function isProxyPath(pathname) {
@@ -43,12 +49,14 @@ export async function handleProxy(request, url, fetchImpl = fetch) {
       body: hasBody ? request.body : undefined,
       redirect: 'manual',
     });
-    return new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers });
+    const out = new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers });
+    out.headers.set(STAMP, '1');
+    return out;
   } catch (e) {
     console.error('[sb proxy] Supabase did not answer', request.method, url.pathname, e);
     return new Response(JSON.stringify({ message: 'The gym server could not be reached. Try again.' }), {
       status: 502,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', [STAMP]: 'unreachable' },
     });
   }
 }

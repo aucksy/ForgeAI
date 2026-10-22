@@ -5,6 +5,19 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-57. Landing page: dedicated animated sections for the app's best screens — 22 Oct 2026
+**Owner said (mid-batch):** "for the landing page... I want dedicated sections with UI animations
+highlighting workout tracking screen with hitting PR, the shop screen and the notifications screen... and
+anything else you think is a USP and a great hook for potential buyers".
+**What I do:** one section per hook, each a drawn phone screen that animates the real app's flow in the
+app's own words ("New record", never "PR" inside the app's screens): (1) a set ticked, kg to beat
+falls, the "New record" pop-up; (2) the gym shop: browse, add, order, the desk sees it; (3) the gym's
+message arriving on members' phones and in the inbox, read counts on the desk; plus the hooks I judge
+strongest: the app in the gym's own name and colours, the lock-screen workout card with rest and
+"Complete set", check-in by QR, gym workout plans arriving by themselves, My membership. Planned items
+stay marked "coming". Same tub-label world (DESIGN.md), English + Hindi, reduced motion respected,
+first screen and CTA unchanged; checked deploy, then live.
+
 ## R-56. "What's new": let members expand and see earlier updates, up to 7 — 22 Oct 2026
 **Owner said (mid-batch):** "the 'whats new' pop up we are showing on the app after app update, let the
 user expand and see what changes in previous updates also... may be up to 7 updates".
