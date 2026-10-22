@@ -2,6 +2,20 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (after the compaction, ~13:00 IST) — RESUME HERE after a compaction
+- **v0.52.0 = 3ebf8fc**, gate: journeys 39734802376 GREEN, CI 39734778914 GREEN; default 39734797251 and owner
+  39734799762 still running at 07:20 UTC. When both green: worktree `git worktree add --detach ../rel052 3ebf8fc`,
+  PROGRESS entry, tag v0.52.0, push the tag, dispatch ci.yml on the tag; APK link must answer.
+- **v0.53.0 candidate = 0e88ed8** (main): R-75 finish list (d7c3329), R-58 tips + Settings switch, workout offer
+  claim code (f4b6a22, both apps), review fixes (363d4b2). Gate dispatched 07:20 UTC: default 39739818742,
+  owner 39739822180, journeys 39739825172, CI 39739818090. Release it the same way after 0.52.0 (main is ahead
+  of 3ebf8fc, so 0.53.0 tags 0e88ed8 or a later fix commit).
+- **Admin app committed, NOT deployed:** offers step 1 (adc4ea5, review fixed), claim-code check (f4b6a22), plus
+  offline step 2, landing sections, title fix from before. Checked deploy after the 0.52.0 release: tsc -b,
+  vitest (1012), `npx vite build` THEN playwright (48; it runs on dist), wrangler.
+- **Tracker:** Claude's tasks rows 11, 15-21 need updating at the next republish (0.51 skipped, 0.52/0.53 status,
+  offers step 1 built, muscle tips built).
+
 ## PC session, 22 Oct 2026 (afternoon, stopped at 88% context) — RESUME HERE after a compaction
 - **0.51.0 is NOT released separately:** its default-profile run 39722663191 failed only on one caught
   "workout reminders could not be set" (expo-sqlite "already released"); now retried once (reminders.ts).
