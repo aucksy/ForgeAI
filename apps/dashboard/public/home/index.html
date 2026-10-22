@@ -253,6 +253,9 @@ section{position:relative}
 .voice .grid{display:grid;gap:36px;align-items:center}
 .voice .lede{color:color-mix(in oklab,var(--on-flavour) 86%,transparent)}
 .voice .phone{box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 70px -24px rgba(0,0,0,.6)}
+.voice .replay{color:var(--on-flavour);border-color:color-mix(in oklab,var(--on-flavour) 45%,transparent)}
+.voice .replay:hover{border-color:var(--on-flavour)}
+.voice .ex{color:color-mix(in oklab,var(--on-flavour) 82%,transparent)}
 .seen{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 14px;border-radius:12px;background:color-mix(in oklab,var(--on-flavour) 12%,transparent);font:700 15px var(--text)}
 .soonline{margin-top:16px;font:600 15px/1.5 var(--text);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
@@ -355,7 +358,16 @@ section{position:relative}
 .armed .msgnew:not(.in)>.msgcard{margin-bottom:0;padding-block:0;border-width:0}
 .newb{margin-left:auto;font:800 10px var(--app-body);padding:2px 6px;border-radius:5px;background:var(--flavour);color:var(--on-flavour)}
 
-/* the lock screen: the live card -> the rest counting down -> "Rest is over" */
+/* the lock screen: the live card -> the rest counting down -> "Rest is over" (+ the watch) */
+.lockpair{position:relative;width:max-content;max-width:100%;justify-self:center}
+.watch{position:absolute;z-index:6;right:-18px;bottom:64px;width:124px;height:124px;border-radius:50%;padding:7px;background:#26272D;box-shadow:0 0 0 1px #3A3B43,0 22px 40px -10px rgba(0,0,0,.8);rotate:8deg}
+.wf{position:relative;width:100%;height:100%;border-radius:50%;background:#050608;overflow:hidden;color:var(--app-ink)}
+.wface{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:1px;text-align:center;font:700 10px var(--app-body);color:var(--app-ink2);opacity:0;transition:opacity .4s var(--ease)}
+.wface b{display:flex;align-items:center;gap:4px;font:700 24px/1.05 var(--app-display);color:var(--app-ink);font-variant-numeric:tabular-nums}
+.wface b svg{width:15px;height:15px}
+.wface .w-done{font-size:14px;color:var(--flavour);max-width:84px;transition:color .5s var(--ease)}
+#lock-watch:not([data-s]) .w-over,#lock-watch[data-s=live] .w-live,#lock-watch[data-s=rest] .w-rest,#lock-watch[data-s=over] .w-over{opacity:1}
+#lock-watch[data-s=over] .wf,#lock-watch:not([data-s]) .wf{box-shadow:inset 0 0 0 2px var(--flavour)}
 .lockscr{padding:96px 0 88px;border-top:1px solid var(--rule);overflow:hidden}
 .lockscr .grid{display:grid;gap:40px;align-items:start}
 .lockscr .beats{margin-top:30px}
@@ -604,13 +616,13 @@ section{position:relative}
       <div class="money" id="shop-beats">
         <div data-beat="1"><b data-hi="ऑर्डर">Order</b><span data-hi="मेंबर ऐप में, दिन में कभी भी">in the app, any time of day</span></div>
         <div data-beat="2"><b data-hi="पैसे">Pay</b><span data-hi="डेस्क पर, कैश या UPI">at your desk, cash or UPI</span></div>
-        <div data-beat="3"><b data-hi="स्टॉक">Stock</b><span data-hi="अपने आप घटता है, और “सिर्फ 3 बचे” भी बताता है">goes down by itself, and says "Only 3 left"</span></div>
+        <div data-beat="3"><b data-hi="स्टॉक">Stock</b><span data-hi="अपने आप घटता है, और “सिर्फ 2 बचे” भी बताता है">goes down by itself, and says "Only 2 left"</span></div>
       </div>
       <p class="ex" data-hi="उदाहरण के दाम; दाम आप तय करते हैं।">Example prices; you set your own.</p>
     </div>
     <div class="duo leads-host" id="shop-scene">
       <svg class="leaders" aria-hidden="true"></svg>
-      <div class="order" id="shop-order" role="img" aria-label="Example: a new shop order reaches the desk" data-hi-label="उदाहरण: डेस्क पर नया ऑर्डर"><span class="ic" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 7h12l-1 9H5L4 7zm3 0V5.5a3 3 0 016 0V7" stroke="var(--on-flavour)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><span aria-hidden="true"><small>Admin app · just now</small><b>New order · Asha Verma</b>2 × Whey protein 1 kg · ₹4,998</span></div>
+      <div class="order" id="shop-order" role="img" aria-label="Example: a new shop order reaches the desk" data-hi-label="उदाहरण: डेस्क पर नया ऑर्डर"><span class="ic" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 7h12l-1 9H5L4 7zm3 0V5.5a3 3 0 016 0V7" stroke="var(--on-flavour)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><span aria-hidden="true"><small>Admin app · just now</small><b>New order · Asha Verma</b>1 × Whey protein 1 kg · ₹2,499</span></div>
       <svg class="sticker burst" id="shop-burst" viewBox="0 0 100 100" role="img" aria-label="Sold at your desk" data-hi-label="आपकी डेस्क पर बिका"><path d="M50.0 1.0 L58.2 13.9 L71.3 5.9 L73.1 21.1 L88.3 19.4 L83.3 33.9 L97.8 39.1 L87.0 50.0 L97.8 60.9 L83.3 66.1 L88.3 80.6 L73.1 78.9 L71.3 94.1 L58.2 86.1 L50.0 99.0 L41.8 86.1 L28.7 94.1 L26.9 78.9 L11.7 80.6 L16.7 66.1 L2.2 60.9 L13.0 50.0 L2.2 39.1 L16.7 33.9 L11.7 19.4 L26.9 21.1 L28.7 5.9 L41.8 13.9Z" fill="var(--sticker)"/><text x="50" y="47" font-size="15" data-hi="आपकी डेस्क">SOLD AT</text><text x="50" y="63" font-size="15" data-hi="पर बिका">YOUR DESK</text></svg>
       <div class="phone" role="img" aria-label="The gym's shop inside the member app" data-hi-label="मेंबर ऐप के अंदर जिम की दुकान">
         <div class="scr" aria-hidden="true">
@@ -663,7 +675,7 @@ section{position:relative}
           <div class="in">
             <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
             <div class="apph" style="font-size:19px">Messages</div>
-            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span> · now</span><b class="newb">New</b></div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div></div>
+            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span></span><b class="newb">New</b></div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div></div>
             <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · Mon</div><div class="t">New leg press machine is here</div><div class="s">Coach Vikram will show you how to use it.</div></div>
             <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 18 Oct</div><div class="t">Closed on Sunday morning</div><div class="s">Open from 4 pm.</div></div>
           </div>
@@ -689,6 +701,7 @@ section{position:relative}
       </ol>
     </div>
     <div class="stage solo" id="lock-scene">
+      <div class="lockpair">
       <div class="phone" id="lock-phone" role="img" aria-label="Example lock screen: the live workout card, then the rest counting down, then Rest is over" data-hi-label="उदाहरण लॉक स्क्रीन: वर्कआउट कार्ड, फिर गिनता हुआ रेस्ट, फिर Rest is over">
         <div class="scr lock" aria-hidden="true">
           <div class="sb"><span></span><span>5G</span></div>
@@ -696,11 +709,19 @@ section{position:relative}
           <div class="lk-date">Wednesday, 22 October</div>
           <div class="nslot">
             <div class="nc" id="n-live"><div class="nh"><i class="nic"></i>ForgeAI · Workout</div><div class="nrow"><b>Bench Press</b><span class="ntime" id="n-clock">24:10</span></div><div class="ntx" id="n-set">Set 3 of 5 · 62.5 kg × 8</div><div class="nact"><span id="n-complete">Complete set</span></div></div>
-            <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>ForgeAI · Rest</div><div class="nrow"><b><span id="n-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
+            <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>ForgeAI · Rest</div><div class="nrow"><b><span id="n-left" class="js-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
             <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>ForgeAI · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b>Rest is over</b></div><div class="ntx">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span>Complete set</span></div></div>
           </div>
           <div class="lk-hint">Swipe up to unlock</div>
         </div>
+      </div>
+      <div class="watch" id="lock-watch" role="img" aria-label="The ForgeAI watch app: the rest counts down on the wrist and buzzes when it is over" data-hi-label="ForgeAI घड़ी ऐप: रेस्ट कलाई पर गिनता है और खत्म होने पर वाइब्रेट करता है">
+        <div class="wf" aria-hidden="true">
+          <div class="wface w-live"><small>Workout</small><b><svg viewBox="0 0 16 16"><path d="M8 13.6S2.2 10 2.2 6.1A3 3 0 018 4.6a3 3 0 015.8 1.5C13.8 10 8 13.6 8 13.6z" fill="var(--flavour)"/></svg>128</b><small>bpm</small></div>
+          <div class="wface w-rest"><small>Rest</small><b class="js-left">1:30</b><small>set 4 next</small></div>
+          <div class="wface w-over"><small>ForgeAI</small><b class="w-done">Rest is over</b><small>Set 4</small></div>
+        </div>
+      </div>
       </div>
       <button class="replay" type="button" id="lock-replay" data-hi="फिर से चलाएँ">Play it again</button>
       <p class="ex" data-hi="उदाहरण के नंबर; कार्ड असली ऐप की तरह।">Example numbers; the cards follow the real app.</p>

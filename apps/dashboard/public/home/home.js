@@ -242,9 +242,13 @@
   // The lock screen: the live card (workout time ticking) -> Complete set -> the rest counts down
   // -> "Rest is over" rings and the phone buzzes.
   (function () {
-    var scene = $('lock-scene'), phone = $('lock-phone'), list = $('lock-beats');
-    var clock = $('n-clock'), leftT = $('n-left');
+    var scene = $('lock-scene'), phone = $('lock-phone'), list = $('lock-beats'), watch = $('lock-watch');
+    var clock = $('n-clock'), lefts = scene ? scene.querySelectorAll('.js-left') : [];
     if (!scene) return;
+    /** The phone and the watch move together (the watch app counts the rest and buzzes too). */
+    function state(v) { phone.dataset.s = v; if (watch) watch.dataset.s = v; }
+    function setLeft(t) { Array.prototype.forEach.call(lefts, function (n) { n.textContent = t; }); }
+    function buzz(el) { if (!el) return; el.classList.remove('buzz'); void el.offsetWidth; el.classList.add('buzz'); }
     var tick = null;
     function mmss(sec) { return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
     function stopClock() { if (tick) clearInterval(tick); tick = null; }
@@ -256,20 +260,21 @@
         tick = setInterval(function () { sec += 1; clock.textContent = mmss(sec); }, 1000);
       }],
       [2200, function () { tap($('n-complete')); }],
-      [2700, function () { stopClock(); phone.dataset.s = 'rest'; beatsTo(list, 2); }],
+      [2700, function () { stopClock(); state('rest'); beatsTo(list, 2); }],
     ];
     for (var r = 1; r <= 10; r++) {
-      (function (r) { steps.push([2900 + r * 300, function () { leftT.textContent = mmss(90 - r * 9); }]); })(r);
+      (function (r) { steps.push([2900 + r * 300, function () { setLeft(mmss(90 - r * 9)); }]); })(r);
     }
-    steps.push([6300, function () { phone.dataset.s = 'over'; beatsTo(list, 3); phone.classList.remove('buzz'); void phone.offsetWidth; phone.classList.add('buzz'); }]);
+    steps.push([6300, function () { state('over'); beatsTo(list, 3); buzz(phone); buzz(watch); }]);
     sceneOn(scene, $('lock-replay'), function () {
       stopClock();
       if (list) list.classList.add('armed');
       beatsTo(list, 0);
-      phone.dataset.s = 'live';
+      state('live');
       phone.classList.remove('buzz');
+      if (watch) watch.classList.remove('buzz');
       clock.textContent = '24:10';
-      leftT.textContent = '1:30';
+      setLeft('1:30');
     }, steps);
   })();
 
