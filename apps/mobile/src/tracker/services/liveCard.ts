@@ -77,8 +77,8 @@ const NOT_SAVED: Record<'reps' | 'weight' | 'time' | 'distance', string> = {
  * The card for the workout as it is now. PURE.
  *
  * 15 Oct 2026 (pause the workout): while the workout timer is paused the text starts "Paused · ".
- * The card shows no workout clock (only the rest card counts, and a rest keeps running while
- * paused), so nothing in the shade keeps counting the workout.
+ * R-55 (22 Oct 2026): the card's header now shows the workout clock (liveClock.ts); while paused
+ * it stands still, so nothing in the shade keeps counting a paused workout.
  */
 export function liveCardContent(
   w: { startedAt: number | null; exercises: readonly DraftExercise[]; workoutName?: string | null; pausedAt?: number | null },

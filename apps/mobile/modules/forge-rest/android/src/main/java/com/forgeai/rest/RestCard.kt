@@ -349,6 +349,51 @@ object RestCard {
   internal fun ringThroughDnd(ctx: Context): Boolean =
     ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("dnd", false)
 
+  /**
+   * R-55 (22 Oct 2026, owner backlog "Pick your rest-over sound"): Profile → Workout → "Rest-over
+   * sound". "forge" (the ForgeAI chime) keeps the original channels, so nothing changes for a member
+   * who never picks. Every other sound has its own three loud channels: Android never changes a
+   * channel's sound, so a sound is a channel id ("rest-over-sound-bell" ...). Only the chosen
+   * sound's channels exist beside the chime's; picking another deletes them. The open app plays the
+   * same file (assets/sounds/rest-<id>.wav, scripts/make_rest_sounds.py): one sound on both paths.
+   */
+  internal val SOUNDS = listOf("bell", "beep", "whistle")
+  private const val DEFAULT_SOUND = "forge"
+  private val SOUND_NAMES = mapOf("bell" to "Bell", "beep" to "Double beep", "whistle" to "Whistle")
+
+  fun setSound(ctx: Context, id: String) {
+    val s = if (id in SOUNDS) id else DEFAULT_SOUND
+    ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).edit().putString("sound", s).commit()
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+    val m = nm(ctx)
+    for (other in SOUNDS) {
+      if (other == s) continue
+      for (base in listOf(CH_OVER, CH_OVER_OPEN_SOUND, CH_OVER_ALARM)) {
+        val chId = soundChannel(base, other)
+        if (m.getNotificationChannel(chId) == null) continue
+        try {
+          m.deleteNotificationChannel(chId)
+        } catch (e: Exception) {
+          android.util.Log.w("ForgeErr", "old sound channel $chId not deleted", e)
+        }
+      }
+    }
+    ensureChannels(ctx)
+  }
+
+  internal fun sound(ctx: Context): String {
+    val s = ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getString("sound", null) ?: return DEFAULT_SOUND
+    return if (s in SOUNDS) s else DEFAULT_SOUND
+  }
+
+  /** The channel id of [base] for sound [s]: the chime keeps the original ids. */
+  private fun soundChannel(base: String, s: String): String = if (s == DEFAULT_SOUND) base else "$base-$s"
+
+  /** The three loud "Rest is over" channels for the member's sound now. */
+  private fun chOver(ctx: Context) = soundChannel(CH_OVER, sound(ctx))
+  private fun chOverOpenSound(ctx: Context) = soundChannel(CH_OVER_OPEN_SOUND, sound(ctx))
+  private fun chOverAlarm(ctx: Context) = soundChannel(CH_OVER_ALARM, sound(ctx))
+
   /** Is Do Not Disturb (any mode) on right now? */
   private fun dndOn(ctx: Context): Boolean {
     return try {
@@ -917,7 +962,7 @@ object RestCard {
     if (quiet(ctx)) {
       listOf(CH_OVER_OPEN)
     } else {
-      listOf(CH_OVER, CH_OVER_OPEN_SOUND) + (if (ringThroughDnd(ctx)) listOf(CH_OVER_ALARM) else emptyList())
+      listOf(chOver(ctx), chOverOpenSound(ctx)) + (if (ringThroughDnd(ctx)) listOf(chOverAlarm(ctx)) else emptyList())
     }
 
   /** The first of [alertChannels] that cannot alert, with its state ("blocked" / "silenced"); null = all ok. */
@@ -992,7 +1037,7 @@ object RestCard {
       val i = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
       i.putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
       // C5-14: the channel that is muted, when one is (else the main one).
-      i.putExtra(Settings.EXTRA_CHANNEL_ID, worstChannel(ctx)?.first ?: CH_OVER)
+      i.putExtra(Settings.EXTRA_CHANNEL_ID, worstChannel(ctx)?.first ?: chOver(ctx))
       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       ctx.startActivity(i)
       true
@@ -1129,9 +1174,69 @@ object RestCard {
    * number shifts whenever another raw file is added or removed in a later version — the name form
    * is looked up each time it plays. (R.raw is still referenced so the shrinker keeps the file.)
    */
-  private fun restSound(ctx: Context): Uri {
-    if (R.raw.forge_rest_done == 0) android.util.Log.w("ForgeErr", "rest sound resource missing")
-    return Uri.parse("android.resource://${ctx.packageName}/raw/forge_rest_done")
+  private fun restSound(ctx: Context, s: String = DEFAULT_SOUND): Uri {
+    // R-55: each sound's file by name (the numbers below only keep the files in a release build).
+    val res = when (s) {
+      "bell" -> R.raw.forge_rest_bell
+      "beep" -> R.raw.forge_rest_beep
+      "whistle" -> R.raw.forge_rest_whistle
+      else -> R.raw.forge_rest_done
+    }
+    if (res == 0) android.util.Log.w("ForgeErr", "rest sound resource missing: $s")
+    val file = if (s == DEFAULT_SOUND) "forge_rest_done" else "forge_rest_$s"
+    return Uri.parse("android.resource://${ctx.packageName}/raw/$file")
+  }
+
+  /** R-55: the chosen sound's own three loud channels (the chime's are made above). */
+  private fun ensureSoundChannels(ctx: Context, m: NotificationManager) {
+    val s = sound(ctx)
+    if (s == DEFAULT_SOUND) return
+    val label = SOUND_NAMES[s] ?: s
+    val usage = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build()
+    val over = soundChannel(CH_OVER, s)
+    if (m.getNotificationChannel(over) == null) {
+      m.createNotificationChannel(
+        NotificationChannel(over, "$OVER_NAME: $label", NotificationManager.IMPORTANCE_HIGH).apply {
+          description = OVER_DESC
+          setSound(restSound(ctx, s), usage)
+          enableVibration(true)
+          vibrationPattern = longArrayOf(0, 250, 150, 250)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
+    val open = soundChannel(CH_OVER_OPEN_SOUND, s)
+    if (m.getNotificationChannel(open) == null) {
+      m.createNotificationChannel(
+        NotificationChannel(open, "Rest is over, app open: $label", NotificationManager.IMPORTANCE_DEFAULT).apply {
+          description = "Rings when rest ends while ForgeAI is on screen, at notification volume"
+          setSound(restSound(ctx, s), usage)
+          enableVibration(false)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
+    val alarm = soundChannel(CH_OVER_ALARM, s)
+    if (m.getNotificationChannel(alarm) == null) {
+      m.createNotificationChannel(
+        NotificationChannel(alarm, "Rest is over, through Do Not Disturb: $label", NotificationManager.IMPORTANCE_HIGH).apply {
+          description = "Used only when you turn on Ring through Do Not Disturb in ForgeAI"
+          setSound(
+            restSound(ctx, s),
+            AudioAttributes.Builder()
+              .setUsage(AudioAttributes.USAGE_ALARM)
+              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+              .build(),
+          )
+          enableVibration(true)
+          vibrationPattern = longArrayOf(0, 250, 150, 250)
+          setShowBadge(false)
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        },
+      )
+    }
   }
 
   private fun ensureChannels(ctx: Context) {
@@ -1248,6 +1353,7 @@ object RestCard {
         },
       )
     }
+    ensureSoundChannels(ctx, m)
   }
 
   /** Card title, e.g. "Rest 1:30 · ends 4:12 pm". */
@@ -1391,9 +1497,9 @@ object RestCard {
    */
   private fun overChannel(ctx: Context): String = when {
     quiet(ctx) -> CH_OVER_OPEN
-    ringThroughDnd(ctx) && dndOn(ctx) -> CH_OVER_ALARM
-    appOnScreen(ctx) -> CH_OVER_OPEN_SOUND
-    else -> CH_OVER
+    ringThroughDnd(ctx) && dndOn(ctx) -> chOverAlarm(ctx)
+    appOnScreen(ctx) -> chOverOpenSound(ctx)
+    else -> chOver(ctx) // R-55: the member's chosen sound (the chime keeps the original ids)
   }
 
   @Suppress("DEPRECATION")
@@ -1403,7 +1509,7 @@ object RestCard {
       val icon = iconRes(ctx)
       val channel = overChannel(ctx)
       val open = appOnScreen(ctx) || channel == CH_OVER_OPEN
-      val soft = channel == CH_OVER_OPEN || channel == CH_OVER_OPEN_SOUND
+      val soft = channel == CH_OVER_OPEN || channel == chOverOpenSound(ctx)
       // 13 Oct 2026: Android 15+ "notification cooldown" (on by default on Pixel, and a Pixel Watch
       // follows it) mutes the buzz of a second alert from one app within ~2 minutes — one rest
       // after another. Alarm-category alerts skip it, so every "Rest is over" is an alarm on every

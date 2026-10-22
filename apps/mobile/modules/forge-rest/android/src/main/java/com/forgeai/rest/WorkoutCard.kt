@@ -100,14 +100,16 @@ object WorkoutCard {
    * The card's words for [restore] (also written by [OfflineTick] after a tap with the app closed).
    * C5-2: the watch gets them too (its "Complete set" names and ticks this row); C5-11: when.
    */
-  internal fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?) {
-    ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+  internal fun keep(ctx: Context, title: String, text: String, image: String?, doneJson: String?, clockJson: String? = null) {
+    val e = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
       .putString("title", title)
       .putString("text", text)
       .putString("image", image)
       .putString("done", doneJson)
       .putLong("at", System.currentTimeMillis())
-      .apply()
+    // R-55: the workout clock, when the app gives one ([OfflineTick]'s keep has none: the old stays).
+    if (clockJson != null) e.putString("clock", clockJson)
+    e.apply()
     val done = doneOf(doneJson)
     WearSync.workout(ctx, true, title, text, if (done != null && !done.first.open) doneJson.orEmpty() else "")
   }
@@ -167,8 +169,8 @@ object WorkoutCard {
    * for later (one at a time). False when it could not be posted (the app then uses its old card).
    */
   @Synchronized
-  fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?, plan: String? = null): Boolean {
-    keep(ctx, title, text, image, doneJson) // also tells the watch (v0.46 heart rate, C5-2 Complete set)
+  fun show(ctx: Context, title: String, text: String, image: String?, doneJson: String?, plan: String? = null, clockJson: String? = null): Boolean {
+    keep(ctx, title, text, image, doneJson, clockJson) // also tells the watch (v0.46 heart rate, C5-2 Complete set)
     keepPlan(ctx, plan)
     if (RestCard.restUp(ctx)) {
       cancel(ctx)
@@ -179,10 +181,10 @@ object WorkoutCard {
 
   /** A rest started: down it goes (the app's words kept when given, for [restore]). */
   @Synchronized
-  fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null, plan: String? = null) {
+  fun hide(ctx: Context, title: String? = null, text: String? = null, image: String? = null, doneJson: String? = null, plan: String? = null, clockJson: String? = null) {
     // The app's own hide (a rest started) carries the words (keep also tells the watch);
     // RestCard's bare hides do not.
-    if (title != null && text != null) keep(ctx, title, text, image, doneJson)
+    if (title != null && text != null) keep(ctx, title, text, image, doneJson, clockJson)
     keepPlan(ctx, plan)
     // C5 review: the app's own hide while the running rest's card was swiped away / cleared
     // (C5-15): the live card stays up with the new words instead of going down again.
@@ -228,6 +230,7 @@ object WorkoutCard {
         .setShowWhen(false)
         .setCategory("workout") // Notification.CATEGORY_WORKOUT (Android 12+); older ones ignore it
         .setVisibility(Notification.VISIBILITY_PUBLIC)
+      clockOn(b, clock(ctx))
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         b.setPriority(Notification.PRIORITY_DEFAULT).setSound(null).setVibrate(null)
       }
@@ -247,6 +250,52 @@ object WorkoutCard {
     } catch (e: Exception) {
       android.util.Log.w("ForgeRest", "live workout card not posted", e)
       false
+    }
+  }
+
+  /**
+   * R-55 (owner backlog "Workout time on the notification card", 22 Oct 2026): how long the workout
+   * has run, in the card's header ("ForgeAI · Workout · 42:15"). The app sends `{"base": ms}` while
+   * the timer runs (the moment the clock would read 0:00, paused time left out, workoutPause.ts):
+   * Android's own chronometer then ticks it every second with the app closed and no updates from
+   * us. Paused, `{"paused": ms}`: the time stands still ("Workout 42:15"; the text says "Paused").
+   */
+  internal sealed class Clock {
+    data class Running(val base: Long) : Clock()
+    data class Paused(val ms: Long) : Clock()
+  }
+
+  /** The clock as last given ([keep]); null when none or unreadable (the header then shows no time). */
+  internal fun clock(ctx: Context): Clock? {
+    val raw = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("clock", null) ?: return null
+    return try {
+      val o = JSONObject(raw)
+      when {
+        o.has("base") -> o.optDouble("base", 0.0).toLong().takeIf { it > 0L }?.let { Clock.Running(it) }
+        o.has("paused") -> Clock.Paused(maxOf(0L, o.optDouble("paused", 0.0).toLong()))
+        else -> null
+      }
+    } catch (e: Exception) {
+      android.util.Log.w("ForgeRest", "workout clock unreadable", e)
+      null
+    }
+  }
+
+  /** "42:15", or "1:02:30" past an hour (the app's own m:ss). */
+  internal fun clockText(ms: Long): String {
+    val s = ms / 1000
+    val h = s / 3600
+    val m = (s % 3600) / 60
+    val sec = s % 60
+    return if (h > 0) String.format(java.util.Locale.US, "%d:%02d:%02d", h, m, sec)
+    else String.format(java.util.Locale.US, "%d:%02d", m, sec)
+  }
+
+  private fun clockOn(b: Notification.Builder, c: Clock?) {
+    when (c) {
+      is Clock.Running -> b.setSubText("Workout").setShowWhen(true).setWhen(c.base).setUsesChronometer(true)
+      is Clock.Paused -> b.setSubText("Workout ${clockText(c.ms)}").setShowWhen(false).setUsesChronometer(false)
+      null -> Unit
     }
   }
 

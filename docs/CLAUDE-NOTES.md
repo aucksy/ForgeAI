@@ -5,6 +5,28 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-56. "What's new": let members expand and see earlier updates, up to 7 — 22 Oct 2026
+**Owner said (mid-batch):** "the 'whats new' pop up we are showing on the app after app update, let the
+user expand and see what changes in previous updates also... may be up to 7 updates".
+**What I do:** in v0.51.0 the card shows this update's lines, then "See earlier updates" opens the 7
+updates before it (newest first, version and date, plain member words). Lines for v0.44-v0.50 written
+from PROGRESS.md, member-facing changes only. Also kept in Settings so it can be read again later.
+
+## R-55. "All the planned features and to do tasks that you can start and complete... dont stop after each task" — 22 Oct 2026
+**Owner said:** do every Planned feature and To-do task I can start AND finish myself, one after another.
+**What I can finish without him (my order, member-facing first, then safety, then admin):**
+1. Member app v0.51.0: workout time on the notification card; pick your rest-over sound (ForgeAI default,
+   a few others, vibrate only); the open rest-card item U-C1 (H2) if it is in the same code; "What's new"
+   text for 0.51 (the first version that shows it). Full gate (both cloud phones, journeys, CI).
+2. Block-proof server address (R-40 plan): the panel Worker forwards /sb/* to Supabase; admin app and
+   member app use forgeai.aakashpahuja.in/sb, member app falls back to the direct address. Ships with 1.
+3. Full GST tax invoices in the admin app, if the gym's GST number fits without a live database change.
+4. Research he asked for, back as decisions: Google login options; a new brand name with a free domain.
+5. Offline front desk (decided #7) if the rest is done: client-side only, no server change.
+**Not mine to finish (need him):** anything with a live database change (member progress, FitPass, busy
+times, branches), money (AI coach, demo clips, paid server), his accounts (Play, Sentry, Test Lab),
+privacy wording (#37), the gym visit. Food log stays hidden (owner decision D4).
+
 ## R-54. Landing page: say what the product IS in one punch line — 22 Oct 2026
 **Owner said:** "On the landing page there is no place which tells the reader what this product is all
 about in a phrase .. like a punch line ... for example, Modern GYM OS and Member Progress App - something

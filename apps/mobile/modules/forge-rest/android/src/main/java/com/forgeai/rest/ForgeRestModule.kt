@@ -38,6 +38,10 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - setRestAllDone(on)            — the next rest follows the last set (before show());
  *  - dismissRestOver()             — an old "Rest is over" goes, the live card is back;
  *  - setAccent(hex)                — the gym's accent for both cards.
+ * R-55 (22 Oct 2026):
+ *  - showWorkoutCard / hideWorkoutCard take a 6th argument, `clock` (JSON {base} running or
+ *    {paused} ms, liveClock.ts): the workout time in the live card's header;
+ *  - setRestSound(id)              — the "Rest is over" sound: "forge" (default), "bell", "beep", "whistle".
  * C5 audit (16 Oct 2026):
  *  - restBell()                    — "native" (the app-open "Rest is over" rings itself, at
  *                                    notification volume), "hold" (Do Not Disturb holds it, and
@@ -226,14 +230,21 @@ class ForgeRestModule : Module() {
       true
     }
 
-    Function("showWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String? ->
+    Function("showWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String?, clock: String? ->
       val c = ctx ?: return@Function false
-      WorkoutCard.show(c, title, text, image, done, plan)
+      WorkoutCard.show(c, title, text, image, done, plan, clock)
     }
 
-    Function("hideWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String? ->
+    Function("hideWorkoutCard") { title: String, text: String, image: String?, done: String?, plan: String?, clock: String? ->
       val c = ctx ?: return@Function false
-      WorkoutCard.hide(c, title, text, image, done, plan)
+      WorkoutCard.hide(c, title, text, image, done, plan, clock)
+      true
+    }
+
+    // R-55: the member's rest-over sound ("forge", "bell", "beep", "whistle"); unknown = the chime.
+    Function("setRestSound") { id: String ->
+      val c = ctx ?: return@Function false
+      RestCard.setSound(c, id)
       true
     }
 

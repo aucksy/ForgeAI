@@ -32,6 +32,7 @@ vi.mock('@/tracker/services/restCard', () => ({
   phoneUses24Hour: () => true,
   setRestQuiet: () => undefined,
   setRestRingThroughDnd: () => undefined,
+  setRestSoundNative: () => undefined,
   dismissRestOver: () => undefined,
   liveWorkoutCardAvailable: () => true,
   showLiveWorkoutCard: (title: string, text: string) => {

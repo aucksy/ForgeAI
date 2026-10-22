@@ -4,7 +4,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const seen = { ongoing: [] as string[], quiet: [] as boolean[], dnd: [] as boolean[] };
+const seen = { ongoing: [] as string[], quiet: [] as boolean[], dnd: [] as boolean[], sound: [] as string[] };
 let holds = false;
 vi.mock('@/tracker/services/workoutAlerts', () => ({
   scheduleRestEnd: async () => undefined,
@@ -29,6 +29,9 @@ vi.mock('@/tracker/services/restCard', () => ({
   dismissRestOver: () => undefined,
   setRestQuiet: (q: boolean) => {
     seen.quiet.push(q);
+  },
+  setRestSoundNative: (id: string) => {
+    seen.sound.push(id);
   },
   setRestRingThroughDnd: (on: boolean) => {
     seen.dnd.push(on);
@@ -62,6 +65,7 @@ describe('workout cards during a rest', () => {
     seen.ongoing = [];
     seen.quiet = [];
     seen.dnd = [];
+    seen.sound = [];
     useRestTimer.setState({ endsAt: null, startedAt: null, source: null });
     useTrackerPrefs.setState({ sounds: true });
     useRestAlertPrefs.setState({ ringThroughDnd: false });
@@ -85,6 +89,11 @@ describe('workout cards during a rest', () => {
     expect(seen.quiet).toEqual([false, true]);
     useRestAlertPrefs.getState().setRingThroughDnd(true);
     expect(seen.dnd).toEqual([false, true]);
+    // R-55: the rest-over sound reaches the native alert at once too (the chime unless picked).
+    expect(seen.sound).toEqual(['forge']);
+    useTrackerPrefs.getState().setRestSound('bell');
+    expect(seen.sound).toEqual(['forge', 'bell']);
+    useTrackerPrefs.getState().setRestSound('forge');
     stop();
   });
 });

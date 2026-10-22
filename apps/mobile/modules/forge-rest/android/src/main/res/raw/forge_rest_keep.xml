@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The rest card's layout is looked up by name (RestCard.kt), and the rest sound is a channel URI: keep it when release builds shrink resources. -->
+<!-- The rest card's layout is looked up by name (RestCard.kt), and the rest sounds are channel URIs (R-55: one per sound): keep it when release builds shrink resources. -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@raw/forge_rest_done,@layout/forge_rest_card,@id/forge_rest_left,@id/forge_rest_line,@id/forge_rest_sub" />
+    tools:keep="@raw/forge_rest_done,@raw/forge_rest_bell,@raw/forge_rest_beep,@raw/forge_rest_whistle,@layout/forge_rest_card,@id/forge_rest_left,@id/forge_rest_line,@id/forge_rest_sub" />

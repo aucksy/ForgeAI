@@ -22,6 +22,8 @@ import { Platform } from 'react-native';
 import { color } from '@/theme/tokens';
 
 import type { CardDone, DoneRequest, QueuedTick } from './restDone';
+import type { LiveClock } from './liveClock';
+import type { RestSoundId } from './restSounds';
 
 export interface CardRest {
   startedAt: number;
@@ -71,10 +73,12 @@ interface Native {
    * 13 Oct 2026, the live workout card (WorkoutCard.kt); an older native piece lacks these.
    * `done`: JSON { workout, exKey, setKey, open, values, label } for "Complete set", or null.
    */
-  showWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null): boolean;
+  showWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null, clock: string | null): boolean;
   clearWorkoutCard?(): boolean;
   /** One at a time (13 Oct 2026): keep the card's words but take it down while a rest runs. */
-  hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null): boolean;
+  hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null, clock: string | null): boolean;
+  /** R-55: the "Rest is over" sound ("forge" | "bell" | "beep" | "whistle"); an older native piece lacks it. */
+  setRestSound?(id: string): boolean;
   /** v0.37.1 (C1): the ticks made with the app closed (JSON array), taken once. */
   takeQueuedTicks?(): string | null;
   /** v0.37.1 (C9): the next rest follows the workout's last set (called just before show). */
@@ -408,6 +412,11 @@ export function setRestQuiet(quiet: boolean): void {
   call((n) => n.setQuiet?.(quiet));
 }
 
+/** R-55: Settings → Rest-over sound changed: the next "Rest is over" plays it (also with the screen off). */
+export function setRestSoundNative(id: RestSoundId): void {
+  call((n) => n.setRestSound?.(id));
+}
+
 /** Profile → "Ring through Do Not Disturb" (RT-12). */
 export function setRestRingThroughDnd(on: boolean): void {
   call((n) => n.setRingThroughDnd?.(on));
@@ -527,13 +536,15 @@ export function showLiveWorkoutCard(
   label: string | null,
   /** v0.37.1 (C1): the plan of the sets ahead (`livePlan`, JSON) for taps with the app closed. */
   plan: string | null = null,
+  /** R-55: the workout time in the card's header (`liveClock`). */
+  clock: LiveClock | null = null,
 ): boolean {
   const n = N();
   if (!n?.showWorkoutCard) return false;
   try {
     syncNotifAccent();
     const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
-    return n.showWorkoutCard(title, text, image, json, plan) === true;
+    return n.showWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {
     return false;
   }
@@ -551,13 +562,14 @@ export function hideLiveWorkoutCard(
   done: CardDone | null,
   label: string | null,
   plan: string | null = null,
+  clock: LiveClock | null = null,
 ): boolean {
   const n = N();
   if (!n?.hideWorkoutCard) return false;
   try {
     syncNotifAccent();
     const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
-    return n.hideWorkoutCard(title, text, image, json, plan) === true;
+    return n.hideWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {
     return false;
   }

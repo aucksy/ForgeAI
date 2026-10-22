@@ -38,6 +38,8 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
 import { refreshWidgets } from '../phone/widgets';
 import { plateSetupLine } from '../services/plateMath';
+import { REST_SOUND_CHOICES, restSoundFootnote } from '../services/restSounds';
+import { previewRestSound } from '../services/workoutSounds';
 import { fmtRest } from '../services/restRules';
 import {
   choiceDetail,
@@ -154,6 +156,9 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
   const sounds = useTrackerPrefs((s) => s.sounds);
   const setSounds = useTrackerPrefs((s) => s.setSounds);
+  const restSound = useTrackerPrefs((s) => s.restSound);
+  const setRestSound = useTrackerPrefs((s) => s.setRestSound);
+  const restSoundLabel = choiceLabel(REST_SOUND_CHOICES, restSound);
   const defaultSec = useRestTimer((s) => s.defaultSec);
   const setDefaultSec = useRestTimer((s) => s.setDefaultSec);
   const loadDefault = useRestTimer((s) => s.loadDefault);
@@ -162,7 +167,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
   const setWeightJump = useTrackerPrefs((s) => s.setWeightJump);
   const repRange = useTrackerPrefs((s) => s.repRange);
   const setRepRange = useTrackerPrefs((s) => s.setRepRange);
-  const [choosing, setChoosing] = useState<'jump' | 'range' | null>(null);
+  const [choosing, setChoosing] = useState<'jump' | 'range' | 'sound' | null>(null);
   const jumpLabel = choiceLabel(WEIGHT_JUMP_CHOICES, weightJump);
   const rangeLabel = choiceLabel(REP_RANGE_CHOICES, repRange);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -205,6 +210,20 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         onChange={setSounds}
         divider
       />
+      {/* R-55 (owner backlog): which sound "Rest is over" plays, in the app and with the screen off. */}
+      <Pressable onPress={() => setChoosing('sound')} accessibilityRole="button" accessibilityLabel={`Rest-over sound, ${restSoundLabel}. Change`}>
+        <SettingRow
+          icon="volume"
+          title="Rest-over sound"
+          caption={sounds ? "Tell your rest from a gym friend's" : 'Workout sounds are off: Rest is over only buzzes'}
+          right={
+            <Text numberOfLines={2} style={ROW_VALUE()}>
+              {restSoundLabel}
+            </Text>
+          }
+          divider
+        />
+      </Pressable>
       {Platform.OS === 'android' ? (
         <ToggleRow
           icon="volume"
@@ -328,6 +347,20 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         onChoose={(v) => {
           setWeightJump(v);
           setChoosing(null);
+        }}
+        onClose={() => setChoosing(null)}
+      />
+      {/* Stays open after a tap, so each sound can be heard in turn. */}
+      <PrefChoiceSheet
+        visible={choosing === 'sound'}
+        title="Rest-over sound"
+        subtitle="The sound when your rest is over. The ForgeAI chime is the default."
+        footnote={restSoundFootnote(sounds)}
+        choices={REST_SOUND_CHOICES}
+        value={restSound}
+        onChoose={(v) => {
+          setRestSound(v);
+          previewRestSound(v);
         }}
         onClose={() => setChoosing(null)}
       />

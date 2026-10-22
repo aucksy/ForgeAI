@@ -35,6 +35,7 @@ import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { isShareLook, isShareSize, type ShareLook, type ShareSize } from '../share/frame';
 import { DEFAULT_JUMP, isWeightJump, type WeightJump } from '../engine/progression';
 import { isRepRangeChoice, type RepRangeChoice } from '../engine/repRanges';
+import { DEFAULT_REST_SOUND, isRestSoundId, type RestSoundId } from '../services/restSounds';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
 
 /** Where an exercise's past numbers come from in a workout: any workout, this routine, this folder. */
@@ -49,6 +50,8 @@ export interface TrackerPrefsState {
   advancedSets: boolean;
   coachNotes: boolean;
   sounds: boolean;
+  /** R-55: Settings → Workouts → Rest-over sound (the ForgeAI chime unless picked). */
+  restSound: RestSoundId;
   bodyFigure: BodyFigure;
   /**
    * Audit Phase 9 (#4): the member's own workouts-a-week goal (1–7), or null (off: the week
@@ -73,6 +76,7 @@ export interface TrackerPrefsState {
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
+  setRestSound: (value: RestSoundId) => void;
   setBodyFigure: (value: BodyFigure) => void;
   setWeeklyGoal: (value: number | null) => void;
   setChartMetric: (value: ChartMetric) => void;
@@ -105,6 +109,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       advancedSets: false,
       coachNotes: false,
       sounds: true,
+      restSound: DEFAULT_REST_SOUND,
       bodyFigure: 'male',
       weeklyGoal: null,
       chartMetric: DEFAULT_METRIC,
@@ -117,6 +122,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
+      setRestSound: (value) => set({ restSound: isRestSoundId(value) ? value : DEFAULT_REST_SOUND }),
       setBodyFigure: (bodyFigure) => set({ bodyFigure }),
       setWeeklyGoal: (value) => set({ weeklyGoal: cleanWeeklyGoal(value) }),
       setChartMetric: (value) => set({ chartMetric: isChartMetric(value) ? value : DEFAULT_METRIC }),
@@ -144,6 +150,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           shareLook: isShareLook(p.shareLook) ? p.shareLook : current.shareLook,
           weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
+          restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,
         };
       },
     },

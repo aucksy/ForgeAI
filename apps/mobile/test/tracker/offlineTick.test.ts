@@ -258,9 +258,13 @@ describe('the native side (source checks; Kotlin builds only in cloud CI)', () =
     expect(offline).toContain('.commit()');
   });
   it('the plan rides with every live-card post and is taken by the app once', () => {
-    expect(card).toMatch(/fun show\([^)]*plan: String\? = null\)[\s\S]*?keepPlan\(ctx, plan\)/);
-    expect(card).toMatch(/fun hide\([^)]*plan: String\? = null\)[\s\S]*?keepPlan\(ctx, plan\)/);
-    expect(mod).toMatch(/Function\("showWorkoutCard"\) \{ title: String, text: String, image: String\?, done: String\?, plan: String\? ->/);
+    expect(card).toMatch(/fun show\([^)]*plan: String\? = null[^)]*\)[\s\S]*?keepPlan\(ctx, plan\)/);
+    expect(card).toMatch(/fun hide\([^)]*plan: String\? = null[^)]*\)[\s\S]*?keepPlan\(ctx, plan\)/);
+    expect(mod).toMatch(/Function\("showWorkoutCard"\) \{ title: String, text: String, image: String\?, done: String\?, plan: String\?, clock: String\? ->/);
+    // R-55: the workout clock rides with every post, and an offline tick keeps the one already kept.
+    expect(mod).toContain('WorkoutCard.show(c, title, text, image, done, plan, clock)');
+    expect(mod).toContain('WorkoutCard.hide(c, title, text, image, done, plan, clock)');
+    expect(card).toMatch(/if \(clockJson != null\) e\.putString\("clock", clockJson\)/);
     expect(mod).toMatch(/Function\("takeQueuedTicks"\)[\s\S]*?OfflineTick\.take\(c\)/);
   });
   it('no block comment opens inside a KDoc (Kotlin block comments nest)', () => {

@@ -49,6 +49,7 @@ import {
   restCardHolds,
   setRestQuiet,
   setRestRingThroughDnd,
+  setRestSoundNative,
   showRestCard,
 } from './restCard';
 import { cancelRestEnd, clearWorkoutOngoing, showWorkoutOngoing } from './workoutAlerts';
@@ -58,6 +59,7 @@ import { useTargets } from '../store/targetStore';
 import { clearLiveWorkoutCard, hideLiveWorkoutCard, liveWorkoutCardAvailable, showLiveWorkoutCard } from './restCard';
 import { liveCardContent, liveCardKey, type LiveCard } from './liveCard';
 import { liveCardImage } from './liveCardImage';
+import { liveClock } from './liveClock';
 import { livePlan } from './livePlan';
 import { rowFill } from './restDoneRun';
 
@@ -168,11 +170,13 @@ export function startWorkoutPresence(): () => void {
     };
     const plan = livePlan(w, rowFill, units, useRestTimer.getState().defaultSec, imageFor);
     const planJson = plan ? JSON.stringify(plan) : null;
-    const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}:${planJson ?? ''}`;
+    // R-55: the workout time in the card's header; the same every second while it runs (no re-post to tick).
+    const clock = liveClock(w.startedAt, w, Date.now());
+    const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}:${planJson ?? ''}:${JSON.stringify(clock)}`;
     if (key === last) return true;
     const ok = shown
-      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson)
-      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson);
+      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock)
+      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock);
     if (!ok) return false;
     lastShown = shown;
     lastRow = liveRow(card);
@@ -291,8 +295,10 @@ export function startWorkoutPresence(): () => void {
   // RT-07 / RT-12: push alert choices to the native card as they change (and once now).
   setRestQuiet(!useTrackerPrefs.getState().sounds);
   setRestRingThroughDnd(useRestAlertPrefs.getState().ringThroughDnd);
+  setRestSoundNative(useTrackerPrefs.getState().restSound); // R-55: the member's rest-over sound
   const u3 = useTrackerPrefs.subscribe((p, prev) => {
     if (p.sounds !== prev.sounds) setRestQuiet(!p.sounds);
+    if (p.restSound !== prev.restSound) setRestSoundNative(p.restSound);
   });
   const u4 = useRestAlertPrefs.subscribe((p, prev) => {
     if (p.ringThroughDnd !== prev.ringThroughDnd) setRestRingThroughDnd(p.ringThroughDnd);

@@ -17,6 +17,7 @@ export const SETTINGS_PAGES = [
   { key: 'backup', title: 'Backup' },
   { key: 'export', title: 'Export & import' },
   { key: 'data', title: 'Your data' },
+  { key: 'news', title: "What's new" },
   { key: 'feedback', title: 'Send feedback' },
   { key: 'about', title: 'About' },
 ] as const;

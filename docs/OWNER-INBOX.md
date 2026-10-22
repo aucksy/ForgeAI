@@ -20,6 +20,8 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
 | 41 | Price for an owner with 2 or more branches | A: per branch, no member limit, lower price from the 2nd branch |
+| 43 | How members sign in: Google, or a phone code | A: Google, the desk confirms each member once |
+| 44 | New brand name (domains free today) | A: Repghar |
 
 ---
 
@@ -40,6 +42,11 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
 | 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
 | 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
+| 11. v0.51.0: workout time on the notification card, rest-over sound choice, "What's new" with earlier updates | Doing | 22 Oct (your "do all you can"): built, 3,063 tests green; independent review, then both cloud phones. Found on the way: Drive backup hidden until your Google setup (#42). |
+| 12. Research you asked for: Google login, new brand name | Done | 22 Oct: two ways to sign in (#43) and 5 names with free domains (#44), for your pick. |
+| 13. Block-proof server address | To do | Both apps reach the server through forgeai.aakashpahuja.in, so a block of Supabase's own address (as in Feb 2026) cannot stop them. No database change. Next app version after v0.51.0. |
+| 14. Full GST tax invoices (admin app) | To do | Only if the gym's GST number fits without a live database change; else it waits for your yes. |
+| 15. Offline front desk (admin app) | To do | Decided by you (#7). Biggest of the batch; client side only. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -69,12 +76,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
 | Rest timer and rest alerts | Live | A rest timer starts after every set, and "Rest is over" sounds and buzzes on time, even with the screen off. |
 | Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
-| Workout time on the notification card | Planned | The live workout card in the notification shade also shows how long the workout has been running. | The card shows a clock, for example "Workout 42:15", beside the exercise name. Android itself ticks it, so it stays right with the screen off and uses no extra battery. While the workout is paused, the clock stops. |
-| Pick your rest-over sound | Planned | Choose from a few rest-over sounds (or vibrate only), so you can tell your timer from others in the same gym; a ForgeAI sound stays the default. | Settings → Rest timer gets a "Rest-over sound" list: the ForgeAI sound (default), 3 or 4 others, and "Vibrate only". A tap on each one plays it. The sound you pick also plays with the screen off. |
+| Workout time on the notification card | Next release | v0.51.0: the live workout card's header shows how long the workout has run ("ForgeAI · Workout · 42:15"), ticking with the app closed; it stands still while the workout is paused. |
+| Pick your rest-over sound | Next release | v0.51.0: Settings → Workouts → Rest-over sound: ForgeAI chime (default), Bell, Double beep or Whistle; tap one to hear it. The same sound with the app open and with the screen off. Vibrate only = Workout sounds off. |
 | Changing the rest time also changes the running timer | Live | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
 | "Machine in use" screen during rest | Live | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
 | Save a free workout as a routine | Live | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
-| "What's new" after each update | Live | The first time the app opens after an update, a short pop-up says in plain words what changed. |
+| "What's new" after each update | Live | The first time the app opens after an update, a short card says in plain words what changed. v0.51.0 adds "See earlier updates" (the 7 before it) and Settings → What's new (owner, 22 Oct). |
 | Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
 | Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
 | Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
@@ -95,8 +102,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Share a picture or text | Live | Share a workout as a picture (post or story size) or as text; body weight is never shown. |
 | Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
 | Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
-| Google Drive backup and restore | Live | Back up all your workouts to your own Google Drive and restore them on a new phone. |
-| Automatic workout backup | Live | Members can't lose their history: one tap to link Google Drive at the start, then the app backs up by itself after each workout; a clear warning if it hasn't backed up for a few days. |
+| Google Drive backup and restore | Waiting for you | Built, but hidden in the app until your one-time free Google setup (#42). | After #42: Settings → Backup shows "Back up to Google Drive"; the member signs in with Google once and backs up; on a new phone the same page offers "Restore". |
+| Automatic workout backup | Waiting for you | Built in v0.50.0; it starts working once Drive backup is switched on (#42). | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the finish screen, and the Workout tab warns after 3 days without a backup. |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
 | Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. |
@@ -165,7 +172,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
 | Busy times by exercise | Planned | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. | Members choose to share "which exercise, at what hour" (no weights, no names; off until they agree). On an exercise or a routine, the app then shows "Other members also plan this between 6 and 8 pm", and members judge for themselves. It needs a few weeks of shared data before it shows anything, and a live server change (your yes). |
-| Google login | Planned | Research sign-in with Google first, then come back to you with options. | An optional "Continue with Google" on the first screen; the app still works without it. Signed in, the member's gym link is tied to a checked Google account instead of a typed phone number, and the same account finds their Drive backup on a new phone. Research comes first, then options for you. |
+| Google login | Waiting for you | Research done: two ways to pick from (#43). | Your pick in #43 decides it. My pick: an optional "Continue with Google" on the first screen, with "Join with your gym code" and "Use without an account" below; the desk confirms each member once, so My membership can later show payments. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. | Like workout plans: the trainer builds a simple day plan (meals, times, a protein target) or picks a ready one, and sends it to a member or a whole membership plan. It shows in the member's app to read; the member can't change it. |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
@@ -173,7 +180,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
-| New brand name with a free domain | Planned | Research a new product name whose .com (or .in / .app) domain is still available at a normal price; forge.ai and forgeai.com are taken and too expensive. | I make a short list of about 5 names, each checked for a free .com (or .in / .app) at a normal price, for Indian trademark clashes and for Play Store clashes, with the yearly cost. You pick one and buy the domain (your money). Then I rename the app, the website and the store listing. |
+| New brand name with a free domain | Waiting for you | Research done: 136 names checked, 5 with .com, .in and .app free at the normal price; your pick (#44). | You pick a name and buy its .com and .in the same day (about ₹1,700-3,100 a year); then a trademark check, then I rename the app, the website and the store listing. |
 | Block-proof server address | Planned | The apps reach our database through forgeai.aakashpahuja.in (Cloudflare) instead of Supabase's own address, so a block like Feb 2026 can't stop them. | Both apps talk to forgeai.aakashpahuja.in, and our Cloudflare Worker passes every request on to Supabase. If an Indian network blocks Supabase's own address again (as in Feb 2026), our address still works; if ours fails, the member app falls back to the direct one. No database change, free. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
 | Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
@@ -197,6 +204,61 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
+normal price; forge.ai and forgeai.com are taken and too expensive.
+**My answer:** I checked 136 names on 22 Oct. Most short English names are taken; most free .com names are
+Hindi-English blends. Five have .com, .in and .app all free at the normal price (no premium):
+- **Repghar** (रेपघर, "home of your reps"): progress plus the gym as a place you come back to. No clash found.
+- **Kilojeet** (किलोजीत, "win the kilos"): ties to "kg to beat"; sounds like a Punjabi first name, so it can be a mascot. Some owners may take it as a joke.
+- **RepAhead**: plain English; similar trademarks exist, so it is harder to protect.
+- **AglaSet** ("next set"): perfect in Hindi; English readers may stumble.
+- **IronAdda**: warm, but a Kolkata gym chain is called "Iron Addict", and "adda" can mean a den.
+Cost: about ₹3,100 a year for all three endings (.com about ₹990, .in about ₹740, .app about ₹1,350).
+Two cautions: two names on my list were registered by someone else in the last four months, so buy the
+.com and .in the day you pick; and the official trademark search (IP India) needs a person (it has a
+captcha), so do it, or ask a lawyer, before paying for a logo. Say both top names to 3-4 Jaipur gym owners
+first if you can.
+**Decide:** Which name?
+- A: Repghar (recommended): one word for the whole pitch, members see their reps and treat the gym as home
+- B: Kilojeet: the most memorable, a ready mascot; a little playful for some owners
+**Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
+
+## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (17 Oct, #11):** "log in with Google etc., with 'join via your gym membership' right below;
+the app must also work with no gym." You chose: research it properly first, then come back with options.
+**My answer:** Google sign-in is free and the app already has the Google sign-in part (used by Drive
+backup). One catch decides the design: Google tells us a member's email, never their phone number, and
+the gym's member list is matched by phone. So a Google sign-in alone cannot prove "this is Rahul from the
+list". One more check is needed before "My membership" can safely show payments.
+- **What others do:** Hevy and Strong make you sign in (both have help pages for members who signed in a
+  second way and found an empty account). cult.fit and FITPASS sign in by phone number and a code.
+- **Rules that come with accounts:** Google Play asks for "Delete my account" inside the app and on a web
+  page; India's data law (full from 13 May 2027) asks for consent words and answers to delete requests.
+- **Workouts do not move:** they stay on the phone and in the member's own Drive in both options.
+**Decide:** How should members sign in?
+- A: "Continue with Google" on the first screen (optional; "Join with your gym code" and "Use without an account" stay). The desk confirms each member once with one tap in the admin app. Free; the Google part is the same setup as task #42. Unlocks one sign-in for backup and a new phone, and later payments in My membership (recommended)
+- B: Phone number and a one-time code by WhatsApp or SMS. Matches the gym's list by itself, no desk step. About ₹0.12 a WhatsApp code or ₹0.30 an SMS (₹60–130 a year for a 300-member gym), plus ₹5,900 + ₹1,250 once for India's SMS registration, and business paperwork that takes days
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-google-login.md
+
+## 42. Your task: switch on Google Drive backup (free, about 30 minutes) — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Your task:** Open https://console.cloud.google.com/projectcreate with your Google account and make a project named ForgeAI (free, no card).
+**Your task:** In that project, open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable.
+**Your task:** Open https://console.cloud.google.com/auth/branding and fill in: app name ForgeAI, your email as the support and contact email, audience External. Then on the Audience page press "Publish app". (The app only asks for its own files in the member's Drive, which Google does not review.)
+**Your task:** Open https://console.cloud.google.com/auth/clients, press Create client, pick Android, and fill in: package name com.forgeai.app and SHA-1 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public signing fingerprint). Press Create.
+**Your task:** Press Create client again, pick Web application, name it "ForgeAI app", press Create. Copy its Client ID (it ends in .apps.googleusercontent.com) and send it to Claude. It is not a secret.
+**Why:** found on 22 Oct: Drive backup and the automatic backup after every workout are built, but hidden
+in the app, because this one-time Google setup was never done. Today members have only Android's own
+phone backup, so a lost or reset phone can lose their history (your rule: members must not lose
+workouts). With the ID, I switch it on in the next app version. The cloud test phone has no Google
+account, so the first real backup will be on your phone; I will tell you exactly what to tap.
 
 ## 41. How do we price an owner with 2 or more branches? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
