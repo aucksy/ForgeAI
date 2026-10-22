@@ -61,6 +61,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
 | 24. AI import of old records (#47) | Doing | Building 23 Oct: Gemini first, Claude Haiku 5.5 as backup; works by hand until you add the keys. |
 | 25. System owner panel: the plan | Done | 23 Oct: plan written (#51); the build waits for your pick. |
+| 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |

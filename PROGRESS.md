@@ -2548,6 +2548,8 @@
     navigation modes took 03a-swiped-from-box and passed (the default phone already showed the link).
   - Gate on 2385142: default 39814847937, owner 39814851301, journeys 39814871703, CI 39814846871 (all green).
     Tag commit = 2385142 + this entry (main moved on with CLAUDE.md + owner_inbox_page.py, not paperwork).
+  - PUBLISHED 23 Oct (release run 39834068476; CI 39834082014 dispatched on the tag): phone APK 69,508,190 B;
+    the APK link answers 200; GitHub's latest release is v0.54.1.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
