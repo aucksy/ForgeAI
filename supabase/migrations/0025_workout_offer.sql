@@ -34,7 +34,11 @@
 -- the plan's notes (the admin app shows it as "Extended free by 3 days (reward)"; no receipt, no
 -- GST, it is not a sale), moves the records version on by one, and stamps who gave it (or
 -- "Automatic"). Given once: a second call finds given_at set and changes nothing. The owner can take
--- a reward back (owner_undo_reward) while the plan's last day is still the one the reward set.
+-- a reward back (owner_undo_reward) while the plan's last day is still the one the reward set; only
+-- the owner can give a taken-back reward again (the desk and the automatic rule get TAKEN_BACK).
+-- An automatic give that found no running plan is tried again when the member next opens the card
+-- (member_offers), so a renewal later still gets the days. A date already counted stays counted if
+-- the desk later takes that check-in back (accepted; see supabase/README.md).
 --
 -- MESSAGES. owner_send_message gains p_to (app member ids: a group the admin app worked out from its
 -- own records; null = everyone) and p_send_at (null = now; up to 30 days ahead). Who it went to is
@@ -252,8 +256,10 @@ end $$;
 -- Give the reward (see the top). The caller has already decided the member earned it. Takes the
 -- gym's row lock, then the member's offer row lock, so two taps, the desk and the automatic rule
 -- can never give it twice. Raises NOT_EARNED, NO_PLAN; a reward already given is returned as it is
--- (alreadyGiven true) and nothing changes.
-create or replace function public._offer_give(p_offer uuid, p_roster text, p_by uuid, p_by_name text, p_auto boolean)
+-- (alreadyGiven true) and nothing changes. A reward the owner took back is given again only when
+-- p_owner is true (the owner's own tap); the front desk and the automatic rule get TAKEN_BACK.
+create or replace function public._offer_give(p_offer uuid, p_roster text, p_by uuid, p_by_name text, p_auto boolean,
+                                              p_owner boolean)
   returns jsonb language plpgsql security definer set search_path = public as $$
 declare
   o public.gym_offers; om public.offer_members; g public.gyms; ms public.crm_records;
@@ -270,6 +276,7 @@ begin
       'membershipId', om.given_membership_id, 'version', g.crm_version);
   end if;
   if om.earned_at is null then raise exception 'NOT_EARNED'; end if;
+  if om.undone_at is not null and not coalesce(p_owner, false) then raise exception 'TAKEN_BACK'; end if;
   ms := public._offer_plan(o.gym_id, p_roster, today, false);
   if ms.id is null then raise exception 'NO_PLAN'; end if;
   v_old := public._iso_day(ms.data->>'endsOn');
@@ -379,7 +386,8 @@ begin
            'joined', (select count(*) from public.offer_members m where m.offer_id = o.offer_id),
            'inNow', (select count(*) from public.offer_members m where m.offer_id = o.offer_id and m.left_at is null
                        and m.earned_at is null and m.window_ends_on >= today),
-           'ready', (select count(*) from public.offer_members m where m.offer_id = o.offer_id and m.earned_at is not null and m.given_at is null),
+           'ready', (select count(*) from public.offer_members m where m.offer_id = o.offer_id and m.earned_at is not null
+                       and m.given_at is null and m.undone_at is null),
            'given', (select count(*) from public.offer_members m where m.offer_id = o.offer_id and m.given_at is not null))
            order by o.created_at desc), '[]'::jsonb)
     into offers
@@ -407,13 +415,16 @@ end $$;
 
 -- The desk's one tap (and the owner's): give an earned reward. Any live key of the gym; the front
 -- desk can move a plan's last day this way only, by exactly the offer's days, once.
--- Raises BAD_KEY, GONE, NOT_EARNED, NO_PLAN. Already given: returns it (alreadyGiven true).
+-- Raises BAD_KEY, GONE, NOT_EARNED, NO_PLAN, TAKEN_BACK (a reward the owner took back: only the
+-- owner gives it again). Already given: returns it (alreadyGiven true).
 create or replace function public.staff_give_reward(p_key text, p_offer uuid, p_roster text)
   returns jsonb language plpgsql security definer set search_path = public as $$
 declare g uuid := public._owner_gym(p_key); st public.gym_staff := public._staff(p_key);
+  -- An old owner key (no person) or an owner's session.
+  is_owner boolean := st.staff_id is null or st.role = 'owner';
 begin
   if not exists (select 1 from public.gym_offers where offer_id = p_offer and gym_id = g) then raise exception 'GONE'; end if;
-  return public._offer_give(p_offer, p_roster, st.staff_id, coalesce(st.name, 'Owner (old owner key)'), false);
+  return public._offer_give(p_offer, p_roster, st.staff_id, coalesce(st.name, 'Owner (old owner key)'), false, is_owner);
 end $$;
 
 -- The owner takes a reward back (an automatic one given by mistake, a member who cheated). Only
@@ -471,11 +482,24 @@ declare
   o public.gym_offers; om public.offer_members; who record; can text;
 begin
   select name into gname from public.gyms where gym_id = m.gym_id;
-  -- 1. An offer this app member is in and still counting (window not over, not given yet).
+  -- 1. An offer this app member is in and still counting (window not over, not given yet), or one
+  --    they earned whose days are still to come (kept however long that takes).
   select om2.* into om from public.offer_members om2 join public.gym_offers o2 on o2.offer_id = om2.offer_id
    where om2.member_id = m.member_id and o2.gym_id = m.gym_id and om2.left_at is null
-     and om2.given_at is null and om2.window_ends_on >= today
+     and om2.given_at is null
+     and (om2.window_ends_on >= today or (om2.earned_at is not null and om2.undone_at is null))
    order by o2.created_at desc limit 1;
+  -- Earned while no gym plan was running, and the offer gives the days by itself: try again now
+  -- (a renewal may have come since). Still no plan: it stays "ready" for the desk.
+  if om.offer_id is not null and om.earned_at is not null and om.given_at is null and om.undone_at is null
+     and exists (select 1 from public.gym_offers x where x.offer_id = om.offer_id and x.auto_give) then
+    begin
+      perform public._offer_give(om.offer_id, om.roster_id, null, 'Automatic', true, false);
+    exception when raise_exception then
+      null;  -- quiet: NO_PLAN (or GONE) leaves the earned row as it is; the desk can give it
+    end;
+    select * into om from public.offer_members where offer_id = om.offer_id and roster_id = om.roster_id;
+  end if;
   if om.offer_id is null then
     -- 2. The gym's open offer (to join, or the member's finished row in it).
     select * into o from public.gym_offers
@@ -604,24 +628,16 @@ begin
         values (m.gym_id, om.offer_id, om.roster_id, 'earned', jsonb_build_object('counted', n));
       if o.auto_give then
         begin
-          perform public._offer_give(om.offer_id, om.roster_id, null, 'Automatic', true);
+          perform public._offer_give(om.offer_id, om.roster_id, null, 'Automatic', true, false);
         exception when raise_exception then
-          -- NO_PLAN (no gym plan running): the desk sees "Ready for reward" and gives it at renewal.
-          -- Only the give is undone; the earned mark above stays.
+          -- quiet: NO_PLAN (no gym plan running): the desk sees "Ready for reward"; member_offers
+          -- tries again on the member's next look. Only the give is undone; the earned mark stays.
           null;
         end;
       end if;
     end if;
-  elsif o.auto_give then
-    -- Earned before, not given yet (it had no plan then): try again now.
-    begin
-      if om.given_at is null and om.undone_at is null then
-        perform public._offer_give(om.offer_id, om.roster_id, null, 'Automatic', true);
-      end if;
-    exception when raise_exception then
-      null;  -- still no plan: stays "Ready for reward" for the desk
-    end;
   end if;
+  -- member_offers also retries an automatic give that had no plan before.
   return public.member_offers(p_key);
 end $$;
 
@@ -690,12 +706,12 @@ begin
     select count(*) into n from public.gym_messages
       where gym_id = g and kind in ('offer','event')
         and coalesce(send_at, created_at) >= day_start and coalesce(send_at, created_at) < day_start + interval '1 day'
-        and (withdrawn_at is null or withdrawn_at > created_at + interval '10 minutes');
+        and (withdrawn_at is null or withdrawn_at > coalesce(send_at, created_at) + interval '10 minutes');
     if n >= 1 then raise exception 'OFFER_TODAY'; end if;
     select count(*) into n from public.gym_messages
       where gym_id = g and kind in ('offer','event')
         and coalesce(send_at, created_at) >= day_start - interval '6 days' and coalesce(send_at, created_at) < day_start + interval '7 days'
-        and (withdrawn_at is null or withdrawn_at > created_at + interval '10 minutes');
+        and (withdrawn_at is null or withdrawn_at > coalesce(send_at, created_at) + interval '10 minutes');
     if n >= 3 then raise exception 'OFFER_WEEK'; end if;
   end if;
   if p_to is null then
@@ -785,7 +801,7 @@ revoke all on function public._offer_identity(public.gym_members)              f
 revoke all on function public._offer_me_json(public.offer_members)             from public, anon, authenticated;
 revoke all on function public._offer_member_offer_json(public.gym_offers)      from public, anon, authenticated;
 revoke all on function public._offer_tidy(uuid)                                from public, anon, authenticated;
-revoke all on function public._offer_give(uuid, text, uuid, text, boolean)     from public, anon, authenticated;
+revoke all on function public._offer_give(uuid, text, uuid, text, boolean, boolean) from public, anon, authenticated;
 
 revoke all on function public.owner_save_offer(text, jsonb)                    from public;
 revoke all on function public.owner_stop_offer(text, uuid)                     from public;
@@ -816,3 +832,6 @@ grant execute on function public.owner_send_message(text, text, text, text, uuid
 grant execute on function public.owner_messages(text)                          to anon, authenticated;
 grant execute on function public.member_messages(text)                         to anon, authenticated;
 grant execute on function public.member_saw_messages(text, uuid[])             to anon, authenticated;
+
+-- PostgREST learns the new and changed functions at once (instead of on its next schema reload).
+notify pgrst, 'reload schema';

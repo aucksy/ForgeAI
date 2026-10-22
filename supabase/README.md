@@ -91,7 +91,11 @@ gym yet"; messages go to everyone as before.
 
 To switch it on: (1) SQL Editor → paste all of `migrations/0025_workout_offer.sql` → Run
 (re-runnable; after 0024). (2) Paste `tests/0025_workout_offer.sql` → Run: it must end in an error
-that reads `RESULT PASS (67 checks)` (it changes nothing). Paste `tests/security.sql` → `RESULT PASS`.
+that reads `RESULT PASS (71 checks)` (it changes nothing). Paste `tests/security.sql` → `RESULT PASS`.
 (3) Put the approved privacy lines into `docs/launch/PRIVACY-NOTICE.md` and `-HI.md` (new "Last
 updated") and ship the member app release that has the offer card; deploy the admin app. (4) In the
 admin app: Messages & offers → Workout offer → Start offer.
+
+Known and accepted: a date the server already counted stays counted if the desk later takes that
+check-in back (Visits → undo). The count never goes down by itself; the owner can take a reward back
+while the plan's last day is unchanged.

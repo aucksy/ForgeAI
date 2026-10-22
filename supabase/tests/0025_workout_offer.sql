@@ -182,7 +182,12 @@ begin
     'Reward taken back: ' || to_char(td + 13, 'YYYY-MM-DD') || ' -> ' || to_char(td + 10, 'YYYY-MM-DD'));
   checks := checks + 1;
   fails := fails || pg_temp.t25_is('9 twice', pg_temp.t25_try(format('select public.owner_undo_reward(%L, %L, %L)', kop, o1, 'm-asha')), 'NOT_GIVEN');
-  -- Given again by hand, then the plan is changed by hand: taking it back now is refused.
+  -- A reward the owner took back: the desk cannot give it again (TAKEN_BACK), and it is not counted
+  -- as ready; the owner can.
+  checks := checks + 2;
+  fails := fails || pg_temp.t25_is('9 desk regive', pg_temp.t25_try(format('select public.staff_give_reward(%L, %L, %L)', ks, o1, 'm-asha')), 'TAKEN_BACK');
+  fails := fails || pg_temp.t25_is('9 not ready', public.owner_offers(kop)->'offers'->0->>'ready', '0');
+  -- Given again by the owner, then the plan is changed by hand: taking it back now is refused.
   perform public.staff_give_reward(kop, o1, 'm-asha');
   update public.crm_records set data = data || jsonb_build_object('endsOn', to_char(td + 20, 'YYYY-MM-DD')) where gym_id = gid and id = 'ms-a';
   checks := checks + 1;
@@ -213,9 +218,15 @@ begin
   r := public.member_offer_days(ka, o2, jsonb_build_array(dd[2]));
   checks := checks + 1;
   fails := fails || pg_temp.t25_is('11 no plan', (r->'me'->>'earned') || ':' || (r->'me'->>'given'), 'true:false');
-  -- The plan is back: the next send gives the days, by itself, once.
+  -- Long after the window, the earned row still shows (the card keeps its promise).
+  update public.offer_members set window_ends_on = td - 20 where offer_id = o2 and roster_id = 'm-asha';
+  r := public.member_offers(ka);
+  checks := checks + 1;
+  fails := fails || pg_temp.t25_is('11 still shown', (r->'offer'->>'id') || ':' || (r->'me'->>'earned') || ':' || (r->'me'->>'given'), o2::text || ':true:false');
+  -- The plan is back: the member's next look gives the days, by itself, once.
   update public.crm_records set data = data || '{"cancelled":false}'::jsonb where gym_id = gid and id = 'ms-a';
-  r := public.member_offer_days(ka, o2, '[]'::jsonb);
+  -- (the member's next look at the card is enough; the phone sends nothing once earned)
+  r := public.member_offers(ka);
   checks := checks + 2;
   fails := fails || pg_temp.t25_is('11 auto', (r->'me'->>'given') || ':' || (r->'me'->>'givenAuto') || ':' || (r->'me'->>'newEnd'),
     'true:true:' || to_char(td + 22, 'YYYY-MM-DD'));
@@ -235,6 +246,11 @@ begin
   checks := checks + 2;
   fails := fails || pg_temp.t25_is('12 no one', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, %L::uuid[])', kop, 'announcement', 'x', '', array[mid_x])), 'NO_ONE');
   fails := fails || pg_temp.t25_is('12 too far', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'announcement', 'x', '', now() + interval '40 days')), 'BAD_TIME');
+  -- A timed offer cancelled before it goes does not use up its day.
+  msg2 := (public.owner_send_message(kop, 'offer', 'T25 cancelled', '', null, now() + interval '2 days') ->> 'id')::uuid;
+  perform public.owner_withdraw_message(kop, msg2);
+  checks := checks + 1;
+  fails := fails || pg_temp.t25_is('12 cancelled frees day', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'offer', 'T25 day 2', '', now() + interval '2 days 1 minute')), 'ok');
   -- Tomorrow's offer, then today's: both fit (each day has one). A second one tomorrow does not.
   msg2 := (public.owner_send_message(kop, 'offer', 'T25 tomorrow', '', null, now() + interval '1 day') ->> 'id')::uuid;
   checks := checks + 4;
@@ -273,7 +289,7 @@ begin
      or not has_function_privilege('anon', 'public.staff_give_reward(text, uuid, text)', 'execute') then
     fails := fails || ' 14 grants';
   end if;
-  if has_function_privilege('anon', 'public._offer_give(uuid, text, uuid, text, boolean)', 'execute')
+  if has_function_privilege('anon', 'public._offer_give(uuid, text, uuid, text, boolean, boolean)', 'execute')
      or has_function_privilege('anon', 'public._offer_identity(public.gym_members)', 'execute')
      or has_function_privilege('authenticated', 'public._offer_tidy(uuid)', 'execute') then
     fails := fails || ' 14 helpers open';
