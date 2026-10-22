@@ -82,3 +82,16 @@ would load. The member app also refuses any logo link that is not a `gym-logos` 
   `select gym_id, brand_logo_url from public.gyms where not public._logo_url_ok(brand_logo_url);`,
   set that `brand_logo_url` to null, and run the file again.
 - The RAMS01 step above still works: the panel's logo link passes the check.
+
+## Workout offer, group and timed messages (0025_workout_offer.sql) — NOT APPLIED
+Waits on the owner's yes (OWNER-INBOX #49 step 2) and his approval of the consent words and privacy
+lines in `docs/overhaul/offers-step2-words-for-approval.md`. Until it is applied, the member app
+shows no offer card and the admin app says "Workout offers in the app are not switched on for your
+gym yet"; messages go to everyone as before.
+
+To switch it on: (1) SQL Editor → paste all of `migrations/0025_workout_offer.sql` → Run
+(re-runnable; after 0024). (2) Paste `tests/0025_workout_offer.sql` → Run: it must end in an error
+that reads `RESULT PASS (67 checks)` (it changes nothing). Paste `tests/security.sql` → `RESULT PASS`.
+(3) Put the approved privacy lines into `docs/launch/PRIVACY-NOTICE.md` and `-HI.md` (new "Last
+updated") and ship the member app release that has the offer card; deploy the admin app. (4) In the
+admin app: Messages & offers → Workout offer → Start offer.
