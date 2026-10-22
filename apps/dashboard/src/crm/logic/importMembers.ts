@@ -26,7 +26,7 @@ import { addDays, formatDay, isValidDateISO, toISO, type DateISO } from './dates
 import { DuplicatePhoneError, EARLIEST_DATE, PartialSaveError } from '../data/adapter';
 import { BATCH_MAX, listBatches, resolveBatch } from './batches';
 import { formatINR, parseRupeeInput } from './money';
-import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember } from './members';
+import { DEFAULT_DIAL_CODE, findDuplicatePhone, normalizeName, normalizePhone, splitE164, validateMember, withoutTitle } from './members';
 import { termFromRow, type ImportTerm } from './importTerms';
 
 // ---------------------------------------------------------------- fields
@@ -372,7 +372,7 @@ export function parseImportMoney(raw: string): number | null {
  * shared mobile ("Sunita Gupta" on Ramesh's number) is two people. PURE.
  */
 export function samePersonName(a: string, b: string): boolean {
-  const words = (x: string) => x.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim().split(' ').filter(Boolean);
+  const words = (x: string) => withoutTitle(x).normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim().split(' ').filter(Boolean);
   const x = words(a);
   const y = words(b);
   if (x.length === 0 || y.length === 0) return true;
@@ -803,9 +803,11 @@ export function planImport(
     const warnings: string[] = [];
     const text = (f: ImportField) => cellText(cellAt(row, map[f]));
 
-    // Name
-    const fullName = normalizeName(text('fullName'));
+    // Name: a title in front is left out ("Mr. Ramesh Gupta" joins the app as "Ramesh", R-67).
+    const written = normalizeName(text('fullName'));
+    const fullName = withoutTitle(written);
     if (!fullName) problems.push('No name.');
+    else if (fullName !== written) warnings.push(`"${written.slice(0, written.length - fullName.length).trim()}" left out of the name.`);
 
     // Mobile
     const phoneRead = parseImportPhone(cellAt(row, map.phone));

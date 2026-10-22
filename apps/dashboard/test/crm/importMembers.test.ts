@@ -549,3 +549,26 @@ describe('who may import', () => {
     expect(canOpen('staff', '/members/import')).toBe(true);
   });
 });
+
+describe('R-67: a title in front of a name is left out (the member app checks the first name)', () => {
+  it('Mr, Mrs, Smt, Shri, Kumari, Dr, with or without a dot; never a real name', async () => {
+    const { withoutTitle } = await import('../../src/crm/logic/members');
+    expect(withoutTitle('Mr. Ramesh Gupta')).toBe('Ramesh Gupta');
+    expect(withoutTitle('MRS sunita  gupta')).toBe('sunita gupta');
+    expect(withoutTitle('Smt. Kamla Devi')).toBe('Kamla Devi');
+    expect(withoutTitle('Dr.Anil Mehta')).toBe('Anil Mehta');
+    expect(withoutTitle('Shri Mohan Lal')).toBe('Mohan Lal');
+    // Real names that start like a title stay whole.
+    expect(withoutTitle('Mridul Jain')).toBe('Mridul Jain');
+    expect(withoutTitle('Sri Lakshmi')).toBe('Sri Lakshmi');
+    expect(withoutTitle('Drishti Rao')).toBe('Drishti Rao');
+    // A title alone is all there is: kept.
+    expect(withoutTitle('Mr.')).toBe('Mr.');
+  });
+
+  it('the same person with and without a title', async () => {
+    const { samePersonName } = await import('../../src/crm/logic/importMembers');
+    expect(samePersonName('Mr. Ramesh Gupta', 'Ramesh')).toBe(true);
+    expect(samePersonName('Mr. Ramesh Gupta', 'Mr. Suresh Gupta')).toBe(false);
+  });
+});

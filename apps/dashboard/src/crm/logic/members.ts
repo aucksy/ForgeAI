@@ -122,6 +122,23 @@ export function normalizeName(raw: string): string {
   return raw.trim().replace(/\s+/g, ' ');
 }
 
+/**
+ * Titles an old register puts before a name: "Mr. Ramesh Gupta", "Smt Sunita", "Dr.Anil". Not "Sri"
+ * or "Shree": they also start real names ("Sri Lakshmi").
+ */
+const TITLE = /^(mr|mrs|ms|miss|mx|smt|shri|kumari|dr)(\.\s*|\s+)/i;
+
+/**
+ * R-67 research (22 Oct 2026): the name without a title in front ("Mr. Ramesh Gupta" -> "Ramesh
+ * Gupta"). The member app checks the FIRST name when a member joins, so "Mr." stood in for "Ramesh"
+ * and he was refused. A title alone stays (it may be the only name written). PURE.
+ */
+export function withoutTitle(name: string): string {
+  const n = normalizeName(name);
+  const cut = n.replace(TITLE, '');
+  return cut.length > 0 && cut !== n ? cut : n;
+}
+
 /** Up to two initials for an avatar chip. */
 export function initials(name: string): string {
   const parts = normalizeName(name).split(' ').filter(Boolean);

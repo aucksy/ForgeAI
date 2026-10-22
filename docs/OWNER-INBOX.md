@@ -22,6 +22,9 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 41 | Price for an owner with 2 or more branches | A: per branch, no member limit, lower price from the 2nd branch |
 | 43 | How members sign in: Google, or a phone code | A: Google, the desk confirms each member once |
 | 44 | New brand name (domains free today) | A: Repghar |
+| 45 | Count reps by listening: build a test version | A: yes, phone mic |
+| 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
+| 47 | AI import of old records: the first version | A: spreadsheets with AI, free with a daily limit |
 
 ---
 
@@ -48,8 +51,11 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 14. Full GST tax invoices (admin app) | Done | 22 Oct, live: a gym with a GST number now prints a "Tax invoice" with the place of supply (its state), "Reverse charge: No" and a signature line. Not done: the paying company's own GST number (needs a live database change, your yes). |
 | 15. Offline front desk (admin app) | Doing | 22 Oct: step 1 live (opens and shows everything without internet). Step 2 built and tested (desk check-ins kept offline and sent later, with their real time); goes live with the next admin deploy. Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
 | 16. Landing page: dedicated animated sections (your note, 22 Oct) | Doing | Built and design-reviewed: workout + new record, the shop order, free notices to every member, the lock screen with a watch. Goes live right after v0.51.0 is released (it shows v0.51.0 features). |
-| 17. Missing-muscle suggestions (your note, 22 Oct) | Doing | Research running; the build follows the release. |
-| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | After 17. The trainer view needs a live server change (your yes). |
+| 17. Missing-muscle suggestions (your note, 22 Oct) | Doing | Research done (a calm once-a-week tip when a big muscle group gets almost no work all week; never during a workout). Build after the two releases. |
+| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Trainer view: plan in #46, waits for your pick. Reps to beat: after 17. |
+| 19. v0.52.0: your gym notes of 22 Oct | Doing | Built and tested (3,084 checks): warm-ups keep last time's numbers; dumbbell pairs only get weights that split into two real dumbbells; the newest workout anywhere counts (no false "long break"); the kg line turns green when beaten; "Last" beside the rest timer; pop-ups 2 s longer; "In use" by itself after each set (a setting). Independent review running, then the phone tests. |
+| 20. Offers and notices for gym owners, with the workout reward (your note, 22 Oct) | Doing | Research running (every message a gym sends, the "track 10 workouts, get 3 extra days" reward, how to stop cheating). Then the build; the reward needs your yes on a live server change and privacy words. |
+| 21. Imported names with a title ("Mr. Ramesh") | Doing | Found 22 Oct: the member app refused such a member at Join. Imports now leave titles out (admin app, next deploy). Fixing names already on the server needs a small live server change: I will ask with the next one. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -211,6 +217,106 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** Answered
+**You asked:** you aim for one extra rep on every set. Is that better for long-run progress, or should you
+follow the app's targets?
+**My answer:** Both work. Keep your habit, with one rule from the app.
+- **Why both work:** muscle and strength grow when you keep doing a little more over time. More reps at the
+  same weight counts just as much as more weight. A 2022 study (Plotkin and others) had two groups train for
+  8 weeks: one added weight, the other added reps. Both gained about the same muscle and strength.
+- **The catch with +1 on every set:** it cannot go on for ever. Each set gets longer, the last sets fail
+  first, and you end up grinding every set to the limit. That tires you more and slows you down over months.
+- **What the app does:** set 1 aims for one more rep than last time; the other sets aim to match last time.
+  When your sets reach the top of the rep range, the app adds weight and starts the reps lower again. That
+  is the same idea as yours (called "double progression"), paced so it lasts.
+- **My advice:** treat the app's number as the floor. If a set feels easy (you could do 2 or more reps
+  more), take the extra rep. Stop a set when you have about 1 rep left, not at total failure. When the app
+  says "Up", take the weight, even if it means fewer reps that day.
+
+## 47. AI import of a gym's old records: the plan — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** gym owners must bring their old data in without your help. Use AI in the admin app's
+import, with a database that can take new kinds of fields for each gym, and think through the problems.
+**My answer:** Yes, build it. Others do the column matching with AI too (HubSpot, Flatfile). Indian gym
+software only offers a fixed upload template, and nobody reads a photo of a paper register.
+- **What the owner does:** upload the file (Excel or CSV first; photos of a register later). The AI says
+  which column is which ("Mobile No." is the phone, "Pkg" is the plan). The owner sees a preview with
+  every problem marked, fixes it, presses Import. One tap undoes the whole import.
+- **New kinds of information** (locker number, blood group, referred by) become that gym's own extra
+  fields, shown on the member's page. They are stored as data, not as new database columns: instant,
+  safe, and no change to the live database. Adding real columns for each gym would lock a table every
+  gym shares; real products do not do it.
+- **The AI only points; our tested code reads.** For a spreadsheet the AI sees only the column names and
+  5 example rows, with mobile numbers hidden. Our own code reads every date, phone and rupee amount, so
+  the AI cannot invent a member or a payment.
+- **Problems and fixes:** the same member twice (matched by phone, the owner picks); plans that don't
+  match ours (the owner maps each one once); dates like 05/06 (read the whole column to tell DD/MM from
+  MM/DD); dues and part payments (kept as dues, never as paid); a file imported twice (found and skipped);
+  very large files (done in parts).
+- **Cost:** about ₹0.40 per spreadsheet, about ₹2.50 per photo of a register page. The photo price at
+  Google roughly doubles on 1 January 2027.
+- **A bug I found on the way:** a member imported as "Mr. Ramesh Gupta" is refused when he later joins the
+  member app as "Ramesh" (the check reads his first name as "Mr"). I am fixing that now; it affects
+  today's import too.
+**Decide:** How should the first version work?
+- A: Spreadsheets with AI matching, free to gyms with a daily limit, the owner asked before each AI read, Aadhaar and PAN numbers never imported. Needs one new secret key (Google AI, made by you) and one small usage table on our web server, not the gym database (recommended)
+- B: The same, but without AI for now: the owner matches each column by hand from a list; no key, no cost
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-ai-import.md
+
+## 46. Trainers see their members' progress: the plan — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** trainers should see if members are progressing, encourage them, and help the gym sell
+personal training. Research it and decide the best way.
+**My answer:** Build it as a tool that tells a trainer who to talk to today and what to say, not a sales list.
+- **The member chooses.** Sharing is off until the member turns it on, picks one named trainer and taps
+  "Share". The trainer accepts them in person at the gym.
+- **Only a weekly summary leaves the phone:** workouts a week, total kg lifted a week, the best set on their
+  5 most-done exercises, and new records. Body weight, photos, notes and food never leave the phone.
+  Stopping deletes the shared copy at once.
+- **The trainer sees "My members":** one plain line each, like "New best: Leg press 120 kg × 10", with
+  ready WhatsApp messages ("well done", "how's it going?"). You see all of it.
+- **Why:** no Indian gym software does this. Hevy Coach shares everything once linked, body weight and photos
+  too, so keeping those private is our edge. Members whom staff speak to regularly cancel less (UK gym
+  studies). Chasing struggling members with offers backfired elsewhere (10% left against 6% left alone), so
+  version 1 has an "Ask my trainer for help" button instead: the member asks.
+- **A safety point I found:** trainers sign in as front desk today. A "Trainer" tick on a person is the safe
+  way to add them; a new role done the quick way would give trainers owner powers (money totals, cancelling
+  receipts).
+- **India's privacy law** needs separate consent for coaching and for sales; its main duties start in May 2027.
+**Decide:** Go ahead with version 1?
+- A: Yes: the Trainer tick, the member's share screen with "Ask my trainer for help", and "My members" for trainers; you also see shared progress (named on the screen). Before it goes live you approve the consent words (English and Hindi), 4 lines in the privacy notice, and the new server tables (recommended)
+- B: Not yet: build it after the client gym is live
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-trainer-view.md
+
+## 45. Count reps by listening: the plan — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** in a hard set people lose count. Could the app listen to the member counting (earbud mic)
+and log the set by itself? Or is there a better way?
+**My answer:** Build the listening idea, with one change: use the phone's own microphone, not the earbuds'.
+- **Why not the earbud mic:** on most budget Bluetooth earbuds, opening the earbud mic turns the member's
+  music into phone-call sound for as long as it listens. Android's own guide confirms this. With the phone's
+  mic the music stays perfect; the phone must be within about 1-2 m (on the bench or the floor, not in a
+  pocket). The earbuds still carry the app's voice back: "ten, logged".
+- **The other ways are worse:** watch counting gets 44-67% wrong on some exercises and fails on legs and
+  machines (your Pixel Watch 4 has no rep counting). Camera counting double-counts when people walk past.
+  Earbud-button counting takes over the music buttons. No big app (Hevy, Strong, Fitbod, cult.fit) counts
+  by listening; the few small ones that try have poor reviews.
+- **First version:** with the app open and the screen on. It hears numbers in English or Hindi ("ek, do,
+  teen") and shows the count large on the set row. "Done", "ho gaya" or "bas" ticks the set, with Undo. It
+  never ticks on silence and only takes the next number in order, so a trainer counting nearby is ignored.
+  Everything runs on the phone; nothing is sent anywhere. About 3-5 days of work, no money.
+- **Test first on your phone:** if it gets 9 of 10 sets right over 3 workouts at your gym, I finish it
+  (screen-locked listening, a "Count for me" voice for people who count silently).
+**Decide:** Build the first version as a test on your phone?
+- A: Yes. This brings back the microphone permission (removed before launch) with plain privacy words (drafts in English and Hindi in the note) (recommended)
+- B: Not now
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-voice-rep-count.md
 
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
