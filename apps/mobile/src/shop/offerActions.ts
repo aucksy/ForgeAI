@@ -18,12 +18,15 @@ import {
   OFFER_CONSENT_KEY,
   OFFER_KEPT_KEY,
   OFFER_LEAVE_KEY,
+  OFFER_SENT_KEY,
   OFFER_STORAGE_KEYS,
   consentFromRaw,
   datesToSend,
   mayShareDates,
   offersFromRow,
   offersToRow,
+  sentFromRaw,
+  shouldSendDates,
   type MemberOffer,
   type OfferConsent,
   type OffersAnswer,
@@ -70,8 +73,15 @@ export async function readConsent(): Promise<OfferConsent | null> {
   return consentFromRaw(await readJson(OFFER_CONSENT_KEY));
 }
 
-/** Leave the gym / Erase all data: the consent, a pending Leave and the kept card all go. */
+/**
+ * Moves on at every Leave (the offer or the gym) and Erase: a sync that started before it must not
+ * write its answer back afterwards (review fix, 23 Oct 2026).
+ */
+let offerEpoch = 0;
+
+/** Leave the gym / Erase all data: the consent, a pending Leave, the kept card and the last send all go. */
 export async function forgetOfferData(): Promise<void> {
+  offerEpoch += 1;
   for (const k of OFFER_STORAGE_KEYS) await remove(k);
 }
 
@@ -102,7 +112,8 @@ async function retryPendingOfferLeave(link: GymLink): Promise<void> {
   if (r.ok || r.missing || r.error?.kind === 'BAD_KEY') await remove(OFFER_LEAVE_KEY);
 }
 
-export type OfferLoad = { kind: 'answer'; answer: OffersAnswer } | { kind: 'missing' } | { kind: 'failed'; offline: boolean };
+/** `stale`: a Leave (or Erase) happened while this sync ran; its answer is thrown away. */
+export type OfferLoad = { kind: 'answer'; answer: OffersAnswer } | { kind: 'missing' } | { kind: 'failed'; offline: boolean } | { kind: 'stale' };
 
 function loadFrom(r: OfferResult): OfferLoad {
   if (r.ok) return { kind: 'answer', answer: r.data };
@@ -136,12 +147,16 @@ async function readCountRows(from: string, to: string): Promise<CountRow[]> {
  * what the card shows.
  */
 let syncing: Promise<OfferLoad> | null = null;
+let syncingEpoch = -1;
 
 export function syncOfferDates(link: GymLink, known?: OffersAnswer): Promise<OfferLoad> {
-  if (syncing) return syncing;
+  // A sync from before a Leave is not shared with a call made after it.
+  if (syncing && syncingEpoch === offerEpoch) return syncing;
+  const epoch = offerEpoch;
   const p = (async (): Promise<OfferLoad> => {
     await retryPendingOfferLeave(link).catch((e: unknown) => console.warn('[ForgeErr] offer: resending a leave', e));
     let load: OfferLoad = known ? { kind: 'answer', answer: known } : loadFrom(await apiOffers(link.memberKey));
+    if (epoch !== offerEpoch) return { kind: 'stale' };
     if (load.kind !== 'answer') return load;
     const answer = load.answer;
     const consent = await readConsent();
@@ -150,17 +165,25 @@ export function syncOfferDates(link: GymLink, known?: OffersAnswer): Promise<Off
       const offer = answer.offer;
       const rows = await readCountRows(answer.me.joinedOn, today);
       const days = datesToSend(rows, answer.me, today, offer.minMinutes, offer.minSets);
-      // Nothing new to tell (every date already matched): no call.
+      // Nothing new to tell (every date already matched): no call. The same unmatched set again
+      // (a workout on a day with no check-in): at most once a day.
       const news = days.some((d) => !answer.me!.days.includes(d));
-      if (news) {
+      const last = sentFromRaw(await readJson(OFFER_SENT_KEY));
+      if (news && shouldSendDates(last, offer.id, days, today) && epoch === offerEpoch) {
         const after = loadFrom(await apiOfferDays(link.memberKey, offer.id, days));
+        // Remember it once the gym heard it (an answer or a refusal such as TOO_MANY, not no signal).
+        if (after.kind === 'answer' || (after.kind === 'failed' && !after.offline)) {
+          if (epoch === offerEpoch) await writeJson(OFFER_SENT_KEY, { offerId: offer.id, days: days.join(','), on: today });
+        }
         if (after.kind === 'answer') load = after;
       }
     }
+    if (epoch !== offerEpoch) return { kind: 'stale' };
     if (load.kind === 'answer') await keepOffer(link.memberId, load.answer);
     return load;
   })();
   syncing = p;
+  syncingEpoch = epoch;
   const done = (): void => {
     if (syncing === p) syncing = null;
   };
@@ -201,7 +224,9 @@ export async function joinOffer(link: GymLink, offer: MemberOffer): Promise<{ ok
  * no signal the Leave is kept and sent again on the next refresh.
  */
 export async function leaveOffer(link: GymLink, offerId: string): Promise<void> {
+  offerEpoch += 1;
   await remove(OFFER_CONSENT_KEY);
+  await remove(OFFER_SENT_KEY);
   await writeJson(OFFER_LEAVE_KEY, { memberKey: link.memberKey, offerId });
   const r = await apiLeaveOffer(link.memberKey, offerId);
   if (r.ok || r.missing || r.error?.kind === 'BAD_KEY') await remove(OFFER_LEAVE_KEY);

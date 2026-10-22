@@ -42,7 +42,8 @@ export function OfferCard({ link }: { link: GymLink }) {
         const kept = await readKeptOffer(link.memberId);
         if (live && kept) setAnswer((a) => a ?? kept.answer);
         const load = await syncOfferDates(link);
-        if (!live) return;
+        // Stale: a Leave happened while this ran; the card shows what the Leave left.
+        if (!live || load.kind === 'stale') return;
         if (load.kind === 'answer') setAnswer(load.answer);
         // No offers on the server, or a refusal that is not about the signal: no card.
         else if (load.kind === 'missing' || !load.offline) setAnswer(null);
@@ -95,7 +96,7 @@ export function OfferCard({ link }: { link: GymLink }) {
       await leaveOffer(link, offer.id);
       // The card goes back to the offer as the gym sees it now (or hides).
       const load = await syncOfferDates(link);
-      setAnswer(load.kind === 'answer' ? load.answer : null);
+      if (load.kind !== 'stale') setAnswer(load.kind === 'answer' ? load.answer : null);
     } finally {
       busy.current = false;
       setLeaving(false);

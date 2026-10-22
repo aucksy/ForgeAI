@@ -179,8 +179,37 @@ export interface OfferConsent {
 export const OFFER_CONSENT_KEY = 'forgeai-offer-consent';
 export const OFFER_LEAVE_KEY = 'forgeai-offer-leave';
 export const OFFER_KEPT_KEY = 'forgeai-offer-kept';
+/** The last set of dates sent, so the same set is not sent again on every gym check. */
+export const OFFER_SENT_KEY = 'forgeai-offer-sent';
 /** Every key above: Leave the gym and Erase all data remove them all. */
-export const OFFER_STORAGE_KEYS = [OFFER_CONSENT_KEY, OFFER_LEAVE_KEY, OFFER_KEPT_KEY] as const;
+export const OFFER_STORAGE_KEYS = [OFFER_CONSENT_KEY, OFFER_LEAVE_KEY, OFFER_KEPT_KEY, OFFER_SENT_KEY] as const;
+
+/** The last dates sent for an offer: which offer, the dates (sorted, joined by commas), the day sent. */
+export interface OfferSent {
+  offerId: string;
+  days: string;
+  on: string;
+}
+
+/** A kept "last sent" record, checked; null when it is not one. PURE. */
+export function sentFromRaw(raw: unknown): OfferSent | null {
+  if (!isObj(raw)) return null;
+  const offerId = str(raw.offerId);
+  const on = str(raw.on);
+  if (!offerId || !on || typeof raw.days !== 'string') return null;
+  return { offerId, days: raw.days, on };
+}
+
+/**
+ * Send these dates now? A day with a workout but no check-in never matches at the gym, so the same
+ * set would otherwise go on every gym check (review fix, 23 Oct 2026). Only when the set changed
+ * since the last send for this offer, or once a day (a check-in the desk types in late still
+ * counts). PURE.
+ */
+export function shouldSendDates(last: OfferSent | null, offerId: string, days: readonly string[], today: string): boolean {
+  if (!last || last.offerId !== offerId) return true;
+  return last.days !== days.join(',') || last.on !== today;
+}
 
 /** A kept consent record, checked; null when it is not one. PURE. */
 export function consentFromRaw(raw: unknown): OfferConsent | null {

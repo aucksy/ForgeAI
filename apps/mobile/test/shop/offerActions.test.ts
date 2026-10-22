@@ -145,3 +145,45 @@ describe('a gym server without the offer (0025 not applied)', () => {
     expect(await syncOfferDates(LINK)).toEqual({ kind: 'failed', offline: true });
   });
 });
+
+describe('review fixes (23 Oct 2026)', () => {
+  it('the same unmatched dates are not sent again on every gym check; a new date is', async () => {
+    // A workout on a day the register has no check-in: the gym never matches it.
+    sqlRows.push(workout('2026-11-03'));
+    mem.set(OFFER_CONSENT_KEY, JSON.stringify({ memberId: 'm-1', offerId: 'o-1', noticeVersion: OFFER_NOTICE_VERSION, at: 1 }));
+    api.apiOffers.mockResolvedValue({ ok: true, data: ans() });
+    api.apiOfferDays.mockResolvedValue({ ok: true, data: ans() });
+    await syncOfferDates(LINK);
+    await syncOfferDates(LINK);
+    await syncOfferDates(LINK);
+    expect(api.apiOfferDays).toHaveBeenCalledTimes(1);
+    // Another counted workout: the set changed, so it goes.
+    sqlRows.push(workout('2026-11-04'));
+    await syncOfferDates(LINK);
+    expect(api.apiOfferDays).toHaveBeenCalledTimes(2);
+    expect(api.apiOfferDays.mock.calls[1]![2]).toEqual(['2026-11-03', '2026-11-04']);
+  });
+
+  it('a send that never reached the gym (no signal) is tried again', async () => {
+    sqlRows.push(workout('2026-11-03'));
+    mem.set(OFFER_CONSENT_KEY, JSON.stringify({ memberId: 'm-1', offerId: 'o-1', noticeVersion: OFFER_NOTICE_VERSION, at: 1 }));
+    api.apiOffers.mockResolvedValue({ ok: true, data: ans() });
+    api.apiOfferDays.mockResolvedValueOnce({ ok: false, error: { kind: 'offline' } }).mockResolvedValue({ ok: true, data: ans() });
+    await syncOfferDates(LINK);
+    await syncOfferDates(LINK);
+    expect(api.apiOfferDays).toHaveBeenCalledTimes(2);
+  });
+
+  it('leaving the gym while a sync is running: its answer is not written back', async () => {
+    let answerNow: (v: unknown) => void = () => undefined;
+    api.apiOffers.mockReturnValue(new Promise((res) => (answerNow = res)));
+    const running = syncOfferDates(LINK);
+    await forgetOfferData();
+    answerNow({ ok: true, data: ans() });
+    expect((await running).kind).toBe('stale');
+    expect(await readKeptOffer('m-1')).toBeNull();
+    // A sync after the leave is a fresh one, not the stale one.
+    api.apiOffers.mockResolvedValue({ ok: true, data: ans() });
+    expect((await syncOfferDates(LINK)).kind).toBe('answer');
+  });
+});

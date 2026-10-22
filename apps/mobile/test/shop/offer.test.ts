@@ -17,6 +17,8 @@ import {
   offersToRow,
   type OfferConsent,
   type OffersAnswer,
+  sentFromRaw,
+  shouldSendDates,
 } from '@/shop/offer';
 import { OFFER_NOTICE_VERSION, OFFER_WORDS, consentWords, joinErrorWords } from '@/shop/offerWords';
 import { workoutCounts, type CountRow } from '@/shop/workoutCode';
@@ -242,5 +244,23 @@ describe('the words', () => {
       expect(w).not.toMatch(/\bsessions?\b/i);
       expect(w).not.toMatch(/hurry|last chance|don't miss|you'll lose/i);
     }
+  });
+});
+
+describe('the same dates are not sent over and over (review fix)', () => {
+  const last = { offerId: 'o-1', days: '2026-11-03,2026-11-04', on: '2026-11-10' };
+  it('sends when nothing was sent yet, for another offer, a changed set, or on a new day', () => {
+    expect(shouldSendDates(null, 'o-1', ['2026-11-03'], '2026-11-10')).toBe(true);
+    expect(shouldSendDates(last, 'o-2', ['2026-11-03', '2026-11-04'], '2026-11-10')).toBe(true);
+    expect(shouldSendDates(last, 'o-1', ['2026-11-03', '2026-11-04', '2026-11-05'], '2026-11-10')).toBe(true);
+    expect(shouldSendDates(last, 'o-1', ['2026-11-03', '2026-11-04'], '2026-11-11')).toBe(true);
+  });
+  it('does not send the same set twice in one day', () => {
+    expect(shouldSendDates(last, 'o-1', ['2026-11-03', '2026-11-04'], '2026-11-10')).toBe(false);
+  });
+  it('reads a kept record, and nothing else', () => {
+    expect(sentFromRaw(last)).toEqual(last);
+    expect(sentFromRaw({ offerId: 'o-1', on: '2026-11-10' })).toBeNull();
+    expect(sentFromRaw('junk')).toBeNull();
   });
 });
