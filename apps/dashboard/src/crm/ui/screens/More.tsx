@@ -1,7 +1,8 @@
 /**
  * More (phone only, Gym Panel step 3): the pages that are not on the five-item bottom bar, as big
- * rows with their own badges — Plans, Shop, Settings, and the two Settings pages owners look for
- * most (Staff & sign-in, Invite members). On a computer the sidebar shows them all instead.
+ * rows with their own badges — Plans, Shop, Messages & offers (the owner's), Settings, and the two
+ * Settings pages owners look for most (Staff & sign-in, Invite members). On a computer the sidebar
+ * shows them all instead.
  */
 
 import { useRole } from '../../auth/AuthProvider';
@@ -40,6 +41,7 @@ export function MoreScreen() {
     { path: '/expenses', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
     { path: '/workouts', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
     { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
+    { path: '/messages', label: 'Messages & offers', hint: 'Notices, offers and wishes to members', icon: 'messages' },
     {
       path: '/settings/people',
       label: 'Staff & sign-in',

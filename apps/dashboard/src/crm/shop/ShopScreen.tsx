@@ -56,14 +56,14 @@ import { ProductPicture } from './ProductArt';
 import { PhotoError, uploadProductPhoto } from './photoUpload';
 import { useRole } from '../auth/AuthProvider';
 import { shopTabFor, shopTabs } from '../auth/permissions';
-import { MessagesSection } from './MessagesSection';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
 
 export function ShopScreen({ section }: { section?: string }) {
   const { cloud, newCount } = useShop();
-  // Staff (front desk) hands over orders; products, prices and messages to members are the
-  // owner's (permissions.ts), so Staff gets the Orders list with no tabs above it.
+  // Staff (front desk) hands over orders; products and prices are the owner's (permissions.ts), so
+  // Staff gets the Orders list with no tabs above it. Messages to members moved to their own page,
+  // Messages & offers (22 Oct 2026).
   const role = useRole();
   const tab = shopTabFor(role, section);
   const tabs = shopTabs(role);
@@ -74,7 +74,7 @@ export function ShopScreen({ section }: { section?: string }) {
         title="Shop"
         subtitle={
           tabs.length > 1
-            ? 'What members order in the ForgeAI app, what you sell, and your messages to them'
+            ? 'What members order in the ForgeAI app, and what you sell'
             : 'What members order in the ForgeAI app'
         }
       />
@@ -96,12 +96,11 @@ export function ShopScreen({ section }: { section?: string }) {
                     label: newCount > 0 ? `Orders · ${newCount} new` : 'Orders',
                   },
                   { value: 'products', label: 'Products' },
-                  { value: 'messages', label: 'Messages' },
                 ]}
               />
             </div>
           )}
-          {tab === 'orders' ? <OrdersSection /> : tab === 'products' ? <ProductsSection /> : <MessagesSection />}
+          {tab === 'orders' ? <OrdersSection /> : <ProductsSection />}
         </>
       )}
     </>

@@ -668,11 +668,17 @@ export function ChipToggle({
   onChange,
   label,
   variant = 'filter',
+  wrap = false,
 }: {
   options: { value: string; label: string; count?: number }[];
   value: string;
   onChange: (v: string) => void;
   label: string;
+  /**
+   * A few choices that must all be seen at once (Messages & offers' kinds of message): wrap onto a
+   * second line on a phone instead of scrolling sideways, where the last chips hide off-screen.
+   */
+  wrap?: boolean;
   /**
    * `tabs` switches between sections of a screen and is drawn as one segmented
    * control; `filter` narrows a list and is drawn as separate chips. They used to be
@@ -741,8 +747,8 @@ export function ChipToggle({
         gap: space.sm,
         // One row that scrolls sideways on a phone: wrapping left three ragged rows
         // with a single chip stranded on the last one.
-        flexWrap: compact ? 'nowrap' : 'wrap',
-        overflowX: compact ? 'auto' : undefined,
+        flexWrap: compact && !wrap ? 'nowrap' : 'wrap',
+        overflowX: compact && !wrap ? 'auto' : undefined,
         scrollbarWidth: 'none',
         minWidth: 0,
       }}

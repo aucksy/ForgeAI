@@ -18,8 +18,9 @@ import { useMemo, useRef } from 'react';
 import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
 import { OwnerOnly } from './auth/OwnerOnly';
-import { canOpen, navFor, roleOf } from './auth/permissions';
+import { canOpen, navFor, oldMessagesLinkTo, roleOf } from './auth/permissions';
 import { PeopleScreen } from './auth/PeopleScreen';
+import type { Role } from './auth/signin';
 import { CloudCrmData } from './data/cloud';
 import { browserSavedCopy } from './data/savedCopy';
 
@@ -43,8 +44,9 @@ import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { FeedbackScreen } from './ui/screens/Feedback';
+import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
-import { useRoute } from './ui/router';
+import { Redirect, useRoute } from './ui/router';
 
 export function CrmApp() {
   return (
@@ -117,6 +119,8 @@ function Routes({ online }: { online: boolean }) {
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
       { path: '/shop', label: 'Shop', icon: 'shop', badge: newCount },
+      // 22 Oct 2026: notices, offers and wishes to members, moved out of Shop (owner only).
+      { path: '/messages', label: 'Messages & offers', icon: 'messages' },
       // "Visits" rather than "Attendance": six items across a 375px phone leave
       // about 54px of text, and the longer word does not fit. The screen itself is
       // still titled Attendance, which is the word an owner comparing products
@@ -150,12 +154,12 @@ function Routes({ online }: { online: boolean }) {
 
   return (
     <AppShell gymName={snapshot.gym.name} nav={nav} phoneNav={phoneNav}>
-      {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} /> : <OwnerOnly />}
+      {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} role={role} /> : <OwnerOnly />}
     </AppShell>
   );
 }
 
-function Screen({ segments }: { segments: string[] }) {
+function Screen({ segments, role }: { segments: string[]; role: Role }) {
   const [head, id] = segments;
 
   switch (head) {
@@ -172,7 +176,11 @@ function Screen({ segments }: { segments: string[] }) {
       if (id === 'f') return <MembersScreen key={segments[2]} filter={isTileFilter(segments[2]) ? segments[2] : undefined} />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;
     case 'shop':
+      // Messages moved to their own page (22 Oct 2026): an old link still lands in the right place.
+      if (id === 'messages') return <Redirect to={oldMessagesLinkTo(role)} />;
       return <ShopScreen section={id} />;
+    case 'messages':
+      return <MessagesScreen startWith={id} />;
     case 'attendance':
       return <AttendanceScreen section={id} />;
     case 'money':

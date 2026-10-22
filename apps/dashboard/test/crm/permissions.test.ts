@@ -7,6 +7,7 @@ import {
   moneyTabFor,
   moneyTabs,
   navFor,
+  oldMessagesLinkTo,
   roleOf,
   shopTabFor,
   shopTabs,
@@ -117,11 +118,25 @@ describe('Shop tabs', () => {
     expect(shopTabFor('staff', 'messages')).toBe('orders');
   });
 
-  it('keeps all three for an owner', () => {
-    expect(shopTabs('owner')).toEqual(['orders', 'products', 'messages']);
+  it('keeps both for an owner; messages moved to their own page (22 Oct 2026)', () => {
+    expect(shopTabs('owner')).toEqual(['orders', 'products']);
     expect(shopTabFor('owner', 'products')).toBe('products');
-    expect(shopTabFor('owner', 'messages')).toBe('messages');
+    expect(shopTabFor('owner', 'messages')).toBe('orders');
     expect(shopTabFor('owner', 'nonsense')).toBe('orders');
+  });
+});
+
+describe('Messages & offers (22 Oct 2026)', () => {
+  it('is the owner’s page: staff cannot open it', () => {
+    expect(canOpen('owner', '/messages')).toBe(true);
+    expect(canOpen('owner', '/messages/birthday')).toBe(true);
+    expect(canOpen('staff', '/messages')).toBe(false);
+    expect(navFor('staff', [{ path: '/messages' }, { path: '/shop' }])).toEqual([{ path: '/shop' }]);
+  });
+
+  it('an old Shop -> Messages link lands on the new page, or on Shop for staff', () => {
+    expect(oldMessagesLinkTo('owner')).toBe('/messages');
+    expect(oldMessagesLinkTo('staff')).toBe('/shop');
   });
 });
 

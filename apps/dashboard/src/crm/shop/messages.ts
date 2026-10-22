@@ -3,8 +3,14 @@
  * list. The pure half — types, ready-made words per type, checks, and the server's answers read
  * into shapes. The server side is supabase/migrations/0008_gym_messages.sql; the member's side is
  * the app's inbox (apps/mobile src/shop/inbox*).
+ *
+ * Messages & offers step 1 (22 Oct 2026): the ready messages with boxes for the blanks, in English
+ * and Hindi, are logic/messageTemplates.ts; the types below stay the "Write my own" starting words.
+ * The server's limits are checked here before a send too (`capProblem`).
  */
 
+import { addDays, dateISOFromEpoch } from '../logic/dates';
+import { letterCount } from '../logic/messageWords';
 import { errorWords } from './logic';
 
 export type MessageKind = 'announcement' | 'closed' | 'timing' | 'offer' | 'event' | 'reminder';
@@ -104,9 +110,41 @@ export function draftProblem(d: MessageDraft): string | null {
   const title = d.title.trim();
   const body = d.body.trim();
   if (!title) return 'Write a title.';
-  if (title.length > TITLE_MAX) return `Keep the title to ${TITLE_MAX} letters.`;
-  if (body.length > BODY_MAX) return `Keep the message to ${BODY_MAX} letters.`;
+  // Letters as the server counts them (characters, not the browser's UTF-16 units).
+  if (letterCount(title) > TITLE_MAX) return `Keep the title to ${TITLE_MAX} letters.`;
+  if (letterCount(body) > BODY_MAX) return `Keep the message to ${BODY_MAX} letters.`;
   if (/[[\]]/.test(title) || /[[\]]/.test(body)) return 'Fill in the words in [brackets] first.';
+  return null;
+}
+
+/** The most messages a gym can send in one day (the server's TOO_MANY, 0008). */
+export const DAY_MAX = 20;
+/** Offers and events: at most this many a day and in any 7 days (OFFER_TODAY / OFFER_WEEK). */
+export const OFFERS_A_DAY = 1;
+export const OFFERS_A_WEEK = 3;
+
+/**
+ * The server's limits checked BEFORE sending, from the Sent list (Messages & offers step 1, 22 Oct
+ * 2026), so the owner learns it at once and can still use WhatsApp. Days are India days, like the
+ * server's. A message taken back does not count here; the server still counts one taken back more
+ * than 10 minutes after it went (0009), and its answer is shown then. Null when nothing stops it. PURE.
+ */
+export function capProblem(kind: MessageKind, sent: readonly SentMessage[] | null, now: number): string | null {
+  if (!sent) return null;
+  const today = dateISOFromEpoch(now);
+  const weekStart = addDays(today, -6);
+  const dayOf = (m: SentMessage) => dateISOFromEpoch(m.createdAt);
+  if (sent.filter((m) => dayOf(m) === today).length >= DAY_MAX) {
+    return `You sent ${DAY_MAX} messages today. That is the most for one day. Send it in the app tomorrow, or on WhatsApp now.`;
+  }
+  if (!isCapped(kind)) return null;
+  const offers = sent.filter((m) => isCapped(m.kind) && !m.withdrawn);
+  if (offers.filter((m) => dayOf(m) === today).length >= OFFERS_A_DAY) {
+    return 'You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.';
+  }
+  if (offers.filter((m) => dayOf(m) >= weekStart && dayOf(m) <= today).length >= OFFERS_A_WEEK) {
+    return `You sent ${OFFERS_A_WEEK} offers or events this week. Members get at most ${OFFERS_A_WEEK} a week in the app. Wait a few days, or use WhatsApp now.`;
+  }
   return null;
 }
 

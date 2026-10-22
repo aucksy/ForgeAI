@@ -12,7 +12,10 @@ import { dueCount } from '../../logic/enquiries';
 import { GetStartedCard } from '../GetStartedCard';
 import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
-import { useCan } from '../../auth/AuthProvider';
+import { useCan, useRole } from '../../auth/AuthProvider';
+import { canOpen } from '../../auth/permissions';
+import { endingSoon } from '../../logic/audience';
+import { isBirthdayToday } from '../../logic/homeTiles';
 import { useMemo } from 'react';
 
 import { JoinCodeCard } from '../../shop/JoinCode';
@@ -122,6 +125,9 @@ export function TodayScreen() {
 
       {/* Phones only, until installed or closed: "Phone par app lagao". */}
       <InstallCard variant="banner" />
+
+      {/* Messages & offers (22 Oct 2026): who to message today, each opening its ready message. */}
+      <MessageNudges />
 
       {/* The join code first: it is how members get into the app, and the shop
           card beside it is the part of the demo that moves on its own. */}
@@ -326,6 +332,51 @@ export function TodayScreen() {
         </Card>
       </Grid>
     </>
+  );
+}
+
+/**
+ * Messages & offers step 1 (22 Oct 2026, R-offers-notices §6): "3 birthdays today", "5 plans end this
+ * week", each opening the ready message with its group picked. The owner's (messages are owner-only);
+ * gone when there is nobody to message.
+ */
+function MessageNudges() {
+  const { memberViews, today } = useCrm();
+  const role = useRole();
+  const counts = useMemo(
+    () => ({
+      birthdays: memberViews.filter((v) => isBirthdayToday(v.member.dateOfBirth, today)).length,
+      ending: memberViews.filter((v) => endingSoon(v)).length,
+    }),
+    [memberViews, today],
+  );
+  if (!canOpen(role, '/messages') || (counts.birthdays === 0 && counts.ending === 0)) return null;
+  const rows = [
+    counts.birthdays > 0 && {
+      text: counts.birthdays === 1 ? '1 birthday today' : `${counts.birthdays} birthdays today`,
+      action: 'Send wishes',
+      to: '/messages/birthday',
+    },
+    counts.ending > 0 && {
+      text: counts.ending === 1 ? '1 plan ends this week' : `${counts.ending} plans end this week`,
+      action: 'Remind them',
+      to: '/messages/ending',
+    },
+  ].filter((r): r is { text: string; action: string; to: string } => Boolean(r));
+  return (
+    <Card pad={space.lg} style={{ marginBottom: space.md }}>
+      <SectionTitle>Messages to send</SectionTitle>
+      <div style={{ display: 'grid', gap: space.sm, marginTop: -space.sm }}>
+        {rows.map((r) => (
+          <Row key={r.to} gap={space.md} wrap={false}>
+            <span style={{ flex: 1, minWidth: 0, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{r.text}</span>
+            <Button variant="ghost" onClick={() => navigate(r.to)} ariaLabel={`${r.action}: ${r.text}`}>
+              {r.action}
+            </Button>
+          </Row>
+        ))}
+      </div>
+    </Card>
   );
 }
 

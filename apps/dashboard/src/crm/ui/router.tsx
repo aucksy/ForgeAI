@@ -56,6 +56,12 @@ export function useRoute(): Route {
   return route;
 }
 
+/** Send an old address to its new place, without trapping the back button (`replace`). */
+export function Redirect({ to }: { to: string }): null {
+  useEffect(() => replace(to), [to]);
+  return null;
+}
+
 /** `useRoute` plus the helpers a screen usually wants. */
 export function useNavigation() {
   const route = useRoute();

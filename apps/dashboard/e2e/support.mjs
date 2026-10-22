@@ -79,6 +79,10 @@ export class FakeServer {
     /** Every call with its arguments, for checks after a journey. */
     this.log = [];
     this.pushes = [];
+    /** Messages sent to app members (owner_send_message), newest first. */
+    this.messages = [];
+    /** Members who joined the gym in the ForgeAI app (owner_app_members rows). None by default. */
+    this.appMembers = [];
   }
 
   /** The internet goes off for `fn` after `n` more calls get through (n = 0: at once). */
@@ -308,6 +312,29 @@ export class FakeServer {
         this.pushes.push(args.p_records);
         return this.version;
       }
+      case 'owner_send_message': {
+        // 0008 / 0018: to every app member of the gym; the same limits as the real server.
+        const title = String(args.p_title ?? '').trim();
+        const body = String(args.p_body ?? '').trim();
+        if (!title) throw new Refusal('EMPTY');
+        if ([...title].length > 60 || [...body].length > 300) throw new Refusal('TOO_LONG');
+        const m = {
+          id: `msg-${this.messages.length + 1}`,
+          kind: args.p_kind,
+          title,
+          body,
+          createdAt: NOW.toISOString(),
+          recipients: this.appMembers.length,
+          seen: 0,
+          withdrawn: false,
+        };
+        this.messages.unshift(m);
+        return m;
+      }
+      case 'owner_messages':
+        return this.messages;
+      case 'owner_app_members':
+        return this.appMembers;
       default:
         // Orders, messages, app members: an empty list, as for a new gym.
         return [];

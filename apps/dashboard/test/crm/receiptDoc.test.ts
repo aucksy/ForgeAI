@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildReceiptDoc } from '../../src/crm/logic/receiptDoc';
+import { buildReceiptDoc, extensionWords, termAsSold } from '../../src/crm/logic/receiptDoc';
 import { GYM_SAC_CODE, placeOfSupply } from '../../src/crm/logic/gst';
 import { makeGym, makeMember, makeMembership, makePayment, VALID_GSTIN } from './fixtures';
 
@@ -243,6 +243,73 @@ describe('the tax status is snapshotted, not read live', () => {
         memberPayments: [legacy],
       }).gstin,
     ).toBe(VALID_GSTIN);
+  });
+});
+
+describe('a reprint says the dates as sold, then any free days (22 Oct 2026)', () => {
+  // The notes exactly as "Freeze / extra days" writes them (data/local.ts extendMembership; the
+  // format is pinned by local.test.ts).
+  const gifted = makeMembership({
+    ...term,
+    endsOn: '2026-10-28',
+    notes: '+3 days (Gift - extra days): 2026-10-25 -> 2026-10-28',
+  });
+
+  it('a gift after the sale: the paid dates, and the free days on their own line', () => {
+    const doc = buildReceiptDoc({ ...base, membership: gifted });
+    expect(doc.particularLines[0]).toBe('26 Jul 2026 to 25 Oct 2026');
+    expect(doc.particularLines[1]).toBe('Extended free by 3 days (gift) to 28 Oct 2026');
+  });
+
+  it('never changes what the receipt says about money', () => {
+    const before = buildReceiptDoc(base);
+    const after = buildReceiptDoc({ ...base, membership: gifted });
+    for (const k of ['amountP', 'amountWords', 'balanceP', 'termTotalP', 'gst', 'receiptNo', 'paidOn', 'method'] as const) {
+      expect(after[k], k).toEqual(before[k]);
+    }
+    expect(after.particularLines).toContain('Includes a one-time joining fee of ₹500');
+  });
+
+  it('several extensions, a freeze then a reward, each on its line, oldest first', () => {
+    const twice = makeMembership({
+      ...term,
+      endsOn: '2026-11-11',
+      notes: [
+        'Paid half now.',
+        '+7 days (Freeze - medical): 2026-10-25 -> 2026-11-01',
+        '+10 days (Reward - Workout offer Nov): 2026-11-01 -> 2026-11-11',
+      ].join('\n'),
+    });
+    expect(buildReceiptDoc({ ...base, membership: twice }).particularLines.slice(0, 3)).toEqual([
+      '26 Jul 2026 to 25 Oct 2026',
+      'Extended free by 7 days (freeze) to 1 Nov 2026',
+      'Extended free by 10 days (reward) to 11 Nov 2026',
+    ]);
+    expect(termAsSold(twice).endsOn).toBe('2026-10-25');
+  });
+
+  it('1 day, and a reason left blank, read naturally', () => {
+    expect(extensionWords({ days: 1, reason: 'extra days', from: '2026-10-25', to: '2026-10-26' })).toBe('Extended free by 1 day to 26 Oct 2026');
+    expect(extensionWords({ days: 2, reason: 'Freeze', from: '2026-10-25', to: '2026-10-27' })).toBe('Extended free by 2 days (freeze) to 27 Oct 2026');
+  });
+
+  it('a chain that does not add up prints today\'s dates as before, never a guess', () => {
+    // The end was moved some other way after the note: the note no longer leads to today's end.
+    const moved = makeMembership({ ...term, endsOn: '2026-11-30', notes: '+3 days (Gift - extra days): 2026-10-25 -> 2026-10-28' });
+    expect(buildReceiptDoc({ ...base, membership: moved }).particularLines[0]).toBe('26 Jul 2026 to 30 Nov 2026');
+    expect(termAsSold(moved).extensions).toEqual([]);
+    // A gap between two lines.
+    const gap = makeMembership({
+      ...term,
+      endsOn: '2026-11-05',
+      notes: '+3 days (Gift - extra days): 2026-10-25 -> 2026-10-28\n+5 days (Freeze): 2026-10-31 -> 2026-11-05',
+    });
+    expect(termAsSold(gap)).toEqual({ startsOn: '2026-07-26', endsOn: '2026-11-05', extensions: [] });
+    // Days that do not match the dates.
+    const wrong = makeMembership({ ...term, endsOn: '2026-10-28', notes: '+9 days (Gift - extra days): 2026-10-25 -> 2026-10-28' });
+    expect(termAsSold(wrong).endsOn).toBe('2026-10-28');
+    // No extension at all: unchanged.
+    expect(termAsSold(term)).toEqual({ startsOn: '2026-07-26', endsOn: '2026-10-25', extensions: [] });
   });
 });
 

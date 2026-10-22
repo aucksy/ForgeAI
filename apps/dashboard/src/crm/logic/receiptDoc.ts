@@ -19,9 +19,9 @@
 
 import type { Member, Membership, Payment } from '../types';
 import type { GymRecord } from '../data/adapter';
-import { formatDay, type DateISO } from './dates';
+import { addDays, formatDay, isValidDateISO, type DateISO } from './dates';
 import { gstAppliesTo, gstRateForDate, placeOfSupply, splitInclusiveGst, GYM_SAC_CODE, type GstSplit } from './gst';
-import { unpaidForMembership } from './membership';
+import { extensionLine, unpaidForMembership, type ExtensionLine } from './membership';
 import { formatINR, type Paise } from './money';
 import { methodLabel } from './payments';
 import { financialYear } from './receipts';
@@ -107,7 +107,11 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
 
   const particularLines: string[] = [];
   if (membership) {
-    particularLines.push(`${formatDay(membership.startsOn)} to ${formatDay(membership.endsOn)}`);
+    // The dates AS SOLD, then each free extension on a line of its own. Printing today's end date
+    // made an old receipt claim days given free later (a gift, a reward) as paid for.
+    const sold = termAsSold(membership);
+    particularLines.push(`${formatDay(sold.startsOn)} to ${formatDay(sold.endsOn)}`);
+    for (const ext of sold.extensions) particularLines.push(extensionWords(ext));
     if (membership.joiningFeeP > 0) {
       particularLines.push(`Includes a one-time joining fee of ${formatINR(membership.joiningFeeP)}`);
     }
@@ -156,6 +160,45 @@ export function buildReceiptDoc(input: ReceiptDocInput): ReceiptDoc {
     balanceAsOn: today,
     termTotalP: membership ? membership.priceP + membership.joiningFeeP : null,
   };
+}
+
+export interface TermAsSold {
+  startsOn: DateISO;
+  /** The last day as sold, before any free days. */
+  endsOn: DateISO;
+  /** Free days added since, oldest first (Freeze / extra days, a gift, a reward). */
+  extensions: ExtensionLine[];
+}
+
+/**
+ * A term's dates as they were sold (Messages & offers step 1, 22 Oct 2026; R-offers-notices §1).
+ * "Freeze / extra days" moves `endsOn` and writes "+3 days (Gift - extra days): 2026-11-30 ->
+ * 2026-12-03" into the notes (data/local.ts `extendMembership`); the first such line's "from" is the
+ * end as sold. Only a chain that adds up — each line starting where the one before ended, and the
+ * last ending on today's `endsOn` — is believed; anything else (a hand-typed note, a change made
+ * some other way) prints today's dates with no extension lines, exactly as before. PURE.
+ */
+export function termAsSold(m: Pick<Membership, 'startsOn' | 'endsOn' | 'notes'>): TermAsSold {
+  const asIs: TermAsSold = { startsOn: m.startsOn, endsOn: m.endsOn, extensions: [] };
+  const exts = (m.notes ?? '')
+    .split('\n')
+    .map(extensionLine)
+    .filter((e): e is ExtensionLine => e !== null);
+  if (exts.length === 0) return asIs;
+  for (let i = 0; i < exts.length; i += 1) {
+    const e = exts[i]!;
+    if (!isValidDateISO(e.from) || !isValidDateISO(e.to) || e.days < 1 || addDays(e.from, e.days) !== e.to) return asIs;
+    if (i > 0 && e.from !== exts[i - 1]!.to) return asIs;
+  }
+  if (exts[exts.length - 1]!.to !== m.endsOn || exts[0]!.from < m.startsOn) return asIs;
+  return { startsOn: m.startsOn, endsOn: exts[0]!.from, extensions: exts };
+}
+
+/** "Extended free by 3 days (gift) to 3 Dec 2026". The reason is its first word: gift, freeze, reward. */
+export function extensionWords(e: ExtensionLine): string {
+  const head = e.reason.split(' - ')[0]!.trim().toLowerCase();
+  const why = head && head !== 'extra days' ? ` (${head})` : '';
+  return `Extended free by ${e.days === 1 ? '1 day' : `${e.days} days`}${why} to ${formatDay(e.to)}`;
 }
 
 /**

@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // Four squares: "everything else" (the phone's More tab).
@@ -66,6 +66,13 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <rect x="4.5" y="7" width="3" height="10" rx="1" />
       <rect x="16.5" y="7" width="3" height="10" rx="1" />
       <path d="M2.5 10v4M21.5 10v4" />
+    </>
+  ),
+  // A speech bubble with two lines: Messages & offers.
+  messages: (
+    <>
+      <path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5V16.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" />
+      <path d="M8 9.5h8M8 12.5h5" />
     </>
   ),
   settings: (

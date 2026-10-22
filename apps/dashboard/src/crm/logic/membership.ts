@@ -258,17 +258,30 @@ export function buildMemberView(
 
 // ---------------------------------------------------------------- presentation
 
+/** One "Freeze / extra days" entry in a plan's notes (data/local.ts `extendMembership`). */
+export interface ExtensionLine {
+  days: number;
+  /** As stored: "Gift - extra days", "Freeze - medical", "Reward - Workout offer Nov". */
+  reason: string;
+  from: DateISO;
+  to: DateISO;
+}
+
+/** "+3 days (Gift - extra days): 2026-11-30 -> 2026-12-03" read back, or null for any other line. PURE. */
+export function extensionLine(line: string): ExtensionLine | null {
+  const ext = /^\+(\d+) days \((.*)\): (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
+  if (!ext) return null;
+  return { days: Number(ext[1]), reason: ext[2]!, from: ext[3]!, to: ext[4]! };
+}
+
 /**
  * One line of a plan's history, as the page shows it (admin audit C7-31 / C7-32, 16 Oct 2026).
  * The lines are stored with raw dates ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11");
  * here they get the page's dates. A line typed by a person is shown as written. PURE.
  */
 export function historyLine(line: string): string {
-  const ext = /^\+(\d+) days \((.*)\): (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
-  if (ext) {
-    const [, n, reason, from, to] = ext;
-    return `+${n} days (${reason}): ${formatDay(from!)} → ${formatDay(to!)}`;
-  }
+  const ext = extensionLine(line);
+  if (ext) return `+${ext.days} days (${ext.reason}): ${formatDay(ext.from)} → ${formatDay(ext.to)}`;
   const cancelled = /^Cancelled: (.*)$/.exec(line.trim());
   if (cancelled) return `Cancelled: ${cancelled[1]}`;
   if (line.trim() === 'Cancellation reversed.') return 'Cancel undone.';

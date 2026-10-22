@@ -105,6 +105,9 @@ export function canOpen(role: Role, path: string): boolean {
   const [head, sub] = path.replace(/^#?\/?/, '').split('/');
   if (head === 'expenses') return can(role, 'seeExpenses');
   if (head === 'workouts') return can(role, 'editWorkoutPlans');
+  // Messages & offers (22 Oct 2026): the owner's, like messages always were (the server sends only
+  // for the owner, 0018). Staff opening an old Shop -> Messages link is sent to Shop instead.
+  if (head === 'messages') return can(role, 'manageGym');
   if (head === 'settings' && sub === 'branding') return can(role, 'manageGym');
   return true;
 }
@@ -128,18 +131,26 @@ export function moneyTabFor(role: Role, section: string | undefined): MoneyTab {
   return tabs.includes(wanted) ? wanted : tabs[0]!;
 }
 
-export type ShopTab = 'orders' | 'products' | 'messages';
+export type ShopTab = 'orders' | 'products';
 
-/** Shop's tabs: Staff hands over orders; products, prices and messages are the owner's. */
+/**
+ * Shop's tabs: Staff hands over orders; products and prices are the owner's. Messages moved out to
+ * their own page, Messages & offers (22 Oct 2026); `/shop/messages` now opens it (CrmApp.tsx).
+ */
 export function shopTabs(role: Role): ShopTab[] {
-  return can(role, 'manageGym') ? ['orders', 'products', 'messages'] : ['orders'];
+  return can(role, 'manageGym') ? ['orders', 'products'] : ['orders'];
 }
 
 /** Which Shop tab a route opens for this role. */
 export function shopTabFor(role: Role, section: string | undefined): ShopTab {
   const tabs = shopTabs(role);
-  const wanted: ShopTab = section === 'products' || section === 'messages' ? section : 'orders';
+  const wanted: ShopTab = section === 'products' ? section : 'orders';
   return tabs.includes(wanted) ? wanted : 'orders';
+}
+
+/** Where an old Shop -> Messages link goes: Messages & offers, or Shop for someone who cannot send. */
+export function oldMessagesLinkTo(role: Role): '/messages' | '/shop' {
+  return canOpen(role, '/messages') ? '/messages' : '/shop';
 }
 
 /** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
