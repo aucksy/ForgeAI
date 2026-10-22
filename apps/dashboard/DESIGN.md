@@ -212,6 +212,7 @@ A black tub, one loud flavour colour that the visitor owns, a sticker yellow, an
 
 ### Hierarchy
 - **Display:** the brand line ("Keeps members coming back."). Uppercase, width 62. On wide screens it caps at clamp(4rem, 6.4vw, 5.9rem). Hindi drops to clamp(3rem, 13vw, 5.6rem), not uppercased, line height 1.02.
+- **Statement of identity:** what the product is, directly UNDER the display line ("Gym software + member progress app"; owner R-54, 22 Oct 2026). Condensed caps at clamp(1.3rem, 5.6vw, 2rem), between a 3px ink rule and a hairline, like a tub's product-type line; the "+" takes the flavour colour. Never above the display line (no kicker), and the same words lead the page title and the link preview.
 - **Headline:** every section heading. Uppercase condensed, width 62.
 - **Panel title:** the facts-panel heading, at width 75.
 - **Title:** step headings in "Directions for use".

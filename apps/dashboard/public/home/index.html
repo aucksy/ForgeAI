@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ForgeAI — keeps your members coming back</title>
-<meta name="description" content="A free workout app for your members, in your gym's name and colours. Every member sees their own progress, orders from your shop and reads your messages. Plus the desk work: renewals, dues and GST receipts.">
-<meta property="og:title" content="ForgeAI — keeps your members coming back">
+<title>ForgeAI — gym software + member progress app</title>
+<meta name="description" content="Gym software and a member progress app in one. Your members get a free workout app in your gym's name and colours. Every member sees their own progress, orders from your shop and reads your messages. Plus the desk work: renewals, dues and GST receipts.">
+<meta property="og:title" content="ForgeAI — gym software + member progress app">
 <meta property="og:description" content="Your members see their own progress in an app with your gym's name on it. Your shop and your messages live there too.">
 <meta property="og:image" content="/home/tiles.webp">
 <meta name="theme-color" content="#0B0B0D">
@@ -66,19 +66,23 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .pill:hover{border-color:var(--ink3);color:var(--ink)}
 
 /* ---------- front panel of the label ---------- */
-.front{position:relative;padding:26px 0 0;isolation:isolate}
+.front{position:relative;padding:20px 0 0;isolation:isolate}
 .lockup{position:relative;z-index:2}
-.mega{font-size:clamp(3.6rem,16vw,6.6rem)}
+.mega{font-size:clamp(3.4rem,15vw,6.6rem)}
 .mega .hot{color:var(--flavour);transition:color .5s var(--ease)}
 :lang(hi) .mega{font-size:clamp(3rem,13vw,5.6rem)}
-.claim{margin-top:16px;font-size:clamp(1.08rem,2.6vw,1.32rem);color:var(--ink2);max-width:36ch}
+/* The statement of identity: what the product is, ruled like the facts panel, under the headline. */
+.ident{margin-top:14px;padding:8px 0 7px;border-top:3px solid var(--ink);border-bottom:1px solid var(--rule);font-size:clamp(1.3rem,5.6vw,2rem);line-height:1;color:var(--ink);max-width:max-content}
+.ident i{font-style:normal;color:var(--flavour);transition:color .5s var(--ease)}
+:lang(hi) .ident{line-height:1.15}
+.claim{margin-top:12px;font-size:clamp(1.08rem,2.6vw,1.32rem);color:var(--ink2);max-width:36ch}
 .claim strong{color:var(--ink)}
-.net{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 14px;font:800 12px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.net{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 14px;font:800 12px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
 :lang(hi) .net{letter-spacing:0;font-size:13px}
 .net span+span::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--flavour);margin:0 14px 2px 0;vertical-align:middle}
 
 /* the flavour band: full width, the gym's own colour, editable */
-.band{position:relative;z-index:1;margin-top:26px;background:var(--flavour);color:var(--on-flavour);transition:background .5s var(--ease),color .5s var(--ease);border-block:3px solid var(--label-ink)}
+.band{position:relative;z-index:1;margin-top:20px;background:var(--flavour);color:var(--on-flavour);transition:background .5s var(--ease),color .5s var(--ease);border-block:3px solid var(--label-ink)}
 .band-in{padding:16px 0 14px}
 .band label{display:block;font:800 12px/1 var(--text);letter-spacing:.16em;text-transform:uppercase}
 :lang(hi) .band label{letter-spacing:0;font-size:14px}
@@ -91,7 +95,7 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .band .hint{margin-top:10px;font:700 14px/1.4 var(--text)}
 
 /* the demo action */
-.act{margin-top:20px;display:grid;gap:10px;max-width:640px}
+.act{margin-top:16px;display:grid;gap:10px;max-width:640px}
 .act .row{display:flex;gap:8px;flex-wrap:wrap}
 .field{flex:1 1 180px;min-height:54px;padding:0 16px;border-radius:14px;border:1px solid #3A3A42;background:var(--tub2);color:var(--ink);font:600 18px var(--text);width:100%}
 .field::placeholder{color:#8E8E97}
@@ -327,7 +331,9 @@ section{position:relative}
   <svg class="leaders" aria-hidden="true"></svg>
   <div class="wrap lockup">
     <h1 id="h1" class="cond mega"><span data-hi="मेंबर">Keeps</span> <span class="hot" data-hi="वापस आते">members</span><br><span data-hi="रहेंगे।">coming back.</span></h1>
-    <p class="claim" data-hi="एक वर्कआउट ऐप जो <strong>हर मेंबर को उसकी अपनी तरक्की दिखाता है</strong>, आपके जिम के नाम और रंग में। साथ में आपकी दुकान और आपके संदेश।">A workout app that <strong>shows every member their own progress</strong>, in your gym's name and colours. With your shop and your messages inside.</p>
+    <!-- R-54 (owner, 22 Oct): what the product IS, in one line: the tub's statement of identity. -->
+    <p class="ident cond" data-hi="जिम सॉफ़्टवेयर <i>+</i> मेंबर प्रोग्रेस ऐप">Gym software <i>+</i> member progress app</p>
+    <p class="claim" data-hi="<strong>हर मेंबर अपनी तरक्की देखता है</strong>, आपके जिम के नाम और रंग में। आपकी दुकान और संदेश भी इसी में।">Every member sees <strong>their own progress</strong>, in your gym's name and colours. Your shop and messages, inside.</p>
     <p class="net"><span data-hi="मेंबरों के लिए मुफ्त">Free for your members</span><span>Android</span><span data-hi="402 एक्सरसाइज़">402 exercises</span></p>
   </div>
 
@@ -343,7 +349,7 @@ section{position:relative}
         <button class="sw" type="button" style="--c:#3D7BFF" data-c="#3D7BFF" data-on="#FFFFFF" aria-pressed="false" aria-label="Blue"></button>
         <button class="sw" type="button" style="--c:#B45CFF" data-c="#B45CFF" data-on="#FFFFFF" aria-pressed="false" aria-label="Purple"></button>
       </div>
-      <p class="hint" data-hi="देखिए, ऐप तुरंत आपके जिम का हो गया। मेंबरों के फोन में यही दिखेगा।">Watch the app turn into yours. This is what your members see.</p>
+      <p class="hint" data-hi="देखिए, ऐप आपके जिम का हो गया।">Watch the app turn into yours.</p>
     </div>
   </div>
 

@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-54. Landing page: say what the product IS in one punch line — 22 Oct 2026
+**Owner said:** "On the landing page there is no place which tells the reader what this product is all
+about in a phrase .. like a punch line ... for example, Modern GYM OS and Member Progress App - something
+like that... I imagine this could be part of banner at the top - but you can decide the best way".
+**What I do:** a category line at the very top of the hero (the tub label's "statement of identity", the
+line every supplement tub carries under its brand), English + Hindi, and the same words in the page title
+and link preview (what WhatsApp shows when he shares the link). Deploy after the checks.
+
 ## R-53. From the tracker page, 22 Oct 08:04-08:07: landing page yes; chat renamed; branches and pricing — 22 Oct 2026
 **Owner said (page):** #40 "A: Yes, now" (put the landing page live). Renamed this chat "ForgeAI Local Chat".
 Feature comment on "Separate app per gym": "We need to plan it. Even small GYMs have 2 branches sometimes -

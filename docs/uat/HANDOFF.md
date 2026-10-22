@@ -14,6 +14,7 @@ Whoever stops last updates this file and pushes it. The other side starts here.
   (0 on 22 Oct). Email alert waits for the contact email (#37).
 - One vitest run went red once (1 of 929, unnamed; colour output hid it) then 5 green runs: watch for a
   flaky admin unit test; next red run, save the reporter output.
+- Landing punch line live (R-54, Worker 4af80c65): "Gym software + member progress app" under the headline.
 - Next: notification-card workout time (native, with the owner awake), then Planned items.
 
 ## PC session, 21-22 Oct 2026 (night, owner asleep, R-51)

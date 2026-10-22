@@ -2492,6 +2492,12 @@
   form refuses a short number in the page; /api/lead 400 / 201 (bot) / 405 (GET). No test lead written.
   Tracker: "How it will work" column for every backlog row not built (R-52); "Several branches"
   Planned; decision #41 (branch pricing).
+- 2026-10-22: **Landing page says what it is** (owner R-54): "Gym software + member progress app" as the
+  tub's statement of identity directly under the headline (never above it: no kicker), English + Hindi;
+  the same words lead the page title and og:title (the WhatsApp link preview). To keep "Call me for a
+  free demo" on the first screen: hero spacing tightened, headline 16vw -> 15vw, the claim and the band
+  hint shortened (same facts). Button bottom at 360 px wide: 749 of 757 (was 773, below the fold
+  before this change). Checked deploy: tsc, vitest 929, build, journeys 45; Worker 4af80c65.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
