@@ -4,6 +4,8 @@
 //  2. "Type your gym's name" + colour: every phone on the page wears it (View Transitions when the
 //     browser has them);
 //  3. the live workout: three sets tick, the kg to beat rolls down digit by digit, a record slams;
+//  3b. R-57 (owner, 22 Oct 2026): the shop, the messages and the lock screen play the same way, each
+//      with a list beside it that lights up step by step;
 //  4. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js).
 (function () {
   var root = document.documentElement;
@@ -76,7 +78,13 @@
   var rest = document.getElementById('rest');
   var restT = document.getElementById('restt');
   var record = document.getElementById('record');
+  var liftBeats = document.getElementById('lift-beats');
   var timers = [];
+  /** R-57: light the list beside a phone up to step n (0 = none yet). */
+  function beatsTo(list, n) {
+    if (!list) return;
+    Array.prototype.forEach.call(list.querySelectorAll('[data-beat]'), function (li) { li.classList.toggle('on', Number(li.dataset.beat) <= n); });
+  }
   function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function fmt(n) { return n.toLocaleString('en-IN'); }
   // Split-flap roll: only the characters that change flip in.
@@ -105,20 +113,25 @@
     if (restT) restT.textContent = '1:30';
     if (record) record.classList.remove('slam');
     if (beat) beat.closest('.live-beat').classList.remove('won');
+    beatsTo(liftBeats, 0);
   }
   function finalState() {
     rows.forEach(function (r) { r.classList.add('done'); });
     beat.textContent = '0';
     beat.closest('.live-beat').classList.add('won');
     record.classList.add('slam');
+    beatsTo(liftBeats, 3);
   }
   function play() {
     reset();
     if (!live) return;
     if (reduce) { finalState(); return; }
+    if (liftBeats) liftBeats.classList.add('armed');
+    beatsTo(liftBeats, 1);
     var left = 1125;
     rows.forEach(function (r, i) {
       later(900 + i * 2100, function () {
+        if (i === 0) beatsTo(liftBeats, 2);
         r.classList.add('done');
         var next = Math.max(0, left - 375);
         countDown(left, next, 600);
@@ -131,7 +144,7 @@
         }
       });
     });
-    later(900 + rows.length * 2100, function () { beat.closest('.live-beat').classList.add('won'); record.classList.add('slam'); });
+    later(900 + rows.length * 2100, function () { beat.closest('.live-beat').classList.add('won'); record.classList.add('slam'); beatsTo(liftBeats, 3); });
   }
   if (live) {
     if ('IntersectionObserver' in window) {
@@ -145,6 +158,120 @@
     var again = document.getElementById('replay');
     if (again) again.addEventListener('click', play);
   }
+
+
+  // 3b. R-57: the played scenes ----------------------------------------------------------------
+  // A scene is ARMED when it can play (its parts take their starting state; until then the HTML
+  // shows the finished state, which is also what reduced motion and a page without script keep).
+  // It plays once when it scrolls into view, and again on "Play it again".
+  function sceneOn(el, again, arm, steps) {
+    if (!el || reduce || !('IntersectionObserver' in window)) return;
+    var ts = [];
+    function run() {
+      ts.forEach(clearTimeout);
+      ts = [];
+      arm();
+      steps.forEach(function (st) { ts.push(setTimeout(st[1], st[0])); });
+    }
+    arm();
+    var seen = false;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; run(); } });
+    }, { threshold: 0.4 }).observe(el);
+    if (again) again.addEventListener('click', run);
+  }
+  /** A finger on a control: it dips and a ring spreads (the class is set again to replay it). */
+  function tap(el) {
+    if (!el) return;
+    el.classList.remove('tapping');
+    void el.offsetWidth;
+    el.classList.add('tapping');
+  }
+  function $(id) { return document.getElementById(id); }
+
+  // The shop: Add -> the bag -> Place order -> the desk gets it -> one fewer on the shelf.
+  (function () {
+    var scene = $('shop-scene'), list = $('shop-beats');
+    var add = $('shop-add'), bag = $('shop-bag'), bagN = $('shop-bagn'), sheet = $('shop-sheet');
+    var order = $('shop-order'), burst = $('shop-burst'), left = $('shop-left');
+    sceneOn(scene, $('shop-replay'), function () {
+      scene.classList.add('armed');
+      if (list) list.classList.add('armed');
+      beatsTo(list, 0);
+      add.classList.remove('on', 'tapping');
+      bag.classList.remove('has');
+      bagN.textContent = '0';
+      sheet.classList.remove('up', 'sent');
+      order.classList.remove('in');
+      burst.classList.remove('in');
+      left.textContent = '3';
+    }, [
+      [700, function () { tap(add); add.classList.add('on'); bag.classList.add('has'); bagN.textContent = '1'; beatsTo(list, 1); }],
+      [1500, function () { sheet.classList.add('up'); }],
+      [2600, function () { tap($('shop-place')); }],
+      [3000, function () { sheet.classList.add('sent'); beatsTo(list, 2); }],
+      [3700, function () { order.classList.add('in'); }],
+      [4500, function () { roll(left, '2'); beatsTo(list, 3); }],
+      [5000, function () { burst.classList.add('in'); }],
+    ]);
+  })();
+
+  // Messages: typed once, Send, it lands in the inbox, "read by" counts up.
+  (function () {
+    var scene = $('msg-scene'), compose = $('msg-compose'), typed = $('msg-typed');
+    var read = $('msg-read'), card = $('msg-new');
+    if (!scene) return;
+    var text = typed.textContent;
+    var steps = [];
+    for (var k = 1; k <= text.length; k++) {
+      (function (k) { steps.push([500 + k * 32, function () { typed.textContent = text.slice(0, k); }]); })(k);
+    }
+    var at = 500 + text.length * 32;
+    steps.push([at + 450, function () { tap($('msg-send')); }]);
+    steps.push([at + 850, function () { compose.classList.add('sent'); card.classList.add('in'); }]);
+    [9, 21, 35, 48, 58, 64].forEach(function (n, i) { steps.push([at + 1500 + i * 260, function () { roll(read, String(n)); }]); });
+    sceneOn(scene, $('msg-replay'), function () {
+      scene.classList.add('armed');
+      compose.classList.remove('sent');
+      typed.textContent = '';
+      read.textContent = '0';
+      card.classList.remove('in');
+    }, steps);
+  })();
+
+  // The lock screen: the live card (workout time ticking) -> Complete set -> the rest counts down
+  // -> "Rest is over" rings and the phone buzzes.
+  (function () {
+    var scene = $('lock-scene'), phone = $('lock-phone'), list = $('lock-beats');
+    var clock = $('n-clock'), leftT = $('n-left');
+    if (!scene) return;
+    var tick = null;
+    function mmss(sec) { return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+    function stopClock() { if (tick) clearInterval(tick); tick = null; }
+    var steps = [
+      [300, function () {
+        beatsTo(list, 1);
+        var sec = 24 * 60 + 10;
+        stopClock();
+        tick = setInterval(function () { sec += 1; clock.textContent = mmss(sec); }, 1000);
+      }],
+      [2200, function () { tap($('n-complete')); }],
+      [2700, function () { stopClock(); phone.dataset.s = 'rest'; beatsTo(list, 2); }],
+    ];
+    for (var r = 1; r <= 10; r++) {
+      (function (r) { steps.push([2900 + r * 300, function () { leftT.textContent = mmss(90 - r * 9); }]); })(r);
+    }
+    steps.push([6300, function () { phone.dataset.s = 'over'; beatsTo(list, 3); phone.classList.remove('buzz'); void phone.offsetWidth; phone.classList.add('buzz'); }]);
+    sceneOn(scene, $('lock-replay'), function () {
+      stopClock();
+      if (list) list.classList.add('armed');
+      beatsTo(list, 0);
+      phone.dataset.s = 'live';
+      phone.classList.remove('buzz');
+      clock.textContent = '24:10';
+      leftT.textContent = '1:30';
+    }, steps);
+  })();
 
   // Leader lines: each call-out or price tag (data-target, data-side) gets a hand-drawn line to the
   // part of the app it names. The line runs to a gutter beside the phone (data-side = which side),
