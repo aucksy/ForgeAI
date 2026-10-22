@@ -21,9 +21,10 @@ import { Glyph } from './TrackerGlyph';
 /**
  * How long each pop-up stays. 15 Oct 2026 (owner, in the gym: "I could only read 30% more then,
  * and it went away... increase it by 20%"): 2.5 s -> 3 s and 3.5 s -> 4.2 s, and an × closes it.
+ * R-66 (owner, 22 Oct 2026: "still not long enough. Add maybe 2 more seconds"): 5 s and 6.2 s.
  */
-export const LAST_TIME_MS = 3000;
-export const RECORD_MS = 4200;
+export const LAST_TIME_MS = 5000;
+export const RECORD_MS = 6200;
 
 export function RecordToast() {
   const record = useWorkoutUi((s) => s.record);

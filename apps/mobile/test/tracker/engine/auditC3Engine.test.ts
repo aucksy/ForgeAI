@@ -105,7 +105,6 @@ describe('C3-2: heavy and light days never teach a 20 kg step', () => {
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBeGreaterThanOrEqual(107.5);
     expect(t.targetWeightKg).toBeLessThanOrEqual(110);
-    expect(t.warm?.stepKg ?? 0).toBeLessThanOrEqual(5);
   });
 
   it('a real repeated 2.5 kg jump is still learned', () => {
@@ -263,11 +262,10 @@ describe('C3-15: "Add warm-up sets" never goes under the empty bar, and uses the
 });
 
 describe('C3-16: an EZ-bar warm-up lighter than the 20 kg bar stays light', () => {
-  it('last warm-up 12.5 kg for 25 kg, Target 27.5: warm-up about 12.5, never 20', async () => {
-    const { warmupWeightKg } = await import('@/tracker/engine/progression');
-    expect(warmupWeightKg(12.5, 27.5, { fromKg: 25, stepKg: 2.5, barKg: 20 })).toBe(12.5);
-    // A straight bar's 20 kg warm-up stays at least the bar.
-    expect(warmupWeightKg(20, 65, { fromKg: 60, stepKg: 2.5, barKg: 20 })).toBe(20);
+  it('R-61: a moved Target no longer touches warm-ups at all (12.5 kg stays 12.5 kg)', async () => {
+    const { targetFill } = await import('@/tracker/engine/progression');
+    const fill = targetFill({ targetWeightKg: 27.5, repGoal: 8, action: 'increase', topSetOnly: false, change: 'up' });
+    expect(fill).not.toHaveProperty('warm');
   });
 });
 

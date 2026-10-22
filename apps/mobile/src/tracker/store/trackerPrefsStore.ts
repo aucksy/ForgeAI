@@ -12,9 +12,10 @@
  *  - `bodyFigure` (v0.25.1): the figure the body map and the share picture draw — male or
  *    female, chosen in Profile. The profile has no sex field, so it starts on the male
  *    figure every install had before.
- *  - `previousFrom` (13 Oct 2026, Hevy's "Previous Workout Values" plus "Same folder"): which past
- *    workouts PREVIOUS, the Target and carried notes read (`tracker/db/historyScope.ts`). Any
- *    workout by default — what every install did before.
+ *  - `previousFrom` (13 Oct 2026, Hevy's "Previous Workout Values"): which past workouts PREVIOUS,
+ *    the Target and carried notes read (`tracker/db/historyScope.ts`). Any workout by default.
+ *    R-61 (owner, 22 Oct 2026: "it should be even global"): every saved choice went back to Any
+ *    workout once (`version` 1), and "Same folder" is retired (a stored one reads as Any workout).
  *  - `shareSize` / `shareLook` (15 Oct 2026, Hevy's share backgrounds): the share picture's size
  *    (Post or Story) and background (Dark or See-through), as last picked on the share sheet.
  *    Post + Dark — the only picture before — the first time.
@@ -44,6 +45,18 @@ export type PreviousFrom = 'any' | 'routine' | 'folder';
 /** A choice this version knows. PURE. */
 export function isPreviousFrom(v: unknown): v is PreviousFrom {
   return v === 'any' || v === 'routine' || v === 'folder';
+}
+
+/** R-61: the setting as it applies now — "Same folder" is retired and reads as Any workout. PURE. */
+export function shownPreviousFrom(v: unknown): PreviousFrom {
+  return v === 'routine' ? 'routine' : 'any';
+}
+
+/** R-61: a saved settings blob from before version 1 starts "Previous values" on Any workout. PURE. */
+export function migratePrefs(persisted: unknown, version: number): Record<string, unknown> {
+  const p = persisted != null && typeof persisted === 'object' ? { ...(persisted as Record<string, unknown>) } : {};
+  if (version < 1) p.previousFrom = 'any';
+  return p;
 }
 
 export interface TrackerPrefsState {
@@ -136,6 +149,9 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
+      // R-61: version 1 = "Previous values" starts again on Any workout once, for every install.
+      version: 1,
+      migrate: (persisted, version) => migratePrefs(persisted, version) as unknown as TrackerPrefsState,
       // A stored chip, range, Previous, share, weight-jump or rep-range choice this version does not
       // know falls back to the first-time one.
       merge: (persisted, current) => {
@@ -145,7 +161,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           ...p,
           chartMetric: isChartMetric(p.chartMetric) ? p.chartMetric : current.chartMetric,
           chartRange: isChartRange(p.chartRange) ? p.chartRange : current.chartRange,
-          previousFrom: isPreviousFrom(p.previousFrom) ? p.previousFrom : current.previousFrom,
+          previousFrom: isPreviousFrom(p.previousFrom) ? shownPreviousFrom(p.previousFrom) : current.previousFrom,
           shareSize: isShareSize(p.shareSize) ? p.shareSize : current.shareSize,
           shareLook: isShareLook(p.shareLook) ? p.shareLook : current.shareLook,
           weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,

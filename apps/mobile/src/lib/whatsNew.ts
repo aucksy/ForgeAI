@@ -27,6 +27,18 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.52.0',
+    date: '22 Oct',
+    lines: [
+      "Warm-up sets keep last time's weight and reps. Suggestions never change them.",
+      'Two dumbbells typed as one total: suggested weights always split into two real dumbbells.',
+      'Your numbers come from the last time you did the exercise, in any folder, so a lift you did last week never counts as a long break.',
+      '"Previous values" is back on Any workout. Pick Same routine again in Settings → Workouts if you want it.',
+      'The kg to beat turns green when you beat it, and "Last" sits beside the rest timer.',
+      'The pop-up after a set stays on screen longer.',
+    ],
+  },
+  {
     version: '0.51.0',
     date: '22 Oct',
     lines: [

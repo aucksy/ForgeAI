@@ -50,20 +50,21 @@ appId: com.forgeai.app
       text: "(?i)^weekly goal$"
 - assertVisible: "Workouts a week. The Workout tab shows how many are left."
 - takeScreenshot: p9-01-weekly-goal
-# 13 Oct 2026: "Previous values" (Any workout / Same routine / Same folder), under the weekly goal.
+# 13 Oct 2026: "Previous values" (Any workout / Same routine), under the weekly goal. R-61 (22 Oct 2026):
+# "Same folder" is retired.
 - scrollUntilVisible:
     element: "(?i)^previous values$"
     centerElement: true
     timeout: 30000
 - scrollUntilVisible:
-    element: "^Same folder$"
+    element: "^Same routine$"
     timeout: 30000
 - assertVisible: "^Any workout$"
-- assertVisible: "^Same routine$"
+- assertNotVisible: "^Same folder$"
 - tapOn: "^Any workout$"
 - scrollUntilVisible:
-    # Routines audit C3-3 (16 Oct 2026): "Any workout" now says a routine's Target reads that routine first.
-    element: "Previous and notes come from the last time you did the exercise. Target comes from this routine first. Applies from your next workout."
+    # C3-3 + R-61: heavy and light days of one folder keep their own Target; a newer workout elsewhere leads.
+    element: "Previous, Target and notes come from the last time you did the exercise, in any folder. Heavy and light days in one folder keep their own Target. Applies from your next workout."
     timeout: 30000
 - takeScreenshot: p9-01b-previous-values
 # Workouts → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is

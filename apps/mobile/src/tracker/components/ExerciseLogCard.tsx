@@ -49,7 +49,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { kgLiveLine, kgPlan, kgProgress, kgTickKey } from '../lib/kgTarget';
+import { kgBeaten, kgLiveLine, kgPlan, kgProgress, kgTickKey } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
@@ -63,6 +63,8 @@ import { Glyph } from './TrackerGlyph';
 import { SheetRow, TrackerSheet } from './TrackerSheet';
 
 const cap = (s: string): string => (s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1));
+/** R-65: the beaten kg line's soft green, as the "good" Badge's. */
+const GOOD_SOFT = 'rgba(61, 203, 108, 0.14)';
 
 // A word only when the weight changes — same words as the chat card.
 const BADGE_TONE: Record<NonNullable<ReturnType<typeof targetBadge>>, BadgeProps['tone']> = {
@@ -263,7 +265,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
     );
     const each = weightIsEach(loadMode) ? ' each' : '';
-    return kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units));
+    return {
+      text: kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
+      beaten: kgBeaten(g),
+    };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kgPlanned, tickKey, units, loadMode]);
@@ -436,6 +441,16 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               </Text>
             </Pressable>
             )}
+            {/* 13 Oct 2026: where PREVIOUS comes from. R-61 (owner, 22 Oct 2026): at the right end of
+                the muscle and rest row, where there is room; a long one wraps under it. */}
+            {sourceLine && !compact ? (
+              <Text
+                accessibilityLabel={sourceLine.spoken}
+                style={{ marginLeft: 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
+              >
+                {sourceLine.text}
+              </Text>
+            ) : null}
           </View>
         </View>
         <Pressable
@@ -564,17 +579,26 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           ) : null}
         </Pressable>
       ) : null}
+      {/* R-65 (owner, 22 Oct 2026): the line turns green once the kilos to beat are beaten. */}
       {kgLine ? (
-        <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>
-          {kgLine}
-        </Text>
-      ) : null}
-
-      {/* 13 Oct 2026: where PREVIOUS comes from — one muted line above the set table */}
-      {sourceLine ? (
-        <Text accessibilityLabel={sourceLine.spoken} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>
-          {sourceLine.text}
-        </Text>
+        <View
+          style={
+            kgLine.beaten
+              ? { alignSelf: 'flex-start', backgroundColor: GOOD_SOFT, borderRadius: radius.sm, paddingHorizontal: space.sm, paddingVertical: 3 }
+              : { paddingHorizontal: space.xs }
+          }
+        >
+          <Text
+            numberOfLines={2}
+            style={{
+              fontFamily: kgLine.beaten ? type.bodySemi : type.bodyMedium,
+              fontSize: type.size.sub,
+              color: kgLine.beaten ? color.goodText : color.inkSecondary,
+            }}
+          >
+            {kgLine.text}
+          </Text>
+        </View>
       ) : null}
 
       {/* the set table; on a phone under 400 dp it reaches into the card's padding (rowLayout.bleed) */}

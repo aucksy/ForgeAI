@@ -155,6 +155,48 @@ describe('the three settings, on PREVIOUS, the Target and the carried note', () 
   });
 });
 
+describe('R-61 (owner, 22 Oct 2026): the newest workout of the lift, in any folder', () => {
+  /** Moves the bench workouts of `routineId` to `daysAgo` days before today. */
+  async function backdate(routineId: string, daysAgo: number): Promise<void> {
+    const { todayISO } = await import('@/lib/date');
+    const d = new Date(`${todayISO()}T12:00:00`);
+    d.setDate(d.getDate() - daysAgo);
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const { getDb } = await import('@/db');
+    await getDb().runAsync('UPDATE workout_sessions SET date_iso = ? WHERE routine_id = ?', [iso, routineId]);
+  }
+  const targetOf = async (routineId: string) => {
+    const { getTargetsForCards } = await import('@/tracker/services/coachTargets');
+    return (await getTargetsForCards(routineId, [{ key: 'c', exerciseId: bench }])).get('c')!;
+  };
+
+  it('Any workout: done since in ANOTHER folder (Gym B, today), that workout leads the Target', async () => {
+    await setting('any');
+    await backdate(A1, 10);
+    await backdate(A2, 9);
+    const t = await targetOf(A1);
+    expect(t.last?.weightKg).toBe(60);
+    expect(t.rule).not.toBe('R1b');
+  });
+
+  it('Any workout: heavy and light days in ONE folder keep their own Target', async () => {
+    await setting('any');
+    await backdate(A1, 10);
+    await backdate(B1, 9);
+    // Gym A's light day is the newest of all: the heavy day still reads its own 100 x 5.
+    await backdate(A2, 1);
+    expect((await targetOf(A1)).last?.weightKg).toBe(100);
+  });
+
+  it('Same routine: a break is a break from the lift — done elsewhere since, never "lighter after a break"', async () => {
+    await setting('routine');
+    await backdate(A1, 70);
+    const t = await targetOf(A1);
+    expect(t.rule).not.toBe('R1b');
+    expect(t.last?.weightKg).toBe(60);
+  });
+});
+
 describe('the live workout', () => {
   it('review fix: the choice is frozen at the start — a change mid-workout applies from the next one', async () => {
     await setting('folder');

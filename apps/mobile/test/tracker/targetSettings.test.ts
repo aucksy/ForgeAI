@@ -25,7 +25,6 @@ import {
   perSetGoals,
   targetFill,
   targetLine,
-  warmupWeightKg,
   type ProgSession,
   type ProgSetType,
   type WeightJump,
@@ -385,14 +384,15 @@ describe('ONE source: targetFill → fillForSet', () => {
     expect(fillForSet(card([h1, h2]), h2.key, fill)).toEqual({ weightKg: 55, reps: 6 });
   });
 
-  it('review fix: warm-ups follow a moved working weight (40 × 8 for 60 → 42.5 × 8 for 65)', () => {
+  it('R-61: a warm-up keeps last time\'s weight and reps when the working weight moves (40 × 8, not 42.5)', () => {
     const h = [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 12], [60, 12], [60, 12]])];
     const up = run(ex(), h, { jump: 'large' });
     expect(up.targetWeightKg).toBe(65);
     const upFill = targetFill(up)!;
     const [w, s1] = [row({ isWarmup: true }), row()];
     const c = { ...card([w, s1]), previousSets: [{ weightKg: 60, reps: 12 }], previousWarmups: [{ weightKg: 40, reps: 8 }] } as DraftExercise;
-    expect(fillForSet(c, w.key, upFill)).toEqual({ weightKg: 42.5, reps: 8 });
+    // Owner, 22 Oct 2026: "we're not changing the weight for the warm-up sets people do".
+    expect(fillForSet(c, w.key, upFill)).toEqual({ weightKg: 40, reps: 8 });
     expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 8 });
     // No change of working weight: last time's warm-up as it was.
     const same = run(ex(), [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 10], [60, 9], [60, 8]])]);
@@ -402,17 +402,10 @@ describe('ONE source: targetFill → fillForSet', () => {
     expect(fillForSet(c, w.key, null)).toEqual({ weightKg: 40, reps: 8 });
   });
 
-  it('warmupWeightKg: rounded down to a loadable step, never under the bar, never above the new weight', () => {
-    const bar = { fromKg: 60, stepKg: 2.5, barKg: 20 };
-    expect(warmupWeightKg(40, 65, bar)).toBe(42.5);
-    expect(warmupWeightKg(40, 60, bar)).toBe(40);
-    expect(warmupWeightKg(20, 50, bar)).toBe(20); // 20 × 50/60 = 16.7 → the empty bar
-    expect(warmupWeightKg(70, 65, bar)).toBe(65); // never above the new working weight
-    expect(warmupWeightKg(40, 65, { ...bar, gym: noSmall })).toBe(40); // 43.3 → the plates make 40
-    expect(warmupWeightKg(10, 13, { fromKg: 12, stepKg: 2.5, barKg: null })).toBe(10); // dumbbells: 10.8 → 10
-    // Pounds: 95 lb warm-up for 135 → 145: 102 → 100 lb.
-    const lb = (n: number) => n * KG_PER_LB;
-    expect(warmupWeightKg(lb(95), lb(145), { fromKg: lb(135), stepKg: lb(5), barKg: lb(45) }) / KG_PER_LB).toBeCloseTo(100, 4);
+  it('R-61: the owner\'s screen — a 10 kg warm-up stays 10 kg when the Target goes lighter (20 → 15 kg)', () => {
+    const [w, s1] = [row({ isWarmup: true }), row()];
+    const c = { ...card([w, s1]), previousSets: [{ weightKg: 20, reps: 15 }], previousWarmups: [{ weightKg: 10, reps: 25 }] } as DraftExercise;
+    expect(fillForSet(c, w.key, { weightKg: 15, reps: 9, fromKg: 20 })).toEqual({ weightKg: 10, reps: 25 });
   });
 
   it('a drop row still hints its own last-time drop, never the Target', () => {

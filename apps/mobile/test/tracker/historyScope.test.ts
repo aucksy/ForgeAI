@@ -89,11 +89,11 @@ describe('the workout’s routine and the setting', () => {
     expect(merge({ previousFrom: 'gym' }, now).previousFrom).toBe('any');
   });
 
-  it('three choices, each with one plain line', () => {
-    expect(PREVIOUS_FROM_CHOICES.map((c) => c.label)).toEqual(['Any workout', 'Same routine', 'Same folder']);
-    for (const c of PREVIOUS_FROM_CHOICES) expect(c.line).toMatch(/^Previous(, Target)? and notes come from the last time you did/);
-    // C3-3: under Any workout a routine's Target reads that routine first.
-    expect(PREVIOUS_FROM_CHOICES[0].line).toContain('Target comes from this routine first.');
-    expect(PREVIOUS_FROM_CHOICES[2].line).toContain('Handy when each folder is a gym.');
+  it('two choices, each with one plain line (R-61: "Same folder" is retired)', () => {
+    expect(PREVIOUS_FROM_CHOICES.map((c) => c.label)).toEqual(['Any workout', 'Same routine']);
+    for (const c of PREVIOUS_FROM_CHOICES) expect(c.line).toMatch(/^Previous, Target and notes come from the last time you did/);
+    // C3-3 + R-61: heavy and light days of one folder keep their own Target.
+    expect(PREVIOUS_FROM_CHOICES[0].line).toContain('in any folder');
+    expect(PREVIOUS_FROM_CHOICES[0].line).toContain('Heavy and light days in one folder keep their own Target.');
   });
 });

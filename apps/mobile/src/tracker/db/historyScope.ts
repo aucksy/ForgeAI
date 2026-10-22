@@ -181,13 +181,11 @@ export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: strin
   {
     value: 'any',
     label: 'Any workout',
-    // C3-3: a routine's Target reads that routine first (heavy and light days keep their own).
-    line: 'Previous and notes come from the last time you did the exercise. Target comes from this routine first. Applies from your next workout.',
+    // C3-3 + R-61: heavy and light days of one folder keep their own Target; a newer workout in
+    // another folder leads.
+    line: 'Previous, Target and notes come from the last time you did the exercise, in any folder. Heavy and light days in one folder keep their own Target. Applies from your next workout.',
   },
   { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine. Applies from your next workout.' },
-  {
-    value: 'folder',
-    label: 'Same folder',
-    line: 'Previous, Target and notes come from the last time you did it in any routine of this folder. Handy when each folder is a gym. Applies from your next workout.',
-  },
+  // R-61 (owner, 22 Oct 2026: "It shouldn't be even folder"): "Same folder" is retired; a saved one
+  // reads as Any workout (`shownPreviousFrom`). Its scope stays for the Target's folder check.
 ];

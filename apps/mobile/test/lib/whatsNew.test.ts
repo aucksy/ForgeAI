@@ -44,7 +44,8 @@ describe('R-56: earlier updates (owner: "up to 7 updates")', () => {
   it('Settings → What\'s new: this version and everything before it, never a later one', () => {
     expect(updatesUpTo('0.50.0')[0].version).toBe('0.50.0');
     expect(updatesUpTo('0.50.0').some((e) => e.version === '0.51.0')).toBe(false);
-    expect(updatesUpTo('0.51.0')).toHaveLength(WHATS_NEW_LOG.length);
+    expect(updatesUpTo('0.51.0').some((e) => e.version === '0.52.0')).toBe(false);
+    expect(updatesUpTo(WHATS_NEW_LOG[0].version)).toHaveLength(WHATS_NEW_LOG.length);
   });
   it('the release being built has its own lines (app.json and the log agree)', async () => {
     const app = (await import('../../app.json')).default as { expo: { version: string } };

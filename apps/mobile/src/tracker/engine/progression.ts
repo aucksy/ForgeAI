@@ -35,11 +35,11 @@
  */
 import { trimNum } from '@/lib/format';
 import { displayUnits, isImperial, kgToShown, roundToShownStep, stepFor, weightUnitOf } from '@/lib/units';
-import { defaultBarKg, gymFloorKg, type GymPlates } from '@/tracker/services/plateMath';
+import type { GymPlates } from '@/tracker/services/plateMath';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
 import { fmtDurationWords, isBodyweightFamily, type LoadMode, type LogType } from './logTypes';
-import { buildLadder, downRungKg, jumpRungKg, ladderKind, sameRungKg, unitToKg, upRungsKg } from './weightLadder';
+import { buildLadder, downRungKg, jumpRungKg, ladderKind, sameRungKg, upRungsKg } from './weightLadder';
 
 /**
  * Settings → Workouts → Weight jumps (Oct 2026, owner): how much a Target adds when every main
@@ -65,44 +65,6 @@ const FAST_LANE_SHARE: Readonly<Record<WeightJump, number | null>> = {
   standard: JUMP_SHARE.large,
   large: null,
 };
-
-/**
- * Review fix (Oct 2026): what the warm-up rows need to follow a weight change - last time's
- * warm-ups were done for `fromKg`; scaled to the new working weight they are rounded DOWN to a
- * weight the member can load (`warmupWeightKg`).
- */
-export interface WarmScale {
-  /** Last time's working weight (kg). */
-  fromKg: number;
-  /** Round down to whole steps of this (kg): his own learned step, else 2.5 kg / 5 lb. */
-  stepKg: number;
-  /** The empty bar (kg) on a barbell lift - a warm-up never goes under it; null otherwise. */
-  barKg: number | null;
-  /** The gym's bar and plates (a barbell, Plates and bars set up): round down through them. */
-  gym?: GymPlates | null;
-}
-
-/**
- * A warm-up's weight for a new working weight (review fix, Oct 2026). Last time a 40 kg warm-up
- * for 60 kg, now 65 kg: 40 x 65/60 = 43.3 -> 42.5 kg. Rounded DOWN to a loadable step, never under
- * the empty bar on a barbell, never above the new working weight. The same working weight =
- * last time's warm-up as it was. PURE.
- */
-export function warmupWeightKg(lastWarmKg: number, newWorkKg: number, w: WarmScale): number {
-  if (!(lastWarmKg > 0) || !(w.fromKg > 0) || !(newWorkKg > 0)) return lastWarmKg;
-  const ratio = newWorkKg / w.fromKg;
-  if (Math.abs(ratio - 1) < 1e-9) return lastWarmKg;
-  const raw = lastWarmKg * ratio;
-  let v: number;
-  if (w.gym) v = gymFloorKg(raw, w.gym);
-  else if (w.stepKg > 0) v = Math.floor(raw / w.stepKg + 1e-9) * w.stepKg;
-  else v = raw;
-  // 16 Oct 2026 audit (C3-16): never under the empty bar — unless last time's warm-up already was
-  // (an EZ bar, a skull crusher): then never under last time's own warm-up.
-  if (w.barKg != null) v = Math.max(v, Math.min(w.barKg, lastWarmKg));
-  v = Math.min(v, newWorkKg);
-  return Math.round(v * 1e6) / 1e6;
-}
 
 export type ProgSetType = 'normal' | 'warmup' | 'drop' | 'failure';
 
@@ -148,11 +110,6 @@ export interface ProgressionTarget extends OverloadTarget {
    * rest last time's same set. Empty when there is no rep goal (first time, a hold, an easy week).
    */
   setGoals: number[];
-  /**
-   * Review fix (Oct 2026): set when the weight moves (`change`), so the warm-up rows scale with it
-   * (`targetFill` -> `fillForSet` -> `warmupWeightKg`). Absent = the warm-ups stay as last time.
-   */
-  warm?: WarmScale;
   /** The weight moved from last time's main weight. null = same weight / first time. */
   change: 'up' | 'down' | null;
   /** Bodyweight move the member has never loaded: show no kilos at all. */
@@ -282,6 +239,13 @@ export interface ProgressionInput {
    * own steps from his history, as before (review fix, Oct 2026).
    */
   gym?: GymPlates | null;
+  /**
+   * R-61 (owner, 22 Oct 2026): a two-dumbbell move whose weight is typed as the total of both
+   * (Counting "Weight as typed", as a Hevy history is): every suggested total must be two equal
+   * dumbbells from the rack. 10 kg typed is 5 + 5, so warm-up-style halves like 7.5 (3.75 each)
+   * or a step to 22.5 (11.25 each) can never be picked up. Absent = one weight as typed.
+   */
+  pair?: boolean;
 }
 
 /** Loaded equipment: a blank weight here is "no weight logged", never "bodyweight" (TG-07). */
@@ -387,16 +351,26 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const gym = exercise.equipment === 'barbell' && logType === 'weight_reps' && input.gym ? input.gym : null;
   const ladderWeights =
     input.ladder ?? input.history.flatMap((s) => s.sets.filter((x) => x.setType !== 'warmup' && x.reps > 0).map((x) => x.weightKg));
-  const ladder = buildLadder(ladderWeights, ladderKind(exercise.equipment, logType), {
-    learnedStepKg: learnedGap(all, false),
-    catalogStepKg: exercise.incrementKg,
-    // The gym's plates make a bar's weights (a belt on a pull-up keeps the usual step).
-    ...(gym ? { gym } : {}),
-  });
+  const kind = ladderKind(exercise.equipment, logType);
+  // R-61: a pair typed as one total gets its ladder per dumbbell (halves of every weight he
+  // typed, the rack's usual dumbbells), and each weight picked is doubled back. Halving and
+  // doubling are exact in floating point, so nothing else moves.
+  const per = input.pair && kind === 'dumbbell' && !assisted ? 2 : 1;
+  const ladder = buildLadder(
+    ladderWeights.map((x) => x / per),
+    kind,
+    {
+      learnedStepKg: learnedGap(all, false) / per,
+      catalogStepKg: exercise.incrementKg,
+      // The gym's plates make a bar's weights (a belt on a pull-up keeps the usual step).
+      ...(gym ? { gym } : {}),
+    },
+  );
+  const both = (kg: number | null): number | null => (kg == null ? null : kg * per);
   /** Last time's weight as the Target shows and fills it (a clean number in this unit). */
-  const same = assisted || bodyweightOnly ? w : sameRungKg(w, ladder);
-  const upTo = (n: number): number => upRungsKg(w, n, ladder)[n - 1];
-  const lighter = (): number | null => downRungKg(w, ladder);
+  const same = assisted || bodyweightOnly ? w : sameRungKg(w / per, ladder) * per;
+  const upTo = (n: number): number => upRungsKg(w / per, n, ladder)[n - 1] * per;
+  const lighter = (): number | null => both(downRungKg(w / per, ladder));
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
     assisted ? (kg < 0 ? ` with ${targetKgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${targetKgText(kg)}` : '';
@@ -420,16 +394,6 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
     const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
     const setGoals = perSet && perSet.length > 0 ? perSet : Array.from({ length: Math.max(1, target.targetSets) }, () => repGoal);
-    // Review fix: a moved weight takes the warm-ups with it (loaded weights only).
-    const warm: WarmScale | null =
-      change != null && logType === 'weight_reps' && !bodyweightOnly && w > 0 && weightKg > 0
-        ? {
-            fromKg: w,
-            stepKg: unitToKg(learnedGap(all, false) > 0 && ladder.step != null ? ladder.step : ladder.units === 'imperial' ? 5 : 2.5, ladder.units),
-            barKg: exercise.equipment === 'barbell' ? (gym?.barKg ?? defaultBarKg(ladder.units)) : null,
-            ...(gym ? { gym } : {}),
-          }
-        : null;
     return {
       ...base,
       last,
@@ -444,7 +408,6 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       rule,
       topSetOnly: L.ramp,
       version,
-      ...(warm ? { warm } : {}),
     };
   };
 
@@ -456,7 +419,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
       // 16 Oct 2026 audit (C3-8): the longer the break, the bigger the cut — about 10% up to 13
       // weeks, 20% up to 26 weeks, 30% after that (a year off was the same 10% as six weeks).
       const cut = gap < 91 ? 0.1 : gap < 183 ? 0.2 : 0.3;
-      const down = assisted ? clean(round3(w - step)) : downRungKg(w, ladder, cut);
+      const down = assisted ? clean(round3(w - step)) : both(downRungKg(w / per, ladder, cut));
       if (down !== null) {
         return out(
           'R1b',
@@ -531,7 +494,7 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   if (logType === 'weight_reps' && !L.ramp && w > 0 && topReps < min - RANGE_MOVED_REPS && enoughSets && !reachedHere) {
     const e1 = w * (1 + topReps / 30);
     const want = e1 / (1 + min / 30);
-    const down = want < w - 1e-6 ? downRungKg(w, ladder, 1 - want / w) : null;
+    const down = want < w - 1e-6 ? both(downRungKg(w / per, ladder, 1 - want / w)) : null;
     // Nowhere lighter to go: the usual rules (R3 holds the weight).
     if (down != null) {
       return out(
@@ -580,12 +543,12 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     // never less than one step (overrules TG-01's "never more than one rung").
     const jumpKey: WeightJump = isWeightJump(input.jump) ? input.jump : DEFAULT_JUMP;
     const share = JUMP_SHARE[jumpKey];
-    const next = w > 0 ? jumpRungKg(w, share, ladder) : up;
+    const next = w > 0 ? jumpRungKg(w / per, share, ladder) * per : up;
     // R2c - a beginner who found it easy may go ONE size further than his choice (review fix:
     // Small never jumps past the Standard share; Large has no fast lane).
     const fast = FAST_LANE_SHARE[jumpKey];
     if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && fast != null) {
-      const jump = jumpRungKg(w, fast, ladder);
+      const jump = jumpRungKg(w / per, fast, ladder) * per;
       if (jump > next + 1e-6) {
         return out('R2c', jump, min, `That looked easy: ${repsList}${atLast}. Jumping to ${targetKgText(jump)}.`);
       }
@@ -938,8 +901,6 @@ export interface TargetFill {
    * only when they differ. `fillForSet` gives a row the goal of its working-set number.
    */
   setReps?: number[];
-  /** Review fix (Oct 2026): the weight moved - warm-up rows scale with it (`warmupWeightKg`). */
-  warm?: WarmScale;
   /**
    * 16 Oct 2026 audit (C3-4 / C3-5): last time's MAIN weight (kg). A row whose last-time set was
    * 10% or more away from it (a heavy top set, a lighter back-off) hints that set, not the Target.
@@ -958,7 +919,7 @@ export const EASY_REPS_LEFT = 3;
  */
 export function targetFill(
   t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'> &
-    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'warm' | 'change'>>,
+    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change'>>,
 ): TargetFill | null {
   if (t.action === 'start' || t.version || t.free) return null;
   if (t.logType === 'time') return t.holdSec != null && t.holdSec > 0 ? { weightKg: 0, reps: 0, durationSec: t.holdSec } : null;
@@ -973,7 +934,6 @@ export function targetFill(
   if (t.repGoal == null) return null;
   const perSet = !t.easy && perSetLine(t.setGoals) != null ? [...(t.setGoals as readonly number[])] : null;
   const out: TargetFill = perSet ? { weightKg, reps: t.repGoal, setReps: perSet } : { weightKg, reps: t.repGoal };
-  if (t.warm && t.change != null && !t.easy) out.warm = t.warm;
   if (!t.easy && (t.logType ?? 'weight_reps') === 'weight_reps' && t.last && t.last.weightKg > 0) out.fromKg = t.last.weightKg;
   return out;
 }

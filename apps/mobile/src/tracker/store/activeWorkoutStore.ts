@@ -35,7 +35,7 @@ import {
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { OFF_MAIN_SHARE, warmupWeightKg, type WarmScale } from '@/tracker/engine/progression';
+import { OFF_MAIN_SHARE } from '@/tracker/engine/progression';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -1276,7 +1276,7 @@ export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: (SetFill & { setReps?: readonly number[]; warm?: WarmScale; fromKg?: number }) | null,
+  target?: (SetFill & { setReps?: readonly number[]; fromKg?: number }) | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
@@ -1366,11 +1366,10 @@ export function fillForSet(
   // weight of a NORMAL set above (or of last time's normal set): its own last-time drop, else the
   // weight typed in a drop row above (review item 4: a second drop). With neither, a tick asks
   // for the weight. Its reps may still follow the row above.
+  // R-61 (owner, 22 Oct 2026): a warm-up keeps last time's weight and reps when the working weight
+  // moves ("we're not changing the weight for the warm-up sets"); it used to scale with it (10 kg
+  // for 20 kg became 7.5 kg for 15 kg).
   let weightKg = lt === 'reps' ? 0 : pick((s) => present(s.weightKg), (p) => present(p?.weightKg), true);
-  // Review fix: a warm-up follows a moved working weight (last time's warm-up x new / last).
-  if (warmup && lt === 'weight_reps' && weightKg != null && weightKg > 0 && target?.warm && target.weightKg > 0) {
-    weightKg = warmupWeightKg(weightKg, target.weightKg, target.warm);
-  }
   // The row's own goal: the Target's goal for its working-set number (warm-ups and drops not counted).
   let goal: number | null = null;
   if (tgt) {

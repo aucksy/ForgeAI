@@ -236,6 +236,8 @@ async function targetsFor(
       ...(ladder ? { ladder } : {}),
       jump: prefs.jump,
       gym: prefs.gym,
+      // R-61: a two-dumbbell move (the library's counting) typed as one total.
+      pair: (entry?.loadMode === 'both' || entry?.loadMode === 'both_side') && !weightIsEach(mode),
     });
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
@@ -410,7 +412,13 @@ export async function getTargetsForCards(
  * routine's own last time first, and every workout only for a lift the routine has never done.
  * With heavy and light days of the same lift, the heavy day took the light day's Target
  * ("82.5 kg · aim for 3" after a 100 kg x 5 heavy day). PREVIOUS and notes still read every
- * workout. "Same routine" / "Same folder" scopes are used as they are.
+ * workout.
+ *
+ * R-61 (owner, 22 Oct 2026: "If the same exact exercise were done recently, even in a different
+ * folder, then also"): heavy and light days live in one folder, so only a newer workout of the SAME
+ * folder leaves the routine its own Target; one done since in another folder (or in no routine)
+ * leads. And a break is a break from the lift under "Same routine" too: that scope's break rule
+ * reads every workout when the lift was done elsewhere since.
  */
 async function routineFirstTargets(
   items: TargetItem[],
@@ -419,19 +427,58 @@ async function routineFirstTargets(
   planDayId: string,
   prefs: TargetPrefs = targetPrefs(),
 ): Promise<ProgressionTarget[]> {
-  if (scope != null) return targetsFor(items, includeToday, scope, prefs);
-  const own = await historyScopeOrAll(planDayId, 'routine');
-  if (own == null) return targetsFor(items, includeToday, null, prefs);
-  const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
   // Wave-2 review: a break is a break from the LIFT, not from this routine — when the lift was done
   // elsewhere after this routine's last time, the break rule (and its weight) reads every workout
   // (routine at 80 kg 70 days ago, bench 110 x 5 two days ago: never "10 weeks since… 72.5 kg").
   const breakRule = (t: ProgressionTarget): boolean => t.rule === 'R1' || t.rule === 'R1b' || t.rule === 'T1';
+  const newer = (a: ProgressionTarget, b: ProgressionTarget): boolean =>
+    a.last?.dateISO != null && b.last?.dateISO != null && a.last.dateISO > b.last.dateISO;
+  if (scope != null) {
+    const [mine, any] = await Promise.all([targetsFor(items, includeToday, scope, prefs), targetsFor(items, includeToday, null, prefs)]);
+    return mine.map((t, i) => (breakRule(t) && newer(any[i], t) ? any[i] : t));
+  }
+  const own = await historyScopeOrAll(planDayId, 'routine');
+  if (own == null) return targetsFor(items, includeToday, null, prefs);
+  const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
+  const outside = await newestOutsideFolder(items, mine, any, planDayId, includeToday, newer);
   return mine.map((t, i) => {
     if (t.action === 'start') return any[i];
-    const newer = any[i].last?.dateISO != null && t.last?.dateISO != null && any[i].last!.dateISO > t.last!.dateISO;
-    return breakRule(t) && newer ? any[i] : t;
+    // R-61: the newest workout of the lift is outside this routine's folder.
+    if (outside[i]) return any[i];
+    return breakRule(t) && newer(any[i], t) ? any[i] : t;
   });
+}
+
+/**
+ * R-61: for each lift, is its newest workout anywhere OUTSIDE this routine's folder? Only lifts done
+ * somewhere since this routine's own last time are asked (usually none), with one read of the
+ * folder's newest workout per lift — never a third full set of Targets (phone statement budget).
+ */
+async function newestOutsideFolder(
+  items: readonly TargetItem[],
+  mine: readonly ProgressionTarget[],
+  any: readonly ProgressionTarget[],
+  planDayId: string,
+  includeToday: boolean,
+  newer: (a: ProgressionTarget, b: ProgressionTarget) => boolean,
+): Promise<boolean[]> {
+  const out = mine.map(() => false);
+  const ask = mine.flatMap((t, i) => (t.action !== 'start' && newer(any[i], t) ? [i] : []));
+  if (ask.length === 0) return out;
+  const folder = await historyScopeOrAll(planDayId, 'folder');
+  if (folder == null) return out;
+  const today = todayISO();
+  const newest = await getProgressionHistoryMany(
+    ask.map((i) => ({ exerciseId: items[i].exerciseId ?? items[i].pe.exerciseId })),
+    2,
+    { scope: folder },
+  );
+  ask.forEach((i, k) => {
+    const inFolder = newest[k].find((h) => (includeToday ? h.dateISO <= today : h.dateISO < today));
+    const anyLast = any[i].last?.dateISO;
+    out[i] = inFolder != null && anyLast != null && anyLast > inFolder.dateISO;
+  });
+  return out;
 }
 
 /**

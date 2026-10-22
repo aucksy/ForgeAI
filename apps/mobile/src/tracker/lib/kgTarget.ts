@@ -184,9 +184,14 @@ export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
   return p.sets.map((s, i) => `Set ${i + 1} · ${weight(s.weightKg)} × ${s.reps}${s.asLast ? ' (as last time)' : ''}`);
 }
 
+/** Every kilo to beat is lifted: the live line says "beaten" (and turns green, R-65). PURE. */
+export function kgBeaten(g: KgProgress): boolean {
+  return g.left <= 1e-9;
+}
+
 /** During the workout: "410 of 765 kg · next 42.5 kg × 7, 7" / "765 kg beaten ✓". PURE. */
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
-  if (g.left <= 1e-9) return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
+  if (kgBeaten(g)) return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
   if (g.next.length === 0) return `${head} · ${total(g.left)} short, add a set if you have it in you`;
