@@ -5,6 +5,23 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-82. Build #47 (AI import) and #49 step 2 (automatic option); plan a system owner panel — 23 Oct 2026
+**Owner said:** "I get $100 of credit with the Claude plan every month. So you pick the most efficient model, the
+cheapest one, and plan for that integration, as well as I have Google AI Pro subscription for 18 months... I get 1,000
+rupees every month for developer program... integrate the option to use any of the AI. I guess use the cheapest one
+first and then fall back to Claude... I will give you the keys later, but you can start building for these two for
+now." Then: "do I need an admin panel as the owner of the whole system that I'm building? I think you need to plan
+that. Think about what all I will need... data control and governance... maybe when I log in, I see most of the
+data... You can decide what's the correct implementation." And on #49: "I like your recommendation about how the
+offer will work, but let it be automatic as well if the owner wants... choose whether they want to give this extra
+days automatically if the eligibility is met, or they want to manually add that in. Otherwise, everything looks
+good. So you can just start building now."
+**Decisions:** #47 = A, with a provider chain: the cheapest model first (Google Gemini on his AI Pro developer
+credit), then Claude as the fallback; keys come later, so it is built and tested without them. #49 = A plus an
+owner setting: "Give the days by themselves" or "I give them" (desk one tap). Step 2 needs a live server change:
+he said yes to A; I still show him the consent words and privacy lines before members see it.
+**Owner panel:** I plan it (research first), decide the shape, and put it in the tracker.
+
 ## R-81. Rule: the tracker is the plan; Planned = mine to pick; anything needing him = Waiting for you; let him move rows — 22 Oct 2026
 **Owner said:** "Lets please make it a rule to use the project tracker always and keep updating it.. anything in planned
 means.. its good to go for you to pick.. anything that needs my input or approval need to sit in 'Waiting for you' tab
