@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-81. Rule: the tracker is the plan; Planned = mine to pick; anything needing him = Waiting for you; let him move rows — 22 Oct 2026
+**Owner said:** "Lets please make it a rule to use the project tracker always and keep updating it.. anything in planned
+means.. its good to go for you to pick.. anything that needs my input or approval need to sit in 'Waiting for you' tab
+... in fact , I should have options to move these between tabs.."
+**What I did:** rule in CLAUDE.md (Project Tracker section) and D:/Brain/How I Like Things/tracker-matches-what-shipped.md
+(hard). Moved the last 5 Planned rows that need him to Waiting for you (offline desk step 3, entry machine, gym workout
+report, FitPass, busy times). Page: a "Move to" control on every backlog feature; --absorb writes his moves into the .md.
+
 ## R-80. "Keep the tracker updated": Planned and Doing rows that are really done — 22 Oct 2026
 **Owner said:** "I see all these Planned features in backlog.. and Claude's tasks that are tagged doing.. are they
 all done ? if yes.. we need to keep tracker updated".

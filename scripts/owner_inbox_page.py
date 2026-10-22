@@ -23,6 +23,10 @@ with "| Feature | Status | Details |" tables), each feature with its own comment
 as DATA.notes, printed by --absorb like answers); "Waiting for you" counts decisions only, and the
 entries not read yet have their own "To read" list and filter.
 
+R-81 (22 Oct 2026): every feature not built yet has "Move to" (Planned / Waiting for you / Idea / Not
+doing). A move is saved into the page as DATA.moves and shows at once; --absorb writes it into the
+feature's Status cell in the .md (his move wins). Planned = Claude may build it; Waiting for you = needs him.
+
 Usage: owner_inbox_page.py <output.html> [<inbox.md>]
        owner_inbox_page.py --absorb <saved-page.html> [<inbox.md>]
          writes the page's read taps into the .md and prints the answers/replies it holds
@@ -173,6 +177,7 @@ def build(md_path=INBOX):
     data["answers"] = {}
     data["read"] = {}
     data["notes"] = {}
+    data["moves"] = {}
     return fill(TEMPLATE, data)
 
 
@@ -232,6 +237,33 @@ def rename_chats(text, names):
     return re.sub(r"^\*\*Chat:\*\* (.+)$", one, text, flags=re.M)
 
 
+MOVE_TO = ("Planned", "Waiting for you", "Idea", "Not doing")
+
+
+def move_features(text, moves):
+    """R-81: each moved feature's Status cell in "## Feature backlog" becomes the owner's pick.
+    Returns (text, moves written). A move to an unknown status, or of a feature no longer there, is skipped."""
+    m = BACKLOG_RE.search(text)
+    if not m or not moves:
+        return text, []
+    lines, group, done = m.group(1).split("\n"), "Other", []
+    for k, line in enumerate(lines):
+        hm = re.match(r"^### (.+)$", line)
+        if hm:
+            group = hm.group(1).strip()
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.strip().startswith("|") or len(cells) not in (3, 4):
+            continue
+        mv = moves.get(slug(group) + "/" + slug(cells[0]))
+        if not mv or mv.get("to") not in MOVE_TO or cells[1] == mv["to"]:
+            continue
+        cells[1] = mv["to"]
+        lines[k] = "| " + " | ".join(cells) + " |"
+        done.append((group, cells[0], mv["to"]))
+    return text[: m.start(1)] + "\n".join(lines) + text[m.end(1):], done
+
+
 def absorb(saved_html, md_path=INBOX):
     """Move the page's read taps into the .md; return the answers/replies the page holds (to act on)."""
     data = page_data(saved_html)
@@ -248,6 +280,7 @@ def absorb(saved_html, md_path=INBOX):
     text = rename_chats(text, data.get("chatNames") or {})
     for num, when in (data.get("done") or {}).items():
         text = set_task_done(text, int(num), str(when) if when else None)
+    text, _ = move_features(text, data.get("moves") or {})
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -434,6 +467,10 @@ DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comme
 DATA.backlog = DATA.backlog || [];
 DATA.done = DATA.done || {}; // R-31: num -> when he tapped "I've done it", or false for "Not done yet" (moved into the .md by --absorb)
 DATA.chatNames = DATA.chatNames || {}; // R-28: chat as in the .md -> the owner's new name (written into the .md by --absorb)
+DATA.moves = DATA.moves || {}; // R-81: feature id -> {group, name, to, at}: his "Move to" pick (written into the .md by --absorb)
+// R-81: Planned = Claude may build it; Waiting for you = it needs him.
+const MOVE_KIND = { "Planned": "planned", "Waiting for you": "waiting", "Idea": "idea", "Not doing": "no" };
+const MOVE_LABEL = { "Planned": "Planned: Claude can build it", "Waiting for you": "Waiting for you: needs me", "Idea": "Idea", "Not doing": "Not doing" };
 const chatLabel = (c) => DATA.chatNames[c] || c;
 let chat = "all", filter = "all";
 let blKind = null; // a status pill tapped in the backlog / built tab: only that status (null = all)
@@ -576,7 +613,7 @@ function backlogHtml() {
   // Owner (18 Oct): the status pills are filters: tap "Live" to see only Live; tap it again for all.
   const sum = '<p class="bl-sum">' + Object.keys(BL_KIND).filter((k) => counts[k]).map((k) =>
       '<button type="button" class="status k-' + k + '" data-act="blk" data-k="' + k + '" aria-pressed="' + (blKind === k) + '">' + BL_KIND[k] + " " + counts[k] + "</button>").join("") +
-    "<span>" + (blKind ? "Showing " + BL_KIND[blKind] + " only. Tap it again to see all." : "Tap a status to see only those. Tap \u201cComment\u201d to send me a note.") + "</span></p>";
+    "<span>" + (blKind ? "Showing " + BL_KIND[blKind] + " only. Tap it again to see all." : "Planned = I can build it; Waiting for you = it needs you. Tap a status to see only those; “Move to” changes one. Tap \u201cComment\u201d to send me a note.") + "</span></p>";
   // A tapped status shows just those features; otherwise the pending ones, then "Built" folded.
   if (blKind) return sum + groupedHtml(all.filter((x) => x.f.kind === blKind));
   const built = all.filter((x) => inTab(x.f, "shipped"));
@@ -588,6 +625,12 @@ function featHtml(f, i) {
     return '<div class="feat"><div class="row"><span class="name">' + esc(f.name) + '</span><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
       '<p class="det">' + esc(f.details) + "</p>" +
       (f.how ? '<p class="how"><b>How it will work:</b> ' + esc(f.how) + "</p>" : "") +
+      (DATA.moves[f.id] ? '<p class="pick">Moved here by you, ' + esc(DATA.moves[f.id].at) + ".</p>" : "") +
+      (SHIPPED.includes(f.kind) ? "" :
+        '<details><summary>Move to</summary><div class="actions">' +
+        Object.keys(MOVE_KIND).filter((to) => to !== f.status).map((to) =>
+          '<button class="btn ghost" data-act="move" data-i="' + i + '" data-to="' + esc(to) + '">' + esc(MOVE_LABEL[to]) + "</button>").join("") +
+        '<span class="msg" id="mmsg' + i + '" role="status"></span></div></details>') +
       (sent
         ? '<div class="form sent"><p class="sentline">Comment sent ' + esc(sent.at) + ". Claude acts on it next time it looks at your inbox.</p><pre>" + esc(sent.text) + "</pre>" +
           '<div class="actions"><button class="btn ghost" data-act="renote" data-i="' + i + '">Write another</button></div></div>'
@@ -647,7 +690,7 @@ function render() {
   $("entries").innerHTML = list.length ? list.map(card).join("")
     : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : "Nothing new: everything is read.") + "</p>";
   if (filter === "waiting" && waitingFeats().length) {
-    $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs your yes (most cost money or need something bought). Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
+    $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs you: an answer, a yes, a purchase or a setup step. Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
       waitingFeats().map(({ f, i }) => featHtml(f, i)).join("");
   }
   // Folded "done" box at the bottom: answered decisions (and feature yes/no's sent) or read answers.
@@ -722,6 +765,14 @@ function sendNote(i) {
   save(() => { DATA.notes[f.id] = { group: f.group, name: f.name, text, at: stamp() }; },
     () => { if (had) DATA.notes[f.id] = had; else delete DATA.notes[f.id]; }, msg, noteText(f, text));
 }
+// R-81 (owner, 22 Oct): he moves a feature between statuses himself; --absorb writes it into the .md.
+function moveFeature(i, to) {
+  const f = DATA.backlog[i];
+  const had = DATA.moves[f.id], before = { status: f.status, kind: f.kind };
+  save(() => { DATA.moves[f.id] = { group: f.group, name: f.name, to, at: stamp() }; f.status = to; f.kind = MOVE_KIND[to]; },
+    () => { if (had) DATA.moves[f.id] = had; else delete DATA.moves[f.id]; f.status = before.status; f.kind = before.kind; },
+    $("mmsg" + i), "Owner inbox feature backlog: " + f.group + " / " + f.name + ": move to " + to);
+}
 function showCopy(msg, why, text) {
   msg.innerHTML = esc(why) + ' Copy it and paste it in the chat instead: <button class="btn ghost" data-act="copy">Copy</button><pre class="copy">' + esc(text) + "</pre>";
 }
@@ -752,6 +803,7 @@ document.addEventListener("click", (ev) => {
   if (b.dataset.act === "undone") markDone(n, false);
   if (b.dataset.act === "change") { delete DATA.answers[n]; render(); }
   if (b.dataset.act === "fnote") sendNote(Number(b.dataset.i));
+  if (b.dataset.act === "move") moveFeature(Number(b.dataset.i), b.dataset.to);
   if (b.dataset.act === "blk") { blKind = blKind === b.dataset.k ? null : b.dataset.k; render(); }
   if (b.dataset.act === "renote") { delete DATA.notes[DATA.backlog[Number(b.dataset.i)].id]; render(); }
   if (b.dataset.act === "copy") {
@@ -779,6 +831,9 @@ render();
 
 
 def main(argv):
+    # Group names hold marks like "↔" that Windows' default console code page cannot print.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     if len(argv) in (3, 4) and argv[1] == "--absorb":
         answers = absorb(open(argv[2], encoding="utf-8").read(), argv[3] if len(argv) == 4 else INBOX)
         print("read taps written into the inbox; answers and replies to act on: " + str(len(answers)))
@@ -789,6 +844,8 @@ def main(argv):
             print("chat renamed in the inbox: " + json.dumps(old, ensure_ascii=False) + " -> " + json.dumps(new, ensure_ascii=False))
         for num, when in (saved.get("done") or {}).items():
             print(f"task #{num}: " + ("done " + str(when) if when else "not done yet") + " (written into the inbox)")
+        for fid, mv in (saved.get("moves") or {}).items():
+            print("feature moved by the owner (written into the inbox): " + json.dumps({"feature": fid, **mv}, ensure_ascii=False))
         notes = saved.get("notes") or {}
         print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
         for fid, n in notes.items():

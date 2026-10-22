@@ -33,6 +33,11 @@ holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it
 - **A decision only he can make** (the #18 list below): `**Decide:** <question>` + `- A: <option>`
   lines (mark one "(recommended)") in the entry, plus a row in the "Waiting for your decision" table;
   when he decides, write `**DECIDED (date):** ...`, drop the `**Decide:**` lines and the table row.
+- **⭐ Owner rule (22 Oct 2026, R-81): the tracker is THE plan: use it always, keep it true.** **Planned =
+  good to go: pick it and build it without asking.** Anything that needs his input, pick, approval, money,
+  a setup step or a live server yes sits in **Waiting for you** (name the # it waits on), never in Planned.
+  After every release or deploy, check EVERY row not Live/Done in the same turn. He moves features between
+  statuses on the page ("Move to"); `--absorb` writes his moves into the .md and they win.
 - **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details | How it will work |`,
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
   sentence each; every row not built yet also fills "How it will work" in 1-4 plain sentences, R-52):
