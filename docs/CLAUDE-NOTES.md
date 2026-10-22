@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-78. Fluid tab bar: the highlight slides to the tapped tab — 22 Oct 2026
+**Owner said:** "add this little feature in the plan for you to build. I want those nice fluid animations when
+someone switches from one tab to another at the bottom of the screen ... That highlighted color that we have is
+actually kind of moves. It's like visible moving towards the right hand side. So you can actually check how this is
+implemented online and build a good implementation for it."
+**Plan:** backlog row (Planned, his confirmation); research the common implementations; build one highlight that
+slides (and stretches a little) from the old tab to the new one, on the UI thread, still with "Remove animations".
+
 ## R-77. After joining a gym: restart into its branding and offer its home-screen icon; Shop only when it is on — 22 Oct 2026
 **Owner said (after joining RAM Fitness Club from its invite link):** "after I joined the gym, I wanted to just reload
 automatically and show the splash screen for the gym's branding, and automatically shows a pop-up to add the icon on
