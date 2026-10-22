@@ -7,8 +7,10 @@ Sources: docs/launch/PRIVACY-NOTICE.md (the part under "## ForgeAI privacy notic
 PRIVACY-NOTICE-HI.md (Hindi, below the English), TERMS.md. The admin app serves them as static files
 (forgeai.aakashpahuja.in/privacy.html, /terms.html); the member app links to them when joining a gym.
 CONTACT_NAME / CONTACT_EMAIL fill the documents' [OWNER NAME] / [CONTACT EMAIL] blanks. While they are
-empty the pages go to docs/launch/preview/ instead (to look at) and any copy in public/ is removed, so
-an admin deploy can never publish a page with blanks.
+empty the pages go to docs/launch/preview/ instead (to look at), and public/ gets a short holding page
+at each address that says the page is being finished, so an admin deploy can never publish a page with
+blanks, and the member app's links never land on the admin app (R-76: the site sends any address it
+does not have to the admin app, and the join screen's links did exactly that).
 A tiny Markdown subset only: ## / ### headings, paragraphs, "- " lists, | tables |, **bold**.
 """
 import html
@@ -111,6 +113,12 @@ a{{color:var(--accent)}}nav{{font-size:.9rem;color:var(--muted)}}hr{{border:0;bo
 """
 
 
+HOLD = """<h1>{title}</h1>
+<p>This page is being finished and will be here soon.</p>
+<section lang="hi"><p>यह पेज तैयार किया जा रहा है और जल्द ही यहाँ होगा।</p></section>
+"""
+
+
 def main():
     priv = fill(open(os.path.join(DOCS, "PRIVACY-NOTICE.md"), encoding="utf-8").read())
     hindi = fill(open(os.path.join(DOCS, "PRIVACY-NOTICE-HI.md"), encoding="utf-8").read())
@@ -129,9 +137,12 @@ def main():
         with open(os.path.join(out, name), "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
         print("wrote", os.path.relpath(os.path.join(out, name), ROOT))
-        if left and os.path.exists(os.path.join(OUT, name)):
-            os.remove(os.path.join(OUT, name))
-            print("removed", os.path.relpath(os.path.join(OUT, name), ROOT), "(blanks: never for the live site)")
+        if left:
+            title = "ForgeAI privacy notice" if name == "privacy.html" else "ForgeAI terms of use"
+            short = "Privacy notice" if name == "privacy.html" else "Terms of use"
+            with open(os.path.join(OUT, name), "w", encoding="utf-8", newline="\n") as f:
+                f.write(PAGE.format(title=short, body=HOLD.format(title=title)))
+            print("wrote a holding page", os.path.relpath(os.path.join(OUT, name), ROOT), "(blanks: never the real page)")
     if left:
         print("NOT READY TO DEPLOY: blanks left: " + ", ".join(left) + " (owner inbox #37)")
         return 1
