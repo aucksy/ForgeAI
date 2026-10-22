@@ -25,6 +25,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 45 | Count reps by listening: build a test version | A: yes, phone mic |
 | 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
 | 47 | AI import of old records: the first version | A: spreadsheets with AI, free with a daily limit |
+| 49 | Offers and messages: step 2 (live server change) and the reward numbers | A: yes after step 1; 10 workouts in 30 days → 3 days |
 
 ---
 
@@ -54,7 +55,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 17. Missing-muscle suggestions (your note, 22 Oct) | Doing | Research done (a calm once-a-week tip when a big muscle group gets almost no work all week; never during a workout). Build after the two releases. |
 | 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Trainer view: plan in #46, waits for your pick. Reps to beat: after 17. |
 | 19. v0.52.0: your gym notes of 22 Oct | Doing | Built and tested (3,084 checks): warm-ups keep last time's numbers; dumbbell pairs only get weights that split into two real dumbbells; the newest workout anywhere counts (no false "long break"); the kg line turns green when beaten; "Last" beside the rest timer; pop-ups 2 s longer; "In use" by itself after each set (a setting). Independent review running, then the phone tests. |
-| 20. Offers and notices for gym owners, with the workout reward (your note, 22 Oct) | Doing | Research running (every message a gym sends, the "track 10 workouts, get 3 extra days" reward, how to stop cheating). Then the build; the reward needs your yes on a live server change and privacy words. |
+| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Doing | Research done (#49). Step 1 building now: ready messages in English and Hindi, who-gets-it picker, WhatsApp send-to-next, Today nudges, the receipt fix, the claim-code reward trial. |
 | 21. Imported names with a title ("Mr. Ramesh") | Doing | Found 22 Oct: the member app refused such a member at Join. Imports now leave titles out (admin app, next deploy). Fixing names already on the server needs a small live server change: I will ask with the next one. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
@@ -217,6 +218,37 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Planned | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
+and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
+**My answer:** Building it in three steps. Step 1 needs nothing from you, and I have started it.
+- **Step 1 (building now, no live server change):** 26 ready messages in English and Hindi (gym closed, new
+  timings, fee offer, festival, renewal, birthday, welcome, "haven't seen you"...), blanks filled with boxes
+  instead of typing into brackets; a "who gets it" picker (plans ending this week, ended, stopped coming, a plan,
+  a batch, birthdays); a WhatsApp "send to next" list from your phone for members without the app; "Messages &
+  offers" as its own menu item; Today nudges ("5 plans end this week").
+- **The workout reward, first as a trial with nothing sent to the server:** the member app shows "Show my
+  workouts to the desk" with a short code; the desk types it in, the admin app checks the dates against its own
+  check-in register ("9 of 10 match"), and you give the days with the existing gift button.
+- **Stopping cheating:** a workout counts only on a day the gym's register shows a check-in, and only if it ran
+  20+ minutes with 6+ sets. A sofa workout earns nothing; the worst a cheat wins is coming to the gym 10 times.
+- **Evidence:** rewards raise gym visits while they run; a small part lasts, mostly in people who were not
+  regulars. So the reward stays small and repeatable.
+- **No GST and no receipt for the free days** (a free extension is not a sale). I found and am fixing a related
+  bug: a reprinted old receipt showed the longer end date as if the days were paid for. It will print the dates as
+  sold, plus "Extended free by 3 days (reward)".
+- **Step 2 (needs your yes to a live server change):** members join the offer in the app, progress "6 of 10",
+  only the DATES of counted workouts leave the phone (after "Join the offer"), the desk's one-tap Give button,
+  in-app messages to a group (not only everyone), messages at a chosen time.
+- **Step 3 (after your Firebase setup):** pop-up notifications, and automatic birthday / plan-ending / welcome
+  messages at 9 am, never more than one a day per member.
+**Decide:** Step 2 and its numbers?
+- A: Yes to step 2 once step 1 is live: 10 workouts within 30 days, 3 extra days, 20+ minutes and 6+ sets, once per member per offer; the desk gives the days with one tap; desk and QR check-ins both count; every member with a running plan can join. You approve the consent words and the privacy notice lines first (drafts in the note) (recommended)
+- B: Stay with the step 1 trial (claim code at the desk) until the client gym has used it for a month
+**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
 
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
