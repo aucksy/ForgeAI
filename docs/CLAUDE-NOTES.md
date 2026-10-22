@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-79. "Is there anything else you can continue building without me" (he is tired) — 22 Oct 2026
+**Owner said:** "I am tired... is there anything else you can continue building without me".
+**What I do (decided myself, rule #18):** only work that needs no answer, no money and no live server change:
+1. The known issue: a drag that starts on a weight/reps box does not scroll the workout page. A fix that keeps the
+   box's own touch (never the pointerEvents way that broke typing), proven by the phone tests before any release.
+2. Small checks and tidy-ups found on the way; stale tracker rows (Reps to beat, Missing-muscle are live).
+Everything bigger waits on his answers: #46 trainer view, #47 AI import, #49 offers step 2, #41 branches, #45 rep
+counting, #37 contact; FitPass members and the gym's workout report need a live server change (his yes).
+
 ## R-78. Fluid tab bar: the highlight slides to the tapped tab — 22 Oct 2026
 **Owner said:** "add this little feature in the plan for you to build. I want those nice fluid animations when
 someone switches from one tab to another at the bottom of the screen ... That highlighted color that we have is
