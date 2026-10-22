@@ -410,10 +410,18 @@ export const SetRow = memo(function SetRow({
       <TextInput
         ref={p.inputRef}
         value={p.value}
-        onChangeText={p.onChangeText}
+        onChangeText={(t) => p.onChangeText(t.replace(/[\r\n]/g, ''))}
         onFocus={p.onFocus}
         onBlur={p.onBlur}
         keyboardType={p.keyboardType}
+        // R-79 (22 Oct 2026): on Android a one-line box with centred text counts as "can scroll
+        // sideways" (its text sits in a very wide strip), so React Native's box keeps a drag that
+        // starts on it and the workout page never scrolls. A multi-line box is exactly as wide as
+        // its text area, so the drag goes to the page; Enter still closes the keyboard, as before.
+        // (Not pointerEvents: that broke typing, run 39758056150.)
+        multiline
+        submitBehavior="blurAndSubmit"
+        returnKeyType="done"
         selectTextOnFocus
         accessibilityLabel={p.a11y}
         accessibilityHint={p.value === '' && p.hint !== '—' ? `Empty. A tick saves ${p.hint}` : undefined}
@@ -710,6 +718,7 @@ const inputStyle = (fontSize: number) => ({
   borderWidth: 1,
   borderColor: color.border,
   textAlign: 'center' as const,
+  textAlignVertical: 'center' as const,
   fontFamily: type.monoBold,
   fontSize,
   color: color.ink,

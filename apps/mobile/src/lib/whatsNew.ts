@@ -27,6 +27,11 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.54.1',
+    date: '22 Oct',
+    lines: ['A swipe that starts on a weight or reps box now scrolls the workout page.'],
+  },
+  {
     version: '0.54.0',
     date: '22 Oct',
     lines: [

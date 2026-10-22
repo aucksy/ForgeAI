@@ -98,30 +98,28 @@ appId: com.forgeai.app
       - waitForAnimationToEnd:
           timeout: 3000
       - takeScreenshot: p7-big-${NAV}-03-open-workout
-      # 22 Oct 2026 (runs 39734799762 x2): Maestro's swipe starts at the screen's centre, which can
-      # land on a set's number box; on Android a drag that starts on a box does not scroll the page
-      # (a known React Native behaviour; an app-side fix broke typing in run 39758056150 and was
-      # undone). The centre swipe is tried first; if it cannot scroll, swipes from the PREVIOUS
-      # column (never a box) reach the link, and the 03a-scroll-fallback picture records it.
-      - scrollUntilVisible:
-          element: "Discard workout"
-          centerElement: true
-          timeout: 12000
-          optional: true
+      # R-79 proof (22 Oct 2026): a drag that STARTS on a set's number box scrolls the page. Runs
+      # 39734799762 x2 found it did not (React Native's one-line centred box kept the drag); the boxes
+      # are multi-line now. At this text size the link is below the screen, so each swipe begins on
+      # the set 1 weight box itself, and the link must come into view. (The pointerEvents fix of
+      # run 39758056150 broke typing; the parts that type into boxes check that this one does not.)
       - runFlow:
           when:
             notVisible: "Discard workout"
           commands:
-            - takeScreenshot: p7-big-${NAV}-03a-scroll-fallback
             - repeat:
                 while:
+                  visible: ".* set 1 weight, (kilograms|pounds)"
                   notVisible: "Discard workout"
-                times: 6
+                times: 3
                 commands:
                   - swipe:
-                      start: "20%, 70%"
-                      end: "20%, 35%"
-                      duration: 600
+                      from:
+                        text: ".* set 1 weight, (kilograms|pounds)"
+                      direction: UP
+                      duration: 700
+            - takeScreenshot: p7-big-${NAV}-03a-swiped-from-box
+            - assertVisible: "Discard workout"
       - scrollUntilVisible:
           element: "Discard workout"
           centerElement: true
