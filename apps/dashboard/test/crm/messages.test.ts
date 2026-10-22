@@ -47,6 +47,8 @@ describe('the server\'s limits, checked before sending (22 Oct 2026)', () => {
     recipients: 10,
     seen: 0,
     withdrawn,
+    sendAt: null,
+    toGroup: false,
   });
 
   it('nothing stops a first offer, or gym news at any time', () => {

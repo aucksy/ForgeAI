@@ -21,7 +21,7 @@ import type { Member, Membership, Payment } from '../types';
 import type { GymRecord } from '../data/adapter';
 import { addDays, formatDay, isValidDateISO, type DateISO } from './dates';
 import { gstAppliesTo, gstRateForDate, placeOfSupply, splitInclusiveGst, GYM_SAC_CODE, type GstSplit } from './gst';
-import { extensionLine, unpaidForMembership, type ExtensionLine } from './membership';
+import { extensionLine, rewardTakenBackLine, unpaidForMembership, type ExtensionLine } from './membership';
 import { formatINR, type Paise } from './money';
 import { methodLabel } from './payments';
 import { financialYear } from './receipts';
@@ -180,10 +180,22 @@ export interface TermAsSold {
  */
 export function termAsSold(m: Pick<Membership, 'startsOn' | 'endsOn' | 'notes'>): TermAsSold {
   const asIs: TermAsSold = { startsOn: m.startsOn, endsOn: m.endsOn, extensions: [] };
-  const exts = (m.notes ?? '')
-    .split('\n')
-    .map(extensionLine)
-    .filter((e): e is ExtensionLine => e !== null);
+  // #49 step 2: "Reward taken back: X -> Y" (0025's owner_undo_reward) cancels the reward line just
+  // before it (to X, from Y): both drop out, and the chain still adds up. Any other order is not
+  // believed (today's dates, as before).
+  const exts: ExtensionLine[] = [];
+  for (const line of (m.notes ?? '').split('\n')) {
+    const e = extensionLine(line);
+    if (e) {
+      exts.push(e);
+      continue;
+    }
+    const back = rewardTakenBackLine(line);
+    if (!back) continue;
+    const last = exts[exts.length - 1];
+    if (!last || last.to !== back.from || last.from !== back.to) return asIs;
+    exts.pop();
+  }
   if (exts.length === 0) return asIs;
   for (let i = 0; i < exts.length; i += 1) {
     const e = exts[i]!;
