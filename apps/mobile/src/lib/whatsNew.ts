@@ -27,6 +27,16 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.53.0',
+    date: '22 Oct',
+    lines: [
+      'After a workout, tap the comparison line to see each exercise: up, down, and why.',
+      "The comparison uses this routine's last time first, then the same kind of day in its folder.",
+      'Muscle tips: now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out. Turn them off in Settings → Workouts.',
+      "Gym members: “Show my workouts to the desk” under My membership, for your gym's workout offer. Nothing is sent from your phone.",
+    ],
+  },
+  {
     version: '0.52.0',
     date: '22 Oct',
     lines: [
