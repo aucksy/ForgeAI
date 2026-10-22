@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-80. "Keep the tracker updated": Planned and Doing rows that are really done — 22 Oct 2026
+**Owner said:** "I see all these Planned features in backlog.. and Claude's tasks that are tagged doing.. are they
+all done ? if yes.. we need to keep tracker updated".
+**What I did:** went through EVERY row not Live/Done against the code and releases: shipped -> Live/Done; waits on
+him -> "Waiting for you" (backlog) / "Blocked" (my tasks) with the tracker number; added Live rows for features he
+asked for that shipped with no row (finish-screen list, In use after each set, gym welcome + logo pop-up, Shop only
+when on, workout reward, Messages & offers). Saved as a hard rule: D:/Brain/How I Like Things/tracker-matches-what-shipped.md.
+**Also said:** "dont work on AI Coach chat for now.. move it 'Waiting for you'" -> done; I do not work on it.
+**Also said:** "same for foor and calories log" -> Food and calorie log is Waiting for you too; I do not work on it.
+
 ## R-79. "Is there anything else you can continue building without me" (he is tired) — 22 Oct 2026
 **Owner said:** "I am tired... is there anything else you can continue building without me".
 **What I do (decided myself, rule #18):** only work that needs no answer, no money and no live server change:
