@@ -1,6 +1,6 @@
 /**
  * Health Connect (v0.27.0, tracker plan Phase 5): each finished workout and its estimated
- * calories go to Health Connect, which Google Fit and Samsung Health read. Write only.
+ * calories go to Health Connect, which Google Health (the Fitbit app) and Samsung Health read. Write only.
  *  - Off until the member taps "Connect" (Profile) and allows it on Health Connect's own screen.
  *  - Then every finished workout is sent; an edited one is sent again (it replaces the old
  *    copy — the native side keys each record on the workout id), a deleted one is taken out.
@@ -19,13 +19,14 @@
  *  - IM-16: imported workouts are sent too (`sendWorkoutsToHealth`, from the import screen).
  */
 import { getDb } from '@/db';
+import { clockTime, relativeDay, tinyDateWithYear, toISO, todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { isDemoData } from '@/onboarding/db/dataActions';
 
 import { dayTypeLabel } from '../services/finishSummary';
 import { activeKcal, endFor } from './calories';
 import { phoneNative } from './native';
-import { usePhonePrefs } from './phonePrefs';
+import { usePhonePrefs, type HealthLast } from './phonePrefs';
 
 /** 'off' = not allowed yet; 'allowed' = allowed on Health Connect, sending switched off. */
 export type HealthState = 'none' | 'unavailable' | 'update' | 'off' | 'allowed' | 'on';
@@ -186,8 +187,11 @@ async function readWeights(): Promise<BodyWeightAt[]> {
   return rows.map((r) => ({ dateISO: r.date_iso, weightKg: r.weight_kg }));
 }
 
+/** R-72: how far "Send past workouts" is ("Sending… 200 of 480"). */
+export type SendProgress = (sent: number, total: number) => void;
+
 /** Send rows in parts; counts what went in, and why it stopped. */
-async function send(rows: Row[]): Promise<SendResult> {
+async function send(rows: Row[], onProgress?: SendProgress): Promise<SendResult> {
   if (rows.length === 0) return { kind: 'none' };
   // Demo data (sample history, and workouts logged while it is loaded) never leaves the phone.
   if (await isDemoData().catch(() => true)) return { kind: 'demo' };
@@ -196,6 +200,7 @@ async function send(rows: Row[]): Promise<SendResult> {
   const weights = await readWeights().catch(() => [] as BodyWeightAt[]);
   const payload = healthPayload(rows, weights);
   let sent = 0;
+  onProgress?.(0, payload.length);
   for (let i = 0; i < payload.length; i += SEND_PART) {
     const part = payload.slice(i, i + SEND_PART);
     const written = await n.healthWrite(JSON.stringify(part)).catch(() => -1);
@@ -207,9 +212,74 @@ async function send(rows: Row[]): Promise<SendResult> {
       return { kind: 'failed', sent, total: payload.length, reason };
     }
     sent += written;
+    onProgress?.(sent, payload.length);
   }
   return { kind: 'sent', sent, total: payload.length };
 }
+
+/** R-72: remember when workouts last went in (the row says it, so the member can see it works). */
+function noteLastSent(count: number, past: boolean): void {
+  if (count <= 0) return;
+  try {
+    usePhonePrefs.getState().setHealthLast({ at: Date.now(), count, past });
+  } catch (e) {
+    console.warn('[ForgeErr] health: the last-sent time could not be saved', e);
+  }
+}
+
+/** R-72: what "Send past workouts" would send: how many, from which day to which. */
+export interface PastSummary {
+  count: number;
+  firstISO: string | null;
+  lastISO: string | null;
+  demo: boolean;
+}
+
+export async function pastWorkoutsSummary(): Promise<PastSummary> {
+  const demo = await isDemoData().catch(() => true);
+  const r = await getDb().getFirstAsync<{ n: number; first: string | null; last: string | null }>(
+    "SELECT COUNT(*) AS n, MIN(date_iso) AS first, MAX(date_iso) AS last FROM workout_sessions WHERE source != 'seed'",
+  );
+  return { count: r?.n ?? 0, firstISO: r?.first ?? null, lastISO: r?.last ?? null, demo };
+}
+
+/** R-72: the question before sending, or a plain notice when there is nothing to send. PURE. */
+export function pastSendAsk(
+  s: PastSummary,
+  today: string = todayISO(),
+): { notice: string } | { title: string; body: string; confirm: string } {
+  if (s.demo) return { notice: 'Nothing to send: workouts on demo data never leave your phone.' };
+  if (s.count === 0 || !s.firstISO || !s.lastISO) return { notice: 'No workouts to send yet.' };
+  const n = s.count === 1 ? '1 workout' : `${fmtInt(s.count)} workouts`;
+  const span =
+    s.firstISO === s.lastISO
+      ? `Your workout of ${tinyDateWithYear(s.firstISO, today)}`
+      : `Your workouts from ${tinyDateWithYear(s.firstISO, today)} to ${tinyDateWithYear(s.lastISO, today)}`;
+  return {
+    title: `Send ${n} to Health Connect?`,
+    body:
+      `${span} go in as strength training, each with its time and calories (an estimate). ` +
+      'Google Health, Samsung Health and other apps you allow there can show them. ' +
+      'Sending again replaces them, so nothing is counted twice.',
+    confirm: `Send ${n}`,
+  };
+}
+
+/** R-72: "Sending… 200 of 480". PURE. */
+export function sendProgressText(sent: number, total: number): string {
+  return total > 0 ? `Sending… ${fmtInt(sent)} of ${fmtInt(total)}` : 'Sending…';
+}
+
+/** R-72: "Last sent: Today, 10:40 · 480 past workouts". PURE. */
+export function lastSentText(last: HealthLast | null, today: string = todayISO()): string | null {
+  if (!last || !(last.count > 0)) return null;
+  const day = relativeDay(toISO(new Date(last.at)), today);
+  const what = last.past ? `${fmtInt(last.count)} past workout${last.count === 1 ? '' : 's'}` : `${fmtInt(last.count)} workout${last.count === 1 ? '' : 's'}`;
+  return `Last sent: ${day}, ${clockTime(last.at)} · ${what}`;
+}
+
+/** R-72: where to look once they are sent (Google's health app reads Health Connect). */
+export const SEE_THEM_IN_GOOGLE_HEALTH = 'To see them in Google Health: Connections → Partner apps → allow Exercise.';
 
 /**
  * PURE (audit M2). The workouts still owed to Health Connect after a send: every id asked about
@@ -280,6 +350,7 @@ async function sendInParts(ids: readonly string[]): Promise<SendResult> {
     }
     if (r.kind === 'failed') failed ??= r.reason;
   }
+  noteLastSent(sent, true);
   if (failed) return { kind: 'failed', sent, total, reason: failed };
   if (demo && total === 0) return { kind: 'demo' };
   return total === 0 ? { kind: 'none' } : { kind: 'sent', sent, total };
@@ -288,7 +359,8 @@ async function sendInParts(ids: readonly string[]): Promise<SendResult> {
 /** After a workout is finished or edited: send it, if Health Connect is on. A refusal is kept. */
 export async function sendWorkoutToHealth(sessionId: string): Promise<void> {
   if (!usePhonePrefs.getState().healthConnect) return;
-  await sendIds([sessionId]);
+  const r = await sendIds([sessionId]);
+  if (r.kind === 'sent') noteLastSent(r.sent, false);
 }
 
 /** IM-16: workouts just imported — sent, if Health Connect is on. A refusal is kept. */
@@ -307,9 +379,10 @@ export async function resendUnsentToHealth(): Promise<SendResult> {
 }
 
 /** "Send past workouts": every workout of the member's own. Says what happened. */
-export async function sendAllWorkoutsToHealth(): Promise<SendResult> {
+export async function sendAllWorkoutsToHealth(onProgress?: SendProgress): Promise<SendResult> {
   try {
-    const r = await send(await readRows('1 = 1', []));
+    const r = await send(await readRows('1 = 1', []), onProgress);
+    if (r.kind === 'sent' || r.kind === 'failed') noteLastSent(r.sent, true);
     // Every workout went, so none is still owed.
     if (r.kind === 'sent' && (usePhonePrefs.getState().healthUnsent ?? []).length > 0) usePhonePrefs.getState().setHealthUnsent([]);
     if (r.kind === 'failed') console.warn(`[ForgeErr] past workouts did not reach Health Connect (${r.reason}, ${r.sent} of ${r.total})`);

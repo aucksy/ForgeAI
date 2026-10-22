@@ -166,6 +166,8 @@ async function targetsFor(
   includeToday: boolean,
   scope: HistoryScope | null,
   prefs: TargetPrefs = targetPrefs(),
+  /** R-61 review: each lift's newest day in ANY workout (the break clock under "Same routine"). */
+  breakFrom: readonly (string | null)[] | null = null,
 ): Promise<ProgressionTarget[]> {
   const today = todayISO();
   const ids = items.map((it) => it.exerciseId ?? it.pe.exerciseId);
@@ -180,7 +182,7 @@ async function targetsFor(
   const [{ experience, goal }, version] = await Promise.all([profileFacts(), trainingVersion()]);
   // A version below one remembered: that one was a rolled-back write's (or another database's).
   if (version != null && version < targetMemoTop) forgetTargetMemo();
-  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope, goal, prefs);
+  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope, goal, prefs, breakFrom);
   const hit = key != null ? targetMemo.get(key) : undefined;
   if (hit) return [...hit];
   const [{ infos, versionIds }, histories, ladders] = await Promise.all([
@@ -238,6 +240,7 @@ async function targetsFor(
       gym: prefs.gym,
       // R-61: a two-dumbbell move (the library's counting) typed as one total.
       pair: (entry?.loadMode === 'both' || entry?.loadMode === 'both_side') && !weightIsEach(mode),
+      ...(breakFrom?.[i] ? { breakFromISO: breakFrom[i] } : {}),
     });
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
@@ -287,6 +290,7 @@ function memoKey(
   scope: HistoryScope | null,
   goal: Goal | null,
   prefs: TargetPrefs,
+  breakFrom: readonly (string | null)[] | null = null,
 ): string {
   // Display units shape the ladder's rungs (kg / lb).
   const parts = items.map((it, i) => {
@@ -306,6 +310,7 @@ function memoKey(
     displayUnits(),
     scopeKey(scope),
     parts,
+    breakFrom ?? '',
   ]);
 }
 
@@ -417,8 +422,9 @@ export async function getTargetsForCards(
  * R-61 (owner, 22 Oct 2026: "If the same exact exercise were done recently, even in a different
  * folder, then also"): heavy and light days live in one folder, so only a newer workout of the SAME
  * folder leaves the routine its own Target; one done since in another folder (or in no routine)
- * leads. And a break is a break from the lift under "Same routine" too: that scope's break rule
- * reads every workout when the lift was done elsewhere since.
+ * leads. And a break is a break from the lift under "Same routine" too: its break clock counts from
+ * the newest day anywhere (`breakFromISO`), while its weights stay this routine's own (review: the
+ * whole other Target used to come in, disagreeing with PREVIOUS and the grey hints).
  */
 async function routineFirstTargets(
   items: TargetItem[],
@@ -433,10 +439,7 @@ async function routineFirstTargets(
   const breakRule = (t: ProgressionTarget): boolean => t.rule === 'R1' || t.rule === 'R1b' || t.rule === 'T1';
   const newer = (a: ProgressionTarget, b: ProgressionTarget): boolean =>
     a.last?.dateISO != null && b.last?.dateISO != null && a.last.dateISO > b.last.dateISO;
-  if (scope != null) {
-    const [mine, any] = await Promise.all([targetsFor(items, includeToday, scope, prefs), targetsFor(items, includeToday, null, prefs)]);
-    return mine.map((t, i) => (breakRule(t) && newer(any[i], t) ? any[i] : t));
-  }
+  if (scope != null) return targetsFor(items, includeToday, scope, prefs, await newestAnywhere(items, includeToday));
   const own = await historyScopeOrAll(planDayId, 'routine');
   if (own == null) return targetsFor(items, includeToday, null, prefs);
   const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
@@ -447,6 +450,22 @@ async function routineFirstTargets(
     if (outside[i]) return any[i];
     return breakRule(t) && newer(any[i], t) ? any[i] : t;
   });
+}
+
+/** R-61 review: each lift's newest day in any workout (null when none, or the read failed). */
+async function newestAnywhere(items: readonly TargetItem[], includeToday: boolean): Promise<(string | null)[]> {
+  const today = todayISO();
+  try {
+    const rows = await getProgressionHistoryMany(
+      items.map((it) => ({ exerciseId: it.exerciseId ?? it.pe.exerciseId })),
+      2,
+      { scope: null },
+    );
+    return rows.map((h) => h.find((s) => (includeToday ? s.dateISO <= today : s.dateISO < today))?.dateISO ?? null);
+  } catch (e) {
+    console.warn('[ForgeErr] targets: the newest workout of each lift could not be read', e);
+    return items.map(() => null);
+  }
 }
 
 /**

@@ -69,6 +69,25 @@ function isMultiple(v: number, of: number): boolean {
   return Math.abs(q - Math.round(q)) < 1e-6;
 }
 
+/**
+ * R-61 review: does this total (kg) split into two equal dumbbells a gym has? Half on the usual
+ * 2.5 kg / 2.5 lb steps, or (kg) a whole number up to 10 (the small 1 kg racks: 12 = 6 + 6). PURE.
+ */
+export function pairsUp(totalKg: number, u: UnitSystem = displayUnits()): boolean {
+  if (!(totalKg > EPS)) return false;
+  const half = kgToUnit(totalKg, u) / 2;
+  if (isMultiple(half, 2.5)) return true;
+  return !imperial(u) && half <= 10 + EPS && isMultiple(half, 1);
+}
+
+/**
+ * R-61 review: a per-hand step (kg) a rack can make: 0.5 kg steps in kg (1 kg racks: 5, 6, 7), 2.5 lb
+ * in pounds. 1.25 kg (a 2.5 kg jump on totals) is not one. PURE.
+ */
+export function rackStep(stepKg: number, u: UnitSystem = displayUnits()): boolean {
+  return stepKg > EPS && isMultiple(kgToUnit(stepKg, u), imperial(u) ? 2.5 : 0.5);
+}
+
 function nearestOf(list: readonly number[], v: number): number {
   let best = list[0];
   for (const x of list) if (Math.abs(x - v) < Math.abs(best - v) - EPS) best = x;
@@ -295,7 +314,8 @@ export function jumpRungKg(wKg: number, share: number, l: Ladder): number {
 
 /**
  * About 10% lighter (kg): the rung nearest to 90% of last time's weight among those within
- * 25% below it (ties → the heavier); else whole steps down. null when that reaches zero.
+ * 25% below it (ties → the heavier); else whole steps down, but never past that window. null when
+ * nothing lighter fits (R-61: a 5 kg dumbbell is never halved to 2.5 kg).
  * `share` asks for another cut (0.2 = about 20%; the window moves with it).
  */
 export function downRungKg(
@@ -322,6 +342,10 @@ export function downRungKg(
     const steps = Math.max(1, Math.round((w * cut) / l.step));
     v = r3(rungOf(wKg, l) - steps * l.step);
   }
+  // R-61 (owner's Preacher Curl, 22 Oct 2026): never lighter than the window either. With 5 kg
+  // dumbbells the next ones down are 2.5 kg, half the weight: then there is no lighter weight
+  // (null), and the rules keep the weight and aim for fewer reps.
+  if (v < w * (1 - cut - 0.15) - EPS) return null;
   if (l.gym != null && v > EPS) {
     // Review fix: a weight the gym's plates can load — the nearest at or above, else below.
     const kg = unitToKg(v, l.units);

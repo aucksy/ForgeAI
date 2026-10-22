@@ -119,3 +119,48 @@ describe('R-65: the kg line knows when it is beaten', () => {
     expect(kgBeaten({ done: 90, left: 45, next: [{ weightKg: 15, reps: 9 }], short: false })).toBe(false);
   });
 });
+
+describe('R-61: a lighter suggestion never halves a small dumbbell (owner\'s Preacher Curl)', () => {
+  it('10 kg typed for two 5 kg dumbbells after a long break: no 5 kg (2.5 each), the weight stays', () => {
+    const h = [sets('2026-08-15', [[10, 15], [10, 15], [10, 13], [10, 14], [10, 9]])];
+    const pair = run(h, true);
+    expect(pair.targetWeightKg).toBe(10);
+    expect(pair.change).toBeNull();
+  });
+
+  it('reps fell twice on a 5 kg dumbbell: stay at 5 and build back, never 2.5', () => {
+    const one = { ...curl, id: 'c1', name: 'Concentration Curl' };
+    const h = [sets('2026-10-20', [[5, 6], [5, 6], [5, 5]]), sets('2026-10-17', [[5, 7], [5, 6], [5, 6]])];
+    const t = computeProgressionTarget({ exercise: one, target: { targetSets: 3, repRangeMin: 8, repRangeMax: 12 }, history: h, todayISO: TODAY });
+    expect(t.targetWeightKg).toBe(5);
+  });
+});
+
+describe('R-61 review: who really types both dumbbells', () => {
+  it('a recent total that is no pair (12.5 = one dumbbell typed) leaves pairs off', () => {
+    const h = [sets('2026-10-20', [[12.5, 12], [12.5, 12], [12.5, 12]])];
+    const t = run(h, true);
+    // Old behaviour for a one-dumbbell typer: the next dumbbell, 15.
+    expect(t.targetWeightKg).toBe(15);
+  });
+
+  it('an old odd total (22.5 = 11.25 a hand) is never a rung: up from 20 is 25', () => {
+    const h = [sets('2026-10-20', [[20, 16], [20, 16], [20, 16]])];
+    const t = run(h, true, [15, 20, 22.5]);
+    expect(t.targetWeightKg).toBe(25);
+  });
+
+  it('a recent 17.5 (8.75 a hand: no pair) means one dumbbell was typed: the next dumbbell, 22.5', () => {
+    const h = [sets('2026-10-20', [[20, 16], [20, 16], [20, 16]]), sets('2026-10-16', [[17.5, 12], [17.5, 12], [17.5, 12]])];
+    expect(run(h, true).targetWeightKg).toBe(22.5);
+  });
+
+  it('"Same weight" never goes heavier on a total typed in the other unit', () => {
+    // 30 lb typed, shown in kg: 13.61 kg total (no pair in kg): never 15 kg under "Same weight".
+    const lb30 = 30 * 0.45359237;
+    const h = [sets('2026-10-20', [[lb30, 10], [lb30, 9], [lb30, 9]])];
+    const t = run(h, true);
+    expect(t.change).toBeNull();
+    expect(t.targetWeightKg).toBeLessThanOrEqual(lb30 + 1e-6);
+  });
+});

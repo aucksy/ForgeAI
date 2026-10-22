@@ -1267,10 +1267,8 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * was just done at that weight. The weight still follows rule 1 (a weight typed above carries
  * down).
  *
- * Review fix (Oct 2026): when the Target moves the working weight (`warm`), a warm-up row's
- * last-time weight scales by the same ratio (40 kg for 60 -> 42.5 kg for 65), rounded down to a
- * weight that can be loaded, never under the empty bar, never above the new working weight; its
- * reps stay last time's. The same working weight = last time's warm-ups as they were.
+ * R-61 (owner, 22 Oct 2026): a warm-up row is last time's warm-up as it was, weight and reps, even
+ * when the Target moves the working weight (it used to scale with it: 10 kg for 20 became 7.5 for 15).
  */
 export function fillForSet(
   ex: DraftExercise,

@@ -31,6 +31,11 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 20000
 # Where PREVIOUS comes from: the last Push A (Saturday's workout was Legs A; Push A was earlier).
+# R-61 (22 Oct 2026): the line now sits in the card's header (muscle and rest row), higher up.
+- scrollUntilVisible:
+    element: 'Last: .* · Push A'
+    direction: UP
+    timeout: 15000
 - assertVisible: 'Last: .* · Push A'
 # Two warm-ups for the bench (from the Hevy history), each with a PREVIOUS from last time.
 - assertVisible: 'Mark .*Bench Press warm-up 1 complete'

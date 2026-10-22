@@ -3,6 +3,7 @@
  * its name, its Target line, and the kg to beat with the % on last time. Tap to open it: each
  * set's weight × reps. An exercise with no kg to beat (a first time, a hold, an easy week) shows
  * its Target line only and doesn't open. Words: tracker/lib/kgTarget.ts (tested).
+ * R-60 (owner, 22 Oct 2026): a move with no kilos shows its REPS to beat and opens to each set's reps.
  */
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -13,17 +14,21 @@ import { color, space, type } from '@/theme/tokens';
 import type { UnitSystem } from '@/types/models';
 
 import { targetLine } from '../engine/progression';
-import { kgPlan, kgSetLines, kgToBeatLine } from '../lib/kgTarget';
+import { beatPlan, kgSetLines, kgToBeatLine, repSetLines, repsToBeatLine } from '../lib/kgTarget';
 import type { KgTarget } from '../services/coachTargets';
 
 export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; index: number; units: UnitSystem }) {
   const [open, setOpen] = useState(false);
   const weight = (kg: number) => fmtWeight(kg, units);
   const line = targetLine(t, weight);
-  const plan = useMemo(() => kgPlan(t, t.lastSets ?? []), [t]);
+  const plan = useMemo(() => beatPlan(t, t.lastSets ?? []), [t]);
   // Dumbbells counted per hand add up per hand: say so.
-  const toBeat = plan ? kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${t.each ? ' each' : ''}`) : null;
-  const sets = plan && open ? kgSetLines(plan, weight) : null;
+  const toBeat = !plan
+    ? null
+    : plan.reps
+      ? repsToBeatLine(plan, t.perSide === true)
+      : kgToBeatLine(plan, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${t.each ? ' each' : ''}`);
+  const sets = plan && open ? (plan.reps ? repSetLines(plan) : kgSetLines(plan, weight)) : null;
 
   const body = (
     <>
@@ -64,7 +69,15 @@ export function ExerciseKgRow({ target: t, index, units }: { target: KgTarget; i
       accessibilityRole="button"
       accessibilityState={{ expanded: open }}
       accessibilityLabel={`${t.exerciseName}. ${line}. ${toBeat}.`}
-      accessibilityHint={open ? 'Hides the weight and reps of each set' : 'Shows the weight and reps of each set'}
+      accessibilityHint={
+        plan.reps
+          ? open
+            ? 'Hides the reps of each set'
+            : 'Shows the reps of each set'
+          : open
+            ? 'Hides the weight and reps of each set'
+            : 'Shows the weight and reps of each set'
+      }
       style={({ pressed }) => [rowStyle, { opacity: pressed ? 0.7 : 1 }]}
     >
       {body}

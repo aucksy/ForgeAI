@@ -5,6 +5,27 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-73. The yellow Target box shows the live kg line instead (his idea) — 22 Oct 2026
+**Owner said (Preacher Curl screenshot):** "Why is it showing different target in the yellow color up there and the
+different suggestions in the actual grayed out boxes?" Then: "this yellow color target suggestion is static ... if your
+suggestion is right there in the grayed out boxes already, then why do I need that part? I think I need to replace
+that part in yellow color with the total ... how much [planned], how much is done, and turn that green when it's
+done. What do you think?"
+**Answered:** the box said 7.5 (a false "long break" from 15 Aug, and 3.75 a hand: both fixed in 0.52.0); the grey
+boxes said 10 because a weight typed in set 1 carries down. Agreed with his idea.
+**Done (0.52.0):** with kilos (or reps) to beat, the box shows "120 of 405 kg · next 10 kg × 9, 9", green with a
+tick once beaten; ⓘ shows "Suggested: 7.5 kg · aim for 9 · RPE 7 · Lighter" and the why. No plan (first time,
+holds, easy week): the old line. Also: a lighter suggestion never goes past the 25% window (a 5 kg dumbbell is
+never halved to 2.5: the weight stays, fewer reps).
+
+## R-72. Health Connect "Send past workouts" asks first and shows that it works — 22 Oct 2026
+**Owner said:** "Has send past workouts... i tapped and it sent it without confirmation and without telling user what
+it will do... Improve the user experience here. I am not even sure if it's working..."
+**Done (0.52.0):** a question first ("Send 480 workouts to Health Connect?": the dates, strength training with time
+and calories, which apps can show them, sending again replaces); "Sending… 200 of 480" on the button; after it the
+result, "To see them in Google Health: Connections → Partner apps → allow Exercise", an "Open Health Connect"
+button, and a lasting green line "Last sent: Today, 10:40 · 480 past workouts" (also after each finished workout).
+
 ## R-71. Question: can our workouts show as strength training in Google's health app on the Pixel? — 22 Oct 2026
 **Owner asked:** "check if Google Pixel will allow other apps to send the workout data, so that even if I do not
 start the workout on the ... watch with the native functionality, can it still receive data from our watch app or

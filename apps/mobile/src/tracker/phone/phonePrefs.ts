@@ -21,10 +21,26 @@ export interface PhonePrefsState {
    * says "N workouts didn't reach Health Connect. Send again" until they go.
    */
   healthUnsent: string[];
+  /**
+   * R-72 (owner, 22 Oct 2026: "I am not even sure if it's working"): when workouts last reached
+   * Health Connect, how many, and whether it was "Send past workouts". Shown on the Health Connect
+   * row until the next send. null = nothing sent yet from this install.
+   */
+  healthLast: HealthLast | null;
   setHealthConnect: (on: boolean) => void;
+  setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
   setReminders: (p: Partial<Pick<PhonePrefsState, 'remindersOn' | 'reminderDays' | 'reminderMinutes' | 'reminderChosen'>>) => void;
   reset: () => void;
+}
+
+/** R-72: the last time workouts reached Health Connect. */
+export interface HealthLast {
+  /** Epoch ms. */
+  at: number;
+  count: number;
+  /** "Send past workouts" (true) or a finished workout sent by itself (false). */
+  past: boolean;
 }
 
 export const DEFAULT_REMINDER_MINUTES = 18 * 60;
@@ -39,7 +55,9 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       reminderMinutes: DEFAULT_REMINDER_MINUTES,
       reminderChosen: false,
       healthUnsent: [],
+      healthLast: null,
       setHealthConnect: (healthConnect) => set({ healthConnect }),
+      setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
       setReminders: (p) => set(p),
       reset: () =>
@@ -50,6 +68,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           reminderMinutes: DEFAULT_REMINDER_MINUTES,
           reminderChosen: false,
           healthUnsent: [],
+          healthLast: null,
         }),
     }),
     {

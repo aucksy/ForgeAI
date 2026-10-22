@@ -49,7 +49,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { kgBeaten, kgLiveLine, kgPlan, kgProgress, kgTickKey } from '../lib/kgTarget';
+import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import type { DragWrap } from './DragList';
@@ -212,8 +212,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // OWNER-INBOX #9: the kg to beat and what the open sets need (decision 2 A: at most 2 extra reps a
   // set; it never blocks anything). Last time = this card's own PREVIOUS sets, drops left out.
+  // R-60: a move with no kilos gets the same line in reps.
   const kgPlanned = useMemo(
-    () => (target ? kgPlan(target, exercise.previousSets.filter((p) => p.setType !== 'drop')) : null),
+    () => (target ? beatPlan(target, exercise.previousSets.filter((p) => p.setType !== 'drop')) : null),
     [target, exercise.previousSets],
   );
 
@@ -266,7 +267,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     );
     const each = weightIsEach(loadMode) ? ' each' : '';
     return {
-      text: kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
+      text: kgPlanned.reps
+        ? repLiveLine(kgPlanned, g)
+        : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
       beaten: kgBeaten(g),
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
@@ -507,18 +510,22 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         />
       ) : null}
 
-      {/* coach target (Phase C1) — inline prescription, tap for the why */}
+      {/* coach target (Phase C1) — inline prescription, tap for the why. R-73 (owner, 22 Oct 2026: "this
+          yellow color target suggestion is static ... if your suggestion is right there in the grayed out
+          boxes already, then why do I need that part?"): with kilos (or reps) to beat, the box shows the
+          live line instead — done so far and what the open sets need — and turns green once beaten. The
+          suggestion and its why stay one tap away (ⓘ). */}
       {target && line ? (
         <Pressable
           onPress={() => setShowWhy((v) => !v)}
           accessibilityRole="button"
-          accessibilityLabel={`Target ${line}. Tap for why.`}
+          accessibilityLabel={kgLine ? `Target ${line}. ${kgLine.text}. Tap for why.` : `Target ${line}. Tap for why.`}
           style={{
             gap: 4,
             borderRadius: radius.sm,
-            backgroundColor: color.surfaceSunken,
+            backgroundColor: kgLine?.beaten ? GOOD_SOFT : color.surfaceSunken,
             borderWidth: 1,
-            borderColor: color.border,
+            borderColor: kgLine?.beaten ? color.goodText : color.border,
             paddingHorizontal: space.md,
             paddingVertical: 8,
           }}
@@ -528,18 +535,31 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               ◎, the words, the pill and ⓘ share ONE vertical centre with even 8 dp gaps; when the
               words wrap, the others centre on the whole block. */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <Icon name="target" size={14} color={color.accentBright} />
+            <Icon name={kgLine?.beaten ? 'check' : 'target'} size={14} color={kgLine?.beaten ? color.goodText : color.accentBright} />
             <Text
-              style={{ flex: 1, flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accentBright }}
+              style={{
+                flex: 1,
+                flexShrink: 1,
+                fontFamily: type.bodySemi,
+                fontSize: type.size.sub,
+                color: kgLine?.beaten ? color.goodText : color.accentBright,
+              }}
               numberOfLines={3}
             >
-              {line}
+              {kgLine ? kgLine.text : line}
             </Text>
-            {targetBadge(target) ? (
+            {!kgLine && targetBadge(target) ? (
               <Badge label={targetBadge(target)!} tone={BADGE_TONE[targetBadge(target)!]} />
             ) : null}
             <Glyph name="info" size={16} color={showWhy ? color.accent : color.inkMuted} />
           </View>
+          {/* R-73: the suggestion itself, one tap away. */}
+          {showWhy && kgLine ? (
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
+              Suggested: {line}
+              {targetBadge(target) ? ` · ${targetBadge(target)}` : ''}
+            </Text>
+          ) : null}
           {showWhy && target.reason ? (
             <Text
               style={{
@@ -579,26 +599,12 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           ) : null}
         </Pressable>
       ) : null}
-      {/* R-65 (owner, 22 Oct 2026): the line turns green once the kilos to beat are beaten. */}
-      {kgLine ? (
-        <View
-          style={
-            kgLine.beaten
-              ? { alignSelf: 'flex-start', backgroundColor: GOOD_SOFT, borderRadius: radius.sm, paddingHorizontal: space.sm, paddingVertical: 3 }
-              : { paddingHorizontal: space.xs }
-          }
-        >
-          <Text
-            numberOfLines={2}
-            style={{
-              fontFamily: kgLine.beaten ? type.bodySemi : type.bodyMedium,
-              fontSize: type.size.sub,
-              color: kgLine.beaten ? color.goodText : color.inkSecondary,
-            }}
-          >
-            {kgLine.text}
-          </Text>
-        </View>
+      {/* R-65 / R-73: the live kg line now sits in the Target box above (green once beaten). A plan with
+          no Target line to hold it (never today) shows it here. */}
+      {kgLine && !(target && line) ? (
+        <Text numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: kgLine.beaten ? color.goodText : color.inkSecondary, paddingHorizontal: space.xs }}>
+          {kgLine.text}
+        </Text>
       ) : null}
 
       {/* the set table; on a phone under 400 dp it reaches into the card's padding (rowLayout.bleed) */}

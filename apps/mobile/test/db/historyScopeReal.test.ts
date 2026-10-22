@@ -193,7 +193,14 @@ describe('R-61 (owner, 22 Oct 2026): the newest workout of the lift, in any fold
     await backdate(A1, 70);
     const t = await targetOf(A1);
     expect(t.rule).not.toBe('R1b');
-    expect(t.last?.weightKg).toBe(60);
+    expect(t.rule).not.toBe('R1');
+    // Review: the routine keeps its OWN numbers (100 x 5), as PREVIOUS and the grey hints show them;
+    // only the break clock reads every workout.
+    expect(t.last?.weightKg).toBe(100);
+    // Without the newer workout elsewhere, 70 days is a break.
+    await backdate(A2, 70);
+    await backdate(B1, 70);
+    expect((await targetOf(A1)).rule).toBe('R1b');
   });
 });
 

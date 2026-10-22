@@ -13,16 +13,22 @@ import { AppState, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, PrimaryButton, Sheet } from '@/components/ui';
+import { askConfirm } from '@/components/ui/confirmStore';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
   HC_OPEN_FAILED,
+  SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
   healthState,
+  lastSentText,
   openHealthConnect,
+  pastSendAsk,
+  pastWorkoutsSummary,
   resendUnsentToHealth,
   sendAllWorkoutsToHealth,
+  sendProgressText,
   sendResultText,
   unsentText,
   type HealthState,
@@ -60,6 +66,11 @@ function HealthRow() {
   const [state, setState] = useState<HealthState | null>(null);
   const [sent, setSent] = useState<SendResult | null>(null);
   const [busy, setBusy] = useState(false);
+  // R-72: how far "Send past workouts" is, a notice instead of a send, and when workouts last went in.
+  const [progress, setProgress] = useState<{ sent: number; total: number } | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const last = usePhonePrefs((s) => s.healthLast);
+  const lastLine = lastSentText(last);
   // v0.39.0: Connect was pressed and access is still off — Android shows no screen after two
   // refusals, so offer Health Connect's own page as the way round.
   const [asked, setAsked] = useState(false);
@@ -75,6 +86,38 @@ function HealthRow() {
     const opened = openHealthConnect();
     if (!opened) console.warn('[ForgeErr] Health Connect did not open');
     setOpenFailed(!opened);
+  };
+
+  // R-72 (owner, 22 Oct 2026: "it sent it without confirmation and without telling what it will do"):
+  // first say how many workouts, from when to when, and where they go; send only on a yes.
+  const sendPast = async (): Promise<void> => {
+    if (busy) return;
+    tap();
+    setNotice(null);
+    setSent(null);
+    const summary = await pastWorkoutsSummary().catch((e: unknown) => {
+      console.warn('[ForgeErr] health: past workouts could not be counted', e);
+      return null;
+    });
+    if (!summary) {
+      setSent({ kind: 'failed', sent: 0, total: 0, reason: 'error' });
+      return;
+    }
+    const ask = pastSendAsk(summary);
+    if ('notice' in ask) {
+      setNotice(ask.notice);
+      return;
+    }
+    const yes = await askConfirm({ title: ask.title, body: ask.body, confirmLabel: ask.confirm, cancelLabel: 'Not now' });
+    if (!yes) return;
+    setBusy(true);
+    setProgress(null);
+    try {
+      setSent(await sendAllWorkoutsToHealth((done, total) => setProgress({ sent: done, total })));
+    } finally {
+      setBusy(false);
+      setProgress(null);
+    }
   };
 
   const resend = (): void => {
@@ -108,8 +151,8 @@ function HealthRow() {
       : state === 'update'
         ? 'Install or update Health Connect from the Play Store first.'
         : state === 'on'
-          ? 'On. Each workout you finish goes to Health Connect with its calories (an estimate), so Google Fit and Samsung Health show it.'
-          : 'Send each finished workout and its calories to Google Fit and Samsung Health, through Health Connect.';
+          ? 'On. Each workout you finish goes to Health Connect as strength training, with its calories (an estimate), so Google Health and Samsung Health can show it.'
+          : 'Send each finished workout and its calories to Google Health and Samsung Health, through Health Connect.';
 
   return (
     <View>
@@ -177,22 +220,30 @@ function HealthRow() {
       ) : null}
       {state === 'on' ? (
         <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          {/* R-72: the member can always see that it works: when workouts last went in. */}
+          {lastLine && !busy ? (
+            <Text style={{ ...CAPTION(), textAlign: 'center', color: color.goodText }}>{lastLine}</Text>
+          ) : null}
           <GhostButton
-            label={busy ? 'Sending…' : 'Send past workouts'}
+            label={busy ? sendProgressText(progress?.sent ?? 0, progress?.total ?? 0) : 'Send past workouts'}
             icon="heart"
-            onPress={() => {
-              if (busy) return;
-              tap();
-              setBusy(true);
-              void sendAllWorkoutsToHealth()
-                .then((n) => setSent(n))
-                .finally(() => setBusy(false));
-            }}
+            onPress={() => void sendPast()}
           />
-          {sent != null ? (
+          {notice ? (
             <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center' }}>
+              {notice}
+            </Text>
+          ) : null}
+          {sent != null ? (
+            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center', color: sent.kind === 'failed' ? color.criticalText : color.inkMuted }}>
               {sendResultText(sent)}
             </Text>
+          ) : null}
+          {sent?.kind === 'sent' ? (
+            <>
+              <Text style={{ ...CAPTION(), textAlign: 'center' }}>{SEE_THEM_IN_GOOGLE_HEALTH}</Text>
+              <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+            </>
           ) : null}
         </View>
       ) : null}

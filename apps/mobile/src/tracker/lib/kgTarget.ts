@@ -9,8 +9,12 @@
  * the open sets need — never more than 2 extra reps a set above the plan (decision 2 A), and it
  * never blocks anything.
  *
- * Only weight × reps lifts with a real Target get one: a first time, a bodyweight move without
- * kilos, a hold, an easy week, a pyramid or a "try the other version" keep their own Target line.
+ * Only weight × reps lifts with a real Target get one: a first time, a hold, an easy week, a pyramid
+ * or a "try the other version" keep their own Target line.
+ *
+ * R-60 (owner, 22 Oct 2026): a move with no kilos (push-ups, pull-ups, a bodyweight row) gets the
+ * same thing in REPS (`repPlan`): "45 reps to beat · +3 on last time", each set's reps when opened,
+ * and "20 of 45 reps · next 12, 13" during the workout. Each rep counts as one, so the same math runs.
  */
 import { OFF_MAIN_SHARE, type ProgressionTarget } from '../engine/progression';
 
@@ -25,6 +29,8 @@ export interface KgPlanSet extends KgSet {
 }
 
 export interface KgPlan {
+  /** R-60: counted in reps (a move with no kilos; every set's weightKg is 1). Absent = kilos. */
+  reps?: true;
   sets: KgPlanSet[];
   /** The kg to beat (weight × reps over the planned working sets). */
   total: number;
@@ -92,6 +98,29 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   return { sets, total, last: lastTotal, pct: lastTotal && lastTotal > 0 ? (total - lastTotal) / lastTotal : null };
 }
 
+/**
+ * R-60: the reps to beat for a move with no kilos (a "Reps only" exercise, or a bodyweight lift
+ * logged at 0 kg) — each working set's rep goal added up, against last time's same sets. null
+ * when the move has kilos (`kgPlan`), or no rep goal yet. PURE.
+ */
+export function repPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
+  if (t.action === 'start' || t.free || t.easy || t.topSetOnly || t.version) return null;
+  const lt = t.logType ?? 'weight_reps';
+  if (!(lt === 'reps' || (lt === 'weight_reps' && t.bodyweightOnly))) return null;
+  if (t.repGoal == null || !(t.targetSets > 0)) return null;
+  const sets: KgPlanSet[] = Array.from({ length: t.targetSets }, (_, i) => ({ weightKg: 1, reps: t.setGoals[i] ?? t.repGoal ?? 0, asLast: false }));
+  const total = sets.reduce((a, s) => a + s.reps, 0);
+  const last = lastSets.filter((s) => Number.isFinite(s.reps) && s.reps > 0);
+  // A difference only against the same number of sets (2 of 3 done last time is not "+20").
+  const lastTotal = last.length === t.targetSets ? last.reduce((a, s) => a + s.reps, 0) : null;
+  return { reps: true, sets, total, last: lastTotal, pct: lastTotal && lastTotal > 0 ? (total - lastTotal) / lastTotal : null };
+}
+
+/** The kilos to beat, else (R-60) the reps to beat; null when the exercise gets neither. PURE. */
+export function beatPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
+  return kgPlan(t, lastSets) ?? repPlan(t, lastSets);
+}
+
 /** A row of the open workout, as the card holds it. */
 export interface KgRow {
   weightKg: number | null;
@@ -130,12 +159,15 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
     const planned = drop ? undefined : plan.sets[ordinal];
     if (!drop) ordinal += 1;
     if (r.done) {
-      if (r.weightKg != null && r.reps != null && r.weightKg > 0 && r.reps > 0) done += r.weightKg * r.reps;
+      // R-60: a rep plan counts every rep once, whatever the row's weight (blank on a "Reps only" move).
+      if (plan.reps) {
+        if (r.reps != null && r.reps > 0) done += r.reps;
+      } else if (r.weightKg != null && r.reps != null && r.weightKg > 0 && r.reps > 0) done += r.weightKg * r.reps;
       continue;
     }
     if (drop) continue;
     const pos = (n: number | null | undefined): number | null => (n != null && Number.isFinite(n) && n > 0 ? n : null);
-    const weightKg = pos(r.weightKg) ?? pos(r.hintKg) ?? planned?.weightKg ?? 0;
+    const weightKg = plan.reps ? 1 : pos(r.weightKg) ?? pos(r.hintKg) ?? planned?.weightKg ?? 0;
     const reps = pos(r.hintReps) ?? planned?.reps ?? pos(r.reps) ?? 0;
     if (weightKg > 0 && reps > 0) open.push({ weightKg, reps });
   }
@@ -164,6 +196,36 @@ export function kgTickKey(rows: readonly KgRow[]): string {
 export type TotalFmt = (kg: number) => string;
 /** "42.5 kg": one set's weight. */
 export type WeightFmt = (kg: number) => string;
+
+/** R-60: "+3 on last time", "same as last time", "fewer than last time", or null. PURE. */
+export function repDiffWords(p: KgPlan): string | null {
+  if (p.last == null) return null;
+  const d = Math.round(p.total - p.last);
+  if (d === 0) return 'same as last time';
+  return d < 0 ? 'fewer than last time' : `+${d} on last time`;
+}
+
+/** "45 reps" / "1 rep". */
+const repsText = (n: number): string => `${Math.round(n)} ${Math.round(n) === 1 ? 'rep' : 'reps'}`;
+
+/** R-60, before the workout: "45 reps to beat · +3 on last time" (" per side" when counted per side). PURE. */
+export function repsToBeatLine(p: KgPlan, perSide = false): string {
+  const diff = repDiffWords(p);
+  return `${repsText(p.total)} to beat${perSide ? ' per side' : ''}${diff ? ` · ${diff}` : ''}`;
+}
+
+/** R-60, the opened row: "Set 1 · 12 reps". PURE. */
+export function repSetLines(p: KgPlan): string[] {
+  return p.sets.map((s, i) => `Set ${i + 1} · ${repsText(s.reps)}`);
+}
+
+/** R-60, during the workout: "20 of 45 reps · next 12, 13" / "45 reps beaten ✓ (47 done)". PURE. */
+export function repLiveLine(p: KgPlan, g: KgProgress): string {
+  if (kgBeaten(g)) return `${repsText(p.total)} beaten ✓ (${Math.round(g.done)} done)`;
+  const head = `${Math.round(g.done)} of ${repsText(p.total)}`;
+  if (g.next.length === 0) return `${head} · ${repsText(g.left)} short, add a set if you have it in you`;
+  return `${head} · next ${g.next.map((s) => s.reps).join(', ')}${g.short ? ' (a little short is fine)' : ''}`;
+}
 
 /** "+6% on last time", "same as last time", "lighter than last time", or null. PURE. */
 export function pctWords(pct: number | null): string | null {

@@ -39,7 +39,7 @@ import type { GymPlates } from '@/tracker/services/plateMath';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
 import { fmtDurationWords, isBodyweightFamily, type LoadMode, type LogType } from './logTypes';
-import { buildLadder, downRungKg, jumpRungKg, ladderKind, sameRungKg, upRungsKg } from './weightLadder';
+import { buildLadder, downRungKg, jumpRungKg, ladderKind, pairsUp, rackStep, sameRungKg, upRungsKg } from './weightLadder';
 
 /**
  * Settings → Workouts → Weight jumps (Oct 2026, owner): how much a Target adds when every main
@@ -246,6 +246,12 @@ export interface ProgressionInput {
    * or a step to 22.5 (11.25 each) can never be picked up. Absent = one weight as typed.
    */
   pair?: boolean;
+  /**
+   * R-61 review: the newest day this lift was done in ANY workout, when `history` is narrower (the
+   * "Same routine" setting). Only the break clock reads it ("10 weeks since your last…"); the
+   * weights still come from `history`, so the Target, PREVIOUS and the grey hints agree.
+   */
+  breakFromISO?: string | null;
 }
 
 /** Loaded equipment: a blank weight here is "no weight logged", never "bodyweight" (TG-07). */
@@ -352,15 +358,19 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const ladderWeights =
     input.ladder ?? input.history.flatMap((s) => s.sets.filter((x) => x.setType !== 'warmup' && x.reps > 0).map((x) => x.weightKg));
   const kind = ladderKind(exercise.equipment, logType);
-  // R-61: a pair typed as one total gets its ladder per dumbbell (halves of every weight he
-  // typed, the rack's usual dumbbells), and each weight picked is doubled back. Halving and
-  // doubling are exact in floating point, so nothing else moves.
-  const per = input.pair && kind === 'dumbbell' && !assisted ? 2 : 1;
+  // R-61: a pair typed as one total gets its ladder per dumbbell (halves of the weights he typed,
+  // the rack's usual dumbbells), and each weight picked is doubled back. Halving and doubling are
+  // exact in floating point, so nothing else moves. Review: only for a member who really types both
+  // dumbbells — a recent total that is no pair (7.5, 12.5, 17.5: one dumbbell typed) leaves it off —
+  // and an old total that is no pair (22.5 = 11.25 a hand) is never a rung.
+  const recentPairs = all.slice(0, 6).every((s) => !(s.mainWeight > 0) || pairsUp(s.mainWeight));
+  const per = input.pair && kind === 'dumbbell' && !assisted && logType === 'weight_reps' && recentPairs ? 2 : 1;
+  const learnedKg = learnedGap(all, false);
   const ladder = buildLadder(
-    ladderWeights.map((x) => x / per),
+    per === 2 ? ladderWeights.filter((x) => pairsUp(x)).map((x) => x / 2) : ladderWeights,
     kind,
     {
-      learnedStepKg: learnedGap(all, false) / per,
+      learnedStepKg: per === 2 ? (rackStep(learnedKg / 2) ? learnedKg / 2 : 0) : learnedKg,
       catalogStepKg: exercise.incrementKg,
       // The gym's plates make a bar's weights (a belt on a pull-up keeps the usual step).
       ...(gym ? { gym } : {}),
@@ -368,7 +378,10 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   );
   const both = (kg: number | null): number | null => (kg == null ? null : kg * per);
   /** Last time's weight as the Target shows and fills it (a clean number in this unit). */
-  const same = assisted || bodyweightOnly ? w : sameRungKg(w / per, ladder) * per;
+  const sameRung = assisted || bodyweightOnly ? w : sameRungKg(w / per, ladder) * per;
+  // Review: a pair whose nearest rack pair is more than 3% off last time's own total (a history in
+  // the other unit) keeps that total as "the same weight": never 10% heavier under "Same weight".
+  const same = per === 2 && Math.abs(sameRung - w) > w * 0.03 + 1e-9 ? w : sameRung;
   const upTo = (n: number): number => upRungsKg(w / per, n, ladder)[n - 1] * per;
   const lighter = (): number | null => both(downRungKg(w / per, ladder));
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
@@ -411,8 +424,8 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     };
   };
 
-  // R1 / R1b — coming back after a break.
-  const gap = daysBetween(lastDoneISO, todayISO);
+  // R1 / R1b — coming back after a break. Review (R-61): from the newest day anywhere, when known.
+  const gap = daysBetween(input.breakFromISO && input.breakFromISO > lastDoneISO ? input.breakFromISO : lastDoneISO, todayISO);
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     if (gap >= 42 && !bodyweightOnly) {
@@ -765,7 +778,7 @@ function holdTarget(input: ProgressionInput): ProgressionTarget {
     version,
   });
 
-  const gap = daysBetween(L.dateISO, todayISO);
+  const gap = daysBetween(input.breakFromISO && input.breakFromISO > L.dateISO ? input.breakFromISO : L.dateISO, todayISO);
   if (gap >= 21) {
     const weeks = Math.floor(gap / 7);
     return mk('T1', lowest, null, `Your last ${name} was ${weeks} weeks ago. Hold ${fmtDurationWords(lowest)} and see how it feels.`);

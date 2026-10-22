@@ -253,19 +253,30 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'On\. Each workout you finish goes to Health Connect with its calories \(an estimate\), so Google Fit and Samsung Health show it\.'
+      FIND: 'On\. Each workout you finish goes to Health Connect as strength training, with its calories \(an estimate\), so Google Health and Samsung Health can show it\.'
 - takeScreenshot: 128-health-connect-on
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "Send past workouts"
 - tapOn: "Send past workouts"
+# R-72 (owner, 22 Oct 2026): it asks first, saying how many workouts, from when to when, and where
+# they go; nothing is sent before "Send N workouts".
+- extendedWaitUntil:
+    visible: 'Send [\d,]+ workouts? to Health Connect\?'
+    timeout: 20000
+- assertVisible: '.*go in as strength training, each with its time and calories.*'
+- takeScreenshot: 129a-health-connect-ask
+- tapOn: '^Send [\d,]+ workouts?$'
 # PH-03: the line under the button says what "Send past workouts" really did. The import above
 # replaced the demo, so the member's own workouts are sent (not "Nothing sent. Workouts on demo
 # data are never sent.").
 - extendedWaitUntil:
-    visible: 'Sent \d+ workouts? to Health Connect\.'
+    visible: 'Sent [\d,]+ workouts? to Health Connect\.'
     timeout: 30000
+# R-72: where to look, and a lasting "Last sent" line.
+- assertVisible: 'To see them in Google Health: Connections → Partner apps → allow Exercise\.'
+- assertVisible: 'Last sent: Today, \d\d:\d\d · [\d,]+ past workouts?'
 - takeScreenshot: 129-health-connect-sent
 # ---------------------------------------------------------------- reminders
 # Health Connect → Settings → Notifications.
