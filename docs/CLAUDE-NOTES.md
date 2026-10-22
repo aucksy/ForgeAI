@@ -5,6 +5,20 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-77. After joining a gym: restart into its branding and offer its home-screen icon; Shop only when it is on — 22 Oct 2026
+**Owner said (after joining RAM Fitness Club from its invite link):** "after I joined the gym, I wanted to just reload
+automatically and show the splash screen for the gym's branding, and automatically shows a pop-up to add the icon on
+the screen. At this point of time, we want the default app icon to be gone from the page, so figure it out. Secondly,
+in the settings ... in the gym section, it has this option called shop and leave. What is that about? That's so
+weird. Leave gym should be a separate option, and the shop is just ... already there, activated as soon as someone
+joins the gym ... So the shop shouldn't be there if there is no gym active, and as soon as the gym is active by the
+invitation code or something, and the ... gym owner has a shop activated from the admin panel, then it starts showing
+up."
+**Plan:** (1) Join -> the app restarts itself into the gym's look (its splash) -> the "add your gym's icon" pop-up
+opens by itself; find out how far Android lets an app hide its own default icon, and do the most that is safe.
+(2) Settings: "Leave gym" on its own; no "Shop" there; the Shop tab shows only with a gym joined AND its shop turned
+on in the admin app.
+
 ## R-76. Join screen: "Terms" and "Privacy notice" open the admin app — 22 Oct 2026
 **Owner said (screenshot of "Join your gym" from a gym's invite link, RAM Fitness Club):** "when I tap on terms of
 privacy notice, it doesn't really open that. It opens the admin dashboard."
