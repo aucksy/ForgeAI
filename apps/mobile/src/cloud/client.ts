@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { AppState } from 'react-native';
 
-import { SUPABASE_KEY, SUPABASE_URL, isCloudConfigured } from '@/cloud/config';
+import { routedFetch, sessionKey } from '@/cloud/address';
+import { SUPABASE_KEY, SUPABASE_PROXY_URL, SUPABASE_URL, isCloudConfigured } from '@/cloud/config';
 
 /**
  * Lazily-constructed Supabase client. Nothing here runs until the app is linked
@@ -20,13 +21,17 @@ export function getSupabase(): SupabaseClient {
     throw new Error('Cloud is not configured (missing Supabase extra in app.json).');
   }
   if (!client) {
-    client = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    // R-55: our own address first (cloud/address.ts), Supabase's own when ours fails to answer.
+    const url = SUPABASE_PROXY_URL || SUPABASE_URL;
+    client = createClient(url, SUPABASE_KEY, {
       auth: {
         storage: AsyncStorage,
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
+        storageKey: sessionKey(SUPABASE_URL), // what was kept before the switch stays readable
       },
+      global: url === SUPABASE_URL ? undefined : { fetch: routedFetch(url, SUPABASE_URL, (...a) => fetch(...a)) },
     });
     if (!appStateWired) {
       appStateWired = true;

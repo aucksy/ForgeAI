@@ -6,13 +6,16 @@
  */
 import { Image } from 'expo-image';
 
+import { pictureUrl } from '@/cloud/picture';
+
 let last: string | null = null;
 
 export function prefetchGymLogo(url: string | null | undefined): void {
   if (!url || url === last) return;
   last = url;
   try {
-    void Image.prefetch(url, 'memory-disk').catch(() => {
+    // R-55: the same address the opening and the mark load it from (cloud/picture.ts).
+    void Image.prefetch(pictureUrl(url), 'memory-disk').catch(() => {
       last = null;
     });
   } catch {

@@ -101,6 +101,7 @@
     "extra": {
       "router": {},
       "supabaseUrl": "https://hdxzqbdiokjklnypfisq.supabase.co",
+      "supabaseProxyUrl": "https://forgeai.aakashpahuja.in/sb",
       "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo",
       "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID"
     },

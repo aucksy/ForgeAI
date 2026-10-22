@@ -29,9 +29,17 @@ export function isRestSoundId(v: unknown): v is RestSoundId {
   return v === 'forge' || v === 'bell' || v === 'beep' || v === 'whistle';
 }
 
+/**
+ * The "Rest is over" channel for a sound: the chime keeps the original id, every other sound has
+ * its own (RestCard.kt makes it when the sound is picked). PURE.
+ */
+export function overSoundChannel(id: RestSoundId): string {
+  return id === 'forge' ? 'rest-over-sound' : `rest-over-sound-${id}`;
+}
+
 /** The sheet's line under the choices, as "Workout sounds" stands. PURE. */
 export function restSoundFootnote(soundsOn: boolean): string {
   return soundsOn
-    ? 'Tap a sound to hear it. It plays with the app open and with the screen off.'
+    ? 'Tap a sound to hear it here, at your media volume. Rest is over plays it at your notification volume.'
     : 'Workout sounds are off, so Rest is over only buzzes. Turn them on to hear this sound.';
 }

@@ -12,6 +12,9 @@ import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
+import android.view.View
+import android.widget.RemoteViews
 import org.json.JSONObject
 
 /**
@@ -230,11 +233,18 @@ object WorkoutCard {
         .setShowWhen(false)
         .setCategory("workout") // Notification.CATEGORY_WORKOUT (Android 12+); older ones ignore it
         .setVisibility(Notification.VISIBILITY_PUBLIC)
-      clockOn(b, clock(ctx))
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         b.setPriority(Notification.PRIORITY_DEFAULT).setSound(null).setVibrate(null)
       }
-      bitmap(ctx, image)?.let { b.setLargeIcon(it) }
+      // R-55: the workout time, drawn in the card's own view (liveView); else the plain card.
+      val pic = bitmap(ctx, image)
+      val view = liveView(ctx, title, text, pic, clock(ctx))
+      if (view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        b.setStyle(Notification.DecoratedCustomViewStyle())
+        b.setCustomContentView(view)
+      } else {
+        pic?.let { b.setLargeIcon(it) }
+      }
       // "Complete set" only when the row has numbers to save; else a tap on the card opens the app.
       val done = doneOf(doneJson)
       if (done != null && !done.first.open) {
@@ -255,17 +265,19 @@ object WorkoutCard {
 
   /**
    * R-55 (owner backlog "Workout time on the notification card", 22 Oct 2026): how long the workout
-   * has run, in the card's header ("ForgeAI · Workout · 42:15"). The app sends `{"base": ms}` while
-   * the timer runs (the moment the clock would read 0:00, paused time left out, workoutPause.ts):
-   * Android's own chronometer then ticks it every second with the app closed and no updates from
-   * us. Paused, `{"paused": ms}`: the time stands still ("Workout 42:15"; the text says "Paused").
+   * has run, counting up on the right of the exercise's line ("Bench Press ... 42:15"). The app sends
+   * `{"base": ms}` while the timer runs (the moment the clock would read 0:00, paused time left out,
+   * liveClock.ts): the card's own Chronometer ticks it every second with the app closed and no
+   * updates from us. Paused, `{"paused": ms}`: the time stands still (the text says "Paused").
+   * Not the header's chronometer (review, 22 Oct): that needs `when` = the workout's start, and
+   * Android ranks a card by `when`, so it sank below every newer notification on the lock screen.
    */
   internal sealed class Clock {
     data class Running(val base: Long) : Clock()
     data class Paused(val ms: Long) : Clock()
   }
 
-  /** The clock as last given ([keep]); null when none or unreadable (the header then shows no time). */
+  /** The clock as last given ([keep]); null when none or unreadable (the card then shows no time). */
   internal fun clock(ctx: Context): Clock? {
     val raw = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("clock", null) ?: return null
     return try {
@@ -281,21 +293,41 @@ object WorkoutCard {
     }
   }
 
-  /** "42:15", or "1:02:30" past an hour (the app's own m:ss). */
-  internal fun clockText(ms: Long): String {
-    val s = ms / 1000
-    val h = s / 3600
-    val m = (s % 3600) / 60
-    val sec = s % 60
-    return if (h > 0) String.format(java.util.Locale.US, "%d:%02d:%02d", h, m, sec)
-    else String.format(java.util.Locale.US, "%d:%02d", m, sec)
+  /** Time trained so far by [c] at wall time [now] (never below 0). PURE. */
+  internal fun trainedMs(c: Clock, now: Long): Long = when (c) {
+    is Clock.Running -> maxOf(0L, now - c.base)
+    is Clock.Paused -> c.ms
   }
 
-  private fun clockOn(b: Notification.Builder, c: Clock?) {
-    when (c) {
-      is Clock.Running -> b.setSubText("Workout").setShowWhen(true).setWhen(c.base).setUsesChronometer(true)
-      is Clock.Paused -> b.setSubText("Workout ${clockText(c.ms)}").setShowWhen(false).setUsesChronometer(false)
-      null -> Unit
+  /**
+   * The card's own view (res/layout/forge_live_card.xml): the exercise and the workout time, the
+   * next set, the picture. Null (the plain card, no time) without a clock, before Android 7, or
+   * when the layout is missing.
+   */
+  private fun liveView(ctx: Context, title: String, text: String, pic: Bitmap?, c: Clock?): RemoteViews? {
+    if (c == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return null
+    return try {
+      val res = ctx.resources
+      val pkg = ctx.packageName
+      val layout = res.getIdentifier("forge_live_card", "layout", pkg)
+      val picId = res.getIdentifier("forge_live_pic", "id", pkg)
+      val titleId = res.getIdentifier("forge_live_title", "id", pkg)
+      val timeId = res.getIdentifier("forge_live_time", "id", pkg)
+      val textId = res.getIdentifier("forge_live_text", "id", pkg)
+      if (layout == 0 || picId == 0 || titleId == 0 || timeId == 0 || textId == 0) return null
+      val v = RemoteViews(pkg, layout)
+      v.setTextViewText(titleId, title)
+      v.setTextViewText(textId, text)
+      if (pic != null) {
+        v.setImageViewBitmap(picId, pic)
+        v.setViewVisibility(picId, View.VISIBLE)
+      }
+      val base = SystemClock.elapsedRealtime() - trainedMs(c, System.currentTimeMillis())
+      v.setChronometer(timeId, base, null, c is Clock.Running)
+      v
+    } catch (e: Exception) {
+      android.util.Log.w("ForgeRest", "live card view not made; the plain card instead", e)
+      null
     }
   }
 

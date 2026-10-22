@@ -2,7 +2,8 @@
  * Oct 2026 — the choice sheet for "Weight jumps" and "Rep range" (Settings → Workouts). It opens
  * from its row exactly like "Default rest": a title, one plain line under it, then one full-width
  * row per choice — its name, a "Recommended" tag on the default, and one plain line saying what it
- * does. A tap chooses and closes. Rows wrap at large text (no segmented control).
+ * does. A tap chooses (the caller closes it: Rest-over sound stays open so each sound can be heard).
+ * Rows wrap at large text (no segmented control).
  */
 import { Pressable, Text, View } from 'react-native';
 

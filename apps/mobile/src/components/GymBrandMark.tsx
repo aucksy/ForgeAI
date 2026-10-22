@@ -18,6 +18,7 @@ import { Text, View } from 'react-native';
 
 import { isBranded } from '@forgeai/theme';
 
+import { pictureUrl } from '@/cloud/picture';
 import { brandHeadingStyle } from '@/theme/brandTokens';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, space, type } from '@/theme/tokens';
@@ -46,7 +47,7 @@ export function GymBrandMark() {
     >
       {logo ? (
         <Image
-          source={{ uri: logo }}
+          source={{ uri: pictureUrl(logo) }}
           style={{ width, height: LOGO, borderRadius: 6 }}
           contentFit="contain"
           cachePolicy="memory-disk"

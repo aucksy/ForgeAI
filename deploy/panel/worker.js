@@ -8,12 +8,15 @@
 //               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
+//  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
+//               the apps (proxy.js, owner R-40, built R-55).
 //  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
+import { handleProxy, isProxyPath } from './proxy.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -23,6 +26,8 @@ const REPO = 'https://github.com/aucksy/ForgeAI';
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // R-55: the block-proof address for the gym server (proxy.js).
+    if (isProxyPath(url.pathname)) return handleProxy(request, url);
     const invite = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
     if (invite) return joinPage(request, env, ctx, url, invite[1].toUpperCase());
     if (url.pathname.startsWith('/j/')) return joinPage(request, env, ctx, url, null);

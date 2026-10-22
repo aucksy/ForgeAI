@@ -19,6 +19,7 @@ import { color } from '@/theme/tokens';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { ALL_DONE_TEXT, clearRestCard, hasRestCard, restEndsWorkout, showRestCard } from './restCard';
 import type { CardDone } from './restDone';
+import { overSoundChannel } from './restSounds';
 
 type NotificationsModule = typeof import('expo-notifications');
 
@@ -168,7 +169,8 @@ export async function scheduleRestEnd(
         color: color.accent,
       },
       // Review: with the native card in the build, its sound channel (the old one is deleted).
-      trigger: { type: n.SchedulableTriggerInputTypes.DATE, date: endsAt, channelId: hasRestCard() ? 'rest-over-sound' : REST_CHANNEL },
+      // R-55 (review): the member's own rest-over sound (its channel, made by the native piece's setSound).
+      trigger: { type: n.SchedulableTriggerInputTypes.DATE, date: endsAt, channelId: hasRestCard() ? overSoundChannel(useTrackerPrefs.getState().restSound) : REST_CHANNEL },
     });
   } catch {
     // ignore

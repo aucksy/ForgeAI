@@ -8,6 +8,7 @@ import { Image } from 'expo-image';
 import { useState } from 'react';
 import { View } from 'react-native';
 
+import { pictureUrl } from '@/cloud/picture';
 import { color, radius } from '@/theme/tokens';
 
 import { ProductArt, type ProductArtProps } from './ProductArt';
@@ -40,7 +41,7 @@ function Photo({ imageUrl, ...art }: ProductArtProps & { imageUrl: string }) {
       }}
     >
       <Image
-        source={{ uri: imageUrl }}
+        source={{ uri: pictureUrl(imageUrl) }}
         style={{ width: art.size, height: h }}
         contentFit="cover"
         transition={150}

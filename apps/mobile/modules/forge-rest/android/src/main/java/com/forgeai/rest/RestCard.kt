@@ -350,7 +350,7 @@ object RestCard {
     ctx.getSharedPreferences(PREFS_QUIET, Context.MODE_PRIVATE).getBoolean("dnd", false)
 
   /**
-   * R-55 (22 Oct 2026, owner backlog "Pick your rest-over sound"): Profile → Workout → "Rest-over
+   * R-55 (22 Oct 2026, owner backlog "Pick your rest-over sound"): Settings → Workouts → "Rest-over
    * sound". "forge" (the ForgeAI chime) keeps the original channels, so nothing changes for a member
    * who never picks. Every other sound has its own three loud channels: Android never changes a
    * channel's sound, so a sound is a channel id ("rest-over-sound-bell" ...). Only the chosen
@@ -1530,7 +1530,14 @@ object RestCard {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         // Android 7 and older (no channels): the app on screen rings its own bell there ([restBell]).
         b.setPriority(if (soft) Notification.PRIORITY_DEFAULT else Notification.PRIORITY_MAX)
-          .setDefaults(if (soft) Notification.DEFAULT_VIBRATE else Notification.DEFAULT_ALL)
+        if (soft) {
+          b.setDefaults(Notification.DEFAULT_VIBRATE)
+        } else {
+          // R-55 (review): the member's own sound here too, not the phone's default tone.
+          val usage = if (channel == chOverAlarm(ctx)) AudioAttributes.USAGE_ALARM else AudioAttributes.USAGE_NOTIFICATION
+          b.setDefaults(Notification.DEFAULT_VIBRATE or Notification.DEFAULT_LIGHTS)
+            .setSound(restSound(ctx, sound(ctx)), AudioAttributes.Builder().setUsage(usage).build())
+        }
       }
       // App on screen: the watch has buzzed by the time this goes; the app shows the rest is over.
       // v0.37.1 (C2): EVERY "Rest is over" goes by itself — one posted with the app in the

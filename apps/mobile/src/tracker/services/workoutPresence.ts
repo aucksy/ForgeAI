@@ -295,7 +295,19 @@ export function startWorkoutPresence(): () => void {
   // RT-07 / RT-12: push alert choices to the native card as they change (and once now).
   setRestQuiet(!useTrackerPrefs.getState().sounds);
   setRestRingThroughDnd(useRestAlertPrefs.getState().ringThroughDnd);
-  setRestSoundNative(useTrackerPrefs.getState().restSound); // R-55: the member's rest-over sound
+  // R-55 (review): the rest-over sound only once the saved choice is read. Sending the default first
+  // deleted a member's Bell / Beep / Whistle channels on every cold start, then made them again.
+  let unhydrated: (() => void) | null = null;
+  // No `persist` (a test's stand-in store): nothing to wait for.
+  const saved = useTrackerPrefs.persist as typeof useTrackerPrefs.persist | undefined;
+  if (!saved || saved.hasHydrated()) setRestSoundNative(useTrackerPrefs.getState().restSound);
+  else {
+    unhydrated = saved.onFinishHydration((p) => {
+      unhydrated?.();
+      unhydrated = null;
+      setRestSoundNative(p.restSound);
+    });
+  }
   const u3 = useTrackerPrefs.subscribe((p, prev) => {
     if (p.sounds !== prev.sounds) setRestQuiet(!p.sounds);
     if (p.restSound !== prev.restSound) setRestSoundNative(p.restSound);
@@ -309,6 +321,7 @@ export function startWorkoutPresence(): () => void {
     u1();
     u2();
     u3();
+    unhydrated?.();
     u4();
     u5();
     stopLiveTimer();

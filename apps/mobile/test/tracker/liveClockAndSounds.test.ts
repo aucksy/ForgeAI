@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { liveClock } from '@/tracker/services/liveClock';
-import { DEFAULT_REST_SOUND, isRestSoundId, REST_SOUND_CHOICES, restSoundFootnote } from '@/tracker/services/restSounds';
+import { DEFAULT_REST_SOUND, isRestSoundId, overSoundChannel, REST_SOUND_CHOICES, restSoundFootnote } from '@/tracker/services/restSounds';
 import { activeMs, NO_PAUSE } from '@/tracker/services/workoutPause';
 
 const MIN = 60_000;
@@ -54,7 +54,12 @@ describe('R-55: pick your rest-over sound', () => {
 
   it('with Workout sounds off the sheet says Rest is over only buzzes', () => {
     expect(restSoundFootnote(false)).toMatch(/only buzzes/);
-    expect(restSoundFootnote(true)).toMatch(/screen off/);
+    expect(restSoundFootnote(true)).toMatch(/notification volume/);
+  });
+
+  it("the backup alert path rings the chosen sound's channel (the chime keeps the original id)", () => {
+    expect(overSoundChannel('forge')).toBe('rest-over-sound');
+    expect(overSoundChannel('whistle')).toBe('rest-over-sound-whistle');
   });
 
   // An alert has two sound paths (memory note): the open app and the screen-off channel must play

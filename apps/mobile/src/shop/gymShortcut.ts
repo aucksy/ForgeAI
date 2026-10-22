@@ -9,6 +9,7 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { pictureUrl } from '@/cloud/picture';
 import { phoneNative, type GymShortcutResult } from '@/tracker/phone/native';
 
 import { useGymShop } from './gymStore';
@@ -78,7 +79,7 @@ export async function addGymShortcut(link: GymLink | null, ask = true): Promise<
   if (!plan) return 'no-logo';
   if (!n?.gymShortcutPin) return 'unsupported';
   try {
-    return await n.gymShortcutPin(plan.name, plan.logoUrl, plan.bg, ask);
+    return await n.gymShortcutPin(plan.name, pictureUrl(plan.logoUrl), plan.bg, ask);
   } catch (e) {
     console.warn('[ForgeErr] gym shortcut: pin', e);
     return 'failed';

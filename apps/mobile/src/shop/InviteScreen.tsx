@@ -16,6 +16,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 
+import { pictureUrl } from '@/cloud/picture';
 import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
@@ -198,7 +199,7 @@ function GymFace({ gym }: { gym: GymPreview }) {
         }}
       >
         {logo ? (
-          <Image source={{ uri: logo }} contentFit="contain" style={{ width: 56, height: 56 }} onError={() => setFailed(true)} accessibilityIgnoresInvertColors />
+          <Image source={{ uri: pictureUrl(logo) }} contentFit="contain" style={{ width: 56, height: 56 }} onError={() => setFailed(true)} accessibilityIgnoresInvertColors />
         ) : (
           <Text style={{ fontFamily: type.display, fontSize: 28, color: gym.brand?.accent ?? color.accent }}>
             {gymInitial(gym.gymName)}

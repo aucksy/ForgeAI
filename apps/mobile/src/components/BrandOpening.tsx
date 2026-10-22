@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
+import { pictureUrl } from '@/cloud/picture';
 import { useReduceMotion } from '@/components/ui/useReduceMotion';
 import type { Opening } from '@/theme/gymTheme';
 import { type } from '@/theme/tokens';
@@ -72,7 +73,7 @@ export function BrandOpening({ opening, onDone }: { opening: Opening; onDone: ()
         <Animated.View style={[{ alignItems: 'center', gap: 20 }, mark]}>
           {wantLogo ? (
             <Image
-              source={{ uri: opening.logoUrl ?? undefined }}
+              source={{ uri: pictureUrl(opening.logoUrl) ?? undefined }}
               // Loading: full size but unseen and out of the layout (the name is centred alone).
               style={showLogo ? { width: size, height: size } : { position: 'absolute', width: size, height: size, opacity: 0 }}
               contentFit="contain"

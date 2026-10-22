@@ -3,18 +3,18 @@ package com.forgeai.rest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** R-55: the paused workout time in the live card's header, in the app's own m:ss. */
+/** R-55: the live card's workout time (the card's own Chronometer starts from this). */
 class WorkoutClockTest {
   @Test
-  fun `under an hour reads minutes and seconds`() {
-    assertEquals("0:00", WorkoutCard.clockText(0L))
-    assertEquals("0:59", WorkoutCard.clockText(59_999L))
-    assertEquals("42:15", WorkoutCard.clockText((42L * 60 + 15) * 1000))
+  fun `running counts from the base the app sent`() {
+    val base = 1_000_000L
+    assertEquals(0L, WorkoutCard.trainedMs(WorkoutCard.Clock.Running(base), base))
+    assertEquals(42L * 60_000 + 15_000, WorkoutCard.trainedMs(WorkoutCard.Clock.Running(base), base + 42L * 60_000 + 15_000))
   }
 
   @Test
-  fun `past an hour reads hours minutes and seconds`() {
-    assertEquals("1:00:00", WorkoutCard.clockText(3_600_000L))
-    assertEquals("1:02:30", WorkoutCard.clockText((3600L + 150) * 1000))
+  fun `paused stands still and a clock gone backwards never shows below zero`() {
+    assertEquals(20L * 60_000, WorkoutCard.trainedMs(WorkoutCard.Clock.Paused(20L * 60_000), 99_999_999L))
+    assertEquals(0L, WorkoutCard.trainedMs(WorkoutCard.Clock.Running(5_000L), 1_000L))
   }
 }

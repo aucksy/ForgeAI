@@ -130,7 +130,18 @@ object OfflineTick {
         null
       }
     }
-    WorkoutCard.keep(ctx, str(s.next, "title") ?: "Workout in progress", str(s.next, "text") ?: "", str(s.next, "image"), doneJson)
+    // R-55 (review): a tick while the workout was paused resumes it at the tick (the app's own rule,
+    // activeWorkoutStore), so a paused clock starts running again from the time it showed.
+    val paused = WorkoutCard.clock(ctx) as? WorkoutCard.Clock.Paused
+    val clockJson = paused?.let {
+      try {
+        JSONObject().put("base", now - it.ms).toString()
+      } catch (e: Exception) {
+        android.util.Log.w(LOG_TAG, "workout clock not resumed after an offline tick", e)
+        null
+      }
+    }
+    WorkoutCard.keep(ctx, str(s.next, "title") ?: "Workout in progress", str(s.next, "text") ?: "", str(s.next, "image"), doneJson, clockJson)
     if (s.restSec > 0) {
       // The rest card alone (it takes the live card down), naming the next row and ticking it.
       RestCard.setDoneTarget(ctx, target)
