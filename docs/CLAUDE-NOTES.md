@@ -12,6 +12,14 @@ our phone app and record it as a strength training done and put that in the ... 
 record."
 **Plan:** check what we already write to Health Connect, and research whether Google's health app (Fitbit / Google
 Health) shows exercise written by other apps; answer in chat, keep it here.
+**Answered in chat:** partly yes. We already write each finished workout to Health Connect as
+ExerciseSessionRecord STRENGTH_TRAINING + ActiveCaloriesBurnedRecord. The Fitbit app is now "Google Health"; it
+reads Exercise and Active calories from Health Connect (Connections → Partner apps → allow both), so our workouts
+should appear in its history. Not confirmed: the "strength training" label. Active Zone Minutes and readiness come
+only from the watch's own heart rate; cardio load needs heart rate (we send none). Possible build: our watch app
+records heart rate during the workout, the phone saves it with the session. The Fitbit Web API shuts down on
+30 Oct 2026 (replaced by the Google Health API). Sources: support.google.com/googlehealth/answer/14506680,
+/14236613, /15402655; developers.google.com/health/data-types.
 
 ## R-70. Build: "In use" opens by itself after each set (a setting) — 22 Oct 2026
 **Owner said:** "a checkbox in the menu. So if the checkbox is always ticked, then as soon as the user completes a
