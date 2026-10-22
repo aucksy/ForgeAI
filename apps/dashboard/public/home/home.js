@@ -148,6 +148,12 @@
   }
   if (live) {
     if ('IntersectionObserver' in window) {
+      // The HTML holds the finished workout (no script, reduced motion). With motion it is set back
+      // to the start now, so the visitor sees it play from the first set (R-57 review).
+      if (!reduce) {
+        reset();
+        if (liftBeats) liftBeats.classList.add('armed');
+      }
       var seen = false;
       new IntersectionObserver(function (es) {
         es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; play(); } });

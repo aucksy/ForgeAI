@@ -145,7 +145,7 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .rest{margin-top:10px;border-radius:12px;background:var(--app-card);border:1px solid var(--app-line);overflow:hidden;position:relative;font:700 12px var(--app-body);padding:9px 12px;display:flex;justify-content:space-between}
 .rest::before{content:"";position:absolute;inset:0;background:color-mix(in oklab,var(--flavour) 30%,transparent);transform-origin:left;transform:scaleX(var(--p,0));transition:transform .3s linear}
 .rest span{position:relative}
-.record{position:absolute;left:50%;top:39%;width:80%;translate:-50% -50%;padding:14px 12px;border-radius:18px;background:var(--gold);color:#1E1400;text-align:center;font:800 13px var(--app-body);box-shadow:0 20px 40px rgba(0,0,0,.5);opacity:0;scale:2.2;rotate:-8deg;pointer-events:none}
+.record{position:absolute;left:50%;top:69%;width:80%;translate:-50% -50%;padding:14px 12px;border-radius:18px;background:var(--gold);color:#1E1400;text-align:center;font:800 13px var(--app-body);box-shadow:0 20px 40px rgba(0,0,0,.5);opacity:0;scale:2.2;rotate:-8deg;pointer-events:none}
 .record b{display:block;font:900 30px/1 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;letter-spacing:.01em;text-transform:uppercase}
 .record.slam{animation:slam .55s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes slam{0%{opacity:0;scale:2.2;rotate:-8deg}60%{opacity:1;scale:.94;rotate:-3deg}100%{opacity:1;scale:1;rotate:-4deg}}
@@ -231,6 +231,7 @@ section{position:relative}
 .duo{position:relative;display:grid;justify-items:center;width:max-content;max-width:100%;margin-inline:auto;padding-top:76px}
 .duo .phone{--w:280px;rotate:3deg}
 .tags{display:flex;justify-content:space-between;gap:18px;width:100%;margin-top:26px}
+.duo .replay{margin-top:22px}
 .tag{position:relative;z-index:6;display:inline-flex;align-items:center;gap:7px;padding:7px 14px 7px 9px;background:var(--label);color:var(--label-ink);border-radius:6px 20px 20px 6px;font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;box-shadow:0 10px 20px rgba(0,0,0,.4);rotate:-5deg}
 .tag:last-child{rotate:4deg}
 .tag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tub);box-shadow:inset 0 0 0 2px #aaa}
@@ -256,6 +257,10 @@ section{position:relative}
 .voice .replay{color:var(--on-flavour);border-color:color-mix(in oklab,var(--on-flavour) 45%,transparent)}
 .voice .replay:hover{border-color:var(--on-flavour)}
 .voice .ex{color:color-mix(in oklab,var(--on-flavour) 82%,transparent)}
+.voice .notices{margin-top:18px}
+.voice .notices div{border-top-color:color-mix(in oklab,var(--on-flavour) 30%,transparent)}
+.voice .notices b{color:var(--on-flavour);min-width:3.4ch}
+.voice .notices span{color:color-mix(in oklab,var(--on-flavour) 86%,transparent)}
 .seen{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 14px;border-radius:12px;background:color-mix(in oklab,var(--on-flavour) 12%,transparent);font:700 15px var(--text)}
 .soonline{margin-top:16px;font:600 15px/1.5 var(--text);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
@@ -297,16 +302,13 @@ section{position:relative}
    and a screenshot all get the whole story. */
 .lift{padding:88px 0 80px;border-top:1px solid var(--rule)}
 .lift .grid{display:grid;gap:44px;margin-top:36px;align-items:start}
-/* the beats: the list beside a phone lights up with it */
-.beats{list-style:none;margin:0;padding:0;display:grid;gap:22px;counter-reset:b}
-.beats li{display:grid;grid-template-columns:46px 1fr;gap:2px 14px;counter-increment:b;transition:opacity .5s var(--ease)}
-.beats li::before{content:counter(b);grid-row:span 2;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--flavour);color:var(--on-flavour);font:900 24px/1 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;transition:background .4s var(--ease),color .4s var(--ease)}
-.beats h3{font:800 1.18rem/1.25 var(--text)}
-.beats p{color:var(--ink2)}
-.beats.armed li:not(.on){opacity:.42}
-.beats.armed li:not(.on)::before{background:var(--rule);color:var(--ink)}
+/* the rows beside a phone light up with it (the label's own rows, like ORDER / PAY / STOCK) */
 .money.armed div{transition:opacity .5s var(--ease)}
-.money.armed div:not(.on){opacity:.42}
+.money.armed div:not(.on){opacity:.72}
+.money.armed div.on b{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
+.rows{margin-top:0}
+.rows div{display:grid;grid-template-columns:7.2rem 1fr;gap:14px;align-items:baseline}
+.rows b{min-width:0;white-space:nowrap}
 /* a finger on the screen: the control dips and a ring spreads from it */
 .tapping{animation:tap .45s var(--ease)}
 .tapping::after{content:"";position:absolute;inset:-6px;border-radius:999px;border:2px solid var(--flavour);animation:ring .6s var(--ease) forwards;pointer-events:none}
@@ -323,6 +325,9 @@ section{position:relative}
 .prod{position:relative}
 .addp{position:absolute;right:7px;bottom:7px;font:800 11px var(--app-body);padding:4px 9px;border-radius:999px;background:var(--app-line);color:var(--app-ink)}
 #shop-add{background:var(--good);color:#04140B}
+#shop-add .a1,.armed #shop-add:not(.on) .a2{display:none}
+.armed #shop-add:not(.on) .a1{display:inline}
+.okt{display:inline-block;width:15px;height:15px;vertical-align:-2px}
 .armed #shop-add:not(.on){background:var(--app-line);color:var(--app-ink)}
 .bagsheet{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 16px 18px;background:#141824;border-top:1px solid var(--app-line);border-radius:22px 22px 0 0;transition:transform .5s var(--ease)}
 .armed .bagsheet:not(.up){transform:translateY(105%)}
@@ -348,6 +353,9 @@ section{position:relative}
 .caret{display:inline-block;width:2px;height:14px;background:#111;vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .compose.sent .caret{display:none}
+.cm-send .s2,.compose.sent .cm-send .s1{display:none}
+.compose.sent .cm-send .s2{display:inline}
+.compose.sent .cm-send{background:#E3E6EC;color:#3B4252}
 .cm-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
 .cm-sent{font:700 12px var(--app-body);color:#127A3D;transition:opacity .4s}
 .compose:not(.sent) .cm-sent{opacity:0}
@@ -358,6 +366,10 @@ section{position:relative}
 .armed .msgnew:not(.in)>.msgcard{margin-bottom:0;padding-block:0;border-width:0}
 .newb{margin-left:auto;font:800 10px var(--app-body);padding:2px 6px;border-radius:5px;background:var(--flavour);color:var(--on-flavour)}
 
+@media (max-width:979px){
+  .lift .grid>.stage,.lockscr .grid>.stage{order:-1}
+  .lift svg.leaders,.lockscr svg.leaders{display:none}
+}
 /* the lock screen: the live card -> the rest counting down -> "Rest is over" (+ the watch) */
 .lockpair{position:relative;width:max-content;max-width:100%;justify-self:center}
 .watch{position:absolute;z-index:6;right:-18px;bottom:64px;width:124px;height:124px;border-radius:50%;padding:7px;background:#26272D;box-shadow:0 0 0 1px #3A3B43,0 22px 40px -10px rgba(0,0,0,.8);rotate:8deg}
@@ -369,8 +381,7 @@ section{position:relative}
 #lock-watch:not([data-s]) .w-over,#lock-watch[data-s=live] .w-live,#lock-watch[data-s=rest] .w-rest,#lock-watch[data-s=over] .w-over{opacity:1}
 #lock-watch[data-s=over] .wf,#lock-watch:not([data-s]) .wf{box-shadow:inset 0 0 0 2px var(--flavour)}
 .lockscr{padding:96px 0 88px;border-top:1px solid var(--rule);overflow:hidden}
-.lockscr .grid{display:grid;gap:40px;align-items:start}
-.lockscr .beats{margin-top:30px}
+.lockscr .grid{display:grid;gap:40px;margin-top:36px;align-items:start}
 .scr.lock{background:radial-gradient(120% 70% at 50% 0%,color-mix(in oklab,var(--flavour) 30%,#07080C) 0%,#07080C 72%)}
 .lk-time{margin-top:22px;text-align:center;font:300 64px/1 var(--app-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .lk-date{text-align:center;font:600 13px var(--app-body);color:var(--app-ink2);margin-top:6px}
@@ -402,7 +413,7 @@ section{position:relative}
   .use .steps{grid-template-columns:repeat(3,1fr);gap:26px 40px}
   .use .steps li{align-content:start}
   .lift .grid{grid-template-columns:1fr 1.05fr;gap:56px}
-  .lockscr .grid{grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .lockscr .grid{grid-template-columns:1fr 1.05fr;gap:56px;align-items:start}
   .stage.solo{grid-template-columns:auto;justify-content:center}
   .stage{grid-template-columns:auto 170px;justify-content:start;align-items:start;column-gap:40px}
   .stage .notes{flex-direction:column;align-items:flex-start;gap:58px;padding-top:120px;max-width:none}
@@ -508,11 +519,11 @@ section{position:relative}
     <h2 id="lift-h" class="cond panel-h" data-hi="हर सेट, वापस आने की वजह">Every set, a reason to come back</h2>
     <p class="lede" data-hi="जो मेंबर खुद को मज़बूत होते देखता है, वो जिम नहीं छोड़ता। ForgeAI उसे हर सेट पर यही दिखाता है।">Members don't quit a gym where they can see themselves getting stronger. ForgeAI shows them, set by set.</p>
     <div class="grid">
-      <ol class="beats" id="lift-beats">
-        <li data-beat="1"><h3 data-hi="हर सेट के पास पिछली बार के नंबर">Last time's numbers, beside every set</h3><p data-hi="उसे पता है पिछली बार कितना उठाया था, तो हर सेट का एक लक्ष्य है।">They see what they lifted last time, so every set has a target.</p></li>
-        <li data-beat="2"><h3 data-hi="kg to beat घटता जाता है">The kg to beat counts down</h3><p data-hi="हर टिक किया सेट लक्ष्य से किलो घटाता है, साथ में रेस्ट टाइमर चलता है।">Each ticked set takes kilos off the target, live, with the rest timer running.</p></li>
-        <li data-beat="3"><h3 data-hi="“New record”, उसी पल">“New record”, the moment it falls</h3><p data-hi="पॉप-अप रिकॉर्ड का नाम बताता है। यही एहसास उसे अगली बार वापस लाता है।">A pop-up names the record. That feeling is what brings them back next time.</p></li>
-      </ol>
+      <div class="money rows" id="lift-beats">
+        <div data-beat="1"><b data-hi="लक्ष्य">Target</b><span data-hi="हर सेट के पास पिछली बार के नंबर, तो हर सेट का एक लक्ष्य है।">Last time's numbers beside every set, so every set has a target.</span></div>
+        <div data-beat="2"><b data-hi="घटता">Beat</b><span data-hi="हर टिक किया सेट “kg to beat” से किलो घटाता है, साथ में रेस्ट टाइमर चलता है।">Each ticked set takes kilos off the “kg to beat”, live, with the rest timer running.</span></div>
+        <div data-beat="3"><b data-hi="रिकॉर्ड">Record</b><span data-hi="“New record” उसी पल, नाम के साथ। यही एहसास उसे अगली बार वापस लाता है।">“New record” the moment it falls, named. That feeling brings them back next time.</span></div>
+      </div>
       <div class="stage leads-host">
         <svg class="leaders" aria-hidden="true"></svg>
         <div class="phone" id="live" style="aspect-ratio:9/15.5" role="img" aria-label="A member logging Bench Press: three sets ticked against last time's numbers, then a new record" data-hi-label="एक मेंबर बेंच प्रेस लिख रहा है: पिछली बार के नंबरों के सामने तीन सेट, फिर नया रिकॉर्ड">
@@ -522,20 +533,20 @@ section{position:relative}
               <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="apph" style="font-size:19px;margin:2px 0 4px">Push Day A</div><b style="font:700 13px var(--app-body);color:var(--app-ink2)">24:10</b></div>
               <div class="ac" style="padding:10px">
                 <div class="t" style="font-size:15px">Bench Press (Barbell)</div>
-                <div class="beat live-beat" id="t-beat"><span class="todo"><span class="roll" id="beat">1,125</span> kg to beat · +15%</span><span class="won-t">1,125 kg beaten · +15%</span></div>
+                <div class="beat live-beat won" id="t-beat"><span class="todo"><span class="roll" id="beat">1,125</span> kg to beat · +15%</span><span class="won-t">1,125 kg beaten · +15%</span></div>
                 <table class="sets">
                   <thead><tr><th>SET</th><th id="t-prev">PREVIOUS</th><th>KG</th><th>REPS</th><th></th></tr></thead>
                   <tbody>
-                    <tr><td>1</td><td class="prev">60 × 8</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
-                    <tr><td>2</td><td class="prev">60 × 8</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
-                    <tr><td>3</td><td class="prev">60 × 7</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
+                    <tr class="done"><td>1</td><td class="prev">60 × 8</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
+                    <tr class="done"><td>2</td><td class="prev">60 × 8</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
+                    <tr class="done"><td>3</td><td class="prev">60 × 7</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
                   </tbody>
                 </table>
                 <div class="rest" id="rest"><span>Rest</span><span id="restt">1:30</span></div>
               </div>
               <div class="ac" style="padding:10px"><div class="t" style="font-size:15px">Overhead Press</div><div class="beat">540 kg to beat · +8%</div></div>
             </div>
-            <div class="record" id="record"><b>New record</b>Bench Press · 62.5 kg × 8</div>
+            <div class="record slam" id="record"><b>New record</b>Bench Press · 62.5 kg × 8</div>
           </div>
         </div>
         <div class="notes">
@@ -594,10 +605,10 @@ section{position:relative}
         <li><span><b data-hi="आपका नाम, लोगो, रंग">Your name, logo and colours</b></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="QR चेक-इन">QR check-in</b> <span data-hi="और “मेरी मेंबरशिप”">and "My membership"</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="आपकी दुकान">Your shop</b> <span data-hi="ऑर्डर ऐप में, पैसे डेस्क पर">order in the app, pay at the desk</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span><b data-hi="आपके संदेश">Your messages</b> <span data-hi="ऐप के इनबॉक्स में">in the app's inbox</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
+        <li><span><b data-hi="आपकी सूचनाएँ">Your notices</b> <span data-hi="ऐप के इनबॉक्स में, मुफ्त">in the app's inbox, free</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="लॉक स्क्रीन पर वर्कआउट">Workout on the lock screen</b> <span data-hi="Complete set, रेस्ट, वर्कआउट का समय">Complete set, the rest, the workout time</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="बिना इंटरनेट भी वर्कआउट लिखें">Logs workouts with no internet</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span data-hi="संदेश फोन की स्क्रीन पर पॉप-अप">Messages pop up on the phone's screen</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
+        <li><span data-hi="सूचना फोन की लॉक स्क्रीन पर पॉप-अप">Notices pop up on the phone's lock screen</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
         <li><span data-hi="जिम देखे कौन तरक्की कर रहा है (मेंबर की मंज़ूरी से)">Gym sees who is progressing (with the member's OK)</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
         <li><span data-hi="हिंदी में मेंबर ऐप">Member app in Hindi</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
       </ul>
@@ -632,7 +643,7 @@ section{position:relative}
             <div class="shophead"><div class="apph" style="font-size:19px;margin:0">Your gym's shop</div><span class="bagb has" id="shop-bag">Bag<i id="shop-bagn">1</i></span></div>
             <div style="color:var(--app-ink2);font-size:12px;margin:-6px 0 10px">Pay at the desk</div>
             <div class="shopgrid">
-              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="9" y="8" width="22" height="27" rx="5" fill="var(--flavour)"/><rect x="11" y="4" width="18" height="6" rx="2" fill="#E8E8EC"/><rect x="9" y="17" width="22" height="8" fill="#0B0B0D"/></svg></div><div class="n">Whey protein</div><div class="u">1 kg</div><div class="p" id="p-whey">₹2,499</div><div class="left"><span data-hi="सिर्फ">Only</span> <span class="roll" id="shop-left">2</span> <span data-hi="बचे">left</span></div><span class="addp" id="shop-add">Add</span></div>
+              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="9" y="8" width="22" height="27" rx="5" fill="var(--flavour)"/><rect x="11" y="4" width="18" height="6" rx="2" fill="#E8E8EC"/><rect x="9" y="17" width="22" height="8" fill="#0B0B0D"/></svg></div><div class="n">Whey protein</div><div class="u">1 kg</div><div class="p" id="p-whey">₹2,499</div><div class="left"><span data-hi="सिर्फ">Only</span> <span class="roll" id="shop-left">2</span> <span data-hi="बचे">left</span></div><span class="addp" id="shop-add"><span class="a1">Add</span><span class="a2">In bag</span></span></div>
               <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="11" y="10" width="18" height="24" rx="4" fill="#E8E8EC"/><rect x="12" y="6" width="16" height="6" rx="2" fill="var(--flavour)"/><rect x="11" y="18" width="18" height="6" fill="#0B0B0D"/></svg></div><div class="n">Creatine</div><div class="u">250 g</div><div class="p" id="p-crea">₹899</div><span class="addp">Add</span></div>
               <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M13 9h14l-2 26H15L13 9z" fill="#E8E8EC"/><rect x="12" y="5" width="16" height="5" rx="2" fill="var(--flavour)"/></svg></div><div class="n">Shaker</div><div class="u">700 ml</div><div class="p">₹399</div></div>
               <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M12 9l5-3h6l5 3 5 6-4 3-2-2v18H13V16l-2 2-4-3 5-6z" fill="var(--flavour)"/></svg></div><div class="n">Gym T-shirt</div><div class="u">S to XXL</div><div class="p">₹599</div></div>
@@ -641,7 +652,7 @@ section{position:relative}
           <div class="bagsheet up sent" id="shop-sheet">
             <div class="grab"></div>
             <div class="bs-ask"><b>Your bag · 1 item</b><div class="bs-row"><span>Whey protein · 1 kg</span><span>₹2,499</span></div><div class="bs-note">Pay at the desk when you collect</div><span class="abtn" id="shop-place">Place order</span></div>
-            <div class="bs-done"><b>Order sent ✓</b><div class="bs-note">The desk has it. Pay when you collect.</div></div>
+            <div class="bs-done"><b>Order sent <svg class="okt" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></b><div class="bs-note">The desk has it. Pay when you collect.</div></div>
           </div>
           <div class="tabs"><span>Workout</span><span>Profile</span><b>Shop</b></div>
         </div>
@@ -655,19 +666,20 @@ section{position:relative}
   </div>
 </section>
 
-<!-- MESSAGES (R-57: plays a message, from the owner's Send to "read by") -->
+<!-- NOTICES (R-57; owner 22 Oct: "free member notifications about holidays"): plays a notice from Send to "read by" -->
 <section class="voice" aria-labelledby="voice-h">
   <div class="wrap grid">
     <div>
-      <h2 id="voice-h" class="cond panel-h" data-hi="एक संदेश, हर मेंबर तक">One message, every member</h2>
-      <p class="lede" data-hi="ऑफर, छुट्टी, नया बैच, नई मशीन। एडमिन ऐप में एक बार लिखिए, हर मेंबर के इनबॉक्स में पहुँच जाता है, और आप देखते हैं कितनों ने पढ़ा। न WhatsApp ग्रुप, न किसी मेंबर का नंबर दूसरों को दिखता है।">Offers, holidays, a new batch, a new machine. Write it once in the admin app and it lands in every member's inbox, and you see how many read it. No WhatsApp group, and no member's number shown to the others.</p>
-      <p class="soonline"><span class="soon" data-hi="जल्द">Coming</span><span data-hi="संदेश फोन की लॉक स्क्रीन पर भी पॉप-अप होंगे।">Messages will also pop up on the phone's lock screen.</span></p>
+      <h2 id="voice-h" class="cond panel-h" data-hi="हर मेंबर तक सूचना, मुफ्त">Free notices to every member</h2>
+      <p class="lede" data-hi="छुट्टी में जिम बंद, नए बैच का समय, ऑफर, नई मशीन। एडमिन ऐप में एक बार लिखिए: सेकंडों में हर मेंबर के ऐप के इनबॉक्स में पहुँचता है, और आप देखते हैं कितनों ने पढ़ा। हर संदेश मुफ्त: न SMS का खर्च, न WhatsApp का, न कोई ग्रुप जिसमें सबके नंबर दिखें।">Holiday closures, new batch timings, offers, a new machine. Write it once in the admin app: it reaches every member's app inbox in seconds, and you see how many read it. Every notice is free: no SMS or WhatsApp charge, and no group that shows everyone's number.</p>
+      <div class="money notices"><div><b data-hi="₹0">₹0</b><span data-hi="हर संदेश पर, कितने भी मेंबर हों">per notice, however many members</span></div><div><b data-hi="1×">1×</b><span data-hi="लिखिए, सबको पहुँचता है">write it once, everyone gets it</span></div><div><b data-hi="पढ़ा">Read</b><span data-hi="देखिए कितनों ने पढ़ा">see how many read it</span></div></div>
+      <p class="soonline"><span class="soon" data-hi="जल्द">Coming</span><span data-hi="सूचना फोन की लॉक स्क्रीन पर भी पॉप-अप होगी।">Notices will also pop up on the phone's lock screen.</span></p>
     </div>
     <div class="duo msgduo leads-host" id="msg-scene">
-      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends one message to every member and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को एक संदेश भेजता है और देखता है कितनों ने पढ़ा">
+      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends a holiday notice to every member, free, and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को छुट्टी की सूचना मुफ्त भेजता है और देखता है कितनों ने पढ़ा">
         <small aria-hidden="true">Admin app · Message to all members</small>
-        <div class="cm-text" aria-hidden="true"><span id="msg-typed">Diwali offer: renew for 3 months, get 2 weeks free</span><i class="caret"></i></div>
-        <div class="cm-row" aria-hidden="true"><span class="cm-sent" id="msg-status">Sent to 212 members · read by <span class="roll" id="msg-read">64</span></span><span class="cm-send" id="msg-send">Send</span></div>
+        <div class="cm-text" aria-hidden="true"><span id="msg-typed">Gym closed on 1 Nov for Diwali. Open as usual from 2 Nov. Happy Diwali!</span><i class="caret"></i></div>
+        <div class="cm-row" aria-hidden="true"><span class="cm-sent" id="msg-status">Sent to 212 members · read by <span class="roll" id="msg-read">64</span></span><span class="cm-send" id="msg-send"><span class="s1">Send</span><span class="s2">Sent</span></span></div>
       </div>
       <div class="phone" role="img" aria-label="The gym's messages in the member app's inbox" data-hi-label="मेंबर ऐप के इनबॉक्स में जिम के संदेश">
         <div class="scr" aria-hidden="true">
@@ -675,9 +687,9 @@ section{position:relative}
           <div class="in">
             <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
             <div class="apph" style="font-size:19px">Messages</div>
-            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span></span><b class="newb">New</b></div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div></div>
-            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · Mon</div><div class="t">New leg press machine is here</div><div class="s">Coach Vikram will show you how to use it.</div></div>
-            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 18 Oct</div><div class="t">Closed on Sunday morning</div><div class="s">Open from 4 pm.</div></div>
+            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span></span><b class="newb">New</b></div><div class="t">Gym closed on 1 Nov for Diwali</div><div class="s">Open as usual from 2 Nov. Happy Diwali!</div></div></div>
+            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · Mon</div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div>
+            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 18 Oct</div><div class="t">New evening batch: 9 to 10 pm</div><div class="s">From Monday. Ask Coach Vikram.</div></div>
           </div>
           <div class="tabs"><span>Workout</span><b>Profile</b><span>Shop</span></div>
         </div>
@@ -688,19 +700,19 @@ section{position:relative}
   </div>
 </section>
 
-<!-- THE LOCK SCREEN (R-57): the workout card, the rest, "Rest is over" -->
+<!-- THE LOCK SCREEN (R-57): the workout card, the rest, "Rest is over" (and the watch) -->
 <section class="lockscr" aria-labelledby="lock-h">
-  <div class="wrap grid">
-    <div>
+  <div class="wrap">
       <h2 id="lock-h" class="cond panel-h" data-hi="लॉक स्क्रीन पर उनका वर्कआउट">Their workout, on the lock screen</h2>
       <p class="lede" data-hi="मेंबर फोन अनलॉक किए बिना सेट टिक करता है और अपना रेस्ट देखता है। “Rest is over” समय पर बजता और वाइब्रेट करता है, स्क्रीन बंद होने पर भी, और Wear OS घड़ी पर भी।">Members tick a set and watch their rest without unlocking the phone. “Rest is over” rings and buzzes on time, even with the screen off, and on a Wear OS watch.</p>
-      <ol class="beats" id="lock-beats">
-        <li data-beat="1"><h3 data-hi="अनलॉक किए बिना “Complete set”">“Complete set”, without unlocking</h3><p data-hi="कार्ड पर अगला सेट, वज़न और रेप्स, और वर्कआउट का समय चलता हुआ।">The card shows the next set, its kg and reps, and the workout time ticking.</p></li>
-        <li data-beat="2"><h3 data-hi="रेस्ट वहीं गिनता है">The rest counts down right there</h3><p data-hi="+15 s और Skip के साथ। जिम के रंग में।">With +15 s and Skip. In your gym's colour.</p></li>
-        <li data-beat="3"><h3 data-hi="“Rest is over” समय पर">“Rest is over”, on time</h3><p data-hi="बजता है, वाइब्रेट करता है, और अगला सेट बताता है। मेंबर अपनी घंटी चुन सकता है।">It rings, buzzes and names the next set. Members can pick their own sound.</p></li>
-      </ol>
-    </div>
-    <div class="stage solo" id="lock-scene">
+    <div class="grid">
+      <div class="money rows" id="lock-beats">
+        <div data-beat="1"><b data-hi="टैप">Tap</b><span data-hi="लॉक स्क्रीन के कार्ड पर “Complete set”: सेट टिक, रेस्ट शुरू। कार्ड पर वर्कआउट का समय चलता है।">“Complete set” on the lock-screen card ticks the set and starts the rest. The card shows the workout time.</span></div>
+        <div data-beat="2"><b data-hi="रेस्ट">Rest</b><span data-hi="रेस्ट वहीं गिनता है, +15 s और Skip के साथ, जिम के रंग में।">The rest counts down right there, with +15 s and Skip, in your gym's colour.</span></div>
+        <div data-beat="3"><b data-hi="घंटी">Ring</b><span data-hi="“Rest is over” समय पर बजता और वाइब्रेट करता है, घड़ी पर भी, और अगला सेट बताता है। मेंबर अपनी घंटी चुन सकता है।">“Rest is over” rings and buzzes on time, on the watch too, and names the next set. Members can pick their own sound.</span></div>
+      </div>
+    <div class="stage leads-host" id="lock-scene">
+      <svg class="leaders" aria-hidden="true"></svg>
       <div class="lockpair">
       <div class="phone" id="lock-phone" role="img" aria-label="Example lock screen: the live workout card, then the rest counting down, then Rest is over" data-hi-label="उदाहरण लॉक स्क्रीन: वर्कआउट कार्ड, फिर गिनता हुआ रेस्ट, फिर Rest is over">
         <div class="scr lock" aria-hidden="true">
@@ -710,7 +722,7 @@ section{position:relative}
           <div class="nslot">
             <div class="nc" id="n-live"><div class="nh"><i class="nic"></i>ForgeAI · Workout</div><div class="nrow"><b>Bench Press</b><span class="ntime" id="n-clock">24:10</span></div><div class="ntx" id="n-set">Set 3 of 5 · 62.5 kg × 8</div><div class="nact"><span id="n-complete">Complete set</span></div></div>
             <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>ForgeAI · Rest</div><div class="nrow"><b><span id="n-left" class="js-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
-            <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>ForgeAI · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b>Rest is over</b></div><div class="ntx">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span>Complete set</span></div></div>
+            <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>ForgeAI · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b id="n-over-title">Rest is over</b></div><div class="ntx" id="n-over-next">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span id="n-over-act">Complete set</span></div></div>
           </div>
           <div class="lk-hint">Swipe up to unlock</div>
         </div>
@@ -723,8 +735,14 @@ section{position:relative}
         </div>
       </div>
       </div>
+      <div class="notes">
+        <span class="callout" data-target="#n-over-title" data-side="right" data-hi="समय पर बजता और वाइब्रेट करता है, स्क्रीन बंद होने पर भी">Rings and buzzes on time, screen off too</span>
+        <span class="callout" data-target="#n-over-next" data-side="right" data-anchor="under" data-hi="अगला सेट, वज़न और रेप्स">The next set, kg and reps</span>
+        <span class="callout" data-target="#n-over-act" data-side="right" data-hi="अनलॉक किए बिना टिक">Tick it without unlocking</span>
+      </div>
       <button class="replay" type="button" id="lock-replay" data-hi="फिर से चलाएँ">Play it again</button>
       <p class="ex" data-hi="उदाहरण के नंबर; कार्ड असली ऐप की तरह।">Example numbers; the cards follow the real app.</p>
+    </div>
     </div>
   </div>
 </section>

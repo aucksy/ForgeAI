@@ -5,6 +5,34 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-59. Backlog: trainers see their members' progress (widens "Member progress for the gym") — 22 Oct 2026
+**Owner said (thinking out loud):** users are members, staff, receptionists, trainers; "the trainers need to be
+able to see member data ... if they're progressing or not, then they can encourage basically user to increase
+the weight, or maybe the gym can sell personal training with the data analytics ... something around this may
+add value to the gym owner"; research and decide the best implementation.
+**Done:** the existing Planned row (R-25) renamed "Trainer view of member progress" and widened; not a second row.
+**Plan when it starts (after the R-55 batch, ordered with R-58):** research first (Trainerize, TrueCoach, Hevy
+Coach, PT Distinction; what members accept sharing). Members opt in (off by default; workouts stay on the phone
+today, a promise in the app). Shared only: workout dates, total kg per workout, best set per main lift, records,
+workouts a week; never body weight or photos. Trainer login (the role exists) gets "My members": trend (up /
+flat / down / stopped coming), a stalled-lift flag, one-tap WhatsApp praise or nudge. Owner gets "stalling and
+not on personal training" (a PT sales list) and a monthly progress report a trainer can share with a PT client.
+Needs: a live server change (his yes) and a privacy notice line.
+
+## R-58. Backlog: suggestions for muscles a member's routine misses (big; build after the rest) — 22 Oct 2026
+**Owner said:** "add a feature in the backlog which you can actually start building when you're done with all
+the others ... a big feature but needs to be done accurately. You'll have to research thoroughly about all the
+muscles in the body, and then if someone's routine, for example ... pull or push ... is missing out certain
+muscles, then we give them suggestions. You decide where to give them, and let's build it, and then we'll see
+how to trim it down, because I do not want people to experience FOMO ... this is too much".
+**Done:** backlog row "Missing-muscle suggestions" (Planned, Member app) with how it will work.
+**Plan when it starts (after the R-55 batch):** research first (muscle anatomy and the groups training
+science counts, e.g. weekly sets per muscle group; how Hevy / Fitbod / JEFIT show muscle balance; what their
+users find nagging). Judge the WEEK of routines, not one day (a push day is meant to skip the back). Use the
+402-exercise library's main and helping muscles (the body map already reads them). Show ONE quiet
+suggestion at a time, never during a workout; "Not now" is remembered; at most one per routine. Then trim
+with the owner.
+
 ## R-57. Landing page: dedicated animated sections for the app's best screens — 22 Oct 2026
 **Owner said (mid-batch):** "for the landing page... I want dedicated sections with UI animations
 highlighting workout tracking screen with hitting PR, the shop screen and the notifications screen... and
