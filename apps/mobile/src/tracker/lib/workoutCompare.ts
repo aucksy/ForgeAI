@@ -127,3 +127,17 @@ export function deltaTag(d: ExerciseDelta): string {
       return `${d.kind === 'up' ? '+' : '−'}${Math.max(1, Math.round(Math.abs(d.pct ?? 0) * 100))}%`;
   }
 }
+
+/** What a screen reader says for a row's tag ("down 20 percent"). PURE. */
+export function spokenTag(d: ExerciseDelta): string {
+  switch (d.kind) {
+    case 'new':
+      return 'new today';
+    case 'skipped':
+      return 'not done today';
+    case 'same':
+      return 'about the same';
+    default:
+      return `${d.kind} ${deltaTag(d).slice(1).replace('%', ' percent')}`;
+  }
+}

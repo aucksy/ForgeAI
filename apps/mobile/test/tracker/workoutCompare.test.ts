@@ -1,7 +1,7 @@
 /** R-75 (owner, 22 Oct 2026): which exercises went up or down on the finish screen, and why. */
 import { describe, expect, it } from 'vitest';
 
-import { deltaReason, deltaTag, exerciseDeltas, mainCause, type CompareExercise } from '@/tracker/lib/workoutCompare';
+import { deltaReason, deltaTag, exerciseDeltas, mainCause, spokenTag, type CompareExercise } from '@/tracker/lib/workoutCompare';
 
 const ex = (exerciseId: string, name: string, sets: [number, number][]): CompareExercise => ({
   exerciseId,
@@ -57,5 +57,36 @@ describe('R-75: each exercise against the compared workout', () => {
 
   it('member words never say volume, PR or session', () => {
     for (const x of d) expect(`${deltaTag(x)} ${x.reason ?? ''}`).not.toMatch(/\b(volume|PR|session)\b/i);
+  });
+});
+
+describe('R-75: the finish list opens with the arrow on the right', () => {
+  it('a screen reader hears each tag in words', () => {
+    const row = (kind: 'up' | 'down' | 'same' | 'new' | 'skipped', pct: number | null) => ({
+      exerciseId: 'x',
+      name: 'Row',
+      kind,
+      todayKg: 0,
+      lastKg: 0,
+      pct,
+      reason: null,
+    });
+    expect(spokenTag(row('up', 0.08))).toBe('up 8 percent');
+    expect(spokenTag(row('down', -0.2))).toBe('down 20 percent');
+    expect(spokenTag(row('same', 0.01))).toBe('about the same');
+    expect(spokenTag(row('new', null))).toBe('new today');
+    expect(spokenTag(row('skipped', null))).toBe('not done today');
+  });
+
+  it('the finish screen shows the line through the opening card, and the words stay plain', async () => {
+    const fs = await import('node:fs');
+    const finish = fs.readFileSync('src/app/session/finish.tsx', 'utf8');
+    expect(finish).toMatch(/<CompareNote text=\{note\.text\} exercises=\{note\.exercises\} cause=\{note\.cause\} \/>/);
+    const card = fs.readFileSync('src/tracker/components/CompareNote.tsx', 'utf8');
+    expect(card).toContain("name=\"chevron-right\"");
+    expect(card).toContain('accessibilityState={{ expanded: open }}');
+    const code = card.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    const shown = code.match(/'[^']*'|`[^`]*`/g)?.join(' ') ?? '';
+    expect(shown).not.toMatch(/\b(volume|PR|session)\b/i);
   });
 });

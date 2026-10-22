@@ -25,12 +25,13 @@ import { useUnits } from '@/lib/useUnits';
 import { onAccentTint } from '@/theme/tint';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
+import { CompareNote } from '@/tracker/components/CompareNote';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { SHARE_TEXT_HINT, SHARE_TEXT_LABEL, shareTextNow } from '@/tracker/components/ShareTextRow';
 import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
-import { getCloudCoachNote, getSessionCoachNote } from '@/tracker/services/coachNote';
+import { getCloudCoachNote, getSessionCoachNote, type CoachNote } from '@/tracker/services/coachNote';
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
@@ -100,7 +101,7 @@ export default function FinishScreen() {
 
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [note, setNote] = useState<string | null>(null);
+  const [note, setNote] = useState<Pick<CoachNote, 'text' | 'exercises' | 'cause'> | null>(null);
   const [sharing, setSharing] = useState(false);
   const [routineLine, setRoutineLine] = useState<string | null>(null);
   // Backlog (21 Oct): no routines yet and an empty workout -> one quiet "Save as routine" button.
@@ -200,10 +201,11 @@ export default function FinishScreen() {
     let alive = true;
     void getSessionCoachNote(data).then((n) => {
       if (!alive) return;
-      setNote(n.text);
+      setNote(n);
       if (coachNotesPref) {
+        // The richer note compares in its own way: it replaces the line and the exercise list.
         void getCloudCoachNote(data).then((rich) => {
-          if (alive && rich) setNote(rich);
+          if (alive && rich) setNote({ text: rich });
         });
       }
     });
@@ -278,13 +280,8 @@ export default function FinishScreen() {
           {/* Audit Phase 7: a line of facts (an easy week, its records, or kg lifted against the
               last workout of its kind) — plain, with no coach heading or sparkle while the coach
               is hidden, and never food or sleep advice while nutrition is. */}
-          {note ? (
-            <Card>
-              <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, lineHeight: 21 }}>
-                {note}
-              </Text>
-            </Card>
-          ) : null}
+          {/* R-75: the line opens to each exercise (up, down, why) with the arrow on the right. */}
+          {note?.text ? <CompareNote text={note.text} exercises={note.exercises} cause={note.cause} /> : null}
 
           {routineLine ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{routineLine}</Text>
