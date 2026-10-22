@@ -24,8 +24,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 44 | New brand name (domains free today) | A: Repghar |
 | 45 | Count reps by listening: build a test version | A: yes, phone mic |
 | 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
-| 47 | AI import of old records: the first version | A: spreadsheets with AI, free with a daily limit |
-| 49 | Offers and messages: step 2 (live server change) and the reward numbers | A: yes after step 1; 10 workouts in 30 days → 3 days |
 | 50 | Members' workouts on our server | A: yes later, by choice, after sign-in and the paid plan |
 
 ---
@@ -56,10 +54,12 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
 | 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | Blocked | Reps to beat: live in v0.54.0. Trainer view: waits for your pick in #46. |
 | 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
-| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Blocked | Step 1 live 22 Oct: admin app More → Messages & offers (ready messages in English and Hindi, who gets it, WhatsApp one by one, Today nudges, the receipt fix, "Check workout code"); member app v0.54.0 has "Show my workouts to the desk". Step 2 waits for your pick in #49. |
+| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Doing | Step 1 live 22 Oct. Step 2 building (you picked A on 23 Oct, plus automatic giving as an option).
 | 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
 | 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
+| 24. AI import of old records (#47) | Doing | Building 23 Oct: Gemini first, Claude Haiku 5.5 as backup; works by hand until you add the keys. |
+| 25. System owner panel: the plan | Doing | Researching 23 Oct; the plan comes to you before any build. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -148,6 +148,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
 | Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
 | Messages & offers | Live | 22 Oct: admin app More → Messages & offers: ready messages in English and Hindi (closures, fee offers, festivals, renewals...), who gets it, WhatsApp one by one, Today nudges. Step 2 waits for your pick in #49. |
+| Workout offer in the app (step 2) | Planned | You picked A (23 Oct): members join the offer in the app and see "6 of 10"; the owner picks "give the days by themselves" or "I give them". Building now; the server part needs the live change you said yes to. | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
 | Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
 | "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
 | Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
@@ -162,7 +163,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Entry machine (turnstile, face or fingerprint) | Waiting for you | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. Waits for the client to buy the machine. | The gym buys the machine; it talks to our server over the internet. A new member added in the admin app goes to the machine by itself and the desk scans the finger or face once; an expired or frozen member is blocked even when the internet is down, and a renewal unblocks them at once. Every entry becomes a check-in in the attendance register, and the desk gets an "Open door" button. |
 | Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
-| AI import of a gym's old records | Waiting for you | You confirmed it (22 Oct). Research done; the plan waits for your pick in #47. | The owner uploads what they have (Excel, CSV, a PDF or photos of a register). AI reads it and shows each column matched to ours, with any new kind of information kept as an extra field for that gym. The owner checks a preview, fixes anything wrong, and imports; one tap undoes the whole import. |
+| AI import of a gym's old records | Planned | You confirmed it (22 Oct) and picked A (23 Oct): spreadsheets with AI matching, cheapest AI first (Gemini), Claude Haiku as backup. Building now. | The owner uploads what they have (Excel, CSV, a PDF or photos of a register). AI reads it and shows each column matched to ours, with any new kind of information kept as an extra field for that gym. The owner checks a preview, fixes anything wrong, and imports; one tap undoes the whole import. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
 | Body measurements taken by the gym | Idea | Let trainers record measurements; members already log their own. | Trainers record weight, body fat and measurements (waist, chest, arms) on the member's page, with dates and a chart. With the member's OK, the numbers also show in the member's own app beside the ones they log. |
 | Trainer view of member progress | Waiting for you | Trainers and the owner see whether each member is progressing (owner 18 Oct, widened 22 Oct). Research done; the plan waits for your pick in #46. | Research comes first (Trainerize, TrueCoach, Hevy Coach). In the app the member turns on "Share my progress with my gym" (off until they choose; they see exactly what is shared and can turn it off). Shared: workout days, total kg lifted per workout, the best set on main lifts and new records; never body weight or photos. A trainer's "My members" shows each one going up, flat, down or stopped coming, flags a lift stuck for 3 weeks, and has one-tap WhatsApp praise or a nudge. The owner gets a list of members who are stalling and not on personal training (a sales list), and a monthly progress report a trainer can send a PT client. Needs a live server change (your yes). |
@@ -204,6 +205,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
+| System owner panel (for you) | Planned | Your own sign-in to see every gym's health, usage and costs, approve or pause a gym, handle delete requests, with every look logged (your note, 23 Oct). Planning now; the plan comes to you first. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
 | New brand name with a free domain | Waiting for you | Research done: 136 names checked, 5 with .com, .in and .app free at the normal price; your pick (#44). | You pick a name and buy its .com and .in the same day (about ₹1,700-3,100 a year); then a trademark check, then I rename the app, the website and the store listing. |
 | Block-proof server address | Live | Admin app since 22 Oct; member app since v0.54.0. A block of Supabase's own address (as in Feb 2026) can no longer stop the apps. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
@@ -268,7 +270,7 @@ free plan, and for how long, if they start today?
 
 ## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** Building (decided 23 Oct)
 **You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
 and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
 **My answer:** Building it in three steps. Step 1 needs nothing from you, and I have started it.
@@ -292,9 +294,7 @@ and a reward that nudges members to track workouts ("track 10 workouts, get 3 ex
   in-app messages to a group (not only everyone), messages at a chosen time.
 - **Step 3 (after your Firebase setup):** pop-up notifications, and automatic birthday / plan-ending / welcome
   messages at 9 am, never more than one a day per member.
-**Decide:** Step 2 and its numbers?
-- A: Yes to step 2 once step 1 is live: 10 workouts within 30 days, 3 extra days, 20+ minutes and 6+ sets, once per member per offer; the desk gives the days with one tap; desk and QR check-ins both count; every member with a running plan can join. You approve the consent words and the privacy notice lines first (drafts in the note) (recommended)
-- B: Stay with the step 1 trial (claim code at the desk) until the client gym has used it for a month
+**DECIDED (23 Oct 2026):** A, plus your addition: each offer has a setting "Give the days by themselves" or "I give them" (the desk taps Give). Building now; before members see it you approve the consent words and the privacy lines.
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
 
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
@@ -317,7 +317,7 @@ follow the app's targets?
 
 ## 47. AI import of a gym's old records: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** Building (decided 23 Oct)
 **You asked:** gym owners must bring their old data in without your help. Use AI in the admin app's
 import, with a database that can take new kinds of fields for each gym, and think through the problems.
 **My answer:** Yes, build it. Others do the column matching with AI too (HubSpot, Flatfile). Indian gym
@@ -341,9 +341,7 @@ software only offers a fixed upload template, and nobody reads a photo of a pape
 - **A bug I found on the way:** a member imported as "Mr. Ramesh Gupta" is refused when he later joins the
   member app as "Ramesh" (the check reads his first name as "Mr"). I am fixing that now; it affects
   today's import too.
-**Decide:** How should the first version work?
-- A: Spreadsheets with AI matching, free to gyms with a daily limit, the owner asked before each AI read, Aadhaar and PAN numbers never imported. Needs one new secret key (Google AI, made by you) and one small usage table on our web server, not the gym database (recommended)
-- B: The same, but without AI for now: the owner matches each column by hand from a list; no key, no cost
+**DECIDED (23 Oct 2026):** A, with your addition: the cheapest AI first (Google Gemini, on your Google AI Pro developer credit), then Claude Haiku 5.5 (the cheapest Claude) if Gemini fails. Building now without keys; the import works by hand until the keys are in.
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-ai-import.md
 
 ## 46. Trainers see their members' progress: the plan — 22 Oct 2026
