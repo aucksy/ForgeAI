@@ -61,6 +61,12 @@ export interface Member extends GymScoped {
    * everywhere (`logic/batches.ts`), and the stores fill it in when they load.
    */
   batch?: string | null;
+  /**
+   * #47 AI import (23 Oct 2026): the gym's own extra details for this member, brought in from an
+   * old file ("Locker No." -> "12", "Blood Group" -> "B+"), label -> value as written. Stored inside
+   * the member record like every other field: no gym-database change. Absent = none.
+   */
+  extra?: Record<string, string> | null;
   archived: boolean;
   /** Set once the member installs the app and links; null for everyone else. */
   appUserId: string | null;

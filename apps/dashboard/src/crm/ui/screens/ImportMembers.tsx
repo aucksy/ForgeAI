@@ -34,22 +34,36 @@ import {
   skipReason,
   templateCsv,
   termsPreview,
+  MAX_EXTRAS,
+  usableExtras,
   type Cell,
   type ColumnMap,
+  type ExtraColumn,
   type ImportField,
   type ImportRow,
   type RowStatus,
 } from '../../logic/importMembers';
+import {
+  AI_WORDS,
+  aiColumnsPayload,
+  applyAiPicks,
+  askAiForColumns,
+  columnName,
+  columnSamples,
+  findIdColumns,
+  freeColumns,
+  type IdColumn,
+} from '../../logic/aiImport';
 import { formatPhone } from '../../logic/members';
 import { useCrm } from '../../store';
-import { useRole } from '../../auth/AuthProvider';
+import { useAuth, useRole } from '../../auth/AuthProvider';
 import type { ImportTermsResult } from '../../data/adapter';
 import { previewImportMoney } from '../../data/importPreview';
 import { pastImports, planUndo } from '../../logic/undoImport';
 import { bestSheet, readSheets, usableSheets, type SheetRows } from '../../logic/sheets';
 import { formatINR } from '../../logic/money';
 import { downloadCsv } from '../download';
-import { Button, Card, ChipToggle, ErrorBanner, Grid, PageHeader, Row, SectionTitle, SelectField, color, font, radius, space } from '../kit';
+import { Button, Card, ChipToggle, ErrorBanner, Grid, PageHeader, Pill, Row, SectionTitle, SelectField, TextField, TOUCH, color, font, radius, space } from '../kit';
 import { navigate } from '../router';
 
 /** Bigger than any gym's member list; stops a wrong file (a video) from freezing the tab. */
@@ -85,6 +99,29 @@ interface Result {
   termsForStaff: boolean;
 }
 
+/** #47: the "Ask AI to match the columns" card. */
+type AiState =
+  | { stage: 'idle' }
+  | { stage: 'asking' }
+  | { stage: 'skipped' }
+  | { stage: 'done'; filled: number; held: string[]; left: number | null }
+  | { stage: 'error'; words: string };
+
+type ExtraChoice = Pick<ExtraColumn, 'label' | 'on' | 'ai'>;
+
+/** The widest of the first 200 rows: how many columns the sheet has. PURE. */
+function sheetWidth(rows: readonly (readonly Cell[])[]): number {
+  return Math.max(0, ...rows.slice(0, 200).map((r) => r.length));
+}
+
+/** The guessed columns with any ID-number column taken back out. PURE. */
+function withoutIdColumns(map: ColumnMap, ids: readonly IdColumn[]): ColumnMap {
+  const out = { ...map };
+  const set = new Set(ids.map((c) => c.col));
+  for (const f of IMPORT_FIELDS) if (out[f] !== null && set.has(out[f]!)) out[f] = null;
+  return out;
+}
+
 /**
  * Let the browser draw before heavy work: "Reading the file…" shows before a big sheet is parsed.
  * A plain timer, not an animation frame, so a tab in the background still moves on.
@@ -107,10 +144,34 @@ export function ImportMembersScreen() {
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<Result | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  // #47 AI import: the owner's extra details, the fields the AI filled in, and the AI card.
+  const { session } = useAuth();
+  const [extraChoices, setExtraChoices] = useState<Record<number, ExtraChoice>>({});
+  const [aiFields, setAiFields] = useState<ImportField[]>([]);
+  const [ai, setAi] = useState<AiState>({ stage: 'idle' });
+  /** Bumped whenever the sheet or its header row changes: an AI answer for the old one is dropped. */
+  const aiTurn = useRef(0);
+
+  const headers = useMemo(() => (file ? (file.rows[headerRow] ?? []).map(cellText) : []), [file, headerRow]);
+  const width = useMemo(() => (file ? sheetWidth(file.rows) : 0), [file]);
+  const idCols = useMemo(() => (file ? findIdColumns(file.rows, headerRow, width) : []), [file, headerRow, width]);
+  const idColNums = useMemo(() => idCols.map((c) => c.col), [idCols]);
+  const free = useMemo(() => (file ? freeColumns(file.rows, headerRow, width, map, idColNums) : []), [file, headerRow, width, map, idColNums]);
+  const extras = useMemo<ExtraColumn[]>(
+    () =>
+      free.map((col) => {
+        const choice = extraChoices[col];
+        return { col, label: choice?.label ?? ((headers[col] ?? '').trim() || `Column ${columnLetter(col)}`), on: choice?.on ?? false, ai: choice?.ai ?? false };
+      }),
+    [free, extraChoices, headers],
+  );
 
   const plan = useMemo(
-    () => (file && stage === 'review' ? planImport(file.rows, headerRow, map, snapshot.members, today) : null),
-    [file, stage, headerRow, map, snapshot.members, today],
+    () =>
+      file && stage === 'review'
+        ? planImport(file.rows, headerRow, map, snapshot.members, today, { extras, idCols: idColNums })
+        : null,
+    [file, stage, headerRow, map, snapshot.members, today, extras, idColNums],
   );
 
   // UAT U-A10: the money the import will really save as receipts, worked out by the import itself.
@@ -132,9 +193,6 @@ export function ImportMembersScreen() {
       cancelled = true;
     };
   }, [plan, snapshot, role, today]);
-
-  const headers = useMemo(() => (file ? (file.rows[headerRow] ?? []).map(cellText) : []), [file, headerRow]);
-  const width = useMemo(() => (file ? Math.max(0, ...file.rows.slice(0, 200).map((r) => r.length)) : 0), [file]);
 
   const fail = (message: string, cause?: unknown) => {
     console.warn('[ForgeErr] import members:', message, cause ?? '');
@@ -176,13 +234,51 @@ export function ImportMembersScreen() {
     const h = findHeaderRow(rows);
     setFile({ ...loaded, rows, sheet: i });
     setHeaderRow(h);
-    setMap(guessFromValues(rows, h, guessColumns(rows[h] ?? []), today));
+    setMap(withoutIdColumns(guessFromValues(rows, h, guessColumns(rows[h] ?? []), today), findIdColumns(rows, h, sheetWidth(rows))));
+    resetAi();
     setFilter('all');
     setStage('review');
   };
 
+  /** A new sheet or header row: the AI's earlier answer and the extra details start again. */
+  const resetAi = () => {
+    aiTurn.current += 1;
+    setExtraChoices({});
+    setAiFields([]);
+    setAi({ stage: 'idle' });
+  };
+
+  /** #47: the owner said yes. Only the masked column names and 5 example rows go. */
+  const askAi = async () => {
+    if (!file || !session) return;
+    const turn = aiTurn.current;
+    setAi({ stage: 'asking' });
+    const answer = await askAiForColumns(session.ownerKey, aiColumnsPayload(file.rows, headerRow, width, idColNums));
+    if (turn !== aiTurn.current) return; // the owner moved to another sheet meanwhile
+    if (!answer.ok) {
+      setAi({ stage: 'error', words: answer.words });
+      return;
+    }
+    const applied = applyAiPicks(map, answer.picks, idColNums, headers);
+    setMap(applied.map);
+    setAiFields(applied.aiFields);
+    // A detail the owner already ticked or renamed stays as the owner left it.
+    setExtraChoices((prev) => ({ ...applied.extras, ...prev }));
+    const ticked = Object.values(applied.extras).filter((e) => e.on).length;
+    setAi({ stage: 'done', filled: applied.aiFields.length + ticked, held: applied.held, left: answer.left });
+  };
+
+  const setExtra = (col: number, change: Partial<ExtraChoice>) => {
+    setExtraChoices((prev) => {
+      const now = extras.find((e) => e.col === col);
+      if (!now) return prev;
+      return { ...prev, [col]: { label: now.label, on: now.on, ai: now.ai, ...change } };
+    });
+  };
+
   const pickColumn = (field: ImportField, value: string) => {
     const col = value === '' ? null : Number(value);
+    setAiFields((prev) => prev.filter((f) => f !== field));
     setMap((prev) => {
       const next = { ...prev };
       // One column feeds one field: taking it here frees it elsewhere.
@@ -196,7 +292,8 @@ export function ImportMembersScreen() {
     if (!file) return;
     const h = Number(value);
     setHeaderRow(h);
-    setMap(guessFromValues(file.rows, h, guessColumns(file.rows[h] ?? []), today));
+    setMap(withoutIdColumns(guessFromValues(file.rows, h, guessColumns(file.rows[h] ?? []), today), findIdColumns(file.rows, h, width)));
+    resetAi();
   };
 
   const run = async () => {
@@ -281,6 +378,7 @@ export function ImportMembersScreen() {
     setFile(null);
     setResult(null);
     setError(null);
+    resetAi();
     setStage('pick');
   };
 
@@ -327,6 +425,9 @@ export function ImportMembersScreen() {
               Works with .xlsx, old .xls and .csv, and files with several sheets. Dates like 15/08/2026 are fine.
             </li>
             <li>
+              Other columns (locker number, blood group…) can be kept as extra details. Aadhaar and PAN numbers are never imported.
+            </li>
+            <li>
               Nothing is saved until you check the list and tap Add.
             </li>
           </ol>
@@ -348,6 +449,11 @@ export function ImportMembersScreen() {
 
       {stage === 'review' && file && plan && (
         <>
+          {/* #47: owner of an online gym only; never shown when every column is already placed. */}
+          {role === 'owner' && session && ai.stage !== 'skipped' && (ai.stage !== 'idle' || free.length > 0 || map.fullName === null || map.phone === null) && (
+            <AiCard ai={ai} onAsk={() => void askAi()} onSkip={() => setAi({ stage: 'skipped' })} />
+          )}
+
           <Card style={{ marginBottom: space.lg }}>
             <SectionTitle>Which column is which</SectionTitle>
             <p style={muted}>
@@ -377,19 +483,26 @@ export function ImportMembersScreen() {
               {IMPORT_FIELDS.map((field) => (
                 <SelectField
                   key={field}
-                  label={fieldLabel(field) + (field === 'fullName' || field === 'phone' ? ' *' : '')}
+                  label={fieldLabel(field) + (field === 'fullName' || field === 'phone' ? ' *' : '') + (aiFields.includes(field) ? ' · AI' : '')}
                   value={map[field] === null ? '' : String(map[field])}
                   onChange={(v) => pickColumn(field, v)}
                   options={[
                     { value: '', label: '— Not in the file —' },
-                    ...Array.from({ length: width }, (_, i) => ({
-                      value: String(i),
-                      label: `${columnLetter(i)} · ${(headers[i] || '(no name)').slice(0, 40)}`,
-                    })),
+                    ...Array.from({ length: width }, (_, i) => i)
+                      .filter((i) => !idColNums.includes(i))
+                      .map((i) => ({
+                        value: String(i),
+                        label: `${columnLetter(i)} · ${(headers[i] || '(no name)').slice(0, 40)}`,
+                      })),
                   ]}
                 />
               ))}
             </Grid>
+            {idCols.map((c) => (
+              <p key={c.col} style={{ ...muted, marginTop: space.md, color: color.warning }}>
+                {`Not imported: ${columnName(headers, c.col)} has ${c.kind === 'aadhaar' ? 'Aadhaar' : c.kind === 'pan' ? 'PAN' : 'ID'} numbers. ID numbers are never imported.`}
+              </p>
+            ))}
             {(map.plan !== null || map.amount !== null || map.expiry !== null) && map.expiry === null && map.startDate === null && (
               <p style={{ ...muted, marginTop: space.lg }}>
                 Pick the “Valid till” or “Plan start” column to bring each plan in with its dates. Without either, the plan and fees go into the member’s notes.
@@ -403,6 +516,15 @@ export function ImportMembersScreen() {
               </p>
             )}
           </Card>
+
+          {free.length > 0 && (
+            <ExtrasCard
+              extras={extras}
+              names={(col) => columnName(headers, col)}
+              samples={(col) => columnSamples(file.rows, headerRow, col)}
+              onChange={setExtra}
+            />
+          )}
 
           {(map.fullName === null || map.phone === null) && (
             <ErrorBanner>
@@ -652,6 +774,13 @@ function RowCard({ row }: { row: ImportRow }) {
         <span style={{ fontSize: 12, fontWeight: 700, color: TONE[row.status], minWidth: 0 }}>{rowVerdict(row)}</span>
       </div>
       {row.draft && <div style={{ color: color.inkSecondary, marginTop: 2 }}>{formatPhone(row.draft.phone)}</div>}
+      {row.draft?.extra && Object.keys(row.draft.extra).length > 0 && (
+        <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>
+          {Object.entries(row.draft.extra)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(' · ')}
+        </div>
+      )}
       {row.problems.map((p) => (
         <div key={p} style={{ color: color.criticalText, marginTop: 4 }}>
           {p}
@@ -693,6 +822,114 @@ function ActionBar({
         Choose another file
       </Button>
     </Row>
+  );
+}
+
+/**
+ * #47: the owner is asked before every AI read, in one line (wording approved with option A). "I'll
+ * match them myself" sends nothing; the column boxes below always work without the AI.
+ */
+function AiCard({ ai, onAsk, onSkip }: { ai: AiState; onAsk: () => void; onSkip: () => void }) {
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>Match the columns with AI</SectionTitle>
+      {(ai.stage === 'idle' || ai.stage === 'asking') && (
+        <>
+          <p style={{ ...muted, color: color.ink }}>{AI_WORDS.ask}</p>
+          <p style={{ ...muted, marginTop: space.sm }}>Nothing is saved until you check the list and tap Add.</p>
+          {ai.stage === 'asking' && (
+            <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginTop: space.sm }}>
+              {AI_WORDS.asking}
+            </p>
+          )}
+          <div style={{ marginTop: space.md }}>
+            <Row gap={space.sm}>
+              <Button wrap disabled={ai.stage === 'asking'} onClick={onAsk}>
+                {ai.stage === 'asking' ? AI_WORDS.asking : 'Ask AI'}
+              </Button>
+              <Button variant="ghost" wrap disabled={ai.stage === 'asking'} onClick={onSkip}>
+                I’ll match them myself
+              </Button>
+            </Row>
+          </div>
+        </>
+      )}
+      {ai.stage === 'done' && (
+        <div role="status" aria-live="polite">
+          <p style={{ ...muted, color: color.ink, fontWeight: 700 }}>
+            {ai.filled > 0
+              ? `AI matched ${ai.filled} ${ai.filled === 1 ? 'column' : 'columns'}. They are marked “AI” below. Check them before you add.`
+              : 'AI found nothing more to match. Match the rest yourself below.'}
+          </p>
+          {ai.held.map((h) => (
+            <p key={h} style={{ ...muted, marginTop: space.sm }}>
+              {`${h} Change the box below if that is right.`}
+            </p>
+          ))}
+          {ai.left !== null && (
+            <p style={{ ...muted, marginTop: space.sm }}>{`${ai.left} AI ${ai.left === 1 ? 'match' : 'matches'} left today.`}</p>
+          )}
+        </div>
+      )}
+      {ai.stage === 'error' && (
+        <p role="status" aria-live="polite" style={{ ...muted, color: color.warning }}>
+          {ai.words}
+        </p>
+      )}
+    </Card>
+  );
+}
+
+/**
+ * #47: columns that fit no box. Each one ticked becomes the gym's own detail on every member it
+ * has a value for ("Locker No.: 12"), shown on the member's page. Nothing is kept unless ticked.
+ */
+function ExtrasCard({
+  extras,
+  names,
+  samples,
+  onChange,
+}: {
+  extras: readonly ExtraColumn[];
+  names: (col: number) => string;
+  samples: (col: number) => string[];
+  onChange: (col: number, change: Partial<ExtraChoice>) => void;
+}) {
+  const kept = usableExtras(extras).length;
+  const ticked = extras.filter((e) => e.on).length;
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>Other columns in your file</SectionTitle>
+      <p style={muted}>
+        These columns fit none of the boxes above. Tick the ones to keep. Each becomes a detail on the member’s page. You can change its name.
+      </p>
+      <ul style={{ listStyle: 'none', margin: `${space.sm}px 0 0`, padding: 0, display: 'grid' }}>
+        {extras.map((e, i) => {
+          const eg = samples(e.col);
+          return (
+            <li key={e.col} style={{ borderTop: i ? `1px solid ${color.border}` : 'none', padding: `${space.sm}px 0` }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: space.sm, minHeight: TOUCH, fontFamily: font.body, fontSize: 15, color: color.ink, cursor: 'pointer', minWidth: 0, overflowWrap: 'anywhere' }}>
+                <input type="checkbox" checked={e.on} onChange={() => onChange(e.col, { on: !e.on })} style={{ width: 20, height: 20, flex: 'none' }} />
+                <span style={{ minWidth: 0 }}>{`Keep ${names(e.col)}`}</span>
+                {e.ai && <Pill tone="muted">AI</Pill>}
+              </label>
+              {eg.length > 0 && <p style={{ ...muted, fontSize: 13, paddingLeft: 28 }}>{`e.g. ${eg.join(', ')}`}</p>}
+              {e.on && (
+                <div style={{ paddingLeft: 28 }}>
+                  <TextField label="Name on the member’s page" value={e.label} onChange={(v) => onChange(e.col, { label: v })} />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      {ticked > MAX_EXTRAS && (
+        <p style={{ ...muted, marginTop: space.sm, color: color.warning }}>{`Only the first ${MAX_EXTRAS} ticked columns are kept.`}</p>
+      )}
+      {ticked > 0 && kept < Math.min(ticked, MAX_EXTRAS) && (
+        <p style={{ ...muted, marginTop: space.sm, color: color.warning }}>A ticked column with no name is not kept. Give it a name.</p>
+      )}
+    </Card>
   );
 }
 
