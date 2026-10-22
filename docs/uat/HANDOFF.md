@@ -2,6 +2,20 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (~14:30 IST) — RESUME HERE after a compaction
+- **v0.52.0 = 3ebf8fc**: journeys + CI green; device default 39734797251 / owner 39734799762 still running
+  (background waiter in the chat). When green: release from a worktree (block below).
+- **v0.53.0 is NOT released on its own**: its journeys 39739825172 failed at J3 step 1 because the live admin
+  script (apps/dashboard/e2e-live/xj-messages.live.mjs) still used Shop -> Messages; fixed in 58eeb38. Its device
+  runs were cancelled. v0.54.0 carries 0.53.0.
+- **v0.54.0** (R-77: join -> welcome opening -> icon pop-up; no gym = no Shop tab, "Gym" until the shop lists a
+  product; "Leave <gym>" row in Settings; phone flows rewritten by sub-join-gym.yaml / sub-after-join.yaml /
+  brand-welcome.yaml) = 04e15d8 + 58eeb38. Its first gate runs were cancelled (old J3 script). An independent
+  review of R-77 is running; apply its MUST-FIX, then dispatch qa-device default + owner + qa-journeys on main.
+- **Admin + landing deploy** waits for the 0.52.0 release (checked deploy: tsc -b, vitest, `npx vite build` THEN
+  playwright with E2E_CHROME, wrangler). Includes offers step 1, claim-code check, R-76 holding pages.
+- **Waiting on him:** #37 contact (legal pages), #41, #43, #44, #45-#47, #49, #50, #42 Google setup.
+
 ## PC session, 22 Oct 2026 (after the compaction, ~13:00 IST) — RESUME HERE after a compaction
 - **v0.52.0 = 3ebf8fc**, gate: journeys 39734802376 GREEN, CI 39734778914 GREEN; default 39734797251 and owner
   39734799762 still running at 07:20 UTC. When both green: worktree `git worktree add --detach ../rel052 3ebf8fc`,
