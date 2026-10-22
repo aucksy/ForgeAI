@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-62. Idea: a paid plan for people who train without a gym — 22 Oct 2026
+**Owner said:** "Log this as an idea ... the app will be completely free with all features if they join a gym,
+but they can get option to join without a gym personally as well, directly the consumer, for which they can just
+pay, right? So we will explore this further."
+**Done:** backlog row "Paid plan for people without a gym" (Idea, Member app), with how it could work (free trial,
+then a Google Play subscription; a gym code makes it free). Nothing built. Prices and what stays free are his
+decision when we explore it (research Hevy Pro / Strong Pro prices in India first).
+
 ## R-61. Workout screen: date up, warm-ups unchanged, dumbbell weights you can hold — 22 Oct 2026
 **Owner said (screenshot, Seated Incline Curl (Dumbbell), mid-workout):** (1) "the date stamp we are showing for
 the last exercise, I think it can move to the upper line on the right hand side. There is space." (2) "these types

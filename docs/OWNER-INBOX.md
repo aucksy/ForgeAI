@@ -120,6 +120,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Food and calorie log | Planned | Built earlier but hidden from members until its own phase. | Members log meals with calories and protein, by typing or by telling the coach. Home shows two rings: today's calories and protein against the member's target. Everything stays on the phone, like workouts. |
 | Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
 | Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
+| Paid plan for people without a gym | Idea | The app is free, with every feature, for members of a gym on ForgeAI. People who train without a gym (or whose gym is not on ForgeAI) could pay for it themselves. To explore. | Without a gym code, a person gets a free trial, then a monthly or yearly plan paid through Google Play. Joining a gym on ForgeAI makes everything free again. You set the price; Google keeps 15% of each payment. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
