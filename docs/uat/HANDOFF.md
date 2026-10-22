@@ -2,6 +2,15 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (~16:30 IST) — RESUME HERE after a compaction
+- **One release: v0.54.0 = f98d8df** (carries 0.51, 0.52, 0.53, 0.54 + R-78 fluid tab bar + the number-box scroll
+  fix). 0.52.0 was NOT released: its owner run failed P7BIG twice (a drag starting on a centred number box never
+  scrolled the page; fixed in SetRow, flow has a fallback + 03a-scroll-fallback picture). Gate dispatched on
+  f98d8df (see the runs listed for that sha). When green: tag v0.54.0 on f98d8df (or a paperwork-only commit after
+  it), PROGRESS entry, push the tag, dispatch ci.yml on the tag, check the APK link; then the checked admin deploy.
+- **Check after the run:** qa-out/p7-big has NO p7-big-gesture-03a-scroll-fallback.png = the scroll fix holds.
+- Journeys on 33e9c70 (R-77 join flow + fixed J3) were GREEN (39748509817).
+
 ## PC session, 22 Oct 2026 (~14:30 IST) — RESUME HERE after a compaction
 - **v0.52.0 = 3ebf8fc**: journeys + CI green; device default 39734797251 / owner 39734799762 still running
   (background waiter in the chat). When green: release from a worktree (block below).
