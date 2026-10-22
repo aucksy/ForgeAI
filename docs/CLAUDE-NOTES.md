@@ -5,6 +5,26 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-69. Question: one extra rep on every set, or follow the app's targets? — 22 Oct 2026
+**Owner asked:** "I personally target to do one extra rep for each set that I do ... is it ideal and better to
+follow the suggestions in the app ... or for a long run progress it is better to follow what's in the app? Put
+this in the tracker."
+**Done:** answered in the tracker (rep progression vs load progression, Plotkin et al. 2022; the app's rule:
+set 1 aims +1, the others match last time, weight goes up at the top of the range).
+
+## R-68. Build: offers and notices for the gym owner (with "track 10 workouts, get 3 extra days") — 22 Oct 2026
+**Owner said:** "We need to build a versatile offers and notification section for the gym owner and the admin
+panel. I'll do the Firebase thingy, but you can at least build that thing ... research all the use cases, like
+sending holiday message that gym is closed to everyone, or new offers about the fees. One of the offers that I do
+want to build, and gym owner nudged toward it, is incentive for users to actually track their workouts. Something
+like track 10 workouts to get 3 extra days in your membership."
+**Plan:** confirmed feature. Research the use cases (closures, fee offers, renewals, festivals, referral, new
+batches/classes, trainer changes), how gym software does offers, then build in the admin app on top of the
+existing free notices. The workout-tracking reward needs the member app to tell the gym a COUNT of tracked
+workouts (workouts stay on the phone today: a promise) — count only workouts on days the member checked in, so it
+cannot be faked from the sofa; extra days are added by the desk (money-like: the owner sets the reward). Firebase
+push = his task (the backlog row "Messages in the phone's notification shade" already waits for it).
+
 ## R-67. Build: AI import of a gym's old data, with fields that grow per gym — 22 Oct 2026
 **Owner said:** "we need to plan and build it for sure, because in the long run, I cannot be the one personally
 helping gym owners on board, and the biggest friction will be ... exporting the data. So ... enable AI in their
