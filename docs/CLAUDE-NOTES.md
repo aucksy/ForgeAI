@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-75. Finish screen: compare fairly, and show which exercises went up or down — 22 Oct 2026
+**Owner said (screenshot "Pull 1 done ... 18% less kg lifted than your last pull workout (3,155 kg)"):** "First, this
+has to be, I think, folder specific, but you can think through this. Second, what I really want is further insights
+on which exercises we did less and which ones we did more, like individual exercise insight on this."
+**Plan:** compare with the last time of THIS routine (same exercises: a fair total), else the last workout of the
+same kind in the same folder, else any; say which one ("than Pull 1 on 15 Oct"). Under it, each exercise: kg lifted
+today vs its own last time, up / same / down, with the reason in a few words (2 sets fewer, lighter, more reps),
+and what explains most of the total change. Calm colours: green for up, grey for down (no red).
+
 ## R-74. Question: how many members' workouts fit in Supabase's free plan? (answer in the tracker, #50) — 22 Oct 2026
 **Owner asked:** "consider the possibility of storing the data in our own database and superbase for each member
 ... run some calculations and tell me with the free tier how many members we can store the data for ... if someone
