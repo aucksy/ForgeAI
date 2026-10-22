@@ -32,6 +32,8 @@ import {
   type VolumeExercise,
   type VolumeSession,
 } from '../engine/volume';
+import { setShares } from '../catalog/muscles';
+import type { CountedSet } from '../engine/muscleBalance';
 
 export interface VolumeContext {
   bw: BodyweightPoint[];
@@ -469,6 +471,26 @@ export function consistencyLevels(
     cells.push({ dateISO, level: levelFor(dateISO) });
   }
   return cells;
+}
+
+/**
+ * R-58: the missing-muscle check's logged sets between two days (inclusive): each working set with
+ * its day and its muscle shares (1 main, 0.5 helper), and how many workouts had a working set that
+ * is not cardio (the check waits for 4 such workouts).
+ */
+export async function getBalanceSets(fromISO: string, toISO: string): Promise<{ sets: CountedSet[]; workouts: number }> {
+  const { rows, ctx } = await readRange(fromISO, toISO);
+  const sets: CountedSet[] = [];
+  const workouts = new Set<string>();
+  for (const r of rows) {
+    if (r.is_warmup === 1) continue;
+    const info = ctx.exercises.get(r.exercise_id);
+    if (!info) continue;
+    const shares = setShares(info.muscles);
+    sets.push({ dateISO: r.date_iso, shares });
+    if ([...shares.keys()].some((m) => m !== 'cardio')) workouts.add(r.session_id);
+  }
+  return { sets, workouts: workouts.size };
 }
 
 /** Working sets per finer muscle between two days (inclusive). */

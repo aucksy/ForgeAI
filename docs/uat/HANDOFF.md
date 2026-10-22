@@ -2,6 +2,26 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 22 Oct 2026 (midday, owner in the gym sending notes R-61..R-73) — RESUME HERE after a compaction
+- **v0.51.0** = 4e5983d, gate: journeys 39722667517 GREEN; default 39722663191 and owner 39722665499 still running
+  at 06:07 UTC. When green: release from a worktree (memory forgeai-release-commit-off-main), APK link 200.
+- **v0.52.0 candidate** on main (app.json 0.52.0): 9de71a9 + 5e2c24c (In use after each set) + 898b8a4 (review
+  round 1 fixed: Same routine keeps its own Target with breakFromISO; pairs only for real two-dumbbell typers;
+  live kg line in the yellow Target box, R-73; reps to beat, R-60; Health Connect asks first, R-72) + b8be643
+  (muscle check engine, unused). A second review (new features only) was running; apply its MUST-FIX, then
+  dispatch the gate (qa-device default + owner, qa-journeys) on that commit, then release v0.52.0.
+- **Uncommitted at the time of writing:** volumeService.getBalanceSets (R-58 reader) — harmless, typecheck clean.
+- **Admin app, building in the background (agent, uncommitted, apps/dashboard only):** offers step 1 (#49):
+  templates EN+HI, who-gets-it picker, WhatsApp send-to-next, Messages & offers menu, Today nudges, receipt fix
+  (dates as sold + "Extended free by N days"). Review it, run tsc -b / vitest / journeys (E2E_CHROME), commit,
+  then deploy admin + landing ONLY after v0.51.0 is released (landing names 0.51 features).
+- **Admin import fix committed (a6d7e4d):** titles left out of imported names. The live server's first-name check
+  (_first_name_key) still reads "Mr." for names already there: needs his yes (ask with the next live change).
+- **Tracker:** #45 voice counting, #46 trainer view, #47 AI import, #48 one extra rep (answered), #49 offers;
+  page version 79. Notes R-61..R-73 in CLAUDE-NOTES.
+- **Next builds:** R-58 UI (Up next line + plan list card + Settings "Muscle tips" + snooze store), offers step 1
+  item 6 (claim code, both apps), then step 2 after his yes (#49).
+
 ## PC session, 22 Oct 2026 (late morning, R-55 batch "do all you can") — RESUME HERE after a compaction
 - **v0.51.0 candidate = 4e5983d** (workout clock in the live card's own view, rest-over sound choice, What's
   new with 7 earlier updates + Settings → What's new, block-proof address with stamp-checked fallback, two
