@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-60. Backlog: "reps to beat" for rep-only exercises on the next-workout card — 22 Oct 2026
+**Owner said:** "on the home screen where we are showing the next workout, and when we see all exercises, we
+are telling them how many kgs to beat. But for rep-based exercises, we are just saying aim for this. ... we have
+to show the total number of reps to achieve or to beat whatever for that set."
+**Done:** backlog row "Reps to beat for rep-only exercises" (Planned, Member app). Also asked: stop after the
+current work so he can compact (22 Oct, late morning).
+**Plan:** where the kg-to-beat line is worked out (the Up next card's exercise list and the Start / Resume
+screen), a rep-only exercise (push-ups, pull-ups, plank-free reps) gets "45 reps to beat · +3" from last time's
+total reps, and each set's plan line "aim 12 → beat 13"; timed ones keep their own words. Same member wording
+rules (never "volume", "PR", "session").
+
 ## R-59. Backlog: trainers see their members' progress (widens "Member progress for the gym") — 22 Oct 2026
 **Owner said (thinking out loud):** users are members, staff, receptionists, trainers; "the trainers need to be
 able to see member data ... if they're progressing or not, then they can encourage basically user to increase

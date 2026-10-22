@@ -2,7 +2,29 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
-## PC session, 22 Oct 2026 (morning, "ForgeAI Local Chat") — RESUME HERE after a compaction
+## PC session, 22 Oct 2026 (late morning, R-55 batch "do all you can") — RESUME HERE after a compaction
+- **v0.51.0 candidate = 4e5983d** (workout clock in the live card's own view, rest-over sound choice, What's
+  new with 7 earlier updates + Settings → What's new, block-proof address with stamp-checked fallback, two
+  review rounds fixed). Gate dispatched on main@4e5983d: default 39722663191, owner 39722665499, journeys
+  39722667517; CI 39722400227 GREEN; Wear OS build 39722400190 GREEN. When all three are green: worktree
+  `git worktree add --detach ../rel051 4e5983d`, PROGRESS v0.51.0 entry, commit, tag v0.51.0, push the tag,
+  dispatch ci.yml on the tag (memory forgeai-release-commit-off-main), check the APK link answers 200.
+  A red on a date near midnight IST = U-Q6 pattern (rerun one profile via a qa-... helper tag).
+- **Then deploy the admin Worker** (checked deploy, E2E_CHROME = installed Chrome): main now also holds the
+  landing page's new sections (they name v0.51.0 features: deploy only after the release) and offline
+  desk step 2 (check-ins kept offline). Live now: Worker 23f1fb7d (admin with /sb proxy + stamp, offline
+  step 1, GST tax invoice, landing as of R-54).
+- Admin journeys on the latest tree were running at the stop (b718ikelz); unit tests 951 green; J34 (offline
+  incl. check-in) green alone.
+- Research running at the stop: docs/overhaul/research/R-muscle-balance.md (R-58) — read it, then build.
+- Next after deploy: R-58 missing-muscle suggestions, R-60 reps to beat, R-59 trainer view (live server
+  change = his yes). Offline desk step 3 (payments) waits for the gym visit (money risk; server rules allow
+  a per-desk series up to 16 chars).
+- Owner tasks/decisions added today: #42 Google setup (Drive backup is hidden until then; exact steps and
+  SHA-1 in the tracker), #43 sign-in (A Google + desk confirm), #44 brand name (A Repghar), #41 branches.
+- Tracker page last published as version 76 (before #42-#44): republish after any further change.
+
+## PC session, 22 Oct 2026 (morning, "ForgeAI Local Chat")
 - Tracker: every backlog row not built has a "How it will work" column (R-52; page script reads an
   optional 4th cell). Owner answered on the page: #40 A (landing live), renamed this chat, and a
   comment on branches + pricing -> "Several branches" now Planned, decision #41 (branch pricing).

@@ -1,7 +1,7 @@
 // R-55 (22 Oct 2026), offline front desk step 1 (owner #7): an online gym's panel still OPENS with no
 // internet, shows every member from the copy kept on this device under an "Offline mode" bar, and
 // says plainly that saving waits for the internet. When the internet is back the bar goes and saving
-// works again. (Check-ins saved offline are step 2.)
+// works again. Step 2: a desk check-in made offline shows at once and reaches the server when it is back.
 import { expect, test } from '@playwright/test';
 
 import { addMember, expectFitsPhone, open, openApp, sheet, startOnlineGym } from './support.mjs';
@@ -44,7 +44,7 @@ test('J34 offline: the panel opens with no internet, shows the kept gym, refuses
   await page.reload();
   const bar = page.getByRole('status').filter({ hasText: 'Offline mode.' });
   await expect(bar).toBeVisible({ timeout: 15_000 });
-  await expect(bar).toContainText('Saving waits until the internet is back.');
+  await expect(bar).toContainText('check-ins are kept on this computer and sent when the internet is back. Other saving waits.');
   await expectFitsPhone(page, 'offline, on Today');
 
   // Looking things up works.
@@ -59,8 +59,18 @@ test('J34 offline: the panel opens with no internet, shows the kept gym, refuses
   await s.getByRole('button', { name: 'Add member' }).tap();
   await expect(s).toContainText("No internet right now, so this can't be saved yet.", { timeout: 15_000 });
 
-  // The internet is back: the bar goes by itself, and the same save goes through.
+  await s.getByRole('button', { name: 'Close' }).or(s.getByRole('button', { name: 'Cancel' })).first().tap();
+
+  // Step 2: a check-in still works offline: it shows at once and waits on this computer.
+  await page.getByText('Asha Verma').first().tap();
+  await page.getByRole('button', { name: 'Check in', exact: true }).tap();
+  await expect(page.getByRole('button', { name: 'Checked in today' })).toBeVisible({ timeout: 15_000 });
+  await expect(bar).toContainText('1 check-in waiting to be sent.');
+  expect(server.pushes.flat().some((r) => r.k === 'visit')).toBe(false);
+
+  // The internet is back: the bar goes by itself, and the kept check-in reaches the server.
   await page.context().setOffline(false);
   server.reconnect();
   await expect(bar).toBeHidden({ timeout: 20_000 });
+  await expect.poll(() => server.pushes.flat().some((r) => r.k === 'visit'), { timeout: 20_000 }).toBe(true);
 });

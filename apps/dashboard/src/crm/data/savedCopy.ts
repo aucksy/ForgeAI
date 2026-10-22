@@ -1,9 +1,9 @@
 /**
  * Offline front desk, step 1 (owner #7, built R-55, 22 Oct 2026): a copy of the ONLINE gym kept on
  * this device, so the panel still opens and every member, plan and due can be looked up when the
- * internet is down. Saving waits for the internet (step 2 sends check-ins later; payments and new
- * members need a receipt-number series of their own per desk first: a tax invoice's number must
- * never change after it is printed).
+ * internet is down. Step 2: desk check-ins made offline are kept here too and sent later. Other
+ * saving waits for the internet (payments and new members need a receipt-number series of their
+ * own per desk first: a tax invoice's number must never change after it is printed).
  *
  * Where: IndexedDB in this browser (a gym is far past localStorage's ~5 MB with years of
  * receipts). Which gym: the copy is filed under a one-way hash of the device's sign-in key, so
@@ -13,6 +13,7 @@
  * It holds the same records the panel shows on screen, on the same desk device. The gym's privacy
  * notice says so (docs/launch/PRIVACY-NOTICE.md and -HI.md, "Where it is kept").
  */
+import type { Visit } from '../types';
 import type { CloudGymRow, CrmRecord, Rows } from './cloud';
 
 export interface SavedGym {
@@ -23,6 +24,23 @@ export interface SavedGym {
   version: number;
   gym: CloudGymRow;
   records: CrmRecord[];
+  /** Step 2: desk check-ins made with no internet, not yet on the server (oldest first). */
+  queued?: QueuedCheckIn[];
+}
+
+/**
+ * Offline front desk, step 2 (R-55, 22 Oct 2026): a check-in at the desk while the internet is down.
+ * It shows on screen at once (`visit`) and is sent with its real time when the internet is back. A
+ * check-in has no receipt number, so sending it later can never clash with another desk.
+ */
+export interface QueuedCheckIn {
+  memberId: string;
+  day: string;
+  source: Visit['source'];
+  today: string;
+  /** Epoch ms when it was made (the visit's own time on the server). */
+  at: number;
+  visit: Visit;
 }
 
 export interface SavedCopyStore {
@@ -47,6 +65,7 @@ export function usableCopy(raw: unknown): SavedGym | null {
   const c = raw as Partial<SavedGym>;
   if (c.v !== 1 || typeof c.version !== 'number' || typeof c.savedAt !== 'number') return null;
   if (!c.gym || typeof c.gym.gymId !== 'string' || !Array.isArray(c.records)) return null;
+  if (c.queued !== undefined && !Array.isArray(c.queued)) return null;
   return c as SavedGym;
 }
 

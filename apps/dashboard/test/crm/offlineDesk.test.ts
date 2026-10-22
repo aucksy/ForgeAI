@@ -160,3 +160,79 @@ describe('R-55: offline front desk, step 1 (owner #7)', () => {
     expect(keyId('key-1')).not.toBe(keyId('key-2'));
   });
 });
+
+describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)', () => {
+  async function offlineDesk() {
+    const server = new Server();
+    const saved = memoryCopy();
+    const first = new CloudCrmData('key-1', server, opts(saved));
+    const m = await first.createMember(member('Riya Sharma', '+919876543210'));
+    await settle();
+    server.down = true;
+    const t = { now: 60_000 };
+    const desk = new CloudCrmData('key-1', server, opts(saved, t));
+    await desk.load();
+    return { server, saved, desk, m, t };
+  }
+  const visitsOnServer = (server: Server) => [...server.rows.values()].filter((r) => r.k === 'visit' && !r.x).map((r) => r.d as { memberId: string; checkedInAt: number; visitedOn: string });
+
+  it('a check-in with no internet shows at once and waits on this device; the bar counts it', async () => {
+    const { server, saved, desk, m } = await offlineDesk();
+    const v = await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    expect(v.checkedInAt).toBe(60_000);
+    expect((await desk.load()).visits.map((x) => x.memberId)).toEqual([m.id]);
+    expect(visitsOnServer(server)).toEqual([]);
+    expect(desk.offlineState()?.queued).toBe(1);
+    await settle();
+    expect(saved.kept.get(keyId('key-1'))?.queued).toHaveLength(1);
+  });
+
+  it('a second tap for the same member the same day is the same check-in, never two', async () => {
+    const { desk, m } = await offlineDesk();
+    const a = await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    const b = await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    expect(b.id).toBe(a.id);
+    expect(desk.offlineState()?.queued).toBe(1);
+  });
+
+  it('the internet back: the check-in is sent with the time it was made, and the bar goes', async () => {
+    const { server, desk, m, t } = await offlineDesk();
+    await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    t.now = 900_000; // sent much later
+    server.down = false;
+    expect(await desk.refresh()).toBe(true);
+    expect(desk.offlineState()).toBeNull();
+    const onServer = visitsOnServer(server);
+    expect(onServer).toHaveLength(1);
+    expect(onServer[0]).toMatchObject({ memberId: m.id, visitedOn: TODAY, checkedInAt: 60_000 });
+    expect((await desk.load()).visits).toHaveLength(1); // the kept one gave way to the server's
+  });
+
+  it('the page closed while offline: after a reload the check-in is still waiting, and goes when online', async () => {
+    const { server, saved, desk, m } = await offlineDesk();
+    await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    await settle();
+    server.down = false;
+    const again = new CloudCrmData('key-1', server, opts(saved, { now: 70_000 }));
+    await again.load();
+    await again.refresh();
+    expect(visitsOnServer(server)).toHaveLength(1);
+  });
+
+  it('another desk checked the same member in meanwhile: still one visit', async () => {
+    const { server, saved, desk, m } = await offlineDesk();
+    await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    server.down = false;
+    const other = new CloudCrmData('key-1', server, opts(memoryCopy(), { now: 80_000 }));
+    await other.checkIn(m.id, TODAY, 'desk', TODAY);
+    await desk.refresh();
+    expect(visitsOnServer(server)).toHaveLength(1);
+    void saved;
+  });
+
+  it('other saving still waits for the internet, in words that say check-ins work', async () => {
+    const { desk } = await offlineDesk();
+    await expect(desk.createMember(member('Aman Verma', '+919812345678'))).rejects.toThrow(OFFLINE_SAVE_WORDS);
+    expect(OFFLINE_SAVE_WORDS).toMatch(/check members in/);
+  });
+});

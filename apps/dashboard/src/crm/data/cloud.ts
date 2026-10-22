@@ -46,7 +46,7 @@ import { authErrorWords, RECEIPT_REFUSALS } from '../auth/signin';
 import type { Role } from '../logic/receiptRules';
 import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
-import { isNetworkFailure, keyId, rowsToRecords, type SavedCopyStore } from './savedCopy';
+import { isNetworkFailure, keyId, rowsToRecords, type QueuedCheckIn, type SavedCopyStore } from './savedCopy';
 
 export type RecordKind =
   | 'gym'
@@ -272,12 +272,14 @@ export interface CloudCrmOptions {
 
 /** Saving while offline (step 1 keeps the desk able to LOOK; saving waits for the internet). */
 export const OFFLINE_SAVE_WORDS =
-  "No internet right now, so this can't be saved yet. You can still look everything up. Try again when the internet is back.";
+  "No internet right now, so this can't be saved yet. You can still look everything up and check members in. Try again when the internet is back.";
 
-/** What the offline bar says: since when, and how old the copy on screen is. */
+/** What the offline bar says: since when, how old the copy on screen is, check-ins waiting. */
 export interface OfflineState {
   since: number;
   savedAt: number;
+  /** Step 2: check-ins made offline, not yet sent. */
+  queued: number;
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
@@ -331,6 +333,8 @@ export class CloudCrmData implements CrmData {
   private offlineSince: number | null = null;
   /** When the copy on screen was last brought up to date by the server. */
   private savedAt = 0;
+  /** Step 2 (R-55): desk check-ins made offline, waiting to be sent (oldest first). */
+  private queued: QueuedCheckIn[] = [];
 
   constructor(
     private readonly key: string,
@@ -359,14 +363,14 @@ export class CloudCrmData implements CrmData {
 
   /** R-55: offline (with when the copy on screen is from), or null when the server answers. */
   offlineState(): OfflineState | null {
-    return this.offlineSince === null ? null : { since: this.offlineSince, savedAt: this.savedAt };
+    return this.offlineSince === null ? null : { since: this.offlineSince, savedAt: this.savedAt, queued: this.queued.length };
   }
 
   /** R-55: keep the gym as it is now on this device (never waited for; a failure is logged). */
   private keep(): void {
     const saved = this.opts.saved;
     if (!saved || !this.gym) return;
-    const copy = { v: 1 as const, savedAt: this.savedAt, version: this.version, gym: this.gym, records: rowsToRecords(this.rows) };
+    const copy = { v: 1 as const, savedAt: this.savedAt, version: this.version, gym: this.gym, records: rowsToRecords(this.rows), queued: this.queued };
     saved.save(keyId(this.key), copy).catch((err: unknown) => console.warn('[offline copy] not saved', err));
   }
 
@@ -382,8 +386,41 @@ export class CloudCrmData implements CrmData {
     this.gym = copy.gym;
     this.version = copy.version;
     this.savedAt = copy.savedAt;
+    this.queued = copy.queued ?? [];
     this.offlineSince = this.now();
     return true;
+  }
+
+  /** Step 2: check-ins kept on this device before the page was closed (they still need sending). */
+  private async restoreQueue(): Promise<void> {
+    const copy = await this.opts.saved?.load(keyId(this.key)).catch((err: unknown) => {
+      console.warn('[offline copy] could not be read', err);
+      return null;
+    });
+    this.queued = copy?.queued ?? [];
+  }
+
+  /**
+   * Step 2: send the check-ins made offline, oldest first, each with its own time, through the same
+   * action code as an online check-in (one visit per member per day: a desk that checked the member
+   * in meanwhile is not doubled). A refusal (the member was removed meanwhile) drops that one, logged;
+   * no internet again stops and keeps the rest. True when anything was sent.
+   */
+  private async flushQueued(): Promise<boolean> {
+    let sent = false;
+    while (this.queued.length > 0 && this.offlineSince === null) {
+      const q = this.queued[0];
+      try {
+        await this.run((d) => d.checkIn(q.memberId, q.day, q.source, q.today), { at: q.at, fromQueue: true });
+        sent = true;
+      } catch (e) {
+        if (this.offlineSince !== null || isNetworkFailure(e)) break;
+        console.warn('[offline check-in] refused when sent; dropped', q.memberId, q.day, e);
+      }
+      this.queued.shift();
+      this.keep();
+    }
+    return sent;
   }
 
   /** Bring this copy up to date. True when anything changed. Runs inside the queue. */
@@ -413,24 +450,34 @@ export class CloudCrmData implements CrmData {
     return first || changed || gymChanged || wasOffline;
   }
 
-  private current(): CrmSnapshot {
+  private current(withQueued = true): CrmSnapshot {
     if (!this.gym) throw new Error('The gym is not loaded yet.');
-    return buildSnapshot(this.rows, this.gym);
+    const snap = buildSnapshot(this.rows, this.gym);
+    // Step 2: the screens show a check-in made offline at once (one per member per day).
+    if (withQueued) {
+      for (const q of this.queued) {
+        if (!snap.visits.some((v) => v.memberId === q.memberId && v.visitedOn === q.day)) snap.visits.push(q.visit);
+      }
+    }
+    return snap;
   }
 
   /** For the poll: pull what other devices wrote. True when the screens should redraw. */
-  refresh(): Promise<boolean> {
-    return this.serial(async () => {
-      let changed = false;
+  async refresh(): Promise<boolean> {
+    const changed = await this.serial(async () => {
+      let pendingSent = false;
       if (this.pending) {
         try {
-          changed = await this.flushPending();
+          pendingSent = await this.flushPending();
         } catch {
           // Still offline: try again on the next tick.
         }
       }
-      return (await this.pullNow()) || changed;
+      return (await this.pullNow()) || pendingSent;
     });
+    // Step 2: online again: the check-ins kept offline go now, each in its own turn of the queue.
+    if (this.queued.length > 0 && this.offlineSince === null) return (await this.flushQueued()) || changed;
+    return changed;
   }
 
   /**
@@ -488,6 +535,7 @@ export class CloudCrmData implements CrmData {
   load(): Promise<CrmSnapshot> {
     return this.serial(async () => {
       if (!this.gym) {
+        await this.restoreQueue();
         try {
           await this.pullNow();
         } catch (e) {
@@ -504,7 +552,10 @@ export class CloudCrmData implements CrmData {
    * `lateSaveIsSafe`: the action can never save the same thing twice by itself (adding members: a
    * mobile already in the gym is refused), so a late save going through first does not stop it.
    */
-  private run<T>(op: (d: LocalCrmData) => Promise<T>, { lateSaveIsSafe = false }: { lateSaveIsSafe?: boolean } = {}): Promise<T> {
+  private run<T>(
+    op: (d: LocalCrmData) => Promise<T>,
+    { lateSaveIsSafe = false, at, fromQueue = false }: { lateSaveIsSafe?: boolean; at?: number; fromQueue?: boolean } = {},
+  ): Promise<T> {
     return this.serial(async () => {
       if (!this.gym) await this.pullNow();
       // R-55: showing the kept copy: only once the server answers again can anything be saved.
@@ -526,9 +577,10 @@ export class CloudCrmData implements CrmData {
         throw new Error('Your last change was saved just now (the internet came back). Check the screen before doing it again.');
       }
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
-        const before = this.current();
+        // A queued check-in is sent against the server's rows only (else it would find itself and stop).
+        const before = this.current(!fromQueue);
         const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
-        const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
+        const copy = new LocalCrmData({ store: memoryStore(raw), now: at === undefined ? this.now : () => at, role: this.opts.role, today: this.opts.today });
         const result = await op(copy);
         const after = await copy.load();
         const changes = diffSnapshots(before, after);
@@ -647,8 +699,34 @@ export class CloudCrmData implements CrmData {
   voidPayment(id: string, reason: string) {
     return this.run((d) => d.voidPayment(id, reason));
   }
-  checkIn(memberId: string, day: string, source: Visit['source'], today: string) {
-    return this.run((d) => d.checkIn(memberId, day, source, today));
+  /**
+   * Step 2 (R-55): with no internet a desk check-in is kept on this device and shown at once; it is
+   * sent when the internet is back (`flushQueued`). Online, as before.
+   */
+  async checkIn(memberId: string, day: string, source: Visit['source'], today: string): Promise<Visit> {
+    try {
+      return await this.run((d) => d.checkIn(memberId, day, source, today));
+    } catch (e) {
+      // The server cannot be reached (run() tried first): keep it on this device, send it later.
+      if (e instanceof Error && e.message === OFFLINE_SAVE_WORDS) return this.keepCheckIn(memberId, day, source, today);
+      throw e;
+    }
+  }
+
+  /** Step 2: the check-in, made with the browser store's own rules on the copy on screen, kept for later. */
+  private keepCheckIn(memberId: string, day: string, source: Visit['source'], today: string): Promise<Visit> {
+    return this.serial(async () => {
+      const before = this.current();
+      const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
+      const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
+      const visit = await copy.checkIn(memberId, day, source, today);
+      const known = before.visits.some((v) => v.id === visit.id);
+      if (!known) {
+        this.queued.push({ memberId, day, source, today, at: visit.checkedInAt, visit });
+        this.keep();
+      }
+      return visit;
+    });
   }
   undoCheckIn(memberId: string, day: string) {
     return this.run((d) => d.undoCheckIn(memberId, day));

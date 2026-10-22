@@ -407,8 +407,9 @@ function OfflineBar({ state }: { state: OfflineState }) {
         lineHeight: 1.4,
       }}
     >
-      <strong>Offline mode.</strong> No internet. You can look up members, plans and dues (as of {at}). Saving waits
-      until the internet is back.
+      <strong>Offline mode.</strong> No internet. You can look up members, plans and dues (as of {at}) and check
+      members in: check-ins are kept on this computer and sent when the internet is back. Other saving waits.
+      {state.queued > 0 ? ` ${state.queued} check-in${state.queued === 1 ? '' : 's'} waiting to be sent.` : ''}
     </div>
   );
 }

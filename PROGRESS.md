@@ -2499,6 +2499,22 @@
   hint shortened (same facts). Button bottom at 360 px wide: 749 of 757 (was 773, below the fold
   before this change). Checked deploy: tsc, vitest 929, build, journeys 45; Worker 4af80c65.
 
+- 2026-10-22: **R-55 batch (owner: "all the planned features and to do tasks you can finish")** — admin side live,
+  member side = v0.51.0 candidate 4e5983d (gate running).
+  - Block-proof address: panel Worker /sb/* -> Supabase (deploy/panel/proxy.js, stamps answers X-Forge-Proxy);
+    admin (on our domain) and member app use it, switching to the direct address for 10 min on no answer, an
+    unstamped answer or (member) a 10 s hang, never resending; sessions kept under the old storage key; logos
+    and photos SAVED with Supabase's address (review MUST-FIX), loaded through ours in the member app.
+  - Admin: GST tax invoice (title, place of supply from the GSTIN, reverse charge No, signature line).
+  - Offline front desk step 1 (live 23f1fb7d): IndexedDB copy of the online gym (savedCopy.ts, keyed by a hash of
+    the key, cleared on sign-out / dead key), opens offline under an "Offline mode" bar, saves refused in plain
+    words; service worker keeps the shell network-first. Step 2 (main, not deployed): desk check-ins kept offline
+    and sent later with their own time (flushQueued), J34 covers it. Privacy notice EN + HI updated.
+  - Landing (main, not deployed): dedicated played sections (workout + new record, shop order, free notices,
+    lock screen + watch), impeccable finish review round fixed; captures in apps/dashboard/.impeccable/review.
+  - Research: R-google-login.md (#43), R-brand-name.md (#44); found Drive backup hidden (googleWebClientId
+    placeholder) -> owner task #42 with the release key's SHA-1 (97:F8:...:88).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
