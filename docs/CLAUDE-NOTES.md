@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-61. Workout screen: date up, warm-ups unchanged, dumbbell weights you can hold — 22 Oct 2026
+**Owner said (screenshot, Seated Incline Curl (Dumbbell), mid-workout):** (1) "the date stamp we are showing for
+the last exercise, I think it can move to the upper line on the right hand side. There is space." (2) "these types
+of exercises where we are using two separate sets of weights ... last I did on this bicep curl 5 kg each, so it
+was 10 kg total that I was logging, but now you're suggesting 7.5, which does not make sense ... you have to
+identify such exercises and suggest the correct weight." (3) "we're not changing the weight for the warm-up sets
+people do, that can remain same. You're not suggesting anything higher and lower."
+**Plan:** "Last: 15 Aug" moves to the right end of the "0 of 405 kg · next ..." line. A warm-up set is filled
+with last time's warm-up weight and reps, never a suggested change. Exercises done with a pair of dumbbells get
+suggestions that split evenly into dumbbells a gym has (checked against how the member logs: both together or
+one hand).
+
 ## R-60. Backlog: "reps to beat" for rep-only exercises on the next-workout card — 22 Oct 2026
 **Owner said:** "on the home screen where we are showing the next workout, and when we see all exercises, we
 are telling them how many kgs to beat. But for rep-based exercises, we are just saying aim for this. ... we have
