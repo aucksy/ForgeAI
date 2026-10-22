@@ -217,9 +217,12 @@ export const STATE_WORDS: Record<OfferMemberState, string> = {
   ended: 'Window over',
 };
 
-/** May this row get a Give button? Earned and not given (taken back included). PURE. */
-export function canGive(m: OfferMember): boolean {
-  return m.earnedAt !== null && m.givenAt === null;
+/**
+ * May this row get a Give button? Earned and not given. A reward the owner took back is given again
+ * by the owner only (the server answers the desk TAKEN_BACK, review fix 23 Oct 2026). PURE.
+ */
+export function canGive(m: OfferMember, owner: boolean): boolean {
+  return m.earnedAt !== null && m.givenAt === null && (m.undoneAt === null || owner);
 }
 
 /** "6 of 10 workouts · desk 5 · app 1 · until 21 Nov 2026". PURE. */
@@ -347,6 +350,7 @@ export function offerErrorWords(err: unknown): string | null {
   if (/\bNOT_EARNED\b/.test(t)) return 'This member has not reached the target yet.';
   if (/\bNO_PLAN\b/.test(t)) return 'No gym plan running. Give it when they renew.';
   if (/\bCHANGED\b/.test(t)) return 'Their plan changed since; change the days by hand with Freeze / extra days.';
+  if (/\bTAKEN_BACK\b/.test(t)) return 'The owner took this reward back. Only the owner can give it again.';
   if (/\bNOT_GIVEN\b/.test(t)) return 'This reward was not given, so there is nothing to take back.';
   if (/\bGONE\b/.test(t)) return 'That offer is no longer there. The list is fresh now.';
   if (/\bINVALID\b/.test(t)) return 'The server did not accept these numbers. Check them and try again.';

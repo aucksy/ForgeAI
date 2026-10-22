@@ -156,7 +156,7 @@ export class FakeServer {
       open: o.stoppedAt === null && o.startsOn <= TODAY && o.joinUntil >= TODAY,
       joined: ms.length,
       inNow: ms.filter((m) => !m.left && !m.earnedAt && m.windowEndsOn >= TODAY).length,
-      ready: ms.filter((m) => m.earnedAt && !m.givenAt).length,
+      ready: ms.filter((m) => m.earnedAt && !m.givenAt && !m.undoneAt).length,
       given: ms.filter((m) => m.givenAt).length,
     };
   }
@@ -490,6 +490,8 @@ export class FakeServer {
         const o = this.offers.find((x) => x.id === args.p_offer);
         const m = this.offerMembers.find((x) => x.offerId === args.p_offer && x.rosterId === args.p_roster);
         if (!o || !m) throw new Refusal('GONE');
+        // A reward the owner took back: only the owner gives it again (0025 review fix).
+        if (!m.givenAt && m.undoneAt && p.role !== 'owner') throw new Refusal('TAKEN_BACK');
         return this.giveReward(o, m, p.name, false);
       }
       case 'owner_undo_reward': {

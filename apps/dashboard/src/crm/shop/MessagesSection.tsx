@@ -199,6 +199,8 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   const baseReach = reachOf(target, groupMembers, phones, appMembers?.length ?? 0);
   const reach = groups ? { ...baseReach, widerInApp: false } : baseReach;
   const groupEmptyInApp = groupAppIds !== null && appMembers !== null && groupAppIds.length === 0;
+  // A group send waits for the app-member list: until it is in, the group's app members are unknown.
+  const groupLoading = groupAppIds !== null && appMembers === null;
   // "Not in the app" only when the app send can go (or went): a send limit that blocks it leaves the
   // members with the app to WhatsApp too (review fix).
   const appSendOpen = alreadySent || cap === null;
@@ -559,12 +561,17 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                     {cap}
                   </p>
                 )}
+                {groupLoading && !alreadySent && (
+                  <p role="status" style={{ ...quiet, marginBottom: space.sm }}>
+                    Still loading who in this group has the app…
+                  </p>
+                )}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center' }}>
                   {alreadySent ? (
                     <Pill tone="good">{later?.ok ? 'Timed in the app' : 'Sent in the app'}</Pill>
                   ) : !confirming ? (
                     <Button
-                      disabled={busy || problem !== null || cap !== null || groupEmptyInApp || (later !== null && !later.ok)}
+                      disabled={busy || problem !== null || cap !== null || groupEmptyInApp || groupLoading || (later !== null && !later.ok)}
                       onClick={() => setConfirming(true)}
                     >
                       Send in the app

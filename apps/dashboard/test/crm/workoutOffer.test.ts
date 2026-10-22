@@ -127,10 +127,13 @@ describe("each member's state", () => {
   });
 
   it('Give shows only for an earned reward not given (a taken-back one may be given again)', () => {
-    expect(canGive(parsed())).toBe(false);
-    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z' }))).toBe(true);
-    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z', givenAt: '2026-11-01T11:00:00Z' }))).toBe(false);
-    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z', undoneAt: '2026-11-02T10:00:00Z' }))).toBe(true);
+    expect(canGive(parsed(), true)).toBe(false);
+    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z' }), false)).toBe(true);
+    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z', givenAt: '2026-11-01T11:00:00Z' }), true)).toBe(false);
+    // A reward taken back: the owner may give it again, the front desk may not.
+    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z', undoneAt: '2026-11-02T10:00:00Z' }), true)).toBe(true);
+    expect(canGive(parsed({ earnedAt: '2026-11-01T10:00:00Z', undoneAt: '2026-11-02T10:00:00Z' }), false)).toBe(false);
+    expect(offerErrorWords(new Error('TAKEN_BACK'))).toBe('The owner took this reward back. Only the owner can give it again.');
   });
 
   it('rewards to give counts ready rows only', () => {

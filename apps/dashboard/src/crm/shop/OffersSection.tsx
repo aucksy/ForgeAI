@@ -83,13 +83,20 @@ export function OffersSection() {
     toastTimer.current = window.setTimeout(() => setToast(null), 4000);
   }, []);
 
+  /** True while the banner shows a failed refresh (a later good refresh clears it; an action's own error stays). */
+  const pollFailed = useRef(false);
   const load = useCallback(async () => {
     if (!key) return;
     try {
       const r = await probeOffers(key);
       setServer(r.server);
       if (r.server === 'yes') setAnswer(r.answer);
+      if (pollFailed.current) {
+        pollFailed.current = false;
+        setError(null);
+      }
     } catch (e) {
+      pollFailed.current = true;
       setError(failWords(e));
     }
   }, [key]);
@@ -106,6 +113,7 @@ export function OffersSection() {
     try {
       flash(await fn());
     } catch (e) {
+      pollFailed.current = false;
       setError(failWords(e));
     } finally {
       setBusy(null);
@@ -435,9 +443,9 @@ function OfferCard({
                 {state === 'takenBack' && m.undoneByName && (
                   <div style={{ ...quiet, marginTop: 4, fontSize: 12 }}>{`Taken back by ${m.undoneByName}.`}</div>
                 )}
-                {(canGive(m) || (owner && m.givenAt !== null)) && (
+                {(canGive(m, owner) || (owner && m.givenAt !== null)) && (
                   <div style={{ marginTop: space.sm, display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
-                    {canGive(m) && (
+                    {canGive(m, owner) && (
                       <Button disabled={busy !== null} onClick={() => onGive(m)} ariaLabel={`Give ${offer.rewardDays} days to ${name ?? 'this member'}`}>
                         {busy === `give:${m.rosterId}` ? 'Giving…' : `Give ${offer.rewardDays} days`}
                       </Button>
