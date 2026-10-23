@@ -714,7 +714,9 @@ export function ChipToggle({
               style={{
                 appearance: 'none',
                 minHeight: TOUCH - 4,
-                padding: '6px 18px',
+                // R-86: three tabs on a 360 px phone (Messages | Workout offer | Reminders) need the
+                // room; two keep the roomier padding.
+                padding: compact && options.length > 2 ? '6px 12px' : '6px 18px',
                 borderRadius: radius.pill,
                 border: `1px solid ${selected ? color.borderStrong : 'transparent'}`,
                 background: selected ? color.surfaceRaised : 'transparent',

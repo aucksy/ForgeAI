@@ -47,6 +47,12 @@ class NoSuchFunction extends Error {}
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
 const OFFER_FNS = ['owner_offers', 'owner_save_offer', 'owner_stop_offer', 'staff_give_reward', 'owner_undo_reward'];
 
+/** R-86 (0029): the calls only a server with automatic reminders answers. */
+const REMINDER_FNS = ['owner_auto_reminders', 'owner_save_auto_reminders'];
+/** 0029's check: the cases with a number, and their ranges [min, max, most]. */
+const REMINDER_NUMBERS = { plan_ends_soon: [1, 30, 3], plan_ended: [1, 60, 3], offer_ending: [1, 14, 1], pt_low: [1, 5, 1], miss_you: [5, 60, 1] };
+const REMINDER_KEYS = ['plan_ends_soon', 'plan_ends_today', 'plan_ended', 'birthday', 'welcome', 'offer_reward', 'offer_ending', 'offer_near', 'pt_low', 'miss_you', 'anniversary'];
+
 /** 'YYYY-MM-DD' + n days. */
 function plusDays(day, n) {
   const d = new Date(`${day}T00:00:00Z`);
@@ -106,6 +112,12 @@ export class FakeServer {
     /** offer members: { offerId, rosterId, joinedOn, windowEndsOn, counted, deskDays, appDays, ... } */
     this.offerMembers = [];
     /** #51 (0027/0028): the gym's status as ForgeAI HQ set it, its support-access windows and HQ actions. */
+    /**
+     * R-86: does this server have 0029 (automatic reminders)? Off by default, like a server before
+     * it: the calls answer PGRST202. `autoReminders`: the owner's saved switches (null = none).
+     */
+    this.reminderServer = false;
+    this.autoReminders = null;
     this.hqStatus = 'active';
     this.hqGrants = [];
     this.hqActions = [];
@@ -151,6 +163,12 @@ export class FakeServer {
   anyone(key) {
     if (this.ownerKeys.has(key)) return { staffId: null, name: 'Owner (old owner key)', role: 'owner' };
     return this.who(key);
+  }
+
+  /** owner_auto_reminders' answer (0029). */
+  remindersJson(canEdit) {
+    const r = this.autoReminders;
+    return { settings: r ? r.settings : null, updatedAt: r ? r.updatedAt : null, updatedByName: r ? r.updatedByName : null, canEdit };
   }
 
   offerJson(o) {
@@ -270,6 +288,9 @@ export class FakeServer {
     if (typeof args.p_key === 'string' && !['staff_sign_in', 'gym_create_online', 'staff_key_status'].includes(fn)) this.checkKey(args.p_key);
     // A server before 0025 has neither the offer calls nor owner_send_message's two new arguments.
     if (!this.offerServer && (OFFER_FNS.includes(fn) || (fn === 'owner_send_message' && ('p_to' in args || 'p_send_at' in args)))) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
+    if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     switch (fn) {
@@ -546,6 +567,30 @@ export class FakeServer {
         plan.ver = this.version;
         Object.assign(m, { givenAt: null, givenAuto: null, givenByName: null, givenDays: null, undoneAt: NOW.toISOString(), undoneByName: p.name });
         return { ok: true, endsOn: m.oldEnd, version: this.version };
+      }
+      // ---- R-86 (0029): automatic reminders, only when reminderServer is on.
+      case 'owner_auto_reminders': {
+        const p = this.anyone(args.p_key);
+        return this.remindersJson(p.role === 'owner');
+      }
+      case 'owner_save_auto_reminders': {
+        const p = this.ownerLike(args.p_key);
+        const s = args.p_settings;
+        if (!s || typeof s !== 'object' || Array.isArray(s)) throw new Refusal('INVALID');
+        const clean = {};
+        for (const [k, v] of Object.entries(s)) {
+          if (!REMINDER_KEYS.includes(k) || !v || typeof v.on !== 'boolean') throw new Refusal('INVALID');
+          clean[k] = { on: v.on };
+          if (v.days != null) {
+            const range = REMINDER_NUMBERS[k];
+            if (!range || !Array.isArray(v.days)) throw new Refusal('INVALID');
+            const days = [...new Set(v.days)];
+            if (days.length < 1 || days.length > range[2] || days.some((d) => !Number.isInteger(d) || d < range[0] || d > range[1])) throw new Refusal('INVALID');
+            clean[k].days = days.sort((a, b) => b - a);
+          }
+        }
+        this.autoReminders = { settings: clean, updatedAt: NOW.toISOString(), updatedByName: p.name };
+        return this.remindersJson(true);
       }
       default:
         // Orders, messages, app members: an empty list, as for a new gym.
