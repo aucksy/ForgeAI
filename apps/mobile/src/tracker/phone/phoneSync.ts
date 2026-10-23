@@ -32,6 +32,22 @@ export async function phoneAfterWorkout(sessionId: string): Promise<void> {
   await sendWorkoutToHealth(sessionId).catch(() => undefined);
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
+  // R-86 review NIT 3: a saved workout may move the workout offer's count; the offer sync sends
+  // its dates (only for a member who joined it) and keeps the answer, which sets the gym reminders
+  // ("almost there", "ending soon") again. Not awaited: the save never waits on the gym.
+  void syncOfferAfterWorkout();
+}
+
+async function syncOfferAfterWorkout(): Promise<void> {
+  try {
+    const { useGymShop } = await import('@/shop/gymStore');
+    const link = useGymShop.getState().link;
+    if (!link) return;
+    const { syncOfferDates } = await import('@/shop/offerActions');
+    await syncOfferDates(link);
+  } catch (e) {
+    console.warn('[ForgeErr] after a workout: the workout offer and gym reminders', e);
+  }
 }
 
 /**

@@ -16,6 +16,7 @@ import { AppState, Platform } from 'react-native';
 
 import { color } from '@/theme/tokens';
 
+import { liveWorkout } from '../phone/liveWorkout';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { ALL_DONE_TEXT, clearRestCard, hasRestCard, restEndsWorkout, showRestCard } from './restCard';
 import type { CardDone } from './restDone';
@@ -64,8 +65,9 @@ export function setupWorkoutAlerts(): Promise<void> {
           }
           if (kind === 'gym') {
             // R-86: a reminder from the gym (9:30 am) is shown even with the app open; it is the
-            // gym's news, not a sound the app already plays. Its channel decides the sound.
-            return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
+            // gym's news, not a sound the app already plays. Its channel decides the sound — but
+            // none while a workout is open (review NIT 6: never a ping over the rest timer).
+            return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: liveWorkout() == null, shouldSetBadge: false };
           }
           // App open: the on-screen timer already rings — no banner, no sound.
           // The ongoing card still lists in the shade.

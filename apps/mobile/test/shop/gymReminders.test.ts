@@ -30,10 +30,12 @@ vi.mock('@/shop/gymApi', () => ({
 import { autoAnswerFromRow } from '@/shop/autoReminders';
 import { useGymShop } from '@/shop/gymStore';
 import {
+  GYM_REMINDERS_JOINED_KEY,
   GYM_REMINDERS_KEY,
   GYM_REMINDER_STORAGE_KEYS,
   cancelGymReminders,
   forgetGymReminders,
+  noteAppJoin,
   refreshGymReminders,
   setGymNotificationsForTest,
   syncGymReminders,
@@ -71,7 +73,7 @@ const planRow = (over: Record<string, unknown> = {}) => ({
   visitsThisMonth: 9,
   ...over,
 });
-const days = () => [...set.keys()].map((id) => id.replace('forgeai-gym-', '')).sort();
+const days = () => [...set.keys()].map((id) => id.replace('forgeai-gym-reminder-', '')).sort();
 
 beforeAll(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
@@ -99,7 +101,7 @@ describe('gym reminders on the phone', () => {
     await syncGymReminders();
     expect(api.calls).toContain('member_auto_reminders');
     expect(days()).toEqual(['2026-10-26', '2026-10-30', '2026-11-02', '2026-11-03', '2026-11-09']);
-    const first = set.get('forgeai-gym-2026-10-26')!;
+    const first = set.get('forgeai-gym-reminder-2026-10-26')!;
     expect(first).toMatchObject({ title: "RAM'S FITNESS", channelId: 'gym-reminders', data: { kind: 'gym', route: '/shop' } });
     expect(new Date(first.date).getHours()).toBe(9);
     expect(log.mock.calls.filter((c) => String(c[0]).includes('no automatic reminders yet'))).toHaveLength(1);
@@ -112,7 +114,7 @@ describe('gym reminders on the phone', () => {
     api.auto = { ok: true, data: autoAnswerFromRow({ ok: true, settings: { plan_ended: { on: false }, plan_ends_soon: { on: true, days: [3] } }, birthday: '11-10', joinedOn: null, lastVisitOn: null }) };
     await syncGymReminders();
     expect(days()).toEqual(['2026-10-30', '2026-11-02', '2026-11-10']);
-    expect(set.get('forgeai-gym-2026-11-10')!.body).toBe("Happy birthday, Asha! Best wishes from all of us at RAM'S FITNESS.");
+    expect(set.get('forgeai-gym-reminder-2026-11-10')!.body).toBe("Happy birthday, Asha! Best wishes from all of us at RAM'S FITNESS.");
     const before = writes;
     await refreshGymReminders();
     await syncGymReminders();
@@ -156,6 +158,30 @@ describe('gym reminders on the phone', () => {
     await syncGymReminders();
     expect(days()).toEqual([]);
     expect(api.calls).toEqual([]);
+  });
+
+  it('an id from the first build (old prefix) is cancelled and replaced', async () => {
+    set.set('forgeai-gym-2026-10-26', { title: 'old', body: '', date: 0, channelId: 'gym-reminders', data: {} });
+    await syncGymReminders();
+    expect([...set.keys()].some((id) => /^forgeai-gym-\d/.test(id))).toBe(false);
+    expect(days()).toHaveLength(5);
+  });
+
+  it('a phone that joined in the app this week gets the welcome; the record goes with Leave', async () => {
+    api.plan = { ok: true, data: membershipFromRow({ error: 'NO_PHONE', gymName: "RAM'S FITNESS" }) };
+    await syncGymReminders();
+    expect(days()).toEqual([]);
+    await noteAppJoin('m1');
+    await refreshGymReminders();
+    expect(days()).toEqual(['2026-10-23']);
+    expect(set.get('forgeai-gym-reminder-2026-10-23')!.body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in ForgeAI.");
+    // Switched off before it came, then on again: it can still come (NIT 4).
+    await cancelGymReminders();
+    expect(days()).toEqual([]);
+    await refreshGymReminders();
+    expect(days()).toEqual(['2026-10-23']);
+    await forgetGymReminders();
+    expect(mem.has(GYM_REMINDERS_JOINED_KEY)).toBe(false);
   });
 
   it('only gym reminders are touched (the workout reminders stay)', async () => {

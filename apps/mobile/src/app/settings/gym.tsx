@@ -9,8 +9,8 @@
  * joined gym with a logo also has "Add to your home screen" (OWNER-INBOX #11): the gym's logo as a
  * shortcut that opens ForgeAI.
  */
-import { useRef, useState } from 'react';
-import { Text } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AppState, Linking, Text } from 'react-native';
 
 import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
@@ -31,7 +31,7 @@ import { useGymShop } from '@/shop/gymStore';
 import { cancelGymReminders, refreshGymReminders } from '@/shop/gymReminders';
 import { gymRemindersCaption } from '@/shop/autoReminders';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
-import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
+import { ensureAlertPermission, notificationsGranted } from '@/tracker/services/workoutAlerts';
 import { useGymHydrated } from '@/shop/shopSource';
 import type { GymLink } from '@/shop/types';
 import { color, space, type } from '@/theme/tokens';
@@ -113,6 +113,19 @@ function JoinedGymCard({ link }: { link: GymLink }) {
  */
 function GymRemindersSwitch({ gymName }: { gymName: string }) {
   const on = usePhonePrefs((s) => s.gymRemindersOn);
+  // Review NIT 5: switched on but Android blocks ForgeAI's notifications: say so, with the way out.
+  const [blocked, setBlocked] = useState(false);
+  const check = (): void => {
+    void notificationsGranted().then((g) => setBlocked(g === false));
+  };
+  useEffect(() => {
+    check();
+    // Back from Android's settings: read it again.
+    const sub = AppState.addEventListener('change', (st) => {
+      if (st === 'active') check();
+    });
+    return () => sub.remove();
+  }, []);
   const flip = (v: boolean): void => {
     usePhonePrefs.getState().setGymRemindersOn(v);
     if (!v) {
@@ -122,11 +135,23 @@ function GymRemindersSwitch({ gymName }: { gymName: string }) {
     // Switched on by the member: the one moment the app may ask for notifications for these.
     void ensureAlertPermission()
       .catch((e: unknown) => console.warn('[ForgeErr] gym reminders: asking for notifications', e))
-      .then(() => refreshGymReminders());
+      .then(() => {
+        check();
+        return refreshGymReminders();
+      });
   };
   return (
-    <GlassCard>
-      <ToggleRow icon="calendar" title="Reminders from my gym" caption={gymRemindersCaption(gymName)} value={on} onChange={flip} />
-    </GlassCard>
+    <>
+      <GlassCard>
+        <ToggleRow icon="calendar" title="Reminders from my gym" caption={gymRemindersCaption(gymName)} value={on} onChange={flip} />
+      </GlassCard>
+      {on && blocked ? (
+        <LinkRow
+          title="Notifications are off for ForgeAI"
+          sub="No reminder from your gym can arrive. Turn them on in your phone's settings."
+          onPress={() => void Linking.openSettings().catch((e: unknown) => console.warn('[ForgeErr] app settings did not open', e))}
+        />
+      ) : null}
+    </>
   );
 }

@@ -23,7 +23,8 @@ import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import { color } from '@/theme/tokens';
 
 import {
-  GYM_REMINDER_PREFIX,
+  OLD_GYM_REMINDER_PREFIX,
+  deliveredOnly,
   GYM_REMINDER_ROUTE,
   autoAnswerFromRow,
   autoAnswerToRow,
@@ -43,8 +44,10 @@ type NotificationsModule = typeof import('expo-notifications');
 export const GYM_REMINDERS_KEY = 'forgeai-gym-reminders';
 export const GYM_REMINDERS_SENT_KEY = 'forgeai-gym-reminders-sent';
 export const GYM_REMINDERS_STAMP_KEY = 'forgeai-gym-reminders-stamp';
+/** When this phone joined the gym in the app ({ memberId, at }), for the welcome. */
+export const GYM_REMINDERS_JOINED_KEY = 'forgeai-gym-reminders-joined';
 /** Every key above: Leave the gym and Erase all data remove them all. */
-export const GYM_REMINDER_STORAGE_KEYS = [GYM_REMINDERS_KEY, GYM_REMINDERS_SENT_KEY, GYM_REMINDERS_STAMP_KEY] as const;
+export const GYM_REMINDER_STORAGE_KEYS = [GYM_REMINDERS_KEY, GYM_REMINDERS_SENT_KEY, GYM_REMINDERS_STAMP_KEY, GYM_REMINDERS_JOINED_KEY] as const;
 
 export const GYM_CHANNEL = 'gym-reminders';
 
@@ -121,6 +124,7 @@ function noteMissing(): void {
 let chain: Promise<unknown> = Promise.resolve();
 function serial(fn: () => Promise<void>): Promise<void> {
   const run = chain.then(fn);
+  // quiet: the next job only waits for this one; its failure is logged just below.
   chain = run.catch(() => undefined);
   // Never rejects: every caller fires and forgets.
   return run.catch((e: unknown) => console.warn('[ForgeErr] gym reminders', e));
@@ -156,9 +160,13 @@ export function cancelGymReminders(): Promise<void> {
   return serial(cancelNow);
 }
 
+/**
+ * Every gym reminder Android holds. The old prefix (review NIT 9: 'forgeai-gym-<day>') starts the
+ * new one too, so a phone that had the first build's ids sees them here and they are cancelled.
+ */
 async function scheduledIds(n: NotificationsModule): Promise<string[]> {
   const all = await n.getAllScheduledNotificationsAsync();
-  return all.map((r) => r.identifier).filter((id) => id.startsWith(GYM_REMINDER_PREFIX));
+  return all.map((r) => r.identifier).filter((id) => id.startsWith(OLD_GYM_REMINDER_PREFIX));
 }
 
 async function cancelNow(): Promise<void> {
@@ -169,6 +177,29 @@ async function cancelNow(): Promise<void> {
   } catch (e) {
     console.warn('[ForgeErr] gym reminders: forgetting the stamp', e);
   }
+  // Review NIT 4: a one-off set for a morning still ahead never came; it may come later.
+  const v = await readJson(GYM_REMINDERS_SENT_KEY);
+  if (v && typeof v === 'object') {
+    const o = v as { memberId?: unknown; sent?: unknown };
+    if (typeof o.memberId === 'string' && o.sent && typeof o.sent === 'object') {
+      await writeJson(GYM_REMINDERS_SENT_KEY, { memberId: o.memberId, sent: deliveredOnly(await readSent(o.memberId), new Date()) });
+    }
+  }
+}
+
+/**
+ * The phone joined a gym in the app just now (joinGym): kept so a member new to the app gets the
+ * welcome (review SHOULD 1). A phone that joined before R-86 has no record: no app welcome.
+ */
+export async function noteAppJoin(memberId: string): Promise<void> {
+  await writeJson(GYM_REMINDERS_JOINED_KEY, { memberId, at: Date.now() });
+}
+
+async function readAppJoinedAt(memberId: string): Promise<number | null> {
+  const v = await readJson(GYM_REMINDERS_JOINED_KEY);
+  if (!v || typeof v !== 'object') return null;
+  const o = v as { memberId?: unknown; at?: unknown };
+  return o.memberId === memberId && typeof o.at === 'number' ? o.at : null;
 }
 
 /** What is set, as a string: changed words, times or colour mean set them again. PURE. */
@@ -181,11 +212,12 @@ async function scheduleNow(): Promise<void> {
   if (!link || !usePhonePrefs.getState().gymRemindersOn) return cancelNow();
   const n = N();
   if (!n) return;
-  const [kept, plan, offer, sentBefore] = await Promise.all([
+  const [kept, plan, offer, sentBefore, appJoinedAt] = await Promise.all([
     readKeptAnswer(link.memberId),
     readKeptMembership(link.memberId),
     readKeptOfferAnswer(link.memberId),
     readSent(link.memberId),
+    readAppJoinedAt(link.memberId),
   ]);
   const answer = kept ?? fallbackAnswer();
   const out = planGymReminders({
@@ -197,6 +229,7 @@ async function scheduleNow(): Promise<void> {
     dates: answer.dates,
     offer,
     sent: sentBefore,
+    appJoinedAt,
   });
   const stamp = gymStampKey(out.reminders, color.accent);
   const have = await scheduledIds(n);
@@ -223,13 +256,17 @@ async function scheduleNow(): Promise<void> {
 }
 
 /** Leave the gym / BAD_KEY: everything off and forgotten. Never rejects. */
-export async function forgetGymReminders(): Promise<void> {
-  await cancelGymReminders();
-  for (const k of GYM_REMINDER_STORAGE_KEYS) {
-    try {
-      await AsyncStorage.removeItem(k);
-    } catch (e) {
-      console.warn('[ForgeErr] gym reminders: forgetting', k, e);
+export function forgetGymReminders(): Promise<void> {
+  // Review NIT 8: in the same queue, so a refresh waiting behind it cannot set them again from
+  // what was kept before the keys went.
+  return serial(async () => {
+    await cancelNow();
+    for (const k of GYM_REMINDER_STORAGE_KEYS) {
+      try {
+        await AsyncStorage.removeItem(k);
+      } catch (e) {
+        console.warn('[ForgeErr] gym reminders: forgetting', k, e);
+      }
     }
-  }
+  });
 }

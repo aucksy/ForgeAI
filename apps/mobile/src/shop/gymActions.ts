@@ -125,8 +125,15 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   useGymShop.getState().setLink(r.data);
   // R-77: the gym's tab is "Shop" only once its shop lists something: ask now, not on a visit.
   void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] join: the shop list', e));
-  // R-86: the gym's automatic reminders start with the join (a new member's welcome, the plan).
-  syncGymRemindersQuietly();
+  // R-86: the gym's automatic reminders start with the join (the welcome to a member new to the
+  // app — the join is kept first — and the plan).
+  const memberId = r.data.memberId;
+  void import('./gymReminders')
+    .then(async (m) => {
+      await m.noteAppJoin(memberId);
+      await m.syncGymReminders();
+    })
+    .catch((e: unknown) => console.warn('[ForgeErr] join: the gym reminders', e));
   return null;
 }
 

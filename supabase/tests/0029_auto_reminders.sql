@@ -68,7 +68,7 @@ begin
                  || pg_temp.t29_is('1 member settings null', jsonb_typeof(r->'settings'), 'null')
                  || pg_temp.t29_is('1 birthday MM-DD', r->>'birthday', '03-09')
                  || pg_temp.t29_is('1 joined', r->>'joinedOn', '2025-10-20')
-                 || pg_temp.t29_is('1 last visit (not deleted, not future)', r->>'lastVisitOn', to_char(td - 3, 'YYYY-MM-DD'))
+                 || pg_temp.t29_is('1 no last visit while "we haven''t seen you" is off', r->>'lastVisitOn', null)
                  || pg_temp.t29_is('1 day', r->>'day', to_char(td, 'YYYY-MM-DD'));
 
   -- ------------------------------------------------ 2. saving: the owner only, everything checked
@@ -107,8 +107,9 @@ begin
 
   -- ------------------------------------------------ 3. the member's phone
   r := public.member_auto_reminders(ka);
-  checks := checks + 1;
-  fails := fails || pg_temp.t29_is('3 member gets switches', (r->'settings'->'plan_ends_soon'->'days')::text, '[7, 3]');
+  checks := checks + 2;
+  fails := fails || pg_temp.t29_is('3 member gets switches', (r->'settings'->'plan_ends_soon'->'days')::text, '[7, 3]')
+                 || pg_temp.t29_is('3 last visit (miss_you on; not deleted, not future)', r->>'lastVisitOn', to_char(td - 3, 'YYYY-MM-DD'));
   -- No QR check-in yet (no matched number): the switches, but no dates.
   r := public.member_auto_reminders(kn);
   checks := checks + 4;
@@ -126,7 +127,7 @@ begin
   checks := checks + 3;
   fails := fails || pg_temp.t29_is('3 other gym settings', jsonb_typeof(r->'settings'), 'null')
                  || pg_temp.t29_is('3 other gym birthday', r->>'birthday', '12-25')
-                 || pg_temp.t29_is('3 other gym visit', r->>'lastVisitOn', to_char(td, 'YYYY-MM-DD'));
+                 || pg_temp.t29_is('3 other gym: no visit (its miss_you off)', r->>'lastVisitOn', null);
   checks := checks + 2;
   fails := fails || pg_temp.t29_is('3 other owner reads own', jsonb_typeof(public.owner_auto_reminders(kob)->'settings'), 'null');
   perform public.owner_save_auto_reminders(kob, '{"welcome":{"on":false}}');
