@@ -2588,6 +2588,10 @@
   owner_hq_access answers BAD_KEY. D1 0004_ai_limits applied. Admin app deployed (version c6fbc814: ForgeAI access
   card). HQ Worker deployed (1a94b03f) at forgeai-hq.aakashpahuja.in, fail-closed 503 until SUPABASE_HQ_KEY +
   GOOGLE_CLIENT_ID/SECRET (owner task #52); HQ_ALLOWED_EMAIL + HQ_SESSION_SECRET set. 0029 asked as #53.
+- 2026-10-23: **HQ sign-in live + 0029 reminders LIVE** (owner: "B, HQ Keys are in", "yes to #53"). HQ secrets all set
+  (owner pasted SUPABASE_HQ_KEY + GOOGLE_CLIENT_SECRET, type Secret); Google returned the Chrome profile account, so
+  HQ_ALLOWED_EMAIL = both owner accounts; signed in, gym list loads (223 gyms, most are QA journey gyms). 0029 applied
+  (sha256 8bb3d9a2725ada57); live tests 0029 PASS (60), security.sql (main) PASS (9).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

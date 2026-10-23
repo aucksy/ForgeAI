@@ -1,4 +1,4 @@
--- NOT APPLIED - main session applies after review
+-- APPLIED LIVE 23 Oct 2026 (owner said yes, #53; live test PASS 60).
 --
 -- 0029: automatic reminders to members (R-86, 23 Oct 2026). Design and the list of cases:
 -- docs/overhaul/research/R-auto-reminders.md. Additive only and re-runnable (if not exists / create
