@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-94. Shortlist his 40 names (from other AIs) by .com/.in and brand checks, sort by domain price, as a table — 23 Oct 2026
+**Owner said:** "First shortlist them basis which ones have the domain .com or .in available and other brand name
+availability factors, then sequence them basis the price for the domain, give me a table" + 40 names.
+**What I did:** RDAP for all 40: every .com taken; 25 have .in free (15 dropped). Two agents check each .com's sale
+price, the .in price, and app/brand/trademark clashes; then one table sorted by price.
+
 ## R-93. Names must feel like lifting; he loved "ForgeAI" at once; give 10-20 options — 23 Oct 2026
 **Owner said:** "I think you're not researching and giving me a good name, really. I mean, ForgeAI is something I loved
 immediately ... none of this ... really connects with weightlifting and workout. Just research more and give me at least
