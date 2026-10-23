@@ -121,16 +121,32 @@ begin
   all_out := all_out || public.hq_system('owner@example.com')::text;
   all_out := all_out || public.hq_audit_list('owner@example.com', null, null, 100)::text;
   all_out := all_out || public.hq_delete_requests('owner@example.com')::text;
-  foreach got in array array['Registermember', 'Appmember', 'Deskperson', '9876526002', '9876526003', '9876526004', '9876526005'] loop
+  -- 0028's sign-in history: the desk person's sign-in (above) and a device and address are in the
+  -- access log; by default HQ sees only when and what.
+  insert into public.gym_access_log(gym_id, staff_id, person, action, device, ip)
+    values (gid, s_desk, 'Deskperson Zeta', 'sign_in', 'Pixel Deskdevice', '203.0.113.77');
+  r := public.hq_access_log('owner@example.com', gid, null);
+  all_out := all_out || r::text;
+  fails := fails || pg_temp.t26_is('3 access log: times only', (r->>'detailed') || '/' || ((r->'counts7Days'->>'sign_in')::int >= 3)::text, 'false/true');
+  checks := checks + 1;
+  foreach got in array array['Registermember', 'Appmember', 'Deskperson', 'Pixel Deskdevice', '203.0.113.77',
+                             '9876526002', '9876526003', '9876526004', '9876526005'] loop
     checks := checks + 1;
     if position(got in all_out) > 0 then fails := fails || ' 3:HQ showed ' || got; end if;
   end loop;
+  -- Inside an open support window the names show, and that look is listed for the gym owner.
+  perform public.owner_hq_grant(k_owner);
+  r := public.hq_access_log('owner@example.com', gid, null);
+  fails := fails || pg_temp.t26_is('3 access log in a window', (r->>'detailed') || '/' || (position('Pixel Deskdevice' in r::text) > 0)::text, 'true/true');
+  fails := fails || pg_temp.t26_is('3 that look is listed for the owner',
+    (select string_agg(l->>'what', ',') from jsonb_array_elements(public.owner_hq_access(k_owner)->'grants'->0->'looked') l), 'access_log');
+  checks := checks + 2;
 
   -- Every read above wrote its audit row.
   select count(*) into n from public.hq_audit
-   where actor = 'owner@example.com' and action in ('view_all_gyms', 'view_gym', 'view_system', 'view_audit', 'view_delete_requests')
+   where actor = 'owner@example.com' and action in ('view_all_gyms', 'view_gym', 'view_system', 'view_audit', 'view_delete_requests', 'view_access_log', 'support_view')
      and at >= now();
-  fails := fails || pg_temp.t26_is('4 audit rows', n::text, '5');
+  fails := fails || pg_temp.t26_is('4 audit rows', n::text, '7');
   select count(*) into n from public.hq_audit where action = 'view_gym' and gym_id = gid and gym_name = 'T26 Gym';
   fails := fails || pg_temp.t26_is('4 audit names the gym', n::text, '1');
   checks := checks + 2;

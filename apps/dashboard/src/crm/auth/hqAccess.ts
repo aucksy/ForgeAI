@@ -94,6 +94,7 @@ const WHAT: Record<string, string> = {
   visit: 'check-ins',
   order: 'shop orders',
   staff: 'staff list',
+  access_log: 'sign-in history',
 };
 
 const REASON: Record<string, string> = {

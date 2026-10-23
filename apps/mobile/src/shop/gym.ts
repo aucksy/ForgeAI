@@ -273,7 +273,7 @@ export function linkWithNow(link: GymLink, now: GymNow): GymLink {
  * the server comes back with status 0 ("TypeError: Network request failed"), and one cut off by
  * the app's own timer says it was aborted.
  */
-export type GymErrorKind = 'offline' | 'timeout' | 'INVALID_CODE' | 'EMPTY' | 'BUSY' | 'GONE' | 'SOLD_OUT' | 'BAD_KEY' | 'TOO_LATE' | 'TOO_MANY' | 'TOO_BIG' | 'other';
+export type GymErrorKind = 'offline' | 'timeout' | 'INVALID_CODE' | 'EMPTY' | 'BUSY' | 'GONE' | 'SOLD_OUT' | 'BAD_KEY' | 'TOO_LATE' | 'TOO_MANY' | 'TOO_BIG' | 'SUSPENDED' | 'other';
 
 export interface GymError {
   kind: GymErrorKind;
@@ -281,7 +281,14 @@ export interface GymError {
   name?: string;
 }
 
-const CODES: readonly GymErrorKind[] = ['INVALID_CODE', 'EMPTY', 'BUSY', 'GONE', 'BAD_KEY', 'TOO_LATE', 'TOO_MANY', 'TOO_BIG'];
+const CODES: readonly GymErrorKind[] = ['INVALID_CODE', 'EMPTY', 'BUSY', 'GONE', 'BAD_KEY', 'TOO_LATE', 'TOO_MANY', 'TOO_BIG', 'SUSPENDED'];
+
+/**
+ * ForgeAI HQ (#51, server migration 0027): ForgeAI paused the gym's account. The gym's records can be
+ * read but nothing at the gym can change (orders, check-ins, offers). The member's own workouts live
+ * on the phone and are untouched.
+ */
+export const GYM_PAUSED_TEXT = "Your gym's ForgeAI account is paused. Your workouts are safe on this phone.";
 
 /** Read an error from a Supabase call ({ message, hint }, plus the HTTP status). PURE. */
 export function classifyRpcError(error: unknown, status?: number): GymError {
@@ -320,6 +327,7 @@ export function joinErrorText(err: GymError): string {
 
 /** Words under the shop when the list could not be refreshed. PURE. */
 export function refreshErrorText(err: GymError, hasCache: boolean): string {
+  if (err.kind === 'SUSPENDED') return GYM_PAUSED_TEXT;
   if (hasCache) return "Couldn't refresh — showing the last list.";
   if (err.kind === 'offline') return OFFLINE;
   if (err.kind === 'timeout') return SLOW;
@@ -349,6 +357,8 @@ export function placeFailure(err: GymError, bag: readonly BagLine[], products: r
       return { message: "You've placed a lot of orders in the last hour. Ask at the desk, or try again later.", removeKey: null, refresh: false };
     case 'TOO_BIG':
       return { message: 'This order is too big to place in the app. Ask at the desk.', removeKey: null, refresh: false };
+    case 'SUSPENDED':
+      return { message: GYM_PAUSED_TEXT, removeKey: null, refresh: false };
     case 'offline':
       return { message: "No internet. Your bag is kept — try again when you're online.", removeKey: null, refresh: false };
     case 'timeout':
@@ -365,6 +375,8 @@ export function cancelErrorText(err: GymError): string {
       return 'The gym has already moved this order on, so it can no longer be cancelled here. Ask at the desk.';
     case 'GONE':
       return 'This order is no longer at the gym.';
+    case 'SUSPENDED':
+      return GYM_PAUSED_TEXT;
     case 'offline':
       return "No internet. The order is still placed — try again when you're online.";
     case 'timeout':

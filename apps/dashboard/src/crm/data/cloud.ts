@@ -42,7 +42,7 @@ import {
   type ImportTermsResult,
   type UndoImportResult,
 } from './adapter';
-import { authErrorWords, RECEIPT_REFUSALS } from '../auth/signin';
+import { authErrorCode, authErrorWords, RECEIPT_REFUSALS, SUSPENDED_WORDS } from '../auth/signin';
 import type { Role } from '../logic/receiptRules';
 import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
@@ -312,6 +312,11 @@ interface PendingPush {
   pushId: string;
 }
 
+/** SUSPENDED (#51), as the server raised it or after plainError turned it into words. */
+function isSuspended(e: unknown): boolean {
+  return authErrorCode(e) === 'SUSPENDED' || (e instanceof Error && e.message === SUSPENDED_WORDS);
+}
+
 /** A server or network failure in words for the owner (never a raw database message). */
 function plainError(e: unknown): Error {
   return new Error(authErrorWords(e));
@@ -416,6 +421,11 @@ export class CloudCrmData implements CrmData {
         sent = true;
       } catch (e) {
         if (this.offlineSince !== null || isNetworkFailure(e)) break;
+        // #51: ForgeAI paused the gym. The check-ins really happened: keep them for when it is back.
+        if (isSuspended(e)) {
+          console.warn('[offline check-in] gym paused by ForgeAI; kept to send later', this.queued.length);
+          break;
+        }
         console.warn('[offline check-in] refused when sent; dropped', q.memberId, q.day, e);
       }
       this.queued.shift();

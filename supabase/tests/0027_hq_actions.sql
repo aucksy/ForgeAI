@@ -22,6 +22,7 @@ $$;
 do $$
 declare
   ga uuid; gb uuid; s_oa uuid; s_da uuid; s_ob uuid; pa uuid; pb uuid; req uuid; r jsonb; v bigint; n bigint; code text;
+  off uuid; mid_a uuid; msg_a uuid; pb2 uuid;
   koa text := 't27-owner-a'; kda text := 't27-desk-a'; kob text := 't27-owner-b'; kma text := 't27-member-a'; kmb text := 't27-member-b';
   hq text := 'owner@example.com';
   fails text := ''; checks int := 0;
@@ -39,6 +40,15 @@ begin
     values (ga, 'Shaker A', 'gear', 39900, '[]', 10, true) returning product_id into pa;
   insert into public.shop_products(gym_id, name, category, price_p, options, stock, active)
     values (gb, 'Shaker B', 'gear', 39900, '[]', 10, true) returning product_id into pb;
+
+  -- Gym A's running offer, a member in it with a counted date, and a group message (before any pause).
+  insert into public.gym_offers(gym_id, title, starts_on, join_until) values (ga, 'Ten workouts', current_date, current_date + 10)
+    returning offer_id into off;
+  insert into public.offer_members(offer_id, roster_id, gym_id, joined_on, window_ends_on, notice_version)
+    values (off, 't27-m8', ga, current_date, current_date + 30, 'v1');
+  insert into public.offer_days(offer_id, roster_id, day, source) values (off, 't27-m8', current_date - 1, 'desk');
+  select member_id into mid_a from public.gym_members where gym_id = ga;
+  insert into public.gym_messages(gym_id, kind, title) values (ga, 'announcement', 'Hi') returning message_id into msg_a;
 
   -- 1. Approve a new gym (trial -> active); a status change outside HQ is refused.
   fails := fails || pg_temp.t27_is('1 starts trial', (select status from public.gyms where gym_id = ga), 'trial');
@@ -71,6 +81,26 @@ begin
   fails := fails || pg_temp.t27_is('3 add person', pg_temp.t27_try(format(
     'select public.owner_add_person(%L, %L, %L, %L)', koa, 'New Desk', '9876527009', 'staff')), 'SUSPENDED');
   checks := checks + 7;
+  -- 0025's offer and group-message tables: starting, changing, joining and counting are refused;
+  -- a member leaving and the offer stopping still work.
+  fails := fails || pg_temp.t27_is('3 new offer', pg_temp.t27_try(format(
+    'insert into public.gym_offers(gym_id, title, starts_on, join_until) values (%L, %L, current_date, current_date + 5)', ga, 'Another')), 'SUSPENDED');
+  fails := fails || pg_temp.t27_is('3 change offer', pg_temp.t27_try(format(
+    'update public.gym_offers set reward_days = 7 where offer_id = %L', off)), 'SUSPENDED');
+  fails := fails || pg_temp.t27_is('3 join offer', pg_temp.t27_try(format(
+    'insert into public.offer_members(offer_id, roster_id, gym_id, joined_on, window_ends_on, notice_version) values (%L, %L, %L, current_date, current_date + 30, %L)',
+    off, 't27-m9', ga, 'v1')), 'SUSPENDED');
+  fails := fails || pg_temp.t27_is('3 count a date', pg_temp.t27_try(format(
+    'insert into public.offer_days(offer_id, roster_id, day, source) values (%L, %L, current_date, %L)', off, 't27-m8', 'app')), 'SUSPENDED');
+  fails := fails || pg_temp.t27_is('3 group message', pg_temp.t27_try(format(
+    'insert into public.gym_message_to(message_id, member_id) values (%L, %L)', msg_a, mid_a)), 'SUSPENDED');
+  fails := fails || pg_temp.t27_is('3 member leaves the offer', pg_temp.t27_try(format(
+    'update public.offer_members set left_at = now() where offer_id = %L', off)), 'ok');
+  fails := fails || pg_temp.t27_is('3 their dates go', pg_temp.t27_try(format(
+    'delete from public.offer_days where offer_id = %L', off)), 'ok');
+  fails := fails || pg_temp.t27_is('3 offer stops', pg_temp.t27_try(format(
+    'update public.gym_offers set stopped_at = now() where offer_id = %L', off)), 'ok');
+  checks := checks + 8;
   -- ... but reading, signing in and downloading still work.
   fails := fails || pg_temp.t27_is('3 pull', pg_temp.t27_try(format('select public.crm_pull(%L, 0)', koa)), 'ok');
   fails := fails || pg_temp.t27_is('3 staff_me', pg_temp.t27_try(format('select public.staff_me(%L)', kda)), 'ok');
@@ -136,11 +166,26 @@ begin
   fails := fails || pg_temp.t27_is('9 remind first', pg_temp.t27_try(format('select public.hq_delete_gym(%L, %L, %L)', hq, req, 'T27GYB')), 'NOT_REMINDED');
   perform public.hq_delete_request_step(hq, req, 'reminded');
   fails := fails || pg_temp.t27_is('9 wrong code', pg_temp.t27_try(format('select public.hq_delete_gym(%L, %L, %L)', hq, req, 'T27GYA')), 'WRONG_CODE');
+  -- Gym B's own photo, and one whose link gym A also uses: only B's own file may be removed.
   update public.shop_products set image_url = 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/'
     || repeat('ab', 24) || '/shaker.jpg' where product_id = pb;
+  insert into public.shop_products(gym_id, name, category, price_p, options, stock, active, image_url)
+    values (gb, 'Shared photo', 'gear', 39900, '[]', 1, true,
+            'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/' || repeat('cd', 24) || '/bar.jpg')
+    returning product_id into pb2;
+  update public.shop_products set image_url = 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/product-photos/'
+    || repeat('cd', 24) || '/bar.jpg' where product_id = pa;
+  update public.gyms set brand_logo_url = 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/gym-logos/'
+    || repeat('ef', 24) || '/logo.png' where gym_id in (ga, gb);
+  insert into public.gym_access_log(gym_id, person, action, device) values (gb, 'Owner B', 'sign_in', 'B phone');
   r := public.hq_delete_gym(hq, req, 't27gyb');
   fails := fails || pg_temp.t27_is('9 deleted', r->>'deleted', 'true');
-  fails := fails || pg_temp.t27_is('9 files', r->'files'->0->>'bucket', 'product-photos');
+  fails := fails || pg_temp.t27_is('9 only its own file (not A''s photo or logo)', (r->'files')::text,
+    jsonb_build_array(jsonb_build_object('bucket', 'product-photos', 'path', repeat('ab', 24) || '/shaker.jpg'))::text);
+  fails := fails || pg_temp.t27_is('9 sign-in history keeps no names or devices',
+    (select count(*) from public.gym_access_log where gym_id = gb and (person is not null or device is not null))::text, '0');
+  fails := fails || pg_temp.t27_is('9 audit names the deleted gym', (select gym_name from public.hq_audit where gym_id = gb and action = 'delete_gym'), 'T27 Gym B2');
+  checks := checks + 2;
   fails := fails || pg_temp.t27_is('9 no gym', (select count(*) from public.gyms where gym_id = gb)::text, '0');
   fails := fails || pg_temp.t27_is('9 no records', (select count(*) from public.crm_records where gym_id = gb)::text, '0');
   fails := fails || pg_temp.t27_is('9 audit kept', (select count(*) from public.hq_audit where gym_id = gb and action = 'delete_gym')::text, '1');

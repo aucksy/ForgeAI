@@ -28,6 +28,10 @@
 --                       the delete-request workflow with its 30-day count (docs/launch/GYM-DELETE.md).
 -- A sign-in code is returned to HQ once and never written to the audit log.
 
+-- Apply 0026, 0027 and 0028 together, in this order (each is re-runnable; re-run all three after a
+-- change). A lock wait gives up after 3 seconds rather than stalling the live apps behind it.
+set lock_timeout = '3s';
+
 -- ------------------------------------------------------------------ gym status
 alter table public.gyms add column if not exists status text not null default 'active';
 alter table public.gyms add column if not exists status_at timestamptz;
@@ -74,6 +78,46 @@ create trigger gym_messages_not_suspended before insert or update or delete on p
 drop trigger if exists gym_staff_not_suspended on public.gym_staff;
 create trigger gym_staff_not_suspended before insert or update or delete on public.gym_staff
   for each row execute function public._gym_not_suspended();
+-- 0025's workout offer and group messages. Starting an offer, joining it, counting a member's dates
+-- and sending to a group are refused while paused. Still allowed: a member leaving the offer or the
+-- gym (their consent can always be withdrawn), the automatic stop of an offer whose time is over and
+-- the retention clean-up (both only stop or delete).
+create or replace function public._gym_offer_not_suspended() returns trigger
+  language plpgsql security definer set search_path = public as $$
+declare g uuid; st text;
+begin
+  if current_setting('forgeai.hq', true) = 'on' then return coalesce(new, old); end if;
+  if tg_op = 'DELETE' then return old; end if;
+  if tg_table_name = 'gym_offers' then
+    -- Only stopping (stopped_at) passes; anything else is a change to the offer.
+    if tg_op = 'UPDATE' and (to_jsonb(new) - 'stopped_at') = (to_jsonb(old) - 'stopped_at') then return new; end if;
+    g := new.gym_id;
+  elsif tg_table_name = 'offer_members' then
+    if tg_op = 'UPDATE' then return new; end if;  -- leaving, and the server's own bookkeeping
+    g := new.gym_id;
+  elsif tg_table_name = 'offer_days' then
+    select o.gym_id into g from public.gym_offers o where o.offer_id = new.offer_id;
+  elsif tg_table_name = 'gym_message_to' then
+    select m.gym_id into g from public.gym_messages m where m.message_id = new.message_id;
+  end if;
+  select status into st from public.gyms where gym_id = g;
+  if st = 'suspended' then raise exception 'SUSPENDED'; end if;
+  return new;
+end $$;
+
+drop trigger if exists gym_offers_not_suspended on public.gym_offers;
+create trigger gym_offers_not_suspended before insert or update or delete on public.gym_offers
+  for each row execute function public._gym_offer_not_suspended();
+drop trigger if exists offer_members_not_suspended on public.offer_members;
+create trigger offer_members_not_suspended before insert or update or delete on public.offer_members
+  for each row execute function public._gym_offer_not_suspended();
+drop trigger if exists offer_days_not_suspended on public.offer_days;
+create trigger offer_days_not_suspended before insert or update or delete on public.offer_days
+  for each row execute function public._gym_offer_not_suspended();
+drop trigger if exists gym_message_to_not_suspended on public.gym_message_to;
+create trigger gym_message_to_not_suspended before insert or update or delete on public.gym_message_to
+  for each row execute function public._gym_offer_not_suspended();
+
 drop trigger if exists gyms_not_suspended on public.gyms;
 create trigger gyms_not_suspended
   before update of name, brand_accent, brand_bg, brand_logo_url, brand_heading, status on public.gyms
@@ -320,6 +364,18 @@ begin
                   union all select image_url from public.shop_products where gym_id = g.gym_id) x
            where u is not null) y
    where m is not null;
+  -- Only exact files (never a folder), and never one another gym still shows: the picture buckets'
+  -- folders are upload tickets, not gym ids, so a link copied into another gym keeps its file.
+  select coalesce(jsonb_agg(f), '[]'::jsonb) into files
+    from jsonb_array_elements(files) f
+   where not exists (select 1 from public.shop_products p
+                      where p.gym_id <> g.gym_id
+                        and right(p.image_url, length('/storage/v1/object/public/' || (f->>'bucket') || '/' || (f->>'path')))
+                            = '/storage/v1/object/public/' || (f->>'bucket') || '/' || (f->>'path'))
+     and not exists (select 1 from public.gyms o
+                      where o.gym_id <> g.gym_id
+                        and right(o.brand_logo_url, length('/storage/v1/object/public/' || (f->>'bucket') || '/' || (f->>'path')))
+                            = '/storage/v1/object/public/' || (f->>'bucket') || '/' || (f->>'path'));
 
   perform set_config('forgeai.hq', 'on', true);
   -- 0021's private creator address: its cascade is deferred to the commit, so it goes first.
@@ -336,15 +392,22 @@ begin
     if n > 0 then raise exception 'STILL_ROWS % in %', n, t.table_name; end if;
   end loop;
   perform set_config('forgeai.hq', 'off', true);
+  -- 0028's access log keeps the gym's sign-in times (ForgeAI's own security record), but not who or
+  -- on which device: those were the gym's staff.
+  update public.gym_access_log set person = null, device = null where gym_id = g.gym_id;
   update public.hq_delete_requests set done_at = now(), done_by = a where request_id = p_request;
-  perform public._hq_log(a, 'delete_gym', g.gym_id, 'delete request ' || p_request::text,
-    jsonb_build_object('gymName', g.name, 'joinCode', g.join_code, 'tablesChecked', tables, 'files', jsonb_array_length(files)));
+  -- The gym row is gone, so its name is written in by hand (_hq_log looks it up from gyms).
+  insert into public.hq_audit(actor, action, gym_id, gym_name, reason, detail, ip)
+    values (a, 'delete_gym', g.gym_id, g.name, 'delete request ' || p_request::text,
+            jsonb_build_object('joinCode', g.join_code, 'tablesChecked', tables, 'files', jsonb_array_length(files)),
+            public._hq_ip());
   return jsonb_build_object('deleted', true, 'gymName', g.name, 'joinCode', g.join_code, 'tablesChecked', tables, 'files', files);
 end $$;
 
 -- ------------------------------------------------------------------ grants
 revoke all on function public._gym_not_suspended()                         from public, anon, authenticated;
 revoke all on function public._gym_row_not_suspended()                     from public, anon, authenticated;
+revoke all on function public._gym_offer_not_suspended()                   from public, anon, authenticated;
 revoke all on function public._hq_request_json(public.hq_delete_requests)  from public, anon, authenticated;
 revoke all on function public._hq_reason(text)                             from public, anon, authenticated;
 revoke all on function public._hq_gym_extra(uuid)                          from public, anon, authenticated;

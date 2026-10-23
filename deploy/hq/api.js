@@ -155,7 +155,8 @@ export async function handleApi(request, env, who, deps = {}) {
       const id = q.get('id');
       const before = q.get('before');
       if (!isUuid(id)) return refuse('BAD_REQUEST');
-      return json(200, { rows: await db('hq_access_log', { p_gym: id, p_before: before && /^\d{1,15}$/.test(before) ? Number(before) : null }) });
+      // { rows, counts7Days, detailed }: names, devices and addresses only inside open support access (0028).
+      return json(200, await db('hq_access_log', { p_gym: id, p_before: before && /^\d{1,15}$/.test(before) ? Number(before) : null }));
     }
 
     if (route === 'GET /api/access/records') {
@@ -210,7 +211,11 @@ export async function handleApi(request, env, who, deps = {}) {
       return json(200, made);
     }
 
+    // A new owner code and a gym delete need a sign-in from the last 15 minutes, like support access.
+    const fresh = isFresh(who, Math.floor(now.getTime() / 1000));
+
     if (route === 'POST /api/gym/reset-signin') {
+      if (!fresh) return refuse('FRESH', 401);
       if (!isUuid(b.gymId) || (b.staffId != null && !isUuid(b.staffId))) return refuse('BAD_REQUEST');
       return json(200, await db('hq_reset_owner_signin', { p_gym: b.gymId, p_staff: b.staffId ?? null, p_called: b.called === true }));
     }
@@ -245,8 +250,18 @@ export async function handleApi(request, env, who, deps = {}) {
     }
 
     if (route === 'POST /api/delete-requests/delete-gym') {
+      if (!fresh) return refuse('FRESH', 401);
       if (!isUuid(b.requestId)) return refuse('BAD_REQUEST');
-      const done = await db('hq_delete_gym', { p_request: b.requestId, p_typed_code: text(b.typedCode, 10) });
+      let done;
+      try {
+        done = await db('hq_delete_gym', { p_request: b.requestId, p_typed_code: text(b.typedCode, 10) });
+      } catch (e) {
+        // The refusal undid everything in the database, its audit row too: write it down separately.
+        if (e instanceof DbError) {
+          await webPart('audit of a refused delete', () => log('delete_gym_refused', null, e.code, { requestId: b.requestId, why: e.code }));
+        }
+        throw e;
+      }
       const files = await removeFiles(env, done.files, { fetchImpl });
       if (files.left.length) {
         await webPart('audit of pictures left', () => log('delete_gym_files_left', null, null, { requestId: b.requestId, left: files.left.length }));
@@ -264,7 +279,7 @@ export async function handleApi(request, env, who, deps = {}) {
     }
 
     if (route === 'POST /api/access/open') {
-      if (!isFresh(who, Math.floor(now.getTime() / 1000))) return refuse('FRESH', 401);
+      if (!fresh) return refuse('FRESH', 401);
       if (!isUuid(b.gymId) || !Number.isInteger(b.minutes)) return refuse('BAD_REQUEST');
       return json(200, await db('hq_open_emergency', { p_gym: b.gymId, p_reason_kind: b.reasonKind, p_reason: text(b.reason, 500), p_minutes: b.minutes }));
     }

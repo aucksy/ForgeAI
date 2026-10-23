@@ -26,6 +26,10 @@
 -- last activity. The only names and mobiles are each gym OWNER's (ForgeAI's own business contact,
 -- ForgeAI is responsible for that data itself). No member name or mobile, no staff list.
 
+-- Apply 0026, 0027 and 0028 together, in this order (each is re-runnable; re-run all three after a
+-- change). A lock wait gives up after 3 seconds rather than stalling the live apps behind it.
+set lock_timeout = '3s';
+
 -- ------------------------------------------------------------------ the audit log
 create table if not exists public.hq_audit (
   audit_id bigint generated always as identity primary key,
@@ -80,7 +84,7 @@ create or replace function public._hq_actor(p_actor text) returns text
   language plpgsql immutable set search_path = public as $$
 declare a text := lower(btrim(coalesce(p_actor, '')));
 begin
-  if a !~ '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$' and a <> 'nightly-cleanup' then raise exception 'NO_ACTOR'; end if;
+  if a !~ '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$' then raise exception 'NO_ACTOR'; end if;
   if length(a) > 200 then raise exception 'NO_ACTOR'; end if;
   return a;
 end $$;

@@ -361,6 +361,37 @@ test('emergency support access needs a sign-in from the last 15 minutes', async 
   assert.deepEqual(JSON.parse(net.rpcCalls('hq_open_emergency')[0].init.body), { p_actor: OWNER, p_gym: GYM, p_reason_kind: 'legal', p_reason: 'Police letter dated 22 Oct', p_minutes: 30 });
 });
 
+test('a new owner code and a gym delete also need a sign-in from the last 15 minutes', async () => {
+  const net = fakeNet({ db: { hq_reset_owner_signin: { code: '123456' }, hq_delete_gym: { deleted: true, files: [] } } });
+  const stale = { email: OWNER, authAt: NOW - FRESH_SECONDS - 5 };
+  const run = (path, body, w) => quiet(() => handleApi(new Request(`${ORIGIN}${path}`, { method: 'POST', body: JSON.stringify(body) }), env(), w, { fetchImpl: net.fetchImpl, now: new Date(NOW * 1000) }));
+  for (const [path, body] of [['/api/gym/reset-signin', { gymId: GYM, called: true }], ['/api/delete-requests/delete-gym', { requestId: GYM, typedCode: 'ABC123' }]]) {
+    const res = await run(path, body, stale);
+    assert.equal(res.status, 401, path);
+    assert.deepEqual(await res.json(), { error: 'FRESH' });
+    assert.equal((await run(path, body, who)).status, 200, path);
+  }
+  assert.equal(net.rpcCalls('hq_reset_owner_signin').length, 1);
+  assert.equal(net.rpcCalls('hq_delete_gym').length, 1);
+});
+
+test('a refused gym delete is written to the audit log in its own call', async () => {
+  const net = fakeNet({ db: { hq_log: null }, dbFail: { hq_delete_gym: 'WRONG_CODE' } });
+  const res = await api('POST', '/api/delete-requests/delete-gym', { requestId: GYM, typedCode: 'NOPE00' }, env(), net);
+  assert.deepEqual(await res.json(), { error: 'WRONG_CODE' });
+  const logged = JSON.parse(net.rpcCalls('hq_log')[0].init.body);
+  assert.equal(logged.p_action, 'delete_gym_refused');
+  assert.equal(logged.p_detail.why, 'WRONG_CODE');
+  assert.equal(net.calls.filter((c) => c.url.includes('/storage/')).length, 0, 'no picture is touched');
+});
+
+test('the sign-in history is passed on as the server shapes it (names only inside support access)', async () => {
+  const net = fakeNet({ db: { hq_access_log: { rows: [{ id: 1, at: '2026-10-23T08:00:00Z', action: 'sign_in' }], counts7Days: { sign_in: 1 }, detailed: false } } });
+  const body = await (await api('GET', `/api/gym/access-log?id=${GYM}`, null, env(), net)).json();
+  assert.equal(body.detailed, false);
+  assert.deepEqual(Object.keys(body.rows[0]).sort(), ['action', 'at', 'id']);
+});
+
 test('bad input is refused before the gym server is asked', async () => {
   const net = fakeNet();
   assert.equal((await api('GET', '/api/gym?id=not-a-uuid', null, env(), net)).status, 400);
@@ -441,6 +472,7 @@ test('D1: AI use, cost, limits, delete requests in feedback, statuses', { skip: 
   const dr = await deleteRequestsInFeedback(db);
   assert.equal(dr.length, 1);
   assert.equal(dr[0].joinCode, 'IRON01');
+  assert.equal(dr[0].checked, false, 'anyone in the admin app could have sent it: call the owner first');
   assert.equal(await setFeedbackStatus(db, dr[0].feedbackId, 'done', 'written in HQ', new Date()), true);
   assert.equal(await setFeedbackStatus(db, dr[0].feedbackId, 'deleted', '', new Date()), false);
 });

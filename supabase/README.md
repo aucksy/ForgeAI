@@ -115,9 +115,21 @@ Owner said yes (#51, "make it all LIVE"). Plan: `docs/overhaul/research/R-owner-
 Every `hq_*` function is granted to `service_role` only, so only a Supabase secret key (HQ's own key,
 "hq") can call it; the apps' publishable key and every gym key are refused (tests/0026_hq_access.sql).
 
-To apply: SQL Editor → paste each migration → Run. Then paste each test and check its last line:
-`tests/0026_hq_access.sql` → `RESULT PASS (49 checks)`, `tests/0027_hq_actions.sql` →
-`RESULT PASS (54 checks)`, `tests/0028_hq_breakglass_and_logs.sql` → `RESULT PASS (41 checks)`,
+To apply: SQL Editor → paste each migration → Run, **0026, 0027 and 0028 together and in this order**
+(also when re-running after a change: re-run all three, in order). Each starts with
+`set lock_timeout = '3s'`: if a busy table keeps it waiting it stops instead of holding the apps up;
+just run it again. Then paste each test and check its last line:
+`tests/0026_hq_access.sql` → `RESULT PASS (54 checks)`, `tests/0027_hq_actions.sql` →
+`RESULT PASS (64 checks)`, `tests/0028_hq_breakglass_and_logs.sql` → `RESULT PASS (49 checks)`,
 `tests/security.sql` → `RESULT PASS`. The tests always end in an error, so they change nothing.
+
+**Owner step (Supabase dashboard, after HQ works):** Project Settings → API Keys → **Legacy API
+keys** → disable the legacy `service_role` key, and keep the secret key named **"hq"** as the ONLY
+secret key. Why: the database trusts the person named in each HQ call (`p_actor`) from any caller
+holding a service_role key, so every extra secret key is another way to act as HQ. (First check
+nothing else uses the legacy key: today nothing in this repo does; the apps use the publishable key.)
+
+Access log period: 7 days until 13 May 2027, then 1 year (`_access_log_keep`), matching the privacy
+notice's "Technical logs" line. Change both together.
 Cloudflare database: `cd deploy/panel && npx wrangler d1 migrations apply forgeai-web --remote` (adds
 `ai_limits`, 0004).

@@ -64,7 +64,9 @@ export async function deleteRequestsInFeedback(db) {
     .all()).results ?? [];
   return rows.map((r) => {
     const m = /\bcode ([A-Z0-9]{6})\b/.exec(String(r.text || ''));
-    return { feedbackId: r.id, at: r.at, joinCode: m ? m[1] : null, status: r.status, text: String(r.text || '').slice(0, 300) };
+    // Anyone signed in to the admin app (a front-desk person too) could have sent it: never checked
+    // until HQ calls the gym's own number (hq_delete_gym refuses before that step: NOT_CALLED).
+    return { feedbackId: r.id, at: r.at, joinCode: m ? m[1] : null, status: r.status, checked: false, text: String(r.text || '').slice(0, 300) };
   });
 }
 
