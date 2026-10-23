@@ -3,6 +3,9 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~17:45 IST:** owner rerun on 8813012 red in part L only (same race: "Update routine?" sheet hid "Workout complete").
+  Fixed v0290-l.yaml. FULL gate restarted on 1bca634 (default, owner, journeys, CI). When green: tag 1bca634 (or a
+  paperwork commit after it), PROGRESS entry, release, APK link.
 - **UPDATE ~15:45 IST:** gate on 8813012: default, journeys, CI green; owner red only in BR-welcome (test race: the icon
   pop-up covered the tab bar; every later part failed because the pop-up stayed open). Test fixed on main (not paperwork).
   Owner rerun on 8813012 via helper tag qa-8813012-owner. If green: release v0.55.0 from a worktree on 8813012 (+ PROGRESS
