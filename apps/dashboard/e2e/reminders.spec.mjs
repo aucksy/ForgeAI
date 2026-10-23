@@ -82,7 +82,8 @@ test('J38b the front desk can look at the automatic reminders but not change the
   const desk = await secondPhone(browser, server);
   await signIn(desk, DESK.phone);
   await desk.goto('./#/messages/reminders');
-  await expect(desk.getByRole('heading', { name: 'Automatic reminders' })).toBeVisible({ timeout: 15_000 });
+  // The desk's page title and the section title both read "Automatic reminders" (run 39968489102).
+  await expect(desk.getByRole('heading', { name: 'Automatic reminders', level: 1 })).toBeVisible({ timeout: 15_000 });
   await expect(desk.getByText('Only the owner can change these.')).toBeVisible();
   await expect(row(desk, 'Plan ends soon').getByRole('switch')).toBeDisabled();
   await expect(row(desk, 'Plan ends soon')).toContainText('Days before the last day: 7, 3');
