@@ -105,6 +105,10 @@ jobs:
       - name: Panel Worker tests
         run: node --test deploy/panel
 
+      # ForgeAI HQ (#51): the system owner's panel Worker (sign-in, API, clean-up) and its page logic.
+      - name: HQ Worker and page tests
+        run: node --test deploy/hq apps/hq/test
+
       # A build failure here is a shipping failure — the CRM is served as static
       # files, so `vite build` succeeding IS the deployability check.
       - name: Build (dashboard/CRM)

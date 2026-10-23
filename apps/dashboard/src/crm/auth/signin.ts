@@ -183,6 +183,8 @@ export type AuthErrorCode =
   | 'BAD_KEY'
   | 'EMPTY'
   | 'BUSY'
+  // ForgeAI HQ (#51, migration 0027): ForgeAI paused this gym; looking and downloading still work.
+  | 'SUSPENDED'
   // UAT work package 3 (0021): the server's receipt rules.
   | ReceiptRefusal
   | 'OFFLINE'
@@ -211,8 +213,12 @@ export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
 
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
-  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', ...RECEIPT_REFUSALS,
+  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', ...RECEIPT_REFUSALS,
 ];
+
+/** ForgeAI HQ (#51): what a desk sees when ForgeAI has paused the gym (every save is refused). */
+export const SUSPENDED_WORDS =
+  'ForgeAI has paused this gym, so nothing can be changed or saved. You can still look at everything and download your data from Settings. Call ForgeAI to switch it back on.';
 
 function errorText(err: unknown): string {
   if (!err) return '';
@@ -311,6 +317,8 @@ export function authErrorWords(err: unknown): string {
       return 'You were signed out. Sign in again with your mobile number.';
     case 'EMPTY':
       return 'Type the name.';
+    case 'SUSPENDED':
+      return SUSPENDED_WORDS;
     case 'BUSY':
       return 'Many gyms are starting right now. Please try again in a few minutes.';
     case 'OFFLINE':

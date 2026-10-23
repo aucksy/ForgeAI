@@ -11,6 +11,7 @@ import {
   FIELD_NAMES,
   GEMINI_MODEL,
   PER_GYM_PER_DAY,
+  gymLimit,
   isRealDate,
   takeOne,
   buildPrompt,
@@ -32,13 +33,19 @@ const CLAUDE_KEY = 'sk-ant-secret-BBBB';
 /** The D1 statements aiMatch.js uses, kept in memory. */
 function fakeD1() {
   const rows = new Map(); // `${day}|${gym}` -> row
+  const limits = new Map(); // gym -> per_day (HQ's ai_limits, migrations/0004)
   return {
     rows,
+    limits,
     prepare(sql) {
       return {
         bind(...args) {
           return {
             async first() {
+              if (/^SELECT per_day FROM ai_limits/.test(sql)) {
+                const v = limits.get(args[0]);
+                return v === undefined ? null : { per_day: v };
+              }
               if (/^INSERT INTO ai_usage/.test(sql)) {
                 const [day, gym, limit, all] = args;
                 const k = `${day}|${gym}`;
@@ -46,6 +53,7 @@ function fakeD1() {
                 const today = [...rows.values()].filter((x) => x.day === day).reduce((sum, x) => sum + x.calls, 0);
                 if (today >= all) return null;
                 if (!r) {
+                  if (limit < 1) return null;
                   rows.set(k, { day, gym, calls: 1, failed: 0, tokens_in: 0, tokens_out: 0, provider: '' });
                   return { calls: 1 };
                 }
@@ -472,4 +480,50 @@ test('the usage table and the one-statement allowance work on real SQLite', { sk
   assert.equal(await takeOne(d1, 'gym-b', '2026-10-25'), 1);
   assert.equal(await takeOne(d1, 'gym-c', '2026-10-25'), null);
   assert.equal(await takeOne(d1, 'gym-b', '2026-10-25'), null);
+});
+
+// ForgeAI HQ (#51): one gym's own daily limit (D1 ai_limits, migrations/0004).
+test('a limit set in HQ replaces the normal one for that gym only; 0 switches it off', async () => {
+  const WEB = fakeD1();
+  WEB.limits.set('gym-1', 2);
+  const env = bothKeys(WEB);
+  const at = new Date('2026-10-23T10:00:00+05:30');
+  const first = await handleMatchColumns(post({ columns: COLUMNS }), env, { now: at, fetchImpl: fakeNet().fetchImpl, log: quiet });
+  assert.equal(first.status, 200);
+  assert.equal((await first.json()).left, 1);
+  assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), env, { now: at, fetchImpl: fakeNet().fetchImpl, log: quiet })).status, 200);
+  assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), env, { now: at, fetchImpl: fakeNet().fetchImpl, log: quiet })).status, 429);
+  WEB.limits.set('gym-1', 0);
+  const off = await handleMatchColumns(post({ columns: COLUMNS }), env, { now: new Date('2026-10-24T10:00:00+05:30'), fetchImpl: fakeNet().fetchImpl, log: quiet });
+  assert.equal(off.status, 429);
+});
+
+test('before the limits table exists, the normal limit applies (and it says so in the log)', async () => {
+  const warned = [];
+  const was = console.warn;
+  console.warn = (...a) => warned.push(a.join(' '));
+  try {
+    const broken = { prepare: () => ({ bind: () => ({ first: async () => { throw new Error('no such table: ai_limits'); } }) }) };
+    assert.equal(await gymLimit(broken, 'gym-1'), PER_GYM_PER_DAY);
+  } finally {
+    console.warn = was;
+  }
+  assert.ok(warned.some((w) => w.includes('ai_limits')));
+});
+
+test('HQ limits on real SQLite: a gym at 0 gets nothing, another keeps the normal limit', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const db = new sqlite.DatabaseSync(':memory:');
+  db.exec(readFileSync(new URL('./migrations/0003_ai_usage.sql', import.meta.url), 'utf8'));
+  db.exec(readFileSync(new URL('./migrations/0004_ai_limits.sql', import.meta.url), 'utf8'));
+  const d1 = {
+    prepare: (sql) => ({ bind: (...args) => ({ first: async () => db.prepare(sql).get(...args) ?? null }) }),
+  };
+  db.prepare("INSERT INTO ai_limits (gym_id, per_day) VALUES ('gym-off', 0), ('gym-big', 50)").run();
+  assert.equal(await gymLimit(d1, 'gym-off'), 0);
+  assert.equal(await gymLimit(d1, 'gym-big'), 50);
+  assert.equal(await gymLimit(d1, 'gym-plain'), PER_GYM_PER_DAY);
+  assert.equal(await takeOne(d1, 'gym-off', '2026-10-23', 0), null);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM ai_usage WHERE gym_id = 'gym-off'").get().n, 0);
+  for (let i = 1; i <= 25; i++) assert.equal(await takeOne(d1, 'gym-big', '2026-10-23', 50), i);
+  assert.throws(() => db.prepare("INSERT INTO ai_limits (gym_id, per_day) VALUES ('x', 500)").run());
 });

@@ -24,6 +24,8 @@ declare
     'member_orders','member_place_order','member_products','member_saw_messages','member_set_name',
     -- 0025: the workout offer (each checks a member key or a gym key itself).
     'member_join_offer','member_leave_offer','member_offer_days','member_offers',
+    -- 0028: the gym owner's "ForgeAI access" list and "Let ForgeAI support look" (each checks an owner key).
+    'owner_hq_access','owner_hq_end','owner_hq_grant',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
     'owner_gym','owner_make_signin_code','owner_messages','owner_offers','owner_orders','owner_people','owner_photo_ticket',
     'owner_products','owner_receipt_history','owner_remove_person','owner_rename_gym','owner_retire_key','owner_save_offer','owner_save_product',

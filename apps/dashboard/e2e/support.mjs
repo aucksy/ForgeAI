@@ -105,6 +105,10 @@ export class FakeServer {
     this.offers = [];
     /** offer members: { offerId, rosterId, joinedOn, windowEndsOn, counted, deskDays, appDays, ... } */
     this.offerMembers = [];
+    /** #51 (0027/0028): the gym's status as ForgeAI HQ set it, its support-access windows and HQ actions. */
+    this.hqStatus = 'active';
+    this.hqGrants = [];
+    this.hqActions = [];
   }
 
   /**
@@ -341,6 +345,39 @@ export class FakeServer {
         if (!id) return 'unknown';
         return this.removedStaff.has(id) ? 'removed' : 'signed_out';
       }
+      // #51 (0028): the owner's "ForgeAI access" list and the one-hour support access.
+      case 'owner_hq_access': {
+        this.ownerOnly(args.p_key);
+        const t = NOW.getTime();
+        return {
+          status: this.hqStatus,
+          grants: this.hqGrants.map((g) => ({ ...g, open: !g.endedEarly && Date.parse(g.startsAt) <= t && Date.parse(g.endsAt) > t })).reverse(),
+          actions: this.hqActions,
+        };
+      }
+      case 'owner_hq_grant': {
+        const me = this.ownerOnly(args.p_key);
+        const g = {
+          grantId: `grant-${this.hqGrants.length + 1}`,
+          openedBy: 'gym',
+          openedByName: me.name,
+          reasonKind: 'gym_asked',
+          reason: 'The gym asked ForgeAI support to look',
+          startsAt: NOW.toISOString(),
+          endsAt: new Date(NOW.getTime() + 60 * 60_000).toISOString(),
+          endedEarly: false,
+          looked: [],
+        };
+        this.hqGrants.push(g);
+        return { ...g, open: true };
+      }
+      case 'owner_hq_end': {
+        this.ownerOnly(args.p_key);
+        for (const g of this.hqGrants) {
+          if (!g.endedEarly && Date.parse(g.endsAt) > NOW.getTime()) Object.assign(g, { endedEarly: true, endsAt: NOW.toISOString() });
+        }
+        return null;
+      }
       case 'owner_people': {
         const me = this.ownerOnly(args.p_key);
         return [...this.people.values()].map((p) => ({
@@ -402,6 +439,8 @@ export class FakeServer {
       }
       case 'crm_push': {
         this.who(args.p_key);
+        // #51 (0027): a gym ForgeAI paused can look but not save.
+        if (this.hqStatus === 'suspended') throw new Refusal('SUSPENDED');
         if (Number(args.p_base) !== this.version) throw new Refusal('STALE');
         this.version += 1;
         for (const r of args.p_records) {

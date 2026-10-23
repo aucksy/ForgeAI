@@ -15,7 +15,8 @@
 //
 // Cost control: free to gyms, PER_GYM_PER_DAY reads per gym per India day and ALL_PER_DAY for all
 // gyms together, counted in Cloudflare D1 `forgeai-web`, table `ai_usage`
-// (migrations/0003_ai_usage.sql). About ₹0.40 per spreadsheet at the prices below.
+// (migrations/0003_ai_usage.sql). About ₹0.40 per spreadsheet at the prices below. ForgeAI HQ can set
+// one gym's own daily limit (table ai_limits, migrations/0004; #51).
 //
 // Providers, in order (a provider without its key is skipped; an error, a 10-second timeout or an
 // answer that is not the JSON we asked for moves on to the next, with a log line each time):
@@ -427,22 +428,37 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
 }
 
 /**
+ * This gym's own daily allowance, when ForgeAI HQ set one (D1 table ai_limits, migrations/0004;
+ * 0 = off for this gym), else PER_GYM_PER_DAY. Before the table exists: PER_GYM_PER_DAY.
+ */
+export async function gymLimit(db, gymId) {
+  try {
+    const row = await db.prepare('SELECT per_day FROM ai_limits WHERE gym_id = ?').bind(gymId).first();
+    const n = row ? Number(row.per_day) : NaN;
+    return Number.isInteger(n) && n >= 0 ? n : PER_GYM_PER_DAY;
+  } catch (e) {
+    console.warn('[ai-match] ai_limits not readable, using the normal limit', safeMessage(e));
+    return PER_GYM_PER_DAY;
+  }
+}
+
+/**
  * Take one read from today's allowance for this gym. -> the count after taking it, or null when the
  * gym (or every gym together) has used today's allowance. One statement per step, so two tabs
  * asking at once cannot both take the last read.
  */
-export async function takeOne(db, gymId, day) {
+export async function takeOne(db, gymId, day, perDay = PER_GYM_PER_DAY) {
   // One statement: the gym's allowance and all gyms' together are checked and taken at once, so two
   // tabs (or two gyms) asking at the same moment cannot both take the last read.
   const row = await db
     .prepare(
       "INSERT INTO ai_usage (day, gym_id, kind, calls) SELECT ?1, ?2, 'columns', 1 " +
-        'WHERE (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
+        'WHERE ?3 > 0 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
         'ON CONFLICT (day, gym_id, kind) DO UPDATE SET calls = calls + 1 ' +
         'WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
         'RETURNING calls',
     )
-    .bind(day, gymId, PER_GYM_PER_DAY, ALL_PER_DAY)
+    .bind(day, gymId, perDay, ALL_PER_DAY)
     .first();
   return row ? Number(row.calls) : null;
 }
@@ -502,9 +518,10 @@ export async function handleMatchColumns(request, env, { now = new Date(), fetch
   if (!who.owner) return answer(403, { error: 'Only the owner can use AI matching.' });
 
   const day = indiaDay(now);
+  const perDay = await gymLimit(env.WEB, who.gymId);
   let used;
   try {
-    used = await takeOne(env.WEB, who.gymId, day);
+    used = await takeOne(env.WEB, who.gymId, day, perDay);
   } catch (e) {
     console.error('[ai-match] usage table not readable', e);
     return answer(503, { reason: 'off', error: 'AI matching is not switched on yet.' });
@@ -523,5 +540,5 @@ export async function handleMatchColumns(request, env, { now = new Date(), fetch
   }
   // Counts only, never the file: which provider, how many columns, tokens.
   console.log(`[ai-match] ok ${result.provider} ${result.model} cols=${checked.value.columns.length} in=${result.tokensIn} out=${result.tokensOut}`);
-  return answer(200, { columns: result.mapping, provider: result.provider, left: Math.max(0, PER_GYM_PER_DAY - used) });
+  return answer(200, { columns: result.mapping, provider: result.provider, left: Math.max(0, perDay - used) });
 }

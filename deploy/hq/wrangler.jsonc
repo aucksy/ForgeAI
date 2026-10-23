@@ -1,0 +1,45 @@
+// ForgeAI HQ (#51): the system owner's panel, https://forgeai-hq.aakashpahuja.in. NOT DEPLOYED: the
+// main session deploys after review. From this folder: npx wrangler deploy
+// The page is plain static files (apps/hq/public, no build step); worker.js runs FIRST for every
+// path, so nothing is served before the sign-in check. Plan: docs/overhaul/research/R-owner-panel.md.
+//
+// Secrets (never in this file; `npx wrangler secret put <NAME>` from this folder):
+//   SUPABASE_HQ_KEY       a Supabase secret key named "hq" (Supabase dashboard -> Project Settings ->
+//                         API Keys -> Secret keys -> New secret key). Only the hq_* functions take it.
+//   HQ_ALLOWED_EMAIL      the one Google address allowed in (a comma list is accepted).
+//   HQ_SESSION_SECRET     64 random characters (signs the session cookie). Google mode only.
+//   GOOGLE_CLIENT_ID      from Google Cloud -> APIs & Services -> Credentials -> OAuth client
+//   GOOGLE_CLIENT_SECRET    (Web application; redirect URI https://forgeai-hq.aakashpahuja.in/auth/callback).
+//   GITHUB_TOKEN          optional: only raises GitHub's hourly limit for the download counts.
+// Variables below: AUTH_MODE "google" (no cost) or "access" (Cloudflare Access in front; then set
+// ACCESS_TEAM = the team name in <team>.cloudflareaccess.com and ACCESS_AUD = the application's
+// audience tag, and the Google secrets are not needed).
+{
+  "name": "forgeai-hq",
+  "compatibility_date": "2026-10-01",
+  "main": "worker.js",
+  "assets": {
+    "directory": "../../apps/hq/public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "routes": [{ "pattern": "forgeai-hq.aakashpahuja.in", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "SUPABASE_URL": "https://hdxzqbdiokjklnypfisq.supabase.co",
+    "AUTH_MODE": "google",
+    "ACCESS_TEAM": "",
+    "ACCESS_AUD": "",
+    "HQ_GITHUB_REPO": "aucksy/ForgeAI"
+  },
+  // The same small Cloudflare database as the gym panel: feedback, leads, AI usage and AI limits
+  // (tables: deploy/panel/migrations). HQ reads them and changes statuses and limits.
+  "d1_databases": [
+    { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "../panel/migrations" }
+  ],
+  // The nightly clean-up, 03:00 India time (21:30 UTC): access log and old logs (hq_nightly_cleanup)
+  // and Cloudflare's database (old feedback, leads without a deal, AI usage).
+  "triggers": { "crons": ["30 21 * * *"] },
+  "observability": { "enabled": true }
+}

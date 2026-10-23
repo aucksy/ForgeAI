@@ -283,7 +283,8 @@ export interface OfflineState {
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
-const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|${RECEIPT_REFUSALS.join('|')})($|[^A-Z_])`);
+// SUSPENDED (#51): ForgeAI paused the gym; sending the same save again cannot help.
+const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|SUSPENDED|${RECEIPT_REFUSALS.join('|')})($|[^A-Z_])`);
 
 const MAX_TRIES = 4;
 

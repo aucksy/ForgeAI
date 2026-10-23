@@ -8,6 +8,7 @@
  * cancelled (stock goes back). Collected and cancelled are final.
  */
 
+import { SUSPENDED_WORDS } from '../auth/signin';
 import { formatINR, parseRupeeInput, type Paise } from '../logic/money';
 import { dateISOFromEpoch, IST_OFFSET_MS } from '../logic/dates';
 
@@ -655,13 +656,14 @@ export type ShopErrorCode =
   | 'CHANGED'
   | 'TOO_MANY'
   | 'BAD_PHOTO'
+  | 'SUSPENDED'
   | 'OFFLINE'
   | 'INVALID'
   | 'UNKNOWN';
 
 export function errorCode(err: unknown): ShopErrorCode {
   const msg = errorText(err);
-  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY', 'BAD_PHOTO'] as const) {
+  for (const code of ['BAD_KEY', 'GONE', 'BAD_STEP', 'EMPTY', 'BAD_OPTIONS', 'BUSY', 'CHANGED', 'TOO_MANY', 'BAD_PHOTO', 'SUSPENDED'] as const) {
     if (new RegExp(`\\b${code}\\b`).test(msg)) return code;
   }
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
@@ -709,6 +711,10 @@ const ERROR_WORDS: Record<ShopErrorCode, string> = {
   },
   get BAD_PHOTO() {
     return 'That photo link can’t be used. Upload the photo again from this screen.';
+  },
+  get SUSPENDED() {
+    // #51: the same sentence the records screens use.
+    return SUSPENDED_WORDS;
   },
   get OFFLINE() {
     return 'Can’t reach the internet. Check the connection and try again.';
