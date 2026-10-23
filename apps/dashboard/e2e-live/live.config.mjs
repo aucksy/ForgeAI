@@ -46,6 +46,8 @@ export default defineConfig({
   },
   webServer: {
     command: `npx vite preview --port ${PORT} --strictPort`,
+    // XJ7: /api answers from the live panel Worker (the real AI column match, #47).
+    env: { XJ_API_PROXY: 'https://forgeai.aakashpahuja.in' },
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: true,
     timeout: 60_000,

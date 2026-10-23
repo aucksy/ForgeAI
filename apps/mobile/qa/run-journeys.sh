@@ -251,6 +251,8 @@ step J4 2 server "her plan covers today" -- server A plan-today "Kiran Desk"
 step J4 3 member "poster link, types the mobile, in with no see-the-desk line" -- checkin_at "$CODE_A" xj-4-checkin "${A[@]}"
 step J4 4 server "one visit today, source app" -- server A visit "Kiran Desk" app ";" visits-today 1
 step J4 5 admin "Visits shows her, tagged App" -- admin XJ4b
+# #47: the real AI column match through the live panel Worker (gym A; nothing imported).
+step J7 1 admin "asks AI to match an odd register (real AI)" -- admin XJ7
 
 # ---------------------------------------------------------------- J5 import + J6 branding (gym B)
 B=(CODE_B="$CODE_B" GYM_B="$GYM_B" GYM="$GYM_A")

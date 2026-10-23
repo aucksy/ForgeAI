@@ -17,5 +17,10 @@ function livePolicy(): Record<string, string> {
 export default defineConfig({
   plugins: [react()],
   build: { outDir: 'dist' },
-  preview: { headers: livePolicy() },
+  preview: {
+    headers: livePolicy(),
+    // Live journeys only (e2e-live/live.config.mjs sets XJ_API_PROXY): /api goes to the real panel
+    // Worker, so XJ7 runs a real AI column match against the live site (#47).
+    proxy: process.env.XJ_API_PROXY ? { '/api': { target: process.env.XJ_API_PROXY, changeOrigin: true } } : undefined,
+  },
 });
