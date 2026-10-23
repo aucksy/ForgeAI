@@ -47,8 +47,11 @@ class Page(unittest.TestCase):
         self.assertEqual(e2["decides"], [{"q": "Pick one", "opts": [
             {"key": "A", "text": "First way", "rec": True}, {"key": "B", "text": "Second way", "rec": False}]}])
         self.assertNotIn("**Decide:**", e2["body"])
-        decided = page.parse(SAMPLE.replace("**You asked:** b", "**DECIDED (17 Oct):** A"))["entries"][0]
+        decided = page.parse(SAMPLE.replace("- B: Second way\n", "- B: Second way\n**DECIDED (17 Oct):** A\n"))["entries"][0]
         self.assertEqual(decided["decides"], [])
+        # R-83: a question added AFTER the last DECIDED line is a new, open question.
+        follow_up = page.parse(SAMPLE.replace("**You asked:** b", "**DECIDED (17 Oct):** A"))["entries"][0]
+        self.assertEqual([d["q"] for d in follow_up["decides"]], ["Pick one"])
 
     def test_the_page_carries_its_own_template_and_markers_appear_once(self):
         self.assertEqual(page.TEMPLATE.count("__TPL__"), 1)

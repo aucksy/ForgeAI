@@ -19,6 +19,13 @@ give it a serious effort now".
 **What I do:** (1) HQ steps 1-3 built and taken live; his "make it all LIVE" is the yes for HQ's additive live
 server changes; I still list each one in chat; keys/accounts only he can make stay his tasks. (2) "Go to #" box +
 jump links shipped; then a full improvement pass of the tracker page (research, design, build, test).
+**Done (23 Oct, page pass):** sticky bar 340 -> 122 px on a phone; one always-visible "Search or #51" box (a number
+jumps; words search entries, backlog and Claude's tasks, results grouped Waiting for you / Questions & answers /
+Feature backlog / Claude's tasks, a tap jumps and unfolds; also his page request "I need a search box"); a Home tab
+(what waits, what changed since his last visit on that phone, new answers, what Claude is doing); five tabs with
+counts; cards fold the long answer (Q&A 41,000 -> 8,250 px tall); "Agree with my pick" one tap; a clear Sent box and
+a "Sent" note after each save; backlog status pills + group picker; Claude's tasks Doing / Blocked (with # chips) /
+Done; a link ending in #51 opens at #51; AA contrast (darker orange), 44 px targets. DATA contract unchanged.
 
 ## R-83. "I can't find #49 or #51": every question waiting on him must sit in Waiting for you — 23 Oct 2026
 **Owner said:** "I am having difficulty finding #49 or #51 - if these are queries waiting for my answers, why are they
