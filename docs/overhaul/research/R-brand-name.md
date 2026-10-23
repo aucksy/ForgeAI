@@ -355,3 +355,143 @@ Same GoDaddy India list prices as the 23 Oct round, before GST: .com ₹1 for ye
 - EverStrong equipment: https://www.walmart.com/ip/595676706
 - Fortwell Capital: https://www.estatesgazette.co.uk/?p=842711
 - Web searches with no matching app or company: "Habitsmith", "Strongsmith", "Still Not Out", "Back Tomorrow", "Better Than Last", "Gritwell", "Daystrong", "Steadwell", "Onwardly", "Pushwell", "Kinora / Elevra / Tenacia", "Mettlo / Kinvo / Valtro", "Tenaxa"
+
+---
+
+## 23 Oct (round 4): names that feel like lifting
+
+You said: "ForgeAI is something I loved immediately. None of this [Liftchase, RepAhead, Habitsmith, Still Not Out...] really connects with weightlifting and workout." So this round looks for the feel of "Forge" (metal, heat, made by hard work, short, premium) plus an obvious link to lifting. No habit words, no cricket, no Hindi. 379 new names checked, none of them on the earlier lists.
+
+### In one minute
+
+- **ForgeAI cannot stay as the public name.** Every good ForgeAI domain is taken, Google Play India already has two 10,000+ download apps called "Forge AI Workout Tracker" and "ForgeFit: AI Fitness Coach", and "Forge Fitness" is a registered Indian trademark for gyms.
+- **Top pick (A): Liftforged.** Runner-up **(B): IronKG.** Third **(C): ForgeKG.** All three have **.com, .in and .app free at the normal price** (GoDaddy India checked today).
+- 8 of the 17 names below have all three domains free. The rest have .in, .app and a "get" .com free; their plain .com belongs to someone.
+- Every name with "Forge" in it carries some of ForgeAI's problem: there are more than a dozen gym apps called Forge. A Forge name can still work, but members searching the app stores will see those apps next to ours.
+- The strength-myth names (Titan, Atlas, Milo, Hercules) are all blocked. Details under "Dropped".
+
+### Step 1: can you keep ForgeAI?
+
+**Verdict: no, not as the public brand.** Here is why.
+
+**Domains (checked at each registry, 23 Oct):**
+- Taken: forgeai.com (a live US company: "the control layer that lets you wield AI"), forgeai.in (bought Feb 2026, parked), forgeai.co.in (bought Apr 2026), forgeai.app (for sale on Afternic), getforgeai.com, tryforgeai.com (a live app builder called "Forge.ai"), forgeaiapp.com, forgeaihq.com (a live "Forged AI" receptionist business), joinforgeai.com, myforgeai.com, forgeai.fit, forgeai.ai, forgeai.club, forgeai.org, forgeai.net, forge.fit, forge.in, forge.app, forgefit.com, forgefit.in, forgefit.app, forgefit.fit, forgeapp.in.
+- Still free (all weak): useforgeai.com, forgeaifit.com, forgeaigym.com, forgeai.fitness, forgeaiapp.in, useforgeai.in, forgeaigym.in, forgeaifit.in, forgegym.in.
+- There is no ".gym" ending. It does not exist on the internet's list of endings.
+
+**Apps already using the name:**
+- Google Play India: "Forge AI Workout Tracker" (10K+ downloads), "ForgeFit: AI Fitness Coach" (10K+), "FORGE: Strength OS" (5K+), "Forge Ai - Be Jacked", "Forge: Gym & Meal Tracker", "Forge Trainer: Gym & Strength", "Forge: Gym Tracker", "The Forge: AI Gym Coach", "GymForge", "FitForge" (two apps), and an Indian app "Forge Fitness".
+- App Store: "Forge AI Workout Trainer", "Forge - Social Gym Tracker", "Forge - Training", "Forge Strength Trainer", "Workout Forge".
+- A member who hears "ForgeAI" and searches for it will most likely install someone else's app.
+
+**Indian trademarks (rough pre-check on QuickCompany, an unofficial copy of the register; not an official search):**
+- "Forge Fitness" is **registered in class 41** (gyms and fitness training) by Trigem Ventures (2018), and again by another owner (2015).
+- "Forgefit" was **filed in class 9 for fitness apps** by Forgefit Software (June 2025, under examination).
+- "Forge Fitness" is registered in class 28 (gym equipment). "Forge Fitness Club" was filed in class 41 in Nov 2025.
+- Coforge, a large Indian IT company, holds "Coforge AI Studio" and other "...AI" marks in class 42 (online software).
+- No exact "ForgeAI" mark was found. But a new owner would have to argue past "Forge Fitness" (gyms) and "Forgefit" (fitness apps), and would be easy to oppose.
+
+**What it would take to keep it:** run on forgeaifit.com or forgeai.fitness, accept being one of 15 "Forge" apps in the stores, and accept a real chance of a trademark objection. That is a weak start for a product you want to sell to gym owners. Better to keep "ForgeAI" as the internal project name only.
+
+### The shortlist (17), by vein
+
+"Phone" = how easily a Jaipur gym owner can say it and spell it over a call. "Free" domains are at the normal price unless stated (GoDaddy India: .com ₹1 for year 1 on a 3-year term then ₹1,599; .in ₹1 then ₹899; .app ₹1,508 then ₹2,666; before GST).
+
+**A. Forge family (keeps the word you loved)**
+
+| Name | The idea | Phone | Domains | Clashes | Risk |
+|---|---|---|---|---|---|
+| **Liftforged** | Made strong by lifting, the way steel is hand-forged | easy ("lift forged, one word") | **.com .in .app all free** | No app or company with the name. Nearest: "BulkForged", a small Garmin watch app; "Lionforged" (engineering, class 7). Mild "Forge" crowding in the stores. | low |
+| **ForgeKG** | Forge your kilos. ForgeAI with "AI" swapped for the thing members chase | easy ("forge K G") | **.com .in .app all free** | Nothing called ForgeKG. Sits inside the "Forge" crowd above. | medium |
+| **Forgeyard** | The yard where strength gets forged | easy | .in, .app, getforgeyard.com free. **forgeyard.com for sale: ₹3.47 lakh** (US$3,675 on GoDaddy; BrandBucket lists it at US$3,485) | No Forgeyard anywhere. Gyms named "The Forge" exist abroad. | medium |
+| **Barforge** | The barbell is the forge | easy | .in, .app, getbarforge.com free. barforge.com registered 2024, no website | Nothing in fitness. | medium |
+| **Forgehall** | A hall where lifters are made | easy | .in, .app, getforgehall.com free. forgehall.com registered 2025, points to an unrelated site | Nothing in fitness. | medium |
+| **Strongforge** | Where strength is forged | easy | .in, .app, getstrongforge.com free. strongforge.com is a US metal-fabrication company | No app. Members may mix it up with the big "Strong" gym-log app. | medium |
+| **Forgeiron** | An order: forge iron | easy | .in, .app, getforgeiron.com free. forgeiron.com registered Jul 2025, shows "Launching soon" | Someone plans to use the .com. "Iron Forge" gym apps exist. | medium-high |
+
+**B. Smithing words (anvil, foundry, temper)**
+
+| Name | The idea | Phone | Domains | Clashes | Risk |
+|---|---|---|---|---|---|
+| **AnvilKG** | The anvil is where metal takes its shape; KG is the weight you add | ok ("anvil K G") | **.com .in .app all free** | "Anvil" marks exist in class 9 (Anvil Energy, cables) and a gym app "The Anvil Gym" is on Play. No AnvilKG. | medium |
+| **Foundrylift** | A foundry is where iron is cast; this is where lifters are | ok | **.com .in .app all free** | "Fit Foundry LLP" filed in class 41 (fitness) in Nov 2025. Gym apps "The Foundry Fighting & Fitness" abroad. | medium |
+| **Ironsmithy** | A smithy is a blacksmith's workshop: the iron workshop | ok (some will not know "smithy") | **.com .in .app all free** | "Ironsmith" is registered by Onntra India (tools, vehicles, business services; class 8/12/35). | medium |
+| **Temperiron** | Tempering makes iron hard and tough | ok | **.com .in .app all free** | No clash found. But in Indian English "temper" means anger ("he has a temper"). | medium |
+| **Anvilstrong** | Strong as an anvil | ok | .in, .app, getanvilstrong.com free. anvilstrong.com is a protection-products website | No app. "Strong" app confusion again. | medium |
+
+**C. Lifting-world words (iron, kg, chalk, rack)**
+
+| Name | The idea | Phone | Domains | Clashes | Risk |
+|---|---|---|---|---|---|
+| **IronKG** | The two words every lifter lives by: iron and kilos | easy ("iron K G") | **.com .in .app all free** | No IronKG anywhere. Many apps start with "Iron" ("IRON: Workout Plans & Gym Log", "Iron Gym", "IronPulse"), so the word "Iron" alone cannot be owned. | medium |
+| **Chalkiron** | Chalk on the hands, iron in them | ok | **.com .in .app all free** | Nothing found. Nearest marks are medicines ("Cheliron", "Caliron"). | low |
+| **Heavyiron** | Lift heavy iron | easy | .in, .app, getheavyiron.com free. heavyiron.com registered since 1998, no website | No app with the name. "Heavy" and "HeavyLifting" workout apps exist. | low-medium |
+| **Ironrack** | The squat rack: where serious lifting happens | easy | .in, .app, getironrack.com free. ironrack.com registered since 2000, no website | "Iron" crowd on Play. | medium |
+| **Ironhall** | A hall of iron | easy | .in, .app, getironhall.com free. ironhall.com is a church in Belfast | "Ironhill" (an Indian brewery and café brand, classes 32/33/43) sounds close. | medium |
+
+**D. Strength heroes (Atlas, Titan, Milo, Hercules):** none made the list. See "Dropped".
+
+### Top 3
+
+**A: Liftforged.** It keeps exactly what you loved in ForgeAI (metal, heat, earned by effort) and adds lifting in the same word. "Forged by lifting" is the promise of the product. All three domains are free at the normal price, and no app, company or Indian trademark uses it. It reads well both ways: "Liftforged" for members, "Liftforged for Gyms" for owners. One catch: in India "lift" also means an elevator. Next to a barbell logo nobody will read it that way.
+
+**B: IronKG.** The plainest lifting name on the list. Every gym owner in Jaipur already says "iron" and "kg" every day, so it needs no explaining on the phone. Short (5 letters), all three domains free at the normal price, and it points straight at the "kg to beat" screen. The trade-off: "Iron" is a crowded word in the app stores, so the logo and the "KG" must do the work.
+
+**C: ForgeKG.** The smallest change from ForgeAI: same first word, with "AI" swapped for "KG". All three domains are free. Pick it only if keeping "Forge" matters more than standing out: it still sits among the 15 "Forge" apps, so it carries a share of the trademark and search risk described in Step 1.
+
+Say the three out loud to 3 or 4 Jaipur gym owners before you choose. Buy the .com and .in the same day you pick (12 names checked this round were registered by someone in the last 3 months, for example hammerix.com on 19 Oct, forgeclan.com on 8 Oct and chalkhand.com on 6 Oct).
+
+### Dropped (good feel, but blocked)
+
+- **Ironforged / Ironforge:** "IronForge: Gym Workout Trainer", "Iron Forge: Conjugate Workout", "Iron Forged Fitness" and others are on Play. Ironforge.in is taken.
+- **Atlas names (Atlasiron, Atlaslift, Atlasfit):** **"Iron Atlas: Run Your Gym"** on Play is gym software, our exact business. "ATLAS - Gym & Workout Tracker" is there too.
+- **Milo names (Milolift, Miloiron, Miloplate):** Milo of Croton is the perfect strength story (he carried a calf every day until it was a bull). But **MILOLIFT**, a strength-training app, launched at milolift.com this month.
+- **Titan names (Irontitan, Titanlift, Titanfit):** Titan is a Tata brand in India with marks in many classes, and a gym app "S.K Iron Titans Gym" is on Play.
+- **Hercules, Samson, Vulcan:** Hercules is a big Indian bicycle brand. Samson is a Bible figure and Vulcan a Roman god, so both were left out under your rule.
+- **Anvilgym:** a gym app called "The Anvil Gym" is on Play.
+- **SteelKG:** all free, but Play India is full of steel-weight calculators for builders. Members searching would find those.
+- **Plain smithing words** (Anvil, Forged, Tempered, Foundry, Crucible, Ironsmith, Ironclad, Castiron, Wroughtiron): the .com is taken for every one (since the 1990s for most), and the .in for most.
+- **Liftfoundry:** .com is a live site (an e-learning page). Its twin **Foundrylift** is on the shortlist instead.
+
+### Trademark: what still needs a person
+
+- **Official IP India search: not done** (it needs a captcha). For the finalist, search classes 9 (app), 35 (business management), 41 (fitness) and 42 (online software), or pay a trademark lawyer. For any Forge name, ask about "Forge Fitness" (class 41) and "Forgefit" (class 9). For IronKG, ask whether "Iron" is treated as a common word.
+- What was done: a rough pre-check on QuickCompany, Google Play India searches, and web searches (which cover App Store listings).
+- Before paying, check that the Instagram and YouTube handles are free.
+
+### Every name checked (round 4, 23 Oct 2026)
+
+"Free" means the registry has no record of the name. `*` = the .com is registered and parked or listed for sale, so buying it costs a premium. `?` = the registry did not answer. 379 names, none on the earlier lists. Status can change any day.
+
+| .com | .in | .app | Names |
+|---|---|---|---|
+| free | free | free | ajaxiron, ajaxlift, anvilfort, anvilgains, anvilkg, anvilplate, anvilrep, bellowsfit, chalkiron, crucibleiron, cruciblelift, deadliftly, firedsteel, forgekg, foundryiron, foundrylift, furnacefit, furnacelift, hammerplate, hammerrep, hearthlift, ingotfit, ingotlift, ironkg, ironsmelt, ironsmithe, ironsmithy, kilnlift, kiniron, liftforged, miloiron, miloplate, moltenlift, moltiron, platehall, quenchiron, quenchlift, smeltfit, smithgym, steelgains, steelhewn, steelkg, temperediron, tempergym, temperiron, temperlift, temperrep, temperset, temperstrong, whitehotiron, wroughtfit (51) |
+| free | free | ? | anvilsquad (1) |
+| taken | free | free | alloyfit*, anvilbar, anvilbound, anvilclub*, anvilcraft, anviledge, anvilgym, anvilhouse, anvilhq*, anvillift, anvilmade, anvilmaster, anvilpr, anvilset, anvilstrong, atlasbar, atlasiron*, atlasplate*, barforge, barfoundry, barlift, barworks, castironfit, chalkforge, chalkhand, colossusfit*, cruciblefit, cruciblegym, emberiron, forgebuilt, forgeclan, forgeden, forgedin*, forgediron*, forgedly, forgedstrong, forgeglow, forgehall, forgeheart*, forgeheat, forgeheavy, forgeiron, forgeist, forgemade*, forgemill*, forgeplate*, forgepress, forgerack*, forgeroom*, forgesquad*, forgesworn, forgetribe*, forgeyard*, foundryfit, gripiron, gymfoundry, hammerix, hammerlift, hammerset*, hammerstrong, hearthiron, heavyiron, heavyplate, herculift, hotforge*, ingotiron, irona, ironarmy, ironborn*, ironbull*, irondeck*, ironfire*, ironforged, ironfurnace, ironglow*, ironhall, ironhammer, ironhearted*, ironheat, ironhewn, ironingot*, ironio, ironkiln*, ironlegion, ironmason, ironmettle, ironmill, ironmonger, ironpower, ironpr*, ironpress*, ironra*, ironrack, ironram, ironsmithgym, ironsquad*, ironstrike, ironsworn, irontitan, ironwright, kgforge*, kgiron, kilnfit, liftfoundry, liftpower, liftsteel, liftworks, liftwright, milobar, milolift, moltenfit, olympuslift, platebound, platelift, platemade*, platemaster, platepress*, prforge, quenchfit*, rackiron, rackmade, redhotiron*, samsonfit, samsonlift, smithbar*, smithiron, smithlift, spartaniron, steelarmy, steelbound, steelbuilt, steelcrest, steelfire, steelforged*, steelfort, steelhall*, steelhold, steelingot*, steellift*, steelmill, steeloath, steelpress*, steelsworn, strengthsmith, strongforge, strongiron*, strongsteel, strongworks, temperedsteel, titanbar, titaniron*, titanrack, trueiron*, truiron, vulcanfit*, vulcanlift*, wroughtiron* (157) |
+| taken | free | taken | anvilfit, anvilworks, atlasfit*, atlaslift, barbellhq, barwright, benchly, emberlift*, forgeathlete*, forgebar, forgeborn*, forgebound, forgeclub*, forgedaily*, forgedfit, forgeedge*, forgefield, forgefire*, forgegrip*, forgegym*, forgehaus*, forgelift, forgelog, forgely*, forgemark, forgemaster, forgepr, forgeset*, forgestrong, forgetrack, forjd, getforged, gymsmith, hammerfit*, heavyset*, ironanvil, ironbound, ironbuilt, ironcast, ironclan, ironex, ironfort, ironfoundry*, irongate, ironhaus, ironhold*, ironlift, ironmade, ironoath, ironpact*, ironpeak, ironplate*, ironproof*, ironrep, ironset*, ironvow*, ironwill*, liftforge*, liftheavy*, liftio, liftrix, liftsmith, milostrong, olympusfit*, plateforge*, plateload, plateon, platesmith*, rackio, repsmith, setix, spartaforge, steelproof*, steelrep, steelset*, steelwill, strengthfoundry*, strongwright, temperfit, titanfit, titanlift* (81) |
+| taken | free | ? | barix, squatly* (2) |
+| taken | taken | free | anvilborn, forgemax*, forgemode, forgestone, forgewell, forgix*, gripfit, heavymetal, ingotix, ironbar*, irongrit*, ironmaster, ironvale*, ironyx, plateio, powerix*, steelbar, steelbull*, steelforge, steelgate, steelgrip, steelio, steelix*, steelmade, steelmaster, steelplate*, steelrack*, steelsmith*, steelstrong, strikefit (30) |
+| taken | taken | taken | anvix, atlasforge, barsmith, billet, bullforge*, castiron, crucible, forgd, forgecraft*, forged, forgehouse, forgehq, forgeline, forgeon, forgeone, forgepoint, forgestack*, forgeup*, forgeworks, forgio, forgr, forj, foundry, ironclad, ironcore, ironcrest*, ironcrew*, ironedge, ironforge, irongains, irongrip, ironix, ironmind, ironox, ironpulse, ironside, ironsmith, irontribe*, ironvault, ironworks*, liftix*, milofit, molten, musclesmith*, platix*, powerforge*, pressly, quench, rackhouse, steelcore, steelworks, steelyard, tempered, titanforge, tungsten, wrought (56) |
+| taken | ? | free | titanplate* (1) |
+
+**Back-up .com forms (147 checked, .com only):** get + name, name + app and name + fit were checked for 49 names whose plain .com is taken. All are free except ironforgedfit.com. The names: anvilbar, anvilcraft, anvilgym, anvilhouse, anvillift, anvilset, anvilstrong, atlasiron, barforge, barfoundry, chalkforge, cruciblegym, emberiron, forgeclan, forgeden, forgehall, forgeheavy, forgeiron, forgeplate, forgepress, forgerack, forgeroom, forgeyard, gymfoundry, hammerlift, hammerstrong, heavyiron, ironforged, ironfurnace, ironhall, ironhammer, ironkiln, ironlegion, ironmason, ironmonger, ironrack, ironstrike, ironsworn, irontitan, ironwright, liftfoundry, liftworks, platebound, steelbound, steelcrest, steelfort, strongforge, strongworks, titaniron.
+
+### How it was checked (round 4)
+
+- Domains: each registry's own lookup, the same method as before. Verisign for .com, NIXI for .in, Google Registry for .app; the ForgeAI endings (.co.in, .fit, .fitness, .club, .ai, .org, .net) through the registry servers listed by IANA. "Not found" = free. For a taken .com, the nameservers show whether it is parked or for sale, and the finalists' .com sites were opened.
+- Normal vs premium price: GoDaddy India's own exact-match lookup, run from a normal browser tab, for every shortlisted domain. All free ones showed the standard price; the four for-sale .coms showed their asking price.
+- Clashes: Google Play India search for each finalist (joined and split), web searches (which also cover App Store listings), and QuickCompany for Indian trademarks.
+
+### Sources (round 4)
+
+- https://rdap.verisign.com/com/v1/domain/{name}.com , https://rdap.nixiregistry.in/rdap/domain/{name}.in , https://pubapi.registry.google/rdap/domain/{name}.app (each name and back-up form)
+- https://data.iana.org/rdap/dns.json (registry servers for the other endings) and https://data.iana.org/TLD/tlds-alpha-by-domain.txt (no .gym ending exists)
+- https://forgeai.com , https://tryforgeai.com , https://forgeaihq.com (live businesses on the ForgeAI domains)
+- https://play.google.com/store/search?q={name}&c=apps&hl=en_IN&gl=IN (forge, forgeai, forge ai workout, forge gym, forgeyard, forge yard, forgehall, forge hall, ironforged, iron forged, barforge, bar forge, forgeiron, forgekg, strongforge, strong forge, anvil, anvil gym, anvil strong, anvilkg, anvil plate, liftfoundry, lift foundry, foundry lift, ironsmithy, iron smithy, hammer plate, temper iron, liftforged, lift forged, ironkg, iron kg, steelkg, chalkiron, chalk iron, heavyiron, heavy iron, ironhall, iron hall, ironrack, iron rack, ironwright, irontitan, iron titan, atlasiron, miloiron, ironsmelt, anvilfort, foundry iron, ironmonger, steelgains, crucible)
+- Play listings with download counts: https://play.google.com/store/apps/details?id=fit.adonis.main , https://play.google.com/store/apps/details?id=com.forgefit.app , https://play.google.com/store/apps/details?id=com.forgegymapp.forge , https://play.google.com/store/apps/details?id=in.goforge.app , https://play.google.com/store/apps/details?id=com.ironatlas.mobile
+- App Store Forge apps: https://apps.apple.com/app/id6759990122 , https://apps.apple.com/us/app/-/id6745174764 , https://apps.apple.com/us/app/-/id6757342999 , https://apps.apple.com/app/id6765519720 , https://apps.apple.com/us/app/workout-forge-for-home-and-gym/id6476525255
+- https://www.quickcompany.in/trademarks?q={name} (forge, forgeai, forge ai, forge fitness, forge gym, forgeyard, forgehall, barforge, forgekg, strongforge, anvilgym, anvilstrong, anvilkg, anvil, liftfoundry, ironsmithy, liftforged, ironkg, chalkiron, heavyiron, ironhall, irontitan, temperiron, hammerplate, ironwright, anvilfort, steelkg)
+- https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=forgeyard.in and the page's own exact-match lookup for each shortlisted domain; https://www.brandbucket.com/names/forgeyard (US$3,485)
+- https://milolift.com (MILOLIFT strength app), https://strongforge.com (metal fabrication), https://anvilstrong.com , https://forgeiron.com ("Launching soon"), https://www.ironhall.com (church), https://liftfoundry.com
+- BulkForged Garmin app: https://forums.garmin.com/developer/connect-iq/f/showcase/441337/app-bulkforged-automatic-progressive-overload-now-on-the-wrist-too
+- Web searches with no app or company of the same name: "IronKG", "Forgeyard", "Liftforged", "ForgeKG / Anvil KG", "Forgehall / Barforge / Chalkiron / Ironsmithy", "Heavy Iron"
