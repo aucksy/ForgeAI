@@ -13,6 +13,7 @@ import {
   errorWords,
   flags,
   gymByCode,
+  NOT_CHECKED_WORDS,
   megabytes,
   needsLook,
   recordCells,
@@ -305,12 +306,19 @@ async function gymPage(id) {
     signOut,
     ai,
     h('div', { class: 'card' }, h('h2', {}, 'Sign-in history'),
-      h('p', { class: 'muted' }, 'Sign-ins, sign-outs, wrong codes and saves in the admin app (kept 1 year).'),
+      h('p', { class: 'muted' }, 'Sign-ins, sign-outs, wrong codes and saves in the admin app (kept 7 days; 1 year from 13 May 2027).'),
       action('Show sign-in history', async () => {
         const r = await api(`/api/gym/access-log?id=${encodeURIComponent(id)}`);
-        historyBox.replaceChildren(r.rows.length
-          ? h('div', { class: 'table-wrap' }, h('table', {}, h('tbody', {}, r.rows.map((x) => h('tr', {}, h('td', {}, when(x.at)), h('td', {}, x.person || ''), h('td', {}, ACCESS_WORDS[x.action] || x.action), h('td', { class: 'muted' }, x.device || ''), h('td', { class: 'muted' }, x.ip || ''))))))
-          : h('p', {}, 'Nothing yet.'));
+        const counts = Object.entries(r.counts7Days || {}).map(([k, n]) => `${ACCESS_WORDS[k] || k}: ${n}`).join(' · ');
+        historyBox.replaceChildren(
+          h('p', { class: 'muted' }, r.detailed
+            ? 'Support access is open, so names, devices and addresses show (the gym owner sees this look).'
+            : 'Times only. Names, devices and addresses show only while support access is open.'),
+          counts ? h('p', {}, `Last 7 days: ${counts}`) : null,
+          r.rows.length
+            ? h('div', { class: 'table-wrap' }, h('table', {}, h('tbody', {}, r.rows.map((x) => h('tr', {}, h('td', {}, when(x.at)), h('td', {}, ACCESS_WORDS[x.action] || x.action),
+                r.detailed ? h('td', {}, x.person || '') : null, r.detailed ? h('td', { class: 'muted' }, x.device || '') : null, r.detailed ? h('td', { class: 'muted' }, x.ip || '') : null)))))
+            : h('p', {}, 'Nothing yet.'));
       }, { out: historyBox }),
       historyBox),
     h('div', { class: 'card' }, h('h2', {}, 'What HQ did here'),
@@ -451,6 +459,7 @@ async function deletesPage() {
     return h('div', { class: 'card warn' },
       h('p', {}, `${when(w.at)} · from the admin app`),
       h('p', { class: 'quote' }, w.text),
+      w.checked ? null : note(NOT_CHECKED_WORDS, 'warn'),
       gym ? action(`Write it down for ${gym.name}`, async () => {
         await api('/api/delete-requests/add', { gymId: gym.gymId, kind: 'gym', requestedAt: w.at, source: 'admin_app', sourceRef: `fb-${w.feedbackId}` });
         await deletesPage();
@@ -492,6 +501,7 @@ function requestCard(r) {
   return h('div', { class: `card ${left <= 5 ? 'bad' : ''}` },
     h('p', {}, h('strong', {}, `${r.gymName} (${r.joinCode})`), ` · ${r.kind === 'gym' ? 'delete the whole gym' : `erase a member: ${r.memberRef || ''}`}`),
     h('p', {}, `Asked ${when(r.requestedAt)} · day ${r.day} of 30 · ${left > 0 ? `${left} days left` : left === 0 ? 'last day' : `${-left} days late`}`),
+    r.calledAt ? null : note(NOT_CHECKED_WORDS, 'warn'),
     h('ol', { class: 'steps' },
       h('li', {}, r.calledAt ? `Called the gym’s own number ✓ (${when(r.calledAt)})` : step('called', 'I called the gym’s own number and the owner confirmed')),
       r.kind === 'gym'

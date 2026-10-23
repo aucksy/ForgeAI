@@ -140,6 +140,7 @@ const ACTIONS = {
   delete_request_member_done: 'Erased a member’s details',
   delete_gym: 'Deleted a gym',
   delete_gym_files_left: 'Some pictures were left after a delete',
+  delete_gym_refused: 'A gym delete was refused (nothing deleted)',
   feedback_status: 'Changed a feedback status',
   lead_status: 'Changed a lead status',
   ai_limit_set: 'Changed a gym’s AI limit',
@@ -206,6 +207,9 @@ export function gymByCode(gyms, code) {
 }
 
 /** Days left of the 30 the privacy notice promises (0 on the last day, negative when late). */
+/** The warning on a delete request nobody has confirmed by phone yet. */
+export const NOT_CHECKED_WORDS = 'Not checked: anyone signed in to the gym’s admin app could have sent this. Call the owner on the gym’s own number first.';
+
 export function daysLeft(req) {
   return 30 - (Number(req.day) || 0);
 }
