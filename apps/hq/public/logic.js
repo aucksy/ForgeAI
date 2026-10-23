@@ -65,6 +65,12 @@ export function flags(g, now = Date.now()) {
   if (g.aiLimit != null && g.aiToday != null && g.aiLimit > 0 && g.aiToday >= g.aiLimit) out.push({ tone: 'warn', words: 'AI limit hit today' });
   const created = Date.parse(g.createdAt);
   const last = g.lastDeskActivity ? Date.parse(g.lastDeskActivity) : NaN;
+  // Nobody signs in to it: a "Start demo" gym or a browser-only gym's shop. Not a gym to chase.
+  const noPeople = Number(g.staff) === 0;
+  if (noPeople) {
+    out.push({ tone: 'info', words: 'Demo or browser-only (nobody signs in)' });
+    return out;
+  }
   if (now - created > 7 * DAY_MS && (Number.isNaN(last) || now - last > 7 * DAY_MS)) {
     out.push({ tone: 'warn', words: 'No desk activity for 7 days' });
   }
@@ -75,7 +81,7 @@ export function flags(g, now = Date.now()) {
 
 /** Gyms that need a look (any bad or warn flag, or not checked yet). */
 export function needsLook(gyms, now = Date.now()) {
-  return gyms.filter((g) => flags(g, now).some((f) => f.tone !== 'info' || g.status === 'trial')).length;
+  return gyms.filter((g) => flags(g, now).some((f) => f.tone !== 'info' || (g.status === 'trial' && Number(g.staff) > 0))).length;
 }
 
 /** What a refusal means, in plain words. */

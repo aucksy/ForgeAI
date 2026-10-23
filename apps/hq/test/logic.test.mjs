@@ -19,7 +19,7 @@ import {
 
 const NOW = Date.parse('2026-10-23T09:00:00Z');
 const day = (n) => new Date(NOW - n * 864e5).toISOString();
-const gym = (extra = {}) => ({ status: 'active', createdAt: day(60), lastDeskActivity: day(1), failedSignins24h: 0, deleteRequest: null, supportUntil: null, aiLimit: 20, aiToday: 0, ...extra });
+const gym = (extra = {}) => ({ status: 'active', staff: 2, createdAt: day(60), lastDeskActivity: day(1), failedSignins24h: 0, deleteRequest: null, supportUntil: null, aiLimit: 20, aiToday: 0, ...extra });
 
 test('money in rupees with Indian grouping, from paise', () => {
   assert.equal(rupees(12345600), '₹1,23,456');
@@ -51,6 +51,14 @@ test('the flags on a gym row, most urgent first', () => {
 
 test('need a look: warnings and unchecked gyms, not just "new this week"', () => {
   assert.equal(needsLook([gym(), gym({ createdAt: day(2), lastDeskActivity: day(0) }), gym({ status: 'trial' }), gym({ failedSignins24h: 50 })], NOW), 2);
+});
+
+test('a demo or browser-only gym (nobody signs in) is labelled, not chased', () => {
+  const demo = gym({ staff: 0, status: 'trial', lastDeskActivity: null });
+  assert.deepEqual(flags(demo, NOW).map((f) => f.words), ['Demo or browser-only (nobody signs in)']);
+  assert.equal(needsLook([demo], NOW), 0);
+  // ... but a paused one still says so first.
+  assert.deepEqual(flags({ ...demo, status: 'suspended' }, NOW).map((f) => f.words), ['Paused', 'Demo or browser-only (nobody signs in)']);
 });
 
 test('every refusal has plain words; an unknown one has a safe sentence', () => {

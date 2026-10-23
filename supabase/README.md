@@ -99,3 +99,25 @@ admin app: Messages & offers → Workout offer → Start offer.
 Known and accepted: a date the server already counted stays counted if the desk later takes that
 check-in back (Visits → undo). The count never goes down by itself; the owner can take a reward back
 while the plan's last day is unchanged.
+
+## ForgeAI HQ, the system owner's panel (0026, 0027, 0028) — NOT APPLIED
+Owner said yes (#51, "make it all LIVE"). Plan: `docs/overhaul/research/R-owner-panel.md`. Worker:
+`deploy/hq` (forgeai-hq.aakashpahuja.in). All three are additive and re-runnable; apply in order, after
+0025.
+- **0026** `hq_audit` (append-only, 2 years) and the count reads `hq_gyms`, `hq_gym`, `hq_system`,
+  `hq_audit_list`, `hq_log`. Changes nothing the apps use.
+- **0027** `gyms.status` (every existing gym becomes `active`; new gyms start `trial`), "paused =
+  read-only" by triggers (crm_records, shop_products, shop_orders, gym_messages, gym_staff, the gyms
+  row), the delete-request list and the HQ actions. No gym function is edited.
+- **0028** support access (`hq_grants`, `hq_gym_records`, `owner_hq_grant` / `owner_hq_end` /
+  `owner_hq_access`), the 1-year access log (`gym_access_log`, written by triggers) and
+  `hq_nightly_cleanup`. **Changes one function:** `crm_pull` gets one line that logs a whole-copy pull.
+Every `hq_*` function is granted to `service_role` only, so only a Supabase secret key (HQ's own key,
+"hq") can call it; the apps' publishable key and every gym key are refused (tests/0026_hq_access.sql).
+
+To apply: SQL Editor → paste each migration → Run. Then paste each test and check its last line:
+`tests/0026_hq_access.sql` → `RESULT PASS (49 checks)`, `tests/0027_hq_actions.sql` →
+`RESULT PASS (54 checks)`, `tests/0028_hq_breakglass_and_logs.sql` → `RESULT PASS (41 checks)`,
+`tests/security.sql` → `RESULT PASS`. The tests always end in an error, so they change nothing.
+Cloudflare database: `cd deploy/panel && npx wrangler d1 migrations apply forgeai-web --remote` (adds
+`ai_limits`, 0004).

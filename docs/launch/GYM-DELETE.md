@@ -7,7 +7,24 @@ nothing. The privacy notice promises: deleted within 30 days; backups expire wit
 
 This is a **LIVE database change**: it runs only with the ForgeAI owner's yes, every time.
 
-## Steps
+## With ForgeAI HQ (once HQ is live, #51)
+HQ → **Delete requests**. A request sent from the admin app shows under "New from the admin app":
+press "Write it down" (the 30 days count from the day it was sent). A request by email or phone:
+"Write down a request that came another way". Then, on the request:
+1. Call the gym's own number (the number on the gym, not one in the message); the owner confirms.
+   Press "I called the gym's own number and the owner confirmed".
+2. Remind them to download first (Settings → Your data → Download all your gym's data). Press
+   "I reminded them to download their data first".
+3. With the owner's yes in chat, type the gym's 6-letter code and press "Delete the gym for ever".
+   HQ deletes the gym, checks every gym table holds nothing of it (else nothing is deleted), and
+   removes its logo and product photos from Storage. If it says pictures are left, remove those in
+   the Supabase dashboard → Storage.
+4. Tell the gym it is done. Every step is in HQ → Log; the request's own row stays 2 years.
+A member's erase request: write it down as "Erase one member", call, then open support access on
+the gym, erase the member's details by hand, and press "Done: the member is erased".
+The steps below stay as the fallback when HQ is not reachable.
+
+## Steps (fallback: SQL editor)
 1. **Check it is real.** Call the gym's own number (from the request AND from the gym's record, not
    a number written in the message). The gym's owner confirms by voice. A request from a Staff
    person is not enough: the gym owner must confirm.
