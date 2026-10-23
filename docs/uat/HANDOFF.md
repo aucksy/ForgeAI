@@ -3,6 +3,9 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~21:50 IST:** gate on 8771e54: journeys green; CI red (J38b two "Automatic reminders" headings -> level 1, fixed);
+  owner red UN = Maestro device server died (infra); default red R = emulator "No internet" on Find my gym (infra).
+  FULL gate restarted on aaeced0. When green: tag, PROGRESS, release, APK link. Brand: #44 rounds 4-5 (owner's 40 names).
 - **UPDATE ~20:00 IST:** gate on 1bca634: owner, journeys, CI green; default red in UK2 = U-M6 ghost keyboard again (blank
   band after the shortcut, no tab bar after Minimise; pre-existing, not 0.55). Fixed in KeyboardRoom (8771e54: dismiss on
   background + 0.5 s focus check). FULL gate restarted on 8771e54. When green: tag, PROGRESS, release, APK link.
