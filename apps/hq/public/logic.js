@@ -79,6 +79,19 @@ export function flags(g, now = Date.now()) {
   return out;
 }
 
+// Gyms made by our own automatic tests (the phone and browser journeys sign up as "QA ... Gym" with the
+// 98765000xx test mobiles), by the database tests, and the "Start demo" sample gym nobody signs in to.
+const TEST_NAME = /^(QA |T\d+ |Sec Gym |Owner RPC check$|ForgeAI Test Gym$)/;
+const DEMO_NAME = 'Iron Temple Fitness';
+
+/** 'test', 'demo' or '' (a real gym). Hidden from the list unless "Show test and demo gyms" is on. */
+export function testKind(g) {
+  const name = String(g.name || '');
+  if (TEST_NAME.test(name) || /^98765000\d\d$/.test(String(g.ownerPhone || ''))) return 'test';
+  if (name === DEMO_NAME && Number(g.staff) === 0) return 'demo';
+  return '';
+}
+
 /** Gyms that need a look (any bad or warn flag, or not checked yet). */
 export function needsLook(gyms, now = Date.now()) {
   return gyms.filter((g) => flags(g, now).some((f) => f.tone !== 'info' || (g.status === 'trial' && Number(g.staff) > 0))).length;

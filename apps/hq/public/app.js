@@ -19,6 +19,7 @@ import {
   recordCells,
   rupees,
   rupeesExact,
+  testKind,
   when,
 } from './logic.js';
 
@@ -132,6 +133,7 @@ function show(...kids) {
 }
 
 let gymsCache = [];
+let showTestGyms = false;
 
 // ------------------------------------------------------------------ All gyms
 async function gymsPage() {
@@ -139,7 +141,8 @@ async function gymsPage() {
   const data = await api('/api/gyms');
   gymsCache = data.gyms;
   const now = Date.now();
-  const gyms = data.gyms;
+  const hidden = data.gyms.filter((g) => testKind(g)).length;
+  const gyms = showTestGyms ? data.gyms : data.gyms.filter((g) => !testKind(g));
   const newWeek = gyms.filter((g) => now - Date.parse(g.createdAt) <= 7 * 864e5).length;
   const createOut = h('div');
   const rows = gyms.map((g) =>
@@ -162,8 +165,11 @@ async function gymsPage() {
     h('div', { class: 'stats' }, stat('Gyms', `${gyms.length}`), stat('New this week', `${newWeek}`), stat('Need a look', `${needsLook(gyms, now)}`)),
     data.webOk ? null : note('Feedback, leads and AI use could not be read right now, so those columns are empty.', 'warn'),
     h('p', { class: 'muted' }, 'Counts only. Member names and numbers are never shown here. Tap a gym for more.'),
+    hidden ? h('label', { class: 'muted' },
+      h('input', { type: 'checkbox', checked: showTestGyms, onchange: (e) => { showTestGyms = e.target.checked; gymsPage(); } }),
+      ` Show test and demo gyms (${hidden})`) : null,
     gyms.length === 0
-      ? h('p', {}, 'No gyms yet.')
+      ? h('p', {}, hidden ? 'No real gyms yet.' : 'No gyms yet.')
       : h('div', { class: 'table-wrap' }, h('table', {},
           h('thead', {}, h('tr', {}, ['Gym', 'Members', 'Check-ins 7 / 30 days', 'Shop orders 30 days', 'Money this month', 'Last desk activity', 'Staff', 'Wrong codes 24 h', 'New feedback', 'AI reads this month', 'Owner'].map((t) => h('th', {}, t)))),
           h('tbody', {}, rows))),

@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-91. "do it": hide the automatic test gyms from the owner panel list — 23 Oct 2026
+**Owner said:** "do it" (to my Next line: hide the test gyms from his owner panel list; nothing deleted).
+**What I did:** HQ gym list hides test gyms (names "QA ...", "T<n> ...", "Sec Gym ...", "Owner RPC check", "ForgeAI Test
+Gym", or a 98765000xx owner mobile) and the "Start demo" sample (Iron Temple Fitness with no staff); a "Show test and
+demo gyms (N)" box brings them back. Live: 3 real gyms shown, 220 hidden. Test in apps/hq/test/logic.test.mjs.
+
 ## R-90. "yes to #53"; stop telling him to create new keys — 23 Oct 2026
 **Owner said:** "yes to #53 and stop telling me to create new keys.. I am fine with this..".
 **What I do:** apply supabase/migrations/0029_auto_reminders.sql live (SQL editor, sha256 checked), run its test and

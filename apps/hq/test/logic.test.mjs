@@ -107,3 +107,16 @@ test('the page loads nothing from outside and writes no HTML from data', () => {
   assert.doesNotMatch(html, /style="|onclick=/);
   assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/, 'HQ keeps nothing in the browser');
 });
+
+test('test and demo gyms are told apart from real ones', async () => {
+  const { testKind } = await import('../public/logic.js');
+  assert.equal(testKind({ name: 'QA Check-in Gym', ownerPhone: '9876500001', staff: 1 }), 'test');
+  assert.equal(testKind({ name: 'My Gym', ownerPhone: '9876500042', staff: 1 }), 'test');
+  assert.equal(testKind({ name: 'T29 Gym', staff: 0 }), 'test');
+  assert.equal(testKind({ name: 'ForgeAI Test Gym', staff: 0 }), 'test');
+  assert.equal(testKind({ name: 'Iron Temple Fitness', staff: 0 }), 'demo');
+  // A real gym that happens to share the sample name, with people signing in, stays visible.
+  assert.equal(testKind({ name: 'Iron Temple Fitness', staff: 2, ownerPhone: '9829012345' }), '');
+  assert.equal(testKind({ name: "RAM'S FITNESS CLUB IMPACT", staff: 0 }), '');
+  assert.equal(testKind({ name: 'Quality Gym', ownerPhone: '9876500100' }), '');
+});
