@@ -16,7 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
-| 44 | A new English brand name | A: Liftchase |
+| 44 | A new English brand name (round 3) | A: Habitsmith |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -485,9 +485,21 @@ first if you can.
 - **Repnotch**: "notch up one more rep". But "Notch – Gym & Fitness Tracker" is on Google Play.
 - **Kilonest** and **Kilostreak**: risky: a US company called Kilo already sells gym software with a member app.
 Cost: about ₹3,100 a year for .com + .in + .app. Before paying for a logo, the official trademark search (needs a person, it has a captcha) or a lawyer. Buy the .com and .in the day you pick: 9 names I tried were taken in the last 30 days.
-**Decide:** Which English name?
-- A: Liftchase (recommended): the only 2-syllable name clean on domains, Google Play, the web and the rough trademark check
-- B: RepAhead: the safest plain English, easy to remember; weaker trademark protection
+**YOUR REPLY (23 Oct, chat):** "suggest me more brand names... not feeling it"
+**ROUND 3 (23 Oct): new styles, no more lift/rep/kilo pairs.** I checked about 315 more. Every short real English word is taken (Stride, Tempo, Ember, Vigour, Encore, Outdo, Summit...): .com always, .in and .app usually. What is left is made-up words built from real words, and short phrases:
+- **Habitsmith**: "we forge the gym habit" (keeps the "forge" story). .in, .app and gethabitsmith.com free; habitsmith.com is for sale at about ₹2.8 lakh.
+- **Still Not Out**: cricket's "still in the game". .com, .in and .app all free at the normal price. "Not Out" is crowded in the trademark register.
+- **Strongsmith**: "the smith who makes you strong". .in, .app and the "get" .com free; close to the big "Strong" gym-log app.
+- **Better Than Last**: "beat your last session". All three free; two small apps have a similar name.
+- **Push Through**: what members do on a hard day. .in, .app and the "get" .com free; a game called "Push Through 3D" exists.
+- **Gritwell**: "doing well through grit". .in and .app free; a US leather brand owns the .com.
+- **Back Tomorrow**: the retention goal in two words. .in and .app free; the .com costs about ₹94,000 and it reads like a "shop closed" sign.
+- **Fortwell**: "the strong place you come back to". .in and .app free; Sun Pharma uses "Fortwell" for a medicine.
+The official trademark search still needs a person (it has a captcha) before you pay for a logo.
+**Decide:** Which name?
+- A: Habitsmith (recommended): "habit" is what owners and members both pay for; no app, company or rough-check trademark uses it; launch on .in + gethabitsmith.com, buy the .com later
+- B: Still Not Out: the only strong name with all three domains free today; Indian feel in English; weaker trademark protection
+- C: Liftchase (from round 2): .com, .in and .app free; nothing uses it
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
