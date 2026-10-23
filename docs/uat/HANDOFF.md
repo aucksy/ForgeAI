@@ -3,6 +3,9 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~11:45 IST: HQ 0027 + 0028 APPLIED LIVE** (owner said yes, R-87). Live tests: 0027 PASS (64), 0028 PASS (49);
+  security.sql (main) fails ONLY on the 3 not-yet-live 0029 reminder functions (expected). Next: deploy the admin app
+  (ForgeAI access card), then the v0.55.0 gate. HQ Worker still waits for his Supabase "hq" key + Google OAuth client.
 - **UPDATE ~11:15 IST:** the ac49b00 gate's CI failed again: Node 22 refuses `node --test <folder>`; fixed in ci.yml
   (explicit *.test.mjs, commit after f14a779). ci.yml is NOT paperwork for phone_gate.py, so ac49b00 cannot be
   tagged: the device runs 39902230052 / 39902232208 / 39902234186 can be cancelled. PLAN: wait for the reminders

@@ -1,4 +1,4 @@
--- NOT APPLIED - main session applies after review (owner said yes, #51).
+-- APPLIED LIVE 23 Oct 2026 (owner said yes, R-87; live test PASS 64).
 --
 -- 0027: ForgeAI HQ, step 2 ("Act"): a status on each gym, "suspended = read-only", and the HQ
 -- actions (plan docs/overhaul/research/R-owner-panel.md section 5). Re-runnable. Apply after 0026.

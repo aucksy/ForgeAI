@@ -1,4 +1,4 @@
--- NOT APPLIED - main session applies after review (owner said yes, #51).
+-- APPLIED LIVE 23 Oct 2026 (owner said yes, R-87; live test PASS 49).
 --
 -- 0028: ForgeAI HQ, step 3 ("Govern"): support access ("break-glass"), the gym owner's "ForgeAI
 -- access" list, the 1-year access log of the admin app, and the nightly clean-up (plan

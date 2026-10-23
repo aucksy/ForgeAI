@@ -1,4 +1,4 @@
--- NOT APPLIED - needs the owner's yes (live database).
+-- APPLIED LIVE 23 Oct 2026 (owner said yes, #49; live test PASS 71).
 --
 -- 0025: the workout offer, in-app messages to a group, and messages at a chosen time
 -- (OWNER-INBOX #49 step 2, option A, 23 Oct 2026; R-82: the owner picks per offer whether the days

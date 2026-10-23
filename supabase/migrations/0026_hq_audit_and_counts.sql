@@ -1,4 +1,4 @@
--- NOT APPLIED - main session applies after review (owner said yes, #51).
+-- APPLIED LIVE 23 Oct 2026 (owner said yes, #51).
 --
 -- 0026: ForgeAI HQ, step 1 ("Look"): the system owner's panel reads counts, never people, and every
 -- look is written down (Project Tracker #51, option A; plan docs/overhaul/research/R-owner-panel.md
