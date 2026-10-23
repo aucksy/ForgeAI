@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-89. "suggest me more brand names... not feeling it" (Liftchase / RepAhead) — 23 Oct 2026
+**Owner said:** "suggest me more brand names... not feeling it". (Earlier: "Nah I want something in English".)
+**What I do:** a new research round in other styles than the lift/rep/kilo word-pairs of 23 Oct: short real words,
+coined words, and two-word phrases; each checked for free .com/.in/.app domains, app-store and company clashes and
+the Indian trademark register; then a fresh pick in tracker #44. Also: the HQ secrets are all in as Secrets now.
+
 ## R-88. Owner panel sign-in account = B (pahuja.aakash108@gmail.com) — 23 Oct 2026
 **Owner said:** "B, HQ Keys are in". He made a Web client in the GmailAPI Google project (gmailapi-491903, Testing,
 test user pahuja.aakash108@gmail.com) and gave its Client ID in chat (not a secret).
