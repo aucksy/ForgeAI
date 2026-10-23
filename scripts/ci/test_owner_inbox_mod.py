@@ -24,7 +24,7 @@ class Mod(unittest.TestCase):
     def test_same_reading_as_the_page(self):
         mod = "file://" + os.path.join(ROOT, "plugins", "owner-inbox", "hooks", "register.js")
         out = subprocess.run(["node", "--input-type=module", "-e", JS % (json.dumps(mod), json.dumps(page.INBOX))],
-                             capture_output=True, text=True, check=True).stdout
+                             capture_output=True, text=True, encoding="utf-8", check=True).stdout
         got = json.loads(out)
         want = [{"num": e["num"], "chat": e["chat"], "decides": e["decides"], "read": e["read"]}
                 for e in page.parse(open(page.INBOX, encoding="utf-8").read())["entries"]]

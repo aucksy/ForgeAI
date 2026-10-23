@@ -21,6 +21,8 @@ const PAGE_URL = 'https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT'
 const ENTRY_RE = /^## (\d+)\. (.+?) — (.+)$/gm
 
 export function parseInbox(text) {
+  // A Windows checkout has CRLF line ends; Python reads them as "\n", so do the same here.
+  text = String(text || '').replace(/\r\n/g, '\n')
   const heads = [...String(text || '').matchAll(ENTRY_RE)]
   return heads.map((h, i) => {
     const end = i + 1 < heads.length ? heads[i + 1].index : text.length
@@ -36,7 +38,11 @@ export function parseInbox(text) {
     const rm = body.match(/^\*\*READ \([^)\n]*\)\*\*[ \t]*(?:\r?\n|$)/m)
     if (rm) body = body.replace(rm[0], '')
     const decides = []
+    // R-83 (owner, 23 Oct 2026): a question added AFTER the entry's last "**DECIDED" line is open again;
+    // only the ones before it are answered (the same reading as scripts/owner_inbox_page.py).
+    const lastDecided = Math.max(-1, ...[...body.matchAll(/^\*\*DECIDED/gm)].map((m) => m.index))
     for (const dm of body.matchAll(/^\*\*Decide:\*\* (.+)\n((?:- [A-Z]: .+\n?)+)/gm)) {
+      if (dm.index < lastDecided) continue
       const opts = [...dm[2].matchAll(/^- ([A-Z]): (.+)$/gm)].map((om) => {
         const said = om[2].trim()
         const rec = said.endsWith('(recommended)')
@@ -45,8 +51,7 @@ export function parseInbox(text) {
       decides.push({ q: dm[1].trim(), opts })
     }
     body = body.replace(/^\*\*Decide:\*\* .+\n(?:- [A-Z]: .+\n?)+/gm, '').trim()
-    const decided = /^\*\*DECIDED/m.test(body)
-    return { num: Number(h[1]), title: h[2].trim(), date: h[3].trim(), chat, status, body, decides: decided ? [] : decides, read: Boolean(rm) }
+    return { num: Number(h[1]), title: h[2].trim(), date: h[3].trim(), chat, status, body, decides, read: Boolean(rm) }
   })
 }
 
