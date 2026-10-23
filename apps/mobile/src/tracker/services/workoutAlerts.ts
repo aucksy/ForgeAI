@@ -62,6 +62,11 @@ export function setupWorkoutAlerts(): Promise<void> {
             // Screen off / app in the background: this IS the alert.
             return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
           }
+          if (kind === 'gym') {
+            // R-86: a reminder from the gym (9:30 am) is shown even with the app open; it is the
+            // gym's news, not a sound the app already plays. Its channel decides the sound.
+            return { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
+          }
           // App open: the on-screen timer already rings — no banner, no sound.
           // The ongoing card still lists in the shade.
           return {

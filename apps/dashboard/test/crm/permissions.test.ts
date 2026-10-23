@@ -86,6 +86,8 @@ describe('canOpen / navFor', () => {
     expect(canOpen('staff', '/expenses')).toBe(false);
     // #49 step 2: the desk gives earned workout-offer rewards, but never sends messages.
     expect(canOpen('staff', '/messages/offer')).toBe(true);
+    // R-86: the desk may look at the automatic reminders (the server lets only the owner save).
+    expect(canOpen('staff', '/messages/reminders')).toBe(true);
     expect(canOpen('staff', '/messages')).toBe(false);
     expect(canOpen('staff', '/messages/birthday')).toBe(false);
     expect(canOpen('staff', 'expenses')).toBe(false);

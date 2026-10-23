@@ -45,6 +45,11 @@ export function WorkoutPresenceHost() {
         setTimeout(() => router.navigate('/workout'), 300);
         return;
       }
+      // R-86: a gym reminder opens the gym's tab (the offer card and My membership at its top).
+      if (route === '/shop') {
+        setTimeout(() => router.navigate('/shop'), 300);
+        return;
+      }
       if (route !== WORKOUT_ROUTE) return;
       void useActiveWorkout
         .getState()

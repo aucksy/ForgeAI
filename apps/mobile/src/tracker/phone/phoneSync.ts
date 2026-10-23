@@ -42,6 +42,10 @@ export async function phoneAfterWorkout(sessionId: string): Promise<void> {
 export async function phoneAfterLookChange(): Promise<void> {
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
+  // R-86: the gym's reminders keep their colour too; a join or Leave also starts or ends them.
+  await import('@/shop/gymReminders')
+    .then((m) => m.refreshGymReminders())
+    .catch((e: unknown) => console.warn('[ForgeErr] look change: the gym reminders', e));
 }
 
 export async function phoneAfterDelete(sessionId: string): Promise<void> {

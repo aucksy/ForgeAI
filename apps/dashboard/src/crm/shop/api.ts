@@ -20,6 +20,7 @@ import {
 } from './logic';
 
 import { sentFromRow, sentFromRows, type MessageDraft, type SentMessage } from './messages';
+import { reminderPayload, remindersFromAnswer, type ReminderSettings, type RemindersAnswer } from '../logic/autoReminders';
 import {
   giveFromAnswer,
   offerFromRow,
@@ -176,6 +177,18 @@ export async function undoReward(key: string, offerId: string, rosterId: string)
   const r = undoFromAnswer(await call<unknown>('owner_undo_reward', { p_key: key, p_offer: offerId, p_roster: rosterId }));
   if (!r) throw new Error('UNKNOWN');
   return r;
+}
+
+// ---------------------------------------------------------------- automatic reminders (0029, R-86)
+
+/** The owner's switches (owner and front desk read). Throws PGRST202 on a server without 0029. */
+export async function getAutoReminders(key: string): Promise<RemindersAnswer> {
+  return remindersFromAnswer(await call<unknown>('owner_auto_reminders', { p_key: key }));
+}
+
+/** Save every switch and its days. Owner only (the desk gets OWNER_ONLY). */
+export async function saveAutoReminders(key: string, settings: ReminderSettings): Promise<RemindersAnswer> {
+  return remindersFromAnswer(await call<unknown>('owner_save_auto_reminders', { p_key: key, p_settings: reminderPayload(settings) }));
 }
 
 /** The Sent list, newest first, with how many members have seen each. */
