@@ -8,8 +8,8 @@ Whoever stops last updates this file and pushes it. The other side starts here.
   tagged: the device runs 39902230052 / 39902232208 / 39902234186 can be cancelled. PLAN: wait for the reminders
   review (background agent) -> fix its findings -> ONE gate on main for v0.55.0 (offers + reminders + paused-gym
   words + CI fix): qa-device default + owner, qa-journeys, CI; then tag, release, send the APK link.
-- **Reminders review done (no MUST-FIX; 2 SHOULD + 8 NIT):** sent back to the build agent (worktree-agent-a1e6b48b495acc662); when its
-  report comes, merge, rerun checks, then the one v0.55.0 gate. 0029 not applied (needs his yes, like 0025).
+- **Reminders review fixes MERGED** (d66e9a3; agent checks: mobile 3229, dashboard 1069, playwright 59, SQL 19 suites). NEXT: rerun
+  checks on main, then the one v0.55.0 gate (qa-device default + owner, qa-journeys, CI) on main HEAD. 0029 not applied (needs his yes, like 0025).
 - **Waiting on the owner:** "yes, apply HQ parts 2 and 3" (0027, 0028; the permission check needs his direct OK),
   #44 pick (Liftchase / RepAhead).
 - **#49 LIVE:** 0025 applied from the SQL editor (pasted in parts; sha256 prefix checked in the browser); live tests
