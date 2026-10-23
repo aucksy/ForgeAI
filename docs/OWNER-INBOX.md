@@ -21,7 +21,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
 | 41 | Price for an owner with 2 or more branches | A: per branch, no member limit, lower price from the 2nd branch |
 | 43 | How members sign in: Google, or a phone code | A: Google, the desk confirms each member once |
-| 44 | New brand name (domains free today) | A: Repghar |
 | 45 | Count reps by listening: build a test version | A: yes, phone mic |
 | 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
 | 50 | Members' workouts on our server | A: yes later, by choice, after sign-in and the paid plan |
@@ -54,7 +53,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
 | 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | Blocked | Reps to beat: live in v0.54.0. Trainer view: waits for your pick in #46. |
 | 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
-| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Blocked | Step 1 live 22 Oct. Step 2 built and reviewed 23 Oct; the admin part is live (shows "not switched on"). Waits for your OK on the consent words (#49), then the live server change and the member app release.
+| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Doing | Step 1 live 22 Oct. Step 2: server and admin live 23 Oct; member app v0.55.0 in phone tests.
 | 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
 | 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
@@ -150,7 +149,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
 | Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
 | Messages & offers | Live | 22 Oct: admin app More → Messages & offers: ready messages in English and Hindi (closures, fee offers, festivals, renewals...), who gets it, WhatsApp one by one, Today nudges. Step 2 waits for your pick in #49. |
-| Workout offer in the app (step 2) | Waiting for you | Built and reviewed 23 Oct. Waits for your OK on the consent words and privacy lines (#49); then the server change, the privacy notice and the member app release. | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
+| Workout offer in the app (step 2) | Next release | Server live 23 Oct; the admin part is live; the member app card ships in v0.55.0 (phone tests running). | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
 | Automatic reminders to members | Planned | Your note (23 Oct): automatic app notifications, like "your plan ends in 3 days", for every useful case; you switch each one on or off, the common ones start on. Building now. | The member's phone sets each reminder itself from what it already knows (plan end date, birthday, visits, offer progress), at a good time of day and never more than one a day, so it works without internet and costs nothing. In the admin app, Messages & offers gets an "Automatic reminders" list with an on/off switch for each and the number of days where it matters. Members can turn gym reminders off in Settings. |
 | Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
 | "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
@@ -302,7 +301,7 @@ free plan, and for how long, if they start today?
 
 ## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** Done
 **READ (23 Oct, 08:49 am, via the page)**
 **You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
 and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
@@ -334,7 +333,8 @@ and a reward that nudges members to track workouts ("track 10 workouts, get 3 ex
 **New lines for the privacy notice** (English and Hindi, full text in docs/overhaul/offers-step2-words-for-approval.md): 1) if you join, the app sends your gym only the dates of the workouts that count, only while you are in the offer; 2) what we keep and for how long: dates deleted when you leave, or 90 days after the offer ends; 3) how to stop: Gym tab → Workout offer → Leave the offer; 4) "Last updated" with what changed.
 **YOUR REPLY (23 Oct, 08:49):** A. "I will setup firebase but I think we need to think about changing branding first.. where is the answer to branding related question. I think we need a search box also in this tracker"
 **DECIDED (23 Oct 2026):** A: the words as written. Next: the live server change (needs you to sign in to Supabase once in my browser), the privacy notice lines, the member app release. The branding answer is #44 (5 names to pick from); a search box is being built into this page.
-**Your task:** Sign in to Supabase once in the browser inside the Claude app (Ctrl+Shift+B opens it; the Supabase sign-in page is already open there: use "Continue with GitHub" or your email, as you usually do). Then tell me "signed in" and I make the live server change for the workout offer.
+**TASK DONE (23 Oct, you signed in)**
+**LIVE (23 Oct):** the server change is on the live database (its own test: RESULT PASS, 71 checks; the security test: RESULT PASS, 9 checks). The privacy notice has the 4 approved lines (English and Hindi, "Last updated: 23 Oct 2026"). The member app with the offer card is v0.55.0, in its phone tests now; owners can start an offer in Messages & offers → Workout offer.
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
 
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
@@ -444,7 +444,8 @@ and log the set by itself? Or is there a better way?
 
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** Working on it
+**READ (23 Oct, 09:46 am, via the page)**
 **You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
 normal price; forge.ai and forgeai.com are taken and too expensive.
 **My answer:** I checked 136 names on 22 Oct. Most short English names are taken; most free .com names are
@@ -459,9 +460,8 @@ Two cautions: two names on my list were registered by someone else in the last f
 .com and .in the day you pick; and the official trademark search (IP India) needs a person (it has a
 captcha), so do it, or ask a lawyer, before paying for a logo. Say both top names to 3-4 Jaipur gym owners
 first if you can.
-**Decide:** Which name?
-- A: Repghar (recommended): one word for the whole pitch, members see their reps and treat the gym as home
-- B: Kilojeet: the most memorable, a ready mascot; a little playful for some owners
+**YOUR REPLY (23 Oct, 09:46):** "Nah I want something in English"
+**WORKING ON IT (23 Oct):** a new search, English names only, each with .com and .in free at the normal price; a new question comes back here with my top picks.
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026

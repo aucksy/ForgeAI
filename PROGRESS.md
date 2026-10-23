@@ -2576,6 +2576,12 @@
   - Next: owner OKs the consent words (#49) -> apply 0025 + its test in the SQL editor -> privacy notice lines ->
     member release (version bump, phone gate).
 
+- 2026-10-23: **#49 step 2 switched on**: 0025_workout_offer.sql applied LIVE from the SQL editor (pasted in
+  parts, sha256 prefix 32a6d47197e9f34a checked in the browser before running); tests on LIVE: 0025 RESULT PASS
+  (71 checks), security.sql as of 22f6d29 RESULT PASS (9 checks; main's copy already lists the not-yet-live HQ
+  functions). Privacy notice EN + HI got the 4 approved lines (Last updated 23 Oct). Member app v0.55.0 (offer
+  card) bumped; gate dispatched.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.

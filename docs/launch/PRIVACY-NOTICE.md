@@ -22,6 +22,9 @@ A lawyer check is still advised before the second gym (open risks at the end).
 - **Your workouts** (exercises, sets, weights, body weight, progress photos) stay **on your phone**.
   We do not receive them and your gym does not see them. Nothing about your body or health leaves
   your phone unless you turn on a feature that clearly asks you first.
+  If you join your gym's workout offer, the app sends your gym only the dates of the workouts
+  that count, and only while you are in the offer. Your gym is responsible for its offers and
+  rewards; ForgeAI keeps the dates for the gym.
 
 ### What we keep on our server, why, and for how long
 
@@ -31,6 +34,7 @@ A lawyer check is still advised before the second gym (open risks at the end).
 | Check-ins (date and time), shop orders, messages with the desk | To run your membership and the gym's shop | As long as the gym keeps its records |
 | The gym's records listed above | So the gym can run memberships, receipts and check-ins | While the gym uses ForgeAI; deleted within 30 days after it leaves (backups expire within 7 more days) |
 | Gym staff: name and mobile | Staff sign-in | While they work there |
+| Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward | To give you the reward | Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends |
 | Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Technical logs (sign-ins, errors, the network address of requests) | To keep the service working and safe | Up to 7 days today (our provider's limit); from May 2027, 1 year, as the law then requires |
 
@@ -51,7 +55,9 @@ You can:
 - ask us to **correct** or **complete** it;
 - ask us to **erase** it, where the law allows (your gym may have to keep payment records);
 - **withdraw consent**: tap **Leave gym** in the app, or email [CONTACT EMAIL]. It is as easy as
-  giving it. It stops future use only; some features then stop working;
+  giving it. It stops future use only; some features then stop working. To stop sharing workout
+  dates, open the Gym tab, then Workout offer, then Leave the offer. Leaving the gym in the app does
+  the same;
 - **name another person** to use these rights for you if you die or cannot act;
 - **complain** to our Grievance Officer above. If we do not resolve it, you can complain to the
   **Data Protection Board of India**.
@@ -69,7 +75,8 @@ codes; every receipt records who took the money. If your data is exposed, we tel
 ### Changes
 We tell you in the app before a change that affects you. The date below is the latest version.
 
-Last updated: 20 Oct 2026.
+Last updated: 23 Oct 2026. What changed: the optional workout offer (dates of counted workouts, only
+if you join).
 
 ---
 

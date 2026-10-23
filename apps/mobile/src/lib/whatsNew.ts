@@ -27,6 +27,14 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.55.0',
+    date: '23 Oct',
+    lines: [
+      "Gym members: when your gym runs a workout offer, it shows on the Gym tab. Train the days it asks and get free days on your membership.",
+      'Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.',
+    ],
+  },
+  {
     version: '0.54.1',
     date: '22 Oct',
     lines: ['A swipe that starts on a weight or reps box now scrolls the workout page.'],
