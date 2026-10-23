@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-90. "yes to #53"; stop telling him to create new keys — 23 Oct 2026
+**Owner said:** "yes to #53 and stop telling me to create new keys.. I am fine with this..".
+**What I do:** apply supabase/migrations/0029_auto_reminders.sql live (SQL editor, sha256 checked), run its test and
+security.sql on live, mark #53 DECIDED. Key rotation: never raise it again (brain note no-nagging-to-rotate-keys).
+
 ## R-89. "suggest me more brand names... not feeling it" (Liftchase / RepAhead) — 23 Oct 2026
 **Owner said:** "suggest me more brand names... not feeling it". (Earlier: "Nah I want something in English".)
 **What I do:** a new research round in other styles than the lift/rep/kilo word-pairs of 23 Oct: short real words,
