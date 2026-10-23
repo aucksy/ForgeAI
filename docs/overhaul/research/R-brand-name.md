@@ -212,3 +212,146 @@ If you would rather have warmth over safety, **Kilonest** is the one people will
 - StreakReps on the App Store: https://chrome-stats.com/d/id6775801149
 - Web searches with no matching app or company: "Liftchase", "Kilonest", "Kilostreak", "Repnotch", "Kilochase"
 - https://branddb.wipo.int/ (tried; did not load for an automated browser)
+
+---
+
+## 23 Oct (round 3): new styles
+
+You said the word-pair names (Liftchase, RepAhead, Kilostreak) did not feel right. So this round drops every lift / rep / kilo / set / iron / gym mash-up and tries three other styles: short real English words (like Strava, Whoop, Notion), made-up words that sound real (like Hevy, Fitbod), and short phrases. About 315 new names were checked. None of them was on the earlier lists.
+
+### In one minute
+
+- **Top pick (A): Habitsmith.** Runner-up **(B): Still Not Out.**
+- **Short real English words are all gone.** Every one tried (Stride, Strive, Tempo, Ember, Anvil, Hearth, Grit, Vigour, Valour, Encore, Outdo, Upkeep, Momentum, Summit...) has its .com taken. Almost all have .in and .app taken too, and even "get" + name .com and name + "app" .com are mostly taken. So no plain real word made the shortlist.
+- What is still open: **made-up words built from real words** (Habitsmith, Strongsmith, Gritwell) and **short English phrases** (Still Not Out, Better Than Last, Push Through).
+- **Three names have .com, .in and .app all free at the normal price:** Still Not Out, Better Than Last, Beat Last Time. GoDaddy confirmed the normal price for stillnotout.com, .in, .app and betterthanlast.com.
+- For the others, the .com belongs to someone. You would launch on the **.in** plus a **"get" .com** (for example gethabitsmith.com), both at the normal price, and buy the plain .com later if you want it.
+- Domains go fast: habitsmith.com was bought by a domain reseller in March 2026, and stridly.com in August 2026. Buy the day you pick.
+
+### The shortlist (8)
+
+**1. Habitsmith**: "we forge the gym habit"
+- Idea: a smith shapes metal by striking it again and again. Habitsmith shapes the gym habit the same way. Members come back session after session, and owners keep members paying. It also keeps the "forge" story from the ForgeAI name.
+- Sound: HA-bit-smith, 3 syllables. Easy to spell over the phone: "habit smith, one word".
+- Domains: habitsmith.in, habitsmith.app, gethabitsmith.com and habitsmithapp.com are free. GoDaddy shows the normal price for the .in, the .app and gethabitsmith.com. **habitsmith.com is for sale by HugeDomains for US$2,995 (about ₹2.8 lakh)**, or US$125 a month for 24 months.
+- Clashes: Google Play says "No results for habitsmith". Nothing on the web. The unofficial copy of the Indian trademark register shows no exact match. The nearest marks are "Hairsmith" (a salon), "Aitsmith" and "Habits Matter" (Harappa, which also covers apps and training). Many habit-tracker apps exist, but none with this name.
+- Risk: low. The main cost is the .com price, if you want the .com.
+
+**2. Still Not Out**: "you're still in the game"
+- Idea: in cricket, a batter who is "not out" is still at the crease, still scoring. A member who keeps showing up is still not out. Every gym owner in India gets it instantly, and it is all English.
+- Sound: STILL-not-OUT, 3 syllables. Easy over the phone.
+- Domains: **stillnotout.com, stillnotout.in and stillnotout.app are all free, normal price** (GoDaddy confirmed all three).
+- Clashes: no app or company with this name on Play or the web. The nearest is a health app called "STILL_" made by a UK company named "Still Not Done Ltd". Different name. But "Not Out" on its own is crowded in the Indian trademark register (578 matches). One "Not Out" mark is registered for software (class 9), and "Notouts" was filed for business services (class 35). No exact "Still Not Out" mark was found.
+- Risk: medium. You could own "Still Not Out" as a whole, but never "Not Out" alone. It is a little playful, so check it feels premium enough to gym owners. It means nothing outside cricket countries.
+
+**3. Strongsmith**: "the smith who makes you strong"
+- Idea: the same forge story as Habitsmith, but about strength instead of habit. It sits well on the member app.
+- Sound: STRONG-smith, 2 syllables.
+- Domains: strongsmith.in and strongsmith.app are free at the normal price (GoDaddy confirmed). getstrongsmith.com and strongsmithapp.com are free. strongsmith.com is registered (since 2011) and shows no website.
+- Clashes: no Strongsmith app or company. But **"Strong" is a big gym-log app** (Strong Workout Tracker, millions of downloads), and members may confuse the two. Nearest Indian mark: "Stonesmith" (building materials).
+- Risk: medium.
+
+**4. Better Than Last**: "beat your last session"
+- Idea: the "kg to beat" screen as a promise. Every visit, be better than last time.
+- Sound: BET-ter-than-LAST, 4 syllables. Plain English.
+- Domains: **betterthanlast.com, .in and .app are all free.** GoDaddy shows the normal price for the .com.
+- Clashes: no app with this name. But two small workout apps have the same idea and a similar name: **"BeatLast: Gym Workout Tracker"** (iPhone) and **"Beat Your Last"** (launched on Product Hunt). No exact mark among the "Better Than..." trademarks seen.
+- Risk: medium. A common phrase is hard to protect as a trademark, and it is long for a logo.
+
+**5. Push Through**: "push through the hard set, push through the hard day"
+- Idea: what every member does on a tough day. It is a phrase people already say at the gym.
+- Sound: PUSH-THROO, 2 syllables. Easy.
+- Domains: pushthrough.in (normal price, GoDaddy confirmed), pushthrough.app, getpushthrough.com and pushthroughapp.com are free. pushthrough.com is registered (since 2004) and shows a blank page.
+- Clashes: a mobile game called **"Push Through 3D: Crowd Runner"** is on Play. Gym apps called "PUSH" exist (PUSH Workout & Gym Tracker, PUSH GYM Fitness). No Indian mark found.
+- Risk: medium to high. It is a common phrase, so it is weak as a trademark and easy to lose in search.
+
+**6. Gritwell**: "doing well, through grit"
+- Idea: grit gets you there, and the "-well" ending makes it sound like a place or an old English family name. Calm and premium.
+- Sound: GRIT-well, 2 syllables. Easy.
+- Domains: gritwell.in (normal price, GoDaddy confirmed), gritwell.app, getgritwell.com and gritwellapp.com are free. **gritwell.com belongs to "Gritwell Leather"**, a US leather-goods brand.
+- Clashes: no app. No exact Indian mark. Nearest Indian marks: "Gripwell" (many classes, including "Gripwel" for electronics) and "Critwel" (business services).
+- Risk: medium. The leather brand is a different trade, but it owns the .com.
+
+**7. Back Tomorrow**: "see you tomorrow"
+- Idea: the whole retention goal in two words. Members come back tomorrow.
+- Sound: BACK-to-MOR-row, 4 syllables.
+- Domains: backtomorrow.in, backtomorrow.app, getbacktomorrow.com and backtomorrowapp.com are free. **backtomorrow.com is for sale on GoDaddy for ₹94,245.**
+- Clashes: no app or company. The only Indian mark near it is "Back On Own Tomorrow" (drinks).
+- Risk: medium. It is also the sign a shop hangs when it is closed ("Back tomorrow"). Not a great feeling for a gym.
+
+**8. Fortwell**: "your fort, and you're doing well"
+- Idea: the gym as a strong place you come back to. Two syllables, sounds like an established brand.
+- Domains: fortwell.in, fortwell.app, getfortwell.com and fortwellapp.com are free. fortwell.com is registered (since 2004, no website).
+- Clashes: no app. But **Sun Pharma (a big Indian drug company) has "Fortwell" registered as a medicine brand**, and there is a "Fortwell Animal Health Care". In the UK, Fortwell Capital is a lender.
+- Risk: high. A different trade, but a big Indian company owns the exact word.
+
+### Top pick and runner-up
+
+**A: Habitsmith.** It says the whole pitch in one word. "Habit" is what both sides pay for: members build the gym habit, and owners keep members renewing. "Smith" keeps the forge idea from ForgeAI, so the story carries over. It sounds premium but friendly, it is easy to spell, and nothing else uses it: no app, no company, no Indian trademark found. The catch is the .com: it costs US$2,995 (about ₹2.8 lakh) from HugeDomains. You can start on habitsmith.in plus gethabitsmith.com at the normal price (about ₹2,500 a year for both) and buy the .com later.
+
+**B: Still Not Out.** The only strong name with **all three domains free at the normal price today**. It feels Indian while staying English, and owners will remember it after one phone call. The risks: "Not Out" is crowded in the trademark register (we could own only the full phrase), and it is a bit playful. Say it to 3 or 4 Jaipur gym owners next to Habitsmith before you choose.
+
+### Good-looking names that were dropped
+
+- **Beat Last Time**: all three domains free, but the iPhone app "BeatLast: Gym Workout Tracker" does exactly our "beat last time" feature. Too close.
+- **Show Up Strong**: .in and .app free, but the gym app "Liftin" uses "Show Up. Get Strong." as its tagline.
+- **Unbowed**: .in and .app free, but an app called "Unbowed" is already on Google Play, and the word is hard to say.
+- **Brawnly**: .in and .app free, but a strength-training app called "Brawn" exists, "Brawn" is a registered Indian mark for software, and on Play it sits next to "Brainly".
+- **Strongwell**: all endings except .com free, but Strongwell is a large US building-materials maker that owns the .com.
+- **Everstrong, Strivo, Thrivo**: an EverStrong gym-equipment and supplement brand exists, "Strivo" is already a personal-training app, and "Thriveo" is a fitness app.
+- **Outdo** (a perfect verb): every ending taken, and a game called "Outdo.io 3D" is on Play.
+- **Beat Yesterday**: .in and .app free, but "Beat Yesterday" is Garmin's slogan, and the .com is held through MarkMonitor, a firm big brands use to guard their names.
+- **Vigoro**: .in and .app free, but Vigoro is a Home Depot lawn-care brand that owns the .com.
+- **Tenaxa, Toughday, Sturdia, Roburo**: .in and .app free, but the .com is listed for sale (premium), and the words are weaker.
+
+### Prices
+
+Same GoDaddy India list prices as the 23 Oct round, before GST: .com ₹1 for year 1 on a 3-year term, then ₹1,599 a year. .in ₹1 for year 1 on a 3-year term, then ₹899. .app ₹1,508 for year 1, then ₹2,641. Every name GoDaddy was asked about this round showed these normal prices, except the two premium .coms above (habitsmith.com at HugeDomains, backtomorrow.com on GoDaddy). Exchange rate for the US$ price: ₹94.59 per US$ (22 Oct).
+
+### Trademark: what still needs a person
+
+- **Official IP India search: not done** (it needs a captcha). Search the finalists in classes 9 (app/software), 35 (business management), 41 (fitness) and 42 (online software), or pay a trademark lawyer. For Still Not Out, ask specifically about the "Not Out" mark in class 9.
+- What was done: a rough pre-check on QuickCompany (an unofficial copy of the Indian register), Google Play India searches, and web searches (which also cover App Store listings).
+- Before paying, check that the Instagram and YouTube handles are free.
+
+### Every name checked (round 3, 23 Oct 2026)
+
+"Free" means the registry has no record of the name. `*` = the .com is registered and parked or listed for sale, so buying it costs a premium. **(g)** = get + name .com is free. **(a)** = name + app .com is free. Status can change any day.
+
+**Full check (179 names): .com, .in, .app, plus the "get" and "app" .com versions**
+
+| .com | .in | .app | Names |
+|---|---|---|---|
+| free | free | free | beatlasttime, betterthanlast, stillnotout (3) |
+| taken | free | free | againtoday (ga), backtomorrow (ga), beatlastweek (ga), beatyesterday (ga), brawnly* (ga), doughty (ga), fortwell (ga), gritwell (ga), habitsmith* (ga), hardihood (ga), herco (a), keepace (ga), keepat (ga), keepshowingup (ga), pushthrough (ga), pushthru* (ga), robora (a), roburo* (ga), showupstrong (ga), strongerdaily (ga), strongertoday (ga), strongsmith (ga), strongup* (ga), strongwell (ga), sturdia* (ga), sturdo (a), sweatday* (ga), tenaxa* (ga), thriveway (g), toughday* (ga), unbowed* (ga), upstrong* (a), vigoro (ga) (33) |
+| taken | free | taken | againly (g), daystrong* (ga), durava (ga), ember, endurio (ga), fineform* (a), fitsmith* (a), formsmith* (a), goagain (g), keepatit* (ga), keeppace (a), onwardly (a), persista (g), pushon* (ga), pushwell (ga), seeyouthere (g), steadi, steadwell, stickwith* (ga), stickwithit (ga), stridly (a), strivia* (a), tenacia (ga), tensio (g), vantage (25) |
+| taken | taken | free | fervour (ga), homecoming (g), outdoyou (ga), purplepatch (a), sinewy* (ga), stalvo* (ga), valtro* (ga) (7) |
+| taken | taken | taken | alloy, anvil, ardent, ardo, ardour (ga), ascent, beback (g), bettr, bodysmith (ga), bolster, brawn, brio, clockin, comeback*, dayone, elevo, elevra, encore, endeavour, endura, endure, everstrong, exceed, formup, forte, fortitude, fortiva (a), fortivo (a), forza, grit, gumption, gusto, gutsy, hardy, hattrick, hearth, heft, ingot, kaizo (a), keel, keepgoing, keepup, kindle, kinora, kinvo, mettlo (ga), mighty, moxie, moxly* (ga), nexttime, nextup, notout (ga), onebetter (g), onemore*, oneup, onward, oomph, outdo, outgrow*, outlast, peakform, persist, pluck, plucky, plusone, prevail, raisethebar (g), rally*, resolve, secondwind, seeyoutomorrow (ga), sinew (a), smithy (a), stalwart, staystrong (a), steadfast, stoke, stride, strive, strivo, sturdy, surpass, temper, tempo, tenacity, tensile, tenzo, thrive, thrivo* (ga), topform (ga), turnup, upkeep, upnext, upward, upwell, upwise, valenta (ga), valor, valora, valour (a), verve, vigor, vigora*, vigour (g), vim, vimly (g), vitora, vyta, zeal, zestro (ga), zorvi* (a) (111) |
+
+**Quick check, .in and .app only (90 names).** These came back taken on both .in and .app, so they were not checked further: anchor, ballast, bedrock, bastion, rampart, granite, flint, quarry, keystone, lodestar, waypoint, milestone, foothold, toehold, handhold, steppingstone, summit, ridgeline, uphill, headway, momentum, traction, ratchet, fulcrum, torque, valiant, resolute, stout, hale, hearty, robust, spry, limber, brisk, chipper, routine, hometurf, homeground, homebase, clubhouse, kinfolk, cohort, troupe, posse, increment, snowball, flywheel, stairway, escalate, compound, risedaily, onemoreday, stillhere, herewego, carryon, staythecourse, beatit, bestofme, betterme, ferro, bravio, animo, zestly, goodform, trueform, inform, newform, strongest, stronghold, bravely, boldly, sweatbox, sweatclub (73). Only .in free (.app taken): upslope, steely, undaunted, dogged, keeprising, shownup, keepclimbing, personalbest, outdome, fortia, tenacio, formday, bestform, steadily, pulseup, pacekeeper (16). Both free: todaystronger (1).
+
+**Quick check, .com only (46 names), all taken:** fortis, vires, virtus, valens, forja, fornax, kiln, embera, emberly, pushly, strivly, thrively, vigorly, keepwell, mightwell, strivewell, doagain, nextbest, tuffly, sturdi, mightly, ardora, vantro, tavio, kordo, movana, stamio, vytal, vitalo, endra, mettl, climbr, trivo, uplo, upko, betterly, goonebetter, edgeup, upmost, daybyday, betterdaily, habitstrong, outdoit, trystrong, staunch, vimtra.
+
+### How it was checked (round 3)
+
+- Domains: each registry's own lookup, the same method as before. Verisign for .com, NIXI for .in, Google Registry for .app. For each taken .com, the "get" + name and name + "app" .com versions were checked too. Verisign sometimes dropped the connection, so each lookup was retried. The quick checks screened out names before the full check.
+- Parked or for sale: read from the .com's nameservers (Afternic, Atom, BrandBucket, Sedo, NameBright/HugeDomains, Squadhelp and so on), and by opening the .com itself for the finalists.
+- Normal vs premium price: GoDaddy India's own search, in a normal browser tab.
+- Clashes: Google Play India search for each finalist, web search, and QuickCompany for Indian trademarks.
+
+### Sources (round 3)
+
+- https://rdap.verisign.com/com/v1/domain/{name}.com , https://rdap.nixiregistry.in/rdap/domain/{name}.in , https://pubapi.registry.google/rdap/domain/{name}.app (each name, plus get{name}.com and {name}app.com)
+- https://www.godaddy.com/en-in/domainsearch/find?domainToCheck={domain} (stillnotout.com, stillnotout.in, stillnotout.app, habitsmith.in, habitsmith.app, gethabitsmith.com, strongsmith.in, strongsmith.app, betterthanlast.com, backtomorrow.com, pushthrough.in, gritwell.in)
+- https://www.hugedomains.com/domain_profile.cfm?d=habitsmith.com (US$2,995)
+- https://gritwell.com (Gritwell Leather), https://www.strongwell.com/about/history/ (Strongwell)
+- https://play.google.com/store/search?q={name}&c=apps&hl=en_IN&gl=IN (habitsmith, strongsmith, push through, show up strong, beat last time, better than last, back tomorrow, gritwell, fortwell, unbowed, outdo, vimly, daystrong, steadwell)
+- https://www.quickcompany.in/trademarks?q={name} (habitsmith, strongsmith, still not out, not out, back tomorrow, push through, fortwell, gritwell, better than last, brawnly)
+- BeatLast app: https://chrome-stats.com/d/id6782681867 ; Beat Your Last: https://www.producthunt.com/products/beat-your-last/makers
+- STILL_ app (Still Not Done Ltd): https://apps.apple.com/us/app/-/id6744973878
+- Strong Workout Tracker: https://apps.apple.com/app/id464254577
+- Strivo app: https://mwm.ai/apps/strivo/6740406852 ; Thriveo app: https://apps.apple.com/app/id6756632618
+- Brawn strength app: https://www.htworld.co.uk/?p=5539
+- EverStrong equipment: https://www.walmart.com/ip/595676706
+- Fortwell Capital: https://www.estatesgazette.co.uk/?p=842711
+- Web searches with no matching app or company: "Habitsmith", "Strongsmith", "Still Not Out", "Back Tomorrow", "Better Than Last", "Gritwell", "Daystrong", "Steadwell", "Onwardly", "Pushwell", "Kinora / Elevra / Tenacia", "Mettlo / Kinvo / Valtro", "Tenaxa"
