@@ -174,7 +174,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       // `/members/import`: bring members in from an Excel or CSV file (owner and Staff).
       if (id === 'import') return <ImportMembersScreen />;
       // `/members/new`: the quick button "New member" opens the add form at once.
-      if (id === 'new') return <MembersScreen startAdding />;
+      // Its own key (R-85): coming from "Joined in the app" (the same screen) must open the form too.
+      if (id === 'new') return <MembersScreen key="new" startAdding />;
       // `/members/f/<tile>`: the roster filtered like the home tile that was tapped.
       if (id === 'f') return <MembersScreen key={segments[2]} filter={isTileFilter(segments[2]) ? segments[2] : undefined} />;
       return id ? <MemberDetailScreen memberId={id} /> : <MembersScreen />;

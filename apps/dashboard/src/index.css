@@ -124,3 +124,18 @@ table {
 .page-actions > * {
   flex: 1 1 auto;
 }
+
+/* R-85 (owner, 23 Oct 2026): a whole card or row that opens something (app members, Get started). */
+.tap-card:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.tap-card:hover > div,
+.tap-row:hover {
+  border-color: var(--c-borderStrong);
+}
+.tap-row:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}

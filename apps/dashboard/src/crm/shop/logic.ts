@@ -205,6 +205,22 @@ export function appMemberFromRow(r: Row): AppMember {
   };
 }
 
+/**
+ * R-85 (owner, 23 Oct 2026): the gym's own member record for someone who joined in the app, so a tap
+ * opens their page. Matched by the last 10 digits of the mobile (the app keeps "+91…" or the bare
+ * number); a left member's old record still counts. Null = not in the member list yet. PURE.
+ */
+export function rosterIdFor(
+  phone: string | null,
+  members: readonly { id: string; phone: string; archived?: boolean }[],
+): string | null {
+  const key = (p: string | null) => (p ?? '').replace(/\D/g, '').slice(-10);
+  const want = key(phone);
+  if (want.length < 10) return null;
+  const hits = members.filter((m) => key(m.phone) === want);
+  return (hits.find((m) => !m.archived) ?? hits[0])?.id ?? null;
+}
+
 // ---------------------------------------------------------------- orders
 
 export const STATUS_LABEL: Record<OrderStatus, string> = {

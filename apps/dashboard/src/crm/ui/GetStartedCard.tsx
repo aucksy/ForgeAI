@@ -54,6 +54,14 @@ export function GetStartedCard() {
       <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid' }}>
         {steps.map((s, i) => (
           <li key={s.key} style={{ display: 'flex', alignItems: 'center', gap: space.md, padding: `${space.sm}px 0`, borderTop: i ? `1px solid ${color.border}` : 'none' }}>
+            {/* R-85 (owner, 23 Oct 2026): the whole step opens the screen where it is done, not only its title. */}
+            <button
+              type="button"
+              className="tap-row"
+              onClick={() => navigate(s.path)}
+              aria-label={s.done ? `${s.title} (done). Open` : `${s.title}. Open`}
+              style={{ flex: 1, minWidth: 0, minHeight: TOUCH, display: 'flex', alignItems: 'center', gap: space.md, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', color: 'inherit', font: 'inherit' }}
+            >
             <span
               aria-hidden
               style={{
@@ -74,16 +82,13 @@ export function GetStartedCard() {
               {s.done ? '✓' : i + 1}
             </span>
             <span style={{ flex: 1, minWidth: 0 }}>
-              <button
-                type="button"
-                onClick={() => navigate(s.path)}
-                aria-label={s.done ? `${s.title} (done)` : s.title}
-                style={{ ...link, minHeight: 0, color: s.done ? color.inkSecondary : color.ink, textAlign: 'left', textDecoration: s.done ? 'line-through' : 'none' }}
-              >
+              <span style={{ display: 'block', fontFamily: font.body, fontSize: 14, fontWeight: 700, color: s.done ? color.inkSecondary : color.ink, textDecoration: s.done ? 'line-through' : 'none' }}>
                 {s.title}
-              </button>
+              </span>
               <span style={{ display: 'block', fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>{s.hint}</span>
             </span>
+            <span aria-hidden style={{ fontFamily: font.body, fontSize: 20, color: color.inkMuted, flexShrink: 0 }}>›</span>
+            </button>
             {s.manual && !s.done && (
               <button type="button" onClick={() => update({ ...state, ticked: [...state.ticked, s.key] })} style={{ ...link, color: color.accentBright }} aria-label={`Mark "${s.title}" as done`}>
                 Done

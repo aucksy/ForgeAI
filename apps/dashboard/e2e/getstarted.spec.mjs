@@ -12,8 +12,8 @@ test('J32 Get started: ticks itself, takes a hand tick, hides for good', async (
   await expect(page.getByText('1 of 5 done')).toBeVisible();
   await page.getByRole('button', { name: 'Mark "Add your desk staff" as done' }).tap();
   await expect(page.getByText('2 of 5 done')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add your plans (done)' })).toBeVisible();
-  await page.getByRole('button', { name: 'Bring in your members' }).tap();
+  await expect(page.getByRole('button', { name: 'Add your plans (done). Open' })).toBeVisible();
+  await page.getByRole('button', { name: 'Bring in your members. Open' }).tap();
   await expect(page).toHaveURL(/#\/members\/import$/);
   await open(page, 'Today');
   await page.getByRole('button', { name: 'Hide this list' }).tap();

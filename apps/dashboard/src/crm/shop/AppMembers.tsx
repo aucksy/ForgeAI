@@ -1,22 +1,26 @@
 /**
  * Members who joined this gym from the ForgeAI app (with the join code), read live
  * from the cloud. A separate list from the CRM roster on purpose: the roster is
- * the gym's own record of everyone who pays, this is who has the app — and the two
- * are not linked yet.
+ * the gym's own record of everyone who pays, this is who has the app. A tap opens the
+ * member's page, matched by mobile (R-85), or the add form when they are not in the list.
  */
 
 import { useCallback, useState } from 'react';
 
 import { formatINR } from '../logic/money';
 import { initials } from '../logic/members';
+import { useCrm } from '../store';
 import { Avatar, Card, EmptyState, ErrorBanner, Row, color, font, space } from '../ui/kit';
+import { navigate } from '../ui/router';
+import { radius } from '../../theme';
 import * as api from './api';
 import { JoinCodeCard } from './JoinCode';
-import { timeAgo, type AppMember } from './logic';
+import { rosterIdFor, timeAgo, type AppMember } from './logic';
 import { usePoll, useShop } from './ShopProvider';
 
 export function AppMembersSection() {
   const { cloud, handleError, now } = useShop();
+  const { snapshot } = useCrm();
   const [members, setMembers] = useState<AppMember[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const key = cloud?.ownerKey ?? null;
@@ -57,8 +61,19 @@ export function AppMembersSection() {
         </Card>
       ) : (
         <div style={{ display: 'grid', gap: space.sm }}>
-          {(members ?? []).map((m) => (
-            <Card key={m.memberId} pad={space.lg}>
+          {(members ?? []).map((m) => {
+            // R-85: a tap opens the member's own page, or the add form when they are not in the list yet.
+            const rosterId = rosterIdFor(m.phone, snapshot.members);
+            return (
+            <button
+              key={m.memberId}
+              type="button"
+              onClick={() => navigate(rosterId ? `/members/${rosterId}` : '/members/new')}
+              aria-label={rosterId ? `Open ${m.name}` : `${m.name} is not in your member list. Add them`}
+              style={{ all: 'unset', display: 'block', cursor: 'pointer', borderRadius: radius.lg }}
+              className="tap-card"
+            >
+            <Card pad={space.lg}>
               <Row gap={space.md} wrap={false} align="center">
                 <Avatar text={initials(m.name)} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -84,9 +99,17 @@ export function AppMembersSection() {
                       : 'Nothing paid at the desk yet'}
                   </div>
                 </div>
+                <span aria-hidden style={{ fontFamily: font.body, fontSize: 20, color: color.inkMuted, flexShrink: 0 }}>›</span>
               </Row>
+              {!rosterId && (
+                <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: space.sm }}>
+                  Not in your member list yet. Tap to add them.
+                </div>
+              )}
             </Card>
-          ))}
+            </button>
+            );
+          })}
         </div>
       )}
     </>

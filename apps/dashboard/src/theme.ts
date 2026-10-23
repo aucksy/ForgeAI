@@ -44,8 +44,10 @@ export const lightColor: Record<ColorName, string> = {
   accentDeep: '#C2410C',
   accentSoft: 'rgba(217, 87, 26, 0.12)',
 
-  border: 'rgba(20, 22, 28, 0.10)',
-  borderStrong: 'rgba(20, 22, 28, 0.20)',
+  // R-85 (owner, 23 Oct 2026): 0.10 / 0.20 were too faint on white cards over the light-grey page;
+  // cards and pills now part clearly from the page and from each other.
+  border: 'rgba(20, 22, 28, 0.20)',
+  borderStrong: 'rgba(20, 22, 28, 0.34)',
   grid: '#E4E7ED',
   axis: '#C8CDD6',
 

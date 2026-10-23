@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-85. Admin app: "Joined in the app" members not clickable; Get started steps not clickable; light-mode borders too thin — 23 Oct 2026
+**Owner said (screenshot of Today):** "Unable to click members from 'Joined in the App' Section. Get started list of tasks
+are not clickable to start from there only. In the Light mode, the borders for cards and pills are way too thin... the
+separation is not that clear".
+**What I do:** each joined member opens their page; each Get started step opens the screen where it is done; light-mode
+card and pill borders made clearly visible (dark mode unchanged), checked on screenshots.
+
 ## R-84. #51 answered: build the owner panel and "make it all LIVE"; improve the tracker seriously — 23 Oct 2026
 **Owner said (page, #51):** A + "you make the best decisions and make it all LIVE". In chat: "and also give some
 type of option to surface / jump directly #XX" and "hey you improve this project tracker in all possible ways..
