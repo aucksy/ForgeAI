@@ -16,7 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
-| 44 | A new English brand name (round 3) | A: Habitsmith |
+| 44 | Brand: one or two, then the name (round 4: names that feel like lifting) | A: one brand; Liftforged |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -505,10 +505,19 @@ The official trademark search still needs a person (it has a captcha) before you
 **Decide:** One brand or two?
 - A: One brand, with "for Gyms" on the business side (recommended)
 - B: Two separate brands, one for members and one for gyms
+**YOUR REPLY (23 Oct, chat):** "you're not ... giving me a good name ... ForgeAI is something I loved immediately ... none of this ... connects with weightlifting and workout. Give me at least 10 to 20 options."
+**ROUND 4 (23 Oct): names that feel like ForgeAI and like lifting.** 379 more names checked; every "free" domain below confirmed at the normal price.
+- **Can ForgeAI stay? No, not as the public name.** forgeai.com is a live US AI company; .in, .app and getforgeai.com are taken; Google Play India already has "Forge AI Workout Tracker" and "ForgeFit: AI Fitness Coach" (10,000+ downloads each) and 10+ other Forge gym apps; "Forge Fitness" is a registered trademark for gyms. It stays our internal project name.
+- **Forge family:** **Liftforged** (made strong by lifting, like hand-forged steel; .com/.in/.app free; low risk) · **ForgeKG** (ForgeAI with KG for AI; all free; medium) · **Forgeyard** (.in/.app/getforgeyard.com; .com for sale ₹3.5 lakh) · **Barforge** (the barbell is the forge) · **Forgehall** · **Strongforge** · **Forgeiron** (all .in/.app + a "get" .com). Any "Forge" name sits among the Forge apps in store search.
+- **Smithing words:** **AnvilKG** (all free) · **Foundrylift** (all free) · **Ironsmithy** (all free) · **Temperiron** (all free; "temper" can read as anger) · **Anvilstrong** (.in/.app + "get" .com).
+- **Lifting words:** **IronKG** (iron and kilos, the words every lifter uses; all free; many "Iron" apps) · **Chalkiron** (chalk on the hands, iron in them; all free; low risk) · **Heavyiron** (.in/.app + "get" .com; low-medium) · **Ironrack** · **Ironhall** (close to "Ironhill" beer).
+- **Hero names:** none survived (Atlas: "Iron Atlas" gym software; Titan: Tata; Hercules: Indian bicycles; Milo: a new strength app).
+Buy the .com and .in the day you pick: 12 names checked were registered by someone in the last 3 months.
 **Decide:** Which name? (if A)
-- A: Habitsmith (recommended): "habit" is what owners and members both pay for; no app, company or rough-check trademark uses it; launch on .in + gethabitsmith.com, buy the .com later
-- B: Still Not Out: the only strong name with all three domains free today; Indian feel in English; weaker trademark protection
-- C: Liftchase (from round 2): .com, .in and .app free; nothing uses it
+- A: Liftforged (recommended): keeps the forge feel and says lifting in the same word; .com, .in and .app free; nothing uses it
+- B: IronKG: the two words every lifter says; short; "Iron" is crowded in the stores
+- C: ForgeKG: the smallest step from ForgeAI; all domains free; shares the Forge crowding
+- D: Chalkiron: lifting through and through; all free; low risk
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
