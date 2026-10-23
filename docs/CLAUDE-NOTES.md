@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-92. One brand for the member app and the gym software, or two? — 23 Oct 2026
+**Owner said:** "we probably need either a name that can work for both a consumer facing app as well as a B2B member
+management, a gym opt-in system, or we basically separate two different brandings ... I don't know which one is going
+to be better."
+**What I did:** recommended one brand with plain sub-names (members' app + "for Gyms"), reasons in chat; put the
+choice into tracker #44 as the first decision; the name then gets a "works for both" test.
+
 ## R-91. "do it": hide the automatic test gyms from the owner panel list — 23 Oct 2026
 **Owner said:** "do it" (to my Next line: hide the test gyms from his owner panel list; nothing deleted).
 **What I did:** HQ gym list hides test gyms (names "QA ...", "T<n> ...", "Sec Gym ...", "Owner RPC check", "ForgeAI Test
