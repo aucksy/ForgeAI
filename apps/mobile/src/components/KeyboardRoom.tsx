@@ -20,7 +20,12 @@ import { keyboardCacheTrusted, keyboardIfTyping, keyboardRoom, type KeyboardFram
 let cacheTrusted = true;
 if (Platform.OS === 'android') {
   AppState.addEventListener('change', (s) => {
-    if (s === 'background') cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'background');
+    if (s !== 'background') return;
+    cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'background');
+    // U-M6c (23 Oct, run 39950792788 part UK2): a box still focused when the app went away came back
+    // focused, so Android's report of a keyboard that was not on screen was believed again (blank band,
+    // then no tab bar after Minimise). Leaving the app lets go of the box: nothing is typed while away.
+    Keyboard.dismiss();
   });
   Keyboard.addListener('keyboardDidShow', () => {
     if (typing()) cacheTrusted = keyboardCacheTrusted(cacheTrusted, 'show');
@@ -56,6 +61,15 @@ export function useKeyboardFrame(): KeyboardFrame {
       away.remove();
     };
   }, []);
+  // U-M6c: Android does not always say the keyboard closed (a screen with the focused box went away,
+  // e.g. Minimise). While room is kept, check twice a second that a box of ours still has the focus.
+  useEffect(() => {
+    if (Platform.OS !== 'android' || kb == null) return;
+    const check = setInterval(() => {
+      if (!typing()) setKb(null);
+    }, 500);
+    return () => clearInterval(check);
+  }, [kb]);
   return kb;
 }
 
