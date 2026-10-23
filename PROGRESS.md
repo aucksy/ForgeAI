@@ -2561,6 +2561,9 @@
   - Review (subagent): 1 MUST-FIX (ID column dropped by its name) + 2 SHOULD-FIX (masking gaps, Gemini thinking)
     + 4 NITs, all fixed (fc063d7). Checks: tsc -b, vitest 1032, playwright 50, panel node --test 37.
   - Deployed 23 Oct (version a2f535d8). Keys not set yet: the endpoint answers "not switched on" (503).
+  - Keys set by the owner 23 Oct (GEMINI_API_KEY, ANTHROPIC_API_KEY secrets). Proved live: qa-journeys 39895450334
+    step XJ7 (e2e-live/xj-aiimport.live.mjs; vite preview proxies /api to the panel Worker) matched a test
+    register with Hindi column names in 6 s.
 
 - 2026-10-23: **#49 offers step 2 built** (owner R-82: A + automatic or manual giving). Not switched on.
   - Server: supabase/migrations/0025_workout_offer.sql (NOT APPLIED; offers, members, counted dates, consent/

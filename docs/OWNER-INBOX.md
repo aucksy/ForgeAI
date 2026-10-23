@@ -357,7 +357,7 @@ follow the app's targets?
 **Chat:** ForgeAI Local Chat
 **Status:** Done
 **TASK DONE (23 Oct, 08:54 am, via the page)**
-**KEYS IN (23 Oct):** both keys are saved as secrets; the AI address now answers "sign in first" instead of "not switched on". I am running one real import through the test gym to prove it.
+**KEYS IN (23 Oct):** both keys are saved as secrets; the AI address now answers "sign in first" instead of "not switched on". Proved 23 Oct: a real test-gym register with odd column names (Hindi words) was matched by the live AI in 6 seconds (live run 39895450334, step XJ7).
 **READ (23 Oct, 08:55 am, via the page)**
 **You asked:** gym owners must bring their old data in without your help. Use AI in the admin app's
 import, with a database that can take new kinds of fields for each gym, and think through the problems.
