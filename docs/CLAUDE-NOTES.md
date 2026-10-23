@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-93. Names must feel like lifting; he loved "ForgeAI" at once; give 10-20 options — 23 Oct 2026
+**Owner said:** "I think you're not researching and giving me a good name, really. I mean, ForgeAI is something I loved
+immediately ... none of this ... really connects with weightlifting and workout. Just research more and give me at least
+10 to 20 options to choose from."
+**What I do:** round 4 with his taste as the brief: the ForgeAI feel (strong, metal, made by effort) and a clear lifting
+link; first check whether ForgeAI itself can stay (forgeai.in / .app / a "get" .com, trademark clashes); then 10-20
+options with domains, clashes and how each sounds to an owner and a member.
+
 ## R-92. One brand for the member app and the gym software, or two? — 23 Oct 2026
 **Owner said:** "we probably need either a name that can work for both a consumer facing app as well as a B2B member
 management, a gym opt-in system, or we basically separate two different brandings ... I don't know which one is going
