@@ -3,6 +3,9 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~20:00 IST:** gate on 1bca634: owner, journeys, CI green; default red in UK2 = U-M6 ghost keyboard again (blank
+  band after the shortcut, no tab bar after Minimise; pre-existing, not 0.55). Fixed in KeyboardRoom (8771e54: dismiss on
+  background + 0.5 s focus check). FULL gate restarted on 8771e54. When green: tag, PROGRESS, release, APK link.
 - **UPDATE ~17:45 IST:** owner rerun on 8813012 red in part L only (same race: "Update routine?" sheet hid "Workout complete").
   Fixed v0290-l.yaml. FULL gate restarted on 1bca634 (default, owner, journeys, CI). When green: tag 1bca634 (or a
   paperwork commit after it), PROGRESS entry, release, APK link.
