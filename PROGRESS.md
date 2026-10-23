@@ -2581,6 +2581,13 @@
   (71 checks), security.sql as of 22f6d29 RESULT PASS (9 checks; main's copy already lists the not-yet-live HQ
   functions). Privacy notice EN + HI got the 4 approved lines (Last updated 23 Oct). Member app v0.55.0 (offer
   card) bumped; gate dispatched.
+- 2026-10-23: **#51 HQ server parts 2 and 3 LIVE** (owner R-87: "yes, apply the owner panel database parts 2 and 3").
+  0027_hq_actions.sql (sha256 86004f236272103b) and 0028_hq_breakglass_and_logs.sql (abd06ca14fd6faf6) applied from
+  the SQL editor; all 217 existing gyms = 'active'. Live tests: 0027 RESULT PASS (64), 0028 RESULT PASS (49);
+  security.sql (main) fails ONLY on the 3 not-yet-live 0029 functions. Public key: hq_* = permission denied;
+  owner_hq_access answers BAD_KEY. D1 0004_ai_limits applied. Admin app deployed (version c6fbc814: ForgeAI access
+  card). HQ Worker deployed (1a94b03f) at forgeai-hq.aakashpahuja.in, fail-closed 503 until SUPABASE_HQ_KEY +
+  GOOGLE_CLIENT_ID/SECRET (owner task #52); HQ_ALLOWED_EMAIL + HQ_SESSION_SECRET set. 0029 asked as #53.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

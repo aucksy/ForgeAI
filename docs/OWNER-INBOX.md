@@ -17,6 +17,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
 | 44 | A new English brand name | A: Liftchase |
+| 53 | Switch on the owner's reminder switches (one live server change) | A: yes |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -43,7 +44,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
 | 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
 | 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
-| 9. Keep access logs for 1 year | Blocked | Needs either Supabase's paid log export or a live database change, both your call; due before May 2027. Plan in CLAUDE-NOTES R-49. Medium. |
+| 9. Keep access logs for 1 year | Done | 23 Oct, live on the server (part of #51): every admin-app sign-in, sign-out, failed code, save and full download is written down; kept 7 days now and 1 year from 13 May 2027, as the privacy notice says. The nightly clean-up starts when the HQ app is set up (#52). |
 | 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
 | 11. v0.51.0: workout time on the notification card, rest-over sound choice, "What's new" with earlier updates, block-proof address | Done | 22 Oct: released inside v0.54.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.0/forgeai-v0.54.0.apk). |
 | 12. Research you asked for: Google login, new brand name | Done | 22 Oct: two ways to sign in (#43) and 5 names with free domains (#44), for your pick. |
@@ -59,9 +60,9 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
 | 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
 | 24. AI import of old records (#47) | Done | 23 Oct: live (Gemini first, Claude Haiku 5.5 as backup); reviewed, all fixes in. The AI part waits for your two keys (#47). |
-| 25. System owner panel ("ForgeAI HQ", #51) | Doing | You picked A on 23 Oct: building step 1 (look), then 2 (act), then 3 (break-glass and logs), each taken live. |
+| 25. System owner panel ("ForgeAI HQ", #51) | Blocked | 23 Oct: all 3 server parts live and tested (64 + 49 checks); the gym owner's "ForgeAI access" list is live in the admin app; the HQ app is online at https://forgeai-hq.aakashpahuja.in but stays locked until your keys are in (#52). |
 | 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
-| 27. Automatic reminders to members (your note, 23 Oct) | Doing | Research and build started 23 Oct. |
+| 27. Automatic reminders to members (your note, 23 Oct) | Doing | Built and reviewed 23 Oct. Member app part ships in v0.55.0 (phone tests running). The owner's on/off switches need one live server change: waits for your yes (#53). Until then phones use the default switches. |
 | Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
@@ -151,7 +152,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
 | Messages & offers | Live | 22 Oct: admin app More → Messages & offers: ready messages in English and Hindi (closures, fee offers, festivals, renewals...), who gets it, WhatsApp one by one, Today nudges. Step 2 waits for your pick in #49. |
 | Workout offer in the app (step 2) | Next release | Server live 23 Oct; the admin part is live; the member app card ships in v0.55.0 (phone tests running). | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
-| Automatic reminders to members | Planned | Your note (23 Oct): automatic app notifications, like "your plan ends in 3 days", for every useful case; you switch each one on or off, the common ones start on. Building now. | The member's phone sets each reminder itself from what it already knows (plan end date, birthday, visits, offer progress), at a good time of day and never more than one a day, so it works without internet and costs nothing. In the admin app, Messages & offers gets an "Automatic reminders" list with an on/off switch for each and the number of days where it matters. Members can turn gym reminders off in Settings. |
+| Automatic reminders to members | Waiting for you | Built 23 Oct; the member app part ships in v0.55.0. The owner's on/off switches wait for your yes to one live server change (#53). | The member's phone sets each reminder itself from what it already knows (plan end date, birthday, visits, offer progress), at a good time of day and never more than one a day, so it works without internet and costs nothing. In the admin app, Messages & offers gets an "Automatic reminders" list with an on/off switch for each and the number of days where it matters. Members can turn gym reminders off in Settings. |
 | Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
 | "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
 | Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
@@ -208,7 +209,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
-| System owner panel (for you) | Planned | You picked A (23 Oct): all 3 steps, live. Building now. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
+| System owner panel (for you) | Waiting for you | Server parts live 23 Oct. The HQ app is online but locked until you make two keys (#52). | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
 | New brand name with a free domain | Waiting for you | Research done: 136 names checked, 5 with .com, .in and .app free at the normal price; your pick (#44). | You pick a name and buy its .com and .in the same day (about ₹1,700-3,100 a year); then a trademark check, then I rename the app, the website and the store listing. |
 | Block-proof server address | Live | Admin app since 22 Oct; member app since v0.54.0. A block of Supabase's own address (as in Feb 2026) can no longer stop the apps. |
 | Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
@@ -234,9 +235,26 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
+## 53. Switch on the owner's reminder switches (one live server change) — 23 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (23 Oct):** automatic app reminders to members (plan ends in N days, and every other useful case), each one switched on or off by the gym owner, the common ones on.
+**My answer:** Built. The member's phone sets each reminder itself (at most one a day, 9:30 am), so it works without internet and costs nothing. The phone part ships in v0.55.0 and uses the default switches (common ones on). The owner's own on/off list in the admin app needs one live server change (supabase/migrations/0029_auto_reminders.sql). It only adds: a new table and 3 new functions; it changes no existing function and no member data. Its server tests passed.
+**Decide:** Apply the reminders server change to the live server now?
+- A: Yes, apply it now (recommended). Owners can then switch each reminder on or off.
+- B: Not yet. Phones keep the default switches; owners cannot change them.
+
+## 52. Your task: two keys to unlock your owner panel (ForgeAI HQ), about 20 minutes — 23 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** your owner panel (#51) is built and online at https://forgeai-hq.aakashpahuja.in. All its server parts are live and tested. It stays locked ("not set up yet") until it has a gym-server key and a Google sign-in client. Only you can make these. Only your Google account (aakashpahuja1990@gmail.com) can sign in.
+**Your task:** Make the gym-server key: open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/settings/api-keys, open "Secret keys", press "New secret key", name it hq, and copy it.
+**Your task:** Make the Google sign-in client: open https://console.cloud.google.com/auth/clients (in your ForgeAI project; if you have no project yet, first make one at https://console.cloud.google.com/projectcreate named ForgeAI, then fill https://console.cloud.google.com/auth/branding with app name ForgeAI, your email, audience External, and press "Publish app"). Press Create client, pick Web application, name it ForgeAI HQ, and under "Authorized redirect URIs" add https://forgeai-hq.aakashpahuja.in/auth/callback. Press Create. Copy the Client ID and the Client secret.
+**Your task:** Paste all three into Cloudflare: open dash.cloudflare.com → Workers & Pages → forgeai-hq → Settings → Variables and Secrets → Add. Type "Secret" each time. Name SUPABASE_HQ_KEY with the Supabase key, GOOGLE_CLIENT_ID with the Client ID, GOOGLE_CLIENT_SECRET with the Client secret. Save. Then tell me "HQ keys are in" and I test the sign-in.
+
 ## 51. Your own panel for the whole system ("ForgeAI HQ"): the plan — 23 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** Building (decided 23 Oct)
+**Status:** Built: server parts live 23 Oct; the HQ app waits for your keys (#52)
 **READ (23 Oct, 08:32 am, via the page)**
 **You asked:** do you need an admin panel as the owner of the whole system? Think about data control and
 governance; maybe you log in and see most of the data. Decide the correct implementation.
