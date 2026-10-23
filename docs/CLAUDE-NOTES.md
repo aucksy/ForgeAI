@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-86. Automatic member notifications (plan ending in N days and every other case), owner switches each on/off — 23 Oct 2026
+**Owner said:** "for Plans and offers - plan and implement automated app notifications for things like membership
+expiring in XX days... think of all possible use cases... let the owner switch them On or Off - leave some of the most
+common use cases on by default".
+**What I do:** research what gym software sends automatically; build every useful case. Without Firebase (his task,
+after branding), the member app itself schedules these as phone notifications from what it already knows (plan end
+date, birthday, visits, offer progress), so they work offline and cost nothing; the owner's on/off settings come from
+the gym server. Members can turn gym reminders off too. Push for one-off gym messages waits for Firebase.
+
 ## R-85. Admin app: "Joined in the app" members not clickable; Get started steps not clickable; light-mode borders too thin — 23 Oct 2026
 **Owner said (screenshot of Today):** "Unable to click members from 'Joined in the App' Section. Get started list of tasks
 are not clickable to start from there only. In the Light mode, the borders for cards and pills are way too thin... the
