@@ -3,6 +3,10 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE 24 Oct ~02:00 IST:** gate on aaeced0: default, journeys, CI green; owner red W1 (Maestro driver died); owner
+  rerun (qa-aaeced0-owner) red UR: after Remove set + Undo, set 2 had no weight (typing lost or a real bug: unproven).
+  e0f701a: run-device-qa.sh retries a part once on DeviceServerDiedException only; uat-r checks the typed 47.5 before
+  Remove (retypes once). FULL gate on e0f701a. If UR fails AT THE NEW CHECK = typing flake; if after Undo = real bug.
 - **UPDATE ~21:50 IST:** gate on 8771e54: journeys green; CI red (J38b two "Automatic reminders" headings -> level 1, fixed);
   owner red UN = Maestro device server died (infra); default red R = emulator "No internet" on Find my gym (infra).
   FULL gate restarted on aaeced0. When green: tag, PROGRESS, release, APK link. Brand: #44 rounds 4-5 (owner's 40 names).
