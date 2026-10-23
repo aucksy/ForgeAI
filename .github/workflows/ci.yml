@@ -105,11 +105,12 @@ jobs:
 
       # Launch H7 (21 Oct 2026): the panel Worker's own code ("Send feedback", deploy/panel).
       - name: Panel Worker tests
-        run: node --test deploy/panel
+        # Node 22 takes files, not a folder (a folder is run as a script and fails).
+        run: node --test deploy/panel/*.test.mjs
 
       # ForgeAI HQ (#51): the system owner's panel Worker (sign-in, API, clean-up) and its page logic.
       - name: HQ Worker and page tests
-        run: node --test deploy/hq apps/hq/test
+        run: node --test deploy/hq/*.test.mjs apps/hq/test/*.test.mjs
 
       # A build failure here is a shipping failure — the CRM is served as static
       # files, so `vite build` succeeding IS the deployability check.

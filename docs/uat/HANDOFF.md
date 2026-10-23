@@ -3,6 +3,13 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~11:15 IST:** the ac49b00 gate's CI failed again: Node 22 refuses `node --test <folder>`; fixed in ci.yml
+  (explicit *.test.mjs, commit after f14a779). ci.yml is NOT paperwork for phone_gate.py, so ac49b00 cannot be
+  tagged: the device runs 39902230052 / 39902232208 / 39902234186 can be cancelled. PLAN: wait for the reminders
+  review (background agent) -> fix its findings -> ONE gate on main for v0.55.0 (offers + reminders + paused-gym
+  words + CI fix): qa-device default + owner, qa-journeys, CI; then tag, release, send the APK link.
+- **Waiting on the owner:** "yes, apply HQ parts 2 and 3" (0027, 0028; the permission check needs his direct OK),
+  #44 pick (Liftchase / RepAhead).
 - **#49 LIVE:** 0025 applied from the SQL editor (pasted in parts; sha256 prefix checked in the browser); live tests
   0025 PASS (71), security.sql@22f6d29 PASS (9). Privacy notice lines in. Member app v0.55.0 (offer card) = gate on
   ac49b00 (CI moved to Node 22): default 39902230052, owner 39902232208, journeys 39902234186, CI 39902225774.
