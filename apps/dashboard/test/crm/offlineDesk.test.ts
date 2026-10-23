@@ -208,6 +208,26 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)'
     expect((await desk.load()).visits).toHaveLength(1); // the kept one gave way to the server's
   });
 
+  it('#51: the gym is paused by ForgeAI when the internet is back: the check-ins are kept, and go once it is switched back on', async () => {
+    const { server, saved, desk, m } = await offlineDesk();
+    await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    server.down = false;
+    const push = server.push.bind(server);
+    let paused = true;
+    server.push = async (k, base, records) => {
+      if (paused) throw new Error('SUSPENDED');
+      return push(k, base, records);
+    };
+    await desk.refresh();
+    await settle();
+    expect(visitsOnServer(server)).toEqual([]);
+    expect(saved.kept.get(keyId('key-1'))?.queued).toHaveLength(1);
+    expect((await desk.load()).visits.map((x) => x.memberId)).toEqual([m.id]);
+    paused = false;
+    await desk.refresh();
+    expect(visitsOnServer(server)).toHaveLength(1);
+  });
+
   it('the page closed while offline: after a reload the check-in is still waiting, and goes when online', async () => {
     const { server, saved, desk, m } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);

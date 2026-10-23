@@ -6,7 +6,7 @@
  * link, reads the server's answer, and picks every word the screen shows. No Supabase here
  * (gymApi.ts makes the call); test/shop/checkIn.test.ts holds it.
  */
-import { cleanJoinCode, JOIN_CODE_LENGTH, type GymError } from './gym';
+import { cleanJoinCode, GYM_PAUSED_TEXT, JOIN_CODE_LENGTH, type GymError } from './gym';
 import { INVITE_HOST, isInviteHost } from './pendingInvite';
 
 // ------------------------------------------------------------------ the link
@@ -173,6 +173,7 @@ export function problemText(p: { problem: CheckInProblem; gymName: string | null
 
 /** Words when the call itself failed (no answer from the gym). PURE. */
 export function checkInErrorText(err: GymError): string {
+  if (err.kind === 'SUSPENDED') return GYM_PAUSED_TEXT;
   if (err.kind === 'offline') return "No internet. Check in at the desk, or scan again when you're online.";
   if (err.kind === 'timeout') return "The gym didn't answer. Scan again in a moment.";
   return "Couldn't check you in. Try again, or check in at the desk.";
