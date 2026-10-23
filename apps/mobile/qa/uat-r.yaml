@@ -181,6 +181,21 @@ appId: com.forgeai.app
     env:
       FIELD: "${output.exRe} set 2 weight, kilograms"
       VALUE: " 47.5"
+# Run 40002348835 (owner phone): after Undo set 2 had no weight, and nothing showed whether the typing
+# had reached the box. Read it here first; if the emulator lost the keys, type once more. A box that
+# still lacks 47.5 then fails HERE (the typing), never later as an Undo that lost a number.
+- copyTextFrom: "${output.exRe} set 2 weight, kilograms"
+- runFlow:
+    when:
+      true: '${maestro.copiedText != "47.5"}'
+    commands:
+      - runFlow:
+          file: sub-type.yaml
+          env:
+            FIELD: "${output.exRe} set 2 weight, kilograms"
+            VALUE: " 47.5"
+      - copyTextFrom: "${output.exRe} set 2 weight, kilograms"
+- assertTrue: '${maestro.copiedText == "47.5"}'
 # (a) The set menu's "Remove set", then Undo.
 - tapOn: '${output.exRe} set 2(, RPE [\d.]+)?\. Change set type'
 - extendedWaitUntil:

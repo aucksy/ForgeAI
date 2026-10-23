@@ -27,6 +27,23 @@ free_maestro() {
 push_fixture() {
   if ! adb push "$1" "$2" >/dev/null 2>&1; then log "FIXTURE PUSH FAILED: $1 -> $2"; status=1; fi
 }
+# Runs 39968481110 (part UN) and 39985380714 (part W1): Maestro's driver on the phone died before
+# the flow's first step ("DeviceServerDiedException ... during 'deviceInfo'", under 300 ms), and
+# that alone made the release check red. Every `maestro test` below goes through this: when the run
+# fails and its junit report shows only that death, the driver is freed and the part runs once more.
+# A real failed step is never retried.
+maestro() {
+  local out="" prev="" a rc
+  for a in "$@"; do [ "$prev" = "--output" ] && out="$a"; prev="$a"; done
+  command maestro "$@"; rc=$?
+  if [ "$rc" -ne 0 ] && [ -n "$out" ] && grep -q "DeviceServerDiedException" "$out" 2>/dev/null \
+     && ! grep -q "Assertion is false\|Element not found" "$out" 2>/dev/null; then
+    log "Maestro's phone driver died before the flow ran ($(basename "$out")); freeing it and running the part once more"
+    free_maestro
+    command maestro "$@"; rc=$?
+  fi
+  return "$rc"
+}
 # Print how many media-store rows (content://media/external/$4) have $1 in their name, waiting
 # up to $3 s for at least $2 of them. Replaces a fixed sleep before the picker steps.
 wait_media() {
