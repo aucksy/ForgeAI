@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-88. Owner panel sign-in account = B (pahuja.aakash108@gmail.com) — 23 Oct 2026
+**Owner said:** "B, HQ Keys are in". He made a Web client in the GmailAPI Google project (gmailapi-491903, Testing,
+test user pahuja.aakash108@gmail.com) and gave its Client ID in chat (not a secret).
+**What I did:** set HQ_ALLOWED_EMAIL = pahuja.aakash108@gmail.com and GOOGLE_CLIENT_ID on forgeai-hq. Checked: no
+SUPABASE_HQ_KEY and no GOOGLE_CLIENT_SECRET on forgeai-hq yet (versions list shows only my changes); told him.
+
 ## R-87. "yes, apply the owner panel database parts 2 and 3" — 23 Oct 2026
 **Owner said:** "yes, apply the owner panel database parts 2 and 3".
 **What I do:** apply supabase/migrations/0027_hq_actions.sql and 0028_hq_breakglass_and_logs.sql to the live database
