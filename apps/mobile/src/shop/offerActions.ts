@@ -97,6 +97,8 @@ export async function readKeptOffer(memberId: string): Promise<{ answer: OffersA
 
 async function keepOffer(memberId: string, answer: OffersAnswer): Promise<void> {
   await writeJson(OFFER_KEPT_KEY, { memberId, answer: offersToRow(answer), at: Date.now() });
+  // R-86: the offer's reminders (days added, ending soon, almost there) follow the kept answer.
+  void import('./gymReminders').then((m) => m.refreshGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] offer: the gym reminders', e));
 }
 
 /** A "Leave the offer" the gym has not confirmed: sent again before anything else. */

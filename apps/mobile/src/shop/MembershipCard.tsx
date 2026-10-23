@@ -6,7 +6,6 @@
  * #49 step 1: "Show my workouts to the desk" opens the workout offer's claim code (WorkoutCodeSheet).
  */
 import { useFocusEffect } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -15,39 +14,14 @@ import { clockTime } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
 
 import { apiMembership } from './gymApi';
-import { keptLine, MEMBERSHIP_STORAGE_KEY, membershipFromRow, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
+import { refreshGymReminders } from './gymReminders';
+import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
+import { keepMembership, readKeptMembership } from './membershipKept';
 import type { GymLink } from './types';
 import { WorkoutCodeSheet } from './WorkoutCodeSheet';
 import { WORKOUT_CODE_WORDS } from './workoutCodeWords';
 
 type Shown = { answer: MembershipAnswer; keptAt: number | null } | null;
-
-async function readKept(memberId: string): Promise<{ answer: MembershipAnswer; at: number } | null> {
-  try {
-    const raw = await AsyncStorage.getItem(MEMBERSHIP_STORAGE_KEY);
-    const v: unknown = raw ? JSON.parse(raw) : null;
-    if (!v || typeof v !== 'object') return null;
-    const o = v as { memberId?: unknown; answer?: unknown; at?: unknown };
-    if (o.memberId !== memberId || typeof o.at !== 'number') return null;
-    const answer = membershipFromRow(o.answer);
-    return answer ? { answer, at: o.at } : null;
-  } catch (e) {
-    console.warn('[ForgeErr] membership: reading the kept answer', e);
-    return null;
-  }
-}
-
-async function keep(memberId: string, answer: MembershipAnswer): Promise<void> {
-  try {
-    // Kept in the server's own shape, so the same reader checks it when it is read back.
-    const raw = answer.ok
-      ? { ok: true, gymName: answer.gymName, memberName: answer.memberName, day: answer.day, current: answer.current, next: answer.next, lastEndedOn: answer.lastEndedOn, visitsThisMonth: answer.visitsThisMonth }
-      : { error: answer.problem, gymName: answer.gymName };
-    await AsyncStorage.setItem(MEMBERSHIP_STORAGE_KEY, JSON.stringify({ memberId, answer: raw, at: Date.now() }));
-  } catch (e) {
-    console.warn('[ForgeErr] membership: keeping the answer', e);
-  }
-}
 
 const toneColor = (t: MembershipTone): string => (t === 'good' ? color.goodText : t === 'soon' ? color.warning : t === 'ended' ? color.criticalText : color.inkSecondary);
 
@@ -66,13 +40,14 @@ export function MembershipCard({ link }: { link: GymLink }) {
     useCallback(() => {
       let live = true;
       void (async () => {
-        const kept = await readKept(link.memberId);
+        const kept = await readKeptMembership(link.memberId);
         if (live && kept) setShown((s) => s ?? { answer: kept.answer, keptAt: kept.at });
         const r = await apiMembership(link.memberKey);
         if (!live) return;
         if (r.ok) {
           setShown({ answer: r.data, keptAt: null });
-          void keep(link.memberId, r.data);
+          // R-86: the gym reminders follow the plan (a renewal cancels "ends soon").
+          void keepMembership(link.memberId, r.data).then(() => refreshGymReminders());
         } else if ('missing' in r) {
           setShown(null);
         } else if (kept && (r.error.kind === 'offline' || r.error.kind === 'timeout')) {

@@ -219,6 +219,9 @@ function deviceSteps(): EraseStep[] {
         // The workout offer's consent record, a pending "Leave the offer" and the kept card (#49).
         const { OFFER_STORAGE_KEYS } = await import('@/shop/offer');
         for (const k of OFFER_STORAGE_KEYS) await AsyncStorage.removeItem(k);
+        // R-86: the gym's automatic reminders: cancelled on Android and their kept answers forgotten.
+        const { forgetGymReminders } = await import('@/shop/gymReminders');
+        await forgetGymReminders();
         // Which gym plans already made a folder (a deleted one never comes back): a fresh start forgets.
         const { GYM_PLANS_KNOWN_KEY } = await import('@/tracker/services/gymPlansSync');
         await AsyncStorage.removeItem(GYM_PLANS_KNOWN_KEY);

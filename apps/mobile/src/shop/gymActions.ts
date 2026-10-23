@@ -61,12 +61,23 @@ function retireGymPlans(): void {
   void import('@/tracker/services/gymPlansSync').then((m) => m.retireGymFolders()).catch((e: unknown) => console.warn('[ForgeErr] gym plans: relabelling after the link went', e));
 }
 
+/** R-86: the gym's automatic reminders go with the link (cancelled and forgotten). */
+function forgetGymRemindersQuietly(): void {
+  void import('./gymReminders').then((m) => m.forgetGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] gym reminders: forgetting after the link went', e));
+}
+
+/** R-86: ask the gym for the reminder switches and the plan, then set the reminders (background). */
+function syncGymRemindersQuietly(): void {
+  void import('./gymReminders').then((m) => m.syncGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] gym check: the gym reminders', e));
+}
+
 function lostKey(err: GymError): boolean {
   if (err.kind !== 'BAD_KEY') return false;
   useGymShop.getState().unlink(UNLINKED_TEXT);
   // C6-15: the gym's messages go with the link (they were kept, hidden, on the phone).
   useGymInbox.getState().clear();
   retireGymPlans();
+  forgetGymRemindersQuietly();
   return true;
 }
 
@@ -114,6 +125,8 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   useGymShop.getState().setLink(r.data);
   // R-77: the gym's tab is "Shop" only once its shop lists something: ask now, not on a visit.
   void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] join: the shop list', e));
+  // R-86: the gym's automatic reminders start with the join (a new member's welcome, the plan).
+  syncGymRemindersQuietly();
   return null;
 }
 
@@ -166,7 +179,11 @@ export async function checkInAtGym(code: string, phone: string | null): Promise<
   const key = useGymShop.getState().link?.memberKey;
   if (!key) return { kind: 'not-joined' };
   const r = await apiCheckIn(key, cleanJoinCode(code), phone);
-  if (r.ok) return { kind: 'answer', answer: r.data };
+  if (r.ok) {
+    // R-86: a check-in moves "last visit" (and may match the member's number for the first time).
+    syncGymRemindersQuietly();
+    return { kind: 'answer', answer: r.data };
+  }
   if (lostKey(r.error)) return { kind: 'unlinked' };
   return { kind: 'failed', error: r.error };
 }
@@ -210,6 +227,8 @@ async function checkGymNow(): Promise<void> {
   void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] gym check: the shop list', e));
   // #49 step 2: the workout offer's counted DATES, only when the member joined it (offerActions.ts).
   syncOfferQuietly();
+  // R-86: the automatic reminders (the owner's switches, the plan, the member's dates).
+  syncGymRemindersQuietly();
 }
 
 /** Best effort, in the background: a failure keeps what the offer card shows. */
@@ -458,6 +477,8 @@ export async function leaveGym(): Promise<void> {
   AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the kept plan', e));
   // The workout offer's consent and kept card go too (the gym's member_leave leaves its offers).
   for (const k of OFFER_STORAGE_KEYS) AsyncStorage.removeItem(k).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the offer', k, e));
+  // R-86: no reminder from a gym the member left.
+  forgetGymRemindersQuietly();
   retireGymPlans();
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);

@@ -14,6 +14,7 @@ import { Text } from 'react-native';
 
 import { CloudCard } from '@/components/settings/CloudCard';
 import { GymCard } from '@/components/settings/GymCard';
+import { ToggleRow } from '@/components/settings/SettingRow';
 import { JoinGymCard } from '@/components/settings/JoinGymCard';
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { LinkRow } from '@/components/stats/parts';
@@ -27,6 +28,10 @@ import { isBranded } from '@forgeai/theme';
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { FEATURES, profileParts } from '@/lib/features';
 import { useGymShop } from '@/shop/gymStore';
+import { cancelGymReminders, refreshGymReminders } from '@/shop/gymReminders';
+import { gymRemindersCaption } from '@/shop/autoReminders';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
+import { ensureAlertPermission } from '@/tracker/services/workoutAlerts';
 import { useGymHydrated } from '@/shop/shopSource';
 import type { GymLink } from '@/shop/types';
 import { color, space, type } from '@/theme/tokens';
@@ -92,11 +97,36 @@ function JoinedGymCard({ link }: { link: GymLink }) {
         </Text>
       </GlassCard>
       <MembershipCard link={link} />
+      <GymRemindersSwitch gymName={link.gymName} />
       {canAddGymShortcut(link) ? (
         <LinkRow title="Add to your home screen" sub={`${link.gymName}'s logo on your home screen. It opens ForgeAI.`} onPress={() => void addShortcut()} />
       ) : null}
       <InlineError message={words} />
       <LinkRow title={`Leave ${link.gymName}`} sub="Your workouts stay on this phone." onPress={() => void leave()} />
     </>
+  );
+}
+
+/**
+ * R-86: "Reminders from my gym" — plan ending, birthday and the other automatic reminders the
+ * owner switched on (shop/gymReminders.ts). On by default; off cancels every one at once.
+ */
+function GymRemindersSwitch({ gymName }: { gymName: string }) {
+  const on = usePhonePrefs((s) => s.gymRemindersOn);
+  const flip = (v: boolean): void => {
+    usePhonePrefs.getState().setGymRemindersOn(v);
+    if (!v) {
+      void cancelGymReminders();
+      return;
+    }
+    // Switched on by the member: the one moment the app may ask for notifications for these.
+    void ensureAlertPermission()
+      .catch((e: unknown) => console.warn('[ForgeErr] gym reminders: asking for notifications', e))
+      .then(() => refreshGymReminders());
+  };
+  return (
+    <GlassCard>
+      <ToggleRow icon="calendar" title="Reminders from my gym" caption={gymRemindersCaption(gymName)} value={on} onChange={flip} />
+    </GlassCard>
   );
 }

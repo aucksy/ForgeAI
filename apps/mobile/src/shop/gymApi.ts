@@ -10,6 +10,7 @@
 import { getSupabase } from '@/cloud/client';
 
 import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromRows, previewFromRow, productsFromRows, type GymError, type GymNow, type GymPreview } from './gym';
+import { autoAnswerFromRow, type AutoRemindersAnswer } from './autoReminders';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { membershipFromRow, type MembershipAnswer } from './membership';
@@ -145,6 +146,18 @@ export async function apiMembership(key: string): Promise<GymResult<MembershipAn
   const r = await call('member_membership', { p_key: key }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = membershipFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * Automatic reminders (member_auto_reminders, 0029, R-86): the owner's switches and the member's
+ * birthday (MM-DD), joining day and last check-in day. `missing`: the server has not had 0029 yet,
+ * so the phone uses the built-in defaults.
+ */
+export async function apiAutoReminders(key: string): Promise<GymResult<AutoRemindersAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_auto_reminders', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = autoAnswerFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

@@ -5,6 +5,7 @@
  *    midnight). Off by default — a reminder the member did not ask for is noise.
  *  - reminderChosen (audit Phase 6): the member picked the days or the time themselves. Until
  *    then, switching reminders on fills in "your usual training days and time".
+ *  - gymRemindersOn (R-86): the gym's automatic reminders; on by default.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -27,6 +28,12 @@ export interface PhonePrefsState {
    * row until the next send. null = nothing sent yet from this install.
    */
   healthLast: HealthLast | null;
+  /**
+   * R-86: "Reminders from my gym" (Settings → Your gym): plan ending, birthday and the other
+   * automatic reminders the gym's owner switched on (shop/gymReminders.ts). On by default.
+   */
+  gymRemindersOn: boolean;
+  setGymRemindersOn: (on: boolean) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
@@ -56,6 +63,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       reminderChosen: false,
       healthUnsent: [],
       healthLast: null,
+      gymRemindersOn: true,
+      setGymRemindersOn: (gymRemindersOn) => set({ gymRemindersOn }),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
@@ -69,6 +78,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           reminderChosen: false,
           healthUnsent: [],
           healthLast: null,
+          gymRemindersOn: true,
         }),
     }),
     {
