@@ -16,7 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
-| 44 | Brand: one or two, then the name (round 4: names that feel like lifting) | A: one brand; Liftforged |
+| 44 | Brand: one or two, then the name (rounds 4-5, incl. your 40 names) | A: one brand; Liftforged |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -513,11 +513,12 @@ The official trademark search still needs a person (it has a captcha) before you
 - **Lifting words:** **IronKG** (iron and kilos, the words every lifter uses; all free; many "Iron" apps) · **Chalkiron** (chalk on the hands, iron in them; all free; low risk) · **Heavyiron** (.in/.app + "get" .com; low-medium) · **Ironrack** · **Ironhall** (close to "Ironhill" beer).
 - **Hero names:** none survived (Atlas: "Iron Atlas" gym software; Titan: Tata; Hercules: Indian bicycles; Milo: a new strength app).
 Buy the .com and .in the day you pick: 12 names checked were registered by someone in the last 3 months.
+**YOUR 40 NAMES (23 Oct, from other AI tools):** every .com is taken; 25 have the .in free; 8 of those dropped for a same-name gym app or a strong clash (Knurl, Outlift, Grindset, Beatlast, Heavier, Stepweight, Moreweight, Passlast). The clean ones, cheapest .com first (.in about ₹899 a year for all): **Castrep** (.com expires about 24 Oct: normal price if caught), **Sleevelock** (.com ₹2.2 lakh), **Upweight** (₹3.4 lakh), **Platecast** (₹3.9 lakh), **Gainset** (₹6.6 lakh). With a catch: Plusplate (₹3.3 lakh; a dishwashing brand), Pinload (₹4.2 lakh; a Pinterest downloader), Addiron (₹4.5 lakh; reads like iron tablets), Pushpast (₹11.4 lakh), Mettled (₹31 lakh), and Smelt, Barcast, Barweld, Nextplate, Hardset, Climbset, Peakrep (.com not for sale; .in only). Full table: the research file, round 5.
 **Decide:** Which name? (if A)
-- A: Liftforged (recommended): keeps the forge feel and says lifting in the same word; .com, .in and .app free; nothing uses it
-- B: IronKG: the two words every lifter says; short; "Iron" is crowded in the stores
-- C: ForgeKG: the smallest step from ForgeAI; all domains free; shares the Forge crowding
-- D: Chalkiron: lifting through and through; all free; low risk
+- A: Liftforged (recommended among my names): forge feel + lifting; .com, .in and .app free at the normal price
+- B: Castrep (best of your 40): "cast" like metal casting + "rep"; .in and .app free; the .com may be caught at the normal price this week
+- C: Platecast: clean; .in and .app free; the .com is for sale at ₹3.9 lakh
+- D: Upweight: clean; .in free; the .com is for sale at ₹3.4 lakh
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
