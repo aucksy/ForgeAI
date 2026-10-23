@@ -5,6 +5,23 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-84. #51 answered: build the owner panel and "make it all LIVE"; improve the tracker seriously — 23 Oct 2026
+**Owner said (page, #51):** A + "you make the best decisions and make it all LIVE". In chat: "and also give some
+type of option to surface / jump directly #XX" and "hey you improve this project tracker in all possible ways..
+give it a serious effort now".
+**What I do:** (1) HQ steps 1-3 built and taken live; his "make it all LIVE" is the yes for HQ's additive live
+server changes; I still list each one in chat; keys/accounts only he can make stay his tasks. (2) "Go to #" box +
+jump links shipped; then a full improvement pass of the tracker page (research, design, build, test).
+
+## R-83. "I can't find #49 or #51": every question waiting on him must sit in Waiting for you — 23 Oct 2026
+**Owner said:** "I am having difficulty finding #49 or #51 - if these are queries waiting for my answers, why are they
+no in 'Waiting for Me' - for any such questions that I asked which later requires my decision... they should still
+sit under 'Waiting for you'".
+**Cause:** (1) bug: the page treated an entry with ANY `**DECIDED` line as answered, so a new `**Decide:**` added
+later to the same entry (#49) never showed; (2) #51 was there but buried in 49 mixed items.
+**Fix:** a Decide after the last DECIDED line is open again; the Waiting tab starts with a list of the open
+questions by number (tap to jump), then "Questions for you", then "Tasks for you", then features. Rule saved.
+
 ## R-82. Build #47 (AI import) and #49 step 2 (automatic option); plan a system owner panel — 23 Oct 2026
 **Owner said:** "I get $100 of credit with the Claude plan every month. So you pick the most efficient model, the
 cheapest one, and plan for that integration, as well as I have Google AI Pro subscription for 18 months... I get 1,000

@@ -103,7 +103,12 @@ def parse(text):
         if td:
             body = body[: td.start()] + body[td.end():]
         decides = []
+        # R-83 (owner, 23 Oct 2026): a question added AFTER an entry's last "**DECIDED" line is a new,
+        # open question (#49 got its follow-up hidden); only the ones before it are answered.
+        last_decided = max((m.start() for m in re.finditer(r"^\*\*DECIDED", body, re.M)), default=-1)
         for dm in re.finditer(r"^\*\*Decide:\*\* (.+)\n((?:- [A-Z]: .+\n?)+)", body, re.M):
+            if dm.start() < last_decided:
+                continue
             opts = []
             for om in re.finditer(r"^- ([A-Z]): (.+)$", dm.group(2), re.M):
                 said = om.group(2).strip()
@@ -111,10 +116,9 @@ def parse(text):
                 opts.append({"key": om.group(1), "text": said[: -len("(recommended)")].strip() if rec else said, "rec": rec})
             decides.append({"q": dm.group(1).strip(), "opts": opts})
         body = re.sub(r"^\*\*Decide:\*\* .+\n(?:- [A-Z]: .+\n?)+", "", body, flags=re.M)
-        decided = bool(re.search(r"^\*\*DECIDED", body, re.M))
         entries.append({
             "num": int(h.group(1)),
-            "decides": [] if decided else decides,
+            "decides": decides,
             "title": h.group(2).strip(),
             "date": h.group(3).strip(),
             "chat": chat,
@@ -414,6 +418,17 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
 .renamebox[hidden] { display: none; }
 .renamebox input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; box-sizing: border-box; }
 .renamebox input:focus-visible, #rename:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* R-83 (owner, 23 Oct): "Go to #51" from anywhere; the Waiting tab opens with a list of open questions. */
+.gotobox { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.gotobox input { font: inherit; width: 4.5em; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.gotobox input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+article { scroll-margin-top: 200px; }
+article.flash { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow 0.6s; }
+.qindex { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; }
+.qindex ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.qindex a { color: var(--ink); text-decoration: none; }
+.qindex a b { font-family: var(--f-mono); color: var(--accent); margin-right: 6px; }
+a.goto { font-family: var(--f-mono); }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 
@@ -423,6 +438,12 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono)
     <label class="lbl" for="chat">Chat</label>
     <select id="chat"></select>
     <button class="btn ghost quiet" id="rename" type="button" hidden>Rename</button>
+    <form class="gotobox" id="gotoform" autocomplete="off">
+      <label class="lbl" for="goto">Go to #</label>
+      <input id="goto" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="51">
+      <button class="btn ghost" type="submit">Go</button>
+      <span class="msg" id="gotomsg" role="status"></span>
+    </form>
   </div>
   <div class="renamebox" id="renamebox" hidden>
     <label class="notelbl" for="newname">New name for this chat</label>
@@ -687,7 +708,14 @@ function render() {
     "<details" + (e.decides.length || !isRead(e) ? " open" : "") + "><summary>" + (e.decides.length ? "The full question and my answer" : tasksOf(e).length ? "Why" : "The answer") + "</summary>" +
     '<div class="body">' + md(e.body) + "</div></details>" +
     (e.decides.length ? "" : formHtml(e)) + readHtml(e) + "</article>";
-  $("entries").innerHTML = list.length ? list.map(card).join("")
+  // R-83: Waiting opens with the open questions by number (tap = jump), then questions, then tasks.
+  const qs = list.filter(needsAnswer), ts = list.filter((e) => !needsAnswer(e));
+  const waitingHtml = () =>
+    (qs.length ? '<nav class="qindex" aria-label="Questions for you"><b>' + qs.length + (qs.length === 1 ? " question" : " questions") + " for you</b><ul>" +
+      qs.map((e) => '<li><a href="#e' + e.num + '" data-goto="' + e.num + '"><b>#' + e.num + "</b>" + esc(e.title) + "</a></li>").join("") + "</ul></nav>" : "") +
+    (qs.length ? '<h3 class="bl-group">Questions for you (' + qs.length + ")</h3>" + qs.map(card).join("") : "") +
+    (ts.length ? '<h3 class="bl-group">Tasks for you (' + ts.length + ")</h3>" + ts.map(card).join("") : "");
+  $("entries").innerHTML = list.length ? (filter === "waiting" ? waitingHtml() : list.map(card).join(""))
     : filter === "waiting" && waitingFeats().length ? "" : '<p class="none">' + (filter === "waiting" ? "No decisions waiting for you." : "Nothing new: everything is read.") + "</p>";
   if (filter === "waiting" && waitingFeats().length) {
     $("entries").innerHTML += '<h3 class="bl-group">Features waiting for you</h3><p class="pick">Each needs you: an answer, a yes, a purchase or a setup step. Tap \u201cComment\u201d and tell me, e.g. \u201cYes, go ahead\u201d or \u201cNot now\u201d.</p>' +
@@ -703,6 +731,18 @@ function render() {
   }
   document.querySelectorAll(".body table").forEach((t) => { const box = document.createElement("div"); box.className = "tablebox"; t.replaceWith(box); box.appendChild(t); });
   document.querySelectorAll(".body a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+  // R-83: "#47" written in an answer becomes a jump link to that entry.
+  document.querySelectorAll(".body p, .body li, .body td, .pick").forEach((el) => {
+    if (!/#\d/.test(el.textContent) || el.querySelector("a.goto")) return;
+    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walk.nextNode()) if (/#\d/.test(walk.currentNode.nodeValue) && !walk.currentNode.parentElement.closest("a, code")) nodes.push(walk.currentNode);
+    nodes.forEach((t) => {
+      const span = document.createElement("span");
+      span.innerHTML = esc(t.nodeValue).replace(/#(\d{1,4})\b/g, (m, n) => DATA.entries.some((x) => x.num === Number(n)) ? '<a class="goto" href="#e' + n + '" data-goto="' + n + '">' + m + "</a>" : m);
+      t.replaceWith(span);
+    });
+  });
   document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
 }
 
@@ -765,6 +805,25 @@ function sendNote(i) {
   save(() => { DATA.notes[f.id] = { group: f.group, name: f.name, text, at: stamp() }; },
     () => { if (had) DATA.notes[f.id] = had; else delete DATA.notes[f.id]; }, msg, noteText(f, text));
 }
+// R-83 (owner, 23 Oct): jump straight to #n from anywhere: the right tab, all chats, folded boxes opened.
+function goTo(n) {
+  const msg = $("gotomsg");
+  const e = DATA.entries.find((x) => x.num === n);
+  if (!e) { msg.textContent = n ? "There is no #" + n + "." : "Type a number."; return; }
+  msg.textContent = "";
+  chat = "all"; $("chat").value = "all"; syncRename();
+  filter = needsYou(e) ? "waiting" : "all"; blKind = null;
+  render();
+  const el = $("e" + n);
+  if (!el) return;
+  for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  el.querySelectorAll(":scope > details").forEach((d) => { d.open = true; });
+  // Below the sticky header (it is tall on a phone), not under it.
+  scrollTo(0, el.getBoundingClientRect().top + scrollY - document.querySelector("header.bar").offsetHeight - 12);
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 1600);
+}
+$("gotoform").addEventListener("submit", (ev) => { ev.preventDefault(); goTo(Number(($("goto").value || "").replace(/\D/g, ""))); });
 // R-81 (owner, 22 Oct): he moves a feature between statuses himself; --absorb writes it into the .md.
 function moveFeature(i, to) {
   const f = DATA.backlog[i];
@@ -789,10 +848,7 @@ document.addEventListener("change", (ev) => {
 document.addEventListener("click", (ev) => {
   // A link to an entry the current filter hides (or the backlog view): show all entries first.
   const g = ev.target.closest("a[data-goto]");
-  if (g) {
-    const e = DATA.entries.find((x) => x.num === Number(g.dataset.goto));
-    if (filter === "backlog" || (e && !shown(e))) { filter = "all"; render(); }
-  }
+  if (g) { ev.preventDefault(); goTo(Number(g.dataset.goto)); return; }
   const b = ev.target.closest("button[data-act]");
   if (!b) return;
   const n = Number(b.dataset.n);
