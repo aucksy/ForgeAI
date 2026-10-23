@@ -2,6 +2,18 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **#49 LIVE:** 0025 applied from the SQL editor (pasted in parts; sha256 prefix checked in the browser); live tests
+  0025 PASS (71), security.sql@22f6d29 PASS (9). Privacy notice lines in. Member app v0.55.0 (offer card) = gate on
+  ac49b00 (CI moved to Node 22): default 39902230052, owner 39902232208, journeys 39902234186, CI 39902225774.
+  When green: tag (ac49b00 or a paperwork commit after it; main moved on with reminders: release from a worktree).
+- **HQ (#51):** 0026 applied LIVE (Success). 0027 and 0028 NOT applied: Claude Code's permission check blocked
+  pasting 0027 (it holds hq_delete_gym); needs the owner's go-ahead to continue. HQ Worker not deployed; needs his
+  Supabase "hq" key + Google OAuth client (deploy/hq README). Admin app with the ForgeAI access card: deploy only
+  after 0028 is live.
+- **Reminders (R-86):** merged 663da7e; review running; 0029 not applied.
+- **#44:** English names researched (Liftchase / RepAhead), question in the tracker.
+
 ## PC session, 22 Oct 2026 (~22:15 IST) — RESUME HERE after a compaction
 - **v0.54.1 candidate = 2385142** (R-79: set boxes are multi-line, so a drag that starts on a box scrolls the page;
   P7BIG now swipes FROM the set 1 weight box and asserts the page moved). Gate: default 39814847937, owner
