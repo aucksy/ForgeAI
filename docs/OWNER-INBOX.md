@@ -495,7 +495,17 @@ Cost: about ₹3,100 a year for .com + .in + .app. Before paying for a logo, the
 - **Back Tomorrow**: the retention goal in two words. .in and .app free; the .com costs about ₹94,000 and it reads like a "shop closed" sign.
 - **Fortwell**: "the strong place you come back to". .in and .app free; Sun Pharma uses "Fortwell" for a medicine.
 The official trademark search still needs a person (it has a captcha) before you pay for a logo.
-**Decide:** Which name?
+**YOUR QUESTION (23 Oct, chat):** one name that works for both the members' app and the gym software, or two separate brands?
+**My answer:** one brand, with plain labels: "<Name>" for the members' app, and "<Name> for Gyms" for the admin app and website. Why:
+- Gyms are how members find us: every member who installs from a gym poster spreads the same name, and "your members already use <Name>" sells the next gym. Two brands throw that away.
+- Half the work and money: one set of domains, one trademark, one Play listing and one logo, for one person to run.
+- Members already see their own gym's logo and colours inside the app, so our name stays quiet next to theirs.
+- This is what Hevy (Hevy and Hevy Coach), Virtuagym and Trainerize do. Two brands mostly happen after one company buys another (Mindbody and ClassPass).
+- The catch: the name must sound right both on a member's home screen and on a gym owner's bill. That rules out Still Not Out (fun, cricket) and makes Liftchase lean to members. Habitsmith passes both: "habit" is what owners pay for (members who keep coming) and what members want.
+**Decide:** One brand or two?
+- A: One brand, with "for Gyms" on the business side (recommended)
+- B: Two separate brands, one for members and one for gyms
+**Decide:** Which name? (if A)
 - A: Habitsmith (recommended): "habit" is what owners and members both pay for; no app, company or rough-check trademark uses it; launch on .in + gethabitsmith.com, buy the .com later
 - B: Still Not Out: the only strong name with all three domains free today; Indian feel in English; weaker trademark protection
 - C: Liftchase (from round 2): .com, .in and .app free; nothing uses it
