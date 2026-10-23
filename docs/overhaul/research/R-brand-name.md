@@ -495,3 +495,37 @@ Say the three out loud to 3 or 4 Jaipur gym owners before you choose. Buy the .c
 - https://milolift.com (MILOLIFT strength app), https://strongforge.com (metal fabrication), https://anvilstrong.com , https://forgeiron.com ("Launching soon"), https://www.ironhall.com (church), https://liftfoundry.com
 - BulkForged Garmin app: https://forums.garmin.com/developer/connect-iq/f/showcase/441337/app-bulkforged-automatic-progressive-overload-now-on-the-wrist-too
 - Web searches with no app or company of the same name: "IronKG", "Forgeyard", "Liftforged", "ForgeKG / Anvil KG", "Forgehall / Barforge / Chalkiron / Ironsmithy", "Heavy Iron"
+
+## 23 Oct (round 5): the owner's 40 names from other AI tools (R-94)
+
+All 40 .com addresses are taken. 25 have the .in free; 15 have neither (.com and .in taken): Temper, Foundry, Ingot,
+Weld, Billet, Loadup, Upload, Outrep, Topset, Nextrep, Stackup, Overload, Raisethebar, Maxout, Upstack.
+Of the 25, 8 dropped for a same-name fitness app or a strong clash: Knurl (a "Knurl" strength-training app), Outlift
+(live muscle-building site and apps), Grindset (fitness business + coaching app; meme), Beatlast (same-idea gym app;
+.com ₹23.7 lakh), Heavier (sounds like Hevy; weak mark), Stepweight ("Stepweigh" scales mark in class 9), Moreweight
+(a "MoreWeight" gym app), Passlast (LastPass reversed).
+Kept 17, cheapest .com first (.in normal price, about ₹899 a year, for all):
+
+| # | Name | .com | .com price | .app | Clashes / notes | Verdict |
+|---|---|---|---|---|---|---|
+| 1 | Castrep | expired, drops about 24 Oct | normal (~₹1,600) if caught | free | none found; "cast" = metal casting | OK |
+| 2 | Sleevelock | for sale (Afternic) | ₹2.2 lakh | free | none; reads like a barbell part | OK |
+| 3 | Plusplate | for sale (BrandBucket) | ₹3.3 lakh | free | "Plusplate" dishwashing mark in India; sounds like food | CAUTION |
+| 4 | Upweight | for sale (Afternic) | ₹3.4 lakh | taken | none; finance word | OK |
+| 5 | Platecast | for sale (HugeDomains) | ₹3.9 lakh | free | none | OK |
+| 6 | Pinload | for sale (Atom) | ₹4.2 lakh | taken | Pinterest downloader "PinLoad" | CAUTION |
+| 7 | Addiron | for sale (Atom) | ₹4.5 lakh | free | reads like iron supplements | CAUTION |
+| 8 | Gainset | for sale (Afternic) | ₹6.6 lakh | free | crowded "gains" apps | OK |
+| 9 | Pushpast | for sale (Efty) | ₹11.4 lakh | free | "Pushpa" misreads | CAUTION |
+| 10 | Mettled | for sale (Atom) | ₹31 lakh | taken | Mettle fitness apps | CAUTION |
+| 11 | Smelt | parked, offers only | unknown, likely high | taken | also "smelled" | CAUTION |
+| 12 | Barcast | parked, offers only | unknown | taken | Barcast Inc (bar TV screens) | CAUTION |
+| 13 | Barweld | held by a brand-protection registrar | not for sale | free | sounds like welding | CAUTION |
+| 14 | Nextplate | parked, locked | not for sale | taken | NextPlate food apps | CAUTION |
+| 15 | Hardset | parked since 1996 | not for sale | free | a tiny "HardSet" watch gym app | CAUTION |
+| 16 | Climbset | held by Atom | not for sale now | free | reads like rock climbing | CAUTION |
+| 17 | Peakrep | live US property firm | not for sale | free | many "Peak" apps | CAUTION |
+
+Method: RDAP (Verisign .com, NIXI .in, Google .app); sale pages on Afternic, Atom, HugeDomains, BrandBucket, Efty,
+Dynadot; .in price at GoDaddy India (8) and Namecheap (4); Play / App Store / web searches; QuickCompany's unofficial
+copy of the Indian trademark register. $1 = ₹94.90.
