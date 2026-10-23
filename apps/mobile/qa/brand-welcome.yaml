@@ -41,9 +41,11 @@ appId: com.forgeai.app
     timeout: 15000
 - tapOn: "^Join this gym$"
 # ---------------------------------------------------------------- 2. the welcome opening
-# Joined = the third tab exists (the opening, when up, lies over it).
+# Joined = the third tab exists (the opening, when up, lies over it), or the icon pop-up already covers
+# the tab bar (run 39920977372, owner phone: the opening ended straight into the pop-up, so the tab was
+# never seen; step 4 checks the tab once the pop-up is closed).
 - extendedWaitUntil:
-    visible: "^(Shop|Gym)$"
+    visible: "^(Shop|Gym)$|Put .* on your home screen"
     timeout: 45000
 - extendedWaitUntil:
     visible: "Welcome to RAM'S FITNESS CLUB IMPACT"
