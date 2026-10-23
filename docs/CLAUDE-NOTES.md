@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-95. "can we book forgeAI in any form which is available and cheap" — 23 Oct 2026
+**Owner asked:** book ForgeAI in any cheap available form.
+**What I did:** checked 35+ endings at each registry. Free at normal price: forgeaifit.com, forgeaigym.com,
+useforgeai.com, forgeaifit.in, forgeaigym.in, getforgeai.in, forgeaiapp.in, myforgeai.in, forgeai.net.in, forgeai.fitness,
+forgeai.health. Taken: forgeai.com/.in/.co.in/.app/.fit/.co/.io/.net/.org and get/try/my/joinforgeai.com. Suggested a
+matching pair (forgeaifit.com + forgeaifit.in, about ₹2,500 a year); he buys it (payment). Reminded once: the Forge
+crowding on the Play Store and the "Forge Fitness" trademark stay.
+
 ## R-94. Shortlist his 40 names (from other AIs) by .com/.in and brand checks, sort by domain price, as a table — 23 Oct 2026
 **Owner said:** "First shortlist them basis which ones have the domain .com or .in available and other brand name
 availability factors, then sequence them basis the price for the domain, give me a table" + 40 names.
