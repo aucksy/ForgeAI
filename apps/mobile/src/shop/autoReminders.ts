@@ -191,7 +191,27 @@ export const FLOAT_DAYS = 7;
 /** A new member: joined within this many days (today counts). */
 export const WELCOME_WITHIN_DAYS = 7;
 /** Every gym reminder's id starts with this; the day follows, so one a day is built in. */
-export const GYM_REMINDER_PREFIX = 'forgeai-gym-';
+export const GYM_REMINDER_PREFIX = 'forgeai-gym-reminder-';
+/** Review NIT 9: the first build's prefix ('forgeai-gym-2026-10-30'); such ids are cancelled too. */
+export const OLD_GYM_REMINDER_PREFIX = 'forgeai-gym-';
+
+/** The first morning still ahead: today's 9:30, or tomorrow's. PURE. */
+export function firstSlotDay(now: Date): string {
+  const today = toISO(now);
+  return now.getHours() * 60 + now.getMinutes() < SLOT_MINUTES ? today : addDays(today, 1);
+}
+
+/**
+ * Review NIT 4: the one-off history after the reminders were cancelled (switch off, leave): only
+ * the ones whose morning has passed stay "delivered"; one set for a morning still ahead never came,
+ * so it may come later. PURE.
+ */
+export function deliveredOnly(sent: Readonly<Record<string, string>>, now: Date): Record<string, string> {
+  const first = firstSlotDay(now);
+  const out: Record<string, string> = {};
+  for (const [k, d] of Object.entries(sent)) if (d < first) out[k] = d;
+  return out;
+}
 /** Where a tap goes: the gym's tab (the offer card and My membership are at its top). */
 export const GYM_REMINDER_ROUTE = '/shop';
 
@@ -218,6 +238,8 @@ export interface PlanInput {
   offer: OffersAnswer | null;
   /** onceKey -> the day it was set for, from earlier runs. */
   sent: Readonly<Record<string, string>>;
+  /** When this phone joined the gym in the app (epoch ms); null when unknown (joined before R-86). */
+  appJoinedAt?: number | null;
 }
 
 export interface PlanOutput {
@@ -257,9 +279,8 @@ export function nextYearly(mmdd: string, from: string): string {
  */
 export function planGymReminders(o: PlanInput): PlanOutput {
   const today = toISO(o.now);
-  const nowMin = o.now.getHours() * 60 + o.now.getMinutes();
   // Today's 9:30 still ahead, or tomorrow's.
-  const first = nowMin < SLOT_MINUTES ? today : addDays(today, 1);
+  const first = firstSlotDay(o.now);
   const last = addDays(first, HORIZON_DAYS - 1);
   const inRange = (d: string): boolean => d >= first && d <= last;
   const s = o.settings;
@@ -285,7 +306,7 @@ export function planGymReminders(o: PlanInput): PlanOutput {
   if (cur && cur.ptSessions && on('pt_low')) {
     const left = cur.ptSessions - Math.min(cur.ptUsed, cur.ptSessions);
     const total = cur.ptSessions;
-    if (left >= 1 && left <= (s.pt_low.days[0] ?? 0)) once.push({ kase: 'pt_low', key: `pt:${cur.startsOn}:${left}`, earliest: first, body: () => AUTO_WORDS.ptLow(left, total) });
+    if (left >= 1 && left <= (s.pt_low.days[0] ?? 0)) once.push({ kase: 'pt_low', key: `pt:${cur.startsOn}`, earliest: first, body: () => AUTO_WORDS.ptLow(left, total) });
   }
 
   // ---- birthday and one year with the gym (the gym's list, 0029)
@@ -297,12 +318,16 @@ export function planGymReminders(o: PlanInput): PlanOutput {
     if (years >= 1) fixed.push({ kase: 'anniversary', day: d, body: AUTO_WORDS.anniversary(years, gym) });
   }
 
-  // ---- welcome: a new member (joined the gym in the last 7 days; or, without the gym's list, a
-  // first plan that started in the last 7 days)
+  // ---- welcome: a new member. Review (23 Oct): the admin app fills "joined on" with the day a
+  // member was added or imported, so a joining day alone is not enough: the plan running now must
+  // also have started in the last 7 days (with the gym's list: joined recently too; without it: a
+  // first plan, nothing ended before). Or the phone joined the gym in the app in the last 7 days.
   if (on('welcome')) {
     const recent = (d: string | null | undefined): boolean => !!d && d <= today && daysBetween(d, today) < WELCOME_WITHIN_DAYS;
-    const firstPlan = !!cur && !m?.lastEndedOn && recent(cur.startsOn);
-    if (recent(joined) || (!joined && firstPlan)) once.push({ kase: 'welcome', key: `welcome:${o.memberId}`, earliest: first, body: () => AUTO_WORDS.welcome(name, gym) });
+    const planNew = !!cur && recent(cur.startsOn) && (joined ? recent(joined) : !m?.lastEndedOn);
+    const nowMs = o.now.getTime();
+    const appNew = o.appJoinedAt != null && o.appJoinedAt <= nowMs && nowMs - o.appJoinedAt < WELCOME_WITHIN_DAYS * 86_400_000;
+    if (planNew || appNew) once.push({ kase: 'welcome', key: `welcome:${o.memberId}`, earliest: first, body: () => AUTO_WORDS.welcome(name, gym) });
   }
 
   // ---- we haven't seen you: N days after the last check-in, while a plan runs, once per absence

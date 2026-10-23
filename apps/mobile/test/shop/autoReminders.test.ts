@@ -10,10 +10,13 @@ import {
   CASE_NUMBERS,
   DEFAULT_ON,
   GYM_REMINDER_PREFIX,
+  OLD_GYM_REMINDER_PREFIX,
   HORIZON_DAYS,
   autoAnswerFromRow,
   autoAnswerToRow,
   defaultAutoSettings,
+  deliveredOnly,
+  firstSlotDay,
   fallbackAnswer,
   gymRemindersCaption,
   nextYearly,
@@ -209,8 +212,8 @@ describe('one a day, by priority', () => {
 });
 
 describe('welcome, birthday, one year', () => {
-  it('welcomes a new member once (joined in the last 7 days), never again after it came', () => {
-    const fresh = input({ dates: { ...NO_DATES, joinedOn: '2026-10-22' }, membership: null });
+  it('welcomes a phone that joined the gym in the app this week, once, never again after it came', () => {
+    const fresh = input({ appJoinedAt: new Date(2026, 9, 22, 18, 0).getTime(), membership: null });
     const first = planGymReminders(fresh);
     expect(first.reminders.map((r) => `${r.day} ${r.kase}`)).toEqual(['2026-10-23 welcome']);
     expect(first.reminders[0].body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in ForgeAI.");
@@ -219,8 +222,21 @@ describe('welcome, birthday, one year', () => {
     const next = planGymReminders({ ...fresh, now: new Date(2026, 9, 24, 8, 0), sent: first.sent });
     expect(next.reminders).toEqual([]);
     expect(next.sent).toEqual({ 'welcome:m1': '2026-10-23' });
-    // Joined 10 days ago: no welcome.
-    expect(kinds(input({ dates: { ...NO_DATES, joinedOn: '2026-10-13' }, membership: null }))).toEqual([]);
+    // Joined in the app 10 days ago, or before R-86 (no record): no welcome.
+    expect(kinds(input({ appJoinedAt: new Date(2026, 9, 13, 18, 0).getTime(), membership: null }))).toEqual([]);
+    expect(kinds(input({ appJoinedAt: null, membership: null }))).toEqual([]);
+  });
+
+  it('review SHOULD 1: a recent "joined on" alone is not a new member; the plan must be new too', () => {
+    // The admin app filled "joined on" with today on import: a long-time member, plan from August.
+    const old = plan({ current: { planName: 'Yearly', startsOn: '2026-08-01', endsOn: '2027-07-31', ptSessions: null, ptUsed: 0 } });
+    expect(kinds(input({ membership: old, dates: { ...NO_DATES, joinedOn: '2026-10-22' } }))).toEqual([]);
+    expect(kinds(input({ membership: null, dates: { ...NO_DATES, joinedOn: '2026-10-22' } }))).toEqual([]);
+    // Joined this week AND the plan started this week: welcome.
+    const fresh = plan({ current: { planName: 'Monthly', startsOn: '2026-10-22', endsOn: '2027-01-21', ptSessions: null, ptUsed: 0 }, lastEndedOn: null });
+    expect(kinds(input({ membership: fresh, dates: { ...NO_DATES, joinedOn: '2026-10-22' } }))).toEqual(['2026-10-23 welcome']);
+    // A new plan this week but joined long ago (a renewal after a gap): no welcome.
+    expect(kinds(input({ membership: fresh, dates: { ...NO_DATES, joinedOn: '2024-01-10' } }))).toEqual([]);
   });
 
   it('without the gym list (server before 0029), a first plan that started this week is a new member', () => {
@@ -232,7 +248,7 @@ describe('welcome, birthday, one year', () => {
   });
 
   it('a one-off set for a later morning is planned again (not "delivered") until its day passes', () => {
-    const fresh = input({ dates: { ...NO_DATES, joinedOn: '2026-10-22' }, membership: null, now: LATE });
+    const fresh = input({ appJoinedAt: new Date(2026, 9, 22, 18, 0).getTime(), membership: null, now: LATE });
     const a = planGymReminders(fresh);
     expect(a.sent).toEqual({ 'welcome:m1': '2026-10-24' });
     const again = planGymReminders({ ...fresh, sent: a.sent });
@@ -308,13 +324,21 @@ describe('the workout offer and personal training', () => {
     // Far from the goal: no "almost there".
     expect(kinds(input({ settings: on, offer: offer({ counted: 3 }) }))).toEqual(['2026-11-05 offer_ending']);
   });
-  it('personal training running low (off by default): once per count', () => {
+  it('personal training running low (off by default): once per pack (review SHOULD 2)', () => {
     const pt = plan({ current: { planName: 'PT 12', startsOn: '2026-09-01', endsOn: '2027-02-28', ptSessions: 12, ptUsed: 10, trainer: 'Ravi' } });
     expect(kinds(input({ settings: quiet, membership: pt }))).toEqual([]);
     const s = settingsFromRow({ plan_ends_soon: { on: false }, plan_ends_today: { on: false }, plan_ended: { on: false }, pt_low: { on: true, days: [2] } });
-    const r = planGymReminders(input({ settings: s, membership: pt })).reminders;
+    const out = planGymReminders(input({ settings: s, membership: pt }));
+    const r = out.reminders;
     expect(r.map((x) => `${x.day} ${x.kase}`)).toEqual(['2026-10-23 pt_low']);
     expect(r[0].body).toBe('Personal training: 2 of 12 left. Ask the desk to add more.');
+    expect(out.sent).toEqual({ 'pt:2026-09-01': '2026-10-23' });
+    // Next week one more is used (1 left): the same pack, so no second reminder.
+    const oneLeft = plan({ current: { planName: 'PT 12', startsOn: '2026-09-01', endsOn: '2027-02-28', ptSessions: 12, ptUsed: 11 } });
+    expect(planGymReminders(input({ settings: s, membership: oneLeft, now: new Date(2026, 9, 30, 8), sent: out.sent })).reminders).toEqual([]);
+    // A new pack (another start day) gets its own reminder.
+    const newPack = plan({ current: { planName: 'PT 12', startsOn: '2026-10-28', endsOn: '2027-04-28', ptSessions: 12, ptUsed: 11 } });
+    expect(kinds(input({ settings: s, membership: newPack, now: new Date(2026, 9, 30, 8), sent: out.sent }))).toEqual(['2026-10-30 pt_low']);
     const allUsed = plan({ current: { planName: 'PT 12', startsOn: '2026-09-01', endsOn: '2027-02-28', ptSessions: 12, ptUsed: 12 } });
     expect(kinds(input({ settings: s, membership: allUsed }))).toEqual([]);
   });
@@ -344,5 +368,23 @@ describe('the words', () => {
     }
     expect(AUTO_WORDS.offerReward(1, '2027-01-05', '2026-10-23')).toBe('1 extra day added to your plan for your workouts. It now ends on 5 Jan 2027.');
     expect(AUTO_WORDS.birthday('', GYM)).toBe("Happy birthday! Best wishes from all of us at RAM'S FITNESS.");
+  });
+});
+
+describe('review NITs 4 and 9', () => {
+  it('after a cancel, only one-offs whose morning passed stay delivered', () => {
+    const sent = { 'welcome:m1': '2026-10-22', 'reward:o1': '2026-10-23', 'pt:2026-09-01': '2026-10-25' };
+    // 8 am: today's 9:30 has not come, so today's one never arrived either.
+    expect(deliveredOnly(sent, EARLY)).toEqual({ 'welcome:m1': '2026-10-22' });
+    expect(deliveredOnly(sent, LATE)).toEqual({ 'welcome:m1': '2026-10-22', 'reward:o1': '2026-10-23' });
+    expect(firstSlotDay(EARLY)).toBe('2026-10-23');
+    expect(firstSlotDay(LATE)).toBe('2026-10-24');
+  });
+  it('ids carry the new prefix; the old one still covers them (old ids are cancelled with them)', () => {
+    const r = planGymReminders(input()).reminders;
+    expect(r[0].id).toBe('forgeai-gym-reminder-2026-10-26');
+    expect(GYM_REMINDER_PREFIX.startsWith(OLD_GYM_REMINDER_PREFIX)).toBe(true);
+    // Never the workout reminders' own ids.
+    expect('forgeai-reminder-w0'.startsWith(OLD_GYM_REMINDER_PREFIX)).toBe(false);
   });
 });

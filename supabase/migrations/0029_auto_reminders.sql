@@ -32,7 +32,8 @@
 --                                        number matched at a QR check-in, the first name matches,
 --                                        not a shared number), else null. birthday is 'MM-DD' only,
 --                                        never the year. lastVisitOn: the latest check-in in the
---                                        register (any source), not after today. No money, ever.
+--                                        register (any source), not after today, and only while the
+--                                        owner has "we haven't seen you" (miss_you) on. No money.
 -- The table has row security on and no grants: everything goes through the functions (SECURITY
 -- DEFINER, fixed search_path). Nobody reads another gym's row.
 
@@ -146,12 +147,15 @@ begin
     if roster.id is not null then
       dob := public._iso_day(roster.data->>'dateOfBirth');
       joined := public._iso_day(roster.data->>'joinedOn');
+      -- Only "we haven't seen you" reads the last check-in (off unless the owner turned it on).
+      if coalesce(s->'miss_you'->>'on', 'false') = 'true' then
       select max(r.data->>'visitedOn') into last_visit
         from public.crm_records r
        where r.gym_id = m.gym_id and r.kind = 'visit' and not r.deleted
          and r.data->>'memberId' = roster.id
          and r.data->>'visitedOn' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
          and r.data->>'visitedOn' <= to_char(today, 'YYYY-MM-DD');
+      end if;
     end if;
   end if;
   return jsonb_build_object('ok', true, 'day', to_char(today, 'YYYY-MM-DD'), 'settings', s,
