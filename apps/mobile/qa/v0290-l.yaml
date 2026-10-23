@@ -242,8 +242,10 @@ appId: com.forgeai.app
     text: "Finish workout"
     above:
       text: "Keep going"
+# The "Update routine?" sheet can open over the summary before "Workout complete" is read, and then
+# hides it from the screen reader (run 39936640177, owner phone): either one means "finished".
 - extendedWaitUntil:
-    visible: "Workout complete"
+    visible: "Workout complete|Update routine"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000
