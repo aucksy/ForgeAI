@@ -3,6 +3,9 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~13:35 IST:** 0029 LIVE (#53). HQ sign-in works (both owner Google accounts); test gyms hidden (R-91). CI on 08362f7
+  failed: aiMatch "hang" test on Node 22.23 (unref'd AbortSignal.timeout) -> test fixed in 8813012. v0.55.0 gate restarted
+  on 8813012 (old phone runs cancelled). NEXT: when green, tag 8813012 (or a paperwork commit after it), release, link.
 - **UPDATE ~11:45 IST: HQ 0027 + 0028 APPLIED LIVE** (owner said yes, R-87). Live tests: 0027 PASS (64), 0028 PASS (49);
   security.sql (main) fails ONLY on the 3 not-yet-live 0029 reminder functions (expected). Next: deploy the admin app
   (ForgeAI access card), then the v0.55.0 gate. HQ Worker still waits for his Supabase "hq" key + Google OAuth client.
