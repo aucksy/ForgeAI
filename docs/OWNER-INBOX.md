@@ -16,7 +16,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
-| 49 | Offers step 2: the consent words and privacy lines | A: yes as written |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -302,6 +301,7 @@ free plan, and for how long, if they start today?
 ## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (23 Oct, 08:49 am, via the page)**
 **You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
 and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
 **My answer:** Building it in three steps. Step 1 needs nothing from you, and I have started it.
@@ -330,9 +330,9 @@ and a reward that nudges members to track workouts ("track 10 workouts, get 3 ex
 **What the member sees before joining (consent words):**
 > Join: 10 workouts, 3 extra days. How it works: on a day you check in at <gym>, log a workout of at least 20 minutes with 6 or more sets in ForgeAI. Log 10 of them within 30 days of joining, and 3 days are added to your membership. What the gym gets: only the dates of those workouts. Never your exercises, weights, sets, body weight or photos. Who sees it: the owner and front desk of <gym>. Stop any time: Gym tab → Workout offer → Leave the offer. The dates are deleted and nothing more is sent. Questions or complaints: ask at <gym>'s front desk. If it is not solved, you can complain to the Data Protection Board of India. Not joining changes nothing about your membership. [Join the offer] [Not now]
 **New lines for the privacy notice** (English and Hindi, full text in docs/overhaul/offers-step2-words-for-approval.md): 1) if you join, the app sends your gym only the dates of the workouts that count, only while you are in the offer; 2) what we keep and for how long: dates deleted when you leave, or 90 days after the offer ends; 3) how to stop: Gym tab → Workout offer → Leave the offer; 4) "Last updated" with what changed.
-**Decide:** Are the consent words and the privacy lines OK?
-- A: Yes, as written. I then make the live server change (you said yes in A), put the lines in the privacy notice, and release the member app (recommended)
-- B: Change them: write what to change in the comment box
+**YOUR REPLY (23 Oct, 08:49):** A. "I will setup firebase but I think we need to think about changing branding first.. where is the answer to branding related question. I think we need a search box also in this tracker"
+**DECIDED (23 Oct 2026):** A: the words as written. Next: the live server change (needs you to sign in to Supabase once in my browser), the privacy notice lines, the member app release. The branding answer is #44 (5 names to pick from); a search box is being built into this page.
+**Your task:** Sign in to Supabase once in the browser inside the Claude app (Ctrl+Shift+B opens it; the Supabase sign-in page is already open there: use "Continue with GitHub" or your email, as you usually do). Then tell me "signed in" and I make the live server change for the workout offer.
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
 
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
@@ -355,7 +355,10 @@ follow the app's targets?
 
 ## 47. AI import of a gym's old records: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** Done
+**TASK DONE (23 Oct, 08:54 am, via the page)**
+**KEYS IN (23 Oct):** both keys are saved as secrets; the AI address now answers "sign in first" instead of "not switched on". I am running one real import through the test gym to prove it.
+**READ (23 Oct, 08:55 am, via the page)**
 **You asked:** gym owners must bring their old data in without your help. Use AI in the admin app's
 import, with a database that can take new kinds of fields for each gym, and think through the problems.
 **My answer:** Yes, build it. Others do the column matching with AI too (HubSpot, Flatfile). Indian gym
