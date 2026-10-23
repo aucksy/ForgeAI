@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-87. "yes, apply the owner panel database parts 2 and 3" — 23 Oct 2026
+**Owner said:** "yes, apply the owner panel database parts 2 and 3".
+**What I do:** apply supabase/migrations/0027_hq_actions.sql and 0028_hq_breakglass_and_logs.sql to the live database
+(Supabase dashboard SQL editor), in that order, then run their tests on live (the tests end in an error on purpose, so
+they change nothing) and the security test. This yes covers only 0027 and 0028; 0029 (reminders) still needs its own yes.
+
 ## R-86. Automatic member notifications (plan ending in N days and every other case), owner switches each on/off — 23 Oct 2026
 **Owner said:** "for Plans and offers - plan and implement automated app notifications for things like membership
 expiring in XX days... think of all possible use cases... let the owner switch them On or Off - leave some of the most
