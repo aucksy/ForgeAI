@@ -16,6 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
+| 44 | A new English brand name | A: Liftchase |
 | 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
@@ -444,7 +445,7 @@ and log the set by itself? Or is there a better way?
 
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** Working on it
+**Status:** WAITING FOR YOU
 **READ (23 Oct, 09:46 am, via the page)**
 **You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
 normal price; forge.ai and forgeai.com are taken and too expensive.
@@ -461,7 +462,15 @@ Two cautions: two names on my list were registered by someone else in the last f
 captcha), so do it, or ask a lawyer, before paying for a logo. Say both top names to 3-4 Jaipur gym owners
 first if you can.
 **YOUR REPLY (23 Oct, 09:46):** "Nah I want something in English"
-**WORKING ON IT (23 Oct):** a new search, English names only, each with .com and .in free at the normal price; a new question comes back here with my top picks.
+**NEW ANSWER (23 Oct): English names only.** I checked 625 more. Every plain English word is taken as a .com (Uptick, Regulars, Mainstay, Topset...). What is still free is two words joined: "lift" or "rep" plus a progress word. All five below have .com, .in and .app free at the normal price (GoDaddy India: none premium):
+- **Liftchase**: "chase your next lift". Names the "kg to beat" screen and the reason to come back. 2 syllables; nothing anywhere uses it. Nearest Indian trademark: "The Fit Chase" (the official search must clear it).
+- **RepAhead**: "stay a rep ahead". The plainest English; no app uses it, but similar marks exist ("Stepahead", "Getahead"), so it is harder to protect.
+- **Repnotch**: "notch up one more rep". But "Notch – Gym & Fitness Tracker" is on Google Play.
+- **Kilonest** and **Kilostreak**: risky: a US company called Kilo already sells gym software with a member app.
+Cost: about ₹3,100 a year for .com + .in + .app. Before paying for a logo, the official trademark search (needs a person, it has a captcha) or a lawyer. Buy the .com and .in the day you pick: 9 names I tried were taken in the last 30 days.
+**Decide:** Which English name?
+- A: Liftchase (recommended): the only 2-syllable name clean on domains, Google Play, the web and the rough trademark check
+- B: RepAhead: the safest plain English, easy to remember; weaker trademark protection
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026

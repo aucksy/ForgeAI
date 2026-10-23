@@ -107,3 +107,108 @@ Also known taken (from the brief): forge.ai, forgeai.com. forgeai.app is taken t
 - https://cfdomainpricing.com/ (Cloudflare at-cost prices) and https://www.cloudflare.com/tld-policies/ (.in not offered)
 - https://open.er-api.com/v6/latest/USD (exchange rate)
 - Web searches with no matching app or company: "Repghar", "Kadamfit", "Kilojeet", "RepAhead", "Iron Adda" (found the Iron Addict gyms at https://fitpass.co.in/studio/iron-addict-gym4-topsia), "Aglaset", "Rozrep / Gymjeet / Repjeet", "Gym Hazri". The Kadam fitness app was also seen in a search result at https://hunted.space/product/kadam-3.
+
+---
+
+## 23 Oct: English names only
+
+You said: "Nah I want something in English". So this round has no Hindi words at all. 625 more English names checked (real words, two-word joins, and a few made-up ones).
+
+### In one minute
+
+- **Top pick (A): Liftchase.** Runner-up **(B): RepAhead.**
+- All five names below have **.com, .in and .app free at the normal price** (GoDaddy India checked each one on 23 Oct: standard price, not premium, not for sale by someone else).
+- Short real English words are gone. Every plain word tried (Uptick, Mainstay, Regulars, Turnout, Topset, Rerack, Muster, Reprise, Outset, Gainful...) has its .com taken, and most are taken on all three endings. What is still free is two words joined: "lift" or "rep" plus a progress word.
+- **A warning about every name starting with "Kilo":** a US company called **Kilo** already sells gym software to gym owners (members, billing, scheduling, its own member app). There is also a gym-log app called "Kilo: Gym Log" on Google Play India. That is our exact business. So the Kilo names are only safe if we stay in India, and even then members searching for us may land on them.
+- Domains go fast: 9 of the names tried were registered by someone in the last 30 days (kilocamp.com on 21 Oct, gritrep.com on 17 Oct). Buy the .com and .in the day you pick.
+
+### The shortlist (5)
+
+**1. Liftchase**: "chase your next lift"
+- Free: liftchase.com, liftchase.in, liftchase.app. Normal price (GoDaddy: .com ₹1 for year 1 on a 3-year term, then ₹1,599; .in ₹1, then ₹899; .app ₹1,508, then ₹2,641).
+- Why it fits: it is the "kg to beat" screen in one word. Every week there is a new number to chase, so members come back to chase it. For owners it sounds energetic, not like a toy. 2 syllables, 9 letters.
+- Clash: no app or company called Liftchase (Google Play, App Store and web). On Play there is "PR Chaser - Outrun Yesterday", a different name with a similar idea. Nearest Indian trademark on the unofficial copy of the register: **"The Fit Chase"**, plus "Light Chasers" and "Liftcal". The person doing the official search should look hard at "The Fit Chase". "Chase" is also a big US bank brand, but in banking, not fitness.
+- Saying it: easy, no th or v/w sound. One catch: in Indian English "lift" also means an elevator. Next to a dumbbell logo nobody will read it that way.
+
+**2. RepAhead**: "stay a rep ahead" (also on the 22 Oct list)
+- Free: repahead.com, repahead.in, repahead.app. Normal price (GoDaddy confirmed all three today).
+- Why it fits: the plainest English on the list. Members want to stay ahead of last week. Owners hear "a step ahead".
+- Clash: no app with this name. "Reppa: Train Together" (a gym app on Play) is close. Indian trademarks "Stepahead", "Getahead", "Keepahead" and "Regahead" exist, so this name is **harder to protect** than a less common word.
+- Saying it: easy. 3 syllables.
+
+**3. Repnotch**: "notch up one more rep"
+- Free: repnotch.com, repnotch.in, repnotch.app. Normal price (GoDaddy confirmed).
+- Why it fits: a notch is a small step up, and also the mark you cut to count something. So it covers both progress and "count every visit". Indians know the word from "top-notch". 2 syllables, 8 letters.
+- Clash: no "Repnotch" anywhere. But "Notch" is busy: "Notch - Gym & Fitness Tracker" and "Notch: Pull-up & Plank Timer" are on Play, and the register has many "Topnotch" marks plus a "Renotch". In English slang, "a notch on the bedpost" means a sexual conquest. That is mild and rarely heard in India.
+
+**4. Kilonest**: "the home of your kilos" (the English twin of Repghar)
+- Free: kilonest.com, kilonest.in, kilonest.app. Normal price (GoDaddy confirmed).
+- Why it fits: kilos = progress, nest = the place you come back to. The same idea you liked in Repghar, but in English.
+- Clash: no Kilonest anywhere. Nearest Indian marks: "Kidonest", "Cilonest", "Kilobeaters". **But see the Kilo warning above:** the US gym-software company Kilo and the "Kilo: Gym Log" app are in our exact space. That is a real risk if you sell abroad.
+- Saying it: easy. 3 syllables.
+
+**5. Kilostreak**: "kilos up, streak going"
+- Free: kilostreak.com, kilostreak.in, kilostreak.app. Normal price (GoDaddy confirmed).
+- Why it fits: both halves of the pitch in one word. Kilos = progress, streak = coming back.
+- Clash: nothing called Kilostreak. The only Indian mark near it is "Biostreak Pharmaceuticals". The same Kilo warning applies. It is 10 letters, the longest on the list. In English, "streaking" also means running naked: harmless, but some will joke about it.
+
+### Top pick and runner-up
+
+**A: Liftchase.** It is the only short name (2 syllables) that is clean everywhere we looked: all three domains at normal price, no app or company with the name, and it says what members will actually do (chase the next kg) and why they come back. Before you pay for a logo, the official trademark search must clear "The Fit Chase".
+
+**B: RepAhead.** It is the safest plain-English choice and easy for any owner to remember. The trade-off: it is a common pair of words, so a trademark is harder to defend.
+
+If you would rather have warmth over safety, **Kilonest** is the one people will remember. Only pick it if you are fine with a US gym-software company called Kilo existing.
+
+### Good-looking English names that were dropped
+
+- **Streakrep** (streak + rep): domains free, but an iPhone strength app called **"StreakReps: Workout Tracker"** launched in July 2026. Too close.
+- **Kilochase / Kiloleap / Kilorise / Kiloclimb**: domains free at normal price. Dropped for the Kilo clash, and Kilochase repeats Liftchase.
+- **Uptick** (a small rise, the perfect word): taken on all three. Only uptickgym.com and similar forms are free, which is a weak domain.
+- **Regulars, Mainstay, Turnout, Muster** (the "regulars who keep coming back" idea): all taken. Gymregulars.com is free but 11 letters long.
+- **Topset, Rerack, Outlift, Repchase, Chalkup, Platechase**: perfect gym words, but the .com is taken.
+- **Platestreak, Plateclimb, Setclimb, Climbrep**: free, but "Plates: Simple Workout Tracker" is on Play, the "climb" names read like rock-climbing apps, and some are long.
+
+### Prices (GoDaddy India, read 23 Oct 2026, before GST)
+
+- .com: ₹1 for year 1 on a 3-year term (₹1,029 on a 1-year term), then ₹1,599 a year.
+- .in: ₹1 for year 1 on a 3-year term (₹599 on a 1-year term), then ₹899 a year.
+- .app: ₹1,508 for year 1, then ₹2,641 a year.
+- These are the same standard prices for all seven names checked (liftchase, repahead, repnotch, kilonest, kilostreak, kilochase, kiloleap). None is marked premium.
+- Cheaper elsewhere (22 Oct list above): about ₹990 for .com and ₹1,343 for .app at Cloudflare, and about ₹741 for .in at Porkbun. That is about ₹3,100 a year for all three.
+
+### Trademark: what still needs a person
+
+- **Official IP India search: not done.** It needs a captcha. Search each finalist in classes 9 (app/software), 35 (business management), 41 (fitness) and 42 (online software), or pay a trademark lawyer (usually a few thousand rupees).
+- **WIPO Global Brand Database: not done.** The automated browser stuck on "Processing" every time. A person can search it free at branddb.wipo.int. This matters if you plan to sell outside India.
+- What was done: a rough pre-check on QuickCompany (an unofficial copy of the Indian register), plus Google Play India and web searches.
+
+### Every English name checked (23 Oct 2026)
+
+"Free" means the registry has no record of the name. `*` = the .com is registered and parked or listed for sale, so buying it would cost a premium. `?` = the registry did not answer. 625 names: 619 new, plus 6 already on the 22 Oct list (repahead, kgahead, kiloscore, beatkg, showupgym, repagain). Status can change any day.
+
+| .com | .in | .app | Names |
+|---|---|---|---|
+| free | free | free | barnotch, barrise, beatkg, beltnotch, benchstreak, chasekilo, chaseplate, climbrep, comebackgym, diehardgym, everykilo, gainnotch, gainometer, gritkilo, gymdiehard, gymfixture, gymmainstay, gymmuster, gymregular, gymregulars, gymrejoin, gymrerun, gymrollcall, gymstaple, gymturnout, gymuptick, gymusual, gymusuals, heftday, ironagain, ironnotch, ironregular, ironreturn, keepkilo, kgahead, kgcount, kgtobeat, kiloace, kiloagain, kiloahead, kilobadge, kilobest, kiloboard, kilobump, kilochamp, kilochart, kilochase, kiloclimb, kiloclock, kilocord, kilocrest, kiloedge, kilofolk, kilofort, kilogains, kilogoal, kilohabit, kiloheart, kilohike, kilojump, kiloleap, kilolevel, kilomore, kilonest, kilonext, kilonotch, kilonow, kilonudge, kiloprime, kilopush, kilorank, kiloreturn, kilorise, kiloroad, kiloscore, kilospur, kilostairs, kilostobeat, kilostreak, kilosure, kilotally, kiloteam, kilotempo, kilotick, kilotrail, liftchase, liftchaser, liftchasers, lifterclub, liftfixture, liftfort, liftloyal, liftmile, liftnotch, liftregular, liftreturn, liftuptick, liftusual, loyalrep, mainstayfit, morekilo, musterfit, notchgym, notchkg, notchon, notchrep, notchset, overloadly, peakkilo, plateclimb, platestreak, pushkilo, regaingym, regularlift, repahead, repchaser, repfaithful, repmedal, repmill, repmost, repmuster, repnotch, repregular, repsback, repsprint, repuptick, setclimb, setnotch, showupgym, steadykilo, streakrep, topkilo, uptickgym (133) |
+| taken | free | free | acelift*, acerep, aceset*, barbest*, barchase*, barclimb, barleap, barnest, barnext*, barrank*, beatbest, beatmine, beatrep, beatset, betterrep*, boostrep*, chaselift, chaserep, chaseset, climblift*, climbset, crestfit*, gainchase*, gainchaser, gainclub*, gaindays, gainleap*, gainlog, gainmark*, gainnest*, gainrep, gainset, gainstreak*, gainsure*, gritgym, gritrep, gritset, gymagain, gymahead, gymanchor, gymcrest*, gymden, gymgain, gymgrit, gymhome, gymlocals, gymloyal*, gymnotch, gymrally, gymreturn, gymstamp, gymstay, gymsteady, gymstep*, gymsure, gymtally, gymtick*, heftly, ironchase, ironclimb*, ironclub, ironcove*, irondays*, ironden, ironfolk*, ironlevel, ironloyal, ironpass, ironplus, ironrally*, ironscore*, ironsteady*, ironstep, ironsure*, keeplifting*, keeprep, kgclub*, kilobase*, kilobeat*, kilobook*, kiloboost, kilocheck, kiloclub, kilocore*, kilocraft, kilocrew, kilodaily, kilodash, kiloday, kiloforge, kilogain, kilograde, kilohero, kilohome*, kilohouse, kilokeep, kilolift*, kiloline*, kilomap, kilomate*, kilomedal, kilomight*, kilopal, kilopass, kilopath, kilopeak*, kiloplus*, kiloquest, kilospark, kilostack, kilostep, kilosteps, kilostride*, kilostrong, kilotop, kilowin, kiloyard, lastbest*, liftagain, liftahead, liftbeat*, liftbest*, liftchart*, liftcheck*, liftclimb, liftcount*, liftcove, liftcrest*, liftdaily, liftden, liftgrade, lifthouse, liftik*, liftkeep, liftkeeper, liftladder, liftlegacy, liftlevel, liftmeter, liftnext, liftometer, liftover*, liftpeak, liftplus, liftport, liftrally*, liftroad, liftspring*, liftsprint*, liftstreak, liftstride, liftsure*, lifttoday*, lifttrek*, loyalift, loyaliron, morerep*, newbest*, nextkg*, nextkilo, nextload, nextnotch, onenotch*, outgain, pacerep, peakrep, platechase, platehouse, plateleap, platenest, platenext, plateplus, platerise, plusset*, primerep*, proglift, progrep, rackday*, realgains, regainfit*, repagain, repbadge*, repbest, repchart, repchase, repcove, repcraft, repcrest, repfield, repfort, repgrade, rephabit, rephome*, repkeeper, repkick*, repladder, replane*, repleap, replocal, repmonk, repmore*, repometer, repon*, repover, reprally, repreturn*, repritual, reproad, repsahead, repsign, repspark, repstamp, repstay, repstrong, reptick, reptrail, reptrek, repwin*, riselift*, riserep, riseset*, setagain, setahead, setbit, setcove, setden*, setfolk, setleap*, setnext, setpeak*, setport*, setstreak, settrek, showrep, showstreak, staylift*, stayrep*, steadyrep, steelday, stepupgym, streakgym, streaklift, streakset, strongclub, strongfolk*, strongkilo, strongline, strongscore*, strongset, uptickapp, uptickfit (251) |
+| taken | free | taken | barclub*, barpath, beatlast*, beatlift*, benchday, benchup*, bestrep, bestset*, betterset*, chalkday, chalkline, chalkly, chalkmark, chalkup, checkrep*, climbly*, everyrep, everyset, gainboard*, gainbook*, gainday, gainful, gainfully, gritlift*, gritly, gymbit*, gymclimb, gymdaily*, gympace*, gymrank, gymritual*, gymroster*, gymspark, gymup, ironbit, ironbook, ironday, ironhabit*, ironkeep*, ironleap*, ironline, ironmile, ironpath, ironrank, ironrise, ironroad, ironstreak, kilocamp, kilohub, kilomile*, kilopace, kilotrack*, liftbit, liftboard, liftbook, liftcamp*, liftclock*, liftcrew, liftday, lifthabit, liftkin, liftlane, liftleap*, liftledger*, liftlore, liftmore, liftproof, liftrank, liftrecord, liftscore*, liftsteady, maxrep*, maxset*, musterly*, nextlift, nextplate*, nextrung*, notchbar, notchly, outlift, overrep, peakset*, plateahead, platechaser*, plateday, platemark, platerank*, plusrep, reclimb, repbeat, repbit*, repboard, repcamp, repclimb, repclock, repcord*, repcore*, repcount, repcrew*, repdash, repday*, repden*, repedge, repfolk, repforge*, repfuel*, repgrind, repkind, replegend*, replevel, replift*, repline, repmax*, repnext, reppace, repport, repproof, reppy, repquest, repr*, reprank, reprush*, repsaga, repscale, repstone, repstride, reptally, reptoday*, rungup, setbook*, setchase, setchaser, setday, setforge, setmark, setrise*, setstone*, setsure*, steadyset, strongday, tobeat*, topsets*, truerep, upclimb, uprep* (145) |
+| taken | taken | free | climbon, gainon*, gymfort*, gymlane, gymstone*, homerack*, ironhome, ironly*, ironup, liftpass, regularly, repeak, rephouse, rephub, repsure, steadygains*, upgain, upkg, upticks* (19) |
+| taken | taken | taken | backagain, climbup, comeagain, gaintrack*, gainup*, gymcheck*, gymclock*, gymcrew*, gymedge*, gymforge, gymhabit*, gymkeeper, gymledger*, gymmate*, gympulse, gymtrack*, inchup, ironbeat*, ironhouse*, ironhub*, ironmark*, ironnest*, keepon*, keepset*, liftedge*, lifthub*, liftlocal, lifto, liftr, liftra, lifty, loadup, mainstay, mettle, muster, notchfit*, notchup, onemoreset*, onerep, outpace, outrep, outset, pbclub*, plateclub*, rackly*, rackon*, rackup, regain, regulars, regulr, relift, repbook*, repcheck, repforce, repiq, repone, reprise, repto, repwise*, rerack, retainly, rollcall, setnest, showup*, spotly, stepahead, streakly*, strongr, topset, truelift*, turnout, upshift, upstep, upstride, uptick, upturn (76) |
+| taken | taken | ? | rerise (1) |
+
+### How it was checked (23 Oct)
+
+- Domains: each registry's own RDAP lookup, the same method as 22 Oct. Verisign for .com, NIXI for .in, Google Registry for .app. "Not found" = free. For a taken .com, the nameservers show whether it is parked or listed for sale (Afternic, Atom, NameBright/HugeDomains, BrandBucket, Sedo, Dan, ParkLogic, dns-parking and so on).
+- Normal vs premium price: GoDaddy India's own search, read from inside a normal browser tab (GoDaddy blocks plain automated requests).
+- Clashes: Google Play India search for each finalist (joined and split, e.g. "liftchase" and "lift chase"), web search, and QuickCompany for Indian trademarks.
+
+### Sources (23 Oct)
+
+- https://rdap.verisign.com/com/v1/domain/{name}.com , https://rdap.nixiregistry.in/rdap/domain/{name}.in , https://pubapi.registry.google/rdap/domain/{name}.app (each name)
+- https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=liftchase.com and the page's own exact-match lookup for liftchase, repahead, repnotch, kilonest, kilostreak, kilochase, kiloleap (.com/.in/.app)
+- https://play.google.com/store/search?q={name}&c=apps&hl=en_IN&gl=IN (kilochase, kilo chase, kilonest, kilo nest, repnotch, rep notch, kiloleap, kilo leap, kilorise, kilo rise, kilostreak, kilo streak, liftchase, lift chase, setnotch, notch, kilo, kilo gym log, repahead, rep ahead, loyalrep, gym regulars, notch gym, chase fitness, streakrep, streak rep, rep streak, climbrep, climb rep, platestreak, plate streak, repchaser, rep chaser, uptick)
+- https://www.quickcompany.in/trademarks?q={name} (liftchase, repnotch, repahead, kilonest, kilostreak, kilochase, setnotch, ironnotch, platestreak, uptickgym, repuptick, liftnotch, streakrep, climbrep, repchaser, uptick, notch, kilo)
+- Kilo, the US gym-software company: https://www.usekilo.com/ and https://help.usekilo.com/kb/articles/workout-tracker-overview ; "Kilo: Gym Log & Garmin Tracker" on Play (com.thekiloapp.tracker)
+- StreakReps on the App Store: https://chrome-stats.com/d/id6775801149
+- Web searches with no matching app or company: "Liftchase", "Kilonest", "Kilostreak", "Repnotch", "Kilochase"
+- https://branddb.wipo.int/ (tried; did not load for an automated browser)
