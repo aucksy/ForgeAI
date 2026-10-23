@@ -37,6 +37,7 @@ import {
   font,
   space,
 } from '../kit';
+import { ForgeAccessCard } from '../ForgeAccessCard';
 import { GymDataActions } from '../GymDataActions';
 
 export function SettingsScreen() {
@@ -232,6 +233,9 @@ export function SettingsScreen() {
         </Row>
         )}
       </Card>
+
+      {/* #51: when ForgeAI support looked at this gym's records, and the button to let them. */}
+      {online && canErase && <ForgeAccessCard />}
 
       {confirming && (
         <Sheet
