@@ -122,7 +122,10 @@ function fakeNet({ gemini = () => geminiOk(), claude = () => claudeOk(), me = (k
     if (out === 'hang') {
       return new Promise((_, reject) => {
         const signal = init.signal ?? (typeof input === 'object' ? input.signal : undefined);
-        signal?.addEventListener('abort', () => reject(signal.reason ?? new Error('aborted')));
+        // AbortSignal.timeout's timer does not keep Node running (Node 22 ends the test with "Promise
+        // resolution is still pending"); a real request does. This stands in for that request.
+        const alive = setInterval(() => {}, 1000);
+        signal?.addEventListener('abort', () => { clearInterval(alive); reject(signal.reason ?? new Error('aborted')); });
       });
     }
     if (out instanceof Error) throw out;
