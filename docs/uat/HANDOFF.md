@@ -3,6 +3,10 @@
 Whoever stops last updates this file and pushes it. The other side starts here.
 
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
+- **UPDATE ~15:45 IST:** gate on 8813012: default, journeys, CI green; owner red only in BR-welcome (test race: the icon
+  pop-up covered the tab bar; every later part failed because the pop-up stayed open). Test fixed on main (not paperwork).
+  Owner rerun on 8813012 via helper tag qa-8813012-owner. If green: release v0.55.0 from a worktree on 8813012 (+ PROGRESS
+  entry), dispatch ci.yml on the tag. If red again: full gate on main HEAD.
 - **UPDATE ~13:35 IST:** 0029 LIVE (#53). HQ sign-in works (both owner Google accounts); test gyms hidden (R-91). CI on 08362f7
   failed: aiMatch "hang" test on Node 22.23 (unref'd AbortSignal.timeout) -> test fixed in 8813012. v0.55.0 gate restarted
   on 8813012 (old phone runs cancelled). NEXT: when green, tag 8813012 (or a paperwork commit after it), release, link.
