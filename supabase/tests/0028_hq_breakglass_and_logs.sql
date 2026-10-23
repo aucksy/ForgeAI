@@ -61,6 +61,18 @@ begin
   fails := fails || pg_temp.t28_is('2 on HQ row', (public.hq_gym(hq, ga)->>'supportOpenedBy'), 'gym');
   checks := checks + 12;
 
+  -- Pressing the button again closes this window (its start and its looks stay as they were) and
+  -- opens a new hour.
+  update public.hq_grants set starts_at = now() - interval '10 minutes', ends_at = now() + interval '50 minutes' where gym_id = ga;
+  r := public.owner_hq_grant(koa);
+  acc := public.owner_hq_access(koa);
+  fails := fails || pg_temp.t28_is('2b two windows', jsonb_array_length(acc->'grants')::text, '2');
+  fails := fails || pg_temp.t28_is('2b the first keeps its start',
+    ((acc->'grants'->1->>'startsAt')::timestamptz = now() - interval '10 minutes')::text || '/' || (acc->'grants'->1->>'endedEarly'), 'true/true');
+  fails := fails || pg_temp.t28_is('2b and its looks', (select string_agg(x->>'what', ',' order by x->>'what') from jsonb_array_elements(acc->'grants'->1->'looked') x), 'member,staff');
+  fails := fails || pg_temp.t28_is('2b the new hour is open', (acc->'grants'->0->>'open') || '/' || (r->>'open'), 'true/true');
+  checks := checks + 4;
+
   -- Read-only: there is no HQ write path through a grant, and HQ still cannot use a gym function.
   fails := fails || pg_temp.t28_is('2 no edit', (select count(*) from pg_proc p join pg_namespace s on s.oid = p.pronamespace
      where s.nspname = 'public' and p.proname like 'hq\_gym\_%' and p.proname <> 'hq_gym_records')::text, '0');
@@ -123,13 +135,23 @@ begin
   checks := checks + 4;
 
   -- 7. Nightly clean-up: old rows go, recent ones stay, and it writes its own audit row.
-  insert into public.gym_access_log(at, gym_id, action) values (now() - interval '400 days', ga, 'sign_in'), (now() - interval '10 days', ga, 'sign_in');
+  -- The access log's period follows the privacy notice: 7 days until 13 May 2027, then 1 year.
+  fails := fails || pg_temp.t28_is('7 period now', public._access_log_keep(timestamptz '2026-10-23 12:00+05:30')::text, '7 days')
+                 || pg_temp.t28_is('7 period on the last 7-day day', public._access_log_keep(timestamptz '2027-05-12 23:59+05:30')::text, '7 days')
+                 || pg_temp.t28_is('7 period from 13 May 2027', public._access_log_keep(timestamptz '2027-05-13 00:00+05:30')::text, '1 year');
+  checks := checks + 3;
+  insert into public.gym_access_log(at, gym_id, action) values
+    (now() - interval '400 days', ga, 'sign_in'), (now() - interval '8 days', ga, 'pull_all'), (now() - interval '3 days', ga, 'sign_out');
   insert into public.hq_audit(at, actor, action) values (now() - interval '800 days', 'old@example.com', 'view_all_gyms');
   insert into public.gym_creator_ips(gym_id, ip, created_at) values (gb, '1.2.3.4', now() - interval '400 days')
     on conflict (gym_id) do update set created_at = excluded.created_at;
   r := public.hq_nightly_cleanup('{"feedback":0}'::jsonb);
   fails := fails || pg_temp.t28_is('7 access log', ((r->>'accessLog')::int >= 1)::text, 'true');
-  fails := fails || pg_temp.t28_is('7 recent kept', (select count(*) from public.gym_access_log where gym_id = ga and at = now() - interval '10 days')::text, '1');
+  fails := fails || pg_temp.t28_is('7 3 days kept', (select count(*) from public.gym_access_log where gym_id = ga and at = now() - interval '3 days')::text, '1');
+  fails := fails || pg_temp.t28_is('7 8 days: gone while the period is 7 days',
+    (select count(*) from public.gym_access_log where gym_id = ga and at = now() - interval '8 days')::text,
+    case when public._access_log_keep(now()) = interval '7 days' then '0' else '1' end);
+  checks := checks + 1;
   fails := fails || pg_temp.t28_is('7 old audit', (select count(*) from public.hq_audit where actor = 'old@example.com')::text, '0');
   fails := fails || pg_temp.t28_is('7 recent audit kept', ((select count(*) from public.hq_audit where gym_id = ga) > 5)::text, 'true');
   fails := fails || pg_temp.t28_is('7 creator address', (select count(*) from public.gym_creator_ips where gym_id = gb)::text, '0');

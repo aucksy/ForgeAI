@@ -22,7 +22,9 @@
 -- The owner sees every grant and every look (owner_hq_access): who opened it, why, from when to
 -- when, and what was looked at. Nobody can hide or delete those rows (hq_audit is append-only).
 --
--- ACCESS LOG (gym_access_log, 1 year). Written by triggers, so no sign-in function changes:
+-- ACCESS LOG (gym_access_log). Kept 7 days until 13 May 2027 and 1 year from then, as the privacy
+-- notice says (PRIVACY-NOTICE.md, "Technical logs"); the nightly clean-up decides by the date.
+-- Written by triggers, so no sign-in function changes:
 --   sign_in       a new device session (gym_sessions insert): person, device, address;
 --   sign_out      a session ended (signed out, removed, signed out everywhere, 11th device);
 --   sign_in_failed a wrong code (gym_signin_fails insert; that table keeps rows only 1 day);
@@ -31,9 +33,13 @@
 --   pull_all      the whole copy pulled (crm_pull with p_since = 0, the one line above).
 --
 -- NIGHTLY CLEAN-UP (hq_nightly_cleanup, called by the HQ Worker's 03:00 India-time Cron Trigger):
--- access log older than 1 year; the gym creator's address (0021) older than 1 year; support-access
+-- access log past its period (7 days, from 13 May 2027 1 year); the gym creator's address (0021) older than 1 year; support-access
 -- rows, done or cancelled delete requests and the HQ audit log older than 2 years. It writes its own
 -- audit row with the counts.
+
+-- Apply 0026, 0027 and 0028 together, in this order (each is re-runnable; re-run all three after a
+-- change). A lock wait gives up after 3 seconds rather than stalling the live apps behind it.
+set lock_timeout = '3s';
 
 -- ------------------------------------------------------------------ support access
 create table if not exists public.hq_grants (
@@ -89,6 +95,7 @@ create or replace function public._access_log_session() returns trigger
 declare st public.gym_staff;
 begin
   select * into st from public.gym_staff where staff_id = new.staff_id;
+  if st.staff_id is null then return null; end if;
   if tg_op = 'INSERT' then
     insert into public.gym_access_log(gym_id, staff_id, person, action, device, ip)
       values (st.gym_id, st.staff_id, st.name, 'sign_in', left(new.device, 80), public._caller_ip());
@@ -141,7 +148,7 @@ begin
   if since = 0 then
     insert into public.gym_access_log(gym_id, staff_id, person, action, ip)
       select g, s.staff_id, coalesce(s.name, 'Owner (old owner key)'), 'pull_all', public._caller_ip()
-        from (select (public._staff(p_key)).*) s;
+        from public._staff(p_key) s;
   end if;
   return jsonb_build_object(
     'version', gr.crm_version,
@@ -154,21 +161,18 @@ begin
 end $$;
 
 -- ------------------------------------------------------------------ the gym owner's side (anon + key)
--- "Let ForgeAI support look (1 hour)": owner only. An open grant from the gym is extended to an
--- hour from now instead of adding a second one. Errors: BAD_KEY, OWNER_ONLY.
+-- "Let ForgeAI support look (1 hour)": owner only. An open window from the gym is closed (its looks
+-- stay listed under it) and a new hour starts. Errors: BAD_KEY, OWNER_ONLY.
 create or replace function public.owner_hq_grant(p_key text)
   returns jsonb language plpgsql volatile security definer set search_path = public as $$
 declare g uuid := public._owner_only_gym(p_key); st public.gym_staff := public._staff(p_key); x public.hq_grants;
 begin
   perform 1 from public.gyms where gym_id = g for update;
-  x := public._hq_grant_live(g);
-  if x.grant_id is not null and x.opened_by = 'gym' then
-    update public.hq_grants set starts_at = now(), ends_at = now() + interval '60 minutes' where grant_id = x.grant_id returning * into x;
-  else
-    insert into public.hq_grants(gym_id, opened_by, opened_by_name, reason_kind, reason, starts_at, ends_at)
-      values (g, 'gym', coalesce(st.name, 'Owner'), 'gym_asked', 'The gym asked ForgeAI support to look', now(), now() + interval '60 minutes')
-      returning * into x;
-  end if;
+  update public.hq_grants set ended_early_at = now()
+   where gym_id = g and opened_by = 'gym' and ended_early_at is null and ends_at > now();
+  insert into public.hq_grants(gym_id, opened_by, opened_by_name, reason_kind, reason, starts_at, ends_at)
+    values (g, 'gym', coalesce(st.name, 'Owner'), 'gym_asked', 'The gym asked ForgeAI support to look', now(), now() + interval '60 minutes')
+    returning * into x;
   return public._hq_grant_json(x);
 end $$;
 
@@ -275,20 +279,41 @@ begin
 end $$;
 
 -- One gym's access log (the admin app's sign-ins, sign-outs, saves, whole-copy pulls), newest first.
--- Staff names are ForgeAI's own records (it is responsible for staff sign-in data itself).
+-- By default only WHEN and WHAT (and counts per kind): no person, device or address. Those show only
+-- while support access is open on the gym, and that look is an audit row the gym owner sees
+-- ("sign-in history" in owner_hq_access).
 create or replace function public.hq_access_log(p_actor text, p_gym uuid, p_before bigint default null)
   returns jsonb language plpgsql volatile security definer set search_path = public as $$
-declare out jsonb;
+declare x public.hq_grants := public._hq_grant_live(p_gym); detailed boolean; rows jsonb; counts jsonb;
 begin
   perform public._hq_guard();
-  select coalesce(jsonb_agg(jsonb_build_object('id', l.log_id, 'at', l.at, 'person', l.person, 'action', l.action,
-                                               'device', l.device, 'ip', l.ip) order by l.log_id desc), '[]'::jsonb)
-    into out
+  detailed := x.grant_id is not null;
+  select coalesce(jsonb_agg(case when detailed
+                                 then jsonb_build_object('id', l.log_id, 'at', l.at, 'action', l.action, 'person', l.person,
+                                                         'device', l.device, 'ip', l.ip)
+                                 else jsonb_build_object('id', l.log_id, 'at', l.at, 'action', l.action) end
+                            order by l.log_id desc), '[]'::jsonb)
+    into rows
     from (select * from public.gym_access_log where gym_id = p_gym and (p_before is null or log_id < p_before)
            order by log_id desc limit 200) l;
-  perform public._hq_log(p_actor, 'view_access_log', p_gym, null, '{}'::jsonb);
-  return out;
+  select coalesce(jsonb_object_agg(action, n), '{}'::jsonb) into counts
+    from (select action, count(*) n from public.gym_access_log
+           where gym_id = p_gym and at > now() - interval '7 days' group by action) c;
+  if detailed then
+    perform public._hq_log(p_actor, 'support_view', p_gym, x.reason,
+      jsonb_build_object('kind', 'access_log', 'rows', jsonb_array_length(rows), 'grantId', x.grant_id));
+  else
+    perform public._hq_log(p_actor, 'view_access_log', p_gym, null, '{}'::jsonb);
+  end if;
+  return jsonb_build_object('rows', rows, 'counts7Days', counts, 'detailed', detailed);
 end $$;
+
+-- How long the access log is kept on a given day: 7 days until 13 May 2027 (the privacy notice says
+-- "up to 7 days today"), 1 year from then (DPDP Rules 2025, Rule 6). PURE.
+create or replace function public._access_log_keep(p_now timestamptz) returns interval
+  language sql immutable set search_path = public as $$
+  select case when p_now < timestamptz '2027-05-13 00:00:00+05:30' then interval '7 days' else interval '1 year' end
+$$;
 
 -- The nightly clean-up (the HQ Worker's Cron Trigger). p_detail: what the Worker cleaned in
 -- Cloudflare's database, written into the same audit row.
@@ -297,7 +322,7 @@ create or replace function public.hq_nightly_cleanup(p_detail jsonb default '{}'
 declare a int; c int; gr int; rq int; au int; out jsonb;
 begin
   perform public._hq_guard();
-  delete from public.gym_access_log where at < now() - interval '1 year';
+  delete from public.gym_access_log where at < now() - public._access_log_keep(now());
   get diagnostics a = row_count;
   delete from public.gym_creator_ips where created_at < now() - interval '1 year';
   get diagnostics c = row_count;
@@ -312,7 +337,8 @@ begin
   perform set_config('forgeai.hq_purge', 'off', true);
   out := jsonb_build_object('accessLog', a, 'creatorAddresses', c, 'supportAccess', gr, 'deleteRequests', rq, 'audit', au)
          || jsonb_build_object('web', coalesce(p_detail, '{}'::jsonb));
-  perform public._hq_log('nightly-cleanup', 'nightly_cleanup', null, null, out);
+  -- Its own row: no person signed in to run it (_hq_log accepts only a verified email).
+  insert into public.hq_audit(actor, action, detail) values ('nightly-cleanup', 'nightly_cleanup', out);
   return out;
 end $$;
 
@@ -339,6 +365,7 @@ revoke all on function public._hq_grant_json(public.hq_grants)            from p
 revoke all on function public._access_log_session()                      from public, anon, authenticated;
 revoke all on function public._access_log_fail()                         from public, anon, authenticated;
 revoke all on function public._access_log_push()                         from public, anon, authenticated;
+revoke all on function public._access_log_keep(timestamptz)              from public, anon, authenticated;
 revoke all on function public._hq_gym_extra(uuid)                         from public, anon, authenticated;
 revoke all on function public.hq_open_emergency(text, uuid, text, text, int) from public, anon, authenticated;
 revoke all on function public.hq_end_access(text, uuid)                   from public, anon, authenticated;
