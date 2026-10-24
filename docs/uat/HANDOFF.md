@@ -2,6 +2,13 @@
 
 Whoever stops last updates this file and pushes it. The other side starts here.
 
+## PC session, 24 Oct 2026 (~06:45 IST) — RESUME HERE after a compaction
+- **v0.55.0 RELEASED** (tag bbdba10 = e0f701a + notes; release run 40045514490; APK link 200):
+  https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk
+- Live: HQ (forgeai-hq.aakashpahuja.in, both owner Google accounts), 0027/0028/0029, admin c6fbc814.
+- Waiting on the owner: #44 brand (one brand or two; names: Liftforged / Castrep / Platecast / Upweight; ForgeAI
+  domains forgeaifit.com+.in or forgeaigym.com+.in free), the other open decisions in the tracker.
+
 ## PC session, 23 Oct 2026 (~11:00 IST) — RESUME HERE after a compaction
 - **UPDATE 24 Oct ~02:00 IST:** gate on aaeced0: default, journeys, CI green; owner red W1 (Maestro driver died); owner
   rerun (qa-aaeced0-owner) red UR: after Remove set + Undo, set 2 had no weight (typing lost or a real bug: unproven).
