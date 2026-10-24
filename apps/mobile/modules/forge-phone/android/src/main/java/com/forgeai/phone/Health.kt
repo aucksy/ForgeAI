@@ -34,10 +34,9 @@ object Health {
   const val REQUEST_CODE = 4711
   private const val PROVIDER = "com.google.android.apps.healthdata"
 
-  val PERMISSIONS: Set<String> = setOf(
-    HealthPermission.getWritePermission(ExerciseSessionRecord::class),
-    HealthPermission.getWritePermission(ActiveCaloriesBurnedRecord::class),
-  )
+  private val EXERCISE = HealthPermission.getWritePermission(ExerciseSessionRecord::class)
+  private val CALORIES = HealthPermission.getWritePermission(ActiveCaloriesBurnedRecord::class)
+  val PERMISSIONS: Set<String> = setOf(EXERCISE, CALORIES)
 
   /** "available", "update" (Health Connect app missing or too old), or "unavailable". */
   fun status(ctx: Context): String {
@@ -56,6 +55,23 @@ object Health {
     val c = client(ctx) ?: return false
     return runBlocking { c.permissionController.getGrantedPermissions().containsAll(PERMISSIONS) }
   }
+
+  /**
+   * 24 Oct 2026 ("on and off"): each of ForgeAI's two permissions on its own. Health Connect lets
+   * the member allow one and not the other (one switch each, on its permission screen and in its
+   * app). `granted` read that as "nothing allowed", so the app said Off while Health Connect said
+   * ForgeAI was allowed, and every send failed (one refused record type fails the whole insert).
+   * Null when Health Connect is not there. THROWS when it could not be asked: the app then keeps
+   * what it showed, instead of reading a hiccup as "not allowed".
+   */
+  fun access(ctx: Context): Map<String, Boolean>? {
+    val c = client(ctx) ?: return null
+    val g = runBlocking { c.permissionController.getGrantedPermissions() }
+    return mapOf("exercise" to g.contains(EXERCISE), "calories" to g.contains(CALORIES))
+  }
+
+  private fun caloriesAllowed(c: HealthConnectClient): Boolean =
+    runBlocking { c.permissionController.getGrantedPermissions().contains(CALORIES) }
 
   /**
    * Open Health Connect's own permission screen. The app checks `granted` when it is back.
@@ -110,7 +126,7 @@ object Health {
         ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         return true
       } catch (_: Exception) {
-        // next
+        // quiet: this page is missing on this phone; the next one is tried, and JS says so if none opened
       }
     }
     return false
@@ -125,6 +141,8 @@ object Health {
     val arr = JSONArray(json)
     val zone = ZoneId.systemDefault()
     val version = System.currentTimeMillis()
+    // 24 Oct 2026: calories only when the member allowed them; the workouts go either way.
+    val calories = caloriesAllowed(c)
     val records = mutableListOf<Record>()
     var sessions = 0
     for (i in 0 until arr.length()) {
@@ -152,9 +170,9 @@ object Health {
           title = w.optString("title", "Workout"),
         ),
       )
-      // Always sent, also at 0: an edit that drops the calories must replace the old record.
+      // Always sent (when allowed), also at 0: an edit that drops the calories must replace the old record.
       val kcal = maxOf(0.0, w.optDouble("kcal", 0.0))
-      run {
+      if (calories) {
         records.add(
           ActiveCaloriesBurnedRecord(
             startTime = start,
@@ -181,9 +199,12 @@ object Health {
   /** Take a deleted workout back out of Health Connect. */
   fun delete(ctx: Context, id: String): Boolean {
     val c = client(ctx) ?: return false
+    val calories = caloriesAllowed(c)
     runBlocking {
       c.deleteRecords(ExerciseSessionRecord::class, emptyList(), listOf("forgeai-$id"))
-      c.deleteRecords(ActiveCaloriesBurnedRecord::class, emptyList(), listOf("forgeai-$id-kcal"))
+      // Without the calories permission Health Connect refuses this call, which used to fail the
+      // whole delete. A calories copy sent while it was allowed then stays (Health Connect's rule).
+      if (calories) c.deleteRecords(ActiveCaloriesBurnedRecord::class, emptyList(), listOf("forgeai-$id-kcal"))
     }
     return true
   }

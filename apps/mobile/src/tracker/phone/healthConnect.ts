@@ -25,22 +25,103 @@ import { isDemoData } from '@/onboarding/db/dataActions';
 
 import { dayTypeLabel } from '../services/finishSummary';
 import { activeKcal, endFor } from './calories';
-import { phoneNative } from './native';
+import { phoneNative, type ForgePhone } from './native';
 import { usePhonePrefs, type HealthLast } from './phonePrefs';
 
 /** 'off' = not allowed yet; 'allowed' = allowed on Health Connect, sending switched off. */
 export type HealthState = 'none' | 'unavailable' | 'update' | 'off' | 'allowed' | 'on';
 
-/** Where Health Connect stands on this phone, for Profile. 'none' = this build has no native piece. */
-export async function healthState(): Promise<HealthState> {
-  const n = phoneNative();
-  if (!n) return 'none';
-  const s = n.healthStatus();
-  if (s !== 'available') return s;
-  const granted = await n.healthGranted().catch(() => false);
-  if (!granted) return 'off';
-  return usePhonePrefs.getState().healthConnect ? 'on' : 'allowed';
+/** Which of ForgeAI's two Health Connect permissions the member allowed. */
+export interface HealthAccess {
+  /** Add workouts (exercise sessions). Without it nothing can go. */
+  exercise: boolean;
+  /** Add calories burned. Without it the workouts still go, without their calories. */
+  calories: boolean;
 }
+
+/** One look at Health Connect: 'error' = it could not be asked this time. */
+export type HealthReading =
+  | { status: 'none' }
+  | { status: 'unavailable' | 'update' }
+  | { status: 'available'; access: HealthAccess | 'error'; sending: boolean };
+
+/** What Settings shows: the state, and whether calories go with the workouts. */
+export interface HealthCheck {
+  state: HealthState;
+  calories: boolean;
+}
+
+/**
+ * PURE (24 Oct 2026, owner: Health Connect "was just on and off"). What the Health Connect row
+ * shows after one look, given what it showed before (`prev`, null on the first look):
+ *  - workouts allowed = connected, even with calories refused (Health Connect has a switch for
+ *    each; before, one switch off read as "nothing allowed": the row said Off while Health
+ *    Connect listed ForgeAI as allowed, and every send failed);
+ *  - Health Connect could not be asked (a passing error) = what it showed before, never Off.
+ *    Before, any error read as "not allowed", so the row flipped to Off and back on its own.
+ */
+export function healthCheckFrom(r: HealthReading, prev: HealthCheck | null): HealthCheck {
+  if (r.status === 'none') return { state: 'none', calories: false };
+  if (r.status !== 'available') return { state: r.status, calories: false };
+  if (r.access === 'error') {
+    if (prev && (prev.state === 'on' || prev.state === 'allowed' || prev.state === 'off')) return prev;
+    return { state: 'off', calories: false };
+  }
+  if (!r.access.exercise) return { state: 'off', calories: r.access.calories };
+  return { state: r.sending ? 'on' : 'allowed', calories: r.access.calories };
+}
+
+/** Read each permission; an older build (no `healthAccess`) only knows "both or not". */
+async function readAccess(n: ForgePhone): Promise<HealthAccess | 'error'> {
+  try {
+    if (n.healthAccess) return (await n.healthAccess()) ?? { exercise: false, calories: false };
+    const both = await n.healthGranted();
+    return { exercise: both, calories: both };
+  } catch (e) {
+    console.warn('[ForgeErr] health: Health Connect access could not be read', e);
+    return 'error';
+  }
+}
+
+/** What the row showed last (shared by Settings and the Health Connect page). */
+let lastCheck: HealthCheck | null = null;
+
+/** Where Health Connect stands on this phone, and whether calories go too. */
+export async function healthCheck(): Promise<HealthCheck> {
+  const n = phoneNative();
+  if (!n) return { state: 'none', calories: false };
+  const status = n.healthStatus();
+  if (status !== 'available') {
+    lastCheck = healthCheckFrom({ status }, lastCheck);
+    return lastCheck;
+  }
+  let access = await readAccess(n);
+  // Nothing shown yet to fall back on: one more try before calling it Off.
+  if (access === 'error' && !lastCheck) access = await readAccess(n);
+  // Read after the wait, so a choice saved meanwhile (and the saved choice at start-up) counts.
+  lastCheck = healthCheckFrom({ status, access, sending: usePhonePrefs.getState().healthConnect }, lastCheck);
+  return lastCheck;
+}
+
+/** Where Health Connect stands on this phone, for Settings. 'none' = this build has no native piece. */
+export async function healthState(): Promise<HealthState> {
+  return (await healthCheck()).state;
+}
+
+/** Can ForgeAI add workouts to Health Connect right now? (Why a send failed.) */
+async function workoutsAllowed(n: ForgePhone): Promise<boolean> {
+  const a = await readAccess(n);
+  // Could not ask: not called a refusal.
+  return a === 'error' ? true : a.exercise;
+}
+
+/** 24 Oct 2026: the line on the Health Connect page when calories are not allowed. */
+export const HC_CALORIES_OFF =
+  'Your workouts go to Health Connect, but not their calories. To send calories too, tap "Open Health Connect" below and turn on "Active calories burned".';
+
+/** 24 Oct 2026: the line on the Health Connect page when sending is chosen but not allowed. */
+export const HC_NOT_ALLOWED =
+  'Health Connect isn\'t letting ForgeAI add your workouts, so none are being sent. Tap "Connect" below and turn on "Exercise".';
 
 /** Open Health Connect's permission screen. Profile re-checks when the app is back. */
 export function askHealthConnect(): boolean {
@@ -208,7 +289,7 @@ async function send(rows: Row[], onProgress?: SendProgress): Promise<SendResult>
     // (every record here has a length — `endFor` — so a whole part is never skipped).
     if (written <= 0) {
       const reason: 'access' | 'unavailable' | 'error' =
-        written === 0 ? 'unavailable' : (await n.healthGranted().catch(() => true)) ? 'error' : 'access';
+        written === 0 ? 'unavailable' : (await workoutsAllowed(n)) ? 'error' : 'access';
       return { kind: 'failed', sent, total: payload.length, reason };
     }
     sent += written;
@@ -247,6 +328,8 @@ export async function pastWorkoutsSummary(): Promise<PastSummary> {
 export function pastSendAsk(
   s: PastSummary,
   today: string = todayISO(),
+  /** 24 Oct 2026: false when calories are not allowed in Health Connect (the workouts go without them). */
+  calories = true,
 ): { notice: string } | { title: string; body: string; confirm: string } {
   if (s.demo) return { notice: 'Nothing to send: workouts on demo data never leave your phone.' };
   if (s.count === 0 || !s.firstISO || !s.lastISO) return { notice: 'No workouts to send yet.' };
@@ -260,7 +343,7 @@ export function pastSendAsk(
   return {
     title: `Send ${n} to Health Connect?`,
     body:
-      `${span} in as strength training, each with its time and calories (an estimate). ` +
+      `${span} in as strength training, ${calories ? 'each with its time and calories (an estimate)' : 'each with its time'}. ` +
       'Google Health, Samsung Health and other apps you allow there can show them. ' +
       'Sending again replaces them, so nothing is counted twice.',
     confirm: `Send ${n}`,

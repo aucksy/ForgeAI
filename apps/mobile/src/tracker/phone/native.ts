@@ -10,6 +10,11 @@ export type GymShortcutResult = 'asked' | 'updated' | 'none' | 'unsupported' | '
 export interface ForgePhone {
   healthStatus(): 'available' | 'update' | 'unavailable';
   healthGranted(): Promise<boolean>;
+  /**
+   * 24 Oct 2026: each of ForgeAI's two Health Connect permissions on its own (null = no Health
+   * Connect). Rejects when Health Connect could not be asked. Absent on builds before it.
+   */
+  healthAccess?(): Promise<{ exercise: boolean; calories: boolean } | null>;
   healthRequest(): boolean;
   healthOpenSettings(): boolean;
   healthWrite(json: string): Promise<number>;

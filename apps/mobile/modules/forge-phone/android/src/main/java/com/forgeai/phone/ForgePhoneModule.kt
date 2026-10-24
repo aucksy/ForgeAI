@@ -49,7 +49,8 @@ class ForgePhoneModule : Module() {
       val c = ctx ?: return@Function "unavailable"
       try {
         Health.status(c)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeHealth", "Health Connect status could not be read", e)
         "unavailable"
       }
     }
@@ -58,8 +59,21 @@ class ForgePhoneModule : Module() {
       val c = ctx ?: return@AsyncFunction false
       try {
         Health.granted(c)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeHealth", "Health Connect access could not be read", e)
         false
+      }
+    }
+
+    // 24 Oct 2026: each permission on its own; null = no Health Connect. A failure rejects the
+    // promise (logged here) so the app keeps what it showed instead of flipping to Off.
+    AsyncFunction("healthAccess") {
+      val c = ctx ?: return@AsyncFunction null
+      try {
+        Health.access(c)
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeHealth", "Health Connect access could not be read", e)
+        throw e
       }
     }
 
@@ -98,7 +112,8 @@ class ForgePhoneModule : Module() {
       val c = ctx ?: return@AsyncFunction false
       try {
         Health.delete(c, id)
-      } catch (_: Throwable) {
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "Health Connect delete failed", e)
         false
       }
     }

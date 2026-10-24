@@ -19,10 +19,12 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import {
   COUNT_FAILED,
+  HC_CALORIES_OFF,
+  HC_NOT_ALLOWED,
   HC_OPEN_FAILED,
   SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
-  healthState,
+  healthCheck,
   lastSentText,
   openHealthConnect,
   pastSendAsk,
@@ -65,6 +67,8 @@ function HealthRow() {
   const setOn = usePhonePrefs((s) => s.setHealthConnect);
   const setUnsent = usePhonePrefs((s) => s.setHealthUnsent);
   const [state, setState] = useState<HealthState | null>(null);
+  // 24 Oct 2026: calories have their own switch in Health Connect; workouts go without them.
+  const [calories, setCalories] = useState(true);
   const [sent, setSent] = useState<SendResult | null>(null);
   const [busy, setBusy] = useState(false);
   // R-72: how far "Send past workouts" is, a notice instead of a send, and when workouts last went in.
@@ -104,7 +108,7 @@ function HealthRow() {
       setNotice(COUNT_FAILED);
       return;
     }
-    const ask = pastSendAsk(summary);
+    const ask = pastSendAsk(summary, undefined, calories);
     if ('notice' in ask) {
       setNotice(ask.notice);
       return;
@@ -131,8 +135,17 @@ function HealthRow() {
       .finally(() => setResending(false));
   };
 
+  // 24 Oct 2026: only the newest look counts (a slow older one never overwrites it).
+  const looks = useRef(0);
   const check = useCallback(async () => {
-    setState(await healthState().catch(() => 'none' as const));
+    const mine = ++looks.current;
+    const r = await healthCheck().catch((e: unknown) => {
+      console.warn('[ForgeErr] health: Health Connect could not be checked', e);
+      return null;
+    });
+    if (mine !== looks.current || !r) return;
+    setState(r.state);
+    setCalories(r.calories);
   }, []);
 
   // Re-checked on every return to the app — also after Health Connect's own screen.
@@ -152,8 +165,12 @@ function HealthRow() {
       : state === 'update'
         ? 'Install or update Health Connect from the Play Store first.'
         : state === 'on'
-          ? 'On. Each workout you finish goes to Health Connect as strength training, with its calories (an estimate), so Google Health and Samsung Health can show it.'
-          : 'Send each finished workout and its calories to Google Health and Samsung Health, through Health Connect.';
+          ? calories
+            ? 'On. Each workout you finish goes to Health Connect as strength training, with its calories (an estimate), so Google Health and Samsung Health can show it.'
+            : 'On. Each workout you finish goes to Health Connect as strength training, so Google Health and Samsung Health can show it.'
+          : state === 'off' && on && !asked
+            ? HC_NOT_ALLOWED
+            : 'Send each finished workout and its calories to Google Health and Samsung Health, through Health Connect.';
 
   return (
     <View>
@@ -219,6 +236,17 @@ function HealthRow() {
           {HC_OPEN_FAILED}
         </Text>
       ) : null}
+      {state === 'on' && !calories ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          <Text style={{ ...CAPTION(), textAlign: 'center' }}>{HC_CALORIES_OFF}</Text>
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+          {openFailed ? (
+            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center' }}>
+              {HC_OPEN_FAILED}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
       {state === 'on' ? (
         <View style={{ gap: space.xs, paddingBottom: space.sm }}>
           {/* R-72: the member can always see that it works: when workouts last went in. */}
@@ -243,7 +271,8 @@ function HealthRow() {
           {sent?.kind === 'sent' ? (
             <>
               <Text style={{ ...CAPTION(), textAlign: 'center' }}>{SEE_THEM_IN_GOOGLE_HEALTH}</Text>
-              <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+              {/* Calories refused: the same button already shows above. */}
+              {calories ? <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} /> : null}
             </>
           ) : null}
         </View>
