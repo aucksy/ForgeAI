@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-119. Demo gym opens his real gym; sidebar; "notifications" — 24 Oct 2026
+**Owner said:** "'Open Demo GYM' is opening the latest GYM I created.. .wow. Also highlight the button for people to see
+demo GYM. Branding and Notifications should be on the side bar. On website.. you have used for notices.. make it
+notifications."
+**Doing (helper):** demo link always opens the made-up demo gym and never touches or shows a signed-in gym; a clear demo
+button on the landing; Branding + Notifications as their own sidebar items in the admin app; website says
+"notifications" instead of "notices" (English + Hindi).
+
 ## R-118. No competitor named on the website (GGMS) — 24 Oct 2026
 **Owner said:** "really ... you will put GGMS here.. as if its worlds best and most common software? duh" (lead form).
 **Done:** lead form now Register book / Excel or Google Sheets / Gym software / Something else; the 3 "GGMS export"
