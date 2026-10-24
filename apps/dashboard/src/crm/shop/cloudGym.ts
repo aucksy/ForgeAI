@@ -12,6 +12,7 @@
  * browser.
  */
 
+import { isDemoLocked } from '../../lib/demoLock';
 import type { KeyValueStore } from '../data/local';
 import { personFromRow, type Person } from '../auth/signin';
 
@@ -44,6 +45,8 @@ function store(s?: KeyValueStore): KeyValueStore | null {
 }
 
 export function readCloudGym(s?: KeyValueStore): CloudGym | null {
+  // R-119: the demo gym never sees the gym this device is signed in to.
+  if (!s && isDemoLocked()) return null;
   const st = store(s);
   if (!st) return null;
   try {
@@ -66,9 +69,11 @@ export function readCloudGym(s?: KeyValueStore): CloudGym | null {
 }
 
 export function writeCloudGym(gym: CloudGym, s?: KeyValueStore): void {
+  if (!s && isDemoLocked()) return; // R-119: the demo never overwrites a signed-in gym
   store(s)?.setItem(CLOUD_GYM_KEY, JSON.stringify(gym));
 }
 
 export function clearCloudGym(s?: KeyValueStore): void {
+  if (!s && isDemoLocked()) return; // R-119: the demo never signs a gym out
   store(s)?.removeItem(CLOUD_GYM_KEY);
 }

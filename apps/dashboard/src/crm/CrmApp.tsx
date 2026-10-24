@@ -57,6 +57,7 @@ import { TermsGate } from './auth/TermsGate';
 import { PinPrompt } from './auth/PinForms';
 import { Redirect, useRoute } from './ui/router';
 import { MoveBanner } from './move/MoveBanner';
+import { DemoNeedsRealGym, demoNeedsRealGym, useDemo } from './demo/demoMode';
 
 export function CrmApp() {
   return (
@@ -113,7 +114,9 @@ function SessionRoot() {
   );
 }
 
-function Routes({ online }: { online: boolean }) {
+/** The screens and navigation. The real app mounts it per session (SessionRoot); the demo gym mounts it on the sample gym (demo/DemoApp). */
+export function Routes({ online }: { online: boolean }) {
+  const demo = useDemo() !== null;
   const { snapshot, memberViews, today } = useCrm();
   const { newCount } = useShop();
   const route = useRoute();
@@ -125,7 +128,9 @@ function Routes({ online }: { online: boolean }) {
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
   // demo and erase buttons must never touch online records.
+  // The demo gym is always set up, and its Welcome screen would start a real cloud gym.
   const isNewGym =
+    !demo &&
     !online &&
     snapshot.members.length === 0 && snapshot.plans.length === 0 && snapshot.gym.name === 'My Gym';
 
@@ -174,11 +179,15 @@ function Routes({ online }: { online: boolean }) {
       { path: '/expenses', label: 'Expenses', icon: 'money' },
       // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
       { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
+      // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
+      // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
+      { path: '/settings/branding', label: 'Branding', icon: 'brand' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
-      // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff.
-      { path: '/feedback', label: 'Send feedback', icon: 'more' },
+      // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
+      // gym, which sends nothing to anyone.
+      ...(demo ? [] : [{ path: '/feedback', label: 'Send feedback', icon: 'more' } as NavItem]),
     ]);
-  }, [memberViews, snapshot, today, newCount, role, allBranches]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -222,6 +231,9 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
 function Screen({ segments, role }: { segments: string[]; role: Role }) {
   const [head, id] = segments;
   const { offline } = useOffline();
+  // R-119: the demo gym shows a plain card in place of any page that only works in a real gym.
+  const demoPage = useDemo() ? demoNeedsRealGym(head, id) : null;
+  if (demoPage) return <DemoNeedsRealGym page={demoPage} />;
   const blocked = offline ? offlinePage(head, id) : null;
   if (blocked) return <NeedsInternetPage what={blocked} />;
 

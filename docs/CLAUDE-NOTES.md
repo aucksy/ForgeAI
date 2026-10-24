@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-121. Overnight: deploy everything in flight; tester install links by morning — 24 Oct 2026 (~10 pm)
+**Owner said:** "I am going to sleep.. so deploy all changes in flight yourself.. when I wake up tomorrow I need to be
+able to send links to testers to install the app."
+**Doing:** (1) demo-gym/Branding fix and measurements/diet plans: checks → deploy (0035 live as part of "deploy all
+changes in flight", only after its tests pass in CI); (2) 0.56.0: phone tests → tag → verify the APK link
+(mettleup.fit/app) = tester link #1 that works without Play; (3) Play closed test with mettleup-testers@googlegroups.com:
+AAB upload, store listing, send for review = tester link #2 (Google's review may take hours to days).
+
 ## R-120. From the GGMS menu: build trainer measurements + diet plans (picked A); calorie research — 24 Oct 2026
 **Owner said:** sent photos of GGMS's full menu: "check if there is something worth building in our admin panel which
 owners will use". I mapped it: 14 covered, worth building = measurements taken by the trainer, diet plans from the
@@ -51,6 +59,7 @@ button on the landing; Branding + Notifications as their own sidebar items in th
 you need to push back on these things.. you gotta be my product partner here." So: no Notifications item or rename;
 only Branding joins the sidebar. My pushback: the website says "messages" (not "notifications", which implies phone
 pop-ups that are still Coming), matching "Messages & offers". Rule saved: be-his-product-partner-push-back.
+**Built (helper, not deployed):** the demo is `app.mettleup.fit/demo` (also `/?demo=1`): the real screens on the sample gym held in the page's memory, with nobody signed in. Before anything else runs, `src/lib/demoLock.ts` locks the page: the signed-in gym's keys read as empty and cannot be written or cleared, every gym-server call is refused (`lib/supabase.ts`), the page's fetch/XHR/beacon only read this site's own files, and browser storage writes stay in memory (only the dark/light choice reaches the device). Pages that only work in a real gym (messages, shop, branding, settings, staff, import, workout plans) show a plain "This works in your own gym" card. A banner says "Demo gym: made-up data. Nothing you do here is saved." with "Leave the demo" (landing) or "Back to my gym" (signed in). No Worker change was needed (single-page fallback serves /demo; mettleup.fit/demo redirects to the app host). Landing: demo is a ghost button beside "Start free for 3 months" plus a link in the start section; "notices" became "messages" (Hindi "मैसेज"). Branding is its own sidebar item and More row (longest-path active state in AppShell). Tests: e2e/demo.spec.mjs, test/crm/demoGym.test.ts, hosts.test.mjs.
 
 ## R-118. No competitor named on the website (GGMS) — 24 Oct 2026
 **Owner said:** "really ... you will put GGMS here.. as if its worlds best and most common software? duh" (lead form).

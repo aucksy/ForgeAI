@@ -39,7 +39,7 @@ export function MessagesScreen({ startWith }: { startWith?: string }) {
         title={owner ? 'Messages & offers' : reminders ? 'Automatic reminders' : 'Workout offer'}
         subtitle={
           owner
-            ? 'Notices, offers and wishes for your members, in the app and on WhatsApp'
+            ? 'Messages, offers and wishes for your members, in the app and on WhatsApp'
             : reminders
               ? 'What members get on their phone by themselves'
               : 'Rewards for members who train'

@@ -27,11 +27,13 @@ test('mettleup.fit is the landing page; what it does not keep moves to app.mettl
   }
   assert.deepEqual(go('mettleup.fit', '/start'), { kind: 'redirect', to: `${APP_ORIGIN}/start`, status: 301 });
   assert.deepEqual(go('mettleup.fit', '/j/ABC123'), { kind: 'redirect', to: `${APP_ORIGIN}/j/ABC123`, status: 301 });
+  // R-119: the demo gym lives at app.mettleup.fit/demo; an old link on the landing host lands there too.
+  assert.deepEqual(go('mettleup.fit', '/demo'), { kind: 'redirect', to: `${APP_ORIGIN}/demo`, status: 301 });
   assert.deepEqual(go('mettleup.fit', '/sb/rest/v1/x', '', 'POST'), { kind: 'redirect', to: `${APP_ORIGIN}/sb/rest/v1/x`, status: 308 });
 });
 
 test('app.mettleup.fit is the admin app with everything it had; /home goes to mettleup.fit', () => {
-  for (const p of ['/', '/start', '/members/abc', '/sb/auth/v1/health', '/j/ABC123', '/c/ABC123', '/api/feedback', '/api/move', '/app', '/sw.js', '/privacy.html', '/.well-known/assetlinks.json']) {
+  for (const p of ['/', '/start', '/demo', '/demo/', '/members/abc', '/sb/auth/v1/health', '/j/ABC123', '/c/ABC123', '/api/feedback', '/api/move', '/app', '/sw.js', '/privacy.html', '/.well-known/assetlinks.json']) {
     assert.deepEqual(go('app.mettleup.fit', p), { kind: 'app' }, p);
   }
   assert.deepEqual(go('app.mettleup.fit', '/home/'), { kind: 'redirect', to: `${SITE_ORIGIN}/`, status: 301 });

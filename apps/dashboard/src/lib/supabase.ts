@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import { DEMO_LOCKED_WORDS, isDemoLocked } from './demoLock';
 import { routedFetch, serverBase, sessionKey } from './serverAddress';
 
 /**
@@ -46,6 +47,8 @@ function real(): SupabaseClient {
  */
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
+    // R-119: the demo gym never reaches the gym server, whatever a screen tries.
+    if (isDemoLocked()) throw new Error(DEMO_LOCKED_WORDS);
     const c = real();
     const v = Reflect.get(c, prop, c) as unknown;
     return typeof v === 'function' ? (v as (...a: unknown[]) => unknown).bind(c) : v;

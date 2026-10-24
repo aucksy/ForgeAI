@@ -24,6 +24,23 @@ export interface NavItem {
   badge?: number;
 }
 
+/** Height of the demo gym's banner (demo/demoMode.tsx), set as a page variable by the shell; 0 in the real app. */
+const UNDER_DEMO_BAR = 'var(--demo-bar, 0px)';
+
+/**
+ * Which nav entry is open: the one with the longest path that the route starts with. `/settings/branding`
+ * lights Branding (not Settings); `/messages/offer` lights Messages & offers. A page with no entry of its
+ * own (a member's page, Receipts) falls back to its first word, so Members stays lit. PURE.
+ */
+export function activeNavPath(navPaths: readonly string[], routePath: string): string {
+  const path = routePath.split('?')[0]!.replace(/\/+$/, '') || '/';
+  let best = '';
+  for (const p of navPaths) {
+    if (p === '/' ? path === '/' : path === p || path.startsWith(`${p}/`)) if (p.length > best.length) best = p;
+  }
+  return best || `/${path.split('/').filter(Boolean)[0] ?? ''}`;
+}
+
 export function AppShell({
   gymName,
   nav,
@@ -39,7 +56,7 @@ export function AppShell({
 }) {
   const compact = useIsCompact();
   const route = useRoute();
-  const activePath = `/${route.segments[0] ?? ''}`;
+  const activePath = activeNavPath((phoneNav ?? nav).concat(nav).map((n) => n.path), route.path);
 
   return (
     <div
@@ -80,9 +97,10 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         borderRight: `1px solid ${color.border}`,
         padding: `${space.xl}px ${space.md}px`,
         position: 'sticky',
-        top: 0,
+        top: UNDER_DEMO_BAR,
         alignSelf: 'start',
-        height: '100vh',
+        height: `calc(100vh - ${UNDER_DEMO_BAR})`,
+        overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
         gap: space.xs,
@@ -139,7 +157,7 @@ function CompactHeader({ gymName }: { gymName: string }) {
     <header
       style={{
         position: 'sticky',
-        top: 0,
+        top: UNDER_DEMO_BAR,
         zIndex: 20,
         background: color.surfaceSunken,
         borderBottom: `1px solid ${color.border}`,

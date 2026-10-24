@@ -12,6 +12,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
+import { isDemoLocked } from '../../lib/demoLock';
 import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
 import { browserSavedCopy } from '../data/savedCopy';
@@ -110,6 +111,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Another tab signed in, out, or put the records online: this tab follows at once instead of
   // showing (and saving into) a gym that is no longer this device's.
   useEffect(() => {
+    // R-119: the demo gym follows nobody's sign-in; it is made-up data in this page only.
+    if (isDemoLocked()) return;
     const onStorage = (e: StorageEvent) => {
       if (e.key === CLOUD_GYM_KEY || e.key === null) window.location.reload();
     };
@@ -118,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const adopt = useCallback((s: SignedIn, opts: { online: boolean; demo?: boolean }) => {
+    if (isDemoLocked()) return; // R-119: the demo never takes over, or sets aside, a real gym
     const gym: CloudGym = {
       gymId: s.gymId,
       ownerKey: s.sessionKey,
@@ -134,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    if (isDemoLocked()) return; // R-119: nothing in the demo signs the real gym out or empties its copy
     const key = readCloudGym()?.ownerKey;
     if (key) await authApi.signOut(key);
     forgetBranchKeys(key, true);
@@ -144,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const lost = useCallback(() => {
+    if (isDemoLocked()) return; // R-119
     const key = readCloudGym()?.ownerKey ?? null;
     clearCloudGym();
     forgetOfflineCopy();

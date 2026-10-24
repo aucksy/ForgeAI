@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -82,6 +82,15 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5V16.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" />
       <path d="M8 9.5h8M8 12.5h5" />
+    </>
+  ),
+  // A paint palette: Branding (the gym's logo and colours).
+  brand: (
+    <>
+      <path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.7 0 4.3 3.4 7.3 7 7.3 1.6 0 2.2-.9 2.2-1.8 0-1.3-1.1-1.5-1.1-2.7 0-1 .8-1.7 1.9-1.7h2.2c2 0 3.3-1.2 3.3-3.1 0-3-3.4-5.7-7-5.7Z" />
+      <circle cx="7.8" cy="11" r="1.1" />
+      <circle cx="10.8" cy="7.6" r="1.1" />
+      <circle cx="15.2" cy="8" r="1.1" />
     </>
   ),
   settings: (

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MettleUp for Gyms — gym software + member progress app</title>
-<meta name="description" content="Gym software and a member progress app in one. Free for 3 months, no card. Your members get a free workout app in your gym's name and colours: they see their own progress, order from your shop and read your notices. Plus the desk work, and your old Excel records moved in privately with AI. From ₹999 a month.">
+<meta name="description" content="Gym software and a member progress app in one. Free for 3 months, no card. Your members get a free workout app in your gym's name and colours: they see their own progress, order from your shop and read your messages. Plus the desk work, and your old Excel records moved in privately with AI. From ₹999 a month.">
 <meta property="og:title" content="MettleUp for Gyms — gym software + member progress app">
-<meta property="og:description" content="Free for 3 months. Your members see their own progress in an app with your gym's name on it. Your shop and your notices live there too.">
+<meta property="og:description" content="Free for 3 months. Your members see their own progress in an app with your gym's name on it. Your shop and your messages live there too.">
 <meta property="og:image" content="https://mettleup.fit/brand/og-1200x630.png">
 <meta name="theme-color" content="#0B0B0D">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -446,6 +446,12 @@ section{position:relative}
 .go.big{min-height:62px;padding:0 30px;font-size:23px;box-shadow:0 16px 30px -14px rgba(0,0,0,.7)}
 :lang(hi) .go.big{font-size:25px}
 .go.ghost{background:none;color:var(--ink);box-shadow:inset 0 0 0 2px var(--flavour)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;width:100%}
+.ctas .go{flex:1 1 100%;text-align:center}
+@media (min-width:640px){.ctas .go{flex:0 0 auto}}
+.go.ghost:hover{background:color-mix(in oklab,var(--flavour) 14%,transparent)}
+.back .seedemo{margin-top:16px;font:700 16px/1.4 var(--text)}
+.back .seedemo a{color:inherit;text-decoration:underline;text-underline-offset:3px;display:inline-block;min-height:44px;padding:10px 0 0;box-sizing:border-box}
 .trial{display:grid;gap:10px;justify-items:start;max-width:640px;margin-top:22px}
 .trial-note{font:600 15px/1.55 var(--text);color:var(--ink2);max-width:46ch}
 .callme{display:grid;gap:10px;max-width:640px;padding-top:20px;border-top:1px solid var(--rule)}
@@ -599,7 +605,11 @@ section{position:relative}
     <h1 id="h1" class="cond mega" data-hi="मेंबर जब अपनी तरक्की देखते हैं, तो वे &lt;span class=&quot;hot&quot;&gt;ज़्यादा समय&lt;/span&gt; जुड़े रहते हैं।">Members stay longer when they see <span class="hot">progress.</span></h1>
     <p class="claim" data-hi="MettleUp आपको जिम चलाने का डेस्क सॉफ़्टवेयर देता है, और हर मेंबर को आपके जिम के नाम में एक वर्कआउट ऐप।">MettleUp gives you the desk software to run your gym, and gives every member a workout app in your gym's name.</p>
     <div class="trial">
-      <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
+      <!-- R-119 (owner, 24 Oct 2026): the demo is a button beside the trial, not a small link under the form. -->
+      <div class="ctas">
+        <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
+        <a class="go big ghost" href="https://app.mettleup.fit/demo" data-hi="डेमो जिम देखिए">See the demo gym</a>
+      </div>
       <p class="trial-note" data-hi="न कार्ड, न सेटअप फीस। 2 मिनट में आपका जिम तैयार।">No card, no setup fee. Your gym is ready in 2 minutes.</p>
     </div>
     <p class="net"><span data-hi="मेंबरों के लिए मुफ्त">Free for your members</span><span data-hi="आपके जिम का नाम और लोगो">Your gym's name and logo</span><span data-hi="डेस्क बिना इंटरनेट भी चलती है">Desk works without internet</span></p>
@@ -660,7 +670,7 @@ section{position:relative}
       </div>
       <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="msg" role="status" aria-live="polite"></p>
-      <p class="alt" data-hi="पहले खुद देखना है? <a href=&quot;https://app.mettleup.fit/&quot;>डेमो जिम खोलिए</a> (नकली डेटा)। पहले से MettleUp पर? <a href=&quot;https://app.mettleup.fit/&quot;>साइन इन</a>।">Rather look first? <a href="https://app.mettleup.fit/">Open the demo gym</a> (made-up data). Already on MettleUp? <a href="https://app.mettleup.fit/">Sign in</a>.</p>
+      <p class="alt" data-hi="पहले से MettleUp पर? <a href=&quot;https://app.mettleup.fit/&quot;>साइन इन</a>।">Already on MettleUp? <a href="https://app.mettleup.fit/">Sign in</a>.</p>
     </form>
   </div>
 
@@ -794,9 +804,9 @@ section{position:relative}
         <li><span><b data-hi="आपका नाम, लोगो, रंग">Your name, logo and colours</b></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="QR चेक-इन">QR check-in</b> <span data-hi="और “मेरी मेंबरशिप”">and "My membership"</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="आपकी दुकान">Your shop</b> <span data-hi="ऑर्डर ऐप में, पैसे डेस्क पर">order in the app, pay at the desk</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span><b data-hi="आपकी सूचनाएँ">Your notices</b> <span data-hi="ऐप के इनबॉक्स में, मुफ्त">in the app's inbox, free</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
+        <li><span><b data-hi="आपके मैसेज">Your messages</b> <span data-hi="ऐप के इनबॉक्स में, मुफ्त">in the app's inbox, free</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="बिना इंटरनेट भी वर्कआउट लिखें">Logs workouts with no internet</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span data-hi="सूचना फोन की लॉक स्क्रीन पर पॉप-अप">Notices pop up on the phone's lock screen</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
+        <li><span data-hi="मैसेज फोन की लॉक स्क्रीन पर पॉप-अप">Messages pop up on the phone's lock screen</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
         <li><span data-hi="जिम देखे कौन तरक्की कर रहा है (मेंबर की मंज़ूरी से)">Gym sees who is progressing (with the member's OK)</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
         <li><span data-hi="हिंदी में मेंबर ऐप">Member app in Hindi</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
       </ul>
@@ -993,21 +1003,21 @@ section{position:relative}
   </div>
 </section>
 
-<!-- NOTICES (R-57; owner 22 Oct: "free member notifications about holidays"): plays a notice from Send to "read by" -->
+<!-- MESSAGES (R-57; owner 22 Oct: "free member notifications about holidays"; R-119: the word is "messages", matching the admin app's Messages & offers): plays a message from Send to "read by" -->
 <section class="voice" aria-labelledby="voice-h">
   <div class="wrap scene">
     <div class="scene-col">
       <div class="scene-text">
-      <h2 id="voice-h" class="cond panel-h" data-hi="हर मेंबर को मुफ्त सूचना भेजिए।">Send free notices to every member.</h2>
-      <p class="lede" data-hi="एक बार लिखिए। यह सेकंडों में हर मेंबर के ऐप के इनबॉक्स में पहुँचती है, और आप देखते हैं कितनों ने पढ़ी। न SMS का खर्च, न WhatsApp का।">Write it once. It reaches every member's app inbox in seconds, and you see how many read it. No SMS or WhatsApp cost.</p>
+      <h2 id="voice-h" class="cond panel-h" data-hi="हर मेंबर को मुफ्त मैसेज भेजिए।">Send free messages to every member.</h2>
+      <p class="lede" data-hi="एक बार लिखिए। यह सेकंडों में हर मेंबर के ऐप के इनबॉक्स में पहुँचता है, और आप देखते हैं कितनों ने पढ़ा। न SMS का खर्च, न WhatsApp का।">Write it once. It reaches every member's app inbox in seconds, and you see how many read it. No SMS or WhatsApp cost.</p>
     </div>
       <div class="beatcol">
-      <div class="money rows notices"><div><b data-hi="₹0">₹0</b><span data-hi="हर सूचना पर">per notice</span></div><div><b data-hi="1×">1×</b><span data-hi="एक बार लिखिए, सबको पहुँचती है">write it once, everyone gets it</span></div><div><b data-hi="पढ़ा">Read</b><span data-hi="देखिए कितनों ने पढ़ी">see how many read it</span></div></div>
+      <div class="money rows notices"><div><b data-hi="₹0">₹0</b><span data-hi="हर मैसेज पर">per message</span></div><div><b data-hi="1×">1×</b><span data-hi="एक बार लिखिए, सबको पहुँचता है">write it once, everyone gets it</span></div><div><b data-hi="पढ़ा">Read</b><span data-hi="देखिए कितनों ने पढ़ा">see how many read it</span></div></div>
     </div>
     </div>
     <div class="stage solo duo msgduo play" id="msg-scene">
       <div class="pwrap">
-      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends a holiday notice to every member, free, and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को छुट्टी की सूचना मुफ्त भेजता है और देखता है कितनों ने पढ़ा">
+      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends a holiday message to every member, free, and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को छुट्टी का मैसेज मुफ्त भेजता है और देखता है कितनों ने पढ़ा">
         <small aria-hidden="true">Admin app · Message to all members</small>
         <div class="cm-text" aria-hidden="true"><span id="msg-typed">Gym closed on 1 Nov for Diwali. Open as usual from 2 Nov. Happy Diwali!</span><i class="caret"></i></div>
         <div class="cm-row" aria-hidden="true"><span class="cm-sent" id="msg-status">Sent to 212 members · read by <span class="roll" id="msg-read">64</span></span><span class="cm-send" id="msg-send"><span class="s1">Send</span><span class="s2">Sent</span></span></div>
@@ -1090,7 +1100,7 @@ section{position:relative}
           <tr><th scope="row"><span data-hi="बिना इंटरनेट भी चलने वाला डेस्क सॉफ़्टवेयर">Desk software that works without internet</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
           <tr><th scope="row"><span data-hi="आना बंद करने वाले मेंबरों की रोज़ की लिस्ट">Daily list of members who stopped coming</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
           <tr><th scope="row"><span data-hi="मेंबरों के फोन में ट्रेनर के प्लान">Trainer plans in members' phones</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row"><span data-hi="हर मेंबर के ऐप में मुफ्त सूचना">Free notices to every member's app</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="हर मेंबर के ऐप में मुफ्त मैसेज">Free messages to every member's app</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
           <tr class="grp"><th colspan="4" scope="colgroup" data-hi="डेस्क का रोज़ का काम">The usual desk work</th></tr>
           <tr><th scope="row"><span data-hi="मेंबर, प्लान, रिन्यूअल और बकाया">Members, plans, renewals and dues</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
           <tr><th scope="row"><span data-hi="GST इनवॉइस">GST invoices</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
@@ -1131,6 +1141,7 @@ section{position:relative}
         <li data-hi="QR पोस्टर लगाइए। मेंबर एक स्कैन में मुफ्त जुड़ते हैं।">Put up your QR poster. Members join with one scan, free.</li>
       </ol>
       <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
+      <p class="seedemo" data-hi="पहले खुद देखना है?<br><a href=&quot;https://app.mettleup.fit/demo&quot;>डेमो जिम देखिए</a> (नकली डेटा)।">Rather look first?<br><a href="https://app.mettleup.fit/demo">See the demo gym</a> (made-up data).</p>
     </div>
     <form class="lead-form" id="demo" novalidate>
       <p class="f-h" data-hi="हम आपके साथ सेट करें?">Rather we set it up with you?</p>
