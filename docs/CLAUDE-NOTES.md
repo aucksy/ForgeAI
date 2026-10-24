@@ -5,6 +5,24 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-106. Play account name later? And: what is gym-only, and what is limited, for members without a gym — 24 Oct 2026
+**Owner said:** "will it be a problem later if I wanted to launch this app via a different account than Simple Apps? Or will I
+be able to change the name of the account ... I just want it organized. So I'm just wondering if there are things I should
+finalize today" ... "using the app without a gym membership has to have many of the functionalities that are only related to
+gym membership disabled, right? ... we are building following the members of that gym ... think through that and decide what
+should be disabled for consumer only. And also what should be paywalled."
+**Answers (Claude decided):** Play: SimpleApps108 is a PERSONAL account (shows on its home page); its developer name can be
+renamed any time; an app can be moved to another developer account later (Google support transfer keeps users and reviews);
+personal accounts made after 13 Nov 2023 need a closed test with 12+ testers for 14 days before going public (internal test
+has no such rule). Only the Play ID is permanent: com.mettleup.app (any account). Gym vs no gym: no gym = the full workout
+tracker free forever (logging, history, records, timers, imports, exports, Drive backup, Health Connect, widgets, watch, and the
+new phone-only features); gym-only (not shown at all, one Join door instead): membership, check-in, how busy, challenge,
+workout of the day, trainer videos and plans, freeze/renew, offers, gym reminders, shop, bring a friend, workout reward, gym
+logo/colours, trainer view, and all parked social features. Limited without a gym (the 'join through your gym' nudge, built,
+OFF): 4 routines, 7 own exercises, charts of the last 3 months, and NEW: the server copy (Google sign-in restore) only for gym
+members (server space costs; no-gym members use their own Drive backup). Paid plan for no-gym members: later, with Play
+Billing; price is his call when we get there. Domains: both moved to Cloudflare (nameservers saved at Namecheap 24 Oct).
+
 ## R-105. MettleUp: rebrand everywhere, new logo options, Play Store internal test, release pipeline, tester groups — 24 Oct 2026
 **Owner said:** "I have bought 2 domains: mettleup.fit (this is what I will market) and mettleup.in so it can redirect to .fit
 (I have not bought .app - dont need it) may be later... Use my browser to migrate - and lets change branding everywhere
