@@ -394,9 +394,17 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **Member import fixes** (no server change): a "Paid" column of Yes/No or dates is read correctly; a branch column; extra columns kept; bad rows listed to fix.
 **What goes live with your yes:** I paste the three changes into the Supabase SQL Editor (in the Chrome window already signed in), run each one's test (each must say PASS), then put the new admin app, owner panel (HQ) and AI-matching server live. If a test fails I stop and change nothing more.
 **Risk:** low. Each change only adds; gyms with one branch work exactly as before; a gym can always be checked in HQ.
-**Two words to approve first (privacy):** the privacy notice must say members' workouts are saved on our server once a member signs in with Google, and the gym owners' terms need a short data agreement. I will put both drafts in this entry for your OK before 0032 goes live.
+**The privacy words (drafts ready, 24 Oct):** full text at https://github.com/aucksy/ForgeAI/blob/main/docs/launch/DRAFT-2026-10-24-server-copy-and-gym-terms.md (English and Hindi; every claim checked against the app; spots for a lawyer marked [LAWYER CHECK]).
+- **Privacy notice, new part:** when a member signs in with Google, their workouts, routines, body weight, measurements, progress-photo dates (not the photos) and profile are saved on our server in Mumbai. Never the phone number. Only the member can see it; the gym cannot. "Delete my account" removes it at once.
+- **Gym data agreement (about 1 page):** the gym owns its member records; ForgeAI only keeps them to run the service; no selling, no ads; the outside companies we use are named; we tell the gym of a breach within 24 hours; the gym can download everything any time; deleted within 30 days of a request; backups gone within 7 days (as the live notice already says); 30 days' notice before either side ends it; a member's own saved workouts belong to the member.
+- **Two fixes I will make with it:** the "data agreement" link at "Create my gym" gets its own page (today it opens the privacy page); the old line "if we ever add AI features that use your data, we ask you first" is replaced by the truth about the AI import (below).
+- **The AI import today:** it shows the AI the column names and 5 example rows, with phone numbers, emails and ID numbers hidden, but names and addresses visible. My pick: hide names and addresses too (the AI only needs the column names and a hint of the shape), so no member's name ever leaves the gym's computer.
+**Decide:** The privacy and agreement words?
+- A: Approve as written, and hide names and addresses from the AI import too (recommended)
+- B: Approve as written, keep the AI import as it is
+- C: I want changes (write them in the note)
 **Decide:** Switch them on?
-- A: Yes: 0031 (branches) and 0033 (terms) now, 0032 (workouts) after you OK the privacy words (recommended)
+- A: Yes: 0031 (branches) and 0033 (terms) now, 0032 (workouts) once you approve the words below (recommended)
 - B: Yes, all three now
 - C: Not yet
 
