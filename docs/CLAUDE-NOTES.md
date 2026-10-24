@@ -36,6 +36,10 @@ notifications."
 **Doing (helper):** demo link always opens the made-up demo gym and never touches or shows a signed-in gym; a clear demo
 button on the landing; Branding + Notifications as their own sidebar items in the admin app; website says
 "notifications" instead of "notices" (English + Hindi).
+**Changed (owner, same evening):** "We already have Messages and offers so that is okay... no need for notifications...
+you need to push back on these things.. you gotta be my product partner here." So: no Notifications item or rename;
+only Branding joins the sidebar. My pushback: the website says "messages" (not "notifications", which implies phone
+pop-ups that are still Coming), matching "Messages & offers". Rule saved: be-his-product-partner-push-back.
 
 ## R-118. No competitor named on the website (GGMS) — 24 Oct 2026
 **Owner said:** "really ... you will put GGMS here.. as if its worlds best and most common software? duh" (lead form).
