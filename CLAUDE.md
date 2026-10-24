@@ -14,6 +14,10 @@ owner's gym fieldwork (`docs/overhaul/FIELDWORK.md`); app-quality work proceeds 
 ## ⭐ Talk in plain English
 The owner is **not a developer**. In chat, lead with what changed for them and why. All technical
 detail goes in `PROGRESS.md`, commit messages, and code comments — not chat.
+**Owner rule (24 Oct 2026, R-98): every word a member, gym owner or visitor reads** (What's new, buttons, pop-ups,
+errors, landing page, messages) goes through the global `member-words` skill before it ships: write for someone who
+has never seen the screen, say where and what it does for them, one short line each, and get Gemini's second opinion
+when GEMINI_API_KEY is set (else a fresh-reader subagent). What's new notes carry a `go` button where one helps.
 
 ## ⭐ Project Tracker = the owner inbox (`docs/OWNER-INBOX.md` + his private page, renamed 21 Oct)
 The page and the file's title say "Project Tracker"; the file path and the script names stay. It also

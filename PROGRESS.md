@@ -2601,6 +2601,21 @@
   headings, aiMatch hang on Node 22.23, UR typing check) and run-device-qa.sh retries a part once on Maestro's
   DeviceServerDiedException only.
 
+- 2026-10-24: **R-97 live (web): free 3-month trial + public prices + HQ trial controls** (commit 9b3fc87, panel
+  661f4677, HQ b0a35c8a). Landing: trial is the first door (hero + lid "Start free" -> /start), one layout for every
+  played section (words left, stage right; phone: words, stage, list), scenes loop while on screen (stop off screen on
+  the finished state, tap to pause), loosened spacing, desk-work list, "moving in privately" (AI import; claim true to
+  aiMatch.js), "Pick your pack" (Starter 999 / Pro 1,999 / AI 2,999 coming / founding lifetime 29,999; prices decided
+  by Claude, #30, after a 12-product market check). Finish review (impeccable-finish-reviewer, 4 captures) fixes
+  applied. Admin app: /start opens Start my gym; Today trial banner (after 0030); manifest linked only once signed in.
+  HQ: summary, search, filters, sort, gym CSV export (gym facts only, audited), trial and plan controls, confirms;
+  works before 0030. **0030_plans_and_trials.sql NOT APPLIED** (tracker #55). Tests: dashboard vitest 1081, e2e 62,
+  HQ 48, panel 40, PGlite migrations 20 files (0030 PASS 41).
+- 2026-10-24: **R-98: member-facing English** — every What's new line (0.44-0.55) rewritten in plain words and checked by
+  a fresh-reader subagent; lines carry an optional `go` button (opens the screen/setting); Settings -> What's new and
+  the card show the last 3 updates. Global skills: obra writing-clearly-and-concisely + own `member-words` (Gemini
+  second opinion via gemini_rewrite.py once the owner sets GEMINI_API_KEY, tracker #56). App 0.55.1 prepared.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.

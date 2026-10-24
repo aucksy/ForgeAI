@@ -17,13 +17,14 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 27 | Paid server plan (Supabase Pro, about ₹2,100 a month): now or in the switch-over week | A: now |
 | 28 | Google Play account: personal or organisation | A: personal |
 | 44 | Brand: one or two, then the name (rounds 4-5, incl. your 40 names) | A: one brand; Liftforged |
-| 30 | Price after the free 8-week trial | A: ₹1,499 a month or ₹14,999 a year |
 | 32 | Register ForgeAI for GST now | A: not now |
 | 33 | Your support hours during the trial | A: rush hours, 15 minutes |
 | 41 | Price for an owner with 2 or more branches | A: per branch, no member limit, lower price from the 2nd branch |
 | 43 | How members sign in: Google, or a phone code | A: Google, the desk confirms each member once |
 | 45 | Count reps by listening: build a test version | A: yes, phone mic |
 | 46 | Trainers see members' progress: version 1 | A: yes, the member chooses |
+| 55 | Switch on free trials (one live server change) | A: yes, now |
+| 54 | How much member data your owner panel shows | A: counts only; records only through logged support access |
 | 50 | Members' workouts on our server | A: yes later, by choice, after sign-in and the paid plan |
 
 ---
@@ -35,6 +36,9 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #56 | High | Low |
+| #55 | High | Low |
+| #54 | Medium | Low |
 | #50 | Medium | High |
 | #46 | High | Medium |
 | #45 | Low | High |
@@ -75,7 +79,8 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: A member's own history from before joining a gym | Medium | Medium |
 | Feature: FitPass and other pass members | Medium | Medium |
 | Feature: QR scan opens the door | Medium | Medium |
-| Feature: Paying in the app | Medium | High |
+| Feature: Paying in the app | High | High |
+| Feature: Free 3-month trial (HQ can extend to 6) | High | Low |
 | Feature: Messages in the phone's notification shade | High | Medium |
 | Feature: Busy times by exercise | Low | Medium |
 | Feature: Google login | Medium | Medium |
@@ -135,7 +140,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 25. System owner panel ("ForgeAI HQ", #51) | Done | 23 Oct, live at https://forgeai-hq.aakashpahuja.in: you sign in with Google and see every gym (counts only). All 3 server parts live and tested (64 + 49 checks); the gym owner's "ForgeAI access" list is live in the admin app. |
 | 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
 | 27. Automatic reminders to members (your note, 23 Oct) | Done | 24 Oct: released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk); server part live 23 Oct (#53). Owners switch each one on or off in Messages & offers. |
-| Pilot + data agreement | Blocked | D3: needs your answers to #30 (price) and #33 (support hours). Medium. |
+| Pilot + data agreement | Blocked | D3: the price is set (#30, decided 24 Oct); needs your answer to #33 (support hours). Medium. |
 | Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
 | Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
 | GGMS column mapping and trial imports | Blocked | F3, F4: needs the GGMS export (#36). Large. |
@@ -262,7 +267,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
 | QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. | The member scans the gate QR; our server checks the plan is active and tells a networked door lock to open for a few seconds. The QR on a small gate screen changes every 30 seconds, so a forwarded photo does not work. The desk button and a keypad PIN still work when the internet is down, and the lock opens on power loss (fire safety). |
 | Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
-| Paying in the app | Idea | Shop orders are paid at the desk today; paying in the app may come later. | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
+| Paying in the app | Waiting for you | Part of the Pro pack (your plan, 24 Oct, R-97). Shop orders are paid at the desk today. Needs a payment company account (for example Razorpay) that only you can open. | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
 | Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
 | Gym welcome and logo after joining | Live | v0.54.0: after joining, the app restarts in the gym's look with "Welcome to <gym>", then offers the gym's logo for the home screen and shows how to take the ForgeAI icon off (owner, 22 Oct). |
 | Shop tab only when the gym's shop is on | Live | v0.54.0: no gym = no Shop tab; a gym = a "Gym" tab; it becomes "Shop" once the gym lists a product. "Leave gym" is its own row in Settings → Your gym (owner, 22 Oct). |
@@ -281,6 +286,11 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
+| Free 3-month trial (HQ can extend to 6) | Waiting for you | Built. Switches on with your yes to one live server change (#55). | Every new gym gets 3 months free, no card. Your owner panel shows days left and extends a trial up to 6 months, with a reason. The gym owner sees the days left on Today. Nothing locks when it ends; members keep their app. |
+| Prices and packs on the landing page | Live | Starter ₹999, Pro ₹1,999, AI ₹2,999 (coming) a month, yearly prices, and a founding-gym lifetime pack (₹29,999, first 50 gyms). Live 24 Oct. |
+| Start the free trial from the landing page | Live | "Start free" buttons open the gym sign-up straight away (forgeai.aakashpahuja.in/start). Live 24 Oct. |
+| Owner panel: search, filters, export, trial controls | Live | Search, sort, filters (on trial, ending soon, ended, paying), a summary, a gym list export (gym facts only) and confirm questions. Trial controls switch on with #55. Live 24 Oct. |
+| "What's new" with a button to try each change | Next release | Every note rewritten in plain words; a button opens the screen or setting it talks about; Settings shows the last 3 updates. |
 | System owner panel (for you) | Live | 23 Oct: https://forgeai-hq.aakashpahuja.in, your Google sign-in only. Counts per gym, approve or pause gyms, delete requests, support access the gym owner can see, and a log nobody can edit. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
 | New brand name with a free domain | Waiting for you | Research done: 136 names checked, 5 with .com, .in and .app free at the normal price; your pick (#44). | You pick a name and buy its .com and .in the same day (about ₹1,700-3,100 a year); then a trademark check, then I rename the app, the website and the store listing. |
 | Block-proof server address | Live | Admin app since 22 Oct; member app since v0.54.0. A block of Supabase's own address (as in Feb 2026) can no longer stop the apps. |
@@ -306,6 +316,37 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** you asked that every word members read gets checked by Gemini, with the full context. The check is built: before any member-facing text ships, Claude sends the draft and its context to Gemini, compares the two versions and checks the facts. It runs only with your own Gemini key, and only you can make that key.
+**Your task:** Open https://aistudio.google.com/apikey, press "Create API key", pick any project, and copy the key.
+**Your task:** Open PowerShell on this computer and run this one line, with your key between the quotes: setx GEMINI_API_KEY "your-key-here"
+**Your task:** Close the Claude app and open it again, so it can see the key. Then tell me "Gemini key is in" and I run a test.
+
+## 55. Switch on free trials: one live server change (part 4 of your owner panel) — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**What it does:** every gym gets 3 months free, with no card. Your owner panel shows how many days each gym has left. You can extend a trial up to 6 months, with a reason that is logged. The gym owner sees "Free trial: 41 days left" on the Today screen. When a trial ends, nothing locks: members keep their app, and the owner sees "Pick a ForgeAI pack to keep going". Your panel can also record each gym's pack (Starter, Pro, AI), monthly, yearly or lifetime, and paid until when.
+**What is already live without it:** the new landing page with prices, the "Start free" sign-up, and the new owner panel (search, filters, export). Until you say yes, the panel shows "Trials need the database update".
+**Safe:** it only adds new columns and two new owner-panel actions. It changes no member data. It was tested on a copy (41 checks pass). Existing gyms start their 3 months on the day it goes in.
+**Decide:** Switch on free trials now?
+- A: Yes, apply it now (recommended)
+- B: Not yet
+
+## 54. How much of a gym's data should you see in your owner panel? — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked:** in your owner panel (ForgeAI HQ), will you see each gym's member data? Do you need it? Should you have it?
+**My answer:** No, not by default. Your panel shows each gym's own facts: name, owner, mobile, plan, trial, how many members, last activity. It never shows member names, phones or payments. Four reasons:
+1. **The law.** Under India's data law (DPDP Act 2023), the gym owns its members' data and ForgeAI only keeps it for the gym. Looking at it without the gym's OK is a risk for you, not a feature.
+2. **Trust sells.** The new landing page promises: "ForgeAI staff can't open your member list unless you let them in." That promise is what makes a nervous owner import his Excel.
+3. **Safety.** If your Google account were ever stolen, a panel that shows every member's phone would leak thousands of people. Counts leak nothing.
+4. **You don't need it.** Support works without it, and this is already live (built 23 Oct): the gym taps "Let ForgeAI support look (1 hour)" in Settings, or in an emergency you open a 15 to 60 minute window with a written reason. Both are read-only and logged, and the gym owner sees every look.
+**Decide:** How much member data should your owner panel show?
+- A: Gym facts and counts only; member records only through support access (the gym's OK, or an emergency reason), logged and shown to the gym owner (recommended)
+- B: Every gym's member list, all the time
 
 ## 53. Switch on the owner's reminder switches (one live server change) — 23 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -774,10 +815,8 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**Decide:** What does the gym pay after a free 8-week trial? (It goes into the agreement before the trial starts.)
-- A: ₹1,499 a month, or ₹14,999 a year (about GGMS's price, with the member app included) (recommended)
-- B: A first-client price of ₹999 a month for the first year, in return for a testimonial and feedback
+**Status:** DONE
+**DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
