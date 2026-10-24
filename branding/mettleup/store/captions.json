@@ -9,6 +9,6 @@
     { "id": 5, "screen": "Check-in scan", "headline": "Check in with\n*one scan*", "sub": "Scan the code at your gym's front desk." },
     { "id": 6, "screen": "Progress chart for one lift", "headline": "See your\n*strength* grow", "sub": "A chart for every lift, week by week." },
     { "id": 7, "screen": "A workout logged in aeroplane mode", "headline": "Works without\n*internet*", "sub": "No signal in the gym? Keep logging." },
-    { "id": 8, "screen": "Join link / gym welcome", "headline": "*Free* with\nyour gym", "sub": "Your gym sets you up. You just train." }
+    { "id": 8, "screen": "Join link / gym welcome", "headline": "Free. *Better*\nwith your gym", "sub": "Join with your gym's code to unlock everything." }
   ]
 }
