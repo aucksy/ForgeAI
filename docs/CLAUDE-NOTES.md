@@ -29,6 +29,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-118. No competitor named on the website (GGMS) — 24 Oct 2026
+**Owner said:** "really ... you will put GGMS here.. as if its worlds best and most common software? duh" (lead form).
+**Done:** lead form now Register book / Excel or Google Sheets / Gym software / Something else; the 3 "GGMS export"
+lines say "your old gym software"; leads.js accepts 'software' (and old 'ggms'). Deployed; live page has 0 GGMS.
+Rule saved: D:\Brain\How I Like Things\never-name-a-competitor-as-the-default.md.
+
 ## R-117. Owners need a lasting sign-in: own 6-digit PIN (picked A) — 24 Oct 2026 (~8:20 pm)
 **Owner said:** "When I create a new gym as a gym owner, I do not see my six-digit sign-in code on the website, and later I
 have no code to sign in. In the admin panel I also don't see the code, only the option to create a new one... the sign-in
