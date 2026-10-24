@@ -35,6 +35,9 @@ declare
     'owner_terms','owner_accept_terms',
     -- 0034: your own sign-in PIN (each checks a session key and acts only on that key's person).
     'staff_set_pin','staff_pin_status',
+    -- 0035: measurements taken by the trainer and diet plans (owner/desk key, or a member key, checked by each).
+    'owner_member_measurements','owner_save_measurement','owner_delete_measurement','member_measurements',
+    'owner_diet_plans','owner_save_diet_plan','owner_withdraw_diet_plan','member_diet_plans',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
