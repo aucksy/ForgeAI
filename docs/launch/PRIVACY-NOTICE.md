@@ -8,6 +8,24 @@ A lawyer check is still advised before the second gym (open risks at the end).
 Updated 24 Oct 2026 (tracker #59, owner approved the draft "as written"): saved workouts with Google
 sign-in, the AI import named under "Where it is kept" (names and addresses now hidden from it too).
 
+**PROPOSED CHANGE, R-120 (24 Oct 2026): WAITING FOR THE OWNER'S APPROVAL, NOT IN THE PUBLIC NOTICE YET.**
+Why: measurements taken by the trainer and diet plans (server change 0035) put a member's body
+measurements on our server as the GYM's records. Today the notice says measurements stay on the
+phone and the gym never sees them; that stays true for what the member logs, not for what the gym
+records. Once approved, these three edits go into the notice below (and the Hindi one), before 0035
+is switched on live:
+1. "Who is responsible for what", first bullet, the list in brackets becomes: "(membership,
+   payments, receipts, visits, shop orders, messages with the desk, body measurements your trainer
+   takes at the gym, and diet plans your trainer sends you)".
+2. The "Your workouts" bullet starts: "**The workouts and measurements you log yourself** (exercises,
+   sets, weights, body weight, measurements, progress photos) stay **on your phone** ..." (rest as is).
+3. A new row in the table: "Body measurements your trainer takes at the gym (the date, body weight,
+   body fat, tape measurements, who measured, and the desk's own note), and diet plans your trainer
+   sends you | So your trainer can follow your progress and you see it in the app (Progress → Body,
+   Gym → Diet plan) | As long as the gym keeps its records. Only your gym's staff and you can see
+   them. A measurement the gym deletes also goes from your app; the numbers already on your phone
+   stay there if you leave the gym, until you erase the app's data".
+
 ---
 
 ## MettleUp privacy notice

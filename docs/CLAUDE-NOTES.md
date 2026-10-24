@@ -47,6 +47,19 @@ available out there so we can build a calorie tracker with images or manually."
 **Doing:** helper builds both (server change 0035 written, applied only after his yes); research helper on free food
 data + photo methods (India-first) → docs/research/R-calorie-tracking.md. Reminder: a food/calorie log was built earlier
 and is hidden (tracker: "Food and calorie log", on hold 22 Oct) — the calorie work builds on it, later.
+**Built (helper, 24 Oct night):** server 0035 (NOT APPLIED; CI database job PASS 54 + security PASS 9):
+tables gym_body_measurements + gym_diet_plans; RPCs owner_member_measurements, owner_save_measurement,
+owner_delete_measurement, member_measurements, owner_diet_plans, owner_save_diet_plan,
+owner_withdraw_diet_plan, member_diet_plans. Admin: member page cards "Body measurements" (add / fix /
+delete, change vs last time, phone-sized form) and "Diet plan" (send in one tap, stop sending); new page
+Diet plans (menu + More) with 3 starter samples (fat loss veg 1,600, muscle gain non-veg 2,600,
+maintenance veg 2,000; each with the doctor line). Member app: Progress → Body shows the gym's entries
+"From <gym> · <trainer>" (read-only; the member's own entry wins on the same day); Gym tab gets a "Diet
+plan" row once a plan arrives → read-only page; both kept on the phone (offline after the first answer).
+Decided: a member who leaves keeps the gym's measurements already on the phone (their own body), the
+diet plans go with the link; Erase all data removes both. What's new 0.57.0: 2 lines. Privacy notice:
+a 3-edit change is DRAFTED at the top of docs/launch/PRIVACY-NOTICE.md (outside the published part),
+waiting for his approval before 0035 goes live.
 
 ## R-119. Demo gym opens his real gym; sidebar; "notifications" — 24 Oct 2026
 **Owner said:** "'Open Demo GYM' is opening the latest GYM I created.. .wow. Also highlight the button for people to see
