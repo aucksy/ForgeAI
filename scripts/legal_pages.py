@@ -26,8 +26,8 @@ DOCS = os.path.join(ROOT, "docs", "launch")
 OUT = os.path.join(ROOT, "apps", "dashboard", "public")
 
 # Owner inbox #37: the complaints contact. Empty until he gives it.
-CONTACT_NAME = ""
-CONTACT_EMAIL = ""
+CONTACT_NAME = "Aakash Pahuja"  # owner, 24 Oct 2026 (#37, R-111)
+CONTACT_EMAIL = "contact@mettleup.fit"  # forwarded by Cloudflare Email Routing
 
 
 def inline(text):

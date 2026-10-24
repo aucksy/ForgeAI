@@ -994,9 +994,11 @@ no paper signing needed. As you asked, gym owners now accept the terms and the d
 
 ## 37. Launch task: name the complaints contact for members — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **Your task:** Tell Claude one name and one email address that members can write to about their data (it can be you and a new address such as privacy.forgeai@gmail.com; one you will check weekly).
 **Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
+**TASK DONE (24 Oct, chat)**
+Contact: contact@mettleup.fit, shown with your name Aakash Pahuja as Grievance Officer. Emails forward to simpleapps108@gmail.com until your new Gmail exists. The privacy, terms and data agreement pages are now complete.
 
 ## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
 **Chat:** ForgeAI Local Chat

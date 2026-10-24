@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-111. Complaints contact: contact@mettleup.fit, name Aakash Pahuja — 24 Oct 2026
+**Owner said:** "contact@mettleup.fit — We will set it up to route the emails to a Gmail account that I'll probably create".
+Asked in chat: name shown = "Aakash Pahuja"; until the new Gmail exists, forward to simpleapps108@gmail.com.
+**Done:** scripts/legal_pages.py CONTACT_NAME/EMAIL set; privacy, terms and data-agreement pages built in full (no blanks).
+Next: Cloudflare Email Routing contact@mettleup.fit -> simpleapps108@gmail.com once the zone is active (Google sends a verify
+mail he clicks). #37 TASK DONE.
+
 ## R-110. Why is the Play target age 18+? — 24 Oct 2026
 **Owner said:** "Why is the target age on play submission is 18 and above.. kids below 18 dont workout?"
 **Answer:** from #29 (decided 20 Oct, Claude's legal call): India's DPDP Act treats everyone under 18 as a child: verified
