@@ -28,6 +28,79 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 ---
 
+## Priority (pending items only)
+R-96 (owner, 24 Oct 2026). **Impact** = how much it matters to the gym and its members. **Effort** = the time and
+tokens it takes to build (for a decision: the build after it; for your own task: your time). High / Medium / Low.
+Done, built and "Not doing" items have no rating. The page sorts by these (Best first = high impact, low effort).
+
+| Item | Impact | Effort |
+|---|---|---|
+| #50 | Medium | High |
+| #46 | High | Medium |
+| #45 | Low | High |
+| #44 | High | Medium |
+| #43 | Medium | Medium |
+| #42 | Medium | Low |
+| #41 | Low | High |
+| #38 | High | Low |
+| #37 | Medium | Low |
+| #36 | High | Medium |
+| #35 | High | Low |
+| #34 | High | Low |
+| #33 | Medium | Low |
+| #32 | Medium | Low |
+| #30 | High | Low |
+| #28 | High | Low |
+| #27 | High | Low |
+| #26 | High | Medium |
+| #25 | Medium | Low |
+| Feature: Moving exercise demo clips | Medium | Medium |
+| Feature: Google Drive backup and restore | Medium | Low |
+| Feature: Automatic workout backup | Medium | Low |
+| Feature: AI coach chat | Medium | Medium |
+| Feature: Food and calorie log | Low | Medium |
+| Feature: Hindi screens | Medium | High |
+| Feature: Body weight from Health Connect | Low | Medium |
+| Feature: Paid plan for people without a gym | Medium | High |
+| Feature: Offline front desk | Medium | Medium |
+| Feature: Entry machine (turnstile, face or fingerprint) | High | Medium |
+| Feature: Automatic SMS or WhatsApp reminders | High | Medium |
+| Feature: Trainer profiles and schedules | Low | Medium |
+| Feature: Webcam photo at the desk | Low | Low |
+| Feature: Body measurements taken by the gym | Low | Low |
+| Feature: Trainer view of member progress | High | Medium |
+| Feature: AI assistant for the owner | Low | High |
+| Feature: Several branches | Low | High |
+| Feature: Member data export by the gym, on request | Medium | Medium |
+| Feature: A member's own history from before joining a gym | Medium | Medium |
+| Feature: FitPass and other pass members | Medium | Medium |
+| Feature: QR scan opens the door | Medium | Medium |
+| Feature: Paying in the app | Medium | High |
+| Feature: Messages in the phone's notification shade | High | Medium |
+| Feature: Busy times by exercise | Low | Medium |
+| Feature: Google login | Medium | Medium |
+| Feature: Class booking | Medium | High |
+| Feature: Diet plans from the trainer | Medium | Medium |
+| Feature: New brand name with a free domain | High | Medium |
+| Feature: Play Store release | High | Medium |
+| Feature: Paid server with daily backups | High | Low |
+| Feature: Test server before live | Medium | Medium |
+| Feature: Crash and outage alerts | High | Low |
+| Feature: Real-phone tests on Google's lab | Medium | Low |
+| Feature: Privacy notice, terms and consent | High | Low |
+| Feature: Launch plan for the client gym | High | High |
+| Task: 15. Offline front desk (admin app) | Medium | Medium |
+| Task: 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | High | Medium |
+| Task: 21. Imported names with a title ("Mr. Ramesh") | Low | Low |
+| Task: Pilot + data agreement | High | Medium |
+| Task: Crash reports and outage alerts wired in | High | Medium |
+| Task: Staging server, backups check, restore drill | High | Medium |
+| Task: GGMS column mapping and trial imports | High | High |
+| Task: Play Store listing, data safety answers, internal test | High | Medium |
+| Task: In-app "Delete my data" for members | Medium | Medium |
+
+---
+
 ## Claude's tasks
 What I do myself, in the order I do them (re-prioritised 21 Oct: safety and legal before real
 members, then what the trial needs, then marketing; owner, 21 Oct: "you can decide the sequence").
@@ -249,7 +322,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Your task:** Make the gym-server key: open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/settings/api-keys, open "Secret keys", press "New secret key", name it hq, and copy it.
 **Your task:** Make the Google sign-in client: open https://console.cloud.google.com/auth/clients (in your ForgeAI project; if you have no project yet, first make one at https://console.cloud.google.com/projectcreate named ForgeAI, then fill https://console.cloud.google.com/auth/branding with app name ForgeAI, your email, audience External, and press "Publish app"). Press Create client, pick Web application, name it ForgeAI HQ, and under "Authorized redirect URIs" add https://forgeai-hq.aakashpahuja.in/auth/callback. Press Create. Copy the Client ID and the Client secret.
 **Your task:** Paste all three into Cloudflare: open dash.cloudflare.com → Workers & Pages → forgeai-hq → Settings → Variables and Secrets → Add. Type "Secret" each time. Name SUPABASE_HQ_KEY with the Supabase key, GOOGLE_CLIENT_ID with the Client ID, GOOGLE_CLIENT_SECRET with the Client secret. Save. Then tell me "HQ keys are in" and I test the sign-in.
-**TASK DONE (23 Oct 2026)**: keys in; you signed in to https://forgeai-hq.aakashpahuja.in (both your Google accounts are allowed) and it lists every gym.
+**TASK DONE (23 Oct 2026)**
+Keys in; you signed in to https://forgeai-hq.aakashpahuja.in (both your Google accounts are allowed) and it lists every gym.
 
 ## 51. Your own panel for the whole system ("ForgeAI HQ"): the plan — 23 Oct 2026
 **Chat:** ForgeAI Local Chat

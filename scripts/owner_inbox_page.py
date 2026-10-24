@@ -33,6 +33,11 @@ since his last visit on that phone, new answers, what Claude is doing), Waiting 
 Feature backlog (status pills + group picker), Claude's tasks (Doing / Blocked / To do / Done). Cards show the
 title and one line; the long answer is drawn only when opened. A link ending in #51 opens at #51.
 
+R-96 (24 Oct 2026): every pending item (an open question or task of his, a feature not built, a task of mine not
+done) has Impact and Effort (High / Medium / Low) in the .md's "## Priority" table. Pending cards show both, and
+a Sort picker on the four list tabs orders them: Best first (the default), Biggest impact, Quickest, Original order.
+A build prints any pending item with no rating, and any rating row that matches nothing.
+
 Usage: owner_inbox_page.py <output.html> [<inbox.md>]
        owner_inbox_page.py --absorb <saved-page.html> [<inbox.md>]
          writes the page's read taps into the .md and prints the answers/replies it holds
@@ -136,7 +141,42 @@ def parse(text):
             "taskDone": td.group(1) if td else "",
             "body": body.strip(),
         })
-    return {"decisions": decisions, "entries": entries, "backlog": parse_backlog(text), "mine": parse_mine(text)}
+    backlog, mine, prio = parse_backlog(text), parse_mine(text), parse_priority(text)
+    for e in entries:
+        e["prio"] = prio.get("#%d" % e["num"])
+    for f in backlog:
+        f["prio"] = prio.get("Feature: " + f["name"])
+    for t in mine:
+        t["prio"] = prio.get("Task: " + t["task"])
+    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine}
+
+
+PRIO_LEVELS = ("High", "Medium", "Low")
+
+
+def parse_priority(text):
+    """R-96 (owner, 24 Oct 2026): {item: [impact, effort]} from "## Priority" (| Item | Impact | Effort |, each
+    High / Medium / Low). An item is "#50", "Feature: <backlog name>" or "Task: <Claude's task>"."""
+    m = re.search(r"^## Priority[^\n]*\n(.*?)^---[ \t]*$", text, re.M | re.S)
+    out = {}
+    for line in (m.group(1).splitlines() if m else []):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if line.strip().startswith("|") and len(cells) == 3 and cells[1] in PRIO_LEVELS and cells[2] in PRIO_LEVELS:
+            out[cells[0]] = [cells[1], cells[2]]
+    return out
+
+
+def priority_gaps(data, text):
+    """R-96: pending items with no rating, and rating rows that match nothing (a renamed or removed item)."""
+    missing = []
+    for e in data["entries"]:
+        if (e["decides"] or (e["tasks"] and not e["taskDone"])) and not e["prio"]:
+            missing.append("#%d" % e["num"])
+    missing += ["Feature: " + f["name"] for f in data["backlog"] if f["kind"] not in ("done", "built", "no") and not f["prio"]]
+    missing += ["Task: " + t["task"] for t in data["mine"] if not t["done"] and not t["prio"]]
+    known = {"#%d" % e["num"] for e in data["entries"]} | {"Feature: " + f["name"] for f in data["backlog"]} | {"Task: " + t["task"] for t in data["mine"]}
+    stale = [k for k in parse_priority(text) if k not in known]
+    return missing, stale
 
 
 def slug(s):
@@ -519,6 +559,12 @@ mark { background: var(--wait-bg); color: inherit; border-radius: 3px; padding: 
 .waits { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; font-size: 0.86rem; color: var(--muted); align-items: center; }
 .chipnum { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border-radius: 999px; background: var(--wait-bg); color: var(--wait); font-weight: 700; text-decoration: none; }
 .chipnum b { font-family: var(--f-mono); margin-right: 4px; }
+/* R-96: Impact and Effort on pending items; high impact and low effort stand out. */
+.pri { font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 1px 7px; white-space: nowrap; color: var(--muted); border: 1px solid var(--line-strong); }
+.pri.i3 { color: var(--accent); border-color: currentColor; }
+.pri.e1 { color: var(--done); border-color: currentColor; }
+.pris { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }
+.sortbar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
 
 /* Finished items fold at the bottom of each tab (owner, 18 Oct). */
 .donebox { margin-top: 24px; padding-top: 8px; border-top: 2px dashed var(--line); }
@@ -650,6 +696,23 @@ const inTab = (f, tab) => (tab === "shipped") === SHIPPED.includes(f.kind);
 // R-33 / R-84: Claude's tasks in the order Doing, Blocked (waits for you), To do, Done.
 const taskKind = (t) => { const s = String(t.status).toLowerCase(); return s.startsWith("done") ? "done" : s.startsWith("doing") ? "doing" : s.startsWith("blocked") ? "blocked" : "todo"; };
 const mineAll = () => DATA.mine.map((t, i) => ({ t, i, k: taskKind(t) }));
+// R-96: a pending item's prio is [impact, effort] (High / Medium / Low). The Sort picker orders the four list tabs;
+// rated items come first, unrated ones after them in their usual order. The choice is kept on this phone.
+const LV = { High: 3, Medium: 2, Low: 1 };
+const SORTS = { best: "Best first (high impact, low effort)", impact: "Biggest impact first", quick: "Quickest first", order: "Original order" };
+let sortBy = ls.get("inbox-sort");
+if (!(sortBy in SORTS)) sortBy = "best";
+const priKey = (p) => !p ? null : sortBy === "best" ? [LV[p[0]] - LV[p[1]], LV[p[0]]] : sortBy === "impact" ? [LV[p[0]], -LV[p[1]]] : [-LV[p[1]], LV[p[0]]];
+const byPrio = (get, fallback) => (a, b) => {
+  if (sortBy === "order") return fallback(a, b);
+  const ka = priKey(get(a)), kb = priKey(get(b));
+  if (!ka || !kb) return (kb ? 1 : 0) - (ka ? 1 : 0) || fallback(a, b);
+  return kb[0] - ka[0] || kb[1] - ka[1] || fallback(a, b);
+};
+const priHtml = (p) => p ? '<span class="pri i' + LV[p[0]] + '">Impact ' + p[0] + '</span><span class="pri e' + LV[p[1]] + '">Effort ' + p[1] + "</span>" : "";
+const sortHtml = () => '<div class="sortbar"><div class="selrow"><label for="sortby">Sort</label><select id="sortby">' +
+  Object.keys(SORTS).map((k) => '<option value="' + k + '"' + (k === sortBy ? " selected" : "") + ">" + SORTS[k] + "</option>").join("") + "</select></div>" +
+  '<p class="legend"><b>Impact</b> = how much it matters to the gym and its members. <b>Effort</b> = time and tokens to build it (your own task: your time). Only open items have them.</p></div>';
 const numsIn = (s) => [...new Set((String(s).match(/#(\d{1,4})\b/g) || []).map((x) => Number(x.slice(1))))].filter((n) => entryOf(n));
 
 function shown(e) {
@@ -745,7 +808,7 @@ function card(e) {
   const act = taskHtml(e) + (e.decides.length || sent ? formHtml(e) : "");
   const fold = filter === "all" && !query && needsYou(e);
   return '<article id="e' + e.num + '"><div class="ch"><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
-    '<p class="meta">' + tag + pill + "<span>" + esc(e.date) + "</span>" +
+    '<p class="meta">' + tag + pill + (needsYou(e) ? priHtml(e.prio) : "") + "<span>" + esc(e.date) + "</span>" +
     (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(chatLabel(e.chat)) + "</a>" : "<span>" + esc(chatLabel(e.chat)) + "</span>") + "</p>" +
     (showStatus ? '<p class="statusline">' + esc(softCaps(e.status)) + "</p>" : "") +
     (gist ? '<p class="gist">' + esc(gist) + "</p>" : "") + "</div></div>" +
@@ -866,13 +929,13 @@ function homeHtml() {
 }
 function waitingHtml() {
   const list = DATA.entries.filter(shown).sort(byNum);
-  const qs = list.filter(needsAnswer), ts = list.filter((e) => !needsAnswer(e));
-  const feats = waitingFeats();
+  const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter((e) => !needsAnswer(e)).sort(byPrio((e) => e.prio, byNum));
+  const feats = waitingFeats().sort(byPrio((x) => x.f.prio, (a, b) => a.i - b.i));
   // Done (folded below): decisions already answered, tasks done, feature yes/no's sent.
   const doneList = DATA.entries.filter(inChat).filter((e) => (e.decides.length > 0 && Boolean(sentOf(e))) || (tasksOf(e).length > 0 && taskDone(e))).sort(byNum);
   const sentFeats = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && DATA.notes[x.f.id]);
   let out = '<div class="tabhead"><h2>Waiting for you</h2></div>' +
-    '<p class="hint">A question: tap an answer, then Send. A task: do it, then tap “I have done it”. Or tell me in chat, for example “49: A”.</p>';
+    '<p class="hint">A question: tap an answer, then Send. A task: do it, then tap “I have done it”. Or tell me in chat, for example “49: A”.</p>' + sortHtml();
   if (!qs.length && !ts.length && !feats.length) out += '<div style="margin-top:14px">' + empty("Nothing waits for you.", "When I need a decision or a step from you, it shows up here first.") + "</div>";
   // R-83: the open questions by number first (tap = jump), then the questions, the tasks, the features.
   if (qs.length) out += '<nav class="qindex" aria-label="Questions for you">' + rows(qs.map((e) => rowEntry(e))) + "</nav>" +
@@ -886,22 +949,26 @@ function waitingHtml() {
   return out;
 }
 function qaHtml() {
-  const sorted = DATA.entries.filter(shown).sort((a, b) => (toRead(b) - toRead(a)) || byNum(a, b));
+  // R-96: open questions and tasks first, in the Sort order; then new answers; then the rest by number.
+  const sorted = DATA.entries.filter(shown).sort(byPrio((e) => (needsYou(e) ? e.prio : null), (a, b) => (toRead(b) - toRead(a)) || byNum(a, b)));
   const isDone = (e) => isRead(e) && !needsYou(e);
   const list = sorted.filter((e) => !isDone(e)), doneList = sorted.filter(isDone);
   const fresh = list.filter(toRead);
   return '<div class="tabhead"><h2>Questions &amp; answers</h2>' +
     (fresh.length > 1 ? '<button class="btn ghost" data-act="readall">Mark all ' + fresh.length + " as read</button>" : "") + "</div>" +
     '<span class="msg" id="rallmsg" role="status"></span>' +
-    '<p class="hint">New answers first, marked “New”. Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>' +
+    '<p class="hint">' + (sortBy === "order" ? "New answers first, marked “New”." : "Open questions and tasks first, in the Sort order; then new answers, marked “New”.") +
+    " Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>" + sortHtml() +
     '<div class="stack" style="margin-top:14px">' + (list.length ? list.map(card).join("") : empty("Nothing new: everything is read.", "Read answers are folded below.")) + "</div>" +
     doneBox("all", "Already read (" + doneList.length + ")", doneList.map(card).join(""));
 }
 function noteText(f, text) { return "Owner inbox feature backlog: " + f.group + " / " + f.name + ": " + text; }
-function featHtml(f, i) {
+function featHtml(f, i, withGroup) {
   const sent = DATA.notes[f.id], mv = DATA.moves[f.id], canMove = !SHIPPED.includes(f.kind);
   const btn = (k, label) => '<button type="button" class="fbtn" data-act="panel" data-p="fp' + k + i + '" aria-expanded="false" aria-controls="fp' + k + i + '">' + label + CHEV + "</button>";
+  const pri = canMove && f.kind !== "no" ? priHtml(f.prio) : "";
   return '<div class="feat" id="f' + i + '"><div class="fh"><h4 class="name">' + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
+    (pri || withGroup ? '<p class="pris">' + pri + (withGroup ? "<span>" + esc(f.group) + "</span>" : "") + "</p>" : "") +
     '<p class="det">' + esc(f.details) + "</p>" +
     (mv ? '<p class="moved">Moved here by you, ' + esc(mv.at) + ".</p>" : "") +
     (sent ? '<div class="sentbox"><p class="sentline">' + CHECK + "Comment sent " + esc(sent.at) + '</p><p class="sentnote">' + esc(sent.text) + "</p>" +
@@ -947,24 +1014,29 @@ function backlogHtml() {
     "</div>" +
     '<div class="selrow"><label for="blgroup">Group</label><select id="blgroup"><option value="all">All groups (' + all.length + ")</option>" +
     groups.map((g) => '<option value="' + esc(g) + '"' + (g === blGroup ? " selected" : "") + ">" + esc(g) + " (" + all.filter((x) => x.f.group === g).length + ")</option>").join("") + "</select></div>" +
-    '<p class="legend"><b>Planned</b> = Claude builds it, no need to ask you. <b>Waiting for you</b> = needs your answer, a yes, money or a setup step. Open “Move to” on a feature to change it.</p></div>';
-  if (blKind) return head + filters + groupedHtml(sortIn(inGroup.filter((x) => x.f.kind === blKind)));
+    '<p class="legend"><b>Planned</b> = Claude builds it, no need to ask you. <b>Waiting for you</b> = needs your answer, a yes, money or a setup step. Open “Move to” on a feature to change it.</p></div>' + sortHtml();
+  // R-96: a Sort other than "Original order" lists the features not built as one list (each card names its group).
+  const listed = (xs) => sortBy === "order" ? groupedHtml(sortIn(xs))
+    : '<div style="margin-top:14px">' + sortIn(xs).sort(byPrio((x) => (x.f.kind === "no" ? null : x.f.prio), () => 0)).map(({ f, i }) => featHtml(f, i, true)).join("") + "</div>";
+  if (blKind) return head + filters + (SHIPPED.includes(blKind) ? groupedHtml(sortIn(inGroup.filter((x) => x.f.kind === blKind))) : listed(inGroup.filter((x) => x.f.kind === blKind)));
   const built = inGroup.filter((x) => SHIPPED.includes(x.f.kind));
   const pending = inGroup.filter((x) => !SHIPPED.includes(x.f.kind));
-  return head + filters + (pending.length ? groupedHtml(sortIn(pending)) : '<div style="margin-top:14px">' + empty("Everything in this group is built.") + "</div>") +
+  return head + filters + (pending.length ? listed(pending) : '<div style="margin-top:14px">' + empty("Everything in this group is built.") + "</div>") +
     doneBox("built", "Built (" + built.length + "): live, or in the next release", groupedHtml(sortIn(built)));
 }
 function taskRow(x) {
   const waits = x.k === "blocked" ? numsIn(x.t.details) : [];
+  const pri = x.k === "done" ? "" : priHtml(x.t.prio);
   return '<div class="feat task" id="t' + x.i + '"><div class="fh"><h4 class="name">' + esc(x.t.task) + '</h4><span class="status k-' + x.k + '">' + esc(x.t.status) + "</span></div>" +
+    (pri ? '<p class="pris">' + pri + "</p>" : "") +
     (waits.length ? '<p class="waits">Waits for ' + waits.map((n) => '<a class="chipnum" href="#e' + n + '" data-goto="' + n + '"><b>#' + n + "</b>" + esc(entryOf(n).title.length > 34 ? entryOf(n).title.slice(0, 32).replace(/\s+\S*$/, "") + "…" : entryOf(n).title) + "</a>").join("") + "</p>" : "") +
     (x.t.details ? '<p class="det">' + esc(x.t.details) + "</p>" : "") + "</div>";
 }
 function mineHtml() {
   const mine = mineAll();
-  const head = '<div class="tabhead"><h2>Claude’s tasks</h2></div><p class="hint">What I do myself. Blocked ones wait for you: tap the # to answer it.</p>';
+  const head = '<div class="tabhead"><h2>Claude’s tasks</h2></div><p class="hint">What I do myself. Blocked ones wait for you: tap the # to answer it.</p>' + sortHtml();
   if (!mine.length) return head + empty("No tasks yet.");
-  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k); return xs.length ? '<h3 class="grp">' + title + ' <span class="cnt">' + xs.length + "</span></h3>" + xs.map(taskRow).join("") : ""; };
+  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k).sort(byPrio((x) => x.t.prio, (a, b) => a.i - b.i)); return xs.length ? '<h3 class="grp">' + title + ' <span class="cnt">' + xs.length + "</span></h3>" + xs.map(taskRow).join("") : ""; };
   const done = mine.filter((x) => x.k === "done");
   return head + sec("doing", "Doing now") + sec("blocked", "Blocked: waits for you") + sec("todo", "To do next") +
     (mine.some((x) => x.k !== "done") ? "" : empty("Nothing open: all my tasks are done.")) +
@@ -1233,6 +1305,7 @@ document.addEventListener("change", (ev) => {
     if (ag) ag.hidden = true;
   }
   if (t.id === "blgroup") { blGroup = t.value; blKind = null; render(); }
+  if (t.id === "sortby" && t.value in SORTS) { sortBy = t.value; ls.set("inbox-sort", sortBy); render(); const s = $("sortby"); if (s) s.focus(); }
 });
 document.addEventListener("click", (ev) => {
   const g = ev.target.closest("a[data-goto]");
@@ -1348,10 +1421,17 @@ def main(argv):
     if len(argv) not in (2, 3):
         print(__doc__)
         return 2
-    page = build(argv[2] if len(argv) == 3 else INBOX)
+    md_path = argv[2] if len(argv) == 3 else INBOX
+    page = build(md_path)
     with open(argv[1], "w", encoding="utf-8") as f:
         f.write(page)
     print("wrote " + argv[1])
+    text = open(md_path, encoding="utf-8").read()
+    missing, stale = priority_gaps(parse(text), text)
+    for k in missing:
+        print("R-96: pending, no Impact/Effort in ## Priority: " + k)
+    for k in stale:
+        print("R-96: ## Priority row matches nothing (renamed or removed?): " + k)
     return 0
 
 

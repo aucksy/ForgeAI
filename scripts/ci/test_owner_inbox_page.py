@@ -252,6 +252,24 @@ class Backlog(unittest.TestCase):
         self.assertIn('if (filter === "waiting") return needsYou(e);', html)
         self.assertIn('data-act="done"', html)
 
+    def test_priority_is_read_and_gaps_are_named(self):
+        # R-96: "## Priority" rates pending items; a build names unrated pending items and rows that match nothing.
+        text = "\n".join([
+            "## Priority (pending items only)", "| Item | Impact | Effort |", "|---|---|---|",
+            "| #2 | High | Low |", "| Task: Write the plan | Medium | High |", "| #99 | Low | Low |", "| #3 | Big | Low |", "", "---", "",
+            "## Claude's tasks", "| Task | Status | Details |", "|---|---|---|", "| Write the plan | To do | x |", "| Old one | Done | y |", "", "---", "",
+            "## 3. Pick a colour — 18 Oct 2026", "**Status:** WAITING FOR YOU", "**Decide:** Which colour?", "- A: Red (recommended)", "- B: Blue", "",
+            "## 2. Make a key — 18 Oct 2026", "**Status:** WAITING FOR YOU", "**Your task:** Make the key.", "",
+        ])
+        data = page.parse(text)
+        self.assertEqual(page.parse_priority(text), {"#2": ["High", "Low"], "Task: Write the plan": ["Medium", "High"], "#99": ["Low", "Low"]})
+        self.assertEqual([e["prio"] for e in data["entries"]], [None, ["High", "Low"]])
+        self.assertEqual(data["mine"][0]["prio"], ["Medium", "High"])
+        self.assertEqual(page.priority_gaps(data, text), (["#3"], ["#99"]))
+        html = page.fill(page.TEMPLATE, data)
+        self.assertIn('id="sortby"', html)
+        self.assertIn("byPrio(", html)
+
     def test_page_has_rename(self):
         html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
         self.assertIn('id="rename"', html)
