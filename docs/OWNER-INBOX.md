@@ -14,8 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 58 | What to build next from the other apps (20 ideas) | A: the top 5, one release at a time |
-| 57 | The app's new Play Store ID (Google says com.forgeai.app is taken) | A: com.simpleapps.forgeai |
+| 57 | The app's Play Store ID (com.forgeai.app is taken); follows the name in #44 | A: com.mettleup.app |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
 | 44 | Brand name (round 7: Mettle names) | A: MettleUp |
 
@@ -28,7 +27,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
-| #58 | High | Low |
 | Feature: Monthly gym challenge with a ranking | High | Low |
 | Feature: How busy the gym is right now | High | Low |
 | Feature: Gym's logo on share pictures and a before/after share | High | Low |
@@ -43,6 +41,12 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Quick workout: "I have 30 minutes" | High | Medium |
 | Feature: Ask your own AI | Medium | Low |
 | Feature: Steps and water each day | Low | Medium |
+| Feature: 1-rep max and % calculator | Medium | Low |
+| Feature: Treadmill and cycle details | Medium | Medium |
+| Feature: Log sets on the watch | Low | High |
+| Feature: "Stronger than X% of your gym" | Medium | Medium |
+| Feature: Follow gym mates (a feed of your gym) | Medium | High |
+| Feature: Compare with a friend | Low | Medium |
 | #57 | High | Medium |
 | #56 | High | Low |
 | Task: Multi-branch gyms, end to end (#41) | High | High |
@@ -238,12 +242,15 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
 | Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
 | Paid plan for people without a gym | Idea | The app is free, with every feature, for members of a gym on ForgeAI. People who train without a gym (or whose gym is not on ForgeAI) could pay for it themselves. To explore. | Without a gym code, a person gets a free trial, then a monthly or yearly plan paid through Google Play. Joining a gym on ForgeAI makes everything free again. You set the price; Google keeps 15% of each payment. |
-| Strength level for each main lift | Idea | Shows Beginner, Intermediate or Advanced for squat, bench, deadlift and other main lifts, from #58. | Each main lift's chart shows a level worked out from your best set and your body weight, with our own formula. Body weight is never shown. Works offline. |
-| Badge shelf | Idea | Badges for first 100 kg lift, 4 weeks in a row, 50 workouts and more, from #58. | Profile shows a shelf of badges earned from records and milestones the app already counts. The gym can give a real prize for a badge. |
-| Which muscles are ready today | Idea | A body map that shows which muscles rested enough to train again, from #58. | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
-| Quick workout: "I have 30 minutes" | Idea | Builds a workout for the time and equipment you have today, from #58. | Pick the time and the muscles; the app picks exercises with the plan builder's rules (no AI) and your history, ready to start. |
-| Ask your own AI | Idea | One tap sends your workout history as text to ChatGPT or Gemini, from #58. | Settings → Export shows "Ask an AI": it makes a short text of your recent workouts and opens the phone's share sheet. You use your own free AI. |
-| Steps and water each day | Idea | Steps from Health Connect and a water tap on Today, from #58. | Reads today's steps from Health Connect (one new permission). A step challenge can join the gym challenge. |
+| Strength level for each main lift | Planned | Shows Beginner, Intermediate or Advanced for squat, bench, deadlift and other main lifts, from #58. | Each main lift's chart shows a level worked out from your best set and your body weight, with our own formula. Body weight is never shown. Works offline. |
+| Badge shelf | Planned | Badges for first 100 kg lift, 4 weeks in a row, 50 workouts and more, from #58. | Profile shows a shelf of badges earned from records and milestones the app already counts. The gym can give a real prize for a badge. |
+| Which muscles are ready today | Planned | A body map that shows which muscles rested enough to train again, from #58. | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
+| Quick workout: "I have 30 minutes" | Planned | Builds a workout for the time and equipment you have today, from #58. | Pick the time and the muscles; the app picks exercises with the plan builder's rules (no AI) and your history, ready to start. |
+| Ask your own AI | Planned | One tap sends your workout history as text to ChatGPT or Gemini, from #58. | Settings → Export shows "Ask an AI": it makes a short text of your recent workouts and opens the phone's share sheet. You use your own free AI. |
+| Steps and water each day | Planned | Steps from Health Connect and a water tap on Today, from #58. | Reads today's steps from Health Connect (one new permission), shown on Today with a water tap. Stays on the phone. A gym-wide step challenge is parked (owner, 24 Oct: nothing that costs server space). |
+| 1-rep max and % calculator | Planned | Type a weight and reps to see your 1-rep max, then 50-95% of it in plate-ready weights, from #58. | Opens from an exercise's chart and from the plate calculator. Uses the same formula as the estimated 1-rep max chart. On the phone only. |
+| Treadmill and cycle details | Planned | Log speed, incline, level and intervals for cardio machines, from #58. | Cardio exercises get extra fields (speed, incline or level) added without changing old workouts. History and charts show them. |
+| Log sets on the watch | Idea | Parked (Claude, 24 Oct): few members wear Wear OS watches; from #58. | The watch would show the current set with a Done button. Waits until members ask. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
@@ -312,14 +319,17 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. | Like workout plans: the trainer builds a simple day plan (meals, times, a protein target) or picks a ready one, and sends it to a member or a whole membership plan. It shows in the member's app to read; the member can't change it. |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
-| Monthly gym challenge with a ranking | Idea | "Most workouts in November": a progress bar, the top 10 of your gym, a prize of free days, from #58. | The owner makes a challenge in the admin app (goal, dates, prize). Members see their place among their own gym. The workout reward already counts workouts and adds free days. |
-| How busy the gym is right now | Idea | Members see how busy the gym is now and the quietest times, from the QR check-ins, from #58. | The server counts check-ins per hour (the admin app already shows busy hours). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
-| Gym's logo on share pictures and a before/after share | Idea | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
-| Bring a friend | Idea | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
-| The gym's own form videos | Idea | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
-| Ask your trainer | Idea | A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
-| Ask the desk to freeze or renew | Idea | A member asks to freeze or renew from the app; the desk approves, from #58. | A request button on the membership card. The admin app shows the request; one tap freezes or renews with the tools it already has. |
-| The gym's workout of the day | Idea | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
+| Monthly gym challenge with a ranking | Planned | "Most workouts in November": a progress bar, the top 10 of your gym, a prize of free days, from #58. | The owner makes a challenge in the admin app (goal, dates, prize). Members see their place among their own gym. The workout reward already counts workouts and adds free days. |
+| How busy the gym is right now | Planned | Members see how busy the gym is now and the quietest times, from the QR check-ins, from #58. | The server counts check-ins per hour (the admin app already shows busy hours). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
+| Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
+| Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
+| The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
+| Ask your trainer | Idea | Parked (owner, 24 Oct). A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
+| Ask the desk to freeze or renew | Planned | A member asks to freeze or renew from the app; the desk approves, from #58. | A request button on the membership card. The admin app shows the request; one tap freezes or renews with the tools it already has. |
+| The gym's workout of the day | Planned | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
+| "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
+| Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
+| Compare with a friend | Idea | Parked (owner, 24 Oct), from #58. | Pick a gym mate and compare the same lifts side by side. Comes after the feed. |
 
 ### Platform and quality
 | Feature | Status | Details | How it will work |
@@ -357,7 +367,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (24 Oct) — build queued
 **You asked (24 Oct, chat):** research the members' workout apps, find features we can build ourselves that would be valuable, and add them to the tracker.
 **My answer:** I compared Hevy, Strong, Fitbod, JEFIT, Boostcamp, Alpha Progression, Gravl, Gymshark, MacroFactor, Fittr, cult.fit, HealthifyMe, FITPASS and gym-software member apps (Virtuagym, Trainerize, Glofox, Wellyx) with what ForgeAI already has. **For logging workouts we already match them** (rest timer, notification card, supersets, plates, warm-ups, swap, targets, charts, records, body map, Hevy/Strong import, Health Connect, Wear OS, offline, and no free-tier limits). The gaps are mostly things only a gym-linked app can do well, which is our edge. None needs a paid service.
 
@@ -387,19 +397,25 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **What members hate in the others (we win by not doing it):** basics locked behind payment (Hevy allows 4 free routines, Strong 3), rest timers that cut off, silly weight suggestions, weak cardio logging, sales pop-ups and refund fights, crashes after updates, broken imports, forced sign-up.
 **Not proven:** the member and gym values and India-specific points (evening rush, treadmill use) are my judgement. Reddit blocked automated reading, so complaints come from review sites.
 Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. Items 15-20 stay here.
-**Decide:** What do I build next?
-- A: The top 5 now (challenge, how busy, gym logo on shares, bring a friend, strength level), one release at a time (recommended)
-- B: Only the 3 member-side ones (strength level, badges, muscles-ready map); the gym ones later
-- C: Nothing yet; I will move the ones I want to Planned on the page
+**YOUR REPLY (24 Oct, chat):** "I really like all these 20 features ... plan and start working on them. You can decide the priority ... park, chat with your trainer, and the rest seems fine to me." Then: "also park the feed things.. anything that will cost us more server space or money.. lets park". And: keep the app simple; organise every feature so it is easy to find, even if we reorganise what we built.
+**DECIDED (24 Oct):** build 14, park 6.
+- **Parked (they need more server space, or cost money, or few members would use them):** Ask your trainer (chat) · Follow gym mates (feed) · Compare with a friend · "Stronger than X% of your gym" (it needs everyone's best lifts on our server) · Log sets on the watch · Steps challenge across the gym (steps on your own phone still comes).
+- **First:** a full map of the member app by a design review (every screen and setting, what to merge, move or rename), so the new features land in the right place and the app stays simple. The moves ship first.
+- **Then, in this order (my call):**
+  1. On your phone only, no server: strength level per lift · 1-rep max and % calculator · badge shelf · which muscles are ready today · ask your own AI · gym logo on share pictures + before/after.
+  2. With the gym (uses data the server already has; tiny extra rows): how busy the gym is now · monthly gym challenge · bring a friend · the gym's workout of the day · the gym's form videos · ask the desk to freeze or renew.
+  3. Bigger logging: quick workout ("I have 30 minutes") · treadmill and cycle details · steps and water.
 
 ## 57. The app needs a new Play Store ID — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **What happened:** creating the app in your Play Console (simpleapps108), Google said "com.forgeai.app is already in use". Another developer owns that ID, and every Play app needs its own one. The ID can never change after the first upload. Members almost never see it; it only shows in the Play Store web link.
 **What changes for testers:** the new ID makes it a new app on phones. Before switching, move your own workouts with Settings → Export & import in the old app, then import them in the new one. I will write the steps.
+**NEWS (24 Oct):** you are leaning to the name MettleUp (#44). The ID can never change, so it should match the brand. No public Play app uses com.mettleup.app or com.simpleapps.mettleup.
 **Decide:** Which Play Store ID?
-- A: com.simpleapps.forgeai: your company name plus the app (recommended)
-- B: com.simpleapps.gym: no app name in it, so it still fits if the brand changes (#44)
+- A: com.mettleup.app: matches mettleup.app, the domain you will own (recommended, if #44 is MettleUp)
+- B: com.simpleapps.mettleup: your company name plus the app
+- C: com.simpleapps.forgeai: only if we keep ForgeAI as the name
 
 ## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -760,6 +776,15 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 - On a phone call it sounds like "metal"; spell it once: M-E-T-T-L-E.
 - Other brands use the word: "Mettle: Mental Fitness for Men" (Bear Grylls' app, on Play and the App Store); NatWest's "Mettle" business bank app (UK); a "Mettle Fitness" gym in Hyderabad; "MettleMingle", a gym booking app. A two-word name (MettleUp, MoreMettle) keeps us apart, but a plain "Mettle" logo would not.
 - The official Indian trademark search still needs a person (captcha); search "Mettle" in classes 9, 41 and 42 at ipindia.gov.in, or ask a lawyer, before paying for a logo.
+**YOUR QUESTION (24 Oct, chat):** "I am really feeling MettleUp.in - do we need even more in-depth research before finalize?"
+**My answer:** No more big research. Three small checks are left, and two of them only you can do:
+- **Done by me (24 Oct):** no app called MettleUp on Google Play India; no company or product called MettleUp found on the web. mettleup.in, mettleup.app, getmettleup.com and mettleupapp.com are all free. Five apps called just "Mettle" are on Play (a men's mind app, a quiz, a walking game, a gym booking app), so in store search we must always show the full name "MettleUp".
+- **Your task, trademark (15 minutes, free):** search India's official register yourself (it has a captcha). If nothing close shows in classes 9, 41 or 42, you are clear to file.
+- **Your task, domains (about ₹2,500 for the first year):** buy mettleup.in and mettleup.app the same day; add getmettleup.com (about ₹1,000) so a .com points to us until mettleup.com can be bought.
+- **Optional:** say "MettleUp" to 3 gym owners on the phone and ask them to spell it back.
+- **Play ID:** if you pick MettleUp, the Play Store ID in #57 should be com.mettleup.app (it matches the domain you will own); no public app uses it today.
+**Your task:** open https://tmrsearch.ipindia.gov.in/tmrpublicsearch/ (or ipindia.gov.in → Trade Marks → Public Search), choose "Wordmark", type METTLEUP, search "Contains", and repeat for METTLE UP. Look at classes 9 (apps), 41 (fitness training) and 42 (software). Tell me what you see, or send a screenshot.
+**Your task:** buy mettleup.in, mettleup.app and getmettleup.com yourself (GoDaddy India, Hostinger or Porkbun; Porkbun is cheapest after the first year). Never share the account password with me.
 **Decide:** Which name?
 - A: MettleUp: the strongest "keep going up" feel; buy mettleup.in and mettleup.app now, and make an offer for mettleup.com (recommended)
 - B: MoreMettle: all three endings free at the normal price today

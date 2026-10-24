@@ -20,6 +20,11 @@ it was just on and off. I don't really understand it, and I'm not sure if you've
 (3) First a full UI/UX map of the member app (every screen and setting, where each new feature goes, what to merge or
 move), so new features land in the right place; then build. (4) Health Connect: find why the switch goes on and off,
 explain it in plain words, fix it. Status: started.
+**Owner added (24 Oct, mid-turn):** "also park the feed things.. anything that will cost us more server space or money..
+lets park". Done: #58 DECIDED (build 14, park 6: trainer chat, feed, compare with a friend, stronger than X% of your gym,
+watch logging, gym-wide step challenge). #44: MettleUp checks done (no Play app, no web use, domains free); his tasks =
+trademark search + buy mettleup.in/.app/getmettleup.com. #57: options now follow the name (A com.mettleup.app).
+0032 committed 103a1bb (OFF, not applied). UX map + Health Connect agents running.
 
 ## R-101. He likes MettleBook: more names around "Mettle" with a progressive-overload feel — 24 Oct 2026
 **Owner said:** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around
