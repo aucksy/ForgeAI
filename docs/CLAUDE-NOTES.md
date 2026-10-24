@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-117. Owners need a lasting sign-in: own 6-digit PIN (picked A) — 24 Oct 2026 (~8:20 pm)
+**Owner said:** "When I create a new gym as a gym owner, I do not see my six-digit sign-in code on the website, and later I
+have no code to sign in. In the admin panel I also don't see the code, only the option to create a new one... the sign-in
+code should be provided." Cause: codes are one-time, 30-minute OTPs made by the owner (0010); nothing lasting exists.
+Offered A (own 6-digit PIN, lockout after 5 wrong tries for 15 min, staff may set theirs after first sign-in) or B (Google,
+after #60). **He picked A** — this is his yes to the one live server change it needs (migration 0034).
+**Doing:** helper builds 0034 + admin UI + tests; I review, apply 0034 live in the Supabase SQL editor, deploy the panel.
+
 ## R-116. Three apps, three icons: badges for Admin and HQ — 24 Oct 2026 (~8:10 pm)
 **Owner said:** HQ installed on his phone and works. "The app icons for the actual member app, the admin app, and the
 headquarters app need to be different. The main app icon I approved should be the actual [member] app icon, with slight
