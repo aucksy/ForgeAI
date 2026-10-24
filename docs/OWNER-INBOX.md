@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 57 | The app's new Play Store ID (Google says com.forgeai.app is taken) | A: com.simpleapps.forgeai |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
 | 44 | Brand: one or two, then the name (rounds 4-5, incl. your 40 names) | A: one brand; Liftforged |
 
@@ -26,6 +27,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #57 | High | Medium |
 | #56 | High | Low |
 | Task: Multi-branch gyms, end to end (#41) | High | High |
 | Task: AI import that never fails (#41, #36) | High | High |
@@ -323,14 +325,24 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
+## 57. The app needs a new Play Store ID — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**What happened:** creating the app in your Play Console (simpleapps108), Google said "com.forgeai.app is already in use". Another developer owns that ID, and every Play app needs its own one. The ID can never change after the first upload. Members almost never see it; it only shows in the Play Store web link.
+**What changes for testers:** the new ID makes it a new app on phones. Before switching, move your own workouts with Settings → Export & import in the old app, then import them in the new one. I will write the steps.
+**Decide:** Which Play Store ID?
+- A: com.simpleapps.forgeai: your company name plus the app (recommended)
+- B: com.simpleapps.gym: no app name in it, so it still fits if the brand changes (#44)
+
+## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** DONE
+**TASK DONE (24 Oct 2026, 1:40 pm)**
 **Why:** you asked that every word members read gets checked by Gemini, with the full context. The check is built: before any member-facing text ships, Claude sends the draft and its context to Gemini, compares the two versions and checks the facts. It runs only with your own Gemini key, and only you can make that key.
 **Your task:** Open https://aistudio.google.com/apikey, press "Create API key", pick any project, and copy the key.
 **Your task:** Open PowerShell on this computer and run this one line, with your key between the quotes: setx GEMINI_API_KEY "your-key-here"
 **Your task:** Close the Claude app and open it again, so it can see the key. Then tell me "Gemini key is in" and I run a test.
-**Not found yet (24 Oct, 1:20 pm):** I checked this computer and there is no GEMINI_API_KEY yet. Most likely the setx line ran in a different window or with a typo. Run it again in PowerShell (a normal window, not as admin), then close and reopen the Claude app.
+**Done (24 Oct, 1:40 pm):** the key works; Gemini's free model (3.8 Flash) answered the first test. **Earlier note (1:20 pm):** I checked this computer and there is no GEMINI_API_KEY yet. Most likely the setx line ran in a different window or with a typo. Run it again in PowerShell (a normal window, not as admin), then close and reopen the Claude app.
 
 ## 55. Switch on free trials: one live server change (part 4 of your owner panel) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat

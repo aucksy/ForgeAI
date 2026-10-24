@@ -1,3 +1,20 @@
+## Resume: PC session, 24 Oct 2026 (~1:45 pm IST) — read this first
+- **Live today:** landing page with prices + trial door + AI-import section; /start sign-up; admin trial banner; HQ trial
+  and plan controls; **0030 applied live** (PASS 41). Tracker answers of 24 Oct all written in (R-99).
+- **Running when this chat ended:** (1) phone gate for **v0.55.1** on commit **4aa917b** (qa-device default + owner,
+  qa-journeys, CI). When green: tag v0.55.1 ON 4aa917b (later commits touch supabase/ = not paperwork), push the tag,
+  check the APK URL. (2) Builder agent "multi-branch + robust AI import + terms acceptance" (migrations 0031, 0033; no
+  commits; dashboard/HQ/panel). (3) Builder agent "members' workouts on our server + Google sign-in + free limits"
+  (migration 0032; apps/mobile). Both leave changes uncommitted: review, run tests, commit, then ask his yes for each
+  live migration as a tracker entry.
+- **Play Console:** his Chrome profile simpleapps108 is now connected (Claude in Chrome "Browser 1"; select_browser).
+  Account SimpleApps108 (personal, id 8165750959522333478). com.forgeai.app is TAKEN on Play -> tracker #57 (new ID;
+  changing applicationId touches android/, app.json, assetlinks for /j/ links, Health Connect, Google sign-in).
+  Stop at every "I agree" for his OK. The "installer check" protection should be OFF (we also ship the APK on GitHub).
+- **Gemini:** GEMINI_API_KEY is in his User env (read it from the registry in a child PowerShell). member-words skill
+  works; free key -> gemini-3.8-flash (pro models 429 on a free key).
+- **Waiting on him:** #46 (trainer view: notice + off switch), #57 (Play ID), #44 brand.
+
 # UAT handoff (PC <-> cloud)
 
 Whoever stops last updates this file and pushes it. The other side starts here.
