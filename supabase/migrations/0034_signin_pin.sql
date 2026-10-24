@@ -1,4 +1,4 @@
--- NOT APPLIED YET. The owner said yes to building it (R-117, option A); apply after review.
+-- APPLIED LIVE 24 Oct 2026 (owner: "yes apply 0034"); live tests 0034 PASS 68, security PASS 9.
 --
 -- 0034: a lasting 6-digit PIN for every person who signs in to a gym's admin app (R-117, 24 Oct
 -- 2026). The owner's words: "When I create a new gym ... later I have no code to sign in." Until

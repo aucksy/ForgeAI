@@ -1,4 +1,4 @@
-# ForgeAI cloud (Supabase) — beta setup
+﻿# ForgeAI cloud (Supabase) — beta setup
 
 Free tier, Mumbai region. One-time owner steps to bring the cloud online.
 
@@ -221,7 +221,7 @@ acceptance counts for every branch of the business. **Changes one function:** gy
 back next to it: always re-run 0033 after 0021. Test: `tests/0033_terms_acceptance.sql` →
 `RESULT PASS (27 checks)`. Before it is applied nobody is asked and nothing is recorded.
 
-## Own sign-in PIN (0034, R-117) — NOT APPLIED
+## Own sign-in PIN (0034, R-117) — APPLIED LIVE 24 Oct 2026 (0034 PASS 68, security PASS 9)
 Additive and re-runnable; apply after 0033. Every person (owner and staff) may keep their own lasting
 6-digit PIN: sign-in is mobile number + PIN, every time. The one-time codes keep working exactly as
 before (first sign-in for staff, a new phone, recovery, HQ's reset); the sign-in box takes either, and
