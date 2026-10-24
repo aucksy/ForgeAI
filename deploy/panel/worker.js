@@ -57,7 +57,9 @@ export default {
     if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     const bundle = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$/.exec(url.pathname);
-    if (bundle) return playBundle(request, bundle[1]);
+    if (bundle) return playBundle(request, bundle[1], `mettleup-${bundle[1]}.aab`, 'application/octet-stream');
+    const storeArt = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$/.exec(url.pathname);
+    if (storeArt) return playBundle(request, storeArt[1], storeArt[2], 'image/png');
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
@@ -147,14 +149,15 @@ async function joinPage(request, env, ctx, url, code, kind = JOIN) {
  * /dl/<tag>.aab: the release's Play bundle, passed through with a CORS header for the Play Console
  * page only (R-121, 25 Oct 2026). The browser tool cannot hand a 56 MB file to the console's upload
  * box, so the console page fetches it from here. The bundle is a public release file anyway.
+ * /dl/<tag>/store-*.png does the same for the store icon, banner and screenshots attached to that release.
  */
-async function playBundle(request, tag) {
+async function playBundle(request, tag, file, type) {
   const cors = { 'Access-Control-Allow-Origin': 'https://play.google.com', Vary: 'Origin' };
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: { ...cors, 'Access-Control-Allow-Methods': 'GET' } });
   if (request.method !== 'GET') return new Response('Method not allowed', { status: 405 });
-  const r = await fetch(`${REPO}/releases/download/${tag}/mettleup-${tag}.aab`, { headers: { 'User-Agent': 'forgeai-panel' } });
+  const r = await fetch(`${REPO}/releases/download/${tag}/${file}`, { headers: { 'User-Agent': 'forgeai-panel' } });
   if (!r.ok) return new Response('Not found', { status: 404, headers: cors });
-  const headers = { ...cors, 'Content-Type': 'application/octet-stream', 'Cache-Control': 'no-store' };
+  const headers = { ...cors, 'Content-Type': type, 'Cache-Control': 'no-store' };
   if (r.headers.get('Content-Length')) headers['Content-Length'] = r.headers.get('Content-Length');
   return new Response(r.body, { headers });
 }
