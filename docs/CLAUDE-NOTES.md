@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-97. Landing page fixes, self-serve trial sign-up, 3 price tiers + lifetime, trials in HQ, HQ review — 24 Oct 2026
+**Owner said (one message, with a screenshot of forgeai.aakashpahuja.in/home/ showing Chrome's "Open in app"):**
+1. The landing page offers "install / open as an app". It should not; installing is only for someone signed in to the admin panel.
+2. Check the landing page with our UI/UX skill: the text feels crammed; the section animations are bad (symmetry, placement): rebuild or correct them carefully. Animations loop by themselves (no "play it again"); if heavy, run 7-9 times.
+3. Can he turn on trials for gyms in the HQ panel? He needs it. Review the HQ panel: better, friendlier, more intuitive, more control over data. How much should he see: a gym's member data? Does he need it, should he have it? "The answer can go into the tracker."
+4. Most important: a stranger sent the landing link must easily see how to sign up and start the free trial directly (not only the demo). Highlight during the trial that their data can be moved privately, with nobody else involved, accurately imported with AI from their own Excel files, however custom. I pick the words.
+5. Three price tiers (monthly + yearly) and a lifetime plan (to raise money): basic = member app, no shop; second = shop + online payments in the app (end to end) + access control; top = advanced AI for members and owners, "coming soon". "Just my ideas... you decide the best thing." I pick the prices. Show what no other gym software offers; stress the most valuable.
+6. A 3-month trial, which the back end can extend to 6 months. "Think through the whole setup and start building now."
+**What I do:** notes first; competitor price/feature research; then build: landing fixes (no install prompt, spacing, looping animations), sign-up + trial path, pricing section, HQ trial controls (3 months, extend to 6) and HQ improvements; the data-access answer as a tracker entry (he asked). Live database changes and payments stay "Waiting for you" (his yes / accounts).
+
 ## R-96. Rate every pending tracker item High/Medium/Low (impact, and time/tokens to build) and give a Sort — 24 Oct 2026
 **Owner said:** "reorder all tasks in project tracker in all 4 tabs basis its severity/impact and time/tokens it will take
 to build... we can have High Medium Low - Give me Sort option", then "only for pending items".
