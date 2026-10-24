@@ -14,10 +14,8 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 59 | Switch on branches, online terms and members' workouts on our server (3 live server changes) | A: 0031 + 0033 now, 0032 after the privacy words |
-| 57 | The app's Play Store ID (com.forgeai.app is taken); follows the name in #44 | A: com.mettleup.app |
+| 61 | The MettleUp logo (6 options) | A: Ascent |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
-| 44 | Brand name (round 7: Mettle names) | A: MettleUp |
 
 ---
 
@@ -48,12 +46,12 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
-| #59 | High | Low |
+| #61 | High | Low |
+| #62 | Medium | Low |
 | #60 | High | Low |
 | Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
 | Task: Privacy and gym-terms words for the server copy (#59) | High | Low |
-| #57 | High | Medium |
 | #56 | High | Low |
 | Task: Multi-branch gyms, end to end (#41) | High | High |
 | Task: AI import that never fails (#41, #36) | High | High |
@@ -375,6 +373,28 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
+## 62. Your task: tick "I'm not a robot" to finish the tester group (10 seconds) — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** I filled in the Google group "MettleUp testers" (mettleup-testers@googlegroups.com; only people you add can join; you add emails directly) in your simpleapps108 Chrome window. Google asks for a robot check before it creates the group, and I am not allowed to do robot checks.
+**Your task:** in the simpleapps108 Chrome window, open the tab "My groups" (groups.google.com). The "Create group" box shows "Captcha required": tick "I'm not a robot", then press "Create group". If the box is gone, open https://groups.google.com/my-groups and press "Create group" again: name MettleUp testers, email mettleup-testers.
+
+## 61. Pick the MettleUp logo — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** the logo goes on the app icon, the Play Store listing, the website and the gym owner app, so it is the one thing I should not choose for you. All six are drawn as clean shapes, tested at the size of a phone icon, on white and on black. Pictures: sent in the chat on 24 Oct; the page is in the project at branding/logo-options/index.html.
+- **A · Ascent:** an M whose second peak stands higher: "this week beats last week". Ember orange, the colour the app already uses, so nothing else in the app changes colour.
+- **B · Loaded:** a barbell loaded light to heavy. Pine green and brass. Blurs when very small.
+- **C · Unbroken:** M and U as one line climbing from the floor. Volt yellow-green on graphite.
+- **D · Up Arrow:** the U of "Up" becomes an arrow. Red. Can read like a U-turn road sign.
+- **E · Forged:** a hex dumbbell head with an M struck through it. Molten orange.
+- **F · Hidden Up:** a solid M with an up-arrow cut into its base. Cobalt blue, close to Hevy's blue.
+**Decide:** Which logo?
+- A: A · Ascent: clean at every size, keeps the app's orange, one clear idea (recommended)
+- B: F · Hidden Up: the M and the arrow in one shape; blue
+- C: E · Forged: a dumbbell with an M
+- D: Another (write the letter, or what to change, in the note)
+
 ## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
@@ -386,7 +406,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 59. Switch on branches, online terms and members' workouts on our server: three live server changes — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE (24 Oct)
 **READ (24 Oct, 03:35 pm, via the page)**
 **What is built (24 Oct), tested and checked by a second reviewer; nothing is live yet:**
 - **Branches (0031):** one owner runs several branches; each branch has its own members, money, staff and receipt numbers (B2/2026-27/0001); members can train at another branch; an "All branches" page.
@@ -400,14 +420,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **Gym data agreement (about 1 page):** the gym owns its member records; ForgeAI only keeps them to run the service; no selling, no ads; the outside companies we use are named; we tell the gym of a breach within 24 hours; the gym can download everything any time; deleted within 30 days of a request; backups gone within 7 days (as the live notice already says); 30 days' notice before either side ends it; a member's own saved workouts belong to the member.
 - **Two fixes I will make with it:** the "data agreement" link at "Create my gym" gets its own page (today it opens the privacy page); the old line "if we ever add AI features that use your data, we ask you first" is replaced by the truth about the AI import (below).
 - **The AI import today:** it shows the AI the column names and 5 example rows, with phone numbers, emails and ID numbers hidden, but names and addresses visible. My pick: hide names and addresses too (the AI only needs the column names and a hint of the shape), so no member's name ever leaves the gym's computer.
-**Decide:** The privacy and agreement words?
-- A: Approve as written, and hide names and addresses from the AI import too (recommended)
-- B: Approve as written, keep the AI import as it is
-- C: I want changes (write them in the note)
-**Decide:** Switch them on?
-- A: Yes: 0031 (branches) and 0033 (terms) now, 0032 (workouts) once you approve the words below (recommended)
-- B: Yes, all three now
-- C: Not yet
+**DECIDED (24 Oct, 3:35 pm, via the page):** switch them on: A; the privacy and agreement words: A (approve, and hide names and addresses from the AI import too).
+**DONE (24 Oct):** 0031, 0033 and 0032 are live; every test passed (branches 115 checks, terms 27, workouts 58, security 9). The privacy notice and the gym data agreement are written into the app; the public pages go live when your complaints contact is filled in (#37). The AI import now hides names and addresses.
 
 ## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -452,14 +466,11 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 
 ## 57. The app needs a new Play Store ID — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (24 Oct)
 **What happened:** creating the app in your Play Console (simpleapps108), Google said "com.forgeai.app is already in use". Another developer owns that ID, and every Play app needs its own one. The ID can never change after the first upload. Members almost never see it; it only shows in the Play Store web link.
 **What changes for testers:** the new ID makes it a new app on phones. Before switching, move your own workouts with Settings → Export & import in the old app, then import them in the new one. I will write the steps.
 **NEWS (24 Oct):** you are leaning to the name MettleUp (#44). The ID can never change, so it should match the brand. No public Play app uses com.mettleup.app or com.simpleapps.mettleup.
-**Decide:** Which Play Store ID?
-- A: com.mettleup.app: matches mettleup.app, the domain you will own (recommended, if #44 is MettleUp)
-- B: com.simpleapps.mettleup: your company name plus the app
-- C: com.simpleapps.forgeai: only if we keep ForgeAI as the name
+**DECIDED (24 Oct, Claude, as you asked: "disturb only when I am needed"):** com.mettleup.app. It works under any Play account, now or later.
 
 ## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -724,7 +735,8 @@ and log the set by itself? Or is there a better way?
 
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (24 Oct)
+**READ (24 Oct, 04:03 pm, via the page)**
 **You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
 normal price; forge.ai and forgeai.com are taken and too expensive.
 **My answer:** I checked 136 names on 22 Oct. Most short English names are taken; most free .com names are
@@ -764,9 +776,6 @@ The official trademark search still needs a person (it has a captcha) before you
 - Members already see their own gym's logo and colours inside the app, so our name stays quiet next to theirs.
 - This is what Hevy (Hevy and Hevy Coach), Virtuagym and Trainerize do. Two brands mostly happen after one company buys another (Mindbody and ClassPass).
 - The catch: the name must sound right both on a member's home screen and on a gym owner's bill. That rules out Still Not Out (fun, cricket) and makes Liftchase lean to members. Habitsmith passes both: "habit" is what owners pay for (members who keep coming) and what members want.
-**Decide:** One brand or two?
-- A: One brand, with "for Gyms" on the business side (recommended)
-- B: Two separate brands, one for members and one for gyms
 **YOUR REPLY (23 Oct, chat):** "you're not ... giving me a good name ... ForgeAI is something I loved immediately ... none of this ... connects with weightlifting and workout. Give me at least 10 to 20 options."
 **ROUND 4 (23 Oct): names that feel like ForgeAI and like lifting.** 379 more names checked; every "free" domain below confirmed at the normal price.
 - **Can ForgeAI stay? No, not as the public name.** forgeai.com is a live US AI company; .in, .app and getforgeai.com are taken; Google Play India already has "Forge AI Workout Tracker" and "ForgeFit: AI Fitness Coach" (10,000+ downloads each) and 10+ other Forge gym apps; "Forge Fitness" is a registered trademark for gyms. It stays our internal project name.
@@ -829,12 +838,11 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 - **Play ID:** if you pick MettleUp, the Play Store ID in #57 should be com.mettleup.app (it matches the domain you will own); no public app uses it today.
 **Your task:** open https://tmrsearch.ipindia.gov.in/tmrpublicsearch/ (or ipindia.gov.in → Trade Marks → Public Search), choose "Wordmark", type METTLEUP, search "Contains", and repeat for METTLE UP. Look at classes 9 (apps), 41 (fitness training) and 42 (software). Tell me what you see, or send a screenshot.
 **Your task:** buy mettleup.in, mettleup.app and getmettleup.com yourself (GoDaddy India, Hostinger or Porkbun; Porkbun is cheapest after the first year). Never share the account password with me.
-**Decide:** Which name?
-- A: MettleUp: the strongest "keep going up" feel; buy mettleup.in and mettleup.app now, and make an offer for mettleup.com (recommended)
-- B: MoreMettle: all three endings free at the normal price today
-- C: MettleStep: all three free; the plainest English
-- D: SetBook (round 6): .in free; the .com may free up on 21 Dec
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
+**DECIDED (24 Oct, 4:03 pm, via the page):** one brand, with "for Gyms" on the business side; the name is **MettleUp**. You bought mettleup.fit (the address we market) and mettleup.in (it will send people to mettleup.fit); no .app for now.
+**YOUR QUESTION (24 Oct, on the page):** "Will these be two separate mobile apps like mettleup and mettleup for GYMS? Because I was thinking it would be just one app with consumer and B2B logins, not sure."
+**My answer:** one name, and only ONE app on the Play Store: the members' MettleUp app. Gym owners and their desk staff use MettleUp in the browser at app.mettleup.fit (on the desk computer or a phone; it can be added to the phone's home screen like an app, and it works offline). "MettleUp for Gyms" is just the label on that website and on the price page, not a second app. Why not put the owner screens inside the phone app: the desk works on a big screen all day, and one web app updates for every gym the moment we fix something, with no Play review. Later, if owners ask, the phone app can get an "I run a gym" button that opens the owner app.
+**Done (24 Oct):** both domains now point to Cloudflare (where your other sites live); the switch finishes within a few hours.
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
