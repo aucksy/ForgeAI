@@ -848,7 +848,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 **DECIDED (24 Oct 2026):** A: your existing Google Play account (simpleapps108@gmail.com).
 **YOUR REPLY (24 Oct):** Submit the app for internal testing so you can add testers' emails. Testing with your first client for a few months and rebranding later is fine.
 **My answer:** Agreed: test now, rebrand later. One thing to know: the app's Play Store ID (com.forgeai.app) can never change, even after a new name. Nobody sees it, so that is fine. I will set up the internal test in your open Play Console. I stop and ask you at every "I agree" box, because those are your agreements to accept.
-**Your task:** Let me reach your Play Console: this Chrome window and the built-in browser are signed in as pahuja.aakash108, not simpleapps108. Either open the built-in browser in the Claude app and sign in to play.google.com/console as simpleapps108@gmail.com yourself, or turn on the Claude extension in the Chrome profile that has simpleapps108. Then tell me "Play is open". (I need the app's 0.55.1 build too; it is in its phone tests now.)
+**Your task:** In your Chrome window signed in as simpleapps108@gmail.com, turn on the Claude extension: open chrome://extensions, find "Claude" (or add it from the Chrome Web Store), switch it on, and sign in to Claude. Then tell me "Play is connected". Right now only your other Chrome profile (pahuja.aakash108) is connected to me, so I cannot see the Play Console window.
 
 ## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
