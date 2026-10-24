@@ -1,0 +1,13 @@
+{
+  "concept": "E",
+  "name": "Forged",
+  "idea": "Mettle began as a spelling of metal: a hex dumbbell head with an M struck through it.",
+  "wordmark_font": "Manrope ExtraBold caps, outlined",
+  "adaptive_icon_background": "#1B1F26",
+  "colours": {
+    "Molten": "#FF8A4C",
+    "Forge": "#F0662A",
+    "Slag": "#C9481A",
+    "Steel": "#1B1F26"
+  }
+}

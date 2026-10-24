@@ -1,0 +1,12 @@
+{
+  "concept": "D",
+  "name": "Up Arrow",
+  "idea": "The wordmark does the work: the U of Up keeps climbing past the line.",
+  "wordmark_font": "Sora ExtraBold, outlined; the U is redrawn",
+  "adaptive_icon_background": "#E2312B",
+  "colours": {
+    "Signal red": "#E2312B",
+    "Ink": "#0C0C0D",
+    "Bone": "#F3EFE6"
+  }
+}

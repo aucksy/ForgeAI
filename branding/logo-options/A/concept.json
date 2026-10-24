@@ -1,0 +1,14 @@
+{
+  "concept": "A",
+  "name": "Ascent",
+  "idea": "An M whose second peak stands higher than the first: this week beats last week.",
+  "wordmark_font": "Sora ExtraBold (the app display face), outlined",
+  "adaptive_icon_background": "#171B26",
+  "colours": {
+    "Ember": "#FF7A3B",
+    "Ember deep": "#E8641F",
+    "Night": "#0B0D12",
+    "Icon night": "#171B26",
+    "Bone": "#F4F5F7"
+  }
+}

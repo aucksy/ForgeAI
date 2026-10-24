@@ -1,0 +1,13 @@
+{
+  "concept": "B",
+  "name": "Loaded",
+  "idea": "A bar loaded light to heavy, left to right: progressive overload you can see.",
+  "wordmark_font": "Space Grotesk Bold, outlined",
+  "adaptive_icon_background": "#123328",
+  "colours": {
+    "Pine": "#123328",
+    "Chalk": "#ECE5D3",
+    "Brass": "#D9A84E",
+    "Brass deep": "#B58431"
+  }
+}

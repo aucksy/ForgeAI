@@ -1,0 +1,12 @@
+{
+  "concept": "C",
+  "name": "Unbroken",
+  "idea": "M and U in one unbroken line that starts on the floor and finishes at the top: you do not stop.",
+  "wordmark_font": "Manrope ExtraBold, outlined",
+  "adaptive_icon_background": "#15171B",
+  "colours": {
+    "Volt": "#D4FF3A",
+    "Graphite": "#15171B",
+    "Fog": "#F2F3F0"
+  }
+}

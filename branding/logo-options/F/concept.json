@@ -1,0 +1,13 @@
+{
+  "concept": "F",
+  "name": "Hidden Up",
+  "idea": "A solid M with an up arrow cut through its base: the climb is built into the letter.",
+  "wordmark_font": "Sora SemiBold, outlined",
+  "adaptive_icon_background": "#2D3BFF",
+  "colours": {
+    "Cobalt": "#2D3BFF",
+    "Cobalt light": "#7F89FF",
+    "Midnight": "#0E1030",
+    "White": "#FFFFFF"
+  }
+}
