@@ -143,13 +143,13 @@ begin
 
   -- 9. Bad plans are refused.
   checks := checks + 1; fails := fails || pg_temp.t35_is('9nomeal', pg_temp.t35_run(format('select public.owner_save_diet_plan(%L, %L::jsonb)', ks,
-    jsonb_build_object('title', 'X', 'meals', '[]'::jsonb, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb))))), 'INVALID');
+    jsonb_build_object('title', 'X', 'meals', '[]'::jsonb, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb)))), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t35_is('9kcal', pg_temp.t35_run(format('select public.owner_save_diet_plan(%L, %L::jsonb)', ks,
-    jsonb_build_object('title', 'X', 'kcal', 100, 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb))))), 'INVALID');
+    jsonb_build_object('title', 'X', 'kcal', 100, 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb)))), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t35_is('9notitle', pg_temp.t35_run(format('select public.owner_save_diet_plan(%L, %L::jsonb)', ks,
-    jsonb_build_object('title', '  ', 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb))))), 'INVALID');
+    jsonb_build_object('title', '  ', 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb)))), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t35_is('9noitems', pg_temp.t35_run(format('select public.owner_save_diet_plan(%L, %L::jsonb)', ks,
-    jsonb_build_object('title', 'X', 'meals', '[{"name":"Lunch","items":[" "]}]'::jsonb, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb))))), 'INVALID');
+    jsonb_build_object('title', 'X', 'meals', '[{"name":"Lunch","items":[" "]}]'::jsonb, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb)))), 'INVALID');
 
   -- 10. The owner edits Asha's plan: who made it stays Ravi.
   r := public.owner_save_diet_plan(kop, jsonb_build_object('id', dp1, 'title', 'Fat loss veg 1,600 kcal', 'kcal', 1600, 'meals', meals,
@@ -176,7 +176,7 @@ begin
   -- 12. Another gym: its list is empty, and it can't edit or withdraw this gym's plan.
   checks := checks + 1; fails := fails || pg_temp.t35_is('12list', jsonb_array_length(public.owner_diet_plans(kob))::text, '0');
   checks := checks + 1; fails := fails || pg_temp.t35_is('12edit', pg_temp.t35_run(format('select public.owner_save_diet_plan(%L, %L::jsonb)', kob,
-    jsonb_build_object('id', dp1, 'title', 'Hijack', 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb))))), 'NOT_FOUND');
+    jsonb_build_object('id', dp1, 'title', 'Hijack', 'meals', meals, 'assign', jsonb_build_object('memberIds', '[]'::jsonb, 'planIds', '[]'::jsonb)))), 'NOT_FOUND');
   checks := checks + 1; fails := fails || pg_temp.t35_is('12withdraw', pg_temp.t35_run(format('select public.owner_withdraw_diet_plan(%L, %L::uuid)', kob, dpg)), 'NOT_FOUND');
   checks := checks + 1; fails := fails || pg_temp.t35_is('12gym', jsonb_array_length(public.owner_diet_plans(ks))::text, '2');
 
