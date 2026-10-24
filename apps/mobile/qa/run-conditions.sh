@@ -20,8 +20,14 @@
 #      death        open, and mid-Hevy-import: the workout and rest intact; no half import
 #   C5 Doze         a 1:30 rest with the screen off, deep Doze forced and the app in standby bucket
 #                   "rare": "Rest is over" within 5 s of the rest's end
-#   C6 exact alarm  SCHEDULE_EXACT_ALARM denied (as after a restore): the alert still comes, and the
-#                   app says so when it may be late; background-restricted: "May be late - tap to fix"
+#   C6 exact alarm  SCHEDULE_EXACT_ALARM denied (a new install on Android 14+; 0.56.1: no USE_EXACT_ALARM,
+#                   Google Play policy): the first rest asks for "Alarms & reminders" (xc-6-ask-rest),
+#                   the alert still comes (perhaps late), and the app says so when it may be late;
+#                   background-restricted: "May be late - tap to fix"
+#
+# 0.56.1: every other condition runs with "Alarms & reminders" ALLOWED by hand (EXACT_MODE=allow,
+# set before each Maestro flow, as a member who said yes to the ask), so its rests are exact and
+# no flow meets the ask. C6a sets EXACT_MODE=deny for its own steps.
 #
 # An app bug a condition finds keeps its check, marked as an EXPECTED FAIL with its finding id
 # (XFAIL below; Audit/uat/FINDINGS.md U-C*), so the run can stay green while the bug is open.
@@ -142,12 +148,16 @@ blocked() {
 ok_so_far() { [ -z "${PFAIL[$1]:-}" ]; }
 
 # The commands a step runs.
+# 0.56.1: "Alarms & reminders" (SCHEDULE_EXACT_ALARM app-op) for the next flow: allow (default) or deny (C6a).
+EXACT_MODE=allow
+exact_mode() { adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM "$EXACT_MODE" >/dev/null 2>&1 || true; }
 member() {  # member <flow> [KEY=VALUE ...]: one Maestro flow
   local flow=$1
   shift
   local envs=() kv
   for kv in "$@"; do envs+=(-e "$kv"); done
   free_maestro
+  exact_mode
   maestro test "${envs[@]}" --format junit --output "$C_OUT/$flow.xml" --test-output-dir "$C_OUT/$flow" "$QA_DIR/$flow.yaml"
 }
 server() {  # server <check> [args...], `;` between checks (the run's gym, slot C)
@@ -624,8 +634,9 @@ if runs 5; then
       done
       log "standby bucket now: $b (40 = rare; 10 active, 20 working set, 30 frequent, 45 restricted); inactive: $(adb shell am get-inactive "$PKG" | tr -d '\r')"
       # Runs 38983728841 / 38991190510 read 20 every time: Android 12+ never puts an app that holds
-      # the exact-alarm permission (ForgeAI: USE_EXACT_ALARM) below "working set", so "rare" cannot
-      # happen to it on a real phone either. The rest is still tested asleep in that lowest bucket.
+      # the exact-alarm permission (since 0.56.1 SCHEDULE_EXACT_ALARM, allowed for this run as a
+      # member who said yes to the ask) below "working set", so "rare" cannot happen to it on a real
+      # phone either. The rest is still tested asleep in that lowest bucket.
       [ "$b" = 40 ] || log "standby: 'rare' refused by Android (an app with exact alarms stays at working set or better): the rest runs in bucket $b"
       force_deep_idle
     }
@@ -637,35 +648,56 @@ if runs 5; then
   fi
 fi
 
-# ================================================================ C6 exact alarms after a restore
+# ================================================================ C6 exact alarms denied
 if runs 6; then
-  log "condition 6: exact alarms denied (as after a backup-restore), then a background-restricted app"
+  log "condition 6: exact alarms denied (a new install on Android 14+), then a background-restricted app"
   [ "$ONBOARDED" = 1 ] || runs 4 || runs 5 || step C6a 0 member "demo data" -- member xc-seed-demo
-  adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM deny >/dev/null 2>&1
-  log "C6a: appops SCHEDULE_EXACT_ALARM: $(adb shell appops get "$PKG" SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' '); USE_EXACT_ALARM: $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -o 'android.permission.USE_EXACT_ALARM: granted=[a-z]*' | head -1)"
-  step C6a 1 member "a bench workout, rest 0:30 running" -- member xc-open-rest REST="Rest 0:30" SHOT=6a
+  EXACT_MODE=deny
+  exact_mode
+  log "C6a: appops SCHEDULE_EXACT_ALARM: $(adb shell appops get "$PKG" SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
+  c6a_no_uea() {
+    if adb shell dumpsys package "$PKG" | tr -d '\r' | grep -q 'android.permission.USE_EXACT_ALARM'; then
+      echo "CHECK FAILED the installed app asks Android for USE_EXACT_ALARM (Google Play refuses it for this app)"
+      return 1
+    fi
+    echo "CHECK OK no USE_EXACT_ALARM in the installed app"
+  }
+  step C6a 1 phone "no USE_EXACT_ALARM in the installed app (Google Play policy)" -- c6a_no_uea
+  step C6a 2 member "a bench workout, rest 0:30: the Alarms & reminders ask shows, Not now, the rest runs" -- member xc-6-ask-rest REST="Rest 0:30" SHOT=6a
   if ok_so_far C6a; then
     rest_asleep c6a true
-    step C6a 2 phone "the alert still comes" -- phone over-any "$C_OUT/c6a-after.txt" "$DUE"
+    # Inexact now: Android may deliver it late. Wait for it (the phone still asleep), up to 15 min.
+    c6a_wait_alert() {
+      local waited=0
+      while ! phone over-any "$C_OUT/c6a-after.txt" "$DUE" >/dev/null 2>&1; do
+        [ "$waited" -ge 900 ] && break
+        sleep 30
+        waited=$((waited + 30))
+        dump c6a-after.txt
+      done
+      phone over-any "$C_OUT/c6a-after.txt" "$DUE"
+    }
+    step C6a 3 phone "the alert still comes (perhaps late, within 15 min)" -- c6a_wait_alert
     C6A_LATE=$(phone late "$C_OUT/c6a-after.txt" "$DUE")
     wake_phone
-    step C6a 3 member "Settings -> Workouts: the rest alerts line" -- member xc-6-status SHOT=6a
+    step C6a 4 member "Settings -> Rest timer and sounds: the rest alerts line" -- member xc-6-status SHOT=6a
     c6a_verdict() {
       local said=on-time
       [ -n "$(find "$C_OUT" "$PWD" "$QA_DIR" -maxdepth 7 -name 'xc6-status-6a-may-be-late.png' 2>/dev/null | head -1)" ] && said=may-be-late
       echo "VERDICT C6a: the alert came ${C6A_LATE}s after the rest's end; the app says '$said'"
       if [ "$C6A_LATE" = none ]; then return 1; fi
       if awk "BEGIN{exit !($C6A_LATE <= 5)}"; then
-        echo "VERDICT C6a: on time (USE_EXACT_ALARM, granted at install, keeps exact alarms with SCHEDULE_EXACT_ALARM denied)"
+        echo "VERDICT C6a: on time with exact alarms denied (Android delivered the inexact alarm, or the app's own timer, on time)"
         return 0
       fi
       [ "$said" = may-be-late ] && { echo "VERDICT C6a: late, and the app says so"; return 0; }
       echo "VERDICT C6a: LATE and the app does not say so"
       return 1
     }
-    step C6a 4 phone "on time, or late and saying so" -- c6a_verdict
+    step C6a 5 phone "on time, or late and saying so" -- c6a_verdict
   fi
-  adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM default >/dev/null 2>&1
+  EXACT_MODE=allow
+  exact_mode
   # ---- C6b: Android restricts the app in the background (battery "Restricted")
   adb shell appops set "$PKG" RUN_ANY_IN_BACKGROUND ignore >/dev/null 2>&1
   log "C6b: appops RUN_ANY_IN_BACKGROUND: $(adb shell appops get "$PKG" RUN_ANY_IN_BACKGROUND | tr -d '\r' | tr '\n' ' ')"

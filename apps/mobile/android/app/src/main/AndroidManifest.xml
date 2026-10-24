@@ -9,6 +9,10 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+  <!-- 0.56.1 (Google Play policy): Play allows USE_EXACT_ALARM only for alarm-clock and calendar
+       apps. tools:node="remove" keeps it out of the merged manifest even if a library adds it; the
+       rest timer asks for "Alarms & reminders" (SCHEDULE_EXACT_ALARM) instead. -->
+  <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:node="remove"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion"/>
   <queries>
     <intent>

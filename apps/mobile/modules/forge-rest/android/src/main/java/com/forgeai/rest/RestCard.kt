@@ -1076,7 +1076,9 @@ object RestCard {
     handler.postDelayed(run, maxOf(0L, endsAt - System.currentTimeMillis()))
     // The alarm covers a sleeping phone and a stopped app. Exact only where Android allows
     // it (the "Alarms & reminders" permission, Android 12+); otherwise Android may run it
-    // late, and [fireEnd] still alerts then. Asking for the permission is a later phase (D8).
+    // late, and [fireEnd] still alerts then. 0.56.1: with no USE_EXACT_ALARM (Google Play policy)
+    // this is the member's own switch; the rest timer asks for it (D8) and [rearm] makes a running
+    // rest exact once it is allowed (app back on screen, or Android's broadcast: RestBootReceiver).
     val am = try {
       ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     } catch (_: Exception) {

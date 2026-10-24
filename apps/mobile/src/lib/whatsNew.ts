@@ -68,6 +68,17 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     ],
   },
   {
+    version: '0.56.1',
+    date: '25 Oct',
+    lines: [
+      {
+        // Google Play policy: the app can no longer turn this on by itself; the member allows it once.
+        text: 'When MettleUp asks, turn on "Alarms & reminders" so "Rest is over" rings on time, even on a locked phone.',
+        go: { label: 'Open Rest timer and sounds', href: '/settings/rest' },
+      },
+    ],
+  },
+  {
     version: '0.56.0',
     date: '24 Oct',
     lines: [

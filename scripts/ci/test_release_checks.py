@@ -273,6 +273,51 @@ class ReleaseAssetNameTests(unittest.TestCase):
         self.assertNotIn("`forgeai-${tag}.apk`", self.app)
 
 
+class ForbiddenPermissionTests(unittest.TestCase):
+    """0.56.1: Google Play blocked the closed test over USE_EXACT_ALARM (alarm-clock and calendar
+    apps only). It must never come back: not in the APK, not approved, not declared by the phone app
+    or its own native modules, and the app manifest strips any library's copy."""
+
+    UEA = "android.permission.USE_EXACT_ALARM"
+
+    def test_use_exact_alarm_is_forbidden(self):
+        self.assertIn(self.UEA, rc.FORBIDDEN)
+        self.assertEqual([p for p, _ in rc.forbidden_in({self.UEA, "android.permission.VIBRATE"})], [self.UEA])
+        self.assertEqual(rc.forbidden_in({"android.permission.SCHEDULE_EXACT_ALARM"}), [])
+
+    def test_not_approved(self):
+        self.assertNotIn(self.UEA, rc.approved_list())
+        self.assertIn("android.permission.SCHEDULE_EXACT_ALARM", rc.approved_list())
+
+    def test_forbidden_fails_even_when_approved(self):
+        orig_perms, orig_list, orig_results = rc.permissions, rc.approved_list, list(rc.results)
+        try:
+            rc.permissions = lambda apk: {self.UEA, "android.permission.VIBRATE"}
+            rc.approved_list = lambda: {self.UEA, "android.permission.VIBRATE"}
+            del rc.results[:]
+            rc.check_permissions("x.apk", warn_only=False)
+            self.assertIn("FAIL", [lvl for chk, lvl, _ in rc.results if chk == "permissions"])
+        finally:
+            rc.permissions, rc.approved_list = orig_perms, orig_list
+            rc.results[:] = orig_results
+
+    def test_phone_manifests_never_declare_it(self):
+        import glob
+        import re
+        mobile = os.path.join(ROOT, "apps", "mobile")
+        app = _read("apps", "mobile", "android", "app", "src", "main", "AndroidManifest.xml")
+        self.assertRegex(app, r'<uses-permission android:name="android\.permission\.USE_EXACT_ALARM" tools:node="remove"\s*/>')
+        mods = glob.glob(os.path.join(mobile, "modules", "*", "android", "src", "main", "AndroidManifest.xml"))
+        self.assertTrue(mods)
+        decl = re.compile(r'<uses-permission[^>]*USE_EXACT_ALARM(?![^>]*tools:node="remove")')
+        for m in mods:
+            with open(m, encoding="utf-8") as f:
+                self.assertIsNone(decl.search(f.read()), m)
+        self.assertIsNone(decl.search(app))
+        with open(os.path.join(mobile, "app.json"), encoding="utf-8") as f:
+            self.assertNotIn("USE_EXACT_ALARM", f.read())
+
+
 # ------------------------------------------------------------ update_proof parsers
 
 def _lp(b):

@@ -1,8 +1,12 @@
 /**
  * Phase 2, packet D — rest-alert choices (persisted, AsyncStorage). Kept apart from
  * `trackerPrefsStore` so this packet touches no shared store.
- *  - `exactAsked` (D8): "Get rest alerts on time?" was shown once — whatever the answer, it is
- *    never asked again on its own (Profile → Workout keeps the fix one tap away).
+ *  - `exactAsked` (D8): the "Hear "Rest is over" on time" ask was shown at least once.
+ *  - `exactAskedAt` (0.56.1, Play policy: no USE_EXACT_ALARM): when it was last shown. Since the
+ *    app can no longer get exact alarms at install, a member who said "Not now" (or tapped Allow
+ *    and left the switch off) is asked again, at most once every 7 days
+ *    (restAlertAccess.EXACT_ASK_COOLDOWN_MS). Settings → Rest timer and sounds keeps the fix one
+ *    tap away meanwhile. Null on a phone that saved its answer before 0.56.1: asked once more.
  *  - `exactAnswer`: what the member picked ('allow' | 'later'), for the record.
  *  - `ringThroughDnd` (RT-12): "Rest is over" rings through Do Not Disturb. Off by default.
  *  - `alertsHintFor` (RT-02, not persisted): the workout (its start time) that already showed
@@ -14,10 +18,11 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface RestAlertPrefsState {
   exactAsked: boolean;
+  exactAskedAt: number | null;
   exactAnswer: 'allow' | 'later' | null;
   ringThroughDnd: boolean;
   alertsHintFor: number | null;
-  answerExact: (answer: 'allow' | 'later') => void;
+  answerExact: (answer: 'allow' | 'later', at?: number) => void;
   setRingThroughDnd: (on: boolean) => void;
   markAlertsHint: (workoutStartedAt: number) => void;
 }
@@ -26,17 +31,23 @@ export const useRestAlertPrefs = create<RestAlertPrefsState>()(
   persist(
     (set) => ({
       exactAsked: false,
+      exactAskedAt: null,
       exactAnswer: null,
       ringThroughDnd: false,
       alertsHintFor: null,
-      answerExact: (exactAnswer) => set({ exactAsked: true, exactAnswer }),
+      answerExact: (exactAnswer, at = Date.now()) => set({ exactAsked: true, exactAskedAt: at, exactAnswer }),
       setRingThroughDnd: (ringThroughDnd) => set({ ringThroughDnd }),
       markAlertsHint: (alertsHintFor) => set({ alertsHintFor }),
     }),
     {
       name: 'forgeai-rest-alert-prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ exactAsked: s.exactAsked, exactAnswer: s.exactAnswer, ringThroughDnd: s.ringThroughDnd }),
+      partialize: (s) => ({
+        exactAsked: s.exactAsked,
+        exactAskedAt: s.exactAskedAt,
+        exactAnswer: s.exactAnswer,
+        ringThroughDnd: s.ringThroughDnd,
+      }),
     },
   ),
 );

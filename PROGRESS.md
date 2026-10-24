@@ -2636,6 +2636,18 @@
   receipt-series claim (`deskseries-2`, cloud.ts ensureDesk, sent when a money sheet opens), landing after the
   count; the refused payments sent nothing (trace). The test now waits for both claims, then also asserts no
   payment dated 7 Sep / 18 Oct ever reached the server. J26 x6 locally green.
+- 2026-10-25: **0.56.1 prepared: no USE_EXACT_ALARM (Google Play blocked the closed test over it).** Play allows
+  USE_EXACT_ALARM only for alarm-clock / calendar apps. Removed from forge-rest's manifest and approved-permissions.txt;
+  the app manifest strips any library's copy (`tools:node="remove"`); release_checks.py FORBIDDEN fails on it even if
+  re-approved (+ test_release_checks ForbiddenPermissionTests, vitest phase2RestTimer guard). Without "Alarms &
+  reminders" (SCHEDULE_EXACT_ALARM, OFF by default on Android 14+) the rest's alarm stays inexact (setAndAllowWhileIdle,
+  unchanged). The rest bar asks 'Hear "Rest is over" on time' (Allow opens ACTION_REQUEST_SCHEDULE_EXACT_ALARM; Not now
+  waits 7 days: restAlertPrefs.exactAskedAt + shouldAskExact cooldown); Settings → Rest timer and sounds keeps the
+  "Rest alerts: May be late" row. RestBootReceiver now takes SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED and re-arms
+  a running rest exactly (getState already re-armed on return). QA: device/journeys/conditions allow the app-op before
+  every Maestro flow; C6a denies it, checks no USE_EXACT_ALARM is installed, and the ask (new qa/xc-6-ask-rest.yaml),
+  waits up to 15 min for the inexact alert. What's new 0.56.1: one line. The watch APK (sideloaded, not in the AAB)
+  still declares USE_EXACT_ALARM: change it before the watch app ever goes to Play.
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

@@ -61,7 +61,7 @@ vi.mock('react-native', () => {
 });
 
 import { REST_CHOICES, parseCustomRest } from '@/tracker/services/restRules';
-import { restAlertStatus, shouldAskExact } from '@/tracker/services/restAlertAccess';
+import { EXACT_ASK, EXACT_ASK_COOLDOWN_MS, restAlertStatus, shouldAskExact, statusText } from '@/tracker/services/restAlertAccess';
 import { clockTime, ongoingText } from '@/tracker/services/workoutPresence';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import type { DraftExercise, DraftSet } from '@/tracker/store/activeWorkoutStore';
@@ -215,21 +215,78 @@ describe('D8 / RT-02: rest alert status', () => {
     expect(showAlertStatus('unknown')).toBe(false);
     for (const s of ['off', 'silenced', 'held-back', 'may-be-late'] as const) expect(showAlertStatus(s)).toBe(true);
   });
-  it('[source-text check] exact by default: USE_EXACT_ALARM declared and approved; an alarm-clock alarm first', () => {
+  it('[source-text check] 0.56.1 Play policy: NO USE_EXACT_ALARM anywhere in the phone app; an alarm-clock alarm first', () => {
     const fs = require('node:fs') as typeof import('node:fs');
     const path = require('node:path') as typeof import('node:path');
     const root = path.resolve(__dirname, '../..');
-    expect(fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/AndroidManifest.xml'), 'utf8')).toContain('android.permission.USE_EXACT_ALARM');
-    expect(fs.readFileSync(path.join(root, '../../scripts/ci/approved-permissions.txt'), 'utf8')).toMatch(/^android\.permission\.USE_EXACT_ALARM$/m);
-    const kt = fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt'), 'utf8');
+    const read = (...p: string[]): string => fs.readFileSync(path.join(root, ...p), 'utf8');
+    // Declared nowhere (a remove entry is the only allowed mention in a manifest tag)...
+    const declares = /<uses-permission[^>]*USE_EXACT_ALARM(?![^>]*tools:node="remove")/;
+    const mod = read('modules/forge-rest/android/src/main/AndroidManifest.xml');
+    expect(mod).not.toMatch(declares);
+    expect(mod).toContain('android.permission.SCHEDULE_EXACT_ALARM');
+    const app = read('android/app/src/main/AndroidManifest.xml');
+    expect(app).not.toMatch(declares);
+    // ...stripped from every library's merged manifest...
+    expect(app).toMatch(/<uses-permission android:name="android\.permission\.USE_EXACT_ALARM" tools:node="remove"\s*\/>/);
+    expect(read('app.json')).not.toContain('USE_EXACT_ALARM');
+    // ...never approved, and the release check refuses it even if it were.
+    expect(read('../../scripts/ci/approved-permissions.txt')).not.toMatch(/^android\.permission\.USE_EXACT_ALARM/m);
+    expect(read('../../scripts/ci/release_checks.py')).toMatch(/FORBIDDEN = \{\s*"android\.permission\.USE_EXACT_ALARM"/);
+    const kt = read('modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt');
     expect(kt.indexOf('am.setAlarmClock(')).toBeGreaterThan(0);
     expect(kt.indexOf('am.setAlarmClock(')).toBeLessThan(kt.indexOf('am.setExactAndAllowWhileIdle('));
   });
-  it('asks once, only when alerts would be late', () => {
-    expect(shouldAskExact({ notifications: true, exact: false }, false)).toBe(true);
-    expect(shouldAskExact({ notifications: true, exact: false }, true)).toBe(false);
-    expect(shouldAskExact({ notifications: true, exact: true }, false)).toBe(false);
-    expect(shouldAskExact({ notifications: false, exact: false }, false)).toBe(false);
-    expect(shouldAskExact({ notifications: null, exact: null }, false)).toBe(false);
+  it('[source-text check] "Alarms & reminders" allowed mid-rest: the running rest is re-armed (exact)', () => {
+    const fs = require('node:fs') as typeof import('node:fs');
+    const path = require('node:path') as typeof import('node:path');
+    const root = path.resolve(__dirname, '../..');
+    const action = 'android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED';
+    expect(fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/AndroidManifest.xml'), 'utf8')).toContain(`<action android:name="${action}"/>`);
+    const rx = fs.readFileSync(path.join(root, 'modules/forge-rest/android/src/main/java/com/forgeai/rest/RestBootReceiver.kt'), 'utf8');
+    expect(rx).toContain(`"${action}"`);
+    expect(rx).toMatch(/a == ACTION_EXACT_ALARM_ALLOWED\) \{\s*try \{\s*RestCard\.rearm\(/);
+  });
+  it('asks when alerts would be late: never asked, or the last ask is 7+ days old', () => {
+    const day = 24 * 60 * 60 * 1000;
+    const now = 100 * day;
+    const late = { notifications: true, exact: false } as const;
+    expect(EXACT_ASK_COOLDOWN_MS).toBe(7 * day);
+    expect(shouldAskExact(late, null, now)).toBe(true);
+    // "Not now" (or Allow with the switch left off): quiet for 7 days, then asked again.
+    expect(shouldAskExact(late, now - 1000, now)).toBe(false);
+    expect(shouldAskExact(late, now - 6 * day, now)).toBe(false);
+    expect(shouldAskExact(late, now - 7 * day + 1, now)).toBe(false);
+    expect(shouldAskExact(late, now - 7 * day, now)).toBe(true);
+    expect(shouldAskExact(late, now - 30 * day, now)).toBe(true);
+    // A clock set back before the last ask never makes it nag.
+    expect(shouldAskExact(late, now + day, now)).toBe(false);
+    // Nothing to ask: allowed, notifications off (timing changes nothing), or unknown.
+    expect(shouldAskExact({ notifications: true, exact: true }, null, now)).toBe(false);
+    expect(shouldAskExact({ notifications: false, exact: false }, null, now)).toBe(false);
+    expect(shouldAskExact({ notifications: null, exact: false }, null, now)).toBe(false);
+    expect(shouldAskExact({ notifications: null, exact: null }, null, now)).toBe(false);
+  });
+  it('the ask and the Settings line say where and what, in member words', () => {
+    expect(EXACT_ASK.title).toBe('Hear "Rest is over" on time');
+    expect(EXACT_ASK.body).toContain('"Alarms & reminders"');
+    expect(EXACT_ASK.body).toContain('"Allow"');
+    expect([EXACT_ASK.allow, EXACT_ASK.notNow]).toEqual(['Allow', 'Not now']);
+    const row = statusText('may-be-late');
+    // Phone tests find the row by this title (qa/xc-6-status.yaml).
+    expect(row.title).toMatch(/^Rest alerts: May be late/);
+    expect(row.caption).toContain('"Alarms & reminders"');
+    for (const t of [EXACT_ASK.title, EXACT_ASK.body, row.title, row.caption]) expect(t).not.toMatch(/\b(volume|PR|session)\b/i);
+  });
+  it('[source-text check] the rest bar asks with the saved time of the last ask, and it is kept', () => {
+    const fs = require('node:fs') as typeof import('node:fs');
+    const path = require('node:path') as typeof import('node:path');
+    const root = path.resolve(__dirname, '../..');
+    const bar = fs.readFileSync(path.join(root, 'src/tracker/components/RestTimerBar.tsx'), 'utf8');
+    expect(bar).toContain('shouldAskExact(a, prefs.exactAskedAt, Date.now())');
+    expect(bar).toContain("openFixFor('may-be-late')");
+    const store = fs.readFileSync(path.join(root, 'src/tracker/store/restAlertPrefsStore.ts'), 'utf8');
+    expect(store).toMatch(/answerExact: \(exactAnswer, at = Date\.now\(\)\) => set\(\{ exactAsked: true, exactAskedAt: at, exactAnswer \}\)/);
+    expect(store).toMatch(/partialize: \(s\) => \(\{[^}]*exactAskedAt: s\.exactAskedAt/);
   });
 });

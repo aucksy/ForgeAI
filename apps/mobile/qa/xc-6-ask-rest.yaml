@@ -1,0 +1,51 @@
+# Phone conditions (UAT WP7), condition 6a (0.56.1, Google Play policy: no USE_EXACT_ALARM): with
+# "Alarms & reminders" denied (the script sets the SCHEDULE_EXACT_ALARM app-op to deny, as on a new
+# install on Android 14+), the first rest ASKS the member: "Hear "Rest is over" on time" with
+# "Allow" (opens Android's "Alarms & reminders" page) and "Not now". The flow checks the ask, keeps
+# a screenshot of it (xc6-ask-shown-<SHOT>), says "Not now" (asked again after 7 days at most) and
+# ends with the rest still running, like xc-open-rest.yaml; the script then puts the phone to sleep.
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- runFlow:
+    file: xc-sub-bench.yaml
+    env:
+      WEIGHT: " 60"
+      REPS: " 8"
+# xc-sub-rest-tick.yaml, up to the tick (its last check, "Skip rest", waits for the ask below).
+- tapOn:
+    text: "More for .*"
+    index: 0
+- tapOn: "Rest timer"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "^${REST}$"
+- tapOn: "^${REST}$"
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "Mark Barbell Bench Press set 1 complete"
+- tapOn:
+    text: "Mark Barbell Bench Press set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'Hear "Rest is over" on time'
+    timeout: 15000
+- assertVisible: '.*turn on "Alarms & reminders".*'
+- assertVisible: "^Allow$"
+- takeScreenshot: xc6-ask-shown-${SHOT}
+- tapOn: "^Not now$"
+- assertNotVisible: 'Hear "Rest is over" on time'
+- assertVisible: "Skip rest"
+- takeScreenshot: xc-rest-running-${SHOT}

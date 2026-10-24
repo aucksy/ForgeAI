@@ -35,6 +35,7 @@ push_fixture() {
 maestro() {
   local out="" prev="" a rc
   for a in "$@"; do [ "$prev" = "--output" ] && out="$a"; prev="$a"; done
+  exact_on
   command maestro "$@"; rc=$?
   if [ "$rc" -ne 0 ] && [ -n "$out" ] && grep -q "DeviceServerDiedException" "$out" 2>/dev/null \
      && ! grep -q "Assertion is false\|Element not found" "$out" 2>/dev/null; then
@@ -92,13 +93,15 @@ adb install -r "$APK" || { log "INSTALL FAILED"; exit 1; }
 sleep 30
 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb logcat -c
-# Rest-alert audit (11 Oct 2026): exact alarms are NOT switched on by hand any more. A real phone
-# on Android 14+ has "Alarms & reminders" OFF after a fresh install, and that is where "Rest is
-# over" came minutes late (and the watch never buzzed); this run used to allow it first, so it
-# never saw that phone. The app now gets exact alarms at install (USE_EXACT_ALARM); the run must
-# prove it, as installed, with nothing granted by hand.
-adb shell appops set $PKG SCHEDULE_EXACT_ALARM default >/dev/null 2>&1 || true
-log "exact alarms as installed: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed'); SCHEDULE_EXACT_ALARM appop $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
+# 0.56.1 (Google Play policy): the app no longer declares USE_EXACT_ALARM (Play allows it only for
+# alarm-clock and calendar apps), so on Android 14+ "Alarms & reminders" is OFF after a fresh install
+# and the first rest ASKS for it ("Hear "Rest is over" on time"). This run plays a member who said
+# yes: the SCHEDULE_EXACT_ALARM app-op is allowed here and again before every Maestro flow
+# (exact_on, in the maestro() wrapper above), so rests are exact and no flow meets the ask. The ask
+# itself, and the alert with it denied, are tested by the phone conditions (qa-conditions.yml, 6).
+exact_on() { adb shell appops set $PKG SCHEDULE_EXACT_ALARM allow >/dev/null 2>&1 || true; }
+exact_on
+log "exact alarms: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r' | grep -m1 -oE 'android.permission.USE_EXACT_ALARM: granted=(true|false)' || echo 'not listed (as it must be since 0.56.1)'); SCHEDULE_EXACT_ALARM appop (allowed for this run) $(adb shell appops get $PKG SCHEDULE_EXACT_ALARM | tr -d '\r' | tr '\n' ' ')"
 
 # Which parts run (qa-device.yml inputs, audit v2 phase B).
 #   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, the UAT-M parts, then W). Otherwise ONLY

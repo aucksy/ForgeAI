@@ -105,6 +105,9 @@ member() {  # member <flow> [KEY=VALUE ...]: one Maestro flow on the emulator
   local envs=() kv
   for kv in "$@"; do envs+=(-e "$kv"); done
   free_maestro
+  # 0.56.1: "Alarms & reminders" allowed (a member who said yes to the rest timer's ask), so no rest
+  # in a journey meets the ask; qa-conditions.yml condition 6 tests the ask itself.
+  adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM allow >/dev/null 2>&1 || true
   maestro test "${envs[@]}" --format junit --output "$J_OUT/$flow.xml" --test-output-dir "$J_OUT/$flow" "$QA_DIR/$flow.yaml"
 }
 admin() {  # admin <XJ step id>: one Playwright step of apps/dashboard/e2e-live

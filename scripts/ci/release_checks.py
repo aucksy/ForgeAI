@@ -23,6 +23,8 @@ Checks (FAIL blocks the release, WARN is reported only):
                (semver) is not above it, or versionCode is not the one derived from the version
                (MAJOR*1_000_000 + MINOR*1_000 + PATCH; audit QA-26).
   c. permissions  FAIL if the APK's permission list differs from scripts/ci/approved-permissions.txt.
+               FAIL always (even when approved there) on a FORBIDDEN permission: one Google Play
+               refuses for this app (0.56.1: USE_EXACT_ALARM, alarm-clock and calendar apps only).
   d. 16 KB     WARN if `zipalign -c -P 16 -v 4` fails or a lib/arm64-v8a/*.so has a LOAD segment
                aligned below 16 KB (Android 15+ devices with 16 KB pages; a Play requirement).
   e. size      WARN if the APK grew more than 25% against the last release's APK.
@@ -50,6 +52,13 @@ TOKEN = os.environ.get("GITHUB_TOKEN", "")
 # The React Native template's stock debug key (apps/mobile/android/app/debug.keystore, public).
 PUBLIC_DEBUG_KEY = "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
 SIZE_GROWTH_WARN = 0.25
+# Permissions the phone app must never ship, whatever approved-permissions.txt says (Google Play
+# policy). 0.56.1: Play blocked the closed test over USE_EXACT_ALARM, which it allows only for apps
+# whose core function is an alarm clock or a calendar; MettleUp is a workout tracker. The rest timer
+# asks for "Alarms & reminders" (SCHEDULE_EXACT_ALARM) instead.
+FORBIDDEN = {
+    "android.permission.USE_EXACT_ALARM": "Google Play allows it only for alarm-clock and calendar apps",
+}
 
 # Key rotation (docs/RELEASE-SIGNING.md). Every copy of ForgeAI installed up to v0.31.0 is signed
 # with PUBLIC_DEBUG_KEY. Android 7-8 (API 24-27) only read the v1/v2 signature and refuse an update
@@ -153,15 +162,27 @@ def approved_list():
     return names
 
 
+def forbidden_in(names):
+    """The FORBIDDEN permissions among `names`, with why, sorted. PURE."""
+    return [(p, FORBIDDEN[p]) for p in sorted(set(names) & set(FORBIDDEN))]
+
+
 def check_permissions(apk, warn_only, out_dir=None):
     have = permissions(apk)
     want = approved_list()
     if out_dir:
         with open(os.path.join(out_dir, "permissions.txt"), "w", encoding="utf-8") as f:
             f.write("\n".join(sorted(have)) + "\n")
+    # 0.56.1: a forbidden permission fails on its own, even when someone approves it in the list.
+    bad = forbidden_in(have) + [(p, why + " (and it is listed in approved-permissions.txt)")
+                                for p, why in forbidden_in(want) if p not in have]
+    if bad:
+        report("permissions", "WARN" if warn_only else "FAIL",
+               "forbidden permission(s): " + "; ".join(f"{p}: {why}" for p, why in bad))
     added, removed = sorted(have - want), sorted(want - have)
     if not added and not removed:
-        report("permissions", "PASS", f"{len(have)} permissions, same as scripts/ci/approved-permissions.txt")
+        if not bad:
+            report("permissions", "PASS", f"{len(have)} permissions, same as scripts/ci/approved-permissions.txt")
         return
     lvl = "WARN" if warn_only else "FAIL"
     diff = "; ".join([f"+ {p} (in the APK, not approved)" for p in added] +

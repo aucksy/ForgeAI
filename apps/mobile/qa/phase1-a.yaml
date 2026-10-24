@@ -159,10 +159,10 @@ appId: com.mettleup.app
     text: 'Mark .* set 1 complete'
     index: 0
 - takeScreenshot: 08-first-set-ticked-rest-running
-# D8 / rest-alert audit (owner: "just enable the alarms by default"): exact alarms come with the
-# install (USE_EXACT_ALARM) and the script no longer allows them by hand, so the first rest must
-# NOT ask "Get rest alerts on time?" — the member never has to find a setting.
-- assertNotVisible: 'Get rest alerts on time\?'
+# D8, 0.56.1 (Google Play policy: no USE_EXACT_ALARM): run-device-qa.sh allows "Alarms & reminders"
+# before every flow (a member who said yes), so with exact alarms on the first rest must NOT ask
+# 'Hear "Rest is over" on time'. The ask with it denied: qa-conditions.yml condition 6 (xc-6-ask-rest).
+- assertNotVisible: 'Hear "Rest is over" on time'
 - assertVisible: "Skip rest"
 - tapOn: "Skip rest"
 - tapOn:

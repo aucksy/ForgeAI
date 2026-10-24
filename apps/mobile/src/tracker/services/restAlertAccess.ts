@@ -8,8 +8,16 @@
  *  - "Alarms & reminders" (exact alarms, Android 12+; OFF by default on Android 14+) — off means
  *    a locked phone may wake for "Rest is over" well after the rest ends.
  *
- * Read here, shown in Profile → Workout ("Rest alerts: …") and asked for ONCE when the first rest
- * starts (RestTimerBar). The pure parts are unit-tested; the reads never throw.
+ * Read here, shown in Settings → Rest timer and sounds ("Rest alerts: …") and asked for when a rest
+ * starts (RestTimerBar): the first time, then at most once every 7 days while it stays off. The
+ * pure parts are unit-tested; the reads never throw.
+ *
+ * 0.56.1 (Google Play policy, closed test blocked): the app no longer declares USE_EXACT_ALARM
+ * (Play allows it only for alarm-clock and calendar apps). Exact alarms now come only from the
+ * member's own "Alarms & reminders" switch (SCHEDULE_EXACT_ALARM), OFF by default for a new install
+ * on Android 14+. Without it the rest's alarm is inexact (RestCard.arm: setAndAllowWhileIdle) and
+ * still alerts, perhaps late; once allowed, a running rest is re-armed exactly (RestCard.rearm, on
+ * the app's return and on Android's permission-changed broadcast, RestBootReceiver).
  */
 import { Linking } from 'react-native';
 
@@ -42,10 +50,10 @@ export interface AlertAccess {
 export type RestAlertStatus = 'on-time' | 'may-be-late' | 'off' | 'silenced' | 'held-back' | 'unknown';
 
 /**
- * PURE. What the Profile line says. Since the audit, "Alarms & reminders" is granted at install
- * (USE_EXACT_ALARM), so on a working phone this is 'on-time' and the line is NOT shown at all
- * (owner: defaults that just work, no options to confuse). It appears only when Android has
- * something switched off.
+ * PURE. What the Settings line says. On a working phone this is 'on-time' and the line is NOT
+ * shown at all (owner: defaults that just work, no options to confuse). It appears only when
+ * Android has something switched off: since 0.56.1 that includes "Alarms & reminders" left off
+ * (a new install on Android 14+), the line that stays after the member said "Not now".
  */
 export function restAlertStatus(a: AlertAccess): RestAlertStatus {
   if (a.notifications === false || a.channel === 'blocked') return 'off';
@@ -61,13 +69,29 @@ export function showAlertStatus(s: RestAlertStatus): boolean {
   return s !== 'on-time' && s !== 'unknown';
 }
 
+/** 0.56.1: after "Not now" (or Allow with the switch left off), the ask waits this long. */
+export const EXACT_ASK_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+
 /**
- * PURE (D8). Ask "Get rest alerts on time?" only if it was never asked before, notifications are
- * on (with them off, exact timing changes nothing) and exact alarms are off.
+ * PURE (D8; 0.56.1 cooldown). Ask about "Alarms & reminders" only when notifications are on (with
+ * them off, exact timing changes nothing) and exact alarms are off, and then only if it was never
+ * asked or the last ask is at least 7 days old. `lastAskedAt` null = never asked (or asked before
+ * 0.56.1, when the app still had exact alarms at install: asked once more). A clock set back
+ * before the last ask waits until it passes that time again (never nags).
  */
-export function shouldAskExact(a: AlertAccess, alreadyAsked: boolean): boolean {
-  return !alreadyAsked && a.notifications === true && a.exact === false;
+export function shouldAskExact(a: AlertAccess, lastAskedAt: number | null, now: number): boolean {
+  if (a.notifications !== true || a.exact !== false) return false;
+  if (lastAskedAt == null || !Number.isFinite(lastAskedAt)) return true;
+  return now - lastAskedAt >= EXACT_ASK_COOLDOWN_MS;
 }
+
+/** The ask's words (member-words pass, 25 Oct 2026). "Allow" opens Android's "Alarms & reminders" page. */
+export const EXACT_ASK = {
+  title: 'Hear "Rest is over" on time',
+  body: 'Tap "Allow" to open your phone’s settings and turn on "Alarms & reminders". Then "Rest is over" rings on time, even when your phone is locked.',
+  allow: 'Allow',
+  notNow: 'Not now',
+} as const;
 
 /** The status line's words. */
 export function statusText(s: RestAlertStatus): { title: string; caption: string } {
@@ -75,7 +99,10 @@ export function statusText(s: RestAlertStatus): { title: string; caption: string
     case 'on-time':
       return { title: 'Rest alerts: On time', caption: 'Your phone and watch buzz when rest is over' };
     case 'may-be-late':
-      return { title: 'Rest alerts: May be late — tap to fix', caption: 'Turns on "Alarms & reminders" for MettleUp' };
+      return {
+        title: 'Rest alerts: May be late — tap to fix',
+        caption: 'Tap to turn on "Alarms & reminders" in your phone’s settings, so "Rest is over" rings on time',
+      };
     case 'off':
       return { title: 'Rest alerts: Off — notifications are blocked', caption: 'Tap to turn them on' };
     case 'silenced':

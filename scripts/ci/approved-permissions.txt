@@ -19,9 +19,9 @@ android.permission.WRITE_EXTERNAL_STORAGE
 
 # own native modules (forge-rest, forge-phone)
 android.permission.POST_NOTIFICATIONS
-# Owner, 11 Oct 2026 ("do an audit of that feature and fix everything" — the rest alert): granted at
-# install on Android 13+, so the rest timer's alarm is exact without the member finding a setting.
-android.permission.USE_EXACT_ALARM
+# NEVER android.permission.USE_EXACT_ALARM (removed 0.56.1): Google Play allows it only for alarm-clock
+# and calendar apps and blocked the closed test over it. release_checks.py fails on it even if it is
+# added back here; the rest timer asks for "Alarms & reminders" (SCHEDULE_EXACT_ALARM) instead.
 android.permission.health.WRITE_EXERCISE
 android.permission.health.WRITE_ACTIVE_CALORIES_BURNED
 

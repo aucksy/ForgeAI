@@ -8,8 +8,10 @@
  *    row at every text size, [−15] [Rest 0:20] [+15] [Skip]; labels and clock shrink to fit.)
  *  - RT-02: notifications blocked → a small "Alerts off" line under the bar, once per workout,
  *    that opens Android's notification settings.
- *  - D8: the first rest on a phone whose alerts would come late (no "Alarms & reminders") asks
- *    ONCE: "Get rest alerts on time?" — Allow opens that Android page; Not now is remembered.
+ *  - D8: a rest on a phone whose alerts would come late (no "Alarms & reminders") asks
+ *    "Hear "Rest is over" on time" — Allow opens that Android page; "Not now" waits 7 days before
+ *    asking again (0.56.1: the app no longer gets exact alarms at install, Google Play policy).
+ *    Settings → Rest timer and sounds keeps the fix meanwhile (RestAlertsStatusRow).
  */
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
@@ -20,8 +22,7 @@ import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { openFixFor, readAlertAccess, shouldAskExact } from '../services/restAlertAccess';
-import { openExactAlarmSettings } from '../services/restCard';
+import { EXACT_ASK, openFixFor, readAlertAccess, shouldAskExact } from '../services/restAlertAccess';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
@@ -88,7 +89,7 @@ function TimerBtn({ label, onPress, a11y }: { label: string; onPress: () => void
 
 /**
  * RT-02 + D8: read the two Android switches when a rest starts. Shows the "Alerts off" line at
- * most once per workout, and asks about on-time alerts once ever.
+ * most once per workout, and asks about on-time alerts at most once every 7 days.
  */
 function useAlertChecks(endsAt: number | null): {
   alertsOff: boolean;
@@ -116,7 +117,7 @@ function useAlertChecks(endsAt: number | null): {
         return;
       }
       setAlertsOff(false);
-      if (restAlertPrefsReady() && shouldAskExact(a, prefs.exactAsked)) setAsking(true);
+      if (restAlertPrefsReady() && shouldAskExact(a, prefs.exactAskedAt, Date.now())) setAsking(true);
     });
     return () => {
       live = false;
@@ -130,7 +131,8 @@ function useAlertChecks(endsAt: number | null): {
     answer: (allow) => {
       setAsking(false);
       useRestAlertPrefs.getState().answerExact(allow ? 'allow' : 'later');
-      if (allow) openExactAlarmSettings();
+      // Android's "Alarms & reminders" page for MettleUp (the app's settings if that fails).
+      if (allow) openFixFor('may-be-late');
     },
   };
 }
@@ -149,6 +151,9 @@ export function RestTimerBar() {
   const machine = useActiveWorkout((s) => (startedBy ? s.exercises.find((e) => e.key === startedBy)?.name ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
+  // 0.56.1: the "Alarms & reminders" ask now shows on many new phones; "In use" never opens over it.
+  const askingRef = useRef(false);
+  askingRef.current = checks.asking;
   const [inUse, setInUse] = useState(false);
   // The rest ended (or was skipped): the in-use screen closes and stays closed for the next rest.
   useEffect(() => {
@@ -167,7 +172,7 @@ export function RestTimerBar() {
     // timer) never swallows it.
     if (!autoInUse || endsAt == null || !nextLabel) return undefined;
     const t = setTimeout(() => {
-      if (useWorkoutUi.getState().typoAsk == null && useRestTimer.getState().endsAt != null) setInUse(true);
+      if (useWorkoutUi.getState().typoAsk == null && !askingRef.current && useRestTimer.getState().endsAt != null) setInUse(true);
     }, IN_USE_DELAY_MS);
     return () => clearTimeout(t);
   }, [startedAt, endsAt, autoInUse, nextLabel]);
@@ -175,10 +180,10 @@ export function RestTimerBar() {
   const ask = (
     <ConfirmSheet
       visible={checks.asking}
-      title="Get rest alerts on time?"
-      body="So your phone and watch buzz the moment rest is over."
-      confirmLabel="Allow"
-      cancelLabel="Not now"
+      title={EXACT_ASK.title}
+      body={EXACT_ASK.body}
+      confirmLabel={EXACT_ASK.allow}
+      cancelLabel={EXACT_ASK.notNow}
       onConfirm={() => checks.answer(true)}
       onCancel={() => checks.answer(false)}
     />

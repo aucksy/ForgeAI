@@ -2,11 +2,13 @@
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-  <!-- Rest-alert audit (11 Oct 2026): Android 13+ grants this at install, so "Rest is over" is on
-       time on a fresh install. Android 14+ turns SCHEDULE_EXACT_ALARM OFF by default, and without
-       it a locked phone rang minutes late or not at all (and the watch never buzzed). For apps whose
-       core is a timer (the rest timer); Android 12 still uses SCHEDULE_EXACT_ALARM above. -->
-  <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+  <!-- 0.56.1 (Google Play policy): NO USE_EXACT_ALARM. Play allows it only for apps whose core is an
+       alarm clock or a calendar, and MettleUp is a workout tracker. Exact alarms come only from the
+       member's "Alarms & reminders" switch (SCHEDULE_EXACT_ALARM above; OFF by default for a new
+       install on Android 14+): the app asks for it when a rest starts (RestTimerBar), and until then
+       the rest's alarm is inexact and may come late (RestCard.arm). The app manifest strips any
+       library's USE_EXACT_ALARM (tools:node="remove"); release_checks.py and a vitest guard fail if
+       it ever comes back. -->
   <!-- C5-5 (16 Oct 2026): a rest running across a restart gets its alarm and cards back. Already
        in the app through expo-notifications (approved-permissions.txt): the list does not change. -->
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -18,6 +20,8 @@
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED"/>
         <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+        <!-- 0.56.1: "Alarms & reminders" was just allowed: a running rest's alarm is set again, exact. -->
+        <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"/>
       </intent-filter>
     </receiver>
     <!-- C5-2: the ForgeAI watch app's buttons (Wear messages /forge/act/…). Google Play services

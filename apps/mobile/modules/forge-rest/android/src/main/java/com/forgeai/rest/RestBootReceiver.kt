@@ -13,10 +13,26 @@ import android.content.Intent
  *
  * RECEIVE_BOOT_COMPLETED is already in the app (expo-notifications declares it; it is on
  * scripts/ci/approved-permissions.txt), so the permission list does not change.
+ *
+ * 0.56.1 (Google Play policy: no USE_EXACT_ALARM): Android sends
+ * [ACTION_EXACT_ALARM_ALLOWED] when the member turns "Alarms & reminders" on for MettleUp (Android
+ * 12+, from the rest timer's ask or Settings). A rest running then gets its alarm set again, now
+ * exact ([RestCard.rearm]), even if the member never comes back to the app before it ends. (Taking
+ * the switch away again kills the app and drops its alarms; [RestCard.recover] is not needed then:
+ * the app's next start re-arms the rest inexactly.)
  */
 class RestBootReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
     val a = intent.action
+    if (a == ACTION_EXACT_ALARM_ALLOWED) {
+      try {
+        RestCard.rearm(context.applicationContext)
+        android.util.Log.i("ForgeRest", "Alarms & reminders changed: running rest re-armed (exact=${RestCard.canScheduleExact(context)})")
+      } catch (e: Exception) {
+        android.util.Log.w("ForgeRest", "rest not re-armed after $a", e)
+      }
+      return
+    }
     if (a != Intent.ACTION_BOOT_COMPLETED && a != Intent.ACTION_MY_PACKAGE_REPLACED) return
     try {
       RestCard.recover(context.applicationContext)
@@ -25,3 +41,6 @@ class RestBootReceiver : BroadcastReceiver() {
     }
   }
 }
+
+/** AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED (API 31), as a string. */
+internal const val ACTION_EXACT_ALARM_ALLOWED = "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"
