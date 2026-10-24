@@ -113,7 +113,10 @@ appId: com.mettleup.app
 # Leaving a branded gym re-draws the app in ForgeAI's look (it may come back on the Workout tab, or
 # stay on this page, now offering "Join your gym").
 - extendedWaitUntil:
-    visible: "^Profile$|^Join your gym$"
+    # Release A: Leave is on Settings, and the new look redraws the whole app (RootFrame keyed
+    # on the theme epoch): Settings comes back at its TOP, so "Join your gym" (its Your gym row)
+    # is below the edge; "Your profile" (its first row) says we are there (run 40097554901).
+    visible: "^Profile$|^Join your gym$|^Your profile$"
     timeout: 30000
 - runFlow: sub-back-to-tabs.yaml
 - runFlow: sub-gym-none.yaml

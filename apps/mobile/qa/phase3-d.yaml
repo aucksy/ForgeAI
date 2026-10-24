@@ -191,6 +191,14 @@ appId: com.mettleup.app
 - back
 # ---------------------------------------------------------------- weeks in a row
 # D9: THE streak in weeks, the same rule everywhere: the Profile header's "Weeks in a row".
+# Release A: Charts lives on the Progress tab now, so "back" lands there, not on the Profile —
+# open the Profile tab first (index 0: the app's tab, not 3-button navigation's own, trap 18).
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 20000
 - scrollUntilVisible:
     element: '^Weeks in a row: [\d,]+$'
     direction: UP

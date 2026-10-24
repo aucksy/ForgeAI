@@ -40,6 +40,9 @@ appId: com.mettleup.app
     notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 20000
 - extendedWaitUntil:
-    visible: "^Profile$|^Join your gym$"
+    # Release A: Leave is on Settings, and the new look redraws the whole app (RootFrame keyed
+    # on the theme epoch): Settings comes back at its TOP, so "Join your gym" (its Your gym row)
+    # is below the edge; "Your profile" (its first row) says we are there (run 40097554901).
+    visible: "^Profile$|^Join your gym$|^Your profile$"
     timeout: 20000
 - runFlow: sub-gym-none.yaml

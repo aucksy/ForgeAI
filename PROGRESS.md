@@ -2616,6 +2616,17 @@
   the card show the last 3 updates. Global skills: obra writing-clearly-and-concisely + own `member-words` (Gemini
   second opinion via gemini_rewrite.py once the owner sets GEMINI_API_KEY, tracker #56). App 0.55.1 prepared.
 - 2026-10-24: App 0.56.0 prepared (MettleUp rebrand: package com.mettleup.app, E Forged icons, Release A layout with 4 tabs, Health Connect fix, Play-install detection, APK published as mettleup-<tag>.apk). Domains mettleup.fit + mettleup.in moved to Cloudflare (registry confirmed). Gate: CI + Device QA default/owner api 34 + journeys.
+- 2026-10-24: **0.56.0 gate red, all test-side (Release A flows had never run on a phone).** Device QA 40097554901
+  (default) + 40097556274 (owner) and journeys 40101624114 read part by part, no app bug found:
+  (1) Back from a Settings page lands on Settings mid-page, where sub-settings-open saw none of its rows and waited
+  for the tab bar Settings hides (parts B, I, W1; I2 failed after it as part I never turned reminders on): it now
+  looks UP for "Your profile" first. (2) Gym tab "No gym? Everything else works without one." sits below the edge
+  at 360 dp / font 1.3 / font 2.0 (R, UE, BR, INV-e, INV-f3, P7BIG, P7NAV3, journeys J1 and so J2-J6):
+  sub-gym-none scrolls to it, then back to the top. (3) Leaving a gym (Settings since Release A) redraws the app
+  (RootFrame keyed on the theme epoch) and Settings comes back at its top: BR-WELCOME, BR, INV-c and xj-5-leave
+  accept "Your profile" too. (4) Part D: "Weeks in a row" is on the Profile tab, Charts on Progress: tap Profile
+  first. (5) Part UD: the export is mettleup-history-<date>.csv since R-105. Owner BR "start-up screen not
+  switched" = BR stopped before its join. mobile vitest 3395 pass, typecheck 0.
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

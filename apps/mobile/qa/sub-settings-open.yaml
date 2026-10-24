@@ -12,6 +12,19 @@
 # back to its top. Group headings are drawn in capitals: tap rows, never headings.
 appId: com.mettleup.app
 ---
+# Back from a Settings page lands on Settings scrolled to that page's row: the middle of the page
+# (Workouts / Reminders and phone), where none of the rows below is on screen (run 40097554901,
+# part I: it then waited for the tab bar Settings hides). No tab bar and none of those rows = on a
+# page above the tabs: look UP for the page's first row before deciding we are elsewhere.
+- runFlow:
+    when:
+      notVisible: "^Profile$|^Your profile$|^Backup$|^About$|^Your details$|^Export & import$"
+    commands:
+      - scrollUntilVisible:
+          element: "^Your profile$|^Your details$"
+          direction: UP
+          timeout: 10000
+          optional: true
 - runFlow:
     when:
       notVisible: "^Your profile$|^Backup$|^About$|^Your details$|^Export & import$"

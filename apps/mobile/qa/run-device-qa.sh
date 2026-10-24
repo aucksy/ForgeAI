@@ -1508,13 +1508,13 @@ if qa_runs ud; then
       status=1
       log "UAT UD SAVE MY HISTORY FAILED: no share sheet in front after 'Save my history' ($ud_top)"
     fi
-    ud_file=$(adb shell "su 0 ls /data/data/$PKG/cache/" 2>/dev/null | tr -d '\r' | grep -m1 -E '^forgeai-history-.*\.csv$')
+    ud_file=$(adb shell "su 0 ls /data/data/$PKG/cache/" 2>/dev/null | tr -d '\r' | grep -m1 -E '^mettleup-history-.*\.csv$')
     if [ -z "$ud_file" ]; then
       if [ -z "$(adb shell "su 0 ls /data/data/$PKG/" 2>/dev/null | tr -d '\r')" ]; then
         log "UAT UD SAVE MY HISTORY: the file cannot be read through adb on this image (no root); the share sheet check above stands alone"
       else
         status=1
-        log "UAT UD SAVE MY HISTORY FAILED: no forgeai-history-*.csv in the app's cache after 'Save my history'"
+        log "UAT UD SAVE MY HISTORY FAILED: no mettleup-history-*.csv in the app's cache (the file is named mettleup-history-<date>.csv since R-105) after 'Save my history'"
       fi
     else
       adb exec-out "su 0 cat /data/data/$PKG/cache/$ud_file" > "$OUT/ud-history.csv" 2>/dev/null || true

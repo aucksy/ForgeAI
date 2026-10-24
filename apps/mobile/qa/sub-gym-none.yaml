@@ -12,4 +12,14 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 30000
-- assertVisible: "No gym\\? Everything else works without one\\."
+# The line sits under "With your gym in the app": below the screen's edge at 360 dp / font 1.3
+# (owner profile, run 40097556274 part R), so it is scrolled to (trap 27), then the page goes back
+# to its top: callers photograph the join card and scroll DOWN to "Gym code".
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "No gym\\? Everything else works without one\\."
+- scrollUntilVisible:
+    element: "^Join your gym$"
+    direction: UP
+    timeout: 20000

@@ -129,8 +129,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 15000
+# Release A: Leave is on Settings, and the redraw brings Settings back at its TOP ("Your profile",
+# its first row): no tab bar there, so wait for either (run 40097554901); sub-gym-none goes Back
+# to the tabs.
 - extendedWaitUntil:
-    visible: "^Profile$"
+    visible: "^Profile$|^Your profile$"
     timeout: 20000
 - runFlow: sub-gym-none.yaml
 - takeScreenshot: br-08-left-forgeai-look
