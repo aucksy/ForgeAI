@@ -773,7 +773,7 @@ function formHtml(e) {
       '<label class="opt' + (mine[qi] === o.key ? " on" : "") + '"><input type="radio" name="q' + e.num + "_" + qi + '" value="' + o.key + '"' +
       (mine[qi] === o.key ? " checked" : "") + ' data-n="' + e.num + '" data-q="' + qi + '"><span class="key">' + o.key + "</span><span>" + esc(o.text) +
       (o.rec ? ' <em class="rec">my pick</em>' : "") + "</span></label>").join("") + "</fieldset>").join("") +
-    '<label class="notelbl" for="note' + e.num + '">Comment (optional). You can send just a comment, without picking.</label>' +
+    '<label class="notelbl" for="note' + e.num + '">Comment (optional). You can send just a comment, without picking. Tap a picked answer again to undo it.</label>' +
     '<textarea id="note' + e.num + '" rows="2" placeholder="e.g. Yes, but keep it free for members"></textarea>' +
     '<div class="actions"><button class="btn" data-act="send" data-n="' + e.num + '">Send to Claude</button>' +
     (recs.every(Boolean) ? '<button class="btn ghost" data-act="agree" data-n="' + e.num + '"' + (canAgree ? "" : " hidden") + ">Agree with my pick" +
@@ -1293,6 +1293,27 @@ document.addEventListener("toggle", (ev) => {
   const d = ev.target;
   if (!d.dataset) return;
   if (d.dataset.box) doneOpen[d.dataset.box] = d.open;
+}, true);
+// R-99 (owner, 24 Oct 2026: "Once I have selected an option, I am unable to de-select"): tapping the
+// picked answer again takes the pick back. The browser keeps a radio checked, so it is unchecked after it.
+let wasPicked = null;
+document.addEventListener("pointerdown", (ev) => {
+  const opt = ev.target.closest && ev.target.closest(".opt");
+  const r = opt && opt.querySelector('input[type="radio"][data-n]');
+  wasPicked = r && r.checked ? r : null;
+}, true);
+document.addEventListener("click", (ev) => {
+  const opt = ev.target.closest && ev.target.closest(".opt");
+  if (!opt || !wasPicked || opt.querySelector('input[type="radio"][data-n]') !== wasPicked) return;
+  const r = wasPicked, n = Number(r.dataset.n);
+  wasPicked = null;
+  ev.preventDefault();
+  setTimeout(() => { r.checked = false; }, 0);
+  if (picks[n]) { delete picks[n][r.dataset.q]; if (!Object.keys(picks[n]).length) delete picks[n]; }
+  keepPicks();
+  opt.classList.remove("on");
+  const ag = document.querySelector('button[data-act="agree"][data-n="' + n + '"]');
+  if (ag && !picks[n]) ag.hidden = false;
 }, true);
 document.addEventListener("change", (ev) => {
   const t = ev.target;
