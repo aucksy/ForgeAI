@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-96. Rate every pending tracker item High/Medium/Low (impact, and time/tokens to build) and give a Sort — 24 Oct 2026
+**Owner said:** "reorder all tasks in project tracker in all 4 tabs basis its severity/impact and time/tokens it will take
+to build... we can have High Medium Low - Give me Sort option", then "only for pending items".
+**What I do:** every item not done yet in Waiting for you, Questions & answers, Feature backlog and Claude's tasks gets
+Impact (High/Medium/Low) and Effort (High/Medium/Low = time and tokens to build; for his own tasks, his time). The
+ratings live in one "## Priority" table in docs/OWNER-INBOX.md (keyed by #, backlog feature or task). The page shows two
+small tags on each pending card and a Sort picker on those 4 tabs: Best first (high impact, low effort) / Impact /
+Quickest / Number. Best first is the default. Done items keep their place.
+Also answered (chat): forgefitai.com is taken (a live GLP-1 fitness site "ForgeFit", since Apr 2026); forgefitai.in is
+free (~₹899/yr); recommended forgeaifit.com + forgeaifit.in instead (both still free).
+
 ## R-95. "can we book forgeAI in any form which is available and cheap" — 23 Oct 2026
 **Owner asked:** book ForgeAI in any cheap available form.
 **What I did:** checked 35+ endings at each registry. Free at normal price: forgeaifit.com, forgeaigym.com,
