@@ -1,4 +1,5 @@
-// ForgeAI HQ (#51): the system owner's own panel, at https://forgeai-hq.aakashpahuja.in.
+// MettleUp HQ (#51): the system owner's own panel, at https://hq.mettleup.fit (R-105; the old
+// https://forgeai-hq.aakashpahuja.in answers too). Sign-in uses the address it was opened on.
 // Plan: docs/overhaul/research/R-owner-panel.md. A separate Worker from the gym panel
 // (deploy/panel) on purpose: its own address, its own sign-in, its own server key; the gym admin app
 // has no way in.
@@ -76,7 +77,7 @@ export async function handle(request, env, deps = {}) {
   const missing = missingSettings(env);
   if (missing.length) {
     console.error('[hq] not set up; missing:', missing.join(', '));
-    return page(503, 'ForgeAI HQ is not set up yet', 'A setting is missing. Ask Claude to check the HQ setup list.');
+    return page(503, 'MettleUp HQ is not set up yet', 'A setting is missing. Ask Claude to check the HQ setup list.');
   }
   // The sign-in page's own stylesheet is the one file served before sign-in.
   if (url.pathname === '/signin.css') {
@@ -94,7 +95,7 @@ export async function handle(request, env, deps = {}) {
     if (done.error) {
       console.warn('[hq] sign-in refused:', done.error);
       const r = page(403, 'Could not sign you in', done.refused
-        ? 'This Google account cannot open ForgeAI HQ.'
+        ? 'This Google account cannot open MettleUp HQ.'
         : 'The sign-in did not finish. Try again.', { href: '/auth/login', text: 'Try again' });
       r.headers.append('Set-Cookie', clear);
       return r;
@@ -112,7 +113,7 @@ export async function handle(request, env, deps = {}) {
     return redirect('/signed-out', [`${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`]);
   }
   if (url.pathname === '/signed-out') {
-    return page(200, 'Signed out', 'You are signed out of ForgeAI HQ.', google ? { href: '/auth/login', text: 'Sign in again' } : null);
+    return page(200, 'Signed out', 'You are signed out of MettleUp HQ.', google ? { href: '/auth/login', text: 'Sign in again' } : null);
   }
 
   const who = await whoIsIt(request, env, { fetchImpl, nowSec });

@@ -98,17 +98,22 @@ export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], 
  * match them). GST (CGST Rule 46(b)): a supplier may keep several invoice series, each consecutive
  * and unique within the financial year, at most 16 characters; one series per desk device is that.
  *
- * Spelling, shortest that fits the 16-character limit (the server refuses longer, 0021; a branch's
+ * Spelling, the first that fits the 16-character limit (the server refuses longer, 0021; a branch's
  * number must start with its prefix, 0031 - both hold for every spelling here):
- *   no prefix: 2026-27/D1-0001, else 26-27/D10-0001;  prefix: B2/26-27/D1-0001, else B10/2627/D1-0001.
+ *   no prefix: 2026-27/D1-0001, else 26-27/D10-0001, else 26/D1000-0001;
+ *   prefix:    B2/26-27/D1-0001, else B2/26/D10-0001 (the year it starts in, "26" = 2026-27).
+ * The short "26/" spelling fits every prefix the server allows (up to 4 characters) for D1..D99,
+ * and the longer spellings stay readable (parseOfflineReceiptNo reads every spelling, including the
+ * "2627" one an earlier build of this step made).
  */
 export function offlineReceiptNo(deskNo: number, seq: number, paidOn: DateISO, prefix?: string | null): string {
   if (!Number.isInteger(deskNo) || deskNo < 1 || !Number.isInteger(seq) || seq < 1) throw new Error('Not a desk series number.');
   const fy = financialYear(paidOn);
   const short = fy.slice(2);
+  const start = fy.slice(2, 4);
   const tail = `D${deskNo}-${String(seq).padStart(4, '0')}`;
   const px = cleanReceiptPrefix(prefix);
-  const tries = px ? [`${px}/${short}/${tail}`, `${px}/${short.replace('-', '')}/${tail}`] : [`${fy}/${tail}`, `${short}/${tail}`];
+  const tries = px ? [`${px}/${short}/${tail}`, `${px}/${start}/${tail}`] : [`${fy}/${tail}`, `${short}/${tail}`, `${start}/${tail}`];
   const fit = tries.find((t) => t.length <= MAX_RECEIPT_NO);
   if (!fit) throw new Error('This device’s receipt numbers are too long to print offline. Take this payment when the internet is back.');
   return fit;
@@ -122,10 +127,11 @@ export function parseOfflineReceiptNo(receiptNo: string, prefix?: string | null)
     if (!text.startsWith(`${px}/`)) return null;
     text = text.slice(px.length + 1);
   }
-  const m = /^(?:\d{2}(\d{2}-\d{2})|(\d{2}-\d{2})|(\d{2})(\d{2}))\/D(\d+)-(\d{4,})$/.exec(text);
+  const m = /^(?:\d{2}(\d{2}-\d{2})|(\d{2}-\d{2})|(\d{2})(\d{2})|(\d{2}))\/D(\d+)-(\d{4,})$/.exec(text);
   if (!m) return null;
-  const fy = m[1] ?? m[2] ?? `${m[3]}-${m[4]}`;
-  return { deskNo: Number(m[5]), fy, seq: Number(m[6]) };
+  const startShort = m[5];
+  const fy = m[1] ?? m[2] ?? (m[3] ? `${m[3]}-${m[4]}` : `${startShort}-${String((Number(startShort) + 1) % 100).padStart(2, '0')}`);
+  return { deskNo: Number(m[6]), fy, seq: Number(m[7]) };
 }
 
 /** The highest number desk `deskNo` has used for `paidOn`'s year, among `existing`. PURE. */

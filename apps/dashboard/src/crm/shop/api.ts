@@ -76,7 +76,7 @@ export async function ownerGym(key: string): Promise<CloudGymInfo> {
 
 /**
  * Gym branding: save the gym's whole look (owner_set_brand, 0005). Nulls clear; all nulls and
- * 'normal' are ForgeAI's own look. Members get it on their next app launch (new members at once).
+ * 'normal' are MettleUp's own look. Members get it on their next app launch (new members at once).
  */
 export async function setBrand(
   key: string,

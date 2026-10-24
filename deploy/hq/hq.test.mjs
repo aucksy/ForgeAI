@@ -1,4 +1,4 @@
-// node --test deploy/hq  (CI: ci.yml "HQ Worker tests"). ForgeAI HQ, #51, 23 Oct 2026.
+// node --test deploy/hq  (CI: ci.yml "HQ Worker tests"). MettleUp HQ, #51, 23 Oct 2026.
 // Every network call is a stand-in: Google, Cloudflare Access, Supabase and GitHub are never reached.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -572,10 +572,12 @@ test('the Cron Trigger: Cloudflare clean-up first, then the gym server, which wr
   assert.equal(indiaDay(new Date('2026-10-23T18:31:00Z')), '2026-10-24');
 });
 
-test('the wrangler file: its own name, address, cron, the page folder, no secrets', () => {
+test('the wrangler file: its own name, addresses, cron, the page folder, no secrets', () => {
   const raw = readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8');
   assert.match(raw, /"name": "forgeai-hq"/);
   assert.match(raw, /"pattern": "forgeai-hq\.aakashpahuja\.in", "custom_domain": true/);
+  // MettleUp (R-105): the new address, with the old one kept.
+  assert.match(raw, /"pattern": "hq\.mettleup\.fit", "custom_domain": true/);
   assert.match(raw, /"run_worker_first": true/);
   assert.match(raw, /"crons": \["30 21 \* \* \*"\]/);
   assert.doesNotMatch(raw, /sb_secret_|GOCSPX-|"SUPABASE_HQ_KEY":/);

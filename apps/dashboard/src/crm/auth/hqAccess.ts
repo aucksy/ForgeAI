@@ -1,7 +1,7 @@
 /**
- * ForgeAI HQ (#51, migration 0028): the gym owner's "ForgeAI access" list and the button that lets
- * ForgeAI support look at the gym's records for one hour. The owner always sees every time ForgeAI
- * opened the records (either door), what was looked at, and every other ForgeAI action on the gym
+ * MettleUp HQ (#51, migration 0028): the gym owner's "MettleUp access" list and the button that lets
+ * MettleUp support look at the gym's records for one hour. The owner always sees every time MettleUp
+ * opened the records (either door), what was looked at, and every other MettleUp action on the gym
  * (paused, new sign-in code, signed out everywhere). Nobody can hide or delete these lines.
  * Server: owner_hq_access / owner_hq_grant / owner_hq_end (owner only; a front-desk key gets OWNER_ONLY).
  */
@@ -101,10 +101,10 @@ const WHAT: Record<string, string> = {
 };
 
 const REASON: Record<string, string> = {
-  gym_asked: 'you asked ForgeAI support to look',
+  gym_asked: 'you asked MettleUp support to look',
   leak: 'a suspected data leak',
   legal: 'a legal demand',
-  erase: 'a member asked ForgeAI to erase their details',
+  erase: 'a member asked MettleUp to erase their details',
   locked_out: 'the owner was locked out',
   other: 'other',
 };
@@ -117,38 +117,38 @@ export function lookedWords(looked: readonly HqLook[]): string {
 }
 
 /**
- * One line of the owner's list, for example "ForgeAI support viewed your members and receipts on
- * 23 Oct, 14:05-14:35. Reason: you asked ForgeAI support to look." PURE.
+ * One line of the owner's list, for example "MettleUp support viewed your members and receipts on
+ * 23 Oct, 14:05-14:35. Reason: you asked MettleUp support to look." PURE.
  */
 export function grantLine(g: HqGrant): string {
-  const who = g.openedBy === 'gym' ? 'you opened it' : 'ForgeAI opened it in an emergency';
+  const who = g.openedBy === 'gym' ? 'you opened it' : 'MettleUp opened it in an emergency';
   const reason = g.openedBy === 'gym' ? REASON.gym_asked : `${REASON[g.reasonKind] ?? 'other'}: ${g.reason}`;
   if (g.open) {
-    const seen = g.looked.length ? ` So far ForgeAI support viewed your ${lookedWords(g.looked)}.` : ' Nothing looked at yet.';
+    const seen = g.looked.length ? ` So far MettleUp support viewed your ${lookedWords(g.looked)}.` : ' Nothing looked at yet.';
     return `Support access is open until ${clock(g.endsAt)} (${who}).${seen} Reason: ${reason}.`;
   }
   const span = `${dayTime(g.startsAt)}-${clock(g.endsAt)}`;
   if (!g.looked.length) return `Support access was open ${span} (${who}). Nothing was looked at.`;
   const first = g.looked[0].at;
   const last = g.looked[g.looked.length - 1].at;
-  return `ForgeAI support viewed your ${lookedWords(g.looked)} on ${dayTime(first)}-${clock(last)} (${who}). Reason: ${reason}.`;
+  return `MettleUp support viewed your ${lookedWords(g.looked)} on ${dayTime(first)}-${clock(last)} (${who}). Reason: ${reason}.`;
 }
 
 const ACTION: Record<string, string> = {
-  approve_gym: 'ForgeAI checked and approved your gym',
-  suspend_gym: 'ForgeAI paused your gym',
-  restore_gym: 'ForgeAI switched your gym back on',
-  reset_owner_signin: 'ForgeAI made a new sign-in code for the owner, after a call to your gym',
-  sign_out_gym: 'ForgeAI signed every phone and computer of your gym out',
-  create_gym: 'ForgeAI set up your gym',
-  ai_limit_set: 'ForgeAI changed your daily AI matches',
-  set_trial: 'ForgeAI changed the end of your free trial',
-  set_plan: 'ForgeAI updated your plan',
+  approve_gym: 'MettleUp checked and approved your gym',
+  suspend_gym: 'MettleUp paused your gym',
+  restore_gym: 'MettleUp switched your gym back on',
+  reset_owner_signin: 'MettleUp made a new sign-in code for the owner, after a call to your gym',
+  sign_out_gym: 'MettleUp signed every phone and computer of your gym out',
+  create_gym: 'MettleUp set up your gym',
+  ai_limit_set: 'MettleUp changed your daily AI matches',
+  set_trial: 'MettleUp changed the end of your free trial',
+  set_plan: 'MettleUp updated your plan',
 };
 
-/** One other ForgeAI action on the gym, in words. PURE. */
+/** One other MettleUp action on the gym, in words. PURE. */
 export function actionLine(a: HqAction): string {
-  const what = ACTION[a.action] ?? 'ForgeAI made a change to your gym';
+  const what = ACTION[a.action] ?? 'MettleUp made a change to your gym';
   return `${dayTime(a.at)}: ${what}.${a.reason ? ` Reason: ${a.reason}` : ''}`;
 }
 

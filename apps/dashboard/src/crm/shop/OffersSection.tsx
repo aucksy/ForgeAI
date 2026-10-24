@@ -139,7 +139,7 @@ export function OffersSection() {
         <SectionTitle>Workout offer</SectionTitle>
         <p style={{ ...quiet, fontSize: 14, color: color.ink }}>Workout offers in the app are not switched on for your gym yet.</p>
         <p style={{ ...quiet, marginTop: space.sm }}>
-          Until then, a member can open “Show my workouts to the desk” in the ForgeAI app. Type their code on the member’s page (Check
+          Until then, a member can open “Show my workouts to the desk” in the MettleUp app. Type their code on the member’s page (Check
           workout code) and give the days with Freeze / extra days.
         </p>
       </Card>
@@ -171,7 +171,7 @@ export function OffersSection() {
           onStart={(offer) =>
             void act('start', async () => {
               await api.saveOffer(key, offer);
-              return 'Offer started. Members see it in the ForgeAI app now.';
+              return 'Offer started. Members see it in the MettleUp app now.';
             })
           }
         />
@@ -256,7 +256,7 @@ function StartOfferForm({
       <SectionTitle>Start a workout offer</SectionTitle>
       <p style={quiet}>
         A workout counts only on a day your register shows a check-in for that member, and only if they logged 20+ minutes with 6+ sets
-        in the ForgeAI app. Once per member. Members with a plan running can join.
+        in the MettleUp app. Once per member. Members with a plan running can join.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: compact ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))', columnGap: space.md }}>
         <TextField label="Workouts" value={draft.workouts} inputMode="numeric" onChange={(v) => set({ workouts: digits(v) })} hint={`${L.workouts.min} to ${L.workouts.max}`} />
@@ -416,7 +416,7 @@ function OfferCard({
 
       <div style={{ marginTop: space.lg, display: 'grid', gap: space.sm }}>
         {rows.length === 0 ? (
-          <p style={quiet}>Nobody has joined yet. Members join from the Gym tab in the ForgeAI app.</p>
+          <p style={quiet}>Nobody has joined yet. Members join from the Gym tab in the MettleUp app.</p>
         ) : (
           rows.map((m) => {
             const state = memberState(m, today);

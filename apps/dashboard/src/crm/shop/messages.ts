@@ -250,7 +250,7 @@ export function messageErrorWords(err: unknown): string {
   if (/\bTOO_LONG\b/.test(text))
     return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
   if (/\bEMPTY\b/.test(text)) return 'Write a title.';
-  if (/\bNO_ONE\b/.test(text)) return 'Nobody in this group has the ForgeAI app. Send it on WhatsApp instead.';
+  if (/\bNO_ONE\b/.test(text)) return 'Nobody in this group has the MettleUp app. Send it on WhatsApp instead.';
   if (/\bBAD_TIME\b/.test(text)) return 'Pick a time within the next 30 days.';
   // A send that timed out may still have gone: say so, so the owner looks before sending again.
   return `${errorWords(err)} Check the Sent list below before sending it again.`;

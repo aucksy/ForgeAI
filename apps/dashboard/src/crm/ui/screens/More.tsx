@@ -61,7 +61,7 @@ export function MoreScreen() {
       icon: 'settings',
     },
     // Launch H7 (21 Oct 2026).
-    { path: '/feedback', label: 'Send feedback', hint: 'Tell ForgeAI a problem or an idea', icon: 'more' },
+    { path: '/feedback', label: 'Send feedback', hint: 'Tell MettleUp a problem or an idea', icon: 'more' },
   ]);
   return (
     <>

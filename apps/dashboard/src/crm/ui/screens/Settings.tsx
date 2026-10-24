@@ -43,6 +43,7 @@ import { useBranches } from '../../branches/context';
 import { useTerms } from '../../auth/TermsGate';
 import { acceptedLine } from '../../auth/terms';
 import { GymDataActions } from '../GymDataActions';
+import { ClearDeviceCard } from '../offline';
 
 export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
@@ -203,6 +204,8 @@ export function SettingsScreen() {
 
         {/* Launch D8: take everything away (Excel + full copy); an online gym can ask to be deleted. */}
         {canErase && <GymDataActions online={online} />}
+        {/* Offline front desk: the copy and the waiting list kept on this device (owner only). */}
+        {online && canErase && <ClearDeviceCard />}
 
         {/* UAT U-A13: a gym this browser could not read is kept, and stays downloadable here. */}
         {kept && (
@@ -251,7 +254,7 @@ export function SettingsScreen() {
         )}
       </Card>
 
-      {/* #51: when ForgeAI support looked at this gym's records, and the button to let them. */}
+      {/* #51: when MettleUp support looked at this gym's records, and the button to let them. */}
       {online && canErase && <ForgeAccessCard />}
 
       {confirming && (

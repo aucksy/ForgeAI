@@ -283,7 +283,7 @@ describe('messages to a group, at a chosen time (0025)', () => {
   });
 
   it('server words for a group with nobody in the app and a bad time', () => {
-    expect(messageErrorWords({ message: 'NO_ONE' })).toMatch(/Nobody in this group has the ForgeAI app/);
+    expect(messageErrorWords({ message: 'NO_ONE' })).toMatch(/Nobody in this group has the MettleUp app/);
     expect(messageErrorWords({ message: 'BAD_TIME' })).toMatch(/30 days/);
   });
 });

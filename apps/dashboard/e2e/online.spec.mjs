@@ -151,7 +151,7 @@ test('J22 turn on the shop: no internet says so; then the gym code and the 12 sa
   server.reconnect();
   await turnOn.tap();
   await expect(page.getByLabel('Gym code Q A 0 0 0 1')).toBeVisible();
-  await expect(page.getByRole('main')).toContainText('Members join in the ForgeAI app with gym code');
+  await expect(page.getByRole('main')).toContainText('Members join in the MettleUp app with gym code');
   await expect(page.getByRole('button', { name: 'Turn on the shop' })).toHaveCount(0);
   // The shop is this gym's own: named after it.
   expect(server.log.filter((c) => c.fn === 'demo_start_gym').at(-1)?.args.p_name).toBe('Iron Temple Fitness');

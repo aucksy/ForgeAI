@@ -1,5 +1,5 @@
 /**
- * #38 (24 Oct 2026): an existing gym's owner is asked ONCE to agree to the ForgeAI terms and the
+ * #38 (24 Oct 2026): an existing gym's owner is asked ONCE to agree to the MettleUp terms and the
  * data agreement, the next time they open the admin app signed in. Until they tick the box and
  * press "Agree and continue", the owner sees only this card (or can sign out). Front-desk staff are
  * never asked (the business agrees through its owner). On a server without 0033 nothing is asked.
@@ -23,12 +23,12 @@ import { acceptTerms, DATA_AGREEMENT_URL, getTerms, needsTerms, TERMS_URL, TERMS
 
 export { TERMS_VERSION } from './terms';
 
-/** "I agree to the ForgeAI terms and the data agreement", with both links (they open a new tab). */
+/** "I agree to the MettleUp terms and the data agreement", with both links (they open a new tab). */
 export function TermsWords() {
   const link = { color: color.accentBright, textDecoration: 'underline' } as const;
   return (
     <>
-      I agree to the ForgeAI{' '}
+      I agree to the MettleUp{' '}
       <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" style={link}>
         terms
       </a>{' '}
@@ -130,7 +130,7 @@ function AskTerms({ sessionKey, onAccepted, onSignOut }: { sessionKey: string; o
         <Card>
           <SectionTitle>Before you go on</SectionTitle>
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: 1.5, color: color.inkSecondary }}>
-            Please read and accept the ForgeAI terms and the data agreement. They say how ForgeAI keeps your gym’s
+            Please read and accept the MettleUp terms and the data agreement. They say how MettleUp keeps your gym’s
             records and your members’ details safe. You do this once. Your staff are not asked.
           </p>
           <CheckField checked={agreed} onChange={setAgreed}>

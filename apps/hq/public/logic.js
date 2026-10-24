@@ -1,4 +1,4 @@
-// ForgeAI HQ page: the words and numbers, as pure functions (tested: apps/hq/test/logic.test.mjs).
+// MettleUp HQ page: the words and numbers, as pure functions (tested: apps/hq/test/logic.test.mjs).
 // Plain English for the owner; no database words ever reach the screen.
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -51,9 +51,9 @@ export function megabytes(bytes) {
   return Math.round((Number(bytes) || 0) / (1024 * 1024));
 }
 
-// gyms.status (0027). Its 'trial' means "new, not checked by ForgeAI yet" and has NOTHING to do with
+// gyms.status (0027). Its 'trial' means "new, not checked by MettleUp yet" and has NOTHING to do with
 // the free trial (0030, trialEndsAt): the screens say "Free trial" only for that one.
-export const STATUS_WORDS = { trial: 'New, not checked yet', active: 'Active (checked)', suspended: 'Paused by ForgeAI' };
+export const STATUS_WORDS = { trial: 'New, not checked yet', active: 'Active (checked)', suspended: 'Paused by MettleUp' };
 
 /** The flags on a gym's row, most urgent first. Each: { tone: 'bad' | 'warn' | 'info', words }. */
 export function flags(g, now = Date.now()) {
@@ -83,7 +83,7 @@ export function flags(g, now = Date.now()) {
 
 // Gyms made by our own automatic tests (the phone and browser journeys sign up as "QA ... Gym" with the
 // 98765000xx test mobiles), by the database tests, and the "Start demo" sample gym nobody signs in to.
-const TEST_NAME = /^(QA |T\d+ |Sec Gym |Owner RPC check$|ForgeAI Test Gym$)/;
+const TEST_NAME = /^(QA |T\d+ |Sec Gym |Owner RPC check$|MettleUp Test Gym$)/;
 const DEMO_NAME = 'Iron Temple Fitness';
 
 /** 'test', 'demo' or '' (a real gym). Hidden from the list unless "Show test and demo gyms" is on. */
@@ -221,7 +221,7 @@ export function recordCells(kind, row) {
 
 /** The message to send the owner on WhatsApp with a new sign-in code. */
 export function codeMessage(gymName, code) {
-  return `ForgeAI: your sign-in code for ${gymName} is ${code}. Open the ForgeAI admin app, type your mobile number and this code. It works once, for 30 minutes.`;
+  return `MettleUp: your sign-in code for ${gymName} is ${code}. Open the MettleUp admin app, type your mobile number and this code. It works once, for 30 minutes.`;
 }
 
 /** The gym of a 6-letter code from the list, or null. */
@@ -475,7 +475,7 @@ export function endOfIndiaDay(day) {
 
 // ------------------------------------------------------------------ "Export gyms (CSV)"
 // Gym-level facts only: never a member's name or number (HQ sees counts). The gym owner's own name
-// and mobile are ForgeAI's business contact. Gyms carry no city yet, so there is no city column.
+// and mobile are MettleUp's business contact. Gyms carry no city yet, so there is no city column.
 const CSV_COLUMNS = [
   ['Gym name', (g) => g.name],
   ['Gym code', (g) => g.joinCode],
@@ -514,7 +514,7 @@ export function csvName(now = Date.now()) {
 
 // ------------------------------------------------------------------ gym groups and branches (0031, #41)
 // A gym business with several branches is a GROUP; each branch is its own gym row (own records,
-// receipts, staff). HQ shows the group with its branches and the members of each branch. ForgeAI's
+// receipts, staff). HQ shows the group with its branches and the members of each branch. MettleUp's
 // prices are PER BRANCH (the landing page says so); HQ shows that as information only: nothing is
 // billed from here.
 

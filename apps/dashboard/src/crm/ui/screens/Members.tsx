@@ -49,7 +49,7 @@ type Filter = 'all' | MemberState | 'dues' | 'archived' | 'pt-ending' | `tile:${
 
 /**
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
- * members who joined in the ForgeAI app with the gym's code (`/members/app`).
+ * members who joined in the MettleUp app with the gym's code (`/members/app`).
  */
 export function MembersScreen({ section, filter: initialFilter, startAdding }: { section?: 'app'; filter?: TileFilter; startAdding?: boolean } = {}) {
   const { memberViews } = useCrm();
@@ -61,7 +61,7 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
         title="Members"
         subtitle={
           app
-            ? 'Who has the ForgeAI app on their phone'
+            ? 'Who has the MettleUp app on their phone'
             : countOf(memberViews.length, 'member')
         }
         actions={

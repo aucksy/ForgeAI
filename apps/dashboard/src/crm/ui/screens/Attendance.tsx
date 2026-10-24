@@ -603,7 +603,7 @@ function RegisterRowView({
       {visit.atGymId && visit.atGymId !== visit.gymId && <Pill tone="muted">{`At ${visit.atGymName || 'another branch'}`}</Pill>}
       {visitSourceTag(visit.source) && (
         <Pill tone="muted">
-          <span title={visit.source === 'app' ? 'Checked in with the ForgeAI app' : undefined}>{visitSourceTag(visit.source)}</span>
+          <span title={visit.source === 'app' ? 'Checked in with the MettleUp app' : undefined}>{visitSourceTag(visit.source)}</span>
         </Pill>
       )}
       <Button

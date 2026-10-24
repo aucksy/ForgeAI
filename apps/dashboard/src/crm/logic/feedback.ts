@@ -1,5 +1,5 @@
 /**
- * More → Send feedback (launch plan H7, inbox #39): the owner or the desk writes to ForgeAI. The
+ * More → Send feedback (launch plan H7, inbox #39): the owner or the desk writes to MettleUp. The
  * message goes to the same site's /api/feedback (Cloudflare's feedback box, deploy/panel/feedback.js),
  * never to the gym's records. With it: the browser and the page. No name, no mobile number.
  */

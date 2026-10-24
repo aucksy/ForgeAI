@@ -65,7 +65,7 @@ export function Login() {
               color: 'transparent',
             }}
           >
-            ForgeAI
+            MettleUp
           </div>
           <div style={{ color: color.inkMuted, fontSize: 13, marginTop: 4 }}>Owner dashboard</div>
         </div>
@@ -130,7 +130,7 @@ export function Login() {
         </Card>
 
         <div style={{ textAlign: 'center', color: color.inkFaint, fontSize: 12, marginTop: space.lg }}>
-          For gym owners. Members use the ForgeAI app.
+          For gym owners. Members use the MettleUp app.
         </div>
       </div>
     </div>

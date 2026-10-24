@@ -43,7 +43,7 @@ export function Onboarding({ email, onCreated }: { email: string; onCreated: () 
           </h1>
           <p style={{ color: color.inkSecondary, fontSize: 14, lineHeight: 1.5, marginTop: space.sm }}>
             Signed in as {email}. Name your gym and you'll get a join code to share with members — they
-            enter it in the ForgeAI app to sync their progress to you.
+            enter it in the MettleUp app to sync their progress to you.
           </p>
           <form onSubmit={(e) => void create(e)}>
             <TextField label="Gym name" value={name} onChange={setName} placeholder="e.g. Iron Temple Fitness" />

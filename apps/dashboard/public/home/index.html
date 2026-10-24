@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ForgeAI — gym software + member progress app</title>
+<title>MettleUp for Gyms — gym software + member progress app</title>
 <meta name="description" content="Gym software and a member progress app in one. Free for 3 months, no card. Your members get a free workout app in your gym's name and colours: they see their own progress, order from your shop and read your notices. Plus the desk work, and your old Excel records moved in privately with AI. From ₹999 a month.">
-<meta property="og:title" content="ForgeAI — gym software + member progress app">
+<meta property="og:title" content="MettleUp for Gyms — gym software + member progress app">
 <meta property="og:description" content="Free for 3 months. Your members see their own progress in an app with your gym's name on it. Your shop and your notices live there too.">
-<meta property="og:image" content="/home/tiles.webp">
+<meta property="og:image" content="https://mettleup.fit/brand/og-1200x630.png">
 <meta name="theme-color" content="#0B0B0D">
-<link rel="icon" type="image/png" href="/icons/admin-192.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" href="/brand/icon-192.png">
+<link rel="apple-touch-icon" href="/brand/apple-touch-icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..900&family=Khand:wght@600;700&family=Mukta:wght@500;700&family=Manrope:wght@500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -60,7 +62,8 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .lid{position:sticky;top:0;z-index:30;background:color-mix(in oklab,var(--tub) 88%,transparent);backdrop-filter:blur(12px) saturate(1.3);border-bottom:1px solid var(--rule)}
 .lid .wrap{display:flex;align-items:center;gap:10px;min-height:58px}
 .mark{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:auto}
-.mark svg{width:26px;height:26px}
+.mark img{width:26px;height:26px;display:block}
+.mark small{font-size:13px;font-weight:600;line-height:1;opacity:.75;letter-spacing:.02em;white-space:nowrap}
 .mark b{font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;letter-spacing:.01em}
 .pill{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:none;color:var(--ink2);font:700 15px var(--text);text-decoration:none;cursor:pointer}
 .pill:hover{border-color:var(--ink3);color:var(--ink)}
@@ -549,13 +552,14 @@ section{position:relative}
 <body>
 <header class="lid">
   <div class="wrap">
-    <a class="mark" href="/home/" aria-label="ForgeAI home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--flavour)"/><path d="M10 24V9h13M10 16.5h9" stroke="var(--on-flavour)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <b>FORGEAI</b>
+    <a class="mark" href="/" aria-label="MettleUp for Gyms home">
+      <!-- R-105: the logo mark (public/brand/mark.svg, from branding/mettleup/web) and the name as text. -->
+      <img src="/brand/mark.svg" width="26" height="26" alt="">
+      <b>MettleUp</b><small>for Gyms</small>
     </a>
     <button class="pill" type="button" id="lang" lang="hi">हिंदी</button>
-    <a class="pill signin" href="/" data-hi="साइन इन">Sign in</a>
-    <a class="pill start" href="/start" data-hi="मुफ्त शुरू करें">Start free</a>
+    <a class="pill signin" href="https://app.mettleup.fit/" data-hi="साइन इन">Sign in</a>
+    <a class="pill start" href="https://app.mettleup.fit/start" data-hi="मुफ्त शुरू करें">Start free</a>
   </div>
 </header>
 
@@ -569,7 +573,7 @@ section{position:relative}
     <p class="ident cond" data-hi="जिम सॉफ़्टवेयर <i>+</i> मेंबर प्रोग्रेस ऐप">Gym software <i>+</i> member progress app</p>
     <p class="claim" data-hi="<strong>हर मेंबर अपनी तरक्की देखता है</strong>, आपके जिम के नाम और रंग में। आपकी दुकान और संदेश भी इसी में।">Every member sees <strong>their own progress</strong>, in your gym's name and colours. Your shop and messages, inside.</p>
     <div class="trial">
-      <a class="go big" href="/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
+      <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
       <p class="trial-note" data-hi="न कार्ड, न सेटअप फीस। 2 मिनट में अपना जिम बनाइए। मेंबरों का ऐप हमेशा मुफ्त।">No card, no setup fee. Your gym is ready in 2 minutes. Your members' app is free, always.</p>
     </div>
     <p class="net"><span data-hi="मेंबरों के लिए मुफ्त">Free for your members</span><span>Android</span><span data-hi="402 एक्सरसाइज़">402 exercises</span></p>
@@ -601,7 +605,7 @@ section{position:relative}
       </div>
       <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="msg" role="status" aria-live="polite"></p>
-      <p class="alt" data-hi="पहले खुद देखना है? <a href=&quot;/&quot;>डेमो जिम खोलिए</a> (नकली डेटा)। पहले से ForgeAI पर? <a href=&quot;/&quot;>साइन इन</a>।">Rather look first? <a href="/">Open the demo gym</a> (made-up data). Already on ForgeAI? <a href="/">Sign in</a>.</p>
+      <p class="alt" data-hi="पहले खुद देखना है? <a href=&quot;https://app.mettleup.fit/&quot;>डेमो जिम खोलिए</a> (नकली डेटा)। पहले से MettleUp पर? <a href=&quot;https://app.mettleup.fit/&quot;>साइन इन</a>।">Rather look first? <a href="https://app.mettleup.fit/">Open the demo gym</a> (made-up data). Already on MettleUp? <a href="https://app.mettleup.fit/">Sign in</a>.</p>
     </form>
   </div>
 
@@ -642,7 +646,7 @@ section{position:relative}
   <div class="wrap scene">
     <div class="scene-text">
       <h2 id="lift-h" class="cond panel-h" data-hi="हर सेट, वापस आने की वजह">Every set, a reason to come back</h2>
-      <p class="lede" data-hi="जो मेंबर खुद को मज़बूत होते देखता है, वो जिम नहीं छोड़ता। ForgeAI उसे हर सेट पर यही दिखाता है।">Members don't quit a gym where they can see themselves getting stronger. ForgeAI shows them, set by set.</p>
+      <p class="lede" data-hi="जो मेंबर खुद को मज़बूत होते देखता है, वो जिम नहीं छोड़ता। MettleUp उसे हर सेट पर यही दिखाता है।">Members don't quit a gym where they can see themselves getting stronger. MettleUp shows them, set by set.</p>
     </div>
       <div class="money rows" id="lift-beats">
         <div data-beat="1"><b data-hi="लक्ष्य">Target</b><span data-hi="हर सेट के पास पिछली बार के नंबर, तो हर सेट का एक लक्ष्य है।">Last time's numbers beside every set, so every set has a target.</span></div>
@@ -701,7 +705,7 @@ section{position:relative}
   <div class="wrap grid">
     <div>
       <h2 id="facts-h" class="cond panel-h" data-hi="बाकी फीस गिनते हैं। हम मेंबर रोकते हैं।">Others count fees. We keep members.</h2>
-      <p class="lede" data-hi="ज़्यादातर जिम सॉफ्टवेयर मेंबर को फीस और हाज़िरी वाला ऐप देते हैं। ForgeAI मेंबर को पूरा वर्कआउट ट्रैकर देता है, उस तरह का जिसके लिए लोग Hevy या Strong में पैसे देते हैं, और वो भी आपके जिम के नाम से। यह हर विज़िट पर खोलने के लिए बना है, सिर्फ फीस वाले दिन के लिए नहीं।">Most gym software gives members an app for fees and attendance. ForgeAI gives them a full workout tracker, the kind people pay for in Hevy or Strong, in your gym's name. It is made to be opened every visit, not just on fee day.</p>
+      <p class="lede" data-hi="ज़्यादातर जिम सॉफ्टवेयर मेंबर को फीस और हाज़िरी वाला ऐप देते हैं। MettleUp मेंबर को पूरा वर्कआउट ट्रैकर देता है, उस तरह का जिसके लिए लोग Hevy या Strong में पैसे देते हैं, और वो भी आपके जिम के नाम से। यह हर विज़िट पर खोलने के लिए बना है, सिर्फ फीस वाले दिन के लिए नहीं।">Most gym software gives members an app for fees and attendance. MettleUp gives them a full workout tracker, the kind people pay for in Hevy or Strong, in your gym's name. It is made to be opened every visit, not just on fee day.</p>
       <div class="panel evidence">
         <h3 data-hi="सबूत">Evidence</h3>
         <div class="hd"><span data-hi="जिम छोड़ने के बारे में">On members quitting</span><span data-hi="आँकड़ा">Figure</span></div>
@@ -848,18 +852,18 @@ section{position:relative}
           <div class="lk-time">7:42</div>
           <div class="lk-date">Wednesday, 22 October</div>
           <div class="nslot">
-            <div class="nc" id="n-live"><div class="nh"><i class="nic"></i>ForgeAI · Workout</div><div class="nrow"><b>Bench Press</b><span class="ntime" id="n-clock">24:10</span></div><div class="ntx" id="n-set">Set 3 of 5 · 62.5 kg × 8</div><div class="nact"><span id="n-complete">Complete set</span></div></div>
-            <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>ForgeAI · Rest</div><div class="nrow"><b><span id="n-left" class="js-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
-            <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>ForgeAI · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b id="n-over-title">Rest is over</b></div><div class="ntx" id="n-over-next">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span id="n-over-act">Complete set</span></div></div>
+            <div class="nc" id="n-live"><div class="nh"><i class="nic"></i>MettleUp · Workout</div><div class="nrow"><b>Bench Press</b><span class="ntime" id="n-clock">24:10</span></div><div class="ntx" id="n-set">Set 3 of 5 · 62.5 kg × 8</div><div class="nact"><span id="n-complete">Complete set</span></div></div>
+            <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>MettleUp · Rest</div><div class="nrow"><b><span id="n-left" class="js-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
+            <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>MettleUp · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b id="n-over-title">Rest is over</b></div><div class="ntx" id="n-over-next">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span id="n-over-act">Complete set</span></div></div>
           </div>
           <div class="lk-hint">Swipe up to unlock</div>
         </div>
       </div>
-      <div class="watch" id="lock-watch" role="img" aria-label="The ForgeAI watch app: the rest counts down on the wrist and buzzes when it is over" data-hi-label="ForgeAI घड़ी ऐप: रेस्ट कलाई पर गिनता है और खत्म होने पर वाइब्रेट करता है">
+      <div class="watch" id="lock-watch" role="img" aria-label="The MettleUp watch app: the rest counts down on the wrist and buzzes when it is over" data-hi-label="MettleUp घड़ी ऐप: रेस्ट कलाई पर गिनता है और खत्म होने पर वाइब्रेट करता है">
         <div class="wf" aria-hidden="true">
           <div class="wface w-live"><small>Workout</small><b><svg viewBox="0 0 16 16"><path d="M8 13.6S2.2 10 2.2 6.1A3 3 0 018 4.6a3 3 0 015.8 1.5C13.8 10 8 13.6 8 13.6z" fill="var(--flavour)"/></svg>128</b><small>bpm</small></div>
           <div class="wface w-rest"><small>Rest</small><b class="js-left">1:30</b><small>set 4 next</small></div>
-          <div class="wface w-over"><small>ForgeAI</small><b class="w-done">Rest is over</b><small>Set 4</small></div>
+          <div class="wface w-over"><small>MettleUp</small><b class="w-done">Rest is over</b><small>Set 4</small></div>
         </div>
       </div>
       </div>
@@ -914,12 +918,12 @@ section{position:relative}
         <div data-beat="1"><b data-hi="कोई भी शीट">Any sheet</b><span data-hi="“Mob No”, “Contact”, “Phone 1”: जो भी नाम रखा हो। Excel, CSV या GGMS से निकाली फाइल।">“Mob No”, “Contact”, “Phone 1”: whatever you called them. Excel, CSV or a GGMS export.</span></div>
         <div data-beat="2"><b data-hi="प्राइवेट">Private</b><span data-hi="AI सिर्फ कॉलम के नाम और 5 नमूना पंक्तियाँ देखता है, मोबाइल नंबर छुपाकर। पूरी लिस्ट सीधे आपके जिम के अपने खाते में जाती है।">The AI sees only your column names and 5 sample rows, with mobile numbers hidden. Your full list goes straight to your gym's own account.</span></div>
         <div data-beat="3"><b data-hi="जाँच">Checked</b><span data-hi="Add दबाने से पहले आप देखते हैं कितने मेंबर और कितने रुपये जुड़ेंगे। आपकी हाँ के बिना कुछ सेव नहीं होता।">Before you tap Add, you see how many members and how many rupees go in. Nothing is saved until you say so.</span></div>
-        <div data-beat="4"><b data-hi="आपका">Yours</b><span data-hi="ForgeAI की टीम आपकी मेंबर लिस्ट नहीं खोल सकती, जब तक आप एक घंटे के लिए खुद इजाज़त न दें। हर बार देखा जाना आपको दिखता है।">ForgeAI staff can't open your member list unless you let them in for an hour. You see every look.</span></div>
+        <div data-beat="4"><b data-hi="आपका">Yours</b><span data-hi="MettleUp की टीम आपकी मेंबर लिस्ट नहीं खोल सकती, जब तक आप एक घंटे के लिए खुद इजाज़त न दें। हर बार देखा जाना आपको दिखता है।">MettleUp staff can't open your member list unless you let them in for an hour. You see every look.</span></div>
       </div>
       <p class="onlyhere"><span class="only" data-hi="सिर्फ यहाँ">Only here</span> <span data-hi="हमने भारत और बाहर के 12 जिम सॉफ्टवेयर देखे (अक्टूबर 2026)। किसी में AI किसी भी Excel को नहीं पढ़ता।">We checked 12 gym software products in India and abroad (Oct 2026). None reads any Excel layout with AI.</span></p>
     </div>
     <div class="stage solo" id="move-scene">
-      <div class="sheet" role="img" aria-label="Example: a gym's own Excel sheet with messy column names; each column gets matched to a ForgeAI field, mobile numbers stay hidden, and 212 members are ready to check" data-hi-label="उदाहरण: जिम की अपनी Excel शीट; हर कॉलम ForgeAI के खाने से मिलता है, मोबाइल नंबर छुपे रहते हैं, 212 मेंबर जाँच के लिए तैयार">
+      <div class="sheet" role="img" aria-label="Example: a gym's own Excel sheet with messy column names; each column gets matched to a MettleUp field, mobile numbers stay hidden, and 212 members are ready to check" data-hi-label="उदाहरण: जिम की अपनी Excel शीट; हर कॉलम MettleUp के खाने से मिलता है, मोबाइल नंबर छुपे रहते हैं, 212 मेंबर जाँच के लिए तैयार">
         <div class="sh-top" aria-hidden="true"><span class="sh-file">members 2024 (final).xlsx</span><span class="sh-ai" id="mv-ai" data-hi="AI · सिर्फ कॉलम">AI · columns only</span></div>
         <table class="sh-grid" aria-hidden="true">
           <thead>
@@ -949,7 +953,7 @@ section{position:relative}
     <p class="lede" data-hi="हर पैक 3 महीने मुफ्त से शुरू होता है। न कार्ड, न सेटअप फीस, मेंबर जितने चाहें। मेंबरों का ऐप हर पैक में मुफ्त, हमेशा।">Every pack starts with 3 months free. No card, no setup fee, no limit on members. Your members' app is free in every pack, always.</p>
     <div class="panel pricetab">
       <table>
-        <caption class="sr" data-hi="पैक और उनमें क्या है">Packs and what each one has</caption>
+        <caption class="sr" data-hi="पैक और उनमें क्या है">MettleUp for Gyms: packs and what each one has</caption>
         <thead>
           <tr class="ph">
             <th scope="col"><span class="ph-t" data-hi="पैक साइज़">Pack sizes</span></th>
@@ -989,7 +993,7 @@ section{position:relative}
         <p data-hi="एक बार ₹29,999। Pro की हर चीज़, एक ब्रांच के लिए, हमेशा। सिर्फ पहले 50 जिमों के लिए। AI पैक आने पर अलग से।">One payment of ₹29,999. Everything in Pro, for one branch, forever. For the first 50 gyms only. The AI pack is extra when it comes.</p>
         <p class="f-how" data-hi="जगह कैसे पक्की होती है: पहले मुफ्त 3 महीने शुरू करें। उनके खत्म होने से पहले हमें बताइए; जो पहले 50 जिम भरते हैं, उन्हें यह दाम मिलता है।">How a spot is held: start your free 3 months first. Tell us before they end; the first 50 gyms to pay get this price.</p>
       </div>
-      <a class="go" href="/start" data-hi="मुफ्त शुरू करें">Start free</a>
+      <a class="go" href="https://app.mettleup.fit/start" data-hi="मुफ्त शुरू करें">Start free</a>
     </div>
   </div>
 </section>
@@ -1005,7 +1009,7 @@ section{position:relative}
         <li data-hi="Excel या GGMS से मेंबर लाइए। AI कॉलम मिलाता है; आप देखकर Add दबाते हैं।">Bring your members from Excel or GGMS. AI matches the columns; you check, then tap Add.</li>
         <li data-hi="QR पोस्टर लगाइए। मेंबर एक स्कैन में मुफ्त जुड़ते हैं।">Put up your QR poster. Members join with one scan, free.</li>
       </ol>
-      <a class="go big" href="/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
+      <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
     </div>
     <form class="lead-form" id="demo" novalidate>
       <p class="f-h" data-hi="हम आपके साथ सेट करें?">Rather we set it up with you?</p>
@@ -1025,7 +1029,7 @@ section{position:relative}
   <div class="wrap made">
     <span data-hi="जयपुर, भारत में बना · बैच 2026-10">Made in Jaipur, India · Batch 2026-10</span>
     <svg viewBox="0 0 120 40" aria-hidden="true"><g fill="#0B0B0D"><rect x="0" width="3" height="40"/><rect x="5" width="1" height="40"/><rect x="8" width="2" height="40"/><rect x="12" width="4" height="40"/><rect x="18" width="1" height="40"/><rect x="21" width="3" height="40"/><rect x="26" width="1" height="40"/><rect x="29" width="2" height="40"/><rect x="33" width="4" height="40"/><rect x="39" width="1" height="40"/><rect x="42" width="2" height="40"/><rect x="46" width="3" height="40"/><rect x="51" width="1" height="40"/><rect x="54" width="4" height="40"/><rect x="60" width="2" height="40"/><rect x="64" width="1" height="40"/><rect x="67" width="3" height="40"/><rect x="72" width="2" height="40"/><rect x="76" width="1" height="40"/><rect x="79" width="4" height="40"/><rect x="85" width="1" height="40"/><rect x="88" width="2" height="40"/><rect x="92" width="3" height="40"/><rect x="97" width="1" height="40"/><rect x="100" width="2" height="40"/><rect x="104" width="4" height="40"/><rect x="110" width="1" height="40"/><rect x="113" width="3" height="40"/><rect x="118" width="2" height="40"/></g></svg>
-    <a href="/" data-hi="मौजूदा जिम: साइन इन">Existing gyms: sign in</a>
+    <a href="https://app.mettleup.fit/" data-hi="मौजूदा जिम: साइन इन">Existing gyms: sign in</a>
   </div>
 </section>
 </main>

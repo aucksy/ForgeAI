@@ -264,7 +264,7 @@
     }, steps, stopClock);
   })();
 
-  // Moving in (R-97): the owner's own sheet; each column gets its ForgeAI name, the rows check out,
+  // Moving in (R-97): the owner's own sheet; each column gets its MettleUp name, the rows check out,
   // and the count of members ready rolls up, with no mobile number shown to the AI.
   (function () {
     var scene = $('move-scene'), list = $('move-beats');

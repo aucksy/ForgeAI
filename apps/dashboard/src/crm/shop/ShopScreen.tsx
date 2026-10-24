@@ -1,5 +1,5 @@
 /**
- * Shop — orders members placed in the ForgeAI app, and the products they can buy.
+ * Shop — orders members placed in the MettleUp app, and the products they can buy.
  *
  * Orders is the default because it is the part that moves: a member orders on
  * their phone, the desk sees it here within five seconds, hands it over, and
@@ -74,8 +74,8 @@ export function ShopScreen({ section }: { section?: string }) {
         title="Shop"
         subtitle={
           tabs.length > 1
-            ? 'What members order in the ForgeAI app, and what you sell'
-            : 'What members order in the ForgeAI app'
+            ? 'What members order in the MettleUp app, and what you sell'
+            : 'What members order in the MettleUp app'
         }
       />
 
@@ -154,7 +154,7 @@ function OrdersSection() {
         <Card>
           <EmptyState
             title="No orders yet"
-            body={`Members order from the Shop tab in the ForgeAI app after joining with gym code ${code}.`}
+            body={`Members order from the Shop tab in the MettleUp app after joining with gym code ${code}.`}
           />
         </Card>
       ) : rows.length === 0 ? (

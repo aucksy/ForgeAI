@@ -80,7 +80,7 @@ describe('the WhatsApp code message', () => {
     expect(text).toMatch(/Hi Suresh!/);
     expect(text).toMatch(/482913/);
     expect(text).toMatch(/98765 43210/);
-    expect(text).toMatch(/https:\/\/forgeai\.aakashpahuja\.in/);
+    expect(text).toMatch(/https:\/\/app\.mettleup\.fit/);
   });
   it('goes to the Indian number, never another country', () => {
     expect(whatsAppToMobile('98765 43210', 'hi')).toBe('https://wa.me/919876543210?text=hi');

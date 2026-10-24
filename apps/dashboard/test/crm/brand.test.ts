@@ -32,7 +32,7 @@ const LOGO = `https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/
 const RAMS = parseGymBrand({ accent: '#F7D411', bg: '#0A0A0C', logoUrl: LOGO, heading: 'bold-italic', updatedAt: '2026-10-13T10:00:00Z' })!;
 
 describe('the Branding form', () => {
-  it('starts from the saved brand, or from ForgeAI’s ember', () => {
+  it('starts from the saved brand, or from MettleUp’s ember', () => {
     expect(draftFromBrand(RAMS)).toEqual({ accent: '#F7D411', useBg: true, bg: '#0A0A0C', logoUrl: LOGO, heading: 'bold-italic' });
     expect(draftFromBrand(null)).toMatchObject({ accent: FORGE_ACCENT, useBg: false, logoUrl: null, heading: 'normal' });
   });
@@ -67,21 +67,21 @@ describe('the Branding form', () => {
   it('knows when Save has something to save', () => {
     expect(draftChanged(draftFromBrand(RAMS), RAMS)).toBe(false);
     expect(draftChanged({ ...draftFromBrand(RAMS), heading: 'normal' }, RAMS)).toBe(true);
-    // A gym with no look yet: ForgeAI's ember IS no look — nothing to save until something changes.
+    // A gym with no look yet: MettleUp's ember IS no look — nothing to save until something changes.
     expect(draftChanged(draftFromBrand(null), null)).toBe(false);
     expect(draftChanged({ ...draftFromBrand(null), logoUrl: LOGO }, null)).toBe(true);
-    // A look saved earlier with ForgeAI's ember written out: the same look, nothing to save.
+    // A look saved earlier with MettleUp's ember written out: the same look, nothing to save.
     const oldSave = parseGymBrand({ accent: '#FF7A3B', logoUrl: LOGO })!;
     expect(draftChanged(draftFromBrand(oldSave), oldSave)).toBe(false);
   });
 
-  it("D9: a logo-only gym saves NO colour — the phone keeps ForgeAI's hand-tuned look", () => {
+  it("D9: a logo-only gym saves NO colour — the phone keeps MettleUp's hand-tuned look", () => {
     const logoOnly = { ...draftFromBrand(null), logoUrl: LOGO };
     expect(saveArgs(logoOnly)).toEqual({ p_accent: null, p_bg: null, p_logo_url: LOGO, p_heading: 'normal' });
     expect(saveArgs({ ...logoOnly, accent: '#ff7a3b' }).p_accent).toBeNull();
     // A colour the owner picked is saved as picked.
     expect(saveArgs({ ...logoOnly, accent: '#D32F2F' }).p_accent).toBe('#D32F2F');
-    // …and the preview of the untouched form is ForgeAI's own palette, shade for shade.
+    // …and the preview of the untouched form is MettleUp's own palette, shade for shade.
     const p = previewPalette(logoOnly)!;
     expect(p.color.accentBright).toBe('#FFA043');
     expect(p.gradients.ember).toEqual(['#FF8B4A', '#F0570F']);
@@ -137,7 +137,7 @@ describe('owner-facing words', () => {
     expect(brandErrorWords({ message: 'BAD_COLOUR' })).toMatch(/colour code/);
     expect(brandErrorWords({ message: 'BAD_LOGO' })).toMatch(/Upload the logo again/);
     expect(brandErrorWords({ message: 'BAD_KEY' })).toMatch(/no longer available/);
-    expect(brandErrorWords({ message: 'Could not find the function public.owner_set_brand' })).toMatch(/isn’t ready for your gym yet. Message ForgeAI on WhatsApp/);
+    expect(brandErrorWords({ message: 'Could not find the function public.owner_set_brand' })).toMatch(/isn’t ready for your gym yet. Message MettleUp on WhatsApp/);
     expect(brandErrorWords(new Error('Failed to fetch'))).toMatch(/internet/);
     expect(brandErrorWords({ message: 'deadlock detected' })).toBe('That didn’t save. Please try again.');
   });

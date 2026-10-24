@@ -4,7 +4,7 @@
  * The list of plans (withdrawn ones folded away at the bottom), and the builder sheet: the plan's
  * name and note, one section per day with its exercises (picked from the library by any name, Hindi
  * gym words included, or typed by hand), and who it goes to — members by name, and everyone on a
- * membership plan. The member sees it in the ForgeAI app after one check-in at the gym.
+ * membership plan. The member sees it in the MettleUp app after one check-in at the gym.
  *
  * Little typing for a trainer (18 Oct 2026): a new plan can start from a ready plan (the member
  * app's gym programs) and only needs weights typed if they want; a plan or a day can be copied;
@@ -80,7 +80,7 @@ import {
 } from '../kit';
 
 /** The line every builder and list shows: when the member gets it. */
-export const MEMBERS_SEE_IT = 'Members see it in the ForgeAI app after one check-in at the gym.';
+export const MEMBERS_SEE_IT = 'Members see it in the MettleUp app after one check-in at the gym.';
 /** Review fix: a browser-only gym's plans never reach a phone (member_gym_plans reads online records). */
 export const NOT_ONLINE_YET = 'Members get these plans only once your gym is online (Settings → Put your gym online).';
 
@@ -588,7 +588,7 @@ function ExerciseEditor({
             {position + 1}. {exercise.name}
           </div>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
-            {exercise.catalogKey ? [muscles || 'From the ForgeAI exercise list', how].filter(Boolean).join(' · ') : 'Your own exercise'}
+            {exercise.catalogKey ? [muscles || 'From the MettleUp exercise list', how].filter(Boolean).join(' · ') : 'Your own exercise'}
           </div>
         </div>
         <Row gap={2} wrap={false}>

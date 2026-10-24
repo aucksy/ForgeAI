@@ -490,7 +490,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                       </p>
                       {groupEmptyInApp && (
                         <p role="note" style={{ ...quiet, color: color.warning }}>
-                          Nobody in this group has the ForgeAI app yet. Send it on WhatsApp.
+                          Nobody in this group has the MettleUp app yet. Send it on WhatsApp.
                         </p>
                       )}
                       {reach.widerInApp && (
@@ -512,7 +512,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                     <>
                       <p style={{ ...quiet, fontSize: 14, color: color.ink }}>{`In this group: ${countOf(reach.group, 'member')}.`}</p>
                       <p style={quiet}>
-                        The ForgeAI member app is not turned on for your gym, so this goes on WhatsApp only.{' '}
+                        The MettleUp member app is not turned on for your gym, so this goes on WhatsApp only.{' '}
                         <Link to="/shop">
                           <span style={{ color: color.accentBright }}>Turn it on</span>
                         </Link>
@@ -526,7 +526,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
             {/* In the app (not for personal messages: those are one member's own words). */}
             {!personal && cloud && (
               <div style={{ marginTop: space.lg, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
-                <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink, marginBottom: space.sm }}>In the ForgeAI app</div>
+                <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink, marginBottom: space.sm }}>In the MettleUp app</div>
                 {groups && !alreadySent && (
                   <div style={{ marginBottom: space.md }}>
                     <ChipToggle

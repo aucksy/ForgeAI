@@ -6,7 +6,7 @@
  * plans ending within 7 days, plans that ended in the last 30 days, members who stopped coming (the
  * Away list, logic/attendance.ts), one plan, one batch, birthdays today.
  *
- * STEP 1 LIMIT, said on the screen: a message in the ForgeAI app still goes to EVERY app member (the
+ * STEP 1 LIMIT, said on the screen: a message in the MettleUp app still goes to EVERY app member (the
  * server has no groups yet). A smaller group is reached on WhatsApp, one by one.
  *
  * "In the app": a member of the gym's list whose mobile matches an app member's (read the way the

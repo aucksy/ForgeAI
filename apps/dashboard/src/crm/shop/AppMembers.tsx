@@ -1,5 +1,5 @@
 /**
- * Members who joined this gym from the ForgeAI app (with the join code), read live
+ * Members who joined this gym from the MettleUp app (with the join code), read live
  * from the cloud. A separate list from the CRM roster on purpose: the roster is
  * the gym's own record of everyone who pays, this is who has the app. A tap opens the
  * member's page, matched by mobile (R-85), or the add form when they are not in the list.
@@ -42,7 +42,7 @@ export function AppMembersSection() {
   return (
     <>
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        Members who joined your gym in the ForgeAI app with gym code{' '}
+        Members who joined your gym in the MettleUp app with gym code{' '}
         <strong style={{ fontFamily: font.mono, color: color.accentBright, letterSpacing: 2 }}>{cloud.joinCode}</strong>.
       </p>
 
@@ -56,7 +56,7 @@ export function AppMembersSection() {
         <Card>
           <EmptyState
             title="Nobody has joined in the app yet"
-            body={`Ask members to open the ForgeAI app and join with gym code ${cloud.joinCode}. They show up here at once.`}
+            body={`Ask members to open the MettleUp app and join with gym code ${cloud.joinCode}. They show up here at once.`}
           />
         </Card>
       ) : (

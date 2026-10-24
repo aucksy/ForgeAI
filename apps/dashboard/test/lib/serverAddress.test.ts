@@ -12,6 +12,9 @@ const served = (body = 'ok', status = 200) => new Response(body, { status, heade
 describe('R-55: the block-proof server address (admin app)', () => {
   it('our own site uses our address; anywhere else keeps the direct one', () => {
     expect(serverBase('forgeai.aakashpahuja.in', 'https://forgeai.aakashpahuja.in', DIRECT)).toBe(PROXY);
+    // MettleUp (R-105): the new address uses its own /sb too.
+    expect(serverBase('app.mettleup.fit', 'https://app.mettleup.fit', DIRECT)).toBe('https://app.mettleup.fit/sb');
+    expect(serverBase('mettleup.fit', 'https://mettleup.fit', DIRECT)).toBe(DIRECT);
     expect(serverBase('localhost', 'http://localhost:4181', DIRECT)).toBe(DIRECT);
     expect(serverBase(null, null, DIRECT)).toBe(DIRECT);
   });

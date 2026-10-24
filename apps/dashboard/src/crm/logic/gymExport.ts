@@ -3,7 +3,7 @@
  * notice and the gym agreement promise a gym can take everything with it. One Excel file, one sheet
  * per kind of record, with plain column names, money in rupees and every member's name next to their
  * rows, so it opens in Excel or Google Sheets and moves to any other software. Plus the full copy as
- * JSON (exactly what ForgeAI holds) for a move that wants every field. PURE except `downloadGymData`.
+ * JSON (exactly what MettleUp holds) for a move that wants every field. PURE except `downloadGymData`.
  */
 import type { CrmSnapshot } from '../data/adapter';
 

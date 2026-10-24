@@ -24,7 +24,7 @@ test('J38 automatic reminders: the owner switches them and sets the days; member
 
   // ---- The common ones start on; the touchy ones off.
   const main = page.getByRole('main');
-  await expect(main).toContainText('Members with the ForgeAI app get these on their phone at 9:30 am, never more than one a day.');
+  await expect(main).toContainText('Members with the MettleUp app get these on their phone at 9:30 am, never more than one a day.');
   await expect(main).toContainText('6 of 11 on · the usual ones');
   for (const on of ['Plan ends soon', 'Plan ends today', 'Plan ended', 'Birthday wish', 'Welcome', 'Workout offer: days added']) {
     await expect(row(page, on).getByRole('switch')).toBeChecked();
@@ -50,7 +50,7 @@ test('J38 automatic reminders: the owner switches them and sets the days; member
   await row(page, 'Birthday wish').getByRole('switch').tap();
   await expect(main).toContainText('6 of 11 on');
   await page.getByRole('button', { name: 'Save changes' }).tap();
-  await expect(page.getByText("Saved. Members' phones pick this up the next time they open ForgeAI.")).toBeVisible();
+  await expect(page.getByText("Saved. Members' phones pick this up the next time they open MettleUp.")).toBeVisible();
 
   const saved = server.log.filter((c) => c.fn === 'owner_save_auto_reminders');
   expect(saved).toHaveLength(1);
@@ -102,7 +102,7 @@ test('J38c a server before 0029: Automatic reminders says it is not switched on'
   await startOnlineGym(page);
   await openReminders(page);
   await expect(page.getByText('Automatic reminders are not switched on for your gym yet.')).toBeVisible();
-  await expect(page.getByRole('main')).toContainText('Until then, members with the ForgeAI app get the usual ones');
+  await expect(page.getByRole('main')).toContainText('Until then, members with the MettleUp app get the usual ones');
   await expectFitsPhone(page, 'on an old server');
   expect(server.log.some((c) => c.fn === 'owner_save_auto_reminders')).toBe(false);
 });

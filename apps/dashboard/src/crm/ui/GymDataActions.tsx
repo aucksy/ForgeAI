@@ -2,8 +2,8 @@
  * Settings → Your data, the owner's two "leaving" actions (launch plan D8, 21 Oct 2026):
  *  - Download all your gym's data: one Excel file (a sheet per kind of record) + the full JSON copy
  *    (logic/gymExport.ts). Works for every gym, online or in this browser only.
- *  - Delete our gym from ForgeAI (online gyms): sends a delete request to ForgeAI's box. The deletion
- *    itself is done by ForgeAI within 30 days after calling the gym back (docs/launch/GYM-DELETE.md),
+ *  - Delete our gym from MettleUp (online gyms): sends a delete request to MettleUp's box. The deletion
+ *    itself is done by MettleUp within 30 days after calling the gym back (docs/launch/GYM-DELETE.md),
  *    as the privacy notice says; nothing is deleted from this button.
  */
 import { useState } from 'react';
@@ -16,8 +16,8 @@ import { downloadTextFile } from './download';
 import { Button, Sheet, color, font, space } from './kit';
 
 export const DELETE_WORDS = {
-  ask: 'Delete our gym from ForgeAI',
-  title: 'Delete your gym from ForgeAI?',
+  ask: 'Delete our gym from MettleUp',
+  title: 'Delete your gym from MettleUp?',
   body:
     'Download your data first. Then we delete every member, payment, check-in and shop order of this gym from our server within 30 days, and call you on the gym’s number to confirm before we do. This cannot be undone.',
   send: 'Send delete request',

@@ -1,7 +1,7 @@
 /**
  * Workout plans from the gym or trainer (18 Oct 2026, OWNER-INBOX #6). PURE.
  *
- * A plan is routines the gym sends to members; the member's ForgeAI app shows them "From <gym> ·
+ * A plan is routines the gym sends to members; the member's MettleUp app shows them "From <gym> ·
  * <trainer>" after the member has checked in at the gym once. The routines are the member app's
  * routine-file shape (apps/mobile/src/tracker/plans/routineFile.ts), so the phone imports them with
  * the code it already has.

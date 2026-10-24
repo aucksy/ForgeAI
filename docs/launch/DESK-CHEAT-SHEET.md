@@ -1,4 +1,4 @@
-# ForgeAI desk cheat sheet — one page, keep at the desk (launch plan G2)
+# MettleUp desk cheat sheet — one page, keep at the desk (launch plan G2)
 
 Bottom menu: **Today · Members · Money · Visits · More**. Print in A4, both languages.
 

@@ -1,4 +1,4 @@
-// node --test apps/hq/test  (CI: ci.yml "HQ Worker and page tests"). ForgeAI HQ page words, #51.
+// node --test apps/hq/test  (CI: ci.yml "HQ Worker and page tests"). MettleUp HQ page words, #51.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
@@ -115,7 +115,7 @@ test('test and demo gyms are told apart from real ones', async () => {
   assert.equal(testKind({ name: 'QA Check-in Gym', ownerPhone: '9876500001', staff: 1 }), 'test');
   assert.equal(testKind({ name: 'My Gym', ownerPhone: '9876500042', staff: 1 }), 'test');
   assert.equal(testKind({ name: 'T29 Gym', staff: 0 }), 'test');
-  assert.equal(testKind({ name: 'ForgeAI Test Gym', staff: 0 }), 'test');
+  assert.equal(testKind({ name: 'MettleUp Test Gym', staff: 0 }), 'test');
   assert.equal(testKind({ name: 'Iron Temple Fitness', staff: 0 }), 'demo');
   // A real gym that happens to share the sample name, with people signing in, stays visible.
   assert.equal(testKind({ name: 'Iron Temple Fitness', staff: 2, ownerPhone: '9829012345' }), '');

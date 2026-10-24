@@ -123,6 +123,14 @@ interface CrmContextValue {
    * The screens mark waiting records and the banner shows the rest (ui/offline.tsx).
    */
   desk: DeskState | null;
+  /** A money sheet opened: this device gets its offline receipt series if it has none (never throws). */
+  prepareOffline: () => void;
+  /**
+   * The waiting list's actions (banner, Settings): try again, a refused receipt saved as cancelled or
+   * removed (owner), sent with today's date (owner, a clock that was ahead), the device emptied (owner).
+   * Each one re-reads the screens; an error is thrown for the caller to show.
+   */
+  deskAction: (kind: 'cancelled' | 'remove' | 'today' | 'clear', id?: string) => Promise<void>;
 }
 
 const CrmContext = createContext<CrmContextValue | null>(null);
@@ -146,6 +154,12 @@ export type CrmBackend = CrmData & {
   deskState?: () => DeskState;
   sendAgain?: () => Promise<boolean>;
   dismissNote?: (id: string) => Promise<void>;
+  /** Review fixes (24 Oct 2026): the series claimed when a money sheet opens; the owner's actions. */
+  prepareOfflinePayments?: () => Promise<void>;
+  saveHeldAsCancelled?: (id: string) => Promise<void>;
+  removeHeld?: (id: string) => Promise<void>;
+  sendWithToday?: (id: string) => Promise<boolean>;
+  clearDevice?: () => Promise<void>;
 };
 
 /** How long "All sent" stays on the bar after the last waiting thing went. */
@@ -208,7 +222,8 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
     () => ({
       offline: desk?.offline ?? false,
       waitingIds: new Set(desk?.waitingIds ?? []),
-      waiting: desk?.waiting ?? 0,
+      // Not yet sent and not refused (a refused one waits for the owner, filed under this gym).
+      waiting: desk ? desk.waiting - desk.held.length : 0,
       canPayOffline: desk?.canPayOffline ?? false,
     }),
     [desk],
@@ -217,6 +232,13 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   const [error, setError] = useState<string | null>(null);
   // UAT U-A13: the gym saved in this browser can't be read (its own screen, below).
   const [damaged, setDamaged] = useState<DamagedDataError | null>(null);
+
+  // A money sheet opened: the offline receipt series, once (stable, so a sheet's effect runs once).
+  const prepareOffline = useCallback(() => {
+    void (db.prepareOfflinePayments?.() ?? Promise.resolve())
+      .catch((e: unknown) => console.warn('[offline desk] receipt series', e))
+      .finally(syncOffline);
+  }, [db, syncOffline]);
 
   const reload = useCallback(async () => {
     try {
@@ -409,8 +431,20 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
         await reload();
       },
       desk,
+      prepareOffline,
+      deskAction: async (kind, id) => {
+        try {
+          if (kind === 'cancelled' && id) await db.saveHeldAsCancelled?.(id);
+          else if (kind === 'remove' && id) await db.removeHeld?.(id);
+          else if (kind === 'today' && id) await db.sendWithToday?.(id);
+          else if (kind === 'clear') await db.clearDevice?.();
+        } finally {
+          syncOffline();
+          await reload();
+        }
+      },
     };
-  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, refreshNow, mutate, db, desk]);
+  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, refreshNow, mutate, db, desk, syncOffline, prepareOffline]);
 
   const sendAgain = useCallback(async () => {
     try {
@@ -461,6 +495,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
             names={(id) => value.snapshot.members.find((m) => m.id === id)?.fullName ?? 'A member'}
             onSendAgain={() => void sendAgain()}
             onDismiss={dismissNote}
+            onAction={value.deskAction}
           />
         )}
         {children}

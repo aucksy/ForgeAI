@@ -15,8 +15,8 @@ import type { MemberDraft } from '../../src/crm/types';
 
 describe('check-in link', () => {
   it('is the gym code under /c/ on the panel site, in capitals', () => {
-    expect(checkInLink('rams01')).toBe('https://forgeai.aakashpahuja.in/c/RAMS01');
-    expect(checkInLink(' FORGE1 ')).toBe('https://forgeai.aakashpahuja.in/c/FORGE1');
+    expect(checkInLink('rams01')).toBe('https://app.mettleup.fit/c/RAMS01');
+    expect(checkInLink(' FORGE1 ')).toBe('https://app.mettleup.fit/c/FORGE1');
   });
 
   it('is not the invite link (a different screen opens)', () => {

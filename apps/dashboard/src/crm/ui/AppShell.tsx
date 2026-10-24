@@ -93,7 +93,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
         <BranchSwitch gymName={gymName} />
         <div style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.6 }}>
-          POWERED BY FORGEAI
+          POWERED BY METTLEUP
         </div>
         <div style={{ marginTop: space.md }}>
           <ThemeToggle compact />

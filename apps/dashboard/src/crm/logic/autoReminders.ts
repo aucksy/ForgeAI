@@ -76,7 +76,7 @@ export const REMINDER_CASES: readonly ReminderCaseInfo[] = [
     key: 'welcome',
     title: 'Welcome',
     when: 'The first morning after a new member joins.',
-    example: "Welcome to {gym}, Asha! Your plan and the gym's news are in ForgeAI.",
+    example: "Welcome to {gym}, Asha! Your plan and the gym's news are in MettleUp.",
     defaultOn: true,
   },
   {

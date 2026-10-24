@@ -1,4 +1,4 @@
-// #38 (24 Oct 2026): the ForgeAI terms and the data agreement, accepted online.
+// #38 (24 Oct 2026): the MettleUp terms and the data agreement, accepted online.
 //
 // J70: "Create my gym" needs the tick box; the version ticked is kept with the gym, and Settings ->
 //      Your data says when and which version.
@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
 
 import { SIGN_IN_CODE, expectFitsPhone, open, openApp, typeSignIn } from './support.mjs';
 
-const BOX = /I agree to the ForgeAI terms and the data agreement/;
+const BOX = /I agree to the MettleUp terms and the data agreement/;
 
 test('J70 Create my gym: the terms box must be ticked, and the acceptance is kept', async ({ page }) => {
   const server = await openApp(page);
@@ -111,7 +111,7 @@ test('J74 the data agreement link opens its own page with the version the box re
   page.on('pageerror', (e) => errors.push(String(e)));
   const res = await page.goto('/data-agreement.html');
   expect(res?.status()).toBe(200);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('ForgeAI data agreement for gyms');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('MettleUp data agreement for gyms');
   await expect(page.locator('main')).toContainText('Version 2026-10-24.');
   await expect(page.locator('#root')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Privacy notice' })).toHaveAttribute('href', '/privacy.html');

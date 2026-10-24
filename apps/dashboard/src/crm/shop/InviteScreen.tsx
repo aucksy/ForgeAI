@@ -120,7 +120,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {link}
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {`A member taps it on their phone. The ForgeAI app opens on “Join ${gymName}”. One more tap and they are in. If they don’t have the app, the link shows how to get it, and your gym code ${joinCode}.`}
+          {`A member taps it on their phone. The MettleUp app opens on “Join ${gymName}”. One more tap and they are in. If they don’t have the app, the link shows how to get it, and your gym code ${joinCode}.`}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
           <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>Send on WhatsApp</Button>
@@ -212,8 +212,8 @@ export interface PosterWords {
 }
 
 export const POSTER: PosterWords = {
-  lead: 'Join our gym in the ForgeAI app',
-  steps: ['Scan with your phone camera', 'Get the ForgeAI app', 'Tap Join'],
+  lead: 'Join our gym in the MettleUp app',
+  steps: ['Scan with your phone camera', 'Get the MettleUp app', 'Tap Join'],
   codeLine: (code: string) => `Or type gym code ${code} in the app's Shop tab`,
   file: 'invite-poster',
 };

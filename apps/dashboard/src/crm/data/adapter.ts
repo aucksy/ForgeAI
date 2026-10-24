@@ -233,7 +233,7 @@ export class FutureSchemaError extends Error {
     public readonly supported: number,
   ) {
     super(
-      (`This gym was saved by a newer version of ForgeAI (v${found}; this app reads v${supported}). ` +
+      (`This gym was saved by a newer version of MettleUp (v${found}; this app reads v${supported}). ` +
           'Reload the page to get the new version. Your data is safe.'),
     );
     this.name = 'FutureSchemaError';

@@ -49,16 +49,19 @@ import {
 } from './adapter';
 import { authErrorCode, authErrorWords, RECEIPT_REFUSALS, SUSPENDED_WORDS } from '../auth/signin';
 import type { Role } from '../logic/receiptRules';
-import type { DateISO } from '../logic/dates';
+import { todayISO, type DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
 import { isNetworkFailure, keyId, rowsToRecords, type SavedCopyStore, type SavedGym } from './savedCopy';
 import {
   deskClaimOwner,
   deskClaimRecord,
   isDeskClaim,
+  isMoneyPush,
+  moneyMemberId,
   nextDeskNo,
   overlay,
   replayRecords,
+  unconfirmedReceiptIds,
   waitingSummary,
   type DeskSeries,
   type OutboxDoc,
@@ -67,8 +70,9 @@ import {
   type OutboxNote,
   type OutboxStore,
   type Replay,
+  type TakenBy,
 } from './outbox';
-import { financialYear, highestOfflineSeq, offlineReceiptNo } from '../logic/receipts';
+import { financialYear, highestOfflineSeq, nextReceiptNo, offlineReceiptNo } from '../logic/receipts';
 
 export type RecordKind =
   | 'gym'
@@ -302,6 +306,11 @@ export interface CloudCrmOptions {
    * one nothing can be done offline (each save says it waits for the internet).
    */
   outbox?: OutboxStore;
+  /**
+   * Step 3 (review SHOULD 6): the person signed in on this device (null: an old owner key). Money
+   * kept for later remembers who took it, and only that person, or an owner, sends it.
+   */
+  person?: { staffId: string; name: string; role: Role } | null;
 }
 
 /** Saving something that cannot wait offline (everything but check-ins, payments, plans sold and members). */
@@ -312,13 +321,30 @@ export const OFFLINE_SAVE_WORDS =
 export const NO_DESK_SERIES_WORDS =
   "Connect this device to the internet once so it can take payments offline. Until then, take this payment when the internet is back.";
 
-/** Step 3: the same sheet pressed again while its first try is still on its way to the server. */
+/** Step 3: a payment for this member is not confirmed by the server yet (the same sheet, or an earlier one). */
 export const STILL_SENDING_WORDS =
-  "This payment is still being sent. When the internet is back, check the member's page before you take it again.";
+  "A payment for this member is still being sent. When the internet is back, check the member's page before you take money again.";
+
+/**
+ * Review MUST 1: an online payment or sale got no answer. It may already be on the server, so it is
+ * kept on this device and sent again with the same push id (never saved twice), and shows on the
+ * member's page as waiting. Taking the money again would make two receipts.
+ */
+export const STUCK_WORDS =
+  "The internet dropped while saving, so it may not have gone through yet. It is kept on this device and sent when the internet is back. Don't take this payment again: it shows on the member's page.";
 
 /** Step 3: IndexedDB refused to keep it (a full or blocked browser). Nothing was taken. */
 export const NOT_KEPT_WORDS =
   "Nothing was saved: this device is out of space. Free up space, or try again when the internet is back.";
+
+/** Review nit: the server says the date is later than its today (this device's clock is ahead). */
+export const CLOCK_AHEAD_WORDS =
+  "Not sent yet: its date is later than today on the internet, so this device's clock may be wrong. It goes by itself when that day comes, or an owner can send it with today's date.";
+
+/** Review SHOULD 6: money another person took waits for them (or an owner) to send it. */
+export function waitForTakerWords(name: string): string {
+  return `Waiting for ${name} or an owner to sign in on this device and send it, so the receipt shows who took the money.`;
+}
 
 /** What the offline bar says: since when, how old the copy on screen is, how much is waiting. */
 export interface OfflineState {
@@ -326,6 +352,18 @@ export interface OfflineState {
   savedAt: number;
   /** Items made offline, not yet on the server. */
   queued: number;
+}
+
+/** Step 3: one refused item, as the banner shows it. */
+export interface HeldItem {
+  id: string;
+  kind: OutboxKind;
+  memberId: string;
+  words: string;
+  /** It carries a receipt: the owner may save it as a cancelled receipt (the series stays unbroken). */
+  hasReceipt: boolean;
+  /** This member's later items wait with it (a refused new member's plan and payment). */
+  withIt: number;
 }
 
 /** Step 3: everything the banner and the screens need about this desk's waiting list. */
@@ -337,12 +375,16 @@ export interface DeskState {
   savedAt: number;
   /** Items not yet on the server, the refused ones included. */
   waiting: number;
-  /** Refused by the server: kept on this device, with plain words. */
-  held: { id: string; kind: OutboxKind; memberId: string; words: string }[];
+  /** Refused by the server: kept on this device, with plain words (never in the totals). */
+  held: HeldItem[];
+  /** Not refused, not sent yet, with the reason (tried again on every look). */
+  waits: { id: string; memberId: string; words: string; clockAhead: boolean }[];
   /** One-line notes from sending (a duplicate mobile, another device's change). */
   notes: OutboxNote[];
   /** Ids of the records still waiting (members, plans, receipts, check-ins). */
   waitingIds: string[];
+  /** Receipts from an online save that got no answer: the number is sure only once sent. */
+  unconfirmedIds: string[];
   payments: number;
   paidP: number;
   /** This device has its own receipt series, so it can take payments offline. */
@@ -350,10 +392,13 @@ export interface DeskState {
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
-// SUSPENDED (#51): ForgeAI paused the gym; sending the same save again cannot help.
+// SUSPENDED (#51): MettleUp paused the gym; sending the same save again cannot help.
 const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|SUSPENDED|${RECEIPT_REFUSALS.join('|')})($|[^A-Z_])`);
 
 const MAX_TRIES = 4;
+
+/** Review nit: a refused member or change (personal data) is kept at most this long on the device. */
+export const HELD_PERSONAL_DAYS = 30;
 
 /** Waits before sending the same push again after a failure (ms). */
 export const RESEND_WAITS = [1500, 4000];
@@ -417,6 +462,17 @@ function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
+/** Money records with the taker left for the server to keep as written (an owner sends another's). */
+function asWrittenBy(records: CrmRecord[], takenBy: TakenBy): CrmRecord[] {
+  return records.map((r) => {
+    if (r.k === 'payment' && r.d && typeof r.d === 'object') return { ...r, d: { ...(r.d as object), collectedBy: null, collectedByName: takenBy.name } };
+    if (r.k === 'membership' && r.d && typeof r.d === 'object') return { ...r, d: { ...(r.d as object), soldBy: null, soldByName: takenBy.name } };
+    return r;
+  });
+}
+
+const DAY_MS = 86_400_000;
+
 export class CloudCrmData implements CrmData {
   private rows: Rows = emptyRows();
   private gym: CloudGymRow | null = null;
@@ -434,6 +490,10 @@ export class CloudCrmData implements CrmData {
   private items: OutboxItem[] = [];
   private notes: OutboxNote[] = [];
   private desk: DeskSeries | null = null;
+  /** Review SHOULD 4: a series claimed while the outbox could not be written is kept here. */
+  private memDesk: DeskSeries | null = null;
+  /** Review SHOULD 4: the outbox could be read last time (no claims while it can't). */
+  private outboxReadable = true;
   private seqSeen: Record<string, number> = {};
 
   constructor(
@@ -469,14 +529,28 @@ export class CloudCrmData implements CrmData {
   /** Step 3: the whole picture for the banner and the "Waiting to send" marks. */
   deskState(): DeskState {
     const s = waitingSummary(this.items);
+    const heldMembers = new Set(this.items.filter((i) => i.held && i.kind === 'member').map((i) => i.memberId));
     return {
       offline: this.offlineSince !== null,
       since: this.offlineSince,
       savedAt: this.savedAt,
       waiting: s.waiting,
-      held: this.items.filter((i) => i.held).map((i) => ({ id: i.id, kind: i.kind, memberId: i.memberId, words: i.held ?? '' })),
+      held: this.items
+        .filter((i) => i.held)
+        .map((i) => ({
+          id: i.id,
+          kind: i.kind,
+          memberId: i.memberId,
+          words: i.held ?? '',
+          hasReceipt: i.records.some((r) => r.k === 'payment'),
+          withIt: heldMembers.has(i.memberId) && i.kind === 'member' ? this.items.filter((x) => !x.held && x.memberId === i.memberId).length : 0,
+        })),
+      waits: this.items
+        .filter((i) => !i.held && i.waitReason)
+        .map((i) => ({ id: i.id, memberId: i.memberId, words: i.waitReason ?? '', clockAhead: i.waitReason === CLOCK_AHEAD_WORDS })),
       notes: [...this.notes],
       waitingIds: [...s.ids],
+      unconfirmedIds: [...unconfirmedReceiptIds(this.items)],
       payments: s.payments,
       paidP: s.paidP,
       canPayOffline: this.desk !== null && Boolean(this.opts.outbox),
@@ -526,7 +600,7 @@ export class CloudCrmData implements CrmData {
   private applyDoc(doc: OutboxDoc): void {
     this.items = doc.items;
     this.notes = doc.notes;
-    this.desk = doc.desk;
+    this.desk = doc.desk ?? this.memDesk;
     this.seqSeen = doc.seq;
   }
 
@@ -537,20 +611,25 @@ export class CloudCrmData implements CrmData {
     if (!store || !g) return;
     try {
       this.applyDoc(await store.load(g));
+      this.outboxReadable = true;
     } catch (e) {
+      this.outboxReadable = false;
       console.warn('[offline desk] waiting list not read', e);
     }
   }
 
-  private async changeOutbox(change: (doc: OutboxDoc) => OutboxDoc | null): Promise<void> {
+  /** Change the waiting list; false when the device could not write it (it is logged). */
+  private async changeOutbox(change: (doc: OutboxDoc) => OutboxDoc | null): Promise<boolean> {
     const store = this.opts.outbox;
     const g = this.gymIdForOutbox();
-    if (!store || !g) return;
+    if (!store || !g) return false;
     try {
       this.applyDoc((await store.update(g, change)).doc);
+      return true;
     } catch (e) {
       // The item stays on the list: sent again later, which never saves twice (outbox.ts).
       console.warn('[offline desk] waiting list not saved', e);
+      return false;
     }
   }
 
@@ -581,25 +660,54 @@ export class CloudCrmData implements CrmData {
     }
   }
 
+  /** Money waits for the person who took it, or an owner (review SHOULD 6). The records to send, or null. */
+  private recordsForSender(item: OutboxItem, records: CrmRecord[]): CrmRecord[] | null {
+    const by = item.takenBy;
+    const me = this.opts.person;
+    if (!by || !me || by.staffId === me.staffId) return records;
+    // The server always puts the SENDER's name on a new receipt from the front desk (0019), so only
+    // an owner may send it, written as the taker's (an owner's save keeps a receipt as written).
+    return me.role === 'owner' ? asWrittenBy(records, by) : null;
+  }
+
   /**
    * Send one waiting item against the server's rows as they are now (outbox.ts, replayRecords). The
    * item's id is the push id, so a reply lost on the way is answered with the version it got (0011).
    */
   private async sendItem(item: OutboxItem): Promise<Replay> {
+    let triedAsIs = false;
     for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
-      const r = replayRecords(item, this.current(false));
+      // A push that got no answer goes first exactly as it was: the server answers its id with the
+      // version it got if it has it; STALE proves it never landed (then it is sent like an offline sale).
+      if (item.kind === 'push' && item.base !== undefined && !triedAsIs) {
+        triedAsIs = true;
+        const rs = this.recordsForSender(item, item.records);
+        if (!rs) return { records: [], wait: waitForTakerWords(item.takenBy?.name ?? 'the person who took it') } ;
+        try {
+          await this.api.push(this.key, item.base, rs, item.id);
+          await this.pullNow();
+          return { records: rs };
+        } catch (e) {
+          if (!isStale(e)) throw e;
+        }
+      }
+      const r = replayRecords(item, this.current(false), {
+        renumber: (p, server) => nextReceiptNo(server.payments, p.paidOn, server.gym.receiptPrefix),
+      });
       if (r.drop || r.hold || r.records.length === 0) return r;
+      const rs = this.recordsForSender(item, r.records);
+      if (!rs) return { records: [], wait: waitForTakerWords(item.takenBy?.name ?? 'the person who took it') } ;
       const base = this.version;
       try {
-        const v = await this.api.push(this.key, base, r.records, item.id);
+        const v = await this.api.push(this.key, base, rs, item.id);
         if (v === base + 1) {
           this.version = v;
-          this.adopt(r.records);
+          this.adopt(rs);
         } else {
           // Saved before (the same push id came back with its old version): read what is there.
           await this.pullNow();
         }
-        return r;
+        return { ...r, records: rs };
       } catch (e) {
         if (isStale(e)) {
           await this.pullNow();
@@ -612,17 +720,22 @@ export class CloudCrmData implements CrmData {
   }
 
   /**
-   * Step 3: send what this desk did offline, oldest first, each once. No internet again: stop, keep
-   * the rest. Refused by the server: kept, with the reason on screen (money is never dropped); only
-   * a check-in or change for a member who is gone is taken off (logged). True when anything was sent.
+   * Step 3: send what this desk did offline, oldest first, each once. No internet again, a busy or
+   * unknown failure (503, a login page on the wifi): stop, keep the rest for the next look. Refused by
+   * the server with one of its final codes: kept, with the reason in the banner (money is never
+   * dropped). A refused new member holds back that member's later items. True when anything was sent.
    */
   private async flushOutbox(includeHeld = false): Promise<boolean> {
     if (!this.opts.outbox || !this.gymIdForOutbox()) return false;
     await this.reloadOutbox();
+    await this.forgetOldHeld();
     let sent = false;
+    const heldMembers = new Set(this.items.filter((i) => i.held && i.kind === 'member').map((i) => i.memberId));
     for (const item of [...this.items]) {
       if (this.offlineSince !== null) break;
       if (item.held && !includeHeld) continue;
+      // Review nit: a refused new member's plan and payment wait with it (never sent for nobody).
+      if (!item.held && item.kind !== 'member' && heldMembers.has(item.memberId)) continue;
       let r: Replay;
       try {
         r = await this.sendItem(item);
@@ -632,20 +745,30 @@ export class CloudCrmData implements CrmData {
           break;
         }
         this.signedOutCheck(e);
-        if (e instanceof BusyError || isSuspended(e) || /\bBAD_KEY\b/.test(messageOf(e))) {
-          // #51 paused, signed out, or a busy gym: it really happened; it waits for the next try.
+        if (authErrorCode(e) === 'BAD_DATE') {
+          // The desk's clock was ahead: not refused, it goes when that day comes (or an owner sends it today).
+          await this.markItem(item.id, { waitReason: CLOCK_AHEAD_WORDS });
+          continue;
+        }
+        const msg = messageOf(e);
+        if (e instanceof BusyError || isSuspended(e) || /\bBAD_KEY\b/.test(msg) || !FINAL_REFUSAL.test(msg)) {
+          // #51 paused, signed out, busy, or not a refusal at all (503, 429, a wifi login page):
+          // it really happened; it waits for the next look.
           console.warn('[offline desk] not sent now; kept to send later', item.kind, item.id, e);
           break;
         }
         console.warn('[offline desk] refused when sent; kept on this device', item.kind, item.id, e);
-        const words = heldWords(e);
-        await this.changeOutbox((doc) => ({ ...doc, items: doc.items.map((i) => (i.id === item.id ? { ...i, held: words } : i)) }));
+        await this.markItem(item.id, { held: heldWords(e), heldAt: this.now(), waitReason: null });
+        if (item.kind === 'member') heldMembers.add(item.memberId);
+        continue;
+      }
+      if (r.wait) {
+        await this.markItem(item.id, { waitReason: r.wait });
         continue;
       }
       if (r.hold) {
         console.warn('[offline desk] cannot be sent yet; kept on this device', item.kind, item.id, r.hold);
-        const words = `Not sent: ${r.hold} It is kept on this device. Ask the owner to check this member.`;
-        await this.changeOutbox((doc) => ({ ...doc, items: doc.items.map((i) => (i.id === item.id ? { ...i, held: words } : i)) }));
+        await this.markItem(item.id, { held: `Not sent: ${r.hold} It is kept on this device. Ask the owner to check this member.`, heldAt: this.now(), waitReason: null });
         continue;
       }
       if (r.drop) console.warn('[offline desk] could not be sent; taken off the list', item.kind, item.id, r.drop);
@@ -660,13 +783,31 @@ export class CloudCrmData implements CrmData {
     return sent;
   }
 
+  private markItem(id: string, patch: Partial<OutboxItem>): Promise<boolean> {
+    return this.changeOutbox((doc) => ({ ...doc, items: doc.items.map((i) => (i.id === id ? { ...i, ...patch } : i)) }));
+  }
+
+  /** Review nit: a refused member or member change (personal details) leaves the device after 30 days. */
+  private async forgetOldHeld(): Promise<void> {
+    const cutoff = this.now() - HELD_PERSONAL_DAYS * DAY_MS;
+    const old = this.items.filter((i) => i.held && (i.kind === 'member' || i.kind === 'memberEdit' || i.kind === 'checkIn') && (i.heldAt ?? i.at) < cutoff);
+    if (old.length === 0) return;
+    console.warn('[offline desk] refused items older than 30 days removed from this device', old.map((i) => i.id));
+    const ids = new Set(old.map((i) => i.id));
+    await this.changeOutbox((doc) => ({ ...doc, items: doc.items.filter((i) => !ids.has(i.id)) }));
+  }
+
   /**
    * Step 3: this device's own receipt series (D1, D2 ...), claimed once while online (outbox.ts,
-   * "the desk's receipt series number"). Kept in the waiting list's document, which outlives sign-out.
+   * "the desk's receipt series number"). Review SHOULD 5: only when a money sheet first opens on this
+   * device, so a device that never takes money never uses up a number. Review SHOULD 4: never while
+   * the waiting list cannot be read, and a claim the device could not write is kept in memory.
    */
   private async ensureDesk(): Promise<void> {
     const g = this.gymIdForOutbox();
     if (!this.opts.outbox || !g || this.offlineSince !== null) return;
+    await this.reloadOutbox();
+    if (!this.outboxReadable) return;
     const mine = this.desk;
     if (mine && deskClaimOwner(this.rows.enquiry, mine.no) === mine.deviceId) return;
     const deviceId = mine?.deviceId ?? newPushId();
@@ -688,9 +829,16 @@ export class CloudCrmData implements CrmData {
         throw e;
       }
       const desk: DeskSeries = { no, deviceId, claimedAt: at };
+      this.memDesk = desk;
+      this.desk = desk;
       await this.changeOutbox((doc) => ({ ...doc, desk }));
       return;
     }
+  }
+
+  /** Review SHOULD 5: a money sheet opened: make sure this device can number receipts offline later. */
+  prepareOfflinePayments(): Promise<void> {
+    return this.serial(() => this.quietly('receipt series not set up yet', () => this.ensureDesk()));
   }
 
   /** Bring this copy up to date. True when anything changed. Runs inside the queue. */
@@ -742,15 +890,12 @@ export class CloudCrmData implements CrmData {
       const pulled = await this.pullNow();
       await this.reloadOutbox();
       let sent = false;
-      if (this.offlineSince === null) {
-        sent = await this.flushOutbox();
-        await this.quietly('receipt series not set up yet', () => this.ensureDesk());
-      }
+      if (this.offlineSince === null) sent = await this.flushOutbox();
       return pulled || pendingSent || sent || this.items.length !== before;
     });
   }
 
-  /** Step 3: "Try again" on the banner: send the refused ones once more (the others go anyway). */
+  /** Step 3: "Try sending again" on the banner: send the refused ones once more (the others go anyway). */
   async sendAgain(): Promise<boolean> {
     return this.serial(async () => {
       if (this.offlineSince !== null) {
@@ -767,7 +912,83 @@ export class CloudCrmData implements CrmData {
 
   /** Step 3: the desk read a note ("OK"). */
   dismissNote(id: string): Promise<void> {
-    return this.serial(() => this.changeOutbox((doc) => (doc.notes.some((n) => n.id === id) ? { ...doc, notes: doc.notes.filter((n) => n.id !== id) } : null)));
+    return this.serial(async () => {
+      await this.changeOutbox((doc) => (doc.notes.some((n) => n.id === id) ? { ...doc, notes: doc.notes.filter((n) => n.id !== id) } : null));
+    });
+  }
+
+  /**
+   * Review SHOULD 3, owner only: a refused receipt is saved as a CANCELLED receipt with the reason
+   * (the server takes a receipt saved already cancelled without the "more than due" check, 0021), so
+   * the series stays unbroken and nothing counts as money taken. A refused plan sold with it is saved
+   * cancelled too. Refused again (a bad date, say): it stays, with the new words.
+   */
+  saveHeldAsCancelled(id: string): Promise<void> {
+    return this.serial(async () => {
+      await this.reloadOutbox();
+      const item = this.items.find((i) => i.id === id && i.held);
+      if (!item) return;
+      if (this.offlineSince !== null) await this.pullNow();
+      const server = this.current(false);
+      const reason = 'Not sent from the desk: refused by the server';
+      const records: CrmRecord[] = [];
+      for (const r of item.records) {
+        if (r.k === 'membership' && !server.memberships.some((m) => m.id === r.id)) {
+          const d = r.d as Membership;
+          records.push({ ...r, d: { ...d, cancelled: true, notes: d.notes ? `${d.notes}\nCancelled: ${reason}` : `Cancelled: ${reason}` } });
+        } else if (r.k === 'payment' && !server.payments.some((p) => p.id === r.id)) {
+          records.push({ ...r, d: { ...(r.d as Payment), voided: true, voidReason: reason } });
+        }
+      }
+      if (records.length > 0) {
+        try {
+          this.version = await this.pushOnce(records, { keepIfStuck: false });
+          this.adopt(records);
+        } catch (e) {
+          if (isStale(e)) {
+            await this.pullNow();
+            throw new Error('Someone else saved at the same moment. Please try again.');
+          }
+          await this.markItem(id, { held: heldWords(e), heldAt: this.now() });
+          throw e;
+        }
+      }
+      await this.changeOutbox((doc) => ({ ...doc, items: doc.items.filter((i) => i.id !== id) }));
+    });
+  }
+
+  /** Review SHOULD 3, owner only, after a confirm: take a refused item off this device for good. */
+  removeHeld(id: string): Promise<void> {
+    return this.serial(async () => {
+      await this.reloadOutbox();
+      if (!this.items.some((i) => i.id === id && i.held)) return;
+      console.warn('[offline desk] a refused item was removed from this device by the owner', id);
+      await this.changeOutbox((doc) => ({ ...doc, items: doc.items.filter((i) => i.id !== id) }));
+    });
+  }
+
+  /** Review nit, owner only: the desk's clock was ahead: send it now with today's date (the number stays). */
+  sendWithToday(id: string): Promise<boolean> {
+    return this.serial(async () => {
+      await this.reloadOutbox();
+      const today = (this.opts.today ?? todayISO)();
+      const item = this.items.find((i) => i.id === id);
+      if (!item) return false;
+      const records = item.records.map((r) => (r.k === 'payment' && r.d ? { ...r, d: { ...(r.d as Payment), paidOn: today } } : r));
+      await this.markItem(id, { records, waitReason: null });
+      return this.flushOutbox();
+    });
+  }
+
+  /**
+   * Review nit, owner only: "Clear this device's saved data" (Settings -> Your data): the copy of the
+   * gym and everything waiting on this device for it. The screen asks first and lists what goes.
+   */
+  clearDevice(): Promise<void> {
+    return this.serial(async () => {
+      await this.opts.saved?.clear();
+      await this.changeOutbox((doc) => ({ ...doc, items: [], notes: [] }));
+    });
   }
 
   /**
@@ -797,8 +1018,13 @@ export class CloudCrmData implements CrmData {
     }
   }
 
-  /** Push, and on a failure that is not STALE send the very same push again before giving up. */
-  private async pushOnce(changes: CrmRecord[]): Promise<number> {
+  /**
+   * Push, and on a failure that is not STALE send the very same push again before giving up.
+   * Review MUST 1: a payment or sale that still got no answer is kept in the waiting list with this
+   * push id (it survives a reload, shows on the member's page, is sent exactly once) and the desk is
+   * told not to take the money again. Anything else stays the in-memory `pending` push, as before.
+   */
+  private async pushOnce(changes: CrmRecord[], { keepIfStuck = true }: { keepIfStuck?: boolean } = {}): Promise<number> {
     const pushId = newPushId();
     const base = this.version;
     let last: unknown = null;
@@ -818,6 +1044,15 @@ export class CloudCrmData implements CrmData {
         last = e;
       }
     }
+    if (keepIfStuck && isMoneyPush(changes) && this.opts.outbox && this.gymIdForOutbox()) {
+      const by = this.opts.person ? { staffId: this.opts.person.staffId, name: this.opts.person.name } : null;
+      const item: OutboxItem = { id: pushId, kind: 'push', at: this.now(), memberId: moneyMemberId(changes), records: changes, base, takenBy: by };
+      if (await this.changeOutbox((doc) => ({ ...doc, items: [...doc.items, item] }))) {
+        // The internet is most likely gone: the bar says so at once.
+        if (isOffline(last) && this.offlineSince === null) this.offlineSince = this.now();
+        throw new Error(STUCK_WORDS);
+      }
+    }
     this.pending = { base, changes, pushId };
     throw plainError(last);
   }
@@ -835,21 +1070,29 @@ export class CloudCrmData implements CrmData {
         await this.reloadOutbox();
         if (await this.takeOldCheckIns(kept)) this.keep();
         if (this.offlineSince === null) {
-          // Opened online: what this desk kept from before goes now, and the device gets its series.
+          // Opened online: what this desk kept from before goes now.
           await this.quietly('waiting list not sent at start', () => this.flushOutbox(true));
-          await this.quietly('receipt series not set up yet', () => this.ensureDesk());
         }
       }
       return clone(this.current());
     });
   }
 
+  /** A payment for this member whose online save got no answer, not yet confirmed (review MUST 1). */
+  private unconfirmedFor(memberId: string): boolean {
+    return this.items.some((i) => i.kind === 'push' && !i.held && i.memberId === memberId);
+  }
+
   /**
    * Run one action on a private copy with the browser store's own code, then send what changed.
    * `lateSaveIsSafe`: the action can never save the same thing twice by itself (adding members: a
    * mobile already in the gym is refused), so a late save going through first does not stop it.
+   * `moneyFor`: a payment or sale for this member (refused while one is still unconfirmed).
    */
-  private run<T>(op: (d: LocalCrmData) => Promise<T>, { lateSaveIsSafe = false }: { lateSaveIsSafe?: boolean } = {}): Promise<T> {
+  private run<T>(
+    op: (d: LocalCrmData) => Promise<T>,
+    { lateSaveIsSafe = false, moneyFor }: { lateSaveIsSafe?: boolean; moneyFor?: string } = {},
+  ): Promise<T> {
     return this.serial(async () => {
       if (!this.gym) await this.pullNow();
       // R-55: showing the kept copy: only once the server answers again can anything be saved.
@@ -863,9 +1106,15 @@ export class CloudCrmData implements CrmData {
       }
       // Step 3: what this desk did offline goes first, in order (an offline payment lands before a new one).
       if (this.items.some((i) => !i.held)) {
+        const hadPush = this.items.some((i) => i.kind === 'push' && !i.held);
         await this.flushOutbox();
         if (this.offlineSince !== null) throw new Error(OFFLINE_SAVE_WORDS);
+        // Same rule as the in-memory push below: a save that got no answer just landed. Stop.
+        if (hadPush && !this.items.some((i) => i.kind === 'push' && !i.held) && !lateSaveIsSafe) {
+          throw new Error('Your last change was saved just now (the internet came back). Check the screen before doing it again.');
+        }
       }
+      if (moneyFor && this.unconfirmedFor(moneyFor)) throw new Error(STILL_SENDING_WORDS);
       // A change that never got an answer goes first. If it lands now, STOP: the person is most
       // likely pressing the same button again because the first time "failed", and doing this
       // action too would save it twice. They see it on screen and decide.
@@ -910,22 +1159,25 @@ export class CloudCrmData implements CrmData {
     kind: OutboxKind,
     memberId: string,
     op: (d: LocalCrmData) => Promise<T>,
-    extra: { numbered?: boolean; requestId?: string | null; patch?: Partial<MemberDraft> } = {},
+    extra: { numbered?: boolean; money?: boolean; requestId?: string | null; patch?: Partial<MemberDraft> } = {},
   ): Promise<T> {
     return this.serial(async () => {
       const store = this.opts.outbox;
       const g = this.gymIdForOutbox();
       if (!store || !g || !this.gym) throw new Error(OFFLINE_SAVE_WORDS);
-      // The same press whose online save was cut off and is still waiting to be resent (`pending`).
+      await this.reloadOutbox();
+      // Review MUST 1: an online save of money for this member got no answer and may already be on
+      // the server; the same sheet pressed again (`pending`) the same.
+      if (extra.money && this.unconfirmedFor(memberId)) throw new Error(STILL_SENDING_WORDS);
       if (extra.requestId && this.pending?.changes.some((c) => (c.d as { requestId?: unknown } | null)?.requestId === extra.requestId)) {
         throw new Error(STILL_SENDING_WORDS);
       }
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
-        await this.reloadOutbox();
+        if (attempt > 0) await this.reloadOutbox();
         const desk = this.desk;
         if (extra.numbered && !desk) throw new Error(NO_DESK_SERIES_WORDS);
         const before = this.current();
-        const baseUpdatedAt = before.members.find((m) => m.id === memberId)?.updatedAt;
+        const baseMember = before.members.find((m) => m.id === memberId);
         const seen = this.seqSeen;
         let taken: { key: string; seq: number } | null = null;
         const receiptNo =
@@ -944,13 +1196,18 @@ export class CloudCrmData implements CrmData {
         const changes = diffSnapshots(before, await copy.load()).filter((c) => c.k !== 'gym');
         // Nothing new (the same check-in again, the same press again): what is on screen is the answer.
         if (changes.length === 0) return result;
+        const baseValues: Record<string, unknown> | undefined = extra.patch && baseMember
+          ? Object.fromEntries(Object.keys(extra.patch).map((k) => [k, (baseMember as unknown as Record<string, unknown>)[k] ?? null]))
+          : undefined;
+        const person = this.opts.person;
         const item: OutboxItem = {
           id: newPushId(),
           kind,
           at: this.now(),
           memberId: memberId || (changes.find((c) => c.k === 'member')?.id ?? ''),
           records: changes,
-          ...(extra.patch ? { patch: extra.patch, ...(baseUpdatedAt !== undefined ? { baseUpdatedAt } : {}) } : {}),
+          ...(extra.patch ? { patch: extra.patch, ...(baseMember ? { baseUpdatedAt: baseMember.updatedAt, baseValues } : {}) } : {}),
+          ...(extra.money ? { takenBy: person ? { staffId: person.staffId, name: person.name } : null } : {}),
         };
         const got = taken as { key: string; seq: number } | null;
         const expected = got ? (seen[got.key] ?? 0) : 0;
@@ -1027,7 +1284,7 @@ export class CloudCrmData implements CrmData {
     }
     return saved;
   }
-  /** Step 3: offline, a change to a member's details is kept here; sent later, newest change wins. */
+  /** Step 3: offline, a change to a member's details is kept here; sent later, merged field by field. */
   updateMember(id: string, patch: Parameters<CrmData['updateMember']>[1]) {
     return this.orKeep(
       () => this.run((d) => d.updateMember(id, patch)),
@@ -1078,8 +1335,13 @@ export class CloudCrmData implements CrmData {
   /** Step 3: offline, a plan sold (with its payment and this desk's receipt number) is kept here. */
   sellMembership(input: SellMembershipInput): Promise<SellMembershipResult> {
     return this.orKeep(
-      () => this.run((d) => d.sellMembership(input)),
-      () => this.keepOffline('sale', input.memberId, (d) => d.sellMembership(input), { numbered: input.collectNowP > 0, requestId: input.requestId }),
+      () => this.run((d) => d.sellMembership(input), { moneyFor: input.collectNowP > 0 ? input.memberId : undefined }),
+      () =>
+        this.keepOffline('sale', input.memberId, (d) => d.sellMembership(input), {
+          numbered: input.collectNowP > 0,
+          money: true,
+          requestId: input.requestId,
+        }),
     );
   }
   cancelMembership(id: string, reason: string | null) {
@@ -1091,8 +1353,8 @@ export class CloudCrmData implements CrmData {
   /** Step 3: offline, a payment is kept here with this desk's own receipt number, printed at once. */
   recordPayment(input: RecordPaymentInput) {
     return this.orKeep(
-      () => this.run((d) => d.recordPayment(input)),
-      () => this.keepOffline('payment', input.memberId, (d) => d.recordPayment(input), { numbered: true, requestId: input.requestId }),
+      () => this.run((d) => d.recordPayment(input), { moneyFor: input.memberId }),
+      () => this.keepOffline('payment', input.memberId, (d) => d.recordPayment(input), { numbered: true, money: true, requestId: input.requestId }),
     );
   }
   voidPayment(id: string, reason: string) {

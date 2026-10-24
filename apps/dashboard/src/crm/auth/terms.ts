@@ -1,5 +1,5 @@
 /**
- * The ForgeAI terms and the data agreement, accepted online (tracker #38, 24 Oct 2026; owner: "no
+ * The MettleUp terms and the data agreement, accepted online (tracker #38, 24 Oct 2026; owner: "no
  * physical signing; a scalable digital acceptance of the terms online for gyms anywhere").
  *
  * A new gym ticks the box at "Create my gym" (auth/SignInForms.tsx). An existing gym's owner is

@@ -32,7 +32,7 @@ async function expectAppVisit(page, name, testInfo, shotName) {
   });
   const row = registerRow(page, name);
   await expect(row.getByText('App', { exact: true })).toBeVisible();
-  await expect(row.getByTitle('Checked in with the ForgeAI app')).toBeVisible();
+  await expect(row.getByTitle('Checked in with the MettleUp app')).toBeVisible();
   await expect(tile(page, 'Check-ins today')).toContainText('1');
   await shot(page, testInfo, shotName);
   return row;

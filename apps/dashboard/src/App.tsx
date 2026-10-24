@@ -38,7 +38,7 @@ function Authed({ userId, email }: { userId: string; email: string }) {
   if (profile?.role === 'member') {
     return (
       <Centered>
-        <div>This is a member account. Please use the ForgeAI app — the dashboard is for gym owners.</div>
+        <div>This is a member account. Please use the MettleUp app — the dashboard is for gym owners.</div>
         <Button variant="ghost" onClick={signOut}>
           Sign out
         </Button>

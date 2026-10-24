@@ -1,4 +1,4 @@
-// ForgeAI HQ sign-in (#51). Only the system owner's Google account may open HQ, and the Worker
+// MettleUp HQ sign-in (#51). Only the system owner's Google account may open HQ, and the Worker
 // checks that itself on every request: it never trusts a header or a cookie it did not verify.
 //
 // Two ways in, chosen by the Worker variable AUTH_MODE:

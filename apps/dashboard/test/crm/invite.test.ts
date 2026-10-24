@@ -9,14 +9,14 @@ import { POSTER, qrModules } from '../../src/crm/shop/InviteScreen';
 
 describe('invite link', () => {
   it('is the gym code under /j/ on the panel site, in capitals', () => {
-    expect(inviteLink('rams01')).toBe('https://forgeai.aakashpahuja.in/j/RAMS01');
-    expect(inviteLink(' FORGE1 ')).toBe('https://forgeai.aakashpahuja.in/j/FORGE1');
+    expect(inviteLink('rams01')).toBe('https://app.mettleup.fit/j/RAMS01');
+    expect(inviteLink(' FORGE1 ')).toBe('https://app.mettleup.fit/j/FORGE1');
   });
 
   it('carries no name or number', () => {
     const msg = inviteMessage("RAM'S FITNESS CLUB", 'RAMS01', 'Rahul Sharma');
     const link = msg.split('\n').find((l) => l.startsWith('https://'));
-    expect(link).toBe('https://forgeai.aakashpahuja.in/j/RAMS01');
+    expect(link).toBe('https://app.mettleup.fit/j/RAMS01');
   });
 });
 
@@ -25,8 +25,8 @@ describe('the WhatsApp message', () => {
     const msg = inviteMessage("RAM'S FITNESS CLUB", 'RAMS01', '  Rahul  Sharma ');
     const lines = msg.split('\n');
     expect(lines[0]).toBe('Hi Rahul!');
-    expect(msg).toContain("Join RAM'S FITNESS CLUB in the ForgeAI app");
-    expect(lines).toContain('https://forgeai.aakashpahuja.in/j/RAMS01');
+    expect(msg).toContain("Join RAM'S FITNESS CLUB in the MettleUp app");
+    expect(lines).toContain('https://app.mettleup.fit/j/RAMS01');
     expect(lines[lines.length - 1]).toBe('Gym code: RAMS01');
   });
 
@@ -56,7 +56,7 @@ describe('wa.me links', () => {
 
 describe('QR poster', () => {
   it('encodes the link into a scannable grid', () => {
-    const q = qrModules('https://forgeai.aakashpahuja.in/j/RAMS01');
+    const q = qrModules('https://app.mettleup.fit/j/RAMS01');
     expect(q.size).toBeGreaterThanOrEqual(21);
     expect(q.path.length).toBeGreaterThan(100);
   });

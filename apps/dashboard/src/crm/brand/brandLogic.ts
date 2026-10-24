@@ -18,7 +18,7 @@ export const LOGO_BUCKET = 'gym-logos';
 export const MAX_LOGO_BYTES = 1024 * 1024;
 /** Logos are shrunk to at most this on the long side: the app shows them at 260 dp at most. */
 export const LOGO_EDGE = 512;
-/** ForgeAI's own accent: the picker's starting colour for a gym without one. */
+/** MettleUp's own accent: the picker's starting colour for a gym without one. */
 export const FORGE_ACCENT = '#FF7A3B';
 
 const LOGO_PREFIX = 'https://hdxzqbdiokjklnypfisq.supabase.co/storage/v1/object/public/gym-logos/';
@@ -36,7 +36,7 @@ export interface BrandDraft {
   heading: HeadingStyle;
 }
 
-/** The form as the gym's brand has it now (ForgeAI's ember to start from when it has none). */
+/** The form as the gym's brand has it now (MettleUp's ember to start from when it has none). */
 export function draftFromBrand(b: GymBrand | null | undefined): BrandDraft {
   return {
     accent: b?.accent ?? FORGE_ACCENT,
@@ -66,9 +66,9 @@ export function previewPalette(d: BrandDraft): BrandPalette | null {
 }
 
 /**
- * The colour to save: none while it is ForgeAI's own ember (the picker's starting colour). A gym
- * that only uploads a logo then keeps ForgeAI's hand-tuned colours on the phone, instead of
- * ForgeAI's orange pushed through the palette engine (D9). PURE.
+ * The colour to save: none while it is MettleUp's own ember (the picker's starting colour). A gym
+ * that only uploads a logo then keeps MettleUp's hand-tuned colours on the phone, instead of
+ * MettleUp's orange pushed through the palette engine (D9). PURE.
  */
 export function accentToSave(raw: string | null | undefined): string | null {
   const hex = normalizeHex(raw);
@@ -85,7 +85,7 @@ export function saveArgs(d: BrandDraft): { p_accent: string | null; p_bg: string
   };
 }
 
-/** "Use ForgeAI's look": everything empty. */
+/** "Use MettleUp's look": everything empty. */
 export const CLEAR_ARGS = { p_accent: null, p_bg: null, p_logo_url: null, p_heading: 'normal' as HeadingStyle };
 
 /** The draft differs from what is saved (Save is worth pressing). */
@@ -151,7 +151,7 @@ export function brandErrorWords(err: unknown): string {
   if (/\bBAD_LOGO\b/.test(msg)) return 'That logo link can’t be used. Upload the logo again from this screen.';
   if (/\bBAD_HEADING\b/.test(msg)) return 'Pick a heading style again.';
   if (/\bBUSY\b/.test(msg)) return 'Too many uploads in the last few minutes. Wait a little and try again.';
-  if (/could not find the function|PGRST202/i.test(msg)) return 'Branding isn’t ready for your gym yet. Message ForgeAI on WhatsApp to switch it on.';
+  if (/could not find the function|PGRST202/i.test(msg)) return 'Branding isn’t ready for your gym yet. Message MettleUp on WhatsApp to switch it on.';
   if (/failed to fetch|networkerror|network request failed|load failed|fetch failed|timed? ?out/i.test(msg)) {
     return 'Can’t reach the internet. Check the connection and try again.';
   }

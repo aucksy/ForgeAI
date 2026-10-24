@@ -3,6 +3,16 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
+      "package_name": "com.mettleup.app",
+      "sha256_cert_fingerprints": [
+        "B2:B0:C2:11:5C:A2:13:62:D4:EB:50:C0:70:97:5C:74:8E:2E:9B:37:93:DC:87:32:53:17:43:B5:2D:85:75:B2"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
       "package_name": "com.forgeai.app",
       "sha256_cert_fingerprints": [
         "B2:B0:C2:11:5C:A2:13:62:D4:EB:50:C0:70:97:5C:74:8E:2E:9B:37:93:DC:87:32:53:17:43:B5:2D:85:75:B2"

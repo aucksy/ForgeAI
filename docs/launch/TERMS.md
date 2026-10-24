@@ -1,14 +1,14 @@
-# ForgeAI terms of use — FINAL for the trial (launch plan D2)
+# MettleUp terms of use — FINAL for the trial (launch plan D2)
 
 Finalized 20 Oct 2026 by Claude after an independent check against the Indian Contract Act 1872
 and the Consumer Protection Act 2019. Blanks only the owner can fill: [OWNER NAME], [CONTACT EMAIL].
-The gym's own contract with ForgeAI is the separate pilot agreement (D3).
+The gym's own contract with MettleUp is the separate pilot agreement (D3).
 
 ---
 
-## A. For members (ForgeAI app)
+## A. For members (MettleUp app)
 
-These terms are between you and ForgeAI, run by [OWNER NAME], Jaipur, India. By tapping
+These terms are between you and MettleUp, run by [OWNER NAME], Jaipur, India. By tapping
 "I agree" you accept them. You must be **18 or over** to use the app.
 
 1. **What it is.** A workout log, plus links to your gym (plan, check-in, shop, your trainer's
@@ -35,9 +35,9 @@ These terms are between you and ForgeAI, run by [OWNER NAME], Jaipur, India. By 
 12. **If a part is invalid,** the rest still applies.
 13. **Contact:** [OWNER NAME], [CONTACT EMAIL].
 
-## B. For gym staff (ForgeAI admin app)
+## B. For gym staff (MettleUp admin app)
 
-These rules are part of your gym's agreement with ForgeAI.
+These rules are part of your gym's agreement with MettleUp.
 
 1. **Who may use it.** Only people the gym owner adds. Use only your own sign-in; never share a code.
 2. **Members' data is confidential.** Use it only for the gym's work (memberships, payments,

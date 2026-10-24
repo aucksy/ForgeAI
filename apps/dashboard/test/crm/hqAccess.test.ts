@@ -23,7 +23,7 @@ const grant = (extra: Partial<HqGrant> = {}): HqGrant => ({
   openedBy: 'gym',
   openedByName: 'Ravi',
   reasonKind: 'gym_asked',
-  reason: 'The gym asked ForgeAI support to look',
+  reason: 'The gym asked MettleUp support to look',
   startsAt: at('14:05'),
   endsAt: at('15:05'),
   endedEarly: false,
@@ -32,7 +32,7 @@ const grant = (extra: Partial<HqGrant> = {}): HqGrant => ({
   ...extra,
 });
 
-describe('ForgeAI access list (#51)', () => {
+describe('MettleUp access list (#51)', () => {
   it('reads the server answer field by field and drops anything odd', () => {
     const a = hqAccessFromRow({
       status: 'suspended',
@@ -47,19 +47,19 @@ describe('ForgeAI access list (#51)', () => {
     expect(hqAccessFromRow([])).toEqual({ status: null, grants: [], actions: [], trial: null });
   });
 
-  it('says what ForgeAI looked at, when, who opened it and why', () => {
+  it('says what MettleUp looked at, when, who opened it and why', () => {
     const g = grant({ looked: [{ at: at('14:07'), what: 'member', rows: 200 }, { at: at('14:35'), what: 'payment', rows: 30 }] });
-    expect(grantLine(g)).toBe('ForgeAI support viewed your members and receipts on 23 Oct, 14:07-14:35 (you opened it). Reason: you asked ForgeAI support to look.');
+    expect(grantLine(g)).toBe('MettleUp support viewed your members and receipts on 23 Oct, 14:07-14:35 (you opened it). Reason: you asked MettleUp support to look.');
     const hq = grant({ openedBy: 'hq', reasonKind: 'locked_out', reason: 'Owner lost his phone', looked: [{ at: at('14:10'), what: 'staff', rows: 3 }] });
-    expect(grantLine(hq)).toBe('ForgeAI support viewed your staff list on 23 Oct, 14:10-14:10 (ForgeAI opened it in an emergency). Reason: the owner was locked out: Owner lost his phone.');
+    expect(grantLine(hq)).toBe('MettleUp support viewed your staff list on 23 Oct, 14:10-14:10 (MettleUp opened it in an emergency). Reason: the owner was locked out: Owner lost his phone.');
     expect(grantLine(grant())).toBe('Support access was open 23 Oct, 14:05-15:05 (you opened it). Nothing was looked at.');
-    expect(grantLine(grant({ open: true }))).toBe('Support access is open until 15:05 (you opened it). Nothing looked at yet. Reason: you asked ForgeAI support to look.');
+    expect(grantLine(grant({ open: true }))).toBe('Support access is open until 15:05 (you opened it). Nothing looked at yet. Reason: you asked MettleUp support to look.');
     expect(lookedWords([{ at: '', what: 'member', rows: 1 }, { at: '', what: 'plan', rows: 1 }, { at: '', what: 'visit', rows: 1 }])).toBe('members, plans and check-ins');
   });
 
-  it('other ForgeAI actions in plain words', () => {
-    expect(actionLine({ at: at('10:00'), action: 'suspend_gym', reason: 'Unpaid for 3 months' })).toBe('23 Oct, 10:00: ForgeAI paused your gym. Reason: Unpaid for 3 months');
-    expect(actionLine({ at: at('10:00'), action: 'something_new', reason: null })).toBe('23 Oct, 10:00: ForgeAI made a change to your gym.');
+  it('other MettleUp actions in plain words', () => {
+    expect(actionLine({ at: at('10:00'), action: 'suspend_gym', reason: 'Unpaid for 3 months' })).toBe('23 Oct, 10:00: MettleUp paused your gym. Reason: Unpaid for 3 months');
+    expect(actionLine({ at: at('10:00'), action: 'something_new', reason: null })).toBe('23 Oct, 10:00: MettleUp made a change to your gym.');
   });
 
   it('finds the open window; knows a server without the feature', () => {

@@ -1,6 +1,7 @@
 /**
  * The block-proof server address (owner R-40, built R-55, 22 Oct 2026). On our own site the panel
- * reaches the gym server at https://forgeai.aakashpahuja.in/sb (deploy/panel/proxy.js passes it
+ * reaches the gym server at <our address>/sb (https://app.mettleup.fit/sb since MettleUp, R-105; the
+ * old https://forgeai.aakashpahuja.in/sb stays for good; deploy/panel/proxy.js passes it
  * on to Supabase), so a block of supabase.co in India (24 Feb - 3 Mar 2026) cannot stop the desk.
  * Anywhere else (a laptop's dev server, the journeys, a preview) it keeps Supabase's own address.
  *
@@ -8,14 +9,14 @@
  * the next ten minutes use the direct address. The failed request itself is NOT sent again: a
  * payment or a check-in must never be saved twice; the screen's own "try again" handles it.
  */
-export const OUR_HOST = 'forgeai.aakashpahuja.in';
+export const OUR_HOSTS: readonly string[] = ['app.mettleup.fit', 'forgeai.aakashpahuja.in'];
 export const PROXY_PATH = '/sb';
 /** How long the direct address is used after our address failed. */
 export const FALLBACK_MS = 10 * 60_000;
 
 /** The address the client is made with: ours on our site, else the direct one. PURE. */
 export function serverBase(hostname: string | null | undefined, origin: string | null | undefined, direct: string): string {
-  return hostname === OUR_HOST && origin ? `${origin}${PROXY_PATH}` : direct;
+  return hostname && OUR_HOSTS.includes(hostname) && origin ? `${origin}${PROXY_PATH}` : direct;
 }
 
 /**

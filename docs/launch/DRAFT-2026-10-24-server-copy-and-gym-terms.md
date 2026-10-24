@@ -38,24 +38,24 @@ IT (SPDI) Rules 2011 until then (body measurements may count as "physiological" 
 > - **Your workouts** (exercises, sets, weights, body weight, progress photos) stay **on your phone**.
 >   We do not receive them and your gym does not see them. Nothing about your body or health leaves
 >   your phone unless you turn on a feature that clearly asks you first.
->   If you join your gym's workout offer, ... ForgeAI keeps the dates for the gym.
+>   If you join your gym's workout offer, ... MettleUp keeps the dates for the gym.
 
 **With:**
 > - **Your workouts** (exercises, sets, weights, body weight, measurements, progress photos) stay
 >   **on your phone** unless you sign in with Google. Your gym does not see them either way.
-> - **If you sign in with Google**, ForgeAI saves a copy of your workouts on our server so you can
->   get them back on a new phone. **ForgeAI** is responsible for that copy, not your gym. Only you
+> - **If you sign in with Google**, MettleUp saves a copy of your workouts on our server so you can
+>   get them back on a new phone. **MettleUp** is responsible for that copy, not your gym. Only you
 >   can see it. See "Your saved workouts" below.
 > - If you join your gym's workout offer, the app sends your gym only the dates of the workouts
 >   that count, and only while you are in the offer. Your gym is responsible for its offers and
->   rewards; ForgeAI keeps the dates for the gym.
+>   rewards; MettleUp keeps the dates for the gym.
 
 ### Change 2. In the table "What we keep on our server", add these two rows after the "Feedback" row
 
 | Data | Why | How long |
 |---|---|---|
 | Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts" | So you can get them back on a new phone | Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days |
-| Only if you sign in with Google: your ForgeAI account (your Google email address, and the name and picture link Google shares) | So only you can open your saved workouts | Until you delete your account (one exception, explained below) |
+| Only if you sign in with Google: your MettleUp account (your Google email address, and the name and picture link Google shares) | So only you can open your saved workouts | Until you delete your account (one exception, explained below) |
 
 ### Change 3. Add a new section after "What we keep on our server, why, and for how long"
 
@@ -64,7 +64,7 @@ IT (SPDI) Rules 2011 until then (body measurements may count as "physiological" 
 > your workouts stay only on your phone.
 >
 > **What we save.** When you sign in (on the welcome screen, or in Settings → Backup → Keep your
-> workouts on ForgeAI), the app saves these on our server:
+> workouts on MettleUp), the app saves these on our server:
 > - your workouts, with each exercise and set (weight, reps, time);
 > - your routine folders and routines, and the exercises you made yourself;
 > - your rest-timer lengths and where your personal records start;
@@ -79,7 +79,7 @@ IT (SPDI) Rules 2011 until then (body measurements may count as "physiological" 
 > by signing in again. We do not sell it, show ads with it, or use it to profile you.
 >
 > **Who can see it.** Only you, when you are signed in. **Your gym cannot**: not the owner, the
-> trainers or the desk. Other members cannot. ForgeAI's people do not look at it, except when
+> trainers or the desk. Other members cannot. MettleUp's people do not look at it, except when
 > needed to keep the service running or fix a fault, or when the law makes us.
 > [LAWYER CHECK: is "except when needed to keep the service running" narrow enough?]
 >
@@ -94,7 +94,7 @@ IT (SPDI) Rules 2011 until then (body measurements may count as "physiological" 
 > saved stays until you delete your account.
 >
 > **Delete it** (Settings → Backup → **Delete my account**): this deletes everything saved on our
-> server and your ForgeAI account, at once. The workouts on your phone stay. One exception: if
+> server and your MettleUp account, at once. The workouts on your phone stay. One exception: if
 > you also use the same Google account to sign in for a gym (for example as a trainer or owner),
 > we delete your saved workouts but keep that sign-in, so the gym's app keeps working. Backup
 > copies at our provider expire within 7 more days. You can also ask us by email
@@ -139,7 +139,7 @@ a US company. The gym decides to do this; is the gym's own notice enough for its
 
 ### Change 7. In "Security and breaches", add at the end
 
-> For your saved workouts, ForgeAI is responsible, so we report a breach to the Data Protection
+> For your saved workouts, MettleUp is responsible, so we report a breach to the Data Protection
 > Board ourselves and tell you directly.
 
 ### Change 8. Replace the "Last updated" line
@@ -155,22 +155,22 @@ a US company. The gym decides to do this; is the gym's own notice enough for its
 ### बदलाव 1. "कौन किसके लिए ज़िम्मेदार है" में तीसरा बिंदु बदलें
 
 **हटाएँ:** "**आपके वर्कआउट** (एक्सरसाइज़, सेट, वज़न, शरीर का वज़न, फोटो) **आपके फोन पर ही** रहते हैं। ...
-ForgeAI जिम के लिए तारीख़ें रखता है।"
+MettleUp जिम के लिए तारीख़ें रखता है।"
 
 **इसकी जगह लिखें:**
 > - **आपके वर्कआउट** (एक्सरसाइज़, सेट, वज़न, शरीर का वज़न, नाप, फोटो) **आपके फोन पर ही** रहते हैं,
 >   जब तक आप Google से साइन इन नहीं करते। जिम इन्हें किसी भी हाल में नहीं देखता।
-> - **अगर आप Google से साइन इन करते हैं**, तो ForgeAI आपके वर्कआउट की एक कॉपी अपने सर्वर पर सेव
->   करता है, ताकि नए फोन पर वे वापस मिल सकें। इस कॉपी की ज़िम्मेदारी **ForgeAI** की है, जिम की नहीं।
+> - **अगर आप Google से साइन इन करते हैं**, तो MettleUp आपके वर्कआउट की एक कॉपी अपने सर्वर पर सेव
+>   करता है, ताकि नए फोन पर वे वापस मिल सकें। इस कॉपी की ज़िम्मेदारी **MettleUp** की है, जिम की नहीं।
 >   इसे सिर्फ़ आप देख सकते हैं। नीचे "आपके सेव किए गए वर्कआउट" देखें।
 > - अगर आप जिम के वर्कआउट ऑफ़र से जुड़ते हैं, तो ऐप जिम को सिर्फ़ गिने गए वर्कआउट की तारीख़ें भेजता
->   है, और सिर्फ़ तब तक जब तक आप ऑफ़र में हैं। ऑफ़र और इनाम की ज़िम्मेदारी जिम की है; ForgeAI जिम
+>   है, और सिर्फ़ तब तक जब तक आप ऑफ़र में हैं। ऑफ़र और इनाम की ज़िम्मेदारी जिम की है; MettleUp जिम
 >   के लिए तारीख़ें रखता है।
 
 ### बदलाव 2. "हम सर्वर पर क्या रखते हैं" में फीडबैक वाले बिंदु के बाद जोड़ें
 > - सिर्फ़ Google से साइन इन करने पर: आपके सेव किए गए वर्कआउट (नीचे की सूची): जब तक आप अपना खाता
 >   डिलीट नहीं करते। डिलीट करते ही सर्वर से तुरंत मिटा दिए जाते हैं; बैकअप कॉपी 7 दिन के अंदर ख़त्म हो जाती है।
-> - सिर्फ़ Google से साइन इन करने पर: आपका ForgeAI खाता (आपका Google ईमेल, और Google जो नाम और
+> - सिर्फ़ Google से साइन इन करने पर: आपका MettleUp खाता (आपका Google ईमेल, और Google जो नाम और
 >   फोटो लिंक देता है): जब तक आप खाता डिलीट नहीं करते (एक अपवाद नीचे लिखा है)।
 
 ### बदलाव 3. "हम सर्वर पर क्या रखते हैं" के बाद नया हिस्सा जोड़ें
@@ -179,7 +179,7 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
 > नहीं भेजा जाता और आपके वर्कआउट सिर्फ़ आपके फोन पर रहते हैं।
 >
 > **हम क्या सेव करते हैं।** साइन इन करने पर (शुरुआती स्क्रीन पर, या Settings → Backup → Keep your
-> workouts on ForgeAI में), ऐप हमारे सर्वर पर ये सेव करता है:
+> workouts on MettleUp में), ऐप हमारे सर्वर पर ये सेव करता है:
 > - आपके वर्कआउट, हर एक्सरसाइज़ और सेट के साथ (वज़न, रेप्स, समय);
 > - आपके रूटीन फ़ोल्डर और रूटीन, और आपकी बनाई एक्सरसाइज़;
 > - आराम के टाइमर की लंबाई, और आपके पर्सनल रिकॉर्ड कहाँ से शुरू होते हैं;
@@ -194,7 +194,7 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
 > वर्कआउट वापस मिल जाएँ। हम इसे बेचते नहीं, इससे विज्ञापन नहीं दिखाते, इससे आपकी प्रोफ़ाइलिंग नहीं करते।
 >
 > **कौन देख सकता है।** सिर्फ़ आप, साइन इन होने पर। **आपका जिम नहीं देख सकता**: न मालिक, न ट्रेनर,
-> न डेस्क। दूसरे सदस्य भी नहीं। ForgeAI के लोग इसे नहीं देखते, सिवाय तब जब सेवा चलाने या कोई खराबी
+> न डेस्क। दूसरे सदस्य भी नहीं। MettleUp के लोग इसे नहीं देखते, सिवाय तब जब सेवा चलाने या कोई खराबी
 > ठीक करने के लिए ज़रूरी हो, या कानून ऐसा कहे।
 >
 > **कहाँ।** हमारे मुख्य डेटाबेस में, **मुंबई, भारत** (Supabase)। साइन इन Google संभालता है।
@@ -207,7 +207,7 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
 > है, वह खाता डिलीट करने तक रहता है।
 >
 > **डिलीट करें** (Settings → Backup → **Delete my account**): इससे हमारे सर्वर पर सेव सब कुछ और आपका
-> ForgeAI खाता तुरंत डिलीट हो जाता है। आपके फोन के वर्कआउट रहते हैं। एक अपवाद: अगर आप इसी Google खाते
+> MettleUp खाता तुरंत डिलीट हो जाता है। आपके फोन के वर्कआउट रहते हैं। एक अपवाद: अगर आप इसी Google खाते
 > से किसी जिम के लिए भी साइन इन करते हैं (जैसे ट्रेनर या मालिक के तौर पर), तो हम आपके सेव किए वर्कआउट
 > डिलीट करते हैं पर वह साइन इन रखते हैं, ताकि जिम का ऐप चलता रहे। हमारी सेवा देने वाली कंपनी की बैकअप
 > कॉपी 7 दिन के अंदर ख़त्म हो जाती है। आप ईमेल ([CONTACT EMAIL]) से भी कह सकते हैं; हम 30 दिन के अंदर
@@ -237,7 +237,7 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
 > अपने सेव किए वर्कआउट और खाता कभी भी ख़ुद डिलीट कर सकते हैं (Settings → Backup → Delete my account);
 
 ### बदलाव 7. "सुरक्षा" के आख़िर में जोड़ें
-> आपके सेव किए वर्कआउट की ज़िम्मेदारी ForgeAI की है, इसलिए उनके लीक होने पर हम ख़ुद बोर्ड को रिपोर्ट
+> आपके सेव किए वर्कआउट की ज़िम्मेदारी MettleUp की है, इसलिए उनके लीक होने पर हम ख़ुद बोर्ड को रिपोर्ट
 > करते हैं और आपको सीधे बताते हैं।
 
 ### बदलाव 8. "बदलाव" की आख़िरी पंक्ति बदलें
@@ -253,7 +253,7 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
 
 - **TERMS.md, part A, point 7** says "Your workouts stay on your phone, so keep your phone backed
   up." Replace with: "Your workouts stay on your phone unless you sign in with Google to save
-  them on ForgeAI. Keep your phone backed up either way."
+  them on MettleUp. Keep your phone backed up either way."
 - **TERMS.md, part A, point 9** ("not liable ... for workout data kept only on your phone"): keep,
   and add: "We try to keep your saved workouts safe, but the app is a beta: keep your own backup."
   [LAWYER CHECK]
@@ -262,33 +262,33 @@ ForgeAI जिम के लिए तारीख़ें रखता है�
   notice. For consent to count as "informed", the card should name those too and link here.
   [LAWYER CHECK: SPDI Rules 2011 may treat body measurements as sensitive data needing consent.]
 - **BREACH-PLAN.md** covers only the gym's records (we tell the gym in 24 hours). For the saved
-  workouts ForgeAI is responsible itself, so the plan needs a line: we tell the Board and the
+  workouts MettleUp is responsible itself, so the plan needs a line: we tell the Board and the
   affected members ourselves, first notice without delay, full report within 72 hours.
 
 ---
 
 # Part 2. Gym data agreement (the page behind "the data agreement" link)
 
-> Note for the owner: the admin app's tick box says "I agree to the ForgeAI terms and the data
+> Note for the owner: the admin app's tick box says "I agree to the MettleUp terms and the data
 > agreement", but today **the "data agreement" link opens the privacy notice**, not a separate
 > page. Either this agreement goes on its own page and the link is changed, or it goes at the
 > bottom of terms.html. The version shown must say **Version 2026-10-24**, to match what the
 > server records.
 
-## ForgeAI data agreement for gyms
+## MettleUp data agreement for gyms
 
-**Version 2026-10-24.** Between ForgeAI, run by [OWNER NAME], Jaipur, India ("we"), and the gym
-whose owner ticks "I agree" ("you"). It is part of the ForgeAI terms. [LAWYER CHECK: is an online
+**Version 2026-10-24.** Between MettleUp, run by [OWNER NAME], Jaipur, India ("we"), and the gym
+whose owner ticks "I agree" ("you"). It is part of the MettleUp terms. [LAWYER CHECK: is an online
 tick box with this record enough for a DPDP s.8(2) processor contract?]
 
 **1. Your records are yours.** Your members' details, memberships, payments, receipts,
 check-ins, shop orders, staff and messages are your gym's records. Under India's data law
 (DPDP Act 2023) **you are the Data Fiduciary** for them and **we are your Data Processor**.
 
-**2. What we do with them.** We store and process them only to run ForgeAI for your gym, and
+**2. What we do with them.** We store and process them only to run MettleUp for your gym, and
 only as the app's features and your staff's actions direct. We do not sell them, show ads with
 them, use them for our own marketing, or share them with other gyms. We may count them in
-totals that name no gym or person (for example, how many check-ins ForgeAI handled).
+totals that name no gym or person (for example, how many check-ins MettleUp handled).
 [LAWYER CHECK]
 
 **3. Who else handles them (our service providers).**
@@ -316,7 +316,7 @@ your first notice straight away and the full report within 72 hours, and tell th
 affected (see docs/launch/BREACH-PLAN.md).
 
 **6. Your duties.**
-- Tell your members that you keep their records in ForgeAI (a short notice you can copy is in our
+- Tell your members that you keep their records in MettleUp (a short notice you can copy is in our
   privacy notice), and have a lawful reason or their consent to keep them.
 - Keep the records accurate, and correct them when a member asks.
 - Add only people who need access, and remove staff who leave (Settings → people).
@@ -331,15 +331,15 @@ handle it. We help when you ask. If a member asks us, we pass it to you.
 data → Download all your gym's data** (an Excel file and a full copy). If that does not work for
 you, we send you the same within 7 days of asking.
 
-**9. Deleting your gym.** The owner asks in **Settings → Your data → Delete our gym from ForgeAI**,
+**9. Deleting your gym.** The owner asks in **Settings → Your data → Delete our gym from MettleUp**,
 or by email. We call the gym's own number to confirm, remind you to download first, then delete
 every member, payment, check-in and shop order of your gym from our server **within 30 days** of
 the request. Backup copies expire within 7 more days. We keep the request itself, and the record
 that you accepted this agreement, for 2 years, as proof. [LAWYER CHECK: 2 years]
 
 **10. Members' own saved workouts are not your records.** A member who signs in with Google can
-save their own workouts, body weight and measurements on ForgeAI. That copy belongs to the member;
-**ForgeAI** is responsible for it, not your gym. You, your trainers and your desk cannot see it,
+save their own workouts, body weight and measurements on MettleUp. That copy belongs to the member;
+**MettleUp** is responsible for it, not your gym. You, your trainers and your desk cannot see it,
 and deleting your gym does not delete it.
 
 **11. Our record of your acceptance.** When your owner ticks "I agree", we keep: the gym, who
@@ -347,12 +347,12 @@ ticked it (their name as signed in), when, which version, whether it was at "Cre
 a later sign-in, and a one-way scrambled form of the internet address it came from. That
 scrambled form can still be traced back, so we protect it like any other personal data.
 
-**12. Term and ending.** This agreement runs while your gym uses ForgeAI. You can stop at any
+**12. Term and ending.** This agreement runs while your gym uses MettleUp. You can stop at any
 time and ask us to delete your gym (point 9). We may end it with [30] days' written notice, or at
 once for serious misuse; you can still download your data during the notice. [LAWYER CHECK]
 Points 5, 9 and 10 continue after it ends, until your records are deleted.
 
-**13. Liability.** ForgeAI is a beta. [LAWYER CHECK: the liability cap belongs in the pilot
+**13. Liability.** MettleUp is a beta. [LAWYER CHECK: the liability cap belongs in the pilot
 agreement (launch plan D3); not set here.]
 
 **14. Changes.** We tell the owner in the admin app before a new version applies, and ask the
@@ -367,7 +367,7 @@ owner to accept it again. The version date is at the top.
 1. **Privacy notice**: says plainly that if a member signs in with Google, their workouts, body
    weight, measurements, photo dates and profile (never the phone number) are saved on our server
    in Mumbai, only they can see it, their gym cannot, and "Delete my account" removes it at once.
-2. **Gym data agreement**: says the gym owns its records and we only handle them to run ForgeAI.
+2. **Gym data agreement**: says the gym owns its records and we only handle them to run MettleUp.
    It covers no selling or ads, our providers (the AI import is named truthfully), a 24-hour breach
    notice, the gym's duties, download any time, deletion within 30 days, and that a member's own
    saved workouts are the member's, not the gym's.
@@ -380,7 +380,7 @@ owner to accept it again. The version date is at the top.
 - **Deleting saved workouts: "at once" or "within 30 days"?** The app deletes at once, so the draft
   says that. Email requests get 30 days. Also: should an account nobody uses be deleted after
   some years? Today nothing does that.
-- **How much notice before ForgeAI ends a gym's agreement** (draft says 30 days). Also, should the
+- **How much notice before MettleUp ends a gym's agreement** (draft says 30 days). Also, should the
   AI import keep sending member names and addresses from 5 rows? Today it does, and the agreement
   says so.
 

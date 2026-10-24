@@ -1,4 +1,4 @@
-// Launch H7 (21 Oct 2026): the owner writes to ForgeAI from More → Send feedback. The feedback box
+// Launch H7 (21 Oct 2026): the owner writes to MettleUp from More → Send feedback. The feedback box
 // (/api/feedback, the panel Worker) is answered here; the real one is tested in deploy/panel.
 import { expect, test } from '@playwright/test';
 

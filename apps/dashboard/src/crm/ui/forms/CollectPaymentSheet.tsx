@@ -9,7 +9,7 @@
  * than no dues ledger.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
 import { useAuth, useRole } from '../../auth/AuthProvider';
@@ -34,7 +34,10 @@ export function CollectPaymentSheet({
   /** Handed the written receipt so the caller can offer to print it. */
   onCollected?: (payment: Payment) => void;
 }) {
-  const { snapshot, today, recordPayment } = useCrm();
+  const { snapshot, today, recordPayment, prepareOffline } = useCrm();
+  // Offline front desk (review SHOULD 5): the first money sheet opened online gives this device its
+  // own receipt series, so it can take payments if the internet goes later.
+  useEffect(() => prepareOffline(), [prepareOffline]);
   // C7-12: the receipt says who took the money (the server stamps the same from the session).
   const taker = takerOf(useAuth().session);
   const role = useRole();

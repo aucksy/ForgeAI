@@ -27,7 +27,19 @@ import type { CrmRecord } from './cloud';
 import { findDuplicatePhone } from '../logic/members';
 import type { Member, MemberDraft, Membership, Payment, Visit } from '../types';
 
-export type OutboxKind = 'checkIn' | 'member' | 'memberEdit' | 'payment' | 'sale';
+/**
+ * `push` (review MUST, 24 Oct 2026): an ONLINE payment or sale whose save got no answer (the server
+ * may or may not have it). It is kept here with the very push id it was sent with, so it survives a
+ * reload and is sent again exactly once: the server answers a push id it already has with its
+ * version (0011), and refuses one it never took as STALE, which proves it never landed.
+ */
+export type OutboxKind = 'checkIn' | 'member' | 'memberEdit' | 'payment' | 'sale' | 'push';
+
+/** Who was signed in when money was taken (the receipt's "Taken by"). */
+export interface TakenBy {
+  staffId: string;
+  name: string;
+}
 
 export interface OutboxItem {
   /** A UUID: the item's id and the push id it is sent with (never saved twice, 0011). */
@@ -41,11 +53,24 @@ export interface OutboxItem {
   /** memberEdit: only the fields the desk changed, and the member's `updatedAt` it changed them on. */
   patch?: Partial<MemberDraft>;
   baseUpdatedAt?: number;
+  /** memberEdit: those fields as they were when the edit started (merged field by field when sent). */
+  baseValues?: Record<string, unknown>;
+  /** push: the version the push was built on. */
+  base?: number;
+  /** payment / sale / push: who took the money (null: no person, an old owner key). */
+  takenBy?: TakenBy | null;
   /**
-   * Set when the server refused it (plain words). Money is never dropped: the item stays here and
-   * on screen, and is tried again on the next start or when the desk taps "Try again".
+   * Set when the server refused it (plain words). Money is never dropped: the item stays on this
+   * device and in the banner (never in the totals), and is tried again on the next start or when
+   * someone taps "Try sending again". `heldAt`: when it was refused.
    */
   held?: string | null;
+  heldAt?: number;
+  /**
+   * Not refused, just not sent yet, with the reason (the desk's clock was ahead; another person took
+   * the money). It stays in the totals and is tried again on every look.
+   */
+  waitReason?: string | null;
 }
 
 /** This device's own receipt series for one gym (logic/receipts.ts, offlineReceiptNo). */
@@ -237,7 +262,10 @@ function isListKind(k: string): k is ListKind {
  * already has one that day on the server shows once (one visit per member per day). PURE: returns a
  * new snapshot.
  */
-export function overlay(snap: CrmSnapshot, items: readonly OutboxItem[]): CrmSnapshot {
+export function overlay(snap: CrmSnapshot, all: readonly OutboxItem[]): CrmSnapshot {
+  // Review SHOULD 3: what the server refused is not money taken (yet): it shows in the banner only,
+  // never in dues, totals, lists or exports.
+  const items = all.filter((i) => !i.held);
   if (items.length === 0) return snap;
   const out: CrmSnapshot = {
     ...snap,
@@ -270,7 +298,10 @@ export function waitingSummary(items: readonly OutboxItem[]): { ids: Set<string>
   let payments = 0;
   let paidP = 0;
   for (const i of items) {
-    if (i.held) held += 1;
+    if (i.held) {
+      held += 1;
+      continue;
+    }
     for (const r of i.records) {
       ids.add(r.id);
       if (r.k === 'payment' && r.d && typeof r.d === 'object') {
@@ -280,6 +311,32 @@ export function waitingSummary(items: readonly OutboxItem[]): { ids: Set<string>
     }
   }
   return { ids, waiting: items.length, held, payments, paidP };
+}
+
+/** Receipts from an online save that got no answer: their number is only sure once sent. PURE. */
+export function unconfirmedReceiptIds(items: readonly OutboxItem[]): Set<string> {
+  const out = new Set<string>();
+  for (const i of items) if (i.kind === 'push' && !i.held) for (const r of i.records) if (r.k === 'payment') out.add(r.id);
+  return out;
+}
+
+/** An online save of money: only new or changed memberships and receipts (a sale, a payment). PURE. */
+export function isMoneyPush(changes: readonly CrmRecord[]): boolean {
+  return changes.length > 0 && changes.some((c) => c.k === 'payment' && !c.x) && changes.every((c) => (c.k === 'payment' || c.k === 'membership') && !c.x);
+}
+
+/** The member a set of money records is for. PURE. */
+export function moneyMemberId(records: readonly CrmRecord[]): string {
+  for (const r of records) {
+    const d = r.d as { memberId?: unknown } | null;
+    if ((r.k === 'payment' || r.k === 'membership') && d && typeof d.memberId === 'string') return d.memberId;
+  }
+  return '';
+}
+
+/** Same value, as the server keeps it (JSON). */
+function same(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
 // ---------------------------------------------------------------- sending one item
@@ -293,6 +350,8 @@ export interface Replay {
   drop?: string;
   /** Cannot be sent now, but is money or a member: kept, with these words. */
   hold?: string;
+  /** Not refused: waits (another person took the money), tried again on every look. */
+  wait?: string;
 }
 
 function rec<T extends { id: string }>(k: CrmRecord['k'], d: T): CrmRecord {
@@ -309,7 +368,7 @@ function rec<T extends { id: string }>(k: CrmRecord['k'], d: T): CrmRecord {
  *  - payment / sale: always sent as made (the same id and receipt number that were printed). Only a
  *    record already on the server is left out (sent before).
  */
-export function replayRecords(item: OutboxItem, server: CrmSnapshot): Replay {
+export function replayRecords(item: OutboxItem, server: CrmSnapshot, opts: { renumber?: (p: Payment, server: CrmSnapshot) => string } = {}): Replay {
   const members = new Map(server.members.map((m) => [m.id, m]));
   switch (item.kind) {
     case 'checkIn': {
@@ -336,28 +395,66 @@ export function replayRecords(item: OutboxItem, server: CrmSnapshot): Replay {
       if (!s) return { records: [], drop: 'the member is no longer in the gym' };
       const patch = item.patch ?? {};
       const changedElsewhere = item.baseUpdatedAt !== undefined && s.updatedAt !== item.baseUpdatedAt;
-      if (changedElsewhere && s.updatedAt > item.at) {
-        return { records: [], note: `${s.fullName}’s details were changed on another device later, so that newer change was kept.` };
+      let merged: Member;
+      let clash: 'ours' | 'theirs' | null = null;
+      if (item.baseValues) {
+        // Review nit: field by field against the member as it was when the edit started. A field
+        // only this desk changed is ours; one only another device changed is theirs; one both
+        // changed to different values goes to the later change (and the desk is told).
+        const out: Record<string, unknown> = { ...s };
+        let changes = 0;
+        for (const [k, ours] of Object.entries(patch)) {
+          const theirs = (s as unknown as Record<string, unknown>)[k];
+          if (same(theirs, ours)) continue;
+          if (same(theirs, item.baseValues[k])) {
+            out[k] = ours;
+            changes += 1;
+          } else if (item.at >= s.updatedAt) {
+            out[k] = ours;
+            changes += 1;
+            clash = 'ours';
+          } else if (clash !== 'ours') {
+            clash = 'theirs';
+          }
+        }
+        if (changes === 0) {
+          return clash ? { records: [], note: `${s.fullName}’s details were changed on another device later, so that newer change was kept.` } : { records: [] };
+        }
+        merged = { ...(out as unknown as Member), updatedAt: Math.max(item.at, s.updatedAt + 1) };
+      } else {
+        // An item kept before field-by-field merging: the later change wins as a whole.
+        if (changedElsewhere && s.updatedAt > item.at) {
+          return { records: [], note: `${s.fullName}’s details were changed on another device later, so that newer change was kept.` };
+        }
+        if (changedElsewhere) clash = 'ours';
+        merged = { ...s, ...patch, updatedAt: Math.max(item.at, s.updatedAt + 1) };
       }
-      const merged: Member = { ...s, ...patch, updatedAt: Math.max(item.at, s.updatedAt + 1) };
       if (patch.phone && patch.phone !== s.phone) {
         const dup = findDuplicatePhone(server.members, patch.phone, s.id);
         if (dup) merged.duplicateOf = dup.id;
       }
       const note = merged.duplicateOf && merged.duplicateOf !== s.duplicateOf
         ? `Check ${merged.fullName}: ${members.get(merged.duplicateOf)?.fullName ?? 'another member'} already has the same mobile number. Both are kept.`
-        : changedElsewhere
+        : clash === 'ours'
           ? `${s.fullName}’s details were also changed on another device, but the change made here is newer, so it was kept.`
-          : undefined;
+          : clash === 'theirs'
+            ? `${s.fullName}’s details were changed on another device later, so that newer change was kept.`
+            : undefined;
       return { records: [rec('member', merged)], ...(note ? { note } : {}) };
     }
     case 'payment':
-    case 'sale': {
+    case 'sale':
+    case 'push': {
       const ms = item.records.find((x) => x.k === 'membership')?.d as Membership | undefined;
-      const pay = item.records.find((x) => x.k === 'payment')?.d as Payment | undefined;
+      const made = item.records.find((x) => x.k === 'payment')?.d as Payment | undefined;
       const out: CrmRecord[] = [];
       if (ms && !server.memberships.some((x) => x.id === ms.id)) out.push(rec('membership', ms));
-      if (pay && !server.payments.some((x) => x.id === pay.id)) {
+      if (made && !server.payments.some((x) => x.id === made.id)) {
+        // A push that got no answer was proven never saved (STALE); its normal-series number may have
+        // gone to another desk meanwhile. It was never confirmed (the receipt page says so), so it
+        // takes the next free number now. An offline (D1-) number is never changed.
+        const taken = server.payments.some((x) => x.id !== made.id && x.receiptNo.trim() === made.receiptNo.trim());
+        const pay: Payment = taken && item.kind === 'push' && opts.renumber && !made.offline ? { ...made, receiptNo: opts.renumber(made, server) } : made;
         const plan = server.memberships.find((x) => x.id === pay.membershipId) ?? (ms && ms.id === pay.membershipId ? ms : undefined);
         if (!plan || plan.memberId !== pay.memberId) {
           return { records: [], hold: 'The plan this payment is for is not on the server.' };

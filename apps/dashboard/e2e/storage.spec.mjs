@@ -72,7 +72,7 @@ test('J23b data saved by a newer app: "Couldn’t open your gym", Try again, and
   await page.evaluate(([k, v]) => localStorage.setItem(k, v), [STORE, newer]);
   await page.reload();
   await expect(page.getByText('Couldn’t open your gym')).toBeVisible();
-  await expect(page.getByText('This gym was saved by a newer version of ForgeAI (v2; this app reads v1). Reload the page to get the new version. Your data is safe.')).toBeVisible();
+  await expect(page.getByText('This gym was saved by a newer version of MettleUp (v2; this app reads v1). Reload the page to get the new version. Your data is safe.')).toBeVisible();
   await expectFitsPhone(page, 'on the start-up failure screen');
   await page.getByRole('button', { name: 'Try again' }).tap();
   await expect(page.getByText('Couldn’t open your gym')).toBeVisible();

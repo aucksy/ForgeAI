@@ -1,22 +1,22 @@
-// #51 ForgeAI HQ, the gym owner's side: Settings → Your data → ForgeAI access (migration 0028), and
-// a gym ForgeAI paused (0027: looking works, saving says why it cannot). Pretend server: support.mjs.
+// #51 MettleUp HQ, the gym owner's side: Settings → Your data → MettleUp access (migration 0028), and
+// a gym MettleUp paused (0027: looking works, saving says why it cannot). Pretend server: support.mjs.
 import { expect, test } from '@playwright/test';
 
 import { expectFitsPhone, open, openApp, sheet, startOnlineGym } from './support.mjs';
 
-const PAUSED = 'ForgeAI has paused this gym, so nothing can be changed or saved.';
+const PAUSED = 'MettleUp has paused this gym, so nothing can be changed or saved.';
 
-test('J51a the owner lets ForgeAI support look for an hour, sees it listed, and closes it early', async ({ page }) => {
+test('J51a the owner lets MettleUp support look for an hour, sees it listed, and closes it early', async ({ page }) => {
   await openApp(page);
   await startOnlineGym(page);
   await open(page, 'Settings');
-  await expect(page.getByRole('heading', { name: 'ForgeAI access' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'MettleUp access' })).toBeVisible();
   await expect(page.getByText('never a member’s name or number', { exact: false })).toBeVisible();
   const card = page.getByRole('main');
-  await expect(card.getByText('ForgeAI has never opened your records.')).toBeVisible();
+  await expect(card.getByText('MettleUp has never opened your records.')).toBeVisible();
 
-  await card.getByRole('button', { name: 'Let ForgeAI support look (1 hour)' }).tap();
-  const ask = sheet(page, 'Let ForgeAI support look?');
+  await card.getByRole('button', { name: 'Let MettleUp support look (1 hour)' }).tap();
+  const ask = sheet(page, 'Let MettleUp support look?');
   await expect(ask).toContainText('They cannot change anything.');
   await expectFitsPhone(page, 'in the support access sheet');
   await ask.getByRole('button', { name: 'Yes, for 1 hour' }).tap();
@@ -25,11 +25,11 @@ test('J51a the owner lets ForgeAI support look for an hour, sees it listed, and 
 
   await card.getByRole('button', { name: 'Close it now' }).tap();
   await expect(card.getByText('Support access was open 17 Oct, 10:00-10:00 (you opened it). Nothing was looked at.')).toBeVisible();
-  await expect(card.getByRole('button', { name: 'Let ForgeAI support look (1 hour)' })).toBeVisible();
-  await expectFitsPhone(page, 'on Settings with the ForgeAI access list');
+  await expect(card.getByRole('button', { name: 'Let MettleUp support look (1 hour)' })).toBeVisible();
+  await expectFitsPhone(page, 'on Settings with the MettleUp access list');
 });
 
-test('J51b a gym ForgeAI paused: records still open, a save says why it cannot', async ({ page }) => {
+test('J51b a gym MettleUp paused: records still open, a save says why it cannot', async ({ page }) => {
   const server = await openApp(page);
   await startOnlineGym(page);
   server.hqStatus = 'suspended';
@@ -37,7 +37,7 @@ test('J51b a gym ForgeAI paused: records still open, a save says why it cannot',
 
   await open(page, 'Settings');
   await expect(page.getByText(PAUSED).first()).toBeVisible();
-  await expect(page.getByText('17 Oct, 09:00: ForgeAI paused your gym. Reason: Unpaid for 3 months')).toBeVisible();
+  await expect(page.getByText('17 Oct, 09:00: MettleUp paused your gym. Reason: Unpaid for 3 months')).toBeVisible();
 
   await open(page, 'Members');
   await page.getByRole('button', { name: '+ Add member' }).first().tap();

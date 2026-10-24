@@ -386,7 +386,7 @@ export interface WorkoutRoutine {
 
 /**
  * Workout plan from the gym or trainer (OWNER-INBOX #6; supabase/migrations/0024_workout_plans.sql):
- * routines the gym sends to members, who see them in the ForgeAI app "From <gym> · <trainer>".
+ * routines the gym sends to members, who see them in the MettleUp app "From <gym> · <trainer>".
  * Sent to named members (`assign.memberIds`) and/or everyone on a plan today (`assign.planIds`).
  * Never deleted: `withdrawn` hides it from members. Who made it is stamped by the server.
  */

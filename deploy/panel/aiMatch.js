@@ -16,7 +16,7 @@
 //
 // Cost control: free to gyms, PER_GYM_PER_DAY reads per gym per India day and ALL_PER_DAY for all
 // gyms together, counted in Cloudflare D1 `forgeai-web`, table `ai_usage`
-// (migrations/0003_ai_usage.sql). About ₹0.40 per spreadsheet at the prices below. ForgeAI HQ can set
+// (migrations/0003_ai_usage.sql). About ₹0.40 per spreadsheet at the prices below. MettleUp HQ can set
 // one gym's own daily limit (table ai_limits, migrations/0004; #51).
 //
 // Providers, in order (a provider without its key is skipped; an error, a 10-second timeout or an
@@ -574,7 +574,7 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
 }
 
 /**
- * This gym's own daily allowance, when ForgeAI HQ set one (D1 table ai_limits, migrations/0004;
+ * This gym's own daily allowance, when MettleUp HQ set one (D1 table ai_limits, migrations/0004;
  * 0 = off for this gym), else PER_GYM_PER_DAY. Before the table exists: PER_GYM_PER_DAY.
  */
 export async function gymLimit(db, gymId) {

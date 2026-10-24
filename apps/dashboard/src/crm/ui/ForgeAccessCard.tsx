@@ -1,7 +1,7 @@
 /**
- * Settings → Your data → ForgeAI access (#51, ForgeAI HQ step 3). The gym owner sees every time
- * ForgeAI support opened this gym's records (the gym's own "Let ForgeAI support look" button, or
- * ForgeAI in an emergency), what was looked at, and every other ForgeAI action on the gym. The
+ * Settings → Your data → MettleUp access (#51, MettleUp HQ step 3). The gym owner sees every time
+ * MettleUp support opened this gym's records (the gym's own "Let MettleUp support look" button, or
+ * MettleUp in an emergency), what was looked at, and every other MettleUp action on the gym. The
  * button opens read-only support access for one hour; "Close it now" ends it early.
  * Owners of an online gym only (the server refuses anyone else). Before migration 0028 is live the
  * card says so and shows nothing else.
@@ -23,17 +23,17 @@ import { authErrorWords, SUSPENDED_WORDS } from '../auth/signin';
 import { Button, Card, ErrorBanner, SectionTitle, Sheet, color, font, space } from './kit';
 
 export const FORGE_ACCESS_WORDS = {
-  title: 'ForgeAI access',
+  title: 'MettleUp access',
   intro:
-    'ForgeAI sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number. ForgeAI support can look at your records only when you let them, for one hour at most, and only to read. Every look is listed here.',
-  ask: 'Let ForgeAI support look (1 hour)',
-  sheetTitle: 'Let ForgeAI support look?',
+    'MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number. MettleUp support can look at your records only when you let them, for one hour at most, and only to read. Every look is listed here.',
+  ask: 'Let MettleUp support look (1 hour)',
+  sheetTitle: 'Let MettleUp support look?',
   sheetBody:
-    'ForgeAI support can read your members, plans, receipts, check-ins, shop orders and staff list for the next hour, to help with what you asked. They cannot change anything. It closes by itself after an hour, and every look is listed here.',
+    'MettleUp support can read your members, plans, receipts, check-ins, shop orders and staff list for the next hour, to help with what you asked. They cannot change anything. It closes by itself after an hour, and every look is listed here.',
   yes: 'Yes, for 1 hour',
   close: 'Close it now',
-  none: 'ForgeAI has never opened your records.',
-  notLive: 'ForgeAI access is not switched on for your gym yet.',
+  none: 'MettleUp has never opened your records.',
+  notLive: 'MettleUp access is not switched on for your gym yet.',
 } as const;
 
 const small = { margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted } as const;
@@ -110,7 +110,7 @@ export function ForgeAccessCard() {
             )}
           </div>
           {access && (
-            <ul style={{ margin: `${space.lg}px 0 0`, padding: 0, listStyle: 'none' }} aria-label="ForgeAI access list">
+            <ul style={{ margin: `${space.lg}px 0 0`, padding: 0, listStyle: 'none' }} aria-label="MettleUp access list">
               {access.grants.length === 0 && access.actions.length === 0 && <li style={body}>{FORGE_ACCESS_WORDS.none}</li>}
               {access.grants.map((g) => (
                 <li key={g.grantId} style={{ ...body, padding: `${space.sm}px 0`, borderTop: `1px solid ${color.border}` }}>

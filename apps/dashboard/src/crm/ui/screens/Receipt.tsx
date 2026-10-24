@@ -20,7 +20,8 @@ import { useCrm } from '../../store';
 import { formatDay } from '../../logic/dates';
 import { formatINR } from '../../logic/money';
 import { buildReceiptDoc, type ReceiptDoc } from '../../logic/receiptDoc';
-import { Button, Card, EmptyState, PageHeader, space } from '../kit';
+import { Button, Card, EmptyState, PageHeader, color, font, space } from '../kit';
+import { useOffline } from '../offlineContext';
 import { navigate } from '../router';
 import { receiptBackTo } from '../../logic/receiptDoc';
 
@@ -38,7 +39,10 @@ const SERIF = "'Manrope', system-ui, sans-serif";
 const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
 export function ReceiptScreen({ paymentId }: { paymentId: string }) {
-  const { snapshot, today } = useCrm();
+  const { snapshot, today, desk } = useCrm();
+  // Review MUST 1: an online save that got no answer: its number is sure only once it is sent.
+  const unconfirmed = desk?.unconfirmedIds.includes(paymentId) ?? false;
+  const { offline } = useOffline();
 
   const doc = useMemo<ReceiptDoc | null>(() => {
     const payment = snapshot.payments.find((p) => p.id === paymentId);
@@ -92,15 +96,22 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
                 Back
               </Button>
               {/* Step 4: the receipt as a WhatsApp message to the member (the print stays the record). */}
-              {waHref && (
+              {waHref && !offline && (
                 <a href={waHref} target="_blank" rel="noreferrer" style={waLink}>
                   Send on WhatsApp
                 </a>
               )}
-              <Button onClick={() => window.print()}>Print</Button>
+              <Button disabled={unconfirmed} onClick={() => window.print()}>
+                Print
+              </Button>
             </>
           }
         />
+        {unconfirmed && (
+          <p role="note" style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 14, color: color.warning }}>
+            Not confirmed yet: the internet dropped while this was saved. Its receipt number is sure once it is sent, so print it after that.
+          </p>
+        )}
       </div>
 
       <div

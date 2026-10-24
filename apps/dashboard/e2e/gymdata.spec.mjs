@@ -1,5 +1,5 @@
 // Launch D8 (21 Oct 2026): a gym that leaves takes everything with it, and an online gym can ask
-// ForgeAI to delete it. The delete request goes to the feedback box (answered here); nothing is
+// MettleUp to delete it. The delete request goes to the feedback box (answered here); nothing is
 // deleted by the button itself.
 import { readFile } from 'node:fs/promises';
 
@@ -35,14 +35,14 @@ test('J31b an online gym asks to be deleted: asked first, request sent, nothing 
   await openApp(page);
   await startOnlineGym(page);
   await open(page, 'Settings');
-  await page.getByRole('button', { name: 'Delete our gym from ForgeAI' }).tap();
-  const ask = sheet(page, 'Delete your gym from ForgeAI?');
+  await page.getByRole('button', { name: 'Delete our gym from MettleUp' }).tap();
+  const ask = sheet(page, 'Delete your gym from MettleUp?');
   await expect(ask).toContainText('Download your data first.');
   await ask.getByRole('button', { name: 'Cancel' }).tap();
   expect(sent).toHaveLength(0);
 
-  await page.getByRole('button', { name: 'Delete our gym from ForgeAI' }).tap();
-  await sheet(page, 'Delete your gym from ForgeAI?').getByRole('button', { name: 'Send delete request' }).tap();
+  await page.getByRole('button', { name: 'Delete our gym from MettleUp' }).tap();
+  await sheet(page, 'Delete your gym from MettleUp?').getByRole('button', { name: 'Send delete request' }).tap();
   await expect(page.getByRole('status').filter({ hasText: 'Request sent.' })).toBeVisible();
   expect(sent).toHaveLength(1);
   expect(sent[0]).toMatchObject({ source: 'admin', screen: 'settings/delete-request' });

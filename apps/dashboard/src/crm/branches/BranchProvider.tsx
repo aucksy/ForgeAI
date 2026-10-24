@@ -70,7 +70,7 @@ export function branchFailWords(e: unknown): string {
   for (const code of ['NAME_TAKEN', 'STAFF_ELSEWHERE', 'NOT_ALLOWED', 'TOO_MANY_LOOKUPS', 'TOO_MANY']) {
     if (new RegExp(`\\b${code}\\b`).test(msg)) return branchErrorWords(code) ?? authErrorWords(e);
   }
-  if (branchApi.isMissingFunction(e)) return 'Branches are not switched on for your gym yet. Message ForgeAI on WhatsApp.';
+  if (branchApi.isMissingFunction(e)) return 'Branches are not switched on for your gym yet. Message MettleUp on WhatsApp.';
   return authErrorWords(e);
 }
 

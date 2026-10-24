@@ -7,11 +7,11 @@ import { expect, test } from '@playwright/test';
 import { addMember, addPlan, expectFitsPhone, open, openMember, sell, sheet, startOnlineGym } from './support.mjs';
 
 /** The service worker has kept the panel's page, this device has its copy and its receipt series. */
-async function readyForOffline(page, server) {
+async function readyForOffline(page, server, { series = true } = {}) {
   await expect
     .poll(
       () =>
-        page.evaluate(async () => {
+        page.evaluate(async (withSeries) => {
           await navigator.serviceWorker.ready;
           const shell = await (await caches.open('forgeai-panel-v1')).match('/');
           const count = (name, store) =>
@@ -25,13 +25,13 @@ async function readyForOffline(page, server) {
               };
               req.onerror = () => resolve(0);
             });
-          return Boolean(shell) && (await count('forgeai-offline', 'gyms')) > 0 && (await count('forgeai-outbox', 'gyms')) > 0;
-        }),
+          return Boolean(shell) && (await count('forgeai-offline', 'gyms')) > 0 && (!withSeries || (await count('forgeai-outbox', 'gyms')) > 0);
+        }, series),
       { timeout: 20_000 },
     )
     .toBe(true);
-  // The device's receipt series (D1) was given while online.
-  await expect.poll(() => server.records.has('enquiry:deskseries-1'), { timeout: 20_000 }).toBe(true);
+  // The device's receipt series (D1) was given while online, when a money sheet first opened.
+  if (series) await expect.poll(() => server.records.has('enquiry:deskseries-1'), { timeout: 20_000 }).toBe(true);
 }
 
 /** How many pushes carried this record (by kind and id). */
@@ -117,7 +117,9 @@ test('J34c offline: pages that need the internet say so; signing out waits until
   const server = await openApp(page);
   await startOnlineGym(page);
   await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
-  await readyForOffline(page, server);
+  // No money sheet opened here: no receipt series is claimed (review SHOULD 5).
+  await readyForOffline(page, server, { series: false });
+  expect(server.records.has('enquiry:deskseries-1')).toBe(false);
   await page.context().setOffline(true);
   server.disconnect();
   await page.reload();
@@ -134,7 +136,7 @@ test('J34c offline: pages that need the internet say so; signing out waits until
   await page.getByRole('button', { name: 'Check in', exact: true }).tap();
   await expect(page.getByRole('button', { name: 'Checked in today' })).toBeVisible({ timeout: 15_000 });
 
-  // The internet is back, but the server takes nothing for now (ForgeAI paused the gym): it keeps waiting.
+  // The internet is back, but the server takes nothing for now (MettleUp paused the gym): it keeps waiting.
   server.hqStatus = 'suspended';
   await page.context().setOffline(false);
   server.reconnect();
@@ -154,4 +156,43 @@ test('J34c offline: pages that need the internet say so; signing out waits until
   expect(server.rows('visit')).toHaveLength(1);
   await page.getByRole('button', { name: 'Sign out of this device' }).tap();
   await expect(sheet(page, 'Sign out of this device?').getByRole('button', { name: 'Sign out' })).toBeEnabled();
+});
+test('J34d a payment whose save got no answer: kept, not printable yet, never taken twice, sent once', async ({ page }) => {
+  const { openApp } = await import('./support.mjs');
+  const server = await openApp(page);
+  await startOnlineGym(page);
+  await addPlan(page, { name: 'Monthly', price: '1500', joining: '0', months: '1' });
+  await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
+  await sell(page, { received: '500' });
+
+  // The internet drops for saving only: every try of this payment's save gets no answer.
+  server.dropAfterCalls('crm_push', 0);
+  await page.getByRole('button', { name: 'Collect payment' }).tap();
+  const c = sheet(page, 'Collect payment');
+  await c.getByLabel('Amount received').fill('500');
+  await c.getByRole('button', { name: 'Save payment' }).tap();
+  await expect(c).toContainText("The internet dropped while saving, so it may not have gone through yet.", { timeout: 20_000 });
+  await c.getByRole('button', { name: 'Cancel' }).tap();
+
+  // It shows on the member's page as waiting; its receipt can't be printed until its number is sure.
+  await expect(page.getByText('Waiting to send').first()).toBeVisible();
+  await page.getByRole('link', { name: /2026-27\/0002/ }).first().tap();
+  await expect(page.getByText('Not confirmed yet: the internet dropped while this was saved.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Print' })).toBeDisabled();
+  await page.goBack();
+
+  // A second payment for her is refused while the first is not confirmed (a second receipt for the same cash).
+  await page.getByRole('button', { name: 'Collect payment' }).tap();
+  const c2 = sheet(page, 'Collect payment');
+  await c2.getByLabel('Amount received').fill('500');
+  await c2.getByRole('button', { name: 'Save payment' }).tap();
+  await expect(c2).toContainText('A payment for this member is still being sent.', { timeout: 20_000 });
+  await c2.getByRole('button', { name: 'Cancel' }).tap();
+
+  // The internet is back: it goes by itself, once.
+  server.reconnect();
+  await expect(page.getByText('All sent. Everything saved on this device is now online.')).toBeVisible({ timeout: 25_000 });
+  const pays = server.rows('payment').filter((p) => p.amountP === 50_000);
+  expect(pays.map((p) => p.receiptNo).sort()).toEqual(['2026-27/0001', '2026-27/0002']);
+  expect(timesSent(server, 'payment', pays.find((p) => p.receiptNo === '2026-27/0002').id)).toBe(1);
 });

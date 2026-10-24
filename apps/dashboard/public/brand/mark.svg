@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+<!-- MettleUp mark (R-105/R-107, 24 Oct 2026): logo E "Forged" (#61). Every file in public/brand/,
+     public/favicon.svg and public/favicon.ico comes from the brand set in branding/mettleup/web/:
+     to change them, change that set and run  python branding/mettleup/install.py --apply --only dashboard
+     (README "Logo"). Never edit or regenerate these copies by hand. -->
+<title>MettleUp</title><g transform="matrix(0.98 0 0 0.98 5.12 5.12)"><mask id="mkmk1" maskUnits="userSpaceOnUse" x="0" y="0"><rect fill="#fff"/><path d="M205 346 205 245.8 256 306.71 307 245.8 307 346 349 346 349 188 300.61 188 256 241.29 211.39 188 163 188 163 346Z" fill="#000"/></mask><g mask="url(#mkmk1)"><path d="M256 52 432.67 154 432.67 358 256 460 79.33 358 79.33 154Z" fill="#F0662A"/><path d="M256 256 79.33 154 256 52ZM256 256 256 52 432.67 154Z" fill="#FF8A4C"/><path d="M256 256 432.67 154 432.67 358ZM256 256 79.33 358 79.33 154Z" fill="#F0662A"/><path d="M256 256 432.67 358 256 460ZM256 256 256 460 79.33 358Z" fill="#C9481A"/></g></g></svg>

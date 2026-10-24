@@ -1,4 +1,4 @@
-// ForgeAI HQ's JSON API (/api/*), for the HQ page only. Every call here has already passed the
+// MettleUp HQ's JSON API (/api/*), for the HQ page only. Every call here has already passed the
 // sign-in check in worker.js (a verified email on the allow-list), and every POST came from HQ's own
 // page (same-origin check in worker.js). Every gym server call goes through the hq_* functions, which
 // write the audit log themselves; anything done in Cloudflare's database (feedback, leads, AI limits)

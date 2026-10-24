@@ -540,7 +540,7 @@ test('the usage table and the one-statement allowance work on real SQLite', { sk
   assert.equal(await takeOne(d1, 'gym-b', '2026-10-25'), null);
 });
 
-// ForgeAI HQ (#51): one gym's own daily limit (D1 ai_limits, migrations/0004).
+// MettleUp HQ (#51): one gym's own daily limit (D1 ai_limits, migrations/0004).
 test('a limit set in HQ replaces the normal one for that gym only; 0 switches it off', async () => {
   const WEB = fakeD1();
   WEB.limits.set('gym-1', 2);

@@ -287,7 +287,7 @@ export function MemberFormSheet({
       />
 
       {canSetBranches && (
-        <CheckField checked={allBranches} onChange={setAllBranches} hint="Any branch’s front desk can then check them in with their mobile number. With the ForgeAI app, they can also scan the QR poster at any branch.">
+        <CheckField checked={allBranches} onChange={setAllBranches} hint="Any branch’s front desk can then check them in with their mobile number. With the MettleUp app, they can also scan the QR poster at any branch.">
           Can train at every branch
         </CheckField>
       )}

@@ -222,7 +222,7 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later; 
     expect(waiting(outbox)).toHaveLength(0);
   });
 
-  it('#51: the gym is paused by ForgeAI when the internet is back: the check-ins are kept, and go once it is switched back on', async () => {
+  it('#51: the gym is paused by MettleUp when the internet is back: the check-ins are kept, and go once it is switched back on', async () => {
     const { server, outbox, desk, m } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     server.down = false;

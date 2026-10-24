@@ -118,6 +118,8 @@ async function gymWithDue() {
   const server = new Server();
   const d = device(server, 'key-desk');
   await d.desk.load();
+  // A money sheet opened online (review SHOULD 5: the series is claimed only then).
+  await d.desk.prepareOfflinePayments();
   await d.desk.createPlan(MONTHLY);
   const plan = (await d.desk.load()).plans[0];
   const asha = await d.desk.createMember(draft('Asha Verma', '+919829011111'));
@@ -149,9 +151,15 @@ describe('offline front desk, step 3: the desk receipt series (pure)', () => {
     expect(offlineReceiptNo(12, 37, TODAY)).toBe('2026-27/D12-0037');
     expect(offlineReceiptNo(123, 1, TODAY)).toBe('26-27/D123-0001');
     expect(offlineReceiptNo(1, 1, TODAY, 'B2')).toBe('B2/26-27/D1-0001');
-    expect(offlineReceiptNo(10, 1, TODAY, 'B2')).toBe('B2/2627/D10-0001');
-    expect(offlineReceiptNo(1, 1, TODAY, 'B10')).toBe('B10/2627/D1-0001');
-    expect(() => offlineReceiptNo(10, 1, TODAY, 'B10')).toThrow(/too long/);
+    expect(offlineReceiptNo(10, 1, TODAY, 'B2')).toBe('B2/26/D10-0001');
+    expect(offlineReceiptNo(1, 1, TODAY, 'B10')).toBe('B10/26/D1-0001');
+    expect(offlineReceiptNo(1234, 1, TODAY)).toBe('26-27/D1234-0001');
+    expect(offlineReceiptNo(12345, 1, TODAY)).toBe('26/D12345-0001');
+    // Review SHOULD 5: every prefix the server allows (up to 4 characters) fits for D1..D99.
+    for (const px of ['B2', 'B10', 'B999', 'ABCD']) {
+      for (const n of [1, 9, 10, 99]) expect(offlineReceiptNo(n, 9999, TODAY, px).length).toBeLessThanOrEqual(16);
+    }
+    expect(() => offlineReceiptNo(100, 1, TODAY, 'ABCD')).toThrow(/too long/);
     for (const no of [offlineReceiptNo(9, 9999, TODAY), offlineReceiptNo(2, 1, TODAY, 'B9'), offlineReceiptNo(99, 1, TODAY)]) {
       expect(no.length).toBeLessThanOrEqual(16);
       // The branch rule of 0031: a prefixed branch's receipt starts with its prefix and a slash.
@@ -167,6 +175,8 @@ describe('offline front desk, step 3: the desk receipt series (pure)', () => {
     expect(parseOfflineReceiptNo('26-27/D123-0001')).toEqual({ deskNo: 123, fy: '26-27', seq: 1 });
     expect(parseOfflineReceiptNo('B2/26-27/D1-0002', 'B2')).toEqual({ deskNo: 1, fy: '26-27', seq: 2 });
     expect(parseOfflineReceiptNo('B10/2627/D1-0003', 'B10')).toEqual({ deskNo: 1, fy: '26-27', seq: 3 });
+    expect(parseOfflineReceiptNo('B10/26/D1-0004', 'B10')).toEqual({ deskNo: 1, fy: '26-27', seq: 4 });
+    expect(parseOfflineReceiptNo('99/D1-0004')).toEqual({ deskNo: 1, fy: '99-00', seq: 4 });
     expect(parseOfflineReceiptNo('B2/26-27/D1-0002')).toBeNull();
     expect(parseOfflineReceiptNo('2026-27/0004')).toBeNull();
     const rows = [{ receiptNo: '2026-27/0004' }, { receiptNo: '2026-27/D1-0009' }, { receiptNo: '2026-27/D2-0040' }, { receiptNo: '2025-26/D1-0050' }];
@@ -191,23 +201,29 @@ describe('offline front desk, step 3: each desk gets its own series, once, while
     const a = device(server, 'key-a');
     const b = device(server, 'key-b');
     await Promise.all([a.desk.load(), b.desk.load()]);
+    // Opening alone claims nothing (review SHOULD 5).
+    expect([...server.rows.keys()].filter((k) => k.startsWith('enquiry:deskseries-'))).toEqual([]);
+    await Promise.all([a.desk.prepareOfflinePayments(), b.desk.prepareOfflinePayments()]);
     const nos = [a.outbox.docs.get('g1')?.desk?.no, b.outbox.docs.get('g1')?.desk?.no].sort();
     expect(nos).toEqual([1, 2]);
     // A third load does not claim again.
     const before = server.pushes;
     await a.desk.refresh();
+    await a.desk.prepareOfflinePayments();
     expect(server.pushes).toBe(before);
     // Claims never show as enquiries.
     expect((await a.desk.load()).enquiries).toEqual([]);
   });
 
   it('no series kept and no internet: the payment is refused in plain words; check-ins still work', async () => {
-    const { server, desk, outbox, asha, membership } = await gymWithDue();
-    outbox.docs.set('g1', { ...outbox.docs.get('g1')!, desk: null });
-    await goOffline(server, desk);
-    await expect(desk.recordPayment(pay(asha.id, membership.id, 50_000))).rejects.toThrow(NO_DESK_SERIES_WORDS);
-    await desk.checkIn(asha.id, TODAY, 'desk', TODAY);
-    expect(outbox.docs.get('g1')?.items).toHaveLength(1);
+    const { server, asha, membership } = await gymWithDue();
+    // A second device: online once, but no money sheet ever opened on it (so no series).
+    const b = device(server, 'key-b');
+    await b.desk.load();
+    await goOffline(server, b.desk);
+    await expect(b.desk.recordPayment(pay(asha.id, membership.id, 50_000))).rejects.toThrow(NO_DESK_SERIES_WORDS);
+    await b.desk.checkIn(asha.id, TODAY, 'desk', TODAY);
+    expect(b.outbox.docs.get('g1')?.items).toHaveLength(1);
   });
 });
 
@@ -350,7 +366,9 @@ describe('offline front desk, step 3: payments taken with no internet', () => {
     expect(state.waiting).toBe(1);
     expect(state.held).toHaveLength(1);
     expect(state.held[0].words).toMatch(/kept on this device/);
-    expect((await desk.load()).payments.some((p) => p.id === ours.id)).toBe(true);
+    // Review SHOULD 3: refused is not money taken: banner only, never in the totals or lists.
+    expect((await desk.load()).payments.some((p) => p.id === ours.id)).toBe(false);
+    expect(state.paidP).toBe(0);
     expect(outbox.docs.get('g1')?.items[0].held).toMatch(/more than this member owes/);
     // The owner sorts it out (here: the other receipt is cancelled); Try again sends it.
     server.refuse = null;
@@ -446,7 +464,23 @@ describe('offline front desk, step 3: new members and their changes', () => {
     await desk.refresh();
     const s = server.list<Member>('member').find((m) => m.id === asha.id);
     expect(s?.address).toBe('Desk street');
-    expect(s?.notes).toBe('Knee'); // only the fields changed here are put on top
+    expect(s?.notes).toBe('Knee'); // review nit: merged field by field, both changes kept
+    expect(desk.deskState().notes).toEqual([]); // different fields: nothing to tell
+  });
+
+  it('the SAME field changed on both, ours later: ours is kept, the desk is told', async () => {
+    const { server, desk, asha, t } = await gymWithDue();
+    await goOffline(server, desk);
+    server.down = false;
+    const o = device(server, 'key-other', { now: 15_000 });
+    await o.desk.load();
+    await o.desk.updateMember(asha.id, { address: 'Their street' });
+    server.down = true;
+    t.now = 40_000;
+    await desk.updateMember(asha.id, { address: 'Desk street' });
+    server.down = false;
+    await desk.refresh();
+    expect(server.list<Member>('member').find((m) => m.id === asha.id)?.address).toBe('Desk street');
     expect(desk.deskState().notes[0].text).toMatch(/newer, so it was kept/);
   });
 

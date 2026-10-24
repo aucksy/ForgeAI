@@ -154,7 +154,7 @@ export function codeMessage(personName: string, gymName: string, phone: string, 
   const gym = gymName.trim() || 'the gym';
   return [
     hi ? `Hi ${hi}!` : 'Hi!',
-    `Your ForgeAI sign-in code for ${gym}: ${code}`,
+    `Your MettleUp sign-in code for ${gym}: ${code}`,
     `Open the link and tap "Sign in". Type your mobile number ${formatMobile(phone)} and this code. The code works once, for ${CODE_MINUTES} minutes.`,
     '',
     INVITE_ORIGIN,
@@ -183,7 +183,7 @@ export type AuthErrorCode =
   | 'BAD_KEY'
   | 'EMPTY'
   | 'BUSY'
-  // ForgeAI HQ (#51, migration 0027): ForgeAI paused this gym; looking and downloading still work.
+  // MettleUp HQ (#51, migration 0027): MettleUp paused this gym; looking and downloading still work.
   | 'SUSPENDED'
   // #41 (0031): a mobile on another branch's staff list can't be made an owner of every branch.
   | 'STAFF_ELSEWHERE'
@@ -218,9 +218,9 @@ const CODES: readonly AuthErrorCode[] = [
   'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE', ...RECEIPT_REFUSALS,
 ];
 
-/** ForgeAI HQ (#51): what a desk sees when ForgeAI has paused the gym (every save is refused). */
+/** MettleUp HQ (#51): what a desk sees when MettleUp has paused the gym (every save is refused). */
 export const SUSPENDED_WORDS =
-  'ForgeAI has paused this gym, so nothing can be changed or saved. You can still look at everything and download your data from Settings. Call ForgeAI to switch it back on.';
+  'MettleUp has paused this gym, so nothing can be changed or saved. You can still look at everything and download your data from Settings. Call MettleUp to switch it back on.';
 
 function errorText(err: unknown): string {
   if (!err) return '';

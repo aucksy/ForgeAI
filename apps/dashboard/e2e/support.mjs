@@ -109,7 +109,7 @@ export class FakeServer {
     this.pushes = [];
     /** Messages sent to app members (owner_send_message), newest first. */
     this.messages = [];
-    /** Members who joined the gym in the ForgeAI app (owner_app_members rows). None by default. */
+    /** Members who joined the gym in the MettleUp app (owner_app_members rows). None by default. */
     this.appMembers = [];
     /**
      * #49 step 2: does this server have 0025 (the workout offer, group and timed messages)? Off by
@@ -120,7 +120,7 @@ export class FakeServer {
     this.offers = [];
     /** offer members: { offerId, rosterId, joinedOn, windowEndsOn, counted, deskDays, appDays, ... } */
     this.offerMembers = [];
-    /** #51 (0027/0028): the gym's status as ForgeAI HQ set it, its support-access windows and HQ actions. */
+    /** #51 (0027/0028): the gym's status as MettleUp HQ set it, its support-access windows and HQ actions. */
     /**
      * R-86: does this server have 0029 (automatic reminders)? Off by default, like a server before
      * it: the calls answer PGRST202. `autoReminders`: the owner's saved switches (null = none).
@@ -414,7 +414,7 @@ export class FakeServer {
         if (!id) return 'unknown';
         return this.removedStaff.has(id) ? 'removed' : 'signed_out';
       }
-      // #51 (0028): the owner's "ForgeAI access" list and the one-hour support access.
+      // #51 (0028): the owner's "MettleUp access" list and the one-hour support access.
       case 'owner_hq_access': {
         this.ownerOnly(args.p_key);
         const t = NOW.getTime();
@@ -432,7 +432,7 @@ export class FakeServer {
           openedBy: 'gym',
           openedByName: me.name,
           reasonKind: 'gym_asked',
-          reason: 'The gym asked ForgeAI support to look',
+          reason: 'The gym asked MettleUp support to look',
           startsAt: NOW.toISOString(),
           endsAt: new Date(NOW.getTime() + 60 * 60_000).toISOString(),
           endedEarly: false,
@@ -509,7 +509,7 @@ export class FakeServer {
       }
       case 'crm_push': {
         this.who(args.p_key);
-        // #51 (0027): a gym ForgeAI paused can look but not save.
+        // #51 (0027): a gym MettleUp paused can look but not save.
         if (this.hqStatus === 'suspended') throw new Refusal('SUSPENDED');
         if (Number(args.p_base) !== this.version) throw new Refusal('STALE');
         this.version += 1;
@@ -900,7 +900,7 @@ export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name,
   await start.getByLabel('Your name').fill(name);
   await start.getByLabel('Your mobile number').fill(phone);
   // #38: the owner agrees to the terms before the gym is made.
-  await start.getByRole('checkbox', { name: /I agree to the ForgeAI terms and the data agreement/ }).check();
+  await start.getByRole('checkbox', { name: /I agree to the MettleUp terms and the data agreement/ }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('banner')).toContainText(gym);

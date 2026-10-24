@@ -10,7 +10,7 @@ export interface OfflineInfo {
   offline: boolean;
   /** Ids of records made on this device that are not on the server yet ("Waiting to send"). */
   waitingIds: ReadonlySet<string>;
-  /** How many things wait to be sent (refused ones included). */
+  /** How many things wait to be sent (refused ones not counted: they wait for the owner). */
   waiting: number;
   /** This device has its own receipt series (it can take payments offline). */
   canPayOffline: boolean;

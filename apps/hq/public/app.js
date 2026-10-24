@@ -1,4 +1,4 @@
-// ForgeAI HQ page (#51). Plain static script: no build, no outside files (the Worker's strict CSP
+// MettleUp HQ page (#51). Plain static script: no build, no outside files (the Worker's strict CSP
 // allows only this address). Every name, number and message from the server is put on screen as
 // text (textContent), never as HTML. Nothing is kept in the browser: each page asks the Worker.
 import {
@@ -371,7 +371,7 @@ function planCard(g, id, ready) {
   const extend = picks.length
     ? h('div', { class: 'stack' },
         field('New end of the free trial', pick),
-        field('Why', trialWhy, 'Written in the log. The gym owner sees that ForgeAI changed the trial.'),
+        field('Why', trialWhy, 'Written in the log. The gym owner sees that MettleUp changed the trial.'),
         action('Save the new end', async () => {
           await api('/api/gym/trial', { gymId: id, endsAt: pick.value, reason: trialWhy.value });
           await gymPage(id, `Saved: the free trial now ends ${dateWords(pick.value)}.`);
@@ -546,7 +546,7 @@ function renderAccess(box, g, id) {
   if (open) {
     box.replaceChildren(h('div', { class: 'card warn' },
       h('h2', {}, 'Support access is open'),
-      h('p', {}, `Opened by ${g.supportOpenedBy === 'gym' ? 'the gym' : 'ForgeAI (emergency)'}, until ${when(g.supportUntil)}. Read-only. The gym owner sees every look.`),
+      h('p', {}, `Opened by ${g.supportOpenedBy === 'gym' ? 'the gym' : 'MettleUp (emergency)'}, until ${when(g.supportUntil)}. Read-only. The gym owner sees every look.`),
       h('div', { class: 'row wrap' }, RECORD_KINDS.map(([kind, words]) => action(words, async () => {
         const r = await api(`/api/access/records?id=${encodeURIComponent(id)}&kind=${kind}`);
         view.replaceChildren(h('h3', {}, `${words} (${r.rows.length}${r.rows.length === 200 ? '+' : ''})`),
@@ -561,7 +561,7 @@ function renderAccess(box, g, id) {
   const minutes = select([['15', '15 minutes'], ['30', '30 minutes'], ['60', '60 minutes']], '30');
   box.replaceChildren(h('div', { class: 'card' },
     h('h2', {}, 'Support access'),
-    h('p', { class: 'muted' }, 'Closed. Normally the gym opens it (Settings → Your data → “Let ForgeAI support look”). Open it yourself only in an emergency: it is read-only, it ends by itself, and the gym owner sees it with your reason.'),
+    h('p', { class: 'muted' }, 'Closed. Normally the gym opens it (Settings → Your data → “Let MettleUp support look”). Open it yourself only in an emergency: it is read-only, it ends by itself, and the gym owner sees it with your reason.'),
     field('Reason', kind), field('What happened', reason), field('For how long', minutes),
     action('Open in an emergency', async () => {
       await api('/api/access/open', { gymId: id, reasonKind: kind.value, reason: reason.value, minutes: Number(minutes.value) });

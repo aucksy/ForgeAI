@@ -357,7 +357,7 @@ export function branchErrorWords(code: string): string | null {
     case 'NAME_TAKEN':
       return 'A branch with this name already exists. Pick another name.';
     case 'TOO_MANY':
-      return 'You already have 10 branches, the most for now. Message ForgeAI on WhatsApp if you need more.';
+      return 'You already have 10 branches, the most for now. Message MettleUp on WhatsApp if you need more.';
     case 'STAFF_ELSEWHERE':
       return 'This mobile number is on another branch’s staff list. Remove it there first, then add them as an owner.';
     case 'NOT_ALLOWED':

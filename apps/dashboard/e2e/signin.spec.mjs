@@ -32,7 +32,7 @@ test('J25 owner signs in on a new device with mobile + code; wrong codes get cle
   await open(page, 'Staff & sign-in');
   await personCard(page, OWNER.name).getByRole('button', { name: 'Make sign-in code' }).tap();
   const mine = sheet(page, 'Your sign-in code');
-  await expect(mine).toContainText('On your new phone or computer, open forgeai.aakashpahuja.in, tap Sign in, and type +91 98290 12345 and this code.');
+  await expect(mine).toContainText('On your new phone or computer, open app.mettleup.fit, tap Sign in, and type +91 98290 12345 and this code.');
   await expect(mine.getByLabel(`Code ${SIGN_IN_CODE.split('').join(' ')}`)).toBeVisible();
   await mine.getByRole('button', { name: 'Done' }).tap();
 

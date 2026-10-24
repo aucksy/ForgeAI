@@ -14,6 +14,9 @@ import { NEEDS_INTERNET_WORDS, useOffline } from '../ui/offlineContext';
 
 export const ALL_BRANCHES = '__all';
 
+/** Things saved on this device are still being sent: another branch opens once they are. */
+export const WAIT_FIRST_WORDS = 'Another branch opens when everything saved on this device is sent.';
+
 export function BranchSwitch({ gymName, compact = false }: { gymName: string; compact?: boolean }) {
   const { branches, multi, canOpenOthers, currentGymId } = useBranches();
   const { switchTo } = useBranchActions();
@@ -21,7 +24,9 @@ export function BranchSwitch({ gymName, compact = false }: { gymName: string; co
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Offline front desk, step 3: another branch opens only online (this device keeps one branch's copy).
-  const { offline } = useOffline();
+  const { offline, waiting } = useOffline();
+  // Review SHOULD 7: another branch's panel would not send this branch's waiting items: send them first.
+  const blocked = offline || waiting > 0;
 
   if (!multi || !canOpenOthers) {
     return (
@@ -62,8 +67,8 @@ export function BranchSwitch({ gymName, compact = false }: { gymName: string; co
         <select
           aria-label="Branch"
           value={value}
-          disabled={busy || offline}
-          aria-description={offline ? NEEDS_INTERNET_WORDS : undefined}
+          disabled={busy || blocked}
+          aria-description={offline ? NEEDS_INTERNET_WORDS : waiting > 0 ? WAIT_FIRST_WORDS : undefined}
           onChange={(e) => void pick(e.target.value)}
           style={{
             width: '100%',
@@ -87,6 +92,9 @@ export function BranchSwitch({ gymName, compact = false }: { gymName: string; co
           ))}
         </select>
       </label>
+      {!offline && waiting > 0 && (
+        <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 4 }}>{WAIT_FIRST_WORDS}</div>
+      )}
       {busy && <div role="status" style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 4 }}>Opening the branch…</div>}
       {error && <div role="alert" style={{ fontFamily: font.body, fontSize: 12, color: color.criticalText, marginTop: 4 }}>{error}</div>}
     </div>

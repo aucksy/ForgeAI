@@ -24,7 +24,7 @@ import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
 
 export function Welcome() {
-  // R-97: the direct sign-up link (https://forgeai.aakashpahuja.in/start) puts "Start my gym" first.
+  // R-97: the direct sign-up link (https://app.mettleup.fit/start) puts "Start my gym" first.
   const startFirst = typeof window !== 'undefined' && isStartLink(window.location.pathname);
   const { loadDemoGym } = useCrm();
   const { startDemo, notice: shopNotice } = useShop();
@@ -49,10 +49,10 @@ export function Welcome() {
   const signInCard: ReactNode = (
     <Card style={startFirst ? { marginTop: space.lg } : undefined}>
       <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-        {startFirst ? 'Already use ForgeAI? Sign in' : 'Sign in'}
+        {startFirst ? 'Already use MettleUp? Sign in' : 'Sign in'}
       </h2>
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
+        Your gym already uses MettleUp? Sign in with your mobile number and the code from your gym owner.
       </p>
       <SignInForm />
     </Card>
@@ -103,10 +103,14 @@ export function Welcome() {
               letterSpacing: -0.5,
             }}
           >
-            FORGE<span style={{ color: color.accent }}>AI</span>
+            {/* R-105: a plain text wordmark until the logo is picked (#61). */}
+            Mettle<span style={{ color: color.accent }}>Up</span>
+          </div>
+          <div style={{ marginTop: 2, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.inkSecondary, letterSpacing: 0.4 }}>
+            for Gyms
           </div>
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 15, color: color.inkSecondary }}>
-            Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the ForgeAI app.
+            Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the MettleUp app.
           </p>
         </div>
 
@@ -136,7 +140,7 @@ export function Welcome() {
             See it working
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the ForgeAI app can join and order, and you see the order here.
+            Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the MettleUp app can join and order, and you see the order here.
           </p>
 
           {error && (

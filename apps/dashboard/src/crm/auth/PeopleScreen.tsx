@@ -416,8 +416,8 @@ function CodeSheet({ code, gymName, forMe, onClose }: { code: MadeCode; gymName:
       </p>
       <p style={{ ...bodyText, marginTop: space.md }}>
         {forMe
-          ? `On your new phone or computer, open forgeai.aakashpahuja.in, tap Sign in, and type +91 ${formatMobile(code.phone)} and this code.`
-          : `${code.name} opens forgeai.aakashpahuja.in, taps Sign in, and types +91 ${formatMobile(code.phone)} and this code. Read it out, or send it on WhatsApp.`}
+          ? `On your new phone or computer, open app.mettleup.fit, tap Sign in, and type +91 ${formatMobile(code.phone)} and this code.`
+          : `${code.name} opens app.mettleup.fit, taps Sign in, and types +91 ${formatMobile(code.phone)} and this code. Read it out, or send it on WhatsApp.`}
       </p>
       <div style={{ marginTop: space.lg, display: 'grid', gap: space.sm }}>
         {!forMe && (

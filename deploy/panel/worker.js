@@ -1,17 +1,20 @@
-// The panel's Worker (14 Oct 2026). Everything is still the static panel (apps/dashboard/dist),
-// except two paths that need a little server work (wrangler.jsonc run_worker_first):
+// The panel's Worker (14 Oct 2026). Since MettleUp (R-105) it runs first for every path but the
+// hashed /assets/ files, and first sends each address where it belongs (hosts.js: mettleup.fit is
+// the landing page, app.mettleup.fit the admin app, the old address stays for good). Everything
+// else is still the static panel (apps/dashboard/dist), except the paths that need server work:
+//  - /api/moved, /api/move  the old address's admin app moving a desk to app.mettleup.fit (hosts.js).
 //  - /j/<CODE>  the gym's invite link page (join.html), with the gym filled in before it is sent —
 //               so WhatsApp's link preview shows "Join <gym>" and the gym's logo, and the page
 //               draws at once. On a phone with the app, Android opens the app instead.
 //  - /c/<CODE>  the gym's check-in poster link (checkin.html), filled in the same way: on a phone
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
-//               is for phones without it ("Open this in the ForgeAI app to check in" + get the app).
+//               is for phones without it ("Open this in the MettleUp app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
 //               the apps (proxy.js, owner R-40, built R-55).
-//  - /app       the newest ForgeAI APK (whatever the latest GitHub release is), so the page, the
+//  - /app       the newest MettleUp APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
@@ -19,6 +22,7 @@ import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleProxy, isProxyPath } from './proxy.js';
+import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
@@ -28,6 +32,21 @@ const REPO = 'https://github.com/aucksy/ForgeAI';
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // MettleUp (R-105): which address shows what (hosts.js). Redirects first, then the landing page.
+    const where = routeFor(url.hostname, url.pathname, url.search, request.method, { moveOld: env.MOVE !== 'off' });
+    if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
+    if (where.kind === 'landing') {
+      if (env.LANDING !== 'live') return Response.redirect(`${APP_ORIGIN}/`, 302);
+      return env.ASSETS.fetch(new Request(new URL('/home/', url), request));
+    }
+    // The old address's admin app asks whether to move (src/crm/move); "off" keeps every desk where it is.
+    if (url.pathname === '/api/moved') {
+      return new Response(JSON.stringify({ move: env.MOVE !== 'off', to: APP_ORIGIN }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      });
+    }
+    // The old address hands a desk's sign-in over to app.mettleup.fit (hosts.js handleMove).
+    if (url.pathname === '/api/move') return url.hostname === APP_HOST ? handleMove(request) : new Response('Not found', { status: 404 });
     // R-55: the block-proof address for the gym server (proxy.js).
     if (isProxyPath(url.pathname)) return handleProxy(request, url);
     const invite = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
@@ -74,13 +93,13 @@ async function preview(code, ctx) {
 /** The two gym pages: what each one is called, and which static page it fills in. */
 const JOIN = {
   asset: '/join',
-  title: (g) => `Join ${g.gymName} on ForgeAI`,
-  desc: (g) => `${g.gymName} invites you to the ForgeAI app. Tap to join. Gym code ${g.joinCode}.`,
+  title: (g) => `Join ${g.gymName} on MettleUp`,
+  desc: (g) => `${g.gymName} invites you to the MettleUp app. Tap to join. Gym code ${g.joinCode}.`,
 };
 const CHECKIN = {
   asset: '/checkin',
   title: (g) => `Check in at ${g.gymName}`,
-  desc: (g) => `Open this in the ForgeAI app to check in at ${g.gymName}. Gym code ${g.joinCode}.`,
+  desc: (g) => `Open this in the MettleUp app to check in at ${g.gymName}. Gym code ${g.joinCode}.`,
 };
 
 async function joinPage(request, env, ctx, url, code, kind = JOIN) {

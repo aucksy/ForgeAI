@@ -70,7 +70,7 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>
-          Let members order from your gym in the ForgeAI app
+          Let members order from your gym in the MettleUp app
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.
@@ -107,7 +107,7 @@ export function JoinCodeCard({
       {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         {'Members join in the '}
-        <strong style={{ color: color.ink }}>ForgeAI app</strong>
+        <strong style={{ color: color.ink }}>MettleUp app</strong>
         {' with gym code'}
       </div>
       <div

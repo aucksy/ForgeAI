@@ -1,5 +1,5 @@
 /**
- * Settings → Branding (gym branding, Level 1): the gym's look inside the ForgeAI member app.
+ * Settings → Branding (gym branding, Level 1): the gym's look inside the MettleUp member app.
  *
  * The owner uploads a logo and picks ONE colour (optionally a background tone and bold italic
  * headings); the shared palette engine builds everything else — shades, the words on the colour,
@@ -8,7 +8,7 @@
  * (owner_set_brand). New members get it straight after joining; members already in the gym once
  * their app has checked with the gym (on opening, and on coming back at most once an hour), the
  * next time they open or come back to the app, under the gym's logo and never mid-workout
- * (apps/mobile theme/gymTheme.ts). "Use ForgeAI's look" clears it.
+ * (apps/mobile theme/gymTheme.ts). "Use MettleUp's look" clears it.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -38,7 +38,7 @@ export function BrandingScreen() {
     <>
       <PageHeader
         title="Branding"
-        subtitle="Your gym's logo and colours in the ForgeAI app"
+        subtitle="Your gym's logo and colours in the MettleUp app"
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
             Back to Settings
@@ -146,7 +146,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       await api.setBrand(ownerKey, CLEAR_ARGS);
       setLoad({ state: 'ready', saved: null });
       setDraft(draftFromBrand(null));
-      flash('Back to ForgeAI’s look.');
+      flash('Back to MettleUp’s look.');
     } catch (e) {
       setError(brandErrorWords(e));
     } finally {
@@ -215,7 +215,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
             <div role="radiogroup" aria-label="Heading style" style={{ display: 'grid', gap: space.sm }}>
               {(
                 [
-                  ['normal', 'Normal', 'ForgeAI’s own headings'],
+                  ['normal', 'Normal', 'MettleUp’s own headings'],
                   ['bold-italic', 'Bold italic', 'Slanted headings, for a sporty look'],
                 ] as [HeadingStyle, string, string][]
               ).map(([value, label, note]) => (
@@ -273,7 +273,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
             </Button>
             {saved && (
               <Button variant="quiet" tone="danger" onClick={() => setConfirmClear(true)} disabled={saving || uploading}>
-                Use ForgeAI’s look
+                Use MettleUp’s look
               </Button>
             )}
             {!changed && saved && (
@@ -290,7 +290,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
 
       {confirmClear && (
         <Sheet
-          title="Go back to ForgeAI’s look?"
+          title="Go back to MettleUp’s look?"
           onClose={closeClear}
           footer={
             <>
@@ -298,13 +298,13 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
                 Keep my look
               </Button>
               <Button tone="danger" onClick={() => void clear()}>
-                Use ForgeAI’s look
+                Use MettleUp’s look
               </Button>
             </>
           }
         >
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            This removes your logo and colours from the member app. Members see ForgeAI’s look on a later visit to the app, never in the middle of a workout.
+            This removes your logo and colours from the member app. Members see MettleUp’s look on a later visit to the app, never in the middle of a workout.
           </p>
         </Sheet>
       )}

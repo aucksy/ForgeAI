@@ -45,7 +45,7 @@ describe('the free-trial banner (R-97, 0030)', () => {
 
   it('stronger in the last 14 days, with See prices', () => {
     const w = trialBanner(trial({ endsAt: '2026-11-07T05:00:00Z' }), NOW);
-    expect(w).toEqual({ tone: 'strong', text: 'Free trial: 14 days left (ends 7 Nov 2026). Pick a ForgeAI pack to keep going after that.', showPlans: true });
+    expect(w).toEqual({ tone: 'strong', text: 'Free trial: 14 days left (ends 7 Nov 2026). Pick a MettleUp pack to keep going after that.', showPlans: true });
     expect(trialBanner(trial({ endsAt: '2026-11-08T05:00:00Z' }), NOW)?.tone).toBe('calm');
     expect(trialBanner(trial({ endsAt: '2026-10-25T05:00:00Z' }), NOW)?.text).toMatch(/^Free trial: 1 day left/);
     // Ends at 22:00 India time today.
@@ -55,7 +55,7 @@ describe('the free-trial banner (R-97, 0030)', () => {
   it('after the end: ended on the day, pick a plan, the members’ app keeps working', () => {
     expect(trialBanner(trial({ endsAt: '2026-10-20T05:00:00Z' }), NOW)).toEqual({
       tone: 'ended',
-      text: 'Your free trial ended on 20 Oct 2026. Pick a ForgeAI pack to keep going. Your members’ app keeps working.',
+      text: 'Your free trial ended on 20 Oct 2026. Pick a MettleUp pack to keep going. Your members’ app keeps working.',
       showPlans: true,
     });
   });
@@ -73,14 +73,14 @@ describe('the free-trial banner (R-97, 0030)', () => {
   });
 
   it('See prices goes to the price list on the landing page', () => {
-    expect(PLANS_URL).toBe('https://forgeai.aakashpahuja.in/home/#pricing');
+    expect(PLANS_URL).toBe('https://mettleup.fit/#pricing');
   });
 
-  it('the owner’s ForgeAI access list names a trial or plan change in words', () => {
+  it('the owner’s MettleUp access list names a trial or plan change in words', () => {
     expect(actionLine({ at: '2026-10-24T06:00:00Z', action: 'set_trial', reason: 'Moving 300 members' })).toBe(
-      '24 Oct, 11:30: ForgeAI changed the end of your free trial. Reason: Moving 300 members',
+      '24 Oct, 11:30: MettleUp changed the end of your free trial. Reason: Moving 300 members',
     );
-    expect(actionLine({ at: '2026-10-24T06:00:00Z', action: 'set_plan', reason: null })).toBe('24 Oct, 11:30: ForgeAI updated your plan.');
+    expect(actionLine({ at: '2026-10-24T06:00:00Z', action: 'set_plan', reason: null })).toBe('24 Oct, 11:30: MettleUp updated your plan.');
   });
 });
 

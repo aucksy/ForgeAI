@@ -4,7 +4,7 @@
 - **Member app:** Settings → Send feedback (from v0.50.0). Type, or speak with the keyboard's own
   microphone (the app has no microphone permission). Hindi or English.
 - **Admin app:** More → Send feedback (live 21 Oct 2026).
-- **The box:** `POST https://forgeai.aakashpahuja.in/api/feedback` (deploy/panel/feedback.js), kept in
+- **The box:** `POST https://app.mettleup.fit/api/feedback` (the old `https://forgeai.aakashpahuja.in/api/feedback` keeps working) (deploy/panel/feedback.js), kept in
   Cloudflare D1 `forgeai-web`, table `feedback`. Free plan. Not the gym server: no live gym data is
   touched. 20 messages a day per network address; 2000 letters each.
 - **Kept:** message, app version, phone or browser, screen, gym code, a random install id, a one-way

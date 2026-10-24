@@ -37,7 +37,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Admin app on your phone</SectionTitle>
         <p style={body}>
-          The admin app is on your home screen. Open it from the ForgeAI Admin icon.
+          The admin app is on your home screen. Open it from the MettleUp Admin icon.
         </p>
       </Card>
     );

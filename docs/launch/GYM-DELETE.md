@@ -1,13 +1,13 @@
-# Deleting a gym from ForgeAI (launch D8) — 21 Oct 2026
+# Deleting a gym from MettleUp (launch D8) — 21 Oct 2026
 
-A gym owner asks from the admin app: **Settings → Your data → Delete our gym from ForgeAI**. The
+A gym owner asks from the admin app: **Settings → Your data → Delete our gym from MettleUp**. The
 request lands in the feedback box (`python scripts/feedback.py new` shows it as
 `DELETE REQUEST: gym "<name>", code <CODE>, gym phone <number>, asked by <person>`). The button deletes
 nothing. The privacy notice promises: deleted within 30 days; backups expire within 7 more days.
 
-This is a **LIVE database change**: it runs only with the ForgeAI owner's yes, every time.
+This is a **LIVE database change**: it runs only with the MettleUp owner's yes, every time.
 
-## With ForgeAI HQ (once HQ is live, #51)
+## With MettleUp HQ (once HQ is live, #51)
 HQ → **Delete requests**. A request sent from the admin app shows under "New from the admin app":
 press "Write it down" (the 30 days count from the day it was sent). A request by email or phone:
 "Write down a request that came another way". Then, on the request:

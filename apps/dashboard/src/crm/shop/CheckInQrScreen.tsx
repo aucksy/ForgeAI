@@ -2,7 +2,7 @@
  * Attendance → Check-in QR (15 Oct 2026): the gym's "Scan to check in" poster. Printed on A4 (the
  * browser's print — "Save as PDF" works on a phone too) or downloaded as a picture for a print
  * shop. The same drawing as the invite poster (InviteScreen.tsx), with the check-in link
- * (checkin.ts) and words. A member scanning it with the ForgeAI app is checked in at once and
+ * (checkin.ts) and words. A member scanning it with the MettleUp app is checked in at once and
  * shows in the register with a small "App" tag.
  *
  * Only for a gym whose records are ONLINE: the member's phone writes the visit into those records
@@ -33,7 +33,7 @@ export function CheckInQrScreen() {
     <>
       <PageHeader
         title="Check-in QR"
-        subtitle="Members scan it with the ForgeAI app and check themselves in"
+        subtitle="Members scan it with the MettleUp app and check themselves in"
         actions={
           <Button variant="ghost" onClick={() => navigate('/attendance')}>
             Back to the register
@@ -112,7 +112,7 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
         <SectionTitle>How it works</SectionTitle>
         <ol style={{ margin: 0, paddingLeft: 20, fontFamily: font.body, fontSize: 14, lineHeight: 1.6, color: color.inkSecondary }}>
           <li>
-            The member scans the poster with their phone camera. The ForgeAI app opens and checks them in.
+            The member scans the poster with their phone camera. The MettleUp app opens and checks them in.
           </li>
           <li>
             The app finds them in your Members list by their mobile number. It asks for the number only the first time.
@@ -125,7 +125,7 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           If a member’s mobile number is not in your Members list, the app asks them to go to the desk. Add or fix their number. Then they scan again.
         </p>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          {`Members need the ForgeAI app, and must join your gym in it (gym code ${joinCode}). The join poster is in Settings → Invite members.`}
+          {`Members need the MettleUp app, and must join your gym in it (gym code ${joinCode}). The join poster is in Settings → Invite members.`}
         </p>
         <div style={{ marginTop: space.md }}>
           <Button variant="ghost" onClick={() => navigate('/settings/invite')}>

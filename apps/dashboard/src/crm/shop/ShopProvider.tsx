@@ -289,7 +289,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const code = errorCode(e);
       throw new Error(
         code === 'OFFLINE' || code === 'UNKNOWN'
-          ? 'Can’t reach ForgeAI. Check the internet and try again.'
+          ? 'Can’t reach MettleUp. Check the internet and try again.'
           : errorWords(e),
       );
     }

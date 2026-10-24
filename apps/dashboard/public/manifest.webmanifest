@@ -1,6 +1,6 @@
 {
-  "name": "ForgeAI admin app",
-  "short_name": "ForgeAI Admin",
+  "name": "MettleUp for Gyms",
+  "short_name": "MettleUp Admin",
   "description": "Run your gym: members, fees, renewals and attendance.",
   "id": "/",
   "start_url": "/",
@@ -11,19 +11,19 @@
   "lang": "en-IN",
   "icons": [
     {
-      "src": "/icons/admin-192.png",
+      "src": "/brand/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/admin-512.png",
+      "src": "/brand/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/admin-512.png",
+      "src": "/brand/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

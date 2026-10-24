@@ -55,18 +55,23 @@ import { BranchProvider } from './branches/BranchProvider';
 import { useBranches } from './branches/context';
 import { TermsGate } from './auth/TermsGate';
 import { Redirect, useRoute } from './ui/router';
+import { MoveBanner } from './move/MoveBanner';
 
 export function CrmApp() {
   return (
-    <AuthProvider>
-      {/* #41: above the panel, so it lives on while the panel remounts for another branch. */}
-      <BranchProvider>
-        {/* #38: an owner who has not accepted the terms yet is asked once, before the panel. */}
-        <TermsGate>
-          <SessionRoot />
-        </TermsGate>
-      </BranchProvider>
-    </AuthProvider>
+    <>
+      {/* R-105: MettleUp's new address (old address: when it is safe to move; new: once, after). */}
+      <MoveBanner />
+      <AuthProvider>
+        {/* #41: above the panel, so it lives on while the panel remounts for another branch. */}
+        <BranchProvider>
+          {/* #38: an owner who has not accepted the terms yet is asked once, before the panel. */}
+          <TermsGate>
+            <SessionRoot />
+          </TermsGate>
+        </BranchProvider>
+      </AuthProvider>
+    </>
   );
 }
 
@@ -84,12 +89,15 @@ function SessionRoot() {
   useEffect(() => setInstallOffer(signedIn), [signedIn]);
   // UAT F-02: the desk's 31-day limit on receipt dates is checked before anything is sent.
   const role = roleOf(session);
+  // Offline front desk (review SHOULD 6): money kept for later remembers who took it.
+  const staffId = session?.person?.staffId ?? null;
+  const personName = session?.person?.name ?? '';
   const data = useMemo(
     () =>
       onlineKey
-        ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role, saved: browserSavedCopy(), outbox: browserOutbox() })
+        ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role, saved: browserSavedCopy(), outbox: browserOutbox(), person: staffId ? { staffId, name: personName, role } : null })
         : undefined,
-    [onlineKey, role],
+    [onlineKey, role, staffId, personName],
   );
   return (
     <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
@@ -159,10 +167,10 @@ function Routes({ online }: { online: boolean }) {
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
       { path: '/enquiries', label: 'Enquiries', icon: 'members', badge: enquiriesDue || undefined },
       { path: '/expenses', label: 'Expenses', icon: 'money' },
-      // 18 Oct 2026: routines the gym or a trainer sends to members' ForgeAI app (owner and Staff).
+      // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
       { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
-      // Launch H7 (21 Oct 2026): write to ForgeAI (problems, ideas). Owner and Staff.
+      // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff.
       { path: '/feedback', label: 'Send feedback', icon: 'more' },
     ]);
   }, [memberViews, snapshot, today, newCount, role, allBranches]);

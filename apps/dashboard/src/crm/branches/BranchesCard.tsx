@@ -59,7 +59,7 @@ export function BranchesCard() {
     return (
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Branches</SectionTitle>
-        <p style={body}>Branches are not switched on for your gym yet. Message ForgeAI on WhatsApp to switch them on.</p>
+        <p style={body}>Branches are not switched on for your gym yet. Message MettleUp on WhatsApp to switch them on.</p>
       </Card>
     );
   }
@@ -181,7 +181,7 @@ export function BranchesCard() {
             <li>Its receipt numbers start with its own code (like B2), so two branches never print the same number.</li>
             <li>It gets its own gym code and QR poster for members.</li>
             <li>It starts with your first branch’s GST number. If the new branch has its own, change it in Settings after you open it.</li>
-            <li>Its free trial ends when your first branch’s does, on the same ForgeAI plan. ForgeAI is priced per branch.</li>
+            <li>Its free trial ends when your first branch’s does, on the same MettleUp plan. MettleUp is priced per branch.</li>
           </ul>
         </Sheet>
       )}

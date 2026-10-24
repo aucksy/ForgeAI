@@ -1,4 +1,4 @@
-/** More → Send feedback (launch H7): write to ForgeAI; the words are in logic/feedback.ts. */
+/** More → Send feedback (launch H7): write to MettleUp; the words are in logic/feedback.ts. */
 
 import { useState } from 'react';
 

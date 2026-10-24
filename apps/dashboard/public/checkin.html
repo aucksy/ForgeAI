@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Check in at your gym</title>
-<meta name="description" content="Open this in the ForgeAI app to check in at your gym.">
+<meta name="description" content="Open this in the MettleUp app to check in at your gym.">
 <meta property="og:title" content="Check in at your gym">
-<meta property="og:description" content="Open this in the ForgeAI app to check in.">
+<meta property="og:description" content="Open this in the MettleUp app to check in.">
 <meta property="og:type" content="website">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#07080C">
 <!--
-  Check-in poster page (15 Oct 2026): https://forgeai.aakashpahuja.in/c/<CODE>, the QR on the gym's
+  Check-in poster page (15 Oct 2026): https://app.mettleup.fit/c/<CODE> (and the old
+  https://forgeai.aakashpahuja.in/c/<CODE>, kept for good), the QR on the gym's
   "Scan to check in" poster (panel: Attendance -> Check-in QR). Served by the panel's Worker
   (deploy/panel/worker.js), which fills in the gym (window.__GYM__) before sending it, exactly like
   the invite page (join.html). On a phone WITH the app, Android opens the app's "Check in at <gym>"
@@ -47,17 +48,17 @@
 <main>
   <div class="logo" id="logo"><span id="initial">F</span></div>
   <h1 id="title">Check in at your gym</h1>
-  <p class="hi" id="sub">with the ForgeAI app</p>
+  <p class="hi" id="sub">with the MettleUp app</p>
 
   <div id="found">
-    <p class="lead">Open this in the ForgeAI app to check in.
-      <small>Check in karne ke liye ise ForgeAI app mein kholiye.</small></p>
+    <p class="lead">Open this in the MettleUp app to check in.
+      <small>Check in karne ke liye ise MettleUp app mein kholiye.</small></p>
 
     <!-- Android: opens the app's check-in screen; without the app Chrome comes back here with ?noapp=1. -->
-    <a class="btn" id="open" href="#">Check in with the ForgeAI app<small>ForgeAI app se check in karein</small></a>
+    <a class="btn" id="open" href="#">Check in with the MettleUp app<small>MettleUp app se check in karein</small></a>
 
     <div class="card hide" id="getapp">
-      <h2>First, get the ForgeAI app<br><small style="color:var(--ink2);font-weight:600">Pehle ForgeAI app lijiye</small></h2>
+      <h2>First, get the MettleUp app<br><small style="color:var(--ink2);font-weight:600">Pehle MettleUp app lijiye</small></h2>
       <ol>
         <li>Tap “Download the app” below.<small>Neeche “Download the app” dabaayein.</small></li>
         <li>Open the downloaded file and tap Install. If the phone asks, allow installs from Chrome.<small>File kholkar Install dabaayein. Phone pooche to Chrome se install allow karein.</small></li>
@@ -68,8 +69,8 @@
     </div>
 
     <div class="card hide" id="notandroid">
-      <h2>ForgeAI is an Android app for now</h2>
-      <p class="note" style="margin:0">Check in at the front desk today.<small>Abhi ForgeAI sirf Android phone par hai. Aaj front desk par check in karein.</small></p>
+      <h2>MettleUp is an Android app for now</h2>
+      <p class="note" style="margin:0">Check in at the front desk today.<small>Abhi MettleUp sirf Android phone par hai. Aaj front desk par check in karein.</small></p>
     </div>
 
     <div class="card">
@@ -98,6 +99,8 @@
   var show = function (id, on) { $(id).classList.toggle('hide', !on); };
   var android = /Android/i.test(navigator.userAgent);
   var noApp = /[?&]noapp=1/.test(location.search);
+  // MettleUp (R-105): set when the MettleUp app was not on the phone; the older ForgeAI app is tried next.
+  var tryOld = /[?&]try=old/.test(location.search);
 
   function hexOk(h) { return typeof h === 'string' && /^#[0-9A-Fa-f]{6}$/.test(h); }
   // Black or white words on the gym's colour, whichever reads better.
@@ -113,7 +116,7 @@
     // textContent only: a gym's name is never read as HTML.
     document.title = 'Check in at ' + gym.gymName;
     $('title').textContent = 'Check in at ' + gym.gymName;
-    $('initial').textContent = (gym.gymName.trim().charAt(0) || 'F').toUpperCase();
+    $('initial').textContent = (gym.gymName.trim().charAt(0) || 'M').toUpperCase();
     var b = gym.brand || {};
     if (hexOk(b.accent)) {
       document.documentElement.style.setProperty('--accent', b.accent);
@@ -126,9 +129,16 @@
       img.onload = function () { $('logo').innerHTML = ''; $('logo').appendChild(img); };
       img.src = b.logoUrl;
     }
-    // The app's own link; Chrome falls back to this page marked "no app" when it is not installed.
-    var back = location.origin + '/c/' + gym.joinCode + '?noapp=1';
-    $('open').href = 'intent://c/' + gym.joinCode + '#Intent;scheme=forgeai;package=com.forgeai.app;S.browser_fallback_url=' + encodeURIComponent(back) + ';end';
+    // Android opens the MettleUp app (com.mettleup.app). Without it, Chrome comes back here with
+    // ?try=old and the older ForgeAI app (com.forgeai.app) is tried; without that too, ?noapp=1.
+    var base = location.origin + '/c/' + gym.joinCode;
+    var intent = function (scheme, pkg, fallback) {
+      return 'intent://c/' + gym.joinCode + '#Intent;scheme=' + scheme + ';package=' + pkg + ';S.browser_fallback_url=' + encodeURIComponent(fallback) + ';end';
+    };
+    var oldApp = intent('forgeai', 'com.forgeai.app', base + '?noapp=1');
+    $('open').href = tryOld ? oldApp : intent('mettleup', 'com.mettleup.app', base + '?try=old');
+    // Chrome may want a tap for this one; then the button does it.
+    if (android && tryOld && !noApp) location.replace(oldApp);
     if (!android) { show('open', false); show('notandroid', true); }
     else if (noApp) {
       // No app yet: getting it comes first and is the big button; "Check in" waits under it.

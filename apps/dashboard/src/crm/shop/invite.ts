@@ -1,7 +1,8 @@
 /**
  * Invite link + front-desk QR (14 Oct 2026). ONE link per gym — the same in every WhatsApp invite
- * and on the printed poster: https://forgeai.aakashpahuja.in/j/<JOIN CODE>.
- *  - On a phone with the ForgeAI app, Android opens the app on "Join <gym>" (one tap to join).
+ * and on the printed poster: https://app.mettleup.fit/j/<JOIN CODE> (MettleUp, R-105; links sent and
+ * posters printed before carry https://forgeai.aakashpahuja.in/j/..., which works for good).
+ *  - On a phone with the MettleUp app, Android opens the app on "Join <gym>" (one tap to join).
  *  - Without the app, the link's web page (deploy/panel/join.html) shows the gym, how to get the
  *    app, and the code to type as the fallback.
  * No name or number rides in the link: it is forwarded, printed and photographed. The app fills
@@ -12,7 +13,7 @@
 
 import { phoneDigits, validateE164 } from '../logic/members';
 
-export const INVITE_ORIGIN = 'https://forgeai.aakashpahuja.in';
+export const INVITE_ORIGIN = 'https://app.mettleup.fit';
 
 /** The gym's invite link. PURE. */
 export function inviteLink(joinCode: string): string {
@@ -33,7 +34,7 @@ export function inviteMessage(gymName: string, joinCode: string, memberName?: st
   const gym = gymName.trim() || 'our gym';
   return [
     hi ? `Hi ${hi}!` : 'Hi!',
-    `Join ${gym} in the ForgeAI app: track your workouts and order from the gym shop.`,
+    `Join ${gym} in the MettleUp app: track your workouts and order from the gym shop.`,
     '',
     `Tap to join:`,
     inviteLink(joinCode),

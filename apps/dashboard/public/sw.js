@@ -59,7 +59,7 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(page(req));
     return;
   }
-  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.webmanifest') {
+  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/icons/') || url.pathname.startsWith('/brand/') || url.pathname.startsWith('/favicon.') || url.pathname === '/manifest.webmanifest') {
     e.respondWith(file(req));
   }
 });

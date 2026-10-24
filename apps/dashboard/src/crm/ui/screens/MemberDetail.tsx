@@ -537,7 +537,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
             {workoutPlans.length === 0 ? (
               online ? (
-                'No workout plan sent yet. They see one in the ForgeAI app after one check-in at the gym.'
+                'No workout plan sent yet. They see one in the MettleUp app after one check-in at the gym.'
               ) : (
                 `No workout plan sent yet. ${NOT_ONLINE_YET}`
               )

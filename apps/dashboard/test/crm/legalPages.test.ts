@@ -18,7 +18,8 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
   it('every page the member app links to is on the site', () => {
     const terms = readFileSync(resolve(__dirname, '../../../mobile/src/shop/joinTerms.ts'), 'utf8');
     const base = /LEGAL_BASE = '([^']+)'/.exec(terms)?.[1];
-    expect(base).toBe('https://forgeai.aakashpahuja.in');
+    // MettleUp (R-105): the old address and the new one serve the same pages.
+    expect(['https://forgeai.aakashpahuja.in', 'https://app.mettleup.fit']).toContain(base);
     const pages = [...terms.matchAll(/\$\{LEGAL_BASE\}\/([a-z-]+\.html)/g)].map((m) => m[1]!);
     expect(pages.sort()).toEqual(['privacy.html', 'terms.html']);
     for (const p of pages) {

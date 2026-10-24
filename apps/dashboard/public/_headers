@@ -2,12 +2,14 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://hdxzqbdiokjklnypfisq.supabase.co; connect-src 'self' https://hdxzqbdiokjklnypfisq.supabase.co wss://hdxzqbdiokjklnypfisq.supabase.co https://cloudflareinsights.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://hdxzqbdiokjklnypfisq.supabase.co; connect-src 'self' https://hdxzqbdiokjklnypfisq.supabase.co wss://hdxzqbdiokjklnypfisq.supabase.co https://cloudflareinsights.com https://app.mettleup.fit; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://app.mettleup.fit; frame-ancestors 'none'
 
 # Launch A6 (21 Oct 2026): the security policy above lets the panel run only its own scripts and
 # talk only to the gym server (plus Cloudflare's own visit counter, which Cloudflare adds to the
 # page). The invite and check-in pages carry one small script the Worker
 # writes into them (the gym's name), so they go without it (they hold no sign-in and no data).
+# MettleUp (R-105): app.mettleup.fit is allowed twice, only for the old address's move: one
+# "is it up?" check (connect-src) and the form that hands the sign-in over (form-action).
 # vite.config.ts applies the same policy to `vite preview`, so every admin-app journey runs under it.
 /join
   ! Content-Security-Policy

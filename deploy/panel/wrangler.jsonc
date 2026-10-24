@@ -1,8 +1,12 @@
-// The gym owner's web panel (apps/dashboard) on Cloudflare: the static panel, served by a Worker
-// with assets at https://forgeai.aakashpahuja.in. Build first (apps/dashboard: npm run build),
+// MettleUp's web side on Cloudflare (R-105, 24 Oct 2026): one Worker with the admin app's static
+// files (apps/dashboard/dist) answers every address. Build first (apps/dashboard: npm run build),
 // then from this folder: npx wrangler deploy
-// worker.js runs only for the invite link page (/j/<CODE>), the check-in poster page (/c/<CODE>)
-// the app download (/app) and "Send feedback" (/api/feedback); every other path is the static panel, as before.
+//   https://mettleup.fit            the landing page (www.mettleup.fit, mettleup.in, www.mettleup.in
+//                                   send people there, same path)
+//   https://app.mettleup.fit        the admin app, /sb, /j, /c, /api, /start, legal pages
+//   https://forgeai.aakashpahuja.in the old address, kept for good (old phones, printed posters)
+// Which host shows what: hosts.js. worker.js runs first for every path except the hashed /assets/
+// files (so each host can redirect); everything it does not handle is the static panel, as before.
 {
   "name": "forgeai-panel",
   "compatibility_date": "2026-10-01",
@@ -11,9 +15,16 @@
     "directory": "../../apps/dashboard/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/j/*", "/c/*", "/app", "/app/", "/api/*", "/home", "/home/*", "/sb", "/sb/*"]
+    "run_worker_first": ["/*", "!/assets/*"]
   },
-  "routes": [{ "pattern": "forgeai.aakashpahuja.in", "custom_domain": true }],
+  "routes": [
+    { "pattern": "forgeai.aakashpahuja.in", "custom_domain": true },
+    { "pattern": "app.mettleup.fit", "custom_domain": true },
+    { "pattern": "mettleup.fit", "custom_domain": true },
+    { "pattern": "www.mettleup.fit", "custom_domain": true },
+    { "pattern": "mettleup.in", "custom_domain": true },
+    { "pattern": "www.mettleup.in", "custom_domain": true }
+  ],
   // Launch H7 (21 Oct 2026): "Send feedback" from both apps (feedback.js). Cloudflare's free
   // database, not the gym server. Tables: migrations/ (npx wrangler d1 migrations apply forgeai-web --remote).
   // Launch I2: the landing page (/home/) stayed hidden (404) until the owner said yes: "live" since
@@ -22,7 +33,10 @@
   // and ANTHROPIC_API_KEY (Claude, the fallback); either, both or none (none = owners match by hand).
   // `npx wrangler secret put GEMINI_API_KEY`. Optional var GEMINI_MODEL swaps the Gemini model.
   // Needs table ai_usage (migrations/0003_ai_usage.sql).
-  "vars": { "LANDING": "live" },
+  // MOVE (R-105): "on" sends /home on the old address to mettleup.fit, and lets the old address's
+  // admin app move each desk to app.mettleup.fit once nothing is waiting to be sent. "off" keeps
+  // the old address exactly as it was (a kill switch; deploy again to apply).
+  "vars": { "LANDING": "live", "MOVE": "on" },
   "d1_databases": [
     { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "migrations" }
   ]

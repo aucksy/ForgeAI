@@ -50,7 +50,7 @@ test('J37 workout offer: the owner starts it, a member reaches 10, the desk give
   await page.getByLabel('Workouts', { exact: true }).fill('10');
 
   await page.getByRole('button', { name: 'Start offer' }).tap();
-  await expect(page.getByText('Offer started. Members see it in the ForgeAI app now.')).toBeVisible();
+  await expect(page.getByText('Offer started. Members see it in the MettleUp app now.')).toBeVisible();
   const saved = server.log.find((c) => c.fn === 'owner_save_offer');
   expect(saved.args.p_offer).toMatchObject({ workouts: 10, windowDays: 30, rewardDays: 3, autoGive: false, countAppCheckins: true, joinUntil: '2026-11-16' });
   await expect(page.getByRole('main')).toContainText('Joined 0 · Ready 0 · Rewarded 0');

@@ -1,9 +1,10 @@
-# ForgeAI — admin app (gym owner and staff)
+# MettleUp for Gyms — admin app (gym owner and staff)
 
 The web app the gym runs on: members, plans, renewals, dues, receipts (GST 5%, financial-year
 numbers), visits and QR check-in, staff sign-in by mobile + 6-digit code, roles (owner / staff /
 trainer), shop, gym workout plans, Excel import. Vite + React + TypeScript; talks to Supabase
-directly (row-level security per gym). Live at forgeai.aakashpahuja.in, served by the Cloudflare
+directly (row-level security per gym). Live at app.mettleup.fit (the old forgeai.aakashpahuja.in
+keeps answering for good; the brand was ForgeAI until 24 Oct 2026, R-105), served by the Cloudflare
 Worker in `deploy/panel` (`npx wrangler deploy` after a checked build: `npx tsc -b`,
 `npx vitest run`, `npm run build`). Journeys: `apps/dashboard/e2e` (Playwright).
 (Rewritten 19 Oct 2026: the old text described a read-only Phase 2 dashboard on Cloudflare Pages.)
@@ -32,7 +33,7 @@ An owner needs a `profiles` row with `role='owner'` + a `gym_id`. Two paths:
 
 1. **In-app (recommended):** sign up (email + password) → the app shows **"Create your
    gym"** → it calls the `create_gym` RPC (which makes the gym and sets you as owner)
-   → you get a **join code** to share. Members enter that code in the ForgeAI app.
+   → you get a **join code** to share. Members enter that code in the MettleUp app.
 2. **Adopt the existing test gym (IRON01):** after signing up, run this once in the
    Supabase SQL editor to make your account the owner of the seeded test gym:
    ```sql
@@ -57,8 +58,45 @@ npm run build
 cd ../../deploy/panel
 npx wrangler deploy
 ```
-Then open https://forgeai.aakashpahuja.in, sign in, and check the response has the
+Then open https://app.mettleup.fit, sign in, and check the response has the
 `Content-Security-Policy` header. Write the new version id into docs/uat/STATUS.md.
+
+### The addresses (MettleUp, R-105, 24 Oct 2026; one Worker answers all of them: `deploy/panel/hosts.js`)
+| Address | What it shows |
+|---|---|
+| https://mettleup.fit | the landing page (`public/home/`); any other path goes to app.mettleup.fit, same path |
+| www.mettleup.fit, mettleup.in, www.mettleup.in | 301 to https://mettleup.fit, same path |
+| https://app.mettleup.fit | the admin app, `/sb` (gym server, stamped `X-Forge-Proxy`), `/j`, `/c`, `/api`, `/start`, legal pages, `/.well-known/assetlinks.json`; `/home` goes to mettleup.fit |
+| https://forgeai.aakashpahuja.in | the old address, kept for good: `/sb`, `/j`, `/c`, `/api`, `/join`, `/checkin`, the service worker. `/home` goes to mettleup.fit. The admin app moves each desk to app.mettleup.fit in the browser, only once nothing is waiting to be sent (`src/crm/move/`), carrying the sign-in |
+
+The wrangler var `MOVE` ("on") is the kill switch for the old address: "off" keeps it exactly as it
+was (no /home redirect, no desk moves). After a deploy that adds an address, check each one answers:
+`curl -sI https://mettleup.fit/`, `https://app.mettleup.fit/`, `https://mettleup.in/start` (301),
+`https://app.mettleup.fit/.well-known/assetlinks.json` (both packages).
+
+**Android app links** (`public/.well-known/assetlinks.json`, the same file on every address): both
+packages, com.mettleup.app and com.forgeai.app, with the upload key's SHA-256 fingerprint.
+TODO (Play internal test): when Play App Signing is on, add the **app signing key** SHA-256 from
+Play Console → Test and release → App integrity → App signing to com.mettleup.app's
+`sha256_cert_fingerprints` (a second entry in the list), or links will not open the Play copy of
+the app. `deploy/panel/hosts.test.mjs` checks the file (update its expected fingerprints too).
+
+### Logo
+Logo E "Forged" (picked 24 Oct 2026, #61). The brand set lives in `branding/mettleup/` (colours and
+text pairings: `branding/mettleup/BRAND.md`); the web files are copies of `branding/mettleup/web/`,
+put in place by `python branding/mettleup/install.py --apply --only dashboard`. Never edit the copies:
+| File (apps/dashboard/public/) | Size | Used by |
+|---|---|---|
+| `favicon.svg`, `favicon.ico` | any, 16-48 | browser tab (admin app, landing page) |
+| `brand/icon-192.png` | 192 x 192 | favicon fallback, install manifest |
+| `brand/icon-512.png` | 512 x 512 | install manifest (install sheet, splash) |
+| `brand/icon-maskable-512.png` | 512 x 512 | install manifest "maskable" (Android cuts it) |
+| `brand/apple-touch-icon-180.png` | 180 x 180 | iPhone home screen |
+| `brand/og-1200x630.png` | 1200 x 630 | link preview of mettleup.fit (WhatsApp, Google) |
+| `brand/mark.svg` | 26 x 26 shown | landing page header, beside the words "MettleUp for Gyms" |
+| `brand/wordmark-light.svg`, `brand/wordmark-dark.svg` | vector | spare lockups (not shown yet) |
+The admin sign-in page shows the name as text. The old `public/icons/admin-*.png` stay on disk for
+pages cached before the change. HQ (`apps/hq/public/`) has its own `favicon.svg` copy.
 
 **Roll back** (a deploy broke the panel): from `deploy/panel`,
 `npx wrangler deployments list` shows the versions, newest last; then

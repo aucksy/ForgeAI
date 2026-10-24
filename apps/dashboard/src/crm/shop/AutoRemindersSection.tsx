@@ -2,7 +2,7 @@
  * Messages & offers → Automatic reminders (R-86, 23 Oct 2026). One switch per reminder (plan ends
  * soon, plan ended, birthday, welcome, ...) with a plain line on when it goes, what the member reads,
  * and the days where they matter. The common ones start on. Saved on the gym's server (0029); members'
- * phones pick the change up the next time ForgeAI checks the gym, and set the reminders themselves
+ * phones pick the change up the next time MettleUp checks the gym, and set the reminders themselves
  * (9:30 am, at most one a day). Owner only; the front desk can look. Words and rules:
  * logic/autoReminders.ts. A server without 0029 says so in one line.
  */
@@ -109,7 +109,7 @@ export function AutoRemindersSection() {
         <SectionTitle>Automatic reminders</SectionTitle>
         <p style={{ ...quiet, fontSize: 14, color: color.ink }}>Automatic reminders are not switched on for your gym yet.</p>
         <p style={{ ...quiet, marginTop: space.sm }}>
-          Until then, members with the ForgeAI app get the usual ones: plan ends in 7 and 3 days, ends today, plan ended, welcome, and workout
+          Until then, members with the MettleUp app get the usual ones: plan ends in 7 and 3 days, ends today, plan ended, welcome, and workout
           offer days added.
         </p>
       </Card>
@@ -145,7 +145,7 @@ export function AutoRemindersSection() {
     setError(null);
     try {
       take(await api.saveAutoReminders(key, next));
-      setToast("Saved. Members' phones pick this up the next time they open ForgeAI.");
+      setToast("Saved. Members' phones pick this up the next time they open MettleUp.");
       window.clearTimeout(toastTimer.current);
       toastTimer.current = window.setTimeout(() => setToast(null), 4000);
     } catch (e) {
@@ -162,7 +162,7 @@ export function AutoRemindersSection() {
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Automatic reminders</SectionTitle>
         <p style={{ ...quiet, fontSize: 14, color: color.ink }}>
-          Members with the ForgeAI app get these on their phone at 9:30 am, never more than one a day. Their phone sets them, so they cost
+          Members with the MettleUp app get these on their phone at 9:30 am, never more than one a day. Their phone sets them, so they cost
           nothing. Members can turn them off in the app.
         </p>
         <p style={{ ...quiet, marginTop: space.sm }}>
