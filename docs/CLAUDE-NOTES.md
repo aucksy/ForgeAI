@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-104. Offline admin app: does it need installing? And stop asking how often the internet drops — 24 Oct 2026
+**Owner said:** "I want to know that the offline will only work if they install the website as app. If they don't, then it
+will not work. Is that correct? Second, most gyms may not be able to answer how often the internet is down. And even if they
+have an idea, it may not be like remain same all the time. So I don't know why you're asking this. What is the purpose?"
+**Answer:** no install needed: public/sw.js registers on every visit of the live site (install.ts listenForInstall), so the
+normal Chrome tab opens offline too, after one online visit + sign-in on that device (not in Incognito, not after clearing
+site data). He is right on #2: he decided the whole CRM offline on 18 Oct (#7). Claude builds step 3 now (payments and new
+members offline, a receipt series per desk device). New hard rule saved: never-ask-him-what-he-cannot-know. Status: started.
+
 ## R-103. His #59 answers: switch on 0031 + 0033, approve the privacy words (so 0032 too), hide names from the AI — 24 Oct 2026
 **Owner said (on the page, 3:35 pm):** #59 "Switch them on?" A: "Yes: 0031 (branches) and 0033 (terms) now, 0032
 (workouts) once you approve the words below"; "The privacy and agreement words?" A: "Approve as written, and hide names
