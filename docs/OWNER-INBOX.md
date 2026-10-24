@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
 
 ---
 
@@ -142,7 +141,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
 | The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
 | Privacy and gym-terms words for the server copy (#59) | To do | Drafts for your OK before 0032 goes live. Small. |
-| Trainer view without a tick box (#46) | Blocked | Waits for your pick in #46 and your OK on the words. Medium. |
+| Trainer view without a tick box (#46) | To do | 24 Oct: you picked A (join-screen line + off switch). Built after the MettleUp release. Waits for your pick in #46 and your OK on the words. Medium. |
 | Free vs gym-member limits + Google sign-in (#43) | Blocked | 24 Oct: built, OFF; Google sign-in waits for #60. Limits built but OFF at launch, switched from the owner panel; "Continue with Google". Medium. |
 | Play Store internal test (#28) | To do | In your open Play Console; I stop at every "I agree". Medium. |
 | Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
@@ -163,7 +162,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | 15. Offline front desk (admin app) | Blocked | Steps 1 and 2 live 22 Oct (opens without internet; desk check-ins kept offline and sent later, with their real time). Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
 | 16. Landing page: dedicated animated sections (your note, 22 Oct) | Done | 22 Oct, live: workout + new record, the shop order, free notices to every member, the lock screen with a watch. |
 | 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
-| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | Blocked | Reps to beat: live in v0.54.0. Trainer view: waits for your pick in #46. |
+| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Reps to beat: live in v0.54.0. Trainer view: #46 decided A (24 Oct); built after the MettleUp release. |
 | 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
 | 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Done | 24 Oct: all live. Step 1 live 22 Oct; step 2 server and admin 23 Oct; the member app card released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk). |
 | 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
@@ -375,11 +374,13 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Status:** DONE
 **Why:** I filled in the Google group "MettleUp testers" (mettleup-testers@googlegroups.com; only people you add can join; you add emails directly) in your simpleapps108 Chrome window. Google asks for a robot check before it creates the group, and I am not allowed to do robot checks.
 **Your task:** in the simpleapps108 Chrome window, open the tab "My groups" (groups.google.com). The "Create group" box shows "Captcha required": tick "I'm not a robot", then press "Create group". If the box is gone, open https://groups.google.com/my-groups and press "Create group" again: name MettleUp testers, email mettleup-testers.
-**TASK DONE (24 Oct, chat):** the group mettleup-testers@googlegroups.com exists. Add testers at groups.google.com → MettleUp testers → Members → Add members.
+**TASK DONE (24 Oct, chat)**
+the group mettleup-testers@googlegroups.com exists. Add testers at groups.google.com → MettleUp testers → Members → Add members.
 
 ## 61. Pick the MettleUp logo — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED (24 Oct)
+**READ (24 Oct, 04:48 pm, via the page)**
 **Why:** the logo goes on the app icon, the Play Store listing, the website and the gym owner app, so it is the one thing I should not choose for you. All six are drawn as clean shapes, tested at the size of a phone icon, on white and on black. Pictures: sent in the chat on 24 Oct; the page is in the project at branding/logo-options/index.html.
 - **A · Ascent:** an M whose second peak stands higher: "this week beats last week". Ember orange, the colour the app already uses, so nothing else in the app changes colour.
 - **B · Loaded:** a barbell loaded light to heavy. Pine green and brass. Blurs when very small.
@@ -392,9 +393,10 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**Why:** members sign in with Google so their workouts come back on a new phone (#43, #50). The app part is built and hidden; it shows only after these steps. Do them after you pick the Play Store ID in #57, because step 2 needs it.
+**Why:** members sign in with Google so their workouts come back on a new phone (#43, #50). The app part is built and hidden; it shows only after these steps. The Play Store ID is com.mettleup.app (#57). This one setup also switches on Google Drive backup (it replaces #42).
 **Your task:** open https://console.cloud.google.com/projectcreate and make a project named ForgeAI (skip if you already made one for Drive backup, #42). Then open https://console.cloud.google.com/auth/branding: app name ForgeAI (or the new name), your email as support and contact email, audience External; then Audience → "Publish app".
-**Your task:** open https://console.cloud.google.com/auth/clients → Create client → Android. Package name: the Play ID you picked in #57. SHA-1: 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public fingerprint, not a secret) → Create.
+**Your task:** open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable (for Drive backup).
+**Your task:** open https://console.cloud.google.com/auth/clients → Create client → Android. Package name: com.mettleup.app. SHA-1: 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public fingerprint, not a secret) → Create.
 **Your task:** same page → Create client → Web application, name "ForgeAI app" → Create. Send me its Client ID in chat (it ends in .apps.googleusercontent.com; it is not a secret). Keep its Client secret for the next step only: never paste it in chat or a file.
 **Your task:** open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/auth/providers → Google → turn on "Enable Sign in with Google". Client IDs: the Web client ID, a comma, then the Android client ID. Client Secret: the Web client secret. Leave "Skip nonce checks" off → Save.
 
@@ -673,7 +675,8 @@ software only offers a fixed upload template, and nobody reads a photo of a pape
 
 ## 46. Trainers see their members' progress: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (24 Oct) — build queued
+**READ (24 Oct, 04:54 pm, via the page)**
 **You asked:** trainers should see if members are progressing, encourage them, and help the gym sell
 personal training. Research it and decide the best way.
 **My answer:** Build it as a tool that tells a trainer who to talk to today and what to say, not a sales list.
@@ -700,9 +703,7 @@ personal training. Research it and decide the best way.
 2. **An off switch** in Settings → Your gym: "Share my workouts with my gym" (on). Very few will turn it off, and having it protects you and the gym.
 3. **The terms and the privacy notice** say the same, in the positive way you asked.
 Without the off switch, a member could complain that a "no" was ignored, and that is the one real legal risk. Before it goes live, you approve the exact words.
-**Decide:** Share members' workouts with their gym without a tick box?
-- A: Yes: the line on the join screen + an off switch in Settings (recommended)
-- B: Yes, with no off switch (the small legal risk above)
+**DECIDED (24 Oct, 4:54 pm, via the page):** A: a line on the join screen + an off switch in Settings; no tick box. Claude builds the trainer view next, after the MettleUp release.
 
 ## 45. Count reps by listening: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -831,7 +832,6 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 - **Optional:** say "MettleUp" to 3 gym owners on the phone and ask them to spell it back.
 - **Play ID:** if you pick MettleUp, the Play Store ID in #57 should be com.mettleup.app (it matches the domain you will own); no public app uses it today.
 **Your task:** open https://tmrsearch.ipindia.gov.in/tmrpublicsearch/ (or ipindia.gov.in → Trade Marks → Public Search), choose "Wordmark", type METTLEUP, search "Contains", and repeat for METTLE UP. Look at classes 9 (apps), 41 (fitness training) and 42 (software). Tell me what you see, or send a screenshot.
-**Your task:** buy mettleup.in, mettleup.app and getmettleup.com yourself (GoDaddy India, Hostinger or Porkbun; Porkbun is cheapest after the first year). Never share the account password with me.
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 **DECIDED (24 Oct, 4:03 pm, via the page):** one brand, with "for Gyms" on the business side; the name is **MettleUp**. You bought mettleup.fit (the address we market) and mettleup.in (it will send people to mettleup.fit); no .app for now.
 **YOUR QUESTION (24 Oct, on the page):** "Will these be two separate mobile apps like mettleup and mettleup for GYMS? Because I was thinking it would be just one app with consumer and B2B logins, not sure."
@@ -863,7 +863,7 @@ list". One more check is needed before "My membership" can safely show payments.
 
 ## 42. Your task: switch on Google Drive backup (free, about 30 minutes) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **Your task:** Open https://console.cloud.google.com/projectcreate with your Google account and make a project named ForgeAI (free, no card).
 **Your task:** In that project, open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable.
 **Your task:** Open https://console.cloud.google.com/auth/branding and fill in: app name ForgeAI, your email as the support and contact email, audience External. Then on the Audience page press "Publish app". (The app only asks for its own files in the member's Drive, which Google does not review.)
@@ -874,6 +874,8 @@ in the app, because this one-time Google setup was never done. Today members hav
 phone backup, so a lost or reset phone can lose their history (your rule: members must not lose
 workouts). With the ID, I switch it on in the next app version. The cloud test phone has no Google
 account, so the first real backup will be on your phone; I will tell you exactly what to tap.
+**TASK DONE (24 Oct)**
+merged into #60: one Google Cloud setup now covers both Drive backup and "Continue with Google", with the new Play ID com.mettleup.app. Nothing to do here.
 
 ## 41. How do we price an owner with 2 or more branches? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -961,12 +963,14 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** PLANNED
+**Status:** DONE
 **Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
 **Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
 **Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
 **YOUR REPLY (24 Oct):** No physical signing; a scalable digital way for gyms anywhere.
 **My answer:** Yes. Online acceptance is legal in India (IT Act 2000) and is how all software is sold. When an owner taps "Create my gym", a tick box says "I agree to the ForgeAI terms and the data agreement", with links to both. We store the date, time and version of the terms they accepted, and the owner can see it in Settings. No paper, no visit. I am building it now.
+**TASK DONE (24 Oct)**
+no paper signing needed. As you asked, gym owners now accept the terms and the data agreement online with a tick box at "Create my gym" (live on the server 24 Oct); the date and version are kept.
 
 ## 37. Launch task: name the complaints contact for members — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -986,15 +990,17 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 35. Launch task: open the Google Play developer account ($25 once) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**TASK DONE (24 Oct, 04:55 pm, via the page)**
 **Your task:** After you answer #28: go to https://play.google.com/console/signup and make the account type you picked. It needs your government ID, a card in your name and an Android phone. Pay the $25 once.
 **Your task:** Tell Claude "Play account ready". Claude then prepares the store listing, the data safety answers and the internal test for you to submit.
 **Why:** members get updates by themselves from the Play Store; the GitHub download link will be blocked by Google for unregistered apps from 2027. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (C1-C3).
+**TASK DONE (24 Oct)**
+the Play account exists (SimpleApps108, a personal account). Claude prepares the MettleUp listing and internal test there.
 
 ## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**Your task:** If you say yes in #27: in Supabase (https://supabase.com/dashboard), open the project → Billing → upgrade the organisation to Pro. Leave "Spend cap" ON.
 **Your task:** In Supabase, create a second, free project named `forgeai-staging`, region Mumbai (Claude fills it with the same tables, for testing changes before they reach the gym).
 **Your task:** Turn on two-step sign-in (an authenticator app) on Supabase, GitHub, Cloudflare and your Google account.
 **Your task:** Make a free Sentry account (https://sentry.io/signup) and a free Better Stack account (https://betterstack.com/users/sign-up); then tell Claude. Claude wires crash reports into both apps and sets the "site is down" alerts to your phone.
@@ -1037,12 +1043,14 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 28. Launch decision: which Google Play account — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** PLANNED
+**Status:** DONE
 **Why it matters:** the Play Store gives members automatic updates and keeps the app installable after Google's 2027 rule against unregistered downloads. You can move to an organisation account later when you form a company.
 **DECIDED (24 Oct 2026):** A: your existing Google Play account (simpleapps108@gmail.com).
 **YOUR REPLY (24 Oct):** Submit the app for internal testing so you can add testers' emails. Testing with your first client for a few months and rebranding later is fine.
 **My answer:** Agreed: test now, rebrand later. One thing to know: the app's Play Store ID (com.forgeai.app) can never change, even after a new name. Nobody sees it, so that is fine. I will set up the internal test in your open Play Console. I stop and ask you at every "I agree" box, because those are your agreements to accept.
 **Your task:** In your Chrome window signed in as simpleapps108@gmail.com, turn on the Claude extension: open chrome://extensions, find "Claude" (or add it from the Chrome Web Store), switch it on, and sign in to Claude. Then tell me "Play is connected". Right now only your other Chrome profile (pahuja.aakash108) is connected to me, so I cannot see the Play Console window.
+**TASK DONE (24 Oct, chat)**
+the Claude extension is on in the simpleapps108 Chrome window; Claude works there.
 
 ## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1056,7 +1064,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 
 ## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **TASK DONE (24 Oct, 01:05 pm, via the page)**
 **Your task:** Install v0.48.0 on your phone: https://github.com/aucksy/ForgeAI/releases/download/v0.48.0/forgeai-v0.48.0.apk
 **Your task:** Do one real workout with it, and tell me anything that looks or feels wrong (a screenshot helps).
@@ -1065,7 +1073,7 @@ version (new: gym workout plans, kg to beat per exercise, My membership, check-i
 
 ## 25. Set up Google Test Lab (free, about 10 minutes) — 18 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **TASK DONE (24 Oct, 01:15 pm, via the page)**
 **READ (24 Oct, 01:15 pm, via the page)**
 **Your task:** Follow the 5 short steps in `docs/uat/TEST-LAB-SETUP.md` (on GitHub: https://github.com/aucksy/ForgeAI/blob/main/docs/uat/TEST-LAB-SETUP.md): make a free Firebase project `forgeai-testlab`, turn on 2 services, make a key, and add `TEST_LAB_PROJECT` and `TEST_LAB_KEY` to the GitHub secrets.
