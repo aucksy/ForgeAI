@@ -43,7 +43,16 @@ export async function openAsOwner(page, slot) {
     [CLOUD_GYM_KEY, JSON.stringify(session)],
   );
   await page.goto('./');
-  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 45_000 });
+  const today = page.getByRole('heading', { name: 'Today', exact: true });
+  // Since 0033 (24 Oct 2026) a gym that has not accepted the terms sees "Before you go on" first;
+  // the seeded QA gyms accept it once, as a real owner does.
+  const terms = page.getByRole('heading', { name: 'Before you go on' });
+  await expect(today.or(terms)).toBeVisible({ timeout: 45_000 });
+  if (await terms.isVisible()) {
+    await page.getByRole('checkbox', { name: /I agree to the MettleUp terms/ }).check();
+    await page.getByRole('button', { name: 'Agree and continue' }).click();
+  }
+  await expect(today).toBeVisible({ timeout: 45_000 });
   await expectFitsPhone(page, 'on Today');
   return st;
 }
