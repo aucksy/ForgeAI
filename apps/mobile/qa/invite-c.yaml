@@ -27,22 +27,19 @@ appId: com.forgeai.app
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 30000
 - takeScreenshot: inv-05-switched
-# Owner-profile run 39101894316: Leave is the LAST thing on the Shop page, so centring it can't
-# happen and ate the whole timeout (it was fully on screen). Not centred; the tap still needs it.
-- scrollUntilVisible:
-    element: "^Leave$"
-    timeout: 20000
-- tapOn: "^Leave$"
+
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave RAM''S FITNESS CLUB IMPACT\?'
     timeout: 10000
 - tapOn: "^Leave gym$"
-# Leaving a branded gym redraws the app in ForgeAI's colours, which lands on the Workout tab
-# (as in part BR). R-77: in no gym there is no third tab.
+# Leaving a branded gym redraws the app in ForgeAI's colours (it may land on the Workout tab, or stay
+# on Settings, now offering "Join your gym"; as in part BR). Release A: the Gym tab is its join screen.
 - extendedWaitUntil:
     notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 20000
 - extendedWaitUntil:
-    visible: "^Profile$"
+    visible: "^Profile$|^Join your gym$"
     timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml

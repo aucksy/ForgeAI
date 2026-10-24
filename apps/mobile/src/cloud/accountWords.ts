@@ -36,12 +36,12 @@ export const ACCOUNT_WORDS = {
   deletedKeptSignIn:
     'Everything saved on ForgeAI is deleted. Your Google sign-in stays, because your gym also uses it. Your workouts are still on this phone.',
   otherPerson:
-    'This phone has another person’s workouts. To use a different Google account, first erase this phone in Settings → "Your data".',
+    'This phone has another person’s workouts. To use a different Google account, first erase this phone in Settings → "Erase or start over".',
   finishWorkoutFirst: 'Finish your workout first, then try again.',
   signOutFailed: 'Could not sign out. Please try again.',
   welcomeAsk: 'Used ForgeAI before? Sign in to bring your workouts back.',
   welcomeNothing: 'You are signed in. Nothing is saved yet, so answer the 3 questions to start.',
-  demo: 'This phone has the demo data. Remove it first (Settings → "Your data"), then try again.',
+  demo: 'This phone has the demo data. Remove it first (Settings → "Erase or start over"), then try again.',
   notInThisVersion: 'Google sign-in is not ready in this version of the app yet.',
   noPlayServices: 'Google sign-in needs Google Play services, and this phone does not have it.',
   couldNotSignIn: 'Could not sign in with Google. Check your internet and try again.',

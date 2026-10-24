@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { healthLine, notificationsLine, SETTINGS_PAGES, unitsLine, versionLine, widgetsLine, workoutsLine } from '@/components/settings/settingsLines';
+import { healthLine, notificationsLine, settingsGroups, unitsLine, versionLine, widgetsLine, workoutsLine } from '@/components/settings/settingsLines';
 import { historyTarget } from '@/lib/oldRoutes';
 import type { ExerciseHistoryEntry } from '@/tracker/db/exerciseHistory';
 import { bandOf, exercisesRows, lastDoneText, type LastDone } from '@/tracker/lib/exercisesView';
@@ -237,23 +237,10 @@ describe('a saved workout’s page', () => {
 
 // ---------------------------------------------------------------- Settings and old links
 
-describe('Settings — Hevy’s list of pages', () => {
-  it('the pages, in order', () => {
-    expect(SETTINGS_PAGES.map((p) => p.title)).toEqual([
-      'Your details',
-      'Workouts',
-      'Units',
-      'Notifications',
-      'Health Connect',
-      'Widgets',
-      'Your gym',
-      'Backup',
-      'Export & import',
-      'Your data',
-      "What's new",
-      'Send feedback',
-      'About',
-    ]);
+describe('Settings — Hevy’s headed groups (Release A, A7)', () => {
+  it('the groups, in order (the full rules: test/lib/releaseA.test.ts)', () => {
+    const groups = settingsGroups({ gymName: null, canAddGymLogo: false, hasHealth: true, coach: false });
+    expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Your data', 'Help']);
   });
 
   it('one short grey line where it helps', () => {

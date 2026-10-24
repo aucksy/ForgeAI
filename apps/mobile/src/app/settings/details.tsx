@@ -1,12 +1,10 @@
-/** Settings → Your details (redesign R6): name, mobile, gym, goal, experience, age, height. */
-import { ProfileCard } from '@/components/settings/ProfileCard';
-import { SettingsPage } from '@/components/settings/SettingsPage';
-import { useDashboard } from '@/store/dashboardStore';
+import { Redirect } from 'expo-router';
 
-export default function DetailsPage() {
-  return (
-    <SettingsPage title="Your details">
-      <ProfileCard onSaved={() => void useDashboard.getState().refresh().catch(() => undefined)} />
-    </SettingsPage>
-  );
+/**
+ * Release A, A9 (docs/ux/MEMBER-APP-MAP.md): one profile editor. "Your details" (name, mobile, goal,
+ * experience, age, height) joined Edit profile (photo, name, bio, link) on one page, "Your profile",
+ * which the Profile's pencil and Settings → Your profile both open. An old link lands there.
+ */
+export default function DetailsRedirect() {
+  return <Redirect href="/edit-profile" />;
 }

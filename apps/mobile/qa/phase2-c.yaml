@@ -15,9 +15,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -296,9 +296,9 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- custom exercise form
 # Done goes to the Workout tab; the form is Profile → Exercises → "Create" (was "New exercise").
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000

@@ -1,6 +1,8 @@
 /**
- * Edit profile (redesign R2) — Hevy's: the photo (take one, choose one, remove it), the name, a
- * short bio and one link. Saves as you type, like Your details in Settings (no Save button): a
+ * Your profile (redesign R2 "Edit profile"; Release A, A9: the ONE profile editor). The Profile's
+ * pencil and Settings → Your profile both open it. First Hevy's part: the photo (take one, choose
+ * one, remove it), the name, a short bio and one link. Then what Settings → "Your details" held
+ * (`ProfileCard`): mobile number, goal, experience, age, height and body figure. Saves as you type, like Your details in Settings (no Save button): a
  * moment after the member stops typing, when a box loses focus, and when the app goes to the
  * background. A wrong answer is written under its own box and simply not saved; a quiet "Saved"
  * line confirms each save.
@@ -13,6 +15,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Card, Screen } from '@/components/ui';
+import { ProfileCard } from '@/components/settings/ProfileCard';
 import { AUTOSAVE_DELAY_MS, SAVED_SHOWN_MS } from '@/components/settings/profileAutosave';
 import { updateProfile } from '@/db/queuedWrites';
 import { getProfile } from '@/db/repos/userRepo';
@@ -220,7 +223,7 @@ export default function EditProfileScreen() {
     ) : null;
 
   return (
-    <Screen title="Edit profile" onBack={() => goBack(router, '/profile')}>
+    <Screen title="Your profile" onBack={() => goBack(router, '/profile')}>
       {loaded ? (
         <View style={{ gap: space.xl }}>
           <View style={{ alignItems: 'center', gap: space.sm }}>
@@ -235,6 +238,9 @@ export default function EditProfileScreen() {
                 {photoBusy ? 'Saving the photo…' : photo ? 'Change photo' : 'Add photo'}
               </Text>
             </Pressable>
+            <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, minHeight: 18 }}>
+              {saved ? 'Saved' : 'Changes save as you type.'}
+            </Text>
           </View>
 
           <Card style={{ gap: space.lg }}>
@@ -301,9 +307,8 @@ export default function EditProfileScreen() {
             </View>
           </Card>
 
-          <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, minHeight: 18 }}>
-            {saved ? 'Saved' : 'Changes save as you type.'}
-          </Text>
+          {/* Release A, A9: the rest of you (what "Your details" in Settings held), on this one page. */}
+          <ProfileCard showHint={false} onSaved={() => void useDashboard.getState().refresh().catch((e: unknown) => console.warn('[profile] refresh after a save failed', e))} />
         </View>
       ) : null}
 

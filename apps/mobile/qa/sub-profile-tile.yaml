@@ -1,10 +1,10 @@
-# Sub-flow (called with runFlow; not a part of its own). Redesign R2/R3: the Profile page's
-# Dashboard has 4 tiles — Statistics · Exercises · Measures · Calendar (src/tracker/components/
-# profile/DashboardTiles.tsx). Opens the Profile tab and taps the tile passed in:
+# Sub-flow (called with runFlow; not a part of its own). Release A (A6): the Profile page keeps ONE
+# button of the old Dashboard, "Calendar" (src/app/(tabs)/profile.tsx); Charts, Exercises and Body
+# moved to the Progress tab (sub-progress-row.yaml). Opens the Profile tab and taps the button passed in:
 #   - runFlow:
 #       file: sub-profile-tile.yaml
 #       env:
-#         TILE: "Exercises"
+#         TILE: "Calendar"
 # Call it with the tab bar on screen. The Profile tab keeps its scroll position (the feed below
 # the tiles can be scrolled far down), so it looks UP first, then down (at 200 % text the tiles
 # start below the screen's edge). No `env:` default here (trap 22).

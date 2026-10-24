@@ -34,10 +34,11 @@ describe('weekly goal', () => {
     expect(src('components/analytics/WeekCard.tsx')).toContain('weekGoalStat(w.workouts, goal)');
     expect(src('tracker/phone/widgets.ts')).toContain('goal: ownGoal ?? (hasPlan');
     // Oct 2026: a − N + stepper under a "Weekly goal" heading (eight chips wrapped at large text).
+    // Release A, A8: its own page, Settings → Weekly goal (the page's title is the heading).
     const card = src('tracker/components/WorkoutPrefsCard.tsx');
-    expect(card).toMatch(/>\s*Weekly goal\s*</);
-    expect(card).toContain('<WeeklyGoalStepper');
+    expect(card).toMatch(/export function WeeklyGoalCard\(\)[\s\S]*<WeeklyGoalStepper/);
     expect(card).not.toContain('ChipGroup');
+    expect(src('app/settings/weekly-goal.tsx')).toMatch(/<SettingsPage title="Weekly goal">\s*<WeeklyGoalCard \/>/);
   });
 
   it('the stepper walks Off ↔ 1 … 7 and never past either end', () => {

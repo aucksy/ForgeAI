@@ -1,18 +1,11 @@
+import { Redirect } from 'expo-router';
+
 /**
- * Settings → Workouts (redesign R6): default rest, sounds, Do Not Disturb, RPE, weekly goal, and
- * (13 Oct 2026) previous values — and the rest-alert check, which shows only when rest alerts
- * would not ring on time.
+ * Release A, A7/A8 (docs/ux/MEMBER-APP-MAP.md §3.3): the 14-row Workouts page is gone. Its rows are
+ * the "Workouts" group on the Settings page itself, each opening a short page of its own (Weekly goal,
+ * Rest timer and sounds, How the app picks your next weight, Plates and bars, Last time's numbers,
+ * Rate how hard each set felt, Muscle tips). An old link lands on Settings.
  */
-import { SettingsPage } from '@/components/settings/SettingsPage';
-import { FEATURES, profileParts } from '@/lib/features';
-import { WorkoutPrefsCard } from '@/tracker/components/WorkoutPrefsCard';
-
-const PARTS = new Set(profileParts(FEATURES));
-
-export default function WorkoutsPage() {
-  return (
-    <SettingsPage title="Workouts">
-      <WorkoutPrefsCard showCoachNotes={PARTS.has('coachNotes')} />
-    </SettingsPage>
-  );
+export default function WorkoutsRedirect() {
+  return <Redirect href="/settings" />;
 }

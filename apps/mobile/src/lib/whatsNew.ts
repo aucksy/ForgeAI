@@ -28,13 +28,14 @@ export interface WhatsNewLine {
 
 /**
  * What a line's button does on this phone, or null for no button. PURE.
- * - The Gym tab ('/shop') exists only after joining a gym: without one, the button joins one instead.
+ * - The Gym tab ('/shop') is always there (Release A): without a gym it is the "Join your gym" screen,
+ *   so the button says so.
  * - A button that would open the page it is on is left out (Settings → What's new).
  * - `tab` tells the caller to switch tabs (router.navigate) rather than stack a page (router.push).
  */
 export function goFor(line: WhatsNewLine, inGym: boolean, here?: string): { label: string; href: string; tab: boolean } | null {
   if (!line.go) return null;
-  const go = line.go.href === '/shop' && !inGym ? { label: 'Join your gym', href: '/settings/gym' } : line.go;
+  const go = line.go.href === '/shop' && !inGym ? { label: 'Join your gym', href: '/shop' } : line.go;
   if (go.href === here) return null;
   return { label: go.label, href: go.href, tab: go.href === '/workout' || go.href === '/shop' };
 }
@@ -81,7 +82,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     lines: [
       {
         text: "Joined a gym that has its own look? The app changes to your gym's name and colours.",
-        go: { label: 'Join your gym', href: '/settings/gym' },
+        go: { label: 'Open the Gym tab', href: '/shop' },
       },
       { text: 'After you join, a "Gym" button appears at the bottom. It becomes "Shop" when your gym adds products.' },
       { text: 'To leave your gym, open Settings, then "Your gym".', go: { label: 'Open Your gym', href: '/settings/gym' } },
@@ -94,11 +95,11 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: 'After a workout, see if you beat your last time on the same routine. Tap the result to see each exercise.' },
       {
         text: "Haven't trained a muscle in 3 weeks? The Workout tab may suggest a few sets for it.",
-        go: { label: 'Turn tips on or off', href: '/settings/workouts' },
+        go: { label: 'Turn tips on or off', href: '/settings/muscle-tips' },
       },
       {
         text: 'Gym members: show your workout days to the front desk on your screen, from "My membership".',
-        go: { label: 'Open My membership', href: '/settings/gym' },
+        go: { label: 'Open My membership', href: '/shop' },
       },
     ],
   },
@@ -109,13 +110,13 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: 'Each exercise shows how many kilos you still need to beat last time. It turns green when you do.' },
       {
         text: "Last time's numbers now come from the last time you did that exercise, in any routine.",
-        go: { label: 'Change setting', href: '/settings/workouts' },
+        go: { label: 'Change setting', href: '/settings/last-time' },
       },
       { text: 'Warm-up sets stay as they were last time. The app never changes them.' },
       { text: 'Push-ups, pull-ups and other bodyweight moves now show how many reps beat last time.' },
       {
         text: 'Turn on a big "In use" screen after each set, so others know the machine is taken.',
-        go: { label: 'Turn it on', href: '/settings/workouts' },
+        go: { label: 'Turn it on', href: '/settings/rest' },
       },
       {
         text: "The app now asks before sending past workouts to Health Connect (Google's health app).",
@@ -130,7 +131,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: "During a workout, your phone's notifications show how long you've been training." },
       {
         text: 'Pick the sound that plays when your rest is over: chime, bell, double beep or whistle.',
-        go: { label: 'Pick a sound', href: '/settings/workouts' },
+        go: { label: 'Pick a sound', href: '/settings/rest' },
       },
     ],
   },
@@ -163,7 +164,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: 'In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.' },
       {
         text: 'New "My membership" page: your plan, end date, days left and visits this month.',
-        go: { label: 'Open My membership', href: '/settings/gym' },
+        go: { label: 'Open My membership', href: '/shop' },
       },
       { text: "Scan the QR code at your gym's desk, then start today's workout in one tap." },
       { text: "Got a code from your gym? Join from the first screen and add your gym's logo to your home screen." },
@@ -181,7 +182,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     version: '0.47.0',
     date: '17 Oct',
     lines: [
-      { text: 'Join your gym with its code.', go: { label: 'Join your gym', href: '/settings/gym' } },
+      { text: 'Join your gym with its code.', go: { label: 'Open the Gym tab', href: '/shop' } },
       { text: 'Rate how hard a set felt, and the set ticks itself before your rest starts.' },
       { text: 'A small handle shows which exercises and routines you can drag to move.' },
       { text: 'Fixes for large text sizes, and for the keyboard after opening the app from its home-screen shortcut.' },
@@ -202,7 +203,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     lines: [
       {
         text: 'The rep range you set in Settings now shows when you edit a routine.',
-        go: { label: 'Workout settings', href: '/settings/workouts' },
+        go: { label: 'Choose your reps', href: '/settings/next-weight' },
       },
       { text: 'A new app icon that fits round home screens.' },
     ],
@@ -217,7 +218,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: 'During a workout, hold and drag an exercise to move it.' },
       {
         text: 'Choose how big each suggested weight increase is: "Weight jumps".',
-        go: { label: 'Open Weight jumps', href: '/settings/workouts' },
+        go: { label: 'Choose your weight step', href: '/settings/next-weight' },
       },
     ],
   },
@@ -265,6 +266,22 @@ export async function readWhatsNew(current: string | null | undefined): Promise<
   } catch (e) {
     console.warn('[whats new] could not read', e);
     return null;
+  }
+}
+
+/**
+ * Release A hints (lib/layoutHints.ts): did this install meet an EARLIER version than current? A
+ * fresh install has no remembered version yet (or only this one), an update still holds the old one
+ * until its What's new is closed. Never throws (unknown = no).
+ */
+export async function installMetEarlierVersion(current: string | null | undefined): Promise<boolean> {
+  if (!current) return false;
+  try {
+    const seen = await getMeta(SEEN_KEY);
+    return seen != null && seen !== current;
+  } catch (e) {
+    console.warn('[whats new] could not read the last version', e);
+    return false;
   }
 }
 

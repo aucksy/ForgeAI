@@ -1,6 +1,9 @@
 /**
- * Profile → "Your details": name, mobile number, gym, goal, experience, age and height (and the
- * daily targets while nutrition is switched on). SH-09: every welcome answer can be changed here.
+ * Your profile's second card (Release A, A9: the ONE profile editor, `app/edit-profile.tsx`): mobile
+ * number, goal, experience, age, height and body figure (and the daily targets while nutrition is
+ * switched on). SH-09: every welcome answer can be changed here. The name is the editor's first card
+ * (one name box, not two), and the typed "Your gym, optional" box is gone (A2): the gym joined on the
+ * Gym tab is the one the app knows. Body figure moved in from Units.
  *
  * Audit Phase 7 (SH-16, SH-10): no "Save profile" button any more. A tap on a choice saves at
  * once; a typed answer saves a moment after the member stops typing, when the box loses focus,
@@ -26,6 +29,8 @@ import { NAME_MAX } from '@/onboarding/form';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { FEATURES } from '@/lib/features';
 import { useUnits } from '@/lib/useUnits';
+import type { BodyFigure } from '@/tracker/catalog/bodyMapPaths';
+import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 import { color, radius, space, type } from '@/theme/tokens';
 import type { UserProfile } from '@/types/models';
 
@@ -52,6 +57,11 @@ const GOAL_OPTIONS = [
   { id: 'strength', label: 'Get stronger' },
   { id: 'general', label: 'General fitness' },
 ] as const satisfies readonly ChipOption<UserProfile['goal']>[];
+
+const FIGURE_OPTIONS = [
+  { id: 'male', label: 'Male' },
+  { id: 'female', label: 'Female' },
+] as const satisfies readonly ChipOption<BodyFigure>[];
 
 const TARGET_KEYS: readonly TargetKey[] = ['calorieTarget', 'proteinTargetG', 'carbsTargetG', 'fatTargetG'];
 
@@ -122,8 +132,10 @@ function FieldError({ message }: { message: string | undefined }) {
   );
 }
 
-export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
+export function ProfileCard({ onSaved, showHint = true }: { onSaved?: () => void; showHint?: boolean }) {
   const units = useUnits();
+  const bodyFigure = useTrackerPrefs((s) => s.bodyFigure);
+  const setBodyFigure = useTrackerPrefs((s) => s.setBodyFigure);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [texts, setTexts] = useState<Texts>(EMPTY_TEXTS);
   const [errors, setErrors] = useState<Partial<Record<ProfileTextField, string>>>({});
@@ -369,7 +381,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       {/* The quiet confirmation: "Saved" beside a fixed line, gone after a moment. Only the
           changing part is a live region, so a screen reader says "Saved" and nothing else. */}
       <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: space.sm, minHeight: 20, marginBottom: space.sm }}>
-        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>Changes save as you go.</Text>
+        {showHint ? <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>Changes save as you go.</Text> : null}
         <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           {status === 'saved' ? (
             <>
@@ -395,11 +407,7 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
         </View>
       ) : null}
 
-      <Text style={overline()}>Name</Text>
-      {box('name', { label: 'Your name', placeholder: 'Your name', maxLength: NAME_MAX + 20, autoCapitalize: 'words', autoComplete: 'name' })}
-      <FieldError message={errors.name} />
-
-      <View style={{ marginTop: space.lg }}>
+      <View>
         <Text style={overline()}>Mobile number · optional</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
           <View style={{ flex: 1 }}>
@@ -446,12 +454,6 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
       </View>
 
       <View style={{ marginTop: space.lg }}>
-        <Text style={overline()}>Your gym · optional</Text>
-        {box('gymName', { label: 'Your gym, optional', placeholder: 'e.g. Iron Temple Fitness', maxLength: 80, autoCapitalize: 'words' })}
-        <FieldError message={errors.gymName} />
-      </View>
-
-      <View style={{ marginTop: space.lg }}>
         <ChipGroup label="Goal" options={GOAL_OPTIONS} selectedId={profile?.goal ?? 'muscle'} onSelect={(g) => void pick({ key: 'goal', value: g })} />
       </View>
 
@@ -485,6 +487,14 @@ export function ProfileCard({ onSaved }: { onSaved?: () => void }) {
           })}
           <FieldError message={errors.height} />
         </View>
+      </View>
+
+      {/* v0.25.1: the body figure the body map and the share picture draw (Units until Release A). */}
+      <View style={{ marginTop: space.lg }}>
+        <ChipGroup label="Body figure" options={FIGURE_OPTIONS} selectedId={bodyFigure} onSelect={setBodyFigure} />
+        <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }}>
+          The body drawn on Charts and on share pictures.
+        </Text>
       </View>
 
       {/* Calorie and macro targets only drive nutrition, which is hidden (owner decision D4). */}

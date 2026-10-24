@@ -11,9 +11,10 @@ import { Card } from '@/components/ui';
 import { earlierUpdates, markWhatsNewSeen, readWhatsNew, type WhatsNewLine } from '@/lib/whatsNew';
 import { color, space, type } from '@/theme/tokens';
 
+import { useReportWant, type NoticeSlotProps } from './noticeSlot';
 import { WhatsNewLines, WhatsNewList } from './WhatsNewList';
 
-export function WhatsNewCard() {
+export function WhatsNewCard({ hidden = false, onWant, onDone }: NoticeSlotProps = {}) {
   const version = Constants.expoConfig?.version ?? null;
   const [lines, setLines] = useState<readonly WhatsNewLine[] | null>(null);
   const [open, setOpen] = useState(false);
@@ -26,11 +27,13 @@ export function WhatsNewCard() {
       live = false;
     };
   }, [version]);
-  if (!lines || !version) return null;
+  useReportWant(lines != null && version != null, onWant);
+  if (!lines || !version || hidden) return null;
 
   const earlier = earlierUpdates(version);
   const done = () => {
     setLines(null);
+    onDone?.();
     markWhatsNewSeen(version).catch((e: unknown) => console.warn('[whats new] could not save', e));
   };
   return (

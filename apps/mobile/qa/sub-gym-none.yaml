@@ -1,0 +1,15 @@
+# Sub-flow (called with runFlow; not a part of its own). Release A (A1/A2): the Gym tab is ALWAYS
+# there, so "in no gym" is no longer "no third tab": it is the Gym tab showing its one "Join your
+# gym" screen (src/shop/ShopScreen.tsx JoinGymDoor). This opens the Gym tab and waits for that
+# screen. Call it with the tab bar on screen. No `env:` (trap 22).
+appId: com.forgeai.app
+---
+- runFlow:
+    file: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Join your gym$"
+    timeout: 30000
+- assertVisible: "No gym\\? Everything else works without one\\."

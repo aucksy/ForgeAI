@@ -1,49 +1,41 @@
 /**
- * Profile → Workout (Phase 1). Four lines, nothing else:
- *  - Default rest — the rest timer for exercises without their own setting;
- *  - Workout sounds — rest bell + new-record chime;
- *  - Track RPE — adds the effort column (set types are always available now);
- *  - AI coach notes — only while the coach is switched on (lib/features.ts, D4).
+ * The workout settings, one short card per Settings page (Release A, A8, docs/ux/MEMBER-APP-MAP.md
+ * §3.3). Until Release A they were ONE card of 14 rows on Settings → Workouts, doing four jobs; the
+ * Settings page's "Workouts" group now opens each job on its own page:
  *
- * Audit Phase 9: + "Weekly goal" (Off, 1–7 workouts a week) at the end. Oct 2026: a − N +
- * stepper. Eight round chips (Off, 1–7) wrapped at large text, leaving "7" alone on a second
- * line; squeezed into one row they would be about 26 dp each on a large-display phone, under
- * the app's 48 dp touch rule. The stepper is one row with two 48 dp buttons at every size.
+ *  - Weekly goal            → `WeeklyGoalCard`   (Off, 1–7 workouts a week; a − N + stepper: eight
+ *    round chips wrapped at large text, and squeezed into one row they were under 48 dp each);
+ *  - Rest timer and sounds  → `RestPrefsCard`    (default rest, workout sounds, rest-over sound, ring
+ *    through Do Not Disturb, the "In use" screen after each set, the rest-alert check);
+ *  - How the app picks your next weight → `NextWeightCard` (weight step, reps to aim for, easy weeks
+ *    of the plan you follow; the folder menu keeps its own Easy weeks shortcut);
+ *  - Last time's numbers    → `LastTimeCard`     (where Previous, the Target and notes come from);
+ *  - Rate how hard each set felt → `EffortCard`  (the effort column; AI coach notes while the coach is on);
+ *  - Muscle tips            → `MuscleTipsCard`   (the Up next tips, and the muscles you asked to skip).
+ * Plates and bars keeps its own page (`app/settings/plates.tsx`).
  *
- * Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one tap fixes it), the optional
- * "Ring through Do Not Disturb" (Android only, off by default — RT-12), and a default rest that
- * could not be saved says so (RT-11).
- *
- * 13 Oct 2026: + "Previous values" at the end (Hevy's "Previous Workout Values", plus the owner's
- * "Same folder"): three full-width rows, one line under them saying what the chosen one does. Three
- * choices with long words do not fit a segmented control at large text; rows wrap instead.
- *
- * Oct 2026: + "Plates and bars" (Hevy's Settings → Workouts → Plate Calculator): opens its own page,
- * the plates the gym has and the bar the plate calculator starts on.
- *
- * Oct 2026 (owner): + "Weight jumps" and "Rep range", just above Plates and bars. Each opens a
- * choice sheet like Default rest does (`PrefChoiceSheet`): every choice with one plain line, the
- * default tagged "Recommended". The Target and the grey set hints follow both.
+ * Every setting keeps its store and its key, so nothing a member set is lost by the move.
  */
-import { useRouter, type Href } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, Icon, SheetRow } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { tap } from '@/lib/haptics';
-import { useUnits } from '@/lib/useUnits';
+import { tell } from '@/lib/tell';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
+import { followedFolder } from '../db/folderRepo';
 import { GROUP_WORDS } from '../engine/muscleBalance';
 import { putAwayGroups, useMuscleTips } from '../store/muscleTipsStore';
 import { refreshWidgets } from '../phone/widgets';
-import { plateSetupLine } from '../services/plateMath';
 import { REST_SOUND_CHOICES, restSoundFootnote } from '../services/restSounds';
 import { previewRestSound } from '../services/workoutSounds';
 import { fmtRest } from '../services/restRules';
+import { setEasyWeeks } from '../services/planState';
 import {
   choiceDetail,
   choiceLabel,
@@ -53,23 +45,12 @@ import {
   WEIGHT_JUMP_CHOICES,
   WEIGHT_JUMP_HELP,
 } from '../services/targetChoices';
-import { usePlateSetupFor } from '../store/plateSetupStore';
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
 import { PrefChoiceSheet } from './PrefChoiceSheet';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
-
-/** A section's small heading (Weekly goal, Previous values). Read when drawn: gym branding repaints the tokens. */
-const HEADING = () => ({
-  fontFamily: type.bodySemi,
-  fontSize: type.size.caption,
-  color: color.inkMuted,
-  letterSpacing: 1.1,
-  textTransform: 'uppercase',
-  marginBottom: space.sm,
-}) as const;
 
 /** The plain line under a section. Read when drawn: gym branding repaints the tokens. */
 const SECTION_LINE = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs, lineHeight: 17 }) as const;
@@ -122,7 +103,7 @@ function WeeklyGoalStepper({ goal, onChange }: { goal: number | null; onChange: 
       <View
         accessible
         accessibilityRole="adjustable"
-        // Not "Weekly goal": phone tests find the heading above by that exact text.
+        // Not "Weekly goal": phone tests find the page's title by that exact text.
         accessibilityLabel="Workouts a week"
         accessibilityValue={{ text: spoken }}
         accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
@@ -147,50 +128,48 @@ function WeeklyGoalStepper({ goal, onChange }: { goal: number | null; onChange: 
   );
 }
 
-export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: boolean }) {
+/** Settings → Weekly goal: the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */
+export function WeeklyGoalCard() {
   const weeklyGoal = useTrackerPrefs((s) => s.weeklyGoal);
   const setWeeklyGoal = useTrackerPrefs((s) => s.setWeeklyGoal);
-  const previousFrom = useTrackerPrefs((s) => s.previousFrom);
-  const setPreviousFrom = useTrackerPrefs((s) => s.setPreviousFrom);
-  const previousChoice = PREVIOUS_FROM_CHOICES.find((c) => c.value === previousFrom) ?? PREVIOUS_FROM_CHOICES[0];
-  const advancedSets = useTrackerPrefs((s) => s.advancedSets);
-  const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
-  const coachNotes = useTrackerPrefs((s) => s.coachNotes);
-  const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
+  return (
+    <Card style={{ paddingVertical: space.md }}>
+      <WeeklyGoalStepper
+        goal={weeklyGoal}
+        onChange={(next) => {
+          setWeeklyGoal(next);
+          void refreshWidgets();
+        }}
+      />
+      <Text style={SECTION_LINE()}>Workouts a week. The Workout tab shows how many are left.</Text>
+    </Card>
+  );
+}
+
+/**
+ * Settings → Rest timer and sounds. Phase 2, packet D: "Rest alerts: …" (are rest alerts on time? one
+ * tap fixes it), the optional "Ring through Do Not Disturb" (Android only, off by default, RT-12), and a
+ * default rest that could not be saved says so (RT-11). R-55: the rest-over sound. R-70: "In use".
+ */
+export function RestPrefsCard() {
   const sounds = useTrackerPrefs((s) => s.sounds);
-  const inUseAfterSet = useTrackerPrefs((s) => s.inUseAfterSet);
-  const setInUseAfterSet = useTrackerPrefs((s) => s.setInUseAfterSet);
-  // R-58: the Up next muscle tips, and the ones the member put away.
-  const tipsOn = useMuscleTips((s) => s.on);
-  const setTipsOn = useMuscleTips((s) => s.setOn);
-  const tipMuted = useMuscleTips((s) => s.muted);
-  const tipSnoozed = useMuscleTips((s) => s.snoozedUntil);
-  const putAway = putAwayGroups({ muted: tipMuted, snoozedUntil: tipSnoozed }, todayISO());
   const setSounds = useTrackerPrefs((s) => s.setSounds);
   const restSound = useTrackerPrefs((s) => s.restSound);
   const setRestSound = useTrackerPrefs((s) => s.setRestSound);
   const restSoundLabel = choiceLabel(REST_SOUND_CHOICES, restSound);
+  const inUseAfterSet = useTrackerPrefs((s) => s.inUseAfterSet);
+  const setInUseAfterSet = useTrackerPrefs((s) => s.setInUseAfterSet);
   const defaultSec = useRestTimer((s) => s.defaultSec);
   const setDefaultSec = useRestTimer((s) => s.setDefaultSec);
   const loadDefault = useRestTimer((s) => s.loadDefault);
-  const [picking, setPicking] = useState(false);
-  const weightJump = useTrackerPrefs((s) => s.weightJump);
-  const setWeightJump = useTrackerPrefs((s) => s.setWeightJump);
-  const repRange = useTrackerPrefs((s) => s.repRange);
-  const setRepRange = useTrackerPrefs((s) => s.setRepRange);
-  const [choosing, setChoosing] = useState<'jump' | 'range' | 'sound' | null>(null);
-  const jumpLabel = choiceLabel(WEIGHT_JUMP_CHOICES, weightJump);
-  const rangeLabel = choiceLabel(REP_RANGE_CHOICES, repRange);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
-  const router = useRouter();
-  const units = useUnits();
-  const plateSetup = usePlateSetupFor(units);
-  const [openError, setOpenError] = useState<string | null>(null);
   const setRingThroughDnd = useRestAlertPrefs((s) => s.setRingThroughDnd);
+  const [picking, setPicking] = useState(false);
+  const [choosingSound, setChoosingSound] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    void loadDefault().catch(() => undefined);
+    loadDefault().catch((e: unknown) => console.warn('[settings] default rest could not be read', e));
   }, [loadDefault]);
 
   return (
@@ -204,13 +183,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           icon="clock"
           title="Default rest"
           caption="Starts when you tick a set. Change it per exercise from the exercise's menu."
-          right={
-            <Text
-              style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accent }}
-            >
-              {defaultSec > 0 ? fmtRest(defaultSec) : 'Off'}
-            </Text>
-          }
+          right={<Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.accent }}>{defaultSec > 0 ? fmtRest(defaultSec) : 'Off'}</Text>}
         />
       </Pressable>
       <ToggleRow
@@ -222,7 +195,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
         divider
       />
       {/* R-55 (owner backlog): which sound "Rest is over" plays, in the app and with the screen off. */}
-      <Pressable onPress={() => setChoosing('sound')} accessibilityRole="button" accessibilityLabel={`Rest-over sound, ${restSoundLabel}. Change`}>
+      <Pressable onPress={() => setChoosingSound(true)} accessibilityRole="button" accessibilityLabel={`Rest-over sound, ${restSoundLabel}. Change`}>
         <SettingRow
           icon="volume"
           title="Rest-over sound"
@@ -249,157 +222,15 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
       {/* R-70 (owner, 22 Oct 2026): "In use" opens by itself when a set's rest starts. */}
       <ToggleRow
         icon="clock"
-        title="Show In use after each set"
+        title={'Show "In use" screen after each set'}
         caption="When rest starts, a big IN USE screen with the rest clock, so others know you are coming back"
         value={inUseAfterSet}
         onChange={setInUseAfterSet}
         divider
       />
-      {/* R-58: one calm tip on Up next when 3 weeks left a muscle group close to zero. */}
-      <ToggleRow
-        icon="dumbbell"
-        title="Muscle tips"
-        caption="Now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out"
-        value={tipsOn}
-        onChange={setTipsOn}
-        divider
-      />
-      {tipsOn && putAway.length > 0 ? (
-        <Pressable
-          onPress={() => {
-            tap();
-            useMuscleTips.getState().unmuteAll();
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={`Put-away tips: ${putAway.map((g) => GROUP_WORDS[g].your).join(', ')}. Bring them back`}
-        >
-          <SettingRow
-            icon="sparkle"
-            title="Put-away tips"
-            caption={putAway.map((g) => GROUP_WORDS[g].your).join(', ')}
-            right={<Text style={ROW_VALUE()}>Bring back</Text>}
-            divider
-          />
-        </Pressable>
-      ) : null}
-      <ToggleRow
-        icon="gauge"
-        title="Track RPE"
-        caption="Rate how hard each set felt (6–10)"
-        value={advancedSets}
-        onChange={setAdvancedSets}
-        divider
-      />
-      {showCoachNotes ? (
-        <ToggleRow
-          icon="sparkle"
-          title="AI coach notes"
-          caption="A short note from the AI coach after each workout. Without it, the built-in note shows."
-          value={coachNotes}
-          onChange={setCoachNotes}
-          divider
-        />
-      ) : null}
-      <Pressable onPress={() => setChoosing('jump')} accessibilityRole="button" accessibilityLabel={`Weight jumps, ${jumpLabel}. Change`}>
-        <SettingRow
-          icon="trend"
-          title="Weight jumps"
-          caption={choiceDetail(WEIGHT_JUMP_CHOICES, weightJump)}
-          right={
-            <Text numberOfLines={2} style={ROW_VALUE()}>
-              {jumpLabel}
-            </Text>
-          }
-          divider
-        />
-      </Pressable>
-      <Pressable onPress={() => setChoosing('range')} accessibilityRole="button" accessibilityLabel={`Rep range, ${rangeLabel}. Change`}>
-        <SettingRow
-          icon="target"
-          title="Rep range"
-          caption={choiceDetail(REP_RANGE_CHOICES, repRange)}
-          right={
-            <Text numberOfLines={2} style={ROW_VALUE()}>
-              {rangeLabel}
-            </Text>
-          }
-          divider
-        />
-      </Pressable>
-      <Pressable
-        onPress={() => {
-          setOpenError(null);
-          try {
-            router.push('/settings/plates' as Href);
-          } catch (e) {
-            console.warn('[ForgeErr] plates and bars page did not open', e);
-            setOpenError("Couldn't open Plates and bars. Try again.");
-          }
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={`Plates and bars, ${plateSetupLine(plateSetup, units)}. Change`}
-      >
-        <SettingRow
-          icon="dumbbell"
-          title="Plates and bars"
-          caption={`For the plate calculator: ${plateSetupLine(plateSetup, units)}`}
-          right={<Icon name="chevron-right" size={18} color={color.inkMuted} />}
-          divider
-        />
-      </Pressable>
-      {openError ? (
-        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.criticalText, paddingBottom: space.sm }}>{openError}</Text>
-      ) : null}
-      {/* Audit Phase 9 (#4): the member's own workouts-a-week goal (Up next on the Workout tab, the widget). */}
-      <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <Text accessibilityRole="header" style={HEADING()}>
-          Weekly goal
-        </Text>
-        <WeeklyGoalStepper
-          goal={weeklyGoal}
-          onChange={(next) => {
-            setWeeklyGoal(next);
-            void refreshWidgets();
-          }}
-        />
-        <Text style={SECTION_LINE()}>Workouts a week. The Workout tab shows how many are left.</Text>
-      </View>
-      {/* 13 Oct 2026: where PREVIOUS, the Target and carried notes come from (tracker/db/historyScope.ts). */}
-      <View style={{ paddingVertical: space.md, borderTopWidth: 1, borderTopColor: color.border }}>
-        <Text accessibilityRole="header" style={HEADING()}>
-          Previous values
-        </Text>
-        <View accessibilityRole="radiogroup" style={{ gap: space.xs }}>
-          {PREVIOUS_FROM_CHOICES.map((c) => (
-            <SheetRow
-              key={c.value}
-              label={c.label}
-              selected={previousFrom === c.value}
-              onPress={() => {
-                if (previousFrom === c.value) return;
-                tap();
-                setPreviousFrom(c.value);
-              }}
-            />
-          ))}
-        </View>
-        <Text style={SECTION_LINE()}>{previousChoice.line}</Text>
-      </View>
-      <PrefChoiceSheet
-        visible={choosing === 'jump'}
-        title="Weight jumps"
-        subtitle={WEIGHT_JUMP_HELP}
-        choices={WEIGHT_JUMP_CHOICES}
-        value={weightJump}
-        onChoose={(v) => {
-          setWeightJump(v);
-          setChoosing(null);
-        }}
-        onClose={() => setChoosing(null)}
-      />
       {/* Stays open after a tap, so each sound can be heard in turn. */}
       <PrefChoiceSheet
-        visible={choosing === 'sound'}
+        visible={choosingSound}
         title="Rest-over sound"
         subtitle="The sound when your rest is over. The ForgeAI chime is the default."
         footnote={restSoundFootnote(sounds)}
@@ -409,20 +240,7 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           setRestSound(v);
           previewRestSound(v);
         }}
-        onClose={() => setChoosing(null)}
-      />
-      <PrefChoiceSheet
-        visible={choosing === 'range'}
-        title="Rep range"
-        subtitle={REP_RANGE_HELP}
-        footnote={REP_RANGE_KEEP}
-        choices={REP_RANGE_CHOICES}
-        value={repRange}
-        onChoose={(v) => {
-          setRepRange(v);
-          setChoosing(null);
-        }}
-        onClose={() => setChoosing(null)}
+        onClose={() => setChoosingSound(false)}
       />
       <RestPickerSheet
         visible={picking}
@@ -442,6 +260,209 @@ export function WorkoutPrefsCard({ showCoachNotes = true }: { showCoachNotes?: b
           setPicking(false);
         }}
       />
+    </Card>
+  );
+}
+
+type Followed = Awaited<ReturnType<typeof followedFolder>>;
+
+/**
+ * Settings → How the app picks your next weight. Oct 2026 (owner): the weight step ("Weight jumps"
+ * before Release A) and the reps to aim for ("Rep range"), each a choice sheet with one plain line per
+ * choice and the default tagged "Recommended"; the Target and the grey set hints follow both. Release
+ * A: + Easy weeks for the plan you follow (it was only in the folder's ⋯ menu, which keeps it too).
+ */
+export function NextWeightCard() {
+  const weightJump = useTrackerPrefs((s) => s.weightJump);
+  const setWeightJump = useTrackerPrefs((s) => s.setWeightJump);
+  const repRange = useTrackerPrefs((s) => s.repRange);
+  const setRepRange = useTrackerPrefs((s) => s.setRepRange);
+  const [choosing, setChoosing] = useState<'jump' | 'range' | null>(null);
+  const jumpLabel = choiceLabel(WEIGHT_JUMP_CHOICES, weightJump);
+  const rangeLabel = choiceLabel(REP_RANGE_CHOICES, repRange);
+  const [plan, setPlan] = useState<Followed | undefined>(undefined);
+  const [saving, setSaving] = useState(false);
+
+  const readPlan = useCallback(() => {
+    followedFolder()
+      .then((f) => setPlan(f))
+      .catch((e: unknown) => {
+        console.warn('[settings] the followed plan could not be read', e);
+        setPlan(null);
+      });
+  }, []);
+  useFocusEffect(readPlan);
+
+  const flipEasy = (on: boolean): void => {
+    if (!plan || saving) return;
+    setSaving(true);
+    void setEasyWeeks(plan, on)
+      .then(readPlan)
+      .catch((e: unknown) => {
+        console.warn('[settings] easy weeks could not be saved', e);
+        void tell('Could not save', 'Please try again.');
+      })
+      .finally(() => setSaving(false));
+  };
+
+  return (
+    <>
+      <Card style={{ paddingVertical: space.xs }}>
+        <Pressable onPress={() => setChoosing('jump')} accessibilityRole="button" accessibilityLabel={`Weight step, ${jumpLabel}. Change`}>
+          <SettingRow
+            icon="trend"
+            title="Weight step"
+            caption={choiceDetail(WEIGHT_JUMP_CHOICES, weightJump)}
+            right={
+              <Text numberOfLines={2} style={ROW_VALUE()}>
+                {jumpLabel}
+              </Text>
+            }
+          />
+        </Pressable>
+        <Pressable onPress={() => setChoosing('range')} accessibilityRole="button" accessibilityLabel={`Reps to aim for, ${rangeLabel}. Change`}>
+          <SettingRow
+            icon="target"
+            title="Reps to aim for"
+            caption={choiceDetail(REP_RANGE_CHOICES, repRange)}
+            right={
+              <Text numberOfLines={2} style={ROW_VALUE()}>
+                {rangeLabel}
+              </Text>
+            }
+            divider
+          />
+        </Pressable>
+      </Card>
+      {/* Easy weeks belong to a plan you follow: shown for that plan, else one line on how to get one. */}
+      {plan === undefined ? null : plan ? (
+        <Card style={{ paddingVertical: space.xs }}>
+          <ToggleRow
+            icon="heart"
+            title="Easy weeks"
+            caption={`In ${plan.name}: every 6 weeks, half the sets at the same weights. Kept out of your records.`}
+            value={!!plan.settings.easy}
+            onChange={flipEasy}
+          />
+        </Card>
+      ) : (
+        <Text style={SECTION_LINE()}>
+          Easy weeks work only with a plan you follow. On the Workout tab, tap ⋯ on a folder, then &quot;Follow this plan&quot;.
+        </Text>
+      )}
+      <PrefChoiceSheet
+        visible={choosing === 'jump'}
+        title="Weight step"
+        subtitle={WEIGHT_JUMP_HELP}
+        choices={WEIGHT_JUMP_CHOICES}
+        value={weightJump}
+        onChoose={(v) => {
+          setWeightJump(v);
+          setChoosing(null);
+        }}
+        onClose={() => setChoosing(null)}
+      />
+      <PrefChoiceSheet
+        visible={choosing === 'range'}
+        title="Reps to aim for"
+        subtitle={REP_RANGE_HELP}
+        footnote={REP_RANGE_KEEP}
+        choices={REP_RANGE_CHOICES}
+        value={repRange}
+        onChoose={(v) => {
+          setRepRange(v);
+          setChoosing(null);
+        }}
+        onClose={() => setChoosing(null)}
+      />
+    </>
+  );
+}
+
+/** Settings → Last time's numbers (13 Oct 2026, Hevy's "Previous Workout Values"): three full-width rows. */
+export function LastTimeCard() {
+  const previousFrom = useTrackerPrefs((s) => s.previousFrom);
+  const setPreviousFrom = useTrackerPrefs((s) => s.setPreviousFrom);
+  const previousChoice = PREVIOUS_FROM_CHOICES.find((c) => c.value === previousFrom) ?? PREVIOUS_FROM_CHOICES[0];
+  return (
+    <Card style={{ paddingVertical: space.md }}>
+      <View accessibilityRole="radiogroup" style={{ gap: space.xs }}>
+        {PREVIOUS_FROM_CHOICES.map((c) => (
+          <SheetRow
+            key={c.value}
+            label={c.label}
+            selected={previousFrom === c.value}
+            onPress={() => {
+              if (previousFrom === c.value) return;
+              tap();
+              setPreviousFrom(c.value);
+            }}
+          />
+        ))}
+      </View>
+      <Text style={SECTION_LINE()}>{previousChoice.line}</Text>
+    </Card>
+  );
+}
+
+/** Settings → Rate how hard each set felt: the effort column (and AI coach notes, while the coach is on). */
+export function EffortCard({ showCoachNotes = false }: { showCoachNotes?: boolean }) {
+  const advancedSets = useTrackerPrefs((s) => s.advancedSets);
+  const setAdvancedSets = useTrackerPrefs((s) => s.setAdvancedSets);
+  const coachNotes = useTrackerPrefs((s) => s.coachNotes);
+  const setCoachNotes = useTrackerPrefs((s) => s.setCoachNotes);
+  return (
+    <Card style={{ paddingVertical: space.xs }}>
+      <ToggleRow
+        icon="gauge"
+        title="Rate how hard each set felt"
+        caption="Adds a box to each set: 6 is easy, 10 is as hard as you can go"
+        value={advancedSets}
+        onChange={setAdvancedSets}
+      />
+      {showCoachNotes ? (
+        <ToggleRow
+          icon="sparkle"
+          title="AI coach notes"
+          caption="A short note from the AI coach after each workout. Without it, the built-in note shows."
+          value={coachNotes}
+          onChange={setCoachNotes}
+          divider
+        />
+      ) : null}
+    </Card>
+  );
+}
+
+/** Settings → Muscle tips (R-58): one calm tip on Up next when 3 weeks left a muscle group close to zero. */
+export function MuscleTipsCard() {
+  const tipsOn = useMuscleTips((s) => s.on);
+  const setTipsOn = useMuscleTips((s) => s.setOn);
+  const tipMuted = useMuscleTips((s) => s.muted);
+  const tipSnoozed = useMuscleTips((s) => s.snoozedUntil);
+  const skipped = putAwayGroups({ muted: tipMuted, snoozedUntil: tipSnoozed }, todayISO());
+  const names = skipped.map((g) => GROUP_WORDS[g].your).join(', ');
+  return (
+    <Card style={{ paddingVertical: space.xs }}>
+      <ToggleRow
+        icon="dumbbell"
+        title="Muscle tips"
+        caption="Now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out"
+        value={tipsOn}
+        onChange={setTipsOn}
+      />
+      {tipsOn && skipped.length > 0 ? (
+        <Pressable
+          onPress={() => {
+            tap();
+            useMuscleTips.getState().unmuteAll();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={`Muscles you asked to skip: ${names}. Bring them back`}
+        >
+          <SettingRow icon="sparkle" title="Muscles you asked to skip" caption={names} right={<Text style={ROW_VALUE()}>Bring back</Text>} divider />
+        </Pressable>
+      ) : null}
     </Card>
   );
 }

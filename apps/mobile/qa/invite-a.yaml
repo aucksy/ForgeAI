@@ -1,7 +1,7 @@
 # Invite link device QA, part INV (v0.38.0), step A. run-device-qa.sh opened the gym's link
 # https://forgeai.aakashpahuja.in/j/FORGE1 at the app (am start -d … -p com.forgeai.app), with the
 # phone in no gym. The "Join your gym" screen shows the gym (from the live gym_preview) and ONE
-# button. R-77: joining lands on the Workout tab (no longer the shop), and the third tab appears.
+# button. Joining lands on the Workout tab (no longer the shop); the Gym tab then shows the gym.
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
@@ -25,13 +25,14 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Join this gym$"
-# Joined = the third tab is there (no gym, no third tab). Then the Workout tab (sub-after-join.yaml).
+# Joined = the invite screen has gone, its "Your name" box with it (Release A: the Gym tab is
+# there with or without a gym). Then the Workout tab (sub-after-join.yaml).
 - extendedWaitUntil:
-    visible: "^(Shop|Gym)$"
+    notVisible: "Your name"
     timeout: 30000
 - runFlow: sub-after-join.yaml
 - takeScreenshot: inv-02-joined-workout
-# FORGE1 lists products: its tab opens on its shop (the tab can read "Gym" until the list arrives).
+# FORGE1 lists products: the Gym tab shows its shop part once the list arrives.
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0

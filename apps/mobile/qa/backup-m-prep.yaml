@@ -51,9 +51,9 @@ appId: com.forgeai.app
     timeout: 15000
 # ---------------------------------------------------------------- a measurement
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
@@ -72,7 +72,7 @@ appId: com.forgeai.app
       FIND: "^Save$"
 - tapOn: "^Save$"
 - extendedWaitUntil:
-    visible: "^Measures$"
+    visible: "^Body$"
     timeout: 15000
 - runFlow:
     file: sub-find.yaml

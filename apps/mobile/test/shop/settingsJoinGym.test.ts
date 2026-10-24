@@ -28,9 +28,24 @@ describe('Settings → Your gym: join with a code', () => {
     expect(joinPathFromSettings('')).toBeNull();
   });
 
-  it('the page shows the join card only to a member in no gym', () => {
+  it('Release A (A2): a member in no gym joins on the Gym tab; Settings → Your gym goes there', () => {
     const page = read('src/app/settings/gym.tsx');
-    expect(page).toMatch(/link \? \(\s*<JoinedGymCard link=\{link\} \/>\s*\) : \(\s*<>\s*\{notice \? <DemoNote text=\{notice\} \/> : null\}\s*<GymCard \/>\s*<JoinGymCard \/>/);
+    expect(page).toMatch(/if \(hydrated && !link\) return <Redirect href="\/shop" \/>/);
+    expect(page).not.toMatch(/<JoinGymCard|<GymCard/);
+    const shop = read('src/shop/ShopScreen.tsx');
+    expect(shop).toMatch(/\{notice \? <DemoNote text=\{notice\} \/> : null\}\s*<JoinGymCard scan \/>/);
+    // The settings list's no-gym row opens the Gym tab.
+    expect(read('src/components/settings/settingsLines.ts')).toMatch(/title: 'Join your gym', href: '\/shop'/);
+  });
+
+  it('the card also offers the poster scan (the phone camera reads the gym’s QR code)', () => {
+    const card = read('src/components/settings/JoinGymCard.tsx');
+    expect(card).toMatch(/label="Scan the poster"/);
+    expect(card).toMatch(/openPosterScan\(\)/);
+    const scan = read('src/shop/scanPoster.ts');
+    expect(scan).toMatch(/Linking\.sendIntent\(CAMERA_ACTION\)/);
+    expect(scan).toMatch(/await tell\(NO_CAMERA_TITLE, NO_CAMERA_BODY\)/);
+    expect(read('android/app/src/main/AndroidManifest.xml')).toMatch(/android\.media\.action\.STILL_IMAGE_CAMERA/);
   });
 
   it('the card goes through the invite screen (it asks before joining), never joins by itself', () => {

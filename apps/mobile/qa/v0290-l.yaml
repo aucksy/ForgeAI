@@ -23,7 +23,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Export & import"
+      PAGE: "Bring in from Hevy or Strong"
 - scrollUntilVisible:
     element: "Import from Hevy"
     centerElement: true

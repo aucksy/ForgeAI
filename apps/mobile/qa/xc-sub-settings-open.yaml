@@ -4,7 +4,7 @@ appId: com.forgeai.app
 ---
 - runFlow:
     when:
-      notVisible: "^Your details$|^Export & import$|^Your data$"
+      notVisible: "^Your profile$|^Backup$|^About$|^Your details$|^Export & import$"
     commands:
       - extendedWaitUntil:
           visible: "^Profile$"
@@ -18,6 +18,6 @@ appId: com.forgeai.app
           timeout: 30000
       - tapOn: "Settings"
 - scrollUntilVisible:
-    element: "^Your details$"
+    element: "^Your profile$|^Your details$"
     direction: UP
     timeout: 20000

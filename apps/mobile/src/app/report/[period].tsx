@@ -389,7 +389,7 @@ export default function ReportScreen() {
     <Screen
       title={title}
       subtitle={isYear ? 'Year in review' : 'Monthly report'}
-      onBack={() => goBack(router, '/profile')}
+      onBack={() => goBack(router, '/progress')}
       right={scene ? <IconButton icon="send" onPress={() => setSharing(true)} accessibilityLabel="Share as a picture" /> : undefined}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: space.lg }}>

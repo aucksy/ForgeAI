@@ -19,8 +19,8 @@ import { tap, thud } from '@/lib/haptics';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
+import { HIDDEN_TAB_ROUTES, isShownTab, tabTitle } from '@/lib/appTabs';
 import { useGymShop } from '@/shop/gymStore';
-import { GYM_TAB_LABEL, gymTabFor } from '@/shop/gymTab';
 import { unreadCount } from '@/shop/inbox';
 import { inboxFor, useGymInbox } from '@/shop/inboxStore';
 
@@ -30,21 +30,23 @@ import { Glyph, type GlyphName } from './TrackerGlyph';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
 /**
- * Redesign R1: three tabs, as Hevy — Workout, Profile, Shop (the bag is a tracker glyph). R-77: the
- * third shows only with a gym joined, as "Gym" until its shop is on (shop/gymTab.ts).
+ * Release A (docs/ux/MEMBER-APP-MAP.md §3.1): 4 tabs, always the same 4 — Workout, Progress, Gym,
+ * Profile (lib/appTabs.ts). The Gym tab (route `shop`) shows with or without a gym and is always
+ * "Gym" (before, R-77, it was missing without a gym and became "Shop" with products).
  */
 type TabIcon = { icon: IconName } | { glyph: GlyphName };
 const ROUTE_ICON: Record<string, TabIcon> = {
   workout: { icon: 'dumbbell' },
+  progress: { icon: 'trend' },
+  shop: { glyph: 'gym' },
   profile: { icon: 'person' },
-  shop: { glyph: 'bag' },
 };
 
 /** The tab row's top padding: the sliding highlight sits at the top of each tab, this far down. */
 const TAB_ROW_TOP = 10;
 
 /** Routes present in the navigator but never shown as a tab (still navigable). */
-const HIDDEN = new Set(['coach']);
+const HIDDEN = new Set(HIDDEN_TAB_ROUTES);
 
 function TabItem({
   label,
@@ -60,7 +62,7 @@ function TabItem({
   onPress: () => void;
   /** R-78: where this tab sits in the bar, for the one sliding highlight (SlidingPill). */
   onLayout: (e: LayoutChangeEvent) => void;
-  /** Gym messages: the Shop tab's unread count (0 = no badge). */
+  /** Gym messages: the Gym tab's unread count (0 = no badge). */
   badge?: number;
 }) {
   // Audit Phase 7: the lift stays still when the phone asks for less motion.
@@ -127,7 +129,7 @@ function TabItem({
  * R-78 (owner, 22 Oct 2026): one highlight for the whole bar that slides to the tapped tab, its
  * front edge quick and its back edge following (lib/tabPill.ts), so it stretches as it travels and
  * settles to its size. On the UI thread (Reanimated). With "Remove animations" it simply moves.
- * A tab appearing or going (R-77: the Gym/Shop tab) moves it with no stretch.
+ * The bar itself moving (a font change) moves it with no stretch.
  */
 function SlidingPill({ tabKey, center, top }: { tabKey: string | null; center: number | null; top: number }) {
   const reduced = useReduceMotion();
@@ -241,12 +243,9 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Phase 3 review: every screen now shrinks above the keyboard (KeyboardRoom), so while
   // the member types, the tab bar and the workout bar step aside instead of riding up on it.
   const typing = useKeyboardFrame() != null;
-  // Gym messages: unread messages from the member's gym badge the Shop tab.
+  // Gym messages: unread messages from the member's gym badge the Gym tab.
   const memberId = useGymShop((s) => s.link?.memberId ?? null);
   const unread = useGymInbox((s) => unreadCount(inboxFor(s, memberId)));
-  // R-77: no gym, no third tab; "Gym" until the gym's shop lists something, then "Shop".
-  const productCount = useGymShop((s) => s.products.length);
-  const gymTab = gymTabFor(memberId != null, productCount);
   // R-78: each tab's place in the bar (its left edge and width), for the sliding highlight.
   const [places, setPlaces] = useState<Record<string, { x: number; w: number }>>({});
   const place = (key: string) => (e: LayoutChangeEvent) => {
@@ -254,7 +253,7 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
     setPlaces((p) => (p[key]?.x === x && p[key]?.w === width ? p : { ...p, [key]: { x, w: width } }));
   };
   const focusedRoute = state.routes[state.index];
-  const tabShown = (name: string) => !HIDDEN.has(name) && !(name === 'shop' && gymTab === 'none');
+  const tabShown = (name: string) => !HIDDEN.has(name) && isShownTab(name);
   const focusedPlace = focusedRoute && tabShown(focusedRoute.name) ? places[focusedRoute.key] : undefined;
   if (typing) return null;
   return (
@@ -278,13 +277,13 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
       {state.routes.map((route, index) => {
         if (!tabShown(route.name)) return null;
         const { options } = descriptors[route.key];
-        const label = route.name === 'shop' && gymTab !== 'none' ? GYM_TAB_LABEL[gymTab] : (options.title ?? route.name);
+        const label = tabTitle(route.name) ?? options.title ?? route.name;
         const focused = state.index === index;
         return (
           <TabItem
             key={route.key}
             label={label}
-            icon={route.name === 'shop' && gymTab === 'gym' ? { glyph: 'gym' } : (ROUTE_ICON[route.name] ?? { icon: 'sparkle' })}
+            icon={ROUTE_ICON[route.name] ?? { icon: 'sparkle' }}
             focused={focused}
             badge={route.name === 'shop' ? unread : 0}
             onLayout={place(route.key)}

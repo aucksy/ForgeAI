@@ -54,11 +54,12 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 30000
-# The old tabs are gone. R-77: no gym joined, so no third tab (it is "Gym" or "Shop" only in a
-# gym): Workout and Profile only.
-- assertNotVisible: "^(Shop|Gym)$"
+# The old tabs are gone. Release A (A1/A5): 4 tabs, always the same 4, with or without a gym:
+# Workout, Progress, Gym, Profile.
+- assertVisible: "^Progress$"
+- assertVisible: "^Gym$"
+- assertNotVisible: "^Shop$"
 - assertNotVisible: "^History$"
-- assertNotVisible: "^Progress$"
 # Audit Phase 3 / redesign R1: the ONE "Today" answer is the Up next card at the top of the
 # Workout tab (src/tracker/lib/upNext.ts). The demo history ends yesterday, so today's routine is
 # still to do: "Up next: <routine>" over "from <folder> · N exercises · <first> first" (not

@@ -13,7 +13,7 @@ appId: com.forgeai.app
 - runFlow:
     file: xc-sub-settings-page.yaml
     env:
-      PAGE: "Export & import"
+      PAGE: "Bring in from Hevy or Strong"
 - runFlow:
     file: xc-sub-find.yaml
     env:

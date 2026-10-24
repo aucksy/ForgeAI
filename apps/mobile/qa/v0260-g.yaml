@@ -28,10 +28,10 @@ appId: com.forgeai.app
     timeout: 30000
 - assertVisible: "New folder"
 - assertVisible: "New routine"
-- assertVisible: "Explore"
+- assertVisible: "Find a plan"
 - takeScreenshot: 80-workout-folders
 # ---------------------------------------------------------------- ready programs
-- tapOn: "Explore"
+- tapOn: "Find a plan"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
@@ -63,11 +63,11 @@ appId: com.forgeai.app
 - takeScreenshot: 83-program-followed
 # ---------------------------------------------------------------- the plan builder
 - scrollUntilVisible:
-    element: "Explore"
+    element: "Find a plan"
     direction: UP
     centerElement: true
     timeout: 20000
-- tapOn: "Explore"
+- tapOn: "Find a plan"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
@@ -466,10 +466,10 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- open a shared routine file
 # Redesign R4: Explore → Bring routines in → "Import a routine file".
 - scrollUntilVisible:
-    element: "Explore"
+    element: "Find a plan"
     centerElement: true
     timeout: 15000
-- tapOn: "Explore"
+- tapOn: "Find a plan"
 - scrollUntilVisible:
     element: "Import a routine file"
     centerElement: true

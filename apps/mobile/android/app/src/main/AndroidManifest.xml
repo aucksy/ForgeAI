@@ -17,6 +17,14 @@
       <data android:scheme="https"/>
     </intent>
   </queries>
+  <!-- Release A (A3): the Gym tab's "Check in" / "Scan the poster" opens the phone's own camera to
+       read the gym's QR poster (src/shop/scanPoster.ts). Android 11+ only lets the app see a camera
+       app it lists here. -->
+  <queries>
+    <intent>
+      <action android:name="android.media.action.STILL_IMAGE_CAMERA"/>
+    </intent>
+  </queries>
   <queries>
     <package android:name="com.google.android.googlequicksearchbox"/>
     <intent>

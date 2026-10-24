@@ -15,7 +15,7 @@ appId: com.forgeai.app
       - runFlow:
           file: sub-settings-page.yaml
           env:
-            PAGE: "Workouts"
+            PAGE: "Rest timer and sounds"
       - scrollUntilVisible:
           element: "Ring through Do Not Disturb"
           centerElement: true

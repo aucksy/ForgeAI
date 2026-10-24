@@ -12,10 +12,12 @@ import { Card } from '@/components/ui';
 import { findUpdate, updateLater, type AppUpdate } from '@/lib/appUpdate';
 import { color, space, type } from '@/theme/tokens';
 
+import { useReportWant, type NoticeSlotProps } from './noticeSlot';
+
 export const UPDATE_TITLE = 'A new version of ForgeAI is ready';
 export const UPDATE_LINE = 'Tap Get it, then open the file to install. Your workouts stay.';
 
-export function UpdateCard() {
+export function UpdateCard({ hidden = false, onWant, onDone }: NoticeSlotProps = {}) {
   const [update, setUpdate] = useState<AppUpdate | null>(null);
   useEffect(() => {
     let live = true;
@@ -26,13 +28,15 @@ export function UpdateCard() {
       live = false;
     };
   }, []);
-  if (!update) return null;
+  useReportWant(update != null, onWant);
+  if (!update || hidden) return null;
 
   const get = () => {
     Linking.openURL(update.url).catch((e: unknown) => console.warn('[update] could not open', update.url, e));
   };
   const later = () => {
     setUpdate(null);
+    onDone?.();
     updateLater(update.version).catch((e: unknown) => console.warn('[update] could not save Later', e));
   };
   const link = { minHeight: 48, minWidth: 48, justifyContent: 'center' as const };

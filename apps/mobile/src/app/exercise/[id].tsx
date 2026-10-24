@@ -257,7 +257,7 @@ export default function ExerciseScreen() {
     if (!ex) return;
     const ok = await askConfirm({
       title: `Hide ${ex.name}?`,
-      body: 'It leaves every exercise list. Bring it back any time from "Hidden exercises" at the bottom of Profile → Exercises.',
+      body: 'It leaves every exercise list. Bring it back any time from "Hidden exercises" at the bottom of Progress → Exercises.',
       confirmLabel: 'Hide',
     });
     if (!ok) return;
@@ -342,7 +342,7 @@ export default function ExerciseScreen() {
           entering={FadeInDown.duration(motion.slow)}
           style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.md, marginBottom: space.lg }}
         >
-          <IconButton icon="chevron-left" onPress={() => goBack(router, '/profile')} accessibilityLabel="Go back" />
+          <IconButton icon="chevron-left" onPress={() => goBack(router, '/progress')} accessibilityLabel="Go back" />
           <View style={{ flex: 1, paddingTop: 2 }}>
             {ex ? (
               <>

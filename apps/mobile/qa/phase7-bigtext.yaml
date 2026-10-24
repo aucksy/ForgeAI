@@ -5,7 +5,7 @@
 # Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
 # (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/). Redesign (3 tabs): the Workout
 # tab (top, then its folders), an open workout with a set row, the Profile page (top, its chart,
-# its feed), Calendar, Statistics, Settings, and Settings → Your gym's "Join your gym" card.
+# its feed), Calendar, Progress and Charts, Settings, and the Gym tab's "Join your gym" screen.
 # R-77: no gym, no shop tab (sample shop removed): the Shop's join card, the sample shop's grid and
 # its product page are gone, so this tour checks the tab is absent instead.
 # Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
@@ -173,11 +173,20 @@ appId: com.forgeai.app
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-07-calendar
 - back
-# ---------------------------------------------------------------- Statistics
+# ---------------------------------------------------------------- Progress (Release A) and Charts
+- tapOn:
+    text: "^Progress$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Charts$"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: p7-big-${NAV}-07b-progress
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Statistics"
+      ROW: "Charts"
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
@@ -192,44 +201,33 @@ appId: com.forgeai.app
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-09-settings
 - back
-# ---------------------------------------------------------------- the gym: no tab, the join card in Settings
-# R-77: no gym, no shop tab (sample shop removed). Not joined, there are only Workout and Profile;
-# joining is in Settings → Your gym, whose "Join your gym" card is photographed here (nothing typed).
-# If an earlier part left this phone joined (a failed BR, INV or INV-f may not leave), leave first
-# from the gym's tab so the tour sees the phone as it should be.
+# ---------------------------------------------------------------- the Gym tab with no gym: its join screen
+# Release A (A2): the Gym tab is always there; with no gym it is ONE "Join your gym" screen (code box,
+# "Scan the poster", what you get), photographed here (nothing typed). If an earlier part left this
+# phone joined (a failed BR, INV or INV-f may not leave), leave first (Settings → Your gym, A4) so the
+# tour sees the phone as it should be.
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 20000
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Join your gym$|^Check in$"
+    timeout: 30000
 - runFlow:
     when:
-      visible: "^(Shop|Gym)$"
+      visible: "^Check in$"
     commands:
-      - tapOn:
-          text: "^(Shop|Gym)$"
-          index: 0
-      - scrollUntilVisible:
-          element: "^Leave$"
-          # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
-          timeout: 30000
-      - tapOn: "^Leave$"
+      - runFlow: sub-leave-gym.yaml
       - extendedWaitUntil:
           visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
           timeout: 15000
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
       - extendedWaitUntil:
-          notVisible: "^(Shop|Gym)$"
+          visible: "^Join your gym$"
           timeout: 45000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- scrollUntilVisible:
-    element: "^Join your gym$"
-    timeout: 30000
+- runFlow: sub-gym-none.yaml
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 30000

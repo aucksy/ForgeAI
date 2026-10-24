@@ -13,24 +13,24 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 # ---------------------------------------------------------------- body figure
-# Redesign R6: Body figure is on Settings → Units.
+# Release A (A9): Body figure is on Your profile (Settings → Your profile), the one profile editor.
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Units"
+      PAGE: "Your profile"
 - scrollUntilVisible:
     element: '(?i)body figure'
     centerElement: true
     timeout: 20000
 - tapOn: "^Female$"
 - takeScreenshot: 70-settings-units-body-figure
-# Back to Profile (Units → Settings → Profile); the last-7-days body map is Statistics' first part.
+# Back to Profile (Your profile → Settings → Profile); the last-7-days body map is Statistics' first part.
 - back
 - back
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Statistics"
+      ROW: "Charts"
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
@@ -178,9 +178,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 20000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000

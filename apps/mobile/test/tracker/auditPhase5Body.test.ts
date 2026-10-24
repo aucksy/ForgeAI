@@ -430,12 +430,15 @@ describe('[source-text check] the body screens', () => {
   });
 
   it('PG-03 / PG-16: body weight logs for a chosen day and its history rows open the fix sheet', () => {
-    const s = src('app/bodyweight.tsx');
-    expect(s).not.toContain('logBodyWeight(todayISO()');
+    // Release A, A13: the old Body weight and Measurements pages are retired into Body (`measures`).
+    const s = src('app/measures/index.tsx');
     expect(s).toContain('<BodyEntrySheet');
     expect(s).toContain('<UndoBar');
-    expect(src('app/measurements/log.tsx')).not.toContain('logMeasurements(todayISO()');
-    expect(src('app/measurements/index.tsx')).not.toContain('Alert.alert');
+    expect(s).not.toContain('Alert.alert');
+    const add = src('app/measures/add.tsx');
+    expect(add).not.toContain('logBodyWeight(todayISO()');
+    expect(add).not.toContain('logMeasurements(todayISO()');
+    expect(src('app/bodyweight.tsx')).toContain('<Redirect');
   });
 
   it('PG-17: each photo can be saved out, and Profile → Backup offers the opt-in', () => {

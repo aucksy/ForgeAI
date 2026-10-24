@@ -1,8 +1,8 @@
-# Sub-flow (called with runFlow; not a part of its own). R-77 (22 Oct 2026): with no gym joined there
-# is no Shop tab and no join card on it (nor a sample shop). A member joins from Settings → Your gym
-# ("Join your gym": the gym code, Next) or from the gym's own link; both open the invite screen
-# (src/shop/InviteScreen.tsx: the gym's name and code, "Your name", the 18+ / terms tick, "Join this
-# gym"). This joins the first way:
+# Sub-flow (called with runFlow; not a part of its own). Release A (A2, docs/ux/MEMBER-APP-MAP.md):
+# with no gym joined the Gym tab is ONE "Join your gym" screen (src/shop/ShopScreen.tsx JoinGymDoor):
+# the gym code, Next, and "Scan the poster". Settings → Your gym only links there. A member joins
+# there or from the gym's own link; both open the invite screen (src/shop/InviteScreen.tsx: the
+# gym's name and code, "Your name", the 18+ / terms tick, "Join this gym"). This joins the first way:
 #   - runFlow:
 #       file: sub-join-gym.yaml
 #       env:
@@ -11,17 +11,15 @@
 #         GYM: "ForgeAI Test Gym"
 # CODE, NAME and GYM are also matched as regexes (GYM = the invite screen's heading, exactly).
 # No `env:` default here: a flow-level default would override the caller's (trap 22).
-# Call it with the phone in NO gym and the app's tab bar on screen (any tab) or on the Settings list.
+# Call it with the phone in NO gym and the app's tab bar on screen (any tab).
 # Ends on the Workout tab with the gym joined (sub-after-join.yaml: the opening waited out, the
-# home-screen icon pop-up closed with "Not now"). The third tab then reads "Gym", or "Shop" once the
-# gym's product list has arrived (it can read "Gym" for a moment): wait for "^Shop$" before products.
+# home-screen icon pop-up closed with "Not now"). The Gym tab is always there and always "Gym"; a
+# gym's shop shows inside it ("Shop" heading) once the gym's product list has arrived.
 appId: com.forgeai.app
 ---
 - runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-# The no-gym page: its "Join your gym" card. Not centred: on a short page nothing can reach the
+    file: sub-gym-none.yaml
+# The Gym tab's "Join your gym" card. Not centred: on a short page nothing can reach the
 # middle, and centring would eat the timeout (U-Q5). Fully on screen is enough for the tap.
 - scrollUntilVisible:
     element: "^Join your gym$"
@@ -71,8 +69,9 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Join this gym$"
-# The join is on the live server. Joined = the third tab is there (no gym, no third tab).
+# The join is on the live server. Joined = the invite screen has gone (its "Your name" box with it):
+# the app goes on to the Workout tab.
 - extendedWaitUntil:
-    visible: "^(Shop|Gym)$"
+    notVisible: "Your name"
     timeout: 45000
 - runFlow: sub-after-join.yaml

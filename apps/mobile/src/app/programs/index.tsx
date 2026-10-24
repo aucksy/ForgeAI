@@ -1,10 +1,11 @@
 /**
- * Explore — redesign R4 (Hevy's Explore). The Workout tab's "Explore" opens here: the plan
+ * Find a plan (redesign R4, Hevy's Explore; renamed in Release A). The Workout tab's "Find a plan" opens here: the plan
  * builder first ("Build a plan" from the member's goal, days, equipment and sore spots), then the
  * ready programs in three groups (a full gym, dumbbells only, home), each from beginner to
  * advanced — tap one to see its routines, then follow it or keep it in your routines ("Save"
  * makes a folder). At the bottom, the ways to bring routines in that used to sit behind the old
- * Routines screen's "+": a routine file someone shared, and a Hevy share link.
+ * Routines screen's "+": a routine file someone shared, and (Release A) the one "Bring in from Hevy or
+ * Strong" page in Settings → Your data.
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -88,7 +89,7 @@ export default function ProgramsScreen() {
   };
 
   return (
-    <Screen title="Explore" subtitle="A plan built for you, or a ready program." onBack={() => goBack(router, '/workout')}>
+    <Screen title="Find a plan" subtitle="A plan built for you, or a ready program." onBack={() => goBack(router, '/workout')}>
       <View style={{ gap: space.lg }}>
         <Card style={{ paddingVertical: space.xs }}>
           <Row
@@ -121,7 +122,8 @@ export default function ProgramsScreen() {
           <SectionHeader title="Bring routines in" />
           <Card style={{ paddingVertical: space.xs }}>
             <Row first icon="import" title="Import a routine file" sub="A file another ForgeAI member shared" onPress={() => void onImportFile()} />
-            <Row first={false} icon="globe" title="Import routines from Hevy" sub="From a Hevy share link" onPress={() => router.push('/import/routines')} />
+            {/* Release A, A11: the one home for bringing workouts and routines in from Hevy or Strong. */}
+            <Row first={false} icon="globe" title="Bring in from Hevy or Strong" sub="Your past workouts, or routines from a Hevy share link" onPress={() => router.push('/settings/import')} />
           </Card>
         </View>
       </View>

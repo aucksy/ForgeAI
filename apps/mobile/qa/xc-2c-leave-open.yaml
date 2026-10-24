@@ -8,11 +8,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^${GYM}$"
     timeout: 45000
-- runFlow:
-    file: xc-sub-find.yaml
-    env:
-      FIND: "^Leave$"
-- tapOn: "^Leave$"
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: xc-sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: "Leave ${GYM}\\?"
     timeout: 30000
@@ -25,7 +22,8 @@ appId: com.forgeai.app
 - assertVisible: 'No internet\. Your orders? (is|are) still placed and you''re still in the gym\. Try again when you''re online\.'
 - takeScreenshot: xc2c-02-not-cancelled-offline
 - tapOn: "Not now"
+# Still in the gym: Settings still offers its Leave row.
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: "^Leave$"
+      FIND: "^Leave ${GYM}$"

@@ -183,9 +183,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 20000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000

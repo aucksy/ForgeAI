@@ -9,37 +9,42 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { GYM_ICON_WORDS, UNLINKED_TITLE } from '@/shop/gymIconWords';
-import { GYM_TAB_LABEL, gymTabFor } from '@/shop/gymTab';
+import { APP_TABS } from '@/lib/appTabs';
+import { GYM_TAB_LABEL, gymShopOn } from '@/shop/gymTab';
 
 const read = (f: string) => readFileSync(f, 'utf8');
 
-describe('R-77: the gym tab shows only when it works', () => {
-  it('no gym: no tab; a gym with no shop: "Gym"; its shop on: "Shop"', () => {
-    expect(gymTabFor(false, 0)).toBe('none');
-    expect(gymTabFor(false, 12)).toBe('none');
-    expect(gymTabFor(true, 0)).toBe('gym');
-    expect(gymTabFor(true, 1)).toBe('shop');
-    expect(GYM_TAB_LABEL).toEqual({ gym: 'Gym', shop: 'Shop' });
+// Release A, A1 (docs/ux/MEMBER-APP-MAP.md, 24 Oct 2026) replaced R-77's "no gym, no tab; Shop with
+// products": the Gym tab is always there and always "Gym"; its shop is a part of it.
+describe('Release A: the Gym tab is always there, always "Gym"', () => {
+  it('one label whatever the gym and its shop; the shop part shows once the gym lists something', () => {
+    expect(GYM_TAB_LABEL).toBe('Gym');
+    expect(APP_TABS.find((t) => t.route === 'shop')?.title).toBe('Gym');
+    expect(gymShopOn(false, 12)).toBe(false);
+    expect(gymShopOn(true, 0)).toBe(false);
+    expect(gymShopOn(true, 1)).toBe(true);
   });
 
-  it('the tab bar leaves the tab out with no gym and names it by the rule', () => {
+  it('the tab bar shows the 4 tabs by the one list, never by the gym', () => {
     const bar = read('src/tracker/components/TrackerTabBar.tsx');
-    expect(bar).toMatch(/gymTabFor\(memberId != null, productCount\)/);
-    expect(bar).toMatch(/!\(name === 'shop' && gymTab === 'none'\)/);
+    expect(bar).toMatch(/isShownTab\(name\)/);
+    expect(bar).not.toMatch(/gymTab === 'none'|products\.length/);
     expect(bar).toMatch(/if \(!tabShown\(route\.name\)\) return null/);
-    expect(bar).toMatch(/GYM_TAB_LABEL\[gymTab\]/);
+    expect(bar).toMatch(/tabTitle\(route\.name\)/);
   });
 
-  it('no gym: the tab address goes to Workout (no join card, no sample shop there)', () => {
+  it('no gym: the tab is the one "Join your gym" screen (no sample shop, no locked rows)', () => {
     const shop = read('src/shop/ShopScreen.tsx');
-    expect(shop).toMatch(/return <Redirect href="\/workout" \/>/);
+    expect(shop).toMatch(/return <JoinGymDoor key="door" \/>/);
+    expect(shop).toMatch(/<JoinGymCard scan \/>/);
+    expect(shop).toMatch(/No gym\? Everything else works without one\./);
     expect(shop).not.toMatch(/See a sample shop|function JoinShop|function SampleShop/);
-    // The shop's own parts show only while it is on.
-    expect(shop).toMatch(/const shopOn = products\.length > 0/);
+    // The shop's own parts show only while it is on; Leave is not on the tab any more (A4).
+    expect(shop).toMatch(/const shopOn = gymShopOn\(true, products\.length\)/);
     expect(shop).toMatch(/\{shopOn \? <BagButton/);
-    expect(shop).toMatch(/\{shopOn \? <ProductGrid/);
+    expect(shop).toMatch(/<ProductGrid products=\{products\}/);
+    expect(shop).not.toMatch(/askAndLeaveGym|accessibilityLabel=\{`Leave/);
   });
-
   it('the gym list is asked for right after a join and on every gym check (the tab is right at once)', () => {
     const actions = read('src/shop/gymActions.ts');
     expect(actions.match(/void refreshProducts\(\)\.catch/g)?.length).toBe(2);
@@ -81,7 +86,7 @@ describe('R-77: the gym tab shows only when it works', () => {
   it('review fix: bag, product and My orders never fall back to a sample shop', () => {
     for (const f of ['src/shop/BagScreen.tsx', 'src/shop/ProductScreen.tsx', 'src/shop/OrdersScreen.tsx']) expect(read(f), f).toMatch(/<GymOnly>/);
     expect(read('src/shop/OrdersScreen.tsx')).not.toMatch(/function SampleOrders/);
-    expect(read('src/shop/GymOnly.tsx')).toMatch(/if \(hydrated && !joined\) return <Redirect href="\/workout" \/>/);
+    expect(read('src/shop/GymOnly.tsx')).toMatch(/if \(hydrated && !joined\) return <Redirect href="\/shop" \/>/);
   });
 });
 

@@ -14,24 +14,18 @@ appId: com.forgeai.app
 - assertNotVisible: 'Your mobile number'
 - takeScreenshot: inv-f3-already-in
 - tapOn: '^Done$'
-# Done goes to the gym's tab (R-77: "Gym" here, its shop is off; its unbranded title is its name).
+# Done goes to the Gym tab (its shop is off; its unbranded title is its name).
 - extendedWaitUntil:
     visible: '^QA Check-in Gym$'
     timeout: 20000
-- scrollUntilVisible:
-    element: '^Leave$'
-    # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- tapOn: '^Leave$'
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave QA Check-in Gym\?'
     timeout: 15000
 - tapOn: '^Leave gym$'
-# R-77: no gym, no third tab; the app is on Workout.
+# Release A: in no gym, Settings offers "Join your gym" and the Gym tab is its join screen.
 - extendedWaitUntil:
-    notVisible: '^(Shop|Gym)$'
+    visible: '^Join your gym$'
     timeout: 20000
-- extendedWaitUntil:
-    visible: '^Profile$'
-    timeout: 20000
-- assertNotVisible: '^(Shop|Gym)$'
+- runFlow: sub-gym-none.yaml

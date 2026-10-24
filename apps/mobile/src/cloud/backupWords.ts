@@ -36,7 +36,7 @@ export class DriveError extends PlainError {
 
 /** Drive backup can't work in this build (no Google client, or the build's key isn't registered). */
 export const DRIVE_NOT_IN_THIS_VERSION =
-  'Google Drive backup isn’t working in this version of ForgeAI. For now, keep a copy with Save my history (Settings → Export & import), and tell your gym.';
+  'Google Drive backup isn’t working in this version of ForgeAI. For now, keep a copy with Save my history (Settings → Save as a spreadsheet), and tell your gym.';
 
 export const DRIVE_NO_INTERNET = 'Couldn’t reach Google Drive. Check your internet and try again.';
 

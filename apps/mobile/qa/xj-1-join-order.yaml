@@ -1,5 +1,5 @@
 # Cross-role journey 1 (UAT WP6), member step 1: join the fresh gym run-journeys.sh made, by typing
-# its gym code (CODE, gym name GYM) in Settings → Your gym, then order 2 of the QA Shaker the owner
+# its gym code (CODE, gym name GYM) on the Gym tab's "Join your gym" screen, then order 2 of the QA Shaker the owner
 # just added with stock 3 (the admin app, step XJ1a). The product page must say "Only 3 left" first. Ends on My orders:
 # Ordered, "The gym is getting it ready", 2 x QA Shaker.
 appId: com.forgeai.app
@@ -12,8 +12,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# R-77: in no gym there is no Shop tab: the join is in Settings → Your gym (sub-join-gym.yaml), and
-# it lands on the Workout tab; then the gym's tab ("Shop" once its product list has arrived).
+# The join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml, Release A), and it lands
+# on the Workout tab; then the Gym tab (its "Shop" part once the product list has arrived).
 - runFlow:
     file: sub-join-gym.yaml
     env:
@@ -27,13 +27,15 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^${GYM}$"
     timeout: 45000
-- extendedWaitUntil:
-    visible: "QA Shaker, .*"
-    timeout: 45000
-- extendedWaitUntil:
-    visible: "^Shop$"
-    timeout: 20000
 - assertVisible: "Your gym's shop · pay at the desk"
+# Release A: the Gym tab, membership and Check in first; its "Shop" part once the list arrives.
+- scrollUntilVisible:
+    element: "QA Shaker, .*"
+    timeout: 45000
+- scrollUntilVisible:
+    element: "^Shop$"
+    direction: UP
+    timeout: 20000
 - runFlow:
     file: xj-sub-find.yaml
     env:

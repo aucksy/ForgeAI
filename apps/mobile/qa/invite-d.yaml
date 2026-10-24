@@ -1,14 +1,14 @@
-# Part INV, step D: a link whose code no gym has — says so, and points at Settings → Your gym's code
-# box (R-77: with no gym there is no Shop tab; the button is "Type a gym code").
+# Part INV, step D: a link whose code no gym has — says so, and points at the Gym tab's code box
+# (Release A: the Gym tab's one "Join your gym" screen; the button is "Type a gym code").
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
     visible: "This link is not a gym's"
     timeout: 30000
-- assertVisible: 'No gym has the code ZZZZZ9\. Ask your gym for a new link, or type their code in Settings → Your gym\.'
+- assertVisible: 'No gym has the code ZZZZZ9\. Ask your gym for a new link, or type their code in the Gym tab\.'
 - takeScreenshot: inv-06-unknown-code
 - tapOn: "^Type a gym code$"
-# Settings → Your gym, in no gym: the "Join your gym" card with its code box.
+# Release A: the Gym tab's "Join your gym" screen with its code box.
 - extendedWaitUntil:
     notVisible: "This link is not a gym's"
     timeout: 20000

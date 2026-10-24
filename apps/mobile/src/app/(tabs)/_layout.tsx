@@ -1,11 +1,12 @@
 import { Tabs } from 'expo-router';
 
+import { APP_TABS } from '@/lib/appTabs';
 import { TrackerTabBar } from '@/tracker/components/TrackerTabBar';
 
 /**
- * Redesign R1 — three tabs, exactly Hevy's shape: Workout (opens first), Profile, Shop.
- * Home, History and Progress are gone as tabs: "/" sends to Workout (app/index.tsx), History and
- * Progress are plain pages the Profile links to, and Settings is the Profile's gear.
+ * Release A (docs/ux/MEMBER-APP-MAP.md §3.1): 4 tabs, always the same 4 — Workout (opens first) ·
+ * Progress · Gym · Profile (lib/appTabs.ts). The Gym tab's route is still `shop`, so every older
+ * `/shop` link opens it. "/" sends to Workout (app/index.tsx); Settings is the Profile's gear.
  */
 export const unstable_settings = { initialRouteName: 'workout' };
 
@@ -16,9 +17,9 @@ export default function TabsLayout() {
       screenOptions={{ headerShown: false }}
       backBehavior="firstRoute"
     >
-      <Tabs.Screen name="workout" options={{ title: 'Workout' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-      <Tabs.Screen name="shop" options={{ title: 'Shop' }} />
+      {APP_TABS.map((t) => (
+        <Tabs.Screen key={t.route} name={t.route} options={{ title: t.title }} />
+      ))}
       {/* Coach is hidden from the tab bar. While FEATURES.coach is off (lib/features.ts)
           the route itself sends members to the Workout tab. */}
       <Tabs.Screen name="coach" options={{ title: 'Coach' }} />

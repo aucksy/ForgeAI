@@ -1,19 +1,24 @@
 /**
- * Settings → Your gym, for a member in no gym (owner report, 17 Oct 2026): "Join your gym" with the
- * gym's code. Next opens the invite screen for that code, which shows the gym and asks before
- * joining (never automatic). Joining paints the app in the gym's colours (part BR).
+ * "Join your gym" with the gym's code (owner report, 17 Oct 2026). Next opens the invite screen for
+ * that code, which shows the gym and asks before joining (never automatic). Joining paints the app in
+ * the gym's colours (part BR).
+ *
+ * Release A (A2/A3, docs/ux/MEMBER-APP-MAP.md): the card is the top of the Gym tab's no-gym screen,
+ * the one place to join. With `scan`, it also offers "Scan the poster": the phone's camera reads the
+ * QR code at the gym's desk, which opens the same invite (or check-in) screen.
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { GlassCard, PrimaryButton } from '@/components/ui';
+import { GhostButton, GlassCard, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { JOIN_CODE_LENGTH, joinCodeFromTyped, joinPathFromSettings } from '@/shop/gym';
+import { openPosterScan, SCAN_POSTER_LINE } from '@/shop/scanPoster';
 import { shopInputStyle } from '@/shop/ShopParts';
 import { color, space, type } from '@/theme/tokens';
 
-export function JoinGymCard() {
+export function JoinGymCard({ scan = false }: { scan?: boolean }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +62,13 @@ export function JoinGymCard() {
       />
       <InlineError message={error} />
       <PrimaryButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
+      {scan ? (
+        <View style={{ gap: space.sm, paddingTop: space.sm, borderTopWidth: 1, borderTopColor: color.border }}>
+          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>No code? Your gym&apos;s poster has one.</Text>
+          <GhostButton label="Scan the poster" icon="camera" onPress={() => void openPosterScan()} />
+          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{SCAN_POSTER_LINE}</Text>
+        </View>
+      ) : null}
     </GlassCard>
   );
 }

@@ -1,12 +1,12 @@
 # UAT work package 4, part UE (U-M3, U-M2): "Erase all data", as a solo member and as a gym member,
 # and the welcome's "From Hevy" promise.
-#   1. Solo (no gym): Settings -> Your data -> "Erase all data": the question names no gym; "Erase
+#   1. Solo (no gym): Settings -> Erase or start over -> "Erase all data": the question names no gym; "Erase
 #      everything" lands on the welcome; the app stopped and opened again still opens on it.
 #   2. U-M2: on that welcome, "From Hevy" -> ... -> "Start training": the Hevy import MUST open by
 #      itself (no way round through Settings: if it does not open, that is an app bug).
-#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R; R-77: from Settings →
-#      Your gym), then Erase: the question names "ForgeAI Test Gym"; after it (and the demo loaded
-#      to reach the tabs) there is no third tab and Settings → Your gym offers "Join your gym" again.
+#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R: from the Gym tab's "Join
+#      your gym" screen), then Erase: the question names "ForgeAI Test Gym"; after it (and the demo
+#      loaded to reach the tabs) the Gym tab offers "Join your gym" again.
 # Needs some data to erase: after part UD (its 12 imported workouts) or, alone, the script seeds the
 # demo first.
 appId: com.forgeai.app
@@ -22,7 +22,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Your data"
+      PAGE: "Erase or start over"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -101,8 +101,8 @@ appId: com.forgeai.app
 - takeScreenshot: ue-04-hevy-import-opened-by-itself
 - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 3. erase, gym member
-# R-77: in no gym there is no Shop tab; the join is in Settings → Your gym (sub-join-gym.yaml), and
-# it lands on the Workout tab. FORGE1 is unbranded, so its tab's title is its name.
+# The join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml), and it lands on the
+# Workout tab. FORGE1 is unbranded, so the Gym tab's title is its name.
 - runFlow:
     file: sub-join-gym.yaml
     env:
@@ -119,7 +119,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Your data"
+      PAGE: "Erase or start over"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -147,16 +147,8 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# R-77: no gym after the erase, so no third tab; Settings → Your gym offers "Join your gym" and
-# names no gym.
-- assertNotVisible: "^(Shop|Gym)$"
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- scrollUntilVisible:
-    element: "^Join your gym$"
-    timeout: 20000
+# No gym after the erase: the Gym tab is its "Join your gym" screen (Release A) and names no gym.
+- runFlow: sub-gym-none.yaml
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 20000

@@ -25,10 +25,10 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
+      PAGE: "Weekly goal"
 - scrollUntilVisible:
     element: "(?i)^weekly goal$"
-    centerElement: true
+    direction: UP
     timeout: 30000
 # Oct 2026: the goal is a "− N +" stepper (eight round chips did not fit one row at large text).
 # From whatever it was: down to Off (a tap on the dimmed − does nothing), then up three.
@@ -50,12 +50,13 @@ appId: com.forgeai.app
       text: "(?i)^weekly goal$"
 - assertVisible: "Workouts a week. The Workout tab shows how many are left."
 - takeScreenshot: p9-01-weekly-goal
-# 13 Oct 2026: "Previous values" (Any workout / Same routine), under the weekly goal. R-61 (22 Oct 2026):
-# "Same folder" is retired.
-- scrollUntilVisible:
-    element: "(?i)^previous values$"
-    centerElement: true
-    timeout: 30000
+# 13 Oct 2026: "Previous values" (Any workout / Same routine), Release A: Settings → "Last time's
+# numbers", its own page. R-61 (22 Oct 2026): "Same folder" is retired.
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Last time's numbers"
 - scrollUntilVisible:
     element: "^Same routine$"
     timeout: 30000
@@ -67,7 +68,7 @@ appId: com.forgeai.app
     element: "Previous, Target and notes come from the last time you did the exercise, in any folder. Heavy and light days in one folder keep their own Target. Applies from your next workout."
     timeout: 30000
 - takeScreenshot: p9-01b-previous-values
-# Workouts → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is
+# Last time's numbers → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is
 # "Done today: Push 1" with its goal line, "This week: N of 3 workouts".
 - back
 - back
@@ -222,9 +223,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 20000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -283,10 +284,10 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
+      PAGE: "Weekly goal"
 - scrollUntilVisible:
     element: "(?i)^weekly goal$"
-    centerElement: true
+    direction: UP
     timeout: 30000
 - repeat:
     times: 7

@@ -1,0 +1,35 @@
+# Sub-flow (called with runFlow; not a part of its own). Release A (A5, docs/ux/MEMBER-APP-MAP.md):
+# Charts (was Statistics), Exercises and Body (was Measures) left the Profile's tiles for the new
+# Progress tab (src/app/(tabs)/progress.tsx). Opens the Progress tab and taps the row passed in:
+#   - runFlow:
+#       file: sub-progress-row.yaml
+#       env:
+#         ROW: "Charts"
+# ROW is a regex for the row's title ("Charts", "Exercises", "Records", "Body"). Call it with the
+# tab bar on screen. The tab is tapped with index 0: the top-most match (trap 18). At 200 % text the
+# rows can start below the screen's edge, so it scrolls to the row. No `env:` default (trap 22).
+appId: com.forgeai.app
+---
+- extendedWaitUntil:
+    visible: "^Progress$"
+    timeout: 30000
+- tapOn:
+    text: "^Progress$"
+    index: 0
+# The tab keeps its scroll position (at 200 % text a row can sit above or below the screen's edge):
+# look UP first, then down.
+- scrollUntilVisible:
+    element: "^${ROW}$"
+    direction: UP
+    centerElement: true
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "^${ROW}$"
+    commands:
+      - scrollUntilVisible:
+          element: "^${ROW}$"
+          centerElement: true
+          timeout: 20000
+- tapOn: "^${ROW}$"

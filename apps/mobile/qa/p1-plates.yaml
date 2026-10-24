@@ -13,12 +13,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
-- scrollUntilVisible:
-    element: "Plates and bars"
-    centerElement: true
-    timeout: 20000
-- tapOn: "Plates and bars"
+      PAGE: "Plates and bars"
 - extendedWaitUntil:
     visible: "Turn off the plates your gym doesn.t have.*"
     timeout: 15000

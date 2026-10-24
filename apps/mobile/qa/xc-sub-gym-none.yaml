@@ -1,0 +1,13 @@
+# Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-gym-none.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+appId: com.forgeai.app
+---
+- runFlow:
+    file: xc-sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Join your gym$"
+    timeout: 30000
+- assertVisible: "No gym\\? Everything else works without one\\."

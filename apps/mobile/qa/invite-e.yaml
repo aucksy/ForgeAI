@@ -1,8 +1,8 @@
 # Part INV, step E (gym messages, Phase 1): run-device-qa.sh made a fresh demo gym on the live
 # server ("QA Inbox Gym", with the sample products), sent it one announcement ("QA: gym closed on
 # Sunday") with that gym's own key, and opened the gym's invite link. Join it (R-77: it lands on the
-# Workout tab); on the gym's tab the bell shows 1 new; the inbox shows the message; back on the
-# gym's page the count is gone. Then Leave, so the phone ends in no gym (no third tab).
+# Workout tab); on the Gym tab the bell shows 1 new; the inbox shows the message; back on the
+# gym's page the count is gone. Then Leave (Settings → Your gym), so the phone ends in no gym.
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
@@ -19,9 +19,10 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Join this gym$"
-# Joined = the third tab is there (no gym, no third tab). Then the Workout tab (sub-after-join.yaml).
+# Joined = the invite screen has gone, its "Your name" box with it (Release A: the Gym tab is
+# there with or without a gym). Then the Workout tab (sub-after-join.yaml).
 - extendedWaitUntil:
-    visible: "^(Shop|Gym)$"
+    notVisible: "Your name"
     timeout: 30000
 - runFlow: sub-after-join.yaml
 - tapOn:
@@ -45,20 +46,14 @@ appId: com.forgeai.app
     visible: "^Messages from your gym$"
     timeout: 20000
 - assertNotVisible: "Messages from your gym, 1 new"
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- tapOn: "^Leave$"
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave QA Inbox Gym\?'
     timeout: 15000
 - tapOn: "^Leave gym$"
-# R-77: no gym, no third tab; the app is on Workout.
+# Release A: in no gym, Settings offers "Join your gym" and the Gym tab is its join screen.
 - extendedWaitUntil:
-    notVisible: "^(Shop|Gym)$"
+    visible: "^Join your gym$"
     timeout: 20000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml

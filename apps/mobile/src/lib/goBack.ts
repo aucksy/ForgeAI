@@ -12,7 +12,7 @@ import type { Href } from 'expo-router';
  * are Workout and Profile (and Shop, whose pages handle their own way back); Settings is a page
  * under Profile's gear, so its own pages (Credits, Import) go back to it.
  */
-export type BackHome = '/workout' | '/profile' | '/settings';
+export type BackHome = '/workout' | '/progress' | '/profile' | '/settings';
 
 /** Where the back arrow goes: back, or (nothing behind this page) the page's tab. PURE. */
 export function backTarget(canGoBack: boolean, home: BackHome): 'back' | BackHome {

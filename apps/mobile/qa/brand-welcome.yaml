@@ -1,7 +1,7 @@
 # Gym branding device QA, part BR, first flow (R-77, 22 Oct 2026): what a member sees right after
 # joining a branded gym. run-device-qa.sh opened RAMS01's invite link
 # (https://forgeai.aakashpahuja.in/j/RAMS01) at the app, with the phone in no gym. (The gym's link is
-# one way in; brand-theme.yaml, next, joins the other way: Settings → Your gym.)
+# one way in; brand-theme.yaml, next, joins the other way: the Gym tab's "Join your gym" screen.)
 #  1. The invite screen: RAM'S FITNESS CLUB IMPACT, the new intro line, "Join this gym".
 #  2. The welcome opening: "Welcome to" above the gym's name (spoken "Welcome to <gym>"), held ~1.8 s
 #     longer than the opening at launch. Photographed best effort: it can be gone before the photo.
@@ -10,9 +10,10 @@
 #     hand, supabase/README.md) and the phone can pin shortcuts. When it comes, its words are checked
 #     and it is closed with "Not now" — never "Add to home screen" (Android's own question would
 #     come up). No logo: no pop-up, and that passes.
-#  4. The app lands on Workout in the gym's look; the third tab reads "Shop" or "Gym".
-#  5. Settings → Your gym: "Leave RAM'S FITNESS CLUB IMPACT" is its own row and "Shop and leave" is
-#     gone. That row leaves: "Leave RAM'S FITNESS CLUB IMPACT?" → "Leave gym" → no third tab.
+#  4. The app lands on Workout in the gym's look; the Gym tab is there (it always is, Release A).
+#  5. Settings, "Your gym" group: "Leave RAM'S FITNESS CLUB IMPACT" is its own row and "Shop and leave"
+#     is gone. That row leaves: "Leave RAM'S FITNESS CLUB IMPACT?" → "Leave gym" → the Gym tab shows
+#     "Join your gym" again.
 # Runs BEFORE brand-theme.yaml: the pop-up shows once per gym, and part BR's start-up screen check
 # needs brand-theme's join + relaunch as the last two "plain" lines before its Leave.
 # Screenshots br-w*.png (gathered in qa-out/brand/ with brand-theme's). Places no order.
@@ -41,11 +42,10 @@ appId: com.forgeai.app
     timeout: 15000
 - tapOn: "^Join this gym$"
 # ---------------------------------------------------------------- 2. the welcome opening
-# Joined = the third tab exists (the opening, when up, lies over it), or the icon pop-up already covers
-# the tab bar (run 39920977372, owner phone: the opening ended straight into the pop-up, so the tab was
-# never seen; step 4 checks the tab once the pop-up is closed).
+# Joined = the invite screen has gone, its "Your name" box with it (Release A: the Gym tab is there with
+# or without a gym, so it says nothing). The opening, or the icon pop-up, may lie over the app.
 - extendedWaitUntil:
-    visible: "^(Shop|Gym)$|Put .* on your home screen"
+    notVisible: "Your name"
     timeout: 45000
 - extendedWaitUntil:
     visible: "Welcome to RAM'S FITNESS CLUB IMPACT"
@@ -87,17 +87,11 @@ appId: com.forgeai.app
     element: "Your gym: RAM'S FITNESS CLUB IMPACT"
     direction: UP
     timeout: 15000
-- assertVisible: "^(Shop|Gym)$"
+- assertVisible: "^Gym$"
 - takeScreenshot: br-w03-workout-after-join
-# ---------------------------------------------------------------- 5. Settings → Your gym, and Leave from there
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- extendedWaitUntil:
-    visible: "^RAM'S FITNESS CLUB IMPACT$"
-    timeout: 20000
-# The last row of the page: never centred (U-Q5).
+# ---------------------------------------------------------------- 5. Settings, "Your gym" group, and Leave from there
+- runFlow: sub-settings-open.yaml
+# Release A: the gym's rows sit on the Settings page itself. Not centred (U-Q5).
 - scrollUntilVisible:
     element: "^Leave RAM'S FITNESS CLUB IMPACT$"
     timeout: 20000
@@ -122,6 +116,6 @@ appId: com.forgeai.app
     visible: "^Profile$|^Join your gym$"
     timeout: 30000
 - runFlow: sub-back-to-tabs.yaml
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml
 - assertNotVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
 - takeScreenshot: br-w06-left-no-gym-tab

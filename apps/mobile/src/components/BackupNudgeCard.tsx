@@ -8,7 +8,9 @@ import { shownBackupError } from '@/cloud/backupWords';
 import { useBackup } from '@/store/backupStore';
 import { color, space, type } from '@/theme/tokens';
 
-export function BackupNudgeCard() {
+import { useReportWant, type NoticeSlotProps } from './noticeSlot';
+
+export function BackupNudgeCard({ hidden = false, onWant }: NoticeSlotProps = {}) {
   const linked = useBackup((s) => Boolean(s.configured && s.googleEmail));
   const lastAt = useBackup((s) => s.lastBackupAt);
   const busy = useBackup((s) => s.busy);
@@ -20,7 +22,8 @@ export function BackupNudgeCard() {
       .catch((e: unknown) => console.warn('[backup nudge] could not read the backup state', e));
   }, []);
   const days = staleBackupDays(linked, lastAt, Date.now());
-  if (days == null && !note) return null;
+  useReportWant(days != null || note != null, onWant);
+  if ((days == null && !note) || hidden) return null;
 
   const backUp = () => {
     if (busy) return;

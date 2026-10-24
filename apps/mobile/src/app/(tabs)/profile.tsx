@@ -6,7 +6,9 @@
  *  3. bio and link, when set;
  *  4. the history chart — the range's total, Last 12 weeks / Last 12 months / All time, tap a bar,
  *     Duration · Kg lifted · Reps (Kg lifted the first time, then the last choice);
- *  5. Dashboard: Statistics · Exercises · Measures · Calendar;
+ *  5. Calendar (Release A, A6: Statistics, Exercises and Measures moved to the Progress tab as
+ *     Charts, Exercises and Body; a member who had the tiles sees "Your charts are now in the
+ *     Progress tab" once, above the chart);
  *  6. the Workouts feed, newest first, 30 at a time, a thin month line between months.
  *
  * Audit Phase 8 (years of data): coming back with nothing saved since (and the same day) reads
@@ -14,17 +16,18 @@
  */
 import { chartAllowed } from '@/cloud/limitsFlag';
 import { explainLimit, monthsOfRange } from '@/cloud/limitsPrompt';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter, type Href } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'react-native';
 
 import { GymBrandMark } from '@/components/GymBrandMark';
-import { GhostButton, Icon, LoadError, Screen, Skeleton } from '@/components/ui';
+import { Card, GhostButton, Icon, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { quietSince, writeQueueMark } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { tap } from '@/lib/haptics';
+import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
 import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
@@ -34,7 +37,6 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { Avatar } from '@/tracker/components/profile/Avatar';
-import { DashboardTiles, type DashboardTile } from '@/tracker/components/profile/DashboardTiles';
 import { FeedCard } from '@/tracker/components/profile/FeedCard';
 import { FeedMenu, type FeedMenuRequest } from '@/tracker/components/profile/FeedMenu';
 import { HistoryChartCard } from '@/tracker/components/profile/HistoryChartCard';
@@ -262,13 +264,22 @@ export default function ProfileScreen() {
     [items, counts],
   );
 
-  const onTile = (t: DashboardTile): void => {
-    // Hevy's Dashboard: Statistics, Exercises, Measures, Calendar (R3; Exercises gets its own
-    // screen in R5 — until then the exercise library).
-    if (t === 'statistics') router.push('/stats');
-    else if (t === 'exercises') router.push('/exercises');
-    else if (t === 'measures') router.push('/measures');
-    else router.push('/calendar');
+  // Release A (A5, owner yes 24 Oct 2026): once, for a member who had the old tiles, where they went.
+  const [progressHint, setProgressHint] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      let live = true;
+      void hintDue('progressTab').then((due) => {
+        if (live) setProgressHint(due);
+      });
+      return () => {
+        live = false;
+      };
+    }, []),
+  );
+  const closeHint = (): void => {
+    setProgressHint(false);
+    dismissHint('progressTab').catch((e: unknown) => console.warn('[profile] could not save the hint', e));
   };
 
   const shareBusy = useRef(false);
@@ -338,6 +349,35 @@ export default function ProfileScreen() {
         </View>
       )}
 
+      {progressHint ? (
+        <Card style={{ gap: space.sm }}>
+          <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
+            {HINT_TEXT.progressTab}
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: space.xl }}>
+            <Pressable
+              onPress={() => {
+                closeHint();
+                router.navigate('/progress' as Href);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Open the Progress tab"
+              style={{ minHeight: 48, minWidth: 48, justifyContent: 'center' }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Open Progress</Text>
+            </Pressable>
+            <Pressable
+              onPress={closeHint}
+              accessibilityRole="button"
+              accessibilityLabel="Got it. Hide this note"
+              style={{ minHeight: 48, minWidth: 48, justifyContent: 'center' }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Got it</Text>
+            </Pressable>
+          </View>
+        </Card>
+      ) : null}
+
       <HistoryChartCard
         bars={bars}
         metric={metric}
@@ -352,7 +392,34 @@ export default function ProfileScreen() {
         onRetry={() => void historyStamp().catch(() => null).then((stamp) => loadChart(rangeRef.current, stamp))}
       />
 
-      <DashboardTiles onOpen={onTile} />
+      {/* Release A, A6: the Profile keeps Calendar (your past workouts by day, streak, rest days and
+          "Log a past workout"); Charts, Exercises and Body moved to the Progress tab. */}
+      <Pressable
+        onPress={() => {
+          tap();
+          router.push('/calendar');
+        }}
+        accessibilityRole="button"
+        accessibilityLabel="Calendar"
+        style={({ pressed }) => ({
+          minHeight: 56,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space.md,
+          paddingHorizontal: space.lg,
+          paddingVertical: space.md,
+          borderRadius: radius.md,
+          backgroundColor: pressed ? color.surfaceRaised : color.surface,
+          borderWidth: 1,
+          borderColor: color.border,
+        })}
+      >
+        <Icon name="calendar" size={22} color={color.ink} />
+        <Text numberOfLines={1} style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+          Calendar
+        </Text>
+        <Icon name="chevron-right" size={18} color={color.inkMuted} />
+      </Pressable>
 
       {/* 12 Oct 2026: no "Workouts" heading over the feed — the first month line ("October ·
           12 workouts") already heads it, and the two stacked with a gap. */}

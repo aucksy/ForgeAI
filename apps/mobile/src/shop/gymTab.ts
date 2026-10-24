@@ -1,18 +1,14 @@
 /**
- * R-77 (owner, 22 Oct 2026): "the shop shouldn't be there if there is no gym active, and as soon as
- * the gym is active ... and the gym owner has a shop activated ... then it starts showing up."
- * The third tab:
- *  - no gym joined: none (Workout and Profile only; join from Settings → Your gym or the gym's link);
- *  - a gym joined, its shop not on (it lists nothing): "Gym" — My membership, the gym's messages,
- *    the workout code, Leave;
- *  - a gym joined with its shop on (it lists at least one product): "Shop" — the same, plus the shop.
+ * The gym's tab. Release A, A1 (docs/ux/MEMBER-APP-MAP.md, 24 Oct 2026): the tab is ALWAYS shown and
+ * ALWAYS called "Gym". With no gym it is one "Join your gym" screen (ShopScreen's JoinGymDoor); with a
+ * gym it is the gym's home, and the gym's shop, once the gym lists something, is a part of it.
+ * (Before Release A the tab was missing without a gym and turned into "Shop" with products, R-77.)
+ * The route stays `shop`, so `/shop` links from notifications, What's new and older builds still open it.
  * PURE.
  */
-export type GymTab = 'none' | 'gym' | 'shop';
+export const GYM_TAB_LABEL = 'Gym';
 
-export function gymTabFor(joined: boolean, productCount: number): GymTab {
-  if (!joined) return 'none';
-  return productCount > 0 ? 'shop' : 'gym';
+/** The shop part of the Gym tab shows once the gym lists at least one product. PURE. */
+export function gymShopOn(joined: boolean, productCount: number): boolean {
+  return joined && productCount > 0;
 }
-
-export const GYM_TAB_LABEL: Record<Exclude<GymTab, 'none'>, string> = { gym: 'Gym', shop: 'Shop' };

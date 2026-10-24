@@ -3,7 +3,7 @@
 # app first (XJ6a), so the app re-draws in the gym's look on joining (branding: new members see it
 # at once). The Workout tab is photographed before (ForgeAI's look) and after (the gym's look);
 # run-journeys.sh measures the brand colour on both pictures.
-# R-77: after Leave there is no third tab; the join is in Settings → Your gym (sub-join-gym.yaml),
+# Leave is in Settings → Your gym; the join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml),
 # which waits out gym B's "Welcome to" opening and lands on the Workout tab.
 appId: com.forgeai.app
 ---
@@ -29,23 +29,17 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^${GYM}$"
     timeout: 45000
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- tapOn: "^Leave$"
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: "Leave ${GYM}\\?"
     timeout: 15000
 - tapOn: "^Leave gym$"
-# R-77: no gym, no third tab; the app is on Workout.
+# No gym: Settings offers "Join your gym", and the Gym tab is its join screen (Release A).
 - extendedWaitUntil:
-    notVisible: "^(Shop|Gym)$"
+    visible: "^Join your gym$"
     timeout: 30000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 30000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml
 # ---------------------------------------------------------------- join gym B (branded)
 - runFlow:
     file: sub-join-gym.yaml

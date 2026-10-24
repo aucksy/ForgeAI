@@ -103,7 +103,7 @@ export async function signInToDrive(): Promise<string | null> {
       if (e.code === statusCodes.SIGN_IN_CANCELLED) return null; // genuine user cancel
       if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
         throw new DriveError(
-          'Google Drive backup needs Google Play services, and this phone doesn’t have it. Keep a copy with Save my history (Settings → Export & import) instead.',
+          'Google Drive backup needs Google Play services, and this phone doesn’t have it. Keep a copy with Save my history (Settings → Save as a spreadsheet) instead.',
           'PLAY_SERVICES_NOT_AVAILABLE',
         );
     }

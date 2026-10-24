@@ -1,0 +1,15 @@
+# Sub-flow (called with runFlow; not a part of its own). Release A (A4, docs/ux/MEMBER-APP-MAP.md):
+# Leave lives in ONE place, Settings → the "Your gym" group's "Leave <gym>" row
+# (src/components/settings/GymSettings.tsx); the Gym tab has no Leave at its foot any more. This
+# opens Settings and taps that row. The caller answers the question that follows ("Leave <gym>?" →
+# "Leave gym", or "Cancel order and leave" with an open order), as it did on the Gym tab.
+# Call it with the tab bar on screen (any tab) or on the Settings list. No `env:` (trap 22).
+appId: com.forgeai.app
+---
+- runFlow:
+    file: sub-settings-open.yaml
+- scrollUntilVisible:
+    element: "^Leave .+$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Leave .+$"

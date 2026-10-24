@@ -231,6 +231,8 @@ describe('the folder remembers its link', () => {
   // Redesign R4: the Routines screen became the Workout tab; its "+" imports moved to Explore.
   it('[source-text check] Import routines is reachable from Profile and from Workout → Explore', () => {
     expect(readFileSync('src/tracker/components/ImportCard.tsx', 'utf8')).toMatch(/router\.push\('\/import\/routines'\)/);
-    expect(readFileSync('src/app/programs/index.tsx', 'utf8')).toMatch(/Import routines from Hevy[\s\S]*router\.push\('\/import\/routines'\)/);
+    // Release A, A11: Find a plan links to the one import home, which holds Import routines.
+    expect(readFileSync('src/app/programs/index.tsx', 'utf8')).toMatch(/Bring in from Hevy or Strong[\s\S]*router\.push\('\/settings\/import'\)/);
+    expect(readFileSync('src/app/settings/import.tsx', 'utf8')).toMatch(/<ImportCard \/>/);
   });
 });

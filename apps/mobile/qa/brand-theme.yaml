@@ -2,14 +2,14 @@
 # Talks to the LIVE server: needs supabase/migrations/0005_gym_theme.sql applied there (the
 # runner skips this part when it is not — run-device-qa.sh probes owner_set_brand first).
 #  1. Settings → Your gym → join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT, yellow
-#     #F7D411 on #0A0A0C) as "QA Member" (sub-join-gym.yaml; R-77: in no gym there is no Shop tab).
+#     #F7D411 on #0A0A0C) as "QA Member" (sub-join-gym.yaml: the Gym tab's "Join your gym" screen).
 #     The app re-draws in the gym's colours behind the gym's "Welcome to" opening (logo, or its
 #     name while the test gym has no logo) and lands on the Workout tab. The opening and the
 #     home-screen icon pop-up are photographed by brand-welcome.yaml, which runs just before this.
-#  2. Workout, Profile and Shop tabs, each with the gym's mark under the title; a product page
+#  2. Workout, Profile and Gym tabs, each with the gym's mark under the title; a product page
 #     (the yellow "Add to bag" button with black words).
 #  3. The app closed and opened again: the gym's opening shows at launch, then the gym's colours.
-#  4. Leave the gym: ForgeAI's own look is back and the third tab is gone (R-77).
+#  4. Leave the gym (Settings → Your gym): ForgeAI's own look is back and the Gym tab offers "Join your gym".
 # Screenshots br-*.png (gathered in qa-out/brand/). The opening lasts about a second, so its
 # photo is best-effort (an optional wait); everything after it is asserted.
 # Saves no workout and places no order; the phone ends outside the gym, as it started.
@@ -23,38 +23,23 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 90000
 # brand-welcome.yaml (just before) leaves RAMS01 at its end; if it failed before that, leave here
-# from the gym's tab so this join starts from no gym.
+# (Release A: Leave is in Settings → Your gym) so this join starts from no gym.
 - runFlow:
     when:
-      visible: "^(Shop|Gym)$"
+      visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     commands:
-      - tapOn:
-          text: "^(Shop|Gym)$"
-          index: 0
-      - scrollUntilVisible:
-          element: "^Leave$"
-          # Leave is the last row of the gym's page: it can never be centred (U-Q5), so no centerElement.
-          timeout: 30000
-      - tapOn: "^Leave$"
+      - runFlow: sub-leave-gym.yaml
       - extendedWaitUntil:
           visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
           timeout: 15000
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
       - extendedWaitUntil:
-          notVisible: "^(Shop|Gym)$"
+          notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
           timeout: 45000
-      - extendedWaitUntil:
-          visible: "^Profile$"
-          timeout: 30000
+      - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 1. join the branded gym
-# The join card, in ForgeAI's look (R-77: Settings → Your gym, not the Shop tab).
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- scrollUntilVisible:
-    element: "^Join your gym$"
-    timeout: 20000
+# The join card, in ForgeAI's look (Release A: the Gym tab's one "Join your gym" screen).
+- runFlow: sub-gym-none.yaml
 - takeScreenshot: br-00-join-card-forgeai-look
 - runFlow: sub-back-to-tabs.yaml
 - runFlow:
@@ -91,9 +76,9 @@ appId: com.forgeai.app
     visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 15000
 - takeScreenshot: br-03-profile
-# RAMS01 lists products, so its tab is "Shop" (it can read "Gym" until the list arrives).
+# RAMS01 lists products, so the Gym tab shows its "Shop" part (once the list arrives).
 - tapOn:
-    text: "^(Shop|Gym)$"
+    text: "^Gym$"
     index: 0
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
@@ -132,29 +117,20 @@ appId: com.forgeai.app
     timeout: 30000
 - takeScreenshot: br-07-workout-after-relaunch
 # ---------------------------------------------------------------- 4. leave: ForgeAI's look again
-- tapOn:
-    text: "^(Shop|Gym)$"
-    index: 0
-- extendedWaitUntil:
-    visible: "Your gym's shop · pay at the desk"
-    timeout: 30000
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- tapOn: "^Leave$"
+# Release A (A4): Leave is in Settings → Your gym only.
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: "Leave RAM'S FITNESS CLUB IMPACT\\?"
     timeout: 10000
 - assertVisible: ".*goes back to ForgeAI's colours.*"
 - tapOn: "^Leave gym$"
-# The app re-draws in ForgeAI's look (it may come back on the Workout tab). R-77: no gym, so the
-# third tab is gone.
+# The app re-draws in ForgeAI's look (it may come back on the Workout tab). Release A: no gym, so
+# the Gym tab is its "Join your gym" screen.
 - extendedWaitUntil:
     notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
     timeout: 15000
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml
 - takeScreenshot: br-08-left-forgeai-look

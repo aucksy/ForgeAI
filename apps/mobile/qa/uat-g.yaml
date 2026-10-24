@@ -14,9 +14,9 @@ appId: com.forgeai.app
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- 1a. the member's own exercise
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -150,9 +150,9 @@ appId: com.forgeai.app
 - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 2. its page, then Merge into…
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -223,9 +223,9 @@ appId: com.forgeai.app
 - takeScreenshot: ug-06-workout-now-bench-press
 - runFlow: sub-back-to-tabs.yaml
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000

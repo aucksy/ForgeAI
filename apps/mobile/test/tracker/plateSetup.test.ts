@@ -264,7 +264,8 @@ describe('[source-text check] the screens use the gym setup', () => {
     expect(sheet).toContain('Change plates');
     expect(sheet).toContain("'/settings/plates'");
     expect(sheet).toContain('[ForgeErr]');
-    expect(src('tracker/components/WorkoutPrefsCard.tsx')).toContain('title="Plates and bars"');
+    // Release A: a row of the Settings page's Workouts group.
+    expect(src('components/settings/settingsLines.ts')).toContain("title: 'Plates and bars', href: '/settings/plates'");
     expect(src('app/settings/plates.tsx')).toContain('<PlateSetupCard />');
   });
 });

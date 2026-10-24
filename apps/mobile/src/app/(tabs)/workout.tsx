@@ -13,6 +13,7 @@
  * carry small tags; they read the same answer as the card. The Exercise library moved to
  * Profile → Exercises; ready programs and the plan builder are behind Explore.
  */
+import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, View } from 'react-native';
@@ -26,7 +27,11 @@ import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
 import { thud } from '@/lib/haptics';
+import { hadOldTiles, hadShopTab, settleLayoutHint } from '@/lib/layoutHints';
 import { takeLinkNotice } from '@/lib/linkNotice';
+import { installMetEarlierVersion } from '@/lib/whatsNew';
+import { pickNotice, readNoticeRestDay, restNoticesToday, upNextExtra, type NoticeKind } from '@/lib/workoutNotices';
+import { useGymShop } from '@/shop/gymStore';
 import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
 import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
@@ -48,13 +53,7 @@ import { addMuscleTip, muscleTipFor, type MuscleTip } from '@/tracker/services/m
 import { getPlanNow, moveEasyWeek, planLine, type PlanNow } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { startShownWorkout } from '@/tracker/services/todayStart';
-import {
-  dismissTabsNotice,
-  getWorkoutCounts,
-  tabsNoticeDue,
-  TABS_NOTICE_TEXT,
-  upNextToday,
-} from '@/tracker/services/upNextService';
+import { getWorkoutCounts, upNextToday } from '@/tracker/services/upNextService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useFolderOpen } from '@/tracker/store/folderOpenStore';
@@ -65,6 +64,27 @@ import { useMuscleTips } from '@/tracker/store/muscleTipsStore';
 const NOTICE_MS = 4000;
 /** A second tap this soon after a push is ignored (one tap, one page). */
 const PUSH_GUARD_MS = 800;
+
+/** Settled once per app run (lib/layoutHints.ts keeps the answer; this only saves the reads). */
+let hintsSettled = false;
+
+/**
+ * Release A: who sees "Your charts are now in the Progress tab" (Profile) and "Your gym's shop is
+ * here in the Gym tab now" (Gym tab): members who had the old layout. Never throws.
+ */
+async function settleMovedHints(hasWorkouts: boolean): Promise<void> {
+  if (hintsSettled) return;
+  hintsSettled = true;
+  const met = await installMetEarlierVersion(Constants.expoConfig?.version);
+  await settleLayoutHint('progressTab', hadOldTiles({ metEarlierVersion: met, hasWorkouts, demo: useOnboarding.getState().demo }));
+  // The saved gym must be read back first, or a member in a gym would look like one with none.
+  if (useGymShop.persist.hasHydrated()) {
+    const g = useGymShop.getState();
+    await settleLayoutHint('shopInGym', hadShopTab({ metEarlierVersion: met, joined: g.link != null, productCount: g.products.length }));
+  } else {
+    hintsSettled = false;
+  }
+}
 
 export default function WorkoutScreen() {
   const router = useRouter();
@@ -94,8 +114,23 @@ export default function WorkoutScreen() {
   const [tick, setTick] = useState(0);
   // SH-29: a wrong forgeai:// link lands here with one calm line.
   const [linkNotice, setLinkNotice] = useState<string | null>(null);
-  // Redesign R1: once, after the update — where Home, History and Progress went.
-  const [tabsNotice, setTabsNotice] = useState(false);
+  // Release A, A12: which notice cards have something to say, and the day one was last closed.
+  const [wants, setWants] = useState<Partial<Record<NoticeKind, boolean>>>({});
+  const [restDay, setRestDay] = useState<string | null>(null);
+  const wantFns = useRef(new Map<NoticeKind, (w: boolean) => void>());
+  const want = (kind: NoticeKind): ((w: boolean) => void) => {
+    let fn = wantFns.current.get(kind);
+    if (!fn) {
+      fn = (w: boolean) => setWants((cur) => (cur[kind] === w ? cur : { ...cur, [kind]: w }));
+      wantFns.current.set(kind, fn);
+    }
+    return fn;
+  };
+  const noticeClosed = useCallback(() => {
+    const day = todayISO();
+    setRestDay(day);
+    restNoticesToday(day).catch((e: unknown) => console.warn('[notices] could not save the rest day', e));
+  }, []);
   // Phone test run 38144864717: a read that failed even after its retries (Up next or the week's
   // count) — read again when the app is back in front or after the next save.
   const [readFailed, setReadFailed] = useState(false);
@@ -165,6 +200,8 @@ export default function WorkoutScreen() {
       const week = readWithRetry(() => getWorkoutCounts(day), retry)
         .then((c) => {
           if (alive) setCounts(c);
+          // Release A: the first launch of this version settles who sees the "it moved" hints.
+          void settleMovedHints(c.total > 0);
         })
         .catch(() => {
           failedNow = true;
@@ -173,11 +210,9 @@ export default function WorkoutScreen() {
       void Promise.all([upNext, week]).then(() => {
         if (alive) setReadFailed(failedNow);
       });
-      tabsNoticeDue()
-        .then((due) => {
-          if (alive) setTabsNotice(due);
-        })
-        .catch(() => undefined);
+      void readNoticeRestDay().then((d) => {
+        if (alive) setRestDay(d);
+      });
       return () => {
         alive = false;
       };
@@ -211,6 +246,8 @@ export default function WorkoutScreen() {
       if (app) openImport(app);
     }, [openImport]),
   );
+
+  const notice = pickNotice({ ...wants, link: linkNotice != null }, restDay, todayISO());
 
   const editing = active && editingSessionId != null;
   const open = active && !editing ? { name: workoutName, countsLine } : null;
@@ -250,6 +287,8 @@ export default function WorkoutScreen() {
   const week = following && card.kind === 'next' ? planLine(plan) : null;
   const easyNow = following && plan?.easy === true;
   const offerEasy = following && plan != null && offerEarlyEasy({ stalled, easyNow: plan.easy, week: plan.week, lastEasy: plan.lastEasy });
+  // Release A, A12: at most ONE extra line inside Up next (the easy week, the offer, or the tip).
+  const extra = upNextExtra({ easyNow, offerEasy, tip: tip != null && card.kind === 'next' });
 
   // RP-25: a double tap never stacks two workout screens — a ref guard on each start, and one
   // guarded way to open the screen (ignored while it is open or was opened a moment ago).
@@ -330,13 +369,10 @@ export default function WorkoutScreen() {
       <View style={{ gap: space.lg }}>
         {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
         <GymBrandMark />
-        {/* Launch C6: a newer release on GitHub ("Get it" / "Later"). */}
-        <UpdateCard />
-        {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
-        <WhatsNewCard />
-        {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
-        <BackupNudgeCard />
-        {linkNotice ? (
+        {/* Release A, A12: ONE notice at a time above Up next (lib/workoutNotices.ts): the answer to
+            a link just tapped, then a new version, What's new, the backup reminder. */}
+        {/* SH-29: a wrong forgeai:// link lands here with one calm line. */}
+        {notice === 'link' && linkNotice ? (
           <Pressable
             onPress={() => setLinkNotice(null)}
             accessibilityRole="button"
@@ -348,26 +384,12 @@ export default function WorkoutScreen() {
             </Card>
           </Pressable>
         ) : null}
-
-        {tabsNotice ? (
-          <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-            <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>
-              {TABS_NOTICE_TEXT}
-            </Text>
-            <Pressable
-              onPress={() => {
-                setTabsNotice(false);
-                void dismissTabsNotice().catch(() => undefined);
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Got it. Hide this note"
-              hitSlop={6}
-              style={{ minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }}
-            >
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
-            </Pressable>
-          </Card>
-        ) : null}
+        {/* Launch C6: a newer release on GitHub ("Get it" / "Later"). */}
+        <UpdateCard hidden={notice !== 'update'} onWant={want('update')} onDone={noticeClosed} />
+        {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
+        <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
+        {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
+        <BackupNudgeCard hidden={notice !== 'backup'} onWant={want('backup')} />
 
         {card.kind !== 'none' ? (
           <UpNextCard card={card} onAction={onAction} starting={starting}>
@@ -377,10 +399,10 @@ export default function WorkoutScreen() {
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{week}</Text>
                 ) : null}
                 {/* An easy week shows even on a day with no routine to do (trained already). */}
-                {easyNow ? <EasyWeekNote until={plan?.easyUntil} /> : null}
-                {easyNow ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
+                {extra === 'easyWeek' ? <EasyWeekNote until={plan?.easyUntil} /> : null}
+                {extra === 'easyWeek' ? <GhostButton label="Train normally this week" icon="dumbbell" onPress={() => void onTrainNormally()} /> : null}
                 {/* R-58: one calm tip when 3 weeks left a muscle group close to zero (never in an easy week). */}
-                {tip && card.kind === 'next' && !easyNow ? (
+                {tip && extra === 'muscleTip' ? (
                   <MuscleTipNote
                     tip={tip}
                     lastNotNow={(useMuscleTips.getState().notNow[tip.group] ?? 0) >= 1}
@@ -404,7 +426,7 @@ export default function WorkoutScreen() {
                     }}
                   />
                 ) : null}
-                {offerEasy ? (
+                {extra === 'easyOffer' ? (
                   <View style={{ gap: space.sm }}>
                     <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
                       {`${countWord(stalled, 'lift')} stuck at the same numbers. An easy week now often gets them moving again.`}

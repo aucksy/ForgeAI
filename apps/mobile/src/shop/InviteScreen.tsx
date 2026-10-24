@@ -85,7 +85,8 @@ export function InviteScreen() {
   }, []);
 
   const toShop = () => router.replace('/shop');
-  const toCodeBox = () => router.replace('/settings/gym');
+  // Release A (A2): the code box is the Gym tab's "Join your gym" screen.
+  const toCodeBox = () => router.replace('/shop');
 
   const onJoin = async () => {
     if (busy || !code) return;
@@ -128,8 +129,8 @@ export function InviteScreen() {
           </Text>
           <Text style={body()}>
             {code
-              ? `No gym has the code ${code}. Ask your gym for a new link, or type their code in Settings → Your gym.`
-              : 'Ask your gym for a new link, or type their code in Settings → Your gym.'}
+              ? `No gym has the code ${code}. Ask your gym for a new link, or type their code in the Gym tab.`
+              : 'Ask your gym for a new link, or type their code in the Gym tab.'}
           </Text>
           <GhostButton label="Type a gym code" onPress={toCodeBox} />
         </Card>

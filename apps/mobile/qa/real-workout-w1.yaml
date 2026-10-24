@@ -128,20 +128,36 @@ appId: com.forgeai.app
     visible: "3 routines in From Hevy"
     timeout: 20000
 - tapOn: "Open routines"
-# ---------------------------------------------------------------- Track RPE on (as the owner has it)
+# ---------------------------------------------------------------- effort on (as the owner has it)
+# Release A (A8): "Rate how hard each set felt" (was Track RPE) has its own page; the page's title
+# is the same words, so the switch is found by its state.
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
-- scrollUntilVisible:
-    element: "Track RPE"
-    centerElement: true
+      PAGE: "Rate how hard each set felt"
+- extendedWaitUntil:
+    visible: "Adds a box to each set.*"
     timeout: 30000
-- tapOn: "Track RPE"
+- runFlow:
+    when:
+      visible:
+        text: "Rate how hard each set felt"
+        checked: false
+    commands:
+      - tapOn:
+          text: "Rate how hard each set felt"
+          checked: false
+- assertVisible:
+    text: "Rate how hard each set felt"
+    checked: true
 - takeScreenshot: w-05-track-rpe-on
-- scrollUntilVisible:
-    element: "(?i)^previous values$"
-    centerElement: true
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Last time's numbers"
+- extendedWaitUntil:
+    visible: "^Any workout$"
     timeout: 20000
 - takeScreenshot: w-05b-previous-values
 - back
@@ -202,9 +218,9 @@ appId: com.forgeai.app
     visible: "Range: Last 12 weeks. Change"
     timeout: 15000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Statistics"
+      ROW: "Charts"
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000

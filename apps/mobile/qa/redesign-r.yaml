@@ -1,24 +1,25 @@
 # Redesign device QA, part R — the 3-tab redesign, photographed screen by screen (runs after part
 # P9 and its shortcut check, before the P7 large-text tours and M). Normal text, gesture
 # navigation. Screenshots r-*.png (the script gathers them in qa-out/redesign/).
-#  1. Workout tab (R1/R4): only Workout · Profile (R-77: no third tab in no gym); the Up next card; Start empty workout,
-#     Routines with New folder, New routine and Explore; the followed folder "Jaipur (6)" open,
-#     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Explore.
+#  1. Workout tab (R1/R4): the 4 tabs Workout · Progress · Gym · Profile (Release A); the Up next card; Start empty workout,
+#     Routines with New folder, New routine and Find a plan; the followed folder "Jaipur (6)" open,
+#     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Find a plan.
 #  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
 #     (Duration · Kg/Lb lifted · Reps) and each range (Last 12 weeks · Last 12 months · All time), a bar
-#     tapped; the 4 Dashboard tiles' screens (Statistics, Exercises, Measures, Calendar + its Year
+#     tapped; Progress → Charts, Exercises and Body, and Profile's Calendar (+ its Year
 #     view); a feed card and its ⋯; a workout page and its ⋯; an exercise page's 3 tabs.
-#  3. Settings (R6): the list and 3 pages (Units, Workouts, About); Edit profile.
-#  4. The gym's real shop (S2) on the LIVE server: Settings → Your gym's join card (R-77: in no gym
-#     there is no Shop tab), join the test gym FORGE1 as "QA Member" (sub-join-gym.yaml), its
+#  3. Settings (Release A: 6 headed groups) and 4 pages (Units, Rest timer and sounds, How the app
+#     picks your next weight, About); Your profile (the one profile editor).
+#  4. The gym's real shop (S2) on the LIVE server: the Gym tab's "Join your gym" screen (Release A:
+#     the Gym tab is always there), join the test gym FORGE1 as "QA Member" (sub-join-gym.yaml), its
 #     products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
 #     My orders (Ordered: "The gym is getting it ready"), Cancel order ("You cancelled this order",
 #     the placed line gone), Leave; then (UAT U-G1) join again, order the shaker and Leave WITH it
 #     open: the question says "You have 1 open order (₹…). Leaving cancels it.", and a third join
-#     sees the shaker's stock back where it was. R-77: no gym, no shop tab (sample shop removed).
+#     sees the shaker's stock back where it was. Leave is in Settings → Your gym (A4).
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
 # Kg/Lb lifted and Last 12 weeks. Both gym orders placed are cancelled (their stock goes back) and
-# the phone leaves the gym, so the app ends with no third tab.
+# the phone leaves the gym, so the app ends in no gym (the Gym tab offers "Join your gym").
 appId: com.forgeai.app
 ---
 - launchApp
@@ -51,13 +52,14 @@ appId: com.forgeai.app
           direction: UP
           centerElement: true
           timeout: 20000
-# Workout (opens first) and Profile; R-77: the third tab ("Gym" / "Shop") shows only with a gym
-# joined, and this part starts in none. Home, History and Progress are gone (this part runs with
-# gesture navigation, so no system "Home" button is on screen).
-- assertNotVisible: "^(Shop|Gym)$"
+# Release A (A1/A5): 4 tabs, always the same 4, with or without a gym: Workout (opens first),
+# Progress, Gym, Profile. Home and History are gone (this part runs with gesture navigation, so no
+# system "Home" button is on screen).
+- assertVisible: "^Progress$"
+- assertVisible: "^Gym$"
+- assertNotVisible: "^Shop$"
 - assertNotVisible: "^Home$"
 - assertNotVisible: "^History$"
-- assertNotVisible: "^Progress$"
 - takeScreenshot: r-01-workout-top
 - scrollUntilVisible:
     element: "^Routines$"
@@ -66,7 +68,7 @@ appId: com.forgeai.app
 - assertVisible: "Start empty workout"
 - assertVisible: "New folder"
 - assertVisible: "New routine"
-- assertVisible: "Explore"
+- assertVisible: "Find a plan"
 # Part L follows "Jaipur": its folder is first, open, tagged "Following".
 - scrollUntilVisible:
     element: 'Jaipur \(6\)'
@@ -119,18 +121,19 @@ appId: com.forgeai.app
     timeout: 10000
 # ---------------------------------------------------------------- Explore
 - scrollUntilVisible:
-    element: "Explore"
+    element: "Find a plan"
     direction: UP
     centerElement: true
     timeout: 20000
-- tapOn: "Explore"
+- tapOn: "Find a plan"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
 - assertVisible: "A plan built for you, or a ready program."
 - takeScreenshot: r-05-explore
+# Release A (A11): Find a plan links to the one import home, Settings → Bring in from Hevy or Strong.
 - scrollUntilVisible:
-    element: "Import routines from Hevy"
+    element: "Bring in from Hevy or Strong"
     centerElement: true
     timeout: 30000
 - assertVisible: "Bring routines in"
@@ -263,9 +266,9 @@ appId: com.forgeai.app
     timeout: 15000
 # ---------------------------------------------------------------- the 4 tiles
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Statistics"
+      ROW: "Charts"
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
@@ -281,9 +284,9 @@ appId: com.forgeai.app
 - takeScreenshot: r-09b-statistics-main-exercises
 - back
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -291,9 +294,9 @@ appId: com.forgeai.app
 - takeScreenshot: r-10-exercises
 - back
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
@@ -413,20 +416,32 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- 3. Settings and Edit profile
 - runFlow:
     file: sub-settings-open.yaml
-- assertVisible: "^Workouts$"
+# Release A (A7): one page in 6 headed groups. Rows are checked, never the (capital) headings.
+- assertVisible: "^Your profile$"
 - assertVisible: "^Units$"
-- assertVisible: "^Notifications$"
-- assertVisible: "^Widgets$"
+- assertVisible: "^Weekly goal$"
 - takeScreenshot: r-16-settings
 - scrollUntilVisible:
     element: "^About$"
     centerElement: true
     timeout: 20000
-# Owner profile: the list is taller than the screen; each row is scrolled to.
+# Owner profile: the page is taller than the screen; each row is scrolled to.
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Your gym$"
+      FIND: "^Rest timer and sounds$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Reminders$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Widgets$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Join your gym$"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -434,11 +449,15 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Export & import$"
+      FIND: "^Save as a spreadsheet$"
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Your data$"
+      FIND: "^Bring in from Hevy or Strong$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Erase or start over$"
 - takeScreenshot: r-16b-settings-bottom
 - runFlow:
     file: sub-settings-page.yaml
@@ -447,20 +466,27 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "lb, miles"
     timeout: 15000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "(?i)body figure"
 - takeScreenshot: r-17-settings-units
 - back
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
+      PAGE: "Rest timer and sounds"
 - extendedWaitUntil:
     visible: "Workout sounds"
     timeout: 15000
 - takeScreenshot: r-18-settings-workouts
+- back
+# Release A (A8): the other page split out of the old Workouts page.
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "How the app picks your next weight"
+- extendedWaitUntil:
+    visible: "^Weight step$"
+    timeout: 15000
+- assertVisible: "^Reps to aim for$"
+- takeScreenshot: r-18b-settings-next-weight
 - back
 - runFlow:
     file: sub-settings-page.yaml
@@ -483,25 +509,37 @@ appId: com.forgeai.app
 - assertVisible: "Name"
 - assertVisible: "Link"
 - takeScreenshot: r-20-edit-profile
+# Release A (A9): one profile editor, "Your profile": what Settings → Your details held is below,
+# and Body figure moved in from Units.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mobile number, optional"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "(?i)body figure"
+- assertNotVisible: "Your gym, optional"
+- takeScreenshot: r-20b-your-profile-rest
 - back
 # ---------------------------------------------------------------- 4. the gym (S2: the gym's real shop)
-# R-77: not joined yet, there is no third tab; the join is in Settings → Your gym ("Join your gym":
+# Not joined yet: the Gym tab is its one "Join your gym" screen (Release A, A2:
 # the code, Next, then the gym's invite screen). Join the fixed test gym (code FORGE1, "ForgeAI Test
 # Gym", supabase/migrations/0002_shop.sql, with the sample products) as "QA Member" — this talks to
 # the LIVE server, so every wait after a tap that calls it is long. The shaker is ordered, then
 # cancelled (its stock goes back), and the phone leaves the gym at the end so later parts meet no gym.
-- assertNotVisible: "^(Shop|Gym)$"
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- scrollUntilVisible:
-    element: "^Join your gym$"
-    timeout: 20000
+- runFlow: sub-gym-none.yaml
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 20000
 - takeScreenshot: r-21-your-gym-join-card
+# A3: "Scan the poster" (the phone's own camera reads the gym's QR poster). Not tapped: the camera app
+# would open over ForgeAI.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Scan the poster$"
+- takeScreenshot: r-21a-gym-tab-scan-poster
 - runFlow: sub-back-to-tabs.yaml
 - runFlow:
     file: sub-join-gym.yaml
@@ -517,16 +555,22 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 45000
-# FORGE1 lists products, so its tab is "Shop" (it can read "Gym" until the list arrives).
-- extendedWaitUntil:
-    visible: 'Whey protein 1 kg, .*'
-    timeout: 45000
-- extendedWaitUntil:
-    visible: "^Shop$"
-    timeout: 20000
+# Release A: the Gym tab, membership first, then Check in (A3); no Leave at its foot (A4).
 - assertVisible: "Your gym's shop · pay at the desk"
-- assertVisible: "My orders"
 - assertVisible: "Bag, empty"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Check in$"
+# FORGE1 lists products, so the Gym tab shows its "Shop" part once the list arrives.
+- scrollUntilVisible:
+    element: 'Whey protein 1 kg, .*'
+    timeout: 45000
+- scrollUntilVisible:
+    element: "^Shop$"
+    direction: UP
+    timeout: 20000
+- assertVisible: "My orders"
 - takeScreenshot: r-21c-shop-grid
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'
@@ -614,33 +658,19 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 15000
-# Leave the gym (the row at the shop's end): the app's own question, then no gym (R-77: the third
-# tab goes and the app is on Workout).
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "Gym: ForgeAI Test Gym"
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Leave$"
-- tapOn: "^Leave$"
+# Leave the gym: the app's own question, then no gym (the Gym tab shows "Join your gym" again).
+# Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
+- assertNotVisible: "^Leave$"
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave ForgeAI Test Gym\?'
     timeout: 10000
 - takeScreenshot: r-27-leave-question
 - tapOn: "^Leave gym$"
 - extendedWaitUntil:
-    notVisible: "^(Shop|Gym)$"
+    visible: "^Join your gym$"
     timeout: 30000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml
 - takeScreenshot: r-27b-left-no-gym-tab
 # UAT U-G1 (17 Oct 2026): Leave WITH an open order. A member who left with an order still
 # "Ordered" lost it for good (the gym kept it, its stock held). Join again, note the shaker's stock,
@@ -702,7 +732,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^The gym is getting it ready$"
     timeout: 20000
-# Not cancelled here: back to the Shop and Leave with the order still open.
+# Not cancelled here: back to the Gym tab, then Leave (Settings) with the order still open.
 - back
 - runFlow:
     when:
@@ -712,15 +742,9 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 15000
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Leave$"
-- tapOn: "^Leave$"
+# Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
+- assertNotVisible: "^Leave$"
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave ForgeAI Test Gym\?'
     timeout: 15000
@@ -730,12 +754,9 @@ appId: com.forgeai.app
 - takeScreenshot: r-27c-leave-with-open-order
 - tapOn: "Cancel order and leave"
 - extendedWaitUntil:
-    notVisible: "^(Shop|Gym)$"
+    visible: "^Join your gym$"
     timeout: 45000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
+- runFlow: sub-gym-none.yaml
 - takeScreenshot: r-27d-left-order-cancelled
 # The proof: a fresh join sees the shaker's stock back where it was before the order.
 - runFlow:
@@ -768,36 +789,19 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^ForgeAI Test Gym$"
     timeout: 15000
-- scrollUntilVisible:
-    element: "^Leave$"
-    # Leave is the last row of the Shop page: it can never be centred (U-Q5), so no centerElement.
-    timeout: 20000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Leave$"
-- tapOn: "^Leave$"
+# Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
+- assertNotVisible: "^Leave$"
+- runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
     visible: 'Leave ForgeAI Test Gym\?'
     timeout: 15000
 - assertVisible: "Your workouts stay on this phone. You can join again with the code."
 - tapOn: "^Leave gym$"
-# R-77: no gym, no shop tab (sample shop removed). The third tab is gone and Settings → Your gym
-# offers "Join your gym" again.
+# No gym: Settings offers "Join your gym" again, and so does the Gym tab.
 - extendedWaitUntil:
-    notVisible: "^(Shop|Gym)$"
+    visible: "^Join your gym$"
     timeout: 45000
-- extendedWaitUntil:
-    visible: "^Profile$"
-    timeout: 20000
-- assertNotVisible: "^(Shop|Gym)$"
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Your gym"
-- scrollUntilVisible:
-    element: "^Join your gym$"
-    timeout: 20000
+- runFlow: sub-gym-none.yaml
 - assertNotVisible: "^ForgeAI Test Gym$"
 - takeScreenshot: r-28-no-gym-join-again
 - runFlow: sub-back-to-tabs.yaml

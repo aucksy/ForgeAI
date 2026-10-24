@@ -81,7 +81,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Your data"
+      PAGE: "Erase or start over"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -176,7 +176,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Your data"
+      PAGE: "Erase or start over"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -200,7 +200,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Export & import"
+      PAGE: "Bring in from Hevy or Strong"
 - runFlow:
     file: uat-d-hevy-replace.yaml
 - runFlow:
@@ -230,7 +230,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Export & import"
+      PAGE: "Bring in from Hevy or Strong"
 - runFlow:
     file: uat-d-hevy-replace.yaml
 - runFlow: sub-back-to-tabs.yaml
@@ -250,7 +250,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Export & import"
+      PAGE: "Save as a spreadsheet"
 - runFlow:
     file: sub-find.yaml
     env:

@@ -59,7 +59,7 @@ export function PlateCalcSheet({
       onClose();
     } catch (e) {
       console.warn('[ForgeErr] plate calculator: Plates and bars did not open', e);
-      setOpenError("Couldn't open Plates and bars. Try again from Settings → Workouts.");
+      setOpenError("Couldn't open Plates and bars. Try again from Settings → Plates and bars.");
     }
   };
 

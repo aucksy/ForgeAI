@@ -1,8 +1,8 @@
 # Phone conditions (UAT WP7), condition 2 setup (online): join the run's own fresh gym by typing its
 # code (CODE, gym name GYM); the shop lists the products the owner added (QA Bottle, QA Band,
 # QA Rope). Same steps as WP6's xj-1-join-order.yaml.
-# R-77: in no gym there is no Shop tab: the join is in Settings → Your gym (sub-join-gym.yaml), and
-# it lands on the Workout tab; then the gym's tab ("Shop" once its list has arrived).
+# The join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml, Release A), and it lands
+# on the Workout tab; then the Gym tab (its "Shop" part once the list has arrived).
 appId: com.forgeai.app
 ---
 - stopApp
@@ -25,10 +25,12 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "^${GYM}$"
     timeout: 45000
-- extendedWaitUntil:
-    visible: "QA Bottle, .*"
+# Release A: the Gym tab, membership and Check in first; its "Shop" part once the list arrives.
+- scrollUntilVisible:
+    element: "QA Bottle, .*"
     timeout: 45000
-- extendedWaitUntil:
-    visible: "^Shop$"
+- scrollUntilVisible:
+    element: "^Shop$"
+    direction: UP
     timeout: 20000
 - takeScreenshot: xc2-00-joined

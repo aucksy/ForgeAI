@@ -222,7 +222,9 @@ describe('a male or female body figure', () => {
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] Profile offers the choice; Progress, the finish screen and a saved workout follow it', () => {
     expect(read('tracker/store/trackerPrefsStore.ts')).toMatch(/bodyFigure: 'male',/);
-    expect(read('app/settings/units.tsx')).toMatch(/label="Body figure"/);
+    // Release A, A9: the choice moved from Units to Your profile (the one profile editor).
+    expect(read('components/settings/ProfileCard.tsx')).toMatch(/label="Body figure"/);
+    expect(read('app/edit-profile.tsx')).toMatch(/<ProfileCard /);
     expect(read('components/analytics/BodyMapSection.tsx')).toMatch(/<BodyMap levels=\{levels\} figure=\{figure\}/);
     for (const screen of ['app/session/finish.tsx', 'app/session/[id].tsx']) {
       expect(read(screen), screen).toMatch(/workoutShareScene\(\{ \.\.\.workoutShareInput\(data\), figure \}\)/);

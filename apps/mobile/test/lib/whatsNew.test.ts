@@ -82,8 +82,8 @@ describe('R-98: short lines, each try-it button opens a real screen', () => {
 
 describe('R-98 review: what a button does on this phone', () => {
   const offer = { text: 'x', go: { label: "See your gym's offer", href: '/shop' as const } };
-  it('the Gym tab button joins a gym first when there is none', () => {
-    expect(goFor(offer, false)).toEqual({ label: 'Join your gym', href: '/settings/gym', tab: false });
+  it('the Gym tab button says Join your gym when there is none (Release A: the tab is the join screen)', () => {
+    expect(goFor(offer, false)).toEqual({ label: 'Join your gym', href: '/shop', tab: true });
     expect(goFor(offer, true)).toEqual({ label: "See your gym's offer", href: '/shop', tab: true });
   });
   it('no button to the page it is on; none for a line without one', () => {

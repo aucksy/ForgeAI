@@ -487,7 +487,7 @@ export function WorkoutRoutines({
   const buttons = (
     <View style={{ flexDirection: stack ? 'column' : 'row', gap: space.md }}>
       <TileButton half={!stack} label="New routine" icon="list" onPress={onNewRoutineButton} />
-      <TileButton half={!stack} label="Explore" icon="search" a11y="Explore programs" onPress={() => router.push('/programs')} />
+      <TileButton half={!stack} label="Find a plan" icon="search" a11y="Find a plan" onPress={() => router.push('/programs')} />
     </View>
   );
 

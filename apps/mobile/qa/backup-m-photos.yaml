@@ -14,9 +14,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000

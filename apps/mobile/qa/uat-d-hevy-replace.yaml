@@ -1,4 +1,4 @@
-# Sub-flow of part UD (uat-d.yaml): from Settings -> Export & import, import qa-hevy.csv (12 workouts,
+# Sub-flow of part UD (uat-d.yaml): from Settings -> Bring in from Hevy or Strong, import qa-hevy.csv (12 workouts,
 # pushed to Downloads by the script) with REPLACE over the member's ONE own workout. The option and
 # the question name it ("Delete all 1 of your workout", "Delete 1 workout first?", "1 of them is only
 # in ForgeAI"); the result is "12 workouts imported". Leaves the app on the result page.

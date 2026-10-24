@@ -3,9 +3,9 @@
 #   - runFlow:
 #       file: sub-settings-page.yaml
 #       env:
-#         PAGE: "Export & import"
+#         PAGE: "Save as a spreadsheet"
 # PAGE is a regex for the row's visible title (src/components/settings/settingsLines.ts
-# SETTINGS_PAGES). No `env:` default here: a flow-level default would override the caller's (trap 22).
+# settingsGroups; never a group heading). No `env:` default here: a flow-level default would override the caller's (trap 22).
 # The page's own title is the same words, so the caller waits for something ON the page after this.
 # Health Connect's row shows only once the app has read Health Connect's state: it is waited for.
 appId: com.forgeai.app

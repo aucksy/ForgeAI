@@ -121,11 +121,11 @@ export default function StatisticsScreen() {
   };
 
   const body = (() => {
-    if (top.state === 'error') return <LoadError what="your statistics" onRetry={top.retry} />;
+    if (top.state === 'error') return <LoadError what="your charts" onRetry={top.retry} />;
     const d = top.data;
     if (!d) return [0, 1, 2].map((i) => <SectionSkeleton key={i} index={i} />);
     if (!d.first) {
-      return <EmptyState icon="chart" title="No workouts yet" body="Your statistics show here once you finish a workout." />;
+      return <EmptyState icon="chart" title="No workouts yet" body="Your charts show here once you finish a workout." />;
     }
 
     const months = [...d.monthCounts.keys()].sort().reverse();
@@ -292,7 +292,7 @@ export default function StatisticsScreen() {
   })();
 
   return (
-    <Screen title="Statistics" onBack={() => leavePage(router)}>
+    <Screen title="Charts" onBack={() => leavePage(router, '/progress')}>
       <View style={{ paddingBottom: space.xxl }}>{body}</View>
     </Screen>
   );

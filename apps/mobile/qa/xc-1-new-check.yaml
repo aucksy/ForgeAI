@@ -24,9 +24,9 @@ appId: com.forgeai.app
     timeout: 20000
 - takeScreenshot: xc1-11-new-two-workouts
 - runFlow:
-    file: xc-sub-profile-tile.yaml
+    file: xc-sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
@@ -50,8 +50,8 @@ appId: com.forgeai.app
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: "^Workouts$"
-- tapOn: "^Workouts$"
+      FIND: "^Rest timer and sounds$"
+- tapOn: "^Rest timer and sounds$"
 - runFlow:
     file: xc-sub-find.yaml
     env:

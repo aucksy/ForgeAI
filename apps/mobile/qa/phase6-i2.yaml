@@ -32,7 +32,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Notifications"
+      PAGE: "Reminders"
 - runFlow:
     when:
       visible: "(?i)^don.t allow$"

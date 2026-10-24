@@ -585,7 +585,7 @@ export default function RoutineEditorScreen() {
                       >
                         {(() => {
                           const r = rangeForRow(pe, pe.exercise, choice);
-                          return `${r.repRangeMin}–${r.repRangeMax} reps, from Settings → Workouts → Rep range (${choiceName}).`;
+                          return `${r.repRangeMin}–${r.repRangeMax} reps, from Settings → How the app picks your next weight (${choiceName}).`;
                         })()}
                       </Text>
                     ) : hasReps(logTypes.get(pe.exerciseId) ?? 'weight_reps') ? (

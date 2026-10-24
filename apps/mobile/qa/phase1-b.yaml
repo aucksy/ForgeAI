@@ -113,20 +113,22 @@ appId: com.forgeai.app
     element: "Done"
     timeout: 15000
 - tapOn: "Done"
-# Done goes to the Workout tab. Redesign R6: the workout settings are Profile → Settings → Workouts.
+# Done goes to the Workout tab. Release A (A7/A8): the workout settings are rows of Settings' Workouts
+# group, each with its own page: "Rate how hard each set felt" (was Track RPE), "Rest timer and sounds".
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Workouts"
-- scrollUntilVisible:
-    element: "Track RPE"
+      PAGE: "Rate how hard each set felt"
+- extendedWaitUntil:
+    visible: "Adds a box to each set.*"
     timeout: 30000
 - takeScreenshot: 16-settings-workouts
+- back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Rest timer and sounds"
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "Workout sounds"
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "Track RPE"

@@ -352,9 +352,10 @@ describe('2: logging for an earlier day that already has an entry asks first', (
     );
   });
   it('[source-text check] both log screens ask before saving over an earlier day', () => {
-    expect(src('app/bodyweight.tsx')).toContain('replaceWeighInQuestion(');
-    expect(src('app/measurements/log.tsx')).toContain('replaceMeasurementsQuestion(');
-    expect(src('app/measurements/log.tsx')).toContain('askConfirm(');
+    // Release A, A13: Body's one add form (the old log screens redirect to it).
+    expect(src('app/measures/add.tsx')).toContain('replaceWeighInQuestion(');
+    expect(src('app/measures/add.tsx')).toContain('replaceMeasurementsQuestion(');
+    expect(src('app/measures/add.tsx')).toContain('askConfirm(');
   });
 });
 
@@ -409,7 +410,8 @@ describe('3 / 11: Undo after a replace, and after several deletes — real SQL',
   });
 
   it('[source-text check] both screens keep every undoable change, not just the last', () => {
-    for (const p of ['app/bodyweight.tsx', 'app/measurements/index.tsx']) {
+    // Release A, A13: Body is the one screen now (the old two redirect to it).
+    for (const p of ['app/measures/index.tsx']) {
       const s = src(p);
       expect(s, p).toContain('setUndo((cur) => [...cur,');
       expect(s, p).not.toContain('setDeleted(');
@@ -430,10 +432,10 @@ describe('6: the weigh-in history pages instead of stopping at the newest 60', (
     expect(p3.rows[149].id).toBe('w0');
     expect(p3.more).toBe(0);
   });
-  it('[source-text check] the screen offers the older ones', () => {
-    const s = src('app/bodyweight.tsx');
+  it('[source-text check] Body lists every entry (Release A: the old Body weight page redirects there)', () => {
+    const s = src('app/measures/index.tsx');
     expect(s).not.toContain('.slice(0, 60)');
-    expect(s).toContain('historyPage(');
+    expect(s).toContain('[...sorted].reverse().map(');
   });
 });
 

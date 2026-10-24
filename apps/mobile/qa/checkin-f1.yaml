@@ -2,8 +2,8 @@
 # the live server (gym_create_online, "QA Check-in Gym"), put one member on its roster with the
 # mobile +91 98765 00002 (crm_push), and opened the gym's INVITE link /j/<CODE> at the app. Join it,
 # so the phone is that gym's member before the check-in poster's link is opened (F2).
-# R-77: the join lands on the Workout tab. The gym lists NO products (gym_create_online seeds no
-# shop), so its tab is "Gym" and its page says "Your gym" (no bag, no product grid).
+# The join lands on the Workout tab. The gym lists NO products (gym_create_online seeds no
+# shop), so its Gym tab page says "Your gym" (no bag, no product grid).
 appId: com.forgeai.app
 ---
 - extendedWaitUntil:
@@ -20,9 +20,10 @@ appId: com.forgeai.app
     centerElement: true
     timeout: 15000
 - tapOn: '^Join this gym$'
-# Joined = the third tab is there (no gym, no third tab). Then the Workout tab (sub-after-join.yaml).
+# Joined = the invite screen has gone, its "Your name" box with it (Release A: the Gym tab is there
+# with or without a gym). Then the Workout tab (sub-after-join.yaml).
 - extendedWaitUntil:
-    visible: '^(Shop|Gym)$'
+    notVisible: 'Your name'
     timeout: 30000
 - runFlow: sub-after-join.yaml
 - takeScreenshot: inv-f1-joined
@@ -36,4 +37,7 @@ appId: com.forgeai.app
 - assertVisible: '^Gym$'
 - assertVisible: '^Your gym$'
 - assertNotVisible: 'Bag, .*'
+# Release A: membership first, then "Check in" (the phone's camera reads the poster); no Leave here (A4).
+- assertVisible: '^Check in$'
+- assertNotVisible: '^Leave$'
 - takeScreenshot: inv-f1-gym-tab

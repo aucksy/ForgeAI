@@ -18,9 +18,9 @@ appId: com.forgeai.app
     visible: "^Profile$"
     timeout: 60000
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Statistics"
+      ROW: "Charts"
 - extendedWaitUntil:
     visible: "Last 7 days"
     timeout: 30000
@@ -201,9 +201,9 @@ appId: com.forgeai.app
 # PG-09: any exercise's trend — now on its own page (Profile → Exercises). Part C ran a Treadmill
 # Run today, so its Summary must show it (not "No sets logged yet").
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Exercises"
+      ROW: "Exercises"
 - extendedWaitUntil:
     visible: "Search exercises"
     timeout: 20000
@@ -224,9 +224,9 @@ appId: com.forgeai.app
 # ---------------------------------------------------------------- Measures: body weight
 # PG-11: the body-weight change always says its span: "+3.6 kg since 13 Jul" under the graph.
 - runFlow:
-    file: sub-profile-tile.yaml
+    file: sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Progress photos"
     timeout: 20000
