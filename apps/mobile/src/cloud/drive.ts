@@ -14,7 +14,7 @@
  * `googleWebClientId` in app.json > extra, so the offline demo never engages Google.
  *
  * Requires: `extra.googleWebClientId` (Web OAuth client id) + an Android OAuth client
- * registered with `com.forgeai.app` + the build's signing SHA-1. See supabase/README
+ * registered with `com.mettleup.app` (MettleUp, R-105) + the build's signing SHA-1. See supabase/README
  * / docs (the SHA-1 gate). This is a member-owned backup, independent of gym sync —
  * Supabase only ever holds the one-row summary.
  */
@@ -38,7 +38,9 @@ export { DriveError } from './backupWords';
 /** The single file versions before v0.30 overwrote; still found and restored. */
 const FILE_NAME = 'forgeai-backup.json';
 const FILE_PREFIX = 'forgeai-backup-';
-const FOLDER_NAME = 'ForgeAI';
+/** The backup folder's name (MettleUp, R-105). A folder made under the old name is still used. */
+const FOLDER_NAME = 'MettleUp';
+const OLD_FOLDER_NAME = 'ForgeAI';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 const SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE = 'https://www.googleapis.com/drive/v3';
@@ -113,7 +115,7 @@ export async function signInToDrive(): Promise<string | null> {
       // C9-8: the developer detail goes to the log, never to the member.
       throw new DriveError(
         DRIVE_NOT_IN_THIS_VERSION,
-        'DEVELOPER_ERROR: add the build signing SHA-1 for com.forgeai.app as an Android OAuth client in Google Cloud',
+        'DEVELOPER_ERROR: add the build signing SHA-1 for com.mettleup.app as an Android OAuth client in Google Cloud',
       );
     }
     // C9-10: Google's raw text ("NETWORK_ERROR", "A non-recoverable sign in failure…") is logged only.
@@ -127,7 +129,7 @@ export async function signInToDrive(): Promise<string | null> {
     // Android OAuth client (package + SHA-1) in the Cloud project.
     throw new DriveError(
       DRIVE_NOT_IN_THIS_VERSION,
-      'signed in but no account returned: the Android OAuth client (com.forgeai.app + SHA-1) is likely missing in Google Cloud',
+      'signed in but no account returned: the Android OAuth client (com.mettleup.app + SHA-1) is likely missing in Google Cloud',
     );
   }
   return email;
@@ -194,16 +196,17 @@ async function api(token: string, url: string, init?: RequestInit): Promise<Resp
 }
 
 /**
- * Find our dedicated "ForgeAI" Drive folder (creating it if missing) and return its
+ * Find our dedicated "MettleUp" Drive folder (or the old "ForgeAI" one; creating it if missing) and return its
  * id, so the backup lives in its own folder rather than loose in My Drive.
  * `drive.file` scope only sees folders this app created — exactly what we want.
  */
 async function ensureFolderId(token: string): Promise<string> {
   const q = encodeURIComponent(
-    `name = '${FOLDER_NAME}' and mimeType = '${FOLDER_MIME}' and trashed = false`,
+    `(name = '${FOLDER_NAME}' or name = '${OLD_FOLDER_NAME}') and mimeType = '${FOLDER_MIME}' and trashed = false`,
   );
   // orderBy=createdTime so if two devices ever race-create a duplicate folder,
-  // every device deterministically converges on the earliest-created one.
+  // every device deterministically converges on the earliest-created one. A folder this app made
+  // as "ForgeAI" (before the new name) is older, so its backups stay where they are.
   const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=createdTime&pageSize=1&fields=files(id)`;
   const res = await api(token, url);
   const json = (await res.json()) as { files?: { id: string }[] };
@@ -217,7 +220,7 @@ async function ensureFolderId(token: string): Promise<string> {
   });
   const created = (await create.json()) as { id?: string };
   if (!created.id) {
-    throw new DriveError('Couldn’t make the ForgeAI folder in your Google Drive. Wait a minute, then try again.', 'folder create returned no id');
+    throw new DriveError('Couldn’t make the MettleUp folder in your Google Drive. Wait a minute, then try again.', 'folder create returned no id');
   }
   return created.id;
 }

@@ -32,6 +32,6 @@ describe('gym home-screen shortcut (OWNER-INBOX #11)', () => {
     expect(gymShortcutWords('unsupported', 'G')).toBe("This phone's home screen doesn't take shortcuts.");
     expect(gymShortcutWords('no-logo', 'G')).toMatch(/Couldn't get G's logo/);
     expect(gymShortcutWords('failed', 'G')).toBe("Couldn't add it. Try again.");
-    expect(shortcutOffText('G')).toBe('You left G. Open ForgeAI from its own icon.');
+    expect(shortcutOffText('G')).toBe('You left G. Open MettleUp from its own icon.');
   });
 });

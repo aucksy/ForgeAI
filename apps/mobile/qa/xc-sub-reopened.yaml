@@ -2,7 +2,7 @@
 # process was killed, or after an update), WITHOUT Maestro's launchApp (that force-stops the app,
 # which would also cancel its alarms). Waits for the app, then opens the live workout if the app
 # came up on the tabs. Ends on the live workout ("Finish workout" / "Log a set to finish").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

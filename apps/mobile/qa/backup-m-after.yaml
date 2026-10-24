@@ -2,7 +2,7 @@
 # restored its backup. The member must land in the app (not the welcome screen) and Settings →
 # Backup must show the same workout count as before the backup.
 # The script passes that line in: maestro test -e WORKOUTS_LINE="12 workouts" ...
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

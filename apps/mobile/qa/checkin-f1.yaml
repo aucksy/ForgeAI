@@ -4,7 +4,7 @@
 # so the phone is that gym's member before the check-in poster's link is opened (F2).
 # The join lands on the Workout tab. The gym lists NO products (gym_create_online seeds no
 # shop), so its Gym tab page says "Your gym" (no bag, no product grid).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: 'Gym code .*'

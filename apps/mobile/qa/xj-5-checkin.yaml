@@ -2,7 +2,7 @@
 # The owner imported a 2-row CSV in the admin app (XJ5a); one row, Meera Import, holds the mobile
 # 98765 00021. The phone types it once and is matched to that row: in as Meera. The imported row
 # came with no plan, so "Please see the desk" shows under it (the visit is still written).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Check in at ${GYM_B}$"

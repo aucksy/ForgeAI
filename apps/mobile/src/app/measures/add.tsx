@@ -78,7 +78,7 @@ export default function AddMeasuresScreen() {
       }
     } catch (e) {
       const denied = e instanceof Error && e.message === 'camera-denied';
-      setNote(denied ? 'Camera not allowed. Allow the camera for ForgeAI in your phone settings, or choose a photo from the gallery.' : 'Couldn’t add the picture. Please try again.');
+      setNote(denied ? 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.' : 'Couldn’t add the picture. Please try again.');
     } finally {
       busy.current = false;
     }

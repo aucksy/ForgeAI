@@ -9,7 +9,7 @@
 #  4. Bench Press page (Profile → Exercises, redesign R5): ⋯ → "Start records fresh…" → "Start fresh": "Records since …" shows;
 #     ⋯ → "Count all records again" → "Count all again": the line goes.
 # Saves one workout (part M reads its count afresh, before its backup).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:
@@ -209,7 +209,7 @@ appId: com.forgeai.app
 - tapOn: "Share as text"
 # Android's share menu (only the SYSTEM chooser has these).
 - extendedWaitUntil:
-    visible: '(Copy|Nearby|Sharing text|Here is my workout from ForgeAI.*)'
+    visible: '(Copy|Nearby|Sharing text|Here is my workout from MettleUp.*)'
     timeout: 20000
 - takeScreenshot: p9-07-share-text-menu
 - back

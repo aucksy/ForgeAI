@@ -172,7 +172,7 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   }
 
   // Footer.
-  nodes.push({ t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with ForgeAI', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle' });
+  nodes.push({ t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with MettleUp', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle' });
 
   return { width: SHARE_W, height: SHARE_H, background: BG, nodes };
 }

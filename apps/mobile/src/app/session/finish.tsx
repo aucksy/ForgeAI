@@ -330,7 +330,7 @@ export default function FinishScreen() {
             <ShareSheet
               visible={sharing}
               scene={scene}
-              fileName={`forgeai-workout-${data.session.dateISO}`}
+              fileName={`mettleup-workout-${data.session.dateISO}`}
               onClose={() => setSharing(false)}
             />
           ) : null}

@@ -137,7 +137,7 @@ describe('reminders — the time picker and the words (PH-06, PH-01)', () => {
 
   it('says notifications are off instead of a next time that will never come', () => {
     expect(reminderCaption({ on: true, blocked: true, next: '2026-10-12T18:00', days: 3 })).toBe(
-      'Notifications are off for ForgeAI, so no reminder can arrive.',
+      'Notifications are off for MettleUp, so no reminder can arrive.',
     );
     expect(reminderCaption({ on: true, blocked: false, next: 'Mon 6:00 pm', days: 3 })).toBe(
       'Next: Mon 6:00 pm. None on a day you already trained or while a workout is open.',
@@ -282,7 +282,7 @@ describe('Health Connect — honest send results (PH-03)', () => {
       'Sent 750 of 1,500 workouts. Health Connect stopped taking them. Try again to send the rest.',
     );
     expect(sendResultText({ kind: 'failed', sent: 0, total: 20, reason: 'access' })).toBe(
-      "Couldn't send: ForgeAI isn't allowed to add workouts in Health Connect. Check its access there.",
+      "Couldn't send: MettleUp isn't allowed to add workouts in Health Connect. Check its access there.",
     );
     expect(sendResultText({ kind: 'failed', sent: 0, total: 20, reason: 'unavailable' })).toBe(
       "Couldn't send: Health Connect isn't available right now.",

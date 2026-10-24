@@ -2,7 +2,7 @@
 # from the same place, whatever the step before it left open), then the gym's tab.
 # R-77: the third tab shows only with a gym joined, as "Gym" until the gym lists a product, then
 # "Shop" (gym A lists the QA Shaker and QA Towel; gym B lists nothing, so it reads "Gym").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

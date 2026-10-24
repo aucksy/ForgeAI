@@ -320,8 +320,9 @@ async function clearOldExports(): Promise<void> {
       if (match.test(n)) await FileSystem.deleteAsync(`${dir}${n}`, { idempotent: true }).catch(() => undefined);
     }
   };
-  await sweep(FileSystem.cacheDirectory, /^forgeai-history-.*\.csv$/);
-  await sweep(FileSystem.documentDirectory, /^forgeai-workouts-.*\.xlsx$/);
+  // Both names: files written before the new name (MettleUp, R-105) are cleared too.
+  await sweep(FileSystem.cacheDirectory, /^(?:mettleup|forgeai)-history-.*\.csv$/);
+  await sweep(FileSystem.documentDirectory, /^(?:mettleup|forgeai)-workouts-.*\.xlsx$/);
 }
 
 /** Write the whole history as a Hevy CSV and open Android's share sheet. */
@@ -330,7 +331,7 @@ export async function saveMyHistory(units: UnitSystem): Promise<SaveHistoryResul
   // 4 MB text for 5 years, built from every row at once). Same bytes. The old files go just
   // before the first page is written (never when nothing is logged).
   const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory ?? '';
-  const uri = `${dir}forgeai-history-${todayISO()}.csv`;
+  const uri = `${dir}mettleup-history-${todayISO()}.csv`;
   let started = false;
   let counts: { workouts: number; sets: number };
   try {

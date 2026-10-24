@@ -2,7 +2,7 @@
 # away first) with Barbell Bench Press, set 1 filled with WEIGHT x REPS (VALUE strings start with a
 # space: trap 5). Ends on the live workout with nothing ticked. Works in kg or lb (the box's spoken
 # unit is not named). No `env:` defaults here (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-workout-fresh.yaml
 - tapOn: "Start empty workout"

@@ -56,10 +56,10 @@ export function bootMessage(f: BootFailure): { title: string; body: string } {
   }
   switch (f.stage) {
     case 'open':
-      return { title: 'ForgeAI could not start', body: `ForgeAI couldn't open your data. ${STILL_HERE}` };
+      return { title: 'MettleUp could not start', body: `MettleUp couldn't open your data. ${STILL_HERE}` };
     case 'upgrade':
-      return { title: 'ForgeAI could not start', body: `ForgeAI couldn't finish updating your data. ${STILL_HERE}` };
+      return { title: 'MettleUp could not start', body: `MettleUp couldn't finish updating your data. ${STILL_HERE}` };
     default:
-      return { title: 'ForgeAI could not start', body: `ForgeAI couldn't read your data. ${STILL_HERE}` };
+      return { title: 'MettleUp could not start', body: `MettleUp couldn't read your data. ${STILL_HERE}` };
   }
 }

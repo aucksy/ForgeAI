@@ -1,6 +1,6 @@
 # Part INV, step B: the same link again while in that gym — "already in", nothing to do. Its button
 # opens the gym's tab (R-77: "Open your gym", was "Open the shop").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "You're already in .*"

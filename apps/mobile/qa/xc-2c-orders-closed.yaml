@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 2c (online): the owner marked every order collected (the
 # script, on the server). My orders on the phone catches up: no order is "Ordered" any more.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

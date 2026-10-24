@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 3: "Place order" tapped, and nothing waited for: the flow ends
 # at once, with the order request on its way.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "^Place order$"

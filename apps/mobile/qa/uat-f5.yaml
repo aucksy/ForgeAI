@@ -3,7 +3,7 @@
 # no "Couldn't finish" banner left, the Profile one workout up from step 1 (-e WANT=N+1: saved
 # exactly once), and the workout itself, opened from today's day in Calendar (-e TODAY="Saturday
 # 17 October", the phone's own date), holds both sets: 50 kg x 5 and 52.5 kg x 5.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # Since U-M5's fix UF3 really minimises: the open workout waits on the Workout tab. Resume it first.
 - runFlow:

@@ -65,7 +65,7 @@ export function existingProgramFolder(key: string): Promise<Omit<Folder, 'routin
  */
 export async function addProgram(key: string, opts: { follow: boolean; easyWeeks: boolean; existing?: ExistingChoice }): Promise<string> {
   const p = programByKey(key);
-  if (!p) throw new Error('That program is not in this version of ForgeAI.');
+  if (!p) throw new Error('That program is not in this version of MettleUp.');
   const routines = await withIds(programRoutines(p));
   // RP-06: the plan remembers its days a week (3 for a 3-day program of 2 routines).
   const settings: FolderSettings = { program: p.key, easy: easySchedule(opts.easyWeeks), daysPerWeek: p.daysPerWeek };

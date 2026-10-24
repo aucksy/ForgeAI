@@ -145,7 +145,7 @@ describe('IM-05: the way back from Replace', () => {
     expect(await isDemoData()).toBe(true);
   });
 
-  it('replaceImpact counts the member’s workouts and those only in ForgeAI (the demo’s are not counted)', async () => {
+  it('replaceImpact counts the member’s workouts and those only in MettleUp (the demo’s are not counted)', async () => {
     const own = await demoWithOwnWorkout();
     const row = db.all<{ date_iso: string; started_at: number }>('SELECT date_iso, started_at FROM workout_sessions WHERE id = ?', [own])[0];
     const { replaceImpact } = await import('@/onboarding/db/importSafety');
@@ -158,8 +158,8 @@ describe('IM-05: the way back from Replace', () => {
     const b = { dateISO: '2026-10-02', startedAt: Date.UTC(2026, 9, 2, 7) };
     expect(onlyInForgeAI([a, b], [a])).toEqual([b]);
     expect(replaceConfirmBody(0)).toMatch(/in this file too/);
-    expect(replaceConfirmBody(1)).toMatch(/^1 of them is only in ForgeAI/);
-    expect(replaceConfirmBody(5)).toMatch(/^5 of them are only in ForgeAI.*undo/);
+    expect(replaceConfirmBody(1)).toMatch(/^1 of them is only in MettleUp/);
+    expect(replaceConfirmBody(5)).toMatch(/^5 of them are only in MettleUp.*undo/);
   });
 });
 

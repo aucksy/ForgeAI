@@ -229,7 +229,7 @@ export default function NewExerciseScreen() {
       void tell(
         'Could not add it',
         why === 'camera-denied'
-          ? 'ForgeAI needs the camera for this. You can allow it in your phone settings, or choose from your gallery.'
+          ? 'MettleUp needs the camera for this. You can allow it in your phone settings, or choose from your gallery.'
           : why === 'video-too-long'
             ? `Pick a video of ${MAX_VIDEO_SEC} seconds or less — one or two reps is plenty.`
             : why === 'video-too-big'

@@ -18,7 +18,7 @@ export default function AboutPage() {
         <Pressable onPress={() => router.push('/credits')} accessibilityRole="button" accessibilityLabel="Credits" style={{ minHeight: 48 }}>
           <SettingRow title="Credits" right={<Icon name="chevron-right" size={16} color={color.inkMuted} />} />
         </Pressable>
-        {version ? <SettingRow title="ForgeAI" caption={version} divider /> : null}
+        {version ? <SettingRow title="MettleUp" caption={version} divider /> : null}
       </Card>
     </SettingsPage>
   );

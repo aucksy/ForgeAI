@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7): a fresh install's state (clearState) with the demo data loaded, the app
 # on the Workout tab. Copied from gate-demo.yaml so a change to the phone test parts never moves it.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     clearState: true

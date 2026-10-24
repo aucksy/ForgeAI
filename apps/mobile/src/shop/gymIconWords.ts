@@ -10,20 +10,20 @@
 
 export const GYM_ICON_WORDS = {
   addTitle: (gym: string) => `Put ${gym} on your home screen`,
-  addBody: (gym: string) => `${gym}'s logo opens ForgeAI in your gym's look.`,
+  addBody: (gym: string) => `${gym}'s logo opens MettleUp in your gym's look.`,
   add: 'Add to home screen',
   notNow: 'Not now',
   confirmBody: "Tap Add on your phone's question. Then come back here.",
   checkAgain: 'I added it',
   notAddedTitle: 'Not added',
   notAddedBody: "Your gym's icon was not added. You can add it any time in Settings → Your gym.",
-  removeTitle: 'Last step: remove the ForgeAI icon',
+  removeTitle: 'Last step: remove the MettleUp icon',
   removeSteps: [
     'Go to your home screen.',
-    'Press and hold the ForgeAI icon.',
+    'Press and hold the MettleUp icon.',
     'Tap Remove (on some phones: Remove from Home).',
   ],
-  removeNote: "ForgeAI stays on your phone, in your app list. Only its icon leaves the home screen. Don't tap Uninstall.",
+  removeNote: "MettleUp stays on your phone, in your app list. Only its icon leaves the home screen. Don't tap Uninstall.",
   done: 'Done',
   close: 'Close',
 } as const;

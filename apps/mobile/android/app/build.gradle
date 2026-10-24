@@ -87,9 +87,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
+    // MettleUp (R-105, 24 Oct 2026): the Play ID is com.mettleup.app (permanent; com.forgeai.app was
+    // taken on Play). Only the applicationId changed: the Kotlin package and `namespace` (R and
+    // BuildConfig classes) stay com.forgeai.* on purpose. Every native lookup uses packageName at run
+    // time, so nothing else needs the new id. app.json android.package says the same.
     namespace 'com.forgeai.app'
     defaultConfig {
-        applicationId 'com.forgeai.app'
+        applicationId 'com.mettleup.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // versionCode/versionName are driven by CI from the release tag: versionCode =

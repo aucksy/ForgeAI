@@ -47,7 +47,7 @@ import { workoutName, type SessionSummaryData } from './finishSummary';
 import { getRecordEvents, type RecordEventRow } from './recordsService';
 import { recordValueText } from './recordText';
 
-export const WORKOUT_TEXT_INTRO = 'Here is my workout from ForgeAI. Please review it and suggest what to change next time.';
+export const WORKOUT_TEXT_INTRO = 'Here is my workout from MettleUp. Please review it and suggest what to change next time.';
 
 /** How an exercise is logged — what its sets need to read right. */
 export interface TextKind {
@@ -301,8 +301,8 @@ export function periodText(input: PeriodTextInput): string {
   const unit = weightUnitOf(u);
   const ask =
     input.kind === 'month'
-      ? `Here is my training for ${input.label} from ForgeAI. Please review it and suggest what to change next month.`
-      : `Here is my training for ${input.label} from ForgeAI. Please review it and suggest what to change from here.`;
+      ? `Here is my training for ${input.label} from MettleUp. Please review it and suggest what to change next month.`
+      : `Here is my training for ${input.label} from MettleUp. Please review it and suggest what to change from here.`;
   const out: string[] = [ask, ''];
   out.push(input.complete ? input.label : `${input.label} (so far)`);
   const workouts = input.sessions.length;

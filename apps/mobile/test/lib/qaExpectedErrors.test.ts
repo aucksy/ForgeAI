@@ -31,7 +31,7 @@ const CAUSE = '10-17 18:00:00.123  1234  1250 E ReactNativeJS: Caused by: file i
 const OTHER = '10-17 18:00:05.000  1234  1250 E ReactNativeJS: something else broke';
 const CRASH = [
   '10-17 18:00:06.000  1234  1234 E AndroidRuntime: FATAL EXCEPTION: main',
-  '10-17 18:00:06.000  1234  1234 E AndroidRuntime: Process: com.forgeai.app, PID: 1234',
+  '10-17 18:00:06.000  1234  1234 E AndroidRuntime: Process: com.mettleup.app, PID: 1234',
 ].join('\n');
 
 function scan(files: Record<string, string>, expected: string): { code: number; out: string } {

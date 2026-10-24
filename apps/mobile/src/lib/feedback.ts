@@ -1,7 +1,7 @@
 /**
  * Settings → Send feedback (launch plan H7, inbox #39). The member types, or speaks with the
  * keyboard's own microphone (the app itself has no microphone permission), in Hindi or English.
- * The message goes to ForgeAI's feedback box (the admin site's /api/feedback, Cloudflare), never to
+ * The message goes to MettleUp's feedback box (the admin site's /api/feedback, Cloudflare), never to
  * the gym server. With it: the app version, the phone model, the gym code and a random id for this
  * install. No name, no mobile number.
  */
@@ -12,7 +12,11 @@ import { enqueueWrite } from '@/db/writeQueue';
 import { fetchWithTimeout } from '@/lib/fetchTimeout';
 import { uuid } from '@/lib/uuid';
 
-export const FEEDBACK_URL = 'https://forgeai.aakashpahuja.in/api/feedback';
+/**
+ * The feedback box's addresses, newest first (MettleUp, R-105): the old one stays for good. The next
+ * is tried only when the one before gave no answer, or answered "not here" (404) or a server error.
+ */
+export const FEEDBACK_URLS = ['https://app.mettleup.fit/api/feedback', 'https://forgeai.aakashpahuja.in/api/feedback'] as const;
 export const FEEDBACK_MAX = 2000;
 const SENDER_KEY = 'feedback_sender';
 
@@ -55,6 +59,29 @@ async function senderId(): Promise<string> {
   }
 }
 
+/** Is this answer worth trying the next address for? No box there (404) or a server error. PURE. */
+export function tryNextBox(status: number): boolean {
+  return status === 404 || status >= 500;
+}
+
+/** POST to the first address that answers; the last address's answer (or error) is the result. */
+export async function postToBox(json: string, post: typeof fetchWithTimeout = fetchWithTimeout): Promise<Response> {
+  let lastError: unknown = null;
+  for (let i = 0; i < FEEDBACK_URLS.length; i++) {
+    const last = i === FEEDBACK_URLS.length - 1;
+    try {
+      const res = await post(FEEDBACK_URLS[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json });
+      if (last || !tryNextBox(res.status)) return res;
+      console.warn('[feedback] box address answered', res.status, FEEDBACK_URLS[i], '; trying the next');
+    } catch (e) {
+      lastError = e;
+      if (last) throw e;
+      console.warn('[feedback] box address gave no answer', FEEDBACK_URLS[i], '; trying the next', e);
+    }
+  }
+  throw lastError ?? new Error('no feedback address');
+}
+
 export async function sendFeedback(text: string, extra: { app?: string; gym?: string; screen?: string }): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
@@ -68,7 +95,7 @@ export async function sendFeedback(text: string, extra: { app?: string; gym?: st
     sender: await senderId(),
   };
   try {
-    const res = await fetchWithTimeout(FEEDBACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await postToBox(JSON.stringify(body));
     let answer: unknown = null;
     try {
       answer = await res.json();

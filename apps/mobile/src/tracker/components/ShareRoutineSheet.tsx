@@ -26,7 +26,7 @@ export function ShareRoutineSheet({
   const fail = () => void tell('Could not share', 'Something went wrong. Please try again.');
   const title = folder ? `Share ${folder}` : `Share ${routines[0]?.name ?? 'routine'}`;
   return (
-    <TrackerSheet visible={visible} title={title} subtitle="Text anyone can read, or a file another ForgeAI member can open." onClose={onClose}>
+    <TrackerSheet visible={visible} title={title} subtitle="Text anyone can read, or a file another MettleUp member can open." onClose={onClose}>
       <SheetRow
         label="Send as text"
         leading={<Glyph name="list" size={20} color={color.accent} />}

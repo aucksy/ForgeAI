@@ -1,6 +1,6 @@
 # Cross-role journey 1, member step 2: the owner tapped "Mark ready" in the admin app (XJ1b).
 # My orders shows Ready, "Collect it at the desk", and the member can no longer cancel it.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-my-orders.yaml
 - extendedWaitUntil:

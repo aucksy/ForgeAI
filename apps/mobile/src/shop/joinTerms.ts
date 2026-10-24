@@ -8,7 +8,7 @@ export const LEGAL_BASE = 'https://forgeai.aakashpahuja.in';
 export const PRIVACY_URL = `${LEGAL_BASE}/privacy.html`;
 export const TERMS_URL = `${LEGAL_BASE}/terms.html`;
 
-export const AGREE_LABEL = "I'm 18 or older, and I agree to ForgeAI's terms and privacy notice";
+export const AGREE_LABEL = "I'm 18 or older, and I agree to MettleUp's terms and privacy notice";
 export const AGREE_NEEDED = "Tick the box first: you must be 18 or older and agree to the terms.";
 
 /** Join may go ahead only with the box ticked. */

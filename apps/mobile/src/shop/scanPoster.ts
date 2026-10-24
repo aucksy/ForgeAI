@@ -21,7 +21,7 @@ export const SCAN_POSTER_LINE = "Your phone's camera opens. Point it at the QR c
 
 /** Shown when no camera app opened. */
 export const NO_CAMERA_TITLE = "Couldn't open the camera";
-export const NO_CAMERA_BODY = "Open your phone's camera app, point it at the QR code on the poster, and tap the link it shows to come back to ForgeAI.";
+export const NO_CAMERA_BODY = "Open your phone's camera app, point it at the QR code on the poster, and tap the link it shows to come back to MettleUp.";
 
 /** Open the phone's camera; when it cannot, say how to do it by hand. Never throws. */
 export async function openPosterScan(): Promise<void> {

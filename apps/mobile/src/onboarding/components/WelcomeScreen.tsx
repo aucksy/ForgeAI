@@ -14,7 +14,8 @@
  * spoken by the screen reader — never only a buzz. Every answer can be changed in Profile.
  * The step logic is pure (`../welcomeSteps`); the demo and the "Coming from Hevy or Strong?"
  * pick behave exactly as before. Under Next: "Have a gym code? Join your gym" (WelcomeGymCode), then
- * "Continue with Google" for a member coming back (WelcomeGoogle; hidden until the build can sign in).
+ * "Continue with Google" for a gym member coming back (WelcomeGoogle; R-106: shown once a gym code
+ * waits, and only in a build that can sign in).
  */
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -82,7 +83,7 @@ const UNIT_OPTIONS: readonly RadioOption<UnitSystem>[] = [
 
 const STEP_TEXT: Record<WelcomeStep, { title: string; sub: string }> = {
   0: {
-    title: 'Welcome to ForgeAI',
+    title: 'Welcome to MettleUp',
     sub: 'Three quick questions and you are training. Every number in here will be one you lifted.',
   },
   1: { title: 'Kilograms or pounds?', sub: 'For every weight in the app. You can change it in Profile.' },
@@ -175,6 +176,8 @@ export function WelcomeScreen() {
   // The app's own sheets: this screen renders before the navigator, so there is no ConfirmHost.
   const [saveProblem, setSaveProblem] = useState<string | null>(null);
   const [askDemo, setAskDemo] = useState(false);
+  // R-106: the gym code waiting to be joined (WelcomeGymCode); "Continue with Google" is for gym members.
+  const [gymCodeWaiting, setGymCodeWaiting] = useState<string | null>(null);
   // Audit Phase 4: a switcher's app — its import opens right after "Start training".
   const [switchApp, setSwitchApp] = useState<SwitchApp | null>(null);
   const pickSwitch = (app: SwitchApp): void => {
@@ -285,8 +288,8 @@ export function WelcomeScreen() {
 
   const demoBody =
     kept > 0
-      ? `Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. Your ${kept} workout${kept === 1 ? '' : 's'} on this phone ${kept === 1 ? 'is' : 'are'} deleted.`
-      : 'Fills the app with a sample member and 13 weeks of made-up training, for showing ForgeAI off. You can remove it any time.';
+      ? `Fills the app with a sample member and 13 weeks of made-up training, for showing MettleUp off. Your ${kept} workout${kept === 1 ? '' : 's'} on this phone ${kept === 1 ? 'is' : 'are'} deleted.`
+      : 'Fills the app with a sample member and 13 weeks of made-up training, for showing MettleUp off. You can remove it any time.';
 
   const text = STEP_TEXT[step];
 
@@ -395,12 +398,13 @@ export function WelcomeScreen() {
 
                 {/* OWNER-INBOX #11: joining a gym from the first screen (opens after setup). */}
                 <View style={{ marginTop: space.md }}>
-                  <WelcomeGymCode />
+                  <WelcomeGymCode onKept={setGymCodeWaiting} />
                 </View>
 
-                {/* #43/#50: a member who used ForgeAI before gets their workouts back (hidden until the build can sign in). */}
+                {/* #43/#50: a gym member who used the app before gets their workouts back (R-106: gym members only;
+                    hidden until the build can sign in). */}
                 <View style={{ marginTop: space.md }}>
-                  <WelcomeGoogle onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))} />
+                  <WelcomeGoogle onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))} gymCodeWaiting={gymCodeWaiting != null} />
                 </View>
 
                 <View style={{ marginTop: space.xl }}>

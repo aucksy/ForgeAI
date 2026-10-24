@@ -4,7 +4,7 @@
 # app, opened again, has no rest running (and set 2, ticked by Done, is still ticked). Then a 30 s
 # rest with the app OPEN (after set 3, the last set): "Rest is over" is still posted (that is what
 # buzzes a watch); the script reads the notification list after.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - swipe:
     start: 50%, 1%

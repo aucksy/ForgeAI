@@ -2,7 +2,7 @@
 # /c/<CODE> at the app. The owner added Kiran Desk with mobile 98765 00011 and sold her a Monthly
 # plan in the admin app (XJ4a). One tap "Check in", the number asked once, typed -> in as Kiran,
 # and NO "see the desk" line: the plan is active today.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Check in at ${GYM}$"

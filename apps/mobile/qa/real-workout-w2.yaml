@@ -6,7 +6,7 @@
 #   - "Last: <day> · Push A" says where PREVIOUS comes from;
 #   - a WARM-UP tick starts the rest (it used to start none).
 # Ends with that rest running; run-device-qa.sh then checks the shade (the rest card alone).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

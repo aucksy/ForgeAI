@@ -2,7 +2,7 @@
 # replayed or doubled link: its key was spent by the start in step 3). It must not start anything
 # by itself: the calm one-tap question "Start <routine>?" with "Not now". "Not now" -> the Workout
 # tab with nothing open. -e ROUTINE=<the routine's name, regex-escaped>.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

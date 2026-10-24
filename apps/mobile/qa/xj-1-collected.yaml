@@ -1,6 +1,6 @@
 # Cross-role journey 1, member step 3: the owner handed it over, "Collected (paid)" (XJ1c).
 # My orders shows Collected, and nothing more to do: no pay line, no Cancel.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-my-orders.yaml
 - extendedWaitUntil:

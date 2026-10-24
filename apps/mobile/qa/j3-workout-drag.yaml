@@ -3,7 +3,7 @@
 # top; run-device-qa.sh then holds the 2nd exercise's name row with real touch events (every card
 # shrinks to its name row), drags it above the 1st, reads the order back (drag_check.py ex-names)
 # and runs j3-end.yaml, which discards the workout so later parts see none open.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

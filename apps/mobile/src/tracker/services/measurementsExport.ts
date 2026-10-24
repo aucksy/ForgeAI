@@ -170,7 +170,7 @@ async function clearOldMeasurementFiles(dir: string): Promise<void> {
     return;
   }
   for (const n of names) {
-    if (!/^forgeai-measurements-.*\.csv$/.test(n)) continue;
+    if (!/^(?:mettleup|forgeai)-measurements-.*\.csv$/.test(n)) continue; // both names (R-105)
     await FileSystem.deleteAsync(`${dir}${n}`, { idempotent: true }).catch((e: unknown) => {
       console.warn('[ForgeErr] measurements export: remove old file', e);
     });
@@ -183,7 +183,7 @@ export async function saveMyMeasurements(units: UnitSystem): Promise<SaveMeasure
     const file = await measurementsFileText(units);
     if (file.kind !== 'ready') return file;
     const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory ?? '';
-    const uri = `${dir}forgeai-measurements-${todayISO()}.csv`;
+    const uri = `${dir}mettleup-measurements-${todayISO()}.csv`;
     await clearOldMeasurementFiles(dir);
     await FileSystem.writeAsStringAsync(uri, file.text, { encoding: FileSystem.EncodingType.UTF8 });
     let shared = false;

@@ -20,7 +20,7 @@
 # Saves no workout (part M reads its count afresh). The chart's chip and range are put back to
 # Kg/Lb lifted and Last 12 weeks. Both gym orders placed are cancelled (their stock goes back) and
 # the phone leaves the gym, so the app ends in no gym (the Gym tab offers "Join your gym").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

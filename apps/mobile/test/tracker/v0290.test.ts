@@ -192,12 +192,12 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
   });
 
   // [source-text check] Partly reads source text (the rest is behavioural): passes on dead code, fails on a harmless rename (audit QA-12).
-  it('[source-text check] an exercise new to ForgeAI is shown before saving, with how it will be made', async () => {
+  it('[source-text check] an exercise new to MettleUp is shown before saving, with how it will be made', async () => {
     const { newExerciseAbout } = await import('@/tracker/services/routineImport');
     expect(newExerciseAbout('Decline Leg Raise (Gurgaon)', false)).toMatch(/ · Reps only$|· Weight and reps$/);
     expect(newExerciseAbout('Plank (Weighted Vest)', true)).toMatch(/· Time$/);
     const steps = readFileSync('src/tracker/components/RoutineImportSteps.tsx', 'utf8');
-    expect(steps).toMatch(/new to ForgeAI/);
+    expect(steps).toMatch(/new to MettleUp/);
     expect(steps).toMatch(/lastOne \? void afterChecks\(\)/);
   });
 
@@ -217,7 +217,7 @@ describe('continuity with the imported history (v0.29.1, owner)', () => {
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   it('[source-text check] the history import names its new exercises, each with a suggested match (IM-15)', () => {
     expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/<NewNamesCard/);
-    expect(readFileSync('src/tracker/components/NewNamesCard.tsx', 'utf8')).toMatch(/new to ForgeAI/);
+    expect(readFileSync('src/tracker/components/NewNamesCard.tsx', 'utf8')).toMatch(/new to MettleUp/);
   });
 });
 

@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), sub-flow: in the gym's shop (the Shop tab open), one PRODUCT into the
 # bag, then the bag with "Place order" centred.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     file: xc-sub-find.yaml

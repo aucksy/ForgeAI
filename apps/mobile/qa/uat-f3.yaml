@@ -2,7 +2,7 @@
 # sheet's "Finish workout": the save is refused. The member must be told ("Could not save ... Your
 # sets are still here — tap Finish to try again.", then the banner "Couldn't finish your workout.
 # It's still open — tap Finish again.") and the workout must still be open with both sets ticked.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - scrollUntilVisible:
     element: '.*\. Open its history and how-to'

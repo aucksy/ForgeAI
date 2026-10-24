@@ -1,7 +1,7 @@
 # Part P2a (15 Oct 2026): pause the workout timer, as Hevy (tap the duration -> Pause). Part H2 left
 # a workout open: resume it (or start an empty one). The script then waits 70 s and checks the
 # duration did not move (uiautomator dump), and P2b resumes it. Part I discards the workout after.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

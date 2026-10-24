@@ -3,7 +3,7 @@
 # Sunday") with that gym's own key, and opened the gym's invite link. Join it (R-77: it lands on the
 # Workout tab); on the Gym tab the bell shows 1 new; the inbox shows the message; back on the
 # gym's page the count is gone. Then Leave (Settings → Your gym), so the phone ends in no gym.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "Gym code .*"

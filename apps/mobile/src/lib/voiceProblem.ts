@@ -8,7 +8,7 @@
 export type VoiceProblem = 'denied' | 'speech-off' | 'error';
 
 export function voiceProblemText(p: VoiceProblem): string {
-  if (p === 'denied') return 'The microphone is off for ForgeAI, so the coach can’t hear you.';
+  if (p === 'denied') return 'The microphone is off for MettleUp, so the coach can’t hear you.';
   if (p === 'speech-off') return 'Voice typing is off on this phone. Turn on Google voice typing in your phone settings.';
   return 'Couldn’t start listening. Hold the mic to try again.';
 }

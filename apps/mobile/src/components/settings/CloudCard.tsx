@@ -208,7 +208,7 @@ export function CloudCard() {
           lineHeight: 19,
         }}
       >
-        Optional. Link your gym so your coach sees your progress. Skip it and ForgeAI stays
+        Optional. Link your gym so your coach sees your progress. Skip it and MettleUp stays
         fully offline.
       </Text>
 

@@ -150,10 +150,10 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     version: '0.49.0',
     date: '21 Oct',
     lines: [
-      { text: 'The Workout tab now tells you when a new version of ForgeAI is ready.' },
+      { text: 'The Workout tab now tells you when a new version of MettleUp is ready.' },
       { text: 'Tell us what to fix or add, by typing or speaking.', go: { label: 'Send feedback', href: '/settings/feedback' } },
       { text: 'Joining a gym now asks you to confirm you are 18 or older and agree to the terms.' },
-      { text: 'ForgeAI no longer asks to use your microphone.' },
+      { text: 'MettleUp no longer asks to use your microphone.' },
     ],
   },
   {
@@ -192,7 +192,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     version: '0.46.0',
     date: '16 Oct',
     lines: [
-      { text: 'New: the ForgeAI watch app. Your rest counts down and buzzes on your Wear OS watch.' },
+      { text: 'New: the MettleUp watch app. Your rest counts down and buzzes on your Wear OS watch.' },
       { text: "Said no to the camera? The app now tells you and opens your phone's Settings to allow it." },
       { text: 'Many small fixes from a full check of the app.' },
     ],

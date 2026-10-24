@@ -68,7 +68,7 @@ import subprocess
 import sys
 import time
 
-PKG = "pkg=com.forgeai.app"
+PKG = "pkg=com.mettleup.app"
 # C5-3 (16 Oct 2026): the countdown's channel with no watch (or a watch with the ForgeAI app).
 CARD_CHANNEL = "rest-card-live"
 # Any rest card: the C5-3 channel, the LOW one still used while a watch WITHOUT the ForgeAI app is

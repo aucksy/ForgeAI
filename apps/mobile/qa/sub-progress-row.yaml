@@ -8,7 +8,7 @@
 # ROW is a regex for the row's title ("Charts", "Exercises", "Records", "Body"). Call it with the
 # tab bar on screen. The tab is tapped with index 0: the top-most match (trap 18). At 200 % text the
 # rows can start below the screen's edge, so it scrolls to the row. No `env:` default (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Progress$"

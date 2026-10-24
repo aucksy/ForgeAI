@@ -122,7 +122,7 @@ export function membershipView(a: MembershipAnswer): MembershipView {
     if (a.problem === 'NOT_ON_ROSTER') {
       return { tone: 'none', title: 'Your gym has a different number', when: null, lines: [`${a.gymName}'s list doesn't have the number you checked in with. Ask the desk to update it.`] };
     }
-    return { tone: 'none', title: 'Not available yet', when: null, lines: [`${a.gymName} doesn't keep its members' plans in ForgeAI yet. Ask the desk.`] };
+    return { tone: 'none', title: 'Not available yet', when: null, lines: [`${a.gymName} doesn't keep its members' plans in MettleUp yet. Ask the desk.`] };
   }
   const visits = a.visitsThisMonth === 0 ? 'No days at the gym yet this month.' : `${dayWord(a.visitsThisMonth)} at the gym this month.`;
   const nextLine = a.next ? `Next: ${a.next.planName}, from ${tinyDateWithYear(a.next.startsOn, a.day)}.` : null;

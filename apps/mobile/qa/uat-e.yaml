@@ -9,7 +9,7 @@
 #      loaded to reach the tabs) the Gym tab offers "Join your gym" again.
 # Needs some data to erase: after part UD (its 12 imported workouts) or, alone, the script seeds the
 # demo first.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:
@@ -38,7 +38,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Step 1 of 3"
     timeout: 60000
-- assertVisible: "Welcome to ForgeAI"
+- assertVisible: "Welcome to MettleUp"
 - assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
 - takeScreenshot: ue-02-erased-welcome
 # Stopped and opened again: still the welcome, nothing kept.
@@ -134,7 +134,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Step 1 of 3"
     timeout: 60000
-- assertVisible: "Welcome to ForgeAI"
+- assertVisible: "Welcome to MettleUp"
 # Into the app the quickest way (the demo), then: no gym.
 - scrollUntilVisible:
     element: "Load demo data instead"

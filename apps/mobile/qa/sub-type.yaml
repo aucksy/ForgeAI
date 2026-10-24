@@ -9,7 +9,7 @@
 # what was in it is erased; VALUE starts with a space (trap 5: the emulator drops the first key).
 # The keyboard is closed right after typing, while it is surely open (trap 20: hideKeyboard is
 # Back, and a Back with no keyboard would leave the editor). No `env:` default here (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - scrollUntilVisible:
     element: "${FIELD}"

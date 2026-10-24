@@ -293,7 +293,7 @@ describe('the request kept for the app', () => {
     doneListener?.({ kind: 'done' });
     expect(sets()[0].done).toBe(false);
     expect(opens).toEqual([]);
-    expect(notes).toEqual([['Open ForgeAI to log Bench Press, set 1', 'Add reps first — nothing was saved.']]);
+    expect(notes).toEqual([['Open MettleUp to log Bench Press, set 1', 'Add reps first — nothing was saved.']]);
   });
 
   it('the "open" Done (it launched the app) opens the set with what is missing', () => {
@@ -330,7 +330,7 @@ describe('the request kept for the app', () => {
     useActiveWorkout.setState({ hydrated: true });
     expect(sets()[0].done).toBe(false);
     expect(ticks).toEqual([]);
-    expect(notes).toEqual([['Open ForgeAI to log Bench Press, set 1', 'Nothing was saved yet.']]);
+    expect(notes).toEqual([['Open MettleUp to log Bench Press, set 1', 'Nothing was saved yet.']]);
   });
 
   it('a stale request in the app on screen just opens the app; nothing is ticked', () => {

@@ -62,7 +62,7 @@ beforeEach(() => {
 
 describe('saveDataFile', () => {
   it('names the file by date and gives SQLite a plain path', () => {
-    expect(dataFileName(NOW)).toBe('forgeai-data-2026-10-10-0905.db');
+    expect(dataFileName(NOW)).toBe('mettleup-data-2026-10-10-0905.db');
     expect(toPlainPath('file:///data/user/0/app/cache/a%20b.db')).toBe('/data/user/0/app/cache/a b.db');
   });
 
@@ -70,8 +70,8 @@ describe('saveDataFile', () => {
     h.files[DB] = 1_000_000;
     const r = await saveDataFile(NOW);
     expect(r).toEqual({ ok: true, files: 1, consistent: true });
-    expect(h.sql).toEqual([{ sql: 'VACUUM INTO ?', params: ['/data/user/0/app/cache/forgeai-data-2026-10-10-0905.db'] }]);
-    expect(h.shared).toEqual(['file:///data/user/0/app/cache/forgeai-data-2026-10-10-0905.db']);
+    expect(h.sql).toEqual([{ sql: 'VACUUM INTO ?', params: ['/data/user/0/app/cache/mettleup-data-2026-10-10-0905.db'] }]);
+    expect(h.shared).toEqual(['file:///data/user/0/app/cache/mettleup-data-2026-10-10-0905.db']);
     expect(h.closed).toBe(1); // the extra connection it opened is closed again
   });
 

@@ -10,7 +10,7 @@
 # J's Hevy history) → finish it → the Workout tab's Up next card says Pull 1. Needs the internet
 # (hevy.com). Redesign: the imports are Settings → Export & import (R6); "Open routines" lands on
 # the Workout tab with the folder inline, "Jaipur (6)" (R4); Home's card is the Up next card (R1).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:
@@ -117,10 +117,10 @@ appId: com.forgeai.app
     timeout: 10000
 # IM-15: names ForgeAI keeps under another name are shown with both.
 - scrollUntilVisible:
-    element: "Named differently in ForgeAI"
+    element: "Named differently in MettleUp"
     centerElement: true
     timeout: 15000
-- tapOn: "Named differently in ForgeAI"
+- tapOn: "Named differently in MettleUp"
 - scrollUntilVisible:
     element: 'Chest Fly \(Machine\) → Pec Deck Fly'
     centerElement: true
@@ -136,10 +136,10 @@ appId: com.forgeai.app
 # exercise ("Same as ForgeAI's Decline Leg Raise?"), never chosen for him: Keep as new adds it
 # with his name, as before.
 - extendedWaitUntil:
-    visible: "1 name is new to ForgeAI"
+    visible: "1 name is new to MettleUp"
     timeout: 15000
 - assertVisible: "Decline Leg Raise \\(Gurgaon\\)"
-- assertVisible: "Same as ForgeAI.s .*\\?"
+- assertVisible: "Same as MettleUp.s .*\\?"
 - takeScreenshot: 174b-link-new-exercise
 - tapOn: "Keep as new"
 - tapOn: "^Next$"

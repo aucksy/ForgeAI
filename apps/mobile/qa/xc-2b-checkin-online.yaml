@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 2b, back online: the same screen's "Check in" again. The gym
 # asks for the mobile once (98765 00031, on its desk list with a plan today) -> in as Asha.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn: "^Check in$"
 - extendedWaitUntil:

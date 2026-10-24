@@ -14,7 +14,7 @@
 # Redesign R6: the imports are Settings → Export & import; Units, Health Connect, Notifications
 # (reminders) and Widgets are their own Settings pages (sub-settings-page.yaml). History in lb is
 # the Profile feed; the exercise library is Profile → Exercises.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # v0.39.0: Maestro's launchApp ALLOWS EVERY PERMISSION by default (pm grant on each one), which
 # undid the script's revoke and is why Connect was never pressed with nothing allowed. Health
@@ -327,7 +327,7 @@ appId: com.forgeai.app
       FIND: 'Reminder time \d{1,2}:\d{2} (am|pm)\. Change'
 # Notifications are allowed (part A allowed every permission), so no "Turn on notifications".
 - assertNotVisible: "Turn on notifications"
-- assertNotVisible: 'Notifications are off for ForgeAI, so no reminder can arrive\.'
+- assertNotVisible: 'Notifications are off for MettleUp, so no reminder can arrive\.'
 - takeScreenshot: 130-reminders-on
 # ---------------------------------------------------------------- widgets
 # Notifications → Settings → Widgets.
@@ -390,7 +390,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . ForgeAI\.'
+      FIND: '\d+ on your home screen\. Add another, or long-press your home screen . Widgets . MettleUp\.'
 - takeScreenshot: 132b-widgets-row-counts-it
 # ---------------------------------------------------------------- a workout in lb
 # Widgets → Settings → Profile, then the Workout tab.

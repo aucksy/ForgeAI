@@ -3,7 +3,7 @@
 # "From Hevy" holds Push A then Pull A. This flow only brings both cards on screen; the script
 # then drags with Android's own `input draganddrop` (a real press, a hold, a move) and reads the
 # order back from the screen (qa/drag_check.py), then drags it back so later parts see Push A first.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

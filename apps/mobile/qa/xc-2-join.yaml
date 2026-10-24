@@ -3,7 +3,7 @@
 # QA Rope). Same steps as WP6's xj-1-join-order.yaml.
 # The join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml, Release A), and it lands
 # on the Workout tab; then the Gym tab (its "Shop" part once the list has arrived).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

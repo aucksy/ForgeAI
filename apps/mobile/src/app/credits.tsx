@@ -33,7 +33,7 @@ function CreditCard({ c }: { c: Credit }) {
       <Text style={body}>By {c.author}</Text>
       <Text style={body}>From {c.source}</Text>
       <Text style={body}>Licence: {c.licenceName}</Text>
-      {c.changes ? <Text style={body}>Changed by ForgeAI: {c.changes}</Text> : null}
+      {c.changes ? <Text style={body}>Changed by MettleUp: {c.changes}</Text> : null}
       <LinkLine label="Read the licence" url={c.licenceUrl} />
       <LinkLine label="See the source" url={c.sourceUrl} />
       {c.fullText ? (

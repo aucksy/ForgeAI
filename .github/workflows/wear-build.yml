@@ -94,8 +94,8 @@ jobs:
           set -euo pipefail
           BT="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)"
           "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -E "^(package|sdkVersion|targetSdkVersion|uses-feature|application-label|uses-permission)" || true
-          "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -q "package: name='com.forgeai.app'" \
-            || { echo "::error::The watch APK's package is not com.forgeai.app: the Data Layer would never pair it with the phone."; exit 1; }
+          "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -q "package: name='com.mettleup.app'" \
+            || { echo "::error::The watch APK's package is not com.mettleup.app: the Data Layer would never pair it with the phone."; exit 1; }
 
       # play-services-wearable joined the phone app in v0.46: its permission list must not change.
       - name: Phone app permissions (play-services-wearable must add none)

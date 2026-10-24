@@ -1,11 +1,11 @@
 # Part INV, step F2 (QR self check-in). run-device-qa.sh opened the gym's CHECK-IN link
-# https://forgeai.aakashpahuja.in/c/<CODE> at the app (am start -d … -p com.forgeai.app), as the
+# https://forgeai.aakashpahuja.in/c/<CODE> at the app (am start -d … -p com.mettleup.app), as the
 # camera does when the poster's QR is scanned. The phone is in that gym (F1): one tap "Check in"
 # (never by itself: a forwarded link must not check anyone in). The app never sent a mobile number
 # at Join, so it asks for it ONCE. A wrong number first (not on the roster: the desk words, with
 # the number), then the roster's number → in, as the first name only. The roster member has no
 # plan, so "Please see the desk" shows under it (0016).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: '^Check in at QA Check-in Gym$'

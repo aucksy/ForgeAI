@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 3a: a FLAKY network (the script set the emulator's link to
 # GPRS delay and EDGE speed). QA Band ordered the normal way; it must still be placed (once).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

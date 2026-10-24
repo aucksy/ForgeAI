@@ -9,7 +9,7 @@
 #      is one down, the Profile count is back where it started.
 # Starts from a fresh install with the demo (gate-demo.yaml: it trains Mon-Sat over 13 weeks), so it
 # runs alone (qa-device.yml only=uh) or in the whole run (after part M).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- the Profile count before

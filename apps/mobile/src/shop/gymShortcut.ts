@@ -58,7 +58,7 @@ export function gymShortcutWords(r: GymShortcutResult, gymName: string): string 
 
 /** The line when a gym leaves (Android shows it on the greyed-out shortcut). PURE. */
 export function shortcutOffText(gymName: string): string {
-  return `You left ${gymName}. Open ForgeAI from its own icon.`;
+  return `You left ${gymName}. Open MettleUp from its own icon.`;
 }
 
 /** Can this phone pin it, for this gym? */

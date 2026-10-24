@@ -250,7 +250,7 @@ function DriveBackup() {
     try {
       const { found } = await checkForBackup();
       if (!found) {
-        say('There’s no ForgeAI backup in this Google account yet.');
+        say('There’s no MettleUp backup in this Google account yet.');
         return;
       }
       const info = useBackup.getState().found;

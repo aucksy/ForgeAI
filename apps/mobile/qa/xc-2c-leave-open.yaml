@@ -2,7 +2,7 @@
 # 2a, 3a and 3b all ordered). The question names them; "Cancel orders and leave" cannot reach the gym,
 # so the member is told the orders are still placed and they are still in the gym ("Not now"):
 # nothing is left half-done.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

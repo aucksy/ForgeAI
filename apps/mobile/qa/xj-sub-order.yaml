@@ -1,6 +1,6 @@
 # Cross-role journeys (UAT WP6), sub-flow: in the gym's shop, order ONE of PRODUCT (its stock line
 # must read STOCK first), pay at the desk. Ends on My orders with the order placed ("Ordered").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     file: xj-sub-find.yaml

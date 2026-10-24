@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 2d: the whole workout loop with NO INTERNET (airplane mode on,
 # the app opened afresh): start (any open workout thrown away first), fill, tick, a 0:30 rest that
 # runs out by itself, finish, the summary. Then the Profile counts it.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

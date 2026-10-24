@@ -11,7 +11,7 @@
 #   - Settings -> Export & import -> "Save my history": the flow ends with Android's share sheet up;
 #     the script checks the share sheet is in front and reads the file it shares (12 workouts).
 # Starts from a fresh install with the demo (gate-demo.yaml); the script pushes qa-hevy.csv first.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- one workout of the member's own

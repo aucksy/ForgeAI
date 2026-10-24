@@ -1,7 +1,7 @@
 # Part INV, step F3 (QR self check-in): the same poster scanned again the same day. One tap; no
 # number is asked (the gym kept the one that matched), nothing is written twice: "already checked in". Then Leave, so the
 # phone ends in no gym, like step E.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: 'Tap Check in when you are at the gym\.'

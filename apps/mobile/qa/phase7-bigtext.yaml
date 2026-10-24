@@ -13,7 +13,7 @@
 # part left open is only looked at, then minimised. Nothing is added to the bag; no gym is joined.
 # Screenshots every tour takes, whichever way its workout step goes: 10 (P7_SHOTS in
 # run-device-qa.sh); the empty-workout branch adds 2 (03b, 03c).
-appId: com.forgeai.app
+appId: com.mettleup.app
 # NAV comes from the script (maestro test -e NAV=gesture|3button). No `env:` default here: a
 # flow-level env overrides -e, so both tours were photographed as "gesture" (run 38091447858).
 ---

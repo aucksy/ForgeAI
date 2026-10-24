@@ -105,7 +105,7 @@ export function startRestDone(deps: RestDoneDeps): () => void {
     const name = req.label ?? 'your set';
     const openOrNote = (exKey: string, setKey: string, missing: TickMissing | null): void => {
       if (front) deps.openSet(exKey, setKey, missing);
-      else postDoneNote(`Open ForgeAI to log ${name}`, missing ? `${missingText(missing)} — nothing was saved.` : 'Nothing was saved yet.');
+      else postDoneNote(`Open MettleUp to log ${name}`, missing ? `${missingText(missing)} — nothing was saved.` : 'Nothing was saved yet.');
     };
     switch (step.do) {
       case 'ignore':
@@ -113,7 +113,7 @@ export function startRestDone(deps: RestDoneDeps): () => void {
         return;
       case 'stale':
         if (front) deps.openSet(null, null, null);
-        else postDoneNote('Open ForgeAI to log your set', 'That rest card was out of date, so nothing was saved.');
+        else postDoneNote('Open MettleUp to log your set', 'That rest card was out of date, so nothing was saved.');
         return;
       case 'open':
         openOrNote(step.exKey, step.setKey, step.missing);

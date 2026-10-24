@@ -8,7 +8,7 @@
 #   4. The live workout is gone for good: the Workout tab offers "Start empty workout", no "Resume
 #      workout", also after the app is stopped and opened again.
 # Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=uv).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - runFlow: sub-workout-fresh.yaml

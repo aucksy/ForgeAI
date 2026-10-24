@@ -17,7 +17,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-PKG = "com.forgeai.app"
+PKG = "com.mettleup.app"
 
 # --- crash / ANR / JS error patterns. Both logcat layouts match: "time" ("10-09 16:35:29.286 E/Tag( 123): msg")
 # and the default "threadtime" ("10-09 16:35:29.286  1234  1250 E Tag     : msg").

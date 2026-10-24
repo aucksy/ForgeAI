@@ -35,7 +35,7 @@ export function consentWords(o: OfferNumbers): { title: string; paragraphs: stri
   return {
     title: `Join: ${workouts(o.n)}, ${o.d} extra ${o.d === 1 ? 'day' : 'days'}`,
     paragraphs: [
-      `How it works: on a day you check in at ${o.gym}, log a workout of at least ${o.min} minutes with ${o.sets} or more sets in ForgeAI. Log ${o.n} of them within ${o.w} days of joining, and ${days(o.d)} are added to your membership.`,
+      `How it works: on a day you check in at ${o.gym}, log a workout of at least ${o.min} minutes with ${o.sets} or more sets in MettleUp. Log ${o.n} of them within ${o.w} days of joining, and ${days(o.d)} are added to your membership.`,
       'What the gym gets: only the dates of those workouts. Never your exercises, weights, sets, body weight or photos.',
       `Who sees it: the owner and front desk of ${o.gym}.`,
       'Stop any time: Gym tab → Workout offer → Leave the offer. The dates are deleted and nothing more is sent.',

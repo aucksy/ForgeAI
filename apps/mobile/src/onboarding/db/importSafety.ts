@@ -230,5 +230,5 @@ export async function replaceImpact(file: readonly Start[]): Promise<{ removed: 
 export function replaceConfirmBody(onlyHere: number): string {
   const back = 'A copy is kept while you stay on this screen, so you can undo.';
   if (onlyHere <= 0) return `Every one of them is in this file too. ${back}`;
-  return `${onlyHere} of them ${onlyHere === 1 ? 'is' : 'are'} only in ForgeAI, not in this file. ${back}`;
+  return `${onlyHere} of them ${onlyHere === 1 ? 'is' : 'are'} only in MettleUp, not in this file. ${back}`;
 }

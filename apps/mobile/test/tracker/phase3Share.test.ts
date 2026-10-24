@@ -129,7 +129,7 @@ describe('the workout picture', () => {
 
   it('says what the workout was: day, date, time, volume, sets, records', () => {
     const texts = sceneTexts(scene);
-    for (const t of ['Push Day', 'Tue, 6 Oct 2026', '1h 04m', '12,480', '18', '3', 'Workout complete', 'Logged with ForgeAI']) {
+    for (const t of ['Push Day', 'Tue, 6 Oct 2026', '1h 04m', '12,480', '18', '3', 'Workout complete', 'Logged with MettleUp']) {
       expect(texts, t).toContain(t);
     }
   });

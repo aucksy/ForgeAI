@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 4b: the rest skipped, "Finish workout" tapped: the finish sheet
 # is open when this ends (the script then kills the app).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Skip rest"

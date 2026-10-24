@@ -240,7 +240,7 @@ export function pictureFileName(base: string): string {
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
-  return `${clean || 'forgeai'}.png`;
+  return `${clean || 'mettleup'}.png`;
 }
 
 /** Every text node of a scene (tests check what the picture says). */

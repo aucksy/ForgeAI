@@ -2,7 +2,7 @@
 # (am force-stop). This opens it again and goes back into the open workout, at its top, so the
 # script can read the exercises' order again (drag_check.py ex-names): it must be the dragged order,
 # i.e. the new order was saved, not only drawn. j3-end.yaml then discards the workout as before.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

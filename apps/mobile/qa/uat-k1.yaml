@@ -7,7 +7,7 @@
 # Ends with the workout open and the app in the background; the script then reads the app-icon
 # shortcuts Android holds (dumpsys shortcut) and opens them as the launcher does (steps 2-5).
 # Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=uk).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - runFlow:

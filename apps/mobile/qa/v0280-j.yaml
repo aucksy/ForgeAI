@@ -8,7 +8,7 @@
 # "Create “…”" (a distance exercise in metres), which lands in the workout.
 # Redesign: the imports are Settings → Export & import (R6); "Open routines" lands on the Workout
 # tab, where folders sit inline as "From Hevy (2)" with routine cards (R4); Home is gone (R1).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:
@@ -51,7 +51,7 @@ appId: com.forgeai.app
 # September 2026 — so years of history never read like months.
 - assertVisible: "Mar 2024 → Sep 2026"
 # Every name in this file is one ForgeAI knows (some under another name): nothing to ask.
-- assertNotVisible: '.* new to ForgeAI'
+- assertNotVisible: '.* new to MettleUp'
 # Phase 1 (DS-05 / IM-01): part I's import took the demo away, so this is an ordinary import over
 # the member's own data: no "The demo goes first" card, no name box.
 - assertNotVisible: "The demo goes first"
@@ -203,7 +203,7 @@ appId: com.forgeai.app
           optional: true
 - tapOn: "qa-hevy.*"
 - extendedWaitUntil:
-    visible: "Already in ForgeAI"
+    visible: "Already in MettleUp"
     timeout: 20000
 # Audit Phase 4 (IM-09): a file already imported says so first, and offers no "Merge 12" that
 # would add 0 — straight on to the routines.

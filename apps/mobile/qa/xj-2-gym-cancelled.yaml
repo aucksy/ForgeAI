@@ -1,6 +1,6 @@
 # Cross-role journey 2, member step 3: the owner cancelled the second towel order (XJ2b).
 # My orders: "The gym cancelled this order" on it, and the member's own cancel still says so.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-my-orders.yaml
 - extendedWaitUntil:

@@ -3,7 +3,7 @@
 # shows them ("See all", not "Add"), a photo opens in the viewer, and Settings -> Backup still has
 # "Include photos in my backup" on with its "Backing up ..." line. The script then checks, as root,
 # that the picture FILES came back (files/progress-photos/, not only the rows).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

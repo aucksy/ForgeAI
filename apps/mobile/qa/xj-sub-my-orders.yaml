@@ -1,6 +1,6 @@
 # Cross-role journeys (UAT WP6), sub-flow: the gym's shop (GYM, unbranded: its name is the title)
 # -> My orders. The page asks the gym for news when it opens and every 10 s.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:

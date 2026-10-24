@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 2b: the gym's check-in poster opened with NO INTERNET (the
 # script opened /c/<CODE> at the app in airplane mode). One tap "Check in" -> the plain words, and a
 # "Check in" button to try again (no dead end).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Check in at ${GYM}$"

@@ -6,7 +6,7 @@
 # "Discard workout" link → the app's own sheet "Discard workout?" → its "Discard" button.
 #   - runFlow: sub-workout-fresh.yaml
 # Call it with the tab bar on screen. The tab keeps its scroll position, so it looks UP.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Workout$"

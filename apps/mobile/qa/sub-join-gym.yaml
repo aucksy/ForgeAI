@@ -15,7 +15,7 @@
 # Ends on the Workout tab with the gym joined (sub-after-join.yaml: the opening waited out, the
 # home-screen icon pop-up closed with "Not now"). The Gym tab is always there and always "Gym"; a
 # gym's shop shows inside it ("Shop" heading) once the gym's product list has arrived.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     file: sub-gym-none.yaml

@@ -1,6 +1,6 @@
 # Cross-role journey 2, member step 2: order 1 QA Towel again (stock back at 4). The owner cancels
 # this one in the admin app (XJ2b).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:

@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 2a, back online (the script switched airplane mode off and
 # waited for the network): the same bag, still on screen, placed with one tap -> the order is placed.
 # No app restart in between: this is the member pressing the button again.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     file: xc-sub-find.yaml

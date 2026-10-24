@@ -78,11 +78,11 @@ export function routineFileJson(file: RoutineFile): string {
   return JSON.stringify(file, null, 2);
 }
 
-/** "upper-a.forgeai.json" — letters, digits and dashes. */
+/** "upper-a.mettleup.json" — letters, digits and dashes. */
 export function routineFileName(title: string): string {
   const clean = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   // A file name stays short whatever the routine is called (RP-16).
-  return `${clean.slice(0, 60).replace(/-$/, '') || 'routine'}.forgeai.json`;
+  return `${clean.slice(0, 60).replace(/-$/, '') || 'routine'}.mettleup.json`;
 }
 
 /** A non-empty name, cut to `max` characters (RP-16: a long name is shortened, never refused). */
@@ -120,8 +120,8 @@ export function parseRoutineFile(text: string): { ok: true; file: RoutineFile } 
     return { ok: false, reason: 'That file is not a routine file.' };
   }
   const f = raw as Partial<Record<keyof RoutineFile, unknown>> | null;
-  if (!f || f.kind !== ROUTINE_FILE_KIND) return { ok: false, reason: 'That file is not a ForgeAI routine file.' };
-  if (num(f.version, 0) > ROUTINE_FILE_VERSION) return { ok: false, reason: 'That file comes from a newer ForgeAI. Update the app, then try again.' };
+  if (!f || f.kind !== ROUTINE_FILE_KIND) return { ok: false, reason: 'That file is not a MettleUp routine file.' };
+  if (num(f.version, 0) > ROUTINE_FILE_VERSION) return { ok: false, reason: 'That file comes from a newer MettleUp. Update the app, then try again.' };
   if (!Array.isArray(f.routines) || f.routines.length === 0) return { ok: false, reason: 'That file has no routines in it.' };
   if (f.routines.length > FILE_MAX_ROUTINES) return { ok: false, reason: `That file has too many routines (${FILE_MAX_ROUTINES} at most).` };
   const routines: SharedRoutine[] = [];
@@ -189,7 +189,7 @@ export function routinesText(folder: string | null, routines: readonly SharedRou
     if (r.exercises.length === 0) lines.push('(no exercises yet)');
     blocks.push(lines.join('\n'));
   }
-  blocks.push('Made with ForgeAI');
+  blocks.push('Made with MettleUp');
   return blocks.join('\n\n');
 }
 

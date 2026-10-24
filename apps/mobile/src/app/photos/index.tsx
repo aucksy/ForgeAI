@@ -141,7 +141,7 @@ export default function ProgressPhotosScreen() {
       const denied = e instanceof Error && e.message === 'camera-denied';
       setNote(
         denied
-          ? 'Camera not allowed. Allow the camera for ForgeAI in your phone settings, or choose a photo from the gallery.'
+          ? 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.'
           : 'Couldn’t add the photo. Please try again.',
       );
     } finally {

@@ -1,7 +1,7 @@
 # v0.28.0 device QA, part K — an export shared to ForgeAI, the way a person does it (runs after
 # part J). The script opens Android's Files app; here: hold qa-hevy.csv in Downloads → Share →
 # ForgeAI. The import opens on that file's preview, without picking it.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: '(?i).*(downloads|recent|files|qa-hevy).*'
@@ -21,12 +21,12 @@ appId: com.forgeai.app
 - tapOn:
     text: "Share"
 - extendedWaitUntil:
-    visible: "ForgeAI"
+    visible: "MettleUp"
     timeout: 20000
 - takeScreenshot: 159b-share-menu
-- tapOn: "ForgeAI"
+- tapOn: "MettleUp"
 - extendedWaitUntil:
-    visible: "Already in ForgeAI"
+    visible: "Already in MettleUp"
     timeout: 60000
 - assertVisible: "qa-hevy.csv"
 # Audit Phase 4 (IM-09): part J imported this file already, so the preview says so first and

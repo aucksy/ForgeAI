@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 4b: killed with the finish sheet open, opened again: the
 # workout is still OPEN (not finished behind the member's back, not lost), set 1 still ticked. Then it
 # is thrown away (Discard) so the import that follows starts from the demo alone.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-reopened.yaml
 - assertNotVisible: "Workout complete"

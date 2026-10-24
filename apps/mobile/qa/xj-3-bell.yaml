@@ -1,6 +1,6 @@
 # Cross-role journey 3, member step 1: the owner sent a message from the admin app (XJ3a). The
 # bell on the Shop tab says 1 new; the inbox shows it; back on the shop the count is gone.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:

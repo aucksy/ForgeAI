@@ -457,7 +457,7 @@ export default function ReportScreen() {
         </View>
       ) : null}
 
-      {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`forgeai-${period}`} onClose={() => setSharing(false)} /> : null}
+      {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`mettleup-${period}`} onClose={() => setSharing(false)} /> : null}
     </Screen>
   );
 }

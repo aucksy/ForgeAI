@@ -789,7 +789,7 @@ object RestCard {
   /** Done tapped while the app's JS is not running: the tap waits for the app, and says so. */
   fun noteQueued(ctx: Context, label: String?) {
     val what = label ?: "your set"
-    postNote(ctx, "Open ForgeAI to save $what", "ForgeAI was closed. Open it within 10 min to log this set.")
+    postNote(ctx, "Open MettleUp to save $what", "MettleUp was closed. Open it within 10 min to log this set.")
   }
 
   /**
@@ -1210,7 +1210,7 @@ object RestCard {
     if (m.getNotificationChannel(open) == null) {
       m.createNotificationChannel(
         NotificationChannel(open, "Rest is over, app open: $label", NotificationManager.IMPORTANCE_DEFAULT).apply {
-          description = "Rings when rest ends while ForgeAI is on screen, at notification volume"
+          description = "Rings when rest ends while MettleUp is on screen, at notification volume"
           setSound(restSound(ctx, s), usage)
           enableVibration(false)
           setShowBadge(false)
@@ -1222,7 +1222,7 @@ object RestCard {
     if (m.getNotificationChannel(alarm) == null) {
       m.createNotificationChannel(
         NotificationChannel(alarm, "Rest is over, through Do Not Disturb: $label", NotificationManager.IMPORTANCE_HIGH).apply {
-          description = "Used only when you turn on Ring through Do Not Disturb in ForgeAI"
+          description = "Used only when you turn on Ring through Do Not Disturb in MettleUp"
           setSound(
             restSound(ctx, s),
             AudioAttributes.Builder()
@@ -1285,7 +1285,7 @@ object RestCard {
     if (m.getNotificationChannel(CH_OVER_OPEN_SOUND) == null) {
       m.createNotificationChannel(
         NotificationChannel(CH_OVER_OPEN_SOUND, "Rest is over, app open", NotificationManager.IMPORTANCE_DEFAULT).apply {
-          description = "Rings when rest ends while ForgeAI is on screen, at notification volume"
+          description = "Rings when rest ends while MettleUp is on screen, at notification volume"
           setSound(
             restSound(ctx),
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build(),
@@ -1306,7 +1306,7 @@ object RestCard {
     if (m.getNotificationChannel(CH_OVER_ALARM) == null) {
       m.createNotificationChannel(
         NotificationChannel(CH_OVER_ALARM, "Rest is over, through Do Not Disturb", NotificationManager.IMPORTANCE_HIGH).apply {
-          description = "Used only when you turn on Ring through Do Not Disturb in ForgeAI"
+          description = "Used only when you turn on Ring through Do Not Disturb in MettleUp"
           setSound(
             restSound(ctx),
             AudioAttributes.Builder()
@@ -1344,7 +1344,7 @@ object RestCard {
     if (m.getNotificationChannel(CH_OVER_OPEN)?.name?.toString() != OPEN_QUIET_NAME) {
       m.createNotificationChannel(
         NotificationChannel(CH_OVER_OPEN, OPEN_QUIET_NAME, NotificationManager.IMPORTANCE_DEFAULT).apply {
-          description = "Buzzes when rest ends while Workout sounds are off in ForgeAI"
+          description = "Buzzes when rest ends while Workout sounds are off in MettleUp"
           setSound(null, null)
           enableVibration(true)
           vibrationPattern = longArrayOf(0, 250, 150, 250)

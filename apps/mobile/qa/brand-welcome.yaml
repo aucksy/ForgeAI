@@ -17,7 +17,7 @@
 # Runs BEFORE brand-theme.yaml: the pop-up shows once per gym, and part BR's start-up screen check
 # needs brand-theme's join + relaunch as the last two "plain" lines before its Leave.
 # Screenshots br-w*.png (gathered in qa-out/brand/ with brand-theme's). Places no order.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # ---------------------------------------------------------------- 1. the invite screen
 - extendedWaitUntil:
@@ -107,7 +107,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '^Leave RAM''S FITNESS CLUB IMPACT\?$'
     timeout: 15000
-- assertVisible: '.*goes back to ForgeAI''s colours\. Your workouts stay on this phone\. You can join again with the code\.'
+- assertVisible: '.*goes back to MettleUp''s colours\. Your workouts stay on this phone\. You can join again with the code\.'
 - takeScreenshot: br-w05-leave-question
 - tapOn: "^Leave gym$"
 # Leaving a branded gym re-draws the app in ForgeAI's look (it may come back on the Workout tab, or

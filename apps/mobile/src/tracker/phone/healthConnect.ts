@@ -121,7 +121,7 @@ export const HC_CALORIES_OFF =
 
 /** 24 Oct 2026: the line on the Health Connect page when sending is chosen but not allowed. */
 export const HC_NOT_ALLOWED =
-  'Health Connect isn\'t letting ForgeAI add your workouts, so none are being sent. Tap "Connect" below and turn on "Exercise".';
+  'Health Connect isn\'t letting MettleUp add your workouts, so none are being sent. Tap "Connect" below and turn on "Exercise".';
 
 /** Open Health Connect's permission screen. Profile re-checks when the app is back. */
 export function askHealthConnect(): boolean {
@@ -254,7 +254,7 @@ export function sendResultText(r: SendResult): string {
     case 'failed':
     default: {
       if (r.sent > 0) return `Sent ${fmtInt(r.sent)} of ${workouts(r.total)}. Health Connect stopped taking them. Try again to send the rest.`;
-      if (r.reason === 'access') return "Couldn't send: ForgeAI isn't allowed to add workouts in Health Connect. Check its access there.";
+      if (r.reason === 'access') return "Couldn't send: MettleUp isn't allowed to add workouts in Health Connect. Check its access there.";
       if (r.reason === 'unavailable') return "Couldn't send: Health Connect isn't available right now.";
       return "Couldn't send: Health Connect didn't take the workouts. Please try again.";
     }

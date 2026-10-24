@@ -10,7 +10,7 @@
 # share a folder as a file → back on the demo plan: easy weeks on, take one now (with its end
 # date) → the easy workout (half the sets, no record pop-up, swap for today) → train normally →
 # open a routine file someone shared → "New routine" asks where it goes → a routine's ⋯ moves.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

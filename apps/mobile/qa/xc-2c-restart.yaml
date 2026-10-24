@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 2c: back online, the app is started again (the "next start"
 # that sends the kept Leave). In no gym the Gym tab is its "Join your gym" screen (Release A).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

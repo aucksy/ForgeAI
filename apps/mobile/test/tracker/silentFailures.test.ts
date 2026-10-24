@@ -43,8 +43,8 @@ describe('H3 — a pin request is not a placed widget', () => {
     expect(pinNotPlaced(0, 1)).toBe(false);
   });
   it('both hints point to the long-press way round', () => {
-    expect(widgetHintText('refused')).toMatch(/Long-press your home screen → Widgets → ForgeAI/);
-    expect(widgetHintText('notPlaced')).toMatch(/Long-press your home screen → Widgets → ForgeAI/);
+    expect(widgetHintText('refused')).toMatch(/Long-press your home screen → Widgets → MettleUp/);
+    expect(widgetHintText('notPlaced')).toMatch(/Long-press your home screen → Widgets → MettleUp/);
   });
 });
 

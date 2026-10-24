@@ -67,7 +67,7 @@ describe('check-in URLs', () => {
   });
 
   it('builds the same link the panel prints', () => {
-    expect(checkInUrl('rams01')).toBe('https://forgeai.aakashpahuja.in/c/RAMS01');
+    expect(checkInUrl('rams01')).toBe('https://app.mettleup.fit/c/RAMS01');
     expect(checkInCodeFromUrl(checkInUrl('FORGE1'))).toBe('FORGE1');
   });
 
@@ -222,14 +222,15 @@ describe('Android opens the app for the poster link', () => {
   it('in app.json', () => {
     const app = JSON.parse(readFileSync(join(root, 'app.json'), 'utf8'));
     const filters = app.expo.android.intentFilters as { autoVerify?: boolean; data: { host: string; pathPrefix: string }[] }[];
-    const c = filters.find((f) => f.data.some((d) => d.pathPrefix === '/c/'));
-    expect(c?.autoVerify).toBe(true);
-    expect(c?.data[0].host).toBe('forgeai.aakashpahuja.in');
+    // MettleUp (R-105): the new address first, the old one kept for printed posters.
+    const hosts = filters.filter((f) => f.autoVerify === true && f.data.some((d) => d.pathPrefix === '/c/')).map((f) => f.data[0].host);
+    expect(hosts).toEqual(['app.mettleup.fit', 'forgeai.aakashpahuja.in']);
   });
 
   it('in the committed AndroidManifest.xml (the cloud build does not regenerate it)', () => {
     const xml = readFileSync(join(root, 'android', 'app', 'src', 'main', 'AndroidManifest.xml'), 'utf8');
     expect(xml).toMatch(/<intent-filter android:autoVerify="true">[\s\S]*?android:host="forgeai\.aakashpahuja\.in" android:pathPrefix="\/c\/"[\s\S]*?<\/intent-filter>/);
+    expect(xml).toMatch(/<intent-filter android:autoVerify="true">[\s\S]*?android:host="app\.mettleup\.fit" android:pathPrefix="\/c\/"[\s\S]*?<\/intent-filter>/);
   });
 });
 

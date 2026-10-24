@@ -86,7 +86,7 @@ export function reportWorkoutPhotoProblem(
 }
 
 /** The same words progress photos use when the camera is refused. */
-export const CAMERA_DENIED_TEXT = 'Camera not allowed. Allow the camera for ForgeAI in your phone settings, or choose a photo from the gallery.';
+export const CAMERA_DENIED_TEXT = 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.';
 
 /** Plain words for a failed add. PURE. */
 export function addPhotoErrorText(problem: WorkoutPhotoProblem): string {

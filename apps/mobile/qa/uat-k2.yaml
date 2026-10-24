@@ -2,7 +2,7 @@
 # script with the very intent Android holds for it, as the launcher does) lands in the open
 # workout, set 1 still ticked. That workout is then thrown away the member's way, and the app left
 # in the background, so the shortcut turns back into "Start <routine>".
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

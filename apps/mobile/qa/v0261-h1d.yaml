@@ -6,7 +6,7 @@
 # card is posted again as "Rest 3:00 · ends …" naming set 3 (the script reads it from the
 # notification list after this part) → the app, opened again, shows set 2 ticked, set 3 not, and
 # a rest running. Part H2 then uses this card's "Skip" with the app's process stopped.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # The shade normally stays open between H1 and this part; open it again if it closed.
 - runFlow:
@@ -63,7 +63,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: '.*Barbell Bench Press, set 3'
     timeout: 10000
-- assertNotVisible: 'Open ForgeAI to .*'
+- assertNotVisible: 'Open MettleUp to .*'
 - assertVisible: '^Done$'
 - takeScreenshot: 112b-shade-after-done
 # ---------------------------------------------------------------- the app again

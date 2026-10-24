@@ -6,7 +6,7 @@
 #   - the workout's own page: More → Rename workout (only a routine-less finish asks a name);
 #   - the bench's exercise page: one tap on the chart keeps that point (it used to vanish on
 #     release), its Records with the new record.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - takeScreenshot: w-40-shade-after-superset-rest
 - tapOn: 'Rest is over|Set \d+ of \d+.*|.*Lateral Raise.*|Workout in progress'

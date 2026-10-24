@@ -109,7 +109,7 @@ export async function joinGymByCode(
       m.includes('INVALID_CODE')
         ? 'That gym code is not valid — check with your gym.'
         : m.includes('ALREADY_STAFF')
-          ? 'This account belongs to a gym owner or staff. Open the ForgeAI admin app instead.'
+          ? 'This account belongs to a gym owner or staff. Open the MettleUp admin app instead.'
           : 'Could not join the gym — please try again.',
     );
   }

@@ -1,7 +1,7 @@
 # UAT WP4b, part UF (M-58: Finish fails, or the phone's storage is full), step 1 of 5: the demo on a
 # fresh install, the Profile on screen with its "Workouts: N" line, which the script reads: at the
 # end exactly ONE more workout must be saved (a failed Finish retried never saves twice).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - tapOn:

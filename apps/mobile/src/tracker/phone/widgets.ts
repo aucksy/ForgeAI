@@ -77,8 +77,8 @@ export function widgetData(i: WidgetInput): WidgetData {
       action: 'Start',
     };
     if (i.today.routineId) today.routineId = i.today.routineId;
-  } else if (i.today) today = { title: i.today.name, line: 'Open ForgeAI to see it', action: 'Open' };
-  else today = { title: 'No plan yet', line: 'Open ForgeAI to start a workout', action: 'Open' };
+  } else if (i.today) today = { title: i.today.name, line: 'Open MettleUp to see it', action: 'Open' };
+  else today = { title: 'No plan yet', line: 'Open MettleUp to start a workout', action: 'Open' };
 
   const count = i.goal != null && i.goal > 0 ? `${done} of ${i.goal}` : countWord(done, 'workout');
   const line =
@@ -266,8 +266,8 @@ export const PIN_CHECK_MS = 6000;
 /** PURE (audit H3). The long-press hint: the home screen said no, or nothing was added. */
 export function widgetHintText(why: 'refused' | 'notPlaced'): string {
   return why === 'refused'
-    ? "Your home screen can't add it from here. Long-press your home screen → Widgets → ForgeAI."
-    : 'No widget added? Long-press your home screen → Widgets → ForgeAI.';
+    ? "Your home screen can't add it from here. Long-press your home screen → Widgets → MettleUp."
+    : 'No widget added? Long-press your home screen → Widgets → MettleUp.';
 }
 
 /** Ask the home screen to add one. False when this phone's home screen cannot. */

@@ -1,7 +1,7 @@
 # Phase 3 device QA, part E — a new kind of record live, the records on the finish screen,
 # the workout share picture through to Android's share menu, and the exercise page's
 # records card. Runs after part D.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

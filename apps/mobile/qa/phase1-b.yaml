@@ -8,7 +8,7 @@
 # v0.37.1 (audit C4): the tap on the notification is part B0 (phase1-b0.yaml), so the script can
 # read the notification list between the tap and this part (the live card must be back). This part
 # starts on the workout screen B0 left open.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"

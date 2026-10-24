@@ -50,7 +50,7 @@ const STEP_WORDS: Record<string, string> = {
   cache: 'shared and imported files',
   'ai-keys': 'AI keys',
   'gym-link': 'gym sign-in',
-  'member-account': 'ForgeAI sign-in',
+  'member-account': 'MettleUp sign-in',
   'drive-link': 'Google Drive link',
   settings: 'settings',
   shop: 'shop bag and orders',
@@ -84,16 +84,17 @@ export function eraseLeftBehindText(failed: readonly string[]): string {
 
 /** Files the app wrote into the documents folder for the member to share (spreadsheets). */
 export function isExportFile(name: string): boolean {
-  return /^forgeai-.*\.(xlsx|csv|json)$/i.test(name);
+  // Both names: files written before the new name (MettleUp, R-105) are the member's too.
+  return /^(?:mettleup|forgeai)-.*\.(xlsx|csv|json)$/i.test(name);
 }
 
 /**
- * The member's own data in the app's cache: exports and data files ("forgeai-…"), the picker's
+ * The member's own data in the app's cache: exports and data files ("mettleup-…", "forgeai-…"), the picker's
  * and share sheet's copies, and imported files (a whole workout history). Not the cache as a
  * whole: Expo keeps the app's own sounds and fonts there while it runs.
  */
 export function isPrivateCacheEntry(name: string): boolean {
-  return /^forgeai/i.test(name) || /^(share|ImagePicker|DocumentPicker)$/i.test(name.replace(/\/$/, '')) || /\.(csv|xlsx|xls|json|db|sqlite)$/i.test(name);
+  return /^(?:mettleup|forgeai)/i.test(name) || /^(share|ImagePicker|DocumentPicker)$/i.test(name.replace(/\/$/, '')) || /\.(csv|xlsx|xls|json|db|sqlite)$/i.test(name);
 }
 
 interface FileApi {

@@ -408,15 +408,15 @@ describe('sharing a routine as a file or text', () => {
 
   it('the text reads well anywhere', () => {
     expect(routinesText('Summer plan', routines)).toBe(
-      'Summer plan\n\nUpper A · Upper Body\n1. Barbell Bench Press — 3 × 6–10\n2. Plank — 2 sets\n3. My Band Pull — 1 × 15\n\nMade with ForgeAI',
+      'Summer plan\n\nUpper A · Upper Body\n1. Barbell Bench Press — 3 × 6–10\n2. Plank — 2 sets\n3. My Band Pull — 1 × 15\n\nMade with MettleUp',
     );
-    expect(routinesText(null, [{ name: 'Empty', dayType: 'full', exercises: [] }])).toBe('Empty · Full Body\n(no exercises yet)\n\nMade with ForgeAI');
+    expect(routinesText(null, [{ name: 'Empty', dayType: 'full', exercises: [] }])).toBe('Empty · Full Body\n(no exercises yet)\n\nMade with MettleUp');
   });
 
   it('a safe file name', () => {
-    expect(routineFileName('Upper A')).toBe('upper-a.forgeai.json');
-    expect(routineFileName('  ')).toBe('routine.forgeai.json');
-    expect(routineFileName('Push/Pull: Week #1')).toBe('push-pull-week-1.forgeai.json');
+    expect(routineFileName('Upper A')).toBe('upper-a.mettleup.json');
+    expect(routineFileName('  ')).toBe('routine.mettleup.json');
+    expect(routineFileName('Push/Pull: Week #1')).toBe('push-pull-week-1.mettleup.json');
   });
 
   it('refuses what it cannot use, in plain words', () => {
@@ -425,8 +425,8 @@ describe('sharing a routine as a file or text', () => {
       return r.ok ? null : r.reason;
     };
     expect(bad('hello')).toBe('That file is not a routine file.');
-    expect(bad('{"kind":"other"}')).toBe('That file is not a ForgeAI routine file.');
-    expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":2,"routines":[{}]}`)).toMatch(/newer ForgeAI/);
+    expect(bad('{"kind":"other"}')).toBe('That file is not a MettleUp routine file.');
+    expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":2,"routines":[{}]}`)).toMatch(/newer MettleUp/);
     expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":1,"routines":[]}`)).toBe('That file has no routines in it.');
     expect(bad(`{"kind":"${ROUTINE_FILE_KIND}","version":1,"routines":[{"name":"x","exercises":[{"name":""}]}]}`)).toBe('An exercise in that file is damaged.');
     // RP-16: only a file far beyond any real folder is refused (500 routines at most).

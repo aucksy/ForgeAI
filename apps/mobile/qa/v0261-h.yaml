@@ -6,7 +6,7 @@
 # reads "Rest 3:15". (A watch shows this card's title and text, set as before; its buttons run
 # here, on the phone.) The card's "Done" is tapped next, in part H1D (v0261-h1d.yaml), after the
 # script has read this card from the notification list.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

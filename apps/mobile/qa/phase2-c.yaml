@@ -5,7 +5,7 @@
 # an empty workout with every new kind of set: a timed plank on the stopwatch, bodyweight
 # pull-ups (body weight counts in volume), an assisted pull-up, dumbbells "kg each" with the
 # Counting choice, a treadmill run (distance + time) → finish → sets per muscle → new exercise form.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

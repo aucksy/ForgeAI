@@ -5,7 +5,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { AppState } from 'react-native';
 
 import { routedFetch, sessionKey } from '@/cloud/address';
-import { SUPABASE_KEY, SUPABASE_PROXY_URL, SUPABASE_URL, isCloudConfigured } from '@/cloud/config';
+import { SUPABASE_KEY, SUPABASE_PROXY_URLS, SUPABASE_URL, isCloudConfigured } from '@/cloud/config';
 
 /**
  * Lazily-constructed Supabase client. Nothing here runs until the app is linked
@@ -21,8 +21,9 @@ export function getSupabase(): SupabaseClient {
     throw new Error('Cloud is not configured (missing Supabase extra in app.json).');
   }
   if (!client) {
-    // R-55: our own address first (cloud/address.ts), Supabase's own when ours fails to answer.
-    const url = SUPABASE_PROXY_URL || SUPABASE_URL;
+    // R-55 / R-105: our own addresses first, newest first (cloud/address.ts), Supabase's own when
+    // none of ours answers. The client builds every request on the first; routedFetch sends it on.
+    const url = SUPABASE_PROXY_URLS[0] ?? SUPABASE_URL;
     client = createClient(url, SUPABASE_KEY, {
       auth: {
         storage: AsyncStorage,
@@ -31,7 +32,7 @@ export function getSupabase(): SupabaseClient {
         detectSessionInUrl: false,
         storageKey: sessionKey(SUPABASE_URL), // what was kept before the switch stays readable
       },
-      global: url === SUPABASE_URL ? undefined : { fetch: routedFetch(url, SUPABASE_URL, (...a) => fetch(...a)) },
+      global: SUPABASE_PROXY_URLS.length === 0 ? undefined : { fetch: routedFetch(SUPABASE_PROXY_URLS, SUPABASE_URL, (...a) => fetch(...a)) },
     });
     if (!appStateWired) {
       appStateWired = true;

@@ -232,7 +232,7 @@ export function RestPrefsCard() {
       <PrefChoiceSheet
         visible={choosingSound}
         title="Rest-over sound"
-        subtitle="The sound when your rest is over. The ForgeAI chime is the default."
+        subtitle="The sound when your rest is over. The MettleUp chime is the default."
         footnote={restSoundFootnote(sounds)}
         choices={REST_SOUND_CHOICES}
         value={restSound}

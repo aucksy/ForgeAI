@@ -2,7 +2,7 @@
 # at once and says the gym will be told the next time the app is online.
 # Release A: Leave is in Settings → Your gym; after it the Gym tab is its "Join your gym" screen,
 # with the "gym will be told" words above the code box.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

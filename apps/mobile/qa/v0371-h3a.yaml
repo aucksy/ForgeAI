@@ -3,7 +3,7 @@
 # still to do, and a 0:30 rest on the exercise (run 38390826292: the live card read "Set 4 of 4";
 # adding a set made it "4 of 5"). Here: the app goes to the background on that set. The script then STOPS the app's process
 # (Android closed it) and checks the live card is up with "Complete set" (part H3B taps it).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

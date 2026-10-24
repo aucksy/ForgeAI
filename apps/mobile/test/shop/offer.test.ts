@@ -227,7 +227,7 @@ describe('the words', () => {
     const c = consentWords(nums);
     expect(c.title).toBe('Join: 10 workouts, 3 extra days');
     expect(c.paragraphs).toEqual([
-      "How it works: on a day you check in at RAM'S FITNESS, log a workout of at least 20 minutes with 6 or more sets in ForgeAI. Log 10 of them within 30 days of joining, and 3 days are added to your membership.",
+      "How it works: on a day you check in at RAM'S FITNESS, log a workout of at least 20 minutes with 6 or more sets in MettleUp. Log 10 of them within 30 days of joining, and 3 days are added to your membership.",
       'What the gym gets: only the dates of those workouts. Never your exercises, weights, sets, body weight or photos.',
       "Who sees it: the owner and front desk of RAM'S FITNESS.",
       'Stop any time: Gym tab → Workout offer → Leave the offer. The dates are deleted and nothing more is sent.',

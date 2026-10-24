@@ -54,15 +54,15 @@ export function BootErrorScreen() {
     if (r.ok) {
       setSaveNote(
         r.files === 2
-          ? 'Keep both files together, with the same names. If you need help, send them to your gym, who can pass them to ForgeAI to open.'
-          : 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to ForgeAI to open.',
+          ? 'Keep both files together, with the same names. If you need help, send them to your gym, who can pass them to MettleUp to open.'
+          : 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to MettleUp to open.',
       );
     } else if (r.reason === 'no-share') {
       setSaveNote("This phone can't share files right now.");
     } else if (r.reason === 'no-file') {
       setSaveNote(NO_DATA_FILE_MESSAGE);
     } else {
-      setSaveNote(`ForgeAI couldn't save the file.${r.detail ? ` ${r.detail}` : ''}`);
+      setSaveNote(`MettleUp couldn't save the file.${r.detail ? ` ${r.detail}` : ''}`);
     }
   };
 

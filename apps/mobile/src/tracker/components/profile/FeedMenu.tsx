@@ -158,7 +158,7 @@ export function FeedMenu({ request, onClose, onDeleted }: { request: FeedMenuReq
         }}
       />
       {scene && data ? (
-        <ShareSheet visible={sharing} scene={scene} fileName={`forgeai-workout-${data.session.dateISO}`} onClose={() => setSharing(false)} />
+        <ShareSheet visible={sharing} scene={scene} fileName={`mettleup-workout-${data.session.dateISO}`} onClose={() => setSharing(false)} />
       ) : null}
     </>
   );

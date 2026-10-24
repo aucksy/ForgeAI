@@ -2,7 +2,7 @@
 # (redesign R6) and scrolls to its card, whose first line is the member's workout count ("12 workouts").
 # The script reads that exact line off the screen and part M (after) must find it again once the
 # app has been uninstalled, reinstalled and restored from the backup.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

@@ -8,7 +8,7 @@
 # Profile → a distance lift's trend (part C's Treadmill Run) → Measures: a 765 kg weigh-in kept,
 # then fixed → measurements (log three, delete one, Undo) → progress photos (two SAMPLE pictures
 # pushed by run-device-qa.sh: a tall one and a wide one, neither dated) → change a date → compare.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

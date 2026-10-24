@@ -121,7 +121,7 @@ export default function ProgramsScreen() {
         <View>
           <SectionHeader title="Bring routines in" />
           <Card style={{ paddingVertical: space.xs }}>
-            <Row first icon="import" title="Import a routine file" sub="A file another ForgeAI member shared" onPress={() => void onImportFile()} />
+            <Row first icon="import" title="Import a routine file" sub="A file another MettleUp member shared" onPress={() => void onImportFile()} />
             {/* Release A, A11: the one home for bringing workouts and routines in from Hevy or Strong. */}
             <Row first={false} icon="globe" title="Bring in from Hevy or Strong" sub="Your past workouts, or routines from a Hevy share link" onPress={() => router.push('/settings/import')} />
           </Card>

@@ -25,7 +25,7 @@
  */
 import { color } from '@/theme/tokens';
 
-import { FORGE_MARK } from './brand';
+import { FORGE_MARK, WORD_EMBER } from './brand';
 import { CLEAR_BACKGROUND, type Scene, type SceneNode } from './scene';
 
 export type ShareSize = 'post' | 'story';
@@ -113,9 +113,9 @@ function seeThrough(n: SceneNode): SceneNode | null {
     case 'text': {
       // A day number on its ember dot keeps the dot's ink, with no shadow.
       if (n.fill === color.onAccent) return n;
-      // The wordmark's "AI" stays ForgeAI's ember (brand.ts); every other word turns white —
-      // even ember headings, whose colour is the same hex by default.
-      const fill = n.text === 'AI' && BRAND.has(n.fill.toUpperCase()) ? n.fill : WHITE;
+      // The wordmark's ember half ("UP" of METTLEUP, brand.ts) stays the brand's ember; every other
+      // word turns white — even ember headings, whose colour is the same hex by default.
+      const fill = n.text === WORD_EMBER && BRAND.has(n.fill.toUpperCase()) ? n.fill : WHITE;
       return { ...n, fill, shadow: true };
     }
     default:
@@ -137,7 +137,7 @@ export function framedScene(card: Scene, size: ShareSize, look: ShareLook): Scen
   return { width, height, background: look === 'clear' ? CLEAR_BACKGROUND : card.background, nodes };
 }
 
-/** "forgeai-workout-2026-10-06" → "forgeai-workout-2026-10-06-story-clear" (Post + Dark: unchanged). PURE. */
+/** "mettleup-workout-2026-10-06" → "mettleup-workout-2026-10-06-story-clear" (Post + Dark: unchanged). PURE. */
 export function framedFileName(base: string, size: ShareSize, look: ShareLook): string {
   const parts = [base];
   if (size === 'story') parts.push('story');

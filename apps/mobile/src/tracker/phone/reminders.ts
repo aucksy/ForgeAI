@@ -258,7 +258,7 @@ export function reminderStampKey(triggers: unknown, body: string, accent: string
  */
 export function reminderCaption(o: { on: boolean; blocked: boolean; next: string | null; days: number; failed?: boolean }): string {
   if (!o.on) return 'A quiet reminder on your usual training days, at your usual time.';
-  if (o.blocked) return 'Notifications are off for ForgeAI, so no reminder can arrive.';
+  if (o.blocked) return 'Notifications are off for MettleUp, so no reminder can arrive.';
   if (o.days === 0) return 'Pick at least one day.';
   if (o.failed) return "Couldn't set reminders. Try again.";
   if (o.next) return `Next: ${o.next}. None on a day you already trained or while a workout is open.`;
@@ -377,7 +377,7 @@ async function refreshRemindersNow(opts: { ask?: boolean; force?: boolean }, aga
     // Audit Phase 3: the one "Today" answer. The rotation only moves when a workout is saved,
     // and every save sets the reminders again, so every repeat can name the next routine.
     const next = tp?.next ? tp.next.name : null;
-    const body = next ? `Next: ${next}` : 'Open ForgeAI to start your workout';
+    const body = next ? `Next: ${next}` : 'Open MettleUp to start your workout';
     const stamp: ScheduleStamp = {
       offset: now.getTimezoneOffset(),
       key: reminderStampKey(triggers, body, color.accent),

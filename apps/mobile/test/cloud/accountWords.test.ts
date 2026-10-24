@@ -18,7 +18,7 @@ const S = { waiting: 0, lastAt: null as number | null, needsSignIn: false, full:
 describe('the status line', () => {
   it('says what is true now, most urgent first', () => {
     expect(copyStatusLine(null, when)).toBe(ACCOUNT_WORDS.notCopiedYet);
-    expect(copyStatusLine({ ...S, lastAt: 5 }, when)).toBe('Your workouts are saved on ForgeAI. Last saved: at 5.');
+    expect(copyStatusLine({ ...S, lastAt: 5 }, when)).toBe('Your workouts are saved on MettleUp. Last saved: at 5.');
     expect(copyStatusLine({ ...S, waiting: 1, lastAt: 5 }, when)).toBe('1 change is waiting for the internet. They are saved by themselves when you are online.');
     expect(copyStatusLine({ ...S, waiting: 3 }, when)).toMatch(/^3 changes are waiting/);
     expect(copyStatusLine({ ...S, waiting: 3, full: true }, when)).toBe(ACCOUNT_WORDS.full);

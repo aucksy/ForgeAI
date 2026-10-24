@@ -18,7 +18,7 @@ export type RestSoundId = 'forge' | 'bell' | 'beep' | 'whistle';
 export const DEFAULT_REST_SOUND: RestSoundId = 'forge';
 
 export const REST_SOUND_CHOICES: readonly PrefChoice<RestSoundId>[] = [
-  { value: 'forge', label: 'ForgeAI chime', detail: 'Two rising notes', recommended: true },
+  { value: 'forge', label: 'MettleUp chime', detail: 'Two rising notes', recommended: true },
   { value: 'bell', label: 'Bell', detail: 'One deep bell' },
   { value: 'beep', label: 'Double beep', detail: 'Two short beeps, like a sports timer' },
   { value: 'whistle', label: 'Whistle', detail: "A coach's whistle" },

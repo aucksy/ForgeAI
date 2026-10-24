@@ -4,7 +4,7 @@
 # alerts are off and offer to turn them on (RestTimerBar.tsx; checked when a rest starts). Not
 # tapped: it leaves the app for Android's settings. The workout is then discarded; the script gives
 # the permission back.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # launchApp grants every permission unless told not to (trap 21).
 - launchApp:

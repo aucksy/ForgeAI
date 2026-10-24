@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 4a: the app process was killed mid-rest (Home, then `am kill`,
 # as Android does to a background app) and opened again: the workout is still open, set 1 still
 # ticked, and the rest still running ("Skip rest").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-reopened.yaml
 - extendedWaitUntil:

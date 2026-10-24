@@ -57,9 +57,9 @@ describe('Release A: the Gym tab is always there, always "Gym"', () => {
     expect(read('src/app/_layout.tsx')).toMatch(/\{ready \? <GymIconOfferHost \/> : null\}/);
   });
 
-  it('the pop-up says plainly how to take the ForgeAI icon off, and never to uninstall', () => {
+  it('the pop-up says plainly how to take the MettleUp icon off, and never to uninstall', () => {
     expect(GYM_ICON_WORDS.addTitle('RAM Fitness Club')).toBe('Put RAM Fitness Club on your home screen');
-    expect(GYM_ICON_WORDS.removeSteps.join(' ')).toMatch(/Press and hold the ForgeAI icon/);
+    expect(GYM_ICON_WORDS.removeSteps.join(' ')).toMatch(/Press and hold the MettleUp icon/);
     expect(GYM_ICON_WORDS.removeNote).toMatch(/stays on your phone/);
     expect(GYM_ICON_WORDS.removeNote).toMatch(/Don't tap Uninstall/);
     const all = [GYM_ICON_WORDS.addTitle('X'), GYM_ICON_WORDS.addBody('X'), ...GYM_ICON_WORDS.removeSteps, GYM_ICON_WORDS.removeNote];

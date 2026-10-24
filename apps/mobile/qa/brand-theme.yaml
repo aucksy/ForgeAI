@@ -13,7 +13,7 @@
 # Screenshots br-*.png (gathered in qa-out/brand/). The opening lasts about a second, so its
 # photo is best-effort (an optional wait); everything after it is asserted.
 # Saves no workout and places no order; the phone ends outside the gym, as it started.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:
@@ -122,7 +122,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Leave RAM'S FITNESS CLUB IMPACT\\?"
     timeout: 10000
-- assertVisible: ".*goes back to ForgeAI's colours.*"
+- assertVisible: ".*goes back to MettleUp's colours.*"
 - tapOn: "^Leave gym$"
 # The app re-draws in ForgeAI's look (it may come back on the Workout tab). Release A: no gym, so
 # the Gym tab is its "Join your gym" screen.

@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 6: Settings -> Workouts, the rest alerts line. It shows only
 # when Android holds something back ("Rest alerts: May be late — tap to fix"). The screenshot's name
 # says which the member saw: xc6-status-<SHOT>-may-be-late or xc6-status-<SHOT>-on-time.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

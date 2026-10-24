@@ -42,17 +42,24 @@ export function logoMark(x: number, y: number, size: number): SceneNode[] {
   ];
 }
 
-/** Mark + "FORGEAI" ("AI" in ember), baseline aligned to the mark's middle. Returns its width too. */
+/** The name on share pictures (MettleUp, R-105): "METTLE" in ink, "UP" in ember. */
+export const WORD_INK = 'METTLE';
+export const WORD_EMBER = 'UP';
+
+/**
+ * Mark + "METTLEUP" ("UP" in ember), baseline aligned to the mark's middle. Returns its width too.
+ * The mark is still the old one until the new logo is picked (logoMark above is the one to swap).
+ */
 export function wordmark(x: number, y: number, size: number): { nodes: SceneNode[]; width: number } {
   const font = size * 0.64;
   const gap = size * 0.32;
   const tx = x + size + gap;
   const baseline = y + size * 0.5 + font * 0.36;
-  const forge = textWidth('FORGE', 'display', font);
+  const ink = textWidth(WORD_INK, 'display', font);
   const nodes: SceneNode[] = [
     ...logoMark(x, y, size),
-    { t: 'text', x: tx, y: baseline, text: 'FORGE', font: 'display', size: font, fill: color.ink },
-    { t: 'text', x: tx + forge, y: baseline, text: 'AI', font: 'display', size: font, fill: EMBER },
+    { t: 'text', x: tx, y: baseline, text: WORD_INK, font: 'display', size: font, fill: color.ink },
+    { t: 'text', x: tx + ink, y: baseline, text: WORD_EMBER, font: 'display', size: font, fill: EMBER },
   ];
-  return { nodes, width: size + gap + forge + textWidth('AI', 'display', font) };
+  return { nodes, width: size + gap + ink + textWidth(WORD_EMBER, 'display', font) };
 }

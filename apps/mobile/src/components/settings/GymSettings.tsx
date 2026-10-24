@@ -58,7 +58,7 @@ export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key
       {canAddGymShortcut(link) ? (
         <LinkRow
           title="Gym logo on my home screen"
-          sub={`${link.gymName}'s logo on your home screen. It opens ForgeAI.`}
+          sub={`${link.gymName}'s logo on your home screen. It opens MettleUp.`}
           leading={leading?.('gymLogo')}
           onPress={() => void addShortcut()}
         />
@@ -110,7 +110,7 @@ export function GymRemindersSwitch({ gymName }: { gymName: string }) {
       </GlassCard>
       {on && blocked ? (
         <LinkRow
-          title="Notifications are off for ForgeAI"
+          title="Notifications are off for MettleUp"
           sub="No reminder from your gym can arrive. Turn them on in your phone's settings."
           onPress={() => void Linking.openSettings().catch((e: unknown) => console.warn('[ForgeErr] app settings did not open', e))}
         />

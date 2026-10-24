@@ -11,35 +11,35 @@
 import type { SendFailure } from './copyPlan';
 
 export const ACCOUNT_WORDS = {
-  cardTitle: 'Keep your workouts on ForgeAI',
+  cardTitle: 'Keep your workouts on MettleUp',
   cardBody:
-    'Sign in with Google and ForgeAI saves your workouts, routines and body weight on its own server. On a new phone, sign in again and everything comes back.',
+    'Sign in with Google and MettleUp saves your workouts, routines and body weight on its own server. On a new phone, sign in again and everything comes back.',
   privacy: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.',
   signIn: 'Continue with Google',
   signedInAs: (email: string | null): string => (email ? `Signed in as ${email}` : 'Signed in with Google'),
-  allCopied: (when: string): string => `Your workouts are saved on ForgeAI. Last saved: ${when}.`,
-  notCopiedYet: 'Your workouts will be saved on ForgeAI in a moment.',
+  allCopied: (when: string): string => `Your workouts are saved on MettleUp. Last saved: ${when}.`,
+  notCopiedYet: 'Your workouts will be saved on MettleUp in a moment.',
   waiting: (n: number): string => `${n} ${n === 1 ? 'change is' : 'changes are'} waiting for the internet. They are saved by themselves when you are online.`,
-  needsSignIn: 'Sign in again to keep saving your workouts on ForgeAI.',
-  full: 'Your space on ForgeAI is full, so new workouts stay on this phone only. Please tell us in Settings → "Send feedback".',
+  needsSignIn: 'Sign in again to keep saving your workouts on MettleUp.',
+  full: 'Your space on MettleUp is full, so new workouts stay on this phone only. Please tell us in Settings → "Send feedback".',
   bringBack: 'Bring back my workouts',
   broughtBack: (workouts: number): string =>
     workouts === 0 ? 'Everything was already on this phone.' : `${workouts} ${workouts === 1 ? 'workout' : 'workouts'} brought back to this phone.`,
   signOut: 'Sign out',
-  signOutTitle: 'Sign out of ForgeAI?',
-  signOutBody: 'Your workouts stay on this phone. New workouts are not saved on ForgeAI until you sign in again.',
+  signOutTitle: 'Sign out of MettleUp?',
+  signOutBody: 'Your workouts stay on this phone. New workouts are not saved on MettleUp until you sign in again.',
   deleteAccount: 'Delete my account',
-  deleteTitle: 'Delete your ForgeAI account?',
-  deleteBody: 'This deletes your account and everything saved on ForgeAI’s server. The workouts on this phone stay.',
+  deleteTitle: 'Delete your MettleUp account?',
+  deleteBody: 'This deletes your account and everything saved on MettleUp’s server. The workouts on this phone stay.',
   deleteConfirm: 'Delete account',
-  deleted: 'Your account and everything saved on ForgeAI are deleted. Your workouts are still on this phone.',
+  deleted: 'Your account and everything saved on MettleUp are deleted. Your workouts are still on this phone.',
   deletedKeptSignIn:
-    'Everything saved on ForgeAI is deleted. Your Google sign-in stays, because your gym also uses it. Your workouts are still on this phone.',
+    'Everything saved on MettleUp is deleted. Your Google sign-in stays, because your gym also uses it. Your workouts are still on this phone.',
   otherPerson:
     'This phone has another person’s workouts. To use a different Google account, first erase this phone in Settings → "Erase or start over".',
   finishWorkoutFirst: 'Finish your workout first, then try again.',
   signOutFailed: 'Could not sign out. Please try again.',
-  welcomeAsk: 'Used ForgeAI before? Sign in to bring your workouts back.',
+  welcomeAsk: 'Used MettleUp before? Sign in to bring your workouts back.',
   welcomeNothing: 'You are signed in. Nothing is saved yet, so answer the 3 questions to start.',
   demo: 'This phone has the demo data. Remove it first (Settings → "Erase or start over"), then try again.',
   notInThisVersion: 'Google sign-in is not ready in this version of the app yet.',
@@ -69,9 +69,9 @@ export function copyFailureWords(f: SendFailure | 'demo'): string {
     case 'full':
       return ACCOUNT_WORDS.full;
     case 'not-ready':
-      return 'Saving workouts on ForgeAI is not switched on yet. Your workouts are safe on this phone.';
+      return 'Saving workouts on MettleUp is not switched on yet. Your workouts are safe on this phone.';
     case 'refused':
-      return 'Something on this phone could not be saved on ForgeAI. Your workouts are safe here. Please try again later.';
+      return 'Something on this phone could not be saved on MettleUp. Your workouts are safe here. Please try again later.';
     case 'offline':
     default:
       return 'No internet right now. Your workouts are safe on this phone. Try again when you are online.';

@@ -10,7 +10,7 @@
 # Edit workout → Android Back asks "Discard changes?" → nothing is left open → Log a past workout
 # (yesterday 18:00) → Back asks "Discard this workout?". Nothing is saved, so part M's workout
 # count is not changed by this part.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

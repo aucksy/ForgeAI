@@ -171,9 +171,9 @@ describe('2. a backup from a newer app is refused, not half-restored', () => {
     const { PlainError } = await import('@/cloud/backupWords');
     const env = (extra: Record<string, unknown>): string =>
       JSON.stringify({ app: 'forgeai', schema_version: 1, ...extra, exported_at: '2026-10-16T00:00:00Z', tables: {} });
-    expect(() => parseSnapshot(env({ tracker_schema_version: 15, member_schema_version: 2 }))).toThrow('This backup was made by a newer ForgeAI');
+    expect(() => parseSnapshot(env({ tracker_schema_version: 15, member_schema_version: 2 }))).toThrow('This backup was made by a newer MettleUp');
     expect(() => parseSnapshot(env({ tracker_schema_version: 14, member_schema_version: 3 }))).toThrow(PlainError);
-    expect(() => parseSnapshot(env({ tracker_schema_version: 14, member_schema_version: 3 }))).toThrow('Update ForgeAI from the Play Store');
+    expect(() => parseSnapshot(env({ tracker_schema_version: 14, member_schema_version: 3 }))).toThrow('Update MettleUp from the Play Store');
     expect(() => parseSnapshot(env({ tracker_schema_version: '14' }))).toThrow('damaged');
     expect(parseSnapshot(env({ tracker_schema_version: 14, member_schema_version: 2 })).app).toBe('forgeai');
     expect(parseSnapshot(env({ tracker_schema_version: 9, member_schema_version: 1 })).app).toBe('forgeai');

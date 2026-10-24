@@ -10,7 +10,7 @@
 # The Profile tab is tapped with index 0: the top-most match (trap 18, 3-button navigation).
 # The page is taller than the screen: any of three rows says "on the page", and it is then scrolled
 # back to its top. Group headings are drawn in capitals: tap rows, never headings.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     when:

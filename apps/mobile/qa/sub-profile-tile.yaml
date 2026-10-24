@@ -8,7 +8,7 @@
 # Call it with the tab bar on screen. The Profile tab keeps its scroll position (the feed below
 # the tiles can be scrolled far down), so it looks UP first, then down (at 200 % text the tiles
 # start below the screen's edge). No `env:` default here (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Profile$"

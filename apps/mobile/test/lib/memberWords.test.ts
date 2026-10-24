@@ -211,7 +211,7 @@ describe('C9-3: the Android text outside src/ — notifications, widget, watch, 
 
   it('reads the notification, widget, watch and permission text', () => {
     const all = texts.map((t) => t.text);
-    expect(all).toEqual(expect.arrayContaining(['Rest is over', 'Skip', 'Complete set', 'ForgeAI']));
+    expect(all).toEqual(expect.arrayContaining(['Rest is over', 'Skip', 'Complete set', 'MettleUp']));
     expect(texts.some((t) => t.file.startsWith('android/wear/'))).toBe(true);
     expect(texts.some((t) => t.file.startsWith('modules/forge-phone/') && t.file.endsWith('strings.xml'))).toBe(true);
     expect(texts.some((t) => t.file === 'app.json' && /microphone/.test(t.text))).toBe(true);

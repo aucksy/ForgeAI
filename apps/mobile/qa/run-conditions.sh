@@ -40,7 +40,7 @@ set -u
 QA_DIR="$(cd "$(dirname "$0")" && pwd)"
 OUT="${QA_OUT:-$PWD/qa-out}"
 C_OUT="$OUT/conditions"
-PKG=com.forgeai.app
+PKG=com.mettleup.app
 export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xc-state}"
 export XC_OUT="$C_OUT"
 mkdir -p "$OUT" "$C_OUT" "$XJ_STATE_DIR"

@@ -2,7 +2,7 @@
 # link, opened as the launcher does) starts that routine AT ONCE: the workout screen, never the
 # "Start <routine>?" question. -e ROUTINE=<the routine's name, regex-escaped> from the shortcut's
 # label. The workout is thrown away again after, and the app left in the background.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

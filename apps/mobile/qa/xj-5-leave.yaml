@@ -1,7 +1,7 @@
 # Cross-role journeys 5 and 6, last member step: leave gym B. The question says the app goes back
 # to ForgeAI's colours, and it does: the gym's name is gone and the Gym tab offers "Join your gym"
 # again (Release A). The phone ends in no gym, as it started.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:
@@ -12,7 +12,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: "Leave ${GYM_B}\\?"
     timeout: 15000
-- assertVisible: ".*goes back to ForgeAI's colours.*"
+- assertVisible: ".*goes back to MettleUp's colours.*"
 - tapOn: "^Leave gym$"
 - extendedWaitUntil:
     notVisible: "Your gym: ${GYM_B}"

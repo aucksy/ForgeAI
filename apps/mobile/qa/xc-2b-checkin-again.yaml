@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 2b, the retry: the poster scanned once more (online) -> "You
 # were already checked in": still ONE visit at the gym (the script checks the server).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "^Check in at ${GYM}$"

@@ -6,7 +6,7 @@
 #   - units "lb, miles" (Settings -> Units),
 #   - a routine: the flow ends on the Workout tab with a routine card on screen; the script reads its
 #     name off the screen (uiautomator dump) and passes it to backup-m-check.yaml after the restore.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

@@ -9,7 +9,7 @@
 #      the record opens that past workout, which now lists Barbell Bench Press with 250 kg x 1 and
 #      no QA Bench Twin. Searching Exercises finds no QA Bench Twin any more.
 # Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=ug).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- 1a. the member's own exercise

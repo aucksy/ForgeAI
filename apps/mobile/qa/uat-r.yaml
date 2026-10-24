@@ -12,7 +12,7 @@
 #      on that exercise.
 # Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=ur) or in the
 # whole run (after part M).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 # ---------------------------------------------------------------- the routine's first exercise, before

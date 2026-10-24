@@ -7,7 +7,7 @@
 #   - saved: SQLite still had room in its own log file, so the workout went in (step 5 checks it
 #     went in ONCE, with both sets).
 # Screenshots are taken only after the outcome (nothing is written to the phone before it).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # Maestro cannot START on a full phone (it installs its driver first: run 38993380014), so this
 # flow starts while there is room and waits here; the script fills the phone meanwhile (it starts

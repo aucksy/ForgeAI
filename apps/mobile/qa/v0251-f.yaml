@@ -3,7 +3,7 @@
 # Settings → Units → Body figure: Female → the Statistics body map (redesign R3/R6) → a run: a 400 m sprint (sets no pace)
 # and 2 km in 9:00 (a new best pace, 4:30 /km) → finish → the share picture on the female figure
 # → the run's exercise page: Best pace in Records, and the 1 km rule behind the i.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

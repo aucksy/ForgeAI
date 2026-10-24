@@ -1,6 +1,6 @@
 # Cross-role journey 2, member step 1: order 1 QA Towel (stock 4) and cancel it on the phone.
 # My orders: "You cancelled this order". The server check after it reads the stock back at 4.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:

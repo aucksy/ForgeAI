@@ -33,7 +33,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import notif  # noqa: E402
 
-PKG = "com.forgeai.app"
+PKG = "com.mettleup.app"
 OLD_CHANNELS = ("rest-timer", "rest-over-alarm", "rest-card")
 QUERIES = {
     "workouts": "SELECT COUNT(*) FROM workout_sessions",

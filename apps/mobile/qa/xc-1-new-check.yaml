@@ -2,7 +2,7 @@
 # v0.45.0 install (run-conditions.sh opened the app itself, without a force-stop), what the member
 # sees: the open workout with its ticked set; 2 workouts on the Profile; Body fat 17.5 %; "lb, miles";
 # "Ring through Do Not Disturb" still on; the followed plan's routine Full Body A.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-reopened.yaml
 - runFlow:

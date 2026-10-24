@@ -625,7 +625,7 @@ export default function ImportScreen() {
               value={`${preview.distinctExercises}  ·  ${preview.newExercises.length} new`}
             />
             {preview.alreadyHere > 0 ? (
-              <StatRow label="Already in ForgeAI" value={String(preview.alreadyHere)} tint={color.inkMuted} />
+              <StatRow label="Already in MettleUp" value={String(preview.alreadyHere)} tint={color.inkMuted} />
             ) : null}
             {preview.timedSets > 0 ? (
               <StatRow label="Timed or distance sets" value={String(preview.timedSets)} />
@@ -649,7 +649,7 @@ export default function ImportScreen() {
           {allHereText(preview) && mode === 'merge' ? (
             <Card style={{ gap: space.xs }}>
               <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{allHereText(preview)}</Text>
-              <Text style={CAPTION()}>Nothing in this file is new to ForgeAI, so nothing will be added.</Text>
+              <Text style={CAPTION()}>Nothing in this file is new to MettleUp, so nothing will be added.</Text>
             </Card>
           ) : null}
 
@@ -758,7 +758,7 @@ export default function ImportScreen() {
                 onPress={() => setMode('replace')}
                 body={
                   ownWorkouts > 0
-                    ? `Delete all ${ownWorkouts} of your workout${ownWorkouts === 1 ? '' : 's'} in ForgeAI, then import. You can undo right after.`
+                    ? `Delete all ${ownWorkouts} of your workout${ownWorkouts === 1 ? '' : 's'} in MettleUp, then import. You can undo right after.`
                     : 'Import into an empty history.'
                 }
               />
@@ -766,7 +766,7 @@ export default function ImportScreen() {
                 label="Merge"
                 selected={mode === 'merge'}
                 onPress={() => setMode('merge')}
-                body="Keep your current workouts and add these. A workout already here is skipped, also one you logged in ForgeAI too (same day, started within 30 minutes), so it’s safe to re-run."
+                body="Keep your current workouts and add these. A workout already here is skipped, also one you logged in MettleUp too (same day, started within 30 minutes), so it’s safe to re-run."
               />
             </View>
           ) : null}
@@ -847,7 +847,7 @@ export default function ImportScreen() {
               {doneTitle(result.imported)}
             </Text>
             <Text style={{ ...CAPTION(), textAlign: 'center' as const }}>
-              {result.imported > 0 ? `Your ${appName} history is now in ForgeAI.` : `Every workout in this file was already in ForgeAI.`}
+              {result.imported > 0 ? `Your ${appName} history is now in MettleUp.` : `Every workout in this file was already in MettleUp.`}
             </Text>
           </Card>
 
@@ -860,7 +860,7 @@ export default function ImportScreen() {
             <StatRow label="Sets logged" value={String(result.setsInserted)} />
             <StatRow label="New exercises created" value={String(result.createdExercises)} />
             {result.skippedSameWorkout > 0 ? (
-              <StatRow label="Logged in ForgeAI too (skipped)" value={String(result.skippedSameWorkout)} tint={color.inkMuted} />
+              <StatRow label="Logged in MettleUp too (skipped)" value={String(result.skippedSameWorkout)} tint={color.inkMuted} />
             ) : null}
             {result.skippedExisting > 0 ? (
               <StatRow

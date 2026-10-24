@@ -28,9 +28,9 @@ android {
   buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
-    // MUST equal the phone app's id: the Data Layer only connects apps with the same package
-    // name and the same signing certificate.
-    applicationId 'com.forgeai.app'
+    // MUST equal the phone app's id (android/app/build.gradle; MettleUp, R-105): the Data Layer only
+    // connects apps with the same package name and the same signing certificate.
+    applicationId 'com.mettleup.app'
     minSdkVersion 30 // Wear OS 3+
     targetSdkVersion 35
     // The same numbers the phone gets from CI (app/build.gradle), so both halves match.

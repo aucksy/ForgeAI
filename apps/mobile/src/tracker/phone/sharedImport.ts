@@ -19,7 +19,7 @@ export interface SharedFileProblem {
 /** What the import screen says about a share it could not take. PURE. */
 export function shareProblemText(error: string | null | undefined): string | null {
   if (error === 'too_big') return 'That file is too big to import (over 50 MB). Export again from Hevy or Strong and share the new file.';
-  if (error === 'unreadable') return 'ForgeAI couldn’t open that file. Share it again, or tap “Choose file” and pick it here.';
+  if (error === 'unreadable') return 'MettleUp couldn’t open that file. Share it again, or tap “Choose file” and pick it here.';
   return null;
 }
 

@@ -83,7 +83,7 @@ describe('ready programs and built plans become folders', () => {
   });
 
   it('a program this version does not have says so plainly', async () => {
-    await expect(addProgram('from_the_future', { follow: true, easyWeeks: true })).rejects.toThrow('That program is not in this version of ForgeAI.');
+    await expect(addProgram('from_the_future', { follow: true, easyWeeks: true })).rejects.toThrow('That program is not in this version of MettleUp.');
   });
 
   it('a built plan keeps its answers, so it can be built again', async () => {

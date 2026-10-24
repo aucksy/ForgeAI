@@ -3,7 +3,7 @@
 # the phone itself ticks set 4 for the app and starts that set's rest — the rest card ALONE
 # ("Rest 0:30 · ends …"; set 4 is the last set, so it says "All sets done") — and NOT the old
 # "Open ForgeAI to save …" note. The script reads the notification list after this part.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - swipe:
     start: 50%, 1%
@@ -58,6 +58,6 @@ appId: com.forgeai.app
             text: 'Rest 0:30 · ends .*'
           direction: DOWN
 - assertVisible: '.*All sets done.*'
-- assertNotVisible: 'Open ForgeAI to .*'
+- assertNotVisible: 'Open MettleUp to .*'
 - takeScreenshot: h3b-shade-rest-after-complete-set-app-closed
 - pressKey: Back

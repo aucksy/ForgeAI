@@ -8,7 +8,7 @@
 #   - units "lb, miles", and "Ring through Do Not Disturb" switched ON (Settings -> Workouts),
 #   - a 3rd workout left OPEN mid-rest: bench 135 lb x 5, rest 3:00, set 1 ticked.
 # The script then updates the app in place (adb install -r) while that rest runs.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     clearState: true

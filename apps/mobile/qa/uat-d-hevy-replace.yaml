@@ -2,7 +2,7 @@
 # pushed to Downloads by the script) with REPLACE over the member's ONE own workout. The option and
 # the question name it ("Delete all 1 of your workout", "Delete 1 workout first?", "1 of them is only
 # in ForgeAI"); the result is "12 workouts imported". Leaves the app on the result page.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     file: sub-find.yaml
@@ -38,7 +38,7 @@ appId: com.forgeai.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Delete all 1 of your workout in ForgeAI, then import\. You can undo right after\.'
+      FIND: 'Delete all 1 of your workout in MettleUp, then import\. You can undo right after\.'
 - runFlow:
     file: sub-find.yaml
     env:
@@ -48,7 +48,7 @@ appId: com.forgeai.app
 - extendedWaitUntil:
     visible: 'Delete 1 workout first\?'
     timeout: 15000
-- assertVisible: '1 of them is only in ForgeAI, not in this file\. A copy is kept while you stay on this screen, so you can undo\.'
+- assertVisible: '1 of them is only in MettleUp, not in this file\. A copy is kept while you stay on this screen, so you can undo\.'
 - takeScreenshot: ud-06b-delete-first-question
 - tapOn:
     text: "^Replace$"

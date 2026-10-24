@@ -8,7 +8,7 @@
 #     screen": Android's own question would come up over the app;
 #  3. the app is on the Workout tab (a join lands there, as if the app started again in the gym's look).
 # No `env:` here (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # The opening may not be up yet when the caller saw the join: give it a moment, then wait it out.
 - extendedWaitUntil:

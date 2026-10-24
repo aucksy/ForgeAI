@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), sub-flow: finish the live workout (any rest skipped, untouched rows
 # left out) and close the summary. Ends on the tabs.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Skip rest"

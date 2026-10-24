@@ -3,7 +3,7 @@
 # force-stopped first, so its notifications stay): set 4 is ticked, saved from the phone's queue,
 # and no second rest starts. The script then reads the notification list: "Rest is over" went
 # when the app came to the front and the live card is back.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 4c: Settings -> Export & import -> Import from Hevy with the
 # big history the script pushed (qa-hevy-xc.csv, ~1,000 workouts), Merge, and "Import N workouts"
 # tapped. The flow ends straight after the tap: the script kills the app while it writes.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

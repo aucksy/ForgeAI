@@ -1,6 +1,6 @@
 # Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-type.yaml, so a change to the
 # phone test parts never moves these flows. Same behaviour.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - scrollUntilVisible:
     element: "${FIELD}"

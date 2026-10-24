@@ -1,6 +1,6 @@
 # Cross-role journey 3, member step 2: the owner took the message back (XJ3b). It is gone from
 # the member's inbox, and the bell has no count.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xj-sub-shop.yaml
 - extendedWaitUntil:

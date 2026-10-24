@@ -11,7 +11,7 @@ import json
 import re
 import sys
 
-PKG = "com.forgeai.app"
+PKG = "com.mettleup.app"
 # Android starts a shortcut's intent with NEW_TASK | CLEAR_TASK unless the intent says otherwise.
 LAUNCHER_FLAGS = "0x10008000"
 

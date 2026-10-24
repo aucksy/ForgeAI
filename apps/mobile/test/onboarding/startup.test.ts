@@ -61,7 +61,7 @@ describe('what the error screen says (pure)', () => {
     const open = bootFailureFrom(new StartupError('open', new Error('unable to open database file')));
     expect(open.stage).toBe('open');
     expect(bootMessage(open).body).toBe(
-      "ForgeAI couldn't open your data. Your workouts are still on this phone. Tap Try again.",
+      "MettleUp couldn't open your data. Your workouts are still on this phone. Tap Try again.",
     );
     expect(open.detail).toContain('unable to open database file');
 

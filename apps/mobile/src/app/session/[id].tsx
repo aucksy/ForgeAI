@@ -203,7 +203,7 @@ export default function SessionDetailScreen() {
               setTimeout(() => void onSaveRoutine(folderId, choices), SLIDE_MS);
             }}
           />
-          {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`forgeai-workout-${data.session.dateISO}`} onClose={() => setSharing(false)} /> : null}
+          {scene ? <ShareSheet visible={sharing} scene={scene} fileName={`mettleup-workout-${data.session.dateISO}`} onClose={() => setSharing(false)} /> : null}
         </View>
       ) : loadFailed ? (
         <LoadError what="this workout" onRetry={summary.retry} />

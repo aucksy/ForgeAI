@@ -512,7 +512,7 @@ export default function ProfileScreen() {
         <ShareSheet
           visible={sharingMonth}
           scene={monthScene.scene}
-          fileName={`forgeai-month-${monthScene.month}`}
+          fileName={`mettleup-month-${monthScene.month}`}
           onClose={() => setSharingMonth(false)}
         />
       ) : null}

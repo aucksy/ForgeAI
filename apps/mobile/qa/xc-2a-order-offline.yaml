@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 2a: NO INTERNET (airplane mode, switched on by the script
 # before this flow). The app is opened afresh offline; the shop still shows its last list; QA Bottle
 # into the bag; "Place order" -> the plain words, and the bag is KEPT (the line and the button).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

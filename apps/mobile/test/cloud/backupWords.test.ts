@@ -74,13 +74,13 @@ describe('C9-14: an older backup restores; a newer one says what to do', () => {
   it('the words', () => {
     expect(backupVersionWords(1, 1)).toBeNull();
     expect(backupVersionWords(0, 1)).toBeNull();
-    expect(backupVersionWords(2, 1)).toBe('This backup was made by a newer ForgeAI. Update ForgeAI from the Play Store, then restore again.');
+    expect(backupVersionWords(2, 1)).toBe('This backup was made by a newer MettleUp. Update MettleUp from the Play Store, then restore again.');
     expect(backupVersionWords('1', 1)).toContain('damaged');
   });
 
   it('parseSnapshot takes an older backup and refuses a newer one with the update step', () => {
     expect(parseSnapshot(envelope(0)).schema_version).toBe(0);
-    expect(() => parseSnapshot(envelope(99))).toThrow('Update ForgeAI from the Play Store');
+    expect(() => parseSnapshot(envelope(99))).toThrow('Update MettleUp from the Play Store');
     expect(() => parseSnapshot(envelope(99))).toThrow(PlainError);
     expect(() => parseSnapshot('not json')).toThrow(PlainError);
   });

@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 3b/3c: after the order request was cut, the words the
 # member is left with (any of them; the script then retries online and counts the orders).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: 'Order \d+ placed\. Pay at the desk when you collect it\.|No internet.*|The gym didn.t answer.*|Couldn.t place the order.*'

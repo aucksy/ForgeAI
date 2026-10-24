@@ -1,7 +1,7 @@
 # Phase 1 device QA, part A — runs on a cloud Android emulator (.github/workflows/qa-device.yml).
 # Demo data → the Workout tab's Up next card (redesign R1) → start today's routine → calm card + menu → per-exercise rest 30s →
 # set-type sheet → tick (rest starts) → beat history (live record) → leave the rest running.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     clearState: true

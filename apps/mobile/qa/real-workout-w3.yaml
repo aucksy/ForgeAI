@@ -8,7 +8,7 @@
 #   - Lateral Raise + Triceps Pushdown made a superset: the first exercise's tick starts NO rest,
 #     the second's does (the rest comes after the round).
 # Ends with that superset rest running; run-device-qa.sh checks the shade again.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - takeScreenshot: w-30-shade-after-warmup-rest
 - tapOn: 'Rest is over|Set \d+ of \d+.*|.*Bench Press.*|Workout in progress'

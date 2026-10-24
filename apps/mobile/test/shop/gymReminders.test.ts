@@ -174,7 +174,7 @@ describe('gym reminders on the phone', () => {
     await noteAppJoin('m1');
     await refreshGymReminders();
     expect(days()).toEqual(['2026-10-23']);
-    expect(set.get('forgeai-gym-reminder-2026-10-23')!.body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in ForgeAI.");
+    expect(set.get('forgeai-gym-reminder-2026-10-23')!.body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in MettleUp.");
     // Switched off before it came, then on again: it can still come (NIT 4).
     await cancelGymReminders();
     expect(days()).toEqual([]);

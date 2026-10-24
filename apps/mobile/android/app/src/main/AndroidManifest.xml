@@ -47,10 +47,27 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="mettleup"/>
+        <!-- MettleUp (R-105): the old scheme keeps working, so old links and widgets still open the app. -->
         <data android:scheme="forgeai"/>
       </intent-filter>
+      <!-- MettleUp (R-105): the new address of gym links and check-in posters. Verified against
+           https://app.mettleup.fit/.well-known/assetlinks.json (must list com.mettleup.app). -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="app.mettleup.fit" android:pathPrefix="/j/"/>
+      </intent-filter>
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="app.mettleup.fit" android:pathPrefix="/c/"/>
+      </intent-filter>
       <!-- v0.38.0 invite link: a gym's link (WhatsApp, front-desk QR) opens the app on "Join <gym>".
-           Verified against https://forgeai.aakashpahuja.in/.well-known/assetlinks.json. -->
+           The old address, kept for good (printed posters, old messages). Verified against
+           https://forgeai.aakashpahuja.in/.well-known/assetlinks.json (must list com.mettleup.app too). -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
@@ -65,7 +82,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="https" android:host="forgeai.aakashpahuja.in" android:pathPrefix="/c/"/>
       </intent-filter>
-      <!-- Health Connect (Android 13 and older): "why ForgeAI asks" opens the app. -->
+      <!-- Health Connect (Android 13 and older): "why MettleUp asks" opens the app. -->
       <intent-filter>
         <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
       </intent-filter>

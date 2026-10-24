@@ -36,7 +36,7 @@ export class DriveError extends PlainError {
 
 /** Drive backup can't work in this build (no Google client, or the build's key isn't registered). */
 export const DRIVE_NOT_IN_THIS_VERSION =
-  'Google Drive backup isn’t working in this version of ForgeAI. For now, keep a copy with Save my history (Settings → Save as a spreadsheet), and tell your gym.';
+  'Google Drive backup isn’t working in this version of MettleUp. For now, keep a copy with Save my history (Settings → Save as a spreadsheet), and tell your gym.';
 
 export const DRIVE_NO_INTERNET = 'Couldn’t reach Google Drive. Check your internet and try again.';
 
@@ -62,7 +62,7 @@ export function backupVersionWords(backupVersion: unknown, appVersion: number): 
   }
   // Older backups restore: every column added since comes back empty (see snapshot.ts).
   if (backupVersion <= appVersion) return null;
-  return 'This backup was made by a newer ForgeAI. Update ForgeAI from the Play Store, then restore again.';
+  return 'This backup was made by a newer MettleUp. Update MettleUp from the Play Store, then restore again.';
 }
 
 /**

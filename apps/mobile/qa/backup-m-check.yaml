@@ -2,7 +2,7 @@
 # restore, and after backup-m-after.yaml found the workout count again: what backup-m-prep.yaml set
 # must be back too. The profile name "QA Restore"; the Body fat 17.5 % entry; units "lb, miles";
 # the routine the script read before the backup (-e ROUTINE=<regex-escaped name>).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

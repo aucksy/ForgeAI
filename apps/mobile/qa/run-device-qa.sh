@@ -8,7 +8,7 @@ set -u
 APK="$1"
 QA_DIR="$(cd "$(dirname "$0")" && pwd)"
 OUT="${QA_OUT:-$PWD/qa-out}"
-PKG=com.forgeai.app
+PKG=com.mettleup.app
 mkdir -p "$OUT"
 export PATH="$PATH:$HOME/.maestro/bin"
 status=0
@@ -332,7 +332,7 @@ python3 "$QA_DIR/notif.py" over-locked "$OUT/notifications-after-rest.txt" "$TIC
 # the app's own rest-done sound (a raw resource of the app), not the phone's default tone, and the
 # old default-tone channel "rest-timer" is gone.
 REST_SOUND_CH=$(grep -o "NotificationChannel{mId='rest-over-sound'[^}]*" "$OUT/notifications-after-rest.txt" 2>/dev/null | head -1)
-if printf '%s' "$REST_SOUND_CH" | grep -q "mSound=android.resource://com.forgeai.app/raw/forge_rest_done" \
+if printf '%s' "$REST_SOUND_CH" | grep -q "mSound=android.resource://com.mettleup.app/raw/forge_rest_done" \
    && ! grep -q "NotificationChannel{mId='rest-timer'.*mDeleted=false" "$OUT/notifications-after-rest.txt"; then
   log "REST SOUND: OK (rest-over-sound plays the app's own rest sound; old rest-timer channel gone)"
 else
@@ -575,7 +575,7 @@ if grep -q "did not open" "$OUT/i-health-logcat.txt"; then
 fi
 # The reminders the app set (expo keeps them as alarms) and the widget the home screen holds.
 # NB: a count of dumpsys LINES that mention the app, not a count of alarms (audit QA-27).
-adb shell dumpsys alarm | grep -c "com.forgeai.app" > "$OUT/i-alarm-count.txt" 2>/dev/null || true
+adb shell dumpsys alarm | grep -c "com.mettleup.app" > "$OUT/i-alarm-count.txt" 2>/dev/null || true
 log "dumpsys alarm lines mentioning the app after part I (not an alarm count): $(cat "$OUT/i-alarm-count.txt" 2>/dev/null)"
 adb shell dumpsys appwidget > "$OUT/i-appwidget.txt" 2>/dev/null || true
 log "home-screen widget list saved (i-appwidget.txt); ForgeAI widget lines: $(grep -c 'com.forgeai.phone.TodayWidget' "$OUT/i-appwidget.txt" 2>/dev/null)"
@@ -1821,7 +1821,7 @@ fi
 # Maestro clears logcat when each part starts, so every part's own device log (in its
 # test-output folder) is read, plus the final logcat and Android's dropbox, which keeps crash
 # and ANR reports across logcat clears. Fails on: the app's Java crash (FATAL EXCEPTION for
-# com.forgeai.app), a native crash (Fatal signal ... (com.forgeai.app)), "ANR in com.forgeai.app",
+# com.mettleup.app), a native crash (Fatal signal ... (com.mettleup.app)), "ANR in com.mettleup.app",
 # an error-level React Native / JS line or an unhandled JS rejection, a Maestro crash/ANR report
 # (audit QA-07, QA-08). Another app's crash or ANR on the emulator is not ours and is ignored.
 adb logcat -d > "$OUT/logcat.txt"

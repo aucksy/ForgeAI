@@ -1,5 +1,5 @@
 # Part P2b: resume the paused workout from the same control.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     stopApp: false

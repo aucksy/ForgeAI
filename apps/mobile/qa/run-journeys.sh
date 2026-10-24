@@ -31,7 +31,7 @@ QA_DIR="$(cd "$(dirname "$0")" && pwd)"
 DASH_DIR="$(cd "$QA_DIR/../../dashboard" && pwd)"
 OUT="${QA_OUT:-$PWD/qa-out}"
 J_OUT="$OUT/journeys"
-PKG=com.forgeai.app
+PKG=com.mettleup.app
 export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
 mkdir -p "$OUT" "$J_OUT" "$XJ_STATE_DIR"
 chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true

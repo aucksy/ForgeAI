@@ -208,7 +208,7 @@ export default function EditProfileScreen() {
       showSaved();
     } catch (e) {
       if (e instanceof Error && e.message === 'camera-denied') {
-        void tell('Camera not allowed', 'Allow the camera for ForgeAI in your phone’s settings, or choose a photo instead.');
+        void tell('Camera not allowed', 'Allow the camera for MettleUp in your phone’s settings, or choose a photo instead.');
       } else void tell('Couldn’t change the photo', 'Please try again.');
     } finally {
       setPhotoBusy(false);

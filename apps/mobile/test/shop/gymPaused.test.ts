@@ -14,7 +14,7 @@ describe('a paused gym', () => {
 
   it('says the same plain words wherever a gym feature fails', () => {
     const err = classifyRpcError({ message: 'SUSPENDED' }, 400);
-    expect(GYM_PAUSED_TEXT).toBe("Your gym's ForgeAI account is paused. Your workouts are safe on this phone.");
+    expect(GYM_PAUSED_TEXT).toBe("Your gym's MettleUp account is paused. Your workouts are safe on this phone.");
     expect(refreshErrorText(err, true)).toBe(GYM_PAUSED_TEXT);
     expect(refreshErrorText(err, false)).toBe(GYM_PAUSED_TEXT);
     expect(placeFailure(err, [], []).message).toBe(GYM_PAUSED_TEXT);

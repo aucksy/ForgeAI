@@ -1,6 +1,6 @@
 /**
  * QR self check-in (15 Oct 2026) — the PURE half. The gym's poster carries the QR of
- * https://forgeai.aakashpahuja.in/c/<JOIN CODE> (panel: Attendance → Check-in QR); Android opens the
+ * https://app.mettleup.fit/c/<JOIN CODE> (old posters: forgeai.aakashpahuja.in; panel: Attendance → Check-in QR); Android opens the
  * app on "Check in at <gym>" (app/c/[code].tsx → CheckInScreen.tsx), which calls member_check_in
  * (supabase/migrations/0015_qr_checkin.sql) with this phone's member key. This file reads the
  * link, reads the server's answer, and picks every word the screen shows. No Supabase here
@@ -11,10 +11,10 @@ import { INVITE_HOST, isInviteHost } from './pendingInvite';
 
 // ------------------------------------------------------------------ the link
 
-/** The gym code in a check-in URL (https://<INVITE_HOST>/c/CODE or forgeai://c/CODE), else null. PURE. */
+/** The gym code in a check-in URL (https://<a gym-link host>/c/CODE, mettleup://c/CODE or forgeai://c/CODE), else null. PURE. */
 export function checkInCodeFromUrl(url: string | null | undefined): string | null {
   if (!url) return null;
-  const m = /^(?:https?:\/\/([^/?#]+)|forgeai:\/)\/c\/([^/?#]+)/i.exec(url.trim());
+  const m = /^(?:https?:\/\/([^/?#]+)|(?:mettleup|forgeai):\/)\/c\/([^/?#]+)/i.exec(url.trim());
   if (!m) return null;
   if (m[1] !== undefined && !isInviteHost(m[1])) return null;
   let raw = m[2];

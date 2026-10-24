@@ -2,19 +2,19 @@
 # the screen says what to do with the file. Then "Try again" while the database is STILL damaged:
 # the error screen again (a real retry that failed), never the welcome screen. The script then puts
 # the database back exactly as it was (tools/uat-root.sh db-restore).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: 'Keep this file somewhere safe\. If you need help, send it to your gym, who can pass it to ForgeAI to open\.'
+    visible: 'Keep this file somewhere safe\. If you need help, send it to your gym, who can pass it to MettleUp to open\.'
     timeout: 20000
-- assertVisible: "ForgeAI could not start"
+- assertVisible: "MettleUp could not start"
 - takeScreenshot: ub-04-file-saved-note
 - tapOn: "^Try again$"
 - extendedWaitUntil:
     visible: "^Try again$"
     timeout: 30000
 - extendedWaitUntil:
-    visible: "ForgeAI could not start"
+    visible: "MettleUp could not start"
     timeout: 30000
 - assertNotVisible: "Step 1 of 3|Your name|Load demo data instead"
 - assertNotVisible: "^Profile$"

@@ -1,5 +1,5 @@
 /**
- * Invite link: a gym's link (https://forgeai.aakashpahuja.in/j/RAMS01) tapped on a phone that has
+ * Invite link: a gym's link (https://app.mettleup.fit/j/RAMS01, or the old forgeai.aakashpahuja.in) tapped on a phone that has
  * not been set up yet. The first start shows the welcome flow INSTEAD of the app's screens
  * (app/_layout.tsx), so the link's own screen cannot open yet: the code is kept here and the
  * "Join <gym>" screen opens once the welcome flow is done.
@@ -10,23 +10,29 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** Where invite links live. The panel builds the same links (apps/dashboard src/crm/shop/invite.ts). */
-export const INVITE_HOST = 'forgeai.aakashpahuja.in';
+/**
+ * Where gym links live, newest first (MettleUp, R-105). The first is the address the app writes;
+ * every one of them is read, for good: the old address stays on printed posters and in old messages.
+ * The panel builds the same links (apps/dashboard src/crm/shop/invite.ts).
+ */
+export const INVITE_HOSTS = ['app.mettleup.fit', 'forgeai.aakashpahuja.in'] as const;
+export const INVITE_HOST: string = INVITE_HOSTS[0];
 
 const CODE = /^[A-Za-z0-9]{6}$/;
 
 /**
- * Is this a link's host the gym links' own? Its www. form and an explicit :443/:80 port count
- * (review of wave 4a); anything else — another site, a look-alike — does not. PURE.
+ * Is this a link's host one of the gym links' own? Its www. form and an explicit :443/:80 port
+ * count (review of wave 4a); anything else — another site, a look-alike — does not. PURE.
  */
 export function isInviteHost(host: string): boolean {
-  return host.toLowerCase().replace(/:(443|80)$/, '').replace(/^www\./, '') === INVITE_HOST;
+  const h = host.toLowerCase().replace(/:(443|80)$/, '').replace(/^www\./, '');
+  return (INVITE_HOSTS as readonly string[]).includes(h);
 }
 
-/** The gym code in an invite URL (https://<INVITE_HOST>/j/CODE or forgeai://j/CODE), else null. PURE. */
+/** The gym code in an invite URL (https://<a gym-link host>/j/CODE, mettleup://j/CODE or forgeai://j/CODE), else null. PURE. */
 export function inviteCodeFromUrl(url: string | null | undefined): string | null {
   if (!url) return null;
-  const m = /^(?:https?:\/\/([^/?#]+)|forgeai:\/)\/j\/([^/?#]+)/i.exec(url.trim());
+  const m = /^(?:https?:\/\/([^/?#]+)|(?:mettleup|forgeai):\/)\/j\/([^/?#]+)/i.exec(url.trim());
   if (!m) return null;
   if (m[1] !== undefined && !isInviteHost(m[1])) return null;
   let raw = m[2];

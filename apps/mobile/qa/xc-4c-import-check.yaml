@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 4c: killed mid-import, opened again: the app starts normally
 # (no start-up error screen) and the Profile shows a workout count. Whether that count is the demo's
 # alone (nothing kept) or the demo's plus the whole file is the script's verdict (the database).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

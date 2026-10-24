@@ -180,7 +180,7 @@ describe('workoutText', () => {
   it('opens with a request written for an AI, then the name, the day and the length', () => {
     const lines = workoutText(fullWorkout()).split('\n');
     expect(lines[0]).toBe(WORKOUT_TEXT_INTRO);
-    expect(lines[0]).toBe('Here is my workout from ForgeAI. Please review it and suggest what to change next time.');
+    expect(lines[0]).toBe('Here is my workout from MettleUp. Please review it and suggest what to change next time.');
     expect(lines).toContain('Workout: Push A');
     expect(lines).toContain('Date: Tue, 6 Oct 2026');
     expect(lines).toContain('Duration: 1h 05m');
@@ -327,7 +327,7 @@ describe('periodText — a month or a year', () => {
   it('workouts, days trained, time, sets, kg lifted without body weight, distance', () => {
     const text = periodText(month());
     const lines = text.split('\n');
-    expect(lines[0]).toBe('Here is my training for October 2026 from ForgeAI. Please review it and suggest what to change next month.');
+    expect(lines[0]).toBe('Here is my training for October 2026 from MettleUp. Please review it and suggest what to change next month.');
     expect(lines).toContain('October 2026');
     expect(lines).toContain('Workouts: 3');
     expect(lines).toContain('Days trained: 2');
@@ -363,7 +363,7 @@ describe('periodText — a month or a year', () => {
     expect(empty).toContain('No workouts were logged.');
     expect(empty).not.toContain('Workouts:');
     const year = periodText(month({ kind: 'year', label: '2026' }));
-    expect(year.split('\n')[0]).toBe('Here is my training for 2026 from ForgeAI. Please review it and suggest what to change from here.');
+    expect(year.split('\n')[0]).toBe('Here is my training for 2026 from MettleUp. Please review it and suggest what to change from here.');
     expect(year).toContain('Records this year:');
   });
 

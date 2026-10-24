@@ -1,6 +1,6 @@
 # Part INV, step C: another gym's link (RAMS01) while in FORGE1 — "Switch to this gym" joins the new
 # gym first and only then lets FORGE1 go; then Leave, so the phone ends in no gym as it started.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "Gym code RAMS01"

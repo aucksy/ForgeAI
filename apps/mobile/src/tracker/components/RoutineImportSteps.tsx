@@ -464,11 +464,11 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
       <View style={{ gap: space.lg }}>
         <View style={{ gap: space.xs }}>
           <Text style={HEAD()}>
-            {step.items.length} name{step.items.length === 1 ? ' is' : 's are'} new to ForgeAI
+            {step.items.length} name{step.items.length === 1 ? ' is' : 's are'} new to MettleUp
           </Text>
           <Text style={CAPTION()}>
             {asked.length > 0
-              ? 'Say “Yes” and the routine uses ForgeAI’s exercise, with your history. “Keep as new” adds it as your own exercise with this name.'
+              ? 'Say “Yes” and the routine uses MettleUp’s exercise, with your history. “Keep as new” adds it as your own exercise with this name.'
               : `We add ${step.items.length === 1 ? 'it' : 'them'} to your exercises with the same name, so your Hevy history and these routines stay together. Untick one to leave it out.`}
           </Text>
         </View>

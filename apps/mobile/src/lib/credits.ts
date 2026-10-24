@@ -46,7 +46,7 @@ export const CREDITS: readonly Credit[] = [
     sourceUrl: 'https://www.npmjs.com/package/react-native-body-highlighter',
     licenceName: 'MIT License',
     licenceUrl: 'https://opensource.org/license/mit',
-    changes: 'Split into ForgeAI’s own muscle areas.',
+    changes: 'Split into MettleUp’s own muscle areas.',
     fullText: BODY_MAP_LICENSE,
   },
   {

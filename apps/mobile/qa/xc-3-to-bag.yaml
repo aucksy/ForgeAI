@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), condition 3: the app opened afresh, PRODUCT into the bag, the bag open
 # with "Place order" centred (the bag's own refresh has just talked to the gym). The script then
 # cuts the network its own way and xc-3-tap.yaml taps the button.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: xc-sub-shop.yaml
 - extendedWaitUntil:

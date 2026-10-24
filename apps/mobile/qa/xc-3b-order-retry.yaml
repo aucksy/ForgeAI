@@ -1,6 +1,6 @@
 # Phone conditions (UAT WP7), condition 3b, back online: if the bag was kept, the member taps "Place
 # order" again (the same bag, so the same order id); then My orders shows exactly one ${PRODUCT} order.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow:
     when:

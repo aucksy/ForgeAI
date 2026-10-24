@@ -215,7 +215,7 @@ function HealthRow() {
       {state === 'off' && asked ? (
         <View style={{ gap: space.xs, paddingBottom: space.sm }}>
           <Text style={{ ...CAPTION(), textAlign: 'center' }}>
-            Nothing opened? Open Health Connect, find ForgeAI and allow it there.
+            Nothing opened? Open Health Connect, find MettleUp and allow it there.
           </Text>
           <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
         </View>
@@ -603,7 +603,7 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
         title="Home-screen widgets"
         caption={
           placed > 0
-            ? `${placed} on your home screen. Add another, or long-press your home screen → Widgets → ForgeAI.`
+            ? `${placed} on your home screen. Add another, or long-press your home screen → Widgets → MettleUp.`
             : "Today's workout and your week, on your home screen."
         }
         divider={divider}

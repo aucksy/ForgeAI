@@ -5,7 +5,7 @@
 # years, tools/make_big_hevy.py) ending on Saturday 27 Feb. Here: the welcome with "From Hevy",
 # the import, "Bring my routines in" → follow them, "Track RPE" on, then the Profile page's numbers
 # on a Monday that is also the 1st of a month (the day "Last 12 weeks" read 0 for the owner).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     clearState: true

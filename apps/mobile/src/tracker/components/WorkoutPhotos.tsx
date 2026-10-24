@@ -128,7 +128,7 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
   const openSettings = (): void => {
     Linking.openSettings().catch((e: unknown) => {
       warn(e);
-      setNote('Couldn’t open settings. Open your phone’s Settings, then Apps, then ForgeAI, and allow the camera.');
+      setNote('Couldn’t open settings. Open your phone’s Settings, then Apps, then MettleUp, and allow the camera.');
     });
   };
 

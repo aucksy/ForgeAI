@@ -4,7 +4,7 @@
 # covers Health Connect; part I2 covers notifications off). This part covers the camera: with the
 # camera permission taken away, Photos -> Add a photo -> Take a photo must show Android's own
 # camera question, and after "Don't allow" the app must say what happened and the way round.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     permissions:

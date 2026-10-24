@@ -162,7 +162,7 @@ export const AUTO_WORDS = {
   planEnded: (endedOn: string, today: string): string =>
     `Your plan ended on ${tinyDateWithYear(endedOn, today)}. Renew at the desk to keep your progress going.`,
   birthday: (name: string, gym: string): string => `Happy birthday${name ? `, ${name}` : ''}! Best wishes from all of us at ${gym}.`,
-  welcome: (name: string, gym: string): string => `Welcome to ${gym}${name ? `, ${name}` : ''}! Your plan and the gym's news are in ForgeAI.`,
+  welcome: (name: string, gym: string): string => `Welcome to ${gym}${name ? `, ${name}` : ''}! Your plan and the gym's news are in MettleUp.`,
   offerReward: (days: number, newEnd: string, today: string): string =>
     `${many(days, 'extra day', 'extra days')} added to your plan for your workouts. It now ends on ${tinyDateWithYear(newEnd, today)}.`,
   offerEnding: (endsOn: string, left: number, reward: number, today: string): string =>

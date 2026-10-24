@@ -100,7 +100,7 @@ describe('measurements', () => {
 });
 
 describe('progress photos stay in their own folder', () => {
-  const dir = 'file:///data/user/0/com.forgeai.app/files/progress-photos/';
+  const dir = 'file:///data/user/0/com.mettleup.app/files/progress-photos/';
   it('only ever deletes files the app put there', () => {
     expect(isOwnPhotoPath(`${dir}abc.jpg`, dir)).toBe(true);
     expect(isOwnPhotoPath('file:///sdcard/DCIM/me.jpg', dir)).toBe(false);

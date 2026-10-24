@@ -3,15 +3,18 @@
  * Google, see that the copy is up to date (or what is waiting for the internet), bring the copy back,
  * sign out, or delete the account. Hidden until the build can sign in (account.ts), so nothing here
  * promises a copy that does not exist. Google Drive backup stays below it as an extra copy.
+ * R-106: for gym members only (cloud/accountGate.ts); a member without a gym sees Drive backup alone.
  */
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 
+import { accountOffered } from '@/cloud/accountGate';
 import { ACCOUNT_WORDS, copyStatusLine } from '@/cloud/accountWords';
 import { askConfirm, Card, GhostButton, PrimaryButton } from '@/components/ui';
 import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
 import { success, warn } from '@/lib/haptics';
+import { useGymShop } from '@/shop/gymStore';
 import { useAccount } from '@/store/accountStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -23,6 +26,7 @@ export function AccountCard() {
   const status = useAccount((s) => s.status);
   const busy = useAccount((s) => s.busy);
   const note = useAccount((s) => s.note);
+  const inGym = useGymShop((s) => s.link != null);
 
   useFocusEffect(
     useCallback(() => {
@@ -30,7 +34,7 @@ export function AccountCard() {
     }, []),
   );
 
-  if (!configured) return null;
+  if (!accountOffered({ configured, inGym, signedIn: account != null })) return null;
 
   const signIn = async (): Promise<void> => {
     const r = await useAccount.getState().signIn();

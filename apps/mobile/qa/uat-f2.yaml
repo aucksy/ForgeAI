@@ -2,7 +2,7 @@
 # 2 (52.5 kg x 5) ticked. The app stays on the workout screen; the script then makes another
 # program hold the database's write lock (tools/uat-root.sh lock-hold), so the app's next save
 # is refused, as when the phone's storage chip or another app holds it.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "^Workout$"

@@ -3,7 +3,7 @@
 # own clock 75 minutes on (as root, the way time passes for a member who walked off): no set for an
 # hour, so the app must pause the workout timer by itself (uat-a2.yaml checks it).
 # Starts from a fresh install with the demo (gate-demo.yaml), so it runs alone (only=ua).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - runFlow: sub-workout-fresh.yaml

@@ -1,7 +1,7 @@
 # Part P1 (15 Oct 2026): Settings -> Workouts -> Plates and bars, every control pressed once
 # (audit rule: every button on every screen). Runs before part I switches the units to lb, so the
 # plates read in kg. A plate turned off, then the standard set brought back.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

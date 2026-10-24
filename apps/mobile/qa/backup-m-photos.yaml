@@ -4,7 +4,7 @@
 # turns ON Settings -> Backup -> "Include photos in my backup". The card must then say what it
 # backs up ("Backing up your 1 photo (0.1 MB)." / "Backing up all 2 photos (...)."). After the
 # uninstall + reinstall, backup-m-photos-check.yaml must find the photos again.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp
 - tapOn:

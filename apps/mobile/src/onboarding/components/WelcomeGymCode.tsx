@@ -16,9 +16,14 @@ import { color, space, type } from '@/theme/tokens';
 
 import { WELCOME_GYM_ASK, WELCOME_GYM_WHY, welcomeGymCode, welcomeGymKept } from '../welcomeGym';
 
-export function WelcomeGymCode() {
+/** `onKept`: told whenever a code starts or stops waiting (the welcome screen's Google button needs it, R-106). */
+export function WelcomeGymCode({ onKept }: { onKept?: (code: string | null) => void } = {}) {
   // A gym link opened before setup already waits: show it as saved.
   const [kept, setKept] = useState<string | null>(() => peekPendingInvite());
+
+  useEffect(() => {
+    onKept?.(kept);
+  }, [kept, onKept]);
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState('');
   const [error, setError] = useState<string | null>(null);

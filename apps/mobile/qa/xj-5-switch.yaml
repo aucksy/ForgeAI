@@ -5,7 +5,7 @@
 # run-journeys.sh measures the brand colour on both pictures.
 # Leave is in Settings → Your gym; the join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml),
 # which waits out gym B's "Welcome to" opening and lands on the Workout tab.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

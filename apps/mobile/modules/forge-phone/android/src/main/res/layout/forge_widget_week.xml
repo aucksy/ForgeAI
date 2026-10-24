@@ -23,7 +23,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
       android:maxLines="1"
-      android:text="ForgeAI"
+      android:text="MettleUp"
       android:textColor="#F2F3F5"
       android:textSize="18sp"
       android:textStyle="bold"/>
@@ -34,7 +34,7 @@
       android:layout_marginTop="2dp"
       android:ellipsize="end"
       android:maxLines="1"
-      android:text="Open ForgeAI to update"
+      android:text="Open MettleUp to update"
       android:textColor="#A0A4AE"
       android:textSize="13sp"/>
   <!-- Audit PH-10: the seven marks share the row, so they shrink to fit the smallest size.

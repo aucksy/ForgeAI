@@ -3,7 +3,7 @@
 # slide, buttons spring, the record pop-up animates in. Every other part runs with animations off.
 # Demo data, today's routine, a sheet opened and closed, set 1 ticked, the rest skipped, 300 kg
 # on set 2 (a new record: the pop-up), then the workout discarded. Screenshots: anim-*.png.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - takeScreenshot: anim-01-workout-tab

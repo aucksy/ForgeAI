@@ -218,7 +218,7 @@ export function parseSnapshot(json: string): BackupEnvelope {
   }
   const env = raw as Partial<BackupEnvelope> | null;
   if (!env || env.app !== APP_TAG || typeof env.tables !== 'object' || env.tables === null) {
-    throw new PlainError('That file isn’t a ForgeAI backup, so nothing was changed.');
+    throw new PlainError('That file isn’t a MettleUp backup, so nothing was changed.');
   }
   // C9-14: an OLDER backup restores (every column added since comes back empty, as the table
   // notes above say). Only a backup from a NEWER app is refused, with what to do about it.

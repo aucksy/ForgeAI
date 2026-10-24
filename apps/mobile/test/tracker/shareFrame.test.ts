@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 
 import { color } from '@/theme/tokens';
 import { buildMonthReport, buildYearReview, type ReportSession } from '@/tracker/engine/reports';
-import { FORGE_MARK } from '@/tracker/share/brand';
+import { FORGE_MARK, WORD_EMBER } from '@/tracker/share/brand';
 import {
   frameLayout,
   framedFileName,
@@ -177,7 +177,7 @@ describe('the background', () => {
       for (const t of texts(scene)) {
         if (t.fill === color.onAccent) continue; // a day number on its ember dot
         expect(t.shadow, `${name}: ${t.text}`).toBe(true);
-        if (t.text === 'AI') expect(brand.has(t.fill as never), `${name}: the wordmark's AI`).toBe(true);
+        if (t.text === WORD_EMBER) expect(brand.has(t.fill as never), `${name}: the wordmark's UP`).toBe(true);
         else expect(t.fill, `${name}: ${t.text}`).toBe('#FFFFFF');
       }
       // The ember mark is still there.

@@ -8,7 +8,7 @@
 # M-56: Finish then asks about a workout left open: "Open for 1h ..m. When did you finish?" with
 #   "Ended at <last set + rest>" (picked) and "Now"; the overview's length follows the choice
 #   (minutes / over an hour). Finished with "Ended at": the summary's Duration is minutes, not 1h+.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # ---------------------------------------------------------------- M-50: paused by itself
 # Checked once a minute while the app is open (src/tracker/services/idlePause.ts).

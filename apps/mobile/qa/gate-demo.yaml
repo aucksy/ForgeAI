@@ -1,7 +1,7 @@
 # Sub-flow for the audit-v2 gate parts (DND, LONGREST, ANIM, MK in run-device-qa.sh): a fresh
 # install's state (clearState) with the demo data loaded, the app on the Workout tab. Each gate
 # part starts from here, so it can run alone (qa-device.yml `only`) or after the full run.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - launchApp:
     clearState: true

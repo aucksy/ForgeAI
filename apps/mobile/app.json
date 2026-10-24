@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "ForgeAI",
+    "name": "MettleUp",
     "slug": "forgeai",
     "version": "0.55.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "forgeai",
+    "scheme": ["mettleup", "forgeai"],
     "userInterfaceStyle": "dark",
     "backgroundColor": "#07080C",
     "android": {
-      "package": "com.forgeai.app",
+      "package": "com.mettleup.app",
       "adaptiveIcon": {
         "backgroundColor": "#E8692A",
         "backgroundImage": "./assets/images/android-icon-background.png",
@@ -18,6 +18,18 @@
       },
       "predictiveBackGestureEnabled": false,
       "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "app.mettleup.fit", "pathPrefix": "/j/" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "app.mettleup.fit", "pathPrefix": "/c/" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
         {
           "action": "VIEW",
           "autoVerify": true,
@@ -64,15 +76,15 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "ForgeAI uses your photos so the AI coach can estimate nutrition from meal pictures.",
-          "cameraPermission": "ForgeAI uses the camera so you can snap a meal for instant nutrition estimates."
+          "photosPermission": "MettleUp uses your photos so the AI coach can estimate nutrition from meal pictures.",
+          "cameraPermission": "MettleUp uses the camera so you can snap a meal for instant nutrition estimates."
         }
       ],
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "ForgeAI uses the microphone so you can talk to your AI coach.",
-          "speechRecognitionPermission": "ForgeAI uses speech recognition so you can log workouts and meals by voice."
+          "microphonePermission": "MettleUp uses the microphone so you can talk to your AI coach.",
+          "speechRecognitionPermission": "MettleUp uses speech recognition so you can log workouts and meals by voice."
         }
       ],
       "expo-sqlite",
@@ -101,7 +113,8 @@
     "extra": {
       "router": {},
       "supabaseUrl": "https://hdxzqbdiokjklnypfisq.supabase.co",
-      "supabaseProxyUrl": "https://forgeai.aakashpahuja.in/sb",
+      "supabaseProxyUrl": "https://app.mettleup.fit/sb",
+      "supabaseProxyFallbackUrls": ["https://forgeai.aakashpahuja.in/sb"],
       "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo",
       "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID"
     },

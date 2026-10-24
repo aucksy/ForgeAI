@@ -113,7 +113,7 @@ import { askAndLeaveGym, askAndSwitchGym } from '@/shop/leaveFlow';
 import type { GymOrder } from '@/shop/types';
 
 const KEY = 'k'.repeat(48);
-const LINK = { memberKey: KEY, memberId: 'm1', gymId: 'g1', gymName: 'ForgeAI Test Gym', joinCode: 'FORGE1', name: 'Asha' };
+const LINK = { memberKey: KEY, memberId: 'm1', gymId: 'g1', gymName: 'MettleUp Test Gym', joinCode: 'FORGE1', name: 'Asha' };
 
 function row(n: number, status: string, totalP = 45000): Row {
   return {
@@ -160,17 +160,17 @@ beforeEach(() => {
 
 describe('U-G1: the words before Leave', () => {
   it('nothing open: the question is as before, without the old "orders stay" promise', () => {
-    const q = leaveQuestion({ gymName: 'ForgeAI Test Gym', branded: false, orders: [order(1, 'collected'), order(2, 'cancelled')] });
-    expect(q.title).toBe('Leave ForgeAI Test Gym?');
+    const q = leaveQuestion({ gymName: 'MettleUp Test Gym', branded: false, orders: [order(1, 'collected'), order(2, 'cancelled')] });
+    expect(q.title).toBe('Leave MettleUp Test Gym?');
     expect(q.confirmLabel).toBe('Leave gym');
     expect(q.cancelLabel).toBe('Stay');
     expect(q.body).toBe('Your workouts stay on this phone. You can join again with the code.');
-    expect(leaveQuestion({ gymName: 'X', branded: true, orders: [] }).body).toMatch(/goes back to ForgeAI's colours/);
+    expect(leaveQuestion({ gymName: 'X', branded: true, orders: [] }).body).toMatch(/goes back to MettleUp's colours/);
   });
 
   it('one open order: how much, and that leaving cancels it', () => {
     expect(openOrdersText([order(1, 'ordered', 45000)], 'leave')).toBe('You have 1 open order (₹450). Leaving cancels it.');
-    const q = leaveQuestion({ gymName: 'ForgeAI Test Gym', branded: false, orders: [order(1, 'ordered', 45000)] });
+    const q = leaveQuestion({ gymName: 'MettleUp Test Gym', branded: false, orders: [order(1, 'ordered', 45000)] });
     expect(q.body).toBe('You have 1 open order (₹450). Leaving cancels it. Your workouts stay on this phone. You can join again with the code.');
     expect(q.confirmLabel).toBe('Cancel order and leave');
   });
@@ -196,11 +196,11 @@ describe('U-G1: the words before Leave', () => {
   });
 
   it('switching gyms: asked only when something is open, in "switch" words', () => {
-    expect(switchQuestion({ fromGym: 'ForgeAI Test Gym', toGym: 'RAMS', orders: [order(1, 'collected')] })).toBeNull();
-    const q = switchQuestion({ fromGym: 'ForgeAI Test Gym', toGym: 'RAMS', orders: [order(1, 'ordered', 45000), order(2, 'ready')] });
+    expect(switchQuestion({ fromGym: 'MettleUp Test Gym', toGym: 'RAMS', orders: [order(1, 'collected')] })).toBeNull();
+    const q = switchQuestion({ fromGym: 'MettleUp Test Gym', toGym: 'RAMS', orders: [order(1, 'ordered', 45000), order(2, 'ready')] });
     expect(q?.title).toBe('Switch to RAMS?');
     expect(q?.body).toBe(
-      "You have 1 open order at ForgeAI Test Gym (₹450). Switching cancels it. 1 order is ready at ForgeAI Test Gym's desk. Collect it or ask the desk to cancel it before you switch.",
+      "You have 1 open order at MettleUp Test Gym (₹450). Switching cancels it. 1 order is ready at MettleUp Test Gym's desk. Collect it or ask the desk to cancel it before you switch.",
     );
     expect(q?.confirmLabel).toBe('Cancel order and switch');
     expect(switchQuestion({ fromGym: 'A', toGym: 'B', orders: [order(1, 'ready')] })?.confirmLabel).toBe('Switch anyway');
@@ -222,7 +222,7 @@ describe('U-G1: Leave cancels the open orders first', () => {
     joinedWith([row(1, 'ordered')]);
     answers = [true];
     await askAndLeaveGym(false);
-    expect(asked[0].title).toBe('Leave ForgeAI Test Gym?');
+    expect(asked[0].title).toBe('Leave MettleUp Test Gym?');
     expect(asked[0].body).toMatch(/You have 1 open order \(₹450\)\. Leaving cancels it\./);
     expect(server.orders[0].status).toBe('cancelled');
     expect(server.orders[0].cancelled_by).toBe('member');
@@ -356,7 +356,7 @@ describe('U-G1: switching gyms from an invite link follows the same rule', () =>
     expect(await askAndSwitchGym('RAMS01', 'Asha', 'RAMS')).toBe('stayed');
     expect(server.calls).not.toContain('member_cancel_order');
     expect(server.calls).not.toContain('member_join');
-    expect(useGymShop.getState().link?.gymName).toBe('ForgeAI Test Gym');
+    expect(useGymShop.getState().link?.gymName).toBe('MettleUp Test Gym');
   });
 
   it('U-G6: the new gym can\'t be reached: NOTHING is cancelled, not switched, told why', async () => {
@@ -364,12 +364,12 @@ describe('U-G1: switching gyms from an invite link follows the same rule', () =>
     answers = [true];
     server.previewOffline = true;
     const r = await askAndSwitchGym('RAMS01', 'Asha', "RAM'S FITNESS CLUB IMPACT");
-    expect(r).toMatch(/Nothing was cancelled: you are still in ForgeAI Test Gym\./);
+    expect(r).toMatch(/Nothing was cancelled: you are still in MettleUp Test Gym\./);
     expect(server.calls.indexOf('gym_preview')).toBeGreaterThan(-1);
     expect(server.calls).not.toContain('member_cancel_order');
     expect(server.calls).not.toContain('member_join');
     expect(server.orders[0].status).toBe('ordered');
-    expect(useGymShop.getState().link?.gymName).toBe('ForgeAI Test Gym');
+    expect(useGymShop.getState().link?.gymName).toBe('MettleUp Test Gym');
   });
 
   it('U-G6: the new gym is asked BEFORE the old gym\'s orders are cancelled', async () => {
@@ -388,6 +388,6 @@ describe('U-G1: switching gyms from an invite link follows the same rule', () =>
     expect(asked[1].body).toMatch(/No internet/);
     expect(asked[1].body).toMatch(/haven't switched gyms/);
     expect(server.calls).not.toContain('member_join');
-    expect(useGymShop.getState().link?.gymName).toBe('ForgeAI Test Gym');
+    expect(useGymShop.getState().link?.gymName).toBe('MettleUp Test Gym');
   });
 });

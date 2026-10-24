@@ -5,7 +5,7 @@
 # then sleeps the phone and reads the notification list.
 # Called with: maestro test -e REST="Rest 0:30" -e RING=off gate-rest.yaml (no env defaults
 # here: a flow-level default would override the caller's, trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
 - runFlow:

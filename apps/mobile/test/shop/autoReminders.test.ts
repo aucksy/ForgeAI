@@ -216,7 +216,7 @@ describe('welcome, birthday, one year', () => {
     const fresh = input({ appJoinedAt: new Date(2026, 9, 22, 18, 0).getTime(), membership: null });
     const first = planGymReminders(fresh);
     expect(first.reminders.map((r) => `${r.day} ${r.kase}`)).toEqual(['2026-10-23 welcome']);
-    expect(first.reminders[0].body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in ForgeAI.");
+    expect(first.reminders[0].body).toBe("Welcome to RAM'S FITNESS! Your plan and the gym's news are in MettleUp.");
     expect(first.sent).toEqual({ 'welcome:m1': '2026-10-23' });
     // The next day: it was delivered (its morning passed), so it is not set again.
     const next = planGymReminders({ ...fresh, now: new Date(2026, 9, 24, 8, 0), sent: first.sent });

@@ -399,10 +399,10 @@ private fun IdleScreen(notifAllowed: Boolean, onAllowNotif: () -> Unit) {
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center,
   ) {
-    Text("ForgeAI", color = Ember, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+    Text("MettleUp", color = Ember, fontSize = 15.sp, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(6.dp))
     Text(
-      "Start a workout in ForgeAI on your phone",
+      "Start a workout in MettleUp on your phone",
       color = Color.White,
       fontSize = 16.sp,
       textAlign = TextAlign.Center,

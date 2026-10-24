@@ -1,7 +1,7 @@
 # Phone conditions (UAT WP7), sub-flow: on the live workout of xc-sub-bench.yaml, the bench's rest set
 # to REST (a rest chip's spoken name: "Rest 0:30", "Rest 1:30", "Rest 3:00"), then set 1 ticked: the
 # rest is running when this ends ("Skip rest" on screen).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "More for .*"

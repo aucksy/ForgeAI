@@ -11,7 +11,7 @@
 # below the screen's edge, and a plain assertVisible / extendedWaitUntil never scrolls (trap 7).
 # Centred (trap 12/13): a sliver at the edge, or a row under the status bar, would pass but not tap.
 # No `env:` default here (trap 22).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - scrollUntilVisible:
     element: "${FIND}"

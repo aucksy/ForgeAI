@@ -2,7 +2,7 @@
 # its gym code (CODE, gym name GYM) on the Gym tab's "Join your gym" screen, then order 2 of the QA Shaker the owner
 # just added with stock 3 (the admin app, step XJ1a). The product page must say "Only 3 left" first. Ends on My orders:
 # Ordered, "The gym is getting it ready", 2 x QA Shaker.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

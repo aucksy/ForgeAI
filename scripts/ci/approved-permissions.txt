@@ -35,7 +35,8 @@ android.permission.USE_BIOMETRIC
 android.permission.USE_FINGERPRINT
 android.permission.WAKE_LOCK
 com.google.android.c2dm.permission.RECEIVE
-com.forgeai.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+# MettleUp (R-105): this one is named after the Play ID (applicationId), so it moved with it.
+com.mettleup.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 
 # Found by the first real check (release run 38045274611, v0.30.0). Already shipped in every
 # release before it; added by libraries, all "normal" permissions with no prompt to the member:

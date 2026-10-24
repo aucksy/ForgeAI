@@ -2,7 +2,7 @@
 # phone was just woken), the first exercise's rest changed to REST (e.g. "Rest 0:30"), set 2
 # ticked: a second rest runs, so its "Rest is over" comes within ~2 minutes of the first one
 # (Android 15+ notification cooldown). Called with: maestro test -e REST="Rest 0:30" gate-rest-again.yaml
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"

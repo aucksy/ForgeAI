@@ -1,7 +1,7 @@
 # Cross-role journey 6, member step: the app closed and opened again inside gym B. It starts in the
 # gym's look (the gym's opening, then its name under the title); the Workout tab is photographed
 # for the colour check (run-journeys.sh reads the brand colour off this picture).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - stopApp
 - launchApp

@@ -14,7 +14,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import { useReportWant, type NoticeSlotProps } from './noticeSlot';
 
-export const UPDATE_TITLE = 'A new version of ForgeAI is ready';
+export const UPDATE_TITLE = 'A new version of MettleUp is ready';
 export const UPDATE_LINE = 'Tap Get it, then open the file to install. Your workouts stay.';
 
 export function UpdateCard({ hidden = false, onWant, onDone }: NoticeSlotProps = {}) {

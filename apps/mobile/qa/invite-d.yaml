@@ -1,6 +1,6 @@
 # Part INV, step D: a link whose code no gym has — says so, and points at the Gym tab's code box
 # (Release A: the Gym tab's one "Join your gym" screen; the button is "Type a gym code").
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - extendedWaitUntil:
     visible: "This link is not a gym's"

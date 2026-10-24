@@ -1,6 +1,6 @@
 # Launch D5/D6 (21 Oct 2026): before joining a gym the member ticks "I'm 18 or older, and I agree
 # to ForgeAI's terms and privacy notice". Ticks it only when not yet ticked (a second call is a no-op).
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 # No hideKeyboard here: with no keyboard open, Android takes it as Back and leaves the screen (it
 # left the old join card in journeys run 39599886082, J1 step 3). Callers close the keyboard

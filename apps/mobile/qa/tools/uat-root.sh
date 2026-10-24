@@ -19,7 +19,7 @@
 #                 the space Android keeps back for itself stays free, as on a real full phone.
 #   unfill        the filler deleted.
 #   ls DIR        the files under the app's DIR (files/...), with sizes.
-PKG=com.forgeai.app
+PKG=com.mettleup.app
 APP=/data/data/$PKG
 D=$APP/files/SQLite
 B=/data/local/tmp/qa-ub

@@ -185,12 +185,12 @@ object Widgets {
     v.setTextColor(R.id.forge_today_action, accent)
     var path = "workout"
     if (t == null) {
-      v.setTextViewText(R.id.forge_today_title, "ForgeAI")
-      v.setTextViewText(R.id.forge_today_line, "Open ForgeAI to see your workout")
+      v.setTextViewText(R.id.forge_today_title, "MettleUp")
+      v.setTextViewText(R.id.forge_today_line, "Open MettleUp to see your workout")
       v.setTextViewText(R.id.forge_today_action, "Open")
-      v.setContentDescription(R.id.forge_today_root, "ForgeAI. Open ForgeAI to see your workout")
+      v.setContentDescription(R.id.forge_today_root, "MettleUp. Open MettleUp to see your workout")
     } else {
-      val title = t.optString("title", "ForgeAI")
+      val title = t.optString("title", "MettleUp")
       val line = t.optString("line", "")
       val action = t.optString("action", "Open")
       v.setTextViewText(R.id.forge_today_title, title)
@@ -269,8 +269,8 @@ object Widgets {
       v.setTextViewText(R.id.forge_week_line, later.optString("line", ""))
       paintDays(v, BooleanArray(7), todayIndexNow(), true, accent, onAccent)
     } else {
-      v.setTextViewText(R.id.forge_week_count, "ForgeAI")
-      v.setTextViewText(R.id.forge_week_line, "Open ForgeAI to update")
+      v.setTextViewText(R.id.forge_week_count, "MettleUp")
+      v.setTextViewText(R.id.forge_week_line, "Open MettleUp to update")
       paintDays(v, BooleanArray(7), -1, false, accent, onAccent)
     }
     // Redesign R1: the week opens the Profile (its chart and workouts); History is no longer a tab.

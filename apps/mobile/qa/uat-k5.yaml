@@ -1,7 +1,7 @@
 # UAT WP4b, part UK (M-110), step 5 of 5: the app-icon shortcut "Log body weight" (opened as the
 # launcher does) lands on Measures, on Body weight: its "Add measures" form starts with the body
 # weight box.
-appId: com.forgeai.app
+appId: com.mettleup.app
 ---
 - tapOn:
     text: "Wait"

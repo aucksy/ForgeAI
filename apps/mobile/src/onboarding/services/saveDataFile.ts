@@ -37,7 +37,7 @@ function stamp(now: Date): string {
 
 /** The name the member sees in the share sheet. */
 export function dataFileName(now: Date = new Date()): string {
-  return `forgeai-data-${stamp(now)}.db`;
+  return `mettleup-data-${stamp(now)}.db`;
 }
 
 /** `file:///data/…/x.db` → `/data/…/x.db` (SQLite wants a plain path). */
@@ -65,7 +65,7 @@ export async function saveDataFile(now: Date = new Date()): Promise<SaveDataFile
   try {
     if (!(await Sharing.isAvailableAsync())) return { ok: false, reason: 'no-share' };
     const name = dataFileName(now);
-    const dialogTitle = 'Save your ForgeAI data file';
+    const dialogTitle = 'Save your MettleUp data file';
 
     // Where expo-sqlite keeps the database. Checked first: never open (= create) a missing one.
     const dir = `${FileSystem.documentDirectory ?? ''}SQLite/`;

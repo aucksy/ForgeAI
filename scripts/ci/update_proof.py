@@ -27,7 +27,8 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import release_checks as rc  # noqa: E402
 
-PKG = "com.forgeai.app"
+# The phone app's package; cmd_device reads it from the new APK (MettleUp, R-105: com.mettleup.app).
+PKG = "com.mettleup.app"
 APK_SIG_BLOCK_MAGIC = b"APK Sig Block 42"
 V2_ID, V3_ID, V31_ID = 0x7109871A, 0xF05368C0, 0x1B93AD61
 
@@ -172,7 +173,24 @@ def cmd_fetch(a):
     return 0
 
 
+def other_app(old_apk, new_apk, title):
+    """MettleUp (R-105, 24 Oct 2026): the Play ID changed from com.forgeai.app to com.mettleup.app.
+    A previous release under another package is a DIFFERENT app on the phone: this build installs next
+    to it and never updates it, so there is nothing to prove in place. True (and reported) then; the
+    proof runs again from the first release under the new ID on."""
+    old_pkg, new_pkg = rc.badging(old_apk)["package"], rc.badging(new_apk)["package"]
+    if old_pkg == new_pkg:
+        return False
+    report("other-app", "INFO", f"the previous release is {old_pkg}, this build is {new_pkg}: a different app "
+                                "on the phone (a new Play ID), so no in-place update to prove")
+    rc.results[:] = results
+    rc.write_summary(title)
+    return True
+
+
 def cmd_static(a):
+    if other_app(a.old, a.new, "Update proof: signatures (static)"):
+        return 0
     old, new = open(a.old, "rb").read(), open(a.new, "rb").read()
     for name, data in (("previous", old), ("new", new)):
         for s, lo, hi, cert in signers(data):
@@ -220,8 +238,12 @@ def launch(out_dir, label):
 
 def cmd_device(a):
     os.makedirs(a.out, exist_ok=True)
+    global PKG
+    if other_app(a.old, a.new, "Update proof: previous release -> this build on an emulator"):
+        return 0
     old_bytes, new_bytes = open(a.old, "rb").read(), open(a.new, "rb").read()
     new_info = rc.badging(a.new)
+    PKG = new_info["package"]
     sdk = int(adb("shell", "getprop", "ro.build.version.sdk")[1].strip() or 0)
     abis = adb("shell", "getprop", "ro.product.cpu.abilist")[1].strip()
     print(f"Emulator API {sdk}, ABIs {abis}")

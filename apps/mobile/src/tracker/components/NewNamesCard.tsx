@@ -20,7 +20,7 @@ export function MatchRow({ s, same, onAnswer }: { s: NameSuggestion; same: boole
   return (
     <View style={{ gap: space.xs, paddingVertical: space.sm }}>
       <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.ink }}>{s.title}</Text>
-      <Text style={CAPTION()}>Same as ForgeAI’s {s.match.name}?</Text>
+      <Text style={CAPTION()}>Same as MettleUp’s {s.match.name}?</Text>
       <View style={{ flexDirection: 'row', gap: space.sm, marginTop: 2 }}>
         <Chip label="Yes" icon={same ? 'check' : undefined} selected={same} onPress={() => onAnswer(true)} />
         <Chip label="Keep as new" icon={!same ? 'check' : undefined} selected={!same} onPress={() => onAnswer(false)} />
@@ -33,7 +33,7 @@ export function MatchRow({ s, same, onAnswer }: { s: NameSuggestion; same: boole
 export function RenamedList({ renamed }: { renamed: readonly { from: string; to: string }[] }) {
   if (renamed.length === 0) return null;
   return (
-    <FoldSection title="Named differently in ForgeAI" count={renamed.length} noun="exercise">
+    <FoldSection title="Named differently in MettleUp" count={renamed.length} noun="exercise">
       <Card style={{ gap: space.xs }}>
         {renamed.map((r) => (
           <Text key={r.from} style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.ink }}>
@@ -65,11 +65,11 @@ export function NewNamesCard({
     <View style={{ gap: space.sm }}>
       <View style={{ gap: 2 }}>
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          {suggestions.length} name{suggestions.length === 1 ? ' is' : 's are'} new to ForgeAI
+          {suggestions.length} name{suggestions.length === 1 ? ' is' : 's are'} new to MettleUp
         </Text>
         <Text style={CAPTION()}>
           {asked.length > 0
-            ? 'Say “Yes” and its history joins ForgeAI’s exercise. “Keep as new” adds it as your own exercise with this name.'
+            ? 'Say “Yes” and its history joins MettleUp’s exercise. “Keep as new” adds it as your own exercise with this name.'
             : 'Each is added as your own exercise with the same name, so its history stays with it.'}
         </Text>
       </View>

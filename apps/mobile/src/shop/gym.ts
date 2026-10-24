@@ -10,7 +10,7 @@ import { parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES } from './catalog';
 import { lineKey, lineName, priceBag, rupees } from './money';
-import { INVITE_HOST, inviteCodeFromUrl } from './pendingInvite';
+import { INVITE_HOSTS, inviteCodeFromUrl } from './pendingInvite';
 import type { ArtKind, BagLine, GymLink, GymOrder, OrderLine, OrderStatus, Product, ProductOption, ShopCategory } from './types';
 
 // ------------------------------------------------------------------ join code
@@ -38,7 +38,7 @@ export function joinCodeFromTyped(raw: string): string {
     if (!word) continue;
     const lower = word.toLowerCase();
     // The gym link as WhatsApp sometimes shows it: no https:// in front.
-    const bare = lower.startsWith(INVITE_HOST) || lower.startsWith(`www.${INVITE_HOST}`);
+    const bare = INVITE_HOSTS.some((host) => lower.startsWith(host) || lower.startsWith(`www.${host}`));
     const code = inviteCodeFromUrl(bare ? `https://${word}` : word);
     if (code) return code;
     if (bare || /^(?:[a-z][a-z0-9+.-]*:\/\/|www\.)/i.test(word)) otherLink = true;
@@ -288,7 +288,7 @@ const CODES: readonly GymErrorKind[] = ['INVALID_CODE', 'EMPTY', 'BUSY', 'GONE',
  * read but nothing at the gym can change (orders, check-ins, offers). The member's own workouts live
  * on the phone and are untouched.
  */
-export const GYM_PAUSED_TEXT = "Your gym's ForgeAI account is paused. Your workouts are safe on this phone.";
+export const GYM_PAUSED_TEXT = "Your gym's MettleUp account is paused. Your workouts are safe on this phone.";
 
 /** Read an error from a Supabase call ({ message, hint }, plus the HTTP status). PURE. */
 export function classifyRpcError(error: unknown, status?: number): GymError {
@@ -613,7 +613,7 @@ function leaveButton(orders: readonly GymOrder[], kind: LeaveKind): string | nul
  */
 export function leaveQuestion(a: { gymName: string; branded: boolean; orders: readonly GymOrder[] }): LeaveQuestion {
   const base = a.branded
-    ? "The app goes back to ForgeAI's colours. Your workouts stay on this phone. You can join again with the code."
+    ? "The app goes back to MettleUp's colours. Your workouts stay on this phone. You can join again with the code."
     : 'Your workouts stay on this phone. You can join again with the code.';
   const open = openOrdersText(a.orders, 'leave');
   return {
