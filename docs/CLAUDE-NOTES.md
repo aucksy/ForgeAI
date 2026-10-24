@@ -37,6 +37,12 @@ changes in flight", only after its tests pass in CI); (2) 0.56.0: phone tests �
 (mettleup.fit/app) = tester link #1 that works without Play; (3) Play closed test with mettleup-testers@googlegroups.com:
 AAB upload, store listing, send for review = tester link #2 (Google's review may take hours to days).
 
+**R-121 overnight log:** demo/Branding/messages deployed 24 Oct ~10:40 pm. R-120 built (commits d0bdd30..698bb50, CI green,
+0035 test 54 + security 9 in CI) but HELD, not live: the privacy notice says measurements never reach the gym, so 0035
+needs his yes to the 3 drafted privacy edits (top of docs/launch/PRIVACY-NOTICE.md, "PROPOSED CHANGE, R-120") — legal
+wording is his call (#18). Admin panel not redeployed with R-120 (its pages would only say "not switched on"). Ask as a
+Decide in the morning summary.
+
 ## R-120. From the GGMS menu: build trainer measurements + diet plans (picked A); calorie research — 24 Oct 2026
 **Owner said:** sent photos of GGMS's full menu: "check if there is something worth building in our admin panel which
 owners will use". I mapped it: 14 covered, worth building = measurements taken by the trainer, diet plans from the
