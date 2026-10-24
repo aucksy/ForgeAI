@@ -320,6 +320,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**TASK DONE (24 Oct, 01:01 pm, via the page)**
 **Why:** you asked that every word members read gets checked by Gemini, with the full context. The check is built: before any member-facing text ships, Claude sends the draft and its context to Gemini, compares the two versions and checks the facts. It runs only with your own Gemini key, and only you can make that key.
 **Your task:** Open https://aistudio.google.com/apikey, press "Create API key", pick any project, and copy the key.
 **Your task:** Open PowerShell on this computer and run this one line, with your key between the quotes: setx GEMINI_API_KEY "your-key-here"
@@ -328,6 +329,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 55. Switch on free trials: one live server change (part 4 of your owner panel) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:37 pm, via the page)**
 **What it does:** every gym gets 3 months free, with no card. Your owner panel shows how many days each gym has left. You can extend a trial up to 6 months, with a reason that is logged. The gym owner sees "Free trial: 41 days left" on the Today screen. When a trial ends, nothing locks: members keep their app, and the owner sees "Pick a ForgeAI pack to keep going". Your panel can also record each gym's pack (Starter, Pro, AI), monthly, yearly or lifetime, and paid until when.
 **What is already live without it:** the new landing page with prices, the "Start free" sign-up, and the new owner panel (search, filters, export). Until you say yes, the panel shows "Trials need the database update".
 **Safe:** it only adds new columns and two new owner-panel actions. It changes no member data. It was tested on a copy (41 checks pass). Existing gyms start their 3 months on the day it goes in.
@@ -338,6 +340,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 54. How much of a gym's data should you see in your owner panel? — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:47 pm, via the page)**
 **You asked:** in your owner panel (ForgeAI HQ), will you see each gym's member data? Do you need it? Should you have it?
 **My answer:** No, not by default. Your panel shows each gym's own facts: name, owner, mobile, plan, trial, how many members, last activity. It never shows member names, phones or payments. Four reasons:
 1. **The law.** Under India's data law (DPDP Act 2023), the gym owns its members' data and ForgeAI only keeps it for the gym. Looking at it without the gym's OK is a risk for you, not a feature.
@@ -398,6 +401,7 @@ governance; maybe you log in and see most of the data. Decide the correct implem
 ## 50. Members' workouts on our own server: how many fit in the free plan? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:57 pm, via the page)**
 **You asked:** if we store every member's workouts in our own database (Supabase), how many members fit in the
 free plan, and for how long, if they start today?
 **My answer:** Many more than we will have for a long time, if we store them the compact way.
@@ -527,6 +531,7 @@ software only offers a fixed upload template, and nobody reads a photo of a pape
 ## 46. Trainers see their members' progress: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:46 pm, via the page)**
 **You asked:** trainers should see if members are progressing, encourage them, and help the gym sell
 personal training. Research it and decide the best way.
 **My answer:** Build it as a tool that tells a trainer who to talk to today and what to say, not a sales list.
@@ -553,6 +558,7 @@ personal training. Research it and decide the best way.
 ## 45. Count reps by listening: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:58 pm, via the page)**
 **You asked:** in a hard set people lose count. Could the app listen to the member counting (earbud mic)
 and log the set by itself? Or is there a better way?
 **My answer:** Build the listening idea, with one change: use the phone's own microphone, not the earbuds'.
@@ -639,6 +645,7 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:55 pm, via the page)**
 **You asked (17 Oct, #11):** "log in with Google etc., with 'join via your gym membership' right below;
 the app must also work with no gym." You chose: research it properly first, then come back with options.
 **My answer:** Google sign-in is free and the app already has the Google sign-in part (used by Drive
@@ -672,6 +679,7 @@ account, so the first real backup will be on your phone; I will tell you exactly
 ## 41. How do we price an owner with 2 or more branches? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 01:01 pm, via the page)**
 **You asked (comment on the feature backlog, 22 Oct):** "We need to plan it. Even small GYMs have 2
 branches sometimes - But I need your input on how the pricing should work. per GYM per XX members or just
 XX members across any number of GYMs". (You wrote it on "Separate app per gym"; I read it as being about
@@ -756,6 +764,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 01:02 pm, via the page)**
 **Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
 **Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
 **Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
@@ -769,6 +778,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 01:05 pm, via the page)**
 **Your task:** Visit the gym with the one-page question sheet (about 45 minutes): https://github.com/aucksy/ForgeAI/blob/main/docs/launch/GYM-VISIT.md
 **Your task:** Ask the desk to export from GGMS whatever it can (members, plans, dues, payment history, attendance; Excel best) and get a copy, plus photos of 2 receipts.
 **Your task:** Send Claude the answers (typed, voice note text, or photos of your notes) and the export files.
@@ -784,6 +794,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 01:04 pm, via the page)**
 **Your task:** If you say yes in #27: in Supabase (https://supabase.com/dashboard), open the project → Billing → upgrade the organisation to Pro. Leave "Spend cap" ON.
 **Your task:** In Supabase, create a second, free project named `forgeai-staging`, region Mumbai (Claude fills it with the same tables, for testing changes before they reach the gym).
 **Your task:** Turn on two-step sign-in (an authenticator app) on Supabase, GitHub, Cloudflare and your Google account.
@@ -794,6 +805,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 33. Launch decision: your support hours during the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:50 pm, via the page)**
 **Decide:** When will you answer the gym's WhatsApp support group during the 8-week trial?
 - A: Gym rush hours (about 6-10 am and 5-9 pm) on gym days: payment problems answered within 15 minutes, everything else the same day (recommended)
 - B: Evenings only, within 2 hours; the desk uses paper or GGMS for anything urgent
@@ -802,6 +814,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 32. Launch decision: should ForgeAI register for GST now? — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:50 pm, via the page)**
 **Decide:** Register ForgeAI for GST now?
 - A: Not now: registration is required only above ₹20 lakh a year; gyms cannot claim back GST since Sep 2025, so our 18% GST would be a straight extra cost to the gym (recommended)
 - B: Register now (needed only if you want to bill GST from day one, for example as a company)
@@ -828,6 +841,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 28. Launch decision: which Google Play account — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:40 pm, via the page)**
 **Decide:** Which kind of Google Play developer account?
 - A: Personal account ($25 once, ready in days). Before going public, the app needs 12 testers using it for 14 days in a row: the gym's members can be those testers (recommended)
 - B: Organisation account: no 12-tester rule, but needs a registered company and a free D-U-N-S number (can take up to 30 days)
@@ -836,6 +850,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 12:44 pm, via the page)**
 **Decide:** When do we move the live server to the paid plan (Supabase Pro, $25 a month, about ₹2,100)?
 - A: Now, before the gym's real data goes in (recommended)
 - B: In the switch-over week
@@ -844,6 +859,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**TASK DONE (24 Oct, 01:05 pm, via the page)**
 **Your task:** Install v0.48.0 on your phone: https://github.com/aucksy/ForgeAI/releases/download/v0.48.0/forgeai-v0.48.0.apk
 **Your task:** Do one real workout with it, and tell me anything that looks or feels wrong (a screenshot helps).
 **Why:** every automatic test passed, but you are the first real person in a real gym on this
@@ -852,6 +868,8 @@ version (new: gym workout plans, kg to beat per exercise, My membership, check-i
 ## 25. Set up Google Test Lab (free, about 10 minutes) — 18 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**TASK DONE (24 Oct, 01:15 pm, via the page)**
+**READ (24 Oct, 01:15 pm, via the page)**
 **Your task:** Follow the 5 short steps in `docs/uat/TEST-LAB-SETUP.md` (on GitHub: https://github.com/aucksy/ForgeAI/blob/main/docs/uat/TEST-LAB-SETUP.md): make a free Firebase project `forgeai-testlab`, turn on 2 services, make a key, and add `TEST_LAB_PROJECT` and `TEST_LAB_KEY` to the GitHub secrets.
 **Your task:** Then tap "I have done it" here (or tell me "Test Lab is set up").
 **Why:** after that, every release is tried by Google's robot on 5 real phones (Samsung, Xiaomi,

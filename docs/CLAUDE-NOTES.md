@@ -5,6 +5,36 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-99. His tracker answers of 24 Oct (12:37-1:15 pm): 15 entries — 24 Oct 2026
+**Owner said (on the page, absorbed 24 Oct):**
+- #55 A: apply the free-trial database update now. #54 A: HQ shows gym facts and counts only. #45 B: rep counting not now.
+  #32 A: no GST now. #25, #26, #56 marked done (Test Lab set up on the simpleapps108 account; he wants every brand
+  setting moved to one brand Google account later; Gemini key set).
+- #50 A + note: store members' workouts on OUR server from the start (like Hevy), don't depend on Google Drive (not
+  everyone has space); use the free Supabase now (fits ~1,500 members), try with 10-20 members, decide later. "you decide".
+- #27 B + note: park the paid plan until testing and the market check are done; research whether our own database beats
+  Drive backups; start the trial on the free tier if it holds 50-100 members.
+- #46 A + note: skip member consent for the trainer view; the gym gives the app free as part of membership, so put it in
+  the terms with a positive spin, "unless you see there is a legal risk".
+- #43 A + note: Google sign-in yes. Members without a gym (or whose gym is not on ForgeAI) get limited features (like
+  Hevy's routine limit); gym members get everything; tell people "join through your gym to unlock everything". I decide
+  the launch rules from research. WhatsApp one-time codes later, once it makes money. "For now try three things."
+- #41 A + note: BUILD multi-branch from the beginning, complete (he will approach gyms with branches). Test the AI data
+  import thoroughly with every kind of data, extra fields, one central sheet with a branch column; the system adapts; a
+  failure path. "You are the boss and the expert; do it correctly."
+- #38 note: no physical signing; a scalable digital acceptance of the terms online for gyms anywhere.
+- #36 note: he will onboard RAM'S FITNESS CLUB IMPACT himself end to end (create the account, export GGMS, AI import) in
+  1-2 weeks, once the planned features are built.
+- #34 note: asks how big a deal the 7-day pause of the free server is (data is not lost; members will keep it active).
+- #33 B + note: no fixed support hours; say "as soon as possible". Research and set up the automated support and fixes
+  system (AI support, end-to-end automated fixes and releases). Tracker: let him UNDO a picked option.
+- #28 A + note: he already has a Play developer account (simpleapps108@gmail.com, open in Chrome); submit the app for
+  internal testing so he can add testers' emails; OK to test with his first client for a few months and rebrand later.
+**What I do:** apply 0030; test Gemini; tracker "undo a pick"; answer #34/#38/#27/#50/#46/#43 in the tracker; record the
+decisions; then build in order: server storage of workouts (#50), multi-branch + robust AI import (#41/#36), digital
+agreement (#38), trainer view with a notice + opt-out (#46), free-vs-gym limits + Google sign-in (#43), Play internal
+test (#28), automated support research (#33). Each live database step asks his yes first.
+
 ## R-98. Plain English for members; "What's new" with a button to try each change; last 3 updates in Settings — 24 Oct 2026
 **Owner said:** deep disappointment with user-facing English ("Do you want users to read these, thinking they know every
 functionality of the app?"). Keep notes user-friendly, plain, with enough context; research and install a writing skill
