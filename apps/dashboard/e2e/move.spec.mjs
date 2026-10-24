@@ -133,6 +133,8 @@ test('J105d a hand-over from any other site is refused', async ({ page }) => {
   const res = await handleMove(
     new Request(`${NEW}/api/move`, { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'm=abc' }),
   );
-  expect(res.status).toBe(403);
+  // Refused: sent to the sign-in at this address, nothing written (no bare error page).
+  expect(res.status).toBe(303);
+  expect(res.headers.get('Location')).toBe('/');
   void page;
 });
