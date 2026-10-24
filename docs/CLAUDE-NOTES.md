@@ -13,6 +13,12 @@ have an idea, it may not be like remain same all the time. So I don't know why y
 normal Chrome tab opens offline too, after one online visit + sign-in on that device (not in Incognito, not after clearing
 site data). He is right on #2: he decided the whole CRM offline on 18 Oct (#7). Claude builds step 3 now (payments and new
 members offline, a receipt series per desk device). New hard rule saved: never-ask-him-what-he-cannot-know. Status: started.
+**RESUME HERE (24 Oct, usage limit hit):** 0031, 0033, 0032 are LIVE (all tests PASS: 115/27/58, security 9). Privacy +
+agreement + AI name hiding committed a74187c. NOT done: (1) deploy admin app + HQ + panel Worker: run
+scratchpad deploy_clean.ps1 (clean worktree of HEAD at D:\Apps\ForgeAI\deploy-wt, checks), then wrangler deploy in
+deploy/panel and deploy/hq; mark 0031-0033 headers applied; tracker #59 DECIDED + Done rows. (2) Two builders were STOPPED
+mid-work with UNCOMMITTED partial edits: Release A layout (apps/mobile) and offline step 3 (apps/dashboard: receipts
+first). Restart each, telling it to read git diff first and continue. (3) #37 contact blanks keep privacy pages on hold.
 
 ## R-103. His #59 answers: switch on 0031 + 0033, approve the privacy words (so 0032 too), hide names from the AI — 24 Oct 2026
 **Owner said (on the page, 3:35 pm):** #59 "Switch them on?" A: "Yes: 0031 (branches) and 0033 (terms) now, 0032
