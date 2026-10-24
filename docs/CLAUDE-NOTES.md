@@ -29,6 +29,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-116. Three apps, three icons: badges for Admin and HQ — 24 Oct 2026 (~8:10 pm)
+**Owner said:** HQ installed on his phone and works. "The app icons for the actual member app, the admin app, and the
+headquarters app need to be different. The main app icon I approved should be the actual [member] app icon, with slight
+variations or additions that distinguish the admin app and the HQ app... add a badge that says 'admin' and 'HQ'."
+**Done:** branding/mettleup/_src/make_app_badges.py: the approved icon + a pill badge at the hexagon's foot (ADMIN white,
+HQ Molten, Steel ring, Manrope ExtraBold); maskable versions keep the badge in the safe circle. Admin app uses
+/brand/admin-*.png (manifest + index.html); HQ uses apps/hq/public/icons. Member app icon unchanged. (Also R-115 follow-up:
+he fixed the HQ Google client himself; hq.mettleup.fit sign-in verified; contact@ forwarding rule live via wrangler.)
+
 ## R-115. No ForgeAI anywhere he looks — 24 Oct 2026 (~7:45 pm)
 **Owner said:** "Why do I have HQ still on forgeAI - we are removing forgeAI from everywhere mate... We are moving to
 mettleup." (I had told him to install HQ from forgeai-hq.aakashpahuja.in because hq.mettleup.fit's Google sign-in fails:
