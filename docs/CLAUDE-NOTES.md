@@ -5,6 +5,30 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## RESUME HERE (24 Oct, ~6:20 pm IST, context 91%: owner asked to compact) — supersedes older resume lines
+- **Decided today:** brand MettleUp (mettleup.fit marketed, mettleup.in redirects), logo E Forged, Play ID com.mettleup.app,
+  contact@mettleup.fit + Grievance Officer Aakash Pahuja (#37 done), teens later (#63 A), trainer view A (#46), Play declarations
+  yes (R-109). Play app created: id 4973234719959672731 (SimpleApps108, Browser 1 = simpleapps108 Chrome profile); all 10 App
+  content forms saved; internal-test email list holds mettleup-testers@googlegroups.com (internal test may not accept groups:
+  make a CLOSED test with the group too — it also starts Play's 12-testers/14-days clock).
+- **Live:** 0031/0032/0033 applied. **Not deployed yet:** web (admin app/landing/HQ at mettleup.fit / app. / hq.) — waits for
+  DNS: nameservers re-saved at Namecheap 24 Oct ~6 pm via angular SaveDomainNameservers (first save had silently failed);
+  background poll b6gc0yqh8 (scratchpad ns_wait.py) prints when both show Cloudflare. Then: delete parking DNS records in the
+  mettleup.in zone, Cloudflare zone settings (Email Obfuscation off, RUM off, Always HTTPS), Email Routing
+  contact@mettleup.fit -> simpleapps108@gmail.com (he clicks Google's verify mail), deploy deploy/panel + deploy/hq (clean
+  worktree; checks: tsc -b, vitest, playwright with E2E_CHROME, node --test deploy/panel/*.test.mjs, deploy/hq), add Google OAuth
+  origin/redirect for hq.mettleup.fit and Supabase redirect URL app.mettleup.fit/** (dashboard steps in apps/dashboard/README).
+- **App 0.56.0 (not tagged):** pre-release review said NO until: APK renamed mettleup-<tag>.apk (old ForgeAI phones must not see
+  it as an update), website live (assetlinks both packages, join/checkin intents), HC duplicates, nits. Fix agent running
+  (ab9acea7a6a845bf4); then commit, bump app.json 0.56.0 + PROGRESS, push, wait CI + Device QA default/owner + journeys on the
+  release commit, tag v0.56.0, verify releases/download/v0.56.0/mettleup-v0.56.0.apk. Then: Play App Signing SHA-256 into
+  assetlinks; AAB upload to internal + closed test; screenshots from the QA phone runs -> branding/mettleup/store/compose.py;
+  store listing (title, short/long text, feature graphic, icon, 8 shots incl. panorama pair 1-2); permission forms (Health
+  Connect, exact alarm) appear after the upload. Pipeline: GitHub Actions upload to Play via Workload Identity Federation
+  (keyless) or a service-account key he makes; not built yet.
+- **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
+  series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
+
 ## R-111. Complaints contact: contact@mettleup.fit, name Aakash Pahuja — 24 Oct 2026
 **Owner said:** "contact@mettleup.fit — We will set it up to route the emails to a Gmail account that I'll probably create".
 Asked in chat: name shown = "Aakash Pahuja"; until the new Gmail exists, forward to simpleapps108@gmail.com.
