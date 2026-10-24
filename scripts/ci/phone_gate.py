@@ -20,7 +20,8 @@ Each phone passes when ONE of these is true:
   2. One passed on a recent first-parent ANCESTOR (up to MAX_WALK commits back),
      AND the ancestor -> tag diff touches ONLY things that never change the installed app:
        - PROGRESS.md, CONTEXT.md, anything under docs/
-       - unit tests (apps/mobile/test/**) and the CI scripts (scripts/ci/**)
+       - unit tests (apps/mobile/test/**), the CI scripts (scripts/ci/**) and the journey tests
+         (apps/dashboard/e2e-live/**: Playwright code that drives the admin app; never in the APK)
        - apps/mobile/app.json, where every changed line is the "version" line
      (e.g. a unit-test fix, then "bump the version, update PROGRESS", on top of the tested one).
   3. A MANUAL run (workflow_dispatch) with the input skip_phone_gate=true. Tag pushes never skip.
@@ -51,8 +52,9 @@ CI_WORKFLOW = os.environ.get("CI_WORKFLOW", "ci.yml")
 CI_WAIT_SECONDS = int(os.environ.get("CI_WAIT_SECONDS", "1500"))
 
 PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
-# None of these is built into the APK: notes, unit tests (vitest only) and the CI check scripts.
-PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/")
+# None of these is built into the APK: notes, unit tests (vitest only), the CI check scripts and the
+# journey tests (Playwright for the admin app).
+PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/", "apps/dashboard/e2e-live/")
 MAX_WALK = 8
 APP_JSON = "apps/mobile/app.json"
 VERSION_LINE = re.compile(r'^\s*"version"\s*:\s*"[^"]*"\s*,?\s*$')
