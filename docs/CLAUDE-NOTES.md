@@ -9,7 +9,8 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 **Owner said:** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around
 Mettle that gives a feel of progressive overload"
 **What Claude does:** checks his 4 plus new Mettle names (.com/.in/.app, apps, trademarks), table in chat; adds it to
-tracker #44 as round 7. Status: started.
+tracker #44 as round 7. DONE 24 Oct: 60 names checked; pick A MettleUp (.in/.app free, .com parked at GoDaddy),
+all-free backups MoreMettle, MettleStep; cautions: "metal" sound, Bear Grylls Mettle app, NatWest Mettle.
 
 ## R-100. Two researches: a new brand name, and what members' apps do that we don't — 24 Oct 2026
 **Owner said:** "I want you to initiate two researches. First, research the list of names I just shared for a new

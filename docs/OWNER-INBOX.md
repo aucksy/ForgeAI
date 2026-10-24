@@ -17,7 +17,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | 58 | What to build next from the other apps (20 ideas) | A: the top 5, one release at a time |
 | 57 | The app's new Play Store ID (Google says com.forgeai.app is taken) | A: com.simpleapps.forgeai |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
-| 44 | Brand name (round 6: your 80 names) | A: SetBook |
+| 44 | Brand name (round 7: Mettle names) | A: MettleUp |
 
 ---
 
@@ -739,11 +739,32 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 **Dropped:** "Cast" (sounds like "caste"), "Bar" (a liquor bar), "Steel" (a live STEELBOOK trademark; utensils in India), Ledger/Chronicle/Folio (hard words), names whose .com is a live business or app (RepLog, SetLog, RepCard, IronDiary, Lift Card...), Weld/Grind/Press/Stack (factory feel), "Sheet" (sounds like the owner's import sheet), PRBook ("PR" is a banned word), MaxBook (Max Healthcare), most "Rep" names (crowded with small apps).
 **Cost:** .in about ₹750-950 a year. A free .com about ₹1,000-1,600 a year (Porkbun or Cloudflare about ₹1,050 every year; GoDaddy/Hostinger ₹1 only with 3 years paid, then about ₹1,500-1,600). Cloudflare does not sell .in. Namecheap says .com prices go up on 1 Nov.
 **Not proven:** the official Indian trademark search has a captcha, so I used a copy of the register (top 30 matches). Ask a lawyer, or search ipindia.gov.in yourself, before paying for a logo.
+**YOUR REPLY (24 Oct, chat):** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around Mettle that gives a feel of progressive overload"
+**ROUND 7 (24 Oct): Mettle names.** "Mettle" means the courage to keep going when it gets hard; "test your mettle" is a common phrase. I checked 60 Mettle names at the official registries (.com, .in, .app).
+- **Your 4:** **MettleUp**: .in and .app free; the .com is parked at GoDaddy (bought 2023, renewed to 2027, no price shown; an offer may work). **MettleLogs**: all three free. **MettleTracker**: .in and .app free; the .com is a live app, "Mettle - The Private Gym for Social Confidence". **MettleBooks**: .in and .app free; the .com is a live online shop.
+- **New ones with an "add a little more each week" feel, all 3 endings free at the normal price:** **MoreMettle** ("one more rep" = more mettle) · **MettleStep** (one step up each week) · **MettleClimb** · **MettleNotch** (notch it up) · **AddMettle** · **MettleRaise** · **MettleLadder** · **MettleNext** · **MettleBuild** · **MettleKG** · and your **MettleBook**.
+- **Taken .com:** MettleGain, MettleRise (a software company), MettleSet (coming soon page), MettleOn, MettlePlus, MettleProof, BuildMettle, ProveMettle, MettleGym, MettleFit, MettleClub, MettleForge, Mettlesmith, MettleTrack and others.
+
+| Name | .com | .in | .app | Overload feel | Note |
+|---|---|---|---|---|---|
+| MettleUp | Parked (GoDaddy, no price) | Free | Free | Best: "level up" | Your pick; try an offer, or start on mettleup.in |
+| MoreMettle | Free | Free | Free | Strong: "one more" | Reads like a slogan |
+| MettleStep | Free | Free | Free | Strong: step up | Plain and clear |
+| MettleNotch | Free | Free | Free | Strong: notch up | "Notch" is a less common word |
+| MettleClimb | Free | Free | Free | Good | Longer to say |
+| AddMettle | Free | Free | Free | Good | Sounds like an advert |
+| MettleBook | Free | Free | Free | Weak: a log, not growth | Fits owners' records best |
+| MettleLogs | Free | Free | Free | Weak | Fits members' logging |
+
+**Cautions about "Mettle" itself:**
+- On a phone call it sounds like "metal"; spell it once: M-E-T-T-L-E.
+- Other brands use the word: "Mettle: Mental Fitness for Men" (Bear Grylls' app, on Play and the App Store); NatWest's "Mettle" business bank app (UK); a "Mettle Fitness" gym in Hyderabad; "MettleMingle", a gym booking app. A two-word name (MettleUp, MoreMettle) keeps us apart, but a plain "Mettle" logo would not.
+- The official Indian trademark search still needs a person (captcha); search "Mettle" in classes 9, 41 and 42 at ipindia.gov.in, or ask a lawyer, before paying for a logo.
 **Decide:** Which name?
-- A: SetBook: "set" every member knows, "Book" for owners; buy setbook.in now and setbookgym.com, try for setbook.com when it expires on 21 Dec (recommended)
-- B: RackBook: .in and .app free, the .com for sale today at about ₹3.3 lakh
-- C: Liftforged (round 4): .com, .in and .app all free at the normal price
-- D: ForgeBook: keeps "Forge"; .in and forgebookapp.com free
+- A: MettleUp: the strongest "keep going up" feel; buy mettleup.in and mettleup.app now, and make an offer for mettleup.com (recommended)
+- B: MoreMettle: all three endings free at the normal price today
+- C: MettleStep: all three free; the plainest English
+- D: SetBook (round 6): .in free; the .com may free up on 21 Dec
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
