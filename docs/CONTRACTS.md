@@ -348,11 +348,12 @@ demo; TODAY = next day in rotation):
 
 ## Assets
 
-`scripts/make-icons.mjs` (node, @resvg/resvg-js): resizes the designer's master
-PNG exports in `scripts/icon-src/` (ember hexagon + compass-star mark on #07080C)
-by embedding each as a data-URI `<image>` in an SVG (no sharp/ImageMagick on the
-build machine). Outputs the Expo assets (icon 1024, adaptive foreground/monochrome
-1024, splash 512, favicon 48) AND the native `res/mipmap-*` launcher icons (PNG;
-the old .webp are deleted — CI builds android/ with no prebuild, so the native
-mipmaps are what actually ship) plus the drawable-* splash logos.
+`scripts/make-icons.mjs` (0.56.0, MettleUp logo E "Forged"): copies the finished icon set from
+`branding/mettleup/android` (drawn per size by `branding/mettleup/_src/make_assets.py`; rules in
+`branding/mettleup/BRAND.md`) into `assets/images` and the native `res/` (launcher mipmaps incl. the
+themed monochrome layer, adaptive XMLs, splash logos, notification icon, Wear icons). CI builds
+android/ with no prebuild, so the native files are what ship. `python branding/mettleup/install.py
+--only mobile --apply` does the same and also sets the colours in app.json / colors.xml.
+`scripts/icon-src/` keeps the MettleUp mark masters (hero, colour, white). The app's lockup is
+`src/components/brand/MettleUpLogo.tsx` (the frozen `Logo.tsx` still draws "FORGE AI" and is no longer used).
 `Logo.tsx`: SVG wordmark "FORGE **AI**" (Sora feel, ember accent).

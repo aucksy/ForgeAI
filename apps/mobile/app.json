@@ -11,7 +11,7 @@
     "android": {
       "package": "com.mettleup.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E8692A",
+        "backgroundColor": "#1B1F26",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -57,10 +57,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#07080C",
+          "backgroundColor": "#1B1F26",
           "android": {
             "image": "./assets/images/splash-icon.png",
-            "imageWidth": 96
+            "imageWidth": 150
           }
         }
       ],
@@ -101,7 +101,8 @@
       [
         "expo-notifications",
         {
-          "color": "#FF7A3B"
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#F0662A"
         }
       ],
       "expo-video"
@@ -116,7 +117,8 @@
       "supabaseProxyUrl": "https://app.mettleup.fit/sb",
       "supabaseProxyFallbackUrls": ["https://forgeai.aakashpahuja.in/sb"],
       "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo",
-      "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID"
+      "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID",
+      "distribution": "github"
     },
     "owner": "aucksy"
   }

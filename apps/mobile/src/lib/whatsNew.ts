@@ -23,8 +23,12 @@ import { isNewer } from './appUpdate';
  */
 export interface WhatsNewLine {
   text: string;
-  go?: { label: string; href: '/workout' | '/shop' | `/settings/${string}` };
+  go?: { label: string; href: WhatsNewTab | `/settings/${string}` };
 }
+
+/** The tabs a line's button can switch to (0.56.0: the new Progress tab too). */
+export type WhatsNewTab = '/workout' | '/progress' | '/shop';
+const TABS: readonly string[] = ['/workout', '/progress', '/shop'] satisfies readonly WhatsNewTab[];
 
 /**
  * What a line's button does on this phone, or null for no button. PURE.
@@ -37,7 +41,7 @@ export function goFor(line: WhatsNewLine, inGym: boolean, here?: string): { labe
   if (!line.go) return null;
   const go = line.go.href === '/shop' && !inGym ? { label: 'Join your gym', href: '/shop' } : line.go;
   if (go.href === here) return null;
-  return { label: go.label, href: go.href, tab: go.href === '/workout' || go.href === '/shop' };
+  return { label: go.label, href: go.href, tab: TABS.includes(go.href) };
 }
 
 export interface WhatsNewEntry {
@@ -49,6 +53,30 @@ export interface WhatsNewEntry {
 
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
+  {
+    version: '0.56.0',
+    date: '24 Oct',
+    lines: [
+      { text: 'ForgeAI is now called MettleUp, with a new orange logo. Same app: your workouts and history are all still here.' },
+      { text: 'At the bottom of the screen, the same 4 tabs always show: Workout, Progress, Gym and Profile. They never move.' },
+      {
+        text: 'Your charts, records and body weight are now together in the new Progress tab.',
+        go: { label: 'Open Progress', href: '/progress' },
+      },
+      {
+        text: 'In the Gym tab, join your gym, or check in at the front desk by scanning the poster with your camera.',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
+      {
+        text: 'Settings is now in clear groups. Rest timer options and sounds have their own page, "Rest timer and sounds".',
+        go: { label: 'Open Rest timer and sounds', href: '/settings/rest' },
+      },
+      {
+        text: "Health Connect (Google's health app) now stays on. Your workouts are sent even if you don't allow calories there.",
+        go: { label: 'Health Connect settings', href: '/settings/health' },
+      },
+    ],
+  },
   {
     version: '0.55.1',
     date: '24 Oct',

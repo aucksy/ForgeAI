@@ -6,8 +6,8 @@
  *
  * "Get it" opens the release's phone APK in the browser; Android installs it over the old one and
  * keeps every workout (same signing key). "Later" hides the card until the NEXT version.
- * When the app is on Google Play, switch this to Play's own update check: a Play install cannot
- * take the GitHub APK.
+ * A copy installed from Google Play never shows the card (lib/installSource.ts, 0.56.0): a Play
+ * install cannot take the GitHub APK, and Play updates it itself.
  */
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';

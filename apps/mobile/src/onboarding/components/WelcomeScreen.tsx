@@ -34,7 +34,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ConfirmSheet, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
-import { Logo } from '@/components/ui/Logo';
+import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { success, thud } from '@/lib/haptics';
 import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
@@ -308,7 +308,7 @@ export function WelcomeScreen() {
               {step > 0 ? (
                 <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => goTo(previousStep(step) ?? 0)} />
               ) : (
-                <Logo height={26} />
+                <MettleUpLogo height={26} />
               )}
               <View style={{ flex: 1 }} />
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}>{stepLabel(step)}</Text>

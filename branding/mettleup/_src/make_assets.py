@@ -331,7 +331,7 @@ def build_web():
     out(B.render(mk, os.path.join(WEB, 'icon-maskable-512.png'), 512, 512, 'RGB'))
     out(B.render(hero_svg(1200, 630, 180, 76, 40, 'og'), os.path.join(WEB, 'og-1200x630.png'), 1200, 630, 'RGB'))
     mark_svg = B.svg(512, 512, B.mark(256, 256, 204 * 0.98, 'mk1'), title='MettleUp')
-    B.write(out(os.path.join(WEB, 'mark.svg')), mark_svg.replace(' width="512" height="512"', ''))
+    B.write(out(os.path.join(WEB, 'mark.svg')), mark_svg.replace(' width="512" height="512"', '', 1))  # only the root's size: the mask needs its own
     mono = B.svg(512, 512, B.mark(256, 256, 204 * 0.98, 'mm', mode='mono', colour='currentColor'), title='MettleUp')
     B.write(out(os.path.join(WEB, 'mark-mono.svg')), mono.replace(' width="512" height="512"', ''))
     for scheme, nm in (('light', 'wordmark-light.svg'), ('dark', 'wordmark-dark.svg')):

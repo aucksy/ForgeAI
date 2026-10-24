@@ -7,7 +7,7 @@
 import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-import { goFor, type WhatsNewEntry, type WhatsNewLine } from '@/lib/whatsNew';
+import { goFor, type WhatsNewEntry, type WhatsNewLine, type WhatsNewTab } from '@/lib/whatsNew';
 import { useGymShop } from '@/shop/gymStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -34,7 +34,7 @@ export function WhatsNewLines({ lines, onGo, here }: LinesProps) {
                 <Pressable
                   onPress={() => {
                     onGo?.();
-                    if (go.tab) router.navigate(go.href as '/workout' | '/shop');
+                    if (go.tab) router.navigate(go.href as WhatsNewTab);
                     else router.push(go.href as `/settings/${string}`);
                   }}
                   accessibilityRole="button"

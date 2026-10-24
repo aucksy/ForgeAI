@@ -180,8 +180,8 @@ describe('the background', () => {
         if (t.text === WORD_EMBER) expect(brand.has(t.fill as never), `${name}: the wordmark's UP`).toBe(true);
         else expect(t.fill, `${name}: ${t.text}`).toBe('#FFFFFF');
       }
-      // The ember mark is still there.
-      expect(scene.nodes.some((n) => n.t === 'rect' && n.fill === FORGE_MARK.ember)).toBe(true);
+      // The mark is still there, in its own colours (0.56.0: the Forged hex, its faces are paths).
+      for (const face of Object.values(FORGE_MARK)) expect(scene.nodes.some((n) => n.t === 'path' && n.fill === face), `${name}: ${face}`).toBe(true);
       // Its SVG draws the shadow copies under the words.
       expect(sceneToSvg(scene)).toContain('fill="#000000"');
     }

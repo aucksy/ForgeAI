@@ -59,6 +59,16 @@ describe('R-56 / R-98: the last 3 updates (owner, 24 Oct: "the last three update
   });
 });
 
+describe('0.56.0, the first MettleUp release', () => {
+  it('says the new name first, keeps the data promise, and points at the new tabs and pages', () => {
+    const lines = WHATS_NEW['0.56.0'] ?? [];
+    expect(lines.length).toBe(6);
+    expect(lines[0].text).toMatch(/ForgeAI is now called MettleUp/);
+    expect(lines[0].text).toMatch(/still here/);
+    expect(lines.map((l) => l.go?.href).filter(Boolean)).toEqual(['/progress', '/shop', '/settings/rest', '/settings/health']);
+  });
+});
+
 describe('R-98: short lines, each try-it button opens a real screen', () => {
   it('every line is one short sentence or two (at most 120 characters), at most 6 lines an update', () => {
     for (const e of WHATS_NEW_LOG) {
@@ -69,7 +79,9 @@ describe('R-98: short lines, each try-it button opens a real screen', () => {
   it('every button opens a screen that exists, with a short label', () => {
     const app = join(__dirname, '..', '..', 'src', 'app');
     const screen = (href: string) =>
-      href === '/workout' || href === '/shop' ? join(app, '(tabs)', `${href.slice(1)}.tsx`) : join(app, `${href.slice(1)}.tsx`);
+      href === '/workout' || href === '/progress' || href === '/shop'
+        ? join(app, '(tabs)', `${href.slice(1)}.tsx`)
+        : join(app, `${href.slice(1)}.tsx`);
     for (const e of WHATS_NEW_LOG) {
       for (const l of e.lines) {
         if (!l.go) continue;
@@ -85,6 +97,10 @@ describe('R-98 review: what a button does on this phone', () => {
   it('the Gym tab button says Join your gym when there is none (Release A: the tab is the join screen)', () => {
     expect(goFor(offer, false)).toEqual({ label: 'Join your gym', href: '/shop', tab: true });
     expect(goFor(offer, true)).toEqual({ label: "See your gym's offer", href: '/shop', tab: true });
+  });
+  it('0.56.0: the Progress tab button switches tabs, like Workout and Gym', () => {
+    expect(goFor({ text: 'x', go: { label: 'Open Progress', href: '/progress' } }, true)).toEqual({ label: 'Open Progress', href: '/progress', tab: true });
+    expect(goFor({ text: 'x', go: { label: 'Open', href: '/settings/rest' } }, true)?.tab).toBe(false);
   });
   it('no button to the page it is on; none for a line without one', () => {
     expect(goFor({ text: 'x', go: { label: "See what's new", href: '/settings/news' } }, true, '/settings/news')).toBeNull();

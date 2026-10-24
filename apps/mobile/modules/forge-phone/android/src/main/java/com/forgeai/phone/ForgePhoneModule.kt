@@ -13,6 +13,10 @@ class ForgePhoneModule : Module() {
   private val ctx: Context?
     get() = appContext.reactContext?.applicationContext
 
+  /** Android 10 and older: the only way to ask (deprecated from Android 11, where installerPackage uses getInstallSourceInfo). */
+  @Suppress("DEPRECATION")
+  private fun legacyInstaller(c: Context): String? = c.packageManager.getInstallerPackageName(c.packageName)
+
   override fun definition() = ModuleDefinition {
     Name("ForgePhone")
     Events("onSharedFile")
@@ -202,6 +206,25 @@ class ForgePhoneModule : Module() {
       } catch (e: Throwable) {
         android.util.Log.w("ForgeErr", "gym shortcut: could not grey it out", e)
         false
+      }
+    }
+
+    // ---------------------------------------------------------------- who installed the app (0.56.0)
+    // "com.android.vending" = Google Play. The GitHub "new version" card hides on a Play install: a
+    // GitHub APK carries another signing key, so Android refuses it over the Play one. Null when
+    // Android does not say (adb, an error).
+    Function("installerPackage") {
+      val c = ctx ?: return@Function null
+      try {
+        val name: String? = if (android.os.Build.VERSION.SDK_INT >= 30) {
+          c.packageManager.getInstallSourceInfo(c.packageName).installingPackageName
+        } else {
+          legacyInstaller(c)
+        }
+        name
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "installer could not be read", e)
+        null
       }
     }
 

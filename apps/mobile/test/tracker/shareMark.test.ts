@@ -29,4 +29,17 @@ describe("share pictures: ForgeAI's mark", () => {
     for (const f of fills(inGym as { fill?: string }[])) expect(allowed).toContain(f);
     expect(fills(logoMark(0, 0, 40) as { fill?: string }[])).toEqual([...Object.values(FORGE_MARK)].sort());
   });
+
+  it('0.56.0: the mark is the Forged hex (six faces, the M cut out), placed in its square', () => {
+    const mark = logoMark(100, 50, 56);
+    expect(mark).toHaveLength(6);
+    for (const n of mark) {
+      expect(n.t).toBe('path');
+      const p = n as { x: number; y: number; scale: number };
+      // The box's corners on the 512 grid, (52, 52) and (460, 460), land on (100, 50) and (156, 106).
+      expect(p.x + 52 * p.scale).toBeCloseTo(100);
+      expect(p.y + 460 * p.scale).toBeCloseTo(106);
+    }
+    expect(FORGE_MARK).toEqual({ molten: '#FF8A4C', forge: '#F0662A', slag: '#C9481A' });
+  });
 });

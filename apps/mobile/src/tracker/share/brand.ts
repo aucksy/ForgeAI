@@ -1,54 +1,33 @@
 /**
- * The ForgeAI mark and wordmark as scene nodes (Phase 3 share pictures). Same geometry as
- * the frozen `components/ui/Logo` (authored in a 512 box, shown through a 384 window), in a
- * flat ember instead of its gradient.
+ * MettleUp's mark and wordmark as scene nodes (Phase 3 share pictures). The mark is logo E
+ * "Forged" (first MettleUp release, 0.56.0): the same faces as components/brand/MettleUpLogo, from
+ * components/brand/mettleUpMark.ts, the M cut out so the picture shows through it.
  *
- * Gym branding (D6): ForgeAI's mark is ForgeAI's — the bar, the spark, the dot and "AI" are all
- * drawn in ForgeAI's own fixed colours, whatever gym look the app wears (the picture's other parts
- * take the gym's colours from the tokens). Only "FORGE" uses the ink, which no gym changes.
+ * Gym branding (D6): MettleUp's mark is MettleUp's: its faces and "UP" are drawn in MettleUp's own
+ * fixed colours, whatever gym look the app wears (the picture's other parts take the gym's colours
+ * from the tokens). Only "METTLE" uses the ink, which no gym changes.
  */
+import { MARK_BOX, MARK_FACES, METTLEUP_COLOURS } from '@/components/brand/mettleUpMark';
 import { color } from '@/theme/tokens';
 
 import { textWidth, type SceneNode } from './scene';
 
-/** ForgeAI's own colours (theme/tokens.ts defaults), never the gym's. */
-export const FORGE_MARK = { ember: '#FF7A3B', spark: '#FF8B4A', dot: '#FFA043' } as const;
-const EMBER = FORGE_MARK.ember;
+/** MettleUp's own colours (BRAND.md), never the gym's. */
+export const FORGE_MARK = METTLEUP_COLOURS;
+const EMBER = FORGE_MARK.forge;
 
-/** The barbell-"F" mark, `size` pixels square, top-left at (x, y). */
+/** The Forged hex mark, `size` pixels square, top-left at (x, y); the hex's points touch top and bottom. */
 export function logoMark(x: number, y: number, size: number): SceneNode[] {
-  const k = size / 384;
-  // Logo.tsx: viewBox "64 64 384 384", shapes inside translate(-40 22).
-  const X = (v: number) => x + (v - 64 - 40) * k;
-  const Y = (v: number) => y + (v - 64 + 22) * k;
-  const rect = (rx: number, ry: number, w: number, h: number, r: number): SceneNode => ({
-    t: 'rect',
-    x: X(rx),
-    y: Y(ry),
-    w: w * k,
-    h: h * k,
-    r: r * k,
-    fill: EMBER,
-  });
-  const spark = 'M386 262 Q392 300 430 306 Q392 312 386 350 Q380 312 342 306 Q380 300 386 262 Z';
-  return [
-    rect(120, 96, 352, 72, 30),
-    rect(330, 52, 48, 160, 22),
-    rect(398, 72, 40, 120, 20),
-    rect(120, 96, 72, 320, 30),
-    rect(120, 252, 168, 64, 28),
-    { t: 'path', d: spark, fill: FORGE_MARK.spark, x: X(0), y: Y(0), scale: k },
-    { t: 'circle', cx: X(448), cy: Y(240), r: 13 * k, fill: FORGE_MARK.dot },
-  ];
+  const k = size / MARK_BOX.size;
+  return MARK_FACES.map((f): SceneNode => ({ t: 'path', d: f.d, fill: f.fill, x: x - MARK_BOX.x * k, y: y - MARK_BOX.y * k, scale: k }));
 }
 
-/** The name on share pictures (MettleUp, R-105): "METTLE" in ink, "UP" in ember. */
+/** The name on share pictures (MettleUp, R-105): "METTLE" in ink, "UP" in Forge orange. */
 export const WORD_INK = 'METTLE';
 export const WORD_EMBER = 'UP';
 
 /**
- * Mark + "METTLEUP" ("UP" in ember), baseline aligned to the mark's middle. Returns its width too.
- * The mark is still the old one until the new logo is picked (logoMark above is the one to swap).
+ * Mark + "METTLEUP" ("UP" in Forge orange), baseline aligned to the mark's middle. Returns its width too.
  */
 export function wordmark(x: number, y: number, size: number): { nodes: SceneNode[]; width: number } {
   const font = size * 0.64;

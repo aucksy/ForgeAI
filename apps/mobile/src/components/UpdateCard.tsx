@@ -3,6 +3,8 @@
  * "Get it" opens the new APK in the browser; "Later" hides the card until the next version.
  * Shows nothing while there is no newer release, and nothing during the phone tests' own build
  * (its version is never older than the latest release).
+ * 0.56.0: never on a copy installed from Google Play (lib/installSource.ts): Android refuses the GitHub
+ * APK there (another signing key), and Play updates the app itself. GitHub is not even asked.
  */
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
@@ -10,7 +12,9 @@ import { Linking, Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui';
 import { findUpdate, updateLater, type AppUpdate } from '@/lib/appUpdate';
+import { offersGithubUpdate, readInstaller } from '@/lib/installSource';
 import { color, space, type } from '@/theme/tokens';
+import { phoneNative } from '@/tracker/phone/native';
 
 import { useReportWant, type NoticeSlotProps } from './noticeSlot';
 
@@ -21,6 +25,7 @@ export function UpdateCard({ hidden = false, onWant, onDone }: NoticeSlotProps =
   const [update, setUpdate] = useState<AppUpdate | null>(null);
   useEffect(() => {
     let live = true;
+    if (!offersGithubUpdate(readInstaller(phoneNative()), Constants.expoConfig?.extra?.distribution)) return;
     findUpdate(Constants.expoConfig?.version)
       .then((u) => live && setUpdate(u))
       .catch((e: unknown) => console.warn('[update] check failed', e));

@@ -38,6 +38,11 @@ export interface ForgePhone {
   gymShortcutPin?(name: string, logoUrl: string, bg: string, ask: boolean): Promise<GymShortcutResult>;
   /** Left the gym: grey out the pinned shortcut with this line. */
   gymShortcutOff?(message: string): boolean;
+  /**
+   * 0.56.0: the app store that installed the app ("com.android.vending" = Google Play), or null when
+   * Android does not say. Absent on builds before it.
+   */
+  installerPackage?(): string | null;
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
   takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };

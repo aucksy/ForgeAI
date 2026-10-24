@@ -1,128 +1,75 @@
 #!/usr/bin/env node
 /**
- * ForgeAI icon pipeline — resize the designer's master PNG exports into every
- * app-icon output (Expo assets + native Android mipmaps + splash logo).
+ * MettleUp icon pipeline (first MettleUp release, 0.56.0: logo E "Forged").
  *
- * Source of truth = the three master PNGs in scripts/icon-src/ (copied from the
- * "Forge AI App Icons" export set):
- *   hero-1024.png        full square launcher art (ember hexagon + compass star
- *                        on #07080C, subtle glow) — the composed icon.
- *   mark-1024.png        the mark alone on transparent (adaptive foreground / splash).
- *   mark-white-1024.png  solid-white mark on transparent (Android monochrome/themed).
+ * The icons are no longer resized here. They are drawn, each at its own size, by the brand
+ * generator in branding/mettleup (`python branding/mettleup/_src/make_assets.py`; rules and sizes
+ * in branding/mettleup/BRAND.md): the adaptive layers inside Android's safe zone, the Android 13
+ * themed (monochrome) layer, the splash at Android 12's 288 dp canvas, the small-size M for the
+ * status bar. This script only copies those finished files into the app, the same files
+ * `python branding/mettleup/install.py --only mobile --apply` copies (that one also sets the
+ * colours in app.json and colors.xml; prefer it).
  *
- * 17 Oct 2026 (owner: "I like the admin panel's icon more, make it the mobile app's"): the
- * launcher icon is now the admin app's look, a dark mark on the ember gradient. Made from the
- * masters above by scripts/icon-src (python, once): hero-1024.png re-composed, plus
- *   bg-1024.png          the ember gradient alone (adaptive BACKGROUND layer).
- *   mark-dark-1024.png   mark-1024's shape in #111015 (adaptive FOREGROUND layer).
- * The splash keeps the ember mark on #07080C (a dark mark would vanish on the dark splash).
+ * Until 24 Oct 2026 this resized the old ForgeAI masters in scripts/icon-src, so running it again
+ * would have brought the old logo back. scripts/icon-src now holds the MettleUp mark only:
+ *   hero-1024.png        the full launcher icon (= assets/images/icon.png)
+ *   mark-1024.png        the mark in its colours on transparent, ~0.82 of the square
+ *   mark-white-1024.png  the same shape in white (the owner panel's admin icon uses it as a mask)
  *
- * No sharp/ImageMagick on the build machine, so we resize by embedding each PNG
- * as a data-URI <image> inside an SVG and letting @resvg/resvg-js rasterise it at
- * the target size (round icons use an SVG circle clip-path).
- *
- * CI builds android/ directly (no prebuild), so the NATIVE res/mipmap-* files are
- * what actually ship — they are regenerated here too, as PNG (the old .webp are
- * deleted; Android resolves @mipmap/ic_launcher to either extension).
- *
+ * CI builds android/ directly (no prebuild), so the native res/ files are what actually ship.
  * Run from apps/mobile:   node scripts/make-icons.mjs
  */
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Resvg } from '@resvg/resvg-js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SRC = join(ROOT, 'scripts', 'icon-src');
+const BRAND = join(ROOT, '..', '..', 'branding', 'mettleup', 'android');
 const ASSETS = join(ROOT, 'assets', 'images');
 const RES = join(ROOT, 'android', 'app', 'src', 'main', 'res');
+const DENSITIES = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'];
 
-// Adaptive-icon safe zone = central 72dp of the 108dp foreground (~0.667). The
-// mark art carries ~0.82 internal height. 16 Oct 2026 (owner: "not cut out; the black borders
-// are very little"): at 0.80 the hexagon was ~0.66 tall, its points touching the launcher's
-// circle. At 0.62 it is ~0.51 tall: a clear dark margin on every launcher shape.
-const FG_SAFE = 0.62;
-// The dark mark on the gradient: the hexagon at ~0.54 of the visible icon, as in the admin app's
-// icon (0.44 x 0.82 of the 108dp layer = ~0.36 = ~0.54 of the 72dp the launcher shows).
-const FG_DARK = 0.44;
-
-const heroB64 = (await readFile(join(SRC, 'hero-1024.png'))).toString('base64');
-const markB64 = (await readFile(join(SRC, 'mark-1024.png'))).toString('base64');
-const monoB64 = (await readFile(join(SRC, 'mark-white-1024.png'))).toString('base64');
-const darkB64 = (await readFile(join(SRC, 'mark-dark-1024.png'))).toString('base64');
-const bgB64 = (await readFile(join(SRC, 'bg-1024.png'))).toString('base64');
-
-/** Rasterise a master PNG centred in a square canvas (optionally circle-clipped). */
-function render(b64, canvas, contentFrac, { round = false } = {}) {
-  const content = Math.round(canvas * contentFrac);
-  const offset = (canvas - content) / 2;
-  const defs = round
-    ? `<defs><clipPath id="c"><circle cx="${canvas / 2}" cy="${canvas / 2}" r="${canvas / 2}"/></clipPath></defs>`
-    : '';
-  const clip = round ? ' clip-path="url(#c)"' : '';
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas}" height="${canvas}" viewBox="0 0 ${canvas} ${canvas}">` +
-    `${defs}<image href="data:image/png;base64,${b64}" x="${offset}" y="${offset}" width="${content}" height="${content}"${clip}/></svg>`;
-  return new Resvg(svg, { fitTo: { mode: 'width', value: canvas } }).render().asPng();
+/** [from, to] pairs, as install.py's mobile and wear groups. */
+const files = [];
+for (const d of DENSITIES) {
+  for (const f of ['ic_launcher_foreground.png', 'ic_launcher_background.png', 'ic_launcher_monochrome.png', 'ic_launcher.png', 'ic_launcher_round.png']) {
+    files.push([join(BRAND, 'res', `mipmap-${d}`, f), join(RES, `mipmap-${d}`, f)]);
+  }
+  files.push([join(BRAND, 'res', `drawable-${d}`, 'splashscreen_logo.png'), join(RES, `drawable-${d}`, 'splashscreen_logo.png')]);
+}
+for (const f of ['ic_launcher.xml', 'ic_launcher_round.xml']) files.push([join(BRAND, 'res', 'mipmap-anydpi-v26', f), join(RES, 'mipmap-anydpi-v26', f)]);
+files.push([join(BRAND, 'res', 'drawable', 'notification_icon.xml'), join(RES, 'drawable', 'notification_icon.xml')]);
+for (const f of ['icon.png', 'android-icon-foreground.png', 'android-icon-background.png', 'android-icon-monochrome.png', 'splash-icon.png', 'favicon.png', 'notification-icon.png']) {
+  files.push([join(BRAND, 'expo', f), join(ASSETS, f)]);
+}
+for (const f of ['ic_launcher.xml', 'ic_stat_forge.xml']) {
+  files.push([join(BRAND, 'wear', 'res', 'drawable', f), join(ROOT, 'android', 'wear', 'src', 'main', 'res', 'drawable', f)]);
 }
 
-/** width from a PNG's IHDR (bytes 16..20, big-endian) — to match existing sizes. */
-function pngWidth(buf) {
-  return buf.readUInt32BE(16);
+const missing = files.filter(([from]) => !existsSync(from));
+if (missing.length) {
+  console.error(`Missing brand files (run python branding/mettleup/_src/make_assets.py):\n${missing.map(([f]) => `  ${f}`).join('\n')}`);
+  process.exit(1);
 }
 
-const write = async (path, buf) => {
-  await writeFile(path, buf);
-  console.log(`  ${path.replace(ROOT, '.')}  (${buf.length} bytes)`);
+/** A PNG's width and height from its IHDR, to say when a size changes. */
+const dims = async (p) => {
+  try {
+    const b = await readFile(p);
+    return b.readUInt32BE(0) === 0x89504e47 ? `${b.readUInt32BE(16)}x${b.readUInt32BE(20)}` : null;
+  } catch {
+    return null;
+  }
 };
 
-// ---------------------------------------------------------------- Expo assets
-await mkdir(ASSETS, { recursive: true });
-console.log('Expo assets:');
-await copyFile(join(SRC, 'hero-1024.png'), join(ASSETS, 'icon.png')); // 1024, lossless
-console.log('  ./assets/images/icon.png  (copied hero)');
-await write(join(ASSETS, 'android-icon-foreground.png'), render(darkB64, 1024, FG_DARK));
-await write(join(ASSETS, 'android-icon-background.png'), render(bgB64, 1024, 1));
-await write(join(ASSETS, 'android-icon-monochrome.png'), render(monoB64, 1024, FG_SAFE));
-await write(join(ASSETS, 'splash-icon.png'), render(markB64, 512, 0.9));
-await write(join(ASSETS, 'favicon.png'), render(heroB64, 48, 1));
-
-// ---------------------------------------------------------------- native mipmaps
-const DENSITIES = [
-  { dir: 'mipmap-mdpi', legacy: 48, adaptive: 108 },
-  { dir: 'mipmap-hdpi', legacy: 72, adaptive: 162 },
-  { dir: 'mipmap-xhdpi', legacy: 96, adaptive: 216 },
-  { dir: 'mipmap-xxhdpi', legacy: 144, adaptive: 324 },
-  { dir: 'mipmap-xxxhdpi', legacy: 192, adaptive: 432 },
-];
-console.log('Native mipmaps (webp -> png):');
-for (const d of DENSITIES) {
-  const dir = join(RES, d.dir);
-  await mkdir(dir, { recursive: true });
-  // Drop the stale .webp so aapt doesn't see duplicate ic_launcher resources.
-  for (const name of ['ic_launcher', 'ic_launcher_round', 'ic_launcher_foreground', 'ic_launcher_monochrome']) {
-    await rm(join(dir, `${name}.webp`), { force: true });
-  }
-  await write(join(dir, 'ic_launcher.png'), render(heroB64, d.legacy, 1));
-  await write(join(dir, 'ic_launcher_round.png'), render(heroB64, d.legacy, 1, { round: true }));
-  await write(join(dir, 'ic_launcher_foreground.png'), render(darkB64, d.adaptive, FG_DARK));
-  await write(join(dir, 'ic_launcher_background.png'), render(bgB64, d.adaptive, 1));
-  await write(join(dir, 'ic_launcher_monochrome.png'), render(monoB64, d.adaptive, FG_SAFE));
+for (const [from, to] of files) {
+  await mkdir(dirname(to), { recursive: true });
+  const before = to.endsWith('.png') ? await dims(to) : null;
+  // An old .webp twin would be a duplicate resource for aapt.
+  if (to.includes(`${join('res', 'mipmap-')}`) && to.endsWith('.png')) await rm(to.replace(/\.png$/, '.webp'), { force: true });
+  await copyFile(from, to);
+  const after = to.endsWith('.png') ? await dims(to) : null;
+  console.log(`  ${to.replace(ROOT, '.')}${before && after && before !== after ? `  (size ${before} -> ${after})` : ''}`);
 }
-
-// ---------------------------------------------------------------- native splash logo
-// Keep the launch screen on-brand; regenerate each drawable-* splashscreen_logo.png
-// at its EXISTING pixel size (from the committed file's IHDR).
-console.log('Native splash logo:');
-for (const d of ['drawable-mdpi', 'drawable-hdpi', 'drawable-xhdpi', 'drawable-xxhdpi', 'drawable-xxxhdpi']) {
-  const path = join(RES, d, 'splashscreen_logo.png');
-  let size;
-  try {
-    size = pngWidth(await readFile(path));
-  } catch {
-    continue; // density not present
-  }
-  await write(path, render(markB64, size, 1));
-}
-
-console.log('done.');
+console.log(`done: ${files.length} files. Colours in app.json / colors.xml: python branding/mettleup/install.py --only mobile`);
