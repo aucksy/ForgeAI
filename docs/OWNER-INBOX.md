@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 63 | Teen members (13-17) with a parent's OK | A: 18+ for the trial, teens before public launch |
 
 ---
 
@@ -44,6 +45,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
+| #63 | Medium | Medium |
 | #60 | High | Low |
 | Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
@@ -368,6 +370,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 63. Members under 18: add teen accounts (13 to 17) with a parent's OK? — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (24 Oct, chat):** "Why is the target age on play submission is 18 and above.. kids below 18 dont workout?"
+**My answer:** they do, and many Indian gyms have teen members. It is 18+ only because of the law, from #29 (20 Oct):
+- India's data law (DPDP Act) counts everyone under 18 as a child. Before keeping a child's data, an app needs a parent's checked OK, and it may not track or monitor a child's behaviour. A workout tracker keeps fitness and body data, so it counts. Its main duties start around 13 May 2027.
+- Google Play: if we list 13 to 17, Play's teen rules apply (no ads aimed at them, safe content); we already meet these. Under 13 brings Play's stricter Families rules; not worth it for a gym app.
+- The Play setting can be changed at any time; nothing is locked by choosing 18+ now.
+**What teen accounts would mean:** at "Join your gym", a member under 18 enters a parent's mobile or email; the parent gets a one-time code and taps "I agree"; we keep the date and the parent's contact. No public sharing for teens (no rankings with their name, no share pictures with the gym logo by default). The gym owner sees the teen flag. About a week of work, plus a cost of about ₹0.2 per SMS code (email codes are free).
+**Decide:** Teen members?
+- A: Keep 18+ for the trial; build teen accounts with a parent's OK before the public launch (recommended)
+- B: Build teen accounts now, before the Play internal test (adds about a week)
+- C: Keep 18+ for good
 
 ## 62. Your task: tick "I'm not a robot" to finish the tester group (10 seconds) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat

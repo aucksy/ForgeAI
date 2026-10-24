@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-110. Why is the Play target age 18+? — 24 Oct 2026
+**Owner said:** "Why is the target age on play submission is 18 and above.. kids below 18 dont workout?"
+**Answer:** from #29 (decided 20 Oct, Claude's legal call): India's DPDP Act treats everyone under 18 as a child: verified
+parent consent before collecting their data, and no tracking or behaviour monitoring of children (main duties from about
+13 May 2027). A workout tracker is fitness/health tracking. The Play setting can be changed any time. New tracker #63 asks
+whether to build teen accounts (13-17) with a parent's OTP consent before the public launch.
+
 ## R-109. "yes to all Play declarations" — 24 Oct 2026
 **Owner said:** "yes to all Play declarations" (answer to Claude's list: Developer Program Policies, US export laws, content
 rating answered truthfully, data safety exactly as the privacy notice says, target audience 18+, sensitive-permission
