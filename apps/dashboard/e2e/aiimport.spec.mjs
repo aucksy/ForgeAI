@@ -58,7 +58,7 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   await expectFitsPhone(page, 'on the AI question');
 
   await page.getByRole('button', { name: 'Ask AI' }).tap();
-  await expect(main).toContainText('AI matched 2 columns. They are marked “AI” below. Check them before you add.');
+  await expect(main).toContainText('AI matched 3 columns. They are marked “AI” below. Check them before you add.');
   await expect(main).toContainText('19 AI matches left today.');
 
   // What left the browser: names and masked examples, no mobile, no Aadhaar; the key in a header.
@@ -69,15 +69,15 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   expect(sent[0].body).toContain('[ID number]');
   expect(sent[0].body).not.toContain(sent[0].key);
 
-  // Locker and blood group ticked by the AI; "Referred By" was a guess it was not sure of: not ticked.
+  // #36: every column is kept unless the owner unticks it. "Referred By" was a name the AI was not
+  // sure of: the column is still kept, and the owner gives it a better name.
   const lockers = page.getByRole('checkbox', { name: /Keep Column C “Lkr”/ });
   const blood = page.getByRole('checkbox', { name: /Keep Column E “BG”/ });
   const referred = page.getByRole('checkbox', { name: /Keep Column F “Ref By”/ });
   await expect(lockers).toBeChecked();
   await expect(blood).toBeChecked();
-  await expect(referred).not.toBeChecked();
+  await expect(referred).toBeChecked();
   await expect(page.getByRole('checkbox', { name: /Aadhaar/ })).toHaveCount(0);
-  await referred.tap();
   const names = page.getByLabel('Name on the member’s page');
   await expect(names).toHaveCount(3);
   await names.nth(2).fill('Referred by');
@@ -121,8 +121,8 @@ test('J47b AI is off: the owner is told in one line and matches by hand; "I’ll
   await expect(main).toContainText('AI matching is not switched on yet. Match the columns yourself below.');
   expect(sent).toHaveLength(1);
 
-  // By hand: tick the locker column; it keeps its own name.
-  await page.getByRole('checkbox', { name: /Keep Column C “Lkr”/ }).tap();
+  // By hand: the locker column is already kept (#36: every column is, unless unticked), with its own name.
+  await expect(page.getByRole('checkbox', { name: /Keep Column C “Lkr”/ })).toBeChecked();
   await expect(main).toContainText('Lkr: 12');
   await page.getByRole('button', { name: 'Add 2 members' }).tap();
   await expect(main).toContainText('2 added, 0 skipped');

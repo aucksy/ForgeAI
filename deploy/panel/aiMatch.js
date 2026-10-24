@@ -73,6 +73,8 @@ export const FIELDS = {
   due: 'Balance still due',
   expiry: 'Date the plan ends (valid till, expiry, next due date)',
   notes: 'Free-text notes or remarks about the member',
+  branch: 'Which branch or centre of the gym the member belongs to (only for a gym with several branches)',
+  paidFlag: 'Whether the fees were paid, written as yes / no or a tick (not an amount)',
 };
 export const FIELD_NAMES = Object.keys(FIELDS);
 

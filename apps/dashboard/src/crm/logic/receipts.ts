@@ -25,12 +25,37 @@ export function financialYear(date: DateISO): string {
 
 const RECEIPT_RE = /^(\d{4}-\d{2})\/(\d{4,})$/;
 
-/** Split a receipt number back into its year and sequence, or null if it isn't one. */
-export function parseReceiptNo(receiptNo: string): { fy: string; seq: number } | null {
-  const m = RECEIPT_RE.exec(receiptNo.trim());
-  if (!m) return null;
-  return { fy: m[1], seq: Number(m[2]) };
+/**
+ * #41 branches (24 Oct 2026): a branch's receipt prefix ("B2"), or '' for none. Two branches under
+ * one GST number must never print the same number (GST Rule 46: one series per GSTIN per year), so
+ * every added branch numbers its receipts B2/2026-27/0001 and its imports B2I/26-27/0001. The first
+ * branch keeps its own numbers. The server checks the same (supabase 0031). PURE.
+ */
+export function cleanReceiptPrefix(prefix: string | null | undefined): string {
+  const p = (prefix ?? '').trim().toUpperCase();
+  return /^[A-Z][A-Z0-9]{0,3}$/.test(p) ? p : '';
 }
+
+/**
+ * Split a receipt number back into its year and sequence, or null if it isn't one. With a
+ * `prefix`, only that branch's numbers (B2/2026-27/0001) are read; without one, only unprefixed.
+ */
+export function parseReceiptNo(receiptNo: string, prefix?: string | null): { fy: string; seq: number } | null {
+  const px = cleanReceiptPrefix(prefix);
+  let text = receiptNo.trim();
+  if (px) {
+    if (!text.startsWith(`${px}/`)) return null;
+    text = text.slice(px.length + 1);
+  }
+  const m = RECEIPT_RE.exec(text);
+  if (m) return { fy: m[1], seq: Number(m[2]) };
+  // A branch's number past 16 characters writes the year short (ABCD/26-27/0001).
+  const short = px ? BRANCH_IMPORT_RE.exec(text) : null;
+  return short ? { fy: `20${short[1]}`, seq: Number(short[2]) } : null;
+}
+
+/** After a branch's import mark ("B2I/"): `26-27/0001`. */
+const BRANCH_IMPORT_RE = /^(\d{2}-\d{2})\/(\d{4,})$/;
 
 /**
  * Admin audit C7-36 (16 Oct 2026): receipts brought in by an import get their OWN series,
@@ -38,19 +63,26 @@ export function parseReceiptNo(receiptNo: string): { fy: string; seq: number } |
  * numbers after a desk receipt from October, and "Undo this import" then left gaps in it. The desk
  * series (`nextReceiptNo`) never reads these. PURE.
  */
-export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], paidOn: DateISO): string {
+export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], paidOn: DateISO, prefix?: string | null): string {
   const fy = financialYear(paidOn);
   const shortFy = fy.slice(2); // 2026-27 -> 26-27
+  const px = cleanReceiptPrefix(prefix);
   let highest = 0;
   for (const row of existing) {
     // Both spellings of the series: IMP/2026-27/0001 and, from the 10,000th, IMP/26-27/10000.
-    const m = /^IMP\/(?:\d{2})?(\d{2}-\d{2})\/(\d{4,})$/.exec(row.receiptNo.trim());
+    // A branch with a prefix: B2I/26-27/0001 (the year is always short: the prefix needs the room).
+    const text = row.receiptNo.trim();
+    const m = px
+      ? text.startsWith(`${px}I/`) ? BRANCH_IMPORT_RE.exec(text.slice(px.length + 2)) : null
+      : /^IMP\/(?:\d{2})?(\d{2}-\d{2})\/(\d{4,})$/.exec(text);
     if (m && m[1] === shortFy && Number(m[2]) > highest) highest = Number(m[2]);
   }
   const next = highest + 1;
   // UAT F-11 (GST Rule 46: at most 16 characters). IMP/2026-27/9999 is 16; the 10,000th would be
   // 17, so from there the year is written short (IMP/26-27/10000, 15). Old numbers never change.
-  const no = next < 10_000 ? `IMP/${fy}/${String(next).padStart(4, '0')}` : `IMP/${shortFy}/${next}`;
+  const no = px
+    ? `${px}I/${shortFy}/${String(next).padStart(4, '0')}`
+    : next < 10_000 ? `IMP/${fy}/${String(next).padStart(4, '0')}` : `IMP/${shortFy}/${next}`;
   if (no.length > MAX_RECEIPT_NO) throw new Error('Too many imported receipts in one year. Split the import by year.');
   return no;
 }
@@ -67,12 +99,18 @@ export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], 
 export function nextReceiptNo(
   existing: readonly { receiptNo: string }[],
   paidOn: DateISO,
+  prefix?: string | null,
 ): string {
   const fy = financialYear(paidOn);
+  const px = cleanReceiptPrefix(prefix);
   let highest = 0;
   for (const row of existing) {
-    const parsed = parseReceiptNo(row.receiptNo);
+    const parsed = parseReceiptNo(row.receiptNo, px);
     if (parsed && parsed.fy === fy && parsed.seq > highest) highest = parsed.seq;
   }
-  return `${fy}/${String(highest + 1).padStart(4, '0')}`;
+  const seq = String(highest + 1).padStart(4, '0');
+  if (!px) return `${fy}/${seq}`;
+  // GST Rule 46: at most 16 characters. B2/2026-27/0001 is 15; past that the year is written short.
+  const long = `${px}/${fy}/${seq}`;
+  return long.length <= MAX_RECEIPT_NO ? long : `${px}/${fy.slice(2)}/${seq}`;
 }

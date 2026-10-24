@@ -38,6 +38,10 @@ import {
   space,
 } from '../kit';
 import { ForgeAccessCard } from '../ForgeAccessCard';
+import { BranchesCard } from '../../branches/BranchesCard';
+import { useBranches } from '../../branches/context';
+import { useTerms } from '../../auth/TermsGate';
+import { acceptedLine } from '../../auth/terms';
 import { GymDataActions } from '../GymDataActions';
 
 export function SettingsScreen() {
@@ -51,6 +55,10 @@ export function SettingsScreen() {
   const allowed = useCan();
   const canManage = allowed('manageGym');
   const canErase = allowed('eraseOrDemo');
+  // #41: with branches, these details are the OPEN branch's (each branch has its own address and GST).
+  const { multi } = useBranches();
+  // #38: when the gym's owner accepted the terms (null for a browser-only gym or an older server).
+  const termsLine = acceptedLine(useTerms());
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -123,12 +131,13 @@ export function SettingsScreen() {
       <InstallCard />
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Gym details</SectionTitle>
+        <SectionTitle>{multi ? 'This branch’s details' : 'Gym details'}</SectionTitle>
         <TextField
-          label="Gym name"
+          label={multi ? 'Branch name' : 'Gym name'}
           value={name}
           onChange={setName}
           error={fieldError?.field === 'name' ? fieldError.message : null}
+          hint={multi ? 'Members of this branch see this name in their app.' : undefined}
         />
         <Grid min={220}>
           <TextField label="Phone" value={phone} onChange={setPhone} inputMode="tel" />
@@ -137,7 +146,7 @@ export function SettingsScreen() {
             value={gstin}
             onChange={setGstin}
             error={fieldError?.field === 'gstin' ? fieldError.message : null}
-            hint="Only if you have GST. It shows on your receipts."
+            hint={multi ? 'Only if you have GST. It shows on this branch’s receipts.' : 'Only if you have GST. It shows on your receipts.'}
           />
         </Grid>
         <TextField label="Address" value={address} onChange={setAddress} multiline />
@@ -147,6 +156,9 @@ export function SettingsScreen() {
           </Button>
         </div>
       </Card>
+
+      {/* #41: the gym's branches and "Add a branch". */}
+      <BranchesCard />
 
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
@@ -177,6 +189,11 @@ export function SettingsScreen() {
             ? 'Saved online. Safe if a phone or computer breaks. The same on every phone or computer you sign in on.'
             : 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'}
         </p>
+        {termsLine && (
+          <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+            {termsLine}
+          </p>
+        )}
 
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>

@@ -976,6 +976,55 @@ export function Sheet({
   );
 }
 
+/**
+ * A tick box with its words (#38 terms, #41 "can train at every branch"). The whole line is the
+ * touch target (44 px high), so a thumb never misses the small box.
+ */
+export function CheckField({
+  checked,
+  onChange,
+  children,
+  hint,
+  disabled = false,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children: ReactNode;
+  hint?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div style={{ marginTop: space.md }}>
+      <label
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: space.sm,
+          minHeight: TOUCH,
+          paddingTop: 10,
+          cursor: disabled ? 'default' : 'pointer',
+          fontFamily: font.body,
+          fontSize: 14,
+          lineHeight: 1.45,
+          color: color.ink,
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={checked}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+          style={{ width: 20, height: 20, flex: 'none', margin: 0, accentColor: color.accent }}
+        />
+        <span style={{ minWidth: 0 }}>{children}</span>
+      </label>
+      {hint && (
+        <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, margin: `2px 0 0 ${20 + space.sm}px` }}>{hint}</div>
+      )}
+    </div>
+  );
+}
+
 /** Inline error banner for a failed action. */
 export function ErrorBanner({ children }: { children: ReactNode }) {
   return (

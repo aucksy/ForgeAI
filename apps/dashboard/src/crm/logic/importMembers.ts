@@ -48,10 +48,16 @@ export type ImportField =
   | 'paidOn'
   | 'due'
   | 'expiry'
-  | 'notes';
+  | 'notes'
+  | 'branch'
+  /**
+   * #36 review (24 Oct 2026): a "Paid" column written as yes / no or a tick. Yes = the plan was paid
+   * in full, no = nothing paid yet. Never money itself.
+   */
+  | 'paidFlag';
 
 export const IMPORT_FIELDS: readonly ImportField[] = [
-  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'startDate', 'total', 'amount', 'paidOn', 'due', 'expiry', 'notes',
+  'fullName', 'phone', 'joinedOn', 'gender', 'dateOfBirth', 'email', 'address', 'batch', 'plan', 'startDate', 'total', 'amount', 'paidOn', 'due', 'expiry', 'notes', 'branch', 'paidFlag',
 ];
 
 /** Which column (0-based) holds each field; null = not in the file. */
@@ -80,6 +86,8 @@ export function fieldLabel(field: ImportField): string {
     case 'due': return 'Balance due';
     case 'expiry': return 'Valid till';
     case 'notes': return 'Notes';
+    case 'branch': return 'Branch';
+    case 'paidFlag': return 'Paid? (yes or no)';
   }
 }
 
@@ -156,6 +164,17 @@ const SYNONYMS: Record<ImportField, readonly string[]> = {
     '=till', 'khatam', 'समाप्ति',
   ],
   notes: ['notes', 'note', 'remarks', 'remark', 'comment', 'comments', '=other', 'टिप्पणी'],
+  // Tracker #41 (24 Oct 2026): one sheet for all branches names each member's branch. "Location"
+  // and "Area" stay address words (a member's home); "Branch Location" / "Gym Location" are the
+  // branch, and a column whose VALUES are the gym's branch names is found by `guessBranchColumn`.
+  // Only used when the gym has 2 or more branches (the screen clears it otherwise).
+  branch: [
+    'branch', 'branch name', 'gym branch', 'branch location', 'gym location', 'centre', 'center', 'centre name',
+    'center name', 'gym centre', 'gym center', 'outlet', 'franchise', 'shakha', 'branch ka naam', 'शाखा', 'ब्रांच', 'सेंटर',
+  ],
+  // Only headers that cannot mean money; a bare "Paid" column is told apart by what is in it
+  // (settlePaidColumns).
+  paidFlag: ['payment status', 'fee status', 'fees status', 'paid status', 'paid y n', 'paid yes no', 'fees paid yes no', 'paid or not'],
 };
 
 /** Lower case, every run of punctuation one space, Devanagari kept (with its vowel marks). */
@@ -208,8 +227,91 @@ export function guessColumns(headers: readonly unknown[]): ColumnMap {
     map[c.field] = c.col;
     usedCols.add(c.col);
   }
+  // #36 review (24 Oct 2026): which of "Amount" and "Paid" is the price is decided from what the
+  // columns HOLD (settlePaidColumns, run by guessFromValues), never from their names alone.
   return map;
 }
+
+/**
+ * "Paid" as a tick: yes / no in English, Hinglish and Hindi, ✓ / ✗, Y / N. Never 1 / 0 (money in
+ * some sheets). Null when the cell is none of them. PURE.
+ */
+export function parsePaidFlag(v: unknown): boolean | null {
+  if (typeof v === 'boolean') return v;
+  const t = cellText(v).trim().toLowerCase().replace(/[.!]+$/, '');
+  if (!t) return null;
+  if (PAID_YES.has(t)) return true;
+  if (PAID_NO.has(t)) return false;
+  return null;
+}
+
+const PAID_YES = new Set(['yes', 'y', 'paid', 'done', 'ok', 'haan', 'ha', 'han', 'ji', 'full', 'full paid', 'fully paid', '✓', '✔', '✅', '☑', 'हाँ', 'हां', 'जमा']);
+const PAID_NO = new Set(['no', 'n', 'unpaid', 'not paid', 'pending', 'nahi', 'nahin', 'na', 'baki', 'baaki', '✗', '✘', '✕', '❌', '×', 'x', 'नहीं', 'बाकी']);
+
+/**
+ * #36 review (24 Oct 2026): GGMS-style exports have "Amount, Paid, Balance". When a "Paid" column
+ * sits beside "Amount" / "Fees", what is IN it decides what it is (the names alone imported a
+ * Yes/No "Paid" column as "everyone owes the full fee", and a "Paid" column of Excel dates as
+ * ₹46,296 paid):
+ *  - mostly money, each no more than the Amount on its row: Amount is the plan's price, Paid is
+ *    what was paid;
+ *  - mostly yes / no / ✓ / ✗: Amount is the price and Paid says paid in full or not (paidFlag);
+ *  - mostly dates: Paid is the payment date, Amount stays the fees paid;
+ *  - anything else: nothing changes (Paid stays an extra detail). PURE.
+ */
+export function settlePaidColumns(rows: readonly (readonly unknown[])[], headerRow: number, map: ColumnMap, today: DateISO): ColumnMap {
+  if (map.total !== null || map.amount === null) return map;
+  const headers = rows[headerRow] ?? [];
+  const used = new Set<number>(IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null));
+  const amountIsPaid = PAID_HEADERS.has(normalizeHeader(headers[map.amount]));
+  // A = the column with the price (or plain fees), P = the "Paid" column.
+  const A = amountIsPaid ? headers.findIndex((h, c) => !used.has(c) && BARE_AMOUNT_HEADERS.has(normalizeHeader(h))) : map.amount;
+  const P = amountIsPaid ? map.amount : headers.findIndex((h, c) => !used.has(c) && PAID_HEADERS.has(normalizeHeader(h)));
+  if (P < 0) return map;
+  const body = rows.slice(headerRow + 1, headerRow + 201).filter((r) => !isBlankRow(r));
+  const filled = body.filter((r) => cellText(r[P]) !== '');
+  if (filled.length === 0) return map;
+  const out: ColumnMap = { ...map };
+  if (A < 0) {
+    // "Paid Amount" alone: only a yes / no column changes (it is then a paid flag, not money).
+    if (filled.filter((r) => parsePaidFlag(r[P]) !== null).length / filled.length >= 0.6) {
+      out.amount = null;
+      out.paidFlag = P;
+    }
+    return out;
+  }
+  const share = (test: (r: readonly unknown[]) => boolean) => filled.filter(test).length / filled.length;
+  const isDate = (v: unknown) =>
+    typeof v === 'number' ? v >= EXCEL_SERIAL_MIN && v <= EXCEL_SERIAL_MAX : v instanceof Date || parseSheetDate(v, today) !== null;
+  const money = (v: unknown) => (v instanceof Date ? null : parseImportMoney(cellText(v)));
+  // Money, never more than the Amount on its row (a row with no Amount does not count against it).
+  const paidFits = (r: readonly unknown[]) => {
+    const p = money(r[P]);
+    if (p === null || (typeof r[P] !== 'number' && isDate(r[P]))) return false;
+    const a = money(r[A]);
+    return a === null || p <= a;
+  };
+  if (share(paidFits) >= 0.6) {
+    out.total = A;
+    out.amount = P;
+    return out;
+  }
+  if (share((r) => parsePaidFlag(r[P]) !== null) >= 0.6) {
+    out.total = A;
+    out.amount = null;
+    out.paidFlag = P;
+    return out;
+  }
+  // "Paid" full of dates (or a "Paid Amount" that is not money): the plain Amount is what was paid.
+  if (amountIsPaid) out.amount = A;
+  if (share((r) => isDate(r[P])) >= 0.6 && out.paidOn === null) out.paidOn = P;
+  return out;
+}
+
+const BARE_AMOUNT_HEADERS = new Set(['amount', 'amt', 'fees', 'fee', 'rs', 'rupees']);
+
+/** Headers that can only mean "what was paid". */
+const PAID_HEADERS = new Set(['paid', 'paid amount', 'amount paid', 'paid amt', 'amt paid', 'paid fees', 'fees paid', 'fee paid', 'received', 'amount received', 'jama']);
 
 function mappedCount(map: ColumnMap): number {
   return IMPORT_FIELDS.filter((f) => map[f] !== null).length;
@@ -247,7 +349,7 @@ export function findHeaderRow(rows: readonly (readonly unknown[])[]): number {
  * Only fields still empty are filled, and only from columns no field uses. PURE.
  */
 export function guessFromValues(rows: readonly (readonly unknown[])[], headerRow: number, map: ColumnMap, today: DateISO): ColumnMap {
-  const out: ColumnMap = { ...map };
+  const out: ColumnMap = settlePaidColumns(rows, headerRow, { ...map }, today);
   const used = new Set<number>(IMPORT_FIELDS.map((f) => out[f]).filter((c): c is number => c !== null));
   const body = rows.slice(headerRow + 1, headerRow + 61).filter((r) => !isBlankRow(r));
   const width = Math.max(0, ...rows.slice(headerRow, headerRow + 61).map((r) => r.length));
@@ -348,7 +450,8 @@ export function columnLetter(index: number): string {
 }
 
 /** C7-8: a header that names a number or a fee the panel does not take is never guessed as money. */
-const NOT_MONEY_HEADER = / (id|no|nos|sr|s no|sno|serial|code|roll|receipt|invoice|bill|joining|admission|registration|reg) /;
+// #36: body sizes too ("Height (cm)": 172 is not ₹172), and a locker or room number.
+const NOT_MONEY_HEADER = / (id|no|nos|sr|s no|sno|serial|code|roll|receipt|invoice|bill|joining|admission|registration|reg|height|weight|age|cm|kg|kgs|inch|inches|ft|feet|bmi|locker|room|floor|pin|pincode) /;
 
 /**
  * A fees cell as paise (admin audit C7-5, 16 Oct 2026): "Rs. 1,500/-", "Rs 1500", "INR 1500",
@@ -742,6 +845,14 @@ export interface ImportRow {
    * (`importTerms.ts`). Null when the row names no plan with dates.
    */
   term: ImportTerm | null;
+  /** #41: the branch this row goes to (gym id). Absent = the gym has one branch. */
+  gymId?: string;
+  /** #41: the owner chose "Skip these rows" for this row's branch name: not a row to check. */
+  ownerSkipped?: boolean;
+  /** #41: this row's branch could not be opened, or is still opening (a try again may fix it). */
+  branchWaiting?: boolean;
+  /** #41: this row's branch name matched none: the owner's pick under "Branches in your file" fixes it. */
+  needsBranch?: boolean;
 }
 
 export interface ImportPlan {
@@ -749,6 +860,8 @@ export interface ImportPlan {
   counts: { add: number; duplicate: number; problem: number };
   /** Rows past `MAX_IMPORT_ROWS`, not looked at. */
   leftOut: number;
+  /** #36: totals rows and stray cells, left out and listed on screen. */
+  notMembers: NotMemberRow[];
 }
 
 function cellAt(row: readonly unknown[], col: number | null): unknown {
@@ -766,12 +879,48 @@ export interface ExtraColumn {
   label: string;
   on: boolean;
   ai: boolean;
+  /** #36: the AI said this column is not needed (shown unticked; the owner can tick it back). */
+  aiIgnored?: boolean;
+  /** #36: the column only counts rows (1, 2, 3…): shown unticked; the owner can tick it back. */
+  rowNumbers?: boolean;
 }
 
-/** Most extra details one import brings, and the longest value kept (the server caps a record's size). */
-export const MAX_EXTRAS = 15;
+/**
+ * Most extra details one import brings, and the longest value kept. #36 (24 Oct 2026, "keep every
+ * extra column"): raised from 15; every column over it is NAMED on screen before the import
+ * (`extrasOverCap`), and a value cut short says so on its row. The server refuses a record over
+ * 20,000 bytes, so a member's details are also held under `MAX_EXTRA_BYTES`.
+ */
+export const MAX_EXTRAS = 40;
 export const MAX_EXTRA_VALUE = 200;
 export const MAX_EXTRA_LABEL = 40;
+export const MAX_EXTRA_BYTES = 9000;
+
+/** The ticked columns past MAX_EXTRAS: not brought in, and the screen names them. PURE. */
+export function extrasOverCap(extras: readonly ExtraColumn[]): ExtraColumn[] {
+  return extras.filter((e) => e.on && cleanExtraLabel(e.label)).slice(MAX_EXTRAS);
+}
+
+/** Headers that only number the rows ("Sr. No.", "S.No", "#"). */
+const ROW_NUMBER_HEADERS = new Set(['sr', 'sr no', 'srno', 's no', 'sno', 'sl no', 'slno', 's n', 'serial', 'serial no', 'serial number', 'no', 'kr', 'kr sa', 'क्र', 'क्र सं', 'क्रम', 'क्रमांक']);
+
+/**
+ * #36: is this column just row numbers (1, 2, 3…), not a detail about the member? By its name
+ * ("Sr. No.", "#") or, with no name, by numbers that run one after another. PURE.
+ */
+export function isRowNumberColumn(rows: readonly (readonly unknown[])[], headerRow: number, col: number): boolean {
+  const rawHeader = cellText((rows[headerRow] ?? [])[col]);
+  const h = normalizeHeader(rawHeader);
+  if (ROW_NUMBER_HEADERS.has(h) || rawHeader === '#') return true;
+  if (h) return false;
+  const ns = rows
+    .slice(headerRow + 1)
+    .map((r) => cellText(r[col]))
+    .filter((t) => t !== '');
+  if (ns.length < 2 || ns.some((t) => !/^\d{1,5}$/.test(t))) return false;
+  const sorted = ns.map(Number).sort((a, b) => a - b);
+  return sorted.every((n, i) => i === 0 || n === sorted[i - 1]! + 1);
+}
 
 /** A detail's name, tidied: one line, at most 40 letters. '' when nothing is left. PURE. */
 export function cleanExtraLabel(raw: string): string {
@@ -802,6 +951,95 @@ export interface PlanOptions {
    * may still point a box at one by hand; every value read is cut free of ID numbers anyway.
    */
   idCols?: readonly number[];
+  /** #41: the gym has 2 or more branches: which branch each row goes to. Absent = this gym only. */
+  branches?: BranchRouting;
+}
+
+// ---------------------------------------------------------------- branches (#41)
+
+/** The owner's "Skip these rows" for a branch name in the file. */
+export const SKIP_BRANCH = 'skip';
+
+/**
+ * #41 (24 Oct 2026): where each row goes in a gym with several branches. Either the sheet has a
+ * Branch column (`map.branch`; names matched loosely by `match`, the owner answers for the rest),
+ * or the whole sheet goes to `sheetGymId` (one sheet per branch).
+ */
+export interface BranchRouting {
+  branches: readonly { gymId: string; name: string }[];
+  currentGymId: string;
+  /** No Branch column: every row of this sheet goes here. */
+  sheetGymId: string | null;
+  /** The loose matcher (branches/context.tsx `matchBranchName`): a gymId, or null. */
+  match: (typed: string) => string | null;
+  /** The owner's pick for a name in the file (by `branchKey`): a gymId, or SKIP_BRANCH. */
+  answers: Readonly<Record<string, string>>;
+  /** Every member (archived too) of each OTHER branch, once it is open. Absent = still opening. */
+  rosters: Readonly<Record<string, readonly Member[]>>;
+  /** Branches that could not be opened, with the reason in plain words. */
+  failed: Readonly<Record<string, string>>;
+}
+
+/** A branch name as written, made comparable ("  Vaishali  NAGAR" -> "vaishali nagar"). PURE. */
+export function branchKey(typed: string): string {
+  return typed.normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+/** Where one branch name in the file goes: the owner's answer first, then the loose match. PURE. */
+export function branchTarget(typed: string, routing: BranchRouting): string | null {
+  const answer = routing.answers[branchKey(typed)];
+  if (answer) return answer;
+  return typed.trim() ? routing.match(typed) : null;
+}
+
+// ---------------------------------------------------------------- rows that are not members
+
+/** A row left out because it is not a member (a totals row, a row with one stray cell). */
+export interface NotMemberRow {
+  rowNumber: number;
+  why: 'total' | 'stray';
+}
+
+const TOTAL_WORDS = new Set([
+  'total', 'totals', 'grand total', 'sub total', 'subtotal', 'net total', 'sum', 'total amount', 'total members',
+  'kul yog', 'कुल', 'कुल योग',
+]);
+
+/**
+ * #36: a totals row at the bottom ("Total", the sums) or a row with only one stray cell (a register
+ * numbered down to row 100) is not a member: it is left out and listed, never a "row to check".
+ * A row with a mobile is always a member row. PURE.
+ */
+export function notMemberReason(row: readonly unknown[], map: ColumnMap): NotMemberRow['why'] | null {
+  const phoneText = cellText(cellAt(row, map.phone));
+  if (phoneText && parseImportPhone(phoneText).ok) return null;
+  const filled = row.map(cellText).filter((t) => t !== '');
+  const firstWords = [cellText(cellAt(row, map.fullName)), ...filled.slice(0, 3)].map(normalizeHeader);
+  if (firstWords.some((w) => TOTAL_WORDS.has(w))) return 'total';
+  if (!cellText(cellAt(row, map.fullName)) && !phoneText && filled.length <= 1) return 'stray';
+  return null;
+}
+
+/** Edits typed into "Rows to check": by sheet row index, then column. */
+export type CellEdits = Readonly<Record<number, Readonly<Record<number, string>>>>;
+
+/** The sheet with the owner's fixes typed in (only edited rows are copied). PURE. */
+export function applyCellEdits<T>(rows: readonly (readonly T[])[], edits: CellEdits): (readonly (T | string)[])[] {
+  const keys = Object.keys(edits);
+  if (keys.length === 0) return rows as (readonly (T | string)[])[];
+  const out: (readonly (T | string)[])[] = [...rows];
+  for (const k of keys) {
+    const i = Number(k);
+    const fix = edits[i]!;
+    const row: (T | string)[] = [...(rows[i] ?? [])];
+    for (const [c, v] of Object.entries(fix)) {
+      const col = Number(c);
+      while (row.length <= col) row.push('');
+      row[col] = v;
+    }
+    out[i] = row;
+  }
+  return out;
 }
 
 function isBlankRow(row: readonly unknown[]): boolean {
@@ -824,9 +1062,13 @@ export function planImport(
   const fieldCols = new Set(IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null));
   const extraCols = usableExtras(options.extras ?? []).filter((e) => !idCols.has(e.col) && !fieldCols.has(e.col));
   const data: { row: readonly unknown[]; rowNumber: number }[] = [];
+  const notMembers: NotMemberRow[] = [];
   for (let i = headerRow + 1; i < rows.length; i += 1) {
     const row = rows[i] ?? [];
-    if (!isBlankRow(row)) data.push({ row, rowNumber: i + 1 });
+    if (isBlankRow(row)) continue;
+    const why = notMemberReason(row, map);
+    if (why) notMembers.push({ rowNumber: i + 1, why });
+    else data.push({ row, rowNumber: i + 1 });
   }
   const leftOut = Math.max(0, data.length - MAX_IMPORT_ROWS);
   const taken = data.slice(0, MAX_IMPORT_ROWS);
@@ -848,13 +1090,73 @@ export function planImport(
   const startDayFirst = dayFirstOf(map.startDate);
   const paidDayFirst = dayFirstOf(map.paidOn);
 
-  const batchNames = listBatches(roster).map((b) => b.name);
+  // #41: each branch has its own members (duplicates are checked against THAT branch) and batches.
+  const routing = options.branches;
+  const rosterOf = (gymId: string | undefined): readonly Member[] =>
+    !routing || gymId === undefined || gymId === routing.currentGymId ? roster : routing.rosters[gymId] ?? [];
+  const branchName = (gymId: string) => routing?.branches.find((b) => b.gymId === gymId)?.name ?? 'that branch';
+  const batchesByBranch = new Map<string, string[]>();
+  const batchNamesOf = (gymId: string | undefined) => {
+    const key = gymId ?? '';
+    let list = batchesByBranch.get(key);
+    if (!list) {
+      list = listBatches(rosterOf(gymId)).map((b) => b.name);
+      batchesByBranch.set(key, list);
+    }
+    return list;
+  };
   const seen = new Map<string, { row: number; name: string; cells: string }>();
   const out: ImportRow[] = [];
 
   for (const { row, rowNumber } of taken) {
     const problems: string[] = [];
     const warnings: string[] = [];
+    // #41: the branch first. A name nobody matched waits for the owner's pick; a branch that can't
+    // be opened (yet) keeps its rows back; "Skip these rows" leaves them out on purpose.
+    let gymId: string | undefined;
+    let branchWaiting = false;
+    let needsBranch = false;
+    if (routing) {
+      if (map.branch === null) {
+        gymId = routing.sheetGymId ?? routing.currentGymId;
+      } else {
+        const typed = cellText(row[map.branch]).replace(/\s+/g, ' ').trim();
+        const target = branchTarget(typed, routing);
+        if (target === SKIP_BRANCH) {
+          out.push({
+            rowNumber,
+            cells: row.map(cellText),
+            name: withoutTitle(normalizeName(cellText(cellAt(row, map.fullName)))),
+            status: 'problem',
+            draft: null,
+            existing: null,
+            sameAsRow: null,
+            problems: [typed ? `Skipped: you chose “Skip these rows” for the branch “${typed}”.` : 'Skipped: you chose “Skip these rows” for rows with no branch.'],
+            warnings: [],
+            term: null,
+            ownerSkipped: true,
+          });
+          continue;
+        }
+        if (target === null) {
+          needsBranch = true;
+          problems.push(
+            typed
+              ? `The branch “${typed}” is not one of your branches. Pick the branch for it under “Branches in your file”.`
+              : 'No branch is written on this row. Pick the branch for it under “Branches in your file”.',
+          );
+        } else gymId = target;
+      }
+      if (gymId !== undefined && gymId !== routing.currentGymId) {
+        if (routing.failed[gymId] !== undefined) {
+          problems.push(`The branch “${branchName(gymId)}” could not be opened: ${routing.failed[gymId]}`);
+          branchWaiting = true;
+        } else if (!routing.rosters[gymId]) {
+          problems.push(`The branch “${branchName(gymId)}” is still opening. Wait a moment.`);
+          branchWaiting = true;
+        }
+      }
+    }
     // #47: an Aadhaar or PAN number in any cell this row reads (a note, an address, a name, an extra
     // detail, a column picked by hand) is cut out, and the row says so.
     let idCut = false;
@@ -931,6 +1233,7 @@ export function planImport(
     }
 
     // Batch: the gym's own spelling when it already has this batch.
+    const batchNames = batchNamesOf(gymId);
     let batch = resolveBatch(text('batch'), batchNames) ?? '';
     if (batch.length > BATCH_MAX) {
       warnings.push(`Batch name cut to ${BATCH_MAX} letters.`);
@@ -957,13 +1260,21 @@ export function planImport(
       warnings.push(`Payment date “${text('paidOn')}” can’t be read. The receipt uses the plan’s start date.`);
       paidOn = null;
     }
+    // #36 review: a "Paid" yes / no column: yes = the plan's price was paid in full, no = nothing yet.
+    let paidP = money('amount');
+    if (map.paidFlag !== null && text('paidFlag')) {
+      const flag = parsePaidFlag(cellAt(row, map.paidFlag));
+      if (flag === true) paidP = money('total') ?? paidP;
+      else if (flag === false) paidP = 0;
+      else warnings.push(`Paid “${text('paidFlag')}” is not yes or no. Nothing is counted as paid for this row.`);
+    }
     const term = termFromRow({
       planName: text('plan'),
       startsOn,
       endsOn,
       joinedOn: text('joinedOn') ? joinedOn : null,
       totalP: money('total'),
-      paidP: money('amount'),
+      paidP,
       dueP: money('due'),
       paidOn,
     });
@@ -1010,10 +1321,24 @@ export function planImport(
     );
     const address = text('address');
     const extra: Record<string, string> = {};
+    const cut: string[] = [];
+    let extraBytes = 2;
     for (const e of extraCols) {
       const v = safe(cellText(row[e.col]).replace(/\s+/g, ' ').trim());
-      if (v) extra[e.label] = v.length > MAX_EXTRA_VALUE ? `${v.slice(0, MAX_EXTRA_VALUE - 1)}…` : v;
+      if (!v) continue;
+      // #36: a value cut short, or left out to keep the member's record under the server's size,
+      // is said on the row (it used to be cut without a word).
+      const kept = v.length > MAX_EXTRA_VALUE ? `${v.slice(0, MAX_EXTRA_VALUE - 1)}…` : v;
+      const bytes = utf8Length(JSON.stringify(e.label)) + utf8Length(JSON.stringify(kept)) + 2;
+      if (extraBytes + bytes > MAX_EXTRA_BYTES) {
+        warnings.push(`“${e.label}” is not kept for this member. This member has too many long details.`);
+        continue;
+      }
+      if (kept !== v) cut.push(e.label);
+      extraBytes += bytes;
+      extra[e.label] = kept;
     }
+    if (cut.length > 0) warnings.push(`${cut.map((l) => `“${l}”`).join(', ')} cut to ${MAX_EXTRA_VALUE} letters.`);
     if (idCut) warnings.push('An Aadhaar or PAN number was left out. ID numbers are never imported.');
 
     let draft: MemberDraft | null = null;
@@ -1043,12 +1368,15 @@ export function planImport(
     }
 
     const cells = row.map(cellText);
-    if (!draft) {
-      out.push({ rowNumber, cells, name: fullName, status: 'problem', draft: null, existing: null, sameAsRow: null, problems, warnings, term: null });
+    const where = gymId === undefined ? {} : { gymId };
+    if (!draft || problems.length > 0) {
+      out.push({ rowNumber, cells, name: fullName, status: 'problem', draft: null, existing: null, sameAsRow: null, problems, warnings, term: null, ...where, ...(branchWaiting ? { branchWaiting } : {}), ...(needsBranch ? { needsBranch } : {}) });
       continue;
     }
 
-    const earlier = seen.get(draft.phone);
+    // #41: a mobile repeats only within one branch (the same person may train at two branches).
+    const seenKey = `${gymId ?? ''}\u0001${draft.phone}`;
+    const earlier = seen.get(seenKey);
     if (earlier !== undefined) {
       // Review (16 Oct 2026): a repeat is the SAME member (a payments list) only when the name
       // matches too. Two people on one family mobile must never share plans and money.
@@ -1062,11 +1390,11 @@ export function planImport(
           `Exactly the same as row ${earlier.row}, so it counts as a second payment. If it is a copy, delete one row in Excel and import again.`,
         );
       }
-      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null });
+      out.push({ rowNumber, cells, name: fullName, status: 'duplicate', draft, existing: null, sameAsRow: earlier.row, problems, warnings, term: sameName ? term : null, ...where });
       continue;
     }
-    seen.set(draft.phone, { row: rowNumber, name: draft.fullName, cells: cells.join('\u0001') });
-    const existing = findDuplicatePhone(roster, draft.phone);
+    seen.set(seenKey, { row: rowNumber, name: draft.fullName, cells: cells.join('\u0001') });
+    const existing = findDuplicatePhone(rosterOf(gymId), draft.phone);
     // C7-3: a member already in the gym on this mobile with ANOTHER name is someone else (a family
     // shares a number). Their plan and money are never put on that member.
     let rowTerm = term;
@@ -1078,7 +1406,7 @@ export function planImport(
         );
       }
     }
-    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term: rowTerm });
+    out.push({ rowNumber, cells, name: fullName, status: existing ? 'duplicate' : 'add', draft, existing, sameAsRow: null, problems, warnings, term: rowTerm, ...where });
   }
 
   // Admin audit C7-38 (16 Oct 2026): with no joining-date column, a member joins on their EARLIEST
@@ -1097,7 +1425,11 @@ export function planImport(
 
   const counts = { add: 0, duplicate: 0, problem: 0 };
   for (const r of out) counts[r.status] += 1;
-  return { rows: out, counts, leftOut };
+  return { rows: out, counts, leftOut, notMembers };
+}
+
+function utf8Length(s: string): number {
+  return new TextEncoder().encode(s).length;
 }
 
 /**
@@ -1150,7 +1482,8 @@ export function termsPreview(rows: readonly ImportRow[]): { members: number; nam
 /** One plain line: what happens to this row. */
 export function rowVerdict(row: ImportRow): string {
   if (row.status === 'add') return 'Will be added';
-  if (row.status === 'problem') return 'Problem — will be skipped';
+  // #36: a problem row can be fixed on the screen now ("Rows to check"), so it is not "skipped" yet.
+  if (row.status === 'problem') return row.ownerSkipped ? 'Skipped' : 'Not added yet. See “Rows to check”';
   if (row.sameAsRow !== null) {
     // 16 Oct 2026: a payments list repeats the member; the row's plan and payment still count.
     if (row.term) {
@@ -1264,10 +1597,17 @@ export async function saveInBatches(
   save: (drafts: MemberDraft[]) => Promise<Member[]>,
   onProgress: (done: number) => void,
   size: number = IMPORT_BATCH_SIZE,
+  /**
+   * #36 "never stop halfway": after a batch fails, go on with the NEXT batches (their own saves);
+   * only the failed batch's unsaved rows wait. `stopped` is the first failure's words.
+   */
+  keepGoing = false,
 ): Promise<BatchSaveOutcome> {
   const work = rows.filter((r) => r.draft !== null);
   const added: ImportRow[] = [];
   const duplicates: ImportRow[] = [];
+  const notSaved: ImportRow[] = [];
+  let stopped: string | null = null;
   for (let start = 0; start < work.length; start += size) {
     let batch = work.slice(start, start + size);
     while (batch.length > 0) {
@@ -1291,15 +1631,22 @@ export async function saveInBatches(
         const savedPhones = new Set(e instanceof PartialSaveError ? e.saved.map((m) => m.phone) : []);
         const savedHere = batch.filter((r) => savedPhones.has(r.draft?.phone ?? ''));
         added.push(...savedHere);
-        return {
-          added,
-          duplicates,
-          notSaved: [...batch.filter((r) => !savedHere.includes(r)), ...work.slice(start + size)],
-          stopped: e instanceof Error && e.message ? e.message : 'Saving stopped.',
-        };
+        const words = e instanceof Error && e.message ? e.message : 'Saving stopped.';
+        if (!keepGoing) {
+          return {
+            added,
+            duplicates,
+            notSaved: [...batch.filter((r) => !savedHere.includes(r)), ...work.slice(start + size)],
+            stopped: words,
+          };
+        }
+        console.warn('[ForgeErr] import members: one batch not saved, going on with the next', e);
+        notSaved.push(...batch.filter((r) => !savedHere.includes(r)));
+        stopped ??= words;
+        break;
       }
     }
     onProgress(Math.min(work.length, start + size));
   }
-  return { added, duplicates, notSaved: [], stopped: null };
+  return { added, duplicates, notSaved, stopped };
 }

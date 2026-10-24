@@ -92,7 +92,7 @@ export interface CrmCloudApi {
 }
 
 /** The gym's own details that live in a record (name, join code and created date are the server's). */
-type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin'>;
+type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix'>;
 
 const COLLECTIONS = [
   ['member', 'members'],
@@ -145,6 +145,8 @@ export function applyRecords(rows: Rows, records: readonly CrmRecord[]): boolean
           phone: typeof d.phone === 'string' ? d.phone : null,
           address: typeof d.address === 'string' ? d.address : null,
           gstin: typeof d.gstin === 'string' ? d.gstin : null,
+          // #41: a branch's receipt prefix; the server writes it on the record and keeps it (0031).
+          receiptPrefix: typeof d.receiptPrefix === 'string' && d.receiptPrefix ? d.receiptPrefix : null,
         };
       }
       continue;
@@ -172,6 +174,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
       phone: rows.gym?.phone ?? null,
       address: rows.gym?.address ?? null,
       gstin: rows.gym?.gstin ?? null,
+      receiptPrefix: rows.gym?.receiptPrefix ?? null,
       createdAt: gym.createdAt,
     },
     members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0).map(normalizeMember),
@@ -186,7 +189,10 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
 }
 
 function gymDetails(g: GymRecord): GymDetails {
-  return { name: g.name, phone: g.phone, address: g.address, gstin: g.gstin };
+  const out: GymDetails = { name: g.name, phone: g.phone, address: g.address, gstin: g.gstin };
+  // Only a branch has one; the first branch's record stays exactly as it always was.
+  if (g.receiptPrefix) out.receiptPrefix = g.receiptPrefix;
+  return out;
 }
 
 /** The rows that differ between two copies of the gym: changed or new, and deleted. PURE. */

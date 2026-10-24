@@ -191,7 +191,7 @@ describe('the AI answer', () => {
         { column: 5, target: { field: 'phone' }, confidence: 0.9 }, // disagrees with our rules: only shown
         { column: 5, target: { field: 'notes' }, confidence: 0.85 },
         { column: 2, target: { extra: 'Locker No.' }, confidence: 0.8 },
-        { column: 4, target: { extra: 'Blood Group' }, confidence: 0.5 }, // unsure: suggested, not ticked
+        { column: 4, target: { extra: 'Blood Group' }, confidence: 0.5 }, // unsure: its name suggested, the column kept (#36)
         { column: 3, target: { extra: 'Aadhaar' }, confidence: 0.9 }, // an ID column: never
       ],
       [3],
@@ -202,7 +202,7 @@ describe('the AI answer', () => {
     expect(applied.aiFields).toEqual(['notes']);
     expect(applied.extras).toEqual({
       2: { label: 'Locker No.', on: true, ai: true },
-      4: { label: 'Blood Group', on: false, ai: true },
+      4: { label: 'Blood Group', on: true, ai: true }, // #36: unsure of the NAME only; the column is still kept
     });
     expect(applied.held).toEqual(['AI thinks Column F “Remarks” is “Mobile”.']); // shown, never applied
     const unsure = applyAiPicks(map({}), [{ column: 4, target: { field: 'batch' }, confidence: 0.45 }], [], headers);

@@ -185,6 +185,8 @@ export type AuthErrorCode =
   | 'BUSY'
   // ForgeAI HQ (#51, migration 0027): ForgeAI paused this gym; looking and downloading still work.
   | 'SUSPENDED'
+  // #41 (0031): a mobile on another branch's staff list can't be made an owner of every branch.
+  | 'STAFF_ELSEWHERE'
   // UAT work package 3 (0021): the server's receipt rules.
   | ReceiptRefusal
   | 'OFFLINE'
@@ -213,7 +215,7 @@ export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
 
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
-  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', ...RECEIPT_REFUSALS,
+  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE', ...RECEIPT_REFUSALS,
 ];
 
 /** ForgeAI HQ (#51): what a desk sees when ForgeAI has paused the gym (every save is refused). */
@@ -309,6 +311,8 @@ export function authErrorWords(err: unknown): string {
       return 'You can’t remove yourself. Use “Sign out” instead.';
     case 'LAST_OWNER':
       return 'A gym needs at least one owner. Add another owner first.';
+    case 'STAFF_ELSEWHERE':
+      return 'This mobile number is on another branch’s staff list. Remove it there first, then add them as an owner.';
     case 'TOO_MANY':
       return 'Too many tries right now. Wait a little, then try again.';
     case 'GONE':

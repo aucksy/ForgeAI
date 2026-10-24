@@ -511,3 +511,47 @@ export function gymsCsv(gyms) {
 export function csvName(now = Date.now()) {
   return `forgeai-gyms-${new Date(now + IST_MS).toISOString().slice(0, 10)}.csv`;
 }
+
+// ------------------------------------------------------------------ gym groups and branches (0031, #41)
+// A gym business with several branches is a GROUP; each branch is its own gym row (own records,
+// receipts, staff). HQ shows the group with its branches and the members of each branch. ForgeAI's
+// prices are PER BRANCH (the landing page says so); HQ shows that as information only: nothing is
+// billed from here.
+
+/** The landing page's monthly prices per branch, in rupees (apps/dashboard/public/home). */
+export const BRANCH_PRICES = { starter: 999, pro: 1999 };
+
+/** gymId -> { groupId, groupName, branchNo, branches } for every gym in a group. PURE. */
+export function branchOf(groups) {
+  const out = new Map();
+  for (const grp of Array.isArray(groups) ? groups : []) {
+    const branches = Array.isArray(grp.branches) ? grp.branches : [];
+    branches.forEach((b, i) => out.set(b.gymId, { groupId: grp.groupId, groupName: grp.name, branchNo: i + 1, branches: branches.length, receiptPrefix: b.receiptPrefix || null }));
+  }
+  return out;
+}
+
+/** Groups with 2 or more branches, biggest first, each branch joined to its HQ gym row when known. PURE. */
+export function groupCards(groups, gyms) {
+  const byId = new Map((Array.isArray(gyms) ? gyms : []).map((g) => [g.gymId, g]));
+  return (Array.isArray(groups) ? groups : [])
+    .map((grp) => {
+      const branches = (Array.isArray(grp.branches) ? grp.branches : []).map((b) => ({ ...b, gym: byId.get(b.gymId) || null }));
+      return {
+        groupId: grp.groupId,
+        name: grp.name,
+        branches,
+        membersRegister: branches.reduce((n, b) => n + (Number(b.membersRegister) || 0), 0),
+        membersApp: branches.reduce((n, b) => n + (Number(b.membersApp) || 0), 0),
+      };
+    })
+    .filter((g) => g.branches.length >= 2)
+    .sort((a, b) => b.branches.length - a.branches.length || b.membersRegister - a.membersRegister || String(a.name).localeCompare(String(b.name)));
+}
+
+/** "3 branches: priced per branch, e.g. Starter ₹2,997 or Pro ₹5,997 a month in all (information only)." PURE. */
+export function groupPriceWords(branches) {
+  const n = Number(branches) || 0;
+  const r = (x) => `₹${(x * n).toLocaleString('en-IN')}`;
+  return `${count(n, 'branch', 'branches')}: priced per branch, so Starter ${r(BRANCH_PRICES.starter)} or Pro ${r(BRANCH_PRICES.pro)} a month for all of them. Information only: nothing is billed here.`;
+}

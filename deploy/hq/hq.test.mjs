@@ -340,6 +340,20 @@ test('the gym server is called with the HQ key and the verified email; the key n
   assert.equal(JSON.parse(body).gyms[0].aiLimit, null, 'no Cloudflare database bound: AI columns empty, page still works');
 });
 
+test('gym groups (0031): passed to the page; a server without 0031 answers no groups, the list still works', async () => {
+  const groups = [{ groupId: 'grp-1', name: 'Iron Temple', branches: [{ gymId: GYM, name: 'Iron', membersRegister: 5, membersApp: 1 }] }];
+  const net = fakeNet({ db: { hq_gyms: [{ gymId: GYM, joinCode: 'ABC123', name: 'Iron' }], hq_groups: groups } });
+  const body = await (await api('GET', '/api/gyms', null, env(), net)).json();
+  assert.deepEqual(body.groups, groups);
+  assert.equal(JSON.parse(net.rpcCalls('hq_groups')[0].init.body).p_actor, OWNER, 'audited under the verified email');
+  const before = fakeNet({ db: { hq_gyms: [{ gymId: GYM, joinCode: 'ABC123', name: 'Iron' }] }, dbMissing: ['hq_groups'] });
+  const res = await api('GET', '/api/gyms', null, env(), before);
+  assert.equal(res.status, 200);
+  const old = await res.json();
+  assert.equal(old.groups, null);
+  assert.equal(old.gyms.length, 1);
+});
+
 test('a refusal comes back as its code, never the raw database message', async () => {
   assert.equal(refusalCode('SUSPENDED'), 'SUSPENDED');
   assert.equal(refusalCode('STILL_ROWS 3 in crm_records'), 'STILL_ROWS');

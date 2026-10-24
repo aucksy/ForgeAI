@@ -5,6 +5,7 @@
 
 import type { CrmCloudApi, CrmRecord } from '../data/cloud';
 import { call } from '../shop/api';
+import { isMissingFunction } from '../branches/api';
 import {
   madeCodeFromRow,
   peopleFromRows,
@@ -27,15 +28,27 @@ function device(): string | null {
   return typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 200) : null;
 }
 
-/** A new gym, online from the first minute, with this person as its owner (signed in here). */
-export async function createOnlineGym(gymName: string, name: string, phone: string): Promise<SignedIn> {
-  const r = await call<Row>('gym_create_online', {
+/**
+ * A new gym, online from the first minute, with this person as its owner (signed in here).
+ * `termsVersion` (#38): the version of the terms the owner ticked at "Create my gym"; the server
+ * keeps it with the gym (0033). A server without 0033 does not know the argument: the gym is then
+ * made without it, and the owner is asked once 0033 is there (TermsGate).
+ */
+export async function createOnlineGym(gymName: string, name: string, phone: string, termsVersion?: string): Promise<SignedIn> {
+  const args = {
     p_gym_name: gymName.trim(),
     p_name: name.trim(),
     p_phone: phone,
     p_device: device(),
-  });
-  return signedInFromRow(r);
+  };
+  if (!termsVersion) return signedInFromRow(await call<Row>('gym_create_online', args));
+  try {
+    return signedInFromRow(await call<Row>('gym_create_online', { ...args, p_terms_version: termsVersion }));
+  } catch (e) {
+    if (!isMissingFunction(e)) throw e;
+    console.warn('[ForgeErr] gym_create_online: no terms on this server yet (0033), made without', e);
+    return signedInFromRow(await call<Row>('gym_create_online', args));
+  }
 }
 
 /** An existing cloud gym (held by an old owner key) gets its owner as a person, signed in here. */

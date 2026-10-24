@@ -101,7 +101,7 @@ test('J19 online import: the internet drops after the first 500; the words say w
   const main = page.getByRole('main');
   await expect(main).toContainText('500 added, 100 skipped');
   await expect(main).toContainText(
-    'Saving stopped halfway: Can’t reach the internet. Check the connection and try again. 500 members were saved (up to row 501). The rest may not be saved. When the internet is back, import the same file again. Members already added are skipped, so nobody is added twice.',
+    'Saving stopped halfway: Can’t reach the internet. Check the connection and try again. 500 members were saved (up to row 501). The rest may not be saved. When the internet is back, tap “Try again” below, or import the same file again. Members already added are skipped, so nobody is added twice.',
   );
   await expectFitsPhone(page, 'after the import stopped');
   expect(server.rows('member')).toHaveLength(500);

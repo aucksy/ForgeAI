@@ -112,6 +112,8 @@ export function canOpen(role: Role, path: string): boolean {
   // R-86: Automatic reminders (`/messages/reminders`) too: the desk can look; only the owner changes them.
   if (head === 'messages') return sub === 'offer' || sub === 'reminders' || can(role, 'manageGym');
   if (head === 'settings' && sub === 'branding') return can(role, 'manageGym');
+  // #41: every branch's totals together: the owner's (the desk works at one branch).
+  if (head === 'branches') return can(role, 'seeTotals');
   return true;
 }
 
@@ -156,7 +158,7 @@ export function oldMessagesLinkTo(role: Role): '/messages' | '/shop' {
   return canOpen(role, '/messages') ? '/messages' : '/shop';
 }
 
-/** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. */
-export function staffRightsWords(): string {
-  return 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in, hand over shop orders and send members workout plans. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
+/** One plain line: what Staff can and cannot do now. Shown on Staff & sign-in. `multi`: the gym has branches. */
+export function staffRightsWords(multi = false): string {
+  return (multi ? 'Owners are owners of every branch. Staff work only at the branch they are added to. ' : '') + 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in, hand over shop orders and send members workout plans. Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead. Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.';
 }

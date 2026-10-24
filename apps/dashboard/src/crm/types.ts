@@ -67,6 +67,12 @@ export interface Member extends GymScoped {
    * the member record like every other field: no gym-database change. Absent = none.
    */
   extra?: Record<string, string> | null;
+  /**
+   * #41 branches (24 Oct 2026): true when this member may train at EVERY branch of the gym (the desk
+   * of another branch, or the member app's QR there, may check them in; supabase 0031). Absent or
+   * false = their own branch only. Kept inside the member record: no gym-database change.
+   */
+  allBranches?: boolean;
   archived: boolean;
   /** Set once the member installs the app and links; null for everyone else. */
   appUserId: string | null;
@@ -262,6 +268,13 @@ export interface Visit extends GymScoped {
   /** Epoch ms of the first check-in that day, for peak-hour reporting. */
   checkedInAt: number;
   source: 'desk' | 'app' | 'import';
+  /**
+   * #41 branches: set when the member trained at ANOTHER branch of the gym (its desk or its QR
+   * checked them in; the visit is kept here, in their own branch, so their attendance stays true).
+   * Absent = at this branch.
+   */
+  atGymId?: string | null;
+  atGymName?: string | null;
 }
 
 // ---------------------------------------------------------------- enquiries and expenses (step 5)

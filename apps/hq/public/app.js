@@ -14,6 +14,7 @@ import {
   actionWords,
   ago,
   billingBadge,
+  branchOf,
   capWords,
   codeMessage,
   count,
@@ -24,6 +25,8 @@ import {
   errorWords,
   filterNeedsTrial,
   flags,
+  groupCards,
+  groupPriceWords,
   gymByCode,
   gymsCsv,
   inFilter,
@@ -167,7 +170,29 @@ async function gymsPage() {
   loading();
   gymsData = await api('/api/gyms');
   gymsCache = gymsData.gyms;
+  groupsCache = Array.isArray(gymsData.groups) ? gymsData.groups : [];
   renderGyms();
+}
+
+// #41 (0031): gym businesses with several branches. Kept from the last gym list (never saved).
+let groupsCache = [];
+
+/** "Gym groups": each business with its branches and their members (counts only). */
+function groupsCard(groups, gyms, now, ready) {
+  const cards = groupCards(groups, gyms);
+  if (!cards.length) return null;
+  return h('div', { class: 'card' },
+    h('h2', {}, `Gyms with branches (${cards.length})`),
+    cards.map((c) => h('div', { class: 'stack' },
+      h('p', {}, h('strong', {}, c.name), ` · ${count(c.branches.length, 'branch', 'branches')} · ${c.membersRegister} members in the registers, ${c.membersApp} in the app`),
+      h('ul', {}, c.branches.map((b) => {
+        const badge = ready && b.gym ? billingBadge(b.gym, now) : null;
+        return h('li', {},
+          h('a', { href: `#gym/${b.gymId}` }, b.name),
+          ` · ${b.joinCode}${b.receiptPrefix ? ` · receipts ${b.receiptPrefix}/…` : ''} · ${b.membersRegister} members (${b.membersApp} in app)`,
+          badge ? h('span', { class: `flag ${badge.tone}` }, ` ${badge.words}`) : null);
+      })),
+      h('p', { class: 'muted' }, groupPriceWords(c.branches.length)))));
 }
 
 function openGym(g) {
@@ -179,7 +204,8 @@ function gymRow(g, now, ready) {
   // One wrapper per cell, so on a phone (style.css) the label sits left and the value block right.
   const cell = (label, attrs, ...kids) => h('td', { ...attrs, 'data-label': label }, h('div', { class: 'cell' }, ...kids));
   return h('tr', { tabindex: '0', onclick: () => openGym(g), onkeydown: (e) => e.key === 'Enter' && openGym(g) },
-    cell('Gym', {}, h('strong', {}, g.name), h('div', { class: 'muted' }, `${g.joinCode} · ${STATUS_WORDS[g.status] || g.status}`), flagList(g)),
+    cell('Gym', {}, h('strong', {}, g.name), h('div', { class: 'muted' }, `${g.joinCode} · ${STATUS_WORDS[g.status] || g.status}`),
+      branchLine(g.gymId), flagList(g)),
     ready ? cell('Free trial or plan', {}, badge ? h('span', { class: `flag ${badge.tone}` }, badge.words) : h('span', { class: 'muted' }, '–')) : null,
     cell('Members', { class: 'num' }, `${g.membersRegister}`, h('div', { class: 'muted' }, `${g.membersApp} in app`)),
     cell('Check-ins 7 / 30 days', { class: 'num' }, `${g.checkins7} / ${g.checkins30}`),
@@ -187,6 +213,12 @@ function gymRow(g, now, ready) {
     cell('Last desk activity', {}, ago(g.lastDeskActivity, now), h('div', { class: 'muted' }, `${count(g.staff, 'person', 'people')} · ${count(g.liveDevices, 'device')}`)),
     cell('Owner', {}, h('span', {}, g.ownerName || ''), h('div', {}, g.ownerPhone ? h('a', { href: `tel:+91${g.ownerPhone}`, onclick: (e) => e.stopPropagation() }, g.ownerPhone) : '')),
   );
+}
+
+/** "Branch 2 of 3 · Iron Temple" under a gym that is a branch of a business; null otherwise. */
+function branchLine(gymId) {
+  const b = branchOf(groupsCache).get(gymId);
+  return b && b.branches >= 2 ? h('div', { class: 'muted' }, `Branch ${b.branchNo} of ${b.branches} · ${b.groupName}`) : null;
 }
 
 function renderGyms() {
@@ -252,6 +284,7 @@ function renderGyms() {
       tile('Need a look', `${s.needLook}`, 'paused, warnings, not checked', 'look')),
     ready || base.length === 0 ? null : note(NOT_READY_WORDS, 'warn'),
     data.webOk ? null : note('Feedback, leads and AI use could not be read right now.', 'warn'),
+    groupsCard(data.groups, data.gyms, now, ready),
     h('div', { class: 'toolbar' },
       field('Search', search), field('Show', filterPick), field('Sort', sortPick)),
     h('div', { class: 'row wrap between' },
@@ -461,6 +494,7 @@ async function gymPage(id, flash = '') {
     h('p', {}, h('a', { href: '#gyms' }, '← All gyms')),
     h('div', { class: 'page-head' }, h('h1', {}, g.name), h('span', { class: `badge ${g.status}` }, STATUS_WORDS[g.status] || g.status)),
     h('p', { class: 'muted' }, `Gym code ${g.joinCode} · started ${when(g.createdAt)}`),
+    branchLine(id),
     flash ? note(flash, 'good') : null,
     flagList({ ...g, aiLimit: null }),
     h('div', { class: 'stats' },

@@ -47,12 +47,22 @@ import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
+import { AllBranchesScreen } from './branches/AllBranches';
+import { BranchProvider } from './branches/BranchProvider';
+import { useBranches } from './branches/context';
+import { TermsGate } from './auth/TermsGate';
 import { Redirect, useRoute } from './ui/router';
 
 export function CrmApp() {
   return (
     <AuthProvider>
-      <SessionRoot />
+      {/* #41: above the panel, so it lives on while the panel remounts for another branch. */}
+      <BranchProvider>
+        {/* #38: an owner who has not accepted the terms yet is asked once, before the panel. */}
+        <TermsGate>
+          <SessionRoot />
+        </TermsGate>
+      </BranchProvider>
     </AuthProvider>
   );
 }
@@ -89,6 +99,9 @@ function Routes({ online }: { online: boolean }) {
   const { newCount } = useShop();
   const route = useRoute();
   const role = useRole();
+  // #41: an owner with 2 or more branches gets "All branches" (totals and lists across branches).
+  const { multi, canOpenOthers } = useBranches();
+  const allBranches = multi && canOpenOthers;
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -118,6 +131,7 @@ function Routes({ online }: { online: boolean }) {
     const enquiriesDue = dueCount(snapshot.enquiries, today);
     // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
     return navFor<NavItem>(role, [
+      ...(allBranches ? [{ path: '/branches', label: 'All branches', icon: 'branches' } as NavItem] : []),
       { path: '/', label: 'Today', icon: 'today' },
       { path: '/members', label: 'Members', icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
@@ -145,7 +159,7 @@ function Routes({ online }: { online: boolean }) {
       // Launch H7 (21 Oct 2026): write to ForgeAI (problems, ideas). Owner and Staff.
       { path: '/feedback', label: 'Send feedback', icon: 'more' },
     ]);
-  }, [memberViews, snapshot, today, newCount, role]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -208,6 +222,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <WorkoutPlansScreen />;
     case 'feedback':
       return <FeedbackScreen />;
+    case 'branches':
+      return <AllBranchesScreen />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

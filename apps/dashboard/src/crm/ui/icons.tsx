@@ -6,9 +6,18 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches';
 
 const PATHS: Record<IconName, React.ReactNode> = {
+  // #41: two buildings side by side: "every branch".
+  branches: (
+    <>
+      <path d="M3 20.5V9l5-3.5L13 9v11.5" />
+      <path d="M13 20.5V12l4-3 4 3v8.5" />
+      <path d="M2 20.5h20" />
+      <path d="M6.5 20.5v-4h3v4" />
+    </>
+  ),
   // Four squares: "everything else" (the phone's More tab).
   more: (
     <>

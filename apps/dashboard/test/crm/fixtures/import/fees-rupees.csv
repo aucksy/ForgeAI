@@ -1,0 +1,7 @@
+Name,Mobile,Plan,Start Date,End Date,Fees Paid
+Fee Rupee Sign,9876500901,Monthly,01/10/2026,31/10/2026,"₹1,500"
+Fee Rs Dot,9876500902,Monthly,01/10/2026,31/10/2026,Rs. 2000/-
+Fee Slash Dash,9876500903,Quarterly,01/10/2026,31/12/2026,"3,000/-"
+Fee Only,9876500904,Monthly,01/10/2026,31/10/2026,Rs 1500 only
+Fee INR,9876500905,6 Months,01/10/2026,31/03/2027,"INR 4,500"
+Fee Bad,9876500906,Monthly,01/10/2026,31/10/2026,paid later

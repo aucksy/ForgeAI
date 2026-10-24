@@ -34,6 +34,7 @@ import { navigate } from '../ui/router';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { staffRightsWords } from './permissions';
+import { useBranches } from '../branches/context';
 import {
   authErrorCode,
   authErrorWords,
@@ -65,6 +66,8 @@ export function PeopleScreen() {
   const key = session?.ownerKey ?? '';
   const me = session?.person ?? null;
   const isOwner = me?.role === 'owner';
+  // #41: with branches, this list is the OPEN branch's (owners are on every branch's list).
+  const { multi: multiBranch } = useBranches();
 
   const [people, setPeople] = useState<PersonRow[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -172,7 +175,7 @@ export function PeopleScreen() {
           <p style={bodyText}>
             Only an owner can add people or make sign-in codes. Ask your gym owner.
           </p>
-          <p style={{ ...bodyText, marginTop: space.md, fontSize: 13, color: color.inkMuted }}>{staffRightsWords()}</p>
+          <p style={{ ...bodyText, marginTop: space.md, fontSize: 13, color: color.inkMuted }}>{staffRightsWords(multiBranch)}</p>
         </Card>
       )}
 
@@ -236,7 +239,7 @@ export function PeopleScreen() {
             ))}
           </div>
           <p style={{ ...bodyText, marginTop: space.lg, fontSize: 13, color: color.inkMuted }}>
-            {staffRightsWords()}
+            {staffRightsWords(multiBranch)}
           </p>
         </Card>
       )}
@@ -320,6 +323,7 @@ function AddPersonSheet({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState<Role>('staff');
+  const { multi } = useBranches();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -361,8 +365,8 @@ function AddPersonSheet({
         value={role}
         onChange={(v) => setRole(v === 'owner' ? 'owner' : 'staff')}
         options={[
-          { value: 'staff', label: 'Staff (front desk): add members, collect fees, check in' },
-          { value: 'owner', label: 'Owner: everything, including money totals' },
+          { value: 'staff', label: multi ? 'Staff (front desk of this branch): add members, collect fees, check in' : 'Staff (front desk): add members, collect fees, check in' },
+          { value: 'owner', label: multi ? 'Owner: everything, in every branch, including money totals' : 'Owner: everything, including money totals' },
         ]}
       />
     </Sheet>

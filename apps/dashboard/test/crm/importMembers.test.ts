@@ -38,7 +38,7 @@ describe('guessColumns', () => {
     const m = guessColumns(['Name', 'Mobile', 'Joining date', 'Gender', 'DOB', 'Address', 'Batch', 'Plan', 'Amount', 'Expiry', 'Notes', 'Email']);
     expect(m).toEqual({
       fullName: 0, phone: 1, joinedOn: 2, gender: 3, dateOfBirth: 4, address: 5, batch: 6, plan: 7, amount: 8, expiry: 9, notes: 10, email: 11,
-      startDate: null, total: null, due: null, paidOn: null,
+      startDate: null, total: null, due: null, paidOn: null, branch: null, paidFlag: null,
     });
   });
 

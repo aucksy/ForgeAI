@@ -1,0 +1,4 @@
+Name,Mobile,Plan,Valid From,Valid Till,Fees,Paid
+Tick One,9876500811,Monthly,01/10/2026,31/10/2026,₹1500/-,✓
+Cross One,9876500812,Monthly,02/10/2026,01/11/2026,"Rs. 1,500",✗
+Tick Two,9876500813,Quarterly,03/10/2026,02/01/2027,4000,✔

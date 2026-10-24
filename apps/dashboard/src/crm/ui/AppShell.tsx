@@ -10,6 +10,7 @@
 
 import type { ReactNode } from 'react';
 
+import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
 import { color, font, radius, space, TOUCH, useIsCompact } from './kit';
@@ -89,9 +90,8 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       }}
     >
       <div style={{ padding: `0 ${space.md}px ${space.lg}px` }}>
-        <div style={{ fontFamily: font.display, fontSize: 15, fontWeight: 700, color: color.ink }}>
-          {gymName}
-        </div>
+        {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
+        <BranchSwitch gymName={gymName} />
         <div style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.6 }}>
           POWERED BY FORGEAI
         </div>
@@ -150,9 +150,7 @@ function CompactHeader({ gymName }: { gymName: string }) {
         gap: space.md,
       }}
     >
-      <div style={{ fontFamily: font.display, fontSize: 15, fontWeight: 700, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {gymName}
-      </div>
+      <BranchSwitch gymName={gymName} compact />
       <ThemeToggle compact />
     </header>
   );

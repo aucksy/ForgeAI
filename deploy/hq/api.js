@@ -60,6 +60,20 @@ const plansReady = (g) => Boolean(g) && typeof g === 'object' && Object.prototyp
 const PLANS = ['starter', 'pro', 'ai'];
 const BILLINGS = ['monthly', 'yearly', 'lifetime'];
 
+/**
+ * #41 (0031): every gym group with its branches. Null on a server without 0031 (the page then shows
+ * no groups); any other failure is thrown like every other read.
+ */
+async function groupsPart(db) {
+  try {
+    const groups = await db('hq_groups', {});
+    return Array.isArray(groups) ? groups : [];
+  } catch (e) {
+    if (e instanceof DbError && e.code === 'NOT_READY') return null;
+    throw e;
+  }
+}
+
 /** The D1 part of a page; null (and a log line) when Cloudflare's database could not be read. */
 async function webPart(what, fn) {
   try {
@@ -94,6 +108,7 @@ export async function handleApi(request, env, who, deps = {}) {
 
     if (route === 'GET /api/gyms') {
       const gyms = await db('hq_gyms', {});
+      const groups = await groupsPart(db);
       const web = env.WEB;
       const ai = web ? await webPart('ai usage', () => aiUsageByGym(web, monthStart(now))) : null;
       const today = web ? await webPart('ai usage today', () => aiUsageByGym(web, indiaDay(now))) : null;
@@ -107,7 +122,7 @@ export async function handleApi(request, env, who, deps = {}) {
         newFeedback: fb ? fb[g.joinCode] || 0 : null,
       }));
       // plansReady: false until 0030 is applied (the page then shows "needs the database update").
-      return json(200, { gyms: out, webOk: Boolean(ai && limits && fb), today: indiaDay(now), plansReady: out.some(plansReady) });
+      return json(200, { gyms: out, groups, webOk: Boolean(ai && limits && fb), today: indiaDay(now), plansReady: out.some(plansReady) });
     }
 
     if (route === 'GET /api/gym') {

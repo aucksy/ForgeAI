@@ -68,6 +68,8 @@ import {
 } from '../kit';
 import { Link, navigate } from '../router';
 import { CheckInQrScreen } from '../../shop/CheckInQrScreen';
+import { VisitorsCard } from '../../branches/VisitorsCard';
+import { useBranches } from '../../branches/context';
 
 type Tab = 'register' | 'risk';
 
@@ -150,6 +152,8 @@ function AttendanceTabs({ section }: { section?: string }) {
 
 function Register({ onToast }: { onToast: (msg: string) => void }) {
   const { snapshot, today, memberViews, checkIn, undoCheckIn } = useCrm();
+  // #41: a visit kept here that happened at another branch says where.
+  const { multi } = useBranches();
 
   // The day is held as a MODE plus a typed date, not as a bare date with the mode
   // derived back out of it. Deriving it made "Another day" a dead chip: clicking it
@@ -352,7 +356,9 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
                 body={
                   batchName
                     ? `Searching only ${batchName}. Pick “All batches” to search everyone.`
-                    : 'Check the spelling, or add them in Members first.'
+                    : multi
+                      ? 'Check the spelling, or add them in Members first. A member of another branch? Use “Member from another branch” below.'
+                      : 'Check the spelling, or add them in Members first.'
                 }
                 action={<Button onClick={() => navigate('/members')}>Open Members</Button>}
               />
@@ -400,6 +406,8 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
           </div>
         )}
       </Card>
+
+      {isToday && <VisitorsCard onToast={onToast} />}
 
       <Grid min={165}>
         <StatTile
@@ -592,6 +600,7 @@ function RegisterRowView({
       {view !== null && view.outstandingP > 0 && (
         <Pill tone="warn">{`${formatINR(view.outstandingP)} due`}</Pill>
       )}
+      {visit.atGymId && visit.atGymId !== visit.gymId && <Pill tone="muted">{`At ${visit.atGymName || 'another branch'}`}</Pill>}
       {visitSourceTag(visit.source) && (
         <Pill tone="muted">
           <span title={visit.source === 'app' ? 'Checked in with the ForgeAI app' : undefined}>{visitSourceTag(visit.source)}</span>

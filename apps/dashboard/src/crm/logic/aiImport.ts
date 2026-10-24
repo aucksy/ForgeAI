@@ -12,7 +12,7 @@
  * The server half is deploy/panel/aiMatch.js (maskCell there is the same rule as here).
  */
 
-import { cellText, columnLetter, fieldLabel, IMPORT_FIELDS, normalizeHeader, type ColumnMap, type ExtraColumn, type ImportField } from './importMembers';
+import { cellText, columnLetter, fieldLabel, IMPORT_FIELDS, MAX_IMPORT_ROWS, normalizeHeader, type ColumnMap, type ExtraColumn, type ImportField } from './importMembers';
 import { idColumnKind, isIdHeader, type IdKind } from './importIds';
 
 export const AI_EXAMPLE_ROWS = 5;
@@ -138,7 +138,9 @@ export function columnName(headers: readonly string[], col: number): string {
 /** Columns no field uses, that are not ID numbers and have something in them. PURE. */
 export function freeColumns(rows: readonly (readonly unknown[])[], headerRow: number, width: number, map: ColumnMap, idCols: readonly number[]): number[] {
   const used = new Set<number>([...IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null), ...idCols]);
-  const body = dataRows(rows, headerRow, 200);
+  // #36: every row is looked at (it was the first 200): a column filled in only further down is
+  // still a column to keep.
+  const body = dataRows(rows, headerRow, MAX_IMPORT_ROWS);
   const out: number[] = [];
   for (let c = 0; c < width; c += 1) {
     if (used.has(c)) continue;
@@ -225,7 +227,7 @@ export interface AiApplied {
   /** Fields the AI filled in (shown with an "AI" mark until the owner changes them). */
   aiFields: ImportField[];
   /** Extra-detail suggestions by column. */
-  extras: Record<number, Pick<ExtraColumn, 'label' | 'on' | 'ai'>>;
+  extras: Record<number, Pick<ExtraColumn, 'label' | 'on' | 'ai' | 'aiIgnored'>>;
   /** Guesses shown but not applied: they disagree with our rules, or the AI was not sure. */
   held: string[];
 }
@@ -257,7 +259,13 @@ export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: r
       }
     } else if ('extra' in p.target) {
       if (used().has(p.column)) continue;
-      extras[p.column] = { label: p.target.extra, on: p.confidence >= AI_SURE, ai: true };
+      // #36: every column is kept unless the owner says no; a name the AI is unsure of is still
+      // only a name (the owner can change it).
+      extras[p.column] = { label: p.target.extra, on: true, ai: true };
+    } else if (p.confidence >= AI_SURE) {
+      // #36: "not needed" is shown unticked with its own name, never hidden: one tick brings it back.
+      if (used().has(p.column)) continue;
+      extras[p.column] = { label: (headers[p.column] ?? '').trim() || `Column ${columnLetter(p.column)}`, on: false, ai: true, aiIgnored: true };
     }
   }
   // An extra suggestion for a column a field just took is dropped.
@@ -274,6 +282,8 @@ export const AI_WORDS = {
   off: 'AI matching is not switched on yet. Match the columns yourself below.',
   limit: 'Today’s AI matches for your gym are used up. Match the columns yourself below, or try tomorrow.',
   failed: 'The AI did not answer. Match the columns yourself below.',
+  /** #36: the AI answered, but was not sure of any column. */
+  unsure: 'The AI was not sure about these columns. Match them yourself below.',
   offline: 'Could not reach the AI. Check the internet, or match the columns yourself below.',
   owner: 'Only the owner can use AI matching. Match the columns yourself below.',
   signin: 'Sign in again to use AI matching. You can match the columns yourself below.',

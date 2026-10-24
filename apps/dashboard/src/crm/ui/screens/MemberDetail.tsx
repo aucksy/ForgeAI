@@ -334,6 +334,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
               {member.archived && <Pill tone="muted">Archived</Pill>}
               {member.appUserId && <Pill tone="accent">Using the app</Pill>}
+              {/* #41: may train at every branch (set on the member's form by an owner). */}
+              {member.allBranches && <Pill tone="muted">Every branch</Pill>}
             </Row>
             <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
               {current ? (

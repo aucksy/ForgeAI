@@ -249,3 +249,34 @@ test('Export gyms (CSV): gym-level facts only, safe for Excel', () => {
   assert.doesNotMatch(csv, /fullName|memberName|Member name/i, 'nothing about members but the two counts');
   assert.equal(L.csvName(T0), 'forgeai-gyms-2026-10-24.csv');
 });
+
+test('gym groups (0031, #41): each business with its branches, members per branch, price as information', () => {
+  const groups = [
+    { groupId: 'grp-1', name: 'Iron Temple', branches: [
+      { gymId: 'g1', name: 'Iron Temple', joinCode: 'IRON01', receiptPrefix: null, membersRegister: 120, membersApp: 40 },
+      { gymId: 'g2', name: 'Iron Temple, Vaishali', joinCode: 'IRON02', receiptPrefix: 'B2', membersRegister: 60, membersApp: 10 },
+    ] },
+    { groupId: 'grp-2', name: 'Solo', branches: [{ gymId: 'g9', name: 'Solo', joinCode: 'SOLO01', membersRegister: 5, membersApp: 0 }] },
+  ];
+  const by = L.branchOf(groups);
+  assert.deepEqual(by.get('g2'), { groupId: 'grp-1', groupName: 'Iron Temple', branchNo: 2, branches: 2, receiptPrefix: 'B2' });
+  assert.equal(by.get('nope'), undefined);
+  const cards = L.groupCards(groups, [{ gymId: 'g1', plan: 'pro' }]);
+  assert.equal(cards.length, 1, 'a group of one is just a gym');
+  assert.equal(cards[0].membersRegister, 180);
+  assert.equal(cards[0].membersApp, 50);
+  assert.equal(cards[0].branches[0].gym.plan, 'pro');
+  assert.equal(cards[0].branches[1].gym, null);
+  assert.equal(L.groupCards(null, []).length, 0, 'a server without 0031: no groups, no crash');
+  assert.equal(L.groupPriceWords(3), '3 branches: priced per branch, so Starter ₹2,997 or Pro ₹5,997 a month for all of them. Information only: nothing is billed here.');
+});
+
+test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: the page)", () => {
+  const html = readFileSync(new URL('../../dashboard/public/home/index.html', import.meta.url), 'utf8');
+  const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ');
+  for (const [plan, word] of [['starter', 'Starter'], ['pro', 'Pro']]) {
+    const m = new RegExp(`${word} ₹([0-9,]+) a month`).exec(text);
+    assert.ok(m, `${word} price not found on the landing page`);
+    assert.equal(Number(m[1].replace(/,/g, '')), L.BRANCH_PRICES[plan], `${word}: HQ and the landing page disagree`);
+  }
+});

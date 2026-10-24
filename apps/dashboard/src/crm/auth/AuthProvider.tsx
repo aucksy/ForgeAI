@@ -15,6 +15,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { STORAGE_KEY } from '../data/local';
 import { CLOUD_GYM_KEY, clearCloudGym, readCloudGym, writeCloudGym, type CloudGym } from '../shop/cloudGym';
 import { browserSavedCopy } from '../data/savedCopy';
+import { clearBranchKeys } from '../branches/logic';
 import * as authApi from './api';
 import { can, roleOf, type Action } from './permissions';
 import { lostWords, SIGNED_OUT_WORDS, type Role, type SignedIn } from './signin';
@@ -22,6 +23,17 @@ import { lostWords, SIGNED_OUT_WORDS, type Role, type SignedIn } from './signin'
 /** R-55: signing out (or losing the key) deletes this device's copy of the gym (savedCopy.ts). */
 function forgetOfflineCopy(): void {
   browserSavedCopy()?.clear().catch((e: unknown) => console.warn('[offline copy] not cleared', e));
+}
+
+/**
+ * #41: the keys this device kept for the OTHER branches go too. Signing out signs each of them out
+ * on the server (`signOutRest`); a lost key just forgets them (they may still work: harmless, since
+ * only this device ever had them, and the owner's "Sign out everywhere" ends them).
+ */
+function forgetBranchKeys(current: string | null | undefined, signOutRest: boolean): void {
+  const keys = Object.values(clearBranchKeys(safeStorage()));
+  if (!signOutRest) return;
+  for (const k of keys) if (k !== current) void authApi.signOut(k);
 }
 
 interface AuthContextValue {
@@ -119,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     const key = readCloudGym()?.ownerKey;
     if (key) await authApi.signOut(key);
+    forgetBranchKeys(key, true);
     clearCloudGym();
     forgetOfflineCopy();
     setNotice('You are signed out of this device.');
@@ -129,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const key = readCloudGym()?.ownerKey ?? null;
     clearCloudGym();
     forgetOfflineCopy();
+    forgetBranchKeys(key, false);
     setSession(null);
     // Several polls can find the dead key at once: only the first one (with the key) sets the words.
     if (!key) return;

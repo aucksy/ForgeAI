@@ -2618,6 +2618,25 @@
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 
+- 2026-10-24: **#41 multi-branch + #36 import that never fails + #38 terms online (built, NOT APPLIED, not committed).**
+  - Server: `supabase/migrations/0031_branches.sql` (gym_groups + gyms.group_id/receipt_prefix/branch_no; a branch is a gym;
+    owners own every branch, desk staff per branch; owner_branches/add/open/rename_group; branch_* visitor check-in;
+    B2/ receipt series enforced by trigger; member_check_in accepts another branch's QR for allBranches members;
+    hq_groups). `0033_terms_acceptance.sql` (append-only acceptance with version, how, sha256(gym:ip);
+    gym_create_online gains p_terms_version). Tests: 0031 PASS 115, 0033 PASS 27, all 23 suites pass on PGlite.
+  - Admin app: `src/crm/branches/*` (provider + keyring, switch at the top, All branches page, Settings -> Branches,
+    Visits -> Member from another branch), receipts.ts prefixes, member "Can train at every branch", TermsGate +
+    Create my gym tick box, Settings line. Import (subagent): branch column / sheet per branch, Rows to check, every
+    extra column kept, 13 fixtures. HQ: groups with branches and members per branch, price per branch as info.
+  - Review fixes (same day): "Paid" column read by its contents (money <= Amount / yes-no flag / dates; new
+    paidFlag field); paused branch no longer blocks owner removal; one lock per business for people changes;
+    visitor look-ups 30/hour/branch; terms versions only from _terms_versions(); new branch copies HQ status,
+    plan, trial and GSTIN. Terms check waits at most 4 s, then opens the panel (offline desks) and asks next
+    open; old admin apps are not refused by the server (a gym made without a version is asked later).
+  - Checks: dashboard vitest 1157, e2e 72 (+1 skipped), HQ 51, panel 40, crawl clean, ratchets at baseline.
+  - Waiting: owner yes for 0031 + 0033 live; terms/privacy pages are still holding pages and have no gym-owner
+    data agreement text (owner wording); deploy admin app + HQ + panel Worker (AI branch field) after the yes.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.

@@ -146,3 +146,77 @@ Re-running 0028 undoes those two: **always re-run 0030 after 0026-0028.**
 Nothing locks when a trial ends. Test: `tests/0030_plans_and_trials.sql` → `RESULT PASS (41 checks)`,
 then `tests/security.sql` → `RESULT PASS`. Before it is applied, HQ shows "Trials need the database
 update" and the admin app shows no trial line.
+
+## Members' workouts on our own server + member accounts (0032, tracker #50/#43) — NOT APPLIED
+Needs the owner's yes (#50) before it goes live. Additive and re-runnable; apply after 0030. Adds
+`member_items` (one compact row per workout, routine folder, own exercise, body weight, measurement,
+progress-photo day and the profile, keyed by the member's Supabase Auth account), `app_config` with the
+free plan's switch (`free_limits`, OFF), and the functions `member_copy_put`, `member_copy_get`,
+`member_copy_count`, `member_account_delete` (signed-in members only, each on its own rows; "Delete my
+account" deletes the copy always, and the sign-in account only when it is nothing but a member
+account: Supabase links Google to an existing same-email account, so an owner's or trainer's sign-in,
+or an older gym-sync member with a gym, keeps its account) and
+`app_limits` (anyone; answers only that row). Row level security: a member reads only their own rows;
+there is NO policy for a gym, so no owner, trainer or desk sees any of it (#46 is a later decision).
+Size math is in the migration's header (about 1 KB a workout; the free plan holds about 1,500
+members for 1.5 years). No existing table or function changes.
+
+To apply: SQL Editor → paste all of `migrations/0032_member_cloud.sql` → Run. Then paste
+`tests/0032_member_cloud.sql` → Run: it must end in an error that reads `RESULT PASS (58 checks)`.
+Then `tests/security.sql` → `RESULT PASS`. Until it is applied, the app's copy simply waits (its queue
+tries again every few hours) and the free limits read as off.
+
+Switching the free plan's limits on later (HQ will get a button; until then the SQL Editor):
+`update public.app_config set value = jsonb_set(value, '{on}', 'true'), updated_at = now() where key = 'free_limits';`
+(`'false'` switches them off again). Phones pick it up within 12 hours, with no app update.
+
+### Owner steps for "Continue with Google" (one time, free)
+1. Google Cloud (skip what tracker #42 already did): open https://console.cloud.google.com/projectcreate,
+   make a project named ForgeAI. Open https://console.cloud.google.com/auth/branding: app name ForgeAI,
+   your email as support and contact email, audience External; then Audience → "Publish app".
+2. https://console.cloud.google.com/auth/clients → Create client → **Android**: package name = the
+   app's Play ID (see tracker #57: `com.forgeai.app` is taken, so the ID changes before the first Play
+   upload; use the new one, and make this client again if it was made with the old one), SHA-1
+   `97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88` (the release key's public
+   fingerprint) → Create.
+3. Same page → Create client → **Web application**, name "ForgeAI app" → Create. Copy its **Client ID**
+   (ends in `.apps.googleusercontent.com`; not a secret: send it to Claude for app.json) and its
+   **Client secret** (a secret: paste it ONLY into Supabase in step 4, never into chat or a file).
+4. Supabase: https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/auth/providers → **Google** →
+   turn on "Enable Sign in with Google" → **Client IDs**: the Web client ID first, then a comma, then
+   the Android client ID → **Client Secret (for OAuth)**: the Web client secret → leave "Skip nonce
+   checks" OFF → Save. (If sign-in later fails with a "nonce" error, turn that switch on.)
+5. Say yes to applying 0032 (above), and approve the privacy-notice lines for the copy (workouts kept on
+   ForgeAI's server for signed-in members, only they can see them, deleted with "Delete my account").
+After step 3's Client ID is in app.json and a new app version ships, Settings → Backup shows "Keep your
+workouts on ForgeAI" and the welcome screen shows "Continue with Google". The same Client ID also
+switches on the Google Drive backup (#42).
+
+## Branches (0031, tracker #41) — NOT APPLIED, needs the owner's yes
+Additive and re-runnable; apply after 0030. A branch is a gym row like any other (own records, receipt
+series, join code, staff); branches of one business share a `gym_groups` row (`gyms.group_id`, null =
+a gym with one branch, exactly as before). Every owner is an owner of every branch; desk staff are per
+branch. Added branches number receipts `B2/2026-27/0001` (imports `B2I/26-27/0001`), checked by a
+trigger, so two branches under one GSTIN never print the same number. A member whose record says
+`allBranches` may be checked in at another branch's desk (`branch_check_in_visitor`) or with that
+branch's QR (member_check_in); the visit is kept in their own branch with `atGymId`. HQ reads groups
+with `hq_groups`. **Changes five functions additively:** owner_add_person, owner_remove_person,
+owner_sign_out_person, support_make_signin_code (0010) and member_check_in (0020), and points 0027's
+gym_staff paused-gym trigger at `_gym_staff_not_suspended` (an owner can still be taken off or put on a
+paused branch by those functions); re-running 0010, 0020 or 0027 undoes them, so always re-run 0031
+after them. A new branch takes the first branch's HQ status, plan and trial dates and its GST number.
+`branch_find_visitor` allows 30 look-ups an hour per branch. Test: `tests/0031_branches.sql` →
+`RESULT PASS (115 checks)`, then `tests/security.sql` → `RESULT PASS`. Before it is applied the admin app
+says "Branches are not switched on for your gym yet" and HQ shows no groups.
+
+## Terms acceptance (0033, tracker #38) — NOT APPLIED, needs the owner's yes
+Additive and re-runnable; apply after 0031. `gym_terms_acceptance` keeps who ticked "I agree to the
+ForgeAI terms and the data agreement", when, which version (a date, the admin app's TERMS_VERSION), how
+(at Create my gym, or asked at sign-in) and a sha256 hash of `<gym id>:<address>` when the gateway
+passed one. The hash is not anonymous (an IPv4 address can be found by trying them all); raw addresses
+live in gym_creator_ips (0021) and the access log (0028). Only versions in `_terms_versions()` that
+have come are accepted: a new terms version = a new line there + the admin app's TERMS_VERSION. Append-only. `owner_terms` / `owner_accept_terms`; an
+acceptance counts for every branch of the business. **Changes one function:** gym_create_online gains
+`p_terms_version` (default null; the 4-argument version is dropped). Re-running 0021 puts the old one
+back next to it: always re-run 0033 after 0021. Test: `tests/0033_terms_acceptance.sql` →
+`RESULT PASS (27 checks)`. Before it is applied nobody is asked and nothing is recorded.

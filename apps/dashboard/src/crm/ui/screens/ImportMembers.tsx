@@ -11,36 +11,36 @@
  * Owner and Staff may both import: adding members is front-desk work (auth/permissions.ts).
  */
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 import { csvFilename } from '../../logic/csv';
 import {
+  applyCellEdits,
   cellText,
   columnLetter,
   emptyColumnMap,
+  extrasOverCap,
   fieldLabel,
-  fillBlanksPatch,
   findHeaderRow,
-  guessColumns,
-  guessFromValues,
   importAction,
   IMPORT_FIELDS,
   MAX_IMPORT_ROWS,
   planImport,
-  rowBringsTerm,
   rowVerdict,
-  saveInBatches,
   skippedRowsCsv,
-  skipReason,
+  SKIP_BRANCH,
   templateCsv,
   termsPreview,
   MAX_EXTRAS,
   usableExtras,
+  type BranchRouting,
   type Cell,
+  type CellEdits,
   type ColumnMap,
   type ExtraColumn,
   type ImportField,
   type ImportRow,
+  type NotMemberRow,
   type RowStatus,
 } from '../../logic/importMembers';
 import {
@@ -53,12 +53,16 @@ import {
   findIdColumns,
   idNamedColumns,
   freeColumns,
-  type IdColumn,
 } from '../../logic/aiImport';
+import { branchesToOpen, branchNamesInFile, rowsPerBranch, type BranchNameInFile } from '../../logic/importBranches';
+import { guessMapAt, sheetExtras, sheetWidth, type ExtraChoice } from '../../logic/importGuess';
+import { mergeSaveResults, rowsToRetry, saveImport, type ImportSaver, type ImportSaveResult, type SkippedRow } from '../../logic/importSave';
 import { formatPhone } from '../../logic/members';
 import { useCrm } from '../../store';
 import { useAuth, useRole } from '../../auth/AuthProvider';
-import type { ImportTermsResult } from '../../data/adapter';
+import { matchBranchName, useBranches } from '../../branches/context';
+import type { CrmData, CrmSnapshot } from '../../data/adapter';
+import type { Member } from '../../types';
 import { previewImportMoney } from '../../data/importPreview';
 import { pastImports, planUndo } from '../../logic/undoImport';
 import { bestSheet, readSheets, usableSheets, type SheetRows } from '../../logic/sheets';
@@ -85,20 +89,19 @@ interface Loaded {
   auto: boolean;
 }
 
-interface Result {
-  added: number;
-  updated: number;
-  skipped: { row: ImportRow; reason: string }[];
-  /** Why saving stopped part-way (no internet), or null when everything went through. */
-  stopped: string | null;
-  /** The last Excel row saved as a member (0 when none). */
-  lastSavedRow: number;
-  /** Data migration: the plans, memberships and receipts made (null when none were tried). */
-  terms: ImportTermsResult | null;
-  termsError: string | null;
-  /** A Staff session: the plans in the file were left for the owner. */
-  termsForStaff: boolean;
+/**
+ * #36 / #41: what the import did, branch by branch (`logic/importSave.ts`), plus the import id so
+ * "Try again" files the waiting rows under the same import (one "Undo this import" per branch).
+ */
+interface Result extends ImportSaveResult {
+  importId: string;
 }
+
+/** #41: another branch's records, opened to check duplicates and to save into. */
+type OtherBranch =
+  | { state: 'opening' }
+  | { state: 'open'; data: CrmData; snapshot: CrmSnapshot }
+  | { state: 'failed'; words: string };
 
 /** #47: the "Ask AI to match the columns" card. */
 type AiState =
@@ -107,21 +110,6 @@ type AiState =
   | { stage: 'skipped' }
   | { stage: 'done'; filled: number; held: string[]; left: number | null }
   | { stage: 'error'; words: string };
-
-type ExtraChoice = Pick<ExtraColumn, 'label' | 'on' | 'ai'>;
-
-/** The widest of the first 200 rows: how many columns the sheet has. PURE. */
-function sheetWidth(rows: readonly (readonly Cell[])[]): number {
-  return Math.max(0, ...rows.slice(0, 200).map((r) => r.length));
-}
-
-/** The guessed columns with any ID-number column taken back out. PURE. */
-function withoutIdColumns(map: ColumnMap, ids: readonly IdColumn[]): ColumnMap {
-  const out = { ...map };
-  const set = new Set(ids.map((c) => c.col));
-  for (const f of IMPORT_FIELDS) if (out[f] !== null && set.has(out[f]!)) out[f] = null;
-  return out;
-}
 
 /**
  * Let the browser draw before heavy work: "Reading the file…" shows before a big sheet is parsed.
@@ -135,6 +123,16 @@ export function ImportMembersScreen() {
   const { snapshot, today, createMembers, updateMember, importTerms } = useCrm();
   // Data migration: memberships and receipts are the owner's (the server refuses a Staff session's plans).
   const role = useRole();
+  // #41: a gym with several branches. With one branch (`multi` false) nothing below changes.
+  const branchCtx = useBranches();
+  const multi = branchCtx.multi;
+  const currentGymId = branchCtx.currentGymId;
+  const branchList = useMemo(() => branchCtx.branches.map((b) => ({ gymId: b.gymId, name: b.name })), [branchCtx.branches]);
+  const match = useCallback((typed: string) => matchBranchName(typed, branchList), [branchList]);
+  const branchName = useCallback(
+    (gymId: string) => branchList.find((b) => b.gymId === gymId)?.name ?? (gymId === '' ? 'this branch' : 'that branch'),
+    [branchList],
+  );
   const [stage, setStage] = useState<Stage>('pick');
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<Loaded | null>(null);
@@ -152,6 +150,16 @@ export function ImportMembersScreen() {
   const [ai, setAi] = useState<AiState>({ stage: 'idle' });
   /** Bumped whenever the sheet or its header row changes: an AI answer for the old one is dropped. */
   const aiTurn = useRef(0);
+  // #41: the owner's pick for each branch name in the file, the branch for each sheet, and the
+  // other branches opened for this import.
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [sheetGym, setSheetGym] = useState<Record<number, string>>({});
+  const [others, setOthers] = useState<Record<string, OtherBranch>>({});
+  // #36: fixes typed into "Rows to check", and the rows the owner skipped there.
+  const [edits, setEdits] = useState<CellEdits>({});
+  const [skippedByOwner, setSkippedByOwner] = useState<ReadonlySet<number>>(new Set());
+  const [lastFixed, setLastFixed] = useState<string | null>(null);
+  const [importedSheets, setImportedSheets] = useState<readonly number[]>([]);
 
   const headers = useMemo(() => (file ? (file.rows[headerRow] ?? []).map(cellText) : []), [file, headerRow]);
   const width = useMemo(() => (file ? sheetWidth(file.rows) : 0), [file]);
@@ -159,42 +167,112 @@ export function ImportMembersScreen() {
   const idColNums = useMemo(() => idCols.map((c) => c.col), [idCols]);
   const idNamed = useMemo(() => (file ? idNamedColumns(file.rows, headerRow, width, idColNums) : []), [file, headerRow, width, idColNums]);
   const free = useMemo(() => (file ? freeColumns(file.rows, headerRow, width, map, idColNums) : []), [file, headerRow, width, map, idColNums]);
+  // #36: every other column is kept unless the owner unticks it; a column that only numbers the
+  // rows starts unticked (and says so).
   const extras = useMemo<ExtraColumn[]>(
-    () =>
-      free.map((col) => {
-        const choice = extraChoices[col];
-        return { col, label: choice?.label ?? ((headers[col] ?? '').trim() || `Column ${columnLetter(col)}`), on: choice?.on ?? false, ai: choice?.ai ?? false };
-      }),
-    [free, extraChoices, headers],
+    () => (file ? sheetExtras(file.rows, headerRow, map, idColNums, extraChoices) : []),
+    [file, headerRow, map, idColNums, extraChoices],
   );
+
+  // The sheet with the owner's fixes typed in: what is checked and saved.
+  const sheetRows = useMemo(() => (file ? applyCellEdits(file.rows, edits) : []), [file, edits]);
+
+  // #41: where each row goes.
+  const defaultSheetGym = useMemo(() => {
+    if (!file || !multi) return currentGymId;
+    const name = file.sheets[file.sheet]?.name ?? '';
+    return (file.sheets.length > 1 ? match(name) : null) ?? currentGymId;
+  }, [file, multi, match, currentGymId]);
+  const sheetGymId = file ? sheetGym[file.sheet] ?? defaultSheetGym : currentGymId;
+  const branchNames = useMemo<BranchNameInFile[]>(
+    () => (file && multi && map.branch !== null ? branchNamesInFile(sheetRows, headerRow, map, { match, answers }) : []),
+    [file, multi, map, sheetRows, headerRow, match, answers],
+  );
+  const needed = useMemo(
+    () => (multi ? branchesToOpen(branchNames, sheetGymId, currentGymId, map.branch !== null) : []),
+    [multi, branchNames, sheetGymId, currentGymId, map.branch],
+  );
+  // Open each other branch the rows go to (once): its members are checked for duplicates, and the rows are saved into it.
+  useEffect(() => {
+    if (stage !== 'review') return;
+    for (const id of needed) {
+      if (others[id]) continue;
+      setOthers((prev) => ({ ...prev, [id]: { state: 'opening' } }));
+      void (async () => {
+        try {
+          const data = await branchCtx.dataFor(id);
+          const snap = await data.load();
+          setOthers((prev) => ({ ...prev, [id]: { state: 'open', data, snapshot: snap } }));
+        } catch (e) {
+          console.warn('[ForgeErr] import members: branch could not be opened', id, e);
+          const words = e instanceof Error && e.message ? e.message : 'It could not be opened.';
+          setOthers((prev) => ({ ...prev, [id]: { state: 'failed', words } }));
+        }
+      })();
+    }
+  }, [needed, others, branchCtx, stage]);
+  const stillOpening = needed.filter((id) => !others[id] || others[id]!.state === 'opening');
+  const routing = useMemo<BranchRouting | undefined>(() => {
+    if (!multi) return undefined;
+    const rosters: Record<string, readonly Member[]> = {};
+    const failed: Record<string, string> = {};
+    for (const [id, o] of Object.entries(others)) {
+      if (o.state === 'open') rosters[id] = o.snapshot.members;
+      else if (o.state === 'failed') failed[id] = o.words;
+    }
+    return { branches: branchList, currentGymId, sheetGymId: map.branch === null ? sheetGymId : null, match, answers, rosters, failed };
+  }, [multi, others, branchList, currentGymId, map.branch, sheetGymId, match, answers]);
 
   const plan = useMemo(
     () =>
       file && stage === 'review'
-        ? planImport(file.rows, headerRow, map, snapshot.members, today, { extras, idCols: idColNums })
+        ? planImport(sheetRows, headerRow, map, snapshot.members, today, { extras, idCols: idColNums, branches: routing })
         : null,
-    [file, stage, headerRow, map, snapshot.members, today, extras, idColNums],
+    [file, stage, sheetRows, headerRow, map, snapshot.members, today, extras, idColNums, routing],
   );
 
-  // UAT U-A10: the money the import will really save as receipts, worked out by the import itself.
+  // UAT U-A10: the money the import will really save as receipts, worked out by the import itself
+  // (#41: on each branch's own records).
   const [previewPaidP, setPreviewPaidP] = useState<number | null>(null);
+  // #36 review: the money preview could not be worked out (the import itself still works).
+  const [previewFailed, setPreviewFailed] = useState(false);
   useEffect(() => {
     setPreviewPaidP(null);
     if (!plan || role !== 'owner') return;
     let cancelled = false;
-    const adds = plan.rows.filter((r) => r.status === 'add' && r.draft !== null).map((r) => r.draft!);
-    // The same rows, in the same order, as run() below hands to importTerms.
-    const terms = plan.rows
-      .filter((r) => r.term && r.draft && (r.status === 'add' || r.existing !== null || r.sameAsRow !== null))
-      .sort((a, b) => a.rowNumber - b.rowNumber)
-      .map((r) => ({ phone: r.draft!.phone, term: r.term! }));
-    void previewImportMoney(snapshot, adds, terms, today).then((r) => {
-      if (!cancelled) setPreviewPaidP(r ? r.paidP : null);
+    const groups = new Map<string, ImportRow[]>();
+    for (const r of plan.rows) {
+      const g = r.gymId === undefined || r.gymId === currentGymId ? '' : r.gymId;
+      groups.set(g, [...(groups.get(g) ?? []), r]);
+    }
+    const runs = [...groups.entries()].map(([g, rows]) => {
+      const o = g === '' ? null : others[g];
+      const snap = g === '' ? snapshot : o?.state === 'open' ? o.snapshot : null;
+      if (!snap) return Promise.resolve({ receipts: 0, paidP: 0 });
+      const adds = rows.filter((r) => r.status === 'add' && r.draft !== null).map((r) => r.draft!);
+      // The same rows, in the same order, as the import hands to importTerms.
+      const terms = rows
+        .filter((r) => r.term && r.draft && (r.status === 'add' || r.existing !== null || r.sameAsRow !== null))
+        .sort((a, b) => a.rowNumber - b.rowNumber)
+        .map((r) => ({ phone: r.draft!.phone, term: r.term! }));
+      return previewImportMoney(snap, adds, terms, today);
     });
+    void Promise.all(runs)
+      .then((all) => {
+        if (cancelled) return;
+        setPreviewFailed(false);
+        setPreviewPaidP(all.some((r) => r === null) ? null : all.reduce((t, r) => t + (r?.paidP ?? 0), 0));
+      })
+      .catch((e: unknown) => {
+        console.warn('[ForgeErr] import: money preview', e);
+        if (cancelled) return;
+        setPreviewPaidP(null);
+        setPreviewFailed(true);
+      });
     return () => {
       cancelled = true;
     };
-  }, [plan, snapshot, role, today]);
+  }, [plan, snapshot, role, today, others, currentGymId]);
 
   const fail = (message: string, cause?: unknown) => {
     console.warn('[ForgeErr] import members:', message, cause ?? '');
@@ -227,7 +305,24 @@ export function ImportMembersScreen() {
     }
     // Checking every row comes next (the list below): let the page draw once more first.
     await letThePagePaint();
+    setAnswers({});
+    setSheetGym({});
+    setImportedSheets([]);
     openSheet({ name: f.name, rows: [], sheets, sheet: 0, auto: true }, bestSheet(sheets));
+  };
+
+  /**
+   * Our column guesses for a header row: by name, then by what is in the columns; ID-number columns
+   * taken back out. #41: with several branches, a column of branch names is found even when its name
+   * says nothing; with one branch, a "Branch" column is just another detail to keep.
+   */
+  const guessMap = (rows: Cell[][], h: number): ColumnMap => guessMapAt(rows, h, today, multi ? match : null);
+
+  /** A new sheet or header row: typed fixes and skips start again. */
+  const resetRows = () => {
+    setEdits({});
+    setSkippedByOwner(new Set());
+    setLastFixed(null);
   };
 
   /** Show one sheet of the file: its header row and column guesses start again. */
@@ -236,8 +331,9 @@ export function ImportMembersScreen() {
     const h = findHeaderRow(rows);
     setFile({ ...loaded, rows, sheet: i });
     setHeaderRow(h);
-    setMap(withoutIdColumns(guessFromValues(rows, h, guessColumns(rows[h] ?? []), today), findIdColumns(rows, h, sheetWidth(rows))));
+    setMap(guessMap(rows, h));
     resetAi();
+    resetRows();
     setFilter('all');
     setStage('review');
   };
@@ -261,7 +357,9 @@ export function ImportMembersScreen() {
       setAi({ stage: 'error', words: answer.words });
       return;
     }
-    const applied = applyAiPicks(map, answer.picks, idColNums, headers);
+    // #41: a gym with one branch has no Branch box: that column stays a detail to keep.
+    const picks = multi ? answer.picks : answer.picks.filter((p) => !('field' in p.target && p.target.field === 'branch'));
+    const applied = applyAiPicks(map, picks, idColNums, headers);
     setMap(applied.map);
     setAiFields(applied.aiFields);
     // A detail the owner already ticked or renamed stays as the owner left it.
@@ -274,7 +372,7 @@ export function ImportMembersScreen() {
     setExtraChoices((prev) => {
       const now = extras.find((e) => e.col === col);
       if (!now) return prev;
-      return { ...prev, [col]: { label: now.label, on: now.on, ai: now.ai, ...change } };
+      return { ...prev, [col]: { label: now.label, on: now.on, ai: now.ai, aiIgnored: now.aiIgnored, ...change } };
     });
   };
 
@@ -294,8 +392,23 @@ export function ImportMembersScreen() {
     if (!file) return;
     const h = Number(value);
     setHeaderRow(h);
-    setMap(withoutIdColumns(guessFromValues(file.rows, h, guessColumns(file.rows[h] ?? []), today), findIdColumns(file.rows, h, width)));
+    setMap(guessMap(file.rows, h));
     resetAi();
+    resetRows();
+  };
+
+  /** #36: the owner's fix for one row, from "Rows to check". */
+  const fixRow = (row: ImportRow, fix: Record<number, string>) => {
+    setEdits((prev) => ({ ...prev, [row.rowNumber - 1]: { ...(prev[row.rowNumber - 1] ?? {}), ...fix } }));
+    setLastFixed(`Row ${row.rowNumber} checked again.`);
+  };
+
+  /** The store each branch saves through: this branch's own (so the screens redraw), the others' opened. */
+  const saverFor = async (gymId: string): Promise<ImportSaver> => {
+    if (gymId === '' || gymId === currentGymId) return { createMembers, updateMember, importTerms };
+    const o = others[gymId];
+    if (o?.state === 'open') return o.data;
+    return branchCtx.dataFor(gymId);
   };
 
   const run = async () => {
@@ -303,84 +416,59 @@ export function ImportMembersScreen() {
     // Frozen now: each save re-reads the gym, and a live plan would start calling the members
     // just added "already a member".
     const rows = plan.rows;
-    const adds = rows.filter((r) => r.status === 'add' && r.draft !== null);
-    const fills = dupMode === 'fill' ? rows.filter((r) => r.existing !== null && r.sameAsRow === null && r.draft !== null) : [];
-    const work = new Set([...adds, ...fills]);
-    // A repeated row whose plan and payment are added to its member is not "skipped" (review: the
-    // skipped-rows file would invite typing that payment in again).
-    // C7-37: so is a row for a member already in the gym whose plan and payment the owner adds.
-    const repeatAdds = (r: ImportRow) => rowBringsTerm(r, role);
-    const skipped = rows.filter((r) => !work.has(r) && !repeatAdds(r)).map((row) => ({ row, reason: skipReason(row) }));
-    const total = adds.length + fills.length;
-    setStage('running');
-    setProgress({ done: 0, total });
-
-    // New members: one save per batch (one push online), never one per row. Every record this
-    // import makes carries one id (data migration, 15 Oct 2026).
     const importId = `import-${Date.now().toString(36)}`;
-    const outcome = await saveInBatches(adds, (drafts) => createMembers(drafts.map((d) => ({ ...d, importId }))), (done) => setProgress({ done, total }));
-    for (const row of outcome.duplicates) {
-      skipped.push({ row, reason: 'Already a member.' });
-    }
-    const notSavedReason = 'Not saved. Saving stopped, maybe because the internet went off. Import this file again. Members already added are skipped.';
-    for (const row of outcome.notSaved) skipped.push({ row, reason: notSavedReason });
-    if (outcome.stopped) console.warn('[ForgeErr] import members: saving stopped', outcome.stopped);
-
-    let updated = 0;
-    if (outcome.stopped) {
-      // The connection is gone: filling in details would fail row by row too.
-      for (const row of fills) skipped.push({ row, reason: notSavedReason });
-    } else {
-      for (let i = 0; i < fills.length; i += 1) {
-        const row = fills[i]!;
-        try {
-          const patch = row.existing && row.draft ? fillBlanksPatch(row.existing, row.draft) : {};
-          if (!row.existing || Object.keys(patch).length === 0) {
-            skipped.push({ row, reason: 'Already a member. Nothing new to fill in.' });
-          } else {
-            await updateMember(row.existing.id, patch);
-            updated += 1;
-          }
-        } catch (e) {
-          // One bad row never stops the rest.
-          console.warn(`[ForgeErr] import members: row ${row.rowNumber} not filled in`, e);
-          skipped.push({ row, reason: 'Could not be saved.' });
-        }
-        setProgress({ done: adds.length + i + 1, total });
-      }
-    }
-    // Data migration (15 Oct 2026): each row's plan with its dates becomes a real membership, and
-    // what was paid a receipt — for new members and for members already here (a term already in
-    // the gym is skipped, so importing again adds nothing).
-    let terms: ImportTermsResult | null = null;
-    let termsError: string | null = null;
-    // 16 Oct 2026: rows that repeat a member (a payments list) bring their plan and payment too,
-    // after that member's first row (file order).
-    const termRows = [...outcome.added, ...rows.filter((r) => r.existing !== null || r.sameAsRow !== null)]
-      .filter((r) => r.term && r.draft)
-      .sort((a, b) => a.rowNumber - b.rowNumber);
-    if (!outcome.stopped && termRows.length > 0 && role === 'owner') {
-      try {
-        terms = await importTerms(
-          termRows.map((r) => ({ phone: r.draft!.phone, term: r.term! })),
-          importId,
-        );
-      } catch (e) {
-        console.warn('[ForgeErr] import members: plans and payments not saved', e);
-        termsError = e instanceof Error && e.message ? e.message : 'Saving stopped.';
-      }
-    }
-    skipped.sort((a, b) => a.row.rowNumber - b.row.rowNumber);
-    const lastSavedRow = outcome.added.reduce((max, r) => Math.max(max, r.rowNumber), 0);
-    setResult({ added: outcome.added.length, updated, skipped, stopped: outcome.stopped, lastSavedRow, terms, termsError, termsForStaff: role !== 'owner' && termRows.length > 0 });
+    setStage('running');
+    setProgress({ done: 0, total: 0 });
+    // #36 / #41: branch by branch; a failure only holds back its own rows (logic/importSave.ts).
+    // Every record this import makes carries one id (data migration, 15 Oct 2026).
+    const saved = await saveImport({
+      rows,
+      dupMode,
+      role,
+      importId,
+      saverFor,
+      branchName,
+      currentGymId,
+      onProgress: (done, total) => setProgress({ done, total }),
+    });
+    for (const b of saved.branches) if (b.stopped) console.warn('[ForgeErr] import members: saving stopped', b.gymId, b.stopped);
+    setResult({ ...saved, importId });
+    setImportedSheets((prev) => [...prev, file.sheet]);
+    // The other branches changed: they are opened again for the next sheet.
+    setOthers({});
     setStage('done');
   };
+
+  /** #36: "Try again": only the rows still waiting, under the same import. */
+  const retry = async () => {
+    if (!result) return;
+    const rows = rowsToRetry(result);
+    if (rows.length === 0) return;
+    setStage('running');
+    setProgress({ done: 0, total: 0 });
+    const again = await saveImport({
+      rows,
+      dupMode,
+      role,
+      importId: result.importId,
+      saverFor,
+      branchName,
+      currentGymId,
+      onProgress: (done, total) => setProgress({ done, total }),
+    });
+    setResult({ ...mergeSaveResults(result, again), importId: result.importId });
+    setStage('done');
+  };
+
+  const nextSheet = file ? file.sheets.findIndex((_, i) => i !== file.sheet && !importedSheets.includes(i)) : -1;
 
   const startOver = () => {
     setFile(null);
     setResult(null);
     setError(null);
     resetAi();
+    resetRows();
+    setOthers({});
     setStage('pick');
   };
 
@@ -468,7 +556,7 @@ export function ImportMembersScreen() {
                 onChange={(v) => openSheet({ ...file, auto: false }, Number(v))}
                 options={file.sheets.map((sh, i) => ({
                   value: String(i),
-                  label: `${sh.name} (${filledRows(sh.rows)} rows)`,
+                  label: `${sh.name} (${filledRows(sh.rows)} rows)${importedSheets.includes(i) ? ' · added' : ''}`,
                 }))}
               />
             )}
@@ -482,7 +570,8 @@ export function ImportMembersScreen() {
               }))}
             />
             <Grid min={200}>
-              {IMPORT_FIELDS.map((field) => (
+              {/* #41: the Branch box only for a gym with 2 or more branches. */}
+              {IMPORT_FIELDS.filter((f) => multi || f !== 'branch').map((field) => (
                 <SelectField
                   key={field}
                   label={fieldLabel(field) + (field === 'fullName' || field === 'phone' ? ' *' : '') + (aiFields.includes(field) ? ' · AI' : '')}
@@ -524,6 +613,29 @@ export function ImportMembersScreen() {
             )}
           </Card>
 
+          {multi && map.branch !== null && (
+            <BranchNamesCard
+              names={branchNames}
+              branches={branchList}
+              others={others}
+              needed={needed}
+              counts={rowsPerBranch(plan.rows)}
+              onPick={(key, gymId) => setAnswers((prev) => ({ ...prev, [key]: gymId }))}
+              onRetry={(id) => setOthers((prev) => { const next = { ...prev }; delete next[id]; return next; })}
+            />
+          )}
+          {multi && map.branch === null && (
+            <SheetBranchCard
+              branches={branchList}
+              value={sheetGymId}
+              severalSheets={file.sheets.length > 1}
+              other={sheetGymId !== currentGymId ? others[sheetGymId] ?? { state: 'opening' } : null}
+              name={branchName(sheetGymId)}
+              onPick={(gymId) => setSheetGym((prev) => ({ ...prev, [file.sheet]: gymId }))}
+              onRetry={() => setOthers((prev) => { const next = { ...prev }; delete next[sheetGymId]; return next; })}
+            />
+          )}
+
           {free.length > 0 && (
             <ExtrasCard
               extras={extras}
@@ -547,19 +659,43 @@ export function ImportMembersScreen() {
             rows={plan.rows}
             counts={plan.counts}
             leftOut={plan.leftOut}
+            notMembers={plan.notMembers}
             filter={filter}
             setFilter={setFilter}
             dupMode={dupMode}
             setDupMode={setDupMode}
+            branchOf={multi ? branchName : null}
+          />
+
+          <RowsToCheck
+            rows={plan.rows.filter((r) => r.status === 'problem' && !r.ownerSkipped && !skippedByOwner.has(r.rowNumber))}
+            skipped={skippedByOwner.size}
+            map={map}
+            sheetRows={sheetRows}
+            lastFixed={lastFixed}
+            onFix={fixRow}
+            onSkip={(r) => setSkippedByOwner((prev) => new Set([...prev, r.rowNumber]))}
+            onUnskip={() => setSkippedByOwner(new Set())}
           />
 
           <TermsLine rows={plan.rows} owner={role === 'owner'} paidP={previewPaidP} />
+          {previewFailed && (
+            <p role="status" style={muted}>
+              We couldn’t add up the money in this file before the import. Each receipt is still checked when it is added.
+            </p>
+          )}
+
+          {stillOpening.length > 0 && (
+            <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, margin: `${space.lg}px 0 0` }}>
+              {`Opening ${stillOpening.map((id) => branchName(id)).join(', ')}… The Add button works once ${stillOpening.length === 1 ? 'it is' : 'they are'} open.`}
+            </p>
+          )}
 
           <ActionBar
             plan={plan.rows}
             role={role}
             dupMode={dupMode}
-            blocked={map.fullName === null || map.phone === null}
+            blocked={map.fullName === null || map.phone === null || stillOpening.length > 0}
             onRun={() => void run()}
             onOther={() => input.current?.click()}
           />
@@ -592,75 +728,27 @@ export function ImportMembersScreen() {
         </Card>
       )}
 
-      {stage === 'done' && result && (
-        <Card>
-          <SectionTitle>Import finished</SectionTitle>
-          <p style={{ margin: 0, fontFamily: font.display, fontSize: 20, fontWeight: 700, color: color.ink }}>
-            {`${result.added} added, ${result.skipped.length} skipped`}
-            {result.updated > 0 ? `, ${result.updated} filled in` : ''}
-          </p>
-          {result.terms && (result.terms.memberships > 0 || result.terms.skipped > 0) && (
-            <p style={{ ...muted, marginTop: space.sm }}>
-              {`${n(result.terms.memberships, 'plan')} with their dates · ${n(result.terms.payments, 'receipt')}${result.terms.plans > 0 ? ` · ${n(result.terms.plans, 'new plan name')} added to Plans` : ''}${result.terms.skipped > 0 ? ` · ${result.terms.skipped} already here, not added again` : ''}.`}
-            </p>
-          )}
-          {result.termsError && (
-            <div style={{ marginTop: space.md }}>
-              <ErrorBanner>
-                {`Members are saved, but not all their plans and payments. ${result.termsError} Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.`}
-              </ErrorBanner>
-            </div>
-          )}
-          {result.termsForStaff && (
-            <p style={{ ...muted, marginTop: space.sm }}>
-              Only the owner can add the plans and payments in this file. Ask the owner to import the same file. Members already added are skipped.
-            </p>
-          )}
-          {result.stopped && (
-            <div style={{ marginTop: space.md }}>
-              <ErrorBanner>
-                {`Saving stopped halfway: ${result.stopped} `}
-                {result.added > 0
-                  ? `${result.added} members were saved (up to row ${result.lastSavedRow}). The rest may not be saved. `
-                  : 'No new members were saved. '}
-                When the internet is back, import the same file again. Members already added are skipped, so nobody is added twice.
-              </ErrorBanner>
-            </div>
-          )}
-          {result.skipped.length > 0 && (
-            <p style={{ ...muted, marginTop: space.sm }}>
-              Download the skipped rows and fix them in Excel. The reason is in the first column. Then import that file.
-            </p>
-          )}
-          <Row gap={space.sm}>
-            <div style={{ marginTop: space.lg }}>
-              <Button wrap onClick={() => navigate('/members')}>
-                Open members
-              </Button>
-            </div>
-            {result.skipped.length > 0 && file && (
-              <div style={{ marginTop: space.lg }}>
-                <Button
-                  variant="ghost"
-                  wrap
-                  onClick={() =>
-                    downloadCsv(
-                      csvFilename(['skipped rows', file.name.replace(/\.[^.]+$/, '')]),
-                      skippedRowsCsv(headers, result.skipped),
-                    )
-                  }
-                >
-                  {`Download ${result.skipped.length} skipped rows`}
-                </Button>
-              </div>
-            )}
-            <div style={{ marginTop: space.lg }}>
-              <Button variant="ghost" wrap onClick={startOver}>
-                Import another file
-              </Button>
-            </div>
-          </Row>
-        </Card>
+      {stage === 'done' && result && file && (
+        <DoneCard
+          result={result}
+          multi={multi}
+          currentGymId={currentGymId}
+          branchName={branchName}
+          onDownload={() =>
+            downloadCsv(
+              csvFilename(['skipped rows', file.name.replace(/\.[^.]+$/, '')]),
+              skippedRowsCsv(headers, result.skipped),
+            )
+          }
+          onRetry={() => void retry()}
+          nextSheet={nextSheet >= 0 ? file.sheets[nextSheet]?.name ?? '' : null}
+          onNextSheet={() => {
+            if (nextSheet < 0) return;
+            setResult(null);
+            openSheet({ ...file, auto: false }, nextSheet);
+          }}
+          onStartOver={startOver}
+        />
       )}
       {role === 'owner' && (stage === 'pick' || stage === 'done') && <PastImports />}
     </>
@@ -671,19 +759,26 @@ function Review({
   rows,
   counts,
   leftOut,
+  notMembers,
   filter,
   setFilter,
   dupMode,
   setDupMode,
+  branchOf,
 }: {
   rows: ImportRow[];
   counts: { add: number; duplicate: number; problem: number };
   leftOut: number;
+  notMembers: readonly NotMemberRow[];
   filter: Filter;
   setFilter: (f: Filter) => void;
   dupMode: 'skip' | 'fill';
   setDupMode: (m: 'skip' | 'fill') => void;
+  /** #41: a gym with several branches: each row says where it goes. */
+  branchOf: ((gymId: string) => string) | null;
 }) {
+  const totals = notMembers.filter((r) => r.why === 'total').map((r) => r.rowNumber);
+  const strays = notMembers.filter((r) => r.why === 'stray').map((r) => r.rowNumber);
   const inGym = rows.filter((r) => r.existing !== null).length;
   const shown = rows.filter((r) => filter === 'all' || r.status === filter);
   return (
@@ -695,6 +790,17 @@ function Review({
       {leftOut > 0 && (
         <p style={{ ...muted, color: color.warning, marginTop: space.sm }}>
           {`Only the first ${MAX_IMPORT_ROWS} rows can be imported at once. ${leftOut} more rows were left out. Import them as a second file.`}
+        </p>
+      )}
+      {/* #36: rows that are not members are named, never dropped without a word. */}
+      {totals.length > 0 && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          {`Not added: ${rowsWord(totals)} ${totals.length === 1 ? 'is a totals row' : 'are totals rows'}, not ${totals.length === 1 ? 'a member' : 'members'}.`}
+        </p>
+      )}
+      {strays.length > 0 && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          {`Not added: ${rowsWord(strays)} ${strays.length === 1 ? 'has' : 'have'} only one cell filled in, with no name and no mobile.`}
         </p>
       )}
 
@@ -739,7 +845,7 @@ function Review({
       ) : (
         <div style={{ display: 'grid', gap: space.sm }}>
           {shown.slice(0, SHOW_ROWS).map((r) => (
-            <RowCard key={r.rowNumber} row={r} />
+            <RowCard key={r.rowNumber} row={r} branch={branchOf && r.gymId !== undefined ? branchOf(r.gymId) : null} />
           ))}
         </div>
       )}
@@ -758,7 +864,7 @@ const TONE: Record<RowStatus, string> = {
   problem: color.criticalText,
 };
 
-function RowCard({ row }: { row: ImportRow }) {
+function RowCard({ row, branch }: { row: ImportRow; branch: string | null }) {
   const name = row.draft?.fullName || row.name;
   return (
     <div
@@ -780,7 +886,12 @@ function RowCard({ row }: { row: ImportRow }) {
         </span>
         <span style={{ fontSize: 12, fontWeight: 700, color: TONE[row.status], minWidth: 0 }}>{rowVerdict(row)}</span>
       </div>
-      {row.draft && <div style={{ color: color.inkSecondary, marginTop: 2 }}>{formatPhone(row.draft.phone)}</div>}
+      {row.draft && (
+        <div style={{ color: color.inkSecondary, marginTop: 2 }}>
+          {formatPhone(row.draft.phone)}
+          {branch ? ` · Goes to ${branch}` : ''}
+        </div>
+      )}
       {row.draft?.extra && Object.keys(row.draft.extra).length > 0 && (
         <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>
           {Object.entries(row.draft.extra)
@@ -866,7 +977,9 @@ function AiCard({ ai, onAsk, onSkip }: { ai: AiState; onAsk: () => void; onSkip:
           <p style={{ ...muted, color: color.ink, fontWeight: 700 }}>
             {ai.filled > 0
               ? `AI matched ${ai.filled} ${ai.filled === 1 ? 'column' : 'columns'}. They are marked “AI” below. Check them before you add.`
-              : 'AI found nothing more to match. Match the rest yourself below.'}
+              : ai.held.length > 0
+                ? AI_WORDS.unsure
+                : 'AI found nothing more to match. Match the rest yourself below.'}
           </p>
           {ai.held.map((h) => (
             <p key={h} style={{ ...muted, marginTop: space.sm }}>
@@ -904,11 +1017,13 @@ function ExtrasCard({
 }) {
   const kept = usableExtras(extras).length;
   const ticked = extras.filter((e) => e.on).length;
+  // #36: every ticked column past the cap is named before the import.
+  const over = extrasOverCap(extras);
   return (
     <Card style={{ marginBottom: space.lg }}>
       <SectionTitle>Other columns in your file</SectionTitle>
       <p style={muted}>
-        These columns fit none of the boxes above. Tick the ones to keep. Each becomes a detail on the member’s page. You can change its name.
+        These columns fit none of the boxes above. Each ticked column is kept as a detail on the member’s page. You can change its name. Untick a column you don’t need.
       </p>
       <ul style={{ listStyle: 'none', margin: `${space.sm}px 0 0`, padding: 0, display: 'grid' }}>
         {extras.map((e, i) => {
@@ -921,6 +1036,12 @@ function ExtrasCard({
                 {e.ai && <Pill tone="muted">AI</Pill>}
               </label>
               {eg.length > 0 && <p style={{ ...muted, fontSize: 13, paddingLeft: 28 }}>{`e.g. ${eg.join(', ')}`}</p>}
+              {!e.on && e.aiIgnored && (
+                <p style={{ ...muted, fontSize: 13, paddingLeft: 28 }}>AI says this column is not needed, so it is not kept. Tick it to keep it.</p>
+              )}
+              {!e.on && !e.aiIgnored && e.rowNumbers && (
+                <p style={{ ...muted, fontSize: 13, paddingLeft: 28 }}>It only numbers the rows, so it is not kept. Tick it to keep it.</p>
+              )}
               {e.on && (
                 <div style={{ paddingLeft: 28 }}>
                   <TextField label="Name on the member’s page" value={e.label} onChange={(v) => onChange(e.col, { label: v })} />
@@ -930,14 +1051,435 @@ function ExtrasCard({
           );
         })}
       </ul>
-      {ticked > MAX_EXTRAS && (
-        <p style={{ ...muted, marginTop: space.sm, color: color.warning }}>{`Only the first ${MAX_EXTRAS} ticked columns are kept.`}</p>
+      {over.length > 0 && (
+        <p style={{ ...muted, marginTop: space.sm, color: color.warning }}>
+          {`Not brought in: ${over.map((e) => names(e.col)).join(', ')}. One member can keep at most ${MAX_EXTRAS} details from your file. Untick other columns to bring these in.`}
+        </p>
       )}
       {ticked > 0 && kept < Math.min(ticked, MAX_EXTRAS) && (
         <p style={{ ...muted, marginTop: space.sm, color: color.warning }}>A ticked column with no name is not kept. Give it a name.</p>
       )}
     </Card>
   );
+}
+
+/** Rows of "Rows to check" drawn at once (the rest are in the skipped-rows file after the import). */
+const CHECK_ROWS = 50;
+
+/**
+ * #41: one sheet for all branches. Each different name in its Branch column is listed ONCE: the
+ * branch it was matched to (changeable), or "Pick a branch" when none fits. "Skip these rows"
+ * leaves that name's rows out on purpose.
+ */
+function BranchNamesCard({
+  names,
+  branches,
+  others,
+  needed,
+  counts,
+  onPick,
+  onRetry,
+}: {
+  names: readonly BranchNameInFile[];
+  branches: readonly { gymId: string; name: string }[];
+  others: Readonly<Record<string, OtherBranch>>;
+  needed: readonly string[];
+  counts: ReadonlyMap<string, { add: number; duplicate: number }>;
+  onPick: (key: string, gymId: string) => void;
+  onRetry: (gymId: string) => void;
+}) {
+  const waiting = names.filter((nm) => nm.target === null);
+  const nameOf = (id: string) => branches.find((b) => b.gymId === id)?.name ?? 'that branch';
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>Branches in your file</SectionTitle>
+      <p style={muted}>Your file has a column with each member’s branch. Check that each name goes to the right branch.</p>
+      {waiting.length > 0 && (
+        <p style={{ ...muted, color: color.warning, marginTop: space.sm }}>
+          {`${waiting.length === 1 ? '1 name matches' : `${waiting.length} names match`} none of your branches. Pick a branch for ${waiting.length === 1 ? 'it' : 'each one'}, or pick “Skip these rows”. Until then, those rows wait under “Rows to check”.`}
+        </p>
+      )}
+      <Grid min={220}>
+        {names.map((nm) => (
+          <SelectField
+            key={nm.key}
+            label={nm.shown ? `“${nm.shown.slice(0, 40)}” · ${n(nm.rows, 'row')}` : `No branch written · ${n(nm.rows, 'row')}`}
+            value={nm.target ?? ''}
+            onChange={(v) => onPick(nm.key, v)}
+            error={nm.target === null ? 'Pick a branch for these rows.' : null}
+            options={[
+              ...(nm.target === null ? [{ value: '', label: 'Pick a branch' }] : []),
+              ...branches.map((b) => ({ value: b.gymId, label: b.name })),
+              { value: SKIP_BRANCH, label: 'Skip these rows' },
+            ]}
+          />
+        ))}
+      </Grid>
+      {needed.map((id) => {
+        const o = others[id];
+        if (o?.state !== 'failed') return null;
+        return (
+          <div key={id} style={{ marginTop: space.md }}>
+            <p style={{ ...muted, color: color.warning }}>{`Could not open ${nameOf(id)}: ${o.words} Its rows wait under “Rows to check”.`}</p>
+            <div style={{ marginTop: space.sm }}>
+              <Button variant="ghost" wrap onClick={() => onRetry(id)}>
+                {`Try to open ${nameOf(id)} again`}
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+      {counts.size > 0 && (
+        <p style={{ ...muted, marginTop: space.md }}>
+          {[...counts.entries()].map(([id, c]) => `${nameOf(id)}: ${c.add} to add`).join(' · ')}
+        </p>
+      )}
+    </Card>
+  );
+}
+
+/** #41: no Branch column. The owner says which branch this sheet's members go to (one sheet per branch). */
+function SheetBranchCard({
+  branches,
+  value,
+  severalSheets,
+  other,
+  name,
+  onPick,
+  onRetry,
+}: {
+  branches: readonly { gymId: string; name: string }[];
+  value: string;
+  severalSheets: boolean;
+  other: OtherBranch | null;
+  name: string;
+  onPick: (gymId: string) => void;
+  onRetry: () => void;
+}) {
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>Branch</SectionTitle>
+      <SelectField
+        label="Add the members in this sheet to"
+        value={value}
+        onChange={onPick}
+        options={branches.map((b) => ({ value: b.gymId, label: b.name }))}
+      />
+      {severalSheets && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          One sheet for each branch? Pick the branch for this sheet. When it is added, you can add the next sheet.
+        </p>
+      )}
+      {other?.state === 'failed' && (
+        <div style={{ marginTop: space.md }}>
+          <p style={{ ...muted, color: color.warning }}>{`Could not open ${name}: ${other.words}`}</p>
+          <div style={{ marginTop: space.sm }}>
+            <Button variant="ghost" wrap onClick={onRetry}>
+              {`Try to open ${name} again`}
+            </Button>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/**
+ * #36 "never stop halfway": the rows that can't go in yet, each with its reason. The owner fixes
+ * the name, mobile or joining date right here ("Check again") or skips the row; every other row
+ * still goes in.
+ */
+function RowsToCheck({
+  rows,
+  skipped,
+  map,
+  sheetRows,
+  lastFixed,
+  onFix,
+  onSkip,
+  onUnskip,
+}: {
+  rows: readonly ImportRow[];
+  skipped: number;
+  map: ColumnMap;
+  sheetRows: readonly (readonly unknown[])[];
+  lastFixed: string | null;
+  onFix: (row: ImportRow, fix: Record<number, string>) => void;
+  onSkip: (row: ImportRow) => void;
+  onUnskip: () => void;
+}) {
+  if (rows.length === 0 && skipped === 0 && !lastFixed) return null;
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>Rows to check</SectionTitle>
+      <p style={muted}>
+        {rows.length > 0
+          ? `${n(rows.length, 'row')} can’t be added yet. The reason is under each row. Fix it here and tap “Check again”, or tap “Skip this row”. All the other rows still go in.`
+          : 'Every row can be added now.'}
+      </p>
+      {lastFixed && (
+        <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginTop: space.sm }}>
+          {lastFixed}
+        </p>
+      )}
+      <div style={{ display: 'grid', gap: space.sm, marginTop: space.md }}>
+        {rows.slice(0, CHECK_ROWS).map((r) => (
+          <FixRow key={r.rowNumber} row={r} map={map} sheetRow={sheetRows[r.rowNumber - 1] ?? []} onFix={onFix} onSkip={onSkip} />
+        ))}
+      </div>
+      {rows.length > CHECK_ROWS && (
+        <p style={{ ...muted, marginTop: space.md }}>
+          {`Showing the first ${CHECK_ROWS} of ${rows.length}. After the import, download the skipped rows and fix the rest in Excel.`}
+        </p>
+      )}
+      {skipped > 0 && (
+        <div style={{ marginTop: space.md }}>
+          <Row gap={space.sm}>
+            <p style={muted}>{`You skipped ${n(skipped, 'row')}. ${skipped === 1 ? 'It is' : 'They are'} not added.`}</p>
+            <Button variant="ghost" wrap onClick={onUnskip}>
+              Show skipped rows again
+            </Button>
+          </Row>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+const FIX_FIELDS = ['fullName', 'phone', 'joinedOn'] as const;
+const FIX_HINT: Record<(typeof FIX_FIELDS)[number], string> = {
+  fullName: 'The member’s name',
+  phone: '10 digits, like 98765 43210',
+  joinedOn: 'Like 15/08/2026',
+};
+
+function FixRow({
+  row,
+  map,
+  sheetRow,
+  onFix,
+  onSkip,
+}: {
+  row: ImportRow;
+  map: ColumnMap;
+  sheetRow: readonly unknown[];
+  onFix: (row: ImportRow, fix: Record<number, string>) => void;
+  onSkip: (row: ImportRow) => void;
+}) {
+  const fields = FIX_FIELDS.filter((f) => map[f] !== null);
+  const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(fields.map((f) => [f, cellText(sheetRow[map[f]!])])));
+  // A row whose only trouble is its branch is fixed by the branch picker above, not by typing.
+  const onlyBranch = row.problems.length === 1 && (row.needsBranch || row.branchWaiting);
+  return (
+    <div
+      style={{
+        border: `1px solid ${color.border}`,
+        borderRadius: radius.md,
+        background: color.surfaceSunken,
+        padding: `${space.md}px ${space.lg}px`,
+        fontFamily: font.body,
+        fontSize: 14,
+        color: color.ink,
+        minWidth: 0,
+        overflowWrap: 'anywhere',
+      }}
+    >
+      <div style={{ fontWeight: 700 }}>{`Row ${row.rowNumber} · ${row.name || '(no name)'}`}</div>
+      {row.problems.map((p) => (
+        <div key={p} style={{ color: color.criticalText, marginTop: 4 }}>
+          {p}
+        </div>
+      ))}
+      {!onlyBranch && fields.length > 0 && (
+        <Grid min={180}>
+          {fields.map((f) => (
+            <TextField
+              key={f}
+              label={`${fieldLabel(f)}, row ${row.rowNumber}`}
+              value={vals[f] ?? ''}
+              hint={FIX_HINT[f]}
+              inputMode={f === 'phone' ? 'tel' : 'text'}
+              onChange={(v) => setVals((prev) => ({ ...prev, [f]: v }))}
+            />
+          ))}
+        </Grid>
+      )}
+      <div style={{ marginTop: space.md }}>
+        <Row gap={space.sm}>
+          {!onlyBranch && fields.length > 0 && (
+            <Button wrap onClick={() => onFix(row, Object.fromEntries(fields.map((f) => [map[f]!, vals[f] ?? ''])))}>
+              Check again
+            </Button>
+          )}
+          <Button variant="ghost" wrap onClick={() => onSkip(row)} ariaLabel={`Skip row ${row.rowNumber}`}>
+            Skip this row
+          </Button>
+        </Row>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The end of an import: what went in (branch by branch when there are several), what was left out
+ * on purpose, and what is waiting because something failed, with "Try again" for just those rows.
+ */
+function DoneCard({
+  result,
+  multi,
+  currentGymId,
+  branchName,
+  onDownload,
+  onRetry,
+  nextSheet,
+  onNextSheet,
+  onStartOver,
+}: {
+  result: Result;
+  multi: boolean;
+  currentGymId: string;
+  branchName: (gymId: string) => string;
+  onDownload: () => void;
+  onRetry: () => void;
+  nextSheet: string | null;
+  onNextSheet: () => void;
+  onStartOver: () => void;
+}) {
+  const added = result.branches.reduce((t, b) => t + b.added, 0);
+  const updated = result.branches.reduce((t, b) => t + b.updated, 0);
+  const waiting = result.skipped.filter((s) => s.waiting);
+  const withTerms = result.branches.filter((b) => b.terms);
+  const terms = withTerms.length
+    ? withTerms.reduce(
+        (t, b) => ({
+          plans: t.plans + b.terms!.plans,
+          memberships: t.memberships + b.terms!.memberships,
+          payments: t.payments + b.terms!.payments,
+          skipped: t.skipped + b.terms!.skipped,
+        }),
+        { plans: 0, memberships: 0, payments: 0, skipped: 0 },
+      )
+    : null;
+  const named = (gymId: string) => branchName(gymId);
+  const intoOthers = multi && result.branches.some((b) => b.gymId !== currentGymId && b.gymId !== '' && b.added > 0);
+  return (
+    <Card>
+      <SectionTitle>Import finished</SectionTitle>
+      <p style={{ margin: 0, fontFamily: font.display, fontSize: 20, fontWeight: 700, color: color.ink }}>
+        {`${added} added, ${result.skipped.length} skipped`}
+        {updated > 0 ? `, ${updated} filled in` : ''}
+      </p>
+      {multi &&
+        result.branches.map((b) => (
+          <p key={b.gymId} style={{ ...muted, marginTop: space.sm }}>
+            {`${named(b.gymId)}: ${n(b.added, 'member')} added${b.updated > 0 ? `, ${b.updated} filled in` : ''}${b.terms && b.terms.memberships > 0 ? `, ${n(b.terms.memberships, 'plan')} with dates` : ''}.`}
+          </p>
+        ))}
+      {terms && (terms.memberships > 0 || terms.skipped > 0) && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          {`${n(terms.memberships, 'plan')} with their dates · ${n(terms.payments, 'receipt')}${terms.plans > 0 ? ` · ${n(terms.plans, 'new plan name')} added to Plans` : ''}${terms.skipped > 0 ? ` · ${terms.skipped} already here, not added again` : ''}.`}
+        </p>
+      )}
+      {result.branches
+        .filter((b) => b.termsError)
+        .map((b) => (
+          <div key={`terms-${b.gymId}`} style={{ marginTop: space.md }}>
+            <ErrorBanner>
+              {multi
+                ? `${named(b.gymId)}: members are saved, but not all their plans and payments. ${b.termsError} Open that branch and tap “Undo this import” on this page. Then import the same file again, so every payment comes in only once.`
+                : `Members are saved, but not all their plans and payments. ${b.termsError} Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.`}
+            </ErrorBanner>
+          </div>
+        ))}
+      {result.termsForStaff && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          Only the owner can add the plans and payments in this file. Ask the owner to import the same file. Members already added are skipped.
+        </p>
+      )}
+      {result.branches
+        .filter((b) => b.stopped && !b.openError)
+        .map((b) => (
+          <div key={`stopped-${b.gymId}`} style={{ marginTop: space.md }}>
+            <ErrorBanner>
+              {`Saving stopped halfway${multi ? ` in ${named(b.gymId)}` : ''}: ${b.stopped} `}
+              {b.added > 0
+                ? `${b.added} members were saved (up to row ${b.lastSavedRow}). The rest may not be saved. `
+                : 'No new members were saved. '}
+              When the internet is back, tap “Try again” below, or import the same file again. Members already added are skipped, so nobody is added twice.
+            </ErrorBanner>
+          </div>
+        ))}
+      {result.branches
+        .filter((b) => b.openError)
+        .map((b) => (
+          <div key={`open-${b.gymId}`} style={{ marginTop: space.md }}>
+            <ErrorBanner>{`${named(b.gymId)} could not be opened: ${b.openError} Its rows are waiting below. Tap “Try again”.`}</ErrorBanner>
+          </div>
+        ))}
+      {intoOthers && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          Each branch has its own “Past imports” list on this page. To undo what went into another branch, switch to that branch and open this page there.
+        </p>
+      )}
+      {waiting.length > 0 && (
+        <div style={{ marginTop: space.lg }}>
+          <SectionTitle>Rows to check</SectionTitle>
+          <p style={muted}>{`${n(waiting.length, 'row')} ${waiting.length === 1 ? 'is' : 'are'} not saved yet. Tap “Try again” to send just ${waiting.length === 1 ? 'this row' : 'these rows'}.`}</p>
+          <div style={{ display: 'grid', gap: space.xs, marginTop: space.sm }}>
+            {waiting.slice(0, CHECK_ROWS).map((s: SkippedRow) => (
+              <div key={s.row.rowNumber} style={{ ...muted, color: color.ink, overflowWrap: 'anywhere' }}>
+                {`Row ${s.row.rowNumber} · ${s.row.draft?.fullName || s.row.name || '(no name)'}: ${s.reason}`}
+              </div>
+            ))}
+          </div>
+          {waiting.length > CHECK_ROWS && <p style={{ ...muted, marginTop: space.sm }}>{`And ${waiting.length - CHECK_ROWS} more.`}</p>}
+          <div style={{ marginTop: space.md }}>
+            <Button wrap onClick={onRetry}>
+              Try again
+            </Button>
+          </div>
+        </div>
+      )}
+      {result.skipped.length > 0 && (
+        <p style={{ ...muted, marginTop: space.sm }}>
+          Download the skipped rows and fix them in Excel. The reason is in the first column. Then import that file.
+        </p>
+      )}
+      <Row gap={space.sm}>
+        <div style={{ marginTop: space.lg }}>
+          <Button wrap onClick={() => navigate('/members')}>
+            Open members
+          </Button>
+        </div>
+        {result.skipped.length > 0 && (
+          <div style={{ marginTop: space.lg }}>
+            <Button variant="ghost" wrap onClick={onDownload}>
+              {`Download ${n(result.skipped.length, 'skipped row')}`}
+            </Button>
+          </div>
+        )}
+        {nextSheet !== null && (
+          <div style={{ marginTop: space.lg }}>
+            <Button variant="ghost" wrap onClick={onNextSheet}>
+              {`Import the next sheet: “${nextSheet.slice(0, 30)}”`}
+            </Button>
+          </div>
+        )}
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" wrap onClick={onStartOver}>
+            Import another file
+          </Button>
+        </div>
+      </Row>
+    </Card>
+  );
+}
+
+/** "Row 25" / "Rows 25, 26 and 3 more". PURE. */
+function rowsWord(nums: readonly number[]): string {
+  if (nums.length === 1) return `Row ${nums[0]}`;
+  const more = nums.length > 8 ? ` and ${nums.length - 8} more` : '';
+  return `Rows ${nums.slice(0, 8).join(', ')}${more}`;
 }
 
 const muted: CSSProperties = {

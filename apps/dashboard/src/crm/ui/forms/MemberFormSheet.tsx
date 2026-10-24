@@ -29,7 +29,9 @@ import {
 } from '../../logic/members';
 import { batchKey, BATCH_MAX, listBatches, resolveBatch, type BatchCount } from '../../logic/batches';
 import { DuplicatePhoneError } from '../../data/adapter';
-import { Button, ChipToggle, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
+import { Button, CheckField, ChipToggle, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
+import { useBranches } from '../../branches/context';
+import { useCan } from '../../auth/AuthProvider';
 import { navigate } from '../router';
 
 export function MemberFormSheet({
@@ -63,6 +65,11 @@ export function MemberFormSheet({
   const [formError, setFormError] = useState<string | null>(null);
   const [archivedClash, setArchivedClash] = useState<Member | null>(null);
   const [saving, setSaving] = useState(false);
+  // #41: with 2 or more branches the owner says whether this member may train at every branch.
+  const { multi } = useBranches();
+  const allowed = useCan();
+  const canSetBranches = multi && allowed('manageGym');
+  const [allBranches, setAllBranches] = useState(editing?.allBranches === true);
 
   const set = (key: keyof MemberFormDraft) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -93,9 +100,10 @@ export function MemberFormSheet({
     try {
       // Note what is NOT passed on edit: `archived` and `photoUri` are lifecycle
       // state, changed by their own actions, never as a side effect of a save.
+      const branchPart = canSetBranches ? { allBranches } : {};
       const saved = editing
-        ? await updateMember(editing.id, result.value)
-        : await createMember({ ...result.value, archived: false, photoUri: null });
+        ? await updateMember(editing.id, { ...result.value, ...branchPart })
+        : await createMember({ ...result.value, archived: false, photoUri: null, ...branchPart });
       onSaved?.(saved);
       onClose();
     } catch (e) {
@@ -277,6 +285,12 @@ export function MemberFormSheet({
         multiline
         placeholder="Injuries, preferences, who referred them…"
       />
+
+      {canSetBranches && (
+        <CheckField checked={allBranches} onChange={setAllBranches} hint="Any branch’s front desk can then check them in with their mobile number. With the ForgeAI app, they can also scan the QR poster at any branch.">
+          Can train at every branch
+        </CheckField>
+      )}
 
       {editing?.archived && (
         <p style={{ margin: `${space.lg}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>

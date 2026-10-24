@@ -39,10 +39,19 @@ export const SAMPLE_PRODUCTS = [
 ];
 
 /** A server refusal, answered the way PostgREST does (400 with the message). */
-class Refusal extends Error {}
+export class Refusal extends Error {}
 
 /** A function this server does not have (PostgREST: 404, code PGRST202), e.g. before 0025. */
-class NoSuchFunction extends Error {}
+export class NoSuchFunction extends Error {}
+
+/** #41 (0031): the branch calls. A FakeServer alone is a server before 0031; e2e/branchNet.mjs answers them. */
+export const BRANCH_FNS = [
+  'owner_branches', 'owner_add_branch', 'owner_open_branch', 'owner_rename_group',
+  'branch_find_visitor', 'branch_check_in_visitor', 'branch_visitors', 'branch_undo_visitor',
+];
+
+/** #38 (0033): the terms calls, answered only when `termsServer` is on. */
+const TERMS_FNS = ['owner_terms', 'owner_accept_terms'];
 
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
 const OFFER_FNS = ['owner_offers', 'owner_save_offer', 'owner_stop_offer', 'staff_give_reward', 'owner_undo_reward'];
@@ -123,6 +132,12 @@ export class FakeServer {
     this.hqActions = [];
     /** R-97 (0030): the gym's free trial { startsAt, endsAt, plan, billing, paidUntil }; undefined = a server before 0030. */
     this.hqTrial = undefined;
+    /**
+     * #38: does this server have 0033 (terms acceptance)? Off by default (PGRST202), so the older
+     * journeys never see the "Before you go on" card. `terms`: what was accepted, null = nothing.
+     */
+    this.termsServer = false;
+    this.terms = null;
   }
 
   /**
@@ -165,6 +180,12 @@ export class FakeServer {
   anyone(key) {
     if (this.ownerKeys.has(key)) return { staffId: null, name: 'Owner (old owner key)', role: 'owner' };
     return this.who(key);
+  }
+
+  /** owner_terms' answer (0033). */
+  termsJson(canAccept) {
+    const t = this.terms;
+    return { acceptedVersion: t ? t.version : null, acceptedAt: t ? t.at : null, acceptedByName: t ? t.by : null, how: t ? t.how : null, canAccept };
   }
 
   /** owner_auto_reminders' answer (0029). */
@@ -295,6 +316,9 @@ export class FakeServer {
     if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    if (BRANCH_FNS.includes(fn) || (!this.termsServer && TERMS_FNS.includes(fn))) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     switch (fn) {
       case 'demo_start_gym': {
         // The demo, or "Turn on the shop" for a gym kept in this browser: a gym with a code, the
@@ -331,7 +355,23 @@ export class FakeServer {
       case 'gym_create_online': {
         this.gym.name = args.p_gym_name;
         const staffId = this.addPerson({ name: args.p_name, phone: args.p_phone, role: 'owner', code: null });
+        // 0033: the box ticked at "Create my gym" is kept with the gym.
+        if (this.termsServer && args.p_terms_version) {
+          this.terms = { version: args.p_terms_version, at: NOW.toISOString(), by: args.p_name, how: 'create' };
+        }
         return this.signedIn(this.people.get(args.p_phone) ?? { staffId });
+      }
+      case 'owner_terms': {
+        const p = this.anyone(args.p_key);
+        return this.termsJson(p.role === 'owner');
+      }
+      case 'owner_accept_terms': {
+        const p = this.ownerLike(args.p_key);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(args.p_version))) throw new Refusal('INVALID');
+        if (!this.terms || this.terms.version < args.p_version) {
+          this.terms = { version: args.p_version, at: NOW.toISOString(), by: p.name, how: 'sign_in' };
+        }
+        return this.termsJson(true);
       }
       case 'owner_go_online': {
         // The shop's gym (held by an old owner key) gets its owner as a person, signed in here.
@@ -362,6 +402,12 @@ export class FakeServer {
       case 'staff_sign_out':
         this.endSession(args.p_key);
         return null;
+      case 'staff_me': {
+        // 0010: who this key is (an old owner key has no person).
+        if (this.ownerKeys.has(args.p_key)) return { gymId: this.shopGym.gymId, name: this.shopGym.name, joinCode: this.shopGym.joinCode, person: null };
+        const p = this.who(args.p_key);
+        return { gymId: this.gym.gymId, name: this.gym.name, joinCode: this.gym.joinCode, person: { staffId: p.staffId, name: p.name, phone: p.phone, role: p.role } };
+      }
       case 'staff_key_status': {
         if (this.sessions.has(args.p_key)) return 'live';
         const id = this.deadKeys.get(args.p_key);
@@ -853,6 +899,8 @@ export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name,
   await start.getByLabel('Gym name').fill(gym);
   await start.getByLabel('Your name').fill(name);
   await start.getByLabel('Your mobile number').fill(phone);
+  // #38: the owner agrees to the terms before the gym is made.
+  await start.getByRole('checkbox', { name: /I agree to the ForgeAI terms and the data agreement/ }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('banner')).toContainText(gym);

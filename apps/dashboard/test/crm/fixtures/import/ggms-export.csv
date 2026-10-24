@@ -1,0 +1,10 @@
+Member Report,,,,,,,,,,,,,,,,,
+From 01/04/2026 To 24/10/2026,,,,,,,,,,,,,,,,,
+Sr. No.,Member ID,Member Name,Gender,Mobile No,Email ID,DOB,Package,Joining Date,Start Date,End Date,Amount,Discount,Paid,Balance,Payment Mode,Trainer,Status
+1,GM1001,Aarav Testwala,Male,9876500101,aarav.test@example.com,12/03/1995,3 Months,05/01/2025,01/08/2026,31/10/2026,4500,500,3000,1000,UPI,Coach Demo,Active
+2,GM1002,Bhavna Sampleton,Female,9876500102,,22/11/1998,Monthly,10/02/2026,15/10/2026,14/11/2026,1500,0,1500,0,Cash,,Active
+3,GM1003,Chirag Fakely,Male,9876500103,chirag.f@example.com,,Annual,01/06/2024,01/06/2026,31/05/2027,12000,1000,11000,0,Card,Coach Demo,Active
+4,GM1004,Divya Mockford,Female,9876500104,,05/07/2001,6 Months,20/03/2026,20/03/2026,19/09/2026,7000,0,5000,2000,Cash,Coach Two,Expired
+5,GM1005,Eshan Notreal,Male,,,,Monthly,01/10/2026,01/10/2026,31/10/2026,1500,0,1500,0,Cash,,Active
+,,,,,,,,,,,,,,,,,
+Total,,,,,,,,,,,26500,1500,22000,3000,,,

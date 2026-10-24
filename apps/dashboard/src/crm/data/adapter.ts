@@ -41,6 +41,12 @@ export interface GymRecord {
   address: string | null;
   /** GSTIN, when the gym is registered. Drives invoice formatting in P6. */
   gstin: string | null;
+  /**
+   * #41 branches (24 Oct 2026): the start of this branch's receipt numbers ("B2" -> B2/2026-27/0001)
+   * so two branches under one GST number never print the same number. The server sets it when the
+   * branch is added and keeps it (supabase 0031); null or absent = the first branch's own series.
+   */
+  receiptPrefix?: string | null;
   createdAt: number;
 }
 
