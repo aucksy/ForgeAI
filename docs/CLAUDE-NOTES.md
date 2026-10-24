@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-101. He likes MettleBook: more names around "Mettle" with a progressive-overload feel — 24 Oct 2026
+**Owner said:** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around
+Mettle that gives a feel of progressive overload"
+**What Claude does:** checks his 4 plus new Mettle names (.com/.in/.app, apps, trademarks), table in chat; adds it to
+tracker #44 as round 7. Status: started.
+
 ## R-100. Two researches: a new brand name, and what members' apps do that we don't — 24 Oct 2026
 **Owner said:** "I want you to initiate two researches. First, research the list of names I just shared for a new
 brand name and give me a table of the shortlisted ones with the prices and details. Then, research the competition apps
