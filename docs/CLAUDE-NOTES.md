@@ -10,6 +10,8 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 rating answered truthfully, data safety exactly as the privacy notice says, target audience 18+, sensitive-permission
 declarations such as Health Connect). Scope: the MettleUp app in the SimpleApps108 Play Console only; Claude answers truthfully
 and stops for anything new that costs money or is not on that list.
+**Done (24 Oct):** MettleUp created in Play Console: app id 4973234719959672731, package com.mettleup.app (checked available),
+Free, App, default language en-US. Console: https://play.google.com/console/u/0/developers/8165750959522333478/app/4973234719959672731/app-dashboard
 
 ## R-108. Questions & answers tab = answers only; anything he must pick or do = Waiting for you — 24 Oct 2026
 **Owner said:** "everything that is waiting under the Questions and Answers tab ... if any of those is actually a question
