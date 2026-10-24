@@ -17,80 +17,130 @@ import { enqueueWrite } from '@/db/writeQueue';
 
 import { isNewer } from './appUpdate';
 
+/**
+ * One change, in one short sentence a member understands with the app closed (owner R-98, 24 Oct 2026).
+ * `go`, when the change has a place to try it: a button that opens that screen or setting at once.
+ */
+export interface WhatsNewLine {
+  text: string;
+  go?: { label: string; href: '/workout' | '/shop' | `/settings/${string}` };
+}
+
+/**
+ * What a line's button does on this phone, or null for no button. PURE.
+ * - The Gym tab ('/shop') exists only after joining a gym: without one, the button joins one instead.
+ * - A button that would open the page it is on is left out (Settings → What's new).
+ * - `tab` tells the caller to switch tabs (router.navigate) rather than stack a page (router.push).
+ */
+export function goFor(line: WhatsNewLine, inGym: boolean, here?: string): { label: string; href: string; tab: boolean } | null {
+  if (!line.go) return null;
+  const go = line.go.href === '/shop' && !inGym ? { label: 'Join your gym', href: '/settings/gym' } : line.go;
+  if (go.href === here) return null;
+  return { label: go.label, href: go.href, tab: go.href === '/workout' || go.href === '/shop' };
+}
+
 export interface WhatsNewEntry {
   version: string;
   /** The day it was released, e.g. "22 Oct". */
   date: string;
-  lines: readonly string[];
+  lines: readonly WhatsNewLine[];
 }
 
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.55.1',
+    date: '24 Oct',
+    lines: [
+      {
+        text: '"What\'s new" is now easier to read, and a button under a change takes you straight to it.',
+        go: { label: "See what's new", href: '/settings/news' },
+      },
+      { text: 'Settings → "What\'s new" shows your last 3 updates.' },
+    ],
+  },
+  {
     version: '0.55.0',
     date: '23 Oct',
     lines: [
-      "Gym members: when your gym runs a workout offer, it shows on the Gym tab. Train the days it asks and get free days on your membership.",
-      'Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.',
+      {
+        text: 'Gym members: your gym can reward you for training. Hit its target days and get free days on your membership.',
+        go: { label: "See your gym's offer", href: '/shop' },
+      },
+      { text: 'Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.' },
     ],
   },
   {
     version: '0.54.1',
     date: '22 Oct',
-    lines: ['A swipe that starts on a weight or reps box now scrolls the workout page.'],
+    lines: [{ text: 'Scrolling a workout is easier. A swipe that starts on a weight or reps box now scrolls the page.' }],
   },
   {
     version: '0.54.0',
     date: '22 Oct',
     lines: [
-      "Joined a gym? The app starts again in your gym's look with a welcome, then offers your gym's logo for your home screen.",
-      "No gym, no Shop tab. With a gym it's the Gym tab, and it becomes Shop once your gym's shop has something in it.",
-      'Leave gym is now its own row in Settings → Your gym.',
-      'The tab bar highlight now slides to the tab you tap.',
+      {
+        text: "Joined a gym that has its own look? The app changes to your gym's name and colours.",
+        go: { label: 'Join your gym', href: '/settings/gym' },
+      },
+      { text: 'After you join, a "Gym" button appears at the bottom. It becomes "Shop" when your gym adds products.' },
+      { text: 'To leave your gym, open Settings, then "Your gym".', go: { label: 'Open Your gym', href: '/settings/gym' } },
     ],
   },
   {
     version: '0.53.0',
     date: '22 Oct',
     lines: [
-      'After a workout, tap the comparison line to see each exercise: up, down, and why.',
-      "The comparison uses this routine's last time first, then the same kind of day in its folder.",
-      'Muscle tips: now and then, Up next suggests a few sets for a muscle group your last 3 weeks left out. Turn them off in Settings → Workouts.',
-      "Gym members: “Show my workouts to the desk” under My membership, for your gym's workout offer. Nothing is sent from your phone.",
+      { text: 'After a workout, see if you beat your last time on the same routine. Tap the result to see each exercise.' },
+      {
+        text: "Haven't trained a muscle in 3 weeks? The Workout tab may suggest a few sets for it.",
+        go: { label: 'Turn tips on or off', href: '/settings/workouts' },
+      },
+      {
+        text: 'Gym members: show your workout days to the front desk on your screen, from "My membership".',
+        go: { label: 'Open My membership', href: '/settings/gym' },
+      },
     ],
   },
   {
     version: '0.52.0',
     date: '22 Oct',
     lines: [
-      "Warm-up sets keep last time's weight and reps. Suggestions never change them.",
-      'Two dumbbells typed as one total: suggested weights always split into two real dumbbells.',
-      'Your numbers come from the last time you did the exercise, in any folder, so a lift you did last week never counts as a long break.',
-      '"Previous values" is back on Any workout. Pick Same routine again in Settings → Workouts if you want it.',
-      'The box at the top of each exercise now shows the kilos (or reps) done and what is left, and turns green when you beat it. Tap ⓘ for the suggestion and why.',
-      '"Last" now sits beside the rest timer.',
-      'Push-ups, pull-ups and other moves with no weight now show the reps to beat, set by set.',
-      'The pop-up after a set stays on screen longer.',
-      'Health Connect: "Send past workouts" now says what it will send and asks first, then shows when workouts last went in.',
-      'New: Settings → Workouts → Show In use after each set. A big IN USE screen with your rest clock opens by itself, so others know you are coming back.',
+      { text: 'Each exercise shows how many kilos you still need to beat last time. It turns green when you do.' },
+      {
+        text: "Last time's numbers now come from the last time you did that exercise, in any routine.",
+        go: { label: 'Change setting', href: '/settings/workouts' },
+      },
+      { text: 'Warm-up sets stay as they were last time. The app never changes them.' },
+      { text: 'Push-ups, pull-ups and other bodyweight moves now show how many reps beat last time.' },
+      {
+        text: 'Turn on a big "In use" screen after each set, so others know the machine is taken.',
+        go: { label: 'Turn it on', href: '/settings/workouts' },
+      },
+      {
+        text: "The app now asks before sending past workouts to Health Connect (Google's health app).",
+        go: { label: 'Open settings', href: '/settings/health' },
+      },
     ],
   },
   {
     version: '0.51.0',
     date: '22 Oct',
     lines: [
-      'The workout card in your notifications now shows how long your workout has run.',
-      'Pick your rest-over sound in Settings → Workouts: ForgeAI chime, Bell, Double beep or Whistle.',
-      'Missed an update? Tap "See earlier updates" here, or open Settings → What\'s new.',
+      { text: "During a workout, your phone's notifications show how long you've been training." },
+      {
+        text: 'Pick the sound that plays when your rest is over: chime, bell, double beep or whistle.',
+        go: { label: 'Pick a sound', href: '/settings/workouts' },
+      },
     ],
   },
   {
     version: '0.50.0',
     date: '22 Oct',
     lines: [
-      'Finished a workout without a routine? Save its exercises as a routine in one tap.',
-      'During rest, tap the rest clock: a big "In use" timer shows others the machine is taken.',
-      'Change an exercise\'s rest while its timer runs, and the running timer changes too.',
+      { text: 'Did a workout without a routine? Save it as a routine in one tap when you finish.' },
+      { text: 'Resting? Tap the rest timer to show a big "In use" screen, so others know the machine is taken.' },
+      { text: "Change an exercise's rest time while you rest, and the running timer changes too." },
       // Not "Your workouts back up to Drive by themselves": Drive backup is hidden until the
       // owner's Google setup (Project Tracker #42), so no member can link it yet.
     ],
@@ -99,78 +149,89 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     version: '0.49.0',
     date: '21 Oct',
     lines: [
-      'A card on the Workout tab tells you when a new version of ForgeAI is ready.',
-      'Settings → Send feedback: tell us what to fix or add. Type it or speak it.',
-      'Joining a gym now asks you to confirm you are 18 or older and agree to the terms.',
-      'ForgeAI no longer asks for your microphone.',
+      { text: 'The Workout tab now tells you when a new version of ForgeAI is ready.' },
+      { text: 'Tell us what to fix or add, by typing or speaking.', go: { label: 'Send feedback', href: '/settings/feedback' } },
+      { text: 'Joining a gym now asks you to confirm you are 18 or older and agree to the terms.' },
+      { text: 'ForgeAI no longer asks to use your microphone.' },
     ],
   },
   {
     version: '0.48.0',
     date: '18 Oct',
     lines: [
-      'Workout plans from your gym\'s trainer now arrive in your Workout tab by themselves.',
-      'Start a routine to see the kg to beat for each exercise, and the plan for each set.',
-      'My membership: your plan, end date, days left and visits this month.',
-      'After a QR check-in, start today\'s workout in one tap.',
-      'Have a gym code? Join your gym from the first screen, and put your gym\'s logo on your home screen.',
+      { text: "Your trainer's workout plans now appear on your Workout tab by themselves." },
+      { text: 'In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.' },
+      {
+        text: 'New "My membership" page: your plan, end date, days left and visits this month.',
+        go: { label: 'Open My membership', href: '/settings/gym' },
+      },
+      { text: "Scan the QR code at your gym's desk, then start today's workout in one tap." },
+      { text: "Got a code from your gym? Join from the first screen and add your gym's logo to your home screen." },
     ],
   },
   {
     version: '0.47.1',
     date: '18 Oct',
     lines: [
-      'The tick after an RPE tap pops once, and keeps the numbers you typed.',
-      'Switching gyms with open shop orders now checks with the new gym first.',
+      { text: 'After you rate how hard a set felt, the tick shows once and keeps the numbers you typed.' },
+      { text: 'Switching gyms while a shop order is waiting now asks you first, because switching cancels it.' },
     ],
   },
   {
     version: '0.47.0',
     date: '17 Oct',
     lines: [
-      'Settings → Your gym: join your gym with its code.',
-      'Tap an RPE and watch the set tick itself before your rest starts.',
-      'A small drag bar shows which exercises and routines you can move.',
-      'Fixes for big text sizes and for the keyboard after the app-icon shortcut.',
+      { text: 'Join your gym with its code.', go: { label: 'Join your gym', href: '/settings/gym' } },
+      { text: 'Rate how hard a set felt, and the set ticks itself before your rest starts.' },
+      { text: 'A small handle shows which exercises and routines you can drag to move.' },
+      { text: 'Fixes for large text sizes, and for the keyboard after opening the app from its home-screen shortcut.' },
     ],
   },
   {
     version: '0.46.0',
     date: '16 Oct',
     lines: [
-      'New: the ForgeAI watch app. Your rest counts down and buzzes on your Wear OS watch.',
-      'Said no to the camera? The app now says so and opens Settings for you.',
-      'Many small fixes from a full check of the app.',
+      { text: 'New: the ForgeAI watch app. Your rest counts down and buzzes on your Wear OS watch.' },
+      { text: "Said no to the camera? The app now tells you and opens your phone's Settings to allow it." },
+      { text: 'Many small fixes from a full check of the app.' },
     ],
   },
   {
     version: '0.45.0',
     date: '16 Oct',
     lines: [
-      'Your rep range from Settings now shows in the routine editor.',
-      'A new app icon that fits round home screens.',
+      {
+        text: 'The rep range you set in Settings now shows when you edit a routine.',
+        go: { label: 'Workout settings', href: '/settings/workouts' },
+      },
+      { text: 'A new app icon that fits round home screens.' },
     ],
   },
   {
     version: '0.44.0',
     date: '15 Oct',
     lines: [
-      'RPE: one tap picks how hard the set felt and starts your rest.',
-      'Rest is over plays the same ForgeAI sound with the screen off as with the app open.',
-      'A new record pops up with confetti and names the record you beat.',
-      'Hold and drag exercises to move them during a workout.',
-      'Settings → Workouts → Weight jumps: choose how big each suggested step up is.',
+      { text: 'Rate how hard a set felt with one tap, and your rest timer starts.' },
+      { text: 'The "Rest is over" sound is now the same with the screen off as with the app open.' },
+      { text: 'A new record pops up with confetti and names the record you beat.' },
+      { text: 'During a workout, hold and drag an exercise to move it.' },
+      {
+        text: 'Choose how big each suggested weight increase is: "Weight jumps".',
+        go: { label: 'Open Weight jumps', href: '/settings/workouts' },
+      },
     ],
   },
 ];
 
 /** A version's lines, for the card's top (kept by name for the tests and older callers). */
-export const WHATS_NEW: Readonly<Record<string, readonly string[]>> = Object.fromEntries(
+export const WHATS_NEW: Readonly<Record<string, readonly WhatsNewLine[]>> = Object.fromEntries(
   WHATS_NEW_LOG.map((e) => [e.version, e.lines]),
 );
 
-/** R-56: how many earlier updates the card opens. */
-export const EARLIER_MAX = 7;
+/** R-98 (owner, 24 Oct 2026): "the last three updates": this one and the 2 before it. */
+export const SHOWN_UPDATES = 3;
+/** How many earlier updates the card opens (with this one: the last 3). */
+export const EARLIER_MAX = SHOWN_UPDATES - 1;
 
 /** The updates before `current`, newest first, at most `max`. PURE. */
 export function earlierUpdates(current: string | null | undefined, max = EARLIER_MAX): readonly WhatsNewEntry[] {
@@ -178,23 +239,23 @@ export function earlierUpdates(current: string | null | undefined, max = EARLIER
   return WHATS_NEW_LOG.filter((e) => isNewer(current, e.version) && e.lines.length > 0).slice(0, max);
 }
 
-/** Settings → What's new: this version and every one before it, newest first. PURE. */
-export function updatesUpTo(current: string | null | undefined): readonly WhatsNewEntry[] {
-  if (!current) return WHATS_NEW_LOG;
-  return WHATS_NEW_LOG.filter((e) => !isNewer(e.version, current) && e.lines.length > 0);
+/** Settings → What's new: the last 3 updates up to this version, newest first. PURE. */
+export function updatesUpTo(current: string | null | undefined, max = SHOWN_UPDATES): readonly WhatsNewEntry[] {
+  const upTo = current ? WHATS_NEW_LOG.filter((e) => !isNewer(e.version, current)) : WHATS_NEW_LOG;
+  return upTo.filter((e) => e.lines.length > 0).slice(0, max);
 }
 
 const SEEN_KEY = 'whats_new_seen'; // the last version whose news was shown (or skipped)
 
 /** The lines to show, or null. PURE. */
-export function whatsNewToShow(current: string | null | undefined, seen: string | null): readonly string[] | null {
+export function whatsNewToShow(current: string | null | undefined, seen: string | null): readonly WhatsNewLine[] | null {
   if (!current || seen == null || seen === current) return null;
   const lines = WHATS_NEW[current];
   return lines && lines.length > 0 ? lines : null;
 }
 
 /** What the card shows now. A version with nothing to show is remembered at once. Never throws. */
-export async function readWhatsNew(current: string | null | undefined): Promise<readonly string[] | null> {
+export async function readWhatsNew(current: string | null | undefined): Promise<readonly WhatsNewLine[] | null> {
   if (!current) return null;
   try {
     const seen = await getMeta(SEEN_KEY);

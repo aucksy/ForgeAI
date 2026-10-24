@@ -1,20 +1,21 @@
 /**
  * The Workout tab's one-time "New in this version" card (lib/whatsNew.ts).
- * R-56 (owner, 22 Oct 2026): "See earlier updates" opens the 7 updates before this one, in the card.
+ * R-56 (owner, 22 Oct 2026): "See earlier updates" opens the updates before this one, in the card.
+ * R-98 (24 Oct 2026): the last 3 updates in all (this one + 2), each change with a button to try it where it has one.
  */
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui';
-import { earlierUpdates, markWhatsNewSeen, readWhatsNew } from '@/lib/whatsNew';
+import { earlierUpdates, markWhatsNewSeen, readWhatsNew, type WhatsNewLine } from '@/lib/whatsNew';
 import { color, space, type } from '@/theme/tokens';
 
 import { WhatsNewLines, WhatsNewList } from './WhatsNewList';
 
 export function WhatsNewCard() {
   const version = Constants.expoConfig?.version ?? null;
-  const [lines, setLines] = useState<readonly string[] | null>(null);
+  const [lines, setLines] = useState<readonly WhatsNewLine[] | null>(null);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     let live = true;
@@ -34,13 +35,26 @@ export function WhatsNewCard() {
   };
   return (
     <Card style={{ gap: space.sm }}>
-      <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+      <Text
+        accessibilityRole="header"
+        style={{
+          fontFamily: type.bodySemi,
+          fontSize: type.size.body,
+          color: color.ink,
+        }}
+      >
         {`New in this version (${version})`}
       </Text>
-      <WhatsNewLines lines={lines} />
+      <WhatsNewLines lines={lines} onGo={done} />
       {open && earlier.length > 0 ? (
-        <View style={{ paddingTop: space.sm, borderTopWidth: 1, borderTopColor: color.border }}>
-          <WhatsNewList entries={earlier} />
+        <View
+          style={{
+            paddingTop: space.sm,
+            borderTopWidth: 1,
+            borderTopColor: color.border,
+          }}
+        >
+          <WhatsNewList entries={earlier} onGo={done} />
         </View>
       ) : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: space.lg }}>
@@ -50,7 +64,15 @@ export function WhatsNewCard() {
           accessibilityLabel="Got it. Hide what's new"
           style={{ minHeight: 48, minWidth: 48, justifyContent: 'center' }}
         >
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
+          <Text
+            style={{
+              fontFamily: type.bodySemi,
+              fontSize: type.size.sub,
+              color: color.accent,
+            }}
+          >
+            Got it
+          </Text>
         </Pressable>
         {earlier.length > 0 ? (
           <Pressable
@@ -60,7 +82,13 @@ export function WhatsNewCard() {
             accessibilityLabel={open ? 'Hide earlier updates' : `See the ${earlier.length} earlier updates`}
             style={{ minHeight: 48, minWidth: 48, justifyContent: 'center' }}
           >
-            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
+            <Text
+              style={{
+                fontFamily: type.bodySemi,
+                fontSize: type.size.sub,
+                color: color.accent,
+              }}
+            >
               {open ? 'Hide earlier updates' : 'See earlier updates'}
             </Text>
           </Pressable>
