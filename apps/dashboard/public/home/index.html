@@ -38,7 +38,7 @@ a{color:inherit;text-underline-offset:.2em}
 img,svg{display:block;max-width:100%}
 :focus-visible{outline:3px solid var(--flavour);outline-offset:3px;border-radius:4px}
 .wrap{width:min(1180px,100% - 32px);margin-inline:auto}
-.cond{font-family:var(--cond);font-weight:900;font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;letter-spacing:-.01em;line-height:.88}
+.cond{font-family:var(--cond);font-weight:900;font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;letter-spacing:-.01em;word-spacing:.14em;line-height:.88}
 :lang(hi) .cond{font-family:"Khand",var(--cond);font-weight:700;text-transform:none;letter-spacing:0;line-height:1.02}
 :lang(hi) body{font-family:"Mukta","Archivo",system-ui,sans-serif;line-height:1.7}
 h1,h2,h3{margin:0;text-wrap:balance}
@@ -69,23 +69,19 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .pill:hover{border-color:var(--ink3);color:var(--ink)}
 
 /* ---------- front panel of the label ---------- */
-.front{position:relative;padding:20px 0 0;isolation:isolate}
+.front{position:relative;padding:20px 0 0;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr)}
 .lockup{position:relative;z-index:2}
-.mega{font-size:clamp(3.4rem,15vw,6.6rem)}
+.mega{font-size:clamp(3.2rem,14vw,6rem)}
 .mega .hot{color:var(--flavour);transition:color .5s var(--ease)}
-:lang(hi) .mega{font-size:clamp(3rem,13vw,5.6rem)}
-/* The statement of identity: what the product is, ruled like the facts panel, under the headline. */
-.ident{margin-top:22px;padding:8px 0 7px;border-top:3px solid var(--ink);border-bottom:1px solid var(--rule);font-size:clamp(1.3rem,5.6vw,2rem);line-height:1;color:var(--ink);max-width:max-content}
-.ident i{font-style:normal;color:var(--flavour);transition:color .5s var(--ease)}
-:lang(hi) .ident{line-height:1.15}
-.claim{margin-top:18px;line-height:1.6;font-size:clamp(1.08rem,2.6vw,1.32rem);color:var(--ink2);max-width:36ch}
+:lang(hi) .mega{font-size:clamp(2.8rem,12vw,5rem)}
+.claim{margin-top:18px;line-height:1.6;font-size:clamp(1.08rem,2.6vw,1.32rem);color:var(--ink2);max-width:40ch}
 .claim strong{color:var(--ink)}
 .net{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px 14px;font:800 12px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
 :lang(hi) .net{letter-spacing:0;font-size:13px}
 .net span+span::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--flavour);margin:0 14px 2px 0;vertical-align:middle}
 
 /* the flavour band: full width, the gym's own colour, editable */
-.band{position:relative;z-index:1;margin-top:30px;background:var(--flavour);color:var(--on-flavour);transition:background .5s var(--ease),color .5s var(--ease);border-block:3px solid var(--label-ink)}
+.band{position:relative;z-index:1;margin-top:34px;background:var(--flavour);color:var(--on-flavour);transition:background .5s var(--ease),color .5s var(--ease);border-block:3px solid var(--label-ink)}
 .band-in{padding:20px 0 18px}
 .band label{display:block;font:800 12px/1 var(--text);letter-spacing:.16em;text-transform:uppercase}
 :lang(hi) .band label{letter-spacing:0;font-size:14px}
@@ -112,16 +108,21 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .msg.ok{color:var(--good)} .msg.err{color:#FF8A80}
 .alt{font-size:15px;color:var(--ink3)}
 .alt a{color:var(--ink);font-weight:700}
-.hero-phone{position:relative;z-index:3;display:grid;justify-items:center;margin:34px auto 0;padding-bottom:48px;width:max-content}
+.hero-phone{position:relative;z-index:3;display:grid;justify-items:center;margin:34px auto 0;width:max-content;order:3}
 .hero-phone .callout{justify-self:start;margin:0 0 14px -6px;width:max-content;max-width:11em}
-.seal{width:88px;height:88px;right:-30px;top:30px;rotate:12deg}
-@media (min-width:980px){.hero-phone{padding-bottom:0}.seal{right:auto;top:auto;rotate:-14deg;left:-92px;bottom:96px;width:124px;height:124px}.mega{font-size:clamp(4rem,6.4vw,5.9rem)}}
+.seal{width:84px;height:84px;right:-30px;bottom:140px;rotate:10deg}
+.front>.band{order:1}
+.front>.act{order:4}
 
 /* ---------- phones: the real member app, drawn ---------- */
-.phone{--w:300px;width:var(--w);max-width:84vw;aspect-ratio:9/19;border-radius:44px;padding:9px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 44px 70px -26px rgba(0,0,0,.85),0 14px 30px rgba(0,0,0,.5);position:relative;flex:none}
-.scr{position:relative;height:100%;border-radius:36px;overflow:hidden;background:var(--app-bg);color:var(--app-ink);font:500 13px/1.35 var(--app-body)}
-.scr .sb{display:flex;justify-content:space-between;padding:12px 22px 4px;font:700 12px var(--app-body)}
-.scr .in{padding:8px 14px}
+.phone{--w:280px;position:relative;flex:none;width:min(var(--w),72vw);aspect-ratio:9/19.5;margin-inline:auto;padding:10px;border-radius:40px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 44px 70px -26px rgba(0,0,0,.85),0 14px 30px rgba(0,0,0,.5)}
+.phone::after{content:"";position:absolute;z-index:6;top:24px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#040405;box-shadow:0 0 0 2px #17171c}
+.scr{position:relative;height:100%;border-radius:30px;overflow:hidden;background:var(--app-bg);color:var(--app-ink);font:500 13px/1.35 var(--app-body)}
+.scr .sb{display:flex;justify-content:space-between;align-items:center;height:38px;padding:0 22px;font:700 12px var(--app-body)}
+.scr .in{position:absolute;left:0;right:0;top:38px;bottom:54px;padding:6px 14px 0;overflow:hidden}
+.scr .in.centre{display:flex;flex-direction:column;justify-content:center;padding-bottom:10px}
+@media (max-width:379px){.phone .scr{zoom:.92}}
+@media (max-width:349px){.phone .scr{zoom:.82}}
 .gymhead{display:flex;align-items:center;gap:8px;margin:2px 0 10px}
 .gymlogo{width:26px;height:26px;border-radius:7px;background:var(--flavour);display:grid;place-items:center;font:800 13px var(--app-display);color:var(--on-flavour);transition:background .5s var(--ease);flex:none}
 .gymname{font:700 14px var(--app-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -131,7 +132,7 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .ac .t{font:700 17px var(--app-display);margin:3px 0}
 .beat{color:var(--flavour);font:800 13px var(--app-body);transition:color .5s var(--ease)}
 .abtn{display:block;text-align:center;border-radius:999px;padding:10px;font:800 14px var(--app-body);background:var(--flavour);color:var(--on-flavour);margin-top:10px;transition:background .5s var(--ease)}
-.tabs{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-around;padding:9px 0 16px;background:#0C0E14;border-top:1px solid var(--app-line);font:700 11px var(--app-body);color:var(--app-ink2)}
+.tabs{position:absolute;left:0;right:0;bottom:0;height:54px;display:flex;justify-content:space-around;align-items:flex-start;padding:10px 0 0;background:#0C0E14;border-top:1px solid var(--app-line);font:700 11px var(--app-body);color:var(--app-ink2)}
 .tabs b{color:var(--flavour);transition:color .5s var(--ease)}
 .week{display:flex;gap:6px;margin-top:8px}
 .week i{flex:1;height:26px;border-radius:7px;background:var(--app-line)}
@@ -145,13 +146,10 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .done .tick{background:var(--good);border-color:var(--good)}
 .tick svg{width:14px;height:14px;opacity:0}
 .done .tick svg{opacity:1}
-.rest{margin-top:10px;border-radius:12px;background:var(--app-card);border:1px solid var(--app-line);overflow:hidden;position:relative;font:700 12px var(--app-body);padding:9px 12px;display:flex;justify-content:space-between}
-.rest::before{content:"";position:absolute;inset:0;background:color-mix(in oklab,var(--flavour) 30%,transparent);transform-origin:left;transform:scaleX(var(--p,0));transition:transform .3s linear}
-.rest span{position:relative}
-.record{position:absolute;left:50%;top:69%;width:80%;translate:-50% -50%;padding:14px 12px;border-radius:18px;background:var(--gold);color:#1E1400;text-align:center;font:800 13px var(--app-body);box-shadow:0 20px 40px rgba(0,0,0,.5);opacity:0;scale:2.2;rotate:-8deg;pointer-events:none}
+.record{position:absolute;left:50%;top:62%;width:80%;translate:-50% -50%;padding:14px 12px;border-radius:18px;background:var(--gold);color:#1E1400;text-align:center;font:800 13px var(--app-body);box-shadow:0 20px 40px rgba(0,0,0,.5);opacity:0;scale:2.2;rotate:-6deg;pointer-events:none}
 .record b{display:block;font:900 30px/1 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;letter-spacing:.01em;text-transform:uppercase}
 .record.slam{animation:slam .55s cubic-bezier(.2,1.6,.4,1) forwards}
-@keyframes slam{0%{opacity:0;scale:2.2;rotate:-8deg}60%{opacity:1;scale:.94;rotate:-3deg}100%{opacity:1;scale:1;rotate:-4deg}}
+@keyframes slam{0%{opacity:0;scale:2.2;rotate:-6deg}60%{opacity:1;scale:.94;rotate:-2deg}100%{opacity:1;scale:1;rotate:0deg}}
 .roll{display:inline-flex;font-variant-numeric:tabular-nums}
 .roll i{font-style:normal;display:inline-block}
 .roll i.flip{animation:flip .32s var(--ease)}
@@ -181,17 +179,7 @@ section{position:relative}
 .lede{margin-top:20px;font-size:clamp(1.05rem,2.3vw,1.22rem);line-height:1.6;color:var(--ink2);max-width:52ch}
 .ex{font:600 13px var(--text);color:var(--ink3);margin-top:12px}
 
-/* directions for use */
-.use{padding:80px 0 80px;border-top:1px solid var(--rule)}
-.use .steps{margin-top:44px}
-.steps{list-style:none;margin:0;padding:0;display:grid;gap:34px;counter-reset:s}
-.steps li{display:grid;grid-template-columns:58px 1fr;gap:4px 16px;counter-increment:s}
-.steps li::before{content:counter(s);grid-row:span 2;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--flavour);color:var(--on-flavour);font:900 30px/1 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;transition:background .5s var(--ease),color .5s var(--ease)}
-.steps h3{font:800 1.28rem/1.2 var(--text)}
-.steps p{color:var(--ink2)}
-.stage{display:grid;grid-template-columns:auto;justify-content:center;justify-items:center;gap:22px}
-.stage .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(340px,100%)}
-.stage .notes .callout{max-width:none}
+.stage{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;align-items:center;gap:22px}
 
 /* member facts + evidence: two label panels */
 .facts-sec{padding:88px 0;background:var(--tub2);border-top:1px solid var(--rule)}
@@ -214,8 +202,8 @@ section{position:relative}
 .panel .cost{border-top:12px solid var(--label-ink);margin-top:-1px;padding-top:6px;display:flex;justify-content:space-between;font:900 22px var(--text)}
 .panel .foot{border-top:5px solid var(--label-ink);margin-top:8px;padding-top:6px;font:500 12px/1.45 var(--text);color:var(--label-ink2)}
 .panel .foot a{color:var(--label-ink)}
-.facts{max-width:480px;justify-self:center;rotate:-1.2deg}
-.evidence{margin-top:26px;max-width:520px;rotate:.8deg}
+.facts{max-width:480px;justify-self:center}
+.evidence{margin-top:26px;max-width:520px}
 .evidence li .v{font:900 1.5rem/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75}
 .evidence li .v sup{font:800 11px var(--text);margin-left:2px}
 @supports (animation-timeline: view()){
@@ -228,13 +216,13 @@ section{position:relative}
 }
 
 /* the shelf: the gym shop */
-.shelf{padding:96px 0 88px;border-top:1px solid var(--rule);overflow:hidden}
+.shelf{border-top:1px solid var(--rule);overflow:hidden}
 .pwrap{position:relative;display:grid;justify-items:center}
 .duo .pwrap{padding-top:76px}
-.duo .phone{--w:280px;rotate:3deg}
-.tag{position:relative;z-index:6;display:inline-flex;align-items:center;gap:7px;padding:7px 14px 7px 9px;background:var(--label);color:var(--label-ink);border-radius:6px 20px 20px 6px;font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;box-shadow:0 10px 20px rgba(0,0,0,.4);rotate:-5deg}
+.tag{position:relative;z-index:6;display:inline-flex;align-items:center;gap:7px;padding:7px 14px 7px 9px;background:var(--label);color:var(--label-ink);border-radius:6px 20px 20px 6px;font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;box-shadow:0 10px 20px rgba(0,0,0,.4);rotate:-4deg}
 .tag-r{rotate:4deg}
-.tag{white-space:nowrap}
+.tag{white-space:nowrap;flex-wrap:wrap;max-width:132px;row-gap:0}
+.tag small{flex-basis:100%;margin:2px 0 0 16px}
 .tag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tub);box-shadow:inset 0 0 0 2px #aaa}
 .tag small{font:700 12px var(--text);margin-left:2px}
 .burst{width:106px;height:106px;rotate:-10deg}
@@ -262,7 +250,7 @@ section{position:relative}
 .soonline{margin-top:16px;font:600 15px/1.5 var(--text);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* ingredients: the desk work */
-.ingr{padding:88px 0;border-top:1px solid var(--rule)}
+.ingr{padding:96px 0 88px;border-top:1px solid var(--rule)}
 .ingr .grid{display:grid;gap:36px;align-items:start}
 .ingr .text{margin-top:22px;font:500 clamp(1.08rem,2.2vw,1.3rem)/1.65 var(--text);color:var(--ink2);max-width:62ch}
 .ingr .text b{color:var(--ink);font-weight:800}
@@ -297,7 +285,8 @@ section{position:relative}
    Each scene plays once when it scrolls into view (home.js), with "Play it again". Until home.js
    ARMS a scene (class "armed"), every part shows in its finished state: no script, reduced motion
    and a screenshot all get the whole story. */
-.lift{padding:88px 0 80px;border-top:1px solid var(--rule)}
+.own,.lift,.trainer,.slip,.offline,.mydata{border-top:1px solid var(--rule)}
+.own,.lift,.trainer,.slip,.offline,.shelf,.movein,.mydata{padding:96px 0 88px}
 /* the rows beside a phone light up with it (the label's own rows, like ORDER / PAY / STOCK) */
 .money.armed div{transition:opacity .5s var(--ease)}
 .money.armed div:not(.on){opacity:.72}
@@ -339,8 +328,7 @@ section{position:relative}
 .armed .burst:not(.in){opacity:0;scale:.3}
 
 /* messages: the owner types once, presses Send, every inbox gets it, "read by" counts up */
-.msgduo .pwrap{padding-top:128px}
-.msgduo .phone{rotate:-2deg}
+.msgduo .pwrap{padding-top:152px}
 .compose{position:absolute;z-index:8;left:50%;top:0;translate:-50% 0;width:min(330px,94vw);padding:12px 14px;border-radius:16px;background:#F6F7F9;color:#111;font:600 13px/1.35 var(--app-body);box-shadow:0 18px 40px rgba(0,0,0,.35)}
 .compose small{display:block;font:700 11px var(--app-body);color:#5B6372}
 .cm-text{margin-top:6px;min-height:40px;padding:8px 10px;border-radius:10px;border:1px solid #D5D8DE;background:#fff}
@@ -364,58 +352,89 @@ section{position:relative}
   .scene svg.leaders{display:none}
   .stage.tagged>.burst{display:none}
 }
-/* the lock screen: the live card -> the rest counting down -> "Rest is over" (+ the watch) */
-.lockpair{position:relative;width:max-content;max-width:100%;justify-self:center}
-.watch{position:absolute;z-index:6;right:-10px;bottom:48px;width:104px;height:104px;border-radius:50%;padding:7px;background:#26272D;box-shadow:0 0 0 1px #3A3B43,0 22px 40px -10px rgba(0,0,0,.8);rotate:8deg}
-.wf{position:relative;width:100%;height:100%;border-radius:50%;background:#050608;overflow:hidden;color:var(--app-ink)}
-.wface{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:1px;text-align:center;font:700 10px var(--app-body);color:var(--app-ink2);opacity:0;transition:opacity .4s var(--ease)}
-.wface b{display:flex;align-items:center;gap:4px;font:700 24px/1.05 var(--app-display);color:var(--app-ink);font-variant-numeric:tabular-nums}
-.wface b svg{width:15px;height:15px}
-.wface .w-done{font-size:14px;color:var(--flavour);max-width:84px;transition:color .5s var(--ease)}
-#lock-watch:not([data-s]) .w-over,#lock-watch[data-s=live] .w-live,#lock-watch[data-s=rest] .w-rest,#lock-watch[data-s=over] .w-over{opacity:1}
-#lock-watch[data-s=over] .wf,#lock-watch:not([data-s]) .wf{box-shadow:inset 0 0 0 2px var(--flavour)}
-.lockscr{padding:96px 0 88px;border-top:1px solid var(--rule);overflow:hidden}
-.scr.lock{background:radial-gradient(120% 70% at 50% 0%,color-mix(in oklab,var(--flavour) 30%,#07080C) 0%,#07080C 72%)}
-.lk-time{margin-top:22px;text-align:center;font:300 64px/1 var(--app-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.lk-date{text-align:center;font:600 13px var(--app-body);color:var(--app-ink2);margin-top:6px}
-.nslot{position:relative;margin:28px 10px 0;height:150px}
-.nc{position:absolute;left:0;right:0;top:0;padding:11px 13px;border-radius:20px;background:rgba(30,32,40,.94);border:1px solid #2A2F3C;box-shadow:0 10px 24px rgba(0,0,0,.35);opacity:0;transform:translateY(-10px) scale(.98);transition:opacity .45s var(--ease),transform .45s var(--ease)}
-#lock-phone:not([data-s]) #n-over,#lock-phone[data-s=live] #n-live,#lock-phone[data-s=rest] #n-rest,#lock-phone[data-s=over] #n-over{opacity:1;transform:none}
-.nc.alert{border-color:var(--flavour)}
-.nh{display:flex;align-items:center;gap:6px;font:700 11px var(--app-body);color:var(--app-ink2)}
-.nh svg{margin-left:auto;width:15px;height:15px}
-.nic{width:16px;height:16px;border-radius:5px;background:var(--flavour);transition:background .5s var(--ease);flex:none}
-.nrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:5px}
-.nrow b{font:700 15px var(--app-display)}
-.ntime{font:700 13px var(--app-body);color:var(--app-ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
-.ntx{font:600 12.5px/1.35 var(--app-body);margin-top:2px}
-.nact{display:flex;gap:16px;margin-top:9px;font:800 12.5px var(--app-body);color:var(--flavour);transition:color .5s var(--ease)}
-.nact span{position:relative}
-.lk-hint{position:absolute;bottom:18px;left:0;right:0;text-align:center;font:600 11px var(--app-body);color:var(--app-ink2)}
-.buzz{animation:buzz .42s linear 2}
-@keyframes buzz{20%{translate:-3px 0;rotate:-.7deg}40%{translate:3px 0;rotate:.7deg}60%{translate:-2px 0}80%{translate:2px 0}}
 
 @media (min-width:980px){
-  .wrap.lockup{margin-left:var(--edge);margin-right:0;max-width:calc(100vw - var(--edge) - 440px)}
-  .band-in{padding-right:420px}
-  .hero-phone{position:absolute;right:var(--edge);top:10px;margin:0}
-  .hero-phone .phone{--w:330px;rotate:3deg}
-  .hero-phone .callout{position:absolute;right:calc(100% + 30px);top:52px;margin:0;justify-self:auto}
-  .front{padding-bottom:64px}
-  .use{padding-top:96px}
-  .use .steps{grid-template-columns:repeat(3,1fr);gap:26px 40px}
-  .use .steps li{align-content:start}
-  .stage{grid-template-columns:auto 170px;justify-content:center;justify-items:start;align-items:start;column-gap:44px}
-  .stage .notes{display:flex;flex-direction:column;align-items:flex-start;gap:58px;padding-top:120px;width:auto}
-  .stage .notes .callout{max-width:15ch}
-  .stage .ex{grid-column:1;justify-self:center}
-  .stage.solo{grid-template-columns:auto;justify-items:center}
-  .stage.solo .ex{grid-column:auto}
-  .facts-sec .grid{grid-template-columns:1fr 1fr;gap:64px}
-  .ingr .grid{grid-template-columns:1fr auto;gap:56px}
+  .front{grid-template-columns:minmax(16px,1fr) repeat(2,minmax(0,590px)) minmax(16px,1fr);padding-bottom:0}
+  .front>.lockup{grid-column:2;grid-row:1;width:auto;margin:0;align-self:center;padding:24px 24px 24px 0}
+  .front>.hero-phone{grid-column:3;grid-row:1;justify-self:center;align-self:center;margin:24px 0 40px;order:0}
+  .front>.band{grid-column:1/-1;grid-row:2;order:0}
+  .front>.act{grid-column:2/4;grid-row:3;width:auto;margin:0;order:0}
+  .mega{font-size:clamp(3.4rem,5.2vw,5rem)}
+  :lang(hi) .mega{font-size:clamp(3rem,4.6vw,4.4rem)}
+  .hero-phone .callout{position:absolute;right:calc(100% + 14px);top:36px;margin:0;justify-self:auto;max-width:9em}
+  .seal{right:-58px;bottom:auto;top:70px;width:104px;height:104px;rotate:10deg}
+  .facts{rotate:-1.2deg}
+  .evidence{rotate:.8deg}
+  .pricetab{rotate:-.4deg}
+  .facts-sec .grid{grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .ingr .grid{grid-template-columns:1fr auto;gap:56px;align-items:center}
   .desk figure{width:440px}
   .back .grid{grid-template-columns:1fr 1fr;gap:64px;align-items:start}
 }
+
+/* ---------- R-112 (owner, 24 Oct 2026): the new words, the new sections, one phone ---------- */
+.hero-phone .seal{z-index:7}
+.pts{list-style:none;margin:0;padding:0;display:grid;gap:0;max-width:56ch}
+.pts li{position:relative;padding:13px 0 13px 34px;border-top:1px solid var(--rule);font:500 16.5px/1.5 var(--text);color:var(--ink2)}
+.pts li:last-child{border-bottom:1px solid var(--rule)}
+.pts li::before{content:"";position:absolute;left:0;top:15px;width:20px;height:20px;border-radius:50%;background:var(--flavour) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.4l3.3 3.1L15 6.6' stroke='%230B0B0D' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;transition:background-color .5s var(--ease)}
+.pts b{color:var(--ink);font-weight:800}
+.pts .only{margin-left:6px}
+.voice .pts li{color:color-mix(in oklab,var(--on-flavour) 88%,transparent);border-color:color-mix(in oklab,var(--on-flavour) 30%,transparent)}
+.beatcol>.money+.pts{margin-top:22px}
+
+/* "usually extra" sits beside "only here": same sticker, outlined */
+.only.extra{background:none;color:var(--ink);box-shadow:inset 0 0 0 2px var(--flavour)}
+.pricetab .only.extra{color:var(--label-ink);box-shadow:inset 0 0 0 2px var(--label-ink)}
+.pricetab .only.extra{background:none}
+
+/* small static mocks (the same label look as the Excel sheet) */
+.mock{width:min(460px,100%);background:var(--label);color:var(--label-ink);border:3px solid var(--label-ink);border-radius:6px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;font:500 14px/1.35 var(--text)}
+.mock-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-bottom:3px solid var(--label-ink);font:800 13px var(--text)}
+.chip{display:inline-block;font:800 11px/1.2 var(--text);padding:4px 9px;border-radius:999px;background:var(--label-ink);color:var(--label);white-space:nowrap}
+.chip.on{background:var(--flavour);color:var(--on-flavour)}
+.chip.off{background:none;color:var(--label-ink);box-shadow:inset 0 0 0 2px var(--label-ink)}
+.mock-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border-bottom:1px solid var(--label-ink)}
+.mock-row:last-child{border-bottom:0}
+.mock-row b{font-weight:800}
+.mock-row small{display:block;font:600 12.5px var(--text);color:var(--label-ink2)}
+.mock-row .w{flex:none;font:800 12px var(--text);padding:6px 11px;border-radius:999px;background:var(--flavour);color:var(--on-flavour);transition:background .5s var(--ease)}
+.mock-foot{padding:10px 12px;border-top:3px solid var(--label-ink);font:700 13px var(--text)}
+.mock-foot.good{background:color-mix(in oklab,var(--good) 24%,#fff)}
+.mock-foot.warn{background:#FFF1C2}
+.stack{display:grid;gap:22px;justify-items:center;width:100%}
+
+/* your gym's own app: the QR poster, then the phone it opens in */
+.pair{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;justify-items:center;align-items:center;width:100%}
+.poster{width:min(230px,100%);background:var(--label);color:var(--label-ink);border:3px solid var(--label-ink);border-radius:6px;padding:16px 16px 14px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.poster .p-k{font:800 12px var(--text);letter-spacing:.14em;text-transform:uppercase}
+:lang(hi) .poster .p-k{letter-spacing:0;font-size:14px}
+.poster .p-n{margin-top:6px;font:900 28px/.95 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;overflow-wrap:anywhere}
+:lang(hi) .poster .p-n{font-family:"Khand",var(--cond);font-weight:700;text-transform:none;font-size:26px;line-height:1.05}
+.poster svg{width:150px;height:150px;margin:12px auto 8px}
+.poster .p-s{font:700 12.5px/1.3 var(--text);color:var(--label-ink2)}
+.arrow{width:36px;height:36px;color:var(--flavour);transition:color .5s var(--ease);rotate:90deg}
+.bigmark{display:grid;place-items:center;margin:0 auto 14px;width:88px;height:88px;border-radius:26px;flex:none;background:var(--flavour);color:var(--on-flavour);font:800 42px var(--app-display);transition:background .5s var(--ease)}
+.welcome{text-align:center;font:700 19px/1.2 var(--app-display);padding:0 6px}
+.welcome small{display:block;margin-top:6px;font:500 12.5px/1.4 var(--app-body);color:var(--app-ink2)}
+
+/* your data */
+.mydata .wrap>.lede{max-width:62ch}
+.keep{list-style:none;margin:36px 0 0;padding:0;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.keep li{display:grid;grid-template-columns:44px 1fr;gap:4px 16px;align-content:start;padding:20px 18px;border:2px solid var(--rule);border-radius:12px;background:var(--tub2)}
+.keep svg{grid-row:span 2;width:44px;height:44px;color:var(--flavour);transition:color .5s var(--ease)}
+.keep b{font:800 1.12rem/1.25 var(--text)}
+.keep span{color:var(--ink2);font-size:15.5px;line-height:1.5}
+@media (min-width:760px){.keep{grid-template-columns:repeat(3,minmax(0,1fr))}.keep li{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}.keep svg{grid-row:auto}}
+@media (min-width:980px){
+  .pair{grid-template-columns:auto auto auto;gap:30px}
+  .arrow{rotate:0deg}
+}
+.ingr-list li.wide{grid-column:1/-1}
+.tilefig{margin:0;width:min(460px,100%)}
+.tilefig img{width:100%;height:auto;border-radius:18px;border:1px solid var(--rule)}
+.tilefig figcaption{margin-top:8px;font:700 14px var(--text);color:var(--ink2);text-align:center}
+
 /* ---------- R-97 (owner, 24 Oct 2026) ----------
    One layout for every played section (words left, the stage right on a computer; words, stage, list
    on a phone); the free trial as the first door; moving in privately; the pack sizes. */
@@ -432,28 +451,33 @@ section{position:relative}
 .callme{display:grid;gap:10px;max-width:640px;padding-top:20px;border-top:1px solid var(--rule)}
 .or{font:700 14px var(--text);color:var(--ink3)}
 
-.scene{display:grid;gap:34px;grid-template-areas:"text" "stage" "rows"}
-.scene>.scene-text{grid-area:text}
+.scene{display:grid;gap:34px;grid-template-columns:minmax(0,1fr);grid-template-areas:"text" "stage" "rows"}
+.scene-col{display:contents}
+.scene .scene-text{grid-area:text}
 .scene>.stage{grid-area:stage}
-.scene>.money,.scene>.beatcol{grid-area:rows}
+.scene .beatcol{grid-area:rows}
 .scene .money{margin-top:0}
 .money.wide div{grid-template-columns:9.4rem 1fr}
 .beatcol>.ex,.beatcol>.soonline{margin-top:16px}
-.lift,.shelf,.voice,.lockscr,.movein{padding:96px 0 88px}
 .stage>*{transition:opacity .45s var(--ease)}
-.scene .stage{cursor:pointer}
+.scene .stage.play{cursor:pointer}
 .stage.paused .ex::after{content:" (paused)"}
 :lang(hi) .stage.paused .ex::after{content:" (रुका हुआ)"}
 .stage.rewind>*:not(svg){opacity:.28}
+.stage .ex{text-align:center;margin-top:0}
+/* a phone with a note on each side (phone, then the two notes under it on a small screen) */
 .stage.tagged{grid-template-columns:1fr 1fr;grid-template-areas:"phone phone" "tagl tagr" "ex ex";justify-items:center;gap:22px 14px}
 .stage.tagged>.pwrap{grid-area:phone}
-.stage.tagged>.tag-l{grid-area:tagl;justify-self:end}
-.stage.tagged>.tag-r{grid-area:tagr;justify-self:start}
+.stage.tagged>.tag-l,.stage.tagged>.cl{grid-area:tagl;justify-self:end}
+.stage.tagged>.tag-r,.stage.tagged>.cr{grid-area:tagr;justify-self:start}
 .stage.tagged>.burst{grid-area:burst;position:relative}
 .stage.tagged>.ex{grid-area:ex}
+.stage.tagged>.callout{max-width:16ch}
+.stage.tagged>.cl{rotate:-2deg}
+.stage.tagged>.cr{rotate:2deg}
 
 .movein{background:var(--tub2);border-top:1px solid var(--rule)}
-.sheet{width:min(480px,100%);background:var(--label);color:var(--label-ink);border:3px solid var(--label-ink);border-radius:6px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);rotate:-1deg;overflow:hidden;font:500 12.5px/1.3 var(--text)}
+.sheet{width:min(480px,100%);background:var(--label);color:var(--label-ink);border:3px solid var(--label-ink);border-radius:6px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;font:500 12.5px/1.3 var(--text)}
 .sh-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;border-bottom:3px solid var(--label-ink);font:800 12.5px var(--text)}
 .sh-file{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh-ai{flex:none;font:800 11px var(--text);padding:3px 8px;border-radius:5px;background:var(--label-ink);color:var(--label);letter-spacing:.04em;transition:background .4s var(--ease),color .4s var(--ease)}
@@ -478,13 +502,13 @@ section{position:relative}
 .onlyhere .only{margin-right:6px}
 
 .ingr .text+.text{margin-top:0}
-.ingr-list{list-style:none;margin:10px 0 22px;padding:0;display:grid;column-gap:28px;max-width:62ch}
+.ingr-list{list-style:none;margin:28px 0 0;padding:0;display:grid;column-gap:28px;max-width:62ch}
 .ingr-list li{padding:11px 0;border-top:1px solid var(--rule);font:500 16.5px/1.45 var(--text);color:var(--ink2)}
 .ingr-list b{color:var(--ink);font-weight:800}
 @media (min-width:640px){.ingr-list{grid-template-columns:1fr 1fr}}
 
 .packs{padding:96px 0 88px;border-top:1px solid var(--rule)}
-.pricetab{margin-top:40px;padding:0;overflow:hidden;rotate:-.4deg}
+.pricetab{margin-top:40px;padding:0;overflow:hidden}
 .pricetab table{width:100%;border-collapse:collapse;table-layout:fixed}
 .pricetab thead th{vertical-align:bottom;text-align:left;padding:14px 8px 12px;border-bottom:12px solid var(--label-ink)}
 .pricetab thead th:first-child{width:40%;padding-left:12px}
@@ -519,8 +543,6 @@ section{position:relative}
   .pricetab tbody th{font-size:15px}
   .money.wide div{grid-template-columns:1fr;gap:6px}
 }
-.stage .notes .callout:nth-child(3):last-child{grid-column:1/-1;justify-self:center}
-@media (min-width:980px){.stage .notes .callout:nth-child(3):last-child{grid-column:auto;justify-self:auto}}
 @media (min-width:640px){.pricetab tbody th{font-size:16px}.pricetab td .soon{font-size:11px;padding:3px 8px}.pricetab .only{font-size:11px}}
 .founder{position:relative;margin-top:40px;display:grid;gap:16px;justify-items:start;padding:22px 20px;border:3px dashed var(--ink3);border-radius:10px}
 .founder .fseal{position:static;width:96px;height:96px;rotate:-10deg}
@@ -535,17 +557,22 @@ section{position:relative}
 :lang(hi) .back .go.big{font-size:25px}
 
 @media (min-width:980px){
-  .scene{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-areas:"text stage" "rows stage";grid-template-rows:auto 1fr;column-gap:64px;row-gap:30px}
-  .scene>.scene-text{align-self:end}
-  .scene .panel-h{font-size:clamp(3rem,6vw,5.2rem)}
+  .scene{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-areas:"col stage";column-gap:64px;align-items:center}
+  .scene.flip{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"stage col"}
+  .scene-col{display:block;grid-area:col}
+  .scene-col>*+*{margin-top:30px}
+  .scene .panel-h{font-size:clamp(2.8rem,4.8vw,4.4rem)}
   .scene>.stage{align-self:center}
-  .stage.tagged{grid-template-columns:1fr auto 1fr;grid-template-areas:"tagl phone tagr" "burst phone tagr" "ex ex ex";justify-items:stretch;column-gap:26px;row-gap:22px}
+  .stage.tagged{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"tagl phone tagr" "burst phone tagr" "ex ex ex";justify-items:stretch;column-gap:26px;row-gap:22px}
   .stage.tagged>.tag-l,.stage.tagged>.tag-r{align-self:start;margin-top:250px}
+  .stage.tagged>.cl,.stage.tagged>.cr{align-self:start}
+  .stage.tagged>.cl{margin-top:106px}
+  .stage.tagged>.cr{margin-top:134px}
   .stage.tagged>.burst{align-self:end;justify-self:end;margin-bottom:70px}
   .stage.tagged>.ex{justify-self:center}
   .founder{grid-template-columns:110px 1fr auto;align-items:center;gap:26px;padding:24px 28px}
 }
-@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .record.slam{animation:none;opacity:1;scale:1;rotate:-4deg} .roll i.flip{animation:none} .caret{animation:none} }
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .record.slam{animation:none;opacity:1;scale:1;rotate:0deg} .roll i.flip{animation:none} .caret{animation:none} }
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.45s}
 </style>
 </head>
@@ -564,21 +591,49 @@ section{position:relative}
 </header>
 
 <main>
-<!-- FRONT PANEL OF THE LABEL -->
+
+<!-- 1. HERO -->
 <section class="front leads-host" aria-labelledby="h1">
   <svg class="leaders" aria-hidden="true"></svg>
   <div class="wrap lockup">
-    <h1 id="h1" class="cond mega"><span data-hi="मेंबर">Keeps</span> <span class="hot" data-hi="वापस आते">members</span><br><span data-hi="रहेंगे।">coming back.</span></h1>
-    <!-- R-54 (owner, 22 Oct): what the product IS, in one line: the tub's statement of identity. -->
-    <p class="ident cond" data-hi="जिम सॉफ़्टवेयर <i>+</i> मेंबर प्रोग्रेस ऐप">Gym software <i>+</i> member progress app</p>
-    <p class="claim" data-hi="<strong>हर मेंबर अपनी तरक्की देखता है</strong>, आपके जिम के नाम और रंग में। आपकी दुकान और संदेश भी इसी में।">Every member sees <strong>their own progress</strong>, in your gym's name and colours. Your shop and messages, inside.</p>
+    <h1 id="h1" class="cond mega" data-hi="मेंबर जब अपनी तरक्की देखते हैं, तो वे &lt;span class=&quot;hot&quot;&gt;ज़्यादा समय&lt;/span&gt; जुड़े रहते हैं।">Members stay longer when they see <span class="hot">progress.</span></h1>
+    <p class="claim" data-hi="MettleUp आपको जिम चलाने का डेस्क सॉफ़्टवेयर देता है, और हर मेंबर को आपके जिम के नाम में एक वर्कआउट ऐप।">MettleUp gives you the desk software to run your gym, and gives every member a workout app in your gym's name.</p>
     <div class="trial">
       <a class="go big" href="https://app.mettleup.fit/start" data-hi="3 महीने मुफ्त शुरू करें">Start free for 3 months</a>
-      <p class="trial-note" data-hi="न कार्ड, न सेटअप फीस। 2 मिनट में अपना जिम बनाइए। मेंबरों का ऐप हमेशा मुफ्त।">No card, no setup fee. Your gym is ready in 2 minutes. Your members' app is free, always.</p>
+      <p class="trial-note" data-hi="न कार्ड, न सेटअप फीस। 2 मिनट में आपका जिम तैयार।">No card, no setup fee. Your gym is ready in 2 minutes.</p>
     </div>
-    <p class="net"><span data-hi="मेंबरों के लिए मुफ्त">Free for your members</span><span>Android</span><span data-hi="402 एक्सरसाइज़">402 exercises</span></p>
+    <p class="net"><span data-hi="मेंबरों के लिए मुफ्त">Free for your members</span><span data-hi="आपके जिम का नाम और लोगो">Your gym's name and logo</span><span data-hi="डेस्क बिना इंटरनेट भी चलती है">Desk works without internet</span></p>
   </div>
-
+  <div class="hero-phone">
+    <span class="callout" data-target="#hero-gym" data-side="left" data-hi="यहाँ आपके जिम का नाम">Your gym's name, here</span>
+    <svg class="sticker seal" viewBox="0 0 100 100" role="img" aria-label="Free for your members" data-hi-label="मेंबरों के लिए मुफ्त"><path d="M50.0 2.0 L55.6 7.4 L62.4 3.6 L66.5 10.3 L74.0 8.4 L76.2 15.9 L83.9 16.1 L84.1 23.8 L91.6 26.0 L89.7 33.5 L96.4 37.6 L92.6 44.4 L98.0 50.0 L92.6 55.6 L96.4 62.4 L89.7 66.5 L91.6 74.0 L84.1 76.2 L83.9 83.9 L76.2 84.1 L74.0 91.6 L66.5 89.7 L62.4 96.4 L55.6 92.6 L50.0 98.0 L44.4 92.6 L37.6 96.4 L33.5 89.7 L26.0 91.6 L23.8 84.1 L16.1 83.9 L15.9 76.2 L8.4 74.0 L10.3 66.5 L3.6 62.4 L7.4 55.6 L2.0 50.0 L7.4 44.4 L3.6 37.6 L10.3 33.5 L8.4 26.0 L15.9 23.8 L16.1 16.1 L23.8 15.9 L26.0 8.4 L33.5 10.3 L37.6 3.6 L44.4 7.4Z" fill="var(--sticker)"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--label-ink)" stroke-width="1.6" stroke-dasharray="3 3"/><text x="50" y="52" font-size="30">₹0</text><text x="50" y="66" font-size="10.5" data-hi="मेंबरों के लिए">FOR MEMBERS</text></svg>
+    <div class="phone" role="img" aria-label="The member app&#x27;s Workout tab, in your gym&#x27;s name" data-hi-label="आपके जिम के नाम में मेंबर ऐप का Workout टैब">
+      <div class="scr" aria-hidden="true">
+        <div class="sb"><span>7:42</span><span>5G</span></div>
+        <div class="in">
+          <div class="gymhead" id="hero-gym"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
+          <div class="apph">Workout</div>
+          <div class="ac">
+            <div class="k">Up next</div>
+            <div class="t">Push Day A</div>
+            <div class="beat">1,125 kg to beat · +15%</div>
+            <div style="color:var(--app-ink2);font-size:12px;margin-top:4px">Bench Press, Overhead Press, Incline Dumbbell…</div>
+            <span class="abtn">Start workout</span>
+          </div>
+          <div class="ac">
+            <div class="k">This week</div>
+            <div class="week"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+            <div style="margin-top:8px;font-weight:700">3 of 4 workouts</div>
+          </div>
+          <div class="ac">
+            <div class="k">From <span data-gym>Iron Temple Fitness</span> · Coach Vikram</div>
+            <div class="t">8-week strength plan</div>
+          </div>
+        </div>
+        <div class="tabs"><b>Workout</b><span>Profile</span><span>Shop</span></div>
+      </div>
+    </div>
+  </div>
   <div class="band" id="band">
     <div class="wrap band-in">
       <label for="gymname" data-hi="आपके जिम का नाम लिखिए">Type your gym's name</label>
@@ -609,57 +664,78 @@ section{position:relative}
     </form>
   </div>
 
-  <div class="hero-phone">
-    <span class="callout" data-target="#hero-gym" data-side="left" data-hi="यहाँ आपके जिम का नाम">Your gym's name, here</span>
-    <svg class="sticker seal" viewBox="0 0 100 100" role="img" aria-label="Free for your members" data-hi-label="मेंबरों के लिए मुफ्त"><path d="M50.0 2.0 L55.6 7.4 L62.4 3.6 L66.5 10.3 L74.0 8.4 L76.2 15.9 L83.9 16.1 L84.1 23.8 L91.6 26.0 L89.7 33.5 L96.4 37.6 L92.6 44.4 L98.0 50.0 L92.6 55.6 L96.4 62.4 L89.7 66.5 L91.6 74.0 L84.1 76.2 L83.9 83.9 L76.2 84.1 L74.0 91.6 L66.5 89.7 L62.4 96.4 L55.6 92.6 L50.0 98.0 L44.4 92.6 L37.6 96.4 L33.5 89.7 L26.0 91.6 L23.8 84.1 L16.1 83.9 L15.9 76.2 L8.4 74.0 L10.3 66.5 L3.6 62.4 L7.4 55.6 L2.0 50.0 L7.4 44.4 L3.6 37.6 L10.3 33.5 L8.4 26.0 L15.9 23.8 L16.1 16.1 L23.8 15.9 L26.0 8.4 L33.5 10.3 L37.6 3.6 L44.4 7.4Z" fill="var(--sticker)"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--label-ink)" stroke-width="1.6" stroke-dasharray="3 3"/><text x="50" y="52" font-size="30">₹0</text><text x="50" y="66" font-size="10.5" data-hi="मेंबरों के लिए">FOR MEMBERS</text></svg>
-    <div class="phone" role="img" aria-label="The member app's Workout tab, in your gym's name" data-hi-label="आपके जिम के नाम में मेंबर ऐप का Workout टैब">
-      <div class="scr" aria-hidden="true">
-        <div class="sb"><span>7:42</span><span>5G</span></div>
-        <div class="in">
-          <div class="gymhead" id="hero-gym"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
-          <div class="apph">Workout</div>
-          <div class="ac">
-            <div class="k">Up next</div>
-            <div class="t">Push Day A</div>
-            <div class="beat">1,125 kg to beat · +15%</div>
-            <div style="color:var(--app-ink2);font-size:12px;margin-top:4px">Bench Press, Overhead Press, Incline Dumbbell…</div>
-            <span class="abtn">Start routine</span>
-          </div>
-          <div class="ac">
-            <div class="k">This week</div>
-            <div class="week"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
-            <div style="margin-top:8px;font-weight:700">3 of 4 workouts</div>
-          </div>
-          <div class="ac">
-            <div class="k">From <span data-gym>Iron Temple Fitness</span> · Coach Vikram</div>
-            <div class="t">8-week strength plan</div>
+  </section>
+
+<!-- 2. YOUR GYM'S OWN APP -->
+<section class="own" aria-labelledby="own-h">
+  <div class="wrap scene">
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="own-h" class="cond panel-h" data-hi="आपके जिम के नाम और लोगो वाला ऐप।">An app with your gym's name and logo.</h2>
+      <p class="lede" data-hi="मेंबर आपका QR पोस्टर एक बार स्कैन करते हैं। उसके बाद ऐप आपके जिम के नाम, लोगो और रंगों में खुलता है।">Members scan your QR poster once. From then on, the app opens in your gym's name, logo and colours.</p>
+    </div>
+      <div class="beatcol">
+        <ul class="pts">
+        <li data-hi="आपके मेंबर ऐप के लिए कभी पैसे नहीं देते।">Your members never pay to use the app.</li>
+        <li><span data-hi="ज़्यादातर जिम सॉफ़्टवेयर में नाम वाले मेंबर ऐप के लिए ज़्यादा पैसे लगते हैं। यहाँ यह हर पैक में है।">Most gym software charges more for a branded member app. Here it is in every pack.</span> <span class="only extra" data-hi="आम तौर पर अलग से">Usually extra</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="pair">
+        <div class="poster">
+          <div class="p-k" data-hi="जुड़ने के लिए स्कैन करें">Scan to join</div>
+          <div class="p-n" data-gym>Iron Temple Fitness</div>
+          <svg viewBox="0 0 21 21" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM14 0h1v1h-1zM15 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM14 1h1v1h-1zM20 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM12 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM17 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM17 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM9 5h1v1h-1zM11 5h1v1h-1zM14 5h1v1h-1zM20 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM17 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM15 8h1v1h-1zM16 8h1v1h-1zM0 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM9 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM20 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM14 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM0 11h1v1h-1zM2 11h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM12 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM0 12h1v1h-1zM1 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM20 12h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM18 13h1v1h-1zM20 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM2 14h1v1h-1zM3 14h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM0 15h1v1h-1zM6 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM0 16h1v1h-1zM2 16h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM6 16h1v1h-1zM9 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM0 17h1v1h-1zM2 17h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM8 17h1v1h-1zM11 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM0 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM6 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM13 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM17 19h1v1h-1zM20 19h1v1h-1zM0 20h1v1h-1zM1 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM9 20h1v1h-1zM10 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM20 20h1v1h-1z"/></svg>
+          <div class="p-s" data-hi="आपका QR पोस्टर">Your QR poster</div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="phone" role="img" aria-label="The member app after joining: it wears the gym&#x27;s name, logo and colours" data-hi-label="जुड़ने के बाद मेंबर ऐप: उस पर जिम का नाम, लोगो और रंग">
+          <div class="scr" aria-hidden="true">
+            <div class="sb"><span>6:30</span><span>5G</span></div>
+            <div class="in centre">
+              <div class="bigmark" data-initial>I</div>
+              <div class="welcome"><span data-gym>Iron Temple Fitness</span><small>Welcome. Your workouts start here.</small></div>
+              <div class="ac" style="margin-top:22px"><div class="k">Your gym</div><div class="t" data-gym>Iron Temple Fitness</div><div style="color:var(--app-ink2);font-size:12px">Joined with the QR poster</div></div>
+              <span class="abtn" style="margin-top:14px">Start workout</span>
+            </div>
+            <div class="tabs"><b>Workout</b><span>Profile</span><span>Shop</span></div>
           </div>
         </div>
-        <div class="tabs"><b>Workout</b><span>Profile</span><span>Shop</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- THE HOOK: PROGRESS (R-57: its own section; the list lights up with the phone) -->
+<!-- 3. PROGRESS: the live workout -->
 <section class="lift" aria-labelledby="lift-h">
   <div class="wrap scene">
-    <div class="scene-text">
-      <h2 id="lift-h" class="cond panel-h" data-hi="हर सेट, वापस आने की वजह">Every set, a reason to come back</h2>
-      <p class="lede" data-hi="जो मेंबर खुद को मज़बूत होते देखता है, वो जिम नहीं छोड़ता। MettleUp उसे हर सेट पर यही दिखाता है।">Members don't quit a gym where they can see themselves getting stronger. MettleUp shows them, set by set.</p>
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="lift-h" class="cond panel-h" data-hi="हर सेट, वापस आने की एक वजह।">A reason to come back, every set.</h2>
+      <p class="lede" data-hi="ऐप मेंबर को दिखाता है कि पिछली बार उसने कितना उठाया था, ताकि वह आज उसे पार करने की कोशिश करे।">The app shows members what they lifted last time, so they try to beat it today.</p>
     </div>
-      <div class="money rows" id="lift-beats">
-        <div data-beat="1"><b data-hi="लक्ष्य">Target</b><span data-hi="हर सेट के पास पिछली बार के नंबर, तो हर सेट का एक लक्ष्य है।">Last time's numbers beside every set, so every set has a target.</span></div>
-        <div data-beat="2"><b data-hi="घटता">Beat</b><span data-hi="हर टिक किया सेट “kg to beat” से किलो घटाता है, साथ में रेस्ट टाइमर चलता है।">Each ticked set takes kilos off the “kg to beat”, live, with the rest timer running.</span></div>
-        <div data-beat="3"><b data-hi="रिकॉर्ड">Record</b><span data-hi="“New record” उसी पल, नाम के साथ। यही एहसास उसे अगली बार वापस लाता है।">“New record” the moment it falls, named. That feeling brings them back next time.</span></div>
+      <div class="beatcol">
+        <div class="money rows" id="lift-beats">
+          <div data-beat="1"><b data-hi="लक्ष्य">Target</b><span data-hi="हर सेट के पास पिछली बार के नंबर हैं, तो हर सेट का एक लक्ष्य है।">Last time's numbers sit beside every set, so every set has a target.</span></div>
+          <div data-beat="2"><b data-hi="घटता">Beat</b><span data-hi="हर टिक किया सेट “kg to beat” से किलो घटाता है, उसी समय।">Each ticked set takes kilos off the “kg to beat”, live.</span></div>
+          <div data-beat="3"><b data-hi="रिकॉर्ड">Record</b><span data-hi="जिस पल मेंबर पहले से ज़्यादा उठाता है, उसी पल “New record” का संदेश।">A “New record” message the moment a member lifts more than ever before.</span></div>
+        </div>
+        <ul class="pts">
+        <li data-hi="मेंबर अपना शरीर बदलते देखते हैं: फोटो और चार्ट में, हफ्ते दर हफ्ते।">Members see their body change in photos and charts, week by week.</li>
+        <li data-hi="हफ्ते का लक्ष्य और महीने की रिपोर्ट मेंबर को जिम की आदत बनाने में मदद करते हैं।">A weekly goal and a monthly report help members build a gym habit.</li>
+        </ul>
       </div>
-      <div class="stage leads-host" id="lift-scene">
-        <svg class="leaders" aria-hidden="true"></svg>
-        <div class="phone" id="live" style="aspect-ratio:9/15.5" role="img" aria-label="A member logging Bench Press: three sets ticked against last time's numbers, then a new record" data-hi-label="एक मेंबर बेंच प्रेस लिख रहा है: पिछली बार के नंबरों के सामने तीन सेट, फिर नया रिकॉर्ड">
+    </div>
+    <div class="stage tagged play leads-host" id="lift-scene">
+      <svg class="leaders" aria-hidden="true"></svg>
+      <span class="callout cl" data-target="#t-beat" data-side="left" data-hi="हर एक्सरसाइज़ पर kg to beat">Kg to beat, on every exercise</span>
+      <div class="pwrap">
+        <div class="phone" id="live" role="img" aria-label="A member logging Bench Press: three sets ticked against last time&#x27;s numbers, then a new record" data-hi-label="एक मेंबर बेंच प्रेस लिख रहा है: पिछली बार के नंबरों के सामने तीन सेट, फिर नया रिकॉर्ड">
           <div class="scr" aria-hidden="true">
             <div class="sb"><span>7:58</span><span>5G</span></div>
             <div class="in">
-              <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="apph" style="font-size:19px;margin:2px 0 4px">Push Day A</div><b style="font:700 13px var(--app-body);color:var(--app-ink2)">24:10</b></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="apph" style="font-size:19px;margin:2px 0 8px">Push Day A</div><b style="font:700 13px var(--app-body);color:var(--app-ink2)">24:10</b></div>
               <div class="ac" style="padding:10px">
                 <div class="t" style="font-size:15px">Bench Press (Barbell)</div>
                 <div class="beat live-beat won" id="t-beat"><span class="todo"><span class="roll" id="beat">1,125</span> kg to beat · +15%</span><span class="won-t">1,125 kg beaten · +15%</span></div>
@@ -671,35 +747,21 @@ section{position:relative}
                     <tr class="done"><td>3</td><td class="prev">60 × 7</td><td>62.5</td><td>8</td><td><span class="tick"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" stroke="#04140B" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td></tr>
                   </tbody>
                 </table>
-                <div class="rest" id="rest"><span>Rest</span><span id="restt">1:30</span></div>
               </div>
               <div class="ac" style="padding:10px"><div class="t" style="font-size:15px">Overhead Press</div><div class="beat">540 kg to beat · +8%</div></div>
+              <div class="ac" style="padding:10px"><div class="t" style="font-size:15px">Incline Dumbbell Press</div><div class="beat">420 kg to beat · +6%</div></div>
+              <div class="ac" style="padding:10px"><div class="t" style="font-size:15px">Triceps Pushdown</div><div class="beat">360 kg to beat · +5%</div></div>
             </div>
+            <span class="abtn" style="position:absolute;left:14px;right:14px;bottom:16px;margin:0">Finish workout</span>
             <div class="record slam" id="record"><b>New record</b>Bench Press · 62.5 kg × 8</div>
           </div>
         </div>
-        <div class="notes">
-          <span class="callout" data-target="#t-beat" data-side="right" data-hi="हर एक्सरसाइज़ पर kg to beat">Kg to beat, on every exercise</span>
-          <span class="callout" data-target="#t-prev" data-side="right" data-hi="पिछली बार के नंबर">Last time's numbers</span>
-          <span class="callout" data-target="#rest" data-side="right" data-hi="रेस्ट टाइमर, स्क्रीन बंद होने पर भी बजता है">Rest timer that rings with the screen off</span>
-        </div>
-        <p class="ex" data-hi="उदाहरण के जिम और नंबर; स्क्रीन असली ऐप की तरह। रोकने के लिए टैप करें।">Example gym and numbers; the screens follow the real app. Tap to pause.</p>
       </div>
+      <span class="callout cr" data-target="#t-prev" data-side="right" data-hi="पिछली बार के नंबर">Last time's numbers</span>
+      <p class="ex" data-hi="उदाहरण के जिम और नंबर; स्क्रीन असली ऐप की तरह। रोकने के लिए टैप करें।">Example gym and numbers; the screens follow the real app. Tap to pause.</p>
+    </div>
   </div>
 </section>
-
-<!-- DIRECTIONS FOR USE -->
-<section class="use" aria-labelledby="use-h">
-  <div class="wrap">
-    <h2 id="use-h" class="cond panel-h" data-hi="इस्तेमाल का तरीका">Directions for use</h2>
-    <ol class="steps">
-      <li><h3 data-hi="QR पोस्टर से जुड़ते हैं">They join with your QR poster</h3><p data-hi="डेस्क पर एक स्कैन, और ऐप आपके जिम के नाम और रंग में बदल जाता है।">One scan at the desk and the app wears your gym's name and colours.</p></li>
-      <li><h3 data-hi="आपके प्लान से ट्रेनिंग">They train with your plan</h3><p data-hi="ट्रेनर का प्लान अपने आप ऐप में आता है। चेक-इन के बाद आज का वर्कआउट एक टैप में शुरू।">Your trainer's plan arrives by itself. After a QR check-in, today's workout starts in one tap.</p></li>
-      <li><h3 data-hi="रिकॉर्ड टूटते हैं, वो वापस आते हैं">Records fall, they come back</h3><p data-hi="हफ्ते का लक्ष्य, माइलस्टोन और महीने की रिपोर्ट अगली विज़िट की वजह बनते हैं।">The weekly goal, milestones and a monthly report give them a reason for the next visit.</p></li>
-    </ol>
-  </div>
-</section>
-
 <!-- MEMBER FACTS + EVIDENCE -->
 <section class="facts-sec" aria-labelledby="facts-h">
   <div class="wrap grid">
@@ -733,7 +795,6 @@ section{position:relative}
         <li><span><b data-hi="QR चेक-इन">QR check-in</b> <span data-hi="और “मेरी मेंबरशिप”">and "My membership"</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="आपकी दुकान">Your shop</b> <span data-hi="ऑर्डर ऐप में, पैसे डेस्क पर">order in the app, pay at the desk</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span><b data-hi="आपकी सूचनाएँ">Your notices</b> <span data-hi="ऐप के इनबॉक्स में, मुफ्त">in the app's inbox, free</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span><b data-hi="लॉक स्क्रीन पर वर्कआउट">Workout on the lock screen</b> <span data-hi="Complete set, रेस्ट, वर्कआउट का समय">Complete set, the rest, the workout time</span></span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="बिना इंटरनेट भी वर्कआउट लिखें">Logs workouts with no internet</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="सूचना फोन की लॉक स्क्रीन पर पॉप-अप">Notices pop up on the phone's lock screen</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
         <li><span data-hi="जिम देखे कौन तरक्की कर रहा है (मेंबर की मंज़ूरी से)">Gym sees who is progressing (with the member's OK)</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
@@ -745,184 +806,120 @@ section{position:relative}
   </div>
 </section>
 
-<!-- THE SHELF: SHOP (R-57: plays an order, from the member's tap to the desk) -->
-<section class="shelf" aria-labelledby="shop-h">
+
+<!-- 4. TRAINER PLANS -->
+<section class="trainer" aria-labelledby="plan-h">
+  <div class="wrap scene flip">
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="plan-h" class="cond panel-h" data-hi="ट्रेनर का प्लान, हर मेंबर के फोन में।">Your trainer's plan, in every member's phone.</h2>
+      <p class="lede" data-hi="आपका ट्रेनर एक बार प्लान बनाता है, शुरुआती वज़न के साथ, और उसे एक मेंबर को या पूरे मेंबरशिप प्लान को भेज देता है। वह मेंबर के ऐप में अपने आप आ जाता है।">Your trainer makes a plan once, with starting weights, and sends it to one member or a whole membership plan. It appears in their app by itself.</p>
+    </div>
+      <div class="beatcol">
+        <ul class="pts">
+        <li data-hi="चेक-इन के बाद मेंबर एक टैप में आज का वर्कआउट शुरू करते हैं।">After they check in, members start today's workout with one tap.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stack">
+        <div class="mock" role="img" aria-label="Example: a trainer&#x27;s 8-week strength plan with starting weights, sent to a whole membership plan" data-hi-label="उदाहरण: ट्रेनर का 8 हफ्ते का स्ट्रेंथ प्लान, शुरुआती वज़न के साथ, पूरे मेंबरशिप प्लान को भेजा गया">
+          <div class="mock-top" aria-hidden="true"><span data-hi="8 हफ्ते का स्ट्रेंथ प्लान">8-week strength plan</span><span class="chip">Coach Vikram</span></div>
+          <div aria-hidden="true">
+            <div class="mock-row"><span><b>Push Day A</b><small>Bench Press 40 kg · Overhead Press 25 kg · Incline Dumbbell 14 kg</small></span></div>
+            <div class="mock-row"><span><b>Pull Day A</b><small>Barbell Row 40 kg · Lat Pulldown 45 kg · Biceps Curl 10 kg</small></span></div>
+            <div class="mock-row"><span><b>Leg Day</b><small>Squat 50 kg · Leg Press 90 kg · Calf Raise 40 kg</small></span></div>
+            <div class="mock-row"><span data-hi="किसे भेजें:">Send to:</span><span><span class="chip off" data-hi="एक मेंबर">One member</span> <span class="chip on" data-hi="पूरा मेंबरशिप प्लान">Whole membership plan</span></span></div>
+          </div>
+          <div class="mock-foot good" aria-hidden="true" data-hi="भेज दिया: हर मेंबर के ऐप में अपने आप आ जाता है।">Sent: it appears in each member's app by itself.</div>
+        </div>
+        <p class="ex" data-hi="उदाहरण का प्लान और वज़न।">Example plan and weights.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. WHO IS SLIPPING AWAY -->
+<section class="slip" aria-labelledby="slip-h">
   <div class="wrap scene">
-    <div class="scene-text">
-      <h2 id="shop-h" class="cond panel-h" data-hi="आपकी शेल्फ, उनकी जेब में">Your shelf, in their pocket</h2>
-      <p class="lede" data-hi="प्रोटीन, क्रिएटिन, शेकर, टी-शर्ट। मेंबर ऐप में ऑर्डर करता है और डेस्क पर पैसे देता है। आप ऑर्डर देखते हैं, स्टॉक अपने आप घटता है, और बिक्री ऑनलाइन स्टोर के बजाय आपके जिम में रहती है।">Protein, creatine, shakers, T-shirts. Members order in the app and pay at the desk. You see the order, the stock goes down by itself, and the sale stays inside your gym instead of going to an online store.</p>
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="slip-h" class="cond panel-h" data-hi="देखिए कौन आना बंद कर रहा है, इससे पहले कि वह जिम छोड़ दे।">See who stopped coming, before they quit.</h2>
+      <p class="lede" data-hi="हर सुबह एक लिस्ट दिखाती है कि कौन अपने रोज़ के आने के दिन छोड़ रहा है। हर मेंबर की तुलना उसकी अपनी आदत से होती है।">Every morning, a list shows who is missing their usual visits. Each member is compared with their own routine.</p>
     </div>
-    <div class="beatcol">
-      <div class="money rows" id="shop-beats">
-        <div data-beat="1"><b data-hi="ऑर्डर">Order</b><span data-hi="मेंबर ऐप में, दिन में कभी भी">in the app, any time of day</span></div>
-        <div data-beat="2"><b data-hi="पैसे">Pay</b><span data-hi="डेस्क पर, कैश या UPI">at your desk, cash or UPI</span></div>
-        <div data-beat="3"><b data-hi="स्टॉक">Stock</b><span data-hi="अपने आप घटता है, और “सिर्फ 2 बचे” भी बताता है">goes down by itself, and says "Only 2 left"</span></div>
+      <div class="beatcol">
+        <ul class="pts">
+        <li data-hi="रिन्यूअल: कौन आज खत्म हो रहा है, और कौन 1-3, 4-7 और 8-15 दिन में।">Renewals: who ends today, and in 1-3, 4-7 and 8-15 days.</li>
+        <li data-hi="हर किसी के लिए WhatsApp संदेश पहले से लिखा है। टैप करें, देखें, भेजें।">A WhatsApp message is already typed for each one. Tap, check, send.</li>
+        <li data-hi="ऐप खुद भी मेंबर को याद दिला सकता है। हर रिमाइंडर आप चालू या बंद करते हैं।">The app can also remind members by itself. You switch each reminder on or off.</li>
+        </ul>
       </div>
-      <p class="ex" data-hi="उदाहरण के दाम; दाम आप तय करते हैं।">Example prices; you set your own.</p>
     </div>
-    <div class="stage duo tagged leads-host" id="shop-scene">
-      <svg class="leaders" aria-hidden="true"></svg>
-      <span class="tag tag-l" data-target="#p-whey" data-side="left" style="--lead:var(--label)">₹2,499 <small data-hi="आपका दाम">your price</small></span>
-      <div class="pwrap">
-      <div class="order" id="shop-order" role="img" aria-label="Example: a new shop order reaches the desk" data-hi-label="उदाहरण: डेस्क पर नया ऑर्डर"><span class="ic" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 7h12l-1 9H5L4 7zm3 0V5.5a3 3 0 016 0V7" stroke="var(--on-flavour)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><span aria-hidden="true"><small>Admin app · just now</small><b>New order · Asha Verma</b>1 × Whey protein 1 kg · ₹2,499</span></div>
-      <div class="phone" role="img" aria-label="The gym's shop inside the member app" data-hi-label="मेंबर ऐप के अंदर जिम की दुकान">
-        <div class="scr" aria-hidden="true">
-          <div class="sb"><span>6:15</span><span>5G</span></div>
-          <div class="in">
-            <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
-            <div class="shophead"><div class="apph" style="font-size:19px;margin:0">Your gym's shop</div><span class="bagb has" id="shop-bag">Bag<i id="shop-bagn">1</i></span></div>
-            <div style="color:var(--app-ink2);font-size:12px;margin:-6px 0 10px">Pay at the desk</div>
-            <div class="shopgrid">
-              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="9" y="8" width="22" height="27" rx="5" fill="var(--flavour)"/><rect x="11" y="4" width="18" height="6" rx="2" fill="#E8E8EC"/><rect x="9" y="17" width="22" height="8" fill="#0B0B0D"/></svg></div><div class="n">Whey protein</div><div class="u">1 kg</div><div class="p" id="p-whey">₹2,499</div><div class="left"><span data-hi="सिर्फ">Only</span> <span class="roll" id="shop-left">2</span> <span data-hi="बचे">left</span></div><span class="addp" id="shop-add"><span class="a1">Add</span><span class="a2">In bag</span></span></div>
-              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="11" y="10" width="18" height="24" rx="4" fill="#E8E8EC"/><rect x="12" y="6" width="16" height="6" rx="2" fill="var(--flavour)"/><rect x="11" y="18" width="18" height="6" fill="#0B0B0D"/></svg></div><div class="n">Creatine</div><div class="u">250 g</div><div class="p" id="p-crea">₹899</div><span class="addp">Add</span></div>
-              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M13 9h14l-2 26H15L13 9z" fill="#E8E8EC"/><rect x="12" y="5" width="16" height="5" rx="2" fill="var(--flavour)"/></svg></div><div class="n">Shaker</div><div class="u">700 ml</div><div class="p">₹399</div></div>
-              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M12 9l5-3h6l5 3 5 6-4 3-2-2v18H13V16l-2 2-4-3 5-6z" fill="var(--flavour)"/></svg></div><div class="n">Gym T-shirt</div><div class="u">S to XXL</div><div class="p">₹599</div></div>
-            </div>
+    <div class="stage">
+      <div class="stack">
+        <div class="mock" role="img" aria-label="Example: the morning list of members missing their usual visits, each with a WhatsApp button" data-hi-label="उदाहरण: सुबह की लिस्ट, उन मेंबरों की जो अपने रोज़ के दिन छोड़ रहे हैं; हर नाम के साथ WhatsApp बटन">
+          <div class="mock-top" aria-hidden="true"><span data-hi="अपने रोज़ के दिन छोड़ रहे हैं">Missing their usual visits</span><span class="chip" data-hi="हर सुबह">Every morning</span></div>
+          <div aria-hidden="true">
+            <div class="mock-row"><span><b>Pooja Jain</b><small data-hi="आम तौर पर हफ्ते में 4 बार · इस हफ्ते 1">Usually 4 visits a week · 1 this week</small></span><span class="w">WhatsApp</span></div>
+            <div class="mock-row"><span><b>Ramesh S.</b><small data-hi="आम तौर पर हफ्ते में 3 बार · इस हफ्ते 0">Usually 3 visits a week · 0 this week</small></span><span class="w">WhatsApp</span></div>
+            <div class="mock-row"><span><b>Asha Verma</b><small data-hi="आम तौर पर हफ्ते में 5 बार · इस हफ्ते 2">Usually 5 visits a week · 2 this week</small></span><span class="w">WhatsApp</span></div>
           </div>
-          <div class="bagsheet up sent" id="shop-sheet">
-            <div class="grab"></div>
-            <div class="bs-ask"><b>Your bag · 1 item</b><div class="bs-row"><span>Whey protein · 1 kg</span><span>₹2,499</span></div><div class="bs-note">Pay at the desk when you collect</div><span class="abtn" id="shop-place">Place order</span></div>
-            <div class="bs-done"><b>Order sent <svg class="okt" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></b><div class="bs-note">The desk has it. Pay when you collect.</div></div>
-          </div>
-          <div class="tabs"><span>Workout</span><span>Profile</span><b>Shop</b></div>
         </div>
+        <figure class="tilefig"><img src="/home/tiles.webp" width="740" height="490" loading="lazy" alt="Admin app Today tiles: members ending today, in 1-3, 4-7 and 8-15 days" data-hi-alt="एडमिन ऐप: आज, 1-3, 4-7 और 8-15 दिन में खत्म होने वाले मेंबर"><figcaption data-hi="Today: कौन खत्म होने वाला है">Today: who is about to end</figcaption></figure>
+        <p class="ex" data-hi="उदाहरण के नाम और नंबर।">Example names and numbers.</p>
       </div>
-      </div>
-      <span class="tag tag-r" data-target="#p-crea" data-side="right" style="--lead:var(--label)">₹899 <small data-hi="आपका दाम">your price</small></span>
-      <svg class="sticker burst" id="shop-burst" viewBox="0 0 100 100" role="img" aria-label="Sold at your desk" data-hi-label="आपकी डेस्क पर बिका"><path d="M50.0 1.0 L58.2 13.9 L71.3 5.9 L73.1 21.1 L88.3 19.4 L83.3 33.9 L97.8 39.1 L87.0 50.0 L97.8 60.9 L83.3 66.1 L88.3 80.6 L73.1 78.9 L71.3 94.1 L58.2 86.1 L50.0 99.0 L41.8 86.1 L28.7 94.1 L26.9 78.9 L11.7 80.6 L16.7 66.1 L2.2 60.9 L13.0 50.0 L2.2 39.1 L16.7 33.9 L11.7 19.4 L26.9 21.1 L28.7 5.9 L41.8 13.9Z" fill="var(--sticker)"/><text x="50" y="47" font-size="15" data-hi="आपकी डेस्क">SOLD AT</text><text x="50" y="63" font-size="15" data-hi="पर बिका">YOUR DESK</text></svg>
     </div>
   </div>
 </section>
 
-<!-- NOTICES (R-57; owner 22 Oct: "free member notifications about holidays"): plays a notice from Send to "read by" -->
-<section class="voice" aria-labelledby="voice-h">
-  <div class="wrap scene">
-    <div class="scene-text">
-      <h2 id="voice-h" class="cond panel-h" data-hi="हर मेंबर तक सूचना, मुफ्त">Free notices to every member</h2>
-      <p class="lede" data-hi="छुट्टी में जिम बंद, नए बैच का समय, ऑफर, नई मशीन। एडमिन ऐप में एक बार लिखिए: सेकंडों में हर मेंबर के ऐप के इनबॉक्स में पहुँचता है, और आप देखते हैं कितनों ने पढ़ा। हर संदेश मुफ्त: न SMS का खर्च, न WhatsApp का, न कोई ग्रुप जिसमें सबके नंबर दिखें।">Holiday closures, new batch timings, offers, a new machine. Write it once in the admin app: it reaches every member's app inbox in seconds, and you see how many read it. Every notice is free: no SMS or WhatsApp charge, and no group that shows everyone's number.</p>
+<!-- 6. WORKS WITHOUT INTERNET -->
+<section class="offline" aria-labelledby="off-h">
+  <div class="wrap scene flip">
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="off-h" class="cond panel-h" data-hi="इंटरनेट बंद हो तब भी अपनी डेस्क चलाइए।">Run your desk even when the internet is down.</h2>
+      <p class="lede" data-hi="बिना इंटरनेट के मेंबर चेक-इन करें और पेमेंट लें। इंटरनेट लौटते ही सब कुछ भेज दिया जाता है।">Check members in and take payments with no internet. Everything is sent when the internet is back.</p>
     </div>
-    <div class="beatcol">
-      <div class="money rows notices"><div><b data-hi="₹0">₹0</b><span data-hi="हर संदेश पर, कितने भी मेंबर हों">per notice, however many members</span></div><div><b data-hi="1×">1×</b><span data-hi="लिखिए, सबको पहुँचता है">write it once, everyone gets it</span></div><div><b data-hi="पढ़ा">Read</b><span data-hi="देखिए कितनों ने पढ़ा">see how many read it</span></div></div>
-      <p class="soonline"><span class="soon" data-hi="जल्द">Coming</span><span data-hi="सूचना फोन की लॉक स्क्रीन पर भी पॉप-अप होगी।">Notices will also pop up on the phone's lock screen.</span></p>
-    </div>
-    <div class="stage solo duo msgduo" id="msg-scene">
-      <div class="pwrap">
-      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends a holiday notice to every member, free, and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को छुट्टी की सूचना मुफ्त भेजता है और देखता है कितनों ने पढ़ा">
-        <small aria-hidden="true">Admin app · Message to all members</small>
-        <div class="cm-text" aria-hidden="true"><span id="msg-typed">Gym closed on 1 Nov for Diwali. Open as usual from 2 Nov. Happy Diwali!</span><i class="caret"></i></div>
-        <div class="cm-row" aria-hidden="true"><span class="cm-sent" id="msg-status">Sent to 212 members · read by <span class="roll" id="msg-read">64</span></span><span class="cm-send" id="msg-send"><span class="s1">Send</span><span class="s2">Sent</span></span></div>
+      <div class="beatcol">
+        <ul class="pts">
+        <li data-hi="डेस्क के फोन या कंप्यूटर, दोनों पर चलाइए।">Use it on the desk phone or the computer.</li>
+        </ul>
       </div>
-      <div class="phone" role="img" aria-label="The gym's messages in the member app's inbox" data-hi-label="मेंबर ऐप के इनबॉक्स में जिम के संदेश">
-        <div class="scr" aria-hidden="true">
-          <div class="sb"><span>9:03</span><span>5G</span></div>
-          <div class="in">
-            <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
-            <div class="apph" style="font-size:19px">Messages</div>
-            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span></span><b class="newb">New</b></div><div class="t">Gym closed on 1 Nov for Diwali</div><div class="s">Open as usual from 2 Nov. Happy Diwali!</div></div></div>
-            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · Mon</div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div>
-            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 18 Oct</div><div class="t">New evening batch: 9 to 10 pm</div><div class="s">From Monday. Ask Coach Vikram.</div></div>
+    </div>
+    <div class="stage">
+      <div class="stack">
+        <div class="mock" role="img" aria-label="Example: the desk with no internet. A check-in and a payment are saved and wait to be sent" data-hi-label="उदाहरण: बिना इंटरनेट की डेस्क। एक चेक-इन और एक पेमेंट सेव हैं और भेजे जाने का इंतज़ार कर रहे हैं">
+          <div class="mock-top" aria-hidden="true"><span data-hi="डेस्क">Desk</span><span class="chip off" data-hi="इंटरनेट नहीं">No internet</span></div>
+          <div aria-hidden="true">
+            <div class="mock-row"><span><b data-hi="चेक-इन">Check-in</b><small>Asha Verma</small></span><span class="chip off" data-hi="भेजना बाकी">Waiting to send</span></div>
+            <div class="mock-row"><span><b data-hi="पेमेंट">Payment</b><small>Ramesh S. · ₹1,500</small></span><span class="chip off" data-hi="भेजना बाकी">Waiting to send</span></div>
           </div>
-          <div class="tabs"><span>Workout</span><b>Profile</b><span>Shop</span></div>
+          <div class="mock-foot warn" aria-hidden="true" data-hi="इंटरनेट लौटते ही सब कुछ भेज दिया जाएगा।">Everything is sent when the internet is back.</div>
         </div>
+        <p class="ex" data-hi="उदाहरण के नाम और रकम।">Example names and amount.</p>
       </div>
-      </div>
-      <p class="ex" data-hi="उदाहरण का जिम और संख्या। रोकने के लिए टैप करें।">Example gym and numbers. Tap to pause.</p>
     </div>
   </div>
 </section>
-
-<!-- THE LOCK SCREEN (R-57): the workout card, the rest, "Rest is over" (and the watch) -->
-<section class="lockscr" aria-labelledby="lock-h">
-  <div class="wrap scene">
-    <div class="scene-text">
-      <h2 id="lock-h" class="cond panel-h" data-hi="लॉक स्क्रीन पर उनका वर्कआउट">Their workout, on the lock screen</h2>
-      <p class="lede" data-hi="मेंबर फोन अनलॉक किए बिना सेट टिक करता है और अपना रेस्ट देखता है। “Rest is over” समय पर बजता और वाइब्रेट करता है, स्क्रीन बंद होने पर भी, और Wear OS घड़ी पर भी।">Members tick a set and watch their rest without unlocking the phone. “Rest is over” rings and buzzes on time, even with the screen off, and on a Wear OS watch.</p>
-    </div>
-      <div class="money rows" id="lock-beats">
-        <div data-beat="1"><b data-hi="टैप">Tap</b><span data-hi="लॉक स्क्रीन के कार्ड पर “Complete set”: सेट टिक, रेस्ट शुरू। कार्ड पर वर्कआउट का समय चलता है।">“Complete set” on the lock-screen card ticks the set and starts the rest. The card shows the workout time.</span></div>
-        <div data-beat="2"><b data-hi="रेस्ट">Rest</b><span data-hi="रेस्ट वहीं गिनता है, +15 s और Skip के साथ, जिम के रंग में।">The rest counts down right there, with +15 s and Skip, in your gym's colour.</span></div>
-        <div data-beat="3"><b data-hi="घंटी">Ring</b><span data-hi="“Rest is over” समय पर बजता और वाइब्रेट करता है, घड़ी पर भी, और अगला सेट बताता है। मेंबर अपनी घंटी चुन सकता है।">“Rest is over” rings and buzzes on time, on the watch too, and names the next set. Members can pick their own sound.</span></div>
-      </div>
-    <div class="stage leads-host" id="lock-scene">
-      <svg class="leaders" aria-hidden="true"></svg>
-      <div class="lockpair">
-      <div class="phone" id="lock-phone" role="img" aria-label="Example lock screen: the live workout card, then the rest counting down, then Rest is over" data-hi-label="उदाहरण लॉक स्क्रीन: वर्कआउट कार्ड, फिर गिनता हुआ रेस्ट, फिर Rest is over">
-        <div class="scr lock" aria-hidden="true">
-          <div class="sb"><span></span><span>5G</span></div>
-          <div class="lk-time">7:42</div>
-          <div class="lk-date">Wednesday, 22 October</div>
-          <div class="nslot">
-            <div class="nc" id="n-live"><div class="nh"><i class="nic"></i>MettleUp · Workout</div><div class="nrow"><b>Bench Press</b><span class="ntime" id="n-clock">24:10</span></div><div class="ntx" id="n-set">Set 3 of 5 · 62.5 kg × 8</div><div class="nact"><span id="n-complete">Complete set</span></div></div>
-            <div class="nc" id="n-rest"><div class="nh"><i class="nic"></i>MettleUp · Rest</div><div class="nrow"><b><span id="n-left" class="js-left">1:30</span> left</b><span class="ntime">Bench Press, set 4</span></div><div class="ntx">Rest 1:30 · ends 7:44 pm</div><div class="nact"><span>Done</span><span>+15 s</span><span>Skip</span></div></div>
-            <div class="nc alert" id="n-over"><div class="nh"><i class="nic"></i>MettleUp · now<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2c-2.2 0-3.6 1.6-3.6 3.8v2.6L3 10.6v.9h10v-.9l-1.4-2V6c0-2.2-1.4-3.8-3.6-3.8zM6.6 12.6a1.5 1.5 0 002.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="nrow"><b id="n-over-title">Rest is over</b></div><div class="ntx" id="n-over-next">Next: Bench Press, set 4 · 62.5 kg × 8</div><div class="nact"><span id="n-over-act">Complete set</span></div></div>
-          </div>
-          <div class="lk-hint">Swipe up to unlock</div>
-        </div>
-      </div>
-      <div class="watch" id="lock-watch" role="img" aria-label="The MettleUp watch app: the rest counts down on the wrist and buzzes when it is over" data-hi-label="MettleUp घड़ी ऐप: रेस्ट कलाई पर गिनता है और खत्म होने पर वाइब्रेट करता है">
-        <div class="wf" aria-hidden="true">
-          <div class="wface w-live"><small>Workout</small><b><svg viewBox="0 0 16 16"><path d="M8 13.6S2.2 10 2.2 6.1A3 3 0 018 4.6a3 3 0 015.8 1.5C13.8 10 8 13.6 8 13.6z" fill="var(--flavour)"/></svg>128</b><small>bpm</small></div>
-          <div class="wface w-rest"><small>Rest</small><b class="js-left">1:30</b><small>set 4 next</small></div>
-          <div class="wface w-over"><small>MettleUp</small><b class="w-done">Rest is over</b><small>Set 4</small></div>
-        </div>
-      </div>
-      </div>
-      <div class="notes">
-        <span class="callout" data-target="#n-over-title" data-side="right" data-hi="समय पर बजता और वाइब्रेट करता है, स्क्रीन बंद होने पर भी">Rings and buzzes on time, screen off too</span>
-        <span class="callout" data-target="#n-over-next" data-side="right" data-hi="अगला सेट, वज़न और रेप्स">The next set, kg and reps</span>
-        <span class="callout" data-target="#n-over-act" data-side="right" data-hi="अनलॉक किए बिना टिक">Tick it without unlocking</span>
-      </div>
-      <p class="ex" data-hi="उदाहरण के नंबर; कार्ड असली ऐप की तरह। रोकने के लिए टैप करें।">Example numbers; the cards follow the real app. Tap to pause.</p>
-    </div>
-  </div>
-</section>
-
-<!-- INGREDIENTS: THE DESK -->
-<section class="ingr" aria-labelledby="ingr-h">
-  <div class="wrap grid">
-    <div>
-      <h2 id="ingr-h" class="cond panel-h" data-hi="और डेस्क का सारा काम">And all the desk work</h2>
-      <!-- R-97 (owner: "the text is crammed"): the ingredients are a list now, not one paragraph. -->
-      <p class="text"><strong data-hi="सामग्री">Ingredients</strong></p>
-      <ul class="ingr-list">
-        <li data-hi="<b>रिन्यूअल</b>: आज, 1-3, 4-7 और 8-15 दिन में खत्म"><b>Renewals</b>: ending today, in 1-3, 4-7 and 8-15 days</li>
-        <li data-hi="<b>बकाया फीस</b>, नाम के साथ"><b>Dues</b>, with names</li>
-        <li data-hi="<b>रसीद और GST टैक्स इनवॉइस</b>, वित्त वर्ष के नंबर से"><b>Receipts and GST tax invoices</b>, numbered by financial year</li>
-        <li data-hi="<b>WhatsApp रिमाइंडर</b>, पहले से लिखे हुए"><b>WhatsApp reminders</b>, typed for you</li>
-        <li data-hi="<b>कौन आना बंद कर रहा है</b>"><b>Who has stopped coming</b></li>
-        <li data-hi="हाज़िरी और पूछताछ">Attendance and enquiries</li>
-        <li data-hi="खर्च और मुनाफा">Expenses and profit</li>
-        <li data-hi="पर्सनल ट्रेनिंग पैक, मेंबर ID कार्ड">Personal-training packs, member ID cards</li>
-        <li data-hi="स्टाफ लॉगिन (कुल रकम सिर्फ मालिक देखता है)">Staff logins (only the owner sees the totals)</li>
-        <li data-hi="एक टैप में पूरा डेटा Excel में">All your data to Excel in one tap</li>
-      </ul>
-      <p class="text" data-hi="<strong>इसमें है:</strong> डेस्क के फोन या कंप्यूटर, दोनों पर चलता है, और इंटरनेट न हो तब भी खुलकर सब दिखाता है।"><strong>Contains:</strong> works on the desk's phone or computer, and still opens to look things up when the internet is down.</p>
-    </div>
-    <div class="desk">
-      <figure><img src="/home/tiles.webp" width="740" height="490" loading="lazy" alt="Admin app Today tiles: members ending today, in 1-3, 4-7 and 8-15 days" data-hi-alt="एडमिन ऐप: आज, 1-3, 4-7 और 8-15 दिन में खत्म होने वाले मेंबर"><figcaption data-hi="Today: कौन खत्म होने वाला है">Today: who is about to end</figcaption></figure>
-      <figure><img src="/home/dues-list.webp" width="658" height="473" loading="lazy" alt="Admin app fees due list with amounts and a Collect button" data-hi-alt="एडमिन ऐप: बकाया फीस की लिस्ट"><figcaption data-hi="बकाया फीस, नाम के साथ">Dues, with names</figcaption></figure>
-    </div>
-  </div>
-</section>
-
 <!-- MOVING IN (R-97, owner 24 Oct 2026): the old records come in privately, by the owner himself.
      True to deploy/panel/aiMatch.js: the AI sees column names + 5 example rows, mobiles hidden. -->
 <section class="movein" aria-labelledby="move-h">
   <div class="wrap scene">
-    <div class="scene-text">
-      <h2 id="move-h" class="cond panel-h" data-hi="पुराना रिकॉर्ड, बिना किसी को दिखाए">Your old records, moved in privately</h2>
-      <p class="lede" data-hi="आपकी Excel शीट, आपके अपने कॉलम के नाम, जैसी भी हो। AI पहचानता है कौन सा कॉलम क्या है, हमारा जाँचा हुआ कोड हर नाम, तारीख और रुपया पढ़ता है, और कुछ भी सेव होने से पहले आप सब देखते हैं। आप खुद करते हैं, कुछ मिनटों में। आपके मेंबरों की जानकारी किसी और के हाथ नहीं जाती।">Your Excel sheet, your own column names, however messy. AI works out which column is which, our tested code reads every name, date and rupee, and you see it all before anything is saved. You do it yourself, in minutes. Nobody else has to handle your members' details.</p>
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="move-h" class="cond panel-h" data-hi="Excel से अपनी मेंबर लिस्ट AI की मदद से लाइए।">Move your member list from Excel, with AI.</h2>
+      <p class="lede" data-hi="कोई भी शीट, कॉलम के कोई भी नाम, GGMS से निकाली फाइल भी। AI समझता है कि कौन सा कॉलम क्या है। कुछ भी सेव होने से पहले आप हर मेंबर और हर रुपया खुद जाँचते हैं।">Any sheet, any column names, even a GGMS export. AI works out which column is which. You check every member and rupee before anything is saved.</p>
     </div>
-    <div class="beatcol">
+      <div class="beatcol">
       <div class="money rows wide" id="move-beats">
         <div data-beat="1"><b data-hi="कोई भी शीट">Any sheet</b><span data-hi="“Mob No”, “Contact”, “Phone 1”: जो भी नाम रखा हो। Excel, CSV या GGMS से निकाली फाइल।">“Mob No”, “Contact”, “Phone 1”: whatever you called them. Excel, CSV or a GGMS export.</span></div>
-        <div data-beat="2"><b data-hi="प्राइवेट">Private</b><span data-hi="AI सिर्फ कॉलम के नाम और 5 नमूना पंक्तियाँ देखता है, मोबाइल नंबर छुपाकर। पूरी लिस्ट सीधे आपके जिम के अपने खाते में जाती है।">The AI sees only your column names and 5 sample rows, with mobile numbers hidden. Your full list goes straight to your gym's own account.</span></div>
-        <div data-beat="3"><b data-hi="जाँच">Checked</b><span data-hi="Add दबाने से पहले आप देखते हैं कितने मेंबर और कितने रुपये जुड़ेंगे। आपकी हाँ के बिना कुछ सेव नहीं होता।">Before you tap Add, you see how many members and how many rupees go in. Nothing is saved until you say so.</span></div>
-        <div data-beat="4"><b data-hi="आपका">Yours</b><span data-hi="MettleUp की टीम आपकी मेंबर लिस्ट नहीं खोल सकती, जब तक आप एक घंटे के लिए खुद इजाज़त न दें। हर बार देखा जाना आपको दिखता है।">MettleUp staff can't open your member list unless you let them in for an hour. You see every look.</span></div>
+        <div data-beat="2"><b data-hi="प्राइवेट">Private</b><span data-hi="AI सिर्फ कॉलम के नाम और 5 नमूना पंक्तियाँ देखता है, मोबाइल नंबर छुपाकर।">The AI sees only the column names and 5 sample rows, with mobile numbers hidden.</span></div>
+        <div data-beat="3"><b data-hi="जाँच">Checked</b><span data-hi="कुछ भी सेव होने से पहले आप हर मेंबर और हर रुपया जाँचते हैं।">You check every member and rupee before anything is saved.</span></div>
       </div>
-      <p class="onlyhere"><span class="only" data-hi="सिर्फ यहाँ">Only here</span> <span data-hi="हमने भारत और बाहर के 12 जिम सॉफ्टवेयर देखे (अक्टूबर 2026)। किसी में AI किसी भी Excel को नहीं पढ़ता।">We checked 12 gym software products in India and abroad (Oct 2026). None reads any Excel layout with AI.</span></p>
+      <p class="onlyhere"><span class="only" data-hi="सिर्फ यहाँ">Only here</span> <span data-hi="भारत और बाहर के जिन 12 जिम सॉफ़्टवेयर को हमने देखा (अक्टूबर 2026), उनमें से कोई भी AI से किसी भी Excel को नहीं पढ़ता।">None of the 12 gym software products we checked in India and abroad (Oct 2026) reads any Excel layout with AI.</span></p>
     </div>
-    <div class="stage solo" id="move-scene">
+    </div>
+    <div class="stage solo play" id="move-scene">
       <div class="sheet" role="img" aria-label="Example: a gym's own Excel sheet with messy column names; each column gets matched to a MettleUp field, mobile numbers stay hidden, and 212 members are ready to check" data-hi-label="उदाहरण: जिम की अपनी Excel शीट; हर कॉलम MettleUp के खाने से मिलता है, मोबाइल नंबर छुपे रहते हैं, 212 मेंबर जाँच के लिए तैयार">
         <div class="sh-top" aria-hidden="true"><span class="sh-file">members 2024 (final).xlsx</span><span class="sh-ai" id="mv-ai" data-hi="AI · सिर्फ कॉलम">AI · columns only</span></div>
         <table class="sh-grid" aria-hidden="true">
@@ -945,53 +942,177 @@ section{position:relative}
   </div>
 </section>
 
-<!-- PACK SIZES (R-97, owner 24 Oct 2026: three packs, monthly and yearly, and a founding lifetime pack;
-     prices chosen by Claude from the market check in docs/CLAUDE-NOTES.md R-97). Planned items say "Coming". -->
+<!-- THE SHELF: SHOP (R-57: plays an order, from the member's tap to the desk) -->
+<section class="shelf" aria-labelledby="shop-h">
+  <div class="wrap scene">
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="shop-h" class="cond panel-h" data-hi="अपने ऐप से सप्लीमेंट बेचिए।">Sell supplements through your own app.</h2>
+      <p class="lede" data-hi="मेंबर ऐप में ऑर्डर करते हैं और आपकी डेस्क पर कैश या UPI से पैसे देते हैं। स्टॉक अपने आप घटता है।">Members order in the app and pay at your desk, in cash or UPI. Stock goes down by itself.</p>
+    </div>
+      <div class="beatcol">
+      <div class="money rows" id="shop-beats">
+        <div data-beat="1"><b data-hi="ऑर्डर">Order</b><span data-hi="मेंबर ऐप में, दिन में कभी भी">in the app, any time of day</span></div>
+        <div data-beat="2"><b data-hi="पैसे">Pay</b><span data-hi="डेस्क पर, कैश या UPI">at your desk, cash or UPI</span></div>
+        <div data-beat="3"><b data-hi="स्टॉक">Stock</b><span data-hi="अपने आप घटता है, और “सिर्फ 2 बचे” भी बताता है">goes down by itself, and says "Only 2 left"</span></div>
+      </div>
+      <p class="ex" data-hi="उदाहरण के दाम; दाम आप तय करते हैं।">Example prices; you set your own.</p>
+    </div>
+    </div>
+    <div class="stage duo tagged play leads-host" id="shop-scene">
+      <svg class="leaders" aria-hidden="true"></svg>
+      <span class="tag tag-l" data-target="#p-whey" data-side="left" style="--lead:var(--label)">₹2,499 <small data-hi="आपका दाम">your price</small></span>
+      <div class="pwrap">
+      <div class="order" id="shop-order" role="img" aria-label="Example: a new shop order reaches the desk" data-hi-label="उदाहरण: डेस्क पर नया ऑर्डर"><span class="ic" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 7h12l-1 9H5L4 7zm3 0V5.5a3 3 0 016 0V7" stroke="var(--on-flavour)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><span aria-hidden="true"><small>Admin app · just now</small><b>New order · Asha Verma</b>1 × Whey protein 1 kg · ₹2,499</span></div>
+      <div class="phone" role="img" aria-label="The gym's shop inside the member app" data-hi-label="मेंबर ऐप के अंदर जिम की दुकान">
+        <div class="scr" aria-hidden="true">
+          <div class="sb"><span>6:15</span><span>5G</span></div>
+          <div class="in">
+            <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
+            <div class="shophead"><div class="apph" style="font-size:19px;margin:0">Your gym's shop</div><span class="bagb has" id="shop-bag">Bag<i id="shop-bagn">1</i></span></div>
+            <div style="color:var(--app-ink2);font-size:12px;margin:-6px 0 10px">Pay at the desk</div>
+            <div class="shopgrid">
+              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="9" y="8" width="22" height="27" rx="5" fill="var(--flavour)"/><rect x="11" y="4" width="18" height="6" rx="2" fill="#E8E8EC"/><rect x="9" y="17" width="22" height="8" fill="#0B0B0D"/></svg></div><div class="n">Whey protein</div><div class="u">1 kg</div><div class="p" id="p-whey">₹2,499</div><div class="left"><span data-hi="सिर्फ">Only</span> <span class="roll" id="shop-left">2</span> <span data-hi="बचे">left</span></div><span class="addp" id="shop-add"><span class="a1">Add</span><span class="a2">In bag</span></span></div>
+              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="11" y="10" width="18" height="24" rx="4" fill="#E8E8EC"/><rect x="12" y="6" width="16" height="6" rx="2" fill="var(--flavour)"/><rect x="11" y="18" width="18" height="6" fill="#0B0B0D"/></svg></div><div class="n">Creatine</div><div class="u">250 g</div><div class="p" id="p-crea">₹899</div><span class="addp">Add</span></div>
+              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M13 9h14l-2 26H15L13 9z" fill="#E8E8EC"/><rect x="12" y="5" width="16" height="5" rx="2" fill="var(--flavour)"/></svg></div><div class="n">Shaker</div><div class="u">700 ml</div><div class="p">₹399</div></div>
+              <div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><path d="M12 9l5-3h6l5 3 5 6-4 3-2-2v18H13V16l-2 2-4-3 5-6z" fill="var(--flavour)"/></svg></div><div class="n">Gym T-shirt</div><div class="u">S to XXL</div><div class="p">₹599</div></div><div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><circle cx="20" cy="22" r="11" fill="none" stroke="var(--flavour)" stroke-width="5"/><rect x="17" y="6" width="6" height="7" rx="2" fill="#E8E8EC"/></svg></div><div class="n">Resistance band</div><div class="u">Medium</div><div class="p">₹349</div></div><div class="prod"><div class="pic"><svg viewBox="0 0 40 40"><rect x="8" y="10" width="24" height="22" rx="5" fill="#E8E8EC"/><rect x="8" y="16" width="24" height="5" fill="var(--flavour)"/></svg></div><div class="n">Gym towel</div><div class="u">Cotton</div><div class="p">₹199</div></div>
+            </div>
+          </div>
+          <div class="bagsheet up sent" id="shop-sheet">
+            <div class="grab"></div>
+            <div class="bs-ask"><b>Your bag · 1 item</b><div class="bs-row"><span>Whey protein · 1 kg</span><span>₹2,499</span></div><div class="bs-note">Pay at the desk when you collect</div><span class="abtn" id="shop-place">Place order</span></div>
+            <div class="bs-done"><b>Order sent <svg class="okt" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></b><div class="bs-note">The desk has it. Pay when you collect.</div></div>
+          </div>
+          <div class="tabs"><span>Workout</span><span>Profile</span><b>Shop</b></div>
+        </div>
+      </div>
+      </div>
+      <span class="tag tag-r" data-target="#p-crea" data-side="right" style="--lead:var(--label)">₹899 <small data-hi="आपका दाम">your price</small></span>
+      <svg class="sticker burst" id="shop-burst" viewBox="0 0 100 100" role="img" aria-label="Sold at your desk" data-hi-label="आपकी डेस्क पर बिका"><path d="M50.0 1.0 L58.2 13.9 L71.3 5.9 L73.1 21.1 L88.3 19.4 L83.3 33.9 L97.8 39.1 L87.0 50.0 L97.8 60.9 L83.3 66.1 L88.3 80.6 L73.1 78.9 L71.3 94.1 L58.2 86.1 L50.0 99.0 L41.8 86.1 L28.7 94.1 L26.9 78.9 L11.7 80.6 L16.7 66.1 L2.2 60.9 L13.0 50.0 L2.2 39.1 L16.7 33.9 L11.7 19.4 L26.9 21.1 L28.7 5.9 L41.8 13.9Z" fill="var(--sticker)"/><text x="50" y="47" font-size="15" data-hi="आपकी डेस्क">SOLD AT</text><text x="50" y="63" font-size="15" data-hi="पर बिका">YOUR DESK</text></svg>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICES (R-57; owner 22 Oct: "free member notifications about holidays"): plays a notice from Send to "read by" -->
+<section class="voice" aria-labelledby="voice-h">
+  <div class="wrap scene">
+    <div class="scene-col">
+      <div class="scene-text">
+      <h2 id="voice-h" class="cond panel-h" data-hi="हर मेंबर को मुफ्त सूचना भेजिए।">Send free notices to every member.</h2>
+      <p class="lede" data-hi="एक बार लिखिए। यह सेकंडों में हर मेंबर के ऐप के इनबॉक्स में पहुँचती है, और आप देखते हैं कितनों ने पढ़ी। न SMS का खर्च, न WhatsApp का।">Write it once. It reaches every member's app inbox in seconds, and you see how many read it. No SMS or WhatsApp cost.</p>
+    </div>
+      <div class="beatcol">
+      <div class="money rows notices"><div><b data-hi="₹0">₹0</b><span data-hi="हर सूचना पर">per notice</span></div><div><b data-hi="1×">1×</b><span data-hi="एक बार लिखिए, सबको पहुँचती है">write it once, everyone gets it</span></div><div><b data-hi="पढ़ा">Read</b><span data-hi="देखिए कितनों ने पढ़ी">see how many read it</span></div></div>
+    </div>
+    </div>
+    <div class="stage solo duo msgduo play" id="msg-scene">
+      <div class="pwrap">
+      <div class="compose sent" id="msg-compose" role="img" aria-label="Example: the owner sends a holiday notice to every member, free, and sees how many read it" data-hi-label="उदाहरण: मालिक सभी मेंबरों को छुट्टी की सूचना मुफ्त भेजता है और देखता है कितनों ने पढ़ा">
+        <small aria-hidden="true">Admin app · Message to all members</small>
+        <div class="cm-text" aria-hidden="true"><span id="msg-typed">Gym closed on 1 Nov for Diwali. Open as usual from 2 Nov. Happy Diwali!</span><i class="caret"></i></div>
+        <div class="cm-row" aria-hidden="true"><span class="cm-sent" id="msg-status">Sent to 212 members · read by <span class="roll" id="msg-read">64</span></span><span class="cm-send" id="msg-send"><span class="s1">Send</span><span class="s2">Sent</span></span></div>
+      </div>
+      <div class="phone" role="img" aria-label="The gym's messages in the member app's inbox" data-hi-label="मेंबर ऐप के इनबॉक्स में जिम के संदेश">
+        <div class="scr" aria-hidden="true">
+          <div class="sb"><span>9:03</span><span>5G</span></div>
+          <div class="in">
+            <div class="gymhead"><div class="gymlogo" data-initial>I</div><div class="gymname" data-gym>Iron Temple Fitness</div></div>
+            <div class="apph" style="font-size:19px">Messages</div>
+            <div class="msgnew" id="msg-new"><div class="msgcard"><div class="from"><i class="dot"></i><span class="fn"><span data-gym>Iron Temple Fitness</span></span><b class="newb">New</b></div><div class="t">Gym closed on 1 Nov for Diwali</div><div class="s">Open as usual from 2 Nov. Happy Diwali!</div></div></div>
+            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · Mon</div><div class="t">Diwali offer: renew for 3 months, get 2 weeks free</div><div class="s">Till 2 Nov. Ask at the desk.</div></div>
+            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 18 Oct</div><div class="t">New evening batch: 9 to 10 pm</div><div class="s">From Monday. Ask Coach Vikram.</div></div>
+            <div class="msgcard"><div class="from"><span data-gym>Iron Temple Fitness</span> · 12 Oct</div><div class="t">New machine on the floor</div><div class="s">Cable crossover, near the mirror.</div></div>
+          </div>
+          <div class="tabs"><span>Workout</span><b>Profile</b><span>Shop</span></div>
+        </div>
+      </div>
+      </div>
+      <p class="ex" data-hi="उदाहरण का जिम और संख्या। रोकने के लिए टैप करें।">Example gym and numbers. Tap to pause.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- 10. ALL THE DESK WORK -->
+<section class="ingr" aria-labelledby="ingr-h">
+  <div class="wrap grid">
+    <div>
+      <h2 id="ingr-h" class="cond panel-h" data-hi="आपके जिम का सारा कागज़ी काम, एक जगह।">All your gym's paperwork, in one place.</h2>
+      <ul class="ingr-list">
+        <li data-hi="<b>GST इनवॉइस और रसीदें</b>, वित्त वर्ष के नंबर से"><b>GST invoices and receipts</b>, numbered by financial year</li>
+        <li data-hi="<b>फीस, आंशिक पेमेंट</b>, और किसके पैसे बाकी हैं"><b>Fees, part payments</b>, and who still owes you money</li>
+        <li data-hi="<b>स्टाफ लॉगिन</b>, छूट की सीमा के साथ। कुल रकम सिर्फ आप देखते हैं"><b>Staff logins</b> with a discount limit. Only you see the totals</li>
+        <li data-hi="<b>कई ब्रांच</b>, एक ही साइन-इन से"><b>Several branches</b> from one sign-in</li>
+        <li data-hi="खर्च, मुनाफा, पूछताछ, पर्सनल ट्रेनिंग पैक और मेंबर ID कार्ड">Expenses, profit, enquiries, personal-training packs and member ID cards</li>
+        <li data-hi="अपना पूरा डेटा जब चाहें Excel में डाउनलोड करें">Download all your data to Excel whenever you want</li>
+        <li class="wide" data-hi="<b>बिना इंटरनेट भी चलती है</b>, डेस्क के फोन या कंप्यूटर पर"><b>Desk works without internet</b>, on the desk phone or the computer</li>
+      </ul>
+    </div>
+    <div class="desk">
+      <figure><img src="/home/dues-list.webp" width="658" height="473" loading="lazy" alt="Admin app fees due list with amounts and a Collect button" data-hi-alt="एडमिन ऐप: बकाया फीस की लिस्ट"><figcaption data-hi="बकाया फीस, नाम के साथ">Dues, with names</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- 11. YOUR DATA -->
+<section class="mydata" aria-labelledby="data-h">
+  <div class="wrap">
+    <h2 id="data-h" class="cond panel-h" data-hi="आपके मेंबरों का डेटा सुरक्षित और प्राइवेट है।">Your member data is safe and private.</h2>
+    <p class="lede" data-hi="यह भारत में रखा जाता है। हमारा स्टाफ आपकी मेंबर लिस्ट तब तक नहीं खोल सकता जब तक आप उसे 1 घंटे के लिए इजाज़त न दें, और हर बार देखे जाने की जानकारी आपको दिखती है।">It is kept in India. Our staff cannot open your member list unless you let them in for 1 hour, and you see every look.</p>
+    <ul class="keep">
+      <li><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 40S9 28.5 9 18a13 13 0 0126 0c0 10.500-13 22-13 22z"/><circle cx="22" cy="18" r="4.500"/></svg><b data-hi="भारत में रखा जाता है">Kept in India</b><span data-hi="आपके मेंबरों का डेटा भारत में रखा जाता है।">Your member data is stored in India.</span></li>
+      <li><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="19" width="26" height="19" rx="4"/><path d="M14 19v-5a8 8 0 0116 0v5"/><circle cx="22" cy="28.500" r="2"/></svg><b data-hi="हमारे स्टाफ के लिए बंद">Closed to our staff</b><span data-hi="वे आपकी मेंबर लिस्ट नहीं खोल सकते, जब तक आप उन्हें 1 घंटे के लिए इजाज़त न दें।">They cannot open your member list unless you let them in for 1 hour.</span></li>
+      <li><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22s7-12 19-12 19 12 19 12-7 12-19 12S3 22 3 22z"/><circle cx="22" cy="22" r="5.500"/></svg><b data-hi="हर बार देखे जाने की जानकारी">You see every look</b><span data-hi="जब भी कोई देखता है, आपको दिखता है।">Every time someone looks, you see it.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 12. PRICES -->
 <section class="packs" id="pricing" aria-labelledby="price-h">
   <div class="wrap">
-    <h2 id="price-h" class="cond panel-h" data-hi="अपना पैक चुनिए">Pick your pack</h2>
-    <p class="lede" data-hi="हर पैक 3 महीने मुफ्त से शुरू होता है। न कार्ड, न सेटअप फीस, मेंबर जितने चाहें। मेंबरों का ऐप हर पैक में मुफ्त, हमेशा।">Every pack starts with 3 months free. No card, no setup fee, no limit on members. Your members' app is free in every pack, always.</p>
+    <h2 id="price-h" class="cond panel-h" data-hi="एक दाम आपके लिए। आपके मेंबर कुछ नहीं देते।">One price for you. Your members pay nothing.</h2>
+    <p class="lede" data-hi="हर पैक 3 महीने मुफ्त से शुरू होता है, जितने भी मेंबर आपके पास हों। न कार्ड, न सेटअप फीस।">Every pack starts with 3 months free, for as many members as you have. No card, no setup fee.</p>
     <div class="panel pricetab">
       <table>
-        <caption class="sr" data-hi="पैक और उनमें क्या है">MettleUp for Gyms: packs and what each one has</caption>
+        <caption class="sr" data-hi="पैक (हर ब्रांच के) और उनमें क्या है">MettleUp for Gyms: packs (per branch) and what each one has</caption>
         <thead>
           <tr class="ph">
-            <th scope="col"><span class="ph-t" data-hi="पैक साइज़">Pack sizes</span></th>
+            <th scope="col"><span class="ph-t" data-hi="पैक, हर ब्रांच के">Packs, per branch</span></th>
             <th scope="col"><span class="pk" data-hi="स्टार्टर">Starter</span><span class="pr">₹999</span><span class="per" data-hi="महीना">a month</span><span class="yr" data-hi="₹9,990 साल का">₹9,990 a year</span></th>
             <th scope="col" class="best"><span class="pk">Pro</span><span class="pr">₹1,999</span><span class="per" data-hi="महीना">a month</span><span class="yr" data-hi="₹19,990 साल का">₹19,990 a year</span></th>
             <th scope="col"><span class="pk">AI</span><span class="pr">₹2,999</span><span class="per" data-hi="महीना">a month</span><span class="yr"><span class="soon" data-hi="जल्द">Coming</span></span></th>
           </tr>
         </thead>
         <tbody>
-          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="डेस्क पर">At the desk</th></tr>
-          <tr><th scope="row" data-hi="मेंबर, प्लान, रिन्यूअल और बकाया">Members, plans, renewals and dues</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="रसीद और GST इनवॉइस">Receipts and GST invoices</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="WhatsApp रिमाइंडर, पहले से लिखे">WhatsApp reminders, typed for you</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="कौन आना बंद कर रहा है">Who has stopped coming</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row"><span data-hi="किसी भी Excel से AI इम्पोर्ट">AI import from any Excel</span> <span class="only" data-hi="सिर्फ यहाँ">Only here</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="स्टाफ लॉगिन">Staff logins</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="हर मेंबर के फोन में, मुफ्त">In every member's phone, free</th></tr>
-          <tr><th scope="row" data-hi="आपके जिम के नाम और रंग में वर्कआउट ऐप">Workout app in your gym's name and colours</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="ट्रेनर के प्लान">Your trainer's plans</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="हर मेंबर को मुफ्त सूचना">Free notices to every member</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="QR चेक-इन">QR check-in</th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="ज़्यादा कमाई, गेट पर कंट्रोल">Earn more, control the door</th></tr>
-          <tr><th scope="row" data-hi="ऐप में आपकी दुकान">Your shop in the app</th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
-          <tr><th scope="row" data-hi="मेंबर फीस और ऑर्डर ऐप में UPI से भरें">Members pay fees and orders in the app (UPI)</th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
-          <tr><th scope="row" data-hi="गेट: टर्नस्टाइल या फेस मशीन से जुड़ाव">Entry gate: turnstile or face machine</th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
-          <tr class="grp"><th colspan="4" scope="colgroup">AI</th></tr>
-          <tr><th scope="row" data-hi="मेंबरों के लिए AI कोच">AI coach for members</th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
-          <tr><th scope="row" data-hi="आपके लिए AI सहायक (“इस हफ्ते कौन रिन्यू करेगा?”)">AI helper for you (“Who renews this week?”)</th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
+          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="MettleUp की खास बातें">What sets MettleUp apart</th></tr>
+          <tr><th scope="row"><span data-hi="हर मेंबर के लिए आपके जिम के नाम का वर्कआउट ऐप, मुफ्त">Branded workout app for every member, free</span> <span class="only extra" data-hi="आम तौर पर अलग से">Usually extra</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="किसी भी Excel शीट से AI इम्पोर्ट">AI import from any Excel sheet</span> <span class="only" data-hi="सिर्फ यहाँ">Only here</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="बिना इंटरनेट भी चलने वाला डेस्क सॉफ़्टवेयर">Desk software that works without internet</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="आना बंद करने वाले मेंबरों की रोज़ की लिस्ट">Daily list of members who stopped coming</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="मेंबरों के फोन में ट्रेनर के प्लान">Trainer plans in members' phones</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="हर मेंबर के ऐप में मुफ्त सूचना">Free notices to every member's app</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="डेस्क का रोज़ का काम">The usual desk work</th></tr>
+          <tr><th scope="row"><span data-hi="मेंबर, प्लान, रिन्यूअल और बकाया">Members, plans, renewals and dues</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="GST इनवॉइस">GST invoices</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="WhatsApp संदेश">WhatsApp messages</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr><th scope="row"><span data-hi="स्टाफ लॉगिन">Staff logins</span></th><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="Pro में और">Pro adds</th></tr>
+          <tr><th scope="row"><span data-hi="ऐप में आपकी दुकान">Your shop in the app</span></th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td><td class="y"><span class="sr" data-hi="हाँ">Yes</span></td></tr>
+          <tr class="grp"><th colspan="4" scope="colgroup" data-hi="जल्द आ रहा है">Coming</th></tr>
+          <tr><th scope="row"><span data-hi="ऐप में फीस भरना">Paying fees in the app</span></th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
+          <tr><th scope="row"><span data-hi="एंट्री गेट">The entry gate</span></th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
+          <tr><th scope="row"><span data-hi="मेंबरों के लिए AI कोच">AI coach for members</span></th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
+          <tr><th scope="row"><span data-hi="आपके लिए AI सहायक">AI helper for you</span></th><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="n"><span class="sr" data-hi="नहीं">No</span></td><td class="c"><span class="soon" data-hi="जल्द">Coming</span></td></tr>
         </tbody>
       </table>
-      <p class="foot" data-hi="<b>सिर्फ यहाँ:</b> अक्टूबर 2026 में हमने भारत और बाहर के जो 12 जिम सॉफ्टवेयर देखे, उनमें से कोई भी AI से किसी भी Excel को नहीं पढ़ता। दाम एक ब्रांच के। मुफ्त 3 महीने के बाद UPI या बैंक ट्रांसफर से भरें, रसीद मिलती है। कभी भी बंद करें: आपका पूरा डेटा एक टैप में Excel में।"><b>Only here:</b> none of the 12 gym software products we checked in India and abroad in Oct 2026 reads any Excel layout with AI. Prices are per branch. After the free 3 months, pay by UPI or bank transfer and get a receipt. Stop any time: all your data goes to Excel in one tap.</p>
+      <p class="foot" data-hi="दाम हर ब्रांच के हैं। मुफ्त 3 महीने के बाद UPI या बैंक ट्रांसफर से भरें, रसीद मिलती है। कभी भी बंद करें: आपका पूरा डेटा एक टैप में Excel में।">Prices are per branch. After the free 3 months, pay by UPI or bank transfer and get a receipt. Stop any time: all your data goes to Excel in one tap.</p>
     </div>
-    <div class="founder">
+<div class="founder">
       <svg class="sticker fseal" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.0 2.0 L55.6 7.4 L62.4 3.6 L66.5 10.3 L74.0 8.4 L76.2 15.9 L83.9 16.1 L84.1 23.8 L91.6 26.0 L89.7 33.5 L96.4 37.6 L92.6 44.4 L98.0 50.0 L92.6 55.6 L96.4 62.4 L89.7 66.5 L91.6 74.0 L84.1 76.2 L83.9 83.9 L76.2 84.1 L74.0 91.6 L66.5 89.7 L62.4 96.4 L55.6 92.6 L50.0 98.0 L44.4 92.6 L37.6 96.4 L33.5 89.7 L26.0 91.6 L23.8 84.1 L16.1 83.9 L15.9 76.2 L8.4 74.0 L10.3 66.5 L3.6 62.4 L7.4 55.6 L2.0 50.0 L7.4 44.4 L3.6 37.6 L10.3 33.5 L8.4 26.0 L15.9 23.8 L16.1 16.1 L23.8 15.9 L26.0 8.4 L33.5 10.3 L37.6 3.6 L44.4 7.4Z" fill="var(--sticker)"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--label-ink)" stroke-width="1.6" stroke-dasharray="3 3"/><text x="50" y="46" font-size="17" data-hi="पहले 50">FIRST 50</text><text x="50" y="64" font-size="17" data-hi="जिम">GYMS</text></svg>
       <div class="f-text">
-        <h3 class="cond" data-hi="फाउंडिंग जिम: Pro, हमेशा के लिए">Founding gym: Pro, for life</h3>
-        <p data-hi="एक बार ₹29,999। Pro की हर चीज़, एक ब्रांच के लिए, हमेशा। सिर्फ पहले 50 जिमों के लिए। AI पैक आने पर अलग से।">One payment of ₹29,999. Everything in Pro, for one branch, forever. For the first 50 gyms only. The AI pack is extra when it comes.</p>
-        <p class="f-how" data-hi="जगह कैसे पक्की होती है: पहले मुफ्त 3 महीने शुरू करें। उनके खत्म होने से पहले हमें बताइए; जो पहले 50 जिम भरते हैं, उन्हें यह दाम मिलता है।">How a spot is held: start your free 3 months first. Tell us before they end; the first 50 gyms to pay get this price.</p>
+        <h3 class="cond" data-hi="फाउंडिंग जिम: Pro हमेशा के लिए, एक बार का भुगतान।">Founding gym: Pro for life, one payment.</h3>
+        <p data-hi="एक ब्रांच के लिए एक बार ₹29,999 दीजिए, और Pro के लिए फिर कभी कुछ मत दीजिए। सिर्फ पहले 50 जिमों के लिए।">Pay ₹29,999 once for one branch, and never pay for Pro again. Only for the first 50 gyms.</p>
+        <p class="f-how" data-hi="पहले अपने मुफ्त 3 महीने शुरू करें, और उनके खत्म होने से पहले हमें बताइए। AI पैक आने पर वह अलग से होगा।">Start your free 3 months first, and tell us before they end. The AI pack is extra when it comes.</p>
       </div>
       <a class="go" href="https://app.mettleup.fit/start" data-hi="मुफ्त शुरू करें">Start free</a>
     </div>
@@ -1002,8 +1123,8 @@ section{position:relative}
 <section class="back" id="start" aria-labelledby="demo-h">
   <div class="wrap grid">
     <div>
-      <h2 id="demo-h" class="cond panel-h" data-hi="मुफ्त 3 महीने शुरू करें">Start your free 3 months</h2>
-      <p class="lede" data-hi="खुद 2 मिनट में शुरू करें, या नंबर छोड़िए और हम आपके साथ सेट करते हैं। जयपुर में, आपके जिम आकर।">Set it up yourself in 2 minutes, or leave your number and we set it up with you. In Jaipur, at your gym.</p>
+      <h2 id="demo-h" class="cond panel-h" data-hi="आज ही अपना 3 महीने का मुफ्त ट्रायल शुरू करें।">Start your 3-month free trial today.</h2>
+      <p class="lede" data-hi="खुद 2 मिनट में सेट करें, या हमसे कहिए कि हम आपके जिम में आपके साथ सेट करें।">Set it up yourself in 2 minutes, or ask us to set it up with you at your gym.</p>
       <ol class="next">
         <li data-hi="जिम बनाइए: जिम का नाम, आपका नाम, आपका मोबाइल।">Create your gym: its name, your name, your mobile.</li>
         <li data-hi="Excel या GGMS से मेंबर लाइए। AI कॉलम मिलाता है; आप देखकर Add दबाते हैं।">Bring your members from Excel or GGMS. AI matches the columns; you check, then tap Add.</li>

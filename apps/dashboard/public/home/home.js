@@ -3,7 +3,7 @@
 //  1. English / Hindi (kept per browser);
 //  2. "Type your gym's name" + colour: every phone on the page wears it (View Transitions when the
 //     browser has them);
-//  3. the played scenes (the live workout, the shop, the messages, the lock screen, moving in), each
+//  3. the played scenes (the live workout, the shop, the messages, moving in), each
 //     with a list beside it that lights up step by step; since R-97 they loop by themselves;
 //  4. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js).
 (function () {
@@ -143,31 +143,23 @@
     var live = $('live'), stage = $('lift-scene');
     if (!live) return;
     var rows = Array.prototype.slice.call(live.querySelectorAll('tbody tr'));
-    var beat = $('beat'), rest = $('rest'), restT = $('restt'), record = $('record'), list = $('lift-beats');
+    var beat = $('beat'), record = $('record'), list = $('lift-beats');
     var won = beat.closest('.live-beat');
     var steps = [[0, function () { beatsTo(list, 1); }]];
     var left = 1125;
     rows.forEach(function (r, i) {
-      var t0 = 900 + i * 2100, from = left, to = Math.max(0, left - 375);
+      var t0 = 900 + i * 1500, from = left, to = Math.max(0, left - 375);
       left = to;
       steps.push([t0, function () { if (i === 0) beatsTo(list, 2); r.classList.add('done'); }]);
       for (var s = 1; s <= 8; s++) {
         (function (s) { steps.push([t0 + 75 * s, function () { roll(beat, fmt(Math.round(from - ((from - to) * s) / 8))); }]); })(s);
       }
-      if (i < rows.length - 1) {
-        for (var k = 1; k <= 6; k++) {
-          (function (k) { steps.push([t0 + k * 230, function () { rest.style.setProperty('--p', k / 6); restT.textContent = '1:' + String(30 - k * 5).padStart(2, '0'); }]); })(k);
-        }
-        steps.push([t0 + 1800, function () { rest.style.setProperty('--p', 0); restT.textContent = '1:30'; }]);
-      }
     });
-    steps.push([900 + rows.length * 2100, function () { won.classList.add('won'); record.classList.add('slam'); beatsTo(list, 3); }]);
+    steps.push([900 + rows.length * 1500, function () { won.classList.add('won'); record.classList.add('slam'); beatsTo(list, 3); }]);
     loopScene(stage, function () {
       if (list) list.classList.add('armed');
       rows.forEach(function (r) { r.classList.remove('done'); });
       beat.textContent = '1,125';
-      rest.style.setProperty('--p', 0);
-      restT.textContent = '1:30';
       record.classList.remove('slam');
       won.classList.remove('won');
       beatsTo(list, 0);
@@ -225,45 +217,6 @@
     }, steps);
   })();
 
-  // The lock screen: the live card (workout time ticking) -> Complete set -> the rest counts down
-  // -> "Rest is over" rings and the phone buzzes.
-  (function () {
-    var scene = $('lock-scene'), phone = $('lock-phone'), list = $('lock-beats'), watch = $('lock-watch');
-    if (!scene) return;
-    var clock = $('n-clock'), lefts = scene.querySelectorAll('.js-left');
-    /** The phone and the watch move together (the watch app counts the rest and buzzes too). */
-    function state(v) { phone.dataset.s = v; if (watch) watch.dataset.s = v; }
-    function setLeft(t) { Array.prototype.forEach.call(lefts, function (n) { n.textContent = t; }); }
-    function buzz(el) { if (!el) return; el.classList.remove('buzz'); void el.offsetWidth; el.classList.add('buzz'); }
-    var tick = null;
-    function mmss(sec) { return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
-    function stopClock() { if (tick) clearInterval(tick); tick = null; }
-    var steps = [
-      [300, function () {
-        beatsTo(list, 1);
-        var sec = 24 * 60 + 10;
-        stopClock();
-        tick = setInterval(function () { sec += 1; clock.textContent = mmss(sec); }, 1000);
-      }],
-      [2200, function () { tap($('n-complete')); }],
-      [2700, function () { stopClock(); state('rest'); beatsTo(list, 2); }],
-    ];
-    for (var r = 1; r <= 10; r++) {
-      (function (r) { steps.push([2900 + r * 300, function () { setLeft(mmss(90 - r * 9)); }]); })(r);
-    }
-    steps.push([6300, function () { state('over'); beatsTo(list, 3); buzz(phone); buzz(watch); }]);
-    loopScene(scene, function () {
-      stopClock();
-      if (list) list.classList.add('armed');
-      beatsTo(list, 0);
-      state('live');
-      phone.classList.remove('buzz');
-      if (watch) watch.classList.remove('buzz');
-      clock.textContent = '24:10';
-      setLeft('1:30');
-    }, steps, stopClock);
-  })();
-
   // Moving in (R-97): the owner's own sheet; each column gets its MettleUp name, the rows check out,
   // and the count of members ready rolls up, with no mobile number shown to the AI.
   (function () {
@@ -281,7 +234,6 @@
     t += 250 + rowsOk.length * 280;
     steps.push([t + 200, function () { beatsTo(list, 3); done.classList.add('in'); }]);
     [26, 74, 131, 178, 212].forEach(function (n, i) { steps.push([t + 300 + i * 160, function () { roll(count, String(n)); }]); });
-    steps.push([t + 1300, function () { beatsTo(list, 4); }]);
     loopScene(scene, function () {
       scene.classList.add('armed');
       if (list) list.classList.add('armed');
