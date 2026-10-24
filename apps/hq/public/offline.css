@@ -1,0 +1,5 @@
+body { font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #1b1f26; color: #e9ecf1; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+main { max-width: 420px; text-align: center; }
+img { width: 96px; height: 96px; border-radius: 22px; }
+h1 { font-size: 22px; margin: 16px 0 8px; }
+.button { display: inline-block; margin-top: 12px; padding: 12px 20px; min-height: 44px; border-radius: 10px; border: 1px solid #f0662a; color: #f0662a; text-decoration: none; }

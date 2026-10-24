@@ -527,8 +527,8 @@ async function gymPage(id, flash = '') {
             : 'Times only. Names, devices and addresses show only while support access is open.'),
           counts ? h('p', {}, `Last 7 days: ${counts}`) : null,
           r.rows.length
-            ? h('div', { class: 'table-wrap' }, h('table', {}, h('tbody', {}, r.rows.map((x) => h('tr', {}, h('td', {}, when(x.at)), h('td', {}, ACCESS_WORDS[x.action] || x.action),
-                r.detailed ? h('td', {}, x.person || '') : null, r.detailed ? h('td', { class: 'muted' }, x.device || '') : null, r.detailed ? h('td', { class: 'muted' }, x.ip || '') : null)))))
+            ? h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('tbody', {}, r.rows.map((x) => h('tr', {}, h('td', {}, when(x.at)), h('td', { 'data-label': 'What' }, ACCESS_WORDS[x.action] || x.action),
+                r.detailed ? h('td', { 'data-label': 'Who' }, x.person || '') : null, r.detailed ? h('td', { class: 'muted', 'data-label': 'Device' }, x.device || '') : null, r.detailed ? h('td', { class: 'muted', 'data-label': 'From' }, x.ip || '') : null)))))
             : h('p', {}, 'Nothing yet.'));
       }, { out: historyBox }),
       historyBox),
@@ -550,7 +550,7 @@ function renderAccess(box, g, id) {
       h('div', { class: 'row wrap' }, RECORD_KINDS.map(([kind, words]) => action(words, async () => {
         const r = await api(`/api/access/records?id=${encodeURIComponent(id)}&kind=${kind}`);
         view.replaceChildren(h('h3', {}, `${words} (${r.rows.length}${r.rows.length === 200 ? '+' : ''})`),
-          r.rows.length ? h('div', { class: 'table-wrap' }, h('table', {}, h('tbody', {}, r.rows.map((row) => h('tr', {}, recordCells(kind, row).map(([label, value]) => h('td', {}, h('span', { class: 'muted' }, `${label}: `), value ?? ''))))))) : h('p', {}, 'None.'));
+          r.rows.length ? h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('tbody', {}, r.rows.map((row) => h('tr', {}, recordCells(kind, row).map(([label, value]) => h('td', {}, h('span', { class: 'muted' }, `${label}: `), value ?? ''))))))) : h('p', {}, 'None.'));
       }, { out }))),
       action('Close access now', async () => { await api('/api/access/end', { gymId: id }); await gymPage(id); }, { tone: 'danger', out }),
       out, view));
@@ -594,8 +594,8 @@ async function systemPage() {
     h('div', { class: 'card' }, h('h2', {}, 'Member app downloads'),
       d.releases === null
         ? note('GitHub did not answer. Try again later.', 'warn')
-        : h('div', { class: 'table-wrap' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Released'), h('th', {}, 'App downloads'))),
-            h('tbody', {}, d.releases.map((r) => h('tr', {}, h('td', {}, r.tag), h('td', {}, when(r.publishedAt)), h('td', { class: 'num' }, `${r.apkDownloads}`))))))),
+        : h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('thead', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Released'), h('th', {}, 'App downloads'))),
+            h('tbody', {}, d.releases.map((r) => h('tr', {}, h('td', {}, r.tag), h('td', { 'data-label': 'Released' }, when(r.publishedAt)), h('td', { class: 'num', 'data-label': 'App downloads' }, `${r.apkDownloads}`))))))),
     h('div', { class: 'card' }, h('h2', {}, 'Errors and outages'),
       h('p', { class: 'muted' }, 'Not connected yet: they show here once the free error and uptime accounts exist (tracker #34).')),
     h('div', { class: 'card' }, h('h2', {}, 'Which app version members use'),
@@ -736,7 +736,7 @@ async function logPage(before = null, list = null) {
   if (!list) loading();
   const d = await api(`/api/audit${before ? `?before=${before}` : ''}`);
   const rows = d.rows.map((r) => h('tr', {},
-    h('td', {}, when(r.at)), h('td', {}, actionWords(r.action)), h('td', {}, r.gymName || ''), h('td', {}, r.reason || ''), h('td', { class: 'muted' }, r.actor), h('td', { class: 'muted' }, r.ip || '')));
+    h('td', {}, when(r.at)), h('td', { 'data-label': 'What' }, actionWords(r.action)), h('td', { 'data-label': 'Gym' }, r.gymName || ''), h('td', { 'data-label': 'Reason' }, r.reason || ''), h('td', { class: 'muted', 'data-label': 'Who' }, r.actor), h('td', { class: 'muted', 'data-label': 'From' }, r.ip || '')));
   if (list) {
     list.append(...rows);
   } else {
@@ -744,7 +744,7 @@ async function logPage(before = null, list = null) {
     show(
       h('h1', {}, 'Log'),
       h('p', { class: 'muted' }, 'Everything done in HQ, and every look at a gym. Nobody can change or delete a line. Kept 2 years.'),
-      h('div', { class: 'table-wrap' }, h('table', {}, h('thead', {}, h('tr', {}, ['When', 'What', 'Gym', 'Reason', 'Who', 'From'].map((t) => h('th', {}, t)))), list)),
+      h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('thead', {}, h('tr', {}, ['When', 'What', 'Gym', 'Reason', 'Who', 'From'].map((t) => h('th', {}, t)))), list)),
       h('div', { id: 'more' }));
   }
   const more = document.getElementById('more');

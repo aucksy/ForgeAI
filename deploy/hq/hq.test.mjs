@@ -1,7 +1,7 @@
 // node --test deploy/hq  (CI: ci.yml "HQ Worker tests"). MettleUp HQ, #51, 23 Oct 2026.
 // Every network call is a stand-in: Google, Cloudflare Access, Supabase and GitHub are never reached.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { test } from 'node:test';
 
@@ -28,7 +28,7 @@ import { handleApi } from './api.js';
 import { refusalCode, rpc } from './db.js';
 import { clearReleaseMemo, releases, removeFiles } from './outside.js';
 import { costRupees, deleteRequestsInFeedback, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
-import worker, { CSP, handle, nightly, sameOrigin, secure } from './worker.js';
+import worker, { CSP, PUBLIC_FILES, handle, nightly, sameOrigin, secure } from './worker.js';
 
 const enc = new TextEncoder();
 const ORIGIN = 'https://forgeai-hq.aakashpahuja.in';
@@ -581,4 +581,107 @@ test('the wrangler file: its own name, addresses, cron, the page folder, no secr
   assert.match(raw, /"run_worker_first": true/);
   assert.match(raw, /"crons": \["30 21 \* \* \*"\]/);
   assert.doesNotMatch(raw, /sb_secret_|GOCSPX-|"SUPABASE_HQ_KEY":/);
+});
+
+// ------------------------------------------------------------------ install on a phone (manifest, icons, sw.js)
+const PUBLIC_DIR = new URL('../../apps/hq/public/', import.meta.url);
+/** The real static files, with the wrong content type on purpose (the Worker must set its own). */
+function diskAssets({ redirectOffline = false } = {}) {
+  return {
+    fetch: async (req) => {
+      const path = new URL(req.url).pathname;
+      if (redirectOffline && path === '/offline.html') return new Response(null, { status: 307, headers: { Location: '/offline' } });
+      const file = redirectOffline && path === '/offline' ? 'offline.html' : path.slice(1);
+      if (!file || !existsSync(new URL(file, PUBLIC_DIR))) return new Response('nope', { status: 404 });
+      return new Response(readFileSync(new URL(file, PUBLIC_DIR)), { headers: { 'Content-Type': 'application/octet-stream', 'Cache-Control': 'public, max-age=0, must-revalidate' } });
+    },
+  };
+}
+const get = (path, e = env({ ASSETS: diskAssets() }), init) => quiet(() => worker.fetch(new Request(`${ORIGIN}${path}`, init), e));
+
+test('install files open without sign-in, with the right type and cache, and still carry the strict headers', async () => {
+  const want = {
+    '/manifest.webmanifest': [/^application\/manifest\+json/, /max-age=3600/],
+    '/sw.js': [/^text\/javascript/, /no-cache/],
+    '/offline.html': [/^text\/html/, /no-cache/],
+    '/offline.css': [/^text\/css/, /no-cache/],
+    '/icons/icon-192.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/icon-512.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/icon-maskable-512.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/apple-touch-icon.png': [/^image\/png$/, /max-age=86400/],
+  };
+  assert.deepEqual(Object.keys(PUBLIC_FILES).sort(), Object.keys(want).sort(), 'nothing else is public');
+  for (const [path, [type, cache]] of Object.entries(want)) {
+    const res = await get(path); // no cookie at all
+    assert.equal(res.status, 200, path);
+    assert.match(res.headers.get('Content-Type'), type, path);
+    assert.match(res.headers.get('Cache-Control'), cache, path);
+    assert.equal(res.headers.get('Content-Security-Policy'), CSP, path);
+    assert.equal(res.headers.get('X-Frame-Options'), 'DENY', path);
+    assert.ok((await res.arrayBuffer()).byteLength > 50, path);
+  }
+  assert.equal((await get('/icons/icon-192.png', undefined, { method: 'HEAD' })).status, 200);
+});
+
+test('install files: an asset redirect (/offline.html -> /offline) is followed, a missing file is 404, a POST is not served', async () => {
+  const res = await get('/offline.html', env({ ASSETS: diskAssets({ redirectOffline: true }) }));
+  assert.equal(res.status, 200);
+  assert.match(await res.text(), /You're offline/);
+  const gone = await get('/manifest.webmanifest', env({ ASSETS: { fetch: async () => new Response('nope', { status: 404 }) } }));
+  assert.equal(gone.status, 404);
+  const post = await get('/sw.js', undefined, { method: 'POST', body: '{}' });
+  assert.equal(post.status, 302, 'a POST is not a public file: it meets the sign-in like any other path');
+});
+
+test('everything else still needs sign-in: the page, the other static files, the API, a look-alike path', async () => {
+  for (const path of ['/', '/index.html', '/app.js', '/logic.js', '/style.css', '/pwa.js', '/icons/other.png', '/icons/', '/manifest.webmanifest/x', '/sw.js.map', '/offline']) {
+    const res = await get(path);
+    assert.equal(res.status, 302, path);
+    assert.match(res.headers.get('Location'), /^\/auth\/login/, path);
+  }
+  for (const path of ['/api/gyms', '/api/me', '/api/system']) {
+    const res = await get(path);
+    assert.equal(res.status, 401, path);
+    assert.deepEqual(await res.json(), { error: 'SIGN_IN' });
+  }
+});
+
+test('the manifest, the icons, the offline page and sw.js are what a phone needs', () => {
+  const m = JSON.parse(readFileSync(new URL('manifest.webmanifest', PUBLIC_DIR), 'utf8'));
+  assert.equal(m.name, 'MettleUp HQ');
+  assert.equal(m.short_name, 'HQ');
+  assert.equal(m.start_url, '/');
+  assert.equal(m.scope, '/');
+  assert.equal(m.display, 'standalone');
+  assert.equal(m.background_color.toLowerCase(), '#1b1f26');
+  assert.equal(m.theme_color.toLowerCase(), '#f0662a');
+  const png = (src) => {
+    const b = readFileSync(new URL(src.slice(1), PUBLIC_DIR));
+    assert.equal(b.subarray(1, 4).toString(), 'PNG', src);
+    return `${b.readUInt32BE(16)}x${b.readUInt32BE(20)}`;
+  };
+  const find = (size, purpose) => m.icons.find((i) => i.sizes === size && i.purpose === purpose);
+  for (const [size, purpose] of [['192x192', 'any'], ['512x512', 'any'], ['512x512', 'maskable']]) {
+    const icon = find(size, purpose);
+    assert.ok(icon, `${size} ${purpose}`);
+    assert.equal(icon.type, 'image/png');
+    assert.equal(png(icon.src), size, icon.src);
+    assert.ok(Object.hasOwn(PUBLIC_FILES, icon.src), `${icon.src} must be public`);
+  }
+  assert.equal(png('/icons/apple-touch-icon.png'), '180x180');
+  const html = readFileSync(new URL('index.html', PUBLIC_DIR), 'utf8');
+  for (const part of ['rel="manifest" href="/manifest.webmanifest"', 'name="theme-color"', 'rel="apple-touch-icon"', 'name="apple-mobile-web-app-capable"', 'viewport-fit=cover']) {
+    assert.ok(html.includes(part), part);
+  }
+  assert.match(readFileSync(new URL('offline.html', PUBLIC_DIR), 'utf8'), /You're offline\.[\s\S]*HQ needs the internet\./);
+});
+
+test('sw.js never stores an API answer or a page: the only cache writes are the three offline files', () => {
+  const sw = readFileSync(new URL('sw.js', PUBLIC_DIR), 'utf8');
+  const code = sw.replace(/\/\/.*$/gm, '');
+  assert.deepEqual([...code.matchAll(/\.(put|add|addAll)\(/g)].map((x) => x[1]), ['addAll'], 'only the install step writes to the cache');
+  assert.match(code, /OFFLINE = '\/offline\.html'/);
+  assert.match(code, /PRECACHE = \[OFFLINE, '\/offline\.css', '\/icons\/icon-192\.png'\]/);
+  assert.match(code, /req\.mode !== 'navigate'\) return/, 'API calls and files are left to the network');
+  assert.doesNotMatch(code, /\/api\//);
 });

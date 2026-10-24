@@ -8,9 +8,11 @@
 // not even its page, is served before the sign-in check:
 //   /auth/login, /auth/callback, /auth/logout   Google sign-in (auth.js), Google mode only
 //   /api/*                                      the JSON API (api.js); POST only from HQ's own page
+//   PUBLIC_FILES below                          the install files (manifest, icons, sw.js, offline page):
+//                                               no sign-in, because a browser fetches them without cookies
 //   everything else                             the static page (apps/hq/public), signed in only
 // A Cron Trigger runs the nightly clean-up at 03:00 India time (scheduled() below).
-// Strict headers on every answer: a Content-Security-Policy that allows only this address
+// Strict headers on every answer (the install files too): a Content-Security-Policy that allows only this address
 // (connect-src 'self'), no framing, no referrer, HSTS.
 
 import { googleFinish, googleStart, isAllowed, makeSession, maskEmail, missingSettings, OAUTH_COOKIE, SESSION_COOKIE, whoIsIt } from './auth.js';
@@ -43,6 +45,34 @@ export function secure(response) {
   r.headers.set('X-Robots-Tag', 'noindex, nofollow');
   if (!r.headers.has('Cache-Control')) r.headers.set('Cache-Control', 'no-store');
   return r;
+}
+
+/**
+ * The only files served without sign-in besides /signin.css: what a phone needs to install HQ and
+ * to show "You're offline". None has any private data. Exact paths, no prefix match.
+ */
+export const PUBLIC_FILES = {
+  '/manifest.webmanifest': { type: 'application/manifest+json; charset=utf-8', cache: 'public, max-age=3600' },
+  '/icons/icon-192.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/icon-512.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/icon-maskable-512.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/apple-touch-icon.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  // The browser re-checks the service worker on every visit, so an old one never sticks.
+  '/sw.js': { type: 'text/javascript; charset=utf-8', cache: 'no-cache' },
+  '/offline.html': { type: 'text/html; charset=utf-8', cache: 'no-cache' },
+  '/offline.css': { type: 'text/css; charset=utf-8', cache: 'no-cache' },
+};
+
+/** One of PUBLIC_FILES from the static files (a redirect such as /offline.html -> /offline is followed here). */
+async function publicFile(request, env, url) {
+  const spec = PUBLIC_FILES[url.pathname];
+  let res = await env.ASSETS.fetch(request);
+  for (let hops = 0; hops < 2 && res.status >= 300 && res.status < 400 && res.headers.get('Location'); hops++) {
+    res = await env.ASSETS.fetch(new Request(new URL(res.headers.get('Location'), url), { method: request.method }));
+  }
+  if (res.status !== 200) return new Response('Not found', { status: 404 });
+  const out = new Response(res.body, { status: 200, headers: { 'Content-Type': spec.type, 'Cache-Control': spec.cache } });
+  return out;
 }
 
 const PAGE_STYLE =
@@ -82,6 +112,9 @@ export async function handle(request, env, deps = {}) {
   // The sign-in page's own stylesheet is the one file served before sign-in.
   if (url.pathname === '/signin.css') {
     return new Response(PAGE_STYLE, { headers: { 'Content-Type': 'text/css; charset=utf-8', 'Cache-Control': 'max-age=3600' } });
+  }
+  if (Object.hasOwn(PUBLIC_FILES, url.pathname) && (request.method === 'GET' || request.method === 'HEAD')) {
+    return publicFile(request, env, url);
   }
   const google = env.AUTH_MODE !== 'access';
 
