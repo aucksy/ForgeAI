@@ -5,6 +5,23 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-105. MettleUp: rebrand everywhere, new logo options, Play Store internal test, release pipeline, tester groups — 24 Oct 2026
+**Owner said:** "I have bought 2 domains: mettleup.fit (this is what I will market) and mettleup.in so it can redirect to .fit
+(I have not bought .app - dont need it) may be later... Use my browser to migrate - and lets change branding everywhere
+design some new logo options. After the complete rebranding and all tests for current ready version, lets first list the app
+on playstore for testing. use my browser to do all this yourself.. and setup a an automated pipeline to push new versions on
+playstore - remember this is on simpleapps browser window. also create those google groups for mettleup testing so I can just
+add email addresses to it. please disturb only when I am needed really - ensure all logos and images on playstore look great
+and professional - see if you can do that thing where one image is split into 2 so in google playstore listing it looks cool
+to see how the content is flowing between 2 images. impress me dude and impress everyone else..."
+**Decisions Claude takes (he said: disturb only when really needed):** #44 DECIDED MettleUp; marketed at mettleup.fit,
+mettleup.in redirects to it. #57: Play ID com.mettleup.app (the pick he saw; permanent). Order: finish the layout and offline
+payments (stopped builders) -> logo options (his pick: really needed) -> rebrand everywhere (apps, admin, HQ, landing, docs,
+store texts) -> domains (Cloudflare) -> full tests -> Play Console app + internal test + listing (icon, feature graphic,
+panorama screenshots that flow across 2 images) -> GitHub Actions upload to Play (needs his service-account key: his task)
+-> Google Group mettleup-testers. Play Console + Groups in the simpleapps108 Chrome profile. Declarations batched into one
+ask. Status: started.
+
 ## R-104. Offline admin app: does it need installing? And stop asking how often the internet drops — 24 Oct 2026
 **Owner said:** "I want to know that the offline will only work if they install the website as app. If they don't, then it
 will not work. Is that correct? Second, most gyms may not be able to answer how often the internet is down. And even if they
