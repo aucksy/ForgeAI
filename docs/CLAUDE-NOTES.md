@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-115. No ForgeAI anywhere he looks — 24 Oct 2026 (~7:45 pm)
+**Owner said:** "Why do I have HQ still on forgeAI - we are removing forgeAI from everywhere mate... We are moving to
+mettleup." (I had told him to install HQ from forgeai-hq.aakashpahuja.in because hq.mettleup.fit's Google sign-in fails:
+redirect_uri_mismatch.) Saved as hard rule D:\Brain\How I Like Things\new-brand-everywhere-never-the-old-name.md.
+**Doing:** the HQ Google client (project gmailapi-491903, client "ForgeAI HQ" 240978491498-at24…) needs redirect URI
+https://hq.mettleup.fit/auth/callback and the name "MettleUp HQ"; the edit was blocked pending his explicit yes (OAuth
+setting). HQ download file renamed mettleup-gyms-<date>.csv (deployed). Old forgeai addresses stay working quietly only.
+
 ## R-114. HQ panel on his phone: installable, phone-first — 24 Oct 2026 (~7:10 pm)
 **Owner said:** "I want to be able to use the Headquarters panel on my phone, so give the option to install the app and
 optimize it for phone."
