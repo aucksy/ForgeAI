@@ -185,6 +185,93 @@ class PhoneAssetTests(unittest.TestCase):
         self.assertIsNone(rc.phone_apk_asset([]))
         self.assertIsNone(rc.phone_apk_asset(None))
 
+    def test_mettleup_release_phone_apk(self):
+        # 0.56.0 on: the phone APK is mettleup-<tag>.apk; the watch APK keeps its forgeai name.
+        assets = [
+            {"name": "forgeai-v0.57.0-wear.apk"},
+            {"name": "mettleup-v0.57.0.aab"},
+            {"name": "mettleup-v0.57.0.apk"},
+        ]
+        self.assertEqual(rc.phone_apk_asset(assets)["name"], "mettleup-v0.57.0.apk")
+        self.assertEqual(rc.phone_apk_name("v0.57.0"), "mettleup-v0.57.0.apk")
+
+
+class LatestMettleUpReleaseTests(unittest.TestCase):
+    """qa-conditions.yml's upgrade test: the old side must be a MettleUp release (same package)."""
+
+    def rel(self, tag, *names, **kw):
+        return {"tag_name": tag, "assets": [{"name": n} for n in names], **kw}
+
+    def test_forgeai_releases_never_count(self):
+        rels = [self.rel("v0.55.0", "forgeai-v0.55.0.apk", "forgeai-v0.55.0-wear.apk"),
+                self.rel("v0.45.0", "forgeai-v0.45.0.apk")]
+        self.assertIsNone(rc.latest_mettleup_release(rels))
+        self.assertIsNone(rc.latest_mettleup_release([]))
+        self.assertIsNone(rc.latest_mettleup_release(None))
+
+    def test_newest_mettleup_release_by_version(self):
+        rels = [self.rel("v0.56.0", "mettleup-v0.56.0.apk", "forgeai-v0.56.0-wear.apk"),
+                self.rel("v0.100.0", "mettleup-v0.100.0.apk"),
+                self.rel("v0.57.0", "mettleup-v0.57.0.apk"),
+                self.rel("v0.55.0", "forgeai-v0.55.0.apk")]
+        self.assertEqual(rc.latest_mettleup_release(rels)["tag_name"], "v0.100.0")
+
+    def test_drafts_prereleases_and_odd_tags_skipped(self):
+        rels = [self.rel("v0.58.0", "mettleup-v0.58.0.apk", draft=True),
+                self.rel("v0.59.0", "mettleup-v0.59.0.apk", prerelease=True),
+                self.rel("test-lab-1", "mettleup-test-lab-1.apk"),
+                self.rel("v0.57.0", "mettleup-v0.57.0.aab"),
+                self.rel("v0.56.0", "mettleup-v0.56.0.apk")]
+        self.assertEqual(rc.latest_mettleup_release(rels)["tag_name"], "v0.56.0")
+
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+
+
+def _read(*parts):
+    with open(os.path.join(ROOT, *parts), encoding="utf-8") as f:
+        return f.read()
+
+
+class ReleaseAssetNameTests(unittest.TestCase):
+    """MettleUp 0.56.0 (com.mettleup.app): installed ForgeAI apps (com.forgeai.app) offer the latest
+    release's "forgeai-<tag>.apk" as an update. A MettleUp phone APK under that name would install a
+    second, empty app, so the release must publish it as mettleup-<tag>.apk, and the new app must
+    look for that exact name."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.wf = _read(".github", "workflows", "release-apk.yml")
+        cls.app = _read("apps", "mobile", "src", "lib", "appUpdate.ts")
+
+    def test_workflow_stages_the_phone_apk_as_mettleup(self):
+        self.assertIn('cp "$APK" "mettleup-${GITHUB_REF_NAME}.apk"', self.wf)
+        self.assertIn('cp "$AAB" "mettleup-${GITHUB_REF_NAME}.aab"', self.wf)
+        self.assertIn('release_checks.py "mettleup-${GITHUB_REF_NAME}.apk"', self.wf)
+
+    def test_no_phone_apk_under_the_old_name(self):
+        # The old apps match exactly "forgeai-<tag>.apk": nothing may be written or published as that.
+        self.assertNotIn('forgeai-${GITHUB_REF_NAME}.apk', self.wf)
+        self.assertNotIn('forgeai-${{ github.ref_name }}.apk', self.wf)
+        publish = self.wf[self.wf.index("Publish GitHub Release"):]
+        files = [ln.strip() for ln in publish.split("files: |", 1)[1].splitlines()[1:] if ln.strip()]
+        files = files[:next((i for i, f in enumerate(files) if ":" in f), len(files))]
+        self.assertIn("mettleup-*.apk", files)
+        for f in files:
+            # Only the watch APK may keep the forgeai prefix (no app looks it up by name).
+            if f.startswith(rc.OLD_PHONE_APK_PREFIX):
+                self.assertTrue(f.endswith("-wear.apk"), f)
+
+    def test_release_title_says_mettleup(self):
+        self.assertIn("name: MettleUp ${{ github.ref_name }}", self.wf)
+        self.assertNotIn("name: ForgeAI ${{ github.ref_name }}", self.wf)
+
+    def test_app_looks_for_the_same_name(self):
+        self.assertIn("return `mettleup-${tag}.apk`;", self.app)
+        self.assertIn("a.name === phoneApkName(tag)", self.app)
+        self.assertEqual(rc.PHONE_APK_PREFIX, "mettleup-")
+        self.assertNotIn("`forgeai-${tag}.apk`", self.app)
+
 
 # ------------------------------------------------------------ update_proof parsers
 

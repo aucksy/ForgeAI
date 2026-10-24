@@ -2,7 +2,7 @@ name: Phone conditions (offline, flaky, killed, Doze, upgrade)
 
 # UAT work package 7 (17 Oct 2026): real-life phone conditions on the member app, each checked on the
 # screen AND in what the phone or the server holds (apps/mobile/qa/run-conditions.sh):
-#   C1 upgrade      v0.45.0 + real data + a workout open mid-rest -> `adb install -r` of this build:
+#   C1 upgrade      the previous MettleUp release + real data + a workout open mid-rest -> `adb install -r` of this build:
 #                   data, open workout, Ring through DND, the rest alert, channel names
 #   C2 no internet  shop order, QR check-in, Leave, the workout loop: plain words, then ONE order /
 #                   ONE visit after reconnecting; a Leave told to the gym on the next start
@@ -12,13 +12,19 @@ name: Phone conditions (offline, flaky, killed, Doze, upgrade)
 #   C5 Doze         a 1:30 rest asleep in deep Doze, standby bucket rare: "Rest is over" on time
 #   C6 exact alarm  SCHEDULE_EXACT_ALARM denied (as after a restore); background-restricted
 #
-# Why v0.45.0 is REBUILT here (first run 38983728841): the released APK carries ARM code only, and
+# The old side (MettleUp 0.56.0, 24 Oct 2026): the newest published release that carries a MettleUp
+# phone APK (mettleup-<tag>.apk, com.mettleup.app; scripts/ci/release_checks.py --latest-mettleup-tag).
+# Up to 0.55 it was v0.45.0, but that is ForgeAI (com.forgeai.app): another app on the phone, so this
+# build would install NEXT to it and the "upgrade" would prove nothing. With no MettleUp release yet,
+# the old side is not built and condition 1 is skipped with a log line (the other conditions run).
+#
+# Why the old side is REBUILT here (first run 38983728841): the released APK carries ARM code only, and
 # on the cloud emulator (x86_64, ARM translated) React Native's library loader looks for x86_64
 # libraries inside it and stops at start-up ("couldn't find DSO to load: libreactnative.so"). So the
-# old side is built from the v0.45.0 tag for x86_64 with v0.45.0's versionCode (45000), and BOTH
+# old side is built from the previous release's tag for x86_64 with that tag's versionCode, and BOTH
 # sides are signed exactly as release-apk.yml signs (debug key v1/v2 + release key v3 with the
-# rotation lineage). The phone job checks that the rebuilt v0.45.0 carries the same signers as the
-# published v0.45.0 APK. The release-signed APKs live only in $RUNNER_TEMP of the phone job.
+# rotation lineage). The phone job checks that the rebuilt old side carries the same signers as the
+# published APK of that tag. The release-signed APKs live only in $RUNNER_TEMP of the phone job.
 #
 #  - The owner's phone profile (360 dp, font 1.3, Asia/Kolkata), driven by Maestro (qa/xc-*.yaml).
 #  - The server: the run makes its OWN fresh online gym (apps/mobile/qa/xc_server.py on WP6's
@@ -41,20 +47,47 @@ permissions:
   contents: read
 
 jobs:
-  # Two emulator builds side by side: this commit (versionCode above every release up to its version)
-  # and the v0.45.0 tag (its own versionCode, 45000). Gradle's debug signing only; handed to the
-  # phone job as a short-lived artifact.
+  # The old side of condition 1: the newest MettleUp release (empty when there is none yet).
+  previous:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.find.outputs.tag }}
+      sides: ${{ steps.find.outputs.sides }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find the previous MettleUp release
+        id: find
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$(python3 scripts/ci/release_checks.py --latest-mettleup-tag)"
+          if [ -n "$tag" ]; then
+            echo "Condition 1 old side: $tag (mettleup-$tag.apk)"
+            echo 'sides=["new","old"]' >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No published MettleUp release yet (only ForgeAI ones, another app on the phone): condition 1 (upgrade) is skipped."
+            echo 'sides=["new"]' >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  # Emulator builds side by side: this commit (versionCode above every release up to its version)
+  # and, when there is one, the previous MettleUp release's tag (its own versionCode). Gradle's debug
+  # signing only; handed to the phone job as a short-lived artifact.
   build:
+    needs: previous
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       matrix:
-        side: [new, old]
+        side: ${{ fromJSON(needs.previous.outputs.sides) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.side == 'old' && 'v0.45.0' || github.sha }}
+          ref: ${{ matrix.side == 'old' && needs.previous.outputs.tag || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -96,7 +129,7 @@ jobs:
           retention-days: 1
 
   conditions:
-    needs: build
+    needs: [previous, build]
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
@@ -110,13 +143,16 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/apk
 
-      - name: Download the published v0.45.0 APK (its signers, to compare)
+      - name: Download the previous MettleUp release's APK (its signers, to compare)
+        if: needs.previous.outputs.tag != ''
         env:
           GH_TOKEN: ${{ github.token }}
+          PREV: ${{ needs.previous.outputs.tag }}
         run: |
           set -euo pipefail
-          gh release download v0.45.0 -R "$GITHUB_REPOSITORY" -p "forgeai-v0.45.0.apk" -D "$RUNNER_TEMP" --clobber
-          ls -la "$RUNNER_TEMP"/forgeai-v0.45.0.apk "$RUNNER_TEMP"/apk
+          gh release download "$PREV" -R "$GITHUB_REPOSITORY" -p "mettleup-$PREV.apk" -D "$RUNNER_TEMP" --clobber
+          cp "$RUNNER_TEMP/mettleup-$PREV.apk" "$RUNNER_TEMP/published-old.apk"
+          ls -la "$RUNNER_TEMP"/published-old.apk "$RUNNER_TEMP"/apk
 
       # The same rotation signing as release-apk.yml ("Sign with key rotation"): v1/v2 = the public
       # debug key, v3 = the release key + the lineage. The keystore exists only inside this step.
@@ -126,13 +162,14 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ vars.ANDROID_KEY_ALIAS || secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          PREV: ${{ needs.previous.outputs.tag }}
         run: |
           set -euo pipefail
           umask 077
           A="$RUNNER_TEMP/apk"
           if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ] || [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; then
             echo "::warning::No release key here: both sides stay on the debug key (condition 1 then proves less)."
-            cp "$A/qa-old.apk" "$A/qa-old-rotated.apk"
+            if [ -f "$A/qa-old.apk" ]; then cp "$A/qa-old.apk" "$A/qa-old-rotated.apk"; fi
             exit 0
           fi
           if [ -z "${ANDROID_KEY_PASSWORD:-}" ]; then ANDROID_KEY_PASSWORD="$ANDROID_KEYSTORE_PASSWORD"; fi
@@ -156,21 +193,25 @@ jobs:
           source scripts/ci/sign_rotated.sh
           echo "signing this commit's build"
           sign_rotated "$A/qa-new.apk" "$A/qa-new-rotated.apk" | grep -E '^Verifies|Verified using|Number of signers' || true
-          echo "signing the v0.45.0 build"
+          if [ ! -f "$A/qa-old.apk" ]; then
+            echo "No previous MettleUp release: no old side to sign (condition 1 is skipped)."
+            exit 0
+          fi
+          echo "signing the previous release's build ($PREV)"
           sign_rotated "$A/qa-old.apk" "$A/qa-old-rotated.apk" | grep -E '^Verifies|Verified using|Number of signers' || true
           ls -la "$A"
-          # The rebuilt v0.45.0 must carry exactly the published v0.45.0's signers (v1/v2 and v3).
+          # The rebuilt old side must carry exactly the published APK's signers (v1/v2 and v3).
           # Every "certificate SHA-256 digest" line apksigner prints (its signer labels differ between
           # schemes and versions; run 38989502963 matched none with a narrower pattern).
           certs() { { "$APKSIGNER" verify -v --print-certs "$1" 2>&1 || true; } | grep -oE 'certificate SHA-256 digest: [0-9a-f]+' | sort -u || true; }
-          certs "$RUNNER_TEMP/forgeai-v0.45.0.apk" > "$WORK/published.txt"
+          certs "$RUNNER_TEMP/published-old.apk" > "$WORK/published.txt"
           certs "$A/qa-old-rotated.apk" > "$WORK/rebuilt.txt"
-          echo "published v0.45.0 signers:"; cat "$WORK/published.txt"
-          echo "rebuilt v0.45.0 signers:"; cat "$WORK/rebuilt.txt"
+          echo "published $PREV signers:"; cat "$WORK/published.txt"
+          echo "rebuilt $PREV signers:"; cat "$WORK/rebuilt.txt"
           if [ ! -s "$WORK/published.txt" ] || ! diff -q "$WORK/published.txt" "$WORK/rebuilt.txt" >/dev/null; then
-            echo "::error::The rebuilt v0.45.0 is not signed like the published one."; exit 1
+            echo "::error::The rebuilt $PREV is not signed like the published one."; exit 1
           fi
-          echo "Same signers as the published v0.45.0."
+          echo "Same signers as the published $PREV."
           ls -la "$A"
 
       - name: Enable KVM
@@ -194,7 +235,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: XC_ONLY="${{ inputs.only }}" XC_APK_DEBUG="$RUNNER_TEMP/apk/qa-new.apk" XC_APK_NEW="$([ -f "$RUNNER_TEMP/apk/qa-new-rotated.apk" ] && echo "$RUNNER_TEMP/apk/qa-new-rotated.apk")" XC_APK_OLD="$RUNNER_TEMP/apk/qa-old-rotated.apk" bash apps/mobile/qa/run-conditions.sh
+          script: XC_ONLY="${{ inputs.only }}" XC_APK_DEBUG="$RUNNER_TEMP/apk/qa-new.apk" XC_APK_NEW="$([ -f "$RUNNER_TEMP/apk/qa-new-rotated.apk" ] && echo "$RUNNER_TEMP/apk/qa-new-rotated.apk")" XC_APK_OLD="$([ -f "$RUNNER_TEMP/apk/qa-old-rotated.apk" ] && echo "$RUNNER_TEMP/apk/qa-old-rotated.apk")" XC_OLD_LABEL="${{ needs.previous.outputs.tag }}" bash apps/mobile/qa/run-conditions.sh
 
       - name: Upload the conditions evidence
         if: always()

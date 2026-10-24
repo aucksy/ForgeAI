@@ -107,7 +107,7 @@ emulator evidence (screenshots, dumpsys, logcat) as `update-proof`.
 ## Rotating to another key later
 
 1. Get the current lineage from any released APK:
-   `apksigner lineage --in forgeai-vX.apk --out lineage.bin`. The lineage is public data:
+   `apksigner lineage --in mettleup-vX.apk --out lineage.bin` (`forgeai-vX.apk` up to v0.55). The lineage is public data:
    certificates and signatures, no private keys.
 2. Extend it: `apksigner rotate --in lineage.bin --out lineage2.bin --old-signer --ks <current release key> --new-signer --ks <next key>`.
 3. Sign with all keys in order (debug key for v1/v2 while Android 7 and 8 matter, then each newer

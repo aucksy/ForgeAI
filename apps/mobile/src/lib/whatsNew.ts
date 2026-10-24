@@ -112,7 +112,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
         text: "Joined a gym that has its own look? The app changes to your gym's name and colours.",
         go: { label: 'Open the Gym tab', href: '/shop' },
       },
-      { text: 'After you join, a "Gym" button appears at the bottom. It becomes "Shop" when your gym adds products.' },
+      { text: 'After you join, a "Gym" button appears at the bottom.' },
       { text: 'To leave your gym, open Settings, then "Your gym".', go: { label: 'Open Your gym', href: '/settings/gym' } },
     ],
   },

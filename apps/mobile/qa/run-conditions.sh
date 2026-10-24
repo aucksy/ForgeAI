@@ -6,7 +6,7 @@
 # (apps/mobile/qa/xc_server.py, on top of WP6's xj_server.py) and what the phone holds read over adb
 # (apps/mobile/qa/xc_phone.py: the database with root, the notification list, the channels).
 #
-#   C1 upgrade      v0.45.0 (rebuilt from its tag for the emulator, signed as released), real data (2 workouts, a followed plan, Body
+#   C1 upgrade      the previous MettleUp release (rebuilt from its tag for the emulator, signed as released), real data (2 workouts, a followed plan, Body
 #                   fat, lb, Ring through DND on) and a workout left OPEN mid-rest -> `adb install -r`
 #                   of this build -> the data, the open workout, the setting, the rest alert (fires or
 #                   is cleanly gone) and the channel names ("Rest is over")
@@ -33,8 +33,10 @@
 #
 # Environment: XC_APK_DEBUG (this commit, the build's own debug key; always), XC_APK_NEW (this commit
 # re-signed with the release key rotation, as release-apk.yml signs; may be empty), XC_APK_OLD
-# (v0.45.0 rebuilt from its tag for x86_64 and signed the same way: the published APK is ARM-only and
-# cannot start on this emulator, see qa-conditions.yml), XC_ONLY (a comma list of condition numbers,
+# (the previous MettleUp release rebuilt from its tag for x86_64 and signed the same way: the published
+# APK is ARM-only and cannot start on this emulator, see qa-conditions.yml; EMPTY when no MettleUp
+# release exists yet, and then C1 is skipped: a ForgeAI release is another app, nothing to upgrade),
+# XC_OLD_LABEL (that release's tag, for the log), XC_ONLY (a comma list of condition numbers,
 # empty = all).
 set -u
 QA_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -49,6 +51,8 @@ export PATH="$PATH:$HOME/.maestro/bin"
 APK_DEBUG="${XC_APK_DEBUG:-}"
 APK_NEW="${XC_APK_NEW:-}"
 APK_OLD="${XC_APK_OLD:-}"
+OLD_LABEL="${XC_OLD_LABEL:-the previous release}"
+C1_SKIPPED=""
 ONLY="$(echo "${XC_ONLY:-}" | tr ',;' '  ' | xargs)"
 status=0
 T0=$(date +%s)
@@ -74,7 +78,7 @@ now_ms() { adb shell date +%s%3N | tr -d '\r'; }
 # ---------------------------------------------------------------- parts and their steps
 PARTS="C1 C2s C2a C2b C2c C2d C3a C3b C3c C4a C4b C4c C5 C6a C6b"
 declare -A PNAME=(
-  [C1]="upgrade v0.45.0 -> this build over real data" [C2s]="no internet: join the gym (setup)"
+  [C1]="upgrade the previous MettleUp release -> this build over real data" [C2s]="no internet: join the gym (setup)"
   [C2a]="no internet: shop order" [C2b]="no internet: QR check-in" [C2c]="no internet: Leave"
   [C2d]="no internet: the workout loop" [C3a]="flaky network: order on GPRS/EDGE"
   [C3b]="flaky network: airplane mode in the middle of the order request"
@@ -316,7 +320,7 @@ install_fresh() {
 
 # ================================================================ C1 upgrade over real data
 c1_upgrade() {
-  # The new side, in order: this build with its own debug key (expected to be refused: v0.45.0 is
+  # The new side, in order: this build with its own debug key (expected to be refused: the old side is
   # signed with key rotation, so Android 9+ sees the release key), then this build signed like a
   # release (rotation). The first that installs in place wins.
   local label apk
@@ -330,7 +334,7 @@ c1_upgrade() {
       continue
     fi
     if adb install -r "$apk" > "$C_OUT/c1-install-$label.txt" 2>&1 && grep -q Success "$C_OUT/c1-install-$label.txt"; then
-      echo "INSTALL $label: Success (updated in place over v0.45.0)"
+      echo "INSTALL $label: Success (updated in place over $OLD_LABEL)"
       echo "$label" > "$C_OUT/c1-upgrade-side.txt"
       return 0
     fi
@@ -346,13 +350,16 @@ c1_verdict_rest() {  # the rest left running across the update: "Rest is over" c
 if runs 1; then
   log "condition 1: upgrade over real data"
   if [ -z "$APK_OLD" ]; then
-    blocked C1 "no v0.45.0 APK in this run"
+    # MettleUp 0.56.0: a ForgeAI release (com.forgeai.app) is another app on the phone, so there is
+    # no in-place upgrade to test until a MettleUp release exists. Not a failure (advisory run).
+    C1_SKIPPED="no published MettleUp release yet (ForgeAI releases are another app), so there is no upgrade to test"
+    log "C1 SKIPPED: $C1_SKIPPED"
   elif ! adb install "$APK_OLD" > "$C_OUT/c1-install-old.txt" 2>&1; then
-    blocked C1 "v0.45.0 did not install: $(tail -1 "$C_OUT/c1-install-old.txt")"
+    blocked C1 "$OLD_LABEL did not install: $(tail -1 "$C_OUT/c1-install-old.txt")"
   else
-    log "INSTALL v0.45.0: $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -m1 -E 'versionName=') $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -m1 -oE 'primaryCpuAbi=[^ ]*')"
+    log "INSTALL $OLD_LABEL: $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -m1 -E 'versionName=') $(adb shell dumpsys package "$PKG" | tr -d '\r' | grep -m1 -oE 'primaryCpuAbi=[^ ]*')"
     sleep 20
-    step C1 1 member "v0.45.0: welcome, 2 workouts, plan, Body fat, lb, Ring through DND, a workout open mid-rest 3:00" -- member xc-1-old-seed
+    step C1 1 member "$OLD_LABEL: welcome, 2 workouts, plan, Body fat, lb, Ring through DND, a workout open mid-rest 3:00" -- member xc-1-old-seed
     if ok_so_far C1; then
       C1_TICK=$(now_ms)
       dump c1-during.txt
@@ -705,6 +712,7 @@ SECS=$(( $(date +%s) - T0 ))
     echo "| $p | ${PNAME[$p]} | $r |"
   done
   echo
+  [ -z "$C1_SKIPPED" ] || echo "C1 (upgrade) SKIPPED: $C1_SKIPPED."
   echo "Upgrade side (C1): $(cat "$C_OUT/c1-upgrade-side.txt" 2>/dev/null || echo 'not run / none'). Build for C2-C6: ${NEW_LABEL:-?} key."
   echo "Run time on the phone: $(( SECS / 60 )) min $(( SECS % 60 )) s. Gym: $GYM (${CODE:-none}), made fresh for this run; owner session signed out."
 } > "$OUT/conditions-summary.md"

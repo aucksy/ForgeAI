@@ -100,7 +100,9 @@ every number on a screenshot read against its label. Lesson: D:/Brain/Lessons/fo
   publishes a Release. A plain push to `main` does **not** build.
 - **Ship gate, never reversed:** tests + typecheck green → adversarial review by a review subagent
   → apply fixes → update `PROGRESS.md` → bump `apps/mobile/app.json` version → commit → tag → push
-  → **paste the direct `.apk` URL in chat** (`releases/download/<tag>/forgeai-<tag>.apk`).
+  → **paste the direct `.apk` URL in chat** (`releases/download/<tag>/mettleup-<tag>.apk`; 0.56.0 on.
+  Never publish a phone APK named `forgeai-<tag>.apk` again: old ForgeAI phones would offer it as an
+  "update" and install a second, empty app).
 - Push `main` + bump + tag after each phase; hand off a fresh-chat kickoff for the next phase.
 - No `expo prebuild` regen unless a new native module truly needs autolinking (committed `android/`
   uses dynamic autolinking).

@@ -37,11 +37,21 @@ export function isNewer(latest: string | null | undefined, current: string | nul
 
 type Release = { tag_name?: unknown; assets?: { name?: unknown; browser_download_url?: unknown }[] };
 
-/** The phone APK of a GitHub release ("forgeai-v0.49.0.apk", never the watch APK). PURE. */
+/**
+ * The phone APK's file name in a GitHub release: "mettleup-v0.56.0.apk" (0.56.0 on; the release workflow
+ * publishes this exact name, scripts/ci/test_release_checks.py checks the two agree). Older ForgeAI apps
+ * (com.forgeai.app) look for "forgeai-<tag>.apk" and must never find a MettleUp release: it is another
+ * package, so "updating" would install a second, empty app. PURE.
+ */
+export function phoneApkName(tag: string): string {
+  return `mettleup-${tag}.apk`;
+}
+
+/** The phone APK of a GitHub release ("mettleup-v0.56.0.apk", never the watch APK). PURE. */
 export function releaseUpdate(release: Release): AppUpdate | null {
   const tag = typeof release.tag_name === 'string' ? release.tag_name : '';
   if (!versionParts(tag)) return null;
-  const apk = (release.assets ?? []).find((a) => a.name === `forgeai-${tag}.apk`);
+  const apk = (release.assets ?? []).find((a) => a.name === phoneApkName(tag));
   const url = typeof apk?.browser_download_url === 'string' ? apk.browser_download_url : '';
   if (!url.startsWith('https://github.com/')) return null;
   return { version: tag.replace(/^v/, ''), url };

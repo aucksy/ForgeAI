@@ -99,6 +99,9 @@ export const WIPE_TABLES_IN_ORDER = [
  *   exercise_catalog_version — the library stamp (onboarding writes the library and stamps it).
  *   cloud_client_version — a monotonic push counter, not personal data: resetting it would make
  *     a later push look STALE to the server.
+ *   first_run_at — when MettleUp first ran here (not personal data). "Send past workouts" keeps
+ *     older workouts (the old ForgeAI app's) out by default; a reset would move that line to the
+ *     erase and keep MettleUp's own earlier workouts out too.
  */
 export const KEPT_META_KEYS = [
   'schema_version',
@@ -106,6 +109,7 @@ export const KEPT_META_KEYS = [
   'member_schema_version',
   'exercise_catalog_version',
   'cloud_client_version',
+  'first_run_at',
 ] as const;
 
 /** The demo's own `meta` keys (kept exported for older callers; an erase now clears all but KEPT). */

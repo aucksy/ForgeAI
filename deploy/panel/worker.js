@@ -160,6 +160,6 @@ async function latestApk(ctx) {
       tag = null;
     }
   }
-  const to = tag ? `${REPO}/releases/download/${tag}/forgeai-${tag}.apk` : `${REPO}/releases/latest`;
+  const to = tag ? `${REPO}/releases/download/${tag}/mettleup-${tag}.apk` : `${REPO}/releases/latest`;
   return new Response(null, { status: 302, headers: { Location: to, 'Cache-Control': 'no-store' } });
 }

@@ -313,12 +313,44 @@ def check_signing(apk, min_sdk):
         report("signing", level, text)
 
 
+# MettleUp (0.56.0 on, Play ID com.mettleup.app): the phone APK is published as mettleup-<tag>.apk.
+# Installed ForgeAI apps (com.forgeai.app, 0.55.x and older) look for exactly "forgeai-<tag>.apk" in
+# the latest release and would offer it as an update, but MettleUp is another package: it would install
+# a second, empty app. So no release may carry a phone APK under the old name again. The app's own
+# lookup (apps/mobile/src/lib/appUpdate.ts phoneApkName) uses the same name; test_release_checks.py
+# checks the workflow, this and the app agree.
+PHONE_APK_PREFIX = "mettleup-"
+OLD_PHONE_APK_PREFIX = "forgeai-"
+
+
+def phone_apk_name(tag):
+    """'v0.56.0' -> 'mettleup-v0.56.0.apk', the phone APK's asset name in a release."""
+    return f"{PHONE_APK_PREFIX}{tag}.apk"
+
+
 def phone_apk_asset(assets):
-    """The PHONE APK among a release's assets. From v0.46 a release also carries the watch APK
-    (forgeai-<tag>-wear.apk); it must never be taken for the phone's (version, size, update proof)."""
+    """The PHONE APK among a release's assets: mettleup-<tag>.apk from 0.56.0, forgeai-<tag>.apk
+    before. From v0.46 a release also carries the watch APK (forgeai-<tag>-wear.apk); it must never
+    be taken for the phone's (version, size, update proof)."""
     apks = [a for a in assets or [] if a.get("name", "").endswith(".apk")]
     phone = [a for a in apks if not a["name"].endswith("-wear.apk")]
     return phone[0] if phone else None
+
+
+def latest_mettleup_release(releases):
+    """The highest-semver published release that carries a MettleUp phone APK (mettleup-<tag>.apk),
+    or None. ForgeAI-era releases (com.forgeai.app) are another app on the phone: a build installed
+    "over" one installs next to it, so they can never be the old side of an upgrade test. PURE."""
+    best = None
+    for r in releases or []:
+        tag = r.get("tag_name") or ""
+        if r.get("draft") or r.get("prerelease") or not semver(tag):
+            continue
+        if not any(a.get("name") == phone_apk_name(tag) for a in r.get("assets") or []):
+            continue
+        if best is None or semver(tag) > semver(best["tag_name"]):
+            best = r
+    return best
 
 
 def previous_release(current_tag):
@@ -473,7 +505,20 @@ def main():
     ap.add_argument("--warn-only", action="store_true")
     ap.add_argument("--out-dir")
     ap.add_argument("--version-code", metavar="VERSION", help="print the versionCode for x.y.z and exit")
+    ap.add_argument("--latest-mettleup-tag", action="store_true",
+                    help="print the newest published release with a mettleup-<tag>.apk (empty when none) and exit")
     a = ap.parse_args()
+
+    if a.latest_mettleup_tag:
+        rels = []
+        for page in (1, 2, 3):
+            got = api(f"/repos/{REPO}/releases?per_page=100&page={page}")
+            rels += got
+            if len(got) < 100:
+                break
+        best = latest_mettleup_release(rels)
+        print(best["tag_name"] if best else "")
+        return 0
 
     if a.version_code:
         try:

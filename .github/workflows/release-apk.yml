@@ -6,6 +6,12 @@ name: Build & Release (APK + AAB)
 # signs it with exactly the phone APK's signer and lineage (scripts/ci/sign_rotated.sh; the Wear
 # Data Layer pairs only same-key apps), checks that (scripts/ci/same_signer.py) and attaches it as
 # forgeai-<tag>-wear.apk. The release checks and the update proof look only at the phone APK.
+# MettleUp (0.56.0 on): the phone APK and AAB are published as mettleup-<tag>.apk / .aab. Installed
+# ForgeAI apps (com.forgeai.app, 0.55.x and older) look for forgeai-<tag>.apk in the latest release;
+# they must NOT find it, or they would offer MettleUp (another package: a second, empty app) as an
+# "update". The new app looks for mettleup-<tag>.apk (apps/mobile/src/lib/appUpdate.ts); the self-test
+# scripts/ci/test_release_checks.py keeps the two names in step. The watch APK keeps its old name
+# (no app looks it up by name).
 # U-W4 (17 Oct 2026): the watch's JVM tests run first, and a failing one stops the release.
 # Manual runs (workflow_dispatch) do everything EXCEPT publish: a dry run on main.
 #
@@ -176,10 +182,10 @@ jobs:
           echo "Found AAB: $AAB"
           echo "Found watch APK: $WEAR"
           if [ -z "$WEAR" ]; then echo "::error::No watch APK was built (apps/mobile/android/wear)."; exit 1; fi
-          cp "$APK" "forgeai-${GITHUB_REF_NAME}.apk"
-          cp "$AAB" "forgeai-${GITHUB_REF_NAME}.aab"
+          cp "$APK" "mettleup-${GITHUB_REF_NAME}.apk"
+          cp "$AAB" "mettleup-${GITHUB_REF_NAME}.aab"
           cp "$WEAR" "forgeai-${GITHUB_REF_NAME}-wear.apk"
-          ls -la forgeai-*
+          ls -la mettleup-* forgeai-*
 
       # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
       - name: No release key (debug-signed build)
@@ -222,8 +228,8 @@ jobs:
           echo "build-tools: $BT"
           "$APKSIGNER" version
 
-          APK="forgeai-${GITHUB_REF_NAME}.apk"
-          AAB="forgeai-${GITHUB_REF_NAME}.aab"
+          APK="mettleup-${GITHUB_REF_NAME}.apk"
+          AAB="mettleup-${GITHUB_REF_NAME}.aab"
           LINEAGE="$RUNNER_TEMP/forgeai-lineage.bin"
           DEBUG_KS="apps/mobile/android/app/debug.keystore"
           # The OLD key: the public React Native debug key every installed copy is signed with.
@@ -291,20 +297,21 @@ jobs:
               echo "::error::The AAB is signed by $AAB_CERTS, which is not in ALLOWED_CERT_SHA256."; exit 1
             fi
           fi
-          ls -la forgeai-*
+          ls -la mettleup-* forgeai-*
 
       # The watch app hears from the phone only when both carry the same certificate (with or
       # without the release key). Fails the release before anything is published.
       - name: Watch APK signed by the same key as the phone APK
-        run: python3 scripts/ci/same_signer.py "forgeai-${GITHUB_REF_NAME}.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
+        run: python3 scripts/ci/same_signer.py "mettleup-${GITHUB_REF_NAME}.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: forgeai-build
           path: |
-            forgeai-*.apk
-            forgeai-*.aab
+            mettleup-*.apk
+            mettleup-*.aab
+            forgeai-*-wear.apk
 
       # Checks on the built APK itself. A FAIL stops here, before the Release is published
       # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public
@@ -313,7 +320,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ALLOWED_CERT_SHA256: ${{ vars.ALLOWED_CERT_SHA256 || secrets.ALLOWED_CERT_SHA256 }}
-        run: python3 scripts/ci/release_checks.py "forgeai-${GITHUB_REF_NAME}.apk"
+        run: python3 scripts/ci/release_checks.py "mettleup-${GITHUB_REF_NAME}.apk"
 
   # Phones with the previous release must take this build as an in-place update. Runs on tags AND
   # on manual runs, so a dry run on main proves it without publishing anything.
@@ -344,10 +351,10 @@ jobs:
         if: steps.prev.outputs.found == 'true'
         run: |
           set -euo pipefail
-          for f in "$RUNNER_TEMP/previous.apk" "dist/forgeai-${GITHUB_REF_NAME}.apk"; do
+          for f in "$RUNNER_TEMP/previous.apk" "dist/mettleup-${GITHUB_REF_NAME}.apk"; do
             echo "$f: $(unzip -l "$f" | awk '{print $4}' | sed -n 's#^lib/\([^/]*\)/.*#\1#p' | sort -u | tr '\n' ' ')"
           done
-          python3 scripts/ci/update_proof.py static --old "$RUNNER_TEMP/previous.apk" --new "dist/forgeai-${GITHUB_REF_NAME}.apk"
+          python3 scripts/ci/update_proof.py static --old "$RUNNER_TEMP/previous.apk" --new "dist/mettleup-${GITHUB_REF_NAME}.apk"
 
       - name: Enable KVM
         if: steps.prev.outputs.found == 'true'
@@ -368,7 +375,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: python3 scripts/ci/update_proof.py device --old "$RUNNER_TEMP/previous.apk" --new "dist/forgeai-${GITHUB_REF_NAME}.apk" --out update-proof-out
+          script: python3 scripts/ci/update_proof.py device --old "$RUNNER_TEMP/previous.apk" --new "dist/mettleup-${GITHUB_REF_NAME}.apk" --out update-proof-out
 
       - name: Upload update-proof evidence
         if: always()
@@ -394,8 +401,9 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ForgeAI ${{ github.ref_name }}
+          name: MettleUp ${{ github.ref_name }}
           files: |
-            forgeai-*.apk
-            forgeai-*.aab
+            mettleup-*.apk
+            mettleup-*.aab
+            forgeai-*-wear.apk
           generate_release_notes: true

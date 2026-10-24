@@ -17,8 +17,14 @@
  *    the first one logged, the first), and the workout's own name (its title, else its
  *    routine's name, else its day).
  *  - IM-16: imported workouts are sent too (`sendWorkoutsToHealth`, from the import screen).
+ *
+ * MettleUp 0.56.0 (new Play ID com.mettleup.app): workouts the old ForgeAI app wrote to Health
+ * Connect belong to com.forgeai.app, and MettleUp can neither read nor replace them (write-only
+ * access). A member who brings their ForgeAI history over and taps "Send past workouts" would get
+ * each one twice. So by default only workouts started after MettleUp first ran on this phone go
+ * (`pastSince`, the `first_run_at` stamp in `meta`); "Send older workouts too" sends the rest on a yes.
  */
-import { getDb } from '@/db';
+import { FIRST_RUN_KEY, getDb, getMeta } from '@/db';
 import { clockTime, relativeDay, tinyDateWithYear, toISO, todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { isDemoData } from '@/onboarding/db/dataActions';
@@ -314,14 +320,78 @@ export interface PastSummary {
   firstISO: string | null;
   lastISO: string | null;
   demo: boolean;
+  /** 0.56.0: workouts left out because they started before MettleUp first ran (0 = none). */
+  older?: number;
 }
 
-export async function pastWorkoutsSummary(): Promise<PastSummary> {
+/** PURE (0.56.0). The stored first-run time, or null when it is missing or unreadable. */
+export function firstRunFrom(raw: string | null | undefined): number | null {
+  const n = Number(raw);
+  return raw != null && raw !== '' && Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/** When MettleUp first ran on this phone (null = unknown: then every workout counts, as before). */
+export async function pastSince(): Promise<number | null> {
+  try {
+    return firstRunFrom(await getMeta(FIRST_RUN_KEY));
+  } catch (e) {
+    console.warn('[ForgeErr] health: the first-run time could not be read', e);
+    return null;
+  }
+}
+
+/**
+ * PURE (0.56.0). Which workouts "Send past workouts" reads: those started at or after `since`
+ * (MettleUp's first run), or every one when `since` is null ("Send older workouts too", or unknown).
+ */
+export function pastWhere(since: number | null): { where: string; args: number[] } {
+  return since != null && Number.isFinite(since) ? { where: 's.started_at >= ?', args: [since] } : { where: '1 = 1', args: [] };
+}
+
+/** `since` null = every workout; else only those started at or after it, and how many are older. */
+export async function pastWorkoutsSummary(since: number | null = null): Promise<PastSummary> {
   const demo = await isDemoData().catch(() => true);
+  const { where, args } = pastWhere(since);
   const r = await getDb().getFirstAsync<{ n: number; first: string | null; last: string | null }>(
-    "SELECT COUNT(*) AS n, MIN(date_iso) AS first, MAX(date_iso) AS last FROM workout_sessions WHERE source != 'seed'",
+    `SELECT COUNT(*) AS n, MIN(s.date_iso) AS first, MAX(s.date_iso) AS last FROM workout_sessions s WHERE s.source != 'seed' AND ${where}`,
+    args,
   );
-  return { count: r?.n ?? 0, firstISO: r?.first ?? null, lastISO: r?.last ?? null, demo };
+  let older = 0;
+  if (since != null) {
+    const o = await getDb().getFirstAsync<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM workout_sessions s WHERE s.source != 'seed' AND s.started_at < ?",
+      [since],
+    );
+    older = o?.n ?? 0;
+  }
+  return { count: r?.n ?? 0, firstISO: r?.first ?? null, lastISO: r?.last ?? null, demo, older };
+}
+
+/** 0.56.0: the line under "Send past workouts" when older workouts are left out. */
+export const HC_OLDER_LEFT_OUT =
+  'Only workouts logged in MettleUp are sent. If your old ForgeAI app sent its workouts to Health Connect, they are already there and would show twice.';
+
+/** 0.56.0: the button that sends the older workouts too (after a yes). */
+export const HC_SEND_OLDER = 'Send older workouts too';
+
+/** 0.56.0: nothing logged in MettleUp yet, only older workouts. */
+export const HC_NOTHING_NEW = 'No workouts logged in MettleUp to send yet. To send your older ones, tap "Send older workouts too".';
+
+/** 0.56.0: the question before "Send older workouts too". PURE. */
+export function olderSendAsk(
+  s: PastSummary,
+  today: string = todayISO(),
+  calories = true,
+): { notice: string } | { title: string; body: string; confirm: string } {
+  const ask = pastSendAsk(s, today, calories);
+  if ('notice' in ask) return ask;
+  return {
+    title: ask.title,
+    body:
+      ask.body.replace(' Sending again replaces them, so nothing is counted twice.', '') +
+      ' If your old ForgeAI app already sent these workouts to Health Connect, they will show twice in Google Health and Samsung Health.',
+    confirm: ask.confirm,
+  };
 }
 
 /** R-72: the question before sending, or a plain notice when there is nothing to send. PURE. */
@@ -467,13 +537,23 @@ export async function resendUnsentToHealth(): Promise<SendResult> {
   return sendInParts(ids);
 }
 
-/** "Send past workouts": every workout of the member's own. Says what happened. */
-export async function sendAllWorkoutsToHealth(onProgress?: SendProgress): Promise<SendResult> {
+/**
+ * "Send past workouts": the member's own workouts. Says what happened. `since` (0.56.0): only
+ * those started at or after it (MettleUp's first run); null = every one ("Send older workouts too").
+ */
+export async function sendAllWorkoutsToHealth(onProgress?: SendProgress, since: number | null = null): Promise<SendResult> {
   try {
-    const r = await send(await readRows('1 = 1', []), onProgress);
+    const { where, args } = pastWhere(since);
+    const rows = await readRows(where, args);
+    const r = await send(rows, onProgress);
     if (r.kind === 'sent' || r.kind === 'failed') noteLastSent(r.sent, true);
-    // Every workout went, so none is still owed.
-    if (r.kind === 'sent' && (usePhonePrefs.getState().healthUnsent ?? []).length > 0) usePhonePrefs.getState().setHealthUnsent([]);
+    // Every workout read went, so none of them is still owed (older ones left out stay owed).
+    const owed = usePhonePrefs.getState().healthUnsent ?? [];
+    if (r.kind === 'sent' && owed.length > 0) {
+      const went = new Set(rows.map((x) => x.id));
+      const left = since == null ? [] : owed.filter((id) => !went.has(id));
+      if (left.length !== owed.length) usePhonePrefs.getState().setHealthUnsent(left);
+    }
     if (r.kind === 'failed') console.warn(`[ForgeErr] past workouts did not reach Health Connect (${r.reason}, ${r.sent} of ${r.total})`);
     return r;
   } catch (e) {

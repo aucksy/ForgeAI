@@ -116,7 +116,9 @@ export default function WorkoutScreen() {
   const [linkNotice, setLinkNotice] = useState<string | null>(null);
   // Release A, A12: which notice cards have something to say, and the day one was last closed.
   const [wants, setWants] = useState<Partial<Record<NoticeKind, boolean>>>({});
-  const [restDay, setRestDay] = useState<string | null>(null);
+  // undefined until read: the notice slot draws nothing before then (0.56.0 review: no flash of a
+  // notice closed earlier today).
+  const [restDay, setRestDay] = useState<string | null | undefined>(undefined);
   const wantFns = useRef(new Map<NoticeKind, (w: boolean) => void>());
   const want = (kind: NoticeKind): ((w: boolean) => void) => {
     let fn = wantFns.current.get(kind);

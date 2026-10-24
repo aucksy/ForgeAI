@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isNewer, releaseUpdate, updateToShow, versionParts } from '@/lib/appUpdate';
+import { isNewer, phoneApkName, releaseUpdate, updateToShow, versionParts } from '@/lib/appUpdate';
 
 describe('appUpdate (launch C6)', () => {
   it('reads plain versions only', () => {
@@ -20,21 +20,28 @@ describe('appUpdate (launch C6)', () => {
 
   it('picks the phone APK, never the watch APK', () => {
     const release = {
-      tag_name: 'v0.49.0',
+      tag_name: 'v0.57.0',
       assets: [
-        { name: 'forgeai-v0.49.0-wear.apk', browser_download_url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0-wear.apk' },
-        { name: 'forgeai-v0.49.0.apk', browser_download_url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk' },
+        { name: 'forgeai-v0.57.0-wear.apk', browser_download_url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.57.0/forgeai-v0.57.0-wear.apk' },
+        { name: 'mettleup-v0.57.0.apk', browser_download_url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.57.0/mettleup-v0.57.0.apk' },
       ],
     };
     expect(releaseUpdate(release)).toEqual({
-      version: '0.49.0',
-      url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk',
+      version: '0.57.0',
+      url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.57.0/mettleup-v0.57.0.apk',
     });
   });
 
+  it('looks for the MettleUp file name, never an old ForgeAI one (another app on the phone)', () => {
+    expect(phoneApkName('v0.57.0')).toBe('mettleup-v0.57.0.apk');
+    // A ForgeAI-era release (com.forgeai.app) is a different app: never offered as an update.
+    const old = { tag_name: 'v0.55.0', assets: [{ name: 'forgeai-v0.55.0.apk', browser_download_url: 'https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk' }] };
+    expect(releaseUpdate(old)).toBeNull();
+  });
+
   it('offers nothing without a phone APK or with a link off GitHub', () => {
-    expect(releaseUpdate({ tag_name: 'v0.49.0', assets: [] })).toBeNull();
-    expect(releaseUpdate({ tag_name: 'v0.49.0', assets: [{ name: 'forgeai-v0.49.0.apk', browser_download_url: 'https://evil.example/x.apk' }] })).toBeNull();
+    expect(releaseUpdate({ tag_name: 'v0.57.0', assets: [] })).toBeNull();
+    expect(releaseUpdate({ tag_name: 'v0.57.0', assets: [{ name: 'mettleup-v0.57.0.apk', browser_download_url: 'https://evil.example/x.apk' }] })).toBeNull();
     expect(releaseUpdate({ tag_name: 'test-lab-1', assets: [] })).toBeNull();
   });
 

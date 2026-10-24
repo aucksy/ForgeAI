@@ -63,8 +63,14 @@ jobs:
           tag="$TAG_IN"
           if [ -z "$tag" ]; then tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName); fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "forgeai-$tag.apk" --dir .
-          ls -l "forgeai-$tag.apk"
+          # The phone APK is mettleup-<tag>.apk from 0.56.0 (MettleUp); older releases: forgeai-<tag>.apk.
+          apk="mettleup-$tag.apk"
+          if ! gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "$apk" --dir .; then
+            apk="forgeai-$tag.apk"
+            gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "$apk" --dir .
+          fi
+          ls -l "$apk"
+          echo "apk=$apk" >> "$GITHUB_OUTPUT"
 
       - name: Sign in to Google Cloud
         if: env.HAS_KEY == 'true'
@@ -90,12 +96,13 @@ jobs:
         id: run
         env:
           TAG: ${{ steps.rel.outputs.tag }}
+          APK: ${{ steps.rel.outputs.apk }}
         run: |
           args=()
           while read -r d; do args+=(--device "$d"); done < devices.txt
           set +e
-          gcloud firebase test android run --type robo --app "forgeai-$TAG.apk" "${args[@]}" \
-            --timeout 5m --client-details matrixLabel="ForgeAI $TAG" --format=json > outcome.json 2> run.log
+          gcloud firebase test android run --type robo --app "$APK" "${args[@]}" \
+            --timeout 5m --client-details matrixLabel="MettleUp $TAG" --format=json > outcome.json 2> run.log
           code=$?
           set -e
           tail -40 run.log

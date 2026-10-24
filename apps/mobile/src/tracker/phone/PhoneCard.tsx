@@ -20,14 +20,19 @@ import { color, radius, space, type } from '@/theme/tokens';
 import {
   COUNT_FAILED,
   HC_CALORIES_OFF,
+  HC_NOTHING_NEW,
   HC_NOT_ALLOWED,
+  HC_OLDER_LEFT_OUT,
   HC_OPEN_FAILED,
+  HC_SEND_OLDER,
   SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
   healthCheck,
   lastSentText,
+  olderSendAsk,
   openHealthConnect,
   pastSendAsk,
+  pastSince,
   pastWorkoutsSummary,
   resendUnsentToHealth,
   sendAllWorkoutsToHealth,
@@ -85,6 +90,8 @@ function HealthRow() {
   const unsent = usePhonePrefs((s) => s.healthUnsent ?? NONE);
   const [resent, setResent] = useState<SendResult | null>(null);
   const [resending, setResending] = useState(false);
+  // 0.56.0: workouts from before MettleUp first ran (the old ForgeAI app's), left out by default.
+  const [older, setOlder] = useState(0);
 
   const openHc = (): void => {
     tap();
@@ -100,7 +107,9 @@ function HealthRow() {
     tap();
     setNotice(null);
     setSent(null);
-    const summary = await pastWorkoutsSummary().catch((e: unknown) => {
+    // 0.56.0: by default only workouts logged in MettleUp (started after its first run here).
+    const since = await pastSince();
+    const summary = await pastWorkoutsSummary(since).catch((e: unknown) => {
       console.warn('[ForgeErr] health: past workouts could not be counted', e);
       return null;
     });
@@ -108,17 +117,46 @@ function HealthRow() {
       setNotice(COUNT_FAILED);
       return;
     }
-    const ask = pastSendAsk(summary, undefined, calories);
+    setOlder(summary.older ?? 0);
+    const ask = summary.count === 0 && (summary.older ?? 0) > 0 && !summary.demo ? { notice: HC_NOTHING_NEW } : pastSendAsk(summary, undefined, calories);
     if ('notice' in ask) {
       setNotice(ask.notice);
       return;
     }
     const yes = await askConfirm({ title: ask.title, body: ask.body, confirmLabel: ask.confirm, cancelLabel: 'Not now' });
     if (!yes) return;
+    await sendNow(since);
+  };
+
+  // 0.56.0: "Send older workouts too": every workout, after a yes that says they may show twice.
+  const sendOlder = async (): Promise<void> => {
+    if (busy) return;
+    tap();
+    setNotice(null);
+    setSent(null);
+    const summary = await pastWorkoutsSummary(null).catch((e: unknown) => {
+      console.warn('[ForgeErr] health: past workouts could not be counted', e);
+      return null;
+    });
+    if (!summary) {
+      setNotice(COUNT_FAILED);
+      return;
+    }
+    const ask = olderSendAsk(summary, undefined, calories);
+    if ('notice' in ask) {
+      setNotice(ask.notice);
+      return;
+    }
+    const yes = await askConfirm({ title: ask.title, body: ask.body, confirmLabel: ask.confirm, cancelLabel: 'Not now' });
+    if (!yes) return;
+    await sendNow(null);
+  };
+
+  const sendNow = async (since: number | null): Promise<void> => {
     setBusy(true);
     setProgress(null);
     try {
-      setSent(await sendAllWorkoutsToHealth((done, total) => setProgress({ sent: done, total })));
+      setSent(await sendAllWorkoutsToHealth((done, total) => setProgress({ sent: done, total }), since));
     } finally {
       setBusy(false);
       setProgress(null);
@@ -147,6 +185,24 @@ function HealthRow() {
     setState(r.state);
     setCalories(r.calories);
   }, []);
+
+  // 0.56.0: how many older workouts are left out, so the line and "Send older workouts too" show up front.
+  useEffect(() => {
+    if (state !== 'on') return;
+    let live = true;
+    void (async () => {
+      const since = await pastSince();
+      if (since == null) return;
+      const summary = await pastWorkoutsSummary(since).catch((e: unknown) => {
+        console.warn('[ForgeErr] health: older workouts could not be counted', e);
+        return null;
+      });
+      if (live && summary && !summary.demo) setOlder(summary.older ?? 0);
+    })();
+    return () => {
+      live = false;
+    };
+  }, [state]);
 
   // Re-checked on every return to the app — also after Health Connect's own screen.
   useEffect(() => {
@@ -258,6 +314,12 @@ function HealthRow() {
             icon="heart"
             onPress={() => void sendPast()}
           />
+          {older > 0 && !busy ? (
+            <>
+              <Text style={{ ...CAPTION(), textAlign: 'center' }}>{HC_OLDER_LEFT_OUT}</Text>
+              <GhostButton label={HC_SEND_OLDER} icon="heart" onPress={() => void sendOlder()} />
+            </>
+          ) : null}
           {notice ? (
             <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center' }}>
               {notice}

@@ -6,6 +6,9 @@ import { startupStep } from '@/db/startupError';
 /** The database file's name. expo-sqlite keeps it in `<documentDirectory>SQLite/` on Android. */
 export const DB_NAME = 'forgeai.db';
 
+/** `meta` key: when the app first opened its database on this phone (ms since 1970, as text). */
+export const FIRST_RUN_KEY = 'first_run_at';
+
 /**
  * Single shared database handle. `getDb()` is safe to call from anywhere;
  * `initDb()` must complete once (root layout awaits it) before screens render.
@@ -44,6 +47,14 @@ export async function initDb(): Promise<SQLite.SQLiteDatabase> {
             `INSERT INTO meta(key, value) VALUES('schema_version', ?)
              ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
             [String(SCHEMA_VERSION)],
+          );
+          // MettleUp 0.56.0: when this app first ran on this phone (never overwritten). "Send past
+          // workouts" sends only workouts started after it by default: older ones came from the
+          // old ForgeAI app, which may have put them in Health Connect already (healthConnect.ts).
+          await tx.runAsync(
+            `INSERT INTO meta(key, value) VALUES('${FIRST_RUN_KEY}', ?)
+             ON CONFLICT(key) DO NOTHING`,
+            [String(Date.now())],
           );
         }),
       );

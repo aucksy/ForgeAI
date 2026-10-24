@@ -17,8 +17,13 @@ export type NoticeKind = 'link' | 'update' | 'whatsNew' | 'backup';
 
 export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'update', 'whatsNew', 'backup'];
 
-/** The one notice to draw now, or null. `restDay`: the day a notice was last closed. PURE. */
-export function pickNotice(wants: Partial<Record<NoticeKind, boolean>>, restDay: string | null, today: string): NoticeKind | null {
+/**
+ * The one notice to draw now, or null. `restDay`: the day a notice was last closed; `undefined` =
+ * not read yet (0.56.0 review): then nothing is drawn, so a notice closed earlier today never
+ * flashes up for a moment before the saved day arrives. PURE.
+ */
+export function pickNotice(wants: Partial<Record<NoticeKind, boolean>>, restDay: string | null | undefined, today: string): NoticeKind | null {
+  if (restDay === undefined) return null;
   for (const kind of NOTICE_ORDER) {
     if (!wants[kind]) continue;
     // A link the member just tapped is always answered; the rest wait a day after one was closed.

@@ -165,6 +165,11 @@ describe('A12: one notice at a time above Up next, one extra line inside it', ()
     expect(pickNotice({ whatsNew: true }, '2026-10-25', today)).toBe('whatsNew');
     expect(pickNotice({ link: true, whatsNew: true }, today, today)).toBe('link');
   });
+  it('0.56.0: nothing is drawn until the closed day has been read (no flash of a closed notice)', () => {
+    expect(pickNotice({ whatsNew: true, update: true }, undefined, today)).toBeNull();
+    expect(pickNotice({ link: true }, undefined, today)).toBeNull();
+    expect(pickNotice({ whatsNew: true }, null, today)).toBe('whatsNew');
+  });
   it('inside Up next: the easy week, else the offer, else the muscle tip — never two', () => {
     expect(upNextExtra({ easyNow: true, offerEasy: true, tip: true })).toBe('easyWeek');
     expect(upNextExtra({ easyNow: false, offerEasy: true, tip: true })).toBe('easyOffer');
@@ -210,6 +215,8 @@ describe('Every old address still lands (redirects)', () => {
     const src = (p: string) => readFileSync(join(APP, p), 'utf8');
     expect(src('settings/details.tsx')).toMatch(/<Redirect href="\/edit-profile" \/>/);
     expect(src('settings/workouts.tsx')).toMatch(/<Redirect href="\/settings" \/>/);
+    // 0.56.0 review: opened from Settings, it goes back to that Settings page (never a second one).
+    expect(src('settings/workouts.tsx')).toMatch(/if \(back\) router\.dismissTo\('\/settings'\)/);
     expect(src('bodyweight.tsx')).toMatch(/bodyTarget\('\/bodyweight'/);
     expect(src('measurements/index.tsx')).toMatch(/bodyTarget\('\/measurements'/);
     expect(src('measurements/log.tsx')).toMatch(/bodyTarget\('\/measurements\/log'/);
