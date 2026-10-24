@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-103. His #59 answers: switch on 0031 + 0033, approve the privacy words (so 0032 too), hide names from the AI — 24 Oct 2026
+**Owner said (on the page, 3:35 pm):** #59 "Switch them on?" A: "Yes: 0031 (branches) and 0033 (terms) now, 0032
+(workouts) once you approve the words below"; "The privacy and agreement words?" A: "Approve as written, and hide names
+and addresses from the AI import too".
+**What Claude does:** apply 0031, 0033, then 0032 live (SQL Editor, Chrome Browser 2), each test must PASS, stop on any fail;
+deploy admin app + HQ + panel; publish the privacy words and the data agreement page; hide names/addresses in the AI
+import. Status: started.
+
 ## R-102. MettleUp, build the 20 features (park trainer chat), keep the app simple, Health Connect — 24 Oct 2026
 **Owner said:** "I am really feeling MettleUp.in - do we need even more in-depth research before finalize?" ... "I really
 like all these 20 features ... plan and start working on them. You can decide the priority, except for a few that you can

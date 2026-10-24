@@ -387,6 +387,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 59. Switch on branches, online terms and members' workouts on our server: three live server changes — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (24 Oct, 03:35 pm, via the page)**
 **What is built (24 Oct), tested and checked by a second reviewer; nothing is live yet:**
 - **Branches (0031):** one owner runs several branches; each branch has its own members, money, staff and receipt numbers (B2/2026-27/0001); members can train at another branch; an "All branches" page.
 - **Online terms (0033):** a gym owner must tick "I agree" before a gym is created; owners of existing gyms see it once; the date and terms version are kept and can't be changed.
