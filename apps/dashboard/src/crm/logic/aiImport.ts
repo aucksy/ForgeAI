@@ -3,7 +3,8 @@
  *
  * Our own word lists and value checks (importMembers.ts) place the columns first, free and tested.
  * When the owner says yes, the AI is shown only the column names and up to 5 example rows, with
- * mobile numbers, emails and ID numbers hidden (masked here, and again by the server). It answers
+ * mobile numbers, emails and ID numbers hidden, and names and addresses shown only as "[name]" /
+ * "[address]" (owner, 24 Oct 2026, #59) (masked here, and again by the server). It answers
  * only "column C is the expiry date / a new detail: Locker No. / not needed", with how sure it is.
  * Its answer is checked strictly against our field list; anything else is dropped. It fills only
  * what our rules left empty: a guess that disagrees with our rules is shown, never applied. Our
@@ -80,6 +81,145 @@ export function maskCell(value: unknown): string {
     return `${digits.slice(0, 2).join('')}${'X'.repeat(digits.length - 4)}${digits.slice(-2).join('')}`;
   });
   return s.length > MAX_CELL ? `${s.slice(0, MAX_CELL - 1)}…` : s;
+}
+
+// ---------------------------------------------------------------- names and addresses
+
+/*
+ * Owner, 24 Oct 2026 (tracker #59): "hide names and addresses from the AI import too". The AI needs
+ * only the SHAPE of such a column, so a column that holds people's names or addresses is sent as
+ * "[name]" / "[address]" for each filled cell (an empty cell stays empty). Decided here, per column:
+ *  1. a header with a word that is never about a person (plan, package, batch, time, trainer,
+ *     status, gender, branch, date, id, no …) keeps its examples (matching needs them);
+ *  2. a header with an address word (address, pata, पता, area, locality …) -> addresses;
+ *  3. a header with a name word (name, naam, नाम, member, customer, ref by …) -> names, unless most
+ *     cells are dates or numbers;
+ *  4. otherwise by the cells: most of them like an address (road, nagar, sector …, or a comma between
+ *     3+ words) -> addresses; most of them 2-4 words of letters, no digits, none a plan / status /
+ *     batch word -> names. Then the header too is hidden when it looks like one more name or
+ *     address (a file with no header row sends its first member as the "header").
+ * The same rule as hidePeople in deploy/panel/aiMatch.js, which applies it again to whatever the
+ * browser sends. PURE.
+ */
+
+export type PeopleKind = 'name' | 'address';
+export const PEOPLE_SHAPE: Readonly<Record<PeopleKind, string>> = { name: '[name]', address: '[address]' };
+
+const KEEP_HEADER_WORDS = [
+  'plan', 'plans', 'package', 'packages', 'pack', 'scheme', 'membership', 'subscription', 'batch', 'slot', 'shift',
+  'timing', 'timings', 'time', 'trainer', 'coach', 'instructor', 'status', 'gender', 'sex', 'branch', 'centre',
+  'center', 'outlet', 'gym', 'type', 'category', 'id', 'uid', 'code', 'no', 'number', 'sr', 'serial', 'roll',
+  'receipt', 'mode', 'method', 'since', 'date', 'joined', 'joining', 'from', 'till', 'expiry', 'amount', 'fees',
+  'fee', 'प्लान', 'पैकेज', 'बैच', 'लिंग', 'तारीख',
+];
+const ADDRESS_HEADER_WORDS = ['address', 'addr', 'pata', 'पता', 'area', 'locality', 'location', 'residence', 'colony', 'street', 'mohalla', 'house'];
+const NAME_HEADER_WORDS = [
+  'name', 'names', 'naam', 'नाम', 'member', 'members', 'customer', 'customers', 'client', 'clients', 'sadasya',
+  'सदस्य', 'person', 'ref by', 'referred', 'reference', 'father', 'mother', 'husband', 'wife', 'guardian', 'nominee',
+];
+/** Header words that show a row really is a header (so a cell-judged column keeps it). */
+const HEADER_HINT_WORDS = [
+  'by', 'of', 'ref', 'refer', 'contact', 'emergency', 'remarks', 'remark', 'notes', 'note', 'comment', 'comments',
+  'goal', 'occupation', 'profession', 'company', 'office', 'school', 'college', 'blood', 'group', 'locker', 'weight',
+  'height', 'other', 'details', 'detail', 'info', 'extra', 'city', 'state',
+];
+/** Words in a cell that make it a plan, a status, a batch, a payment: never a person's name. */
+const NOT_NAME_WORDS = new Set([
+  'month', 'months', 'monthly', 'mth', 'mths', 'quarter', 'quarterly', 'half', 'year', 'years', 'yearly', 'yr', 'yrs',
+  'annual', 'annually', 'week', 'weeks', 'weekly', 'day', 'days', 'daily', 'plan', 'package', 'pack', 'membership',
+  'gold', 'silver', 'platinum', 'diamond', 'bronze', 'basic', 'premium', 'standard', 'elite', 'pro', 'plus', 'super',
+  'combo', 'couple', 'family', 'student', 'students', 'corporate', 'senior', 'ladies', 'gents', 'men', 'women',
+  'male', 'female', 'boys', 'girls', 'kids', 'morning', 'evening', 'afternoon', 'night', 'noon', 'batch', 'slot',
+  'shift', 'am', 'pm', 'yes', 'no', 'paid', 'unpaid', 'pending', 'partial', 'full', 'fully', 'due', 'cash', 'upi',
+  'online', 'card', 'cheque', 'gpay', 'paytm', 'phonepe', 'bank', 'transfer', 'active', 'inactive', 'expired',
+  'expiring', 'left', 'frozen', 'freeze', 'hold', 'new', 'old', 'renewal', 'renewed', 'renew', 'joined', 'regular',
+  'general', 'special', 'offer', 'trial', 'free', 'walk', 'not', 'done', 'open', 'closed', 'cardio', 'strength',
+  'weight', 'weights', 'training', 'personal', 'pt', 'crossfit', 'zumba', 'yoga', 'aerobics', 'functional', 'gym',
+  'fitness', 'steam', 'sauna', 'spa', 'swimming', 'pool', 'diet', 'loss', 'gain', 'muscle', 'fat', 'toning',
+  'पुरुष', 'महिला', 'हाँ', 'हां', 'नहीं', 'मासिक', 'सालाना', 'सुबह', 'शाम', 'जमा', 'बाकी',
+]);
+/** Words that make a cell an address. */
+const ADDRESS_WORDS = new Set([
+  'road', 'rd', 'marg', 'nagar', 'colony', 'sector', 'street', 'lane', 'gali', 'mohalla', 'vihar', 'enclave',
+  'apartment', 'apartments', 'apt', 'society', 'flat', 'house', 'plot', 'near', 'opp', 'opposite', 'behind',
+  'chowk', 'bazaar', 'bazar', 'market', 'block', 'phase', 'layout', 'extension', 'tower', 'residency', 'ganj',
+  'wadi', 'basti', 'kunj', 'sadan', 'bhawan', 'bhavan', 'niwas', 'nivas',
+  'नगर', 'कॉलोनी', 'मार्ग', 'गली', 'रोड', 'सेक्टर', 'मोहल्ला', 'फ्लैट', 'मकान',
+]);
+const PLACEHOLDER = /^\[(name|address|email|PAN|ID number)\]$/;
+const NAME_WORD = /^[\p{L}\p{M}][\p{L}\p{M}.'’-]*$/u;
+
+/** Lower case, every run of punctuation one space (the same as normalizeHeader). PURE. */
+function plainWords(text: string): string {
+  return text.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
+}
+
+function hasWord(text: string, words: readonly string[]): boolean {
+  const padded = ` ${plainWords(text)} `;
+  return words.some((w) => padded.includes(` ${w} `));
+}
+
+/** Dates or numbers only (an Excel day number, an amount, a masked mobile): never a name. PURE. */
+function numberish(cell: string): boolean {
+  return isRealDate(cell) || !/\p{L}/u.test(cell.replace(/X/g, '').replace(/\b(rs|inr)\b/gi, ''));
+}
+
+/** "12, MG Road" / "Near Bus Stand, Sector 4": an address. PURE. */
+export function looksLikeAddress(cell: string): boolean {
+  if (PLACEHOLDER.test(cell) || numberish(cell)) return false;
+  const words = plainWords(cell).split(' ').filter(Boolean);
+  if (words.some((w) => ADDRESS_WORDS.has(w))) return true;
+  const letterWords = words.filter((w) => w.length >= 2 && !/\p{N}/u.test(w));
+  return cell.includes(',') && letterWords.length >= 3 && !letterWords.every((w) => NOT_NAME_WORDS.has(w));
+}
+
+/** "Ramesh Gupta" / "R. K. Sharma" / "राहुल शर्मा": 2-4 words of letters, no plan or status word. PURE. */
+export function looksLikeName(cell: string): boolean {
+  if (PLACEHOLDER.test(cell)) return false;
+  const words = cell.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 4) return false;
+  if (!words.every((w) => NAME_WORD.test(w))) return false;
+  if (words.some((w) => NOT_NAME_WORDS.has(plainWords(w)))) return false;
+  return !looksLikeAddress(cell);
+}
+
+/**
+ * Does this column hold names or addresses? `fromHeader`: its header said so (the header then
+ * stays, it is a real header). Works on cells already through maskCell. PURE.
+ */
+export function peopleColumnKind(header: string, cells: readonly string[]): { kind: PeopleKind; fromHeader: boolean } | null {
+  const filled = cells.map((c) => c.trim()).filter((c) => c !== '' && !PLACEHOLDER.test(c));
+  if (hasWord(header, KEEP_HEADER_WORDS)) return null;
+  if (hasWord(header, ADDRESS_HEADER_WORDS)) return { kind: 'address', fromHeader: true };
+  if (hasWord(header, NAME_HEADER_WORDS)) {
+    const numbers = filled.filter(numberish).length;
+    return filled.length > 0 && numbers * 2 > filled.length ? null : { kind: 'name', fromHeader: true };
+  }
+  if (filled.length === 0) return null;
+  const addresses = filled.filter(looksLikeAddress).length;
+  const names = filled.filter(looksLikeName).length;
+  if (addresses * 2 > filled.length) return { kind: 'address', fromHeader: false };
+  if (names * 2 > filled.length) return { kind: 'name', fromHeader: false };
+  if ((addresses + names) * 2 > filled.length) return { kind: addresses > names ? 'address' : 'name', fromHeader: false };
+  return null;
+}
+
+/**
+ * One column as the AI may see it: a names or addresses column becomes its shape ("[name]" per
+ * filled cell). `placed`: our own rules already put this column in the name or address box. The
+ * header and examples must already be through maskCell. PURE. The same rule as hidePeople in
+ * deploy/panel/aiMatch.js.
+ */
+export function hidePeople(header: string, examples: readonly string[], placed: PeopleKind | null = null): { header: string; examples: string[] } {
+  const found = peopleColumnKind(header, examples) ?? (placed ? { kind: placed, fromHeader: false } : null);
+  if (!found) return { header, examples: [...examples] };
+  const shape = PEOPLE_SHAPE[found.kind];
+  const looksSame = found.kind === 'name' ? looksLikeName(header) : looksLikeAddress(header);
+  const hideHeader = !found.fromHeader && header.trim() !== '' && looksSame && !hasWord(header, HEADER_HINT_WORDS);
+  return {
+    header: hideHeader ? shape : header,
+    examples: examples.map((e) => (e.trim() === '' || PLACEHOLDER.test(e.trim()) ? e : shape)),
+  };
 }
 
 // ---------------------------------------------------------------- the columns of a sheet
@@ -169,16 +309,26 @@ export interface AiColumn {
 
 /**
  * What the AI is shown: every column's name and its cells in the first 5 data rows, masked. An
- * ID-number column shows only that it is one. PURE.
+ * ID-number column shows only that it is one; a names or addresses column only "[name]" /
+ * "[address]" (hidePeople; `placed` = the columns our own rules already put in the name and
+ * address boxes, hidden too whatever they look like). PURE.
  */
-export function aiColumnsPayload(rows: readonly (readonly unknown[])[], headerRow: number, width: number, idCols: readonly number[]): AiColumn[] {
+export function aiColumnsPayload(
+  rows: readonly (readonly unknown[])[],
+  headerRow: number,
+  width: number,
+  idCols: readonly number[],
+  placed: { fullName?: number | null; address?: number | null } = {},
+): AiColumn[] {
   const header = rows[headerRow] ?? [];
   const sample = dataRows(rows, headerRow, AI_EXAMPLE_ROWS);
   const ids = new Set(idCols);
-  return Array.from({ length: Math.min(width, AI_MAX_COLUMNS) }, (_, c) => ({
-    header: maskCell(header[c]),
-    examples: sample.map((r) => (ids.has(c) ? (cellText(r[c]) ? '[ID number]' : '') : maskCell(r[c]))),
-  }));
+  return Array.from({ length: Math.min(width, AI_MAX_COLUMNS) }, (_, c) => {
+    const head = maskCell(header[c]);
+    if (ids.has(c)) return { header: head, examples: sample.map((r) => (cellText(r[c]) ? '[ID number]' : '')) };
+    const kind: PeopleKind | null = placed.fullName === c ? 'name' : placed.address === c ? 'address' : null;
+    return hidePeople(head, sample.map((r) => maskCell(r[c])), kind);
+  });
 }
 
 // ---------------------------------------------------------------- what comes back
@@ -277,7 +427,8 @@ export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: r
 // ---------------------------------------------------------------- asking the server
 
 export const AI_WORDS = {
-  ask: 'Ask AI to match the columns? It sends the column names and 5 example rows. Phone numbers, emails and ID numbers are hidden.',
+  // #59 (24 Oct 2026): names and addresses are hidden too (member-words + Gemini pass).
+  ask: 'Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.',
   asking: 'Asking AI…',
   off: 'AI matching is not switched on yet. Match the columns yourself below.',
   limit: 'Today’s AI matches for your gym are used up. Match the columns yourself below, or try tomorrow.',

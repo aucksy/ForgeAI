@@ -13,14 +13,17 @@ import { call } from '../shop/api';
 import { isMissingFunction } from '../branches/api';
 
 /**
- * The version of /terms.html and /privacy.html an owner agrees to: the date they were last changed.
- * Change it (and the "Last updated" line on both pages) when the words change: every owner is then
- * asked once more.
+ * The version of /terms.html and /data-agreement.html an owner agrees to: the date they were last
+ * changed. Change it (and the "Version" line in docs/launch/DATA-AGREEMENT.md, then run
+ * scripts/legal_pages.py) when the words change: every owner is then asked once more.
+ * test/crm/legalPages.test.ts fails when the two differ.
  */
 export const TERMS_VERSION = '2026-10-24';
 
 export const TERMS_URL = '/terms.html';
 export const PRIVACY_URL = '/privacy.html';
+/** #59 (24 Oct 2026): "the data agreement" opens its own page (it opened the privacy notice). */
+export const DATA_AGREEMENT_URL = '/data-agreement.html';
 
 export interface TermsState {
   acceptedVersion: string | null;

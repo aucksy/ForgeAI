@@ -52,7 +52,7 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   const main = page.getByRole('main');
 
   // Asked first, in one line; the Aadhaar column is already set aside.
-  await expect(main).toContainText('Ask AI to match the columns? It sends the column names and 5 example rows. Phone numbers, emails and ID numbers are hidden.');
+  await expect(main).toContainText('Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.');
   await expect(main).toContainText('Not imported: Column D “Aadhaar No.” has Aadhaar numbers. ID numbers are never imported.');
   expect(sent).toHaveLength(0);
   await expectFitsPhone(page, 'on the AI question');
@@ -61,12 +61,16 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   await expect(main).toContainText('AI matched 3 columns. They are marked “AI” below. Check them before you add.');
   await expect(main).toContainText('19 AI matches left today.');
 
-  // What left the browser: names and masked examples, no mobile, no Aadhaar; the key in a header.
+  // What left the browser: column names and masked examples, no mobile, no Aadhaar, and (#59) no
+  // member's or referrer's name, only "[name]"; the key in a header.
   expect(sent).toHaveLength(1);
   expect(sent[0].key.length).toBeGreaterThanOrEqual(16);
   expect(sent[0].body).not.toMatch(/9829050001|9829050002|2345 6789 0124|234567890124/);
+  expect(sent[0].body).not.toMatch(/Ravi|Kumar|Sita|Devi|Sunil/);
+  expect(sent[0].body).toContain('[name]');
   expect(sent[0].body).toContain('98XXXXXX01');
   expect(sent[0].body).toContain('[ID number]');
+  expect(sent[0].body).toContain('"B+"');
   expect(sent[0].body).not.toContain(sent[0].key);
 
   // #36: every column is kept unless the owner unticks it. "Referred By" was a name the AI was not

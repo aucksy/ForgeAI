@@ -2,7 +2,8 @@
 // owner R-82: the cheapest AI first, Claude as the fallback). POST /api/ai/match-columns.
 //
 // What the AI is shown: the column names and up to 5 example rows of the gym's file, with mobile
-// numbers, emails and ID numbers hidden (the browser hides them, and this Worker hides them AGAIN
+// numbers, emails and ID numbers hidden, and names and addresses shown only as "[name]" /
+// "[address]" (owner, 24 Oct 2026, #59) (the browser hides them, and this Worker hides them AGAIN
 // before anything leaves, so a browser bug can never send a phone number). What it gives back: only
 // which column is which ({ column -> one of our fields | "extra:<label>" | "ignore" } plus how sure it
 // is). It never returns member data; the admin app's own tested code reads every date, mobile and
@@ -138,15 +139,157 @@ export function maskCell(value) {
   return s.length > MAX_CELL ? `${s.slice(0, MAX_CELL - 1)}…` : s;
 }
 
-/** The checked request: columns with their header and up to 5 masked examples, or a reason. PURE. */
+// ---------------------------------------------------------------- names and addresses
+
+/*
+ * Owner, 24 Oct 2026 (tracker #59): "hide names and addresses from the AI import too". A column that
+ * holds people's names or addresses goes to the AI only as "[name]" / "[address]" for each filled
+ * cell (an empty cell stays empty). The browser does this first; this Worker does it AGAIN to
+ * whatever arrives. Decided per column:
+ *  1. a header with a word that is never about a person (plan, package, batch, time, trainer,
+ *     status, gender, branch, date, id, no …) keeps its examples (matching needs them);
+ *  2. a header with an address word (address, pata, पता, area, locality …) -> addresses;
+ *  3. a header with a name word (name, naam, नाम, member, customer, ref by …) -> names, unless most
+ *     cells are dates or numbers;
+ *  4. otherwise by the cells: most of them like an address (road, nagar, sector …, or a comma between
+ *     3+ words) -> addresses; most of them 2-4 words of letters, no digits, none a plan / status /
+ *     batch word -> names. Then the header too is hidden when it looks like one more name or
+ *     address (a file with no header row sends its first member as the "header").
+ * The same rule as hidePeople in apps/dashboard/src/crm/logic/aiImport.ts (the dashboard's
+ * aiImport.test.ts runs both on the same cases). PURE.
+ */
+
+export const PEOPLE_SHAPE = { name: '[name]', address: '[address]' };
+
+const KEEP_HEADER_WORDS = [
+  'plan', 'plans', 'package', 'packages', 'pack', 'scheme', 'membership', 'subscription', 'batch', 'slot', 'shift',
+  'timing', 'timings', 'time', 'trainer', 'coach', 'instructor', 'status', 'gender', 'sex', 'branch', 'centre',
+  'center', 'outlet', 'gym', 'type', 'category', 'id', 'uid', 'code', 'no', 'number', 'sr', 'serial', 'roll',
+  'receipt', 'mode', 'method', 'since', 'date', 'joined', 'joining', 'from', 'till', 'expiry', 'amount', 'fees',
+  'fee', 'प्लान', 'पैकेज', 'बैच', 'लिंग', 'तारीख',
+];
+const ADDRESS_HEADER_WORDS = ['address', 'addr', 'pata', 'पता', 'area', 'locality', 'location', 'residence', 'colony', 'street', 'mohalla', 'house'];
+const NAME_HEADER_WORDS = [
+  'name', 'names', 'naam', 'नाम', 'member', 'members', 'customer', 'customers', 'client', 'clients', 'sadasya',
+  'सदस्य', 'person', 'ref by', 'referred', 'reference', 'father', 'mother', 'husband', 'wife', 'guardian', 'nominee',
+];
+/** Header words that show a row really is a header (so a cell-judged column keeps it). */
+const HEADER_HINT_WORDS = [
+  'by', 'of', 'ref', 'refer', 'contact', 'emergency', 'remarks', 'remark', 'notes', 'note', 'comment', 'comments',
+  'goal', 'occupation', 'profession', 'company', 'office', 'school', 'college', 'blood', 'group', 'locker', 'weight',
+  'height', 'other', 'details', 'detail', 'info', 'extra', 'city', 'state',
+];
+/** Words in a cell that make it a plan, a status, a batch, a payment: never a person's name. */
+const NOT_NAME_WORDS = new Set([
+  'month', 'months', 'monthly', 'mth', 'mths', 'quarter', 'quarterly', 'half', 'year', 'years', 'yearly', 'yr', 'yrs',
+  'annual', 'annually', 'week', 'weeks', 'weekly', 'day', 'days', 'daily', 'plan', 'package', 'pack', 'membership',
+  'gold', 'silver', 'platinum', 'diamond', 'bronze', 'basic', 'premium', 'standard', 'elite', 'pro', 'plus', 'super',
+  'combo', 'couple', 'family', 'student', 'students', 'corporate', 'senior', 'ladies', 'gents', 'men', 'women',
+  'male', 'female', 'boys', 'girls', 'kids', 'morning', 'evening', 'afternoon', 'night', 'noon', 'batch', 'slot',
+  'shift', 'am', 'pm', 'yes', 'no', 'paid', 'unpaid', 'pending', 'partial', 'full', 'fully', 'due', 'cash', 'upi',
+  'online', 'card', 'cheque', 'gpay', 'paytm', 'phonepe', 'bank', 'transfer', 'active', 'inactive', 'expired',
+  'expiring', 'left', 'frozen', 'freeze', 'hold', 'new', 'old', 'renewal', 'renewed', 'renew', 'joined', 'regular',
+  'general', 'special', 'offer', 'trial', 'free', 'walk', 'not', 'done', 'open', 'closed', 'cardio', 'strength',
+  'weight', 'weights', 'training', 'personal', 'pt', 'crossfit', 'zumba', 'yoga', 'aerobics', 'functional', 'gym',
+  'fitness', 'steam', 'sauna', 'spa', 'swimming', 'pool', 'diet', 'loss', 'gain', 'muscle', 'fat', 'toning',
+  'पुरुष', 'महिला', 'हाँ', 'हां', 'नहीं', 'मासिक', 'सालाना', 'सुबह', 'शाम', 'जमा', 'बाकी',
+]);
+/** Words that make a cell an address. */
+const ADDRESS_WORDS = new Set([
+  'road', 'rd', 'marg', 'nagar', 'colony', 'sector', 'street', 'lane', 'gali', 'mohalla', 'vihar', 'enclave',
+  'apartment', 'apartments', 'apt', 'society', 'flat', 'house', 'plot', 'near', 'opp', 'opposite', 'behind',
+  'chowk', 'bazaar', 'bazar', 'market', 'block', 'phase', 'layout', 'extension', 'tower', 'residency', 'ganj',
+  'wadi', 'basti', 'kunj', 'sadan', 'bhawan', 'bhavan', 'niwas', 'nivas',
+  'नगर', 'कॉलोनी', 'मार्ग', 'गली', 'रोड', 'सेक्टर', 'मोहल्ला', 'फ्लैट', 'मकान',
+]);
+const PLACEHOLDER = /^\[(name|address|email|PAN|ID number)\]$/;
+const NAME_WORD = /^[\p{L}\p{M}][\p{L}\p{M}.'’-]*$/u;
+
+/** Lower case, every run of punctuation one space. PURE. */
+function plainWords(text) {
+  return String(text).normalize('NFC').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
+}
+
+function hasWord(text, words) {
+  const padded = ` ${plainWords(text)} `;
+  return words.some((w) => padded.includes(` ${w} `));
+}
+
+/** Dates or numbers only (an Excel day number, an amount, a masked mobile): never a name. PURE. */
+function numberish(cell) {
+  return isRealDate(cell) || !/\p{L}/u.test(cell.replace(/X/g, '').replace(/\b(rs|inr)\b/gi, ''));
+}
+
+/** "12, MG Road" / "Near Bus Stand, Sector 4": an address. PURE. */
+export function looksLikeAddress(cell) {
+  if (PLACEHOLDER.test(cell) || numberish(cell)) return false;
+  const words = plainWords(cell).split(' ').filter(Boolean);
+  if (words.some((w) => ADDRESS_WORDS.has(w))) return true;
+  const letterWords = words.filter((w) => w.length >= 2 && !/\p{N}/u.test(w));
+  return cell.includes(',') && letterWords.length >= 3 && !letterWords.every((w) => NOT_NAME_WORDS.has(w));
+}
+
+/** "Ramesh Gupta" / "R. K. Sharma" / "राहुल शर्मा": 2-4 words of letters, no plan or status word. PURE. */
+export function looksLikeName(cell) {
+  if (PLACEHOLDER.test(cell)) return false;
+  const words = cell.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 4) return false;
+  if (!words.every((w) => NAME_WORD.test(w))) return false;
+  if (words.some((w) => NOT_NAME_WORDS.has(plainWords(w)))) return false;
+  return !looksLikeAddress(cell);
+}
+
+/**
+ * Does this column hold names or addresses? -> { kind: 'name' | 'address', fromHeader } | null.
+ * `fromHeader`: its header said so (the header then stays). Works on masked cells. PURE.
+ */
+export function peopleColumnKind(header, cells) {
+  const filled = cells.map((c) => c.trim()).filter((c) => c !== '' && !PLACEHOLDER.test(c));
+  if (hasWord(header, KEEP_HEADER_WORDS)) return null;
+  if (hasWord(header, ADDRESS_HEADER_WORDS)) return { kind: 'address', fromHeader: true };
+  if (hasWord(header, NAME_HEADER_WORDS)) {
+    const numbers = filled.filter(numberish).length;
+    return filled.length > 0 && numbers * 2 > filled.length ? null : { kind: 'name', fromHeader: true };
+  }
+  if (filled.length === 0) return null;
+  const addresses = filled.filter(looksLikeAddress).length;
+  const names = filled.filter(looksLikeName).length;
+  if (addresses * 2 > filled.length) return { kind: 'address', fromHeader: false };
+  if (names * 2 > filled.length) return { kind: 'name', fromHeader: false };
+  if ((addresses + names) * 2 > filled.length) return { kind: addresses > names ? 'address' : 'name', fromHeader: false };
+  return null;
+}
+
+/**
+ * One column as the AI may see it: a names or addresses column becomes its shape ("[name]" per
+ * filled cell). The header and examples must already be through maskCell. PURE. The same rule as
+ * hidePeople in apps/dashboard/src/crm/logic/aiImport.ts.
+ */
+export function hidePeople(header, examples, placed = null) {
+  const found = peopleColumnKind(header, examples) ?? (placed ? { kind: placed, fromHeader: false } : null);
+  if (!found) return { header, examples: [...examples] };
+  const shape = PEOPLE_SHAPE[found.kind];
+  const looksSame = found.kind === 'name' ? looksLikeName(header) : looksLikeAddress(header);
+  const hideHeader = !found.fromHeader && header.trim() !== '' && looksSame && !hasWord(header, HEADER_HINT_WORDS);
+  return {
+    header: hideHeader ? shape : header,
+    examples: examples.map((e) => (e.trim() === '' || PLACEHOLDER.test(e.trim()) ? e : shape)),
+  };
+}
+
+/**
+ * The checked request: columns with their header and up to 5 masked examples, names and addresses
+ * as their shape only (hidePeople, whatever the browser did), or a reason. PURE.
+ */
 export function checkRequest(body) {
   if (!body || typeof body !== 'object' || !Array.isArray(body.columns)) return { error: 'Send { columns: [...] }.' };
   if (body.columns.length === 0) return { error: 'No columns.' };
   if (body.columns.length > MAX_COLUMNS) return { error: `At most ${MAX_COLUMNS} columns.` };
   const columns = body.columns.map((c, i) => {
-    const header = maskCell(c && typeof c.header === 'string' ? c.header : '');
+    const masked = maskCell(c && typeof c.header === 'string' ? c.header : '');
     const raw = c && Array.isArray(c.examples) ? c.examples : [];
-    const examples = raw.slice(0, MAX_EXAMPLES).map((v) => maskCell(typeof v === 'string' || typeof v === 'number' ? v : ''));
+    const cells = raw.slice(0, MAX_EXAMPLES).map((v) => maskCell(typeof v === 'string' || typeof v === 'number' ? v : ''));
+    const { header, examples } = hidePeople(masked, cells);
     return { column: i, header, examples };
   });
   return { value: { columns } };
@@ -196,7 +339,8 @@ export const SYSTEM = [
   "You match the columns of an Indian gym's member spreadsheet to the fields of a gym app's member import.",
   'Headers may be English, Hinglish or Hindi, abbreviated or misspelt. Some columns have no header.',
   'You see each column number, its header and up to 5 example values from the same rows.',
-  'Mobile numbers, emails and ID numbers are hidden (98XXXXXX45, [email], [PAN]); that is expected.',
+  'Mobile numbers, emails and ID numbers are hidden (98XXXXXX45, [email], [PAN], [ID number]); that is expected.',
+  "People's names and addresses are shown only as [name] / [address]: such a column is the member's name or address (or a person such as \"referred by\").",
   'For EVERY column give exactly one target:',
   '- a field name from the list, when the column holds that information;',
   '- "extra:<label>" for useful information about the member that fits no field (locker number, blood group, referred by, trainer, weight, occupation); <label> is a short English name in Title Case, at most 40 letters, e.g. "extra:Locker No.";',

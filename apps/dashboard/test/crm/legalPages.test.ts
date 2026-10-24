@@ -10,6 +10,8 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { DATA_AGREEMENT_URL, TERMS_VERSION } from '../../src/crm/auth/terms';
+
 const pub = (f: string) => resolve(__dirname, '../../public', f);
 
 describe('R-76: the join screen’s legal links open real pages, never the admin app', () => {
@@ -28,12 +30,28 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     }
   });
 
+  it('#59: the admin app’s “data agreement” link opens its own page, showing the version the tick box records', () => {
+    expect(DATA_AGREEMENT_URL).toBe('/data-agreement.html');
+    const words = readFileSync(resolve(__dirname, '../../src/crm/auth/TermsGate.tsx'), 'utf8');
+    expect(words).toContain('href={DATA_AGREEMENT_URL}');
+    const p = 'data-agreement.html';
+    const html = readFileSync(pub(p), 'utf8');
+    expect(html).not.toContain('id="root"');
+    expect(html).not.toMatch(/\[(OWNER NAME|CONTACT EMAIL)\]|LAWYER/);
+    expect(html).not.toMatch(/<script/i); // the site's security policy runs no inline script
+    expect(html).toMatch(/data agreement/i);
+    expect(html).toContain(`Version ${TERMS_VERSION}.`);
+    // The source the page is built from (scripts/legal_pages.py) says the same version.
+    const source = readFileSync(resolve(__dirname, '../../../../docs/launch/DATA-AGREEMENT.md'), 'utf8');
+    expect(source).toContain(`**Version ${TERMS_VERSION}.**`);
+  });
+
   it('the panel’s offline worker never keeps them as its own page', () => {
     const sw = readFileSync(pub('sw.js'), 'utf8');
     const src = /const SKIP = (\/.+\/);/.exec(sw)?.[1];
     expect(src).toBeDefined();
     const skip = new Function(`return ${src}`)() as RegExp;
-    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/join.html', '/home/']) expect(skip.test(path), path).toBe(true);
+    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/data-agreement', '/data-agreement.html', '/join.html', '/home/']) expect(skip.test(path), path).toBe(true);
     for (const path of ['/', '/members', '/settings']) expect(skip.test(path), path).toBe(false);
   });
 });

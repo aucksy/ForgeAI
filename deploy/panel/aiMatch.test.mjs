@@ -194,13 +194,68 @@ test('the request is re-masked here, whatever the browser sent', () => {
   assert.ok(checkRequest({ columns: Array.from({ length: 61 }, () => ({ header: 'a' })) }).error);
 });
 
-test('the prompt carries the masked columns and every field, never a raw number', () => {
+test('the prompt carries the masked columns and every field, never a raw number or a name', () => {
   const cols = checkRequest({ columns: COLUMNS }).value.columns;
   const p = buildPrompt(cols);
   for (const f of FIELD_NAMES) assert.ok(p.includes(`- ${f}:`), f);
   assert.ok(p.includes('Column 1: header "Mob."'));
+  assert.ok(p.includes('Column 0: header "Naam"; examples ["[name]","[name]"]'));
   assert.ok(!p.includes('12345'));
   assert.ok(!p.includes('54321'));
+  assert.ok(!p.includes('Ramesh'));
+  assert.ok(!p.includes('Sita'));
+});
+
+// ---------------------------------------------------------------- names and addresses (#59)
+
+const shown = (columns) => checkRequest({ columns }).value.columns.map(({ header, examples }) => ({ header, examples }));
+
+test('#59: a "Name" column, a "Member" column of names and an "Address" column go as their shape only', () => {
+  assert.deepEqual(shown([{ header: 'Name', examples: ['Ramesh Gupta', '', 'Sita'] }]), [{ header: 'Name', examples: ['[name]', '', '[name]'] }]);
+  assert.deepEqual(shown([{ header: 'Member', examples: ['Ravi Kumar', 'Sita Devi'] }]), [{ header: 'Member', examples: ['[name]', '[name]'] }]);
+  assert.deepEqual(shown([{ header: 'नाम', examples: ['राहुल शर्मा'] }]), [{ header: 'नाम', examples: ['[name]'] }]);
+  assert.deepEqual(shown([{ header: 'Address', examples: ['12, MG Road, Jaipur', 'B-4 Shastri Nagar', ''] }]), [
+    { header: 'Address', examples: ['[address]', '[address]', ''] },
+  ]);
+  assert.deepEqual(shown([{ header: 'Pata', examples: ['Jaipur'] }]), [{ header: 'Pata', examples: ['[address]'] }]);
+  assert.deepEqual(shown([{ header: 'Ref By', examples: ['Sunil'] }]), [{ header: 'Ref By', examples: ['[name]'] }]);
+});
+
+test('#59: a names column with no header is found by its cells; a first member sent as the header is hidden too', () => {
+  assert.deepEqual(shown([{ header: '', examples: ['Ramesh Gupta', 'Sita Devi', 'R. K. Sharma', '', 'Mohan'] }]), [
+    { header: '', examples: ['[name]', '[name]', '[name]', '', '[name]'] },
+  ]);
+  assert.deepEqual(shown([{ header: 'Anil Mehta', examples: ['Ramesh Gupta', 'Sita Devi'] }]), [{ header: '[name]', examples: ['[name]', '[name]'] }]);
+  assert.deepEqual(shown([{ header: '', examples: ['Near Bus Stand, Sector 4', '22 Gandhi Nagar'] }]), [{ header: '', examples: ['[address]', '[address]'] }]);
+  // A real header over a column of names stays: it tells the AI what the column is.
+  assert.deepEqual(shown([{ header: 'Referred By', examples: ['Sunil Jain', 'Anita Rao'] }]), [{ header: 'Referred By', examples: ['[name]', '[name]'] }]);
+});
+
+test('#59: plan names, amounts, dates, yes / no, gender and batch times are still sent', () => {
+  const cols = [
+    { header: 'Plan', examples: ['Monthly', 'Annual + PT', 'Gold Membership', 'Ramesh Special'] },
+    { header: 'Package Name', examples: ['Couple Pack', 'Silver Plan'] },
+    { header: 'Fees', examples: ['1500', 'Rs. 1,500/-'] },
+    { header: 'Joining Date', examples: ['15-08-2026', '01/09/2026'] },
+    { header: 'Paid', examples: ['Yes', 'No'] },
+    { header: 'Gender', examples: ['Male', 'Female'] },
+    { header: 'Batch', examples: ['Morning 6-8', 'Ladies Batch'] },
+    { header: 'Trainer', examples: ['Vikram Singh'] },
+    { header: 'Member Since', examples: ['15-08-2025'] },
+    { header: '', examples: ['Monthly Plan', 'Quarterly', 'Half Yearly', 'Personal Training'] },
+    { header: 'Locker', examples: ['12', 'B-3'] },
+  ];
+  assert.deepEqual(shown(cols), cols);
+});
+
+test('#59: what the browser already hid stays hidden; an ID column stays an ID column', () => {
+  const once = [
+    { header: 'Name', examples: ['[name]', ''] },
+    { header: '', examples: ['[name]', '[name]'] },
+    { header: 'Aadhaar No.', examples: ['[ID number]', ''] },
+    { header: 'Name as per Aadhaar', examples: ['[ID number]'] },
+  ];
+  assert.deepEqual(shown(once), once);
 });
 
 // ---------------------------------------------------------------- strict answer check

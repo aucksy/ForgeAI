@@ -5,6 +5,7 @@
 // J71: an existing gym's owner is asked once at sign-in ("Before you go on"); after "Agree and
 //      continue" the panel opens and is never asked again. The front desk is never asked.
 // J72: a server without 0033 asks nothing (the older journeys' world).
+// J74: the data agreement link opens its own page (#59).
 import { expect, test } from '@playwright/test';
 
 import { SIGN_IN_CODE, expectFitsPhone, open, openApp, typeSignIn } from './support.mjs';
@@ -20,7 +21,7 @@ test('J70 Create my gym: the terms box must be ticked, and the acceptance is kep
   await start.getByLabel('Your mobile number').fill('98290 12345');
   // Both links open the real pages, in a new tab (the form is not lost).
   await expect(start.getByRole('link', { name: 'terms' })).toHaveAttribute('href', '/terms.html');
-  await expect(start.getByRole('link', { name: 'data agreement' })).toHaveAttribute('href', '/privacy.html');
+  await expect(start.getByRole('link', { name: 'data agreement' })).toHaveAttribute('href', '/data-agreement.html');
   await expect(start.getByRole('link', { name: 'terms' })).toHaveAttribute('target', '_blank');
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(start.getByRole('alert')).toHaveText('Tick the box to agree to the terms. Then tap “Create my gym” again.');
@@ -97,4 +98,24 @@ test('J73 the check can’t reach the server: the desk still opens; the owner is
   server.reconnect();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Before you go on' })).toBeVisible({ timeout: 15_000 });
+});
+
+// #59 (24 Oct 2026): "the data agreement" opens its own page under the site's security policy, with
+// the version the tick box records, readable on a phone (no sideways scroll), never the admin app.
+test('J74 the data agreement link opens its own page with the version the box records', async ({ page }) => {
+  const errors = [];
+  // The browser asks every page for /favicon.ico, which this static page does not name: not a fault.
+  page.on('response', (r) => {
+    if (r.status() >= 400 && !r.url().endsWith('/favicon.ico')) errors.push(`${r.status()} ${r.url()}`);
+  });
+  page.on('pageerror', (e) => errors.push(String(e)));
+  const res = await page.goto('/data-agreement.html');
+  expect(res?.status()).toBe(200);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('ForgeAI data agreement for gyms');
+  await expect(page.locator('main')).toContainText('Version 2026-10-24.');
+  await expect(page.locator('#root')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Privacy notice' })).toHaveAttribute('href', '/privacy.html');
+  const wide = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(wide).toBeLessThanOrEqual(0);
+  expect(errors).toEqual([]);
 });

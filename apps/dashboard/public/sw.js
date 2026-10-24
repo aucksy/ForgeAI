@@ -6,12 +6,12 @@
 //    device (src/crm/data/savedCopy.ts). Network first, always: online, the newest deploy is used
 //    and kept; the kept copy is used only when the network fails, so a new deploy is never hidden
 //    behind an old one. Never kept: the gym server (/sb), the Worker's own pages (/api, /j, /c, /app),
-//    the landing page (/home), the stand-alone join, check-in, privacy and terms pages, and anything
-//    not on this site (R-76: the site serves /privacy.html at /privacy, which would otherwise be kept
-//    as the panel's own page).
+//    the landing page (/home), the stand-alone join, check-in, privacy, terms and data agreement
+//    pages (#59), and anything not on this site (R-76: the site serves /privacy.html at /privacy,
+//    which would otherwise be kept as the panel's own page).
 const CACHE = 'forgeai-panel-v1';
 const SHELL = '/';
-const SKIP = /^\/(sb|api|j|c|app|home)(\/|$)|^\/(join|checkin|privacy|terms)(\.html)?$/;
+const SKIP = /^\/(sb|api|j|c|app|home)(\/|$)|^\/(join|checkin|privacy|terms|data-agreement)(\.html)?$/;
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

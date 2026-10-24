@@ -12,6 +12,7 @@ import {
   askAiForColumns,
   findIdColumns,
   freeColumns,
+  hidePeople,
   idNamedColumns,
   isRealDate,
   maskCell,
@@ -141,12 +142,90 @@ describe('what the AI is shown', () => {
     const rows = [['Name', 'Mobile', 'Aadhaar'], ...Array.from({ length: 9 }, (_, i) => [`M ${i}`, `98290${String(10000 + i)}`, AADHAAR])];
     const cols = aiColumnsPayload(rows, 0, 3, [2]);
     expect(cols.map((c) => c.header)).toEqual(['Name', 'Mobile', 'Aadhaar']);
-    expect(cols[0]!.examples).toEqual(['M 0', 'M 1', 'M 2', 'M 3', 'M 4']);
+    // #59: a "Name" column goes as its shape only.
+    expect(cols[0]!.examples).toEqual(Array(5).fill('[name]'));
     expect(cols[1]!.examples[0]).toBe('98XXXXXX00');
     expect(cols[2]!.examples).toEqual(Array(5).fill('[ID number]'));
     const sent = JSON.stringify(cols);
     expect(sent).not.toMatch(/\d{7}/);
+    expect(sent).not.toContain('M 0');
     expect(sent).not.toContain('M 5');
+  });
+});
+
+describe('#59 names and addresses are never sent to the AI (owner, 24 Oct 2026)', () => {
+  const REGISTER = [
+    ['Name', 'Member', 'Address', '', 'Plan', 'Fees', 'Joining Date', 'Gender', 'Batch', 'Paid'],
+    ['Ramesh Gupta', 'Ravi Kumar', '12, MG Road, Jaipur', 'Sunil Jain', 'Monthly', '1500', '15-08-2026', 'Male', 'Morning 6-8', 'Yes'],
+    ['Sita Devi', 'Anita Sharma', 'B-4 Shastri Nagar', 'Mohan Lal', 'Annual + PT', 'Rs. 12,000', '01/09/2026', 'Female', 'Ladies Batch', 'No'],
+    ['Mohan Lal', '', '', 'Kavita Rao', 'Gold Membership', '', '', '', '', ''],
+  ];
+  const cols = aiColumnsPayload(REGISTER, 0, 10, []);
+
+  it('a "Name" column, a "Member" column of names, an "Address" column and a names column with no header', () => {
+    expect(cols[0]).toEqual({ header: 'Name', examples: ['[name]', '[name]', '[name]'] });
+    expect(cols[1]).toEqual({ header: 'Member', examples: ['[name]', '[name]', ''] });
+    expect(cols[2]).toEqual({ header: 'Address', examples: ['[address]', '[address]', ''] });
+    expect(cols[3]).toEqual({ header: '', examples: ['[name]', '[name]', '[name]'] });
+    const sent = JSON.stringify(cols);
+    for (const who of ['Ramesh', 'Sita', 'Mohan', 'Ravi', 'Anita', 'Sunil', 'Kavita', 'MG Road', 'Shastri']) expect(sent).not.toContain(who);
+  });
+
+  it('a "Plan" column stays visible, and so do amounts, dates, gender, batch and yes / no', () => {
+    expect(cols[4]).toEqual({ header: 'Plan', examples: ['Monthly', 'Annual + PT', 'Gold Membership'] });
+    expect(cols[5]!.examples).toEqual(['1500', 'Rs. 12,000', '']);
+    expect(cols[6]!.examples).toEqual(['15-08-2026', '01/09/2026', '']);
+    expect(cols[7]!.examples).toEqual(['Male', 'Female', '']);
+    expect(cols[8]!.examples).toEqual(['Morning 6-8', 'Ladies Batch', '']);
+    expect(cols[9]!.examples).toEqual(['Yes', 'No', '']);
+    // A plan column with no header is not taken for names.
+    expect(hidePeople('', ['Monthly Plan', 'Quarterly', 'Half Yearly', 'Personal Training']).examples).toEqual(['Monthly Plan', 'Quarterly', 'Half Yearly', 'Personal Training']);
+  });
+
+  it('a sheet with no header row: the first member, sent as the "header", is hidden too', () => {
+    const rows = [
+      ['Anil Mehta', '9829050001', 'Monthly'],
+      ['Ramesh Gupta', '9829050002', 'Quarterly'],
+      ['Sita Devi', '9829050003', 'Monthly'],
+    ];
+    const sent = aiColumnsPayload(rows, 0, 3, []);
+    expect(sent[0]).toEqual({ header: '[name]', examples: ['[name]', '[name]'] });
+    expect(sent[2]).toEqual({ header: 'Monthly', examples: ['Quarterly', 'Monthly'] });
+    expect(JSON.stringify(sent)).not.toMatch(/Anil|Ramesh|Sita/);
+  });
+
+  it('a column our own rules put in the name or address box is hidden whatever it looks like', () => {
+    const rows = [['Who', 'Ghar'], ['Rahul', 'Jaipur'], ['Vikas', 'Ajmer']];
+    expect(aiColumnsPayload(rows, 0, 2, []).map((c) => c.examples)).toEqual([['Rahul', 'Vikas'], ['Jaipur', 'Ajmer']]);
+    expect(aiColumnsPayload(rows, 0, 2, [], { fullName: 0, address: 1 }).map((c) => c.examples)).toEqual([['[name]', '[name]'], ['[address]', '[address]']]);
+  });
+
+  it('the server twin (deploy/panel/aiMatch.js) hides exactly the same', async () => {
+    const path = '../../../../deploy/panel/aiMatch.js';
+    const panel = (await import(/* @vite-ignore */ path)) as { hidePeople: typeof hidePeople; checkRequest: (b: unknown) => { value: { columns: { header: string; examples: string[] }[] } } };
+    const cases: [string, string[]][] = [
+      ['Name', ['Ramesh Gupta', '', 'Sita']],
+      ['Member', ['Ravi Kumar', 'Sita Devi']],
+      ['Address', ['12, MG Road, Jaipur', 'B-4 Shastri Nagar']],
+      ['', ['Ramesh Gupta', 'Sita Devi', 'R. K. Sharma']],
+      ['Anil Mehta', ['Ramesh Gupta', 'Sita Devi']],
+      ['Plan', ['Monthly', 'Annual + PT']],
+      ['', ['Monthly Plan', 'Quarterly']],
+      ['Referred By', ['Sunil Jain']],
+      ['Member Since', ['15-08-2025']],
+      ['नाम', ['राहुल शर्मा']],
+      ['Name', ['[name]', '']],
+      ['Trainer', ['Vikram Singh']],
+    ];
+    for (const [h, ex] of cases) expect(panel.hidePeople(h, ex), h).toEqual(hidePeople(h, ex));
+    // And the server applies it to whatever the browser sends.
+    expect(panel.checkRequest({ columns: [{ header: 'Name', examples: ['Ramesh Gupta'] }] }).value.columns[0]!.examples).toEqual(['[name]']);
+  });
+
+  it('asks in one line that says names and addresses are hidden too', () => {
+    expect(AI_WORDS.ask).toBe(
+      'Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.',
+    );
   });
 });
 

@@ -19,7 +19,7 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import { Button, Card, CheckField, ErrorBanner, SectionTitle, color, font, space } from '../ui/kit';
 import { useAuth } from './AuthProvider';
 import { authErrorWords } from './signin';
-import { acceptTerms, getTerms, needsTerms, PRIVACY_URL, TERMS_URL, TERMS_VERSION, type TermsState } from './terms';
+import { acceptTerms, DATA_AGREEMENT_URL, getTerms, needsTerms, TERMS_URL, TERMS_VERSION, type TermsState } from './terms';
 
 export { TERMS_VERSION } from './terms';
 
@@ -33,7 +33,7 @@ export function TermsWords() {
         terms
       </a>{' '}
       and the{' '}
-      <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" style={link}>
+      <a href={DATA_AGREEMENT_URL} target="_blank" rel="noopener noreferrer" style={link}>
         data agreement
       </a>
       .

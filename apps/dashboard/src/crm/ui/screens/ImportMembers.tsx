@@ -346,12 +346,12 @@ export function ImportMembersScreen() {
     setAi({ stage: 'idle' });
   };
 
-  /** #47: the owner said yes. Only the masked column names and 5 example rows go. */
+  /** #47: the owner said yes. Only the masked column names and 5 example rows go (names and addresses as their shape, #59). */
   const askAi = async () => {
     if (!file || !session) return;
     const turn = aiTurn.current;
     setAi({ stage: 'asking' });
-    const answer = await askAiForColumns(session.ownerKey, aiColumnsPayload(file.rows, headerRow, width, idColNums));
+    const answer = await askAiForColumns(session.ownerKey, aiColumnsPayload(file.rows, headerRow, width, idColNums, map));
     if (turn !== aiTurn.current) return; // the owner moved to another sheet meanwhile
     if (!answer.ok) {
       setAi({ stage: 'error', words: answer.words });

@@ -1,6 +1,12 @@
 # DRAFT (24 Oct 2026): saved-workouts privacy lines + gym data agreement
 
-**Status: DRAFT for the owner's yes. Nothing here is live.** No existing file was changed.
+**APPLIED 24 Oct 2026** (owner approved "as written", tracker #59, and chose to hide names and
+addresses from the AI import too): Part 1 is in PRIVACY-NOTICE.md / PRIVACY-NOTICE-HI.md, Part 2 in
+DATA-AGREEMENT.md (the source of /data-agreement.html, built by scripts/legal_pages.py). The lawyer
+notes moved to the open-risk lists at the end of those files. 1C (terms, sign-in card, breach plan)
+is not applied yet.
+
+**Status (before 24 Oct): DRAFT for the owner's yes. Nothing here is live.** No existing file was changed.
 When approved, Part 1 goes into PRIVACY-NOTICE.md / PRIVACY-NOTICE-HI.md (and the public
 privacy.html), and Part 2 becomes the page the admin app's "data agreement" link opens.
 
