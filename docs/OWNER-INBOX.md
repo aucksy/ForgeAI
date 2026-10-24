@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 61 | The MettleUp logo (6 options) | A: Ascent |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
 
 ---
@@ -46,8 +45,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
-| #61 | High | Low |
-| #62 | Medium | Low |
 | #60 | High | Low |
 | Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
@@ -375,13 +372,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 62. Your task: tick "I'm not a robot" to finish the tester group (10 seconds) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **Why:** I filled in the Google group "MettleUp testers" (mettleup-testers@googlegroups.com; only people you add can join; you add emails directly) in your simpleapps108 Chrome window. Google asks for a robot check before it creates the group, and I am not allowed to do robot checks.
 **Your task:** in the simpleapps108 Chrome window, open the tab "My groups" (groups.google.com). The "Create group" box shows "Captcha required": tick "I'm not a robot", then press "Create group". If the box is gone, open https://groups.google.com/my-groups and press "Create group" again: name MettleUp testers, email mettleup-testers.
+**TASK DONE (24 Oct, chat):** the group mettleup-testers@googlegroups.com exists. Add testers at groups.google.com → MettleUp testers → Members → Add members.
 
 ## 61. Pick the MettleUp logo — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (24 Oct)
 **Why:** the logo goes on the app icon, the Play Store listing, the website and the gym owner app, so it is the one thing I should not choose for you. All six are drawn as clean shapes, tested at the size of a phone icon, on white and on black. Pictures: sent in the chat on 24 Oct; the page is in the project at branding/logo-options/index.html.
 - **A · Ascent:** an M whose second peak stands higher: "this week beats last week". Ember orange, the colour the app already uses, so nothing else in the app changes colour.
 - **B · Loaded:** a barbell loaded light to heavy. Pine green and brass. Blurs when very small.
@@ -389,11 +387,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **D · Up Arrow:** the U of "Up" becomes an arrow. Red. Can read like a U-turn road sign.
 - **E · Forged:** a hex dumbbell head with an M struck through it. Molten orange.
 - **F · Hidden Up:** a solid M with an up-arrow cut into its base. Cobalt blue, close to Hevy's blue.
-**Decide:** Which logo?
-- A: A · Ascent: clean at every size, keeps the app's orange, one clear idea (recommended)
-- B: F · Hidden Up: the M and the arrow in one shape; blue
-- C: E · Forged: a dumbbell with an M
-- D: Another (write the letter, or what to change, in the note)
+**DECIDED (24 Oct, chat):** E · Forged. Your words: "love the dumbell feel".
 
 ## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat

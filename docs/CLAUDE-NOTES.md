@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-107. Logo picked: E · Forged; tester group created — 24 Oct 2026
+**Owner said:** "Done for both.. going with Forged.. love the dumbell feel"
+**What Claude does:** #61 DECIDED E (Forged: hex dumbbell head with an M struck through; molten #FF8A4C, forge #F0662A,
+slag #C9481A, steel #1B1F26). #62 done (mettleup-testers@googlegroups.com). Next: all icon/splash/web/Play assets from E,
+store graphics incl. a 2-screenshot panorama, then the internal test.
+
 ## R-106. Play account name later? And: what is gym-only, and what is limited, for members without a gym — 24 Oct 2026
 **Owner said:** "will it be a problem later if I wanted to launch this app via a different account than Simple Apps? Or will I
 be able to change the name of the account ... I just want it organized. So I'm just wondering if there are things I should
