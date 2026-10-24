@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-114. HQ panel on his phone: installable, phone-first — 24 Oct 2026 (~7:10 pm)
+**Owner said:** "I want to be able to use the Headquarters panel on my phone, so give the option to install the app and
+optimize it for phone."
+**Doing:** apps/hq/public gets a web-app manifest (MettleUp HQ, E Forged icon), a small service worker that never caches
+private data, an "Install" button (Android install prompt; iPhone: Share → Add to Home Screen hint), and a phone layout pass
+(390 px: no sideways scroll, cards instead of wide tables, 44 px tap targets). deploy/hq/worker.js serves the manifest and
+icons before sign-in (browsers fetch them without the cookie). Built by a helper agent; deployed after its checks.
+
 ## R-113. Do it now: website + app live, new-member onboarding ready — 24 Oct 2026 (~6:40 pm)
 **Owner said:** "lets just continue with whatever you have in plate... just get me the website and app live and the
 onboarding for new members should be ready. I have 32% left" (of his usage limit: work lean).
