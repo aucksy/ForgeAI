@@ -37,6 +37,14 @@ changes in flight", only after its tests pass in CI); (2) 0.56.0: phone tests �
 (mettleup.fit/app) = tester link #1 that works without Play; (3) Play closed test with mettleup-testers@googlegroups.com:
 AAB upload, store listing, send for review = tester link #2 (Google's review may take hours to days).
 
+**R-121 overnight log (2):** v0.56.0 RELEASED 25 Oct ~2 am (tag on 647e1a7; Device QA default + owner, journeys, CI all
+green); https://mettleup.fit/app downloads mettleup-v0.56.0.apk (checked without sign-in). Play: AAB uploaded via the Worker's
+/dl/<tag>.aab CORS pass-through (the browser tool caps uploads at 10 MB); INTERNAL TEST LIVE ("Available to internal
+testers"), join link https://play.google.com/apps/internaltest/4701674448333062164, lists: Google Group + "Testers List A".
+Store listing saved (name, short/full text, icon, banner, 6 shots; AI label: none), category Health & Fitness, contact
+contact@mettleup.fit + https://mettleup.fit. Closed test (group, all countries) BLOCKED: the bundle declares USE_EXACT_ALARM,
+allowed only for alarm-clock/calendar apps — not declaring falsely; helper is removing it (0.56.1, SCHEDULE_EXACT_ALARM + an
+"Alarms & reminders" ask). Then: 0.56.1 gate → closed-test release → send for review.
 **R-121 overnight log:** demo/Branding/messages deployed 24 Oct ~10:40 pm. R-120 built (commits d0bdd30..698bb50, CI green,
 0035 test 54 + security 9 in CI) but HELD, not live: the privacy notice says measurements never reach the gym, so 0035
 needs his yes to the 3 drafted privacy edits (top of docs/launch/PRIVACY-NOTICE.md, "PROPOSED CHANGE, R-120") — legal
