@@ -2592,6 +2592,14 @@
   (owner pasted SUPABASE_HQ_KEY + GOOGLE_CLIENT_SECRET, type Secret); Google returned the Chrome profile account, so
   HQ_ALLOWED_EMAIL = both owner accounts; signed in, gym list loads (223 gyms, most are QA journey gyms). 0029 applied
   (sha256 8bb3d9a2725ada57); live tests 0029 PASS (60), security.sql (main) PASS (9).
+- 2026-10-24: **v0.55.0 released** (tag on the PROGRESS commit after e0f701a; only notes after the tested commit).
+  Member app: the workout offer card on the Gym tab (#49 step 2), automatic gym reminders scheduled by the phone with
+  the owner's switches (R-86, 0029 live), paused-gym words (HQ #51), and U-M6c (no ghost keyboard room after the app was
+  away or a typing screen closed: Keyboard.dismiss on background + a 0.5 s focus check). Gate on e0f701a: default
+  40019013968, owner 40034087489 (rerun via qa-e0f701a-owner; first owner run's emulator never booted), journeys
+  40019021892, CI 40019026334. On the way: 5 test races/infra fixes (brand-welcome pop-up, part L sheet, J38b
+  headings, aiMatch hang on Node 22.23, UR typing check) and run-device-qa.sh retries a part once on Maestro's
+  DeviceServerDiedException only.
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
