@@ -91,7 +91,7 @@ describe('the WhatsApp code message', () => {
 describe('U-A14: refusal words that fit the owner too, and a removed person', () => {
   it('a wrong or old code says what the owner does as well, and keeps the tries left', () => {
     expect(WRONG_CODE_WORDS).toBe(
-      'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.',
+      'That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.',
     );
     expect(authErrorWords(new SignInError('WRONG_CODE', null))).toBe(WRONG_CODE_WORDS);
     expect(authErrorWords(new SignInError('WRONG_CODE', 3))).toBe(`${WRONG_CODE_WORDS} (3 tries left)`);

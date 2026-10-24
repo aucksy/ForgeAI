@@ -54,6 +54,7 @@ import { AllBranchesScreen } from './branches/AllBranches';
 import { BranchProvider } from './branches/BranchProvider';
 import { useBranches } from './branches/context';
 import { TermsGate } from './auth/TermsGate';
+import { PinPrompt } from './auth/PinForms';
 import { Redirect, useRoute } from './ui/router';
 import { MoveBanner } from './move/MoveBanner';
 
@@ -100,11 +101,15 @@ function SessionRoot() {
     [onlineKey, role, staffId, personName],
   );
   return (
-    <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
-      <ShopProvider>
-        <Routes online={onlineKey !== null} />
-      </ShopProvider>
-    </CrmProvider>
+    <>
+      <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
+        <ShopProvider>
+          <Routes online={onlineKey !== null} />
+        </ShopProvider>
+      </CrmProvider>
+      {/* R-117: once, after a sign-in with a one-time code by someone with no PIN yet. */}
+      <PinPrompt key={session?.ownerKey ?? 'none'} />
+    </>
   );
 }
 

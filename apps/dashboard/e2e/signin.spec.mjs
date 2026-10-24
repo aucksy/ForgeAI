@@ -21,7 +21,7 @@ import {
 
 // U-A14: the words fit an owner on a new phone too.
 const WRONG =
-  'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.';
+  'That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.';
 
 test('J25 owner signs in on a new device with mobile + code; wrong codes get clear words (U-A14)', async ({ page, browser }) => {
   const server = await openApp(page);
@@ -43,7 +43,7 @@ test('J25 owner signs in on a new device with mobile + code; wrong codes get cle
   await typeSignIn(laptop, '12345', SIGN_IN_CODE);
   await expect(alert).toHaveText('Type a 10-digit mobile number, like 98290 12345.');
   await typeSignIn(laptop, OWNER.phone, '4829');
-  await expect(alert).toHaveText('Type the 6-digit code your gym owner gave you.');
+  await expect(alert).toHaveText('Type your 6-digit PIN, or the code your gym owner gave you.');
   expect(server.calls.filter((c) => c === 'staff_sign_in')).toHaveLength(0);
 
   // Wrong codes: refused, with the tries left.
@@ -55,7 +55,7 @@ test('J25 owner signs in on a new device with mobile + code; wrong codes get cle
     await expect(alert).toHaveText(`${WRONG} (${left})`);
   }
   await typeSignIn(laptop, OWNER.phone, '111111');
-  await expect(alert).toHaveText('That code is wrong. Too many tries. Wait 15 minutes, or get a new code.');
+  await expect(alert).toHaveText('That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code.');
   // Now even the right code waits.
   await typeSignIn(laptop, OWNER.phone, SIGN_IN_CODE);
   await expect(alert).toHaveText('Too many tries for this number. Wait 15 minutes, or get a new code.');

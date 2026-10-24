@@ -138,7 +138,7 @@ const ACTION: Record<string, string> = {
   approve_gym: 'MettleUp checked and approved your gym',
   suspend_gym: 'MettleUp paused your gym',
   restore_gym: 'MettleUp switched your gym back on',
-  reset_owner_signin: 'MettleUp made a new sign-in code for the owner, after a call to your gym',
+  reset_owner_signin: 'MettleUp made a new sign-in code for the owner and cleared the old PIN, after a call to your gym',
   sign_out_gym: 'MettleUp signed every phone and computer of your gym out',
   create_gym: 'MettleUp set up your gym',
   ai_limit_set: 'MettleUp changed your daily AI matches',

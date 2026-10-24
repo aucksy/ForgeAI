@@ -443,7 +443,7 @@ async function gymPage(id, flash = '') {
   const resetOut = h('div');
   const reset = h('div', { class: 'card' },
     h('h2', {}, 'Owner lost their sign-in'),
-    h('p', { class: 'muted' }, 'Call the gym’s own number first. Make a code only when the owner confirms on that call.'),
+    h('p', { class: 'muted' }, 'Call the gym’s own number first. Make a code only when the owner confirms on that call. The owner’s old PIN stops working; they set a new one after signing in with this code.'),
     ownerPick ? field('Which owner', ownerPick) : null,
     h('label', { class: 'check' }, called, ' I called the gym’s own number and the owner confirmed'),
     action('Make a new sign-in code', async () => {

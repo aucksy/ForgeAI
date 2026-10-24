@@ -45,7 +45,7 @@ export function MoreScreen() {
     {
       path: '/settings/people',
       label: 'Staff & sign-in',
-      hint: owner ? 'Who can open this admin app' : 'You, and signing out',
+      hint: owner ? 'Who can open this admin app, and your PIN' : 'Your PIN, and signing out',
       icon: 'members',
     },
     {

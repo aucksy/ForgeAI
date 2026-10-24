@@ -1,5 +1,7 @@
 /**
- * Sign-in by mobile number + a 6-digit code (14 Oct 2026; Gym Panel for Jaipur owners, step 1).
+ * Sign-in by mobile number + a 6-digit code (14 Oct 2026; Gym Panel for Jaipur owners, step 1), and
+ * since R-117 (24 Oct 2026, migration 0034) each person's own lasting 6-digit PIN: the same box
+ * takes either, and the server tries the PIN first.
  * The pure half: the mobile number's shape, the server's answers read into shapes, the words for
  * every refusal, and the WhatsApp message that carries a code.
  *
@@ -27,6 +29,10 @@ export interface SignedIn {
   joinCode: string;
   sessionKey: string;
   person: Person;
+  /** 0034: how this device got in ('pin' or a one-time 'code'); absent from a server before 0034. */
+  via?: 'pin' | 'code';
+  /** 0034: does this person have a PIN now? Absent from a server before 0034. */
+  hasPin?: boolean;
 }
 
 /** One row of Settings -> Staff & sign-in. */
@@ -38,6 +44,23 @@ export interface PersonRow extends Person {
   lastSeenAt: number | null;
   /** Epoch ms the waiting code stops working, or null when none is waiting. */
   codeUntil: number | null;
+  /** 0034: has this person set a PIN? null on a server before 0034 (nobody can have one). */
+  hasPin: boolean | null;
+  /** 0034: epoch ms their PIN stays locked after 5 wrong tries, or null. */
+  pinLockedUntil: number | null;
+}
+
+/** 0034: this device's own PIN, as staff_pin_status tells it (never the PIN itself). */
+export interface PinStatus {
+  /** False for an old owner key (no person to give a PIN to). */
+  canSet: boolean;
+  hasPin: boolean;
+  /** Epoch ms, or null. */
+  setAt: number | null;
+  /** Changing it needs the current PIN (false for 15 minutes after a sign-in with a code). */
+  needsCurrent: boolean;
+  /** Epoch ms the PIN stays locked after wrong tries, or null. */
+  lockedUntil: number | null;
 }
 
 export interface MadeCode {
@@ -117,8 +140,70 @@ export function signedInFromRow(raw: unknown): SignedIn {
   const person = personFromRow(r.person);
   const sessionKey = str(r.sessionKey);
   if (!person || sessionKey.length < 16 || !str(r.gymId)) throw new Error('UNKNOWN');
-  return { gymId: str(r.gymId), name: str(r.name), joinCode: str(r.joinCode), sessionKey, person };
+  const out: SignedIn = { gymId: str(r.gymId), name: str(r.name), joinCode: str(r.joinCode), sessionKey, person };
+  if (r.via === 'pin' || r.via === 'code') out.via = r.via;
+  if (typeof r.hasPin === 'boolean') out.hasPin = r.hasPin;
+  return out;
 }
+
+/** staff_pin_status's answer (0034). PURE. */
+export function pinStatusFromRow(raw: unknown): PinStatus {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Row;
+  return {
+    canSet: r.canSet === true,
+    hasPin: r.hasPin === true,
+    setAt: epoch(r.setAt),
+    needsCurrent: r.needsCurrent === true,
+    lockedUntil: epoch(r.lockedUntil),
+  };
+}
+
+// ---------------------------------------------------------------- the PIN (0034)
+
+/** What is wrong with a new PIN (the same rules as the server's _pin_problem). */
+export type PinProblem = 'LENGTH' | 'SAME' | 'RUN' | 'MOBILE';
+
+/**
+ * Why a PIN may not be used, or null when it is fine. Exactly 6 digits; not one digit six times
+ * (111111); not a straight run up or down (123456, 654321, 012345, 987654); not the last 6 digits
+ * of the person's own mobile. PURE.
+ */
+export function pinProblem(pin: string, phone: string | null | undefined): PinProblem | null {
+  if (!/^\d{6}$/.test(pin)) return 'LENGTH';
+  if (/^(\d)\1{5}$/.test(pin)) return 'SAME';
+  if ('0123456789'.includes(pin) || '9876543210'.includes(pin)) return 'RUN';
+  const ten = phone ? normalizeMobile(phone) : null;
+  if (ten && pin === ten.slice(-6)) return 'MOBILE';
+  return null;
+}
+
+/** The words for a PIN that may not be used. PURE. */
+export function pinProblemWords(problem: PinProblem): string {
+  switch (problem) {
+    case 'LENGTH':
+      return 'Your PIN must be 6 digits.';
+    case 'SAME':
+      return 'Don’t use the same digit six times. Pick a PIN that is hard to guess.';
+    case 'RUN':
+      return 'Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess.';
+    case 'MOBILE':
+      return 'Don’t use the end of your mobile number. Pick a PIN that is hard to guess.';
+  }
+}
+
+/**
+ * A new PIN typed twice: the words for what is wrong, or null when it can be saved. The PIN's own
+ * problems come first, then "the two are not the same". PURE.
+ */
+export function newPinError(pin: string, again: string, phone: string | null | undefined): string | null {
+  const problem = pinProblem(pin, phone);
+  if (problem) return pinProblemWords(problem);
+  if (again !== pin) return 'The two PINs are not the same. Type the same PIN in both boxes.';
+  return null;
+}
+
+/** The plain words under the PIN boxes (owner's wording, R-117). */
+export const PIN_HINT = 'You sign in with your mobile number and this PIN. Keep it private.';
 
 export function peopleFromRows(raw: unknown): PersonRow[] {
   const out: PersonRow[] = [];
@@ -132,6 +217,8 @@ export function peopleFromRows(raw: unknown): PersonRow[] {
       devices: Number(r.devices) || 0,
       lastSeenAt: epoch(r.lastSeenAt),
       codeUntil: epoch(r.codeUntil),
+      hasPin: typeof r.hasPin === 'boolean' ? r.hasPin : null,
+      pinLockedUntil: epoch(r.pinLockedUntil),
     });
   }
   return out;
@@ -187,6 +274,12 @@ export type AuthErrorCode =
   | 'SUSPENDED'
   // #41 (0031): a mobile on another branch's staff list can't be made an owner of every branch.
   | 'STAFF_ELSEWHERE'
+  // R-117 (0034): the PIN.
+  | 'BAD_PIN'
+  | 'WEAK_PIN'
+  | 'NEED_CURRENT'
+  | 'WRONG_PIN'
+  | 'NO_PERSON'
   // UAT work package 3 (0021): the server's receipt rules.
   | ReceiptRefusal
   | 'OFFLINE'
@@ -215,7 +308,8 @@ export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
 
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
-  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE', ...RECEIPT_REFUSALS,
+  'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE',
+  'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', ...RECEIPT_REFUSALS,
 ];
 
 /** MettleUp HQ (#51): what a desk sees when MettleUp has paused the gym (every save is refused). */
@@ -245,7 +339,7 @@ export function authErrorCode(err: unknown): AuthErrorCode {
   return 'UNKNOWN';
 }
 
-/** A refusal with its tries left (WRONG_CODE only). */
+/** A refusal with its tries left (WRONG_CODE and WRONG_PIN only). */
 export class SignInError extends Error {
   constructor(
     public readonly code: AuthErrorCode,
@@ -259,9 +353,10 @@ export class SignInError extends Error {
 /**
  * UAT U-A14 (17 Oct 2026, owner's words): a wrong or old code. Said to a desk person AND to an
  * owner on a new phone, who has nobody to ask: an owner makes his own code where he is signed in.
+ * R-117: the same box takes a PIN, so the words name both.
  */
 export const WRONG_CODE_WORDS =
-  'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.';
+  'That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.';
 
 /** U-A14: this device's person was removed from the gym (the server says so: staff_key_status, 0022). */
 export type KeyStatus = 'live' | 'signed_out' | 'removed' | 'unknown';
@@ -294,7 +389,7 @@ export function authErrorWords(err: unknown): string {
       // 0011: one answer for "wrong" and "none waiting", so nobody learns when a code exists.
       // UAT U-A14: the person may be the owner, so the words say what an owner does too.
       const base = WRONG_CODE_WORDS;
-      if (left === 0) return 'That code is wrong. Too many tries. Wait 15 minutes, or get a new code.';
+      if (left === 0) return 'That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code.';
       return left === null
         ? base
         : left === 1
@@ -303,6 +398,20 @@ export function authErrorWords(err: unknown): string {
     }
     case 'TOO_MANY_TRIES':
       return 'Too many tries for this number. Wait 15 minutes, or get a new code.';
+    case 'BAD_PIN':
+      return pinProblemWords('LENGTH');
+    case 'WEAK_PIN':
+      return 'That PIN is too easy to guess. Don’t use one digit six times, digits in order like 123456, or the end of your mobile number.';
+    case 'NEED_CURRENT':
+      return 'Type your current PIN first.';
+    case 'WRONG_PIN': {
+      const left = err instanceof SignInError ? err.triesLeft : null;
+      if (left === 0) return 'That is not your current PIN. Too many tries. Wait 15 minutes.';
+      if (left === null) return 'That is not your current PIN.';
+      return `That is not your current PIN. (${left} ${left === 1 ? 'try' : 'tries'} left)`;
+    }
+    case 'NO_PERSON':
+      return 'Sign in with your mobile number first. Then you can set a PIN.';
     case 'PHONE_TAKEN':
       return 'This mobile number is already on the list.';
     case 'OWNER_ONLY':

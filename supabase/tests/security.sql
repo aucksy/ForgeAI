@@ -33,6 +33,8 @@ declare
     'branch_find_visitor','branch_check_in_visitor','branch_visitors','branch_undo_visitor',
     -- 0033: the terms the gym accepted (each checks an owner or desk key; accepting: owners only).
     'owner_terms','owner_accept_terms',
+    -- 0034: your own sign-in PIN (each checks a session key and acts only on that key's person).
+    'staff_set_pin','staff_pin_status',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

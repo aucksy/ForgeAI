@@ -220,3 +220,21 @@ acceptance counts for every branch of the business. **Changes one function:** gy
 `p_terms_version` (default null; the 4-argument version is dropped). Re-running 0021 puts the old one
 back next to it: always re-run 0033 after 0021. Test: `tests/0033_terms_acceptance.sql` →
 `RESULT PASS (27 checks)`. Before it is applied nobody is asked and nothing is recorded.
+
+## Own sign-in PIN (0034, R-117) — NOT APPLIED
+Additive and re-runnable; apply after 0033. Every person (owner and staff) may keep their own lasting
+6-digit PIN: sign-in is mobile number + PIN, every time. The one-time codes keep working exactly as
+before (first sign-in for staff, a new phone, recovery, HQ's reset); the sign-in box takes either, and
+the server tries the PIN first. Only a bcrypt hash is kept (`gym_staff_pins`, no access for anon or
+authenticated); no function ever returns it. Weak PINs are refused (one digit six times, straight runs
+like 123456 / 654321, the last 6 digits of the person's own mobile). Five wrong tries in a row (PIN or
+code) lock that person's PIN for 15 minutes; a one-time code still works while it is locked, and a
+correct sign-in clears the count. The 0018 per-caller limit stays. New: `staff_set_pin` (your own PIN;
+changing it needs the current PIN unless this device signed in with a code in the last 15 minutes) and
+`staff_pin_status`. **Changes:** staff_sign_in (0018; adds `via` / `hasPin`), owner_people (0018; adds
+`hasPin` / `pinLockedUntil`), owner_sign_out_person (0031; also clears that person's PIN),
+hq_reset_owner_signin (0027; clears the owner's PIN before making the code) and gym_create_online (0033;
+gains `p_pin`, the 5-argument version is dropped). A trigger deletes a removed person's PIN. Re-running
+0018, 0027, 0031 or 0033 puts their versions back: always re-run 0034 after them. Apply it BEFORE the
+admin app that asks for a PIN is deployed (an older server makes the gym without the PIN). Test:
+`tests/0034_signin_pin.sql` → `RESULT PASS (68 checks)`, then `tests/security.sql` → `RESULT PASS`.

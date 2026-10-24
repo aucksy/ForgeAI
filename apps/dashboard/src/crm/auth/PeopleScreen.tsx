@@ -7,6 +7,9 @@
  * the owner's own row is how the owner signs in on a new phone.
  *
  * Owners can add people, make codes, sign people out and remove them. Staff see only themselves.
+ *
+ * R-117 (0034): everyone sets their OWN lasting PIN in the "You" card ("Set my PIN" / "Change my
+ * PIN"). The owner's list says who has one; "Sign out everywhere" also clears that person's PIN.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -35,6 +38,7 @@ import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { staffRightsWords } from './permissions';
 import { useBranches } from '../branches/context';
+import { SetPinSheet } from './PinForms';
 import {
   authErrorCode,
   authErrorWords,
@@ -46,6 +50,7 @@ import {
   whatsAppToMobile,
   type MadeCode,
   type PersonRow,
+  type PinStatus,
   type Role,
 } from './signin';
 
@@ -56,6 +61,18 @@ function clock(ms: number): string {
 function seenWords(p: PersonRow): string {
   if (p.devices === 0) return p.lastSeenAt ? 'Signed out' : 'Not signed in yet';
   return p.devices === 1 ? 'Signed in on 1 device' : `Signed in on ${p.devices} devices`;
+}
+
+/** 0034: " · PIN set" / " · No PIN yet" / " · PIN locked till 5:40 pm"; nothing on an older server. */
+function pinWords(p: PersonRow): string {
+  if (p.pinLockedUntil) return ` · PIN locked till ${clock(p.pinLockedUntil)} (too many wrong tries)`;
+  if (p.hasPin === true) return ' · PIN set';
+  if (p.hasPin === false) return ' · No PIN yet';
+  return '';
+}
+
+function day(ms: number): string {
+  return new Date(ms).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 const bodyText = { margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary } as const;
@@ -80,11 +97,14 @@ export function PeopleScreen() {
     | { kind: 'remove'; person: PersonRow }
     | { kind: 'signout'; person: PersonRow }
     | { kind: 'me-signout' }
+    | { kind: 'pin' }
     | null
   >(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rowError, setRowError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // R-117: this device's own PIN (null: not known yet, or a server without PINs: nothing is shown).
+  const [pin, setPin] = useState<PinStatus | null>(null);
   const closeSheet = useCallback(() => setSheet(null), []);
 
   const fail = useCallback(
@@ -108,6 +128,21 @@ export function PeopleScreen() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const loadPin = useCallback(async () => {
+    if (!key || !me) return;
+    try {
+      setPin(await authApi.pinStatus(key));
+    } catch (e) {
+      // The PIN card is extra: the rest of the screen works without it.
+      console.warn('[ForgeErr] staff_pin_status', e);
+      setPin(null);
+    }
+  }, [key, me]);
+
+  useEffect(() => {
+    void loadPin();
+  }, [loadPin]);
 
   useEffect(() => {
     if (!toast) return;
@@ -166,10 +201,24 @@ export function PeopleScreen() {
           <Pill tone={isOwner ? 'accent' : 'muted'}>{isOwner ? 'Owner' : 'Staff'}</Pill>
         </Row>
         <p style={{ ...bodyText, marginTop: 4 }}>+91 {formatMobile(me.phone)}</p>
+        {pin?.canSet && (
+          <p style={{ ...bodyText, marginTop: space.md }}>
+            {pin.lockedUntil
+              ? `Your PIN is locked till ${clock(pin.lockedUntil)} after too many wrong tries. You can still sign in with a code from the owner.`
+              : pin.hasPin
+                ? `You sign in with your mobile number and your own PIN${pin.setAt ? ` (set on ${day(pin.setAt)})` : ''}.`
+                : 'You have no PIN yet. Set one, and you can sign in any time with your mobile number and your PIN.'}
+          </p>
+        )}
         <div style={{ marginTop: space.lg }}>
-          <Button variant="ghost" onClick={() => setSheet({ kind: 'me-signout' })}>
-            Sign out of this device
-          </Button>
+          <Row gap={space.sm}>
+            {pin?.canSet && (
+              <Button onClick={() => setSheet({ kind: 'pin' })}>{pin.hasPin ? 'Change my PIN' : 'Set my PIN'}</Button>
+            )}
+            <Button variant="ghost" onClick={() => setSheet({ kind: 'me-signout' })}>
+              Sign out of this device
+            </Button>
+          </Row>
         </div>
       </Card>
 
@@ -219,6 +268,7 @@ export function PeopleScreen() {
                 </Row>
                 <p style={{ ...bodyText, marginTop: 4 }}>
                   +91 {formatMobile(p.phone)} · {seenWords(p)}
+                  {pinWords(p)}
                   {p.codeUntil ? ` · Code works till ${clock(p.codeUntil)}` : ''}
                 </p>
                 <div style={{ marginTop: space.md }}>
@@ -226,7 +276,8 @@ export function PeopleScreen() {
                     <Button disabled={busyId !== null} onClick={() => void makeCode(p)}>
                       {busyId === p.staffId ? 'Making…' : 'Make sign-in code'}
                     </Button>
-                    {p.devices > (p.me ? 1 : 0) && (
+                    {/* R-117: also for someone signed in nowhere who has a PIN, so it can be cleared. */}
+                    {(p.devices > (p.me ? 1 : 0) || (!p.me && p.hasPin === true)) && (
                       <Button variant="ghost" onClick={() => setSheet({ kind: 'signout', person: p })}>
                         {p.me ? 'Sign out other devices' : 'Sign out everywhere'}
                       </Button>
@@ -277,8 +328,12 @@ export function PeopleScreen() {
             sheet.kind === 'remove'
               ? `${sheet.person.name} is signed out of every phone and computer. They can’t sign in again. Your members and payments stay as they are.`
               : sheet.person.me
-                ? 'Every other phone or computer signed in as you is signed out. This one stays signed in.'
-                : `${sheet.person.name} is signed out of every phone and computer. They can sign in again with a new code.`
+                ? `Every other phone or computer signed in as you is signed out. This one stays signed in.${
+                    sheet.person.hasPin ? ' Your PIN is cleared too. Set a new one in “You” above.' : ''
+                  }`
+                : `${sheet.person.name} is signed out of every phone and computer. They can sign in again with a new code.${
+                    sheet.person.hasPin ? ' Their PIN stops working too. To get back in, they need a new code; then they set a new PIN.' : ''
+                  }`
           }
           action={sheet.kind === 'remove' ? 'Remove' : 'Sign out'}
           onClose={closeSheet}
@@ -288,8 +343,32 @@ export function PeopleScreen() {
             setSheet(null);
             setToast(sheet.kind === 'remove' ? `${sheet.person.name} removed.` : 'Signed out.');
             await load();
+            // Signing yourself out of other devices clears your PIN (0034): show it.
+            if (sheet.person.me) await loadPin();
           }}
           fail={fail}
+        />
+      )}
+
+      {sheet?.kind === 'pin' && pin && (
+        <SetPinSheet
+          sessionKey={key}
+          phone={me.phone}
+          needsCurrent={pin.hasPin && pin.needsCurrent}
+          title={pin.hasPin ? 'Change my PIN' : 'Set my PIN'}
+          forgot={
+            isOwner
+              ? 'Forgot it? Make yourself a sign-in code in the list below, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one.'
+              : 'Forgot it? Ask your gym owner for a sign-in code, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one.'
+          }
+          onClose={closeSheet}
+          onSaved={() => {
+            setSheet(null);
+            setToast('PIN saved. Sign in with your mobile number and this PIN.');
+            void loadPin();
+            void load();
+          }}
+          onLost={lost}
         />
       )}
 

@@ -53,6 +53,9 @@ export const BRANCH_FNS = [
 /** #38 (0033): the terms calls, answered only when `termsServer` is on. */
 const TERMS_FNS = ['owner_terms', 'owner_accept_terms'];
 
+/** R-117 (0034): the PIN calls, answered only when `pinServer` is on. */
+const PIN_FNS = ['staff_set_pin', 'staff_pin_status'];
+
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
 const OFFER_FNS = ['owner_offers', 'owner_save_offer', 'owner_stop_offer', 'staff_give_reward', 'owner_undo_reward'];
 
@@ -138,6 +141,14 @@ export class FakeServer {
      */
     this.termsServer = false;
     this.terms = null;
+    /**
+     * R-117: does this server have 0034 (each person's own PIN)? Off by default, like a server before
+     * it: gym_create_online with a PIN and the PIN calls answer PGRST202, and a sign-in reply has no
+     * `via` / `hasPin`, so the older journeys never see the "Set your own PIN" prompt.
+     */
+    this.pinServer = false;
+    /** session key -> 'pin' | 'code' (how that device signed in; 0034's gym_sessions.via). */
+    this.sessionVia = new Map();
   }
 
   /**
@@ -242,11 +253,19 @@ export class FakeServer {
     this.dropAfter.clear();
   }
 
-  /** A person the owner added, with the sign-in code they were given. */
-  addPerson({ name, phone, role, code }) {
+  /** A person the owner added, with the sign-in code they were given (and, 0034, their PIN). */
+  addPerson({ name, phone, role, code, pin = null }) {
     const staffId = `s-${role}-${phone}`;
-    this.people.set(phone, { staffId, name, phone, role, code, lastSeenAt: null });
+    this.people.set(phone, { staffId, name, phone, role, code, lastSeenAt: null, pin, pinTries: 0, pinLocked: false });
     return staffId;
+  }
+
+  /** 0034's _pin_problem. */
+  pinProblem(pin, phone) {
+    if (!/^\d{6}$/.test(String(pin ?? ''))) return 'BAD_PIN';
+    if (/^(\d)\1{5}$/.test(pin) || '0123456789'.includes(pin) || '9876543210'.includes(pin)) return 'WEAK_PIN';
+    if (String(phone).slice(-6) === pin) return 'WEAK_PIN';
+    return null;
   }
 
   personById(staffId) {
@@ -274,6 +293,14 @@ export class FakeServer {
       sessionKey,
       person: { staffId: person.staffId, name: person.name, phone: person.phone, role: person.role },
     };
+  }
+
+  /** 0034: a sign-in reply that says how the device came in and whether a PIN exists. */
+  signedInVia(person, via) {
+    const out = this.signedIn(person);
+    if (!this.pinServer) return out;
+    this.sessionVia.set(out.sessionKey, via);
+    return { ...out, via, hasPin: Boolean(person.pin) };
   }
 
   /** A device's key stops working (kept, so staff_key_status can say why). */
@@ -319,6 +346,10 @@ export class FakeServer {
     if (BRANCH_FNS.includes(fn) || (!this.termsServer && TERMS_FNS.includes(fn))) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    // A server before 0034 has neither the PIN calls nor gym_create_online's p_pin.
+    if (!this.pinServer && (PIN_FNS.includes(fn) || (fn === 'gym_create_online' && 'p_pin' in args))) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     switch (fn) {
       case 'demo_start_gym': {
         // The demo, or "Turn on the shop" for a gym kept in this browser: a gym with a code, the
@@ -353,8 +384,13 @@ export class FakeServer {
       case 'owner_products':
         return this.products;
       case 'gym_create_online': {
+        // 0034: a PIN that is sent must be a good one.
+        if (args.p_pin) {
+          const bad = this.pinProblem(args.p_pin, args.p_phone);
+          if (bad) throw new Refusal(bad);
+        }
         this.gym.name = args.p_gym_name;
-        const staffId = this.addPerson({ name: args.p_name, phone: args.p_phone, role: 'owner', code: null });
+        const staffId = this.addPerson({ name: args.p_name, phone: args.p_phone, role: 'owner', code: null, pin: args.p_pin ?? null });
         // 0033: the box ticked at "Create my gym" is kept with the gym.
         if (this.termsServer && args.p_terms_version) {
           this.terms = { version: args.p_terms_version, at: NOW.toISOString(), by: args.p_name, how: 'create' };
@@ -388,16 +424,55 @@ export class FakeServer {
       case 'staff_sign_in': {
         // 0011: every miss counts per mobile; a miss never kills the code; one reply for "no code"
         // and "wrong code"; after 5 misses even the right code waits (TOO_MANY_TRIES).
+        // 0034 (pinServer): the person's own PIN first (not while it is locked after 5 wrong tries),
+        // then the code; every wrong try counts against the PIN too.
         const misses = this.misses.get(args.p_phone) ?? 0;
         if (misses >= CODE_TRIES) return { error: 'TOO_MANY_TRIES' };
         const p = this.people.get(args.p_phone);
+        if (this.pinServer && p?.pin && !p.pinLocked && p.pin === args.p_code) {
+          p.pinTries = 0;
+          this.misses.delete(args.p_phone);
+          return this.signedInVia(p, 'pin');
+        }
         if (!p || !p.code || p.code !== args.p_code) {
           this.misses.set(args.p_phone, misses + 1);
+          if (this.pinServer && p?.pin && !p.pinLocked) {
+            p.pinTries += 1;
+            if (p.pinTries >= 5) Object.assign(p, { pinTries: 0, pinLocked: true });
+          }
           return { error: 'WRONG_CODE', triesLeft: Math.max(0, CODE_TRIES - 1 - misses) };
         }
         p.code = null;
+        p.pinTries = 0;
+        p.pinLocked = false;
         this.misses.delete(args.p_phone);
-        return this.signedIn(p);
+        return this.signedInVia(p, 'code');
+      }
+      case 'staff_pin_status': {
+        const p = this.who(args.p_key);
+        return {
+          canSet: true,
+          hasPin: Boolean(p.pin),
+          setAt: p.pin ? NOW.toISOString() : null,
+          needsCurrent: Boolean(p.pin) && this.sessionVia.get(args.p_key) !== 'code',
+          lockedUntil: p.pinLocked ? new Date(NOW.getTime() + 15 * 60_000).toISOString() : null,
+        };
+      }
+      case 'staff_set_pin': {
+        const p = this.who(args.p_key);
+        const bad = this.pinProblem(args.p_pin, p.phone);
+        if (bad) return { error: bad };
+        if (p.pin && this.sessionVia.get(args.p_key) !== 'code') {
+          if (p.pinLocked) return { error: 'TOO_MANY_TRIES' };
+          if (!args.p_current) return { error: 'NEED_CURRENT' };
+          if (args.p_current !== p.pin) {
+            p.pinTries += 1;
+            if (p.pinTries >= 5) Object.assign(p, { pinTries: 0, pinLocked: true });
+            return { error: 'WRONG_PIN', triesLeft: p.pinLocked ? 0 : 5 - p.pinTries };
+          }
+        }
+        Object.assign(p, { pin: args.p_pin, pinTries: 0, pinLocked: false });
+        return { ok: true, hasPin: true, setAt: NOW.toISOString() };
       }
       case 'staff_sign_out':
         this.endSession(args.p_key);
@@ -459,6 +534,9 @@ export class FakeServer {
           devices: this.devices(p.staffId),
           lastSeenAt: p.lastSeenAt,
           codeUntil: p.code ? new Date(NOW.getTime() + 30 * 60_000).toISOString() : null,
+          ...(this.pinServer
+            ? { hasPin: Boolean(p.pin), pinLockedUntil: p.pinLocked ? new Date(NOW.getTime() + 15 * 60_000).toISOString() : null }
+            : {}),
         }));
       }
       case 'owner_add_person': {
@@ -485,7 +563,10 @@ export class FakeServer {
         for (const [k, id] of [...this.sessions]) {
           if (id === args.p_staff && k !== args.p_key) this.endSession(k);
         }
-        if (!this.personById(args.p_staff)) throw new Refusal('GONE');
+        const out = this.personById(args.p_staff);
+        if (!out) throw new Refusal('GONE');
+        // 0034: "Sign out everywhere" clears that person's PIN too.
+        if (this.pinServer) Object.assign(out, { pin: null, pinTries: 0, pinLocked: false });
         void me;
         return null;
       }
@@ -890,15 +971,18 @@ export async function secondPhone(browser, server, time = NOW) {
   return page;
 }
 
-export const OWNER = { name: 'Ramesh Sharma', phone: '98290 12345', gym: 'Shakti Gym' };
+/** The owner of the online journeys; `pin` is the PIN he chooses at Create my gym (R-117). */
+export const OWNER = { name: 'Ramesh Sharma', phone: '98290 12345', gym: 'Shakti Gym', pin: '271828' };
 export const DESK = { name: 'Sunita Verma', phone: '98290 54321' };
 
 /** Welcome -> "New here? Set up your gym" -> Create my gym. Ends on Today, signed in as the owner. */
-export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name, phone = OWNER.phone } = {}) {
+export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name, phone = OWNER.phone, pin = OWNER.pin } = {}) {
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill(gym);
   await start.getByLabel('Your name').fill(name);
   await start.getByLabel('Your mobile number').fill(phone);
+  // R-117: the owner's own PIN, typed twice.
+  await fillNewPin(start, pin);
   // #38: the owner agrees to the terms before the gym is made.
   await start.getByRole('checkbox', { name: /I agree to the MettleUp terms and the data agreement/ }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
@@ -932,11 +1016,17 @@ export async function addDeskPerson(page, { name = DESK.name, phone = DESK.phone
   await expect(codeSheet).toBeHidden();
 }
 
-/** Welcome -> Sign in with a mobile number and a code. Does not wait for the result. */
+/** R-117: "Choose a 6-digit PIN" and "Type the PIN again" (Create my gym, Set my PIN). */
+export async function fillNewPin(scope, pin, again = pin) {
+  await scope.getByLabel('Choose a 6-digit PIN').fill(pin);
+  await scope.getByLabel('Type the PIN again').fill(again);
+}
+
+/** Welcome -> Sign in with a mobile number and a code (or, 0034, a PIN). Does not wait for the result. */
 export async function typeSignIn(page, phone, code) {
   const form = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
   await form.getByLabel('Your mobile number').fill(phone);
-  await form.getByLabel('Sign-in code (6 digits)').fill(code);
+  await form.getByLabel('Sign-in code or PIN (6 digits)').fill(code);
   await form.getByRole('button', { name: 'Sign in' }).tap();
   return form;
 }

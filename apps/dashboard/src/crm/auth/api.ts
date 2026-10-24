@@ -10,6 +10,7 @@ import {
   madeCodeFromRow,
   peopleFromRows,
   personFromRow,
+  pinStatusFromRow,
   SignInError,
   signedInFromRow,
   authErrorCode,
@@ -18,6 +19,7 @@ import {
   type MadeCode,
   type Person,
   type PersonRow,
+  type PinStatus,
   type Role,
   type SignedIn,
 } from './signin';
@@ -31,23 +33,37 @@ function device(): string | null {
 /**
  * A new gym, online from the first minute, with this person as its owner (signed in here).
  * `termsVersion` (#38): the version of the terms the owner ticked at "Create my gym"; the server
- * keeps it with the gym (0033). A server without 0033 does not know the argument: the gym is then
- * made without it, and the owner is asked once 0033 is there (TermsGate).
+ * keeps it with the gym (0033). `pin` (R-117): the owner's own 6-digit PIN, kept by the server only
+ * as a slow hash (0034). A server without 0033 / 0034 does not know those arguments: the gym is
+ * then made without them (logged), so a gym can always be made; the owner is asked for the terms
+ * once 0033 is there (TermsGate), and the reply's missing `hasPin` tells the screen no PIN was kept.
  */
-export async function createOnlineGym(gymName: string, name: string, phone: string, termsVersion?: string): Promise<SignedIn> {
-  const args = {
+export async function createOnlineGym(
+  gymName: string,
+  name: string,
+  phone: string,
+  termsVersion?: string,
+  pin?: string,
+): Promise<SignedIn> {
+  const base = {
     p_gym_name: gymName.trim(),
     p_name: name.trim(),
     p_phone: phone,
     p_device: device(),
   };
-  if (!termsVersion) return signedInFromRow(await call<Row>('gym_create_online', args));
-  try {
-    return signedInFromRow(await call<Row>('gym_create_online', { ...args, p_terms_version: termsVersion }));
-  } catch (e) {
-    if (!isMissingFunction(e)) throw e;
-    console.warn('[ForgeErr] gym_create_online: no terms on this server yet (0033), made without', e);
-    return signedInFromRow(await call<Row>('gym_create_online', args));
+  const withTerms = termsVersion ? { ...base, p_terms_version: termsVersion } : base;
+  // Newest server first; each older shape only when the server says it has no such function.
+  const tries: Record<string, unknown>[] = [];
+  if (pin) tries.push({ ...withTerms, p_pin: pin });
+  tries.push(withTerms);
+  if (termsVersion) tries.push(base);
+  for (let i = 0; ; i++) {
+    try {
+      return signedInFromRow(await call<Row>('gym_create_online', tries[i]));
+    } catch (e) {
+      if (!isMissingFunction(e) || i === tries.length - 1) throw e;
+      console.warn('[ForgeErr] gym_create_online: this server is older (no PIN 0034 / terms 0033); trying without', e);
+    }
   }
 }
 
@@ -57,7 +73,10 @@ export async function goOnline(ownerKey: string, name: string, phone: string): P
   return signedInFromRow(r);
 }
 
-/** Mobile + code. A refusal is thrown as a SignInError (WRONG_CODE carries the tries left). */
+/**
+ * Mobile + PIN or code (0034: the server tries the PIN first). A refusal is thrown as a SignInError
+ * (WRONG_CODE carries the tries left).
+ */
 export async function signIn(phone: string, code: string): Promise<SignedIn> {
   const r = await call<Row>('staff_sign_in', { p_phone: phone, p_code: code, p_device: device() });
   if (r && typeof r === 'object' && typeof r.error === 'string') {
@@ -121,6 +140,34 @@ export async function makeCode(key: string, staffId: string): Promise<MadeCode> 
 
 export async function signOutPerson(key: string, staffId: string): Promise<void> {
   await call<null>('owner_sign_out_person', { p_key: key, p_staff: staffId });
+}
+
+/**
+ * R-117 (0034): this device's own PIN. null on a server without 0034 (the PIN is not switched on
+ * there yet, so the screen offers nothing); any other failure is thrown.
+ */
+export async function pinStatus(key: string): Promise<PinStatus | null> {
+  try {
+    return pinStatusFromRow(await call<unknown>('staff_pin_status', { p_key: key }));
+  } catch (e) {
+    if (!isMissingFunction(e)) throw e;
+    console.warn('[ForgeErr] staff_pin_status: this server has no PINs yet (0034)', e);
+    return null;
+  }
+}
+
+/**
+ * Set or change your own PIN. `current` is needed to change an existing one (not for 15 minutes
+ * after a sign-in with a one-time code). A refusal is thrown as a SignInError (WRONG_PIN carries the
+ * tries left).
+ */
+export async function setMyPin(key: string, pin: string, current?: string): Promise<void> {
+  const r = await call<Row>('staff_set_pin', { p_key: key, p_pin: pin, p_current: current || null });
+  if (r && typeof r === 'object' && typeof r.error === 'string') {
+    const left = typeof r.triesLeft === 'number' ? r.triesLeft : null;
+    throw new SignInError(authErrorCode(r.error), left);
+  }
+  if (!r || r.ok !== true) throw new Error('UNKNOWN');
 }
 
 // ---------------------------------------------------------------- the gym's records (crm_pull / crm_push)

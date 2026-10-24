@@ -8,7 +8,7 @@
 // J74: the data agreement link opens its own page (#59).
 import { expect, test } from '@playwright/test';
 
-import { SIGN_IN_CODE, expectFitsPhone, open, openApp, typeSignIn } from './support.mjs';
+import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn } from './support.mjs';
 
 const BOX = /I agree to the MettleUp terms and the data agreement/;
 
@@ -19,6 +19,7 @@ test('J70 Create my gym: the terms box must be ticked, and the acceptance is kep
   await start.getByLabel('Gym name').fill('Shakti Gym');
   await start.getByLabel('Your name').fill('Ramesh Sharma');
   await start.getByLabel('Your mobile number').fill('98290 12345');
+  await fillNewPin(start, '271828');
   // Both links open the real pages, in a new tab (the form is not lost).
   await expect(start.getByRole('link', { name: 'terms' })).toHaveAttribute('href', '/terms.html');
   await expect(start.getByRole('link', { name: 'data agreement' })).toHaveAttribute('href', '/data-agreement.html');

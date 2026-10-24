@@ -92,7 +92,7 @@ test('J13 owner signs a desk person out everywhere, lets them back in, then remo
   await expect(desk.getByText(SIGNED_OUT_WORDS)).toHaveCount(0);
   await typeSignIn(desk, DESK.phone, '482913');
   await expect(desk.getByRole('alert')).toContainText(
-    'That code is wrong or too old. Ask the gym owner for a new one. If you are the owner, make one on a device where you are signed in.',
+    'That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.',
   );
   await expect(desk.getByRole('heading', { name: 'Today', exact: true })).toHaveCount(0);
   await desk.context().close();
