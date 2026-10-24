@@ -1,14 +1,57 @@
 {
   "_how": "headline: max 6 words, max 2 lines ('\\n' = line break), *word* = orange accent. sub: max 8 words, optional. Shots 1 and 2 are the panorama pair: one artwork across both.",
-  "panorama": [1, 2],
+  "panorama": [
+    1,
+    2
+  ],
   "shots": [
-    { "id": 1, "screen": "Home / today's workout", "headline": "Your gym,\nin your *pocket*", "sub": "Log workouts, check in, see progress." },
-    { "id": 2, "screen": "A workout in progress, sets ticked", "headline": "Every set.\nEvery rep. *Logged.*", "sub": "Tap a set the moment it's done." },
-    { "id": 3, "screen": "Exercise with last time's numbers beside each set", "headline": "Beat *last week's*\nweight", "sub": "Last time's numbers sit beside every set." },
-    { "id": 4, "screen": "Lock screen with the rest timer", "headline": "Rest timer on\nyour *lock screen*", "sub": "Know when to lift again, without unlocking." },
-    { "id": 5, "screen": "Check-in scan", "headline": "Check in with\n*one scan*", "sub": "Scan the code at your gym's front desk." },
-    { "id": 6, "screen": "Progress chart for one lift", "headline": "See your\n*strength* grow", "sub": "A chart for every lift, week by week." },
-    { "id": 7, "screen": "A workout logged in aeroplane mode", "headline": "Works without\n*internet*", "sub": "No signal in the gym? Keep logging." },
-    { "id": 8, "screen": "Join link / gym welcome", "headline": "Free. *Better*\nwith your gym", "sub": "Join with your gym's code to unlock everything." }
+    {
+      "id": 1,
+      "screen": "Home / today's workout",
+      "headline": "Your gym,\nin your *pocket*",
+      "sub": "Log workouts, check in, see progress."
+    },
+    {
+      "id": 2,
+      "screen": "A workout in progress, sets ticked",
+      "headline": "Every set.\nEvery rep. *Logged.*",
+      "sub": "Tap a set the moment it's done."
+    },
+    {
+      "id": 3,
+      "screen": "Exercise with last time's numbers beside each set",
+      "headline": "Beat *last week's*\nweight",
+      "sub": "Last time's numbers sit beside every set."
+    },
+    {
+      "id": 4,
+      "screen": "Workout tab with the gym trainer's plan",
+      "headline": "Your trainer's\nplan, *ready*",
+      "sub": "Plans from your gym appear by themselves."
+    },
+    {
+      "id": 5,
+      "screen": "Check-in scan",
+      "headline": "Check in with\n*one scan*",
+      "sub": "Scan the code at your gym's front desk."
+    },
+    {
+      "id": 6,
+      "screen": "Progress chart for one lift",
+      "headline": "See your\n*strength* grow",
+      "sub": "A chart for every lift, week by week."
+    },
+    {
+      "id": 7,
+      "screen": "A workout logged in aeroplane mode",
+      "headline": "Works without\n*internet*",
+      "sub": "No signal in the gym? Keep logging."
+    },
+    {
+      "id": 8,
+      "screen": "Join link / gym welcome",
+      "headline": "Free. *Better*\nwith your gym",
+      "sub": "Join with your gym's code to unlock everything."
+    }
   ]
 }

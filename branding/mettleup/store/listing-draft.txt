@@ -1,0 +1,10 @@
+TITLE: MettleUp: Gym Workout Tracker
+SHORT: Log every set, beat last week's weight, and see your strength grow. Free.
+FULL1: MettleUp is a free workout log for the gym. Tap each set as you finish it, and see what you lifted last time right beside it.
+FULL2: Beat last week: each exercise shows the kilos to beat today, and the app tells you the moment you set a new record.
+FULL3: See your progress: a chart for every lift, a body map of the muscles you trained, body weight and private progress photos.
+FULL4: Plans that work: ready programs like Push Pull Legs, or build your own routines in folders.
+FULL5: Works without internet: no signal in the gym, no problem. Your workouts stay on your phone.
+FULL6: Better with your gym: if your gym uses MettleUp, join with its code or QR poster. You get your trainer's plans, check in with one scan, see your membership, and order from the gym's shop.
+FULL7: Bring your history: import your workouts from Hevy or Strong.
+FULL8: Free to use. No ads.
