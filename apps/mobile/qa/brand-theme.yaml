@@ -83,10 +83,13 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Your gym's shop · pay at the desk"
     timeout: 30000
-- extendedWaitUntil:
-    visible: "^Shop$"
-    timeout: 20000
 - assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+# Owner profile (360 dp, font 1.3): membership, Check in and My orders come first, so the "Shop"
+# heading is below the screen's edge (run 40107401680): scroll down to it (trap 27).
+- scrollUntilVisible:
+    element: "^Shop$"
+    centerElement: true
+    timeout: 30000
 - takeScreenshot: br-04-shop
 - scrollUntilVisible:
     element: 'Shaker bottle 700 ml, .*'

@@ -54,6 +54,12 @@ test('J26 front desk: archives a member; cannot open Expenses by link; Collect r
   const c = sheet(desk, 'Collect payment');
   await expect(c).toContainText('Today, or up to 31 days back.');
   await expectFitsPhone(desk, 'in the desk Collect sheet');
+  // Opening a money sheet claims this phone's own receipt series (D1, D2 ...) in the background
+  // (cloud.ts ensureDesk, step 3 of offline payments): a push of its own, which CI runs 40107393303
+  // and 40115754787 saw land just after the count was taken (7 vs 6). Wait for both claims (the
+  // owner's, from the sale above, and hers) before counting, so the count below sees only the saves.
+  const deskClaims = () => server.pushes.flat().filter((r) => r.k === 'enquiry' && String(r.id).startsWith('deskseries-')).length;
+  await expect.poll(deskClaims, { timeout: 10_000 }).toBe(2);
   const pushesBefore = server.pushes.length;
 
   // 40 days back (7 Sep): refused, in plain words.
@@ -65,6 +71,7 @@ test('J26 front desk: archives a member; cannot open Expenses by link; Collect r
   await c.getByRole('button', { name: 'Save payment' }).tap();
   await expect(c.getByRole('alert')).toHaveText('The payment date can’t be in the future.');
   expect(server.pushes.length).toBe(pushesBefore);
+  expect(server.pushes.flat().some((r) => r.k === 'payment' && ['2026-09-07', '2026-10-18'].includes(r.d?.paidOn))).toBe(false);
 
   // 31 days back (16 Sep) is allowed.
   await c.getByLabel('Received on').fill('2026-09-16');

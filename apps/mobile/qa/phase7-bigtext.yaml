@@ -224,8 +224,11 @@ appId: com.mettleup.app
           visible: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
           timeout: 15000
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
+      # A branded gym's Leave redraws the app (RootFrame keyed on the theme epoch) and Settings
+      # comes back at its top, "Join your gym" below the edge: "Your profile" says it is done
+      # (run 40107401680, owner profile, left joined to RAMS01 by a failed BR).
       - extendedWaitUntil:
-          visible: "^Join your gym$"
+          visible: "^Join your gym$|^Your profile$"
           timeout: 45000
 - runFlow: sub-gym-none.yaml
 - scrollUntilVisible:

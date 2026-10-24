@@ -2627,6 +2627,15 @@
   accept "Your profile" too. (4) Part D: "Weeks in a row" is on the Profile tab, Charts on Progress: tap Profile
   first. (5) Part UD: the export is mettleup-history-<date>.csv since R-105. Owner BR "start-up screen not
   switched" = BR stopped before its join. mobile vitest 3395 pass, typecheck 0.
+- 2026-10-24: **0.56.0 gate round 2 (56880ca): default Device QA + journeys green; owner Device QA red, all test-side.**
+  Owner run 40107401680: BR's Gym tab "Shop" heading and R's first product ("Whey protein 1 kg") sit below the edge
+  at 360 dp / font 1.3 (membership, Check in, My orders come first): scroll to them. BR stopping there left the phone
+  in RAMS01, so INV-a..f3 all met "You're in RAM'S ... Switching" (cascade; their screenshots show it) and P7BIG's
+  clean-up Leave (branded: Settings comes back at its top) waited for "Join your gym": it accepts "Your profile" too.
+  CI J26 (desk2.spec, 7 vs 6 pushes, also on 318905b; green on b69cf0d/6b397d6): the extra push is the desk's own
+  receipt-series claim (`deskseries-2`, cloud.ts ensureDesk, sent when a money sheet opens), landing after the
+  count; the refused payments sent nothing (trace). The test now waits for both claims, then also asserts no
+  payment dated 7 Sep / 18 Oct ever reached the server. J26 x6 locally green.
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 
