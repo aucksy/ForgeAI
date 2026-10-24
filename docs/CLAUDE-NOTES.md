@@ -29,6 +29,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-113. Do it now: website + app live, new-member onboarding ready — 24 Oct 2026 (~6:40 pm)
+**Owner said:** "lets just continue with whatever you have in plate... just get me the website and app live and the
+onboarding for new members should be ready. I have 32% left" (of his usage limit: work lean).
+**Doing:** cancel the 8:41 pm timer and do R-112 now. Order: (1) domains to Cloudflare (the 24 Oct Namecheap save never
+reached the registry: RDAP still shows registrar-servers.com) → deploy website + admin on mettleup.fit / app.mettleup.fit;
+(2) landing page rebuilt on the new words with real phone frames (cheaper model agent); (3) release MettleUp 0.56.0 and
+put it on the Play closed test with the tester group; (4) check the new-member path end to end: QR poster / join link →
+install → join the gym → first workout.
+
 ## R-112. Website words are weak; phone frame looks wrong; audit + user test later — 24 Oct 2026
 **Owner said:** the website copy "is not good at all": some content is outdated, it does not highlight what we uniquely
 offer, and one section pushes a feature not worth it (the rest timer on the log screen). Focus on the best features,
