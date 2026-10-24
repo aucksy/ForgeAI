@@ -13,6 +13,7 @@ import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromR
 import { autoAnswerFromRow, type AutoRemindersAnswer } from './autoReminders';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
+import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
@@ -169,6 +170,25 @@ export async function apiGymPlans(key: string): Promise<GymResult<GymPlansAnswer
   const r = await call('member_gym_plans', { p_key: key }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = gymPlansFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * Measurements the gym's trainer took (member_measurements, 0035, R-120). `missing`: the server has
+ * not had 0035 yet; nothing happens until it has.
+ */
+export async function apiGymMeasures(key: string): Promise<GymResult<GymMeasuresAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_measurements', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = gymMeasuresFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Diet plans the gym sent (member_diet_plans, 0035, R-120). `missing`: the server has not had 0035 yet. */
+export async function apiGymDiets(key: string): Promise<GymResult<GymDietsAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_diet_plans', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = gymDietsFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

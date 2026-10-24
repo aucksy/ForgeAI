@@ -5,6 +5,8 @@
  *   Body fat / … · that measure's dated list (tap → fix or delete, with Undo, as before) ·
  *   "+" top right → one form for the day: body weight, any measurements, a picture.
  * `?kind=bodyweight` (the "Log body weight" shortcut and widget) opens it on body weight.
+ * R-120: measurements the gym's trainer took show here too, marked "From <gym>" (read-only; on a day
+ * with the member's own entry, theirs is shown). Asked from the gym when the page opens (gymBodySync).
  */
 import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
@@ -37,6 +39,9 @@ import { bodyWeightTypo, bodyWeightTypoText } from '@/tracker/engine/bodyCheck';
 import { MEASURE_LABEL, measureToShown, measureUnit, shownToMeasure, type MeasurementEntry } from '@/tracker/engine/measurements';
 import { MEASURE_CHIPS, changeSinceText, chipLabel, openingChip, type MeasureChip } from '@/tracker/lib/measuresView';
 import { getProgressPhotos, type ProgressPhoto } from '@/tracker/services/progressPhotos';
+import { readGymMeasures, syncGymMeasures } from '@/tracker/services/gymBodySync';
+import { fromGymWords, gymPointsFor, type GymMeasuresStore, type GymPoint } from '@/shop/gymBody';
+import { useGymShop } from '@/shop/gymStore';
 import type { BodyWeightEntry } from '@/types/models';
 
 const STRIP_MAX = 12;
@@ -52,6 +57,8 @@ interface Row {
   value: number;
   weight?: BodyWeightEntry;
   measure?: MeasurementEntry;
+  /** R-120: taken by the gym's trainer (read-only here). */
+  gym?: GymPoint;
 }
 
 type Undo = { table: 'weight'; item: BodyWeightUndo } | { table: 'measure'; item: MeasurementUndo };
@@ -72,6 +79,8 @@ export default function MeasuresScreen() {
   const [measures, setMeasures] = useState<MeasurementEntry[] | null>(null);
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
   const [failed, setFailed] = useState(false);
+  const [gym, setGym] = useState<GymMeasuresStore>({});
+  const gymLink = useGymShop((st) => st.link);
 
   const load = useCallback(() => {
     let alive = true;
@@ -86,19 +95,29 @@ export default function MeasuresScreen() {
     getProgressPhotos()
       .then((p) => alive && setPhotos(p))
       .catch(() => undefined);
+    // R-120: the kept copy at once (works offline), then ask the gym (at most every 10 minutes).
+    void readGymMeasures().then((g) => alive && setGym(g));
+    void syncGymMeasures(gymLink).then((changed) => {
+      if (changed && alive) void readGymMeasures().then((g) => alive && setGym(g));
+    });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [gymLink]);
   useFocusEffect(load);
 
   const unitOf = (c: MeasureChip): string => (c === 'bodyweight' ? weightUnitOf(units) : measureUnit(c, units));
   const shown = useCallback((c: MeasureChip, v: number): number => (c === 'bodyweight' ? kgToShown(v, units) : measureToShown(c, v, units)), [units]);
 
   const rows: Row[] = useMemo(() => {
-    if (chip === 'bodyweight') return (weights ?? []).map((w) => ({ id: w.id, dateISO: w.dateISO, value: w.weightKg, weight: w }));
-    return (measures ?? []).filter((m) => m.kind === chip).map((m) => ({ id: m.id, dateISO: m.dateISO, value: m.value, measure: m }));
-  }, [chip, weights, measures]);
+    const own: Row[] =
+      chip === 'bodyweight'
+        ? (weights ?? []).map((w) => ({ id: w.id, dateISO: w.dateISO, value: w.weightKg, weight: w }))
+        : (measures ?? []).filter((m) => m.kind === chip).map((m) => ({ id: m.id, dateISO: m.dateISO, value: m.value, measure: m }));
+    // R-120: the gym's, on the days the member has none of their own.
+    const fromGym = gymPointsFor(gym, chip, new Set(own.map((r) => r.dateISO))).map((p) => ({ id: p.id, dateISO: p.dateISO, value: p.value, gym: p }));
+    return [...own, ...fromGym];
+  }, [chip, weights, measures, gym]);
   const sorted = useMemo(() => [...rows].sort((a, b) => (a.dateISO < b.dateISO ? -1 : a.dateISO > b.dateISO ? 1 : 0)), [rows]);
   const points = sorted.map((r) => ({ x: r.dateISO, y: shown(chip, r.value) }));
   const latest = sorted.length > 0 ? sorted[sorted.length - 1] : null;
@@ -111,7 +130,8 @@ export default function MeasuresScreen() {
   const [undo, setUndo] = useState<Undo[]>([]);
 
   const valueText = (c: MeasureChip, v: number): string => `${trimNum(shown(c, v))} ${unitOf(c)}`;
-  const otherOn = (iso: string, r: Row): Row | undefined => rows.find((x) => x.dateISO === iso && x.id !== r.id);
+  // The member's own entries only: a gym entry on that day simply gives way to theirs.
+  const otherOn = (iso: string, r: Row): Row | undefined => rows.find((x) => !x.gym && x.dateISO === iso && x.id !== r.id);
 
   const onSaveEdit = async (text: string, dateISO: string): Promise<void> => {
     const r = editing;
@@ -286,9 +306,36 @@ export default function MeasuresScreen() {
               )}
             </Card>
 
-            <StatHeading title="History" sub="Tap an entry to fix or delete it." />
+            <StatHeading title="History" sub={rows.some((r) => r.gym) ? 'Tap your own entry to fix or delete it. Ask your gym to change the ones they recorded.' : 'Tap an entry to fix or delete it.'} />
             <View style={{ gap: space.sm }}>
-              {[...sorted].reverse().map((r) => (
+              {[...sorted].reverse().map((r) =>
+                r.gym ? (
+                  <View
+                    key={r.id}
+                    accessible
+                    accessibilityLabel={`${dateWithYear(r.dateISO)}, ${valueText(chip, r.value)}. ${fromGymWords(r.gym)}`}
+                    style={{
+                      minHeight: 48,
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: space.sm,
+                      paddingVertical: space.sm,
+                      paddingHorizontal: space.md,
+                      borderRadius: radius.md,
+                      backgroundColor: color.surface,
+                      borderWidth: 1,
+                      borderColor: color.border,
+                    }}
+                  >
+                    <View style={{ flexShrink: 1, gap: 2 }}>
+                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{dateWithYear(r.dateISO)}</Text>
+                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.accent }}>{fromGymWords(r.gym)}</Text>
+                    </View>
+                    <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>{valueText(chip, r.value)}</Text>
+                  </View>
+                ) : (
                 <Pressable
                   key={r.id}
                   onPress={() => {
@@ -315,7 +362,8 @@ export default function MeasuresScreen() {
                   <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{dateWithYear(r.dateISO)}</Text>
                   <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>{valueText(chip, r.value)}</Text>
                 </Pressable>
-              ))}
+                ),
+              )}
             </View>
           </>
         )}

@@ -61,6 +61,11 @@ function retireGymPlans(): void {
   void import('@/tracker/services/gymPlansSync').then((m) => m.retireGymFolders()).catch((e: unknown) => console.warn('[ForgeErr] gym plans: relabelling after the link went', e));
 }
 
+/** R-120: the gym's diet plans go with the link (its measurements stay on the phone: gymBody.ts). */
+function forgetGymDietsQuietly(): void {
+  void import('@/tracker/services/gymBodySync').then((m) => m.forgetGymDiets()).catch((e: unknown) => console.warn('[ForgeErr] gym diet plans: forgetting after the link went', e));
+}
+
 /** R-86: the gym's automatic reminders go with the link (cancelled and forgotten). */
 function forgetGymRemindersQuietly(): void {
   void import('./gymReminders').then((m) => m.forgetGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] gym reminders: forgetting after the link went', e));
@@ -77,6 +82,7 @@ function lostKey(err: GymError): boolean {
   // C6-15: the gym's messages go with the link (they were kept, hidden, on the phone).
   useGymInbox.getState().clear();
   retireGymPlans();
+  forgetGymDietsQuietly();
   forgetGymRemindersQuietly();
   return true;
 }
@@ -487,6 +493,7 @@ export async function leaveGym(): Promise<void> {
   // R-86: no reminder from a gym the member left.
   forgetGymRemindersQuietly();
   retireGymPlans();
+  forgetGymDietsQuietly();
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);
   // A join in the meantime owns the card now: its words win.

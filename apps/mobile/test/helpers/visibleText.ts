@@ -111,7 +111,8 @@ function shownByCall(n: ts.Node): boolean {
   if (!p || !ts.isCallExpression(p)) return false;
   const callee = p.expression;
   const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : '';
-  const which = SHOWN_ARGS[name];
+  // Own keys only: `n.toLocaleString('en-IN')` must not find Object.prototype.toLocaleString (R-120).
+  const which = Object.prototype.hasOwnProperty.call(SHOWN_ARGS, name) ? SHOWN_ARGS[name] : undefined;
   if (!which) return false;
   const at = p.arguments.indexOf(n as ts.Expression);
   return at >= 0 && (which === 'all' || which.includes(at));

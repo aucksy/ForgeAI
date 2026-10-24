@@ -28,6 +28,8 @@ import { SHOP_CATEGORIES } from './catalog';
 import { listAgeText } from './gym';
 import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
+import { dietRowWords, type GymDietPlan } from './gymBody';
+import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { gymShopOn } from './gymTab';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { MembershipCard } from './MembershipCard';
@@ -110,6 +112,17 @@ function GymShop({ link }: { link: GymLink }) {
   const [pulling, setPulling] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const running = useRef(false);
+  // R-120: the trainer's diet plans (the row shows once one has come; the kept copy works offline).
+  const [diets, setDiets] = useState<GymDietPlan[] | null>(null);
+  useEffect(() => {
+    let live = true;
+    void readGymDiets(link).then((c) => {
+      if (live) setDiets(c?.plans ?? null);
+    });
+    return () => {
+      live = false;
+    };
+  }, [link]);
   // A1: once, for a member whose tab used to say "Shop" (lib/layoutHints.ts).
   const [shopHint, setShopHint] = useState(false);
   useEffect(() => {
@@ -129,16 +142,20 @@ function GymShop({ link }: { link: GymLink }) {
     else setLoading(true);
     // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
     // Gym messages: refreshGymNow also refreshes the inbox (the bell's count).
-    const [words] = await Promise.all([
+    const [words, , diet] = await Promise.all([
       refreshProducts(),
       refreshOrders(),
+      // R-120: the trainer's diet plans and measurements come by themselves (at most every 10 minutes).
+      syncGymDiets(link, { force: byPull }),
       refreshGymNow().catch((e: unknown) => console.warn('[gym] refreshing the gym failed', e)),
+      syncGymMeasures(link, { force: byPull }),
     ]);
+    if (diet.kind === 'fresh') setDiets(diet.copy.plans);
     running.current = false;
     setProblem(words);
     setPulling(false);
     setLoading(false);
-  }, []);
+  }, [link]);
 
   useFocusEffect(
     useCallback(() => {
@@ -209,6 +226,21 @@ function GymShop({ link }: { link: GymLink }) {
             onPress={() => void openPosterScan()}
           />
         </View>
+        {/* R-120: the diet plan the trainer sent (only once one has come). */}
+        {diets && diets.length > 0 ? (
+          <View style={{ marginTop: space.md }}>
+            <LinkRow
+              title="Diet plan"
+              sub={dietRowWords(diets)}
+              leading={
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name="meal" size={16} color={color.accent} />
+                </View>
+              }
+              onPress={() => router.push('/shop/diet')}
+            />
+          </View>
+        ) : null}
         {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
         <OfferCard link={link} />
         {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}

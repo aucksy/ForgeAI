@@ -54,6 +54,20 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.57.0',
+    date: '25 Oct',
+    lines: [
+      {
+        text: "Gym members: measurements your trainer takes now show in Progress → Body, marked with your gym's name.",
+        go: { label: 'Open Progress', href: '/progress' },
+      },
+      {
+        text: 'Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
+    ],
+  },
+  {
     version: '0.56.0',
     date: '24 Oct',
     lines: [
