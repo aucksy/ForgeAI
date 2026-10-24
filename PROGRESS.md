@@ -2615,6 +2615,8 @@
   a fresh-reader subagent; lines carry an optional `go` button (opens the screen/setting); Settings -> What's new and
   the card show the last 3 updates. Global skills: obra writing-clearly-and-concisely + own `member-words` (Gemini
   second opinion via gemini_rewrite.py once the owner sets GEMINI_API_KEY, tracker #56). App 0.55.1 prepared.
+- 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
+  APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
