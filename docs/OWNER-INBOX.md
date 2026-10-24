@@ -14,9 +14,10 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 58 | What to build next from the other apps (20 ideas) | A: the top 5, one release at a time |
 | 57 | The app's new Play Store ID (Google says com.forgeai.app is taken) | A: com.simpleapps.forgeai |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
-| 44 | Brand: one or two, then the name (rounds 4-5, incl. your 40 names) | A: one brand; Liftforged |
+| 44 | Brand name (round 6: your 80 names) | A: SetBook |
 
 ---
 
@@ -27,6 +28,21 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #58 | High | Low |
+| Feature: Monthly gym challenge with a ranking | High | Low |
+| Feature: How busy the gym is right now | High | Low |
+| Feature: Gym's logo on share pictures and a before/after share | High | Low |
+| Feature: Bring a friend | High | Low |
+| Feature: The gym's own form videos | Medium | Low |
+| Feature: Ask your trainer | High | High |
+| Feature: Ask the desk to freeze or renew | Medium | Low |
+| Feature: The gym's workout of the day | Medium | Low |
+| Feature: Strength level for each main lift | Medium | Low |
+| Feature: Badge shelf | Medium | Low |
+| Feature: Which muscles are ready today | Medium | Low |
+| Feature: Quick workout: "I have 30 minutes" | High | Medium |
+| Feature: Ask your own AI | Medium | Low |
+| Feature: Steps and water each day | Low | Medium |
 | #57 | High | Medium |
 | #56 | High | Low |
 | Task: Multi-branch gyms, end to end (#41) | High | High |
@@ -222,6 +238,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
 | Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
 | Paid plan for people without a gym | Idea | The app is free, with every feature, for members of a gym on ForgeAI. People who train without a gym (or whose gym is not on ForgeAI) could pay for it themselves. To explore. | Without a gym code, a person gets a free trial, then a monthly or yearly plan paid through Google Play. Joining a gym on ForgeAI makes everything free again. You set the price; Google keeps 15% of each payment. |
+| Strength level for each main lift | Idea | Shows Beginner, Intermediate or Advanced for squat, bench, deadlift and other main lifts, from #58. | Each main lift's chart shows a level worked out from your best set and your body weight, with our own formula. Body weight is never shown. Works offline. |
+| Badge shelf | Idea | Badges for first 100 kg lift, 4 weeks in a row, 50 workouts and more, from #58. | Profile shows a shelf of badges earned from records and milestones the app already counts. The gym can give a real prize for a badge. |
+| Which muscles are ready today | Idea | A body map that shows which muscles rested enough to train again, from #58. | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
+| Quick workout: "I have 30 minutes" | Idea | Builds a workout for the time and equipment you have today, from #58. | Pick the time and the muscles; the app picks exercises with the plan builder's rules (no AI) and your history, ready to start. |
+| Ask your own AI | Idea | One tap sends your workout history as text to ChatGPT or Gemini, from #58. | Settings → Export shows "Ask an AI": it makes a short text of your recent workouts and opens the phone's share sheet. You use your own free AI. |
+| Steps and water each day | Idea | Steps from Health Connect and a water tap on Today, from #58. | Reads today's steps from Health Connect (one new permission). A step challenge can join the gym challenge. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
@@ -290,6 +312,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Idea | Workout plans came first; diet plans come next if gyms ask for them. | Like workout plans: the trainer builds a simple day plan (meals, times, a protein target) or picks a ready one, and sends it to a member or a whole membership plan. It shows in the member's app to read; the member can't change it. |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
+| Monthly gym challenge with a ranking | Idea | "Most workouts in November": a progress bar, the top 10 of your gym, a prize of free days, from #58. | The owner makes a challenge in the admin app (goal, dates, prize). Members see their place among their own gym. The workout reward already counts workouts and adds free days. |
+| How busy the gym is right now | Idea | Members see how busy the gym is now and the quietest times, from the QR check-ins, from #58. | The server counts check-ins per hour (the admin app already shows busy hours). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
+| Gym's logo on share pictures and a before/after share | Idea | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
+| Bring a friend | Idea | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
+| The gym's own form videos | Idea | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
+| Ask your trainer | Idea | A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
+| Ask the desk to freeze or renew | Idea | A member asks to freeze or renew from the app; the desk approves, from #58. | A request button on the membership card. The admin app shows the request; one tap freezes or renews with the tools it already has. |
+| The gym's workout of the day | Idea | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
 
 ### Platform and quality
 | Feature | Status | Details | How it will work |
@@ -324,6 +354,43 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (24 Oct, chat):** research the members' workout apps, find features we can build ourselves that would be valuable, and add them to the tracker.
+**My answer:** I compared Hevy, Strong, Fitbod, JEFIT, Boostcamp, Alpha Progression, Gravl, Gymshark, MacroFactor, Fittr, cult.fit, HealthifyMe, FITPASS and gym-software member apps (Virtuagym, Trainerize, Glofox, Wellyx) with what ForgeAI already has. **For logging workouts we already match them** (rest timer, notification card, supersets, plates, warm-ups, swap, targets, charts, records, body map, Hevy/Strong import, Health Connect, Wear OS, offline, and no free-tier limits). The gaps are mostly things only a gym-linked app can do well, which is our edge. None needs a paid service.
+
+| # | Feature | Who has it | Member | Gym | Effort |
+|---|---|---|---|---|---|
+| 1 | Monthly gym challenge with a ranking (top 10 of your gym, prize = free days) | Virtuagym, Trainerize, FITPASS, Fittr | High | High | Low-Medium |
+| 2 | "How busy is the gym now" + best time to go (from QR check-ins) | PureGym, Planet Fitness | High | Medium-High | Low |
+| 3 | Gym's logo on share pictures + before/after photo share | Hevy, Fittr (without the gym) | Medium-High | High | Low |
+| 4 | Bring a friend: invite link, the friend lands in the owner's enquiries, free days when they join | cult.fit, PureGym, Glofox | Medium | High | Low-Medium |
+| 5 | Strength level for each main lift (Beginner to Advanced) | Hevy, Boostcamp, Gravl | Medium-High | Medium | Low |
+| 6 | Badge shelf (first 100 kg, 4 weeks in a row, 50 workouts) | Alpha Progression, Hevy, Trainerize | Medium | Medium | Low |
+| 7 | "Which muscles are ready today" map | Fitbod ($15.99 a month) | Medium | Low-Medium | Low |
+| 8 | Quick workout: "I have 30 minutes" | Fitbod, Alpha Progression, Hevy (paid) | High | Medium | Medium |
+| 9 | The gym's own form videos (the trainer adds a YouTube link) | Trainerize, Virtuagym | Medium-High | Medium | Low-Medium |
+| 10 | Ask your trainer (chat with the gym's trainer) | Trainerize, Hevy Coach, Fittr | High | High | Medium-High |
+| 11 | Ask your own AI: one tap sends your workout history to ChatGPT or Gemini | Hevy | Medium | Low | Low |
+| 12 | Ask the desk to freeze or renew from the app | Glofox, Mindbody | Medium | Medium | Low-Medium |
+| 13 | Steps and water each day, and a step challenge | Fittr, FITPASS, Trainerize | Medium | Low-Medium | Low-Medium |
+| 14 | The gym's workout of the day | Virtuagym | Medium | Medium | Low |
+| 15 | Treadmill and cycle details (speed, incline, intervals) | Asked for on Hevy and Strong | Medium | Low | Medium |
+| 16 | "Stronger than X% of your gym" (opt-in) | Hevy | Medium | Medium | Medium |
+| 17 | 1-rep max and % calculator | Strong, Alpha Progression | Low-Medium | Low | Low |
+| 18 | Follow gym mates: a feed of your gym only | Hevy, Fittr | Medium | Medium-High | High |
+| 19 | Compare with a friend, train together | Hevy | Low-Medium | Medium | Medium-High |
+| 20 | Log sets on the watch | Hevy, Strong | Low | Low | Medium-High |
+
+**What members hate in the others (we win by not doing it):** basics locked behind payment (Hevy allows 4 free routines, Strong 3), rest timers that cut off, silly weight suggestions, weak cardio logging, sales pop-ups and refund fights, crashes after updates, broken imports, forced sign-up.
+**Not proven:** the member and gym values and India-specific points (evening rush, treadmill use) are my judgement. Reddit blocked automated reading, so complaints come from review sites.
+Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. Items 15-20 stay here.
+**Decide:** What do I build next?
+- A: The top 5 now (challenge, how busy, gym logo on shares, bring a friend, strength level), one release at a time (recommended)
+- B: Only the 3 member-side ones (strength level, badges, muscles-ready map); the gym ones later
+- C: Nothing yet; I will move the ones I want to Planned on the page
 
 ## 57. The app needs a new Play Store ID — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -649,11 +716,34 @@ The official trademark search still needs a person (it has a captcha) before you
 - **Hero names:** none survived (Atlas: "Iron Atlas" gym software; Titan: Tata; Hercules: Indian bicycles; Milo: a new strength app).
 Buy the .com and .in the day you pick: 12 names checked were registered by someone in the last 3 months.
 **YOUR 40 NAMES (23 Oct, from other AI tools):** every .com is taken; 25 have the .in free; 8 of those dropped for a same-name gym app or a strong clash (Knurl, Outlift, Grindset, Beatlast, Heavier, Stepweight, Moreweight, Passlast). The clean ones, cheapest .com first (.in about ₹899 a year for all): **Castrep** (.com expires about 24 Oct: normal price if caught), **Sleevelock** (.com ₹2.2 lakh), **Upweight** (₹3.4 lakh), **Platecast** (₹3.9 lakh), **Gainset** (₹6.6 lakh). With a catch: Plusplate (₹3.3 lakh; a dishwashing brand), Pinload (₹4.2 lakh; a Pinterest downloader), Addiron (₹4.5 lakh; reads like iron tablets), Pushpast (₹11.4 lakh), Mettled (₹31 lakh), and Smelt, Barcast, Barweld, Nextplate, Hardset, Climbset, Peakrep (.com not for sale; .in only). Full table: the research file, round 5.
-**Decide:** Which name? (if A)
-- A: Liftforged (recommended among my names): forge feel + lifting; .com, .in and .app free at the normal price
-- B: Castrep (best of your 40): "cast" like metal casting + "rep"; .in and .app free; the .com may be caught at the normal price this week
-- C: Platecast: clean; .in and .app free; the .com is for sale at ₹3.9 lakh
-- D: Upweight: clean; .in free; the .com is for sale at ₹3.4 lakh
+**YOUR 80 NAMES (24 Oct, chat):** "research the list of names I just shared ... give me a table of the shortlisted ones with the prices and details."
+**ROUND 6 (24 Oct): your 80 "-Book / -Log / -Journal" names.** I checked all 80 for .com, .in and .app at the official registries, then searched Google Play, the App Store and the US trademark register for the best 20.
+- **No strong name has a free .com.** The 6 with a free .com are weak (MettleBook sounds like "metal" on a call; RackJournal and LoadJournal are long).
+- **Top pick: SetBook.** Every member knows "set"; "set hai" means "all good"; "Book" reads like a register for owners, the way Khatabook does for shops. setbook.in is free. setbook.com belongs to someone with no website and is not for sale; it expires 21 Dec 2026. Meanwhile setbookgym.com and usesetbook.com are free. No trademark found; only a small music setlist app shares the name.
+- **Backup: RackBook.** The only good name with .in and .app free and a .com you can buy today ($3,495, about ₹3.3 lakh). No clash. On a call it can sound like "rock book".
+- **Keeps "Forge": ForgeBook.** No clash; .in free; forgebookapp.com free; forgebook.com is parked with no price.
+
+| Rank | Name | .com | .in | .app | Clashes | Score /10 |
+|---|---|---|---|---|---|---|
+| 1 | SetBook | Taken, no site, not for sale (expires 21 Dec 2026) | Free | Taken | Small setlist app; no trademark | 8 |
+| 2 | RackBook | For sale, about ₹3.3 lakh | Free | Free | None | 7.5 |
+| 3 | ForgeBook | Parked, no price | Free | Taken | None | 7.5 |
+| 4 | LiftBook | Taken (live) | Free | Taken | 4 tiny LiftBook apps; "lift" = elevator or a ride in India | 6.5 |
+| 5 | AnvilBook | For sale, about ₹56,500 | Free | Free | None; few members know "anvil" | 6.5 |
+| 6 | IronCard | Held by a reseller | Free | Free | A metal bank card in Kazakhstan | 6 |
+| 7 | MettleBook | Free (about ₹1,000 a year) | Free | Free | None; heard as "metal" | 6 |
+| 8 | LiftDiary | Taken (live) | Free | Free | 3 LiftDiary apps | 5.5 |
+| 9 | RackJournal | Free | Free | Free | None; long, member-only feel | 5.5 |
+| 10 | HeavyBook | For sale, $2,695 | Free | Taken | None; sounds like a textbook | 5.5 |
+
+**Dropped:** "Cast" (sounds like "caste"), "Bar" (a liquor bar), "Steel" (a live STEELBOOK trademark; utensils in India), Ledger/Chronicle/Folio (hard words), names whose .com is a live business or app (RepLog, SetLog, RepCard, IronDiary, Lift Card...), Weld/Grind/Press/Stack (factory feel), "Sheet" (sounds like the owner's import sheet), PRBook ("PR" is a banned word), MaxBook (Max Healthcare), most "Rep" names (crowded with small apps).
+**Cost:** .in about ₹750-950 a year. A free .com about ₹1,000-1,600 a year (Porkbun or Cloudflare about ₹1,050 every year; GoDaddy/Hostinger ₹1 only with 3 years paid, then about ₹1,500-1,600). Cloudflare does not sell .in. Namecheap says .com prices go up on 1 Nov.
+**Not proven:** the official Indian trademark search has a captcha, so I used a copy of the register (top 30 matches). Ask a lawyer, or search ipindia.gov.in yourself, before paying for a logo.
+**Decide:** Which name?
+- A: SetBook: "set" every member knows, "Book" for owners; buy setbook.in now and setbookgym.com, try for setbook.com when it expires on 21 Dec (recommended)
+- B: RackBook: .in and .app free, the .com for sale today at about ₹3.3 lakh
+- C: Liftforged (round 4): .com, .in and .app all free at the normal price
+- D: ForgeBook: keeps "Forge"; .in and forgebookapp.com free
 **Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
 
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026

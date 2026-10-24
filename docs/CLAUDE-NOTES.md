@@ -20,7 +20,9 @@ this to the tracker and give me a table in the chat."
   PlateSheet, BarSheet, SetSheet, IronCard, LiftCard, RepCard, PlateCard, IronFolio, SteelFolio, IronFile.
 **What Claude does:** (1) checks every name: .com/.in free or taken, price, other apps/brands with the name, trademark
 risk; shortlist table in chat + tracker. (2) researches members' workout apps (Hevy, Strong, Fitbod, ...) against what
-ForgeAI already has; ranked table of features worth building, in chat + tracker backlog. Status: started.
+ForgeAI already has; ranked table of features worth building, in chat + tracker backlog. DONE 24 Oct: #44 round 6
+(top SetBook, backup RackBook; full results in the session scratchpad brand/results.json), #58 new (20 gaps; 14 in the
+backlog as Idea with ratings; Decide A top 5).
 
 ## R-99. His tracker answers of 24 Oct (12:37-1:15 pm): 15 entries — 24 Oct 2026
 **Owner said (on the page, absorbed 24 Oct):**
