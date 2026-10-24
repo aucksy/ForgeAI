@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 59 | Switch on branches, online terms and members' workouts on our server (3 live server changes) | A: 0031 + 0033 now, 0032 after the privacy words |
 | 57 | The app's Play Store ID (com.forgeai.app is taken); follows the name in #44 | A: com.mettleup.app |
 | 46 | Share members' workouts with their gym without a tick box | A: a line on the join screen + an off switch |
 | 44 | Brand name (round 7: Mettle names) | A: MettleUp |
@@ -47,6 +48,11 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
+| #59 | High | Low |
+| #60 | High | Low |
+| Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
+| Task: The 14 new features (#58) | High | High |
+| Task: Privacy and gym-terms words for the server copy (#59) | High | Low |
 | #57 | High | Medium |
 | #56 | High | Low |
 | Task: Multi-branch gyms, end to end (#41) | High | High |
@@ -133,12 +139,16 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| Multi-branch gyms, end to end (#41) | Doing | One owner, many branches: branch switch, members, money, check-ins, staff and reports per branch, "All branches" view; HQ prices per branch. Needs one live server change (your yes). Large. |
-| AI import that never fails (#41, #36) | To do | Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
-| Members' workouts on our server (#50, #27) | To do | Every saved workout also on our server; restore on a new phone after sign-in; nightly backup to Cloudflare. Needs one live server change (your yes). Large. |
-| Online terms acceptance for gyms (#38) | To do | Tick box at "Create my gym"; date, time and terms version stored; shown in Settings. Small. |
+| Multi-branch gyms, end to end (#41) | Blocked | 24 Oct: built, reviewed (1 must + 5 should fixed), saved; waits for your yes in #59. One owner, many branches: branch switch, members, money, check-ins, staff and reports per branch, "All branches" view; HQ prices per branch. Needs one live server change (your yes). Large. |
+| AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
+| Members' workouts on our server (#50, #27) | Blocked | 24 Oct: built, reviewed (16 fixes), saved, hidden; waits for #59 and your Google steps (#60). Every saved workout also on our server; restore on a new phone after sign-in; nightly backup to Cloudflare. Needs one live server change (your yes). Large. |
+| Online terms acceptance for gyms (#38) | Blocked | 24 Oct: built and reviewed; waits for #59. Tick box at "Create my gym"; date, time and terms version stored; shown in Settings. Small. |
+| Simpler app layout (4 fixed tabs, 6 settings groups) | Doing | Your note, 24 Oct: keep it simple, easy to find. A design review mapped every screen (docs/ux/MEMBER-APP-MAP.md); now building the moves: Workout, Progress (new), Gym, Profile tabs; Settings in 6 groups. Charts move to Progress with a one-time note. |
+| Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
+| The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
+| Privacy and gym-terms words for the server copy (#59) | To do | Drafts for your OK before 0032 goes live. Small. |
 | Trainer view without a tick box (#46) | Blocked | Waits for your pick in #46 and your OK on the words. Medium. |
-| Free vs gym-member limits + Google sign-in (#43) | To do | Limits built but OFF at launch, switched from the owner panel; "Continue with Google". Medium. |
+| Free vs gym-member limits + Google sign-in (#43) | Blocked | 24 Oct: built, OFF; Google sign-in waits for #60. Limits built but OFF at launch, switched from the owner panel; "Continue with Google". Medium. |
 | Play Store internal test (#28) | To do | In your open Play Console; I stop at every "I agree". Medium. |
 | Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
@@ -230,7 +240,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Automatic workout backup | Waiting for you | Built in v0.50.0; it starts working once Drive backup is switched on (#42). | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the finish screen, and the Workout tab warns after 3 days without a backup. |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
-| Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. |
+| Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. 24 Oct fix (next release): it no longer switches itself off, and workouts go even when the calories switch is off. |
 | Home-screen widgets and app shortcuts | Live | Today's workout and weekly widgets, and long-press shortcuts to start or resume a workout. |
 | Workout reminders | Live | Reminders on the days and times you pick. |
 | Watch app (Wear OS) | Live | Rest countdown and buzz on the watch, plus heart rate during a workout. |
@@ -287,7 +297,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Trainer view of member progress | Waiting for you | Trainers and the owner see whether each member is progressing (owner 18 Oct, widened 22 Oct). Research done; the plan waits for your pick in #46. | Research comes first (Trainerize, TrueCoach, Hevy Coach). In the app the member turns on "Share my progress with my gym" (off until they choose; they see exactly what is shared and can turn it off). Shared: workout days, total kg lifted per workout, the best set on main lifts and new records; never body weight or photos. A trainer's "My members" shows each one going up, flat, down or stopped coming, flags a lift stuck for 3 weeks, and has one-tap WhatsApp praise or a nudge. The owner gets a list of members who are stalling and not on personal training (a sales list), and a monthly progress report a trainer can send a PT client. Needs a live server change (your yes). |
 | AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
 | Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
-| Several branches | Waiting for you | One owner runs 2 or more branches from one sign-in (owner, 22 Oct). Waits for your pricing pick (#41); it also needs live server changes (your yes). | The owner signs in once and switches branch at the top of the admin app. Each branch keeps its own members, plans, desk staff, receipt numbers, QR poster and shop stock; the owner also sees money and member reports for all branches together. A plan can allow a member into every branch, and check-in works at whichever branch they visit. Needs a live server change (your yes). |
+| Several branches | Waiting for you | One owner runs 2 or more branches from one sign-in (owner, 22 Oct). Built 24 Oct; waits for your yes in #59. | The owner signs in once and switches branch at the top of the admin app. Each branch keeps its own members, plans, desk staff, receipt numbers, QR poster and shop stock; the owner also sees money and member reports for all branches together. A plan can allow a member into every branch, and check-in works at whichever branch they visit. Needs a live server change (your yes). |
 | Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. | Not planned: the admin app stays in plain English. The desk cheat sheet is in Hindi and English. |
 
 ### Gym ↔ member links
@@ -347,7 +357,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Release gate | Live | A new app version can't be published unless every test, phone run and review is green. |
 | Server safety checks | Live | Tests prove one gym can never see another gym's records, on the live server too. |
 | Private signing key | Live | The app's signing key is kept only on your PC, never in the public code. |
-| Workouts stay on the phone | Live | Workouts never go to our server; the gym only gets check-ins, orders and messages. |
+| Workouts stay on the phone | Live | Workouts never go to our server; the gym only gets check-ins, orders and messages. Changes when members' workouts on our server is switched on (#59, #60): then a copy is kept for members who sign in with Google, readable only by them. |
 | Works without internet | Live | The member app logs workouts fully offline. |
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
@@ -364,6 +374,31 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** members sign in with Google so their workouts come back on a new phone (#43, #50). The app part is built and hidden; it shows only after these steps. Do them after you pick the Play Store ID in #57, because step 2 needs it.
+**Your task:** open https://console.cloud.google.com/projectcreate and make a project named ForgeAI (skip if you already made one for Drive backup, #42). Then open https://console.cloud.google.com/auth/branding: app name ForgeAI (or the new name), your email as support and contact email, audience External; then Audience → "Publish app".
+**Your task:** open https://console.cloud.google.com/auth/clients → Create client → Android. Package name: the Play ID you picked in #57. SHA-1: 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public fingerprint, not a secret) → Create.
+**Your task:** same page → Create client → Web application, name "ForgeAI app" → Create. Send me its Client ID in chat (it ends in .apps.googleusercontent.com; it is not a secret). Keep its Client secret for the next step only: never paste it in chat or a file.
+**Your task:** open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/auth/providers → Google → turn on "Enable Sign in with Google". Client IDs: the Web client ID, a comma, then the Android client ID. Client Secret: the Web client secret. Leave "Skip nonce checks" off → Save.
+
+## 59. Switch on branches, online terms and members' workouts on our server: three live server changes — 24 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**What is built (24 Oct), tested and checked by a second reviewer; nothing is live yet:**
+- **Branches (0031):** one owner runs several branches; each branch has its own members, money, staff and receipt numbers (B2/2026-27/0001); members can train at another branch; an "All branches" page.
+- **Online terms (0033):** a gym owner must tick "I agree" before a gym is created; owners of existing gyms see it once; the date and terms version are kept and can't be changed.
+- **Members' workouts on our server (0032):** each member's workouts, routines and body records are saved on our server, so a new phone gets them back after "Continue with Google". Only the member can read their own; the gym sees nothing. It stays hidden until you finish #60. About 1 KB a workout: the free plan holds about 1,500 members for 1.5 years.
+- **Member import fixes** (no server change): a "Paid" column of Yes/No or dates is read correctly; a branch column; extra columns kept; bad rows listed to fix.
+**What goes live with your yes:** I paste the three changes into the Supabase SQL Editor (in the Chrome window already signed in), run each one's test (each must say PASS), then put the new admin app, owner panel (HQ) and AI-matching server live. If a test fails I stop and change nothing more.
+**Risk:** low. Each change only adds; gyms with one branch work exactly as before; a gym can always be checked in HQ.
+**Two words to approve first (privacy):** the privacy notice must say members' workouts are saved on our server once a member signs in with Google, and the gym owners' terms need a short data agreement. I will put both drafts in this entry for your OK before 0032 goes live.
+**Decide:** Switch them on?
+- A: Yes: 0031 (branches) and 0033 (terms) now, 0032 (workouts) after you OK the privacy words (recommended)
+- B: Yes, all three now
+- C: Not yet
 
 ## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
