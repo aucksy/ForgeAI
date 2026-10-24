@@ -1,0 +1,67 @@
+{
+  "shot-01": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-02": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-03": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-04": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-05": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-06": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-07": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "shot-08": {
+    "x": 158.0,
+    "y": 538,
+    "w": 764,
+    "h": 1698,
+    "r": 58,
+    "visible_h": 1382
+  },
+  "_note": "Screen slot of every shot in its own 1080x1920 image, px. The phone runs off the bottom edge: visible_h is the part of the screen inside the image. Screenshots are scaled to width w, top-anchored. In the SVG templates the same rect is <rect id=\"screen-slot-N\">."
+}
