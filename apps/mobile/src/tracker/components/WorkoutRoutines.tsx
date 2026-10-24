@@ -16,6 +16,8 @@
  * Reorder: press and hold a routine, then drag it within its folder (15 Oct 2026, as Hevy does;
  * DragList). The routine ⋯ keeps Move up / Move down / Move to folder… (moving between folders).
  */
+import { reachedLimit } from '@/cloud/limitsFlag';
+import { explainLimit } from '@/cloud/limitsPrompt';
 import { DragGrip } from './DragGrip';
 import { DragList } from './DragList';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -316,6 +318,11 @@ export function WorkoutRoutines({
   // ------------------------------------------------------------ actions
 
   const onNewRoutine = async (folderId: string | null): Promise<void> => {
+    // #43: the free plan's limit (switched off at launch; gym members never meet it).
+    if (await reachedLimit('routines')) {
+      void explainLimit('routines', () => router.push('/settings/gym'));
+      return;
+    }
     try {
       // RP-08: no folder given → "My routines" (not followed), never the plan by itself.
       const id = await createRoutine({ name: 'New routine', dayType: 'full', folderId });

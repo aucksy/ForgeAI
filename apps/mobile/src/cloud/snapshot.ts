@@ -6,6 +6,7 @@ import { enqueueWrite } from '@/db/writeQueue';
 import { MEMBER_SCHEMA_VERSION } from '@/onboarding/db/memberSchema';
 import { TRACKER_SCHEMA_VERSION } from '@/tracker/db/trackerSchema';
 
+import { MERGE_PENDING_KEY } from './accountMeta';
 import { backupVersionWords, PlainError } from './backupWords';
 
 /**
@@ -14,7 +15,8 @@ import { backupVersionWords, PlainError } from './backupWords';
  * to the member's OWN Drive and a one-time hydrate on restore — NOT two-way sync,
  * no conflict resolution.
  *
- * We snapshot only the DOMAIN tables — never `sync_outbox` or `meta`. Identity, the
+ * We snapshot only the DOMAIN tables — never `sync_outbox`, `meta` or the cloud copy's own
+ * `cloud_copy_state` / `cloud_copy_queue` (copyLocal.ts: what this phone sent, not member data). Identity, the
  * cloud session, the `seeded` flag and the last-backup time are device-local and are
  * re-established on their own, so keeping `meta` out means a restore can't clobber the
  * gym link, re-trigger the demo seed, or wipe the backup timestamp.
@@ -26,7 +28,7 @@ import { backupVersionWords, PlainError } from './backupWords';
 
 type SqlValue = string | number | null;
 type Row = Record<string, SqlValue>;
-type TxLike = Pick<SQLiteDatabase, 'runAsync'>;
+type TxLike = Pick<SQLiteDatabase, 'runAsync' | 'getFirstAsync'>;
 
 /**
  * Domain tables in FK-safe INSERT order (parents before children). Restore DELETEs
@@ -299,4 +301,9 @@ export async function replaceAllInTransaction(tx: TxLike, env: BackupEnvelope): 
   }
   // The restored data may be from before the one-time repairs: they run again.
   await tx.runAsync(`DELETE FROM meta WHERE key IN (${RERUN_AFTER_RESTORE.map(() => '?').join(', ')})`, [...RERUN_AFTER_RESTORE]);
+  // #50: what this phone last copied to ForgeAI no longer describes it. Forget it and bring the
+  // server's copy back first, so the restored (older) rows never delete or overwrite newer ones there.
+  const copied = await tx.getFirstAsync<{ name: string }>("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'cloud_copy_state'");
+  if (copied) await tx.runAsync('DELETE FROM cloud_copy_state');
+  await tx.runAsync("INSERT INTO meta(key, value) VALUES(?, '1') ON CONFLICT(key) DO UPDATE SET value = '1'", [MERGE_PENDING_KEY]);
 }

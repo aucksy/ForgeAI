@@ -14,10 +14,13 @@
  * `range` and their setters, so both tabs share what the member picked (switching tabs keeps
  * them); without them the chart keeps its own choice, as before.
  */
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { chartAllowed } from '@/cloud/limitsFlag';
+import { explainLimit, monthsOfRange } from '@/cloud/limitsPrompt';
 import { Card } from '@/components/ui';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
 import { tap } from '@/lib/haptics';
@@ -92,6 +95,7 @@ export function ExerciseMetricChart({
     setOwnRange(r);
     onRangeChange?.(r);
   };
+  const router = useRouter();
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
   const [picking, setPicking] = useState(false);
 
@@ -138,8 +142,15 @@ export function ExerciseMetricChart({
             options={CHART_RANGES}
             value={range}
             onChange={(r) => {
-              setInspect(null);
-              setRange(r);
+              // #43: the free plan shows 3 months of charts (switched off at launch; gym members never meet it).
+              void chartAllowed(monthsOfRange(r)).then((ok) => {
+                if (!ok) {
+                  void explainLimit('charts', () => router.push('/settings/gym'));
+                  return;
+                }
+                setInspect(null);
+                setRange(r);
+              });
             }}
           />
         </View>

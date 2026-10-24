@@ -13,7 +13,8 @@
  * SH-17: a missing or wrong answer is written under its own field, scrolled into view, and
  * spoken by the screen reader — never only a buzz. Every answer can be changed in Profile.
  * The step logic is pure (`../welcomeSteps`); the demo and the "Coming from Hevy or Strong?"
- * pick behave exactly as before. Under Next: "Have a gym code? Join your gym" (WelcomeGymCode).
+ * pick behave exactly as before. Under Next: "Have a gym code? Join your gym" (WelcomeGymCode), then
+ * "Continue with Google" for a member coming back (WelcomeGoogle; hidden until the build can sign in).
  */
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -57,6 +58,7 @@ import {
   type WelcomeStep,
 } from '../welcomeSteps';
 import { RadioList, type RadioOption } from './RadioList';
+import { WelcomeGoogle } from './WelcomeGoogle';
 import { WelcomeGymCode } from './WelcomeGymCode';
 
 const GOAL_OPTIONS: readonly RadioOption<Goal>[] = [
@@ -394,6 +396,11 @@ export function WelcomeScreen() {
                 {/* OWNER-INBOX #11: joining a gym from the first screen (opens after setup). */}
                 <View style={{ marginTop: space.md }}>
                   <WelcomeGymCode />
+                </View>
+
+                {/* #43/#50: a member who used ForgeAI before gets their workouts back (hidden until the build can sign in). */}
+                <View style={{ marginTop: space.md }}>
+                  <WelcomeGoogle onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))} />
                 </View>
 
                 <View style={{ marginTop: space.xl }}>

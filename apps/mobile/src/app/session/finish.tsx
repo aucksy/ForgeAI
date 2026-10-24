@@ -36,6 +36,7 @@ import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '
 import { workoutMilestone } from '@/tracker/services/milestones';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
 import { autoBackupAfterWorkout } from '@/cloud/autoBackup';
+import { copySoon } from '@/cloud/copySync';
 import { SAVE_FIRST_ROUTINE, offersFirstRoutine, routineCount, saveFirstRoutine } from '@/tracker/services/saveFirstRoutine';
 import { workoutText } from '@/tracker/services/shareText';
 import type { SessionSummaryData } from '@/tracker/services/finishSummary';
@@ -150,6 +151,8 @@ export default function FinishScreen() {
   const loaded = useRef(false);
   useEffect(() => {
     if (data) loaded.current = true;
+    // #50: the finished workout is copied to ForgeAI's server for a signed-in member (a no-op otherwise).
+    if (data) copySoon('finished a workout', 1500);
   }, [data]);
   useEffect(
     () => () => {

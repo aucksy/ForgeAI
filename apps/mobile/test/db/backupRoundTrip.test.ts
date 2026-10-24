@@ -17,7 +17,9 @@ type Row = Record<string, string | number>;
 /** Tables the backup leaves out ON PURPOSE (see src/cloud/snapshot.ts header). */
 // + `training_changes` (tracker schema v13): this phone's change counter, kept by triggers — not member data.
 // + `workout_photos` (15 Oct 2026): photos on a workout stay on this phone, like progress photos.
-const NOT_BACKED_UP = ['meta', 'progress_photos', 'sync_outbox', 'training_changes', 'workout_photos'];
+// + `cloud_copy_state` / `cloud_copy_queue` (tracker #50): what THIS phone copied to ForgeAI's server and what
+//   waits to be sent — about the phone, not member data (the server holds the copy itself).
+const NOT_BACKED_UP = ['cloud_copy_queue', 'cloud_copy_state', 'meta', 'progress_photos', 'sync_outbox', 'training_changes', 'workout_photos'];
 
 /** One row per table, every column non-NULL. FK-safe insert order. */
 const FULL_ROWS: [string, Row][] = [

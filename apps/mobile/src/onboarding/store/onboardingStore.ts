@@ -20,6 +20,7 @@ import { syncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 import { ensureHistoryIndexes } from '@/tracker/db/historyIndexes';
 import { initTrackerSchema } from '@/tracker/db/trackerSchema';
 import { initWorkoutPhotoSchema } from '@/tracker/db/workoutPhotoRepo';
+import { initCloudCopySchema } from '@/cloud/copyLocal';
 import { useDashboard } from '@/store/dashboardStore';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { phoneAfterErase } from '@/tracker/phone/phoneSync';
@@ -117,6 +118,7 @@ async function openAndUpgrade(): Promise<void> {
     await initTrackerSchema(); // additive tracker columns
     await initMemberSchema(); // additive member columns (phone)
     await initWorkoutPhotoSchema(); // additive: photos on a workout (15 Oct 2026)
+    await initCloudCopySchema(); // additive: the cloud copy's two tables (tracker #50)
   });
   // Photos whose workout is gone (an import's Replace, Remove demo data, an older restore): rows
   // and files go. Never blocks start-up; it logs and tries again next launch.

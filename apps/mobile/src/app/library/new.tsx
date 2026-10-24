@@ -18,6 +18,8 @@
  * back after Android closed the app returns to the exercise it was taken for (EX-13); every
  * save refreshes the exercise lists (EX-03).
  */
+import { reachedLimit } from '@/cloud/limitsFlag';
+import { explainLimit } from '@/cloud/limitsPrompt';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -311,6 +313,11 @@ export default function NewExerciseScreen() {
         if (existing) {
           await updateCustomExercise(existing.id, input, m, typeLocked);
         } else {
+          // #43: the free plan's limit (switched off at launch; gym members never meet it).
+          if (await reachedLimit('customExercises')) {
+            void explainLimit('customExercises', () => router.push('/settings/gym'));
+            return;
+          }
           const id = await createCustomExercise(input, m);
           exercisesChanged();
           await dropUnused();

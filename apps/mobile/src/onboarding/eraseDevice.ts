@@ -50,6 +50,7 @@ const STEP_WORDS: Record<string, string> = {
   cache: 'shared and imported files',
   'ai-keys': 'AI keys',
   'gym-link': 'gym sign-in',
+  'member-account': 'ForgeAI sign-in',
   'drive-link': 'Google Drive link',
   settings: 'settings',
   shop: 'shop bag and orders',
@@ -159,6 +160,22 @@ function deviceSteps(): EraseStep[] {
       run: async () => {
         const { signOutCloud } = await import('@/cloud/session');
         await signOutCloud();
+      },
+    },
+    {
+      // #50: the ForgeAI member account on THIS phone: signed out and its copy records emptied. The
+      // copy on the server stays (Settings → Backup → "Delete my account" removes it); the database
+      // wipe already removed the account mark, so no delete is ever sent for the erased workouts.
+      name: 'member-account',
+      run: async () => {
+        const { stopWatchingCloudCopy } = await import('@/cloud/copySync');
+        stopWatchingCloudCopy();
+        const { clearCopyTables } = await import('@/cloud/copyLocal');
+        await clearCopyTables();
+        const { isAccountConfigured, signOutAccount } = await import('@/cloud/account');
+        if (isAccountConfigured()) await signOutAccount();
+        const { useAccount } = await import('@/store/accountStore');
+        useAccount.setState({ account: null, status: null, note: null });
       },
     },
     {

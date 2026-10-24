@@ -15,6 +15,7 @@ import { ConfirmHost } from '@/components/ui';
 import { startUnitSync } from '@/lib/useUnits';
 import { FEATURES } from '@/lib/features';
 import { useCloud } from '@/store/cloudStore';
+import { startCloudCopy } from '@/cloud/copySync';
 import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
 import { phoneAfterLookChange } from '@/tracker/phone/phoneSync';
 import { photoBackupAtStart } from '@/tracker/services/photoBackup';
@@ -105,6 +106,11 @@ export default function RootLayout() {
   }, []);
 
   const ready = fontsLoaded && status !== 'loading' && themeReady;
+  // #50: ForgeAI's own copy of a signed-in member's workouts (every trigger is a no-op without an account).
+  useEffect(() => {
+    if (!ready || status === 'error') return;
+    return startCloudCopy();
+  }, [ready, status]);
   // Forgotten Finish: a workout with no sets for an hour pauses its own timer.
   useIdlePause(ready);
 

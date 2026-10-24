@@ -131,7 +131,9 @@ export async function joinGymByCode(
  *  outbox so a leftover pending row can't push under a different re-linked account. */
 export async function signOutCloud(): Promise<void> {
   try {
-    if (isCloudConfigured()) await getSupabase().auth.signOut();
+    // Only THIS phone (scope 'local'): a global sign-out would end the same account's sign-in on
+    // every phone, including a member account signed in with Google (tracker #50).
+    if (isCloudConfigured()) await getSupabase().auth.signOut({ scope: 'local' });
   } finally {
     await getDb().runAsync('DELETE FROM sync_outbox');
     await setIdentity(null);

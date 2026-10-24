@@ -66,6 +66,14 @@ export function configureDrive(): void {
   }
 }
 
+/**
+ * The member-account sign-in (account.ts) configures Google for sign-in only, without Drive's
+ * permission. The next Drive action then configures Drive's again.
+ */
+export function forgetDriveConfigure(): void {
+  configured = false;
+}
+
 function ensureReady(): void {
   if (!isDriveConfigured()) throw new DriveError(DRIVE_NOT_IN_THIS_VERSION, 'no googleWebClientId in this build');
   configureDrive();

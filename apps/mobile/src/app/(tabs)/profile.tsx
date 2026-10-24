@@ -12,6 +12,8 @@
  * Audit Phase 8 (years of data): coming back with nothing saved since (and the same day) reads
  * nothing; the chart keeps each range it read until the data changes.
  */
+import { chartAllowed } from '@/cloud/limitsFlag';
+import { explainLimit, monthsOfRange } from '@/cloud/limitsPrompt';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'react-native';
@@ -221,6 +223,13 @@ export default function ProfileScreen() {
   useRereadWhenFailed(headerFailed || chartFailed || feedStatus === 'error', () => void loadAll(null));
 
   const pickRange = (r: ChartRange): void => {
+    // #43: the free plan shows 3 months of charts (switched off at launch; gym members never meet it).
+    void chartAllowed(monthsOfRange(r)).then((ok) => {
+      if (ok) showRange(r);
+      else void explainLimit('charts', () => router.push('/settings/gym'));
+    });
+  };
+  const showRange = (r: ChartRange): void => {
     setRange(r);
     rangeRef.current = r;
     void historyStamp()

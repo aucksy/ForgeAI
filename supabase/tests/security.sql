@@ -28,6 +28,13 @@ declare
     'owner_hq_access','owner_hq_end','owner_hq_grant',
     -- 0029: automatic reminders (owner/desk key, or a member key, checked by each).
     'member_auto_reminders','owner_auto_reminders','owner_save_auto_reminders',
+    -- 0031: branches (each checks an owner or desk key itself; opening and adding: owners only).
+    'owner_branches','owner_add_branch','owner_open_branch','owner_rename_group',
+    'branch_find_visitor','branch_check_in_visitor','branch_visitors','branch_undo_visitor',
+    -- 0033: the terms the gym accepted (each checks an owner or desk key; accepting: owners only).
+    'owner_terms','owner_accept_terms',
+    -- 0032: the free plan's switch (answers one config row, nothing else).
+    'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
     'owner_gym','owner_make_signin_code','owner_messages','owner_offers','owner_orders','owner_people','owner_photo_ticket',
     'owner_products','owner_receipt_history','owner_remove_person','owner_rename_gym','owner_retire_key','owner_save_offer','owner_save_product',
@@ -35,7 +42,9 @@ declare
     'owner_set_product_photo','owner_sign_out_person','owner_stop_offer','owner_undo_reward','owner_withdraw_message',
     'staff_give_reward','staff_key_status','staff_me','staff_sign_in',
     'staff_sign_out'];
-  auth_only_ok text[] := array['create_gym','delete_my_cloud_data','join_gym_by_code'];
+  -- 0032: the member's own cloud copy and "Delete my account" (each acts on auth.uid() only).
+  auth_only_ok text[] := array['create_gym','delete_my_cloud_data','join_gym_by_code',
+    'member_account_delete','member_copy_count','member_copy_get','member_copy_put'];
   fails text := ''; checks int := 0; x text; n bigint; t record;
   ga uuid; gb uuid; ka text := 'sec-test-owner-a'; kb text := 'sec-test-owner-b'; km text := 'sec-test-member-a';
   r jsonb; v bigint;
