@@ -2,24 +2,43 @@
 // allows only this address). Every name, number and message from the server is put on screen as
 // text (textContent), never as HTML. Nothing is kept in the browser: each page asks the Worker.
 import {
+  BILLING_CHOICES,
+  ENDING_SOON_DAYS,
+  FILTERS,
+  NOT_READY_WORDS,
+  PLAN_CHOICES,
   REASON_KINDS,
   RECORD_KINDS,
+  SORTS,
   STATUS_WORDS,
   actionWords,
   ago,
+  billingBadge,
+  capWords,
   codeMessage,
   count,
+  csvName,
+  dateWords,
   daysLeft,
+  endOfIndiaDay,
   errorWords,
+  filterNeedsTrial,
   flags,
   gymByCode,
+  gymsCsv,
+  inFilter,
+  indiaDayOf,
+  matchesSearch,
   NOT_CHECKED_WORDS,
   megabytes,
-  needsLook,
+  planWords,
   recordCells,
   rupees,
   rupeesExact,
+  sortGyms,
+  summary,
   testKind,
+  trialPicks,
   when,
 } from './logic.js';
 
@@ -86,10 +105,15 @@ function fail(box, e) {
   }
 }
 
-/** A button that runs an action once at a time, showing what happened in `out`. */
-function action(label, run, { tone = '', out } = {}) {
+/**
+ * A button that runs an action once at a time, showing what happened in `out`. `sure`: a question
+ * asked first (for actions that are hard to undo); "Cancel" does nothing.
+ */
+function action(label, run, { tone = '', out, sure } = {}) {
   const b = h('button', { class: `button ${tone}`, type: 'button' }, label);
   b.addEventListener('click', async () => {
+    const question = typeof sure === 'function' ? sure() : sure;
+    if (question && !window.confirm(question)) return;
     b.disabled = true;
     if (out) out.replaceChildren();
     try {
@@ -133,47 +157,130 @@ function show(...kids) {
 }
 
 let gymsCache = [];
+let gymsData = null;
 let showTestGyms = false;
+// The gym list's search, filter and sort, kept while HQ is open (never saved in the browser).
+const listState = { q: '', filter: 'all', sort: 'new' };
 
 // ------------------------------------------------------------------ All gyms
 async function gymsPage() {
   loading();
-  const data = await api('/api/gyms');
-  gymsCache = data.gyms;
+  gymsData = await api('/api/gyms');
+  gymsCache = gymsData.gyms;
+  renderGyms();
+}
+
+function openGym(g) {
+  location.hash = `#gym/${g.gymId}`;
+}
+
+function gymRow(g, now, ready) {
+  const badge = ready ? billingBadge(g, now) : null;
+  // One wrapper per cell, so on a phone (style.css) the label sits left and the value block right.
+  const cell = (label, attrs, ...kids) => h('td', { ...attrs, 'data-label': label }, h('div', { class: 'cell' }, ...kids));
+  return h('tr', { tabindex: '0', onclick: () => openGym(g), onkeydown: (e) => e.key === 'Enter' && openGym(g) },
+    cell('Gym', {}, h('strong', {}, g.name), h('div', { class: 'muted' }, `${g.joinCode} · ${STATUS_WORDS[g.status] || g.status}`), flagList(g)),
+    ready ? cell('Free trial or plan', {}, badge ? h('span', { class: `flag ${badge.tone}` }, badge.words) : h('span', { class: 'muted' }, '–')) : null,
+    cell('Members', { class: 'num' }, `${g.membersRegister}`, h('div', { class: 'muted' }, `${g.membersApp} in app`)),
+    cell('Check-ins 7 / 30 days', { class: 'num' }, `${g.checkins7} / ${g.checkins30}`),
+    cell('Money this month', { class: 'num' }, rupees(g.moneyThisMonthP), h('div', { class: 'muted' }, `last month ${rupees(g.moneyLastMonthP)}`)),
+    cell('Last desk activity', {}, ago(g.lastDeskActivity, now), h('div', { class: 'muted' }, `${count(g.staff, 'person', 'people')} · ${count(g.liveDevices, 'device')}`)),
+    cell('Owner', {}, h('span', {}, g.ownerName || ''), h('div', {}, g.ownerPhone ? h('a', { href: `tel:+91${g.ownerPhone}`, onclick: (e) => e.stopPropagation() }, g.ownerPhone) : '')),
+  );
+}
+
+function renderGyms() {
+  const data = gymsData;
   const now = Date.now();
+  const ready = data.plansReady === true;
   const hidden = data.gyms.filter((g) => testKind(g)).length;
-  const gyms = showTestGyms ? data.gyms : data.gyms.filter((g) => !testKind(g));
-  const newWeek = gyms.filter((g) => now - Date.parse(g.createdAt) <= 7 * 864e5).length;
+  const base = showTestGyms ? data.gyms : data.gyms.filter((g) => !testKind(g));
+  if (!ready && filterNeedsTrial(listState.filter)) listState.filter = 'all';
+  if (!ready && listState.sort === 'trial') listState.sort = 'new';
+  const s = summary(base, now);
   const createOut = h('div');
-  const rows = gyms.map((g) =>
-    h('tr', { tabindex: '0', onclick: () => (location.hash = `#gym/${g.gymId}`), onkeydown: (e) => e.key === 'Enter' && (location.hash = `#gym/${g.gymId}`) },
-      h('td', {}, h('strong', {}, g.name), h('div', { class: 'muted' }, `${g.joinCode} · ${STATUS_WORDS[g.status] || g.status}`), flagList(g)),
-      h('td', { class: 'num' }, `${g.membersRegister}`, h('div', { class: 'muted' }, `${g.membersApp} in app`)),
-      h('td', { class: 'num' }, `${g.checkins7} / ${g.checkins30}`),
-      h('td', { class: 'num' }, `${g.orders30}`),
-      h('td', { class: 'num' }, rupees(g.moneyThisMonthP), h('div', { class: 'muted' }, `last month ${rupees(g.moneyLastMonthP)}`)),
-      h('td', {}, ago(g.lastDeskActivity, now)),
-      h('td', { class: 'num' }, `${g.staff}`, h('div', { class: 'muted' }, `${g.liveDevices} devices`)),
-      h('td', { class: 'num' }, `${g.failedSignins24h}`),
-      h('td', { class: 'num' }, g.newFeedback == null ? '–' : `${g.newFeedback}`),
-      h('td', { class: 'num' }, g.aiThisMonth ? `${g.aiThisMonth.calls}` : '–', g.aiThisMonth ? h('div', { class: 'muted' }, rupeesExact(g.aiThisMonth.rupees)) : null),
-      h('td', {}, h('span', { class: 'muted' }, g.ownerName || ''), h('div', {}, g.ownerPhone ? h('a', { href: `tel:+91${g.ownerPhone}`, onclick: (e) => e.stopPropagation() }, g.ownerPhone) : '')),
-    ));
+  const exportOut = h('div');
+  const tableBox = h('div');
+  const countLine = h('p', { class: 'muted', role: 'status' });
+  let shown = [];
+
+  const filterPick = select(FILTERS.filter(([f]) => ready || !filterNeedsTrial(f)), listState.filter);
+  const sortPick = select(SORTS.filter(([k]) => ready || k !== 'trial'), listState.sort);
+  const search = h('input', { type: 'search', value: listState.q, placeholder: 'Gym, code, owner or mobile', autocomplete: 'off', 'aria-label': 'Search gyms' });
+
+  const draw = () => {
+    shown = sortGyms(base.filter((g) => matchesSearch(g, listState.q) && inFilter(g, listState.filter, now)), listState.sort, now);
+    const filtered = listState.q.trim() || listState.filter !== 'all';
+    countLine.textContent = filtered ? `Showing ${shown.length} of ${count(base.length, 'gym')}.` : `${count(base.length, 'gym')}. Tap a gym for more.`;
+    if (shown.length) {
+      tableBox.replaceChildren(h('div', { class: 'table-wrap' }, h('table', { class: 'gym-table' },
+        h('thead', {}, h('tr', {}, ['Gym', ready ? 'Free trial or plan' : null, 'Members', 'Check-ins 7 / 30 days', 'Money this month', 'Last desk activity', 'Owner']
+          .filter(Boolean).map((t) => h('th', {}, t)))),
+        h('tbody', {}, shown.map((g) => gymRow(g, now, ready))))));
+    } else if (base.length === 0) {
+      tableBox.replaceChildren(h('div', { class: 'card empty' }, h('p', {}, hidden ? 'No real gyms yet. The test and demo gyms are hidden.' : 'No gyms yet.'),
+        h('p', { class: 'muted' }, 'A gym appears here the moment its owner taps “Start my gym”, or when you use “Make a gym”.')));
+    } else {
+      tableBox.replaceChildren(h('div', { class: 'card empty' }, h('p', {}, 'No gym matches.'),
+        h('button', { class: 'button', type: 'button', onclick: () => { listState.q = ''; listState.filter = 'all'; search.value = ''; filterPick.value = 'all'; draw(); } }, 'Show all gyms')));
+    }
+  };
+  const pickFilter = (f) => {
+    listState.filter = f;
+    filterPick.value = f;
+    draw();
+    tableBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  search.addEventListener('input', () => { listState.q = search.value; draw(); });
+  filterPick.addEventListener('change', () => { listState.filter = filterPick.value; draw(); });
+  sortPick.addEventListener('change', () => { listState.sort = sortPick.value; draw(); });
+
+  const tile = (label, value, hint, filter) => (filter
+    ? h('button', { class: 'stat stat-button', type: 'button', onclick: () => pickFilter(filter), 'aria-label': `${label}: ${value}. Show them.` },
+        h('span', { class: 'stat-value' }, value), h('span', { class: 'stat-label' }, label), hint ? h('span', { class: 'stat-hint' }, hint) : null)
+    : stat(label, value, hint));
+
   show(
     h('div', { class: 'page-head' }, h('h1', {}, 'All gyms'), h('button', { class: 'button', type: 'button', onclick: () => createGymForm(createOut, {}) }, 'Make a gym')),
     createOut,
-    h('div', { class: 'stats' }, stat('Gyms', `${gyms.length}`), stat('New this week', `${newWeek}`), stat('Need a look', `${needsLook(gyms, now)}`)),
-    data.webOk ? null : note('Feedback, leads and AI use could not be read right now, so those columns are empty.', 'warn'),
-    h('p', { class: 'muted' }, 'Counts only. Member names and numbers are never shown here. Tap a gym for more.'),
-    hidden ? h('label', { class: 'muted' },
-      h('input', { type: 'checkbox', checked: showTestGyms, onchange: (e) => { showTestGyms = e.target.checked; gymsPage(); } }),
-      ` Show test and demo gyms (${hidden})`) : null,
-    gyms.length === 0
-      ? h('p', {}, hidden ? 'No real gyms yet.' : 'No gyms yet.')
-      : h('div', { class: 'table-wrap' }, h('table', {},
-          h('thead', {}, h('tr', {}, ['Gym', 'Members', 'Check-ins 7 / 30 days', 'Shop orders 30 days', 'Money this month', 'Last desk activity', 'Staff', 'Wrong codes 24 h', 'New feedback', 'AI reads this month', 'Owner'].map((t) => h('th', {}, t)))),
-          h('tbody', {}, rows))),
+    h('div', { class: 'stats' },
+      tile('Gyms', `${s.gyms}`, `${s.newWeek} new this week`, 'all'),
+      tile('Members', s.members.toLocaleString('en-IN'), `${s.membersApp.toLocaleString('en-IN')} in the member app`),
+      ready ? tile(`Free trials ending in ${ENDING_SOON_DAYS} days`, `${s.endingSoon}`, `${s.onTrial} on a free trial`, 'ending') : null,
+      ready ? tile('Trial ended, not paid', `${s.ended}`, 'call them about a plan', 'ended') : null,
+      ready ? tile('Paying', `${s.paying}`, 'monthly, yearly or lifetime', 'paying') : null,
+      tile('Need a look', `${s.needLook}`, 'paused, warnings, not checked', 'look')),
+    ready || base.length === 0 ? null : note(NOT_READY_WORDS, 'warn'),
+    data.webOk ? null : note('Feedback, leads and AI use could not be read right now.', 'warn'),
+    h('div', { class: 'toolbar' },
+      field('Search', search), field('Show', filterPick), field('Sort', sortPick)),
+    h('div', { class: 'row wrap between' },
+      countLine,
+      hidden ? h('label', { class: 'muted check' },
+        h('input', { type: 'checkbox', checked: showTestGyms, onchange: (e) => { showTestGyms = e.target.checked; renderGyms(); } }),
+        ` Show test and demo gyms (${hidden})`) : null,
+      action('Export these gyms (CSV)', () => exportGyms(shown, exportOut), { out: exportOut })),
+    exportOut,
+    tableBox,
+    h('p', { class: 'muted' }, 'Counts and gym-level facts only. Member names and numbers are never shown in HQ; they stay behind support access, which the gym owner sees.'),
   );
+  draw();
+}
+
+/** "Export gyms (CSV)": written to the log first, then the file of what the list shows. */
+async function exportGyms(list, out) {
+  if (!list.length) {
+    out.replaceChildren(note('No gyms in the list to export.', 'warn'));
+    return;
+  }
+  await api('/api/gyms/export-log', { gyms: list.length, withTestGyms: showTestGyms, filter: listState.filter });
+  const url = URL.createObjectURL(new Blob([gymsCsv(list)], { type: 'text/csv;charset=utf-8' }));
+  const link = h('a', { href: url, download: csvName() });
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  out.replaceChildren(note(`Downloaded ${count(list.length, 'gym')} (${csvName()}). It has owners’ names and mobiles: keep it private.`, 'good'));
 }
 
 function createGymForm(box, { gymName = '', phone = '', leadId = null }) {
@@ -215,7 +322,65 @@ function codeCard(gymName, code, lead) {
 }
 
 // ------------------------------------------------------------------ One gym
-async function gymPage(id) {
+/** The gym page's "Free trial and plan" card (0030, R-97). Before 0030: one line saying so. */
+function planCard(g, id, ready) {
+  const head = h('h2', {}, 'Free trial and plan');
+  if (!ready) return h('div', { class: 'card' }, head, note(NOT_READY_WORDS, 'warn'));
+  const now = Date.now();
+  const badge = billingBadge(g, now);
+  const trialOut = h('div');
+  const planOut = h('div');
+
+  // Extend (or shorten) the free trial: quick picks, never past the cap.
+  const picks = trialPicks(g, now);
+  const pick = select(picks.map((p) => [p.endsAt, p.label]));
+  const trialWhy = h('input', { maxlength: '300', placeholder: 'Why (for example: moving 300 members over from Excel)' });
+  const extend = picks.length
+    ? h('div', { class: 'stack' },
+        field('New end of the free trial', pick),
+        field('Why', trialWhy, 'Written in the log. The gym owner sees that ForgeAI changed the trial.'),
+        action('Save the new end', async () => {
+          await api('/api/gym/trial', { gymId: id, endsAt: pick.value, reason: trialWhy.value });
+          await gymPage(id, `Saved: the free trial now ends ${dateWords(pick.value)}.`);
+        }, { out: trialOut }),
+        trialOut)
+    : note('This free trial is already as long as it can be.', 'warn');
+
+  // The plan, set by hand after a payment.
+  const planPick = select(PLAN_CHOICES, g.plan || '');
+  const billPick = select(BILLING_CHOICES, g.billing || 'monthly');
+  const until = h('input', { type: 'date', value: indiaDayOf(g.paidUntil) });
+  const planWhy = h('input', { maxlength: '300', placeholder: 'Why (for example: paid ₹4,999 by UPI on 24 Oct)' });
+  const billField = field('Paid', billPick);
+  const untilField = field('Paid until', until, 'The last day the money received covers.');
+  const sync = () => {
+    billField.hidden = !planPick.value;
+    untilField.hidden = !planPick.value || billPick.value === 'lifetime';
+  };
+  planPick.addEventListener('change', sync);
+  billPick.addEventListener('change', sync);
+  sync();
+
+  return h('div', { class: 'card' }, head,
+    badge ? h('p', {}, h('span', { class: `flag ${badge.tone}` }, badge.words)) : null,
+    h('p', {}, g.trialEndsAt ? `Free trial: started ${dateWords(g.trialStartsAt)}, ends ${dateWords(g.trialEndsAt)}.` : 'No free trial on record.'),
+    h('p', {}, `Plan: ${planWords(g) || 'none yet'}.`),
+    h('p', { class: 'muted' }, `${capWords(g)} Nothing is locked when the free trial ends: members keep their app and the gym keeps its records. To stop a gym, pause it under Status.`),
+    h('h3', {}, 'Change the free trial'),
+    extend,
+    h('h3', {}, 'Set the plan'),
+    h('div', { class: 'stack' },
+      field('Plan', planPick), billField, untilField,
+      field('Why', planWhy, 'Written in the log.'),
+      action('Save the plan', async () => {
+        const plan = planPick.value || null;
+        await api('/api/gym/plan', { gymId: id, plan, billing: plan ? billPick.value : null, paidUntil: plan && billPick.value !== 'lifetime' ? endOfIndiaDay(until.value) : null, reason: planWhy.value });
+        await gymPage(id, plan ? 'Saved: the plan is set.' : 'Saved: no plan (back on the free trial).');
+      }, { out: planOut, sure: () => (planPick.value ? null : 'Take the plan off this gym? It goes back to its free trial.') }),
+      planOut));
+}
+
+async function gymPage(id, flash = '') {
   loading();
   const data = await api(`/api/gym?id=${encodeURIComponent(id)}`);
   const g = data.gym;
@@ -224,15 +389,19 @@ async function gymPage(id) {
   const historyBox = h('div');
 
   const statusActions = [];
-  if (g.status === 'trial') statusActions.push(action('Approve (checked)', async () => { await api('/api/gym/status', { gymId: id, status: 'active' }); await gymPage(id); }, { out }));
+  if (g.status === 'trial') {
+    statusActions.push(h('p', { class: 'muted' }, 'New gyms start as “New, not checked yet” until you have looked at them (a real gym, a real owner). This is not the free trial.'));
+    statusActions.push(action('Mark as checked', async () => { await api('/api/gym/status', { gymId: id, status: 'active' }); await gymPage(id, 'Marked as checked.'); }, { out }));
+  }
   if (g.status !== 'suspended') {
     const why = h('input', { placeholder: 'Why (the gym owner is told this by you)', maxlength: '300' });
+    statusActions.push(h('p', { class: 'muted' }, 'Pausing makes the gym read-only: staff can sign in, look and download, but cannot add or change anything. Members keep their app.'));
     statusActions.push(h('div', { class: 'row' }, why, action('Pause the gym', async () => {
       await api('/api/gym/status', { gymId: id, status: 'suspended', reason: why.value });
-      await gymPage(id);
-    }, { tone: 'danger', out })));
+      await gymPage(id, 'The gym is paused.');
+    }, { tone: 'danger', out, sure: () => `Pause ${g.name}? Nobody at the gym can add or change anything until you un-pause it.` })));
   } else {
-    statusActions.push(action('Un-pause the gym', async () => { await api('/api/gym/status', { gymId: id, status: 'active' }); await gymPage(id); }, { out }));
+    statusActions.push(action('Un-pause the gym', async () => { await api('/api/gym/status', { gymId: id, status: 'active' }); await gymPage(id, 'The gym is working again.'); }, { out }));
   }
 
   // Reset the owner's sign-in.
@@ -260,7 +429,7 @@ async function gymPage(id) {
     action('Sign out everywhere', async () => {
       const r = await api('/api/gym/sign-out-all', { gymId: id, reason: soWhy.value });
       soOut.replaceChildren(note(`${count(r.devices, 'device')} signed out.${r.oldOwnerKeys ? ' This gym also has an old browser key; tell Claude.' : ''}`, 'good'));
-    }, { tone: 'danger', out: soOut }),
+    }, { tone: 'danger', out: soOut, sure: () => `Sign every phone and computer of ${g.name} out now?` }),
     soOut);
 
   // AI limit.
@@ -292,6 +461,7 @@ async function gymPage(id) {
     h('p', {}, h('a', { href: '#gyms' }, '← All gyms')),
     h('div', { class: 'page-head' }, h('h1', {}, g.name), h('span', { class: `badge ${g.status}` }, STATUS_WORDS[g.status] || g.status)),
     h('p', { class: 'muted' }, `Gym code ${g.joinCode} · started ${when(g.createdAt)}`),
+    flash ? note(flash, 'good') : null,
     flagList({ ...g, aiLimit: null }),
     h('div', { class: 'stats' },
       stat('Members in the register', `${g.membersRegister}`),
@@ -306,6 +476,7 @@ async function gymPage(id) {
     h('div', { class: 'card' }, h('h2', {}, 'Owner'),
       g.owners.length ? g.owners.map((o) => h('p', {}, `${o.name} · `, h('a', { href: `tel:+91${o.phone}` }, o.phone))) : h('p', {}, 'No owner on the list.')),
     g.deleteRequest ? h('div', { class: 'card warn' }, h('p', {}, `Delete asked ${when(g.deleteRequest.requestedAt)}: day ${g.deleteRequest.day} of 30.`), h('a', { href: '#deletes' }, 'Open delete requests')) : null,
+    planCard(g, id, data.plansReady === true),
     h('div', { class: 'card' }, h('h2', {}, 'Status'), h('div', { class: 'stack' }, statusActions), out),
     accessBox,
     reset,
@@ -361,7 +532,7 @@ function renderAccess(box, g, id) {
     action('Open in an emergency', async () => {
       await api('/api/access/open', { gymId: id, reasonKind: kind.value, reason: reason.value, minutes: Number(minutes.value) });
       await gymPage(id);
-    }, { tone: 'danger', out }),
+    }, { tone: 'danger', out, sure: 'Open support access in an emergency? It is read-only, it ends by itself, and the gym owner sees it with your reason.' }),
     out));
 }
 
@@ -517,12 +688,12 @@ function requestCard(r) {
         ? h('li', {}, 'Delete: nothing can be brought back after this.', h('div', { class: 'row' }, typed, action('Delete the gym for ever', async () => {
             const res = await api('/api/delete-requests/delete-gym', { requestId: r.requestId, typedCode: typed.value });
             out.replaceChildren(note(`Deleted ${res.gymName}. Checked ${res.tablesChecked} tables: nothing left. Pictures removed: ${res.filesRemoved}.${res.filesLeft.length ? ` ${res.filesLeft.length} pictures are left: remove them in the Supabase dashboard (Storage).` : ''} Now tell the gym it is done.`, 'good'));
-          }, { tone: 'danger', out })))
+          }, { tone: 'danger', out, sure: () => `Delete ${r.gymName} for ever? Every member, receipt and record of this gym is erased. This cannot be undone.` })))
         : null),
     h('div', { class: 'row' }, cancelWhy, action('Cancel the request', async () => {
       await api('/api/delete-requests/step', { requestId: r.requestId, step: 'cancel', note: cancelWhy.value });
       await deletesPage();
-    }, { out })),
+    }, { out, sure: 'Cancel this delete request? Do this only when the gym told you it no longer wants the delete.' })),
     out);
 }
 

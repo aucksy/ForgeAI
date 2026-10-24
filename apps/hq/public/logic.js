@@ -51,7 +51,9 @@ export function megabytes(bytes) {
   return Math.round((Number(bytes) || 0) / (1024 * 1024));
 }
 
-export const STATUS_WORDS = { trial: 'New, not checked yet', active: 'Active', suspended: 'Paused by ForgeAI' };
+// gyms.status (0027). Its 'trial' means "new, not checked by ForgeAI yet" and has NOTHING to do with
+// the free trial (0030, trialEndsAt): the screens say "Free trial" only for that one.
+export const STATUS_WORDS = { trial: 'New, not checked yet', active: 'Active (checked)', suspended: 'Paused by ForgeAI' };
 
 /** The flags on a gym's row, most urgent first. Each: { tone: 'bad' | 'warn' | 'info', words }. */
 export function flags(g, now = Date.now()) {
@@ -123,6 +125,11 @@ const ERRORS = {
   OFFLINE: 'The gym server did not answer. Try again in a minute.',
   HQ_ONLY: 'Only HQ can do that.',
   SUSPENDED: 'This gym is paused.',
+  TRIAL_PAST: 'That date has already gone. Pick a later one.',
+  TRIAL_CAP: 'That is longer than a free trial can be (6 months from its start). Pick an earlier date.',
+  NEED_DATE: 'Pick the date the payment covers until.',
+  BAD_DATE: 'That date is too far ahead (3 years at most).',
+  NOT_READY: 'Trials need the database update (waiting for your yes).',
 };
 
 export function errorWords(code) {
@@ -161,6 +168,9 @@ const ACTIONS = {
   support_close: 'Closed support access',
   support_view: 'Looked at a gym’s records (support access)',
   nightly_cleanup: 'Nightly clean-up',
+  set_trial: 'Changed a gym’s free trial',
+  set_plan: 'Set a gym’s plan',
+  export_gyms: 'Exported the gym list (CSV)',
 };
 
 export function actionWords(action) {
@@ -225,4 +235,279 @@ export const NOT_CHECKED_WORDS = 'Not checked: anyone signed in to the gym’s a
 
 export function daysLeft(req) {
   return 30 - (Number(req.day) || 0);
+}
+
+// ------------------------------------------------------------------ free trial and plan (0030, R-97)
+// A free trial is 3 months from its start; HQ may make it longer, never past 6 months from the
+// start (the database refuses more: TRIAL_CAP). Nothing locks when it ends.
+
+const IST_MS = 5.5 * 60 * 60 * 1000;
+export const TRIAL_CAP_MONTHS = 6;
+export const ENDING_SOON_DAYS = 14;
+
+export const PLAN_WORDS = { starter: 'Starter', pro: 'Pro', ai: 'AI' };
+export const BILLING_WORDS = { monthly: 'monthly', yearly: 'yearly', lifetime: 'lifetime' };
+export const PLAN_CHOICES = [['', 'No plan yet (free trial)'], ['starter', 'Starter'], ['pro', 'Pro'], ['ai', 'AI']];
+export const BILLING_CHOICES = [['monthly', 'Monthly'], ['yearly', 'Yearly'], ['lifetime', 'Lifetime (paid once)']];
+export const NOT_READY_WORDS = 'Trials need the database update (waiting for your yes).';
+
+/** The gym row came from a database with 0030 (it carries the trial keys, even when empty). */
+export function hasTrialFields(g) {
+  return Boolean(g) && Object.prototype.hasOwnProperty.call(g, 'trialEndsAt');
+}
+
+/** The India calendar day of a moment, as a day number (for "days left"). */
+function indiaDayNo(ms) {
+  return Math.floor((ms + IST_MS) / DAY_MS);
+}
+
+/** "24 Jan 2027" in India time; '' for nothing. */
+export function dateWords(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/** iso + n calendar months, counted in UTC with the day held (31 Jan + 1 = 28/29 Feb), like Postgres. */
+export function addMonths(iso, n) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth() + n;
+  const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  const out = new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), last), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds()));
+  return out.toISOString();
+}
+
+/** The latest end the free trial may have: the server's own number when it sent one. */
+export function trialCap(g) {
+  if (g.trialCapAt) return new Date(g.trialCapAt).toISOString();
+  return g.trialStartsAt ? addMonths(g.trialStartsAt, TRIAL_CAP_MONTHS) : null;
+}
+
+/** India days from today to the trial's end day (0 = ends today, negative = ended); null = unknown. */
+export function trialDaysLeft(g, now = Date.now()) {
+  const end = g.trialEndsAt ? Date.parse(g.trialEndsAt) : NaN;
+  if (Number.isNaN(end)) return null;
+  return indiaDayNo(end) - indiaDayNo(now);
+}
+
+/**
+ * Where a gym stands: 'unknown' (database without 0030), 'trial', 'trial_ended', 'paying',
+ * 'lapsed' (monthly or yearly, paid-until passed) or 'lifetime'.
+ */
+export function billingState(g, now = Date.now()) {
+  if (!hasTrialFields(g)) return 'unknown';
+  if (g.plan) {
+    if (g.billing === 'lifetime') return 'lifetime';
+    const until = g.paidUntil ? Date.parse(g.paidUntil) : NaN;
+    return !Number.isNaN(until) && until >= now ? 'paying' : 'lapsed';
+  }
+  const end = g.trialEndsAt ? Date.parse(g.trialEndsAt) : NaN;
+  if (Number.isNaN(end)) return 'unknown';
+  return end > now ? 'trial' : 'trial_ended';
+}
+
+/** "Free trial: 41 days left", "Free trial: last day", "Free trial ended 3 days ago". */
+export function trialWords(g, now = Date.now()) {
+  const left = trialDaysLeft(g, now);
+  if (left === null) return '';
+  if (Date.parse(g.trialEndsAt) <= now) {
+    const ago = -left;
+    return ago <= 0 ? 'Free trial ended today' : `Free trial ended ${ago === 1 ? '1 day' : `${ago} days`} ago`;
+  }
+  if (left <= 0) return 'Free trial: last day';
+  return `Free trial: ${left === 1 ? '1 day' : `${left} days`} left`;
+}
+
+/** "Pro, yearly, paid until 24 Oct 2027", "AI, lifetime", or "" with no plan. */
+export function planWords(g) {
+  if (!g.plan) return '';
+  const name = PLAN_WORDS[g.plan] || g.plan;
+  if (g.billing === 'lifetime') return `${name}, lifetime`;
+  const how = BILLING_WORDS[g.billing] || g.billing || '';
+  return `${name}, ${how}${g.paidUntil ? `, paid until ${dateWords(g.paidUntil)}` : ''}`;
+}
+
+/** The one badge on a gym's row: { tone: 'good' | 'warn' | 'bad' | 'info', words } or null. */
+export function billingBadge(g, now = Date.now()) {
+  const s = billingState(g, now);
+  if (s === 'unknown') return null;
+  if (s === 'lifetime' || s === 'paying') return { tone: 'good', words: planWords(g) };
+  if (s === 'lapsed') return { tone: 'bad', words: `${PLAN_WORDS[g.plan] || g.plan}: payment due since ${dateWords(g.paidUntil) || 'unknown'}` };
+  if (s === 'trial_ended') return { tone: 'bad', words: `${trialWords(g, now)}, no plan` };
+  return { tone: trialDaysLeft(g, now) <= ENDING_SOON_DAYS ? 'warn' : 'info', words: trialWords(g, now) };
+}
+
+/** The gym-list filters, in the order the picker shows them. */
+export const FILTERS = [
+  ['all', 'All gyms'],
+  ['look', 'Need a look'],
+  ['trial', 'On free trial'],
+  ['ending', `Free trial ends within ${ENDING_SOON_DAYS} days`],
+  ['ended', 'Free trial ended, not paid'],
+  ['paying', 'Paying'],
+  ['lifetime', 'Lifetime'],
+  ['unchecked', 'New, not checked yet'],
+  ['paused', 'Paused'],
+];
+const TRIAL_FILTERS = new Set(['trial', 'ending', 'ended', 'paying', 'lifetime']);
+
+/** The filters that need the trial fields (left out of the picker until 0030 is applied). */
+export function filterNeedsTrial(f) {
+  return TRIAL_FILTERS.has(f);
+}
+
+/** Is gym g in filter f? */
+export function inFilter(g, f, now = Date.now()) {
+  const s = billingState(g, now);
+  switch (f) {
+    case 'trial':
+      return s === 'trial';
+    case 'ending':
+      return s === 'trial' && trialDaysLeft(g, now) <= ENDING_SOON_DAYS;
+    case 'ended':
+      return s === 'trial_ended' || s === 'lapsed';
+    case 'paying':
+      return s === 'paying';
+    case 'lifetime':
+      return s === 'lifetime';
+    case 'look':
+      return needsLook([g], now) === 1;
+    case 'unchecked':
+      return g.status === 'trial';
+    case 'paused':
+      return g.status === 'suspended';
+    default:
+      return true;
+  }
+}
+
+/** Search by gym name, gym code, owner's name (every word must be there) or owner's mobile. */
+export function matchesSearch(g, q) {
+  const words = String(q || '').trim().toLowerCase();
+  if (!words) return true;
+  const hay = [g.name, g.joinCode, g.ownerName].map((x) => String(x || '').toLowerCase()).join(' ');
+  if (words.split(/\s+/).every((w) => hay.includes(w))) return true;
+  const digits = words.replace(/[^0-9]/g, '');
+  return digits.length >= 3 && digits.length === words.replace(/[\s+-]/g, '').length && String(g.ownerPhone || '').includes(digits);
+}
+
+export const SORTS = [
+  ['new', 'Newest first'],
+  ['trial', 'Free trial ends soonest'],
+  ['members', 'Most members'],
+  ['activity', 'Last desk activity'],
+  ['name', 'Name A to Z'],
+];
+
+/** A sorted copy. 'trial': gyms on a free trial by end (ended ones first), then everyone else. */
+export function sortGyms(gyms, key, now = Date.now()) {
+  const t = (iso) => (iso ? Date.parse(iso) || 0 : 0);
+  const trialKey = (g) => {
+    const s = billingState(g, now);
+    return s === 'trial' || s === 'trial_ended' ? t(g.trialEndsAt) : Number.MAX_SAFE_INTEGER;
+  };
+  const by = {
+    new: (a, b) => t(b.createdAt) - t(a.createdAt),
+    name: (a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'en', { sensitivity: 'base' }),
+    members: (a, b) => (Number(b.membersRegister) || 0) - (Number(a.membersRegister) || 0),
+    activity: (a, b) => t(b.lastDeskActivity) - t(a.lastDeskActivity),
+    trial: (a, b) => trialKey(a) - trialKey(b),
+  }[key] || ((a, b) => t(b.createdAt) - t(a.createdAt));
+  return [...gyms].sort(by);
+}
+
+/** The numbers across the top of the gym list. */
+export function summary(gyms, now = Date.now()) {
+  const n = (f) => gyms.filter((g) => inFilter(g, f, now)).length;
+  return {
+    gyms: gyms.length,
+    members: gyms.reduce((s, g) => s + (Number(g.membersRegister) || 0), 0),
+    membersApp: gyms.reduce((s, g) => s + (Number(g.membersApp) || 0), 0),
+    newWeek: gyms.filter((g) => now - Date.parse(g.createdAt) <= 7 * DAY_MS).length,
+    onTrial: n('trial'),
+    endingSoon: n('ending'),
+    ended: n('ended'),
+    paying: n('paying') + n('lifetime'),
+    needLook: needsLook(gyms, now),
+  };
+}
+
+/**
+ * The free-trial quick picks on a gym's page: +1, +2, ... months from the trial's end (from today
+ * when it has ended), never past the cap, then the cap itself. Each: { label, endsAt }. Empty at the cap.
+ */
+export function trialPicks(g, now = Date.now()) {
+  const cap = trialCap(g);
+  if (!cap) return [];
+  const capMs = Date.parse(cap);
+  const end = g.trialEndsAt ? Date.parse(g.trialEndsAt) : NaN;
+  const from = Number.isNaN(end) ? now : Math.max(end, now);
+  const out = [];
+  for (let m = 1; m <= TRIAL_CAP_MONTHS; m++) {
+    const at = addMonths(new Date(from).toISOString(), m);
+    if (Date.parse(at) > capMs) break;
+    out.push({ label: `+${m} ${m === 1 ? 'month' : 'months'} (to ${dateWords(at)})`, endsAt: at });
+  }
+  const last = out.length ? Date.parse(out[out.length - 1].endsAt) : from;
+  if (capMs > last && capMs > now) out.push({ label: `Up to the most allowed (${dateWords(cap)})`, endsAt: cap });
+  return out;
+}
+
+/** The cap in words, for the gym page. */
+export function capWords(g) {
+  const cap = trialCap(g);
+  return cap ? `The free trial can go up to ${dateWords(cap)} at most (6 months from its start on ${dateWords(g.trialStartsAt)}).` : '';
+}
+
+/** The India day of a moment as a date box wants it ("2027-01-24"); '' for nothing. */
+export function indiaDayOf(iso) {
+  const t = iso ? Date.parse(iso) : NaN;
+  return Number.isNaN(t) ? '' : new Date(t + IST_MS).toISOString().slice(0, 10);
+}
+
+/** An India day picked in a date box ("2027-01-24") as the end of that day, India time; else null. */
+export function endOfIndiaDay(day) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(day || '')) ? new Date(`${day}T23:59:59+05:30`).toISOString() : null;
+}
+
+// ------------------------------------------------------------------ "Export gyms (CSV)"
+// Gym-level facts only: never a member's name or number (HQ sees counts). The gym owner's own name
+// and mobile are ForgeAI's business contact. Gyms carry no city yet, so there is no city column.
+const CSV_COLUMNS = [
+  ['Gym name', (g) => g.name],
+  ['Gym code', (g) => g.joinCode],
+  ['Owner name', (g) => g.ownerName],
+  ['Owner mobile', (g) => g.ownerPhone],
+  ['Started', (g) => dateWords(g.createdAt)],
+  ['Status', (g) => STATUS_WORDS[g.status] || g.status],
+  ['Free trial ends', (g) => dateWords(g.trialEndsAt)],
+  ['Plan', (g) => PLAN_WORDS[g.plan] || g.plan || ''],
+  ['Billing', (g) => BILLING_WORDS[g.billing] || g.billing || ''],
+  ['Paid until', (g) => (g.billing === 'lifetime' ? 'for ever' : dateWords(g.paidUntil))],
+  ['Members in the register', (g) => Number(g.membersRegister) || 0],
+  ['Members in the app', (g) => Number(g.membersApp) || 0],
+];
+
+/** One CSV cell: quoted when needed; a cell a spreadsheet would run as a formula gets a ' first. */
+export function csvCell(v) {
+  let s = v === null || v === undefined ? '' : String(v);
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+const BOM = String.fromCharCode(0xfeff);
+
+/** The gym list as CSV text (with a byte-order mark so Excel reads Hindi names right). */
+export function gymsCsv(gyms) {
+  const lines = [CSV_COLUMNS.map(([head]) => csvCell(head)).join(',')];
+  for (const g of gyms) lines.push(CSV_COLUMNS.map(([, f]) => csvCell(f(g))).join(','));
+  return `${BOM}${lines.join('\r\n')}\r\n`;
+}
+
+/** "forgeai-gyms-2026-10-24.csv" (India day). */
+export function csvName(now = Date.now()) {
+  return `forgeai-gyms-${new Date(now + IST_MS).toISOString().slice(0, 10)}.csv`;
 }

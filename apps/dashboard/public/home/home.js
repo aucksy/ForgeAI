@@ -3,9 +3,8 @@
 //  1. English / Hindi (kept per browser);
 //  2. "Type your gym's name" + colour: every phone on the page wears it (View Transitions when the
 //     browser has them);
-//  3. the live workout: three sets tick, the kg to beat rolls down digit by digit, a record slams;
-//  3b. R-57 (owner, 22 Oct 2026): the shop, the messages and the lock screen play the same way, each
-//      with a list beside it that lights up step by step;
+//  3. the played scenes (the live workout, the shop, the messages, the lock screen, moving in), each
+//     with a list beside it that lights up step by step; since R-97 they loop by themselves;
 //  4. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js).
 (function () {
   var root = document.documentElement;
@@ -71,21 +70,19 @@
   swatches.forEach(function (sw) { if (sw.dataset.c === savedColour) paintColour(sw, false); });
   if (read(LANG) === 'hi') setLang('hi'); else paintGym();
 
-  // 3. The live workout --------------------------------------------------------------------------
-  var live = document.getElementById('live');
-  var rows = live ? Array.prototype.slice.call(live.querySelectorAll('tbody tr')) : [];
-  var beat = document.getElementById('beat');
-  var rest = document.getElementById('rest');
-  var restT = document.getElementById('restt');
-  var record = document.getElementById('record');
-  var liftBeats = document.getElementById('lift-beats');
-  var timers = [];
+  // 3. The played scenes ------------------------------------------------------------------------
+  // R-97 (owner, 24 Oct 2026): every scene plays by itself, again and again, while it is on screen
+  // (no "Play it again"). One run ends on the finished state, held HOLD ms so it can be read; the
+  // stage fades for a moment and the run starts over. Off screen, or with the tab hidden, it stops
+  // (nothing runs in the background) and starts from the top when it is seen again. The HTML holds
+  // the finished state, which is what no script, reduced motion and a screenshot all keep.
+  var HOLD = 3400, FADE = 450;
+  function $(id) { return document.getElementById(id); }
   /** R-57: light the list beside a phone up to step n (0 = none yet). */
   function beatsTo(list, n) {
     if (!list) return;
     Array.prototype.forEach.call(list.querySelectorAll('[data-beat]'), function (li) { li.classList.toggle('on', Number(li.dataset.beat) <= n); });
   }
-  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function fmt(n) { return n.toLocaleString('en-IN'); }
   // Split-flap roll: only the characters that change flip in.
   function roll(el, text) {
@@ -98,94 +95,6 @@
       el.appendChild(c);
     }
   }
-  function countDown(from, to, ms) {
-    var steps = 8;
-    for (var s = 1; s <= steps; s++) {
-      (function (s) { later((ms / steps) * s, function () { roll(beat, fmt(Math.round(from - ((from - to) * s) / steps))); }); })(s);
-    }
-  }
-  function reset() {
-    timers.forEach(clearTimeout);
-    timers = [];
-    rows.forEach(function (r) { r.classList.remove('done'); });
-    if (beat) beat.textContent = '1,125';
-    if (rest) rest.style.setProperty('--p', 0);
-    if (restT) restT.textContent = '1:30';
-    if (record) record.classList.remove('slam');
-    if (beat) beat.closest('.live-beat').classList.remove('won');
-    beatsTo(liftBeats, 0);
-  }
-  function finalState() {
-    rows.forEach(function (r) { r.classList.add('done'); });
-    beat.textContent = '0';
-    beat.closest('.live-beat').classList.add('won');
-    record.classList.add('slam');
-    beatsTo(liftBeats, 3);
-  }
-  function play() {
-    reset();
-    if (!live) return;
-    if (reduce) { finalState(); return; }
-    if (liftBeats) liftBeats.classList.add('armed');
-    beatsTo(liftBeats, 1);
-    var left = 1125;
-    rows.forEach(function (r, i) {
-      later(900 + i * 2100, function () {
-        if (i === 0) beatsTo(liftBeats, 2);
-        r.classList.add('done');
-        var next = Math.max(0, left - 375);
-        countDown(left, next, 600);
-        left = next;
-        if (i < rows.length - 1) {
-          for (var t = 1; t <= 6; t++) {
-            (function (t) { later(t * 230, function () { rest.style.setProperty('--p', t / 6); restT.textContent = '1:' + String(30 - t * 5).padStart(2, '0'); }); })(t);
-          }
-          later(1800, function () { rest.style.setProperty('--p', 0); restT.textContent = '1:30'; });
-        }
-      });
-    });
-    later(900 + rows.length * 2100, function () { beat.closest('.live-beat').classList.add('won'); record.classList.add('slam'); beatsTo(liftBeats, 3); });
-  }
-  if (live) {
-    if ('IntersectionObserver' in window) {
-      // The HTML holds the finished workout (no script, reduced motion). With motion it is set back
-      // to the start now, so the visitor sees it play from the first set (R-57 review).
-      if (!reduce) {
-        reset();
-        if (liftBeats) liftBeats.classList.add('armed');
-      }
-      var seen = false;
-      new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; play(); } });
-      }, { threshold: 0.45 }).observe(live);
-    } else {
-      finalState();
-    }
-    var again = document.getElementById('replay');
-    if (again) again.addEventListener('click', play);
-  }
-
-
-  // 3b. R-57: the played scenes ----------------------------------------------------------------
-  // A scene is ARMED when it can play (its parts take their starting state; until then the HTML
-  // shows the finished state, which is also what reduced motion and a page without script keep).
-  // It plays once when it scrolls into view, and again on "Play it again".
-  function sceneOn(el, again, arm, steps) {
-    if (!el || reduce || !('IntersectionObserver' in window)) return;
-    var ts = [];
-    function run() {
-      ts.forEach(clearTimeout);
-      ts = [];
-      arm();
-      steps.forEach(function (st) { ts.push(setTimeout(st[1], st[0])); });
-    }
-    arm();
-    var seen = false;
-    new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; run(); } });
-    }, { threshold: 0.4 }).observe(el);
-    if (again) again.addEventListener('click', run);
-  }
   /** A finger on a control: it dips and a ring spreads (the class is set again to replay it). */
   function tap(el) {
     if (!el) return;
@@ -193,14 +102,85 @@
     void el.offsetWidth;
     el.classList.add('tapping');
   }
-  function $(id) { return document.getElementById(id); }
+  /**
+   * stage: the element that fades between runs and is watched for being on screen.
+   * arm(): every part to its starting state. steps: [[ms, fn], ...]. stop(): optional, ends any
+   * interval a step started.
+   */
+  function loopScene(stage, arm, steps, stop) {
+    if (!stage || reduce || !('IntersectionObserver' in window)) return;
+    var ts = [], on = false, seen = false;
+    var last = steps.reduce(function (m, s) { return Math.max(m, s[0]); }, 0);
+    function clear() { ts.forEach(clearTimeout); ts = []; if (stop) stop(); }
+    function run() {
+      clear();
+      stage.classList.remove('rewind');
+      arm();
+      steps.forEach(function (st) { ts.push(setTimeout(st[1], st[0])); });
+      ts.push(setTimeout(function () { stage.classList.add('rewind'); }, last + HOLD));
+      ts.push(setTimeout(run, last + HOLD + FADE));
+    }
+    var paused = false;
+    /** The finished state at once: every step run in order, then any interval stopped. */
+    function finish() { arm(); steps.slice().sort(function (a, b) { return a[0] - b[0]; }).forEach(function (st) { st[1](); }); if (stop) stop(); }
+    function begin() { if (on || paused) return; on = true; run(); }
+    function end() { if (!on) return; on = false; clear(); stage.classList.remove('rewind'); finish(); }
+    arm();
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { seen = e.isIntersecting; if (seen && !document.hidden) begin(); else end(); });
+    }, { threshold: 0.35 }).observe(stage);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) end(); else if (seen) begin(); });
+    // A tap (or click) on the stage pauses it on the finished state; another tap plays it again.
+    stage.addEventListener('click', function () {
+      paused = !paused;
+      stage.classList.toggle('paused', paused);
+      if (paused) end(); else if (seen) begin();
+    });
+  }
+
+  // The live workout: three sets tick, the kg to beat rolls down digit by digit, a record slams.
+  (function () {
+    var live = $('live'), stage = $('lift-scene');
+    if (!live) return;
+    var rows = Array.prototype.slice.call(live.querySelectorAll('tbody tr'));
+    var beat = $('beat'), rest = $('rest'), restT = $('restt'), record = $('record'), list = $('lift-beats');
+    var won = beat.closest('.live-beat');
+    var steps = [[0, function () { beatsTo(list, 1); }]];
+    var left = 1125;
+    rows.forEach(function (r, i) {
+      var t0 = 900 + i * 2100, from = left, to = Math.max(0, left - 375);
+      left = to;
+      steps.push([t0, function () { if (i === 0) beatsTo(list, 2); r.classList.add('done'); }]);
+      for (var s = 1; s <= 8; s++) {
+        (function (s) { steps.push([t0 + 75 * s, function () { roll(beat, fmt(Math.round(from - ((from - to) * s) / 8))); }]); })(s);
+      }
+      if (i < rows.length - 1) {
+        for (var k = 1; k <= 6; k++) {
+          (function (k) { steps.push([t0 + k * 230, function () { rest.style.setProperty('--p', k / 6); restT.textContent = '1:' + String(30 - k * 5).padStart(2, '0'); }]); })(k);
+        }
+        steps.push([t0 + 1800, function () { rest.style.setProperty('--p', 0); restT.textContent = '1:30'; }]);
+      }
+    });
+    steps.push([900 + rows.length * 2100, function () { won.classList.add('won'); record.classList.add('slam'); beatsTo(list, 3); }]);
+    loopScene(stage, function () {
+      if (list) list.classList.add('armed');
+      rows.forEach(function (r) { r.classList.remove('done'); });
+      beat.textContent = '1,125';
+      rest.style.setProperty('--p', 0);
+      restT.textContent = '1:30';
+      record.classList.remove('slam');
+      won.classList.remove('won');
+      beatsTo(list, 0);
+    }, steps);
+  })();
 
   // The shop: Add -> the bag -> Place order -> the desk gets it -> one fewer on the shelf.
   (function () {
     var scene = $('shop-scene'), list = $('shop-beats');
+    if (!scene) return;
     var add = $('shop-add'), bag = $('shop-bag'), bagN = $('shop-bagn'), sheet = $('shop-sheet');
     var order = $('shop-order'), burst = $('shop-burst'), left = $('shop-left');
-    sceneOn(scene, $('shop-replay'), function () {
+    loopScene(scene, function () {
       scene.classList.add('armed');
       if (list) list.classList.add('armed');
       beatsTo(list, 0);
@@ -236,7 +216,7 @@
     steps.push([at + 450, function () { tap($('msg-send')); }]);
     steps.push([at + 850, function () { compose.classList.add('sent'); card.classList.add('in'); }]);
     [9, 21, 35, 48, 58, 64].forEach(function (n, i) { steps.push([at + 1500 + i * 260, function () { roll(read, String(n)); }]); });
-    sceneOn(scene, $('msg-replay'), function () {
+    loopScene(scene, function () {
       scene.classList.add('armed');
       compose.classList.remove('sent');
       typed.textContent = '';
@@ -249,8 +229,8 @@
   // -> "Rest is over" rings and the phone buzzes.
   (function () {
     var scene = $('lock-scene'), phone = $('lock-phone'), list = $('lock-beats'), watch = $('lock-watch');
-    var clock = $('n-clock'), lefts = scene ? scene.querySelectorAll('.js-left') : [];
     if (!scene) return;
+    var clock = $('n-clock'), lefts = scene.querySelectorAll('.js-left');
     /** The phone and the watch move together (the watch app counts the rest and buzzes too). */
     function state(v) { phone.dataset.s = v; if (watch) watch.dataset.s = v; }
     function setLeft(t) { Array.prototype.forEach.call(lefts, function (n) { n.textContent = t; }); }
@@ -272,7 +252,7 @@
       (function (r) { steps.push([2900 + r * 300, function () { setLeft(mmss(90 - r * 9)); }]); })(r);
     }
     steps.push([6300, function () { state('over'); beatsTo(list, 3); buzz(phone); buzz(watch); }]);
-    sceneOn(scene, $('lock-replay'), function () {
+    loopScene(scene, function () {
       stopClock();
       if (list) list.classList.add('armed');
       beatsTo(list, 0);
@@ -281,6 +261,37 @@
       if (watch) watch.classList.remove('buzz');
       clock.textContent = '24:10';
       setLeft('1:30');
+    }, steps, stopClock);
+  })();
+
+  // Moving in (R-97): the owner's own sheet; each column gets its ForgeAI name, the rows check out,
+  // and the count of members ready rolls up, with no mobile number shown to the AI.
+  (function () {
+    var scene = $('move-scene'), list = $('move-beats');
+    if (!scene) return;
+    var head = $('mv-head'), ai = $('mv-ai'), count = $('mv-count'), done = scene.querySelector('.sh-done');
+    var chips = scene.querySelectorAll('.mv-chip'), rowsOk = scene.querySelectorAll('.sh-grid tbody tr');
+    var steps = [
+      [500, function () { beatsTo(list, 1); head.classList.add('scan'); ai.classList.add('on'); }],
+    ];
+    Array.prototype.forEach.call(chips, function (c, i) { steps.push([1300 + i * 420, function () { c.classList.add('in'); if (i === 1) beatsTo(list, 2); }]); });
+    var t = 1300 + chips.length * 420 + 200;
+    steps.push([t, function () { head.classList.remove('scan'); ai.classList.remove('on'); }]);
+    Array.prototype.forEach.call(rowsOk, function (r, i) { steps.push([t + 250 + i * 280, function () { r.classList.add('ok'); }]); });
+    t += 250 + rowsOk.length * 280;
+    steps.push([t + 200, function () { beatsTo(list, 3); done.classList.add('in'); }]);
+    [26, 74, 131, 178, 212].forEach(function (n, i) { steps.push([t + 300 + i * 160, function () { roll(count, String(n)); }]); });
+    steps.push([t + 1300, function () { beatsTo(list, 4); }]);
+    loopScene(scene, function () {
+      scene.classList.add('armed');
+      if (list) list.classList.add('armed');
+      beatsTo(list, 0);
+      head.classList.remove('scan');
+      ai.classList.remove('on');
+      Array.prototype.forEach.call(chips, function (c) { c.classList.remove('in'); });
+      Array.prototype.forEach.call(rowsOk, function (r) { r.classList.remove('ok'); });
+      done.classList.remove('in');
+      count.textContent = '0';
     }, steps);
   })();
 
@@ -304,14 +315,18 @@
         // each line gets its own lane beside the phone, so two lines never run on top of each other
         var k = lane[right ? 'right' : 'left']++;
         var gx = (right ? P.right + 12 + k * 12 : P.left - 12 - k * 12) - H.left;
-        // data-anchor="under": run along the target's bottom edge (a table header's own rule) to its
-        // middle, so the line never crosses the words beside it.
-        var under = tag.dataset.anchor === 'under';
-        var gy = (under ? G.bottom : G.top + G.height / 2) - H.top;
-        var ex = (under ? G.left + G.width / 2 : right ? G.right + 3 : G.left - 3) - H.left;
+        // R-97 review: the line stops at the edge of the card (or product, or table) that holds the
+        // named part, level with it, so it never runs through the words it points at.
+        var box = target.closest('.nc, .ac, .prod') || target;
+        var B = box.getBoundingClientRect();
+        var gy = G.top + G.height / 2 - H.top;
+        var ex = (right ? B.right + 3 : B.left - 3) - H.left;
         var tl = T.left - H.left, tr = T.right - H.left, tt = T.top - H.top, tb = T.bottom - H.top;
         var d;
-        if (gx > tl && gx < tr) {
+        if (gy > tt + 6 && gy < tb - 6 && (gx <= tl || gx >= tr)) {
+          // R-97: the target sits level with the note: one straight line, no corner.
+          d = 'M' + (gx > tr ? tr : tl) + ' ' + gy + ' H' + ex;
+        } else if (gx > tl && gx < tr) {
           var sy = tt > gy ? tt : tb;
           d = 'M' + gx + ' ' + sy + ' V' + gy + ' H' + ex;
         } else {

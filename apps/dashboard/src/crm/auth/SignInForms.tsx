@@ -6,6 +6,7 @@
 
 import { useState, type FormEvent } from 'react';
 
+import { isStartLink } from '../logic/trial';
 import { Button, ErrorBanner, TextField, color, font, space } from '../ui/kit';
 import { replace } from '../ui/router';
 import * as authApi from './api';
@@ -81,6 +82,9 @@ export function StartGymForm() {
     setError(null);
     try {
       const signed = await authApi.createOnlineGym(gymName, name, ten);
+      // Came by the sign-up link (/start): the address becomes the app's own, so a refresh or a
+      // bookmark later opens the gym, not the sign-up page.
+      if (isStartLink(window.location.pathname)) window.history.replaceState(null, '', '/');
       replace('/');
       adopt(signed, { online: true });
     } catch (err) {

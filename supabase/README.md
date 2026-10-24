@@ -133,3 +133,16 @@ Access log period: 7 days until 13 May 2027, then 1 year (`_access_log_keep`), m
 notice's "Technical logs" line. Change both together.
 Cloudflare database: `cd deploy/panel && npx wrangler d1 migrations apply forgeai-web --remote` (adds
 `ai_limits`, 0004).
+
+## Free trial and plan (0030, R-97) — NOT APPLIED, needs the owner's yes
+Additive and re-runnable; apply after 0028. Adds `gyms.trial_starts_at`, `trial_ends_at` (default 3
+months from the start, so every way a gym is made gets it), `plan` (starter | pro | ai | null),
+`billing` (monthly | yearly | lifetime | null), `paid_until`. Gyms that exist when it runs start
+their trial that day. Only HQ changes these (a trigger raises HQ_ONLY otherwise). New HQ actions
+`hq_set_trial` (never past 6 months from the start: TRIAL_CAP) and `hq_set_plan`, both audited.
+**Changes two functions additively:** `_hq_gym_extra` (HQ's gym rows also carry the trial and
+plan) and `owner_hq_access` (the owner's answer also carries `trial`, for the admin app's banner).
+Re-running 0028 undoes those two: **always re-run 0030 after 0026-0028.**
+Nothing locks when a trial ends. Test: `tests/0030_plans_and_trials.sql` → `RESULT PASS (41 checks)`,
+then `tests/security.sql` → `RESULT PASS`. Before it is applied, HQ shows "Trials need the database
+update" and the admin app shows no trial line.

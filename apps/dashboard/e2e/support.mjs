@@ -121,6 +121,8 @@ export class FakeServer {
     this.hqStatus = 'active';
     this.hqGrants = [];
     this.hqActions = [];
+    /** R-97 (0030): the gym's free trial { startsAt, endsAt, plan, billing, paidUntil }; undefined = a server before 0030. */
+    this.hqTrial = undefined;
   }
 
   /**
@@ -372,6 +374,7 @@ export class FakeServer {
         const t = NOW.getTime();
         return {
           status: this.hqStatus,
+          ...(this.hqTrial === undefined ? {} : { trial: this.hqTrial }),
           grants: this.hqGrants.map((g) => ({ ...g, open: !g.endedEarly && Date.parse(g.startsAt) <= t && Date.parse(g.endsAt) > t })).reverse(),
           actions: this.hqActions,
         };

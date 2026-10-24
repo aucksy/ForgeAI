@@ -162,7 +162,7 @@ The page sells ForgeAI the way a gym owner already sells his best product: as a 
 
 The page is dense the way packaging is dense: every block carries a fact, and there is no ornamental empty hero. Each section is a different panel of the tub, set by its colour field. The front is tub black, the facts sit on a darker shelf, the messages section is drenched in the flavour colour, and the form is the white back of the label. The flavour colour is live: the visitor picks a swatch and the band, the buttons, the app's accents and the messages section all repaint together.
 
-Motion is percussive and scarce. Figures roll in digit by digit. One "New record" card slams in when the demo workout beats its target. Facts-panel rules draw in on scroll, and the headline presses back as the page scrolls. Every effect has a reduced-motion fallback.
+Motion is percussive and scarce. Figures roll in digit by digit. One "New record" card slams in when the demo workout beats its target. Facts-panel rules draw in on scroll, and the headline presses back as the page scrolls. The five played scenes (workout, shop, notices, lock screen, moving in) loop by themselves while on screen: one run, the finished state held about 3.4 s, a short fade, then again; off screen or in a hidden tab they stop (owner R-97, 24 Oct 2026: no "Play it again" buttons). Every effect has a reduced-motion fallback: the finished state, still.
 
 **Key Characteristics:**
 - Matte black tub ground with section panels set by colour field (tub, shelf, flavour, white label).
@@ -251,7 +251,7 @@ The label itself is square-ish, with small 6–8px corners on panels and the for
 
 ### Buttons
 - **Go (primary):** 54px tall, 14px corners, flavour fill with flavour ink, condensed uppercase 19px at width 75. Hover brightens it 8%, press scales it to 0.97, and the disabled state drops to 0.6 opacity. On the white back of the label it inverts to label ink with white text at 21px.
-- **Pill (secondary):** 44px, fully round, hairline tub-rule border, soft chalk text. Hover lifts the border and the text. Used for the language switch and "Replay".
+- **Pill (secondary):** 44px, fully round, hairline tub-rule border, soft chalk text. Hover lifts the border and the text. Used for the language switch and "Sign in". The lid also carries "Start free", the same pill filled with the flavour colour (R-97).
 
 ### Inputs / Fields
 - **Style:** 54px, 14px corners, shelf-black fill with a 1px #3A3A42 border and 600 18px text. On the white label: white fill with a 2px label-ink border.
@@ -274,7 +274,7 @@ White hang-tags in condensed 21px figures with a small "your price" note. Their 
 The seal (88px, or 124px on desktop) and the burst (92px or 106px) are authored SVG shapes with condensed label-ink text. They sit on the frame around a phone, never over its screen content.
 
 ### Drawn Phones (signature)
-A 300px phone (330px in the hero on desktop, 280px for the shop) at 9:19, sometimes tilted 3°. Its screen uses the app palette and app fonts: cards with 18px corners, a set table with a ticked done state, a rest bar filled in flavour, a tab bar with the flavour active tab, and a gold "New record" card that slams in once.
+A 300px phone (330px in the hero on desktop, 280px for the shop) at 9:19, sometimes tilted 3°. Its screen uses the app palette and app fonts: cards with 18px corners, a set table with a ticked done state, a rest bar filled in flavour, a tab bar with the flavour active tab, and a gold "New record" card that slams in at the end of each run.
 
 ### Desk Screenshots
 Real admin-app screenshots, cropped, with 18px corners, a 1px tub-rule border and a 14px caption. Each raster carries a provenance sidecar describing where it came from.
@@ -296,3 +296,10 @@ Real admin-app screenshots, cropped, with 18px corners, a 1px tub-rule border an
 - **Don't** use a hard offset shadow. Depth here is a soft cast shadow.
 - **Don't** add a tracked uppercase line above a heading. The heading is the first thing in each section.
 - **Don't** set readable page text below 12px. Type smaller than that belongs only inside drawn app screens, which follow the app's own sizes.
+
+## Played sections and pack sizes (R-97, 24 Oct 2026)
+- **One scene layout.** Every played section is a three-part grid: the words (heading + lede), the stage, the list that lights up. On a computer the words and the list stack on the left and the stage sits on the right, centred on them; on a phone it reads words, stage, list. Leader lines show only on a computer; on a phone the call-outs sit in a two-column grid under the phone (a third one centred).
+- **Stages.** Overlay cards (the desk order, the compose box) sit above the phone, never over its screen. The shop's price tags stand on either side of the phone at the price row, the burst sticker below the left tag (hidden on a phone). The watch overlaps the lock-screen phone's lower corner.
+- **The sheet** (moving in): a white label panel drawn as the gym's own spreadsheet (messy column names, masked mobiles), with black field chips under each column and a green row check; tilted -1deg like the other panels.
+- **Pack sizes:** one facts-panel table (12px / 5px / 1px rules) with three columns, Pro tinted with the flavour colour at 16%; ticks are drawn, "No" is a short grey bar, planned items wear the yellow Coming chip. The founding offer is a dashed coupon with the seal sticker. Prices are public since R-97; the "Only here" chip (flavour fill) marks the one feature no rival we checked has.
+

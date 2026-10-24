@@ -72,7 +72,7 @@ async function jwt(key, claims, kid = key.kid) {
 const jsonRes = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
 /** One fake network: Google keys and token endpoint, Access keys, Supabase RPCs, GitHub. */
-function fakeNet({ idToken = null, keys = [KEY_A.jwk], db = {}, dbFail = null } = {}) {
+function fakeNet({ idToken = null, keys = [KEY_A.jwk], db = {}, dbFail = null, dbMissing = [] } = {}) {
   const calls = [];
   async function fetchImpl(url, init = {}) {
     const u = String(url);
@@ -82,6 +82,10 @@ function fakeNet({ idToken = null, keys = [KEY_A.jwk], db = {}, dbFail = null } 
     const m = /\/rest\/v1\/rpc\/([a-z_]+)$/.exec(u);
     if (m) {
       if (dbFail && dbFail[m[1]]) return jsonRes(400, { code: 'P0001', message: dbFail[m[1]] });
+      // A function whose migration is not applied yet: what PostgREST answers.
+      if (dbMissing.includes(m[1])) {
+        return jsonRes(404, { code: 'PGRST202', message: `Could not find the function public.${m[1]}(p_actor, p_gym) in the schema cache`, hint: null, details: null });
+      }
       const answer = db[m[1]];
       const body = JSON.parse(init.body || '{}');
       return jsonRes(200, typeof answer === 'function' ? answer(body) : answer ?? null);
@@ -416,6 +420,61 @@ test('delete a gym: the pictures it returns are removed from Storage with the HQ
   // Anything that is not one of our picture paths is never sent.
   const odd = await removeFiles(env(), [{ bucket: 'other', path: 'x' }, { bucket: 'gym-logos', path: '../../etc' }], { fetchImpl: net.fetchImpl });
   assert.deepEqual(odd, { removed: 0, left: [] });
+});
+
+// ------------------------------------------------------------------ free trial and plan (0030, R-97)
+test('before 0030: the gym list says plans are not ready, and a trial change answers NOT_READY (not broken)', async () => {
+  const net = fakeNet({ db: { hq_gyms: [{ gymId: GYM, joinCode: 'ABC123', name: 'Iron', status: 'active' }], hq_gym: { gymId: GYM, name: 'Iron', owners: [], recentHq: [] } }, dbMissing: ['hq_set_trial', 'hq_set_plan'] });
+  const list = await (await api('GET', '/api/gyms', null, env(), net)).json();
+  assert.equal(list.plansReady, false);
+  assert.equal(list.gyms.length, 1, 'the list still works');
+  assert.equal((await (await api('GET', `/api/gym?id=${GYM}`, null, env(), net)).json()).plansReady, false);
+  const trial = await api('POST', '/api/gym/trial', { gymId: GYM, endsAt: '2027-02-24T00:00:00Z', reason: 'Owner asked' }, env(), net);
+  assert.equal(trial.status, 400);
+  assert.deepEqual(await trial.json(), { error: 'NOT_READY' });
+  const plan = await api('POST', '/api/gym/plan', { gymId: GYM, plan: 'pro', billing: 'yearly', paidUntil: '2027-10-24T00:00:00Z', reason: 'Paid' }, env(), net);
+  assert.deepEqual(await plan.json(), { error: 'NOT_READY' });
+});
+
+test('after 0030: the list says ready; trial and plan changes go to the database as asked', async () => {
+  const row = { gymId: GYM, joinCode: 'ABC123', name: 'Iron', trialStartsAt: '2026-10-24T00:00:00Z', trialEndsAt: '2027-01-24T00:00:00Z', plan: null, billing: null, paidUntil: null };
+  const net = fakeNet({ db: { hq_gyms: [row], hq_set_trial: row, hq_set_plan: row } });
+  assert.equal((await (await api('GET', '/api/gyms', null, env(), net)).json()).plansReady, true);
+  assert.equal((await api('POST', '/api/gym/trial', { gymId: GYM, endsAt: '2027-02-24T00:00:00+05:30', reason: 'Moving 300 members' }, env(), net)).status, 200);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_set_trial')[0].init.body), { p_actor: OWNER, p_gym: GYM, p_new_end: '2027-02-23T18:30:00.000Z', p_reason: 'Moving 300 members' });
+  // Lifetime has no paid-until; "no plan" sends no billing either.
+  await api('POST', '/api/gym/plan', { gymId: GYM, plan: 'ai', billing: 'lifetime', paidUntil: '2030-01-01T00:00:00Z', reason: 'Lifetime deal' }, env(), net);
+  await api('POST', '/api/gym/plan', { gymId: GYM, plan: '', billing: 'monthly', paidUntil: '2027-01-01T00:00:00Z', reason: 'Mistake' }, env(), net);
+  const [life, none] = net.rpcCalls('hq_set_plan').map((c) => JSON.parse(c.init.body));
+  assert.deepEqual([life.p_plan, life.p_billing, life.p_paid_until], ['ai', 'lifetime', null]);
+  assert.deepEqual([none.p_plan, none.p_billing, none.p_paid_until], [null, null, null]);
+  // A refusal comes back as its word.
+  const capped = fakeNet({ dbFail: { hq_set_trial: 'TRIAL_CAP' } });
+  assert.deepEqual(await (await api('POST', '/api/gym/trial', { gymId: GYM, endsAt: '2028-01-01T00:00:00Z', reason: 'Owner asked' }, env(), capped)).json(), { error: 'TRIAL_CAP' });
+});
+
+test('trial and plan: bad input is refused before the database is asked', async () => {
+  const net = fakeNet();
+  for (const body of [{ gymId: 'x', endsAt: '2027-01-01T00:00:00Z' }, { gymId: GYM, endsAt: 'soon' }, { gymId: GYM }]) {
+    assert.equal((await api('POST', '/api/gym/trial', body, env(), net)).status, 400);
+  }
+  for (const body of [{ gymId: GYM, plan: 'gold', billing: 'monthly' }, { gymId: GYM, plan: 'pro', billing: 'weekly' }, { gymId: GYM, plan: 'pro' }]) {
+    assert.equal((await api('POST', '/api/gym/plan', body, env(), net)).status, 400);
+  }
+  assert.equal(net.calls.length, 0);
+});
+
+test('Export gyms (CSV) is written to the audit log first', async () => {
+  const net = fakeNet({ db: { hq_log: null } });
+  const res = await api('POST', '/api/gyms/export-log', { gyms: 12, withTestGyms: false, filter: 'trial' }, env(), net);
+  assert.equal(res.status, 200);
+  const logged = JSON.parse(net.rpcCalls('hq_log')[0].init.body);
+  assert.equal(logged.p_action, 'export_gyms');
+  assert.deepEqual(logged.p_detail, { gyms: 12, withTestGyms: false, filter: 'trial' });
+  assert.equal((await api('POST', '/api/gyms/export-log', { gyms: -1 }, env(), fakeNet())).status, 400);
+  // The log is down: no download (the page only downloads after a 200).
+  const down = fakeNet({ dbFail: { hq_log: 'boom' } });
+  assert.notEqual((await api('POST', '/api/gyms/export-log', { gyms: 3 }, env(), down)).status, 200);
 });
 
 test('GitHub download counts per release (APK and all), cached 10 minutes, null when GitHub is down', async () => {

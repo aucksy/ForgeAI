@@ -53,6 +53,12 @@ async function readBody(request) {
 
 const isUuid = (v) => typeof v === 'string' && UUID.test(v);
 const text = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
+/** An ISO moment from the page, as ISO again; null when missing or not a date. */
+const moment = (v) => (typeof v === 'string' && v.length <= 40 && !Number.isNaN(Date.parse(v)) ? new Date(v).toISOString() : null);
+/** The gym row came from a database with 0030 (free trial and plan). Before it, the page says so. */
+const plansReady = (g) => Boolean(g) && typeof g === 'object' && Object.prototype.hasOwnProperty.call(g, 'trialEndsAt');
+const PLANS = ['starter', 'pro', 'ai'];
+const BILLINGS = ['monthly', 'yearly', 'lifetime'];
 
 /** The D1 part of a page; null (and a log line) when Cloudflare's database could not be read. */
 async function webPart(what, fn) {
@@ -100,7 +106,8 @@ export async function handleApi(request, env, who, deps = {}) {
         aiLimit: limits ? (limits[g.gymId] ?? NORMAL_AI_LIMIT) : null,
         newFeedback: fb ? fb[g.joinCode] || 0 : null,
       }));
-      return json(200, { gyms: out, webOk: Boolean(ai && limits && fb), today: indiaDay(now) });
+      // plansReady: false until 0030 is applied (the page then shows "needs the database update").
+      return json(200, { gyms: out, webOk: Boolean(ai && limits && fb), today: indiaDay(now), plansReady: out.some(plansReady) });
     }
 
     if (route === 'GET /api/gym') {
@@ -110,7 +117,7 @@ export async function handleApi(request, env, who, deps = {}) {
       const web = env.WEB;
       const days = web ? await webPart('ai days', () => aiUsageDays(web, id, indiaDay(now, 30))) : null;
       const limits = web ? await webPart('ai limits', () => aiLimits(web)) : null;
-      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT });
+      return json(200, { gym, aiDays: days, aiLimit: limits ? (limits[id] ?? NORMAL_AI_LIMIT) : null, normalAiLimit: NORMAL_AI_LIMIT, plansReady: plansReady(gym) });
     }
 
     if (route === 'GET /api/system') {
@@ -190,6 +197,31 @@ export async function handleApi(request, env, who, deps = {}) {
     if (route === 'POST /api/gym/status') {
       if (!isUuid(b.gymId) || !['active', 'suspended'].includes(b.status)) return refuse('BAD_REQUEST');
       return json(200, await db('hq_set_gym_status', { p_gym: b.gymId, p_status: b.status, p_reason: text(b.reason, 500) || null }));
+    }
+
+    // R-97 (0030): the free trial's end (3 months; at most 6 from its start, the database checks).
+    if (route === 'POST /api/gym/trial') {
+      const endsAt = moment(b.endsAt);
+      if (!isUuid(b.gymId) || !endsAt) return refuse('BAD_REQUEST');
+      return json(200, await db('hq_set_trial', { p_gym: b.gymId, p_new_end: endsAt, p_reason: text(b.reason, 500) }));
+    }
+
+    // R-97 (0030): the gym's plan after a payment, or back to "no plan" (plan null).
+    if (route === 'POST /api/gym/plan') {
+      const plan = b.plan === null || b.plan === '' ? null : b.plan;
+      const billing = plan === null ? null : b.billing;
+      if (!isUuid(b.gymId) || (plan !== null && !PLANS.includes(plan)) || (plan !== null && !BILLINGS.includes(billing))) return refuse('BAD_REQUEST');
+      const paidUntil = plan === null || billing === 'lifetime' ? null : moment(b.paidUntil);
+      return json(200, await db('hq_set_plan', { p_gym: b.gymId, p_plan: plan, p_billing: billing, p_paid_until: paidUntil, p_reason: text(b.reason, 500) }));
+    }
+
+    // "Export gyms (CSV)": the page builds the file from the gym list it already has (gym-level facts
+    // only); it is written down here first, and the page downloads only after this answered.
+    if (route === 'POST /api/gyms/export-log') {
+      const gyms = Number.isInteger(b.gyms) && b.gyms >= 0 ? b.gyms : null;
+      if (gyms === null) return refuse('BAD_REQUEST');
+      await log('export_gyms', null, null, { gyms, withTestGyms: b.withTestGyms === true, filter: text(b.filter, 20) });
+      return json(200, { ok: true });
     }
 
     if (route === 'POST /api/gym/create') {

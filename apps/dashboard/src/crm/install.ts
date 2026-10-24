@@ -6,6 +6,12 @@
  *
  * The event can fire before React has drawn anything, so `listenForInstall` runs first thing in
  * main.tsx and keeps it here.
+ *
+ * R-97 (24 Oct 2026, owner): installing is offered only to someone SIGNED IN. index.html no longer
+ * links the manifest, so Chrome never offers "Install" on the sign-in page to a stranger; the
+ * manifest link is added from code once a person is signed in (`setInstallOffer(true)` in
+ * CrmApp) and taken away again on sign-out. Chrome fires `beforeinstallprompt` after the link
+ * appears, and `listenForInstall` (already listening) keeps it as before.
  */
 
 import { useEffect, useState } from 'react';
@@ -40,6 +46,39 @@ export function listenForInstall(): void {
     deferred = null;
     notify();
   });
+}
+
+export const MANIFEST_HREF = '/manifest.webmanifest';
+
+/** The small part of `document` this needs (a fake one in tests). */
+export interface ManifestDoc {
+  head: { appendChild: (el: ManifestLink) => unknown };
+  querySelector: (sel: string) => ManifestLink | null;
+  createElement: (tag: 'link') => ManifestLink;
+}
+export interface ManifestLink {
+  rel: string;
+  href: string;
+  remove: () => void;
+}
+
+/**
+ * Offer "Install the admin app" (on = signed in) or stop offering it (signed out). Adds or removes
+ * the one <link rel="manifest">; calling it twice changes nothing.
+ */
+export function setInstallOffer(on: boolean, doc: ManifestDoc | null = typeof document !== 'undefined' ? (document as unknown as ManifestDoc) : null): void {
+  if (!doc) return;
+  const have = doc.querySelector('link[rel="manifest"]');
+  if (on && !have) {
+    const link = doc.createElement('link');
+    link.rel = 'manifest';
+    link.href = MANIFEST_HREF;
+    doc.head.appendChild(link);
+  } else if (!on && have) {
+    have.remove();
+    deferred = null; // an offer Chrome made while signed in is not used after sign-out
+    notify();
+  }
 }
 
 export type Platform = 'android' | 'iphone' | 'computer';

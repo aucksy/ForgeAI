@@ -13,7 +13,7 @@ import { EnquiriesScreen } from './ui/screens/Enquiries';
 import { ExpensesScreen } from './ui/screens/Expenses';
 import { MoreScreen } from './ui/screens/More';
 import { isTileFilter } from './logic/homeTiles';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
@@ -22,6 +22,7 @@ import { canOpen, navFor, oldMessagesLinkTo, roleOf } from './auth/permissions';
 import { PeopleScreen } from './auth/PeopleScreen';
 import type { Role } from './auth/signin';
 import { CloudCrmData } from './data/cloud';
+import { setInstallOffer } from './install';
 import { browserSavedCopy } from './data/savedCopy';
 
 import { BrandingScreen } from './brand/BrandingScreen';
@@ -65,6 +66,9 @@ function SessionRoot() {
   const lostRef = useRef(lost);
   lostRef.current = lost;
   const onlineKey = session?.online ? session.ownerKey : null;
+  // R-97: "Install the admin app" only for someone signed in (install.ts).
+  const signedIn = session !== null;
+  useEffect(() => setInstallOffer(signedIn), [signedIn]);
   // UAT F-02: the desk's 31-day limit on receipt dates is checked before anything is sent.
   const role = roleOf(session);
   const data = useMemo(

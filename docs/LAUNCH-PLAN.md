@@ -20,6 +20,8 @@ does; a privacy notice, terms and a data agreement with the gym; the gym visit (
 asked the gym its questions); moving the gym's real data out of GGMS; and training. None of it is
 large. With your tasks done in the first week, the gym can start a **side-by-side run in about
 3 weeks** and **switch over in about 5 weeks**. The trial lasts 8 weeks in total.
+(24 Oct 2026, R-97: the free trial every gym gets is now **3 months**, and ForgeAI HQ can extend it to 6;
+the 8-week pilot below is the work plan inside that free time. Prices after it: tracker #30.)
 
 ## 2. The 8-week pilot at a glance
 

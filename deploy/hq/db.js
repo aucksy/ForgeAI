@@ -1,4 +1,4 @@
-// HQ's door to the gym server (Supabase). Only the hq_* functions (migrations 0026-0028), only with
+// HQ's door to the gym server (Supabase). Only the hq_* functions (migrations 0026-0028, 0030), only with
 // the Worker secret SUPABASE_HQ_KEY (a Supabase secret key named "hq"; it reaches the database as
 // service_role, the only role the hq_* functions are granted to). The key never leaves this Worker:
 // it is not logged, not echoed, and never sent to the browser.
@@ -43,10 +43,19 @@ export async function rpc(env, fn, args, { fetchImpl = fetch, clientIp = '' } = 
   const text = await res.text();
   if (!res.ok) {
     let message = '';
+    let pgCode = '';
     try {
-      message = JSON.parse(text).message || '';
+      const body = JSON.parse(text);
+      message = body.message || '';
+      pgCode = body.code || '';
     } catch {
       message = ''; // quiet: a non-JSON error page; logged below with its status
+    }
+    // The function is not on the server yet (its migration is waiting for the owner's yes, e.g. 0030):
+    // PostgREST answers 404 PGRST202. The page says "needs the database update", never "broken".
+    if (pgCode === 'PGRST202') {
+      console.warn(`[hq-db] ${fn} is not on the gym server yet (migration not applied)`);
+      throw new DbError('NOT_READY', 400);
     }
     const code = refusalCode(message);
     if (code === 'UNKNOWN') console.error(`[hq-db] ${fn} answered ${res.status}`, text.slice(0, 300));

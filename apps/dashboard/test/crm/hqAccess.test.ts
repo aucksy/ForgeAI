@@ -43,8 +43,8 @@ describe('ForgeAI access list (#51)', () => {
     expect(a.grants).toHaveLength(1);
     expect(a.grants[0].looked[0]).toEqual({ at: at('14:06'), what: 'payment', rows: 12 });
     expect(a.actions).toHaveLength(1);
-    expect(hqAccessFromRow(null)).toEqual({ status: null, grants: [], actions: [] });
-    expect(hqAccessFromRow([])).toEqual({ status: null, grants: [], actions: [] });
+    expect(hqAccessFromRow(null)).toEqual({ status: null, grants: [], actions: [], trial: null });
+    expect(hqAccessFromRow([])).toEqual({ status: null, grants: [], actions: [], trial: null });
   });
 
   it('says what ForgeAI looked at, when, who opened it and why', () => {
@@ -63,8 +63,8 @@ describe('ForgeAI access list (#51)', () => {
   });
 
   it('finds the open window; knows a server without the feature', () => {
-    expect(openGrant({ status: 'active', grants: [grant(), grant({ grantId: 'g2', open: true })], actions: [] })?.grantId).toBe('g2');
-    expect(openGrant({ status: 'active', grants: [grant()], actions: [] })).toBeNull();
+    expect(openGrant({ status: 'active', grants: [grant(), grant({ grantId: 'g2', open: true })], actions: [], trial: null })?.grantId).toBe('g2');
+    expect(openGrant({ status: 'active', grants: [grant()], actions: [], trial: null })).toBeNull();
     expect(notLiveYet({ code: 'PGRST202', message: 'Could not find the function public.owner_hq_access' })).toBe(true);
     expect(notLiveYet(new Error('OWNER_ONLY'))).toBe(false);
   });

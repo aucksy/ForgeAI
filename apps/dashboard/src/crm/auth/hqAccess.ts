@@ -6,6 +6,7 @@
  * Server: owner_hq_access / owner_hq_grant / owner_hq_end (owner only; a front-desk key gets OWNER_ONLY).
  */
 
+import { trialFromRow, type GymTrial } from '../logic/trial';
 import { call } from '../shop/api';
 
 export type HqStatus = 'trial' | 'active' | 'suspended' | null;
@@ -39,6 +40,8 @@ export interface HqAccess {
   status: HqStatus;
   grants: HqGrant[];
   actions: HqAction[];
+  /** The free trial and plan (0030, R-97); null before 0030 is applied. */
+  trial: GymTrial | null;
 }
 
 type Row = Record<string, unknown>;
@@ -66,7 +69,7 @@ export function hqAccessFromRow(raw: unknown): HqAccess {
   const actions = rowsOf(r.actions)
     .filter((a) => str(a.at) && str(a.action))
     .map((a) => ({ at: str(a.at), action: str(a.action), reason: str(a.reason) || null }));
-  return { status, grants, actions };
+  return { status, grants, actions, trial: trialFromRow(r.trial) };
 }
 
 const IST = 'Asia/Kolkata';
@@ -139,6 +142,8 @@ const ACTION: Record<string, string> = {
   sign_out_gym: 'ForgeAI signed every phone and computer of your gym out',
   create_gym: 'ForgeAI set up your gym',
   ai_limit_set: 'ForgeAI changed your daily AI matches',
+  set_trial: 'ForgeAI changed the end of your free trial',
+  set_plan: 'ForgeAI updated your plan',
 };
 
 /** One other ForgeAI action on the gym, in words. PURE. */

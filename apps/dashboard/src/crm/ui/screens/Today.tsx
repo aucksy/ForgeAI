@@ -12,6 +12,7 @@ import { dueCount } from '../../logic/enquiries';
 import { GetStartedCard } from '../GetStartedCard';
 import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
+import { TrialBanner } from '../TrialBanner';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
 import { endingSoon } from '../../logic/audience';
@@ -120,6 +121,9 @@ export function TodayScreen() {
         subtitle={formatDay(today)}
         actions={<Button onClick={() => navigate('/members')}>Open Members</Button>}
       />
+
+      {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
+      <TrialBanner />
 
       {/* Backlog (21 Oct): big buttons for the desk's common jobs, chosen and ordered by the owner. */}
       <QuickActions />

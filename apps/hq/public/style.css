@@ -26,6 +26,7 @@
   }
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 a { color: var(--accent); }
@@ -50,6 +51,16 @@ main { max-width: 1280px; margin: 0 auto; padding: 16px; }
 .stat-value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .stat-label { color: var(--muted); font-size: 13px; }
 .stat-hint { color: var(--muted); font-size: 12px; }
+/* A number that is also a filter: tap it to list those gyms. */
+.stat-button { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.stat-button:hover, .stat-button:focus-visible { border-color: var(--accent); outline: none; }
+.stat-button .stat-label { color: var(--accent); }
+
+.toolbar { display: grid; grid-template-columns: minmax(200px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr); gap: 0 12px; align-items: end; }
+.toolbar .field { margin: 4px 0; }
+.toolbar input, .toolbar select { width: 100%; }
+.row.between { justify-content: space-between; }
+.card.empty { text-align: center; }
 
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 12px 0; }
 .card.warn { border-color: var(--warn); }
@@ -73,6 +84,7 @@ tbody tr[tabindex]:hover, tbody tr[tabindex]:focus { background: var(--line); ou
 .flag.bad { color: var(--bad); }
 .flag.warn { color: var(--warn); }
 .flag.info { color: var(--info); }
+.flag.good { color: var(--good); }
 .badge { font-size: 13px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); }
 .badge.suspended { color: var(--bad); border-color: var(--bad); }
 .badge.trial { color: var(--info); border-color: var(--info); }
@@ -109,4 +121,19 @@ textarea { width: 100%; }
   .top { position: static; }
   .me { margin-left: 0; width: 100%; }
   h1 { font-size: 20px; }
+  .toolbar { grid-template-columns: 1fr 1fr; }
+  .toolbar .field:first-child { grid-column: 1 / -1; }
+}
+
+/* The gym list on a phone: each gym is a card of labelled lines, no sideways scrolling. */
+@media (max-width: 760px) {
+  .gym-table thead { display: none; }
+  .gym-table, .gym-table tbody, .gym-table tr, .gym-table td { display: block; width: 100%; }
+  .gym-table tr { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .gym-table td { border: 0; padding: 3px 12px; display: flex; gap: 12px; justify-content: space-between; text-align: right; }
+  .gym-table td > .cell { text-align: right; min-width: 0; overflow-wrap: anywhere; }
+  .gym-table td::before { content: attr(data-label); color: var(--muted); font-size: 12px; text-align: left; flex: none; }
+  .gym-table td:first-child { display: block; text-align: left; }
+  .gym-table td:first-child > .cell { text-align: left; }
+  .gym-table td:first-child::before { content: none; }
 }

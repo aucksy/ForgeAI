@@ -13,16 +13,19 @@
  * sample gym still opens without the shop, so a demo never dies on bad Wi-Fi.
  */
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
 import { ThemeToggle } from './ThemeToggle';
 import { SignInForm, StartGymForm } from '../auth/SignInForms';
+import { isStartLink, START_PROMISE } from '../logic/trial';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
 
 export function Welcome() {
+  // R-97: the direct sign-up link (https://forgeai.aakashpahuja.in/start) puts "Start my gym" first.
+  const startFirst = typeof window !== 'undefined' && isStartLink(window.location.pathname);
   const { loadDemoGym } = useCrm();
   const { startDemo, notice: shopNotice } = useShop();
   const { notice: authNotice } = useAuth();
@@ -42,6 +45,39 @@ export function Welcome() {
       setBusy(null);
     }
   };
+
+  const signInCard: ReactNode = (
+    <Card style={startFirst ? { marginTop: space.lg } : undefined}>
+      <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
+        {startFirst ? 'Already use ForgeAI? Sign in' : 'Sign in'}
+      </h2>
+      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
+      </p>
+      <SignInForm />
+    </Card>
+  );
+
+  const startCard: ReactNode = (
+    <div
+      style={{
+        marginTop: startFirst ? 0 : space.lg,
+        // Same inset as the cards around it, so all their text shares one left edge.
+        padding: space.xl,
+        border: startFirst ? `1px solid ${color.accent}` : `1px dashed ${color.borderStrong}`,
+        borderRadius: radius.lg,
+      }}
+    >
+      <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
+        {startFirst ? 'Start your gym' : 'New here? Set up your gym'}
+      </h2>
+      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{START_PROMISE}</p>
+      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        Starts empty. You add your own members and prices.
+      </p>
+      <StartGymForm />
+    </div>
+  );
 
   return (
     <div
@@ -91,33 +127,9 @@ export function Welcome() {
           </div>
         )}
 
-        <Card>
-          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            Sign in
-          </h2>
-          <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Your gym already uses ForgeAI? Sign in with your mobile number and the code from your gym owner.
-          </p>
-          <SignInForm />
-        </Card>
+        {startFirst ? startCard : signInCard}
 
-        <div
-          style={{
-            marginTop: space.lg,
-            // Same inset as the cards around it, so all their text shares one left edge.
-            padding: space.xl,
-            border: `1px dashed ${color.borderStrong}`,
-            borderRadius: radius.lg,
-          }}
-        >
-          <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            New here? Set up your gym
-          </h2>
-          <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Starts empty. You add your own members and prices.
-          </p>
-          <StartGymForm />
-        </div>
+        {startFirst ? signInCard : startCard}
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>

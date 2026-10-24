@@ -5,6 +5,20 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-98. Plain English for members; "What's new" with a button to try each change; last 3 updates in Settings — 24 Oct 2026
+**Owner said:** deep disappointment with user-facing English ("Do you want users to read these, thinking they know every
+functionality of the app?"). Keep notes user-friendly, plain, with enough context; research and install a writing skill
+globally; learn from how Gemini writes; use a Gemini AI Studio key to rewrite all user-facing English with context. Then:
+"research and find the best way to do this ... concise, simple, complete, to-the-point sentences so the user can quickly
+understand the functionality. Wherever possible, provide an option to check that functionality immediately or include
+settings with a button to do so. I want the version history in the settings so the user can see what new features were
+added in the last three updates."
+**What I did / do:** saved the rule (D:\Brain plain-english-always, 6th time, hard); installed obra's
+writing-clearly-and-concisely skill (Strunk) globally; wrote my own global skill `member-words` (rules, bad/good pairs,
+steps) with `gemini_rewrite.py` (stdlib; reads GEMINI_API_KEY that HE sets; picks the best Gemini pro model; Claude
+fact-checks the result). Rewrote every What's new line (0.44-0.55). Next: each line gets an optional button that opens the
+screen or setting it talks about; Settings → What's new shows the last 3 updates; the card's earlier list matches.
+
 ## R-97. Landing page fixes, self-serve trial sign-up, 3 price tiers + lifetime, trials in HQ, HQ review — 24 Oct 2026
 **Owner said (one message, with a screenshot of forgeai.aakashpahuja.in/home/ showing Chrome's "Open in app"):**
 1. The landing page offers "install / open as an app". It should not; installing is only for someone signed in to the admin panel.
