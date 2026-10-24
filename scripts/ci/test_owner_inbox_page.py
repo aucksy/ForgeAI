@@ -278,3 +278,10 @@ class Backlog(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_questions_tab_holds_only_answers():
+    # R-108 (owner, 24 Oct 2026): a pick or a task waiting on him lives under "Waiting for you" only.
+    src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "owner_inbox_page.py"), encoding="utf-8").read()
+    assert 'if (filter === "all") return !needsYou(e);' in src
+    assert 'if (filter === "waiting") return needsYou(e);' in src

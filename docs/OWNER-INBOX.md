@@ -372,6 +372,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 62. Your task: tick "I'm not a robot" to finish the tester group (10 seconds) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (24 Oct, 05:04 pm, via the page)**
 **Why:** I filled in the Google group "MettleUp testers" (mettleup-testers@googlegroups.com; only people you add can join; you add emails directly) in your simpleapps108 Chrome window. Google asks for a robot check before it creates the group, and I am not allowed to do robot checks.
 **Your task:** in the simpleapps108 Chrome window, open the tab "My groups" (groups.google.com). The "Create group" box shows "Captcha required": tick "I'm not a robot", then press "Create group". If the box is gone, open https://groups.google.com/my-groups and press "Create group" again: name MettleUp testers, email mettleup-testers.
 **TASK DONE (24 Oct, chat)**
@@ -422,6 +423,7 @@ the group mettleup-testers@googlegroups.com exists. Add testers at groups.google
 ## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED (24 Oct) — build queued
+**READ (24 Oct, 05:04 pm, via the page)**
 **You asked (24 Oct, chat):** research the members' workout apps, find features we can build ourselves that would be valuable, and add them to the tracker.
 **My answer:** I compared Hevy, Strong, Fitbod, JEFIT, Boostcamp, Alpha Progression, Gravl, Gymshark, MacroFactor, Fittr, cult.fit, HealthifyMe, FITPASS and gym-software member apps (Virtuagym, Trainerize, Glofox, Wellyx) with what ForgeAI already has. **For logging workouts we already match them** (rest timer, notification card, supersets, plates, warm-ups, swap, targets, charts, records, body map, Hevy/Strong import, Health Connect, Wear OS, offline, and no free-tier limits). The gaps are mostly things only a gym-linked app can do well, which is our edge. None needs a paid service.
 
@@ -463,6 +465,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 57. The app needs a new Play Store ID — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED (24 Oct)
+**READ (24 Oct, 05:04 pm, via the page)**
 **What happened:** creating the app in your Play Console (simpleapps108), Google said "com.forgeai.app is already in use". Another developer owns that ID, and every Play app needs its own one. The ID can never change after the first upload. Members almost never see it; it only shows in the Play Store web link.
 **What changes for testers:** the new ID makes it a new app on phones. Before switching, move your own workouts with Settings → Export & import in the old app, then import them in the new one. I will write the steps.
 **NEWS (24 Oct):** you are leaning to the name MettleUp (#44). The ID can never change, so it should match the brand. No public Play app uses com.mettleup.app or com.simpleapps.mettleup.
@@ -731,6 +734,7 @@ and log the set by itself? Or is there a better way?
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED (24 Oct)
+**TASK DONE (24 Oct, 05:00 pm, via the page)**
 **READ (24 Oct, 04:03 pm, via the page)**
 **You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
 normal price; forge.ai and forgeai.com are taken and too expensive.

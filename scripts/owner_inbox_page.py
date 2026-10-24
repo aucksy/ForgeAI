@@ -717,7 +717,9 @@ const numsIn = (s) => [...new Set((String(s).match(/#(\d{1,4})\b/g) || []).map((
 
 function shown(e) {
   if (chat !== "all" && e.chat !== chat) return false;
-  if (filter === "all") return true;
+  // R-108 (owner, 24 Oct): Questions & answers holds only answers; anything that needs him (a pick or a task)
+  // lives under "Waiting for you" alone.
+  if (filter === "all") return !needsYou(e);
   if (filter === "waiting") return needsYou(e);
   return true;
 }
@@ -957,7 +959,7 @@ function qaHtml() {
   return '<div class="tabhead"><h2>Questions &amp; answers</h2>' +
     (fresh.length > 1 ? '<button class="btn ghost" data-act="readall">Mark all ' + fresh.length + " as read</button>" : "") + "</div>" +
     '<span class="msg" id="rallmsg" role="status"></span>' +
-    '<p class="hint">' + (sortBy === "order" ? "New answers first, marked “New”." : "Open questions and tasks first, in the Sort order; then new answers, marked “New”.") +
+    '<p class="hint">' + "Answers to your questions, new ones first, marked “New”. Anything you need to pick or do is under Waiting for you." +
     " Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>" + sortHtml() +
     '<div class="stack" style="margin-top:14px">' + (list.length ? list.map(card).join("") : empty("Nothing new: everything is read.", "Read answers are folded below.")) + "</div>" +
     doneBox("all", "Already read (" + doneList.length + ")", doneList.map(card).join(""));
@@ -1105,7 +1107,8 @@ function renderTabs() {
     b.setAttribute("aria-label", label);
   };
   set("waiting", wait, wait > 0, "Waiting for you: " + wait + " questions and tasks");
-  set("all", fresh || ent.length, fresh > 0, "Questions and answers: " + (fresh ? fresh + " new" : ent.length + " in all"));
+  const qa = ent.filter((e) => !needsYou(e)).length;
+  set("all", fresh || qa, fresh > 0, "Questions and answers: " + (fresh ? fresh + " new" : qa + " in all"));
   set("backlog", toBuild, false, "Feature backlog: " + toBuild + " not built yet");
   set("mine", open, false, "Claude's tasks: " + open + " open");
   document.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-pressed", String(!query && b.dataset.f === filter)));

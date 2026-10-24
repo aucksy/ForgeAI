@@ -5,6 +5,22 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-109. "yes to all Play declarations" — 24 Oct 2026
+**Owner said:** "yes to all Play declarations" (answer to Claude's list: Developer Program Policies, US export laws, content
+rating answered truthfully, data safety exactly as the privacy notice says, target audience 18+, sensitive-permission
+declarations such as Health Connect). Scope: the MettleUp app in the SimpleApps108 Play Console only; Claude answers truthfully
+and stops for anything new that costs money or is not on that list.
+
+## R-108. Questions & answers tab = answers only; anything he must pick or do = Waiting for you — 24 Oct 2026
+**Owner said:** "everything that is waiting under the Questions and Answers tab ... if any of those is actually a question
+waiting for me, move that to the Waiting for You section in the same format so that I can choose an answer. The Questions and
+Answers tab is only for things where I asked you a question, and need it answered. If those questions will lead to further
+decisions, they should be inside the Waiting for You section."
+**What Claude did:** audited all 60 entries: every open pick already has Decide options and every open task has Your task
+lines (none were hiding in prose). Page changed: the Q&A tab now hides anything that needs him (a pick or an open task); those
+live only under Waiting for you; the Q&A count excludes them. Test added. Rule: every question Claude asks him goes in as
+**Decide:** + A/B/C options (never prose), so it lands in Waiting for you.
+
 ## R-107. Logo picked: E · Forged; tester group created — 24 Oct 2026
 **Owner said:** "Done for both.. going with Forged.. love the dumbell feel"
 **What Claude does:** #61 DECIDED E (Forged: hex dumbbell head with an M struck through; molten #FF8A4C, forge #F0662A,
