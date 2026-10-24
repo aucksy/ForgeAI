@@ -105,6 +105,7 @@ export function canOpen(role: Role, path: string): boolean {
   const [head, sub] = path.replace(/^#?\/?/, '').split('/');
   if (head === 'expenses') return can(role, 'seeExpenses');
   if (head === 'workouts') return can(role, 'editWorkoutPlans');
+  if (head === 'diet') return can(role, 'editWorkoutPlans');
   // Messages & offers (22 Oct 2026): the owner's, like messages always were (the server sends only
   // for the owner, 0018). Staff opening an old Shop -> Messages link is sent to Shop instead.
   // #49 step 2: the workout offer's list (`/messages/offer`) is open to the front desk too, so the

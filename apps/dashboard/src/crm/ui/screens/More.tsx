@@ -40,6 +40,7 @@ export function MoreScreen() {
     },
     { path: '/expenses', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
     { path: '/workouts', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
+    { path: '/diet', label: 'Diet plans', hint: 'Send members what to eat', icon: 'workouts' },
     { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     { path: '/messages', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
     { path: '/settings/branding', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },

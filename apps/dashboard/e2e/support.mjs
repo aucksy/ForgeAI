@@ -56,6 +56,13 @@ const TERMS_FNS = ['owner_terms', 'owner_accept_terms'];
 /** R-117 (0034): the PIN calls, answered only when `pinServer` is on. */
 const PIN_FNS = ['staff_set_pin', 'staff_pin_status'];
 
+/** R-120 (0035): measurements taken by the trainer and diet plans, answered only when `bodyServer` is on. */
+const BODY_FNS = [
+  'owner_member_measurements', 'owner_save_measurement', 'owner_delete_measurement',
+  'owner_diet_plans', 'owner_save_diet_plan', 'owner_withdraw_diet_plan',
+];
+const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
+
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
 const OFFER_FNS = ['owner_offers', 'owner_save_offer', 'owner_stop_offer', 'staff_give_reward', 'owner_undo_reward'];
 
@@ -149,6 +156,59 @@ export class FakeServer {
     this.pinServer = false;
     /** session key -> 'pin' | 'code' (how that device signed in; 0034's gym_sessions.via). */
     this.sessionVia = new Map();
+    /**
+     * R-120: does this server have 0035 (measurements taken by the trainer, diet plans)? Off by
+     * default: its calls answer PGRST202 like a server before it.
+     */
+    this.bodyServer = false;
+    /** 0035's gym_body_measurements rows and gym_diet_plans rows. */
+    this.measures = [];
+    this.diets = [];
+    this.bodySeq = 0;
+  }
+
+  /** 0035 _roster_member_ok: a live member record of this gym. */
+  rosterMember(id) {
+    const r = this.records.get(`member:${id}`);
+    if (!r || r.x) throw new Refusal('NO_MEMBER');
+    return r;
+  }
+
+  /** 0035 _measure_clean (the same ranges and codes). */
+  cleanMeasure(p) {
+    if (!p || typeof p !== 'object' || !/^\d{4}-\d{2}-\d{2}$/.test(String(p.date ?? '')) || p.date > TODAY) throw new Refusal('BAD_DATE');
+    const n01 = (v, lo, hi) => {
+      if (v == null) return null;
+      if (typeof v !== 'number') throw new Refusal('INVALID');
+      const r = Math.round(v * 10) / 10;
+      if (r < lo || r > hi) throw new Refusal('INVALID');
+      return r;
+    };
+    const tape = {};
+    for (const [k, v] of Object.entries(p.tape ?? {})) {
+      if (!TAPE.includes(k)) throw new Refusal('INVALID');
+      if (v != null) tape[k] = n01(v, 5, 300);
+    }
+    const out = { date: p.date, weightKg: n01(p.weightKg, 20, 350), bodyFat: n01(p.bodyFat, 2, 75), tape, note: p.note ? String(p.note).trim() || null : null };
+    if (out.weightKg == null && out.bodyFat == null && Object.keys(tape).length === 0) throw new Refusal('EMPTY');
+    return out;
+  }
+
+  /** 0035 _diet_clean, in short. */
+  cleanDiet(p) {
+    const title = String(p?.title ?? '').trim();
+    if (!title || title.length > 80 || !Array.isArray(p.meals) || p.meals.length < 1 || p.meals.length > 10) throw new Refusal('INVALID');
+    if (p.kcal != null && (p.kcal < 800 || p.kcal > 6000)) throw new Refusal('INVALID');
+    if (p.proteinG != null && (p.proteinG < 20 || p.proteinG > 400)) throw new Refusal('INVALID');
+    const meals = p.meals.map((m) => {
+      const items = (m.items ?? []).map((i) => String(i).trim()).filter(Boolean);
+      if (!String(m.name ?? '').trim() || items.length === 0) throw new Refusal('INVALID');
+      return { name: String(m.name).trim(), time: m.time ? String(m.time).trim() : null, items };
+    });
+    const a = p.assign ?? {};
+    if (!Array.isArray(a.memberIds) || !Array.isArray(a.planIds)) throw new Refusal('INVALID');
+    return { title, goal: p.goal ?? null, kcal: p.kcal ?? null, proteinG: p.proteinG ?? null, meals, notes: p.notes ?? null,
+      assign: { memberIds: [...new Set(a.memberIds)], planIds: [...new Set(a.planIds)] } };
   }
 
   /**
@@ -338,6 +398,9 @@ export class FakeServer {
     if (typeof args.p_key === 'string' && !['staff_sign_in', 'gym_create_online', 'staff_key_status'].includes(fn)) this.checkKey(args.p_key);
     // A server before 0025 has neither the offer calls nor owner_send_message's two new arguments.
     if (!this.offerServer && (OFFER_FNS.includes(fn) || (fn === 'owner_send_message' && ('p_to' in args || 'p_send_at' in args)))) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
+    if (!this.bodyServer && BODY_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
@@ -721,6 +784,64 @@ export class FakeServer {
         }
         this.autoReminders = { settings: clean, updatedAt: NOW.toISOString(), updatedByName: p.name };
         return this.remindersJson(true);
+      }
+      // ---- R-120 (0035): measurements taken by the trainer, and diet plans (owner and desk alike).
+      case 'owner_member_measurements': {
+        this.anyone(args.p_key);
+        return this.measures.filter((m) => m.memberId === args.p_member).sort((a, b) => (a.date < b.date ? 1 : -1));
+      }
+      case 'owner_save_measurement': {
+        const p = this.anyone(args.p_key);
+        this.rosterMember(args.p_member);
+        const c = this.cleanMeasure(args.p_entry);
+        const id = args.p_entry?.id;
+        const old = id ? this.measures.find((m) => m.id === id && m.memberId === args.p_member) : null;
+        if (id && !old) throw new Refusal('NOT_FOUND');
+        if (this.measures.some((m) => m.memberId === args.p_member && m.date === c.date && m.id !== id)) throw new Refusal('DAY_TAKEN');
+        if (old) {
+          Object.assign(old, c, { updatedAt: NOW.getTime() });
+          return old;
+        }
+        this.bodySeq += 1;
+        const row = { id: `00000000-0000-4000-8000-${String(this.bodySeq).padStart(12, '0')}`, memberId: args.p_member, ...c, byName: p.staffId ? p.name : null, createdAt: NOW.getTime(), updatedAt: NOW.getTime() };
+        this.measures.push(row);
+        return row;
+      }
+      case 'owner_delete_measurement': {
+        this.anyone(args.p_key);
+        const i = this.measures.findIndex((m) => m.id === args.p_id);
+        if (i < 0) throw new Refusal('NOT_FOUND');
+        this.measures.splice(i, 1);
+        return null;
+      }
+      case 'owner_diet_plans': {
+        this.anyone(args.p_key);
+        return [...this.diets].sort((a, b) => b.updatedAt - a.updatedAt);
+      }
+      case 'owner_save_diet_plan': {
+        const p = this.anyone(args.p_key);
+        const c = this.cleanDiet(args.p_plan);
+        const id = args.p_plan?.id;
+        if (id) {
+          const old = this.diets.find((d) => d.id === id);
+          if (!old) throw new Refusal('NOT_FOUND');
+          if (old.withdrawn) throw new Refusal('WITHDRAWN');
+          this.bodySeq += 1;
+          Object.assign(old, c, { updatedAt: NOW.getTime() + this.bodySeq });
+          return old;
+        }
+        this.bodySeq += 1;
+        const row = { id: `00000000-0000-4000-9000-${String(this.bodySeq).padStart(12, '0')}`, ...c, withdrawn: false, byName: p.staffId ? p.name : null, createdAt: NOW.getTime(), updatedAt: NOW.getTime() + this.bodySeq };
+        this.diets.push(row);
+        return row;
+      }
+      case 'owner_withdraw_diet_plan': {
+        this.anyone(args.p_key);
+        const d = this.diets.find((x) => x.id === args.p_id);
+        if (!d) throw new Refusal('NOT_FOUND');
+        this.bodySeq += 1;
+        Object.assign(d, { withdrawn: true, updatedAt: NOW.getTime() + this.bodySeq });
+        return d;
       }
       default:
         // Orders, messages, app members: an empty list, as for a new gym.

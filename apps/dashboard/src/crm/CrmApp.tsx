@@ -47,6 +47,7 @@ import { ReceiptScreen } from './ui/screens/Receipt';
 import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
+import { DietPlansScreen } from './ui/screens/DietPlans';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
@@ -179,6 +180,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/expenses', label: 'Expenses', icon: 'money' },
       // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
       { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
+      // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
+      { path: '/diet', label: 'Diet plans', icon: 'workouts' },
       // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
       // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
       { path: '/settings/branding', label: 'Branding', icon: 'brand' },
@@ -218,6 +221,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'messages') return 'Messages & offers';
   if (head === 'shop') return 'The shop';
   if (head === 'workouts') return 'Workout plans';
+  if (head === 'diet') return 'Diet plans';
   if (head === 'feedback') return 'Send feedback';
   if (head === 'branches') return 'All branches';
   if (head === 'members' && id === 'import') return 'Importing members';
@@ -274,6 +278,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <ExpensesScreen />;
     case 'workouts':
       return <WorkoutPlansScreen />;
+    case 'diet':
+      return <DietPlansScreen />;
     case 'feedback':
       return <FeedbackScreen />;
     case 'branches':

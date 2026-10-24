@@ -714,7 +714,7 @@ const pickRowStyle = {
 
 // ---------------------------------------------------------------- who gets it
 
-function AssignSection({
+export function AssignSection({
   assign,
   onChange,
 }: {
@@ -811,7 +811,7 @@ function TickRow({ on, onChange, title, sub }: { on: boolean; onChange: (on: boo
 // ---------------------------------------------------------------- starting and sending
 
 /** One choice in a list of plans: a big tap target with a line or two under the name. */
-function ChoiceRow({
+export function ChoiceRow({
   title,
   sub,
   body,

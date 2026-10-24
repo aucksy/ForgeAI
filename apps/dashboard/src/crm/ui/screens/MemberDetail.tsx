@@ -55,6 +55,8 @@ import { WorkoutCodeCheckSheet } from '../WorkoutCodeCheckSheet';
 import { memberCardFacts } from '../../logic/memberCard';
 import { plansForMember, withoutMember } from '../../logic/workoutPlans';
 import { NOT_ONLINE_YET, SendPlanSheet, WorkoutPlanSheet } from './WorkoutPlans';
+import { MemberMeasurementsCard } from './MemberMeasurements';
+import { MemberDietCard } from './DietPlans';
 import {
   Avatar,
   Button,
@@ -554,6 +556,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           </div>
         </Card>
       )}
+
+      {/* R-120: measured at the desk, and what to eat (both on the gym's server, 0035). */}
+      {canSendPlan && <MemberMeasurementsCard memberId={memberId} memberName={member.fullName} onSaved={flash} />}
+      {canSendPlan && <MemberDietCard memberId={memberId} memberName={member.fullName} />}
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Payments</SectionTitle>
