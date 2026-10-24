@@ -1,4 +1,4 @@
--- NOT APPLIED. Needs the owner's yes (R-97).
+-- APPLIED LIVE 24 Oct 2026 (owner said yes, tracker #55; live test PASS 41).
 --
 -- 0030: the free trial and the plan of each gym (owner request R-97, 24 Oct 2026). Re-runnable
 -- (if not exists / create or replace / drop constraint if exists). Apply after 0028 (it replaces
