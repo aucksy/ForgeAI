@@ -29,6 +29,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-120. From the GGMS menu: build trainer measurements + diet plans (picked A); calorie research — 24 Oct 2026
+**Owner said:** sent photos of GGMS's full menu: "check if there is something worth building in our admin panel which
+owners will use". I mapped it: 14 covered, worth building = measurements taken by the trainer, diet plans from the
+trainer; skip salary (his earlier "not doing"), events, gallery, "Old", class booking (waits gym visit), member feedback
+(later). **He picked A** (both, measurements first) "but remember that we have a bigger vision to build calorie tracking
+with AI by clicking pictures. but later... research if we have some authentic free resources / algorithms / data
+available out there so we can build a calorie tracker with images or manually."
+**Doing:** helper builds both (server change 0035 written, applied only after his yes); research helper on free food
+data + photo methods (India-first) → docs/research/R-calorie-tracking.md. Reminder: a food/calorie log was built earlier
+and is hidden (tracker: "Food and calorie log", on hold 22 Oct) — the calorie work builds on it, later.
+
 ## R-119. Demo gym opens his real gym; sidebar; "notifications" — 24 Oct 2026
 **Owner said:** "'Open Demo GYM' is opening the latest GYM I created.. .wow. Also highlight the button for people to see
 demo GYM. Branding and Notifications should be on the side bar. On website.. you have used for notices.. make it
