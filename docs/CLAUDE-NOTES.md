@@ -5,6 +5,22 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-102. MettleUp, build the 20 features (park trainer chat), keep the app simple, Health Connect — 24 Oct 2026
+**Owner said:** "I am really feeling MettleUp.in - do we need even more in-depth research before finalize?" ... "I really
+like all these 20 features ... plan and start working on them. You can decide the priority, except for a few that you can
+park for now. You can park, chat with your trainer, and the rest seems fine to me." ... "I want my app to be really
+competitive and the best overall. However, our original foundational guidance—keeping the UI simple and not
+overcomplicating the user experience—needs to remain our foundation. Think of it from the perspective of a professional,
+top-notch UI/UX designer. Let's ensure that all options and features are organized in a very intuitive, easy-to-find,
+and understandable way, even if we have to review everything we've built. Everything can be reorganized if necessary"
+... "I don't remember what we did with HealthConnect. The last time I checked, HealthConnect was not working properly;
+it was just on and off. I don't really understand it, and I'm not sure if you've already addressed it."
+**What Claude does:** (1) MettleUp: the last checks (Play Store, social handles, web use), then the steps only he can do
+(trademark search, buy .in/.app). (2) #58 DECIDED: build the 20 except "Ask your trainer" (parked); Claude orders them.
+(3) First a full UI/UX map of the member app (every screen and setting, where each new feature goes, what to merge or
+move), so new features land in the right place; then build. (4) Health Connect: find why the switch goes on and off,
+explain it in plain words, fix it. Status: started.
+
 ## R-101. He likes MettleBook: more names around "Mettle" with a progressive-overload feel — 24 Oct 2026
 **Owner said:** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around
 Mettle that gives a feel of progressive overload"
