@@ -247,7 +247,7 @@ test('Export gyms (CSV): gym-level facts only, safe for Excel', () => {
   assert.ok(lines[2].startsWith(`"'=HYPERLINK(""x"")",IRON01,'+Ravi,`), 'a formula never runs');
   assert.ok(lines[2].includes(',AI,lifetime,for ever,'));
   assert.doesNotMatch(csv, /fullName|memberName|Member name/i, 'nothing about members but the two counts');
-  assert.equal(L.csvName(T0), 'forgeai-gyms-2026-10-24.csv');
+  assert.equal(L.csvName(T0), 'mettleup-gyms-2026-10-24.csv');
 });
 
 test('gym groups (0031, #41): each business with its branches, members per branch, price as information', () => {

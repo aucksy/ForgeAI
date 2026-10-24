@@ -507,9 +507,9 @@ export function gymsCsv(gyms) {
   return `${BOM}${lines.join('\r\n')}\r\n`;
 }
 
-/** "forgeai-gyms-2026-10-24.csv" (India day). */
+/** "mettleup-gyms-2026-10-24.csv" (India day). */
 export function csvName(now = Date.now()) {
-  return `forgeai-gyms-${new Date(now + IST_MS).toISOString().slice(0, 10)}.csv`;
+  return `mettleup-gyms-${new Date(now + IST_MS).toISOString().slice(0, 10)}.csv`;
 }
 
 // ------------------------------------------------------------------ gym groups and branches (0031, #41)
