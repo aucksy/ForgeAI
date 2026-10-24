@@ -7,7 +7,8 @@
 export const PER_DAY = 5;
 export const ALL_PER_DAY = 300;
 const SIZES = ['Under 100', '100-300', '300-600', 'Over 600'];
-const TODAY = ['register', 'excel', 'ggms', 'other'];
+// 'ggms' stays accepted for forms sent before 24 Oct 2026; the page now offers 'software' (R-118).
+const TODAY = ['register', 'excel', 'software', 'other', 'ggms'];
 
 /** The checked lead, a bot (drop it), or a plain reason. PURE. */
 export function checkLead(body) {

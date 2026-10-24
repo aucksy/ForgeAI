@@ -30,10 +30,10 @@ function fakeD1() {
 }
 const env = (WEB) => ({ WEB, FEEDBACK_SALT: 'salt' });
 const post = (b, ip = '1.1.1.1') => new Request('https://x/api/lead', { method: 'POST', body: JSON.stringify(b), headers: { 'CF-Connecting-IP': ip } });
-const good = { phone: '+91 98290 12345', gym: '  Shakti   Gym ', city: 'Jaipur', size: '100-300', today: 'ggms' };
+const good = { phone: '+91 98290 12345', gym: '  Shakti   Gym ', city: 'Jaipur', size: '100-300', today: 'software' };
 
 test('a good lead: 10 digits, tidy text, known choices only', () => {
-  assert.deepEqual(checkLead(good).value, { phone: '9829012345', gym: 'Shakti Gym', city: 'Jaipur', size: '100-300', today: 'ggms', lang: 'en' });
+  assert.deepEqual(checkLead(good).value, { phone: '9829012345', gym: 'Shakti Gym', city: 'Jaipur', size: '100-300', today: 'software', lang: 'en' });
   assert.equal(checkLead({ ...good, size: '<script>', today: 'drop' }).value.size, '');
   assert.ok(checkLead({ ...good, phone: '12345' }).error);
   assert.ok(checkLead({ ...good, phone: '1234567890' }).error); // Indian mobiles start 6-9
