@@ -29,6 +29,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-112. Website words are weak; phone frame looks wrong; audit + user test later — 24 Oct 2026
+**Owner said:** the website copy "is not good at all": some content is outdated, it does not highlight what we uniquely
+offer, and one section pushes a feature not worth it (the rest timer on the log screen). Focus on the best features,
+each in its own section, and show the exclusive items in the plan (pricing) section. The animations have symmetry
+problems; the phone frame does not look like a correctly sized phone. Do a UI/UX audit and possibly user acceptance
+testing "later, after two hours, once my four-hour limit resets". "Let's run the copy of the website with Gemini."
+**Doing:** (1) now, cheap: list every true unique feature from the code and tracker, draft the new section-by-section
+copy, get Gemini's rewrite (member-words skill, public text only), keep it in docs/launch/WEBSITE-COPY-2026-10-24.md.
+(2) after 2 hours (scheduled): UI/UX audit of mettleup.fit landing (impeccable audit + critique), rebuild the sections
+on the new copy, fix the phone frame to real phone proportions (about 9:19.5, even bezel, centred), fix animation
+symmetry, then a user acceptance test (fresh-reader agents playing a gym owner and a member, on phone and desktop).
+
 ## R-111. Complaints contact: contact@mettleup.fit, name Aakash Pahuja — 24 Oct 2026
 **Owner said:** "contact@mettleup.fit — We will set it up to route the emails to a Gmail account that I'll probably create".
 Asked in chat: name shown = "Aakash Pahuja"; until the new Gmail exists, forward to simpleapps108@gmail.com.
