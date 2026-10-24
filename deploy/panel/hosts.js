@@ -81,18 +81,21 @@ const MAX_PAYLOAD = 16_000;
  * PURE apart from reading the form.
  */
 export async function handleMove(request) {
-  if (request.method !== 'POST') return new Response('Not found', { status: 404 });
+  // A refused hand-over must never strand a desk on a bare error page (security review, 24 Oct): send it to
+  // the sign-in at this address instead. Nothing is written on these paths.
+  const signIn = () => new Response(null, { status: 303, headers: { Location: '/', 'Cache-Control': 'no-store' } });
+  if (request.method !== 'POST') return signIn();
   const origin = request.headers.get('Origin');
-  if (origin !== `https://${OLD_HOST}`) return new Response('Not allowed', { status: 403 });
+  if (origin !== `https://${OLD_HOST}`) return signIn();
   let form;
   try {
     form = await request.formData();
   } catch {
-    return new Response('Bad request', { status: 400 });
+    return signIn();
   }
   const m = String(form.get('m') || '');
   const toRaw = String(form.get('to') || '/');
-  if (m.length > MAX_PAYLOAD || !/^[A-Za-z0-9_-]*$/.test(m)) return new Response('Bad request', { status: 400 });
+  if (m.length > MAX_PAYLOAD || !/^[A-Za-z0-9_-]*$/.test(m)) return signIn();
   const to = safePath(toRaw);
   const html =
     '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +

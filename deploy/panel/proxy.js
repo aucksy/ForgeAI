@@ -51,6 +51,10 @@ export async function handleProxy(request, url, fetchImpl = fetch) {
     });
     const out = new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers });
     out.headers.set(STAMP, '1');
+    // Whatever the gym server answers must never act as a page on the admin app's own address (where the
+    // desks' keys live): no type sniffing, and a sandbox that runs nothing (security review, 24 Oct).
+    out.headers.set('X-Content-Type-Options', 'nosniff');
+    out.headers.set('Content-Security-Policy', "sandbox; default-src 'none'");
     return out;
   } catch (e) {
     console.error('[sb proxy] Supabase did not answer', request.method, url.pathname, e);

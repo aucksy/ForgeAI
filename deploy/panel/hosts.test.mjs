@@ -66,12 +66,12 @@ test('the hand-over takes a form only from the old address, and writes nothing b
   assert.equal(ok.headers.get('Cache-Control'), 'no-store');
   assert.equal(ok.headers.get('Set-Cookie'), null);
 
-  assert.equal((await handleMove(movePost('https://evil.example', `m=${payload}`))).status, 403);
-  assert.equal((await handleMove(movePost(null, `m=${payload}`))).status, 403);
-  assert.equal((await handleMove(new Request(`${APP_ORIGIN}/api/move`))).status, 404);
+  assert.equal((await handleMove(movePost('https://evil.example', `m=${payload}`))).status, 303); // refused: back to sign-in, nothing written
+  assert.equal((await handleMove(movePost(null, `m=${payload}`))).status, 303); // refused: back to sign-in, nothing written
+  assert.equal((await handleMove(new Request(`${APP_ORIGIN}/api/move`))).status, 303); // refused: back to sign-in, nothing written
   // Only base64url letters ride in the page: nothing can break out of the tag.
-  assert.equal((await handleMove(movePost(`https://${OLD_HOST}`, 'm=%22%3E%3Cscript%3E'))).status, 400);
-  assert.equal((await handleMove(movePost(`https://${OLD_HOST}`, `m=${'a'.repeat(16_001)}`))).status, 400);
+  assert.equal((await handleMove(movePost(`https://${OLD_HOST}`, 'm=%22%3E%3Cscript%3E'))).status, 303); // refused: back to sign-in, nothing written
+  assert.equal((await handleMove(movePost(`https://${OLD_HOST}`, `m=${'a'.repeat(16_001)}`))).status, 303); // refused: back to sign-in, nothing written
   // Another site's address is never opened afterwards.
   const away = await (await handleMove(movePost(`https://${OLD_HOST}`, `m=${payload}&to=${encodeURIComponent('//evil.example/x')}`))).text();
   assert.match(away, /<meta name="mettleup-to" content="\/">/);
