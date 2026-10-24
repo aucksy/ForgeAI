@@ -108,7 +108,7 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
       setUndo(null);
     });
 
-  const addButton = <Button onClick={() => setAdding(true)}>+ Add enquiry</Button>;
+  const addButton = <Button needsInternet onClick={() => setAdding(true)}>+ Add enquiry</Button>;
 
   return (
     <>
@@ -270,13 +270,13 @@ function EnquiryRow({
         </a>
         {open && (
           <>
-            <Button wrap onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>
+            <Button wrap needsInternet onClick={onConvert} ariaLabel={`Make ${e.name} a member`}>
               Add as member
             </Button>
-            <Button wrap variant="ghost" onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
+            <Button wrap variant="ghost" needsInternet onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
               Follow-up date
             </Button>
-            <Button wrap variant="quiet" tone="danger" onClick={onLost} ariaLabel={`${e.name} is not interested`}>
+            <Button wrap variant="quiet" tone="danger" needsInternet onClick={onLost} ariaLabel={`${e.name} is not interested`}>
               Not interested
             </Button>
           </>
@@ -287,7 +287,7 @@ function EnquiryRow({
           </Button>
         )}
         {e.status === 'lost' && (
-          <Button wrap variant="ghost" onClick={onReopen} ariaLabel={`Reopen ${e.name}`}>
+          <Button wrap variant="ghost" needsInternet onClick={onReopen} ariaLabel={`Reopen ${e.name}`}>
             Reopen
           </Button>
         )}

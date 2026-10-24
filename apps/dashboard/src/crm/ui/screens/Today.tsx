@@ -49,10 +49,11 @@ import {
   font,
   space,
 } from '../kit';
+import { WaitingMoneyLine } from '../offline';
 import { Link, navigate } from '../router';
 
 export function TodayScreen() {
-  const { snapshot, memberViews, allMemberViews, today } = useCrm();
+  const { snapshot, memberViews, allMemberViews, today, desk } = useCrm();
   const compact = useIsCompact();
   // Staff (front desk) sees counts of people, never the gym's money totals (permissions.ts).
   const seeTotals = useCan()('seeTotals');
@@ -124,6 +125,9 @@ export function TodayScreen() {
 
       {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
       <TrialBanner />
+
+      {/* Offline front desk, step 3: money taken on this device that is not on the server yet. */}
+      <WaitingMoneyLine state={desk} />
 
       {/* Backlog (21 Oct): big buttons for the desk's common jobs, chosen and ordered by the owner. */}
       <QuickActions />

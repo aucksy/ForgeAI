@@ -74,7 +74,7 @@ export function ExpensesScreen() {
   const byCategory = useMemo(() => totalsByCategory(expenses, month), [expenses, month]);
 
   const isThisMonth = month === thisMonth;
-  const addButton = <Button onClick={() => setAdding(true)}>+ Add expense</Button>;
+  const addButton = <Button needsInternet onClick={() => setAdding(true)}>+ Add expense</Button>;
 
   return (
     <>
@@ -305,6 +305,7 @@ function ExpenseRow({ expense, first, onRemove }: { expense: Expense; first: boo
           <Button
             variant="quiet"
             tone="danger"
+            needsInternet
             onClick={onRemove}
             ariaLabel={`Remove ${categoryLabel(expense.category)} ${formatINR(expense.amountP)} on ${formatDay(expense.spentOn)}`}
           >

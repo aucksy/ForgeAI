@@ -44,28 +44,25 @@ test('J34 offline: the panel opens with no internet, shows the kept gym, refuses
   await page.reload();
   const bar = page.getByRole('status').filter({ hasText: 'Offline mode.' });
   await expect(bar).toBeVisible({ timeout: 15_000 });
-  await expect(bar).toContainText('check-ins are kept on this computer and sent when the internet is back. Other saving waits.');
+  await expect(bar).toContainText('Check-ins, payments and new members are saved on this device and sent when the internet is back.');
   await expectFitsPhone(page, 'offline, on Today');
 
   // Looking things up works.
   await open(page, 'Members');
   await expect(page.getByText('Asha Verma')).toBeVisible();
 
-  // Saving says why it cannot, in plain words, and nothing is half-saved.
-  await page.getByRole('button', { name: '+ Add member' }).first().tap();
-  const s = sheet(page, 'Add member');
-  await s.getByLabel('Full name').fill('Ravi Kumar');
-  await s.getByLabel('Mobile number').fill('98290 22222');
-  await s.getByRole('button', { name: 'Add member' }).tap();
-  await expect(s).toContainText("No internet right now, so this can't be saved yet.", { timeout: 15_000 });
-
-  await s.getByRole('button', { name: 'Close' }).or(s.getByRole('button', { name: 'Cancel' })).first().tap();
+  // What cannot wait for the internet is greyed out, with the reason under it (step 3).
+  await open(page, 'Plans');
+  const addPlan = page.getByRole('button', { name: '+ Add plan' }).first();
+  await expect(addPlan).toBeDisabled();
+  await expect(page.getByRole('main')).toContainText('Needs internet');
+  await open(page, 'Members');
 
   // Step 2: a check-in still works offline: it shows at once and waits on this computer.
   await page.getByText('Asha Verma').first().tap();
   await page.getByRole('button', { name: 'Check in', exact: true }).tap();
   await expect(page.getByRole('button', { name: 'Checked in today' })).toBeVisible({ timeout: 15_000 });
-  await expect(bar).toContainText('1 check-in waiting to be sent.');
+  await expect(bar).toContainText('1 waiting to send.');
   expect(server.pushes.flat().some((r) => r.k === 'visit')).toBe(false);
 
   // The internet is back: the bar goes by itself, and the kept check-in reaches the server.

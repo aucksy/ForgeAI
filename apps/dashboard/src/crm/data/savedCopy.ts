@@ -1,9 +1,9 @@
 /**
  * Offline front desk, step 1 (owner #7, built R-55, 22 Oct 2026): a copy of the ONLINE gym kept on
  * this device, so the panel still opens and every member, plan and due can be looked up when the
- * internet is down. Step 2: desk check-ins made offline are kept here too and sent later. Other
- * saving waits for the internet (payments and new members need a receipt-number series of their
- * own per desk first: a tax invoice's number must never change after it is printed).
+ * internet is down. Step 2 kept desk check-ins made offline here too; step 3 (24 Oct 2026) moved
+ * everything made offline (check-ins, payments, new members) to the waiting list in outbox.ts, which
+ * is NOT cleared on sign-out. A copy that still carries step 2's `queued` is moved there once.
  *
  * Where: IndexedDB in this browser (a gym is far past localStorage's ~5 MB with years of
  * receipts). Which gym: the copy is filed under a one-way hash of the device's sign-in key, so
@@ -24,7 +24,7 @@ export interface SavedGym {
   version: number;
   gym: CloudGymRow;
   records: CrmRecord[];
-  /** Step 2: desk check-ins made with no internet, not yet on the server (oldest first). */
+  /** Step 2 only (read once, moved to outbox.ts; never written since step 3). */
   queued?: QueuedCheckIn[];
 }
 

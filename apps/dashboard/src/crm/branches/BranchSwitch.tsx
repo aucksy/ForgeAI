@@ -10,6 +10,7 @@ import { color, font, radius, space } from '../ui/kit';
 import { navigate, replace, useRoute } from '../ui/router';
 import { useBranchActions } from './BranchProvider';
 import { useBranches } from './context';
+import { NEEDS_INTERNET_WORDS, useOffline } from '../ui/offlineContext';
 
 export const ALL_BRANCHES = '__all';
 
@@ -19,6 +20,8 @@ export function BranchSwitch({ gymName, compact = false }: { gymName: string; co
   const route = useRoute();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Offline front desk, step 3: another branch opens only online (this device keeps one branch's copy).
+  const { offline } = useOffline();
 
   if (!multi || !canOpenOthers) {
     return (
@@ -59,7 +62,8 @@ export function BranchSwitch({ gymName, compact = false }: { gymName: string; co
         <select
           aria-label="Branch"
           value={value}
-          disabled={busy}
+          disabled={busy || offline}
+          aria-description={offline ? NEEDS_INTERNET_WORDS : undefined}
           onChange={(e) => void pick(e.target.value)}
           style={{
             width: '100%',

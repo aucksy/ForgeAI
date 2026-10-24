@@ -68,6 +68,7 @@ import {
   useIsCompact,
 } from '../kit';
 import { Link, navigate } from '../router';
+import { WaitingPill } from '../offline';
 
 export function MoneyScreen({ section }: { section?: string }) {
   // Staff (front desk) gets only Dues — the PEOPLE to collect from — with no ₹ totals, charts or
@@ -289,7 +290,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
       <Card>
         <SectionTitle
           action={
-            <Button variant="ghost" onClick={exportCsv} disabled={visible.length === 0}>
+            <Button variant="ghost" needsInternet onClick={exportCsv} disabled={visible.length === 0}>
               Download Excel file
             </Button>
           }
@@ -461,6 +462,7 @@ function LedgerTableRow({ row, withYear, onVoid }: { row: LedgerRow; withYear: b
         <Link to={`/receipts/${payment.id}`}>
           <span style={{ color: color.accentBright }}>{payment.receiptNo}</span>
         </Link>
+        <WaitingPill id={payment.id} />
       </Td>
       <Td>
         {member ? (
@@ -499,7 +501,7 @@ function LedgerTableRow({ row, withYear, onVoid }: { row: LedgerRow; withYear: b
       </Td>
       <Td align="right">
         {!payment.voided && onVoid && (
-          <Button variant="quiet" tone="danger" onClick={onVoid}>
+          <Button variant="quiet" tone="danger" needsInternet onClick={onVoid}>
             Cancel receipt
           </Button>
         )}
@@ -559,11 +561,12 @@ function LedgerCard({ row, onVoid }: { row: LedgerRow; onVoid?: () => void }) {
             {payment.receiptNo}
           </span>
         </Link>
+        <WaitingPill id={payment.id} />
         <span style={{ flex: 1 }} />
         {payment.voided ? (
           <span style={{ ...tapTarget, fontSize: 11, color: color.criticalText }}>CANCELLED</span>
         ) : onVoid ? (
-          <Button variant="quiet" tone="danger" onClick={onVoid}>
+          <Button variant="quiet" tone="danger" needsInternet onClick={onVoid}>
             Cancel receipt
           </Button>
         ) : null}
@@ -713,7 +716,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <SectionTitle
           action={
             seeTotals ? (
-              <Button variant="ghost" onClick={exportCsv}>
+              <Button variant="ghost" needsInternet onClick={exportCsv}>
                 Download Excel file
               </Button>
             ) : undefined

@@ -816,7 +816,7 @@ function AtRisk({ onToast }: { onToast: (msg: string) => void }) {
       <Card>
         <SectionTitle
           action={
-            <Button variant="ghost" onClick={exportCsv} disabled={shown.length === 0}>
+            <Button variant="ghost" needsInternet onClick={exportCsv} disabled={shown.length === 0}>
               Download Excel file
             </Button>
           }

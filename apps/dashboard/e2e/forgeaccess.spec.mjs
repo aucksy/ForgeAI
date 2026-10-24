@@ -46,5 +46,6 @@ test('J51b a gym ForgeAI paused: records still open, a save says why it cannot',
   await s.getByLabel('Mobile number').fill('98290 60001');
   await s.getByRole('button', { name: 'Add member' }).tap();
   await expect(page.getByText(PAUSED).first()).toBeVisible();
-  expect(server.records.size).toBe(0);
+  // Nothing of the gym's was saved (the device's receipt-series claim, made while the gym was on, is not a member).
+  expect([...server.records.keys()].filter((k) => !k.startsWith('enquiry:deskseries-'))).toEqual([]);
 });

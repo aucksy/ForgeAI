@@ -151,7 +151,7 @@ export function SettingsScreen() {
         </Grid>
         <TextField label="Address" value={address} onChange={setAddress} multiline />
         <div style={{ marginTop: space.lg }}>
-          <Button onClick={save} disabled={saving}>
+          <Button onClick={save} disabled={saving} needsInternet>
             {saving ? 'Saving…' : 'Save details'}
           </Button>
         </div>
@@ -173,7 +173,7 @@ export function SettingsScreen() {
             : 'First turn on the member app above. Then you can add your logo and colour.'}
         </p>
         <div style={{ marginTop: space.lg }}>
-          <Button variant="ghost" disabled={!cloud} onClick={() => navigate('/settings/branding')}>
+          <Button variant="ghost" disabled={!cloud} needsInternet onClick={() => navigate('/settings/branding')}>
             Open branding
           </Button>
         </div>
@@ -196,7 +196,7 @@ export function SettingsScreen() {
         )}
 
         <div style={{ marginTop: space.lg }}>
-          <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+          <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
             Import members from Excel
           </Button>
         </div>
@@ -242,7 +242,7 @@ export function SettingsScreen() {
           )}
           {cloud && !cloud.demo && (
             <div style={{ marginTop: space.lg }}>
-              <Button variant="ghost" tone="danger" onClick={() => setConfirming('disconnect')}>
+              <Button variant="ghost" tone="danger" needsInternet onClick={() => setConfirming('disconnect')}>
                 Disconnect the shop
               </Button>
             </div>
@@ -349,7 +349,7 @@ function StaffSettings() {
       {/* Adding members is front-desk work, so Staff may import a list too. */}
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Members</SectionTitle>
-        <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+        <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
           Import members from Excel
         </Button>
       </Card>

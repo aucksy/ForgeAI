@@ -60,13 +60,13 @@ export function GymDataActions({ online }: { online: boolean }) {
   return (
     <>
       <div style={{ marginTop: space.lg }}>
-        <Button variant="ghost" wrap disabled={busy} onClick={() => void download()}>
+        <Button variant="ghost" wrap disabled={busy} needsInternet onClick={() => void download()}>
           Download all your gym’s data
         </Button>
       </div>
       {online && (
         <div style={{ marginTop: space.lg }}>
-          <Button variant="ghost" tone="danger" wrap disabled={busy} onClick={() => setAsking(true)}>
+          <Button variant="ghost" tone="danger" wrap disabled={busy} needsInternet onClick={() => setAsking(true)}>
             {DELETE_WORDS.ask}
           </Button>
         </div>

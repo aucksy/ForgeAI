@@ -88,6 +88,58 @@ export function nextImportReceiptNo(existing: readonly { receiptNo: string }[], 
 }
 
 /**
+ * Offline front desk, step 3 (owner #7, 24 Oct 2026): receipts taken on a desk with NO internet get a
+ * series of their own per desk device, `2026-27/D1-0001` (a branch: `B2/26-27/D1-0001`).
+ *
+ * Why a series of its own: a receipt printed offline can never change its number afterwards, and two
+ * desks offline at the same time cannot see each other's numbers. Each device is given its number
+ * (D1, D2 ...) once, while online (data/outbox.ts, `deskClaimRecord`), so two devices never share a
+ * series, and the normal series (`nextReceiptNo`) never reads these numbers (its pattern does not
+ * match them). GST (CGST Rule 46(b)): a supplier may keep several invoice series, each consecutive
+ * and unique within the financial year, at most 16 characters; one series per desk device is that.
+ *
+ * Spelling, shortest that fits the 16-character limit (the server refuses longer, 0021; a branch's
+ * number must start with its prefix, 0031 - both hold for every spelling here):
+ *   no prefix: 2026-27/D1-0001, else 26-27/D10-0001;  prefix: B2/26-27/D1-0001, else B10/2627/D1-0001.
+ */
+export function offlineReceiptNo(deskNo: number, seq: number, paidOn: DateISO, prefix?: string | null): string {
+  if (!Number.isInteger(deskNo) || deskNo < 1 || !Number.isInteger(seq) || seq < 1) throw new Error('Not a desk series number.');
+  const fy = financialYear(paidOn);
+  const short = fy.slice(2);
+  const tail = `D${deskNo}-${String(seq).padStart(4, '0')}`;
+  const px = cleanReceiptPrefix(prefix);
+  const tries = px ? [`${px}/${short}/${tail}`, `${px}/${short.replace('-', '')}/${tail}`] : [`${fy}/${tail}`, `${short}/${tail}`];
+  const fit = tries.find((t) => t.length <= MAX_RECEIPT_NO);
+  if (!fit) throw new Error('This device’s receipt numbers are too long to print offline. Take this payment when the internet is back.');
+  return fit;
+}
+
+/** Any spelling of an offline desk receipt: its desk number, short year ("26-27") and sequence. PURE. */
+export function parseOfflineReceiptNo(receiptNo: string, prefix?: string | null): { deskNo: number; fy: string; seq: number } | null {
+  const px = cleanReceiptPrefix(prefix);
+  let text = receiptNo.trim();
+  if (px) {
+    if (!text.startsWith(`${px}/`)) return null;
+    text = text.slice(px.length + 1);
+  }
+  const m = /^(?:\d{2}(\d{2}-\d{2})|(\d{2}-\d{2})|(\d{2})(\d{2}))\/D(\d+)-(\d{4,})$/.exec(text);
+  if (!m) return null;
+  const fy = m[1] ?? m[2] ?? `${m[3]}-${m[4]}`;
+  return { deskNo: Number(m[5]), fy, seq: Number(m[6]) };
+}
+
+/** The highest number desk `deskNo` has used for `paidOn`'s year, among `existing`. PURE. */
+export function highestOfflineSeq(existing: readonly { receiptNo: string }[], deskNo: number, paidOn: DateISO, prefix?: string | null): number {
+  const fy = financialYear(paidOn).slice(2);
+  let highest = 0;
+  for (const row of existing) {
+    const p = parseOfflineReceiptNo(row.receiptNo, prefix);
+    if (p && p.deskNo === deskNo && p.fy === fy && p.seq > highest) highest = p.seq;
+  }
+  return highest;
+}
+
+/**
  * Next receipt number for `paidOn`, continuing that financial year's series.
  *
  * Derived from the highest number already issued IN THAT YEAR rather than from a

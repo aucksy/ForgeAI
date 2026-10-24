@@ -24,6 +24,9 @@ import type { Role } from './auth/signin';
 import { CloudCrmData } from './data/cloud';
 import { setInstallOffer } from './install';
 import { browserSavedCopy } from './data/savedCopy';
+import { browserOutbox } from './data/outbox';
+import { NeedsInternetPage } from './ui/offline';
+import { useOffline } from './ui/offlineContext';
 
 import { BrandingScreen } from './brand/BrandingScreen';
 import { atRiskList } from './logic/attendance';
@@ -82,7 +85,10 @@ function SessionRoot() {
   // UAT F-02: the desk's 31-day limit on receipt dates is checked before anything is sent.
   const role = roleOf(session);
   const data = useMemo(
-    () => (onlineKey ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role, saved: browserSavedCopy() }) : undefined),
+    () =>
+      onlineKey
+        ? new CloudCrmData(onlineKey, cloudApi, { onSignedOut: () => lostRef.current(), role, saved: browserSavedCopy(), outbox: browserOutbox() })
+        : undefined,
     [onlineKey, role],
   );
   return (
@@ -180,8 +186,31 @@ function Routes({ online }: { online: boolean }) {
   );
 }
 
+/**
+ * Offline front desk, step 3 (owner #7): pages whose every action needs the server (sending
+ * messages and offers, the shop, workout plans, staff and sign-in, branches, AI import, branding,
+ * the invite link, feedback). While offline they show one plain card instead; a page with a list
+ * worth reading offline (plans, enquiries, expenses, settings) stays, with its buttons greyed out.
+ */
+function offlinePage(head: string | undefined, id: string | undefined): string | null {
+  if (head === 'messages') return 'Messages & offers';
+  if (head === 'shop') return 'The shop';
+  if (head === 'workouts') return 'Workout plans';
+  if (head === 'feedback') return 'Send feedback';
+  if (head === 'branches') return 'All branches';
+  if (head === 'members' && id === 'import') return 'Importing members';
+  if (head === 'members' && id === 'app') return 'Members using the app';
+  if (head === 'settings' && id === 'people') return 'Staff & sign-in';
+  if (head === 'settings' && id === 'branding') return 'Branding';
+  if (head === 'settings' && id === 'invite') return 'The invite link';
+  return null;
+}
+
 function Screen({ segments, role }: { segments: string[]; role: Role }) {
   const [head, id] = segments;
+  const { offline } = useOffline();
+  const blocked = offline ? offlinePage(head, id) : null;
+  if (blocked) return <NeedsInternetPage what={blocked} />;
 
   switch (head) {
     case undefined:

@@ -73,6 +73,13 @@ export interface Member extends GymScoped {
    * false = their own branch only. Kept inside the member record: no gym-database change.
    */
   allBranches?: boolean;
+  /**
+   * Offline front desk, step 3 (owner #7, 24 Oct 2026): this member was added on a desk with no
+   * internet, and when it was sent another member already had the same mobile number (that member's
+   * id). Both are kept, never merged: the member's page says "Check this member" until someone taps
+   * "Checked" there (which saves null). Absent or null = nothing to check.
+   */
+  duplicateOf?: string | null;
   archived: boolean;
   /** Set once the member installs the app and links; null for everyone else. */
   appUserId: string | null;
@@ -252,6 +259,11 @@ export interface Payment extends GymScoped {
    * the old behaviour and no worse than it was.
    */
   gstinAtSale?: string | null;
+  /**
+   * Offline front desk, step 3: true on a receipt taken with no internet (its number is from this
+   * desk's own series, `2026-27/D1-0001`, logic/receipts.ts). Absent on every other receipt.
+   */
+  offline?: boolean;
 }
 
 export type PaymentDraft = Omit<

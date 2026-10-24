@@ -79,6 +79,8 @@ import {
   useIsCompact,
 } from '../kit';
 import { Link, navigate } from '../router';
+import { WaitingPill } from '../offline';
+import { NEEDS_INTERNET_WORDS, useOffline } from '../offlineContext';
 
 export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const {
@@ -92,7 +94,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
     markPtSession,
     undoPtSession,
     saveWorkoutPlan,
+    updateMember,
   } = useCrm();
+  const { offline } = useOffline();
   const compact = useIsCompact();
   const { cloud } = useShop();
   // Staff (front desk) can sell, collect and check in, but cannot cancel, freeze or void (permissions.ts).
@@ -279,6 +283,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         full
         variant="ghost"
         tone={member.archived ? undefined : 'danger'}
+        needsInternet
         onClick={() =>
           run(
             () => setMemberArchived(memberId, !member.archived),
@@ -326,6 +331,33 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
+      {/* Step 3: added offline while another device added the same mobile. Both kept, never merged. */}
+      {member.duplicateOf && (
+        <Card style={{ marginBottom: space.lg, borderColor: color.warning }}>
+          <div role="note" style={{ fontFamily: font.body, fontSize: 14, color: color.ink, display: 'grid', gap: space.sm }}>
+            <span>
+              <strong>Check this member.</strong>{' '}
+              {(() => {
+                const other = snapshot.members.find((m) => m.id === member.duplicateOf);
+                return other ? (
+                  <>
+                    <Link to={`/members/${other.id}`}>{other.fullName}</Link> has the same mobile number. Both are kept. If they
+                    are the same person, archive one of them.
+                  </>
+                ) : (
+                  'Another member has the same mobile number. Both are kept.'
+                );
+              })()}
+            </span>
+            <span>
+              <Button variant="ghost" onClick={() => run(() => updateMember(memberId, { duplicateOf: null }).then(() => undefined), 'Marked as checked.')}>
+                Checked
+              </Button>
+            </span>
+          </div>
+        </Card>
+      )}
+
       <Card style={{ marginBottom: space.lg }}>
         <Row gap={space.lg} wrap={false} align="flex-start">
           <Avatar text={initials(member.fullName)} size={52} />
@@ -336,6 +368,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               {member.appUserId && <Pill tone="accent">Using the app</Pill>}
               {/* #41: may train at every branch (set on the member's form by an owner). */}
               {member.allBranches && <Pill tone="muted">Every branch</Pill>}
+              <WaitingPill id={member.id} />
             </Row>
             <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
               {current ? (
@@ -360,11 +393,18 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 {formatPhone(member.phone)}
               </a>
               {/* Step 4: WhatsApp with the message already typed (fees, plan ending, birthday…). */}
-              <button type="button" onClick={() => setWhatsApp(true)} style={{ ...linkStyle, background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>
-                WhatsApp
+              {/* Step 3: sending messages needs the internet. */}
+              <button
+                type="button"
+                disabled={offline}
+                aria-description={offline ? NEEDS_INTERNET_WORDS : undefined}
+                onClick={() => setWhatsApp(true)}
+                style={{ ...linkStyle, background: 'none', border: 'none', padding: 0, cursor: offline ? 'not-allowed' : 'pointer', font: 'inherit', opacity: offline ? 0.45 : 1 }}
+              >
+                {offline ? `WhatsApp (${NEEDS_INTERNET_WORDS.toLowerCase()})` : 'WhatsApp'}
               </button>
               {/* Invite link: WhatsApp opens on this member with the gym's link typed in. */}
-              {cloud && !member.appUserId && (
+              {cloud && !member.appUserId && !offline && (
                 <a
                   href={whatsAppHref(inviteMessage(cloud.name, cloud.joinCode, member.fullName), member.phone)}
                   target="_blank"
@@ -487,7 +527,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <Card style={{ marginBottom: space.lg }}>
           <SectionTitle
             action={
-              <Button variant="ghost" onClick={() => setSendingPlan(true)}>
+              <Button variant="ghost" needsInternet onClick={() => setSendingPlan(true)}>
                 Send a plan
               </Button>
             }
@@ -605,7 +645,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           onSold={(result) =>
             flash(
               result.payment
-                ? `Membership saved. Receipt ${result.payment.receiptNo}.`
+                ? result.payment.offline
+                  ? `Membership saved on this device. Receipt ${result.payment.receiptNo}. It goes online when the internet is back.`
+                  : `Membership saved. Receipt ${result.payment.receiptNo}.`
                 : 'Membership saved. No money taken yet.',
             )
           }
@@ -615,7 +657,13 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <CollectPaymentSheet
           view={view}
           onClose={() => setCollecting(false)}
-          onCollected={(payment) => flash(`Payment saved. Receipt ${payment.receiptNo}.`)}
+          onCollected={(payment) =>
+            flash(
+              payment.offline
+                ? `Payment saved on this device. Receipt ${payment.receiptNo}. It goes online when the internet is back.`
+                : `Payment saved. Receipt ${payment.receiptNo}.`,
+            )
+          }
         />
       )}
       {cancelling && (
@@ -967,12 +1015,12 @@ function PtCard({
           {usedUp ? (
             canRenew && <Button onClick={onRenew}>Renew PT</Button>
           ) : (
-            <Button onClick={onMark} disabled={busy || markedToday}>
+            <Button onClick={onMark} disabled={busy || markedToday} needsInternet>
               {markedToday ? 'Session marked today' : 'Mark session'}
             </Button>
           )}
           {canUndo && (
-            <Button variant="ghost" onClick={onUndo} disabled={busy}>
+            <Button variant="ghost" onClick={onUndo} disabled={busy} needsInternet>
               Undo last session
             </Button>
           )}
@@ -1025,7 +1073,7 @@ function PtCard({
               )}
             </span>
             {canExtend && (
-              <Button variant="ghost" onClick={() => onExtend(m)}>
+              <Button variant="ghost" needsInternet onClick={() => onExtend(m)}>
                 Extend
               </Button>
             )}
@@ -1076,6 +1124,7 @@ function MembershipRow({
         <span style={{ fontFamily: font.body, fontWeight: 600, fontSize: 14, color: color.ink, flex: 1 }}>
           {membership.planName}
         </span>
+        <WaitingPill id={membership.id} />
         <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
       </Row>
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 4 }}>
@@ -1149,19 +1198,19 @@ function MembershipRow({
         </div>
         {membership.cancelled
           ? onRestore && (
-              <Button variant="quiet" onClick={onRestore}>
+              <Button variant="quiet" needsInternet onClick={onRestore}>
                 Undo cancel
               </Button>
             )
           : onCancel && (
-              <Button variant="quiet" tone="danger" onClick={onCancel}>
+              <Button variant="quiet" tone="danger" needsInternet onClick={onCancel}>
                 Cancel
               </Button>
             )}
       </Row>
       {onExtend && (
         <div style={{ marginTop: space.sm }}>
-          <Button variant="ghost" full onClick={onExtend}>
+          <Button variant="ghost" full needsInternet onClick={onExtend}>
             Freeze / extra days
           </Button>
         </div>
@@ -1197,6 +1246,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
             </span>
           </span>
         </Link>
+        <WaitingPill id={payment.id} />
         {payment.voided && (
           // Colour + strikethrough alone is invisible to a screen reader, which
           // would read a cancelled receipt as a normal one.
@@ -1218,7 +1268,7 @@ function PaymentRow({ payment, onVoid }: { payment: Payment; onVoid?: () => void
         {formatINR(payment.amountP)}
       </span>
       {!payment.voided && onVoid && (
-        <Button variant="quiet" tone="danger" onClick={onVoid}>
+        <Button variant="quiet" tone="danger" needsInternet onClick={onVoid}>
           Cancel receipt
         </Button>
       )}

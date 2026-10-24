@@ -27,6 +27,11 @@
  * paint older rows over a change this copy just made.
  *
  * Server side: supabase/migrations/0010_signin_and_records.sql (crm_pull, crm_push).
+ *
+ * Offline front desk (owner #7): step 1 keeps a copy of the gym on this device (savedCopy.ts); step 3
+ * (24 Oct 2026) keeps check-ins, new members, member changes, payments and plans sold, made with no
+ * internet, in this device's waiting list (outbox.ts), shows them at once and sends them, in order,
+ * when the internet is back. Payments made offline get this desk's own receipt series.
  */
 
 import type { Enquiry, Expense, Member, MemberDraft, Membership, Payment, Plan, Visit, WorkoutPlan } from '../types';
@@ -46,7 +51,24 @@ import { authErrorCode, authErrorWords, RECEIPT_REFUSALS, SUSPENDED_WORDS } from
 import type { Role } from '../logic/receiptRules';
 import type { DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
-import { isNetworkFailure, keyId, rowsToRecords, type QueuedCheckIn, type SavedCopyStore } from './savedCopy';
+import { isNetworkFailure, keyId, rowsToRecords, type SavedCopyStore, type SavedGym } from './savedCopy';
+import {
+  deskClaimOwner,
+  deskClaimRecord,
+  isDeskClaim,
+  nextDeskNo,
+  overlay,
+  replayRecords,
+  waitingSummary,
+  type DeskSeries,
+  type OutboxDoc,
+  type OutboxItem,
+  type OutboxKind,
+  type OutboxNote,
+  type OutboxStore,
+  type Replay,
+} from './outbox';
+import { financialYear, highestOfflineSeq, offlineReceiptNo } from '../logic/receipts';
 
 export type RecordKind =
   | 'gym'
@@ -182,7 +204,8 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
     memberships: byTime(list<Membership>(rows.membership), (m) => m.createdAt ?? 0),
     payments: byTime(list<Payment>(rows.payment), (p) => p.createdAt ?? 0),
     visits: byTime(list<Visit>(rows.visit), (v) => v.checkedInAt ?? 0),
-    enquiries: byTime(list<Enquiry>(rows.enquiry), (e) => e.createdAt ?? 0),
+    // Step 3: a desk device's receipt-series claim is kept as an enquiry record; it is not an enquiry.
+    enquiries: byTime(list<Enquiry>(rows.enquiry).filter((e) => !isDeskClaim(String(e.id ?? ''))), (e) => e.createdAt ?? 0),
     expenses: byTime(list<Expense>(rows.expense), (e) => e.createdAt ?? 0),
     workoutPlans: byTime(list<WorkoutPlan>(rows.workout_plan), (w) => w.updatedAt ?? 0),
   };
@@ -274,18 +297,56 @@ export interface CloudCrmOptions {
    * (savedCopy.ts). Without one the panel behaves as before: no internet at start, no panel.
    */
   saved?: SavedCopyStore;
+  /**
+   * Step 3: where this device keeps what it did with no internet until it is sent (outbox.ts). Without
+   * one nothing can be done offline (each save says it waits for the internet).
+   */
+  outbox?: OutboxStore;
 }
 
-/** Saving while offline (step 1 keeps the desk able to LOOK; saving waits for the internet). */
+/** Saving something that cannot wait offline (everything but check-ins, payments, plans sold and members). */
 export const OFFLINE_SAVE_WORDS =
-  "No internet right now, so this can't be saved yet. You can still look everything up and check members in. Try again when the internet is back.";
+  "No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.";
 
-/** What the offline bar says: since when, how old the copy on screen is, check-ins waiting. */
+/** Step 3: a device that never had its receipt series (it was never online since this update). */
+export const NO_DESK_SERIES_WORDS =
+  "Connect this device to the internet once so it can take payments offline. Until then, take this payment when the internet is back.";
+
+/** Step 3: the same sheet pressed again while its first try is still on its way to the server. */
+export const STILL_SENDING_WORDS =
+  "This payment is still being sent. When the internet is back, check the member's page before you take it again.";
+
+/** Step 3: IndexedDB refused to keep it (a full or blocked browser). Nothing was taken. */
+export const NOT_KEPT_WORDS =
+  "Nothing was saved: this device is out of space. Free up space, or try again when the internet is back.";
+
+/** What the offline bar says: since when, how old the copy on screen is, how much is waiting. */
 export interface OfflineState {
   since: number;
   savedAt: number;
-  /** Step 2: check-ins made offline, not yet sent. */
+  /** Items made offline, not yet on the server. */
   queued: number;
+}
+
+/** Step 3: everything the banner and the screens need about this desk's waiting list. */
+export interface DeskState {
+  offline: boolean;
+  /** When the server stopped answering (null: it answers). */
+  since: number | null;
+  /** When the copy on screen was last brought up to date by the server. */
+  savedAt: number;
+  /** Items not yet on the server, the refused ones included. */
+  waiting: number;
+  /** Refused by the server: kept on this device, with plain words. */
+  held: { id: string; kind: OutboxKind; memberId: string; words: string }[];
+  /** One-line notes from sending (a duplicate mobile, another device's change). */
+  notes: OutboxNote[];
+  /** Ids of the records still waiting (members, plans, receipts, check-ins). */
+  waitingIds: string[];
+  payments: number;
+  paidP: number;
+  /** This device has its own receipt series, so it can take payments offline. */
+  canPayOffline: boolean;
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
@@ -318,6 +379,10 @@ interface PendingPush {
   pushId: string;
 }
 
+function messageOf(e: unknown): string {
+  return e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { message?: unknown }).message ?? '') : String(e ?? '');
+}
+
 /** SUSPENDED (#51), as the server raised it or after plainError turned it into words. */
 function isSuspended(e: unknown): boolean {
   return authErrorCode(e) === 'SUSPENDED' || (e instanceof Error && e.message === SUSPENDED_WORDS);
@@ -327,6 +392,26 @@ function isSuspended(e: unknown): boolean {
 function plainError(e: unknown): Error {
   return new Error(authErrorWords(e));
 }
+
+/** Step 3: why the server refused something made offline, in words for the desk (it stays kept). */
+export function heldWords(e: unknown): string {
+  const code = authErrorCode(e);
+  if (code === 'OVER_DUE') {
+    return 'Not sent: it is more than this member owes now (another device took money for the same plan). It is kept on this device. Ask the owner to check this member.';
+  }
+  if (code === 'TOO_OLD') {
+    return 'Not sent: the payment is more than 31 days old, and the front desk can’t send those. It is kept on this device. Ask the owner to sign in here to send it.';
+  }
+  return `Not sent: ${authErrorWords(e)} It is kept on this device.`;
+}
+
+/** No internet (the browser's own failure, or a pull that said so). */
+function isOffline(e: unknown): boolean {
+  return (e as { offline?: boolean } | null)?.offline === true || isNetworkFailure(e);
+}
+
+/** Step 3: someone else kept saving while an item was sent; it waits for the next try (never refused). */
+class BusyError extends Error {}
 
 function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
@@ -345,8 +430,11 @@ export class CloudCrmData implements CrmData {
   private offlineSince: number | null = null;
   /** When the copy on screen was last brought up to date by the server. */
   private savedAt = 0;
-  /** Step 2 (R-55): desk check-ins made offline, waiting to be sent (oldest first). */
-  private queued: QueuedCheckIn[] = [];
+  /** Step 3: this device's waiting list for this gym (a mirror of the outbox document). */
+  private items: OutboxItem[] = [];
+  private notes: OutboxNote[] = [];
+  private desk: DeskSeries | null = null;
+  private seqSeen: Record<string, number> = {};
 
   constructor(
     private readonly key: string,
@@ -365,9 +453,9 @@ export class CloudCrmData implements CrmData {
   }
 
   private signedOutCheck(e: unknown): void {
-    const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { message?: unknown }).message ?? '') : '';
-    if (/\bBAD_KEY\b/.test(msg)) {
-      // The key no longer opens the gym: the copy on this device goes too.
+    if (/\bBAD_KEY\b/.test(messageOf(e))) {
+      // The key no longer opens the gym: the copy on this device goes too. The waiting list does NOT
+      // (it is filed by gym, outbox.ts): the next sign-in to this gym here sends it.
       this.opts.saved?.clear().catch((err: unknown) => console.warn('[offline copy] not cleared', err));
       this.opts.onSignedOut?.();
     }
@@ -375,69 +463,234 @@ export class CloudCrmData implements CrmData {
 
   /** R-55: offline (with when the copy on screen is from), or null when the server answers. */
   offlineState(): OfflineState | null {
-    return this.offlineSince === null ? null : { since: this.offlineSince, savedAt: this.savedAt, queued: this.queued.length };
+    return this.offlineSince === null ? null : { since: this.offlineSince, savedAt: this.savedAt, queued: this.items.length };
+  }
+
+  /** Step 3: the whole picture for the banner and the "Waiting to send" marks. */
+  deskState(): DeskState {
+    const s = waitingSummary(this.items);
+    return {
+      offline: this.offlineSince !== null,
+      since: this.offlineSince,
+      savedAt: this.savedAt,
+      waiting: s.waiting,
+      held: this.items.filter((i) => i.held).map((i) => ({ id: i.id, kind: i.kind, memberId: i.memberId, words: i.held ?? '' })),
+      notes: [...this.notes],
+      waitingIds: [...s.ids],
+      payments: s.payments,
+      paidP: s.paidP,
+      canPayOffline: this.desk !== null && Boolean(this.opts.outbox),
+    };
+  }
+
+  /** Step 3: anything made on this device that is not on the server yet. */
+  hasUnsent(): boolean {
+    return this.items.length > 0;
   }
 
   /** R-55: keep the gym as it is now on this device (never waited for; a failure is logged). */
   private keep(): void {
     const saved = this.opts.saved;
     if (!saved || !this.gym) return;
-    const copy = { v: 1 as const, savedAt: this.savedAt, version: this.version, gym: this.gym, records: rowsToRecords(this.rows), queued: this.queued };
+    // Step 3: what is waiting is kept in the outbox, not in this copy (the copy goes on sign-out).
+    const copy: SavedGym = { v: 1, savedAt: this.savedAt, version: this.version, gym: this.gym, records: rowsToRecords(this.rows) };
     saved.save(keyId(this.key), copy).catch((err: unknown) => console.warn('[offline copy] not saved', err));
   }
 
-  /** R-55: no internet at start: open the copy kept on this device, if there is one. */
-  private async openKeptCopy(): Promise<boolean> {
+  private async readKept(): Promise<SavedGym | null> {
     const copy = await this.opts.saved?.load(keyId(this.key)).catch((err: unknown) => {
       console.warn('[offline copy] could not be read', err);
       return null;
     });
+    return copy ?? null;
+  }
+
+  /** R-55: no internet at start: open the copy kept on this device, if there is one. */
+  private openFrom(copy: SavedGym | null): boolean {
     if (!copy) return false;
     this.rows = emptyRows();
     applyRecords(this.rows, copy.records);
     this.gym = copy.gym;
     this.version = copy.version;
     this.savedAt = copy.savedAt;
-    this.queued = copy.queued ?? [];
     this.offlineSince = this.now();
     return true;
   }
 
-  /** Step 2: check-ins kept on this device before the page was closed (they still need sending). */
-  private async restoreQueue(): Promise<void> {
-    const copy = await this.opts.saved?.load(keyId(this.key)).catch((err: unknown) => {
-      console.warn('[offline copy] could not be read', err);
-      return null;
+  // ---------------------------------------------------------------- step 3: the waiting list
+
+  private gymIdForOutbox(): string | null {
+    return this.gym?.gymId || null;
+  }
+
+  private applyDoc(doc: OutboxDoc): void {
+    this.items = doc.items;
+    this.notes = doc.notes;
+    this.desk = doc.desk;
+    this.seqSeen = doc.seq;
+  }
+
+  /** Read the waiting list again (another tab on this desk may have added to it). */
+  private async reloadOutbox(): Promise<void> {
+    const store = this.opts.outbox;
+    const g = this.gymIdForOutbox();
+    if (!store || !g) return;
+    try {
+      this.applyDoc(await store.load(g));
+    } catch (e) {
+      console.warn('[offline desk] waiting list not read', e);
+    }
+  }
+
+  private async changeOutbox(change: (doc: OutboxDoc) => OutboxDoc | null): Promise<void> {
+    const store = this.opts.outbox;
+    const g = this.gymIdForOutbox();
+    if (!store || !g) return;
+    try {
+      this.applyDoc((await store.update(g, change)).doc);
+    } catch (e) {
+      // The item stays on the list: sent again later, which never saves twice (outbox.ts).
+      console.warn('[offline desk] waiting list not saved', e);
+    }
+  }
+
+  /** Step 2 kept check-ins inside the saved copy; they move to the waiting list once. */
+  private async takeOldCheckIns(copy: SavedGym | null): Promise<boolean> {
+    const old = copy?.queued ?? [];
+    if (!this.opts.outbox || !copy || old.length === 0 || copy.gym.gymId !== this.gymIdForOutbox()) return false;
+    const moved: OutboxItem[] = old.map((q) => ({
+      id: newPushId(),
+      kind: 'checkIn',
+      at: q.at,
+      memberId: q.memberId,
+      records: [{ k: 'visit', id: q.visit.id, d: q.visit }],
+    }));
+    await this.changeOutbox((doc) => {
+      const have = new Set(doc.items.flatMap((i) => i.records.map((r) => r.id)));
+      const add = moved.filter((i) => !have.has(i.records[0].id));
+      return add.length > 0 ? { ...doc, items: [...doc.items, ...add] } : null;
     });
-    this.queued = copy?.queued ?? [];
+    return true;
+  }
+
+  private async quietly(what: string, fn: () => Promise<unknown>): Promise<void> {
+    try {
+      await fn();
+    } catch (e) {
+      console.warn(`[offline desk] ${what}`, e);
+    }
   }
 
   /**
-   * Step 2: send the check-ins made offline, oldest first, each with its own time, through the same
-   * action code as an online check-in (one visit per member per day: a desk that checked the member
-   * in meanwhile is not doubled). A refusal (the member was removed meanwhile) drops that one, logged;
-   * no internet again stops and keeps the rest. True when anything was sent.
+   * Send one waiting item against the server's rows as they are now (outbox.ts, replayRecords). The
+   * item's id is the push id, so a reply lost on the way is answered with the version it got (0011).
    */
-  private async flushQueued(): Promise<boolean> {
-    let sent = false;
-    while (this.queued.length > 0 && this.offlineSince === null) {
-      const q = this.queued[0];
+  private async sendItem(item: OutboxItem): Promise<Replay> {
+    for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
+      const r = replayRecords(item, this.current(false));
+      if (r.drop || r.hold || r.records.length === 0) return r;
+      const base = this.version;
       try {
-        await this.run((d) => d.checkIn(q.memberId, q.day, q.source, q.today), { at: q.at, fromQueue: true });
-        sent = true;
+        const v = await this.api.push(this.key, base, r.records, item.id);
+        if (v === base + 1) {
+          this.version = v;
+          this.adopt(r.records);
+        } else {
+          // Saved before (the same push id came back with its old version): read what is there.
+          await this.pullNow();
+        }
+        return r;
       } catch (e) {
-        if (this.offlineSince !== null || isNetworkFailure(e)) break;
-        // #51: ForgeAI paused the gym. The check-ins really happened: keep them for when it is back.
-        if (isSuspended(e)) {
-          console.warn('[offline check-in] gym paused by ForgeAI; kept to send later', this.queued.length);
+        if (isStale(e)) {
+          await this.pullNow();
+          continue;
+        }
+        throw e;
+      }
+    }
+    throw new BusyError('busy');
+  }
+
+  /**
+   * Step 3: send what this desk did offline, oldest first, each once. No internet again: stop, keep
+   * the rest. Refused by the server: kept, with the reason on screen (money is never dropped); only
+   * a check-in or change for a member who is gone is taken off (logged). True when anything was sent.
+   */
+  private async flushOutbox(includeHeld = false): Promise<boolean> {
+    if (!this.opts.outbox || !this.gymIdForOutbox()) return false;
+    await this.reloadOutbox();
+    let sent = false;
+    for (const item of [...this.items]) {
+      if (this.offlineSince !== null) break;
+      if (item.held && !includeHeld) continue;
+      let r: Replay;
+      try {
+        r = await this.sendItem(item);
+      } catch (e) {
+        if (isOffline(e)) {
+          if (this.offlineSince === null) this.offlineSince = this.now();
           break;
         }
-        console.warn('[offline check-in] refused when sent; dropped', q.memberId, q.day, e);
+        this.signedOutCheck(e);
+        if (e instanceof BusyError || isSuspended(e) || /\bBAD_KEY\b/.test(messageOf(e))) {
+          // #51 paused, signed out, or a busy gym: it really happened; it waits for the next try.
+          console.warn('[offline desk] not sent now; kept to send later', item.kind, item.id, e);
+          break;
+        }
+        console.warn('[offline desk] refused when sent; kept on this device', item.kind, item.id, e);
+        const words = heldWords(e);
+        await this.changeOutbox((doc) => ({ ...doc, items: doc.items.map((i) => (i.id === item.id ? { ...i, held: words } : i)) }));
+        continue;
       }
-      this.queued.shift();
-      this.keep();
+      if (r.hold) {
+        console.warn('[offline desk] cannot be sent yet; kept on this device', item.kind, item.id, r.hold);
+        const words = `Not sent: ${r.hold} It is kept on this device. Ask the owner to check this member.`;
+        await this.changeOutbox((doc) => ({ ...doc, items: doc.items.map((i) => (i.id === item.id ? { ...i, held: words } : i)) }));
+        continue;
+      }
+      if (r.drop) console.warn('[offline desk] could not be sent; taken off the list', item.kind, item.id, r.drop);
+      const note: OutboxNote | null = r.note ? { id: newPushId(), at: this.now(), memberId: item.memberId, text: r.note } : null;
+      await this.changeOutbox((doc) => ({
+        ...doc,
+        items: doc.items.filter((i) => i.id !== item.id),
+        notes: note ? [...doc.notes, note].slice(-20) : doc.notes,
+      }));
+      sent = true;
     }
     return sent;
+  }
+
+  /**
+   * Step 3: this device's own receipt series (D1, D2 ...), claimed once while online (outbox.ts,
+   * "the desk's receipt series number"). Kept in the waiting list's document, which outlives sign-out.
+   */
+  private async ensureDesk(): Promise<void> {
+    const g = this.gymIdForOutbox();
+    if (!this.opts.outbox || !g || this.offlineSince !== null) return;
+    const mine = this.desk;
+    if (mine && deskClaimOwner(this.rows.enquiry, mine.no) === mine.deviceId) return;
+    const deviceId = mine?.deviceId ?? newPushId();
+    for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
+      // Our own number that never reached the server is claimed again, unless another device has it.
+      const no = mine && deskClaimOwner(this.rows.enquiry, mine.no) === null ? mine.no : nextDeskNo(this.rows.enquiry.keys());
+      const at = this.now();
+      const claim = deskClaimRecord(no, deviceId, at, g);
+      const base = this.version;
+      try {
+        const v = await this.api.push(this.key, base, [claim], newPushId());
+        this.version = v;
+        this.adopt([claim]);
+      } catch (e) {
+        if (isStale(e)) {
+          await this.pullNow();
+          continue;
+        }
+        throw e;
+      }
+      const desk: DeskSeries = { no, deviceId, claimedAt: at };
+      await this.changeOutbox((doc) => ({ ...doc, desk }));
+      return;
+    }
   }
 
   /** Bring this copy up to date. True when anything changed. Runs inside the queue. */
@@ -467,34 +720,54 @@ export class CloudCrmData implements CrmData {
     return first || changed || gymChanged || wasOffline;
   }
 
-  private current(withQueued = true): CrmSnapshot {
+  /** The gym as the screens show it: the server's rows, with what is waiting on this device on top. */
+  private current(withWaiting = true): CrmSnapshot {
     if (!this.gym) throw new Error('The gym is not loaded yet.');
     const snap = buildSnapshot(this.rows, this.gym);
-    // Step 2: the screens show a check-in made offline at once (one per member per day).
-    if (withQueued) {
-      for (const q of this.queued) {
-        if (!snap.visits.some((v) => v.memberId === q.memberId && v.visitedOn === q.day)) snap.visits.push(q.visit);
-      }
-    }
-    return snap;
+    return withWaiting ? overlay(snap, this.items) : snap;
   }
 
-  /** For the poll: pull what other devices wrote. True when the screens should redraw. */
+  /** For the poll: pull what other devices wrote, and send what this desk kept. True when the screens should redraw. */
   async refresh(): Promise<boolean> {
-    const changed = await this.serial(async () => {
+    return this.serial(async () => {
       let pendingSent = false;
       if (this.pending) {
         try {
           pendingSent = await this.flushPending();
         } catch {
-          // Still offline: try again on the next tick.
+          // quiet: still offline; the next tick tries again (the push is kept).
         }
       }
-      return (await this.pullNow()) || pendingSent;
+      const before = this.items.length;
+      const pulled = await this.pullNow();
+      await this.reloadOutbox();
+      let sent = false;
+      if (this.offlineSince === null) {
+        sent = await this.flushOutbox();
+        await this.quietly('receipt series not set up yet', () => this.ensureDesk());
+      }
+      return pulled || pendingSent || sent || this.items.length !== before;
     });
-    // Step 2: online again: the check-ins kept offline go now, each in its own turn of the queue.
-    if (this.queued.length > 0 && this.offlineSince === null) return (await this.flushQueued()) || changed;
-    return changed;
+  }
+
+  /** Step 3: "Try again" on the banner: send the refused ones once more (the others go anyway). */
+  async sendAgain(): Promise<boolean> {
+    return this.serial(async () => {
+      if (this.offlineSince !== null) {
+        try {
+          await this.pullNow();
+        } catch (e) {
+          if (isOffline(e)) return false;
+          throw e;
+        }
+      }
+      return this.flushOutbox(true);
+    });
+  }
+
+  /** Step 3: the desk read a note ("OK"). */
+  dismissNote(id: string): Promise<void> {
+    return this.serial(() => this.changeOutbox((doc) => (doc.notes.some((n) => n.id === id) ? { ...doc, notes: doc.notes.filter((n) => n.id !== id) } : null)));
   }
 
   /**
@@ -539,7 +812,7 @@ export class CloudCrmData implements CrmData {
         // OWNER_ONLY too (review of 0018): a refusal is final. Kept as "pending", it was sent again
         // before every later action, and the whole desk froze until the page was reloaded.
         // UAT WP3: the receipt refusals of 0021 are final too.
-        if (FINAL_REFUSAL.test(e instanceof Error ? e.message : String((e as { message?: unknown })?.message ?? ''))) {
+        if (FINAL_REFUSAL.test(messageOf(e))) {
           throw plainError(e);
         }
         last = e;
@@ -552,12 +825,19 @@ export class CloudCrmData implements CrmData {
   load(): Promise<CrmSnapshot> {
     return this.serial(async () => {
       if (!this.gym) {
-        await this.restoreQueue();
+        const kept = await this.readKept();
         try {
           await this.pullNow();
         } catch (e) {
           // R-55: no internet at start: the copy kept on this device, under the offline bar.
-          if (!(e as { offline?: boolean }).offline || !(await this.openKeptCopy())) throw e;
+          if (!(e as { offline?: boolean }).offline || !this.openFrom(kept)) throw e;
+        }
+        await this.reloadOutbox();
+        if (await this.takeOldCheckIns(kept)) this.keep();
+        if (this.offlineSince === null) {
+          // Opened online: what this desk kept from before goes now, and the device gets its series.
+          await this.quietly('waiting list not sent at start', () => this.flushOutbox(true));
+          await this.quietly('receipt series not set up yet', () => this.ensureDesk());
         }
       }
       return clone(this.current());
@@ -569,10 +849,7 @@ export class CloudCrmData implements CrmData {
    * `lateSaveIsSafe`: the action can never save the same thing twice by itself (adding members: a
    * mobile already in the gym is refused), so a late save going through first does not stop it.
    */
-  private run<T>(
-    op: (d: LocalCrmData) => Promise<T>,
-    { lateSaveIsSafe = false, at, fromQueue = false }: { lateSaveIsSafe?: boolean; at?: number; fromQueue?: boolean } = {},
-  ): Promise<T> {
+  private run<T>(op: (d: LocalCrmData) => Promise<T>, { lateSaveIsSafe = false }: { lateSaveIsSafe?: boolean } = {}): Promise<T> {
     return this.serial(async () => {
       if (!this.gym) await this.pullNow();
       // R-55: showing the kept copy: only once the server answers again can anything be saved.
@@ -584,6 +861,11 @@ export class CloudCrmData implements CrmData {
           throw e;
         }
       }
+      // Step 3: what this desk did offline goes first, in order (an offline payment lands before a new one).
+      if (this.items.some((i) => !i.held)) {
+        await this.flushOutbox();
+        if (this.offlineSince !== null) throw new Error(OFFLINE_SAVE_WORDS);
+      }
       // A change that never got an answer goes first. If it lands now, STOP: the person is most
       // likely pressing the same button again because the first time "failed", and doing this
       // action too would save it twice. They see it on screen and decide.
@@ -594,10 +876,10 @@ export class CloudCrmData implements CrmData {
         throw new Error('Your last change was saved just now (the internet came back). Check the screen before doing it again.');
       }
       for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
-        // A queued check-in is sent against the server's rows only (else it would find itself and stop).
-        const before = this.current(!fromQueue);
+        // The server's rows only: what is still waiting here (a refused receipt) is never sent along.
+        const before = this.current(false);
         const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
-        const copy = new LocalCrmData({ store: memoryStore(raw), now: at === undefined ? this.now : () => at, role: this.opts.role, today: this.opts.today });
+        const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
         const result = await op(copy);
         const after = await copy.load();
         const changes = diffSnapshots(before, after);
@@ -618,6 +900,90 @@ export class CloudCrmData implements CrmData {
     });
   }
 
+  /**
+   * Step 3: with no internet, do the action with the browser store's own rules on the gym as this
+   * desk sees it (server rows + what is waiting), and keep what it made on the waiting list. A
+   * receipt gets this desk's next offline number; the number and the item are written in one
+   * transaction, so a second tab on the same desk can never take the same number.
+   */
+  private keepOffline<T>(
+    kind: OutboxKind,
+    memberId: string,
+    op: (d: LocalCrmData) => Promise<T>,
+    extra: { numbered?: boolean; requestId?: string | null; patch?: Partial<MemberDraft> } = {},
+  ): Promise<T> {
+    return this.serial(async () => {
+      const store = this.opts.outbox;
+      const g = this.gymIdForOutbox();
+      if (!store || !g || !this.gym) throw new Error(OFFLINE_SAVE_WORDS);
+      // The same press whose online save was cut off and is still waiting to be resent (`pending`).
+      if (extra.requestId && this.pending?.changes.some((c) => (c.d as { requestId?: unknown } | null)?.requestId === extra.requestId)) {
+        throw new Error(STILL_SENDING_WORDS);
+      }
+      for (let attempt = 0; attempt < MAX_TRIES; attempt += 1) {
+        await this.reloadOutbox();
+        const desk = this.desk;
+        if (extra.numbered && !desk) throw new Error(NO_DESK_SERIES_WORDS);
+        const before = this.current();
+        const baseUpdatedAt = before.members.find((m) => m.id === memberId)?.updatedAt;
+        const seen = this.seqSeen;
+        let taken: { key: string; seq: number } | null = null;
+        const receiptNo =
+          extra.numbered && desk
+            ? (existing: readonly { receiptNo: string }[], paidOn: DateISO, prefix: string | null | undefined) => {
+                const key = `${desk.no}:${financialYear(paidOn).slice(2)}`;
+                const seq = Math.max(seen[key] ?? 0, highestOfflineSeq(existing, desk.no, paidOn, prefix)) + 1;
+                const no = offlineReceiptNo(desk.no, seq, paidOn, prefix);
+                taken = { key, seq };
+                return no;
+              }
+            : undefined;
+        const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
+        const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today, receiptNo });
+        const result = await op(copy);
+        const changes = diffSnapshots(before, await copy.load()).filter((c) => c.k !== 'gym');
+        // Nothing new (the same check-in again, the same press again): what is on screen is the answer.
+        if (changes.length === 0) return result;
+        const item: OutboxItem = {
+          id: newPushId(),
+          kind,
+          at: this.now(),
+          memberId: memberId || (changes.find((c) => c.k === 'member')?.id ?? ''),
+          records: changes,
+          ...(extra.patch ? { patch: extra.patch, ...(baseUpdatedAt !== undefined ? { baseUpdatedAt } : {}) } : {}),
+        };
+        const got = taken as { key: string; seq: number } | null;
+        const expected = got ? (seen[got.key] ?? 0) : 0;
+        let res: { doc: OutboxDoc; changed: boolean };
+        try {
+          res = await store.update(g, (doc) => {
+            // Another tab took a number meanwhile: build it again with the next one.
+            if (got && (doc.seq[got.key] ?? 0) !== expected) return null;
+            return { ...doc, items: [...doc.items, item], seq: got ? { ...doc.seq, [got.key]: got.seq } : doc.seq };
+          });
+        } catch (e) {
+          console.warn('[offline desk] not kept on this device', e);
+          throw new Error(NOT_KEPT_WORDS);
+        }
+        if (!res.changed) continue;
+        this.applyDoc(res.doc);
+        return result;
+      }
+      throw new Error('Someone else is saving at the same time. Please try again.');
+    });
+  }
+
+  /** Online as before; with no internet, kept on this device and sent later (`keepOffline`). */
+  private async orKeep<T>(online: () => Promise<T>, offline: () => Promise<T>): Promise<T> {
+    try {
+      return await online();
+    } catch (e) {
+      // run() tried the server first and it cannot be reached.
+      if (e instanceof Error && e.message === OFFLINE_SAVE_WORDS) return offline();
+      throw e;
+    }
+  }
+
   /** Our own push succeeded: fold it in (and the gym's new name, which the server copied). */
   private adopt(changes: CrmRecord[]): void {
     applyRecords(this.rows, changes);
@@ -635,8 +1001,12 @@ export class CloudCrmData implements CrmData {
     void _ignored;
     return this.run((d) => d.updateGym(rest));
   }
+  /** Step 3: offline, a new member is kept here (the mobile is checked against the copy first). */
   createMember(draft: Parameters<CrmData['createMember']>[0]) {
-    return this.run((d) => d.createMember(draft));
+    return this.orKeep(
+      () => this.run((d) => d.createMember(draft)),
+      () => this.keepOffline('member', '', (d) => d.createMember(draft)),
+    );
   }
   /**
    * The import's bulk save: one push for up to BULK_ONE_PUSH members (the server takes at most 1000
@@ -657,8 +1027,12 @@ export class CloudCrmData implements CrmData {
     }
     return saved;
   }
+  /** Step 3: offline, a change to a member's details is kept here; sent later, newest change wins. */
   updateMember(id: string, patch: Parameters<CrmData['updateMember']>[1]) {
-    return this.run((d) => d.updateMember(id, patch));
+    return this.orKeep(
+      () => this.run((d) => d.updateMember(id, patch)),
+      () => this.keepOffline('memberEdit', id, (d) => d.updateMember(id, patch), { patch }),
+    );
   }
   setMemberArchived(id: string, archived: boolean) {
     return this.run((d) => d.setMemberArchived(id, archived));
@@ -669,11 +1043,6 @@ export class CloudCrmData implements CrmData {
   updatePlan(id: string, patch: Parameters<CrmData['updatePlan']>[1]) {
     return this.run((d) => d.updatePlan(id, patch));
   }
-  /**
-   * Data migration: terms in pushes of IMPORT_TERMS_BATCH (a term is up to 3 records: plan,
-   * membership, receipt — well under the server's 1000-row cap). Already-imported terms are
-   * skipped inside each push, so a stop part-way is safe to run again.
-   */
   /** Undo in parts of BULK_ONE_PUSH records, so no push passes the server's 1000-row cap. */
   async undoImport(importId: string): Promise<UndoImportResult> {
     const total: UndoImportResult = { members: 0, plans: 0, memberships: 0, payments: 0, kept: { members: 0, memberships: 0, plans: 0 }, more: false };
@@ -689,6 +1058,11 @@ export class CloudCrmData implements CrmData {
     return total;
   }
 
+  /**
+   * Data migration: terms in pushes of IMPORT_TERMS_BATCH (a term is up to 3 records: plan,
+   * membership, receipt — well under the server's 1000-row cap). Already-imported terms are
+   * skipped inside each push, so a stop part-way is safe to run again.
+   */
   async importTerms(items: readonly ImportTermItem[], importId: string): Promise<ImportTermsResult> {
     const total: ImportTermsResult = { plans: 0, memberships: 0, payments: 0, skipped: 0 };
     for (let i = 0; i < items.length; i += IMPORT_TERMS_BATCH) {
@@ -701,8 +1075,12 @@ export class CloudCrmData implements CrmData {
     }
     return total;
   }
+  /** Step 3: offline, a plan sold (with its payment and this desk's receipt number) is kept here. */
   sellMembership(input: SellMembershipInput): Promise<SellMembershipResult> {
-    return this.run((d) => d.sellMembership(input));
+    return this.orKeep(
+      () => this.run((d) => d.sellMembership(input)),
+      () => this.keepOffline('sale', input.memberId, (d) => d.sellMembership(input), { numbered: input.collectNowP > 0, requestId: input.requestId }),
+    );
   }
   cancelMembership(id: string, reason: string | null) {
     return this.run((d) => d.cancelMembership(id, reason));
@@ -710,43 +1088,40 @@ export class CloudCrmData implements CrmData {
   uncancelMembership(id: string) {
     return this.run((d) => d.uncancelMembership(id));
   }
+  /** Step 3: offline, a payment is kept here with this desk's own receipt number, printed at once. */
   recordPayment(input: RecordPaymentInput) {
-    return this.run((d) => d.recordPayment(input));
+    return this.orKeep(
+      () => this.run((d) => d.recordPayment(input)),
+      () => this.keepOffline('payment', input.memberId, (d) => d.recordPayment(input), { numbered: true, requestId: input.requestId }),
+    );
   }
   voidPayment(id: string, reason: string) {
     return this.run((d) => d.voidPayment(id, reason));
   }
   /**
    * Step 2 (R-55): with no internet a desk check-in is kept on this device and shown at once; it is
-   * sent when the internet is back (`flushQueued`). Online, as before.
+   * sent when the internet is back, with the time it was made. Online, as before.
    */
-  async checkIn(memberId: string, day: string, source: Visit['source'], today: string): Promise<Visit> {
-    try {
-      return await this.run((d) => d.checkIn(memberId, day, source, today));
-    } catch (e) {
-      // The server cannot be reached (run() tried first): keep it on this device, send it later.
-      if (e instanceof Error && e.message === OFFLINE_SAVE_WORDS) return this.keepCheckIn(memberId, day, source, today);
-      throw e;
-    }
+  checkIn(memberId: string, day: string, source: Visit['source'], today: string): Promise<Visit> {
+    return this.orKeep(
+      () => this.run((d) => d.checkIn(memberId, day, source, today)),
+      () => this.keepOffline('checkIn', memberId, (d) => d.checkIn(memberId, day, source, today)),
+    );
   }
-
-  /** Step 2: the check-in, made with the browser store's own rules on the copy on screen, kept for later. */
-  private keepCheckIn(memberId: string, day: string, source: Visit['source'], today: string): Promise<Visit> {
-    return this.serial(async () => {
-      const before = this.current();
-      const raw = JSON.stringify({ version: SCHEMA_VERSION, snapshot: before });
-      const copy = new LocalCrmData({ store: memoryStore(raw), now: this.now, role: this.opts.role, today: this.opts.today });
-      const visit = await copy.checkIn(memberId, day, source, today);
-      const known = before.visits.some((v) => v.id === visit.id);
-      if (!known) {
-        this.queued.push({ memberId, day, source, today, at: visit.checkedInAt, visit });
-        this.keep();
-      }
-      return visit;
-    });
-  }
-  undoCheckIn(memberId: string, day: string) {
-    return this.run((d) => d.undoCheckIn(memberId, day));
+  /** Offline, only a check-in still waiting on this device can be taken back (it never reached the server). */
+  undoCheckIn(memberId: string, day: string): Promise<void> {
+    return this.orKeep(
+      () => this.run((d) => d.undoCheckIn(memberId, day)),
+      () =>
+        this.serial(async () => {
+          await this.reloadOutbox();
+          const it = this.items.find(
+            (i) => i.kind === 'checkIn' && i.records.some((r) => r.k === 'visit' && (r.d as Visit).memberId === memberId && (r.d as Visit).visitedOn === day),
+          );
+          if (!it) throw new Error(OFFLINE_SAVE_WORDS);
+          await this.changeOutbox((doc) => ({ ...doc, items: doc.items.filter((i) => i.id !== it.id) }));
+        }),
+    );
   }
   createEnquiry(draft: Parameters<CrmData['createEnquiry']>[0]) {
     return this.run((d) => d.createEnquiry(draft));

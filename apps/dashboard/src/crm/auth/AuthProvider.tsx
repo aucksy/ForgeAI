@@ -20,7 +20,12 @@ import * as authApi from './api';
 import { can, roleOf, type Action } from './permissions';
 import { lostWords, SIGNED_OUT_WORDS, type Role, type SignedIn } from './signin';
 
-/** R-55: signing out (or losing the key) deletes this device's copy of the gym (savedCopy.ts). */
+/**
+ * R-55: signing out (or losing the key) deletes this device's copy of the gym (savedCopy.ts). Step 3:
+ * NOT what is still waiting to be sent (data/outbox.ts, filed by gym): an unsent payment is never
+ * deleted; the next sign-in to the same gym on this device sends it. Staff & sign-in greys out
+ * "Sign out" while anything is still waiting.
+ */
 function forgetOfflineCopy(): void {
   browserSavedCopy()?.clear().catch((e: unknown) => console.warn('[offline copy] not cleared', e));
 }

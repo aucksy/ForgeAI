@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { CloudCrmData, OFFLINE_SAVE_WORDS, type CrmCloudApi, type CrmRecord, type PullResult } from '../../src/crm/data/cloud';
 import { isNetworkFailure, keyId, rowsToRecords, usableCopy, type SavedCopyStore, type SavedGym } from '../../src/crm/data/savedCopy';
 import { emptyRows } from '../../src/crm/data/cloud';
+import { memoryOutbox } from '../../src/crm/data/outbox';
 import type { MemberDraft } from '../../src/crm/types';
 
 const TODAY = '2026-10-22';
@@ -161,30 +162,31 @@ describe('R-55: offline front desk, step 1 (owner #7)', () => {
   });
 });
 
-describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)', () => {
+describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later; step 3 moved them to the waiting list)', () => {
   async function offlineDesk() {
     const server = new Server();
     const saved = memoryCopy();
-    const first = new CloudCrmData('key-1', server, opts(saved));
+    const outbox = memoryOutbox();
+    const first = new CloudCrmData('key-1', server, { ...opts(saved), outbox });
     const m = await first.createMember(member('Riya Sharma', '+919876543210'));
     await settle();
     server.down = true;
     const t = { now: 60_000 };
-    const desk = new CloudCrmData('key-1', server, opts(saved, t));
+    const desk = new CloudCrmData('key-1', server, { ...opts(saved, t), outbox });
     await desk.load();
-    return { server, saved, desk, m, t };
+    return { server, saved, outbox, desk, m, t };
   }
   const visitsOnServer = (server: Server) => [...server.rows.values()].filter((r) => r.k === 'visit' && !r.x).map((r) => r.d as { memberId: string; checkedInAt: number; visitedOn: string });
+  const waiting = (outbox: ReturnType<typeof memoryOutbox>) => outbox.docs.get('g1')?.items ?? [];
 
   it('a check-in with no internet shows at once and waits on this device; the bar counts it', async () => {
-    const { server, saved, desk, m } = await offlineDesk();
+    const { server, outbox, desk, m } = await offlineDesk();
     const v = await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     expect(v.checkedInAt).toBe(60_000);
     expect((await desk.load()).visits.map((x) => x.memberId)).toEqual([m.id]);
     expect(visitsOnServer(server)).toEqual([]);
     expect(desk.offlineState()?.queued).toBe(1);
-    await settle();
-    expect(saved.kept.get(keyId('key-1'))?.queued).toHaveLength(1);
+    expect(waiting(outbox)).toHaveLength(1);
   });
 
   it('a second tap for the same member the same day is the same check-in, never two', async () => {
@@ -195,8 +197,19 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)'
     expect(desk.offlineState()?.queued).toBe(1);
   });
 
+  it('a check-in still waiting can be taken back offline; nothing reaches the server', async () => {
+    const { server, outbox, desk, m } = await offlineDesk();
+    await desk.checkIn(m.id, TODAY, 'desk', TODAY);
+    await desk.undoCheckIn(m.id, TODAY);
+    expect(waiting(outbox)).toHaveLength(0);
+    expect((await desk.load()).visits).toEqual([]);
+    server.down = false;
+    await desk.refresh();
+    expect(visitsOnServer(server)).toEqual([]);
+  });
+
   it('the internet back: the check-in is sent with the time it was made, and the bar goes', async () => {
-    const { server, desk, m, t } = await offlineDesk();
+    const { server, outbox, desk, m, t } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     t.now = 900_000; // sent much later
     server.down = false;
@@ -205,11 +218,12 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)'
     const onServer = visitsOnServer(server);
     expect(onServer).toHaveLength(1);
     expect(onServer[0]).toMatchObject({ memberId: m.id, visitedOn: TODAY, checkedInAt: 60_000 });
-    expect((await desk.load()).visits).toHaveLength(1); // the kept one gave way to the server's
+    expect((await desk.load()).visits).toHaveLength(1);
+    expect(waiting(outbox)).toHaveLength(0);
   });
 
   it('#51: the gym is paused by ForgeAI when the internet is back: the check-ins are kept, and go once it is switched back on', async () => {
-    const { server, saved, desk, m } = await offlineDesk();
+    const { server, outbox, desk, m } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     server.down = false;
     const push = server.push.bind(server);
@@ -219,9 +233,9 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)'
       return push(k, base, records);
     };
     await desk.refresh();
-    await settle();
     expect(visitsOnServer(server)).toEqual([]);
-    expect(saved.kept.get(keyId('key-1'))?.queued).toHaveLength(1);
+    expect(waiting(outbox)).toHaveLength(1);
+    expect(waiting(outbox)[0].held ?? null).toBeNull();
     expect((await desk.load()).visits.map((x) => x.memberId)).toEqual([m.id]);
     paused = false;
     await desk.refresh();
@@ -229,30 +243,48 @@ describe('R-55: offline front desk, step 2 (check-ins kept offline, sent later)'
   });
 
   it('the page closed while offline: after a reload the check-in is still waiting, and goes when online', async () => {
-    const { server, saved, desk, m } = await offlineDesk();
+    const { server, saved, outbox, desk, m } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
-    await settle();
     server.down = false;
-    const again = new CloudCrmData('key-1', server, opts(saved, { now: 70_000 }));
+    const again = new CloudCrmData('key-1', server, { ...opts(saved, { now: 70_000 }), outbox });
     await again.load();
     await again.refresh();
     expect(visitsOnServer(server)).toHaveLength(1);
   });
 
   it('another desk checked the same member in meanwhile: still one visit', async () => {
-    const { server, saved, desk, m } = await offlineDesk();
+    const { server, desk, m } = await offlineDesk();
     await desk.checkIn(m.id, TODAY, 'desk', TODAY);
     server.down = false;
     const other = new CloudCrmData('key-1', server, opts(memoryCopy(), { now: 80_000 }));
     await other.checkIn(m.id, TODAY, 'desk', TODAY);
     await desk.refresh();
     expect(visitsOnServer(server)).toHaveLength(1);
-    void saved;
   });
 
-  it('other saving still waits for the internet, in words that say check-ins work', async () => {
+  it("step 2's check-ins kept inside the saved copy move to the waiting list once, and are sent", async () => {
+    const server = new Server();
+    const saved = memoryCopy();
+    const first = new CloudCrmData('key-1', server, opts(saved));
+    const m = await first.createMember(member('Riya Sharma', '+919876543210'));
+    await settle();
+    const copy = saved.kept.get(keyId('key-1'))!;
+    const visit = { id: 'v-old', gymId: 'g1', memberId: m.id, visitedOn: TODAY, checkedInAt: 5_000, source: 'desk' as const };
+    copy.queued = [{ memberId: m.id, day: TODAY, source: 'desk', today: TODAY, at: 5_000, visit }];
+    server.down = true;
+    const outbox = memoryOutbox();
+    const desk = new CloudCrmData('key-1', server, { ...opts(saved), outbox });
+    await desk.load();
+    expect(outbox.docs.get('g1')?.items).toHaveLength(1);
+    expect((await desk.load()).visits.map((v) => v.id)).toEqual(['v-old']);
+    server.down = false;
+    await desk.refresh();
+    expect(visitsOnServer(server)).toEqual([expect.objectContaining({ checkedInAt: 5_000 })]);
+  });
+
+  it('other saving still waits for the internet, in words that say what still works', async () => {
     const { desk } = await offlineDesk();
-    await expect(desk.createMember(member('Aman Verma', '+919812345678'))).rejects.toThrow(OFFLINE_SAVE_WORDS);
-    expect(OFFLINE_SAVE_WORDS).toMatch(/check members in/);
+    await expect(desk.createPlan({ name: 'Monthly' } as never)).rejects.toThrow(OFFLINE_SAVE_WORDS);
+    expect(OFFLINE_SAVE_WORDS).toMatch(/Check-ins, payments and new members still work/);
   });
 });

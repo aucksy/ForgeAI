@@ -62,7 +62,10 @@ const bodyText = { margin: 0, fontFamily: font.body, fontSize: 14, color: color.
 
 export function PeopleScreen() {
   const { session, signOut, lost } = useAuth();
-  const { snapshot } = useCrm();
+  const { snapshot, desk } = useCrm();
+  // Offline front desk, step 3: payments, members and check-ins made here that are not online yet.
+  const unsent = desk ? desk.waiting - desk.held.length : 0;
+  const refused = desk?.held.length ?? 0;
   const key = session?.ownerKey ?? '';
   const me = session?.person ?? null;
   const isOwner = me?.role === 'owner';
@@ -293,8 +296,16 @@ export function PeopleScreen() {
       {sheet?.kind === 'me-signout' && (
         <ConfirmSheet
           title="Sign out of this device?"
-          words="Your gym stays online. To come back, sign in with your mobile number and a new code. An owner makes the code in Staff & sign-in."
+          words={
+            unsent > 0
+              ? `${unsent} saved on this device ${unsent === 1 ? 'is' : 'are'} still waiting to send. Wait for "All sent" at the top before you sign out.`
+              : refused > 0
+                ? `${refused} saved on this device could not be sent (see the top of the page). If you sign out, ${refused === 1 ? 'it stays' : 'they stay'} on this device until someone from this gym signs in here again.`
+                : 'Your gym stays online. To come back, sign in with your mobile number and a new code. An owner makes the code in Staff & sign-in.'
+          }
           action="Sign out"
+          // Never sign out over unsent payments: they would wait on this device until someone signs in again.
+          blocked={unsent > 0}
           onClose={closeSheet}
           run={async () => {
             navigate('/');
@@ -452,6 +463,7 @@ function ConfirmSheet({
   onClose,
   run,
   fail,
+  blocked = false,
 }: {
   title: string;
   words: string;
@@ -459,6 +471,8 @@ function ConfirmSheet({
   onClose: () => void;
   run: () => Promise<void>;
   fail: (e: unknown) => string;
+  /** The action can't be done now (the words say why). */
+  blocked?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -473,7 +487,7 @@ function ConfirmSheet({
           </Button>
           <Button
             tone="danger"
-            disabled={busy}
+            disabled={busy || blocked}
             onClick={async () => {
               setBusy(true);
               setError(null);

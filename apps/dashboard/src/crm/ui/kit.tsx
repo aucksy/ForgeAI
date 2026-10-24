@@ -26,6 +26,7 @@ import {
 } from 'react';
 
 import { color, font, gradients, radius, space } from '../../theme';
+import { NEEDS_INTERNET_WORDS, useOffline } from './offlineContext';
 
 /** Minimum comfortable touch target. Google and Apple both land near 44px. */
 export const TOUCH = 44;
@@ -388,6 +389,7 @@ export function Button({
   full,
   ariaLabel,
   wrap,
+  needsInternet,
 }: {
   children: ReactNode;
   /**
@@ -409,7 +411,14 @@ export function Button({
   ariaLabel?: string;
   /** Let a long label (a member's name) wrap onto a second line instead of overflowing. */
   wrap?: boolean;
+  /**
+   * Offline front desk, step 3: this action cannot be kept for later. While the gym's server cannot
+   * be reached the button is greyed out with "Needs internet" under it.
+   */
+  needsInternet?: boolean;
 }) {
+  const offline = useOffline().offline && needsInternet === true;
+  disabled = disabled || offline;
   const danger = tone === 'danger';
   const base: CSSProperties = {
     appearance: 'none',
@@ -450,16 +459,24 @@ export function Button({
             color: danger ? color.criticalText : color.inkSecondary,
           };
 
-  return (
+  const button = (
     <button
       type={type}
       onClick={onClick ? () => runClick(onClick) : undefined}
       disabled={disabled}
       aria-label={ariaLabel}
+      aria-description={offline ? NEEDS_INTERNET_WORDS : undefined}
       style={{ ...base, ...skin }}
     >
       {children}
     </button>
+  );
+  if (!offline) return button;
+  return (
+    <span style={{ display: 'inline-grid', gap: 2, justifyItems: 'center', width: full ? '100%' : undefined }}>
+      {button}
+      <span style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted }}>{NEEDS_INTERNET_WORDS}</span>
+    </span>
   );
 }
 

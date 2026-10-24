@@ -87,7 +87,7 @@ export function PlansScreen() {
       <PageHeader
         title="Plans"
         subtitle="What you sell, and for how much"
-        actions={canEdit ? <Button onClick={() => setAdding(true)}>+ Add plan</Button> : undefined}
+        actions={canEdit ? <Button needsInternet onClick={() => setAdding(true)}>+ Add plan</Button> : undefined}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -104,8 +104,8 @@ export function PlansScreen() {
             action={
               canEdit && (
               <Row gap={space.sm}>
-                <Button onClick={() => setAdding(true)}>+ Add plan</Button>
-                <Button variant="ghost" onClick={addStarterPlans} disabled={seeding}>
+                <Button needsInternet onClick={() => setAdding(true)}>+ Add plan</Button>
+                <Button variant="ghost" needsInternet onClick={addStarterPlans} disabled={seeding}>
                   {seeding ? 'Adding…' : 'Use a starter price list'}
                 </Button>
               </Row>
@@ -199,7 +199,7 @@ function PlanRow({
     </div>
   );
   const edit = onEdit ? (
-    <Button variant="ghost" onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
+    <Button variant="ghost" needsInternet onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
       Edit
     </Button>
   ) : null;

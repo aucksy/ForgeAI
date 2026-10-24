@@ -165,6 +165,12 @@ export interface LocalCrmOptions {
   role?: Role;
   /** India's day (dates.todayISO). Injected so tests are fixed in time. */
   today?: () => DateISO;
+  /**
+   * Offline front desk, step 3: the number for a NEW desk receipt (a sale's or a payment's). The
+   * cloud copy passes this desk's own offline series when there is no internet (logic/receipts.ts,
+   * `offlineReceiptNo`); such receipts are also marked `offline: true`. Default: the normal series.
+   */
+  receiptNo?: (existing: readonly { receiptNo: string }[], paidOn: DateISO, prefix: string | null | undefined) => string;
 }
 
 export class LocalCrmData implements CrmData {
@@ -173,6 +179,7 @@ export class LocalCrmData implements CrmData {
   private readonly seed: (() => CrmSnapshot) | undefined;
   private readonly role: Role;
   private readonly today: () => DateISO;
+  private readonly offlineReceiptNo: LocalCrmOptions['receiptNo'];
 
   private cache: CrmSnapshot | null = null;
   /** Exactly what is currently in storage, so we can detect another tab's write. */
@@ -185,6 +192,17 @@ export class LocalCrmData implements CrmData {
     this.seed = opts.seed;
     this.role = opts.role ?? 'owner';
     this.today = opts.today ?? (() => todayISO());
+    this.offlineReceiptNo = opts.receiptNo;
+  }
+
+  /** A new desk receipt's number: the normal series, or this desk's offline one (see the option). */
+  private receiptNoFor(existing: readonly { receiptNo: string }[], paidOn: DateISO, prefix: string | null | undefined): string {
+    return this.offlineReceiptNo ? this.offlineReceiptNo(existing, paidOn, prefix) : nextReceiptNo(existing, paidOn, prefix);
+  }
+
+  /** `{ offline: true }` on a receipt numbered from the offline series, else nothing. */
+  private offlineMark(): { offline?: true } {
+    return this.offlineReceiptNo ? { offline: true } : {};
   }
 
   // ------------------------------------------------------------ persistence
@@ -468,7 +486,7 @@ export class LocalCrmData implements CrmData {
           amountP: input.collectNowP,
           method: input.method,
           paidOn: input.paidOn,
-          receiptNo: nextReceiptNo(db.payments, input.paidOn, db.gym.receiptPrefix),
+          receiptNo: this.receiptNoFor(db.payments, input.paidOn, db.gym.receiptPrefix),
           reference: input.reference,
           note: null,
           voided: false,
@@ -476,6 +494,7 @@ export class LocalCrmData implements CrmData {
           collectedBy: input.soldBy,
           collectedByName: input.soldByName ?? null,
           ...(input.requestId ? { requestId: input.requestId } : {}),
+          ...this.offlineMark(),
           createdAt: ts,
           // Snapshot: registering for GST later must not rewrite this receipt.
           gstinAtSale: db.gym.gstin,
@@ -792,7 +811,7 @@ export class LocalCrmData implements CrmData {
         amountP: input.amountP,
         method: input.method,
         paidOn: input.paidOn,
-        receiptNo: nextReceiptNo(db.payments, input.paidOn, db.gym.receiptPrefix),
+        receiptNo: this.receiptNoFor(db.payments, input.paidOn, db.gym.receiptPrefix),
         reference: input.reference,
         note: input.note,
         voided: false,
@@ -800,6 +819,7 @@ export class LocalCrmData implements CrmData {
         collectedBy: input.collectedBy,
         collectedByName: input.collectedByName ?? null,
         ...(input.requestId ? { requestId: input.requestId } : {}),
+        ...this.offlineMark(),
         createdAt: this.now(),
         gstinAtSale: db.gym.gstin,
       };

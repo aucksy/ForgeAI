@@ -69,7 +69,7 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
             <>
               <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
               {/* Day one: a register or sheet comes in all at once (RESEARCH.md §9 rec 9). */}
-              <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+              <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
                 Import from Excel
               </Button>
             </>
@@ -235,7 +235,7 @@ function RosterSection({
       {/* Step 4: the whole list on WhatsApp, one person at a time, with the message typed. */}
       {queueKind && rows.length > 0 && (
         <div style={{ marginBottom: space.lg }}>
-          <Button onClick={() => setQueue(true)}>
+          <Button needsInternet onClick={() => setQueue(true)}>
             {`WhatsApp all ${rows.length}, one by one`}
           </Button>
         </div>
@@ -258,7 +258,7 @@ function RosterSection({
                 <Row gap={space.sm}>
                   <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
                   {memberViews.length === 0 && (
-                    <Button variant="ghost" wrap onClick={() => navigate('/members/import')}>
+                    <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
                       Import from Excel
                     </Button>
                   )}

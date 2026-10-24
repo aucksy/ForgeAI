@@ -131,7 +131,7 @@ export function BranchesCard() {
         <div style={{ marginTop: space.md }}>
           <TextField label="Your business name" value={group} onChange={setGroup} hint="Shown at the top of “All branches”. Members see each branch’s own name." />
           <div style={{ marginTop: space.sm }}>
-            <Button variant="ghost" disabled={groupBusy || !group.trim() || group.trim() === groupName} onClick={() => void saveGroup()}>
+            <Button variant="ghost" needsInternet disabled={groupBusy || !group.trim() || group.trim() === groupName} onClick={() => void saveGroup()}>
               {groupBusy ? 'Saving…' : 'Save name'}
             </Button>
           </div>
@@ -144,13 +144,13 @@ export function BranchesCard() {
             {`${made.name} is added.${made.plansCopied > 0 ? ` ${made.plansCopied} plans were copied to it.` : ''} Next: open it and add its front-desk staff.`}
           </p>
           <div>
-            <Button onClick={() => void openMade()}>{`Open ${made.name}`}</Button>
+            <Button needsInternet onClick={() => void openMade()}>{`Open ${made.name}`}</Button>
           </div>
         </div>
       )}
 
       <div style={{ marginTop: space.lg }}>
-        <Button variant={made ? 'ghost' : 'primary'} onClick={() => setAdding(true)}>
+        <Button variant={made ? 'ghost' : 'primary'} needsInternet onClick={() => setAdding(true)}>
           Add a branch
         </Button>
       </div>

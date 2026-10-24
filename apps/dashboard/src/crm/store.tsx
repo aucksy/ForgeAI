@@ -14,6 +14,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -30,7 +31,9 @@ import type {
   UndoImportResult,
 } from './data/adapter';
 import { DamagedDataError } from './data/adapter';
-import type { OfflineState } from './data/cloud';
+import type { DeskState, OfflineState } from './data/cloud';
+import { DeskBar } from './ui/offline';
+import { OfflineContext, type OfflineInfo } from './ui/offlineContext';
 import { demoSnapshot } from './data/demo';
 import { downloadTextFile } from './ui/download';
 import { emptySnapshot, LocalCrmData } from './data/local';
@@ -114,6 +117,12 @@ interface CrmContextValue {
   /** Destructive resets, used by the welcome screen and settings. */
   loadDemoGym: () => Promise<void>;
   startEmptyGym: (gymName: string) => Promise<void>;
+
+  /**
+   * Offline front desk, step 3: this desk's waiting list (null for a gym kept only in this browser).
+   * The screens mark waiting records and the banner shows the rest (ui/offline.tsx).
+   */
+  desk: DeskState | null;
 }
 
 const CrmContext = createContext<CrmContextValue | null>(null);
@@ -133,7 +142,14 @@ export type CrmBackend = CrmData & {
   refresh?: () => Promise<boolean>;
   /** R-55 (offline front desk, step 1): set while the server cannot be reached. */
   offlineState?: () => OfflineState | null;
+  /** Step 3: the waiting list, "Try sending again", and the notes' "OK". */
+  deskState?: () => DeskState;
+  sendAgain?: () => Promise<boolean>;
+  dismissNote?: (id: string) => Promise<void>;
 };
+
+/** How long "All sent" stays on the bar after the last waiting thing went. */
+const ALL_SENT_MS = 8_000;
 
 /** How often an online gym looks for changes made on other phones and computers. */
 const REFRESH_MS = 15_000;
@@ -168,9 +184,35 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
   }, []);
 
   const [snapshot, setSnapshot] = useState<CrmSnapshot | null>(null);
-  // R-55: the offline bar (an online gym whose server cannot be reached: the device's copy shows).
-  const [offline, setOffline] = useState<OfflineState | null>(null);
-  const syncOffline = useCallback(() => setOffline(db.offlineState?.() ?? null), [db]);
+  // R-55 / step 3: the offline bar and the waiting list (an online gym only).
+  const [desk, setDesk] = useState<DeskState | null>(null);
+  const syncOffline = useCallback(() => setDesk(db.deskState?.() ?? null), [db]);
+  // "All sent": the moment the last waiting thing reached the server (while online).
+  const [allSent, setAllSent] = useState(false);
+  const lastWaiting = useRef(0);
+  const allSentTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(allSentTimer.current), []);
+  useEffect(() => {
+    const now = desk?.waiting ?? 0;
+    const was = lastWaiting.current;
+    lastWaiting.current = now;
+    if (was > 0 && now === 0 && desk && !desk.offline) {
+      setAllSent(true);
+      window.clearTimeout(allSentTimer.current);
+      allSentTimer.current = window.setTimeout(() => setAllSent(false), ALL_SENT_MS);
+    } else if (now > 0) {
+      setAllSent(false);
+    }
+  }, [desk]);
+  const offlineInfo = useMemo<OfflineInfo>(
+    () => ({
+      offline: desk?.offline ?? false,
+      waitingIds: new Set(desk?.waitingIds ?? []),
+      waiting: desk?.waiting ?? 0,
+      canPayOffline: desk?.canPayOffline ?? false,
+    }),
+    [desk],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // UAT U-A13: the gym saved in this browser can't be read (its own screen, below).
@@ -366,8 +408,27 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
         db.replaceAll(emptySnapshot(Date.now(), gymName));
         await reload();
       },
+      desk,
     };
-  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, refreshNow, mutate, db]);
+  }, [snapshot, today, loading, error, memberViews, allMemberViews, viewFor, reload, refreshNow, mutate, db, desk]);
+
+  const sendAgain = useCallback(async () => {
+    try {
+      if (db.sendAgain && (await db.sendAgain())) setSnapshot(await db.load());
+    } catch (e) {
+      console.warn('[offline desk] try sending again', e);
+    } finally {
+      syncOffline();
+    }
+  }, [db, syncOffline]);
+  const dismissNote = useCallback(
+    (id: string) => {
+      void (db.dismissNote?.(id) ?? Promise.resolve())
+        .catch((e: unknown) => console.warn('[offline desk] note not hidden', e))
+        .finally(syncOffline);
+    },
+    [db, syncOffline],
+  );
 
   if (!value) {
     if (!loading && damaged) {
@@ -392,37 +453,19 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
 
   return (
     <CrmContext.Provider value={value}>
-      {offline && <OfflineBar state={offline} />}
-      {children}
+      <OfflineContext.Provider value={offlineInfo}>
+        {desk && (
+          <DeskBar
+            state={desk}
+            allSent={allSent}
+            names={(id) => value.snapshot.members.find((m) => m.id === id)?.fullName ?? 'A member'}
+            onSendAgain={() => void sendAgain()}
+            onDismiss={dismissNote}
+          />
+        )}
+        {children}
+      </OfflineContext.Provider>
     </CrmContext.Provider>
-  );
-}
-
-/**
- * R-55 (owner #7: "a persistent Offline mode banner tells staff only some things work"). Step 1:
- * every screen reads the copy kept on this device; saving waits for the internet (the form says so).
- */
-function OfflineBar({ state }: { state: OfflineState }) {
-  const at = new Date(state.savedAt || state.since).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
-  return (
-    <div
-      role="status"
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-        background: color.surfaceSunken,
-        color: color.ink,
-        borderBottom: `2px solid ${color.warning}`,
-        padding: '8px 16px',
-        fontSize: 14,
-        lineHeight: 1.4,
-      }}
-    >
-      <strong>Offline mode.</strong> No internet. You can look up members, plans and dues (as of {at}) and check
-      members in: check-ins are kept on this computer and sent when the internet is back. Other saving waits.
-      {state.queued > 0 ? ` ${state.queued} check-in${state.queued === 1 ? '' : 's'} waiting to be sent.` : ''}
-    </div>
   );
 }
 
