@@ -44,7 +44,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
-| #60 | High | Low |
 | Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
 | Task: Privacy and gym-terms words for the server copy (#59) | High | Low |
@@ -134,17 +133,19 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| Multi-branch gyms, end to end (#41) | Blocked | 24 Oct: built, reviewed (1 must + 5 should fixed), saved; waits for your yes in #59. One owner, many branches: branch switch, members, money, check-ins, staff and reports per branch, "All branches" view; HQ prices per branch. Needs one live server change (your yes). Large. |
+| Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
 | AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
-| Members' workouts on our server (#50, #27) | Blocked | 24 Oct: built, reviewed (16 fixes), saved, hidden; waits for #59 and your Google steps (#60). Every saved workout also on our server; restore on a new phone after sign-in; nightly backup to Cloudflare. Needs one live server change (your yes). Large. |
-| Online terms acceptance for gyms (#38) | Blocked | 24 Oct: built and reviewed; waits for #59. Tick box at "Create my gym"; date, time and terms version stored; shown in Settings. Small. |
-| Simpler app layout (4 fixed tabs, 6 settings groups) | Doing | Your note, 24 Oct: keep it simple, easy to find. A design review mapped every screen (docs/ux/MEMBER-APP-MAP.md); now building the moves: Workout, Progress (new), Gym, Profile tabs; Settings in 6 groups. Charts move to Progress with a one-time note. |
+| Members' workouts on our server (#50, #27) | Doing | Server part live since #59 (24 Oct); your Google setup done (#60, 25 Oct). I am switching on "Continue with Google" so it works; ships in 0.57.0. |
+| Online terms acceptance for gyms (#38) | Done | Live 24 Oct after your yes in #59. |
+| Simpler app layout (4 fixed tabs, 6 settings groups) | Done | Shipped in 0.56.0 (Workout, Progress, Gym, Profile tabs; Settings in 6 groups). |
+| Play Store pictures, redone (R-126) | Doing | You found layout and symmetry faults (25 Oct). New frames (centred, whole phone), fresh screens on a normal-size phone, and a design review of every picture before upload. |
+| Test server and crash alerts (#34) | To do | After 0.57.0: the free test server in your Chrome, then crash notes and "site is down" emails on Cloudflare and GitHub (no new accounts). |
 | Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
 | The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
-| Privacy and gym-terms words for the server copy (#59) | To do | Drafts for your OK before 0032 goes live. Small. |
+| Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
 | Trainer view without a tick box (#46) | To do | 24 Oct: you picked A (join-screen line + off switch). Built after the MettleUp release. Waits for your pick in #46 and your OK on the words. Medium. |
-| Free vs gym-member limits + Google sign-in (#43) | Blocked | 24 Oct: built, OFF; Google sign-in waits for #60. Limits built but OFF at launch, switched from the owner panel; "Continue with Google". Medium. |
-| Play Store internal test (#28) | To do | In your open Play Console; I stop at every "I agree". Medium. |
+| Free vs gym-member limits + Google sign-in (#43) | Doing | Your Google setup is done (#60). Google sign-in ships in 0.57.0; the limits stay OFF until you switch them on in your owner panel. |
+| Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
 | Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
 | 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
@@ -231,8 +232,10 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Share a picture or text | Live | Share a workout as a picture (post or story size) or as text; body weight is never shown. |
 | Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
 | Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
-| Google Drive backup and restore | Waiting for you | Built, but hidden in the app until your one-time free Google setup (#42). | After #42: Settings → Backup shows "Back up to Google Drive"; the member signs in with Google once and backs up; on a new phone the same page offers "Restore". |
-| Automatic workout backup | Waiting for you | Built in v0.50.0; it starts working once Drive backup is switched on (#42). | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the finish screen, and the Workout tab warns after 3 days without a backup. |
+| Google Drive backup and restore | Planned | Your Google setup is done (#60, 25 Oct). I am finishing the Google side and testing it; it ships in 0.57.0. | Settings → Backup shows "Back up to Google Drive": the member picks a Google account once, and the app saves the full backup file to their own Drive. On a new phone, "Restore from Google Drive" brings everything back. Only the member can open the file. |
+| Automatic workout backup | Planned | Built in v0.50.0; it starts working with Drive backup in 0.57.0 (#60 done). | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the app after a workout. |
+| Full backup file you can keep | Next release | One file with workouts, routines in their order, every setting, profile and photos; restore on a new phone, with or without a gym (R-123). Ships in 0.57.0. |  |
+| Gym opening hours in the app | Next release | The gym sets its hours per day in the admin app (live 25 Oct); members see them in the app from 0.57.0 (R-124). |  |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
 | Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. 24 Oct fix (next release): it no longer switches itself off, and workouts go even when the calories switch is off. |
@@ -322,7 +325,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
 | Busy times by exercise | Waiting for you | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. Waits for your yes: it needs a live server change. | Members choose to share "which exercise, at what hour" (no weights, no names; off until they agree). On an exercise or a routine, the app then shows "Other members also plan this between 6 and 8 pm", and members judge for themselves. It needs a few weeks of shared data before it shows anything, and a live server change (your yes). |
-| Google login | Waiting for you | Research done: two ways to pick from (#43). | Your pick in #43 decides it. My pick: an optional "Continue with Google" on the first screen, with "Join with your gym code" and "Use without an account" below; the desk confirms each member once, so My membership can later show payments. |
+| Google login | Planned | Your Google setup is done (#60, 25 Oct). I am finishing it; ships in 0.57.0. | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
@@ -361,8 +364,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Play Store release | Live | 25 Oct: MettleUp 0.56.1 is in the Play internal test (testers on your two lists join at https://play.google.com/apps/internaltest/4701674448333062164) and the closed test with mettleup-testers@googlegroups.com is in Google's review. Store listing, icon, banner, 6 screenshots done. |  |
 | Landing page, leads and new-gym onboarding | Live | Live since 22 Oct at https://forgeai.aakashpahuja.in/home/ (Hindi + English): a gym owner types their gym's name and sees the member app in their colours, then asks for a free demo (saved privately in Cloudflare; I tell you each one). "Open the demo gym" and "Sign in" lead to the admin app; new gyms get a "Get started" checklist. |
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
-| Test server before live | Waiting for you | A second server where every change is tried before it reaches the gym. Waits for you to make the free Supabase project (only the owner can). | A second, free Supabase project, "forgeai-staging", with the same tables. Every database change goes there first and runs all the server checks; only then does it go live, with your yes. You make the project (Supabase lets only the owner do it); I fill it. |
-| Crash and outage alerts | Waiting for you | Crash reports from both apps and a "site is down" alert to your phone. Waits for your two free accounts (#34). | Crash reports from both apps (Sentry, free) tell me the screen, the app version and the error, with no member names. A check every minute (Better Stack, free) tries the admin app and the database and alerts your phone if either is down. You make the two free accounts; I wire them in. |
+| Test server before live | Planned | You asked why I cannot make it (#34): I can. I make the free second Supabase project in your Chrome and copy the tables into it. | A second, free Supabase project, "mettleup-staging", Mumbai. Every server change runs there first, with the same tests, before it reaches the gym. |
+| Crash and outage alerts | Planned | Changed 25 Oct (#34): no new accounts needed. I build it on what we already have (Cloudflare and GitHub). | Both apps send a short crash note (screen, app version, error; never member data) to our own server, and HQ shows them. A check every 10 minutes opens the website, admin app and HQ; if one is down, you get an email and a GitHub phone alert. |
 | Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
 | "New version ready" in the app | Live | Members are told when an update is ready. |
 | Privacy notice, terms and consent | Live | Notice, terms and gym data agreement complete (English + Hindi), contact@mettleup.fit; owners accept with a tick at "Create my gym" (0033 live 24 Oct). |  |
@@ -419,6 +422,7 @@ the group mettleup-testers@googlegroups.com exists. Add testers at groups.google
 ## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**TASK DONE (25 Oct, 11:44 am, via the page)**
 **Why:** members sign in with Google so their workouts come back on a new phone (#43, #50). The app part is built and hidden; it shows only after these steps. The Play Store ID is com.mettleup.app (#57). This one setup also switches on Google Drive backup (it replaces #42).
 **Your task:** open https://console.cloud.google.com/projectcreate and make a project named ForgeAI (skip if you already made one for Drive backup, #42). Then open https://console.cloud.google.com/auth/branding: app name ForgeAI (or the new name), your email as support and contact email, audience External; then Audience → "Publish app".
 **Your task:** open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable (for Drive backup).
@@ -1036,13 +1040,17 @@ the Play account exists (SimpleApps108, a personal account). Claude prepares the
 ## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**Your task:** In Supabase, create a second, free project named `forgeai-staging`, region Mumbai (Claude fills it with the same tables, for testing changes before they reach the gym).
 **Your task:** Turn on two-step sign-in (an authenticator app) on Supabase, GitHub, Cloudflare and your Google account.
-**Your task:** Make a free Sentry account (https://sentry.io/signup) and a free Better Stack account (https://betterstack.com/users/sign-up); then tell Claude. Claude wires crash reports into both apps and sets the "site is down" alerts to your phone.
 **Your task:** Check that your 2 offline copies of the app's signing key still open (the folder from docs/RELEASE-SIGNING.md). If that key is lost, every member must reinstall and loses their data.
 **Why:** today the server pauses after a quiet week, has no backups, and nobody hears about a crash or an outage until the gym calls. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (A1-A7, B1-B2).
 **YOUR REPLY (24 Oct):** How big a deal is the 7-day pause of the free server? Data is not lost, and members will keep it active.
 **My answer:** Small. You are right: a pause loses no data. While it is paused, the apps cannot save or load anything online until you press "Restore" in Supabase (a few minutes). Once members use the app daily, it never pauses. The bigger gap on the free plan is backups; my nightly backup (see #27) covers that.
+**YOUR REPLY (25 Oct):** Why cant you do this?
+**My answer:** You are right to push. Here is each one:
+- **Test server:** I can make it myself in your Chrome. I do it after 0.57.0.
+- **Crash and "site is down" alerts:** I changed the plan so no new accounts are needed. I build them on Cloudflare and GitHub, which we already have. My safety rules do not let me create new accounts, so this route is better anyway.
+- **Two-step sign-in:** this one stays yours. It changes the security of your own accounts and needs the authenticator app on your phone; my safety rules stop me from changing security settings.
+- **Signing key copies:** this one stays yours. The 2 copies are on your offline drives, which I cannot reach.
 
 ## 33. Launch decision: your support hours during the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
