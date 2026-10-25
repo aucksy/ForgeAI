@@ -12,6 +12,13 @@ before; I do not know where it went. Because the app is focused on progressive o
 total session volume to achieve in today's session, whatever today's session is from the landing screen... you can decide
 the best implementation to ensure the UI/UX is not complicated. www.feyyaz.tv"
 **To do (after R-131):** find where the old mode switch went; look at feyyaz.tv; build after the welcome screen.
+**Done (26 Oct, v0.57.1 RELEASED with R-131):** the old switch was never gone: Profile's chart chips (Duration / Kg
+lifted / Reps). Progress now: tabs Kg lifted / Sets / Duration on top ("volume" stays out of member words), "Today:
+<Up next>" card (Targets added up by the one volume rule vs the last time of that routine; new / pyramid / version lifts
+named, not counted), bars in the same mode, then the links. "www.feyyaz.tv" was NOT his: OpenWhispr (Whisper) invented it
+in the silence at the end of his recording (a Turkish video channel). Opened once (Cloudflare check), closed; from now on
+ask before opening a link that does not fit the request. Open: play-upload.yml never starts by itself after a release
+(workflow_run); both 0.57.0 and 0.57.1 were started by hand.
 
 ## R-131. Welcome screen in three clear parts; Google sign-in finds the backup — 25 Oct 2026
 **He said:** "On the login screen, create three organized sections. The first is Google login. The second section offers

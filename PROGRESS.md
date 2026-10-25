@@ -2679,6 +2679,10 @@
   pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
   (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
   test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-26: **v0.57.1 RELEASED** (tag on 6eef21a; CI, Device QA default + owner, journeys all green after the
+  flow fixes in 6eef21a). Release run 40225623184; play-upload again did not start by itself (workflow_run never
+  fires: open item), run by hand 40228526554: 57001 committed on internal + alpha.
+  APK: https://github.com/aucksy/ForgeAI/releases/download/v0.57.1/mettleup-v0.57.1.apk
 - 2026-10-25: **0.57.1 prepared (R-131, R-132).**
   - Welcome start view before the 3 steps: "Sign in with Google" (WelcomeGoogle: Drive for everyone,
     drive.peekNewestDriveBackup without making a folder, "We found your backup from <day> with N workouts" ->
