@@ -16,6 +16,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "MettleUp could not start"
     timeout: 30000
-- assertNotVisible: "Step 1 of 3|Your name|Load demo data instead"
+# R-131: "Start fresh" is the welcome's first screen now.
+- assertNotVisible: "Step 1 of 3|Your name|Start fresh|Load demo data instead"
 - assertNotVisible: "^Profile$"
 - takeScreenshot: ub-05-try-again-still-broken

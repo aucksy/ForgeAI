@@ -15,9 +15,14 @@ import { shopInputStyle } from '@/shop/ShopParts';
 import { color, space, type } from '@/theme/tokens';
 
 import { WELCOME_GYM_ASK, WELCOME_GYM_WHY, welcomeGymCode, welcomeGymKept } from '../welcomeGym';
+import { START_WORDS } from '../welcomeStart';
 
-/** `onKept`: told whenever a code starts or stops waiting (the welcome screen's Google button needs it, R-106). */
-export function WelcomeGymCode({ onKept }: { onKept?: (code: string | null) => void } = {}) {
+/**
+ * `onKept`: told whenever a code starts or stops waiting (the welcome screen's Google button needs it, R-106).
+ * `inSection` (R-131): drawn inside the welcome's "Do you train at a gym?" section, which says what the code
+ * is for: no box of its own, and a button instead of the underlined line.
+ */
+export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: string | null) => void; inSection?: boolean } = {}) {
   // A gym link opened before setup already waits: show it as saved.
   const [kept, setKept] = useState<string | null>(() => peekPendingInvite());
 
@@ -67,18 +72,21 @@ export function WelcomeGymCode({ onKept }: { onKept?: (code: string | null) => v
     setOpen(true);
   };
 
+  const Box = inSection ? View : GlassCard;
+
   if (kept) {
     return (
-      <GlassCard style={{ gap: space.sm }}>
-        <Text accessibilityLiveRegion="polite" style={body()}>
+      <Box style={{ gap: space.sm }}>
+        <Text accessibilityLiveRegion="polite" style={inSection ? { ...body(), color: color.ink } : body()}>
           {welcomeGymKept(kept)}
         </Text>
         <GhostButton label="Change the code" onPress={change} />
-      </GlassCard>
+      </Box>
     );
   }
 
   if (!open) {
+    if (inSection) return <GhostButton label={START_WORDS.gymButton} icon="key" onPress={() => setOpen(true)} />;
     return (
       <Pressable
         onPress={() => setOpen(true)}
@@ -91,13 +99,15 @@ export function WelcomeGymCode({ onKept }: { onKept?: (code: string | null) => v
   }
 
   return (
-    <GlassCard style={{ gap: space.md }}>
-      <View style={{ gap: space.xs }}>
-        <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
-          Join your gym
-        </Text>
-        <Text style={body()}>{WELCOME_GYM_WHY}</Text>
-      </View>
+    <Box style={{ gap: space.md }}>
+      {inSection ? null : (
+        <View style={{ gap: space.xs }}>
+          <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+            Join your gym
+          </Text>
+          <Text style={body()}>{WELCOME_GYM_WHY}</Text>
+        </View>
+      )}
       <TextInput
         value={typed}
         onChangeText={(t) => {
@@ -123,7 +133,7 @@ export function WelcomeGymCode({ onKept }: { onKept?: (code: string | null) => v
       />
       <InlineError message={error} />
       <GhostButton label="Save the code" onPress={save} />
-    </GlassCard>
+    </Box>
   );
 }
 

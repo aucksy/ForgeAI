@@ -209,16 +209,7 @@ async function api(token: string, url: string, init?: RequestInit): Promise<Resp
  * `drive.file` scope only sees folders this app created — exactly what we want.
  */
 async function ensureFolderId(token: string): Promise<string> {
-  const q = encodeURIComponent(
-    `(name = '${FOLDER_NAME}' or name = '${OLD_FOLDER_NAME}') and mimeType = '${FOLDER_MIME}' and trashed = false`,
-  );
-  // orderBy=createdTime so if two devices ever race-create a duplicate folder,
-  // every device deterministically converges on the earliest-created one. A folder this app made
-  // as "ForgeAI" (before the new name) is older, so its backups stay where they are.
-  const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=createdTime&pageSize=1&fields=files(id)`;
-  const res = await api(token, url);
-  const json = (await res.json()) as { files?: { id: string }[] };
-  const existing = json.files?.[0]?.id;
+  const existing = await findFolderId(token);
   if (existing) return existing;
 
   const create = await api(token, `${DRIVE}/files?fields=id`, {
@@ -231,6 +222,20 @@ async function ensureFolderId(token: string): Promise<string> {
     throw new DriveError('Couldn’t make the MettleUp folder in your Google Drive. Wait a minute, then try again.', 'folder create returned no id');
   }
   return created.id;
+}
+
+/** The MettleUp (or old ForgeAI) folder's id, or null when this app never made one. */
+async function findFolderId(token: string): Promise<string | null> {
+  const q = encodeURIComponent(
+    `(name = '${FOLDER_NAME}' or name = '${OLD_FOLDER_NAME}') and mimeType = '${FOLDER_MIME}' and trashed = false`,
+  );
+  // orderBy=createdTime so if two devices ever race-create a duplicate folder,
+  // every device deterministically converges on the earliest-created one. A folder this app made
+  // as "ForgeAI" (before the new name) is older, so its backups stay where they are.
+  const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=createdTime&pageSize=1&fields=files(id)`;
+  const res = await api(token, url);
+  const json = (await res.json()) as { files?: { id: string }[] };
+  return json.files?.[0]?.id ?? null;
 }
 
 /** How many dated backups Drive keeps (audit DS-10). The oldest beyond this are deleted. */
@@ -300,6 +305,14 @@ async function listBackups(token: string, folderId: string): Promise<DriveBackup
 export async function newestDriveBackup(): Promise<DriveBackupFile | null> {
   const token = await accessToken();
   const folderId = await ensureFolderId(token);
+  return (await listBackups(token, folderId))[0] ?? null;
+}
+
+/** R-131 (welcome screen): the newest backup without making the folder when there is none (a first sign-in leaves Drive as it was). */
+export async function peekNewestDriveBackup(): Promise<DriveBackupFile | null> {
+  const token = await accessToken();
+  const folderId = await findFolderId(token);
+  if (!folderId) return null;
   return (await listBackups(token, folderId))[0] ?? null;
 }
 

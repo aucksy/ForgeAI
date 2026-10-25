@@ -15,10 +15,19 @@ appId: com.mettleup.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# Owner phone: the emulator can open the welcome scrolled down (a text box took focus); the
-# step label sits above the screen since 0.57.0's two links under Next (R-123). Back to the top.
+# R-131: the first screen is the start view. The switcher's way in: "Already have workouts?" -> "From Hevy"
+# (its import opens after Start training). Tapping the chip goes straight on to step 1, then the name.
+- scrollUntilVisible:
+    element: "From Hevy"
+    centerElement: true
+    timeout: 30000
+- tapOn: "From Hevy"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
+# Owner phone: the emulator can open the welcome scrolled down (a text box took focus). Back to the top.
 - scrollUntilVisible:
     element: "Step 1 of 3"
     direction: UP
@@ -27,12 +36,6 @@ appId: com.mettleup.app
 - inputText: "Aakash"
 - hideKeyboard
 - takeScreenshot: w-00-welcome
-# The switcher's way in: "Coming from Hevy or Strong?" → From Hevy (its import opens after Start).
-- scrollUntilVisible:
-    element: "From Hevy"
-    centerElement: true
-    timeout: 20000
-- tapOn: "From Hevy"
 - scrollUntilVisible:
     element: "^Next$"
     centerElement: true

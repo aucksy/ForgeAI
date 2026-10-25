@@ -11,14 +11,10 @@ appId: com.mettleup.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# Owner phone: the emulator can open the welcome scrolled down (a text box took focus); the
-# step label sits above the screen since 0.57.0's two links under Next (R-123). Back to the top.
-- scrollUntilVisible:
-    element: "Step 1 of 3"
-    direction: UP
-    timeout: 20000
+# R-131: the first screen is the start view (no step label); "Load demo data instead" is at its
+# bottom, so scroll down to it (no "Start fresh").
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000

@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-132. Progress: Volume / Sets / Duration tabs at the top + today's volume to beat — 25 Oct 2026
+**He said:** "upgrade the progress section. First, at the very top, I want different tabs to choose from between volume,
+sets, and duration. These will be three different modes to show the different statistics. I think I had this option
+before; I do not know where it went. Because the app is focused on progressive overload, this section will also show the
+total session volume to achieve in today's session, whatever today's session is from the landing screen... you can decide
+the best implementation to ensure the UI/UX is not complicated. www.feyyaz.tv"
+**To do (after R-131):** find where the old mode switch went; look at feyyaz.tv; build after the welcome screen.
+
 ## R-131. Welcome screen in three clear parts; Google sign-in finds the backup — 25 Oct 2026
 **He said:** "On the login screen, create three organized sections. The first is Google login. The second section offers
 unlocking all features with a gym subscription. The third allows restoring or migrating from Hevy Strong. When a user logs

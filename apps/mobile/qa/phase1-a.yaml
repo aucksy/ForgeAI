@@ -11,10 +11,35 @@ appId: com.mettleup.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# Owner phone: the emulator can open the welcome scrolled down (a text box took focus); the
-# step label sits above the screen since 0.57.0's two links under Next (R-123). Back to the top.
+# R-131: the first screen is the start view (no step label): three cards, "Start fresh", then the demo.
+# The chips are checked first, then "Start fresh" opens step 1 (checked), and Back returns here.
+- assertVisible: "Welcome to MettleUp"
+# Audit Phase 4 (point 6): switchers are met where they arrive. R-131: the "Already have workouts?"
+# card on the start view holds "From Hevy" / "From Strong". Not tapped here: a pick goes on to step 1
+# and opens the import on the Workout tab after Start training.
+- scrollUntilVisible:
+    element: "Already have workouts\\?"
+    timeout: 30000
+# Its chips sit below the heading: at font 2.0 on 360 dp the heading alone was on screen
+# (UAT WP14 run 39000428116). Scrolled to, then they must be visible (sub-find).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "From Hevy"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "From Strong"
+# R-131: "Start fresh" opens step 1.
+- scrollUntilVisible:
+    element: "Start fresh"
+    timeout: 30000
+- tapOn: "Start fresh"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
 - scrollUntilVisible:
     element: "Step 1 of 3"
     direction: UP
@@ -26,21 +51,11 @@ appId: com.mettleup.app
 - assertNotVisible: '(?i)age( in years)?.*'
 - assertNotVisible: '(?i)height.*'
 - assertNotVisible: '(?i)body weight.*'
-# Audit Phase 4 (point 6): switchers are met where they arrive — "Coming from Hevy or Strong?"
-# on the welcome screen. Not tapped here: a pick opens the import on the Workout tab.
-- scrollUntilVisible:
-    element: "Coming from Hevy or Strong\\?"
-    timeout: 30000
-# Its "From Hevy" sits below the heading: at font 2.0 on 360 dp the heading alone was on screen
-# (UAT WP14 run 39000428116). Scrolled to, then it must be visible (sub-find).
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "From Hevy"
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "From Strong"
+# R-131: Back on step 1 returns to the start view, where the demo link is.
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible: "Welcome to MettleUp"
+    timeout: 15000
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000

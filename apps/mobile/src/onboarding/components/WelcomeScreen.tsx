@@ -20,6 +20,11 @@
  * Next, "Restore from a backup" (a member back after a reinstall, a new phone, or from the old
  * ForgeAI app: everything comes back in one go, and the app opens on it) and "Bring workouts from
  * Hevy or Strong" (to the Hevy / Strong pick further down).
+ * R-131 (owner, 25 Oct 2026: "three organized sections... very well organized and simple"): the first
+ * view is now the START view, before the 3 steps: (1) "Sign in with Google" (WelcomeGoogle: finds the
+ * Drive backup and offers it), (2) "Do you train at a gym?" (the gym code), (3) "Already have workouts?"
+ * (a backup file, Hevy, Strong), then "Start fresh" → step 1, and "Load demo data instead" at the bottom.
+ * Back from step 1 returns here.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -36,8 +41,13 @@ import {
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { accountOffered } from '@/cloud/accountGate';
+import { ACCOUNT_WORDS } from '@/cloud/accountWords';
+import { isDriveConfigured } from '@/cloud/drive';
 import { RestoreBackupPanel } from '@/components/settings/BackupFilePanels';
-import { ConfirmSheet, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { useGymShop } from '@/shop/gymStore';
+import { useAccount } from '@/store/accountStore';
+import { Card, Chip, ConfirmSheet, GhostButton, Icon, IconButton, PrimaryButton, Screen, type IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { success, thud } from '@/lib/haptics';
@@ -45,7 +55,7 @@ import { useSettings } from '@/store/settingsStore';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import type { Goal, UnitSystem } from '@/types/models';
 
-import { choosePendingImport, SwitcherCard, type SwitchApp } from '@/tracker/components/SwitcherCard';
+import { choosePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 
 import { countOwnWorkouts } from '../db/dataActions';
 import type { Experience, OnboardingDraft } from '../form';
@@ -64,7 +74,8 @@ import {
   type WelcomeStep,
 } from '../welcomeSteps';
 import { RadioList, type RadioOption } from './RadioList';
-import { WelcomeGoogle } from './WelcomeGoogle';
+import { START_WORDS } from '../welcomeStart';
+import { welcomeGoogleShown, WelcomeGoogle } from './WelcomeGoogle';
 import { WelcomeGymCode } from './WelcomeGymCode';
 
 const GOAL_OPTIONS: readonly RadioOption<Goal>[] = [
@@ -148,17 +159,35 @@ function Hint({ children }: { children: string }) {
   );
 }
 
-/** A quiet link under Next (48 dp tall, underlined, like "Load demo data instead"). */
-function WelcomeLink({ label, onPress }: { label: string; onPress: () => void }) {
+/** One section of the start view (R-131): icon + question, one line on what it does, then its buttons. */
+function StartSection({ icon, title, body, children }: { icon: IconName; title: string; body: string; children: React.ReactNode }) {
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
-    >
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent, textDecorationLine: 'underline' }}>{label}</Text>
-    </Pressable>
+    <Card style={{ gap: space.md }}>
+      <View style={{ gap: space.xs }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+          <Icon name={icon} size={18} color={color.accent} />
+          {/* Wraps beside the icon at font 2.0 on 360 dp (UAT WP14), never runs off the edge. */}
+          <Text accessibilityRole="header" style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+            {title}
+          </Text>
+        </View>
+        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 20 }}>{body}</Text>
+      </View>
+      {children}
+    </Card>
+  );
+}
+
+/** Section 1, only in a build that can sign in to Google (else no empty box). Gym members read the server copy's line. */
+function GoogleSection({ gymCodeWaiting, children }: { gymCodeWaiting: boolean; children: React.ReactNode }) {
+  const configured = useAccount((s) => s.configured);
+  const inGym = useGymShop((s) => s.link != null);
+  if (!welcomeGoogleShown({ driveReady: isDriveConfigured(), configured, inGym, gymCodeWaiting })) return null;
+  const serverCopy = accountOffered({ configured, inGym, gymCodeWaiting });
+  return (
+    <StartSection icon="person" title={START_WORDS.googleTitle} body={serverCopy ? ACCOUNT_WORDS.welcomeAsk : START_WORDS.googleBody}>
+      {children}
+    </StartSection>
   );
 }
 
@@ -169,6 +198,8 @@ export function WelcomeScreen() {
   const setUnits = useSettings((s) => s.setUnitSystem);
   const insets = useSafeAreaInsets();
 
+  // R-131: the start view (three sections + "Start fresh") comes before the 3 steps.
+  const [started, setStarted] = useState(false);
   const [step, setStep] = useState<WelcomeStep>(0);
   const [draft, setDraft] = useState<OnboardingDraft>(welcomeDraft);
   // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
@@ -199,11 +230,19 @@ export function WelcomeScreen() {
   const [gymCodeWaiting, setGymCodeWaiting] = useState<string | null>(null);
   // Audit Phase 4: a switcher's app — its import opens right after "Start training".
   const [switchApp, setSwitchApp] = useState<SwitchApp | null>(null);
+  // R-131: picking Hevy or Strong goes straight on to the 3 steps (the import opens after Start training);
+  // tapping the picked one again takes the pick back.
   const pickSwitch = (app: SwitchApp): void => {
     const next = switchApp === app ? null : app;
     setSwitchApp(next);
     choosePendingImport(next);
+    if (next) startSteps();
   };
+  // A Google restore running: Back waits.
+  const googleBusy = useRef(false);
+  const onGoogleBusy = useCallback((b: boolean) => {
+    googleBusy.current = b;
+  }, []);
   // R-123: the "Restore from a backup" view, and where the Hevy / Strong pick sits (to scroll to it).
   const [restoring, setRestoring] = useState(false);
   // A restore running: Back waits (leaving would race it with the welcome's own start).
@@ -211,7 +250,6 @@ export function WelcomeScreen() {
   const onRestoreBusy = useCallback((b: boolean) => {
     restoreBusy.current = b;
   }, []);
-  const switcherY = useRef(0);
   // Phase 1 (DS-06): "Remove demo data" keeps the member's own workouts and lands here.
   const [kept, setKept] = useState(0);
   useEffect(() => {
@@ -248,6 +286,19 @@ export function WelcomeScreen() {
     AccessibilityInfo.announceForAccessibility(`${stepLabel(s)}. ${STEP_TEXT[s].title}`);
   };
 
+  function startSteps(): void {
+    setStarted(true);
+    goTo(0);
+  }
+
+  const backToStart = (): void => {
+    setProblem(null);
+    setSaveProblem(null);
+    setStarted(false);
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+    AccessibilityInfo.announceForAccessibility(START_WORDS.title);
+  };
+
   // Android back walks back through the steps; on the first step it leaves as usual.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -255,15 +306,20 @@ export function WelcomeScreen() {
         if (!restoreBusy.current) setRestoring(false);
         return true;
       }
+      if (!started) {
+        // A Google restore running holds Back; otherwise the start view leaves as usual.
+        return googleBusy.current;
+      }
+      if (useOnboarding.getState().busy) return true;
       const prev = previousStep(step);
-      if (prev == null || useOnboarding.getState().busy) return false;
-      goTo(prev);
+      if (prev == null) backToStart();
+      else goTo(prev);
       return true;
     });
     return () => sub.remove();
-    // goTo only touches setters and refs.
+    // goTo and backToStart only touch setters and refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, restoring]);
+  }, [step, restoring, started]);
 
   const onNext = (): void => {
     const p = stepProblem(step, draft, units);
@@ -350,14 +406,89 @@ export function WelcomeScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: space.xxl + insets.bottom }}
         >
+          {!started ? (
+            <Animated.View key="start" entering={FadeIn.duration(motion.base)} style={{ gap: space.lg }}>
+              {/* ---------------------------------------------------------------- R-131 start view */}
+              <View>
+                <View style={{ minHeight: 48, justifyContent: 'center' }}>
+                  <MettleUpLogo height={26} />
+                </View>
+                <Text
+                  accessibilityRole="header"
+                  style={{ fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5, marginTop: space.lg }}
+                >
+                  {START_WORDS.title}
+                </Text>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 4, lineHeight: 19 }}>
+                  {START_WORDS.sub}
+                </Text>
+              </View>
+
+              {/* 1. Google: finds the member's Drive backup and offers it (gym members: the server copy). */}
+              <GoogleSection gymCodeWaiting={gymCodeWaiting != null}>
+                <WelcomeGoogle
+                  onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))}
+                  gymCodeWaiting={gymCodeWaiting != null}
+                  keptWorkouts={kept}
+                  onBusy={onGoogleBusy}
+                />
+              </GoogleSection>
+
+              {/* 2. The gym: its code unlocks the gym's side of the app (OWNER-INBOX #11; opens after setup). */}
+              <StartSection icon="key" title={START_WORDS.gymTitle} body={START_WORDS.gymBody}>
+                <WelcomeGymCode onKept={setGymCodeWaiting} inSection />
+              </StartSection>
+
+              {/* 3. Workouts from somewhere else: a backup file (R-123), Hevy or Strong (Audit Phase 4). */}
+              <StartSection icon="import" title={START_WORDS.haveTitle} body={START_WORDS.haveBody}>
+                <GhostButton label={START_WORDS.restoreFile} icon="clock" onPress={() => setRestoring(true)} />
+                <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
+                  <Chip label="From Hevy" icon={switchApp === 'hevy' ? 'check' : undefined} selected={switchApp === 'hevy'} onPress={() => pickSwitch('hevy')} />
+                  <Chip label="From Strong" icon={switchApp === 'strong' ? 'check' : undefined} selected={switchApp === 'strong'} onPress={() => pickSwitch('strong')} />
+                </View>
+              </StartSection>
+
+              <View style={{ gap: space.sm }}>
+                {kept > 0 ? (
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
+                    Your {kept} workout{kept === 1 ? ' is' : 's are'} still here. Tap "Start fresh" and add your details to carry on.
+                  </Text>
+                ) : null}
+                <PrimaryButton label={START_WORDS.startFresh} icon="dumbbell" onPress={startSteps} />
+                <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center', lineHeight: 17 }}>
+                  {START_WORDS.startFreshNote}
+                </Text>
+              </View>
+
+              <View>
+                <Pressable
+                  onPress={onLoadDemo}
+                  accessibilityRole="button"
+                  accessibilityLabel="Load demo data instead"
+                  style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+                >
+                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, textDecorationLine: 'underline' }}>
+                    Load demo data instead
+                  </Text>
+                </Pressable>
+                <InlineError message={saveProblem} />
+              </View>
+            </Animated.View>
+          ) : (
+          <>
           {/* ---------------------------------------------------------------- header */}
           <View style={{ marginBottom: space.xl }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48 }}>
-              {step > 0 ? (
-                <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => goTo(previousStep(step) ?? 0)} />
-              ) : (
-                <MettleUpLogo height={26} />
-              )}
+              <IconButton
+                icon="chevron-left"
+                size={48}
+                accessibilityLabel="Back"
+                onPress={() => {
+                  const prev = previousStep(step);
+                  if (prev == null) backToStart();
+                  else goTo(prev);
+                }}
+              />
               <View style={{ flex: 1 }} />
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}>{stepLabel(step)}</Text>
             </View>
@@ -444,64 +575,12 @@ export function WelcomeScreen() {
 
                 <PrimaryButton label="Next" onPress={onNext} />
 
-                {/* R-123: a member coming back, and a switcher, each one tap from the first screen. */}
-                <View style={{ marginTop: space.sm }}>
-                  <WelcomeLink label="Restore from a backup" onPress={() => setRestoring(true)} />
-                  <WelcomeLink
-                    label="Bring workouts from Hevy or Strong"
-                    onPress={() => scrollRef.current?.scrollTo({ y: Math.max(0, bodyY.current + switcherY.current - space.lg), animated: true })}
-                  />
-                </View>
-
-                {/* OWNER-INBOX #11: joining a gym from the first screen (opens after setup). */}
-                <View style={{ marginTop: space.md }}>
-                  <WelcomeGymCode onKept={setGymCodeWaiting} />
-                </View>
-
-                {/* #43/#50: a gym member who used the app before gets their workouts back (R-106: gym members only;
-                    hidden until the build can sign in). */}
-                <View style={{ marginTop: space.md }}>
-                  <WelcomeGoogle onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))} gymCodeWaiting={gymCodeWaiting != null} />
-                </View>
-
-                <View
-                  style={{ marginTop: space.xl }}
-                  onLayout={(e) => {
-                    switcherY.current = e.nativeEvent.layout.y;
-                  }}
-                >
-                  <SwitcherCard onPick={pickSwitch} selected={switchApp} later />
-                </View>
-
-                <Pressable
-                  onPress={onLoadDemo}
-                  accessibilityRole="button"
-                  accessibilityLabel="Load demo data instead"
-                  style={({ pressed }) => ({
-                    minHeight: 48,
-                    marginTop: space.lg,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    opacity: pressed ? 0.6 : 1,
-                  })}
-                >
-                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary, textDecorationLine: 'underline' }}>
-                    Load demo data instead
+                {/* R-131: a Hevy / Strong pick made on the start view; Back takes it back there. */}
+                {switchApp ? (
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, marginTop: space.md, lineHeight: 19 }}>
+                    Your {switchApp === 'hevy' ? 'Hevy' : 'Strong'} workouts and routines come in right after you tap Start training.
                   </Text>
-                </Pressable>
-                <InlineError message={saveProblem} />
-                <Text
-                  style={{
-                    fontFamily: type.body,
-                    fontSize: type.size.caption,
-                    color: color.inkMuted,
-                    textAlign: 'center',
-                    marginTop: space.sm,
-                    lineHeight: 17,
-                  }}
-                >
-                  Everything stays on this phone and works offline.
-                </Text>
+                ) : null}
               </>
             ) : null}
 
@@ -567,6 +646,8 @@ export function WelcomeScreen() {
               </>
             ) : null}
           </Animated.View>
+          </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
       <ConfirmSheet

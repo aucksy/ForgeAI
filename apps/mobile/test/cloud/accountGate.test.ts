@@ -34,7 +34,7 @@ describe('R-106: the member account (server copy) is for gym members only', () =
     expect(welcome).toMatch(/accountOffered\(\{ configured, inGym, gymCodeWaiting \}\)/);
     expect(welcome).not.toMatch(/if \(!configured\) return null/);
     const screen = readFileSync(join(ROOT, 'src/onboarding/components/WelcomeScreen.tsx'), 'utf8');
-    expect(screen).toMatch(/<WelcomeGymCode onKept=\{setGymCodeWaiting\} \/>/);
+    expect(screen).toMatch(/<WelcomeGymCode onKept=\{setGymCodeWaiting\} inSection \/>/);
     expect(screen).toMatch(/gymCodeWaiting=\{gymCodeWaiting != null\}/);
   });
 });

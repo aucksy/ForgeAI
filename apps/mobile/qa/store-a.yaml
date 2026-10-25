@@ -13,8 +13,17 @@ appId: com.mettleup.app
     text: "Wait"
     optional: true
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
+# R-131: the first screen is the start view: pick "From Hevy" there (goes straight on to step 1), then the name.
+- scrollUntilVisible:
+    element: "From Hevy"
+    centerElement: true
+    timeout: 30000
+- tapOn: "From Hevy"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
 - scrollUntilVisible:
     element: "Step 1 of 3"
     direction: UP
@@ -22,11 +31,6 @@ appId: com.mettleup.app
 - tapOn: "Your name"
 - inputText: "Arjun"
 - hideKeyboard
-- scrollUntilVisible:
-    element: "From Hevy"
-    centerElement: true
-    timeout: 20000
-- tapOn: "From Hevy"
 - scrollUntilVisible:
     element: "^Next$"
     centerElement: true

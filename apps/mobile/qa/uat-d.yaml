@@ -94,18 +94,13 @@ appId: com.mettleup.app
 - takeScreenshot: ud-01-remove-demo-question
 - tapOn: "^Remove demo$"
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000
-# Owner phone: the emulator can open the welcome scrolled down (a text box took focus); the
-# step label sits above the screen since 0.57.0's two links under Next (R-123). Back to the top.
-- scrollUntilVisible:
-    element: "Step 1 of 3"
-    direction: UP
-    timeout: 20000
+# R-131: the first screen is the start view (no step label); it says the kept workout is still here.
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Your 1 workout is still here\. Add your details to carry on\.'
+      FIND: 'Your 1 workout is still here\. Tap "Start fresh" and add your details to carry on\.'
 - takeScreenshot: ud-02-welcome-workout-kept
 # The welcome's demo button names what it would delete. Cancelled (the sheet's own Cancel).
 - runFlow:
@@ -125,6 +120,19 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: 'Load demo data\?'
     timeout: 10000
+# R-131: "Start fresh" opens step 1, which also says the workout is still here.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start fresh"
+- tapOn: "Start fresh"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Your 1 workout is still here\. Add your details to carry on\.'
 # The member's details, then the app.
 - scrollUntilVisible:
     element: "Your name"
