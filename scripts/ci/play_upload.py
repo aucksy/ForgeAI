@@ -179,8 +179,11 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
             raise
 
     if not changed:
-        log("Nothing to change on any track. Discarding the edit (no bundle is left behind).")
-        edits.delete(packageName=PACKAGE, editId=edit_id).execute()
+        if dry_run:  # still prove the validate call (and its permission) works
+            finish_edit(api, edit_id, True, "nothing to change")
+        else:
+            log("Nothing to change on any track. Discarding the edit (no bundle is left behind).")
+            edits.delete(packageName=PACKAGE, editId=edit_id).execute()
         return "nothing-to-do", changed
     what = f"versionCode {code} on {', '.join(changed)}"
     try:
