@@ -180,6 +180,21 @@ export function SettingsScreen() {
         </div>
       </Card>
 
+      {/* R-124: when the gym is open; members see "Open now · closes 10:00 pm" in the app. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>Gym timings</SectionTitle>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {online
+            ? 'Morning and evening times for each day, or 24 hours, and holidays. Members see whether you are open now.'
+            : 'First put your gym online (above). Then you can add your timings for members to see.'}
+        </p>
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" disabled={!online} needsInternet onClick={() => navigate('/settings/timings')}>
+            Open gym timings
+          </Button>
+        </div>
+      </Card>
+
       <Card>
         <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>

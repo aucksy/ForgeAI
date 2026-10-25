@@ -66,6 +66,11 @@ function forgetGymDietsQuietly(): void {
   void import('@/tracker/services/gymBodySync').then((m) => m.forgetGymDiets()).catch((e: unknown) => console.warn('[ForgeErr] gym diet plans: forgetting after the link went', e));
 }
 
+/** R-124: the gym's opening hours go with the link. */
+function forgetGymHoursQuietly(): void {
+  void import('./gymTimingsSync').then((m) => m.forgetGymHours()).catch((e: unknown) => console.warn('[ForgeErr] gym hours: forgetting after the link went', e));
+}
+
 /** R-86: the gym's automatic reminders go with the link (cancelled and forgotten). */
 function forgetGymRemindersQuietly(): void {
   void import('./gymReminders').then((m) => m.forgetGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] gym reminders: forgetting after the link went', e));
@@ -83,6 +88,7 @@ function lostKey(err: GymError): boolean {
   useGymInbox.getState().clear();
   retireGymPlans();
   forgetGymDietsQuietly();
+  forgetGymHoursQuietly();
   forgetGymRemindersQuietly();
   return true;
 }
@@ -494,6 +500,7 @@ export async function leaveGym(): Promise<void> {
   forgetGymRemindersQuietly();
   retireGymPlans();
   forgetGymDietsQuietly();
+  forgetGymHoursQuietly();
   if (!link) return;
   const told = await leaveOnServer(link.memberKey);
   // A join in the meantime owns the card now: its words win.

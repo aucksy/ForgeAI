@@ -99,6 +99,7 @@ const NEEDS_A_REAL_GYM: Record<string, { title: string; body: string }> = {
   'settings': { title: 'Settings', body: 'Your gym’s details, the member app switch, staff sign-in and your data.' },
   'settings/people': { title: 'Staff & sign-in', body: 'Choose who can open this admin app, and their PINs.' },
   'settings/branding': { title: 'Branding', body: 'Add your gym’s logo and colours. Members see them in the MettleUp app.' },
+  'settings/timings': { title: 'Gym timings', body: 'Set when your gym is open, morning and evening or 24 hours. Members see it in the MettleUp app.' },
   'settings/invite': { title: 'The invite link', body: 'A link and a QR poster for members to join your gym in the app.' },
 };
 

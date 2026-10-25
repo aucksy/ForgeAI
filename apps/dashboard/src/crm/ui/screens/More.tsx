@@ -44,6 +44,7 @@ export function MoreScreen() {
     { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     { path: '/messages', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
     { path: '/settings/branding', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
+    { path: '/settings/timings', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
     {
       path: '/settings/people',
       label: 'Staff & sign-in',

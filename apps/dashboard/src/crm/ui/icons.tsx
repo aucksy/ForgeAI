@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -91,6 +91,13 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <circle cx="7.8" cy="11" r="1.1" />
       <circle cx="10.8" cy="7.6" r="1.1" />
       <circle cx="15.2" cy="8" r="1.1" />
+    </>
+  ),
+  // A clock: Gym timings (R-124).
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
     </>
   ),
   settings: (

@@ -61,6 +61,8 @@ const BODY_FNS = [
   'owner_member_measurements', 'owner_save_measurement', 'owner_delete_measurement',
   'owner_diet_plans', 'owner_save_diet_plan', 'owner_withdraw_diet_plan',
 ];
+/** R-124 (0036): the gym's opening hours, answered only when `timingsServer` is on. */
+const TIMINGS_FNS = ['owner_gym_timings', 'owner_save_gym_timings'];
 const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
 
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
@@ -165,6 +167,10 @@ export class FakeServer {
     this.measures = [];
     this.diets = [];
     this.bodySeq = 0;
+    /** R-124: does this server have 0036 (gym timings)? Off by default (PGRST202, like a server before it). */
+    this.timingsServer = false;
+    /** 0036's gym_timings row: {hours, updatedByName, updatedAt}, or null. */
+    this.timings = null;
   }
 
   /** 0035 _roster_member_ok: a live member record of this gym. */
@@ -401,6 +407,9 @@ export class FakeServer {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     if (!this.bodyServer && BODY_FNS.includes(fn)) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
+    if (!this.timingsServer && TIMINGS_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
     if (!this.reminderServer && REMINDER_FNS.includes(fn)) {
@@ -843,9 +852,29 @@ export class FakeServer {
         Object.assign(d, { withdrawn: true, updatedAt: NOW.getTime() + this.bodySeq });
         return d;
       }
+      // ---- R-124 (0036): the gym's opening hours (the desk reads; only the owner saves).
+      case 'owner_gym_timings': {
+        const p = this.anyone(args.p_key);
+        return { hours: this.timings?.hours ?? null, updatedByName: this.timings?.updatedByName ?? null, updatedAt: this.timings?.updatedAt ?? null, canEdit: p.role === 'owner' };
+      }
+      case 'owner_save_gym_timings': {
+        const p = this.ownerLike(args.p_key);
+        if (args.p_hours == null) {
+          this.timings = null;
+          return { hours: null, updatedByName: null, updatedAt: null, canEdit: true };
+        }
+        const h = args.p_hours;
+        const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        const okDay = (d) => d && ['closed', 'hours', 'allDay'].includes(d.kind) && Array.isArray(d.ranges ?? []) &&
+          (d.kind !== 'hours' || (d.ranges.length >= 1 && d.ranges.length <= 2 && d.ranges.every((r) => /^([01]\d|2[0-3]):[0-5]\d$/.test(r.open) && /^([01]\d|2[0-3]):[0-5]\d$/.test(r.close))));
+        if (!h || typeof h !== 'object' || !DAYS.every((k) => okDay(h.week?.[k])) || DAYS.every((k) => h.week[k].kind === 'closed')) throw new Refusal('INVALID');
+        if (!(h.special ?? []).every((s) => /^\d{4}-\d{2}-\d{2}$/.test(s.date) && okDay(s))) throw new Refusal('INVALID');
+        const hours = { week: h.week, special: (h.special ?? []).filter((s) => s.date >= plusDays(TODAY, -1)), note: h.note ?? null };
+        this.timings = { hours, updatedByName: p.staffId ? p.name : null, updatedAt: NOW.getTime() };
+        return { ...this.timings, canEdit: true };
+      }
       default:
-        // Orders, messages, app members: an empty list, as for a new gym.
-        return [];
+        // Orders, messages, app members: an empty list, as for a new gym.        return [];
     }
   }
 

@@ -247,6 +247,9 @@ function deviceSteps(): EraseStep[] {
         const { GYM_MEASURES_KEY, GYM_DIETS_KEY } = await import('@/tracker/services/gymBodySync');
         await AsyncStorage.removeItem(GYM_MEASURES_KEY);
         await AsyncStorage.removeItem(GYM_DIETS_KEY);
+        // R-124: the gym's opening hours kept on the phone.
+        const { GYM_HOURS_KEY } = await import('@/shop/gymTimingsSync');
+        await AsyncStorage.removeItem(GYM_HOURS_KEY);
         if (key) {
           const { leaveOnServer } = await import('@/shop/pendingLeave');
           await leaveOnServer(key);

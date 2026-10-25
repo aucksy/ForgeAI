@@ -14,6 +14,8 @@ import { autoAnswerFromRow, type AutoRemindersAnswer } from './autoReminders';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
+import { gymHoursFromRow } from './gymTimings';
+import type { GymHours } from '@forgeai/theme';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
@@ -189,6 +191,17 @@ export async function apiGymDiets(key: string): Promise<GymResult<GymDietsAnswer
   const r = await call('member_diet_plans', { p_key: key }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = gymDietsFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * The gym's opening hours (member_gym_timings, 0036, R-124). `missing`: the server has not had 0036
+ * yet; nothing shows until it has.
+ */
+export async function apiGymTimings(key: string): Promise<GymResult<{ gymId: string; gymName: string; hours: GymHours | null }> | { ok: false; missing: true }> {
+  const r = await call('member_gym_timings', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = gymHoursFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

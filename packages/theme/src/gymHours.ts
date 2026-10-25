@@ -109,7 +109,7 @@ export function dayProblem(day: DayHours, label: string): string | null {
     if (!s) return `${label}: pick a start time and an end time.`;
     if (s.start === s.end || (s.overnight && s.end - DAY_MIN === s.start)) return `${label}: the end time must be after the start time.`;
     if (s.overnight && s.end - DAY_MIN > HOURS_LIMITS.latestOvernightEnd) {
-      return `${label}: ${timeWords(r.open)} to ${timeWords(r.close)} would end the next day. Check am and pm. A time past midnight must end by 6:00 am; for a gym that never closes, choose Open 24 hours.`;
+      return `${label}: ${timeWords(r.open)} to ${timeWords(r.close)} would end the next day. Check am and pm. A time past midnight must end by 6:00 am; for a gym that never closes, choose "24 hours".`;
     }
     spans.push(s);
   }

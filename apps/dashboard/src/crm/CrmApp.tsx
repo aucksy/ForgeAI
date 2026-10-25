@@ -48,6 +48,7 @@ import { SettingsScreen } from './ui/screens/Settings';
 import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { DietPlansScreen } from './ui/screens/DietPlans';
+import { GymTimingsScreen } from './ui/screens/GymTimings';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
@@ -185,6 +186,8 @@ export function Routes({ online }: { online: boolean }) {
       // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
       // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
       { path: '/settings/branding', label: 'Branding', icon: 'brand' },
+      // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
+      { path: '/settings/timings', label: 'Gym timings', icon: 'clock' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
@@ -228,6 +231,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'members' && id === 'app') return 'Members using the app';
   if (head === 'settings' && id === 'people') return 'Staff & sign-in';
   if (head === 'settings' && id === 'branding') return 'Branding';
+  if (head === 'settings' && id === 'timings') return 'Gym timings';
   if (head === 'settings' && id === 'invite') return 'The invite link';
   return null;
 }
@@ -287,6 +291,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;
+      // R-124: Settings -> Gym timings (when the gym is open, shown in the member app).
+      if (id === 'timings') return <GymTimingsScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.

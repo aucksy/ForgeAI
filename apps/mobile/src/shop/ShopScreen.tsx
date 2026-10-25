@@ -31,6 +31,9 @@ import { useGymShop } from './gymStore';
 import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { gymShopOn } from './gymTab';
+import { GymHoursRow } from './GymHoursRow';
+import { readGymHours, syncGymHours } from './gymTimingsSync';
+import type { GymHours } from '@forgeai/theme';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
 import { MembershipCard } from './MembershipCard';
 import { OfferCard } from './OfferCard';
@@ -114,10 +117,15 @@ function GymShop({ link }: { link: GymLink }) {
   const running = useRef(false);
   // R-120: the trainer's diet plans (the row shows once one has come; the kept copy works offline).
   const [diets, setDiets] = useState<GymDietPlan[] | null>(null);
+  // R-124: the gym's opening hours (the row shows once the gym has set them; kept for offline).
+  const [hours, setHours] = useState<GymHours | null>(null);
   useEffect(() => {
     let live = true;
     void readGymDiets(link).then((c) => {
       if (live) setDiets(c?.plans ?? null);
+    });
+    void readGymHours(link).then((c) => {
+      if (live) setHours(c?.hours ?? null);
     });
     return () => {
       live = false;
@@ -142,15 +150,18 @@ function GymShop({ link }: { link: GymLink }) {
     else setLoading(true);
     // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
     // Gym messages: refreshGymNow also refreshes the inbox (the bell's count).
-    const [words, , diet] = await Promise.all([
+    const [words, , diet, , , gymHours] = await Promise.all([
       refreshProducts(),
       refreshOrders(),
       // R-120: the trainer's diet plans and measurements come by themselves (at most every 10 minutes).
       syncGymDiets(link, { force: byPull }),
       refreshGymNow().catch((e: unknown) => console.warn('[gym] refreshing the gym failed', e)),
       syncGymMeasures(link, { force: byPull }),
+      // R-124: the gym's opening hours (at most every 10 minutes; a pull asks at once).
+      syncGymHours(link, { force: byPull }),
     ]);
     if (diet.kind === 'fresh') setDiets(diet.copy.plans);
+    if (gymHours) setHours(gymHours.hours);
     running.current = false;
     setProblem(words);
     setPulling(false);
@@ -213,6 +224,8 @@ function GymShop({ link }: { link: GymLink }) {
 
         {/* A4: My membership lives here only (not in Settings any more). First: the most used. */}
         <MembershipCard link={link} />
+        {/* R-124: open or closed now, in India time (only once the gym has set its hours). */}
+        <GymHoursRow hours={hours} />
         {/* A3: Check in from the app: the phone's camera reads the poster at the desk. */}
         <View style={{ marginTop: space.md }}>
           <LinkRow
