@@ -1,0 +1,66 @@
+name: Play store listing (pictures in order)
+
+# R-125 (25 Oct 2026): replaces MettleUp's Play store pictures for en-US, in order, from the
+# committed files: phone screenshots branding/mettleup/store/out/shot-01, 02, 03, 05, 06, 07, 08
+# (shot 04 is left out: its caption does not match its screen; 01 + 02 are the barbell panorama
+# pair and must sit first, side by side), the feature graphic and the icon. Optionally the title,
+# short and full description from branding/mettleup/store/listing-draft.txt. The script reads the
+# order back from Play and commits only when it is exactly right; the log shows the final order.
+# Keyless sign-in exactly as play-upload.yml (Workload Identity Federation, repository variables).
+on:
+  workflow_dispatch:
+    inputs:
+      with_text:
+        description: 'Also set the title / short / full description from listing-draft.txt'
+        type: boolean
+        default: false
+      dry_run:
+        description: 'Dry run: validate on Play, never commit'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: play-edit
+  cancel-in-progress: false
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install the Google API client (pinned)
+        run: python -m pip install --disable-pip-version-check -q -r scripts/ci/play-requirements.txt
+
+      - name: Self-tests (Play scripts)
+        run: python -m unittest discover -s scripts/ci -p 'test_play_scripts.py' -v
+
+      - name: Google sign-in (keyless, Workload Identity Federation)
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.PLAY_WIF_PROVIDER }}
+          service_account: ${{ vars.PLAY_SERVICE_ACCOUNT }}
+
+      - name: Upload the store pictures in order
+        env:
+          WITH_TEXT: ${{ inputs.with_text }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "$WITH_TEXT" = true ]; then ARGS+=(--with-text); fi
+          if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
+          python scripts/ci/play_listing.py "${ARGS[@]}"

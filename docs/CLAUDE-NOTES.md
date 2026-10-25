@@ -49,6 +49,14 @@ shot 1 missing, the barbell pair split) — fix on the next upload; he runs a th
 project + Android Publisher API + service account + Workload Identity Federation for repo aucksy/ForgeAI; invite the
 service account in Play Console (release to testing tracks + store listing); then a release-workflow step that uploads the
 AAB to internal + closed tracks and the store pictures in order.
+**Built (25 Oct):** repo variables PLAY_WIF_PROVIDER + PLAY_SERVICE_ACCOUNT (not secrets). play-upload.yml (separate
+workflow; runs after a v* tag's release run SUCCEEDS, or by hand with tag + dry_run) → scripts/ci/play_upload.py: the
+release's own mettleup-<tag>.aab to tracks internal + alpha, completed, notes = the tag's What's new lines (whole lines,
+≤500 chars); skips a track that has the versionCode or a newer one; never production; never cancels a running review
+(ERROR_IF_IN_REVIEW, then commit not-sent-for-review + a warning); closed-track trouble = warning, internal still goes.
+play-listing.yml (manual) → scripts/ci/play_listing.py: deletes en-US phone screenshots, uploads shots 1,2,3,5,6,7,8
+(4 left out: caption ≠ screen), feature graphic, icon, optional listing-draft.txt text; commits only if Play reads back
+the exact order. Self-tests scripts/ci/test_play_scripts.py (also run by the release build's self-tests).
 
 ## R-124. Gym timings per day (morning + evening, or 24 hours), shown in the member app — 25 Oct 2026
 **Owner said:** "Build option for gym owner to add GYM timings for each day of the week for morning and evening or 24
