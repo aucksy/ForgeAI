@@ -29,6 +29,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-125. Automatic Play uploads; I do every setup myself in his Chrome — 25 Oct 2026
+**Owner said:** (asked whether Play uploads need the browser or an integration) "make it a rule that you will do all
+these setups yourself using the browser and you wont ask me unless your safety checks stop you.." Rule updated:
+D:\Brain\How I Like Things\use-the-browser-yourself.md. Also: store pictures are out of order on Play (join card first,
+shot 1 missing, the barbell pair split) — fix on the next upload; he runs a third-party 12-tester service for the 14 days.
+**Doing:** keyless Play Developer API upload from GitHub Actions: in simpleapps108's Chrome (Browser 1) a Google Cloud
+project + Android Publisher API + service account + Workload Identity Federation for repo aucksy/ForgeAI; invite the
+service account in Play Console (release to testing tracks + store listing); then a release-workflow step that uploads the
+AAB to internal + closed tracks and the store pictures in order.
+
 ## R-124. Gym timings per day (morning + evening, or 24 hours), shown in the member app — 25 Oct 2026
 **Owner said:** "Build option for gym owner to add GYM timings for each day of the week for morning and evening or 24
 hours, which will be visible in member app. Research for the best implementation."
