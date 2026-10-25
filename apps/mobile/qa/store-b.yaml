@@ -1,0 +1,101 @@
+# Store screens (R-126), step B: today's Push Day. Start it from Up next, tick the bench's two
+# warm-ups and its first working set (s-01: the set table with last time's numbers and the
+# "Last: <day> · Push Day" line), then tick every other set and finish (s-04: Workout complete).
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Up next: Push Day'
+    timeout: 60000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- tapOn:
+    text: 'Mark .*Bench Press warm-up 1 complete'
+    index: 0
+- tapOn:
+    text: 'Mark .*Bench Press warm-up 2 complete'
+    index: 0
+- tapOn:
+    text: 'Mark .*Bench Press set 1 complete'
+    index: 0
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 5000
+    optional: true
+- scrollUntilVisible:
+    element: 'Last: .*'
+    direction: UP
+    timeout: 15000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: s-01-workout
+- scrollUntilVisible:
+    element: 'Mark .*Bench Press set 2 complete'
+    centerElement: true
+    timeout: 10000
+    optional: true
+- takeScreenshot: s-01b-workout-sets
+# Every other set, top to bottom.
+- repeat:
+    times: 16
+    commands:
+      - scrollUntilVisible:
+          element: 'Mark .* complete'
+          centerElement: true
+          timeout: 8000
+          optional: true
+      - tapOn:
+          text: 'Mark .* complete'
+          index: 0
+          optional: true
+          waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s-04-complete
+- scrollUntilVisible:
+    element: "New records.*"
+    centerElement: true
+    timeout: 10000
+    optional: true
+- takeScreenshot: s-04b-complete-records
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 15000
+- tapOn: "^Done$"
+- runFlow: sub-back-to-tabs.yaml

@@ -1,0 +1,169 @@
+# Store screens (R-126, 25 Oct 2026), step A: a new member arrives from Hevy. Fresh install, the
+# welcome with "From Hevy", import the store history (tools/make_store_hevy.py: 49 workouts of
+# Push Day / Pull Day / Leg Day), bring the 3 routines in and follow them, name their folder
+# "Push Pull Legs". Pictures: the Workout tab with Up next (s-02) and Find a plan (s-08).
+# Not a test: run only by qa/run-store-shots.sh (store-shots.yml), never by the release gate.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- scrollUntilVisible:
+    element: "Step 1 of 3"
+    direction: UP
+    timeout: 20000
+- tapOn: "Your name"
+- inputText: "Arjun"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "From Hevy"
+    centerElement: true
+    timeout: 20000
+- tapOn: "From Hevy"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "^Kilograms$"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- tapOn: "Build muscle"
+- scrollUntilVisible:
+    element: "Intermediate"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Intermediate"
+- scrollUntilVisible:
+    element: "Start training"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Start training"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 60000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|store-hevy).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "store-hevy.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "store-hevy.*"
+- extendedWaitUntil:
+    visible: "^Date range$"
+    timeout: 120000
+- tapOn:
+    text: "^Merge$"
+    optional: true
+- scrollUntilVisible:
+    element: 'Import [\d,]+ workouts'
+    centerElement: true
+    timeout: 30000
+- tapOn: 'Import [\d,]+ workouts'
+- extendedWaitUntil:
+    visible: '[\d,]+ workouts imported'
+    timeout: 300000
+- scrollUntilVisible:
+    element: "Bring my routines in"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Bring my routines in"
+- extendedWaitUntil:
+    visible: "We found 3 routines in your Hevy workouts"
+    timeout: 60000
+- tapOn: "Check these 3"
+- repeat:
+    times: 3
+    commands:
+      - extendedWaitUntil:
+          visible: "[123] of 3"
+          timeout: 20000
+      - scrollUntilVisible:
+          element: "^Next$"
+          centerElement: true
+          timeout: 15000
+      - tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?"
+    timeout: 15000
+- tapOn: "Follow them"
+- extendedWaitUntil:
+    visible: "3 routines in From Hevy"
+    timeout: 20000
+- tapOn: "Open routines"
+# The folder's name, as a member would call it.
+- scrollUntilVisible:
+    element: "More for From Hevy"
+    centerElement: true
+    timeout: 20000
+- tapOn: "More for From Hevy"
+- extendedWaitUntil:
+    visible: "Rename folder"
+    timeout: 10000
+- tapOn: "Rename folder"
+- extendedWaitUntil:
+    visible: "Save name"
+    timeout: 10000
+- eraseText: 40
+- inputText: "Push Pull Legs"
+- tapOn: "Save name"
+- extendedWaitUntil:
+    notVisible: "Save name"
+    timeout: 10000
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: Push Day'
+    timeout: 30000
+- scrollUntilVisible:
+    element: 'Up next: Push Day'
+    direction: UP
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s-02-up-next
+- scrollUntilVisible:
+    element: "Find a plan"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: s-02b-routines
+- tapOn: "Find a plan"
+- extendedWaitUntil:
+    visible: "Build a plan"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s-08-find-a-plan
+- scrollUntilVisible:
+    element: "(?i).*push pull legs.*"
+    centerElement: true
+    timeout: 15000
+    optional: true
+- takeScreenshot: s-08b-find-a-plan-programs
+- runFlow: sub-back-to-tabs.yaml

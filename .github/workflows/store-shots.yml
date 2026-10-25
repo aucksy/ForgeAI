@@ -1,0 +1,92 @@
+name: Store screens (Play Store app pictures)
+
+# R-126 (owner, 25 Oct 2026): the Play Store pictures' app screens, taken on a NORMAL phone (Pixel 6,
+# font 1.0) with a clean status bar and a real-looking member history: apps/mobile/qa/run-store-shots.sh.
+# Manual only. Not a test and never part of the release gate: it only uploads the pictures (`store-shots`).
+# `apk_run`: reuse the emulator APK (artifact `qa-apk`) of an earlier Device QA or Store screens run
+# instead of building one (~25 min saved); empty = build from this commit.
+on:
+  workflow_dispatch:
+    inputs:
+      apk_run:
+        description: "Run id whose qa-apk artifact to reuse (empty = build the APK from this commit)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    if: ${{ inputs.apk_run == '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Build an emulator APK (x86_64)
+        working-directory: apps/mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --stacktrace
+          find app/build/outputs/apk/release -name '*.apk' -exec cp {} "$GITHUB_WORKSPACE/qa.apk" \;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qa-apk
+          path: qa.apk
+          retention-days: 7
+
+  shots:
+    needs: [build]
+    if: ${{ always() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: APK built by this run
+        if: ${{ inputs.apk_run == '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-apk
+      - name: APK of an earlier run
+        if: ${{ inputs.apk_run != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-apk
+          run-id: ${{ inputs.apk_run }}
+          github-token: ${{ github.token }}
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Take the screens
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash apps/mobile/qa/run-store-shots.sh "$GITHUB_WORKSPACE/qa.apk"
+      - name: Upload the pictures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: store-shots
+          path: store-out
+          retention-days: 14

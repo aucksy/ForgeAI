@@ -1,0 +1,42 @@
+# Store screens (R-126), step D: the member joins a gym. run-store-shots.sh started a demo gym
+# "Iron Temple Fitness" (demo_start_gym: the website's own "Try the demo", sample shop included) and
+# opened its invite link at the app. Join it; pictures of the Gym tab (s-05, s-05b scrolled).
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "Gym code .*"
+    timeout: 30000
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "Arjun"
+- hideKeyboard
+- runFlow: sub-agree.yaml
+- scrollUntilVisible:
+    element: "^Join this gym$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Join this gym$"
+- extendedWaitUntil:
+    notVisible: "Your name"
+    timeout: 30000
+- runFlow: sub-after-join.yaml
+- takeScreenshot: s-05c-workout-in-gym
+- tapOn:
+    text: "^(Shop|Gym)$"
+    index: 0
+- extendedWaitUntil:
+    visible: "^Iron Temple Fitness$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Messages from your gym.*"
+    timeout: 20000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s-05-gym
+- scroll
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: s-05b-gym-scrolled
+- scroll
+- takeScreenshot: s-05d-gym-scrolled-more
