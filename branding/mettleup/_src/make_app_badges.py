@@ -75,9 +75,10 @@ def main():
     for name in ('icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon-180.png'):
         shutil.copy(WEB / 'admin' / name, dash / f'admin-{name}')
     hq = ROOT / 'apps/hq/public/icons'
-    for src, dst in (('icon-192.png', 'icon-192.png'), ('icon-512.png', 'icon-512.png'),
-                     ('icon-maskable-512.png', 'icon-maskable-512.png'),
-                     ('apple-touch-icon-180.png', 'apple-touch-icon.png')):
+    # '-v2' names (25 Oct 2026): phones kept the unbadged icons cached under the old names.
+    for src, dst in (('icon-192.png', 'icon-192-v2.png'), ('icon-512.png', 'icon-512-v2.png'),
+                     ('icon-maskable-512.png', 'icon-maskable-512-v2.png'),
+                     ('apple-touch-icon-180.png', 'apple-touch-icon-v2.png')):
         shutil.copy(WEB / 'hq' / src, hq / dst)
     print('badged icons written')
 

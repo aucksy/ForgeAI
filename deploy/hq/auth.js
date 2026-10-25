@@ -7,7 +7,7 @@
 //     it back to /auth/callback; this Worker swaps the code for Google's signed ID token, checks the
 //     token's signature against Google's published keys, its issuer, audience (our client id),
 //     expiry, nonce, that Google verified the email, and that the email is on HQ_ALLOWED_EMAIL. Then
-//     it sets its own signed session cookie (HMAC with HQ_SESSION_SECRET, 8 hours, HttpOnly, Secure,
+//     it sets its own signed session cookie (HMAC with HQ_SESSION_SECRET, 30 days, HttpOnly, Secure,
 //     __Host-). His Google account is what protects HQ: passkey and 2-step stay on there.
 //   "access": Cloudflare Access in front (its Zero Trust free plan asks for a payment card at sign-up,
 //     so it is not the default). The Worker still verifies the Cf-Access-Jwt-Assertion token against
@@ -24,7 +24,9 @@ const dec = new TextDecoder();
 
 export const SESSION_COOKIE = '__Host-hq_session';
 export const OAUTH_COOKIE = '__Host-hq_oauth';
-export const SESSION_SECONDS = 8 * 60 * 60;
+// 30 days (owner, 25 Oct 2026: the installed HQ app asked him to sign in every time; 8 hours was too short
+// for a panel only his Google account can open). "Sign out" still ends it at once.
+export const SESSION_SECONDS = 30 * 24 * 60 * 60;
 export const OAUTH_SECONDS = 10 * 60;
 export const FRESH_SECONDS = 15 * 60;
 export const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';

@@ -53,10 +53,10 @@ export function secure(response) {
  */
 export const PUBLIC_FILES = {
   '/manifest.webmanifest': { type: 'application/manifest+json; charset=utf-8', cache: 'public, max-age=3600' },
-  '/icons/icon-192.png': { type: 'image/png', cache: 'public, max-age=86400' },
-  '/icons/icon-512.png': { type: 'image/png', cache: 'public, max-age=86400' },
-  '/icons/icon-maskable-512.png': { type: 'image/png', cache: 'public, max-age=86400' },
-  '/icons/apple-touch-icon.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/icon-192-v2.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/icon-512-v2.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/icon-maskable-512-v2.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icons/apple-touch-icon-v2.png': { type: 'image/png', cache: 'public, max-age=86400' },
   // The browser re-checks the service worker on every visit, so an old one never sticks.
   '/sw.js': { type: 'text/javascript; charset=utf-8', cache: 'no-cache' },
   '/offline.html': { type: 'text/html; charset=utf-8', cache: 'no-cache' },

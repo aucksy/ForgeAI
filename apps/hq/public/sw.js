@@ -1,9 +1,9 @@
 // MettleUp HQ service worker. Its only job is to make HQ installable and to show a plain page when
 // the phone has no internet. It NEVER stores an API answer or any page of HQ: everything goes
 // straight to the network. The only things kept are the three public offline files below.
-const CACHE = 'hq-offline-v1';
+const CACHE = 'hq-offline-v2';
 const OFFLINE = '/offline.html';
-const PRECACHE = [OFFLINE, '/offline.css', '/icons/icon-192.png'];
+const PRECACHE = [OFFLINE, '/offline.css', '/icons/icon-192-v2.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));

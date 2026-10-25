@@ -605,10 +605,10 @@ test('install files open without sign-in, with the right type and cache, and sti
     '/sw.js': [/^text\/javascript/, /no-cache/],
     '/offline.html': [/^text\/html/, /no-cache/],
     '/offline.css': [/^text\/css/, /no-cache/],
-    '/icons/icon-192.png': [/^image\/png$/, /max-age=86400/],
-    '/icons/icon-512.png': [/^image\/png$/, /max-age=86400/],
-    '/icons/icon-maskable-512.png': [/^image\/png$/, /max-age=86400/],
-    '/icons/apple-touch-icon.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/icon-192-v2.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/icon-512-v2.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/icon-maskable-512-v2.png': [/^image\/png$/, /max-age=86400/],
+    '/icons/apple-touch-icon-v2.png': [/^image\/png$/, /max-age=86400/],
   };
   assert.deepEqual(Object.keys(PUBLIC_FILES).sort(), Object.keys(want).sort(), 'nothing else is public');
   for (const [path, [type, cache]] of Object.entries(want)) {
@@ -620,7 +620,7 @@ test('install files open without sign-in, with the right type and cache, and sti
     assert.equal(res.headers.get('X-Frame-Options'), 'DENY', path);
     assert.ok((await res.arrayBuffer()).byteLength > 50, path);
   }
-  assert.equal((await get('/icons/icon-192.png', undefined, { method: 'HEAD' })).status, 200);
+  assert.equal((await get('/icons/icon-192-v2.png', undefined, { method: 'HEAD' })).status, 200);
 });
 
 test('install files: an asset redirect (/offline.html -> /offline) is followed, a missing file is 404, a POST is not served', async () => {
@@ -668,7 +668,7 @@ test('the manifest, the icons, the offline page and sw.js are what a phone needs
     assert.equal(png(icon.src), size, icon.src);
     assert.ok(Object.hasOwn(PUBLIC_FILES, icon.src), `${icon.src} must be public`);
   }
-  assert.equal(png('/icons/apple-touch-icon.png'), '180x180');
+  assert.equal(png('/icons/apple-touch-icon-v2.png'), '180x180');
   const html = readFileSync(new URL('index.html', PUBLIC_DIR), 'utf8');
   for (const part of ['rel="manifest" href="/manifest.webmanifest"', 'name="theme-color"', 'rel="apple-touch-icon"', 'name="apple-mobile-web-app-capable"', 'viewport-fit=cover']) {
     assert.ok(html.includes(part), part);
@@ -681,7 +681,7 @@ test('sw.js never stores an API answer or a page: the only cache writes are the 
   const code = sw.replace(/\/\/.*$/gm, '');
   assert.deepEqual([...code.matchAll(/\.(put|add|addAll)\(/g)].map((x) => x[1]), ['addAll'], 'only the install step writes to the cache');
   assert.match(code, /OFFLINE = '\/offline\.html'/);
-  assert.match(code, /PRECACHE = \[OFFLINE, '\/offline\.css', '\/icons\/icon-192\.png'\]/);
+  assert.match(code, /PRECACHE = \[OFFLINE, '\/offline\.css', '\/icons\/icon-192-v2\.png'\]/);
   assert.match(code, /req\.mode !== 'navigate'\) return/, 'API calls and files are left to the network');
   assert.doesNotMatch(code, /\/api\//);
 });

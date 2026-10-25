@@ -41,7 +41,10 @@
   var COLOUR = 'forgeai.home.colour';
   var nameBox = document.getElementById('gymname');
   var swatches = Array.prototype.slice.call(document.querySelectorAll('.sw'));
-  function gymName() { return (nameBox.value || '').replace(/\s+/g, ' ').trim() || nameBox.getAttribute('placeholder'); }
+  // The empty box shows a grey example; the phone preview keeps its own made-up gym (owner, 25 Oct: a grey
+  // "Iron Temple Fitness" in the box looked already filled in, so the call-back form seemed stuck on it).
+  var DEMO_GYM = 'Iron Temple Fitness';
+  function gymName() { return (nameBox.value || '').replace(/\s+/g, ' ').trim() || DEMO_GYM; }
   function paintGym() {
     var name = gymName();
     Array.prototype.forEach.call(document.querySelectorAll('[data-gym]'), function (n) { n.textContent = name; });
