@@ -379,13 +379,13 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 65. Your task: 1 minute so Google sign-in also works on the GitHub copy of the app — 25 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU (last step)
+**Status:** DONE (25 Oct)
 **TASK DONE (25 Oct, 12:41 pm, via the page)**
 **Why:** Google sign-in and Drive backup are now switched on (#60). They work on the Play Store copy. On the copy installed from GitHub they fail, because an old test entry in your personal Google project "GmailAPI" already holds the app's name and fingerprint. Google lets only one entry hold them. A safety check stopped me from changing your personal project without your word.
 **YOUR REPLY (25 Oct):** yes, move the MettleUp Android client
 **My answer:** I tried in your Chrome. The safety check blocked typing into your personal Google project, even with your yes. Nothing was changed. This one step is yours (1 minute); I do the rest the moment you tap "I have done it".
 **Your task:** in Chrome, signed in as aakashpahuja1990, open https://console.cloud.google.com/auth/clients/240978491498-aoc7fplm0oilsev1nu5ujojqjcdhe7c3.apps.googleusercontent.com?project=gmailapi-491903. In the "Package name" box, replace com.mettleup.app with com.mettleup.app.retired. Press Save at the bottom. Then tap "I have done it".
-**TASK DONE (25 Oct)**: you renamed the old entry. I made the GitHub-copy entry in the MettleUp project (301992813103-apaj51v12678arflaa0tg6i9aapbihu1) and typed it into Supabase. Saving a live server setting needs your word: say "yes, save the Google client in Supabase" in chat, or press Save on the Supabase Google page open in your Chrome (the secret box stays empty).
+**TASK DONE (25 Oct)**: you renamed the old entry. I made the GitHub-copy entry in the MettleUp project (301992813103-apaj51v12678arflaa0tg6i9aapbihu1) and typed it into Supabase. Saving a live server setting needs your word: say "yes, save the Google client in Supabase" in chat, or press Save on the Supabase Google page open in your Chrome (the secret box stays empty). **DONE:** you said yes; saved 25 Oct.
 
 ## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
 **Chat:** ForgeAI Local Chat

@@ -75,7 +75,7 @@ gym timings, Play uploads, leads fix).
 - GAP: Drive backup still uploads the old JSON snapshot (cloud/snapshot.ts: no photos, no settings outside the
   database), not the new full backup ZIP (src/backup). Needs the backup helper to switch Drive to the ZIP.
 
-**25 Oct, later:** owner renamed the old GmailAPI Android client to com.mettleup.app.retired (the safety check blocked me twice, even with his yes). I created "MettleUp GitHub APK" Android client 301992813103-apaj51v12678arflaa0tg6i9aapbihu1 (SHA-1 97:F8:...:93:88) in forgeai-d7eea and typed it into Supabase Client IDs; Save was blocked as a live setting change, waiting for his explicit word. He asked why ".retired": Google lets one package + fingerprint pair live in only one project; renaming frees it and is undoable, deleting is not. His tracker taps do not reach me live: new rule read-his-tracker-taps-before-asking.
+**25 Oct, later:** owner renamed the old GmailAPI Android client to com.mettleup.app.retired (the safety check blocked me twice, even with his yes). I created "MettleUp GitHub APK" Android client 301992813103-apaj51v12678arflaa0tg6i9aapbihu1 (SHA-1 97:F8:...:93:88) in forgeai-d7eea and typed it into Supabase Client IDs; Save was blocked as a live setting change, waiting for his explicit word. He asked why ".retired": Google lets one package + fingerprint pair live in only one project; renaming frees it and is undoable, deleting is not. His tracker taps do not reach me live: new rule read-his-tracker-taps-before-asking. Then he said "yes, save the Google client in Supabase": saved ("Successfully updated settings"); Supabase now holds web + Play + GitHub-APK client IDs, secret empty, google=true.
 
 ## R-127. His website demo request never reached HQ — 25 Oct 2026
 
