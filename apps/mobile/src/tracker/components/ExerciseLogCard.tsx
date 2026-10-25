@@ -285,6 +285,9 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [exercise.previousSets, exercise.lastFrom, exercise.elsewhere, exercise.logType, exercise.loadMode, exercise.distUnit, units],
   );
+  // R-126 (owner, 25 Oct 2026): when "Last: ..." no longer fits at the end of the row it drops to
+  // a line of its own; there it starts at the left, under the muscle tag, instead of floating right.
+  const [sourceWrapped, setSourceWrapped] = useState(false);
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenRpe = useCallback((setKey: string) => setRpeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
@@ -449,7 +452,11 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             {sourceLine && !compact ? (
               <Text
                 accessibilityLabel={sourceLine.spoken}
-                style={{ marginLeft: 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
+                onLayout={(e) => {
+                  const wrapped = e.nativeEvent.layout.y > 4;
+                  if (wrapped !== sourceWrapped) setSourceWrapped(wrapped);
+                }}
+                style={{ marginLeft: sourceWrapped ? 0 : 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
               >
                 {sourceLine.text}
               </Text>
