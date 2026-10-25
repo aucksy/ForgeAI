@@ -177,8 +177,9 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Progress$"
     index: 0
+# R-132: the tabs open the page; the Charts row is further down (sub-progress-row scrolls to it).
 - extendedWaitUntil:
-    visible: "^Charts$"
+    visible: "^Kg lifted$"
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000

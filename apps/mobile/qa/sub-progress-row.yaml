@@ -16,6 +16,14 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Progress$"
     index: 0
+# R-132: the tabs, today's goal and the bars now sit above the rows, so on a normal phone a row can
+# rest at the very bottom, under the "Demo data · Remove" bar, still counted as visible (run
+# 40208458017: the tap on "Exercises" opened "Remove the demo?"). Scroll down to the Reports heading
+# (always drawn, below every row) first: the rows are then above it, clear of the bar.
+- scrollUntilVisible:
+    element: "(?i)^reports$"
+    timeout: 20000
+    optional: true
 # The tab keeps its scroll position (at 200 % text a row can sit above or below the screen's edge):
 # look UP first, then down.
 - scrollUntilVisible:

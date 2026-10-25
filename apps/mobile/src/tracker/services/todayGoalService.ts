@@ -17,7 +17,7 @@ export async function getTodayGoal(): Promise<TodayGoal | null> {
   // Today's sets are logged the exercise's current way ("kg each" or not): loadMode null = that way.
   const [volumeKg, last] = await Promise.all([
     plannedVolumeKg(weighed.map((x) => ({ exerciseId: x.t.exerciseId, loadMode: null, sets: x.p.sets }))),
-    getLastRoutineTotals(tw.planDayId),
+    getLastRoutineTotals(tw.planDayId, tw.dayName),
   ]);
   return {
     routineName: tw.dayName,

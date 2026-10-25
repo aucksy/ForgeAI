@@ -20,7 +20,9 @@ import type { ConsistencyCell, DashboardData, MuscleGroup, RecoveryStatus, Sessi
 
 import { dataStamp } from '../db/dataStamp';
 import { getTrackerExercisesByIds, type TrackerExercise } from '../db/exerciseInfo';
+import { historyScopeSql } from '../db/historyScope';
 import { getRecentSessionDetailsAndModes } from '../db/sessionDetails';
+import { nameKey } from '../plans/todayPlan';
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
 import {
   bodyweightOn,
@@ -426,13 +428,18 @@ export async function getSessionTotalsBetween(fromISO: string, toISO: string): P
  * R-132: the newest workout of a routine (any source, so the demo shows it too) with its totals by the
  * same per-set reading as the chart; null when the routine was never done.
  */
-export async function getLastRoutineTotals(routineId: string): Promise<SessionTotals | null> {
+export async function getLastRoutineTotals(routineId: string, routineName = ''): Promise<SessionTotals | null> {
+  // "Same routine" as the live workout reads it (historyScope): its id, or, for a workout with no known
+  // routine (the demo, older imports), the routine's name (phone run 40208458017: the demo's Push Day A
+  // read "Your first time doing this workout" after 13 weeks of it).
+  const name = nameKey(routineName);
+  const scope = historyScopeSql('ws', { routineIds: [routineId], names: name ? [name] : [] });
   const last = await getDb().getFirstAsync<{ id: string; date_iso: string }>(
     // A workout with no working set (started, then left empty) is not "last time".
     `SELECT ws.id, ws.date_iso FROM workout_sessions ws
-      WHERE ws.routine_id = ? AND EXISTS (SELECT 1 FROM set_entries se WHERE se.session_id = ws.id AND se.is_warmup != 1)
+      WHERE EXISTS (SELECT 1 FROM set_entries se WHERE se.session_id = ws.id AND se.is_warmup != 1) ${scope.sql}
       ORDER BY ws.started_at DESC LIMIT 1`,
-    [routineId],
+    scope.params,
   );
   if (!last) return null;
   const all = await getSessionTotalsBetween(last.date_iso, last.date_iso);
