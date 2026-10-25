@@ -177,6 +177,11 @@ phone restores everything and opens on it) + "Bring workouts from Hevy or Strong
 key, saved store field, key-value/SecureStore key and table is carried or listed in src/backup/backupCoverage.ts with a
 reason. Health Connect is carried but never switched on by a restore (Android permission per phone; the screen says so).
 Drive backup untouched (hidden, its own format). Phone test part UBK (qa/uat-bk.yaml).
+**Then (helper, 25 Oct):** Drive switched to the same file (coordinator): "Back up now" uploads the backup ZIP
+(resumable, from disk), "Restore from Drive" restores it like "Restore from a backup", Undo takes photos and settings
+away too (commit 9eecc5e). ForgeAI 0.55.2 RELEASED off v0.55.1 (commits 7fa53e4 + 343efeb: release checks now compare
+ForgeAI only with ForgeAI releases): https://github.com/aucksy/ForgeAI/releases/download/v0.55.2/forgeai-v0.55.2.apk;
+v0.56.1 set back as the repo's latest release (app.mettleup.fit/app -> mettleup-v0.56.1.apk).
 
 ## R-122. #64 A: privacy lines approved; trainer measurements + diet plans go live — 25 Oct 2026
 **Owner said:** "A" (tracker #64: add the 3 privacy-notice lines, put 0035 live, deploy the admin app; the member app
