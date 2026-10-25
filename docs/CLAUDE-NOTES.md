@@ -34,7 +34,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 hours, which will be visible in member app. Research for the best implementation."
 **Doing:** helper researches (Google Business hours model, Indian gym shift patterns, competitor apps) then builds:
 admin app timings editor, server change 0036 (live only after his yes), member app Gym tab "Open now · closes 10 pm" +
-the week. Also R-123 follow-ups (owner, same morning): the backup must hold photos, profile and EVERY changed setting
+the week.
+**Built (helper, 25 Oct morning; server change NOT LIVE):** research docs/research/R-gym-timings.md (Google's model made
+smaller; holiday notice a week ahead is our edge). Shared rules packages/theme/src/gymHours.ts (both apps). Server 0036
+(NOT APPLIED; CI database job PASS): table gym_timings (one row per gym = per branch); RPCs owner_gym_timings (owner or
+desk), owner_save_gym_timings (owner only; null removes), member_gym_timings (member key; hours are public facts, so no
+check-in match). Admin: page "Gym timings" (sidebar + More next to Branding, Settings card): presets, Closed / Times (1-2)
+/ 24 hours per day, Copy Monday to Tue to Sat, special days, note, "Right now members see", desk read-only. Member app:
+Gym tab line under My membership + page "Gym timings"; hidden until the gym has hours. Decided: staff cannot edit (gym
+details are the owner's, like Branding); past-midnight times allowed until 6:00 am (later = am/pm slip, refused); no
+maestro flow (QA phones use the live server, which has no 0036; diet plans have none either); join page skipped.
+Also R-123 follow-ups (owner, same morning): the backup must hold photos, profile and EVERY changed setting
 (next-weight rules etc.), proven by a guard test; Drive backup waits on #60 (add the Play signing SHA-1 there).
 
 ## R-123. Full backup: routines with their order + settings; ForgeAI → MettleUp; export/import for everyone — 25 Oct 2026

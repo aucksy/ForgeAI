@@ -213,8 +213,10 @@ days left, monthly challenges). One quiet "No gym? Everything else works without
   The rest wait for the next day. Inside Up next, at most one extra line (easy week OR muscle tip OR
   the easy-week offer), never all three.
 - **Progress:** 5 headed blocks, each with "See all". Statistics' 7 sections move one level down under "Charts".
-- **Gym:** membership card first (most-used), then Check in, then whatever is live today (challenge, workout of the day,
-  busy now). Shop is a row, or a grid only when the gym has products. Messages bell stays top right.
+- **Gym:** membership card first (most-used), then the gym's hours line once the gym has set them ("Open now · closes
+  10:00 pm", a holiday in the next 7 days under it; tap: Gym timings, the week; R-124), then Check in, then whatever is
+  live today (challenge, workout of the day, busy now). Shop is a row, or a grid only when the gym has products.
+  Messages bell stays top right.
 - **Profile:** 3 numbers, badge strip, chart, Calendar button, past workouts. Exercises and Measures leave for Progress.
 
 ### 3.3 Settings: 7 headed groups on one page (6 + Back up and restore, R-123) (like Hevy), each row one tap to its own page

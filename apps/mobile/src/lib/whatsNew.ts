@@ -74,6 +74,11 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
         text: 'Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.',
         go: { label: 'Open the Gym tab', href: '/shop' },
       },
+      {
+        // R-124: shows once the gym adds its timings in the admin app.
+        text: 'The Gym tab now shows if your gym is open right now, with its hours for the week and any holiday.',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
     ],
   },
   {
