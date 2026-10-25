@@ -29,6 +29,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-122. #64 A: privacy lines approved; trainer measurements + diet plans go live — 25 Oct 2026
+**Owner said:** "A" (tracker #64: add the 3 privacy-notice lines, put 0035 live, deploy the admin app; the member app
+already carries the screens since 0.56.0/0.56.1 and shows them once 0035 is live). Done in order: notice EN + HI edited,
+legal pages rebuilt; then 0035 live + tests; then admin deploy.
+
 ## R-121. Overnight: deploy everything in flight; tester install links by morning — 24 Oct 2026 (~10 pm)
 **Owner said:** "I am going to sleep.. so deploy all changes in flight yourself.. when I wake up tomorrow I need to be
 able to send links to testers to install the app."

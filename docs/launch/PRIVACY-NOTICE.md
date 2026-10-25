@@ -8,23 +8,8 @@ A lawyer check is still advised before the second gym (open risks at the end).
 Updated 24 Oct 2026 (tracker #59, owner approved the draft "as written"): saved workouts with Google
 sign-in, the AI import named under "Where it is kept" (names and addresses now hidden from it too).
 
-**PROPOSED CHANGE, R-120 (24 Oct 2026): WAITING FOR THE OWNER'S APPROVAL, NOT IN THE PUBLIC NOTICE YET.**
-Why: measurements taken by the trainer and diet plans (server change 0035) put a member's body
-measurements on our server as the GYM's records. Today the notice says measurements stay on the
-phone and the gym never sees them; that stays true for what the member logs, not for what the gym
-records. Once approved, these three edits go into the notice below (and the Hindi one), before 0035
-is switched on live:
-1. "Who is responsible for what", first bullet, the list in brackets becomes: "(membership,
-   payments, receipts, visits, shop orders, messages with the desk, body measurements your trainer
-   takes at the gym, and diet plans your trainer sends you)".
-2. The "Your workouts" bullet starts: "**The workouts and measurements you log yourself** (exercises,
-   sets, weights, body weight, measurements, progress photos) stay **on your phone** ..." (rest as is).
-3. A new row in the table: "Body measurements your trainer takes at the gym (the date, body weight,
-   body fat, tape measurements, who measured, and the desk's own note), and diet plans your trainer
-   sends you | So your trainer can follow your progress and you see it in the app (Progress → Body,
-   Gym → Diet plan) | As long as the gym keeps its records. Only your gym's staff and you can see
-   them. A measurement the gym deletes also goes from your app; the numbers already on your phone
-   stay there if you leave the gym, until you erase the app's data".
+Updated 25 Oct 2026 (tracker #64, owner picked A): measurements your trainer takes at the gym and diet
+plans your trainer sends are the gym's records; "on your phone" now covers what you log yourself.
 
 ---
 
@@ -36,11 +21,11 @@ is switched on live:
 
 ### Who is responsible for what
 - **Your gym's records about you** (membership, payments, receipts, visits, shop orders, messages
-  with the desk): your **gym** is responsible (its name and contact are in the app under Settings → Your gym, and at its desk). MettleUp stores and
+  with the desk, body measurements your trainer takes at the gym, and diet plans your trainer sends you): your **gym** is responsible (its name and contact are in the app under Settings → Your gym, and at its desk). MettleUp stores and
   processes them for the gym, under a written agreement.
 - **Your MettleUp account and our technical logs:** **MettleUp** is responsible.
-- **Your workouts** (exercises, sets, weights, body weight, measurements, progress photos) stay
-  **on your phone** unless you sign in with Google. Your gym does not see them either way.
+- **The workouts and measurements you log yourself** (exercises, sets, weights, body weight, measurements,
+  progress photos) stay **on your phone** unless you sign in with Google. Your gym does not see them either way.
 - **If you sign in with Google**, MettleUp saves a copy of your workouts on our server so you can
   get them back on a new phone. **MettleUp** is responsible for that copy, not your gym. Only you
   can see it. See "Your saved workouts" below.
@@ -54,6 +39,7 @@ is switched on live:
 |---|---|---|
 | When you join a gym in the app: your name, mobile number, the gym, the date you joined, when you last used the app, the date you left | So the gym knows who checked in, ordered or wrote | Until you leave the gym (your mobile number is then erased); the rest stays with the gym's records |
 | Check-ins (date and time), shop orders, messages with the desk | To run your membership and the gym's shop | As long as the gym keeps its records |
+| Body measurements your trainer takes at the gym (the date, body weight, body fat, tape measurements, who measured, and the desk's own note), and diet plans your trainer sends you | So your trainer can follow your progress and you see it in the app (Progress → Body, Gym → Diet plan) | As long as the gym keeps its records. Only your gym's staff and you can see them. A measurement the gym deletes also goes from your app; the numbers already on your phone stay there if you leave the gym, until you erase the app's data |
 | The gym's records listed above | So the gym can run memberships, receipts and check-ins | While the gym uses MettleUp; deleted within 30 days after it leaves (backups expire within 7 more days) |
 | Gym staff: name and mobile | Staff sign-in | While they work there |
 | Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward | To give you the reward | Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends |
