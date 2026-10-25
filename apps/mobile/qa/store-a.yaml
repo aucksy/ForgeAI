@@ -1,7 +1,7 @@
 # Store screens (R-126, 25 Oct 2026), step A: a new member arrives from Hevy. Fresh install, the
 # welcome with "From Hevy", import the store history (tools/make_store_hevy.py: 49 workouts of
 # Push Day / Pull Day / Leg Day), bring the 3 routines in and follow them, name their folder
-# "Push Pull Legs". Pictures: the Workout tab with Up next (s-02) and Find a plan (s-08).
+# "PPL". Pictures: the Workout tab with Up next (s-02) and Find a plan (s-08).
 # Not a test: run only by qa/run-store-shots.sh (store-shots.yml), never by the release gate.
 appId: com.mettleup.app
 ---
@@ -129,7 +129,9 @@ appId: com.mettleup.app
     visible: "Save name"
     timeout: 10000
 - eraseText: 40
-- inputText: "Push Pull Legs"
+# "PPL", not "Push Pull Legs": Up next's line "from PPL · 4 exercises · Barbell Bench Press first" then
+# fits one line on this phone (the long name left "first" alone on a second line, run 40170798594).
+- inputText: "PPL"
 - tapOn: "Save name"
 - extendedWaitUntil:
     notVisible: "Save name"
@@ -142,17 +144,22 @@ appId: com.mettleup.app
     visible: 'Up next: Push Day.*'
     timeout: 30000
     optional: true
-# The Up next card's muscle tip ("Easy add today: ...") is put away, as a member would.
+# The Up next card's muscle tips ("Easy add today: 3 sets of Plank ...") load a moment after the card
+# and come one muscle at a time: put each away for good, as a member who trains them elsewhere would.
 - repeat:
-    times: 2
+    times: 5
     commands:
+      - extendedWaitUntil:
+          visible: "Easy add today.*"
+          timeout: 6000
+          optional: true
       - scrollUntilVisible:
-          element: "Not now.*"
+          element: "I skip this on purpose.*"
           centerElement: true
-          timeout: 4000
+          timeout: 3000
           optional: true
       - tapOn:
-          text: "Not now.*"
+          text: "I skip this on purpose.*"
           optional: true
 - scrollUntilVisible:
     element: 'Up next: Push Day.*'

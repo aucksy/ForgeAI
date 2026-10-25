@@ -115,14 +115,6 @@ appId: com.mettleup.app
     timeout: 10000
     optional: true
 - takeScreenshot: s-03b-bench-chart
-- tapOn: "^Summary$"
-- scrollUntilVisible:
-    element:
-      id: "date-line-chart"
-    centerElement: true
-    timeout: 10000
-    optional: true
-- takeScreenshot: s-03c-bench-summary-chart
 - runFlow: sub-back-to-tabs.yaml
 # No gym yet: the Gym tab is "Join your gym".
 - runFlow: sub-gym-none.yaml
