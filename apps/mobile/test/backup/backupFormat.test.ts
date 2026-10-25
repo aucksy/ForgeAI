@@ -19,7 +19,7 @@ import { settingsToApply } from '@/backup/backupSettings';
 import { choiceHelp, replaceQuestion, restoredText, savingText } from '@/backup/backupText';
 import { PACK_VERSION } from '@/cloud/pack';
 
-const base = { format: 'mettleup-backup', formatVersion: 1, packVersion: PACK_VERSION, app: 'MettleUp', appVersion: '0.57.0', createdAt: '2026-10-25T03:30:00.000Z', units: 'metric' };
+const base = { format: 'mettleup-backup', formatVersion: 1, packVersion: PACK_VERSION, app: 'MettleUp', appVersion: '0.57.0', createdAt: '2026-10-25T12:00:00.000Z', units: 'metric' };
 
 describe('reading a backup', () => {
   it('a minimal file (only the header and its records) reads: missing parts are empty', () => {
@@ -113,7 +113,7 @@ describe('names and words', () => {
 
   it('the summary says what is inside and who made it', () => {
     const counts = { workouts: 512, folders: 3, routines: 9, ownExercises: 4, bodyWeights: 30, measurements: 10, photos: 12 };
-    expect(backupSummary({ counts, createdAt: '2026-10-25T03:30:00.000Z', app: 'ForgeAI', appVersion: '0.55.2' })).toBe(
+    expect(backupSummary({ counts, createdAt: '2026-10-25T12:00:00.000Z', app: 'ForgeAI', appVersion: '0.55.2' })).toBe(
       '512 workouts, 9 routines, 40 measurements and 12 photos, saved on 25 Oct 2026 by ForgeAI 0.55.2',
     );
     expect(backupSummary({ counts: { ...counts, workouts: 1, routines: 1, bodyWeights: 0, measurements: 1, photos: 0 }, createdAt: 'x', app: 'MettleUp', appVersion: '' })).toBe(

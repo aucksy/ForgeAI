@@ -286,6 +286,8 @@ describe('save, then restore on an empty phone', () => {
     expect(opened.summary).toBe('3 workouts, 4 routines, 4 measurements and 6 photos, saved on 25 Oct 2026 by MettleUp 0.57.0');
     expect(result.photos).toBe(6);
     expect(result.photosFailed).toBe(0);
+    // Only what the member changed on a library exercise travels (not the library's own values).
+    expect(opened.file.libraryEdits).toEqual([['c:barbell_bench_press', null, 'both']]);
 
     const after = dump();
     expect(after).toEqual(before);

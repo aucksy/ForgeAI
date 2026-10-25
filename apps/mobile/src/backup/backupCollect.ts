@@ -6,6 +6,7 @@
  */
 import { getDb } from '@/db';
 import { exerciseRef, packHash, PACK_VERSION } from '@/cloud/pack';
+import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 
 import {
   BACKUP_FORMAT,
@@ -88,12 +89,17 @@ export async function collectBackup(o: {
     }
   }
 
-  // What the member changed on a library exercise (how it is logged, how its weight counts).
-  const libraryEdits: LibraryEdit[] = (
-    await db.getAllAsync<{ catalog_key: string; log_type: string | null; load_mode: string | null }>(
-      'SELECT catalog_key, log_type, load_mode FROM exercises WHERE catalog_key IS NOT NULL AND (log_type IS NOT NULL OR load_mode IS NOT NULL) ORDER BY catalog_key',
-    )
-  ).map((r) => [`c:${r.catalog_key}`, r.log_type, r.load_mode]);
+  // What the member changed on a library exercise (how it is logged, how its weight counts): only
+  // what differs from the library's own (exerciseInfo.ts reads a missing one as the library's).
+  const libraryEdits: LibraryEdit[] = [];
+  for (const r of await db.getAllAsync<{ catalog_key: string; log_type: string | null; load_mode: string | null }>(
+    'SELECT catalog_key, log_type, load_mode FROM exercises WHERE catalog_key IS NOT NULL AND (log_type IS NOT NULL OR load_mode IS NOT NULL) ORDER BY catalog_key',
+  )) {
+    const entry = catalogEntry(r.catalog_key);
+    const logType = r.log_type != null && r.log_type !== (entry?.type ?? 'weight_reps') ? r.log_type : null;
+    const loadMode = r.load_mode != null && r.load_mode !== (entry?.loadMode ?? 'one') ? r.load_mode : null;
+    if (logType != null || loadMode != null) libraryEdits.push([`c:${r.catalog_key}`, logType, loadMode]);
+  }
 
   const meta: Record<string, string> = {};
   const metaRows = await db.getAllAsync<{ key: string; value: string }>(

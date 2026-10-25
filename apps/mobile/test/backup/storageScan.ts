@@ -72,7 +72,7 @@ export function scanSource(root: string): Found {
     }
     calls('storage', file, s, new RegExp(String.raw`AsyncStorage\.(?:getItem|setItem|removeItem|mergeItem)\(\s*` + TOKEN, 'g'));
     // A file that keeps things in AsyncStorage: every 'forgeai…' constant in it is one of its keys.
-    if (s.includes('AsyncStorage')) for (const m of s.matchAll(/const [A-Z][A-Z0-9_]*\s*=\s*'(forgeai[^']*)'/g)) add(found.storage, m[1], file);
+    if (s.includes('AsyncStorage')) for (const m of s.matchAll(/const [A-Z][A-Z0-9_]*KEY\s*=\s*'(forgeai[^']*)'/g)) add(found.storage, m[1], file);
     if (s.includes('persist(')) for (const m of s.matchAll(/\bname:\s*'([^']+)'/g)) add(found.storage, m[1], file);
     if (s.includes('expo-sqlite/kv-store')) {
       calls('kv', file, s, new RegExp(String.raw`Storage\.(?:setItemSync|getItemSync|removeItemSync|setItemAsync|getItemAsync|removeItemAsync|setItem|getItem|removeItem)\(\s*` + TOKEN, 'g'));
