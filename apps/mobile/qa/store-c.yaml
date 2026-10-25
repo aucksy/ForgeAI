@@ -16,6 +16,11 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-07a-profile
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-07a
+      STEPS: 4
 - scrollUntilVisible:
     element: '^(Kg|Lb) lifted$'
     centerElement: true
@@ -45,12 +50,11 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-07e-charts
-- scrollUntilVisible:
-    element: "Sets per muscle group"
-    centerElement: true
-    timeout: 15000
-    optional: true
-- takeScreenshot: s-07f-charts-muscles
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-07e
+      STEPS: 6
 - back
 - runFlow:
     file: sub-profile-tile.yaml
@@ -68,6 +72,11 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-07d-calendar
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-07d
+      STEPS: 3
 - runFlow: sub-back-to-tabs.yaml
 # The bench's own page: Progress → Exercises → search.
 - runFlow:
@@ -94,6 +103,11 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-03-bench-history
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-03
+      STEPS: 4
 - scrollUntilVisible:
     element:
       id: "date-line-chart"
@@ -115,4 +129,9 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-06-join-gym
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-06
+      STEPS: 2
 - runFlow: sub-back-to-tabs.yaml

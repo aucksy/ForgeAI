@@ -1,0 +1,18 @@
+# Store screens (R-126) sub-flow: the same screen at several scroll positions, ~190 px apart, so the
+# picture can be one whose bottom edge cuts no text (owner review, 25 Oct 2026). Slow swipes: no
+# fling, so each step moves the page by about the same amount.
+# env: NAME (picture prefix), STEPS (how many).
+appId: com.mettleup.app
+---
+- evalScript: ${output.step = 0}
+- repeat:
+    times: ${STEPS}
+    commands:
+      - evalScript: ${output.step = output.step + 1}
+      - swipe:
+          start: 50%, 70%
+          end: 50%, 62%
+          duration: 1500
+      - waitForAnimationToEnd:
+          timeout: 2000
+      - takeScreenshot: ${NAME}-p${output.step}

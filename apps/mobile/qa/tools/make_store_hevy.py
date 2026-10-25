@@ -10,8 +10,9 @@ Shape:
     member's 50th (the finish screen's "Your 50th workout");
   - Push Day / Pull Day / Leg Day in turn, ending with Leg Day, so Up next today is Push Day;
   - the bench climbs 60 -> 80 kg in 2.5 kg steps, 2 warm-ups (empty bar x 12, 40 x 8) and 3 x 8;
-  - the LAST Push Day was a short one (two exercises, two working sets on the bench): today's full
-    workout then lifts more than it, and the finish screen compares upward.
+  - every workout is full: the app builds each routine from its LAST workout (a short last Push
+    Day made a 2-exercise routine, run 40168708096). The store run adds a bench set today, so the
+    finish screen compares upward.
 
 Usage: python3 make_store_hevy.py OUT.csv [--today 2026-10-26]
 """
@@ -75,13 +76,11 @@ def main() -> None:
     titles = [ORDER[(2 - (len(days) - 1 - i)) % 3] for i in range(len(days))]
     per = {t: titles.count(t) for t in ORDER}
     seen = {t: 0 for t in ORDER}
-    last_push = max(i for i, t in enumerate(titles) if t == "Push Day")
     rows = []
     for i, (day, title) in enumerate(zip(days, titles)):
         k = seen[title]
         seen[title] += 1
-        short = i == last_push
-        exercises = ROUTINES[title][:2] if short else ROUTINES[title]
+        exercises = ROUTINES[title]
         start = dt.datetime(day.year, day.month, day.day, 18, (i * 7) % 4 * 10)
         block = []
         for name, warmups, lo, hi, reps, sets in exercises:
@@ -91,8 +90,7 @@ def main() -> None:
             for wkg, wr in warmups:
                 block.append([name, idx, "warmup", wkg, wr])
                 idx += 1
-            n_sets = 2 if short and "Bench" in name else sets
-            for _ in range(n_sets):
+            for _ in range(sets):
                 block.append([name, idx, "normal", work, reps])
                 idx += 1
         end = start + dt.timedelta(minutes=10 + 3 * len(block))

@@ -34,9 +34,8 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s-05-gym
-- scroll
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: s-05b-gym-scrolled
-- scroll
-- takeScreenshot: s-05d-gym-scrolled-more
+- runFlow:
+    file: store-steps.yaml
+    env:
+      NAME: s-05
+      STEPS: 5
