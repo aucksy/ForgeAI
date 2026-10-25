@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## RESUME HERE (25 Oct ~1:30 pm IST, owner at 95% of weekly limit; back Wednesday) — supersedes older resume lines
+- ForgeAI 0.55.2 is OUT (Save full backup in Settings -> Export & import); owner told to back up with it. releases/latest
+  is still MettleUp v0.56.1 (checked).
+- MettleUp 0.57.0: the backup helper (general-purpose, Opus, effort high) was told to finish full backup + Drive on the
+  new file, rebase on main (5fcc3f9 Google client id), review, tag v0.57.0; play-upload.yml then puts it on internal +
+  closed by itself. FIRST on Wednesday: check whether v0.57.0 exists and both runs are green; if not, finish it.
+- Then give him the MettleUp restore steps (exact button from the 0.57.0 code) and ask him to try Continue with Google.
+- Google sign-in: Supabase has web + Play + GitHub-APK client ids, google=true (#60, #65 done).
+- Store pictures paused (R-126/R-129): new frame in brand.py; 6 good fresh screens may be in the stopped helper's last
+  run (qa store-shots workflow); retake only screen 2; review all 8; then play-listing.yml.
+- Cheaper: when starting helpers, prefer forks (they match his effort level); he asked about effort cost on 25 Oct.
+
 ## RESUME HERE (24 Oct, ~6:20 pm IST, context 91%: owner asked to compact) — supersedes older resume lines
 - **Decided today:** brand MettleUp (mettleup.fit marketed, mettleup.in redirects), logo E Forged, Play ID com.mettleup.app,
   contact@mettleup.fit + Grievance Officer Aakash Pahuja (#37 done), teens later (#63 A), trainer view A (#46), Play declarations
