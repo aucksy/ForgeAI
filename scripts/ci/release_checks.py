@@ -313,6 +313,10 @@ def check_signing(apk, min_sdk):
         report("signing", level, text)
 
 
+# The phone APK's name in this app's releases: forgeai-<tag>.apk (release-apk.yml).
+APK_PREFIX = "forgeai"
+
+
 def phone_apk_asset(assets):
     """The PHONE APK among a release's assets. From v0.46 a release also carries the watch APK
     (forgeai-<tag>-wear.apk); it must never be taken for the phone's (version, size, update proof)."""
@@ -321,13 +325,23 @@ def phone_apk_asset(assets):
     return phone[0] if phone else None
 
 
+def same_app(release, prefix=APK_PREFIX):
+    """True when the release's phone APK is THIS app's (named <prefix>-<tag>.apk). PURE.
+
+    25 Oct 2026 (R-123): the repo also publishes MettleUp (mettleup-<tag>.apk, another package,
+    from v0.56.0), so ForgeAI 0.55.2 must be compared with ForgeAI's own last release (v0.55.1),
+    never with a MettleUp one: its version is not an "update" of a different app."""
+    asset = phone_apk_asset(release.get("assets", []))
+    return bool(asset) and asset["name"].startswith(prefix + "-")
+
+
 def previous_release(current_tag):
-    """The highest-semver published (not draft, not prerelease) release other than this tag."""
+    """The highest-semver published (not draft, not prerelease) release of THIS app other than this tag."""
     best = None
     for page in (1, 2, 3):
         rels = api(f"/repos/{REPO}/releases?per_page=100&page={page}")
         for r in rels:
-            if r.get("draft") or r.get("prerelease") or r.get("tag_name") == current_tag:
+            if r.get("draft") or r.get("prerelease") or r.get("tag_name") == current_tag or not same_app(r):
                 continue
             v = semver(r.get("tag_name"))
             if v and (best is None or v > best[0]):

@@ -185,6 +185,14 @@ class PhoneAssetTests(unittest.TestCase):
         self.assertIsNone(rc.phone_apk_asset([]))
         self.assertIsNone(rc.phone_apk_asset(None))
 
+    def test_same_app_skips_mettleup_releases(self):
+        # R-123: ForgeAI 0.55.2 compares with ForgeAI v0.55.1, never with MettleUp's v0.56.1.
+        forge = {"tag_name": "v0.55.1", "assets": [{"name": "forgeai-v0.55.1.apk"}, {"name": "forgeai-v0.55.1-wear.apk"}]}
+        mettle = {"tag_name": "v0.56.1", "assets": [{"name": "forgeai-v0.56.1-wear.apk"}, {"name": "mettleup-v0.56.1.apk"}]}
+        self.assertTrue(rc.same_app(forge))
+        self.assertFalse(rc.same_app(mettle))
+        self.assertFalse(rc.same_app({"tag_name": "v0.1.0", "assets": []}))
+
 
 # ------------------------------------------------------------ update_proof parsers
 
