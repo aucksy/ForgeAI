@@ -6,3 +6,5 @@
  */
 export * from './palette';
 export * from './brand';
+// R-124: the gym's opening hours (rules, India-time "open now", words), shared so both apps agree.
+export * from './gymHours';

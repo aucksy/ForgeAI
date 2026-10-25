@@ -38,6 +38,8 @@ declare
     -- 0035: measurements taken by the trainer and diet plans (owner/desk key, or a member key, checked by each).
     'owner_member_measurements','owner_save_measurement','owner_delete_measurement','member_measurements',
     'owner_diet_plans','owner_save_diet_plan','owner_withdraw_diet_plan','member_diet_plans',
+    -- 0036: the gym's opening hours (owner/desk key, or a member key, checked by each; saving: owners only).
+    'owner_gym_timings','owner_save_gym_timings','member_gym_timings',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
