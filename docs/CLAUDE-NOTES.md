@@ -40,6 +40,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
   workflow to re-upload pictures in order; (3) owner's website demo lead missing in HQ — root cause + fix.
 - Then: review + tag 0.57.0, closed test update, tracker (gym timings row, Play row, R-123..125), Play signing SHA-1 into #60.
 
+## R-129. Skip the store pictures; release 0.57.0 now; back Wednesday — 25 Oct 2026
+
+**He said:** "we can skip the Google Play Store images task and just release the app with the drive log, Google login
+and drive backup. My weekly limit is going to exhaust, so we will then pick up next week on Wednesday."
+
+**Done:** stopped the store-screens helper (its store-shots workflow is on main; Play still shows the old pictures,
+play-listing.yml NOT run). The new frame (centred headline, whole phone) is committed in brand.py but the pictures
+are not rebuilt. The backup helper releases 0.57.0 (full backup + Drive on the new file + Google sign-in + gym hours)
+and the Play upload runs by itself. **Wednesday:** check v0.57.0 release + play-upload runs, then the store pictures
+(R-126: fresh normal-size screens, captions, review every shot, then play-listing.yml), then #34 test server + alerts.
+
 ## R-128. Build Google sign-in and Drive backup now; check the feature backlog — 25 Oct 2026
 
 **He said:** "I have done the switch on 'Continue with Google'. lets build the google login and drive backups also"

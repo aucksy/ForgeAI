@@ -289,18 +289,23 @@ def contrast(a, b):
 
 # ------------------------------------------------------------------ store scene
 SHOT_W, SHOT_H = 1080, 1920
+# R-126 (owner design review, 25 Oct 2026): headline and sub CENTRED on the same axis as the phone,
+# and the WHOLE phone on the canvas (the old 800 px phone ran off the bottom and cut app text mid-line).
 MARGIN = 88
-HEAD_SIZE = 94            # headline font size
-HEAD_MIN = 74
-HEAD_LEAD = 1.04
-SUB_SIZE = 40
-HEAD_CAP_TOP = 148        # y of the first line's cap top
-PHONE_W = 800
-PHONE_Y = 520
-BEZEL = 18
+HEAD_SIZE = 88            # headline font size
+HEAD_MIN = 70
+HEAD_LEAD = 1.06
+SUB_SIZE = 38
+HEAD_CAP_TOP = 112        # y of the first line's cap top
+SUB_GAP = 70              # last headline baseline -> sub baseline
+PHONE_Y = 430
+PHONE_BOTTOM = 76         # canvas edge below the phone
+BEZEL = 16
 SCREEN_ASPECT = 2400 / 1080   # 20:9, the shape of a modern Android screenshot
-PHONE_R = 76
-SCREEN_R = 58
+_SW = round((SHOT_H - PHONE_Y - PHONE_BOTTOM - 2 * BEZEL) / SCREEN_ASPECT)
+PHONE_W = _SW + 2 * BEZEL
+PHONE_R = 64
+SCREEN_R = 48
 
 
 def phone_geom(cx):
@@ -395,13 +400,13 @@ def phone(g, uid, screen_svg):
             f'<clipPath id="sc{uid}"><rect x="{n(sx)}" y="{n(sy)}" width="{n(sw)}" height="{n(sh)}" rx="{SCREEN_R}"/></clipPath>')
     body = (
         # long soft shadow, tinted toward the slag of the glow, then a tight contact shadow
-        f'<rect x="{n(x + 20)}" y="{n(y + 60)}" width="{n(w - 40)}" height="{n(h)}" rx="{PHONE_R}" '
+        f'<rect x="{n(x + 20)}" y="{n(y + 36)}" width="{n(w - 40)}" height="{n(h)}" rx="{PHONE_R}" '
         f'fill="#05060A" opacity="0.75" filter="url(#sh{uid})"/>'
         f'<rect x="{n(x + 6)}" y="{n(y + 14)}" width="{n(w - 12)}" height="{n(h)}" rx="{PHONE_R}" '
         f'fill="#05060A" opacity="0.7" filter="url(#cs{uid})"/>'
         # side buttons
-        f'<rect x="{n(x + w - 2)}" y="{n(y + 250)}" width="7" height="118" rx="3" fill="#2C3139"/>'
-        f'<rect x="{n(x + w - 2)}" y="{n(y + 420)}" width="7" height="190" rx="3" fill="#2C3139"/>'
+        f'<rect x="{n(x + w - 2)}" y="{n(y + 200)}" width="6" height="96" rx="3" fill="#2C3139"/>'
+        f'<rect x="{n(x + w - 2)}" y="{n(y + 336)}" width="6" height="156" rx="3" fill="#2C3139"/>'
         # body, rim light, glass bezel
         f'<rect x="{n(x)}" y="{n(y)}" width="{n(w)}" height="{n(h)}" rx="{PHONE_R}" fill="url(#bd{uid})"/>'
         f'<rect x="{n(x + 1.5)}" y="{n(y + 1.5)}" width="{n(w - 3)}" height="{n(h - 3)}" rx="{PHONE_R - 1.5}" '
@@ -409,8 +414,8 @@ def phone(g, uid, screen_svg):
         f'<rect x="{n(x + 7)}" y="{n(y + 7)}" width="{n(w - 14)}" height="{n(h - 14)}" rx="{PHONE_R - 7}" fill="#050608"/>'
         f'<g clip-path="url(#sc{uid})">{screen_svg}</g>'
         # punch-hole camera
-        f'<circle cx="{n(cxp)}" cy="{n(sy + 34)}" r="13" fill="#050608"/>'
-        f'<circle cx="{n(cxp)}" cy="{n(sy + 34)}" r="13" fill="none" stroke="#2A2F37" stroke-width="2"/>'
+        f'<circle cx="{n(cxp)}" cy="{n(sy + 20)}" r="9" fill="#050608"/>'
+        f'<circle cx="{n(cxp)}" cy="{n(sy + 20)}" r="9" fill="none" stroke="#2A2F37" stroke-width="1.5"/>'
     )
     return defs, body
 
@@ -435,15 +440,16 @@ def headline(caption, x0, uid):
     base = HEAD_CAP_TOP + cap
     out = ''
     for l in lines:
-        s, _ = rich_line(l, size, x0 + MARGIN, base, '#F4F5F7', MOLTEN)
+        s, _ = rich_line(l, size, x0 + (SHOT_W - rich_w(l, size)) / 2, base, '#F4F5F7', MOLTEN)
         out += s
         base += size * HEAD_LEAD
     last = base - size * HEAD_LEAD
     sub = caption.get('sub')
     if sub:
-        if text_w(sub, SUB_SIZE, MAN_SB, 0) > maxw:
+        sw = text_w(sub, SUB_SIZE, MAN_SB, 0)
+        if sw > maxw:
             raise SystemExit(f'sub too long: {sub!r}')
-        d, _ = text_d(sub, SUB_SIZE, x0 + MARGIN, last + 76, MAN_SB, 0)
+        d, _ = text_d(sub, SUB_SIZE, x0 + (SHOT_W - sw) / 2, last + SUB_GAP, MAN_SB, 0)
         out += f'<path d="{d}" fill="{BODY_ON_DARK}"/>'
     return out
 
