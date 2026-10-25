@@ -54,6 +54,24 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.57.1',
+    date: '25 Oct',
+    lines: [
+      {
+        // R-132: words checked by a fresh reader (Gemini timed out).
+        text: 'Progress tab: new tabs at the top, Kg lifted, Sets and Duration. Tap one to see your totals for it.',
+        go: { label: 'Open Progress', href: '/progress' },
+      },
+      {
+        text: "Progress also shows your next workout's total kg if you hit every target, next to last time's total.",
+      },
+      {
+        // R-131.
+        text: 'New phone? Tap "Continue with Google" on the first screen to find and restore your Google Drive backup.',
+      },
+    ],
+  },
+  {
     version: '0.57.0',
     date: '25 Oct',
     lines: [

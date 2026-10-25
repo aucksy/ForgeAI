@@ -428,7 +428,10 @@ export async function getSessionTotalsBetween(fromISO: string, toISO: string): P
  */
 export async function getLastRoutineTotals(routineId: string): Promise<SessionTotals | null> {
   const last = await getDb().getFirstAsync<{ id: string; date_iso: string }>(
-    'SELECT id, date_iso FROM workout_sessions WHERE routine_id = ? ORDER BY started_at DESC LIMIT 1',
+    // A workout with no working set (started, then left empty) is not "last time".
+    `SELECT ws.id, ws.date_iso FROM workout_sessions ws
+      WHERE ws.routine_id = ? AND EXISTS (SELECT 1 FROM set_entries se WHERE se.session_id = ws.id AND se.is_warmup != 1)
+      ORDER BY ws.started_at DESC LIMIT 1`,
     [routineId],
   );
   if (!last) return null;
@@ -456,19 +459,6 @@ export async function plannedVolumeKg(
   return kg;
 }
 
-/** R-132: how each exercise was counted the last time it was logged ("kg each" or not), for `plannedVolumeKg`. */
-export async function lastLoadModes(exerciseIds: readonly string[]): Promise<Map<string, LoadMode | null>> {
-  const out = new Map<string, LoadMode | null>();
-  for (const id of new Set(exerciseIds)) {
-    const r = await getDb().getFirstAsync<{ load_mode: string | null }>(
-      `SELECT se.load_mode FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
-        WHERE se.exercise_id = ? AND se.is_warmup != 1 ORDER BY ws.started_at DESC LIMIT 1`,
-      [id],
-    );
-    out.set(id, r && isLoadMode(r.load_mode) ? r.load_mode : null);
-  }
-  return out;
-}
 
 /** Weekly volume, Monday buckets, the trailing `weeks` weeks incl. this one (frozen shape). */
 export async function getWeeklyVolumeKg(weeks: number): Promise<VolumePoint[]> {

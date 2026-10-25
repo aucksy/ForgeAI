@@ -15,6 +15,7 @@ export const START_WORDS = {
   notNow: 'Not now',
   nothing: 'No MettleUp backup in your Google Drive yet. Tap "Start fresh" below to begin.',
   restoring: 'Bringing back your backup…',
+  otherAccount: 'Use another Google account',
   gymTitle: 'Do you train at a gym?',
   gymBody: 'Your gym’s code unlocks check-in, your membership, trainer plans and the gym shop.',
   gymButton: 'Enter your gym code',
@@ -22,7 +23,7 @@ export const START_WORDS = {
   haveBody: 'Bring them from a backup file, Hevy or Strong.',
   restoreFile: 'Restore from a backup',
   startFresh: 'Start fresh',
-  startFreshNote: 'Answer 3 quick questions and start training. Your workouts stay on this phone.',
+  startFreshNote: 'Answer 3 quick questions and start training. No sign-in needed.',
   replaceTitle: 'Replace the workouts on this phone?',
   replaceConfirm: 'Replace',
 } as const;

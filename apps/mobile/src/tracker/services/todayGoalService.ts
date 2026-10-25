@@ -6,7 +6,7 @@ import { getDb } from '@/db';
 
 import { plannedSets, type TodayGoal } from '../lib/todayGoal';
 import { getTodaysWorkoutWithTargets } from './coachTargets';
-import { getLastRoutineTotals, lastLoadModes, plannedVolumeKg } from './volumeService';
+import { getLastRoutineTotals, plannedVolumeKg } from './volumeService';
 
 /** Today's goal, or null when Up next has no routine (a rest day, or no routines yet). */
 export async function getTodayGoal(): Promise<TodayGoal | null> {
@@ -14,16 +14,16 @@ export async function getTodayGoal(): Promise<TodayGoal | null> {
   if (!tw.planDayId || tw.targets.length === 0) return null;
   const planned = tw.targets.map((t) => ({ t, p: plannedSets(t) }));
   const weighed = planned.filter((x) => x.p.kgKnown && !x.t.free);
-  const modes = await lastLoadModes(weighed.map((x) => x.t.exerciseId));
+  // Today's sets are logged the exercise's current way ("kg each" or not): loadMode null = that way.
   const [volumeKg, last] = await Promise.all([
-    plannedVolumeKg(weighed.map((x) => ({ exerciseId: x.t.exerciseId, loadMode: modes.get(x.t.exerciseId) ?? null, sets: x.p.sets }))),
+    plannedVolumeKg(weighed.map((x) => ({ exerciseId: x.t.exerciseId, loadMode: null, sets: x.p.sets }))),
     getLastRoutineTotals(tw.planDayId),
   ]);
   return {
     routineName: tw.dayName,
     volumeKg,
     sets: planned.reduce((n, x) => n + x.p.sets.length, 0),
-    newExercises: planned.filter((x) => !x.p.kgKnown).length,
+    uncounted: planned.filter((x) => !x.p.kgKnown).length,
     easy: tw.targets.some((t) => t.easy === true),
     last: last ? { volumeKg: last.volumeKg, sets: last.sets, durationSec: last.durationSec, dateISO: last.dateISO } : null,
   };

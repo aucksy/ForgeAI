@@ -17,6 +17,7 @@ import { fmtInt, fmtTotalTime } from '@/lib/format';
 import { fmtVol, type UnitSystem } from '@/lib/units';
 
 import type { ChartMetric } from '../engine/historyChart';
+import { isBodyweightFamily } from '../engine/logTypes';
 import type { ProgressionTarget } from '../engine/progression';
 
 export type ProgressMode = Extract<ChartMetric, 'volume' | 'sets' | 'duration'>;
@@ -25,16 +26,22 @@ export const PROGRESS_MODES: readonly ProgressMode[] = ['volume', 'sets', 'durat
 type TargetIn = Pick<
   ProgressionTarget,
   'targetWeightKg' | 'targetRepsMin' | 'targetSets' | 'repGoal' | 'setGoals' | 'last' | 'bodyweightOnly' | 'logType' | 'free'
->;
+> &
+  Partial<Pick<ProgressionTarget, 'topSetOnly' | 'version'>>;
 
-/** One exercise's planned working sets, and whether its kilos are known yet. PURE. */
+/**
+ * One exercise's planned working sets, and whether its kilos can be counted. PURE.
+ * Not counted (0.57.1 review): a weighted lift never done (no weight yet); a pyramid or heavy-top day
+ * (the Target is for the top set only, so every set at the top weight would overstate it); a switch to
+ * another version of the exercise (last time was a different lift). Their sets still count.
+ */
 export function plannedSets(t: TargetIn): { sets: { weightKg: number; reps: number }[]; kgKnown: boolean } {
   const n = Math.max(0, t.setGoals.length > 0 ? t.setGoals.length : t.targetSets);
   const repsAt = (i: number): number => Math.max(0, t.setGoals[i] ?? t.repGoal ?? t.targetRepsMin);
   if (t.free) return { sets: Array.from({ length: n }, () => ({ weightKg: 0, reps: 0 })), kgKnown: true };
-  const weightKg = t.bodyweightOnly ? 0 : Math.max(0, t.targetWeightKg);
-  // First time on a weighted lift: no weight to aim for yet.
-  const kgKnown = !(t.logType === 'weight_reps' && !t.bodyweightOnly && weightKg <= 0);
+  // Assisted moves keep their (negative) help: the rule counts body weight minus it, as last time did.
+  const weightKg = t.bodyweightOnly ? 0 : isBodyweightFamily(t.logType) ? t.targetWeightKg : Math.max(0, t.targetWeightKg);
+  const kgKnown = !((t.logType === 'weight_reps' && !t.bodyweightOnly && t.last == null) || t.topSetOnly === true || t.version != null);
   return { sets: Array.from({ length: n }, (_, i) => ({ weightKg, reps: repsAt(i) })), kgKnown };
 }
 
@@ -44,8 +51,8 @@ export interface TodayGoal {
   volumeKg: number;
   /** Every planned working set. */
   sets: number;
-  /** Weighted exercises with no weight yet (first time), left out of the kilos. */
-  newExercises: number;
+  /** Exercises left out of the kilos (`plannedSets`: new to the member, a different weight each set, a new version). */
+  uncounted: number;
   easy: boolean;
   /** The last time this routine was done; null = never. */
   last: { volumeKg: number; sets: number; durationSec: number; dateISO: string } | null;
@@ -71,11 +78,11 @@ export function goalTitle(g: Pick<TodayGoal, 'routineName'>): string {
 
 function noteOf(g: TodayGoal, mode: ProgressMode): string | null {
   const parts: string[] = [];
-  if (mode === 'volume' && g.newExercises > 0) {
+  if (mode === 'volume' && g.uncounted > 0) {
     parts.push(
-      g.newExercises === 1
-        ? '1 new exercise is not in your goal yet. It joins after you do it once.'
-        : `${g.newExercises} new exercises are not in your goal yet. They join after you do them once.`,
+      g.uncounted === 1
+        ? 'Not counted: 1 exercise that is new to you or uses a different weight each set.'
+        : `Not counted: ${g.uncounted} exercises that are new to you or use a different weight each set.`,
     );
   }
   if (g.easy && mode !== 'duration') parts.push('This is an easy week, so the goal is lower.');
@@ -107,10 +114,15 @@ export function goalText(g: TodayGoal, mode: ProgressMode, units: UnitSystem): G
   }
   // Kilos.
   if (g.volumeKg <= 0) {
-    return { big: '—', label: 'to lift today', line: 'Finish this workout once to see your goal here.', trend: null, note: null };
+    // Done before but nothing to weigh (timed or body-weight work): point at Sets, never "do it once".
+    if (g.last && g.uncounted === 0) {
+      return { big: '—', label: 'to lift today', line: 'This workout has no kilos to count. Tap Sets to see your goal.', trend: null, note: null };
+    }
+    return { big: '—', label: 'to lift today', line: 'Finish this workout once to see your goal here.', trend: null, note };
   }
   const big = fmtVol(g.volumeKg, units);
-  if (!g.last || g.last.volumeKg <= 0) return { big, label: 'to lift today', line: 'Your first time doing this workout.', trend: null, note };
+  if (!g.last) return { big, label: 'to lift today', line: 'Your first time doing this workout.', trend: null, note };
+  if (g.last.volumeKg <= 0) return { big, label: 'to lift today', line: 'No kilos counted last time, so there is nothing to compare yet.', trend: null, note };
   const d = g.volumeKg - g.last.volumeKg;
   // Under half a kilo either way reads as the same (rounding of lb and plates).
   if (Math.abs(d) < 0.5) return { big, label: 'to lift today', line: `Same as last time (${fmtVol(g.last.volumeKg, units)}).`, trend: 'same', note };

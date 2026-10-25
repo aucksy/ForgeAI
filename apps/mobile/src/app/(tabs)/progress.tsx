@@ -31,6 +31,7 @@ import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 import { chartMetricLabel, type ChartBar, type ChartRange } from '@/tracker/engine/historyChart';
 import { reportRows } from '@/tracker/lib/progressTab';
 import { PROGRESS_MODES, type ProgressMode, type TodayGoal } from '@/tracker/lib/todayGoal';
+import { historyStamp } from '@/tracker/services/historyFeed';
 import { getHistoryChart } from '@/tracker/services/profileService';
 import { getTrainedMonths } from '@/tracker/services/reportsService';
 import { getTodayGoal, getWorkoutCount } from '@/tracker/services/todayGoalService';
@@ -76,13 +77,18 @@ export default function ProgressScreen() {
   const [chartFailed, setChartFailed] = useState(false);
   const [workoutsEver, setWorkoutsEver] = useState<number | null>(null);
 
-  const loadChart = useCallback(async (r: ChartRange) => {
+  // The bars already on screen were read at this history stamp: no new workout = no new read (review).
+  const chartAt = useRef<string | null>(null);
+  const loadChart = useCallback(async (r: ChartRange, stamp: string | null = null) => {
+    if (stamp != null && chartAt.current === `${stamp}|${r}`) return;
+    chartAt.current = null;
     setChartLoading(true);
     try {
       const b = await readWithRetry(() => getHistoryChart(r), { wanted: () => rangeRef.current === r });
       if (rangeRef.current !== r) return;
       setChart({ range: r, bars: b });
       setChartFailed(false);
+      if (stamp != null) chartAt.current = `${stamp}|${r}`;
     } catch {
       if (rangeRef.current === r) setChartFailed(true);
     } finally {
@@ -112,7 +118,9 @@ export default function ProgressScreen() {
           if (alive) setWorkoutsEver(n);
         })
         .catch(() => undefined);
-      void loadChart(rangeRef.current);
+      void historyStamp()
+        .catch(() => null)
+        .then((stamp) => loadChart(rangeRef.current, stamp));
       return () => {
         alive = false;
       };

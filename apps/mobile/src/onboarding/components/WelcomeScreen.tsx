@@ -238,10 +238,17 @@ export function WelcomeScreen() {
     choosePendingImport(next);
     if (next) startSteps();
   };
-  // A Google restore running: Back waits.
+  // A Google restore running: Back and every other button on the start view wait (0.57.1 review).
   const googleBusy = useRef(false);
+  const [googleRestoring, setGoogleRestoring] = useState(false);
   const onGoogleBusy = useCallback((b: boolean) => {
     googleBusy.current = b;
+    setGoogleRestoring(b);
+  }, []);
+  // A restore brings the member's own history: a Hevy / Strong pick must not open its import afterwards.
+  const forgetSwitch = useCallback(() => {
+    setSwitchApp(null);
+    choosePendingImport(null);
   }, []);
   // R-123: the "Restore from a backup" view, and where the Hevy / Strong pick sits (to scroll to it).
   const [restoring, setRestoring] = useState(false);
@@ -357,7 +364,7 @@ export function WelcomeScreen() {
   };
 
   const onLoadDemo = (): void => {
-    if (busy) return;
+    if (busy || googleBusy.current) return;
     setSaveProblem(null);
     setAskDemo(true);
   };
@@ -392,7 +399,14 @@ export function WelcomeScreen() {
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 4, marginBottom: space.xl, lineHeight: 19 }}>
           Back after a while, or on a new phone? Pick the backup file you saved. Your workouts, routines, measurements, photos, profile and settings come back, and MettleUp opens on them.
         </Text>
-        <RestoreBackupPanel welcome onBusy={onRestoreBusy} onRestored={() => useOnboarding.getState().boot()} />
+        <RestoreBackupPanel
+          welcome
+          onBusy={onRestoreBusy}
+          onRestored={() => {
+            forgetSwitch();
+            return useOnboarding.getState().boot();
+          }}
+        />
       </Screen>
     );
   }
@@ -431,9 +445,12 @@ export function WelcomeScreen() {
                   gymCodeWaiting={gymCodeWaiting != null}
                   keptWorkouts={kept}
                   onBusy={onGoogleBusy}
+                  onBeforeRestore={forgetSwitch}
                 />
               </GoogleSection>
 
+              {/* While a Google restore runs, nothing else here can start (a demo or a second restore would mix data). */}
+              <View pointerEvents={googleRestoring ? 'none' : 'auto'} style={{ gap: space.lg, opacity: googleRestoring ? 0.5 : 1 }}>
               {/* 2. The gym: its code unlocks the gym's side of the app (OWNER-INBOX #11; opens after setup). */}
               <StartSection icon="key" title={START_WORDS.gymTitle} body={START_WORDS.gymBody}>
                 <WelcomeGymCode onKept={setGymCodeWaiting} inSection />
@@ -472,6 +489,7 @@ export function WelcomeScreen() {
                   </Text>
                 </Pressable>
                 <InlineError message={saveProblem} />
+              </View>
               </View>
             </Animated.View>
           ) : (

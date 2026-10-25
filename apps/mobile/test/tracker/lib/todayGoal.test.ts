@@ -20,7 +20,7 @@ const goal = (o: Partial<TodayGoal> = {}): TodayGoal => ({
   routineName: 'Push A',
   volumeKg: 5400,
   sets: 18,
-  newExercises: 0,
+  uncounted: 0,
   easy: false,
   last: { volumeKg: 5100, sets: 17, durationSec: 3480, dateISO: '2026-10-20' },
   ...o,
@@ -42,6 +42,15 @@ describe('planned sets from a Target (R-132)', () => {
     const p = plannedSets(target({ targetWeightKg: 0, last: null, repGoal: null }));
     expect(p.kgKnown).toBe(false);
     expect(p.sets).toHaveLength(3);
+  });
+  it('a lift done before is counted even at 0 kg; a pyramid or a new version is not (review)', () => {
+    expect(plannedSets(target({ targetWeightKg: 0 })).kgKnown).toBe(true);
+    expect(plannedSets(target({ topSetOnly: true })).kgKnown).toBe(false);
+    expect(plannedSets(target({ version: { kind: 'harder', id: 'x', name: 'Weighted pull-up' } })).kgKnown).toBe(false);
+  });
+  it('assisted moves keep their help (negative), so body weight minus help is counted (review)', () => {
+    expect(plannedSets(target({ logType: 'assisted', targetWeightKg: -20 })).sets[0].weightKg).toBe(-20);
+    expect(plannedSets(target({ targetWeightKg: -5 })).sets[0].weightKg).toBe(0);
   });
   it('a body-weight move carries no added weight (the volume rule adds the body where it should)', () => {
     const p = plannedSets(target({ bodyweightOnly: true, logType: 'reps', targetWeightKg: 0 }));
@@ -73,11 +82,13 @@ describe('what the Today card says (R-132)', () => {
     expect(t.note).toBe('This is an easy week, so the goal is lower.');
   });
   it('kilos: new exercises are named as not counted', () => {
-    expect(goalText(goal({ newExercises: 1 }), 'volume', 'metric').note).toBe('1 new exercise is not in your goal yet. It joins after you do it once.');
-    expect(goalText(goal({ newExercises: 2 }), 'volume', 'metric').note).toContain('2 new exercises are not in your goal yet');
+    expect(goalText(goal({ uncounted: 1 }), 'volume', 'metric').note).toBe('Not counted: 1 exercise that is new to you or uses a different weight each set.');
+    expect(goalText(goal({ uncounted: 2 }), 'volume', 'metric').note).toContain('Not counted: 2 exercises');
   });
   it('kilos: nothing known yet, or a first time', () => {
-    expect(goalText(goal({ volumeKg: 0 }), 'volume', 'metric').big).toBe('—');
+    expect(goalText(goal({ volumeKg: 0 }), 'volume', 'metric').line).toBe('This workout has no kilos to count. Tap Sets to see your goal.');
+    expect(goalText(goal({ volumeKg: 0, last: null }), 'volume', 'metric').line).toBe('Finish this workout once to see your goal here.');
+    expect(goalText(goal({ last: { volumeKg: 0, sets: 6, durationSec: 900, dateISO: '2026-10-20' } }), 'volume', 'metric').line).toContain('nothing to compare');
     expect(goalText(goal({ last: null }), 'volume', 'metric').line).toBe('Your first time doing this workout.');
   });
   it('sets: planned against last time', () => {
@@ -92,7 +103,7 @@ describe('what the Today card says (R-132)', () => {
   });
   it('never uses member-banned words', () => {
     const all = (['volume', 'sets', 'duration'] as const)
-      .flatMap((m) => [goal(), goal({ easy: true, newExercises: 2 }), goal({ last: null })].map((g) => goalText(g, m, 'metric')))
+      .flatMap((m) => [goal(), goal({ easy: true, uncounted: 2 }), goal({ last: null })].map((g) => goalText(g, m, 'metric')))
       .map((t) => `${t.big} ${t.label} ${t.line} ${t.note ?? ''}`)
       .join(' ');
     expect(all).not.toMatch(/\b(volume|session|PR)\b/i);

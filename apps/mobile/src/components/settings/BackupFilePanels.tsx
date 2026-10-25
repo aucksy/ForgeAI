@@ -73,8 +73,8 @@ function Note({ children, tone = 'muted' }: { children: ReactNode; tone?: 'muted
 
 const appVersion = (): string => Constants.expoConfig?.version ?? '';
 
-/** Refresh what the screens show after the data changed (best effort). */
-async function refreshAfterRestore(): Promise<void> {
+/** Refresh what the screens show after the data changed (best effort). Also the welcome's Google restore (R-131). */
+export async function refreshAfterRestore(): Promise<void> {
   const [{ useDashboard }, { useChat }, { useOnboarding }] = await Promise.all([
     import('@/store/dashboardStore'),
     import('@/store/chatStore'),

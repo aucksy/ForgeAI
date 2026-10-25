@@ -2675,6 +2675,26 @@
   Back is held while a welcome restore runs; save and restore pause between 1 MB chunks (no frozen screen on a video);
   utf8Encode writes into one Uint8Array (no number list). Left: a failed records rebuild after Replace is only logged.
   Phone test: part W (clock in 2027) excuses only its own certificate errors (the account calls run since R-128).
+- 2026-10-25: **v0.57.0 RELEASED** (tag on b0befd4, pushed from the owner's PC: the cloud session's proxy refused tag
+  pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
+  (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
+  test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-25: **0.57.1 prepared (R-131, R-132).**
+  - Welcome start view before the 3 steps: "Sign in with Google" (WelcomeGoogle: Drive for everyone,
+    drive.peekNewestDriveBackup without making a folder, "We found your backup from <day> with N workouts" ->
+    checkForBackup + restoreFound + refreshAfterRestore + boot; "Not now" keeps it on offer; "Use another Google
+    account"; gym members keep the server-copy sign-in), "Do you train at a gym?" (WelcomeGymCode inSection), "Already
+    have workouts?" (backup file, From Hevy / From Strong -> step 1), "Start fresh", demo link. A running Google restore
+    holds Back and the rest of the start view; a restore forgets a Hevy/Strong pick. Words: welcomeStart.ts (Gemini).
+  - Progress: SegmentedTabs Kg lifted / Sets / Duration on top; TodayGoalCard = today's Up next (getTodaysWorkoutWithTargets)
+    Targets summed by the one volume rule (volumeService.plannedVolumeKg) vs the last workout of that routine with a
+    working set (getLastRoutineTotals); new / pyramid (topSetOnly) / version-switch lifts are left out and named; assisted
+    keeps its negative help; easy week said. History chart: 'sets' metric (SessionTotals.sets), chips hidden on Progress;
+    Profile maps a stored 'sets' back to Kg lifted; the chart is read again only when the history stamp changes.
+  - Review subagent (19 findings): fixed the welcome restore race, double taps, refresh after restore, the Hevy pick after a
+    restore, assisted/pyramid/new-lift math, the load-mode lookup (removed), untrue lines, Profile 'sets', empty last
+    workouts, chart re-reads. Left: dead WELCOME_GYM_ASK path; gym members can't pick Drive on the welcome.
+  - Phone flows: 12 welcome flows walk the start view (helper). What's new 0.57.1: 3 lines (fresh-reader checked).
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

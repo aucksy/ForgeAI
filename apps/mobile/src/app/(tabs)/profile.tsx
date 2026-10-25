@@ -42,7 +42,7 @@ import { FeedMenu, type FeedMenuRequest } from '@/tracker/components/profile/Fee
 import { HistoryChartCard } from '@/tracker/components/profile/HistoryChartCard';
 import { linkLabel } from '@/tracker/db/profileExtras';
 import { liftsBeatingBest } from '@/tracker/engine/headline';
-import type { ChartBar, ChartRange } from '@/tracker/engine/historyChart';
+import { DEFAULT_METRIC, type ChartBar, type ChartRange } from '@/tracker/engine/historyChart';
 import { monthOf } from '@/tracker/lib/months';
 import { feedMonthLine, feedRows, type FeedRow } from '@/tracker/services/feedCard';
 import { getMonthCounts, historyStamp, type HistoryCursor } from '@/tracker/services/historyFeed';
@@ -103,7 +103,9 @@ function Stat({ label, value, unit, spoken }: { label: string; value: string; un
 export default function ProfileScreen() {
   const router = useRouter();
   const units = useUnits();
-  const metric = useTrackerPrefs((s) => s.chartMetric);
+  // R-132: 'sets' is a Progress tab mode; Profile has no chip for it (a restored pref could hold it).
+  const savedMetric = useTrackerPrefs((s) => s.chartMetric);
+  const metric = savedMetric === 'sets' ? DEFAULT_METRIC : savedMetric;
   const range = useTrackerPrefs((s) => s.chartRange);
   const setMetric = useTrackerPrefs((s) => s.setChartMetric);
   const setRange = useTrackerPrefs((s) => s.setChartRange);
