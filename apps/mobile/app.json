@@ -117,7 +117,7 @@
       "supabaseProxyUrl": "https://app.mettleup.fit/sb",
       "supabaseProxyFallbackUrls": ["https://forgeai.aakashpahuja.in/sb"],
       "supabasePublishableKey": "sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo",
-      "googleWebClientId": "REPLACE_WITH_GOOGLE_WEB_CLIENT_ID",
+      "googleWebClientId": "301992813103-a5m1pqvut8oobo5b6lpljn7al3o4u2be.apps.googleusercontent.com",
       "distribution": "github"
     },
     "owner": "aucksy"

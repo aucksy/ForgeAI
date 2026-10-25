@@ -55,6 +55,26 @@ client secret: if Supabase demands it, that one paste is his. Put the Web client
 test sign-in + Drive backup + restore on the emulator, then update the tracker rows (#43, #50, #60, Drive backup,
 gym timings, Play uploads, leads fix).
 
+**Done (25 Oct ~12:40, Google setup helper):**
+- Google Cloud project forgeai-d7eea (simpleapps108): Google Auth Platform made: app name MettleUp, support +
+  contact simpleapps108@gmail.com, External, home https://mettleup.fit, privacy /privacy, terms /terms, domain
+  mettleup.fit, no logo (a logo forces verification). Published: "In production". Google Drive API enabled.
+- Clients: Web "MettleUp app" 301992813103-a5m1pqvut8oobo5b6lpljn7al3o4u2be.apps.googleusercontent.com (no redirect
+  URIs; native ID-token flow). Android "MettleUp Android (Play signing)" 301992813103-fv6l4iv37b0e03k1q1sp12uvf4g448fk
+  for com.mettleup.app + Play App Signing SHA-1 80:19:24:4B:25:8E:CE:74:8D:68:6B:77:3A:04:23:A9:13:E3:4C:47.
+- NOT done: the Android client for the UPLOAD key (97:F8:...:93:88, the GitHub APK) — Google says that package +
+  fingerprint is already used by client "MettleUp" 240978491498-aoc7... in his personal project gmailapi-491903
+  (Testing mode, so useless for members). Renaming/moving it was blocked by the safety check (shared resource).
+  Until it moves, Google sign-in and Drive work on Play installs only; GitHub APK installs get Google's
+  DEVELOPER_ERROR.
+- Supabase hdxzqbdiokjklnypfisq: Google provider ON, Client IDs = web,android(Play); secret EMPTY (Chrome had
+  autofilled a saved 15-character password into the secret box: cleared, never saved); nonce check on.
+  /auth/v1/settings says google=true; a fake ID token gets "Bad ID token" (provider live).
+- app.json extra.googleWebClientId = the web id. Gates unchanged by design: Drive backup for everyone;
+  "Continue with Google" + server copy only for gym members (R-106). tsc 0, vitest 3477 pass.
+- GAP: Drive backup still uploads the old JSON snapshot (cloud/snapshot.ts: no photos, no settings outside the
+  database), not the new full backup ZIP (src/backup). Needs the backup helper to switch Drive to the ZIP.
+
 ## R-127. His website demo request never reached HQ — 25 Oct 2026
 
 **He said:** "I submitted this query on the website for demo, the name and the phone number, but on my HQ app I
