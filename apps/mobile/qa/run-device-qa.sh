@@ -1734,6 +1734,13 @@ part_w() {
   adb shell am broadcast -a android.intent.action.TIME_SET >/dev/null 2>&1 || true
   W_DATE=$(adb shell "date '+%a %d %b %Y %H:%M %Z'" | tr -d '\r')
   log "REAL WORKOUT: phone clock $W_DATE (want Mon 01 Mar 2027 10:0x IST)"
+  # A clock 16 months ahead breaks every HTTPS certificate check ("Chain validation failed"), so the
+  # app's server calls fail and it logs that it moved to Supabase's own address. Made by this part's
+  # clock, not the app (R-123/R-128: since the build carries a real Google client the account calls
+  # run). qa_report.py excuses only those lines, only in these parts.
+  for wp in W1 W2 W3 W4; do
+    printf '%s\t%s\n' "$wp" 'our server address .* failed|Chain validation failed|SSLHandshakeException' >> "$OUT/expected-errors.txt"
+  done
   case "$W_DATE" in
     "Mon 01 Mar 2027"*) ;;
     *) log "REAL WORKOUT FAILED: the phone clock could not be pinned to Monday 1 March 2027 ($W_DATE)"; status=1 ;;

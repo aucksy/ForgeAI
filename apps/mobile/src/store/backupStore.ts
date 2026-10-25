@@ -6,7 +6,7 @@ import { create } from 'zustand';
 import type { SettingsBlob } from '@/backup/backupFormat';
 import { deviceBackupIo } from '@/backup/backupIo';
 import { openBackup, type OpenedBackup } from '@/backup/backupOpen';
-import { restoreBackup } from '@/backup/backupRestore';
+import { restoreBackup, restoreRoomShort } from '@/backup/backupRestore';
 import { saveBackupZip } from '@/backup/backupSave';
 import { deviceSettingsIo } from '@/backup/backupSettings';
 import { noSpaceText, SAVE_EMPTY } from '@/backup/backupText';
@@ -271,12 +271,21 @@ export const useBackup = create<BackupState>()((set, get) => ({
       if (refuse) throw new DriveError(refuse);
       // R-123: the SAME file "Save a backup" makes (everything, photos and settings too), uploaded
       // from disk; the local copy goes once it is up.
-      const saved = await saveBackupZip(deviceBackupIo, {
-        app: 'MettleUp',
-        appVersion: Constants.expoConfig?.version ?? '',
-        units: useSettings.getState().unitSystem,
-        settings: await deviceSettingsIo.read(),
-      });
+      const make = async (includePhotos: boolean) =>
+        saveBackupZip(deviceBackupIo, {
+          app: 'MettleUp',
+          appVersion: Constants.expoConfig?.version ?? '',
+          units: useSettings.getState().unitSystem,
+          settings: await deviceSettingsIo.read(),
+          includePhotos,
+          outDir: `${deviceBackupIo.cacheDir}drive-upload/`,
+        });
+      let saved = await make(true);
+      // A phone short of room for its photos still backs up its workouts, routines and settings.
+      if (saved.kind === 'no-space' || saved.kind === 'too-big') {
+        console.warn('[backup] Drive: no room for the photos; backing up without them this time');
+        saved = await make(false);
+      }
       if (saved.kind === 'empty') throw new PlainError(SAVE_EMPTY);
       if (saved.kind === 'no-space') throw new PlainError(noSpaceText(saved.needBytes, saved.freeBytes));
       if (saved.kind === 'too-big') throw new PlainError(noSpaceText(saved.needBytes, 0));
@@ -355,6 +364,11 @@ export const useBackup = create<BackupState>()((set, get) => ({
       const restoredSessionIds = env
         ? (env.tables['workout_sessions'] ?? []).map((r) => String(r.id))
         : (found.file?.file.items ?? []).filter((i) => i[0] === 'w').map((i) => i[1]);
+      // Room first: a restore that can't fit never replaces the last restore's undo copy.
+      if (found.file) {
+        const short = await restoreRoomShort(deviceBackupIo, found.file, 'replace');
+        if (short) throw new PlainError(noSpaceText(short.needBytes, short.freeBytes));
+      }
       try {
         // The retry of a restore whose tidy-up failed: the copy from before it stays (only the
         // workouts it brings in are updated) — unless the member has saved a workout since.

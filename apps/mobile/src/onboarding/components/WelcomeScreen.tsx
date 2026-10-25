@@ -21,7 +21,7 @@
  * ForgeAI app: everything comes back in one go, and the app opens on it) and "Bring workouts from
  * Hevy or Strong" (to the Hevy / Strong pick further down).
  */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   BackHandler,
@@ -206,6 +206,11 @@ export function WelcomeScreen() {
   };
   // R-123: the "Restore from a backup" view, and where the Hevy / Strong pick sits (to scroll to it).
   const [restoring, setRestoring] = useState(false);
+  // A restore running: Back waits (leaving would race it with the welcome's own start).
+  const restoreBusy = useRef(false);
+  const onRestoreBusy = useCallback((b: boolean) => {
+    restoreBusy.current = b;
+  }, []);
   const switcherY = useRef(0);
   // Phase 1 (DS-06): "Remove demo data" keeps the member's own workouts and lands here.
   const [kept, setKept] = useState(0);
@@ -247,7 +252,7 @@ export function WelcomeScreen() {
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (restoring) {
-        setRestoring(false);
+        if (!restoreBusy.current) setRestoring(false);
         return true;
       }
       const prev = previousStep(step);
@@ -323,7 +328,7 @@ export function WelcomeScreen() {
     return (
       <Screen>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48, marginBottom: space.lg }}>
-          <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => setRestoring(false)} />
+          <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => !restoreBusy.current && setRestoring(false)} />
         </View>
         <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5 }}>
           Restore from a backup
@@ -331,7 +336,7 @@ export function WelcomeScreen() {
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 4, marginBottom: space.xl, lineHeight: 19 }}>
           Back after a while, or on a new phone? Pick the backup file you saved. Your workouts, routines, measurements, photos, profile and settings come back, and MettleUp opens on them.
         </Text>
-        <RestoreBackupPanel welcome onRestored={() => useOnboarding.getState().boot()} />
+        <RestoreBackupPanel welcome onBusy={onRestoreBusy} onRestored={() => useOnboarding.getState().boot()} />
       </Screen>
     );
   }

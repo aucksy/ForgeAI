@@ -53,7 +53,8 @@ export function crc32(bytes: Uint8Array, crc = 0): number {
 
 /** UTF-8 bytes of a string (Hermes needs no TextEncoder). PURE. */
 export function utf8Encode(s: string): Uint8Array {
-  const out: number[] = [];
+  const out = new Uint8Array(s.length * 3);
+  let p = 0;
   for (let i = 0; i < s.length; i++) {
     let c = s.charCodeAt(i);
     if (c >= 0xd800 && c <= 0xdbff && i + 1 < s.length) {
@@ -63,12 +64,22 @@ export function utf8Encode(s: string): Uint8Array {
         i++;
       }
     }
-    if (c < 0x80) out.push(c);
-    else if (c < 0x800) out.push(0xc0 | (c >> 6), 0x80 | (c & 63));
-    else if (c < 0x10000) out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
-    else out.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    if (c < 0x80) out[p++] = c;
+    else if (c < 0x800) {
+      out[p++] = 0xc0 | (c >> 6);
+      out[p++] = 0x80 | (c & 63);
+    } else if (c < 0x10000) {
+      out[p++] = 0xe0 | (c >> 12);
+      out[p++] = 0x80 | ((c >> 6) & 63);
+      out[p++] = 0x80 | (c & 63);
+    } else {
+      out[p++] = 0xf0 | (c >> 18);
+      out[p++] = 0x80 | ((c >> 12) & 63);
+      out[p++] = 0x80 | ((c >> 6) & 63);
+      out[p++] = 0x80 | (c & 63);
+    }
   }
-  return Uint8Array.from(out);
+  return out.slice(0, p);
 }
 
 /** A string from UTF-8 bytes; a broken sequence becomes U+FFFD. PURE. */

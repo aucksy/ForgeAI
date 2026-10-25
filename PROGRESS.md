@@ -2668,6 +2668,13 @@
   database-only forgeai-backup-*.json copies are still listed and restored the old way. Restoring a backup file never
   lets the import clock repair move its workouts again (import_clock_real_v1 defaults to done). Tests:
   test/backup/driveBackup.test.ts (back up -> restore on a second phone -> undo), driveUpload.test.ts.
+- 2026-10-25: **0.57.0 review fixes (review subagent, 8 findings, 7 fixed).** The automatic Drive backup waits for
+  Wi-Fi (the file holds every photo); a phone short of room for its photos still backs up the rest; Drive builds its
+  file in cache/drive-upload/ so it never deletes a file "Save a backup" is sharing; a Drive restore checks room before
+  replacing the last undo copy; a welcome-screen restore that fails removes the profile it made (no stray "Member");
+  Back is held while a welcome restore runs; save and restore pause between 1 MB chunks (no frozen screen on a video);
+  utf8Encode writes into one Uint8Array (no number list). Left: a failed records rebuild after Replace is only logged.
+  Phone test: part W (clock in 2027) excuses only its own certificate errors (the account calls run since R-128).
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

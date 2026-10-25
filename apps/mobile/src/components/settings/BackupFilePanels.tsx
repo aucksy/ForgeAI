@@ -151,8 +151,18 @@ export function SaveBackupPanel() {
 
 type Phase = 'pick' | 'chosen' | 'working' | 'done';
 
-export function RestoreBackupPanel({ welcome = false, onRestored }: { welcome?: boolean; onRestored?: () => void | Promise<void> }) {
+export function RestoreBackupPanel({
+  welcome = false,
+  onRestored,
+  onBusy,
+}: {
+  welcome?: boolean;
+  onRestored?: () => void | Promise<void>;
+  /** True while a restore or an undo runs (the welcome screen holds Back meanwhile). */
+  onBusy?: (busy: boolean) => void;
+}) {
   const [phase, setPhase] = useState<Phase>('pick');
+  useEffect(() => onBusy?.(phase === 'working'), [phase, onBusy]);
   const [opened, setOpened] = useState<OpenedBackup | null>(null);
   const [phone, setPhone] = useState({ workouts: 0, folders: 0, measurements: 0 });
   const [demo, setDemo] = useState(false);

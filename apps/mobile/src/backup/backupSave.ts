@@ -48,10 +48,17 @@ export async function saveBackupZip(
     settings: SettingsBlob;
     now?: Date;
     onProgress?: (p: SaveProgress) => void;
+    /** False: the database and settings only (Drive's fallback on a phone short of space). */
+    includePhotos?: boolean;
+    /** Where the file goes (default the cache). Each caller its own folder, so one never deletes another's file. */
+    outDir?: string;
   },
 ): Promise<SaveResult> {
   const now = o.now ?? new Date();
-  const { file, photos } = await collectBackup({ app: o.app, appVersion: o.appVersion, units: o.units, settings: o.settings, now, exists: (u) => io.fileSize(u) != null });
+  const collected = await collectBackup({ app: o.app, appVersion: o.appVersion, units: o.units, settings: o.settings, now, exists: (u) => io.fileSize(u) != null });
+  const { file } = collected;
+  const photos = o.includePhotos === false ? [] : collected.photos;
+  if (o.includePhotos === false) file.photos = [];
   const c = file.counts;
   if (c.workouts + c.folders + c.ownExercises + c.bodyWeights + c.measurements + c.photos === 0) return { kind: 'empty' };
 
@@ -62,11 +69,13 @@ export async function saveBackupZip(
   const free = io.freeBytes();
   if (free != null && needBytes + SPARE_BYTES > free) return { kind: 'no-space', needBytes: needBytes + SPARE_BYTES, freeBytes: free };
 
-  // One backup in the cache at a time: an older one goes before the new one is written.
-  for (const n of io.list(io.cacheDir)) if (/^mettleup-backup-.*\.zip$/.test(n)) io.remove(`${io.cacheDir}${n}`);
+  // One backup in its folder at a time: an older one goes before the new one is written.
+  const dir = o.outDir ?? io.cacheDir;
+  if (dir !== io.cacheDir) io.mkdir(dir);
+  for (const n of io.list(dir)) if (/^mettleup-backup-.*\.zip$/.test(n)) io.remove(`${dir}${n}`);
 
   const name = backupFileName(localDay(now));
-  const uri = `${io.cacheDir}${name}`;
+  const uri = `${dir}${name}`;
   const out = io.openWrite(uri);
   let closed = false;
   try {
@@ -86,7 +95,10 @@ export async function saveBackupZip(
       }
       try {
         const entry = await zip.begin(p.entry.file);
-        for (let off = 0; off < src.size; off += CHUNK) await entry.write(src.readAt(off, Math.min(CHUNK, src.size - off)));
+        for (let off = 0; off < src.size; off += CHUNK) {
+          await entry.write(src.readAt(off, Math.min(CHUNK, src.size - off)));
+          await pause(); // a long video never freezes the screen
+        }
         await entry.end();
         written.push({ ...p.entry, bytes: src.size });
       } finally {

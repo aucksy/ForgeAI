@@ -414,7 +414,37 @@ export async function restoreBackup(
   const needBytes = bring.reduce((s, p) => s + (opened.entries.get(p.file)?.size ?? 0), 0);
   const free = io.freeBytes();
   if (free != null && needBytes + RESTORE_SPARE_BYTES > free) return { kind: 'no-space', needBytes: needBytes + RESTORE_SPARE_BYTES, freeBytes: free };
+  const madeProfile = !(await hasMemberProfile());
   await ensureProfileFor(file);
+  try {
+    return await restoreWithProfile(io, opened, mode, o, bring);
+  } catch (e) {
+    // A new phone's restore that failed: back to the welcome screen as it was (no "Member" left behind).
+    if (madeProfile) {
+      await enqueueWrite(() => getDb().runAsync('DELETE FROM user_profile').then(() => undefined)).catch((err: unknown) =>
+        console.warn('[backup] the profile made for a failed restore could not be removed', err),
+      );
+    }
+    throw e;
+  }
+}
+
+/** Free space a restore needs for its photos, or null when it fits. */
+export async function restoreRoomShort(io: BackupIo, opened: OpenedBackup, mode: RestoreMode): Promise<{ needBytes: number; freeBytes: number } | null> {
+  const bring = await photosToBring(opened.file, mode);
+  const needBytes = bring.reduce((s, p) => s + (opened.entries.get(p.file)?.size ?? 0), 0) + RESTORE_SPARE_BYTES;
+  const free = io.freeBytes();
+  return free != null && needBytes > free ? { needBytes, freeBytes: free } : null;
+}
+
+async function restoreWithProfile(
+  io: BackupIo,
+  opened: OpenedBackup,
+  mode: RestoreMode,
+  o: { settings: SettingsIo; onProgress?: (p: RestoreProgress) => void },
+  bring: BackupPhoto[],
+): Promise<RestoreResult> {
+  const { file } = opened;
 
   const copy = await takeSafetyCopy();
   const oldSettings = mode === 'replace' ? await o.settings.read() : null;
@@ -438,7 +468,10 @@ export async function restoreBackup(
           io.mkdir(dest.slice(0, dest.lastIndexOf('/') + 1));
           const w = io.openWrite(dest);
           try {
-            await copyEntry(src, entry, (chunk) => w.write(chunk));
+            await copyEntry(src, entry, async (chunk) => {
+              w.write(chunk);
+              await pause(); // a long video never freezes the screen
+            });
           } finally {
             w.close();
           }

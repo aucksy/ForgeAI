@@ -53,6 +53,15 @@ export async function autoBackupAfterWorkout(now = Date.now()): Promise<'done' |
     await store.init();
     const s = useBackup.getState();
     if (!s.configured || s.busy || !autoBackupDue(Boolean(s.googleEmail), s.lastBackupAt, now)) return 'skipped';
+    // R-123: a Drive backup is the whole backup file (photos too), so the automatic one waits for
+    // Wi-Fi rather than spend mobile data after every workout; "Back up now" works on any network.
+    const net = await import('@react-native-community/netinfo')
+      .then((m) => m.default.fetch())
+      .catch((e: unknown) => {
+        console.warn('[auto backup] could not tell the network; trying anyway', e);
+        return null;
+      });
+    if (net?.type === 'cellular') return 'skipped';
     await s.backupNow();
     return 'done';
   } catch (e) {
