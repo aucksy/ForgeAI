@@ -40,6 +40,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
   workflow to re-upload pictures in order; (3) owner's website demo lead missing in HQ — root cause + fix.
 - Then: review + tag 0.57.0, closed test update, tracker (gym timings row, Play row, R-123..125), Play signing SHA-1 into #60.
 
+## R-128. Build Google sign-in and Drive backup now; check the feature backlog — 25 Oct 2026
+
+**He said:** "I have done the switch on 'Continue with Google'. lets build the google login and drive backups also"
+and "also check if feature backlog need to update."
+
+**State found (25 Oct ~12:00):** Supabase auth settings still say Google = off; app.json googleWebClientId is still
+REPLACE_WITH_GOOGLE_WEB_CLIENT_ID. App code for "Continue with Google" (cloud/account.ts) and Drive backup
+(cloud/drive.ts, BackupCard) exists and hides itself until both are set.
+
+**What I do:** finish #60 myself in his Chrome (rule use-the-browser-yourself): consent screen, Drive API, Android
+clients for BOTH the upload key and the Play App Signing key, Web client, Supabase Google provider. Never type the
+client secret: if Supabase demands it, that one paste is his. Put the Web client ID in app.json, ship in 0.57.0,
+test sign-in + Drive backup + restore on the emulator, then update the tracker rows (#43, #50, #60, Drive backup,
+gym timings, Play uploads, leads fix).
+
 ## R-127. His website demo request never reached HQ — 25 Oct 2026
 
 **He said:** "I submitted this query on the website for demo, the name and the phone number, but on my HQ app I
