@@ -24,6 +24,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #64 | High | Low |
 | Feature: Monthly gym challenge with a ranking | High | Low |
 | Feature: How busy the gym is right now | High | Low |
 | Feature: Gym's logo on share pictures and a before/after share | High | Low |
@@ -358,7 +359,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Works without internet | Live | The member app logs workouts fully offline. |
 | Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
-| Play Store release | Waiting for you | Not started: waits for your Play account (#28, #35). | After you open the Play account (#28, #35): first an internal test for the gym's staff, then a closed test with 12 testers for 14 days (gym members can be the testers), then public. Members then get updates by themselves. The GitHub download link stays as a backup. |
+| Play Store release | Live | 25 Oct: MettleUp 0.56.1 is in the Play internal test (testers on your two lists join at https://play.google.com/apps/internaltest/4701674448333062164) and the closed test with mettleup-testers@googlegroups.com is in Google's review. Store listing, icon, banner, 6 screenshots done. |  |
 | Landing page, leads and new-gym onboarding | Live | Live since 22 Oct at https://forgeai.aakashpahuja.in/home/ (Hindi + English): a gym owner types their gym's name and sees the member app in their colours, then asks for a free demo (saved privately in Cloudflare; I tell you each one). "Open the demo gym" and "Sign in" lead to the admin app; new gyms get a "Get started" checklist. |
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
 | Test server before live | Waiting for you | A second server where every change is tried before it reaches the gym. Waits for you to make the free Supabase project (only the owner can). | A second, free Supabase project, "forgeai-staging", with the same tables. Every database change goes there first and runs all the server checks; only then does it go live, with your yes. You make the project (Supabase lets only the owner do it); I fill it. |
@@ -371,6 +372,18 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**What is ready:** trainer measurements and diet plans are built and tested (your pick A, from the GGMS menu). They are held because the privacy notice says measurements stay on the member's phone and the gym never sees them. That stays true for what a member logs. It is not true for what the trainer records at the desk, so the notice must say so before the feature goes live.
+**The 3 changes (English and Hindi):**
+1. The gym's records also include "body measurements your trainer takes at the gym, and diet plans your trainer sends you".
+2. "The workouts and measurements **you log yourself** stay on your phone" (adds "you log yourself").
+3. A new row: what is kept (date, weight, body fat, tape measurements, who measured, the desk's note), why (so the trainer follows progress and the member sees it in the app), who sees it (only that gym's staff and the member), how long (as long as the gym keeps its records).
+**Decide:** may these 3 lines go into the public privacy notice, so I can switch the two features on?
+- A: Yes, as written: I update the notice (English + Hindi), put the server change live, deploy the admin app, and the member app shows them from the next version (recommended)
+- B: Not yet: the features stay built but switched off
 
 ## 63. Members under 18: add teen accounts (13 to 17) with a parent's OK? — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -489,6 +502,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (24 Oct, 10:58 pm, via the page)**
 **TASK DONE (24 Oct 2026, 1:40 pm)**
 **Why:** you asked that every word members read gets checked by Gemini, with the full context. The check is built: before any member-facing text ships, Claude sends the draft and its context to Gemini, compares the two versions and checks the facts. It runs only with your own Gemini key, and only you can make that key.
 **Your task:** Open https://aistudio.google.com/apikey, press "Create API key", pick any project, and copy the key.
@@ -499,6 +513,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 55. Switch on free trials: one live server change (part 4 of your owner panel) — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (24 Oct, 10:58 pm, via the page)**
 **What it does:** every gym gets 3 months free, with no card. Your owner panel shows how many days each gym has left. You can extend a trial up to 6 months, with a reason that is logged. The gym owner sees "Free trial: 41 days left" on the Today screen. When a trial ends, nothing locks: members keep their app, and the owner sees "Pick a ForgeAI pack to keep going". Your panel can also record each gym's pack (Starter, Pro, AI), monthly, yearly or lifetime, and paid until when.
 **What is already live without it:** the new landing page with prices, the "Start free" sign-up, and the new owner panel (search, filters, export). Until you say yes, the panel shows "Trials need the database update".
 **Safe:** it only adds new columns and two new owner-panel actions. It changes no member data. It was tested on a copy (41 checks pass). Existing gyms start their 3 months on the day it goes in.
@@ -507,6 +522,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 54. How much of a gym's data should you see in your owner panel? — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (24 Oct, 10:58 pm, via the page)**
 **You asked:** in your owner panel (ForgeAI HQ), will you see each gym's member data? Do you need it? Should you have it?
 **My answer:** No, not by default. Your panel shows each gym's own facts: name, owner, mobile, plan, trial, how many members, last activity. It never shows member names, phones or payments. Four reasons:
 1. **The law.** Under India's data law (DPDP Act 2023), the gym owns its members' data and ForgeAI only keeps it for the gym. Looking at it without the gym's OK is a risk for you, not a feature.
@@ -526,6 +542,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 52. Your task: two keys to unlock your owner panel (ForgeAI HQ), about 20 minutes — 23 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** Done
+**READ (24 Oct, 10:59 pm, via the page)**
 **Why:** your owner panel (#51) is built and online at https://forgeai-hq.aakashpahuja.in. All its server parts are live and tested. It stays locked ("not set up yet") until it has a gym-server key and a Google sign-in client. Only you can make these. Only your Google account (aakashpahuja1990@gmail.com) can sign in.
 **Your task:** Make the gym-server key: open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/settings/api-keys, open "Secret keys", press "New secret key", name it hq, and copy it.
 **Your task:** Make the Google sign-in client: open https://console.cloud.google.com/auth/clients (in your ForgeAI project; if you have no project yet, first make one at https://console.cloud.google.com/projectcreate named ForgeAI, then fill https://console.cloud.google.com/auth/branding with app name ForgeAI, your email, audience External, and press "Publish app"). Press Create client, pick Web application, name it ForgeAI HQ, and under "Authorized redirect URIs" add https://forgeai-hq.aakashpahuja.in/auth/callback. Press Create. Copy the Client ID and the Client secret.
