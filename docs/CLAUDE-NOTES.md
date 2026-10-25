@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-131. Welcome screen in three clear parts; Google sign-in finds the backup — 25 Oct 2026
+**He said:** "On the login screen, create three organized sections. The first is Google login. The second section offers
+unlocking all features with a gym subscription. The third allows restoring or migrating from Hevy Strong. When a user logs
+in with Google, the system automatically checks for any backup and asks to restore. This is my thinking out loud. I just
+want the user onboarding very well organized and simple."
+**Decided (me):** first welcome screen = 3 cards, then "Start fresh". (1) Continue with Google for EVERYONE: signs in to
+Google Drive (drive.file, no server cost, so R-106 holds) and looks for the newest MettleUp backup; found = "Restore it?"
+(summary, then the same restore as the file); none = name filled in, carry on. A gym member (code waiting) also gets the
+server copy sign-in as before. (2) Join your gym: code box, "unlocks membership, check-in, trainer plans...". (3) Already
+have workouts? Restore a backup file / Bring from Hevy or Strong. Then "Start fresh" → the 3 steps. Demo link stays at the
+bottom.
+
 ## R-130. 0.57.0 tagged from OpenCode; Play upload fixed — 25 Oct 2026
 **He said (OpenCode, his API key):** "check the GitHub run", then "how much time does it take for it to show up on google play".
 **Done:** tagged v0.57.0 on b0befd4 (the cloud session could not push tags); release run 40192649364 green, APK link OK.
