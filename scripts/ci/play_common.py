@@ -34,7 +34,11 @@ def service():
     from googleapiclient.discovery import build
 
     creds, _ = google.auth.default(scopes=[SCOPE])
-    http = google_auth_httplib2.AuthorizedHttp(creds, http=httplib2.Http(timeout=900))
+    raw = httplib2.Http(timeout=900)
+    # A resumable upload answers each chunk with 308 "Resume Incomplete"; httplib2 would follow it as a
+    # redirect and crash (RedirectMissingLocation). googleapiclient's own build_http() drops 308 the same way.
+    raw.redirect_codes = raw.redirect_codes - {308}
+    http = google_auth_httplib2.AuthorizedHttp(creds, http=raw)
     return build("androidpublisher", "v3", http=http, cache_discovery=False)
 
 

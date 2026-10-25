@@ -209,5 +209,24 @@ class ListingText(unittest.TestCase):
         self.assertTrue(got["title"].startswith("MettleUp"))
 
 
+class ResumableUpload(unittest.TestCase):
+    """v0.57.0 (25 Oct 2026): the AAB upload crashed with RedirectMissingLocation because httplib2
+    followed Google's 308 "Resume Incomplete" chunk reply as a redirect."""
+
+    def test_308_is_not_followed_as_a_redirect(self):
+        try:
+            import google.auth
+            from unittest import mock
+            from google.auth.credentials import AnonymousCredentials
+        except ImportError:
+            self.skipTest("Google client libraries not installed")
+        import play_common
+        with mock.patch.object(google.auth, "default", return_value=(AnonymousCredentials(), None)):
+            api = play_common.service()
+        raw = api._http.http
+        self.assertNotIn(308, raw.redirect_codes)
+        self.assertIn(301, raw.redirect_codes)
+
+
 if __name__ == "__main__":
     unittest.main()

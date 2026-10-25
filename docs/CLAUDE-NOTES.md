@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-130. 0.57.0 tagged from OpenCode; Play upload fixed — 25 Oct 2026
+**He said (OpenCode, his API key):** "check the GitHub run", then "how much time does it take for it to show up on google play".
+**Done:** tagged v0.57.0 on b0befd4 (the cloud session could not push tags); release run 40192649364 green, APK link OK.
+CI on 136327e failed once on admin e2e J22 (shop demo button wait, 90 s) with no code change: re-run passed (flaky; fix if
+it repeats). play-upload.yml did NOT start by itself after the release (workflow_run never fired; cause unknown), so I ran
+it by hand (live): it crashed in the AAB upload, httplib2 RedirectMissingLocation (Google's 308 "Resume Incomplete" chunk
+reply followed as a redirect; the v0.56.1 proof runs skipped before uploading, so it never ran). Fix: play_common.service()
+drops 308 from redirect_codes, as googleapiclient.build_http does; guard test ResumableUpload (fails without the fix).
+
 ## RESUME HERE (25 Oct ~5:50 pm IST) — supersedes older resume lines
 - 0.57.0 is READY: on 3b052cf (+ notes-only b0befd4) CI green, Cross-role journeys green, Device QA owner run 40175718272
   and default run 40175716673 both green on attempt 2 (attempt 1 failed only shard 2-gym-backup; re-run passed).
