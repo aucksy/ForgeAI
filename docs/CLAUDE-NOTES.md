@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## RESUME HERE (25 Oct ~5:50 pm IST) — supersedes older resume lines
+- 0.57.0 is READY: on 3b052cf (+ notes-only b0befd4) CI green, Cross-role journeys green, Device QA owner run 40175718272
+  and default run 40175716673 both green on attempt 2 (attempt 1 failed only shard 2-gym-backup; re-run passed).
+- NOT tagged: the cloud session's git proxy refuses tag pushes ("remote end hung up", 3 tries, 25 Oct 12:20 UTC).
+  Tag from his PC or a local session: `git fetch origin` then `git tag v0.57.0 b0befd4` then `git push origin v0.57.0`
+  (lightweight, like v0.56.1). release-apk.yml runs the phone gate itself, then play-upload.yml.
+- After the tag: check releases/download/v0.57.0/mettleup-v0.57.0.apk and the play-upload run; give him restore steps.
+
 ## RESUME HERE (25 Oct ~1:30 pm IST, owner at 95% of weekly limit; back Wednesday) — supersedes older resume lines
 - ForgeAI 0.55.2 is OUT (Save full backup in Settings -> Export & import); owner told to back up with it. releases/latest
   is still MettleUp v0.56.1 (checked).
