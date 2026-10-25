@@ -1,5 +1,5 @@
 -- 0035: body measurements taken by the trainer, and diet plans from the trainer (R-120, 24 Oct 2026).
--- NOT APPLIED YET (live apply only with the owner's yes). Additive and re-runnable: two new tables,
+-- APPLIED LIVE 25 Oct 2026 (owner: tracker #64 A); live tests 0035 PASS 54, security PASS 9. Additive and re-runnable: two new tables,
 -- new functions; nothing existing is changed.
 --
 -- 1. MEASUREMENTS. At the desk a trainer or the owner records a member's body measurements for a day:
