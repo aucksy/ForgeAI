@@ -127,10 +127,14 @@ begin
   perform public.owner_save_gym_timings(kop, h);
 
   -- 8. A suspended gym is read-only (0027).
+  perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'suspended' where gym_id = gid;
+  perform set_config('forgeai.hq', 'off', true);
   checks := checks + 1; fails := fails || pg_temp.t36_is('8suspended', pg_temp.t36_run(format('select public.owner_save_gym_timings(%L, %L::jsonb)', kop, h)), 'SUSPENDED');
   checks := checks + 1; fails := fails || pg_temp.t36_is('8read', public.member_gym_timings(km)->'hours'->'week'->'sun'->>'kind', 'closed');
+  perform set_config('forgeai.hq', 'on', true);
   update public.gyms set status = 'active' where gym_id = gid;
+  perform set_config('forgeai.hq', 'off', true);
 
   -- 9. People no longer allowed: a removed person's session, a member who left, a made-up key.
   update public.gym_staff set removed_at = now() where staff_id = s_owner;
