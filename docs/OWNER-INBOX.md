@@ -24,7 +24,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
-| #64 | High | Low |
 | Feature: Monthly gym challenge with a ranking | High | Low |
 | Feature: How busy the gym is right now | High | Low |
 | Feature: Gym's logo on share pictures and a before/after share | High | Low |
@@ -290,7 +289,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
 | AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
-| Body measurements taken by the gym | Planned | Your pick A (24 Oct, from the GGMS menu): trainers record a member's measurements at the desk. | The trainer adds weight, body fat and tape measurements on the member's profile in the admin app. They appear in that member's MettleUp app, in their progress charts, marked "From <gym>". The member's own entries stay theirs. Being built now; the server part needs your yes before it goes live. |
+| Body measurements taken by the gym | Live | 25 Oct: the trainer records weight, body fat and tape measurements on the member's profile in the admin app; the member sees them in Progress → Body, marked "From <gym>" (server 0035 live, #64). |  |
 | Trainer view of member progress | Waiting for you | Trainers and the owner see whether each member is progressing (owner 18 Oct, widened 22 Oct). Research done; the plan waits for your pick in #46. | Research comes first (Trainerize, TrueCoach, Hevy Coach). In the app the member turns on "Share my progress with my gym" (off until they choose; they see exactly what is shared and can turn it off). Shared: workout days, total kg lifted per workout, the best set on main lifts and new records; never body weight or photos. A trainer's "My members" shows each one going up, flat, down or stopped coming, flags a lift stuck for 3 weeks, and has one-tap WhatsApp praise or a nudge. The owner gets a list of members who are stalling and not on personal training (a sales list), and a monthly progress report a trainer can send a PT client. Needs a live server change (your yes). |
 | AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
 | Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
@@ -325,7 +324,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Busy times by exercise | Waiting for you | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. Waits for your yes: it needs a live server change. | Members choose to share "which exercise, at what hour" (no weights, no names; off until they agree). On an exercise or a routine, the app then shows "Other members also plan this between 6 and 8 pm", and members judge for themselves. It needs a few weeks of shared data before it shows anything, and a live server change (your yes). |
 | Google login | Waiting for you | Research done: two ways to pick from (#43). | Your pick in #43 decides it. My pick: an optional "Continue with Google" on the first screen, with "Join with your gym code" and "Use without an account" below; the desk confirms each member once, so My membership can later show payments. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
-| Diet plans from the trainer | Planned | Your pick A (24 Oct, from the GGMS menu): trainers send diet plans like workout plans. | The trainer writes a plan (meals, times, items, optional calories and protein) or copies a starter plan, and sends it to one member or a whole membership plan. It appears in the member's app under the Gym tab. No food logging here. Being built after measurements. |
+| Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
 | Monthly gym challenge with a ranking | Planned | "Most workouts in November": a progress bar, the top 10 of your gym, a prize of free days, from #58. | The owner makes a challenge in the admin app (goal, dates, prize). Members see their place among their own gym. The workout reward already counts workouts and adds free days. |
 | How busy the gym is right now | Planned | Members see how busy the gym is now and the quietest times, from the QR check-ins, from #58. | The server counts check-ins per hour (the admin app already shows busy hours). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
@@ -375,15 +374,13 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (25 Oct)
 **What is ready:** trainer measurements and diet plans are built and tested (your pick A, from the GGMS menu). They are held because the privacy notice says measurements stay on the member's phone and the gym never sees them. That stays true for what a member logs. It is not true for what the trainer records at the desk, so the notice must say so before the feature goes live.
 **The 3 changes (English and Hindi):**
 1. The gym's records also include "body measurements your trainer takes at the gym, and diet plans your trainer sends you".
 2. "The workouts and measurements **you log yourself** stay on your phone" (adds "you log yourself").
 3. A new row: what is kept (date, weight, body fat, tape measurements, who measured, the desk's note), why (so the trainer follows progress and the member sees it in the app), who sees it (only that gym's staff and the member), how long (as long as the gym keeps its records).
-**Decide:** may these 3 lines go into the public privacy notice, so I can switch the two features on?
-- A: Yes, as written: I update the notice (English + Hindi), put the server change live, deploy the admin app, and the member app shows them from the next version (recommended)
-- B: Not yet: the features stay built but switched off
+**DECIDED (25 Oct, chat):** A. The notice (English + Hindi) now has the 3 lines and is live; server change 0035 is live (54 checks + safety 9 pass on the live server); the admin app has the Measurements card and the Diet plans page. Members see them in MettleUp 0.56.1 (Progress → Body, Gym → Diet plan).
 
 ## 63. Members under 18: add teen accounts (13 to 17) with a parent's OK? — 24 Oct 2026
 **Chat:** ForgeAI Local Chat
