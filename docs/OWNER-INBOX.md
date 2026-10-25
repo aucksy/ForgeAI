@@ -44,6 +44,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
+| #65 | High | Low |
 | Task: Play Store pictures, redone (R-126) | High | Low |
 | Task: Test server and crash alerts (#34) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
@@ -375,6 +376,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 65. Your task: one word so Google sign-in also works on the GitHub copy of the app — 25 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** Google sign-in and Drive backup are now switched on (#60). They work on the Play Store copy. On the copy installed from GitHub they fail, because an old test entry in your personal Google project "GmailAPI" already holds the app's name and fingerprint. Google lets only one entry hold them. A safety check stopped me from changing your personal project without your word.
+**Your task:** say "yes, move the MettleUp Android client" in chat. I then rename the old test entry in "GmailAPI" (nothing else there changes) and add the GitHub copy to the MettleUp project. Or do it yourself: open https://console.cloud.google.com/auth/clients/240978491498-aoc7fplm0oilsev1nu5ujojqjcdhe7c3.apps.googleusercontent.com?project=gmailapi-491903 as aakashpahuja1990, change Package name to com.mettleup.app.retired, press Save, and tap "I have done it".
 
 ## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
 **Chat:** ForgeAI Local Chat
