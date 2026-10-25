@@ -29,6 +29,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## RESUME HERE (25 Oct, ~11:30 am IST) — supersedes older resume lines
+- Live: website (mettleup.fit), admin (app.), HQ (hq.), 0034 PIN, 0035 measurements+diet, 0036 gym timings; MettleUp 0.56.1
+  released (https://mettleup.fit/app), Play internal test live, closed test (group, all countries) in Google review.
+- Fixed + deployed 25 Oct: website gym-name box (grey example), HQ icons renamed -v2 (phones cached unbadged), HQ sign-in 30 days.
+- Helpers running: (1) full backup ZIP (photos, profile, EVERY setting + guard test) for MettleUp 0.57.0 + ForgeAI 0.55.2 off
+  v0.55.1 (may tag v0.55.2 itself; must reset make_latest to MettleUp); (2) GitHub→Play automatic upload (WIF provider
+  projects/301992813103/locations/global/workloadIdentityPools/github/providers/aucksy-forgeai, SA
+  mettleup-play@forgeai-d7eea.iam.gserviceaccount.com invited in Play with testing tracks + store presence) + play-listing
+  workflow to re-upload pictures in order; (3) owner's website demo lead missing in HQ — root cause + fix.
+- Then: review + tag 0.57.0, closed test update, tracker (gym timings row, Play row, R-123..125), Play signing SHA-1 into #60.
+
 ## R-125. Automatic Play uploads; I do every setup myself in his Chrome — 25 Oct 2026
 **Owner said:** (asked whether Play uploads need the browser or an integration) "make it a rule that you will do all
 these setups yourself using the browser and you wont ask me unless your safety checks stop you.." Rule updated:
