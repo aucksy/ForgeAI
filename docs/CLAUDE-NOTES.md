@@ -29,6 +29,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-124. Gym timings per day (morning + evening, or 24 hours), shown in the member app — 25 Oct 2026
+**Owner said:** "Build option for gym owner to add GYM timings for each day of the week for morning and evening or 24
+hours, which will be visible in member app. Research for the best implementation."
+**Doing:** helper researches (Google Business hours model, Indian gym shift patterns, competitor apps) then builds:
+admin app timings editor, server change 0036 (live only after his yes), member app Gym tab "Open now · closes 10 pm" +
+the week. Also R-123 follow-ups (owner, same morning): the backup must hold photos, profile and EVERY changed setting
+(next-weight rules etc.), proven by a guard test; Drive backup waits on #60 (add the Play signing SHA-1 there).
+
 ## R-123. Full backup: routines with their order + settings; ForgeAI → MettleUp; export/import for everyone — 25 Oct 2026
 **Owner said:** "There is no option on welcome page to restore backup of its own history.. how do I restore my ForgeAI
 history" → (after I gave the Save my history CSV route, workouts only) "No I have a problem.. the backup that I did on
