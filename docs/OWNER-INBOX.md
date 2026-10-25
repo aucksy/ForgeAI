@@ -44,7 +44,8 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
 | Feature: Compare with a friend | Low | Medium |
-| Task: Simpler app layout (4 fixed tabs, 6 settings groups) | High | Medium |
+| Task: Play Store pictures, redone (R-126) | High | Low |
+| Task: Test server and crash alerts (#34) | High | Medium |
 | Task: The 14 new features (#58) | High | High |
 | Task: Privacy and gym-terms words for the server copy (#59) | High | Low |
 | #56 | High | Low |
