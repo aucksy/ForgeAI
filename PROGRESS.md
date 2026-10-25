@@ -2615,6 +2615,11 @@
   a fresh-reader subagent; lines carry an optional `go` button (opens the screen/setting); Settings -> What's new and
   the card show the last 3 updates. Global skills: obra writing-clearly-and-concisely + own `member-words` (Gemini
   second opinion via gemini_rewrite.py once the owner sets GEMINI_API_KEY, tracker #56). App 0.55.1 prepared.
+- 2026-10-25: **ForgeAI 0.55.2 (the old app's last update, off v0.55.1, R-123): "Save full backup".** Settings ->
+  Export & import -> "Save full backup" writes the MettleUp backup file (mettleup-backup-<date>.zip: backup.json with the
+  pack.ts records, settings, photos) that MettleUp 0.57.0 restores (Settings -> Back up and restore -> Restore from a
+  backup, or its welcome screen). Writer copied from MettleUp main (src/backup, src/cloud/pack.ts; readItems.ts carries
+  its own readLocalItems). Tests: test/backup (writer on sql.js, ZIP, coverage guard fitted to 0.55.1's keys).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

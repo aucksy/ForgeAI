@@ -49,6 +49,17 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.55.2',
+    date: '25 Oct',
+    lines: [
+      {
+        // R-123: the last ForgeAI update — the file MettleUp restores.
+        text: 'Moving to MettleUp? Settings → Export & import → "Save full backup" keeps everything, routines and photos too.',
+        go: { label: 'Open Export & import', href: '/settings/export' },
+      },
+    ],
+  },
+  {
     version: '0.55.1',
     date: '24 Oct',
     lines: [
