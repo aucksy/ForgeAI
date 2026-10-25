@@ -140,10 +140,11 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Workout$"
     index: 0
-- extendedWaitUntil:
-    visible: 'Up next: Push Day.*'
+# The tab keeps the scroll of the Routines list (run 40172264956): back to the top first.
+- scrollUntilVisible:
+    element: 'Up next: Push Day.*'
+    direction: UP
     timeout: 30000
-    optional: true
 # The Up next card's muscle tips ("Easy add today: 3 sets of Plank ...") load a moment after the card
 # and come one muscle at a time: put each away for good, as a member who trains them elsewhere would.
 - repeat:
