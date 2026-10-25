@@ -1,4 +1,4 @@
--- NOT APPLIED YET. Needs the owner's yes before it goes on the live server (a live server change, #18).
+-- APPLIED LIVE 25 Oct 2026 (owner: "YES - apply it"); live tests 0036 PASS 48, security PASS 9.
 --
 -- 0036: the gym's opening hours, shown in the member app (R-124, 25 Oct 2026: "add GYM timings for each
 -- day of the week for morning and evening or 24 hours, which will be visible in member app").
