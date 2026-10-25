@@ -21,7 +21,8 @@ import { fmtVol, kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 
 import { TAP_MAX_MS } from '../lib/chartTime';
 
-export type ChartMetric = 'duration' | 'volume' | 'reps';
+/** R-132: 'sets' (working sets) is a Progress tab mode; Profile's chips stay Duration · Kg lifted · Reps. */
+export type ChartMetric = 'duration' | 'volume' | 'reps' | 'sets';
 export type ChartRange = 'weeks' | 'year' | 'all';
 
 export const CHART_RANGES: readonly { id: ChartRange; label: string }[] = [
@@ -35,7 +36,7 @@ export const DEFAULT_METRIC: ChartMetric = 'volume';
 export const DEFAULT_RANGE: ChartRange = 'weeks';
 
 export function isChartMetric(v: unknown): v is ChartMetric {
-  return v === 'duration' || v === 'volume' || v === 'reps';
+  return v === 'duration' || v === 'volume' || v === 'reps' || v === 'sets';
 }
 export function isChartRange(v: unknown): v is ChartRange {
   return v === 'weeks' || v === 'year' || v === 'all';
@@ -47,6 +48,8 @@ export interface ChartSession {
   durationSec: number;
   volumeKg: number;
   reps: number;
+  /** R-132: working sets (warm-ups never count); 0 when not read. */
+  sets?: number;
 }
 
 /** One bar: a week or a month, with every metric's total. */
@@ -59,6 +62,7 @@ export interface ChartBar {
   durationSec: number;
   volumeKg: number;
   reps: number;
+  sets: number;
 }
 
 const WEEKS = 12;
@@ -79,7 +83,7 @@ function monthEnd(ym01: string): string {
 
 /** The empty bars of a range. `first` = the first workout's day (All time). PURE. */
 export function chartBuckets(range: ChartRange, today: string, first: string | null): ChartBar[] {
-  const bar = (kind: ChartBar['kind'], start: string, end: string): ChartBar => ({ kind, start, end, workouts: 0, durationSec: 0, volumeKg: 0, reps: 0 });
+  const bar = (kind: ChartBar['kind'], start: string, end: string): ChartBar => ({ kind, start, end, workouts: 0, durationSec: 0, volumeKg: 0, reps: 0, sets: 0 });
   if (range === 'weeks') {
     const last = weekStartISO(today);
     return Array.from({ length: WEEKS }, (_, i) => {
@@ -127,26 +131,28 @@ export function chartBars(sessions: readonly ChartSession[], range: ChartRange, 
     b.durationSec += Math.max(0, s.durationSec);
     b.volumeKg += Math.max(0, s.volumeKg);
     b.reps += Math.max(0, s.reps);
+    b.sets += Math.max(0, s.sets ?? 0);
   }
   return bars;
 }
 
 /** The numbers a bar (or a whole range) carries. */
-export type ChartTotals = Pick<ChartBar, 'workouts' | 'durationSec' | 'volumeKg' | 'reps'>;
+export type ChartTotals = Pick<ChartBar, 'workouts' | 'durationSec' | 'volumeKg' | 'reps' | 'sets'>;
 
 /** A bar's number for a chip. PURE. */
 export function barValue(b: ChartTotals, metric: ChartMetric): number {
-  return metric === 'duration' ? b.durationSec : metric === 'reps' ? b.reps : b.volumeKg;
+  return metric === 'duration' ? b.durationSec : metric === 'reps' ? b.reps : metric === 'sets' ? b.sets : b.volumeKg;
 }
 
 /** The whole range added up: what the big number shows until a bar is tapped. PURE. */
 export function rangeTotals(bars: readonly ChartBar[]): ChartTotals {
-  const t: ChartTotals = { workouts: 0, durationSec: 0, volumeKg: 0, reps: 0 };
+  const t: ChartTotals = { workouts: 0, durationSec: 0, volumeKg: 0, reps: 0, sets: 0 };
   for (const b of bars) {
     t.workouts += b.workouts;
     t.durationSec += b.durationSec;
     t.volumeKg += b.volumeKg;
     t.reps += b.reps;
+    t.sets += b.sets;
   }
   return t;
 }
@@ -218,6 +224,7 @@ export function chartValueText(v: number, metric: ChartMetric, units: UnitSystem
   if (metric === 'volume') return fmtVol(v, units);
   if (metric === 'duration') return v <= 0 ? '0 min' : fmtTotalTime(v);
   const n = Math.round(v);
+  if (metric === 'sets') return `${fmtInt(n)} ${n === 1 ? 'set' : 'sets'}`;
   return `${fmtInt(n)} ${n === 1 ? 'rep' : 'reps'}`;
 }
 
@@ -276,7 +283,7 @@ export function chartCaptionText(b: ChartBar, metric: ChartMetric, units: UnitSy
 }
 
 const what = (metric: ChartMetric, units: UnitSystem): string =>
-  metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : 'Reps';
+  metric === 'volume' ? `${weightUnitOf(units) === 'lb' ? 'Lb' : 'Kg'} lifted` : metric === 'duration' ? 'Time trained' : metric === 'sets' ? 'Sets' : 'Reps';
 const workoutsText = (n: number): string => `${fmtInt(n)} ${n === 1 ? 'workout' : 'workouts'}`;
 
 /** The range in words: "the last 12 weeks", "the last 12 months", "Jan 2023" (All time). PURE. */
@@ -325,6 +332,7 @@ export function chartXLabelIndexes(n: number, want = 5): number[] {
 export function chartMetricLabel(metric: ChartMetric, units: UnitSystem): string {
   if (metric === 'duration') return 'Duration';
   if (metric === 'reps') return 'Reps';
+  if (metric === 'sets') return 'Sets';
   const w = `${weightUnitOf(units)} lifted`;
   return w[0].toUpperCase() + w.slice(1);
 }

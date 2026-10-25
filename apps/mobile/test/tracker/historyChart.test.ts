@@ -223,7 +223,8 @@ describe('the big number is the range’s total (owner, 12 Oct 2026: "All time" 
     const bars = chartBars([s('2026-10-06', 9201, 3600, 40), s('2026-08-04', 12480, 1800, 60)], 'weeks', MONDAY);
     expect(barValue(bars[bars.length - 1], 'volume')).toBe(0); // this week: nothing yet
     const t = rangeTotals(bars);
-    expect(t).toEqual({ workouts: 2, volumeKg: 21681, durationSec: 5400, reps: 100 });
+    // R-132: sets ride along (these sessions were read before sets were counted: 0).
+    expect(t).toEqual({ workouts: 2, volumeKg: 21681, durationSec: 5400, reps: 100, sets: 0 });
     expect(chartTotalCaptionText(bars, 'weeks', 'volume', 'metric')).toBe('Kg lifted in the last 12 weeks · 2 workouts');
   });
 

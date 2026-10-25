@@ -383,6 +383,8 @@ export interface SessionTotals {
   volumeKg: number;
   /** Reps of the working sets (warm-ups never count). */
   reps: number;
+  /** R-132: working sets (warm-ups never count; a plank or a run is a set too, as `muscleSets`). */
+  sets: number;
 }
 
 /**
@@ -405,15 +407,67 @@ export async function getSessionTotalsBetween(fromISO: string, toISO: string): P
       durationSec: s.ended_at != null ? Math.max(0, Math.round((s.ended_at - s.started_at) / 1000)) : 0,
       volumeKg: 0,
       reps: 0,
+      sets: 0,
     });
   }
   for (const r of rows) {
     const t = out.get(r.session_id);
     if (!t) continue;
     t.volumeKg += rowVolume(r, ctx);
-    if (r.is_warmup !== 1) t.reps += Math.max(0, r.reps);
+    if (r.is_warmup !== 1) {
+      t.reps += Math.max(0, r.reps);
+      t.sets += 1;
+    }
   }
   return [...out.values()];
+}
+
+/**
+ * R-132: the newest workout of a routine (any source, so the demo shows it too) with its totals by the
+ * same per-set reading as the chart; null when the routine was never done.
+ */
+export async function getLastRoutineTotals(routineId: string): Promise<SessionTotals | null> {
+  const last = await getDb().getFirstAsync<{ id: string; date_iso: string }>(
+    'SELECT id, date_iso FROM workout_sessions WHERE routine_id = ? ORDER BY started_at DESC LIMIT 1',
+    [routineId],
+  );
+  if (!last) return null;
+  const all = await getSessionTotalsBetween(last.date_iso, last.date_iso);
+  return all.find((t) => t.sessionId === last.id) ?? null;
+}
+
+/**
+ * R-132: kg a planned workout would lift, by the ONE volume rule (`setVolumeKg`: body weight on pull-ups
+ * and dips at today's body weight, both dumbbells for "kg each"). Each item: an exercise and its planned
+ * working sets; `loadMode` as the member last logged it (null = the exercise's own way).
+ */
+export async function plannedVolumeKg(
+  items: readonly { exerciseId: string; loadMode: LoadMode | null; sets: readonly { weightKg: number; reps: number }[] }[],
+  dateISO: string = todayISO(),
+): Promise<number> {
+  if (items.length === 0) return 0;
+  const ctx = await getBaseContext([...new Set(items.map((i) => i.exerciseId))]);
+  const bw = bodyweightOn(ctx.bw, dateISO);
+  let kg = 0;
+  for (const it of items) {
+    const rule = ctx.exercises.get(it.exerciseId) ?? PLAIN;
+    for (const s of it.sets) kg += setVolumeKg({ weightKg: s.weightKg, reps: s.reps, isWarmup: false, loadMode: it.loadMode }, rule, bw);
+  }
+  return kg;
+}
+
+/** R-132: how each exercise was counted the last time it was logged ("kg each" or not), for `plannedVolumeKg`. */
+export async function lastLoadModes(exerciseIds: readonly string[]): Promise<Map<string, LoadMode | null>> {
+  const out = new Map<string, LoadMode | null>();
+  for (const id of new Set(exerciseIds)) {
+    const r = await getDb().getFirstAsync<{ load_mode: string | null }>(
+      `SELECT se.load_mode FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+        WHERE se.exercise_id = ? AND se.is_warmup != 1 ORDER BY ws.started_at DESC LIMIT 1`,
+      [id],
+    );
+    out.set(id, r && isLoadMode(r.load_mode) ? r.load_mode : null);
+  }
+  return out;
 }
 
 /** Weekly volume, Monday buckets, the trailing `weeks` weeks incl. this one (frozen shape). */

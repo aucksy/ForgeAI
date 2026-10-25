@@ -74,7 +74,10 @@ export function HistoryChartCard({
   onMetric,
   onRange,
   onRetry,
+  showChips = true,
 }: {
+  /** R-132: false on the Progress tab, whose tabs at the top choose what the bars count. */
+  showChips?: boolean;
   bars: ChartBar[] | null;
   metric: ChartMetric;
   range: ChartRange;
@@ -278,6 +281,7 @@ export function HistoryChartCard({
       )}
 
       {/* The chips: Duration · Kg lifted · Reps. */}
+      {showChips ? (
       <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
         {METRICS.map((m) => (
           <Chip
@@ -293,6 +297,7 @@ export function HistoryChartCard({
           />
         ))}
       </View>
+      ) : null}
 
       <TrackerSheet visible={rangeOpen} title="Show" onClose={() => setRangeOpen(false)}>
         <View style={{ gap: 2 }}>
