@@ -16,6 +16,10 @@
  * pick behave exactly as before. Under Next: "Have a gym code? Join your gym" (WelcomeGymCode), then
  * "Continue with Google" for a gym member coming back (WelcomeGoogle; R-106: shown once a gym code
  * waits, and only in a build that can sign in).
+ * R-123 (owner, 25 Oct 2026: "There is no option on welcome page to restore backup"): right under
+ * Next, "Restore from a backup" (a member back after a reinstall, a new phone, or from the old
+ * ForgeAI app: everything comes back in one go, and the app opens on it) and "Bring workouts from
+ * Hevy or Strong" (to the Hevy / Strong pick further down).
  */
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -32,6 +36,7 @@ import {
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { RestoreBackupPanel } from '@/components/settings/BackupFilePanels';
 import { ConfirmSheet, IconButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
@@ -143,6 +148,20 @@ function Hint({ children }: { children: string }) {
   );
 }
 
+/** A quiet link under Next (48 dp tall, underlined, like "Load demo data instead"). */
+function WelcomeLink({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+    >
+      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent, textDecorationLine: 'underline' }}>{label}</Text>
+    </Pressable>
+  );
+}
+
 export function WelcomeScreen() {
   const complete = useOnboarding((s) => s.complete);
   const loadDemo = useOnboarding((s) => s.loadDemo);
@@ -185,6 +204,9 @@ export function WelcomeScreen() {
     setSwitchApp(next);
     choosePendingImport(next);
   };
+  // R-123: the "Restore from a backup" view, and where the Hevy / Strong pick sits (to scroll to it).
+  const [restoring, setRestoring] = useState(false);
+  const switcherY = useRef(0);
   // Phase 1 (DS-06): "Remove demo data" keeps the member's own workouts and lands here.
   const [kept, setKept] = useState(0);
   useEffect(() => {
@@ -224,6 +246,10 @@ export function WelcomeScreen() {
   // Android back walks back through the steps; on the first step it leaves as usual.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (restoring) {
+        setRestoring(false);
+        return true;
+      }
       const prev = previousStep(step);
       if (prev == null || useOnboarding.getState().busy) return false;
       goTo(prev);
@@ -232,7 +258,7 @@ export function WelcomeScreen() {
     return () => sub.remove();
     // goTo only touches setters and refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  }, [step, restoring]);
 
   const onNext = (): void => {
     const p = stepProblem(step, draft, units);
@@ -292,6 +318,23 @@ export function WelcomeScreen() {
       : 'Fills the app with a sample member and 13 weeks of made-up training, for showing MettleUp off. You can remove it any time.';
 
   const text = STEP_TEXT[step];
+
+  if (restoring) {
+    return (
+      <Screen>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 48, marginBottom: space.lg }}>
+          <IconButton icon="chevron-left" size={48} accessibilityLabel="Back" onPress={() => setRestoring(false)} />
+        </View>
+        <Text accessibilityRole="header" style={{ fontFamily: type.display, fontSize: type.size.h1, color: color.ink, letterSpacing: -0.5 }}>
+          Restore from a backup
+        </Text>
+        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: 4, marginBottom: space.xl, lineHeight: 19 }}>
+          Back after a while, or on a new phone? Pick the backup file you saved. Your workouts, routines, measurements, photos, profile and settings come back, and MettleUp opens on them.
+        </Text>
+        <RestoreBackupPanel welcome onRestored={() => useOnboarding.getState().boot()} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen scroll={false}>
@@ -396,6 +439,15 @@ export function WelcomeScreen() {
 
                 <PrimaryButton label="Next" onPress={onNext} />
 
+                {/* R-123: a member coming back, and a switcher, each one tap from the first screen. */}
+                <View style={{ marginTop: space.sm }}>
+                  <WelcomeLink label="Restore from a backup" onPress={() => setRestoring(true)} />
+                  <WelcomeLink
+                    label="Bring workouts from Hevy or Strong"
+                    onPress={() => scrollRef.current?.scrollTo({ y: Math.max(0, bodyY.current + switcherY.current - space.lg), animated: true })}
+                  />
+                </View>
+
                 {/* OWNER-INBOX #11: joining a gym from the first screen (opens after setup). */}
                 <View style={{ marginTop: space.md }}>
                   <WelcomeGymCode onKept={setGymCodeWaiting} />
@@ -407,7 +459,12 @@ export function WelcomeScreen() {
                   <WelcomeGoogle onName={(n) => (draft.name.trim() ? undefined : patch({ name: n }))} gymCodeWaiting={gymCodeWaiting != null} />
                 </View>
 
-                <View style={{ marginTop: space.xl }}>
+                <View
+                  style={{ marginTop: space.xl }}
+                  onLayout={(e) => {
+                    switcherY.current = e.nativeEvent.layout.y;
+                  }}
+                >
                   <SwitcherCard onPick={pickSwitch} selected={switchApp} later />
                 </View>
 

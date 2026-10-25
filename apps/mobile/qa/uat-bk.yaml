@@ -1,0 +1,131 @@
+# Part UBK (R-123, owner 25 Oct 2026: "There is no option on welcome page to restore backup"): a
+# member back on a fresh install restores their backup from the WELCOME screen, and everything comes
+# back in one go — then saves a new backup from Settings.
+#   1. Fresh install -> welcome -> "Restore from a backup" -> "Choose backup file" -> Downloads ->
+#      qa-backup.zip (pushed by the script; qa/tools/make_backup_zip.py, a backup as ForgeAI 0.55.2
+#      writes it) -> the summary names what is inside and who made it -> "Restore".
+#   2. The app opens on the restored data: routines in their saved ORDER (QA Push, QA Pull, QA Legs),
+#      the profile name, and settings away from the defaults (lb, weekly goal 5, Large step + Strength).
+#   3. Settings -> Back up and restore -> "Save a backup" -> "Save the backup file": Android's share
+#      sheet opens (system words only, trap 10); Back; the page says what was saved.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Step 1 of 3|Your name"
+    timeout: 90000
+# ---------------------------------------------------------------- 1. restore from the welcome screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Restore from a backup$"
+- takeScreenshot: bk-01-welcome-links
+- tapOn: "^Restore from a backup$"
+- extendedWaitUntil:
+    visible: "^Choose backup file$"
+    timeout: 15000
+- assertVisible: "Back after a while, or on a new phone\\?.*"
+- tapOn: "^Choose backup file$"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-backup).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-backup\\.zip"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-backup\\.zip"
+- extendedWaitUntil:
+    visible: "^In this backup$"
+    timeout: 30000
+- assertVisible: '3 workouts, 4 routines, 2 measurements and 1 photo, saved on 25 Oct 2026 by ForgeAI 0\.55\.2\.'
+- takeScreenshot: bk-02-summary
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Restore$"
+- tapOn: "^Restore$"
+# ---------------------------------------------------------------- 2. the app opens on it
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- tapOn:
+    text: "Wait"
+    optional: true
+- tapOn:
+    text: "^Workout$"
+    index: 0
+# Each routine card's button is "Start routine <name>" (WorkoutRoutines.tsx): unique, unlike the
+# name itself (the Up next card repeats the next one).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine QA Legs"
+- takeScreenshot: bk-03-routines
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine QA Pull"
+- assertVisible:
+    text: "Start routine QA Pull"
+    below:
+      text: "Start routine QA Push"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start routine QA Legs"
+- assertVisible:
+    text: "Start routine QA Legs"
+    below:
+      text: "Start routine QA Pull"
+- runFlow:
+    file: sub-settings-open.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^QA Restored$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^5 a week$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Large step, Strength$"
+- takeScreenshot: bk-04-settings
+# ---------------------------------------------------------------- 3. save a backup
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Save a backup$"
+- tapOn: "^Save a backup$"
+- extendedWaitUntil:
+    visible: "^Save the backup file$"
+    timeout: 15000
+- assertVisible: "Your phone number and your gym membership are never in the file\\."
+- tapOn: "^Save the backup file$"
+# Android's share sheet: only system words (our page has none of them).
+- extendedWaitUntil:
+    visible: '(?i)^(nearby share|quick share|bluetooth|print|copy)$|(?i).*sharing.*'
+    timeout: 60000
+- takeScreenshot: bk-05-share-sheet
+- back
+- extendedWaitUntil:
+    visible: '^Saved mettleup-backup-.*\.zip .*'
+    timeout: 30000
+- takeScreenshot: bk-06-saved

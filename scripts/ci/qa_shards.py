@@ -34,7 +34,7 @@ SCRIPT = os.path.join(ROOT, "apps", "mobile", "qa", "run-device-qa.sh")
 SHARDS = [
     ("1-history-routines", "a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r"),
     ("2-gym-backup", "br inv invf p7 p0 m uh ur"),
-    ("3-uat-a", "un ud ue ub uf"),
+    ("3-uat-a", "un ud ue ubk ub uf"),
     ("4-uat-b-workout", "ua uv ug uk w"),
 ]
 

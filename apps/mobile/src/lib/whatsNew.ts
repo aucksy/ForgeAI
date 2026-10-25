@@ -58,6 +58,15 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     date: '25 Oct',
     lines: [
       {
+        // R-123: the backup file, for every member (with or without a gym).
+        text: 'Settings → Back up and restore → "Save a backup": one file with your workouts, routines, photos and settings.',
+        go: { label: 'Save a backup', href: '/settings/save-backup' },
+      },
+      {
+        text: 'New phone, or back after a while? Tap "Restore from a backup" to bring it all back, even from the old ForgeAI app.',
+        go: { label: 'Restore from a backup', href: '/settings/restore-backup' },
+      },
+      {
         text: "Gym members: measurements your trainer takes now show in Progress → Body, marked with your gym's name.",
         go: { label: 'Open Progress', href: '/progress' },
       },

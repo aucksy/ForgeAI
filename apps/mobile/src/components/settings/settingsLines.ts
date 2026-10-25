@@ -1,6 +1,6 @@
 /**
- * Settings (Release A, A7, docs/ux/MEMBER-APP-MAP.md §3.3): ONE page in 6 headed groups, like Hevy's:
- * You · Workouts · Reminders and phone · Your gym · Your data · Help. Each row is one tap to its own
+ * Settings (Release A, A7, docs/ux/MEMBER-APP-MAP.md §3.3): ONE page in headed groups, like Hevy's:
+ * You · Workouts · Reminders and phone · Your gym · Back up and restore (R-123) · Your data · Help. Each row is one tap to its own
  * page (the gym's two rows are actions), at most 7 rows in a group, and where it helps a row carries
  * one short grey line saying how that page is set now ("kg, km", "Reminders on, 6:00 pm").
  *
@@ -26,6 +26,8 @@ export type SettingsRowKey =
   | 'gymJoin'
   | 'gymLogo'
   | 'gymLeave'
+  | 'saveBackup'
+  | 'restoreBackup'
   | 'backup'
   | 'spreadsheet'
   | 'import'
@@ -91,6 +93,12 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
     gym.push({ key: 'gymJoin', title: 'Join your gym', href: '/shop' });
   }
 
+  // R-123: the backup FILE, for every member with or without a gym.
+  const backupFile: SettingsRow[] = [
+    { key: 'saveBackup', title: 'Save a backup', href: '/settings/save-backup' },
+    { key: 'restoreBackup', title: 'Restore from a backup', href: '/settings/restore-backup' },
+  ];
+
   const data: SettingsRow[] = [
     { key: 'backup', title: 'Backup', href: '/settings/backup' },
     { key: 'spreadsheet', title: 'Save as a spreadsheet', href: '/settings/export' },
@@ -109,6 +117,7 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
     { title: 'Workouts', rows: workouts },
     { title: 'Reminders and phone', rows: phone },
     { title: 'Your gym', rows: gym },
+    { title: 'Back up and restore', rows: backupFile },
     { title: 'Your data', rows: data },
     { title: 'Help', rows: help },
   ];

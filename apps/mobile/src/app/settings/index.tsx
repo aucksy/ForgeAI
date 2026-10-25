@@ -68,6 +68,8 @@ const ICON: Record<SettingsRowKey, IconName> = {
   gymJoin: 'key',
   gymLogo: 'home',
   gymLeave: 'key',
+  saveBackup: 'send',
+  restoreBackup: 'import',
   backup: 'check',
   spreadsheet: 'list',
   import: 'import',

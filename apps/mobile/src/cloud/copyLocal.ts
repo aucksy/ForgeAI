@@ -301,11 +301,18 @@ export async function applyInTransaction(tx: Tx, plan: MergePlan): Promise<Apply
   const sameAs = new Map<string, string>();
   const notRemembered = new Set<string>();
 
+  // R-123: a library exercise's row, once per ref (a 500-workout backup asks thousands of times).
+  const libraryRow = new Map<string, string>();
   const resolve = async (ref: string): Promise<string> => {
     const r = parseRef(ref);
     if (r && r.library) {
+      const known = libraryRow.get(r.key);
+      if (known) return known;
       const row = await tx.getFirstAsync<{ id: string }>('SELECT id FROM exercises WHERE catalog_key = ? ORDER BY rowid LIMIT 1', [r.key]);
-      if (row) return row.id;
+      if (row) {
+        libraryRow.set(r.key, row.id);
+        return row.id;
+      }
       const entry = catalogEntry(r.key);
       return ensureExercise(tx, entry?.name ?? r.key, {
         catalogKey: r.key,

@@ -240,7 +240,7 @@ describe('a saved workout’s page', () => {
 describe('Settings — Hevy’s headed groups (Release A, A7)', () => {
   it('the groups, in order (the full rules: test/lib/releaseA.test.ts)', () => {
     const groups = settingsGroups({ gymName: null, canAddGymLogo: false, hasHealth: true, coach: false });
-    expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Your data', 'Help']);
+    expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Back up and restore', 'Your data', 'Help']);
   });
 
   it('one short grey line where it helps', () => {

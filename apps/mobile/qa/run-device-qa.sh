@@ -128,7 +128,9 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # (write lock held) and on a full phone, ua = auto-pause + "Count it" + "Ended at" (clock moved),
 # uv = edit while a workout is open, ug = merge an exercise, uk = real widget + app-icon shortcuts
 # (qa/uat-wp4b.sh). Part M also turns on "Include photos in my backup" and checks the photos return.
-UAT_PARTS="uh ur un ud ue ub uf ua uv ug uk"
+# R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
+# settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
+UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
 GATE_PARTS="w dnd longrest anim mk"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
@@ -1544,6 +1546,37 @@ fi
 if qa_runs ue; then
   uat_passed ud || gate_flow ue_seed gate-demo.yaml || true
   uat_part ue uat-e.yaml && log "UAT UE: erase (solo, then as a FORGE1 member) and the Hevy import opening by itself, each checked on screen"
+fi
+# UBK (R-123): restore qa-backup.zip (qa/tools/make_backup_zip.py, as ForgeAI 0.55.2 writes one)
+# from a fresh install's welcome screen, check the routines' order and the settings, then "Save a
+# backup": the share sheet is in front and the app's cache holds mettleup-backup-<date>.zip.
+if qa_runs ubk; then
+  push_fixture "$QA_DIR/fixtures/qa-backup.zip" /sdcard/Download/qa-backup.zip
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "downloads: $(wait_media qa-backup 1 20 downloads) backup file for UBK"
+  if uat_part ubk uat-bk.yaml; then
+    bk_file=$(adb shell "su 0 ls -l /data/data/$PKG/cache/" 2>/dev/null | tr -d '\r' | grep -m1 -oE 'mettleup-backup-[0-9-]+\.zip')
+    if [ -n "$bk_file" ]; then
+      adb exec-out "su 0 cat /data/data/$PKG/cache/$bk_file" > "$OUT/ubk-backup.zip" 2>/dev/null || true
+      bk_check=$(python3 -c "
+import json, sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+b = json.loads(z.read('backup.json'))
+names = [i[3] for f in b['items'] if f[0] == 'r' for i in sorted(f[2][2], key=lambda d: d[2])]
+print(z.testzip() is None, b['app'], b['counts']['workouts'], ','.join(names), len(b['photos']))
+" "$OUT/ubk-backup.zip" 2>&1)
+      case "$bk_check" in
+        "True MettleUp 3 "*"QA Push,QA Pull,QA Legs"*" 1") log "UAT UBK SAVE: $bk_file opens as a ZIP, made by MettleUp: 3 workouts, routines in order, 1 photo ($bk_check)" ;;
+        *) status=1; log "UAT UBK SAVE FAILED: $bk_file does not hold the restored data ($bk_check; ubk-backup.zip)" ;;
+      esac
+    elif [ -z "$(adb shell "su 0 ls /data/data/$PKG/" 2>/dev/null | tr -d '\r')" ]; then
+      log "UAT UBK SAVE: the file cannot be read through adb on this image (no root); the on-screen checks stand alone"
+    else
+      status=1
+      log "UAT UBK SAVE FAILED: no mettleup-backup-*.zip in the app's cache after 'Save the backup file'"
+    fi
+    log "UAT UBK: welcome -> Restore from a backup -> summary -> Restore; routines in order, name, lb, weekly goal 5, Large step + Strength; Save a backup -> share sheet"
+  fi
 fi
 # UAT WP4b: ub uf ua uv ug uk (qa/uat-wp4b.sh).
 # shellcheck source=uat-wp4b.sh

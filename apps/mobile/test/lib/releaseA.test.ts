@@ -61,7 +61,7 @@ describe('A7: Settings in 6 headed groups', () => {
   it('the groups, in order, each with at most 7 rows', () => {
     for (const ctx of [NO_GYM, IN_GYM, { ...IN_GYM, coach: true }]) {
       const groups = settingsGroups(ctx);
-      expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Your data', 'Help']);
+      expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Back up and restore', 'Your data', 'Help']);
       for (const g of groups) {
         expect(g.rows.length, g.title).toBeGreaterThan(0);
         expect(g.rows.length, g.title).toBeLessThanOrEqual(MAX_ROWS_PER_GROUP);
@@ -82,6 +82,7 @@ describe('A7: Settings in 6 headed groups', () => {
     ]);
     expect(rows['Reminders and phone']).toEqual(['Reminders', 'Health Connect', 'Widgets']);
     expect(rows['Your gym']).toEqual(['Join your gym']);
+    expect(rows['Back up and restore']).toEqual(['Save a backup', 'Restore from a backup']);
     expect(rows['Your data']).toEqual(['Backup', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
     expect(rows.Help).toEqual(["What's new", 'Send feedback', 'About']);
   });

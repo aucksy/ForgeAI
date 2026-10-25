@@ -47,6 +47,17 @@ routines along with its sequence all other settings on forgeAI app and I can imp
 MettleUp can save and restore for every member, gym or not, plus "Restore from a backup" on the welcome screen; and a final
 ForgeAI 0.55.2 (old package com.forgeai.app, built off v0.55.1) whose only change is "Save full backup" in the same format,
 so his ForgeAI data moves into MettleUp. Both through the full release gate.
+**Built (helper, 25 Oct; MettleUp 0.57.0 not tagged):** src/backup/ — ONE ZIP mettleup-backup-<date>.zip (stored, written a
+chunk at a time): backup.json (header app/appVersion/packVersion/createdAt/units + the cloud copy's packed records: workouts
+with every set, folders with routines and exercises in order + which folder is followed + folder order, own exercises,
+per-exercise rest and records start, body weight, measurements, profile without the phone number; hidden exercises and
+library-exercise changes by library key; import marks; food log + coach chat; every member setting) + photos/ (progress,
+workout, profile, an exercise's own photo/video). Settings → "Back up and restore" (Save a backup / Restore from a backup:
+summary → Replace everything on this phone / Add to what's here → Undo); welcome screen "Restore from a backup" (a fresh
+phone restores everything and opens on it) + "Bring workouts from Hevy or Strong". Guard test: every meta key, AsyncStorage
+key, saved store field, key-value/SecureStore key and table is carried or listed in src/backup/backupCoverage.ts with a
+reason. Health Connect is carried but never switched on by a restore (Android permission per phone; the screen says so).
+Drive backup untouched (hidden, its own format). Phone test part UBK (qa/uat-bk.yaml).
 
 ## R-122. #64 A: privacy lines approved; trainer measurements + diet plans go live — 25 Oct 2026
 **Owner said:** "A" (tracker #64: add the 3 privacy-notice lines, put 0035 live, deploy the admin app; the member app

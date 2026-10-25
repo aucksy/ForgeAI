@@ -2648,6 +2648,18 @@
   every Maestro flow; C6a denies it, checks no USE_EXACT_ALARM is installed, and the ask (new qa/xc-6-ask-rest.yaml),
   waits up to 15 min for the inexact alert. What's new 0.56.1: one line. The watch APK (sideloaded, not in the AAB)
   still declares USE_EXACT_ALARM: change it before the watch app ever goes to Play.
+- 2026-10-25: **0.57.0 prepared: backup FILE for every member (R-123).** Settings → Back up and restore → "Save a backup"
+  writes ONE stored ZIP (src/backup/zipStore.ts, chunked, no new native module; expo-file-system File handles) =
+  backup.json (format mettleup-backup v1, packVersion 1: pack.ts records 'w' 'r' 'x' 'p' 'b' 'm' 'u' + hiddenExercises and
+  libraryEdits by ref + import meta + meals/chat rows + settings per SETTINGS_KEYS) + photos/ (progress, workout, profile,
+  exercise media) and opens the share sheet; free space checked first, "Saving 37 of 210 photos…". "Restore from a backup"
+  (also on the welcome screen, which makes the profile from the backup): summary + who made it, Replace (wipe except
+  library, photos, gym folders and gym link; same ids so order and routine links stay) or Add (same id / same content /
+  isAlreadyHere start rule skip), records rebuilt (reconcilePrsForExercises), settings through each store's merge,
+  Health Connect never switched on by a restore, Undo via importSafety's safety copy. Guard test backupCoverage.test.ts
+  derives every stored key/field/table from the source. Tests: test/backup/* (round trip on sql.js with non-default
+  next-weight rules, ForgeAI-made file, Add, Undo, no space, junk/newer refused). QA part UBK (qa/uat-bk.yaml, fixture
+  qa/tools/make_backup_zip.py). copyLocal applyInTransaction caches library refs. What's new 0.57.0 +2 lines.
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

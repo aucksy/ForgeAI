@@ -217,7 +217,7 @@ days left, monthly challenges). One quiet "No gym? Everything else works without
   busy now). Shop is a row, or a grid only when the gym has products. Messages bell stays top right.
 - **Profile:** 3 numbers, badge strip, chart, Calendar button, past workouts. Exercises and Measures leave for Progress.
 
-### 3.3 Settings: 6 headed groups on one page (like Hevy), each row one tap to its own page
+### 3.3 Settings: 7 headed groups on one page (6 + Back up and restore, R-123) (like Hevy), each row one tap to its own page
 
 | Group | Rows (as they'd show) | Max rows |
 |---|---|---|
@@ -225,6 +225,7 @@ days left, monthly challenges). One quiet "No gym? Everything else works without
 | **Workouts** | Weekly goal · Rest timer and sounds · How the app picks your next weight · Plates and bars · Last time's numbers · Rate how hard each set felt · Muscle tips | 7 |
 | **Reminders and phone** | Reminders (workout reminders + reminders from my gym, one page) · Health Connect · Widgets · Watch | 4 |
 | **Your gym** | *A gym:* What my gym can see · Gym logo on my home screen · Leave &lt;gym&gt;. *No gym:* Join your gym | 3 |
+| **Back up and restore** (R-123, 0.57.0, every member with or without a gym) | Save a backup (one file: workouts, routines in order, own exercises, rest times, measurements, photos, profile, settings → share sheet) · Restore from a backup (pick the file → what is in it and who made it → Replace everything on this phone / Add to what's here → Undo while on the screen). Also on the welcome screen: "Restore from a backup" and "Bring workouts from Hevy or Strong" | 2 |
 | **Your data** | Back up · Save as a spreadsheet · Ask your own AI · Bring in from Hevy or Strong · Erase or start over | 5 |
 | **Help** | What's new · Send feedback · About | 3 |
 
