@@ -37,8 +37,36 @@ test('a good lead: 10 digits, tidy text, known choices only', () => {
   assert.equal(checkLead({ ...good, size: '<script>', today: 'drop' }).value.size, '');
   assert.ok(checkLead({ ...good, phone: '12345' }).error);
   assert.ok(checkLead({ ...good, phone: '1234567890' }).error); // Indian mobiles start 6-9
-  assert.ok(checkLead({ ...good, gym: ' ' }).error);
   assert.equal(checkLead({ ...good, city: undefined }).value.city, ''); // the top form sends no city
+});
+
+// 25 Oct 2026, the owner's own demo request: the top form ("Or we call you") has only a number box;
+// with the coloured gym-name box empty the lead was refused and never reached HQ.
+test('a number without a gym name is kept (the top form sends only the number)', async () => {
+  assert.equal(checkLead({ phone: '98290 12345', gym: ' ' }).value.gym, '');
+  assert.equal(checkLead({ phone: '98290 12345' }).value.gym, '');
+  const WEB = fakeD1();
+  const res = await handleLead(post({ phone: '98290 12345', gym: '', city: '', website: '', lang: 'hi' }), env(WEB));
+  assert.equal(res.status, 201);
+  assert.deepEqual(WEB.rows.map((r) => [r.phone, r.gym, r.lang]), [['9829012345', '', 'hi']]);
+});
+
+test('every refusal and every dropped lead is logged, without the number', async () => {
+  const lines = [];
+  const warn = console.warn;
+  console.warn = (...a) => lines.push(a.join(' '));
+  try {
+    const WEB = fakeD1();
+    assert.equal((await handleLead(post({ ...good, phone: '12345' }), env(WEB))).status, 400);
+    assert.equal((await handleLead(new Request('https://x/api/lead', { method: 'POST', body: 'nope' }), env(WEB))).status, 400);
+    assert.equal((await handleLead(post({ ...good, website: 'x' }), env(WEB))).status, 201);
+    for (let i = 0; i < PER_DAY; i++) await handleLead(post(good), env(WEB));
+    assert.equal((await handleLead(post(good), env(WEB))).status, 429);
+  } finally {
+    console.warn = warn;
+  }
+  assert.deepEqual(lines.map((l) => /^\[lead\] (refused \d+|dropped)/.exec(l)?.[1]), ['refused 400', 'refused 400', 'dropped', 'refused 429']);
+  assert.ok(!lines.join(' ').includes('9829012345'));
 });
 
 test('saved once; a filled hidden box (a bot) is answered 201 and never kept', async () => {

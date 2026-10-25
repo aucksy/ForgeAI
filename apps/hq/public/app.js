@@ -648,7 +648,8 @@ async function leadsPage() {
       const out = h('div');
       const make = h('div');
       return h('div', { class: 'card' },
-        h('p', {}, h('strong', {}, r.gym), r.city ? ` · ${r.city}` : '', ' · ', h('a', { href: `tel:+91${r.phone}` }, r.phone)),
+        // The website's top form can send a number without a gym name (deploy/panel/leads.js, 25 Oct).
+        h('p', {}, h('strong', {}, r.gym || 'Gym name: not entered'), r.city ? ` · ${r.city}` : '', ' · ', h('a', { href: `tel:+91${r.phone}` }, r.phone)),
         h('p', { class: 'muted' }, `${when(r.at)}${r.size ? ` · ${r.size} members` : ''}${r.today ? ` · uses ${r.today} today` : ''}${r.lang === 'hi' ? ' · Hindi' : ''}`),
         h('div', { class: 'row wrap' }, st, nt, action('Save', async () => {
           await api('/api/leads/status', { id: r.id, status: st.value, note: nt.value });

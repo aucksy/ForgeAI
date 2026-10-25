@@ -40,6 +40,23 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
   workflow to re-upload pictures in order; (3) owner's website demo lead missing in HQ — root cause + fix.
 - Then: review + tag 0.57.0, closed test update, tracker (gym timings row, Play row, R-123..125), Play signing SHA-1 into #60.
 
+## R-127. His website demo request never reached HQ — 25 Oct 2026
+
+**He said:** "I submitted this query on the website for demo, the name and the phone number, but on my HQ app I
+don't see that in the query."
+**Cause (proved by a browser test on the real page):** the top form ("Or we call you") has only a number box and
+borrowed the gym name from the coloured box at the top of the page, which looked filled in (a grey "Iron Temple
+Fitness" hint until this morning). Pressing "Call me for a free demo" was refused in the browser: the page jumped up
+to the coloured box, the refusal sat ~600 px below the screen on a phone, and pressing Go in that box sends nothing
+(it is in no form). Nothing reached the server, so there is nothing in the database to find. Server, HQ list, the
+nightly clean-up (12 months, not won) and both hosts were checked and are fine.
+**Done (not deployed):** the top form sends the number alone (gym name if typed); the server takes a lead without a
+gym name (HQ shows "Gym name: not entered"); every form message is scrolled into view; 429 in the page's own words
+(EN/HI); every server refusal and every hidden-box drop is logged (reason only). Tests: leads.test (no-gym lead,
+logging), deploy/hq/leads-flow.test (panel Worker -> real SQLite D1 from the migrations -> nightly clean-up -> HQ
+GET /api/leads), apps/dashboard/e2e/landing-lead.spec (5 phone journeys on the real page + CSP). deploy/package.json
+(type module) so Playwright can import the Worker code. Needs: deploy panel + HQ; then he sends the request again.
+
 ## R-126. Play Store pictures failed his design review; redo before any upload — 25 Oct 2026
 
 **He said:** "perform design review of play store images before you upload... those are not good... many layout

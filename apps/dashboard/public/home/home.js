@@ -320,27 +320,37 @@
   queueLeaders();
 
   // 4. Free demo forms ---------------------------------------------------------------------------
+  // 25 Oct 2026 (the owner's own request never reached HQ): the top form ("Or we call you") has only
+  // a number box. It used to refuse when the coloured gym-name box at the top was empty, and jump up
+  // to that box: the refusal sat below the screen, and pressing Go in that box sends nothing (it is
+  // in no form). So the top form now sends the number with whatever gym name is typed, or none
+  // (deploy/panel/leads.js takes a lead without one), and every message is scrolled into view.
   var WORDS = {
-    en: { phone: 'Type a 10-digit mobile number.', gym: 'Type your gym’s name first (in the coloured box above).', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', fail: 'Could not send. Check your internet and try again.' },
-    hi: { phone: '10 अंकों का मोबाइल नंबर लिखें।', gym: 'पहले ऊपर रंगीन बॉक्स में जिम का नाम लिखें।', gym2: 'जिम का नाम लिखें।', sending: 'भेज रहे हैं…', ok: 'धन्यवाद! हम जल्दी फोन करेंगे।', fail: 'भेज नहीं पाए। इंटरनेट देखकर फिर कोशिश करें।' },
+    en: { phone: 'Type a 10-digit mobile number.', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', many: 'You have sent too many demo requests today. Please try again tomorrow.', fail: 'Could not send. Check your internet and try again.' },
+    hi: { phone: '10 अंकों का मोबाइल नंबर लिखें।', gym2: 'जिम का नाम लिखें।', sending: 'भेज रहे हैं…', ok: 'धन्यवाद! हम जल्दी फोन करेंगे।', many: 'आपने आज कई बार डेमो का अनुरोध भेजा है। कृपया कल फिर कोशिश करें।', fail: 'भेज नहीं पाए। इंटरनेट देखकर फिर कोशिश करें।' },
   };
   function w() { return WORDS[root.lang === 'hi' ? 'hi' : 'en']; }
   Array.prototype.forEach.call(document.querySelectorAll('.lead-form'), function (form) {
     var msg = form.querySelector('.msg');
     var go = form.querySelector('.go');
     var busy = false;
-    function say(text, kind) { msg.textContent = text; msg.className = 'msg' + (kind ? ' ' + kind : ''); }
+    function say(text, kind) {
+      msg.textContent = text;
+      msg.className = 'msg' + (kind ? ' ' + kind : '');
+      // A message the visitor cannot see is a silent failure: bring it on screen (a focus() call
+      // just before can have scrolled it away, or a phone keyboard can cover it).
+      if (msg.scrollIntoView) msg.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (busy) return;
       var f = form.elements;
       var digits = f.phone.value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
-      if (!/^[6-9]\d{9}$/.test(digits)) { say(w().phone, 'err'); f.phone.focus(); return; }
-      var gym = f.gym ? f.gym.value.trim() : nameBox.value.trim();
-      if (!gym) {
-        if (f.gym) { say(w().gym2, 'err'); f.gym.focus(); } else { say(w().gym, 'err'); nameBox.focus(); }
-        return;
-      }
+      if (!/^[6-9]\d{9}$/.test(digits)) { f.phone.focus(); say(w().phone, 'err'); return; }
+      // The Start form asks the gym name itself (its box is right above the button); the top form
+      // takes it from the coloured box when one is typed, and is sent without it otherwise.
+      var gym = f.gym ? f.gym.value.trim() : nameBox.value.replace(/\s+/g, ' ').trim();
+      if (f.gym && !gym) { f.gym.focus(); say(w().gym2, 'err'); return; }
       busy = true;
       go.disabled = true;
       say(w().sending);
@@ -361,8 +371,9 @@
         .then(function (r) {
           return r.json().catch(function () { return {}; }).then(function (b) {
             if (r.status === 201) { f.phone.value = ''; say(w().ok, 'ok'); return; }
-            console.warn('[lead] answered', r.status);
-            say(r.status < 500 && b && b.error ? b.error : w().fail, 'err');
+            console.warn('[lead] answered', r.status, b && b.error);
+            // The page's own words (English or Hindi); only the number can be refused (400) now.
+            say(r.status === 429 ? w().many : r.status === 400 ? w().phone : w().fail, 'err');
           });
         })
         .catch(function (err) { console.warn('[lead] could not send', err); say(w().fail, 'err'); })
