@@ -254,7 +254,8 @@ function DriveBackup() {
         return;
       }
       const info = useBackup.getState().found;
-      const detail = info ? ` from ${fmtWhen(info.exportedAt)} (${info.workouts} workouts, ${info.meals} meals)` : '';
+      // R-123: a Drive backup is the backup file — say what is in it, as "Restore from a backup" does.
+      const detail = info?.summary ? `: ${info.summary}` : info ? ` from ${fmtWhen(info.exportedAt)} (${info.workouts} workouts, ${info.meals} meals)` : '';
       // C4-9: say how many workouts on this phone the backup does not have (they go).
       const removes = await useBackup
         .getState()

@@ -1,17 +1,25 @@
+import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system/legacy';
 import { workoutsNotInBackup } from './restoreImpact';
 import { create } from 'zustand';
 
+import type { SettingsBlob } from '@/backup/backupFormat';
+import { deviceBackupIo } from '@/backup/backupIo';
+import { openBackup, type OpenedBackup } from '@/backup/backupOpen';
+import { restoreBackup } from '@/backup/backupRestore';
+import { saveBackupZip } from '@/backup/backupSave';
+import { deviceSettingsIo } from '@/backup/backupSettings';
+import { noSpaceText, SAVE_EMPTY } from '@/backup/backupText';
 import {
-  backupToDrive,
+  downloadNewestBackup,
   DriveError,
   getCurrentDriveUser,
   isDriveConfigured,
   newestDriveBackup,
   refuseEmptyOverwrite,
-  restoreFromDrive,
   signInToDrive,
   signOutDrive,
+  uploadBackupFile,
 } from '@/cloud/drive';
 import { PlainError, RestoredUntidyError } from '@/cloud/backupWords';
 import {
@@ -28,6 +36,7 @@ import { clearDemoFlag } from '@/onboarding/db/dataActions';
 import { readDemoMeta, writeDemoMeta } from '@/onboarding/db/importSafety';
 import { forgetCatalogSync, resyncExerciseCatalog } from '@/tracker/catalog/catalogSync';
 import { clearMissingExerciseMedia } from '@/tracker/services/exerciseMedia';
+import { useSettings } from '@/store/settingsStore';
 import { countWorkouts } from '@/tracker/services/historyExport';
 
 /** meta keys: a local "the user linked Google before" marker + the last backup time. */
@@ -62,6 +71,12 @@ interface SafetyFile {
   meta: Record<string, string | null>;
   /** The workouts the restore brought in: anything else found later is newer. */
   restoredSessionIds: string[];
+  /**
+   * R-123, a restore of a backup FILE: what it added beside the database (photo rows, the picture
+   * files, the settings it replaced), so Undo takes those away again too. Absent for a database-only
+   * restore.
+   */
+  added?: { photoRows: { progress: string[]; workout: string[]; exercise: string[] }; files: string[]; settings: SettingsBlob | null };
 }
 
 /** Has the copy expired? PURE. */
@@ -105,8 +120,12 @@ async function countNewerWorkouts(restoredSessionIds: readonly string[]): Promis
 }
 
 interface FoundBackup extends BackupInfo {
-  /** The raw downloaded JSON, re-validated on apply. */
-  json: string;
+  /** A backup older versions wrote (the database only): its JSON, re-validated on apply. */
+  json?: string;
+  /** R-123: the backup FILE, downloaded to the cache and opened. */
+  file?: OpenedBackup;
+  /** "512 workouts, 9 routines, … saved on 25 Oct 2026 by MettleUp 0.57.0" (a backup file only). */
+  summary?: string;
 }
 
 export interface BackupState {
@@ -177,6 +196,17 @@ async function afterReplace(): Promise<void> {
  */
 let untidyRestore = false;
 
+/** R-123: take away what a backup FILE's restore added beside the database (photo rows and files, settings). */
+async function undoAdded(added: NonNullable<SafetyFile['added']>): Promise<void> {
+  await enqueueWrite(async () => {
+    const db = getDb();
+    for (const id of added.photoRows.progress) await db.runAsync('DELETE FROM progress_photos WHERE id = ?', [id]);
+    for (const id of added.photoRows.workout) await db.runAsync('DELETE FROM workout_photos WHERE id = ?', [id]);
+  });
+  for (const f of added.files) deviceBackupIo.remove(f);
+  if (added.settings) await deviceSettingsIo.apply(added.settings).catch((e: unknown) => console.warn('[ForgeErr] undo restore: settings not all put back', e));
+}
+
 export const useBackup = create<BackupState>()((set, get) => ({
   ready: false,
   configured: isDriveConfigured(),
@@ -239,10 +269,24 @@ export const useBackup = create<BackupState>()((set, get) => ({
       const workouts = await countWorkouts();
       const refuse = refuseEmptyOverwrite(workouts, workouts > 0 ? null : await newestDriveBackup());
       if (refuse) throw new DriveError(refuse);
-      const json = await exportSnapshot();
-      const at = await backupToDrive(json, workouts);
-      await setMeta(LAST_BACKUP_KEY, at);
-      set({ lastBackupAt: at });
+      // R-123: the SAME file "Save a backup" makes (everything, photos and settings too), uploaded
+      // from disk; the local copy goes once it is up.
+      const saved = await saveBackupZip(deviceBackupIo, {
+        app: 'MettleUp',
+        appVersion: Constants.expoConfig?.version ?? '',
+        units: useSettings.getState().unitSystem,
+        settings: await deviceSettingsIo.read(),
+      });
+      if (saved.kind === 'empty') throw new PlainError(SAVE_EMPTY);
+      if (saved.kind === 'no-space') throw new PlainError(noSpaceText(saved.needBytes, saved.freeBytes));
+      if (saved.kind === 'too-big') throw new PlainError(noSpaceText(saved.needBytes, 0));
+      try {
+        const at = await uploadBackupFile(saved.uri, saved.bytes, workouts);
+        await setMeta(LAST_BACKUP_KEY, at);
+        set({ lastBackupAt: at });
+      } finally {
+        deviceBackupIo.remove(saved.uri);
+      }
     } finally {
       set({ busy: false });
     }
@@ -251,27 +295,52 @@ export const useBackup = create<BackupState>()((set, get) => ({
   checkForBackup: async () => {
     set({ busy: true });
     try {
-      const json = await restoreFromDrive();
-      if (!json) {
+      const prev = get().found?.file?.uri;
+      if (prev) deviceBackupIo.remove(prev);
+      const got = await downloadNewestBackup(deviceBackupIo.cacheDir);
+      if (!got) {
         set({ found: null });
         return { found: false };
       }
-      const env = parseSnapshot(json); // throws on a corrupt / foreign backup
-      set({ found: { ...describeSnapshot(env), json } });
+      if (got.old) {
+        // A backup an older version wrote: the database only, restored the old way.
+        const json = await FileSystem.readAsStringAsync(got.uri);
+        deviceBackupIo.remove(got.uri);
+        const env = parseSnapshot(json); // throws on a corrupt / foreign backup
+        set({ found: { ...describeSnapshot(env), json } });
+        return { found: true };
+      }
+      const opened = await openBackup(deviceBackupIo, got.uri);
+      if (!opened.ok) {
+        deviceBackupIo.remove(got.uri);
+        throw new PlainError(opened.why);
+      }
+      const f = opened.backup.file;
+      set({
+        found: { exportedAt: f.createdAt, workouts: f.counts.workouts, meals: f.rows.meals?.length ?? 0, file: opened.backup, summary: opened.backup.summary },
+      });
       return { found: true };
     } finally {
       set({ busy: false });
     }
   },
 
-  clearFound: () => set({ found: null }),
+  clearFound: () => {
+    const uri = get().found?.file?.uri;
+    if (uri) deviceBackupIo.remove(uri);
+    set({ found: null });
+  },
 
   foundRemoves: async () => {
     const found = get().found;
     if (!found) return 0;
-    const env = parseSnapshot(found.json);
     const rows = await getDb().getAllAsync<{ id: string }>('SELECT id FROM workout_sessions');
-    return workoutsNotInBackup(rows.map((r) => r.id), env);
+    if (found.file) {
+      const inFile = new Set(found.file.file.items.filter((i) => i[0] === 'w').map((i) => i[1]));
+      return rows.filter((r) => !inFile.has(r.id)).length;
+    }
+    if (!found.json) return 0;
+    return workoutsNotInBackup(rows.map((r) => r.id), parseSnapshot(found.json));
   },
 
   restoreFound: async () => {
@@ -279,11 +348,13 @@ export const useBackup = create<BackupState>()((set, get) => ({
     if (!found) return false; // already applied / cleared — caller must not claim success
     set({ busy: true });
     try {
-      const env = parseSnapshot(found.json);
+      const env = found.json ? parseSnapshot(found.json) : null;
       // DS-10: a safety copy of this phone first. If it can't be saved, nothing is replaced.
       const uri = safetyUri();
       if (!uri) throw new PlainError('Could not save a copy of this phone’s data first, so nothing was changed.');
-      const restoredSessionIds = (env.tables['workout_sessions'] ?? []).map((r) => String(r.id));
+      const restoredSessionIds = env
+        ? (env.tables['workout_sessions'] ?? []).map((r) => String(r.id))
+        : (found.file?.file.items ?? []).filter((i) => i[0] === 'w').map((i) => i[1]);
       try {
         // The retry of a restore whose tidy-up failed: the copy from before it stays (only the
         // workouts it brings in are updated) — unless the member has saved a workout since.
@@ -306,8 +377,23 @@ export const useBackup = create<BackupState>()((set, get) => ({
       set({ canUndoRestore: true });
       // Before the replace commits: a kill right after it still re-syncs the library.
       await forgetCatalogSync().catch(() => undefined);
-      // One transaction: a failed restore changes nothing (and the safety copy is kept).
-      await importSnapshot(env);
+      if (env) {
+        // One transaction: a failed restore changes nothing (and the safety copy is kept).
+        await importSnapshot(env);
+      } else if (found.file) {
+        // R-123: the backup FILE (the same restore as "Restore from a backup": photos, settings and
+        // records too). What it adds beside the database goes into the safety copy, for Undo.
+        const r = await restoreBackup(deviceBackupIo, found.file, 'replace', { settings: deviceSettingsIo });
+        if (r.kind === 'no-space') throw new PlainError(noSpaceText(r.needBytes, r.freeBytes));
+        const kept = await readSafetyFile();
+        if (kept) {
+          const withAdded: SafetyFile = { ...kept, added: { photoRows: r.undo.photoRows, files: r.undo.files, settings: r.undo.settings } };
+          await FileSystem.writeAsStringAsync(uri, JSON.stringify(withAdded)).catch((e: unknown) =>
+            console.warn('[ForgeErr] restore: the photos and settings it added are not in the undo copy', e),
+          );
+        }
+        deviceBackupIo.remove(found.file.uri);
+      }
       // From here this phone holds the backup's data: the found backup is used up.
       set({ found: null });
       // Real history has replaced whatever was here — it is no longer demo data, so the badge
@@ -357,6 +443,10 @@ export const useBackup = create<BackupState>()((set, get) => ({
           await writeDemoMeta(tx, file.meta ?? {});
         }),
       );
+      if (file.added) {
+        // R-123: the photos and settings a backup file brought in go too.
+        await undoAdded(file.added);
+      }
       const demo = (file.meta?.demo_data ?? null) === '1';
       await resyncExerciseCatalog(demo).catch(() => undefined);
       await clearMissingExerciseMedia().catch(() => undefined);

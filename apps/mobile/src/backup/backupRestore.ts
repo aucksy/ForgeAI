@@ -284,7 +284,10 @@ export async function restoreInTransaction(tx: Tx, file: BackupFile, mode: Resto
 
   // The import marks that belong to the workouts.
   for (const key of BACKUP_META_KEYS) {
-    const v = file.meta[key];
+    // Every app that writes this file (MettleUp, ForgeAI 0.55.2) already runs the import clock repair
+    // at each start, so its workouts are repaired even when the mark is missing (a phone that never
+    // imported): never let the repair move them again.
+    const v = key === 'import_clock_real_v1' ? file.meta[key] ?? '1' : file.meta[key];
     if (mode === 'replace') await setMetaTx(tx, key, typeof v === 'string' ? v : null);
     else if (typeof v === 'string' && (await tx.getFirstAsync<{ key: string }>('SELECT key FROM meta WHERE key = ?', [key])) == null) await setMetaTx(tx, key, v);
   }

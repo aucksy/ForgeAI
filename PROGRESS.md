@@ -2660,6 +2660,14 @@
   derives every stored key/field/table from the source. Tests: test/backup/* (round trip on sql.js with non-default
   next-weight rules, ForgeAI-made file, Add, Undo, no space, junk/newer refused). QA part UBK (qa/uat-bk.yaml, fixture
   qa/tools/make_backup_zip.py). copyLocal applyInTransaction caches library refs. What's new 0.57.0 +2 lines.
+- 2026-10-25: **Drive backup = the backup file (R-123, coordinator).** Settings -> Backup -> "Back up now" now makes the
+  same ZIP as "Save a backup" (photos + settings) and uploads it with Drive's resumable upload straight from disk
+  (cloud/drive.ts uploadBackupFile, FileSystem.uploadAsync BINARY_CONTENT; mettleup-backup-<date-time>.zip, 5 kept);
+  "Restore from Drive" downloads the newest to disk (downloadNewestBackup) and restores it with backup/backupRestore.ts;
+  the 24-hour "Undo the last restore" copy also records the photo rows, picture files and settings it added. Old
+  database-only forgeai-backup-*.json copies are still listed and restored the old way. Restoring a backup file never
+  lets the import clock repair move its workouts again (import_clock_real_v1 defaults to done). Tests:
+  test/backup/driveBackup.test.ts (back up -> restore on a second phone -> undo), driveUpload.test.ts.
 - 2026-10-24: **v0.55.1 RELEASED** (tag on 4aa917b; CI, Device QA default + owner api 34, journeys all green).
   APK: https://github.com/aucksy/ForgeAI/releases/download/v0.55.1/forgeai-v0.55.1.apk
 

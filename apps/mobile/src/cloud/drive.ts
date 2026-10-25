@@ -4,9 +4,14 @@
  * Ported from ColorCloset's proven `src/lib/drive.ts` (same Expo SDK 56 / RN 0.85
  * stack). Sign-in is native (`@react-native-google-signin/google-signin`), so it
  * needs a dev/preview build — NOT Expo Go. We request the narrow `drive.file` scope
- * (the app only sees files it created), keep the last KEEP_BACKUPS dated backup files
- * (`forgeai-backup-YYYY-MM-DD-HHMMSS.json`, audit DS-10) inside a dedicated "ForgeAI" folder, and talk to the Drive
- * v3 REST API directly with the access token. `drive.file` access is tied to the
+ * (the app only sees files it created), keep the last KEEP_BACKUPS dated backup files inside a
+ * dedicated "MettleUp" folder (audit DS-10), and talk to the Drive v3 REST API directly with the
+ * access token.
+ * R-123 (25 Oct 2026): each Drive backup is the SAME file "Save a backup" makes (src/backup:
+ * `mettleup-backup-YYYY-MM-DD-HHMMSS.zip`, everything incl. photos and settings), uploaded with
+ * Drive's resumable upload straight from the file on disk and downloaded to disk the same way, so a
+ * backup with hundreds of photos never sits in memory. Backups older versions wrote
+ * (`forgeai-backup-*.json`, the database only) are still listed and restored. `drive.file` access is tied to the
  * OAuth client + user, so the backup is still found after a reinstall or new phone.
  *
  * OFFLINE FIREWALL: this module constructs / calls nothing until the user taps a
@@ -19,6 +24,7 @@
  * Supabase only ever holds the one-row summary.
  */
 import Constants from 'expo-constants';
+import * as FileSystem from 'expo-file-system/legacy';
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -38,6 +44,8 @@ export { DriveError } from './backupWords';
 /** The single file versions before v0.30 overwrote; still found and restored. */
 const FILE_NAME = 'forgeai-backup.json';
 const FILE_PREFIX = 'forgeai-backup-';
+/** R-123: a Drive backup is the backup file itself. */
+const ZIP_PREFIX = 'mettleup-backup-';
 /** The backup folder's name (MettleUp, R-105). A folder made under the old name is still used. */
 const FOLDER_NAME = 'MettleUp';
 const OLD_FOLDER_NAME = 'ForgeAI';
@@ -237,15 +245,20 @@ export interface DriveBackupFile {
   workouts: number | null;
 }
 
-/** "forgeai-backup-2026-10-10-1804.json" — sortable, one per backup (DS-10). PURE. */
+/** "mettleup-backup-2026-10-10-180409.zip" — sortable, one per backup (DS-10). PURE. */
 export function backupFileName(at: Date): string {
   const p = (n: number): string => String(n).padStart(2, '0');
-  return `${FILE_PREFIX}${at.getFullYear()}-${p(at.getMonth() + 1)}-${p(at.getDate())}-${p(at.getHours())}${p(at.getMinutes())}${p(at.getSeconds())}.json`;
+  return `${ZIP_PREFIX}${at.getFullYear()}-${p(at.getMonth() + 1)}-${p(at.getDate())}-${p(at.getHours())}${p(at.getMinutes())}${p(at.getSeconds())}.zip`;
 }
 
-/** Is this one of our backup files (the dated ones, or the single file older versions wrote)? PURE. */
+/** Is this one of our backup files (the backup file, or the database-only ones older versions wrote)? PURE. */
 export function isBackupFileName(name: string): boolean {
-  return name === FILE_NAME || (name.startsWith(FILE_PREFIX) && name.endsWith('.json'));
+  return name === FILE_NAME || (name.startsWith(FILE_PREFIX) && name.endsWith('.json')) || (name.startsWith(ZIP_PREFIX) && name.endsWith('.zip'));
+}
+
+/** A backup older versions wrote (the database only, as JSON), not the backup file. PURE. */
+export function isOldDriveBackup(name: string): boolean {
+  return name.endsWith('.json');
 }
 
 /** The backups to delete so only the newest `keep` remain (input in any order). PURE. */
@@ -268,7 +281,7 @@ export function refuseEmptyOverwrite(localWorkouts: number, newest: DriveBackupF
 
 /** Every backup file in the ForgeAI folder, newest first. */
 async function listBackups(token: string, folderId: string): Promise<DriveBackupFile[]> {
-  const q = encodeURIComponent(`'${folderId}' in parents and trashed = false and name contains 'forgeai-backup'`);
+  const q = encodeURIComponent(`'${folderId}' in parents and trashed = false and (name contains 'forgeai-backup' or name contains 'mettleup-backup')`);
   const url = `${DRIVE}/files?q=${q}&spaces=drive&orderBy=modifiedTime desc&pageSize=50&fields=files(id,name,modifiedTime,appProperties)`;
   const res = await api(token, url);
   const json = (await res.json()) as {
@@ -290,50 +303,88 @@ export async function newestDriveBackup(): Promise<DriveBackupFile | null> {
   return (await listBackups(token, folderId))[0] ?? null;
 }
 
+/** Drive's resumable upload: the session's address (Drive answers it in the Location header). */
+async function startUpload(token: string, metadata: Record<string, unknown>, size: number): Promise<string> {
+  const res = await api(token, `${UPLOAD}/files?uploadType=resumable&fields=id`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-Upload-Content-Type': 'application/zip',
+      'X-Upload-Content-Length': String(size),
+    },
+    body: JSON.stringify(metadata),
+  });
+  const at = res.headers.get('location');
+  if (!at) throw new DriveError('Couldn’t start the upload to Google Drive. Wait a minute, then try again.', 'resumable upload: no Location header');
+  return at;
+}
+
 /**
- * Upload `data` (the exportSnapshot() JSON string) as a NEW dated file, then delete the oldest
- * so the last KEEP_BACKUPS stay (DS-10: earlier versions overwrote one file every time).
- * `workouts` is stored with the file so the next backup can tell an empty phone from a real
- * history without downloading. The caller checks `refuseEmptyOverwrite` first. Returns an ISO
- * timestamp.
+ * R-123: upload the backup FILE at `fileUri` (made by src/backup/backupSave.ts) as a NEW dated file,
+ * then delete the oldest so the last KEEP_BACKUPS stay (DS-10). The file goes from disk in one
+ * streamed request (never copied into memory). `workouts` is stored with it so the next backup can
+ * tell an empty phone from a real history without downloading. The caller checks
+ * `refuseEmptyOverwrite` first. Returns an ISO timestamp.
  */
-export async function backupToDrive(data: string, workouts?: number): Promise<string> {
+export async function uploadBackupFile(fileUri: string, size: number, workouts?: number): Promise<string> {
   const token = await accessToken();
   const folderId = await ensureFolderId(token);
   const now = new Date();
-
-  const boundary = 'forgeai-backup-boundary';
-  const metadata = JSON.stringify({
-    name: backupFileName(now),
-    mimeType: 'application/json',
-    parents: [folderId],
-    ...(workouts != null ? { appProperties: { workouts: String(workouts) } } : {}),
-  });
-  const body =
-    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n` +
-    `--${boundary}\r\nContent-Type: application/json\r\n\r\n${data}\r\n` +
-    `--${boundary}--`;
-  await api(token, `${UPLOAD}/files?uploadType=multipart&fields=id`, {
-    method: 'POST',
-    headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
-    body,
-  });
+  const session = await startUpload(
+    token,
+    {
+      name: backupFileName(now),
+      mimeType: 'application/zip',
+      parents: [folderId],
+      ...(workouts != null ? { appProperties: { workouts: String(workouts) } } : {}),
+    },
+    size,
+  );
+  let res: FileSystem.FileSystemUploadResult;
+  try {
+    res = await FileSystem.uploadAsync(session, fileUri, {
+      httpMethod: 'PUT',
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      headers: { 'Content-Type': 'application/zip' },
+    });
+  } catch (e) {
+    throw new DriveError(DRIVE_NO_INTERNET, `upload failed: ${(e as { message?: string })?.message ?? String(e)}`);
+  }
+  if (res.status < 200 || res.status >= 300) {
+    throw new DriveError(driveStatusWords(res.status, res.body ?? ''), `upload failed (${res.status}) ${(res.body ?? '').slice(0, 400)}`);
+  }
 
   // Only after the new copy is safely up: drop the oldest beyond KEEP_BACKUPS. A failed
   // delete leaves an extra copy, never fewer.
-  const all = await listBackups(token, folderId).catch(() => [] as DriveBackupFile[]);
+  const all = await listBackups(token, folderId).catch((e: unknown) => {
+    console.warn('[drive] could not list the backups to tidy (an extra copy stays)', e);
+    return [] as DriveBackupFile[];
+  });
   for (const old of backupsToPrune(all)) {
-    await api(token, `${DRIVE}/files/${old.id}`, { method: 'DELETE' }).catch(() => undefined);
+    await api(token, `${DRIVE}/files/${old.id}`, { method: 'DELETE' }).catch((e: unknown) => console.warn('[drive] an old backup was not deleted', e));
   }
   return now.toISOString();
 }
 
-/** Download the newest backup's contents (the JSON string), or null if none exists. */
-export async function restoreFromDrive(): Promise<string | null> {
+/**
+ * Download the newest backup to `dir` on disk (streamed). Null when Drive holds none. `old` marks a
+ * backup older versions wrote (the database only, JSON): the caller restores it the old way.
+ */
+export async function downloadNewestBackup(dir: string): Promise<{ uri: string; name: string; old: boolean } | null> {
   const token = await accessToken();
   const folderId = await ensureFolderId(token);
   const newest = (await listBackups(token, folderId))[0];
   if (!newest) return null;
-  const res = await api(token, `${DRIVE}/files/${newest.id}?alt=media`);
-  return res.text();
+  const uri = `${dir}drive-${newest.name}`;
+  let res: FileSystem.FileSystemDownloadResult;
+  try {
+    res = await FileSystem.downloadAsync(`${DRIVE}/files/${newest.id}?alt=media`, uri, { headers: { Authorization: `Bearer ${token}` } });
+  } catch (e) {
+    throw new DriveError(DRIVE_NO_INTERNET, `download failed: ${(e as { message?: string })?.message ?? String(e)}`);
+  }
+  if (res.status < 200 || res.status >= 300) {
+    await FileSystem.deleteAsync(uri, { idempotent: true }).catch((e: unknown) => console.warn('[drive] the failed download was not deleted', e));
+    throw new DriveError(driveStatusWords(res.status, ''), `download failed (${res.status})`);
+  }
+  return { uri, name: newest.name, old: isOldDriveBackup(newest.name) };
 }

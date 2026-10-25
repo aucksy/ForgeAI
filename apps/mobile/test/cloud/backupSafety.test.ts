@@ -56,8 +56,10 @@ describe('Google Drive backup keeps 5 copies and refuses an empty overwrite (DS-
   it('names each backup by its date and time, so a new one never overwrites the last', async () => {
     const { backupFileName, isBackupFileName } = await import('@/cloud/drive');
     const name = backupFileName(new Date(2026, 9, 10, 18, 4, 9));
-    expect(name).toBe('forgeai-backup-2026-10-10-180409.json');
+    // R-123: a Drive backup is the backup file itself.
+    expect(name).toBe('mettleup-backup-2026-10-10-180409.zip');
     expect(isBackupFileName(name)).toBe(true);
+    expect(isBackupFileName('forgeai-backup-2026-10-10-180409.json')).toBe(true); // older versions' dated copies
     expect(isBackupFileName('forgeai-backup.json')).toBe(true); // older versions' single file
     expect(isBackupFileName('forgeai-before-restore.json')).toBe(false);
     expect(isBackupFileName('notes.txt')).toBe(false);

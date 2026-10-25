@@ -37,6 +37,8 @@ export default defineConfig({
       { find: /^.*\.wav$/, replacement: nativeStub },
       // Phase 2: the member's own exercise photo/video (device-only picker and files).
       { find: 'expo-file-system/legacy', replacement: nativeStub },
+      // R-123: the backup file's reads and writes (src/backup/backupIo.ts); tests use an in-memory stand-in.
+      { find: /^expo-file-system$/, replacement: nativeStub },
       { find: 'expo-image-picker', replacement: nativeStub },
       // Audit Phase 5: photo backup copies are shrunk on the phone only.
       { find: 'expo-image-manipulator', replacement: nativeStub },
