@@ -40,6 +40,30 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
   workflow to re-upload pictures in order; (3) owner's website demo lead missing in HQ — root cause + fix.
 - Then: review + tag 0.57.0, closed test update, tracker (gym timings row, Play row, R-123..125), Play signing SHA-1 into #60.
 
+## R-126. Play Store pictures failed his design review; redo before any upload — 25 Oct 2026
+
+**He said:** "perform design review of play store images before you upload... those are not good... many layout
+and symmetry issues... please dont do this kind of poor job where I have to worry about everything you do from
+design perspective." Then: "everything looks big and wrapped to next lines.. the last workout date placement is all
+wrong.."
+
+**My review of the 8 shots (out/ from 120eeae):**
+- Headline is left-aligned but the phone is centred: two axes, looks lopsided.
+- Phone runs off the bottom and cuts app text mid-line ("Routines", "Add photo", "With your gym in the app").
+- App screens come from the LARGE-TEXT owner profile: titles wrap ("Barbell Bench / Press"), the target line wraps
+  ("next 90 / kg x 6, 6"), buttons wrap ("New / routine", "Show my workouts to / the desk").
+- "Last: <date>" sits alone, right-aligned under the chips, lined up with nothing (also an app layout fault).
+- Status bars differ per shot (10:06, 11:48, 12:03, 1:19) and show test-phone notification icons.
+- Duplicates: shots 1 and 4 are the same Workout home; shots 2 and 3 the same bench-press screen.
+- Shot 5 shows the test gym name "QA Check-in Gym" and an empty membership; shot 7 says "75% less kg lifted" (a
+  negative message) and "Your first workout" next to "1 lift beat its best".
+- Panorama barbell covers app content on both phones.
+
+**What I do:** stop the Play pipeline from uploading pictures; fix the "Last:" line in the app; rebuild the frames
+(centred headline, whole phone visible, clean identical status bar, no panorama prop); take fresh screens on the
+normal-size test phone with a real gym name; review every shot at full and store-thumbnail size; only then upload.
+Rule updated: D:/Brain/How I Like Things/judge-every-screenshot-like-a-designer.md (2nd time).
+
 ## R-125. Automatic Play uploads; I do every setup myself in his Chrome — 25 Oct 2026
 **Owner said:** (asked whether Play uploads need the browser or an integration) "make it a rule that you will do all
 these setups yourself using the browser and you wont ask me unless your safety checks stop you.." Rule updated:
