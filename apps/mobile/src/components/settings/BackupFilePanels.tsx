@@ -209,7 +209,10 @@ export function RestoreBackupPanel({ welcome = false, onRestored }: { welcome?: 
   const restore = (mode: RestoreMode): Promise<void> =>
     run(async () => {
       if (!opened) return;
-      await useActiveWorkout.getState().hydrate().catch(() => undefined);
+      await useActiveWorkout
+        .getState()
+        .hydrate()
+        .catch((e: unknown) => console.warn('[backup] the open workout could not be read', e));
       if (useActiveWorkout.getState().active) {
         setNote({ text: FINISH_WORKOUT_FIRST, tone: 'error' });
         return;

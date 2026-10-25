@@ -106,8 +106,8 @@ export async function saveBackupZip(
     if (!closed) {
       try {
         out.close();
-      } catch {
-        // already failing
+      } catch (closeErr) {
+        console.warn('[backup] the half-written file could not be closed (it is deleted next)', closeErr);
       }
     }
     io.remove(uri);

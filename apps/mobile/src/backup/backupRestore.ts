@@ -352,7 +352,10 @@ async function photosToBring(file: BackupFile, mode: RestoreMode): Promise<Backu
   const workout = new Set(
     (await db.getAllAsync<{ id: string }>('SELECT id FROM workout_photos').catch(() => [] as { id: string }[])).map((r) => r.id),
   );
-  const profile = await db.getFirstAsync<{ photo_uri: string | null }>('SELECT photo_uri FROM user_profile LIMIT 1').catch(() => null);
+  const profile = await db.getFirstAsync<{ photo_uri: string | null }>('SELECT photo_uri FROM user_profile LIMIT 1').catch((e: unknown) => {
+    console.warn('[backup] the profile photo could not be read', e);
+    return null;
+  });
   const withMedia = new Set<string>();
   for (const e of await db.getAllAsync<{ id: string; catalog_key: string | null }>('SELECT id, catalog_key FROM exercises WHERE media_uri IS NOT NULL')) {
     withMedia.add(e.catalog_key ? `c:${e.catalog_key}` : `x:${e.id}`);

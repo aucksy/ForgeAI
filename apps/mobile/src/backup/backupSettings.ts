@@ -59,9 +59,15 @@ export const deviceSettingsIo: SettingsIo = {
   async read() {
     const states: Record<string, unknown> = {};
     for (const [name, store] of Object.entries(STORES)) states[name] = store.getState();
-    const rest = await getMeta(REST_KEY).catch(() => null);
+    const rest = await getMeta(REST_KEY).catch((e: unknown) => {
+      console.warn('[backup] the default rest could not be read', e);
+      return null;
+    });
     const n = rest != null ? Number(rest) : NaN;
-    const photos = await getMeta(PHOTO_BACKUP_KEY).catch(() => null);
+    const photos = await getMeta(PHOTO_BACKUP_KEY).catch((e: unknown) => {
+      console.warn('[backup] "Include photos in my backup" could not be read', e);
+      return null;
+    });
     // null = never set on this phone (the default): a restore or an undo puts that back too.
     const meta: Record<string, unknown> = { restTimerDefaultSec: Number.isFinite(n) ? n : null, photo_backup_on: photos };
     states.meta = meta;
@@ -86,7 +92,10 @@ export const deviceSettingsIo: SettingsIo = {
       if (typeof rest === 'number' && Number.isFinite(rest) && rest >= 0) await setMeta(REST_KEY, String(Math.round(rest)));
       else if (rest === null) await getDb().runAsync('DELETE FROM meta WHERE key = ?', [REST_KEY]);
       useRestTimer.setState({ loaded: false });
-      await useRestTimer.getState().loadDefault().catch(() => undefined);
+      await useRestTimer
+        .getState()
+        .loadDefault()
+        .catch((e: unknown) => console.warn('[backup] the rest timer did not reload its default (it does on the next start)', e));
     }
     // "Include photos in my backup" (Android's own backup of this phone).
     const photos = blob.meta?.photo_backup_on;

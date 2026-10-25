@@ -144,7 +144,12 @@ export async function collectBackup(o: {
     const id = packHash(ref);
     photos.push({ uri: e.media_uri, entry: { kind: 'exercise', id, ref, mediaType: video ? 'video' : 'image', file: photoEntryName('exercise', id, e.media_uri, video) } });
   }
-  const profile = await db.getFirstAsync<{ photo_uri: string | null }>('SELECT photo_uri FROM user_profile ORDER BY rowid LIMIT 1').catch(() => null);
+  const profile = await db
+    .getFirstAsync<{ photo_uri: string | null }>('SELECT photo_uri FROM user_profile ORDER BY rowid LIMIT 1')
+    .catch((e: unknown) => {
+      console.warn('[backup] the profile photo could not be read; the backup goes without it', e);
+      return null;
+    });
   if (profile?.photo_uri && o.exists(profile.photo_uri)) {
     photos.push({ uri: profile.photo_uri, entry: { kind: 'profile', id: 'me', file: photoEntryName('profile', 'me', profile.photo_uri) } });
   }
