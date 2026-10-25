@@ -29,6 +29,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 - **Waiting on him:** #60 Google sign-in/Drive setup, #34 safety switches. Optional server change for offline receipts (desk
   series RPC, offline receipts skip over-dues, HQ last-activity filter) — ask as a Decide when convenient.
 
+## R-123. Full backup: routines with their order + settings; ForgeAI → MettleUp; export/import for everyone — 25 Oct 2026
+**Owner said:** "There is no option on welcome page to restore backup of its own history.. how do I restore my ForgeAI
+history" → (after I gave the Save my history CSV route, workouts only) "No I have a problem.. the backup that I did on
+forgeAI should also include the routine along with its sequence and in future I should get option to export / import my
+data if I am logging in personally without a GYM. update the app this way and ensure that I will be able to backup my
+routines along with its sequence all other settings on forgeAI app and I can import those here then."
+**Doing:** one full backup file (workouts, routines + folders + their order, own exercises, measurements, settings) that
+MettleUp can save and restore for every member, gym or not, plus "Restore from a backup" on the welcome screen; and a final
+ForgeAI 0.55.2 (old package com.forgeai.app, built off v0.55.1) whose only change is "Save full backup" in the same format,
+so his ForgeAI data moves into MettleUp. Both through the full release gate.
+
 ## R-122. #64 A: privacy lines approved; trainer measurements + diet plans go live — 25 Oct 2026
 **Owner said:** "A" (tracker #64: add the 3 privacy-notice lines, put 0035 live, deploy the admin app; the member app
 already carries the screens since 0.56.0/0.56.1 and shows them once 0035 is live). Done in order: notice EN + HI edited,
