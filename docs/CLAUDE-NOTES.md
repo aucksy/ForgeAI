@@ -98,6 +98,10 @@ release's own mettleup-<tag>.aab to tracks internal + alpha, completed, notes = 
 play-listing.yml (manual) → scripts/ci/play_listing.py: deletes en-US phone screenshots, uploads shots 1,2,3,5,6,7,8
 (4 left out: caption ≠ screen), feature graphic, icon, optional listing-draft.txt text; commits only if Play reads back
 the exact order. Self-tests scripts/ci/test_play_scripts.py (also run by the release build's self-tests).
+**Proven (25 Oct):** v0.56.1 runs 40167663178 + 40168275978 (dry; Play validated) + 40168281409 (live): keyless sign-in
+works; 56001 already on internal AND alpha → both skipped, nothing changed. Alpha's release is NAMED "56000 (0.56.0)"
+but holds 56001 (console label only). The commit path runs for real on the next tag. play-listing.yml NOT run: the
+pictures failed design review (R-126); run it once the new out/shot-0N.png are committed.
 
 ## R-124. Gym timings per day (morning + evening, or 24 hours), shown in the member app — 25 Oct 2026
 **Owner said:** "Build option for gym owner to add GYM timings for each day of the week for morning and evening or 24
