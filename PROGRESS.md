@@ -2679,6 +2679,14 @@
   pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
   (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
   test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-26: **Gym leaderboard + challenges (R-133): server 0037 LIVE, admin app deployed; member app next release.**
+  Spec docs/research/R-leaderboard.md. Server: gym_member_days (per day workouts + kg, 31 days, plausibility: <=3
+  workouts, <=60000 kg a day), gym_member_board (name opt-in, hidden by the gym), gym_challenges (+ results kept in
+  gym_challenge_hits at the end), deletes on leave (trigger) and after 62 days (on push and reads, once a minute per gym),
+  push throttle 15 s. Live tests 0037 PASS 221, security PASS 9 (CI database job too). Admin app: Challenges page.
+  Member app: Gym tab card, day push after a save / on start / foreground / Gym tab, Settings → Your gym → What my gym
+  can see, join screen line. Privacy notice EN + HI (owner "as written"), privacy.html rebuilt. Review: 18 findings fixed.
+  Deployed forgeai-panel version ef1ac74f from a clean worktree of 835a2da.
 - 2026-10-26: **v0.57.1 RELEASED** (tag on 6eef21a; CI, Device QA default + owner, journeys all green after the
   flow fixes in 6eef21a). Release run 40225623184; play-upload again did not start by itself (workflow_run never
   fires: open item), run by hand 40228526554: 57001 committed on internal + alpha.

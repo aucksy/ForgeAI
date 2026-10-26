@@ -32,6 +32,13 @@ server change. Build + test on PGlite first.
 **DECIDED (26 Oct, via the question box):** (1) privacy wording "Privacy OK, as written" (the PROPOSED CHANGE box);
 (2) joining = **automatic + a line at join** ("Your gym sees how many workouts you log and the kg you lift, for
 challenges."); (3) **"Yes, apply 0037 live"** (explicit yes, after the privacy OK).
+**LIVE (26 Oct):** 0037 applied from the SQL Editor (OpenCode browser, he signed in; file fetched from GitHub at cd2f0d8,
+sha256 3976c10ffc06d1bd checked in the page); live tests 0037 PASS 221, security PASS 9; REST check member_board /
+member_board_push -> BAD_KEY for a made-up key. Privacy notice EN + HI updated, public privacy.html rebuilt; join screen
+line in the app. Admin app + website deployed from a clean worktree of 835a2da (dashboard build, 79 test files, panel
+Worker tests 57/57, dry run, then wrangler deploy: version ef1ac74f); live bundle has the Challenges page. Member app's
+card ships in the next release (0.58.0). Tracker row -> Next release (page rebuild waits for Claude Code: OpenCode cannot
+reach the artifact).
 
 ## R-132. Progress: Volume / Sets / Duration tabs at the top + today's volume to beat — 25 Oct 2026
 **He said:** "upgrade the progress section. First, at the very top, I want different tabs to choose from between volume,
