@@ -28,6 +28,10 @@ drops impossible workouts (cap per workout) and the gym can hide a member; Gym t
 (Workouts | Kg lifted, top 10, your place, progress to the challenge goal); admin app: challenge (measure, goal, dates,
 free days) + "Hit the goal" list; Settings opt-in for the name. Needs HIS yes: privacy-notice lines (legal) and the live
 server change. Build + test on PGlite first.
+**Built + reviewed (26 Oct, commit 98cae8c):** CI database job on the real local Supabase: 0037 PASS 221, security PASS 9.
+**DECIDED (26 Oct, via the question box):** (1) privacy wording "Privacy OK, as written" (the PROPOSED CHANGE box);
+(2) joining = **automatic + a line at join** ("Your gym sees how many workouts you log and the kg you lift, for
+challenges."); (3) **"Yes, apply 0037 live"** (explicit yes, after the privacy OK).
 
 ## R-132. Progress: Volume / Sets / Duration tabs at the top + today's volume to beat — 25 Oct 2026
 **He said:** "upgrade the progress section. First, at the very top, I want different tabs to choose from between volume,
