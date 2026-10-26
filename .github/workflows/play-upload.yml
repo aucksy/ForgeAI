@@ -16,10 +16,22 @@ name: Play upload (testing tracks)
 #
 # Manual run (Actions → Play upload → Run workflow): tag (e.g. v0.56.1) and dry_run (default ON:
 # everything except the commit; Play validates the edit, then it is thrown away).
+#
+# 26 Oct 2026: started by the release run itself (release-apk.yml job "play-upload", `uses:` this file,
+# after "publish"). The old `workflow_run` trigger never fired in this repo after a tag release (0.57.0
+# and 0.57.1 both had to be started by hand; test-lab.yml's never fired either), so it is gone: one
+# reliable start, never two.
 on:
-  workflow_run:
-    workflows: ["Build & Release (APK + AAB)"]
-    types: [completed]
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Release tag whose AAB to upload (e.g. v0.57.1)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run: validate on Play, never commit'
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       tag:
@@ -34,27 +46,22 @@ on:
 permissions:
   contents: read
 
-# One Play edit at a time (an edit committed by one run invalidates another open one).
-concurrency:
-  group: play-edit
-  cancel-in-progress: false
-
 jobs:
   upload:
-    # Automatic: only a tag push whose release run succeeded (= published). Manual: always.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       startsWith(github.event.workflow_run.head_branch, 'v'))
+    # The release run calls this only after "publish" succeeded; a manual run always goes.
+    # One Play edit at a time (an edit committed by one run invalidates another open one).
+    concurrency:
+      group: play-edit
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
       id-token: write # the OIDC token Workload Identity Federation swaps for Google credentials
     env:
-      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.workflow_run.head_branch }}
-      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
+      # Both triggers carry the same inputs (workflow_call from the release run, workflow_dispatch by hand).
+      TAG: ${{ inputs.tag }}
+      DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
     steps:
       - name: Check the tag
         run: |
