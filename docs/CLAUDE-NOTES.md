@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-133. Build the gym leaderboard (tracker: "Monthly gym challenge with a ranking") — 26 Oct 2026
+**He said:** "Build the leaderboard for the gym section as planned... do you have details on that one?" Then picked:
+counts = **"Workouts logged and Total KG lifted in last 30 days"** (not visits); prize = **everyone who hits the goal**;
+names = **first name + initial, opt-in** (off by default; under-18s never).
+**Design (me):** member phone sends 2 numbers per gym member (workouts + kg lifted, rolling 30 days; nothing else); server
+drops impossible workouts (cap per workout) and the gym can hide a member; Gym tab card "Leaderboard · last 30 days"
+(Workouts | Kg lifted, top 10, your place, progress to the challenge goal); admin app: challenge (measure, goal, dates,
+free days) + "Hit the goal" list; Settings opt-in for the name. Needs HIS yes: privacy-notice lines (legal) and the live
+server change. Build + test on PGlite first.
+
 ## R-132. Progress: Volume / Sets / Duration tabs at the top + today's volume to beat — 25 Oct 2026
 **He said:** "upgrade the progress section. First, at the very top, I want different tabs to choose from between volume,
 sets, and duration. These will be three different modes to show the different statistics. I think I had this option
