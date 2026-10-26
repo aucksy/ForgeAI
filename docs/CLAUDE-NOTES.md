@@ -19,6 +19,15 @@ cacheable), ~150-token transcript, ~400-token routine JSON out; $1 = Rs 88.
 Recommended: A first, a per-member daily cap, key kept in a Worker/Supabase function (never in the app);
 switch speech-to-text to Sarvam if Hinglish accuracy is poor. Not in the backlog (not confirmed).
 
+## R-137. Two leaderboard follow-ups for the feature backlog — 26 Oct 2026
+**He said (OpenCode):** "add these to notes to be added to feature backlog in tracker. dont analyze anything right now..
+just add in notes."
+1. **Automatic challenge rewards:** "Rewards after meeting the challenge eligibility should be automatically updated in
+   admin panel and user informed with notification in the app automatically."
+2. **Tap a name to see the member's profile:** "For users who have not disabled to show the name, viewers can tap on
+   their name and see their profile just like they see their own.. with DP, name, bio and workout history."
+**To do in Claude Code:** add both as feature backlog rows in the tracker (with R-135's update). Not analysed yet (his word).
+
 ## R-136. Plan: body-weight exercises count everywhere, whatever the folder or routine — 26 Oct 2026
 **He said (OpenCode):** "Plan a feature to automatically consider all body weight exercises like air squat to be
 universally considered for counting irrespective of folder, routine .. even if done with empty workout."
