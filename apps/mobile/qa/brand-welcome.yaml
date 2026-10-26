@@ -96,11 +96,12 @@ appId: com.mettleup.app
     element: "^Leave RAM'S FITNESS CLUB IMPACT$"
     timeout: 20000
 # Run 39758056150: at the owner's text size the row's second line sat under the bottom edge. The
+# R-133 (0.58.0): the line has a second sentence about the leaderboard numbers.
 # row speaks title and line as one ("Leave …, Your workouts stay on this phone."): scroll to that.
 - scrollUntilVisible:
-    element: '.*Your workouts stay on this phone\.$'
+    element: '.*Your workouts stay on this phone\. Your leaderboard numbers are removed from the gym\.$'
     timeout: 15000
-- assertVisible: '.*Your workouts stay on this phone\.$'
+- assertVisible: '.*Your workouts stay on this phone\. Your leaderboard numbers are removed from the gym\.$'
 - assertNotVisible: "^Shop and leave$"
 - takeScreenshot: br-w04-settings-your-gym
 - tapOn: "^Leave RAM'S FITNESS CLUB IMPACT$"
