@@ -17,8 +17,12 @@ lifted / Reps). Progress now: tabs Kg lifted / Sets / Duration on top ("volume" 
 <Up next>" card (Targets added up by the one volume rule vs the last time of that routine; new / pyramid / version lifts
 named, not counted), bars in the same mode, then the links. "www.feyyaz.tv" was NOT his: OpenWhispr (Whisper) invented it
 in the silence at the end of his recording (a Turkish video channel). Opened once (Cloudflare check), closed; from now on
-ask before opening a link that does not fit the request. Open: play-upload.yml never starts by itself after a release
-(workflow_run); both 0.57.0 and 0.57.1 were started by hand.
+ask before opening a link that does not fit the request.
+**Play upload fixed (26 Oct, he said "fix the play upload for now"):** workflow_run never fired after a tag in this repo
+(play-upload and test-lab alike). Now release-apk.yml's last job "play-upload" (needs publish, tags only, id-token: write)
+calls play-upload.yml (workflow_call); the workflow_run trigger is removed; manual dispatch kept (dry run on v0.57.1
+40266175070: validated, nothing to change). actionlint clean. First automatic proof: the next v* tag. test-lab.yml's
+workflow_run is still dead (not asked).
 
 ## R-131. Welcome screen in three clear parts; Google sign-in finds the backup — 25 Oct 2026
 **He said:** "On the login screen, create three organized sections. The first is Google login. The second section offers
