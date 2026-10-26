@@ -19,6 +19,30 @@ cacheable), ~150-token transcript, ~400-token routine JSON out; $1 = Rs 88.
 Recommended: A first, a per-member daily cap, key kept in a Worker/Supabase function (never in the app);
 switch speech-to-text to Sarvam if Hinglish accuracy is poor. Not in the backlog (not confirmed).
 
+## R-136. Plan: body-weight exercises count everywhere, whatever the folder or routine — 26 Oct 2026
+**He said (OpenCode):** "Plan a feature to automatically consider all body weight exercises like air squat to be
+universally considered for counting irrespective of folder, routine .. even if done with empty workout."
+**Status: PLAN ONLY (not built, not in the backlog until he confirms).**
+**What it touches today:** "Previous values" (Settings → Workouts: Any workout / Same routine / Same folder,
+tracker/db/historyScope.ts) scopes an exercise's history: PREVIOUS, the Target's history (coachTargets) and the carried
+note. With "Same routine/folder", air squats done in another folder or in an empty workout (routine_id '' = never in
+scope) do not count, so the Target and PREVIOUS start over. Records, charts, Statistics and Progress already count every
+workout (not scoped).
+**Plan (my reading):** body-weight exercises (log types 'reps', 'weighted', 'assisted' or catalog body-weight moves:
+air squat, push-up, pull-up, plank...) ignore the Previous-values scope: their PREVIOUS and Target read every workout,
+empty workouts included. Weighted lifts keep the folder rule (different gyms, different machines). One rule in
+historyScope (`scopeFor(exercise)` -> null for body-weight), tested; maybe an "Always use all workouts for body-weight
+exercises" switch under Previous values (on by default). Open question for him: does "counting" also mean something else
+(e.g. the leaderboard, weekly sets per muscle, or Up next)? Ask before building.
+
+## R-135. Update the tracker with the OpenCode work when back in Claude Code — 26 Oct 2026
+**He said:** "update tracker with changes done here when I am working back in my weekly plan on Claude code application."
+**To do in Claude Code (it can reach the artifact page):** read the page + `--absorb` first (CLAUDE.md tracker steps), then
+rebuild/republish with everything done in OpenCode on 25-26 Oct: v0.57.0 + v0.57.1 released (welcome start view R-131,
+Progress tabs + Today goal R-132), Play upload moved into the release run, leaderboard R-133 (server 0037 + admin app
+LIVE, member app 0.58.0), privacy notice update, R-136 plan (Idea only if he confirms). Rows: Google login (Live), Drive
+backup (Live), welcome sections, Progress tabs/Today goal, leaderboard (Next release -> Live after 0.58.0), Claude's tasks.
+
 ## R-133. Build the gym leaderboard (tracker: "Monthly gym challenge with a ranking") — 26 Oct 2026
 **He said:** "Build the leaderboard for the gym section as planned... do you have details on that one?" Then picked:
 counts = **"Workouts logged and Total KG lifted in last 30 days"** (not visits); prize = **everyone who hits the goal**;
