@@ -2679,6 +2679,10 @@
   pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
   (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
   test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-26: **v0.58.0 RELEASED** (tag on 33cabec; CI, Device QA default + owner, journeys all green after the
+  brand-welcome flow fix). Release run 40302380878: phone-gate, build, update-proof, publish and the NEW job
+  "play-upload / upload" all green: Play upload ran BY ITSELF for the first time (58000 on internal + alpha).
+  APK: https://github.com/aucksy/ForgeAI/releases/download/v0.58.0/mettleup-v0.58.0.apk
 - 2026-10-26: **Gym leaderboard + challenges (R-133): server 0037 LIVE, admin app deployed; member app next release.**
   Spec docs/research/R-leaderboard.md. Server: gym_member_days (per day workouts + kg, 31 days, plausibility: <=3
   workouts, <=60000 kg a day), gym_member_board (name opt-in, hidden by the gym), gym_challenges (+ results kept in

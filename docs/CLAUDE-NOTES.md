@@ -61,7 +61,8 @@ sha256 3976c10ffc06d1bd checked in the page); live tests 0037 PASS 221, security
 member_board_push -> BAD_KEY for a made-up key. Privacy notice EN + HI updated, public privacy.html rebuilt; join screen
 line in the app. Admin app + website deployed from a clean worktree of 835a2da (dashboard build, 79 test files, panel
 Worker tests 57/57, dry run, then wrangler deploy: version ef1ac74f); live bundle has the Challenges page. Member app's
-card ships in the next release (0.58.0). Tracker row -> Next release (page rebuild waits for Claude Code: OpenCode cannot
+card ships in the next release (0.58.0). **v0.58.0 RELEASED 26 Oct** (tag 33cabec): the Play upload ran by itself as
+the release run's last job (58000 on internal + alpha): the R-125 fix is proven. Tracker row -> Next release (page rebuild waits for Claude Code: OpenCode cannot
 reach the artifact).
 
 ## R-132. Progress: Volume / Sets / Duration tabs at the top + today's volume to beat — 25 Oct 2026
