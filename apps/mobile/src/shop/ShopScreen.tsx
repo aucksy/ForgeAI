@@ -32,6 +32,7 @@ import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { gymShopOn } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
+import { LeaderboardCard } from './LeaderboardCard';
 import { readGymHours, syncGymHours } from './gymTimingsSync';
 import type { GymHours } from '@forgeai/theme';
 import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money';
@@ -256,6 +257,8 @@ function GymShop({ link }: { link: GymLink }) {
         ) : null}
         {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
         <OfferCard link={link} />
+        {/* R-133: the gym's leaderboard and challenge (hidden until the gym's server has them). */}
+        <LeaderboardCard link={link} />
         {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
         {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
         {shopOn ? (

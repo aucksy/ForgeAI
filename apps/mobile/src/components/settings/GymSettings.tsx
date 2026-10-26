@@ -7,6 +7,7 @@
  *  - `GymRemindersSwitch`: "Reminders from my gym" (R-86), on the one Reminders page beside the
  *    workout reminders, no longer away on the gym's page.
  */
+import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AppState, Linking } from 'react-native';
 
@@ -15,17 +16,23 @@ import { LinkRow } from '@/components/stats/parts';
 import { GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { gymRemindersCaption } from '@/shop/autoReminders';
+import { BOARD_WORDS } from '@/shop/boardWords';
 import { cancelGymReminders, refreshGymReminders } from '@/shop/gymReminders';
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { askAndLeaveGym } from '@/shop/leaveFlow';
 import type { GymLink } from '@/shop/types';
+import { useBoardLive } from '@/shop/useBoardLive';
 import { useGymTheme } from '@/theme/gymTheme';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import { ensureAlertPermission, notificationsGranted } from '@/tracker/services/workoutAlerts';
 import { isBranded } from '@forgeai/theme';
 
 /** "Gym logo on my home screen" (when it can) and "Leave <gym>": the Your gym group's rows. */
-export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key: 'gymLogo' | 'gymLeave') => ReactNode }) {
+export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key: 'gymLogo' | 'gymSees' | 'gymLeave') => ReactNode }) {
+  const router = useRouter();
+  const showName = usePhonePrefs((s) => s.showNameOnBoard);
+  // R-133: shown once the gym's leaderboard has answered in this app session.
+  const boardLive = useBoardLive(link);
   const [words, setWords] = useState<string | null>(null);
   const look = useGymTheme((s) => s.look);
   const branded = look?.gymId === link.gymId && isBranded(look.brand);
@@ -64,7 +71,16 @@ export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key
         />
       ) : null}
       <InlineError message={words} />
-      <LinkRow title={`Leave ${link.gymName}`} sub="Your workouts stay on this phone." leading={leading?.('gymLeave')} onPress={() => void leave()} />
+      {/* R-133: what the gym's leaderboard shows of this member (one switch, off by default). */}
+      {boardLive ? (
+        <LinkRow
+          title={BOARD_WORDS.seesRow}
+          sub={showName ? BOARD_WORDS.seesRowSubOn : BOARD_WORDS.seesRowSub}
+          leading={leading?.('gymSees')}
+          onPress={() => router.push('/settings/gym-sees')}
+        />
+      ) : null}
+      <LinkRow title={`Leave ${link.gymName}`} sub={BOARD_WORDS.leaveSub} leading={leading?.('gymLeave')} onPress={() => void leave()} />
     </>
   );
 }

@@ -195,6 +195,21 @@ export function SettingsScreen() {
         </div>
       </Card>
 
+      {/* R-133: a monthly challenge and the leaderboard, shown in the member app. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>Challenges</SectionTitle>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {online
+            ? 'Give members a goal for the month. Everyone who reaches it wins free days. A top 10 list shows in the app.'
+            : 'First put your gym online (above). Then you can start a challenge for members.'}
+        </p>
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" disabled={!online} needsInternet onClick={() => navigate('/challenges')}>
+            Open challenges
+          </Button>
+        </div>
+      </Card>
+
       <Card>
         <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>

@@ -15,6 +15,7 @@ import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { gymHoursFromRow } from './gymTimings';
+import { boardFromRow, type Board, type BoardDay } from './leaderboard';
 import type { GymHours } from '@forgeai/theme';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
@@ -203,6 +204,28 @@ export async function apiGymTimings(key: string): Promise<GymResult<{ gymId: str
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = gymHoursFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * The gym leaderboard (member_board, 0037, R-133). `missing`: the server has not had 0037 yet; no
+ * card shows until it has.
+ */
+export async function apiBoard(key: string): Promise<GymResult<Board> | { ok: false; missing: true }> {
+  const r = await call('member_board', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = boardFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * Send this phone's day totals (member_board_push, 0037): per day only the number of workouts and
+ * the kg, and the member's name switch. `missing`: the server has not had 0037 yet.
+ */
+export async function apiBoardPush(key: string, days: readonly BoardDay[], showName: boolean): Promise<GymResult<true> | { ok: false; missing: true }> {
+  const r = await call('member_board_push', { p_key: key, p_days: days, p_show_name: showName }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const data = Array.isArray(r.data) ? r.data[0] : r.data;
+  return (data as { ok?: unknown } | null)?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
 }
 
 // ------------------------------------------------------------------ the workout offer (0025)

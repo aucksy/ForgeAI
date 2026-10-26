@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { apiCancelOrder, apiCheckIn, apiJoin, apiMe, apiPreview, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
 import { useGymInbox } from './inboxStore';
@@ -81,9 +82,19 @@ function syncGymRemindersQuietly(): void {
   void import('./gymReminders').then((m) => m.syncGymReminders()).catch((e: unknown) => console.warn('[ForgeErr] gym check: the gym reminders', e));
 }
 
+/**
+ * R-133: "Show my name on my gym's leaderboard" is a choice made for one gym. Joining another gym,
+ * leaving, or being let go starts it off again (and drops a change the old gym never heard).
+ */
+function forgetBoardChoice(): void {
+  usePhonePrefs.getState().setShowNameOnBoard(false);
+  usePhonePrefs.getState().setBoardNamePending(false);
+}
+
 function lostKey(err: GymError): boolean {
   if (err.kind !== 'BAD_KEY') return false;
   useGymShop.getState().unlink(UNLINKED_TEXT);
+  forgetBoardChoice();
   // C6-15: the gym's messages go with the link (they were kept, hidden, on the phone).
   useGymInbox.getState().clear();
   retireGymPlans();
@@ -135,6 +146,7 @@ export async function joinGym(rawCode: string, rawName: string): Promise<ActionW
   // The logo starts downloading now, while the opening is still being laid out (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
   useGymShop.getState().setLink(r.data);
+  forgetBoardChoice();
   // R-77: the gym's tab is "Shop" only once its shop lists something: ask now, not on a visit.
   void refreshProducts().catch((e: unknown) => console.warn('[ForgeErr] join: the shop list', e));
   // R-86: the gym's automatic reminders start with the join (the welcome to a member new to the
@@ -491,6 +503,7 @@ export async function cancelOpenOrdersBeforeLeave(kind: LeaveKind): Promise<Sett
 export async function leaveGym(): Promise<void> {
   const link = useGymShop.getState().link;
   useGymShop.getState().unlink(null);
+  forgetBoardChoice();
   useGymInbox.getState().clear();
   // "My membership"'s kept plan goes with the gym (OWNER-INBOX #6).
   AsyncStorage.removeItem(MEMBERSHIP_STORAGE_KEY).catch((e: unknown) => console.warn('[ForgeErr] leave: forgetting the kept plan', e));

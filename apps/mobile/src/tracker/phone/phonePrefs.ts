@@ -34,6 +34,18 @@ export interface PhonePrefsState {
    */
   gymRemindersOn: boolean;
   setGymRemindersOn: (on: boolean) => void;
+  /**
+   * R-133: "Show my name on my gym's leaderboard" (Settings → Your gym → What my gym can see).
+   * Off by default: the gym's board then says "A member".
+   */
+  showNameOnBoard: boolean;
+  setShowNameOnBoard: (on: boolean) => void;
+  /**
+   * R-133: the name switch changed and the gym has not been told yet (offline). Kept until a push is
+   * sent; while set, start / Gym tab / coming back to the app push without the 10-minute wait.
+   */
+  boardNamePending: boolean;
+  setBoardNamePending: (on: boolean) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
@@ -65,6 +77,10 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       healthLast: null,
       gymRemindersOn: true,
       setGymRemindersOn: (gymRemindersOn) => set({ gymRemindersOn }),
+      showNameOnBoard: false,
+      setShowNameOnBoard: (showNameOnBoard) => set({ showNameOnBoard }),
+      boardNamePending: false,
+      setBoardNamePending: (boardNamePending) => set({ boardNamePending }),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
@@ -79,6 +95,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           healthUnsent: [],
           healthLast: null,
           gymRemindersOn: true,
+          showNameOnBoard: false,
+          boardNamePending: false,
         }),
     }),
     {

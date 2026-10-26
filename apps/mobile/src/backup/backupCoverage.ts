@@ -100,6 +100,8 @@ export const FIELDS_LEFT_OUT: Readonly<Record<string, Readonly<Record<string, st
   'forgeai-phone-prefs': {
     healthUnsent: 'workouts this phone could not send to Health Connect',
     healthLast: 'when this phone last sent to Health Connect',
+    showNameOnBoard: 'a privacy choice made per gym; asked again after a restore',
+    boardNamePending: 'bookkeeping: the gym has not been told the name switch yet (this phone only)',
   },
   'forgeai-muscle-tips': {
     snoozedUntil: 'a tip snoozed for a few days',

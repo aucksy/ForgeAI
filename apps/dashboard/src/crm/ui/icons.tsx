@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -98,6 +98,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 7.5V12l3 2" />
+    </>
+  ),
+  // A cup: Challenges (R-133).
+  trophy: (
+    <>
+      <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+      <path d="M8 6H4.5v1.5A3 3 0 0 0 8 10.5M16 6h3.5v1.5a3 3 0 0 1-3.5 3" />
+      <path d="M12 13v4M8.5 20h7M10 17h4" />
     </>
   ),
   settings: (

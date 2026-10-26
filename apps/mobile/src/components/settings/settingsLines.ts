@@ -25,6 +25,7 @@ export type SettingsRowKey =
   | 'widgets'
   | 'gymJoin'
   | 'gymLogo'
+  | 'gymSees'
   | 'gymLeave'
   | 'saveBackup'
   | 'restoreBackup'

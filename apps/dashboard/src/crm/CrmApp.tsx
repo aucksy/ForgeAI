@@ -49,6 +49,7 @@ import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { DietPlansScreen } from './ui/screens/DietPlans';
 import { GymTimingsScreen } from './ui/screens/GymTimings';
+import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
@@ -188,6 +189,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/settings/branding', label: 'Branding', icon: 'brand' },
       // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
       { path: '/settings/timings', label: 'Gym timings', icon: 'clock' },
+      // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
+      { path: '/challenges', label: 'Challenges', icon: 'trophy' },
       { path: '/settings', label: 'Settings', icon: 'settings' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
@@ -225,6 +228,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'shop') return 'The shop';
   if (head === 'workouts') return 'Workout plans';
   if (head === 'diet') return 'Diet plans';
+  if (head === 'challenges') return 'Challenges';
   if (head === 'feedback') return 'Send feedback';
   if (head === 'branches') return 'All branches';
   if (head === 'members' && id === 'import') return 'Importing members';
@@ -284,6 +288,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <WorkoutPlansScreen />;
     case 'diet':
       return <DietPlansScreen />;
+    case 'challenges':
+      return <ChallengesScreen />;
     case 'feedback':
       return <FeedbackScreen />;
     case 'branches':

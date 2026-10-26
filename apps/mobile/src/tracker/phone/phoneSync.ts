@@ -36,6 +36,18 @@ export async function phoneAfterWorkout(sessionId: string): Promise<void> {
   // its dates (only for a member who joined it) and keeps the answer, which sets the gym reminders
   // ("almost there", "ending soon") again. Not awaited: the save never waits on the gym.
   void syncOfferAfterWorkout();
+  // R-133: the gym leaderboard's day totals (only a phone in a gym, never demo data; quiet on failure).
+  void pushBoardLater('workout');
+}
+
+/** R-133: tell the gym's leaderboard (leaderboardPush.ts decides whether to send). Never throws, never waited on. */
+async function pushBoardLater(trigger: 'workout' | 'start' | 'active'): Promise<void> {
+  try {
+    const { pushBoard } = await import('@/shop/leaderboardSync');
+    await pushBoard(trigger);
+  } catch (e) {
+    console.warn('[board] push could not start', e);
+  }
 }
 
 async function syncOfferAfterWorkout(): Promise<void> {
@@ -68,6 +80,8 @@ export async function phoneAfterDelete(sessionId: string): Promise<void> {
   await removeWorkoutFromHealth(sessionId).catch(() => undefined);
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
+  // R-133: a deleted workout leaves the gym's leaderboard too.
+  void pushBoardLater('workout');
 }
 
 /**
@@ -104,10 +118,13 @@ export function startPhoneSync(): void {
   started = true;
   void refreshWidgets();
   void refreshReminders();
+  void pushBoardLater('start');
   AppState.addEventListener('change', (s) => {
     if (s === 'active') {
       void refreshWidgets();
       void refreshReminders();
+      // R-133: back in the app: a name switch the gym has not heard yet is sent again.
+      void pushBoardLater('active');
     } else if (s === 'background') void refreshWidgets();
   });
 }

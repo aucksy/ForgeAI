@@ -40,6 +40,8 @@ declare
     'owner_diet_plans','owner_save_diet_plan','owner_withdraw_diet_plan','member_diet_plans',
     -- 0036: the gym's opening hours (owner/desk key, or a member key, checked by each; saving: owners only).
     'owner_gym_timings','owner_save_gym_timings','member_gym_timings',
+    -- 0037: the leaderboard and the monthly challenge (a member key, or an owner/desk key, checked by each; changing: owners only).
+    'member_board_push','member_board','owner_challenges','owner_save_challenge','owner_cancel_challenge','owner_board','owner_hide_on_board',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

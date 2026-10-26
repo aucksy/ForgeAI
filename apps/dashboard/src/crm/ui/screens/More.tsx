@@ -45,6 +45,7 @@ export function MoreScreen() {
     { path: '/messages', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
     { path: '/settings/branding', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
     { path: '/settings/timings', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
+    { path: '/challenges', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
     {
       path: '/settings/people',
       label: 'Staff & sign-in',

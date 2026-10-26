@@ -11,6 +11,31 @@ sign-in, the AI import named under "Where it is kept" (names and addresses now h
 Updated 25 Oct 2026 (tracker #64, owner picked A): measurements your trainer takes at the gym and diet
 plans your trainer sends are the gym's records; "on your phone" now covers what you log yourself.
 
+> **PROPOSED CHANGE, R-133 (26 Oct 2026) — NOT IN FORCE until the owner approves the wording.** The gym
+> leaderboard sends two numbers per day from a gym member's phone. Three edits, in the notice's own words:
+>
+> 1. "Who is responsible for what", the bullet "The workouts and measurements you log yourself": replace its
+>    last sentence with: *Your gym does not see them, except the leaderboard numbers below.*
+> 2. A new bullet after it: *If you are in a gym, the app sends your gym's leaderboard how many workouts you
+>    logged and how many kg you lifted on each of the last 31 days. Nothing else: no exercises, sets, weights
+>    of a lift, body weight or photos. Your gym's staff see these totals with your name, to run challenges and
+>    give rewards. Other members see your place only as "A member", unless you switch on "Show my name on my
+>    gym's leaderboard" (Settings → Your gym → What my gym can see); then they see your first name and the
+>    first letter of your last name. Your gym can hide you from the leaderboard. Your gym is responsible for
+>    its challenges and rewards; MettleUp keeps the numbers for the gym.*
+> 3. A new row in "What we keep on our server": *Leaderboard numbers (only if you are in a gym): workouts
+>    logged and kg lifted per day, for the last 31 days, and your name switch | So your gym can run its
+>    leaderboard and challenges | Each day's numbers are deleted after 62 days, and all of them as soon as you
+>    leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total)
+>    stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when
+>    you leave the gym.*
+>
+> **Open choice for the owner (review finding 8):** today the numbers go to the gym automatically once a
+> member joins (only the name is opt-in). Either keep that and say it in the join screen, or add a second
+> switch "Take part in my gym's leaderboard" (on or off by default).
+>
+> Hindi notice (PRIVACY-NOTICE-HI.md) gets the same three edits after the English is approved.
+
 ---
 
 ## MettleUp privacy notice

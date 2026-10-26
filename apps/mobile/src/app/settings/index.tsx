@@ -67,6 +67,7 @@ const ICON: Record<SettingsRowKey, IconName> = {
   widgets: 'home',
   gymJoin: 'key',
   gymLogo: 'home',
+  gymSees: 'trophy',
   gymLeave: 'key',
   saveBackup: 'send',
   restoreBackup: 'import',
