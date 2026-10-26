@@ -1,4 +1,4 @@
--- NOT APPLIED LIVE: waits for the owner's yes (R-133).
+-- APPLIED LIVE 26 Oct 2026 (owner: "Yes, apply 0037 live", R-133); live tests 0037 PASS 221, security PASS 9.
 --
 -- 0037: the gym leaderboard and the monthly challenge (R-133, 26 Oct 2026: "monthly gym challenge with a
 -- ranking"; owner's picks: counts = workouts logged AND kg lifted over the last 30 days, the prize goes
