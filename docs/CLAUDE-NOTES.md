@@ -5,6 +5,20 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-134. Cost of "create a routine by speaking" (Hindi / English / Hinglish) — 26 Oct 2026
+**Owner asked:** cost with the cheapest good model if members create routines by speaking to AI.
+**Answer (chat), assumptions:** ~45 s of speech, ~4,000-token prompt (instructions + our exercise names,
+cacheable), ~150-token transcript, ~400-token routine JSON out; $1 = Rs 88.
+- A (cheapest): phone's free speech-to-text (Android recognizer, hi-IN) + Claude Haiku 5.5 ($0.10 / $0.50 per
+  MTok): ~$0.0006 = ~Rs 0.05 per routine.
+- B: Gemini 2.5 Flash-Lite takes the audio directly (audio $0.30/MTok, ~32 tokens/s; text $0.10; out $0.40):
+  ~$0.001 = ~Rs 0.09.
+- C (best Hinglish): Sarvam Saaras V4 STT (Rs 30/hour, Sep 2026) + Haiku 5.5: ~Rs 0.43.
+  gpt-4o-mini-transcribe ~$0.003/min (reported deprecated, removal Feb 2027).
+- 500 members x 4 routines a month: A ~Rs 100, B ~Rs 180, C ~Rs 860 a month; edits/retries x2-3.
+Recommended: A first, a per-member daily cap, key kept in a Worker/Supabase function (never in the app);
+switch speech-to-text to Sarvam if Hinglish accuracy is poor. Not in the backlog (not confirmed).
+
 ## R-133. Build the gym leaderboard (tracker: "Monthly gym challenge with a ranking") — 26 Oct 2026
 **He said:** "Build the leaderboard for the gym section as planned... do you have details on that one?" Then picked:
 counts = **"Workouts logged and Total KG lifted in last 30 days"** (not visits); prize = **everyone who hits the goal**;
