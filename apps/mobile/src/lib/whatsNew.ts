@@ -54,6 +54,21 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.58.0',
+    date: '26 Oct',
+    lines: [
+      {
+        // R-133: words checked by a fresh reader.
+        text: 'Gym tab: a leaderboard of your gym for the last 30 days, by workouts or by kg lifted. See your place and the top 10.',
+        go: { label: 'Open Gym', href: '/shop' },
+      },
+      { text: 'Reach the challenge goal shown in the Gym tab, then show that screen at the front desk for your reward.' },
+      {
+        text: 'Other members see your name only if you switch it on: Settings → Your gym → What my gym can see.',
+      },
+    ],
+  },
+  {
     version: '0.57.1',
     date: '25 Oct',
     lines: [
