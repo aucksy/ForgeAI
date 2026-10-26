@@ -19,6 +19,9 @@ export const BOARD_WORDS = {
       ? `You hit the goal: ${prizeDays} free ${prizeDays === 1 ? 'day' : 'days'}. Show this screen at the desk.`
       : 'You hit the goal. Show this screen at the desk.',
   // Settings → Your gym → What my gym can see
+  // The join screen (R-133, owner 26 Oct: automatic + a line at join).
+  joinNote:
+    'Your gym sees how many workouts you log and the kg you lift, for challenges. Other members see your name only if you switch it on.',
   seesRow: 'What my gym can see',
   seesRowSub: 'Your name on the leaderboard',
   seesRowSubOn: 'Your name shows on the leaderboard',

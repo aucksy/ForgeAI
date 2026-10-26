@@ -27,6 +27,7 @@ import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewError
 import { joinFromInvite } from './gymActions';
 import { JoinAgreement } from './JoinAgreement';
 import { agreementWords } from './joinTerms';
+import { BOARD_WORDS } from './boardWords';
 import { askAndSwitchGym } from './leaveFlow';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -150,6 +151,8 @@ export function InviteScreen() {
                   ? `You're in ${link.gymName} now. Switching takes you out of ${link.gymName} on this phone.`
                   : "Join to see your membership and your gym's messages here. Your workouts stay on this phone."}
               </Text>
+              {/* R-133 (owner, 26 Oct: automatic + a line at join): said before joining, as the privacy notice does. */}
+              <Text style={body()}>{BOARD_WORDS.joinNote}</Text>
               <View>
                 <Text style={label()}>Your name</Text>
                 <TextInput

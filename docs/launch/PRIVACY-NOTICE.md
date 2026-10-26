@@ -11,30 +11,9 @@ sign-in, the AI import named under "Where it is kept" (names and addresses now h
 Updated 25 Oct 2026 (tracker #64, owner picked A): measurements your trainer takes at the gym and diet
 plans your trainer sends are the gym's records; "on your phone" now covers what you log yourself.
 
-> **PROPOSED CHANGE, R-133 (26 Oct 2026) — NOT IN FORCE until the owner approves the wording.** The gym
-> leaderboard sends two numbers per day from a gym member's phone. Three edits, in the notice's own words:
->
-> 1. "Who is responsible for what", the bullet "The workouts and measurements you log yourself": replace its
->    last sentence with: *Your gym does not see them, except the leaderboard numbers below.*
-> 2. A new bullet after it: *If you are in a gym, the app sends your gym's leaderboard how many workouts you
->    logged and how many kg you lifted on each of the last 31 days. Nothing else: no exercises, sets, weights
->    of a lift, body weight or photos. Your gym's staff see these totals with your name, to run challenges and
->    give rewards. Other members see your place only as "A member", unless you switch on "Show my name on my
->    gym's leaderboard" (Settings → Your gym → What my gym can see); then they see your first name and the
->    first letter of your last name. Your gym can hide you from the leaderboard. Your gym is responsible for
->    its challenges and rewards; MettleUp keeps the numbers for the gym.*
-> 3. A new row in "What we keep on our server": *Leaderboard numbers (only if you are in a gym): workouts
->    logged and kg lifted per day, for the last 31 days, and your name switch | So your gym can run its
->    leaderboard and challenges | Each day's numbers are deleted after 62 days, and all of them as soon as you
->    leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total)
->    stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when
->    you leave the gym.*
->
-> **Open choice for the owner (review finding 8):** today the numbers go to the gym automatically once a
-> member joins (only the name is opt-in). Either keep that and say it in the join screen, or add a second
-> switch "Take part in my gym's leaderboard" (on or off by default).
->
-> Hindi notice (PRIVACY-NOTICE-HI.md) gets the same three edits after the English is approved.
+Updated 26 Oct 2026 (R-133, owner approved the wording "as written"): the gym leaderboard's two numbers per day
+(workouts and kg lifted), names opt-in, deletion after 62 days and on leaving. In force when server change 0037 is
+live (the apps show the leaderboard only then).
 
 ---
 
@@ -50,7 +29,14 @@ plans your trainer sends are the gym's records; "on your phone" now covers what 
   processes them for the gym, under a written agreement.
 - **Your MettleUp account and our technical logs:** **MettleUp** is responsible.
 - **The workouts and measurements you log yourself** (exercises, sets, weights, body weight, measurements,
-  progress photos) stay **on your phone** unless you sign in with Google. Your gym does not see them either way.
+  progress photos) stay **on your phone** unless you sign in with Google. Your gym does not see them, except the leaderboard numbers below.
+- If you are in a gym, the app sends your gym's leaderboard how many workouts you logged and how many kg you
+  lifted on each of the last 31 days. Nothing else: no exercises, sets, weights of a lift, body weight or
+  photos. Your gym's staff see these totals with your name, to run challenges and give rewards. Other members
+  see your place only as "A member", unless you switch on "Show my name on my gym's leaderboard" (Settings →
+  Your gym → What my gym can see); then they see your first name and the first letter of your last name. Your
+  gym can hide you from the leaderboard. Your gym is responsible for its challenges and rewards; MettleUp keeps
+  the numbers for the gym.
 - **If you sign in with Google**, MettleUp saves a copy of your workouts on our server so you can
   get them back on a new phone. **MettleUp** is responsible for that copy, not your gym. Only you
   can see it. See "Your saved workouts" below.
@@ -68,6 +54,7 @@ plans your trainer sends are the gym's records; "on your phone" now covers what 
 | The gym's records listed above | So the gym can run memberships, receipts and check-ins | While the gym uses MettleUp; deleted within 30 days after it leaves (backups expire within 7 more days) |
 | Gym staff: name and mobile | Staff sign-in | While they work there |
 | Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward | To give you the reward | Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends |
+| Leaderboard numbers (only if you are in a gym): workouts logged and kg lifted per day, for the last 31 days, and your name switch | So your gym can run its leaderboard and challenges | Each day's numbers are deleted after 62 days, and all of them as soon as you leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total) stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when you leave the gym |
 | Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts" | So you can get them back on a new phone | Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days |
 | Only if you sign in with Google: your MettleUp account (your Google email address, and the name and picture link Google shares) | So only you can open your saved workouts | Until you delete your account (one exception, explained below) |
