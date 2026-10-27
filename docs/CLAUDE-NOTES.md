@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-138. Incline DB Press "kg to beat" looks wrong (analysis only, no change) — 27 Oct 2026
+**Owner asked (screenshot):** card says "0 of 1,560 kg · next 40 kg × 13, 10, 8, 8"; Previous (20 Oct, Push 1) was
+40 × 12 @8.5, 11 @9, 9 @9.5 (3 sets). First 3 sets aim 31 reps vs 32 last time; how is that more? Is it a bug?
+**Found:** the extra kg come only from the 4th set (routine has 4 sets, he did 3). Ran computeProgressionTarget +
+kgPlan on 20 Oct alone (ranges 8-12, 6-10, 8-15, 10-15, 4 sets): it always gives 12,12,9,9 / 13,11,9,9 etc.
+(1,680 kg), never 13,10,8,8. So the Target read a DIFFERENT past workout (one like 40 × 12,10,8) than the one
+PREVIOUS shows: likely the Target history (getProgressionHistoryMany scope) and the "Previous values" scope
+disagree, or another workout after 20 Oct. Bug likely (two parts of one card disagree); needs his history to confirm.
+Also a design gap: no "+%" shows when last time had fewer sets, so a lower per-set aim is hidden behind the extra set.
+
 ## R-134. Cost of "create a routine by speaking" (Hindi / English / Hinglish) — 26 Oct 2026
 **Owner asked:** cost with the cheapest good model if members create routines by speaking to AI.
 **Answer (chat), assumptions:** ~45 s of speech, ~4,000-token prompt (instructions + our exercise names,
