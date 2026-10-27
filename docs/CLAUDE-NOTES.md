@@ -23,6 +23,10 @@ logic is and why it still says 20.
 main one (40 vs 45: is set 1 treated as a "back-off / off-main" set kept as last time?); whether the move-up rule
 looks only at the main weight's sets; whether R-138 (target vs PREVIOUS) is involved. Explain the rule to him in
 plain words, then propose a fix if needed.
+**Added 27 Oct (owner):** "we are also decreasing the weight from last time... something is wrong with the way we
+are suggesting things": he sees 45 kg last time but 40 kg suggested with the same or fewer reps. (Screenshot:
+PREVIOUS set 1 = 40 x 20, sets 2-3 = 45; so set 1 stays at the lighter 40 instead of moving to 45 after 20 reps.)
+Review the whole suggestion logic end to end, not just this case, with R-138 and R-144.
 
 ## R-142. Working rule: "add it to the notes" means just write it down, no code analysis — 27 Oct 2026
 **Owner said:** "I do not want you to analyze the code right now. Just add the stuff in the notes."
