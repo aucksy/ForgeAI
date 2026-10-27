@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-144. To analyse: adjust the next sets live from this set's RPE — 27 Oct 2026
+**Owner said (notes only):** look at the possibility of using the RPE of the set just done. If the member did the
+suggested reps (or more) at a lower RPE than planned (it felt easier), raise the next sets' suggestions in the same
+workout so they can achieve more, since the RPE says they have more in them.
+**To analyse later:** RPE typed by the member vs worked out on its own (rep speed from the watch / phone,
+heart rate?); how much to raise (a rep or two, or a weight step) and the safety caps; how it fits the kg-to-beat line
+(R-138) and the long-rest problem (R-140); what Hevy / Strong / RP-style apps do.
+
 ## R-143. To analyse: why no weight increase after hitting the top of the rep range (Triceps Pushdown) — 27 Oct 2026
 **Owner asked (screenshot, notes only, no code look now):** Triceps Pushdown, last time 13 Oct (Push 2): 40 x 20,
 45 x 13, 45 x 11 (warm-up 30 x 20). The card says "0 of 1,925 kg · next 40 kg x 20, 45 kg x 14, 45 kg x 11".
