@@ -5,6 +5,26 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-141. Exercise page History: show the kg lifted per workout, same look as the profile feed — 27 Oct 2026
+**Owner said:** from the active workout, tapping an exercise opens its history; he needs to see the volume there too.
+Reuse the same view as the profile section so it is consistent everywhere. "You can plan and decide. Add it in the
+notes." (He thinks he asked before; no earlier note found on this exact point. Not in the backlog yet.)
+**Checked 27 Oct:** the live card's name opens the one exercise page (app/exercise/[id].tsx, ExerciseLogCard
+openExercisePage), the same page used from Stats, Records, Progress and a workout. Its History tab has the chart
+(its picker already offers "kg lifted per workout", metric `workoutLifted`) and then SessionHistory: one card per
+workout with only the sets, no total. The profile feed (tracker/components/profile/FeedCard.tsx) shows a stats row
+per workout (time, kg lifted, ...).
+**Plan (my decision, #18):**
+1. Each workout card in SessionHistory gets the profile feed's stats row style, with THIS exercise's numbers:
+   "Kg lifted" (weight x reps, warm-ups out, the same rule as the kg to beat), "Sets", and "Best set". Reps-only /
+   time / distance moves show reps / time / distance instead (chartMetrics' per-workout metric).
+2. The in-progress workout card at the top shows the same row (kg lifted so far), so today vs last time is one glance.
+3. One shared stats-row component used by the feed card and these cards, so they never drift apart.
+4. Opened from the live workout, the chart starts on "Kg lifted per workout" (from anywhere else it keeps its usual first
+   choice).
+Member words through member-words skill ("Kg lifted", never "volume"). Fix R-138 first or alongside: the numbers
+must agree with PREVIOUS.
+
 ## R-140. Problem to analyse later: a longer rest than planned inflates reps, and next time's goal — 27 Oct 2026
 **Owner said:** sometimes he starts the next set after resting longer than the rest timer, so he does more reps than
 he would have. Next time, at the normal rest, the suggested reps are too high. Wants tracking + a solution; unsure
