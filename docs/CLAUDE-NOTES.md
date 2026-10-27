@@ -5,6 +5,21 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-149. PRIORITY: real gym members start testing Monday (or sooner): floating feedback button + auto-fix loop — 27 Oct 2026
+**Owner said (notes only):** actual gym members start as testers probably Monday (2 Nov) or sooner. So build now:
+1. An easy **floating feedback button on every screen** of the member app.
+2. Feedback by **voice (Hindi or English)** or by typing.
+3. The **automated end-to-end flow** we decided before: feedback comes in, Claude sorts it, fixes it, releases it.
+**Prioritise this build now** (ahead of other backlog work).
+**What exists already (from the inbox, not re-checked in code):** "Send feedback" in Settings (member app, v0.49.0) and
+More (admin app), stored in Cloudflare's free database; sorting rules in docs/launch/FEEDBACK.md; the twice-a-day
+sorting schedule was to start with trial week 3 (H7); #39 holds the auto-fix-and-release decision.
+**Gaps to plan:** a button that floats on all screens (not buried in Settings); voice recording + speech-to-text for
+Hindi / English / Hinglish (cost: R-134, ~Rs 0.05 per note on the phone's free speech-to-text); the schedule must start
+before Monday; safeguards on auto-releases (tests green, no live-data changes without his yes); a tester privacy line
+(member-words / legal wording is his call).
+Not yet in the tracker backlog: he said "prioritise", so confirm the plan with him, then add the row.
+
 ## R-148. Admin panel: "what's new" notices for releases and fixes, like the member app — 27 Oct 2026
 **Owner said (notes only):** the admin panel (gym owner / staff side) should also tell its users what we released
 or fixed, with the version number, like the member app's What's new pop-up.
