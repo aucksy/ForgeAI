@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-145. Resume workout: scroll back to the exercise in progress — 27 Oct 2026
+**Owner said (notes only):** when you leave the active workout screen and tap "Resume workout", it should scroll
+back to the exercise you are on (the active one), not the top.
+
 ## R-144. To analyse: adjust the next sets live from this set's RPE — 27 Oct 2026
 **Owner said (notes only):** look at the possibility of using the RPE of the set just done. If the member did the
 suggested reps (or more) at a lower RPE than planned (it felt easier), raise the next sets' suggestions in the same
