@@ -5,6 +5,28 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-140. Problem to analyse later: a longer rest than planned inflates reps, and next time's goal — 27 Oct 2026
+**Owner said:** sometimes he starts the next set after resting longer than the rest timer, so he does more reps than
+he would have. Next time, at the normal rest, the suggested reps are too high. Wants tracking + a solution; unsure
+how. "Let's brainstorm, add it to the note for further analysis." Not in the backlog, nothing built.
+**What the app has today (checked 27 Oct):** the live workout keeps each set's tick time (`doneAt`,
+activeWorkoutStore.ts) so the real rest between two sets can be worked out, but it is NOT saved with the workout
+(no column for it), so the Target can't see it later. Saving it = an additive migration.
+**Brainstorm (to analyse; pick later):**
+1. Save the real rest before each set (gap from the previous tick). Needed by every idea below.
+2. Flag a "long rest" set: rest more than the planned rest by a margin (e.g. 1.5x or +60 s). Show a small tag on
+   the set in history and in PREVIOUS ("after 4:30 rest").
+3. Target rule (simplest, recommended to start): a long-rest set never earns the "+1 rep" next time; its goal stays
+   last time's number from a normal-rest workout (or the set's own reps minus a small cut). No made-up
+   "reps per extra minute" formula without research.
+4. Prevent it: when rest is over, a stronger buzz / sound, the watch buzzes (R-139), and the rest bar counts the
+   extra time in red ("+1:20 over").
+5. One tap after a set: "rested longer". Manual fallback if the auto flag is wrong.
+6. Insight over time: "your reps drop X when you keep to 2:00 rest" (needs many workouts; later).
+**To research before building:** what studies say on rest length vs reps (e.g. 1 vs 3 min rest; more rest = more
+reps); how Hevy/Strong treat it (they track rest, no auto-adjust as far as known; to check); the margin to use.
+Depends on R-138 (Target and PREVIOUS must agree first).
+
 ## R-139. Watch app idea: show the next set's weight and reps (undecided) — 27 Oct 2026
 **Owner said:** the watch app should also show the next weight and reps to do, maybe with last time's numbers
 for that set too, or maybe only last time's. "We'll decide." Just a note: not in the backlog, nothing built.
