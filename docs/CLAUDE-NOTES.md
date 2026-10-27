@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-148. Admin panel: "what's new" notices for releases and fixes, like the member app — 27 Oct 2026
+**Owner said (notes only):** the admin panel (gym owner / staff side) should also tell its users what we released
+or fixed, with the version number, like the member app's What's new pop-up.
+**Ideas for when we plan it:** a "What's new" pop-up once per new version, plus a list page of past versions;
+plain-language lines (member-words skill); the same release notes source as the member app, split by who it
+concerns (members, gym staff). Not in the backlog yet.
+
 ## R-147. Workout-complete screen: show the kg lifted vs last time as the big, proud headline — 27 Oct 2026
 **Owner said (notes only):** on the workout completion screen, highlight very clearly, to motivate and make the
 member feel proud: "last time's total kg lifted was X, you lifted Y". It exists today but sits somewhere else and
