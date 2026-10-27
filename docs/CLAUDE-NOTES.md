@@ -5,7 +5,7 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
-## R-138. Incline DB Press "kg to beat" looks wrong (analysis only, no change) — 27 Oct 2026
+## R-138. BUG (fix later): the "kg to beat" uses a different last time than PREVIOUS — 27 Oct 2026
 **Owner asked (screenshot):** card says "0 of 1,560 kg · next 40 kg × 13, 10, 8, 8"; Previous (20 Oct, Push 1) was
 40 × 12 @8.5, 11 @9, 9 @9.5 (3 sets). First 3 sets aim 31 reps vs 32 last time; how is that more? Is it a bug?
 **Found:** the extra kg come only from the 4th set (routine has 4 sets, he did 3). Ran computeProgressionTarget +
@@ -14,6 +14,15 @@ kgPlan on 20 Oct alone (ranges 8-12, 6-10, 8-15, 10-15, 4 sets): it always gives
 PREVIOUS shows: likely the Target history (getProgressionHistoryMany scope) and the "Previous values" scope
 disagree, or another workout after 20 Oct. Bug likely (two parts of one card disagree); needs his history to confirm.
 Also a design gap: no "+%" shows when last time had fewer sets, so a lower per-set aim is hidden behind the extra set.
+**27 Oct, 2nd case (owner: "it does seem like a bug... add in notes to fix later"):** another exercise, 20 kg, 4 sets.
+PREVIOUS column 19 @9, 16 @9, 15 @9.5, 14 @9; the Target text says "Last time 19, 15, 15, 14 at 20 kg ... aim for
+20, 15, 15, 14" and "0 of 1,280 kg". 1,280 = 20 x 64 = EXACTLY last time's real total (19+16+15+14), so the
+"kg to beat" is no progress at all. Confirmed: the Target reads a different / stale copy of last time than PREVIOUS.
+**TO FIX LATER (owner asked, not started):** suspects, in order: (1) the Target history scope
+(coachTargets getProgressionHistoryMany {scope}) vs the "Previous values" scope (lastFrom); (2) the targetMemo cache
+in coachTargets.ts not cleared when a past workout is edited (16 -> 15?); (3) set order in mainSets. Fix: Target and
+PREVIOUS read the same workout; a test that the plan never aims below last time on any set it has; show the
+"+%" (or "same as last time") also when the set count differs.
 
 ## R-134. Cost of "create a routine by speaking" (Hindi / English / Hinglish) — 26 Oct 2026
 **Owner asked:** cost with the cheapest good model if members create routines by speaking to AI.
