@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-147. Workout-complete screen: show the kg lifted vs last time as the big, proud headline — 27 Oct 2026
+**Owner said (notes only):** on the workout completion screen, highlight very clearly, to motivate and make the
+member feel proud: "last time's total kg lifted was X, you lifted Y". It exists today but sits somewhere else and
+isn't highlighted. The whole app is about progressive overload, so this win should be the star of that screen.
+**Ideas for when we plan it:** one hero card at the top (big number, "+X kg on last time" in green, a short
+cheer line); a gentle line when it is lower ("Lighter day: fine, keep going"); compare with the same routine's
+last time (as R-132 does); share-card tie-in. Member words through member-words skill ("kg lifted", never "volume").
+Not in the backlog yet.
+
 ## R-146. "1,925 kg beaten ✓" turns green when done = target exactly (word + rule) — 27 Oct 2026
 **Owner asked (screenshot, notes only):** Triceps Pushdown shows "1,925 kg beaten ✓ (1,925 kg done)" in green. How is
 it "beaten" when it is the same number?
