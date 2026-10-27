@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-139. Watch app idea: show the next set's weight and reps (undecided) — 27 Oct 2026
+**Owner said:** the watch app should also show the next weight and reps to do, maybe with last time's numbers
+for that set too, or maybe only last time's. "We'll decide." Just a note: not in the backlog, nothing built.
+Options to put to him later: A) next set's target (e.g. 20 kg x 15) plus last time's (20 kg x 16);
+B) last time's only. Depends on R-138 (target and PREVIOUS must agree first).
+
 ## R-138. BUG (fix later): the "kg to beat" uses a different last time than PREVIOUS — 27 Oct 2026
 **Owner asked (screenshot):** card says "0 of 1,560 kg · next 40 kg × 13, 10, 8, 8"; Previous (20 Oct, Push 1) was
 40 × 12 @8.5, 11 @9, 9 @9.5 (3 sets). First 3 sets aim 31 reps vs 32 last time; how is that more? Is it a bug?
