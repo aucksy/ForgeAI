@@ -5,6 +5,24 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-150. Plan (draft): analytics for the admin panel — 27 Oct 2026
+**Owner said (notes only):** plan a feature for analytics in the admin panel. He gave no list yet, so this is my
+first draft from what a gym owner needs; he adds or cuts. Not in the backlog; nothing built; code not checked.
+**Questions the owner wants answered at a glance (draft):**
+1. **Money:** collected this month vs last, dues pending, renewals due in 7 / 30 days, revenue by plan.
+2. **Members:** active, new, expired, frozen, churn (left this month), who is about to lapse.
+3. **Visits:** per day / hour (busy times), who has not come for 7 / 14 / 30 days, check-ins by door machine vs app.
+4. **Plans and sales:** which membership plans sell, average membership length, renewal rate.
+5. **Member app use (when members use ours):** workouts logged, share of members active this week, top features.
+6. **Staff and desk:** collections per staff member, follow-ups done.
+**Shape:** a dashboard home with 4-6 number tiles and a simple trend line each; tap a tile for the list behind it
+(for example "expiring in 7 days" opens the members to call); date range picker; export to Excel; plain words
+(member-words skill). Numbers must come from data the gym server already holds; anything new needs a live server
+change = his yes first. Best first build: renewals due + dues + not-visited-lately, since they bring money back.
+**To research before building (research-demand rule):** what GGMS and other Indian gym software show, and what gym
+owners actually look at daily.
+**Needs his input:** which 5 numbers he checks first; whether it is for the owner only or also staff.
+
 ## R-149. PRIORITY: real gym members start testing Monday (or sooner): floating feedback button + auto-fix loop — 27 Oct 2026
 **Owner said (notes only):** actual gym members start as testers probably Monday (2 Nov) or sooner. So build now:
 1. An easy **floating feedback button on every screen** of the member app.
