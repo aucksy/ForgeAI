@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-142. Working rule: "add it to the notes" means just write it down, no code analysis — 27 Oct 2026
+**Owner said:** "I do not want you to analyze the code right now. Just add the stuff in the notes."
+**Rule:** when he asks to add something to the notes, write what he said (plus a short idea list if he asks to
+brainstorm), commit, reply in a few lines. No code reading, no tests, until he asks to plan or build it.
+
 ## R-141. Exercise page History: show the kg lifted per workout, same look as the profile feed — 27 Oct 2026
 **Owner said:** from the active workout, tapping an exercise opens its history; he needs to see the volume there too.
 Reuse the same view as the profile section so it is consistent everywhere. "You can plan and decide. Add it in the
