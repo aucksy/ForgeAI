@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-146. "1,925 kg beaten ✓" turns green when done = target exactly (word + rule) — 27 Oct 2026
+**Owner asked (screenshot, notes only):** Triceps Pushdown shows "1,925 kg beaten ✓ (1,925 kg done)" in green. How is
+it "beaten" when it is the same number?
+**Quick sums from the screenshot (no code look):** done 40x20 + 45x13 + 45x12 = 800 + 585 + 540 = 1,925. The target
+(40x20, 45x14, 45x11) = 1,925. Last time (40x20, 45x13, 45x11) = 1,880. So he matched the target exactly and did
+45 kg more than last time; but "beaten" on an exact match reads wrong.
+**To decide later:** at done = target say "reached" / "hit" (green ok), keep "beaten" for more than the target; maybe
+also show "+45 kg on last time". Ties into R-138 / R-143 (the whole suggestion review).
+
 ## R-145. Resume workout: scroll back to the exercise in progress — 27 Oct 2026
 **Owner said (notes only):** when you leave the active workout screen and tap "Resume workout", it should scroll
 back to the exercise you are on (the active one), not the top.
