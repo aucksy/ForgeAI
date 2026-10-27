@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-143. To analyse: why no weight increase after hitting the top of the rep range (Triceps Pushdown) — 27 Oct 2026
+**Owner asked (screenshot, notes only, no code look now):** Triceps Pushdown, last time 13 Oct (Push 2): 40 x 20,
+45 x 13, 45 x 11 (warm-up 30 x 20). The card says "0 of 1,925 kg · next 40 kg x 20, 45 kg x 14, 45 kg x 11".
+Set 1 already did 20 reps at 40 kg but is still suggested 40 x 20, not a heavier weight. He thought we had a rule:
+once reps reach / pass the best number for that kind of exercise, suggest more weight. Wants to know what the
+logic is and why it still says 20.
+**To check later:** the rep-range top for this exercise and how the rule treats a set at a lighter weight than the
+main one (40 vs 45: is set 1 treated as a "back-off / off-main" set kept as last time?); whether the move-up rule
+looks only at the main weight's sets; whether R-138 (target vs PREVIOUS) is involved. Explain the rule to him in
+plain words, then propose a fix if needed.
+
 ## R-142. Working rule: "add it to the notes" means just write it down, no code analysis — 27 Oct 2026
 **Owner said:** "I do not want you to analyze the code right now. Just add the stuff in the notes."
 **Rule:** when he asks to add something to the notes, write what he said (plus a short idea list if he asks to
