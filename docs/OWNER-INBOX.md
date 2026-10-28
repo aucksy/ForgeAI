@@ -46,7 +46,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
-| #4 | High | Low |
 | Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
 | Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
 | Task: 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | High | Medium |
@@ -334,7 +333,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Offline front desk | Waiting for you | Steps 1 and 2 live 22 Oct: the admin app opens and shows everything without internet, and desk check-ins made offline are sent later with their real time. Step 3 (payments and new members offline) waits for your gym visit. Waits for your gym visit (is the desk internet really unreliable?). | Step 2: check-ins made offline are kept on the device and sent once the internet is back. Step 3: payments and new members offline, with a receipt-number series of their own per desk (a tax invoice's number must never change after it is printed). |
 | Full GST tax invoices | Live | 22 Oct: a GST-registered gym's receipt is a tax invoice (GST number, service code, CGST + SGST, place of supply, reverse charge No, signature line). The paying company's own GST number waits for a live database change. |
 | Entry machine (turnstile, face or fingerprint) | Waiting for you | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. Waits for the client to buy the machine. | The gym buys the machine; it talks to our server over the internet. A new member added in the admin app goes to the machine by itself and the desk scans the finger or face once; an expired or frozen member is blocked even when the internet is down, and a renewal unblocks them at once. Every entry becomes a check-in in the attendance register, and the desk gets an "Open door" button. |
-| Automatic SMS or WhatsApp reminders | Waiting for you | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
+| Automatic SMS or WhatsApp reminders | Not doing | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
 | Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
 | AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
 | Webcam photo at the desk | Idea | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
@@ -1235,10 +1234,11 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:05 am, via the page)**
+**Status:** RESEARCHING (29 Oct)
 **DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
+**YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."
+**My answer (29 Oct):** Started. A helper is researching the Jaipur gym software market (GGMS and others, one-time vs monthly, what owners pay for). It will design 3 plans, plus a "buy once + yearly upkeep" option and a launch offer. The full plan comes back here with sources, for your pick. It also answers your #4 points: the GGMS-style one-time price, and getting your ₹12,000 a month back.
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1529,6 +1529,7 @@ phone today) — opt-in, no weights or names.
 then nudges them to start their workout; with no saved routines, give them a research-based
 Push Pull Legs plan. Don't build yet; does it work, and how?
 **Status:** STEP 1 BUILT, NOT RELEASED (next release, v0.48.0)
+**READ (29 Oct, 01:09 am, via the page)**
 **My answer:** Yes, it works, and gym apps abroad already do it (PerfectGym, GymMaster; BETA and
 ButaGYM use a QR that changes every few seconds). Most of it already exists in our app:
 - the gym's QR poster already opens ForgeAI on "Check in": one tap marks attendance and checks
@@ -1640,7 +1641,8 @@ can send plans now; members see them once they have the next app release (v0.48.
 
 ## 4. GGMS (the client's current CRM): features and prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** WAITING FOR YOU
+**Status:** ANSWERED
+**READ (29 Oct, 01:11 am, via the page)**
 **My answer:** GGMS (Gayatri Software, Jaipur, since 2017, claims 1,000+ gyms). Offline Plan from
 ₹11,999/year (no member app); Online Plan from ₹14,999/year (with app). These are starting prices
 from listing sites; GGMS doesn't publish prices. Ask the client what they really pay. Owner gaps
@@ -1658,10 +1660,7 @@ photo, birthday wishes. Their users complain about bugs, so reliability is a poi
   - ₹1,499 a month for owners who want nothing up front;
   - for the first 20 gyms, a founding lifetime at ₹24,999 to bring cash in early;
   - a switching offer: we move their GGMS data for free with our AI import.
-**Decide:** How should MettleUp be priced for gym owners?
-- A: Add "buy once + yearly upkeep" (₹14,999 + ₹4,999/year) next to ₹1,499/month, plus a ₹24,999 founding lifetime for the first 20 gyms (recommended)
-- B: Keep today's monthly and yearly plans, and only lower the yearly price closer to GGMS
-- C: Hold prices until the first client gym's trial ends, then decide with real usage
+**Next:** your #30 reply asks for the full price plan. I am researching it now; the decision comes there, so you decide once.
 Sources: https://easygymsoftware.com/blog/gym-software-pricing-in-india , https://codingclave.com/blog/gym-management-software-guide , https://www.techjockey.com/detail/fitness-manager
 
 ## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
