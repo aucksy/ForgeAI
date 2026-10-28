@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-152. Check-in QR scan: camera only, no "pick from gallery" — 28 Oct 2026
+**Owner said (notes only):** when a member opens the camera to scan the gym's check-in QR, there must be no option to
+choose a photo from the gallery. It should only take a live picture, nothing else.
+**Why (my reading):** a gallery option lets a member scan an old photo or screenshot of the QR from home and be
+counted as present. Check later whether the QR code itself also changes (a rotating code would close this fully).
+Code not looked at; not in the backlog.
+
 ## R-151. FIX NEEDED: a notice sent from the admin panel never pops up on the member's phone — 28 Oct 2026
 **Owner said (notes only):** when the gym sends a notification from the admin panel, the member app shows no
 pop-up / phone alert. The notice does arrive: the bell in the gym section shows "1 new notification" and tapping it
