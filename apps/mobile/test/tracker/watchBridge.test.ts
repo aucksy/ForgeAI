@@ -133,7 +133,7 @@ describe('the watch tests gate CI (U-W4)', () => {
   it('release-apk.yml runs them before the build that makes and signs the watch APK', () => {
     const rel = root('.github/workflows/release-apk.yml');
     const tests = rel.indexOf(':wear:testReleaseUnitTest :forge-rest:testReleaseUnitTest');
-    const build = rel.indexOf('- name: Build release APK + AAB (+ watch APK)');
+    const build = rel.indexOf('- name: Build release APK + AAB (+ watch APK + watch AAB)');
     expect(tests).toBeGreaterThan(0);
     expect(build).toBeGreaterThan(tests);
     // Not allowed to fail quietly.
