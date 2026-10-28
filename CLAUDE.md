@@ -43,6 +43,11 @@ holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it
   first and only the final live switch or word check needs him, it is Planned (R-169).
   After every release or deploy, check EVERY row not Live/Done in the same turn. He moves features between
   statuses on the page ("Move to"); `--absorb` writes his moves into the .md and they win.
+- **⭐ Owner rules (29 Oct 2026, R-172/R-173): threads and one-topic-one-place.** His follow-up goes into the entry as
+  `**YOUR REPLY (date):**` with `**My answer (date):**` under it, and the `**READ` line is deleted: the page then puts the
+  entry on top of Q&A ("New answer · reply N") for 3 days. A question about a feature is linked by writing `#n` in that
+  backlog row's Details; if the row is "Waiting for you", the question shows only under Waiting for you. Every feature
+  that came from a Q&A topic must carry its `#n`, or the page says "still a discussion".
 - **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details | How it will work |`,
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
   sentence each; every row not built yet also fills "How it will work" in 1-4 plain sentences, R-52):

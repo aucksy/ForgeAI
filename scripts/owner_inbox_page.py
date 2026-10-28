@@ -77,6 +77,36 @@ def status_kind(status):
     return "answered"
 
 
+MONTHS = {m: i for i, m in enumerate(("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"), 1)}
+
+
+def day_of(said, entry_date):
+    """'29 Oct' or '29 Oct 2026, 12:01 am' -> '2026-10-29'; the year comes from the entry's date when left out."""
+    em = re.search(r"(\d{1,2}) ([A-Za-z]{3})[a-z]* (\d{4})", entry_date)
+    m = re.search(r"(\d{1,2}) ([A-Za-z]{3})[a-z]*(?: (\d{4}))?", said)
+    if not m or m.group(2).lower() not in MONTHS:
+        m = em
+    if not m or m.group(2).lower() not in MONTHS:
+        return ""
+    month = MONTHS[m.group(2).lower()]
+    year = int(m.group(3)) if m.group(3) else int(em.group(3)) if em else 0
+    if not m.group(3) and em and month < MONTHS.get(em.group(2).lower(), month):
+        year += 1  # a December entry answered in January
+    return "%04d-%02d-%02d" % (year, month, int(m.group(1)))
+
+
+def thread_of(body, entry_date):
+    """R-172 (owner, 29 Oct 2026): a question he replied to is a thread. replies = his follow-ups, answered = my
+    answer comes after his last one, last = the day of his last follow-up (for sorting)."""
+    replies = list(re.finditer(r"^\*\*YOUR REPLY \(([^)\n]*)\)", body, re.M))
+    if not replies:
+        return None
+    last = replies[-1]
+    after = body[last.end():].split(chr(10), 1)
+    answered = len(after) > 1 and bool(after[1].strip())  # anything I wrote under his last follow-up
+    return {"replies": len(replies), "answered": answered, "last": day_of(last.group(1), entry_date)}
+
+
 def parse(text):
     """{decisions: [[#, decision, pick]], entries: [{num, title, date, chat, chatUrl, status, kind, body}]}"""
     decisions = []
@@ -139,6 +169,7 @@ def parse(text):
             "read": bool(rm),
             "tasks": tasks,
             "taskDone": td.group(1) if td else "",
+            "thread": thread_of(body, h.group(3).strip()),
             "body": body.strip(),
         })
     backlog, mine, prio = parse_backlog(text), parse_mine(text), parse_priority(text)
@@ -685,13 +716,48 @@ const tasksOf = (e) => e.tasks || [];
 const taskDone = (e) => (e.num in DATA.done ? Boolean(DATA.done[e.num]) : Boolean(e.taskDone));
 const needsTask = (e) => tasksOf(e).length > 0 && !taskDone(e);
 const needsYou = (e) => needsAnswer(e) || needsTask(e);
-const toRead = (e) => !needsYou(e) && !isRead(e);
+// R-173 (owner, 29 Oct 2026): one topic, one place. A backlog row that names "#n" is that question's feature.
+// If the feature waits for him, the question lives under Waiting for you (not in Q&A), and the feature is not shown
+// a second time. Every question card says where its topic stands in the backlog.
+let featMap = null;
+const featsOf = (e) => {
+  if (!featMap) {
+    featMap = {};
+    DATA.backlog.forEach((f, i) => (String(f.details + " " + f.how).match(/#(\d{1,4})\b/g) || []).forEach((m) => {
+      const n = Number(m.slice(1)); (featMap[n] = featMap[n] || []).push({ f, i });
+    }));
+  }
+  return featMap[e.num] || [];
+};
+const topicWait = (e) => !needsYou(e) && featsOf(e).some((x) => x.f.kind === "waiting");
+const inWaiting = (e) => needsYou(e) || topicWait(e);
+const featCovered = (f) => numsIn(f.details + " " + f.how).some((n) => inWaiting(entryOf(n)));
+const backlogChips = (e) => {
+  const xs = featsOf(e);
+  if (!xs.length) return e.kind === "done" ? "" : '<p class="waits">Not in the feature backlog yet: still a discussion.</p>';
+  return '<p class="waits">In the backlog: ' + xs.map(({ f }) => '<a class="chipnum" href="#" data-feat="' + esc(f.id) + '"><b>' + esc(f.status) + "</b>" +
+    esc(f.name.length > 34 ? f.name.slice(0, 32).replace(/\s+\S*$/, "") + "…" : f.name) + "</a>").join("") + "</p>";
+};
+const toRead = (e) => !inWaiting(e) && !isRead(e);
 const inChat = (e) => chat === "all" || e.chat === chat;
 const byNum = (a, b) => b.num - a.num;
+// R-172 (owner, 29 Oct 2026): a question he replied to is a thread. When Claude answers his follow-up it jumps to
+// the top of Questions & answers, tagged with the reply count; threads from the last 3 days stay on top.
+const THREAD_DAYS = 3;
+const threadAnswered = (e) => Boolean(e.thread && e.thread.answered);
+const threadNew = (e) => threadAnswered(e) && !isRead(e);
+const threadWaiting = (e) => Boolean(e.thread && !e.thread.answered) && !sentOf(e);
+const threadRecent = (e) => Boolean(e.thread && e.thread.last) && (Date.now() - Date.parse(e.thread.last + "T00:00:00")) / 864e5 <= THREAD_DAYS;
+const onTop = (e) => threadRecent(e) && (threadAnswered(e) || threadWaiting(e));
+const byThread = (a, b) => (threadNew(b) - threadNew(a)) || (threadWaiting(b) - threadWaiting(a)) || String(b.thread.last).localeCompare(String(a.thread.last)) || byNum(a, b);
+const threadTag = (e) => threadNew(e)
+  ? '<span class="tag act">New answer' + (e.thread.replies > 1 ? " · reply " + e.thread.replies : " to your reply") + "</span>"
+  : threadWaiting(e) ? '<span class="tag new">Claude is answering your reply</span>'
+  : threadRecent(e) && threadAnswered(e) ? '<span class="tag new">Your thread · ' + e.thread.replies + (e.thread.replies > 1 ? " replies" : " reply") + "</span>" : "";
 const entryOf = (n) => DATA.entries.find((x) => x.num === n);
 const maxNum = DATA.entries.reduce((m, e) => Math.max(m, e.num), 0);
 // Features waiting for the owner also show in "Waiting for you" (owner, 18 Oct).
-const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id]);
+const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id] && !featCovered(x.f));
 const inTab = (f, tab) => (tab === "shipped") === SHIPPED.includes(f.kind);
 // R-33 / R-84: Claude's tasks in the order Doing, Blocked (waits for you), To do, Done.
 const taskKind = (t) => { const s = String(t.status).toLowerCase(); return s.startsWith("done") ? "done" : s.startsWith("doing") ? "doing" : s.startsWith("blocked") ? "blocked" : "todo"; };
@@ -719,8 +785,8 @@ function shown(e) {
   if (chat !== "all" && e.chat !== chat) return false;
   // R-108 (owner, 24 Oct): Questions & answers holds only answers; anything that needs him (a pick or a task)
   // lives under "Waiting for you" alone.
-  if (filter === "all") return !needsYou(e);
-  if (filter === "waiting") return needsYou(e);
+  if (filter === "all") return !inWaiting(e);
+  if (filter === "waiting") return inWaiting(e);
   return true;
 }
 
@@ -728,7 +794,9 @@ const plain = (s) => String(s || "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").rep
 // One short line for a folded card: the start of "My answer", or else the first paragraph (the .md's own words).
 function gistOf(e) {
   const lines = e.body.split("\n");
-  let k = lines.findIndex((l) => /^\*\*My answer:\*\*/.test(l));
+  // R-172: a thread shows my newest answer (the one under his last follow-up), not the first.
+  let k = -1;
+  lines.forEach((l, j) => { if (/^\*\*My answer[^*]*:\*\*/.test(l)) k = j; });
   if (k < 0) k = lines.findIndex((l) => l.trim() && !/^\*\*(You asked|Details|DECIDED|YOUR REPLY|BUILT)/.test(l));
   if (k < 0) return "";
   const para = [];
@@ -737,7 +805,7 @@ function gistOf(e) {
     if (j > k && (!l.trim() || /^(\s*[-*] |\*\*|\||>|#)/.test(l))) break;
     para.push(l.trim());
   }
-  const s = plain(para.join(" ")).replace(/^My answer:\s*/, "");
+  const s = plain(para.join(" ")).replace(/^My answer[^:]*:\s*/, "");
   return s.length > 240 ? s.slice(0, 237).replace(/\s+\S*$/, "") + "…" : s;
 }
 // "STEP 1 BUILT, NOT RELEASED (next release)" -> "Step 1 built, not released (next release)"
@@ -802,7 +870,8 @@ function readHtml(e) {
 const pbtn = (id, label) => '<button type="button" class="fbtn" data-act="panel" data-p="fp' + id + '" aria-expanded="false" aria-controls="fp' + id + '">' + label + CHEV + "</button>";
 function card(e) {
   const sent = sentOf(e);
-  const tag = needsAnswer(e) ? '<span class="tag act">To answer</span>' : needsTask(e) ? '<span class="tag act">To do</span>' : !isRead(e) ? '<span class="tag new">New</span>' : "";
+  const tag = needsAnswer(e) ? '<span class="tag act">To answer</span>' : needsTask(e) ? '<span class="tag act">To do</span>'
+    : threadTag(e) || (!isRead(e) ? '<span class="tag new">New</span>' : "");
   const pill = sent ? '<span class="status k-done">' + (e.decides.length ? "Answer sent" : "Reply sent") + "</span>"
     : needsYou(e) ? "" : '<span class="status k-' + e.kind + '">' + KIND[e.kind] + "</span>";
   const showStatus = e.status && norm(e.status) !== norm(KIND[e.kind]) && !["answered", "done", "waitingforyou"].includes(norm(e.status));
@@ -813,7 +882,7 @@ function card(e) {
     '<p class="meta">' + tag + pill + (needsYou(e) ? priHtml(e.prio) : "") + "<span>" + esc(e.date) + "</span>" +
     (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(chatLabel(e.chat)) + "</a>" : "<span>" + esc(chatLabel(e.chat)) + "</span>") + "</p>" +
     (showStatus ? '<p class="statusline">' + esc(softCaps(e.status)) + "</p>" : "") +
-    (gist ? '<p class="gist">' + esc(gist) + "</p>" : "") + "</div></div>" +
+    backlogChips(e) + (gist ? '<p class="gist">' + esc(gist) + "</p>" : "") + "</div></div>" +
     '<div class="cb">' + (fold ? "" : act) +
     '<div class="fbar">' + (fold ? pbtn("act" + e.num, needsAnswer(e) ? "Answer it" : "Your task" + (tasksOf(e).length > 1 ? "s" : "")) : "") + pbtn("full" + e.num, e.decides.length ? "The full question and my answer" : tasksOf(e).length ? "Why" : "Read the full answer") +
     (e.decides.length || sent ? "" : pbtn("reply" + e.num, "Reply")) + readHtml(e) + "</div>" +
@@ -931,18 +1000,23 @@ function homeHtml() {
 }
 function waitingHtml() {
   const list = DATA.entries.filter(shown).sort(byNum);
-  const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter((e) => !needsAnswer(e)).sort(byPrio((e) => e.prio, byNum));
+  const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter(needsTask).sort(byPrio((e) => e.prio, byNum));
+  const tops = list.filter(topicWait).sort(byNum);
   const feats = waitingFeats().sort(byPrio((x) => x.f.prio, (a, b) => a.i - b.i));
   // Done (folded below): decisions already answered, tasks done, feature yes/no's sent.
-  const doneList = DATA.entries.filter(inChat).filter((e) => (e.decides.length > 0 && Boolean(sentOf(e))) || (tasksOf(e).length > 0 && taskDone(e))).sort(byNum);
+  // R-173: answered questions and done tasks live in Q&A only (one topic, one place); here only feature replies just sent.
+  const doneList = [];
   const sentFeats = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && DATA.notes[x.f.id]);
   let out = '<div class="tabhead"><h2>Waiting for you</h2></div>' +
     '<p class="hint">A question: tap an answer, then Send. A task: do it, then tap “I have done it”. Or tell me in chat, for example “49: A”.</p>' + sortHtml();
-  if (!qs.length && !ts.length && !feats.length) out += '<div style="margin-top:14px">' + empty("Nothing waits for you.", "When I need a decision or a step from you, it shows up here first.") + "</div>";
+  if (!qs.length && !ts.length && !tops.length && !feats.length) out += '<div style="margin-top:14px">' + empty("Nothing waits for you.", "When I need a decision or a step from you, it shows up here first.") + "</div>";
   // R-83: the open questions by number first (tap = jump), then the questions, the tasks, the features.
   if (qs.length) out += '<nav class="qindex" aria-label="Questions for you">' + rows(qs.map((e) => rowEntry(e))) + "</nav>" +
     '<h3 class="grp" id="sec-q">Questions for you <span class="cnt">' + qs.length + '</span></h3><div class="stack">' + qs.map(card).join("") + "</div>";
   if (ts.length) out += '<h3 class="grp" id="sec-t">Tasks for you <span class="cnt">' + ts.length + '</span></h3><div class="stack">' + ts.map(card).join("") + "</div>";
+  if (tops.length) out += '<h3 class="grp" id="sec-w">Topics waiting for you <span class="cnt">' + tops.length + "</span></h3>" +
+    '<p class="hint" style="margin:-4px 0 10px">We discussed these; the feature now needs your yes, money or a step. Tap the backlog chip to answer there.</p>' +
+    '<div class="stack">' + tops.map(card).join("") + "</div>";
   if (feats.length) out += '<h3 class="grp" id="sec-f">Features waiting for you <span class="cnt">' + feats.length + "</span></h3>" +
     '<p class="hint" style="margin:-4px 0 10px">Each needs you: an answer, a yes, a purchase or a setup step. Open “Comment” and tell me, for example “Yes, go ahead” or “Not now”.</p>' +
     feats.map(({ f, i }) => featHtml(f, i)).join("");
@@ -954,13 +1028,16 @@ function qaHtml() {
   // R-96: open questions and tasks first, in the Sort order; then new answers; then the rest by number.
   const sorted = DATA.entries.filter(shown).sort(byPrio((e) => (needsYou(e) ? e.prio : null), (a, b) => (toRead(b) - toRead(a)) || byNum(a, b)));
   const isDone = (e) => isRead(e) && !needsYou(e);
-  const list = sorted.filter((e) => !isDone(e)), doneList = sorted.filter(isDone);
-  const fresh = list.filter(toRead);
+  const top = sorted.filter(onTop).sort(byThread), rest = sorted.filter((e) => !onTop(e));
+  const list = rest.filter((e) => !isDone(e)), doneList = rest.filter(isDone);
+  const fresh = sorted.filter(toRead);
+  const topHtml = top.length ? '<h3 class="grp">Your follow-ups <span class="cnt">' + top.length + "</span></h3>" +
+    '<div class="stack">' + top.map(card).join("") + "</div>" + '<h3 class="grp">Other answers</h3>' : "";
   return '<div class="tabhead"><h2>Questions &amp; answers</h2>' +
     (fresh.length > 1 ? '<button class="btn ghost" data-act="readall">Mark all ' + fresh.length + " as read</button>" : "") + "</div>" +
     '<span class="msg" id="rallmsg" role="status"></span>' +
-    '<p class="hint">' + "Answers to your questions, new ones first, marked “New”. Anything you need to pick or do is under Waiting for you." +
-    " Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>" + sortHtml() +
+    '<p class="hint">' + "Questions you replied to sit on top; “New answer” means I answered your follow-up. Then other answers, new ones first. Anything you need to pick or do is under Waiting for you." +
+    " Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>" + sortHtml() + topHtml +
     '<div class="stack" style="margin-top:14px">' + (list.length ? list.map(card).join("") : empty("Nothing new: everything is read.", "Read answers are folded below.")) + "</div>" +
     doneBox("all", "Already read (" + doneList.length + ")", doneList.map(card).join(""));
 }
@@ -1097,7 +1174,7 @@ function enhance(root) {
 }
 function renderTabs() {
   const ent = DATA.entries.filter(inChat);
-  const wait = ent.filter(needsYou).length, fresh = ent.filter(toRead).length;
+  const wait = ent.filter(inWaiting).length + waitingFeats().length, fresh = ent.filter(toRead).length;
   const toBuild = DATA.backlog.filter((f) => !SHIPPED.includes(f.kind)).length;
   const open = mineAll().filter((x) => x.k !== "done").length;
   const set = (f, n, hot, label) => {
@@ -1107,7 +1184,7 @@ function renderTabs() {
     b.setAttribute("aria-label", label);
   };
   set("waiting", wait, wait > 0, "Waiting for you: " + wait + " questions and tasks");
-  const qa = ent.filter((e) => !needsYou(e)).length;
+  const qa = ent.filter((e) => !inWaiting(e)).length;
   set("all", fresh || qa, fresh > 0, "Questions and answers: " + (fresh ? fresh + " new" : qa + " in all"));
   set("backlog", toBuild, false, "Feature backlog: " + toBuild + " not built yet");
   set("mine", open, false, "Claude's tasks: " + open + " open");
@@ -1246,7 +1323,7 @@ function goTo(n) {
   msg.textContent = "";
   clearQuery();
   chat = "all"; $("chat").value = "all"; syncRename();
-  filter = needsYou(e) ? "waiting" : "all"; blKind = null; keepTab();
+  filter = inWaiting(e) ? "waiting" : "all"; blKind = null; keepTab();
   render();
   // In Waiting, the card (not its line in the index at the top).
   const el = document.querySelector("article#e" + n);

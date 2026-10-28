@@ -5,6 +5,21 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-173. One topic, one place: Q&A vs Waiting for you; every question shows its backlog status — 29 Oct 2026
+**He said:** "I want to know whether the topic I am discussing ... is already part of the feature backlog as planned, or waiting for
+me. Anything waiting for me ... only in Waiting for Me. Any topic still in discussion ... in Q&A. A single topic must not appear in both."
+**Done (scripts/owner_inbox_page.py):** a backlog row naming "#n" is entry n's feature. Each Q&A card shows "In the backlog: <status>
+<feature>" chips (tap = jump) or "Not in the feature backlog yet: still a discussion". An entry whose feature waits for him moves to
+Waiting ("Topics waiting for you"), out of Q&A; a waiting feature already covered by a waiting entry is not listed again; the
+"Answered and done" fold no longer repeats Q&A entries. Checked headless: 52 in Q&A, 6 in Waiting, 0 in both.
+
+## R-172. Follow-up threads on top of Q&A, tagged — 29 Oct 2026
+**He said:** keep questions at the top when he replied and Claude answered; a follow-up answered again sits on top with a tag
+showing another answer on the same thread; "there must be a system around this".
+**Done:** parser reads YOUR REPLY lines per entry (thread: replies, answered, last day). Q&A gets "Your follow-ups" on top
+(his reply within 3 days): "New answer · reply N" (unread), "Claude is answering your reply" (no answer yet), "Your thread"
+(read). The card preview shows my newest answer. Rule written into CLAUDE.md.
+
 ## R-171. His tracker replies, 29 Oct: #68, #45, #39, #37 — 29 Oct 2026
 **He said:** #68 suggest members move routines to quieter days, lenient on dumbbells/multi-unit equipment, best for small gyms; #45 cancel
 count-reps-by-listening; #39 "build the feedback loop now, what are we waiting for?"; #37 contact@mettleup.fit done? why still here?
