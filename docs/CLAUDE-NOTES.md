@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-177. "yes, apply 0039 and 0040 live in Supabase and add their privacy lines" — 29 Oct 2026
+**He said (exact):** "yes, apply 0039 and 0040 live in Supabase and add their privacy lines" (tracker #67).
+**Doing:** apply 0039 (how busy the gym is) and 0040 (gym-mate profiles) on the live Supabase project, run their live tests, put the
+approved privacy lines (EN + HI) into the notice and the public pages.
+
 ## R-176. Rate features (Convenience, Value) to find the selling point and marketing hooks — 29 Oct 2026
 **He said:** a module in Waiting for you listing the features we build for the gym owner (big value) and a separate section for member
 features; he rates each on Convenience and Value; this finds the top 5 for marketing; "we need to know the USP, the top 3-5 features
