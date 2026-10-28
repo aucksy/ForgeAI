@@ -104,6 +104,8 @@ export const FIELDS_LEFT_OUT: Readonly<Record<string, Readonly<Record<string, st
     healthLast: 'when this phone last sent to Health Connect',
     showNameOnBoard: 'a privacy choice made per gym; asked again after a restore',
     boardNamePending: 'bookkeeping: the gym has not been told the name switch yet (this phone only)',
+    shareWorkoutsWithGym: 'a privacy choice made per gym (R-164); asked again after a restore',
+    mateSharePending: 'bookkeeping: the gym has not been told the share switch yet (this phone only)',
   },
   'forgeai-muscle-tips': {
     snoozedUntil: 'a tip snoozed for a few days',

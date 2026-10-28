@@ -16,6 +16,7 @@ import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { gymHoursFromRow } from './gymTimings';
 import { boardFromRow, type Board, type BoardDay } from './leaderboard';
+import { mateBoardFrom, mateProfileFrom, type MateBoard, type MateProfile, type MateShare } from './mateProfile';
 import type { GymHours } from '@forgeai/theme';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
@@ -34,7 +35,7 @@ const WRITE_MS = 30000;
  */
 const NO_SUCH_FUNCTION = 'PGRST202';
 
-type CallResult = GymResult<unknown> & { noSuchFunction?: boolean };
+type CallResult = GymResult<unknown> & { noSuchFunction?: boolean; message?: string };
 
 async function call(fn: string, args: Record<string, unknown>, timeoutMs: number): Promise<CallResult> {
   const ac = new AbortController();
@@ -43,7 +44,8 @@ async function call(fn: string, args: Record<string, unknown>, timeoutMs: number
     const res = await getSupabase().rpc(fn, args).abortSignal(ac.signal);
     if (res.error) {
       const noSuchFunction = (res.error as { code?: unknown }).code === NO_SUCH_FUNCTION;
-      return { ok: false, error: classifyRpcError(res.error, res.status), ...(noSuchFunction ? { noSuchFunction } : {}) };
+      const message = (res.error as { message?: unknown }).message;
+      return { ok: false, error: classifyRpcError(res.error, res.status), ...(noSuchFunction ? { noSuchFunction } : {}), ...(typeof message === 'string' ? { message } : {}) };
     }
     return { ok: true, data: res.data };
   } catch (e) {
@@ -226,6 +228,45 @@ export async function apiBoardPush(key: string, days: readonly BoardDay[], showN
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const data = Array.isArray(r.data) ? r.data[0] : r.data;
   return (data as { ok?: unknown } | null)?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ gym mate profiles (0040, R-164)
+
+export type MateCall<T> = { ok: true; data: T } | { ok: false; missing: true } | { ok: false; notShared: true } | { ok: false; error: GymError };
+
+/** Share this member's bio and recent workouts (member_mate_share). `missing`: 0040 is not live yet. */
+export async function apiMateShare(key: string, share: MateShare): Promise<MateCall<true>> {
+  const r = await call('member_mate_share', { p_key: key, p_profile: share }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = Array.isArray(r.data) ? r.data[0] : r.data;
+  return (data as { ok?: unknown } | null)?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Delete everything this member shared (member_mate_stop). */
+export async function apiMateStop(key: string): Promise<MateCall<true>> {
+  const r = await call('member_mate_stop', { p_key: key }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  return { ok: true, data: true };
+}
+
+/** Which leaderboard rows open a profile (member_mate_board). */
+export async function apiMateBoard(key: string): Promise<MateCall<MateBoard>> {
+  const r = await call('member_mate_board', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = mateBoardFrom(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/** A gym mate's shared profile (member_mate_profile). `notShared`: they stopped sharing, hid their name, or left. */
+export async function apiMateProfile(key: string, profile: string): Promise<MateCall<MateProfile>> {
+  const r = await call('member_mate_profile', { p_key: key, p_profile: profile }, READ_MS);
+  if (!r.ok) {
+    if (r.noSuchFunction) return { ok: false, missing: true };
+    if (r.message?.trim() === 'NOT_SHARED') return { ok: false, notShared: true };
+    return { ok: false, error: r.error };
+  }
+  const answer = mateProfileFrom(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 
 // ------------------------------------------------------------------ the workout offer (0025)

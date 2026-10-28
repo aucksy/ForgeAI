@@ -44,6 +44,8 @@ declare
     'member_board_push','member_board','owner_challenges','owner_save_challenge','owner_cancel_challenge','owner_board','owner_hide_on_board',
     -- 0038: this phone's push address for the gym's pop-ups (each checks a member key and acts on that member only).
     'member_save_push_token','member_clear_push_token',
+    -- 0040: a gym mate's profile (each checks a member key; sharing acts on that member only, reading only a same-gym mate who shares).
+    'member_mate_share','member_mate_stop','member_mate_board','member_mate_profile',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

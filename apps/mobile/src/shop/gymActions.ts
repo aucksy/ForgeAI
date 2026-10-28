@@ -89,6 +89,9 @@ function syncGymRemindersQuietly(): void {
 function forgetBoardChoice(): void {
   usePhonePrefs.getState().setShowNameOnBoard(false);
   usePhonePrefs.getState().setBoardNamePending(false);
+  // R-164: the gym deletes what was shared when the member leaves (0040's trigger); the next gym starts off.
+  usePhonePrefs.getState().setShareWorkoutsWithGym(false);
+  usePhonePrefs.getState().setMateSharePending(false);
 }
 
 function lostKey(err: GymError): boolean {

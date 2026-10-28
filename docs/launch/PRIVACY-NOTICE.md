@@ -18,6 +18,24 @@ live (the apps show the leaderboard only then).
 Updated 28 Oct 2026 (R-162, owner approved "yes to all"): a push address per phone so the gym's messages and offers
 pop up; Firebase Cloud Messaging named under "Where it is kept". In force when server change 0038 is live.
 
+<!-- PROPOSAL -->
+> **PROPOSAL, PENDING OWNER APPROVAL (R-164, 28 Oct 2026). Not part of the notice yet; do not publish.**
+> Gym mate profiles ("Let my gym mates see my workouts", off by default; server change 0040, not live).
+> On his yes: add the bullet under "Who is responsible for what" (after the leaderboard bullet) and the row
+> to the table under "What we keep on our server", then rebuild the public pages (scripts/legal_pages.py).
+>
+> Bullet:
+> - **Only if you switch on "Let my gym mates see my workouts"** (Settings → Your gym → What my gym can see;
+>   it is off unless you turn it on), the app sends your bio and a short summary of each of your workouts from
+>   the last 60 days (at most 30): its name, date, how long it took, kg lifted, and the best set of up to 8
+>   exercises. Never your sets, body weight, photos, notes or mobile number. Members of your gym can open it
+>   from the leaderboard, only while your name shows there and your gym has not hidden you. Nobody outside your
+>   gym can see it, and your gym's staff have no screen for it. MettleUp keeps it for you, not for your gym.
+>
+> Table row:
+> | Workouts you share with gym mates (only if you switch it on): your bio, and for each workout its name, date, length, kg lifted and up to 8 exercises with their best set | So members of your gym can see your workouts from the leaderboard | Each workout is deleted after 60 days (at most 30 are kept). Everything is deleted at once when you switch it off or leave the gym |
+<!-- /PROPOSAL -->
+
 ---
 
 ## MettleUp privacy notice

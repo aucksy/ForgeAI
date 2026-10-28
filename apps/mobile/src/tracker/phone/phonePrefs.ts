@@ -53,6 +53,15 @@ export interface PhonePrefsState {
    */
   boardNamePending: boolean;
   setBoardNamePending: (on: boolean) => void;
+  /**
+   * R-164: "Let my gym mates see my workouts" (Settings → Your gym → What my gym can see). Off by
+   * default; off deletes what was shared (shop/mateShare.ts).
+   */
+  shareWorkoutsWithGym: boolean;
+  setShareWorkoutsWithGym: (on: boolean) => void;
+  /** R-164: the share switch changed and the gym has not heard yet (offline); sent again with no wait. */
+  mateSharePending: boolean;
+  setMateSharePending: (on: boolean) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
@@ -90,6 +99,10 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setShowNameOnBoard: (showNameOnBoard) => set({ showNameOnBoard }),
       boardNamePending: false,
       setBoardNamePending: (boardNamePending) => set({ boardNamePending }),
+      shareWorkoutsWithGym: false,
+      setShareWorkoutsWithGym: (shareWorkoutsWithGym) => set({ shareWorkoutsWithGym }),
+      mateSharePending: false,
+      setMateSharePending: (mateSharePending) => set({ mateSharePending }),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
@@ -107,6 +120,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           gymMessagesOn: true,
           showNameOnBoard: false,
           boardNamePending: false,
+          shareWorkoutsWithGym: false,
+          mateSharePending: false,
         }),
     }),
     {
