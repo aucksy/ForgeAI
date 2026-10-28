@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-151. FIX NEEDED: a notice sent from the admin panel never pops up on the member's phone — 28 Oct 2026
+**Owner said (notes only):** when the gym sends a notification from the admin panel, the member app shows no
+pop-up / phone alert. The notice does arrive: the bell in the gym section shows "1 new notification" and tapping it
+lists the notice. Only the pop-up (phone alert) is missing.
+**To check later (code not looked at):** is a real push (FCM) sent at all, or does the app only read the notice list
+when opened; are the member's phone alert permission and the notification channel set; does it fail when the app is
+closed vs open; does the member need to be signed in to the gym for it. Must work before testers start (R-149).
+Test it end to end: send from admin, check on a real phone with the app open, in the background and closed.
+
 ## R-150. Plan (draft): analytics for the admin panel — 27 Oct 2026
 **Owner said (notes only):** plan a feature for analytics in the admin panel. He gave no list yet, so this is my
 first draft from what a gym owner needs; he adds or cuts. Not in the backlog; nothing built; code not checked.
