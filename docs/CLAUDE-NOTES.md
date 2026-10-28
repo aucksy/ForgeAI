@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-180. #32 reply: tax without GST, business not freelance — 29 Oct 2026
+**He said:** see #32 YOUR REPLY (29 Oct). **Answered (general info, CA to confirm):** GST and income tax separate; business/profession
+head; sole proprietorship + current account + Udyam; presumptive 6% scheme (old 44AD, renumbered in the new Act from Apr 2026),
+ITR-4, up to ~Rs 3 crore digital receipts, 5-year lock-out if he leaves it; GST near Rs 20 lakh; company later. Suggested a CA call.
+
 ## R-179. #43 reply: free forever vs trial; link members to the gym by email — 29 Oct 2026
 **He said:** see #43 YOUR REPLY (29 Oct). **Answered:** basic log free for all (cheap: ~330 KB/member), extras on a dated
 no-card trial, early users get a founding bonus not a different deal, gym members get extras via the gym. Email match: ask-first

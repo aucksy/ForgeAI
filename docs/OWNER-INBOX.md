@@ -992,6 +992,7 @@ Buy the .com and .in the day you pick: 12 names checked were registered by someo
 ## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** PLANNED
+**READ (29 Oct, 01:00 am, via the page)**
 **You asked (17 Oct, #11):** "log in with Google etc., with 'join via your gym membership' right below;
 the app must also work with no gym." You chose: research it properly first, then come back with options.
 **My answer:** Google sign-in is free and the app already has the Google sign-in part (used by Drive
@@ -1144,6 +1145,7 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:02 am, via the page)**
 **Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
 **Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
 **Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
@@ -1176,6 +1178,7 @@ Contact: contact@mettleup.fit, shown with your name Aakash Pahuja as Grievance O
 ## 35. Launch task: open the Google Play developer account ($25 once) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:02 am, via the page)**
 **TASK DONE (24 Oct, 04:55 pm, via the page)**
 **Your task:** After you answer #28: go to https://play.google.com/console/signup and make the account type you picked. It needs your government ID, a card in your name and an Android phone. Pay the $25 once.
 **Your task:** Tell Claude "Play account ready". Claude then prepares the store listing, the data safety answers and the internal test for you to submit.
@@ -1201,6 +1204,7 @@ the Play account exists (SimpleApps108, a personal account). Claude prepares the
 ## 33. Launch decision: your support hours during the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:02 am, via the page)**
 **Why it matters:** this promise goes into the pilot agreement (#38). A desk that cannot take a payment and gets no answer is the most common reason a gym gives up on new software. Claude watches the alerts all day; you are the human the gym talks to.
 **DECIDED (24 Oct 2026):** B, changed by your note: no fixed hours. The trial terms say "We reply as soon as we can."
 **YOUR REPLY (24 Oct):** No fixed time; say "as soon as possible". Research and set up the automated support and fixes system. Let me undo a pick in the tracker.
@@ -1211,6 +1215,16 @@ the Play account exists (SimpleApps108, a personal account). Claude prepares the
 **Status:** DONE
 **Why it matters:** it changes the price the gym pays by 18%. Check with your accountant before the second or third gym. The gym's own receipts already use 5% GST and number by financial year.
 **DECIDED (24 Oct 2026):** A: not now. ForgeAI registers for GST once yearly sales near ₹20 lakh.
+**YOUR REPLY (29 Oct):** how does tax work without GST? I do not want it counted as freelance income; it should be business taxation. What is the procedure?
+**My answer (29 Oct):** This is general information, not tax advice; a CA should confirm it before you file.
+- **GST and income tax are separate.** No GST number only means you do not add 18% GST to your price. Your income tax works the same either way.
+- **"Freelance" and "business" are taxed under the same head:** income from business or profession. Selling MettleUp to gyms is a business: you sell a product to many customers. It is not salary.
+- **The simplest route, a sole proprietorship:** you run MettleUp in your own name, with no company needed. Open a separate current bank account in the business name and take an Udyam (MSME) registration (free, online), so payments are clearly business income.
+- **The easy tax scheme for small businesses:** the government treats 6% of what gyms pay you (paid by bank or UPI) as your profit, and you pay normal tax only on that. It works for yearly sales up to about ₹3 crore, filed with the simple ITR-4 form. It was section 44AD; the new Income-tax Act from April 2026 renumbered it. One catch: if you leave the scheme, you cannot come back to it for 5 years.
+- **GST later:** register once yearly sales near ₹20 lakh, as decided in #32. Some gyms may want a GST bill earlier.
+- **Later, a company** (an LLP or a private limited company) when you take investors or partners, or when profits grow large. A CA can tell you when it starts to save money.
+**Next step:** a 30-minute call with a CA in Jaipur to confirm (1) the 6% scheme fits a software business, (2) the account and Udyam setup. About ₹1,000 to ₹2,000.
+Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44ada/ , https://www.taxaj.com/learn/section-44ad-presumptive-taxation-fy-2026-27-turnover-limit-and-opt-ou/
 
 ## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
