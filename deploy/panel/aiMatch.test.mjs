@@ -365,7 +365,6 @@ test('Gemini fails (error, timeout, bad JSON, cut short) -> Claude, with a log l
   const cols = checkRequest({ columns: COLUMNS }).value.columns;
   for (const gemini of [
     () => json(404, { error: { message: 'model not found' } }),
-    () => 'hang',
     () => json(200, { candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'not json' }] } }] }),
     () => json(200, { candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: '{"columns":[' }] } }] }),
     () => json(200, { candidates: [{ finishReason: 'STOP', content: { parts: [{ text: '{"cols":[]}' }] } }] }),
@@ -463,6 +462,17 @@ test('R-162: busy Gemini (429 / 5xx) is asked again after a pause, then the back
   const r3 = await runChain(bothKeys(), cols, { fetchImpl: busy.fetchImpl, pauseMs: 0, log: quiet });
   assert.equal(r3.provider, 'claude');
   assert.deepEqual(busy.calls.filter((c) => c.who === 'gemini').map(model), [GEMINI_MODEL, GEMINI_MODEL, ...GEMINI_BACKUP_MODELS]);
+  // A model that does not answer in time: the next model, not the same one again.
+  let h = 0;
+  const hang = fakeNet({ gemini: () => (++h === 1 ? 'hang' : geminiOk()) });
+  const r4 = await runChain(bothKeys(), cols, { fetchImpl: hang.fetchImpl, timeoutMs: 50, pauseMs: 0, log: quiet });
+  assert.equal(r4.provider, 'gemini');
+  assert.deepEqual(hang.calls.map(model), [GEMINI_MODEL, GEMINI_BACKUP_MODELS[0]]);
+  // Every model hangs: Claude, within the time budget.
+  const allHang = fakeNet({ gemini: () => 'hang' });
+  const r5 = await runChain(bothKeys(), cols, { fetchImpl: allHang.fetchImpl, timeoutMs: 50, pauseMs: 0, log: quiet });
+  assert.equal(r5.provider, 'claude');
+  assert.ok(allHang.calls.filter((c) => c.who === 'gemini').length <= 3);
   // A model set by the Worker variable that is also a backup is not asked twice as a backup.
   const set = fakeNet({ gemini: () => json(503, {}) });
   await runChain({ ...bothKeys(), GEMINI_MODEL: GEMINI_BACKUP_MODELS[0] }, cols, { fetchImpl: set.fetchImpl, pauseMs: 0, log: quiet });

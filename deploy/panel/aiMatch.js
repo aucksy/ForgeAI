@@ -476,6 +476,11 @@ function geminiBody(columns, level) {
  */
 export const GEMINI_BACKUP_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
 export const GEMINI_RETRY_PAUSE_MS = 1500;
+/**
+ * All Gemini asks together stop after this long (the admin app waits 45 s for the whole answer). A
+ * model that does not answer in time (seen 28 Oct: 3.5 Flash-Lite once hung) moves on to the next one.
+ */
+export const GEMINI_BUDGET_MS = 32_000;
 
 /** 429 or 5xx: Google is busy, not refusing this request. PURE. */
 export function geminiBusy(status) {
@@ -488,16 +493,24 @@ async function askGemini(env, columns, fetchImpl, timeoutMs, log = console.warn,
   const first = typeof env.GEMINI_MODEL === 'string' && env.GEMINI_MODEL ? env.GEMINI_MODEL : GEMINI_MODEL;
   // [model, tries]: the first model twice (one pause between), each backup once.
   const plan = [[first, 2], ...GEMINI_BACKUP_MODELS.filter((m) => m !== first).map((m) => [m, 1])];
+  const budget = Math.max(timeoutMs, Math.min(GEMINI_BUDGET_MS, 4 * timeoutMs));
+  const deadline = Date.now() + budget;
   let last;
   for (const [model, tries] of plan) {
     for (let t = 1; t <= tries; t++) {
+      const left = deadline - Date.now();
+      if (left < Math.min(3000, timeoutMs)) throw last ?? new Error('no time left');
       try {
-        return await askGeminiModel(env, model, columns, fetchImpl, timeoutMs, log);
+        return await askGeminiModel(env, model, columns, fetchImpl, Math.min(timeoutMs, left), log);
       } catch (e) {
-        if (!(e instanceof GeminiBusy)) throw e; // a timeout, a refusal, a bad answer: Claude next
+        const timedOut = e?.name === 'TimeoutError' || e?.name === 'AbortError';
+        // A refusal, a bad answer, a network error: Claude next (another Gemini model would not help).
+        if (!(e instanceof GeminiBusy) && !timedOut) throw e;
         last = e;
-        log(`[ai-match] gemini ${model} busy (${e.message.slice(0, 40)}), ${t < tries ? 'asking again' : 'trying the next model'}`);
-        if (t < tries && pauseMs > 0) await new Promise((r) => setTimeout(r, pauseMs));
+        const again = t < tries && !timedOut;
+        log(`[ai-match] gemini ${model} ${timedOut ? 'did not answer in time' : `busy (${e.message.slice(0, 40)})`}, ${again ? 'asking again' : 'trying the next model'}`);
+        if (!again) break;
+        if (pauseMs > 0) await new Promise((r) => setTimeout(r, pauseMs));
       }
     }
   }
