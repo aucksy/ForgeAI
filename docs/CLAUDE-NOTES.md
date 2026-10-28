@@ -23,7 +23,8 @@ after each saved workout and on start (6-hour wait); off = deleted at once (kept
 a read-only profile (initials, name, bio, Profile-feed-style workout cards with best sets) only when the server says so.
 **No photo:** the server has no member-photo store (only product photos and gym logos), so profiles show initials. Privacy
 lines EN + HI drafted as a PROPOSAL in the notices (hidden from the public pages by scripts/legal_pages.py) for his yes.
-Research: docs/research/R-gym-mate-profiles.md.
+Research: docs/research/R-gym-mate-profiles.md. **Measured in CI:** a workout row 630 bytes typical, 1,362 worst
+(limit 2 KB) -> ~23 KB per sharing member with indexes (worst ~45 KB); 500 sharing members ~11 MB (worst ~22 MB) of 500 MB.
 
 ## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
 **He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
