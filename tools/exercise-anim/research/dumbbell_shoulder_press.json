@@ -11,7 +11,7 @@
       "side_delts",
       "triceps"
     ],
-    "status": "draft",
+    "status": "clip-matches",
     "version": 7,
     "researched_on": "2026-10-29",
     "one_line_summary": "Sitting tall against a near-upright back pad, press two dumbbells from ear height straight up until the arms are almost straight over the shoulders, then lower them slowly. Front shoulder leads; side shoulder and triceps help.",
@@ -762,7 +762,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "primary muscle is the strongest red in the bottom, middle and top frames",
       "target": "front shoulder reads as the deepest red in all three",
-      "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade",
+      "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade; confirmed on the v7 sheet (8 frames); loop seam 0.05, seamless",
       "pass": "yes",
       "tool": "rendered frames"
     }
