@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
+**He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
+feedback button, finish-screen kg hero, kg lifted on exercise History, body-weight moves count everywhere, how busy the gym
+is now, What's new in the admin app, crash and outage alerts, test server.
+**Done:** 13 backlog rows + #66 (Firebase limits answer) added; page v172.
+**My calls (#18):** body-weight rule = PREVIOUS and the goal only (not leaderboard/muscle sets); feature work waits for the
+0.59.0 tag before landing on main (helpers in their own worktrees).
+
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
 **He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret
 without anyone seeing or typing it; approve the push privacy line EN + HI).
