@@ -9,6 +9,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 **He said:** (1) OpenCode told him Firebase must be made with his PERSONAL email, not simpleapps108. (2) "for excel import,
 ask AI did not work. I do not want manual ask AI button. It should just use AI to identify the values and match with right
 fields automatically."
+**Checked 28 Oct (his Chrome):** the R-153 line is WRONG. forgeai-d7eea (the Google sign-in clients) is NOT on his personal
+account pahuja.aakash108@gmail.com ("You need additional access"); it is on simpleapps108. The personal account's Firebase
+list shows only a "ForgeAI" Gemini key project (gen-lang-client-0724637472). Stopped before accepting Firebase terms; asked him:
+A) Firebase in a NEW project on the personal account (FCM only; sign-in stays on simpleapps108), or B) add Firebase to
+forgeai-d7eea on simpleapps108 (all in one place).
 **Plan:** (1) matches R-153: add Firebase to forgeai-d7eea (his personal account), in his personal Chrome profile. (2) R-155
 grows: the import sends the headers + a few sample values per column to the AI on every import, by itself; the AI picks
 the field for each column from the VALUES (e.g. the column with 10-digit mobiles = phone); the owner only sees the result
