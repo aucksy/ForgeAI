@@ -15,6 +15,7 @@ import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { gymHoursFromRow } from './gymTimings';
+import { busyFromRow, type GymBusy } from './gymBusy';
 import { boardFromRow, type Board, type BoardDay } from './leaderboard';
 import type { GymHours } from '@forgeai/theme';
 import { membershipFromRow, type MembershipAnswer } from './membership';
@@ -215,6 +216,16 @@ export async function apiBoard(key: string): Promise<GymResult<Board> | { ok: fa
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = boardFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * How busy the gym is now and at each hour (member_gym_busy, 0039, R-163). data null: the gym has too
+ * few check-ins yet (or the answer is not one): no card. `missing`: the server has not had 0039 yet.
+ */
+export async function apiGymBusy(key: string): Promise<GymResult<GymBusy | null> | { ok: false; missing: true }> {
+  const r = await call('member_gym_busy', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  return { ok: true, data: busyFromRow(r.data) };
 }
 
 /**
