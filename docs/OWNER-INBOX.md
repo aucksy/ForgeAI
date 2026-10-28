@@ -1234,11 +1234,26 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** RESEARCHING (29 Oct)
+**Status:** WAITING FOR YOU
 **DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 **YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."
 **My answer (29 Oct):** Started. A helper is researching the Jaipur gym software market (GGMS and others, one-time vs monthly, what owners pay for). It will design 3 plans, plus a "buy once + yearly upkeep" option and a launch offer. The full plan comes back here with sources, for your pick. It also answers your #4 points: the GGMS-style one-time price, and getting your ₹12,000 a month back.
+**My answer (29 Oct, research done):** Full plan with every source: https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-pricing-jaipur.md
+Prices are per branch. A yearly plan costs the same as 10 months.
+- **Starter: ₹999 a month or ₹9,990 a year.** The whole desk: members, plans, dues, GST receipts, QR and desk check-in, offline desk, expiry and "stopped coming" lists, one-tap WhatsApp, free messages to members' phones, the free member app, and the AI import. For gyms with 50-200 members.
+- **Pro: ₹1,499 a month or ₹14,990 a year (the plan to push; today ₹1,999).** Starter plus the gym's own logo and colours in the app, the shop, challenges and leaderboard, workout offers, and trainer plans, diet plans and measurements. Coming later: analytics, bring-a-friend, paying in the app, the entry gate.
+- **Pro + AI: ₹2,499 a month or ₹24,990 a year.** Shown on the website so Pro looks good value. Sold only once the AI parts are built.
+- **"Own it": ₹19,990 once, then ₹4,990 a year from year 2.** The GGMS shape, offered on the phone only, so it does not take buyers away from Pro yearly.
+- **Founding gyms: ₹29,999 once, Pro for life,** for the first 25 gyms only, until 31 Mar 2027.
+- **Extra branches** at half price. **Switching from GGMS:** we move their records free, set up the desk in person, and they pay nothing until their GGMS year ends (up to 6 months).
+- **Your costs back:** about 10 gyms on Pro, or 5 founding gyms (₹1.5 lakh up front, about 10 months of costs).
+**Why it works:** Pro yearly (₹14,990) matches the GGMS app plan (₹14,999) with far more inside. Free messages to phones save a gym about ₹1,000 a month in WhatsApp costs. Pro costs only ₹500 more than Starter, so most owners pick it.
+**Risks:** we cannot yet connect fingerprint or face entry machines, and GGMS can. Today every gym gets every feature, so splitting the plans needs a small build. A few prices could not be checked directly; the file marks which ones.
+**Decide:** Which prices go on the website and into the sales talk?
+- A: The plan above: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999 (recommended)
+- B: Keep today's prices (Pro ₹1,999, AI ₹2,999) and only add the GGMS switching offer
+- C: Wait until the first client gym's trial ends, then decide with real usage
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
 **Chat:** ForgeAI Local Chat

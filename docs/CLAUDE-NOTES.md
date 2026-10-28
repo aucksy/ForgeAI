@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-183. #30 pricing plan for Jaipur: research done, his pick — 29 Oct 2026
+**Done:** docs/overhaul/research/R-pricing-jaipur.md (b237a75). #30 answer + Decide A (Starter 999 / Pro 1,499 / Pro+AI 2,499;
+Own-it 19,990 + 4,990/yr on request; 25 founding at 29,999 till 31 Mar 2027; branches half; GGMS switch offer) / B keep / C wait.
+Also told him: update from the Play Store (internal + alpha tracks), not the GitHub APK (different signing key).
+
 ## R-182. "It cancels my response and refreshes the whole page" — 29 Oct 2026
 **He said:** "When I try to record an answer in the tracker, it suddenly cancels my response and refreshes the whole page ... because
 you are doing something with the tracker. Please resolve this issue and ensure that I am not disturbed while working."
