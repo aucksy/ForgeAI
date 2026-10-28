@@ -53,7 +53,8 @@ begin
     if has_function_privilege('authenticated', f.oid, 'execute') then fails := fails || ' 1:authenticated can call ' || f.sig; end if;
     -- And really call it as each app role, with a gym session key wherever a text fits.
     stmt := format('select %s(%s)', split_part(f.sig, '(', 1),
-                   replace(coalesce(f.nulls, ''), 'null::text', quote_literal(k_owner) || '::text'));
+                   -- Only a plain text argument gets the key (0038's hq_push_drop takes text[]: it stays null).
+                   regexp_replace(coalesce(f.nulls, ''), 'null::text(,|$)', quote_literal(k_owner) || '::text\1', 'g'));
     foreach got in array array['anon', 'authenticated'] loop
       begin
         perform set_config('request.jwt.claims', format('{"role":"%s"}', got), true);
