@@ -368,7 +368,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
-| Busy times by exercise | Planned | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. | The server learns, per weekday and hour, which exercises members start. Each week it checks its own guess against what really happened. Members see "Bench press is usually busy 6-8 pm on Monday" only after its guesses are right most weeks. Your yes for the live server step comes at the end. |
+| Busy times by exercise | Planned | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. | The owner sets how many of each machine the gym has; only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour, and checks its own guesses each week. When it is right most weeks, members see "Leg day is quieter on Tuesday. Move it?" with one tap to move. Your live server yes comes at the end. |
 | Google login | Live | 0.57.0 (25 Oct): "Continue with Google" is the first card on the welcome screen (R-131). | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
@@ -431,6 +431,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **How long:** about 6-8 weeks of real use at a gym with 100+ active members. A small gym may never reach the bar, so it stays hidden there.
 - **Limit:** it sees only members who log workouts in the app, not everyone on the floor. So it says "usually busy", never an exact count.
 I moved it to Planned. The live server step joins your next combined yes.
+**YOUR REPLY (28 Oct):** suggest members move routines to quieter days; be less strict on dumbbells and things gyms have many of; gyms differ, but it will work great in small gyms.
+**My answer (29 Oct):** Agreed, and your point about counts is the key to making it useful.
+- **The owner tells us how many of each machine** in the admin app (for example: 1 leg press, 2 cable stations, 20 pairs of dumbbells). Only machines with 1 or 2 units count as "can get busy". Dumbbells, benches and plates are ignored unless the owner says otherwise.
+- **The suggestion:** when the app is confident, a member sees one calm line on a routine, for example "Leg day is quieter on Tuesday than Monday at 7 pm. Move it?" One tap moves it; "Not now" hides it for a month.
+- **Small gyms gain most,** as you said: one leg press and 40 members at 7 pm is a real queue. In a big gym with 4 of each machine, the app stays silent, so it never annoys anyone.
+- It stays hidden until its own guesses prove right most weeks. The live server step comes at the end, with your yes.
 
 ## 67. Your task: one yes for 2 finished features — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -833,7 +839,7 @@ Without the off switch, a member could complain that a "no" was ignored, and tha
 
 ## 45. Count reps by listening: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** DONE
+**Status:** DONE (cancelled 29 Oct)
 **You asked:** in a hard set people lose count. Could the app listen to the member counting (earbud mic)
 and log the set by itself? Or is there a better way?
 **My answer:** Build the listening idea, with one change: use the phone's own microphone, not the earbuds'.
@@ -853,6 +859,8 @@ and log the set by itself? Or is there a better way?
   (screen-locked listening, a "Count for me" voice for people who count silently).
 **Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-voice-rep-count.md
 **DECIDED (24 Oct 2026):** B: not now.
+**YOUR REPLY (29 Oct):** Cancel this idea.
+**My answer (29 Oct):** Cancelled. Counting reps by listening is not in the plan any more.
 
 ## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1054,7 +1062,7 @@ New demo requests reach me; I tell you each one so you or I can call back.
 
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** DECIDED
+**Status:** BUILDING (29 Oct)
 **You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
 feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
 plan, starts fixing real issues and pushes the releases.
@@ -1087,6 +1095,12 @@ each automatic fix goes first to the testers' group (the gym owner, the desk sta
 If nobody reports a problem and the app does not crash for 24 hours, it goes to everyone by itself.
 If someone reports a problem, it stops and waits for me to look. You never need to tap anything.
 Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
+**YOUR REPLY (29 Oct):** So let us plan to build it now. What are we waiting for on this one?
+**My answer (29 Oct):** Nothing from you. It is already being built:
+- **Step 1, the button:** done. The floating feedback button (voice in Hindi or English, or typing, on every screen) is built and ships in 0.60.0.
+- **Step 2, the reader:** a check on your PC twice a day reads new feedback and crash notes, sorts them, and fixes real bugs through the normal tests. I switch it on the day 0.60.0 ships, because before that nobody can send feedback.
+- **Step 3, testers first:** each fix goes to the testers' group first; after 24 hours with no problem it goes to everyone, as you decided on 20 Oct.
+- **Only wait:** 0.59.0 must finish first (an AI import test is stuck on Google's busy servers; my helper is adding a backup).
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1106,6 +1120,8 @@ no paper signing needed. As you asked, gym owners now accept the terms and the d
 **Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
 **TASK DONE (24 Oct, chat)**
 Contact: contact@mettleup.fit, shown with your name Aakash Pahuja as Grievance Officer. Emails forward to simpleapps108@gmail.com until your new Gmail exists. The privacy, terms and data agreement pages are now complete.
+**YOUR REPLY (29 Oct):** set up contact@mettleup.fit and route it to simpleapps108, or was it done? Why is this still here?
+**My answer (29 Oct):** It was done on 24 Oct. contact@mettleup.fit forwards to simpleapps108@gmail.com (I checked today: the mail records point to Cloudflare's forwarding). It shows only in the "Done" list at the bottom; nothing is left for you.
 
 ## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
 **Chat:** ForgeAI Local Chat

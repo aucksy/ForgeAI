@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-171. His tracker replies, 29 Oct: #68, #45, #39, #37 — 29 Oct 2026
+**He said:** #68 suggest members move routines to quieter days, lenient on dumbbells/multi-unit equipment, best for small gyms; #45 cancel
+count-reps-by-listening; #39 "build the feedback loop now, what are we waiting for?"; #37 contact@mettleup.fit done? why still here?
+**Done:** #68 answered + backlog row: owner sets unit counts per machine, only 1-2 unit machines count, one-tap "move it?" suggestion.
+#45 cancelled. #39: button built (0.60.0), twice-a-day reader switched on when 0.60.0 ships, testers-first then everyone after 24 h.
+#37: done 24 Oct, MX records on mettleup.fit point to Cloudflare routing (checked 29 Oct); it sits in Done.
+
 ## R-170. Exercise clips: the 2 finished ones into the app, then one new clip a day — 29 Oct 2026
 **He said:** use the skills from the "Exercise animation for ForgeAI" chat; plan the top 5-20 most-used exercises; one animation a day for
 his approval; less common exercises get 1-2 still pictures (start and end) later. Then: "use those two animations that were finalized
