@@ -41,9 +41,13 @@
   goes to the owner as a task, because the law gives him 30 days to answer.
 - Anything about money, prices, privacy, the live gym server or promises to a gym needs the owner's
   yes (CLAUDE.md #18 list).
-- Nothing reaches phones without the full release gate. Decided (#39): each fix goes to the testers
-  first; everyone after 24 hours with no reported problem or crash. A crash, money or privacy fix
-  skips the wait.
+- Nothing reaches phones without the full release gate. Release route by risk (#39, owner 29 Oct, R-175):
+  - **Low risk** (one screen: words, layout, one wrong number): everyone, after the full gate.
+  - **Higher risk** (shared parts used by many screens, workout saving, sign-in, money, the gym server,
+    or a change bigger than a few lines): the testers first; everyone after 24 hours with no reported
+    problem or crash.
+  - **Urgent** (a crash, money or privacy): everyone at once, after the full gate.
+  - Each release's PROGRESS.md entry logs the route it took and why.
 
 ## Schedule
 Turned on when the trial's side-by-side run starts (plan week 3): a scheduled run on the PC twice a

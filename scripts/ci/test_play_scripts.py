@@ -155,6 +155,15 @@ class WearTracks(unittest.TestCase):
             with self.assertRaises(ValueError, msg=bad):
                 pu.check_tracks(bad, wear=True)
 
+    def test_watch_lookalike_track_names_fail_loudly(self):
+        # A phone-style name for the Wear OS internal track is refused before anything reaches Play.
+        for bad in ("wear:internal", "wear:Internal", "wear:test"):
+            with self.assertRaises(ValueError, msg=bad) as ctx:
+                pu.check_tracks([bad], wear=True)
+            self.assertIn("wear:qa", str(ctx.exception))
+        self.assertIn("wear:qa", pu.WEAR_BUILTIN)
+        self.assertNotIn("wear:production", pu.WEAR_BUILTIN)
+
     def test_phone_run_never_takes_a_form_factor_track(self):
         self.assertEqual(pu.check_tracks(["internal", "alpha"], wear=False), ["internal", "alpha"])
         for bad in (["wear:qa"], ["internal", "wear:beta"], ["tv:qa"]):

@@ -259,5 +259,10 @@ check-ins in 8 weeks shows 0; null = closed by the gym's weekly hours). No names
 server. A gym with fewer than 40 timed check-ins in 8 weeks answers `learning` and members see nothing.
 Visitors from other branches are not counted. No existing table or function changes.
 Test: `tests/0039_gym_busy.sql` → `RESULT PASS (31 checks)`, then `tests/security.sql` → `RESULT PASS`.
-Until it is applied, the member app shows no busy card (it logs once and stops asking). The privacy line is
-a proposal pending the owner's approval (docs/launch/PRIVACY-NOTICE.md).
+Live test 29 Oct: PASS 31. Where a server lacks it, the member app shows no busy card (it logs once and
+stops asking). The privacy line is in the notice (EN + HI, approved 29 Oct).
+
+## Gym mate profiles (0040, R-164) — APPLIED LIVE 29 Oct 2026 (R-177)
+Member functions `member_mate_share`, `member_mate_stop`, `member_mate_board`, `member_mate_profile`: a member who
+turns on "Let my gym mates see my workouts" shares short workout summaries (60 days, at most 30) that same-gym
+mates can open from the leaderboard. Test: `tests/0040_gym_mate_profiles.sql` → live PASS 46, then `tests/security.sql`.

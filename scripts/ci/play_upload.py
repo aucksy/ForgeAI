@@ -41,6 +41,12 @@ CLOSED = "alpha"
 PRODUCTION = "production"
 WEAR_PREFIX = "wear:"
 WEAR_INTERNAL = "wear:qa"
+# Google's built-in form-factor tracks (developers.google.com/android-publisher/tracks, checked 29 Oct 2026):
+# "<prefix>:production", "<prefix>:beta" (open testing), "<prefix>:qa" (internal testing). Closed tracks are
+# made by hand in Play Console with custom names, so any other "wear:" name must already be listed on Play.
+WEAR_BUILTIN = {"wear:qa", "wear:beta"}
+# Phone-style names that look right but are NOT Play's Wear OS internal track.
+WEAR_LOOKALIKES = {"wear:internal", "wear:internal-testing", "wear:internaltesting", "wear:test"}
 
 
 def is_production(name):
@@ -59,6 +65,9 @@ def check_tracks(tracks, wear):
             raise ValueError(f"refusing to touch the production track '{t}'")
         if wear and not t.startswith(WEAR_PREFIX):
             raise ValueError(f"the watch bundle goes only to Wear OS tracks ('wear:...'), not '{t}'")
+        if wear and t.lower() in WEAR_LOOKALIKES:
+            raise ValueError(f"'{t}' is not a Play track name: Play names the Wear OS internal testing track "
+                             f"'{WEAR_INTERNAL}' (developers.google.com/android-publisher/tracks)")
         if not wear and ":" in t:
             raise ValueError(f"the phone bundle never goes to a form-factor track ('{t}')")
     return tracks
@@ -188,10 +197,15 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
         if is_production(name):
             fail("Refusing to touch the production track.")
         track = by_name.get(name)
-        if track is None and name.startswith(WEAR_PREFIX):
-            # A Wear OS track may not be listed until its first release: set it all the same.
+        if track is None and name in WEAR_BUILTIN:
+            # A built-in Wear OS track may not be listed until its first release: set it all the same.
             log(f"Track '{name}' is not listed yet (tracks: {sorted(by_name)}); creating its first release.")
             track = {"track": name, "releases": []}
+        elif track is None and name.startswith(WEAR_PREFIX):
+            # A custom (closed) Wear OS track must exist on Play first: a typo must not pass quietly.
+            edits.delete(packageName=PACKAGE, editId=edit_id).execute()
+            fail(f"Track '{name}' does not exist on Play (tracks: {sorted(by_name)}). Play's Wear OS internal "
+                 f"testing track is '{WEAR_INTERNAL}'. Nothing changed on Play.")
         if track is None:
             msg = f"Track '{name}' does not exist on Play (tracks: {sorted(by_name)})."
             if name == CLOSED:
