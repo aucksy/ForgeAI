@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-168. Tracker: built work shows as built; only real asks wait for him — 28 Oct 2026
+**He said:** "ensure tracker is updated with features already built or aligned now to be built ... and not showing for me to be waiting for me".
+Also a feature comment on "Busy times by exercise": learn from data and routines which equipment gets busy by day and hour; show only at high confidence.
+**Done:** 7 built rows to Next release (feedback button, finish-screen kg, exercise History, body-weight moves, watch next set, admin What's new, crash alerts); push row = 0.59.0.
+Moved off "Waiting for you": analytics (I picked the first tiles: renewals due, money owed, stopped coming, new members, busy hours; money tiles owner only),
+trainer view (decided in #46; words + live yes at the end), busy-by-exercise (Planned, confidence-gated, answered in #68), AI coach and food log (on hold -> Idea).
+Busy-now and gym-mate profiles stay waiting: built, only his live yes (0039 + 0040 + privacy lines) is left -> one task, #67. Claude's tasks updated.
+
 ## R-167. Put the watch app on Play for the same tester group (no sideloading) — 28 Oct 2026
 **He said:** "start the process of listing the watch app on the Play Store... same tester group... install from my watch...
 I don't have to sideload the APK then."
