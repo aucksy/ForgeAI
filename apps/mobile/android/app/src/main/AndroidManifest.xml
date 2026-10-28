@@ -13,6 +13,10 @@
        apps. tools:node="remove" keeps it out of the merged manifest even if a library adds it; the
        rest timer asks for "Alarms & reminders" (SCHEDULE_EXACT_ALARM) instead. -->
   <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:node="remove"/>
+  <!-- 0.58.1 (R-153): expo-background-task runs the gym-notice check as plain WorkManager periodic work.
+       WorkManager's library manifest adds FOREGROUND_SERVICE for setForeground(), which nothing here calls
+       (no ongoing foreground notification), so it stays out of the merged manifest and the approved list. -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion"/>
   <queries>
     <intent>
