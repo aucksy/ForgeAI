@@ -46,6 +46,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
+| #4 | High | Low |
 | Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
 | Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
 | Task: 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | High | Medium |
@@ -158,12 +159,12 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Doing | Server part live 28 Oct. App part ships in 0.59.0 (phone tests running). Then a real test on your phone. |
+| Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
 | Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
 | Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
 | Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
 | 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
-| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Doing | Fixed 28 Oct; ships in 0.59.0. Next: a lighter first set at the top of it. |
+| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
 | Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
 | Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
 | Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
@@ -365,7 +366,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Gym welcome and logo after joining | Live | v0.54.0: after joining, the app restarts in the gym's look with "Welcome to <gym>", then offers the gym's logo for the home screen and shows how to take the ForgeAI icon off (owner, 22 Oct). |
 | Shop tab only when the gym's shop is on | Live | v0.54.0: no gym = no Shop tab; a gym = a "Gym" tab; it becomes "Shop" once the gym lists a product. "Leave gym" is its own row in Settings → Your gym (owner, 22 Oct). |
 | Workout reward (trial) | Live | 22 Oct: the member shows "Show my workouts to the desk" (v0.54.0), the desk types the code into "Check workout code" in the admin app and gives the free days. Nothing is sent to the server (#49, step 1). |
-| Messages in the phone's notification shade | Next release | Ships in 0.59.0 (R-153, R-158): instant pop-ups through Firebase; the server part is live since 28 Oct. | When the gym sends a message or offer, it pops up on members' phones within about a minute, like a WhatsApp message; a tap opens it in the app. The 15-minute check stays as a backup. Members can turn it off in Settings. |
+| Messages in the phone's notification shade | Live | Live in 0.59.0 (29 Oct): instant pop-ups through Firebase. | When the gym sends a message or offer, it pops up on members' phones within about a minute, like a WhatsApp message; a tap opens it in the app. The 15-minute check stays as a backup. Members can turn it off in Settings. |
 | My membership | Live | Members see their plan, end date, days left, personal training used and visits this month. |
 | Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
@@ -411,7 +412,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
 | Play Store release | Live | 25 Oct: MettleUp 0.56.1 is in the Play internal test (testers on your two lists join at https://play.google.com/apps/internaltest/4701674448333062164) and the closed test with mettleup-testers@googlegroups.com is in Google's review. Store listing, icon, banner, 6 screenshots done. |  |
 | Landing page, leads and new-gym onboarding | Live | Live since 22 Oct at https://forgeai.aakashpahuja.in/home/ (Hindi + English): a gym owner types their gym's name and sees the member app in their colours, then asks for a free demo (saved privately in Cloudflare; I tell you each one). "Open the demo gym" and "Sign in" lead to the admin app; new gyms get a "Get started" checklist. |
-| Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
+| Paid server with daily backups | Not doing | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
 | Test server before live | Planned | You asked why I cannot make it (#34): I can. I make the free second Supabase project in your Chrome and copy the tables into it. | A second, free Supabase project, "mettleup-staging", Mumbai. Every server change runs there first, with the same tests, before it reaches the gym. |
 | Crash and outage alerts | Next release | Built 28 Oct, goes live with 0.60.0 (#34). No new accounts. | Both apps send a short crash note (screen, app version, error; never member data) to our server. A check every 10 minutes opens the website, admin app and HQ; if one is down, a GitHub alert reaches your phone. Claude reads crash notes with the feedback twice a day. |
 | Real-phone tests on Google's lab | Live | Built; your free setup done 24 Oct (#25). Google's robot tries each release on real phones. | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
@@ -1235,12 +1236,14 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:05 am, via the page)**
 **DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:07 am, via the page)**
 **DECIDED (20 Oct):** A: the member app is for 18 and over during the trial (you left the legal calls to Claude, R-45, 20 Oct).
 **Why it matters:** India's data law needs a parent's verified consent for anyone under 18, and bans tracking them. A builds in a day; B takes about a week and slows joining for everyone.
 
@@ -1258,6 +1261,7 @@ the Claude extension is on in the simpleapps108 Chrome window; Claude works ther
 ## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** PARKED (stays here)
+**READ (29 Oct, 01:11 am, via the page)**
 **Why it matters:** the free plan pauses after 7 quiet days (the app and the admin app stop working until someone wakes it) and keeps no backups we can restore. With the gym's real data, one bad day without a backup could lose their records. A means real data is safe from the first import.
 **DECIDED (24 Oct 2026):** B: no paid plan until the testing and the market check are done.
 **YOUR REPLY (24 Oct):** Is our own database better than Drive backups, long term? Can the trial start on the free plan for 50-100 members?
@@ -1550,6 +1554,19 @@ or "Add Push Pull Legs" for no routines). The door (Step 2) waits until the clie
 Push" (today's routine, the same one the Workout tab shows), "Back to your workout" if one is open, or
 "Add Push Pull Legs" for a member with no routines (opens the plan, where they choose to follow it or
 just keep it). Nothing extra once today's workout is done. Comes in the next release.
+**YOUR REPLY (29 Oct):** not every gym can hang a tablet for a changing QR. With a fixed QR, a challenge could be done from anywhere, so capture the location when the QR is scanned and the workout logged. How easy, and is it worth it? Use the access machine where a gym has one. And research FitPass: can its members' check-ins reach our software? If not, exclude them unless there is another way.
+**My answer (29 Oct):**
+**Location at the QR scan: yes, worth it, and fairly easy (about 2-3 days).**
+- The owner drops a pin on the gym once in the admin app.
+- When a member scans the QR, the phone checks its location once. Within about 150 m of the pin, the check-in is marked "at the gym".
+- Only a check-in marked "at the gym" counts for challenges and rewards. Normal check-ins still work without location, so nobody is blocked.
+- Privacy: we keep only "at the gym: yes or no", never the location itself. It needs one new privacy line and the phone's location permission "only while using the app", both for your OK when we build it.
+- Fake-location apps exist, but Android tells the app when one is on, and we can refuse those check-ins for challenges.
+- **Order of strength:** the access machine where the gym has one (best), then QR plus location (every gym), then the plain QR (weakest, fine for attendance only).
+**FitPass:** FitPass has no public connection for gym software. Their members show a QR in the FitPass app, and the desk scans it with the FitPass Partner app. So their check-ins cannot flow into our software today.
+- **Way around it:** the desk adds the person as a "Pass member" (already planned), and the member checks in with our QR like everyone else. Both apps then record the visit, and the owner can match FitPass's monthly payment against our count.
+- Later, we can ask FitPass's partner team for a connection, once we have a few gyms.
+Sources: https://fitpass.co.in/sweatiquette-faq/what-are-the-specific-partnership-requirements-for-gym-owners , https://fitpass.co.in/sweatiquette-faq/how-can-i-scan-the-qr-code-and-confirm-my-workout
 
 ## 7. Offline mode: can the gym use the admin app without internet? — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
@@ -1623,7 +1640,7 @@ can send plans now; members see them once they have the next app release (v0.48.
 
 ## 4. GGMS (the client's current CRM): features and prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
+**Status:** WAITING FOR YOU
 **My answer:** GGMS (Gayatri Software, Jaipur, since 2017, claims 1,000+ gyms). Offline Plan from
 ₹11,999/year (no member app); Online Plan from ₹14,999/year (with app). These are starting prices
 from listing sites; GGMS doesn't publish prices. Ask the client what they really pay. Owner gaps
@@ -1631,6 +1648,21 @@ for us: entry machine (planned P8), automatic SMS/email reminders, an AI busines
 soon" split by days, class booking, trainer section, staff salaries, several branches, webcam
 photo, birthday wishes. Their users complain about bugs, so reliability is a point we can win on.
 **Details:** `docs/overhaul/research/R-ggms-competitor.md`
+**YOUR REPLY (29 Oct):** GGMS told you: about ₹15,000 one time plus ₹5,000 a year upkeep. Is that pricing common? Our monthly and yearly plans may not appeal. Check whether our offer is right, research the market, price for value after the trial, and keep in mind your ₹12,000 a month Claude cost that you want back fast.
+**My answer (29 Oct):**
+- **That shape is common in India.** Older desk software sells "buy once, pay yearly upkeep": one-time prices run about ₹20,000-60,000; cloud plans run about ₹2,000 a month (about ₹24,000 a year). Owners know and trust the one-time shape.
+- **Our plans next to GGMS over 3 years:** GGMS costs ₹25,000 (₹15,000 + 2 × ₹5,000). Our yearly plan costs about ₹60,000 (3 × ₹19,990). Our ₹29,999 lifetime is close to GGMS, and much better value: member app, cloud, updates.
+- **Getting your ₹12,000 a month back:** about 8 gyms paying ₹1,500 a month, or 1 lifetime sale every 2-3 months.
+- **My suggestion:** offer the shape owners already know, next to the monthly plan:
+  - "Buy once ₹14,999 + ₹4,999 a year" (the same as GGMS, with far more inside);
+  - ₹1,499 a month for owners who want nothing up front;
+  - for the first 20 gyms, a founding lifetime at ₹24,999 to bring cash in early;
+  - a switching offer: we move their GGMS data for free with our AI import.
+**Decide:** How should MettleUp be priced for gym owners?
+- A: Add "buy once + yearly upkeep" (₹14,999 + ₹4,999/year) next to ₹1,499/month, plus a ₹24,999 founding lifetime for the first 20 gyms (recommended)
+- B: Keep today's monthly and yearly plans, and only lower the yearly price closer to GGMS
+- C: Hold prices until the first client gym's trial ends, then decide with real usage
+Sources: https://easygymsoftware.com/blog/gym-software-pricing-in-india , https://codingclave.com/blog/gym-management-software-guide , https://www.techjockey.com/detail/fitness-manager
 
 ## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
 **Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2

@@ -11,6 +11,14 @@ exercise clips and the watch app (signed watch bundle to Play's Wear OS internal
 the full gate. Conflicts: keep main's APPLIED LIVE 0039/0040 files and main's approved privacy text; combine security.sql.
 FEEDBACK.md's release rule becomes R-175's.
 
+## R-181. Replies #12 (QR + location, FitPass) and #4 (GGMS one-time price); 0.59.0 released — 29 Oct 2026
+**He said:** see #12 and #4 YOUR REPLY (29 Oct); moved "Paid server with daily backups" to Not doing.
+**Answered:** #12 location check at QR scan (pin + 150 m, keep only yes/no, challenges count only verified; needs privacy line +
+permission OK at build); FitPass has no public API -> pass member + our QR. #4 GGMS shape is common; 3-year cost compare; break-even
+~8 gyms at Rs 1,500/mo; Decide A (buy once 14,999 + 4,999/yr, 1,499/mo, founding lifetime 24,999 first 20) / B / C, waits for him.
+0.59.0 released (helper): APK releases/download/v0.59.0/mettleup-v0.59.0.apk; Play internal + alpha; AI import retries + 2 Gemini
+fallbacks. Rows: notification pop-ups Live; push + kg-to-beat tasks Done. 0.60.0 merge/release helper started.
+
 ## R-180. #32 reply: tax without GST, business not freelance — 29 Oct 2026
 **He said:** see #32 YOUR REPLY (29 Oct). **Answered (general info, CA to confirm):** GST and income tax separate; business/profession
 head; sole proprietorship + current account + Udyam; presumptive 6% scheme (old 44AD, renumbered in the new Act from Apr 2026),
