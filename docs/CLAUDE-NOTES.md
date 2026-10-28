@@ -12,6 +12,16 @@ is now, What's new in the admin app, crash and outage alerts, test server.
 **Done:** 13 backlog rows + #66 (Firebase limits answer) added; page v172.
 **My calls (#18):** body-weight rule = PREVIOUS and the goal only (not leaderboard/muscle sets); feature work waits for the
 0.59.0 tag before landing on main (helpers in their own worktrees).
+**Built (28 Oct): how busy the gym is now.** Research: Google Maps "Popular times" shows a usual-week bar chart plus
+a live "busier/less busy than usual" line and hides it when data is too thin; PureGym's app shows a live head count ("Gym
+Busyness"); a check-in-only gym cannot see who left, so a raw count would mislead. Ours (simplest honest version): check-ins of the
+last 90 minutes against what is usual for that weekday and time = "Quiet / About as busy as usual / Busy right now"
+(or "Closed right now" by the gym's hours, holidays too); a number only when 5 or more, rounded to 5; a bar row per
+hour for today (chips for other days) and "Quietest later today: 2 pm to 4 pm"; hidden while the gym has fewer than
+40 timed check-ins in 8 weeks. Server: 0039_gym_busy.sql (member_gym_busy), NOT APPLIED (needs his yes); test
+0039 PASS 31 locally on PGlite (real Postgres in node). App: Gym tab card under the hours row; hidden (one log line)
+until 0039 is live; asked at most every 5 minutes. Privacy: a proposed line (no new data kept) pending his approval
+in docs/launch/PRIVACY-NOTICE.md.
 
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
 **He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret

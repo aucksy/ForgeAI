@@ -18,6 +18,17 @@ live (the apps show the leaderboard only then).
 Updated 28 Oct 2026 (R-162, owner approved "yes to all"): a push address per phone so the gym's messages and offers
 pop up; Firebase Cloud Messaging named under "Where it is kept". In force when server change 0038 is live.
 
+**PROPOSAL, PENDING OWNER APPROVAL (28 Oct 2026, R-163, "How busy the gym is"). NOT in the notice yet; do not
+publish.** Nothing new is collected or kept: the card is worked out from the check-in times the gym already keeps
+(the row "Check-ins (date and time)" below). Proposed new bullet under "Who is responsible for what", after the
+leaderboard bullet:
+> - If you are in a gym, the app shows how busy your gym is right now and at each hour of a usual week. It is
+>   worked out from the check-in times your gym already keeps. Members see only how busy the whole gym is,
+>   never who checked in or when. A number of people is shown only when it is 5 or more.
+
+Proposed change to the "Check-ins (date and time)" row's "Why": "To run your membership and the gym's shop, and
+to show members how busy the gym usually is (no names)". Goes live with server change 0039 (also not live).
+
 ---
 
 ## MettleUp privacy notice

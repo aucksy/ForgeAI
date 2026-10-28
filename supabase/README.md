@@ -248,3 +248,16 @@ functions `member_save_push_token` / `member_clear_push_token`, and the sender's
 sent before 0038 is applied are never pushed. Test: `tests/0038_member_push.sql` → `RESULT PASS (n checks)`,
 then `tests/0026_hq_access.sql` (it now also checks the two new hq_ functions) and `tests/security.sql`.
 The sender also needs the HQ Worker secret FCM_SERVICE_ACCOUNT; without it nothing is sent and nothing is lost.
+
+## How busy the gym is (0039, R-163) — NOT APPLIED, needs the owner's yes
+Additive and re-runnable; apply after 0038 (it uses 0036's hours). Adds one index on check-ins
+(`crm_records_visit_day`: a gym's visits by day), the helper `_busy_open_hours` (no grants) and the member
+function `member_gym_busy(key)`: from the gym's own timed check-ins of the last 8 weeks (QR and desk), the
+level now ("quiet / normal / busy / closed", against what is usual for that weekday and time), a count only
+when 5 or more and rounded to 5, and per weekday and hour a usual level 0-4 (an hour with fewer than 3
+check-ins in 8 weeks shows 0; null = closed by the gym's weekly hours). No names, ids or visit times leave the
+server. A gym with fewer than 40 timed check-ins in 8 weeks answers `learning` and members see nothing.
+Visitors from other branches are not counted. No existing table or function changes.
+Test: `tests/0039_gym_busy.sql` → `RESULT PASS (31 checks)`, then `tests/security.sql` → `RESULT PASS`.
+Until it is applied, the member app shows no busy card (it logs once and stops asking). The privacy line is
+a proposal pending the owner's approval (docs/launch/PRIVACY-NOTICE.md).

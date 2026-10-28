@@ -32,6 +32,7 @@ import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { gymShopOn } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
+import { GymBusyCard } from './GymBusyCard';
 import { LeaderboardCard } from './LeaderboardCard';
 import { readGymHours, syncGymHours } from './gymTimingsSync';
 import type { GymHours } from '@forgeai/theme';
@@ -114,6 +115,8 @@ function GymShop({ link }: { link: GymLink }) {
   const [filter, setFilter] = useState<Filter>('all');
   const [loading, setLoading] = useState(false);
   const [pulling, setPulling] = useState(false);
+  // R-163: each pull to refresh asks the busy card again at once.
+  const [pulls, setPulls] = useState(0);
   const [problem, setProblem] = useState<string | null>(null);
   const running = useRef(false);
   // R-120: the trainer's diet plans (the row shows once one has come; the kept copy works offline).
@@ -147,8 +150,10 @@ function GymShop({ link }: { link: GymLink }) {
   const refresh = useCallback(async (byPull: boolean) => {
     if (running.current) return;
     running.current = true;
-    if (byPull) setPulling(true);
-    else setLoading(true);
+    if (byPull) {
+      setPulling(true);
+      setPulls((n) => n + 1);
+    } else setLoading(true);
     // Gym branding: the gym's name and look as they are now ride along (quiet on failure).
     // Gym messages: refreshGymNow also refreshes the inbox (the bell's count).
     const [words, , diet, , , gymHours] = await Promise.all([
@@ -227,6 +232,8 @@ function GymShop({ link }: { link: GymLink }) {
         <MembershipCard link={link} />
         {/* R-124: open or closed now, in India time (only once the gym has set its hours). */}
         <GymHoursRow hours={hours} />
+        {/* R-163: how busy the gym is now and its quiet hours (hidden until 0039 is live and the gym has enough check-ins). */}
+        <GymBusyCard link={link} hours={hours} refreshKey={pulls} />
         {/* A3: Check in from the app: the phone's camera reads the poster at the desk. */}
         <View style={{ marginTop: space.md }}>
           <LinkRow
