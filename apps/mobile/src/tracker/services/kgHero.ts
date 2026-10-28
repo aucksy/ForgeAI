@@ -71,7 +71,7 @@ export function kgHero(today: HeroTotals, last: HeroLast | null, units: UnitSyst
     return { ...base, tone: 'up', line: plus, lastLine, shareLine: plus };
   }
   if (diff > -1) return { ...base, tone: 'same', line: 'Same as last time', lastLine, shareLine: null };
-  const kind = easyWeek ? 'Easy week: lighter on purpose.' : 'Lighter than last time. Every workout counts.';
+  const kind = easyWeek ? 'Easy week: lighter on purpose.' : kgMode ? 'Lighter than last time. Every workout counts.' : 'Fewer reps than last time. Every workout counts.';
   return { ...base, tone: 'down', line: kind, lastLine, shareLine: null };
 }
 

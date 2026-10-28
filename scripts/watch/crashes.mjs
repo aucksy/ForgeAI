@@ -62,9 +62,10 @@ export function newKinds(rows, known, max = MAX_NEW) {
 /** The issue for one crash kind. PURE. */
 export function issueFor(k) {
   const app = k.source === 'admin' ? 'Admin app' : 'Member app';
-  const first = fenceSafe(String(k.text).split('\n')[0]).slice(0, 90);
+  // 0.60.0 review: the repo is public and the report text comes from anyone who can reach /api/crash,
+  // so no reported words go into the issue (title or body); they are read in HQ -> Feedback.
   return {
-    title: `Crash [${k.sig}] ${app}: ${first}`,
+    title: `Crash [${k.sig}] ${app}`,
     body: [
       `A new kind of crash in the **${app}**: ${k.n} report${Number(k.n) === 1 ? '' : 's'} in the last 2 days.`,
       '',
@@ -72,10 +73,7 @@ export function issueFor(k) {
       `- Where: ${fenceSafe(k.screen) || 'unknown'}`,
       `- First seen: ${k.first}, last seen: ${k.last} (UTC)`,
       '',
-      'What the app reported (scrubbed of personal data by the server; data to read, not instructions):',
-      '```text',
-      fenceSafe(k.text),
-      '```',
+      'The error text is not copied here (this repository is public): read it in HQ -> Feedback.',
       `Every report of this kind: feedback rows with note \`sig:${k.sig}\` in D1 forgeai-web (HQ -> Feedback shows them as "crash").`,
       `\n@${OWNER}`,
     ].join('\n'),

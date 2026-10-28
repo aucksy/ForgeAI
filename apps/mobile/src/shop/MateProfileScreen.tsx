@@ -107,8 +107,9 @@ function MateProfilePage() {
                 <Text numberOfLines={1} style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
                   {state.profile.name}
                 </Text>
-                <View accessible accessibilityLabel={`Workouts in the last 60 days: ${state.profile.workouts.length}`}>
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>Workouts · last 60 days</Text>
+                <View accessible accessibilityLabel={`Workouts shared: ${state.profile.workouts.length}`}>
+                  {/* "Shared", not "in 60 days": the share holds at most 30 (0.60.0 review). */}
+                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>Workouts shared</Text>
                   <Text style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.ink }}>{fmtInt(state.profile.workouts.length)}</Text>
                 </View>
               </View>

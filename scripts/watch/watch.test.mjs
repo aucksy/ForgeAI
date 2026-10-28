@@ -113,7 +113,8 @@ test('crash kinds: signature from a title, safe text, only new kinds, at most 5'
   assert.equal(fresh.length, 5);
   assert.equal(fresh[0].sig, '111111111111');
   const issue = issueFor({ ...fresh[0], app: '0.59.0', screen: 'screen', first: 'a', last: 'b', text: 'TypeError: x\n  at `A` @evil' });
-  assert.match(issue.title, /^Crash \[111111111111\] Member app: TypeError: x$/);
+  assert.equal(issue.title, 'Crash [111111111111] Member app');
+  assert.ok(!issue.body.includes('TypeError'));
   assert.ok(!issue.body.includes('@evil'));
   assert.match(issue.body, /@aucksy/);
 });

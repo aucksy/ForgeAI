@@ -144,5 +144,5 @@ function cardNow(
 
 /** One string per card as posted, so an unchanged card is not posted again. PURE. */
 export function liveCardKey(c: LiveCard, image: string | null): string {
-  return JSON.stringify([c.title, c.text, image, c.done?.exKey ?? null, c.done?.setKey ?? null, c.done?.open ?? null, c.done?.values ?? null]);
+  return JSON.stringify([c.title, c.text, image, c.done?.exKey ?? null, c.done?.setKey ?? null, c.done?.open ?? null, c.done?.values ?? null, c.watch ?? null]);
 }

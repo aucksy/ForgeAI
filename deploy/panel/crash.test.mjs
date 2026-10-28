@@ -23,6 +23,13 @@ test('scrub takes out emails, phone numbers, long numbers and keys', () => {
   assert.match(s, /\[email\].*\[n\].*\[key\].*\[token\]/);
 });
 
+test('scrub keeps a stack frame line and column (the only clue in a one-line bundle)', () => {
+  const s = scrub('at anonymous (index.android.bundle:1:1234567)\n    at f (https://app.mettleup.fit/assets/index-AbC.js:12:345678)');
+  assert.ok(s.includes('bundle:1:1234567'));
+  assert.ok(s.includes('.js:12:345678'));
+  assert.ok(!scrub('call me on 9829012345').includes('9829012345'));
+});
+
 test('the same crash in another build (new file hashes, line numbers) has the same signature', async () => {
   const other = STACK.replace('index-AbC123xY', 'index-QQ77pp00').replace(':12:3456', ':14:9');
   assert.equal(await crashSignature('admin', 'x is undefined', STACK), await crashSignature('admin', 'x is undefined', other));

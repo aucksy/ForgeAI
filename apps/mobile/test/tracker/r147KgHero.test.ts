@@ -30,6 +30,10 @@ describe('R-147: kgHero', () => {
     expect(h.shareLine).toBeNull();
   });
 
+  it('a no-weight workout with fewer reps says fewer reps, not lighter', () => {
+    expect(kgHero({ kg: 0, reps: 30 }, { kg: 0, reps: 40, against: null }, 'metric')!.line).toBe('Fewer reps than last time. Every workout counts.');
+  });
+
   it('an easy week lower: lighter on purpose', () => {
     expect(kgHero({ kg: 900, reps: 20 }, { kg: 1880, reps: 44, against: null }, 'metric', true)!.line).toBe('Easy week: lighter on purpose.');
   });

@@ -129,7 +129,9 @@ jobs:
         run: |
           set -euo pipefail
           WEAR_AAB="mettleup-$TAG-wear.aab"
-          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -qx "$WEAR_AAB"; then
+          # Its own line, so a failed GitHub call stops the step (set -e) instead of reading as "no watch bundle".
+          ASSETS="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          if ! grep -qx "$WEAR_AAB" <<< "$ASSETS"; then
             echo "::notice::$TAG has no $WEAR_AAB (watch bundles start with 0.60.0): nothing to upload for the watch."
             exit 0
           fi

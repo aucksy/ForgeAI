@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -87,7 +88,8 @@ class MainActivity : ComponentActivity() {
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot
-      val measure = onScreen && hrAllowed && (snap.workoutActive || snap.rest != null)
+      // Not in ambient: the dimmed screen shows no live bpm, so the sensor rests too (battery; 0.60.0 review).
+      val measure = onScreen && !ambient && hrAllowed && (snap.workoutActive || snap.rest != null)
       DisposableEffect(measure) {
         if (measure) heart.start()
         onDispose {
@@ -97,10 +99,32 @@ class MainActivity : ComponentActivity() {
       }
       var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
       val endsAt = snap.rest?.endsAt
-      LaunchedEffect(endsAt, ambient, ambientTick) {
+      LaunchedEffect(endsAt, ambient, ambientTick, exactAllowed) {
         now = System.currentTimeMillis()
-        // Ambient: no ticking (the screen shows the rest's end time; it redraws once a minute).
-        if (endsAt == null || ambient) return@LaunchedEffect
+        if (endsAt == null) return@LaunchedEffect
+        if (ambient) {
+          // Ambient: no ticking (the screen shows the rest's end time; it redraws once a minute).
+          // 0.60.0 review: without "Alarms & reminders" the end alarm is inexact and the wrist is
+          // usually down (ambient) when a rest ends, so wait here under a short partial wake lock and
+          // buzz on time. With exact alarms on, the alarm does it.
+          if (exactAllowed) return@LaunchedEffect
+          val wait = endsAt + 300L - System.currentTimeMillis()
+          if (wait <= 0L) {
+            WatchState.onAlarm(this@MainActivity, endsAt)
+            return@LaunchedEffect
+          }
+          val lock = (getSystemService(POWER_SERVICE) as PowerManager)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mettleup:rest-end")
+          lock.setReferenceCounted(false)
+          lock.acquire(wait + 5_000L)
+          try {
+            delay(wait)
+            WatchState.onAlarm(this@MainActivity, endsAt)
+          } finally {
+            if (lock.isHeld) lock.release()
+          }
+          return@LaunchedEffect
+        }
         while (true) {
           now = System.currentTimeMillis()
           // R-167 (Play: no USE_EXACT_ALARM): with "Alarms & reminders" off the end alarm can come

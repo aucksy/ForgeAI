@@ -34,7 +34,7 @@ import {
   sourceLine,
   type GymBusy,
 } from '@/shop/gymBusy';
-import { GYM_BUSY_EVERY_MS, peekGymBusy, readGymBusy, resetGymBusyForTests } from '@/shop/gymBusySync';
+import { GYM_BUSY_EVERY_MS, GYM_BUSY_STALE_MS, peekGymBusy, readGymBusy, resetGymBusyForTests } from '@/shop/gymBusySync';
 
 const BANNED = /\b(volume|PR|session)\b/i;
 
@@ -163,7 +163,7 @@ describe('asking the gym', () => {
 
   it('asks at most every 5 minutes; a pull asks at once', async () => {
     expect((await readGymBusy(LINK, { now: 1000 })).kind).toBe('busy');
-    expect(peekGymBusy(LINK)?.level).toBe('quiet');
+    expect(peekGymBusy(LINK, 1000)?.level).toBe('quiet');
     await readGymBusy(LINK, { now: 1000 + GYM_BUSY_EVERY_MS - 1 });
     expect(calls).toBe(1);
     await readGymBusy(LINK, { now: 1000 + GYM_BUSY_EVERY_MS });
@@ -179,12 +179,22 @@ describe('asking the gym', () => {
   });
 
   it('offline or a server error: keep what shows', async () => {
-    await readGymBusy(LINK, { now: 0 });
+    const t0 = 1_000_000;
+    await readGymBusy(LINK, { now: t0 });
     for (const bad of [{ ok: false, error: { kind: 'offline' } }, { ok: false, error: { kind: 'other' } }, new Error('boom')]) {
       answer = bad;
-      expect(await readGymBusy(LINK, { force: true })).toEqual({ kind: 'keep' });
+      expect(await readGymBusy(LINK, { force: true, now: t0 + 60_000 })).toEqual({ kind: 'keep' });
     }
-    expect(peekGymBusy(LINK)?.level).toBe('quiet');
+    expect(peekGymBusy(LINK, t0 + 60_000)?.level).toBe('quiet');
+  });
+
+  it('offline for more than 30 minutes: the old answer is not "right now" any more, the card hides', async () => {
+    const t0 = 1_000_000;
+    await readGymBusy(LINK, { now: t0 });
+    answer = { ok: false, error: { kind: 'offline' } };
+    expect(await readGymBusy(LINK, { force: true, now: t0 + GYM_BUSY_STALE_MS - 1 })).toEqual({ kind: 'keep' });
+    expect(await readGymBusy(LINK, { force: true, now: t0 + GYM_BUSY_STALE_MS })).toEqual({ kind: 'hidden' });
+    expect(peekGymBusy(LINK, t0 + GYM_BUSY_STALE_MS)).toBeNull();
   });
 
   it('a server without 0039: hidden, logged once, never asked again', async () => {

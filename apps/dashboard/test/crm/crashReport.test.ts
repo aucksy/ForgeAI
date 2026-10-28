@@ -23,7 +23,9 @@ describe('crash reports', () => {
   it('describes anything thrown', () => {
     expect(describeError(new TypeError('x is undefined')).message).toBe('TypeError: x is undefined');
     expect(describeError('plain').message).toBe('plain');
-    expect(describeError({ code: 42 }).message).toBe('{"code":42}');
+    expect(describeError({ code: 42 }).message).toBe('Non-Error [object Object]');
+    // A database error's details (a failing row with a member's name) never ride along.
+    expect(describeError({ message: 'insert failed', details: 'Failing row contains (Ravi Kumar)' }).message).toBe('Non-Error: insert failed');
   });
 
   it('sends each kind once, at most a few per page, with no personal fields', async () => {

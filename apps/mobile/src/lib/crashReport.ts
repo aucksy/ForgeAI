@@ -30,7 +30,10 @@ export function describeError(reason: unknown): { message: string; stack: string
   if (reason instanceof Error) return { message: `${reason.name}: ${reason.message}`, stack: reason.stack ?? '' };
   if (typeof reason === 'string') return { message: reason, stack: '' };
   try {
-    return { message: JSON.stringify(reason)?.slice(0, 300) ?? String(reason), stack: '' };
+    // Never the whole value: a database error object carries "details" with member data in it (0.60.0
+    // review). Its own message only, else just its kind.
+    const m = typeof reason === 'object' && reason !== null ? (reason as { message?: unknown }).message : undefined;
+    return { message: typeof m === 'string' && m ? `Non-Error: ${m.slice(0, 280)}` : `Non-Error ${Object.prototype.toString.call(reason)}`, stack: '' };
   } catch {
     return { message: String(reason), stack: '' }; // quiet: an unprintable value is described by String()
   }

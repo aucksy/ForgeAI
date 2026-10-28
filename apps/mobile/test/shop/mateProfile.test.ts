@@ -59,7 +59,8 @@ describe('mateShareFrom: what leaves the phone', () => {
           d: TODAY,
           name: 'Push 1',
           min: 52,
-          kg: 3611,
+          // Bar weight only: 60x8 + 60x6 = 840 (the 3611 total includes body weight on the pull-ups).
+          kg: 840,
           ex: [
             { n: 'Bench Press', k: 'bench_press', w: 60, r: 8 },
             { n: 'Pull Up', k: null, w: 0, r: 12 },
@@ -69,6 +70,12 @@ describe('mateShareFrom: what leaves the phone', () => {
     });
     // Nothing else rides along: no sets, notes, photos or body weight keys anywhere.
     expect(JSON.stringify(s)).not.toMatch(/sets|note|photo|body|weight|phone/i);
+  });
+
+  it('a body-weight-only workout shares 0 kg, so kg / reps can never give away body weight', () => {
+    const s = mateShareFrom(null, [workout('w1', TODAY, [ex('pull', 'Pull Up', [set(0, 10), set(0, 8)])])], [{ sessionId: 'w1', durationSec: 600, volumeKg: 1440 }], new Map(), TODAY);
+    expect(s.workouts[0]!.kg).toBe(0);
+    expect(s.workouts[0]!.ex[0]).toEqual({ n: 'Pull Up', k: null, w: 0, r: 10 });
   });
 
   it('only the last 60 days, at most 30 workouts and 8 exercises each', () => {

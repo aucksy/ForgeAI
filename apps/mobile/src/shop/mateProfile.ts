@@ -1,8 +1,8 @@
 /**
  * Gym mate profiles (R-164, supabase/migrations/0040_gym_mate_profiles.sql). The PURE half:
  *  - what this phone shares while "Let my gym mates see my workouts" is on (`mateShareFrom`): the
- *    bio and up to 30 workouts of the last 60 days, each with its name, minutes, kg lifted (the same
- *    number the leaderboard already has) and up to 8 exercises with their best set. No sets list,
+ *    bio and up to 30 workouts of the last 60 days, each with its name, minutes, kg lifted (bar
+ *    weight only, `sharedKg`) and up to 8 exercises with their best set. No sets list,
  *    body weight, photo or note ever leaves the phone;
  *  - the gym's answers read defensively (`mateBoardFrom`, `mateProfileFrom`);
  *  - every word a member reads (MATE_WORDS, held to the member-words rules by a test).
@@ -89,6 +89,26 @@ export function bestSet(sets: LocalWorkout['exercises'][number]['sets']): { w: n
 }
 
 /**
+ * The kg a mate sees for one workout: only the weight on the bar or in the hands (working sets,
+ * weight x reps), never the body-weight part the app's own kg-lifted rule adds for pull-ups and
+ * dips. With that part in, a mate could divide a pull-up workout's kg by its reps and get the
+ * member's body weight (0.60.0 review). Capped by the app's own total when it is known. PURE.
+ */
+export function sharedKg(w: LocalWorkout, t: LocalTotals | undefined): number {
+  let kg = 0;
+  for (const g of w.exercises) {
+    for (const s of g.sets) {
+      if (s.isWarmup) continue;
+      const wt = Math.max(0, finite(s.weightKg));
+      const r = Math.max(0, Math.floor(finite(s.reps)));
+      kg += wt * r;
+    }
+  }
+  const total = finite(t?.volumeKg);
+  return total > 0 ? Math.min(kg, total) : kg;
+}
+
+/**
  * What the phone sends while the switch is on, newest first. `workouts` newest first, as History
  * reads them; `keys`: each exercise id's picture key. Workouts with no id the server accepts, a bad
  * day, or outside the last 60 days are left out. PURE.
@@ -121,7 +141,7 @@ export function mateShareFrom(
       d: w.dateISO,
       name: clean(w.title ?? '', NAME_MAX) || 'Workout',
       min: Math.min(1440, Math.max(0, Math.round(finite(t?.durationSec) / 60))),
-      kg: Math.min(60000, Math.max(0, Math.round(finite(t?.volumeKg)))),
+      kg: Math.min(60000, Math.max(0, Math.round(sharedKg(w, t)))),
       ex,
     });
   }

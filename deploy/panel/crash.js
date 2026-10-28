@@ -23,7 +23,9 @@ export function scrub(text) {
     .replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '[email]')
     .replace(/\b(eyJ[\w-]+\.[\w-]+\.[\w-]+)\b/g, '[token]')
     .replace(/\b(sk|pk|sb|key|AIza)[\w-]{16,}/g, '[key]')
-    .replace(/(\+?\d[\d -]{4,}\d)/g, '[n]')
+    // Not a stack frame's line or column (bundle:1:1234567): in a one-line release bundle the column is the
+    // only clue to where it crashed (0.60.0 review).
+    .replace(/(?<![\d+])(?<!(?:bundle|\.m?js|\.tsx?):(?:\d{1,7}:)?)(\+?\d[\d -]{4,}\d)/g, '[n]')
     .replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '');
 }
 
