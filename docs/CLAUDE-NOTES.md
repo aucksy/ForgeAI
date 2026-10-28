@@ -473,6 +473,7 @@ Recommended: A first, a per-member daily cap, key kept in a Worker/Supabase func
 switch speech-to-text to Sarvam if Hinglish accuracy is poor. Not in the backlog (not confirmed).
 
 ## R-153. Gym notices must pop up on the phone; fix and release — 28 Oct 2026 (follows R-151)
+**Released (28 Oct): 0.59.0** (tag on c6131ba; Device QA default 40695609894 + owner 40695615918, journeys 40695620891 green after the panel AI retry fix 73b4ed6/717958f deployed (forgeai-panel b9b74a67); release run 40751061345 all green, Play 59000 on internal + alpha). APK: https://github.com/aucksy/ForgeAI/releases/download/v0.59.0/mettleup-v0.59.0.apk
 **He said (OpenCode):** "the firebase notifications are working but member is not getting a notifications pop up. one has
 to go inside the app to see the count badge and tap it.. it should have realtime notifications pop up... fix it and push
 the release... and yes Notifications were allowed."
