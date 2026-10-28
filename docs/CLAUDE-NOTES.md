@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-157. Firebase on his personal Google account; Excel import must use AI by itself (no "Ask AI" button) — 28 Oct 2026
+**He said:** (1) OpenCode told him Firebase must be made with his PERSONAL email, not simpleapps108. (2) "for excel import,
+ask AI did not work. I do not want manual ask AI button. It should just use AI to identify the values and match with right
+fields automatically."
+**Plan:** (1) matches R-153: add Firebase to forgeai-d7eea (his personal account), in his personal Chrome profile. (2) R-155
+grows: the import sends the headers + a few sample values per column to the AI on every import, by itself; the AI picks
+the field for each column from the VALUES (e.g. the column with 10-digit mobiles = phone); the owner only sees the result
+and can change a pick; the "Ask AI" button goes. Find why the AI step failed first. Privacy: sample member values go to
+the AI (Gemini/Claude Haiku keys set up for #47, not the free key) — check the privacy notice already covers AI import.
+
 ## R-156. Back in Claude Code: read all notes, fix issues first, update the tracker — 28 Oct 2026
 **He said:** "I made quite a few updates using cloud session and opencode using Anthropic API key. Please go thru all
 notes and recent updates and lets start fixing the issues first. Update the project tracker."
