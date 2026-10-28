@@ -35,7 +35,7 @@ import {
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { OFF_MAIN_SHARE } from '@/tracker/engine/progression';
+import { liftsUp, OFF_MAIN_SHARE, type LiftUp } from '@/tracker/engine/progression';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -1274,7 +1274,7 @@ export function fillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
-  target?: (SetFill & { setReps?: readonly number[]; fromKg?: number }) | null,
+  target?: (SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp }) | null,
 ): SetFill | null {
   const lt: LogType = ex.logType ?? 'weight_reps';
   const idx = ex.sets.findIndex((s) => s.key === setKey);
@@ -1303,7 +1303,13 @@ export function fillForSet(
     plan?.weightKg != null && lt === 'weight_reps' && mainRef != null && mainRef > 0 && Math.abs(plan.weightKg - mainRef) >= mainRef * OFF_MAIN_SHARE - 1e-9;
   if (plan && planOff && plan.reps != null) return { weightKg: plan.weightKg as number, reps: plan.reps };
   const mineOff = offMain(row);
-  if (mineOff) return { weightKg: mineOff.weightKg, reps: mineOff.reps };
+  if (mineOff) {
+    // R-143 (owner, 28 Oct 2026): a lighter set that reached the top of the range moves up to the
+    // main weight (reps back to the bottom of the range); a true back-off stays as last time.
+    const up = target?.liftUp ?? null;
+    if (fromKg != null && liftsUp(mineOff, fromKg, up)) return { weightKg: up.weightKg, reps: up.reps };
+    return { weightKg: mineOff.weightKg, reps: mineOff.reps };
+  }
   // 13 Oct 2026: a warm-up row hints last time's same warm-up (its PREVIOUS) and nothing else —
   // never a working set's numbers, a row above, or the Target.
   const warmup = row.isWarmup;

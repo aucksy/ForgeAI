@@ -931,6 +931,8 @@ export interface TargetFill {
    * 10% or more away from it (a heavy top set, a lighter back-off) hints that set, not the Target.
    */
   fromKg?: number;
+  /** R-143: where a lighter last-time set that reached the top of the range moves (`liftUpOf`). */
+  liftUp?: LiftUp;
 }
 
 /** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
@@ -944,7 +946,12 @@ export const EASY_REPS_LEFT = 3;
  */
 export function targetFill(
   t: Pick<ProgressionTarget, 'targetWeightKg' | 'repGoal' | 'action' | 'topSetOnly'> &
-    Partial<Pick<ProgressionTarget, 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change'>>,
+    Partial<
+      Pick<
+        ProgressionTarget,
+        'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'
+      >
+    >,
 ): TargetFill | null {
   if (t.action === 'start' || t.version || t.free) return null;
   if (t.logType === 'time') return t.holdSec != null && t.holdSec > 0 ? { weightKg: 0, reps: 0, durationSec: t.holdSec } : null;
@@ -959,7 +966,11 @@ export function targetFill(
   if (t.repGoal == null) return null;
   const perSet = !t.easy && perSetLine(t.setGoals) != null ? [...(t.setGoals as readonly number[])] : null;
   const out: TargetFill = perSet ? { weightKg, reps: t.repGoal, setReps: perSet } : { weightKg, reps: t.repGoal };
-  if (!t.easy && (t.logType ?? 'weight_reps') === 'weight_reps' && t.last && t.last.weightKg > 0) out.fromKg = t.last.weightKg;
+  if (!t.easy && (t.logType ?? 'weight_reps') === 'weight_reps' && t.last && t.last.weightKg > 0) {
+    out.fromKg = t.last.weightKg;
+    const up = liftUpOf({ ...t, last: t.last });
+    if (up) out.liftUp = up;
+  }
   return out;
 }
 
@@ -1003,6 +1014,43 @@ export function summarise(s: ProgSession): Summary | null {
 
 /** C3-4: a set this far from the main weight is a top set or a back-off, not a main set. */
 export const OFF_MAIN_SHARE = 0.1;
+
+/**
+ * R-143 (owner, 27-28 Oct 2026): where a LIGHTER set last time moves to next time. A set 10% or
+ * more under last time's main weight is kept as it was (C3-4, a back-off) — unless it reached the
+ * top of the rep range: then it moves up to the main weight, its reps back to the bottom of the
+ * range, as the move-up rule (R2) does for the main sets. Only a lighter set that did not reach the
+ * top (a true back-off) stays as last time; a heavy top set is never moved.
+ */
+export interface LiftUp {
+  /** Reps at or above this on a lighter set = it reached the top of the range. */
+  topReps: number;
+  /** The weight it moves to: last time's main weight (never above today's Target weight). */
+  weightKg: number;
+  /** Its rep goal there: the bottom of the range. */
+  reps: number;
+}
+
+/** The move-up for this Target's lighter sets, or null when none applies. PURE. */
+export function liftUpOf(
+  t: Pick<ProgressionTarget, 'targetWeightKg' | 'last'> &
+    Partial<Pick<ProgressionTarget, 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg' | 'logType'>>,
+): LiftUp | null {
+  if ((t.logType ?? 'weight_reps') !== 'weight_reps') return null;
+  if (!t.last || !(t.last.weightKg > 0) || !(t.targetWeightKg > 0)) return null;
+  if (t.targetRepsMin == null || t.targetRepsMax == null || !(t.targetRepsMax > 0)) return null;
+  const weightKg = Math.min(t.targetWeightKg, t.sameWeightKg ?? t.last.weightKg);
+  return { topReps: t.targetRepsMax, weightKg, reps: Math.max(1, Math.min(t.targetRepsMin, t.targetRepsMax)) };
+}
+
+/** R-143: this last-time set was lighter than the main weight `mainKg` AND reached the top: it moves up. PURE. */
+export function liftsUp(set: { weightKg: number; reps: number }, mainKg: number, up: LiftUp | null): up is LiftUp {
+  if (!up || !(mainKg > 0) || !(set.weightKg > 0)) return false;
+  const lighter = mainKg - set.weightKg >= mainKg * OFF_MAIN_SHARE - 1e-9;
+  // Far ABOVE the range (C3-9's "range moved" spread: 80 x 10 after 100 x 5 in 4-6) is a planned
+  // high-rep back-off with its own aim: it stays as last time (16 Oct audit C3-4).
+  return lighter && set.weightKg < up.weightKg - 1e-9 && set.reps >= up.topReps && set.reps <= up.topReps + RANGE_MOVED_REPS;
+}
 
 /** Reps plus logged reps-in-reserve (10 − RPE), capped at 2. RPE outside the app's 6–10 scale is ignored. */
 export function score(s: ProgSet): number {

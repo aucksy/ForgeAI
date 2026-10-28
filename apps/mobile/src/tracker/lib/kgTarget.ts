@@ -16,7 +16,7 @@
  * same thing in REPS (`repPlan`): "45 reps to beat · +3 on last time", each set's reps when opened,
  * and "20 of 45 reps · next 12, 13" during the workout. Each rep counts as one, so the same math runs.
  */
-import { OFF_MAIN_SHARE, type ProgressionTarget } from '../engine/progression';
+import { liftsUp, liftUpOf, OFF_MAIN_SHARE, type ProgressionTarget } from '../engine/progression';
 
 export interface KgSet {
   weightKg: number;
@@ -41,7 +41,7 @@ export interface KgPlan {
 }
 
 type TargetIn = Pick<ProgressionTarget, 'action' | 'targetWeightKg' | 'targetSets' | 'repGoal' | 'setGoals' | 'topSetOnly' | 'logType' | 'bodyweightOnly'> &
-  Partial<Pick<ProgressionTarget, 'easy' | 'free' | 'version'>>;
+  Partial<Pick<ProgressionTarget, 'easy' | 'free' | 'version' | 'last' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'>>;
 
 /** At most this many reps above a set's plan when catching up (decision 2 A). */
 export const MAX_EXTRA_REPS = 2;
@@ -82,11 +82,16 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   // Review fix: in last time's order, as the set rows hint them (fillForSet matches rows to last
   // time's sets by place): a place that was a top set or back-off stays one; the others take the
   // Target weight and the next per-set goal.
+  // R-143 (owner, 28 Oct 2026): a lighter set that reached the top of the range moves up to the
+  // main weight, reps back to the bottom of the range (as the set row hints it, fillForSet). It
+  // takes no per-set goal: those stay with the main sets, in order.
+  const up = main != null && t.last ? liftUpOf({ ...t, last: t.last }) : null;
   const sets: KgPlanSet[] = [];
   let goal = 0;
   for (let i = 0; i < t.targetSets; i++) {
     const was = last[i];
-    if (was && off.includes(was)) sets.push({ weightKg: was.weightKg, reps: was.reps, asLast: true });
+    if (was && off.includes(was) && main != null && liftsUp(was, main, up)) sets.push({ weightKg: up.weightKg, reps: up.reps, asLast: false });
+    else if (was && off.includes(was)) sets.push({ weightKg: was.weightKg, reps: was.reps, asLast: true });
     else {
       sets.push({ weightKg: t.targetWeightKg, reps: t.setGoals[goal] ?? t.repGoal, asLast: false });
       goal += 1;

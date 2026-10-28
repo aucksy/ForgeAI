@@ -202,6 +202,7 @@ plain words, then propose a fix if needed.
 are suggesting things": he sees 45 kg last time but 40 kg suggested with the same or fewer reps. (Screenshot:
 PREVIOUS set 1 = 40 x 20, sets 2-3 = 45; so set 1 stays at the lighter 40 instead of moving to 45 after 20 reps.)
 Review the whole suggestion logic end to end, not just this case, with R-138 and R-144.
+**Fixed (28 Oct):** a lighter set (10%+ under last time's main weight) that reached the top of its rep range (up to 2 over it) now moves up to the main weight next time, reps back to the bottom of the range, like the move-up rule for main sets; the card's kg plan and the set row hints agree (one helper, liftsUp / liftUpOf in tracker/engine/progression.ts). A lighter set short of the top stays as last time, and so does one far above the range (a planned 80 x 10 back-off after 100 x 5 in 4-6, audit C3-4). His case (40 x 20, 45 x 13, 45 x 11, range to 20) now plans 45 x 12, 45 x 14, 45 x 12. Test: test/tracker/r143LighterSetMovesUp.test.ts.
 
 ## R-142. Working rule: "add it to the notes" means just write it down, no code analysis — 27 Oct 2026
 **Owner said:** "I do not want you to analyze the code right now. Just add the stuff in the notes."
