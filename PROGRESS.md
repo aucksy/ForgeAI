@@ -2764,6 +2764,15 @@
   - Waiting: owner yes for 0031 + 0033 live; terms/privacy pages are still holding pages and have no gym-owner
     data agreement text (owner wording); deploy admin app + HQ + panel Worker (AI branch field) after the yes.
 
+- 2026-10-29: **Offline front desk step 3 finish (#7, R-185/R-186), branch feat/offline-desk-3, not merged/deployed.**
+  - Found: step 3 itself (payments, sales, new members, edits offline; per-device receipt series D1/D2; conflicts) was
+    built 24 Oct (9c832be) and is in the live admin bundle; the tracker row was stale.
+  - Added: bar headline "Offline: N waiting to send." + "See what is waiting" list (outbox.ts waitingList, DeskState.list,
+    ui/offline.tsx); over-paid note when two desks took money for one plan (outbox.ts overPaidP in replayRecords).
+  - Server: 0041_offline_desk_receipts.sql (NOT APPLIED LIVE): an offline-series receipt of a claimed desk skips
+    OVER_DUE. Test 0041 PASS 18 on PGlite; fails 4 against the 0021 rule.
+  - Design doc: docs/overhaul/OFFLINE-DESK.md. Checks: tsc -b, vitest 1311, panel 63, e2e (J34b list + phone fit).
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.

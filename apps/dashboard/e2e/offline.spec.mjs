@@ -42,7 +42,7 @@ test('J34 offline: the panel opens with no internet, shows the kept gym, refuses
   await page.context().setOffline(true);
   server.disconnect();
   await page.reload();
-  const bar = page.getByRole('status').filter({ hasText: 'Offline mode.' });
+  const bar = page.getByRole('status').filter({ hasText: 'Offline: ' });
   await expect(bar).toBeVisible({ timeout: 15_000 });
   await expect(bar).toContainText('Check-ins, payments and new members are saved on this device and sent when the internet is back.');
   await expectFitsPhone(page, 'offline, on Today');
