@@ -5,13 +5,19 @@ name: Build & Release (APK + AAB)
 # From v0.46 it also builds the Wear OS watch app (apps/mobile/android/wear, -PwithWear=true),
 # signs it with exactly the phone APK's signer and lineage (scripts/ci/sign_rotated.sh; the Wear
 # Data Layer pairs only same-key apps), checks that (scripts/ci/same_signer.py) and attaches it as
-# forgeai-<tag>-wear.apk. The release checks and the update proof look only at the phone APK.
+# mettleup-<tag>-wear.apk (forgeai-<tag>-wear.apk up to 0.59.0). The release checks and the update
+# proof look only at the phone APK.
+# R-167 (28 Oct 2026): the watch app also goes to Google Play (Wear OS form factor of the same app,
+# com.mettleup.app): the watch's own AAB, mettleup-<tag>-wear.aab, signed with the same upload key as
+# the phone AAB, with the watch's own versionCode = 1_000_000_000 + the phone's
+# (release_checks.wear_version_code_for: never equal to a phone code, always above it). play-upload.yml
+# puts it on Play's Wear OS internal testing track (wear:qa).
 # MettleUp (0.56.0 on): the phone APK and AAB are published as mettleup-<tag>.apk / .aab. Installed
 # ForgeAI apps (com.forgeai.app, 0.55.x and older) look for forgeai-<tag>.apk in the latest release;
 # they must NOT find it, or they would offer MettleUp (another package: a second, empty app) as an
 # "update". The new app looks for mettleup-<tag>.apk (apps/mobile/src/lib/appUpdate.ts); the self-test
-# scripts/ci/test_release_checks.py keeps the two names in step. The watch APK keeps its old name
-# (no app looks it up by name).
+# scripts/ci/test_release_checks.py keeps the two names in step. No app looks the watch files up by
+# name; release_checks.phone_apk_asset skips any -wear.apk.
 # U-W4 (17 Oct 2026): the watch's JVM tests run first, and a failing one stops the release.
 # Manual runs (workflow_dispatch) do everything EXCEPT publish: a dry run on main.
 #
@@ -134,9 +140,11 @@ jobs:
             NAME="${VERSION}-dryrun.${GITHUB_RUN_NUMBER}"
           fi
           CODE="$(python3 scripts/ci/release_checks.py --version-code "$VERSION")"
-          echo "versionName $NAME, versionCode $CODE"
+          WEAR_CODE="$(python3 scripts/ci/release_checks.py --wear-version-code "$VERSION")"
+          echo "versionName $NAME, versionCode $CODE (watch $WEAR_CODE)"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "wear_code=$WEAR_CODE" >> "$GITHUB_OUTPUT"
 
       # U-W4 (UAT, 17 Oct 2026): the watch app's JVM tests (and the phone's watch-link tests,
       # :forge-rest) must pass BEFORE the watch APK is built and signed: a failing one stops the
@@ -159,18 +167,20 @@ jobs:
           retention-days: 7
 
       # Always signed with the debug config here (build.gradle); the release key is applied below.
-      # -PwithWear=true adds the watch app: assembleRelease builds its APK too. The AAB stays the
-      # phone's only (:app:bundleRelease; before v0.46 :app was the only module with a bundle task).
-      - name: Build release APK + AAB (+ watch APK)
+      # -PwithWear=true adds the watch app: assembleRelease builds its APK too. R-167: the watch's own
+      # AAB too (:wear:bundleRelease), with the watch's versionCode (-PwearVersionCode).
+      - name: Build release APK + AAB (+ watch APK + watch AAB)
         working-directory: apps/mobile/android
         env:
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
+          WEAR_CODE: ${{ steps.version.outputs.wear_code }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease :app:bundleRelease -PwithWear=true \
+          ./gradlew assembleRelease :app:bundleRelease :wear:bundleRelease -PwithWear=true \
             -PappVersionName="$VERSION_NAME" \
             -PappVersionCode="$VERSION_CODE" \
+            -PwearVersionCode="$WEAR_CODE" \
             --no-daemon --stacktrace
 
       - name: Stage artifacts
@@ -178,14 +188,18 @@ jobs:
           APK="$(find apps/mobile/android/app/build/outputs/apk/release -name '*.apk' | head -1)"
           AAB="$(find apps/mobile/android/app/build/outputs/bundle/release -name '*.aab' | head -1)"
           WEAR="$(find apps/mobile/android/wear/build/outputs/apk/release -name '*.apk' | head -1)"
+          WEAR_AAB="$(find apps/mobile/android/wear/build/outputs/bundle/release -name '*.aab' | head -1)"
           echo "Found APK: $APK"
           echo "Found AAB: $AAB"
           echo "Found watch APK: $WEAR"
+          echo "Found watch AAB: $WEAR_AAB"
           if [ -z "$WEAR" ]; then echo "::error::No watch APK was built (apps/mobile/android/wear)."; exit 1; fi
+          if [ -z "$WEAR_AAB" ]; then echo "::error::No watch AAB was built (apps/mobile/android/wear)."; exit 1; fi
           cp "$APK" "mettleup-${GITHUB_REF_NAME}.apk"
           cp "$AAB" "mettleup-${GITHUB_REF_NAME}.aab"
-          cp "$WEAR" "forgeai-${GITHUB_REF_NAME}-wear.apk"
-          ls -la mettleup-* forgeai-*
+          cp "$WEAR" "mettleup-${GITHUB_REF_NAME}-wear.apk"
+          cp "$WEAR_AAB" "mettleup-${GITHUB_REF_NAME}-wear.aab"
+          ls -la mettleup-*
 
       # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
       - name: No release key (debug-signed build)
@@ -277,10 +291,13 @@ jobs:
           #     sees the same key as the phone and the Wear Data Layer pairs them.
           # shellcheck source=scripts/ci/sign_rotated.sh
           source scripts/ci/sign_rotated.sh
-          sign_rotated "forgeai-${GITHUB_REF_NAME}-wear.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
+          sign_rotated "mettleup-${GITHUB_REF_NAME}-wear.apk" "mettleup-${GITHUB_REF_NAME}-wear.apk"
 
-          # 4. AAB (Play upload, never sideloaded): the release key ONLY. Drop Gradle's debug JAR
+          # 4. AABs (Play upload, never sideloaded): the release key ONLY. Drop Gradle's debug JAR
           #    signature first, or jarsigner would add a second signer next to it.
+          #    R-167: the phone's AAB and the watch's (mettleup-<tag>-wear.aab), the same upload key.
+          for AAB in "$AAB" "mettleup-${GITHUB_REF_NAME}-wear.aab"; do
+          echo "Signing $AAB"
           zip -q -d "$AAB" 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' || true
           jarsigner -keystore "$KS" -storetype PKCS12 \
             -storepass:env ANDROID_KEYSTORE_PASSWORD -keypass:env ANDROID_KEY_PASSWORD \
@@ -297,12 +314,13 @@ jobs:
               echo "::error::The AAB is signed by $AAB_CERTS, which is not in ALLOWED_CERT_SHA256."; exit 1
             fi
           fi
-          ls -la mettleup-* forgeai-*
+          done
+          ls -la mettleup-*
 
       # The watch app hears from the phone only when both carry the same certificate (with or
       # without the release key). Fails the release before anything is published.
       - name: Watch APK signed by the same key as the phone APK
-        run: python3 scripts/ci/same_signer.py "mettleup-${GITHUB_REF_NAME}.apk" "forgeai-${GITHUB_REF_NAME}-wear.apk"
+        run: python3 scripts/ci/same_signer.py "mettleup-${GITHUB_REF_NAME}.apk" "mettleup-${GITHUB_REF_NAME}-wear.apk"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -311,7 +329,6 @@ jobs:
           path: |
             mettleup-*.apk
             mettleup-*.aab
-            forgeai-*-wear.apk
 
       # Checks on the built APK itself. A FAIL stops here, before the Release is published
       # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public
@@ -405,7 +422,6 @@ jobs:
           files: |
             mettleup-*.apk
             mettleup-*.aab
-            forgeai-*-wear.apk
           generate_release_notes: true
 
   # R-125 / 26 Oct 2026: the published release's AAB to Google Play's internal + closed tests, as part of

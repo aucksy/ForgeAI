@@ -114,3 +114,26 @@ jobs:
           ARGS=(--tag "$TAG" --aab "$RUNNER_TEMP/aab/mettleup-$TAG.aab" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks internal,alpha)
           if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
           python scripts/ci/play_upload.py "${ARGS[@]}"
+
+      # R-167 (28 Oct 2026): the WATCH app's bundle (mettleup-<tag>-wear.aab: same package, same upload
+      # key, the watch's own versionCode) to the Wear OS internal testing track "wear:qa", in its own
+      # Play edit AFTER the phone's (play_upload.py --wear accepts only "wear:" tracks, never
+      # production; the phone run above refuses every "wear:" track). A release without a watch
+      # bundle (before 0.60.0) is skipped. A failure here is a warning: the phone's tracks are
+      # already out and untouched.
+      - name: Upload the watch app to Play (Wear OS internal testing)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          WEAR_AAB="mettleup-$TAG-wear.aab"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -qx "$WEAR_AAB"; then
+            echo "::notice::$TAG has no $WEAR_AAB (watch bundles start with 0.60.0): nothing to upload for the watch."
+            exit 0
+          fi
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "mettleup-$TAG-wear.aab" --dir "$RUNNER_TEMP/wear-aab"
+          ls -la "$RUNNER_TEMP/wear-aab"
+          ARGS=(--wear --tag "$TAG" --aab "$RUNNER_TEMP/wear-aab/$WEAR_AAB" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks wear:qa)
+          if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
+          python scripts/ci/play_upload.py "${ARGS[@]}" || { echo "::warning::The watch bundle did not reach Play's Wear OS internal track (the phone's tracks are already done). See the log above."; exit 1; }
