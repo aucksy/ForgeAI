@@ -245,6 +245,14 @@ expo-task-manager, ~15-min inbox check, local pop-up on a "Messages from your gy
 repeat / no flood of old notices, "Messages from my gym" switch). Its work is UNCOMMITTED in the working tree until
 reviewed; if the session ended, check `git status` / `git diff` in apps/mobile first and continue from it (do not
 start a second copy). Firebase sign-in tab was left open; he said "will do it later".
+**Accounts (owner, 28 Oct):** the Google Cloud project **forgeai-d7eea is on his PERSONAL Google account** (not
+simpleapps108 as older notes say); an older Firebase project exists under simpleapps108 (likely Test Lab, R-29), not used
+for push. Plan agreed: NOT a new project — sign in to Firebase with his personal account → "Add Firebase to a Google
+Cloud project" → forgeai-d7eea (Analytics off), register Android app com.mettleup.app (SHA-1 upload
+97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88, Play signing 80:19:24:4B:25:8E:CE:74:8D:68:6B:77:3A:04:23:A9:13:E3:4C:47),
+download google-services.json, check Cloud Messaging API (V1) enabled; no service-account key, no legacy server key.
+**He will have Claude Code (Windows app) do this itself when his weekly plan resets (28 Oct)**, in his Chrome
+(rule use-the-browser-yourself), then build step 2.
 **UPDATE (28 Oct, later):** step 1 is COMMITTED (429a18d, version 0.58.1 + What's new); phone tests started on it.
 If they passed: tag v0.58.1 (Play upload runs by itself). If not: read the failing part and fix.
 **Next actions:**
