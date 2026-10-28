@@ -95,6 +95,8 @@ def section(md, start, stop=None):
 
 
 def fill(md):
+    # A wording proposal waiting for the owner's yes is never published (R-164).
+    md = re.sub(r"<!-- PROPOSAL -->.*?<!-- /PROPOSAL -->\n?", "", md, flags=re.S)
     if CONTACT_NAME:
         md = md.replace("[OWNER NAME]", CONTACT_NAME)
     if CONTACT_EMAIL:

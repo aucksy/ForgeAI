@@ -48,6 +48,13 @@ async function pushBoardLater(trigger: 'workout' | 'start' | 'active'): Promise<
   } catch (e) {
     console.warn('[board] push could not start', e);
   }
+  // R-164: the workouts shared with gym mates, only while that switch is on (mateShare.ts decides).
+  try {
+    const { shareWithMates } = await import('@/shop/mateSync');
+    await shareWithMates(trigger);
+  } catch (e) {
+    console.warn('[mates] share could not start', e);
+  }
 }
 
 async function syncOfferAfterWorkout(): Promise<void> {

@@ -194,6 +194,14 @@ the gym server: a live server change (his yes) + a privacy line. Asked him: name
 progress photos ever; display picture only if he/she shares it (max 256x256, ~30 KB, one per member); summaries only (date,
 routine, duration, kg lifted, up to 8 exercises with best set), last 30 workouts / 60 days. Estimate ~1 KB per workout, ~30 KB
 + ~30 KB photo per sharing member; 500 sharing members ~30 MB of the free 500 MB database + 1 GB file storage.
+**Built (28 Oct, helper, NOT live):** server change 0040 (0039 left for "how busy"), header "NOT APPLIED LIVE: waits for the
+owner's yes"; test supabase/tests/0040_gym_mate_profiles.sql (size check: a workout row under 2 KB). Member app: Settings →
+Your gym → What my gym can see → "Let my gym mates see my workouts" (off; shown only once 0040 answers); on = shares at once,
+after each saved workout and on start (6-hour wait); off = deleted at once (kept and re-sent offline). Leaderboard names open
+a read-only profile (initials, name, bio, Profile-feed-style workout cards with best sets) only when the server says so.
+**No photo:** the server has no member-photo store (only product photos and gym logos), so profiles show initials. Privacy
+lines EN + HI drafted as a PROPOSAL in the notices (hidden from the public pages by scripts/legal_pages.py) for his yes.
+Research: docs/research/R-gym-mate-profiles.md.
 
 ## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
 **He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
