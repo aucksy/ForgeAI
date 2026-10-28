@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-175. Tracker bug: a read follow-up stayed on top; replies on #68 and #39 — 29 Oct 2026
+**He said:** "I marked number 45 as read, but it is still in the follow-up section. Anything marked as read should be removed and
+placed in the bottom section." Replies: #68 owner switches busy-machines on in the admin app and enters machine counts from a ready
+list (adds missing ones); Ultra plan idea: AI from photos or audio. #39: "do not send simple bug fixes through testers every time.
+Judge severity, impact and risk ... only when a fix may pose a risk to other screens should it go to the testers first."
+**Done:** onTop = recent AND (unread new answer OR my answer pending); read threads drop to the read list. #68 row + answer updated.
+**#39 RELEASE RULE (replaces "every fix to testers first"):** low risk (one screen: words, layout, one wrong number) -> everyone
+after the full gate; higher risk (shared components, workout saving, sign-in, money, gym server, bigger than a few lines) -> testers
+24 h first; urgent (crash, money, privacy) -> everyone at once. Log the route + reason per release. TODO when feat/feedback-button
+merges: update docs/launch/FEEDBACK.md's #39 line to this rule (the branch still says "each fix goes to the testers first").
+
 ## R-174. Highlight the latest Q&A on a thread — 29 Oct 2026
 **He said:** "also highlight the latest Q&A on the thread"
 **Done:** opening a thread's full answer shows his last follow-up and my answer under it in an accent box titled

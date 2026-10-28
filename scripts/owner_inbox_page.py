@@ -744,18 +744,19 @@ const toRead = (e) => !inWaiting(e) && !isRead(e);
 const inChat = (e) => chat === "all" || e.chat === chat;
 const byNum = (a, b) => b.num - a.num;
 // R-172 (owner, 29 Oct 2026): a question he replied to is a thread. When Claude answers his follow-up it jumps to
-// the top of Questions & answers, tagged with the reply count; threads from the last 3 days stay on top.
+// the top of Questions & answers, tagged with the reply count, until he marks it read (3-day limit).
 const THREAD_DAYS = 3;
 const threadAnswered = (e) => Boolean(e.thread && e.thread.answered);
 const threadNew = (e) => threadAnswered(e) && !isRead(e);
 const threadWaiting = (e) => Boolean(e.thread && !e.thread.answered) && !sentOf(e);
 const threadRecent = (e) => Boolean(e.thread && e.thread.last) && (Date.now() - Date.parse(e.thread.last + "T00:00:00")) / 864e5 <= THREAD_DAYS;
-const onTop = (e) => threadRecent(e) && (threadAnswered(e) || threadWaiting(e));
+// R-175 (owner, 29 Oct 2026): "Mark as read" takes a thread off the top, into the read list at the bottom.
+const onTop = (e) => threadRecent(e) && (threadNew(e) || threadWaiting(e));
 const byThread = (a, b) => (threadNew(b) - threadNew(a)) || (threadWaiting(b) - threadWaiting(a)) || String(b.thread.last).localeCompare(String(a.thread.last)) || byNum(a, b);
 const threadTag = (e) => threadNew(e)
   ? '<span class="tag act">New answer' + (e.thread.replies > 1 ? " · reply " + e.thread.replies : " to your reply") + "</span>"
   : threadWaiting(e) ? '<span class="tag new">Claude is answering your reply</span>'
-  : threadRecent(e) && threadAnswered(e) ? '<span class="tag new">Your thread · ' + e.thread.replies + (e.thread.replies > 1 ? " replies" : " reply") + "</span>" : "";
+  : "";
 const entryOf = (n) => DATA.entries.find((x) => x.num === n);
 const maxNum = DATA.entries.reduce((m, e) => Math.max(m, e.num), 0);
 // Features waiting for the owner also show in "Waiting for you" (owner, 18 Oct).

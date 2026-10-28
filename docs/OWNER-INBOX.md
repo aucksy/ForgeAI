@@ -368,7 +368,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
-| Busy times by exercise | Planned | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. | The owner sets how many of each machine the gym has; only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour, and checks its own guesses each week. When it is right most weeks, members see "Leg day is quieter on Tuesday. Move it?" with one tap to move. Your live server yes comes at the end. |
+| Busy times by exercise | Planned | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. | Off by default; the owner switches it on in the admin app and enters how many of each machine the gym has, from a ready list (and adds any missing machine). Only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour and checks its guesses weekly; when right most weeks, members see "Leg day is quieter on Tuesday. Move it?". Later (Ultra plan idea): AI fills the list from photos or speech. |
 | Google login | Live | 0.57.0 (25 Oct): "Continue with Google" is the first card on the welcome screen (R-131). | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
@@ -437,6 +437,12 @@ I moved it to Planned. The live server step joins your next combined yes.
 - **The suggestion:** when the app is confident, a member sees one calm line on a routine, for example "Leg day is quieter on Tuesday than Monday at 7 pm. Move it?" One tap moves it; "Not now" hides it for a month.
 - **Small gyms gain most,** as you said: one leg press and 40 members at 7 pm is a real queue. In a big gym with 4 of each machine, the app stays silent, so it never annoys anyone.
 - It stays hidden until its own guesses prove right most weeks. The live server step comes at the end, with your yes.
+**YOUR REPLY (29 Oct):** make it a feature the owner switches on in the admin app; on switching it on, they enter how many of each machine they have, from a ready list; they can add a missing machine with its count. Later, on the Ultra plan, AI could do this from photos or audio.
+**My answer (29 Oct):** Agreed. That is how it will work:
+- **Off by default.** Admin app → Settings → "Busy machines for members". The owner turns it on.
+- **A ready list to tick:** about 40 common machines (leg press, Smith machine, lat pulldown, cable station, pec deck and so on). The owner types the count next to each one they have. "Add a machine" covers anything missing, with its count.
+- **Members see nothing** until it is switched on and its guesses prove right.
+- **Ultra plan idea:** the owner walks the gym taking photos or speaking ("two leg presses, one hack squat"), and AI fills in the list. I keep it as an idea for the Ultra plan, not part of the first build.
 
 ## 67. Your task: one yes for 2 finished features — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -840,6 +846,7 @@ Without the off switch, a member could complain that a "no" was ignored, and tha
 ## 45. Count reps by listening: the plan — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE (cancelled 29 Oct)
+**READ (29 Oct, 12:40 am, via the page)**
 **You asked:** in a hard set people lose count. Could the app listen to the member counting (earbud mic)
 and log the set by itself? Or is there a better way?
 **My answer:** Build the listening idea, with one change: use the phone's own microphone, not the earbuds'.
@@ -1101,6 +1108,12 @@ Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
 - **Step 2, the reader:** a check on your PC twice a day reads new feedback and crash notes, sorts them, and fixes real bugs through the normal tests. I switch it on the day 0.60.0 ships, because before that nobody can send feedback.
 - **Step 3, testers first:** each fix goes to the testers' group first; after 24 hours with no problem it goes to everyone, as you decided on 20 Oct.
 - **Only wait:** 0.59.0 must finish first (an AI import test is stuck on Google's busy servers; my helper is adding a backup).
+**YOUR REPLY (29 Oct):** do not send simple bug fixes through the testers every time. Judge the severity, impact and risk. Simple and quick: send it out. Only when a fix may affect other screens should it go to the testers first.
+**My answer (29 Oct):** Agreed. New rule for every fix:
+- **Low risk → straight to everyone** after all tests pass: a fix that touches one screen only, such as wrong words, a layout glitch or a wrong number on one screen.
+- **Higher risk → testers first for 24 hours:** a fix in shared parts many screens use, in saving workouts, sign-in, money, the gym server, or a fix bigger than a few lines.
+- **Urgent → everyone at once,** whatever the size: crashes, wrong money, privacy leaks.
+- Each release note in my log says which route I picked and why, so you can check my judgement.
 
 ## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1116,6 +1129,7 @@ no paper signing needed. As you asked, gym owners now accept the terms and the d
 ## 37. Launch task: name the complaints contact for members — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 12:42 am, via the page)**
 **Your task:** Tell Claude one name and one email address that members can write to about their data (it can be you and a new address such as privacy.forgeai@gmail.com; one you will check weekly).
 **Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
 **TASK DONE (24 Oct, chat)**
