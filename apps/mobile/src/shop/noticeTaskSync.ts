@@ -35,12 +35,12 @@ export function syncNoticeTask(): Promise<void> {
   return run.catch((e: unknown) => console.warn('[ForgeErr] gym notices: the background job', e));
 }
 
+// No time limit here (0.59.0 review): acting on the empty defaults of a slow load would read as "no
+// gym", switch the job off and forget what was already shown. The root layout can wait for the real load.
 function whenRead(p: { hasHydrated: () => boolean; onFinishHydration: (fn: () => void) => () => void }): Promise<void> {
   if (p.hasHydrated()) return Promise.resolve();
   return new Promise((resolve) => {
-    const timer = setTimeout(resolve, 5000);
     const unsub = p.onFinishHydration(() => {
-      clearTimeout(timer);
       unsub();
       resolve();
     });

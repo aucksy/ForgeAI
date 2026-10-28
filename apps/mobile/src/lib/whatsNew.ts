@@ -54,14 +54,19 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
-    version: '0.58.1',
+    version: '0.59.0',
     date: '28 Oct',
     lines: [
       {
-        // R-153 step 1 (background check, no Firebase yet); fresh-reader checked.
-        text: 'Messages from your gym now pop up on your phone, even when the app is closed. They can take a few minutes to arrive.',
+        // R-153 (0.58.1 never reached members, so its line is merged here): FCM push + the 15-minute check.
+        // member-words: Gemini pass, facts checked.
+        text: 'Messages and offers from your gym now pop up on your phone right away, even when the app is closed.',
         go: { label: 'Notification settings', href: '/settings/notifications' },
       },
+      { text: 'During a workout, the "kg to beat" and the PREVIOUS column now come from the same last workout, so the numbers match.' },
+      { text: 'If a lighter first set hit the top of its reps last time, the app now suggests your main weight for it.' },
+      { text: 'Match the "kg to beat" exactly and the app says "reached". It says "beaten" only when you lift more.' },
+      { text: '"Resume workout" now opens at the exercise you were on, so you do not have to scroll.' },
     ],
   },
   {

@@ -14,7 +14,7 @@ vi.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
-const gym = vi.hoisted(() => ({ server: [] as unknown[], fail: false, calls: 0, demo: false }));
+const gym = vi.hoisted(() => ({ server: [] as unknown[], fail: false, apiFail: false, calls: 0, demo: false }));
 vi.mock('@/shop/gymActions', async () => {
   const { useGymInbox } = await import('@/shop/inboxStore');
   return {
@@ -28,7 +28,7 @@ vi.mock('@/shop/gymActions', async () => {
 });
 vi.mock('@/db', () => ({ initDb: async () => undefined }));
 vi.mock('@/onboarding/db/dataActions', () => ({ isDemoData: async () => gym.demo }));
-vi.mock('@/shop/gymApi', () => ({ apiMessages: async () => ({ ok: true, data: gym.server }) }));
+vi.mock('@/shop/gymApi', () => ({ apiMessages: async () => (gym.apiFail ? { ok: false, error: 'offline' } : { ok: true, data: gym.server }) }));
 
 import { useGymShop } from '@/shop/gymStore';
 import { useGymInbox } from '@/shop/inboxStore';
@@ -68,6 +68,7 @@ beforeEach(() => {
   setNoticeAppInFrontForTest(false);
   gym.server = [];
   gym.fail = false;
+  gym.apiFail = false;
   gym.calls = 0;
   gym.demo = false;
   setNoticeNotificationsForTest(fake);
@@ -102,6 +103,16 @@ describe('a push arrives', () => {
     await onPushArrived(pushed(ID_B));
     expect(alerted().sort()).toEqual([ID_B, 'old'].sort());
     await runNoticeCheck();
+    expect(shown).toEqual([]);
+  });
+
+  it('a push before the first look while the inbox cannot be read saves nothing: no flood of old ones later', async () => {
+    gym.server = [row(ID_B, 'Yoga day', 1), row('o1', 'Old 1', 60), row('o2', 'Old 2', 90), row('o3', 'Old 3', 120)];
+    gym.apiFail = true;
+    await onPushArrived(pushed(ID_B));
+    expect(mem.has(GYM_NOTICE_ALERTS_KEY)).toBe(false);
+    gym.apiFail = false;
+    await runNoticeCheck(); // still a first look: remembers all, shows nothing
     expect(shown).toEqual([]);
   });
 

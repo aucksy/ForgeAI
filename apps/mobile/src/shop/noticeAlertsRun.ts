@@ -233,7 +233,10 @@ export async function onPushArrived(raw: unknown): Promise<void> {
         // The first look on this phone: remember what the inbox already holds (no flood of old ones later).
         const { apiMessages } = await import('./gymApi');
         const r = await apiMessages(link.memberKey);
-        alerted = r.ok ? planNoticeAlerts({ messages: r.data, alerted: null, inFront: true }).alerted : [];
+        // Inbox not read (offline, slow): save nothing, so the next check is still a first look. Saving
+        // only this one message would make the next check pop up every older unread one (0.59.0 review).
+        if (!r.ok) return;
+        alerted = planNoticeAlerts({ messages: r.data, alerted: null, inFront: true }).alerted;
       }
       const ids = alerted.includes(p.noticeId) ? alerted : [...alerted, p.noticeId];
       await AsyncStorage.setItem(GYM_NOTICE_ALERTS_KEY, JSON.stringify({ memberId: link.memberId, ids: ids.slice(-ALERTED_CAP) }));

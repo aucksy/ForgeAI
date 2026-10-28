@@ -2,7 +2,7 @@
   "expo": {
     "name": "MettleUp",
     "slug": "forgeai",
-    "version": "0.58.1",
+    "version": "0.59.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": ["mettleup", "forgeai"],

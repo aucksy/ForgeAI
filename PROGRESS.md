@@ -2693,6 +2693,15 @@
   hq_push_next/drop). App: google-services plugin + google-services.json, shop/pushToken.ts (save/refresh/clear the
   FCM address), push task in noticeTask.ts (marks shown so the 15-min check never repeats it). Left: live 0038 (owner
   yes), FCM_SERVICE_ACCOUNT secret, privacy line OK, release. Details CLAUDE-NOTES R-153.
+- 2026-10-28: **0.59.0 prepared (replaces 0.58.1, which was tagged on fecd97b but never published: its phone gate failed
+  and journeys 40678520480 died on a Gradle transform flake).** Holds R-153 step 1 (15-min check + local pop-up) and
+  step 2 (FCM push for gym messages and offers; 0038 live, HQ FCM secret set, admin app deployed), R-138 kg to beat =
+  PREVIOUS's last time (57f3639), R-143, R-146, R-138 tail, R-145, R-152. Review subagent (one round): 3 findings, 2 fixed:
+  a push before the first look whose inbox read failed saved only that notice, so the next 15-min check popped up every
+  older unread one (now saves nothing; test added); the root sync acted on empty defaults after a 5 s hydration timeout
+  (forgot shown notices; now waits for the real load). Left (product, LOW): the switch is on by default but permission is
+  asked only when flipped. Device-only unknown: data-only push with the app fully closed. typecheck 0, vitest 3651 pass.
+  What's new 0.59.0 replaces 0.58.1's line (member-words, Gemini 3.8 Flash pass).
 - 2026-10-26: **v0.58.0 RELEASED** (tag on 33cabec; CI, Device QA default + owner, journeys all green after the
   brand-welcome flow fix). Release run 40302380878: phone-gate, build, update-proof, publish and the NEW job
   "play-upload / upload" all green: Play upload ran BY ITSELF for the first time (58000 on internal + alpha).
