@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-166. Watch minimum: heart rate, rest timer, next set with last time's figures; double-check the design — 28 Oct 2026
+**He said:** "You take the best decision... I want to be able to see the heart rate and the rest timer, and also the previous
+figures of the next set that I'll be doing. That's what I minimum need... decide the best implementation and design. Please
+double check the design. I don't want it messed up."
+**Decided:** R-139 = build now (next set + last time's numbers, target if it fits). Design proof: CI-rendered watch screens
+(small + large round, resting, mid-set, no history, long name, kg/lb), checked by the helper and by me before his test.
+Local builds question (A/B): his "you take the best decision" -> A, keep builds in the cloud (no speed win for full tests).
+
 ## R-165. He tests the Wear OS watch app tomorrow (29 Oct): check it, update and correct it — 28 Oct 2026
 **He said:** "I'll be testing the Wear OS app tomorrow... I did request some features around it. Check if that needs any
 update after so many changes, and make sure that is updated and corrected."
