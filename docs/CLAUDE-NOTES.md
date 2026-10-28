@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-181. Release 0.60.0: the 7 built branches together — 29 Oct 2026
+**Asked (coordinator, for him):** put feedback button, progress trio, busy now, gym-mate profiles, admin What's new + alerts,
+exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through
+the full gate. Conflicts: keep main's APPLIED LIVE 0039/0040 files and main's approved privacy text; combine security.sql.
+FEEDBACK.md's release rule becomes R-175's.
+
 ## R-180. #32 reply: tax without GST, business not freelance — 29 Oct 2026
 **He said:** see #32 YOUR REPLY (29 Oct). **Answered (general info, CA to confirm):** GST and income tax separate; business/profession
 head; sole proprietorship + current account + Udyam; presumptive 6% scheme (old 44AD, renumbered in the new Act from Apr 2026),
