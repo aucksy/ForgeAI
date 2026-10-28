@@ -8,6 +8,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
 **He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret
 without anyone seeing or typing it; approve the push privacy line EN + HI).
+**Done:** privacy line moved into the notice EN + HI, privacy.html rebuilt (ad8dd15; deploy together with 0038).
+**Blocked by the safety classifier (not by him):** running 0038 in the Supabase SQL Editor (pasted, ready, in his
+personal Chrome tab) and opening Google Cloud to make the service account ("Permission Grant"). Asked him to press Run
+himself and to make the key himself (mettleup-push, role Firebase Cloud Messaging API Admin, JSON key to Downloads);
+then I pipe the file into `wrangler secret put FCM_SERVICE_ACCOUNT` in deploy/hq without reading it, and delete it.
 
 ## R-161. He asked: remaining fixes and the top 5 high-impact features — 28 Oct 2026
 **Answer (chat):** fixes left: R-143 lighter set moves up; R-146 "reached" vs "beaten"; R-138 tail ("+%" when set count
