@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-182. "It cancels my response and refreshes the whole page" — 29 Oct 2026
+**He said:** "When I try to record an answer in the tracker, it suddenly cancels my response and refreshes the whole page ... because
+you are doing something with the tracker. Please resolve this issue and ensure that I am not disturbed while working."
+**Cause:** each of my publishes makes his open page reload; unsent text in reply boxes was lost (I published many times a reply).
+**Done:** the page keeps every reply box's text on his phone (by entry number / feature id) until sent and puts it back after any
+reload, reopening its panel; tab and scroll are saved on every page exit. Tested headless: text survives a redraw and a real reload.
+Rule in CLAUDE.md: publish at most once per reply, at the end.
+
 ## R-181. Release 0.60.0: the 7 built branches together — 29 Oct 2026
 **Asked (coordinator, for him):** put feedback button, progress trio, busy now, gym-mate profiles, admin What's new + alerts,
 exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through

@@ -1330,6 +1330,49 @@ function renderTabs() {
   set("mine", open, false, "Claude's tasks: " + open + " open");
   document.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-pressed", String(!query && b.dataset.f === filter)));
 }
+// R-182 (owner, 29 Oct 2026): "it cancels my response and refreshes the whole page". When Claude publishes a new
+// version the open page reloads; what he was typing, his tab and his place must survive that. Every keystroke in a
+// reply box is kept on this phone (by entry number or feature id) until it is sent, and put back after any reload.
+const draftKey = (el) => {
+  const m = /^(note|fnote)(\d+)$/.exec(el.id || "");
+  if (!m) return null;
+  if (m[1] === "note") return "e" + m[2];
+  const f = DATA.backlog[Number(m[2])];
+  return f ? "f" + f.id : null;
+};
+let drafts = {};
+try { drafts = JSON.parse(ls.get("inbox-drafts") || "{}") || {}; } catch (e) { drafts = {}; /* quiet: a broken store starts empty */ }
+const saveDrafts = () => ls.set("inbox-drafts", JSON.stringify(drafts));
+// A reply already sent (it is in the page now) needs no draft.
+Object.keys(drafts).forEach((k) => {
+  if ((k[0] === "e" && DATA.answers[k.slice(1)]) || (k[0] === "f" && DATA.notes[k.slice(1)])) delete drafts[k];
+});
+saveDrafts();
+function restoreDrafts(root) {
+  root.querySelectorAll("textarea[id]").forEach((ta) => {
+    const k = draftKey(ta);
+    if (!k || !drafts[k] || ta.value) return;
+    ta.value = drafts[k];
+    const panel = ta.closest(".fpanel");
+    if (panel && panel.hidden) {
+      panel.hidden = false;
+      const b = document.querySelector('[data-p="' + panel.id + '"]');
+      if (b) b.setAttribute("aria-expanded", "true");
+    }
+  });
+}
+document.addEventListener("input", (ev) => {
+  const t = ev.target;
+  if (t.tagName !== "TEXTAREA") return;
+  const k = draftKey(t);
+  if (!k) return;
+  if (t.value.trim()) drafts[k] = t.value; else delete drafts[k];
+  saveDrafts();
+});
+// Any reload (his own save or Claude's publish) comes back to the same tab and place.
+window.addEventListener("pagehide", () => {
+  try { keepPlace(); keepTab(); } catch (e) { /* quiet: best effort while the page goes away */ }
+});
 function render() {
   renderTabs();
   $("chatbar").hidden = Boolean(query) || !(filter === "waiting" || filter === "all");
@@ -1337,6 +1380,7 @@ function render() {
   const v = $("view");
   v.innerHTML = query ? searchHtml() : filter === "home" ? homeHtml() : filter === "waiting" ? waitingHtml() : filter === "all" ? qaHtml() : filter === "backlog" ? backlogHtml() : mineHtml();
   enhance(v);
+  restoreDrafts(v);
 }
 
 // One save at a time: each one publishes the whole page, and the view reloads after it.

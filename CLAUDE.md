@@ -48,6 +48,9 @@ holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it
   entry on top of Q&A ("New answer · reply N") for 3 days. A question about a feature is linked by writing `#n` in that
   backlog row's Details; if the row is "Waiting for you", the question shows only under Waiting for you. Every feature
   that came from a Q&A topic must carry its `#n`, or the page says "still a discussion".
+- **⭐ Owner rule (29 Oct 2026, R-182): don't disturb him while he types.** Every publish reloads his open page. Publish the
+  tracker AT MOST ONCE per reply, at the end, after one final read + --absorb; never several times while working. (The page
+  also keeps unsent reply text and his place across a reload, but fewer reloads come first.)
 - **Feature backlog** (`## Feature backlog` near the top: `### <group>` + `| Feature | Status | Details | How it will work |`,
   Status one of Live / Next release / Planned / Idea / Waiting for you / Not doing, one short plain
   sentence each; every row not built yet also fills "How it will work" in 1-4 plain sentences, R-52):
