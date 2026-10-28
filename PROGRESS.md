@@ -2693,6 +2693,12 @@
   hq_push_next/drop). App: google-services plugin + google-services.json, shop/pushToken.ts (save/refresh/clear the
   FCM address), push task in noticeTask.ts (marks shown so the 15-min check never repeats it). Left: live 0038 (owner
   yes), FCM_SERVICE_ACCOUNT secret, privacy line OK, release. Details CLAUDE-NOTES R-153.
+- 2026-10-28: **v0.59.0 RELEASED** (tag on c6131ba). J7 had failed on the live AI import (Gemini 3.1 Flash-Lite 503
+  "high demand", Claude fallback out of credit): panel Worker now asks a busy Gemini again after 1.5 s, then
+  gemini-3.5-flash-lite and gemini-3.5-flash on the same key (timeouts move to the next model, 32 s budget), then Claude
+  (73b4ed6, 717958f; deployed forgeai-panel b9b74a67; live log showed 503 then ok on the retry). Journeys 40695620891 green,
+  release run 40751061345 green incl. play-upload (59000 on internal + alpha).
+  APK: https://github.com/aucksy/ForgeAI/releases/download/v0.59.0/mettleup-v0.59.0.apk
 - 2026-10-28: **0.59.0 prepared (replaces 0.58.1, which was tagged on fecd97b but never published: its phone gate failed
   and journeys 40678520480 died on a Gradle transform flake).** Holds R-153 step 1 (15-min check + local pop-up) and
   step 2 (FCM push for gym messages and offers; 0038 live, HQ FCM secret set, admin app deployed), R-138 kg to beat =

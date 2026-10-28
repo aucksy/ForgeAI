@@ -158,6 +158,7 @@ is now, What's new in the admin app, crash and outage alerts, test server.
 0.59.0 tag before landing on main (helpers in their own worktrees).
 
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
+**Released (28 Oct): 0.59.0** (tag on c6131ba; Device QA default 40695609894 + owner 40695615918, journeys 40695620891 green after the panel AI retry fix 73b4ed6/717958f deployed (forgeai-panel b9b74a67); release run 40751061345 all green, Play 59000 on internal + alpha). APK: https://github.com/aucksy/ForgeAI/releases/download/v0.59.0/mettleup-v0.59.0.apk
 **He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret
 without anyone seeing or typing it; approve the push privacy line EN + HI).
 **Done:** privacy line moved into the notice EN + HI, privacy.html rebuilt (ad8dd15; deploy together with 0038).
@@ -178,6 +179,7 @@ side, on and off all evening; my probes 22:59 IST: 2 of 8 OK) and the Claude fal
 (money, his call), or Gemini recovers; then rerun journeys on c6131ba and tag v0.59.0 there (no new commit needed).
 
 ## R-161. He asked: remaining fixes and the top 5 high-impact features — 28 Oct 2026
+**Released (28 Oct): 0.59.0** (tag on c6131ba; Device QA default 40695609894 + owner 40695615918, journeys 40695620891 green after the panel AI retry fix 73b4ed6/717958f deployed (forgeai-panel b9b74a67); release run 40751061345 all green, Play 59000 on internal + alpha). APK: https://github.com/aucksy/ForgeAI/releases/download/v0.59.0/mettleup-v0.59.0.apk
 **Answer (chat):** fixes left: R-143 lighter set moves up; R-146 "reached" vs "beaten"; R-138 tail ("+%" when set count
 differs); R-145 resume scrolls to the active exercise; R-152 camera-only QR; push step 2 (in progress). Top 5: (1) R-149
 feedback button + auto-fix loop (testers ~2 Nov); (2) R-147 workout-complete kg hero; (3) Bring a friend; (4) How busy the gym
