@@ -34,6 +34,8 @@ const UNDER_DEMO_BAR = 'var(--demo-bar, 0px)';
  */
 export function activeNavPath(navPaths: readonly string[], routePath: string): string {
   const path = routePath.split('?')[0]!.replace(/\/+$/, '') || '/';
+  // R-168: the lists behind Today's "Your numbers" tiles belong to Today.
+  if (path === '/numbers' || path.startsWith('/numbers/')) return '/';
   let best = '';
   for (const p of navPaths) {
     if (p === '/' ? path === '/' : path === p || path.startsWith(`${p}/`)) if (p.length > best.length) best = p;
