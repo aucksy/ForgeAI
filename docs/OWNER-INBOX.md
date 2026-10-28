@@ -46,6 +46,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
+| Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
 | Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
 | Task: 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | High | Medium |
 | Task: Play Store pictures, redone (R-126) | High | Low |
@@ -160,6 +161,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Doing | Server part live 28 Oct. App part ships in 0.59.0 (phone tests running). Then a real test on your phone. |
 | Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
 | Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
+| Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
 | 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
 | Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Doing | Fixed 28 Oct; ships in 0.59.0. Next: a lighter first set at the top of it. |
 | Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |

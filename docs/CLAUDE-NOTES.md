@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-176. Rate features (Convenience, Value) to find the selling point and marketing hooks — 29 Oct 2026
+**He said:** a module in Waiting for you listing the features we build for the gym owner (big value) and a separate section for member
+features; he rates each on Convenience and Value; this finds the top 5 for marketing; "we need to know the USP, the top 3-5 features
+for potential buyers, and marketing hooks. Please decide the best implementation."
+**Decided + built (scripts/owner_inbox_page.py):** a folded "Rate features for marketing" box in Waiting for you. Lists every Live,
+Next release and Planned feature: "For the gym owner" = Admin app + Gym-member links (57), "For members" = Member app (62); Platform
+and quality left out (nobody buys tests or backups). Each card: name, status, plain how-it-works, two 1-5 rows. Taps stay on his
+phone (localStorage) until "Save my ratings" saves them into the page; --absorb writes them to a "## Feature ratings" table in
+OWNER-INBOX.md (above the backlog). Live top 5 per side, score = 2 x Value + Convenience. "Hide rated ones" toggle. Tested headless.
+**Next (Claude's task, blocked on his ratings):** competitor check (what Indian gym software sells on), one-line USP, top 3-5 buyer
+features, 3-5 hooks EN + HI through member-words; for his OK.
+
 ## R-175. Tracker bug: a read follow-up stayed on top; replies on #68 and #39 — 29 Oct 2026
 **He said:** "I marked number 45 as read, but it is still in the follow-up section. Anything marked as read should be removed and
 placed in the bottom section." Replies: #68 owner switches busy-machines on in the admin app and enters machine counts from a ready

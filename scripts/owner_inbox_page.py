@@ -179,7 +179,44 @@ def parse(text):
         f["prio"] = prio.get("Feature: " + f["name"])
     for t in mine:
         t["prio"] = prio.get("Task: " + t["task"])
-    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine}
+    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine, "ratings": parse_ratings(text)}
+
+
+RATINGS_HEAD = "## Feature ratings"
+RATINGS_RE = re.compile(r"^## Feature ratings[^\n]*\n(.*?)(?=^## |\Z)", re.M | re.S)
+
+
+def parse_ratings(text):
+    """R-176: his 1-5 Convenience and Value ratings: {feature id: {c, v, at}} from the ## Feature ratings table."""
+    m = RATINGS_RE.search(text)
+    out = {}
+    for line in (m.group(1).splitlines() if m else []):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 5 and cells[2].isdigit() and cells[3].isdigit():
+            out[cells[0]] = {"c": int(cells[2]), "v": int(cells[3]), "at": cells[4]}
+    return out
+
+
+def write_ratings(text, ratings):
+    """Merge the page's ratings into the .md table (its own section just above ## Feature backlog)."""
+    if not ratings:
+        return text
+    cur = parse_ratings(text)
+    for fid, r in ratings.items():
+        if r and r.get("c") and r.get("v"):
+            cur[fid] = {"c": int(r["c"]), "v": int(r["v"]), "at": str(r.get("at") or "")}
+    names = {f["id"]: f["name"] for f in parse_backlog(text)}
+    rows = ["| Feature id | Feature | Convenience | Value | Rated |", "|---|---|---|---|---|"]
+    rows += ["| %s | %s | %d | %d | %s |" % (k, names.get(k, "?").replace("|", "/"), r["c"], r["v"], r["at"]) for k, r in sorted(cur.items())]
+    nl = "\n"
+    section = (RATINGS_HEAD + nl + "His ratings from the tracker's \"Rate features\" module (R-176), 1-5 each: Convenience = how much "
+               "easier it makes the user's day; Value = how much a buyer cares. Used to pick the top features and hooks for marketing."
+               + nl + nl + nl.join(rows) + nl + nl)
+    m = RATINGS_RE.search(text)
+    if m:
+        return text[: m.start()] + section + text[m.end():]
+    i = text.index(nl + "## Feature backlog") + 1
+    return text[:i] + section + text[i:]
 
 
 PRIO_LEVELS = ("High", "Medium", "Low")
@@ -364,6 +401,7 @@ def absorb(saved_html, md_path=INBOX):
     for num, when in (data.get("done") or {}).items():
         text = set_task_done(text, int(num), str(when) if when else None)
     text, _ = move_features(text, data.get("moves") or {})
+    text = write_ratings(text, data.get("ratings") or {})
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -494,6 +532,20 @@ details[open] > summary .chev, button[aria-expanded="true"] .chev { transform: r
 .body th, .body td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
 a.goto { font-family: var(--f-mono); font-size: 0.92em; }
 .latest { margin: 8px 0 10px; padding: 10px 12px 2px; border-left: 4px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }
+/* R-176: the feature-rating module in Waiting for you. */
+.ratebox > summary { color: var(--accent); }
+.rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 10px; margin-bottom: 8px; min-width: 0; }
+.rdet { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rrow { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+.rlbl { flex: 0 0 6.2em; font-size: 0.8rem; color: var(--muted); }
+.r5 { flex: 1 1 0; min-width: 36px; max-width: 54px; min-height: 40px; font: inherit; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer; padding: 0; }
+.r5[aria-pressed="true"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.rtop { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--sunk); }
+.rtoph { margin: 0 0 4px; font-weight: 700; }
+.rtop ol { margin: 0; padding-left: 1.3em; }
+.rsc { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+.rhide { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 0.9rem; }
+.rhide input { width: 18px; height: 18px; accent-color: var(--accent); }
 .latestlbl { margin: 0 0 6px !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
 
 /* Answering: big rows to tap, Claude's pick marked, then Send. */
@@ -1005,6 +1057,85 @@ function homeHtml() {
     (blocked.length ? '<p class="hint"><a href="#" data-tab="mine">' + blocked.length + " of Claude's tasks wait for you</a>: each names the # it waits on.</p>" : "") +
     '<p class="foot">Updated ' + esc(updatedText()) + ". Type a number in the box at the top (for example 51) to jump to it, or a word to search everything.</p></div>";
 }
+// R-176 (owner, 29 Oct 2026): rate the features we build, for marketing. Two scores, 1-5: Convenience (how much
+// easier it makes the user's day) and Value (how much a buyer cares). Taps stay on this phone until "Save my
+// ratings" puts them into the tracker; the live top 5 per side are the selling points and hooks.
+DATA.ratings = DATA.ratings || {};
+const RATE_SIDES = [
+  { key: "owner", title: "For the gym owner", groups: ["Admin app (gym owner and staff)", "Gym ↔ member links"] },
+  { key: "member", title: "For members", groups: ["Member app"] },
+];
+const RATE_KINDS = ["done", "built", "planned"];
+let rdraft = {};
+try { rdraft = JSON.parse(ls.get("inbox-rdraft") || "{}") || {}; } catch (e) { rdraft = {}; /* quiet: a broken draft starts empty */ }
+let rateHideDone = ls.get("inbox-rhide") === "1";
+const rateOf = (id) => Object.assign({}, DATA.ratings[id] || {}, rdraft[id] || {});
+const rateFull = (r) => Boolean(r.c && r.v);
+const rateScore = (r) => r.v * 2 + r.c;
+const rateFeats = (side) => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => side.groups.includes(x.f.group) && RATE_KINDS.includes(x.f.kind));
+const unsavedRates = () => Object.keys(rdraft).filter((id) => rateFull(rateOf(id)));
+function rateTop(side) {
+  return rateFeats(side).map((x) => ({ f: x.f, i: x.i, r: rateOf(x.f.id) })).filter((x) => rateFull(x.r))
+    .sort((a, b) => rateScore(b.r) - rateScore(a.r) || b.r.v - a.r.v || a.i - b.i).slice(0, 5);
+}
+function rateTopHtml() {
+  return RATE_SIDES.map((side) => {
+    const top = rateTop(side);
+    return '<div class="rtop"><p class="rtoph">Top 5 ' + esc(side.title.toLowerCase()) + "</p>" + (top.length
+      ? "<ol>" + top.map((x) => "<li>" + esc(x.f.name) + ' <span class="rsc">Value ' + x.r.v + " · Convenience " + x.r.c + "</span></li>").join("") + "</ol>"
+      : '<p class="small" style="margin:0">Rate a few to see them here.</p>') + "</div>";
+  }).join("");
+}
+const RLABEL = { c: "Convenience", v: "Value" };
+function rateRow(f, k) {
+  const r = rateOf(f.id);
+  let h = '<div class="rrow" role="group" aria-label="' + RLABEL[k] + ", " + esc(f.name) + '"><span class="rlbl">' + RLABEL[k] + "</span>";
+  for (let n = 1; n <= 5; n++) h += '<button type="button" class="r5" data-act="rate" data-id="' + esc(f.id) + '" data-k="' + k + '" data-v="' + n + '" aria-pressed="' + (r[k] === n) + '">' + n + "</button>";
+  return h + "</div>";
+}
+const rateCard = ({ f, i }) => '<div class="rcard" id="rc' + i + '"><div class="fh"><h4 class="name">' + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(BL_KIND[f.kind]) + "</span></div>" +
+  '<p class="det rdet">' + esc(String(f.how || f.details).replace(/\s*\((?:R-\d+|#\d+)[^)]*\)/g, "")) + "</p>" + rateRow(f, "c") + rateRow(f, "v") + "</div>";
+function rateCounts() {
+  const all = RATE_SIDES.map((side) => rateFeats(side));
+  return { all, total: all.reduce((n, xs) => n + xs.length, 0), rated: all.reduce((n, xs) => n + xs.filter((x) => rateFull(rateOf(x.f.id))).length, 0) };
+}
+const rateSum = (c) => "Rate features for marketing (" + c.rated + " of " + c.total + " rated)";
+const rateBtn = () => { const u = unsavedRates().length; return "Save my ratings" + (u ? " (" + u + ")" : ""); };
+function rateHtml() {
+  const c = rateCounts(), u = unsavedRates().length;
+  return '<details class="donebox ratebox" data-box="rate"' + (doneOpen.rate ? " open" : "") + '><summary><span id="rsum">' + rateSum(c) + "</span>" + CHEV + "</summary>" +
+    '<p class="hint">Rate each feature from 1 to 5. <b>Convenience</b>: how much easier it makes the day of the person who uses it. <b>Value</b>: how much a gym owner buying MettleUp would care about it. Tap a number again to clear it. The top 5 on each side become our selling points and marketing hooks.</p>' +
+    '<div id="rtops">' + rateTopHtml() + "</div>" +
+    '<div class="actions" style="margin:12px 0 4px"><button class="btn" id="rsave" data-act="ratesave"' + (u ? "" : " disabled") + ">" + rateBtn() + "</button>" +
+    '<label class="rhide"><input type="checkbox" id="rhide"' + (rateHideDone ? " checked" : "") + "> Hide rated ones</label>" +
+    '<span class="msg" id="ratemsg" role="status"></span></div>' +
+    RATE_SIDES.map((side, si) => {
+      const xs = c.all[si].filter((x) => !(rateHideDone && rateFull(rateOf(x.f.id))));
+      return '<h3 class="grp">' + esc(side.title) + ' <span class="cnt">' + c.all[si].length + "</span></h3>" + (xs.length ? xs.map(rateCard).join("") : empty("All rated on this side.", ""));
+    }).join("") + "</details>";
+}
+function rateTap(b) {
+  const id = b.dataset.id, k = b.dataset.k, v = Number(b.dataset.v), cur = rateOf(id);
+  const d = { c: cur.c || 0, v: cur.v || 0 };
+  d[k] = cur[k] === v ? 0 : v;
+  rdraft[id] = d;
+  ls.set("inbox-rdraft", JSON.stringify(rdraft));
+  b.parentElement.querySelectorAll(".r5").forEach((x) => x.setAttribute("aria-pressed", String(Number(x.dataset.v) === d[k])));
+  $("rtops").innerHTML = rateTopHtml();
+  $("rsum").textContent = rateSum(rateCounts());
+  const sb = $("rsave"); sb.textContent = rateBtn(); sb.disabled = !unsavedRates().length;
+}
+function rateSave() {
+  const msg = $("ratemsg"), at = stamp(), add = {};
+  unsavedRates().forEach((id) => { const r = rateOf(id); add[id] = { c: r.c, v: r.v, at }; });
+  const n = Object.keys(add).length;
+  if (!n) { msg.textContent = "Give a feature both scores first."; return; }
+  const before = JSON.stringify(DATA.ratings), draftBefore = JSON.stringify(rdraft);
+  save(() => { Object.assign(DATA.ratings, add); Object.keys(add).forEach((id) => delete rdraft[id]); ls.set("inbox-rdraft", JSON.stringify(rdraft)); },
+    () => { DATA.ratings = JSON.parse(before); rdraft = JSON.parse(draftBefore); ls.set("inbox-rdraft", draftBefore); },
+    msg, "Owner inbox feature ratings: " + Object.keys(add).map((id) => id + " C" + add[id].c + " V" + add[id].v).join(", "),
+    n + (n === 1 ? " rating" : " ratings") + " saved.");
+}
 function waitingHtml() {
   const list = DATA.entries.filter(shown).sort(byNum);
   const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter(needsTask).sort(byPrio((e) => e.prio, byNum));
@@ -1027,6 +1158,7 @@ function waitingHtml() {
   if (feats.length) out += '<h3 class="grp" id="sec-f">Features waiting for you <span class="cnt">' + feats.length + "</span></h3>" +
     '<p class="hint" style="margin:-4px 0 10px">Each needs you: an answer, a yes, a purchase or a setup step. Open “Comment” and tell me, for example “Yes, go ahead” or “Not now”.</p>' +
     feats.map(({ f, i }) => featHtml(f, i)).join("");
+  out += rateHtml();
   const n = doneList.length + sentFeats.length;
   if (n) out += doneBox("waiting", "Answered and done (" + n + ")", doneList.map(card).join("") + sentFeats.map(({ f, i }) => featHtml(f, i)).join(""));
   return out;
@@ -1404,6 +1536,7 @@ document.addEventListener("click", (ev) => {
 }, true);
 document.addEventListener("change", (ev) => {
   const t = ev.target;
+  if (t.id === "rhide") { rateHideDone = t.checked; ls.set("inbox-rhide", t.checked ? "1" : "0"); render(); return; }
   if (t.matches('input[type="radio"][data-n]')) {
     const n = Number(t.dataset.n);
     picks[n] = Object.assign(picks[n] || {}, { [t.dataset.q]: t.value });
@@ -1428,6 +1561,8 @@ document.addEventListener("click", (ev) => {
   if (!b) return;
   const n = Number(b.dataset.n);
   const act = b.dataset.act;
+  if (act === "rate") { rateTap(b); return; }
+  if (act === "ratesave") { rateSave(); return; }
   if (act === "send") send(n);
   if (act === "agree") agree(n);
   if (act === "read") markRead(n, true);
@@ -1521,6 +1656,7 @@ def main(argv):
             print(f"task #{num}: " + ("done " + str(when) if when else "not done yet") + " (written into the inbox)")
         for fid, mv in (saved.get("moves") or {}).items():
             print("feature moved by the owner (written into the inbox): " + json.dumps({"feature": fid, **mv}, ensure_ascii=False))
+        print("feature ratings saved on the page (written into the inbox): " + str(len(saved.get("ratings") or {})))
         notes = saved.get("notes") or {}
         print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
         for fid, n in notes.items():
