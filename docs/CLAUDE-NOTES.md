@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-158. "Just check however it works": Firebase where it works; offers AND messages must push — 28 Oct 2026
+**He said:** "Just check however it works. I just want the offers and messages from admin panel to send push notifications
+to member app."
+**Decided (me, his go-ahead):** B: add Firebase to forgeai-d7eea on simpleapps108 (one project with the Google sign-in
+clients). Scope of step 2: BOTH gym messages and offers sent from the admin panel push to members' phones.
+
 ## R-157. Firebase on his personal Google account; Excel import must use AI by itself (no "Ask AI" button) — 28 Oct 2026
 **He said:** (1) OpenCode told him Firebase must be made with his PERSONAL email, not simpleapps108. (2) "for excel import,
 ask AI did not work. I do not want manual ask AI button. It should just use AI to identify the values and match with right
