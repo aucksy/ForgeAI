@@ -154,7 +154,7 @@ object WearSync {
    * The workout is open ([active], [title] = the exercise the live card names, [text] = its set
    * line, [done] = the row "Complete set" ticks, "" = none) or over.
    */
-  fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "", lines: WatchLines = WatchLines.NONE) {
+  internal fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "", lines: WatchLines = WatchLines.NONE) {
     // R-166: + the next set's lines (set, last time's numbers, what a tick saves); "" = none.
     val l = if (active) lines else WatchLines.NONE
     val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal) else listOf<Any>(false, "", "", "", "", "", "")
