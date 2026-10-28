@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-187. Release 0.60.0: the 7 built branches together — 29 Oct 2026
+**Asked (coordinator, for him):** put feedback button, progress trio, busy now, gym-mate profiles, admin What's new + alerts,
+exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through
+the full gate. Conflicts: keep main's APPLIED LIVE 0039/0040 files and main's approved privacy text; combine security.sql.
+FEEDBACK.md's release rule becomes R-175's.
+
 ## R-186. Overnight: "pick up whatever you can from the feature backlog and make the best decisions" — 29 Oct 2026
 **He said:** going to sleep; pick up what I can from the backlog, best decisions; he checks in the morning; looking forward to
 installing the watch app from Play; he will check the Play agreement himself.
@@ -36,12 +42,6 @@ you are doing something with the tracker. Please resolve this issue and ensure t
 **Done:** the page keeps every reply box's text on his phone (by entry number / feature id) until sent and puts it back after any
 reload, reopening its panel; tab and scroll are saved on every page exit. Tested headless: text survives a redraw and a real reload.
 Rule in CLAUDE.md: publish at most once per reply, at the end.
-
-## R-181. Release 0.60.0: the 7 built branches together — 29 Oct 2026
-**Asked (coordinator, for him):** put feedback button, progress trio, busy now, gym-mate profiles, admin What's new + alerts,
-exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through
-the full gate. Conflicts: keep main's APPLIED LIVE 0039/0040 files and main's approved privacy text; combine security.sql.
-FEEDBACK.md's release rule becomes R-175's.
 
 ## R-181. Replies #12 (QR + location, FitPass) and #4 (GGMS one-time price); 0.59.0 released — 29 Oct 2026
 **He said:** see #12 and #4 YOUR REPLY (29 Oct); moved "Paid server with daily backups" to Not doing.
@@ -194,15 +194,6 @@ the gym server: a live server change (his yes) + a privacy line. Asked him: name
 progress photos ever; display picture only if he/she shares it (max 256x256, ~30 KB, one per member); summaries only (date,
 routine, duration, kg lifted, up to 8 exercises with best set), last 30 workouts / 60 days. Estimate ~1 KB per workout, ~30 KB
 + ~30 KB photo per sharing member; 500 sharing members ~30 MB of the free 500 MB database + 1 GB file storage.
-**Built (28 Oct, helper, NOT live):** server change 0040 (0039 left for "how busy"), header "NOT APPLIED LIVE: waits for the
-owner's yes"; test supabase/tests/0040_gym_mate_profiles.sql (size check: a workout row under 2 KB). Member app: Settings →
-Your gym → What my gym can see → "Let my gym mates see my workouts" (off; shown only once 0040 answers); on = shares at once,
-after each saved workout and on start (6-hour wait); off = deleted at once (kept and re-sent offline). Leaderboard names open
-a read-only profile (initials, name, bio, Profile-feed-style workout cards with best sets) only when the server says so.
-**No photo:** the server has no member-photo store (only product photos and gym logos), so profiles show initials. Privacy
-lines EN + HI drafted as a PROPOSAL in the notices (hidden from the public pages by scripts/legal_pages.py) for his yes.
-Research: docs/research/R-gym-mate-profiles.md. **Measured in CI:** a workout row 630 bytes typical, 1,362 worst
-(limit 2 KB) -> ~23 KB per sharing member with indexes (worst ~45 KB); 500 sharing members ~11 MB (worst ~22 MB) of 500 MB.
 
 ## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
 **He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
@@ -211,28 +202,6 @@ is now, What's new in the admin app, crash and outage alerts, test server.
 **Done:** 13 backlog rows + #66 (Firebase limits answer) added; page v172.
 **My calls (#18):** body-weight rule = PREVIOUS and the goal only (not leaderboard/muscle sets); feature work waits for the
 0.59.0 tag before landing on main (helpers in their own worktrees).
-**Built (28 Oct): how busy the gym is now.** Research: Google Maps "Popular times" shows a usual-week bar chart plus
-a live "busier/less busy than usual" line and hides it when data is too thin; PureGym's app shows a live head count ("Gym
-Busyness"); a check-in-only gym cannot see who left, so a raw count would mislead. Ours (simplest honest version): check-ins of the
-last 90 minutes against what is usual for that weekday and time = "Quiet / About as busy as usual / Busy right now"
-(or "Closed right now" by the gym's hours, holidays too); a number only when 5 or more, rounded to 5; a bar row per
-hour for today (chips for other days) and "Quietest later today: 2 pm to 4 pm"; hidden while the gym has fewer than
-40 timed check-ins in 8 weeks. Server: 0039_gym_busy.sql (member_gym_busy), NOT APPLIED (needs his yes); test
-0039 PASS 31 locally on PGlite (real Postgres in node). App: Gym tab card under the hours row; hidden (one log line)
-until 0039 is live; asked at most every 5 minutes. Privacy: a proposed line (no new data kept) pending his approval
-in docs/launch/PRIVACY-NOTICE.md.
-**#34 alerts built (28 Oct 2026), no new accounts:** (1) outage watch: .github/workflows/watch.yml every 10 min opens the
-website, admin app, HQ and the gym server (data + sign-in) through /sb; on failure (3 tries) a GitHub issue labelled "outage"
-that @mentions aucksy (GitHub emails him), a comment only when WHAT is down changes, closed by itself when back
-(scripts/watch/outage.mjs). (2) crash reports: both apps POST uncaught errors to the panel Worker /api/crash (deploy/panel/crash.js),
-kept in D1 forgeai-web feedback rows with status 'crash' + note sig:<12 hex> (no migration; no gym, install id or device; message
-and stack scrubbed of emails/phones/keys; 30 per address a day, the same kind once a day; feedback's own limits ignore them).
-Admin: window error + unhandledrejection (crm/crashReport.ts, not on localhost). Member: RN global handler + the screen-crash log
-line (src/lib/crashReport.ts, one import in index.js; fatal waits 1.5 s; off in dev). (3) daily crash issues (label "crash", one
-per new signature, max 5 a day; scripts/watch/crashes.mjs) are BUILT BUT OFF: they need a GitHub secret CLOUDFLARE_API_TOKEN that
-can only read D1 (no Cloudflare secret exists; not created, per the brief). Until then: HQ -> Feedback lists the crash rows.
-Privacy notice still has the placeholder "[and Sentry (crash reports), once added]": wording change is his call (proposal:
-"Crash reports (the error, the app version and the screen; no name, number or gym) are kept by Cloudflare for 1 year").
 
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
 **Released (28 Oct): 0.59.0** (tag on c6131ba; Device QA default 40695609894 + owner 40695615918, journeys 40695620891 green after the panel AI retry fix 73b4ed6/717958f deployed (forgeai-panel b9b74a67); release run 40751061345 all green, Play 59000 on internal + alpha). APK: https://github.com/aucksy/ForgeAI/releases/download/v0.59.0/mettleup-v0.59.0.apk
@@ -415,14 +384,6 @@ or fixed, with the version number, like the member app's What's new pop-up.
 **Ideas for when we plan it:** a "What's new" pop-up once per new version, plus a list page of past versions;
 plain-language lines (member-words skill); the same release notes source as the member app, split by who it
 concerns (members, gym staff). Not in the backlog yet.
-**Built (28 Oct 2026, picked in R-163):** the admin app has no version number, so each update is named by its day. The first
-time the admin app opens after an update, Today shows "What's new in the admin app" ("Update of 28 Oct 2026", one plain line
-per change, a button to the page where it helps; the front desk gets no button to a page it cannot open); "Got it" or any
-button hides it until the next update. More and Settings -> "What's new" keep every update. Like the member app, a browser's
-very first visit only remembers the update (new owners and test browsers see no card), so owners see the card from the NEXT
-admin update on; today's list is in Settings -> What's new. Seeded with 24-28 Oct (AI column matching, phone column, instant
-phone pop-ups, Challenges, Gym timings, Diet plans, Body measurements, own PIN); words via member-words + Gemini, facts checked.
-Source: apps/dashboard/src/crm/logic/whatsNew.ts (add a new day at the TOP with each admin deploy). Tests: whatsNew.test.ts, e2e J148.
 
 ## R-147. Workout-complete screen: show the kg lifted vs last time as the big, proud headline — 27 Oct 2026
 **Owner said (notes only):** on the workout completion screen, highlight very clearly, to motivate and make the
@@ -432,17 +393,6 @@ isn't highlighted. The whole app is about progressive overload, so this win shou
 cheer line); a gentle line when it is lower ("Lighter day: fine, keep going"); compare with the same routine's
 last time (as R-132 does); share-card tie-in. Member words through member-words skill ("kg lifted", never "volume").
 Not in the backlog yet.
-**Built (28 Oct 2026):** one big card at the very top of "Workout complete": "Kg lifted today", the number big ("1,925 kg"),
-then "+45 kg more than last time" in green, or "Same as last time", or a kind line ("Lighter than last time. Every workout
-counts."; an easy week: "Easy week: lighter on purpose."), and "Last time: 1,880 kg in Push 2 on 13 Oct". It compares with
-the SAME workout the old comparison line used (this routine's last time, else the folder's / the last of its kind) and folds
-in that line's "See each exercise" list, so the line no longer repeats (it stays for an easy week and the AI note). First
-workout: today's total and "Your number to beat next time." (nothing made up). No weight at all: reps ("60 reps", "+8 reps
-more than last time"). Cardio only: no card. The screen waits for the comparison before showing, so the card never pushes
-it down. Share picture: "Workout complete · +45 kg more than last time" on the subtitle line when today beat last time
-(it fits that 936 px line; dropped whole, never cut, if a number ever made it too long); the stat boxes had no room.
-Code: tracker/services/kgHero.ts (PURE), components/KgHeroCard.tsx, coachNote `hero`, share/workoutCard `completeLine`.
-Words via member-words + Gemini ("on last time" -> "more than last time", "·" -> "in"). Test: test/tracker/r147KgHero.test.ts.
 
 ## R-146. "1,925 kg beaten ✓" turns green when done = target exactly (word + rule) — 27 Oct 2026
 **Owner asked (screenshot, notes only):** Triceps Pushdown shows "1,925 kg beaten ✓ (1,925 kg done)" in green. How is
@@ -507,14 +457,6 @@ per workout (time, kg lifted, ...).
    choice).
 Member words through member-words skill ("Kg lifted", never "volume"). Fix R-138 first or alongside: the numbers
 must agree with PREVIOUS.
-**Built (28 Oct 2026):** every workout card on an exercise's History tab (and the "This workout · in progress" card once a
-set is ticked) shows a stats row under its name in the profile feed's look: "Kg lifted 1,925 · Sets 3 · Best set 45 kg × 13"
-(warm-ups out; two dumbbells count both, so it equals the "Kg lifted per workout" chart above it); body-weight moves show
-Reps, holds Time, distance work Distance. One shared component, tracker/components/StatsRow.tsx, now draws the profile
-FeedCard's row too. Opened from a live workout's card (param from=workout), the chart starts on the per-workout total
-("Kg lifted", or total reps / time / distance; exerciseChart `workoutChartMetric`); from anywhere else as before.
-Code: tracker/services/exerciseWorkoutStats.ts (PURE), components/exercise/SessionHistory.tsx. Test:
-test/tracker/r141ExerciseWorkoutStats.test.ts.
 
 ## R-140. Problem to analyse later: a longer rest than planned inflates reps, and next time's goal — 27 Oct 2026
 **Owner said:** sometimes he starts the next set after resting longer than the rest timer, so he does more reps than
@@ -694,15 +636,6 @@ empty workouts included. Weighted lifts keep the folder rule (different gyms, di
 historyScope (`scopeFor(exercise)` -> null for body-weight), tested; maybe an "Always use all workouts for body-weight
 exercises" switch under Previous values (on by default). Open question for him: does "counting" also mean something else
 (e.g. the leaderboard, weekly sets per muscle, or Up next)? Ask before building.
-**Built (28 Oct 2026):** (R-163: PREVIOUS and the goal only.) One rule, `scopeFor(scope, exercise)` in tracker/db/historyScope.ts:
-a body-weight move (log type reps / weighted / assisted, or a library move with equipment "bodyweight") gets no scope, so its
-PREVIOUS, warm-ups, carried note and Target read every workout, empty workouts included; weighted lifts keep the routine's.
-Applied where the live workout reads (start from a routine, add an exercise, Repeat, edit a saved workout: activeWorkoutStore)
-and where the Target reads (coachTargets targetsFor: body-weight lifts read in their own batch; memo key carries the switch).
-The "first time in this routine" line never shows for them. Switch: Settings → Workouts → Previous values → "Always use all
-workouts for body-weight moves", on by default, shown only under "Same routine" (the only choice that narrows anything; under
-"Any workout" it would do nothing). Kept because it was one boolean pref + one toggle row. Test (pure + real SQL):
-test/tracker/r136BodyWeightScope.test.ts.
 
 ## R-135. Update the tracker with the OpenCode work when back in Claude Code — 26 Oct 2026
 **He said:** "update tracker with changes done here when I am working back in my weekly plan on Claude code application."

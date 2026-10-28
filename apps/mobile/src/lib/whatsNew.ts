@@ -54,6 +54,26 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-181: member-words, Gemini 3.8 Flash pass, facts checked. 6 lines max, so the finish-screen kg and
+    // the History kg share a line; the watch app (testers only, Wear OS track) is left to its Play notes.
+    version: '0.60.0',
+    date: '29 Oct',
+    lines: [
+      {
+        text: 'Tap the round button on any screen to tell us what is wrong or what you want, by speaking or typing.',
+        go: { label: 'Feedback settings', href: '/settings/feedback' },
+      },
+      { text: 'After a workout, see the kg you lifted today next to last time. Each exercise\'s History shows kg per workout too.' },
+      { text: 'Pull-ups, push-ups and other body-weight moves now show last time\'s numbers from any workout, in any routine.' },
+      { text: 'On the Gym tab, see how busy your gym is right now and its quiet hours later today.', go: { label: 'Open the Gym tab', href: '/shop' } },
+      {
+        text: 'Tap a name on your gym\'s leaderboard to see the workouts that member shares. Sharing yours is off until you turn it on.',
+        go: { label: 'Share my workouts', href: '/settings/gym-sees' },
+      },
+      { text: 'Lateral Raise and Incline Dumbbell Press now have a short moving demo on their exercise page, to check your form.' },
+    ],
+  },
+  {
     version: '0.59.0',
     date: '28 Oct',
     lines: [

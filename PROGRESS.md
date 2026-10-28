@@ -2693,6 +2693,23 @@
   hq_push_next/drop). App: google-services plugin + google-services.json, shop/pushToken.ts (save/refresh/clear the
   FCM address), push task in noticeTask.ts (marks shown so the 15-min check never repeats it). Left: live 0038 (owner
   yes), FCM_SERVICE_ACCOUNT secret, privacy line OK, release. Details CLAUDE-NOTES R-153.
+- 2026-10-29: **0.60.0 prepared (R-187): seven built branches on main, cherry-picked in order onto 0cafe18.** Feedback button
+  (R-149), progress trio (finish-screen kg vs last time, kg per workout on exercise History, body-weight moves read every
+  workout), how busy the gym is (0039 live), gym-mate profiles (0040 live), admin What's new + crash/outage alerts (#34),
+  exercise clip player (lateral_raise + incline_dumbbell_press v6), watch app (next set with last time, ambient, signed Wear
+  OS AAB in the release, Play track wear:qa). Conflicts: main's APPLIED LIVE 0039/0040 files and main's approved privacy
+  text kept (branch PROPOSAL blocks dropped; legal_pages.py stripping kept); security.sql has both 0039 and 0040 lines.
+  Watch track name checked against developers.google.com/android-publisher/tracks (prefix "wear", internal "qa"):
+  play_upload.py refuses phone-style lookalikes (wear:internal...) and an unlisted custom wear: track; the watch step
+  is no longer continue-on-error (red job + error annotation), it runs after the phone edit is committed.
+  FEEDBACK.md release rule = R-175. Review subagents (2, one round), fixed: a mate could divide a shared workout's kg by
+  its reps to get body weight (share bar weight only); busy answer >30 min old hid offline; "Fewer reps" wording; watch
+  buzz late in ambient without exact alarms (partial wake lock until the rest ends) and heart-rate sensor off in ambient;
+  card re-sent when only the watch lines change; crash reports never send a non-Error's details, keep stack columns,
+  public crash issues carry no reported text; a failed gh call no longer skips the watch upload. Left (low): release
+  run does not repeat wear-build's watch-APK permission checks; clip QA "moving" check compares whole screenshots.
+  Gate: mobile vitest 3751 pass + typecheck 0; dashboard tsc -b 0, vitest 1322, e2e 99 (+1 skipped); panel 70+, HQ 53,
+  watch scripts 5, CI Python 80. Release route (R-175): testers first (Play internal + alpha only), shared parts changed.
 - 2026-10-28: **v0.59.0 RELEASED** (tag on c6131ba). J7 had failed on the live AI import (Gemini 3.1 Flash-Lite 503
   "high demand", Claude fallback out of credit): panel Worker now asks a busy Gemini again after 1.5 s, then
   gemini-3.5-flash-lite and gemini-3.5-flash on the same key (timeouts move to the next model, 32 s budget), then Claude
