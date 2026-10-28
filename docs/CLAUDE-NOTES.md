@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-167. Put the watch app on Play for the same tester group (no sideloading) — 28 Oct 2026
+**He said:** "start the process of listing the watch app on the Play Store... same tester group... install from my watch...
+I don't have to sideload the APK then."
+**Done:** Play Console → MettleUp → Advanced settings → Form factors → added Wear OS. Play now lists 3 steps: (1) Wear OS
+screenshots for the store listing, (2) a Wear OS app bundle on a testing track (a "Wear OS only" release), (3) opt in to Wear OS
++ agree to the review policy (unlocks after 1 and 2; his click, it is an agreement).
+**Next (after the watch-app helper lands):** wear module builds a signed AAB in the release run (same package com.mettleup.app,
+its own higher versionCode, uses-feature android.hardware.type.watch), play-upload sends it to the Wear OS internal track
+(same tester list), watch screenshots from the CI-rendered screens (design-checked). Sources: developer.android.com
+/distribute/googleplay/wear, /training/wearables/packaging.
+
 ## R-166. Watch minimum: heart rate, rest timer, next set with last time's figures; double-check the design — 28 Oct 2026
 **He said:** "You take the best decision... I want to be able to see the heart rate and the rest timer, and also the previous
 figures of the next set that I'll be doing. That's what I minimum need... decide the best implementation and design. Please
