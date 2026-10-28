@@ -72,6 +72,12 @@ blocked by the classifier; CI's database job runs it and was green). Service acc
 Messaging API Admin) + JSON key made in his Chrome; piped into the forgeai-hq secret FCM_SERVICE_ACCOUNT unread; file deleted.
 Admin app deployed (forgeai-panel fde18fdf): instant push trigger + privacy page with the push and AI lines (checked live).
 0.58.1 never published (journeys failed on a Gradle cache flake) -> releasing everything as 0.59.0 (helper).
+**0.59.0 NOT tagged (28 Oct, night): blocked by the admin app's AI import, not the member app.** Commit c6131ba: Device QA
+default 40695609894 green, owner 40695615918 green (after one rerun: emulator network flake); journeys 40695620891 failed 4 times
+on J7 only (every other step green). Panel Worker log (wrangler tail): Gemini 3.1 Flash-Lite answers 503 "high demand" (Google
+side, on and off all evening; my probes 22:59 IST: 2 of 8 OK) and the Claude fallback answers 400 "credit balance is too low"
+(Anthropic account has no credit). So real gym owners also get "Matched without AI" now. Fix: he tops up Anthropic credit
+(money, his call), or Gemini recovers; then rerun journeys on c6131ba and tag v0.59.0 there (no new commit needed).
 
 ## R-161. He asked: remaining fixes and the top 5 high-impact features — 28 Oct 2026
 **Answer (chat):** fixes left: R-143 lighter set moves up; R-146 "reached" vs "beaten"; R-138 tail ("+%" when set count

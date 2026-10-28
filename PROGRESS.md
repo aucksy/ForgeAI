@@ -2702,6 +2702,8 @@
   (forgot shown notices; now waits for the real load). Left (product, LOW): the switch is on by default but permission is
   asked only when flipped. Device-only unknown: data-only push with the app fully closed. typecheck 0, vitest 3651 pass.
   What's new 0.59.0 replaces 0.58.1's line (member-words, Gemini 3.8 Flash pass).
+  NOT TAGGED: Device QA default 40695609894 + owner 40695615918 green on c6131ba; journeys 40695620891 red on J7 only
+  (live AI import: Gemini 503 high demand + Anthropic credit balance too low). Details CLAUDE-NOTES R-162.
 - 2026-10-26: **v0.58.0 RELEASED** (tag on 33cabec; CI, Device QA default + owner, journeys all green after the
   brand-welcome flow fix). Release run 40302380878: phone-gate, build, update-proof, publish and the NEW job
   "play-upload / upload" all green: Play upload ran BY ITSELF for the first time (58000 on internal + alpha).
