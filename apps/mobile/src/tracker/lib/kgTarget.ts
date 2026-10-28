@@ -34,10 +34,36 @@ export interface KgPlan {
   sets: KgPlanSet[];
   /** The kg to beat (weight × reps over the planned working sets). */
   total: number;
-  /** The same sets last time, or null with nothing to compare. */
+  /**
+   * Last time's sets that this plan is compared with, added up, or null with nothing to compare.
+   * R-138 (28 Oct 2026): with a different number of sets than last time, the first sets both have
+   * (`compared` of them), set for set.
+   */
   last: number | null;
-  /** (total − last) / last, or null. */
+  /** (the same planned sets − last) / last, or null. */
   pct: number | null;
+  /** R-138: planned sets minus last time's (+1 = one more set than last time); 0 = the same number. */
+  setDiff?: number;
+  /** R-138: how many sets the % compares, when the set counts differ. */
+  compared?: number;
+  /** R-138: the planned sets compared (= `total` when the set counts match). */
+  comparedTotal?: number;
+}
+
+/**
+ * R-138 tail (owner, 27 Oct 2026): a "+%" (or "same as last time") even when last time had a
+ * different number of sets — compared set for set over the sets both have, with the extra or
+ * missing sets named apart ("+1 set"), so a lower aim on the first sets is never hidden behind an
+ * extra set. PURE.
+ */
+function compare(planned: readonly number[], lastEach: readonly number[], total: number): Pick<KgPlan, 'last' | 'pct' | 'setDiff' | 'compared' | 'comparedTotal'> {
+  const k = Math.min(planned.length, lastEach.length);
+  if (k === 0) return { last: null, pct: null };
+  const lastTotal = lastEach.slice(0, k).reduce((a, n) => a + n, 0);
+  const comparedTotal = planned.length === k && lastEach.length === k ? total : planned.slice(0, k).reduce((a, n) => a + n, 0);
+  const setDiff = planned.length - lastEach.length;
+  const pct = lastTotal > 0 ? (comparedTotal - lastTotal) / lastTotal : null;
+  return setDiff === 0 ? { last: lastTotal, pct } : { last: lastTotal, pct, setDiff, compared: k, comparedTotal };
 }
 
 type TargetIn = Pick<ProgressionTarget, 'action' | 'targetWeightKg' | 'targetSets' | 'repGoal' | 'setGoals' | 'topSetOnly' | 'logType' | 'bodyweightOnly'> &
@@ -98,9 +124,9 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
     }
   }
   const total = sets.reduce((a, s) => a + s.weightKg * s.reps, 0);
-  // Review fix: a % only against the same number of sets (2 of 3 done last time is not "+60%").
-  const lastTotal = last.length === t.targetSets ? last.reduce((a, s) => a + s.weightKg * s.reps, 0) : null;
-  return { sets, total, last: lastTotal, pct: lastTotal && lastTotal > 0 ? (total - lastTotal) / lastTotal : null };
+  // Review fix: a % never against a different number of sets (2 of 3 done last time is not "+60%");
+  // R-138: set for set over the sets both have, the extra sets named apart.
+  return { sets, total, ...compare(sets.map((s) => s.weightKg * s.reps), last.map((s) => s.weightKg * s.reps), total) };
 }
 
 /**
@@ -116,9 +142,9 @@ export function repPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null 
   const sets: KgPlanSet[] = Array.from({ length: t.targetSets }, (_, i) => ({ weightKg: 1, reps: t.setGoals[i] ?? t.repGoal ?? 0, asLast: false }));
   const total = sets.reduce((a, s) => a + s.reps, 0);
   const last = lastSets.filter((s) => Number.isFinite(s.reps) && s.reps > 0);
-  // A difference only against the same number of sets (2 of 3 done last time is not "+20").
-  const lastTotal = last.length === t.targetSets ? last.reduce((a, s) => a + s.reps, 0) : null;
-  return { reps: true, sets, total, last: lastTotal, pct: lastTotal && lastTotal > 0 ? (total - lastTotal) / lastTotal : null };
+  // A difference never against a different number of sets (2 of 3 done last time is not "+20");
+  // R-138: set for set over the sets both have, the extra sets named apart.
+  return { reps: true, sets, total, ...compare(sets.map((s) => s.reps), last.map((s) => s.reps), total) };
 }
 
 /** The kilos to beat, else (R-60) the reps to beat; null when the exercise gets neither. PURE. */
@@ -205,7 +231,7 @@ export type WeightFmt = (kg: number) => string;
 /** R-60: "+3 on last time", "same as last time", "fewer than last time", or null. PURE. */
 export function repDiffWords(p: KgPlan): string | null {
   if (p.last == null) return null;
-  const d = Math.round(p.total - p.last);
+  const d = Math.round((p.comparedTotal ?? p.total) - p.last);
   if (d === 0) return 'same as last time';
   return d < 0 ? 'fewer than last time' : `+${d} on last time`;
 }
@@ -213,9 +239,23 @@ export function repDiffWords(p: KgPlan): string | null {
 /** "45 reps" / "1 rep". */
 const repsText = (n: number): string => `${Math.round(n)} ${Math.round(n) === 1 ? 'rep' : 'reps'}`;
 
+/**
+ * R-138: with a different number of sets than last time, "+1 set · first 3 sets +6% on last time"
+ * ("1 set fewer · these 3 sets ..."): the extra sets apart, the rest set for set. null = the same
+ * number of sets (or nothing to compare). PURE.
+ */
+function setCountWords(p: KgPlan, diff: string | null): string | null {
+  if (!p.setDiff || p.compared == null || diff == null) return null;
+  const n = Math.abs(p.setDiff);
+  const sets = `${n} ${n === 1 ? 'set' : 'sets'}`;
+  const which = p.setDiff > 0 ? (p.compared === 1 ? 'first set' : `first ${p.compared} sets`) : p.compared === 1 ? 'this set' : `these ${p.compared} sets`;
+  return `${p.setDiff > 0 ? `+${sets}` : `${sets} fewer`} · ${which} ${diff}`;
+}
+
 /** R-60, before the workout: "45 reps to beat · +3 on last time" (" per side" when counted per side). PURE. */
 export function repsToBeatLine(p: KgPlan, perSide = false): string {
-  const diff = repDiffWords(p);
+  const raw = repDiffWords(p);
+  const diff = setCountWords(p, raw) ?? raw;
   return `${repsText(p.total)} to beat${perSide ? ' per side' : ''}${diff ? ` · ${diff}` : ''}`;
 }
 
@@ -248,7 +288,8 @@ export function pctWords(pct: number | null): string | null {
 
 /** Before the workout: "765 kg to beat · +6% on last time". PURE. */
 export function kgToBeatLine(p: KgPlan, total: TotalFmt): string {
-  const pct = pctWords(p.pct);
+  const raw = pctWords(p.pct);
+  const pct = setCountWords(p, raw) ?? raw;
   return `${total(p.total)} to beat${pct ? ` · ${pct}` : ''}`;
 }
 

@@ -70,10 +70,23 @@ describe('#9 kg to beat: the plan', () => {
       { weightKg: 45, reps: 5, asLast: false },
     ]);
   });
-  it('no % when last time had a different number of sets', () => {
-    expect(kgPlan(base, last3.slice(0, 2))!.pct).toBeNull();
-    expect(kgPlan(base, [...last3, { weightKg: 42.5, reps: 6 }])!.pct).toBeNull();
-    expect(kgPlan(base, last3)!.pct).not.toBeNull();
+  it('R-138: another number of sets than last time compares set for set and names the extra sets', () => {
+    // 2 sets last time, 3 planned: the first 2 (45 x 9, 8 = 765) against last time's 2 (680).
+    const more = kgPlan(base, last3.slice(0, 2))!;
+    expect([more.setDiff, more.compared, more.comparedTotal, more.last]).toEqual([1, 2, 765, 680]);
+    expect(kgToBeatLine(more, total)).toBe('1,125 kg to beat · +1 set · first 2 sets +13% on last time');
+    // 4 sets last time, 3 planned: these 3 (1,125) against last time's first 3 (977.5).
+    const fewer = kgPlan(base, [...last3, { weightKg: 42.5, reps: 6 }])!;
+    expect(kgToBeatLine(fewer, total)).toBe('1,125 kg to beat · 1 set fewer · these 3 sets +15% on last time');
+    // The same number: as before.
+    expect(kgPlan(base, last3)!.setDiff).toBeUndefined();
+    expect(kgToBeatLine(kgPlan(base, last3)!, total)).toBe('1,125 kg to beat · +15% on last time');
+  });
+  it('R-138: his case - an extra 4th set never hides a lower aim on the first 3', () => {
+    // 20 Oct: 40 x 12, 11, 9 (3 sets); the plan 40 x 13, 10, 8, 8 (4 sets): the first 3 aim 31 reps vs 32.
+    const t = { ...base, targetWeightKg: 40, targetSets: 4, setGoals: [13, 10, 8, 8], repGoal: 13 };
+    const p = kgPlan(t, [{ weightKg: 40, reps: 12 }, { weightKg: 40, reps: 11 }, { weightKg: 40, reps: 9 }])!;
+    expect(kgToBeatLine(p, total)).toBe('1,560 kg to beat · +1 set · first 3 sets lighter than last time');
   });
   it('the % words', () => {
     expect(pctWords(0.002)).toBe('same as last time');

@@ -46,9 +46,12 @@ describe('R-60: reps to beat', () => {
     expect(repPlan({ ...pushUps, action: 'start' }, last)).toBeNull();
     expect(repPlan({ ...pushUps, repGoal: null }, last)).toBeNull();
     expect(repPlan({ ...pushUps, easy: true }, last)).toBeNull();
+    // R-138: another set count compares set for set (the first 2 planned vs 15, 15) and names the extra set.
     const two = repPlan(pushUps, last.slice(0, 2))!;
-    expect(two.last).toBeNull();
-    expect(repsToBeatLine(two)).toBe('45 reps to beat');
+    expect(two.last).toBe(30);
+    expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · first 2 sets +1 on last time');
+    expect(repPlan(pushUps, [])!.last).toBeNull();
+    expect(repsToBeatLine(repPlan(pushUps, [])!)).toBe('45 reps to beat');
     expect(repsToBeatLine(repPlan(pushUps, [{ weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }])!)).toBe(
       '45 reps to beat · fewer than last time',
     );

@@ -289,6 +289,7 @@ Now "Any workout" Target reads the same newest workout as PREVIOUS; "Same routin
 (the choice for separate heavy and light days). The Settings line lost its now-false sentence "Heavy and light days in
 one folder keep their own Target." Memo (2) and set order (3) ruled out. Test: test/db/r138KgToBeat.test.ts (Target =
 PREVIOUS in both settings; plan total above PREVIOUS's total, no set below). Still open: "+%" when set counts differ.
+**Fixed (28 Oct):** (the tail) the "+%" now shows when last time had a different number of sets: the extra or missing sets are named apart and the rest compared set for set, e.g. "1,560 kg to beat · +1 set · first 3 sets lighter than last time" (his 20 Oct case: the first 3 sets aim 31 reps vs 32, no longer hidden behind the 4th set), "1 set fewer · these 3 sets +15% on last time". Same for the reps line. Chosen over a bare "+1 set" because only set-for-set shows whether the sets he did last time got harder. Tests: test/tracker/lib/kgTarget.test.ts, test/tracker/r60RepsToBeat.test.ts.
 
 ## R-134. Cost of "create a routine by speaking" (Hindi / English / Hinglish) — 26 Oct 2026
 **Owner asked:** cost with the cheapest good model if members create routines by speaking to AI.
