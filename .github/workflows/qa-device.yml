@@ -19,11 +19,11 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run only these parts, comma separated: any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey). Empty = the whole phone test. A partial run never opens the release gate."
+        description: "Run only these parts, comma separated: any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey), clip (exercise demo clips). Empty = the whole phone test. A partial run never opens the release gate."
         required: false
         default: ""
       extra:
-        description: "Opt-in parts added to a whole run: dnd, longrest, anim, mk. Empty = the whole run exactly as before."
+        description: "Opt-in parts added to a whole run: dnd, longrest, anim, mk, clip. Empty = the whole run exactly as before."
         required: false
         default: ""
       api:

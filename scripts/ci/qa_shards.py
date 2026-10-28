@@ -12,7 +12,7 @@ Quality rules this file keeps:
     demo failed on both phones (J expects the demo already removed by an earlier part; K..R lean on
     J and L), so they stay after I2. BR, INV, INV-f, P7, P0 and M passed from the demo alone
     (shard 2). The UAT parts and W each start from a fresh install (proven alone), so they split.
-  - `extra` (opt-in dnd, longrest, anim, mk) goes to the shard that holds W (mk runs after W).
+  - `extra` (opt-in dnd, longrest, anim, mk, clip) goes to the shard that holds W (mk runs after W).
   - A partial run (`only`) stays ONE piece, exactly as before (it never opens the release gate).
 
 Usage:

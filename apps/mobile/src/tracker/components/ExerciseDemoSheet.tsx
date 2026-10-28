@@ -19,8 +19,10 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
 import { mediaFor } from '../catalog/media';
+import { hasClip } from '../clips/clipManifest';
 import { getTrackerExercise } from '../db/exerciseInfo';
 import { DrawingCredit } from './DrawingCredit';
+import { ExerciseClip } from './ExerciseClip';
 import type { ThumbMedia } from './ExerciseThumb';
 
 /** Two-frame loop: hold the start, fade to the end, hold, fade back. */
@@ -128,8 +130,25 @@ export function ExerciseDemoSheet({
         <Image source={{ uri: own.uri }} style={{ width: '100%', height }} contentFit="contain" />
       </View>
     );
+  else if (hasClip(catalogKey))
+    // R-170: the owner-approved demo clip; the drawings (with their credit) if it cannot be had.
+    picture = (
+      <ExerciseClip
+        catalogKey={catalogKey}
+        name={name}
+        height={height}
+        fallback={
+          bundled ? (
+            <View style={{ gap: space.md }}>
+              <FrameLoop frames={bundled.frames} height={height} />
+              <DrawingCredit beforeOpen={onClose} />
+            </View>
+          ) : null
+        }
+      />
+    );
   else if (bundled) picture = <FrameLoop frames={bundled.frames} height={height} />;
-  const showCredit = !own?.uri && bundled != null;
+  const showCredit = !own?.uri && bundled != null && !hasClip(catalogKey);
 
   // Phase 0 (EX-11): the sheet stops at 90 % of the screen (below the status bar) and its body
   // scrolls, so at large text the name and the close button stay on screen. Built here rather
