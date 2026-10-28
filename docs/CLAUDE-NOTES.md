@@ -9,6 +9,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 **He said (exact):** "yes, apply 0039 and 0040 live in Supabase and add their privacy lines" (tracker #67).
 **Doing:** apply 0039 (how busy the gym is) and 0040 (gym-mate profiles) on the live Supabase project, run their live tests, put the
 approved privacy lines (EN + HI) into the notice and the public pages.
+**Done 29 Oct:** both applied in the SQL Editor (files fetched from the branch commits on GitHub raw, so no hand-typing):
+0039 -> functions member_gym_busy + _busy_open_hours and index crm_records_visit_day exist; live test 0039 PASS 31. 0040 ->
+live test PASS 46 (biggest workout row 1362 bytes, typical 630). Migration + test files copied to main with APPLIED LIVE headers
+(branches keep identical bodies; on rebase take main's header). Privacy notice EN + HI: busy-now bullet, gym-mate bullet,
+check-ins "why", mate-workouts row; public pages rebuilt and deployed with the admin app.
 
 ## R-176. Rate features (Convenience, Value) to find the selling point and marketing hooks — 29 Oct 2026
 **He said:** a module in Waiting for you listing the features we build for the gym owner (big value) and a separate section for member

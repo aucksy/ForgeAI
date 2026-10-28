@@ -18,6 +18,10 @@ live (the apps show the leaderboard only then).
 Updated 28 Oct 2026 (R-162, owner approved "yes to all"): a push address per phone so the gym's messages and offers
 pop up; Firebase Cloud Messaging named under "Where it is kept". In force when server change 0038 is live.
 
+Updated 29 Oct 2026 (R-177, owner: "yes, apply 0039 and 0040 live in Supabase and add their privacy lines"): how
+busy the gym is (from check-in times, no names), and gym-mate profiles (off unless the member switches them on).
+Server changes 0039 and 0040 are live.
+
 ---
 
 ## MettleUp privacy notice
@@ -40,6 +44,15 @@ pop up; Firebase Cloud Messaging named under "Where it is kept". In force when s
   Your gym → What my gym can see); then they see your first name and the first letter of your last name. Your
   gym can hide you from the leaderboard. Your gym is responsible for its challenges and rewards; MettleUp keeps
   the numbers for the gym.
+- If you are in a gym, the app shows how busy your gym is right now and at each hour of a usual week. It is
+  worked out from the check-in times your gym already keeps. Members see only how busy the whole gym is,
+  never who checked in or when. A number of people is shown only when it is 5 or more.
+- **Only if you switch on "Let my gym mates see my workouts"** (Settings → Your gym → What my gym can see;
+  it is off unless you turn it on), the app sends your bio and a short summary of each of your workouts from
+  the last 60 days (at most 30): its name, date, how long it took, kg lifted, and the best set of up to 8
+  exercises. Never your sets, body weight, photos, notes or mobile number. Members of your gym can open it
+  from the leaderboard, only while your name shows there and your gym has not hidden you. Nobody outside your
+  gym can see it, and your gym's staff have no screen for it. MettleUp keeps it for you, not for your gym.
 - **If you sign in with Google**, MettleUp saves a copy of your workouts on our server so you can
   get them back on a new phone. **MettleUp** is responsible for that copy, not your gym. Only you
   can see it. See "Your saved workouts" below.
@@ -52,12 +65,13 @@ pop up; Firebase Cloud Messaging named under "Where it is kept". In force when s
 | Data | Why | How long |
 |---|---|---|
 | When you join a gym in the app: your name, mobile number, the gym, the date you joined, when you last used the app, the date you left | So the gym knows who checked in, ordered or wrote | Until you leave the gym (your mobile number is then erased); the rest stays with the gym's records |
-| Check-ins (date and time), shop orders, messages with the desk | To run your membership and the gym's shop | As long as the gym keeps its records |
+| Check-ins (date and time), shop orders, messages with the desk | To run your membership and the gym's shop, and to show members how busy the gym usually is (no names) | As long as the gym keeps its records |
 | Body measurements your trainer takes at the gym (the date, body weight, body fat, tape measurements, who measured, and the desk's own note), and diet plans your trainer sends you | So your trainer can follow your progress and you see it in the app (Progress → Body, Gym → Diet plan) | As long as the gym keeps its records. Only your gym's staff and you can see them. A measurement the gym deletes also goes from your app; the numbers already on your phone stay there if you leave the gym, until you erase the app's data |
 | The gym's records listed above | So the gym can run memberships, receipts and check-ins | While the gym uses MettleUp; deleted within 30 days after it leaves (backups expire within 7 more days) |
 | Gym staff: name and mobile | Staff sign-in | While they work there |
 | Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward | To give you the reward | Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends |
 | Leaderboard numbers (only if you are in a gym): workouts logged and kg lifted per day, for the last 31 days, and your name switch | So your gym can run its leaderboard and challenges | Each day's numbers are deleted after 62 days, and all of them as soon as you leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total) stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when you leave the gym |
+| Workouts you share with gym mates (only if you switch it on): your bio, and for each workout its name, date, length, kg lifted and up to 8 exercises with their best set | So members of your gym can see your workouts from the leaderboard | Each workout is deleted after 60 days (at most 30 are kept). Everything is deleted at once when you switch it off or leave the gym |
 | Only if your phone is in a gym with "Messages from my gym" on: a push address for this phone (made by Google's Firebase), so your gym's messages and offers can pop up | So your gym's messages can pop up on your phone | Deleted when you leave the gym or turn messages off (or turn off the app's notifications), and when the phone has not used it for 60 days |
 | Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts" | So you can get them back on a new phone | Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days |
