@@ -37,19 +37,19 @@
         "bottom"
       ],
       [
-        0.25,
+        0.3,
         "bottom"
       ],
       [
-        1.35,
+        2.3,
         "top"
       ],
       [
-        1.7,
+        2.6,
         "top"
       ],
       [
-        3.1,
+        4.6,
         "bottom"
       ]
     ]
@@ -116,49 +116,48 @@
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.4,
-            0.1,
-            0.19
-          ],
           "axis": [
             -1,
             0,
             0
-          ]
+          ],
+          "arm": {
+            "elev": 75,
+            "plane": 20,
+            "elbow": "fore_vertical",
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": -16
+          }
         }
-      },
-      "elbows": {
-        "L": [
-          0.8,
-          0.05,
-          -0.4
-        ]
       }
     },
     "top": {
       "hands": {
         "L": {
           "prop": "db_L",
-          "at": [
-            0.24,
-            0.05,
-            0.575
-          ],
           "axis": [
             -1,
             0,
             0
-          ]
+          ],
+          "arm": {
+            "elev": 172,
+            "plane": 20,
+            "elbow": "fore_vertical",
+            "bend_world": [
+              0,
+              0,
+              1
+            ],
+            "tilt": -16
+          }
         }
-      },
-      "elbows": {
-        "L": [
-          0.8,
-          0.0,
-          -0.1
-        ]
       }
     }
-  }
+  },
+  "research": "Seat back 85 deg (S7). Bottom: upper arm ~15 deg below level, elbows 20 deg forward of the torso line, forearm vertical, handles at ear height (NSCA, Paoli full range). Top: arms near-straight, dumbbells over the shoulders, not touching. Tempo 2 s up / 2 s down. Facts and checks: research/dumbbell_shoulder_press.json."
 }

@@ -1,0 +1,770 @@
+{
+  "format": "forgeai-exercise-research v1",
+  "exercise": {
+    "key": "dumbbell_shoulder_press",
+    "name": "Dumbbell Shoulder Press",
+    "equipment": "dumbbell (pair) + upright bench with back support",
+    "library_primary": [
+      "front_delts"
+    ],
+    "library_secondary": [
+      "side_delts",
+      "triceps"
+    ],
+    "status": "draft",
+    "version": 7,
+    "researched_on": "2026-10-29",
+    "one_line_summary": "Sitting tall against a near-upright back pad, press two dumbbells from ear height straight up until the arms are almost straight over the shoulders, then lower them slowly. Front shoulder leads; side shoulder and triceps help.",
+    "evidence_grade": "C",
+    "evidence_note": "Muscle rows are grade A/B: two EMG studies on the seated dumbbell press itself (S2, S4) and three on close variants (S1, S3, S5). Joint angles are grade C: no study measured the joint angles of the seated dumbbell press, so they come from the NSCA technique text, ACE, and shoulder-motion research. The rig keeps the shoulder blade and collarbone still; a real shoulder blade turns upward as the arm goes overhead (S8). That is not visible on this body and is listed as a limit, not a target."
+  },
+  "setup": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "back pad angle",
+      "target": "85 degrees (near upright, slight lean back)",
+      "tolerance": "80-90 degrees",
+      "why": "A near-upright back support keeps the trunk still and the press vertical. Sitting with support lets people lift ~10 % more than standing (S2) and stops the lower back arching.",
+      "source_ids": [
+        "S6",
+        "S7",
+        "S2"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "body contact",
+      "target": "Hips on the seat, back against the pad, both feet flat on the floor",
+      "tolerance": "No contact point lifts at any frame",
+      "why": "Standard NSCA five-point seated position.",
+      "source_ids": [
+        "S6"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "grip",
+      "target": "Closed grip, palms facing forward, handles in line left to right",
+      "tolerance": "Handles may turn in up to ~20 degrees",
+      "why": "The classic version; a neutral or semi-neutral grip is a separate variation.",
+      "source_ids": [
+        "S6",
+        "S7"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "start position",
+      "target": "Dumbbells at ear height, upper arms a little below level, forearms vertical",
+      "tolerance": "Handles between shoulder and top-of-head height",
+      "why": "Lowering to shoulder level (the widest range) raised activity in every shoulder muscle measured versus a shorter range (S4).",
+      "source_ids": [
+        "S4",
+        "S6"
+      ],
+      "grade": "A"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "elbow direction",
+      "target": "Elbows about 20 degrees forward of the body's side line",
+      "tolerance": "0-30 degrees forward",
+      "why": "Elbows slightly forward (toward the shoulder blade's own plane) is the cue in NSCA/ACE and keeps the shoulder joint comfortable; elbows pulled behind the body line is a listed fault.",
+      "source_ids": [
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "item": "wrist",
+      "target": "Straight wrist, stacked over the elbow",
+      "tolerance": "Within ~10 degrees of straight",
+      "why": "A bent-back wrist under load is a listed fault.",
+      "source_ids": [
+        "S6"
+      ],
+      "grade": "C"
+    }
+  ],
+  "movement": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "shoulder (upper arm away from torso)",
+      "measure": "elev: angle between the upper arm and the side of the torso, 0 = arm hanging",
+      "start": "bottom: ~75 deg (upper arm a little below level)",
+      "start_num": 75,
+      "end": "top: ~170 deg (arm close to vertical)",
+      "end_num": 170,
+      "path": "One smooth sweep up and back down",
+      "tolerance": "bottom 70-90 deg; top 160-175 deg",
+      "source_ids": [
+        "S4",
+        "S6",
+        "S8"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "shoulder (direction of the arm)",
+      "measure": "plane: 0 = straight out to the side, +90 = straight forward",
+      "start": "bottom: ~20 deg forward",
+      "start_num": 20,
+      "end": "top: ~20 deg",
+      "end_num": 20,
+      "path": "Stays the same",
+      "tolerance": "0-30 deg",
+      "source_ids": [
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "elbow",
+      "measure": "bend, 0 = straight",
+      "start": "bottom: ~100 deg",
+      "start_num": 100,
+      "end": "top: ~5-10 deg (not locked hard)",
+      "end_num": 8,
+      "path": "Straightens smoothly with the shoulder",
+      "tolerance": "bottom 85-110 deg; top 0-15 deg",
+      "source_ids": [
+        "S6",
+        "S4"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "forearm",
+      "measure": "tilt from vertical, every frame",
+      "start": "vertical",
+      "start_num": 0,
+      "end": "vertical",
+      "end_num": 0,
+      "path": "Stays vertical: the hand stays over the elbow",
+      "tolerance": "0-10 deg",
+      "source_ids": [
+        "S6",
+        "S7"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "upper-arm roll (turn of the upper arm about its own length)",
+      "measure": "twist of the upper-arm bone vs rest, degrees",
+      "start": "turned out (palms forward, forearm up)",
+      "start_num": -69,
+      "end": "about the same",
+      "end_num": -68,
+      "path": "Smooth; changes by under ~15 deg over the rep",
+      "tolerance": "range under ~30 deg; no jump",
+      "source_ids": [
+        "S8"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "wrist",
+      "measure": "bend back/forward and twist vs rest",
+      "start": "straight",
+      "start_num": 0,
+      "end": "straight",
+      "end_num": 0,
+      "path": "Stays straight",
+      "tolerance": "under 10 deg",
+      "source_ids": [
+        "S6"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "dumbbell path",
+      "measure": "handle front/back position vs the shoulder joint, side view",
+      "start": "bottom: in front of the shoulder (elbows forward)",
+      "start_num": 0.13,
+      "end": "top: over the shoulder joint",
+      "end_num": 0.0,
+      "path": "Straight up with a slight drift back to finish over the shoulders",
+      "tolerance": "top within ~5 cm of the shoulder joint",
+      "source_ids": [
+        "S6",
+        "S7"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "dumbbells at the top",
+      "measure": "gap between the inner plates",
+      "start": "-",
+      "end": "close, not touching",
+      "end_num": 0.1,
+      "path": "Hands come slightly together as the arms straighten",
+      "tolerance": "0-20 cm, no clanging",
+      "source_ids": [
+        "S6",
+        "S7"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "shoulder blade / collarbone",
+      "measure": "shrug (shoulder point toward the ears)",
+      "start": "down and still",
+      "end": "down; no shrug",
+      "path": "In real life the shoulder blade turns upward ~40-50 deg as the arm goes overhead (S8); the rig keeps it still, so only 'no shrug' is checked",
+      "tolerance": "shoulder point rises under ~2 cm",
+      "source_ids": [
+        "S8",
+        "S6"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "trunk, hips, head",
+      "measure": "lean and contact with the pad and seat",
+      "start": "against the pad",
+      "end": "against the pad",
+      "path": "Still; no arching back",
+      "tolerance": "no lift, no slide",
+      "source_ids": [
+        "S6",
+        "S7"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "joint": "knees and feet",
+      "measure": "position",
+      "start": "feet flat, knees ~90 deg",
+      "end": "same",
+      "path": "Still",
+      "tolerance": "no movement",
+      "source_ids": [
+        "S6"
+      ],
+      "grade": "C"
+    }
+  ],
+  "muscles": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "front shoulder",
+      "anatomy": "deltoid, anterior (clavicular) part",
+      "mask_key": "front_delts",
+      "tier": "primary",
+      "glow": 1.0,
+      "emg": "33.3 % MVIC, the highest of 4 exercises (shoulder press, 60 % 1RM) [S1]. Seated dumbbell ~11 % above seated barbell [S2]. Highest-activity deltoid head in front presses [S3, S5].",
+      "role": "The muscle this exercise is for: it raises the arm forward and up. Library primary; top deltoid EMG in every study.",
+      "surface": "Front of the shoulder cap: from the outer third of the collarbone down over the front of the shoulder to the deltoid notch on the outer upper arm; inner edge is the groove against the upper chest.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S5",
+        "S9"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "side shoulder",
+      "anatomy": "deltoid, middle (acromial) part",
+      "mask_key": "side_delts",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "27.9 % MVIC (~84 % of the front shoulder) [S1]; seated ~15 % below standing dumbbell [S2]; rises with full range [S4].",
+      "role": "Lifts the arm out to the side; clearly working throughout.",
+      "surface": "Outer point of the shoulder cap, from the acromion down to the deltoid notch.",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S4",
+        "S9"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "triceps",
+      "anatomy": "triceps brachii (all heads)",
+      "mask_key": "triceps",
+      "tier": "secondary",
+      "glow": 0.35,
+      "emg": "Named working muscle in all press studies; standing barbell ~39 % above dumbbell [S2]; rises in the top half as the elbow straightens [S4].",
+      "role": "Straightens the elbow to finish the press.",
+      "surface": "Back of the upper arm from the shoulder to the elbow.",
+      "source_ids": [
+        "S2",
+        "S4",
+        "S5",
+        "S9"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "upper trapezius",
+      "anatomy": "trapezius, descending part",
+      "mask_key": "traps",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Active with the shoulder blade's upward turn; rises with the widest range [S4]; no difference between front press types [S3].",
+      "role": "Turns the shoulder blade upward with serratus; not the target (a shorter range is even used to reduce it [S4]).",
+      "surface": "Top of the shoulders between neck and shoulder point.",
+      "source_ids": [
+        "S3",
+        "S4"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "upper chest",
+      "anatomy": "pectoralis major, clavicular head",
+      "mask_key": "chest_upper",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Some activity in front presses, higher in front than back barbell press [S3].",
+      "role": "Helps raise the arm forward early in the lift; small.",
+      "surface": "Upper third of the chest below the collarbone.",
+      "source_ids": [
+        "S3"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "rear shoulder",
+      "anatomy": "deltoid, posterior part",
+      "mask_key": "rear_delts",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "11.4 % MVIC [S1].",
+      "role": "Steadies the shoulder.",
+      "surface": "Back of the shoulder cap.",
+      "source_ids": [
+        "S1"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "serratus anterior",
+      "anatomy": "serratus anterior",
+      "mask_key": "none",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Not measured in these studies.",
+      "role": "Turns the shoulder blade upward with the trapezius as the arm goes overhead.",
+      "surface": "Side of the ribcage under the armpit.",
+      "source_ids": [
+        "S8",
+        "S9"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "rotator cuff",
+      "anatomy": "supraspinatus, infraspinatus, teres minor, subscapularis",
+      "mask_key": "none",
+      "tier": "deep",
+      "glow": 0.0,
+      "emg": "Not measured in these studies.",
+      "role": "Holds the ball of the shoulder in its socket; supraspinatus helps start the lift.",
+      "surface": "Under the deltoid and trapezius.",
+      "source_ids": [
+        "S9"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "biceps",
+      "anatomy": "biceps brachii",
+      "mask_key": "biceps",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Measured, low [S2].",
+      "role": "Steadies the elbow.",
+      "surface": "Front of the upper arm.",
+      "source_ids": [
+        "S2"
+      ],
+      "grade": "B"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "core",
+      "anatomy": "rectus abdominis, obliques, erector spinae",
+      "mask_key": "abs",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Lower when seated with support than standing.",
+      "role": "Keeps the trunk still against the pad.",
+      "surface": "Front and sides of the trunk.",
+      "source_ids": [
+        "S2",
+        "S6"
+      ],
+      "grade": "C"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "muscle": "forearm grip",
+      "anatomy": "forearm flexors",
+      "mask_key": "forearms",
+      "tier": "stabiliser",
+      "glow": 0.0,
+      "emg": "Not measured.",
+      "role": "Holds the dumbbells.",
+      "surface": "Inner forearm.",
+      "source_ids": [
+        "S6"
+      ],
+      "grade": "C"
+    }
+  ],
+  "tempo": {
+    "key": "dumbbell_shoulder_press",
+    "up_s": 2.0,
+    "hold_top_s": 0.3,
+    "down_s": 2.0,
+    "pause_bottom_s": 0.3,
+    "loop_s": 4.6,
+    "source_ids": [
+      "S6",
+      "S7",
+      "S4"
+    ]
+  },
+  "mistakes": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Arching the lower back",
+      "what_it_looks_like": "Hips slide forward, chest leans back off the pad",
+      "why_it_matters": "Turns it into a steep incline press and loads the lower back.",
+      "source_ids": [
+        "S6",
+        "S7"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Shrugging",
+      "what_it_looks_like": "Shoulders rise to the ears at the top",
+      "why_it_matters": "Shifts work to the upper trapezius.",
+      "source_ids": [
+        "S4",
+        "S7"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Elbows behind the body",
+      "what_it_looks_like": "Elbows pulled back flat in line with or behind the torso at the bottom",
+      "why_it_matters": "Puts the shoulder in an uncomfortable position under load.",
+      "source_ids": [
+        "S6",
+        "S8"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Half reps",
+      "what_it_looks_like": "Dumbbells stop well above the head",
+      "why_it_matters": "Less activity in every shoulder muscle than the full range.",
+      "source_ids": [
+        "S4"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Bent-back wrists",
+      "what_it_looks_like": "Knuckles point back, dumbbell behind the forearm",
+      "why_it_matters": "Strains the wrist; load no longer stacked over the elbow.",
+      "source_ids": [
+        "S6"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Clanging the dumbbells",
+      "what_it_looks_like": "Plates hit together over the head",
+      "why_it_matters": "Loses control at the top.",
+      "source_ids": [
+        "S7"
+      ]
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "mistake": "Bouncing out of the bottom",
+      "what_it_looks_like": "Fast drop and rebound",
+      "why_it_matters": "Controlled lowering is the standard tempo.",
+      "source_ids": [
+        "S6"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S1",
+      "citation": "Campos YAC, Vianna JM, Guimaraes MP, et al. (2020). Different shoulder exercises affect the activation of deltoid portions in resistance-trained individuals. J Hum Kinet 75:5-14.",
+      "url": "https://johk.pl/?p=5707",
+      "type": "emg",
+      "what_it_gave": "13 trained men, 60 % 1RM: shoulder press front delt 33.3, middle 27.9, rear 11.4 % MVIC; front delt highest of 4 exercises."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S2",
+      "citation": "Saeterbakken AH, Fimland MS (2013). Effects of body position and loading modality on muscle activity and strength in shoulder presses. J Strength Cond Res 27(7):1824-1831.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Saeterbakken+Fimland+2013+shoulder+presses",
+      "type": "emg",
+      "what_it_gave": "15 men, 80 % 1RM, seated/standing x barbell/dumbbell: seated dumbbell front delt ~11 % above seated barbell; seated 1RM ~10 % above standing; triceps higher with barbell."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S3",
+      "citation": "Coratella G, Tornatore G, Longo S, et al. (2022). Front vs back and barbell vs machine overhead press: an electromyographic analysis and implications for resistance training. Front Physiol 13:825880.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9354811/",
+      "type": "emg",
+      "what_it_gave": "8 bodybuilders: deltoids, upper trapezius, pec major and triceps all active; front press favours pec more than back press; trapezius equal."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S4",
+      "citation": "Paoli A, Marcolin G, Petrone N (2010). Influence of different ranges of motion on selective recruitment of shoulder muscles in the sitting military press: an electromyographic study. J Strength Cond Res 24(6):1578-1583.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508462/",
+      "type": "emg",
+      "what_it_gave": "Seated dumbbell press at 3 ranges: the widest range raised activity of all 8 muscles; shorter range lowers trapezius."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S5",
+      "citation": "Kohler JM, Flanagan SP, Whiting WC (2010). Muscle activation patterns while lifting stable and unstable loads on stable and unstable surfaces. J Strength Cond Res 24(2):313-321.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Kohler+Flanagan+Whiting+2010+unstable+loads",
+      "type": "emg",
+      "what_it_gave": "Shoulder press barbell vs dumbbell: front deltoid the main mover in all conditions."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S6",
+      "citation": "Haff GG, Triplett NT, eds. (2016). Essentials of Strength Training and Conditioning, 4th ed. NSCA / Human Kinetics. Ch. 15, seated dumbbell shoulder press.",
+      "url": "https://www.nsca.com/store/product-detail/INV/9781492501626/9781492501626",
+      "type": "textbook",
+      "what_it_gave": "Seated five-point position, pronated grip, start at shoulder/ear level with forearms vertical, press to full elbow extension, controlled lowering."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S7",
+      "citation": "American Council on Exercise. Exercise Library: seated shoulder press.",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/",
+      "type": "guideline",
+      "what_it_gave": "Back supported, elbows slightly forward, no arching, no shrug, controlled tempo."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S8",
+      "citation": "Ludewig PM, Phadke V, Braman JP, et al. (2009). Motion of the shoulder complex during multiplanar humeral elevation. J Bone Joint Surg Am 91(2):378-389.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Ludewig+2009+multiplanar+humeral+elevation",
+      "type": "biomechanics",
+      "what_it_gave": "Shoulder blade upward rotation and collarbone elevation as the arm rises; scapular-plane elevation as the natural path."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S9",
+      "citation": "Drake RL, Vogl AW, Mitchell AWM (2019). Gray's Anatomy for Students, 4th ed. Elsevier.",
+      "url": "https://www.elsevier.com/books/grays-anatomy-for-students/drake/978-0-323-39304-1",
+      "type": "textbook",
+      "what_it_gave": "Muscle borders and actions for the skin masks."
+    }
+  ],
+  "clip_check": [
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "back pad / torso angle",
+      "target": "85 deg (80-90), back on the pad",
+      "measured": "torso 84.7 deg from the floor (pad 85); back gap to the pad -0.017 to +0.019 m (probe_bench)",
+      "pass": "yes",
+      "tool": "probe_bench.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "seat and feet contact",
+      "target": "hips on the seat, feet flat on the floor",
+      "measured": "lowest body point over the seat 0.442 m (seat top 0.44); lowest foot point 0.000 m (probe_feet)",
+      "pass": "yes",
+      "tool": "probe_bench.py / probe_feet.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "upper arm from torso (elev) at bottom",
+      "target": "~75 deg (70-90)",
+      "measured": "75 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "upper arm from torso (elev) at top",
+      "target": "~170 deg (160-175)",
+      "measured": "172 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "elbow forward of the body line (plane)",
+      "target": "~20 deg (0-30), every frame",
+      "measured": "20 deg every sample",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "elbow bend at bottom",
+      "target": "~100 deg (85-110)",
+      "measured": "103 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "elbow bend at top",
+      "target": "5-10 deg (0-15)",
+      "measured": "7.9 deg",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "forearm tilt from vertical, every frame (hand over the elbow, front and side view)",
+      "target": "0-10 deg",
+      "measured": "0-1.8 deg every sample",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "start height",
+      "target": "handles between shoulder and top-of-head height",
+      "measured": "handle centre 1.285 m, about ear-top height (shoulder joint ~1.09 m, head base 1.18 m)",
+      "pass": "yes",
+      "tool": "measure_press.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "top: dumbbells over the shoulders",
+      "target": "handles within ~5 cm front/back of the shoulder joint",
+      "measured": "1.3 cm in front of the shoulder joint",
+      "pass": "yes",
+      "tool": "measure_press.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "top: gap between the inner plates",
+      "target": "close, not touching (0-20 cm)",
+      "measured": "handle centres 0.525 m apart (~15 cm between inner plates)",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "upper-arm roll range over the rep",
+      "target": "under ~30 deg, smooth, no jump",
+      "measured": "-75.5 to -67.9 deg (7.6 deg range), at most ~4 deg per 8 frames",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "elbow hinge drift",
+      "target": "under 5 deg",
+      "measured": "0 deg",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "wrist twist",
+      "target": "under 15 deg",
+      "measured": "under 2.5 deg",
+      "pass": "yes",
+      "tool": "measure_twist.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "wrist bend back/forward",
+      "target": "under 10 deg from rest",
+      "measured": "within 0.7 deg of rest every sample (handle tilt -16)",
+      "pass": "yes",
+      "tool": "measure_wrist.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "no shrug",
+      "target": "shoulder point rises under ~2 cm",
+      "measured": "0.1 cm (shoulder girdle held still; real upward turn of the shoulder blade not modelled)",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "trunk, head, hips, feet still",
+      "target": "no lift, no slide",
+      "measured": "trunk 5.3 deg back every sample; body pose is the same in every frame",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "left/right symmetry",
+      "target": "height difference under ~3 cm",
+      "measured": "mirrored by construction",
+      "pass": "yes",
+      "tool": "measure_pose.py"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "tempo",
+      "target": "up 2 s, top 0.3, down 2 s, bottom 0.3, loop 4.6 s",
+      "measured": "2.0 / 0.3 / 2.0 / 0.3, loop 4.6 s",
+      "pass": "yes",
+      "tool": "spec timing keys"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "glow values match tiers",
+      "target": "front_delts 1.0; side_delts, triceps 0.35; everything else 0",
+      "measured": "read from this file by the clip",
+      "pass": "yes",
+      "tool": "spec highlight vs research muscles[]"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "primary muscle is the strongest red in the bottom, middle and top frames",
+      "target": "front shoulder reads as the deepest red in all three",
+      "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade",
+      "pass": "yes",
+      "tool": "rendered frames"
+    }
+  ]
+}
