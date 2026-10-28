@@ -112,9 +112,9 @@ Google's own privacy terms apply to it.
 Our main database is in **Mumbai, India** (Supabase). Some service providers may process limited
 data outside India: Cloudflare (delivers the desk app and passes both apps' requests on to our
 database), Google (sign-in with Google, and Google Drive if you turn on that backup), Google Play
-and GitHub (app downloads), and, only when your gym's owner imports an old member list and
-presses **Ask AI**, Google Gemini or Anthropic Claude (they see the list's column names and 5
-example rows, with names, addresses, mobile numbers, emails and ID numbers hidden) [and Sentry
+and GitHub (app downloads), and, only when your gym's owner imports an old member list,
+Google Gemini or Anthropic Claude (they see the list's column names, 5 example rows and simple
+counts per column, with names, addresses, mobile numbers, emails and ID numbers hidden) [and Sentry
 (crash reports), once added]. They
 process it only to provide their service to us. So that the desk can keep working when the internet
 drops, the desk app keeps a copy of the gym's records on each device a staff member signs in on;

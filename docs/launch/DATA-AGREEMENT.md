@@ -30,7 +30,7 @@ totals that name no gym or person (for example, how many check-ins MettleUp hand
 - **Cloudflare**: delivers the admin app and passes requests to the database; it also keeps our
   feedback box and daily AI-use counts.
 - **Google Gemini, then Anthropic Claude if Gemini fails**: only when your owner imports a member
-  list and presses **Ask AI**. They see the column names and the first 5 rows of the file. Names,
+  list. They see the column names, the first 5 rows of the file and simple counts per column. Names,
   addresses, mobile numbers, emails, PAN and ID numbers, and any run of 7 or more digits are
   hidden first, twice (in your browser and again on our server): a column of names or addresses
   shows only "[name]" or "[address]". Plan names, amounts and dates in those 5 rows are **not**

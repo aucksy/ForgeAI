@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-159. Privacy wording for the automatic AI import: A — 28 Oct 2026
+**He said:** "A" (update the notice to match the automatic AI; no per-import tick box).
+**Done:** "presses Ask AI" removed; the line now says the AI sees column names, 5 example rows and simple counts per column
+(details hidden as before), in PRIVACY-NOTICE.md, PRIVACY-NOTICE-HI.md and DATA-AGREEMENT.md; public pages rebuilt
+(scripts/legal_pages.py) and deployed with the admin app.
+
 ## R-158. "Just check however it works": Firebase where it works; offers AND messages must push — 28 Oct 2026
 **He said:** "Just check however it works. I just want the offers and messages from admin panel to send push notifications
 to member app."
