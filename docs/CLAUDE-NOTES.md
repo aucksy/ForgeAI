@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-154. To do: put a question about Firebase notification limits in the tracker — 28 Oct 2026
+**Owner said:** add to the notes that a question on the limits of Firebase notifications must go in the tracker.
+**Done now:** only this note (rule R-36: nothing goes into the tracker until he says so, and he said "add to notes").
+**To do when he says so:** add a tracker entry "What are the limits of Firebase (FCM) notifications for us?" with
+my plain-English answer: free or not, messages per day / per phone, topic and group limits, size limit, what happens
+when many gyms send at once. Research first (official Firebase docs). Related: R-151 (no pop-up from admin notices).
+
 ## R-153. To build: UPI payments linked to the gym's GGMS CRM, then research the card machine — 28 Oct 2026
 **Owner said (notes only):** build a UPI payments integration: the gym has a QR code, members pay by UPI, and the
 payment is recorded in the gym's existing GGMS CRM. Then research how to connect their card payment system too.
