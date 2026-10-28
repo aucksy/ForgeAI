@@ -31,7 +31,12 @@ export interface ButtonSpot {
 export const DEFAULT_SPOT: ButtonSpot = { side: 'right', y: 0.62 };
 
 /** Screens where the floating button never shows. */
-const HIDDEN_ON = new Set(['/session/active', '/settings/feedback']);
+/**
+ * Screens where the floating button never shows. 0.60.0 phone test (part UH): on the Calendar the
+ * docked button sat over the Sunday column and took a tap meant for a day, so the Calendar has none
+ * (its grid fills the width; the Settings page and every other screen still reach feedback).
+ */
+const HIDDEN_ON = new Set(['/session/active', '/settings/feedback', '/calendar']);
 
 export interface ScreenRoom {
   width: number;

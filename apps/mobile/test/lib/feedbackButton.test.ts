@@ -66,6 +66,7 @@ describe('the floating feedback button (R-149)', () => {
     expect(showsFloatingButton({ ...on, pathname: '/session/finish' })).toBe(true);
     expect(showsFloatingButton({ ...on, pathname: '/session/active' })).toBe(false); // its own top-bar button
     expect(showsFloatingButton({ ...on, pathname: '/session/active/' })).toBe(false);
+    expect(showsFloatingButton({ ...on, pathname: '/calendar' })).toBe(false); // its day grid fills the width (part UH)
     expect(showsFloatingButton({ ...on, pathname: '/settings/feedback' })).toBe(false);
     expect(showsFloatingButton({ ...on, keyboardOpen: true, pathname: '/' })).toBe(false);
     expect(showsFloatingButton({ enabled: false, keyboardOpen: false, pathname: '/' })).toBe(false);
