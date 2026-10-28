@@ -339,6 +339,36 @@ If they passed: tag v0.58.1 (Play upload runs by itself). If not: read the faili
 5. Privacy notice line (his wording OK): "a push address for this phone, so your gym's messages can pop up; deleted
    when you leave the gym or turn messages off".
 6. Tracker: row "Messages in the phone's notification shade" → Planned (step 1 Next release); R-151 closed by this.
+**Step 2 built (28 Oct):** real Firebase push for BOTH gym messages and offers, code only, nothing live yet.
+- Sender: the HQ Worker (deploy/hq/push.js), not a Supabase Edge Function: it already holds the only Supabase secret
+  key ("hq") the sender's functions need, already has a Cron Trigger, costs nothing new. Runs every minute, and at once
+  when the admin app sends a message or starts an offer (the panel Worker's /sb proxy calls HQ's POST /push/run through
+  service binding HQ_PUSH after a successful owner_send_message / owner_save_offer; live with the next panel deploy).
+  Signs the Google JWT itself (RS256, firebase.messaging scope, token kept 55 min), FCM HTTP v1, data-only messages
+  (title, message, channelId gym-messages, tag gym-notice-<id> / gym-offer-<id>: Android shows it with the app closed,
+  under the SAME id the 15-minute check uses, so no doubles); dead addresses deleted on 404/UNREGISTERED; at most 45
+  calls per run (free plan 50; var PUSH_SUBREQUESTS), the rest next minute. No secret / no 0038: stops calmly, one log
+  line, claims nothing.
+- Server: migration 0038_member_push.sql (NOT APPLIED): member_push_tokens (one row per address, max 5 per member,
+  deleted on leave / gym let go / 60 days unused / switch off), push_jobs (one per new message or offer, by triggers;
+  group messages only to the group; timed ones when due; taken-back or >6 h late skipped; never sent twice),
+  member_save_push_token / member_clear_push_token, hq_push_next / hq_push_drop (HQ key only). Test
+  supabase/tests/0038_member_push.sql; security.sql anon list updated.
+- App: google-services plugin 4.4.2 in the committed android/ (root classpath + app plugin), app.json
+  googleServicesFile, google-services.json committed (both places). No new native module (expo-notifications already
+  has firebase-messaging; permissions already approved). shop/pushToken.ts saves the address (getDevicePushTokenAsync)
+  while in a gym + switch on + notifications allowed, weekly and on a new address; clears it on switch/notifications off;
+  forgets it on leave/erase. Push task (noticeTask.ts) marks the message as shown so step 1 never repeats it, takes
+  away a push the phone should not show, refreshes the bell. Foreground: the pop-up shows (workoutAlerts handler).
+  Tap: message -> inbox, offer -> gym tab. Step 1 stays as the fallback.
+- Privacy line drafted EN + HI in docs/launch/PRIVACY-NOTICE(-HI).md as a PROPOSAL (pending owner OK; page not rebuilt).
+**Left (exactly):**
+1. The live migration 0038 + its tests (owner's yes first).
+2. The service-account key + secret FCM_SERVICE_ACCOUNT on the HQ Worker (helper, with the owner's OK): Google Cloud
+   project forgeai-d7eea -> service account (e.g. mettleup-push) with role "Firebase Cloud Messaging API Admin"
+   (roles/firebasemessaging.admin) -> JSON key -> `cd deploy/hq && npx wrangler secret put FCM_SERVICE_ACCOUNT`.
+3. The privacy line (owner OK), then rebuild privacy.html.
+4. Release (a new app version with the push code; the panel deploy for the instant kick).
 
 ## R-137. Two leaderboard follow-ups for the feature backlog — 26 Oct 2026
 **He said (OpenCode):** "add these to notes to be added to feature backlog in tracker. dont analyze anything right now..

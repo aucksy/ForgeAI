@@ -12,6 +12,8 @@
 //                                               no sign-in, because a browser fetches them without cookies
 //   everything else                             the static page (apps/hq/public), signed in only
 // A Cron Trigger runs the nightly clean-up at 03:00 India time (scheduled() below).
+// Phone pop-ups for the gym's messages and offers (push.js, R-153 step 2): a second Cron Trigger every
+// minute, and POST /push/run (no sign-in: it only sends what is already due, at most once every 3 s).
 // Strict headers on every answer (the install files too): a Content-Security-Policy that allows only this address
 // (connect-src 'self'), no framing, no referrer, HSTS.
 
@@ -19,6 +21,7 @@ import { googleFinish, googleStart, isAllowed, makeSession, maskEmail, missingSe
 import { handleApi, json } from './api.js';
 import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
+import { handlePushKick, runPush } from './push.js';
 
 export const CSP = [
   "default-src 'self'",
@@ -188,11 +191,20 @@ export async function nightly(env, { fetchImpl = fetch, now = new Date() } = {})
   }
 }
 
+/** Which Cron Trigger fired: the nightly clean-up, or the every-minute phone pop-ups. PURE. */
+export function cronJob(cron) {
+  return cron === NIGHTLY_CRON ? 'nightly' : 'push';
+}
+export const NIGHTLY_CRON = '30 21 * * *';
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (url.pathname === '/push/run') return secure(handlePushKick(request, env, ctx));
     return secure(await handle(request, env));
   },
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(nightly(env));
+    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(nightly(env));
+    else ctx.waitUntil(runPush(env));
   },
 };

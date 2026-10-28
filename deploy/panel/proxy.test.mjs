@@ -62,3 +62,35 @@ test('Supabase not answering: a plain 502, never a hang or a crash', async () =>
   assert.equal(res.headers.get(STAMP), 'unreachable');
   assert.match(await res.text(), /could not be reached/);
 });
+
+// R-153 step 2: a message sent or an offer started tells HQ to send the phone pop-ups now.
+test('pushAfter tells HQ only after a successful send or offer, and never changes the answer', async () => {
+  const { pushAfter, wantsPush } = await import('./proxy.js');
+  const at = (path, method = 'POST') => [new Request(`https://app.mettleup.fit${path}`, { method, body: method === 'POST' ? '{}' : undefined }), new URL(`https://app.mettleup.fit${path}`)];
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message'), 200), true);
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_save_offer'), 200), true);
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message'), 400), false);
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/member_messages'), 200), false);
+  assert.equal(wantsPush(...at('/sb/rest/v1/rpc/owner_send_message', 'GET'), 200), false);
+
+  const kicks = [];
+  const waits = [];
+  const env = { HQ_PUSH: { fetch: async (u, init) => { kicks.push([u, init.method]); return new Response(null, { status: 202 }); } } };
+  const ctx = { waitUntil: (p) => waits.push(p) };
+  const answer = new Response('{"id":"x"}', { status: 200 });
+  assert.equal(pushAfter(...at('/sb/rest/v1/rpc/owner_send_message'), env, ctx, answer), answer);
+  pushAfter(...at('/sb/rest/v1/rpc/member_me'), env, ctx, new Response('{}', { status: 200 }));
+  // No binding (an older deploy): nothing happens, the answer is the same.
+  assert.equal(pushAfter(...at('/sb/rest/v1/rpc/owner_send_message'), {}, ctx, answer), answer);
+  // HQ unreachable: quiet.
+  const broken = { HQ_PUSH: { fetch: async () => { throw new Error('down'); } } };
+  const warn = console.warn;
+  console.warn = () => undefined;
+  try {
+    pushAfter(...at('/sb/rest/v1/rpc/owner_save_offer'), broken, ctx, answer);
+    await Promise.all(waits);
+  } finally {
+    console.warn = warn;
+  }
+  assert.deepEqual(kicks, [['https://hq.mettleup.fit/push/run', 'POST']]);
+});

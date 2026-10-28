@@ -2686,6 +2686,13 @@
   backups); runs refreshInbox() and pops one local notification per new notice on channel gym-messages (HIGH), >3 = one
   summary; first look / notices > 7 days old are marked without a pop-up; never twice; foreground marks without a
   pop-up; tap opens /shop/inbox. Step 2 (real FCM push) planned in CLAUDE-NOTES R-153.
+- 2026-10-28: **R-153 step 2 BUILT (not live): gym messages AND offers push to members' phones (Firebase FCM).**
+  Sender in the HQ Worker (deploy/hq/push.js: own RS256 JWT, FCM HTTP v1 data-only messages, cron every minute + POST
+  /push/run kicked by the panel proxy after owner_send_message / owner_save_offer via service binding HQ_PUSH). Server
+  0038_member_push.sql NOT APPLIED (member_push_tokens, push_jobs by triggers, member_save/clear_push_token,
+  hq_push_next/drop). App: google-services plugin + google-services.json, shop/pushToken.ts (save/refresh/clear the
+  FCM address), push task in noticeTask.ts (marks shown so the 15-min check never repeats it). Left: live 0038 (owner
+  yes), FCM_SERVICE_ACCOUNT secret, privacy line OK, release. Details CLAUDE-NOTES R-153.
 - 2026-10-26: **v0.58.0 RELEASED** (tag on 33cabec; CI, Device QA default + owner, journeys all green after the
   brand-welcome flow fix). Release run 40302380878: phone-gate, build, update-proof, publish and the NEW job
   "play-upload / upload" all green: Play upload ran BY ITSELF for the first time (58000 on internal + alpha).

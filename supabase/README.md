@@ -238,3 +238,13 @@ gains `p_pin`, the 5-argument version is dropped). A trigger deletes a removed p
 0018, 0027, 0031 or 0033 puts their versions back: always re-run 0034 after them. Apply it BEFORE the
 admin app that asks for a PIN is deployed (an older server makes the gym without the PIN). Test:
 `tests/0034_signin_pin.sql` → `RESULT PASS (68 checks)`, then `tests/security.sql` → `RESULT PASS`.
+
+## Phone pop-ups for the gym's messages and offers (0038, R-153 step 2) — NOT APPLIED, needs the owner's yes
+Additive and re-runnable; apply after 0037. New tables `member_push_tokens` (one row per phone push address)
+and `push_jobs` (one per new message or offer, made by triggers on new `gym_messages` / `gym_offers` rows),
+a trigger that deletes a member's push addresses when they leave or the gym lets the phone go, the member
+functions `member_save_push_token` / `member_clear_push_token`, and the sender's `hq_push_next` / `hq_push_drop`
+(service_role only: the HQ Worker's "hq" key, deploy/hq/push.js). No function that exists is changed. Messages
+sent before 0038 is applied are never pushed. Test: `tests/0038_member_push.sql` → `RESULT PASS (n checks)`,
+then `tests/0026_hq_access.sql` (it now also checks the two new hq_ functions) and `tests/security.sql`.
+The sender also needs the HQ Worker secret FCM_SERVICE_ACCOUNT; without it nothing is sent and nothing is lost.

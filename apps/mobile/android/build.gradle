@@ -9,6 +9,8 @@ buildscript {
     classpath('com.android.tools.build:gradle')
     classpath('com.facebook.react:react-native-gradle-plugin')
     classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+    // R-153 step 2: Firebase push (google-services.json in app/; expo-notifications already brings firebase-messaging).
+    classpath('com.google.gms:google-services:4.4.2')
   }
 }
 

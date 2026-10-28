@@ -18,3 +18,23 @@ TaskManager.defineTask(NOTICE_TASK, async () => {
     return BackgroundTask.BackgroundTaskResult.Failed;
   }
 });
+
+/**
+ * R-153 step 2: the push task. The notification library runs it for every push that arrives (app
+ * open, in the background or closed); Android has already shown the pop-up from the push itself.
+ * It only keeps the books (noticeAlertsRun.onPushArrived). Registered by pushToken.ts.
+ */
+export const PUSH_TASK = 'mettleup-gym-push';
+
+TaskManager.defineTask(PUSH_TASK, async ({ data, error }) => {
+  if (error) {
+    console.warn('[ForgeErr] gym push: the task', error);
+    return;
+  }
+  try {
+    const { onPushArrived } = await import('./noticeAlertsRun');
+    await onPushArrived(data);
+  } catch (e) {
+    console.warn('[ForgeErr] gym push: the task', e);
+  }
+});

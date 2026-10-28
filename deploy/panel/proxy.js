@@ -64,3 +64,31 @@ export async function handleProxy(request, url, fetchImpl = fetch) {
     });
   }
 }
+
+/**
+ * R-153 step 2: the admin app's calls that make something for members' phones. After one of them
+ * succeeds, the HQ Worker (service binding HQ_PUSH, deploy/hq/push.js) is told to send the pop-ups now
+ * instead of at its next minute. PURE.
+ */
+export const PUSH_RPCS = ['owner_send_message', 'owner_save_offer'];
+export function wantsPush(request, url, status) {
+  if (request.method !== 'POST' || status < 200 || status >= 300) return false;
+  const m = /^\/sb\/rest\/v1\/rpc\/([a-z_]+)\/?$/.exec(url.pathname);
+  return Boolean(m && PUSH_RPCS.includes(m[1]));
+}
+
+/** The proxy's answer, unchanged; tells HQ to send (in the background) when wantsPush. Never throws. */
+export function pushAfter(request, url, env, ctx, response) {
+  try {
+    if (env && env.HQ_PUSH && ctx && wantsPush(request, url, response.status)) {
+      ctx.waitUntil(
+        env.HQ_PUSH.fetch('https://hq.mettleup.fit/push/run', { method: 'POST' })
+          .then((r) => r.body?.cancel())
+          .catch((e) => console.warn('[sb proxy] could not tell HQ to send the pop-ups', e instanceof Error ? e.message : 'error')),
+      );
+    }
+  } catch (e) {
+    console.warn('[sb proxy] push kick', e instanceof Error ? e.message : 'error');
+  }
+  return response;
+}

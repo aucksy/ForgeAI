@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "301992813103",
+    "project_id": "forgeai-d7eea",
+    "storage_bucket": "forgeai-d7eea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301992813103:android:81598cb259caec49091cda",
+        "android_client_info": {
+          "package_name": "com.mettleup.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "301992813103-a5m1pqvut8oobo5b6lpljn7al3o4u2be.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqikr3bvwYrukZMTkBWK8GsT-grvgQGHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "301992813103-a5m1pqvut8oobo5b6lpljn7al3o4u2be.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,7 +21,7 @@ import { refreshInbox } from './gymActions';
 import { useGymShop } from './gymStore';
 import type { InboxMessage } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
-import { alertedFromSaved, NOTICE_ROUTE, planNoticeAlerts } from './noticeAlerts';
+import { ALERTED_CAP, alertedFromSaved, NOTICE_ROUTE, planNoticeAlerts } from './noticeAlerts';
 import { NOTICE_CHANNEL_DESCRIPTION, NOTICE_CHANNEL_NAME, noticePopups, type NoticePopup } from './noticeAlertWords';
 import type { GymLink } from './types';
 
@@ -111,17 +111,27 @@ export async function forgetNoticeAlerts(): Promise<void> {
   }
 }
 
-async function showPopups(popups: readonly NoticePopup[]): Promise<void> {
+/**
+ * The "Messages from your gym" channel. A push (step 2) is shown by Android on it with the app
+ * closed, so it must exist before the first push comes: made when the push address is saved too.
+ */
+export async function ensureNoticeChannel(): Promise<void> {
   const n = N();
-  if (!n || popups.length === 0) return;
-  const cur = await n.getPermissionsAsync();
-  if (!cur.granted) return;
+  if (!n) return;
   await n.setNotificationChannelAsync(GYM_NOTICE_CHANNEL, {
     name: NOTICE_CHANNEL_NAME,
     description: NOTICE_CHANNEL_DESCRIPTION,
     importance: n.AndroidImportance.HIGH,
     showBadge: false,
   });
+}
+
+async function showPopups(popups: readonly NoticePopup[]): Promise<void> {
+  const n = N();
+  if (!n || popups.length === 0) return;
+  const cur = await n.getPermissionsAsync();
+  if (!cur.granted) return;
+  await ensureNoticeChannel();
   for (const p of popups) {
     await n.scheduleNotificationAsync({
       identifier: p.id,
@@ -192,5 +202,45 @@ export async function runNoticeCheck(): Promise<boolean> {
     return false;
   } finally {
     taskBusy = false;
+  }
+}
+
+/**
+ * R-153 step 2: a push from the gym arrived (the push task in noticeTask.ts runs for every push, the
+ * app open or not; Android shows the pop-up itself from the push). Here:
+ *  - a message is remembered as shown, so the 15-minute check never pops it up again (the two use the
+ *    same pop-up id, so even a race only replaces it, never stacks);
+ *  - a push this phone should not show (left the gym, another gym, the switch off) is taken away;
+ *  - the inbox is read again, so the bell is right.
+ * Never throws.
+ */
+export async function onPushArrived(raw: unknown): Promise<void> {
+  try {
+    const { pushFromData } = await import('./pushPlan');
+    const p = pushFromData(raw);
+    if (!p) return;
+    await storesReady();
+    const link = useGymShop.getState().link;
+    const wanted = !!link && (!p.gymId || p.gymId === link.gymId) && usePhonePrefs.getState().gymMessagesOn;
+    if (!link || !wanted) {
+      await N()?.dismissNotificationAsync(p.tag).catch(() => undefined);
+      return;
+    }
+    if (p.push !== 'message') return;
+    await serial(async () => {
+      let alerted = await readAlerted(link.memberId);
+      if (alerted === null) {
+        // The first look on this phone: remember what the inbox already holds (no flood of old ones later).
+        const { apiMessages } = await import('./gymApi');
+        const r = await apiMessages(link.memberKey);
+        alerted = r.ok ? planNoticeAlerts({ messages: r.data, alerted: null, inFront: true }).alerted : [];
+      }
+      const ids = alerted.includes(p.noticeId) ? alerted : [...alerted, p.noticeId];
+      await AsyncStorage.setItem(GYM_NOTICE_ALERTS_KEY, JSON.stringify({ memberId: link.memberId, ids: ids.slice(-ALERTED_CAP) }));
+    });
+    // The bell: read the inbox now (quiet on failure; the app reads it again when opened).
+    await refreshInbox();
+  } catch (e) {
+    console.warn('[ForgeErr] gym notices: a push arrived', e);
   }
 }

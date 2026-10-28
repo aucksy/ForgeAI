@@ -43,6 +43,10 @@
   // match can be read afterwards; before this only a live `wrangler tail` showed them.
   "observability": { "enabled": true },
   "vars": { "LANDING": "live", "MOVE": "on" },
+  // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
+  // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go
+  // within a minute anyway (HQ's own Cron Trigger).
+  "services": [{ "binding": "HQ_PUSH", "service": "forgeai-hq" }],
   "d1_databases": [
     { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "migrations" }
   ]

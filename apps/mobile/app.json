@@ -10,6 +10,7 @@
     "backgroundColor": "#07080C",
     "android": {
       "package": "com.mettleup.app",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#1B1F26",
         "backgroundImage": "./assets/images/android-icon-background.png",

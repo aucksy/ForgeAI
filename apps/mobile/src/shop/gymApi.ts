@@ -275,3 +275,23 @@ export async function apiLeaveQuietly(key: string, timeoutMs = 6000): Promise<bo
   const r = await call('member_leave', { p_key: key }, timeoutMs);
   return r.ok || r.error.kind === 'BAD_KEY';
 }
+
+/**
+ * R-153 step 2: this phone's push address (Firebase), so the gym's messages and offers pop up at
+ * once (member_save_push_token / member_clear_push_token, 0038). `missing`: the server has not had
+ * 0038 yet (the phone's own 15-minute check still works); the app tries again on a later start.
+ */
+export type PushTokenResult = { ok: true } | { ok: false; missing?: true; error?: GymError };
+
+export async function apiSavePushToken(key: string, token: string, platform: 'android' | 'ios' = 'android'): Promise<PushTokenResult> {
+  const r = await call('member_save_push_token', { p_key: key, p_token: token, p_platform: platform }, WRITE_MS);
+  if (r.ok) return { ok: true };
+  return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+}
+
+/** Forget this phone's push address (the switch went off, or the phone's notifications did). */
+export async function apiClearPushToken(key: string, token: string): Promise<PushTokenResult> {
+  const r = await call('member_clear_push_token', { p_key: key, p_token: token }, WRITE_MS);
+  if (r.ok) return { ok: true };
+  return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+}

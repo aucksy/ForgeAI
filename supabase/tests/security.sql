@@ -42,6 +42,8 @@ declare
     'owner_gym_timings','owner_save_gym_timings','member_gym_timings',
     -- 0037: the leaderboard and the monthly challenge (a member key, or an owner/desk key, checked by each; changing: owners only).
     'member_board_push','member_board','owner_challenges','owner_save_challenge','owner_cancel_challenge','owner_board','owner_hide_on_board',
+    -- 0038: this phone's push address for the gym's pop-ups (each checks a member key and acts on that member only).
+    'member_save_push_token','member_clear_push_token',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

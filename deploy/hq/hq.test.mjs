@@ -579,7 +579,9 @@ test('the wrangler file: its own name, addresses, cron, the page folder, no secr
   // MettleUp (R-105): the new address, with the old one kept.
   assert.match(raw, /"pattern": "hq\.mettleup\.fit", "custom_domain": true/);
   assert.match(raw, /"run_worker_first": true/);
-  assert.match(raw, /"crons": \["30 21 \* \* \*"\]/);
+  // The nightly clean-up, and every minute the phone pop-ups (push.js, R-153 step 2).
+  assert.match(raw, /"crons": \["30 21 \* \* \*", "\* \* \* \* \*"\]/);
+  assert.doesNotMatch(raw, /"FCM_SERVICE_ACCOUNT":/);
   assert.doesNotMatch(raw, /sb_secret_|GOCSPX-|"SUPABASE_HQ_KEY":/);
 });
 

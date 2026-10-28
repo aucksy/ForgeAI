@@ -13,6 +13,9 @@
 //   GOOGLE_CLIENT_SECRET    (Web application; redirect URIs https://hq.mettleup.fit/auth/callback and
 //                         https://forgeai-hq.aakashpahuja.in/auth/callback: one per address).
 //   GITHUB_TOKEN          optional: only raises GitHub's hourly limit for the download counts.
+//   FCM_SERVICE_ACCOUNT   the gym's messages and offers popping up on phones (push.js): a JSON key of a
+//                         service account in Firebase project forgeai-d7eea with the role "Firebase
+//                         Cloud Messaging API Admin". Not set: no pop-ups are sent, nothing else changes.
 // Variables below: AUTH_MODE "google" (no cost) or "access" (Cloudflare Access in front; then set
 // ACCESS_TEAM = the team name in <team>.cloudflareaccess.com and ACCESS_AUD = the application's
 // audience tag, and the Google secrets are not needed).
@@ -45,6 +48,10 @@
   ],
   // The nightly clean-up, 03:00 India time (21:30 UTC): access log and old logs (hq_nightly_cleanup)
   // and Cloudflare's database (old feedback, leads without a deal, AI usage).
-  "triggers": { "crons": ["30 21 * * *"] },
+  // Every minute: the gym's messages and offers that are due go to members' phones (push.js, R-153 step 2).
+  // Needs the secret FCM_SERVICE_ACCOUNT (a Firebase service-account JSON key, role "Firebase Cloud
+  // Messaging API Admin") and migration 0038; without either it stops at once and sends nothing.
+  // Optional var PUSH_SUBREQUESTS (default 45, for the free plan's 50 calls per run).
+  "triggers": { "crons": ["30 21 * * *", "* * * * *"] },
   "observability": { "enabled": true }
 }

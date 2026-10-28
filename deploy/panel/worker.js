@@ -13,7 +13,8 @@
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
-//               the apps (proxy.js, owner R-40, built R-55).
+//               the apps (proxy.js, owner R-40, built R-55). After the admin app sends a message or
+//               starts an offer, HQ is told to send the phone pop-ups now (proxy.js pushAfter).
 //  - /app       the newest MettleUp APK (whatever the latest GitHub release is), so the page, the
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
@@ -21,7 +22,7 @@
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
 import { handleMatchColumns } from './aiMatch.js';
-import { handleProxy, isProxyPath } from './proxy.js';
+import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
 
 const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
@@ -48,7 +49,8 @@ export default {
     // The old address hands a desk's sign-in over to app.mettleup.fit (hosts.js handleMove).
     if (url.pathname === '/api/move') return url.hostname === APP_HOST ? handleMove(request) : new Response('Not found', { status: 404 });
     // R-55: the block-proof address for the gym server (proxy.js).
-    if (isProxyPath(url.pathname)) return handleProxy(request, url);
+    // R-153 step 2: a message sent or an offer started goes to members' phones at once (deploy/hq/push.js).
+    if (isProxyPath(url.pathname)) return pushAfter(request, url, env, ctx, await handleProxy(request, url));
     const invite = /^\/j\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
     if (invite) return joinPage(request, env, ctx, url, invite[1].toUpperCase());
     if (url.pathname.startsWith('/j/')) return joinPage(request, env, ctx, url, null);

@@ -52,6 +52,8 @@ export function startNoticeTaskSync(): void {
   if (Platform.OS !== 'android') return;
   void Promise.all([whenRead(useGymShop.persist), whenRead(usePhonePrefs.persist)]).then(() => {
     void syncNoticeTask();
+    // R-153 step 2: the push address follows the same link and switch (pushToken.ts); step 1 stays the fallback.
+    void import('./pushToken').then((m) => m.startPushTokenSync()).catch((e: unknown) => console.warn('[ForgeErr] gym push: start', e));
     useGymShop.subscribe((s, prev) => {
       if (s.link?.memberKey === prev.link?.memberKey) return;
       void syncNoticeTask();
