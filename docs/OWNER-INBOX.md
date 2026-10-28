@@ -426,6 +426,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 68. Busy machines by day and hour: can it work? — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** ANSWERED
+**READ (29 Oct, 12:49 am, via the page)**
 **You asked:** an algorithm that learns from check-ins and members' routines which machines get busy on each day and hour, and shows it only when it is accurate. Will it work?
 **My answer:** Yes, it can work. Gyms repeat the same weekly pattern (Monday is chest day for many members).
 - **What it learns from:** the hour members check in and the exercises they start. Members' workouts are already on our server since 24 Oct.
@@ -481,6 +482,7 @@ Sources: https://firebase.google.com/docs/cloud-messaging/throttling-and-quotas 
 ## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED (25 Oct)
+**READ (29 Oct, 12:50 am, via the page)**
 **What is ready:** trainer measurements and diet plans are built and tested (your pick A, from the GGMS menu). They are held because the privacy notice says measurements stay on the member's phone and the gym never sees them. That stays true for what a member logs. It is not true for what the trainer records at the desk, so the notice must say so before the feature goes live.
 **The 3 changes (English and Hindi):**
 1. The gym's records also include "body measurements your trainer takes at the gym, and diet plans your trainer sends you".
@@ -639,6 +641,7 @@ Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. 
 ## 53. Switch on the owner's reminder switches (one live server change) — 23 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** Done (live 23 Oct)
+**READ (29 Oct, 12:50 am, via the page)**
 **You asked (23 Oct):** automatic app reminders to members (plan ends in N days, and every other useful case), each one switched on or off by the gym owner, the common ones on.
 **My answer:** Built. The member's phone sets each reminder itself (at most one a day, 9:30 am), so it works without internet and costs nothing. The phone part ships in v0.55.0 and uses the default switches (common ones on). The owner's own on/off list in the admin app needs one live server change (supabase/migrations/0029_auto_reminders.sql). It only adds: a new table and 3 new functions; it changes no existing function and no member data. Its server tests passed.
 **YOUR REPLY (23 Oct):** "yes to #53"
@@ -687,6 +690,7 @@ governance; maybe you log in and see most of the data. Decide the correct implem
 ## 50. Members' workouts on our own server: how many fit in the free plan? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** PLANNED
+**READ (29 Oct, 12:51 am, via the page)**
 **You asked:** if we store every member's workouts in our own database (Supabase), how many members fit in the
 free plan, and for how long, if they start today?
 **My answer:** Many more than we will have for a long time, if we store them the compact way.
@@ -1072,6 +1076,7 @@ New demo requests reach me; I tell you each one so you or I can call back.
 ## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** BUILDING (29 Oct)
+**READ (29 Oct, 12:50 am, via the page)**
 **You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
 feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
 plan, starts fixing real issues and pushes the releases.
