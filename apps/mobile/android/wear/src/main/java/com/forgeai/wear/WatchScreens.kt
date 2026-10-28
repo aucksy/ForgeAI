@@ -51,6 +51,9 @@ internal val Muted = Color(0xFFB8AFA8)
 /** Ambient (screen dimmed): grey and white only, no fills, no ring (burn-in), no buttons. */
 private val AmbientGrey = Color(0xFF9E9E9E)
 
+/** Degrees left open at the top of the rest ring, under the clock. */
+private const val RING_GAP = 64f
+
 /**
  * The whole watch screen, from state alone (R-166): MainActivity feeds it live, the render test
  * (WatchScreensRenderTest) feeds it fixed states and photographs it on a small and a large round
@@ -177,9 +180,12 @@ private fun RestScreen(
       val stroke = 6.dp.toPx()
       val inset = stroke / 2f
       val arcSize = Size(size.width - stroke, size.height - stroke)
-      drawArc(Track, 0f, 360f, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke))
+      // A gap at the top for the clock (Wear OS draws the time there): the ring never runs under it.
+      val start = -90f + RING_GAP / 2f
+      val sweep = 360f - RING_GAP
+      drawArc(Track, start, sweep, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
       if (fraction > 0f) {
-        drawArc(Ember, -90f, 360f * fraction, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
+        drawArc(Ember, start, sweep * fraction, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
       }
     }
   }
