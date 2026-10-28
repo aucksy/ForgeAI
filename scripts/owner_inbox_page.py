@@ -740,8 +740,9 @@ let chat = ls.get("inbox-chat") || "all";
 let filter = ss.get("inbox-tab") || "home";
 if (filter === "shipped") filter = "backlog";
 if (!TABS.includes(filter)) filter = "home";
-let blKind = null; // a status pill tapped in the backlog: only that status (null = everything not built, Built folded)
-let blGroup = "all";
+// R-184 (owner, 29 Oct 2026): his backlog filters survive a reload (Claude's publish) and a tab switch; kept on this phone.
+let blKind = ls.get("inbox-blkind") || null; // a status pill tapped in the backlog: only that status (null = everything not built, Built folded)
+let blGroup = ls.get("inbox-blgroup") || "all";
 let query = "";
 const picks = {}; // num -> {qIndex: key}
 try { Object.assign(picks, JSON.parse(ss.get("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
@@ -1381,6 +1382,8 @@ function render() {
   v.innerHTML = query ? searchHtml() : filter === "home" ? homeHtml() : filter === "waiting" ? waitingHtml() : filter === "all" ? qaHtml() : filter === "backlog" ? backlogHtml() : mineHtml();
   enhance(v);
   restoreDrafts(v);
+  ls.set("inbox-blkind", blKind || "");
+  ls.set("inbox-blgroup", blGroup);
 }
 
 // One save at a time: each one publishes the whole page, and the view reloads after it.
@@ -1535,7 +1538,7 @@ function goTask(i) {
 }
 function switchTab(f, sec) {
   clearQuery(); $("findmsg").textContent = "";
-  filter = f; blKind = null; keepTab();
+  filter = f; keepTab();
   render();
   const s = sec && $(sec);
   if (s) s.scrollIntoView({ block: "start" }); else scrollTo(0, 0);
