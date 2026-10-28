@@ -13,11 +13,14 @@
  *    set with those numbers and starts the rest;
  *  - every working set ticked: "All sets done · Finish", no button; no exercise yet: "Add an
  *    exercise to start".
+ *  - R-166 (28 Oct 2026): `watch`, the same row in three short lines for the watch app: where it
+ *    is ("Set 3 of 5"), last time's numbers for that very set (`prevForSet`, the PREVIOUS column's
+ *    own source) and what a tick saves (`goal`: the text's numbers, the Target else last time's).
  */
 import type { UnitSystem } from '@/lib/units';
 
 import { setInWords } from '../lib/previousSource';
-import type { DraftExercise } from '../store/activeWorkoutStore';
+import { prevForSet, type DraftExercise } from '../store/activeWorkoutStore';
 import { cardDoneTarget, restTarget, rowLabel, type CardDone, type RowFill } from './restDone';
 import { afterSetCompleted } from './restRules';
 import { tickValues } from './setTick';
@@ -31,6 +34,20 @@ export interface LiveCard {
   done: CardDone | null;
   /** "Bench Press, set 3" — what a queued tap's note names. */
   label: string | null;
+  /** R-166: the row for the watch app; absent / null when no set is named ("All sets done"). */
+  watch?: WatchLines | null;
+}
+
+/**
+ * R-166 (28 Oct 2026): the next set on the watch, in the member's units. Each "" when unknown.
+ *  - set: "Set 3 of 5" / "Warm-up 1 of 2";
+ *  - last: last time's numbers for this very set ("60 kg × 8"), the set row's PREVIOUS;
+ *  - goal: what "Complete set" saves ("62.5 kg × 8": typed, else the Target, else last time's).
+ */
+export interface WatchLines {
+  set: string;
+  last: string;
+  goal: string;
 }
 
 /** The most recently ticked set (by tick time), or null. PURE. */
@@ -113,12 +130,15 @@ function cardNow(
         ex.distUnit ?? 'km',
       )
     : NOT_SAVED[out.missing];
+  const prev = prevForSet(ex, s.key);
+  const last = prev ? setInWords(prev, lt, units, ex.loadMode ?? 'one', ex.distUnit ?? 'km') : null;
   return {
     title: ex.name,
     text: what ? `${where} · ${what}` : where,
     exKey: ex.key,
     done: cardDoneTarget(w, t, fillFor),
     label: rowLabel(ex, s.key),
+    watch: { set: where, last: last ?? '', goal: out.ok ? (what ?? '') : '' },
   };
 }
 

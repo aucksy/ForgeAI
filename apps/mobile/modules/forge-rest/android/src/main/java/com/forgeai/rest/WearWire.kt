@@ -17,7 +17,51 @@ internal data class WatchDone(
   val endsAt: Long,
 )
 
+/**
+ * R-166 (28 Oct 2026): the next set on the watch app, as the app's live card worked it out
+ * (liveCard.ts `watch`): [set] "Set 3 of 5", [last] last time's numbers for that set ("60 kg × 8"),
+ * [goal] what "Complete set" saves ("62.5 kg × 8"). Each "" when unknown.
+ */
+internal data class WatchLines(val set: String, val last: String, val goal: String) {
+  companion object {
+    val NONE = WatchLines("", "", "")
+  }
+}
+
 internal object WearWire {
+  /** Longest line passed to the watch (a hand-typed name can be any length; the watch ellipsizes). */
+  private const val MAX_LINE = 80
+
+  /**
+   * R-166: the "watch" lines the app put in the live card's row JSON ({..., watch: {set, last,
+   * goal}}); [WatchLines.NONE] when there are none (an older app, no set named, bad JSON).
+   */
+  fun watchLines(rowJson: String?): WatchLines {
+    if (rowJson.isNullOrEmpty()) return WatchLines.NONE
+    return try {
+      val w = JSONObject(rowJson).optJSONObject("watch") ?: return WatchLines.NONE
+      fun line(k: String): String = if (w.isNull(k)) "" else w.optString(k, "").trim().take(MAX_LINE)
+      WatchLines(line("set"), line("last"), line("goal"))
+    } catch (e: Exception) {
+      // quiet: no lines is the old watch screen (title and text only), never a crash in the card.
+      WatchLines.NONE
+    }
+  }
+
+  /** The row JSON without its "watch" lines (the watch gets them as their own fields). */
+  fun withoutWatch(rowJson: String): String {
+    if (rowJson.isEmpty()) return rowJson
+    return try {
+      val o = JSONObject(rowJson)
+      if (!o.has("watch")) return rowJson
+      o.remove("watch")
+      o.toString()
+    } catch (e: Exception) {
+      // quiet: not JSON is passed on as it was (the watch never reads it, it only sends it back).
+      rowJson
+    }
+  }
+
   /**
    * The row a /forge/act/done message carries: the JSON the phone itself sent in /forge/rest or
    * /forge/workout ({workout, exKey, setKey, open, values, label, endsAt?}), sent back unchanged.

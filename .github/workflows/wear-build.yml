@@ -59,22 +59,46 @@ jobs:
           set -euo pipefail
           VERSION="$(python3 -c 'import json; print(json.load(open("apps/mobile/app.json"))["expo"]["version"])')"
           CODE="$(python3 scripts/ci/release_checks.py --version-code "$VERSION")"
-          echo "versionName ${VERSION}-wear.${GITHUB_RUN_NUMBER}, versionCode $CODE"
+          # R-167: the watch's own versionCode (1_000_000_000 + the phone's), as the release builds it.
+          WEAR_CODE="$(python3 scripts/ci/release_checks.py --wear-version-code "$VERSION")"
+          echo "versionName ${VERSION}-wear.${GITHUB_RUN_NUMBER}, versionCode $CODE (watch $WEAR_CODE)"
           echo "name=${VERSION}-wear.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "wear_code=$WEAR_CODE" >> "$GITHUB_OUTPUT"
 
-      - name: Build the watch app (release) and the phone app (debug), watch + watch-link unit tests
+      # R-166: :wear:testDebugUnitTest also RENDERS every watch screen on a small and a large round
+      # watch (WatchScreensRenderTest) and fails on anything a round screen would clip. The PNGs are
+      # uploaded below as "watch-screens" even when a check fails, so the failure can be seen.
+      - name: Watch unit tests + watch screens (rendered)
+        working-directory: apps/mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew -PwithWear=true :wear:testDebugUnitTest :forge-rest:testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Upload the watch screens
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watch-screens
+          path: apps/mobile/android/wear/build/outputs/watch-screens
+          if-no-files-found: warn
+          retention-days: ${{ github.event_name == 'push' && 3 || 14 }}
+
+      # R-167: also the watch's Play bundle (:wear:bundleRelease), as the release builds it.
+      - name: Build the watch app (release APK + AAB) and the phone app (debug)
         working-directory: apps/mobile/android
         env:
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
+          WEAR_CODE: ${{ steps.version.outputs.wear_code }}
         run: |
-          chmod +x gradlew
           ./gradlew -PwithWear=true \
-            :wear:testDebugUnitTest :forge-rest:testDebugUnitTest :wear:assembleRelease :app:assembleDebug \
+            :wear:assembleRelease :wear:bundleRelease :app:assembleDebug \
             -PappVersionName="$VERSION_NAME" \
             -PappVersionCode="$VERSION_CODE" \
+            -PwearVersionCode="$WEAR_CODE" \
             --no-daemon --stacktrace
+          find wear/build/outputs/bundle/release -name '*.aab' | grep -q . || { echo "::error::No watch AAB was built."; exit 1; }
 
       - name: Stage the APKs
         id: apks
@@ -84,8 +108,8 @@ jobs:
           PHONE="$(find apps/mobile/android/app/build/outputs/apk/debug -name '*.apk' | head -1)"
           echo "watch: $WEAR"; echo "phone: $PHONE"
           mkdir -p dist
-          cp "$WEAR" "dist/forgeai-wear-${{ steps.version.outputs.name }}.apk"
-          echo "wear=dist/forgeai-wear-${{ steps.version.outputs.name }}.apk" >> "$GITHUB_OUTPUT"
+          cp "$WEAR" "dist/mettleup-wear-${{ steps.version.outputs.name }}.apk"
+          echo "wear=dist/mettleup-wear-${{ steps.version.outputs.name }}.apk" >> "$GITHUB_OUTPUT"
           echo "phone=$PHONE" >> "$GITHUB_OUTPUT"
           ls -la dist
 
@@ -96,6 +120,16 @@ jobs:
           "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -E "^(package|sdkVersion|targetSdkVersion|uses-feature|application-label|uses-permission)" || true
           "${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}" | grep -q "package: name='com.mettleup.app'" \
             || { echo "::error::The watch APK's package is not com.mettleup.app: the Data Layer would never pair it with the phone."; exit 1; }
+          # R-167 (Google Play): no USE_EXACT_ALARM (alarm-clock / calendar apps only), a watch-only
+          # listing (uses-feature watch) and the watch's own versionCode.
+          BADGING="$("${BT%/}/aapt2" dump badging "${{ steps.apks.outputs.wear }}")"
+          if grep -q "android.permission.USE_EXACT_ALARM" <<< "$BADGING"; then
+            echo "::error::The watch APK declares USE_EXACT_ALARM: Google Play refuses it for this app."; exit 1
+          fi
+          grep -q "uses-feature: name='android.hardware.type.watch'" <<< "$BADGING" \
+            || { echo "::error::The watch APK does not require android.hardware.type.watch."; exit 1; }
+          grep -q "versionCode='${{ steps.version.outputs.wear_code }}'" <<< "$BADGING" \
+            || { echo "::error::The watch APK's versionCode is not ${{ steps.version.outputs.wear_code }}."; exit 1; }
 
       # play-services-wearable joined the phone app in v0.46: its permission list must not change.
       - name: Phone app permissions (play-services-wearable must add none)
@@ -156,8 +190,8 @@ jobs:
       - name: Upload the watch APK
         uses: actions/upload-artifact@v4
         with:
-          name: forgeai-wear
-          path: dist/forgeai-wear-*.apk
+          name: mettleup-wear
+          path: dist/mettleup-wear-*.apk
           # Build storage is shared by every private repo of the account: a push run keeps it 3 days.
           retention-days: ${{ github.event_name == 'push' && 3 || 14 }}
 

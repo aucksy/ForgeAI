@@ -115,7 +115,10 @@ object WorkoutCard {
     if (clockJson != null) e.putString("clock", clockJson)
     e.apply()
     val done = doneOf(doneJson)
-    WearSync.workout(ctx, true, title, text, if (done != null && !done.first.open) doneJson.orEmpty() else "")
+    // R-166: the next set's lines for the watch ride in the row JSON; the watch gets them apart.
+    val lines = WearWire.watchLines(doneJson)
+    val row = if (done != null && !done.first.open) WearWire.withoutWatch(doneJson.orEmpty()) else ""
+    WearSync.workout(ctx, true, title, text, row, lines)
   }
 
   /**

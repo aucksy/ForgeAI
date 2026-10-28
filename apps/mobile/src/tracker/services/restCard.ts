@@ -22,6 +22,7 @@ import { Platform } from 'react-native';
 import { color } from '@/theme/tokens';
 
 import type { CardDone, DoneRequest, QueuedTick } from './restDone';
+import type { WatchLines } from './liveCard';
 import type { LiveClock } from './liveClock';
 import type { RestSoundId } from './restSounds';
 
@@ -525,6 +526,17 @@ export function ringerMode(): RingerMode | null {
 // ------------------------------------------------------------------ 13 Oct 2026: the live workout card
 
 /**
+ * The live card's row as the native side keeps it (null = no set named). R-166: `watch` rides in it
+ * (WorkoutCard.keep hands it to the watch app; the phone's own row parsing ignores it). PURE.
+ */
+export function rowJson(done: CardDone | null, label: string | null, watch: WatchLines | null = null): string | null {
+  if (!done) return null;
+  const row: Record<string, unknown> = { workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label };
+  if (watch) row.watch = watch;
+  return JSON.stringify(row);
+}
+
+/**
  * Post or update the live workout card (the next set and "Complete set"; WorkoutCard.kt). False
  * = no native piece, or an older one (the app then posts its old quiet card).
  */
@@ -538,12 +550,14 @@ export function showLiveWorkoutCard(
   plan: string | null = null,
   /** R-55: the workout time in the card's header (`liveClock`). */
   clock: LiveClock | null = null,
+  /** R-166: the row's lines for the watch app (they ride in the row's JSON; WorkoutCard.keep). */
+  watch: WatchLines | null = null,
 ): boolean {
   const n = N();
   if (!n?.showWorkoutCard) return false;
   try {
     syncNotifAccent();
-    const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
+    const json = rowJson(done, label, watch);
     return n.showWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {
     return false;
@@ -563,12 +577,13 @@ export function hideLiveWorkoutCard(
   label: string | null,
   plan: string | null = null,
   clock: LiveClock | null = null,
+  watch: WatchLines | null = null,
 ): boolean {
   const n = N();
   if (!n?.hideWorkoutCard) return false;
   try {
     syncNotifAccent();
-    const json = done ? JSON.stringify({ workout: done.workout, exKey: done.exKey, setKey: done.setKey, open: done.open, values: done.values, label }) : null;
+    const json = rowJson(done, label, watch);
     return n.hideWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {
     return false;

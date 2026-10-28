@@ -39,6 +39,8 @@ object WatchSync {
           // C5-2: the live card's set line and the row its "Complete set" ticks.
           m.getString("text", "") ?: "",
           m.getString("done", "") ?: "",
+          // R-166: the next set's lines (an older phone app sends none: the screen uses text).
+          NextSet(m.getString("set", "") ?: "", m.getString("last", "") ?: "", m.getString("goal", "") ?: ""),
         )
       }
     } catch (e: Exception) {

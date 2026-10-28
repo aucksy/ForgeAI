@@ -61,7 +61,8 @@ vi.mock('@/tracker/store/activeWorkoutStore', async () => {
     workoutName: 'Push 1',
     exercises: [] as unknown[],
   }));
-  return { useActiveWorkout };
+  // R-166: the live card reads last time's set for the watch (none in these tests).
+  return { useActiveWorkout, prevForSet: () => null };
 });
 vi.mock('react-native', () => ({
   AppState: { currentState: 'active', addEventListener: () => ({ remove: () => undefined }) },

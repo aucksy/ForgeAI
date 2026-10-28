@@ -18,7 +18,7 @@
 import type { UnitSystem } from '@/lib/units';
 
 import type { DraftExercise } from '../store/activeWorkoutStore';
-import { liveCardContent } from './liveCard';
+import { liveCardContent, type WatchLines } from './liveCard';
 import type { RowFill } from './restDone';
 import { afterSetCompleted } from './restRules';
 import { tickValues } from './setTick';
@@ -37,6 +37,8 @@ export interface PlanStep {
   title: string;
   text: string;
   image: string | null;
+  /** R-166: the row's lines for the watch app (OfflineTick.kt passes them on); null = none. */
+  watch: WatchLines | null;
   /** Seconds of rest after this row is ticked (0 = none). */
   rest: number;
 }
@@ -67,7 +69,7 @@ export function livePlan(
   for (let i = 0; i < PLAN_MAX_ROWS; i += 1) {
     const card = liveCardContent({ startedAt: w.startedAt, exercises, workoutName: w.workoutName }, fillFor, units);
     const d = card.done;
-    const base = { title: card.title, text: card.text, image: card.exKey ? imageFor(card.exKey) : null };
+    const base = { title: card.title, text: card.text, image: card.exKey ? imageFor(card.exKey) : null, watch: card.watch ?? null };
     if (!d) {
       steps.push({ exKey: null, setKey: null, open: false, values: null, label: null, ...base, rest: 0 });
       break;

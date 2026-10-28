@@ -1,6 +1,7 @@
 package com.forgeai.wear
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,18 +13,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,33 +20,17 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.CompactChip
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
+import androidx.wear.ambient.AmbientLifecycleObserver
 import kotlinx.coroutines.delay
 
-private val Ember = Color(0xFFF26B2A)
-private val Track = Color(0xFF2A2420)
-private val Muted = Color(0xFFB8AFA8)
-
 /**
- * The watch screen. Resting: a big countdown inside an ember ring. A workout open and no rest:
- * live heart rate. Nothing open: how to start. Heart rate is measured only while this screen is
- * visible and a workout is open.
+ * The watch screen (WatchScreens.kt). Resting: a big countdown inside an ember ring with the next
+ * set. A workout open and no rest: heart rate and the set. Nothing open: how to start. Heart rate
+ * is measured only while this screen is visible and a workout is open.
+ *
+ * R-166 (28 Oct 2026): ambient mode. With the watch's always-on screen, the app stays on screen
+ * when the watch dims (grey, no ticking: the rest's end time instead of the countdown), so one
+ * glance in a set still shows the set and last time's numbers.
  */
 class MainActivity : ComponentActivity() {
   private var onScreen by mutableStateOf(false)
@@ -65,7 +38,27 @@ class MainActivity : ComponentActivity() {
   private var hrStatus by mutableStateOf(HeartRate.Status.WAITING)
   private var hrAllowed by mutableStateOf(false)
   private var notifAllowed by mutableStateOf(true)
+  private var ambient by mutableStateOf(false)
+  /** Bumped once a minute in ambient (the screen redraws then). */
+  private var ambientTick by mutableLongStateOf(0L)
   private lateinit var heart: HeartRate
+
+  private val ambientObserver = AmbientLifecycleObserver(
+    this,
+    object : AmbientLifecycleObserver.AmbientLifecycleCallback {
+      override fun onEnterAmbient(ambientDetails: AmbientLifecycleObserver.AmbientDetails) {
+        ambient = true
+      }
+
+      override fun onUpdateAmbient() {
+        ambientTick = System.currentTimeMillis()
+      }
+
+      override fun onExitAmbient() {
+        ambient = false
+      }
+    },
+  )
 
   private val ask = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
     hrAllowed = hasHeartPermission()
@@ -90,6 +83,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    lifecycle.addObserver(ambientObserver)
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot
@@ -101,15 +95,33 @@ class MainActivity : ComponentActivity() {
           bpm = null
         }
       }
-      ForgeWatch(
+      var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+      val endsAt = snap.rest?.endsAt
+      LaunchedEffect(endsAt, ambient, ambientTick) {
+        now = System.currentTimeMillis()
+        // Ambient: no ticking (the screen shows the rest's end time; it redraws once a minute).
+        if (endsAt == null || ambient) return@LaunchedEffect
+        while (true) {
+          now = System.currentTimeMillis()
+          // R-167 (Play: no USE_EXACT_ALARM): with "Alarms & reminders" off the end alarm can come
+          // late; while this screen is up the buzz comes on time from here (onAlarm runs once).
+          if (now >= endsAt + 300L) WatchState.onAlarm(this@MainActivity, endsAt)
+          delay(200L)
+        }
+      }
+      WatchScreen(
         snap,
         bpm,
         hrStatus,
         hrAllowed,
         notifAllowed,
+        ambient,
+        now,
         onAllow = ::allowHeartRate,
         onAllowNotif = ::allowNotifications,
         onComplete = { WatchActions.complete(this, snap.done) },
+        exactAllowed = exactAllowed,
+        onAllowExact = ::allowExactAlarms,
       )
     }
   }
@@ -180,7 +192,40 @@ class MainActivity : ComponentActivity() {
   /** The screen's line, and Wear OS bridging (kept up to date after an app update). */
   private fun afterNotificationChange() {
     notifAllowed = notificationsOn()
+    exactAllowed = exactAlarmsOn()
     Bridging.sync(this)
+  }
+
+  /** R-167: "Alarms & reminders" (SCHEDULE_EXACT_ALARM; off by default on Wear OS 5+ installs). */
+  private var exactAllowed by mutableStateOf(true)
+
+  private fun exactAlarmsOn(): Boolean = try {
+    Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+      (getSystemService(ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+  } catch (e: Exception) {
+    Log.w("ForgeWear", "exact alarm state unknown", e)
+    true
+  }
+
+  /** Opens this app's "Alarms & reminders" switch (the rest's buzz on the second). */
+  private fun allowExactAlarms() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+    try {
+      startActivity(
+        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))
+          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+      )
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "alarm settings did not open", e)
+      try {
+        startActivity(
+          Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      } catch (e2: Exception) {
+        Log.w("ForgeWear", "app settings did not open", e2)
+      }
+    }
   }
 
   private fun allowNotifications() {
@@ -208,205 +253,3 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@Composable
-private fun ForgeWatch(
-  snap: WatchState.Snapshot,
-  bpm: Double?,
-  hrStatus: HeartRate.Status,
-  hrAllowed: Boolean,
-  notifAllowed: Boolean,
-  onAllow: () -> Unit,
-  onAllowNotif: () -> Unit,
-  onComplete: () -> Unit,
-) {
-  Scaffold(
-    modifier = Modifier.fillMaxSize().background(Color.Black),
-    timeText = { TimeText() },
-  ) {
-    Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
-      val rest = snap.rest
-      when {
-        rest != null -> RestScreen(rest, if (hrAllowed) bpm else null)
-        snap.workoutActive -> HeartScreen(snap, bpm, hrStatus, hrAllowed, onAllow, notifAllowed, onAllowNotif, onComplete)
-        else -> IdleScreen(notifAllowed, onAllowNotif)
-      }
-    }
-  }
-}
-
-@Composable
-private fun RestScreen(rest: WatchState.Rest, bpm: Double?) {
-  var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-  LaunchedEffect(rest.endsAt) {
-    while (true) {
-      now = System.currentTimeMillis()
-      delay(200L)
-    }
-  }
-  val fraction = RestText.fractionLeft(now, rest.startedAt, rest.endsAt)
-  Canvas(Modifier.fillMaxSize().padding(4.dp)) {
-    val stroke = 10.dp.toPx()
-    val inset = stroke / 2f
-    val arcSize = Size(size.width - stroke, size.height - stroke)
-    drawArc(Track, 0f, 360f, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke))
-    if (fraction > 0f) {
-      drawArc(
-        Ember,
-        -90f,
-        360f * fraction,
-        false,
-        topLeft = Offset(inset, inset),
-        size = arcSize,
-        style = Stroke(stroke, cap = StrokeCap.Round),
-      )
-    }
-  }
-  Column(
-    Modifier.fillMaxWidth().padding(horizontal = 26.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Text("REST", color = Ember, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-    Text(
-      RestText.remaining(now, rest.endsAt),
-      color = Color.White,
-      fontSize = 50.sp,
-      fontWeight = FontWeight.Bold,
-      maxLines = 1,
-    )
-    RestText.nextLine(rest.next)?.let {
-      Text(
-        it,
-        color = Muted,
-        fontSize = 13.sp,
-        textAlign = TextAlign.Center,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-      )
-    }
-    if (bpm != null) {
-      Spacer(Modifier.height(4.dp))
-      Text("♥ ${RestText.bpm(bpm)}", color = Ember, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-    }
-  }
-}
-
-/**
- * A workout open, no rest: the exercise, live heart rate and (C5-2, 16 Oct 2026) the set the phone's
- * live card names with "Complete set", so the set just done can be logged from the wrist.
- */
-@Composable
-private fun HeartScreen(
-  snap: WatchState.Snapshot,
-  bpm: Double?,
-  status: HeartRate.Status,
-  allowed: Boolean,
-  onAllow: () -> Unit,
-  notifAllowed: Boolean,
-  onAllowNotif: () -> Unit,
-  onComplete: () -> Unit,
-) {
-  val title = snap.title
-  val canComplete = snap.done.isNotEmpty()
-  Column(
-    Modifier.fillMaxWidth().padding(horizontal = 22.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    if (title.isNotBlank()) {
-      Text(title, color = Muted, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-      Spacer(Modifier.height(2.dp))
-    }
-    Text(
-      if (allowed) RestText.bpm(bpm) else "—",
-      color = Color.White,
-      // Smaller with the set's button below, so all of it fits a small round screen.
-      fontSize = if (canComplete) 38.sp else 52.sp,
-      fontWeight = FontWeight.Bold,
-      maxLines = 1,
-    )
-    Text("♥ BPM", color = Ember, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-    val note = when {
-      !allowed -> "Heart rate is off. Tap to allow."
-      status == HeartRate.Status.NO_SENSOR -> "This watch has no heart-rate sensor"
-      status == HeartRate.Status.OFF_WRIST -> "Wear the watch snugly"
-      status == HeartRate.Status.UNAVAILABLE -> "Heart rate not available"
-      bpm == null -> "Reading…"
-      else -> null
-    }
-    if (canComplete) {
-      if (snap.text.isNotBlank()) {
-        Spacer(Modifier.height(4.dp))
-        Text(snap.text, color = Muted, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-      }
-      Spacer(Modifier.height(4.dp))
-      CompactChip(
-        onClick = onComplete,
-        label = { Text("Complete set", color = Color.Black, fontWeight = FontWeight.Bold) },
-        colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
-      )
-    } else if (note != null) {
-      Spacer(Modifier.height(6.dp))
-      Text(
-        note,
-        color = if (!allowed) Ember else Muted,
-        fontSize = 13.sp,
-        textAlign = TextAlign.Center,
-        modifier = if (!allowed) Modifier.clickable(onClick = onAllow).padding(4.dp) else Modifier,
-      )
-    }
-    // C5 review: also beside "Complete set" (short form, to fit a round screen): with notifications
-    // off this app has no countdown and no buttons of its own between sets.
-    if (!notifAllowed) NotificationPrompt(onAllowNotif, compact = canComplete)
-  }
-}
-
-/**
- * Notifications off: the countdown on the watch face, its buttons and "Rest is over" cannot show.
- * [compact]: one small chip, no explanation (beside "Complete set" on a round screen).
- */
-@Composable
-private fun NotificationPrompt(onAllow: () -> Unit, compact: Boolean = false) {
-  if (!compact) {
-    Spacer(Modifier.height(6.dp))
-    Text(
-      "The countdown on the watch face needs notifications",
-      color = Muted,
-      fontSize = 12.sp,
-      textAlign = TextAlign.Center,
-      maxLines = 2,
-    )
-  }
-  Spacer(Modifier.height(4.dp))
-  CompactChip(
-    onClick = onAllow,
-    label = {
-      Text(
-        if (compact) "Allow notifications" else "Allow",
-        color = if (compact) Ember else Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = if (compact) 11.sp else 14.sp,
-      )
-    },
-    colors = if (compact) ChipDefaults.secondaryChipColors() else ChipDefaults.primaryChipColors(backgroundColor = Ember),
-  )
-}
-
-@Composable
-private fun IdleScreen(notifAllowed: Boolean, onAllowNotif: () -> Unit) {
-  Column(
-    Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Text("MettleUp", color = Ember, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-    Spacer(Modifier.height(6.dp))
-    Text(
-      "Start a workout in MettleUp on your phone",
-      color = Color.White,
-      fontSize = 16.sp,
-      textAlign = TextAlign.Center,
-    )
-    if (!notifAllowed) NotificationPrompt(onAllowNotif)
-  }
-}
