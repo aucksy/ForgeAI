@@ -13,15 +13,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { brandReport, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle } from '@forgeai/theme';
+import { brandReport, normalizeHex, suggestBrandColour, type BrandPalette, type GymBrand, type HeadingStyle, type LogoColour, type LogoSuggestion } from '@forgeai/theme';
 
 import * as api from '../shop/api';
 import { JoinCodeCard } from '../shop/JoinCode';
 import { useShop } from '../shop/ShopProvider';
 import { Button, Card, ErrorBanner, PageHeader, SectionTitle, Sheet, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
-import { CLEAR_ARGS, brandErrorWords, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, type BrandDraft } from './brandLogic';
-import { LogoError, uploadGymLogo } from './logoUpload';
+import { CLEAR_ARGS, LOGO_WORDS, brandErrorWords, logoSuggestionLines, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, type BrandDraft } from './brandLogic';
+import { LogoError, readLogoColours, readSavedLogoColours, uploadGymLogo } from './logoUpload';
 import { PhonePreview } from './PhonePreview';
 
 /**
@@ -66,6 +66,8 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
+  // R-160: the colours read from the logo (null: not read yet; 'reading'; 'failed').
+  const [fromLogo, setFromLogo] = useState<LogoRead>(null);
   const closeClear = useCallback(() => setConfirmClear(false), []);
   const toastTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
@@ -183,11 +185,22 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
             bg={palette.color.bg}
             disabled={saving}
             onBusy={setUploading}
-            onLogo={(url) => set({ logoUrl: url })}
+            onLogo={(url) => {
+              set({ logoUrl: url });
+              if (!url) setFromLogo(null);
+            }}
+            onColours={setFromLogo}
           />
 
           <Card>
             <SectionTitle>Colour</SectionTitle>
+            <LogoColourSuggestion
+              read={fromLogo}
+              logoUrl={draft.logoUrl}
+              accent={normalizeHex(draft.accent)}
+              onRead={setFromLogo}
+              onUse={(hex) => set({ accent: hex })}
+            />
             <ColourField
               label="Your brand colour"
               hint="Buttons, the active tab, highlights and charts."
@@ -313,6 +326,109 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
   );
 }
 
+/** R-160: what the logo's colours look like to the form (null: not read). */
+type LogoRead = null | 'reading' | 'failed' | { colours: LogoColour[]; suggestion: LogoSuggestion | null };
+
+/**
+ * R-160: the brand colour suggested from the logo (read on this computer, no AI). The owner takes
+ * it with one press, picks another colour of the logo, or ignores it and picks their own below.
+ */
+function LogoColourSuggestion({
+  read,
+  logoUrl,
+  accent,
+  onRead,
+  onUse,
+}: {
+  read: LogoRead;
+  logoUrl: string | null;
+  accent: string | null;
+  onRead: (r: LogoRead) => void;
+  onUse: (hex: string) => void;
+}) {
+  const note = (text: string) => (
+    <p role="status" style={{ margin: `0 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+      {text}
+    </p>
+  );
+  if (read === null) {
+    if (!logoUrl) return null;
+    return (
+      <div style={{ marginBottom: space.md }}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            onRead('reading');
+            void readSavedLogoColours(logoUrl).then((r) => onRead(r ?? 'failed'));
+          }}
+        >
+          {LOGO_WORDS.suggestButton}
+        </Button>
+      </div>
+    );
+  }
+  if (read === 'reading') return note(LOGO_WORDS.reading);
+  if (read === 'failed') return note(LOGO_WORDS.failed);
+  const s = read.suggestion;
+  if (!s) return note(LOGO_WORDS.none);
+  const inUse = accent === s.suggested;
+  const others = read.colours.slice(1).map((c) => suggestBrandColour(c.hex));
+  return (
+    <div
+      data-testid="logo-colour"
+      style={{ marginBottom: space.lg, padding: space.md, borderRadius: radius.md, border: `1px solid ${color.border}`, background: color.surfaceSunken }}
+    >
+      <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: space.sm }}>{LOGO_WORDS.title}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: space.md, flexWrap: 'wrap' }}>
+        <div
+          aria-hidden
+          style={{ width: 52, height: 44, borderRadius: radius.md, background: s.suggested, color: s.onColour, display: 'grid', placeItems: 'center', fontFamily: font.display, fontWeight: 800, fontSize: 16, border: `1px solid ${color.borderStrong}` }}
+        >
+          Aa
+        </div>
+        <span style={{ fontFamily: font.mono, fontSize: 15, color: color.ink }}>{s.suggested}</span>
+        <Button variant={inUse ? 'quiet' : 'primary'} disabled={inUse} onClick={() => onUse(s.suggested)}>
+          {inUse ? LOGO_WORDS.inUse : LOGO_WORDS.use}
+        </Button>
+      </div>
+      <ul style={{ margin: `${space.sm}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: 4 }}>
+        {logoSuggestionLines(s).map((line) => (
+          <li key={line.text} style={{ display: 'flex', gap: space.sm, alignItems: 'flex-start', fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            <CheckMark kind={line.ok ? 'ok' : 'note'} />
+            <span>{line.text}</span>
+          </li>
+        ))}
+      </ul>
+      <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{LOGO_WORDS.afterSave}</p>
+      {others.length > 0 && (
+        <div style={{ marginTop: space.md }}>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginBottom: 6 }}>{LOGO_WORDS.others}</div>
+          <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
+            {others.map((o) => (
+              <button
+                key={o.suggested}
+                type="button"
+                aria-label={`${LOGO_WORDS.use}: ${o.suggested}`}
+                aria-pressed={accent === o.suggested}
+                title={o.suggested}
+                onClick={() => onUse(o.suggested)}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: radius.md,
+                  background: o.suggested,
+                  border: `2px solid ${accent === o.suggested ? color.ink : color.borderStrong}`,
+                  cursor: 'pointer',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CheckMark({ kind }: { kind: 'ok' | 'note' }) {
   return (
     <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={kind === 'ok' ? color.goodText : color.warning} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
@@ -377,6 +493,7 @@ function LogoCard({
   disabled,
   onBusy,
   onLogo,
+  onColours,
 }: {
   ownerKey: string;
   logoUrl: string | null;
@@ -384,6 +501,7 @@ function LogoCard({
   disabled: boolean;
   onBusy: (busy: boolean) => void;
   onLogo: (url: string | null) => void;
+  onColours: (read: LogoRead) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -396,7 +514,10 @@ function LogoCard({
     onBusy(true);
     setError(null);
     try {
-      onLogo(await uploadGymLogo(ownerKey, file));
+      // R-160: the colours are read from the picture on this computer while it uploads.
+      const [url, colours] = await Promise.all([uploadGymLogo(ownerKey, file), readLogoColours(file)]);
+      onLogo(url);
+      onColours(colours ?? 'failed');
     } catch (e) {
       setError(e instanceof LogoError ? e.message : 'The logo didn’t upload. Please try again.');
     } finally {
