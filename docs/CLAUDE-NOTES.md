@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-164. Build: tap a name on the leaderboard to see that member's profile, within the gym — 28 Oct 2026
+**He said:** in the leaderboard, if a member chose to show their name, others can tap it and see their profile like their
+own (exercises done, history...). "Hevy does that publicly; for now just within the gym; later explore the whole social thing."
+**Fact that shapes it:** workouts live on each member's phone; the server holds only leaderboard numbers (and a private
+Google-sign-in copy only the member can see). So a profile others can open needs the member's phone to share a summary to
+the gym server: a live server change (his yes) + a privacy line. Asked him: name switch alone, or a separate
+"let gym mates see my workouts" switch.
+
 ## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
 **He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
 feedback button, finish-screen kg hero, kg lifted on exercise History, body-weight moves count everywhere, how busy the gym
