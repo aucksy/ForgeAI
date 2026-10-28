@@ -467,8 +467,44 @@ function geminiBody(columns, level) {
   });
 }
 
-async function askGemini(env, columns, fetchImpl, timeoutMs, log = console.warn) {
-  const model = typeof env.GEMINI_MODEL === 'string' && env.GEMINI_MODEL ? env.GEMINI_MODEL : GEMINI_MODEL;
+/**
+ * R-162 (28 Oct 2026): Gemini 3.1 Flash-Lite answered 503 "high demand" on and off for hours, and the
+ * Claude fallback had no credit, so every owner's import fell back to our own rules. A busy answer
+ * (429 or any 5xx) is now asked once more after a short pause, then the same Google key asks the
+ * backup models below, before Claude. Same key, same masked request: nothing else leaves the Worker.
+ * Probed 28 Oct 2026: 3.5 Flash-Lite and 3.5 Flash answered while 3.1 Flash-Lite and 3.8 Flash were 503.
+ */
+export const GEMINI_BACKUP_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
+export const GEMINI_RETRY_PAUSE_MS = 1500;
+
+/** 429 or 5xx: Google is busy, not refusing this request. PURE. */
+export function geminiBusy(status) {
+  return status === 429 || (status >= 500 && status <= 599);
+}
+
+class GeminiBusy extends Error {}
+
+async function askGemini(env, columns, fetchImpl, timeoutMs, log = console.warn, pauseMs = GEMINI_RETRY_PAUSE_MS) {
+  const first = typeof env.GEMINI_MODEL === 'string' && env.GEMINI_MODEL ? env.GEMINI_MODEL : GEMINI_MODEL;
+  // [model, tries]: the first model twice (one pause between), each backup once.
+  const plan = [[first, 2], ...GEMINI_BACKUP_MODELS.filter((m) => m !== first).map((m) => [m, 1])];
+  let last;
+  for (const [model, tries] of plan) {
+    for (let t = 1; t <= tries; t++) {
+      try {
+        return await askGeminiModel(env, model, columns, fetchImpl, timeoutMs, log);
+      } catch (e) {
+        if (!(e instanceof GeminiBusy)) throw e; // a timeout, a refusal, a bad answer: Claude next
+        last = e;
+        log(`[ai-match] gemini ${model} busy (${e.message.slice(0, 40)}), ${t < tries ? 'asking again' : 'trying the next model'}`);
+        if (t < tries && pauseMs > 0) await new Promise((r) => setTimeout(r, pauseMs));
+      }
+    }
+  }
+  throw last;
+}
+
+async function askGeminiModel(env, model, columns, fetchImpl, timeoutMs, log) {
   const signal = AbortSignal.timeout(timeoutMs);
   let res;
   for (const level of GEMINI_THINKING) {
@@ -485,7 +521,10 @@ async function askGemini(env, columns, fetchImpl, timeoutMs, log = console.warn)
     log(`[ai-match] gemini refused thinking level ${level}, trying the next: ${text.slice(0, 160)}`);
   }
   // quiet: an unreadable error body still fails with its status, and the chain logs that line.
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`);
+  if (!res.ok) {
+    const msg = `HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`;
+    throw geminiBusy(res.status) ? new GeminiBusy(msg) : new Error(msg);
+  }
   const data = await res.json();
   const cand = data?.candidates?.[0];
   if (!cand) throw new Error(`no answer${data?.promptFeedback?.blockReason ? ` (${data.promptFeedback.blockReason})` : ''}`);
@@ -536,14 +575,14 @@ export function providersOn(env) {
  * Ask each provider that has its key, in order, until one gives a valid answer.
  * -> { provider, model, mapping, tokensIn, tokensOut } | { error: 'off' | 'failed', tried: [...] }
  */
-export async function runChain(env, columns, { fetchImpl = fetch, timeoutMs = TIMEOUT_MS, log = console.warn } = {}) {
+export async function runChain(env, columns, { fetchImpl = fetch, timeoutMs = TIMEOUT_MS, log = console.warn, pauseMs = GEMINI_RETRY_PAUSE_MS } = {}) {
   const on = providersOn(env);
   if (on.length === 0) return { error: 'off', tried: [] };
   const tried = [];
   for (const p of on) {
     tried.push(p.name);
     try {
-      const r = await p.ask(env, columns, fetchImpl, timeoutMs, log);
+      const r = await p.ask(env, columns, fetchImpl, timeoutMs, log, pauseMs);
       const mapping = validateAnswer(r.json, columns.length);
       if (!mapping) throw new Error('answer is not the JSON shape asked for');
       return { provider: p.name, model: r.model, mapping, tokensIn: r.tokensIn, tokensOut: r.tokensOut };
@@ -660,7 +699,7 @@ function answer(status, body) {
  *   429 { reason: 'limit' } · 502 { reason: 'failed' } · 503 { reason: 'off' | 'unreachable' }
  * The admin app falls back to matching by hand on every answer but 200.
  */
-export async function handleMatchColumns(request, env, { now = new Date(), fetchImpl = fetch, timeoutMs = TIMEOUT_MS, log = console.warn } = {}) {
+export async function handleMatchColumns(request, env, { now = new Date(), fetchImpl = fetch, timeoutMs = TIMEOUT_MS, log = console.warn, pauseMs = GEMINI_RETRY_PAUSE_MS } = {}) {
   if (request.method !== 'POST') return answer(405, { error: 'Use POST.' });
   if (providersOn(env).length === 0) {
     // quiet: no key made yet (the owner's setup step); the admin app shows the by-hand path.
@@ -700,7 +739,7 @@ export async function handleMatchColumns(request, env, { now = new Date(), fetch
   }
   if (used === null) return answer(429, { reason: 'limit', error: 'Today’s AI matches are used up. Match the columns yourself, or try tomorrow.' });
 
-  const result = await runChain(env, checked.value.columns, { fetchImpl, timeoutMs, log });
+  const result = await runChain(env, checked.value.columns, { fetchImpl, timeoutMs, log, pauseMs });
   try {
     await noteResult(env.WEB, who.gymId, day, result);
   } catch (e) {

@@ -10,6 +10,8 @@ import {
   CLAUDE_MODEL,
   FIELD_NAMES,
   GEMINI_MODEL,
+  GEMINI_BACKUP_MODELS,
+  geminiBusy,
   PER_GYM_PER_DAY,
   SYSTEM,
   TIMEOUT_MS,
@@ -362,7 +364,7 @@ test('Gemini first: Claude is not called when Gemini answers', async () => {
 test('Gemini fails (error, timeout, bad JSON, cut short) -> Claude, with a log line each time', async () => {
   const cols = checkRequest({ columns: COLUMNS }).value.columns;
   for (const gemini of [
-    () => json(500, { error: { message: 'internal' } }),
+    () => json(404, { error: { message: 'model not found' } }),
     () => 'hang',
     () => json(200, { candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'not json' }] } }] }),
     () => json(200, { candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: '{"columns":[' }] } }] }),
@@ -371,7 +373,7 @@ test('Gemini fails (error, timeout, bad JSON, cut short) -> Claude, with a log l
   ]) {
     const net = fakeNet({ gemini });
     const logs = [];
-    const r = await runChain(bothKeys(), cols, { fetchImpl: net.fetchImpl, timeoutMs: 50, log: (m) => logs.push(m) });
+    const r = await runChain(bothKeys(), cols, { fetchImpl: net.fetchImpl, timeoutMs: 50, pauseMs: 0, log: (m) => logs.push(m) });
     assert.equal(r.provider, 'claude', String(gemini));
     assert.equal(r.model, CLAUDE_MODEL);
     assert.deepEqual(net.calls.map((c) => c.who), ['gemini', 'claude']);
@@ -383,7 +385,7 @@ test('Gemini fails (error, timeout, bad JSON, cut short) -> Claude, with a log l
 
 test('Claude is asked with low effort and a JSON schema, never a prefill; a refusal is a failure', async () => {
   const net = fakeNet({ gemini: () => json(503, {}) });
-  await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: net.fetchImpl, log: quiet });
+  await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: net.fetchImpl, pauseMs: 0, log: quiet });
   const claudeCall = net.calls.find((c) => c.who === 'claude');
   assert.equal(claudeCall.headers.get('x-api-key'), CLAUDE_KEY);
   const sent = JSON.parse(claudeCall.body);
@@ -394,11 +396,11 @@ test('Claude is asked with low effort and a JSON schema, never a prefill; a refu
 
   const refused = fakeNet({ gemini: () => json(503, {}), claude: () => claudeOk({ columns: [] }, 'refusal') });
   const logs = [];
-  const r = await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: refused.fetchImpl, log: (m) => logs.push(m) });
+  const r = await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: refused.fetchImpl, pauseMs: 0, log: (m) => logs.push(m) });
   assert.equal(r.error, 'failed');
   assert.deepEqual(r.tried, ['gemini', 'claude']);
-  assert.equal(logs.length, 2);
-  assert.match(logs[1], /claude failed.*stop_reason refusal/);
+  assert.equal(logs.length, 6); // 4 busy Gemini asks, Gemini failed, Claude failed
+  assert.match(logs[5], /claude failed.*stop_reason refusal/);
 });
 
 test('a provider without its key is skipped; no keys at all = off', async () => {
@@ -409,9 +411,9 @@ test('a provider without its key is skipped; no keys at all = off', async () => 
   assert.deepEqual(onlyClaude.calls.map((c) => c.who), ['claude']);
 
   const onlyGemini = fakeNet({ gemini: () => json(500, {}) });
-  const r2 = await runChain({ GEMINI_API_KEY: GEMINI_KEY }, cols, { fetchImpl: onlyGemini.fetchImpl, log: quiet });
+  const r2 = await runChain({ GEMINI_API_KEY: GEMINI_KEY }, cols, { fetchImpl: onlyGemini.fetchImpl, pauseMs: 0, log: quiet });
   assert.deepEqual(r2, { error: 'failed', tried: ['gemini'] });
-  assert.deepEqual(onlyGemini.calls.map((c) => c.who), ['gemini']);
+  assert.deepEqual(onlyGemini.calls.map((c) => c.who), ['gemini', 'gemini', 'gemini', 'gemini']); // busy: again, then 2 backups
 
   const none = fakeNet();
   assert.deepEqual(await runChain({}, cols, { fetchImpl: none.fetchImpl }), { error: 'off', tried: [] });
@@ -431,6 +433,44 @@ test('a model that refuses the "minimal" thinking level is asked again with "low
   const r2 = await runChain(bothKeys(), checkRequest({ columns: COLUMNS }).value.columns, { fetchImpl: other.fetchImpl, log: quiet });
   assert.equal(r2.provider, 'claude');
   assert.deepEqual(other.calls.map((c) => c.who), ['gemini', 'claude']);
+});
+
+test('R-162: busy Gemini (429 / 5xx) is asked again after a pause, then the backup models on the same key, before Claude', async () => {
+  const cols = checkRequest({ columns: COLUMNS }).value.columns;
+  const model = (c) => c.url.match(/models\/([^:]+):/)[1];
+  // Busy once, then fine: the same model answers, no backup, no Claude.
+  let n = 0;
+  const again = fakeNet({ gemini: () => (++n === 1 ? json(503, { error: { message: 'high demand' } }) : geminiOk()) });
+  const t0 = Date.now();
+  const r1 = await runChain(bothKeys(), cols, { fetchImpl: again.fetchImpl, pauseMs: 30, log: quiet });
+  assert.ok(Date.now() - t0 >= 25, 'paused before asking again');
+  assert.equal(r1.provider, 'gemini');
+  assert.equal(r1.model, GEMINI_MODEL);
+  assert.deepEqual(again.calls.map(model), [GEMINI_MODEL, GEMINI_MODEL]);
+  // The first model stays busy (429, then 503): the first backup answers.
+  let m = 0;
+  const backup = fakeNet({ gemini: () => (++m <= 2 ? json(m === 1 ? 429 : 503, {}) : geminiOk()) });
+  const r2 = await runChain(bothKeys(), cols, { fetchImpl: backup.fetchImpl, pauseMs: 0, log: quiet });
+  assert.equal(r2.provider, 'gemini');
+  assert.equal(r2.model, GEMINI_BACKUP_MODELS[0]);
+  assert.deepEqual(backup.calls.map(model), [GEMINI_MODEL, GEMINI_MODEL, GEMINI_BACKUP_MODELS[0]]);
+  // Privacy unchanged: every ask uses the same Google key and the same masked request.
+  for (const c of backup.calls) assert.equal(c.headers.get('x-goog-api-key'), GEMINI_KEY);
+  assert.equal(new Set(backup.calls.map((c) => c.body)).size, 1);
+  assert.ok(!backup.calls[2].body.includes('12345'));
+  // All busy: every Gemini model once more, then Claude.
+  const busy = fakeNet({ gemini: () => json(500, {}) });
+  const r3 = await runChain(bothKeys(), cols, { fetchImpl: busy.fetchImpl, pauseMs: 0, log: quiet });
+  assert.equal(r3.provider, 'claude');
+  assert.deepEqual(busy.calls.filter((c) => c.who === 'gemini').map(model), [GEMINI_MODEL, GEMINI_MODEL, ...GEMINI_BACKUP_MODELS]);
+  // A model set by the Worker variable that is also a backup is not asked twice as a backup.
+  const set = fakeNet({ gemini: () => json(503, {}) });
+  await runChain({ ...bothKeys(), GEMINI_MODEL: GEMINI_BACKUP_MODELS[0] }, cols, { fetchImpl: set.fetchImpl, pauseMs: 0, log: quiet });
+  assert.deepEqual(set.calls.filter((c) => c.who === 'gemini').map(model), [GEMINI_BACKUP_MODELS[0], GEMINI_BACKUP_MODELS[0], GEMINI_BACKUP_MODELS[1]]);
+  assert.equal(geminiBusy(429), true);
+  assert.equal(geminiBusy(503), true);
+  assert.equal(geminiBusy(400), false);
+  assert.equal(geminiBusy(404), false);
 });
 
 test('a Gemini model can be swapped without a code change', async () => {
@@ -529,13 +569,13 @@ test('every provider fails: 502 failed, the read is counted as failed', async ()
   const WEB = fakeD1();
   const net = fakeNet({ gemini: () => json(500, {}), claude: () => json(529, { type: 'error', error: { type: 'overloaded_error', message: 'busy' } }) });
   const logs = [];
-  const res = await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(WEB), { fetchImpl: net.fetchImpl, log: (m) => logs.push(m) });
+  const res = await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(WEB), { fetchImpl: net.fetchImpl, pauseMs: 0, log: (m) => logs.push(m) });
   assert.equal(res.status, 502);
   assert.equal((await res.json()).reason, 'failed');
   const row = [...WEB.rows.values()][0];
   assert.equal(row.calls, 1);
   assert.equal(row.failed, 1);
-  assert.equal(logs.length, 3); // gemini, claude, and the "every provider failed" line
+  assert.equal(logs.length, 7); // 4 busy Gemini asks, gemini, claude, and the "every provider failed" line
 });
 
 test('plain answers for a wrong method, a bad body, a big body', async () => {
