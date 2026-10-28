@@ -10,6 +10,7 @@
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the MettleUp app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
+//  - /api/crash     both apps' uncaught errors, no personal data (crash.js, #34 alerts).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
@@ -19,6 +20,7 @@
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
+import { handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
 import { handleMatchColumns } from './aiMatch.js';
@@ -63,6 +65,7 @@ export default {
     const storeArt = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$/.exec(url.pathname);
     if (storeArt) return playBundle(request, storeArt[1], storeArt[2], 'image/png');
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
