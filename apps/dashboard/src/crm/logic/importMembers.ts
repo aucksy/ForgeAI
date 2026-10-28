@@ -713,6 +713,82 @@ export function parseImportPhone(v: unknown): PhoneRead {
   return parsed ? { ok: true, e164: parsed.e164, extra } : { ok: false, why: 'invalid' };
 }
 
+// ---------------------------------------------------------------- several phone columns (R-155)
+
+/*
+ * Owner, 28 Oct 2026 (R-155): a sheet had "Phone" (landlines, mostly empty), "Home phone" and
+ * "Cell phone" (the real mobiles). The header "Phone" won by its name and the import read the wrong
+ * column. Now, when several columns look like phone numbers, the one with the most valid Indian
+ * mobiles (10 digits, starting 6-9, the add-member form's own check) is the member's mobile, and a
+ * row whose chosen cell is empty (or not a mobile) falls back to the next phone-like column.
+ */
+
+/** Header words of a phone column. */
+const PHONE_HEADER_WORDS = ['mobile', 'mob', 'phone', 'ph', 'contact', 'whatsapp', 'cell', 'tel', 'telephone', 'landline', 'मोबाइल', 'फोन', 'फ़ोन'];
+/** Header words of SOMEONE ELSE's number (emergency contact, father's mobile): never the member's own. */
+const OTHER_PERSON_WORDS = [
+  'emergency', 'father', 'mother', 'guardian', 'parent', 'parents', 'husband', 'wife', 'spouse', 'relative', 'ref',
+  'referred', 'reference', 'friend', 'nominee', 'pita', 'mata', 'पिता', 'माता',
+];
+
+function headerHas(raw: unknown, words: readonly string[]): boolean {
+  const padded = ` ${normalizeHeader(raw)} `;
+  return words.some((w) => padded.includes(` ${w} `));
+}
+
+/** How many of the data rows (up to MAX_IMPORT_ROWS) hold a valid mobile in this column. PURE. */
+export function mobileCount(rows: readonly (readonly unknown[])[], headerRow: number, col: number): number {
+  let n = 0;
+  let seen = 0;
+  for (let i = headerRow + 1; i < rows.length && seen < MAX_IMPORT_ROWS; i += 1) {
+    const r = rows[i] ?? [];
+    if (isBlankRow(r)) continue;
+    seen += 1;
+    if (parseImportPhone(r[col]).ok) n += 1;
+  }
+  return n;
+}
+
+/**
+ * The member's own phone-like columns: a phone word in the header, or 60% of the filled cells
+ * valid mobiles; never someone else's number (emergency, father …). Most mobiles first. PURE.
+ */
+export function phoneColumns(rows: readonly (readonly unknown[])[], headerRow: number, exclude: readonly number[] = []): { col: number; mobiles: number }[] {
+  const header = rows[headerRow] ?? [];
+  const body = rows.slice(headerRow + 1, headerRow + 201).filter((r) => !isBlankRow(r));
+  const width = Math.max(header.length, ...body.map((r) => r.length), 0);
+  const skip = new Set(exclude);
+  const out: { col: number; mobiles: number }[] = [];
+  for (let c = 0; c < width; c += 1) {
+    if (skip.has(c) || headerHas(header[c], OTHER_PERSON_WORDS)) continue;
+    const filled = body.map((r) => r[c]).filter((v) => cellText(v) !== '');
+    const mobileShare = filled.length ? filled.filter((v) => parseImportPhone(v).ok).length / filled.length : 0;
+    if (!headerHas(header[c], PHONE_HEADER_WORDS) && !(filled.length >= 2 && mobileShare >= 0.6)) continue;
+    const mobiles = mobileCount(rows, headerRow, c);
+    if (mobiles > 0) out.push({ col: c, mobiles });
+  }
+  return out.sort((a, b) => b.mobiles - a.mobiles || a.col - b.col);
+}
+
+/**
+ * R-155: the Mobile box points at the phone-like column with the most valid mobiles. A column
+ * another box uses (or an ID column) is left alone; a tie keeps the current pick. PURE.
+ */
+export function choosePhoneColumn(rows: readonly (readonly unknown[])[], headerRow: number, map: ColumnMap, idCols: readonly number[] = []): ColumnMap {
+  const others = IMPORT_FIELDS.filter((f) => f !== 'phone').map((f) => map[f]).filter((c): c is number => c !== null);
+  const best = phoneColumns(rows, headerRow, [...others, ...idCols])[0];
+  if (!best) return map;
+  if (map.phone !== null && mobileCount(rows, headerRow, map.phone) >= best.mobiles) return map;
+  return { ...map, phone: best.col };
+}
+
+/** R-155: the next phone-like columns to read when a row's own Mobile cell is empty. PURE. */
+export function phoneBackupColumns(rows: readonly (readonly unknown[])[], headerRow: number, map: ColumnMap, idCols: readonly number[] = []): number[] {
+  if (map.phone === null) return [];
+  const used = IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null);
+  return phoneColumns(rows, headerRow, [...used, ...idCols]).map((p) => p.col);
+}
+
 const MALE = new Set(['m', 'male', 'man', 'boy', 'gents', 'gent', 'purush', 'mard', 'ladka', 'पुरुष', 'mr']);
 const FEMALE = new Set(['f', 'female', 'woman', 'girl', 'lady', 'ladies', 'mahila', 'aurat', 'ladki', 'महिला', 'स्त्री', 'mrs', 'ms']);
 const OTHER = new Set(['o', 'other', 'others', 'trans', 'transgender', 'anya']);
@@ -953,6 +1029,11 @@ export interface PlanOptions {
   idCols?: readonly number[];
   /** #41: the gym has 2 or more branches: which branch each row goes to. Absent = this gym only. */
   branches?: BranchRouting;
+  /**
+   * R-155: phone-like columns read, in order, when a row's Mobile cell is empty or not a mobile.
+   * Absent = worked out from the sheet (phoneBackupColumns); [] = none.
+   */
+  phoneBackups?: readonly number[];
 }
 
 // ---------------------------------------------------------------- branches (#41)
@@ -1061,6 +1142,7 @@ export function planImport(
   const idCols = new Set(options.idCols ?? []);
   const fieldCols = new Set(IMPORT_FIELDS.map((f) => map[f]).filter((c): c is number => c !== null));
   const extraCols = usableExtras(options.extras ?? []).filter((e) => !idCols.has(e.col) && !fieldCols.has(e.col));
+  const phoneBackups = (options.phoneBackups ?? phoneBackupColumns(rows, headerRow, map, [...idCols])).filter((c) => !idCols.has(c) && !fieldCols.has(c));
   const data: { row: readonly unknown[]; rowNumber: number }[] = [];
   const notMembers: NotMemberRow[] = [];
   for (let i = headerRow + 1; i < rows.length; i += 1) {
@@ -1173,8 +1255,19 @@ export function planImport(
     if (!fullName) problems.push('No name.');
     else if (fullName !== written) warnings.push(`"${written.slice(0, written.length - fullName.length).trim()}" left out of the name.`);
 
-    // Mobile
-    const phoneRead = parseImportPhone(cellAt(row, map.phone));
+    // Mobile. R-155: an empty (or non-mobile) cell falls back to the next phone-like column; a
+    // landline it replaces is kept in the notes. A number Excel shortened is still shown to fix.
+    let phoneRead = parseImportPhone(cellAt(row, map.phone));
+    let replacedNumber: string | null = null;
+    if (!phoneRead.ok && phoneRead.why !== 'shortened') {
+      for (const c of phoneBackups) {
+        const backup = parseImportPhone(cellAt(row, c));
+        if (!backup.ok) continue;
+        replacedNumber = text('phone') || null;
+        phoneRead = backup;
+        break;
+      }
+    }
     if (!phoneRead.ok) {
       const shown = text('phone');
       problems.push(
@@ -1314,6 +1407,7 @@ export function planImport(
       if (text('expiry')) extras.push(`Valid till: ${endsOn ? formatDay(endsOn) : text('expiry')}`);
     }
     if (phoneRead.ok && phoneRead.extra) extras.push(`Other number: ${phoneRead.extra}`);
+    if (replacedNumber) extras.push(`Other number: ${replacedNumber}`);
     const notes = safe(
       [text('notes'), extras.length ? `From Excel — ${extras.join(' · ')}` : '']
         .filter(Boolean)

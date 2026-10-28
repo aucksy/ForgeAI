@@ -39,6 +39,9 @@
   // MOVE (R-105): "on" sends /home on the old address to mettleup.fit, and lets the old address's
   // admin app move each desk to app.mettleup.fit once nothing is waiting to be sent. "off" keeps
   // the old address exactly as it was (a kill switch; deploy again to apply).
+  // R-157 (28 Oct 2026): keep the Worker's log lines (Workers Logs, free allowance) so a failed AI
+  // match can be read afterwards; before this only a live `wrangler tail` showed them.
+  "observability": { "enabled": true },
   "vars": { "LANDING": "live", "MOVE": "on" },
   "d1_databases": [
     { "binding": "WEB", "database_name": "forgeai-web", "database_id": "2c036974-ccdc-4a3c-adf8-47a2e243839d", "migrations_dir": "migrations" }

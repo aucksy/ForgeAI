@@ -25,6 +25,18 @@ grows: the import sends the headers + a few sample values per column to the AI o
 the field for each column from the VALUES (e.g. the column with 10-digit mobiles = phone); the owner only sees the result
 and can change a pick; the "Ask AI" button goes. Find why the AI step failed first. Privacy: sample member values go to
 the AI (Gemini/Claude Haiku keys set up for #47, not the free key) — check the privacy notice already covers AI import.
+**Done (28 Oct):** (2) and R-155. Why it failed: the AI was only allowed to fill boxes our rules left EMPTY, so it could
+never fix the Mobile box once the header "Phone" (landlines) had won by name; its "Cell phone" guess was only shown as a
+note. It also saw headers + 5 rows only, so it sometimes picked "Phone" itself (reproduced: 1 of 2 runs). The service
+itself works (Gemini 3.1 Flash-Lite and Claude Haiku 5.5 both answered all week, D1 ai_usage); one call on 28 Oct failed
+on both providers (no stored logs; likely the 10 s limit). Now: no button; the sheet goes to the AI by itself once when
+it opens (owner, online), still masked, plus per-column counts (filled / valid mobile / date / amount / email %); sure
+picks are applied and may override our rules when the counts back them (phone: at least as many valid mobiles); boxes
+the owner set by hand are never changed; "Matched by AI" tag; any failure = our rules + "Matched without AI (it was not
+available). Check the columns below." (logged). Our own rules: of several phone columns the one with the most valid
+mobiles wins; an empty/landline cell falls back to the next phone column (landline kept in notes). Server: counts in the
+prompt, values-first instructions, 20 s per provider, Workers Logs on. Tests: dashboard 1308 unit + 98 e2e, panel 59.
+Privacy notice check (AI import already covered?) still open.
 
 ## R-156. Back in Claude Code: read all notes, fix issues first, update the tracker — 28 Oct 2026
 **He said:** "I made quite a few updates using cloud session and opencode using Anthropic API key. Please go thru all

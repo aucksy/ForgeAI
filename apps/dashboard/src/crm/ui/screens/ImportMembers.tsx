@@ -53,6 +53,7 @@ import {
   findIdColumns,
   idNamedColumns,
   freeColumns,
+  sheetStats,
 } from '../../logic/aiImport';
 import { branchesToOpen, branchNamesInFile, rowsPerBranch, type BranchNameInFile } from '../../logic/importBranches';
 import { guessMapAt, sheetExtras, sheetWidth, type ExtraChoice } from '../../logic/importGuess';
@@ -103,13 +104,15 @@ type OtherBranch =
   | { state: 'open'; data: CrmData; snapshot: CrmSnapshot }
   | { state: 'failed'; words: string };
 
-/** #47: the "Ask AI to match the columns" card. */
+/**
+ * #47 / R-157: the AI matches the columns by itself when a sheet opens (owner only). `fallback`: it
+ * could not be used, our own rules matched (one calm line; the reason is logged).
+ */
 type AiState =
   | { stage: 'idle' }
   | { stage: 'asking' }
-  | { stage: 'skipped' }
-  | { stage: 'done'; filled: number; held: string[]; left: number | null }
-  | { stage: 'error'; words: string };
+  | { stage: 'done'; filled: number }
+  | { stage: 'fallback' };
 
 /**
  * Let the browser draw before heavy work: "Reading the file…" shows before a big sheet is parsed.
@@ -150,6 +153,12 @@ export function ImportMembersScreen() {
   const [ai, setAi] = useState<AiState>({ stage: 'idle' });
   /** Bumped whenever the sheet or its header row changes: an AI answer for the old one is dropped. */
   const aiTurn = useRef(0);
+  /** R-157: the columns as they are now (the AI's answer lands on them), and the boxes the owner set by hand. */
+  const mapRef = useRef<ColumnMap>(map);
+  const ownerPicked = useRef<Set<ImportField>>(new Set());
+  useEffect(() => {
+    mapRef.current = map;
+  }, [map]);
   // #41: the owner's pick for each branch name in the file, the branch for each sheet, and the
   // other branches opened for this import.
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -331,41 +340,64 @@ export function ImportMembersScreen() {
     const h = findHeaderRow(rows);
     setFile({ ...loaded, rows, sheet: i });
     setHeaderRow(h);
-    setMap(guessMap(rows, h));
+    const guessed = guessMap(rows, h);
+    mapRef.current = guessed;
+    setMap(guessed);
     resetAi();
     resetRows();
     setFilter('all');
     setStage('review');
+    void matchWithAi(rows, h);
   };
 
   /** A new sheet or header row: the AI's earlier answer and the extra details start again. */
   const resetAi = () => {
     aiTurn.current += 1;
+    ownerPicked.current = new Set();
     setExtraChoices({});
     setAiFields([]);
     setAi({ stage: 'idle' });
   };
 
-  /** #47: the owner said yes. Only the masked column names and 5 example rows go (names and addresses as their shape, #59). */
-  const askAi = async () => {
-    if (!file || !session) return;
+  /**
+   * R-157: no button. When a sheet (or a header row) opens, the owner's sheet goes to the AI once:
+   * the masked column names, 5 example rows (names and addresses as their shape, #59) and our own
+   * counts per column. Its sure picks are applied over our rules when the counts back them; boxes
+   * the owner already changed stay. Staff: our rules only. Any failure: our rules stand, one calm line.
+   */
+  const matchWithAi = async (rows: Cell[][], h: number) => {
+    if (role !== 'owner') return;
     const turn = aiTurn.current;
+    if (!session) {
+      console.warn('[ai-match] not asked: this gym is not signed in online; our own rules matched');
+      setAi({ stage: 'fallback' });
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      console.warn('[ai-match] not asked: this device is offline; our own rules matched');
+      setAi({ stage: 'fallback' });
+      return;
+    }
+    const w = sheetWidth(rows);
+    const ids = findIdColumns(rows, h, w).map((c) => c.col);
+    const names = (rows[h] ?? []).map(cellText);
     setAi({ stage: 'asking' });
-    const answer = await askAiForColumns(session.ownerKey, aiColumnsPayload(file.rows, headerRow, width, idColNums, map));
+    const answer = await askAiForColumns(session.ownerKey, aiColumnsPayload(rows, h, w, ids, mapRef.current));
     if (turn !== aiTurn.current) return; // the owner moved to another sheet meanwhile
     if (!answer.ok) {
-      setAi({ stage: 'error', words: answer.words });
+      setAi({ stage: 'fallback' }); // logged in askAiForColumns
       return;
     }
     // #41: a gym with one branch has no Branch box: that column stays a detail to keep.
     const picks = multi ? answer.picks : answer.picks.filter((p) => !('field' in p.target && p.target.field === 'branch'));
-    const applied = applyAiPicks(map, picks, idColNums, headers);
+    const applied = applyAiPicks(mapRef.current, picks, ids, names, sheetStats(rows, h, w), [...ownerPicked.current]);
+    mapRef.current = applied.map;
     setMap(applied.map);
     setAiFields(applied.aiFields);
     // A detail the owner already ticked or renamed stays as the owner left it.
     setExtraChoices((prev) => ({ ...applied.extras, ...prev }));
-    const ticked = Object.values(applied.extras).filter((e) => e.on).length;
-    setAi({ stage: 'done', filled: applied.aiFields.length + ticked, held: applied.held, left: answer.left });
+    const named = Object.values(applied.extras).filter((e) => e.on).length;
+    setAi({ stage: 'done', filled: applied.aiFields.length + named });
   };
 
   const setExtra = (col: number, change: Partial<ExtraChoice>) => {
@@ -378,6 +410,7 @@ export function ImportMembersScreen() {
 
   const pickColumn = (field: ImportField, value: string) => {
     const col = value === '' ? null : Number(value);
+    ownerPicked.current.add(field);
     setAiFields((prev) => prev.filter((f) => f !== field));
     setMap((prev) => {
       const next = { ...prev };
@@ -392,9 +425,12 @@ export function ImportMembersScreen() {
     if (!file) return;
     const h = Number(value);
     setHeaderRow(h);
-    setMap(guessMap(file.rows, h));
+    const guessed = guessMap(file.rows, h);
+    mapRef.current = guessed;
+    setMap(guessed);
     resetAi();
     resetRows();
+    void matchWithAi(file.rows, h);
   };
 
   /** #36: the owner's fix for one row, from "Rows to check". */
@@ -539,15 +575,13 @@ export function ImportMembersScreen() {
 
       {stage === 'review' && file && plan && (
         <>
-          {/* #47: owner of an online gym only; never shown when every column is already placed. */}
-          {role === 'owner' && session && ai.stage !== 'skipped' && (ai.stage !== 'idle' || free.length > 0 || map.fullName === null || map.phone === null) && (
-            <AiCard ai={ai} onAsk={() => void askAi()} onSkip={() => setAi({ stage: 'skipped' })} />
-          )}
+          {/* R-157: the AI matches by itself (owner only); one line says how it went. */}
+          {role === 'owner' && ai.stage !== 'idle' && <AiLine ai={ai} />}
 
           <Card style={{ marginBottom: space.lg }}>
             <SectionTitle>Which column is which</SectionTitle>
             <p style={muted}>
-              {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We guessed from the column names. Change any that are wrong.`}
+              {`${file.name}${file.sheets.length > 1 ? `, sheet "${file.sheets[file.sheet]?.name ?? ''}"${file.auto ? ' (it looks most like a member list)' : ''}` : ''}. We matched them from the column names and what is in them. Change any that are wrong.`}
             </p>
             {file.sheets.length > 1 && (
               <SelectField
@@ -574,7 +608,7 @@ export function ImportMembersScreen() {
               {IMPORT_FIELDS.filter((f) => multi || f !== 'branch').map((field) => (
                 <SelectField
                   key={field}
-                  label={fieldLabel(field) + (field === 'fullName' || field === 'phone' ? ' *' : '') + (aiFields.includes(field) ? ' · AI' : '')}
+                  label={fieldLabel(field) + (field === 'fullName' || field === 'phone' ? ' *' : '') + (aiFields.includes(field) ? ` · ${AI_WORDS.tag}` : '')}
                   value={map[field] === null ? '' : String(map[field])}
                   onChange={(v) => pickColumn(field, v)}
                   options={[
@@ -943,60 +977,21 @@ function ActionBar({
   );
 }
 
-/**
- * #47: the owner is asked before every AI read, in one line (honest wording per the review). "I'll
- * match them myself" sends nothing; the column boxes below always work without the AI.
- */
-function AiCard({ ai, onAsk, onSkip }: { ai: AiState; onAsk: () => void; onSkip: () => void }) {
+/** R-157: how the automatic AI match went, in one calm line (no button: it runs by itself). */
+function AiLine({ ai }: { ai: AiState }) {
   return (
-    <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>Match the columns with AI</SectionTitle>
-      {(ai.stage === 'idle' || ai.stage === 'asking') && (
-        <>
-          <p style={{ ...muted, color: color.ink }}>{AI_WORDS.ask}</p>
-          <p style={{ ...muted, marginTop: space.sm }}>Nothing is saved until you check the list and tap Add.</p>
-          {ai.stage === 'asking' && (
-            <p role="status" aria-live="polite" style={{ ...muted, color: color.ink, fontWeight: 700, marginTop: space.sm }}>
-              {AI_WORDS.asking}
-            </p>
-          )}
-          <div style={{ marginTop: space.md }}>
-            <Row gap={space.sm}>
-              <Button wrap disabled={ai.stage === 'asking'} onClick={onAsk}>
-                {ai.stage === 'asking' ? AI_WORDS.asking : 'Ask AI'}
-              </Button>
-              <Button variant="ghost" wrap disabled={ai.stage === 'asking'} onClick={onSkip}>
-                I’ll match them myself
-              </Button>
-            </Row>
-          </div>
-        </>
-      )}
-      {ai.stage === 'done' && (
-        <div role="status" aria-live="polite">
-          <p style={{ ...muted, color: color.ink, fontWeight: 700 }}>
-            {ai.filled > 0
-              ? `AI matched ${ai.filled} ${ai.filled === 1 ? 'column' : 'columns'}. They are marked “AI” below. Check them before you add.`
-              : ai.held.length > 0
-                ? AI_WORDS.unsure
-                : 'AI found nothing more to match. Match the rest yourself below.'}
-          </p>
-          {ai.held.map((h) => (
-            <p key={h} style={{ ...muted, marginTop: space.sm }}>
-              {`${h} Change the box below if that is right.`}
-            </p>
-          ))}
-          {ai.left !== null && (
-            <p style={{ ...muted, marginTop: space.sm }}>{`${ai.left} AI ${ai.left === 1 ? 'match' : 'matches'} left today.`}</p>
-          )}
-        </div>
-      )}
-      {ai.stage === 'error' && (
-        <p role="status" aria-live="polite" style={{ ...muted, color: color.warning }}>
-          {ai.words}
-        </p>
-      )}
-    </Card>
+    <div role="status" aria-live="polite" style={{ marginBottom: space.lg }}>
+      <p style={{ ...muted, color: ai.stage === 'fallback' ? color.warning : color.ink, fontWeight: 700 }}>
+        {ai.stage === 'asking'
+          ? AI_WORDS.asking
+          : ai.stage === 'done'
+            ? ai.filled > 0
+              ? AI_WORDS.done(ai.filled)
+              : AI_WORDS.agreed
+            : AI_WORDS.fallback}
+      </p>
+      {ai.stage === 'asking' && <p style={{ ...muted, marginTop: space.xs }}>{AI_WORDS.privacy}</p>}
+    </div>
   );
 }
 

@@ -10,6 +10,7 @@ import { findIdColumns, freeColumns, type IdColumn } from './aiImport';
 import { guessBranchColumn } from './importBranches';
 import {
   cellText,
+  choosePhoneColumn,
   columnLetter,
   findHeaderRow,
   guessColumns,
@@ -43,7 +44,9 @@ export function withoutIdColumns(map: ColumnMap, ids: readonly IdColumn[]): Colu
  */
 export function guessMapAt(rows: readonly (readonly unknown[])[], headerRow: number, today: DateISO, match: ((typed: string) => string | null) | null): ColumnMap {
   const ids = findIdColumns(rows, headerRow, sheetWidth(rows));
-  const guessed = withoutIdColumns(guessFromValues(rows, headerRow, guessColumns(rows[headerRow] ?? []), today), ids);
+  const byValues = withoutIdColumns(guessFromValues(rows, headerRow, guessColumns(rows[headerRow] ?? []), today), ids);
+  // R-155: of several phone-like columns, the one with the most valid mobiles is the Mobile.
+  const guessed = choosePhoneColumn(rows, headerRow, byValues, ids.map((c) => c.col));
   return match ? guessBranchColumn(rows, headerRow, guessed, match, ids.map((c) => c.col)) : { ...guessed, branch: null };
 }
 

@@ -163,16 +163,16 @@ describe('#59 names and addresses are never sent to the AI (owner, 24 Oct 2026)'
   const cols = aiColumnsPayload(REGISTER, 0, 10, []);
 
   it('a "Name" column, a "Member" column of names, an "Address" column and a names column with no header', () => {
-    expect(cols[0]).toEqual({ header: 'Name', examples: ['[name]', '[name]', '[name]'] });
-    expect(cols[1]).toEqual({ header: 'Member', examples: ['[name]', '[name]', ''] });
-    expect(cols[2]).toEqual({ header: 'Address', examples: ['[address]', '[address]', ''] });
-    expect(cols[3]).toEqual({ header: '', examples: ['[name]', '[name]', '[name]'] });
+    expect(cols[0]).toMatchObject({ header: 'Name', examples: ['[name]', '[name]', '[name]'] });
+    expect(cols[1]).toMatchObject({ header: 'Member', examples: ['[name]', '[name]', ''] });
+    expect(cols[2]).toMatchObject({ header: 'Address', examples: ['[address]', '[address]', ''] });
+    expect(cols[3]).toMatchObject({ header: '', examples: ['[name]', '[name]', '[name]'] });
     const sent = JSON.stringify(cols);
     for (const who of ['Ramesh', 'Sita', 'Mohan', 'Ravi', 'Anita', 'Sunil', 'Kavita', 'MG Road', 'Shastri']) expect(sent).not.toContain(who);
   });
 
   it('a "Plan" column stays visible, and so do amounts, dates, gender, batch and yes / no', () => {
-    expect(cols[4]).toEqual({ header: 'Plan', examples: ['Monthly', 'Annual + PT', 'Gold Membership'] });
+    expect(cols[4]).toMatchObject({ header: 'Plan', examples: ['Monthly', 'Annual + PT', 'Gold Membership'] });
     expect(cols[5]!.examples).toEqual(['1500', 'Rs. 12,000', '']);
     expect(cols[6]!.examples).toEqual(['15-08-2026', '01/09/2026', '']);
     expect(cols[7]!.examples).toEqual(['Male', 'Female', '']);
@@ -189,8 +189,8 @@ describe('#59 names and addresses are never sent to the AI (owner, 24 Oct 2026)'
       ['Sita Devi', '9829050003', 'Monthly'],
     ];
     const sent = aiColumnsPayload(rows, 0, 3, []);
-    expect(sent[0]).toEqual({ header: '[name]', examples: ['[name]', '[name]'] });
-    expect(sent[2]).toEqual({ header: 'Monthly', examples: ['Quarterly', 'Monthly'] });
+    expect(sent[0]).toMatchObject({ header: '[name]', examples: ['[name]', '[name]'] });
+    expect(sent[2]).toMatchObject({ header: 'Monthly', examples: ['Quarterly', 'Monthly'] });
     expect(JSON.stringify(sent)).not.toMatch(/Anil|Ramesh|Sita/);
   });
 
@@ -222,10 +222,8 @@ describe('#59 names and addresses are never sent to the AI (owner, 24 Oct 2026)'
     expect(panel.checkRequest({ columns: [{ header: 'Name', examples: ['Ramesh Gupta'] }] }).value.columns[0]!.examples).toEqual(['[name]']);
   });
 
-  it('asks in one line that says names and addresses are hidden too', () => {
-    expect(AI_WORDS.ask).toBe(
-      'Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.',
-    );
+  it('says in one line, while it matches, that names and addresses are hidden too', () => {
+    expect(AI_WORDS.privacy).toBe('Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.');
   });
 });
 
@@ -292,20 +290,23 @@ describe('the AI answer', () => {
     expect(clash.held).toEqual(['AI thinks Column F “Remarks” is “Mobile”.']);
   });
 
-  it('every server answer becomes a plain sentence; the by-hand path is always named', () => {
+  it('every server answer becomes a reason; our own rules stand on any failure', () => {
     expect(aiAnswer(200, { columns: [{ column: 0, target: 'fullName', confidence: 1 }], left: 19 }, 2)).toEqual({
       ok: true,
       picks: [{ column: 0, target: { field: 'fullName' }, confidence: 1 }],
       left: 19,
     });
-    expect(aiAnswer(429, { reason: 'limit' }, 2)).toEqual({ ok: false, words: AI_WORDS.limit });
-    expect(aiAnswer(503, { reason: 'off' }, 2)).toEqual({ ok: false, words: AI_WORDS.off });
-    expect(aiAnswer(503, { reason: 'unreachable' }, 2)).toEqual({ ok: false, words: AI_WORDS.offline });
-    expect(aiAnswer(502, { reason: 'failed' }, 2)).toEqual({ ok: false, words: AI_WORDS.failed });
-    expect(aiAnswer(403, {}, 2)).toEqual({ ok: false, words: AI_WORDS.owner });
-    expect(aiAnswer(401, {}, 2)).toEqual({ ok: false, words: AI_WORDS.signin });
-    expect(aiAnswer(500, null, 2)).toEqual({ ok: false, words: AI_WORDS.failed });
-    for (const w of Object.values(AI_WORDS).slice(2)) expect(w).toMatch(/yourself/);
+    expect(aiAnswer(429, { reason: 'limit' }, 2)).toEqual({ ok: false, why: 'limit' });
+    expect(aiAnswer(503, { reason: 'off' }, 2)).toEqual({ ok: false, why: 'off' });
+    expect(aiAnswer(503, { reason: 'unreachable' }, 2)).toEqual({ ok: false, why: 'unreachable' });
+    expect(aiAnswer(502, { reason: 'failed' }, 2)).toEqual({ ok: false, why: 'failed' });
+    expect(aiAnswer(403, {}, 2)).toEqual({ ok: false, why: 'owner' });
+    expect(aiAnswer(401, {}, 2)).toEqual({ ok: false, why: 'signin' });
+    expect(aiAnswer(500, null, 2)).toEqual({ ok: false, why: 'failed' });
+    // R-157: a 200 that is not the answer (the app's own page, a proxy's error) is a failure.
+    expect(aiAnswer(200, null, 2)).toEqual({ ok: false, why: 'failed' });
+    expect(aiAnswer(200, '<html>', 2)).toEqual({ ok: false, why: 'failed' });
+    expect(AI_WORDS.fallback).toBe('Matched without AI (it was not available). Check the columns below.');
   });
 
   it('asks with the sign-in key in a header and never throws', async () => {
@@ -322,7 +323,7 @@ describe('the AI answer', () => {
     const down = (async () => {
       throw new TypeError('Failed to fetch');
     }) as unknown as typeof fetch;
-    expect(await askAiForColumns('key-0123456789abcdef', [], down)).toEqual({ ok: false, words: AI_WORDS.offline });
+    expect(await askAiForColumns('key-0123456789abcdef', [], down)).toEqual({ ok: false, why: 'offline' });
   });
 });
 

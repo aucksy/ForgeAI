@@ -11,6 +11,8 @@ import {
   FIELD_NAMES,
   GEMINI_MODEL,
   PER_GYM_PER_DAY,
+  SYSTEM,
+  TIMEOUT_MS,
   gymLimit,
   isRealDate,
   takeOne,
@@ -204,6 +206,36 @@ test('the prompt carries the masked columns and every field, never a raw number 
   assert.ok(!p.includes('54321'));
   assert.ok(!p.includes('Ramesh'));
   assert.ok(!p.includes('Sita'));
+});
+
+test('R-157: the per-column counts reach the prompt; bad counts are dropped, never the column', () => {
+  const stats = { filled: 80, mobile: 80, date: 0, amount: 0, email: 0 };
+  const cols = checkRequest({
+    columns: [
+      { header: 'Phone', examples: ['0141-2745101', ''], stats: { filled: 40, mobile: 0, date: 0, amount: 0, email: 0 } },
+      { header: 'Cell phone', examples: ['9876500011'], stats },
+      { header: 'Plan', examples: ['Monthly'], stats: { filled: 101, mobile: 0, date: 0, amount: 0, email: 0 } },
+      { header: 'Notes', examples: ['x'], stats: { filled: 'all', mobile: 0 } },
+      { header: 'Locker', examples: ['12'], stats: { filled: 50, mobile: 0, date: 0, amount: 0, email: 0, secret: 'Ramesh' } },
+    ],
+  }).value.columns;
+  assert.deepEqual(cols[1].stats, stats);
+  assert.equal(cols[2].stats, undefined);
+  assert.equal(cols[3].stats, undefined);
+  assert.deepEqual(Object.keys(cols[4].stats), ['filled', 'mobile', 'date', 'amount', 'email']);
+  assert.equal(cols[2].header, 'Plan');
+  const p = buildPrompt(cols);
+  assert.ok(p.includes('Column 1: header "Cell phone"; examples ["98XXXXXX11"]; stats % of rows: filled 80, mobile 80, date 0, amount 0, email 0'));
+  assert.ok(p.includes('Column 0: header "Phone"; examples ["01XXXXXXX01",""]; stats % of rows: filled 40, mobile 0'));
+  assert.ok(!p.includes('Ramesh'));
+  assert.ok(!p.includes('9876500011'));
+  // The AI is told to decide from the values, and how to choose among several phone columns.
+  assert.match(SYSTEM, /VALUES and the stats first/);
+  assert.match(SYSTEM, /highest mobile percentage/);
+});
+
+test('R-157: a provider gets 20 seconds (10 was tight for a wide sheet)', () => {
+  assert.equal(TIMEOUT_MS, 20_000);
 });
 
 // ---------------------------------------------------------------- names and addresses (#59)

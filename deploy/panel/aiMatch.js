@@ -1,5 +1,5 @@
-// "Ask AI to match the columns" for the admin app's member import (Project Tracker #47, option A, and
-// owner R-82: the cheapest AI first, Claude as the fallback). POST /api/ai/match-columns.
+// AI column matching for the admin app's member import (Project Tracker #47, option A; owner R-82: the
+// cheapest AI first, Claude as the fallback; R-157: runs by itself, no button). POST /api/ai/match-columns.
 //
 // What the AI is shown: the column names and up to 5 example rows of the gym's file, with mobile
 // numbers, emails and ID numbers hidden, and names and addresses shown only as "[name]" /
@@ -19,7 +19,7 @@
 // (migrations/0003_ai_usage.sql). About ₹0.40 per spreadsheet at the prices below. MettleUp HQ can set
 // one gym's own daily limit (table ai_limits, migrations/0004; #51).
 //
-// Providers, in order (a provider without its key is skipped; an error, a 10-second timeout or an
+// Providers, in order (a provider without its key is skipped; an error, a 20-second timeout or an
 // answer that is not the JSON we asked for moves on to the next, with a log line each time):
 //   1. Google Gemini, REST generateContent, secret GEMINI_API_KEY. Model GEMINI_MODEL below.
 //   2. Anthropic Claude, the official SDK, secret ANTHROPIC_API_KEY. Model CLAUDE_MODEL below.
@@ -43,7 +43,9 @@ export const CLAUDE_MODEL = 'claude-haiku-5-5';
 
 export const PER_GYM_PER_DAY = 20;
 export const ALL_PER_DAY = 1000;
-export const TIMEOUT_MS = 10_000;
+// R-157: 10 s was tight for a wide sheet (one owner import on 28 Oct 2026 failed on both providers);
+// the match now runs by itself in the background, so a slower answer costs nothing.
+export const TIMEOUT_MS = 20_000;
 export const MAX_COLUMNS = 60;
 export const MAX_EXAMPLES = 5;
 export const MAX_CELL = 60;
@@ -290,9 +292,28 @@ export function checkRequest(body) {
     const raw = c && Array.isArray(c.examples) ? c.examples : [];
     const cells = raw.slice(0, MAX_EXAMPLES).map((v) => maskCell(typeof v === 'string' || typeof v === 'number' ? v : ''));
     const { header, examples } = hidePeople(masked, cells);
-    return { column: i, header, examples };
+    const stats = checkStats(c && c.stats);
+    return stats ? { column: i, header, examples, stats } : { column: i, header, examples };
   });
   return { value: { columns } };
+}
+
+/** R-157: the counts the admin app works out per column (whole percentages of the rows it read). */
+export const STAT_KEYS = ['filled', 'mobile', 'date', 'amount', 'email'];
+
+/**
+ * A column's counts, kept only when every one is a whole number 0..100 (anything else: dropped, the
+ * column is still matched from its examples). Counts carry no member data. PURE.
+ */
+export function checkStats(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const out = {};
+  for (const k of STAT_KEYS) {
+    const n = raw[k];
+    if (!Number.isInteger(n) || n < 0 || n > 100) return null;
+    out[k] = n;
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------- the question and the answer
@@ -338,8 +359,10 @@ const GEMINI_SCHEMA = {
 export const SYSTEM = [
   "You match the columns of an Indian gym's member spreadsheet to the fields of a gym app's member import.",
   'Headers may be English, Hinglish or Hindi, abbreviated or misspelt. Some columns have no header.',
-  'You see each column number, its header and up to 5 example values from the same rows.',
-  'Mobile numbers, emails and ID numbers are hidden (98XXXXXX45, [email], [PAN], [ID number]); that is expected.',
+  'You see each column number, its header, up to 5 example values from the same rows, and often "stats": the percentage of the rows read where that column is filled, a valid Indian mobile (10 digits starting 6-9), a date, a rupee amount, an email.',
+  'Decide from the VALUES and the stats first, the header second: headers are often wrong or vague.',
+  'Mobile numbers, emails and ID numbers are hidden (98XXXXXX45, [email], [PAN], [ID number]); that is expected. A hidden number keeps its first 2 and last 2 digits and its length: 98XXXXXX45 is a 10-digit mobile, 01XXXXXXX01 (starting 0, 11+ digits) is a landline.',
+  'phone is the member\'s OWN mobile: when several columns hold phone numbers (Phone, Home phone, Cell phone, WhatsApp), pick the one with the highest mobile percentage; a column that is mostly empty or landlines is not phone (make it extra:<its name>). Emergency contact or a parent\'s number is never phone.',
   "People's names and addresses are shown only as [name] / [address]: such a column is the member's name or address (or a person such as \"referred by\").",
   'For EVERY column give exactly one target:',
   '- a field name from the list, when the column holds that information;',
@@ -353,7 +376,10 @@ export const SYSTEM = [
 export function buildPrompt(columns) {
   const fields = FIELD_NAMES.map((f) => `- ${f}: ${FIELDS[f]}`).join('\n');
   const cols = columns
-    .map((c) => `Column ${c.column}: header ${JSON.stringify(c.header || '(none)')}; examples ${JSON.stringify(c.examples)}`)
+    .map((c) => {
+      const stats = c.stats ? `; stats % of rows: ${STAT_KEYS.map((k) => `${k} ${c.stats[k]}`).join(', ')}` : '';
+      return `Column ${c.column}: header ${JSON.stringify(c.header || '(none)')}; examples ${JSON.stringify(c.examples)}${stats}`;
+    })
     .join('\n');
   return `Fields:\n${fields}\n\nColumns:\n${cols}`;
 }

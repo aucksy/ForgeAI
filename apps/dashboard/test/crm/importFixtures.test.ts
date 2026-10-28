@@ -381,13 +381,12 @@ describe('nothing is dropped without a word', () => {
 });
 
 describe('the AI is down, over its limit or unsure: matching by hand always works', () => {
-  it('every failure is one plain line that says to match the columns by hand', () => {
+  it('every failure leaves our own rules in place, with one calm line', () => {
     for (const [status, body] of [[429, {}], [503, { reason: 'off' }], [503, { reason: 'unreachable' }], [500, {}], [401, {}], [403, {}]] as const) {
       const a = aiAnswer(status, body, 5);
       expect(a.ok).toBe(false);
-      if (!a.ok) expect(a.words).toMatch(/yourself below/);
     }
-    expect(AI_WORDS.unsure).toBe('The AI was not sure about these columns. Match them yourself below.');
+    expect(AI_WORDS.fallback).toBe('Matched without AI (it was not available). Check the columns below.');
   });
 
   it('an unsure AI fills nothing in; the owner picks every box by hand, Branch and details included', () => {

@@ -1,8 +1,8 @@
 // #47 AI import (23 Oct 2026): the owner of an online gym imports an old register with columns the
 // app has no box for (locker, blood group, referred by) and an Aadhaar column. The AI endpoint is a
 // stand-in (page.route): it checks what the browser sends (no phone numbers, the sign-in key in a
-// header) and answers like the Worker would. Then: the by-hand path when AI is off, and "I'll match
-// them myself" sending nothing.
+// header) and answers like the Worker would. Then: our own rules when AI is off. R-157 (28 Oct 2026):
+// no "Ask AI" button any more; the sheet goes to the AI by itself, once, when it opens.
 import { writeFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
@@ -51,19 +51,16 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   await chooseFile(page, csv);
   const main = page.getByRole('main');
 
-  // Asked first, in one line; the Aadhaar column is already set aside.
-  await expect(main).toContainText('Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.');
+  // R-157: no question and no button: the AI is asked by itself, once. The Aadhaar column is set aside.
+  await expect(page.getByRole('button', { name: 'Ask AI' })).toHaveCount(0);
+  await expect(main).toContainText('AI matched 3 columns. Check the boxes below and change any that are wrong.');
   await expect(main).toContainText('Not imported: Column D “Aadhaar No.” has Aadhaar numbers. ID numbers are never imported.');
-  expect(sent).toHaveLength(0);
-  await expectFitsPhone(page, 'on the AI question');
+  await expectFitsPhone(page, 'after the AI matched');
 
-  await page.getByRole('button', { name: 'Ask AI' }).tap();
-  await expect(main).toContainText('AI matched 3 columns. They are marked “AI” below. Check them before you add.');
-  await expect(main).toContainText('19 AI matches left today.');
-
-  // What left the browser: column names and masked examples, no mobile, no Aadhaar, and (#59) no
-  // member's or referrer's name, only "[name]"; the key in a header.
+  // What left the browser: column names, masked examples and counts, no mobile, no Aadhaar, and
+  // (#59) no member's or referrer's name, only "[name]"; the key in a header.
   expect(sent).toHaveLength(1);
+  expect(sent[0].body).toContain('"stats":{"filled":100,"mobile":100');
   expect(sent[0].key.length).toBeGreaterThanOrEqual(16);
   expect(sent[0].body).not.toMatch(/9829050001|9829050002|2345 6789 0124|234567890124/);
   expect(sent[0].body).not.toMatch(/Ravi|Kumar|Sita|Devi|Sunil/);
@@ -112,7 +109,7 @@ test('J47 AI matches the columns: extra details come in, the Aadhaar column neve
   await expect.poll(() => server.rows('member').length).toBe(0);
 });
 
-test('J47b AI is off: the owner is told in one line and matches by hand; "I’ll match them myself" sends nothing', async ({ page }, testInfo) => {
+test('J47b AI is off: one calm line, our own rules matched, the import still works', async ({ page }, testInfo) => {
   await openApp(page);
   await startOnlineGym(page);
   const sent = await stubAi(page, () => ({ status: 503, body: { reason: 'off', error: 'AI matching is not switched on yet.' } }));
@@ -121,25 +118,51 @@ test('J47b AI is off: the owner is told in one line and matches by hand; "I’ll
   await chooseFile(page, csv);
   const main = page.getByRole('main');
 
-  await page.getByRole('button', { name: 'Ask AI' }).tap();
-  await expect(main).toContainText('AI matching is not switched on yet. Match the columns yourself below.');
+  await expect(main).toContainText('Matched without AI (it was not available). Check the columns below.');
   expect(sent).toHaveLength(1);
+  await expect(page.getByRole('button', { name: 'Ask AI' })).toHaveCount(0);
 
-  // By hand: the locker column is already kept (#36: every column is, unless unticked), with its own name.
+  // Our rules: the locker column is already kept (#36: every column is, unless unticked), with its own name.
   await expect(page.getByRole('checkbox', { name: /Keep Column C “Lkr”/ })).toBeChecked();
   await expect(main).toContainText('Lkr: 12');
   await page.getByRole('button', { name: 'Add 2 members' }).tap();
   await expect(main).toContainText('2 added, 0 skipped');
+});
 
-  // A second file: the owner says no; the card goes and nothing is sent.
-  await page.getByRole('button', { name: 'Import another file' }).tap();
-  const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Choose file' }).tap();
-  const csv2 = testInfo.outputPath('register2.csv');
-  await writeFile(csv2, REGISTER.replace(/98290500/g, '98290600'));
-  await (await chooser).setFiles(csv2);
-  await page.getByRole('button', { name: 'I’ll match them myself' }).tap();
-  await expect(page.getByRole('button', { name: 'Ask AI' })).toHaveCount(0);
+// R-155 / R-157: Phone (landlines, blanks), Home phone, Cell phone (the real mobiles).
+const PHONES = [
+  'Name,Phone,Home phone,Cell phone,Plan',
+  'Asha Test,0141-2745101,,9876500011,Monthly',
+  'Ravi Test,,0141-2745102,9876500012,Monthly',
+  'Neha Test,0141-2745103,,9876500013,Monthly',
+  'Sunil Test,,9876500025,,Monthly',
+  '',
+].join('\n');
+
+test('J47c several phone columns: Mobile is Cell phone, the AI marks it, an empty cell falls back', async ({ page }, testInfo) => {
+  const server = await openApp(page);
+  await startOnlineGym(page);
+  const sent = await stubAi(page, () => ({
+    status: 200,
+    body: {
+      columns: [
+        { column: 0, target: 'fullName', confidence: 0.99 },
+        { column: 1, target: 'phone', confidence: 0.97 }, // wrong: our counts refuse it
+        { column: 3, target: 'extra:Cell', confidence: 0.6 },
+      ],
+      provider: 'gemini',
+      left: 18,
+    },
+  }));
+  const csv = testInfo.outputPath('phones.csv');
+  await writeFile(csv, PHONES);
+  await chooseFile(page, csv);
+  const main = page.getByRole('main');
+  await expect(main).toContainText(/AI (matched|checked)/);
   expect(sent).toHaveLength(1);
-  await expect(page.getByRole('button', { name: 'Add 2 members' })).toBeVisible();
+  await expect(page.getByLabel(/^Mobile \*/)).toHaveValue('3');
+  await page.getByRole('button', { name: 'Add 4 members' }).tap();
+  await expect(main).toContainText('4 added, 0 skipped');
+  const phones = server.rows('member').map((m) => m.phone).sort();
+  expect(phones.join(' ')).toMatch(/9876500011.*9876500012.*9876500013.*9876500025/);
 });

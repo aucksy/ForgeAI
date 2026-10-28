@@ -1,19 +1,35 @@
 /**
- * "Ask AI to match the columns" (Project Tracker #47, option A + owner R-82, 23 Oct 2026). PURE.
+ * AI column matching for the member import (Project Tracker #47 + owner R-82, 23 Oct 2026; made
+ * automatic by owner R-157, 28 Oct 2026: "I do not want manual ask AI button. It should just use AI
+ * to identify the values and match with right fields automatically"). PURE.
  *
  * Our own word lists and value checks (importMembers.ts) place the columns first, free and tested.
- * When the owner says yes, the AI is shown only the column names and up to 5 example rows, with
- * mobile numbers, emails and ID numbers hidden, and names and addresses shown only as "[name]" /
- * "[address]" (owner, 24 Oct 2026, #59) (masked here, and again by the server). It answers
+ * Then, for the owner of an online gym, the sheet goes to the AI once, by itself: the column names,
+ * up to 5 example rows with mobile numbers, emails and ID numbers hidden (their length and shape
+ * kept: "98XXXXXX45"), names and addresses shown only as "[name]" / "[address]" (#59) (masked here,
+ * and again by the server), and per column a few counts our code works out (columnStats: how many
+ * cells are valid mobiles, dates, amounts, emails, empty), so it decides from the VALUES. It answers
  * only "column C is the expiry date / a new detail: Locker No. / not needed", with how sure it is.
- * Its answer is checked strictly against our field list; anything else is dropped. It fills only
- * what our rules left empty: a guess that disagrees with our rules is shown, never applied. Our
- * code then reads every date, mobile and rupee amount as before.
+ * Its answer is checked strictly against our field list. A sure answer (>= AI_SURE) is applied, and
+ * may change a column our rules picked when the counts back it (applyAiPicks). Our code then reads
+ * every date, mobile and rupee amount as before.
  *
  * The server half is deploy/panel/aiMatch.js (maskCell there is the same rule as here).
  */
 
-import { cellText, columnLetter, fieldLabel, IMPORT_FIELDS, MAX_IMPORT_ROWS, normalizeHeader, type ColumnMap, type ExtraColumn, type ImportField } from './importMembers';
+import {
+  cellText,
+  columnLetter,
+  fieldLabel,
+  IMPORT_FIELDS,
+  MAX_IMPORT_ROWS,
+  normalizeHeader,
+  parseImportMoney,
+  parseImportPhone,
+  type ColumnMap,
+  type ExtraColumn,
+  type ImportField,
+} from './importMembers';
 import { idColumnKind, isIdHeader, type IdKind } from './importIds';
 
 export const AI_EXAMPLE_ROWS = 5;
@@ -302,13 +318,64 @@ export function columnSamples(rows: readonly (readonly unknown[])[], headerRow: 
 
 // ---------------------------------------------------------------- what is sent
 
+/**
+ * R-157: what our own code sees in a column, as whole percentages of the data rows looked at (the
+ * first STATS_ROWS): filled, valid Indian mobiles, dates, rupee amounts, emails. Counts only, never
+ * a value: safe to send, and the AI decides from them rather than from the header.
+ */
+export interface ColumnStats {
+  filled: number;
+  mobile: number;
+  date: number;
+  amount: number;
+  email: number;
+}
+export const STATS_ROWS = 200;
+const STAT_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}/;
+
+function looksLikeDate(v: unknown): boolean {
+  if (v instanceof Date) return !Number.isNaN(v.getTime());
+  if (typeof v === 'number') return v >= 20000 && v <= 60000;
+  const t = cellText(v).trim();
+  return isRealDate(t) || ISO_DAY.test(t);
+}
+
+function looksLikeAmount(v: unknown): boolean {
+  if (parseImportPhone(v).ok) return false;
+  const p = parseImportMoney(cellText(v));
+  return p !== null && p >= 100_00 && p <= 5_00_000_00;
+}
+
+/** One column's counts (see ColumnStats). PURE. */
+export function columnStats(rows: readonly (readonly unknown[])[], headerRow: number, col: number): ColumnStats {
+  const body = dataRows(rows, headerRow, STATS_ROWS);
+  if (body.length === 0) return { filled: 0, mobile: 0, date: 0, amount: 0, email: 0 };
+  const cells = body.map((r) => r[col]).filter((v) => cellText(v) !== '');
+  const pct = (test: (v: unknown) => boolean) => Math.round((cells.filter(test).length * 100) / body.length);
+  return {
+    filled: Math.round((cells.length * 100) / body.length),
+    mobile: pct((v) => parseImportPhone(v).ok),
+    date: pct(looksLikeDate),
+    amount: pct(looksLikeAmount),
+    email: pct((v) => STAT_EMAIL.test(cellText(v).trim())),
+  };
+}
+
+/** Every column's counts, for the AI and for checking its answer. PURE. */
+export function sheetStats(rows: readonly (readonly unknown[])[], headerRow: number, width: number): ColumnStats[] {
+  return Array.from({ length: width }, (_, c) => columnStats(rows, headerRow, c));
+}
+
 export interface AiColumn {
   header: string;
   examples: string[];
+  stats?: ColumnStats;
 }
 
 /**
- * What the AI is shown: every column's name and its cells in the first 5 data rows, masked. An
+ * What the AI is shown: every column's name, its cells in the first 5 data rows, masked, and its
+ * counts (columnStats; an ID column only how full it is). An
  * ID-number column shows only that it is one; a names or addresses column only "[name]" /
  * "[address]" (hidePeople; `placed` = the columns our own rules already put in the name and
  * address boxes, hidden too whatever they look like). PURE.
@@ -325,9 +392,13 @@ export function aiColumnsPayload(
   const ids = new Set(idCols);
   return Array.from({ length: Math.min(width, AI_MAX_COLUMNS) }, (_, c) => {
     const head = maskCell(header[c]);
-    if (ids.has(c)) return { header: head, examples: sample.map((r) => (cellText(r[c]) ? '[ID number]' : '')) };
+    const stats = columnStats(rows, headerRow, c);
+    if (ids.has(c)) {
+      const examples = sample.map((r) => (cellText(r[c]) ? '[ID number]' : ''));
+      return { header: head, examples, stats: { filled: stats.filled, mobile: 0, date: 0, amount: 0, email: 0 } };
+    }
     const kind: PeopleKind | null = placed.fullName === c ? 'name' : placed.address === c ? 'address' : null;
-    return hidePeople(head, sample.map((r) => maskCell(r[c])), kind);
+    return { ...hidePeople(head, sample.map((r) => maskCell(r[c])), kind), stats };
   });
 }
 
@@ -374,22 +445,57 @@ export function parseAiPicks(raw: unknown, width: number): AiPick[] {
 
 export interface AiApplied {
   map: ColumnMap;
-  /** Fields the AI filled in (shown with an "AI" mark until the owner changes them). */
+  /** Fields the AI set (shown "Matched by AI" until the owner changes them). */
   aiFields: ImportField[];
   /** Extra-detail suggestions by column. */
   extras: Record<number, Pick<ExtraColumn, 'label' | 'on' | 'ai' | 'aiIgnored'>>;
-  /** Guesses shown but not applied: they disagree with our rules, or the AI was not sure. */
+  /** Guesses not applied: the AI was not sure, or the counts did not back it. */
   held: string[];
 }
 
+const DATE_FIELDS: readonly ImportField[] = ['joinedOn', 'dateOfBirth', 'startDate', 'paidOn', 'expiry'];
+const MONEY_FIELDS: readonly ImportField[] = ['total', 'amount', 'due'];
+const NO_STATS: ColumnStats = { filled: 0, mobile: 0, date: 0, amount: 0, email: 0 };
+
 /**
- * Fill in what our rules left empty. A field already placed, a column already used, an ID column:
- * never changed. PURE.
+ * R-157: do our own counts back putting `field` on the AI's column instead of `ruleCol` (the
+ * column our rules picked, or null)? Mobile: at least as many valid mobiles (so a "Phone" column of
+ * landlines loses to a "Cell phone" column of mobiles, never the other way). Email: at least as many
+ * emails. Dates and money: the AI's column is mostly dates / amounts. Anything else (name, plan,
+ * batch …): the AI's column has something in it and is not mostly mobiles, dates or amounts. PURE.
  */
-export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: readonly number[], headers: readonly string[]): AiApplied {
+export function statsBack(field: ImportField, aiCol: number, ruleCol: number | null, stats: readonly (ColumnStats | undefined)[]): boolean {
+  const ai = stats[aiCol] ?? NO_STATS;
+  const rule = ruleCol === null ? NO_STATS : stats[ruleCol] ?? NO_STATS;
+  if (field === 'phone') return ai.mobile > 0 && ai.mobile >= rule.mobile;
+  if (field === 'email') return ai.email > 0 && ai.email >= rule.email;
+  const half = Math.max(1, ai.filled / 2);
+  if (DATE_FIELDS.includes(field)) return ai.date >= half;
+  if (MONEY_FIELDS.includes(field)) return ai.amount >= half;
+  return ai.filled > 0 && ai.mobile < half && ai.date < half && ai.amount < half;
+}
+
+/**
+ * Apply the AI's answer, surest first. A sure pick (>= AI_SURE) fills an empty field, and (R-157)
+ * also moves a field our rules placed when `stats` back it (statsBack); a field that loses its
+ * column to the AI is emptied (a later pick may fill it). The AI never changes its own earlier pick,
+ * a column our rules and the AI agree on, or anything in `keep` (fields the owner chose by hand),
+ * and never touches an ID column. Without `stats`, the old rule: fill only what our rules left
+ * empty. PURE.
+ */
+export function applyAiPicks(
+  map: ColumnMap,
+  picks: readonly AiPick[],
+  idCols: readonly number[],
+  headers: readonly string[],
+  stats?: readonly (ColumnStats | undefined)[],
+  keep: readonly ImportField[] = [],
+): AiApplied {
   const out: ColumnMap = { ...map };
   const ids = new Set(idCols);
   const used = () => new Set(IMPORT_FIELDS.map((f) => out[f]).filter((c): c is number => c !== null));
+  const fieldAt = (col: number): ImportField | null => IMPORT_FIELDS.find((f) => out[f] === col) ?? null;
+  const locked = new Set<ImportField>(keep);
   const aiFields: ImportField[] = [];
   const extras: AiApplied['extras'] = {};
   const held: string[] = [];
@@ -399,10 +505,20 @@ export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: r
     const name = columnName(headers, p.column);
     if ('field' in p.target) {
       const field = p.target.field;
-      if (out[field] === p.column) continue; // our rules agree
-      const free = out[field] === null && !used().has(p.column);
-      if (free && p.confidence >= AI_SURE) {
+      if (out[field] === p.column) {
+        locked.add(field); // our rules agree: it stays
+        continue;
+      }
+      const holder = fieldAt(p.column);
+      const free = out[field] === null && holder === null;
+      const backed = stats !== undefined && statsBack(field, p.column, out[field], stats);
+      const allowed = free
+        ? stats === undefined || backed
+        : backed && !locked.has(field) && (holder === null || !locked.has(holder));
+      if (p.confidence >= AI_SURE && allowed) {
+        if (holder !== null) out[holder] = null;
         out[field] = p.column;
+        locked.add(field);
         aiFields.push(field);
       } else if (p.confidence >= 0.4) {
         held.push(`AI thinks ${name} is “${fieldLabel(field)}”${p.confidence < AI_SURE ? ' (not sure)' : ''}.`);
@@ -421,53 +537,54 @@ export function applyAiPicks(map: ColumnMap, picks: readonly AiPick[], idCols: r
   // An extra suggestion for a column a field just took is dropped.
   const taken = used();
   for (const c of Object.keys(extras).map(Number)) if (taken.has(c)) delete extras[c];
-  return { map: out, aiFields, extras, held };
+  return { map: out, aiFields: aiFields.filter((f) => out[f] !== null), extras, held };
 }
 
 // ---------------------------------------------------------------- asking the server
 
+/** R-157: one calm line each; the AI runs by itself, there is no button. */
 export const AI_WORDS = {
-  // #59 (24 Oct 2026): names and addresses are hidden too (member-words + Gemini pass).
-  ask: 'Ask AI to match the columns? It sends the column names and 5 example rows. Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.',
-  asking: 'Asking AI…',
-  off: 'AI matching is not switched on yet. Match the columns yourself below.',
-  limit: 'Today’s AI matches for your gym are used up. Match the columns yourself below, or try tomorrow.',
-  failed: 'The AI did not answer. Match the columns yourself below.',
-  /** #36: the AI answered, but was not sure of any column. */
-  unsure: 'The AI was not sure about these columns. Match them yourself below.',
-  offline: 'Could not reach the AI. Check the internet, or match the columns yourself below.',
-  owner: 'Only the owner can use AI matching. Match the columns yourself below.',
-  signin: 'Sign in again to use AI matching. You can match the columns yourself below.',
+  asking: 'Matching your columns with AI…',
+  /** Shown while the AI matches: what leaves this browser. */
+  privacy: 'Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.',
+  done: (n: number) => `AI matched ${n} ${n === 1 ? 'column' : 'columns'}. Check the boxes below and change any that are wrong.`,
+  /** The AI agreed with every column our own rules had placed. */
+  agreed: 'AI checked your columns and agrees with them. Check the boxes below.',
+  /** The AI could not be used (off, offline, today's limit, an error): our own rules matched. */
+  fallback: 'Matched without AI (it was not available). Check the columns below.',
+  /** On a field the AI set. */
+  tag: 'Matched by AI',
 } as const;
 
 export type AiAnswer =
   | { ok: true; picks: AiPick[]; left: number | null }
-  | { ok: false; words: string };
+  | { ok: false; why: 'limit' | 'owner' | 'signin' | 'off' | 'unreachable' | 'failed' | 'offline' };
 
 /** What the server's answer means for the owner. PURE. */
 export function aiAnswer(status: number, body: unknown, width: number): AiAnswer {
   const b = body && typeof body === 'object' ? (body as Record<string, unknown>) : {};
-  if (status === 200) {
+  // R-157: a 200 without the answer's shape (an HTML page, a proxy's error) is a failure, not "no picks".
+  if (status === 200 && Array.isArray(b.columns)) {
     const left = typeof b.left === 'number' && Number.isFinite(b.left) ? b.left : null;
     return { ok: true, picks: parseAiPicks(b, width), left };
   }
-  if (status === 429) return { ok: false, words: AI_WORDS.limit };
-  if (status === 403) return { ok: false, words: AI_WORDS.owner };
-  if (status === 401) return { ok: false, words: AI_WORDS.signin };
-  if (status === 503 && b.reason === 'off') return { ok: false, words: AI_WORDS.off };
-  if (status === 503 && b.reason === 'unreachable') return { ok: false, words: AI_WORDS.offline };
-  return { ok: false, words: AI_WORDS.failed };
+  if (status === 429) return { ok: false, why: 'limit' };
+  if (status === 403) return { ok: false, why: 'owner' };
+  if (status === 401) return { ok: false, why: 'signin' };
+  if (status === 503 && b.reason === 'off') return { ok: false, why: 'off' };
+  if (status === 503 && b.reason === 'unreachable') return { ok: false, why: 'unreachable' };
+  return { ok: false, why: 'failed' };
 }
 
 /**
  * POST /api/ai/match-columns (deploy/panel/aiMatch.js) with this device's sign-in key. Never throws:
- * every failure is a sentence, and the by-hand matching on the screen always works.
+ * every failure is a logged reason, and our own matching on the screen always stands.
  */
 export async function askAiForColumns(
   key: string,
   columns: readonly AiColumn[],
   fetcher: typeof fetch = fetch,
-  timeoutMs = 30_000,
+  timeoutMs = 45_000,
 ): Promise<AiAnswer> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -482,11 +599,12 @@ export async function askAiForColumns(
       console.warn('[ai-match] answer was not JSON', e);
       return null;
     });
-    if (res.status !== 200) console.warn('[ai-match] server answered', res.status);
-    return aiAnswer(res.status, body, columns.length);
+    const answer = aiAnswer(res.status, body, columns.length);
+    if (!answer.ok) console.warn('[ai-match] no AI match, our own rules stand:', res.status, answer.why);
+    return answer;
   } catch (e) {
-    console.warn('[ai-match] could not ask', e);
-    return { ok: false, words: AI_WORDS.offline };
+    console.warn('[ai-match] could not ask, our own rules stand', e);
+    return { ok: false, why: 'offline' };
   } finally {
     clearTimeout(timer);
   }
