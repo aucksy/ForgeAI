@@ -180,6 +180,7 @@ it "beaten" when it is the same number?
 45 kg more than last time; but "beaten" on an exact match reads wrong.
 **To decide later:** at done = target say "reached" / "hit" (green ok), keep "beaten" for more than the target; maybe
 also show "+45 kg on last time". Ties into R-138 / R-143 (the whole suggestion review).
+**Fixed (28 Oct):** the exercise card's live line now says "1,925 kg reached ✓" when done = the kg to beat exactly (as it reads on screen), still green; "beaten ✓ (… done)" only when more was lifted. Same for the reps line ("45 reps reached ✓"). Those two lines (kgLiveLine / repLiveLine in tracker/lib/kgTarget.ts) are the only places the word is built; the finish screen's "beat their best" is about records and was left alone. Test: test/tracker/r146ReachedNotBeaten.test.ts.
 
 ## R-145. Resume workout: scroll back to the exercise in progress — 27 Oct 2026
 **Owner said (notes only):** when you leave the active workout screen and tap "Resume workout", it should scroll

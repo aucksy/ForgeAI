@@ -224,9 +224,15 @@ export function repSetLines(p: KgPlan): string[] {
   return p.sets.map((s, i) => `Set ${i + 1} · ${repsText(s.reps)}`);
 }
 
-/** R-60, during the workout: "20 of 45 reps · next 12, 13" / "45 reps beaten ✓ (47 done)". PURE. */
+/**
+ * R-60, during the workout: "20 of 45 reps · next 12, 13" / "45 reps beaten ✓ (47 done)".
+ * R-146: exactly the plan is "45 reps reached ✓" ("beaten" only for more). PURE.
+ */
 export function repLiveLine(p: KgPlan, g: KgProgress): string {
-  if (kgBeaten(g)) return `${repsText(p.total)} beaten ✓ (${Math.round(g.done)} done)`;
+  if (kgBeaten(g)) {
+    if (Math.round(g.done) === Math.round(p.total)) return `${repsText(p.total)} reached ✓`;
+    return `${repsText(p.total)} beaten ✓ (${Math.round(g.done)} done)`;
+  }
   const head = `${Math.round(g.done)} of ${repsText(p.total)}`;
   if (g.next.length === 0) return `${head} · ${repsText(g.left)} short, add a set if you have it in you`;
   return `${head} · next ${g.next.map((s) => s.reps).join(', ')}${g.short ? ' (a little short is fine)' : ''}`;
@@ -251,14 +257,24 @@ export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
   return p.sets.map((s, i) => `Set ${i + 1} · ${weight(s.weightKg)} × ${s.reps}${s.asLast ? ' (as last time)' : ''}`);
 }
 
-/** Every kilo to beat is lifted: the live line says "beaten" (and turns green, R-65). PURE. */
+/**
+ * Every kilo to beat is lifted: the live line turns green (R-65) and says "reached" (exactly the
+ * plan, R-146) or "beaten" (more). PURE.
+ */
 export function kgBeaten(g: KgProgress): boolean {
   return g.left <= 1e-9;
 }
 
-/** During the workout: "410 of 765 kg · next 42.5 kg × 7, 7" / "765 kg beaten ✓". PURE. */
+/**
+ * During the workout: "410 of 765 kg · next 42.5 kg × 7, 7" / "765 kg beaten ✓ (780 kg done)".
+ * R-146 (owner, 27 Oct 2026): done = the plan exactly (as it reads on screen) is "765 kg reached ✓";
+ * "beaten" only when more was lifted. PURE.
+ */
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
-  if (kgBeaten(g)) return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
+  if (kgBeaten(g)) {
+    if (total(g.done) === total(p.total)) return `${total(p.total)} reached ✓`;
+    return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
+  }
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
   if (g.next.length === 0) return `${head} · ${total(g.left)} short, add a set if you have it in you`;
