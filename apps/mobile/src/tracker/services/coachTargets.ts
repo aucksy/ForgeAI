@@ -404,7 +404,7 @@ export async function getTargetsForCards(
   if (items.length === 0) return out;
   const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
   const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, gym: opts.gym });
-  const [targets, rir] = await Promise.all([routineFirstTargets(items, true, scope, planDayId, prefs), effortRir(planDayId, opts)]);
+  const [targets, rir] = await Promise.all([scopedTargets(items, true, scope, prefs), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio
     out.set(keys[i], opts.easy ? toEasyTarget(t, EASY_REASON, easySets) : withEffort(t, rir, rir != null ? effortReason(rir) : ''));
@@ -413,43 +413,28 @@ export async function getTargetsForCards(
 }
 
 /**
- * 16 Oct 2026 audit (C3-3): under "Any workout" (no scope) a routine's Target reads THAT
- * routine's own last time first, and every workout only for a lift the routine has never done.
- * With heavy and light days of the same lift, the heavy day took the light day's Target
- * ("82.5 kg · aim for 3" after a 100 kg x 5 heavy day). PREVIOUS and notes still read every
- * workout.
+ * The Targets of a routine's workout, from the SAME workouts its PREVIOUS column shows.
  *
- * R-61 (owner, 22 Oct 2026: "If the same exact exercise were done recently, even in a different
- * folder, then also"): heavy and light days live in one folder, so only a newer workout of the SAME
- * folder leaves the routine its own Target; one done since in another folder (or in no routine)
- * leads. And a break is a break from the lift under "Same routine" too: its break clock counts from
- * the newest day anywhere (`breakFromISO`), while its weights stay this routine's own (review: the
- * whole other Target used to come in, disagreeing with PREVIOUS and the grey hints).
+ * R-138 (owner, 27 Oct 2026: the "kg to beat" read a different last time than PREVIOUS): under
+ * "Any workout" (no scope) the Target used to read the routine's OWN last time first (16 Oct audit
+ * C3-3, kept by R-61 for a folder's heavy and light days) while PREVIOUS read the newest workout
+ * anywhere. Push 1 and Push 2 of one folder then disagreed on one card: PREVIOUS 20 Oct Push 1
+ * (19, 16, 15, 14), the Target 13 Oct Push 2 (19, 15, 15, 14), and a "kg to beat" equal to what
+ * PREVIOUS already showed. Now "Any workout" reads every workout for both, and "Same routine" keeps
+ * both on the routine's own workouts (the choice for separate heavy and light days).
+ *
+ * R-61 (kept): under "Same routine" a break is a break from the LIFT — its break clock counts from
+ * the newest day anywhere (`breakFromISO`), while its weights stay this routine's own, as PREVIOUS
+ * and the grey hints show them.
  */
-async function routineFirstTargets(
+async function scopedTargets(
   items: TargetItem[],
   includeToday: boolean,
   scope: HistoryScope | null,
-  planDayId: string,
   prefs: TargetPrefs = targetPrefs(),
 ): Promise<ProgressionTarget[]> {
-  // Wave-2 review: a break is a break from the LIFT, not from this routine — when the lift was done
-  // elsewhere after this routine's last time, the break rule (and its weight) reads every workout
-  // (routine at 80 kg 70 days ago, bench 110 x 5 two days ago: never "10 weeks since… 72.5 kg").
-  const breakRule = (t: ProgressionTarget): boolean => t.rule === 'R1' || t.rule === 'R1b' || t.rule === 'T1';
-  const newer = (a: ProgressionTarget, b: ProgressionTarget): boolean =>
-    a.last?.dateISO != null && b.last?.dateISO != null && a.last.dateISO > b.last.dateISO;
-  if (scope != null) return targetsFor(items, includeToday, scope, prefs, await newestAnywhere(items, includeToday));
-  const own = await historyScopeOrAll(planDayId, 'routine');
-  if (own == null) return targetsFor(items, includeToday, null, prefs);
-  const [mine, any] = await Promise.all([targetsFor(items, includeToday, own, prefs), targetsFor(items, includeToday, null, prefs)]);
-  const outside = await newestOutsideFolder(items, mine, any, planDayId, includeToday, newer);
-  return mine.map((t, i) => {
-    if (t.action === 'start') return any[i];
-    // R-61: the newest workout of the lift is outside this routine's folder.
-    if (outside[i]) return any[i];
-    return breakRule(t) && newer(any[i], t) ? any[i] : t;
-  });
+  if (scope == null) return targetsFor(items, includeToday, null, prefs);
+  return targetsFor(items, includeToday, scope, prefs, await newestAnywhere(items, includeToday));
 }
 
 /** R-61 review: each lift's newest day in any workout (null when none, or the read failed). */
@@ -467,38 +452,6 @@ async function newestAnywhere(items: readonly TargetItem[], includeToday: boolea
     console.warn('[ForgeErr] targets: the newest workout of each lift could not be read', e);
     return items.map(() => null);
   }
-}
-
-/**
- * R-61: for each lift, is its newest workout anywhere OUTSIDE this routine's folder? Only lifts done
- * somewhere since this routine's own last time are asked (usually none), with one read of the
- * folder's newest workout per lift — never a third full set of Targets (phone statement budget).
- */
-async function newestOutsideFolder(
-  items: readonly TargetItem[],
-  mine: readonly ProgressionTarget[],
-  any: readonly ProgressionTarget[],
-  planDayId: string,
-  includeToday: boolean,
-  newer: (a: ProgressionTarget, b: ProgressionTarget) => boolean,
-): Promise<boolean[]> {
-  const out = mine.map(() => false);
-  const ask = mine.flatMap((t, i) => (t.action !== 'start' && newer(any[i], t) ? [i] : []));
-  if (ask.length === 0) return out;
-  const folder = await historyScopeOrAll(planDayId, 'folder');
-  if (folder == null) return out;
-  const today = todayISO();
-  const newest = await getProgressionHistoryMany(
-    ask.map((i) => ({ exerciseId: items[i].exerciseId ?? items[i].pe.exerciseId })),
-    2,
-    { scope: folder },
-  );
-  ask.forEach((i, k) => {
-    const inFolder = newest[k].find((h) => (includeToday ? h.dateISO <= today : h.dateISO < today));
-    const anyLast = any[i].last?.dateISO;
-    out[i] = inFolder != null && anyLast != null && anyLast > inFolder.dateISO;
-  });
-  return out;
 }
 
 /**
@@ -568,7 +521,7 @@ export async function getTodaysWorkoutWithTargets(): Promise<Omit<TodaysWorkout,
     return { pe, card };
   });
   const [targets, now, rir] = await Promise.all([
-    routineFirstTargets(items, false, scope, day.id),
+    scopedTargets(items, false, scope),
     getPlanNow().catch(() => null),
     // C3-11: this plan week's effort for members who log RPE, as on the workout screen.
     effortRir(day.id, { effort: useTrackerPrefs.getState().advancedSets }).catch((e: unknown) => {

@@ -181,9 +181,10 @@ export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: strin
   {
     value: 'any',
     label: 'Any workout',
-    // C3-3 + R-61: heavy and light days of one folder keep their own Target; a newer workout in
-    // another folder leads.
-    line: 'Previous, Target and notes come from the last time you did the exercise, in any folder. Heavy and light days in one folder keep their own Target. Applies from your next workout.',
+    // R-138 (28 Oct 2026): the Target reads the same last time as PREVIOUS (the newest workout
+    // anywhere); the C3-3 "heavy and light days keep their own Target" exception is gone, so its
+    // sentence is too. Separate heavy and light days: "Same routine".
+    line: 'Previous, Target and notes come from the last time you did the exercise, in any folder. Applies from your next workout.',
   },
   { value: 'routine', label: 'Same routine', line: 'Previous, Target and notes come from the last time you did it in this routine. Applies from your next workout.' },
   // R-61 (owner, 22 Oct 2026: "It shouldn't be even folder"): "Same folder" is retired; a saved one

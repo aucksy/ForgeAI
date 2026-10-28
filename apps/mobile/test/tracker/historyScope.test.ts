@@ -92,8 +92,8 @@ describe('the workout’s routine and the setting', () => {
   it('two choices, each with one plain line (R-61: "Same folder" is retired)', () => {
     expect(PREVIOUS_FROM_CHOICES.map((c) => c.label)).toEqual(['Any workout', 'Same routine']);
     for (const c of PREVIOUS_FROM_CHOICES) expect(c.line).toMatch(/^Previous, Target and notes come from the last time you did/);
-    // C3-3 + R-61: heavy and light days of one folder keep their own Target.
     expect(PREVIOUS_FROM_CHOICES[0].line).toContain('in any folder');
-    expect(PREVIOUS_FROM_CHOICES[0].line).toContain('Heavy and light days in one folder keep their own Target.');
+    // R-138: the Target reads the same last time as PREVIOUS; no heavy / light day exception.
+    expect(PREVIOUS_FROM_CHOICES[0].line).not.toContain('Heavy and light');
   });
 });

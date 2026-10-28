@@ -65,7 +65,7 @@ appId: com.mettleup.app
 - tapOn: "^Any workout$"
 - scrollUntilVisible:
     # C3-3 + R-61: heavy and light days of one folder keep their own Target; a newer workout elsewhere leads.
-    element: "Previous, Target and notes come from the last time you did the exercise, in any folder. Heavy and light days in one folder keep their own Target. Applies from your next workout."
+    element: "Previous, Target and notes come from the last time you did the exercise, in any folder. Applies from your next workout."
     timeout: 30000
 - takeScreenshot: p9-01b-previous-values
 # Last time's numbers → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is

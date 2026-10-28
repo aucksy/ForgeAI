@@ -218,6 +218,14 @@ PREVIOUS column 19 @9, 16 @9, 15 @9.5, 14 @9; the Target text says "Last time 19
 in coachTargets.ts not cleared when a past workout is edited (16 -> 15?); (3) set order in mainSets. Fix: Target and
 PREVIOUS read the same workout; a test that the plan never aims below last time on any set it has; show the
 "+%" (or "same as last time") also when the set count differs.
+**Fixed (28 Oct):** suspect (1). Under "Any workout" the Target read THIS routine's own last time first (16 Oct
+audit C3-3, kept by R-61 for heavy/light days in one folder) while PREVIOUS read the newest workout anywhere. He
+alternates Push 1 / Push 2 in one folder: on Push 2 PREVIOUS showed 20 Oct Push 1, the Target 13 Oct Push 2.
+Reproduced exactly in a real-SQLite test (target 19,15,15,14 vs PREVIOUS 19,16,15,14; plan 1,280 = PREVIOUS's total).
+Now "Any workout" Target reads the same newest workout as PREVIOUS; "Same routine" keeps both on the routine's own
+(the choice for separate heavy and light days). The Settings line lost its now-false sentence "Heavy and light days in
+one folder keep their own Target." Memo (2) and set order (3) ruled out. Test: test/db/r138KgToBeat.test.ts (Target =
+PREVIOUS in both settings; plan total above PREVIOUS's total, no set below). Still open: "+%" when set counts differ.
 
 ## R-134. Cost of "create a routine by speaking" (Hindi / English / Hinglish) — 26 Oct 2026
 **Owner asked:** cost with the cheapest good model if members create routines by speaking to AI.
