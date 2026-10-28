@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-160. To explore: the app's main colour picked from the gym's logo, without AI — 28 Oct 2026
+**He said:** "add to tracker a functionality to explore. Can we pick the foreground color of the app from the logo of the
+gym without using AI?"
+**Answer (chat):** yes, no AI needed: read the logo's pixels, group similar colours, take the strongest brand colour (skip
+white/black/grey background), then darken or lighten it until text on it is easy to read. Done once when the gym uploads
+its logo (admin app), saved with the gym; the owner sees the result and can change it. Added to the backlog as Idea.
+
 ## R-159. Privacy wording for the automatic AI import: A — 28 Oct 2026
 **He said:** "A" (update the notice to match the automatic AI; no per-import tick box).
 **Done:** "presses Ask AI" removed; the line now says the AI sees column names, 5 example rows and simple counts per column
