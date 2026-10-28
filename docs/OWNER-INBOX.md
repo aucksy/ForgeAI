@@ -132,6 +132,18 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Challenge rewards given out by themselves | Medium | Medium |
 | Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
 | Feature: Gym colour from its logo | Medium | Low |
+| Feature: Floating feedback button, by voice or typing | High | High |
+| Feature: Big "kg lifted vs last time" on the finish screen | High | Low |
+| Feature: Kg lifted per workout on each exercise's History | Medium | Low |
+| Feature: Body-weight moves count across all routines | Medium | Low |
+| Feature: Numbers for the gym owner (analytics) | High | Medium |
+| Feature: "What's new" in the admin app | Medium | Low |
+| Feature: UPI payments recorded in GGMS | High | High |
+| Feature: Long rest that inflates your reps | Medium | Medium |
+| Feature: Next sets adjust to how hard this set felt (RPE) | Medium | Medium |
+| Feature: Next set's weight and reps on the watch | Low | Low |
+| Feature: Make a routine by speaking | Medium | Medium |
+| Feature: Check-in QR that changes every minute | Medium | Medium |
 
 ---
 
@@ -275,10 +287,21 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | 1-rep max and % calculator | Planned | Type a weight and reps to see your 1-rep max, then 50-95% of it in plate-ready weights, from #58. | Opens from an exercise's chart and from the plate calculator. Uses the same formula as the estimated 1-rep max chart. On the phone only. |
 | Treadmill and cycle details | Planned | Log speed, incline, level and intervals for cardio machines, from #58. | Cardio exercises get extra fields (speed, incline or level) added without changing old workouts. History and charts show them. |
 | Log sets on the watch | Idea | Parked (Claude, 24 Oct): few members wear Wear OS watches; from #58. | The watch would show the current set with a Done button. Waits until members ask. |
+| Floating feedback button, by voice or typing | Planned | PRIORITY (R-149): real gym members start testing about 2 Nov. A small button on every screen; speak in Hindi or English, or type. | A small round button floats on every screen of the member app. Tap it, then speak (Hindi, English or Hinglish) or type; the phone turns speech into text for free. The note reaches us with the screen it came from. Claude sorts each note, fixes what it can and releases the fix after the tests pass; anything that changes live data or money still waits for your yes. |
+| Big "kg lifted vs last time" on the finish screen | Planned | The win of the workout as the proud headline: "Last time 1,880 kg, today 1,925 kg" (R-147). | At the top of the workout-complete screen, one large card: today's kg lifted, last time's for the same routine, and "+45 kg" in green. A lighter day gets a kind line ("Lighter day: fine, keep going"). The same number goes on the share picture. |
+| Kg lifted per workout on each exercise's History | Planned | Opening an exercise from a workout shows the kg lifted for that exercise in each past workout, in the same style as your profile feed (R-141). | Each past workout card on the exercise's History tab gets a small row: kg lifted, sets and best set for that exercise (reps or time for moves with no weight). The workout in progress shows the same row at the top, so today vs last time is one glance. Opened from a live workout, the chart starts on "Kg lifted per workout". |
+| Body-weight moves count across all routines | Waiting for you | Air squats, push-ups and other moves with no weight would use every workout for "last time" and the goal, whatever the routine or folder (R-136). One question first: does "count" also mean the leaderboard or weekly muscle sets? | With "Previous values" set to the same routine or folder, a body-weight move done somewhere else starts over today. With this, body-weight moves always look at every workout, empty workouts too; weighted lifts keep the folder rule (different gyms, different machines). A switch under Previous values, on by default. |
+| Long rest that inflates your reps | Idea | To study (R-140): resting much longer than planned gives extra reps, and next time's goal becomes too high. | The app would save the real rest before each set, mark a set done after a much longer rest than planned, and not raise next time's goal from that set. When rest is over: a stronger buzz and a red "+1:20 over" on the timer. Research on rest length vs reps first. |
+| Next sets adjust to how hard this set felt (RPE) | Idea | To study (R-144): if you did the reps and the set felt easier than planned, the next sets in the same workout suggest a little more. | After you tick a set with its effort score, the app compares it with the planned effort. Clearly easier: the next sets get a rep or one weight step more, within safe limits. Research on how other apps do it first. |
+| Next set's weight and reps on the watch | Idea | Undecided (R-139): show the next set's target, maybe with last time's numbers beside it. | During rest the watch shows "Next: 20 kg x 15 (last time 20 x 16)". Option A: target and last time; option B: last time only. |
+| Make a routine by speaking | Idea | Members say "push day: bench, incline dumbbell, flyes" in Hindi, English or Hinglish and get a routine (R-134). About 5 paise each with the phone's free speech-to-text and a small AI. | The member taps a mic on the routines screen and speaks. The phone writes the words down for free, a small AI turns them into a routine with our exercise names, and the member checks it before saving. A daily limit keeps the cost tiny; the AI key stays on our server. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
+| Numbers for the gym owner (analytics) | Waiting for you | A dashboard of the numbers an owner checks: renewals due, money owed, members who stopped coming, busy hours, new members (R-150). Waits for you: which 5 numbers come first, and owner only or staff too. | The admin app's home gets 4-6 number tiles with a small trend line each; tap one for the list behind it (for example "expiring in 7 days" opens the members to call). A date range and an Excel export. First build: renewals due, dues and not-visited-lately, because they bring money back. |
+| "What's new" in the admin app | Planned | The admin app tells owners and staff what we released or fixed, with the version, like the member app does (R-148). | The first time the admin app opens after an update, a short card lists the changes in plain words; Settings keeps the list of earlier updates. Lines come from the same release notes, split into member and gym-staff changes. |
+| UPI payments recorded in GGMS | Waiting for you | Members pay by UPI with the gym's QR and the payment lands in the gym's GGMS records; then the card machine (R-153). Waits for your details: which QR, how GGMS takes payments, fees. | The member pays by UPI; the payment is matched to the member (by a payment link or a note) and saved in the gym's records by itself, so the desk types nothing. Details depend on the gym's QR provider and whether GGMS can take payments in. |
 | Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
@@ -318,6 +341,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Gym ↔ member links
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
+| Check-in QR that changes every minute | Idea | The poster's QR never changes, so a photo of it could check a member in from home (R-152). | A small screen at the desk (an old phone or tablet) shows a check-in QR that changes every minute, so only someone standing there can scan it. Or the app checks that the phone is near the gym when scanning. |
 | Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
 | Join from the welcome screen | Live | "Have a gym code? Join your gym" on the very first screen. |
 | Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
@@ -391,6 +415,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 66. What are the limits of Firebase pop-ups for us? — 28 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** ANSWERED
+**You asked (R-154):** a question on the limits of Firebase notifications, in the tracker.
+**My answer:**
+- **Cost:** Firebase pop-ups (Cloud Messaging) are free. No charge per message.
+- **How many:** up to 600,000 messages a minute for the whole project. Far more than we need.
+- **Per phone:** Google slows down a phone that gets a very large number of messages in a short time. A gym sends a few a day, so this never matters.
+- **Size:** each pop-up can carry up to about 4,000 letters. We send the gym name and the first line.
+- **Our own limit:** our sender runs on Cloudflare's free plan and reaches about 40 phones a minute; the rest go in the next minutes. A gym of 400 members reaches everyone in about 10 minutes. A paid Cloudflare plan (about $5 a month) makes it near-instant for any size, when we need it.
+- **When it can be late:** a phone with strict battery saving (some Xiaomi, Oppo, Vivo) may delay pop-ups. The app's own 15-minute check is the backup.
+
+Sources: https://firebase.google.com/docs/cloud-messaging/throttling-and-quotas and https://firebase.google.com/docs/cloud-messaging/scale-fcm
 
 ## 65. Your task: 1 minute so Google sign-in also works on the GitHub copy of the app — 25 Oct 2026
 **Chat:** ForgeAI Local Chat
