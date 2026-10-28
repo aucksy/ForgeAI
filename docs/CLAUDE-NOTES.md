@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-169. "Waiting for you" = I cannot start until he acts — 28 Oct 2026
+**He said:** "There are features waiting for me and I moved them to Planned and commented on few.. but I still see them... Am I confused here"
+**Found:** only 2 moves (long rest, RPE -> Planned) and 1 comment (busy by exercise) ever reached the page data; all 3 were applied. No move was lost after that.
+**New rule:** a row waits for him only when I cannot build anything until he acts (money, his details, a gym visit, the client buying hardware,
+or a finished build that needs only his live yes). If I can build first and only the final live switch needs him, it is Planned.
+**Done:** moved to Planned: demo clips (free clip maker; paid set optional), member data export, own history before a gym (my rule), FitPass members,
+challenge rewards. CLAUDE.md R-81 line updated to match.
+
 ## R-168. Tracker: built work shows as built; only real asks wait for him — 28 Oct 2026
 **He said:** "ensure tracker is updated with features already built or aligned now to be built ... and not showing for me to be waiting for me".
 Also a feature comment on "Busy times by exercise": learn from data and routines which equipment gets busy by day and hour; show only at high confidence.
