@@ -15,6 +15,15 @@ Run by .github/workflows/play-upload.yml after a v* tag's release is published (
   4. Commits the edit (sent for review where Play does that). A problem with the CLOSED track (in
      review, blocked, missing) is logged as a warning and the internal track still goes out.
   --dry-run: everything except the commit: Play validates the edit, then it is thrown away.
+
+  play_upload.py --wear --tag v0.60.0 --aab mettleup-v0.60.0-wear.aab [--dry-run]
+R-167 (28 Oct 2026): the WATCH app's bundle (the Wear OS form factor of the same Play app) to the
+Wear OS internal testing track, "wear:qa" (Android Publisher API: a form-factor track is
+"<prefix>:<default name>", Wear OS prefix "wear", internal testing "qa";
+developers.google.com/android-publisher/tracks). Its versionCode is the watch's own
+(release_checks.wear_version_code_for). In --wear mode only "wear:" tracks are accepted, and the
+phone mode refuses every form-factor track, so neither run can touch the other's releases.
+Production (any form factor) is always refused.
 """
 import argparse
 import os
@@ -23,13 +32,36 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from play_common import PACKAGE, fail, finish_edit, http_error_text, log, service, warn  # noqa: E402
-from release_checks import version_code_for  # noqa: E402
+from release_checks import version_code_for, wear_version_code_for  # noqa: E402
 
 NOTES_LIMIT = 500
 FALLBACK_NOTES = "Small fixes and improvements."
 INTERNAL = "internal"
 CLOSED = "alpha"
 PRODUCTION = "production"
+WEAR_PREFIX = "wear:"
+WEAR_INTERNAL = "wear:qa"
+
+
+def is_production(name):
+    """'production' or a form factor's production track ('wear:production'). PURE."""
+    return name == PRODUCTION or name.endswith(":" + PRODUCTION)
+
+
+def check_tracks(tracks, wear):
+    """The tracks this run may touch, or ValueError. PURE.
+    Phone run: plain tracks only (internal, alpha...). Watch run (--wear): 'wear:' tracks only.
+    Never a production track."""
+    if not tracks:
+        raise ValueError("no track given")
+    for t in tracks:
+        if is_production(t):
+            raise ValueError(f"refusing to touch the production track '{t}'")
+        if wear and not t.startswith(WEAR_PREFIX):
+            raise ValueError(f"the watch bundle goes only to Wear OS tracks ('wear:...'), not '{t}'")
+        if not wear and ":" in t:
+            raise ValueError(f"the phone bundle never goes to a form-factor track ('{t}')")
+    return tracks
 
 _STR = r"'(?:[^'\\\n]|\\.)*'|\"(?:[^\"\\\n]|\\.)*\""
 
@@ -153,9 +185,13 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
 
     changed = []
     for name in tracks:
-        if name == PRODUCTION:
+        if is_production(name):
             fail("Refusing to touch the production track.")
         track = by_name.get(name)
+        if track is None and name.startswith(WEAR_PREFIX):
+            # A Wear OS track may not be listed until its first release: set it all the same.
+            log(f"Track '{name}' is not listed yet (tracks: {sorted(by_name)}); creating its first release.")
+            track = {"track": name, "releases": []}
         if track is None:
             msg = f"Track '{name}' does not exist on Play (tracks: {sorted(by_name)})."
             if name == CLOSED:
@@ -200,7 +236,8 @@ def main():
     ap.add_argument("--tag", required=True, help="the release tag, e.g. v0.57.0")
     ap.add_argument("--aab", required=True, help="the release's mettleup-<tag>.aab")
     ap.add_argument("--whats-new", default="apps/mobile/src/lib/whatsNew.ts")
-    ap.add_argument("--tracks", default=f"{INTERNAL},{CLOSED}")
+    ap.add_argument("--tracks", default=None, help=f"default {INTERNAL},{CLOSED}; with --wear {WEAR_INTERNAL}")
+    ap.add_argument("--wear", action="store_true", help="the WATCH app's bundle (Wear OS tracks, the watch's versionCode)")
     ap.add_argument("--language", default="en-US")
     ap.add_argument("--dry-run", action="store_true", help="validate the edit, never commit it")
     a = ap.parse_args()
@@ -208,7 +245,7 @@ def main():
     if not re.fullmatch(r"v\d+\.\d+\.\d+", a.tag):
         fail(f"'{a.tag}' is not a release tag like v0.57.0.")
     version = a.tag[1:]
-    code = version_code_for(version)
+    code = wear_version_code_for(version) if a.wear else version_code_for(version)
     with open(a.whats_new, encoding="utf-8") as f:
         lines = whats_new_lines(f.read(), version)
     notes = release_notes(lines)
@@ -218,8 +255,13 @@ def main():
     if not notes:
         warn(f"No What's new lines for {version}; using '{FALLBACK_NOTES}'.")
         notes = FALLBACK_NOTES
-    tracks = [t.strip() for t in a.tracks.split(",") if t.strip()]
-    log(f"MettleUp {version} = versionCode {code}; tracks {tracks}; {'DRY RUN' if a.dry_run else 'LIVE'}")
+    default_tracks = WEAR_INTERNAL if a.wear else f"{INTERNAL},{CLOSED}"
+    try:
+        tracks = check_tracks([t.strip() for t in (a.tracks or default_tracks).split(",") if t.strip()], a.wear)
+    except ValueError as e:
+        fail(str(e))
+    what = "watch (Wear OS)" if a.wear else "phone"
+    log(f"MettleUp {version} {what} = versionCode {code}; tracks {tracks}; {'DRY RUN' if a.dry_run else 'LIVE'}")
     log(f"Release notes ({len(notes)} chars, {a.language}):\n{notes}")
 
     api = service()

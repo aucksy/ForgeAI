@@ -142,6 +142,46 @@ class Idempotency(unittest.TestCase):
         self.assertNotIn(pu.PRODUCTION, (pu.INTERNAL, pu.CLOSED))
 
 
+class WearTracks(unittest.TestCase):
+    """R-167: the watch bundle goes to the Wear OS internal track only; neither run touches the other's."""
+
+    def test_wear_internal_track_name(self):
+        # developers.google.com/android-publisher/tracks: "<prefix>:<default name>", Wear OS "wear", internal "qa".
+        self.assertEqual(pu.WEAR_INTERNAL, "wear:qa")
+        self.assertEqual(pu.check_tracks([pu.WEAR_INTERNAL], wear=True), ["wear:qa"])
+
+    def test_watch_run_takes_wear_tracks_only(self):
+        for bad in (["internal"], ["alpha"], ["wear:qa", "internal"]):
+            with self.assertRaises(ValueError, msg=bad):
+                pu.check_tracks(bad, wear=True)
+
+    def test_phone_run_never_takes_a_form_factor_track(self):
+        self.assertEqual(pu.check_tracks(["internal", "alpha"], wear=False), ["internal", "alpha"])
+        for bad in (["wear:qa"], ["internal", "wear:beta"], ["tv:qa"]):
+            with self.assertRaises(ValueError, msg=bad):
+                pu.check_tracks(bad, wear=False)
+
+    def test_production_refused_in_every_form_factor(self):
+        for wear, t in ((False, "production"), (True, "wear:production")):
+            with self.assertRaises(ValueError):
+                pu.check_tracks([t], wear=wear)
+        self.assertTrue(pu.is_production("wear:production"))
+        self.assertFalse(pu.is_production("wear:qa"))
+        with self.assertRaises(ValueError):
+            pu.check_tracks([], wear=True)
+
+    def test_watch_version_code(self):
+        self.assertEqual(pu.wear_version_code_for("0.60.0"), 1_000_060_000)
+
+    def test_workflow_uploads_the_watch_bundle_to_wear_qa_only(self):
+        with open(os.path.join(ROOT, ".github", "workflows", "play-upload.yml"), encoding="utf-8") as f:
+            wf = f.read()
+        self.assertIn('--pattern "mettleup-$TAG-wear.aab"', wf)
+        self.assertIn("--wear", wf)
+        self.assertIn("--tracks wear:qa", wf)
+        self.assertNotIn("wear:production", wf)
+
+
 class ReviewRefusals(unittest.TestCase):
     def test_review_refusals_are_recognised(self):
         from play_common import needs_not_sent_for_review as n

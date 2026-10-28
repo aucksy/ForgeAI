@@ -166,6 +166,27 @@ class VersionCodeTests(unittest.TestCase):
                 rc.version_code_for(bad)
 
 
+class WearVersionCodeTests(unittest.TestCase):
+    """R-167: the watch's Play bundle needs its own versionCode in the same app (com.mettleup.app)."""
+
+    def test_one_billion_above_the_phone(self):
+        self.assertEqual(rc.wear_version_code_for("0.59.0"), 1_000_059_000)
+        self.assertEqual(rc.wear_version_code_for("v1.2.3"), 1_001_002_003)
+
+    def test_never_collides_and_always_above(self):
+        vs = ["0.0.1", "0.59.0", "0.60.0", "0.999.999", "1.0.0", "9.9.9", "999.999.999"]
+        phone = [rc.version_code_for(v) for v in vs]
+        wear = [rc.wear_version_code_for(v) for v in vs]
+        self.assertFalse(set(phone) & set(wear))
+        self.assertTrue(all(w > max(phone) for w in wear))
+        self.assertEqual(wear, sorted(wear))
+        self.assertLessEqual(max(wear), 2_100_000_000)  # Play's versionCode limit
+
+    def test_rejects_a_major_without_room(self):
+        with self.assertRaises(ValueError):
+            rc.wear_version_code_for("1000.0.0")
+
+
 class PhoneAssetTests(unittest.TestCase):
     """v0.46: a release also carries the watch APK; the checks must always take the phone's."""
 
@@ -261,6 +282,20 @@ class ReleaseAssetNameTests(unittest.TestCase):
             # Only the watch APK may keep the forgeai prefix (no app looks it up by name).
             if f.startswith(rc.OLD_PHONE_APK_PREFIX):
                 self.assertTrue(f.endswith("-wear.apk"), f)
+
+    def test_watch_files_are_mettleup_and_signed(self):
+        # R-167: the watch APK and the watch AAB (Play, Wear OS) under MettleUp names; the watch AAB is
+        # signed in the same loop as the phone AAB (the same upload key) and built with its own code.
+        self.assertIn('cp "$WEAR" "mettleup-${GITHUB_REF_NAME}-wear.apk"', self.wf)
+        self.assertIn('cp "$WEAR_AAB" "mettleup-${GITHUB_REF_NAME}-wear.aab"', self.wf)
+        self.assertIn('for AAB in "$AAB" "mettleup-${GITHUB_REF_NAME}-wear.aab"; do', self.wf)
+        self.assertIn(':wear:bundleRelease', self.wf)
+        self.assertIn('-PwearVersionCode="$WEAR_CODE"', self.wf)
+        self.assertNotIn("forgeai-${GITHUB_REF_NAME}-wear", self.wf)
+        # The phone's own files keep exact names, so no watch file is ever taken for the phone's.
+        self.assertIsNone(rc.phone_apk_asset([{"name": "mettleup-v0.60.0-wear.apk"}]))
+        self.assertEqual(rc.phone_apk_asset([{"name": "mettleup-v0.60.0-wear.apk"}, {"name": "mettleup-v0.60.0.apk"}])["name"],
+                         "mettleup-v0.60.0.apk")
 
     def test_release_title_says_mettleup(self):
         self.assertIn("name: MettleUp ${{ github.ref_name }}", self.wf)
