@@ -231,6 +231,38 @@ notification shade" = Waiting for you (Firebase project). No Firebase messaging 
 **DECIDED (28 Oct, question box): "Both: quick now, real push next".** Step 1 (today): background check of the gym inbox
 about every 15 min + a local phone pop-up, released. Step 2: real FCM push (Firebase on forgeai-d7eea, app token, server
 table 0038 + sender, privacy line) — needs his Google sign-in in the OpenCode browser, his yes for 0038 and the wording.
+**Findings (28 Oct, code read):**
+- App: expo-notifications is only used for LOCAL notifications (gymReminders.ts, tracker/phone/reminders.ts,
+  restCard.ts, workoutAlerts.ts). No getDevicePushTokenAsync / FCM token, no google-services.json, no Firebase
+  dependency. The inbox (shop/inbox.ts, inboxStore.ts, InboxScreen.tsx; refreshed by gymActions.ts via gymApi.ts) is
+  read from the server only while the app runs, so the bell badge appears only after opening the app.
+- Server: 0008_gym_messages.sql stores notices; nothing sends a push ("Push to the phone's notification shade comes
+  with Firebase (Phase 1b)"). No device-token table.
+- Firebase: no messaging project exists (only the Test Lab idea, R-29). Google Cloud project forgeai-d7eea
+  (simpleapps108) already holds the MettleUp Android OAuth clients (R-128): add Firebase to THAT project.
+**State when he paused (28 Oct):** step 1 handed to a background helper in the OpenCode session (expo-background-task +
+expo-task-manager, ~15-min inbox check, local pop-up on a "Messages from your gym" channel, tap opens the inbox, no
+repeat / no flood of old notices, "Messages from my gym" switch). Its work is UNCOMMITTED in the working tree until
+reviewed; if the session ended, check `git status` / `git diff` in apps/mobile first and continue from it (do not
+start a second copy). Firebase sign-in tab was left open; he said "will do it later".
+**Next actions:**
+1. Step 1: review the helper's diff (registration in the app entry, Android manifest needs, no flood, setting +
+   backup guard), typecheck + vitest + eslint, commit, phone tests (default + owner + journeys), release 0.58.1 (the
+   Play upload runs by itself), APK link, test on a real phone: app closed, send a notice from the admin panel, a
+   pop-up within ~15 min (battery-saver brands may delay it).
+2. Step 2 (when he signs in to Google as simpleapps108 in the browser): Firebase console → add Firebase to
+   forgeai-d7eea, register Android app com.mettleup.app (+ SHA-1s of the upload and Play signing keys), download
+   google-services.json (not a secret; commit), enable Cloud Messaging API (V1).
+3. Step 2 server: 0038 member_push_tokens (gym_id, member_id, token, platform, updated_at; member RPC to save/clear;
+   delete on leave), tests, his YES before live. Sender: on a new gym notice, send FCM HTTP v1 to the gym's members
+   (panel Worker or Supabase Edge Function; service-account credentials stored as a secret without anyone typing them;
+   prefer keyless if possible). Trigger from the admin app's send, or a database webhook.
+4. Step 2 app: android google-services plugin in the committed android/ (cloud build only), expo-notifications
+   getDevicePushTokenAsync -> save token via the RPC, refresh on change, clear on leave/erase; foreground handler;
+   tap -> inbox. Keep step 1's background check as a fallback.
+5. Privacy notice line (his wording OK): "a push address for this phone, so your gym's messages can pop up; deleted
+   when you leave the gym or turn messages off".
+6. Tracker: row "Messages in the phone's notification shade" → Planned (step 1 Next release); R-151 closed by this.
 
 ## R-137. Two leaderboard follow-ups for the feature backlog — 26 Oct 2026
 **He said (OpenCode):** "add these to notes to be added to feature backlog in tracker. dont analyze anything right now..
