@@ -1,5 +1,7 @@
 package com.forgeai.wear
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
@@ -11,9 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import java.awt.image.BufferedImage
 import java.io.File
-import javax.imageio.ImageIO
 import kotlin.math.hypot
 
 /**
@@ -79,7 +79,8 @@ abstract class WatchScreensRenderBase(private val size: String) {
   /** Fails on anything a round screen would clip; writes the "-round" copy. */
   private fun check(file: File, ring: Boolean) {
     assertTrue("no capture at ${file.path}", file.exists() && file.length() > 0)
-    val img = ImageIO.read(file)
+    val img = BitmapFactory.decodeFile(file.absolutePath)
+    assertTrue("${file.name} could not be read", img != null)
     val w = img.width
     val h = img.height
     assertTrue("$file is ${w}x$h, not square", w == h)
@@ -90,10 +91,10 @@ abstract class WatchScreensRenderBase(private val size: String) {
     val limit = if (ring) r - 11f * dp else r - 2f * dp
     var outside = 0
     var onRing = 0
-    val round = BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+    val round = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
     for (y in 0 until h) {
       for (x in 0 until w) {
-        val p = img.getRGB(x, y)
+        val p = img.getPixel(x, y)
         val red = (p shr 16) and 0xFF
         val g = (p shr 8) and 0xFF
         val b = p and 0xFF
@@ -104,10 +105,10 @@ abstract class WatchScreensRenderBase(private val size: String) {
         val clockZone = y < h * 0.2f
         if (d > r + 0.5f && bright) outside++
         if (d > limit && d <= r + 0.5f && neutral && !clockZone) onRing++
-        round.setRGB(x, y, if (d > r) 0x303030 else (p and 0xFFFFFF))
+        round.setPixel(x, y, if (d > r) 0xFF303030.toInt() else (p or 0xFF000000.toInt()))
       }
     }
-    ImageIO.write(round, "png", File(file.parentFile, file.nameWithoutExtension + "-round.png"))
+    File(file.parentFile, file.nameWithoutExtension + "-round.png").outputStream().use { round.compress(Bitmap.CompressFormat.PNG, 100, it) }
     assertTrue("${file.name}: $outside bright pixels outside the round screen (clipped on a watch)", outside == 0)
     assertTrue("${file.name}: $onRing text pixels too close to the edge${if (ring) " (on the ring)" else ""}", onRing <= 3)
   }
