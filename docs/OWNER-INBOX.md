@@ -46,6 +46,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
+| #69 | High | Low |
 | Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
 | Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
 | Task: 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | High | Medium |
@@ -308,7 +309,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 |---|---|---|---|
 | Numbers for the gym owner (analytics) | Planned | I picked the first tiles (R-168): renewals due, money owed, members who stopped coming, new members, busy hours. Money tiles are owner only. | The admin app's home gets number tiles with a small trend line each; tap one for the list behind it (for example "expiring in 7 days" opens the members to call). A date range and an Excel export. |
 | "What's new" in the admin app | Next release | Built 28 Oct, goes live with 0.60.0 (R-148). | The first time the admin app opens after an update, a short card lists the changes in plain words; Settings keeps the earlier ones. |
-| UPI payments recorded in GGMS | Waiting for you | Members pay by UPI with the gym's QR and the payment lands in the gym's GGMS records; then the card machine (R-153). Waits for your details: which QR, how GGMS takes payments, fees. | The member pays by UPI; the payment is matched to the member (by a payment link or a note) and saved in the gym's records by itself, so the desk types nothing. Details depend on the gym's QR provider and whether GGMS can take payments in. |
+| UPI payments recorded in GGMS | Waiting for you | Members pay by UPI with the gym's QR and the payment lands in the gym's records by itself; then the card machine (R-153). Waits for 3 quick facts from the gym (#69). | The member pays by UPI; the payment is matched to the member (by a payment link or a note) and saved in the gym's records by itself, so the desk types nothing. Details depend on the gym's QR provider and whether GGMS can take payments in. |
 | Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
@@ -422,6 +423,16 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 69. UPI payments at the client gym: what I need from you — 29 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**You asked (comment on "UPI payments recorded in GGMS"):** the receptionist says payments are not captured in the software automatically; maybe it can be, but it is not set up. What do you need from me to switch on online payments and connect them to their UPI machine?
+**My answer:** It depends on which company runs their UPI QR or sound box. Most of them (Paytm for Business, PhonePe Business, Razorpay, Pine Labs) can tell our server "₹1,500 paid, note: receipt 123" by themselves. Then the desk types nothing: the payment lands on the right member and the receipt is made. Some cheaper QR stands cannot tell anyone, and then we use a payment link instead. I need 3 things from the gym, all quick to get at the desk.
+**Your task:** Take a photo of the gym's UPI QR stand or sound box, front and back, so the company name and the UPI ID show.
+**Your task:** Ask the owner which app they open to see payments (for example "Paytm for Business" or "PhonePe Business"), and whether the account is in the gym's name.
+**Your task:** Ask whether they have a login to that company's website dashboard. Do not send me the password; I only need to know it exists.
+**After that:** I check that company's options and tell you the exact steps and any fees, before anything is switched on. Linked feature: "UPI payments recorded in GGMS".
 
 ## 68. Busy machines by day and hour: can it work? — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
