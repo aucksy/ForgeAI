@@ -1,4 +1,4 @@
-// ForgeAI for Wear OS (v0.46): the watch companion. It shows the phone's rest timer with a ring,
+// MettleUp for Wear OS (v0.46; ForgeAI then): the watch companion. It shows the phone's rest timer with a ring,
 // buzzes when the rest is over (its own exact alarm, so a muted phone alert never matters), and
 // shows live heart rate from the watch's sensor while a workout is open.
 //
@@ -32,9 +32,13 @@ android {
     // connects apps with the same package name and the same signing certificate.
     applicationId 'com.mettleup.app'
     minSdkVersion 30 // Wear OS 3+
+    // Play (31 Aug 2026 on): Wear OS apps must target API 35 or higher (phones 36).
     targetSdkVersion 35
-    // The same numbers the phone gets from CI (app/build.gradle), so both halves match.
-    versionCode (project.hasProperty('appVersionCode') ? project.property('appVersionCode').toString().toInteger() : 1)
+    // R-167 (Play): the watch is a second bundle of the same Play app, so it needs its own
+    // versionCode: 1_000_000_000 + the phone's (release_checks.wear_version_code_for), passed by CI
+    // as -PwearVersionCode. Without it (a local build) the phone's number, as before.
+    versionCode (project.hasProperty('wearVersionCode') ? project.property('wearVersionCode').toString().toInteger()
+      : project.hasProperty('appVersionCode') ? project.property('appVersionCode').toString().toInteger() : 1)
     versionName (project.hasProperty('appVersionName') ? project.property('appVersionName').toString() : "0.1.0")
   }
 
@@ -68,6 +72,16 @@ android {
 
   testOptions {
     unitTests.returnDefaultValues = true
+    // R-166: the watch screens are rendered headlessly (Robolectric, WatchScreensRenderTest).
+    unitTests.includeAndroidResources = true
+    unitTests.all {
+      // Roborazzi without its Gradle plugin: write every capture (there are no goldens to compare).
+      systemProperty 'roborazzi.test.record', 'true'
+      systemProperty 'watchScreens.out', layout.buildDirectory.dir("outputs/watch-screens").get().asFile.absolutePath
+      maxHeapSize = '2g'
+      // The PNGs are side effects: a cached test task would leave the artifact empty.
+      outputs.upToDateWhen { false }
+    }
   }
 }
 
@@ -87,6 +101,16 @@ dependencies {
   // at runtime; the same version on the compile classpath.
   implementation "com.google.guava:guava:32.0.1-android"
   implementation "com.google.android.gms:play-services-wearable:20.0.1"
+  // R-166: ambient mode (AmbientLifecycleObserver): the app stays on the dimmed always-on screen.
+  implementation "androidx.wear:wear:1.3.0"
 
   testImplementation "junit:junit:4.13.2"
+  // R-166: the watch screens rendered on a small and a large round screen (JVM, no emulator).
+  // Pins: Robolectric 4.14.1 renders up to API 35; Roborazzi 1.60.0 is built with Kotlin 2.0.21,
+  // readable by this project's Kotlin.
+  testImplementation "org.robolectric:robolectric:4.14.1"
+  testImplementation "io.github.takahirom.roborazzi:roborazzi:1.60.0"
+  testImplementation "io.github.takahirom.roborazzi:roborazzi-compose:1.60.0"
+  testImplementation "androidx.test:core:1.6.1"
+  testImplementation "androidx.test.ext:junit:1.2.1"
 }

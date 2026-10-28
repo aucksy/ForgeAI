@@ -11,6 +11,42 @@ import org.junit.Test
 class WearWireTest {
   private fun bytes(s: String) = s.toByteArray(Charsets.UTF_8)
 
+  // ------------------------------------------------------------------ R-166: the next set's lines
+  @Test
+  fun theNextSetLinesAreReadFromTheRowJson() {
+    // What restCard.ts rowJson sends: the row plus watch {set, last, goal}.
+    val row = """{"workout":42,"exKey":"b","setKey":"b3","open":false,"values":"60|8","label":"Bench Press, set 3",""" +
+      """"watch":{"set":"Set 3 of 5","last":"60 kg × 8","goal":"62.5 kg × 8"}}"""
+    assertEquals(WatchLines("Set 3 of 5", "60 kg × 8", "62.5 kg × 8"), WearWire.watchLines(row))
+    // The row still reads as the same row (the watch sends it back; the lines are ignored).
+    assertEquals(WatchDone(42L, "b", "b3", "60|8", "Bench Press, set 3", 0L), WearWire.parseDone(bytes(row)))
+    // The watch gets the row without the lines (they go as their own fields).
+    val bare = JSONObject(WearWire.withoutWatch(row))
+    assertTrue(!bare.has("watch"))
+    assertEquals("b3", bare.getString("setKey"))
+  }
+
+  @Test
+  fun noLinesFromAnOlderAppOrBadText() {
+    assertEquals(WatchLines.NONE, WearWire.watchLines(null))
+    assertEquals(WatchLines.NONE, WearWire.watchLines(""))
+    assertEquals(WatchLines.NONE, WearWire.watchLines("not json"))
+    assertEquals(WatchLines.NONE, WearWire.watchLines("""{"workout":42,"exKey":"b","setKey":"b1"}"""))
+    // No previous set: last is "" (null too), the rest stays.
+    assertEquals(WatchLines("Set 1 of 3", "", "20 kg × 10"), WearWire.watchLines("""{"watch":{"set":"Set 1 of 3","last":null,"goal":"20 kg × 10"}}"""))
+    // A row without lines passes through unchanged; bad text too.
+    val plain = """{"workout":42,"exKey":"b","setKey":"b1"}"""
+    assertEquals(plain, WearWire.withoutWatch(plain))
+    assertEquals("x", WearWire.withoutWatch("x"))
+  }
+
+  @Test
+  fun aVeryLongLineIsCut() {
+    val long = "A".repeat(300)
+    val l = WearWire.watchLines("""{"watch":{"set":"$long","last":"","goal":""}}""")
+    assertEquals(80, l.set.length)
+  }
+
   // ------------------------------------------------------------------ U-W3: /forge/act/done
   @Test
   fun aRestDoneFromTheWatchReadsBackEveryField() {

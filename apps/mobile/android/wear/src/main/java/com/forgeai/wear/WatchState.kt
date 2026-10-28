@@ -13,7 +13,8 @@ import androidx.compose.runtime.setValue
  *  - /forge/rest     {startedAt, endsAt, next, ringThroughDnd, done, seq} while a rest runs;
  *                    {endsAt: 0, ended, seq} when it is skipped / cleared (ended = false) or ran out
  *                    on the phone (ended = true);
- *  - /forge/workout  {active, title, text, done, seq}.
+ *  - /forge/workout  {active, title, text, done, set, last, goal, seq} (R-166: set / last / goal,
+ *                    the next set's lines, [NextSet]).
  *
  * `done` (C5-2, 16 Oct 2026): the row a tap ticks, as the phone's JSON, or "" when no tap can save
  * one. The watch never reads it: it shows its Done / "Complete set" only when it is there and sends
@@ -40,13 +41,17 @@ object WatchState {
     val done: String = "",
   )
 
-  /** [text]: the live card's set line; [done]: the row "Complete set" ticks ("" = no button now). */
+  /**
+   * [text]: the live card's set line; [done]: the row "Complete set" ticks ("" = no button now);
+   * [next]: R-166, the same set in lines (where, last time's numbers, what a tick saves).
+   */
   data class Snapshot(
     val rest: Rest?,
     val workoutActive: Boolean,
     val title: String,
     val text: String = "",
     val done: String = "",
+    val next: NextSet = NextSet.NONE,
   )
 
   private val main = Handler(Looper.getMainLooper())
@@ -77,7 +82,8 @@ object WatchState {
     }
     val done = p.getString("done", "") ?: ""
     val sent = RestText.sentRecently(done, p.getString("sentDone", null), p.getLong("sentAt", 0L), now)
-    return Snapshot(rest, p.getBoolean("active", false), p.getString("title", "") ?: "", p.getString("text", "") ?: "", if (sent) "" else done)
+    val next = NextSet(p.getString("set", "") ?: "", p.getString("last", "") ?: "", p.getString("goal", "") ?: "")
+    return Snapshot(rest, p.getBoolean("active", false), p.getString("title", "") ?: "", p.getString("text", "") ?: "", if (sent) "" else done, next)
   }
 
   private fun publish(ctx: Context) {
@@ -180,7 +186,7 @@ object WatchState {
 
   /** A /forge/workout item from the phone. */
   @Synchronized
-  fun onWorkout(ctx: Context, active: Boolean, title: String, seq: Long, text: String = "", done: String = "") {
+  fun onWorkout(ctx: Context, active: Boolean, title: String, seq: Long, text: String = "", done: String = "", next: NextSet = NextSet.NONE) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
     p.edit()
@@ -189,6 +195,9 @@ object WatchState {
       .putString("title", title)
       .putString("text", if (active) text else "")
       .putString("done", if (active) done else "")
+      .putString("set", if (active) next.set else "")
+      .putString("last", if (active) next.last else "")
+      .putString("goal", if (active) next.goal else "")
       .commit()
     if (!active) {
       // Workout finished or discarded: no rest may buzz after it, and (C5-9) a "Rest is over ·

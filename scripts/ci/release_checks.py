@@ -127,6 +127,22 @@ def version_code_for(version):
     return major * 1_000_000 + minor * 1_000 + patch
 
 
+WEAR_CODE_OFFSET = 1_000_000_000
+
+
+def wear_version_code_for(version):
+    """R-167: the WATCH app's versionCode for 'x.y.z': 1_000_000_000 + the phone's (0.59.0 -> 1_000_059_000).
+
+    Phone and watch are one Play app (com.mettleup.app) and every bundle in it needs its own
+    versionCode. The watch's is always the phone's plus one billion: never equal to any phone code
+    (those stay below one billion while MAJOR < 1000), always higher than the phone's of the same
+    release, still growing release by release, and under Play's limit of 2_100_000_000."""
+    phone = version_code_for(version)
+    if phone >= WEAR_CODE_OFFSET:
+        raise ValueError(f"version '{version}' leaves no room for the watch's versionCode (MAJOR must stay below 1000)")
+    return WEAR_CODE_OFFSET + phone
+
+
 def badging(apk):
     code, out = run([build_tool("aapt2"), "dump", "badging", apk])
     if code != 0:
@@ -526,6 +542,8 @@ def main():
     ap.add_argument("--warn-only", action="store_true")
     ap.add_argument("--out-dir")
     ap.add_argument("--version-code", metavar="VERSION", help="print the versionCode for x.y.z and exit")
+    ap.add_argument("--wear-version-code", metavar="VERSION",
+                    help="print the WATCH app's versionCode for x.y.z (wear_version_code_for) and exit")
     ap.add_argument("--latest-mettleup-tag", action="store_true",
                     help="print the newest published release with a mettleup-<tag>.apk (empty when none) and exit")
     a = ap.parse_args()
@@ -539,6 +557,10 @@ def main():
                 break
         best = latest_mettleup_release(rels)
         print(best["tag_name"] if best else "")
+        return 0
+
+    if a.wear_version_code:
+        print(wear_version_code_for(a.wear_version_code))
         return 0
 
     if a.version_code:

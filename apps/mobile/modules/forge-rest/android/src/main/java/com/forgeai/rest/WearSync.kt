@@ -25,8 +25,9 @@ import java.util.concurrent.atomic.AtomicLong
  *                    goes — ended = false: skipped / cleared / settled quietly; ended = true: it ran
  *                    out here ([RestCard.fireEnd]), so a watch whose own alarm has not gone off yet
  *                    buzzes now.
- *  - /forge/workout  {active, title, text, done, seq} from [WorkoutCard] (its words as kept) and
- *                    [WorkoutCard.clear].
+ *  - /forge/workout  {active, title, text, done, set, last, goal, seq} from [WorkoutCard] (its words
+ *                    as kept) and [WorkoutCard.clear]. R-166: set / last / goal are the next set's
+ *                    lines (WearWire.WatchLines); a watch app older than R-166 ignores them.
  *
  * C5-2 (16 Oct 2026): `done` is the row a tap ticks, as JSON ({workout, exKey, setKey, open, values,
  * label}, plus endsAt for a rest's Done), or "" when there is no row a tap can save. The watch never
@@ -153,8 +154,10 @@ object WearSync {
    * The workout is open ([active], [title] = the exercise the live card names, [text] = its set
    * line, [done] = the row "Complete set" ticks, "" = none) or over.
    */
-  fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "") {
-    val now = if (active) listOf<Any>(true, title, text, done) else listOf<Any>(false, "", "", "")
+  fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "", lines: WatchLines = WatchLines.NONE) {
+    // R-166: + the next set's lines (set, last time's numbers, what a tick saves); "" = none.
+    val l = if (active) lines else WatchLines.NONE
+    val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal) else listOf<Any>(false, "", "", "", "", "", "")
     if (now == lastWorkout) {
       flush(ctx) // nothing new, but a state still waiting goes now if it can
       return
@@ -163,7 +166,15 @@ object WearSync {
     put(
       ctx,
       PATH_WORKOUT,
-      linkedMapOf("active" to active, "title" to now[1], "text" to now[2], "done" to now[3]),
+      linkedMapOf(
+        "active" to active,
+        "title" to now[1],
+        "text" to now[2],
+        "done" to now[3],
+        "set" to now[4],
+        "last" to now[5],
+        "goal" to now[6],
+      ),
     )
   }
 

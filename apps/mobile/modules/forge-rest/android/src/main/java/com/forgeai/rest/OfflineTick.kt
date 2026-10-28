@@ -125,6 +125,8 @@ object OfflineTick {
           .put("open", target.open)
           .put("values", target.values ?: JSONObject.NULL)
           .put("label", nextLabel ?: JSONObject.NULL)
+          // R-166: the next row's lines for the watch app (livePlan.ts step.watch), as the app sends.
+          .apply { s.next.optJSONObject("watch")?.let { put("watch", it) } }
           .toString()
       } catch (_: Exception) {
         null

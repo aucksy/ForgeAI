@@ -175,8 +175,8 @@ export function startWorkoutPresence(): () => void {
     const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}:${planJson ?? ''}:${JSON.stringify(clock)}`;
     if (key === last) return true;
     const ok = shown
-      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock)
-      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock);
+      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, card.watch ?? null)
+      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, card.watch ?? null);
     if (!ok) return false;
     lastShown = shown;
     lastRow = liveRow(card);

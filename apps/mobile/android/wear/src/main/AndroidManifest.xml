@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <uses-feature android:name="android.hardware.type.watch" />
+  <!-- R-167: Play lists this build for watches only (it is the Wear OS half of com.mettleup.app). -->
+  <uses-feature
+    android:name="android.hardware.type.watch"
+    android:required="true" />
 
   <!-- The end-of-rest buzz (Vibrator, alarm usage) and the brief wake while it runs. -->
   <uses-permission android:name="android.permission.VIBRATE" />
@@ -14,12 +17,12 @@
        health.READ_HEART_RATE; earlier versions use BODY_SENSORS. Both are asked for. -->
   <uses-permission android:name="android.permission.BODY_SENSORS" />
   <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
-  <!-- The rest's end alarm. USE_EXACT_ALARM is granted at install (a timer app, Android 13+);
-       Android 12 (API 31-32) uses SCHEDULE_EXACT_ALARM instead; Android 11 needs neither. -->
-  <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-  <uses-permission
-    android:name="android.permission.SCHEDULE_EXACT_ALARM"
-    android:maxSdkVersion="32" />
+  <!-- The rest's end alarm. R-167 (28 Oct 2026, the watch app goes to Google Play): NO
+       USE_EXACT_ALARM, as the phone since 0.56.1. Play allows it only for alarm-clock and calendar
+       apps. SCHEDULE_EXACT_ALARM is the watch's "Alarms & reminders" switch (off by default on a new
+       install from Wear OS 5): the app shows "Allow alarms" until it is on; meanwhile the end alarm
+       is inexact (RestAlerts.arm) and the open screen buzzes on time itself (MainActivity). -->
+  <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
   <application
     android:allowBackup="false"
@@ -28,10 +31,17 @@
     android:supportsRtl="true"
     android:theme="@android:style/Theme.DeviceDefault">
 
-    <!-- Needs the phone app: everything it shows comes from ForgeAI on the phone. -->
+    <!-- Needs the phone app: everything it shows comes from MettleUp on the phone (false = Play
+         offers it to watches paired with a phone that has MettleUp). -->
     <meta-data
       android:name="com.google.android.wearable.standalone"
       android:value="false" />
+
+    <!-- R-166: ambient mode (AmbientLifecycleObserver) uses the watch's wearable library when
+         present; not required, so a watch without it still installs the app. -->
+    <uses-library
+      android:name="com.google.android.wearable"
+      android:required="false" />
 
     <activity
       android:name=".MainActivity"
@@ -74,6 +84,8 @@
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
         <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+        <!-- R-167: "Alarms & reminders" was just allowed: a running rest's alarm is set again, exact. -->
+        <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
       </intent-filter>
     </receiver>
 
