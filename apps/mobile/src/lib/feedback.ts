@@ -82,7 +82,10 @@ export async function postToBox(json: string, post: typeof fetchWithTimeout = fe
   throw lastError ?? new Error('no feedback address');
 }
 
-export async function sendFeedback(text: string, extra: { app?: string; gym?: string; screen?: string }): Promise<FeedbackResult> {
+export async function sendFeedback(
+  text: string,
+  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
+): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
   const body = {
@@ -92,6 +95,8 @@ export async function sendFeedback(text: string, extra: { app?: string; gym?: st
     device: deviceLine(Platform.constants as { Model?: unknown; Brand?: unknown; Release?: unknown }, Platform.OS),
     screen: extra.screen ?? 'settings',
     gym: extra.gym ?? '',
+    // R-149: how it was written (the floating button's "Speak", or typed). An older box ignores it.
+    input: extra.input ?? 'typed',
     sender: await senderId(),
   };
   try {

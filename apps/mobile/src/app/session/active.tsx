@@ -31,6 +31,7 @@ import { ExerciseLogCard } from '@/tracker/components/ExerciseLogCard';
 import { RecordToast } from '@/tracker/components/RecordToast';
 import { RestTimerBar } from '@/tracker/components/RestTimerBar';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { FeedbackHeaderButton } from '@/components/feedback/FeedbackButton';
 import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
@@ -598,8 +599,9 @@ export default function ActiveWorkoutScreen() {
         ) : (
           <ElapsedClock startedAt={startedAt} pause={pause} onPress={() => setTimerMenu(true)} />
         )}
-        {/* LW-02: no second ✓ up here — the one Finish button sits at the bottom. Keeps the clock centred. */}
-        <View style={{ width: 42 }} />
+        {/* LW-02: no second ✓ up here — the one Finish button sits at the bottom. Keeps the clock centred.
+            R-149: the feedback button lives in that 42 dp slot here (clear of ticks, rest timer, Finish). */}
+        <FeedbackHeaderButton screen="session/active" />
       </View>
 
       <KeyboardAvoidingView

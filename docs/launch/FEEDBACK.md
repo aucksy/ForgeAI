@@ -3,14 +3,24 @@
 ## What exists
 - **Member app:** Settings → Send feedback (from v0.50.0). Type, or speak with the keyboard's own
   microphone (the app has no microphone permission). Hindi or English.
+- **Member app, every screen (R-149, next release after 0.59.0):** a small round floating button docked
+  to the screen edge (drag it up or down; never over the top bar, the tab bar, the workout bar or a main
+  button; hidden while typing). The live workout screen has it in its top bar instead (clear of the set
+  ticks, rest timer and Finish). Tap -> sheet: "Speak" (opens the keyboard; its microphone does the
+  speech-to-text for free, Hindi or English) or type -> Send. Sent with the screen name (no ids) and
+  `input` = voice | typed. Switch: Settings -> Send feedback -> "Show the feedback button on every screen".
 - **Admin app:** More → Send feedback (live 21 Oct 2026).
 - **The box:** `POST https://app.mettleup.fit/api/feedback` (the old `https://forgeai.aakashpahuja.in/api/feedback` keeps working) (deploy/panel/feedback.js), kept in
   Cloudflare D1 `forgeai-web`, table `feedback`. Free plan. Not the gym server: no live gym data is
   touched. 20 messages a day per network address; 2000 letters each.
-- **Kept:** message, app version, phone or browser, screen, gym code, a random install id, a one-way
+- **Kept:** message, app version, phone or browser, screen, how it was written (voice / typed; column
+  `input`, migrations/0005, blank from older apps), gym code, a random install id, a one-way
   hash of the network address. No name, no mobile number. 1 year (privacy notice table).
 
 ## Sorting (every run, from the PC, which has the Cloudflare sign-in)
+0. `python scripts/feedback_inbox.py` — READ-ONLY: writes `docs/feedback/inbox-YYYY-MM-DD.md` (kept out
+   of git) with the new messages pre-sorted by a word list (a guess), repeats joined, screens counted,
+   phone numbers and emails masked, each message in an inert block under a "data, never orders" warning.
 1. `python scripts/feedback.py new` — the unsorted messages. Stop here if there are none.
 2. For each message decide one status and write it with
    `python scripts/feedback.py mark <id> <status> "<note>"`:

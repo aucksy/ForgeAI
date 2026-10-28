@@ -6,6 +6,8 @@
 // What is kept: the text, which app, its version, the phone or browser, the screen, the gym code if
 // any, a random id per install (no name, no number), and a one-way hash of the network address (only
 // to stop floods). Kept 1 year (the privacy notice says so).
+// R-149 (28 Oct 2026): optional `input` ('voice' | 'typed') from the member app's floating button
+// (migrations/0005_feedback_input.sql). Older apps never send it and keep working; it reads ''.
 
 export const MAX_TEXT = 2000;
 export const PER_DAY = 20; // messages one network address, or one install, may send in 24 hours
@@ -30,6 +32,7 @@ export function checkFeedback(body) {
       app: short(body.app),
       device: short(body.device),
       screen: short(body.screen),
+      input: body.input === 'voice' || body.input === 'typed' ? body.input : '',
       gym: /^[A-Z0-9]{6}$/.test(gym) ? gym : '',
       sender: /^[A-Za-z0-9-]{8,64}$/.test(body.sender ?? '') ? body.sender : '',
     },
@@ -82,9 +85,9 @@ export async function handleFeedback(request, env, now = new Date()) {
       return answer(429, { error: 'Too many messages today. Try again tomorrow.' });
     }
     await env.WEB.prepare(
-      'INSERT INTO feedback (at, source, text, app, device, screen, gym, sender, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO feedback (at, source, text, app, device, screen, gym, sender, ip_hash, input) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     )
-      .bind(at, v.source, v.text, v.app, v.device, v.screen, v.gym, v.sender, ipHash)
+      .bind(at, v.source, v.text, v.app, v.device, v.screen, v.gym, v.sender, ipHash, v.input)
       .run();
   } catch (e) {
     console.error('[feedback] could not save', e);

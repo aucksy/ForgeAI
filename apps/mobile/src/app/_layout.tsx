@@ -7,6 +7,7 @@ import { AppState, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { BrandOpening } from '@/components/BrandOpening';
+import { FeedbackButtonHost } from '@/components/feedback/FeedbackButton';
 import { GymIconOfferHost } from '@/shop/GymIconOffer';
 import { KeyboardRoom } from '@/components/KeyboardRoom';
 import { logScreenCrash, ScreenCrashFallback, ScreenErrorBoundary } from '@/components/ScreenErrorBoundary';
@@ -233,6 +234,8 @@ function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
           }}
         />
         <WorkoutPresenceHost />
+        {/* R-149: the floating feedback button (testers, from 2 Nov) and its sheet, on every screen. */}
+        <FeedbackButtonHost />
         {/* The app's own "Are you sure?" sheet (askConfirm) — mounted once, above every screen. */}
         <ConfirmHost />
         {/* A failed save (e.g. phone storage full) is shown on every screen of the app. */}
