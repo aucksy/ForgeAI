@@ -131,6 +131,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Task: Check-in QR: live camera only, no gallery (R-152) | Medium | Low |
 | Feature: Challenge rewards given out by themselves | Medium | Medium |
 | Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
+| Feature: Gym colour from its logo | Medium | Low |
 
 ---
 
