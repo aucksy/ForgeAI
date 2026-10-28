@@ -221,6 +221,17 @@ cacheable), ~150-token transcript, ~400-token routine JSON out; $1 = Rs 88.
 Recommended: A first, a per-member daily cap, key kept in a Worker/Supabase function (never in the app);
 switch speech-to-text to Sarvam if Hinglish accuracy is poor. Not in the backlog (not confirmed).
 
+## R-153. Gym notices must pop up on the phone; fix and release — 28 Oct 2026 (follows R-151)
+**He said (OpenCode):** "the firebase notifications are working but member is not getting a notifications pop up. one has
+to go inside the app to see the count badge and tap it.. it should have realtime notifications pop up... fix it and push
+the release... and yes Notifications were allowed."
+**Root cause (code read):** push was never built. No FCM token, no google-services.json, no server sender; gym notices go
+only into the in-app inbox (0008 header: "push comes with Firebase (Phase 1b)"); tracker row "Messages in the phone's
+notification shade" = Waiting for you (Firebase project). No Firebase messaging project exists.
+**DECIDED (28 Oct, question box): "Both: quick now, real push next".** Step 1 (today): background check of the gym inbox
+about every 15 min + a local phone pop-up, released. Step 2: real FCM push (Firebase on forgeai-d7eea, app token, server
+table 0038 + sender, privacy line) — needs his Google sign-in in the OpenCode browser, his yes for 0038 and the wording.
+
 ## R-137. Two leaderboard follow-ups for the feature backlog — 26 Oct 2026
 **He said (OpenCode):** "add these to notes to be added to feature backlog in tracker. dont analyze anything right now..
 just add in notes."
