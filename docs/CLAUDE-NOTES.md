@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
+**He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret
+without anyone seeing or typing it; approve the push privacy line EN + HI).
+
 ## R-161. He asked: remaining fixes and the top 5 high-impact features — 28 Oct 2026
 **Answer (chat):** fixes left: R-143 lighter set moves up; R-146 "reached" vs "beaten"; R-138 tail ("+%" when set count
 differs); R-145 resume scrolls to the active exercise; R-152 camera-only QR; push step 2 (in progress). Top 5: (1) R-149
