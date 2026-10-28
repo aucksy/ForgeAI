@@ -113,6 +113,7 @@ choose a photo from the gallery. It should only take a live picture, nothing els
 **Why (my reading):** a gallery option lets a member scan an old photo or screenshot of the QR from home and be
 counted as present. Check later whether the QR code itself also changes (a rotating code would close this fully).
 Code not looked at; not in the backlog.
+**Fixed (28 Oct):** checked: MettleUp never had a scanner or a gallery option of its own. "Scan the poster" (Gym tab, Settings > Your gym) opens the phone's own camera app straight in photo mode (android STILL_IMAGE_CAMERA); the app reads only the link the camera hands it. Nothing to remove; added a guard test (test/shop/r152CameraOnlyCheckIn.test.ts) that fails if any gym / check-in code gains an image picker, gallery, file or photo-library path. Still open (owner's call): the poster link never changes, so a photo of it read by Google Lens, or the saved link itself, still checks a member in from home; only a changing code (a QR on a screen at the desk that refreshes every minute) or a location check closes that.
 
 ## R-151. FIX NEEDED: a notice sent from the admin panel never pops up on the member's phone — 28 Oct 2026
 **Owner said (notes only):** when the gym sends a notification from the admin panel, the member app shows no
