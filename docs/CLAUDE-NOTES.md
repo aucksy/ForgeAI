@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-153. To build: UPI payments linked to the gym's GGMS CRM, then research the card machine — 28 Oct 2026
+**Owner said (notes only):** build a UPI payments integration: the gym has a QR code, members pay by UPI, and the
+payment is recorded in the gym's existing GGMS CRM. Then research how to connect their card payment system too.
+He will send the details. Not in the backlog yet; nothing built; no code or research done.
+**Open questions for when he sends details (money / client promises, so his call):**
+1. Which UPI QR do they use now (a plain bank QR, Razorpay / PhonePe / Paytm business, a card machine's QR)?
+2. How would the payment reach GGMS: does GGMS have an API or import, or must we enter it for the desk?
+3. Matching a payment to a member: amount + reference note, or a per-member QR / payment link?
+4. Gateway fees (UPI is usually free or near-free for small merchants, to verify) and who pays them.
+5. Card system: which machine / bank (Pine Labs, Razorpay POS, Paytm, bank EDC), and whether it has an API.
+**Earlier context:** GGMS link and entry machines in R-34 to R-47 and the Realtime test (R-38). Check them first.
+
 ## R-152. Check-in QR scan: camera only, no "pick from gallery" — 28 Oct 2026
 **Owner said (notes only):** when a member opens the camera to scan the gym's check-in QR, there must be no option to
 choose a photo from the gallery. It should only take a live picture, nothing else.
