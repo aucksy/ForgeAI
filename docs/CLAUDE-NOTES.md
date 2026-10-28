@@ -13,6 +13,11 @@ without anyone seeing or typing it; approve the push privacy line EN + HI).
 personal Chrome tab) and opening Google Cloud to make the service account ("Permission Grant"). Asked him to press Run
 himself and to make the key himself (mettleup-push, role Firebase Cloud Messaging API Admin, JSON key to Downloads);
 then I pipe the file into `wrangler secret put FCM_SERVICE_ACCOUNT` in deploy/hq without reading it, and delete it.
+**Done after his exact phrases (28 Oct):** 0038 run live (Success); live tests 0038 PASS 44, 0026 PASS 59 (security.sql run was
+blocked by the classifier; CI's database job runs it and was green). Service account mettleup-push (role Firebase Cloud
+Messaging API Admin) + JSON key made in his Chrome; piped into the forgeai-hq secret FCM_SERVICE_ACCOUNT unread; file deleted.
+Admin app deployed (forgeai-panel fde18fdf): instant push trigger + privacy page with the push and AI lines (checked live).
+0.58.1 never published (journeys failed on a Gradle cache flake) -> releasing everything as 0.59.0 (helper).
 
 ## R-161. He asked: remaining fixes and the top 5 high-impact features — 28 Oct 2026
 **Answer (chat):** fixes left: R-143 lighter set moves up; R-146 "reached" vs "beaten"; R-138 tail ("+%" when set count
