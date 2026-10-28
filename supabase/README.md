@@ -239,7 +239,7 @@ gains `p_pin`, the 5-argument version is dropped). A trigger deletes a removed p
 admin app that asks for a PIN is deployed (an older server makes the gym without the PIN). Test:
 `tests/0034_signin_pin.sql` → `RESULT PASS (68 checks)`, then `tests/security.sql` → `RESULT PASS`.
 
-## Phone pop-ups for the gym's messages and offers (0038, R-153 step 2) — NOT APPLIED, needs the owner's yes
+## Phone pop-ups for the gym's messages and offers (0038, R-153 step 2) — APPLIED LIVE 28 Oct 2026 (0038 PASS 44, 0026 PASS 59)
 Additive and re-runnable; apply after 0037. New tables `member_push_tokens` (one row per phone push address)
 and `push_jobs` (one per new message or offer, made by triggers on new `gym_messages` / `gym_offers` rows),
 a trigger that deletes a member's push addresses when they leave or the gym lets the phone go, the member

@@ -1,4 +1,4 @@
--- NOT APPLIED LIVE: waits for the owner's yes (R-153 step 2, R-158).
+-- APPLIED LIVE 28 Oct 2026 (owner: "yes, apply 0038 live in Supabase"; live tests 0038 PASS 44, 0026 PASS 59).
 --
 -- 0038: the gym's messages and offers pop up on members' phones at once (R-151, R-153 step 2, R-158:
 -- "I just want the offers and messages from admin panel to send push notifications to member app").
