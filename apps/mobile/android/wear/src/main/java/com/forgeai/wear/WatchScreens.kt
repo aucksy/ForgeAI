@@ -268,8 +268,10 @@ private fun SetScreen(
   val accent = if (ambient) AmbientGrey else Ember
   val muted = if (ambient) AmbientGrey else Muted
   val heart = if (allowed) "♥ ${RestText.bpm(bpm)}" else null
+  val prompt = !ambient && (!notifAllowed || !exactAllowed)
   Column(
-    Modifier.fillMaxWidth().padding(horizontal = side),
+    // A little room under the clock at the top (more with the "Allow ..." line under the button).
+    Modifier.fillMaxWidth().padding(start = side, end = side, top = if (prompt) 14.dp else 6.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center,
   ) {
@@ -327,7 +329,7 @@ private fun SetScreen(
     if (!notifAllowed && !ambient) {
       LinkLine("Allow notifications", "allowNotifications", onAllowNotif)
     } else if (!exactAllowed && !ambient) {
-      LinkLine("Allow alarms for an on-time buzz", "allowAlarms", onAllowExact)
+      LinkLine("Allow alarms", "allowAlarms", onAllowExact)
     }
   }
 }
