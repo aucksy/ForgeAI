@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-186. Overnight: "pick up whatever you can from the feature backlog and make the best decisions" — 29 Oct 2026
+**He said:** going to sleep; pick up what I can from the backlog, best decisions; he checks in the morning; looking forward to
+installing the watch app from Play; he will check the Play agreement himself.
+**Started:** 0.60.0 merge + release (watch bundle to Play) already running. Builds on branches (no merge, no deploy, no live DB):
+feat/owner-analytics (owner number tiles), feat/gym-colour-webcam (logo colour without AI + desk webcam photo),
+feat/offline-desk-3 (payments + new members offline, own receipt series). They join 0.61.0 after review.
+
 ## R-185. Tracker comments 29 Oct 01:20-01:25: payments merged, offline desk step 3 planned, his moves — 29 Oct 2026
 **He said:** UPI capture not set up at the client gym, wants it (what do I need?); merge "Paying in the app" with UPI into one online
 payments feature; offline front desk: "internet sometimes goes down due to power cuts ... build the offline feature ... as many features
