@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-165. He tests the Wear OS watch app tomorrow (29 Oct): check it, update and correct it — 28 Oct 2026
+**He said:** "I'll be testing the Wear OS app tomorrow... I did request some features around it. Check if that needs any
+update after so many changes, and make sure that is updated and corrected."
+**Doing:** a helper audits the watch app (pairing with com.mettleup.app, MettleUp name/icon, phone-watch messages, APK name,
+USE_EXACT_ALARM), lists every watch feature he asked for with its status, fixes small breakage, writes a test checklist
+(docs/qa/WATCH-TEST-29-OCT.md). New features (e.g. R-139) are listed, not built. Also asked (R-166 below): local builds A/B.
+
 ## R-164. Build: tap a name on the leaderboard to see that member's profile, within the gym — 28 Oct 2026
 **He said:** in the leaderboard, if a member chose to show their name, others can tap it and see their profile like their
 own (exercises done, history...). "Hevy does that publicly; for now just within the gym; later explore the whole social thing."
