@@ -5,6 +5,21 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-179. #43 reply: free forever vs trial; link members to the gym by email — 29 Oct 2026
+**He said:** see #43 YOUR REPLY (29 Oct). **Answered:** basic log free for all (cheap: ~330 KB/member), extras on a dated
+no-card trial, early users get a founding bonus not a different deal, gym members get extras via the gym. Email match: ask-first
+one-tap join, optional field with a hint, Apple relay addresses never match (keep code/link/QR), mobile match later (paid SMS).
+Not built; discussion stays in Q&A until he confirms.
+
+## R-178. Tracker bug: #67 marked done still showed as waiting and unread — 29 Oct 2026
+**He said:** "for 67 I just marked it as done, but it is still showing as topics waiting for you and it still wants me to mark it as
+read. If I have marked something as done, then it should just go away, right?"
+**Cause:** its 2 backlog rows were still "Waiting for you" (R-173 pulled the entry back into Waiting), and a done task counted as unread.
+**Done:** a task marked done counts as read and never waits; an entry with status DONE never waits through its feature. Rows: busy now +
+gym-mate profiles -> Next release (server live); free trial -> Live (#55, 24 Oct); real-phone tests -> Live (#25 setup done 24 Oct).
+Checked headless: Waiting = #34, #36, #27; #67 in the read list.
+**Rule for me:** when a Waiting-for-you entry is done, move every backlog row that cites it in the same turn.
+
 ## R-177. "yes, apply 0039 and 0040 live in Supabase and add their privacy lines" — 29 Oct 2026
 **He said (exact):** "yes, apply 0039 and 0040 live in Supabase and add their privacy lines" (tracker #67).
 **Doing:** apply 0039 (how busy the gym is) and 0040 (gym-mate profiles) on the live Supabase project, run their live tests, put the

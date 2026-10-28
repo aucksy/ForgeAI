@@ -377,8 +377,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
 | Monthly gym challenge with a ranking | Live | 26 Oct (0.58.0): Gym tab leaderboard (last 30 days, Workouts or Kg lifted, top 10, your place, the challenge bar); admin app → Challenges (goal in workouts or kg, 7 to 31 days, free days; who hit the goal, with phone). Names show only if the member switches it on. | |
 | Challenge rewards given out by themselves | Planned | When a member meets the challenge goal, the admin app lists the reward and the member gets a message (R-137). I build it; your live server yes comes at the end. | When the month's challenge ends (or the goal is hit), the gym server marks each winner. The admin app lists them under Challenges with the reward to hand over, and each winner gets a gym notice saying what they won and where to collect it. |
-| Tap a name on the leaderboard to see their profile | Waiting for you | Built 28 Oct, within your gym only. Only your yes for one live server step and the privacy lines is left (#67). | A name on the Gym tab leaderboard opens that member's profile only if they turned on a separate "Show my profile" switch (off until they choose). It shows initials, name and recent workouts; no photos are stored. |
-| How busy the gym is right now | Waiting for you | Built 28 Oct. Only your yes for one live server step and one privacy line is left (#67). | The server counts check-ins per hour (no names). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
+| Tap a name on the leaderboard to see their profile | Next release | Built 28 Oct, within your gym only; server part and privacy lines live 29 Oct (#67, your yes); members see it with 0.60.0. | A name on the Gym tab leaderboard opens that member's profile only if they turned on a separate "Show my profile" switch (off until they choose). It shows initials, name and recent workouts; no photos are stored. |
+| How busy the gym is right now | Next release | Built 28 Oct; server part live 29 Oct (#67, your yes); members see it with 0.60.0. | The server counts check-ins per hour (no names). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
 | Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
 | Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
 | The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
@@ -392,7 +392,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Platform and quality
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
-| Free 3-month trial (HQ can extend to 6) | Waiting for you | Built. Switches on with your yes to one live server change (#55). | Every new gym gets 3 months free, no card. Your owner panel shows days left and extends a trial up to 6 months, with a reason. The gym owner sees the days left on Today. Nothing locks when it ends; members keep their app. |
+| Free 3-month trial (HQ can extend to 6) | Live | Live since 24 Oct, after your yes in #55 (live test passed 41 checks). | Every new gym gets 3 months free, no card. Your owner panel shows days left and extends a trial up to 6 months, with a reason. The gym owner sees the days left on Today. Nothing locks when it ends; members keep their app. |
 | Prices and packs on the landing page | Live | Starter ₹999, Pro ₹1,999, AI ₹2,999 (coming) a month, yearly prices, and a founding-gym lifetime pack (₹29,999, first 50 gyms). Live 24 Oct. |
 | Start the free trial from the landing page | Live | "Start free" buttons open the gym sign-up straight away (forgeai.aakashpahuja.in/start). Live 24 Oct. |
 | Owner panel: search, filters, export, trial controls | Live | Search, sort, filters (on trial, ending soon, ended, paying), a summary, a gym list export (gym facts only) and confirm questions. Trial controls switch on with #55. Live 24 Oct. |
@@ -414,7 +414,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Paid server with daily backups | Waiting for you | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
 | Test server before live | Planned | You asked why I cannot make it (#34): I can. I make the free second Supabase project in your Chrome and copy the tables into it. | A second, free Supabase project, "mettleup-staging", Mumbai. Every server change runs there first, with the same tests, before it reaches the gym. |
 | Crash and outage alerts | Next release | Built 28 Oct, goes live with 0.60.0 (#34). No new accounts. | Both apps send a short crash note (screen, app version, error; never member data) to our server. A check every 10 minutes opens the website, admin app and HQ; if one is down, a GitHub alert reaches your phone. Claude reads crash notes with the feedback twice a day. |
-| Real-phone tests on Google's lab | Waiting for you | Built: Google's robot tries each release on 5 real phones; needs your free setup (#25). | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
+| Real-phone tests on Google's lab | Live | Built; your free setup done 24 Oct (#25). Google's robot tries each release on real phones. | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
 | "New version ready" in the app | Live | Members are told when an update is ready. |
 | Privacy notice, terms and consent | Live | Notice, terms and gym data agreement complete (English + Hindi), contact@mettleup.fit; owners accept with a tick at "Create my gym" (0033 live 24 Oct). |  |
 | Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
@@ -449,9 +449,11 @@ I moved it to Planned. The live server step joins your next combined yes.
 
 ## 67. Your task: one yes for 2 finished features — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE (29 Oct)
+**TASK DONE (29 Oct, 12:55 am, via the page)**
 **What it unlocks:** "How busy the gym is right now" and "Tap a name on the leaderboard to see their profile". Both are built. Each needs one live server change and a privacy notice line (English and Hindi).
 **Your task:** Read the privacy lines I send in chat, then type this exact sentence in chat: "yes, apply 0039 and 0040 live in Supabase and add their privacy lines".
+**Done (29 Oct):** both server changes are live and passed their live tests (0039: 31 checks, 0040: 46). The privacy lines are in the notice, English and Hindi, and on the public privacy page. Members get both features with 0.60.0.
 
 ## 66. What are the limits of Firebase pop-ups for us? — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -766,6 +768,7 @@ and a reward that nudges members to track workouts ("track 10 workouts, get 3 ex
 ## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** Answered
+**READ (29 Oct, 01:00 am, via the page)**
 **You asked:** you aim for one extra rep on every set. Is that better for long-run progress, or should you
 follow the app's targets?
 **My answer:** Both work. Keep your habit, with one rule from the app.
@@ -1008,10 +1011,26 @@ list". One more check is needed before "My membership" can safely show payments.
 - **Without one:** 4 routines, 7 custom exercises and 3 months of charts, the same as Hevy. A line in the app says "Join through your gym to unlock everything, free", with a button to tell their gym about ForgeAI.
 - **At launch the limits stay OFF** (everything free for everyone), so the first users love it. You switch them on from your owner panel, with no app update, when you decide.
 - **Sign-in:** "Continue with Google", "Join with your gym code", or "Use without an account". WhatsApp codes come later, as you said.
+**YOUR REPLY (29 Oct):** two ideas. (1) Should members think the app is free forever, or should we say "6 months (or 1 year) free with every feature, no card"? How many users can we support? Free forever for early users and paying for later ones feels wrong. (2) Gym owners collect members' email; members sign in with Google (later Apple on iPhone); if the email matches, the gym links by itself. Keep code and link too; suggest or require email when the owner adds a member.
+**My answer (29 Oct):**
+**1. Free forever or a trial?** My pick: never promise "free forever" for everything. Split it:
+- **The basic workout log stays free for everyone, always.** Hevy and Strong do this, so members expect it, and it costs us very little: about 330 KB per member, so the free server holds about 1,500 members, and the $25 plan about 24,000. Past that, each extra 3,000 members costs about ₹10 a month.
+- **The extras** (AI coach, deep charts and similar) come with "6 months free, every feature, no card". A clear end date is honest, and nobody feels tricked later.
+- **Early users get a thank-you, not a different deal:** for example 3 extra free months or a lifetime discount as "founding members". Everyone sees the same rules; early users just get a bonus.
+- **Members of a MettleUp gym get the extras through their gym,** so they never see a paywall. That is our main sales story to owners.
+- Numbers to keep in mind: trials convert far better than free tiers (about 18% when no card is asked, against 3-4% for a free tier), so a time-limited trial for extras is the stronger choice.
+**2. Link to the gym by email:** good idea, with 3 safety rules:
+- **Always ask first.** The app says "Iron Paradise has you as a member. Join?" and links only after the member taps Yes. A typo in the gym's records must never put a stranger in someone's gym.
+- **Optional, but suggested.** The add-member form shows the email field with a hint ("lets the member join in one tap"). Making it required would slow the desk, and many Indian gyms do not ask for email.
+- **iPhone catch:** Apple's "Hide my email" gives each app a fake address, so those members will not match. The code, the link and the QR stay.
+- Later, matching by **mobile number** would work for almost every member, because gyms already keep numbers. That needs a phone check by SMS (paid), so it waits.
+- The email the gym keeps is the gym's record and is already covered by the privacy notice. One line about the join match goes in when we build it, for your OK.
+Sources: https://fungies.io/saas-free-trial-vs-freemium-2026 , https://www.airbridge.io/en/blog/how-to-choose-free-trial-vs-freemium , https://help.zoho.com/portal/en/kb/accounts/faqs-troubleshooting/faqs/sign-in/articles/why-does-my-zoho-account-shows-a-different-email-address-when-i-sign-in-with-apple
 
 ## 42. Your task: switch on Google Drive backup (free, about 30 minutes) — 22 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 01:00 am, via the page)**
 **Your task:** Open https://console.cloud.google.com/projectcreate with your Google account and make a project named ForgeAI (free, no card).
 **Your task:** In that project, open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable.
 **Your task:** Open https://console.cloud.google.com/auth/branding and fill in: app name ForgeAI, your email as the support and contact email, audience External. Then on the Audience page press "Publish app". (The app only asks for its own files in the member's Drive, which Google does not review.)

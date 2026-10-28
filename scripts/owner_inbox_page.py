@@ -763,7 +763,8 @@ const pageHtml = () => '<!doctype html><html><head><meta charset=utf8><meta name
 // #21: "Waiting for you" = a question still to answer, or a task of his; "To read" = an entry not read yet.
 // Sending an answer or a reply counts as read.
 const sentOf = (e) => DATA.answers[e.num];
-const isRead = (e) => Boolean(sentOf(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));
+// R-178 (owner, 29 Oct 2026): a task he marked done is finished business: it counts as read and waits for nothing.
+const isRead = (e) => Boolean(sentOf(e)) || (tasksOf(e).length > 0 && taskDone(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));
 const needsAnswer = (e) => e.decides.length > 0 && !sentOf(e);
 // R-31: tasks waiting on the owner sit under "Waiting for you" next to his decisions.
 const tasksOf = (e) => e.tasks || [];
@@ -783,7 +784,7 @@ const featsOf = (e) => {
   }
   return featMap[e.num] || [];
 };
-const topicWait = (e) => !needsYou(e) && featsOf(e).some((x) => x.f.kind === "waiting");
+const topicWait = (e) => !needsYou(e) && e.kind !== "done" && !(tasksOf(e).length > 0 && taskDone(e)) && featsOf(e).some((x) => x.f.kind === "waiting");
 const inWaiting = (e) => needsYou(e) || topicWait(e);
 const featCovered = (f) => numsIn(f.details + " " + f.how).some((n) => inWaiting(entryOf(n)));
 const backlogChips = (e) => {
