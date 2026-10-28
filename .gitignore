@@ -37,3 +37,5 @@ apps/dashboard/.impeccable/review/
 apps/dashboard/.impeccable/questions/
 apps/dashboard/.impeccable/mocks/
 apps/dashboard/.impeccable/build/
+# R-149: the feedback inbox holds members' own words; they stay in D1 (1-year purge), never in git.
+docs/feedback/inbox-*.md

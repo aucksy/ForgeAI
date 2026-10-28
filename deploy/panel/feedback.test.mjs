@@ -22,8 +22,8 @@ function fakeD1({ fail = false } = {}) {
             async run() {
               if (fail) throw new Error('db down');
               assert.match(sql, /^INSERT INTO feedback/);
-              const [at, source, text, app, device, screen, gym, sender, ip_hash] = args;
-              rows.push({ at, source, text, app, device, screen, gym, sender, ip_hash });
+              const [at, source, text, app, device, screen, gym, sender, ip_hash, input] = args;
+              rows.push({ at, source, text, app, device, screen, gym, sender, ip_hash, input });
             },
           };
         },
@@ -93,4 +93,36 @@ test('the address hash needs the secret and changes each day', async () => {
   assert.notEqual(a.rows[0].ip_hash, a.rows[1].ip_hash);
   assert.notEqual(a.rows[0].ip_hash, b.rows[0].ip_hash);
   assert.equal((await handleFeedback(post({ source: 'member', text: 'x' }), { WEB: a })).status, 503);
+});
+
+// R-149 (28 Oct 2026): the floating button says how a message was written; older apps say nothing.
+test('keeps how it was written (voice or typed); anything else, or nothing, is blank', () => {
+  assert.equal(checkFeedback({ source: 'member', text: 'x', input: 'voice' }).value.input, 'voice');
+  assert.equal(checkFeedback({ source: 'member', text: 'x', input: 'typed' }).value.input, 'typed');
+  assert.equal(checkFeedback({ source: 'member', text: 'x', input: 'rm -rf /' }).value.input, '');
+  assert.equal(checkFeedback({ source: 'member', text: 'x' }).value.input, '');
+  // `source` still names the app, never the way it was written.
+  assert.equal(checkFeedback({ source: 'voice', text: 'x' }).error, 'Unknown app.');
+});
+
+test('real SQL (every migration): an old app, the admin app and the new floating button all save', async () => {
+  const { sqliteD1 } = await import('./sqliteD1.mjs');
+  const WEB = sqliteD1();
+  const env = { WEB, FEEDBACK_SALT: 'test-salt' };
+  // An app from before R-149: no `input`.
+  assert.equal((await handleFeedback(post({ source: 'member', text: 'old app', app: '0.58.0', screen: 'settings/feedback' }), env)).status, 201);
+  assert.equal((await handleFeedback(post({ source: 'admin', text: 'desk', screen: 'more' }), env)).status, 201);
+  assert.equal(
+    (await handleFeedback(post({ source: 'member', text: 'rest timer jumps', app: '0.60.0', screen: 'session/active', input: 'voice' }), env)).status,
+    201,
+  );
+  const rows = WEB.sqlite.prepare('SELECT text, screen, input, status FROM feedback ORDER BY id').all();
+  assert.deepEqual(
+    rows.map((r) => [r.text, r.screen, r.input, r.status]),
+    [
+      ['old app', 'settings/feedback', '', 'new'],
+      ['desk', 'more', '', 'new'],
+      ['rest timer jumps', 'session/active', 'voice', 'new'],
+    ],
+  );
 });

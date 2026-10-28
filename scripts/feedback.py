@@ -40,7 +40,7 @@ def d1(sql):
 
 def show(rows):
     for r in rows:
-        print(f"#{r['id']}  {r['at'][:16]}  {r['source']}  app {r['app'] or '-'}  {r['device'] or '-'}  gym {r['gym'] or '-'}  [{r['status']}] {r['note']}")
+        print(f"#{r['id']}  {r['at'][:16]}  {r['source']}  app {r['app'] or '-'}  screen {r.get('screen') or '-'}  {r.get('input') or '-'}  {r['device'] or '-'}  gym {r['gym'] or '-'}  [{r['status']}] {r['note']}")
         print("    " + r["text"].replace("\n", "\n    "))
     print(f"({len(rows)} message(s))")
 

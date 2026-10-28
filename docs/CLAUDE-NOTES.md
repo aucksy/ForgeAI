@@ -169,6 +169,16 @@ Hindi / English / Hinglish (cost: R-134, ~Rs 0.05 per note on the phone's free s
 before Monday; safeguards on auto-releases (tests green, no live-data changes without his yes); a tester privacy line
 (member-words / legal wording is his call).
 Not yet in the tracker backlog: he said "prioritise", so confirm the plan with him, then add the row.
+**Built (28 Oct 2026):** member app: a round floating feedback button on every screen (docked to the left or right
+edge, drag up/down; kept clear of the top bar and the bottom 150 dp: tab bar, workout bar, main buttons; hidden while
+typing and on the feedback page); on the live workout screen it sits in the top bar's empty right slot (clear of ticks,
+rest timer, Finish). Sheet: "Speak" = the keyboard's own microphone (free, Hindi/English by the keyboard; the app keeps
+NO microphone permission, launch C5: in-app listening would need RECORD_AUDIO back + a privacy line = his call), or
+type; sends screen name (ids stripped) + `input` voice|typed; no screenshot (no capture module). Switch: Settings ->
+Send feedback (on by default). Worker: optional `input`, D1 migration 0005 (one column with a default, additive).
+Loop: `scripts/feedback_inbox.py` (read-only SELECT -> docs/feedback/inbox-<date>.md, gitignored, masked, fenced).
+Live now: migration 0005 applied to forgeai-web, forgeai-panel deployed (version 9172511d; old apps unchanged, checked
+405/400 live without writing a row). The app part lands in the release after 0.59.0 (no version bump here).
 
 ## R-148. Admin panel: "what's new" notices for releases and fixes, like the member app — 27 Oct 2026
 **Owner said (notes only):** the admin panel (gym owner / staff side) should also tell its users what we released

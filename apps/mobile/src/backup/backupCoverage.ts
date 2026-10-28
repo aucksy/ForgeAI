@@ -35,6 +35,8 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   update_seen: 'app update prompt (seen flag)',
   update_later: 'app update prompt ("Later" pressed)',
   feedback_sender: 'this phone\'s anonymous feedback id',
+  feedback_button: 'floating feedback button on/off (R-149; on by default, a phone preference)',
+  feedback_button_spot: 'where the floating feedback button was dragged to (screen-size dependent)',
   whats_new_seen: 'one-off "seen" flag',
   notice_rest_day: 'one-off notice',
   redesign_tabs_notice: 'one-off "it moved" hint',
