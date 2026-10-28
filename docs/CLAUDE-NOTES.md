@@ -245,8 +245,10 @@ expo-task-manager, ~15-min inbox check, local pop-up on a "Messages from your gy
 repeat / no flood of old notices, "Messages from my gym" switch). Its work is UNCOMMITTED in the working tree until
 reviewed; if the session ended, check `git status` / `git diff` in apps/mobile first and continue from it (do not
 start a second copy). Firebase sign-in tab was left open; he said "will do it later".
+**UPDATE (28 Oct, later):** step 1 is COMMITTED (429a18d, version 0.58.1 + What's new); phone tests started on it.
+If they passed: tag v0.58.1 (Play upload runs by itself). If not: read the failing part and fix.
 **Next actions:**
-1. Step 1: review the helper's diff (registration in the app entry, Android manifest needs, no flood, setting +
+1. Step 1 (done up to the phone tests): review the helper's diff (registration in the app entry, Android manifest needs, no flood, setting +
    backup guard), typecheck + vitest + eslint, commit, phone tests (default + owner + journeys), release 0.58.1 (the
    Play upload runs by itself), APK link, test on a real phone: app closed, send a notice from the admin panel, a
    pop-up within ~15 min (battery-saver brands may delay it).
