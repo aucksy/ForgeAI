@@ -23,12 +23,14 @@ appId: com.mettleup.app
     timeout: 20000
 - takeScreenshot: 20-library
 - tapOn: "Search exercises"
-- inputText: " lateral raise"
+- inputText: " front raise"
 - hideKeyboard
 - takeScreenshot: 21-library-search
 # The small picture opens the moving demo; the row itself opens the exercise page.
+# R-170: Lateral Raise now plays its approved clip instead of the credited drawings (part CLIP), so
+# the drawings' sheet is checked on an exercise with no clip and none planned (not in QUEUE.md).
 - tapOn:
-    text: "Show how to do .*Lateral Raise.*"
+    text: "Show how to do Dumbbell Front Raise"
     index: 0
     waitToSettleTimeoutMs: 500
 - extendedWaitUntil:

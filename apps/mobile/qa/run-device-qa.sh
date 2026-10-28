@@ -106,12 +106,12 @@ log "exact alarms: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r'
 # Which parts run (qa-device.yml inputs, audit v2 phase B).
 #   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, the UAT-M parts, then W). Otherwise ONLY
 #                       the parts named, comma or space separated, from the whole run's parts (OLD_PARTS
-#                       and UAT_PARTS below, in their usual order) and w, dnd, longrest, anim, mk. Such a run is
+#                       and UAT_PARTS below, in their usual order) and w, dnd, longrest, anim, mk, clip. Such a run is
 #                       named "(partial ...)" and never opens the release gate. A part leans on
 #                       what the parts before it left (part A's workout for b, h, h3; part J's
 #                       routines for j2, j3), so name those too; when `a` is not named, the demo
 #                       data is loaded first (gate-demo.yaml) so the other parts have data.
-#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (dnd, longrest, anim, mk): dnd, longrest
+#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (dnd, longrest, anim, mk, clip): dnd, clip, longrest
 #                       and anim run after part M, mk after part W. Empty = the whole run exactly as before.
 #   QA_PROFILE (`profile`): default = the emulator as it boots (411 dp, font 1.0, UTC). owner = the
 #                       owner's phone for EVERY part: ~360 dp wide (density 480), font 1.3,
@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk"
+GATE_PARTS="w dnd longrest anim mk clip"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1691,7 +1691,49 @@ part_anim() {
   done
 }
 
+# ---------------------------------------------------------------- part CLIP (R-170: exercise demo clips)
+# The owner-approved clips (src/tracker/clips/clipManifest.ts) on Lateral Raise and Incline Dumbbell
+# Press, downloaded from the exercise-clips release on first open: (1) animations off = the app's
+# "reduce motion" on: the still frame only; (2) animations on: the moving clip; (3) airplane mode:
+# the clip still plays from the phone. An exercise without a clip shows no clip frame.
+# Evidence: qa-out/clip/clip-*.png and the timeline.
+part_clip() {
+  local k a b
+  gate_flow clip_seed gate-demo.yaml || return 1
+  gate_flow clip_reduced gate-clip.yaml -e REDUCED=on -e "WANT=Picture of"
+  for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+    adb shell settings put global "$k" 1 >/dev/null 2>&1 || true
+  done
+  gate_flow clip_moving gate-clip.yaml -e REDUCED=off -e "WANT=Moving demo of"
+  adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 1
+  sleep 5
+  log "CLIP: airplane mode on (airplane_mode_on=$(adb shell settings get global airplane_mode_on | tr -d '\r'))"
+  gate_flow clip_offline gate-clip.yaml -e REDUCED=offline -e "WANT=Moving demo of"
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
+  for k in window_animation_scale transition_animation_scale animator_duration_scale; do
+    adb shell settings put global "$k" 0 >/dev/null 2>&1 || true
+  done
+  log "CLIP: files on the phone: $(adb shell run-as $PKG ls files/exercise-clips 2>&1 | tr -d '\r' | tr '\n' ' ')"
+  mkdir -p "$OUT/clip"
+  { find "$OUT" -path "$OUT/clip" -prune -o -name "clip-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "clip-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/clip/" 2>/dev/null; done
+  log "CLIP: $(find "$OUT/clip" -name "clip-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/clip/"
+  # A moving clip gives different pixels a moment later; a still frame gives the same.
+  for k in off offline; do
+    a="$OUT/clip/clip-$k-01-summary.png"; b="$OUT/clip/clip-$k-02-summary-later.png"
+    if [ -f "$a" ] && [ -f "$b" ]; then
+      if cmp -s "$a" "$b"; then log "CLIP FAILED: the $k clip did not move (two screenshots are the same)"; status=1
+      else log "CLIP: the $k clip moves (two screenshots differ)"; fi
+    else
+      log "CLIP FAILED: the $k screenshots are missing"; status=1
+    fi
+  done
+  adb logcat -d -v time 2>/dev/null | grep -i 'exercise clip' > "$OUT/clip-errors.txt" || true
+  log "CLIP: $(wc -l < "$OUT/clip-errors.txt" | tr -d ' ') clip errors in the log (clip-errors.txt; the offline run may log none: it reads from the phone)"
+}
+
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
+qa_runs clip && { log "gate part CLIP begins"; part_clip; }
 qa_runs longrest && { log "gate part LONGREST begins"; part_longrest; }
 qa_runs anim && { log "gate part ANIM begins"; part_anim; }
 

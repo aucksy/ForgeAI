@@ -36,6 +36,7 @@ import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { mediaFor } from '@/tracker/catalog/media';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { DrawingCredit } from '@/tracker/components/DrawingCredit';
+import { ExerciseClip } from '@/tracker/components/ExerciseClip';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
 import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
@@ -396,6 +397,8 @@ export default function ExerciseScreen() {
 
             {tab === 'summary' ? (
               <>
+                {/* R-170: the owner-approved demo clip, at the top (nothing for exercises without one) */}
+                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
                 {/* EX-07: the answer first — last time and best, in the way it is logged */}
                 {last ? (
                   <Card style={{ gap: space.sm, marginBottom: space.lg }}>
@@ -478,6 +481,8 @@ export default function ExerciseScreen() {
 
             {tab === 'howto' ? (
               <>
+                {/* R-170: the demo clip above the steps, as on Summary */}
+                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
                 {/* how to — the picture (a tap opens it larger) and the steps, once */}
                 {hasPicture || (entry?.steps.length ?? 0) > 0 ? (
                   <Card style={{ gap: space.md, marginBottom: space.lg }}>

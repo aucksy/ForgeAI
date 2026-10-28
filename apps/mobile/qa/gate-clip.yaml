@@ -1,0 +1,84 @@
+# R-170 gate part CLIP (run-device-qa.sh): the owner-approved exercise demo clips on the phone.
+# Run by part_clip three times after a fresh install: REDUCED=on (animations off = the app's
+# "reduce motion" on: the still frame only, downloaded from the exercise-clips release),
+# REDUCED=off (animations on: the moving clip, downloaded now), then REDUCED=offline (airplane
+# mode: the clip must still play from the phone).
+# WANT: the clip's spoken label expected ("Picture of" = still frame, "Moving demo of" = moving).
+# Screenshots: clip-<REDUCED>-*.png. Two shots of the moving clip ~1 s apart must differ
+# (checked by the script: a still picture would give the same pixels).
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " lateral raise"
+- hideKeyboard
+- tapOn:
+    text: "View Lateral Raise"
+    index: 0
+- extendedWaitUntil:
+    visible: "^How to$"
+    timeout: 15000
+# Summary, at the top: the clip (or its still frame) in a white frame.
+- extendedWaitUntil:
+    visible: "${WANT} Lateral Raise"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: clip-${REDUCED}-01-summary
+- takeScreenshot: clip-${REDUCED}-02-summary-later
+- tapOn: "^How to$"
+- extendedWaitUntil:
+    visible: "How to do it"
+    timeout: 15000
+- takeScreenshot: clip-${REDUCED}-03-how-to
+# The how-to sheet plays the same clip (no drawing credit: the clip is ours, CC0 parts).
+- tapOn:
+    text: "Watch how to do Lateral Raise"
+    index: 0
+- extendedWaitUntil:
+    visible: "${WANT} Lateral Raise"
+    timeout: 15000
+- takeScreenshot: clip-${REDUCED}-04-sheet
+- back
+- back
+# Incline Dumbbell Press has its clip too.
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " incline dumbbell press"
+- hideKeyboard
+- tapOn:
+    text: "View Incline Dumbbell Press"
+    index: 0
+- extendedWaitUntil:
+    visible: "${WANT} Incline Dumbbell Press"
+    timeout: 30000
+- takeScreenshot: clip-${REDUCED}-05-incline
+- back
+# An exercise with no clip looks as before: no clip frame on its page.
+- tapOn: "Search exercises"
+- eraseText
+- inputText: " dumbbell front raise"
+- hideKeyboard
+- tapOn:
+    text: "View Dumbbell Front Raise"
+    index: 0
+- extendedWaitUntil:
+    visible: "^How to$"
+    timeout: 15000
+- assertNotVisible: "Moving demo of .*|Picture of .*"
+- takeScreenshot: clip-${REDUCED}-06-no-clip
+- back
+- back
