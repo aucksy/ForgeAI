@@ -26,18 +26,23 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.CompactChip
+import androidx.wear.compose.material.LocalTextStyle
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 internal val Ember = Color(0xFFF26B2A)
 internal val Track = Color(0xFF2A2420)
@@ -53,8 +58,11 @@ private val AmbientGrey = Color(0xFF9E9E9E)
  *  - Resting: the countdown in an ember ring, heart rate, and the next set: "Set 3 of 5 · Bench
  *    Press", last time's numbers for that set in big type, today's (what "Complete set" saves)
  *    when they differ.
- *  - A workout open, no rest: heart rate, the set, the same two lines and "Complete set".
+ *  - A workout open, no rest: the exercise, "Set 3 of 5 ♥ 132", the same two lines, "Complete set".
  *  - Nothing open: how to start.
+ * Every line that can be long (a name, "22.5 kg each × 10", larger system text) shrinks to fit its
+ * width first (down to 70 %), and only then ends in "…". Lines lower on the round screen get a
+ * narrower width, as the glass (and the rest ring) is narrower there.
  * [ambient]: the screen is dimmed (always-on display): the rest shows when it ends instead of a
  * ticking countdown (an ambient screen redraws about once a minute), in grey and white only.
  */
@@ -80,7 +88,7 @@ internal fun WatchScreen(
     BoxWithConstraints(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
       // Type grows with the screen: 1.0 on a 192 dp (small) round watch, ~1.18 on a 228 dp one.
       val k = (maxWidth.value / 192f).coerceIn(1f, 1.25f)
-      val side = maxWidth * 0.13f
+      val side = maxWidth * 0.12f
       val rest = snap.rest
       when {
         rest != null -> RestScreen(rest, snap, if (hrAllowed) bpm else null, ambient, now, k, side)
@@ -93,44 +101,63 @@ internal fun WatchScreen(
 
 private fun sz(base: Float, k: Float): TextUnit = (base * k).sp
 
+/**
+ * One centred line that shrinks to fit its width (to [minScale] of its size), then ends in "…".
+ * [build] makes the line at a given scale (1.0 = full size).
+ */
+@Composable
+private fun FitLine(tag: String, modifier: Modifier = Modifier, minScale: Float = 0.7f, build: (Float) -> AnnotatedString) {
+  BoxWithConstraints(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    val measurer = rememberTextMeasurer()
+    val style = LocalTextStyle.current
+    val maxPx = constraints.maxWidth
+    var scale = 1f
+    while (scale > minScale + 0.001f) {
+      val w = measurer.measure(build(scale), style = style, maxLines = 1, softWrap = false).size.width
+      if (w <= maxPx) break
+      scale -= 0.05f
+    }
+    Text(
+      build(scale),
+      maxLines = 1,
+      softWrap = false,
+      overflow = TextOverflow.Ellipsis,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.testTag(tag),
+    )
+  }
+}
+
+private fun plain(text: String, color: Color, size: TextUnit, weight: FontWeight = FontWeight.Normal): AnnotatedString =
+  buildAnnotatedString { withStyle(SpanStyle(color = color, fontSize = size, fontWeight = weight)) { append(text) } }
+
 /** "Last  60 kg × 8": a small grey word, then the numbers in big type. */
-private fun labelled(label: String, value: String, valueColor: Color, labelSize: TextUnit, valueSize: TextUnit, labelColor: Color = Muted): AnnotatedString =
+private fun labelled(label: String, value: String, valueColor: Color, labelSize: TextUnit, valueSize: TextUnit, labelColor: Color): AnnotatedString =
   buildAnnotatedString {
     withStyle(SpanStyle(color = labelColor, fontSize = labelSize, fontWeight = FontWeight.Normal)) { append("$label  ") }
     withStyle(SpanStyle(color = valueColor, fontSize = valueSize, fontWeight = FontWeight.Bold)) { append(value) }
   }
 
-/** The next set's two number lines (R-166): last time's (or "No last time"), then today's. */
+/**
+ * The next set's two number lines (R-166): last time's (or "No last time"), then today's.
+ * [inset]: extra side room per line, as the round screen narrows further down.
+ */
 @Composable
-private fun NumberLines(next: NextSet, ambient: Boolean, k: Float) {
+private fun NumberLines(next: NextSet, ambient: Boolean, k: Float, lastSize: Float, inset: Dp) {
   val last = NextSetText.last(next)
   val today = NextSetText.today(next)
+  val label = if (ambient) AmbientGrey else Muted
   if (last != null) {
-    Text(
-      labelled("Last", last, Color.White, sz(12f, k), sz(18f, k), if (ambient) AmbientGrey else Muted),
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis,
-      textAlign = TextAlign.Center,
-      modifier = Modifier.testTag("last"),
-    )
+    FitLine("last", Modifier.padding(horizontal = inset)) { s ->
+      labelled("Last", last, Color.White, sz(12f * s, k), sz(lastSize * s, k), label)
+    }
   } else {
-    Text(
-      "No last time",
-      color = if (ambient) AmbientGrey else Muted,
-      fontSize = sz(12f, k),
-      maxLines = 1,
-      textAlign = TextAlign.Center,
-      modifier = Modifier.testTag("last"),
-    )
+    FitLine("last", Modifier.padding(horizontal = inset)) { s -> plain("No last time", label, sz(12f * s, k)) }
   }
   if (today != null) {
-    Text(
-      labelled("Today", today, if (ambient) Color.White else Ember, sz(12f, k), sz(14f, k), if (ambient) AmbientGrey else Muted),
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis,
-      textAlign = TextAlign.Center,
-      modifier = Modifier.testTag("today"),
-    )
+    FitLine("today", Modifier.padding(horizontal = inset * 2)) { s ->
+      labelled("Today", today, if (ambient) Color.White else Ember, sz(12f * s, k), sz(13f * s, k), label)
+    }
   }
 }
 
@@ -142,12 +169,12 @@ private fun RestScreen(
   ambient: Boolean,
   now: Long,
   k: Float,
-  side: androidx.compose.ui.unit.Dp,
+  side: Dp,
 ) {
   if (!ambient) {
     val fraction = RestText.fractionLeft(now, rest.startedAt, rest.endsAt)
     Canvas(Modifier.fillMaxSize().padding(3.dp)) {
-      val stroke = 7.dp.toPx()
+      val stroke = 6.dp.toPx()
       val inset = stroke / 2f
       val arcSize = Size(size.width - stroke, size.height - stroke)
       drawArc(Track, 0f, 360f, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke))
@@ -163,39 +190,28 @@ private fun RestScreen(
     verticalArrangement = Arrangement.Center,
   ) {
     // "REST  ♥ 132" (heart rate beside the word, so the countdown keeps the middle).
-    Text(
+    FitLine("restLabel") { s ->
       buildAnnotatedString {
-        withStyle(SpanStyle(color = accent, fontSize = sz(12f, k), fontWeight = FontWeight.Bold, letterSpacing = 2.sp)) {
+        withStyle(SpanStyle(color = accent, fontSize = sz(11f * s, k), fontWeight = FontWeight.Bold, letterSpacing = 2.sp)) {
           append(if (ambient) "REST ENDS" else "REST")
         }
         if (bpm != null) {
-          withStyle(SpanStyle(color = accent, fontSize = sz(13f, k), fontWeight = FontWeight.Bold)) { append("   ♥ ${RestText.bpm(bpm)}") }
+          withStyle(SpanStyle(color = accent, fontSize = sz(13f * s, k), fontWeight = FontWeight.Bold)) { append("   ♥ ${RestText.bpm(bpm)}") }
         }
-      },
-      maxLines = 1,
-      modifier = Modifier.testTag("restLabel"),
-    )
+      }
+    }
     Text(
       if (ambient) endTime(rest.endsAt) else RestText.remaining(now, rest.endsAt),
       color = Color.White,
-      fontSize = sz(if (ambient) 34f else 40f, k),
+      fontSize = sz(if (ambient) 30f else 36f, k),
       fontWeight = if (ambient) FontWeight.Normal else FontWeight.Bold,
       maxLines = 1,
       modifier = Modifier.testTag("countdown"),
     )
     val next = snap.next
     if (snap.workoutActive && NextSetText.has(next)) {
-      Text(
-        NextSetText.restHeader(next, snap.title),
-        color = Color.White,
-        fontSize = sz(13f, k),
-        fontWeight = FontWeight.SemiBold,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.testTag("nextSet"),
-      )
-      NumberLines(next, ambient, k)
+      FitLine("nextSet") { s -> plain(NextSetText.restHeader(next, snap.title), Color.White, sz(13f * s, k), FontWeight.SemiBold) }
+      NumberLines(next, ambient, k, lastSize = 16f, inset = 6.dp)
     } else {
       // An older phone app (no lines) or the rest after the last set ("All sets done").
       RestText.nextLine(rest.next)?.let {
@@ -213,20 +229,22 @@ private fun RestScreen(
   }
 }
 
-/** "4:12 PM" / "16:12", as the watch tells the time. */
+/** "4:12 PM" / "16:12", as the watch tells the time (plain spaces: some fonts lack U+202F). */
 @Composable
 private fun endTime(endsAt: Long): String {
   val ctx = LocalContext.current
   return try {
-    DateFormat.getTimeFormat(ctx).format(Date(endsAt))
+    val pattern = if (DateFormat.is24HourFormat(ctx)) "H:mm" else "h:mm a"
+    SimpleDateFormat(pattern, Locale.getDefault()).format(Date(endsAt)).replace('\u202F', ' ').replace('\u00A0', ' ')
   } catch (e: Exception) {
-    RestText.clock(0L)
+    ""
   }
 }
 
 /**
- * A workout open, no rest: heart rate, the set the phone's live card names (R-166: last time's
- * numbers and today's) and (C5-2) "Complete set", so the set just done can be logged from the wrist.
+ * A workout open, no rest: the set the phone's live card names (R-166: last time's numbers and
+ * today's), heart rate beside the set, and (C5-2) "Complete set", so the set just done can be
+ * logged from the wrist.
  */
 @Composable
 private fun SetScreen(
@@ -238,7 +256,7 @@ private fun SetScreen(
   exactAllowed: Boolean,
   ambient: Boolean,
   k: Float,
-  side: androidx.compose.ui.unit.Dp,
+  side: Dp,
   onAllow: () -> Unit,
   onAllowNotif: () -> Unit,
   onAllowExact: () -> Unit,
@@ -248,70 +266,52 @@ private fun SetScreen(
   val next = snap.next
   val lines = NextSetText.has(next)
   val accent = if (ambient) AmbientGrey else Ember
+  val muted = if (ambient) AmbientGrey else Muted
+  val heart = if (allowed) "♥ ${RestText.bpm(bpm)}" else null
   Column(
     Modifier.fillMaxWidth().padding(horizontal = side),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center,
   ) {
-    if (!allowed) {
-      Text(
-        if (ambient) "♥ off" else "♥ Tap to allow heart rate",
-        color = accent,
-        fontSize = sz(12f, k),
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center,
-        maxLines = 2,
-        modifier = (if (ambient) Modifier else Modifier.clickable(onClick = onAllow).padding(2.dp)).testTag("heart"),
-      )
+    if (lines) {
+      FitLine("exercise") { s -> plain(snap.title, Color.White, sz(15f * s, k), FontWeight.Bold) }
+      // "Set 3 of 5   ♥ 132": the set and the heart rate on one line.
+      FitLine("set") { s ->
+        buildAnnotatedString {
+          withStyle(SpanStyle(color = muted, fontSize = sz(12f * s, k))) { append(next.set) }
+          if (heart != null) withStyle(SpanStyle(color = accent, fontSize = sz(15f * s, k), fontWeight = FontWeight.Bold)) { append("   $heart") }
+        }
+      }
+      NumberLines(next, ambient, k, lastSize = 18f, inset = 4.dp)
     } else {
-      Text(
-        "♥ ${RestText.bpm(bpm)}",
-        color = accent,
-        fontSize = sz(18f, k),
-        fontWeight = FontWeight.Bold,
-        maxLines = 1,
-        modifier = Modifier.testTag("heart"),
-      )
+      // An older phone app, "All sets done · Finish", or a row with nothing to save.
+      if (heart != null) Text(heart, color = accent, fontSize = sz(18f, k), fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.testTag("heart"))
+      if (snap.title.isNotBlank()) {
+        FitLine("exercise") { s -> plain(snap.title, Color.White, sz(14f * s, k), FontWeight.Bold) }
+      }
+      if (snap.text.isNotBlank()) {
+        Text(snap.text, color = muted, fontSize = sz(12f, k), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+      }
       val note = when {
         status == HeartRate.Status.NO_SENSOR -> "This watch has no heart-rate sensor"
         status == HeartRate.Status.OFF_WRIST -> "Wear the watch snugly"
         status == HeartRate.Status.UNAVAILABLE -> "Heart rate not available"
         else -> null
       }
-      // Only when there is room: the set's lines come first.
-      if (note != null && !lines && !canComplete) {
+      if (allowed && note != null && !canComplete) {
         Text(note, color = Muted, fontSize = sz(12f, k), textAlign = TextAlign.Center, maxLines = 2)
       }
     }
-    Spacer(Modifier.height(2.dp))
-    if (lines) {
+    if (!allowed) {
       Text(
-        snap.title,
-        color = Color.White,
-        fontSize = sz(15f, k),
+        if (ambient) "♥ off" else "♥ Tap to allow heart rate",
+        color = accent,
+        fontSize = sz(11f, k),
         fontWeight = FontWeight.Bold,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
         textAlign = TextAlign.Center,
-        modifier = Modifier.testTag("exercise"),
-      )
-      Text(
-        next.set,
-        color = if (ambient) AmbientGrey else Muted,
-        fontSize = sz(12f, k),
         maxLines = 1,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.testTag("set"),
+        modifier = (if (ambient) Modifier else Modifier.clickable(onClick = onAllow).padding(2.dp)).testTag("heart"),
       )
-      NumberLines(next, ambient, k)
-    } else {
-      // An older phone app, "All sets done · Finish", or a row with nothing to save.
-      if (snap.title.isNotBlank()) {
-        Text(snap.title, color = Color.White, fontSize = sz(14f, k), fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-      }
-      if (snap.text.isNotBlank()) {
-        Text(snap.text, color = if (ambient) AmbientGrey else Muted, fontSize = sz(12f, k), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-      }
     }
     if (canComplete) {
       Spacer(Modifier.height(4.dp))
@@ -322,76 +322,42 @@ private fun SetScreen(
         modifier = Modifier.testTag("complete"),
       )
     }
-    // C5 review: also beside "Complete set" (short form, to fit a round screen): with notifications
-    // off this app has no countdown and no buttons of its own between sets.
+    // C5 review: also beside "Complete set" (a small tappable line, to fit a round screen): with
+    // notifications off this app has no countdown and no buttons of its own between sets.
     if (!notifAllowed && !ambient) {
-      NotificationPrompt(onAllowNotif, compact = true)
+      LinkLine("Allow notifications", "allowNotifications", onAllowNotif)
     } else if (!exactAllowed && !ambient) {
-      ExactAlarmPrompt(onAllowExact, compact = true)
+      LinkLine("Allow alarms for an on-time buzz", "allowAlarms", onAllowExact)
     }
   }
 }
 
-/**
- * Notifications off: the countdown on the watch face, its buttons and "Rest is over" cannot show.
- * [compact]: one small chip, no explanation (beside "Complete set" on a round screen).
- */
+/** A small orange tappable line under "Complete set" (a chip there would not fit a round screen). */
 @Composable
-private fun NotificationPrompt(onAllow: () -> Unit, compact: Boolean = false) {
-  if (!compact) {
-    Spacer(Modifier.height(6.dp))
-    Text(
-      "The countdown on the watch face needs notifications",
-      color = Muted,
-      fontSize = 12.sp,
-      textAlign = TextAlign.Center,
-      maxLines = 2,
-    )
-  }
-  Spacer(Modifier.height(4.dp))
-  CompactChip(
-    onClick = onAllow,
-    label = {
-      Text(
-        if (compact) "Allow notifications" else "Allow",
-        color = if (compact) Ember else Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = if (compact) 11.sp else 14.sp,
-      )
-    },
-    colors = if (compact) ChipDefaults.secondaryChipColors() else ChipDefaults.primaryChipColors(backgroundColor = Ember),
+private fun LinkLine(text: String, tag: String, onClick: () -> Unit) {
+  Text(
+    text,
+    color = Ember,
+    fontSize = 11.sp,
+    fontWeight = FontWeight.Bold,
+    textAlign = TextAlign.Center,
+    maxLines = 1,
+    overflow = TextOverflow.Ellipsis,
+    modifier = Modifier.clickable(onClick = onClick).padding(horizontal = 6.dp, vertical = 5.dp).testTag(tag),
   )
 }
 
-/**
- * R-167: "Alarms & reminders" is off (Play allows this app no USE_EXACT_ALARM; Wear OS 5+ starts
- * it off): the end-of-rest buzz may come late when this screen is not up. One chip opens the switch.
- */
+/** The first screen: notifications or alarms off, with a short reason and one button. */
 @Composable
-private fun ExactAlarmPrompt(onAllow: () -> Unit, compact: Boolean = false) {
-  if (!compact) {
-    Spacer(Modifier.height(6.dp))
-    Text(
-      "To buzz right when your rest ends, allow alarms",
-      color = Muted,
-      fontSize = 12.sp,
-      textAlign = TextAlign.Center,
-      maxLines = 2,
-    )
-  }
+private fun AllowPrompt(reason: String, button: String, tag: String, onAllow: () -> Unit) {
+  Spacer(Modifier.height(6.dp))
+  Text(reason, color = Muted, fontSize = 12.sp, textAlign = TextAlign.Center, maxLines = 2)
   Spacer(Modifier.height(4.dp))
   CompactChip(
     onClick = onAllow,
-    label = {
-      Text(
-        if (compact) "Allow alarms" else "Allow",
-        color = if (compact) Ember else Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = if (compact) 11.sp else 14.sp,
-      )
-    },
-    colors = if (compact) ChipDefaults.secondaryChipColors() else ChipDefaults.primaryChipColors(backgroundColor = Ember),
-    modifier = Modifier.testTag("allowAlarms"),
+    label = { Text(button, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp) },
+    colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
+    modifier = Modifier.testTag(tag),
   )
 }
 
@@ -411,9 +377,9 @@ private fun IdleScreen(notifAllowed: Boolean, exactAllowed: Boolean, ambient: Bo
       textAlign = TextAlign.Center,
     )
     if (!notifAllowed && !ambient) {
-      NotificationPrompt(onAllowNotif)
+      AllowPrompt("The countdown on the watch face needs notifications", "Allow", "allowNotifications", onAllowNotif)
     } else if (!exactAllowed && !ambient) {
-      ExactAlarmPrompt(onAllowExact)
+      AllowPrompt("To buzz right when your rest ends, allow alarms", "Allow", "allowAlarms", onAllowExact)
     }
   }
 }
