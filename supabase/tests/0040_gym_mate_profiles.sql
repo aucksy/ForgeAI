@@ -76,7 +76,7 @@ begin
   -- 3. Size (owner, 28 Oct: a summary row under ~2 KB): the biggest row allowed, and a typical one.
   ex8 := (select jsonb_agg(jsonb_build_object('n', rpad('Exercise ' || g, 40, 'x'), 'k', rpad('key_' || g, 40, 'k'), 'w', 999.5, 'r', 999)) from generate_series(1, 8) g);
   perform public.member_mate_share(kb, jsonb_build_object('bio', repeat('b', 160), 'workouts', (
-    select jsonb_agg(jsonb_build_object('id', rpad('id' || g, 64, '0'), 'd', to_char(today - g, 'YYYY-MM-DD'), 'name', rpad('Workout ' || g, 60, 'y'),
+    select jsonb_agg(jsonb_build_object('id', 'w' || lpad(g::text, 63, '0'), 'd', to_char(today - g, 'YYYY-MM-DD'), 'name', rpad('Workout ' || g, 60, 'y'),
                                         'min', 1440, 'kg', 59999.9, 'ex', ex8)) from generate_series(0, 29) g)));
   select max(pg_column_size(w.*)) into worst from public.gym_mate_workouts w where member_id = mb;
   checks := checks + 1; fails := fails || pg_temp.t40_is('3thirty', (select count(*) from public.gym_mate_workouts where member_id = mb)::text, '30');
