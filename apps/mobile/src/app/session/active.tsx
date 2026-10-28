@@ -45,6 +45,7 @@ import { loadTargets, querySignature, targetQuery, useTargets } from '@/tracker/
 import { useUnits } from '@/lib/useUnits';
 import { goBack } from '@/lib/goBack';
 import { draftToRichSets, hasWorkingSet, withoutUntickedSaved } from '@/tracker/services/draftSets';
+import { resumeExerciseKey } from '@/tracker/lib/resumeExercise';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
@@ -205,6 +206,13 @@ export default function ActiveWorkoutScreen() {
   // never scrolled, so a fourth card landed below the fold, out of sight).
   const knownKeys = useRef<Set<string> | null>(null);
   const scrollToNew = useRef<string | null>(null);
+  // R-145 (owner, 27 Oct 2026): coming back to a live workout ("Resume workout", the workout bar,
+  // the notification) opens on the exercise in progress, not the top. Worked out once, on opening.
+  const resumeTo = useRef<string | null | undefined>(undefined);
+  if (resumeTo.current === undefined) {
+    const st = useActiveWorkout.getState();
+    resumeTo.current = isCorrecting(st) ? null : resumeExerciseKey(st.exercises);
+  }
   useEffect(() => {
     const keys = exercises.map((e) => e.key);
     const known = knownKeys.current;
@@ -290,6 +298,11 @@ export default function ActiveWorkoutScreen() {
       if (scrollToNew.current === key) {
         scrollToNew.current = null;
         scrollRef.current?.scrollTo({ y: Math.max(0, abs - 8), animated: true });
+      }
+      if (resumeTo.current === key) {
+        resumeTo.current = null;
+        // After the list's own place is known (the scroll request adds it to the row's place).
+        setTimeout(() => useWorkoutUi.getState().requestScroll(key), 120);
       }
       if (lift.current?.key === key && dragKeyRef.current === key) fixLift();
     },

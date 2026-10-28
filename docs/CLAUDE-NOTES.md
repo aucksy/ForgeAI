@@ -185,6 +185,7 @@ also show "+45 kg on last time". Ties into R-138 / R-143 (the whole suggestion r
 ## R-145. Resume workout: scroll back to the exercise in progress — 27 Oct 2026
 **Owner said (notes only):** when you leave the active workout screen and tap "Resume workout", it should scroll
 back to the exercise you are on (the active one), not the top.
+**Fixed (28 Oct):** coming back to a live workout (Resume workout, the workout bar, the notification) now scrolls to the first exercise with a set not ticked yet; a fresh start (first exercise in progress), an all-ticked workout and editing a saved workout stay at the top. Worked out once when the screen opens (tracker/lib/resumeExercise.ts, used by app/session/active.tsx through the existing scroll request). Not yet seen on a phone (no device run). Test: test/tracker/r145ResumeScroll.test.ts.
 
 ## R-144. To analyse: adjust the next sets live from this set's RPE — 27 Oct 2026
 **Owner said (notes only):** look at the possibility of using the RPE of the set just done. If the member did the
