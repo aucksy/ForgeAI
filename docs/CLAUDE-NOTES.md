@@ -12,6 +12,18 @@ is now, What's new in the admin app, crash and outage alerts, test server.
 **Done:** 13 backlog rows + #66 (Firebase limits answer) added; page v172.
 **My calls (#18):** body-weight rule = PREVIOUS and the goal only (not leaderboard/muscle sets); feature work waits for the
 0.59.0 tag before landing on main (helpers in their own worktrees).
+**#34 alerts built (28 Oct 2026), no new accounts:** (1) outage watch: .github/workflows/watch.yml every 10 min opens the
+website, admin app, HQ and the gym server (data + sign-in) through /sb; on failure (3 tries) a GitHub issue labelled "outage"
+that @mentions aucksy (GitHub emails him), a comment only when WHAT is down changes, closed by itself when back
+(scripts/watch/outage.mjs). (2) crash reports: both apps POST uncaught errors to the panel Worker /api/crash (deploy/panel/crash.js),
+kept in D1 forgeai-web feedback rows with status 'crash' + note sig:<12 hex> (no migration; no gym, install id or device; message
+and stack scrubbed of emails/phones/keys; 30 per address a day, the same kind once a day; feedback's own limits ignore them).
+Admin: window error + unhandledrejection (crm/crashReport.ts, not on localhost). Member: RN global handler + the screen-crash log
+line (src/lib/crashReport.ts, one import in index.js; fatal waits 1.5 s; off in dev). (3) daily crash issues (label "crash", one
+per new signature, max 5 a day; scripts/watch/crashes.mjs) are BUILT BUT OFF: they need a GitHub secret CLOUDFLARE_API_TOKEN that
+can only read D1 (no Cloudflare secret exists; not created, per the brief). Until then: HQ -> Feedback lists the crash rows.
+Privacy notice still has the placeholder "[and Sentry (crash reports), once added]": wording change is his call (proposal:
+"Crash reports (the error, the app version and the screen; no name, number or gym) are kept by Cloudflare for 1 year").
 
 ## R-162. "Yes to all": apply 0038 live, make the push key, approve the privacy line — 28 Oct 2026
 **He said:** "Yes to all" (to: apply 0038 live; Claude makes the FCM service-account key and saves it as the HQ Worker secret
@@ -176,6 +188,14 @@ or fixed, with the version number, like the member app's What's new pop-up.
 **Ideas for when we plan it:** a "What's new" pop-up once per new version, plus a list page of past versions;
 plain-language lines (member-words skill); the same release notes source as the member app, split by who it
 concerns (members, gym staff). Not in the backlog yet.
+**Built (28 Oct 2026, picked in R-163):** the admin app has no version number, so each update is named by its day. The first
+time the admin app opens after an update, Today shows "What's new in the admin app" ("Update of 28 Oct 2026", one plain line
+per change, a button to the page where it helps; the front desk gets no button to a page it cannot open); "Got it" or any
+button hides it until the next update. More and Settings -> "What's new" keep every update. Like the member app, a browser's
+very first visit only remembers the update (new owners and test browsers see no card), so owners see the card from the NEXT
+admin update on; today's list is in Settings -> What's new. Seeded with 24-28 Oct (AI column matching, phone column, instant
+phone pop-ups, Challenges, Gym timings, Diet plans, Body measurements, own PIN); words via member-words + Gemini, facts checked.
+Source: apps/dashboard/src/crm/logic/whatsNew.ts (add a new day at the TOP with each admin deploy). Tests: whatsNew.test.ts, e2e J148.
 
 ## R-147. Workout-complete screen: show the kg lifted vs last time as the big, proud headline — 27 Oct 2026
 **Owner said (notes only):** on the workout completion screen, highlight very clearly, to motivate and make the

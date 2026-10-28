@@ -33,7 +33,7 @@ function rpcAnswer(fn) {
 const ROUTES = [
   '/', '/members', '/members/import', '/members/f/exp-1-3', '/members/f/active', '/members/app', 'MEMBER', '/shop', '/shop/messages', '/messages', '/messages/birthday',
   '/attendance', '/money', '/money/dues', '/money/today', 'RECEIPT', '/plans', '/enquiries', '/expenses',
-  '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/more', '/workouts', '/feedback',
+  '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/settings/news', '/more', '/workouts', '/feedback',
 ];
 
 async function waitForServer() {

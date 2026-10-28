@@ -74,7 +74,8 @@ export async function handleFeedback(request, env, now = new Date()) {
   const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   try {
     const row = await env.WEB.prepare(
-      "SELECT COUNT(*) AS n, SUM(ip_hash = ?) AS ip, SUM(sender <> '' AND sender = ?) AS me FROM feedback WHERE at > ?",
+      // Crash reports (crash.js) share the table and have their own limits: they never use up these.
+      "SELECT COUNT(*) AS n, SUM(ip_hash = ?) AS ip, SUM(sender <> '' AND sender = ?) AS me FROM feedback WHERE at > ? AND status <> 'crash'",
     )
       .bind(ipHash, v.sender, dayAgo)
       .first();

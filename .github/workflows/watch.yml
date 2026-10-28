@@ -1,0 +1,59 @@
+name: Watch (outages and crashes)
+
+# #34 alerts (28 Oct 2026), no new accounts: GitHub itself is the alarm.
+# - Every 10 minutes: is the website, the admin app, HQ and the gym server answering?
+#   If not, an issue labelled "outage" is opened (GitHub emails the owner; it @mentions him),
+#   and closed by itself when everything answers again (scripts/watch/outage.mjs).
+# - Once a day (09:00 India time): one issue labelled "crash" per NEW kind of app crash
+#   (scripts/watch/crashes.mjs). Needs the CLOUDFLARE_API_TOKEN secret (D1 read only); until it
+#   exists the step says so and does nothing else.
+# GitHub may start a scheduled run a few minutes late; that is fine for this.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: watch-${{ github.event.schedule || 'manual' }}
+  cancel-in-progress: false
+
+jobs:
+  outage:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '*/10 * * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/watch
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check every part answers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/watch/outage.mjs
+
+  crashes:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '30 3 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/watch
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: New kinds of crash -> one issue each
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # Not a secret: the Cloudflare account that holds D1 forgeai-web.
+          CLOUDFLARE_ACCOUNT_ID: 1dc428a67de48b96bf13fb430da7a9e8
+        run: node scripts/watch/crashes.mjs

@@ -106,7 +106,8 @@ jobs:
       # Launch H7 (21 Oct 2026): the panel Worker's own code ("Send feedback", deploy/panel).
       - name: Panel Worker tests
         # Node 22 takes files, not a folder (a folder is run as a script and fails).
-        run: node --test deploy/panel/*.test.mjs
+        # #34 alerts: the outage and crash watch scripts (.github/workflows/watch.yml) run with them.
+        run: node --test deploy/panel/*.test.mjs scripts/watch/*.test.mjs
 
       # ForgeAI HQ (#51): the system owner's panel Worker (sign-in, API, clean-up) and its page logic.
       - name: HQ Worker and page tests

@@ -53,6 +53,7 @@ import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
+import { WhatsNewScreen } from './ui/WhatsNew';
 import { AllBranchesScreen } from './branches/AllBranches';
 import { BranchProvider } from './branches/BranchProvider';
 import { useBranches } from './branches/context';
@@ -303,6 +304,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.
       if (id === 'people') return <PeopleScreen />;
+      // R-148: Settings -> What's new (every admin-app update, newest first).
+      if (id === 'news') return <WhatsNewScreen />;
       return <SettingsScreen />;
     default:
       return <TodayScreen />;
