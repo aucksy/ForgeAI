@@ -143,7 +143,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Body-weight moves count across all routines | Medium | Low |
 | Feature: Numbers for the gym owner (analytics) | High | Medium |
 | Feature: "What's new" in the admin app | Medium | Low |
-| Feature: UPI payments recorded in GGMS | High | High |
+| Feature: Online payments (UPI, card), recorded by themselves | High | High |
 | Feature: Long rest that inflates your reps | Medium | Medium |
 | Feature: Next sets adjust to how hard this set felt (RPE) | Medium | Medium |
 | Feature: Next set's weight and reps on the watch | Low | Low |
@@ -309,7 +309,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 |---|---|---|---|
 | Numbers for the gym owner (analytics) | Planned | I picked the first tiles (R-168): renewals due, money owed, members who stopped coming, new members, busy hours. Money tiles are owner only. | The admin app's home gets number tiles with a small trend line each; tap one for the list behind it (for example "expiring in 7 days" opens the members to call). A date range and an Excel export. |
 | "What's new" in the admin app | Next release | Built 28 Oct, goes live with 0.60.0 (R-148). | The first time the admin app opens after an update, a short card lists the changes in plain words; Settings keeps the earlier ones. |
-| UPI payments recorded in GGMS | Waiting for you | Members pay by UPI with the gym's QR and the payment lands in the gym's records by itself; then the card machine (R-153). Waits for 3 quick facts from the gym (#69). | The member pays by UPI; the payment is matched to the member (by a payment link or a note) and saved in the gym's records by itself, so the desk types nothing. Details depend on the gym's QR provider and whether GGMS can take payments in. |
+| Online payments (UPI, card), recorded by themselves | Waiting for you | One feature (merged 29 Oct with "Paying in the app", your call): members pay by UPI QR, card or a payment link, at the desk or in the app, and each payment lands on the right member with its receipt, with no typing. Waits for facts from the gym (#69). | Each gym gets its own payment account (Razorpay or a similar company), so money goes straight to the gym's bank. The admin app makes a payment link or QR with the amount and the receipt number; the payment company tells our server when it is paid; the receipt is made by itself. Members can also pay from the app's membership card. |
 | Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
 | Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
 | Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
@@ -361,7 +361,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
 | QR scan opens the door | Waiting for you | The scan could open a networked door lock, but the client must buy the lock first. | The member scans the gate QR; our server checks the plan is active and tells a networked door lock to open for a few seconds. The QR on a small gate screen changes every 30 seconds, so a forwarded photo does not work. The desk button and a keypad PIN still work when the internet is down, and the lock opens on power loss (fire safety). |
 | Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
-| Paying in the app | Waiting for you | Part of the Pro pack (your plan, 24 Oct, R-97). Shop orders are paid at the desk today. Needs a payment company account (for example Razorpay) that only you can open. | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
+| Paying in the app | Not doing | Merged into "Online payments (UPI, card), recorded by themselves" (29 Oct, #69). | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
 | Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
 | Gym welcome and logo after joining | Live | v0.54.0: after joining, the app restarts in the gym's look with "Welcome to <gym>", then offers the gym's logo for the home screen and shows how to take the ForgeAI icon off (owner, 22 Oct). |
 | Shop tab only when the gym's shop is on | Live | v0.54.0: no gym = no Shop tab; a gym = a "Gym" tab; it becomes "Shop" once the gym lists a product. "Leave gym" is its own row in Settings → Your gym (owner, 22 Oct). |
@@ -424,15 +424,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 69. UPI payments at the client gym: what I need from you — 29 Oct 2026
+## 69. Online payments (UPI and card), recorded by themselves: what I need — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**You asked (comment on "UPI payments recorded in GGMS"):** the receptionist says payments are not captured in the software automatically; maybe it can be, but it is not set up. What do you need from me to switch on online payments and connect them to their UPI machine?
-**My answer:** It depends on which company runs their UPI QR or sound box. Most of them (Paytm for Business, PhonePe Business, Razorpay, Pine Labs) can tell our server "₹1,500 paid, note: receipt 123" by themselves. Then the desk types nothing: the payment lands on the right member and the receipt is made. Some cheaper QR stands cannot tell anyone, and then we use a payment link instead. I need 3 things from the gym, all quick to get at the desk.
-**Your task:** Take a photo of the gym's UPI QR stand or sound box, front and back, so the company name and the UPI ID show.
-**Your task:** Ask the owner which app they open to see payments (for example "Paytm for Business" or "PhonePe Business"), and whether the account is in the gym's name.
-**Your task:** Ask whether they have a login to that company's website dashboard. Do not send me the password; I only need to know it exists.
-**After that:** I check that company's options and tell you the exact steps and any fees, before anything is switched on. Linked feature: "UPI payments recorded in GGMS".
+**You asked (2 comments, 29 Oct):** the client's payments are not captured in the software; set it up. And merge "Paying in the app" with UPI: one online-payment feature (card, UPI and more), recorded by itself. Research the best way and say what you need from gym owners.
+**My answer:** Merged into one feature. The usual way in India:
+- **Each gym opens its own payment account** with a payment company (Razorpay, Cashfree or PhonePe Business). The money goes straight to the gym's bank, never through us. That is simpler legally, and owners trust it.
+- **What members can use:** UPI (any app), cards, net banking, by a QR or link at the desk, by a link on WhatsApp, or from the membership card in our app.
+- **Recorded by itself:** the payment company tells our server "paid ₹1,500 for receipt 123", and the receipt is made with no typing.
+- **Fees:** the company keeps a small cut per payment, about 2% on cards. UPI is often cheaper. I confirm the exact fee for the company the gym picks before anything goes live.
+- **Their current UPI sound box:** some companies (Paytm, PhonePe) can also report payments from the existing QR. If theirs can, we use it and the gym changes nothing at the desk.
+**Your task:** At the client gym, take a photo of the UPI QR stand or sound box, front and back, so the company name shows.
+**Your task:** Ask the owner which app they check payments in (for example "Paytm for Business"), and whether the account is in the gym's name.
+**Your task:** Ask whether they would open a Razorpay (or similar) account in the gym's name. It needs the gym's PAN, bank account and an ID, and takes about a day online.
+**After that:** I pick the best route for this gym, tell you the exact steps and fees, and build it. Nothing switches on without your OK.
 
 ## 68. Busy machines by day and hour: can it work? — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
