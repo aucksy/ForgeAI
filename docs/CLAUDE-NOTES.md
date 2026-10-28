@@ -12,6 +12,10 @@ own (exercises done, history...). "Hevy does that publicly; for now just within 
 Google-sign-in copy only the member can see). So a profile others can open needs the member's phone to share a summary to
 the gym server: a live server change (his yes) + a privacy line. Asked him: name switch alone, or a separate
 "let gym mates see my workouts" switch.
+**DECIDED (28 Oct):** separate switch "Let my gym mates see my workouts", off by default. **Space (his ask):** no workout or
+progress photos ever; display picture only if he/she shares it (max 256x256, ~30 KB, one per member); summaries only (date,
+routine, duration, kg lifted, up to 8 exercises with best set), last 30 workouts / 60 days. Estimate ~1 KB per workout, ~30 KB
++ ~30 KB photo per sharing member; 500 sharing members ~30 MB of the free 500 MB database + 1 GB file storage.
 
 ## R-163. Tracker synced with the notes; he picked 8 builds — 28 Oct 2026
 **He said:** "update the tracker with everything in your notes that is not in the tracker", then picked (multi-select):
