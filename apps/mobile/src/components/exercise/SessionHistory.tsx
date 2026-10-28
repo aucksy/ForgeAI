@@ -3,11 +3,11 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Badge, Card, Icon } from '@/components/ui';
 import { dateWithYear } from '@/lib/date';
-import { kgToDisplay, trimNum, weightUnit } from '@/lib/format';
 import { color, radius, space, type } from '@/theme/tokens';
+import { StatsRow } from '@/tracker/components/StatsRow';
 import type { ExerciseHistoryEntry, TrackedSetEntry } from '@/tracker/db/exerciseHistory';
-import { type DistUnit, type LogType } from '@/tracker/engine/logTypes';
-import { setLabel } from '@/tracker/services/exerciseHeadline';
+import { type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
+import { exerciseWorkoutStats, historySetText as setText, topSetIndex } from '@/tracker/services/exerciseWorkoutStats';
 import type { UnitSystem } from '@/types/models';
 
 export interface SessionHistoryProps {
@@ -28,34 +28,8 @@ export interface SessionHistoryProps {
    * last time to compare. Null/absent = no workout open with this exercise.
    */
   current?: TrackedSetEntry[] | null;
-}
-
-/** Index of the top working set for emphasis: heaviest then most reps; longest / farthest for time and distance. */
-function topSetIndex(sets: TrackedSetEntry[], lt: LogType): number {
-  const score = (s: TrackedSetEntry): [number, number] => {
-    if (lt === 'time') return [s.durationSec ?? 0, 0];
-    if (lt === 'distance' || lt === 'time_distance') return [s.distanceM ?? 0, -(s.durationSec ?? 0)];
-    if (lt === 'reps') return [s.reps, s.weightKg];
-    return [s.weightKg, s.reps];
-  };
-  let top = -1;
-  for (let i = 0; i < sets.length; i++) {
-    if (sets[i].isWarmup) continue;
-    if (top === -1) {
-      top = i;
-      continue;
-    }
-    const [a1, a2] = score(sets[i]);
-    const [b1, b2] = score(sets[top]);
-    if (a1 > b1 || (a1 === b1 && a2 > b2)) top = i;
-  }
-  return top;
-}
-
-/** "60 kg × 8" for weight × reps and assisted (with the unit, as Hevy's table), else the type's own words. */
-function setText(s: TrackedSetEntry, lt: LogType, units: UnitSystem, distUnit: DistUnit): string {
-  if (lt === 'weight_reps' || lt === 'assisted') return `${trimNum(kgToDisplay(Math.abs(s.weightKg), units))} ${weightUnit(units)} × ${s.reps}`;
-  return setLabel(s, lt, units, distUnit);
+  /** R-141: the exercise's counting (two dumbbells count both in "Kg lifted"); absent = one weight. */
+  loadMode?: LoadMode;
 }
 
 /**
@@ -63,15 +37,27 @@ function setText(s: TrackedSetEntry, lt: LogType, units: UnitSystem, distUnit: D
  * newest first, open (never folded), a page at a time ("Show more"), so five years of bench are
  * all there. Each card: the workout's name and date (tap → the workout), then its sets — "1",
  * "2", or D / F for a drop or failure set — the top set embered.
+ * R-141 (27 Oct 2026): under the name, the profile feed's stats row with THIS exercise's numbers in
+ * that workout — Kg lifted (or Reps / Time / Distance), Sets, Best set — the open workout's too.
  */
-export function SessionHistory({ history, units, maxSessions = 15, logType = 'weight_reps', distUnit = 'km', names, onOpen, current }: SessionHistoryProps) {
+export function SessionHistory({
+  history,
+  units,
+  maxSessions = 15,
+  logType = 'weight_reps',
+  distUnit = 'km',
+  names,
+  onOpen,
+  current,
+  loadMode = 'one',
+}: SessionHistoryProps) {
   const [pages, setPages] = useState(1);
   const shown = history.slice(0, maxSessions * pages);
   const left = history.length - shown.length;
 
   return (
     <View style={{ gap: space.md }}>
-      {current ? <CurrentCard sets={current} units={units} logType={logType} distUnit={distUnit} /> : null}
+      {current ? <CurrentCard sets={current} units={units} logType={logType} distUnit={distUnit} loadMode={loadMode} /> : null}
       {shown.map((h) => {
         const top = topSetIndex(h.sets, logType);
         const name = names?.get(h.sessionId) ?? null;
@@ -96,6 +82,9 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
             ) : (
               head
             )}
+            <View style={{ paddingHorizontal: space.sm, paddingBottom: space.xs }}>
+              <StatsRow stats={exerciseWorkoutStats(h.sets, logType, units, distUnit, loadMode)} />
+            </View>
             {h.sets.map((s, i) => {
               const mark = s.setType === 'drop' ? 'D' : s.setType === 'failure' ? 'F' : String(++n);
               const isTop = i === top;
@@ -139,7 +128,19 @@ export function SessionHistory({ history, units, maxSessions = 15, logType = 'we
 }
 
 /** The workout in progress: an accent-edged card headed "This workout · in progress". */
-function CurrentCard({ sets, units, logType, distUnit }: { sets: TrackedSetEntry[]; units: UnitSystem; logType: LogType; distUnit: DistUnit }) {
+function CurrentCard({
+  sets,
+  units,
+  logType,
+  distUnit,
+  loadMode,
+}: {
+  sets: TrackedSetEntry[];
+  units: UnitSystem;
+  logType: LogType;
+  distUnit: DistUnit;
+  loadMode: LoadMode;
+}) {
   const top = topSetIndex(sets, logType);
   let n = 0;
   return (
@@ -160,7 +161,11 @@ function CurrentCard({ sets, units, logType, distUnit }: { sets: TrackedSetEntry
           No sets ticked yet. They show here as you tick them.
         </Text>
       ) : (
-        sets.map((s, i) => {
+        <>
+        <View style={{ paddingHorizontal: space.sm, paddingBottom: space.xs }}>
+          <StatsRow stats={exerciseWorkoutStats(sets, logType, units, distUnit, loadMode)} />
+        </View>
+        {sets.map((s, i) => {
           const mark = s.setType === 'drop' ? 'D' : s.setType === 'failure' ? 'F' : String(++n);
           const isTop = i === top;
           return (
@@ -182,7 +187,8 @@ function CurrentCard({ sets, units, logType, distUnit }: { sets: TrackedSetEntry
               </Text>
             </View>
           );
-        })
+        })}
+        </>
       )}
     </Card>
   );

@@ -42,6 +42,11 @@ export interface WorkoutShareInput {
   muscles: MuscleSetsSlice[];
   /** v0.25.1: the body figure chosen in Profile (default male). */
   figure?: BodyFigure;
+  /**
+   * R-147: "+45 kg more than last time" when today beat last time — printed after "Workout complete" on
+   * its line (room for it there; it is dropped, never cut, if the line would not fit).
+   */
+  beatLast?: string;
 }
 
 const M = 72;
@@ -60,6 +65,14 @@ export function statBox(x: number, y: number, w: number, label: string, value: s
   ];
 }
 
+/** R-147: "Workout complete · +45 kg more than last time" when it fits the line whole, else "Workout complete". PURE. */
+export function completeLine(beatLast: string | undefined): string {
+  const base = 'Workout complete';
+  if (!beatLast) return base;
+  const full = `${base} · ${beatLast}`;
+  return fitText(full, 'bodySemi', 32, SHARE_W - M * 2) === full ? full : base;
+}
+
 /** The soft ember glow in the top corner, like the app's own screens. */
 export function cornerGlow(): SceneNode {
   return { t: 'glow', cx: SHARE_W - 60, cy: 40, r: 560, color: color.accent, opacity: 0.16 };
@@ -75,7 +88,7 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
 
   // Title.
   nodes.push({ t: 'text', x: M, y: 236, text: fitText(input.title, 'display', 92, SHARE_W - M * 2), font: 'display', size: 92, fill: color.ink });
-  nodes.push({ t: 'text', x: M, y: 292, text: 'Workout complete', font: 'bodySemi', size: 32, fill: color.accent });
+  nodes.push({ t: 'text', x: M, y: 292, text: completeLine(input.beatLast), font: 'bodySemi', size: 32, fill: color.accent });
 
   // Stats.
   const recordCount = input.recordCount ?? input.records.length;

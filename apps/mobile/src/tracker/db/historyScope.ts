@@ -20,6 +20,9 @@
  * carried exercise note (`exercisePrefs`). No fallback: the first time in scope, PREVIOUS is
  * empty and the Target is its first-time line.
  *
+ * R-136 (28 Oct 2026): body-weight moves are never scoped while the switch "Always use all
+ * workouts for body-weight moves" is on (the default): `scopeFor` is the one rule.
+ *
  * NOT scoped (always every workout): records and live record alerts (`getPriorBests*`), the
  * exercise pages and charts (`exerciseStats`), Statistics, Profile, reports, rest timer prefs,
  * Up next, the Target's weight ladder (weights he really loads), and the early easy-week stall
@@ -27,8 +30,79 @@
  */
 import { getDb } from '@/db';
 
+import { isBodyweightFamily, type LogType } from '../engine/logTypes';
 import { nameKey, workoutNameKey } from '../plans/todayPlan';
 import { useTrackerPrefs, type PreviousFrom } from '../store/trackerPrefsStore';
+
+/** What `scopeFor` needs to know about an exercise: how it is logged and its gear. */
+export interface ScopeExercise {
+  logType?: LogType | null;
+  equipment?: string | null;
+}
+
+/**
+ * R-136: a body-weight move — logged as reps only, body weight + added weight, or assisted, or a
+ * library move done with body weight (air squat, push-up, plank...). PURE.
+ */
+export function isBodyWeightMove(ex: ScopeExercise | null | undefined): boolean {
+  if (!ex) return false;
+  if (ex.equipment === 'bodyweight') return true;
+  return ex.logType != null && isBodyweightFamily(ex.logType);
+}
+
+/** R-136: Settings → Previous values → "Always use all workouts for body-weight moves" (on by default). */
+export function bodyWeightAnyWorkout(): boolean {
+  try {
+    return useTrackerPrefs.getState().bodyWeightAnyWorkout !== false;
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * R-136 (owner, 26 Oct 2026: body-weight moves "universally considered for counting irrespective
+ * of folder, routine ... even if done with empty workout"): THE one rule for which past workouts
+ * an exercise's PREVIOUS, Target and carried note read. A body-weight move reads every workout
+ * (null), empty workouts included, whatever "Previous values" says; every other exercise keeps
+ * the workout's scope (different gyms, different machines). `allForBodyWeight` false (the switch
+ * off) = body-weight moves follow the scope too. PURE (the default reads the switch).
+ */
+export function scopeFor(
+  scope: HistoryScope | null,
+  ex: ScopeExercise | null | undefined,
+  allForBodyWeight: boolean = bodyWeightAnyWorkout(),
+): HistoryScope | null {
+  if (!scope) return null;
+  return allForBodyWeight && isBodyWeightMove(ex) ? null : scope;
+}
+
+/**
+ * R-136: a batch read made per scope — the exercises split by `scopeOf` (at most two groups: the
+ * workout's scope and every workout), each group read once, the answers merged. One read when
+ * every exercise shares a scope.
+ */
+export function readByScope<V>(
+  ids: readonly string[],
+  scopeOf: (id: string) => HistoryScope | null,
+  read: (ids: string[], scope: HistoryScope | null) => Promise<Map<string, V>>,
+): Promise<Map<string, V>> {
+  const groups = new Map<string, { scope: HistoryScope | null; ids: string[] }>();
+  for (const id of ids) {
+    const s = scopeOf(id);
+    const k = s ? `s${scopeKey(s)}` : 'all';
+    const g = groups.get(k);
+    if (g) g.ids.push(id);
+    else groups.set(k, { scope: s, ids: [id] });
+  }
+  const all = [...groups.values()];
+  // One scope (the usual case): the one read, exactly as before.
+  if (all.length <= 1) return read(all[0]?.ids ?? [...ids], all[0]?.scope ?? null);
+  return Promise.all(all.map((g) => read(g.ids, g.scope))).then((parts) => {
+    const out = new Map<string, V>();
+    for (const m of parts) for (const [k, v] of m) out.set(k, v);
+    return out;
+  });
+}
 
 export interface HistoryScope {
   /** The routines whose workouts count. */
@@ -190,3 +264,12 @@ export const PREVIOUS_FROM_CHOICES: readonly { value: PreviousFrom; label: strin
   // R-61 (owner, 22 Oct 2026: "It shouldn't be even folder"): "Same folder" is retired; a saved one
   // reads as Any workout (`shownPreviousFrom`). Its scope stays for the Target's folder check.
 ];
+
+/**
+ * R-136: the switch under Previous values (shown with "Same routine"). Member words: no
+ * "volume", "PR" or "session".
+ */
+export const BODY_WEIGHT_SWITCH = {
+  title: 'Always use all workouts for body-weight moves',
+  caption: 'Push-ups, pull-ups and other moves with no weight show your last time from any workout, even one started without a routine',
+} as const;

@@ -110,7 +110,10 @@ describe('R-75: the finish list opens with the arrow on the right', () => {
   it('the finish screen shows the line through the opening card, and the words stay plain', async () => {
     const fs = await import('node:fs');
     const finish = fs.readFileSync('src/app/session/finish.tsx', 'utf8');
-    expect(finish).toMatch(/<CompareNote text=\{note\.text\} exercises=\{note\.exercises\} cause=\{note\.cause\} \/>/);
+    // R-147: the big kg card at the top holds the exercise list when it compares with last time;
+    // the line keeps it otherwise (no comparison in the card, the AI note).
+    expect(finish).toMatch(/<CompareNote text=\{note\.text\} exercises=\{heroCompared \? undefined : note\.exercises\} cause=\{note\.cause\} \/>/);
+    expect(finish).toMatch(/<KgHeroCard hero=\{hero\.hero\} exercises=\{heroCompared \? hero\.exercises : undefined\}/);
     const card = fs.readFileSync('src/tracker/components/CompareNote.tsx', 'utf8');
     expect(card).toContain("name=\"chevron-right\"");
     expect(card).toContain('accessibilityState={{ expanded: open }}');

@@ -79,6 +79,12 @@ export interface TrackerPrefsState {
   chartRange: ChartRange;
   /** Settings → Workouts → Previous values. */
   previousFrom: PreviousFrom;
+  /**
+   * R-136 (owner, 26 Oct 2026; built 28 Oct): under "Same routine", body-weight moves (push-ups,
+   * air squats, pull-ups...) still read EVERY workout for PREVIOUS and the Target, empty workouts
+   * included (`historyScope.scopeFor`). On by default; Settings → Workouts → Previous values.
+   */
+  bodyWeightAnyWorkout: boolean;
   /** The share sheet's Size and Background choices. */
   shareSize: ShareSize;
   shareLook: ShareLook;
@@ -100,6 +106,7 @@ export interface TrackerPrefsState {
   setChartMetric: (value: ChartMetric) => void;
   setChartRange: (value: ChartRange) => void;
   setPreviousFrom: (value: PreviousFrom) => void;
+  setBodyWeightAnyWorkout: (value: boolean) => void;
   setShareSize: (value: ShareSize) => void;
   setShareLook: (value: ShareLook) => void;
   setWeightJump: (value: WeightJump) => void;
@@ -134,6 +141,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       chartMetric: DEFAULT_METRIC,
       chartRange: DEFAULT_RANGE,
       previousFrom: 'any',
+      bodyWeightAnyWorkout: true,
       shareSize: 'post',
       shareLook: 'dark',
       weightJump: DEFAULT_JUMP,
@@ -148,6 +156,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setChartMetric: (value) => set({ chartMetric: isChartMetric(value) ? value : DEFAULT_METRIC }),
       setChartRange: (value) => set({ chartRange: isChartRange(value) ? value : DEFAULT_RANGE }),
       setPreviousFrom: (value) => set({ previousFrom: isPreviousFrom(value) ? value : 'any' }),
+      setBodyWeightAnyWorkout: (value) => set({ bodyWeightAnyWorkout: value !== false }),
       setShareSize: (value) => set({ shareSize: isShareSize(value) ? value : 'post' }),
       setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
       setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
@@ -176,6 +185,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
           restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,
           inUseAfterSet: typeof p.inUseAfterSet === 'boolean' ? p.inUseAfterSet : current.inUseAfterSet,
+          bodyWeightAnyWorkout: typeof p.bodyWeightAnyWorkout === 'boolean' ? p.bodyWeightAnyWorkout : current.bodyWeightAnyWorkout,
         };
       },
     },

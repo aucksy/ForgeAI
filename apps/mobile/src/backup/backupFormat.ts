@@ -117,6 +117,7 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
     'chartMetric',
     'chartRange',
     'previousFrom',
+    'bodyWeightAnyWorkout',
     'shareSize',
     'shareLook',
     'weightJump',

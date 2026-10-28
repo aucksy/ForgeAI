@@ -55,7 +55,7 @@ import { SetTable } from '@/tracker/components/SetTable';
 import { getWarmupSets, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
-import type { ChartMetric, ChartRange } from '@/tracker/services/exerciseChart';
+import { workoutChartMetric, type ChartMetric, type ChartRange } from '@/tracker/services/exerciseChart';
 import { recordValueText } from '@/tracker/services/recordText';
 import { currentWorkoutSets } from '@/tracker/services/currentInHistory';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -109,8 +109,10 @@ function VersionLink({ label, name, onPress }: { label: string; name: string; on
 
 export default function ExerciseScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; from?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];
+  // R-141: opened from a live workout's card, the chart starts on the per-workout total.
+  const fromWorkout = (typeof params.from === 'string' ? params.from : params.from?.[0]) === 'workout';
 
   const units = useSettings((s) => s.unitSystem);
   const insets = useSafeAreaInsets();
@@ -230,6 +232,7 @@ export default function ExerciseScreen() {
 
   // EX-07: numbers in the way the exercise is logged — or as reps when it never carried weight.
   const shownAs = ov?.shownAs ?? ex?.logType ?? 'weight_reps';
+  const shownMetric = chartMetric ?? (fromWorkout ? workoutChartMetric(shownAs) : null);
   const lastEntry = ov?.history[0] ?? null;
   const last = useMemo(() => {
     if (!lastEntry || !ex) return null;
@@ -434,7 +437,7 @@ export default function ExerciseScreen() {
                       cardio={isTimedCardio(shownAs, ex.muscles.primary)}
                       units={units}
                       distUnit={ex.distUnit}
-                      metric={chartMetric}
+                      metric={shownMetric}
                       onMetricChange={setChartMetric}
                       range={chartRange}
                       onRangeChange={setChartRange}
@@ -459,14 +462,14 @@ export default function ExerciseScreen() {
                     cardio={isTimedCardio(shownAs, ex.muscles.primary)}
                     units={units}
                     distUnit={ex.distUnit}
-                    metric={chartMetric}
+                    metric={shownMetric}
                     onMetricChange={setChartMetric}
                     range={chartRange}
                     onRangeChange={setChartRange}
                   />
                   ) : null}
                   {hasHistory ? <View style={{ height: space.lg }} /> : null}
-                  <SessionHistory history={ov?.history ?? []} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} current={current} />
+                  <SessionHistory history={ov?.history ?? []} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} current={current} loadMode={ex.loadMode} />
                 </>
               ) : (
                 <EmptyState icon="dumbbell" title="No workouts yet" body="Every workout with this exercise shows here, with its sets." />

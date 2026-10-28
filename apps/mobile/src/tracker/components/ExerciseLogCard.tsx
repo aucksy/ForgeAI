@@ -183,7 +183,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     const now = Date.now();
     if (now - lastOpen.current < 1000) return;
     lastOpen.current = now;
-    router.push({ pathname: '/exercise/[id]', params: { id: exercise.exerciseId } });
+    // R-141: from the live workout, the page's chart starts on the kg lifted per workout.
+    router.push({ pathname: '/exercise/[id]', params: { id: exercise.exerciseId, from: 'workout' } });
   };
 
   // Note — local text (pushed to the store), synced back on external change.

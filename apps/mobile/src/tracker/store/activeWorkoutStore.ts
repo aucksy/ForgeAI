@@ -46,7 +46,7 @@ import {
   getPriorBestsMany,
   setExerciseRestSec,
 } from '@/tracker/db/exercisePrefs';
-import { historyScopeOrAll, routineIdByName, type HistoryScope } from '@/tracker/db/historyScope';
+import { historyScopeOrAll, readByScope, routineIdByName, scopeFor, type HistoryScope } from '@/tracker/db/historyScope';
 import { getWorkoutSourceNames } from '@/tracker/db/workoutSourceNames';
 import { bestSetOf } from '@/tracker/lib/previousSource';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
@@ -890,16 +890,24 @@ async function prefetchCardFacts(
   // A later card (back-off) may need to look past last time for its own sets (#11).
   const deep = new Set(cards.filter((c) => c.card > 0).map((c) => c.exerciseId));
   const shallow = ids.filter((id) => !deep.has(id));
-  const opts = { skipEasy: true, before: before ?? undefined, scope };
   const none = <V,>(): Map<string, V> => new Map<string, V>();
   try {
+    // R-136: under "Same routine" a body-weight move reads every workout (`scopeFor`), so how each
+    // exercise is logged is read first; with no scope nothing waits for it.
+    const infosRead = getTrackerExercisesByIds(ids).catch(() => none<TrackerExercise>());
+    const known = scope ? await infosRead : null;
+    const scopeOf = (id: string): HistoryScope | null => (known ? scopeFor(scope, known.get(id)) : null);
+    const histories = (list: string[], limit: number): Promise<Map<string, ExerciseHistoryEntry[]>> =>
+      readByScope(list, scopeOf, (g, s) => getBoundedExerciseHistories(g, limit, { skipEasy: true, before: before ?? undefined, scope: s }));
     const [h1, h12, rest, notes, bests, infos] = await Promise.all([
-      shallow.length > 0 ? getBoundedExerciseHistories(shallow, 1, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
-      deep.size > 0 ? getBoundedExerciseHistories([...deep], CARD_LOOKBACK, opts) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
+      shallow.length > 0 ? histories(shallow, 1) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
+      deep.size > 0 ? histories([...deep], CARD_LOOKBACK) : Promise.resolve(none<ExerciseHistoryEntry[]>()),
       getExerciseRestSecs(ids).catch(() => none<number | null>()),
-      before ? Promise.resolve(none<string | null>()) : getCarriedNotes(ids, { scope }).catch(() => none<string | null>()),
+      before
+        ? Promise.resolve(none<string | null>())
+        : readByScope(ids, scopeOf, (g, s) => getCarriedNotes(g, { scope: s })).catch(() => none<string | null>()),
       before ? Promise.resolve(none<PriorBests | null>()) : getPriorBestsMany(ids).catch(() => none<PriorBests | null>()),
-      getTrackerExercisesByIds(ids).catch(() => none<TrackerExercise>()),
+      infosRead,
     ]);
     const hist = new Map([...h1, ...h12]);
     // Warm-ups on PREVIOUS: one more read for every card, from the workout each card's PREVIOUS
@@ -911,7 +919,8 @@ async function prefetchCardFacts(
     // The "Last: 3 Oct · Push 1A" line names each card's PREVIOUS workout; idea 2 reads the last
     // workout anywhere for exercises the scope found nothing for. Beside the warm-ups, never
     // blocking a start.
-    const empty = ids.filter((id) => (hist.get(id) ?? []).length === 0);
+    // R-136: a body-weight move already read every workout: nothing "elsewhere" to say.
+    const empty = ids.filter((id) => (hist.get(id) ?? []).length === 0 && scopeOf(id) != null);
     const [warm, names, elsewhere] = await Promise.all([
       readWarmups(sources),
       readSourceNames(sources.map((x) => x.sessionId)),
@@ -953,7 +962,12 @@ async function buildDraftExercise(
   // note or live-record bests from today.
   const before = opts.before ?? undefined;
   const facts = opts.facts;
-  const scope = opts.scope ?? null;
+  const workoutScope = opts.scope ?? null;
+  // R-136: this exercise's own scope — a body-weight move reads every workout (`scopeFor`). Under a
+  // scope, how it is logged is read first (with `facts` it is already there).
+  const known: Pick<Exercise, 'equipment'> & { logType?: LogType | null } | null =
+    !workoutScope ? null : facts ? facts.infos.get(ex.id) ?? ex : (await getTrackerExercise(ex.id).catch(() => null)) ?? ex;
+  const scope = known ? scopeFor(workoutScope, known) : null;
   const [hist, restSec, note, bests, info] = facts
     ? [
         facts.hist.get(ex.id) ?? [],
@@ -2352,17 +2366,20 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         planDayId: null,
         routineId: session.routineId ?? (await routineIdByName(session.title, session.notes).catch(() => null)),
       });
-      const [meta, histories, infos] = await Promise.all([
+      // No fallback: without each exercise's type, Save would drop timed and assisted sets.
+      // A failed read refuses the edit (the screen says "Could not open the editor").
+      // R-136: read first, so a body-weight move's PREVIOUS reads every workout (`scopeFor`).
+      const infos = await getTrackerExercisesByIds(session.exercises.map((g) => g.exercise.id));
+      const scopeOfEx = (exerciseId: string): HistoryScope | null =>
+        scopeFor(scope, infos.get(exerciseId) ?? session.exercises.find((g) => g.exercise.id === exerciseId)?.exercise);
+      const [meta, histories] = await Promise.all([
         getSessionSetMeta(session.id),
         Promise.all(
           session.exercises.map(async (g) => ({
             exerciseId: g.exercise.id,
-            history: await getBoundedExerciseHistory(g.exercise.id, 1, { before, scope }),
+            history: await getBoundedExerciseHistory(g.exercise.id, 1, { before, scope: scopeOfEx(g.exercise.id) }),
           })),
         ),
-        // No fallback: without each exercise's type, Save would drop timed and assisted sets.
-        // A failed read refuses the edit (the screen says "Could not open the editor").
-        getTrackerExercisesByIds(session.exercises.map((g) => g.exercise.id)),
       ]);
       const kinds: ExerciseKinds = {};
       for (const [id, info] of infos) {
@@ -2381,7 +2398,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // no "Last:" name, and no "First time in this folder" line.
       const priorOf = new Map(histories.map((h) => [h.exerciseId, previousExcludingSession(h.history, session.id, session.dateISO)]));
       const dayOf = new Map(histories.flatMap((h) => h.history.map((x) => [x.sessionId, x.dateISO] as const)));
-      const empty = histories.filter((h) => (priorOf.get(h.exerciseId) ?? []).length === 0).map((h) => h.exerciseId);
+      const empty = histories
+        .filter((h) => (priorOf.get(h.exerciseId) ?? []).length === 0 && scopeOfEx(h.exerciseId) != null)
+        .map((h) => h.exerciseId);
       const [warm, names, other] = await Promise.all([
         readWarmups(sources),
         readSourceNames(sources.map((x) => x.sessionId)),
@@ -2397,7 +2416,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         const dateISO = src ? dayOf.get(src.sessionId) : undefined;
         if (src && dateISO) return { lastFrom: { dateISO, name: names.get(src.sessionId) ?? null } };
         const lt = kinds[exerciseId]?.logType ?? 'weight_reps';
-        const found = elsewhereOf(scope, other.get(exerciseId), lt, kinds[exerciseId]?.loadMode ?? 'one');
+        const found = elsewhereOf(scopeOfEx(exerciseId), other.get(exerciseId), lt, kinds[exerciseId]?.loadMode ?? 'one');
         return found ? { elsewhere: found } : {};
       };
       const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid }, kinds).map((e) => ({
