@@ -15,7 +15,7 @@ import { deltaTag, spokenTag, type ExerciseDelta } from '../lib/workoutCompare';
 // Up is green; down stays grey, never red (R-75: less on one exercise is not a failure).
 const tagColor = (d: ExerciseDelta): string => (d.kind === 'up' ? color.goodText : d.kind === 'down' ? color.inkSecondary : color.inkMuted);
 
-function DeltaRow({ d }: { d: ExerciseDelta }) {
+export function DeltaRow({ d }: { d: ExerciseDelta }) {
   const why = d.reason ?? (d.kind === 'skipped' ? 'Not done today' : d.kind === 'new' ? 'Not in that workout' : null);
   return (
     <View

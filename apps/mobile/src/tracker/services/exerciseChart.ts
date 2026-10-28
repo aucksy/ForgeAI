@@ -70,6 +70,28 @@ export function chartMetrics(shownAs: LogType): ChartMetric[] {
 }
 
 /**
+ * R-141 (owner, 27 Oct 2026): opened from a live workout, the chart starts on the per-workout total
+ * — "Kg lifted" for a weight lift, total reps / time / distance for the rest — so today's total sits
+ * beside last time's. PURE.
+ */
+export function workoutChartMetric(shownAs: LogType): ChartMetric {
+  switch (shownAs) {
+    case 'weight_reps':
+    case 'weighted':
+      return 'workoutLifted';
+    case 'reps':
+    case 'assisted':
+      return 'workoutReps';
+    case 'time':
+      return 'workoutTime';
+    case 'distance':
+    case 'time_distance':
+    default:
+      return 'workoutDistance';
+  }
+}
+
+/**
  * A chip's words. `cardio`: a timed exercise that is cardio (a stair climber) has a longest time,
  * not a best hold. 13 Oct 2026 (owner: "Workout kg lifted" read oddly): the app's own words —
  * "Kg lifted" as in Statistics, "Estimated 1-rep max" as the design language says, and each

@@ -29,7 +29,7 @@ import { getTodaysWorkout } from '@/services/coach';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { getExerciseIdsByCatalogKey, getTrackerExercisesByIds, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { getRoutineAnywhere } from '@/tracker/db/folderRepo';
-import { historyScopeOrAll, scopeKey, type HistoryScope } from '@/tracker/db/historyScope';
+import { bodyWeightAnyWorkout, historyScopeOrAll, scopeFor, scopeKey, type HistoryScope } from '@/tracker/db/historyScope';
 import { getProgressionHistoryMany, getWeightLadders, type LadderWeight } from '@/tracker/db/progressionHistory';
 import { convertCounting, getsTarget, repsPerSide, weightIsEach, type LoadMode } from '@/tracker/engine/logTypes';
 import {
@@ -182,18 +182,25 @@ async function targetsFor(
   const [{ experience, goal }, version] = await Promise.all([profileFacts(), trainingVersion()]);
   // A version below one remembered: that one was a rolled-back write's (or another database's).
   if (version != null && version < targetMemoTop) forgetTargetMemo();
-  const key = version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope, goal, prefs, breakFrom);
+  // R-136: body-weight moves read every workout while the switch is on (`scopeFor`).
+  const allForBodyWeight = bodyWeightAnyWorkout();
+  const key =
+    version == null ? null : memoKey(version, today, includeToday, experience, items, ids, scope, goal, prefs, breakFrom, scope ? allForBodyWeight : true);
   const hit = key != null ? targetMemo.get(key) : undefined;
   if (hit) return [...hit];
+  const extras = extrasFor(ids);
+  const requests = items.map((it, i) => (it.card != null ? { exerciseId: ids[i], card: it.card } : { exerciseId: ids[i] }));
   const [{ infos, versionIds }, histories, ladders] = await Promise.all([
-    extrasFor(ids),
+    extras,
     // One statement for every lift's history (two when some cards read their own sets), and
-    // one for every ladder — instead of two per lift.
-    getProgressionHistoryMany(
-      items.map((it, i) => (it.card != null ? { exerciseId: ids[i], card: it.card } : { exerciseId: ids[i] })),
-      HISTORY_SESSIONS + 1,
-      { scope },
-    ),
+    // one for every ladder — instead of two per lift. R-136: under a scope, body-weight moves are
+    // read apart, from every workout (how each lift is logged is read first).
+    (async () => {
+      if (!scope) return getProgressionHistoryMany(requests, HISTORY_SESSIONS + 1, { scope });
+      const { infos: known } = await extras;
+      const scopes = items.map((it, i) => scopeFor(scope, known.get(ids[i]) ?? (ids[i] === it.pe.exerciseId ? it.pe.exercise : null), allForBodyWeight));
+      return historiesByScope(requests, scopes);
+    })(),
     // The ladder is never in the way of a Target: a failed read uses the history's own weights.
     (async () => getWeightLadders(ids))().catch(() => null),
   ]);
@@ -262,6 +269,37 @@ async function targetsFor(
   return [...targets];
 }
 
+/**
+ * R-136: `getProgressionHistoryMany` with a scope per request — one read per distinct scope (the
+ * workout's, and every workout for body-weight moves), answers back in request order.
+ */
+async function historiesByScope(
+  requests: readonly { exerciseId: string; card?: number }[],
+  scopes: readonly (HistoryScope | null)[],
+): Promise<Awaited<ReturnType<typeof getProgressionHistoryMany>>> {
+  const groups = new Map<string, { scope: HistoryScope | null; at: number[] }>();
+  scopes.forEach((s, i) => {
+    const k = s ? `s${scopeKey(s)}` : 'all';
+    const g = groups.get(k);
+    if (g) g.at.push(i);
+    else groups.set(k, { scope: s, at: [i] });
+  });
+  const out: Awaited<ReturnType<typeof getProgressionHistoryMany>> = requests.map(() => []);
+  await Promise.all(
+    [...groups.values()].map(async (g) => {
+      const rows = await getProgressionHistoryMany(
+        g.at.map((i) => requests[i]),
+        HISTORY_SESSIONS + 1,
+        { scope: g.scope },
+      );
+      g.at.forEach((i, j) => {
+        out[i] = rows[j];
+      });
+    }),
+  );
+  return out;
+}
+
 /** A Target with last time's working sets (OWNER-INBOX #9, "kg to beat"); the engine's type is unchanged. */
 export type KgTarget = ProgressionTarget & { lastSets?: KgSet[] };
 
@@ -291,6 +329,7 @@ function memoKey(
   goal: Goal | null,
   prefs: TargetPrefs,
   breakFrom: readonly (string | null)[] | null = null,
+  allForBodyWeight = true,
 ): string {
   // Display units shape the ladder's rungs (kg / lb).
   const parts = items.map((it, i) => {
@@ -309,6 +348,7 @@ function memoKey(
     gymKey(prefs.gym),
     displayUnits(),
     scopeKey(scope),
+    allForBodyWeight,
     parts,
     breakFrom ?? '',
   ]);

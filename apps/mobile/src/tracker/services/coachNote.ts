@@ -34,6 +34,7 @@ import type { SessionDetail } from '@/types/models';
 import { RECORD_LABEL } from '../engine/records';
 import { exerciseDeltas, mainCause, type CompareExercise, type ExerciseDelta } from '../lib/workoutCompare';
 import { dayTypeLabel } from './finishSummary';
+import { kgHero, workingReps, type KgHero } from './kgHero';
 import { recordValueText } from './recordText';
 import { withVolume } from './volumeService';
 import type { SessionSummaryData } from './finishSummary';
@@ -118,6 +119,8 @@ export interface CoachNote {
   exercises?: ExerciseDelta[];
   /** R-75: what explains most of the change ("Mostly Barbell Row: 2 sets fewer."). */
   cause?: string | null;
+  /** R-147: the finish screen's big "kg lifted vs last time" card (null = no card). */
+  hero?: KgHero | null;
 }
 
 /** R-75: a workout's exercises as the comparison reads them (warm-ups out). PURE. */
@@ -197,12 +200,19 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
   }
   const units = displayUnits();
   const text = buildSessionNote(data, cmp?.detail ?? null, units, cmp?.against);
-  if (!text || !cmp || data.easyWeek) return { text, source: 'engine' };
+  // R-147: the same workout the line compares with, as the big card at the top.
+  const hero = kgHero(
+    { kg: data.totalVolumeKg, reps: workingReps(data.session) },
+    cmp ? { kg: cmp.detail.totalVolumeKg, reps: workingReps(cmp.detail), against: cmp.against } : null,
+    units,
+    data.easyWeek,
+  );
+  if (!text || !cmp || data.easyWeek) return { text, source: 'engine', hero };
   const exercises = exerciseDeltas(compareExercises(data.session), compareExercises(cmp.detail), (kg) => fmtW(kg, units));
   // "About the same" in the line: no "Mostly …" under it (review nit).
   const moved = data.totalVolumeKg - cmp.detail.totalVolumeKg;
   const cause = cmp.detail.totalVolumeKg > 0 && Math.abs(moved) / cmp.detail.totalVolumeKg >= 0.05 ? mainCause(exercises, moved) : null;
-  return { text, source: 'engine', exercises, cause };
+  return { text, source: 'engine', exercises, cause, hero };
 }
 
 /** Compact, grounded fact sheet handed to Groq — only real numbers, no prose. */

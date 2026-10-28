@@ -4,6 +4,8 @@
  * question worked out on the workout screen is asked here, in the app's own sheet.
  * 15 Oct 2026: "Add photo" (Camera or Gallery, up to 4) — Hevy's "Add a photo / video" on Finish;
  * the workout is already saved here, so each photo is kept the moment it is picked.
+ * R-147 (owner, 27 Oct 2026): the kg lifted against last time is the screen's proud headline — one
+ * big card at the very top (KgHeroCard), with the comparison's exercises folded in it.
  */
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,6 +28,7 @@ import { onAccentTint } from '@/theme/tint';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { CompareNote } from '@/tracker/components/CompareNote';
+import { KgHeroCard } from '@/tracker/components/KgHeroCard';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
@@ -102,7 +105,10 @@ export default function FinishScreen() {
 
   const [data, setData] = useState<SessionSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [note, setNote] = useState<Pick<CoachNote, 'text' | 'exercises' | 'cause'> | null>(null);
+  const [note, setNote] = useState<Pick<CoachNote, 'text' | 'exercises' | 'cause' | 'source'> | null>(null);
+  // R-147: the big "kg lifted vs last time" card and the exercises it opens to (kept when the AI
+  // note replaces the line).
+  const [hero, setHero] = useState<Pick<CoachNote, 'hero' | 'exercises' | 'cause'> | null>(null);
   const [sharing, setSharing] = useState(false);
   const [routineLine, setRoutineLine] = useState<string | null>(null);
   // Backlog (21 Oct): no routines yet and an empty workout -> one quiet "Save as routine" button.
@@ -112,15 +118,27 @@ export default function FinishScreen() {
   // v0.25.1: the body figure chosen in Profile.
   const figure = useTrackerPrefs((s) => s.bodyFigure);
   // Phase 3: the picture to share on WhatsApp / Instagram.
-  const scene = useMemo(() => (data ? workoutShareScene({ ...workoutShareInput(data), figure }) : null), [data, figure]);
+  // R-147: "+45 kg more than last time" goes on the picture too, beside "Workout complete", when today beat it.
+  const shareLine = hero?.hero?.shareLine ?? null;
+  const scene = useMemo(
+    () => (data ? workoutShareScene({ ...workoutShareInput(data), figure, ...(shareLine ? { beatLast: shareLine } : {}) }) : null),
+    [data, figure, shareLine],
+  );
 
   useEffect(() => {
     let alive = true;
     if (id) {
       getSessionSummary(id)
-        .then((d) => {
+        .then(async (d) => {
+          // R-147: the comparison is read before the screen shows, so the big card is there from the
+          // first frame (it never pushes the screen down). It never fails the summary.
+          const n = d ? await getSessionCoachNote(d).catch(() => null) : null;
           if (alive) {
             setData(d);
+            if (n) {
+              setNote(n);
+              setHero({ hero: n.hero, exercises: n.exercises, cause: n.cause });
+            }
             setLoading(false);
           }
         })
@@ -200,17 +218,11 @@ export default function FinishScreen() {
   // the summary loads, then — only with the coach switch on, the member opted in AND a Groq key
   // set — a richer note when it arrives. Never blocks; falls back silently.
   useEffect(() => {
-    if (!data) return;
+    if (!data || !coachNotesPref) return;
     let alive = true;
-    void getSessionCoachNote(data).then((n) => {
-      if (!alive) return;
-      setNote(n);
-      if (coachNotesPref) {
-        // The richer note compares in its own way: it replaces the line and the exercise list.
-        void getCloudCoachNote(data).then((rich) => {
-          if (alive && rich) setNote({ text: rich });
-        });
-      }
+    // The richer note compares in its own way: it replaces the line (the big card stays).
+    void getCloudCoachNote(data).then((rich) => {
+      if (alive && rich) setNote({ text: rich, source: 'groq' });
     });
     return () => {
       alive = false;
@@ -231,6 +243,8 @@ export default function FinishScreen() {
   }, [data, id]);
 
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
+  // R-147: the big card compares with last time (it then holds the exercise list).
+  const heroCompared = hero?.hero != null && hero.hero.tone !== 'first';
 
   const sharingText = useRef(false);
   const shareText = (title: string, getText: () => string): void => {
@@ -250,6 +264,9 @@ export default function FinishScreen() {
         </View>
       ) : data ? (
         <View style={{ gap: space.lg }}>
+          {/* R-147: kg lifted today against last time, the screen's headline. */}
+          {hero?.hero ? <KgHeroCard hero={hero.hero} exercises={heroCompared ? hero.exercises : undefined} cause={hero.cause} /> : null}
+
           <HeroCard gradient={gradients.ember}>
             {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole
                 block); the lines below start where the title's words start. */}
@@ -284,7 +301,11 @@ export default function FinishScreen() {
               last workout of its kind) — plain, with no coach heading or sparkle while the coach
               is hidden, and never food or sleep advice while nutrition is. */}
           {/* R-75: the line opens to each exercise (up, down, why) with the arrow on the right. */}
-          {note?.text ? <CompareNote text={note.text} exercises={note.exercises} cause={note.cause} /> : null}
+          {/* R-147: the big card already says the engine's comparison; the line stays for an easy week,
+              the AI note, or a comparison the card could not make. */}
+          {note?.text && !(note.source === 'engine' && heroCompared && !data.easyWeek) ? (
+            <CompareNote text={note.text} exercises={heroCompared ? undefined : note.exercises} cause={note.cause} />
+          ) : null}
 
           {routineLine ? (
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>{routineLine}</Text>

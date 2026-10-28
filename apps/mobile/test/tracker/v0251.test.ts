@@ -227,7 +227,8 @@ describe('a male or female body figure', () => {
     expect(read('app/edit-profile.tsx')).toMatch(/<ProfileCard /);
     expect(read('components/analytics/BodyMapSection.tsx')).toMatch(/<BodyMap levels=\{levels\} figure=\{figure\}/);
     for (const screen of ['app/session/finish.tsx', 'app/session/[id].tsx']) {
-      expect(read(screen), screen).toMatch(/workoutShareScene\(\{ \.\.\.workoutShareInput\(data\), figure \}\)/);
+      // R-147: the finish screen may add "+45 kg more than last time" after the figure.
+      expect(read(screen), screen).toMatch(/workoutShareScene\(\{ \.\.\.workoutShareInput\(data\), figure( \}\)|, )/);
     }
   });
 });

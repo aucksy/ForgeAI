@@ -20,6 +20,7 @@ import type { UnitSystem } from '@/lib/units';
 import type { FeedThumb, FeedItem } from '../../services/profileService';
 import { feedCardFacts } from '../../services/feedCard';
 import { ExerciseThumb } from '../ExerciseThumb';
+import { StatsRow } from '../StatsRow';
 import { Glyph } from '../TrackerGlyph';
 import { Avatar } from './Avatar';
 
@@ -102,16 +103,8 @@ export const FeedCard = memo(function FeedCard({
 
         <Text style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>{f.title}</Text>
 
-        {f.stats.length > 0 ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: space.xl, rowGap: space.sm }}>
-            {f.stats.map((st) => (
-              <View key={st.label}>
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{st.label}</Text>
-                <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.ink }}>{st.value}</Text>
-              </View>
-            ))}
-          </View>
-        ) : null}
+        {/* R-141: the shared stats row (the exercise History cards use the same one). */}
+        <StatsRow stats={f.stats} />
 
         {photos.length > 0 ? (
           <View

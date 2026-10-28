@@ -27,7 +27,7 @@ import { tap } from '@/lib/haptics';
 import { tell } from '@/lib/tell';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { PREVIOUS_FROM_CHOICES } from '../db/historyScope';
+import { BODY_WEIGHT_SWITCH, PREVIOUS_FROM_CHOICES } from '../db/historyScope';
 import { followedFolder } from '../db/folderRepo';
 import { GROUP_WORDS } from '../engine/muscleBalance';
 import { putAwayGroups, useMuscleTips } from '../store/muscleTipsStore';
@@ -384,6 +384,8 @@ export function LastTimeCard() {
   const previousFrom = useTrackerPrefs((s) => s.previousFrom);
   const setPreviousFrom = useTrackerPrefs((s) => s.setPreviousFrom);
   const previousChoice = PREVIOUS_FROM_CHOICES.find((c) => c.value === previousFrom) ?? PREVIOUS_FROM_CHOICES[0];
+  const bodyWeightAll = useTrackerPrefs((s) => s.bodyWeightAnyWorkout);
+  const setBodyWeightAll = useTrackerPrefs((s) => s.setBodyWeightAnyWorkout);
   return (
     <Card style={{ paddingVertical: space.md }}>
       <View accessibilityRole="radiogroup" style={{ gap: space.xs }}>
@@ -401,6 +403,17 @@ export function LastTimeCard() {
         ))}
       </View>
       <Text style={SECTION_LINE()}>{previousChoice.line}</Text>
+      {/* R-136: only "Same routine" narrows the workouts, so only there is the switch shown. */}
+      {previousFrom === 'routine' ? (
+        <ToggleRow
+          icon="list"
+          title={BODY_WEIGHT_SWITCH.title}
+          caption={BODY_WEIGHT_SWITCH.caption}
+          value={bodyWeightAll}
+          onChange={setBodyWeightAll}
+          divider
+        />
+      ) : null}
     </Card>
   );
 }

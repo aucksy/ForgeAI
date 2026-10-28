@@ -185,6 +185,17 @@ isn't highlighted. The whole app is about progressive overload, so this win shou
 cheer line); a gentle line when it is lower ("Lighter day: fine, keep going"); compare with the same routine's
 last time (as R-132 does); share-card tie-in. Member words through member-words skill ("kg lifted", never "volume").
 Not in the backlog yet.
+**Built (28 Oct 2026):** one big card at the very top of "Workout complete": "Kg lifted today", the number big ("1,925 kg"),
+then "+45 kg more than last time" in green, or "Same as last time", or a kind line ("Lighter than last time. Every workout
+counts."; an easy week: "Easy week: lighter on purpose."), and "Last time: 1,880 kg in Push 2 on 13 Oct". It compares with
+the SAME workout the old comparison line used (this routine's last time, else the folder's / the last of its kind) and folds
+in that line's "See each exercise" list, so the line no longer repeats (it stays for an easy week and the AI note). First
+workout: today's total and "Your number to beat next time." (nothing made up). No weight at all: reps ("60 reps", "+8 reps
+more than last time"). Cardio only: no card. The screen waits for the comparison before showing, so the card never pushes
+it down. Share picture: "Workout complete · +45 kg more than last time" on the subtitle line when today beat last time
+(it fits that 936 px line; dropped whole, never cut, if a number ever made it too long); the stat boxes had no room.
+Code: tracker/services/kgHero.ts (PURE), components/KgHeroCard.tsx, coachNote `hero`, share/workoutCard `completeLine`.
+Words via member-words + Gemini ("on last time" -> "more than last time", "·" -> "in"). Test: test/tracker/r147KgHero.test.ts.
 
 ## R-146. "1,925 kg beaten ✓" turns green when done = target exactly (word + rule) — 27 Oct 2026
 **Owner asked (screenshot, notes only):** Triceps Pushdown shows "1,925 kg beaten ✓ (1,925 kg done)" in green. How is
@@ -249,6 +260,14 @@ per workout (time, kg lifted, ...).
    choice).
 Member words through member-words skill ("Kg lifted", never "volume"). Fix R-138 first or alongside: the numbers
 must agree with PREVIOUS.
+**Built (28 Oct 2026):** every workout card on an exercise's History tab (and the "This workout · in progress" card once a
+set is ticked) shows a stats row under its name in the profile feed's look: "Kg lifted 1,925 · Sets 3 · Best set 45 kg × 13"
+(warm-ups out; two dumbbells count both, so it equals the "Kg lifted per workout" chart above it); body-weight moves show
+Reps, holds Time, distance work Distance. One shared component, tracker/components/StatsRow.tsx, now draws the profile
+FeedCard's row too. Opened from a live workout's card (param from=workout), the chart starts on the per-workout total
+("Kg lifted", or total reps / time / distance; exerciseChart `workoutChartMetric`); from anywhere else as before.
+Code: tracker/services/exerciseWorkoutStats.ts (PURE), components/exercise/SessionHistory.tsx. Test:
+test/tracker/r141ExerciseWorkoutStats.test.ts.
 
 ## R-140. Problem to analyse later: a longer rest than planned inflates reps, and next time's goal — 27 Oct 2026
 **Owner said:** sometimes he starts the next set after resting longer than the rest timer, so he does more reps than
@@ -427,6 +446,15 @@ empty workouts included. Weighted lifts keep the folder rule (different gyms, di
 historyScope (`scopeFor(exercise)` -> null for body-weight), tested; maybe an "Always use all workouts for body-weight
 exercises" switch under Previous values (on by default). Open question for him: does "counting" also mean something else
 (e.g. the leaderboard, weekly sets per muscle, or Up next)? Ask before building.
+**Built (28 Oct 2026):** (R-163: PREVIOUS and the goal only.) One rule, `scopeFor(scope, exercise)` in tracker/db/historyScope.ts:
+a body-weight move (log type reps / weighted / assisted, or a library move with equipment "bodyweight") gets no scope, so its
+PREVIOUS, warm-ups, carried note and Target read every workout, empty workouts included; weighted lifts keep the routine's.
+Applied where the live workout reads (start from a routine, add an exercise, Repeat, edit a saved workout: activeWorkoutStore)
+and where the Target reads (coachTargets targetsFor: body-weight lifts read in their own batch; memo key carries the switch).
+The "first time in this routine" line never shows for them. Switch: Settings → Workouts → Previous values → "Always use all
+workouts for body-weight moves", on by default, shown only under "Same routine" (the only choice that narrows anything; under
+"Any workout" it would do nothing). Kept because it was one boolean pref + one toggle row. Test (pure + real SQL):
+test/tracker/r136BodyWeightScope.test.ts.
 
 ## R-135. Update the tracker with the OpenCode work when back in Claude Code — 26 Oct 2026
 **He said:** "update tracker with changes done here when I am working back in my weekly plan on Claude code application."
