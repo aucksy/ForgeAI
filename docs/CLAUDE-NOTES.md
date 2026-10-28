@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-170. Exercise clips: the 2 finished ones into the app, then one new clip a day — 29 Oct 2026
+**He said:** use the skills from the "Exercise animation for ForgeAI" chat; plan the top 5-20 most-used exercises; one animation a day for
+his approval; less common exercises get 1-2 still pictures (start and end) later. Then: "use those two animations that were finalized
+(lateral raise and incline chest) in the actual app, and then plan the next one. After my approval, keep adding one every day to save
+tokens so my weekly limit does not finish early."
+**Done:** lateral_raise + incline_dumbbell_press v6 (exercise-clips release) marked owner-approved. Queue of 22 in
+tools/exercise-anim/QUEUE.md (most-used first; recipes that exist go first). Helpers: (1) in-app clip player on the exercise page,
+ships in 0.60.0; (2) clip #3 dumbbell_shoulder_press for his approval. A daily scheduled task makes the next clip only when the
+previous one is approved (cheap no-op otherwise).
+
 ## R-169. "Waiting for you" = I cannot start until he acts — 28 Oct 2026
 **He said:** "There are features waiting for me and I moved them to Planned and commented on few.. but I still see them... Am I confused here"
 **Found:** only 2 moves (long rest, RPE -> Planned) and 1 comment (busy by exercise) ever reached the page data; all 3 were applied. No move was lost after that.
