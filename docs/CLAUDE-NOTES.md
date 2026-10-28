@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-156. Back in Claude Code: read all notes, fix issues first, update the tracker — 28 Oct 2026
+**He said:** "I made quite a few updates using cloud session and opencode using Anthropic API key. Please go thru all
+notes and recent updates and lets start fixing the issues first. Update the project tracker."
+**Done:** (1) the 0.58.1 release run (40658106008) failed only its permissions check: WorkManager (used by the new gym-notice
+background check) adds FOREGROUND_SERVICE. The fix was already in the working tree (manifest `tools:node="remove"`);
+committed fecd97b and moved tag v0.58.1 to it (nothing was published from the failed run). (2) Tracker (R-135 + R-137 +
+R-153 step 6): 0.57.0 rows Live (Google login, Drive backup, automatic backup, full backup file, gym hours); notice
+pop-ups Next release; R-137 two leaderboard rows (Waiting for you: live server yes); Claude's tasks: notice pop-ups
+(Doing), feedback button R-149, fixes R-138/R-155/R-152 (To do); page version 169.
+**Fix order (my pick, #18):** 0.58.1 release → R-138 kg-to-beat bug (members see it every workout) → R-155 import
+phone column → R-152 camera-only QR → R-149 feedback button plan for his OK (testers ~2 Nov) → R-153 step 2 (Firebase).
+
 ## R-155. FIX NEEDED: Excel import maps the wrong phone column (and the AI help did not fix it) — 28 Oct 2026
 **Owner said (notes only):** a sheet can have several phone columns (Cell phone, Phone, Home phone...). The import's
 automatic matching picked the wrong one, not the column that holds the real number (it was in "Cell phone"). The

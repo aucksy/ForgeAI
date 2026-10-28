@@ -125,6 +125,13 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Task: GGMS column mapping and trial imports | High | High |
 | Task: Play Store listing, data safety answers, internal test | High | Medium |
 | Task: In-app "Delete my data" for members | Medium | Medium |
+| Task: Gym notices pop up on the phone (R-151, R-153) | High | Medium |
+| Task: Floating feedback button, voice or typing, auto-fix loop (R-149) | High | High |
+| Task: Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | High | Medium |
+| Task: Fix: Excel import picks the wrong phone column (R-155) | High | Low |
+| Task: Check-in QR: live camera only, no gallery (R-152) | Medium | Low |
+| Feature: Challenge rewards given out by themselves | Medium | Medium |
+| Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
 
 ---
 
@@ -135,18 +142,23 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| Gym notices pop up on the phone (R-151, R-153) | Doing | Step 1 (a check every ~15 min + a phone pop-up) is in 0.58.1, releasing 28 Oct. Step 2: instant pop-ups through Firebase on your Google project; needs your yes for one live server change and a privacy line. |
+| Floating feedback button, voice or typing, auto-fix loop (R-149) | To do | PRIORITY: gym members start testing about 2 Nov. A button on every screen; Hindi or English voice, or typing; Claude sorts, fixes and releases. I confirm the plan with you first. |
+| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | To do | Bug confirmed in 2 cases: the goal can equal last time's total, so no progress. One review of the whole suggestion logic, with "beaten" vs "reached" on an exact match. |
+| Fix: Excel import picks the wrong phone column (R-155) | To do | With several phone columns, choose the one holding real mobile numbers and show the choice on the mapping screen. |
+| Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
 | Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
 | AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
-| Members' workouts on our server (#50, #27) | Doing | Server part live since #59 (24 Oct); your Google setup done (#60, 25 Oct). I am switching on "Continue with Google" so it works; ships in 0.57.0. |
+| Members' workouts on our server (#50, #27) | Done | Server part live since #59 (24 Oct); "Continue with Google" shipped in 0.57.0 (25 Oct).
 | Online terms acceptance for gyms (#38) | Done | Live 24 Oct after your yes in #59. |
 | Simpler app layout (4 fixed tabs, 6 settings groups) | Done | Shipped in 0.56.0 (Workout, Progress, Gym, Profile tabs; Settings in 6 groups). |
-| Play Store pictures, redone (R-126) | Doing | You found layout and symmetry faults (25 Oct). New frames (centred, whole phone), fresh screens on a normal-size phone, and a design review of every picture before upload. |
-| Test server and crash alerts (#34) | To do | After 0.57.0: the free test server in your Chrome, then crash notes and "site is down" emails on Cloudflare and GitHub (no new accounts). |
+| Play Store pictures, redone (R-126) | To do | Paused by you (25 Oct, R-129). Good screens are saved; only screen 2 needs a retake; a full design review before any upload.
+| Test server and crash alerts (#34) | To do | The free test server in your Chrome, then crash notes and "site is down" emails on Cloudflare and GitHub (no new accounts).
 | Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
 | The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
 | Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
 | Trainer view without a tick box (#46) | To do | 24 Oct: you picked A (join-screen line + off switch). Built after the MettleUp release. Waits for your pick in #46 and your OK on the words. Medium. |
-| Free vs gym-member limits + Google sign-in (#43) | Doing | Your Google setup is done (#60). Google sign-in ships in 0.57.0; the limits stay OFF until you switch them on in your owner panel. |
+| Free vs gym-member limits + Google sign-in (#43) | Done | Google sign-in live since 0.57.0 (25 Oct). The free limits stay OFF until you switch them on in your owner panel.
 | Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
 | Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
 | 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
@@ -234,10 +246,10 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Share a picture or text | Live | Share a workout as a picture (post or story size) or as text; body weight is never shown. |
 | Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
 | Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
-| Google Drive backup and restore | Planned | Your Google setup is done (#60, 25 Oct). I am finishing the Google side and testing it; it ships in 0.57.0. | Settings → Backup shows "Back up to Google Drive": the member picks a Google account once, and the app saves the full backup file to their own Drive. On a new phone, "Restore from Google Drive" brings everything back. Only the member can open the file. |
-| Automatic workout backup | Planned | Built in v0.50.0; it starts working with Drive backup in 0.57.0 (#60 done). | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the app after a workout. |
-| Full backup file you can keep | Next release | One file with workouts, routines in their order, every setting, profile and photos; restore on a new phone, with or without a gym (R-123). Ships in 0.57.0. |  |
-| Gym opening hours in the app | Next release | The gym sets its hours per day in the admin app (live 25 Oct); members see them in the app from 0.57.0 (R-124). |  |
+| Google Drive backup and restore | Live | 0.57.0 (25 Oct): Settings → Backup → "Back up to Google Drive"; "Continue with Google" on the welcome screen finds your backup and offers to restore it. | Settings → Backup shows "Back up to Google Drive": the member picks a Google account once, and the app saves the full backup file to their own Drive. On a new phone, "Restore from Google Drive" brings everything back. Only the member can open the file. |
+| Automatic workout backup | Live | 0.57.0 (25 Oct): after one Drive backup on this phone, the app backs up by itself when you leave the app after a workout. | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the app after a workout. |
+| Full backup file you can keep | Live | 0.57.0 (25 Oct): one file with workouts, routines in their order, every setting, profile and photos (R-123). |  |
+| Gym opening hours in the app | Live | 0.57.0 (25 Oct): the gym sets hours per day in the admin app; members see them on the Gym tab (R-124). |  |
 | Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
 | Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
 | Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. 24 Oct fix (next release): it no longer switches itself off, and workouts go even when the calories switch is off. |
@@ -321,17 +333,19 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Gym welcome and logo after joining | Live | v0.54.0: after joining, the app restarts in the gym's look with "Welcome to <gym>", then offers the gym's logo for the home screen and shows how to take the ForgeAI icon off (owner, 22 Oct). |
 | Shop tab only when the gym's shop is on | Live | v0.54.0: no gym = no Shop tab; a gym = a "Gym" tab; it becomes "Shop" once the gym lists a product. "Leave gym" is its own row in Settings → Your gym (owner, 22 Oct). |
 | Workout reward (trial) | Live | 22 Oct: the member shows "Show my workouts to the desk" (v0.54.0), the desk types the code into "Check workout code" in the admin app and gives the free days. Nothing is sent to the server (#49, step 1). |
-| Messages in the phone's notification shade | Waiting for you | Needs your Firebase (Google) project set up before messages can pop up on phones. | When the gym sends a message, it also pops up on members' phones like a WhatsApp message; a tap opens it in the app's inbox. It uses Google's free Firebase messaging: you make the Firebase project once, and a live server change (your yes) lets the server remember each phone. Members can turn it off in Settings. |
+| Messages in the phone's notification shade | Next release | 0.58.1 (R-153 step 1): the app checks for new gym notices about every 15 minutes and shows a phone pop-up, even when closed. Instant pop-ups (Firebase) come next. | When the gym sends a message, it also pops up on members' phones like a WhatsApp message; a tap opens it in the app's inbox. It uses Google's free Firebase messaging: you make the Firebase project once, and a live server change (your yes) lets the server remember each phone. Members can turn it off in Settings. |
 | My membership | Live | Members see their plan, end date, days left, personal training used and visits this month. |
 | Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
 | Busy times by exercise | Waiting for you | With members' OK, show "others also plan this exercise at these hours" to help pick a quieter time. Waits for your yes: it needs a live server change. | Members choose to share "which exercise, at what hour" (no weights, no names; off until they agree). On an exercise or a routine, the app then shows "Other members also plan this between 6 and 8 pm", and members judge for themselves. It needs a few weeks of shared data before it shows anything, and a live server change (your yes). |
-| Google login | Planned | Your Google setup is done (#60, 25 Oct). I am finishing it; ships in 0.57.0. | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
+| Google login | Live | 0.57.0 (25 Oct): "Continue with Google" is the first card on the welcome screen (R-131). | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
 | Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
 | Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
 | Monthly gym challenge with a ranking | Live | 26 Oct (0.58.0): Gym tab leaderboard (last 30 days, Workouts or Kg lifted, top 10, your place, the challenge bar); admin app → Challenges (goal in workouts or kg, 7 to 31 days, free days; who hit the goal, with phone). Names show only if the member switches it on. | |
+| Challenge rewards given out by themselves | Waiting for you | Needs one live server change (your yes). When a member meets the challenge goal, the reward shows in the admin app and the member gets a message in the app (R-137). | When the month's challenge ends (or the goal is hit), the gym server marks each winner. The admin app lists them under Challenges with the reward to hand over, and each winner gets a gym notice saying what they won and where to collect it. |
+| Tap a name on the leaderboard to see their profile | Waiting for you | Needs a live server change and a privacy line (your yes). For members who show their name: photo, name, bio and workout history, like your own profile (R-137). | On the Gym tab leaderboard, a name is a link when that member chose to show it. It opens their profile page: photo, name, bio and recent workouts. Members who hide their name stay plain text and cannot be opened. |
 | How busy the gym is right now | Planned | Members see how busy the gym is now and the quietest times, from the QR check-ins, from #58. | The server counts check-ins per hour (the admin app already shows busy hours). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
 | Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
 | Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
