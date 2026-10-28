@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-155. FIX NEEDED: Excel import maps the wrong phone column (and the AI help did not fix it) — 28 Oct 2026
+**Owner said (notes only):** a sheet can have several phone columns (Cell phone, Phone, Home phone...). The import's
+automatic matching picked the wrong one, not the column that holds the real number (it was in "Cell phone"). The
+"AI" matching did not fix it either.
+**To do later (code not looked at):** when more than one column looks like a phone, prefer the one with the most
+real mobile numbers (10 digits, starts 6-9) over the header name; show the choice on the mapping screen so the owner
+can change it (list all phone-like columns, preview 3 values each); fall back to the next phone column when a row's
+first one is empty; add a test with a sheet that has Phone + Home phone + Cell phone. Check why the AI step did not
+help (is it on, is it only reading header names, not values).
+
 ## R-154. To do: put a question about Firebase notification limits in the tracker — 28 Oct 2026
 **Owner said:** add to the notes that a question on the limits of Firebase notifications must go in the tracker.
 **Done now:** only this note (rule R-36: nothing goes into the tracker until he says so, and he said "add to notes").
