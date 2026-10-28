@@ -15,14 +15,8 @@ Updated 26 Oct 2026 (R-133, owner approved the wording "as written"): the gym le
 (workouts and kg lifted), names opt-in, deletion after 62 days and on leaving. In force when server change 0037 is
 live (the apps show the leaderboard only then).
 
-**PROPOSAL — PENDING OWNER APPROVAL (28 Oct 2026, R-153 step 2). NOT part of the notice yet; do not publish.**
-Phone pop-ups for the gym's messages and offers (Firebase push, server change 0038). When the owner says yes, add
-this row to "What we keep on our server" (after the leaderboard row) and this sentence to "Where it is kept":
-
-> | Only if your phone is in a gym with "Messages from my gym" on: a push address for this phone (made by Google's Firebase), so your gym's messages and offers can pop up | So your gym's messages can pop up on your phone | Deleted when you leave the gym or turn messages off (or turn off the app's notifications), and when the phone has not used it for 60 days |
-
-> Google's Firebase Cloud Messaging carries each pop-up to your phone: your gym's name and the first line of the
-> message or offer. Nothing about your workouts goes with it.
+Updated 28 Oct 2026 (R-162, owner approved "yes to all"): a push address per phone so the gym's messages and offers
+pop up; Firebase Cloud Messaging named under "Where it is kept". In force when server change 0038 is live.
 
 ---
 
@@ -64,6 +58,7 @@ this row to "What we keep on our server" (after the leaderboard row) and this se
 | Gym staff: name and mobile | Staff sign-in | While they work there |
 | Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward | To give you the reward | Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends |
 | Leaderboard numbers (only if you are in a gym): workouts logged and kg lifted per day, for the last 31 days, and your name switch | So your gym can run its leaderboard and challenges | Each day's numbers are deleted after 62 days, and all of them as soon as you leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total) stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when you leave the gym |
+| Only if your phone is in a gym with "Messages from my gym" on: a push address for this phone (made by Google's Firebase), so your gym's messages and offers can pop up | So your gym's messages can pop up on your phone | Deleted when you leave the gym or turn messages off (or turn off the app's notifications), and when the phone has not used it for 60 days |
 | Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts" | So you can get them back on a new phone | Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days |
 | Only if you sign in with Google: your MettleUp account (your Google email address, and the name and picture link Google shares) | So only you can open your saved workouts | Until you delete your account (one exception, explained below) |
@@ -124,7 +119,8 @@ database), Google (sign-in with Google, and Google Drive if you turn on that bac
 and GitHub (app downloads), and, only when your gym's owner imports an old member list,
 Google Gemini or Anthropic Claude (they see the list's column names, 5 example rows and simple
 counts per column, with names, addresses, mobile numbers, emails and ID numbers hidden) [and Sentry
-(crash reports), once added]. They
+(crash reports), once added]. Google's Firebase Cloud Messaging carries each pop-up to your phone: your
+gym's name and the first line of the message or offer; nothing about your workouts goes with it. They
 process it only to provide their service to us. So that the desk can keep working when the internet
 drops, the desk app keeps a copy of the gym's records on each device a staff member signs in on;
 signing that device out deletes the copy.
