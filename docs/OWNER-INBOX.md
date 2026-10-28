@@ -128,7 +128,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Task: Gym notices pop up on the phone (R-151, R-153) | High | Medium |
 | Task: Floating feedback button, voice or typing, auto-fix loop (R-149) | High | High |
 | Task: Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | High | Medium |
-| Task: Fix: Excel import picks the wrong phone column (R-155) | High | Low |
 | Task: Check-in QR: live camera only, no gallery (R-152) | Medium | Low |
 | Feature: Challenge rewards given out by themselves | Medium | Medium |
 | Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
@@ -142,10 +141,10 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| Gym notices pop up on the phone (R-151, R-153) | Doing | Step 1 (a check every ~15 min + a phone pop-up) is in 0.58.1, releasing 28 Oct. Step 2: instant pop-ups through Firebase on your Google project; needs your yes for one live server change and a privacy line. |
+| Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Doing | Step 1 (a check every ~15 min) in 0.58.1. Step 2: instant pop-ups through Firebase: Firebase set up 28 Oct; app + server being built; then your yes for one live server change and a privacy line. |
 | Floating feedback button, voice or typing, auto-fix loop (R-149) | To do | PRIORITY: gym members start testing about 2 Nov. A button on every screen; Hindi or English voice, or typing; Claude sorts, fixes and releases. I confirm the plan with you first. |
-| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | To do | Bug confirmed in 2 cases: the goal can equal last time's total, so no progress. One review of the whole suggestion logic, with "beaten" vs "reached" on an exact match. |
-| Fix: Excel import picks the wrong phone column (R-155) | To do | With several phone columns, choose the one holding real mobile numbers and show the choice on the mapping screen. |
+| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Doing | Fixed 28 Oct (goal and PREVIOUS now read the same workout; ships after 0.58.1). Next: a lighter first set at the top of its rep range moves up to the main weight. |
+| Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
 | Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
 | Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
 | AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
