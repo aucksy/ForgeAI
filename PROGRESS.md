@@ -2679,6 +2679,13 @@
   pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
   (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
   test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-28: **0.58.1 prepared: gym notices pop up on the phone (R-153 step 1, no Firebase).** Root cause of R-151:
+  push was never built (no FCM token, no sender; the inbox was read only while the app ran). expo-background-task +
+  expo-task-manager (new native modules, autolinked): task mettleup-gym-notices (shop/noticeTask.ts, imported by
+  index.js), registered every 15 min while in a gym with "Messages from my gym" on (Settings → Reminders; carried in
+  backups); runs refreshInbox() and pops one local notification per new notice on channel gym-messages (HIGH), >3 = one
+  summary; first look / notices > 7 days old are marked without a pop-up; never twice; foreground marks without a
+  pop-up; tap opens /shop/inbox. Step 2 (real FCM push) planned in CLAUDE-NOTES R-153.
 - 2026-10-26: **v0.58.0 RELEASED** (tag on 33cabec; CI, Device QA default + owner, journeys all green after the
   brand-welcome flow fix). Release run 40302380878: phone-gate, build, update-proof, publish and the NEW job
   "play-upload / upload" all green: Play upload ran BY ITSELF for the first time (58000 on internal + alpha).

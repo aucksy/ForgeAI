@@ -6,6 +6,7 @@
  *  - reminderChosen (audit Phase 6): the member picked the days or the time themselves. Until
  *    then, switching reminders on fills in "your usual training days and time".
  *  - gymRemindersOn (R-86): the gym's automatic reminders; on by default.
+ *  - gymMessagesOn: a pop-up for the gym's new notices; on by default.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -34,6 +35,12 @@ export interface PhonePrefsState {
    */
   gymRemindersOn: boolean;
   setGymRemindersOn: (on: boolean) => void;
+  /**
+   * "Messages from my gym" (Settings → Reminders): a pop-up on the phone when the gym sends news
+   * (shop/noticeAlertsRun.ts). On by default; off stops the background check.
+   */
+  gymMessagesOn: boolean;
+  setGymMessagesOn: (on: boolean) => void;
   /**
    * R-133: "Show my name on my gym's leaderboard" (Settings → Your gym → What my gym can see).
    * Off by default: the gym's board then says "A member".
@@ -77,6 +84,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       healthLast: null,
       gymRemindersOn: true,
       setGymRemindersOn: (gymRemindersOn) => set({ gymRemindersOn }),
+      gymMessagesOn: true,
+      setGymMessagesOn: (gymMessagesOn) => set({ gymMessagesOn }),
       showNameOnBoard: false,
       setShowNameOnBoard: (showNameOnBoard) => set({ showNameOnBoard }),
       boardNamePending: false,
@@ -95,6 +104,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           healthUnsent: [],
           healthLast: null,
           gymRemindersOn: true,
+          gymMessagesOn: true,
           showNameOnBoard: false,
           boardNamePending: false,
         }),

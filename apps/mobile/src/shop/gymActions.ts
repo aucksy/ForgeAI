@@ -285,6 +285,8 @@ export async function refreshInbox(): Promise<ActionWords> {
     return r.error.kind === 'offline' ? "No internet — showing the last messages." : "Couldn't refresh — showing the last messages.";
   }
   useGymInbox.getState().setList(link.memberId, r.data);
+  // Notices that pop up on the phone: with the app in front they are only remembered (noticeAlertsRun.ts).
+  void import('./noticeAlertsRun').then((m) => m.afterInboxRefresh(link.memberId, r.data)).catch((e: unknown) => console.warn('[ForgeErr] gym notices: remembering the inbox', e));
   const unsent = useGymInbox.getState().unsent;
   if (unsent.length > 0) await sendSeen(link.memberKey, unsent);
   return null;

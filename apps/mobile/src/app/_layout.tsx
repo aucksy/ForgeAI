@@ -26,6 +26,7 @@ import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingSto
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
 import { checkInCodeFromUrl } from '@/shop/checkIn';
 import { startGymShortcutSync } from '@/shop/gymShortcut';
+import { startNoticeTaskSync } from '@/shop/noticeTaskSync';
 import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
@@ -49,6 +50,9 @@ setWorkoutCheck(() => {
 startGymTheme();
 // A gym logo pinned on the home screen follows the gym (OWNER-INBOX #11).
 startGymShortcutSync();
+// The gym's new notices pop up on the phone: the background check follows the gym link and the
+// "Messages from my gym" switch (shop/noticeTaskSync.ts; the job itself is defined in index.js's import).
+startNoticeTaskSync();
 
 /**
  * Last resort: the root layout ITSELF threw while drawing (each screen has its own

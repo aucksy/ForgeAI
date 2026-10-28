@@ -33,6 +33,9 @@ export default defineConfig({
       // device-only; the pure rest/record/routine rules never reach them.
       { find: 'expo-notifications', replacement: nativeStub },
       { find: 'expo-audio', replacement: nativeStub },
+      // Gym notices that pop up: the background job (device-only).
+      { find: 'expo-background-task', replacement: nativeStub },
+      { find: 'expo-task-manager', replacement: nativeStub },
       { find: 'expo-haptics', replacement: nativeStub },
       { find: /^.*\.wav$/, replacement: nativeStub },
       // Phase 2: the member's own exercise photo/video (device-only picker and files).

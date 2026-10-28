@@ -21,6 +21,7 @@ import { cancelGymReminders, refreshGymReminders } from '@/shop/gymReminders';
 import { addGymShortcut, canAddGymShortcut, gymShortcutWords, markShortcutOffered } from '@/shop/gymShortcut';
 import { askAndLeaveGym } from '@/shop/leaveFlow';
 import type { GymLink } from '@/shop/types';
+import { NOTICE_BLOCKED_SUB, NOTICE_BLOCKED_TITLE, NOTICE_SWITCH_TITLE, noticeSwitchCaption } from '@/shop/noticeAlertWords';
 import { useBoardLive } from '@/shop/useBoardLive';
 import { useGymTheme } from '@/theme/gymTheme';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
@@ -89,6 +90,43 @@ export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key
  * R-86: "Reminders from my gym" — plan ending, birthday and the other automatic reminders the
  * owner switched on (shop/gymReminders.ts). On by default; off cancels every one at once.
  */
+export function GymMessagesSwitch({ gymName }: { gymName: string }) {
+  const on = usePhonePrefs((s) => s.gymMessagesOn);
+  const [blocked, setBlocked] = useState(false);
+  useEffect(() => {
+    const check = (): void => {
+      void notificationsGranted().then((g) => setBlocked(g === false));
+    };
+    check();
+    const sub = AppState.addEventListener('change', (st) => {
+      if (st === 'active') check();
+    });
+    return () => sub.remove();
+  }, []);
+  const flip = (v: boolean): void => {
+    usePhonePrefs.getState().setGymMessagesOn(v);
+    if (!v) return;
+    // Switched on by the member: the one moment the app may ask for notifications for these.
+    void ensureAlertPermission()
+      .catch((e: unknown) => console.warn('[ForgeErr] gym notices: asking for notifications', e))
+      .then(async () => setBlocked((await notificationsGranted()) === false));
+  };
+  return (
+    <>
+      <GlassCard>
+        <ToggleRow icon="chat" title={NOTICE_SWITCH_TITLE} caption={noticeSwitchCaption(gymName)} value={on} onChange={flip} />
+      </GlassCard>
+      {on && blocked ? (
+        <LinkRow
+          title={NOTICE_BLOCKED_TITLE}
+          sub={NOTICE_BLOCKED_SUB}
+          onPress={() => void Linking.openSettings().catch((e: unknown) => console.warn('[ForgeErr] app settings did not open', e))}
+        />
+      ) : null}
+    </>
+  );
+}
+
 export function GymRemindersSwitch({ gymName }: { gymName: string }) {
   const on = usePhonePrefs((s) => s.gymRemindersOn);
   // Review NIT 5: switched on but Android blocks ForgeAI's notifications: say so, with the way out.

@@ -127,7 +127,7 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
   'forgeai-rest-alert-prefs': ['ringThroughDnd'],
   // healthConnect: carried, but a restore never switches it on by itself (Android asks for the
   // permission on each phone): the member is told to turn it on again (backupSettings.ts).
-  'forgeai-phone-prefs': ['healthConnect', 'remindersOn', 'reminderDays', 'reminderMinutes', 'reminderChosen', 'gymRemindersOn'],
+  'forgeai-phone-prefs': ['healthConnect', 'remindersOn', 'reminderDays', 'reminderMinutes', 'reminderChosen', 'gymRemindersOn', 'gymMessagesOn'],
   'forgeai-muscle-tips': ['on', 'muted'],
   'forgeai-folder-open': ['open'],
   // `meta` table keys: the default rest, and "Include photos in my backup" (Settings → Backup).

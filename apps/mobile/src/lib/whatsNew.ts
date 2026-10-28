@@ -54,6 +54,17 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    version: '0.58.1',
+    date: '28 Oct',
+    lines: [
+      {
+        // R-153 step 1 (background check, no Firebase yet); fresh-reader checked.
+        text: 'Messages from your gym now pop up on your phone, even when the app is closed. They can take a few minutes to arrive.',
+        go: { label: 'Notification settings', href: '/settings/notifications' },
+      },
+    ],
+  },
+  {
     version: '0.58.0',
     date: '26 Oct',
     lines: [

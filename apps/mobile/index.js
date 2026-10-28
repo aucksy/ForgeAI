@@ -2,4 +2,7 @@
 // tokens BEFORE any screen file loads, so even colours a file copies when it first loads are the
 // gym's (src/theme/bootTheme.ts). Then expo-router starts the app as before.
 import './src/theme/bootTheme';
+// The background job that pops up the gym's new notices: TaskManager needs it defined here, at the
+// top level of the entry, so it exists when Android wakes the app with no screen.
+import './src/shop/noticeTask';
 import 'expo-router/entry';
