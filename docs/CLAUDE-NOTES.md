@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-174. Highlight the latest Q&A on a thread — 29 Oct 2026
+**He said:** "also highlight the latest Q&A on the thread"
+**Done:** opening a thread's full answer shows his last follow-up and my answer under it in an accent box titled
+"Latest on this thread · reply N" (scripts/owner_inbox_page.py fillBody). Checked headless on #39.
+
 ## R-173. One topic, one place: Q&A vs Waiting for you; every question shows its backlog status — 29 Oct 2026
 **He said:** "I want to know whether the topic I am discussing ... is already part of the feature backlog as planned, or waiting for
 me. Anything waiting for me ... only in Waiting for Me. Any topic still in discussion ... in Q&A. A single topic must not appear in both."

@@ -493,6 +493,8 @@ details[open] > summary .chev, button[aria-expanded="true"] .chev { transform: r
 .tablebox { overflow-x: auto; margin-bottom: 10px; }
 .body th, .body td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
 a.goto { font-family: var(--f-mono); font-size: 0.92em; }
+.latest { margin: 8px 0 10px; padding: 10px 12px 2px; border-left: 4px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }
+.latestlbl { margin: 0 0 6px !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
 
 /* Answering: big rows to tap, Claude's pick marked, then Send. */
 .form { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 12px; background: var(--sunk); }
@@ -911,7 +913,11 @@ function fillBody(d) {
   if (!body || body.dataset.filled) return;
   const e = entryOf(Number(d.dataset.n));
   if (!e) return;
-  body.innerHTML = md(unwrap(e.body));
+  // R-174 (owner, 29 Oct 2026): on a thread, his last follow-up and my answer under it are highlighted.
+  const text = unwrap(e.body), k = e.thread ? text.lastIndexOf("**YOUR REPLY") : -1;
+  body.innerHTML = k < 0 ? md(text) : md(text.slice(0, k)) +
+    '<section class="latest" aria-label="Latest on this thread"><p class="latestlbl">Latest on this thread' +
+    (e.thread.replies > 1 ? " · reply " + e.thread.replies : "") + "</p>" + md(text.slice(k)) + "</section>";
   body.dataset.filled = "1";
   enhance(body);
 }
