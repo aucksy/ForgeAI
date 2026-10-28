@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-185. Tracker comments 29 Oct 01:20-01:25: payments merged, offline desk step 3 planned, his moves — 29 Oct 2026
+**He said:** UPI capture not set up at the client gym, wants it (what do I need?); merge "Paying in the app" with UPI into one online
+payments feature; offline front desk: "internet sometimes goes down due to power cuts ... build the offline feature ... as many features
+as possible ... remove this one from the waiting feature backlog". Moves: QR scan opens the door -> Not doing; Gym colour from its logo -> Planned.
+**Done:** #69 (photo of QR/sound box, payments app + account name, Razorpay-type account in the gym's name); one feature "Online payments
+(UPI, card), recorded by themselves"; "Paying in the app" Not doing (merged). Offline front desk -> Planned (step 3: payments + new members offline).
+
 ## R-184. "I am losing the filter ... in the feature backlog ... every time you update it" — 29 Oct 2026
 **Done:** backlog status + group filters kept on his phone (localStorage) and restored after any reload; switching tabs no longer
 clears them (a jump to one feature still does). Tested headless: "Idea" filter survives a tab switch and a reload.
