@@ -125,7 +125,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Task: GGMS column mapping and trial imports | High | High |
 | Task: Play Store listing, data safety answers, internal test | High | Medium |
 | Task: In-app "Delete my data" for members | Medium | Medium |
-| Task: Gym notices pop up on the phone (R-151, R-153) | High | Medium |
+| Task: Gym messages and offers pop up on the phone (R-151, R-153, R-158) | High | Medium |
 | Task: Floating feedback button, voice or typing, auto-fix loop (R-149) | High | High |
 | Task: Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | High | Medium |
 | Task: Check-in QR: live camera only, no gallery (R-152) | Medium | Low |
