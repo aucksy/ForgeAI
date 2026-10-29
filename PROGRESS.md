@@ -2890,3 +2890,11 @@
 - Node not on default PATH: prepend `%LOCALAPPDATA%\nodejs`.
 
 - 2026-10-29: **Admin branches merged to main and deployed.** Merged in order: feat/owner-analytics, feat/business-growth, feat/gym-colour-webcam, feat/offline-desk-3, feat/message-calm (mobile test files of message-calm kept; they ship in the next phone release). Conflicts: crawl.mjs route list (kept /settings/news and the numbers routes), PROGRESS.md (kept both sides), migrations 0041/0042 add/add (kept main's "applied live" copies; no SQL run). Landing page: the lock-screen messages line now shows as available (English + Hindi). Checks: tsc -b 0, vitest 1396 pass, build 0, e2e 107 pass + 1 skipped (Edge via E2E_CHROME). Deployed with wrangler from deploy/panel.
+- 2026-10-29: **0.61.0 prepared.** Contents since v0.60.0: spoken feedback through our Worker to Groq Whisper (R-206; his own
+  Groq key, ZDR on), crash reports kept 90 days (#72 A), quiet gym messages never pop up (R-195; 0042 live), watch Ring
+  redesign (R-207, glance-only), watch buzz long-pause-short. Adversarial review (1 HIGH, 3 MED, 6 LOW): fixed the HIGH
+  (a 2-minute note read length 0 after expo-audio's own stop and was deleted as too short), privacy line matches the
+  approved notice (#73 A), watch rest screens beat "phone not connected", "Rest alerts" also asks Alarms & reminders
+  once (askedExact), double start/finish guards, clip deleted on leave even if stop fails. LOW left: dimmed phone check,
+  late-answer retry, long "Rest is over" with an old phone app. Play Data safety updated and sent for review (voice
+  ephemeral optional; crash logs + diagnostics). Checks: tsc 0, vitest 3761 pass.
