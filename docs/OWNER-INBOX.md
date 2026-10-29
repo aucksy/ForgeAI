@@ -1,1749 +1,1270 @@
-# Project Tracker (was "Owner inbox") — questions and answers, your decisions, tasks, the feature backlog
-
-**What this is (owner rule, 18 Oct 2026):** only three things live here:
-1. **Questions and answers** between you and me;
-2. **your pending decisions** (the table below; answer them on the page);
-3. the **feature backlog** and what is already **built**.
-Your instructions, requests and feedback go into Claude's own notes (docs/CLAUDE-NOTES.md), not here.
-
-Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account; pin it in the sidebar)
-
----
-
-## Waiting for your decision (all in one place)
-
-| # | Decision | My pick |
-|---|---|---|
-
----
-
-## Priority (pending items only)
-R-96 (owner, 24 Oct 2026). **Impact** = how much it matters to the gym and its members. **Effort** = the time and
-tokens it takes to build (for a decision: the build after it; for your own task: your time). High / Medium / Low.
-Done, built and "Not doing" items have no rating. The page sorts by these (Best first = high impact, low effort).
-
-| Item | Impact | Effort |
-|---|---|---|
-| Feature: Monthly gym challenge with a ranking | High | Low |
-| Feature: How busy the gym is right now | High | Low |
-| Feature: Gym's logo on share pictures and a before/after share | High | Low |
-| Feature: Bring a friend | High | Low |
-| Feature: The gym's own form videos | Medium | Low |
-| Feature: Ask your trainer | High | High |
-| Feature: Ask the desk to freeze or renew | Medium | Low |
-| Feature: The gym's workout of the day | Medium | Low |
-| Feature: Strength level for each main lift | Medium | Low |
-| Feature: Badge shelf | Medium | Low |
-| Feature: Which muscles are ready today | Medium | Low |
-| Feature: Quick workout: "I have 30 minutes" | High | Medium |
-| Feature: Ask your own AI | Medium | Low |
-| Feature: Steps and water each day | Low | Medium |
-| Feature: 1-rep max and % calculator | Medium | Low |
-| Feature: Treadmill and cycle details | Medium | Medium |
-| Feature: Log sets on the watch | Low | High |
-| Feature: "Stronger than X% of your gym" | Medium | Medium |
-| Feature: Follow gym mates (a feed of your gym) | Medium | High |
-| Feature: Compare with a friend | Low | Medium |
-| #65 | High | Low |
-| #67 | High | Low |
-| #70 | High | Low |
-| #69 | High | Low |
-| Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
-| Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
-| Task: 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | High | Medium |
-| Task: Play Store pictures, redone (R-126) | High | Low |
-| Task: Test server and crash alerts (#34) | High | Medium |
-| Task: The 14 new features (#58) | High | High |
-| Task: Privacy and gym-terms words for the server copy (#59) | High | Low |
-| #56 | High | Low |
-| Task: Multi-branch gyms, end to end (#41) | High | High |
-| Task: AI import that never fails (#41, #36) | High | High |
-| Task: Members' workouts on our server (#50, #27) | High | High |
-| Task: Online terms acceptance for gyms (#38) | High | Low |
-| Task: Trainer view without a tick box (#46) | High | Medium |
-| Task: Free vs gym-member limits + Google sign-in (#43) | Medium | Medium |
-| Task: Play Store internal test (#28) | High | Medium |
-| Task: Automated support and fixes: a plan (#33) | Medium | Low |
-| #55 | High | Low |
-| #54 | Medium | Low |
-| #50 | Medium | High |
-| #46 | High | Medium |
-| #45 | Low | High |
-| #44 | High | Medium |
-| #43 | Medium | Medium |
-| #42 | Medium | Low |
-| #41 | Low | High |
-| #38 | High | Low |
-| #37 | Medium | Low |
-| #36 | High | Medium |
-| #35 | High | Low |
-| #34 | High | Low |
-| #33 | Medium | Low |
-| #32 | Medium | Low |
-| #30 | High | Low |
-| #28 | High | Low |
-| #27 | High | Low |
-| #26 | High | Medium |
-| #25 | Medium | Low |
-| Feature: Moving exercise demo clips | Medium | Medium |
-| Feature: Google Drive backup and restore | Medium | Low |
-| Feature: Automatic workout backup | Medium | Low |
-| Feature: AI coach chat | Medium | Medium |
-| Feature: Food and calorie log | Low | Medium |
-| Feature: Calorie tracking from a food photo (AI) | High | High |
-| Feature: Hindi screens | Medium | High |
-| Feature: Body weight from Health Connect | Low | Medium |
-| Feature: Paid plan for people without a gym | Medium | High |
-| Feature: Offline front desk | Medium | Medium |
-| Feature: Entry machine (turnstile, face or fingerprint) | High | Medium |
-| Feature: Automatic SMS or WhatsApp reminders | High | Medium |
-| Feature: Trainer profiles and schedules | Low | Medium |
-| Feature: Webcam photo at the desk | Low | Low |
-| Feature: Body measurements taken by the gym | Low | Low |
-| Feature: Trainer view of member progress | High | Medium |
-| Feature: AI assistant for the owner | Low | High |
-| Feature: Several branches | Low | High |
-| Feature: Member data export by the gym, on request | Medium | Medium |
-| Feature: A member's own history from before joining a gym | Medium | Medium |
-| Feature: FitPass and other pass members | Medium | Medium |
-| Feature: QR scan opens the door | Medium | Medium |
-| Feature: Paying in the app | High | High |
-| Feature: Free 3-month trial (HQ can extend to 6) | High | Low |
-| Feature: Messages in the phone's notification shade | High | Medium |
-| Feature: Busy times by exercise | Low | Medium |
-| Feature: Google login | Medium | Medium |
-| Feature: Class booking | Medium | High |
-| Feature: Diet plans from the trainer | Medium | Medium |
-| Feature: New brand name with a free domain | High | Medium |
-| Feature: Play Store release | High | Medium |
-| Feature: Paid server with daily backups | High | Low |
-| Feature: Test server before live | Medium | Medium |
-| Feature: Crash and outage alerts | High | Low |
-| Feature: Real-phone tests on Google's lab | Medium | Low |
-| Feature: Privacy notice, terms and consent | High | Low |
-| Feature: Launch plan for the client gym | High | High |
-| Task: 15. Offline front desk (admin app) | Medium | Medium |
-| Task: 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | High | Medium |
-| Task: 21. Imported names with a title ("Mr. Ramesh") | Low | Low |
-| Task: Pilot + data agreement | High | Medium |
-| Task: Crash reports and outage alerts wired in | High | Medium |
-| Task: Staging server, backups check, restore drill | High | Medium |
-| Task: GGMS column mapping and trial imports | High | High |
-| Task: Play Store listing, data safety answers, internal test | High | Medium |
-| Task: In-app "Delete my data" for members | Medium | Medium |
-| Task: Gym messages and offers pop up on the phone (R-151, R-153, R-158) | High | Medium |
-| Task: Floating feedback button, voice or typing, auto-fix loop (R-149) | High | High |
-| Task: Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | High | Medium |
-| Task: Check-in QR: live camera only, no gallery (R-152) | Medium | Low |
-| Feature: Challenge rewards given out by themselves | Medium | Medium |
-| Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
-| Feature: Gym colour from its logo | Medium | Low |
-| Feature: Balance check and focus block | High | Medium |
-| Feature: Floating feedback button, by voice or typing | High | High |
-| Feature: Big "kg lifted vs last time" on the finish screen | High | Low |
-| Feature: Kg lifted per workout on each exercise's History | Medium | Low |
-| Feature: Body-weight moves count across all routines | Medium | Low |
-| Feature: Numbers for the gym owner (analytics) | High | Medium |
-| Feature: "What's new" in the admin app | Medium | Low |
-| Feature: Online payments (UPI, card), recorded by themselves | High | High |
-| Feature: Long rest that inflates your reps | Medium | Medium |
-| Feature: Next sets adjust to how hard this set felt (RPE) | Medium | Medium |
-| Feature: Next set's weight and reps on the watch | Low | Low |
-| Feature: Make a routine by speaking | Medium | Medium |
-| Feature: Check-in QR that changes every minute | Medium | Medium |
-
----
-
-## Claude's tasks
-What I do myself, in the order I do them (re-prioritised 21 Oct: safety and legal before real
-members, then what the trial needs, then marketing; owner, 21 Oct: "you can decide the sequence").
-On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (waits for you).
-
-| Task | Status | Details |
-|---|---|---|
-| Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
-| Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
-| Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
-| Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
-| 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
-| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
-| Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
-| Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
-| Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
-| AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
-| Members' workouts on our server (#50, #27) | Done | Server part live since #59 (24 Oct); "Continue with Google" shipped in 0.57.0 (25 Oct).
-| Online terms acceptance for gyms (#38) | Done | Live 24 Oct after your yes in #59. |
-| Simpler app layout (4 fixed tabs, 6 settings groups) | Done | Shipped in 0.56.0 (Workout, Progress, Gym, Profile tabs; Settings in 6 groups). |
-| Play Store pictures, redone (R-126) | To do | Paused by you (25 Oct, R-129). Good screens are saved; only screen 2 needs a retake; a full design review before any upload.
-| Test server and crash alerts (#34) | Doing | Crash and outage alerts built 28 Oct (live with 0.60.0). Next: the free test server in your Chrome. |
-| Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
-| The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
-| Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
-| Trainer view without a tick box (#46) | To do | You picked A on 24 Oct. I build it next; you approve the exact words before it goes live. |
-| Free vs gym-member limits + Google sign-in (#43) | Done | Google sign-in live since 0.57.0 (25 Oct). The free limits stay OFF until you switch them on in your owner panel.
-| Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
-| Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
-| 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
-| 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
-| 3. "New version ready" prompt in the app | Done | 21 Oct: a card on the Workout tab when a newer release exists ("Get it" / "Later"); checks at most every 6 hours. The release now stops if its number differs from the app's own (review find). Ships in v0.49.0 (C6). |
-| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Done | 21 Oct: released. The phone tests caught a real bug coming back (no tab bar after resuming a workout from the app-icon shortcut) and it was fixed before release. APK: https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk |
-| 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
-| 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
-| 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
-| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
-| 9. Keep access logs for 1 year | Done | 23 Oct, live on the server (part of #51): every admin-app sign-in, sign-out, failed code, save and full download is written down; kept 7 days now and 1 year from 13 May 2027, as the privacy notice says. The nightly clean-up starts when the HQ app is set up (#52). |
-| 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
-| 11. v0.51.0: workout time on the notification card, rest-over sound choice, "What's new" with earlier updates, block-proof address | Done | 22 Oct: released inside v0.54.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.0/forgeai-v0.54.0.apk). |
-| 12. Research you asked for: Google login, new brand name | Done | 22 Oct: two ways to sign in (#43) and 5 names with free domains (#44), for your pick. |
-| 13. Block-proof server address | Done | 22 Oct: live for the admin app (forgeai.aakashpahuja.in/sb); the member app gets it with v0.51.0. If our address ever fails, both apps switch to Supabase's own for 10 minutes by themselves, and never send a payment or check-in twice. |
-| 14. Full GST tax invoices (admin app) | Done | 22 Oct, live: a gym with a GST number now prints a "Tax invoice" with the place of supply (its state), "Reverse charge: No" and a signature line. Not done: the paying company's own GST number (needs a live database change, your yes). |
-| 15. Offline front desk (admin app) | Blocked | Steps 1 and 2 live 22 Oct (opens without internet; desk check-ins kept offline and sent later, with their real time). Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
-| 16. Landing page: dedicated animated sections (your note, 22 Oct) | Done | 22 Oct, live: workout + new record, the shop order, free notices to every member, the lock screen with a watch. |
-| 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
-| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Reps to beat: live in v0.54.0. Trainer view: #46 decided A (24 Oct); built after the MettleUp release. |
-| 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
-| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Done | 24 Oct: all live. Step 1 live 22 Oct; step 2 server and admin 23 Oct; the member app card released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk). |
-| 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
-| 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
-| 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
-| 24. AI import of old records (#47) | Done | 23 Oct: live (Gemini first, Claude Haiku 5.5 as backup); reviewed, all fixes in. The AI part waits for your two keys (#47). |
-| 25. System owner panel ("ForgeAI HQ", #51) | Done | 23 Oct, live at https://forgeai-hq.aakashpahuja.in: you sign in with Google and see every gym (counts only). All 3 server parts live and tested (64 + 49 checks); the gym owner's "ForgeAI access" list is live in the admin app. |
-| 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
-| 27. Automatic reminders to members (your note, 23 Oct) | Done | 24 Oct: released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk); server part live 23 Oct (#53). Owners switch each one on or off in Messages & offers. |
-| Pilot + data agreement | Blocked | D3: the price is set (#30, decided 24 Oct); needs your answer to #33 (support hours). Medium. |
-| Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
-| Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
-| GGMS column mapping and trial imports | Blocked | F3, F4: needs the GGMS export (#36). Large. |
-| Play Store listing, data safety answers, internal test | Blocked | C2, C3: needs the Play account (#35). Medium. |
-| In-app "Delete my data" for members | Blocked | "Leave gym" already erases the phone number; a full erase needs a new server rule = a LIVE database change (your yes). Until then by email. |
-| "Claude's tasks" tab on the tracker page | Done | 19 Oct. This list. |
-| Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (D7). |
-| WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
-| Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
-| Clean old notes that now say wrong things | Done | 19 Oct: admin README, old owner to-do list retired, U-A14 fixed (H5). |
-| Confirm the app targets Android 16 (API 36) | Done | 20 Oct: targetSdk 36, minSdk 24 (C4). |
-| Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check: docs/launch/PRIVACY-NOTICE.md (+ gym notice), PRIVACY-NOTICE-HI.md. Blanks: your name + email (#37) (D1). |
-| Terms of use | Done | 20 Oct FINAL: docs/launch/TERMS.md (members + staff) (D2). |
-| Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
----
-
-## Feature backlog
-Every feature, built and pending, in one line each; every feature not built yet also says how it will
-work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.
-
-### Member app
-| Feature | Status | Details | How it will work |
-|---|---|---|---|
-| Workout logging | Live | Log sets of weight and reps, time or distance, with last time's numbers shown beside each set. |
-| Set types and effort (RPE) | Live | Mark warm-up, drop and failure sets; one tap on RPE ticks the set and starts the rest. |
-| Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
-| Rest timer and rest alerts | Live | A rest timer starts after every set, and "Rest is over" sounds and buzzes on time, even with the screen off. |
-| Live workout card in the notification shade | Live | Shows the exercise and next set, with a "Complete set" button, without opening the app. |
-| Workout time on the notification card | Live | v0.54.0: the live workout card's header shows how long the workout has run ("ForgeAI · Workout · 42:15"), ticking with the app closed; it stands still while the workout is paused. |
-| Pick your rest-over sound | Live | v0.54.0: Settings → Workouts → Rest-over sound: ForgeAI chime (default), Bell, Double beep or Whistle; tap one to hear it. The same sound with the app open and with the screen off. Vibrate only = Workout sounds off. |
-| Changing the rest time also changes the running timer | Live | If a rest timer is running and you change that exercise's rest from 2:30 to 3:00, the 30 seconds are added to the running timer too. |
-| Fluid tab bar | Live | v0.54.0: when you tap another tab at the bottom, its highlight slides across to it instead of jumping, stretching a little as it moves (your note, 22 Oct). With the phone's "Remove animations" on, it simply jumps. |
-| "Machine in use" screen during rest | Live | One tap during rest shows a big "In use, back in 1:32" banner with the live timer, so others know the machine is taken while you walk around. |
-| "In use" after each set (a setting) | Live | v0.54.0: Settings → Workouts → Show In use after each set. The big IN USE screen with your rest clock opens by itself after each set (owner, 22 Oct). |
-| Each exercise compared after a workout | Live | v0.54.0: on the finish screen, tap the comparison line to see each exercise up, same or down, and why ("2 sets fewer", "lighter"). It compares with this routine's last time first (owner, 22 Oct). |
-| Save a free workout as a routine | Live | If you have no routines and start an empty workout, finishing it offers "Save these exercises as a routine". |
-| "What's new" after each update | Live | The first time the app opens after an update, a short card says in plain words what changed. v0.51.0 adds "See earlier updates" (the 7 before it) and Settings → What's new (owner, 22 Oct). |
-| Pause and forgotten-finish | Live | Pause a workout; after an hour with no sets the timer pauses itself and asks before counting that time. |
-| Plate calculator, your gym's plates and bars | Live | Shows which plates to load, using only the plates and bars your gym really has. |
-| Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
-| Kg to beat per exercise | Live | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
-| Exercise library and your own exercises | Live | 402 exercises with steps and drawings; add your own and hide the ones you don't use. |
-| Moving exercise demo clips | Planned | I make them with our own free clip maker, in batches (2 done). The paid ready-made set (about $405) stays optional; ask me if you want it faster. | Each exercise page shows a short looping clip at the top: a grey 3D figure doing the move, with the worked muscles in red. A clip downloads the first time you open that exercise, then works offline. The 402 clips come from our own clip maker (free, made in batches) or the ready-made set (about $405, your yes). |
-| Routines and folders | Live | Build routines, group them in folders, and press-and-hold to drag them into order. |
-| Ready programs and plan builder | Live | Push Pull Legs, Upper/Lower and Full Body, or a plan built for your equipment and sore joints. |
-| Easy weeks | Live | A lighter week every 6 weeks, kept out of records and targets. |
-| Up next and Today | Live | The Workout tab opens on the next routine due, ready to start. |
-| History, calendar and editing old workouts | Live | See every past workout by day, and edit, rename, repeat or delete one. |
-| Records | Live | Heaviest weight, most reps, best set and more, with a pop-up the moment you beat one. |
-| Charts and statistics | Live | Weekly charts of kg lifted, reps and time, plus a chart for each exercise. |
-| Body map | Live | Shows which muscles you trained in the last 7 days, in a male or female figure. |
-| Body weight and measurements | Live | Log body weight, body fat and body measurements, with charts. |
-| Progress photos and workout photos | Live | Private photos kept on the phone, with side-by-side compare; up to 4 photos per workout. |
-| Monthly report and year in review | Live | A month and year summary with short notes on how you did. |
-| Share a picture or text | Live | Share a workout as a picture (post or story size) or as text; body weight is never shown. |
-| Weekly goal and milestones | Live | Set workouts per week and celebrate your 10th, 100th and later workouts. |
-| Import from Hevy and Strong | Live | Bring in your full workout history and your routines, including from a Hevy share link. |
-| Google Drive backup and restore | Live | 0.57.0 (25 Oct): Settings → Backup → "Back up to Google Drive"; "Continue with Google" on the welcome screen finds your backup and offers to restore it. | Settings → Backup shows "Back up to Google Drive": the member picks a Google account once, and the app saves the full backup file to their own Drive. On a new phone, "Restore from Google Drive" brings everything back. Only the member can open the file. |
-| Automatic workout backup | Live | 0.57.0 (25 Oct): after one Drive backup on this phone, the app backs up by itself when you leave the app after a workout. | Once a member has linked Drive and backed up once on this phone, the app backs up by itself when they leave the app after a workout. |
-| Full backup file you can keep | Live | 0.57.0 (25 Oct): one file with workouts, routines in their order, every setting, profile and photos (R-123). |  |
-| Gym opening hours in the app | Live | 0.57.0 (25 Oct): the gym sets hours per day in the admin app; members see them on the Gym tab (R-124). |  |
-| Export to Excel | Live | Save your workouts, and separately your measurements, as a spreadsheet. |
-| Kg or pounds, km or miles | Live | Switch units anywhere; your saved numbers never change. |
-| Health Connect | Live | Sends your workouts and calories burned to Android's Health Connect. 24 Oct fix (next release): it no longer switches itself off, and workouts go even when the calories switch is off. |
-| Home-screen widgets and app shortcuts | Live | Today's workout and weekly widgets, and long-press shortcuts to start or resume a workout. |
-| Workout reminders | Live | Reminders on the days and times you pick. |
-| Watch app (Wear OS) | Live | Rest countdown and buzz on the watch, plus heart rate during a workout. |
-| Demo data | Live | An optional 3-month sample history to try the app; never loaded by itself. |
-| Reps to beat for rep-only exercises | Live | v0.54.0: push-ups, pull-ups, dips and other moves with no weight show reps to beat ("45 reps to beat · +3"), set by set (owner, 22 Oct). | Where the app works out "kg to beat" today, a rep-only exercise instead adds up last time's reps: "45 reps to beat · +3", and each set's plan says the reps to beat for that set ("set 1: beat 15"). Timed exercises (plank) keep their time words. A new record shows when the total is beaten. |
-| Missing-muscle suggestions | Live | v0.54.0: now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week). "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back" (owner, 22 Oct). | Research comes first (every muscle group and how much weekly work each needs). The app already knows which muscles each of the 402 exercises works, so it checks the whole WEEK of routines, not one day (a push day is meant to skip the back). Where a group gets little or no work, the routine editor shows one quiet line with one exercise to add, for example "Your week has no rear-shoulder work: add Face Pull?" with Add or Not now. One suggestion at a time, never during a workout, and "Not now" is remembered. Then we trim it together. |
-| AI coach chat | Idea | On hold (you, 22 Oct: not now). Built earlier, hidden from members. | A Coach tab where members ask in plain words. When you want it back, you decide who pays for the AI service. |
-| Food and calorie log | Idea | On hold (you, 22 Oct: not now). Built earlier, hidden from members. | Members log meals with calories and protein. Everything stays on the phone. |
-| Gym colour from its logo | Next release | Built (30 Oct, R-168): after uploading a logo on Branding, the admin app suggests the logo's main colour, made lighter if it is too dark to read; the owner presses "Use this colour" or picks another. No AI, nothing sent anywhere. | The colour is saved in the gym's brand colour, so the member app's buttons and highlights use it. Gyms with an older logo get a "Suggest a colour from my logo" button. |
-| Remove the background from logos automatically | Not doing | Closed (you, 30 Oct, R-192): no tool of our own. Instead, a tip under the logo upload on Branding tells owners how to remove it free with ChatGPT or Google Gemini. | |
-| Balance check and focus block | Idea | Your idea (30 Oct, R-201): the app spots muscles you train little or not at all (and ones you train a lot), and suggests swapping 1-2 exercises in your routines for the best exercise for the weak muscle, with 2 next-best choices. Or you pick a focus yourself (for example more shoulders, less biceps) for about 2 months. Hevy and Fitbod show which muscles you trained but do not suggest swaps; Jefit comes closest. | Our app already counts sets per muscle (the body map and "Sets per muscle") and can swap exercises when it builds a plan. After at least 4 weeks of workouts, a card says for example "Rear shoulders: 2 sets a week (most muscles get 10)". Tap it: it shows which exercise to replace (one for a muscle you already train a lot) and the best 3 exercises for the weak muscle. The swap lasts 8 weeks, then the app asks: keep it or go back to your old routine (the old one is kept). |
-| Calorie tracking from a food photo (AI) | Idea | Your bigger vision (24 Oct): click a picture of the plate and the app estimates calories; manual logging with Indian foods too. Later. Research of free food data and photo methods: docs/research/R-calorie-tracking.md. | The member takes a photo of the meal; AI names the foods and guesses portions; the member checks and fixes them, then the calories and protein count toward the day. Manual search with Indian dishes and katori/roti portions works without a photo. Builds on the hidden food log. |
-| Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
-| Body weight from Health Connect | Idea | Read your weight from other health apps instead of typing it. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
-| Paid plan for people without a gym | Idea | The app is free, with every feature, for members of a gym on ForgeAI. People who train without a gym (or whose gym is not on ForgeAI) could pay for it themselves. To explore. | Without a gym code, a person gets a free trial, then a monthly or yearly plan paid through Google Play. Joining a gym on ForgeAI makes everything free again. You set the price; Google keeps 15% of each payment. |
-| Strength level for each main lift | Planned | Shows Beginner, Intermediate or Advanced for squat, bench, deadlift and other main lifts, from #58. | Each main lift's chart shows a level worked out from your best set and your body weight, with our own formula. Body weight is never shown. Works offline. |
-| Badge shelf | Planned | Badges for first 100 kg lift, 4 weeks in a row, 50 workouts and more, from #58. | Profile shows a shelf of badges earned from records and milestones the app already counts. The gym can give a real prize for a badge. |
-| Which muscles are ready today | Planned | A body map that shows which muscles rested enough to train again, from #58. | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
-| Quick workout: "I have 30 minutes" | Planned | Builds a workout for the time and equipment you have today, from #58. | Pick the time and the muscles; the app picks exercises with the plan builder's rules (no AI) and your history, ready to start. |
-| Ask your own AI | Planned | One tap sends your workout history as text to ChatGPT or Gemini, from #58. | Settings → Export shows "Ask an AI": it makes a short text of your recent workouts and opens the phone's share sheet. You use your own free AI. |
-| Steps and water each day | Planned | Steps from Health Connect and a water tap on Today, from #58. | Reads today's steps from Health Connect (one new permission), shown on Today with a water tap. Stays on the phone. A gym-wide step challenge is parked (owner, 24 Oct: nothing that costs server space). |
-| 1-rep max and % calculator | Planned | Type a weight and reps to see your 1-rep max, then 50-95% of it in plate-ready weights, from #58. | Opens from an exercise's chart and from the plate calculator. Uses the same formula as the estimated 1-rep max chart. On the phone only. |
-| Treadmill and cycle details | Planned | Log speed, incline, level and intervals for cardio machines, from #58. | Cardio exercises get extra fields (speed, incline or level) added without changing old workouts. History and charts show them. |
-| Log sets on the watch | Idea | Parked (Claude, 24 Oct): few members wear Wear OS watches; from #58. | The watch would show the current set with a Done button. Waits until members ask. |
-| Floating feedback button, by voice or typing | Next release | Built 28 Oct, ships in 0.60.0 (R-149). A small button on every screen; speak in Hindi or English, or type. | A small round button floats on every screen of the member app. Tap it, then speak (Hindi, English or Hinglish) or type; the phone turns speech into text for free. The note reaches us with the screen it came from. Claude reads the notes twice a day, fixes what it can and releases the fix after the tests pass. |
-| Big "kg lifted vs last time" on the finish screen | Next release | Built 28 Oct, ships in 0.60.0 (R-147): "Last time 1,880 kg, today 1,925 kg" as the headline. | At the top of the workout-complete screen, one large card: today's kg lifted, last time's for the same routine, and "+45 kg" in green. A lighter day gets a kind line. |
-| Kg lifted per workout on each exercise's History | Next release | Built 28 Oct, ships in 0.60.0 (R-141). | Each past workout card on the exercise's History tab gets a small row: kg lifted, sets and best set for that exercise (reps or time for moves with no weight). |
-| Body-weight moves count across all routines | Next release | Built 28 Oct, ships in 0.60.0 (R-136): covers "last time" and the goal. | Push-ups, air squats and other moves with no weight look at every workout for "last time", whatever the routine or folder. Weighted lifts keep the folder rule. |
-| Long rest that inflates your reps | Planned | To study (R-140): resting much longer than planned gives extra reps, and next time's goal becomes too high. | The app would save the real rest before each set, mark a set done after a much longer rest than planned, and not raise next time's goal from that set. When rest is over: a stronger buzz and a red "+1:20 over" on the timer. Research on rest length vs reps first. |
-| Next sets adjust to how hard this set felt (RPE) | Planned | To study (R-144): if you did the reps and the set felt easier than planned, the next sets in the same workout suggest a little more. | After you tick a set with its effort score, the app compares it with the planned effort. Clearly easier: the next sets get a rep or one weight step more, within safe limits. Research on how other apps do it first. |
-| Next set's weight and reps on the watch | Next release | Built 28 Oct, ships in 0.60.0 (R-139, R-166), with heart rate and the rest timer. | During rest the watch shows the countdown, your heart rate and the next set: "Last 60 kg × 8" and, when different, "Today 62.5 kg × 8". The watch app also goes on Play for the tester group. |
-| Make a routine by speaking | Idea | Members say "push day: bench, incline dumbbell, flyes" in Hindi, English or Hinglish and get a routine (R-134). About 5 paise each with the phone's free speech-to-text and a small AI. | The member taps a mic on the routines screen and speaks. The phone writes the words down for free, a small AI turns them into a routine with our exercise names, and the member checks it before saving. A daily limit keeps the cost tiny; the AI key stays on our server. |
-
-### Admin app (gym owner and staff)
-| Feature | Status | Details | How it will work |
-|---|---|---|---|
-| Numbers for the gym owner (analytics) | Next release | Built (30 Oct, R-168 + R-188): "Your numbers" on Today (renewals due, money owed, stopped coming, new members, busy hours) and a new owner-only page "Your growth": money, active members, new members, renewal rate, members lost and visits per member, month by month, before vs since MettleUp, with a printable report. | Each number opens the people behind it, with Call and WhatsApp. "Your growth" compares the months before the gym started MettleUp (from its imported records) with the months since, and says "since", never "because of". |
-| "What's new" in the admin app | Next release | Built 28 Oct, goes live with 0.60.0 (R-148). | The first time the admin app opens after an update, a short card lists the changes in plain words; Settings keeps the earlier ones. |
-| Online payments (UPI, card), recorded by themselves | Waiting for you | One feature (merged 29 Oct with "Paying in the app", your call): members pay by UPI QR, card or a payment link, at the desk or in the app, and each payment lands on the right member with its receipt, with no typing. Waits for facts from the gym (#69). | Each gym gets its own payment account (Razorpay or a similar company), so money goes straight to the gym's bank. The admin app makes a payment link or QR with the amount and the receipt number; the payment company tells our server when it is paid; the receipt is made by itself. Members can also pay from the app's membership card. |
-| Quick action buttons on the dashboard | Live | Big icon buttons at the top of the dashboard (e.g. New member, Take payment, Check-in) that the owner can choose and reorder. |
-| Members and plans | Live | Add members, sell and renew plans, freeze or add extra days, with every plan's history. |
-| Payments, dues and receipts | Live | Take full or part payments, see who owes and for how long, and print GST-ready receipts. |
-| Money reports and Excel export | Live | Collections by day, method and staff member, with cancelled receipts shown separately. |
-| Expenses and profit | Live | Record gym expenses and see profit, including shop sales. |
-| Enquiries | Live | Track people who asked about joining until they become members. |
-| Attendance register | Live | Check members in at the desk, undo a mistap, catch up on missed days. |
-| At-risk members list | Live | A daily list of members who stopped coming, judged against each member's own routine. |
-| Renewals list and WhatsApp messages | Live | Ready-typed WhatsApp messages for fees, endings, birthdays, welcome and receipts, sent with one tap. |
-| Messages & offers | Live | 22 Oct: admin app More → Messages & offers: ready messages in English and Hindi (closures, fee offers, festivals, renewals...), who gets it, WhatsApp one by one, Today nudges. Step 2 waits for your pick in #49. |
-| Workout offer in the app (step 2) | Live | 24 Oct: released in v0.55.0; server and admin live 23 Oct. | The owner makes an offer (10 workouts in 30 days → 3 extra days). Members tap "Join the offer"; only the dates of counted workouts leave the phone. A workout counts only on a day the gym saw a check-in, 20+ minutes and 6+ sets. When a member reaches 10, the days are added by themselves, or the desk taps Give, as the owner chose. |
-| Automatic reminders to members | Live | 24 Oct: released in v0.55.0; server live. Owners switch each reminder on or off. | The member's phone sets each reminder itself from what it already knows (plan end date, birthday, visits, offer progress), at a good time of day and never more than one a day, so it works without internet and costs nothing. In the admin app, Messages & offers gets an "Automatic reminders" list with an on/off switch for each and the number of days where it matters. Members can turn gym reminders off in Settings. |
-| Home screen tiles | Live | Live, expired and expiring members, today's collection and dues, each opening its matching list. |
-| "Expiring in 1-3 / 4-7 / 8-15 days" tiles | Live | On the Today screen since 15 Oct: Ending today, in 1-3, 4-7 and 8-15 days; each opens its list. |
-| Staff logins and roles | Live | Owner and front-desk logins; staff can give at most 10% off and every receipt shows who took it. |
-| Personal training packs | Live | Sell personal training packs with a sessions-used counter and the trainer's name. |
-| Member ID card | Live | Print a member card, save it as a picture, or send it on WhatsApp. |
-| Import members from Excel | Live | Bring in members and payments from old sheets, with "Undo this import". |
-| Gym branding | Live | Upload the gym's logo and colours, which members' apps then use. |
-| Gym workout plans | Live | Trainers build or pick a plan, add starting weights, and send it to members or a whole membership plan. |
-| Works on phone and computer | Live | One website that installs like an app, with dark and light looks. |
-| Offline front desk | Next release | Steps 1-3 built: the admin app opens and works without internet; check-ins, payments, new members and member changes made offline are sent when the internet is back. New (30 Oct): "Offline: 3 waiting to send" with a list, and each desk device gets its own receipt numbers (2026-27/D1-0001). The server change 0041 is live (30 Oct): a receipt printed offline is never refused. | Step 2: check-ins made offline are kept on the device and sent once the internet is back. Step 3: payments and new members offline, with a receipt-number series of their own per desk (a tax invoice's number must never change after it is printed). |
-| Full GST tax invoices | Live | 22 Oct: a GST-registered gym's receipt is a tax invoice (GST number, service code, CGST + SGST, place of supply, reverse charge No, signature line). The paying company's own GST number waits for a live database change. |
-| Entry machine (turnstile, face or fingerprint) | Waiting for you | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. Waits for the client to buy the machine. | The gym buys the machine; it talks to our server over the internet. A new member added in the admin app goes to the machine by itself and the desk scans the finger or face once; an expired or frozen member is blocked even when the internet is down, and a renewal unblocks them at once. Every entry becomes a check-in in the attendance register, and the desk gets an "Open door" button. |
-| Automatic SMS or WhatsApp reminders | Not doing | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
-| Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
-| AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
-| Webcam photo at the desk | Planned | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
-| Body measurements taken by the gym | Live | 25 Oct: the trainer records weight, body fat and tape measurements on the member's profile in the admin app; the member sees them in Progress → Body, marked "From <gym>" (server 0035 live, #64). |  |
-| Trainer view of member progress | Planned | Decided in #46 (A, no tick box). I build it; your OK on the exact words and the live server yes come at the end. | The member is told on the join screen that the gym's trainers see their workouts, and can turn it off in Settings. A trainer's "My members" shows one line each, like "New best: Leg press 120 kg × 10", with ready WhatsApp messages. Body weight, photos and food never leave the phone. |
-| AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
-| Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
-| Several branches | Live | One owner runs 2 or more branches from one sign-in. Server live 24 Oct (0031, your yes in #59); admin app live 24 Oct. |  |
-| Own sign-in PIN for owners and staff | Live | Your pick A (24 Oct): sign in with mobile + your own 6-digit PIN every time; chosen at "Create my gym"; 5 wrong tries lock it for 15 minutes. Server 0034 live with your yes (68 checks pass). |  |
-| Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. | Not planned: the admin app stays in plain English. The desk cheat sheet is in Hindi and English. |
-
-### Gym ↔ member links
-| Feature | Status | Details | How it will work |
-|---|---|---|---|
-| Check-in QR that changes every minute | Idea | The poster's QR never changes, so a photo of it could check a member in from home (R-152). | A small screen at the desk (an old phone or tablet) shows a check-in QR that changes every minute, so only someone standing there can scan it. Or the app checks that the phone is near the gym when scanning. |
-| Join a gym by code or invite link | Live | Members join with the gym's code, a WhatsApp invite link or the QR poster. |
-| Join from the welcome screen | Live | "Have a gym code? Join your gym" on the very first screen. |
-| Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
-| Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
-| QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| Member data export by the gym, on request | Planned | When a member asks, the owner gets that member's workout report in our own format. I build it; your live server yes comes at the end. | Catch: workouts live on the member's phone, not on our server. So I see it like this: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable PDF or Excel report in our own layout (not a file Hevy or Strong can import) and the desk downloads it. Members can already save their own Excel today; whether that stays is your call. |
-| A member's own history from before joining a gym | Planned | My rule (R-169): workouts from before the join date stay the member's alone; the gym never sees them, and leaving keeps every workout on the phone. You can change it. | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off, and what a gym export may include. |
-| FitPass and other pass members | Planned | Pass members (FitPass, cultpass) join without a plan, get the gym's plans and shop, and the owner counts their visits apart. I build it; your live server yes comes at the end. | The desk adds the person as a "Pass member" (FitPass, cultpass and so on): no plan, no dues, never on the renewal list. They join in the app with the gym code and get the gym's plans, shop and messages. Each check-in counts as a pass visit, and a monthly count per pass company lets the owner match that company's payment. Needs a live server change (your yes). |
-| After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
-| QR scan opens the door | Not doing | The scan could open a networked door lock, but the client must buy the lock first. | The member scans the gate QR; our server checks the plan is active and tells a networked door lock to open for a few seconds. The QR on a small gate screen changes every 30 seconds, so a forwarded photo does not work. The desk button and a keypad PIN still work when the internet is down, and the lock opens on power loss (fire safety). |
-| Gym shop | Live | Members order supplements and gear in the app and pay at the desk; the gym manages stock and orders. |
-| Paying in the app | Not doing | Merged into "Online payments (UPI, card), recorded by themselves" (29 Oct, #69). | Members pay for shop orders, and later renewals, by UPI inside the app through a payment company (for example Razorpay). The money goes straight to the gym's bank account, and the desk sees "Paid online". The payment company keeps a small fee per payment (up to about 2%). |
-| Gym messages inbox | Live | The gym sends offers and news to members' in-app inbox and sees who read them. |
-| Gym welcome and logo after joining | Live | v0.54.0: after joining, the app restarts in the gym's look with "Welcome to <gym>", then offers the gym's logo for the home screen and shows how to take the ForgeAI icon off (owner, 22 Oct). |
-| Shop tab only when the gym's shop is on | Live | v0.54.0: no gym = no Shop tab; a gym = a "Gym" tab; it becomes "Shop" once the gym lists a product. "Leave gym" is its own row in Settings → Your gym (owner, 22 Oct). |
-| Workout reward (trial) | Live | 22 Oct: the member shows "Show my workouts to the desk" (v0.54.0), the desk types the code into "Check workout code" in the admin app and gives the free days. Nothing is sent to the server (#49, step 1). |
-| Messages in the phone's notification shade | Live | Live in 0.59.0 (29 Oct): instant pop-ups through Firebase. | When the gym sends a message or offer, it pops up on members' phones within about a minute, like a WhatsApp message; a tap opens it in the app. The 15-minute check stays as a backup. Members can turn it off in Settings. |
-| My membership | Live | Members see their plan, end date, days left, personal training used and visits this month. |
-| Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
-| Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
-| First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
-| Busy times by exercise | Planned | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. | Off by default; the owner switches it on in the admin app and enters how many of each machine the gym has, from a ready list (and adds any missing machine). Only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour and checks its guesses weekly; when right most weeks, members see "Leg day is quieter on Tuesday. Move it?". Later (Ultra plan idea): AI fills the list from photos or speech. |
-| Google login | Live | 0.57.0 (25 Oct): "Continue with Google" is the first card on the welcome screen (R-131). | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
-| Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
-| Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
-| Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
-| Monthly gym challenge with a ranking | Live | 26 Oct (0.58.0): Gym tab leaderboard (last 30 days, Workouts or Kg lifted, top 10, your place, the challenge bar); admin app → Challenges (goal in workouts or kg, 7 to 31 days, free days; who hit the goal, with phone). Names show only if the member switches it on. | |
-| Challenge rewards given out by themselves | Planned | When a member meets the challenge goal, the admin app lists the reward and the member gets a message (R-137). I build it; your live server yes comes at the end. | When the month's challenge ends (or the goal is hit), the gym server marks each winner. The admin app lists them under Challenges with the reward to hand over, and each winner gets a gym notice saying what they won and where to collect it. |
-| Tap a name on the leaderboard to see their profile | Next release | Built 28 Oct, within your gym only; server part and privacy lines live 29 Oct (#67, your yes); members see it with 0.60.0. | A name on the Gym tab leaderboard opens that member's profile only if they turned on a separate "Show my profile" switch (off until they choose). It shows initials, name and recent workouts; no photos are stored. |
-| How busy the gym is right now | Next release | Built 28 Oct; server part live 29 Oct (#67, your yes); members see it with 0.60.0. | The server counts check-ins per hour (no names). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
-| Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
-| Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
-| The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
-| Ask your trainer | Idea | Parked (owner, 24 Oct). A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
-| Ask the desk to freeze or renew | Planned | A member asks to freeze or renew from the app; the desk approves, from #58. | A request button on the membership card. The admin app shows the request; one tap freezes or renews with the tools it already has. |
-| The gym's workout of the day | Planned | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
-| "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
-| Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
-| Compare with a friend | Idea | Parked (owner, 24 Oct), from #58. | Pick a gym mate and compare the same lifts side by side. Comes after the feed. |
-
-### Platform and quality
-| Feature | Status | Details | How it will work |
-|---|---|---|---|
-| Free 3-month trial (HQ can extend to 6) | Live | Live since 24 Oct, after your yes in #55 (live test passed 41 checks). | Every new gym gets 3 months free, no card. Your owner panel shows days left and extends a trial up to 6 months, with a reason. The gym owner sees the days left on Today. Nothing locks when it ends; members keep their app. |
-| Prices and packs on the landing page | Live | Starter ₹999, Pro ₹1,999, AI ₹2,999 (coming) a month, yearly prices, and a founding-gym lifetime pack (₹29,999, first 50 gyms). Live 24 Oct. |
-| Start the free trial from the landing page | Live | "Start free" buttons open the gym sign-up straight away (forgeai.aakashpahuja.in/start). Live 24 Oct. |
-| Owner panel: search, filters, export, trial controls | Live | Search, sort, filters (on trial, ending soon, ended, paying), a summary, a gym list export (gym facts only) and confirm questions. Trial controls switch on with #55. Live 24 Oct. |
-| "What's new" with a button to try each change | Live | v0.55.1: every note rewritten in plain words; a button opens the screen or setting it talks about; Settings shows the last 3 updates. |
-| System owner panel (for you) | Live | 23 Oct: https://forgeai-hq.aakashpahuja.in, your Google sign-in only. Counts per gym, approve or pause gyms, delete requests, support access the gym owner can see, and a log nobody can edit. | Research first: what platform owners of gym software see, and what India's privacy law lets you see. The plan says what you see by default (counts and health, not members' personal data), how you open one gym's data when needed (with a reason, logged, the gym owner can see it), and a 3-step build order. |
-| New brand name with a free domain | Live | MettleUp (#44): mettleup.fit is live, mettleup.in sends people there, E Forged logo; admin app at app.mettleup.fit, HQ at hq.mettleup.fit (24 Oct). |  |
-| Block-proof server address | Live | Admin app since 22 Oct; member app since v0.54.0. A block of Supabase's own address (as in Feb 2026) can no longer stop the apps. |
-| Automatic tests on every change | Live | Thousands of checks run on both apps before anything can ship. |
-| Cloud phone tests | Live | Every release is tried on a cloud phone set up like yours, in about 2 hours, at no cost. |
-| Release gate | Live | A new app version can't be published unless every test, phone run and review is green. |
-| Server safety checks | Live | Tests prove one gym can never see another gym's records, on the live server too. |
-| Private signing key | Live | The app's signing key is kept only on your PC, never in the public code. |
-| Workouts stay on the phone | Live | Workouts never go to our server; the gym only gets check-ins, orders and messages. Changes when members' workouts on our server is switched on (#59, #60): then a copy is kept for members who sign in with Google, readable only by them. |
-| Works without internet | Live | The member app logs workouts fully offline. |
-| Owner inbox page | Live | A private page where you read answers, mark them read and send your picks. |
-| Feature backlog with comments | Live | This list in your inbox, with a way to comment on any feature. |
-| Play Store release | Live | 25 Oct: MettleUp 0.56.1 is in the Play internal test (testers on your two lists join at https://play.google.com/apps/internaltest/4701674448333062164) and the closed test with mettleup-testers@googlegroups.com is in Google's review. Store listing, icon, banner, 6 screenshots done. |  |
-| Landing page, leads and new-gym onboarding | Live | Live since 22 Oct at https://forgeai.aakashpahuja.in/home/ (Hindi + English): a gym owner types their gym's name and sees the member app in their colours, then asks for a free demo (saved privately in Cloudflare; I tell you each one). "Open the demo gym" and "Sign in" lead to the admin app; new gyms get a "Get started" checklist. |
-| Paid server with daily backups | Not doing | Supabase Pro: no pausing after a quiet week, daily backups, a restore drill before real data goes in (#27). | You upgrade Supabase to Pro (about ₹2,100 a month, spend cap on). The server then never pauses and keeps daily backups for 7 days. I practise a restore on the test server before the gym's real data goes in. |
-| Test server before live | Planned | You asked why I cannot make it (#34): I can. I make the free second Supabase project in your Chrome and copy the tables into it. | A second, free Supabase project, "mettleup-staging", Mumbai. Every server change runs there first, with the same tests, before it reaches the gym. |
-| Crash and outage alerts | Next release | Built 28 Oct, goes live with 0.60.0 (#34). No new accounts. | Both apps send a short crash note (screen, app version, error; never member data) to our server. A check every 10 minutes opens the website, admin app and HQ; if one is down, a GitHub alert reaches your phone. Claude reads crash notes with the feedback twice a day. |
-| Real-phone tests on Google's lab | Live | Built; your free setup done 24 Oct (#25). Google's robot tries each release on real phones. | Built. After each release, the cloud build sends the app to Google's Test Lab, where a robot taps through it on 5 real phones (Samsung, Xiaomi, vivo, OPPO, OnePlus) and reports crashes and broken screens; I read the report. Free; it starts once you do the 10-minute setup (#25). |
-| "New version ready" in the app | Live | Members are told when an update is ready. |
-| Privacy notice, terms and consent | Live | Notice, terms and gym data agreement complete (English + Hindi), contact@mettleup.fit; owners accept with a tick at "Create my gym" (0033 live 24 Oct). |  |
-| Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
-| Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
-| Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
-
----
-
-## 70. Belvee: check whether the old GST is still live — 30 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**Why:** if Belvee's 2021 GST was never cancelled, late fees may be adding up each month (see #32). I cannot check it myself: the official page needs a captcha.
-**Your task:** Open https://services.gst.gov.in/services/searchtp , type Belvee's GSTIN (on the GST certificate in D:\Belvee\Legal\BELVEE GST.pdf, ends R1ZW), fill the captcha, press Search, and tell me the "Status" it shows (Active or Cancelled, and the date).
-
-## 69. Online payments (UPI and card), recorded by themselves: what I need — 29 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**You asked (2 comments, 29 Oct):** the client's payments are not captured in the software; set it up. And merge "Paying in the app" with UPI: one online-payment feature (card, UPI and more), recorded by itself. Research the best way and say what you need from gym owners.
-**My answer:** Merged into one feature. The usual way in India:
-- **Each gym opens its own payment account** with a payment company (Razorpay, Cashfree or PhonePe Business). The money goes straight to the gym's bank, never through us. That is simpler legally, and owners trust it.
-- **What members can use:** UPI (any app), cards, net banking, by a QR or link at the desk, by a link on WhatsApp, or from the membership card in our app.
-- **Recorded by itself:** the payment company tells our server "paid ₹1,500 for receipt 123", and the receipt is made with no typing.
-- **Fees:** the company keeps a small cut per payment, about 2% on cards. UPI is often cheaper. I confirm the exact fee for the company the gym picks before anything goes live.
-- **Their current UPI sound box:** some companies (Paytm, PhonePe) can also report payments from the existing QR. If theirs can, we use it and the gym changes nothing at the desk.
-**Your task:** At the client gym, take a photo of the UPI QR stand or sound box, front and back, so the company name shows.
-**TASK DONE (30 Oct)**
-**Your task:** Ask the owner which app they check payments in (for example "Paytm for Business"), and whether the account is in the gym's name.
-**Your task:** Ask whether they would open a Razorpay (or similar) account in the gym's name. It needs the gym's PAN, bank account and an ID, and takes about a day online.
-**After that:** I pick the best route for this gym, tell you the exact steps and fees, and build it. Nothing switches on without your OK.
-**YOUR REPLY (30 Oct):** photos of the gym's payment setup (HDFC PayZapp UPI QR stand and an HDFC "SmartHub Vyapar" sound box); research integration possibilities.
-**My answer (30 Oct):** The gym uses **HDFC Bank SmartHub Vyapar**: an HDFC current account, a UPI QR and a sound box that speaks each payment. What I found:
-- **No public connection from HDFC.** SmartHub Vyapar has no published way for other software to read payments as they arrive (no API, no webhook). The sound box only speaks; nothing comes out of it. HDFC may offer one to big businesses through a relationship manager, but nothing is published.
-- **What it does have:** the app and its website download a transaction report for any dates (PDF or Excel).
-- **Route 1, free, works with what they have (my pick to start):** once a day, the desk downloads the SmartHub Vyapar report and drops it into our admin app. We match each payment to the member who owes that amount at that time, and the desk confirms each receipt with one tap. Nothing changes at the counter.
-- **Route 2, later, fully automatic:** HDFC's own online payment service, **HDFC SmartGateway**, or Razorpay/Cashfree. These tell our server about each payment as it happens, so receipts make themselves. The gym applies for it (same HDFC account works), and pays a small fee per payment.
-- **Not doing:** reading the sound box or the phone's payment alerts. It is fragile and HDFC can break it at any time.
-**Your task:** Ask the owner to open SmartHub Vyapar → Reports, download yesterday's transaction report as Excel, and send it to you (it holds members' payments, so share it only with me, not on WhatsApp groups).
-
-## 68. Busy machines by day and hour: can it work? — 28 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** ANSWERED
-**READ (29 Oct, 12:49 am, via the page)**
-**You asked:** an algorithm that learns from check-ins and members' routines which machines get busy on each day and hour, and shows it only when it is accurate. Will it work?
-**My answer:** Yes, it can work. Gyms repeat the same weekly pattern (Monday is chest day for many members).
-- **What it learns from:** the hour members check in and the exercises they start. Members' workouts are already on our server since 24 Oct.
-- **How it proves itself:** every week it guesses the coming week, then checks the guess against what really happened. Members see nothing until the guesses are right most weeks.
-- **How long:** about 6-8 weeks of real use at a gym with 100+ active members. A small gym may never reach the bar, so it stays hidden there.
-- **Limit:** it sees only members who log workouts in the app, not everyone on the floor. So it says "usually busy", never an exact count.
-I moved it to Planned. The live server step joins your next combined yes.
-**YOUR REPLY (28 Oct):** suggest members move routines to quieter days; be less strict on dumbbells and things gyms have many of; gyms differ, but it will work great in small gyms.
-**My answer (29 Oct):** Agreed, and your point about counts is the key to making it useful.
-- **The owner tells us how many of each machine** in the admin app (for example: 1 leg press, 2 cable stations, 20 pairs of dumbbells). Only machines with 1 or 2 units count as "can get busy". Dumbbells, benches and plates are ignored unless the owner says otherwise.
-- **The suggestion:** when the app is confident, a member sees one calm line on a routine, for example "Leg day is quieter on Tuesday than Monday at 7 pm. Move it?" One tap moves it; "Not now" hides it for a month.
-- **Small gyms gain most,** as you said: one leg press and 40 members at 7 pm is a real queue. In a big gym with 4 of each machine, the app stays silent, so it never annoys anyone.
-- It stays hidden until its own guesses prove right most weeks. The live server step comes at the end, with your yes.
-**YOUR REPLY (29 Oct):** make it a feature the owner switches on in the admin app; on switching it on, they enter how many of each machine they have, from a ready list; they can add a missing machine with its count. Later, on the Ultra plan, AI could do this from photos or audio.
-**My answer (29 Oct):** Agreed. That is how it will work:
-- **Off by default.** Admin app → Settings → "Busy machines for members". The owner turns it on.
-- **A ready list to tick:** about 40 common machines (leg press, Smith machine, lat pulldown, cable station, pec deck and so on). The owner types the count next to each one they have. "Add a machine" covers anything missing, with its count.
-- **Members see nothing** until it is switched on and its guesses prove right.
-- **Ultra plan idea:** the owner walks the gym taking photos or speaking ("two leg presses, one hack squat"), and AI fills in the list. I keep it as an idea for the Ultra plan, not part of the first build.
-
-## 67. Your task: one yes for 2 finished features — 28 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE (29 Oct)
-**TASK DONE (29 Oct, 12:55 am, via the page)**
-**What it unlocks:** "How busy the gym is right now" and "Tap a name on the leaderboard to see their profile". Both are built. Each needs one live server change and a privacy notice line (English and Hindi).
-**Your task:** Read the privacy lines I send in chat, then type this exact sentence in chat: "yes, apply 0039 and 0040 live in Supabase and add their privacy lines".
-**Done (29 Oct):** both server changes are live and passed their live tests (0039: 31 checks, 0040: 46). The privacy lines are in the notice, English and Hindi, and on the public privacy page. Members get both features with 0.60.0.
-
-## 66. What are the limits of Firebase pop-ups for us? — 28 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** ANSWERED
-**READ (28 Oct, 10:14 pm, via the page)**
-**You asked (R-154):** a question on the limits of Firebase notifications, in the tracker.
-**My answer:**
-- **Cost:** Firebase pop-ups (Cloud Messaging) are free. No charge per message.
-- **How many:** up to 600,000 messages a minute for the whole project. Far more than we need.
-- **Per phone:** Google slows down a phone that gets a very large number of messages in a short time. A gym sends a few a day, so this never matters.
-- **Size:** each pop-up can carry up to about 4,000 letters. We send the gym name and the first line.
-- **Our own limit:** our sender runs on Cloudflare's free plan and reaches about 40 phones a minute; the rest go in the next minutes. A gym of 400 members reaches everyone in about 10 minutes. A paid Cloudflare plan (about $5 a month) makes it near-instant for any size, when we need it.
-- **When it can be late:** a phone with strict battery saving (some Xiaomi, Oppo, Vivo) may delay pop-ups. The app's own 15-minute check is the backup.
-
-Sources: https://firebase.google.com/docs/cloud-messaging/throttling-and-quotas and https://firebase.google.com/docs/cloud-messaging/scale-fcm
-
-## 65. Your task: 1 minute so Google sign-in also works on the GitHub copy of the app — 25 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE (25 Oct)
-**READ (28 Oct, 10:14 pm, via the page)**
-**TASK DONE (25 Oct, 12:41 pm, via the page)**
-**Why:** Google sign-in and Drive backup are now switched on (#60). They work on the Play Store copy. On the copy installed from GitHub they fail, because an old test entry in your personal Google project "GmailAPI" already holds the app's name and fingerprint. Google lets only one entry hold them. A safety check stopped me from changing your personal project without your word.
-**YOUR REPLY (25 Oct):** yes, move the MettleUp Android client
-**My answer:** I tried in your Chrome. The safety check blocked typing into your personal Google project, even with your yes. Nothing was changed. This one step is yours (1 minute); I do the rest the moment you tap "I have done it".
-**Your task:** in Chrome, signed in as aakashpahuja1990, open https://console.cloud.google.com/auth/clients/240978491498-aoc7fplm0oilsev1nu5ujojqjcdhe7c3.apps.googleusercontent.com?project=gmailapi-491903. In the "Package name" box, replace com.mettleup.app with com.mettleup.app.retired. Press Save at the bottom. Then tap "I have done it".
-**TASK DONE (25 Oct)**: you renamed the old entry. I made the GitHub-copy entry in the MettleUp project (301992813103-apaj51v12678arflaa0tg6i9aapbihu1) and typed it into Supabase. Saving a live server setting needs your word: say "yes, save the Google client in Supabase" in chat, or press Save on the Supabase Google page open in your Chrome (the secret box stays empty). **DONE:** you said yes; saved 25 Oct.
-
-## 64. Privacy notice: 3 small lines so trainer measurements and diet plans can go live — 25 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (25 Oct)
-**READ (29 Oct, 12:50 am, via the page)**
-**What is ready:** trainer measurements and diet plans are built and tested (your pick A, from the GGMS menu). They are held because the privacy notice says measurements stay on the member's phone and the gym never sees them. That stays true for what a member logs. It is not true for what the trainer records at the desk, so the notice must say so before the feature goes live.
-**The 3 changes (English and Hindi):**
-1. The gym's records also include "body measurements your trainer takes at the gym, and diet plans your trainer sends you".
-2. "The workouts and measurements **you log yourself** stay on your phone" (adds "you log yourself").
-3. A new row: what is kept (date, weight, body fat, tape measurements, who measured, the desk's note), why (so the trainer follows progress and the member sees it in the app), who sees it (only that gym's staff and the member), how long (as long as the gym keeps its records).
-**DECIDED (25 Oct, chat):** A. The notice (English + Hindi) now has the 3 lines and is live; server change 0035 is live (54 checks + safety 9 pass on the live server); the admin app has the Measurements card and the Diet plans page. Members see them in MettleUp 0.56.1 (Progress → Body, Gym → Diet plan).
-
-## 63. Members under 18: add teen accounts (13 to 17) with a parent's OK? — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct)
-**READ (24 Oct, 05:36 pm, via the page)**
-**You asked (24 Oct, chat):** "Why is the target age on play submission is 18 and above.. kids below 18 dont workout?"
-**My answer:** they do, and many Indian gyms have teen members. It is 18+ only because of the law, from #29 (20 Oct):
-- India's data law (DPDP Act) counts everyone under 18 as a child. Before keeping a child's data, an app needs a parent's checked OK, and it may not track or monitor a child's behaviour. A workout tracker keeps fitness and body data, so it counts. Its main duties start around 13 May 2027.
-- Google Play: if we list 13 to 17, Play's teen rules apply (no ads aimed at them, safe content); we already meet these. Under 13 brings Play's stricter Families rules; not worth it for a gym app.
-- The Play setting can be changed at any time; nothing is locked by choosing 18+ now.
-**What teen accounts would mean:** at "Join your gym", a member under 18 enters a parent's mobile or email; the parent gets a one-time code and taps "I agree"; we keep the date and the parent's contact. No public sharing for teens (no rankings with their name, no share pictures with the gym logo by default). The gym owner sees the teen flag. About a week of work, plus a cost of about ₹0.2 per SMS code (email codes are free).
-**DECIDED (24 Oct, 5:36 pm, via the page):** A: 18+ for the trial; teen accounts (13-17) with a parent's OK are built before the public launch.
-
-## 62. Your task: tick "I'm not a robot" to finish the tester group (10 seconds) — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (24 Oct, 05:04 pm, via the page)**
-**Why:** I filled in the Google group "MettleUp testers" (mettleup-testers@googlegroups.com; only people you add can join; you add emails directly) in your simpleapps108 Chrome window. Google asks for a robot check before it creates the group, and I am not allowed to do robot checks.
-**Your task:** in the simpleapps108 Chrome window, open the tab "My groups" (groups.google.com). The "Create group" box shows "Captcha required": tick "I'm not a robot", then press "Create group". If the box is gone, open https://groups.google.com/my-groups and press "Create group" again: name MettleUp testers, email mettleup-testers.
-**TASK DONE (24 Oct, chat)**
-the group mettleup-testers@googlegroups.com exists. Add testers at groups.google.com → MettleUp testers → Members → Add members.
-
-## 61. Pick the MettleUp logo — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct)
-**READ (24 Oct, 04:48 pm, via the page)**
-**Why:** the logo goes on the app icon, the Play Store listing, the website and the gym owner app, so it is the one thing I should not choose for you. All six are drawn as clean shapes, tested at the size of a phone icon, on white and on black. Pictures: sent in the chat on 24 Oct; the page is in the project at branding/logo-options/index.html.
-- **A · Ascent:** an M whose second peak stands higher: "this week beats last week". Ember orange, the colour the app already uses, so nothing else in the app changes colour.
-- **B · Loaded:** a barbell loaded light to heavy. Pine green and brass. Blurs when very small.
-- **C · Unbroken:** M and U as one line climbing from the floor. Volt yellow-green on graphite.
-- **D · Up Arrow:** the U of "Up" becomes an arrow. Red. Can read like a U-turn road sign.
-- **E · Forged:** a hex dumbbell head with an M struck through it. Molten orange.
-- **F · Hidden Up:** a solid M with an up-arrow cut into its base. Cobalt blue, close to Hevy's blue.
-**DECIDED (24 Oct, chat):** E · Forged. Your words: "love the dumbell feel".
-
-## 60. Your task: switch on "Continue with Google" for members (about 20 minutes, free) — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**READ (28 Oct, 11:34 pm, via the page)**
-**TASK DONE (25 Oct, 11:44 am, via the page)**
-**Why:** members sign in with Google so their workouts come back on a new phone (#43, #50). The app part is built and hidden; it shows only after these steps. The Play Store ID is com.mettleup.app (#57). This one setup also switches on Google Drive backup (it replaces #42).
-**Your task:** open https://console.cloud.google.com/projectcreate and make a project named ForgeAI (skip if you already made one for Drive backup, #42). Then open https://console.cloud.google.com/auth/branding: app name ForgeAI (or the new name), your email as support and contact email, audience External; then Audience → "Publish app".
-**Your task:** open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable (for Drive backup).
-**Your task:** open https://console.cloud.google.com/auth/clients → Create client → Android. Package name: com.mettleup.app. SHA-1: 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public fingerprint, not a secret) → Create.
-**Your task:** same page → Create client → Web application, name "ForgeAI app" → Create. Send me its Client ID in chat (it ends in .apps.googleusercontent.com; it is not a secret). Keep its Client secret for the next step only: never paste it in chat or a file.
-**Your task:** open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/auth/providers → Google → turn on "Enable Sign in with Google". Client IDs: the Web client ID, a comma, then the Android client ID. Client Secret: the Web client secret. Leave "Skip nonce checks" off → Save.
-
-## 59. Switch on branches, online terms and members' workouts on our server: three live server changes — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE (24 Oct)
-**READ (24 Oct, 03:35 pm, via the page)**
-**What is built (24 Oct), tested and checked by a second reviewer; nothing is live yet:**
-- **Branches (0031):** one owner runs several branches; each branch has its own members, money, staff and receipt numbers (B2/2026-27/0001); members can train at another branch; an "All branches" page.
-- **Online terms (0033):** a gym owner must tick "I agree" before a gym is created; owners of existing gyms see it once; the date and terms version are kept and can't be changed.
-- **Members' workouts on our server (0032):** each member's workouts, routines and body records are saved on our server, so a new phone gets them back after "Continue with Google". Only the member can read their own; the gym sees nothing. It stays hidden until you finish #60. About 1 KB a workout: the free plan holds about 1,500 members for 1.5 years.
-- **Member import fixes** (no server change): a "Paid" column of Yes/No or dates is read correctly; a branch column; extra columns kept; bad rows listed to fix.
-**What goes live with your yes:** I paste the three changes into the Supabase SQL Editor (in the Chrome window already signed in), run each one's test (each must say PASS), then put the new admin app, owner panel (HQ) and AI-matching server live. If a test fails I stop and change nothing more.
-**Risk:** low. Each change only adds; gyms with one branch work exactly as before; a gym can always be checked in HQ.
-**The privacy words (drafts ready, 24 Oct):** full text at https://github.com/aucksy/ForgeAI/blob/main/docs/launch/DRAFT-2026-10-24-server-copy-and-gym-terms.md (English and Hindi; every claim checked against the app; spots for a lawyer marked [LAWYER CHECK]).
-- **Privacy notice, new part:** when a member signs in with Google, their workouts, routines, body weight, measurements, progress-photo dates (not the photos) and profile are saved on our server in Mumbai. Never the phone number. Only the member can see it; the gym cannot. "Delete my account" removes it at once.
-- **Gym data agreement (about 1 page):** the gym owns its member records; ForgeAI only keeps them to run the service; no selling, no ads; the outside companies we use are named; we tell the gym of a breach within 24 hours; the gym can download everything any time; deleted within 30 days of a request; backups gone within 7 days (as the live notice already says); 30 days' notice before either side ends it; a member's own saved workouts belong to the member.
-- **Two fixes I will make with it:** the "data agreement" link at "Create my gym" gets its own page (today it opens the privacy page); the old line "if we ever add AI features that use your data, we ask you first" is replaced by the truth about the AI import (below).
-- **The AI import today:** it shows the AI the column names and 5 example rows, with phone numbers, emails and ID numbers hidden, but names and addresses visible. My pick: hide names and addresses too (the AI only needs the column names and a hint of the shape), so no member's name ever leaves the gym's computer.
-**DECIDED (24 Oct, 3:35 pm, via the page):** switch them on: A; the privacy and agreement words: A (approve, and hide names and addresses from the AI import too).
-**DONE (24 Oct):** 0031, 0033 and 0032 are live; every test passed (branches 115 checks, terms 27, workouts 58, security 9). The privacy notice and the gym data agreement are written into the app; the public pages go live when your complaints contact is filled in (#37). The AI import now hides names and addresses.
-
-## 58. What other workout apps have that we don't, and what to build next — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct) — build queued
-**READ (24 Oct, 05:04 pm, via the page)**
-**You asked (24 Oct, chat):** research the members' workout apps, find features we can build ourselves that would be valuable, and add them to the tracker.
-**My answer:** I compared Hevy, Strong, Fitbod, JEFIT, Boostcamp, Alpha Progression, Gravl, Gymshark, MacroFactor, Fittr, cult.fit, HealthifyMe, FITPASS and gym-software member apps (Virtuagym, Trainerize, Glofox, Wellyx) with what ForgeAI already has. **For logging workouts we already match them** (rest timer, notification card, supersets, plates, warm-ups, swap, targets, charts, records, body map, Hevy/Strong import, Health Connect, Wear OS, offline, and no free-tier limits). The gaps are mostly things only a gym-linked app can do well, which is our edge. None needs a paid service.
-
-| # | Feature | Who has it | Member | Gym | Effort |
-|---|---|---|---|---|---|
-| 1 | Monthly gym challenge with a ranking (top 10 of your gym, prize = free days) | Virtuagym, Trainerize, FITPASS, Fittr | High | High | Low-Medium |
-| 2 | "How busy is the gym now" + best time to go (from QR check-ins) | PureGym, Planet Fitness | High | Medium-High | Low |
-| 3 | Gym's logo on share pictures + before/after photo share | Hevy, Fittr (without the gym) | Medium-High | High | Low |
-| 4 | Bring a friend: invite link, the friend lands in the owner's enquiries, free days when they join | cult.fit, PureGym, Glofox | Medium | High | Low-Medium |
-| 5 | Strength level for each main lift (Beginner to Advanced) | Hevy, Boostcamp, Gravl | Medium-High | Medium | Low |
-| 6 | Badge shelf (first 100 kg, 4 weeks in a row, 50 workouts) | Alpha Progression, Hevy, Trainerize | Medium | Medium | Low |
-| 7 | "Which muscles are ready today" map | Fitbod ($15.99 a month) | Medium | Low-Medium | Low |
-| 8 | Quick workout: "I have 30 minutes" | Fitbod, Alpha Progression, Hevy (paid) | High | Medium | Medium |
-| 9 | The gym's own form videos (the trainer adds a YouTube link) | Trainerize, Virtuagym | Medium-High | Medium | Low-Medium |
-| 10 | Ask your trainer (chat with the gym's trainer) | Trainerize, Hevy Coach, Fittr | High | High | Medium-High |
-| 11 | Ask your own AI: one tap sends your workout history to ChatGPT or Gemini | Hevy | Medium | Low | Low |
-| 12 | Ask the desk to freeze or renew from the app | Glofox, Mindbody | Medium | Medium | Low-Medium |
-| 13 | Steps and water each day, and a step challenge | Fittr, FITPASS, Trainerize | Medium | Low-Medium | Low-Medium |
-| 14 | The gym's workout of the day | Virtuagym | Medium | Medium | Low |
-| 15 | Treadmill and cycle details (speed, incline, intervals) | Asked for on Hevy and Strong | Medium | Low | Medium |
-| 16 | "Stronger than X% of your gym" (opt-in) | Hevy | Medium | Medium | Medium |
-| 17 | 1-rep max and % calculator | Strong, Alpha Progression | Low-Medium | Low | Low |
-| 18 | Follow gym mates: a feed of your gym only | Hevy, Fittr | Medium | Medium-High | High |
-| 19 | Compare with a friend, train together | Hevy | Low-Medium | Medium | Medium-High |
-| 20 | Log sets on the watch | Hevy, Strong | Low | Low | Medium-High |
-
-**What members hate in the others (we win by not doing it):** basics locked behind payment (Hevy allows 4 free routines, Strong 3), rest timers that cut off, silly weight suggestions, weak cardio logging, sales pop-ups and refund fights, crashes after updates, broken imports, forced sign-up.
-**Not proven:** the member and gym values and India-specific points (evening rush, treadmill use) are my judgement. Reddit blocked automated reading, so complaints come from review sites.
-Items 1-14 are now in the Feature backlog as **Idea**, each with a Comment box. Items 15-20 stay here.
-**YOUR REPLY (24 Oct, chat):** "I really like all these 20 features ... plan and start working on them. You can decide the priority ... park, chat with your trainer, and the rest seems fine to me." Then: "also park the feed things.. anything that will cost us more server space or money.. lets park". And: keep the app simple; organise every feature so it is easy to find, even if we reorganise what we built.
-**DECIDED (24 Oct):** build 14, park 6.
-- **Parked (they need more server space, or cost money, or few members would use them):** Ask your trainer (chat) · Follow gym mates (feed) · Compare with a friend · "Stronger than X% of your gym" (it needs everyone's best lifts on our server) · Log sets on the watch · Steps challenge across the gym (steps on your own phone still comes).
-- **First:** a full map of the member app by a design review (every screen and setting, what to merge, move or rename), so the new features land in the right place and the app stays simple. The moves ship first.
-- **Then, in this order (my call):**
-  1. On your phone only, no server: strength level per lift · 1-rep max and % calculator · badge shelf · which muscles are ready today · ask your own AI · gym logo on share pictures + before/after.
-  2. With the gym (uses data the server already has; tiny extra rows): how busy the gym is now · monthly gym challenge · bring a friend · the gym's workout of the day · the gym's form videos · ask the desk to freeze or renew.
-  3. Bigger logging: quick workout ("I have 30 minutes") · treadmill and cycle details · steps and water.
-
-## 57. The app needs a new Play Store ID — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct)
-**READ (24 Oct, 05:04 pm, via the page)**
-**What happened:** creating the app in your Play Console (simpleapps108), Google said "com.forgeai.app is already in use". Another developer owns that ID, and every Play app needs its own one. The ID can never change after the first upload. Members almost never see it; it only shows in the Play Store web link.
-**What changes for testers:** the new ID makes it a new app on phones. Before switching, move your own workouts with Settings → Export & import in the old app, then import them in the new one. I will write the steps.
-**NEWS (24 Oct):** you are leaning to the name MettleUp (#44). The ID can never change, so it should match the brand. No public Play app uses com.mettleup.app or com.simpleapps.mettleup.
-**DECIDED (24 Oct, Claude, as you asked: "disturb only when I am needed"):** com.mettleup.app. It works under any Play account, now or later.
-
-## 56. Your task: put your Gemini key on this computer, so Claude's member-facing English gets a second opinion (5 minutes) — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (24 Oct, 10:58 pm, via the page)**
-**TASK DONE (24 Oct 2026, 1:40 pm)**
-**Why:** you asked that every word members read gets checked by Gemini, with the full context. The check is built: before any member-facing text ships, Claude sends the draft and its context to Gemini, compares the two versions and checks the facts. It runs only with your own Gemini key, and only you can make that key.
-**Your task:** Open https://aistudio.google.com/apikey, press "Create API key", pick any project, and copy the key.
-**Your task:** Open PowerShell on this computer and run this one line, with your key between the quotes: setx GEMINI_API_KEY "your-key-here"
-**Your task:** Close the Claude app and open it again, so it can see the key. Then tell me "Gemini key is in" and I run a test.
-**Done (24 Oct, 1:40 pm):** the key works; Gemini's free model (3.8 Flash) answered the first test. **Earlier note (1:20 pm):** I checked this computer and there is no GEMINI_API_KEY yet. Most likely the setx line ran in a different window or with a typo. Run it again in PowerShell (a normal window, not as admin), then close and reopen the Claude app.
-
-## 55. Switch on free trials: one live server change (part 4 of your owner panel) — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (24 Oct, 10:58 pm, via the page)**
-**What it does:** every gym gets 3 months free, with no card. Your owner panel shows how many days each gym has left. You can extend a trial up to 6 months, with a reason that is logged. The gym owner sees "Free trial: 41 days left" on the Today screen. When a trial ends, nothing locks: members keep their app, and the owner sees "Pick a ForgeAI pack to keep going". Your panel can also record each gym's pack (Starter, Pro, AI), monthly, yearly or lifetime, and paid until when.
-**What is already live without it:** the new landing page with prices, the "Start free" sign-up, and the new owner panel (search, filters, export). Until you say yes, the panel shows "Trials need the database update".
-**Safe:** it only adds new columns and two new owner-panel actions. It changes no member data. It was tested on a copy (41 checks pass). Existing gyms start their 3 months on the day it goes in.
-**DECIDED (24 Oct 2026):** A: yes. Applied 24 Oct; the live test passed all 41 checks. Free trials are on: every gym has 3 months, and your owner panel can extend a trial to 6 months.
-
-## 54. How much of a gym's data should you see in your owner panel? — 24 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (24 Oct, 10:58 pm, via the page)**
-**You asked:** in your owner panel (ForgeAI HQ), will you see each gym's member data? Do you need it? Should you have it?
-**My answer:** No, not by default. Your panel shows each gym's own facts: name, owner, mobile, plan, trial, how many members, last activity. It never shows member names, phones or payments. Four reasons:
-1. **The law.** Under India's data law (DPDP Act 2023), the gym owns its members' data and ForgeAI only keeps it for the gym. Looking at it without the gym's OK is a risk for you, not a feature.
-2. **Trust sells.** The new landing page promises: "ForgeAI staff can't open your member list unless you let them in." That promise is what makes a nervous owner import his Excel.
-3. **Safety.** If your Google account were ever stolen, a panel that shows every member's phone would leak thousands of people. Counts leak nothing.
-4. **You don't need it.** Support works without it, and this is already live (built 23 Oct): the gym taps "Let ForgeAI support look (1 hour)" in Settings, or in an emergency you open a 15 to 60 minute window with a written reason. Both are read-only and logged, and the gym owner sees every look.
-**DECIDED (24 Oct 2026):** A: your owner panel shows gym facts and counts only. Member records open only through support access (the gym's OK, or an emergency reason), logged and shown to the gym owner. That is how it works today; nothing to build.
-
-## 53. Switch on the owner's reminder switches (one live server change) — 23 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Done (live 23 Oct)
-**READ (29 Oct, 12:50 am, via the page)**
-**You asked (23 Oct):** automatic app reminders to members (plan ends in N days, and every other useful case), each one switched on or off by the gym owner, the common ones on.
-**My answer:** Built. The member's phone sets each reminder itself (at most one a day, 9:30 am), so it works without internet and costs nothing. The phone part ships in v0.55.0 and uses the default switches (common ones on). The owner's own on/off list in the admin app needs one live server change (supabase/migrations/0029_auto_reminders.sql). It only adds: a new table and 3 new functions; it changes no existing function and no member data. Its server tests passed.
-**YOUR REPLY (23 Oct):** "yes to #53"
-**DECIDED (23 Oct 2026):** A: applied to the live server the same day; its live test passed (60 checks) and the full security test passed.
-
-## 52. Your task: two keys to unlock your owner panel (ForgeAI HQ), about 20 minutes — 23 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Done
-**READ (24 Oct, 10:59 pm, via the page)**
-**Why:** your owner panel (#51) is built and online at https://forgeai-hq.aakashpahuja.in. All its server parts are live and tested. It stays locked ("not set up yet") until it has a gym-server key and a Google sign-in client. Only you can make these. Only your Google account (aakashpahuja1990@gmail.com) can sign in.
-**Your task:** Make the gym-server key: open https://supabase.com/dashboard/project/hdxzqbdiokjklnypfisq/settings/api-keys, open "Secret keys", press "New secret key", name it hq, and copy it.
-**Your task:** Make the Google sign-in client: open https://console.cloud.google.com/auth/clients (in your ForgeAI project; if you have no project yet, first make one at https://console.cloud.google.com/projectcreate named ForgeAI, then fill https://console.cloud.google.com/auth/branding with app name ForgeAI, your email, audience External, and press "Publish app"). Press Create client, pick Web application, name it ForgeAI HQ, and under "Authorized redirect URIs" add https://forgeai-hq.aakashpahuja.in/auth/callback. Press Create. Copy the Client ID and the Client secret.
-**Your task:** Paste all three into Cloudflare: open dash.cloudflare.com → Workers & Pages → forgeai-hq → Settings → Variables and Secrets → Add. Type "Secret" each time. Name SUPABASE_HQ_KEY with the Supabase key, GOOGLE_CLIENT_ID with the Client ID, GOOGLE_CLIENT_SECRET with the Client secret. Save. Then tell me "HQ keys are in" and I test the sign-in.
-**TASK DONE (23 Oct 2026)**
-Keys in; you signed in to https://forgeai-hq.aakashpahuja.in (both your Google accounts are allowed) and it lists every gym.
-
-## 51. Your own panel for the whole system ("ForgeAI HQ"): the plan — 23 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Done: live 23 Oct at https://forgeai-hq.aakashpahuja.in
-**READ (23 Oct, 08:32 am, via the page)**
-**You asked:** do you need an admin panel as the owner of the whole system? Think about data control and
-governance; maybe you log in and see most of the data. Decide the correct implementation.
-**My answer:** Yes, before the second gym. I decided the shape:
-- **A separate small app, "ForgeAI HQ"**, on its own address. Only your Google account gets in (with a passkey
-  and 2-step). Not a "super owner" login inside the gym admin app: that app signs in with a 6-digit code and
-  keeps a copy of a gym on each desk computer, so one mistake there must never open every gym.
-- **By default you see counts and health per gym, never people:** members, check-ins, shop orders, money
-  totals, last activity, failed sign-ins, feedback, leads, AI use and cost, app versions.
-- **Opening one gym's records = "break-glass":** the gym grants support access for an hour, or you open it in
-  an emergency with a typed reason. Read-only, 60 minutes, logged, and the gym owner always sees when you
-  looked and why.
-- **Actions:** approve or pause a new gym, create a gym from a lead, reset an owner's sign-in, delete requests
-  with a 30-day countdown, export a gym's data, AI limits and cost.
-- **Why the law matters:** each gym is responsible for its members' records; ForgeAI handles them for the gym.
-  Looking at members' personal data for your own reasons would give ForgeAI its own legal duties, so counts
-  are the default. Every HQ action goes into a log nobody can edit, kept 2 years in Mumbai.
-- **Found on the way:** today anyone on the internet can create a gym (up to 5 an hour from one address) and
-  nothing tells you. Step 2 adds "approve new gyms".
-- **Build in 3 steps, about 5 working days, ₹0 a month:** 1) Look (about 1 day), 2) Act (1.5-2 days),
-  3) Break-glass and logs (2-3 days). Each step needs your yes for one live server change (it only adds).
-  Step 1 also needs a 10-minute free Cloudflare sign-in setup and a new Supabase key that you make.
-**YOUR REPLY (23 Oct, 08:32):** A. "you make the best decisions and make it all LIVE"
-**DECIDED (23 Oct 2026):** A: all 3 steps, built and taken live by me; I tell you what I changed on the live server each time.
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-owner-panel.md
-
-## 50. Members' workouts on our own server: how many fit in the free plan? — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** PLANNED
-**READ (29 Oct, 12:51 am, via the page)**
-**You asked:** if we store every member's workouts in our own database (Supabase), how many members fit in the
-free plan, and for how long, if they start today?
-**My answer:** Many more than we will have for a long time, if we store them the compact way.
-- **Measured on your real history** (487 workouts): about 18 sets and 4.4 exercises a workout. Packed as one
-  record per workout, a workout takes about 450 bytes, about 1 KB with the database's own overhead. Stored the
-  simple way (one record per set) it takes about 4 KB.
-- **The free plan** (supabase.com/pricing, read today): 500 MB database, 5 GB of downloads a month. I keep 100 MB
-  for the gym records (members, payments, check-ins, shop, messages), so 400 MB is for workouts.
-- **A typical member** trains 3 times a week (about 13 workouts a month): about 13 KB a month, 0.16 MB a year.
-
-| Members starting today | Compact way: full after | Simple way: full after |
-|---|---|---|
-| 100 | about 26 years | about 6.5 years |
-| 300 | about 9 years | about 2 years |
-| 1,000 | about 2.5 years | about 8 months |
-| 3,000 | about 10 months | about 2.5 months |
-| 10,000 | about 3 months | under 1 month |
-
-- **Downloads are not the limit:** a member sends only each new workout (about 1 KB); a new phone downloads a
-  year of history in about 160 KB. Even 1,000 new phones in a month use about 160 MB of the 5 GB.
-- **The paid plan** (about ₹2,100 a month, #27) has 8 GB: 20 times more (1,000 members for decades, 10,000 for
-  about 5 years), plus daily backups. **The free plan keeps no daily backups** and pauses after 7 days unused, so
-  members' history there could be lost in one bad day. If workouts go to the server, the paid plan comes first.
-- **Three things come with it:**
-  - Each member needs a sign-in (#43), so their workouts are theirs on any phone.
-  - The app's promise "your workouts stay on your phone" changes: a clear consent screen and new privacy
-    notice lines, in your approved words.
-  - Workouts count as health-related data under India's privacy law: we must protect and delete them on request.
-- **What it unlocks:** a new phone gets everything back without Google Drive, the trainer view (#46) and owner
-  reports can use real workouts, and the web admin could show a member's progress.
-**DECIDED (24 Oct 2026):** A, changed by your note: members' workouts go to OUR server from the start, the way Hevy does it, on the free plan we have now. Google Drive becomes an extra copy only for people who want one.
-**YOUR REPLY (24 Oct):** Apps like Hevy keep data in their own database; we should not depend on Google Drive; use the free Supabase now (it fits about 1,500 members), try 10-20 members, decide later. "You decide."
-**My answer:** Agreed, and that is what I will build. Every workout a member saves goes to our server too, so a new phone or a reinstall brings everything back after sign-in. The free plan holds about 1,500 members' workouts. Before it goes live I will ask your yes for the new server tables (one live server change).
-
-## 49. Offers and messages for gym owners, with the workout reward: the plan — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Done
-**READ (23 Oct, 08:49 am, via the page)**
-**You asked:** a full offers and messages section for the gym owner: holiday closures to everyone, fee offers,
-and a reward that nudges members to track workouts ("track 10 workouts, get 3 extra days"). You do Firebase.
-**My answer:** Building it in three steps. Step 1 needs nothing from you, and I have started it.
-- **Step 1 (building now, no live server change):** 26 ready messages in English and Hindi (gym closed, new
-  timings, fee offer, festival, renewal, birthday, welcome, "haven't seen you"...), blanks filled with boxes
-  instead of typing into brackets; a "who gets it" picker (plans ending this week, ended, stopped coming, a plan,
-  a batch, birthdays); a WhatsApp "send to next" list from your phone for members without the app; "Messages &
-  offers" as its own menu item; Today nudges ("5 plans end this week").
-- **The workout reward, first as a trial with nothing sent to the server:** the member app shows "Show my
-  workouts to the desk" with a short code; the desk types it in, the admin app checks the dates against its own
-  check-in register ("9 of 10 match"), and you give the days with the existing gift button.
-- **Stopping cheating:** a workout counts only on a day the gym's register shows a check-in, and only if it ran
-  20+ minutes with 6+ sets. A sofa workout earns nothing; the worst a cheat wins is coming to the gym 10 times.
-- **Evidence:** rewards raise gym visits while they run; a small part lasts, mostly in people who were not
-  regulars. So the reward stays small and repeatable.
-- **No GST and no receipt for the free days** (a free extension is not a sale). I found and am fixing a related
-  bug: a reprinted old receipt showed the longer end date as if the days were paid for. It will print the dates as
-  sold, plus "Extended free by 3 days (reward)".
-- **Step 2 (needs your yes to a live server change):** members join the offer in the app, progress "6 of 10",
-  only the DATES of counted workouts leave the phone (after "Join the offer"), the desk's one-tap Give button,
-  in-app messages to a group (not only everyone), messages at a chosen time.
-- **Step 3 (after your Firebase setup):** pop-up notifications, and automatic birthday / plan-ending / welcome
-  messages at 9 am, never more than one a day per member.
-**DECIDED (23 Oct 2026):** A, plus your addition: each offer has a setting "Give the days by themselves" or "I give them" (the desk taps Give). Building now; before members see it you approve the consent words and the privacy lines.
-**BUILT (23 Oct):** step 2 is built, reviewed (1 must-fix and 4 smaller fixes, all done) and tested. The admin part is live: Messages & offers → Workout offer says "not switched on for your gym yet" until the server change. The member app card stays hidden until then too.
-**What the member sees before joining (consent words):**
-> Join: 10 workouts, 3 extra days. How it works: on a day you check in at <gym>, log a workout of at least 20 minutes with 6 or more sets in ForgeAI. Log 10 of them within 30 days of joining, and 3 days are added to your membership. What the gym gets: only the dates of those workouts. Never your exercises, weights, sets, body weight or photos. Who sees it: the owner and front desk of <gym>. Stop any time: Gym tab → Workout offer → Leave the offer. The dates are deleted and nothing more is sent. Questions or complaints: ask at <gym>'s front desk. If it is not solved, you can complain to the Data Protection Board of India. Not joining changes nothing about your membership. [Join the offer] [Not now]
-**New lines for the privacy notice** (English and Hindi, full text in docs/overhaul/offers-step2-words-for-approval.md): 1) if you join, the app sends your gym only the dates of the workouts that count, only while you are in the offer; 2) what we keep and for how long: dates deleted when you leave, or 90 days after the offer ends; 3) how to stop: Gym tab → Workout offer → Leave the offer; 4) "Last updated" with what changed.
-**YOUR REPLY (23 Oct, 08:49):** A. "I will setup firebase but I think we need to think about changing branding first.. where is the answer to branding related question. I think we need a search box also in this tracker"
-**DECIDED (23 Oct 2026):** A: the words as written. Next: the live server change (needs you to sign in to Supabase once in my browser), the privacy notice lines, the member app release. The branding answer is #44 (5 names to pick from); a search box is being built into this page.
-**TASK DONE (23 Oct, you signed in)**
-**LIVE (23 Oct):** the server change is on the live database (its own test: RESULT PASS, 71 checks; the security test: RESULT PASS, 9 checks). The privacy notice has the 4 approved lines (English and Hindi, "Last updated: 23 Oct 2026"). The member app with the offer card is v0.55.0, in its phone tests now; owners can start an offer in Messages & offers → Workout offer.
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-offers-notices.md
-
-## 48. One extra rep on every set, or the app's targets? — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Answered
-**READ (29 Oct, 01:00 am, via the page)**
-**You asked:** you aim for one extra rep on every set. Is that better for long-run progress, or should you
-follow the app's targets?
-**My answer:** Both work. Keep your habit, with one rule from the app.
-- **Why both work:** muscle and strength grow when you keep doing a little more over time. More reps at the
-  same weight counts just as much as more weight. A 2022 study (Plotkin and others) had two groups train for
-  8 weeks: one added weight, the other added reps. Both gained about the same muscle and strength.
-- **The catch with +1 on every set:** it cannot go on for ever. Each set gets longer, the last sets fail
-  first, and you end up grinding every set to the limit. That tires you more and slows you down over months.
-- **What the app does:** set 1 aims for one more rep than last time; the other sets aim to match last time.
-  When your sets reach the top of the rep range, the app adds weight and starts the reps lower again. That
-  is the same idea as yours (called "double progression"), paced so it lasts.
-- **My advice:** treat the app's number as the floor. If a set feels easy (you could do 2 or more reps
-  more), take the extra rep. Stop a set when you have about 1 rep left, not at total failure. When the app
-  says "Up", take the weight, even if it means fewer reps that day.
-
-## 47. AI import of a gym's old records: the plan — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** Done
-**TASK DONE (23 Oct, 08:54 am, via the page)**
-**KEYS IN (23 Oct):** both keys are saved as secrets; the AI address now answers "sign in first" instead of "not switched on". Proved 23 Oct: a real test-gym register with odd column names (Hindi words) was matched by the live AI in 6 seconds (live run 39895450334, step XJ7).
-**READ (23 Oct, 08:55 am, via the page)**
-**You asked:** gym owners must bring their old data in without your help. Use AI in the admin app's
-import, with a database that can take new kinds of fields for each gym, and think through the problems.
-**My answer:** Yes, build it. Others do the column matching with AI too (HubSpot, Flatfile). Indian gym
-software only offers a fixed upload template, and nobody reads a photo of a paper register.
-- **What the owner does:** upload the file (Excel or CSV first; photos of a register later). The AI says
-  which column is which ("Mobile No." is the phone, "Pkg" is the plan). The owner sees a preview with
-  every problem marked, fixes it, presses Import. One tap undoes the whole import.
-- **New kinds of information** (locker number, blood group, referred by) become that gym's own extra
-  fields, shown on the member's page. They are stored as data, not as new database columns: instant,
-  safe, and no change to the live database. Adding real columns for each gym would lock a table every
-  gym shares; real products do not do it.
-- **The AI only points; our tested code reads.** For a spreadsheet the AI sees only the column names and
-  5 example rows, with mobile numbers hidden. Our own code reads every date, phone and rupee amount, so
-  the AI cannot invent a member or a payment.
-- **Problems and fixes:** the same member twice (matched by phone, the owner picks); plans that don't
-  match ours (the owner maps each one once); dates like 05/06 (read the whole column to tell DD/MM from
-  MM/DD); dues and part payments (kept as dues, never as paid); a file imported twice (found and skipped);
-  very large files (done in parts).
-- **Cost:** about ₹0.40 per spreadsheet, about ₹2.50 per photo of a register page. The photo price at
-  Google roughly doubles on 1 January 2027.
-- **A bug I found on the way:** a member imported as "Mr. Ramesh Gupta" is refused when he later joins the
-  member app as "Ramesh" (the check reads his first name as "Mr"). I am fixing that now; it affects
-  today's import too.
-**DECIDED (23 Oct 2026):** A, with your addition: the cheapest AI first (Google Gemini, on your Google AI Pro developer credit), then Claude Haiku 5.5 (the cheapest Claude) if Gemini fails. Building now without keys; the import works by hand until the keys are in.
-**BUILT (23 Oct):** live in the admin app. Import → pick a file → "Ask AI to match the columns?" appears when a column is left unmatched. Until the keys are in, it says AI is not switched on and the owner matches by hand. Each gym gets 20 AI reads a day.
-**Your task:** Make a Gemini key: open aistudio.google.com, tap "Get API key", then "Create API key". Use a Google Cloud project with billing switched on (your Google AI Pro developer credit pays it): on the free tier Google may use what is sent to improve its products.
-**Your task:** Make a Claude key: open console.anthropic.com, then API keys → Create key. Check that the Console shows credit (the Claude chat plan and the Console are billed separately).
-**Your task:** Paste both into Cloudflare: dash.cloudflare.com → Workers & Pages → forgeai-panel → Settings → Variables and Secrets → Add. Type "Secret", name GEMINI_API_KEY, paste the Gemini key, Save. Again with the name ANTHROPIC_API_KEY for the Claude key. Then tell me "keys are in" and I test one import.
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-ai-import.md
-
-## 46. Trainers see their members' progress: the plan — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct) — build queued
-**READ (24 Oct, 04:54 pm, via the page)**
-**You asked:** trainers should see if members are progressing, encourage them, and help the gym sell
-personal training. Research it and decide the best way.
-**My answer:** Build it as a tool that tells a trainer who to talk to today and what to say, not a sales list.
-- **The member chooses.** Sharing is off until the member turns it on, picks one named trainer and taps
-  "Share". The trainer accepts them in person at the gym.
-- **Only a weekly summary leaves the phone:** workouts a week, total kg lifted a week, the best set on their
-  5 most-done exercises, and new records. Body weight, photos, notes and food never leave the phone.
-  Stopping deletes the shared copy at once.
-- **The trainer sees "My members":** one plain line each, like "New best: Leg press 120 kg × 10", with
-  ready WhatsApp messages ("well done", "how's it going?"). You see all of it.
-- **Why:** no Indian gym software does this. Hevy Coach shares everything once linked, body weight and photos
-  too, so keeping those private is our edge. Members whom staff speak to regularly cancel less (UK gym
-  studies). Chasing struggling members with offers backfired elsewhere (10% left against 6% left alone), so
-  version 1 has an "Ask my trainer for help" button instead: the member asks.
-- **A safety point I found:** trainers sign in as front desk today. A "Trainer" tick on a person is the safe
-  way to add them; a new role done the quick way would give trainers owner powers (money totals, cancelling
-  receipts).
-- **India's privacy law** needs separate consent for coaching and for sales; its main duties start in May 2027.
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-trainer-view.md
-**DECIDED (24 Oct 2026):** A, with your change: no consent tick for members.
-**YOUR REPLY (24 Oct):** Skip member consent; the gym gives the app free as part of the membership; mention it in the terms with a positive spin, unless there is a legal risk.
-**My answer:** We can skip the tick box, with one small safety net. India's data law (DPDP Act 2023) allows this without a tick when the member is told clearly and keeps the right to say no. So:
-1. **When a member joins a gym**, one line on the join screen: "Your gym's trainers see your workouts, so they can help you progress."
-2. **An off switch** in Settings → Your gym: "Share my workouts with my gym" (on). Very few will turn it off, and having it protects you and the gym.
-3. **The terms and the privacy notice** say the same, in the positive way you asked.
-Without the off switch, a member could complain that a "no" was ignored, and that is the one real legal risk. Before it goes live, you approve the exact words.
-**DECIDED (24 Oct, 4:54 pm, via the page):** A: a line on the join screen + an off switch in Settings; no tick box. Claude builds the trainer view next, after the MettleUp release.
-
-## 45. Count reps by listening: the plan — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE (cancelled 29 Oct)
-**READ (29 Oct, 12:40 am, via the page)**
-**You asked:** in a hard set people lose count. Could the app listen to the member counting (earbud mic)
-and log the set by itself? Or is there a better way?
-**My answer:** Build the listening idea, with one change: use the phone's own microphone, not the earbuds'.
-- **Why not the earbud mic:** on most budget Bluetooth earbuds, opening the earbud mic turns the member's
-  music into phone-call sound for as long as it listens. Android's own guide confirms this. With the phone's
-  mic the music stays perfect; the phone must be within about 1-2 m (on the bench or the floor, not in a
-  pocket). The earbuds still carry the app's voice back: "ten, logged".
-- **The other ways are worse:** watch counting gets 44-67% wrong on some exercises and fails on legs and
-  machines (your Pixel Watch 4 has no rep counting). Camera counting double-counts when people walk past.
-  Earbud-button counting takes over the music buttons. No big app (Hevy, Strong, Fitbod, cult.fit) counts
-  by listening; the few small ones that try have poor reviews.
-- **First version:** with the app open and the screen on. It hears numbers in English or Hindi ("ek, do,
-  teen") and shows the count large on the set row. "Done", "ho gaya" or "bas" ticks the set, with Undo. It
-  never ticks on silence and only takes the next number in order, so a trainer counting nearby is ignored.
-  Everything runs on the phone; nothing is sent anywhere. About 3-5 days of work, no money.
-- **Test first on your phone:** if it gets 9 of 10 sets right over 3 workouts at your gym, I finish it
-  (screen-locked listening, a "Count for me" voice for people who count silently).
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-voice-rep-count.md
-**DECIDED (24 Oct 2026):** B: not now.
-**YOUR REPLY (29 Oct):** Cancel this idea.
-**My answer (29 Oct):** Cancelled. Counting reps by listening is not in the plan any more.
-
-## 44. Pick a new brand name (its domains are free today) — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DECIDED (24 Oct)
-**TASK DONE (24 Oct, 05:00 pm, via the page)**
-**READ (24 Oct, 04:03 pm, via the page)**
-**You asked (20 Oct, backlog):** research a new product name whose .com (or .in / .app) is still free at a
-normal price; forge.ai and forgeai.com are taken and too expensive.
-**My answer:** I checked 136 names on 22 Oct. Most short English names are taken; most free .com names are
-Hindi-English blends. Five have .com, .in and .app all free at the normal price (no premium):
-- **Repghar** (रेपघर, "home of your reps"): progress plus the gym as a place you come back to. No clash found.
-- **Kilojeet** (किलोजीत, "win the kilos"): ties to "kg to beat"; sounds like a Punjabi first name, so it can be a mascot. Some owners may take it as a joke.
-- **RepAhead**: plain English; similar trademarks exist, so it is harder to protect.
-- **AglaSet** ("next set"): perfect in Hindi; English readers may stumble.
-- **IronAdda**: warm, but a Kolkata gym chain is called "Iron Addict", and "adda" can mean a den.
-Cost: about ₹3,100 a year for all three endings (.com about ₹990, .in about ₹740, .app about ₹1,350).
-Two cautions: two names on my list were registered by someone else in the last four months, so buy the
-.com and .in the day you pick; and the official trademark search (IP India) needs a person (it has a
-captcha), so do it, or ask a lawyer, before paying for a logo. Say both top names to 3-4 Jaipur gym owners
-first if you can.
-**YOUR REPLY (23 Oct, 09:46):** "Nah I want something in English"
-**NEW ANSWER (23 Oct): English names only.** I checked 625 more. Every plain English word is taken as a .com (Uptick, Regulars, Mainstay, Topset...). What is still free is two words joined: "lift" or "rep" plus a progress word. All five below have .com, .in and .app free at the normal price (GoDaddy India: none premium):
-- **Liftchase**: "chase your next lift". Names the "kg to beat" screen and the reason to come back. 2 syllables; nothing anywhere uses it. Nearest Indian trademark: "The Fit Chase" (the official search must clear it).
-- **RepAhead**: "stay a rep ahead". The plainest English; no app uses it, but similar marks exist ("Stepahead", "Getahead"), so it is harder to protect.
-- **Repnotch**: "notch up one more rep". But "Notch – Gym & Fitness Tracker" is on Google Play.
-- **Kilonest** and **Kilostreak**: risky: a US company called Kilo already sells gym software with a member app.
-Cost: about ₹3,100 a year for .com + .in + .app. Before paying for a logo, the official trademark search (needs a person, it has a captcha) or a lawyer. Buy the .com and .in the day you pick: 9 names I tried were taken in the last 30 days.
-**YOUR REPLY (23 Oct, chat):** "suggest me more brand names... not feeling it"
-**ROUND 3 (23 Oct): new styles, no more lift/rep/kilo pairs.** I checked about 315 more. Every short real English word is taken (Stride, Tempo, Ember, Vigour, Encore, Outdo, Summit...): .com always, .in and .app usually. What is left is made-up words built from real words, and short phrases:
-- **Habitsmith**: "we forge the gym habit" (keeps the "forge" story). .in, .app and gethabitsmith.com free; habitsmith.com is for sale at about ₹2.8 lakh.
-- **Still Not Out**: cricket's "still in the game". .com, .in and .app all free at the normal price. "Not Out" is crowded in the trademark register.
-- **Strongsmith**: "the smith who makes you strong". .in, .app and the "get" .com free; close to the big "Strong" gym-log app.
-- **Better Than Last**: "beat your last session". All three free; two small apps have a similar name.
-- **Push Through**: what members do on a hard day. .in, .app and the "get" .com free; a game called "Push Through 3D" exists.
-- **Gritwell**: "doing well through grit". .in and .app free; a US leather brand owns the .com.
-- **Back Tomorrow**: the retention goal in two words. .in and .app free; the .com costs about ₹94,000 and it reads like a "shop closed" sign.
-- **Fortwell**: "the strong place you come back to". .in and .app free; Sun Pharma uses "Fortwell" for a medicine.
-The official trademark search still needs a person (it has a captcha) before you pay for a logo.
-**YOUR QUESTION (23 Oct, chat):** one name that works for both the members' app and the gym software, or two separate brands?
-**My answer:** one brand, with plain labels: "<Name>" for the members' app, and "<Name> for Gyms" for the admin app and website. Why:
-- Gyms are how members find us: every member who installs from a gym poster spreads the same name, and "your members already use <Name>" sells the next gym. Two brands throw that away.
-- Half the work and money: one set of domains, one trademark, one Play listing and one logo, for one person to run.
-- Members already see their own gym's logo and colours inside the app, so our name stays quiet next to theirs.
-- This is what Hevy (Hevy and Hevy Coach), Virtuagym and Trainerize do. Two brands mostly happen after one company buys another (Mindbody and ClassPass).
-- The catch: the name must sound right both on a member's home screen and on a gym owner's bill. That rules out Still Not Out (fun, cricket) and makes Liftchase lean to members. Habitsmith passes both: "habit" is what owners pay for (members who keep coming) and what members want.
-**YOUR REPLY (23 Oct, chat):** "you're not ... giving me a good name ... ForgeAI is something I loved immediately ... none of this ... connects with weightlifting and workout. Give me at least 10 to 20 options."
-**ROUND 4 (23 Oct): names that feel like ForgeAI and like lifting.** 379 more names checked; every "free" domain below confirmed at the normal price.
-- **Can ForgeAI stay? No, not as the public name.** forgeai.com is a live US AI company; .in, .app and getforgeai.com are taken; Google Play India already has "Forge AI Workout Tracker" and "ForgeFit: AI Fitness Coach" (10,000+ downloads each) and 10+ other Forge gym apps; "Forge Fitness" is a registered trademark for gyms. It stays our internal project name.
-- **Forge family:** **Liftforged** (made strong by lifting, like hand-forged steel; .com/.in/.app free; low risk) · **ForgeKG** (ForgeAI with KG for AI; all free; medium) · **Forgeyard** (.in/.app/getforgeyard.com; .com for sale ₹3.5 lakh) · **Barforge** (the barbell is the forge) · **Forgehall** · **Strongforge** · **Forgeiron** (all .in/.app + a "get" .com). Any "Forge" name sits among the Forge apps in store search.
-- **Smithing words:** **AnvilKG** (all free) · **Foundrylift** (all free) · **Ironsmithy** (all free) · **Temperiron** (all free; "temper" can read as anger) · **Anvilstrong** (.in/.app + "get" .com).
-- **Lifting words:** **IronKG** (iron and kilos, the words every lifter uses; all free; many "Iron" apps) · **Chalkiron** (chalk on the hands, iron in them; all free; low risk) · **Heavyiron** (.in/.app + "get" .com; low-medium) · **Ironrack** · **Ironhall** (close to "Ironhill" beer).
-- **Hero names:** none survived (Atlas: "Iron Atlas" gym software; Titan: Tata; Hercules: Indian bicycles; Milo: a new strength app).
-Buy the .com and .in the day you pick: 12 names checked were registered by someone in the last 3 months.
-**YOUR 40 NAMES (23 Oct, from other AI tools):** every .com is taken; 25 have the .in free; 8 of those dropped for a same-name gym app or a strong clash (Knurl, Outlift, Grindset, Beatlast, Heavier, Stepweight, Moreweight, Passlast). The clean ones, cheapest .com first (.in about ₹899 a year for all): **Castrep** (.com expires about 24 Oct: normal price if caught), **Sleevelock** (.com ₹2.2 lakh), **Upweight** (₹3.4 lakh), **Platecast** (₹3.9 lakh), **Gainset** (₹6.6 lakh). With a catch: Plusplate (₹3.3 lakh; a dishwashing brand), Pinload (₹4.2 lakh; a Pinterest downloader), Addiron (₹4.5 lakh; reads like iron tablets), Pushpast (₹11.4 lakh), Mettled (₹31 lakh), and Smelt, Barcast, Barweld, Nextplate, Hardset, Climbset, Peakrep (.com not for sale; .in only). Full table: the research file, round 5.
-**YOUR 80 NAMES (24 Oct, chat):** "research the list of names I just shared ... give me a table of the shortlisted ones with the prices and details."
-**ROUND 6 (24 Oct): your 80 "-Book / -Log / -Journal" names.** I checked all 80 for .com, .in and .app at the official registries, then searched Google Play, the App Store and the US trademark register for the best 20.
-- **No strong name has a free .com.** The 6 with a free .com are weak (MettleBook sounds like "metal" on a call; RackJournal and LoadJournal are long).
-- **Top pick: SetBook.** Every member knows "set"; "set hai" means "all good"; "Book" reads like a register for owners, the way Khatabook does for shops. setbook.in is free. setbook.com belongs to someone with no website and is not for sale; it expires 21 Dec 2026. Meanwhile setbookgym.com and usesetbook.com are free. No trademark found; only a small music setlist app shares the name.
-- **Backup: RackBook.** The only good name with .in and .app free and a .com you can buy today ($3,495, about ₹3.3 lakh). No clash. On a call it can sound like "rock book".
-- **Keeps "Forge": ForgeBook.** No clash; .in free; forgebookapp.com free; forgebook.com is parked with no price.
-
-| Rank | Name | .com | .in | .app | Clashes | Score /10 |
-|---|---|---|---|---|---|---|
-| 1 | SetBook | Taken, no site, not for sale (expires 21 Dec 2026) | Free | Taken | Small setlist app; no trademark | 8 |
-| 2 | RackBook | For sale, about ₹3.3 lakh | Free | Free | None | 7.5 |
-| 3 | ForgeBook | Parked, no price | Free | Taken | None | 7.5 |
-| 4 | LiftBook | Taken (live) | Free | Taken | 4 tiny LiftBook apps; "lift" = elevator or a ride in India | 6.5 |
-| 5 | AnvilBook | For sale, about ₹56,500 | Free | Free | None; few members know "anvil" | 6.5 |
-| 6 | IronCard | Held by a reseller | Free | Free | A metal bank card in Kazakhstan | 6 |
-| 7 | MettleBook | Free (about ₹1,000 a year) | Free | Free | None; heard as "metal" | 6 |
-| 8 | LiftDiary | Taken (live) | Free | Free | 3 LiftDiary apps | 5.5 |
-| 9 | RackJournal | Free | Free | Free | None; long, member-only feel | 5.5 |
-| 10 | HeavyBook | For sale, $2,695 | Free | Taken | None; sounds like a textbook | 5.5 |
-
-**Dropped:** "Cast" (sounds like "caste"), "Bar" (a liquor bar), "Steel" (a live STEELBOOK trademark; utensils in India), Ledger/Chronicle/Folio (hard words), names whose .com is a live business or app (RepLog, SetLog, RepCard, IronDiary, Lift Card...), Weld/Grind/Press/Stack (factory feel), "Sheet" (sounds like the owner's import sheet), PRBook ("PR" is a banned word), MaxBook (Max Healthcare), most "Rep" names (crowded with small apps).
-**Cost:** .in about ₹750-950 a year. A free .com about ₹1,000-1,600 a year (Porkbun or Cloudflare about ₹1,050 every year; GoDaddy/Hostinger ₹1 only with 3 years paid, then about ₹1,500-1,600). Cloudflare does not sell .in. Namecheap says .com prices go up on 1 Nov.
-**Not proven:** the official Indian trademark search has a captcha, so I used a copy of the register (top 30 matches). Ask a lawyer, or search ipindia.gov.in yourself, before paying for a logo.
-**YOUR REPLY (24 Oct, chat):** "I like MettleBook - can we have MettleLogs, MettleTracker, MettleUp, MettleBooks - think of more around Mettle that gives a feel of progressive overload"
-**ROUND 7 (24 Oct): Mettle names.** "Mettle" means the courage to keep going when it gets hard; "test your mettle" is a common phrase. I checked 60 Mettle names at the official registries (.com, .in, .app).
-- **Your 4:** **MettleUp**: .in and .app free; the .com is parked at GoDaddy (bought 2023, renewed to 2027, no price shown; an offer may work). **MettleLogs**: all three free. **MettleTracker**: .in and .app free; the .com is a live app, "Mettle - The Private Gym for Social Confidence". **MettleBooks**: .in and .app free; the .com is a live online shop.
-- **New ones with an "add a little more each week" feel, all 3 endings free at the normal price:** **MoreMettle** ("one more rep" = more mettle) · **MettleStep** (one step up each week) · **MettleClimb** · **MettleNotch** (notch it up) · **AddMettle** · **MettleRaise** · **MettleLadder** · **MettleNext** · **MettleBuild** · **MettleKG** · and your **MettleBook**.
-- **Taken .com:** MettleGain, MettleRise (a software company), MettleSet (coming soon page), MettleOn, MettlePlus, MettleProof, BuildMettle, ProveMettle, MettleGym, MettleFit, MettleClub, MettleForge, Mettlesmith, MettleTrack and others.
-
-| Name | .com | .in | .app | Overload feel | Note |
-|---|---|---|---|---|---|
-| MettleUp | Parked (GoDaddy, no price) | Free | Free | Best: "level up" | Your pick; try an offer, or start on mettleup.in |
-| MoreMettle | Free | Free | Free | Strong: "one more" | Reads like a slogan |
-| MettleStep | Free | Free | Free | Strong: step up | Plain and clear |
-| MettleNotch | Free | Free | Free | Strong: notch up | "Notch" is a less common word |
-| MettleClimb | Free | Free | Free | Good | Longer to say |
-| AddMettle | Free | Free | Free | Good | Sounds like an advert |
-| MettleBook | Free | Free | Free | Weak: a log, not growth | Fits owners' records best |
-| MettleLogs | Free | Free | Free | Weak | Fits members' logging |
-
-**Cautions about "Mettle" itself:**
-- On a phone call it sounds like "metal"; spell it once: M-E-T-T-L-E.
-- Other brands use the word: "Mettle: Mental Fitness for Men" (Bear Grylls' app, on Play and the App Store); NatWest's "Mettle" business bank app (UK); a "Mettle Fitness" gym in Hyderabad; "MettleMingle", a gym booking app. A two-word name (MettleUp, MoreMettle) keeps us apart, but a plain "Mettle" logo would not.
-- The official Indian trademark search still needs a person (captcha); search "Mettle" in classes 9, 41 and 42 at ipindia.gov.in, or ask a lawyer, before paying for a logo.
-**YOUR QUESTION (24 Oct, chat):** "I am really feeling MettleUp.in - do we need even more in-depth research before finalize?"
-**My answer:** No more big research. Three small checks are left, and two of them only you can do:
-- **Done by me (24 Oct):** no app called MettleUp on Google Play India; no company or product called MettleUp found on the web. mettleup.in, mettleup.app, getmettleup.com and mettleupapp.com are all free. Five apps called just "Mettle" are on Play (a men's mind app, a quiz, a walking game, a gym booking app), so in store search we must always show the full name "MettleUp".
-- **Your task, trademark (15 minutes, free):** search India's official register yourself (it has a captcha). If nothing close shows in classes 9, 41 or 42, you are clear to file.
-- **Your task, domains (about ₹2,500 for the first year):** buy mettleup.in and mettleup.app the same day; add getmettleup.com (about ₹1,000) so a .com points to us until mettleup.com can be bought.
-- **Optional:** say "MettleUp" to 3 gym owners on the phone and ask them to spell it back.
-- **Play ID:** if you pick MettleUp, the Play Store ID in #57 should be com.mettleup.app (it matches the domain you will own); no public app uses it today.
-**Your task:** open https://tmrsearch.ipindia.gov.in/tmrpublicsearch/ (or ipindia.gov.in → Trade Marks → Public Search), choose "Wordmark", type METTLEUP, search "Contains", and repeat for METTLE UP. Look at classes 9 (apps), 41 (fitness training) and 42 (software). Tell me what you see, or send a screenshot.
-**Details and all 136 names checked:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-brand-name.md
-**DECIDED (24 Oct, 4:03 pm, via the page):** one brand, with "for Gyms" on the business side; the name is **MettleUp**. You bought mettleup.fit (the address we market) and mettleup.in (it will send people to mettleup.fit); no .app for now.
-**YOUR QUESTION (24 Oct, on the page):** "Will these be two separate mobile apps like mettleup and mettleup for GYMS? Because I was thinking it would be just one app with consumer and B2B logins, not sure."
-**My answer:** one name, and only ONE app on the Play Store: the members' MettleUp app. Gym owners and their desk staff use MettleUp in the browser at app.mettleup.fit (on the desk computer or a phone; it can be added to the phone's home screen like an app, and it works offline). "MettleUp for Gyms" is just the label on that website and on the price page, not a second app. Why not put the owner screens inside the phone app: the desk works on a big screen all day, and one web app updates for every gym the moment we fix something, with no Play review. Later, if owners ask, the phone app can get an "I run a gym" button that opens the owner app.
-**Done (24 Oct):** both domains now point to Cloudflare (where your other sites live); the switch finishes within a few hours.
-
-## 43. How should members sign in: Google, or a phone code? — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** PLANNED
-**READ (29 Oct, 01:00 am, via the page)**
-**You asked (17 Oct, #11):** "log in with Google etc., with 'join via your gym membership' right below;
-the app must also work with no gym." You chose: research it properly first, then come back with options.
-**My answer:** Google sign-in is free and the app already has the Google sign-in part (used by Drive
-backup). One catch decides the design: Google tells us a member's email, never their phone number, and
-the gym's member list is matched by phone. So a Google sign-in alone cannot prove "this is Rahul from the
-list". One more check is needed before "My membership" can safely show payments.
-- **What others do:** Hevy and Strong make you sign in (both have help pages for members who signed in a
-  second way and found an empty account). cult.fit and FITPASS sign in by phone number and a code.
-- **Rules that come with accounts:** Google Play asks for "Delete my account" inside the app and on a web
-  page; India's data law (full from 13 May 2027) asks for consent words and answers to delete requests.
-- **Workouts do not move:** they stay on the phone and in the member's own Drive in both options.
-**Details and sources:** https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-google-login.md
-**DECIDED (24 Oct 2026):** A: "Continue with Google" sign-in, plus your plan for members without a gym.
-**YOUR REPLY (24 Oct):** Why join through a gym rather than alone? Members without a gym (or whose gym is not on ForgeAI) get limited features, like Hevy's routine limit; gym members get everything; say "join through your gym to unlock everything". WhatsApp codes later, once it makes money.
-**My plan (from research):** Hevy's free plan allows 4 routines, 7 custom exercises and 3 months of charts. Strong allows 3 routines. So:
-- **With a gym on ForgeAI:** everything, free.
-- **Without one:** 4 routines, 7 custom exercises and 3 months of charts, the same as Hevy. A line in the app says "Join through your gym to unlock everything, free", with a button to tell their gym about ForgeAI.
-- **At launch the limits stay OFF** (everything free for everyone), so the first users love it. You switch them on from your owner panel, with no app update, when you decide.
-- **Sign-in:** "Continue with Google", "Join with your gym code", or "Use without an account". WhatsApp codes come later, as you said.
-**YOUR REPLY (29 Oct):** two ideas. (1) Should members think the app is free forever, or should we say "6 months (or 1 year) free with every feature, no card"? How many users can we support? Free forever for early users and paying for later ones feels wrong. (2) Gym owners collect members' email; members sign in with Google (later Apple on iPhone); if the email matches, the gym links by itself. Keep code and link too; suggest or require email when the owner adds a member.
-**My answer (29 Oct):**
-**1. Free forever or a trial?** My pick: never promise "free forever" for everything. Split it:
-- **The basic workout log stays free for everyone, always.** Hevy and Strong do this, so members expect it, and it costs us very little: about 330 KB per member, so the free server holds about 1,500 members, and the $25 plan about 24,000. Past that, each extra 3,000 members costs about ₹10 a month.
-- **The extras** (AI coach, deep charts and similar) come with "6 months free, every feature, no card". A clear end date is honest, and nobody feels tricked later.
-- **Early users get a thank-you, not a different deal:** for example 3 extra free months or a lifetime discount as "founding members". Everyone sees the same rules; early users just get a bonus.
-- **Members of a MettleUp gym get the extras through their gym,** so they never see a paywall. That is our main sales story to owners.
-- Numbers to keep in mind: trials convert far better than free tiers (about 18% when no card is asked, against 3-4% for a free tier), so a time-limited trial for extras is the stronger choice.
-**2. Link to the gym by email:** good idea, with 3 safety rules:
-- **Always ask first.** The app says "Iron Paradise has you as a member. Join?" and links only after the member taps Yes. A typo in the gym's records must never put a stranger in someone's gym.
-- **Optional, but suggested.** The add-member form shows the email field with a hint ("lets the member join in one tap"). Making it required would slow the desk, and many Indian gyms do not ask for email.
-- **iPhone catch:** Apple's "Hide my email" gives each app a fake address, so those members will not match. The code, the link and the QR stay.
-- Later, matching by **mobile number** would work for almost every member, because gyms already keep numbers. That needs a phone check by SMS (paid), so it waits.
-- The email the gym keeps is the gym's record and is already covered by the privacy notice. One line about the join match goes in when we build it, for your OK.
-Sources: https://fungies.io/saas-free-trial-vs-freemium-2026 , https://www.airbridge.io/en/blog/how-to-choose-free-trial-vs-freemium , https://help.zoho.com/portal/en/kb/accounts/faqs-troubleshooting/faqs/sign-in/articles/why-does-my-zoho-account-shows-a-different-email-address-when-i-sign-in-with-apple
-
-## 42. Your task: switch on Google Drive backup (free, about 30 minutes) — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:00 am, via the page)**
-**Your task:** Open https://console.cloud.google.com/projectcreate with your Google account and make a project named ForgeAI (free, no card).
-**Your task:** In that project, open https://console.cloud.google.com/apis/library/drive.googleapis.com and press Enable.
-**Your task:** Open https://console.cloud.google.com/auth/branding and fill in: app name ForgeAI, your email as the support and contact email, audience External. Then on the Audience page press "Publish app". (The app only asks for its own files in the member's Drive, which Google does not review.)
-**Your task:** Open https://console.cloud.google.com/auth/clients, press Create client, pick Android, and fill in: package name com.forgeai.app and SHA-1 97:F8:15:53:15:41:CF:71:D4:22:69:8F:5B:6B:84:69:AC:6F:93:88 (the app's public signing fingerprint). Press Create.
-**Your task:** Press Create client again, pick Web application, name it "ForgeAI app", press Create. Copy its Client ID (it ends in .apps.googleusercontent.com) and send it to Claude. It is not a secret.
-**Why:** found on 22 Oct: Drive backup and the automatic backup after every workout are built, but hidden
-in the app, because this one-time Google setup was never done. Today members have only Android's own
-phone backup, so a lost or reset phone can lose their history (your rule: members must not lose
-workouts). With the ID, I switch it on in the next app version. The cloud test phone has no Google
-account, so the first real backup will be on your phone; I will tell you exactly what to tap.
-**TASK DONE (24 Oct)**
-merged into #60: one Google Cloud setup now covers both Drive backup and "Continue with Google", with the new Play ID com.mettleup.app. Nothing to do here.
-
-## 41. How do we price an owner with 2 or more branches? — 22 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** PLANNED
-**You asked (comment on the feature backlog, 22 Oct):** "We need to plan it. Even small GYMs have 2
-branches sometimes - But I need your input on how the pricing should work. per GYM per XX members or just
-XX members across any number of GYMs". (You wrote it on "Separate app per gym"; I read it as being about
-branches: one owner, 2 or more places. "Several branches" is now Planned.)
-**My answer:** I would not count members at all. Price per branch, and make the 2nd branch cheaper.
-- **What the market does:** most gym software charges per location (for example, Mindbody about $99 a
-  month per location). Indian tools move a multi-branch gym into a higher plan. Some charge by member
-  count, and their own reviewers point out the catch: the bill grows every time the gym grows.
-- **Why members are the wrong thing to count for us:** our selling point is the member app. We want the
-  owner to put EVERY member on it. A member limit makes him do the opposite: keep members off, or argue
-  about who counts. Our cost per member is also tiny, because workouts stay on members' phones.
-- **What a branch really costs us:** a second desk to set up, train and support, a second QR poster,
-  maybe a second entry machine. That is per branch, so the price should be per branch too.
-- **Members across all branches (your second idea)** is simple for a chain of small branches, but a
-  2-branch owner with 300 members in total would pay the same as a 1-branch gym, while we do double the
-  setup and support.
-- Numbers follow your pick on #30 (the price for one gym). Example with ₹1,499 a month: 2nd and later
-  branches ₹999 a month each.
-**Sources:** dupple.com, "Best gym management software in 2026" (Mindbody per location, Gymdesk by member
-count); houseofgrapplers.com, gym software pricing (per-member pricing grows with the gym);
-codingclave.com, gym software cost India 2026 (branch count moves the price); Easy Gym Software (multi-branch
-plans). Reviews and vendor pages, not price sheets.
-**DECIDED (24 Oct 2026):** A: per branch, no member limit; the 2nd and later branches pay less.
-**YOUR REPLY (24 Oct):** Build multi-branch from the beginning, complete; test the AI import with every kind of data, extra fields, one central sheet with a branch column; it must adapt and have a failure path.
-**My answer:** I am building it now, in this order: one owner sign-in for all branches, a branch switch at the top of the admin app, members, plans, payments, check-ins, staff and reports per branch, plus an "All branches" view for the owner. The AI import gets a branch column (one sheet for all branches, or one sheet per branch), keeps every extra column, and never stops halfway: rows it cannot read are listed for you to fix, and everything else goes in. I test it with at least 10 different real-world sheet shapes. It needs one live server change, and I will ask your yes first.
-
-## 40. Launch decision: put the new-gym landing page live — 21 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (22 Oct, 08:04 am, via the page)**
-**DECIDED (22 Oct, on the page):** A: yes, now. **Live since 22 Oct:** https://forgeai.aakashpahuja.in/home/
-(the admin app keeps its address). Checked on the live site: the page and its pictures open, no errors,
-the security rules on, and the demo form refuses a wrong number with plain words. The save of a real
-request is proven by its tests; I did not send a fake one into your list.
-**What it is (rebuilt 21 Oct on your note "our USP is the member app"):** a page for gym owners
-who don't use ForgeAI yet, designed like a supplement tub label (the thing every owner sells from his
-own shelf). It leads with "Keeps members coming back": the visitor types their gym's name and picks
-its colour, and the member app on the page turns into theirs. Then a member's workout plays (sets
-tick, "kg to beat" counts down, NEW RECORD), a "Member Facts" panel (live features ticked, planned
-ones marked "Coming"), your shop inside the app, messages to every member, the desk work in one
-line, and a "Free demo" form. Three real, sourced numbers on why progress keeps members. English and
-Hindi. No prices (you have not picked one, #30).
-**Where:** forgeai.aakashpahuja.in/home/; the admin app keeps its address.
-New demo requests reach me; I tell you each one so you or I can call back.
-
-## 39. Is an automatic feedback loop (send feedback, Claude sorts it, fixes it, releases it) in the plan? — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** BUILDING (29 Oct)
-**READ (29 Oct, 12:50 am, via the page)**
-**You asked:** whether the plan has an end-to-end feedback system: the gym owner or members send
-feedback by typing or voice; Claude understands and cleans it, adds real issues and features to the
-plan, starts fixing real issues and pushes the releases.
-**My answer:** No, not yet. Today feedback reaches us only through you. It can be built, and most of
-it can run by itself:
-1. **Send:** a "Send feedback" button in the member app and the admin app. Type or speak (Hindi or
-   English); it attaches the screen, app version and phone model by itself. Voice is turned into text
-   on our side (free speech-to-text).
-2. **Sort:** every few hours a scheduled Claude session in the cloud reads the new feedback, cleans
-   it, joins duplicates, and sorts it: bug, feature idea, question, or praise.
-3. **Record:** bugs go into the findings list; feature ideas go into your feature backlog as "Idea"
-   (with my short research, as the rule says); anything only you can decide comes to "Waiting for you".
-4. **Fix:** for a bug, Claude writes the fix and the test that proves it, and runs the full release
-   gate (thousands of tests, both cloud phones, the cross-role journeys) exactly as today.
-5. **Reply:** the sender gets an answer in the app: "Thanks, fixed in v0.49" or "Added to our list".
-**Two safety limits I would keep, whatever you pick:**
-- Feedback text is written by strangers. It is treated as information, never as orders (someone
-  could type "delete all data" or "give me free months"). Anything touching money, privacy, prices
-  or the live database still needs your yes.
-- Nothing reaches the gym's phones without passing the same tests as now.
-**Cost:** speech-to-text free; the scheduled Claude sessions run on your Claude plan (cloud sessions);
-about a week of building. Members' feedback with their name is personal data, so it goes in the
-privacy notice.
-**DECIDED (19 Oct, on the page):** B, fully automatic: if every test passes, it goes to everyone
-without you. Your note: "Unless you think it should go thru physical user test."
-**YOUR REPLY (19 Oct):** "Unless you think it should go thru physical user test"
-**My answer (20 Oct):** Yes, a short real-person check is worth it, and it can still run without you.
-Tests catch broken code, but not "this screen is confusing" or "it feels slow on a cheap phone". So
-each automatic fix goes first to the testers' group (the gym owner, the desk staff and 2–3 members).
-If nobody reports a problem and the app does not crash for 24 hours, it goes to everyone by itself.
-If someone reports a problem, it stops and waits for me to look. You never need to tap anything.
-Safety-critical fixes (a crash, wrong money, a privacy leak) skip the wait.
-**YOUR REPLY (29 Oct):** So let us plan to build it now. What are we waiting for on this one?
-**My answer (29 Oct):** Nothing from you. It is already being built:
-- **Step 1, the button:** done. The floating feedback button (voice in Hindi or English, or typing, on every screen) is built and ships in 0.60.0.
-- **Step 2, the reader:** a check on your PC twice a day reads new feedback and crash notes, sorts them, and fixes real bugs through the normal tests. I switch it on the day 0.60.0 ships, because before that nobody can send feedback.
-- **Step 3, testers first:** each fix goes to the testers' group first; after 24 hours with no problem it goes to everyone, as you decided on 20 Oct.
-- **Only wait:** 0.59.0 must finish first (an AI import test is stuck on Google's busy servers; my helper is adding a backup).
-**YOUR REPLY (29 Oct):** do not send simple bug fixes through the testers every time. Judge the severity, impact and risk. Simple and quick: send it out. Only when a fix may affect other screens should it go to the testers first.
-**My answer (29 Oct):** Agreed. New rule for every fix:
-- **Low risk → straight to everyone** after all tests pass: a fix that touches one screen only, such as wrong words, a layout glitch or a wrong number on one screen.
-- **Higher risk → testers first for 24 hours:** a fix in shared parts many screens use, in saving workouts, sign-in, money, the gym server, or a fix bigger than a few lines.
-- **Urgent → everyone at once,** whatever the size: crashes, wrong money, privacy leaks.
-- Each release note in my log says which route I picked and why, so you can check my judgement.
-
-## 38. Launch task: sign the pilot and data agreement with the gym owner — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:02 am, via the page)**
-**Your task:** When Claude says the draft is ready (it follows your answers to #30, #31 and #33), read it: one pilot agreement with the data agreement inside (dates, success measures, the gym owns its data, export in 7 days and deletion in 30 if they leave, breach notice to the gym in 24 hours, support hours, price after the pilot, it is a beta).
-**Your task:** Sign it with the gym owner (2 copies, or both sign a PDF), and send Claude a photo of the signed page.
-**Why:** India's data law makes the gym responsible for its members' data and needs a written contract with us (we handle it for the gym). It also stops the trial turning into a free service with no end date. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D3).
-**YOUR REPLY (24 Oct):** No physical signing; a scalable digital way for gyms anywhere.
-**My answer:** Yes. Online acceptance is legal in India (IT Act 2000) and is how all software is sold. When an owner taps "Create my gym", a tick box says "I agree to the ForgeAI terms and the data agreement", with links to both. We store the date, time and version of the terms they accepted, and the owner can see it in Settings. No paper, no visit. I am building it now.
-**TASK DONE (24 Oct)**
-no paper signing needed. As you asked, gym owners now accept the terms and the data agreement online with a tick box at "Create my gym" (live on the server 24 Oct); the date and version are kept.
-
-## 37. Launch task: name the complaints contact for members — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 12:42 am, via the page)**
-**Your task:** Tell Claude one name and one email address that members can write to about their data (it can be you and a new address such as privacy.forgeai@gmail.com; one you will check weekly).
-**Why:** India's data law requires a named contact on the website and in the app, with an answer within 90 days. Claude puts it into the privacy notice and both apps. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (D4).
-**TASK DONE (24 Oct, chat)**
-Contact: contact@mettleup.fit, shown with your name Aakash Pahuja as Grievance Officer. Emails forward to simpleapps108@gmail.com until your new Gmail exists. The privacy, terms and data agreement pages are now complete.
-**YOUR REPLY (29 Oct):** set up contact@mettleup.fit and route it to simpleapps108, or was it done? Why is this still here?
-**My answer (29 Oct):** It was done on 24 Oct. contact@mettleup.fit forwards to simpleapps108@gmail.com (I checked today: the mail records point to Cloudflare's forwarding). It shows only in the "Done" list at the bottom; nothing is left for you.
-
-## 36. Launch task: the gym visit and the GGMS export — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** PLANNED
-**Your task:** Visit the gym with the one-page question sheet (about 45 minutes): https://github.com/aucksy/ForgeAI/blob/main/docs/launch/GYM-VISIT.md
-**Your task:** Ask the desk to export from GGMS whatever it can (members, plans, dues, payment history, attendance; Excel best) and get a copy, plus photos of 2 receipts.
-**Your task:** Send Claude the answers (typed, voice note text, or photos of your notes) and the export files.
-**Why:** everything after this depends on it: the data move, the training plan, whether the desk needs the offline mode, FitPass, receipts with GST. We have never asked the gym these questions. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (F1, F2).
-**YOUR REPLY (24 Oct):** You will onboard RAM'S FITNESS CLUB IMPACT yourself, end to end (create the account, export from GGMS, AI import), in 1-2 weeks, once the planned features are built.
-**My answer:** Noted. Before then I test the AI import on GGMS-style sheets and at least 10 other sheet shapes, and I write you a one-page "how to move a gym in" guide.
-
-## 35. Launch task: open the Google Play developer account ($25 once) — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:02 am, via the page)**
-**TASK DONE (24 Oct, 04:55 pm, via the page)**
-**Your task:** After you answer #28: go to https://play.google.com/console/signup and make the account type you picked. It needs your government ID, a card in your name and an Android phone. Pay the $25 once.
-**Your task:** Tell Claude "Play account ready". Claude then prepares the store listing, the data safety answers and the internal test for you to submit.
-**Why:** members get updates by themselves from the Play Store; the GitHub download link will be blocked by Google for unregistered apps from 2027. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (C1-C3).
-**TASK DONE (24 Oct)**
-the Play account exists (SimpleApps108, a personal account). Claude prepares the MettleUp listing and internal test there.
-
-## 34. Launch task: accounts and safety switches only you can turn on — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**Your task:** Turn on two-step sign-in (an authenticator app) on Supabase, GitHub, Cloudflare and your Google account.
-**Your task:** Check that your 2 offline copies of the app's signing key still open (the folder from docs/RELEASE-SIGNING.md). If that key is lost, every member must reinstall and loses their data.
-**Why:** today the server pauses after a quiet week, has no backups, and nobody hears about a crash or an outage until the gym calls. Plan: https://github.com/aucksy/ForgeAI/blob/main/docs/LAUNCH-PLAN.md (A1-A7, B1-B2).
-**YOUR REPLY (24 Oct):** How big a deal is the 7-day pause of the free server? Data is not lost, and members will keep it active.
-**My answer:** Small. You are right: a pause loses no data. While it is paused, the apps cannot save or load anything online until you press "Restore" in Supabase (a few minutes). Once members use the app daily, it never pauses. The bigger gap on the free plan is backups; my nightly backup (see #27) covers that.
-**YOUR REPLY (25 Oct):** Why cant you do this?
-**My answer:** You are right to push. Here is each one:
-- **Test server:** I can make it myself in your Chrome. I do it after 0.57.0.
-- **Crash and "site is down" alerts:** I changed the plan so no new accounts are needed. I build them on Cloudflare and GitHub, which we already have. My safety rules do not let me create new accounts, so this route is better anyway.
-- **Two-step sign-in:** this one stays yours. It changes the security of your own accounts and needs the authenticator app on your phone; my safety rules stop me from changing security settings.
-- **Signing key copies:** this one stays yours. The 2 copies are on your offline drives, which I cannot reach.
-
-## 33. Launch decision: your support hours during the trial — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:02 am, via the page)**
-**Why it matters:** this promise goes into the pilot agreement (#38). A desk that cannot take a payment and gets no answer is the most common reason a gym gives up on new software. Claude watches the alerts all day; you are the human the gym talks to.
-**DECIDED (24 Oct 2026):** B, changed by your note: no fixed hours. The trial terms say "We reply as soon as we can."
-**YOUR REPLY (24 Oct):** No fixed time; say "as soon as possible". Research and set up the automated support and fixes system. Let me undo a pick in the tracker.
-**My answer:** Done: the tracker now lets you undo a pick (tap the picked answer again). The automated support system is on my list: an AI that answers gym owners and members, logs every problem, and turns repeat problems into fixes I build, test and release. I will bring you a plan first.
-
-## 32. Launch decision: should ForgeAI register for GST now? — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** ANSWERED
-**Why it matters:** it changes the price the gym pays by 18%. Check with your accountant before the second or third gym. The gym's own receipts already use 5% GST and number by financial year.
-**DECIDED (24 Oct 2026):** A: not now. ForgeAI registers for GST once yearly sales near ₹20 lakh.
-**YOUR REPLY (29 Oct):** how does tax work without GST? I do not want it counted as freelance income; it should be business taxation. What is the procedure?
-**My answer (29 Oct):** This is general information, not tax advice; a CA should confirm it before you file.
-- **GST and income tax are separate.** No GST number only means you do not add 18% GST to your price. Your income tax works the same either way.
-- **"Freelance" and "business" are taxed under the same head:** income from business or profession. Selling MettleUp to gyms is a business: you sell a product to many customers. It is not salary.
-- **The simplest route, a sole proprietorship:** you run MettleUp in your own name, with no company needed. Open a separate current bank account in the business name and take an Udyam (MSME) registration (free, online), so payments are clearly business income.
-- **The easy tax scheme for small businesses:** the government treats 6% of what gyms pay you (paid by bank or UPI) as your profit, and you pay normal tax only on that. It works for yearly sales up to about ₹3 crore, filed with the simple ITR-4 form. It was section 44AD; the new Income-tax Act from April 2026 renumbered it. One catch: if you leave the scheme, you cannot come back to it for 5 years.
-- **GST later:** register once yearly sales near ₹20 lakh, as decided in #32. Some gyms may want a GST bill earlier.
-- **Later, a company** (an LLP or a private limited company) when you take investors or partners, or when profits grow large. A CA can tell you when it starts to save money.
-**Next step:** a 30-minute call with a CA in Jaipur to confirm (1) the 6% scheme fits a software business, (2) the account and Udyam setup. About ₹1,000 to ₹2,000.
-Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44ada/ , https://www.taxaj.com/learn/section-44ad-presumptive-taxation-fy-2026-27-turnover-limit-and-opt-ou/
-**YOUR REPLY (29 Oct, 01:30 am):** find the chat (or the Gmail thread) about the PAN of my old, inactive sole proprietorship "Belvee"; work out how to reactivate it as a sole proprietorship. Do not activate it yet: tell me what would happen, and whether I can activate it without paying and use it whenever I want.
-**My answer (30 Oct):** General information, not tax advice. I found no saved chat about it; the facts come from your Gmail and the Belvee papers on your computer (D:\Belvee\Legal). I submitted and changed nothing.
-- **Belvee is already a sole proprietorship on your own PAN** (ending 601R; personal, not a firm's). Your PAN works: returns and refunds went through in 2026.
-- **What it has:** GST (ending R1ZW, Rajasthan, from 29 Jan 2021, trade name BELVEE), an Udyam registration (ending 9886, 18 Jan 2021, set to clothing), a trademark application for clothing only, and an RBL current account "MS BELVEE" (last statement March 2022).
-- **The August Udyam block was Belvee itself:** only one Udyam is allowed per PAN, and Belvee's never expires. So there is nothing to "reactivate": you update it.
-- **Free and quick:** on udyamregistration.gov.in (your Aadhaar OTP), change the activity to software and add MettleUp as a unit. About 15 minutes, no fee. Then use a current account in the business name (ask RBL if the old one is open). No yearly duty while unused; the income goes in your normal income tax return.
-- **The one unknown is the old GST.** If it was cancelled (most likely after 4 years without returns), do nothing now and take a fresh GST near ₹20 lakh of sales (free; about ₹1,000-3,000 through a CA). If it is still live, unfiled returns keep adding late fees (up to ₹500 per return; roughly ₹18,000-54,000 by now), and returns older than 3 years can no longer be filed; a CA files what can be filed and cancels it for free.
-- **Ekam Ek (the Delhi firm):** a different business with its own PAN, so it does not block Belvee. While your name stays on its deed and GST, you share its tax risk; closing your part needs the amended deed, a Registrar of Firms filing and a GST change (still pending since your 5 Aug email).
-**My pick:** use Belvee through the free Udyam update now; leave GST alone until sales near ₹20 lakh; first check the old GST's status (task #70). Ask a CA: is the old GST cancelled or live, and will a fresh GST be accepted later?
-
-## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**DECIDED (20 Oct):** A: Claude's checked documents for the trial; a lawyer before the second gym (you left the legal calls to Claude, R-45, 20 Oct).
-**Why it matters:** the law (DPDP) applies in full from May 2027; penalties are large, but the risk in a one-gym, 8-week trial with a signed agreement is low. Legal wording is your decision.
-
-## 30. Launch decision: the price after the trial — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
-**Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
-**YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."
-**My answer (29 Oct):** Started. A helper is researching the Jaipur gym software market (GGMS and others, one-time vs monthly, what owners pay for). It will design 3 plans, plus a "buy once + yearly upkeep" option and a launch offer. The full plan comes back here with sources, for your pick. It also answers your #4 points: the GGMS-style one-time price, and getting your ₹12,000 a month back.
-**My answer (29 Oct, research done):** Full plan with every source: https://github.com/aucksy/ForgeAI/blob/main/docs/overhaul/research/R-pricing-jaipur.md
-Prices are per branch. A yearly plan costs the same as 10 months.
-- **Starter: ₹999 a month or ₹9,990 a year.** The whole desk: members, plans, dues, GST receipts, QR and desk check-in, offline desk, expiry and "stopped coming" lists, one-tap WhatsApp, free messages to members' phones, the free member app, and the AI import. For gyms with 50-200 members.
-- **Pro: ₹1,499 a month or ₹14,990 a year (the plan to push; today ₹1,999).** Starter plus the gym's own logo and colours in the app, the shop, challenges and leaderboard, workout offers, and trainer plans, diet plans and measurements. Coming later: analytics, bring-a-friend, paying in the app, the entry gate.
-- **Pro + AI: ₹2,499 a month or ₹24,990 a year.** Shown on the website so Pro looks good value. Sold only once the AI parts are built.
-- **"Own it": ₹19,990 once, then ₹4,990 a year from year 2.** The GGMS shape, offered on the phone only, so it does not take buyers away from Pro yearly.
-- **Founding gyms: ₹29,999 once, Pro for life,** for the first 25 gyms only, until 31 Mar 2027.
-- **Extra branches** at half price. **Switching from GGMS:** we move their records free, set up the desk in person, and they pay nothing until their GGMS year ends (up to 6 months).
-- **Your costs back:** about 10 gyms on Pro, or 5 founding gyms (₹1.5 lakh up front, about 10 months of costs).
-**Why it works:** Pro yearly (₹14,990) matches the GGMS app plan (₹14,999) with far more inside. Free messages to phones save a gym about ₹1,000 a month in WhatsApp costs. Pro costs only ₹500 more than Starter, so most owners pick it.
-**Risks:** we cannot yet connect fingerprint or face entry machines, and GGMS can. Today every gym gets every feature, so splitting the plans needs a small build. A few prices could not be checked directly; the file marks which ones.
-**Decide:** Which prices go on the website and into the sales talk?
-- A: The plan above: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999 (recommended)
-- B: Keep today's prices (Pro ₹1,999, AI ₹2,999) and only add the GGMS switching offer
-- C: Wait until the first client gym's trial ends, then decide with real usage
-
-## 29. Launch decision: members under 18 — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (29 Oct, 01:07 am, via the page)**
-**DECIDED (20 Oct):** A: the member app is for 18 and over during the trial (you left the legal calls to Claude, R-45, 20 Oct).
-**Why it matters:** India's data law needs a parent's verified consent for anyone under 18, and bans tracking them. A builds in a day; B takes about a week and slows joining for everyone.
-
-## 28. Launch decision: which Google Play account — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**Why it matters:** the Play Store gives members automatic updates and keeps the app installable after Google's 2027 rule against unregistered downloads. You can move to an organisation account later when you form a company.
-**DECIDED (24 Oct 2026):** A: your existing Google Play account (simpleapps108@gmail.com).
-**YOUR REPLY (24 Oct):** Submit the app for internal testing so you can add testers' emails. Testing with your first client for a few months and rebranding later is fine.
-**My answer:** Agreed: test now, rebrand later. One thing to know: the app's Play Store ID (com.forgeai.app) can never change, even after a new name. Nobody sees it, so that is fine. I will set up the internal test in your open Play Console. I stop and ask you at every "I agree" box, because those are your agreements to accept.
-**Your task:** In your Chrome window signed in as simpleapps108@gmail.com, turn on the Claude extension: open chrome://extensions, find "Claude" (or add it from the Chrome Web Store), switch it on, and sign in to Claude. Then tell me "Play is connected". Right now only your other Chrome profile (pahuja.aakash108) is connected to me, so I cannot see the Play Console window.
-**TASK DONE (24 Oct, chat)**
-the Claude extension is on in the simpleapps108 Chrome window; Claude works there.
-
-## 27. Launch decision: paid server plan (Supabase Pro, about ₹2,100 a month) — 19 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** PARKED (stays here)
-**READ (29 Oct, 01:11 am, via the page)**
-**Why it matters:** the free plan pauses after 7 quiet days (the app and the admin app stop working until someone wakes it) and keeps no backups we can restore. With the gym's real data, one bad day without a backup could lose their records. A means real data is safe from the first import.
-**DECIDED (24 Oct 2026):** B: no paid plan until the testing and the market check are done.
-**YOUR REPLY (24 Oct):** Is our own database better than Drive backups, long term? Can the trial start on the free plan for 50-100 members?
-**My answer:** Yes to both. Our own database is the right long-term choice (it is how Hevy and Strong work, and members need nothing set up). The free plan is fine for 50-100 members: 500 MB of space is enough for about 1,500 members' workouts. Two limits to know, and what I do about them:
-- **No backups on the free plan.** I will add our own nightly backup to Cloudflare's free storage (10 GB, which you already have), so one bad day never loses data.
-- **It pauses after 7 days with no use** (see #34). Daily members keep it awake; a pause loses nothing and is undone in a few minutes.
-
-## 26. Try v0.48.0 on your phone with one real workout — 18 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**TASK DONE (24 Oct, 01:05 pm, via the page)**
-**Your task:** Install v0.48.0 on your phone: https://github.com/aucksy/ForgeAI/releases/download/v0.48.0/forgeai-v0.48.0.apk
-**Your task:** Do one real workout with it, and tell me anything that looks or feels wrong (a screenshot helps).
-**Why:** every automatic test passed, but you are the first real person in a real gym on this
-version (new: gym workout plans, kg to beat per exercise, My membership, check-in offers the workout).
-
-## 25. Set up Google Test Lab (free, about 10 minutes) — 18 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**TASK DONE (24 Oct, 01:15 pm, via the page)**
-**READ (24 Oct, 01:15 pm, via the page)**
-**Your task:** Follow the 5 short steps in `docs/uat/TEST-LAB-SETUP.md` (on GitHub: https://github.com/aucksy/ForgeAI/blob/main/docs/uat/TEST-LAB-SETUP.md): make a free Firebase project `forgeai-testlab`, turn on 2 services, make a key, and add `TEST_LAB_PROJECT` and `TEST_LAB_KEY` to the GitHub secrets.
-**Your task:** Then tap "I have done it" here (or tell me "Test Lab is set up").
-**Why:** after that, every release is tried by Google's robot on 5 real phones (Samsung, Xiaomi,
-vivo, OPPO, OnePlus or Pixel) and 2 virtual ones, free. Only you can make the project and the key.
-Then I run the first test on v0.48.0 and tell you what it found.
-
-## 24. Is Google Test Lab free, and will it use many tokens? — 18 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** ANSWERED
-**READ (18 Oct, 09:53 pm, via the page)**
-**You asked:** whether testing on Google's test lab (Firebase Test Lab) is free, and whether the
-work is token heavy.
-**My answer:** Free for what we need.
-- Free plan: 15 test runs a day, 5 on real phones and 10 on virtual phones. No card needed.
-- Paid plan only above that: about $5 an hour on a real phone, $1 an hour on a virtual one, after
-  a free 30 minutes (real) and 60 minutes (virtual) every day.
-- The Play Store's pre-launch report is also free: Google tries the app on several real phones
-  every time we upload a build to a test track.
-- What it can do: an automatic "crawler" taps through the app on real Samsung, Xiaomi, Pixel
-  phones and reports crashes, screens that look broken, and slow starts. It cannot run our own
-  scripted tests (those run on our cloud phone already).
-- Tokens: light. The tests run on Google's machines, not on me. Setting it up once is a normal
-  small task; after that I only read a short result per release.
-- One thing only you can do: create the free Firebase project and give the cloud build a key to
-  start the tests (about 10 minutes; I write the steps). Nothing is paid.
-
-## 23. Does the audit also cover all possible UAT scenarios? — 16 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (16 Oct, answered in chat)**
-**You asked:** whether the audit covers every UAT scenario (UAT = checking each real user can do
-their real tasks).
-**My answer:** No. The audit hunts for bugs area by area: full workouts at your phone's size, Do Not
-Disturb, screen-off rests, 12,000 random taps, every money and server rule. Gaps were: bad or no
-internet, updating over an old version with data, whole business stories across member, desk and
-owner, a workout past midnight, the admin app on a real phone with the real server, and no written
-list of stories per role ticked off each release. I recommended a written UAT list per role, each
-marked "automatic" or "owner check", tests for the gaps, and a short report every release.
-**DECIDED (16 Oct, in chat):** "research and plan a full coverage professional UAT". Done: the UAT
-plan and its work packages (docs/uat/), now part of every release.
-
-## 22. What is this: Camera "No" was not logged? — 16 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** ANSWERED
-**READ (16 Oct, answered in chat)**
-**You asked:** what the audit line "Camera No was not logged" meant.
-**My answer:** I first described it wrongly. When a member taps the camera button in a workout for
-the first time, Android asks to allow the camera. If they tapped "Don't allow", the app said
-"Couldn't add the photo. Please try again." (retrying never helps) and logged it as an error,
-though saying no is a normal choice. Now it says "Camera not allowed" with an "Open settings"
-button, like progress photos, and logs it as a normal note. Found by the 12,000 random taps.
-Shipped in v0.46.0.
-
-## 21. What is this concept of receipts that were taken back? — 16 Oct 2026
-**Chat:** ForgeAI Local Chat
-**Status:** DONE
-**READ (16 Oct, answered in chat)**
-**You asked:** what "receipts that were taken back" means.
-**My answer:** It is how the admin app fixes a payment saved by mistake. A receipt is never deleted
-or changed. The owner marks it as not counting and types a reason (for example "saved twice"). It
-stays in the list marked cancelled, its money leaves the day's total and goes back onto what the
-member owes (so the app asks first), its number is never used again, and a print says "CANCELLED".
-Only the owner can do it. The question was the button's name: "Void receipt" or "Cancel receipt".
-**DECIDED (16 Oct, in chat):** "Cancel receipt". It is live in the admin app.
-
-## 20. Which GGMS features have we built that we didn't have, and which are pending? — 18 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
-**READ (18 Oct, 02:25 pm, via the page)**
-**You asked:** what we built from GGMS's list that we didn't have, and what is still pending.
-**My answer:**
-**Built (from the GGMS gap list):**
-1. **Member sees their plan in the app** ("My membership"): plan name, end date, days left, "renew
-   at the desk" in the last week, the next plan, personal training used, days at the gym this
-   month. Server live; members get it in v0.48.0. On purpose, no payments (the app can't prove who
-   is holding the phone).
-2. **Workout plans from the gym or trainer**: trainers build or pick a ready plan, add starting
-   weights, send to members or a whole membership plan; it appears in the member's app by itself.
-   Server and admin app live; members get it in v0.48.0.
-3. **Trainers can do this from their own staff login** (a first piece of GGMS's "trainer section").
-Already had before: members, plans, renewals, dues, receipts, expenses, enquiries, reports, staff
-roles, QR check-in, member ID card, shop with stock, WhatsApp messages typed for you.
-**Pending:**
-| Feature | Where it stands |
-|---|---|
-| Entry machine / turnstile (fingerprint, face, open door from the phone) | Planned (P8); the tripod turnstile is the standard pick (#2) |
-| Automatic reminders (expiry, birthday, renewal) by SMS / WhatsApp | Not built: today the owner taps to send ready-typed WhatsApp messages. Costs money per message, so it needs your OK on a provider |
-| "Expiring in 1-3 / 4-7 / 8-15 days" on the home screen | Built (correction, 18 Oct): live since 15 Oct as the Today tiles "Ending today / in 1-3 / 4-7 / 8-15 days"; each opens its list. A new test checks the day edges |
-| Class booking (timetable, spaces left) | Waits for your gym visit: "Do you run group classes?" |
-| Diet plans from the trainer | Not built (workout plans first; diet is next if gyms ask) |
-| Trainer profiles and schedules | Partly (trainers send plans); no schedule screen yet |
-| Staff / trainer salaries | Left out on purpose (small gyms pay staff outside the software) |
-| Several branches | Left out on purpose for now (our gyms have one branch) |
-| Webcam member photo at the desk | Not built (small) |
-| Body measurements taken by the gym | Not built (members log their own) |
-| AI assistant for the owner ("peak hours today?") | Later; the reports already show peak hours |
-| Admin app fully offline | Decided (#7), build queued |
-| Member's payments in the app | Left out on purpose (privacy, see #6) |
-
----
-
-## 15. An owner-inbox "mod" in Claude, one page per chat, on the right-hand side — 17 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**You asked:** with the new Claude "mods" feature, can we build a mod for the owner inbox, where I
-pick the chat I'm working on and each chat has its own page, ideally shown on the right-hand side?
-**Status:** BUILT (A)
-**READ (17 Oct, answered in chat)**
-**My answer:** "Mods" are real (Claude Code, early Oct 2026). A mod can open its own panel; in the
-desktop app it docks beside the chat when the window is wide enough. But (official docs):
-- **Mods draw only in the terminal, the desktop app's Code tab and VS Code.** In cloud sessions
-  (claude.ai/code on the web and the mobile app, where you are now) a mod's panel never draws, and
-  plugins a repo declares are not installed there. The mobile docs don't mention mods at all.
-- So a mod would only help on your PC, not in the chats you follow on your phone.
-- A mod can read the session id, so "one page per chat" is possible there. Whether that id matches
-  the chat in the app isn't documented.
-
-**What works everywhere today: a private page in your Claude account (an "Artifact").**
-- One page, "Owner inbox": the open-decisions table on top, then every entry. Each entry is tagged
-  with the chat it came from, and a chat picker at the top shows one chat's entries.
-- It opens in the app on your phone and on the web, and you can pin it to your sidebar. I update it
-  every time I update the inbox file. Private unless you share it.
-- In this app, a file I send with "show" opens in the side panel. So I can also pop the inbox open
-  on the right after each answer.
-
-**Options:**
-- **A (recommended):** the private "Owner inbox" page with a chat picker, kept up to date by me,
-  plus the file in the repo as the backup. Small job, works on phone + web now.
-- **B (later, PC only):** a desktop mod that shows the inbox in a side panel next to the chat.
-  More work, and invisible in cloud/mobile chats.
-**Needs you:** A, B, or both?
-**DECIDED (17 Oct):** A. Built: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT
-**Sources:** code.claude.com docs: plugins/mods overview, interface, reference; cloud-environments;
-mobile. Press: The New Stack and XDA on the mods launch.
-
-## 14. What would it cost on GitHub to make the phone test runs faster? — 17 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**You asked:** the cost of making the cloud test runs faster.
-**Status:** BUILT, first split runs in progress (decided: split, free)
-**READ (18 Oct, 08:43 am, via the page)**
-**My answer:**
-- **Today it costs ₹0.** The repo is public, so GitHub's normal test machines are free and
-  unlimited. A whole phone run took 3 h 04 min (run 38984599010; GitHub billed 0 minutes).
-- **Paying for bigger machines buys less than it sounds:**
-  - GitHub's paid "larger runners" only work for an **organisation** on the Team plan (about $4 per
-    user a month). The repo is under your personal account today, so it would have to move.
-  - Rough prices (third-party sites quoting GitHub, June 2026; not confirmed on GitHub's own page):
-    Linux 8-core about $0.022/min, 16-core about $0.042/min. One site says larger runners are billed
-    even on public repos.
-  - Free public-repo machines already have 4 cores. An 8-core machine doubles that at most. A lot of
-    a phone run is real waiting (rest timers, app start-ups, "wait 30 s"), which no machine shortens.
-    My estimate: maybe 20–40% faster, not 4x.
-  - Estimated cost on 8-core: about $2–3 per whole run. A release needs about 4 runs (both phones,
-    journeys, conditions), so about $10 a release. A busy fixing day like today (~30 runs) is
-    about $30–40.
-- **Better, free option: split each whole run into 4 smaller runs at the same time.** Free machines
-  can run up to 20 jobs at once. Each part group runs on its own machine, so a whole run would
-  take about 45–60 min instead of 3 h. It costs ₹0 but takes me about half a day of work. The
-  release gate must learn to accept "all 4 pieces green", and parts that rely on earlier parts
-  (e.g. J needs B–I) must stay in the same piece.
-**Needs you:** split the runs for free (my pick), pay for bigger machines, or leave it as is?
-**Follow-up — you asked: "any problems in splitting the runs?"** Yes, six, all manageable:
-1. **Many parts lean on the parts before them.** Parts A to I build up one workout history that J, R,
-   the gym parts and others use. That chain can't be cut, so the longest chain sets the floor. The
-   UAT parts (UH to UK) each start fresh, so they split off easily. Honest estimate: about
-   60–75 min, not 45, until I measure each part's time from a real run.
-2. **Each piece builds the app again** (a Gradle build takes many minutes). Fix: build once, then
-   hand the same app file to all pieces. This also guarantees every piece tests the exact same app.
-3. **The release gate gets more complex.** It must demand ALL pieces green, from the same run and
-   the same commit, on both phones. A mistake here could let an untested build ship. This needs its
-   own tests and a review.
-4. **Hidden links between parts we don't know about yet.** The first split runs may fail for reasons
-   that aren't app bugs (like today's J/J2 partial run). Plan: run split and whole side by side twice
-   and compare before the split one becomes the release gate.
-5. **More phones at once = more chances that one emulator has a hiccup.** Plus side: only that piece
-   is re-run, not 3 hours.
-6. **The evidence is spread over 4 downloads** (screenshots, logs, crash scan). The report must merge
-   them so the UAT report and coverage numbers stay right.
-Also: the free plan runs up to 20 jobs at once. 2 phones × 4 pieces + journeys = 9, which fits, but
-other runs started at the same time will queue.
-**Work:** about a day (not half a day) with the side-by-side check. ₹0 running cost.
-**DECIDED (17 Oct):** split the runs. Research the best way so build/test quality stays top notch, and use it from the next runs.
-**BUILT (17 Oct, commit b8b9890), first split runs started:**
-- The app is built ONCE and every piece tests that exact same file (a fingerprint check).
-- 4 pieces run at the same time: (1) the core workout history, (2) routines, history, gym and
-  backup, (3) and (4) the newer one-screen checks and the real workout. Tests that depend on each
-  other stay in the same piece.
-- A final step proves all 4 finished green AND that together they ran every test of the full run.
-  A test added later but left out of every piece fails a check, so it can't silently stop running.
-- The release check needed no change: a run only counts as green if every piece is green.
-- Expected at first: about 1 h 20 min per full run (see the first-run result below: about 2 h).
-- Validation: the first split runs are compared with the old-style runs on the same app.
-**First split runs (17 Oct):** 3 of 4 pieces passed on both phones, and a whole run took ~1 h 20 min.
-The 4th piece failed from part J on: J needs the demo already removed by an earlier test, so J..R
-can't start from scratch. Regrouped on that evidence (commit 52e8f43): the long chain stays together,
-so **a whole run now takes about 2 h instead of 3 h 30 min**, still ₹0. Re-run in progress.
-
-## 13. "Which machines are free when": suggest a schedule with less waiting — 17 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**You asked:** every member logs their workouts, so we know which machines are used on which day
-and hour. Show members when machines are free, and suggest moving their schedule so they're more
-likely to get a free machine.
-**Status:** DECIDED (18 Oct) — build queued
-**READ (18 Oct, via the page)**
-**My answer:** A good idea, and the machine-level part would be rare. But it can't be built the
-way described today, for four reasons:
-1. **Workouts never leave the member's phone.** That is a promise in the app today ("Private.
-   They stay on this phone"). The server only gets check-ins, shop orders and messages. Each member
-   would have to agree to share "which exercise, what time" (no weights, no names).
-2. **A log says the exercise, not the machine.** "Bench press" could be any of 4 benches. The gym
-   would have to enter its equipment (e.g. 4 benches, 2 squat racks, 1 cable tower), and we'd turn
-   that into "how likely one is free".
-3. **Only members who log count.** If 40 of 300 members use the app, the picture is thin and
-   skewed. That's fine for "busy vs quiet hour", but weak for "is the squat rack free on Tuesday at 7".
-4. **It needs weeks of data per gym** before any advice is right. Wrong advice ("go at 6, it's
-   free" when it isn't) costs trust fast.
-
-What the market does (research): the mainstream feature is **how busy the whole gym is**, not each
-machine. PureGym's app shows live busyness and how busy it will be. Planet Fitness has a "Crowd
-Meter". Google Maps shows "Popular times". I found no mainstream app that shows individual
-machines; only student prototypes with sensors on the machines. So the machine part would make us
-stand out, but nobody has proven members want it.
-
-**Two options:**
-- **A (recommended first): "Best times to go" for the whole gym, from QR check-ins.** The server
-  already has every check-in with its time. No new permission, no privacy change. Member app: "Your
-  usual time (Tue 7 pm) is the busiest. Thu 7 pm is usually 40% quieter." The admin app already
-  shows peak hours to the owner. Works once the gym uses QR check-in for a few weeks.
-- **B (later, if A is used): machine-level advice.** Opt-in sharing of exercise + time, plus the
-  gym's equipment list. "Squat racks are usually all taken Mon 6–8 pm; Wed 6 pm you're likely
-  to get one." Build only after A shows members care, and a gym has enough members logging.
-**Needs you:** A first then maybe B (my pick), B straight away, or keep it parked?
-**Sources:** PureGym help centre (live busyness tracker); PureGym blog (when is the gym quiet);
-Notre Dame senior design "GyEEm" (machine sensors, prototype); Planet Fitness Crowd Meter (blog,
-low-quality source).
-**DECIDED (18 Oct, via the page):** B — build the exercise-level advice now. Your note: no gym
-equipment list needed. Show "other members also plan this exercise between these hours" from the
-exercises in their routines/logs; members judge for themselves from how much equipment their gym has.
-Open point for me to design: members must agree to share their exercise times (they stay on the
-phone today) — opt-in, no weights or names.
-
-## 12. QR code at the entry gate instead of a fingerprint machine — 17 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**You asked:** members open our app and scan a QR at the gate to get in. That marks attendance,
-then nudges them to start their workout; with no saved routines, give them a research-based
-Push Pull Legs plan. Don't build yet; does it work, and how?
-**Status:** STEP 1 BUILT, NOT RELEASED (next release, v0.48.0)
-**READ (29 Oct, 01:09 am, via the page)**
-**My answer:** Yes, it works, and gym apps abroad already do it (PerfectGym, GymMaster; BETA and
-ButaGYM use a QR that changes every few seconds). Most of it already exists in our app:
-- the gym's QR poster already opens ForgeAI on "Check in": one tap marks attendance and checks
-  the membership;
-- a ready Push Pull Legs plan already exists (plus Upper/Lower and Full Body).
-
-Missing, in two steps:
-- **Step 1 (app only, no hardware):** after check-in, "You're in ✓ — Start Push day"; for a
-  member with no routines, "Add Push Pull Legs".
-- **Step 2 (the door):** the scan tells our server to open a networked door lock for a few
-  seconds. This needs hardware at the gate. Wi-Fi door kits are roughly USD 95–360 abroad (not an
-  Indian price; get an installer's quote). Many cheap kits can't be opened by our server, so pick
-  one that can; ask Matrix (local in Jaipur) first.
-
-Risks: a forwarded photo of the QR (fix: a QR that changes every 30 s on a small screen at the
-gate, or open only near the gym); no internet means nobody gets in (keep the desk button and a
-keypad PIN); fire safety (lock must open on power loss, plus an exit button).
-**Needs you:** build Step 1 now? Step 2 waits until the client agrees to buy a lock.
-**Details:** `docs/overhaul/research/R-qr-entry.md`
-**DECIDED (18 Oct, via the page):** A — build Step 1 now (after check-in: "Start <today's routine>",
-or "Add Push Pull Legs" for no routines). The door (Step 2) waits until the client buys a lock.
-**BUILT (18 Oct), Step 1:** after "You're in ✓" the check-in screen now offers the next step: "Start
-Push" (today's routine, the same one the Workout tab shows), "Back to your workout" if one is open, or
-"Add Push Pull Legs" for a member with no routines (opens the plan, where they choose to follow it or
-just keep it). Nothing extra once today's workout is done. Comes in the next release.
-**YOUR REPLY (29 Oct):** not every gym can hang a tablet for a changing QR. With a fixed QR, a challenge could be done from anywhere, so capture the location when the QR is scanned and the workout logged. How easy, and is it worth it? Use the access machine where a gym has one. And research FitPass: can its members' check-ins reach our software? If not, exclude them unless there is another way.
-**My answer (29 Oct):**
-**Location at the QR scan: yes, worth it, and fairly easy (about 2-3 days).**
-- The owner drops a pin on the gym once in the admin app.
-- When a member scans the QR, the phone checks its location once. Within about 150 m of the pin, the check-in is marked "at the gym".
-- Only a check-in marked "at the gym" counts for challenges and rewards. Normal check-ins still work without location, so nobody is blocked.
-- Privacy: we keep only "at the gym: yes or no", never the location itself. It needs one new privacy line and the phone's location permission "only while using the app", both for your OK when we build it.
-- Fake-location apps exist, but Android tells the app when one is on, and we can refuse those check-ins for challenges.
-- **Order of strength:** the access machine where the gym has one (best), then QR plus location (every gym), then the plain QR (weakest, fine for attendance only).
-**FitPass:** FitPass has no public connection for gym software. Their members show a QR in the FitPass app, and the desk scans it with the FitPass Partner app. So their check-ins cannot flow into our software today.
-- **Way around it:** the desk adds the person as a "Pass member" (already planned), and the member checks in with our QR like everyone else. Both apps then record the visit, and the owner can match FitPass's monthly payment against our count.
-- Later, we can ask FitPass's partner team for a connection, once we have a few gyms.
-Sources: https://fitpass.co.in/sweatiquette-faq/what-are-the-specific-partnership-requirements-for-gym-owners , https://fitpass.co.in/sweatiquette-faq/how-can-i-scan-the-qr-code-and-confirm-my-workout
-
-## 7. Offline mode: can the gym use the admin app without internet? — 16 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** DECIDED (18 Oct) — build queued
-**READ (18 Oct, via the page)**
-**My answer:** Partly. A gym kept "in this browser only" works offline but lives on one device.
-An online gym: if the internet drops, the desk can still SEE members and dues, but can't save
-(add member, take payment, check in). A payment cut off mid-save is resent once the internet is back,
-never twice. Opening or refreshing the app with no internet: it won't open. The member phone app
-works fully offline for workouts. The planned entry machine would keep letting paid members in.
-**Needs you:** 1) build "offline front desk" (saved copy on the desk device; offline check-ins
-and payments queued and sent once each when back online), recommended; or 2) leave it.
-**DECIDED (18 Oct, via the page):** A — build the offline front desk. Your note: not only the
-installed admin app but also the website in Chrome on a desktop. Detect when there is no internet;
-keep the whole CRM working, save changes and sync when the internet is back. Anything that cannot
-work offline is greyed out/disabled, and a persistent "Offline mode" banner tells staff only some
-things work.
-
-## 6. GGMS member app: what members get there — 16 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** DONE (server live 18 Oct; member app in v0.48.0)
-**READ (18 Oct, 02:02 pm, via the page)**
-**My answer:** GGMS is one app for owners and members ("I'm Member" tick at login). Members see
-their plan end date, payments and attendance, book classes, check in by QR, get reminders and
-the gym's diet/workout plans. No workout logging or progress, where we are far ahead. Gaps for us
-(members): own plan end date / payments / attendance in the app; class booking; trainer-sent
-diet and workout plans; gym-recorded body measurements.
-**Details:** `docs/overhaul/research/R-ggms-competitor.md`
-**YOUR REPLY (18 Oct, 08:44 am, via the page):** "You should build the useful features from the list."
-**My answer:** agreed. Here is the list ranked by how much members would use it:
-1. **"My membership" in the member app** (most useful, medium job): plan name, end date and days
-   left, payments made, and check-ins this month, with a reminder before it ends. This is the
-   question gym desks get most ("when does mine expire?"). The server already has it all (the
-   gym's plans, payments and check-ins, matched by the member's mobile number, like check-in does).
-   Needs one small read-only server addition, which goes live only after your yes (like 0021/0022).
-2. **Workout plans from the gym or trainer** (useful, bigger job): the trainer picks or builds a
-   routine in the admin app and sends it; it appears in the member's Routines, ready to start. A
-   good fit, since we are already the best workout logger. Needs a new admin app page too.
-3. **Class booking** (only if the gym runs classes): timetable, spaces left, book and cancel. Big
-   job. Waits for your gym visit: "Do you run group classes? How full are they?" is on the list.
-4. **Body measurements taken by the gym** (small value): members already log their own in the app.
-5. **Member photo by webcam** (admin app, small): at the desk when a member joins.
-6. **AI assistant for the owner** ("peak hours today?"): later; the reports already show this.
-**DECIDED (18 Oct, my call under your rule #18):** "My membership" first (members ask the desk
-about their end date more than anything), then the gym's workout plans. Class booking after your
-gym visit. Tell me if you want a different order.
-**BUILT (18 Oct):** "My membership" at the top of the gym's Shop and in Settings → Your gym: plan
-name, "Ends 30 Oct · 12 days left", "Renew at the desk" in the last week (unless the next plan is
-already paid), the next plan, personal training used ("3 of 12 used, with Ravi"), days at the gym
-this month. Works offline with the last copy. On purpose, **no money is shown**: the app only knows
-a member by the number typed at check-in, which nobody verifies. A review also found that someone
-could type another member's number and see their plan, so the plan now shows only when the first
-name given in the app matches the gym's list, and never for a number two members share (a parent
-and child): those members are asked to see the desk. Tested on a copy of the database (12 checks).
-**Needs you:** it reads one new server function (0023), which only reads, never changes anything.
-Until it is turned on, the card simply doesn't show. 0021 (receipt rules) and 0022 (why a staff
-sign-in stopped) are waiting too; all three are applied from your PC.
-**DECIDED (18 Oct, in chat):** "Yes": apply 0021, 0022 and 0023 on the live server from the PC
-(the cloud session has no live access). The paste-in prompt for Claude on the PC is in chat and in
-docs/uat/HANDOFF.md ("PC must do").
-**DONE (18 Oct, from your PC):** 0021, 0022 and 0023 are live, no errors. All 13 database test files
-passed on the live server (including "one gym can never see another gym's records": 66 of 66 blocked).
-Members see "My membership" once they have the next app release (v0.48.0).
-**Workout plans (item 2):** built; see #19 for how the trainer side works.
-**DECIDED (18 Oct, in chat):** "yeah of course - lets switch it on": apply 0024 on the live server
-from the PC, run its checks, then put up the new admin app (in that order). The paste-in steps
-for Claude on the PC are in chat and in docs/uat/HANDOFF.md ("PC must do").
-**DONE (18 Oct, from your PC):** 0024 is live, no errors; its checks all passed on the live server
-(including "one gym can never see another gym's records"), and the new admin app is up. Trainers
-can send plans now; members see them once they have the next app release (v0.48.0).
-
-## 4. GGMS (the client's current CRM): features and prices — 16 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
-**READ (29 Oct, 01:11 am, via the page)**
-**My answer:** GGMS (Gayatri Software, Jaipur, since 2017, claims 1,000+ gyms). Offline Plan from
-₹11,999/year (no member app); Online Plan from ₹14,999/year (with app). These are starting prices
-from listing sites; GGMS doesn't publish prices. Ask the client what they really pay. Owner gaps
-for us: entry machine (planned P8), automatic SMS/email reminders, an AI business chat, "expiring
-soon" split by days, class booking, trainer section, staff salaries, several branches, webcam
-photo, birthday wishes. Their users complain about bugs, so reliability is a point we can win on.
-**Details:** `docs/overhaul/research/R-ggms-competitor.md`
-**YOUR REPLY (29 Oct):** GGMS told you: about ₹15,000 one time plus ₹5,000 a year upkeep. Is that pricing common? Our monthly and yearly plans may not appeal. Check whether our offer is right, research the market, price for value after the trial, and keep in mind your ₹12,000 a month Claude cost that you want back fast.
-**My answer (29 Oct):**
-- **That shape is common in India.** Older desk software sells "buy once, pay yearly upkeep": one-time prices run about ₹20,000-60,000; cloud plans run about ₹2,000 a month (about ₹24,000 a year). Owners know and trust the one-time shape.
-- **Our plans next to GGMS over 3 years:** GGMS costs ₹25,000 (₹15,000 + 2 × ₹5,000). Our yearly plan costs about ₹60,000 (3 × ₹19,990). Our ₹29,999 lifetime is close to GGMS, and much better value: member app, cloud, updates.
-- **Getting your ₹12,000 a month back:** about 8 gyms paying ₹1,500 a month, or 1 lifetime sale every 2-3 months.
-- **My suggestion:** offer the shape owners already know, next to the monthly plan:
-  - "Buy once ₹14,999 + ₹4,999 a year" (the same as GGMS, with far more inside);
-  - ₹1,499 a month for owners who want nothing up front;
-  - for the first 20 gyms, a founding lifetime at ₹24,999 to bring cash in early;
-  - a switching offer: we move their GGMS data for free with our AI import.
-**Next:** your #30 reply asks for the full price plan. I am researching it now; the decision comes there, so you decide once.
-Sources: https://easygymsoftware.com/blog/gym-software-pricing-in-india , https://codingclave.com/blog/gym-management-software-guide , https://www.techjockey.com/detail/fitness-manager
-
-## 2. Matrix's connection kit: does it really work? Top 3 at different prices — 16 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** DECIDED (my call, 18 Oct)
-**My answer:** Yes. Matrix's own guide covers everything we need: the machine connects to our
-server by itself (no PC at the gym); add/remove members; block an expired member by itself even
-when offline; face/finger sign-up; every entry sent to us with a reason; open-door commands; no
-licence fee mentioned. To confirm with the dealer in writing: the exact model supports "Third Party
-Server", their latest guide, and one real machine to test.
-1. Budget smart door (face reader + magnetic lock): about ₹25,000–40,000.
-2. Tripod turnstile: about ₹80,000–1.6 lakh. **My pick as the standard offer.**
-3. Flap barrier: about ₹2.5–4 lakh+.
-(Online prices outside Jaipur, before GST and fitting.)
-**Details:** `docs/overhaul/research/R-entry-machines.md`
-**DECIDED (18 Oct, my call under your rule #18):** offer the tripod turnstile (about ₹80,000–1.6
-lakh) as standard, the budget smart door for small gyms, and the flap barrier only on request. The
-client still decides what to buy; nothing is bought by us. Tell me if you want a different default.
-
-## 1. Physical entry / attendance machines in Jaipur that connect to our CRM — 16 Oct 2026
-**Chat:** Cloud session, 17 Oct (UAT + ideas) — https://claude.ai/code/session_015MTY1WJLpZDueLpknLVLR2
-**Status:** ANSWERED
-**READ (18 Oct, 08:45 am, via the page)**
-**My answer:** No brand has its own Jaipur office; all sell through local dealers. Two options
-connect: Matrix COSEC (Indian, official connection kit, gym case study; recommended) and
-ZKTeco/eSSL (cheaper, "push" to our server, more for us to build).
-**Details:** `docs/overhaul/research/R-entry-machines.md`
+<title>Project Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* R-84 (owner, 23 Oct 2026): a phone-first tracker. A short sticky bar (title, "Go to # or search", five tabs with
+   their counts); Home says what waits and what changed; cards show the title and one line first, the rest folded. */
+:root {
+  --bg: #f4f5f7; --surface: #ffffff; --sunk: #eef0f3; --ink: #1b1f27; --muted: #59616f; --line: #dde1e8; --line-strong: #c4cad4;
+  --accent: #b0451a; --on-accent: #ffffff; --accent-soft: #fcebe1;
+  --wait: #8f5400; --wait-bg: #fff1d6; --built: #1d5fa8; --built-bg: #e2eefc;
+  --done: #23733f; --done-bg: #e0f3e6; --plain: #4b5262; --plain-bg: #eceef2;
+  --shadow: 0 1px 2px rgba(20, 24, 33, 0.05), 0 6px 18px -8px rgba(20, 24, 33, 0.12);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121419; --surface: #1b1e25; --sunk: #16181e; --ink: #e9ebf0; --muted: #a0a7b5; --line: #2c313b; --line-strong: #3d4350;
+  --accent: #f08a4b; --on-accent: #1b1208; --accent-soft: #3a2418;
+  --wait: #f2c36b; --wait-bg: #3a2c10; --built: #8fbaf2; --built-bg: #16283f;
+  --done: #7fd39b; --done-bg: #13301e; --plain: #b9bfcc; --plain-bg: #262a33;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121419; --surface: #1b1e25; --sunk: #16181e; --ink: #e9ebf0; --muted: #a0a7b5; --line: #2c313b; --line-strong: #3d4350;
+  --accent: #f08a4b; --on-accent: #1b1208; --accent-soft: #3a2418;
+  --wait: #f2c36b; --wait-bg: #3a2c10; --built: #8fbaf2; --built-bg: #16283f;
+  --done: #7fd39b; --done-bg: #13301e; --plain: #b9bfcc; --plain-bg: #262a33;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35); color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; -webkit-text-size-adjust: 100%; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+::selection { background: var(--accent-soft); color: var(--ink); }
+input, textarea { caret-color: var(--accent); }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a { color: var(--accent); text-underline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+article:focus, .feat:focus { outline: none; }
+
+/* The sticky bar: about 130 px on a phone (it was 340). */
+header.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+header.bar .wrap { padding-top: 10px; }
+.toprow { display: flex; align-items: center; gap: 10px; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; line-height: 1.1; margin: 0; flex: none; }
+h1 span { color: var(--accent); }
+.find { display: flex; gap: 6px; flex: 1; min-width: 0; margin: 0; }
+.find input { flex: 1; min-width: 0; height: 44px; box-sizing: border-box; font: inherit; color: var(--ink); background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 0 12px; }
+.find input::placeholder { color: var(--muted); opacity: 1; }
+.findmsg { margin: 6px 0 0; font-size: 0.88rem; color: var(--wait); }
+.findmsg:empty { display: none; }
+.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 6px; }
+.tab { font: inherit; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; min-height: 54px; padding: 4px 2px 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 1px; text-align: center; font-size: 0.74rem; line-height: 1.15; }
+.tab .n { font-family: var(--f-mono); font-weight: 700; font-size: 0.98rem; line-height: 1.3; color: var(--ink); font-variant-numeric: tabular-nums; min-height: 1.3em; display: flex; align-items: center; }
+.tab .n.hot { color: var(--accent); }
+.tab .n svg { width: 18px; height: 18px; }
+.tab[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 700; }
+.tab:hover { color: var(--ink); }
+
+main .wrap { padding-block: 16px 64px; }
+.chatbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+.chatbar[hidden] { display: none; }
+.chatbar label { font-size: 0.85rem; color: var(--muted); }
+select { font: inherit; font-size: 1rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 0 10px; min-height: 44px; max-width: 100%; min-width: 0; }
+.renamebox { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.renamebox[hidden] { display: none; }
+.renamebox input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+
+h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+.tabhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); max-width: 62ch; }
+.grp { display: flex; align-items: baseline; gap: 8px; font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin: 26px 0 10px; scroll-margin-top: calc(var(--hdr, 130px) + 12px); }
+.cnt { font-family: var(--f-mono); font-size: 0.85rem; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+
+/* Entry cards: number + title + tags first; the long answer folded. */
+article { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 12px; min-width: 0; box-shadow: var(--shadow); scroll-margin-top: calc(var(--hdr, 130px) + 12px); }
+article.is-open { border-color: var(--line-strong); }
+.ch { display: grid; grid-template-columns: 2.9em 1fr; gap: 8px; align-items: start; }
+.num { font-family: var(--f-mono); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); font-size: 0.95rem; padding-top: 1px; }
+article h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.04rem; line-height: 1.3; margin: 0; text-wrap: pretty; overflow-wrap: anywhere; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }
+.meta a { color: var(--muted); }
+.statusline { margin: 6px 0 0; font-size: 0.86rem; color: var(--muted); }
+.gist { margin: 8px 0 0; font-size: 0.95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+article:has(.fpanel.full:not([hidden])) .gist { display: none; }
+.readbtn { min-height: 40px; padding: 0 12px; font-size: 0.88rem; align-self: center; }
+article .fbar { margin-top: 6px; }
+article .fpanel.full { padding-top: 2px; }
+.cb { min-width: 0; }
+.status { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+.k-waiting, .k-blocked { color: var(--wait); background: var(--wait-bg); }
+.k-built { color: var(--built); background: var(--built-bg); }
+.k-done { color: var(--done); background: var(--done-bg); }
+.k-doing { color: var(--accent); background: var(--accent-soft); }
+.k-planned, .k-answered, .k-working, .k-idea, .k-no, .k-todo { color: var(--plain); background: var(--plain-bg); }
+.k-no { text-decoration: line-through; }
+.tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+.tag.act { color: var(--on-accent); background: var(--accent); }
+.tag.new { color: var(--accent); background: var(--accent-soft); }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+.donebox > summary, .morelist > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent); font-size: 0.92rem; font-weight: 700; }
+.chev { width: 16px; height: 16px; flex: none; transition: transform 0.18s ease-out; }
+details[open] > summary .chev, button[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.body { margin-top: 2px; min-width: 0; overflow-wrap: anywhere; font-size: 0.97rem; }
+.body p, .body ul, .body ol, .body blockquote { margin: 0 0 10px; }
+.body ul, .body ol { padding-left: 1.3em; }
+.body li { margin-bottom: 4px; }
+.body blockquote { border-left: 1px solid var(--line-strong); padding-left: 12px; color: var(--muted); }
+.body code { font-family: var(--f-mono); font-size: 0.84em; background: var(--plain-bg); border-radius: 4px; padding: 1px 4px; }
+.body table { border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.tablebox { overflow-x: auto; margin-bottom: 10px; }
+.body th, .body td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+a.goto { font-family: var(--f-mono); font-size: 0.92em; }
+.latest { margin: 8px 0 10px; padding: 10px 12px 2px; border-left: 4px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }
+/* R-176: the feature-rating module in Waiting for you. */
+.ratebox > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent); font-size: 0.92rem; font-weight: 700; }
+.rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 10px; margin-bottom: 8px; min-width: 0; }
+.rdet { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rrow { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+.rlbl { flex: 0 0 6.2em; font-size: 0.8rem; color: var(--muted); }
+.r5 { flex: 1 1 0; min-width: 36px; max-width: 54px; min-height: 40px; font: inherit; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer; padding: 0; }
+.r5[aria-pressed="true"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.rtop { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--sunk); }
+.rtoph { margin: 0 0 4px; font-weight: 700; }
+.rtop ol { margin: 0; padding-left: 1.3em; }
+.rsc { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+.rhide { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 0.9rem; }
+.rhide input { width: 18px; height: 18px; accent-color: var(--accent); }
+.latestlbl { margin: 0 0 6px !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+
+/* Answering: big rows to tap, Claude's pick marked, then Send. */
+.form { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 12px; background: var(--sunk); }
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+legend { font-weight: 700; margin-bottom: 6px; padding: 0; }
+.opt { display: grid; grid-template-columns: 22px 1.2em 1fr; gap: 8px; align-items: start; min-height: 44px; box-sizing: border-box; padding: 11px 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); cursor: pointer; overflow-wrap: anywhere; }
+.opt:hover { border-color: var(--accent); }
+.opt.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.opt input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }
+.opt:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.key { font-family: var(--f-mono); font-weight: 700; color: var(--accent); }
+.rec { display: inline-block; font-style: normal; font-size: 0.72rem; font-weight: 700; color: var(--done); background: var(--done-bg); border-radius: 5px; padding: 1px 6px; margin-left: 4px; white-space: nowrap; }
+.notelbl { font-size: 0.86rem; color: var(--muted); }
+textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; resize: vertical; min-height: 60px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.btn { font: inherit; font-weight: 700; color: var(--on-accent); background: var(--accent); border: 1px solid var(--accent); border-radius: 10px; min-height: 44px; padding: 0 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+.btn:hover { filter: brightness(1.06); }
+.btn.ghost { color: var(--accent); background: transparent; }
+.btn.ghost:hover { background: var(--accent-soft); filter: none; }
+.btn.quiet { color: var(--muted); border-color: var(--line-strong); font-weight: 400; }
+.btn:disabled { opacity: 0.55; cursor: default; }
+.btn[hidden] { display: none; }
+.msg { font-size: 0.9rem; color: var(--muted); min-width: 0; }
+.msg:empty { display: none; }
+.sentbox { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--done-bg); color: var(--ink); }
+.sentline { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--done); font-weight: 700; }
+.sentline svg { width: 18px; height: 18px; flex: none; }
+.sentpicks { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sentpicks b { font-family: var(--f-mono); color: var(--done); margin-right: 4px; }
+.sentnote { margin: 8px 0 0; overflow-wrap: anywhere; }
+.small { margin: 8px 0 0; font-size: 0.84rem; color: var(--muted); }
+.sentbox .actions { margin-top: 8px; }
+.taskbox { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--sunk); }
+.taskbox.done { background: var(--done-bg); }
+.taskbox .tl { margin: 0; font-weight: 700; }
+.taskbox.done .tl { color: var(--done); }
+.taskbox ol { margin: 8px 0 10px; padding-left: 1.3em; overflow-wrap: anywhere; }
+.taskbox li { margin-bottom: 6px; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.8rem; margin: 6px 0 0; }
+
+/* Lists of rows (Home, the question index, search results): one tap = jump. */
+.rows { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.rows li + li { border-top: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: 2.9em 1fr auto; gap: 8px; align-items: start; min-height: 44px; box-sizing: border-box; padding: 11px 12px; color: var(--ink); text-decoration: none; }
+.row:hover { background: var(--sunk); }
+.row .rn { font-family: var(--f-mono); font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.row .rb { min-width: 0; overflow-wrap: anywhere; }
+.row .rt { display: block; }
+.row .rs { display: block; margin-top: 3px; font-size: 0.85rem; color: var(--muted); }
+.row .rs .status { font-size: 0.68rem; }
+.row .go { width: 16px; height: 16px; color: var(--muted); margin-top: 3px; }
+mark { background: var(--wait-bg); color: inherit; border-radius: 3px; padding: 0 1px; }
+.qindex { margin-top: 14px; }
+.qindex .rows { border-color: var(--accent-soft); }
+
+/* Home */
+.lead { font-family: var(--f-display); font-weight: 600; font-size: 1.35rem; line-height: 1.3; margin: 2px 0 12px; text-wrap: balance; }
+.lead b { color: var(--accent); }
+.home .grp { margin-top: 28px; }
+.empty { padding: 14px; border: 1px dashed var(--line-strong); border-radius: 14px; color: var(--muted); }
+.empty p { margin: 0; }
+.empty p + p { margin-top: 4px; }
+.empty b { color: var(--ink); }
+.foot { margin: 28px 0 0; font-size: 0.84rem; color: var(--muted); }
+.morelist { margin-top: 6px; }
+.morelist .rows { margin-top: 6px; }
+
+/* Feature backlog and Claude's tasks */
+.filters { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { font: inherit; font-size: 0.85rem; min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.pill b { font-family: var(--f-mono); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.k-waiting .dot { background: var(--wait); } .pill.k-planned .dot, .pill.k-idea .dot, .pill.k-no .dot { background: var(--plain); }
+.pill.k-done .dot { background: var(--done); } .pill.k-built .dot { background: var(--built); }
+.pill.k-waiting, .pill.k-planned, .pill.k-idea, .pill.k-no, .pill.k-done, .pill.k-built { background: var(--surface); color: var(--ink); text-decoration: none; }
+.pills .pill[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.pills .pill[aria-pressed="true"] .dot { background: var(--surface); }
+.selrow { display: flex; align-items: center; gap: 8px; }
+.selrow label { font-size: 0.85rem; color: var(--muted); }
+.legend { margin: 0; font-size: 0.88rem; color: var(--muted); }
+.legend b { color: var(--ink); }
+.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 6px; margin-bottom: 8px; min-width: 0; scroll-margin-top: calc(var(--hdr, 130px) + 12px); }
+.feat.task { padding-bottom: 12px; }
+.fh { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; justify-content: space-between; }
+.feat .name { font-family: var(--f-body); font-weight: 700; font-size: 1rem; margin: 0; overflow-wrap: anywhere; min-width: 0; flex: 1 1 12em; }
+.feat .det { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; overflow-wrap: anywhere; }
+.feat .how { margin: 4px 0 6px; font-size: 0.93rem; overflow-wrap: anywhere; }
+.feat .moved { margin: 6px 0 0; font-size: 0.84rem; color: var(--muted); }
+.fbar { display: flex; flex-wrap: wrap; gap: 0 14px; margin-top: 2px; }
+.fbtn { font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0; min-height: 44px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.fpanel { padding-bottom: 8px; }
+.fpanel[hidden] { display: none; }
+.fpanel .form { margin-top: 2px; }
+.waits { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; font-size: 0.86rem; color: var(--muted); align-items: center; }
+.chipnum { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border-radius: 999px; background: var(--wait-bg); color: var(--wait); font-weight: 700; text-decoration: none; }
+.chipnum b { font-family: var(--f-mono); margin-right: 4px; }
+/* R-96: Impact and Effort on pending items; high impact and low effort stand out. */
+.pri { font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 1px 7px; white-space: nowrap; color: var(--muted); border: 1px solid var(--line-strong); }
+.pri.i3 { color: var(--accent); border-color: currentColor; }
+.pri.e1 { color: var(--done); border-color: currentColor; }
+.pris { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }
+.sortbar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+
+/* Finished items fold at the bottom of each tab (owner, 18 Oct). */
+.donebox { margin-top: 24px; padding-top: 8px; border-top: 2px dashed var(--line); }
+.donebox > summary { color: var(--muted); font-family: var(--f-display); font-size: 1rem; font-weight: 600; }
+.donebox .stack { margin-top: 6px; }
+.toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; max-width: calc(100% - 32px); box-sizing: border-box; padding: 12px 16px; border-radius: 12px; background: var(--ink); color: var(--surface); font-weight: 700; box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4); }
+.toast[hidden] { display: none; }
+article.flash, .feat.flash { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow 0.6s ease-out; }
+@media (min-width: 640px) { h1 { font-size: 1.45rem; } .tab { font-size: 0.82rem; } .cb { margin-left: calc(2.9em + 8px); } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
+
+<header class="bar"><div class="wrap">
+  <div class="toprow">
+    <h1>Project <span>Tracker</span></h1>
+    <form class="find" id="findform" role="search" autocomplete="off">
+      <label class="sr" for="find">Search everything, or type a number to go to it</label>
+      <input id="find" type="search" enterkeyhint="go" maxlength="80" placeholder="Search or #51" aria-describedby="findmsg">
+      <button class="btn" type="submit">Go</button>
+    </form>
+  </div>
+  <p class="findmsg" id="findmsg" role="status" aria-live="polite"></p>
+  <nav class="tabs" aria-label="Sections">
+    <button class="tab" type="button" data-f="home" aria-pressed="false"><span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="l">Home</span></button>
+    <button class="tab" type="button" data-f="waiting" aria-pressed="false"><span class="n"></span><span class="l">Waiting for you</span></button>
+    <button class="tab" type="button" data-f="all" aria-pressed="false"><span class="n"></span><span class="l">Questions &amp; answers</span></button>
+    <button class="tab" type="button" data-f="backlog" aria-pressed="false"><span class="n"></span><span class="l">Feature backlog</span></button>
+    <button class="tab" type="button" data-f="mine" aria-pressed="false"><span class="n"></span><span class="l">Claude's tasks</span></button>
+  </nav>
+</div></header>
+
+<main><div class="wrap">
+  <div class="chatbar" id="chatbar" hidden>
+    <label for="chat">Chat</label>
+    <select id="chat"></select>
+    <button class="btn ghost quiet" id="rename" type="button" hidden>Rename</button>
+  </div>
+  <div class="renamebox" id="renamebox" hidden>
+    <label class="notelbl" for="newname">New name for this chat</label>
+    <input id="newname" maxlength="80" autocomplete="off">
+    <div class="actions"><button class="btn" id="rensave" type="button">Save name</button><button class="btn ghost quiet" id="rencancel" type="button">Cancel</button><span class="msg" id="renmsg" role="status"></span></div>
+  </div>
+  <div id="view"></div>
+</div></main>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script>
+const TPL = "\u003ctitle>Project Tracker\u003c/title>\n\u003cmeta name=\"claude:viewport-fit-sides\" content=\"cover\">\n\u003clink rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n\u003clink rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap\">\n\u003cstyle>\n/* R-84 (owner, 23 Oct 2026): a phone-first tracker. A short sticky bar (title, \"Go to # or search\", five tabs with\n   their counts); Home says what waits and what changed; cards show the title and one line first, the rest folded. */\n:root {\n  --bg: #f4f5f7; --surface: #ffffff; --sunk: #eef0f3; --ink: #1b1f27; --muted: #59616f; --line: #dde1e8; --line-strong: #c4cad4;\n  --accent: #b0451a; --on-accent: #ffffff; --accent-soft: #fcebe1;\n  --wait: #8f5400; --wait-bg: #fff1d6; --built: #1d5fa8; --built-bg: #e2eefc;\n  --done: #23733f; --done-bg: #e0f3e6; --plain: #4b5262; --plain-bg: #eceef2;\n  --shadow: 0 1px 2px rgba(20, 24, 33, 0.05), 0 6px 18px -8px rgba(20, 24, 33, 0.12);\n  --f-display: \"Bricolage Grotesque\", \"Segoe UI\", system-ui, sans-serif;\n  --f-body: \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif;\n  --f-mono: \"JetBrains Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace;\n}\n@media (prefers-color-scheme: dark) { :root:not([data-theme=\"light\"]) {\n  --bg: #121419; --surface: #1b1e25; --sunk: #16181e; --ink: #e9ebf0; --muted: #a0a7b5; --line: #2c313b; --line-strong: #3d4350;\n  --accent: #f08a4b; --on-accent: #1b1208; --accent-soft: #3a2418;\n  --wait: #f2c36b; --wait-bg: #3a2c10; --built: #8fbaf2; --built-bg: #16283f;\n  --done: #7fd39b; --done-bg: #13301e; --plain: #b9bfcc; --plain-bg: #262a33;\n  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35); color-scheme: dark; } }\n:root[data-theme=\"dark\"] {\n  --bg: #121419; --surface: #1b1e25; --sunk: #16181e; --ink: #e9ebf0; --muted: #a0a7b5; --line: #2c313b; --line-strong: #3d4350;\n  --accent: #f08a4b; --on-accent: #1b1208; --accent-soft: #3a2418;\n  --wait: #f2c36b; --wait-bg: #3a2c10; --built: #8fbaf2; --built-bg: #16283f;\n  --done: #7fd39b; --done-bg: #13301e; --plain: #b9bfcc; --plain-bg: #262a33;\n  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35); color-scheme: dark; }\nbody { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; -webkit-text-size-adjust: 100%; }\nbody::before { content: \"\"; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }\n::selection { background: var(--accent-soft); color: var(--ink); }\ninput, textarea { caret-color: var(--accent); }\n.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }\n.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }\na { color: var(--accent); text-underline-offset: 2px; }\n:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }\narticle:focus, .feat:focus { outline: none; }\n\n/* The sticky bar: about 130 px on a phone (it was 340). */\nheader.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }\nheader.bar .wrap { padding-top: 10px; }\n.toprow { display: flex; align-items: center; gap: 10px; }\nh1 { font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; line-height: 1.1; margin: 0; flex: none; }\nh1 span { color: var(--accent); }\n.find { display: flex; gap: 6px; flex: 1; min-width: 0; margin: 0; }\n.find input { flex: 1; min-width: 0; height: 44px; box-sizing: border-box; font: inherit; color: var(--ink); background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 0 12px; }\n.find input::placeholder { color: var(--muted); opacity: 1; }\n.findmsg { margin: 6px 0 0; font-size: 0.88rem; color: var(--wait); }\n.findmsg:empty { display: none; }\n.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 6px; }\n.tab { font: inherit; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; min-height: 54px; padding: 4px 2px 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 1px; text-align: center; font-size: 0.74rem; line-height: 1.15; }\n.tab .n { font-family: var(--f-mono); font-weight: 700; font-size: 0.98rem; line-height: 1.3; color: var(--ink); font-variant-numeric: tabular-nums; min-height: 1.3em; display: flex; align-items: center; }\n.tab .n.hot { color: var(--accent); }\n.tab .n svg { width: 18px; height: 18px; }\n.tab[aria-pressed=\"true\"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 700; }\n.tab:hover { color: var(--ink); }\n\nmain .wrap { padding-block: 16px 64px; }\n.chatbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }\n.chatbar[hidden] { display: none; }\n.chatbar label { font-size: 0.85rem; color: var(--muted); }\nselect { font: inherit; font-size: 1rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 0 10px; min-height: 44px; max-width: 100%; min-width: 0; }\n.renamebox { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }\n.renamebox[hidden] { display: none; }\n.renamebox input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; }\n\nh2 { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; margin: 0; text-wrap: balance; }\n.tabhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }\n.hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); max-width: 62ch; }\n.grp { display: flex; align-items: baseline; gap: 8px; font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin: 26px 0 10px; scroll-margin-top: calc(var(--hdr, 130px) + 12px); }\n.cnt { font-family: var(--f-mono); font-size: 0.85rem; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }\n.stack { display: flex; flex-direction: column; gap: 10px; }\n\n/* Entry cards: number + title + tags first; the long answer folded. */\narticle { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 12px; min-width: 0; box-shadow: var(--shadow); scroll-margin-top: calc(var(--hdr, 130px) + 12px); }\narticle.is-open { border-color: var(--line-strong); }\n.ch { display: grid; grid-template-columns: 2.9em 1fr; gap: 8px; align-items: start; }\n.num { font-family: var(--f-mono); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); font-size: 0.95rem; padding-top: 1px; }\narticle h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.04rem; line-height: 1.3; margin: 0; text-wrap: pretty; overflow-wrap: anywhere; }\n.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }\n.meta a { color: var(--muted); }\n.statusline { margin: 6px 0 0; font-size: 0.86rem; color: var(--muted); }\n.gist { margin: 8px 0 0; font-size: 0.95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }\narticle:has(.fpanel.full:not([hidden])) .gist { display: none; }\n.readbtn { min-height: 40px; padding: 0 12px; font-size: 0.88rem; align-self: center; }\narticle .fbar { margin-top: 6px; }\narticle .fpanel.full { padding-top: 2px; }\n.cb { min-width: 0; }\n.status { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }\n.k-waiting, .k-blocked { color: var(--wait); background: var(--wait-bg); }\n.k-built { color: var(--built); background: var(--built-bg); }\n.k-done { color: var(--done); background: var(--done-bg); }\n.k-doing { color: var(--accent); background: var(--accent-soft); }\n.k-planned, .k-answered, .k-working, .k-idea, .k-no, .k-todo { color: var(--plain); background: var(--plain-bg); }\n.k-no { text-decoration: line-through; }\n.tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; border-radius: 6px; padding: 2px 8px; white-space: nowrap; }\n.tag.act { color: var(--on-accent); background: var(--accent); }\n.tag.new { color: var(--accent); background: var(--accent-soft); }\ndetails > summary { cursor: pointer; list-style: none; }\ndetails > summary::-webkit-details-marker { display: none; }\n.donebox > summary, .morelist > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent); font-size: 0.92rem; font-weight: 700; }\n.chev { width: 16px; height: 16px; flex: none; transition: transform 0.18s ease-out; }\ndetails[open] > summary .chev, button[aria-expanded=\"true\"] .chev { transform: rotate(180deg); }\n.body { margin-top: 2px; min-width: 0; overflow-wrap: anywhere; font-size: 0.97rem; }\n.body p, .body ul, .body ol, .body blockquote { margin: 0 0 10px; }\n.body ul, .body ol { padding-left: 1.3em; }\n.body li { margin-bottom: 4px; }\n.body blockquote { border-left: 1px solid var(--line-strong); padding-left: 12px; color: var(--muted); }\n.body code { font-family: var(--f-mono); font-size: 0.84em; background: var(--plain-bg); border-radius: 4px; padding: 1px 4px; }\n.body table { border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }\n.tablebox { overflow-x: auto; margin-bottom: 10px; }\n.body th, .body td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }\na.goto { font-family: var(--f-mono); font-size: 0.92em; }\n.latest { margin: 8px 0 10px; padding: 10px 12px 2px; border-left: 4px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }\n/* R-176: the feature-rating module in Waiting for you. */\n.ratebox > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent); font-size: 0.92rem; font-weight: 700; }\n.rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 10px; margin-bottom: 8px; min-width: 0; }\n.rdet { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }\n.rrow { display: flex; align-items: center; gap: 5px; margin-top: 8px; }\n.rlbl { flex: 0 0 6.2em; font-size: 0.8rem; color: var(--muted); }\n.r5 { flex: 1 1 0; min-width: 36px; max-width: 54px; min-height: 40px; font: inherit; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer; padding: 0; }\n.r5[aria-pressed=\"true\"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }\n.rtop { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--sunk); }\n.rtoph { margin: 0 0 4px; font-weight: 700; }\n.rtop ol { margin: 0; padding-left: 1.3em; }\n.rsc { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }\n.rhide { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 0.9rem; }\n.rhide input { width: 18px; height: 18px; accent-color: var(--accent); }\n.latestlbl { margin: 0 0 6px !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }\n\n/* Answering: big rows to tap, Claude's pick marked, then Send. */\n.form { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 12px; background: var(--sunk); }\nfieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }\nlegend { font-weight: 700; margin-bottom: 6px; padding: 0; }\n.opt { display: grid; grid-template-columns: 22px 1.2em 1fr; gap: 8px; align-items: start; min-height: 44px; box-sizing: border-box; padding: 11px 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); cursor: pointer; overflow-wrap: anywhere; }\n.opt:hover { border-color: var(--accent); }\n.opt.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }\n.opt input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }\n.opt:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }\n.key { font-family: var(--f-mono); font-weight: 700; color: var(--accent); }\n.rec { display: inline-block; font-style: normal; font-size: 0.72rem; font-weight: 700; color: var(--done); background: var(--done-bg); border-radius: 5px; padding: 1px 6px; margin-left: 4px; white-space: nowrap; }\n.notelbl { font-size: 0.86rem; color: var(--muted); }\ntextarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; resize: vertical; min-height: 60px; }\n.actions { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }\n.btn { font: inherit; font-weight: 700; color: var(--on-accent); background: var(--accent); border: 1px solid var(--accent); border-radius: 10px; min-height: 44px; padding: 0 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }\n.btn:hover { filter: brightness(1.06); }\n.btn.ghost { color: var(--accent); background: transparent; }\n.btn.ghost:hover { background: var(--accent-soft); filter: none; }\n.btn.quiet { color: var(--muted); border-color: var(--line-strong); font-weight: 400; }\n.btn:disabled { opacity: 0.55; cursor: default; }\n.btn[hidden] { display: none; }\n.msg { font-size: 0.9rem; color: var(--muted); min-width: 0; }\n.msg:empty { display: none; }\n.sentbox { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--done-bg); color: var(--ink); }\n.sentline { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--done); font-weight: 700; }\n.sentline svg { width: 18px; height: 18px; flex: none; }\n.sentpicks { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }\n.sentpicks b { font-family: var(--f-mono); color: var(--done); margin-right: 4px; }\n.sentnote { margin: 8px 0 0; overflow-wrap: anywhere; }\n.small { margin: 8px 0 0; font-size: 0.84rem; color: var(--muted); }\n.sentbox .actions { margin-top: 8px; }\n.taskbox { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--sunk); }\n.taskbox.done { background: var(--done-bg); }\n.taskbox .tl { margin: 0; font-weight: 700; }\n.taskbox.done .tl { color: var(--done); }\n.taskbox ol { margin: 8px 0 10px; padding-left: 1.3em; overflow-wrap: anywhere; }\n.taskbox li { margin-bottom: 6px; }\npre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.8rem; margin: 6px 0 0; }\n\n/* Lists of rows (Home, the question index, search results): one tap = jump. */\n.rows { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }\n.rows li + li { border-top: 1px solid var(--line); }\n.row { display: grid; grid-template-columns: 2.9em 1fr auto; gap: 8px; align-items: start; min-height: 44px; box-sizing: border-box; padding: 11px 12px; color: var(--ink); text-decoration: none; }\n.row:hover { background: var(--sunk); }\n.row .rn { font-family: var(--f-mono); font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }\n.row .rb { min-width: 0; overflow-wrap: anywhere; }\n.row .rt { display: block; }\n.row .rs { display: block; margin-top: 3px; font-size: 0.85rem; color: var(--muted); }\n.row .rs .status { font-size: 0.68rem; }\n.row .go { width: 16px; height: 16px; color: var(--muted); margin-top: 3px; }\nmark { background: var(--wait-bg); color: inherit; border-radius: 3px; padding: 0 1px; }\n.qindex { margin-top: 14px; }\n.qindex .rows { border-color: var(--accent-soft); }\n\n/* Home */\n.lead { font-family: var(--f-display); font-weight: 600; font-size: 1.35rem; line-height: 1.3; margin: 2px 0 12px; text-wrap: balance; }\n.lead b { color: var(--accent); }\n.home .grp { margin-top: 28px; }\n.empty { padding: 14px; border: 1px dashed var(--line-strong); border-radius: 14px; color: var(--muted); }\n.empty p { margin: 0; }\n.empty p + p { margin-top: 4px; }\n.empty b { color: var(--ink); }\n.foot { margin: 28px 0 0; font-size: 0.84rem; color: var(--muted); }\n.morelist { margin-top: 6px; }\n.morelist .rows { margin-top: 6px; }\n\n/* Feature backlog and Claude's tasks */\n.filters { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }\n.pills { display: flex; flex-wrap: wrap; gap: 6px; }\n.pill { font: inherit; font-size: 0.85rem; min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }\n.pill b { font-family: var(--f-mono); font-size: 0.82rem; font-variant-numeric: tabular-nums; }\n.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }\n.pill.k-waiting .dot { background: var(--wait); } .pill.k-planned .dot, .pill.k-idea .dot, .pill.k-no .dot { background: var(--plain); }\n.pill.k-done .dot { background: var(--done); } .pill.k-built .dot { background: var(--built); }\n.pill.k-waiting, .pill.k-planned, .pill.k-idea, .pill.k-no, .pill.k-done, .pill.k-built { background: var(--surface); color: var(--ink); text-decoration: none; }\n.pills .pill[aria-pressed=\"true\"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }\n.pills .pill[aria-pressed=\"true\"] .dot { background: var(--surface); }\n.selrow { display: flex; align-items: center; gap: 8px; }\n.selrow label { font-size: 0.85rem; color: var(--muted); }\n.legend { margin: 0; font-size: 0.88rem; color: var(--muted); }\n.legend b { color: var(--ink); }\n.feat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 6px; margin-bottom: 8px; min-width: 0; scroll-margin-top: calc(var(--hdr, 130px) + 12px); }\n.feat.task { padding-bottom: 12px; }\n.fh { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; justify-content: space-between; }\n.feat .name { font-family: var(--f-body); font-weight: 700; font-size: 1rem; margin: 0; overflow-wrap: anywhere; min-width: 0; flex: 1 1 12em; }\n.feat .det { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; overflow-wrap: anywhere; }\n.feat .how { margin: 4px 0 6px; font-size: 0.93rem; overflow-wrap: anywhere; }\n.feat .moved { margin: 6px 0 0; font-size: 0.84rem; color: var(--muted); }\n.fbar { display: flex; flex-wrap: wrap; gap: 0 14px; margin-top: 2px; }\n.fbtn { font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0; min-height: 44px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }\n.fpanel { padding-bottom: 8px; }\n.fpanel[hidden] { display: none; }\n.fpanel .form { margin-top: 2px; }\n.waits { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; font-size: 0.86rem; color: var(--muted); align-items: center; }\n.chipnum { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border-radius: 999px; background: var(--wait-bg); color: var(--wait); font-weight: 700; text-decoration: none; }\n.chipnum b { font-family: var(--f-mono); margin-right: 4px; }\n/* R-96: Impact and Effort on pending items; high impact and low effort stand out. */\n.pri { font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 1px 7px; white-space: nowrap; color: var(--muted); border: 1px solid var(--line-strong); }\n.pri.i3 { color: var(--accent); border-color: currentColor; }\n.pri.e1 { color: var(--done); border-color: currentColor; }\n.pris { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }\n.sortbar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }\n\n/* Finished items fold at the bottom of each tab (owner, 18 Oct). */\n.donebox { margin-top: 24px; padding-top: 8px; border-top: 2px dashed var(--line); }\n.donebox > summary { color: var(--muted); font-family: var(--f-display); font-size: 1rem; font-weight: 600; }\n.donebox .stack { margin-top: 6px; }\n.toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; max-width: calc(100% - 32px); box-sizing: border-box; padding: 12px 16px; border-radius: 12px; background: var(--ink); color: var(--surface); font-weight: 700; box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4); }\n.toast[hidden] { display: none; }\narticle.flash, .feat.flash { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow 0.6s ease-out; }\n@media (min-width: 640px) { h1 { font-size: 1.45rem; } .tab { font-size: 0.82rem; } .cb { margin-left: calc(2.9em + 8px); } }\n@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }\n\u003c/style>\n\n\u003cheader class=\"bar\">\u003cdiv class=\"wrap\">\n  \u003cdiv class=\"toprow\">\n    \u003ch1>Project \u003cspan>Tracker\u003c/span>\u003c/h1>\n    \u003cform class=\"find\" id=\"findform\" role=\"search\" autocomplete=\"off\">\n      \u003clabel class=\"sr\" for=\"find\">Search everything, or type a number to go to it\u003c/label>\n      \u003cinput id=\"find\" type=\"search\" enterkeyhint=\"go\" maxlength=\"80\" placeholder=\"Search or #51\" aria-describedby=\"findmsg\">\n      \u003cbutton class=\"btn\" type=\"submit\">Go\u003c/button>\n    \u003c/form>\n  \u003c/div>\n  \u003cp class=\"findmsg\" id=\"findmsg\" role=\"status\" aria-live=\"polite\">\u003c/p>\n  \u003cnav class=\"tabs\" aria-label=\"Sections\">\n    \u003cbutton class=\"tab\" type=\"button\" data-f=\"home\" aria-pressed=\"false\">\u003cspan class=\"n\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z\"/>\u003c/svg>\u003c/span>\u003cspan class=\"l\">Home\u003c/span>\u003c/button>\n    \u003cbutton class=\"tab\" type=\"button\" data-f=\"waiting\" aria-pressed=\"false\">\u003cspan class=\"n\">\u003c/span>\u003cspan class=\"l\">Waiting for you\u003c/span>\u003c/button>\n    \u003cbutton class=\"tab\" type=\"button\" data-f=\"all\" aria-pressed=\"false\">\u003cspan class=\"n\">\u003c/span>\u003cspan class=\"l\">Questions &amp; answers\u003c/span>\u003c/button>\n    \u003cbutton class=\"tab\" type=\"button\" data-f=\"backlog\" aria-pressed=\"false\">\u003cspan class=\"n\">\u003c/span>\u003cspan class=\"l\">Feature backlog\u003c/span>\u003c/button>\n    \u003cbutton class=\"tab\" type=\"button\" data-f=\"mine\" aria-pressed=\"false\">\u003cspan class=\"n\">\u003c/span>\u003cspan class=\"l\">Claude's tasks\u003c/span>\u003c/button>\n  \u003c/nav>\n\u003c/div>\u003c/header>\n\n\u003cmain>\u003cdiv class=\"wrap\">\n  \u003cdiv class=\"chatbar\" id=\"chatbar\" hidden>\n    \u003clabel for=\"chat\">Chat\u003c/label>\n    \u003cselect id=\"chat\">\u003c/select>\n    \u003cbutton class=\"btn ghost quiet\" id=\"rename\" type=\"button\" hidden>Rename\u003c/button>\n  \u003c/div>\n  \u003cdiv class=\"renamebox\" id=\"renamebox\" hidden>\n    \u003clabel class=\"notelbl\" for=\"newname\">New name for this chat\u003c/label>\n    \u003cinput id=\"newname\" maxlength=\"80\" autocomplete=\"off\">\n    \u003cdiv class=\"actions\">\u003cbutton class=\"btn\" id=\"rensave\" type=\"button\">Save name\u003c/button>\u003cbutton class=\"btn ghost quiet\" id=\"rencancel\" type=\"button\">Cancel\u003c/button>\u003cspan class=\"msg\" id=\"renmsg\" role=\"status\">\u003c/span>\u003c/div>\n  \u003c/div>\n  \u003cdiv id=\"view\">\u003c/div>\n\u003c/div>\u003c/main>\n\u003cdiv class=\"toast\" id=\"toast\" role=\"status\" aria-live=\"polite\" hidden>\u003c/div>\n\n\u003cscript src=\"https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js\">\u003c/script>\n\u003cscript>\nconst TPL = __TPL__;\nconst DATA = __DATA__;\nconst $ = (id) => document.getElementById(id);\nconst esc = (s) => String(s).replace(/[&\u003c>\"]/g, (c) => ({ \"&\": \"&amp;\", \"\u003c\": \"&lt;\", \">\": \"&gt;\", '\"': \"&quot;\" }[c]));\nconst md = (s) => {\n  try { if (window.marked) return window.marked.parse(s, { gfm: true, breaks: true }); } catch (e) { /* plain text below */ }\n  return \"\u003cp>\" + esc(s).replace(/\\n/g, \"\u003cbr>\") + \"\u003c/p>\";\n};\nconst KIND = { waiting: \"Waiting for you\", built: \"Built, not released\", done: \"Done\", planned: \"Planned\", answered: \"Answered\", working: \"Working on it\" };\nconst RESET = \":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}\";\nDATA.answers = DATA.answers || {};\nDATA.read = DATA.read || {}; // num -> when tapped, or false for \"mark as unread\" (moved into the .md by --absorb)\nDATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)\nDATA.backlog = DATA.backlog || [];\nDATA.mine = DATA.mine || [];\nDATA.done = DATA.done || {}; // R-31: num -> when he tapped \"I've done it\", or false for \"Not done yet\" (moved into the .md by --absorb)\nDATA.chatNames = DATA.chatNames || {}; // R-28: chat as in the .md -> the owner's new name (written into the .md by --absorb)\nDATA.moves = DATA.moves || {}; // R-81: feature id -> {group, name, to, at}: his \"Move to\" pick (written into the .md by --absorb)\n// R-81: Planned = Claude may build it; Waiting for you = it needs him.\nconst MOVE_KIND = { \"Planned\": \"planned\", \"Waiting for you\": \"waiting\", \"Idea\": \"idea\", \"Not doing\": \"no\" };\nconst MOVE_LABEL = { \"Planned\": \"Planned: Claude can build it\", \"Waiting for you\": \"Waiting for you: needs me\", \"Idea\": \"Idea\", \"Not doing\": \"Not doing\" };\nconst BL_KIND = { done: \"Live\", built: \"Next release\", waiting: \"Waiting for you\", planned: \"Planned\", idea: \"Idea\", no: \"Not doing\" };\nconst BL_ORDER = [\"waiting\", \"planned\", \"idea\", \"no\", \"built\", \"done\"];\nconst SHIPPED = [\"done\", \"built\"];\nconst TABS = [\"home\", \"waiting\", \"all\", \"backlog\", \"mine\"];\nconst CHEV = '\u003csvg class=\"chev\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"m6 9 6 6 6-6\"/>\u003c/svg>';\nconst GO = '\u003csvg class=\"go\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"m9 6 6 6-6 6\"/>\u003c/svg>';\nconst CHECK = '\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M20 6 9 17l-5-5\"/>\u003c/svg>';\nconst chatLabel = (c) => DATA.chatNames[c] || c;\n\n// Storage can be blocked (private window, preview): every read and write is guarded, and the page works without it.\nconst store = (kind) => ({\n  get(k) { try { return window[kind].getItem(k); } catch (e) { return null; } },\n  set(k, v) { try { window[kind].setItem(k, v); } catch (e) { /* not kept */ } },\n  del(k) { try { window[kind].removeItem(k); } catch (e) { /* not kept */ } },\n});\nconst ss = store(\"sessionStorage\"), ls = store(\"localStorage\");\nlet chat = ls.get(\"inbox-chat\") || \"all\";\n// A fresh visit opens on Home; the tab is kept only across the reload that follows a save.\nlet filter = ss.get(\"inbox-tab\") || \"home\";\nif (filter === \"shipped\") filter = \"backlog\";\nif (!TABS.includes(filter)) filter = \"home\";\n// R-184 (owner, 29 Oct 2026): his backlog filters survive a reload (Claude's publish) and a tab switch; kept on this phone.\nlet blKind = ls.get(\"inbox-blkind\") || null; // a status pill tapped in the backlog: only that status (null = everything not built, Built folded)\nlet blGroup = ls.get(\"inbox-blgroup\") || \"all\";\nlet query = \"\";\nconst picks = {}; // num -> {qIndex: key}\ntry { Object.assign(picks, JSON.parse(ss.get(\"inbox-picks\") || \"{}\")); } catch (e) { /* none kept */ }\nconst keepPicks = () => ss.set(\"inbox-picks\", JSON.stringify(picks));\nconst keepTab = () => ss.set(\"inbox-tab\", filter);\n// Which folded \"done\" boxes are open, so a re-render (and the reload after a save) keeps them as he left them.\nconst doneOpen = {};\ntry { Object.assign(doneOpen, JSON.parse(ss.get(\"inbox-open\") || \"{}\")); } catch (e) { /* all folded */ }\nconst keepPlace = () => { ss.set(\"inbox-y\", String(Math.round(scrollY))); ss.set(\"inbox-open\", JSON.stringify(doneOpen)); };\nconst stamp = () => new Date().toLocaleString(\"en-IN\", { day: \"numeric\", month: \"short\", hour: \"2-digit\", minute: \"2-digit\" });\n\n// The page rebuilt from its template and its data: what a save publishes (never the live DOM).\nconst enc = (v) => JSON.stringify(v).replace(/\u003c/g, \"\\\\u003c\");\n// The two markers are spelled in pieces here, so filling the template never touches this code.\nconst MARK_TPL = \"__\" + \"TPL__\", MARK_DATA = \"__\" + \"DATA__\";\nconst pageHtml = () => '\u003c!doctype html>\u003chtml>\u003chead>\u003cmeta charset=utf8>\u003cmeta name=viewport content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\u003cstyle>' + RESET +\n  \"\u003c/style>\u003c/head>\u003cbody>\" + TPL.replace(new RegExp(MARK_TPL + \"|\" + MARK_DATA, \"g\"), (m) => (m === MARK_TPL ? enc(TPL) : enc(DATA))) + \"\u003c/body>\u003c/html>\";\n\n// #21: \"Waiting for you\" = a question still to answer, or a task of his; \"To read\" = an entry not read yet.\n// Sending an answer or a reply counts as read.\nconst sentOf = (e) => DATA.answers[e.num];\n// R-178 (owner, 29 Oct 2026): a task he marked done is finished business: it counts as read and waits for nothing.\nconst isRead = (e) => Boolean(sentOf(e)) || (tasksOf(e).length > 0 && taskDone(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));\nconst needsAnswer = (e) => e.decides.length > 0 && !sentOf(e);\n// R-31: tasks waiting on the owner sit under \"Waiting for you\" next to his decisions.\nconst tasksOf = (e) => e.tasks || [];\nconst taskDone = (e) => (e.num in DATA.done ? Boolean(DATA.done[e.num]) : Boolean(e.taskDone));\nconst needsTask = (e) => tasksOf(e).length > 0 && !taskDone(e);\nconst needsYou = (e) => needsAnswer(e) || needsTask(e);\n// R-173 (owner, 29 Oct 2026): one topic, one place. A backlog row that names \"#n\" is that question's feature.\n// If the feature waits for him, the question lives under Waiting for you (not in Q&A), and the feature is not shown\n// a second time. Every question card says where its topic stands in the backlog.\nlet featMap = null;\nconst featsOf = (e) => {\n  if (!featMap) {\n    featMap = {};\n    DATA.backlog.forEach((f, i) => (String(f.details + \" \" + f.how).match(/#(\\d{1,4})\\b/g) || []).forEach((m) => {\n      const n = Number(m.slice(1)); (featMap[n] = featMap[n] || []).push({ f, i });\n    }));\n  }\n  return featMap[e.num] || [];\n};\nconst topicWait = (e) => !needsYou(e) && e.kind !== \"done\" && !(tasksOf(e).length > 0 && taskDone(e)) && featsOf(e).some((x) => x.f.kind === \"waiting\");\nconst inWaiting = (e) => needsYou(e) || topicWait(e);\nconst featCovered = (f) => numsIn(f.details + \" \" + f.how).some((n) => inWaiting(entryOf(n)));\nconst backlogChips = (e) => {\n  const xs = featsOf(e);\n  if (!xs.length) return e.kind === \"done\" ? \"\" : '\u003cp class=\"waits\">Not in the feature backlog yet: still a discussion.\u003c/p>';\n  return '\u003cp class=\"waits\">In the backlog: ' + xs.map(({ f }) => '\u003ca class=\"chipnum\" href=\"#\" data-feat=\"' + esc(f.id) + '\">\u003cb>' + esc(f.status) + \"\u003c/b>\" +\n    esc(f.name.length > 34 ? f.name.slice(0, 32).replace(/\\s+\\S*$/, \"\") + \"…\" : f.name) + \"\u003c/a>\").join(\"\") + \"\u003c/p>\";\n};\nconst toRead = (e) => !inWaiting(e) && !isRead(e);\nconst inChat = (e) => chat === \"all\" || e.chat === chat;\nconst byNum = (a, b) => b.num - a.num;\n// R-172 (owner, 29 Oct 2026): a question he replied to is a thread. When Claude answers his follow-up it jumps to\n// the top of Questions & answers, tagged with the reply count, until he marks it read (3-day limit).\nconst THREAD_DAYS = 3;\nconst threadAnswered = (e) => Boolean(e.thread && e.thread.answered);\nconst threadNew = (e) => threadAnswered(e) && !isRead(e);\nconst threadWaiting = (e) => Boolean(e.thread && !e.thread.answered) && !sentOf(e);\nconst threadRecent = (e) => Boolean(e.thread && e.thread.last) && (Date.now() - Date.parse(e.thread.last + \"T00:00:00\")) / 864e5 \u003c= THREAD_DAYS;\n// R-175 (owner, 29 Oct 2026): \"Mark as read\" takes a thread off the top, into the read list at the bottom.\nconst onTop = (e) => threadRecent(e) && (threadNew(e) || threadWaiting(e));\nconst byThread = (a, b) => (threadNew(b) - threadNew(a)) || (threadWaiting(b) - threadWaiting(a)) || String(b.thread.last).localeCompare(String(a.thread.last)) || byNum(a, b);\nconst threadTag = (e) => threadNew(e)\n  ? '\u003cspan class=\"tag act\">New answer' + (e.thread.replies > 1 ? \" · reply \" + e.thread.replies : \" to your reply\") + \"\u003c/span>\"\n  : threadWaiting(e) ? '\u003cspan class=\"tag new\">Claude is answering your reply\u003c/span>'\n  : \"\";\nconst entryOf = (n) => DATA.entries.find((x) => x.num === n);\nconst maxNum = DATA.entries.reduce((m, e) => Math.max(m, e.num), 0);\n// Features waiting for the owner also show in \"Waiting for you\" (owner, 18 Oct).\nconst waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === \"waiting\" && !DATA.notes[x.f.id] && !featCovered(x.f));\nconst inTab = (f, tab) => (tab === \"shipped\") === SHIPPED.includes(f.kind);\n// R-33 / R-84: Claude's tasks in the order Doing, Blocked (waits for you), To do, Done.\nconst taskKind = (t) => { const s = String(t.status).toLowerCase(); return s.startsWith(\"done\") ? \"done\" : s.startsWith(\"doing\") ? \"doing\" : s.startsWith(\"blocked\") ? \"blocked\" : \"todo\"; };\nconst mineAll = () => DATA.mine.map((t, i) => ({ t, i, k: taskKind(t) }));\n// R-96: a pending item's prio is [impact, effort] (High / Medium / Low). The Sort picker orders the four list tabs;\n// rated items come first, unrated ones after them in their usual order. The choice is kept on this phone.\nconst LV = { High: 3, Medium: 2, Low: 1 };\nconst SORTS = { best: \"Best first (high impact, low effort)\", impact: \"Biggest impact first\", quick: \"Quickest first\", order: \"Original order\" };\nlet sortBy = ls.get(\"inbox-sort\");\nif (!(sortBy in SORTS)) sortBy = \"best\";\nconst priKey = (p) => !p ? null : sortBy === \"best\" ? [LV[p[0]] - LV[p[1]], LV[p[0]]] : sortBy === \"impact\" ? [LV[p[0]], -LV[p[1]]] : [-LV[p[1]], LV[p[0]]];\nconst byPrio = (get, fallback) => (a, b) => {\n  if (sortBy === \"order\") return fallback(a, b);\n  const ka = priKey(get(a)), kb = priKey(get(b));\n  if (!ka || !kb) return (kb ? 1 : 0) - (ka ? 1 : 0) || fallback(a, b);\n  return kb[0] - ka[0] || kb[1] - ka[1] || fallback(a, b);\n};\nconst priHtml = (p) => p ? '\u003cspan class=\"pri i' + LV[p[0]] + '\">Impact ' + p[0] + '\u003c/span>\u003cspan class=\"pri e' + LV[p[1]] + '\">Effort ' + p[1] + \"\u003c/span>\" : \"\";\nconst sortHtml = () => '\u003cdiv class=\"sortbar\">\u003cdiv class=\"selrow\">\u003clabel for=\"sortby\">Sort\u003c/label>\u003cselect id=\"sortby\">' +\n  Object.keys(SORTS).map((k) => '\u003coption value=\"' + k + '\"' + (k === sortBy ? \" selected\" : \"\") + \">\" + SORTS[k] + \"\u003c/option>\").join(\"\") + \"\u003c/select>\u003c/div>\" +\n  '\u003cp class=\"legend\">\u003cb>Impact\u003c/b> = how much it matters to the gym and its members. \u003cb>Effort\u003c/b> = time and tokens to build it (your own task: your time). Only open items have them.\u003c/p>\u003c/div>';\nconst numsIn = (s) => [...new Set((String(s).match(/#(\\d{1,4})\\b/g) || []).map((x) => Number(x.slice(1))))].filter((n) => entryOf(n));\n\nfunction shown(e) {\n  if (chat !== \"all\" && e.chat !== chat) return false;\n  // R-108 (owner, 24 Oct): Questions & answers holds only answers; anything that needs him (a pick or a task)\n  // lives under \"Waiting for you\" alone.\n  if (filter === \"all\") return !inWaiting(e);\n  if (filter === \"waiting\") return inWaiting(e);\n  return true;\n}\n\nconst plain = (s) => String(s || \"\").replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, \"$1\").replace(/\\*\\*|__|`/g, \"\");\n// One short line for a folded card: the start of \"My answer\", or else the first paragraph (the .md's own words).\nfunction gistOf(e) {\n  const lines = e.body.split(\"\\n\");\n  // R-172: a thread shows my newest answer (the one under his last follow-up), not the first.\n  let k = -1;\n  lines.forEach((l, j) => { if (/^\\*\\*My answer[^*]*:\\*\\*/.test(l)) k = j; });\n  if (k \u003c 0) k = lines.findIndex((l) => l.trim() && !/^\\*\\*(You asked|Details|DECIDED|YOUR REPLY|BUILT)/.test(l));\n  if (k \u003c 0) return \"\";\n  const para = [];\n  for (let j = k; j \u003c lines.length; j++) {\n    const l = lines[j];\n    if (j > k && (!l.trim() || /^(\\s*[-*] |\\*\\*|\\||>|#)/.test(l))) break;\n    para.push(l.trim());\n  }\n  const s = plain(para.join(\" \")).replace(/^My answer[^:]*:\\s*/, \"\");\n  return s.length > 240 ? s.slice(0, 237).replace(/\\s+\\S*$/, \"\") + \"…\" : s;\n}\n// \"STEP 1 BUILT, NOT RELEASED (next release)\" -> \"Step 1 built, not released (next release)\"\nconst softCaps = (s) => String(s).replace(/^[A-Z0-9][A-Z0-9 ,:;'-]*[A-Z](?![a-z])/, (m) => m.charAt(0) + m.slice(1).toLowerCase());\nconst norm = (s) => String(s).toLowerCase().replace(/[^a-z]/g, \"\");\n\nfunction answerText(e, a) {\n  const lines = a.picks.map((p) => \"- \" + p.q + \": \" + p.key + \" (\" + p.text + \")\");\n  const skipped = e.decides.filter((d) => !a.picks.some((p) => p.q === d.q)).map((d) => \"- \" + d.q + \": no pick yet\");\n  const note = a.note ? [(e.decides.length ? \"Note: \" : \"Reply: \") + a.note] : [];\n  return [\"Owner inbox #\" + e.num + \" (\" + e.title + \"):\", ...lines, ...skipped, ...note].join(\"\\n\");\n}\nfunction sentHtml(e, sent) {\n  return '\u003cdiv class=\"sentbox\">\u003cp class=\"sentline\">' + CHECK + \"Sent \" + esc(sent.at) + \"\u003c/p>\" +\n    (sent.picks.length ? '\u003cul class=\"sentpicks\">' + sent.picks.map((p) => \"\u003cli>\u003cb>\" + esc(p.key) + \"\u003c/b>\" + esc(p.text) +\n      (e.decides.length > 1 ? ' \u003cspan class=\"small\">(' + esc(p.q) + \")\u003c/span>\" : \"\") + \"\u003c/li>\").join(\"\") + \"\u003c/ul>\" : \"\") +\n    (sent.note ? '\u003cp class=\"sentnote\">' + (e.decides.length ? \"Your comment: \" : \"Your reply: \") + esc(sent.note) + \"\u003c/p>\" : \"\") +\n    '\u003cp class=\"small\">Claude acts on it the next time it opens your tracker.\u003c/p>' +\n    '\u003cdiv class=\"actions\">\u003cbutton class=\"btn ghost\" data-act=\"change\" data-n=\"' + e.num + '\">' + (e.decides.length ? \"Change my answer\" : \"Write it again\") + \"\u003c/button>\u003c/div>\u003c/div>\";\n}\nfunction formHtml(e) {\n  const sent = sentOf(e);\n  if (sent) return sentHtml(e, sent);\n  if (!e.decides.length) {\n    return '\u003cdiv class=\"form\">' +\n      '\u003clabel class=\"notelbl\" for=\"note' + e.num + '\">Ask a follow-up, disagree, or add something\u003c/label>' +\n      '\u003ctextarea id=\"note' + e.num + '\" rows=\"3\" placeholder=\"e.g. Good, but also show it on the watch\">\u003c/textarea>' +\n      '\u003cdiv class=\"actions\">\u003cbutton class=\"btn\" data-act=\"send\" data-n=\"' + e.num + '\">Send to Claude\u003c/button>\u003cspan class=\"msg\" id=\"msg' + e.num + '\" role=\"status\">\u003c/span>\u003c/div>\u003c/div>';\n  }\n  const mine = picks[e.num] || {};\n  const recs = e.decides.map((d) => d.opts.find((o) => o.rec));\n  const canAgree = recs.every(Boolean) && !Object.keys(mine).length;\n  return '\u003cdiv class=\"form\">' + e.decides.map((d, qi) =>\n    \"\u003cfieldset>\u003clegend>\" + esc(d.q) + \"\u003c/legend>\" + d.opts.map((o) =>\n      '\u003clabel class=\"opt' + (mine[qi] === o.key ? \" on\" : \"\") + '\">\u003cinput type=\"radio\" name=\"q' + e.num + \"_\" + qi + '\" value=\"' + o.key + '\"' +\n      (mine[qi] === o.key ? \" checked\" : \"\") + ' data-n=\"' + e.num + '\" data-q=\"' + qi + '\">\u003cspan class=\"key\">' + o.key + \"\u003c/span>\u003cspan>\" + esc(o.text) +\n      (o.rec ? ' \u003cem class=\"rec\">my pick\u003c/em>' : \"\") + \"\u003c/span>\u003c/label>\").join(\"\") + \"\u003c/fieldset>\").join(\"\") +\n    '\u003clabel class=\"notelbl\" for=\"note' + e.num + '\">Comment (optional). You can send just a comment, without picking. Tap a picked answer again to undo it.\u003c/label>' +\n    '\u003ctextarea id=\"note' + e.num + '\" rows=\"2\" placeholder=\"e.g. Yes, but keep it free for members\">\u003c/textarea>' +\n    '\u003cdiv class=\"actions\">\u003cbutton class=\"btn\" data-act=\"send\" data-n=\"' + e.num + '\">Send to Claude\u003c/button>' +\n    (recs.every(Boolean) ? '\u003cbutton class=\"btn ghost\" data-act=\"agree\" data-n=\"' + e.num + '\"' + (canAgree ? \"\" : \" hidden\") + \">Agree with my pick\" +\n      (recs.length === 1 ? \" (\" + recs[0].key + \")\" : \"s\") + \"\u003c/button>\" : \"\") +\n    '\u003cspan class=\"msg\" id=\"msg' + e.num + '\" role=\"status\">\u003c/span>\u003c/div>\u003c/div>';\n}\nfunction taskHtml(e) {\n  if (!tasksOf(e).length) return \"\";\n  const done = taskDone(e);\n  const when = e.num in DATA.done ? DATA.done[e.num] : e.taskDone;\n  return '\u003cdiv class=\"taskbox' + (done ? \" done\" : \"\") + '\">\u003cp class=\"tl\">' + (done ? \"Done\" + (when ? \" \" + esc(when) : \"\") + \". Thank you.\" : \"Your task\" + (tasksOf(e).length > 1 ? \"s\" : \"\")) + \"\u003c/p>\" +\n    \"\u003col>\" + tasksOf(e).map((t) => \"\u003cli>\" + md(t).replace(/^\u003cp>|\u003c\\/p>\\s*$/g, \"\") + \"\u003c/li>\").join(\"\") + \"\u003c/ol>\" +\n    '\u003cdiv class=\"actions\">' + (done\n      ? '\u003cbutton class=\"btn ghost quiet\" data-act=\"undone\" data-n=\"' + e.num + '\">Not done yet\u003c/button>'\n      : '\u003cbutton class=\"btn\" data-act=\"done\" data-n=\"' + e.num + '\">I have done it\u003c/button>') +\n    '\u003cspan class=\"msg\" id=\"tmsg' + e.num + '\" role=\"status\">\u003c/span>\u003c/div>\u003c/div>';\n}\nfunction readHtml(e) {\n  if (sentOf(e) || needsYou(e)) return \"\";\n  return isRead(e)\n    ? '\u003cbutton class=\"btn ghost quiet readbtn\" data-act=\"unread\" data-n=\"' + e.num + '\">Mark as unread\u003c/button>'\n    : '\u003cbutton class=\"btn ghost readbtn\" data-act=\"read\" data-n=\"' + e.num + '\">Mark as read\u003c/button>';\n}\nconst pbtn = (id, label) => '\u003cbutton type=\"button\" class=\"fbtn\" data-act=\"panel\" data-p=\"fp' + id + '\" aria-expanded=\"false\" aria-controls=\"fp' + id + '\">' + label + CHEV + \"\u003c/button>\";\nfunction card(e) {\n  const sent = sentOf(e);\n  const tag = needsAnswer(e) ? '\u003cspan class=\"tag act\">To answer\u003c/span>' : needsTask(e) ? '\u003cspan class=\"tag act\">To do\u003c/span>'\n    : threadTag(e) || (!isRead(e) ? '\u003cspan class=\"tag new\">New\u003c/span>' : \"\");\n  const pill = sent ? '\u003cspan class=\"status k-done\">' + (e.decides.length ? \"Answer sent\" : \"Reply sent\") + \"\u003c/span>\"\n    : needsYou(e) ? \"\" : '\u003cspan class=\"status k-' + e.kind + '\">' + KIND[e.kind] + \"\u003c/span>\";\n  const showStatus = e.status && norm(e.status) !== norm(KIND[e.kind]) && ![\"answered\", \"done\", \"waitingforyou\"].includes(norm(e.status));\n  const gist = gistOf(e);\n  const act = taskHtml(e) + (e.decides.length || sent ? formHtml(e) : \"\");\n  const fold = filter === \"all\" && !query && needsYou(e);\n  return '\u003carticle id=\"e' + e.num + '\">\u003cdiv class=\"ch\">\u003cspan class=\"num\">#' + e.num + \"\u003c/span>\u003cdiv>\u003ch3>\" + esc(e.title) + \"\u003c/h3>\" +\n    '\u003cp class=\"meta\">' + tag + pill + (needsYou(e) ? priHtml(e.prio) : \"\") + \"\u003cspan>\" + esc(e.date) + \"\u003c/span>\" +\n    (e.chatUrl ? '\u003ca href=\"' + esc(e.chatUrl) + '\" target=\"_blank\" rel=\"noopener\">' + esc(chatLabel(e.chat)) + \"\u003c/a>\" : \"\u003cspan>\" + esc(chatLabel(e.chat)) + \"\u003c/span>\") + \"\u003c/p>\" +\n    (showStatus ? '\u003cp class=\"statusline\">' + esc(softCaps(e.status)) + \"\u003c/p>\" : \"\") +\n    backlogChips(e) + (gist ? '\u003cp class=\"gist\">' + esc(gist) + \"\u003c/p>\" : \"\") + \"\u003c/div>\u003c/div>\" +\n    '\u003cdiv class=\"cb\">' + (fold ? \"\" : act) +\n    '\u003cdiv class=\"fbar\">' + (fold ? pbtn(\"act\" + e.num, needsAnswer(e) ? \"Answer it\" : \"Your task\" + (tasksOf(e).length > 1 ? \"s\" : \"\")) : \"\") + pbtn(\"full\" + e.num, e.decides.length ? \"The full question and my answer\" : tasksOf(e).length ? \"Why\" : \"Read the full answer\") +\n    (e.decides.length || sent ? \"\" : pbtn(\"reply\" + e.num, \"Reply\")) + readHtml(e) + \"\u003c/div>\" +\n    '\u003cspan class=\"msg\" id=\"rmsg' + e.num + '\" role=\"status\">\u003c/span>' +\n    (fold ? '\u003cdiv class=\"fpanel\" id=\"fpact' + e.num + '\" hidden>' + act + \"\u003c/div>\" : \"\") +\n    '\u003cdiv class=\"fpanel full\" id=\"fpfull' + e.num + '\" data-n=\"' + e.num + '\" hidden>\u003cdiv class=\"body\">\u003c/div>\u003c/div>' +\n    (e.decides.length || sent ? \"\" : '\u003cdiv class=\"fpanel\" id=\"fpreply' + e.num + '\" hidden>' + formHtml(e) + \"\u003c/div>\") + \"\u003c/div>\u003c/article>\";\n}\n// The .md wraps its lines at about 110 characters: join a wrapped line to the one before it, so a sentence\n// never breaks in the middle on a phone. A list, a bold label line, a table, a quote or a heading still starts a new line.\nfunction unwrap(s) {\n  const out = [];\n  let fence = false;\n  String(s).split(\"\\n\").forEach((l) => {\n    if (/^\\s*```/.test(l)) fence = !fence;\n    const prev = out[out.length - 1];\n    if (!fence && out.length && prev.trim() && l.trim() && !/^\\s*```/.test(prev) && !/^\\s*\\|/.test(prev) &&\n        !/^\\s*([-*+] |\\d+[.)] |\\*\\*|\\||>|#)/.test(l)) out[out.length - 1] = prev.replace(/\\s+$/, \"\") + \" \" + l.trim();\n    else out.push(l);\n  });\n  return out.join(\"\\n\");\n}\n// The long answer is drawn only when opened: the page stays quick with 50 entries.\nfunction fillBody(d) {\n  const body = d.querySelector(\".body\");\n  if (!body || body.dataset.filled) return;\n  const e = entryOf(Number(d.dataset.n));\n  if (!e) return;\n  // R-174 (owner, 29 Oct 2026): on a thread, his last follow-up and my answer under it are highlighted.\n  const text = unwrap(e.body), k = e.thread ? text.lastIndexOf(\"**YOUR REPLY\") : -1;\n  body.innerHTML = k \u003c 0 ? md(text) : md(text.slice(0, k)) +\n    '\u003csection class=\"latest\" aria-label=\"Latest on this thread\">\u003cp class=\"latestlbl\">Latest on this thread' +\n    (e.thread.replies > 1 ? \" · reply \" + e.thread.replies : \"\") + \"\u003c/p>\" + md(text.slice(k)) + \"\u003c/section>\";\n  body.dataset.filled = \"1\";\n  enhance(body);\n}\nconst doneBox = (key, label, inner) => inner\n  ? '\u003cdetails class=\"donebox\" data-box=\"' + key + '\"' + (doneOpen[key] ? \" open\" : \"\") + \">\u003csummary>\" + esc(label) + CHEV + '\u003c/summary>\u003cdiv class=\"stack\">' + inner + \"\u003c/div>\u003c/details>\"\n  : \"\";\nconst empty = (title, line) => '\u003cdiv class=\"empty\">\u003cp>\u003cb>' + esc(title) + \"\u003c/b>\u003c/p>\" + (line ? \"\u003cp>\" + esc(line) + \"\u003c/p>\" : \"\") + \"\u003c/div>\";\nconst rowEntry = (e, sub) => '\u003cli>\u003ca class=\"row\" href=\"#e' + e.num + '\" data-goto=\"' + e.num + '\">\u003cspan class=\"rn\">#' + e.num + '\u003c/span>\u003cspan class=\"rb\">\u003cspan class=\"rt\">' + esc(e.title) + \"\u003c/span>\" +\n  (sub ? '\u003cspan class=\"rs\">' + sub + \"\u003c/span>\" : \"\") + \"\u003c/span>\" + GO + \"\u003c/a>\u003c/li>\";\nconst rowFeat = (f, sub) => '\u003cli>\u003ca class=\"row\" href=\"#\" data-feat=\"' + esc(f.id) + '\">\u003cspan class=\"rn\">\u003c/span>\u003cspan class=\"rb\">\u003cspan class=\"rt\">' + esc(f.name) + \"\u003c/span>\" +\n  '\u003cspan class=\"rs\">' + (sub || '\u003cspan class=\"status k-' + f.kind + '\">' + esc(f.status) + \"\u003c/span> \" + esc(f.group)) + \"\u003c/span>\u003c/span>\" + GO + \"\u003c/a>\u003c/li>\";\nconst rowTask = (x, sub) => '\u003cli>\u003ca class=\"row\" href=\"#\" data-task=\"' + x.i + '\">\u003cspan class=\"rn\">\u003c/span>\u003cspan class=\"rb\">\u003cspan class=\"rt\">' + esc(x.t.task) + \"\u003c/span>\" +\n  '\u003cspan class=\"rs\">' + (sub || '\u003cspan class=\"status k-' + x.k + '\">' + esc(x.t.status) + \"\u003c/span>\") + \"\u003c/span>\u003c/span>\" + GO + \"\u003c/a>\u003c/li>\";\nconst rows = (items, cap) => {\n  if (!cap || items.length \u003c= cap + 2) return '\u003cul class=\"rows\">' + items.join(\"\") + \"\u003c/ul>\";\n  return '\u003cul class=\"rows\">' + items.slice(0, cap).join(\"\") + '\u003c/ul>\u003cdetails class=\"morelist\">\u003csummary>' + (items.length - cap) + \" more\" + CHEV + '\u003c/summary>\u003cul class=\"rows\">' + items.slice(cap).join(\"\") + \"\u003c/ul>\u003c/details>\";\n};\n\n// ---- What changed since he last looked (kept on this phone only; a new visit = 30 minutes since the last open) ----\nconst snapNow = () => {\n  const s = { e: {}, f: {}, t: {} };\n  DATA.entries.forEach((e) => { s.e[e.num] = [e.status, e.decides.length, tasksOf(e).length]; });\n  DATA.backlog.forEach((f) => { s.f[f.id] = f.status; });\n  DATA.mine.forEach((t) => { s.t[t.task] = t.status; });\n  return s;\n};\nlet seen = null, firstVisit = false;\n(function trackVisit() {\n  const now = Date.now(), cur = snapNow();\n  try { seen = JSON.parse(ls.get(\"inbox-seen\") || \"null\"); } catch (e) { seen = null; }\n  if (!seen || !seen.base || !seen.last) { seen = { base: cur, baseAt: now, last: cur, lastAt: now }; firstVisit = true; }\n  else if (now - seen.lastAt > 30 * 60 * 1000) { seen.base = seen.last; seen.baseAt = seen.lastAt; }\n  seen.last = cur; seen.lastAt = now;\n  ls.set(\"inbox-seen\", JSON.stringify(seen));\n})();\nfunction changes() {\n  const base = seen.base, out = [];\n  DATA.entries.slice().sort(byNum).forEach((e) => {\n    const was = base.e[e.num];\n    if (!was) out.push({ w: 0, html: rowEntry(e, '\u003cspan class=\"tag new\">New\u003c/span>') });\n    else if (e.decides.length > was[1]) out.push({ w: 0, html: rowEntry(e, '\u003cspan class=\"tag act\">New question\u003c/span>') });\n    else if (tasksOf(e).length > was[2]) out.push({ w: 1, html: rowEntry(e, '\u003cspan class=\"tag act\">New task for you\u003c/span>') });\n    else if (e.status !== was[0]) out.push({ w: 1, html: rowEntry(e, \"Now: \" + esc(softCaps(e.status))) });\n  });\n  DATA.backlog.forEach((f) => {\n    if (DATA.moves[f.id]) return; // his own move is not news to him\n    const was = base.f[f.id];\n    if (was === undefined) out.push({ w: 2, html: rowFeat(f, 'Added: \u003cspan class=\"status k-' + f.kind + '\">' + esc(f.status) + \"\u003c/span>\") });\n    else if (was !== f.status) out.push({ w: SHIPPED.includes(f.kind) ? 1 : 2, html: rowFeat(f, esc(was) + ' &rarr; \u003cspan class=\"status k-' + f.kind + '\">' + esc(f.status) + \"\u003c/span>\") });\n  });\n  mineAll().forEach((x) => {\n    const was = base.t[x.t.task];\n    if (was === undefined) out.push({ w: 3, html: rowTask(x, \"New task for Claude\") });\n    else if (was !== x.t.status) out.push({ w: 3, html: rowTask(x, esc(was) + ' &rarr; \u003cspan class=\"status k-' + x.k + '\">' + esc(x.t.status) + \"\u003c/span>\") });\n  });\n  return out.sort((a, b) => a.w - b.w).map((x) => x.html);\n}\nconst since = (t) => new Date(t).toLocaleString(\"en-IN\", { day: \"numeric\", month: \"short\", hour: \"numeric\", minute: \"2-digit\" });\nconst updatedText = () => (DATA.updatedIso ? since(DATA.updatedIso) : DATA.updated);\n\n// ---- Tabs ----\nfunction homeHtml() {\n  const qs = DATA.entries.filter(needsAnswer).sort(byNum), ts = DATA.entries.filter(needsTask).sort(byNum);\n  const fresh = DATA.entries.filter(toRead).sort(byNum), mine = mineAll();\n  const doing = mine.filter((x) => x.k === \"doing\"), blocked = mine.filter((x) => x.k === \"blocked\");\n  const parts = [];\n  if (qs.length) parts.push(\"\u003cb>\" + qs.length + (qs.length === 1 ? \" question\" : \" questions\") + \"\u003c/b>\");\n  if (ts.length) parts.push(\"\u003cb>\" + ts.length + (ts.length === 1 ? \" task\" : \" tasks\") + \"\u003c/b>\");\n  const ch = changes();\n  return '\u003cdiv class=\"home\">\u003ch2 class=\"sr\">Home\u003c/h2>' +\n    '\u003cp class=\"lead\">' + (parts.length ? parts.join(\" and \") + \" wait for you.\" : \"Nothing waits for you right now.\") + \"\u003c/p>\" +\n    '\u003cdiv class=\"actions\">' + (qs.length ? '\u003cbutton class=\"btn\" data-tab=\"waiting\" data-sec=\"sec-q\">Answer questions\u003c/button>' : \"\") +\n    (ts.length ? '\u003cbutton class=\"btn ghost\" data-tab=\"waiting\" data-sec=\"sec-t\">Your tasks\u003c/button>' : \"\") +\n    (fresh.length ? '\u003cbutton class=\"btn ghost\" data-tab=\"all\">Read ' + fresh.length + \" new\u003c/button>\" : \"\") + \"\u003c/div>\" +\n    '\u003ch3 class=\"grp\">Since you last looked' + (ch.length ? ' \u003cspan class=\"cnt\">' + ch.length + \"\u003c/span>\" : \"\") + \"\u003c/h3>\" +\n    (firstVisit ? empty(\"First visit on this phone.\", \"From your next visit, this lists what changed: new answers, new questions, features that went live.\")\n      : ch.length ? rows(ch, 6) + '\u003cdiv class=\"actions\" style=\"margin-top:8px\">\u003cbutton class=\"btn ghost quiet\" data-act=\"seen\">Clear this list\u003c/button>\u003c/div>'\n      : empty(\"Nothing changed since \" + since(seen.baseAt) + \".\")) +\n    '\u003ch3 class=\"grp\">Questions for you \u003cspan class=\"cnt\">' + qs.length + \"\u003c/span>\u003c/h3>\" +\n    (qs.length ? rows(qs.map((e) => rowEntry(e)), 6) : empty(\"No questions wait for you.\")) +\n    (fresh.length ? '\u003ch3 class=\"grp\">New answers to read \u003cspan class=\"cnt\">' + fresh.length + \"\u003c/span>\u003c/h3>\" + rows(fresh.map((e) => rowEntry(e)), 6) : \"\") +\n    // R-196 (owner, 30 Oct 2026): the feature-rating module lives on Home, always, as its own section.\n    '\u003ch3 class=\"grp\" id=\"sec-rate\">Rate features for marketing\u003c/h3>' + rateHtml() +\n    '\u003ch3 class=\"grp\">Claude is working on\u003c/h3>' +\n    (doing.length ? rows(doing.map((x) => rowTask(x, esc(x.t.details.length > 160 ? x.t.details.slice(0, 157).replace(/\\s+\\S*$/, \"\") + \"…\" : x.t.details)))) : empty(\"Nothing marked Doing right now.\")) +\n    (blocked.length ? '\u003cp class=\"hint\">\u003ca href=\"#\" data-tab=\"mine\">' + blocked.length + \" of Claude's tasks wait for you\u003c/a>: each names the # it waits on.\u003c/p>\" : \"\") +\n    '\u003cp class=\"foot\">Updated ' + esc(updatedText()) + \". Type a number in the box at the top (for example 51) to jump to it, or a word to search everything.\u003c/p>\u003c/div>\";\n}\n// R-176 (owner, 29 Oct 2026): rate the features we build, for marketing. Two scores, 1-5: Convenience (how much\n// easier it makes the user's day) and Value (how much a buyer cares). Taps stay on this phone until \"Save my\n// ratings\" puts them into the tracker; the live top 5 per side are the selling points and hooks.\nDATA.ratings = DATA.ratings || {};\nconst RATE_SIDES = [\n  { key: \"owner\", title: \"For the gym owner\", groups: [\"Admin app (gym owner and staff)\", \"Gym ↔ member links\"] },\n  { key: \"member\", title: \"For members\", groups: [\"Member app\"] },\n];\nconst RATE_KINDS = [\"done\", \"built\", \"planned\"];\nlet rdraft = {};\ntry { rdraft = JSON.parse(ls.get(\"inbox-rdraft\") || \"{}\") || {}; } catch (e) { rdraft = {}; /* quiet: a broken draft starts empty */ }\nlet rateHideDone = ls.get(\"inbox-rhide\") === \"1\";\nconst rateOf = (id) => Object.assign({}, DATA.ratings[id] || {}, rdraft[id] || {});\nconst rateFull = (r) => Boolean(r.c && r.v);\nconst rateScore = (r) => r.v * 2 + r.c;\nconst rateFeats = (side) => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => side.groups.includes(x.f.group) && RATE_KINDS.includes(x.f.kind));\nconst unsavedRates = () => Object.keys(rdraft).filter((id) => rateFull(rateOf(id)));\nfunction rateTop(side) {\n  return rateFeats(side).map((x) => ({ f: x.f, i: x.i, r: rateOf(x.f.id) })).filter((x) => rateFull(x.r))\n    .sort((a, b) => rateScore(b.r) - rateScore(a.r) || b.r.v - a.r.v || a.i - b.i).slice(0, 5);\n}\nfunction rateTopHtml() {\n  return RATE_SIDES.map((side) => {\n    const top = rateTop(side);\n    return '\u003cdiv class=\"rtop\">\u003cp class=\"rtoph\">Top 5 ' + esc(side.title.toLowerCase()) + \"\u003c/p>\" + (top.length\n      ? \"\u003col>\" + top.map((x) => \"\u003cli>\" + esc(x.f.name) + ' \u003cspan class=\"rsc\">Value ' + x.r.v + \" · Convenience \" + x.r.c + \"\u003c/span>\u003c/li>\").join(\"\") + \"\u003c/ol>\"\n      : '\u003cp class=\"small\" style=\"margin:0\">Rate a few to see them here.\u003c/p>') + \"\u003c/div>\";\n  }).join(\"\");\n}\nconst RLABEL = { c: \"Convenience\", v: \"Value\" };\nfunction rateRow(f, k) {\n  const r = rateOf(f.id);\n  let h = '\u003cdiv class=\"rrow\" role=\"group\" aria-label=\"' + RLABEL[k] + \", \" + esc(f.name) + '\">\u003cspan class=\"rlbl\">' + RLABEL[k] + \"\u003c/span>\";\n  for (let n = 1; n \u003c= 5; n++) h += '\u003cbutton type=\"button\" class=\"r5\" data-act=\"rate\" data-id=\"' + esc(f.id) + '\" data-k=\"' + k + '\" data-v=\"' + n + '\" aria-pressed=\"' + (r[k] === n) + '\">' + n + \"\u003c/button>\";\n  return h + \"\u003c/div>\";\n}\nconst rateCard = ({ f, i }) => '\u003cdiv class=\"rcard\" id=\"rc' + i + '\">\u003cdiv class=\"fh\">\u003ch4 class=\"name\">' + esc(f.name) + '\u003c/h4>\u003cspan class=\"status k-' + f.kind + '\">' + esc(BL_KIND[f.kind]) + \"\u003c/span>\u003c/div>\" +\n  '\u003cp class=\"det rdet\">' + esc(String(f.how || f.details).replace(/\\s*\\((?:R-\\d+|#\\d+)[^)]*\\)/g, \"\")) + \"\u003c/p>\" + rateRow(f, \"c\") + rateRow(f, \"v\") + \"\u003c/div>\";\nfunction rateCounts() {\n  const all = RATE_SIDES.map((side) => rateFeats(side));\n  return { all, total: all.reduce((n, xs) => n + xs.length, 0), rated: all.reduce((n, xs) => n + xs.filter((x) => rateFull(rateOf(x.f.id))).length, 0) };\n}\nconst rateSum = (c) => \"Rate the features (\" + c.rated + \" of \" + c.total + \" rated)\";\nconst rateBtn = () => { const u = unsavedRates().length; return \"Save my ratings\" + (u ? \" (\" + u + \")\" : \"\"); };\nfunction rateHtml() {\n  const c = rateCounts(), u = unsavedRates().length;\n  // On Home the top 5 always show; the list to rate folds under them (R-196).\n  return '\u003cp class=\"hint\">Rate each feature from 1 to 5. \u003cb>Convenience\u003c/b>: how much easier it makes the day of the person who uses it. \u003cb>Value\u003c/b>: how much a gym owner buying MettleUp would care about it. Tap a number again to clear it. The top 5 on each side become our selling points and marketing hooks.\u003c/p>' +\n    '\u003cdiv id=\"rtops\">' + rateTopHtml() + \"\u003c/div>\" +\n    '\u003cdetails class=\"ratebox\" data-box=\"rate\"' + (doneOpen.rate ? \" open\" : \"\") + '>\u003csummary>\u003cspan id=\"rsum\">' + rateSum(c) + \"\u003c/span>\" + CHEV + \"\u003c/summary>\" +\n    '\u003cdiv class=\"actions\" style=\"margin:12px 0 4px\">\u003cbutton class=\"btn\" id=\"rsave\" data-act=\"ratesave\"' + (u ? \"\" : \" disabled\") + \">\" + rateBtn() + \"\u003c/button>\" +\n    '\u003clabel class=\"rhide\">\u003cinput type=\"checkbox\" id=\"rhide\"' + (rateHideDone ? \" checked\" : \"\") + \"> Hide rated ones\u003c/label>\" +\n    '\u003cspan class=\"msg\" id=\"ratemsg\" role=\"status\">\u003c/span>\u003c/div>' +\n    RATE_SIDES.map((side, si) => {\n      const xs = c.all[si].filter((x) => !(rateHideDone && rateFull(rateOf(x.f.id))));\n      return '\u003ch3 class=\"grp\">' + esc(side.title) + ' \u003cspan class=\"cnt\">' + c.all[si].length + \"\u003c/span>\u003c/h3>\" + (xs.length ? xs.map(rateCard).join(\"\") : empty(\"All rated on this side.\", \"\"));\n    }).join(\"\") + \"\u003c/details>\";\n}\nfunction rateTap(b) {\n  const id = b.dataset.id, k = b.dataset.k, v = Number(b.dataset.v), cur = rateOf(id);\n  const d = { c: cur.c || 0, v: cur.v || 0 };\n  d[k] = cur[k] === v ? 0 : v;\n  rdraft[id] = d;\n  ls.set(\"inbox-rdraft\", JSON.stringify(rdraft));\n  b.parentElement.querySelectorAll(\".r5\").forEach((x) => x.setAttribute(\"aria-pressed\", String(Number(x.dataset.v) === d[k])));\n  $(\"rtops\").innerHTML = rateTopHtml();\n  $(\"rsum\").textContent = rateSum(rateCounts());\n  const sb = $(\"rsave\"); sb.textContent = rateBtn(); sb.disabled = !unsavedRates().length;\n}\nfunction rateSave() {\n  const msg = $(\"ratemsg\"), at = stamp(), add = {};\n  unsavedRates().forEach((id) => { const r = rateOf(id); add[id] = { c: r.c, v: r.v, at }; });\n  const n = Object.keys(add).length;\n  if (!n) { msg.textContent = \"Give a feature both scores first.\"; return; }\n  const before = JSON.stringify(DATA.ratings), draftBefore = JSON.stringify(rdraft);\n  save(() => { Object.assign(DATA.ratings, add); Object.keys(add).forEach((id) => delete rdraft[id]); ls.set(\"inbox-rdraft\", JSON.stringify(rdraft)); },\n    () => { DATA.ratings = JSON.parse(before); rdraft = JSON.parse(draftBefore); ls.set(\"inbox-rdraft\", draftBefore); },\n    msg, \"Owner inbox feature ratings: \" + Object.keys(add).map((id) => id + \" C\" + add[id].c + \" V\" + add[id].v).join(\", \"),\n    n + (n === 1 ? \" rating\" : \" ratings\") + \" saved.\");\n}\nfunction waitingHtml() {\n  const list = DATA.entries.filter(shown).sort(byNum);\n  const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter(needsTask).sort(byPrio((e) => e.prio, byNum));\n  const tops = list.filter(topicWait).sort(byNum);\n  const feats = waitingFeats().sort(byPrio((x) => x.f.prio, (a, b) => a.i - b.i));\n  // Done (folded below): decisions already answered, tasks done, feature yes/no's sent.\n  // R-173: answered questions and done tasks live in Q&A only (one topic, one place); here only feature replies just sent.\n  const doneList = [];\n  const sentFeats = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === \"waiting\" && DATA.notes[x.f.id]);\n  let out = '\u003cdiv class=\"tabhead\">\u003ch2>Waiting for you\u003c/h2>\u003c/div>' +\n    '\u003cp class=\"hint\">A question: tap an answer, then Send. A task: do it, then tap “I have done it”. Or tell me in chat, for example “49: A”.\u003c/p>' + sortHtml();\n  if (!qs.length && !ts.length && !tops.length && !feats.length) out += '\u003cdiv style=\"margin-top:14px\">' + empty(\"Nothing waits for you.\", \"When I need a decision or a step from you, it shows up here first.\") + \"\u003c/div>\";\n  // R-83: the open questions by number first (tap = jump), then the questions, the tasks, the features.\n  if (qs.length) out += '\u003cnav class=\"qindex\" aria-label=\"Questions for you\">' + rows(qs.map((e) => rowEntry(e))) + \"\u003c/nav>\" +\n    '\u003ch3 class=\"grp\" id=\"sec-q\">Questions for you \u003cspan class=\"cnt\">' + qs.length + '\u003c/span>\u003c/h3>\u003cdiv class=\"stack\">' + qs.map(card).join(\"\") + \"\u003c/div>\";\n  if (ts.length) out += '\u003ch3 class=\"grp\" id=\"sec-t\">Tasks for you \u003cspan class=\"cnt\">' + ts.length + '\u003c/span>\u003c/h3>\u003cdiv class=\"stack\">' + ts.map(card).join(\"\") + \"\u003c/div>\";\n  if (tops.length) out += '\u003ch3 class=\"grp\" id=\"sec-w\">Topics waiting for you \u003cspan class=\"cnt\">' + tops.length + \"\u003c/span>\u003c/h3>\" +\n    '\u003cp class=\"hint\" style=\"margin:-4px 0 10px\">We discussed these; the feature now needs your yes, money or a step. Tap the backlog chip to answer there.\u003c/p>' +\n    '\u003cdiv class=\"stack\">' + tops.map(card).join(\"\") + \"\u003c/div>\";\n  if (feats.length) out += '\u003ch3 class=\"grp\" id=\"sec-f\">Features waiting for you \u003cspan class=\"cnt\">' + feats.length + \"\u003c/span>\u003c/h3>\" +\n    '\u003cp class=\"hint\" style=\"margin:-4px 0 10px\">Each needs you: an answer, a yes, a purchase or a setup step. Open “Comment” and tell me, for example “Yes, go ahead” or “Not now”.\u003c/p>' +\n    feats.map(({ f, i }) => featHtml(f, i)).join(\"\");\n  const n = doneList.length + sentFeats.length;\n  if (n) out += doneBox(\"waiting\", \"Answered and done (\" + n + \")\", doneList.map(card).join(\"\") + sentFeats.map(({ f, i }) => featHtml(f, i)).join(\"\"));\n  return out;\n}\nfunction qaHtml() {\n  // R-96: open questions and tasks first, in the Sort order; then new answers; then the rest by number.\n  const sorted = DATA.entries.filter(shown).sort(byPrio((e) => (needsYou(e) ? e.prio : null), (a, b) => (toRead(b) - toRead(a)) || byNum(a, b)));\n  const isDone = (e) => isRead(e) && !needsYou(e);\n  const top = sorted.filter(onTop).sort(byThread), rest = sorted.filter((e) => !onTop(e));\n  const list = rest.filter((e) => !isDone(e)), doneList = rest.filter(isDone);\n  const fresh = sorted.filter(toRead);\n  const topHtml = top.length ? '\u003ch3 class=\"grp\">Your follow-ups \u003cspan class=\"cnt\">' + top.length + \"\u003c/span>\u003c/h3>\" +\n    '\u003cdiv class=\"stack\">' + top.map(card).join(\"\") + \"\u003c/div>\" + '\u003ch3 class=\"grp\">Other answers\u003c/h3>' : \"\";\n  return '\u003cdiv class=\"tabhead\">\u003ch2>Questions &amp; answers\u003c/h2>' +\n    (fresh.length > 1 ? '\u003cbutton class=\"btn ghost\" data-act=\"readall\">Mark all ' + fresh.length + \" as read\u003c/button>\" : \"\") + \"\u003c/div>\" +\n    '\u003cspan class=\"msg\" id=\"rallmsg\" role=\"status\">\u003c/span>' +\n    '\u003cp class=\"hint\">' + \"Questions you replied to sit on top; “New answer” means I answered your follow-up. Then other answers, new ones first. Anything you need to pick or do is under Waiting for you.\" +\n    \" Open one with “Read the full answer”; tap “Mark as read” when you are done with it.\u003c/p>\" + sortHtml() + topHtml +\n    '\u003cdiv class=\"stack\" style=\"margin-top:14px\">' + (list.length ? list.map(card).join(\"\") : empty(\"Nothing new: everything is read.\", \"Read answers are folded below.\")) + \"\u003c/div>\" +\n    doneBox(\"all\", \"Already read (\" + doneList.length + \")\", doneList.map(card).join(\"\"));\n}\nfunction noteText(f, text) { return \"Owner inbox feature backlog: \" + f.group + \" / \" + f.name + \": \" + text; }\nfunction featHtml(f, i, withGroup) {\n  const sent = DATA.notes[f.id], mv = DATA.moves[f.id], canMove = !SHIPPED.includes(f.kind);\n  const btn = (k, label) => '\u003cbutton type=\"button\" class=\"fbtn\" data-act=\"panel\" data-p=\"fp' + k + i + '\" aria-expanded=\"false\" aria-controls=\"fp' + k + i + '\">' + label + CHEV + \"\u003c/button>\";\n  const pri = canMove && f.kind !== \"no\" ? priHtml(f.prio) : \"\";\n  return '\u003cdiv class=\"feat\" id=\"f' + i + '\">\u003cdiv class=\"fh\">\u003ch4 class=\"name\">' + esc(f.name) + '\u003c/h4>\u003cspan class=\"status k-' + f.kind + '\">' + esc(f.status) + \"\u003c/span>\u003c/div>\" +\n    (pri || withGroup ? '\u003cp class=\"pris\">' + pri + (withGroup ? \"\u003cspan>\" + esc(f.group) + \"\u003c/span>\" : \"\") + \"\u003c/p>\" : \"\") +\n    '\u003cp class=\"det\">' + esc(f.details) + \"\u003c/p>\" +\n    (mv ? '\u003cp class=\"moved\">Moved here by you, ' + esc(mv.at) + \".\u003c/p>\" : \"\") +\n    (sent ? '\u003cdiv class=\"sentbox\">\u003cp class=\"sentline\">' + CHECK + \"Comment sent \" + esc(sent.at) + '\u003c/p>\u003cp class=\"sentnote\">' + esc(sent.text) + \"\u003c/p>\" +\n      '\u003cp class=\"small\">Claude acts on it the next time it opens your tracker.\u003c/p>\u003cdiv class=\"actions\">\u003cbutton class=\"btn ghost\" data-act=\"renote\" data-i=\"' + i + '\">Write another\u003c/button>\u003c/div>\u003c/div>' : \"\") +\n    '\u003cdiv class=\"fbar\">' + (f.how ? btn(\"how\", \"How it will work\") : \"\") + (canMove ? btn(\"move\", \"Move to\") : \"\") + (sent ? \"\" : btn(\"note\", \"Comment\")) + \"\u003c/div>\" +\n    (f.how ? '\u003cdiv class=\"fpanel\" id=\"fphow' + i + '\" hidden>\u003cp class=\"how\">\u003cb>How it will work:\u003c/b> ' + esc(f.how) + \"\u003c/p>\u003c/div>\" : \"\") +\n    (canMove ? '\u003cdiv class=\"fpanel\" id=\"fpmove' + i + '\" hidden>\u003cdiv class=\"actions\">' +\n      Object.keys(MOVE_KIND).filter((to) => to !== f.status).map((to) =>\n        '\u003cbutton class=\"btn ghost\" data-act=\"move\" data-i=\"' + i + '\" data-to=\"' + esc(to) + '\">' + esc(MOVE_LABEL[to]) + \"\u003c/button>\").join(\"\") +\n      '\u003cspan class=\"msg\" id=\"mmsg' + i + '\" role=\"status\">\u003c/span>\u003c/div>\u003c/div>' : \"\") +\n    (sent ? \"\" : '\u003cdiv class=\"fpanel\" id=\"fpnote' + i + '\" hidden>\u003cdiv class=\"form\">\u003clabel class=\"notelbl\" for=\"fnote' + i + '\">Your comment on ' + esc(f.name) + \"\u003c/label>\" +\n      '\u003ctextarea id=\"fnote' + i + '\" rows=\"2\" placeholder=\"e.g. Do this one first, members keep asking\">\u003c/textarea>' +\n      '\u003cdiv class=\"actions\">\u003cbutton class=\"btn\" data-act=\"fnote\" data-i=\"' + i + '\">Send to Claude\u003c/button>\u003cspan class=\"msg\" id=\"fmsg' + i + '\" role=\"status\">\u003c/span>\u003c/div>\u003c/div>\u003c/div>') +\n    \"\u003c/div>\";\n}\nfunction groupedHtml(items) {\n  const count = {};\n  items.forEach(({ f }) => { count[f.group] = (count[f.group] || 0) + 1; });\n  let out = \"\", group = null;\n  items.forEach(({ f, i }) => {\n    if (f.group !== group) { group = f.group; out += '\u003ch3 class=\"grp\">' + esc(group) + ' \u003cspan class=\"cnt\">' + count[group] + \"\u003c/span>\u003c/h3>\"; }\n    out += featHtml(f, i);\n  });\n  return out;\n}\nfunction backlogHtml() {\n  const all = DATA.backlog.map((f, i) => ({ f, i }));\n  const head = '\u003cdiv class=\"tabhead\">\u003ch2>Feature backlog\u003c/h2>\u003c/div>';\n  if (!all.length) return head + '\u003cdiv style=\"margin-top:14px\">' + empty(\"Nothing here yet.\", \"Features show up here once you confirm them.\") + \"\u003c/div>\";\n  const groups = [...new Set(all.map((x) => x.f.group))];\n  if (blGroup !== \"all\" && !groups.includes(blGroup)) blGroup = \"all\";\n  const inGroup = all.filter((x) => blGroup === \"all\" || x.f.group === blGroup);\n  const counts = {};\n  inGroup.forEach((x) => { counts[x.f.kind] = (counts[x.f.kind] || 0) + 1; });\n  if (blKind && !counts[blKind]) blKind = null;\n  const toBuild = inGroup.filter((x) => !SHIPPED.includes(x.f.kind)).length;\n  const rank = (x) => BL_ORDER.indexOf(x.f.kind);\n  // Within a group, what needs him first, then Planned, Idea, Not doing (the .md order kept inside each).\n  const sortIn = (xs) => xs.slice().sort((a, b) => groups.indexOf(a.f.group) - groups.indexOf(b.f.group) || rank(a) - rank(b) || a.i - b.i);\n  const filters = '\u003cdiv class=\"filters\">\u003cdiv class=\"pills\" role=\"group\" aria-label=\"Show features by status\">' +\n    '\u003cbutton type=\"button\" class=\"pill\" data-act=\"blk\" data-k=\"\" aria-pressed=\"' + !blKind + '\">Not built yet \u003cb>' + toBuild + \"\u003c/b>\u003c/button>\" +\n    BL_ORDER.filter((k) => counts[k]).map((k) => '\u003cbutton type=\"button\" class=\"pill k-' + k + '\" data-act=\"blk\" data-k=\"' + k + '\" aria-pressed=\"' + (blKind === k) + '\">\u003cspan class=\"dot\">\u003c/span>' + BL_KIND[k] + \" \u003cb>\" + counts[k] + \"\u003c/b>\u003c/button>\").join(\"\") +\n    \"\u003c/div>\" +\n    '\u003cdiv class=\"selrow\">\u003clabel for=\"blgroup\">Group\u003c/label>\u003cselect id=\"blgroup\">\u003coption value=\"all\">All groups (' + all.length + \")\u003c/option>\" +\n    groups.map((g) => '\u003coption value=\"' + esc(g) + '\"' + (g === blGroup ? \" selected\" : \"\") + \">\" + esc(g) + \" (\" + all.filter((x) => x.f.group === g).length + \")\u003c/option>\").join(\"\") + \"\u003c/select>\u003c/div>\" +\n    '\u003cp class=\"legend\">\u003cb>Planned\u003c/b> = Claude builds it, no need to ask you. \u003cb>Waiting for you\u003c/b> = needs your answer, a yes, money or a setup step. Open “Move to” on a feature to change it.\u003c/p>\u003c/div>' + sortHtml();\n  // R-96: a Sort other than \"Original order\" lists the features not built as one list (each card names its group).\n  const listed = (xs) => sortBy === \"order\" ? groupedHtml(sortIn(xs))\n    : '\u003cdiv style=\"margin-top:14px\">' + sortIn(xs).sort(byPrio((x) => (x.f.kind === \"no\" ? null : x.f.prio), () => 0)).map(({ f, i }) => featHtml(f, i, true)).join(\"\") + \"\u003c/div>\";\n  if (blKind) return head + filters + (SHIPPED.includes(blKind) ? groupedHtml(sortIn(inGroup.filter((x) => x.f.kind === blKind))) : listed(inGroup.filter((x) => x.f.kind === blKind)));\n  const built = inGroup.filter((x) => SHIPPED.includes(x.f.kind));\n  const pending = inGroup.filter((x) => !SHIPPED.includes(x.f.kind));\n  return head + filters + (pending.length ? listed(pending) : '\u003cdiv style=\"margin-top:14px\">' + empty(\"Everything in this group is built.\") + \"\u003c/div>\") +\n    doneBox(\"built\", \"Built (\" + built.length + \"): live, or in the next release\", groupedHtml(sortIn(built)));\n}\nfunction taskRow(x) {\n  const waits = x.k === \"blocked\" ? numsIn(x.t.details) : [];\n  const pri = x.k === \"done\" ? \"\" : priHtml(x.t.prio);\n  return '\u003cdiv class=\"feat task\" id=\"t' + x.i + '\">\u003cdiv class=\"fh\">\u003ch4 class=\"name\">' + esc(x.t.task) + '\u003c/h4>\u003cspan class=\"status k-' + x.k + '\">' + esc(x.t.status) + \"\u003c/span>\u003c/div>\" +\n    (pri ? '\u003cp class=\"pris\">' + pri + \"\u003c/p>\" : \"\") +\n    (waits.length ? '\u003cp class=\"waits\">Waits for ' + waits.map((n) => '\u003ca class=\"chipnum\" href=\"#e' + n + '\" data-goto=\"' + n + '\">\u003cb>#' + n + \"\u003c/b>\" + esc(entryOf(n).title.length > 34 ? entryOf(n).title.slice(0, 32).replace(/\\s+\\S*$/, \"\") + \"…\" : entryOf(n).title) + \"\u003c/a>\").join(\"\") + \"\u003c/p>\" : \"\") +\n    (x.t.details ? '\u003cp class=\"det\">' + esc(x.t.details) + \"\u003c/p>\" : \"\") + \"\u003c/div>\";\n}\nfunction mineHtml() {\n  const mine = mineAll();\n  const head = '\u003cdiv class=\"tabhead\">\u003ch2>Claude’s tasks\u003c/h2>\u003c/div>\u003cp class=\"hint\">What I do myself. Blocked ones wait for you: tap the # to answer it.\u003c/p>' + sortHtml();\n  if (!mine.length) return head + empty(\"No tasks yet.\");\n  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k).sort(byPrio((x) => x.t.prio, (a, b) => a.i - b.i)); return xs.length ? '\u003ch3 class=\"grp\">' + title + ' \u003cspan class=\"cnt\">' + xs.length + \"\u003c/span>\u003c/h3>\" + xs.map(taskRow).join(\"\") : \"\"; };\n  const done = mine.filter((x) => x.k === \"done\");\n  return head + sec(\"doing\", \"Doing now\") + sec(\"blocked\", \"Blocked: waits for you\") + sec(\"todo\", \"To do next\") +\n    (mine.some((x) => x.k !== \"done\") ? \"\" : empty(\"Nothing open: all my tasks are done.\")) +\n    doneBox(\"mine\", \"Done (\" + done.length + \")\", done.map(taskRow).join(\"\"));\n}\n\n// ---- Search: words across everything, or a number ----\nfunction searchHtml() {\n  const q = query.trim();\n  const nm = q.match(/^#?(\\d{1,4})$/);\n  const tokens = nm ? [\"#\" + Number(nm[1])] : q.toLowerCase().split(/\\s+/).filter(Boolean);\n  const hit = (hay) => tokens.every((t) => hay.includes(t));\n  const reTok = new RegExp(\"(\" + tokens.map((t) => t.replace(/[.*+?^${}()|[\\]\\\\]/g, \"\\\\$&\")).join(\"|\") + \")\", \"gi\");\n  const snip = (text) => {\n    const low = text.toLowerCase(), at = low.indexOf(tokens[0]);\n    if (at \u003c 0) return \"\";\n    const from = Math.max(0, at - 50), s = (from ? \"…\" : \"\") + text.slice(from, at + 110).replace(/\\s+/g, \" \") + (at + 110 \u003c text.length ? \"…\" : \"\");\n    return esc(s).replace(reTok, \"\u003cmark>$1\u003c/mark>\");\n  };\n  const es = DATA.entries.map((e) => {\n    const text = e.title + \" \" + softCaps(e.status) + \" \" + e.decides.map((d) => d.q + \" \" + d.opts.map((o) => o.key + \": \" + o.text).join(\" \")).join(\" \") + \" \" + tasksOf(e).join(\" \") + \" \" + plain(e.body);\n    return { e, text, hay: (\"#\" + e.num + \" \" + chatLabel(e.chat) + \" \" + text).toLowerCase() };\n  }).filter((x) => hit(x.hay)).sort((a, b) => (nm ? (b.e.num === Number(nm[1])) - (a.e.num === Number(nm[1])) : 0) || byNum(a.e, b.e));\n  const fs = DATA.backlog.map((f, i) => ({ f, i, text: f.name + \" \" + f.status + \" \" + f.details + \" \" + f.how })).filter((x) => hit((x.f.group + \" \" + x.text).toLowerCase()));\n  const ts = mineAll().map((x) => Object.assign(x, { text: x.t.task + \" \" + x.t.status + \" \" + x.t.details })).filter((x) => hit(x.text.toLowerCase()));\n  const total = es.length + fs.length + ts.length;\n  let out = '\u003cdiv class=\"tabhead\">\u003ch2>Search: “' + esc(q) + '”\u003c/h2>\u003cbutton class=\"btn ghost quiet\" data-act=\"clearq\">Clear\u003c/button>\u003c/div>' +\n    '\u003cp class=\"hint\">' + (total ? total + \" found\" + (nm ? \". Press Go to jump to #\" + Number(nm[1]) + \".\" : \".\") : \"\") + \"\u003c/p>\";\n  if (!total) return out + '\u003cdiv style=\"margin-top:14px\">' + empty(\"Nothing matches.\", \"Try one word, or a number like 51.\") + \"\u003c/div>\";\n  const eRow = (x) => rowEntry(x.e, nm && x.e.num === Number(nm[1]) ? '\u003cspan class=\"tag act\">Go to #' + x.e.num + \"\u003c/span>\" : snip(x.text));\n  const ew = es.filter((x) => needsYou(x.e)), eq = es.filter((x) => !needsYou(x.e));\n  if (ew.length) out += '\u003ch3 class=\"grp\">Waiting for you \u003cspan class=\"cnt\">' + ew.length + \"\u003c/span>\u003c/h3>\" + rows(ew.map(eRow), 12);\n  if (eq.length) out += '\u003ch3 class=\"grp\">Questions &amp; answers \u003cspan class=\"cnt\">' + eq.length + \"\u003c/span>\u003c/h3>\" + rows(eq.map(eRow), 12);\n  if (fs.length) out += '\u003ch3 class=\"grp\">Feature backlog \u003cspan class=\"cnt\">' + fs.length + \"\u003c/span>\u003c/h3>\" +\n    rows(fs.map((x) => rowFeat(x.f, '\u003cspan class=\"status k-' + x.f.kind + '\">' + esc(x.f.status) + \"\u003c/span> \" + (snip(x.text) || esc(x.f.group)))), 12);\n  if (ts.length) out += '\u003ch3 class=\"grp\">Claude’s tasks \u003cspan class=\"cnt\">' + ts.length + \"\u003c/span>\u003c/h3>\" +\n    rows(ts.map((x) => rowTask(x, '\u003cspan class=\"status k-' + x.k + '\">' + esc(x.t.status) + \"\u003c/span> \" + snip(x.text))), 12);\n  return out;\n}\n\n// R-83: \"#47\" written in an answer becomes a jump link to that entry; tables scroll inside their box.\nfunction enhance(root) {\n  root.querySelectorAll(\".body table\").forEach((t) => { if (t.parentElement.classList.contains(\"tablebox\")) return; const box = document.createElement(\"div\"); box.className = \"tablebox\"; t.replaceWith(box); box.appendChild(t); });\n  root.querySelectorAll(\".body a, .taskbox a\").forEach((a) => { if (!a.dataset.goto) { a.target = \"_blank\"; a.rel = \"noopener\"; } });\n  root.querySelectorAll(\"p, li, td\").forEach((el) => {\n    if (!/#\\d/.test(el.textContent) || el.closest(\".row, label, .rows, .waits, pre\")) return;\n    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);\n    const nodes = [];\n    while (walk.nextNode()) if (/#\\d/.test(walk.currentNode.nodeValue) && !walk.currentNode.parentElement.closest(\"a, code, button\")) nodes.push(walk.currentNode);\n    nodes.forEach((t) => {\n      const span = document.createElement(\"span\");\n      span.innerHTML = esc(t.nodeValue).replace(/#(\\d{1,4})\\b/g, (m, n) => entryOf(Number(n)) ? '\u003ca class=\"goto\" href=\"#e' + n + '\" data-goto=\"' + n + '\">' + m + \"\u003c/a>\" : m);\n      t.replaceWith(span);\n    });\n  });\n}\nfunction renderTabs() {\n  const ent = DATA.entries.filter(inChat);\n  const wait = ent.filter(inWaiting).length + waitingFeats().length, fresh = ent.filter(toRead).length;\n  const toBuild = DATA.backlog.filter((f) => !SHIPPED.includes(f.kind)).length;\n  const open = mineAll().filter((x) => x.k !== \"done\").length;\n  const set = (f, n, hot, label) => {\n    const b = document.querySelector('.tab[data-f=\"' + f + '\"]');\n    b.querySelector(\".n\").textContent = n;\n    b.querySelector(\".n\").classList.toggle(\"hot\", hot);\n    b.setAttribute(\"aria-label\", label);\n  };\n  set(\"waiting\", wait, wait > 0, \"Waiting for you: \" + wait + \" questions and tasks\");\n  const qa = ent.filter((e) => !inWaiting(e)).length;\n  set(\"all\", fresh || qa, fresh > 0, \"Questions and answers: \" + (fresh ? fresh + \" new\" : qa + \" in all\"));\n  set(\"backlog\", toBuild, false, \"Feature backlog: \" + toBuild + \" not built yet\");\n  set(\"mine\", open, false, \"Claude's tasks: \" + open + \" open\");\n  document.querySelectorAll(\".tab\").forEach((b) => b.setAttribute(\"aria-pressed\", String(!query && b.dataset.f === filter)));\n}\n// R-182 (owner, 29 Oct 2026): \"it cancels my response and refreshes the whole page\". When Claude publishes a new\n// version the open page reloads; what he was typing, his tab and his place must survive that. Every keystroke in a\n// reply box is kept on this phone (by entry number or feature id) until it is sent, and put back after any reload.\nconst draftKey = (el) => {\n  const m = /^(note|fnote)(\\d+)$/.exec(el.id || \"\");\n  if (!m) return null;\n  if (m[1] === \"note\") return \"e\" + m[2];\n  const f = DATA.backlog[Number(m[2])];\n  return f ? \"f\" + f.id : null;\n};\nlet drafts = {};\ntry { drafts = JSON.parse(ls.get(\"inbox-drafts\") || \"{}\") || {}; } catch (e) { drafts = {}; /* quiet: a broken store starts empty */ }\nconst saveDrafts = () => ls.set(\"inbox-drafts\", JSON.stringify(drafts));\n// A reply already sent (it is in the page now) needs no draft.\nObject.keys(drafts).forEach((k) => {\n  if ((k[0] === \"e\" && DATA.answers[k.slice(1)]) || (k[0] === \"f\" && DATA.notes[k.slice(1)])) delete drafts[k];\n});\nsaveDrafts();\nfunction restoreDrafts(root) {\n  root.querySelectorAll(\"textarea[id]\").forEach((ta) => {\n    const k = draftKey(ta);\n    if (!k || !drafts[k] || ta.value) return;\n    ta.value = drafts[k];\n    const panel = ta.closest(\".fpanel\");\n    if (panel && panel.hidden) {\n      panel.hidden = false;\n      const b = document.querySelector('[data-p=\"' + panel.id + '\"]');\n      if (b) b.setAttribute(\"aria-expanded\", \"true\");\n    }\n  });\n}\ndocument.addEventListener(\"input\", (ev) => {\n  const t = ev.target;\n  if (t.tagName !== \"TEXTAREA\") return;\n  const k = draftKey(t);\n  if (!k) return;\n  if (t.value.trim()) drafts[k] = t.value; else delete drafts[k];\n  saveDrafts();\n});\n// Any reload (his own save or Claude's publish) comes back to the same tab and place.\nwindow.addEventListener(\"pagehide\", () => {\n  try { keepPlace(); keepTab(); } catch (e) { /* quiet: best effort while the page goes away */ }\n});\nfunction render() {\n  renderTabs();\n  $(\"chatbar\").hidden = Boolean(query) || !(filter === \"waiting\" || filter === \"all\");\n  if ($(\"chatbar\").hidden) closeRename();\n  const v = $(\"view\");\n  v.innerHTML = query ? searchHtml() : filter === \"home\" ? homeHtml() : filter === \"waiting\" ? waitingHtml() : filter === \"all\" ? qaHtml() : filter === \"backlog\" ? backlogHtml() : mineHtml();\n  enhance(v);\n  restoreDrafts(v);\n  ls.set(\"inbox-blkind\", blKind || \"\");\n  ls.set(\"inbox-blgroup\", blGroup);\n}\n\n// One save at a time: each one publishes the whole page, and the view reloads after it.\nlet saving = false;\nfunction toast(text) {\n  const t = $(\"toast\");\n  t.textContent = text;\n  t.hidden = false;\n  clearTimeout(toast.h);\n  toast.h = setTimeout(() => { t.hidden = true; }, 4000);\n}\nasync function save(change, undo, msg, copyText, doneText) {\n  if (saving) return;\n  saving = true; // before the await, so a second quick tap can't start a second save\n  let artifact = null;\n  try { artifact = await claude.use(\"artifact\"); } catch (e) { artifact = null; /* quiet: treated as \"not available\" below */ }\n  if (!artifact) { saving = false; showCopy(msg, \"Saving isn't available here.\", copyText); return; }\n  change();\n  msg.textContent = \"Saving…\";\n  try {\n    keepPlace(); keepTab();\n    if (doneText) ss.set(\"inbox-toast\", JSON.stringify({ text: doneText, at: Date.now() }));\n    await artifact.publish(pageHtml()); // this view reloads to the saved page\n    // If the view has not reloaded (yet), show the saved state here.\n    saving = false;\n    render();\n    if (doneText) toast(doneText);\n  } catch (err) {\n    ss.del(\"inbox-toast\");\n    undo();\n    saving = false;\n    const code = err && err.code;\n    if (code === \"conflict\") { msg.textContent = \"The page changed meanwhile; it is reloading. Try again after it opens.\"; return; }\n    showCopy(msg, code === \"not_writer\" || code === \"not_granted\" ? \"This view can't save.\" : \"Couldn't save (\" + (code || \"error\") + \").\", copyText);\n  }\n}\nfunction send(n) {\n  const e = entryOf(n);\n  const mine = picks[n] || {};\n  const msg = $(\"msg\" + n);\n  const note = ($(\"note\" + n).value || \"\").trim().slice(0, 2000);\n  const chosen = e.decides.map((d, qi) => ({ q: d.q, key: mine[qi], text: (d.opts.find((o) => o.key === mine[qi]) || {}).text || \"\" })).filter((p) => p.key);\n  if (!chosen.length && !note) { msg.textContent = e.decides.length ? \"Pick an answer or write a comment first.\" : \"Write your reply first.\"; return; }\n  const answer = { picks: chosen, note, at: stamp() };\n  const kept = picks[n];\n  save(() => { DATA.answers[n] = answer; delete picks[n]; keepPicks(); },\n    () => { delete DATA.answers[n]; if (kept) picks[n] = kept; keepPicks(); }, msg, answerText(e, answer),\n    \"Sent to Claude: your \" + (e.decides.length ? \"answer\" : \"reply\") + \" to #\" + n + \".\");\n}\nfunction agree(n) {\n  const e = entryOf(n);\n  picks[n] = {};\n  e.decides.forEach((d, qi) => { const r = d.opts.find((o) => o.rec); if (r) picks[n][qi] = r.key; });\n  keepPicks();\n  send(n);\n}\nfunction markDone(n, on) {\n  const had = n in DATA.done, before = DATA.done[n];\n  const e = entryOf(n);\n  save(() => { DATA.done[n] = on ? stamp() : false; }, () => { if (had) DATA.done[n] = before; else delete DATA.done[n]; },\n    $(\"tmsg\" + n), \"Owner inbox #\" + e.num + \" (\" + e.title + \"): \" + (on ? \"task done\" : \"task not done yet\"), on ? \"Marked #\" + n + \" as done. Thank you.\" : \"#\" + n + \" is open again.\");\n}\nfunction renameChat() {\n  const msg = $(\"renmsg\");\n  const name = ($(\"newname\").value || \"\").trim().replace(/\\s+/g, \" \").slice(0, 80);\n  if (!name) { msg.textContent = \"Type a name first.\"; return; }\n  if (/https?:/i.test(name) || name.includes(\"—\")) { msg.textContent = \"Leave out links and long dashes.\"; return; }\n  if (name === chatLabel(chat)) { closeRename(); return; }\n  if (chats.some((c) => c !== chat && chatLabel(c).toLowerCase() === name.toLowerCase())) { msg.textContent = \"Another chat already has this name.\"; return; }\n  const raw = chat, had = raw in DATA.chatNames, before = DATA.chatNames[raw];\n  save(() => { DATA.chatNames[raw] = name; }, () => { if (had) DATA.chatNames[raw] = before; else delete DATA.chatNames[raw]; },\n    msg, 'Owner inbox: rename the chat \"' + chatLabel(raw) + '\" to \"' + name + '\"', \"Chat renamed.\");\n}\nfunction markRead(n, on) {\n  const had = n in DATA.read, before = DATA.read[n];\n  const e = entryOf(n);\n  save(() => { DATA.read[n] = on ? stamp() : false; }, () => { if (had) DATA.read[n] = before; else delete DATA.read[n]; },\n    $(\"rmsg\" + n), \"Owner inbox #\" + e.num + \" (\" + e.title + \"): \" + (on ? \"read\" : \"mark as unread\"), on ? \"#\" + n + \" marked as read.\" : \"#\" + n + \" marked as unread.\");\n}\nfunction markAllRead() {\n  const fresh = DATA.entries.filter(inChat).filter(toRead);\n  const before = {};\n  fresh.forEach((e) => { before[e.num] = e.num in DATA.read ? [DATA.read[e.num]] : null; });\n  const when = stamp();\n  save(() => { fresh.forEach((e) => { DATA.read[e.num] = when; }); },\n    () => { fresh.forEach((e) => { if (before[e.num]) DATA.read[e.num] = before[e.num][0]; else delete DATA.read[e.num]; }); },\n    $(\"rallmsg\"), \"Owner inbox: read \" + fresh.map((e) => \"#\" + e.num).join(\", \"), fresh.length + \" answers marked as read.\");\n}\nfunction sendNote(i) {\n  const f = DATA.backlog[i];\n  const msg = $(\"fmsg\" + i);\n  const text = ($(\"fnote\" + i).value || \"\").trim().slice(0, 2000);\n  if (!text) { msg.textContent = \"Write your comment first.\"; return; }\n  const had = DATA.notes[f.id];\n  save(() => { DATA.notes[f.id] = { group: f.group, name: f.name, text, at: stamp() }; },\n    () => { if (had) DATA.notes[f.id] = had; else delete DATA.notes[f.id]; }, msg, noteText(f, text), \"Comment sent to Claude.\");\n}\n// R-81 (owner, 22 Oct): he moves a feature between statuses himself; --absorb writes it into the .md.\nfunction moveFeature(i, to) {\n  const f = DATA.backlog[i];\n  const had = DATA.moves[f.id], before = { status: f.status, kind: f.kind };\n  save(() => { DATA.moves[f.id] = { group: f.group, name: f.name, to, at: stamp() }; f.status = to; f.kind = MOVE_KIND[to]; },\n    () => { if (had) DATA.moves[f.id] = had; else delete DATA.moves[f.id]; f.status = before.status; f.kind = before.kind; },\n    $(\"mmsg\" + i), \"Owner inbox feature backlog: \" + f.group + \" / \" + f.name + \": move to \" + to, \"Moved “\" + f.name + \"” to \" + to + \".\");\n}\nfunction showCopy(msg, why, text) {\n  msg.innerHTML = esc(why) + ' Copy it and paste it in the chat instead: \u003cbutton class=\"btn ghost\" data-act=\"copy\">Copy\u003c/button>\u003cpre class=\"copy\">' + esc(text) + \"\u003c/pre>\";\n}\n\n// ---- Jumping: R-83 \"Go to #51\" from anywhere: the right tab, all chats, folded boxes opened ----\nfunction openAround(el) { for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === \"DETAILS\") p.open = true; }\nfunction arrive(el) {\n  el.setAttribute(\"tabindex\", \"-1\");\n  el.scrollIntoView({ block: \"start\" });\n  el.focus({ preventScroll: true });\n  el.classList.add(\"flash\");\n  setTimeout(() => el.classList.remove(\"flash\"), 1600);\n}\nfunction clearQuery() { query = \"\"; $(\"find\").value = \"\"; }\nfunction goTo(n) {\n  const msg = $(\"findmsg\");\n  const e = entryOf(n);\n  if (!e) { msg.textContent = n ? \"There is no #\" + n + \". The newest is #\" + maxNum + \".\" : \"Type a number, for example 51.\"; return; }\n  msg.textContent = \"\";\n  clearQuery();\n  chat = \"all\"; $(\"chat\").value = \"all\"; syncRename();\n  filter = inWaiting(e) ? \"waiting\" : \"all\"; blKind = null; keepTab();\n  render();\n  // In Waiting, the card (not its line in the index at the top).\n  const el = document.querySelector(\"article#e\" + n);\n  if (!el) return;\n  openAround(el);\n  const full = el.querySelector(\".fpanel.full\");\n  if (full) { full.hidden = false; fillBody(full); const fb = el.querySelector('[data-p=\"' + full.id + '\"]'); if (fb) fb.setAttribute(\"aria-expanded\", \"true\"); }\n  arrive(el);\n}\nfunction goFeat(id) {\n  const i = DATA.backlog.findIndex((f) => f.id === id);\n  if (i \u003c 0) return;\n  clearQuery(); $(\"findmsg\").textContent = \"\";\n  filter = \"backlog\"; blKind = null; blGroup = \"all\"; keepTab();\n  render();\n  const el = $(\"f\" + i);\n  if (el) { openAround(el); arrive(el); }\n}\nfunction goTask(i) {\n  clearQuery(); $(\"findmsg\").textContent = \"\";\n  filter = \"mine\"; keepTab();\n  render();\n  const el = $(\"t\" + i);\n  if (el) { openAround(el); arrive(el); }\n}\nfunction switchTab(f, sec) {\n  clearQuery(); $(\"findmsg\").textContent = \"\";\n  filter = f; keepTab();\n  render();\n  const s = sec && $(sec);\n  if (s) s.scrollIntoView({ block: \"start\" }); else scrollTo(0, 0);\n}\n\n// ---- Chats (R-28) ----\nconst chats = [...new Set(DATA.entries.map((e) => e.chat))];\n$(\"chat\").innerHTML = '\u003coption value=\"all\">All chats (' + chats.length + \")\u003c/option>\" +\n  chats.map((c) => '\u003coption value=\"' + esc(c) + '\">' + esc(chatLabel(c)) + \"\u003c/option>\").join(\"\");\nif (chat !== \"all\" && !chats.includes(chat)) chat = \"all\";\n$(\"chat\").value = chat;\n// R-28: \"Rename\" shows for one picked chat (not for \"All chats\").\nfunction closeRename() { $(\"renamebox\").hidden = true; $(\"renmsg\").textContent = \"\"; }\nfunction syncRename() { $(\"rename\").hidden = chat === \"all\"; if (chat === \"all\") closeRename(); }\nsyncRename();\n\n// ---- Events ----\ndocument.addEventListener(\"toggle\", (ev) => {\n  const d = ev.target;\n  if (!d.dataset) return;\n  if (d.dataset.box) doneOpen[d.dataset.box] = d.open;\n}, true);\n// R-99 (owner, 24 Oct 2026: \"Once I have selected an option, I am unable to de-select\"): tapping the\n// picked answer again takes the pick back. The browser keeps a radio checked, so it is unchecked after it.\nlet wasPicked = null;\ndocument.addEventListener(\"pointerdown\", (ev) => {\n  const opt = ev.target.closest && ev.target.closest(\".opt\");\n  const r = opt && opt.querySelector('input[type=\"radio\"][data-n]');\n  wasPicked = r && r.checked ? r : null;\n}, true);\ndocument.addEventListener(\"click\", (ev) => {\n  const opt = ev.target.closest && ev.target.closest(\".opt\");\n  if (!opt || !wasPicked || opt.querySelector('input[type=\"radio\"][data-n]') !== wasPicked) return;\n  const r = wasPicked, n = Number(r.dataset.n);\n  wasPicked = null;\n  ev.preventDefault();\n  setTimeout(() => { r.checked = false; }, 0);\n  if (picks[n]) { delete picks[n][r.dataset.q]; if (!Object.keys(picks[n]).length) delete picks[n]; }\n  keepPicks();\n  opt.classList.remove(\"on\");\n  const ag = document.querySelector('button[data-act=\"agree\"][data-n=\"' + n + '\"]');\n  if (ag && !picks[n]) ag.hidden = false;\n}, true);\ndocument.addEventListener(\"change\", (ev) => {\n  const t = ev.target;\n  if (t.id === \"rhide\") { rateHideDone = t.checked; ls.set(\"inbox-rhide\", t.checked ? \"1\" : \"0\"); render(); return; }\n  if (t.matches('input[type=\"radio\"][data-n]')) {\n    const n = Number(t.dataset.n);\n    picks[n] = Object.assign(picks[n] || {}, { [t.dataset.q]: t.value });\n    keepPicks();\n    t.closest(\"fieldset\").querySelectorAll(\".opt\").forEach((l) => l.classList.toggle(\"on\", l.contains(t)));\n    const ag = document.querySelector('button[data-act=\"agree\"][data-n=\"' + n + '\"]');\n    if (ag) ag.hidden = true;\n  }\n  if (t.id === \"blgroup\") { blGroup = t.value; blKind = null; render(); }\n  if (t.id === \"sortby\" && t.value in SORTS) { sortBy = t.value; ls.set(\"inbox-sort\", sortBy); render(); const s = $(\"sortby\"); if (s) s.focus(); }\n});\ndocument.addEventListener(\"click\", (ev) => {\n  const g = ev.target.closest(\"a[data-goto]\");\n  if (g) { ev.preventDefault(); goTo(Number(g.dataset.goto)); return; }\n  const fl = ev.target.closest(\"a[data-feat]\");\n  if (fl) { ev.preventDefault(); goFeat(fl.dataset.feat); return; }\n  const tl = ev.target.closest(\"a[data-task]\");\n  if (tl) { ev.preventDefault(); goTask(Number(tl.dataset.task)); return; }\n  const tb = ev.target.closest(\"[data-tab]\");\n  if (tb) { ev.preventDefault(); switchTab(tb.dataset.tab, tb.dataset.sec); return; }\n  const b = ev.target.closest(\"button[data-act]\");\n  if (!b) return;\n  const n = Number(b.dataset.n);\n  const act = b.dataset.act;\n  if (act === \"rate\") { rateTap(b); return; }\n  if (act === \"ratesave\") { rateSave(); return; }\n  if (act === \"send\") send(n);\n  if (act === \"agree\") agree(n);\n  if (act === \"read\") markRead(n, true);\n  if (act === \"unread\") markRead(n, false);\n  if (act === \"readall\") markAllRead();\n  if (act === \"done\") markDone(n, true);\n  if (act === \"undone\") markDone(n, false);\n  if (act === \"change\") { delete DATA.answers[n]; render(); const el = document.querySelector(\"article#e\" + n); if (el) arrive(el); }\n  if (act === \"fnote\") sendNote(Number(b.dataset.i));\n  if (act === \"move\") moveFeature(Number(b.dataset.i), b.dataset.to);\n  if (act === \"blk\") { blKind = b.dataset.k || null; render(); }\n  if (act === \"renote\") { delete DATA.notes[DATA.backlog[Number(b.dataset.i)].id]; render(); }\n  if (act === \"panel\") {\n    const p = $(b.dataset.p);\n    const open = p.hidden;\n    p.hidden = !open;\n    b.setAttribute(\"aria-expanded\", String(open));\n    if (open && p.classList.contains(\"full\")) fillBody(p);\n    // Only a comment or reply panel takes the keyboard; an answer panel opens on its choices.\n    if (open && /^fp(note|reply)/.test(p.id)) { const ta = p.querySelector(\"textarea\"); if (ta) ta.focus(); }\n  }\n  if (act === \"seen\") { seen.base = snapNow(); seen.baseAt = Date.now(); ls.set(\"inbox-seen\", JSON.stringify(seen)); render(); }\n  if (act === \"clearq\") { clearQuery(); render(); $(\"find\").focus(); }\n  if (act === \"copy\") {\n    const pre = b.parentElement.querySelector(\"pre.copy\");\n    navigator.clipboard.writeText(pre.textContent).then(() => { b.textContent = \"Copied\"; }, () => {\n      const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = \"Selected: copy it\";\n    });\n  }\n});\nlet typing = null;\n$(\"find\").addEventListener(\"input\", () => {\n  clearTimeout(typing);\n  typing = setTimeout(() => {\n    const was = Boolean(query);\n    query = $(\"find\").value.trim();\n    $(\"findmsg\").textContent = \"\";\n    render();\n    if (query || was) scrollTo(0, 0);\n  }, 150);\n});\n$(\"find\").addEventListener(\"keydown\", (ev) => { if (ev.key === \"Escape\") { clearQuery(); $(\"findmsg\").textContent = \"\"; render(); } });\n$(\"findform\").addEventListener(\"submit\", (ev) => {\n  ev.preventDefault();\n  clearTimeout(typing);\n  const v = $(\"find\").value.trim();\n  const nm = v.match(/^#?(\\d{1,4})$/);\n  if (nm) { $(\"find\").blur(); goTo(Number(nm[1])); return; }\n  if (!v) { $(\"findmsg\").textContent = \"Type a number (for example 51) or a word.\"; return; }\n  query = v; render(); scrollTo(0, 0); $(\"find\").blur(); // closes the phone keyboard on the results\n});\n$(\"chat\").addEventListener(\"change\", (ev) => { chat = ev.target.value; ls.set(\"inbox-chat\", chat); syncRename(); render(); });\n$(\"rename\").addEventListener(\"click\", () => { $(\"newname\").value = chatLabel(chat); $(\"renmsg\").textContent = \"\"; $(\"renamebox\").hidden = false; $(\"newname\").focus(); $(\"newname\").select(); });\n$(\"rencancel\").addEventListener(\"click\", closeRename);\n$(\"rensave\").addEventListener(\"click\", renameChat);\n$(\"newname\").addEventListener(\"keydown\", (ev) => { if (ev.key === \"Enter\") renameChat(); if (ev.key === \"Escape\") closeRename(); });\ndocument.querySelectorAll(\".tab\").forEach((b) => b.addEventListener(\"click\", () => switchTab(b.dataset.f)));\n// The sticky bar's real height, so a jump lands below it, not under it.\nconst bar = document.querySelector(\"header.bar\");\nconst setBar = () => document.documentElement.style.setProperty(\"--hdr\", bar.offsetHeight + \"px\");\nsetBar();\nif (window.ResizeObserver) new ResizeObserver(setBar).observe(bar);\n\nrender();\n// After a save the page reloads: back to the same place, with a short \"Saved\" note.\nconst keptY = Number(ss.get(\"inbox-y\"));\nss.del(\"inbox-y\");\nif (keptY) requestAnimationFrame(() => scrollTo(0, keptY));\ntry { const t = JSON.parse(ss.get(\"inbox-toast\") || \"null\"); ss.del(\"inbox-toast\"); if (t && Date.now() - t.at \u003c 20000) toast(t.text); } catch (e) { /* no note */ }\n// A link that ends in #51 (or #e51) opens at that entry.\nconst fromHash = () => { const m = (location.hash || \"\").match(/^#e?(\\d{1,4})$/); if (m) goTo(Number(m[1])); };\nif (!keptY) fromHash();\nwindow.addEventListener(\"hashchange\", fromHash);\n\u003c/script>\n";
+const DATA = {"decisions":[],"entries":[],"backlog":[],"mine":[],"ratings":{},"updated":"29 Oct 2026, 08:43 UTC","updatedIso":"2026-10-29T08:43:36Z","answers":{},"read":{},"notes":{},"moves":{}};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const md = (s) => {
+  try { if (window.marked) return window.marked.parse(s, { gfm: true, breaks: true }); } catch (e) { /* plain text below */ }
+  return "<p>" + esc(s).replace(/\n/g, "<br>") + "</p>";
+};
+const KIND = { waiting: "Waiting for you", built: "Built, not released", done: "Done", planned: "Planned", answered: "Answered", working: "Working on it" };
+const RESET = ":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
+DATA.answers = DATA.answers || {};
+DATA.read = DATA.read || {}; // num -> when tapped, or false for "mark as unread" (moved into the .md by --absorb)
+DATA.notes = DATA.notes || {}; // feature id -> {group, name, text, at}: a comment on a backlog feature (printed by --absorb)
+DATA.backlog = DATA.backlog || [];
+DATA.mine = DATA.mine || [];
+DATA.done = DATA.done || {}; // R-31: num -> when he tapped "I've done it", or false for "Not done yet" (moved into the .md by --absorb)
+DATA.chatNames = DATA.chatNames || {}; // R-28: chat as in the .md -> the owner's new name (written into the .md by --absorb)
+DATA.moves = DATA.moves || {}; // R-81: feature id -> {group, name, to, at}: his "Move to" pick (written into the .md by --absorb)
+// R-81: Planned = Claude may build it; Waiting for you = it needs him.
+const MOVE_KIND = { "Planned": "planned", "Waiting for you": "waiting", "Idea": "idea", "Not doing": "no" };
+const MOVE_LABEL = { "Planned": "Planned: Claude can build it", "Waiting for you": "Waiting for you: needs me", "Idea": "Idea", "Not doing": "Not doing" };
+const BL_KIND = { done: "Live", built: "Next release", waiting: "Waiting for you", planned: "Planned", idea: "Idea", no: "Not doing" };
+const BL_ORDER = ["waiting", "planned", "idea", "no", "built", "done"];
+const SHIPPED = ["done", "built"];
+const TABS = ["home", "waiting", "all", "backlog", "mine"];
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+const GO = '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+const chatLabel = (c) => DATA.chatNames[c] || c;
+
+// Storage can be blocked (private window, preview): every read and write is guarded, and the page works without it.
+const store = (kind) => ({
+  get(k) { try { return window[kind].getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { window[kind].setItem(k, v); } catch (e) { /* not kept */ } },
+  del(k) { try { window[kind].removeItem(k); } catch (e) { /* not kept */ } },
+});
+const ss = store("sessionStorage"), ls = store("localStorage");
+let chat = ls.get("inbox-chat") || "all";
+// A fresh visit opens on Home; the tab is kept only across the reload that follows a save.
+let filter = ss.get("inbox-tab") || "home";
+if (filter === "shipped") filter = "backlog";
+if (!TABS.includes(filter)) filter = "home";
+// R-184 (owner, 29 Oct 2026): his backlog filters survive a reload (Claude's publish) and a tab switch; kept on this phone.
+let blKind = ls.get("inbox-blkind") || null; // a status pill tapped in the backlog: only that status (null = everything not built, Built folded)
+let blGroup = ls.get("inbox-blgroup") || "all";
+let query = "";
+const picks = {}; // num -> {qIndex: key}
+try { Object.assign(picks, JSON.parse(ss.get("inbox-picks") || "{}")); } catch (e) { /* none kept */ }
+const keepPicks = () => ss.set("inbox-picks", JSON.stringify(picks));
+const keepTab = () => ss.set("inbox-tab", filter);
+// Which folded "done" boxes are open, so a re-render (and the reload after a save) keeps them as he left them.
+const doneOpen = {};
+try { Object.assign(doneOpen, JSON.parse(ss.get("inbox-open") || "{}")); } catch (e) { /* all folded */ }
+const keepPlace = () => { ss.set("inbox-y", String(Math.round(scrollY))); ss.set("inbox-open", JSON.stringify(doneOpen)); };
+const stamp = () => new Date().toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+// The page rebuilt from its template and its data: what a save publishes (never the live DOM).
+const enc = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+// The two markers are spelled in pieces here, so filling the template never touches this code.
+const MARK_TPL = "__" + "TPL__", MARK_DATA = "__" + "DATA__";
+const pageHtml = () => '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + RESET +
+  "</style></head><body>" + TPL.replace(new RegExp(MARK_TPL + "|" + MARK_DATA, "g"), (m) => (m === MARK_TPL ? enc(TPL) : enc(DATA))) + "</body></html>";
+
+// #21: "Waiting for you" = a question still to answer, or a task of his; "To read" = an entry not read yet.
+// Sending an answer or a reply counts as read.
+const sentOf = (e) => DATA.answers[e.num];
+// R-178 (owner, 29 Oct 2026): a task he marked done is finished business: it counts as read and waits for nothing.
+const isRead = (e) => Boolean(sentOf(e)) || (tasksOf(e).length > 0 && taskDone(e)) || (e.num in DATA.read ? Boolean(DATA.read[e.num]) : Boolean(e.read));
+const needsAnswer = (e) => e.decides.length > 0 && !sentOf(e);
+// R-31: tasks waiting on the owner sit under "Waiting for you" next to his decisions.
+const tasksOf = (e) => e.tasks || [];
+const taskDone = (e) => (e.num in DATA.done ? Boolean(DATA.done[e.num]) : Boolean(e.taskDone));
+const needsTask = (e) => tasksOf(e).length > 0 && !taskDone(e);
+const needsYou = (e) => needsAnswer(e) || needsTask(e);
+// R-173 (owner, 29 Oct 2026): one topic, one place. A backlog row that names "#n" is that question's feature.
+// If the feature waits for him, the question lives under Waiting for you (not in Q&A), and the feature is not shown
+// a second time. Every question card says where its topic stands in the backlog.
+let featMap = null;
+const featsOf = (e) => {
+  if (!featMap) {
+    featMap = {};
+    DATA.backlog.forEach((f, i) => (String(f.details + " " + f.how).match(/#(\d{1,4})\b/g) || []).forEach((m) => {
+      const n = Number(m.slice(1)); (featMap[n] = featMap[n] || []).push({ f, i });
+    }));
+  }
+  return featMap[e.num] || [];
+};
+const topicWait = (e) => !needsYou(e) && e.kind !== "done" && !(tasksOf(e).length > 0 && taskDone(e)) && featsOf(e).some((x) => x.f.kind === "waiting");
+const inWaiting = (e) => needsYou(e) || topicWait(e);
+const featCovered = (f) => numsIn(f.details + " " + f.how).some((n) => inWaiting(entryOf(n)));
+const backlogChips = (e) => {
+  const xs = featsOf(e);
+  if (!xs.length) return e.kind === "done" ? "" : '<p class="waits">Not in the feature backlog yet: still a discussion.</p>';
+  return '<p class="waits">In the backlog: ' + xs.map(({ f }) => '<a class="chipnum" href="#" data-feat="' + esc(f.id) + '"><b>' + esc(f.status) + "</b>" +
+    esc(f.name.length > 34 ? f.name.slice(0, 32).replace(/\s+\S*$/, "") + "…" : f.name) + "</a>").join("") + "</p>";
+};
+const toRead = (e) => !inWaiting(e) && !isRead(e);
+const inChat = (e) => chat === "all" || e.chat === chat;
+const byNum = (a, b) => b.num - a.num;
+// R-172 (owner, 29 Oct 2026): a question he replied to is a thread. When Claude answers his follow-up it jumps to
+// the top of Questions & answers, tagged with the reply count, until he marks it read (3-day limit).
+const THREAD_DAYS = 3;
+const threadAnswered = (e) => Boolean(e.thread && e.thread.answered);
+const threadNew = (e) => threadAnswered(e) && !isRead(e);
+const threadWaiting = (e) => Boolean(e.thread && !e.thread.answered) && !sentOf(e);
+const threadRecent = (e) => Boolean(e.thread && e.thread.last) && (Date.now() - Date.parse(e.thread.last + "T00:00:00")) / 864e5 <= THREAD_DAYS;
+// R-175 (owner, 29 Oct 2026): "Mark as read" takes a thread off the top, into the read list at the bottom.
+const onTop = (e) => threadRecent(e) && (threadNew(e) || threadWaiting(e));
+const byThread = (a, b) => (threadNew(b) - threadNew(a)) || (threadWaiting(b) - threadWaiting(a)) || String(b.thread.last).localeCompare(String(a.thread.last)) || byNum(a, b);
+const threadTag = (e) => threadNew(e)
+  ? '<span class="tag act">New answer' + (e.thread.replies > 1 ? " · reply " + e.thread.replies : " to your reply") + "</span>"
+  : threadWaiting(e) ? '<span class="tag new">Claude is answering your reply</span>'
+  : "";
+const entryOf = (n) => DATA.entries.find((x) => x.num === n);
+const maxNum = DATA.entries.reduce((m, e) => Math.max(m, e.num), 0);
+// Features waiting for the owner also show in "Waiting for you" (owner, 18 Oct).
+const waitingFeats = () => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && !DATA.notes[x.f.id] && !featCovered(x.f));
+const inTab = (f, tab) => (tab === "shipped") === SHIPPED.includes(f.kind);
+// R-33 / R-84: Claude's tasks in the order Doing, Blocked (waits for you), To do, Done.
+const taskKind = (t) => { const s = String(t.status).toLowerCase(); return s.startsWith("done") ? "done" : s.startsWith("doing") ? "doing" : s.startsWith("blocked") ? "blocked" : "todo"; };
+const mineAll = () => DATA.mine.map((t, i) => ({ t, i, k: taskKind(t) }));
+// R-96: a pending item's prio is [impact, effort] (High / Medium / Low). The Sort picker orders the four list tabs;
+// rated items come first, unrated ones after them in their usual order. The choice is kept on this phone.
+const LV = { High: 3, Medium: 2, Low: 1 };
+const SORTS = { best: "Best first (high impact, low effort)", impact: "Biggest impact first", quick: "Quickest first", order: "Original order" };
+let sortBy = ls.get("inbox-sort");
+if (!(sortBy in SORTS)) sortBy = "best";
+const priKey = (p) => !p ? null : sortBy === "best" ? [LV[p[0]] - LV[p[1]], LV[p[0]]] : sortBy === "impact" ? [LV[p[0]], -LV[p[1]]] : [-LV[p[1]], LV[p[0]]];
+const byPrio = (get, fallback) => (a, b) => {
+  if (sortBy === "order") return fallback(a, b);
+  const ka = priKey(get(a)), kb = priKey(get(b));
+  if (!ka || !kb) return (kb ? 1 : 0) - (ka ? 1 : 0) || fallback(a, b);
+  return kb[0] - ka[0] || kb[1] - ka[1] || fallback(a, b);
+};
+const priHtml = (p) => p ? '<span class="pri i' + LV[p[0]] + '">Impact ' + p[0] + '</span><span class="pri e' + LV[p[1]] + '">Effort ' + p[1] + "</span>" : "";
+const sortHtml = () => '<div class="sortbar"><div class="selrow"><label for="sortby">Sort</label><select id="sortby">' +
+  Object.keys(SORTS).map((k) => '<option value="' + k + '"' + (k === sortBy ? " selected" : "") + ">" + SORTS[k] + "</option>").join("") + "</select></div>" +
+  '<p class="legend"><b>Impact</b> = how much it matters to the gym and its members. <b>Effort</b> = time and tokens to build it (your own task: your time). Only open items have them.</p></div>';
+const numsIn = (s) => [...new Set((String(s).match(/#(\d{1,4})\b/g) || []).map((x) => Number(x.slice(1))))].filter((n) => entryOf(n));
+
+function shown(e) {
+  if (chat !== "all" && e.chat !== chat) return false;
+  // R-108 (owner, 24 Oct): Questions & answers holds only answers; anything that needs him (a pick or a task)
+  // lives under "Waiting for you" alone.
+  if (filter === "all") return !inWaiting(e);
+  if (filter === "waiting") return inWaiting(e);
+  return true;
+}
+
+const plain = (s) => String(s || "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*|__|`/g, "");
+// One short line for a folded card: the start of "My answer", or else the first paragraph (the .md's own words).
+function gistOf(e) {
+  const lines = e.body.split("\n");
+  // R-172: a thread shows my newest answer (the one under his last follow-up), not the first.
+  let k = -1;
+  lines.forEach((l, j) => { if (/^\*\*My answer[^*]*:\*\*/.test(l)) k = j; });
+  if (k < 0) k = lines.findIndex((l) => l.trim() && !/^\*\*(You asked|Details|DECIDED|YOUR REPLY|BUILT)/.test(l));
+  if (k < 0) return "";
+  const para = [];
+  for (let j = k; j < lines.length; j++) {
+    const l = lines[j];
+    if (j > k && (!l.trim() || /^(\s*[-*] |\*\*|\||>|#)/.test(l))) break;
+    para.push(l.trim());
+  }
+  const s = plain(para.join(" ")).replace(/^My answer[^:]*:\s*/, "");
+  return s.length > 240 ? s.slice(0, 237).replace(/\s+\S*$/, "") + "…" : s;
+}
+// "STEP 1 BUILT, NOT RELEASED (next release)" -> "Step 1 built, not released (next release)"
+const softCaps = (s) => String(s).replace(/^[A-Z0-9][A-Z0-9 ,:;'-]*[A-Z](?![a-z])/, (m) => m.charAt(0) + m.slice(1).toLowerCase());
+const norm = (s) => String(s).toLowerCase().replace(/[^a-z]/g, "");
+
+function answerText(e, a) {
+  const lines = a.picks.map((p) => "- " + p.q + ": " + p.key + " (" + p.text + ")");
+  const skipped = e.decides.filter((d) => !a.picks.some((p) => p.q === d.q)).map((d) => "- " + d.q + ": no pick yet");
+  const note = a.note ? [(e.decides.length ? "Note: " : "Reply: ") + a.note] : [];
+  return ["Owner inbox #" + e.num + " (" + e.title + "):", ...lines, ...skipped, ...note].join("\n");
+}
+function sentHtml(e, sent) {
+  return '<div class="sentbox"><p class="sentline">' + CHECK + "Sent " + esc(sent.at) + "</p>" +
+    (sent.picks.length ? '<ul class="sentpicks">' + sent.picks.map((p) => "<li><b>" + esc(p.key) + "</b>" + esc(p.text) +
+      (e.decides.length > 1 ? ' <span class="small">(' + esc(p.q) + ")</span>" : "") + "</li>").join("") + "</ul>" : "") +
+    (sent.note ? '<p class="sentnote">' + (e.decides.length ? "Your comment: " : "Your reply: ") + esc(sent.note) + "</p>" : "") +
+    '<p class="small">Claude acts on it the next time it opens your tracker.</p>' +
+    '<div class="actions"><button class="btn ghost" data-act="change" data-n="' + e.num + '">' + (e.decides.length ? "Change my answer" : "Write it again") + "</button></div></div>";
+}
+function formHtml(e) {
+  const sent = sentOf(e);
+  if (sent) return sentHtml(e, sent);
+  if (!e.decides.length) {
+    return '<div class="form">' +
+      '<label class="notelbl" for="note' + e.num + '">Ask a follow-up, disagree, or add something</label>' +
+      '<textarea id="note' + e.num + '" rows="3" placeholder="e.g. Good, but also show it on the watch"></textarea>' +
+      '<div class="actions"><button class="btn" data-act="send" data-n="' + e.num + '">Send to Claude</button><span class="msg" id="msg' + e.num + '" role="status"></span></div></div>';
+  }
+  const mine = picks[e.num] || {};
+  const recs = e.decides.map((d) => d.opts.find((o) => o.rec));
+  const canAgree = recs.every(Boolean) && !Object.keys(mine).length;
+  return '<div class="form">' + e.decides.map((d, qi) =>
+    "<fieldset><legend>" + esc(d.q) + "</legend>" + d.opts.map((o) =>
+      '<label class="opt' + (mine[qi] === o.key ? " on" : "") + '"><input type="radio" name="q' + e.num + "_" + qi + '" value="' + o.key + '"' +
+      (mine[qi] === o.key ? " checked" : "") + ' data-n="' + e.num + '" data-q="' + qi + '"><span class="key">' + o.key + "</span><span>" + esc(o.text) +
+      (o.rec ? ' <em class="rec">my pick</em>' : "") + "</span></label>").join("") + "</fieldset>").join("") +
+    '<label class="notelbl" for="note' + e.num + '">Comment (optional). You can send just a comment, without picking. Tap a picked answer again to undo it.</label>' +
+    '<textarea id="note' + e.num + '" rows="2" placeholder="e.g. Yes, but keep it free for members"></textarea>' +
+    '<div class="actions"><button class="btn" data-act="send" data-n="' + e.num + '">Send to Claude</button>' +
+    (recs.every(Boolean) ? '<button class="btn ghost" data-act="agree" data-n="' + e.num + '"' + (canAgree ? "" : " hidden") + ">Agree with my pick" +
+      (recs.length === 1 ? " (" + recs[0].key + ")" : "s") + "</button>" : "") +
+    '<span class="msg" id="msg' + e.num + '" role="status"></span></div></div>';
+}
+function taskHtml(e) {
+  if (!tasksOf(e).length) return "";
+  const done = taskDone(e);
+  const when = e.num in DATA.done ? DATA.done[e.num] : e.taskDone;
+  return '<div class="taskbox' + (done ? " done" : "") + '"><p class="tl">' + (done ? "Done" + (when ? " " + esc(when) : "") + ". Thank you." : "Your task" + (tasksOf(e).length > 1 ? "s" : "")) + "</p>" +
+    "<ol>" + tasksOf(e).map((t) => "<li>" + md(t).replace(/^<p>|<\/p>\s*$/g, "") + "</li>").join("") + "</ol>" +
+    '<div class="actions">' + (done
+      ? '<button class="btn ghost quiet" data-act="undone" data-n="' + e.num + '">Not done yet</button>'
+      : '<button class="btn" data-act="done" data-n="' + e.num + '">I have done it</button>') +
+    '<span class="msg" id="tmsg' + e.num + '" role="status"></span></div></div>';
+}
+function readHtml(e) {
+  if (sentOf(e) || needsYou(e)) return "";
+  return isRead(e)
+    ? '<button class="btn ghost quiet readbtn" data-act="unread" data-n="' + e.num + '">Mark as unread</button>'
+    : '<button class="btn ghost readbtn" data-act="read" data-n="' + e.num + '">Mark as read</button>';
+}
+const pbtn = (id, label) => '<button type="button" class="fbtn" data-act="panel" data-p="fp' + id + '" aria-expanded="false" aria-controls="fp' + id + '">' + label + CHEV + "</button>";
+function card(e) {
+  const sent = sentOf(e);
+  const tag = needsAnswer(e) ? '<span class="tag act">To answer</span>' : needsTask(e) ? '<span class="tag act">To do</span>'
+    : threadTag(e) || (!isRead(e) ? '<span class="tag new">New</span>' : "");
+  const pill = sent ? '<span class="status k-done">' + (e.decides.length ? "Answer sent" : "Reply sent") + "</span>"
+    : needsYou(e) ? "" : '<span class="status k-' + e.kind + '">' + KIND[e.kind] + "</span>";
+  const showStatus = e.status && norm(e.status) !== norm(KIND[e.kind]) && !["answered", "done", "waitingforyou"].includes(norm(e.status));
+  const gist = gistOf(e);
+  const act = taskHtml(e) + (e.decides.length || sent ? formHtml(e) : "");
+  const fold = filter === "all" && !query && needsYou(e);
+  return '<article id="e' + e.num + '"><div class="ch"><span class="num">#' + e.num + "</span><div><h3>" + esc(e.title) + "</h3>" +
+    '<p class="meta">' + tag + pill + (needsYou(e) ? priHtml(e.prio) : "") + "<span>" + esc(e.date) + "</span>" +
+    (e.chatUrl ? '<a href="' + esc(e.chatUrl) + '" target="_blank" rel="noopener">' + esc(chatLabel(e.chat)) + "</a>" : "<span>" + esc(chatLabel(e.chat)) + "</span>") + "</p>" +
+    (showStatus ? '<p class="statusline">' + esc(softCaps(e.status)) + "</p>" : "") +
+    backlogChips(e) + (gist ? '<p class="gist">' + esc(gist) + "</p>" : "") + "</div></div>" +
+    '<div class="cb">' + (fold ? "" : act) +
+    '<div class="fbar">' + (fold ? pbtn("act" + e.num, needsAnswer(e) ? "Answer it" : "Your task" + (tasksOf(e).length > 1 ? "s" : "")) : "") + pbtn("full" + e.num, e.decides.length ? "The full question and my answer" : tasksOf(e).length ? "Why" : "Read the full answer") +
+    (e.decides.length || sent ? "" : pbtn("reply" + e.num, "Reply")) + readHtml(e) + "</div>" +
+    '<span class="msg" id="rmsg' + e.num + '" role="status"></span>' +
+    (fold ? '<div class="fpanel" id="fpact' + e.num + '" hidden>' + act + "</div>" : "") +
+    '<div class="fpanel full" id="fpfull' + e.num + '" data-n="' + e.num + '" hidden><div class="body"></div></div>' +
+    (e.decides.length || sent ? "" : '<div class="fpanel" id="fpreply' + e.num + '" hidden>' + formHtml(e) + "</div>") + "</div></article>";
+}
+// The .md wraps its lines at about 110 characters: join a wrapped line to the one before it, so a sentence
+// never breaks in the middle on a phone. A list, a bold label line, a table, a quote or a heading still starts a new line.
+function unwrap(s) {
+  const out = [];
+  let fence = false;
+  String(s).split("\n").forEach((l) => {
+    if (/^\s*```/.test(l)) fence = !fence;
+    const prev = out[out.length - 1];
+    if (!fence && out.length && prev.trim() && l.trim() && !/^\s*```/.test(prev) && !/^\s*\|/.test(prev) &&
+        !/^\s*([-*+] |\d+[.)] |\*\*|\||>|#)/.test(l)) out[out.length - 1] = prev.replace(/\s+$/, "") + " " + l.trim();
+    else out.push(l);
+  });
+  return out.join("\n");
+}
+// The long answer is drawn only when opened: the page stays quick with 50 entries.
+function fillBody(d) {
+  const body = d.querySelector(".body");
+  if (!body || body.dataset.filled) return;
+  const e = entryOf(Number(d.dataset.n));
+  if (!e) return;
+  // R-174 (owner, 29 Oct 2026): on a thread, his last follow-up and my answer under it are highlighted.
+  const text = unwrap(e.body), k = e.thread ? text.lastIndexOf("**YOUR REPLY") : -1;
+  body.innerHTML = k < 0 ? md(text) : md(text.slice(0, k)) +
+    '<section class="latest" aria-label="Latest on this thread"><p class="latestlbl">Latest on this thread' +
+    (e.thread.replies > 1 ? " · reply " + e.thread.replies : "") + "</p>" + md(text.slice(k)) + "</section>";
+  body.dataset.filled = "1";
+  enhance(body);
+}
+const doneBox = (key, label, inner) => inner
+  ? '<details class="donebox" data-box="' + key + '"' + (doneOpen[key] ? " open" : "") + "><summary>" + esc(label) + CHEV + '</summary><div class="stack">' + inner + "</div></details>"
+  : "";
+const empty = (title, line) => '<div class="empty"><p><b>' + esc(title) + "</b></p>" + (line ? "<p>" + esc(line) + "</p>" : "") + "</div>";
+const rowEntry = (e, sub) => '<li><a class="row" href="#e' + e.num + '" data-goto="' + e.num + '"><span class="rn">#' + e.num + '</span><span class="rb"><span class="rt">' + esc(e.title) + "</span>" +
+  (sub ? '<span class="rs">' + sub + "</span>" : "") + "</span>" + GO + "</a></li>";
+const rowFeat = (f, sub) => '<li><a class="row" href="#" data-feat="' + esc(f.id) + '"><span class="rn"></span><span class="rb"><span class="rt">' + esc(f.name) + "</span>" +
+  '<span class="rs">' + (sub || '<span class="status k-' + f.kind + '">' + esc(f.status) + "</span> " + esc(f.group)) + "</span></span>" + GO + "</a></li>";
+const rowTask = (x, sub) => '<li><a class="row" href="#" data-task="' + x.i + '"><span class="rn"></span><span class="rb"><span class="rt">' + esc(x.t.task) + "</span>" +
+  '<span class="rs">' + (sub || '<span class="status k-' + x.k + '">' + esc(x.t.status) + "</span>") + "</span></span>" + GO + "</a></li>";
+const rows = (items, cap) => {
+  if (!cap || items.length <= cap + 2) return '<ul class="rows">' + items.join("") + "</ul>";
+  return '<ul class="rows">' + items.slice(0, cap).join("") + '</ul><details class="morelist"><summary>' + (items.length - cap) + " more" + CHEV + '</summary><ul class="rows">' + items.slice(cap).join("") + "</ul></details>";
+};
+
+// ---- What changed since he last looked (kept on this phone only; a new visit = 30 minutes since the last open) ----
+const snapNow = () => {
+  const s = { e: {}, f: {}, t: {} };
+  DATA.entries.forEach((e) => { s.e[e.num] = [e.status, e.decides.length, tasksOf(e).length]; });
+  DATA.backlog.forEach((f) => { s.f[f.id] = f.status; });
+  DATA.mine.forEach((t) => { s.t[t.task] = t.status; });
+  return s;
+};
+let seen = null, firstVisit = false;
+(function trackVisit() {
+  const now = Date.now(), cur = snapNow();
+  try { seen = JSON.parse(ls.get("inbox-seen") || "null"); } catch (e) { seen = null; }
+  if (!seen || !seen.base || !seen.last) { seen = { base: cur, baseAt: now, last: cur, lastAt: now }; firstVisit = true; }
+  else if (now - seen.lastAt > 30 * 60 * 1000) { seen.base = seen.last; seen.baseAt = seen.lastAt; }
+  seen.last = cur; seen.lastAt = now;
+  ls.set("inbox-seen", JSON.stringify(seen));
+})();
+function changes() {
+  const base = seen.base, out = [];
+  DATA.entries.slice().sort(byNum).forEach((e) => {
+    const was = base.e[e.num];
+    if (!was) out.push({ w: 0, html: rowEntry(e, '<span class="tag new">New</span>') });
+    else if (e.decides.length > was[1]) out.push({ w: 0, html: rowEntry(e, '<span class="tag act">New question</span>') });
+    else if (tasksOf(e).length > was[2]) out.push({ w: 1, html: rowEntry(e, '<span class="tag act">New task for you</span>') });
+    else if (e.status !== was[0]) out.push({ w: 1, html: rowEntry(e, "Now: " + esc(softCaps(e.status))) });
+  });
+  DATA.backlog.forEach((f) => {
+    if (DATA.moves[f.id]) return; // his own move is not news to him
+    const was = base.f[f.id];
+    if (was === undefined) out.push({ w: 2, html: rowFeat(f, 'Added: <span class="status k-' + f.kind + '">' + esc(f.status) + "</span>") });
+    else if (was !== f.status) out.push({ w: SHIPPED.includes(f.kind) ? 1 : 2, html: rowFeat(f, esc(was) + ' &rarr; <span class="status k-' + f.kind + '">' + esc(f.status) + "</span>") });
+  });
+  mineAll().forEach((x) => {
+    const was = base.t[x.t.task];
+    if (was === undefined) out.push({ w: 3, html: rowTask(x, "New task for Claude") });
+    else if (was !== x.t.status) out.push({ w: 3, html: rowTask(x, esc(was) + ' &rarr; <span class="status k-' + x.k + '">' + esc(x.t.status) + "</span>") });
+  });
+  return out.sort((a, b) => a.w - b.w).map((x) => x.html);
+}
+const since = (t) => new Date(t).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+const updatedText = () => (DATA.updatedIso ? since(DATA.updatedIso) : DATA.updated);
+
+// ---- Tabs ----
+function homeHtml() {
+  const qs = DATA.entries.filter(needsAnswer).sort(byNum), ts = DATA.entries.filter(needsTask).sort(byNum);
+  const fresh = DATA.entries.filter(toRead).sort(byNum), mine = mineAll();
+  const doing = mine.filter((x) => x.k === "doing"), blocked = mine.filter((x) => x.k === "blocked");
+  const parts = [];
+  if (qs.length) parts.push("<b>" + qs.length + (qs.length === 1 ? " question" : " questions") + "</b>");
+  if (ts.length) parts.push("<b>" + ts.length + (ts.length === 1 ? " task" : " tasks") + "</b>");
+  const ch = changes();
+  return '<div class="home"><h2 class="sr">Home</h2>' +
+    '<p class="lead">' + (parts.length ? parts.join(" and ") + " wait for you." : "Nothing waits for you right now.") + "</p>" +
+    '<div class="actions">' + (qs.length ? '<button class="btn" data-tab="waiting" data-sec="sec-q">Answer questions</button>' : "") +
+    (ts.length ? '<button class="btn ghost" data-tab="waiting" data-sec="sec-t">Your tasks</button>' : "") +
+    (fresh.length ? '<button class="btn ghost" data-tab="all">Read ' + fresh.length + " new</button>" : "") + "</div>" +
+    '<h3 class="grp">Since you last looked' + (ch.length ? ' <span class="cnt">' + ch.length + "</span>" : "") + "</h3>" +
+    (firstVisit ? empty("First visit on this phone.", "From your next visit, this lists what changed: new answers, new questions, features that went live.")
+      : ch.length ? rows(ch, 6) + '<div class="actions" style="margin-top:8px"><button class="btn ghost quiet" data-act="seen">Clear this list</button></div>'
+      : empty("Nothing changed since " + since(seen.baseAt) + ".")) +
+    '<h3 class="grp">Questions for you <span class="cnt">' + qs.length + "</span></h3>" +
+    (qs.length ? rows(qs.map((e) => rowEntry(e)), 6) : empty("No questions wait for you.")) +
+    (fresh.length ? '<h3 class="grp">New answers to read <span class="cnt">' + fresh.length + "</span></h3>" + rows(fresh.map((e) => rowEntry(e)), 6) : "") +
+    // R-196 (owner, 30 Oct 2026): the feature-rating module lives on Home, always, as its own section.
+    '<h3 class="grp" id="sec-rate">Rate features for marketing</h3>' + rateHtml() +
+    '<h3 class="grp">Claude is working on</h3>' +
+    (doing.length ? rows(doing.map((x) => rowTask(x, esc(x.t.details.length > 160 ? x.t.details.slice(0, 157).replace(/\s+\S*$/, "") + "…" : x.t.details)))) : empty("Nothing marked Doing right now.")) +
+    (blocked.length ? '<p class="hint"><a href="#" data-tab="mine">' + blocked.length + " of Claude's tasks wait for you</a>: each names the # it waits on.</p>" : "") +
+    '<p class="foot">Updated ' + esc(updatedText()) + ". Type a number in the box at the top (for example 51) to jump to it, or a word to search everything.</p></div>";
+}
+// R-176 (owner, 29 Oct 2026): rate the features we build, for marketing. Two scores, 1-5: Convenience (how much
+// easier it makes the user's day) and Value (how much a buyer cares). Taps stay on this phone until "Save my
+// ratings" puts them into the tracker; the live top 5 per side are the selling points and hooks.
+DATA.ratings = DATA.ratings || {};
+const RATE_SIDES = [
+  { key: "owner", title: "For the gym owner", groups: ["Admin app (gym owner and staff)", "Gym ↔ member links"] },
+  { key: "member", title: "For members", groups: ["Member app"] },
+];
+const RATE_KINDS = ["done", "built", "planned"];
+let rdraft = {};
+try { rdraft = JSON.parse(ls.get("inbox-rdraft") || "{}") || {}; } catch (e) { rdraft = {}; /* quiet: a broken draft starts empty */ }
+let rateHideDone = ls.get("inbox-rhide") === "1";
+const rateOf = (id) => Object.assign({}, DATA.ratings[id] || {}, rdraft[id] || {});
+const rateFull = (r) => Boolean(r.c && r.v);
+const rateScore = (r) => r.v * 2 + r.c;
+const rateFeats = (side) => DATA.backlog.map((f, i) => ({ f, i })).filter((x) => side.groups.includes(x.f.group) && RATE_KINDS.includes(x.f.kind));
+const unsavedRates = () => Object.keys(rdraft).filter((id) => rateFull(rateOf(id)));
+function rateTop(side) {
+  return rateFeats(side).map((x) => ({ f: x.f, i: x.i, r: rateOf(x.f.id) })).filter((x) => rateFull(x.r))
+    .sort((a, b) => rateScore(b.r) - rateScore(a.r) || b.r.v - a.r.v || a.i - b.i).slice(0, 5);
+}
+function rateTopHtml() {
+  return RATE_SIDES.map((side) => {
+    const top = rateTop(side);
+    return '<div class="rtop"><p class="rtoph">Top 5 ' + esc(side.title.toLowerCase()) + "</p>" + (top.length
+      ? "<ol>" + top.map((x) => "<li>" + esc(x.f.name) + ' <span class="rsc">Value ' + x.r.v + " · Convenience " + x.r.c + "</span></li>").join("") + "</ol>"
+      : '<p class="small" style="margin:0">Rate a few to see them here.</p>') + "</div>";
+  }).join("");
+}
+const RLABEL = { c: "Convenience", v: "Value" };
+function rateRow(f, k) {
+  const r = rateOf(f.id);
+  let h = '<div class="rrow" role="group" aria-label="' + RLABEL[k] + ", " + esc(f.name) + '"><span class="rlbl">' + RLABEL[k] + "</span>";
+  for (let n = 1; n <= 5; n++) h += '<button type="button" class="r5" data-act="rate" data-id="' + esc(f.id) + '" data-k="' + k + '" data-v="' + n + '" aria-pressed="' + (r[k] === n) + '">' + n + "</button>";
+  return h + "</div>";
+}
+const rateCard = ({ f, i }) => '<div class="rcard" id="rc' + i + '"><div class="fh"><h4 class="name">' + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(BL_KIND[f.kind]) + "</span></div>" +
+  '<p class="det rdet">' + esc(String(f.how || f.details).replace(/\s*\((?:R-\d+|#\d+)[^)]*\)/g, "")) + "</p>" + rateRow(f, "c") + rateRow(f, "v") + "</div>";
+function rateCounts() {
+  const all = RATE_SIDES.map((side) => rateFeats(side));
+  return { all, total: all.reduce((n, xs) => n + xs.length, 0), rated: all.reduce((n, xs) => n + xs.filter((x) => rateFull(rateOf(x.f.id))).length, 0) };
+}
+const rateSum = (c) => "Rate the features (" + c.rated + " of " + c.total + " rated)";
+const rateBtn = () => { const u = unsavedRates().length; return "Save my ratings" + (u ? " (" + u + ")" : ""); };
+function rateHtml() {
+  const c = rateCounts(), u = unsavedRates().length;
+  // On Home the top 5 always show; the list to rate folds under them (R-196).
+  return '<p class="hint">Rate each feature from 1 to 5. <b>Convenience</b>: how much easier it makes the day of the person who uses it. <b>Value</b>: how much a gym owner buying MettleUp would care about it. Tap a number again to clear it. The top 5 on each side become our selling points and marketing hooks.</p>' +
+    '<div id="rtops">' + rateTopHtml() + "</div>" +
+    '<details class="ratebox" data-box="rate"' + (doneOpen.rate ? " open" : "") + '><summary><span id="rsum">' + rateSum(c) + "</span>" + CHEV + "</summary>" +
+    '<div class="actions" style="margin:12px 0 4px"><button class="btn" id="rsave" data-act="ratesave"' + (u ? "" : " disabled") + ">" + rateBtn() + "</button>" +
+    '<label class="rhide"><input type="checkbox" id="rhide"' + (rateHideDone ? " checked" : "") + "> Hide rated ones</label>" +
+    '<span class="msg" id="ratemsg" role="status"></span></div>' +
+    RATE_SIDES.map((side, si) => {
+      const xs = c.all[si].filter((x) => !(rateHideDone && rateFull(rateOf(x.f.id))));
+      return '<h3 class="grp">' + esc(side.title) + ' <span class="cnt">' + c.all[si].length + "</span></h3>" + (xs.length ? xs.map(rateCard).join("") : empty("All rated on this side.", ""));
+    }).join("") + "</details>";
+}
+function rateTap(b) {
+  const id = b.dataset.id, k = b.dataset.k, v = Number(b.dataset.v), cur = rateOf(id);
+  const d = { c: cur.c || 0, v: cur.v || 0 };
+  d[k] = cur[k] === v ? 0 : v;
+  rdraft[id] = d;
+  ls.set("inbox-rdraft", JSON.stringify(rdraft));
+  b.parentElement.querySelectorAll(".r5").forEach((x) => x.setAttribute("aria-pressed", String(Number(x.dataset.v) === d[k])));
+  $("rtops").innerHTML = rateTopHtml();
+  $("rsum").textContent = rateSum(rateCounts());
+  const sb = $("rsave"); sb.textContent = rateBtn(); sb.disabled = !unsavedRates().length;
+}
+function rateSave() {
+  const msg = $("ratemsg"), at = stamp(), add = {};
+  unsavedRates().forEach((id) => { const r = rateOf(id); add[id] = { c: r.c, v: r.v, at }; });
+  const n = Object.keys(add).length;
+  if (!n) { msg.textContent = "Give a feature both scores first."; return; }
+  const before = JSON.stringify(DATA.ratings), draftBefore = JSON.stringify(rdraft);
+  save(() => { Object.assign(DATA.ratings, add); Object.keys(add).forEach((id) => delete rdraft[id]); ls.set("inbox-rdraft", JSON.stringify(rdraft)); },
+    () => { DATA.ratings = JSON.parse(before); rdraft = JSON.parse(draftBefore); ls.set("inbox-rdraft", draftBefore); },
+    msg, "Owner inbox feature ratings: " + Object.keys(add).map((id) => id + " C" + add[id].c + " V" + add[id].v).join(", "),
+    n + (n === 1 ? " rating" : " ratings") + " saved.");
+}
+function waitingHtml() {
+  const list = DATA.entries.filter(shown).sort(byNum);
+  const qs = list.filter(needsAnswer).sort(byPrio((e) => e.prio, byNum)), ts = list.filter(needsTask).sort(byPrio((e) => e.prio, byNum));
+  const tops = list.filter(topicWait).sort(byNum);
+  const feats = waitingFeats().sort(byPrio((x) => x.f.prio, (a, b) => a.i - b.i));
+  // Done (folded below): decisions already answered, tasks done, feature yes/no's sent.
+  // R-173: answered questions and done tasks live in Q&A only (one topic, one place); here only feature replies just sent.
+  const doneList = [];
+  const sentFeats = DATA.backlog.map((f, i) => ({ f, i })).filter((x) => x.f.kind === "waiting" && DATA.notes[x.f.id]);
+  let out = '<div class="tabhead"><h2>Waiting for you</h2></div>' +
+    '<p class="hint">A question: tap an answer, then Send. A task: do it, then tap “I have done it”. Or tell me in chat, for example “49: A”.</p>' + sortHtml();
+  if (!qs.length && !ts.length && !tops.length && !feats.length) out += '<div style="margin-top:14px">' + empty("Nothing waits for you.", "When I need a decision or a step from you, it shows up here first.") + "</div>";
+  // R-83: the open questions by number first (tap = jump), then the questions, the tasks, the features.
+  if (qs.length) out += '<nav class="qindex" aria-label="Questions for you">' + rows(qs.map((e) => rowEntry(e))) + "</nav>" +
+    '<h3 class="grp" id="sec-q">Questions for you <span class="cnt">' + qs.length + '</span></h3><div class="stack">' + qs.map(card).join("") + "</div>";
+  if (ts.length) out += '<h3 class="grp" id="sec-t">Tasks for you <span class="cnt">' + ts.length + '</span></h3><div class="stack">' + ts.map(card).join("") + "</div>";
+  if (tops.length) out += '<h3 class="grp" id="sec-w">Topics waiting for you <span class="cnt">' + tops.length + "</span></h3>" +
+    '<p class="hint" style="margin:-4px 0 10px">We discussed these; the feature now needs your yes, money or a step. Tap the backlog chip to answer there.</p>' +
+    '<div class="stack">' + tops.map(card).join("") + "</div>";
+  if (feats.length) out += '<h3 class="grp" id="sec-f">Features waiting for you <span class="cnt">' + feats.length + "</span></h3>" +
+    '<p class="hint" style="margin:-4px 0 10px">Each needs you: an answer, a yes, a purchase or a setup step. Open “Comment” and tell me, for example “Yes, go ahead” or “Not now”.</p>' +
+    feats.map(({ f, i }) => featHtml(f, i)).join("");
+  const n = doneList.length + sentFeats.length;
+  if (n) out += doneBox("waiting", "Answered and done (" + n + ")", doneList.map(card).join("") + sentFeats.map(({ f, i }) => featHtml(f, i)).join(""));
+  return out;
+}
+function qaHtml() {
+  // R-96: open questions and tasks first, in the Sort order; then new answers; then the rest by number.
+  const sorted = DATA.entries.filter(shown).sort(byPrio((e) => (needsYou(e) ? e.prio : null), (a, b) => (toRead(b) - toRead(a)) || byNum(a, b)));
+  const isDone = (e) => isRead(e) && !needsYou(e);
+  const top = sorted.filter(onTop).sort(byThread), rest = sorted.filter((e) => !onTop(e));
+  const list = rest.filter((e) => !isDone(e)), doneList = rest.filter(isDone);
+  const fresh = sorted.filter(toRead);
+  const topHtml = top.length ? '<h3 class="grp">Your follow-ups <span class="cnt">' + top.length + "</span></h3>" +
+    '<div class="stack">' + top.map(card).join("") + "</div>" + '<h3 class="grp">Other answers</h3>' : "";
+  return '<div class="tabhead"><h2>Questions &amp; answers</h2>' +
+    (fresh.length > 1 ? '<button class="btn ghost" data-act="readall">Mark all ' + fresh.length + " as read</button>" : "") + "</div>" +
+    '<span class="msg" id="rallmsg" role="status"></span>' +
+    '<p class="hint">' + "Questions you replied to sit on top; “New answer” means I answered your follow-up. Then other answers, new ones first. Anything you need to pick or do is under Waiting for you." +
+    " Open one with “Read the full answer”; tap “Mark as read” when you are done with it.</p>" + sortHtml() + topHtml +
+    '<div class="stack" style="margin-top:14px">' + (list.length ? list.map(card).join("") : empty("Nothing new: everything is read.", "Read answers are folded below.")) + "</div>" +
+    doneBox("all", "Already read (" + doneList.length + ")", doneList.map(card).join(""));
+}
+function noteText(f, text) { return "Owner inbox feature backlog: " + f.group + " / " + f.name + ": " + text; }
+function featHtml(f, i, withGroup) {
+  const sent = DATA.notes[f.id], mv = DATA.moves[f.id], canMove = !SHIPPED.includes(f.kind);
+  const btn = (k, label) => '<button type="button" class="fbtn" data-act="panel" data-p="fp' + k + i + '" aria-expanded="false" aria-controls="fp' + k + i + '">' + label + CHEV + "</button>";
+  const pri = canMove && f.kind !== "no" ? priHtml(f.prio) : "";
+  return '<div class="feat" id="f' + i + '"><div class="fh"><h4 class="name">' + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
+    (pri || withGroup ? '<p class="pris">' + pri + (withGroup ? "<span>" + esc(f.group) + "</span>" : "") + "</p>" : "") +
+    '<p class="det">' + esc(f.details) + "</p>" +
+    (mv ? '<p class="moved">Moved here by you, ' + esc(mv.at) + ".</p>" : "") +
+    (sent ? '<div class="sentbox"><p class="sentline">' + CHECK + "Comment sent " + esc(sent.at) + '</p><p class="sentnote">' + esc(sent.text) + "</p>" +
+      '<p class="small">Claude acts on it the next time it opens your tracker.</p><div class="actions"><button class="btn ghost" data-act="renote" data-i="' + i + '">Write another</button></div></div>' : "") +
+    '<div class="fbar">' + (f.how ? btn("how", "How it will work") : "") + (canMove ? btn("move", "Move to") : "") + (sent ? "" : btn("note", "Comment")) + "</div>" +
+    (f.how ? '<div class="fpanel" id="fphow' + i + '" hidden><p class="how"><b>How it will work:</b> ' + esc(f.how) + "</p></div>" : "") +
+    (canMove ? '<div class="fpanel" id="fpmove' + i + '" hidden><div class="actions">' +
+      Object.keys(MOVE_KIND).filter((to) => to !== f.status).map((to) =>
+        '<button class="btn ghost" data-act="move" data-i="' + i + '" data-to="' + esc(to) + '">' + esc(MOVE_LABEL[to]) + "</button>").join("") +
+      '<span class="msg" id="mmsg' + i + '" role="status"></span></div></div>' : "") +
+    (sent ? "" : '<div class="fpanel" id="fpnote' + i + '" hidden><div class="form"><label class="notelbl" for="fnote' + i + '">Your comment on ' + esc(f.name) + "</label>" +
+      '<textarea id="fnote' + i + '" rows="2" placeholder="e.g. Do this one first, members keep asking"></textarea>' +
+      '<div class="actions"><button class="btn" data-act="fnote" data-i="' + i + '">Send to Claude</button><span class="msg" id="fmsg' + i + '" role="status"></span></div></div></div>') +
+    "</div>";
+}
+function groupedHtml(items) {
+  const count = {};
+  items.forEach(({ f }) => { count[f.group] = (count[f.group] || 0) + 1; });
+  let out = "", group = null;
+  items.forEach(({ f, i }) => {
+    if (f.group !== group) { group = f.group; out += '<h3 class="grp">' + esc(group) + ' <span class="cnt">' + count[group] + "</span></h3>"; }
+    out += featHtml(f, i);
+  });
+  return out;
+}
+function backlogHtml() {
+  const all = DATA.backlog.map((f, i) => ({ f, i }));
+  const head = '<div class="tabhead"><h2>Feature backlog</h2></div>';
+  if (!all.length) return head + '<div style="margin-top:14px">' + empty("Nothing here yet.", "Features show up here once you confirm them.") + "</div>";
+  const groups = [...new Set(all.map((x) => x.f.group))];
+  if (blGroup !== "all" && !groups.includes(blGroup)) blGroup = "all";
+  const inGroup = all.filter((x) => blGroup === "all" || x.f.group === blGroup);
+  const counts = {};
+  inGroup.forEach((x) => { counts[x.f.kind] = (counts[x.f.kind] || 0) + 1; });
+  if (blKind && !counts[blKind]) blKind = null;
+  const toBuild = inGroup.filter((x) => !SHIPPED.includes(x.f.kind)).length;
+  const rank = (x) => BL_ORDER.indexOf(x.f.kind);
+  // Within a group, what needs him first, then Planned, Idea, Not doing (the .md order kept inside each).
+  const sortIn = (xs) => xs.slice().sort((a, b) => groups.indexOf(a.f.group) - groups.indexOf(b.f.group) || rank(a) - rank(b) || a.i - b.i);
+  const filters = '<div class="filters"><div class="pills" role="group" aria-label="Show features by status">' +
+    '<button type="button" class="pill" data-act="blk" data-k="" aria-pressed="' + !blKind + '">Not built yet <b>' + toBuild + "</b></button>" +
+    BL_ORDER.filter((k) => counts[k]).map((k) => '<button type="button" class="pill k-' + k + '" data-act="blk" data-k="' + k + '" aria-pressed="' + (blKind === k) + '"><span class="dot"></span>' + BL_KIND[k] + " <b>" + counts[k] + "</b></button>").join("") +
+    "</div>" +
+    '<div class="selrow"><label for="blgroup">Group</label><select id="blgroup"><option value="all">All groups (' + all.length + ")</option>" +
+    groups.map((g) => '<option value="' + esc(g) + '"' + (g === blGroup ? " selected" : "") + ">" + esc(g) + " (" + all.filter((x) => x.f.group === g).length + ")</option>").join("") + "</select></div>" +
+    '<p class="legend"><b>Planned</b> = Claude builds it, no need to ask you. <b>Waiting for you</b> = needs your answer, a yes, money or a setup step. Open “Move to” on a feature to change it.</p></div>' + sortHtml();
+  // R-96: a Sort other than "Original order" lists the features not built as one list (each card names its group).
+  const listed = (xs) => sortBy === "order" ? groupedHtml(sortIn(xs))
+    : '<div style="margin-top:14px">' + sortIn(xs).sort(byPrio((x) => (x.f.kind === "no" ? null : x.f.prio), () => 0)).map(({ f, i }) => featHtml(f, i, true)).join("") + "</div>";
+  if (blKind) return head + filters + (SHIPPED.includes(blKind) ? groupedHtml(sortIn(inGroup.filter((x) => x.f.kind === blKind))) : listed(inGroup.filter((x) => x.f.kind === blKind)));
+  const built = inGroup.filter((x) => SHIPPED.includes(x.f.kind));
+  const pending = inGroup.filter((x) => !SHIPPED.includes(x.f.kind));
+  return head + filters + (pending.length ? listed(pending) : '<div style="margin-top:14px">' + empty("Everything in this group is built.") + "</div>") +
+    doneBox("built", "Built (" + built.length + "): live, or in the next release", groupedHtml(sortIn(built)));
+}
+function taskRow(x) {
+  const waits = x.k === "blocked" ? numsIn(x.t.details) : [];
+  const pri = x.k === "done" ? "" : priHtml(x.t.prio);
+  return '<div class="feat task" id="t' + x.i + '"><div class="fh"><h4 class="name">' + esc(x.t.task) + '</h4><span class="status k-' + x.k + '">' + esc(x.t.status) + "</span></div>" +
+    (pri ? '<p class="pris">' + pri + "</p>" : "") +
+    (waits.length ? '<p class="waits">Waits for ' + waits.map((n) => '<a class="chipnum" href="#e' + n + '" data-goto="' + n + '"><b>#' + n + "</b>" + esc(entryOf(n).title.length > 34 ? entryOf(n).title.slice(0, 32).replace(/\s+\S*$/, "") + "…" : entryOf(n).title) + "</a>").join("") + "</p>" : "") +
+    (x.t.details ? '<p class="det">' + esc(x.t.details) + "</p>" : "") + "</div>";
+}
+function mineHtml() {
+  const mine = mineAll();
+  const head = '<div class="tabhead"><h2>Claude’s tasks</h2></div><p class="hint">What I do myself. Blocked ones wait for you: tap the # to answer it.</p>' + sortHtml();
+  if (!mine.length) return head + empty("No tasks yet.");
+  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k).sort(byPrio((x) => x.t.prio, (a, b) => a.i - b.i)); return xs.length ? '<h3 class="grp">' + title + ' <span class="cnt">' + xs.length + "</span></h3>" + xs.map(taskRow).join("") : ""; };
+  const done = mine.filter((x) => x.k === "done");
+  return head + sec("doing", "Doing now") + sec("blocked", "Blocked: waits for you") + sec("todo", "To do next") +
+    (mine.some((x) => x.k !== "done") ? "" : empty("Nothing open: all my tasks are done.")) +
+    doneBox("mine", "Done (" + done.length + ")", done.map(taskRow).join(""));
+}
+
+// ---- Search: words across everything, or a number ----
+function searchHtml() {
+  const q = query.trim();
+  const nm = q.match(/^#?(\d{1,4})$/);
+  const tokens = nm ? ["#" + Number(nm[1])] : q.toLowerCase().split(/\s+/).filter(Boolean);
+  const hit = (hay) => tokens.every((t) => hay.includes(t));
+  const reTok = new RegExp("(" + tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "gi");
+  const snip = (text) => {
+    const low = text.toLowerCase(), at = low.indexOf(tokens[0]);
+    if (at < 0) return "";
+    const from = Math.max(0, at - 50), s = (from ? "…" : "") + text.slice(from, at + 110).replace(/\s+/g, " ") + (at + 110 < text.length ? "…" : "");
+    return esc(s).replace(reTok, "<mark>$1</mark>");
+  };
+  const es = DATA.entries.map((e) => {
+    const text = e.title + " " + softCaps(e.status) + " " + e.decides.map((d) => d.q + " " + d.opts.map((o) => o.key + ": " + o.text).join(" ")).join(" ") + " " + tasksOf(e).join(" ") + " " + plain(e.body);
+    return { e, text, hay: ("#" + e.num + " " + chatLabel(e.chat) + " " + text).toLowerCase() };
+  }).filter((x) => hit(x.hay)).sort((a, b) => (nm ? (b.e.num === Number(nm[1])) - (a.e.num === Number(nm[1])) : 0) || byNum(a.e, b.e));
+  const fs = DATA.backlog.map((f, i) => ({ f, i, text: f.name + " " + f.status + " " + f.details + " " + f.how })).filter((x) => hit((x.f.group + " " + x.text).toLowerCase()));
+  const ts = mineAll().map((x) => Object.assign(x, { text: x.t.task + " " + x.t.status + " " + x.t.details })).filter((x) => hit(x.text.toLowerCase()));
+  const total = es.length + fs.length + ts.length;
+  let out = '<div class="tabhead"><h2>Search: “' + esc(q) + '”</h2><button class="btn ghost quiet" data-act="clearq">Clear</button></div>' +
+    '<p class="hint">' + (total ? total + " found" + (nm ? ". Press Go to jump to #" + Number(nm[1]) + "." : ".") : "") + "</p>";
+  if (!total) return out + '<div style="margin-top:14px">' + empty("Nothing matches.", "Try one word, or a number like 51.") + "</div>";
+  const eRow = (x) => rowEntry(x.e, nm && x.e.num === Number(nm[1]) ? '<span class="tag act">Go to #' + x.e.num + "</span>" : snip(x.text));
+  const ew = es.filter((x) => needsYou(x.e)), eq = es.filter((x) => !needsYou(x.e));
+  if (ew.length) out += '<h3 class="grp">Waiting for you <span class="cnt">' + ew.length + "</span></h3>" + rows(ew.map(eRow), 12);
+  if (eq.length) out += '<h3 class="grp">Questions &amp; answers <span class="cnt">' + eq.length + "</span></h3>" + rows(eq.map(eRow), 12);
+  if (fs.length) out += '<h3 class="grp">Feature backlog <span class="cnt">' + fs.length + "</span></h3>" +
+    rows(fs.map((x) => rowFeat(x.f, '<span class="status k-' + x.f.kind + '">' + esc(x.f.status) + "</span> " + (snip(x.text) || esc(x.f.group)))), 12);
+  if (ts.length) out += '<h3 class="grp">Claude’s tasks <span class="cnt">' + ts.length + "</span></h3>" +
+    rows(ts.map((x) => rowTask(x, '<span class="status k-' + x.k + '">' + esc(x.t.status) + "</span> " + snip(x.text))), 12);
+  return out;
+}
+
+// R-83: "#47" written in an answer becomes a jump link to that entry; tables scroll inside their box.
+function enhance(root) {
+  root.querySelectorAll(".body table").forEach((t) => { if (t.parentElement.classList.contains("tablebox")) return; const box = document.createElement("div"); box.className = "tablebox"; t.replaceWith(box); box.appendChild(t); });
+  root.querySelectorAll(".body a, .taskbox a").forEach((a) => { if (!a.dataset.goto) { a.target = "_blank"; a.rel = "noopener"; } });
+  root.querySelectorAll("p, li, td").forEach((el) => {
+    if (!/#\d/.test(el.textContent) || el.closest(".row, label, .rows, .waits, pre")) return;
+    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walk.nextNode()) if (/#\d/.test(walk.currentNode.nodeValue) && !walk.currentNode.parentElement.closest("a, code, button")) nodes.push(walk.currentNode);
+    nodes.forEach((t) => {
+      const span = document.createElement("span");
+      span.innerHTML = esc(t.nodeValue).replace(/#(\d{1,4})\b/g, (m, n) => entryOf(Number(n)) ? '<a class="goto" href="#e' + n + '" data-goto="' + n + '">' + m + "</a>" : m);
+      t.replaceWith(span);
+    });
+  });
+}
+function renderTabs() {
+  const ent = DATA.entries.filter(inChat);
+  const wait = ent.filter(inWaiting).length + waitingFeats().length, fresh = ent.filter(toRead).length;
+  const toBuild = DATA.backlog.filter((f) => !SHIPPED.includes(f.kind)).length;
+  const open = mineAll().filter((x) => x.k !== "done").length;
+  const set = (f, n, hot, label) => {
+    const b = document.querySelector('.tab[data-f="' + f + '"]');
+    b.querySelector(".n").textContent = n;
+    b.querySelector(".n").classList.toggle("hot", hot);
+    b.setAttribute("aria-label", label);
+  };
+  set("waiting", wait, wait > 0, "Waiting for you: " + wait + " questions and tasks");
+  const qa = ent.filter((e) => !inWaiting(e)).length;
+  set("all", fresh || qa, fresh > 0, "Questions and answers: " + (fresh ? fresh + " new" : qa + " in all"));
+  set("backlog", toBuild, false, "Feature backlog: " + toBuild + " not built yet");
+  set("mine", open, false, "Claude's tasks: " + open + " open");
+  document.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-pressed", String(!query && b.dataset.f === filter)));
+}
+// R-182 (owner, 29 Oct 2026): "it cancels my response and refreshes the whole page". When Claude publishes a new
+// version the open page reloads; what he was typing, his tab and his place must survive that. Every keystroke in a
+// reply box is kept on this phone (by entry number or feature id) until it is sent, and put back after any reload.
+const draftKey = (el) => {
+  const m = /^(note|fnote)(\d+)$/.exec(el.id || "");
+  if (!m) return null;
+  if (m[1] === "note") return "e" + m[2];
+  const f = DATA.backlog[Number(m[2])];
+  return f ? "f" + f.id : null;
+};
+let drafts = {};
+try { drafts = JSON.parse(ls.get("inbox-drafts") || "{}") || {}; } catch (e) { drafts = {}; /* quiet: a broken store starts empty */ }
+const saveDrafts = () => ls.set("inbox-drafts", JSON.stringify(drafts));
+// A reply already sent (it is in the page now) needs no draft.
+Object.keys(drafts).forEach((k) => {
+  if ((k[0] === "e" && DATA.answers[k.slice(1)]) || (k[0] === "f" && DATA.notes[k.slice(1)])) delete drafts[k];
+});
+saveDrafts();
+function restoreDrafts(root) {
+  root.querySelectorAll("textarea[id]").forEach((ta) => {
+    const k = draftKey(ta);
+    if (!k || !drafts[k] || ta.value) return;
+    ta.value = drafts[k];
+    const panel = ta.closest(".fpanel");
+    if (panel && panel.hidden) {
+      panel.hidden = false;
+      const b = document.querySelector('[data-p="' + panel.id + '"]');
+      if (b) b.setAttribute("aria-expanded", "true");
+    }
+  });
+}
+document.addEventListener("input", (ev) => {
+  const t = ev.target;
+  if (t.tagName !== "TEXTAREA") return;
+  const k = draftKey(t);
+  if (!k) return;
+  if (t.value.trim()) drafts[k] = t.value; else delete drafts[k];
+  saveDrafts();
+});
+// Any reload (his own save or Claude's publish) comes back to the same tab and place.
+window.addEventListener("pagehide", () => {
+  try { keepPlace(); keepTab(); } catch (e) { /* quiet: best effort while the page goes away */ }
+});
+function render() {
+  renderTabs();
+  $("chatbar").hidden = Boolean(query) || !(filter === "waiting" || filter === "all");
+  if ($("chatbar").hidden) closeRename();
+  const v = $("view");
+  v.innerHTML = query ? searchHtml() : filter === "home" ? homeHtml() : filter === "waiting" ? waitingHtml() : filter === "all" ? qaHtml() : filter === "backlog" ? backlogHtml() : mineHtml();
+  enhance(v);
+  restoreDrafts(v);
+  ls.set("inbox-blkind", blKind || "");
+  ls.set("inbox-blgroup", blGroup);
+}
+
+// One save at a time: each one publishes the whole page, and the view reloads after it.
+let saving = false;
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text;
+  t.hidden = false;
+  clearTimeout(toast.h);
+  toast.h = setTimeout(() => { t.hidden = true; }, 4000);
+}
+async function save(change, undo, msg, copyText, doneText) {
+  if (saving) return;
+  saving = true; // before the await, so a second quick tap can't start a second save
+  let artifact = null;
+  try { artifact = await claude.use("artifact"); } catch (e) { artifact = null; /* quiet: treated as "not available" below */ }
+  if (!artifact) { saving = false; showCopy(msg, "Saving isn't available here.", copyText); return; }
+  change();
+  msg.textContent = "Saving…";
+  try {
+    keepPlace(); keepTab();
+    if (doneText) ss.set("inbox-toast", JSON.stringify({ text: doneText, at: Date.now() }));
+    await artifact.publish(pageHtml()); // this view reloads to the saved page
+    // If the view has not reloaded (yet), show the saved state here.
+    saving = false;
+    render();
+    if (doneText) toast(doneText);
+  } catch (err) {
+    ss.del("inbox-toast");
+    undo();
+    saving = false;
+    const code = err && err.code;
+    if (code === "conflict") { msg.textContent = "The page changed meanwhile; it is reloading. Try again after it opens."; return; }
+    showCopy(msg, code === "not_writer" || code === "not_granted" ? "This view can't save." : "Couldn't save (" + (code || "error") + ").", copyText);
+  }
+}
+function send(n) {
+  const e = entryOf(n);
+  const mine = picks[n] || {};
+  const msg = $("msg" + n);
+  const note = ($("note" + n).value || "").trim().slice(0, 2000);
+  const chosen = e.decides.map((d, qi) => ({ q: d.q, key: mine[qi], text: (d.opts.find((o) => o.key === mine[qi]) || {}).text || "" })).filter((p) => p.key);
+  if (!chosen.length && !note) { msg.textContent = e.decides.length ? "Pick an answer or write a comment first." : "Write your reply first."; return; }
+  const answer = { picks: chosen, note, at: stamp() };
+  const kept = picks[n];
+  save(() => { DATA.answers[n] = answer; delete picks[n]; keepPicks(); },
+    () => { delete DATA.answers[n]; if (kept) picks[n] = kept; keepPicks(); }, msg, answerText(e, answer),
+    "Sent to Claude: your " + (e.decides.length ? "answer" : "reply") + " to #" + n + ".");
+}
+function agree(n) {
+  const e = entryOf(n);
+  picks[n] = {};
+  e.decides.forEach((d, qi) => { const r = d.opts.find((o) => o.rec); if (r) picks[n][qi] = r.key; });
+  keepPicks();
+  send(n);
+}
+function markDone(n, on) {
+  const had = n in DATA.done, before = DATA.done[n];
+  const e = entryOf(n);
+  save(() => { DATA.done[n] = on ? stamp() : false; }, () => { if (had) DATA.done[n] = before; else delete DATA.done[n]; },
+    $("tmsg" + n), "Owner inbox #" + e.num + " (" + e.title + "): " + (on ? "task done" : "task not done yet"), on ? "Marked #" + n + " as done. Thank you." : "#" + n + " is open again.");
+}
+function renameChat() {
+  const msg = $("renmsg");
+  const name = ($("newname").value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+  if (!name) { msg.textContent = "Type a name first."; return; }
+  if (/https?:/i.test(name) || name.includes("—")) { msg.textContent = "Leave out links and long dashes."; return; }
+  if (name === chatLabel(chat)) { closeRename(); return; }
+  if (chats.some((c) => c !== chat && chatLabel(c).toLowerCase() === name.toLowerCase())) { msg.textContent = "Another chat already has this name."; return; }
+  const raw = chat, had = raw in DATA.chatNames, before = DATA.chatNames[raw];
+  save(() => { DATA.chatNames[raw] = name; }, () => { if (had) DATA.chatNames[raw] = before; else delete DATA.chatNames[raw]; },
+    msg, 'Owner inbox: rename the chat "' + chatLabel(raw) + '" to "' + name + '"', "Chat renamed.");
+}
+function markRead(n, on) {
+  const had = n in DATA.read, before = DATA.read[n];
+  const e = entryOf(n);
+  save(() => { DATA.read[n] = on ? stamp() : false; }, () => { if (had) DATA.read[n] = before; else delete DATA.read[n]; },
+    $("rmsg" + n), "Owner inbox #" + e.num + " (" + e.title + "): " + (on ? "read" : "mark as unread"), on ? "#" + n + " marked as read." : "#" + n + " marked as unread.");
+}
+function markAllRead() {
+  const fresh = DATA.entries.filter(inChat).filter(toRead);
+  const before = {};
+  fresh.forEach((e) => { before[e.num] = e.num in DATA.read ? [DATA.read[e.num]] : null; });
+  const when = stamp();
+  save(() => { fresh.forEach((e) => { DATA.read[e.num] = when; }); },
+    () => { fresh.forEach((e) => { if (before[e.num]) DATA.read[e.num] = before[e.num][0]; else delete DATA.read[e.num]; }); },
+    $("rallmsg"), "Owner inbox: read " + fresh.map((e) => "#" + e.num).join(", "), fresh.length + " answers marked as read.");
+}
+function sendNote(i) {
+  const f = DATA.backlog[i];
+  const msg = $("fmsg" + i);
+  const text = ($("fnote" + i).value || "").trim().slice(0, 2000);
+  if (!text) { msg.textContent = "Write your comment first."; return; }
+  const had = DATA.notes[f.id];
+  save(() => { DATA.notes[f.id] = { group: f.group, name: f.name, text, at: stamp() }; },
+    () => { if (had) DATA.notes[f.id] = had; else delete DATA.notes[f.id]; }, msg, noteText(f, text), "Comment sent to Claude.");
+}
+// R-81 (owner, 22 Oct): he moves a feature between statuses himself; --absorb writes it into the .md.
+function moveFeature(i, to) {
+  const f = DATA.backlog[i];
+  const had = DATA.moves[f.id], before = { status: f.status, kind: f.kind };
+  save(() => { DATA.moves[f.id] = { group: f.group, name: f.name, to, at: stamp() }; f.status = to; f.kind = MOVE_KIND[to]; },
+    () => { if (had) DATA.moves[f.id] = had; else delete DATA.moves[f.id]; f.status = before.status; f.kind = before.kind; },
+    $("mmsg" + i), "Owner inbox feature backlog: " + f.group + " / " + f.name + ": move to " + to, "Moved “" + f.name + "” to " + to + ".");
+}
+function showCopy(msg, why, text) {
+  msg.innerHTML = esc(why) + ' Copy it and paste it in the chat instead: <button class="btn ghost" data-act="copy">Copy</button><pre class="copy">' + esc(text) + "</pre>";
+}
+
+// ---- Jumping: R-83 "Go to #51" from anywhere: the right tab, all chats, folded boxes opened ----
+function openAround(el) { for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true; }
+function arrive(el) {
+  el.setAttribute("tabindex", "-1");
+  el.scrollIntoView({ block: "start" });
+  el.focus({ preventScroll: true });
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 1600);
+}
+function clearQuery() { query = ""; $("find").value = ""; }
+function goTo(n) {
+  const msg = $("findmsg");
+  const e = entryOf(n);
+  if (!e) { msg.textContent = n ? "There is no #" + n + ". The newest is #" + maxNum + "." : "Type a number, for example 51."; return; }
+  msg.textContent = "";
+  clearQuery();
+  chat = "all"; $("chat").value = "all"; syncRename();
+  filter = inWaiting(e) ? "waiting" : "all"; blKind = null; keepTab();
+  render();
+  // In Waiting, the card (not its line in the index at the top).
+  const el = document.querySelector("article#e" + n);
+  if (!el) return;
+  openAround(el);
+  const full = el.querySelector(".fpanel.full");
+  if (full) { full.hidden = false; fillBody(full); const fb = el.querySelector('[data-p="' + full.id + '"]'); if (fb) fb.setAttribute("aria-expanded", "true"); }
+  arrive(el);
+}
+function goFeat(id) {
+  const i = DATA.backlog.findIndex((f) => f.id === id);
+  if (i < 0) return;
+  clearQuery(); $("findmsg").textContent = "";
+  filter = "backlog"; blKind = null; blGroup = "all"; keepTab();
+  render();
+  const el = $("f" + i);
+  if (el) { openAround(el); arrive(el); }
+}
+function goTask(i) {
+  clearQuery(); $("findmsg").textContent = "";
+  filter = "mine"; keepTab();
+  render();
+  const el = $("t" + i);
+  if (el) { openAround(el); arrive(el); }
+}
+function switchTab(f, sec) {
+  clearQuery(); $("findmsg").textContent = "";
+  filter = f; keepTab();
+  render();
+  const s = sec && $(sec);
+  if (s) s.scrollIntoView({ block: "start" }); else scrollTo(0, 0);
+}
+
+// ---- Chats (R-28) ----
+const chats = [...new Set(DATA.entries.map((e) => e.chat))];
+$("chat").innerHTML = '<option value="all">All chats (' + chats.length + ")</option>" +
+  chats.map((c) => '<option value="' + esc(c) + '">' + esc(chatLabel(c)) + "</option>").join("");
+if (chat !== "all" && !chats.includes(chat)) chat = "all";
+$("chat").value = chat;
+// R-28: "Rename" shows for one picked chat (not for "All chats").
+function closeRename() { $("renamebox").hidden = true; $("renmsg").textContent = ""; }
+function syncRename() { $("rename").hidden = chat === "all"; if (chat === "all") closeRename(); }
+syncRename();
+
+// ---- Events ----
+document.addEventListener("toggle", (ev) => {
+  const d = ev.target;
+  if (!d.dataset) return;
+  if (d.dataset.box) doneOpen[d.dataset.box] = d.open;
+}, true);
+// R-99 (owner, 24 Oct 2026: "Once I have selected an option, I am unable to de-select"): tapping the
+// picked answer again takes the pick back. The browser keeps a radio checked, so it is unchecked after it.
+let wasPicked = null;
+document.addEventListener("pointerdown", (ev) => {
+  const opt = ev.target.closest && ev.target.closest(".opt");
+  const r = opt && opt.querySelector('input[type="radio"][data-n]');
+  wasPicked = r && r.checked ? r : null;
+}, true);
+document.addEventListener("click", (ev) => {
+  const opt = ev.target.closest && ev.target.closest(".opt");
+  if (!opt || !wasPicked || opt.querySelector('input[type="radio"][data-n]') !== wasPicked) return;
+  const r = wasPicked, n = Number(r.dataset.n);
+  wasPicked = null;
+  ev.preventDefault();
+  setTimeout(() => { r.checked = false; }, 0);
+  if (picks[n]) { delete picks[n][r.dataset.q]; if (!Object.keys(picks[n]).length) delete picks[n]; }
+  keepPicks();
+  opt.classList.remove("on");
+  const ag = document.querySelector('button[data-act="agree"][data-n="' + n + '"]');
+  if (ag && !picks[n]) ag.hidden = false;
+}, true);
+document.addEventListener("change", (ev) => {
+  const t = ev.target;
+  if (t.id === "rhide") { rateHideDone = t.checked; ls.set("inbox-rhide", t.checked ? "1" : "0"); render(); return; }
+  if (t.matches('input[type="radio"][data-n]')) {
+    const n = Number(t.dataset.n);
+    picks[n] = Object.assign(picks[n] || {}, { [t.dataset.q]: t.value });
+    keepPicks();
+    t.closest("fieldset").querySelectorAll(".opt").forEach((l) => l.classList.toggle("on", l.contains(t)));
+    const ag = document.querySelector('button[data-act="agree"][data-n="' + n + '"]');
+    if (ag) ag.hidden = true;
+  }
+  if (t.id === "blgroup") { blGroup = t.value; blKind = null; render(); }
+  if (t.id === "sortby" && t.value in SORTS) { sortBy = t.value; ls.set("inbox-sort", sortBy); render(); const s = $("sortby"); if (s) s.focus(); }
+});
+document.addEventListener("click", (ev) => {
+  const g = ev.target.closest("a[data-goto]");
+  if (g) { ev.preventDefault(); goTo(Number(g.dataset.goto)); return; }
+  const fl = ev.target.closest("a[data-feat]");
+  if (fl) { ev.preventDefault(); goFeat(fl.dataset.feat); return; }
+  const tl = ev.target.closest("a[data-task]");
+  if (tl) { ev.preventDefault(); goTask(Number(tl.dataset.task)); return; }
+  const tb = ev.target.closest("[data-tab]");
+  if (tb) { ev.preventDefault(); switchTab(tb.dataset.tab, tb.dataset.sec); return; }
+  const b = ev.target.closest("button[data-act]");
+  if (!b) return;
+  const n = Number(b.dataset.n);
+  const act = b.dataset.act;
+  if (act === "rate") { rateTap(b); return; }
+  if (act === "ratesave") { rateSave(); return; }
+  if (act === "send") send(n);
+  if (act === "agree") agree(n);
+  if (act === "read") markRead(n, true);
+  if (act === "unread") markRead(n, false);
+  if (act === "readall") markAllRead();
+  if (act === "done") markDone(n, true);
+  if (act === "undone") markDone(n, false);
+  if (act === "change") { delete DATA.answers[n]; render(); const el = document.querySelector("article#e" + n); if (el) arrive(el); }
+  if (act === "fnote") sendNote(Number(b.dataset.i));
+  if (act === "move") moveFeature(Number(b.dataset.i), b.dataset.to);
+  if (act === "blk") { blKind = b.dataset.k || null; render(); }
+  if (act === "renote") { delete DATA.notes[DATA.backlog[Number(b.dataset.i)].id]; render(); }
+  if (act === "panel") {
+    const p = $(b.dataset.p);
+    const open = p.hidden;
+    p.hidden = !open;
+    b.setAttribute("aria-expanded", String(open));
+    if (open && p.classList.contains("full")) fillBody(p);
+    // Only a comment or reply panel takes the keyboard; an answer panel opens on its choices.
+    if (open && /^fp(note|reply)/.test(p.id)) { const ta = p.querySelector("textarea"); if (ta) ta.focus(); }
+  }
+  if (act === "seen") { seen.base = snapNow(); seen.baseAt = Date.now(); ls.set("inbox-seen", JSON.stringify(seen)); render(); }
+  if (act === "clearq") { clearQuery(); render(); $("find").focus(); }
+  if (act === "copy") {
+    const pre = b.parentElement.querySelector("pre.copy");
+    navigator.clipboard.writeText(pre.textContent).then(() => { b.textContent = "Copied"; }, () => {
+      const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Selected: copy it";
+    });
+  }
+});
+let typing = null;
+$("find").addEventListener("input", () => {
+  clearTimeout(typing);
+  typing = setTimeout(() => {
+    const was = Boolean(query);
+    query = $("find").value.trim();
+    $("findmsg").textContent = "";
+    render();
+    if (query || was) scrollTo(0, 0);
+  }, 150);
+});
+$("find").addEventListener("keydown", (ev) => { if (ev.key === "Escape") { clearQuery(); $("findmsg").textContent = ""; render(); } });
+$("findform").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  clearTimeout(typing);
+  const v = $("find").value.trim();
+  const nm = v.match(/^#?(\d{1,4})$/);
+  if (nm) { $("find").blur(); goTo(Number(nm[1])); return; }
+  if (!v) { $("findmsg").textContent = "Type a number (for example 51) or a word."; return; }
+  query = v; render(); scrollTo(0, 0); $("find").blur(); // closes the phone keyboard on the results
+});
+$("chat").addEventListener("change", (ev) => { chat = ev.target.value; ls.set("inbox-chat", chat); syncRename(); render(); });
+$("rename").addEventListener("click", () => { $("newname").value = chatLabel(chat); $("renmsg").textContent = ""; $("renamebox").hidden = false; $("newname").focus(); $("newname").select(); });
+$("rencancel").addEventListener("click", closeRename);
+$("rensave").addEventListener("click", renameChat);
+$("newname").addEventListener("keydown", (ev) => { if (ev.key === "Enter") renameChat(); if (ev.key === "Escape") closeRename(); });
+document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => switchTab(b.dataset.f)));
+// The sticky bar's real height, so a jump lands below it, not under it.
+const bar = document.querySelector("header.bar");
+const setBar = () => document.documentElement.style.setProperty("--hdr", bar.offsetHeight + "px");
+setBar();
+if (window.ResizeObserver) new ResizeObserver(setBar).observe(bar);
+
+render();
+// After a save the page reloads: back to the same place, with a short "Saved" note.
+const keptY = Number(ss.get("inbox-y"));
+ss.del("inbox-y");
+if (keptY) requestAnimationFrame(() => scrollTo(0, keptY));
+try { const t = JSON.parse(ss.get("inbox-toast") || "null"); ss.del("inbox-toast"); if (t && Date.now() - t.at < 20000) toast(t.text); } catch (e) { /* no note */ }
+// A link that ends in #51 (or #e51) opens at that entry.
+const fromHash = () => { const m = (location.hash || "").match(/^#e?(\d{1,4})$/); if (m) goTo(Number(m[1])); };
+if (!keptY) fromHash();
+window.addEventListener("hashchange", fromHash);
+</script>
