@@ -444,6 +444,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 73. Spoken feedback: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (29 Oct, 06:14 pm, via the page)**
 **Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
 **DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. I tick "Voice or sound recordings" in Play's Data safety form.
 **Your task:** Open console.groq.com, then Settings, then Data Controls, and switch on Zero Data Retention. Use the Groq account that holds your VastuFirst key: the server now uses that key. If you already did this, tap "I have done it".
@@ -451,6 +452,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (29 Oct, 06:15 pm, via the page)**
 **Why:** 0.60.0 sends crash reports so I can fix problems fast. The privacy notice and Play's Data safety form must say so. Today the notice holds an empty placeholder for it.
 **YOUR REPLY (30 Oct 2026):** A
 **My answer (30 Oct 2026):** Sorry: my first wording was wrong. I checked the app. A crash report does NOT send the phone model, and today nothing deletes old reports. So I did not add it. The true version is below. Please pick again.
