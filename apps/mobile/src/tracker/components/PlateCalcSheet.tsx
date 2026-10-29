@@ -63,6 +63,18 @@ export function PlateCalcSheet({
     }
   };
 
+  // F63: the 1-rep max and % calculator, starting on the weight typed here.
+  const openOneRepMax = (): void => {
+    setOpenError(null);
+    try {
+      router.push({ pathname: '/one-rep-max', params: target > 0 ? { kg: String(target) } : {} } as unknown as Href);
+      onClose();
+    } catch (e) {
+      console.warn('[ForgeErr] plate calculator: 1-rep max did not open', e);
+      setOpenError("Couldn't open the 1-rep max calculator. Try again."); // member-words
+    }
+  };
+
   // The typed target, in kg (typed pounds turned into kg).
   const target = useMemo(() => {
     const n = parseTyped(text);
@@ -227,6 +239,16 @@ export function PlateCalcSheet({
           >
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent, textDecorationLine: 'underline' }}>
               Change plates
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={openOneRepMax}
+            accessibilityRole="link"
+            accessibilityLabel="Open the 1-rep max and percent calculator" // member-words
+            style={({ pressed }) => ({ minHeight: 48, justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent, textDecorationLine: 'underline' }}>
+              {'1-rep max and %' /* member-words */}
             </Text>
           </Pressable>
         </View>
