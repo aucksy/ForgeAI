@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-188. Business-growth view: "does buying our system really grow their revenue?" — 30 Oct 2026
+**He said:** the analytics he asked for were meant to track whether membership numbers and engagement are increasing: overall
+business-growth analytics. "My genuine focus is to determine whether purchasing our system truly impacts their revenue and other
+growth indicators. Please provide such a view." Research, plan and build it.
+**Plan:** builds on feat/owner-analytics (the 5 tiles, not merged). Research first (competitor gym software growth reports, which
+numbers prove growth). Then a "Your growth" view: month by month revenue, active members, new joins, renewals, members lost,
+visits per member; a line on the day the gym started MettleUp, and "before vs since MettleUp" for each number, using the history
+the gym imported. Honest wording: shows change since start, never claims MettleUp caused it.
+
 ## R-187. Release 0.60.0: the 7 built branches together — 29 Oct 2026
 **Asked (coordinator, for him):** put feedback button, progress trio, busy now, gym-mate profiles, admin What's new + alerts,
 exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through
