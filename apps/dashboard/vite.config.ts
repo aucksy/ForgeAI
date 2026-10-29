@@ -11,7 +11,9 @@ import { defineConfig } from 'vite';
 function livePolicy(): Record<string, string> {
   const m = /^\s+Content-Security-Policy: (.+)$/m.exec(readFileSync(new URL('./public/_headers', import.meta.url), 'utf8'));
   if (!m) throw new Error('public/_headers has no Content-Security-Policy line');
-  return { 'Content-Security-Policy': m[1].trim() };
+  const p = /^\s+Permissions-Policy: (.+)$/m.exec(readFileSync(new URL('./public/_headers', import.meta.url), 'utf8'));
+  // F107: the camera rule travels with the security policy, so the desk photo is tested under it too.
+  return { 'Content-Security-Policy': m[1].trim(), ...(p ? { 'Permissions-Policy': p[1].trim() } : {}) };
 }
 
 export default defineConfig({

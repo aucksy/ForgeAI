@@ -14,7 +14,7 @@
  *    saved again without retyping the number as Indian.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useCrm } from '../../store';
 import type { Member } from '../../types';
@@ -33,6 +33,24 @@ import { Button, CheckField, ChipToggle, ErrorBanner, Grid, Row, SelectField, Sh
 import { useBranches } from '../../branches/context';
 import { useCan } from '../../auth/AuthProvider';
 import { navigate } from '../router';
+import { DeskCameraSheet } from '../DeskCameraSheet';
+import { useDeskPhotoKey } from '../MemberPhoto';
+import { MemberPhotoError, saveMemberPhoto } from '../../shop/memberPhotoApi';
+import { photoServerWords } from '../../logic/memberPhoto';
+import { errorWords } from '../../shop/logic';
+
+/** The photo row on "Add member" (F107). */
+export const FORM_PHOTO_WORDS = {
+  label: 'Photo (optional)', // member-words
+  take: 'Take photo', // member-words
+  change: 'Change photo', // member-words
+  remove: 'Remove', // member-words
+  hint: 'Helps the desk know who is who at check-in. Only your gym’s staff can see it.', // member-words
+  done: 'Done', // member-words
+  /** The member was added, but their photo did not save. */
+  notSaved: (name: string, why: string) =>
+    `${name} is added, but the photo didn’t save. ${why} You can add it later on their page with Take photo.`, // member-words
+} as const;
 
 export function MemberFormSheet({
   editing,
@@ -70,6 +88,18 @@ export function MemberFormSheet({
   const allowed = useCan();
   const canSetBranches = multi && allowed('manageGym');
   const [allBranches, setAllBranches] = useState(editing?.allBranches === true);
+  // F107: a photo taken at the desk, saved right after the new member is. Only on "Add member" and
+  // only when this gym's server keeps photos (the key is null otherwise, and the row stays hidden).
+  const photoKey = useDeskPhotoKey();
+  const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
+  const [camera, setCamera] = useState(false);
+  /** Added, but the photo did not save: the sheet stays open to say so, with one "Done" button. */
+  const [addedNoPhoto, setAddedNoPhoto] = useState<Member | null>(null);
+  useEffect(() => {
+    if (!photo) return;
+    const url = photo.url;
+    return () => URL.revokeObjectURL(url);
+  }, [photo]);
 
   const set = (key: keyof MemberFormDraft) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -104,6 +134,17 @@ export function MemberFormSheet({
       const saved = editing
         ? await updateMember(editing.id, { ...result.value, ...branchPart })
         : await createMember({ ...result.value, archived: false, photoUri: null, ...branchPart });
+      if (!editing && photo && photoKey) {
+        try {
+          await saveMemberPhoto(photoKey, saved.id, photo.blob);
+        } catch (e) {
+          console.warn('[ForgeErr] add member: the member saved but the photo did not', e);
+          const why = e instanceof MemberPhotoError ? e.message : (photoServerWords(e) ?? errorWords(e));
+          setAddedNoPhoto(saved);
+          setFormError(FORM_PHOTO_WORDS.notSaved(saved.fullName, why));
+          return;
+        }
+      }
       onSaved?.(saved);
       onClose();
     } catch (e) {
@@ -144,27 +185,79 @@ export function MemberFormSheet({
     }
   };
 
+  // Once the member is added (photo not saved), every way out hands the saved member on: an
+  // enquiry being converted links to them through onSaved.
+  const close = () => {
+    if (addedNoPhoto) onSaved?.(addedNoPhoto);
+    onClose();
+  };
+
+  // The camera takes the form's place while it is open (never a sheet on a sheet: Escape would close
+  // both). Everything typed stays: it lives in this component, not in the sheet.
+  if (camera) {
+    return (
+      <DeskCameraSheet
+        title={photo ? FORM_PHOTO_WORDS.change : FORM_PHOTO_WORDS.take}
+        onClose={() => setCamera(false)}
+        onUse={(blob) => setPhoto({ blob, url: URL.createObjectURL(blob) })}
+      />
+    );
+  }
+
   return (
     <Sheet
       title={editing ? 'Edit member' : 'Add member'}
-      onClose={onClose}
+      onClose={close}
       wide
       footer={
-        <>
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={save} disabled={saving}>
-            {saving
-              ? 'Saving…'
-              : editing
-                ? 'Save changes'
-                : 'Add member'}
-          </Button>
-        </>
+        addedNoPhoto ? (
+          <Button onClick={close}>{FORM_PHOTO_WORDS.done}</Button>
+        ) : (
+          <>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={save} disabled={saving}>
+              {saving
+                ? 'Saving…'
+                : editing
+                  ? 'Save changes'
+                  : 'Add member'}
+            </Button>
+          </>
+        )
       }
     >
       {formError && <ErrorBanner>{formError}</ErrorBanner>}
+
+      {!editing && photoKey && !addedNoPhoto && (
+        <div style={{ marginBottom: space.md }}>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>{FORM_PHOTO_WORDS.label}</div>
+          <Row gap={space.md} wrap={false}>
+            {photo ? (
+              <img
+                src={photo.url}
+                alt=""
+                width={56}
+                height={56}
+                style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: `1px solid ${color.border}`, flexShrink: 0 }}
+              />
+            ) : null}
+            <Row gap={space.sm}>
+              <Button variant="ghost" onClick={() => setCamera(true)} disabled={saving}>
+                {photo ? FORM_PHOTO_WORDS.change : FORM_PHOTO_WORDS.take}
+              </Button>
+              {photo && (
+                <Button variant="quiet" onClick={() => setPhoto(null)} disabled={saving}>
+                  {FORM_PHOTO_WORDS.remove}
+                </Button>
+              )}
+            </Row>
+          </Row>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 5 }}>{FORM_PHOTO_WORDS.hint}</div>
+        </div>
+      )}
+
 
       {archivedClash && (
         <ErrorBanner>
