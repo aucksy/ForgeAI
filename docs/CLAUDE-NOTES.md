@@ -15,6 +15,13 @@ So the privacy line must be corrected before it ships: ask him (privacy wording)
 STATE: 0.60.0 phone on Play internal+alpha; watch held by Play's health-features question (doing it now in Chrome Browser 2,
 deviceId 6026c851-96d4-463f-92d1-868a04d55ff0), then re-run the Play upload for the watch (release workflow on tag v0.60.0).
 Also tick "Crash logs" in Play Data safety. Admin branches all merged + deployed 30 Oct (4344194). Tracker v233.
+PROGRESS (30 Oct): Play Console is in Chrome "Browser 1" (deviceId 4086376c-e508-4b5c-956f-dbeb0b0c5eb6, simpleapps108),
+NOT Browser 2. App id 4973234719959672731, dev 8165750959522333478. App content: Health apps already declared 24 Oct
+("Activity and fitness" ticked) for phone perms WRITE_EXERCISE + WRITE_ACTIVE_CALORIES_BURNED. Watch manifest adds
+BODY_SENSORS + health.READ_HEART_RATE: Play does not list them because the watch bundle never finished uploading.
+Wear OS form factor still needs: Wear screenshots on store listings, a Wear bundle on a testing track, then opt-in.
+Plan: re-run the watch upload and read the exact Play error; if it is the health form, reopen Health apps after the bundle
+is in the edit and re-save. #72 wording NOT yet corrected/asked.
 Next: 0.60.0 to production after 24 h; 0.61.0 = workout-name-header, leaderboard-show-me (privacy.html), message-calm mobile.
 
 ## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026
