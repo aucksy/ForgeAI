@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-213. Let members install the watch app from the phone app — 29 Oct 2026
+He said: "we need to give an option for users to download the watch app from the phone app - research the best experience around connected watches and create this journey where user get to know that they can install a watch also".
+What I do: research how Wear OS apps and leading fitness apps tell members about their watch app (detect a connected watch, check if our watch app is on it, open Play on the watch). Then build the journey in the phone app. Built after the two watch features in progress (same files). Backlog row added (he confirmed the feature).
+
 ## R-212. Keep picking up work, never sit idle — 29 Oct 2026
 He said: "yeah okay keep picking up what you can .. no need to sit idle".
 What I do: work down the list without waiting: Play Data safety (voice + crash logs), ship 0.61.0, watch buzz long-pause-short + review + watch release, then "Watch opens when a workout starts" and "Watch in the gym's colour". Stop only for money, LIVE data, legal/privacy words, or his own choices.
