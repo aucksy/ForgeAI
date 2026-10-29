@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-207. Watch redesign hand-off arrived; how to install the watch app — 30 Oct 2026
+He said: "Watch OS designs are here: D:\Apps\ForgeAI\Wear OS\Designs\MettleUp Wear OS watch app\design_handoff_mettleup_wear_ring" and "Wear OS review on play console is complete. How do I install it on my watch".
+Plan: rebuild the watch screens to the "Ring" direction (2a) exactly per its README (Compose for Wear, Manrope, scale by width/456, no taps during a workout, Complete-set button gone), with render-gate previews compared to screens/*.png; ship in the next watch release.
+Install answer: Play signs with its own key, so the phone app must ALSO come from Play (internal testing), not the GitHub APK, or the watch cannot talk to the phone. Then Play on the phone > MettleUp > install on the watch.
+
 ## R-206. Voice feedback: transcribe with HIS Groq key on our server; rethink the feedback UI. #72 = A — 30 Oct 2026
 He said: (1) "A" on #72 (add the crash-report line and a daily 90-day clean-up job; his yes for that live job).
 (2) "we discussed this feedback loop feature where people can record the feedback ... Use my Groq key for transcription,
