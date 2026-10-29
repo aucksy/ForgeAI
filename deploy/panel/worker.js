@@ -10,7 +10,10 @@
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the MettleUp app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
+//  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
 //  - /api/crash     both apps' uncaught errors, no personal data (crash.js, #34 alerts).
+// Every day at 03:00 India time (Cron Trigger, wrangler.jsonc) crash reports older than 90 days are
+// deleted (#72, the privacy notice says so).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
@@ -20,9 +23,10 @@
 //               poster and old messages never point at an old version.
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
-import { handleCrash } from './crash.js';
+import { deleteOldCrashes, handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
+import { handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
@@ -65,6 +69,7 @@ export default {
     const storeArt = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$/.exec(url.pathname);
     if (storeArt) return playBundle(request, storeArt[1], storeArt[2], 'image/png');
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname === '/api/feedback/voice') return handleVoice(request, env);
     if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
@@ -74,6 +79,20 @@ export default {
     }
     if (url.pathname.startsWith('/api/')) return new Response('Not found', { status: 404 });
     return env.ASSETS.fetch(request);
+  },
+
+  // #72 (30 Oct 2026): crash reports are kept 90 days.
+  async scheduled(_controller, env, ctx) {
+    if (!env.WEB) {
+      console.error('[crash] clean-up skipped: D1 binding WEB missing');
+      return;
+    }
+    ctx.waitUntil(
+      deleteOldCrashes(env.WEB).then(
+        (n) => console.log('[crash] clean-up: deleted', n, 'reports older than 90 days'),
+        (e) => console.error('[crash] clean-up failed', e),
+      ),
+    );
   },
 };
 

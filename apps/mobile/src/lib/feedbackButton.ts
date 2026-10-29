@@ -1,7 +1,7 @@
 /**
  * The floating feedback button (R-149, 28 Oct 2026): a small round button on every screen of the
- * member app, so testers can say what is wrong where it happens. Tap → a sheet: type, or speak with
- * the keyboard's own microphone (the app has no microphone permission, launch C5), then Send.
+ * member app, so testers can say what is wrong where it happens. Tap → a sheet: type, or tap Speak
+ * (R-206: our server turns the recording into text with Groq's Whisper), then Send.
  *
  * PURE rules only (the screen and the store read them; test/lib/feedbackButton.test.ts):
  *  - where it may sit: docked on the left or right edge, never over the top bar of a screen and never
@@ -114,9 +114,6 @@ export function feedbackScreenName(pathname: string): string {
 export const FEEDBACK_BUTTON_WORDS = {
   button: 'Send feedback about this screen',
   intro: 'Tell us what is wrong or what you want on this screen. We see which screen you were on.',
-  speak: 'Speak',
-  speakLabel: 'Speak your feedback with the keyboard microphone',
-  speakHint: 'Now tap the microphone key on your keyboard to speak, in Hindi or English.',
   placeholder: 'Type here, or tap Speak',
   hideHow: 'To turn off this round button: Settings → "Send feedback".',
   switchTitle: 'Show the feedback button on every screen',

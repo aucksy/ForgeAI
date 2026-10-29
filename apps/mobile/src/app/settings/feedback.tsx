@@ -1,20 +1,23 @@
-/** Settings → Send feedback (launch H7): type or speak (keyboard microphone), then Send. */
+/** Settings → Send feedback (launch H7): type, or tap Speak (R-206, FeedbackComposer), then Send. */
 import Constants from 'expo-constants';
 import { useEffect, useRef, useState } from 'react';
-import { Text, TextInput } from 'react-native';
+import { Text } from 'react-native';
+
+import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { Card, PrimaryButton } from '@/components/ui';
-import { FEEDBACK_MAX, FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
+import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
 import { FEEDBACK_BUTTON_WORDS } from '@/lib/feedbackButton';
 import { useFeedbackButton } from '@/lib/feedbackButtonStore';
 import { useGymShop } from '@/shop/gymStore';
-import { color, radius, space, type } from '@/theme/tokens';
+import { color, type } from '@/theme/tokens';
 
 export default function FeedbackPage() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [input, setInput] = useState<'voice' | 'typed'>('typed');
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
@@ -30,11 +33,12 @@ export default function FeedbackPage() {
     busy.current = true;
     setSending(true);
     setNote(null);
-    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback' });
+    const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback', input });
     busy.current = false;
     setSending(false);
     if (r.ok) {
       setText('');
+      setInput('typed');
       setNote({ ok: true, words: FEEDBACK_WORDS.sent });
     } else {
       setNote({ ok: false, words: r.words });
@@ -45,29 +49,15 @@ export default function FeedbackPage() {
     <SettingsPage title="Send feedback">
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{FEEDBACK_WORDS.intro}</Text>
       <Card>
-        <TextInput
-          value={text}
-          onChangeText={(t) => {
+        <FeedbackComposer
+          text={text}
+          onText={(t) => {
             setText(t);
             if (note?.ok) setNote(null);
           }}
+          onSpoke={() => setInput('voice')}
           placeholder={FEEDBACK_WORDS.placeholder}
-          placeholderTextColor={color.inkMuted}
-          accessibilityLabel="Your feedback"
-          multiline
-          maxLength={FEEDBACK_MAX}
-          textAlignVertical="top"
-          style={{
-            minHeight: 140,
-            backgroundColor: color.surfaceSunken,
-            borderWidth: 1,
-            borderColor: color.borderStrong,
-            borderRadius: radius.md,
-            padding: space.md,
-            fontFamily: type.body,
-            fontSize: type.size.body,
-            color: color.ink,
-          }}
+          minHeight={140}
         />
       </Card>
       {note ? (

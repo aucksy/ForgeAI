@@ -42,6 +42,9 @@
   // R-157 (28 Oct 2026): keep the Worker's log lines (Workers Logs, free allowance) so a failed AI
   // match can be read afterwards; before this only a live `wrangler tail` showed them.
   "observability": { "enabled": true },
+  // #72 (30 Oct 2026): 21:30 UTC = 03:00 India, every day: delete crash reports older than 90 days (worker.js scheduled).
+  // R-206: spoken feedback (voice.js) needs the secret GROQ_API_KEY; optional var GROQ_MODEL swaps the Whisper model.
+  "triggers": { "crons": ["30 21 * * *"] },
   "vars": { "LANDING": "live", "MOVE": "on" },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go

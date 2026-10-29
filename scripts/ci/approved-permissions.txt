@@ -16,6 +16,8 @@ android.permission.SYSTEM_ALERT_WINDOW
 android.permission.VIBRATE
 android.permission.SCHEDULE_EXACT_ALARM
 android.permission.WRITE_EXTERNAL_STORAGE
+# R-206 (30 Oct 2026, owner: "use my Groq key ... not on-device transcription"): spoken feedback records in the app.
+android.permission.RECORD_AUDIO
 
 # own native modules (forge-rest, forge-phone)
 android.permission.POST_NOTIFICATIONS

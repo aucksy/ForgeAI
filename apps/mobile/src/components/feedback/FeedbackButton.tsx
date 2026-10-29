@@ -4,19 +4,20 @@
  * lib/feedbackButton.ts. The live workout screen draws its own `FeedbackHeaderButton` in its top bar
  * instead, so nothing ever covers the set ticks, the rest timer or Finish.
  *
- * Voice: the app has no microphone permission (launch C5). "Speak" puts the cursor in the box, which
- * opens the keyboard; the member taps the keyboard's own microphone (free, Hindi or English, set by the
- * keyboard). The message records that it was spoken ("input: voice").
+ * Voice (R-206): the sheet's FeedbackComposer records the member, our server turns it into text with
+ * Groq's Whisper, and the text lands in the box to check before Send. The message records that it was
+ * spoken ("input: voice").
  */
 import Constants from 'expo-constants';
 import { usePathname } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, PanResponder, Pressable, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Animated, PanResponder, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon, PrimaryButton, Sheet } from '@/components/ui';
-import { FEEDBACK_MAX, FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
+import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
 import {
   DRAG_SLOP,
   FEEDBACK_BUTTON_SIZE,
@@ -155,25 +156,16 @@ export function FeedbackHeaderButton({ screen }: { screen: string }) {
 function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: () => void }) {
   const [text, setText] = useState('');
   const [input, setInput] = useState<FeedbackInput>('typed');
-  const [speakHint, setSpeakHint] = useState(false);
   const [sending, setSending] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
-  const box = useRef<TextInput>(null);
   const busy = useRef(false);
 
   // A fresh sheet each time it opens; an unsent message stays while it is closed and opened again.
   useEffect(() => {
     if (screen == null) return;
     setNote(null);
-    setSpeakHint(false);
   }, [screen]);
-
-  const speak = () => {
-    setInput('voice');
-    setSpeakHint(true);
-    box.current?.focus();
-  };
 
   const send = async () => {
     if (busy.current || screen == null) return;
@@ -186,7 +178,6 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
     if (r.ok) {
       setText('');
       setInput('typed');
-      setSpeakHint(false);
       setNote({ ok: true, words: FEEDBACK_WORDS.sent });
     } else {
       setNote({ ok: false, words: r.words });
@@ -202,55 +193,14 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
     >
       <View style={{ gap: space.md }}>
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{FEEDBACK_BUTTON_WORDS.intro}</Text>
-        <Pressable
-          onPress={speak}
-          accessibilityRole="button"
-          accessibilityLabel={FEEDBACK_BUTTON_WORDS.speakLabel}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            alignSelf: 'flex-start',
-            gap: space.sm,
-            minHeight: 48,
-            paddingHorizontal: space.lg,
-            borderRadius: radius.pill,
-            backgroundColor: color.accentSoft,
-            borderWidth: 1,
-            borderColor: color.accent,
-          }}
-        >
-          <Icon name="mic" size={20} color={color.accent} />
-          <Text style={{ fontFamily: type.bodyBold, fontSize: type.size.body, color: color.accent }}>{FEEDBACK_BUTTON_WORDS.speak}</Text>
-        </Pressable>
-        {speakHint ? (
-          <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: color.ink }}>
-            {FEEDBACK_BUTTON_WORDS.speakHint}
-          </Text>
-        ) : null}
-        <TextInput
-          ref={box}
-          value={text}
-          onChangeText={(t) => {
+        <FeedbackComposer
+          text={text}
+          onText={(t) => {
             setText(t);
             if (note?.ok) setNote(null);
           }}
+          onSpoke={() => setInput('voice')}
           placeholder={FEEDBACK_BUTTON_WORDS.placeholder}
-          placeholderTextColor={color.inkMuted}
-          accessibilityLabel="Your feedback"
-          multiline
-          maxLength={FEEDBACK_MAX}
-          textAlignVertical="top"
-          style={{
-            minHeight: 120,
-            backgroundColor: color.surfaceSunken,
-            borderWidth: 1,
-            borderColor: color.borderStrong,
-            borderRadius: radius.md,
-            padding: space.md,
-            fontFamily: type.body,
-            fontSize: type.size.body,
-            color: color.ink,
-          }}
         />
         {note ? (
           <Text

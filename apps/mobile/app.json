@@ -98,7 +98,12 @@
       "./plugins/backup-rules/withBackupRules.js",
       "@react-native-google-signin/google-signin",
       "expo-sharing",
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "MettleUp uses the microphone only when you tap Speak to send us feedback."
+        }
+      ],
       [
         "expo-notifications",
         {

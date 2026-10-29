@@ -16,6 +16,14 @@ export const MAX_STACK = 1500;
 export const STACK_LINES = 12;
 export const CRASH_PER_DAY = 30; // reports one network address may send in 24 hours
 export const CRASH_ALL_PER_DAY = 2000; // all reports together in 24 hours (free database limits)
+export const KEEP_DAYS = 90; // #72: the privacy notice says crash reports are deleted after 90 days
+
+/** Delete crash reports older than KEEP_DAYS (the daily Cron Trigger, worker.js). -> how many went. */
+export async function deleteOldCrashes(db, now = new Date()) {
+  const before = new Date(now.getTime() - KEEP_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const r = await db.prepare("DELETE FROM feedback WHERE status = 'crash' AND at < ?").bind(before).run();
+  return Number(r?.meta?.changes ?? 0);
+}
 
 /** Anything that could be personal or secret goes, before it is stored. PURE. */
 export function scrub(text) {

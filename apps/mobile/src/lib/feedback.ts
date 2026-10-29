@@ -1,6 +1,6 @@
 /**
- * Settings → Send feedback (launch plan H7, inbox #39). The member types, or speaks with the
- * keyboard's own microphone (the app itself has no microphone permission), in Hindi or English.
+ * Settings → Send feedback (launch plan H7, inbox #39). The member types, or taps Speak (R-206: the
+ * recording becomes text on our server, lib/feedbackVoice.ts), in Hindi or English.
  * The message goes to MettleUp's feedback box (the admin site's /api/feedback, Cloudflare), never to
  * the gym server. With it: the app version, the phone model, the gym code and a random id for this
  * install. No name, no mobile number.
@@ -21,8 +21,8 @@ export const FEEDBACK_MAX = 2000;
 const SENDER_KEY = 'feedback_sender';
 
 export const FEEDBACK_WORDS = {
-  intro: 'Tell us what works, what is hard, or what you want next. Type, or tap the microphone on your keyboard to speak. Hindi or English.',
-  placeholder: 'Your message',
+  intro: 'Tell us what works, what is hard, or what you want next. Tap Speak and talk, or type.',
+  placeholder: 'Type here, or tap Speak',
   sent: 'Thanks! We read every message.',
   empty: 'Write something first.',
   offline: "Couldn't send. Check your internet and try again. Your message is still here.",
@@ -46,7 +46,7 @@ export function feedbackAnswer(status: number, body: unknown): FeedbackResult {
   return { ok: false, words: status >= 400 && status < 500 && error ? error : FEEDBACK_WORDS.offline };
 }
 
-async function senderId(): Promise<string> {
+export async function senderId(): Promise<string> {
   try {
     const saved = await getMeta(SENDER_KEY);
     if (saved) return saved;
