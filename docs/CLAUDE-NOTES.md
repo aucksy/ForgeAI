@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-210. Watch app opens by itself when a workout starts — 30 Oct 2026
+He said: installed the watch app (from the Play website on his desktop: Install, then pick the watch; the phone's Play app showed no "more devices" option). Then: "plan it, if possible: when the user starts the workout on the app, the app on the watch should launch automatically."
+Did: research (Hevy's Wear OS app has no documented auto-open; Samsung Health shows the phone workout on the watch). It is possible: the phone is open at that moment, so it may start the watch screen through Wear OS (RemoteActivityHelper.startRemoteActivity; needs the watch unlocked and on the wrist). If the watch refuses, the watch shows a "Workout started, tap to open" card instead (the watch already hears /forge/workout active=true with its app closed). A Settings switch turns it off. Added to the backlog as Planned (Impact Medium, Effort Medium), after 0.61.0.
+
 ## R-209. Play shows no watch option for the test app — 30 Oct 2026
 He said: on the Play page from the testers link there is no "switch device" or sign the app is for watches; set that up.
 Checked in Play Console (Chrome Browser 1): Wear OS internal track is active, 1000060000 (0.60.0) available, both tester lists ticked. The Wear OS track has its OWN join link: https://play.google.com/apps/internaltest/4698962277451794959 (the phone track's link only joins the phone test). Nothing to change in Console; he must open the Wear link with the Google account on his watch and tap "Become a tester", then install from the watch's Play Store or "Install on more devices".
