@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-204. "A" on #72 + do Play Console declarations yourself — 30 Oct 2026
+He said: "A" (approve crash-report privacy line, #72) and "the Play Console steps ... you should be able to do it yourself ...
+ask me to do something on the Chrome only when you cannot literally do it because of safety rules" (rule use-the-browser-yourself, 5th time).
+FOUND: the #72 wording I offered was wrong vs the code (apps/mobile/src/lib/crashReport.ts, deploy/panel/crash.js): reports
+carry message + short stack + app version + "screen"/"app" only (NO phone model), go to MettleUp's own server
+(app.mettleup.fit/api/crash), a daily GitHub Action opens a GitHub issue per new crash, and NOTHING deletes them (no 90 days).
+So the privacy line must be corrected before it ships: ask him (privacy wording) with the true version.
+STATE: 0.60.0 phone on Play internal+alpha; watch held by Play's health-features question (doing it now in Chrome Browser 2,
+deviceId 6026c851-96d4-463f-92d1-868a04d55ff0), then re-run the Play upload for the watch (release workflow on tag v0.60.0).
+Also tick "Crash logs" in Play Data safety. Admin branches all merged + deployed 30 Oct (4344194). Tracker v233.
+Next: 0.60.0 to production after 24 h; 0.61.0 = workout-name-header, leaderboard-show-me (privacy.html), message-calm mobile.
+
 ## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026
 He said: "stop this effort.. need to re-think.. cant spend these many tokens for this poor of an output".
 Also: his "I approved" earlier meant an app prompt, not the shoulder press clip; that approval was undone (4f09e30).
