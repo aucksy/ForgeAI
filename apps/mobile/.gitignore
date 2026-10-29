@@ -35,3 +35,6 @@ android/app/release.keystore
 
 # Client logos and other test pictures (gym branding): not for a public repo. qa/tools/ makes them.
 qa/test-assets/
+
+# F20: RepDB pictures are fetched at build time (licence: no republishing; this repo is public)
+apps/mobile/assets/exercise-pictures/

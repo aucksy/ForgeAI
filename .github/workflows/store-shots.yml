@@ -33,6 +33,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - run: npm ci
+      - uses: ./.github/actions/exercise-pictures
       - name: Build an emulator APK (x86_64)
         working-directory: apps/mobile/android
         run: |

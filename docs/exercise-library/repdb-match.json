@@ -1,5 +1,5 @@
 {
-  "_about": "MettleUp exercise key -> RepDB free-tier exercise id (github.com/sergei-argutin/exercise-dataset). Matched by script and checked by eye: same movement, same equipment, same body position only. \"swap\": RepDB draws the end position first, so its two pictures are swapped. \"doubt\": a close but not perfect match, kept on purpose. Build: apps/mobile/scripts/build-exercise-pictures.py.",
+  "_about": "MettleUp exercise key -> RepDB free-tier exercise id (github.com/RepDB/exercise-dataset). Matched by script and checked by eye: same movement, same equipment, same body position only. \"swap\": RepDB draws the end position first, so its two pictures are swapped. \"doubt\": a close but not perfect match, kept on purpose. Build: apps/mobile/scripts/build-exercise-pictures.py.",
   "dropped": {
     "smith_machine_incline_press": "RepDB picture looks like an upright seated press, not an incline bench.",
     "handstand_push_up": "RepDB uses parallettes with no wall; ours is against a wall.",

@@ -1,0 +1,32 @@
+# F20: the start and end pictures on the exercise page come from the RepDB free edition.
+# Its licence allows in-app use but not republishing the set, and this repo is public, so the
+# pictures are never committed: every build fetches RepDB at a pinned commit and shrinks the
+# matched ones into apps/mobile/assets/exercise-pictures (gitignored). Cached, so it is ~1 s
+# after the first run. Change REPDB_SHA only after re-checking docs/exercise-library/repdb-match.json.
+name: Exercise pictures
+description: Fetch and shrink the RepDB start/end pictures into the app assets
+runs:
+  using: composite
+  steps:
+    - id: cache
+      uses: actions/cache@v4
+      with:
+        path: apps/mobile/assets/exercise-pictures
+        key: exercise-pictures-d5e093431a92-${{ hashFiles('docs/exercise-library/repdb-match.json', 'apps/mobile/scripts/build-exercise-pictures.py') }}
+    - if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        REPDB_SHA: d5e093431a9245cb469e019f2ef0305e2a5bc595
+      run: |
+        set -euo pipefail
+        git init -q "$RUNNER_TEMP/repdb"
+        git -C "$RUNNER_TEMP/repdb" fetch -q --depth 1 https://github.com/RepDB/exercise-dataset "$REPDB_SHA"
+        git -C "$RUNNER_TEMP/repdb" checkout -q FETCH_HEAD
+        python3 -m venv "$RUNNER_TEMP/pics-venv"
+        "$RUNNER_TEMP/pics-venv/bin/pip" install --quiet pillow
+        "$RUNNER_TEMP/pics-venv/bin/python" apps/mobile/scripts/build-exercise-pictures.py "$RUNNER_TEMP/repdb"
+    - shell: bash
+      run: |
+        n=$(ls apps/mobile/assets/exercise-pictures/*.webp | wc -l)
+        echo "Exercise pictures: $n files"
+        [ "$n" -gt 0 ] || { echo "::error::No exercise pictures were made."; exit 1; }

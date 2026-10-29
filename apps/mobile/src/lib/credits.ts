@@ -41,7 +41,7 @@ export const CREDITS: readonly Credit[] = [
     source: REPDB_CREDIT,
     sourceUrl: REPDB_URL,
     licenceName: 'RepDB Free Tier licence', // member-words
-    licenceUrl: 'https://github.com/sergei-argutin/exercise-dataset/blob/main/LICENSE-DATA.md',
+    licenceUrl: 'https://github.com/RepDB/exercise-dataset/blob/main/LICENSE-DATA.md',
     changes: 'Resized for the phone screen.', // member-words
   },
   {
