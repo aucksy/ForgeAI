@@ -27,6 +27,7 @@ import {
   audiencePlans,
   phone10,
   reachOf,
+  everyoneCount,
   startingAudience,
   withoutApp,
   type Audience,
@@ -310,9 +311,12 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
     () =>
       AUDIENCE_TYPES.filter((t) => (t === 'plan' ? plans.length > 0 : t === 'batch' ? batches.length > 0 : true)).map((t) => ({
         value: t,
-        label: t === 'plan' || t === 'batch' ? `${AUDIENCE_LABEL[t]}…` : `${AUDIENCE_LABEL[t]} (${audienceMembers({ type: t }, data).length})`,
+        label:
+          t === 'plan' || t === 'batch'
+            ? `${AUDIENCE_LABEL[t]}…`
+            : `${AUDIENCE_LABEL[t]} (${t === 'everyone' ? everyoneCount(data.views, phones, appMembers?.length ?? null) : audienceMembers({ type: t }, data).length})`,
       })),
-    [plans, batches, data],
+    [plans, batches, data, phones, appMembers],
   );
   const planOptions = useMemo(
     () => plans.map((p) => ({ value: p.id, label: `${p.name} (${audienceMembers({ type: 'plan', planId: p.id }, data).length})` })),

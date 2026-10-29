@@ -465,6 +465,17 @@ function LogoCard({
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
             A square PNG with a clear background works best. Members see it big when the app opens, and small at the top of each tab. You can also drag it onto the box.
           </div>
+          {/* R-192 (owner, 30 Oct 2026): no background remover of our own; tell the owner how to do it free with an AI chat app. */}
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, background: color.surfaceSunken, borderRadius: radius.md, padding: space.sm }}>
+            <div style={{ fontWeight: 700, color: color.ink }}>Does your logo have a white or coloured box around it?</div>
+            It looks much better on the app’s dark screens without one. Remove the box for free:
+            <ol style={{ margin: `${space.xs}px 0`, paddingLeft: 18 }}>
+              <li>Open ChatGPT or Google Gemini on your phone or computer, and upload your logo.</li>
+              <li>Type this: “Remove the background. Give me a PNG with a see-through background.”</li>
+              <li>Download the new picture and upload it here.</li>
+            </ol>
+            If you see a grey and white checkerboard behind the logo, the background is still there. Try again, or try the other app.
+          </div>
           {error && (
             <div role="alert" style={{ fontFamily: font.body, fontSize: 13, color: color.criticalText }}>
               {error}

@@ -11,6 +11,7 @@ import {
   hasApp,
   phone10,
   reachOf,
+  everyoneCount,
   startingAudience,
   withoutApp,
   type AudienceData,
@@ -126,6 +127,16 @@ describe('in the app, or not', () => {
     expect(hasApp(views.find((v) => v.member.id === 'a')!, phones)).toBe(true);
     expect(hasApp(views.find((v) => v.member.id === 'g')!, phones)).toBe(true);
     expect(hasApp(views.find((v) => v.member.id === 'b')!, phones)).toBe(false);
+  });
+
+  it('"Everyone (N)" matches who a send reaches: app members joined only in the app count too', () => {
+    const everyone = audienceMembers({ type: 'everyone' }, data);
+    const notInApp = reachOf({ type: 'everyone' }, everyone, phones, 2).notInApp;
+    expect(everyoneCount(everyone, phones, 2)).toBe(notInApp + 2);
+    // The owner's case: nobody on the list yet, one member joined in the app.
+    expect(everyoneCount([], new Set(), 1)).toBe(1);
+    // App members not loaded yet (offline): the list.
+    expect(everyoneCount(everyone, phones, null)).toBe(everyone.length);
   });
 
   it('"In the app: N. Not in the app: M." — for everyone, N is every app member of the gym', () => {

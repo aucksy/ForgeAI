@@ -168,6 +168,17 @@ export function reachOf(a: Audience, group: readonly MemberView[], phones: Reado
   };
 }
 
+/**
+ * "Everyone (N)" in the group list (owner, 30 Oct 2026: it said 0 while "In the app: 1"): everyone a send
+ * reaches, which is every app member of the gym (the server's count) plus the members on the list
+ * without the app. A member who joined in the app but is not on the list still counts. Without the
+ * app-member count (offline, still loading) it is the list. PURE.
+ */
+export function everyoneCount(views: readonly Pick<MemberView, 'member'>[], phones: ReadonlySet<string>, appMemberCount: number | null): number {
+  if (appMemberCount === null) return views.length;
+  return views.filter((v) => !hasApp(v, phones)).length + appMemberCount;
+}
+
 /** The group's members without the app. */
 export function withoutApp(group: readonly MemberView[], phones: ReadonlySet<string>): MemberView[] {
   return group.filter((v) => !hasApp(v, phones));

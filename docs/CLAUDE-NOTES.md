@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-193. Messages: "Everyone (0)" while "In the app: 1" — 30 Oct 2026
+**He said:** (screenshot, Test GYM) "Why does everyone in drop down shows 0 but line below says 1. 1 is correct. Check this piece".
+**Cause:** "Everyone (N)" counted only members on the gym's list; a member who joined in the app but is not on the list was left out,
+though the app send reaches them. **Done:** "Everyone (N)" = every app member of the gym + list members without the app (the same
+people a send reaches); the list alone while the app count is not loaded. Unit test added; all tests pass. Live with the next deploy.
+
+## R-192. Logo background: a tip instead of a tool; close the idea — 30 Oct 2026
+**He said:** instead of a tool, add a suggestion and instructions near the logo upload to remove the background with Google Gemini
+or ChatGPT, for better branding; close the idea in the tracker.
+**Done:** a tip box under the logo upload on Branding (3 steps + the checkerboard check; member-words + Gemini pass). Tracker: the
+idea added as "Not doing" with the reason. Live with the next admin deploy.
+
 ## R-191. Idea under discussion: remove the background from uploaded gym logos — 30 Oct 2026
 **He said:** is there a small, free utility (GitHub etc.) for our admin server that removes the background from logos owners
 upload, so the logo looks good in the member app? Small, fast, correct, free. "Let's keep this under discussion for now."
