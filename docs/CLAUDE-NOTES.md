@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-203. Auto-compact at 25% — 29 Oct 2026
+He said: "Cant we setup auto compact ... automatically at 25% after you are done replying and updating current state in your notes".
+Did: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=25 in ~/.claude/settings.json env + Windows user variable (needs a new session / app restart).
+context_meter.py now asks Claude at 20% to save state (commit, push, notes). Brain note stop-at-90-percent-context rewritten.
+STATE at this point: release 0.60.0 run 40838435757 in progress (tag af5dd2c). After it lands on Play: Wear OS opt-in steps for him,
+then merge + deploy admin branches feat/owner-analytics, feat/business-growth, feat/gym-colour-webcam, feat/offline-desk-3,
+feat/message-calm; fix the landing "lock screen — Coming" line. Next member release 0.61.0: feat/workout-name-header,
+feat/leaderboard-show-me (rebuild privacy.html), message-calm mobile part.
+
 ## R-202. "privacy line OK"; email sent; payment photos — 30 Oct 2026
 **He said:** "privacy line OK" (the leaderboard "Show me" line, EN + HI); he sent the Anthropic support email himself; photos of the
 client gym's payment setup (HDFC PayZapp UPI QR + SmartHub Vyapar sound box), "research for integration possibilities".
