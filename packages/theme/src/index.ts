@@ -6,5 +6,7 @@
  */
 export * from './palette';
 export * from './brand';
+// R-160: the brand colour read from the gym's logo (pixels in, a suggestion out; no AI).
+export * from './logoColour';
 // R-124: the gym's opening hours (rules, India-time "open now", words), shared so both apps agree.
 export * from './gymHours';

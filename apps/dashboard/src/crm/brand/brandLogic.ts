@@ -11,7 +11,7 @@
  * owner_photo_ticket, as product photos), PNG / JPEG / WebP up to 1 MB.
  */
 
-import { buildBrandPalette, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle } from '@forgeai/theme';
+import { buildBrandPalette, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle, type LogoSuggestion } from '@forgeai/theme';
 
 export const LOGO_BUCKET = 'gym-logos';
 /** The bucket's own limit (file_size_limit). */
@@ -128,6 +128,40 @@ export function isLogoUrl(url: string | null): boolean {
   if (!url.startsWith(LOGO_PREFIX)) return false;
   const [ticket, name, ...rest] = url.slice(LOGO_PREFIX.length).split('/');
   return rest.length === 0 && TICKET_RE.test(ticket ?? '') && NAME_RE.test(name ?? '');
+}
+
+// ---------------------------------------------------------------- the colour from the logo (R-160)
+
+/** The words around the colour read from the logo (member-words pass, 29 Oct 2026). */
+export const LOGO_WORDS = {
+  title: 'Colour from your logo',
+  use: 'Use this colour',
+  inUse: 'Using this colour',
+  others: 'Other colours in your logo',
+  suggestButton: 'Suggest a colour from my logo',
+  reading: 'Reading the colours in your logo…',
+  failed: 'We couldn’t read the colours in this logo. Type or pick your colour below.',
+  none: 'Your logo is only black, white or grey, so there is no colour to suggest. Type or pick your colour below.',
+  afterSave: 'Members see it after you press Save.',
+} as const;
+
+/** The lines under the suggested colour: what we changed, and how it reads. PURE. */
+export function logoSuggestionLines(s: LogoSuggestion): { text: string; ok: boolean }[] {
+  const lines: { text: string; ok: boolean }[] = [];
+  if (s.adjusted) {
+    lines.push({ text: `Your logo’s colour is ${s.fromLogo}. We made it lighter so words in it are easy to read on the member app’s dark screens.`, ok: false });
+  }
+  lines.push(
+    s.darkOk
+      ? { text: 'Easy to read on the member app’s dark screens.', ok: true }
+      : { text: 'Too dark to read on the member app’s dark screens. Pick a lighter colour.', ok: false },
+  );
+  lines.push(
+    s.lightOk
+      ? { text: 'Prints clearly as the coloured bar on the white member ID card.', ok: true }
+      : { text: 'Prints pale as the coloured bar on the white member ID card. A darker colour prints better.', ok: false },
+  );
+  return lines;
 }
 
 // ---------------------------------------------------------------- words

@@ -5,6 +5,8 @@
  * decode step as product photos (shop/photoUpload.ts). Rules live in `brandLogic.ts`.
  */
 
+import { suggestFromLogo } from '@forgeai/theme';
+
 import { savedPictureUrl, supabase } from '../../lib/supabase';
 import { photoTicket } from '../shop/api';
 import { checkSourceFile, fitWithin } from '../shop/photo';
@@ -61,6 +63,47 @@ export async function shrinkLogo(file: File): Promise<Blob> {
     return blob;
   } finally {
     pic.close?.();
+  }
+}
+
+/** The logo is read at this size for its colours: plenty to find a brand colour, and instant. */
+const COLOUR_EDGE = 64;
+
+/**
+ * R-160: the logo's main colours and a suggested brand colour, read on this computer from the
+ * picture's own pixels (no AI, nothing sent anywhere). Null when the picture can't be read; the
+ * reason is logged. The rules are the shared, tested `suggestFromLogo` (packages/theme).
+ */
+export async function readLogoColours(file: Blob): Promise<ReturnType<typeof suggestFromLogo> | null> {
+  let pic: Awaited<ReturnType<typeof decode>> | null = null;
+  try {
+    pic = await decode(file);
+    const { width, height } = fitWithin(pic.width, pic.height, COLOUR_EDGE);
+    if (!width || !height) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(pic.source, 0, 0, width, height);
+    return suggestFromLogo(ctx.getImageData(0, 0, width, height).data);
+  } catch (e) {
+    console.warn('[branding] could not read the logo colours', e);
+    return null;
+  } finally {
+    pic?.close?.();
+  }
+}
+
+/** The colours of a logo already saved (a link in the gym-logos bucket). Null when unreadable. */
+export async function readSavedLogoColours(url: string): Promise<ReturnType<typeof suggestFromLogo> | null> {
+  try {
+    const res = await fetch(url, { mode: 'cors', cache: 'force-cache' });
+    if (!res.ok) throw new Error(`logo fetch ${res.status}`);
+    return await readLogoColours(await res.blob());
+  } catch (e) {
+    console.warn('[branding] could not fetch the saved logo', e);
+    return null;
   }
 }
 

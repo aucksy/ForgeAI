@@ -2817,6 +2817,25 @@
   - Waiting: owner yes for 0031 + 0033 live; terms/privacy pages are still holding pages and have no gym-owner
     data agreement text (owner wording); deploy admin app + HQ + panel Worker (AI branch field) after the yes.
 
+- 2026-10-29: **Gym colour from its logo (R-160), branch `feat/gym-colour-webcam` (not merged, not deployed).**
+  - `packages/theme/src/logoColour.ts` (pure, no AI): opaque pixels -> 5-bit-per-channel boxes -> drop near white
+    (OKLCH L>0.93), near black (L<0.17), greys (C<0.04) -> merge look-alikes (OKLab dE<12) -> score share x (1 + 0.5
+    vividness), drop <2 % -> top 4. `suggestBrandColour` = the shared palette engine's own dark-app nudge (lightness
+    only, hue kept) so the suggestion is exactly what members get; reports text-in-colour ratio on the dark planes
+    (4.5), the colour as a shape on white (3, the printed ID card bar; yellow is reported pale, not hidden) and the
+    words on it (4.5).
+  - Admin app, Settings -> Branding: the logo is read from a 64 px canvas while it uploads (`readLogoColours`); a box
+    under Colour shows the suggestion, "Use this colour", the logo's other colours as swatches, and plain checks;
+    a saved logo can be read with "Suggest a colour from my logo" (fetches the public logo, CORS). Nothing auto-saves.
+  - Storage: the existing brand accent (owner_set_brand, 0005). No server change, no migration. The member app
+    already repaints with the gym accent (apps/mobile theme/brandTokens.ts), so no mobile code changed.
+  - Tests: dashboard vitest +14 (`test/crm/logoColour.test.ts`), e2e `e2e/logocolour.spec.mjs` (2 journeys).
+- 2026-10-29: **Webcam photo at the desk: NOT built, stopped.** No member-photo storage exists: `Member.photoUri` is
+  never set (not in the form, import sets null) and only the ID card reads it; there is no member-photos bucket (only
+  public `product-photos` and `gym-logos`); records are capped at 20 kB each and pulled whole, and the privacy notice
+  does not cover gym-held member photos. Needed first: a PRIVATE bucket + staff-session upload/read rules (migration),
+  a retention/delete rule with member delete, and the owner's privacy-notice wording.
+
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);
   only its encrypted Actions secrets reach GitHub.
