@@ -138,6 +138,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Challenge rewards given out by themselves | Medium | Medium |
 | Feature: Tap a name on the leaderboard to see their profile | Medium | Medium |
 | Feature: Gym colour from its logo | Medium | Low |
+| Feature: Balance check and focus block | High | Medium |
 | Feature: Floating feedback button, by voice or typing | High | High |
 | Feature: Big "kg lifted vs last time" on the finish screen | High | Low |
 | Feature: Kg lifted per workout on each exercise's History | Medium | Low |
