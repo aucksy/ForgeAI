@@ -62,16 +62,6 @@ object RestText {
   fun buzzOnLateArrival(nowMs: Long, endsAtMs: Long): Boolean =
     endsAtMs > 0L && nowMs >= endsAtMs && nowMs - endsAtMs <= LATE_MS
 
-  /**
-   * C5-2: was "Complete set" just sent for this very row? Then its button stays hidden (no double
-   * tap) until the phone names the next row, or for [SENT_MS] when no answer comes.
-   */
-  fun sentRecently(done: String, sentDone: String?, sentAtMs: Long, nowMs: Long): Boolean =
-    done.isNotEmpty() && done == sentDone && nowMs - sentAtMs in 0L until SENT_MS
-
-  /** How long a sent "Complete set" keeps its button hidden without the phone's answer. */
-  const val SENT_MS = 20_000L
-
   /** How near the watch's own clock the phone's end must be for [buzzOnPhoneEnd]. */
   const val RECENT_MS = 60_000L
 

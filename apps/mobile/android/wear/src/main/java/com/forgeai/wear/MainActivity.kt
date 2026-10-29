@@ -17,31 +17,39 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.wear.ambient.AmbientLifecycleObserver
+import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.delay
 
 /**
- * The watch screen (WatchScreens.kt). Resting: a big countdown inside an ember ring with the next
- * set. A workout open and no rest: heart rate and the set. Nothing open: how to start. Heart rate
- * is measured only while this screen is visible and a workout is open.
+ * The watch screen (WatchScreens.kt). R-207 (29 Oct 2026): the designer's "Ring" screens, chosen
+ * from state alone ([ScreenSelector]): two first-launch permission screens (the only taps), phone
+ * not connected, nothing open, rest timer, rest is over, between rests. Glance-only: the screen has
+ * no "Complete set" any more. Heart rate is measured only while this screen is visible, not dimmed,
+ * and a workout is open.
  *
- * R-166 (28 Oct 2026): ambient mode. With the watch's always-on screen, the app stays on screen
- * when the watch dims (grey, no ticking: the rest's end time instead of the countdown), so one
- * glance in a set still shows the set and last time's numbers.
+ * R-166 (28 Oct 2026): ambient mode. With the watch's always-on screen the app stays on screen when
+ * the watch dims (the ambient twin of each screen, redrawn about once a minute).
  */
 class MainActivity : ComponentActivity() {
   private var onScreen by mutableStateOf(false)
   private var bpm by mutableStateOf<Double?>(null)
   private var hrStatus by mutableStateOf(HeartRate.Status.WAITING)
   private var hrAllowed by mutableStateOf(false)
-  private var notifAllowed by mutableStateOf(true)
   private var ambient by mutableStateOf(false)
   /** Bumped once a minute in ambient (the screen redraws then). */
   private var ambientTick by mutableLongStateOf(0L)
+  /** R-207: the first-launch screens still to show (heart rate "1 of 2", rest alerts "2 of 2"). */
+  private var askHeartRate by mutableStateOf(false)
+  private var askAlerts by mutableStateOf(false)
+  /** R-207: "Phone not connected" (two empty checks in a row; unknown counts as connected). */
+  private var phoneConnected by mutableStateOf(true)
+  private var emptyChecks by mutableIntStateOf(0)
   private lateinit var heart: HeartRate
 
   private val ambientObserver = AmbientLifecycleObserver(
@@ -64,12 +72,13 @@ class MainActivity : ComponentActivity() {
   private val ask = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
     hrAllowed = hasHeartPermission()
     if (!hrAllowed) {
-      // Refused for good (no more dialogs): the next tap opens the app's settings instead.
+      // Refused for good (no more dialogs): the next Allow opens the app's settings instead.
       val again = heartPermissions().any { shouldShowRequestPermissionRationale(it) }
       if (!again) prefs().edit().putBoolean("hrBlocked", true).apply()
     } else {
       prefs().edit().putBoolean("hrBlocked", false).apply()
     }
+    answered(KEY_ASKED_HR)
     afterNotificationChange()
   }
 
@@ -79,6 +88,7 @@ class MainActivity : ComponentActivity() {
     ) {
       prefs().edit().putBoolean("notifBlocked", true).apply()
     }
+    answered(KEY_ASKED_NOTIF)
     afterNotificationChange()
   }
 
@@ -97,13 +107,31 @@ class MainActivity : ComponentActivity() {
           bpm = null
         }
       }
+      // R-207: is the phone there? Checked while the screen is up and not dimmed.
+      LaunchedEffect(onScreen, ambient) {
+        if (!onScreen || ambient) return@LaunchedEffect
+        while (true) {
+          checkPhone()
+          delay(PHONE_CHECK_MS)
+        }
+      }
       var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
       val endsAt = snap.rest?.endsAt
-      LaunchedEffect(endsAt, ambient, ambientTick, exactAllowed) {
+      val overAt = snap.overAt
+      LaunchedEffect(endsAt, overAt, ambient, ambientTick, exactAllowed) {
         now = System.currentTimeMillis()
-        if (endsAt == null) return@LaunchedEffect
+        if (endsAt == null) {
+          // "Rest is over" counts up (live only; ambient redraws once a minute).
+          var counting = overAt > 0L && !ambient
+          while (counting) {
+            delay(250L)
+            now = System.currentTimeMillis()
+            counting = WatchState.snapshot.overAt > 0L
+          }
+          return@LaunchedEffect
+        }
         if (ambient) {
-          // Ambient: no ticking (the screen shows the rest's end time; it redraws once a minute).
+          // Ambient: no ticking (the screen redraws once a minute).
           // 0.60.0 review: without "Alarms & reminders" the end alarm is inexact and the wrist is
           // usually down (ambient) when a rest ends, so wait here under a short partial wake lock and
           // buzz on time. With exact alarms on, the alarm does it.
@@ -138,14 +166,15 @@ class MainActivity : ComponentActivity() {
         bpm,
         hrStatus,
         hrAllowed,
-        notifAllowed,
         ambient,
         now,
-        onAllow = ::allowHeartRate,
-        onAllowNotif = ::allowNotifications,
-        onComplete = { WatchActions.complete(this, snap.done) },
-        exactAllowed = exactAllowed,
-        onAllowExact = ::allowExactAlarms,
+        askHeartRate = askHeartRate,
+        askAlerts = askAlerts,
+        phoneConnected = phoneConnected,
+        onAllowHeartRate = ::allowHeartRate,
+        onSkipHeartRate = { answered(KEY_ASKED_HR) },
+        onAllowAlerts = ::allowNotifications,
+        onSkipAlerts = { answered(KEY_ASKED_NOTIF) },
       )
     }
   }
@@ -156,12 +185,6 @@ class MainActivity : ComponentActivity() {
     WatchSync.refresh(this)
     hrAllowed = hasHeartPermission()
     afterNotificationChange()
-    if (!prefs().getBoolean("asked", false)) {
-      // First open: heart rate, and (Wear OS 4+) notifications for "Rest is over".
-      prefs().edit().putBoolean("asked", true).apply()
-      val notif = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(Manifest.permission.POST_NOTIFICATIONS) else emptyList()
-      requestAll(heartPermissions() + notif)
-    }
     onScreen = true
   }
 
@@ -171,6 +194,42 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun prefs() = getSharedPreferences("forgeai_watch_ui", MODE_PRIVATE)
+
+  /**
+   * R-207: whether a first-launch screen was answered (Allow or Not now). The old app asked both at
+   * once on first open (pref "asked"): those watches count as asked for both.
+   */
+  private fun asked(key: String): Boolean = prefs().getBoolean(key, false) || prefs().getBoolean("asked", false)
+
+  private fun answered(key: String) {
+    prefs().edit().putBoolean(key, true).apply()
+    refreshAsks()
+  }
+
+  /** Which first-launch screens still show: never for a permission already on. */
+  private fun refreshAsks() {
+    askHeartRate = !hasHeartPermission() && !asked(KEY_ASKED_HR)
+    askAlerts = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationsOn() && !asked(KEY_ASKED_NOTIF)
+  }
+
+  /** One check of the phone link; "not connected" only after two empty answers in a row. */
+  private fun checkPhone() {
+    try {
+      Wearable.getNodeClient(this).connectedNodes
+        .addOnSuccessListener { nodes ->
+          if (nodes.isEmpty()) {
+            emptyChecks += 1
+            if (emptyChecks >= 2) phoneConnected = false
+          } else {
+            emptyChecks = 0
+            phoneConnected = true
+          }
+        }
+        .addOnFailureListener { e -> Log.w("ForgeWear", "phone check failed", e) }
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "phone check failed", e)
+    }
+  }
 
   /** Wear OS 6 (Android 16) names the heart-rate permission health.READ_HEART_RATE. */
   private fun heartPermissions(): List<String> {
@@ -187,6 +246,7 @@ class MainActivity : ComponentActivity() {
       ask.launch(perms.toTypedArray())
     } catch (e: Exception) {
       Log.w("ForgeWear", "permission request failed", e)
+      answered(KEY_ASKED_HR)
     }
   }
 
@@ -195,6 +255,7 @@ class MainActivity : ComponentActivity() {
       requestAll(heartPermissions())
       return
     }
+    answered(KEY_ASKED_HR)
     try {
       startActivity(
         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
@@ -213,14 +274,18 @@ class MainActivity : ComponentActivity() {
     true
   }
 
-  /** The screen's line, and Wear OS bridging (kept up to date after an app update). */
+  /** The first-launch screens, the alarm state, and Wear OS bridging (kept up to date after an app update). */
   private fun afterNotificationChange() {
-    notifAllowed = notificationsOn()
     exactAllowed = exactAlarmsOn()
+    refreshAsks()
     Bridging.sync(this)
   }
 
-  /** R-167: "Alarms & reminders" (SCHEDULE_EXACT_ALARM; off by default on Wear OS 5+ installs). */
+  /**
+   * R-167: "Alarms & reminders" (SCHEDULE_EXACT_ALARM; off by default on Wear OS 5+ installs). R-207:
+   * the screen no longer offers it (not in the design); without it the screen itself buzzes on time
+   * while it is up (the wake-lock wait above).
+   */
   private var exactAllowed by mutableStateOf(true)
 
   private fun exactAlarmsOn(): Boolean = try {
@@ -229,27 +294,6 @@ class MainActivity : ComponentActivity() {
   } catch (e: Exception) {
     Log.w("ForgeWear", "exact alarm state unknown", e)
     true
-  }
-
-  /** Opens this app's "Alarms & reminders" switch (the rest's buzz on the second). */
-  private fun allowExactAlarms() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
-    try {
-      startActivity(
-        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))
-          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-      )
-    } catch (e: Exception) {
-      Log.w("ForgeWear", "alarm settings did not open", e)
-      try {
-        startActivity(
-          Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-        )
-      } catch (e2: Exception) {
-        Log.w("ForgeWear", "app settings did not open", e2)
-      }
-    }
   }
 
   private fun allowNotifications() {
@@ -261,6 +305,7 @@ class MainActivity : ComponentActivity() {
         Log.w("ForgeWear", "notification request failed", e)
       }
     }
+    answered(KEY_ASKED_NOTIF)
     try {
       startActivity(
         Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
@@ -274,6 +319,8 @@ class MainActivity : ComponentActivity() {
 
   private companion object {
     const val READ_HEART_RATE = "android.permission.health.READ_HEART_RATE"
+    const val KEY_ASKED_HR = "askedHr"
+    const val KEY_ASKED_NOTIF = "askedNotif"
+    const val PHONE_CHECK_MS = 15_000L
   }
 }
-

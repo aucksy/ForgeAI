@@ -23,7 +23,7 @@ import androidx.wear.phone.interactions.notifications.BridgingManager
  * no notification permission (only VIBRATE, in the manifest), it fires from the watch's own exact
  * alarm, and nothing mutes it while the phone is in use. What the member loses with notifications
  * refused: the "Rest is over" card on the watch (and its "Complete set"); the screen of this app
- * still has "Complete set" and asks for notifications.
+ * still shows "Rest is over" (R-207: glance-only, no button) and asks once ("Rest alerts", 2 of 2).
  */
 object Bridging {
   private const val TAG = "ForgeWear"

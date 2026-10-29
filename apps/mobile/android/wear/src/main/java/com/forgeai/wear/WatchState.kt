@@ -17,8 +17,9 @@ import androidx.compose.runtime.setValue
  *                    the next set's lines, [NextSet]).
  *
  * `done` (C5-2, 16 Oct 2026): the row a tap ticks, as the phone's JSON, or "" when no tap can save
- * one. The watch never reads it: it shows its Done / "Complete set" only when it is there and sends
- * it back to the phone unchanged ([WatchActions]).
+ * one. The watch never reads it: the countdown card's Done sends it back to the phone unchanged
+ * ([WatchActions]). R-207: the screen has no "Complete set" any more (glance-only); `done` also
+ * tells when the set after a finished rest was logged on the phone ([Snapshot.overAt]).
  *
  * Kept in preferences (the listener service and the alarm receiver run without the screen) and
  * mirrored into Compose state for the screen. Every change goes through here, under one lock,
@@ -42,16 +43,18 @@ object WatchState {
   )
 
   /**
-   * [text]: the live card's set line; [done]: the row "Complete set" ticks ("" = no button now);
-   * [next]: R-166, the same set in lines (where, last time's numbers, what a tick saves).
+   * [text]: the live card's set line; [next]: R-166, the same set in lines (where, last time's
+   * numbers, what a tick saves).
+   * [overAt] (R-207): when a rest ran out and the set after it is not logged on the phone yet, that
+   * rest's end (the "Rest is over" screen counts up from it); 0 otherwise.
    */
   data class Snapshot(
     val rest: Rest?,
     val workoutActive: Boolean,
     val title: String,
     val text: String = "",
-    val done: String = "",
     val next: NextSet = NextSet.NONE,
+    val overAt: Long = 0L,
   )
 
   private val main = Handler(Looper.getMainLooper())
@@ -80,10 +83,15 @@ object WatchState {
     } else {
       null
     }
-    val done = p.getString("done", "") ?: ""
-    val sent = RestText.sentRecently(done, p.getString("sentDone", null), p.getLong("sentAt", 0L), now)
     val next = NextSet(p.getString("set", "") ?: "", p.getString("last", "") ?: "", p.getString("goal", "") ?: "")
-    return Snapshot(rest, p.getBoolean("active", false), p.getString("title", "") ?: "", p.getString("text", "") ?: "", if (sent) "" else done, next)
+    return Snapshot(
+      rest,
+      p.getBoolean("active", false),
+      p.getString("title", "") ?: "",
+      p.getString("text", "") ?: "",
+      next,
+      p.getLong("overAt", 0L),
+    )
   }
 
   private fun publish(ctx: Context) {
@@ -126,6 +134,26 @@ object WatchState {
   /** The row the live card's "Complete set" ticks now ("" = none), for "Rest is over". */
   private fun workoutDone(ctx: Context): String = prefs(ctx).getString("done", "") ?: ""
 
+  /**
+   * R-207: which set the "Rest is over" screen waits for: the row a tick on the phone logs next,
+   * else (an older phone app) its "Set 3 of 5". The phone naming another row means it was logged.
+   */
+  private fun setKey(done: String, set: String): String = done.ifEmpty { set }
+
+  /** The rest ran out and the watch buzzed: "Rest is over" until the phone logs the set or starts a rest. */
+  private fun restOver(ctx: Context, r: Rest) {
+    val p = prefs(ctx)
+    p.edit()
+      .putLong("overAt", r.endsAt)
+      .putString("overKey", setKey(p.getString("done", "") ?: "", p.getString("set", "") ?: ""))
+      .commit()
+    RestAlerts.restOver(ctx, r, workoutDone(ctx))
+  }
+
+  private fun clearOver(ctx: Context) {
+    prefs(ctx).edit().remove("overAt").remove("overKey").commit()
+  }
+
   private fun saveRest(ctx: Context, r: Rest?) {
     val e = prefs(ctx).edit()
     if (r == null) {
@@ -163,10 +191,11 @@ object WatchState {
         // Reached the watch already over (it was out of range).
         saveRest(ctx, null)
         RestAlerts.restCleared(ctx)
-        if (RestText.buzzOnLateArrival(now, endsAt)) RestAlerts.restOver(ctx, r, workoutDone(ctx))
+        if (RestText.buzzOnLateArrival(now, endsAt)) restOver(ctx, r)
         Log.i(TAG, "rest arrived ${now - endsAt} ms after its end")
       } else {
         saveRest(ctx, r)
+        clearOver(ctx) // a new rest: the last one's "Rest is over" is done with
         RestAlerts.restStarted(ctx, r)
         Log.i(TAG, "rest until $endsAt (${endsAt - now} ms)")
       }
@@ -175,7 +204,7 @@ object WatchState {
       RestAlerts.restCleared(ctx)
       if (ended && cur != null && RestText.buzzOnPhoneEnd(now, cur.endsAt)) {
         // The phone's end came before the watch's own alarm: buzz now, once.
-        RestAlerts.restOver(ctx, cur, workoutDone(ctx))
+        restOver(ctx, cur)
         Log.i(TAG, "rest ended on the phone first")
       } else {
         Log.i(TAG, "rest cleared (ended=$ended)")
@@ -189,6 +218,11 @@ object WatchState {
   fun onWorkout(ctx: Context, active: Boolean, title: String, seq: Long, text: String = "", done: String = "", next: NextSet = NextSet.NONE) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
+    // R-207: "Rest is over" waits for the set after the rest; the phone naming another row (the set
+    // was logged) or closing the workout moves the screen on.
+    if (p.getLong("overAt", 0L) > 0L && (!active || setKey(done, next.set) != (p.getString("overKey", "") ?: ""))) {
+      clearOver(ctx)
+    }
     p.edit()
       .putLong("workoutSeq", seq)
       .putBoolean("active", active)
@@ -208,25 +242,6 @@ object WatchState {
     publish(ctx)
   }
 
-  /**
-   * C5-2: a "Complete set" was sent for [done]: the button hides until the phone answers with the
-   * next row, or for [RestText.SENT_MS] if it does not (then it shows again).
-   */
-  @Synchronized
-  fun markSent(ctx: Context, done: String) {
-    prefs(ctx).edit().putString("sentDone", done).putLong("sentAt", System.currentTimeMillis()).commit()
-    publish(ctx)
-    val app = ctx.applicationContext
-    main.postDelayed({ publish(app) }, RestText.SENT_MS + 500L)
-  }
-
-  /** C5-2: the phone could not be reached: the button comes back at once. */
-  @Synchronized
-  fun sendFailed(ctx: Context) {
-    prefs(ctx).edit().remove("sentDone").remove("sentAt").commit()
-    publish(ctx)
-  }
-
   /** The rest's alarm went off for [expected]. */
   @Synchronized
   fun onAlarm(ctx: Context, expected: Long) {
@@ -242,7 +257,7 @@ object WatchState {
       return
     }
     saveRest(ctx, null)
-    RestAlerts.restOver(ctx, cur, workoutDone(ctx))
+    restOver(ctx, cur)
     publish(ctx)
   }
 

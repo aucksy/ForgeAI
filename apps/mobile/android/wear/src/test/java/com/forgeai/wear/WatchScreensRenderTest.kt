@@ -17,53 +17,76 @@ import java.io.File
 import kotlin.math.hypot
 
 /**
- * R-166 (28 Oct 2026): every watch screen the owner asked for, rendered headlessly on a SMALL round
- * watch (192 dp: Pixel Watch 41 mm, 384 px) and a LARGE one (228 dp: Pixel Watch 45 mm, 456 px),
- * as PNGs (build/outputs/watch-screens, uploaded by wear-build.yml as "watch-screens").
+ * R-207 (29 Oct 2026): every screen of the designer's "Ring" hand-off (screens/01..12) and its
+ * ambient twin, rendered headlessly on a SMALL round watch (192 dp: Pixel Watch 41 mm, 384 px) and
+ * a LARGE one (228 dp: Pixel Watch 45 mm, 456 px, the design's own size), as PNGs
+ * (build/outputs/watch-screens, uploaded by wear-build.yml as "watch-screens"). File names follow
+ * the hand-off's, so each PNG can be laid next to its design picture.
  *
  * Each capture is also CHECKED, so a clipped screen fails the build:
  *  - nothing drawn outside the round screen (a square render shows what a round watch cuts off);
- *  - on the rest screen, no text (white / grey pixels) on the ember ring;
+ *  - on the ring screens (rest timer, between rests), no text (white / grey pixels) on the ring;
  *  - on the other screens, no text within 2 dp of the round edge.
- * The clock at the top (TimeText) is the system's own curved text and is left out of the checks.
+ * The clock at the top is left out of the checks (the top fifth of the screen).
  * Next to each raw PNG a "-round" copy greys out what the round glass hides, for a human look.
  */
 abstract class WatchScreensRenderBase(private val size: String) {
   private val out = File(System.getProperty("watchScreens.out") ?: "build/outputs/watch-screens").apply { mkdirs() }
   private val now = 1_761_650_000_000L
+
+  /** The hand-off's rest: 2:00 in all, 1:23 left. */
   private val rest = WatchState.Rest(startedAt = now - 37_000L, endsAt = now + 83_000L, next = "Bench Press, set 3")
 
-  private fun workout(title: String, next: NextSet, done: Boolean = true, text: String = "") =
-    WatchState.Snapshot(rest = null, workoutActive = true, title = title, text = text, done = if (done) "{\"workout\":1}" else "", next = next)
+  private val restSet = NextSet("Set 3 of 5", "60 kg × 8", "62.5 kg × 8")
+  private val betweenSet = NextSet("Set 2 of 4", "60 kg × 8", "62.5 kg × 8")
+  private val LONG ="Single-Arm Dumbbell Row"
 
-  private val bench = NextSet("Set 3 of 5", "60 kg × 8", "62.5 kg × 8")
+  private fun workout(title: String, next: NextSet, text: String = "") =
+    WatchState.Snapshot(rest = null, workoutActive = true, title = title, text = text, next = next)
 
-  private fun shot(
-    name: String,
-    snap: WatchState.Snapshot,
-    resting: Boolean,
-    ambient: Boolean = false,
-    bpm: Double? = 132.0,
-    notifAllowed: Boolean = true,
-    exactAllowed: Boolean = true,
-    fontScale: Float = 1f,
-  ) {
+  private fun resting(title: String = "Bench Press", next: NextSet = restSet) = workout(title, next).copy(rest = rest)
+
+  /** The rest ran out 12 s ago and the set after it is not logged yet. */
+  private fun over(title: String = "Bench Press", next: NextSet = restSet) = workout(title, next).copy(overAt = now - 12_000L)
+
+  private val idle = WatchState.Snapshot(null, false, "")
+
+  private class Shot(
+    val snap: WatchState.Snapshot,
+    val ring: Boolean,
+    val bpm: Double? = 132.0,
+    val hrStatus: HeartRate.Status = HeartRate.Status.READING,
+    val hrAllowed: Boolean = true,
+    val askHeartRate: Boolean = false,
+    val askAlerts: Boolean = false,
+    val phoneConnected: Boolean = true,
+    val fontScale: Float = 1f,
+  )
+
+  /** Each screen in its active and its ambient form. */
+  private fun both(name: String, s: Shot) {
+    shot(name, s, ambient = false)
+    shot("$name-ambient", s, ambient = true)
+  }
+
+  private fun shot(name: String, s: Shot, ambient: Boolean) {
     val file = File(out, "$size-$name.png")
     captureRoboImage(file.absolutePath) {
-      Scaled(fontScale) {
+      Scaled(s.fontScale) {
         WatchScreen(
-          snap,
-          bpm,
-          HeartRate.Status.READING,
-          hrAllowed = true,
-          notifAllowed = notifAllowed,
+          s.snap,
+          s.bpm,
+          s.hrStatus,
+          hrAllowed = s.hrAllowed,
           ambient = ambient,
           now = now,
-          exactAllowed = exactAllowed,
+          askHeartRate = s.askHeartRate,
+          askAlerts = s.askAlerts,
+          phoneConnected = s.phoneConnected,
         )
       }
     }
-    check(file, resting && !ambient)
+    check(file, s.ring)
   }
 
   @Composable
@@ -87,8 +110,9 @@ abstract class WatchScreensRenderBase(private val size: String) {
     val dp = w / (if (size == "small") 192f else 228f)
     val c = (w - 1) / 2f
     val r = w / 2f
-    // The text may not come closer to the edge than this (the ring's inside edge on the rest screen).
-    val limit = if (ring) r - 11f * dp else r - 2f * dp
+    // The text may not come closer to the edge than this: the ring's inside edge (208 - 14 / 2 px
+    // from the centre at 456, so 27 design px in from the edge), else 2 dp.
+    val limit = if (ring) r - (RingMath.DESIGN_PX / 2f - RingMath.RADIUS + RingMath.STROKE / 2f) * RingMath.scale(w.toFloat()) else r - 2f * dp
     var outside = 0
     var onRing = 0
     val round = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
@@ -101,7 +125,6 @@ abstract class WatchScreensRenderBase(private val size: String) {
         val d = hypot(x - c, y - c)
         val bright = maxOf(red, g, b) > 60
         val neutral = red > 110 && g > 110 && b > 110 && red - b < 45
-        // The system clock sits along the top edge: left to Wear OS.
         val clockZone = y < h * 0.2f
         if (d > r + 0.5f && bright) outside++
         if (d > limit && d <= r + 0.5f && neutral && !clockZone) onRing++
@@ -113,64 +136,58 @@ abstract class WatchScreensRenderBase(private val size: String) {
     assertTrue("${file.name}: $onRing text pixels too close to the edge${if (ring) " (on the ring)" else ""}", onRing <= 3)
   }
 
-  @Test fun restingWithTimer() = shot("1-resting", workout("Bench Press", bench).copy(rest = rest), resting = true)
+  // The hand-off's twelve screens (screens/NN-name.png and NN-name-ambient.png).
 
-  @Test fun midSet() = shot("2-mid-set", workout("Bench Press", bench), resting = false)
+  @Test fun restTimer() = both("01-rest-timer", Shot(resting(), ring = true))
 
-  @Test fun lastSet() = shot("3-last-set", workout("Bench Press", NextSet("Set 5 of 5", "55 kg × 8", "57.5 kg × 8")), resting = false)
+  @Test fun restIsOver() = both("02-rest-is-over", Shot(over(), ring = false))
 
-  @Test fun restingBeforeTheLastSet() =
-    shot("3b-resting-last-set", workout("Bench Press", NextSet("Set 5 of 5", "55 kg × 8", "57.5 kg × 8")).copy(rest = rest), resting = true)
+  @Test fun betweenRests() = both("03-between-rests", Shot(workout("Bench Press", betweenSet), ring = true))
 
-  @Test fun noPreviousData() = shot("4-no-previous", workout("Cable Fly", NextSet("Set 1 of 3", "", "15 kg × 12")), resting = false)
+  @Test fun longNameRestTimer() = both("04-long-name-rest-timer", Shot(resting(LONG), ring = true))
 
-  @Test fun restingNoPreviousData() =
-    shot("4b-resting-no-previous", workout("Cable Fly", NextSet("Set 1 of 3", "", "15 kg × 12")).copy(rest = rest), resting = true)
+  @Test fun longNameRestIsOver() = both("05-long-name-rest-is-over", Shot(over(LONG), ring = false))
 
-  @Test fun veryLongExerciseName() = shot(
-    "5-long-name",
-    workout("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", NextSet("Set 2 of 4", "2 × 22.5 kg each × 10", "2 × 22.5 kg each × 11")),
-    resting = false,
+  @Test fun longNameBetweenRests() = both("06-long-name-between-rests", Shot(workout(LONG, betweenSet), ring = true))
+
+  @Test fun nothingOpen() = both("07-nothing-open", Shot(idle, ring = false, bpm = null))
+
+  @Test fun permissionHeartRate() = both("08-permission-heart-rate", Shot(idle, ring = false, hrAllowed = false, askHeartRate = true, askAlerts = true))
+
+  @Test fun permissionAlerts() = both("09-permission-alerts", Shot(idle, ring = false, askAlerts = true))
+
+  @Test fun heartRateDeclined() = both("10-heart-rate-declined", Shot(resting(), ring = true, bpm = null, hrAllowed = false))
+
+  @Test fun heartRateWaiting() =
+    both("11-heart-rate-waiting", Shot(resting(), ring = true, bpm = null, hrStatus = HeartRate.Status.WAITING))
+
+  @Test fun phoneNotConnected() = both("12-phone-not-connected", Shot(resting(), ring = false, phoneConnected = false))
+
+  // Real data the hand-off does not draw: each must still fit inside the round glass.
+
+  @Test fun pounds() = both("x1-pounds", Shot(resting(next = NextSet("Set 3 of 5", "135 lb × 8", "140 lb × 8")), ring = true))
+
+  @Test fun veryLongName() = both(
+    "x2-very-long-name",
+    Shot(workout("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", NextSet("Set 2 of 4", "2 × 22.5 kg each × 10", "2 × 22.5 kg each × 11")), ring = true),
   )
 
-  @Test fun restingVeryLongExerciseName() = shot(
-    "5b-resting-long-name",
-    workout("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", NextSet("Set 2 of 4", "22.5 kg each × 10", "22.5 kg each × 11")).copy(rest = rest),
-    resting = true,
+  @Test fun veryLongNameResting() = both(
+    "x3-very-long-name-resting",
+    Shot(resting("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", NextSet("Set 2 of 4", "22.5 kg each × 10", "22.5 kg each × 11")), ring = true),
   )
 
-  @Test fun pounds() = shot("6-pounds", workout("Bench Press", NextSet("Set 3 of 5", "135 lb × 8", "140 lb × 8")), resting = false)
+  @Test fun noPreviousData() = both("x4-no-previous", Shot(workout("Cable Fly", NextSet("Set 1 of 3", "", "15 kg × 12")), ring = true))
 
-  @Test fun restingPounds() =
-    shot("6b-resting-pounds", workout("Bench Press", NextSet("Set 3 of 5", "135 lb × 8", "140 lb × 8")).copy(rest = rest), resting = true)
+  @Test fun manySets() = both("x5-many-sets", Shot(workout("Push-up", NextSet("Set 7 of 12", "20", "20")), ring = true))
 
-  @Test fun sameNumbersAsLastTime() = shot("7-same-as-last", workout("Barbell Row", NextSet("Set 2 of 4", "70 kg × 8", "70 kg × 8")), resting = false)
+  @Test fun olderPhoneApp() = both("x6-older-phone-app", Shot(workout("Bench Press", NextSet.NONE, text = "Set 3 of 5 · 62.5 kg × 8"), ring = true))
 
-  @Test fun ambientResting() = shot("8-ambient-resting", workout("Bench Press", bench).copy(rest = rest), resting = true, ambient = true)
+  @Test fun allSetsDone() = both("x7-all-sets-done", Shot(workout("Push 1", NextSet.NONE, text = "All sets done · Finish"), ring = true))
 
-  @Test fun ambientMidSet() = shot("9-ambient-mid-set", workout("Bench Press", bench), resting = false, ambient = true)
+  @Test fun largerText() = both("x8-larger-text", Shot(resting(), ring = true, fontScale = 1.3f))
 
-  @Test fun notificationsOff() = shot("10-notifications-off", workout("Bench Press", bench), resting = false, notifAllowed = false)
-
-  @Test fun alarmsOff() = shot("11-alarms-off", workout("Bench Press", bench), resting = false, exactAllowed = false)
-
-  @Test fun largerText() = shot("12-larger-text", workout("Bench Press", bench), resting = false, fontScale = 1.15f)
-
-  @Test fun restingLargerText() = shot("12b-resting-larger-text", workout("Bench Press", bench).copy(rest = rest), resting = true, fontScale = 1.15f)
-
-  @Test fun olderPhoneApp() = shot(
-    "13-older-phone-app",
-    workout("Bench Press", NextSet.NONE, text = "Set 3 of 5 · 62.5 kg × 8"),
-    resting = false,
-  )
-
-  @Test fun allSetsDone() = shot(
-    "14-all-sets-done",
-    workout("Push 1", NextSet.NONE, done = false, text = "All sets done · Finish"),
-    resting = false,
-  )
-
-  @Test fun idle() = shot("15-idle", WatchState.Snapshot(null, false, ""), resting = false, bpm = null)
+  @Test fun longOvertime() = both("x9-long-overtime", Shot(workout("Bench Press", restSet).copy(overAt = now - 3_725_000L), ring = false))
 }
 
 @RunWith(AndroidJUnit4::class)

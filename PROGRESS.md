@@ -1,6 +1,17 @@
 # ForgeAI progress
 
 ## Done
+- 2026-10-29: R-207 watch UI rebuilt to the designer's "Ring" hand-off (direction 2a; not built or
+  committed yet, needs the cloud wear build). Glance-only: the app screen's "Complete set" is gone
+  (notification buttons kept). Seven screens chosen from state (`ScreenSelector`, WatchLayout.kt):
+  heart-rate and rest-alert permission screens (the only taps, replacing the old auto-request),
+  phone not connected (NodeClient poll, 2 empty checks), nothing open, rest timer, NEW "Rest is
+  over" (orange, overtime counting up; `overAt` set on the buzz, cleared by a new rest, the phone's
+  next row changing, or the workout closing), between rests (set segments). Manrope bundled
+  (OFL, static 500-800). Render gate now shoots all 12 hand-off screens + ambient twins + 9 edge
+  cases at 384/456 round; new JVM `WatchLayoutTest` (ring/segment maths, selector, copy).
+  Removed: markSent / sendFailed / sentRecently / Snapshot.done, the "Allow alarms" and
+  "Allow notifications" lines.
 - 2026-07-04: Scaffolded (Expo SDK 56, deps incl. expo-speech-recognition),
   contract layer, docs. `tsc` green.
 - 2026-07-05: Wave 1 (DB repos, overload/recovery/strength engine + services,

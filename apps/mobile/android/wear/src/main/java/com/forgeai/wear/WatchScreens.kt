@@ -1,73 +1,139 @@
+@file:OptIn(ExperimentalTextApi::class)
+
 package com.forgeai.wear
 
-import android.text.format.DateFormat
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.CompactChip
-import androidx.wear.compose.material.LocalTextStyle
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import androidx.wear.compose.material.TimeTextDefaults
 
-internal val Ember = Color(0xFFF26B2A)
-internal val Track = Color(0xFF2A2420)
-internal val Muted = Color(0xFFB8AFA8)
+/*
+ * R-207 (29 Oct 2026): the watch rebuilt to the designer's "Ring" hand-off (direction 2a). Glance
+ * only: no buttons during a workout (the old "Complete set" is gone); the only taps are the two
+ * first-launch permission screens. Every size is the hand-off's px at 456 px, scaled by
+ * screen width / 456 ([Px]). The screen is chosen from state alone ([ScreenSelector]); the render
+ * test (WatchScreensRenderTest) photographs every screen and its ambient twin at 456 and 384 px.
+ */
 
-/** Ambient (screen dimmed): grey and white only, no fills, no ring (burn-in), no buttons. */
-private val AmbientGrey = Color(0xFF9E9E9E)
+/** Manrope (OFL, Google Fonts), cut to static 500 / 600 / 700 / 800 (res/font, MANROPE-OFL.txt). */
+internal val Manrope = FontFamily(
+  Font(R.font.manrope_medium, FontWeight.Medium),
+  Font(R.font.manrope_semibold, FontWeight.SemiBold),
+  Font(R.font.manrope_bold, FontWeight.Bold),
+  Font(R.font.manrope_extrabold, FontWeight.ExtraBold),
+)
 
-/** Degrees left open at the top of the rest ring, under the clock. */
-private const val RING_GAP = 64f
+/** The hand-off's colour tokens, active and ambient. */
+internal class Palette(
+  val accent: Color,
+  val text: Color,
+  val grey: Color,
+  val track: Color,
+  val done: Color,
+  val upcoming: Color,
+)
+
+internal val ActivePalette = Palette(
+  accent = Color(0xFFF26B2A),
+  text = Color(0xFFFFFFFF),
+  grey = Color(0xFFA0A0A0),
+  track = Color(0xFF242424),
+  done = Color(0xFF6A6A6A),
+  upcoming = Color(0xFF262626),
+)
+
+internal val AmbientPalette = Palette(
+  accent = Color(0xFFB9592C),
+  text = Color(0xFFC4C4C4),
+  grey = Color(0xFF7C7C7C),
+  track = Color(0xFF161616),
+  done = Color(0xFF4A4A4A),
+  upcoming = Color(0xFF1C1C1C),
+)
+
+internal fun palette(ambient: Boolean): Palette = if (ambient) AmbientPalette else ActivePalette
+
+/** Ambient big numerals: no fill, a 1.5 px outline in this colour. */
+private val OutlineInk = Color(0xFFD4D4D4)
+private const val OUTLINE_PX = 1.5f
+
+/** The clock's top edge, at 456 px. */
+private const val CLOCK_TOP = 36f
+
+/** The widest a one-line exercise name may be before it ends in "…". */
+private const val NAME_MAX_WIDTH = 320f
+
+private val Pill = RoundedCornerShape(percent = 50)
 
 /**
- * The whole watch screen, from state alone (R-166): MainActivity feeds it live, the render test
- * (WatchScreensRenderTest) feeds it fixed states and photographs it on a small and a large round
- * screen.
- *  - Resting: the countdown in an ember ring, heart rate, and the next set: "Set 3 of 5 · Bench
- *    Press", last time's numbers for that set in big type, today's (what "Complete set" saves)
- *    when they differ.
- *  - A workout open, no rest: the exercise, "Set 3 of 5 ♥ 132", the same two lines, "Complete set".
- *  - Nothing open: how to start.
- * Every line that can be long (a name, "22.5 kg each × 10", larger system text) shrinks to fit its
- * width first (down to 70 %), and only then ends in "…". Lines lower on the round screen get a
- * narrower width, as the glass (and the rest ring) is narrower there.
- * [ambient]: the screen is dimmed (always-on display): the rest shows when it ends instead of a
- * ticking countdown (an ambient screen redraws about once a minute), in grey and white only.
+ * The hand-off's px to this screen: value x (screen width / 456). Text is converted without the
+ * member's font scale: the layout is drawn to fit inside the ring at exactly these sizes.
+ */
+internal class Px(private val dpPerPx: Float, private val fontScale: Float) {
+  fun dp(px: Float): Dp = (px * dpPerPx).dp
+  fun sp(px: Float): TextUnit = (px * dpPerPx / fontScale).sp
+}
+
+@Composable
+private fun rememberPx(): Px {
+  val widthDp = LocalConfiguration.current.screenWidthDp
+  val fontScale = LocalDensity.current.fontScale
+  return remember(widthDp, fontScale) { Px(RingMath.scale(widthDp.toFloat()), fontScale) }
+}
+
+/**
+ * The whole watch screen, from state alone: MainActivity feeds it live, the render test feeds it
+ * fixed states. [askHeartRate] / [askAlerts]: the first-launch permission screens are still to show.
  */
 @Composable
 internal fun WatchScreen(
@@ -75,319 +141,482 @@ internal fun WatchScreen(
   bpm: Double?,
   hrStatus: HeartRate.Status,
   hrAllowed: Boolean,
-  notifAllowed: Boolean,
   ambient: Boolean,
   now: Long,
-  onAllow: () -> Unit = {},
-  onAllowNotif: () -> Unit = {},
-  onComplete: () -> Unit = {},
-  exactAllowed: Boolean = true,
-  onAllowExact: () -> Unit = {},
+  askHeartRate: Boolean = false,
+  askAlerts: Boolean = false,
+  phoneConnected: Boolean = true,
+  onAllowHeartRate: () -> Unit = {},
+  onSkipHeartRate: () -> Unit = {},
+  onAllowAlerts: () -> Unit = {},
+  onSkipAlerts: () -> Unit = {},
 ) {
-  Scaffold(
-    modifier = Modifier.fillMaxSize().background(Color.Black),
-    timeText = { TimeText() },
+  val px = rememberPx()
+  val pal = palette(ambient)
+  val kind = ScreenSelector.select(snap, askHeartRate, askAlerts, phoneConnected)
+  val orange = kind == WatchScreenKind.REST_IS_OVER && !ambient
+  // The orange fills the round glass only (a square fill would paint the corners a round watch hides).
+  val round = LocalConfiguration.current.isScreenRound
+  Box(
+    Modifier
+      .fillMaxSize()
+      .background(Color.Black)
+      .background(if (orange) ActivePalette.accent else Color.Black, if (round) CircleShape else RectangleShape)
+      .testTag("screen-${kind.name}"),
+    contentAlignment = Alignment.Center,
   ) {
-    BoxWithConstraints(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
-      // Type grows with the screen: 1.0 on a 192 dp (small) round watch, ~1.18 on a 228 dp one.
-      val k = (maxWidth.value / 192f).coerceIn(1f, 1.25f)
-      val side = maxWidth * 0.12f
-      val rest = snap.rest
-      when {
-        rest != null -> RestScreen(rest, snap, if (hrAllowed) bpm else null, ambient, now, k, side)
-        snap.workoutActive -> SetScreen(snap, bpm, hrStatus, hrAllowed, notifAllowed, exactAllowed, ambient, k, side, onAllow, onAllowNotif, onAllowExact, onComplete)
-        else -> IdleScreen(notifAllowed, exactAllowed, ambient, onAllowNotif, onAllowExact)
-      }
-    }
-  }
-}
-
-private fun sz(base: Float, k: Float): TextUnit = (base * k).sp
-
-/**
- * One centred line that shrinks to fit its width (to [minScale] of its size), then ends in "…".
- * [build] makes the line at a given scale (1.0 = full size).
- */
-@Composable
-private fun FitLine(tag: String, modifier: Modifier = Modifier, minScale: Float = 0.7f, build: (Float) -> AnnotatedString) {
-  BoxWithConstraints(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-    val measurer = rememberTextMeasurer()
-    val style = LocalTextStyle.current
-    val maxPx = constraints.maxWidth
-    var scale = 1f
-    while (scale > minScale + 0.001f) {
-      val w = measurer.measure(build(scale), style = style, maxLines = 1, softWrap = false).size.width
-      if (w <= maxPx) break
-      scale -= 0.05f
-    }
-    Text(
-      build(scale),
-      maxLines = 1,
-      softWrap = false,
-      overflow = TextOverflow.Ellipsis,
-      textAlign = TextAlign.Center,
-      modifier = Modifier.testTag(tag),
-    )
-  }
-}
-
-private fun plain(text: String, color: Color, size: TextUnit, weight: FontWeight = FontWeight.Normal): AnnotatedString =
-  buildAnnotatedString { withStyle(SpanStyle(color = color, fontSize = size, fontWeight = weight)) { append(text) } }
-
-/** "Last  60 kg × 8": a small grey word, then the numbers in big type. */
-private fun labelled(label: String, value: String, valueColor: Color, labelSize: TextUnit, valueSize: TextUnit, labelColor: Color): AnnotatedString =
-  buildAnnotatedString {
-    withStyle(SpanStyle(color = labelColor, fontSize = labelSize, fontWeight = FontWeight.Normal)) { append("$label  ") }
-    withStyle(SpanStyle(color = valueColor, fontSize = valueSize, fontWeight = FontWeight.Bold)) { append(value) }
-  }
-
-/**
- * The next set's two number lines (R-166): last time's (or "No last time"), then today's.
- * [inset]: extra side room per line, as the round screen narrows further down.
- */
-@Composable
-private fun NumberLines(next: NextSet, ambient: Boolean, k: Float, lastSize: Float, inset: Dp) {
-  val last = NextSetText.last(next)
-  val today = NextSetText.today(next)
-  val label = if (ambient) AmbientGrey else Muted
-  if (last != null) {
-    FitLine("last", Modifier.padding(horizontal = inset)) { s ->
-      labelled("Last", last, Color.White, sz(12f * s, k), sz(lastSize * s, k), label)
-    }
-  } else {
-    FitLine("last", Modifier.padding(horizontal = inset)) { s -> plain("No last time", label, sz(12f * s, k)) }
-  }
-  if (today != null) {
-    FitLine("today", Modifier.padding(horizontal = inset * 2)) { s ->
-      labelled("Today", today, if (ambient) Color.White else Ember, sz(12f * s, k), sz(13f * s, k), label)
-    }
-  }
-}
-
-@Composable
-private fun RestScreen(
-  rest: WatchState.Rest,
-  snap: WatchState.Snapshot,
-  bpm: Double?,
-  ambient: Boolean,
-  now: Long,
-  k: Float,
-  side: Dp,
-) {
-  if (!ambient) {
-    val fraction = RestText.fractionLeft(now, rest.startedAt, rest.endsAt)
-    Canvas(Modifier.fillMaxSize().padding(3.dp)) {
-      val stroke = 6.dp.toPx()
-      val inset = stroke / 2f
-      val arcSize = Size(size.width - stroke, size.height - stroke)
-      // A gap at the top for the clock (Wear OS draws the time there): the ring never runs under it.
-      val start = -90f + RING_GAP / 2f
-      val sweep = 360f - RING_GAP
-      drawArc(Track, start, sweep, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-      if (fraction > 0f) {
-        drawArc(Ember, start, sweep * fraction, false, topLeft = Offset(inset, inset), size = arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-      }
-    }
-  }
-  val accent = if (ambient) AmbientGrey else Ember
-  Column(
-    Modifier.fillMaxWidth().padding(horizontal = side),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    // "REST  ♥ 132" (heart rate beside the word, so the countdown keeps the middle).
-    FitLine("restLabel") { s ->
-      buildAnnotatedString {
-        withStyle(SpanStyle(color = accent, fontSize = sz(11f * s, k), fontWeight = FontWeight.Bold, letterSpacing = 2.sp)) {
-          append(if (ambient) "REST ENDS" else "REST")
-        }
-        if (bpm != null) {
-          withStyle(SpanStyle(color = accent, fontSize = sz(13f * s, k), fontWeight = FontWeight.Bold)) { append("   ♥ ${RestText.bpm(bpm)}") }
-        }
-      }
-    }
-    Text(
-      if (ambient) endTime(rest.endsAt) else RestText.remaining(now, rest.endsAt),
-      color = Color.White,
-      fontSize = sz(if (ambient) 30f else 36f, k),
-      fontWeight = if (ambient) FontWeight.Normal else FontWeight.Bold,
-      maxLines = 1,
-      modifier = Modifier.testTag("countdown"),
-    )
-    val next = snap.next
-    if (snap.workoutActive && NextSetText.has(next)) {
-      FitLine("nextSet") { s -> plain(NextSetText.restHeader(next, snap.title), Color.White, sz(13f * s, k), FontWeight.SemiBold) }
-      NumberLines(next, ambient, k, lastSize = 16f, inset = 6.dp)
-    } else {
-      // An older phone app (no lines) or the rest after the last set ("All sets done").
-      RestText.nextLine(rest.next)?.let {
-        Text(
-          it,
-          color = if (ambient) AmbientGrey else Muted,
-          fontSize = sz(13f, k),
-          textAlign = TextAlign.Center,
-          maxLines = 2,
-          overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.testTag("nextSet"),
+    val card = WatchCopy.card(snap)
+    val heart = WatchCopy.heartLine(hrAllowed, hrStatus, bpm, ambient)
+    when (kind) {
+      WatchScreenKind.PERMISSION_HEART_RATE -> PermissionScreen(true, ambient, px, onAllowHeartRate, onSkipHeartRate)
+      WatchScreenKind.PERMISSION_ALERTS -> PermissionScreen(false, ambient, px, onAllowAlerts, onSkipAlerts)
+      WatchScreenKind.PHONE_NOT_CONNECTED -> PhoneNotConnectedScreen(ambient, px)
+      WatchScreenKind.NOTHING_OPEN -> NothingOpenScreen(ambient, px)
+      WatchScreenKind.REST_TIMER -> snap.rest?.let { r ->
+        RestTimerScreen(
+          card,
+          RestText.remaining(now, r.endsAt),
+          RestText.fractionLeft(now, r.startedAt, r.endsAt),
+          heart,
+          ambient,
+          px,
         )
       }
+      WatchScreenKind.REST_IS_OVER -> RestIsOverScreen(card, WatchCopy.overtime(now, snap.overAt), ambient, px)
+      WatchScreenKind.BETWEEN_RESTS -> BetweenRestsScreen(card, heart, ambient, px)
     }
-  }
-}
-
-/** "4:12 PM" / "16:12", as the watch tells the time (plain spaces: some fonts lack U+202F). */
-@Composable
-private fun endTime(endsAt: Long): String {
-  val ctx = LocalContext.current
-  return try {
-    val pattern = if (DateFormat.is24HourFormat(ctx)) "H:mm" else "h:mm a"
-    SimpleDateFormat(pattern, Locale.getDefault()).format(Date(endsAt)).replace('\u202F', ' ').replace('\u00A0', ' ')
-  } catch (e: Exception) {
-    ""
+    Clock(px, if (orange) Color.Black else pal.grey)
   }
 }
 
 /**
- * A workout open, no rest: the set the phone's live card names (R-166: last time's numbers and
- * today's), heart rate beside the set, and (C5-2) "Complete set", so the set just done can be
- * logged from the wrist.
+ * The time, top centre (top edge 36 px, 20 px / 600, tabular). Wear's own TimeText time source
+ * (the watch's 12 / 24 h setting, ticking each minute), drawn straight as the hand-off draws it.
  */
 @Composable
-private fun SetScreen(
-  snap: WatchState.Snapshot,
-  bpm: Double?,
-  status: HeartRate.Status,
-  allowed: Boolean,
-  notifAllowed: Boolean,
-  exactAllowed: Boolean,
-  ambient: Boolean,
-  k: Float,
-  side: Dp,
-  onAllow: () -> Unit,
-  onAllowNotif: () -> Unit,
-  onAllowExact: () -> Unit,
-  onComplete: () -> Unit,
+private fun Clock(px: Px, color: Color) {
+  val time = TimeTextDefaults.timeSource(TimeTextDefaults.timeFormat()).currentTime
+  Box(Modifier.fillMaxSize().padding(top = px.dp(CLOCK_TOP)), contentAlignment = Alignment.TopCenter) {
+    Line(time, px, 20f, FontWeight.SemiBold, color, spacing = 0.02f, tabular = true, tag = "clock")
+  }
+}
+
+// ------------------------------------------------------------------ text
+
+/**
+ * One centred line in Manrope. [spacing] and [lineHeight] are in em (0 = the font's own);
+ * [outlined]: ambient big numerals (no fill, a 1.5 px light outline); [maxWidth] px, then "…".
+ */
+@Composable
+private fun Line(
+  text: String,
+  px: Px,
+  size: Float,
+  weight: FontWeight,
+  color: Color,
+  modifier: Modifier = Modifier,
+  spacing: Float = 0f,
+  lineHeight: Float = 0f,
+  tabular: Boolean = false,
+  outlined: Boolean = false,
+  maxWidth: Float = 0f,
+  maxLines: Int = 1,
+  balanced: Boolean = false,
+  tag: String = "",
 ) {
-  val canComplete = snap.done.isNotEmpty() && !ambient
-  val next = snap.next
-  val lines = NextSetText.has(next)
-  val accent = if (ambient) AmbientGrey else Ember
-  val muted = if (ambient) AmbientGrey else Muted
-  val heart = if (allowed) "♥ ${RestText.bpm(bpm)}" else null
-  val prompt = !ambient && (!notifAllowed || !exactAllowed)
-  Column(
-    // A little room under the clock at the top (more with the "Allow ..." line under the button).
-    Modifier.fillMaxWidth().padding(start = side, end = side, top = if (prompt) 14.dp else 6.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    if (lines) {
-      FitLine("exercise") { s -> plain(snap.title, Color.White, sz(15f * s, k), FontWeight.Bold) }
-      // "Set 3 of 5   ♥ 132": the set and the heart rate on one line.
-      FitLine("set") { s ->
-        buildAnnotatedString {
-          withStyle(SpanStyle(color = muted, fontSize = sz(12f * s, k))) { append(next.set) }
-          if (heart != null) withStyle(SpanStyle(color = accent, fontSize = sz(15f * s, k), fontWeight = FontWeight.Bold)) { append("   $heart") }
-        }
-      }
-      NumberLines(next, ambient, k, lastSize = 18f, inset = 4.dp)
-    } else {
-      // An older phone app, "All sets done · Finish", or a row with nothing to save.
-      if (heart != null) Text(heart, color = accent, fontSize = sz(18f, k), fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.testTag("heart"))
-      if (snap.title.isNotBlank()) {
-        FitLine("exercise") { s -> plain(snap.title, Color.White, sz(14f * s, k), FontWeight.Bold) }
-      }
-      if (snap.text.isNotBlank()) {
-        Text(snap.text, color = muted, fontSize = sz(12f, k), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-      }
-      val note = when {
-        status == HeartRate.Status.NO_SENSOR -> "This watch has no heart-rate sensor"
-        status == HeartRate.Status.OFF_WRIST -> "Wear the watch snugly"
-        status == HeartRate.Status.UNAVAILABLE -> "Heart rate not available"
-        else -> null
-      }
-      if (allowed && note != null && !canComplete) {
-        Text(note, color = Muted, fontSize = sz(12f, k), textAlign = TextAlign.Center, maxLines = 2)
-      }
-    }
-    if (!allowed) {
-      Text(
-        if (ambient) "♥ off" else "♥ Tap to allow heart rate",
-        color = accent,
-        fontSize = sz(11f, k),
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center,
-        maxLines = 1,
-        modifier = (if (ambient) Modifier else Modifier.clickable(onClick = onAllow).padding(2.dp)).testTag("heart"),
-      )
-    }
-    if (canComplete) {
-      Spacer(Modifier.height(4.dp))
-      CompactChip(
-        onClick = onComplete,
-        label = { Text("Complete set", color = Color.Black, fontWeight = FontWeight.Bold) },
-        colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
-        modifier = Modifier.testTag("complete"),
-      )
-    }
-    // C5 review: also beside "Complete set" (a small tappable line, to fit a round screen): with
-    // notifications off this app has no countdown and no buttons of its own between sets.
-    if (!notifAllowed && !ambient) {
-      LinkLine("Allow notifications", "allowNotifications", onAllowNotif)
-    } else if (!exactAllowed && !ambient) {
-      LinkLine("Allow alarms", "allowAlarms", onAllowExact)
+  val outlinePx = with(LocalDensity.current) { px.dp(OUTLINE_PX).toPx() }
+  var style = TextStyle(
+    color = if (outlined) OutlineInk else color,
+    fontSize = px.sp(size),
+    fontWeight = weight,
+    fontFamily = Manrope,
+    letterSpacing = spacing.em,
+    textAlign = TextAlign.Center,
+    fontFeatureSettings = if (tabular) "tnum" else null,
+  )
+  if (lineHeight > 0f) {
+    // CSS line-height: the extra space split evenly above and below (no trimming).
+    style = style.copy(
+      lineHeight = lineHeight.em,
+      lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
+    )
+  }
+  if (outlined) style = style.copy(drawStyle = Stroke(width = outlinePx))
+  if (balanced) style = style.copy(lineBreak = LineBreak.Heading)
+  var m = modifier
+  if (maxWidth > 0f) m = m.widthIn(max = px.dp(maxWidth))
+  if (tag.isNotEmpty()) m = m.testTag(tag)
+  BasicText(
+    text,
+    m,
+    style,
+    overflow = TextOverflow.Ellipsis,
+    softWrap = maxLines > 1,
+    maxLines = maxLines,
+  )
+}
+
+/**
+ * "Next: Set 3 of 5 · Bench Press" on one line, or (the long-name rule) "Next: Set 3 of 5" over the
+ * name. Nothing when the phone sent no set line.
+ */
+@Composable
+private fun NextSetLines(
+  card: SetCard,
+  long: Boolean,
+  px: Px,
+  shortColor: Color,
+  headerColor: Color,
+  nameColor: Color,
+  nameWeight: FontWeight,
+  gap: Float,
+) {
+  val oneLine = WatchCopy.nextSetLine(card) ?: return
+  if (!long) {
+    Line(oneLine, px, 22f, FontWeight.Bold, shortColor, tabular = true, tag = "nextSet")
+    return
+  }
+  Line(WatchCopy.nextSetHeader(card) ?: return, px, 20f, FontWeight.SemiBold, headerColor, tabular = true, tag = "nextSet")
+  if (gap > 0f) Spacer(Modifier.height(px.dp(gap)))
+  Line(card.exercise, px, 20f, nameWeight, nameColor, maxWidth = NAME_MAX_WIDTH, tag = "exercise")
+}
+
+// ------------------------------------------------------------------ ring and segments
+
+private fun DrawScope.ringBox(): Pair<Offset, Size> {
+  val k = size.minDimension / RingMath.DESIGN_PX
+  val r = RingMath.RADIUS * k
+  return Offset(center.x - r, center.y - r) to Size(2f * r, 2f * r)
+}
+
+private fun DrawScope.ringStroke(ambient: Boolean): Float =
+  (if (ambient) RingMath.AMBIENT_STROKE else RingMath.STROKE) * (size.minDimension / RingMath.DESIGN_PX)
+
+/** The rest ring: a full track, and the arc left from 12 o'clock clockwise with round caps. */
+@Composable
+private fun RestRing(fractionLeft: Float, pal: Palette, ambient: Boolean) {
+  Canvas(Modifier.fillMaxSize().testTag("ring")) {
+    val (topLeft, box) = ringBox()
+    val w = ringStroke(ambient)
+    drawArc(pal.track, 0f, 360f, false, topLeft = topLeft, size = box, style = Stroke(width = w))
+    val sweep = RingMath.restSweep(fractionLeft)
+    if (sweep > 0f) {
+      drawArc(pal.accent, RingMath.START_ANGLE, sweep, false, topLeft = topLeft, size = box, style = Stroke(width = w, cap = StrokeCap.Round))
     }
   }
 }
 
-/** A small orange tappable line under "Complete set" (a chip there would not fit a round screen). */
+/** Ambient "Rest is over": the accent outline ring (3 px). */
 @Composable
-private fun LinkLine(text: String, tag: String, onClick: () -> Unit) {
-  Text(
-    text,
-    color = Ember,
-    fontSize = 11.sp,
-    fontWeight = FontWeight.Bold,
-    textAlign = TextAlign.Center,
-    maxLines = 1,
-    overflow = TextOverflow.Ellipsis,
-    modifier = Modifier.clickable(onClick = onClick).padding(horizontal = 6.dp, vertical = 5.dp).testTag(tag),
-  )
+private fun OutlineRing(pal: Palette) {
+  Canvas(Modifier.fillMaxSize()) {
+    val (topLeft, box) = ringBox()
+    drawArc(pal.accent, 0f, 360f, false, topLeft = topLeft, size = box, style = Stroke(width = ringStroke(true)))
+  }
 }
 
-/** The first screen: notifications or alarms off, with a short reason and one button. */
+/** One arc per set: done grey, current accent, upcoming dark (drawn upcoming, done, current). */
 @Composable
-private fun AllowPrompt(reason: String, button: String, tag: String, onAllow: () -> Unit) {
-  Spacer(Modifier.height(6.dp))
-  Text(reason, color = Muted, fontSize = 12.sp, textAlign = TextAlign.Center, maxLines = 2)
-  Spacer(Modifier.height(4.dp))
-  CompactChip(
-    onClick = onAllow,
-    label = { Text(button, color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp) },
-    colors = ChipDefaults.primaryChipColors(backgroundColor = Ember),
-    modifier = Modifier.testTag(tag),
-  )
-}
-
-@Composable
-private fun IdleScreen(notifAllowed: Boolean, exactAllowed: Boolean, ambient: Boolean, onAllowNotif: () -> Unit, onAllowExact: () -> Unit) {
-  Column(
-    Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Text("MettleUp", color = if (ambient) AmbientGrey else Ember, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-    Spacer(Modifier.height(6.dp))
-    Text(
-      "Start a workout in MettleUp on your phone",
-      color = Color.White,
-      fontSize = 16.sp,
-      textAlign = TextAlign.Center,
-    )
-    if (!notifAllowed && !ambient) {
-      AllowPrompt("The countdown on the watch face needs notifications", "Allow", "allowNotifications", onAllowNotif)
-    } else if (!exactAllowed && !ambient) {
-      AllowPrompt("To buzz right when your rest ends, allow alarms", "Allow", "allowAlarms", onAllowExact)
+private fun SetSegments(card: SetCard, pal: Palette, ambient: Boolean) {
+  val segments = remember(card.setIndex, card.setCount) { RingMath.segments(card.setIndex, card.setCount) }
+  if (segments.isEmpty()) return
+  Canvas(Modifier.fillMaxSize().testTag("segments")) {
+    val (topLeft, box) = ringBox()
+    val stroke = Stroke(width = ringStroke(ambient), cap = StrokeCap.Round)
+    for (state in listOf(RingMath.SegmentState.UPCOMING, RingMath.SegmentState.DONE, RingMath.SegmentState.CURRENT)) {
+      val color = when (state) {
+        RingMath.SegmentState.DONE -> pal.done
+        RingMath.SegmentState.CURRENT -> pal.accent
+        RingMath.SegmentState.UPCOMING -> pal.upcoming
+      }
+      for (s in segments) {
+        if (s.state == state && s.sweep > 0f) {
+          drawArc(color, s.startAngle, s.sweep, false, topLeft = topLeft, size = box, style = stroke)
+        }
+      }
     }
+  }
+}
+
+// ------------------------------------------------------------------ 1. rest timer
+
+/** Rest timer (screen 1; 4b without the heart line; 5a with "♥ —"). */
+@Composable
+internal fun RestTimerScreen(
+  card: SetCard,
+  countdown: String,
+  fractionLeft: Float,
+  heart: WatchCopy.HeartLine?,
+  ambient: Boolean,
+  px: Px,
+) {
+  val pal = palette(ambient)
+  val long = WatchCopy.isLongName(card)
+  Box(Modifier.fillMaxSize()) {
+    RestRing(fractionLeft, pal, ambient)
+    Column(
+      Modifier.fillMaxSize().padding(top = px.dp(16f)),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      if (heart != null) {
+        Line(heart.text, px, 24f, FontWeight.Bold, if (heart.waiting) pal.grey else pal.text, tabular = true, tag = "heart")
+      }
+      Line(
+        countdown,
+        px,
+        if (long) 112f else 128f,
+        FontWeight.ExtraBold,
+        pal.text,
+        spacing = -0.045f,
+        lineHeight = 1f,
+        tabular = true,
+        outlined = ambient,
+        tag = "countdown",
+      )
+      Spacer(Modifier.height(px.dp(10f)))
+      NextSetLines(card, long, px, pal.text, pal.grey, pal.text, FontWeight.Bold, gap = 0f)
+      card.previous?.let {
+        Spacer(Modifier.height(px.dp(6f)))
+        Line(it, px, 20f, FontWeight.Medium, pal.grey, tabular = true, tag = "previous")
+      }
+      card.next?.let {
+        Spacer(Modifier.height(px.dp(2f)))
+        Line(it, px, 20f, FontWeight.ExtraBold, pal.accent, tabular = true, tag = "next")
+      }
+    }
+  }
+}
+
+// ------------------------------------------------------------------ 1b. rest is over
+
+/** Rest is over (screen 1b): the whole screen accent, all text black; ambient: black, an outline ring. */
+@Composable
+internal fun RestIsOverScreen(card: SetCard, overtime: String, ambient: Boolean, px: Px) {
+  val pal = palette(ambient)
+  val ink = if (ambient) pal.text else Color.Black
+  val nextInk = if (ambient) pal.accent else Color.Black
+  val long = WatchCopy.isLongName(card)
+  Box(Modifier.fillMaxSize()) {
+    if (ambient) OutlineRing(pal)
+    Column(
+      Modifier.fillMaxSize(),
+      verticalArrangement = Arrangement.spacedBy(px.dp(6f), Alignment.CenterVertically),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      Line(overtime, px, 34f, FontWeight.ExtraBold, ink, Modifier.padding(top = px.dp(18f)), spacing = -0.02f, tabular = true, tag = "overtime")
+      Line(
+        WatchCopy.REST_IS_OVER,
+        px,
+        54f,
+        FontWeight.ExtraBold,
+        Color.Black,
+        Modifier.padding(bottom = px.dp(10f)),
+        spacing = -0.03f,
+        lineHeight = 1.05f,
+        outlined = ambient,
+        tag = "restIsOver",
+      )
+      // The column's 6 px gap also sits between the two long-name lines.
+      NextSetLines(card, long, px, ink, ink, ink, FontWeight.ExtraBold, gap = 0f)
+      card.previous?.let { Line(it, px, 20f, FontWeight.Medium, ink, tabular = true, tag = "previous") }
+      card.next?.let { Line(it, px, 20f, FontWeight.ExtraBold, nextInk, tabular = true, tag = "next") }
+    }
+  }
+}
+
+// ------------------------------------------------------------------ 2. between rests
+
+/** Between rests (screen 2): a workout open, no rest running. View only; set segments on the ring. */
+@Composable
+internal fun BetweenRestsScreen(card: SetCard, heart: WatchCopy.HeartLine?, ambient: Boolean, px: Px) {
+  val pal = palette(ambient)
+  Box(Modifier.fillMaxSize()) {
+    SetSegments(card, pal, ambient)
+    Column(
+      Modifier.fillMaxSize().padding(top = px.dp(14f)),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      if (card.exercise.isNotEmpty()) {
+        Line(
+          card.exercise,
+          px,
+          if (WatchCopy.isLongBetweenName(card.exercise)) 21f else 26f,
+          FontWeight.ExtraBold,
+          pal.text,
+          maxWidth = NAME_MAX_WIDTH,
+          tag = "exercise",
+        )
+      }
+      val number = WatchCopy.setNumber(card)
+      val of = WatchCopy.setOf(card)
+      if (number != null && of != null) {
+        Spacer(Modifier.height(px.dp(2f)))
+        Row(verticalAlignment = Alignment.Bottom) {
+          Line(
+            number,
+            px,
+            96f,
+            FontWeight.ExtraBold,
+            pal.text,
+            Modifier.alignByBaseline(),
+            spacing = -0.04f,
+            lineHeight = 1.05f,
+            tabular = true,
+            outlined = ambient,
+            tag = "setNumber",
+          )
+          Spacer(Modifier.width(px.dp(12f)))
+          Line(of, px, 36f, FontWeight.Bold, pal.grey, Modifier.alignByBaseline(), tabular = true, tag = "setOf")
+        }
+        Spacer(Modifier.height(px.dp(8f)))
+      }
+      card.previous?.let { Line(it, px, 20f, FontWeight.Medium, pal.grey, tabular = true, tag = "previous") }
+      card.next?.let {
+        Spacer(Modifier.height(px.dp(2f)))
+        Line(it, px, 20f, FontWeight.ExtraBold, pal.accent, tabular = true, tag = "next")
+      }
+      if (heart != null) {
+        Spacer(Modifier.height(px.dp(12f)))
+        Line(heart.text, px, 22f, FontWeight.Bold, if (heart.waiting) pal.grey else pal.text, tabular = true, tag = "heart")
+      }
+    }
+  }
+}
+
+// ------------------------------------------------------------------ icons (24 px viewBox, stroked)
+
+private const val PHONE_BODY = "M9.5 2.5h5a2.5 2.5 0 0 1 2.5 2.5v14a2.5 2.5 0 0 1 -2.5 2.5h-5a2.5 2.5 0 0 1 -2.5 -2.5v-14a2.5 2.5 0 0 1 2.5 -2.5z"
+private const val PHONE_SPEAKER = "M11 18h2"
+private const val PHONE_SLASH = "M3.5 3.5l17 17"
+private const val HEART_OUTLINE = "M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"
+private const val BELL_BODY = "M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"
+private const val BELL_CLAPPER = "M10 20.5a2 2 0 0 0 4 0"
+
+private class IconPath(val d: String, val color: Color)
+
+private fun strokeIcon(paths: List<IconPath>, width: Float, cap: StrokeCap, join: StrokeJoin): ImageVector {
+  val b = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
+  for (p in paths) {
+    b.addPath(
+      pathData = addPathNodes(p.d),
+      stroke = SolidColor(p.color),
+      strokeLineWidth = width,
+      strokeLineCap = cap,
+      strokeLineJoin = join,
+    )
+  }
+  return b.build()
+}
+
+@Composable
+private fun StrokeIcon(size: Dp, tag: String, vararg key: Any, build: () -> ImageVector) {
+  val vector = remember(*key) { build() }
+  Image(rememberVectorPainter(vector), contentDescription = null, modifier = Modifier.size(size).testTag(tag))
+}
+
+// ------------------------------------------------------------------ 3. nothing open
+
+/** Nothing open (screen 3). */
+@Composable
+internal fun NothingOpenScreen(ambient: Boolean, px: Px) {
+  val pal = palette(ambient)
+  Column(
+    Modifier.fillMaxSize().padding(horizontal = px.dp(72f)),
+    verticalArrangement = Arrangement.spacedBy(px.dp(14f), Alignment.CenterVertically),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    StrokeIcon(px.dp(44f), "phoneIcon", "phone", pal.accent) {
+      strokeIcon(listOf(IconPath(PHONE_BODY, pal.accent), IconPath(PHONE_SPEAKER, pal.accent)), 1.6f, StrokeCap.Round, StrokeJoin.Miter)
+    }
+    Line(WatchCopy.START_A_WORKOUT, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
+  }
+}
+
+// ------------------------------------------------------------------ 4. permissions (the only taps)
+
+/** First launch (screen 4): heart rate ("1 of 2") or rest alerts ("2 of 2"). Allow / Not now. */
+@Composable
+internal fun PermissionScreen(heartRate: Boolean, ambient: Boolean, px: Px, onAllow: () -> Unit, onNotNow: () -> Unit) {
+  val pal = palette(ambient)
+  Column(
+    Modifier.fillMaxSize().padding(top = px.dp(12f), start = px.dp(64f), end = px.dp(64f)),
+    verticalArrangement = Arrangement.spacedBy(px.dp(8f), Alignment.CenterVertically),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Line(if (heartRate) WatchCopy.STEP_HEART_RATE else WatchCopy.STEP_ALERTS, px, 15f, FontWeight.SemiBold, pal.grey, tabular = true, tag = "step")
+    if (heartRate) {
+      StrokeIcon(px.dp(34f), "heartIcon", "heart", pal.accent) {
+        strokeIcon(listOf(IconPath(HEART_OUTLINE, pal.accent)), 1.7f, StrokeCap.Butt, StrokeJoin.Round)
+      }
+    } else {
+      StrokeIcon(px.dp(34f), "bellIcon", "bell", pal.accent) {
+        strokeIcon(listOf(IconPath(BELL_BODY, pal.accent), IconPath(BELL_CLAPPER, pal.accent)), 1.7f, StrokeCap.Round, StrokeJoin.Round)
+      }
+    }
+    Line(if (heartRate) WatchCopy.TITLE_HEART_RATE else WatchCopy.TITLE_ALERTS, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.1f, tag = "title")
+    Line(
+      if (heartRate) WatchCopy.REASON_HEART_RATE else WatchCopy.REASON_ALERTS,
+      px,
+      18f,
+      FontWeight.Medium,
+      pal.grey,
+      lineHeight = 1.35f,
+      maxLines = 3,
+      balanced = true,
+      tag = "reason",
+    )
+    // Ambient: no fills, the button an outline with accent text, and no taps.
+    Box(
+      Modifier
+        .padding(top = px.dp(8f))
+        .height(px.dp(52f))
+        .widthIn(min = px.dp(184f))
+        .clip(Pill)
+        .background(if (ambient) Color.Transparent else pal.accent)
+        .border(px.dp(2f), pal.accent, Pill)
+        .then(if (ambient) Modifier else Modifier.clickable(onClick = onAllow))
+        .padding(horizontal = px.dp(28f))
+        .testTag("allow"),
+      contentAlignment = Alignment.Center,
+    ) {
+      Line(WatchCopy.ALLOW, px, 20f, FontWeight.Bold, if (ambient) pal.accent else Color.Black)
+    }
+    Box(
+      Modifier
+        .height(px.dp(46f))
+        .clip(Pill)
+        .then(if (ambient) Modifier else Modifier.clickable(onClick = onNotNow))
+        .padding(horizontal = px.dp(24f))
+        .testTag("notNow"),
+      contentAlignment = Alignment.Center,
+    ) {
+      Line(WatchCopy.NOT_NOW, px, 18f, FontWeight.SemiBold, pal.text)
+    }
+  }
+}
+
+// ------------------------------------------------------------------ 5b. phone not connected
+
+/** Phone not connected (screen 5b). */
+@Composable
+internal fun PhoneNotConnectedScreen(ambient: Boolean, px: Px) {
+  val pal = palette(ambient)
+  Column(
+    Modifier.fillMaxSize().padding(horizontal = px.dp(70f)),
+    verticalArrangement = Arrangement.spacedBy(px.dp(10f), Alignment.CenterVertically),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    StrokeIcon(px.dp(44f), "phoneOffIcon", "phoneOff", pal.grey, pal.accent) {
+      strokeIcon(
+        listOf(IconPath(PHONE_BODY, pal.grey), IconPath(PHONE_SPEAKER, pal.grey), IconPath(PHONE_SLASH, pal.accent)),
+        1.6f,
+        StrokeCap.Round,
+        StrokeJoin.Miter,
+      )
+    }
+    Line(WatchCopy.PHONE_NOT_CONNECTED, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 2, balanced = true, tag = "title")
+    Line(WatchCopy.KEEP_PHONE_NEAR, px, 18f, FontWeight.Medium, pal.grey, maxLines = 2, tag = "reason")
   }
 }

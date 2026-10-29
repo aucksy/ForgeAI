@@ -59,16 +59,6 @@ class RestTextTest {
   }
 
   @Test
-  fun completeSetHidesOnlyForTheRowJustSentAndOnlyBriefly() {
-    val row = "{\"exKey\":\"a\",\"setKey\":\"3\"}"
-    assertTrue(RestText.sentRecently(row, row, 1_000L, 5_000L))
-    assertFalse(RestText.sentRecently(row, row, 1_000L, 1_000L + RestText.SENT_MS)) // no answer: back
-    assertFalse(RestText.sentRecently("{\"exKey\":\"a\",\"setKey\":\"4\"}", row, 1_000L, 5_000L)) // next row
-    assertFalse(RestText.sentRecently(row, null, 1_000L, 5_000L))
-    assertFalse(RestText.sentRecently("", "", 1_000L, 5_000L)) // no row: nothing to hide
-  }
-
-  @Test
   fun lateArrivalBuzzesOnlyWithinFiveSeconds() {
     assertTrue(RestText.buzzOnLateArrival(10_000L, 10_000L))
     assertTrue(RestText.buzzOnLateArrival(14_000L, 10_000L))

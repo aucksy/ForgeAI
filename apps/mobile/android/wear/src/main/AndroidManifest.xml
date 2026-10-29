@@ -20,7 +20,7 @@
   <!-- The rest's end alarm. R-167 (28 Oct 2026, the watch app goes to Google Play): NO
        USE_EXACT_ALARM, as the phone since 0.56.1. Play allows it only for alarm-clock and calendar
        apps. SCHEDULE_EXACT_ALARM is the watch's "Alarms & reminders" switch (off by default on a new
-       install from Wear OS 5): the app shows "Allow alarms" until it is on; meanwhile the end alarm
+       install from Wear OS 5): R-207: the screen no longer asks for it; while it is off the end alarm
        is inexact (RestAlerts.arm) and the open screen buzzes on time itself (MainActivity). -->
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 

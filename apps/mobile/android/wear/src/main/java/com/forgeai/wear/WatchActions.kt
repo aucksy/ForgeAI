@@ -14,7 +14,8 @@ import com.google.android.gms.wearable.Wearable
  * C5-2 (16 Oct 2026): the watch's own buttons. The watch could tick a set only from the phone's
  * copied rest card, which exists only while resting (its Done ticks the NEXT set, before it is
  * done); after the rest it had no button at all. Now:
- *  - "Complete set" on the workout screen ([MainActivity]) and on this app's "Rest is over";
+ *  - "Complete set" on this app's "Rest is over" card (R-207, 29 Oct 2026: no longer on the app's
+ *    screen, which is glance-only);
  *  - Done / +15 s / Skip on this app's own rest countdown (the phone's card is no longer copied
  *    here, C5-3).
  * Each goes to the phone as a Wear message /forge/act/{done|add|skip} (done carries the row exactly
@@ -46,28 +47,25 @@ object WatchActions {
 
   /**
    * U-W3 (17 Oct 2026): the phone received a Done / "Complete set" but could not use it (it could
-   * not read the row). The button comes back at once and the member is told, instead of the button
-   * hiding for 20 s as if the set were saved.
+   * not read the row). The member is told, instead of believing the set was saved.
    */
   fun refused(ctx: Context) {
     Log.w(TAG, "the phone could not log the set sent from here")
-    WatchState.sendFailed(ctx)
     note(ctx, "Not saved. Tick it on your phone")
   }
 
-  /** "Complete set" / Done for [row] (the phone's JSON); the button hides until the phone answers. */
+  /** "Complete set" / Done for [row] (the phone's JSON), from a card's button. */
   fun complete(ctx: Context, row: String, onDone: () -> Unit = {}) {
     if (row.isEmpty()) {
       onDone()
       return
     }
-    WatchState.markSent(ctx, row)
     send(ctx, "done", row, onDone)
   }
 
   /**
    * Sends one message to every connected phone (there is one); [onDone] runs once when all have
-   * answered. Nothing connected or a failure: a short note on the watch, and the button is back.
+   * answered. Nothing connected or a failure: a short note on the watch.
    */
   fun send(ctx: Context, what: String, row: String, onDone: () -> Unit = {}) {
     val app = ctx.applicationContext
@@ -75,7 +73,6 @@ object WatchActions {
     val bytes = row.toByteArray(Charsets.UTF_8)
     val fail: (String) -> Unit = { why ->
       Log.w(TAG, "$path not sent: $why")
-      if (what == "done") WatchState.sendFailed(app)
       note(app, "Phone not reachable")
       onDone()
     }

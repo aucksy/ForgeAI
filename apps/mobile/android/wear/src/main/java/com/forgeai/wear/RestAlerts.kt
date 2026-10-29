@@ -248,8 +248,8 @@ object RestAlerts {
         .setWhen(r.endsAt)
         .setContentIntent(openIntent(ctx))
         .setTimeoutAfter(OVER_TIMEOUT_MS)
-      // C5-2: log the set just done from the wrist (the phone's live card's "Complete set").
-      if (done.isNotEmpty()) b.addAction(R.drawable.ic_stat_forge, "Complete set", WatchActions.pending(ctx, "done", done, 14))
+      // R-207 (30 Oct 2026): no "Complete set" here any more. The owner made the watch glance-only (the Ring
+      // design): sets are logged on the phone. `done` stays in the message so an older phone keeps working.
       nm(ctx).notify(OVER_ID, b.build())
     } catch (e: Exception) {
       // Notifications refused: the buzz above still happened.
