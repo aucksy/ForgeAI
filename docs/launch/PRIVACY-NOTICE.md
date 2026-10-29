@@ -41,13 +41,13 @@ Server changes 0039 and 0040 are live.
   lifted on each of the last 31 days. Nothing else: no exercises, sets, weights of a lift, body weight or
   photos. Your gym's staff see these totals with your name, to run challenges and give rewards. Other members
   see your place only as "A member", unless you switch on "Show my name on my gym's leaderboard" (Settings →
-  Your gym → What my gym can see); then they see your first name and the first letter of your last name. Your
+  Your gym → What my gym can see, or "Show me" on the leaderboard, which switches both on together; you switch them off in Settings); then they see your first name and the first letter of your last name. Your
   gym can hide you from the leaderboard. Your gym is responsible for its challenges and rewards; MettleUp keeps
   the numbers for the gym.
 - If you are in a gym, the app shows how busy your gym is right now and at each hour of a usual week. It is
   worked out from the check-in times your gym already keeps. Members see only how busy the whole gym is,
   never who checked in or when. A number of people is shown only when it is 5 or more.
-- **Only if you switch on "Let my gym mates see my workouts"** (Settings → Your gym → What my gym can see;
+- **Only if you switch on "Let my gym mates see my workouts"** (Settings → Your gym → What my gym can see, or "Show me" on the leaderboard, which switches both on together; you switch them off in Settings;
   it is off unless you turn it on), the app sends your bio and a short summary of each of your workouts from
   the last 60 days (at most 30): its name, date, how long it took, kg lifted, and the best set of up to 8
   exercises. Never your sets, body weight, photos, notes or mobile number. Members of your gym can open it
