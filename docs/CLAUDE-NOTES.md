@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-212. Keep picking up work, never sit idle — 29 Oct 2026
+He said: "yeah okay keep picking up what you can .. no need to sit idle".
+What I do: work down the list without waiting: Play Data safety (voice + crash logs), ship 0.61.0, watch buzz long-pause-short + review + watch release, then "Watch opens when a workout starts" and "Watch in the gym's colour". Stop only for money, LIVE data, legal/privacy words, or his own choices.
+
 ## R-211. Wrong Groq account: the VastuFirst key is his CLIENT's — 30 Oct 2026
 He said: the key he gave today is from his personal Groq account; the VastuFirst key was made with his client's official account; why ask for ZDR there; which switch to use.
 My mistake: when his key got 401 I switched the server to the VastuFirst key without asking. That puts MettleUp members' voice clips through his client's account. Fix: he makes a new key in his personal account and saves it to D:\Apps\ForgeAI\groq-key.txt; I pipe it unread into wrangler secret put GROQ_API_KEY, test with a real clip, delete the file. ZDR: "Inference APIs ZDR" on, in the personal account. Rule for me: never borrow a key from another project without his yes.
