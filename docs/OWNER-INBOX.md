@@ -46,6 +46,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
+| #70 | High | Low |
 | #69 | High | Low |
 | Task: Marketing: our selling point, top 3-5 features and hooks (R-176) | High | Low |
 | Task: Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Medium | Low |
