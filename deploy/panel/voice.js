@@ -19,6 +19,9 @@ export const GROQ_MODEL = 'whisper-large-v3';
 export const MAX_BYTES = 1_000_000;
 export const PER_INSTALL_PER_DAY = 20;
 export const ALL_PER_DAY = 1000;
+// Per internet address too (a made-up install id per clip must not get round the install cap). A gym's
+// Wi-Fi shares one address, so this is higher than one member's.
+export const PER_ADDRESS_PER_DAY = 60;
 export const TIMEOUT_MS = 30_000;
 const TYPES = /^audio\/(mp4|m4a|x-m4a|aac|mpeg|mp3|ogg|webm|wav|x-wav|flac|3gpp)$/;
 // A hint for Whisper: what the clip is about and the words it may hear.
@@ -50,17 +53,20 @@ async function hashIp(ip, salt, day) {
   return [...new Uint8Array(digest)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Take one clip from today's allowance. -> the count after it, or null when it is used up. */
-export async function takeClip(db, who, day, perDay = PER_INSTALL_PER_DAY, all = ALL_PER_DAY) {
+/**
+ * Take one clip from today's allowance. -> the count after it, or null when it is used up.
+ * kind 'voice' rows are clips (they count toward `all`); kind 'voice-ip' rows only cap one address.
+ */
+export async function takeClip(db, who, day, perDay = PER_INSTALL_PER_DAY, all = ALL_PER_DAY, kind = 'voice') {
   const row = await db
     .prepare(
-      "INSERT INTO ai_usage (day, gym_id, kind, calls) SELECT ?1, ?2, 'voice', 1 " +
-        "WHERE (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind = 'voice') < ?4 " +
+      "INSERT INTO ai_usage (day, gym_id, kind, calls) SELECT ?1, ?2, ?5, 1 " +
+        "WHERE (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind = ?5) < ?4 " +
         'ON CONFLICT (day, gym_id, kind) DO UPDATE SET calls = calls + 1 ' +
-        "WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind = 'voice') < ?4 " +
+        "WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind = ?5) < ?4 " +
         'RETURNING calls',
     )
-    .bind(day, who, perDay, all)
+    .bind(day, who, perDay, all, kind)
     .first();
   return row ? Number(row.calls) : null;
 }
@@ -93,12 +99,13 @@ export async function handleVoice(request, env, { now = new Date(), fetchImpl = 
 
   const day = indiaDay(now);
   const sender = String(form.get('sender') ?? '');
-  const who = /^[A-Za-z0-9-]{8,64}$/.test(sender)
-    ? `v:${sender}`
-    : `v:ip:${await hashIp(request.headers.get('CF-Connecting-IP') || 'unknown', env.FEEDBACK_SALT, day)}`;
+  const ipWho = `v:ip:${await hashIp(request.headers.get('CF-Connecting-IP') || 'unknown', env.FEEDBACK_SALT, day)}`;
+  const who = /^[A-Za-z0-9-]{8,64}$/.test(sender) ? `v:${sender}` : ipWho;
   let used;
   try {
-    used = await takeClip(env.WEB, who, day);
+    // The address first (its rows never count toward the all-together cap), then the clip itself.
+    const fromAddress = await takeClip(env.WEB, ipWho, day, PER_ADDRESS_PER_DAY, Number.MAX_SAFE_INTEGER, 'voice-ip');
+    used = fromAddress === null ? null : await takeClip(env.WEB, who, day);
   } catch (e) {
     console.error('[voice] usage table not readable', e);
     return answer(503, { reason: 'off', error: 'Speaking is not switched on yet. Type your message instead.' });

@@ -672,14 +672,15 @@ export async function gymLimit(db, gymId) {
  * asking at once cannot both take the last read.
  */
 export async function takeOne(db, gymId, day, perDay = PER_GYM_PER_DAY) {
+  // Spoken feedback's counts (kind 'voice...', voice.js) share the table but never use up this allowance.
   // One statement: the gym's allowance and all gyms' together are checked and taken at once, so two
   // tabs (or two gyms) asking at the same moment cannot both take the last read.
   const row = await db
     .prepare(
       "INSERT INTO ai_usage (day, gym_id, kind, calls) SELECT ?1, ?2, 'columns', 1 " +
-        'WHERE ?3 > 0 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
+        "WHERE ?3 > 0 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind NOT LIKE 'voice%') < ?4 " +
         'ON CONFLICT (day, gym_id, kind) DO UPDATE SET calls = calls + 1 ' +
-        'WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1) < ?4 ' +
+        "WHERE calls < ?3 AND (SELECT COALESCE(SUM(calls), 0) FROM ai_usage WHERE day = ?1 AND kind NOT LIKE 'voice%') < ?4 " +
         'RETURNING calls',
     )
     .bind(day, gymId, perDay, ALL_PER_DAY)

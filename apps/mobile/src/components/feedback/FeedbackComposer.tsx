@@ -121,10 +121,19 @@ export function FeedbackComposer({ text, onText, onSpoke, placeholder, minHeight
     }
   };
 
-  // The 2-minute stop (record forDuration) ends the recording by itself: turn it into text then too.
+  // The recorder can stop by itself: at 2 minutes (record forDuration), or early on a phone call or when
+  // the app goes to the background. Turn what was heard into text then too, so the screen never sticks
+  // on "recording". `heard` waits for the first "recording" status, so the start itself is not mistaken
+  // for a stop.
+  const heard = useRef(false);
   useEffect(() => {
-    if (stage === 'recording' && !state.isRecording && state.durationMillis >= MAX_CLIP_MS - 500) void finish(true);
-  }, [stage, state.isRecording, state.durationMillis]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (stage !== 'recording') {
+      heard.current = false;
+      return;
+    }
+    if (state.isRecording) heard.current = true;
+    else if (heard.current) void finish(true);
+  }, [stage, state.isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const recording = stage === 'recording';
   const writing = stage === 'writing';

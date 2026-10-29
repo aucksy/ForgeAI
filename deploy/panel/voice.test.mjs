@@ -4,7 +4,8 @@ import { test } from 'node:test';
 
 import { deleteOldCrashes } from './crash.js';
 import { sqliteD1 } from './sqliteD1.mjs';
-import { ALL_PER_DAY, GROQ_URL, MAX_BYTES, PER_INSTALL_PER_DAY, cleanText, handleVoice, indiaDay, takeClip } from './voice.js';
+import { takeOne } from './aiMatch.js';
+import { ALL_PER_DAY, GROQ_URL, MAX_BYTES, PER_ADDRESS_PER_DAY, PER_INSTALL_PER_DAY, cleanText, handleVoice, indiaDay, takeClip } from './voice.js';
 
 const ENV = (db) => ({ WEB: db, FEEDBACK_SALT: 'salt', GROQ_API_KEY: 'gsk_test' });
 const NOW = new Date('2026-10-30T10:00:00Z');
@@ -84,6 +85,28 @@ test('daily limits: per install, then all together', async () => {
   assert.equal(res.status, 429);
   assert.equal((await res.json()).reason, 'limit');
   assert.equal(g.calls.length, 0);
+});
+
+test('a new made-up install id per clip still stops at the address cap', async () => {
+  const db = sqliteD1();
+  const g = groq();
+  const codes = [];
+  for (let i = 0; i <= PER_ADDRESS_PER_DAY; i++) {
+    const res = await handleVoice(clip(4000, 'audio/mp4', `fake-id-${String(i).padStart(4, '0')}`), ENV(db), { now: NOW, fetchImpl: g.fetchImpl });
+    codes.push(res.status);
+  }
+  assert.equal(codes.filter((c) => c === 200).length, PER_ADDRESS_PER_DAY);
+  assert.equal(codes.at(-1), 429);
+  assert.equal(g.calls.length, PER_ADDRESS_PER_DAY, 'Groq not called once the address is used up');
+  // Address rows never use up the all-together clip count.
+  const clips = db.sqlite.prepare("SELECT SUM(calls) AS n FROM ai_usage WHERE kind = 'voice'").get().n;
+  assert.equal(clips, PER_ADDRESS_PER_DAY);
+});
+
+test('spoken clips never use up the AI import allowance of the gyms', async () => {
+  const db = sqliteD1();
+  db.sqlite.prepare("INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES ('2026-10-30', 'v:x', 'voice', 5000), ('2026-10-30', 'v:ip:y', 'voice-ip', 5000)").run();
+  assert.equal(await takeOne(db, 'gym-1', '2026-10-30'), 1);
 });
 
 test('no install id: counted under a hash of the address, never the address itself', async () => {

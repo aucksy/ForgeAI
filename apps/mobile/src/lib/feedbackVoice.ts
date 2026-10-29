@@ -11,7 +11,7 @@
 import type { RecordingOptions } from 'expo-audio';
 import { File } from 'expo-file-system';
 
-import { FEEDBACK_MAX, FEEDBACK_URLS, senderId, tryNextBox } from '@/lib/feedback';
+import { FEEDBACK_MAX, FEEDBACK_URLS, senderId } from '@/lib/feedback';
 import { fetchWithTimeout } from '@/lib/fetchTimeout';
 
 /** A clip stops by itself after this long (the server takes about 2 minutes at the rate below). */
@@ -57,7 +57,7 @@ export function voiceAnswer(status: number, body: unknown): VoiceResult {
   if (status === 200 && typeof b.text === 'string' && b.text.trim()) return { ok: true, text: b.text.trim() };
   // The box's own words for what the member can act on: too long, nothing heard, limits, switched off.
   if ([413, 422, 429, 503].includes(status) && typeof b.error === 'string' && b.error) return { ok: false, words: b.error };
-  return { ok: false, words: status >= 500 || status === 200 ? VOICE_WORDS.failed : VOICE_WORDS.offline };
+  return { ok: false, words: status >= 400 || status === 200 ? VOICE_WORDS.failed : VOICE_WORDS.offline };
 }
 
 /** The heard text added to what the member already typed (a new line between), within the limit. PURE. */
@@ -83,7 +83,11 @@ export function levelFromMetering(db: number | undefined): number {
 /** The voice address next to each feedback box address, newest first. PURE. */
 export const VOICE_URLS = FEEDBACK_URLS.map((u) => `${u}/voice`);
 
-/** Send the clip; the next address only when one gave no answer, "not here" or a server error. */
+/**
+ * Send the clip; the next address only when one gave no answer or "not here" (404). A server answer
+ * (502 Groq failed, 503 switched off) is final: trying the next address would spend a second
+ * transcription for the same clip.
+ */
 export async function transcribe(uri: string, post: typeof fetchWithTimeout = fetchWithTimeout): Promise<VoiceResult> {
   const sender = await senderId();
   for (let i = 0; i < VOICE_URLS.length; i++) {
@@ -94,7 +98,7 @@ export async function transcribe(uri: string, post: typeof fetchWithTimeout = fe
     if (sender) form.append('sender', sender);
     try {
       const res = await post(VOICE_URLS[i], { method: 'POST', body: form }, 45_000);
-      if (!last && tryNextBox(res.status)) {
+      if (!last && res.status === 404) {
         console.warn('[feedback-voice] box address answered', res.status, VOICE_URLS[i], '; trying the next');
         continue;
       }

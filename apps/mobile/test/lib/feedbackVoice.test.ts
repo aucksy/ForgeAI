@@ -23,7 +23,8 @@ describe('spoken feedback (R-206)', () => {
     expect(voiceAnswer(422, { error: 'We heard nothing.' })).toEqual({ ok: false, words: 'We heard nothing.' });
     expect(voiceAnswer(503, { error: 'Not on yet.' })).toEqual({ ok: false, words: 'Not on yet.' });
     expect(voiceAnswer(502, { error: 'x' })).toEqual({ ok: false, words: VOICE_WORDS.failed });
-    expect(voiceAnswer(400, null)).toEqual({ ok: false, words: VOICE_WORDS.offline });
+    expect(voiceAnswer(400, null)).toEqual({ ok: false, words: VOICE_WORDS.failed });
+    expect(voiceAnswer(0, null)).toEqual({ ok: false, words: VOICE_WORDS.offline });
   });
 
   it('adds what was heard under what was typed, within the limit', () => {
@@ -66,6 +67,11 @@ describe('spoken feedback (R-206)', () => {
     const limit = vi.fn(async () => new Response(JSON.stringify({ reason: 'limit', error: 'Try tomorrow.' }), { status: 429 }));
     expect(await transcribe('file:///clip.m4a', limit)).toEqual({ ok: false, words: 'Try tomorrow.' });
     expect(limit).toHaveBeenCalledTimes(1);
+
+    // A server failure is final: no second transcription at the next address.
+    const failed = vi.fn(async () => new Response(JSON.stringify({ reason: 'failed', error: 'x' }), { status: 502 }));
+    expect(await transcribe('file:///clip.m4a', failed)).toEqual({ ok: false, words: VOICE_WORDS.failed });
+    expect(failed).toHaveBeenCalledTimes(1);
 
     const down = vi.fn(async () => {
       throw new Error('offline');
