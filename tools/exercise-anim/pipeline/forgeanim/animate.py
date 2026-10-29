@@ -75,9 +75,61 @@ class Clip:
                 self.props[name] = P.dumbbell("FA_" + name)
             else:
                 raise ValueError("unknown prop " + p["type"])
+        # "skin": {"preserve_volume": true} -> dual-quaternion skinning on the body (recipe option; off by default so
+        # approved clips render exactly as they were)
+        if self.spec.get("skin", {}).get("preserve_volume"):
+            for ob in (self.ch["body"], self.ch["shorts"]):
+                for m in ob.modifiers:
+                    if m.type == "ARMATURE":
+                        m.use_deform_preserve_volume = True
+        if self.spec.get("skin", {}).get("calm_armpits"):
+            self.calm_armpits(self.spec["skin"]["calm_armpits"])
         R.set_grip(self.rig, 1.0, 1.0)
         self.G = {s: R.measure_grip(self.rig, s) for s in R.SIDES}
         self.Gphi = {s: R.grip_forearm_angle(self.rig, s, self.G[s]) for s in R.SIDES}
+
+    def calm_armpits(self, cfg):
+        """Recipe option "skin": {"calm_armpits": {"amount": .., "radius": .., "fade": ..}}: with the arm overhead the
+        armpit skin stretches to ~2-3x its rest area, and the painted muscle grooves and the normal-map detail there
+        smear into dark streaks and putty-like blur (fresh reviewer, v8 shoulder press). Real armpit skin is smooth, so
+        raise the existing fa_flat attribute (which already calms the face) around each armpit hollow."""
+        import numpy as np
+        from . import character
+        body = self.ch["body"]; rig = self.rig
+        cfg = cfg if isinstance(cfg, dict) else {"amount": float(cfg)}
+        amt = cfg.get("amount", 0.7); rad = cfg.get("radius", 0.07); fade = cfg.get("fade", 0.06)
+        pos = np.array([tuple(p) for p in character.rest_positions(body)])
+        me = body.data
+        flat = np.zeros(len(me.vertices), np.float32); me.attributes["fa_flat"].data.foreach_get("value", flat)
+        mw = rig.matrix_world
+        calm = None
+        for s in R.SIDES:
+            sx = 1.0 if s == "L" else -1.0
+            J = np.array(tuple(mw @ rig.data.bones[f"upperarm01.{s}"].head_local))
+            # armpit hollow, relative to the shoulder joint (rest A-pose): `apex` m inward, forward, down; "extra" adds
+            # more spots the same way (e.g. the back of the armpit, where the rear shoulder meets the back)
+            for ax, ay, az, *amt2 in [tuple(cfg.get("apex", (-0.05, 0.01, -0.10)))] + [tuple(e) for e in cfg.get("extra", [])]:
+                apex = J + np.array([sx * ax, ay, az])
+                k = self._calm_spot(pos, apex, cfg, rad, fade, s)
+                flat = np.maximum(flat, (k * (amt2[0] if amt2 else amt)).astype(np.float32))
+                calm = k if calm is None else np.maximum(calm, k)
+        me.attributes["fa_flat"].data.foreach_set("value", flat)
+        # the front-shoulder mask's lower edge runs into the armpit; overhead it reads as a red blob in the armpit
+        # ("teaches the wrong muscle", reviewer 2). highlight() fades the red there by `hl_cut`.
+        self._calm_k = calm
+
+    @staticmethod
+    def _calm_spot(pos, apex, cfg, rad, fade, s):
+        """0..1 weight inside a vertical capsule from `apex` down `down` m (the grooves smear down the ribs too)."""
+        import numpy as np
+        down = cfg.get("down", 0.08)
+        d = pos - apex
+        dz = np.clip(d[:, 2], -down, 0.0)
+        dist = np.sqrt(d[:, 0] ** 2 + d[:, 1] ** 2 + (d[:, 2] - dz) ** 2)
+        k = np.clip(1.0 - (dist - rad) / fade, 0.0, 1.0)
+        k = k * k * (3 - 2 * k)
+        print(f"[forgeanim] calm armpit {s}: apex {np.round(apex, 3).tolist()}, {int((k > 0.5).sum())} verts")
+        return k
 
     # ---------------- pose resolution ----------------
     def full_pose(self, name):
@@ -173,6 +225,7 @@ class Clip:
                 pb[name].rotation_mode = "XYZ"
                 pb[name].rotation_euler = Euler([math.radians(a) for a in e], "XYZ")
         R.update()
+        self.apply_girdle(pose)
         T = torso_frame(rig)
         self.resolve_arms(pose, T)
         for s, pos in pose.get("elbows", {}).items():
@@ -201,6 +254,60 @@ class Clip:
         R.update()
 
     FK_BONES = ("upperarm01", "upperarm02", "lowerarm01", "lowerarm02")
+    GIRDLE_BONES = ("clavicle", "shoulder01")
+
+    def girdle_angles(self, elev):
+        """Scapulohumeral rhythm (research/dumbbell_shoulder_press.json, S8-S11): below `start` deg of arm raise the
+        girdle is still; past it the shoulder blade turns upward `ur` deg per deg of raise, the collarbone lifts `elev`
+        and draws back `retract` deg per deg. Each is capped. Returns degrees (upward rot, clav elevation, retraction)."""
+        g = self.spec["girdle"]
+        x = max(0.0, elev - g.get("start", 30.0))
+        # soften the knee at `start` so the girdle eases in instead of starting with a kink
+        k = g.get("knee", 15.0)
+        if k > 0:
+            x = (x * x / (2 * k)) if x < k else x - k / 2
+        return (min(g.get("ur_max", 55.0), x * g.get("ur", 0.4)),
+                min(g.get("elev_max", 25.0), x * g.get("elev", 0.15)),
+                min(g.get("retract_max", 15.0), x * g.get("retract", 0.08)))
+
+    def apply_girdle(self, pose):
+        """Recipe option "girdle": move the collarbone (clavicle.*) and the shoulder-blade bone (shoulder01.*) with the
+        arm, so the shoulder skin is shared between them instead of folding at the armpit when the arm goes overhead.
+        Off unless the recipe has "girdle" (approved clips are untouched)."""
+        if not self.spec.get("girdle"):
+            return
+        g = self.spec["girdle"]
+        rig = self.rig; pb = rig.pose.bones; mw = rig.matrix_world
+        sp = pb["spine01"]
+        Rsp = (mw.to_3x3() @ sp.matrix.to_3x3()) @ (mw.to_3x3() @ sp.bone.matrix_local.to_3x3()).inverted()
+        A = mw.to_3x3().inverted()
+        sca = math.radians(g.get("scap_plane", 30.0))   # shoulder blade's plane: ~30 deg forward of the frontal plane
+        for s, h in pose.get("hands", {}).items():
+            a = h.get("arm")
+            if not a:
+                continue
+            sx = 1.0 if s == "L" else -1.0
+            ur, ce, cr = self.girdle_angles(a["elev"])
+            for b in self.GIRDLE_BONES:
+                p = pb[f"{b}.{s}"]; p.rotation_mode = "QUATERNION"; p.rotation_quaternion = (1, 0, 0, 0)
+                p.location = (0, 0, 0)
+            R.update()
+
+            def turn(bone, axis_rest_world, deg, pivot=0.0):
+                p = pb[f"{bone}.{s}"]
+                ax = (A @ (Rsp @ Vector(axis_rest_world))).normalized()
+                piv = p.head + (p.tail - p.head) * pivot
+                q = Quaternion(ax, math.radians(deg))
+                p.matrix = Matrix.Translation(piv) @ q.to_matrix().to_4x4() @ Matrix.Translation(-piv) @ p.matrix
+                R.update()
+            # collarbone: lateral end up (about the forward axis) and back (about the vertical axis)
+            turn("clavicle", (0, -sx, 0), ce)
+            turn("clavicle", (0, 0, sx), cr)
+            # shoulder blade: upward rotation in its own plane (axis = the plane's normal). This rig's shoulder01 starts at
+            # the middle of the collarbone, not at the AC joint; turning it about its head lifted the shoulder joint 10 cm
+            # (a huge shrug). A real blade turns about an axis that moves out to the AC joint late in the raise, so the
+            # socket itself rises only a little: pivot `ur_pivot` of the way from the bone's head to the joint.
+            turn("shoulder01", (math.sin(sca), -sx * math.cos(sca), 0), ur, g.get("ur_pivot", 0.8))
 
     def pose_arm_fk(self, s, h, T):
         """Set the arm bones directly: each segment takes the shortest swing from where it points to where it must point,
@@ -373,6 +480,11 @@ class Clip:
         bone_names |= {b[:-2] + ".R" for b in bone_names if b.endswith(".L")}
         fk = any("arm" in h for p in self.spec["poses"].values() for h in p.get("hands", {}).values())
         fk_bones = [f"{b}.{s}" for b in self.FK_BONES for s in R.SIDES] if fk else []
+        if self.spec.get("girdle"):
+            girdle_bones = [f"{b}.{s}" for b in self.GIRDLE_BONES for s in R.SIDES if f"{b}.{s}" not in bone_names]
+            fk_bones += girdle_bones
+        else:
+            girdle_bones = []
         animated = [o for o in self.ctl.values()] + list(self.props.values())
         for f in range(n):
             scene.frame_set(f)
@@ -383,6 +495,8 @@ class Clip:
                     pb[b].keyframe_insert("rotation_euler", frame=f)
             for b in fk_bones:
                 pb[b].keyframe_insert("rotation_quaternion", frame=f)
+            for b in girdle_bones:   # the shoulder blade turns about a pivot off its head, so it moves too
+                pb[b].keyframe_insert("location", frame=f)
             for o in animated:
                 o.keyframe_insert("location", frame=f)
                 o.keyframe_insert("rotation_quaternion" if o.rotation_mode == "QUATERNION" else "rotation_euler", frame=f)
@@ -398,6 +512,13 @@ class Clip:
         prim = self.spec.get("primary", []); sec = self.spec.get("secondary", [])
         w = research_weights(self.spec.get("key")) or self.spec.get("highlight")   # research file wins
         MU.set_highlight(self.ch["body"], prim, sec, weights=w)
+        cut = (self.spec.get("skin", {}).get("calm_armpits") or {})
+        cut = cut.get("hl_cut", 0.0) if isinstance(cut, dict) else 0.0
+        if cut > 0 and getattr(self, "_calm_k", None) is not None:
+            import numpy as np
+            me = self.ch["body"].data; a = me.attributes["fa_hl"]
+            hl = np.zeros(len(me.vertices), np.float32); a.data.foreach_get("value", hl)
+            a.data.foreach_set("value", (hl * (1.0 - cut * self._calm_k)).astype(np.float32)); me.update()
         MU.set_highlight(self.ch["shorts"], prim, sec, weights=w)
 
 

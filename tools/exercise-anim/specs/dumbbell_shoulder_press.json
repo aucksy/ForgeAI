@@ -13,6 +13,36 @@
       "deg": 85
     }
   },
+  "girdle": {
+    "start": 30,
+    "knee": 15,
+    "ur": 0.4,
+    "ur_max": 50,
+    "ur_pivot": 0.92,
+    "scap_plane": 30,
+    "elev": 0.08,
+    "elev_max": 11,
+    "retract": 0.12,
+    "retract_max": 16
+  },
+  "skin": {
+    "preserve_volume": true,
+    "calm_armpits": {
+      "amount": 0.45,
+      "radius": 0.05,
+      "fade": 0.05,
+      "down": 0.08,
+      "extra": [
+        [
+          -0.02,
+          0.08,
+          -0.08,
+          0.4
+        ]
+      ],
+      "hl_cut": 0.8
+    }
+  },
   "props": {
     "db_L": {
       "type": "dumbbell"
@@ -130,7 +160,7 @@
               0,
               1
             ],
-            "tilt": -16
+            "tilt": 0
           }
         }
       }
@@ -153,11 +183,11 @@
               0,
               1
             ],
-            "tilt": -16
+            "tilt": 0
           }
         }
       }
     }
   },
-  "research": "Seat back 85 deg (S7). Bottom: upper arm ~15 deg below level, elbows 20 deg forward of the torso line, forearm vertical, handles at ear height (NSCA, Paoli full range). Top: arms near-straight, dumbbells over the shoulders, not touching. Tempo 2 s up / 2 s down. Facts and checks: research/dumbbell_shoulder_press.json."
+  "research": "Seat back 85 deg (S7). Bottom: upper arm ~15 deg below level, elbows 20 deg forward of the torso line, forearm vertical, handles at ear height (NSCA, Paoli full range). Top: arms near-straight, dumbbells over the shoulders, not touching. Tempo 2 s up / 2 s down. Facts and checks: research/dumbbell_shoulder_press.json. v8 (30 Oct 2026, owner rejected v7 shoulder skin + slanted dumbbell): girdle = scapulohumeral rhythm (McClure 2001, Ludewig 2009, Inman 1944) on clavicle/shoulder01; skin.preserve_volume = dual-quaternion skinning; skin.calm_armpits = smooth armpit skin overhead; tilt 0 = handles level."
 }

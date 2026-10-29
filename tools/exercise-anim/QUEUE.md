@@ -10,7 +10,7 @@ Status: `approved` (in the app) · `waiting for owner` (made, shown to him) · `
 |---|---|---|---|---|
 | 1 | incline_dumbbell_press | Incline Dumbbell Press | - | approved (v6) |
 | 2 | lateral_raise | Lateral Raise | - | approved (v6) |
-| 3 | dumbbell_shoulder_press | Dumbbell Shoulder Press | - | waiting for owner (v7) |
+| 3 | dumbbell_shoulder_press | Dumbbell Shoulder Press | - | waiting for owner (v8) |
 | 4 | dumbbell_curl | Dumbbell Curl | - (recipe v3 exists) | to do |
 | 5 | barbell_bench_press | Barbell Bench Press | barbell, flat bench rack | to do |
 | 6 | lat_pulldown | Lat Pulldown | cable pulldown station | to do |

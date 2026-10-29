@@ -12,11 +12,11 @@
       "triceps"
     ],
     "status": "clip-matches",
-    "version": 7,
+    "version": 8,
     "researched_on": "2026-10-29",
     "one_line_summary": "Sitting tall against a near-upright back pad, press two dumbbells from ear height straight up until the arms are almost straight over the shoulders, then lower them slowly. Front shoulder leads; side shoulder and triceps help.",
     "evidence_grade": "C",
-    "evidence_note": "Muscle rows are grade A/B: two EMG studies on the seated dumbbell press itself (S2, S4) and three on close variants (S1, S3, S5). Joint angles are grade C: no study measured the joint angles of the seated dumbbell press, so they come from the NSCA technique text, ACE, and shoulder-motion research. The rig keeps the shoulder blade and collarbone still; a real shoulder blade turns upward as the arm goes overhead (S8). That is not visible on this body and is listed as a limit, not a target."
+    "evidence_note": "Muscle rows are grade A/B: two EMG studies on the seated dumbbell press itself (S2, S4) and three on close variants (S1, S3, S5). Joint angles are grade C: no study measured the joint angles of the seated dumbbell press, so they come from the NSCA technique text, ACE, and shoulder-motion research. Shoulder-girdle motion is grade B: measured in unloaded arm raising in vivo (S8 Ludewig 2009, S10 McClure 2001 bone pins, S11 Inman 1944), not in a loaded press. v7 kept the shoulder blade and collarbone still; the owner rejected it (30 Oct 2026) because the armpit and shoulder skin folded and seemed to twist overhead. From v8 the collarbone and shoulder blade move with the arm (scapulohumeral rhythm). LIMITS of this body: the rig has one collarbone bone and one shoulder-blade bone (shoulder01, starting mid-collarbone), so the shoulder blade's backward tilt (~20-30 deg, S8/S10) and outward turn are not modelled and the blade itself never shows under the skin; armpit skin still stretches ~2x overhead, so its painted grooves are softened there (skin.calm_armpits)."
   },
   "setup": [
     {
@@ -223,16 +223,20 @@
     {
       "key": "dumbbell_shoulder_press",
       "joint": "shoulder blade / collarbone",
-      "measure": "shrug (shoulder point toward the ears)",
-      "start": "down and still",
-      "end": "down; no shrug",
-      "path": "In real life the shoulder blade turns upward ~40-50 deg as the arm goes overhead (S8); the rig keeps it still, so only 'no shrug' is checked",
-      "tolerance": "shoulder point rises under ~2 cm",
+      "measure": "shoulder-blade upward turn, collarbone lift and draw-back, vs arm raise",
+      "start": "bottom (arm 75 deg): blade turned up ~15 deg, collarbone up ~3 deg, back ~5 deg",
+      "end": "top (arm 172 deg): blade turned up ~50 deg, collarbone up ~11 deg, back ~16 deg",
+      "path": "Still below ~30 deg of arm raise, then the shoulder blade turns upward ~0.4 deg per deg of arm raise (about 1 deg per 2-2.5 deg: glenohumeral:scapulothoracic 2:1 Inman, 2.2:1 Ludewig scapular plane, 1.7:1 McClure) to ~50 deg overhead (McClure 50 +-5; Ludewig 11->50); the collarbone lifts ~6-11 deg (Ludewig +6, McClure ~2->13; Inman's older radiographs ~30) and draws back ~16 deg (Ludewig 23->39). The clip uses: blade 0.4 deg/deg past 30 deg (cap 50), collarbone lift 0.08 deg/deg (cap 11), draw-back 0.12 deg/deg (cap 16), eased in over 15 deg. Not modelled: blade backward tilt ~20-30 deg and collarbone spin ~31 deg (no bone for them).",
+      "tolerance": "blade 40-60 deg at the top; shoulder joint rises 2-5 cm with the girdle (part of the normal rhythm), no extra shrug",
       "source_ids": [
         "S8",
+        "S10",
+        "S11",
         "S6"
       ],
-      "grade": "B"
+      "grade": "B",
+      "start_num": 15,
+      "end_num": 50
     },
     {
       "key": "dumbbell_shoulder_press",
@@ -584,9 +588,9 @@
       "key": "dumbbell_shoulder_press",
       "id": "S8",
       "citation": "Ludewig PM, Phadke V, Braman JP, et al. (2009). Motion of the shoulder complex during multiplanar humeral elevation. J Bone Joint Surg Am 91(2):378-389.",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Ludewig+2009+multiplanar+humeral+elevation",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/",
       "type": "biomechanics",
-      "what_it_gave": "Shoulder blade upward rotation and collarbone elevation as the arm rises; scapular-plane elevation as the natural path."
+      "what_it_gave": "12 subjects, bone pins: over full arm raising the collarbone lifted 11->17 deg (+6), drew back 23->39 deg (+16), spun back 31 deg; the shoulder blade turned upward 11->50 deg (~40) and tilted back 21 deg; glenohumeral:scapulothoracic rhythm 2.1-2.4:1."
     },
     {
       "key": "dumbbell_shoulder_press",
@@ -595,6 +599,22 @@
       "url": "https://www.elsevier.com/books/grays-anatomy-for-students/drake/978-0-323-39304-1",
       "type": "textbook",
       "what_it_gave": "Muscle borders and actions for the skin masks."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S10",
+      "citation": "McClure PW, Michener LA, Sennett BJ, Karduna AR (2001). Direct 3-dimensional measurement of scapular kinematics during dynamic movements in vivo. J Shoulder Elbow Surg 10(3):269-277.",
+      "url": "https://pages.uoregon.edu/biomech/obl/articles/2001_mcclure_jses2001.pdf",
+      "type": "biomechanics",
+      "what_it_gave": "8 volunteers, bone pins in the shoulder blade: scapular-plane raise turned the blade upward 50 +-5 deg, tilted it back 30 deg, turned it out 24 deg; glenohumeral:scapulothoracic 1.7:1; collarbone lift ~2->13 deg, draw-back ~18->40 deg (Fig. 3)."
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "id": "S11",
+      "citation": "Inman VT, Saunders JB, Abbott LC (1944). Observations on the function of the shoulder joint. J Bone Joint Surg 26(1):1-30.",
+      "url": "https://journals.lww.com/jbjsjournal/citation/1944/26010/observations_on_the_function_of_the_shoulder_joint.1.aspx",
+      "type": "biomechanics",
+      "what_it_gave": "Classic 2:1 glenohumeral to scapular rhythm over the full raise (blade ~60 deg of 180); the blade is fairly still in the first ~30 deg (setting phase)."
     }
   ],
   "clip_check": [
@@ -602,7 +622,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "back pad / torso angle",
       "target": "85 deg (80-90), back on the pad",
-      "measured": "torso 84.7 deg from the floor (pad 85); back gap to the pad -0.017 to +0.019 m (probe_bench)",
+      "measured": "torso 84.7 deg from the floor (pad 85); back gap to the pad -0.020 to +0.019 m (probe_bench, v8)",
       "pass": "yes",
       "tool": "probe_bench.py"
     },
@@ -610,7 +630,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "seat and feet contact",
       "target": "hips on the seat, feet flat on the floor",
-      "measured": "lowest body point over the seat 0.442 m (seat top 0.44); lowest foot point 0.000 m (probe_feet)",
+      "measured": "lowest body point over the seat 0.43 m (seat top 0.44, hips pressed 1 cm into the soft pad); lowest foot point 0.000 m (probe_feet, v8)",
       "pass": "yes",
       "tool": "probe_bench.py / probe_feet.py"
     },
@@ -642,7 +662,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "elbow bend at bottom",
       "target": "~100 deg (85-110)",
-      "measured": "103 deg",
+      "measured": "102 deg",
       "pass": "yes",
       "tool": "measure_pose.py"
     },
@@ -658,7 +678,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "forearm tilt from vertical, every frame (hand over the elbow, front and side view)",
       "target": "0-10 deg",
-      "measured": "0-1.8 deg every sample",
+      "measured": "0-1.7 deg every sample (v8)",
       "pass": "yes",
       "tool": "measure_pose.py"
     },
@@ -674,7 +694,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "top: dumbbells over the shoulders",
       "target": "handles within ~5 cm front/back of the shoulder joint",
-      "measured": "1.3 cm in front of the shoulder joint",
+      "measured": "1.2 cm in front of the shoulder joint (v8)",
       "pass": "yes",
       "tool": "measure_press.py"
     },
@@ -682,7 +702,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "top: gap between the inner plates",
       "target": "close, not touching (0-20 cm)",
-      "measured": "handle centres 0.525 m apart (~15 cm between inner plates)",
+      "measured": "12.5 cm between the inner ends of the two dumbbells at the top (closeups.py gap_m, v8)",
       "pass": "yes",
       "tool": "measure_pose.py"
     },
@@ -690,15 +710,15 @@
       "key": "dumbbell_shoulder_press",
       "check": "upper-arm roll range over the rep",
       "target": "under ~30 deg, smooth, no jump",
-      "measured": "-75.5 to -67.9 deg (7.6 deg range), at most ~4 deg per 8 frames",
-      "pass": "yes",
+      "measured": "-76 to -109 deg vs the shoulder-blade bone (33 deg range), at most ~8 deg per 8 frames, no jump. The arm's own roll in the world is unchanged from v7; the extra range is the shoulder blade now turning 50 deg under it (real glenohumeral rotation).",
+      "pass": "borderline (smooth; range is the moving shoulder blade)",
       "tool": "measure_twist.py"
     },
     {
       "key": "dumbbell_shoulder_press",
       "check": "elbow hinge drift",
       "target": "under 5 deg",
-      "measured": "0 deg",
+      "measured": "1.2 deg max (v8)",
       "pass": "yes",
       "tool": "measure_twist.py"
     },
@@ -706,31 +726,31 @@
       "key": "dumbbell_shoulder_press",
       "check": "wrist twist",
       "target": "under 15 deg",
-      "measured": "under 2.5 deg",
+      "measured": "under 2.5 deg (v8)",
       "pass": "yes",
       "tool": "measure_twist.py"
     },
     {
       "key": "dumbbell_shoulder_press",
-      "check": "wrist bend back/forward",
+      "check": "wrist angle (measure_wrist)",
       "target": "under 10 deg from rest",
-      "measured": "within 0.7 deg of rest every sample (handle tilt -16)",
-      "pass": "yes",
+      "measured": "bend back/forward within 1.5 deg of rest; side-to-side 15-16 deg toward the little finger every frame. v7 kept the wrist neutral by slanting both handles 16 deg off level (handle tilt -16), which the owner rejected ('the dumbbell is not straight'). v8 levels the handles (tilt 0); a level handle with a vertical forearm needs this small ulnar tilt, as a real fist holds a bar across the palm at a slant. Fresh reviewers saw straight wrists.",
+      "pass": "no on the 10 deg number (15-16 deg side-to-side); accepted for level handles",
       "tool": "measure_wrist.py"
     },
     {
       "key": "dumbbell_shoulder_press",
-      "check": "no shrug",
-      "target": "shoulder point rises under ~2 cm",
-      "measured": "0.1 cm (shoulder girdle held still; real upward turn of the shoulder blade not modelled)",
+      "check": "shoulder girdle moves with the arm, no extra shrug",
+      "target": "shoulder blade turns up ~40-60 deg by the top; shoulder joint rises 2-5 cm with it",
+      "measured": "blade 15 deg at the bottom -> 50 deg at the top, collarbone up 3 -> 11 deg and back 5 -> 16 deg; shoulder joint rises 2.9 cm over the lift (4.2 cm vs the still-girdle rest point) (closeups.py / measure_twist / measure_pose)",
       "pass": "yes",
-      "tool": "measure_pose.py"
+      "tool": "closeups.py, measure_twist.py, measure_pose.py"
     },
     {
       "key": "dumbbell_shoulder_press",
       "check": "trunk, head, hips, feet still",
       "target": "no lift, no slide",
-      "measured": "trunk 5.3 deg back every sample; body pose is the same in every frame",
+      "measured": "trunk 5.3 deg back every sample; body pose is the same in every frame (v8)",
       "pass": "yes",
       "tool": "measure_pose.py"
     },
@@ -738,7 +758,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "left/right symmetry",
       "target": "height difference under ~3 cm",
-      "measured": "mirrored by construction",
+      "measured": "mirrored by construction; handle slope L = R = 0.0 deg every frame (closeups.py)",
       "pass": "yes",
       "tool": "measure_pose.py"
     },
@@ -765,6 +785,30 @@
       "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade; confirmed on the v7 sheet (8 frames); loop seam 0.05, seamless",
       "pass": "yes",
       "tool": "rendered frames"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "both dumbbell handles level, left matches right, every frame",
+      "target": "each handle within 3 deg of level; left and right equal",
+      "measured": "slope 0.0 deg (L) and 0.0 deg (R) at every one of 138 frames; turned in 0.0 deg; v7 was 16.0 deg off level on BOTH hands (inner ends up), which from the clip camera showed most on the left dumbbell",
+      "pass": "yes",
+      "tool": "closeups.py (handle slope per frame)"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "shoulder and armpit skin, close-ups (human-eye review)",
+      "target": "no crease, pinch, fold, slide or twist at 6 points of the rep from both sides",
+      "measured": "3 rounds of 36 close-ups (6 points x camL/camR/pitL/pitR/hands/clip) + a fresh reviewer each. v7: front of the shoulder folded into a notch and the arm seemed to come out of a slot overhead; dumbbells 16 deg off level. v8 round 1 (moving girdle + preserve volume + level handles): fold gone, handles fixed; reviewer: armpit skin smeared, dark streaks down the ribs, rear shoulder a 'ball' side-on. Round 2 (armpit grooves calmed): reviewer: armpit now blank/'melted', red in the armpit at the top. Round 3 (calming halved, red faded in the armpit): reviewer still 'mostly': armpit skin soft/rubbery at the top (noticeable), rear shoulder ball side-on at the bottom (noticeable; present in v7 too, from the body shape), thin red line on the neck slope side-on, front-shoulder red faint at the top. Hands and handles pass in every round.",
+      "pass": "no - reviewer still finds the armpit at the top and the rear shoulder side-on unnatural (mostly passes at clip size)",
+      "tool": "closeups.py + fresh reviewer subagent"
+    },
+    {
+      "key": "dumbbell_shoulder_press",
+      "check": "skin deformation numbers within 14 cm of each shoulder joint",
+      "target": "few crushed faces (area under 45 % of rest)",
+      "measured": "crushed faces at the top: v7 13.7 %, v8 2.5 % (preserve volume + moving girdle); stretched (over 2.2x): v7 2.3 %, v8 17.7 % (armpit skin stretched like a real raised arm; its grooves are softened there)",
+      "pass": "yes",
+      "tool": "closeups.py"
     }
   ]
 }
