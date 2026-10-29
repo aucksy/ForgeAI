@@ -42,7 +42,7 @@ const FULL_ROWS: [string, Row][] = [
   ['workout_sessions', { id: 's1', date_iso: '2026-03-01', started_at: 1772339400000, ended_at: 1772343300000, day_type: 'push', notes: 'n', source: 'manual', easy_week: 1, title: 'Push A', routine_id: 'day1' }],
   ['set_entries', {
     id: 'se1', session_id: 's1', exercise_id: 'ex1', set_number: 1, weight_kg: 80, reps: 6, is_warmup: 0, rpe: 8.5, set_type: 'drop',
-    note: 'slow', superset_group: 1, duration_sec: 61, distance_m: 25, load_mode: 'one', card_index: 1,
+    note: 'slow', superset_group: 1, duration_sec: 61, distance_m: 25, load_mode: 'one', card_index: 1, speed_kmh: 8.5, incline_pct: 6, machine_level: 9,
   }],
   ['personal_records', { id: 'pr1', exercise_id: 'ex1', kind: 'weight', value: 80, weight_kg: 80, reps: 6, date_iso: '2026-03-01', session_id: 's1' }],
   ['body_weight', { id: 'bw1', date_iso: '2026-03-01', weight_kg: 78.4 }],

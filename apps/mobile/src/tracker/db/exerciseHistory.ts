@@ -45,6 +45,7 @@
 import { getDb } from '@/db';
 import type { SetEntry } from '@/types/models';
 
+import { machineFromRow, type MachineDetails } from '../engine/cardioMachine';
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
 import { historyScopeSql, type HistoryScope } from './historyScope';
 
@@ -66,6 +67,8 @@ export interface TrackedSetEntry extends SetEntry {
    * "Track RPE" on (Hevy's "30 kg × 15 @ 9"). Absent = none, so older rows keep their shape.
    */
   rpe?: number;
+  /** F64 (tracker schema v15): a cardio machine's speed / incline / level. Absent = none. */
+  machine?: MachineDetails;
 }
 
 export interface ExerciseHistoryEntry {
@@ -93,6 +96,9 @@ interface HistoryRow {
   set_type?: string | null;
   card_index?: number | null;
   rpe?: number | null;
+  speed_kmh?: number | null;
+  incline_pct?: number | null;
+  machine_level?: number | null;
 }
 
 function mapSet(r: HistoryRow): TrackedSetEntry {
@@ -112,13 +118,16 @@ function mapSet(r: HistoryRow): TrackedSetEntry {
   if (r.set_type === 'drop' || r.set_type === 'failure') s.setType = r.set_type;
   if (r.card_index != null && r.card_index > 0) s.cardIndex = Number(r.card_index);
   if (r.rpe != null && Number.isFinite(Number(r.rpe))) s.rpe = Number(r.rpe);
+  const machine = machineFromRow(r);
+  if (machine) s.machine = machine;
   return s;
 }
 
 /** Columns of the frozen `SetRow` shape, plus the session's date and Phase 2's time/distance. */
 const COLS = `se.id, se.session_id, se.exercise_id, se.set_number, se.weight_kg, se.reps,
               se.is_warmup, ws.date_iso AS date_iso, se.duration_sec, se.distance_m, se.load_mode,
-              ws.easy_week AS easy_week, se.set_type, se.card_index, se.rpe`;
+              ws.easy_week AS easy_week, se.set_type, se.card_index, se.rpe,
+              se.speed_kmh, se.incline_pct, se.machine_level`;
 
 const ORDER = 'ORDER BY ws.started_at DESC, ws.date_iso DESC, se.set_number ASC';
 

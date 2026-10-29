@@ -14,7 +14,8 @@
  *
  *   'w' workout       [groups, date, started, dayType, source, ended, title, notes, easyWeek, routineId]
  *                     group = [ref, sets, cardIndex, supersetGroup]
- *                     set   = [setNo, kg, reps, warmup, rpe, setType, note, seconds, metres, loadMode]
+ *                     set   = [setNo, kg, reps, warmup, rpe, setType, note, seconds, metres, loadMode,
+ *                              speedKmh, inclinePct, machineLevel]   (F64: the last three only when logged)
  *   'r' folder        [name, isActive, days, order, source, settings]
  *                     day   = [dayId, dayType, dayOrder, name, exercises]
  *                     ex    = [ref, exOrder, targetSets, repMin, repMax, setsJson, restSec, superset, note]
@@ -118,6 +119,10 @@ export interface SetRow {
   distance_m: number | null;
   load_mode: string | null;
   card_index: number | null;
+  /** F64 (tracker schema v15): a cardio machine's details; absent / null = none. */
+  speed_kmh?: number | null;
+  incline_pct?: number | null;
+  machine_level?: number | null;
 }
 
 /** A set as unpacked: its exercise by ref (the restore turns it into this phone's row id). */
@@ -143,7 +148,14 @@ export function packWorkout(s: WorkoutRow, sets: readonly SetRow[], refOf: (exer
       g = { ref, card: x.card_index ?? null, ss: x.superset_group ?? null, sets: [] };
       groups.set(key, g);
     }
-    g.sets.push(trimEnd<Cell>([x.set_number, x.weight_kg, x.reps, x.is_warmup ? 1 : 0, x.rpe, x.set_type, x.note, x.duration_sec, x.distance_m, x.load_mode]));
+    // F64: the machine's three cells go last, so a set without them packs to the same text (and
+    // hash) as before — no older workout is copied again.
+    g.sets.push(
+      trimEnd<Cell>([
+        x.set_number, x.weight_kg, x.reps, x.is_warmup ? 1 : 0, x.rpe, x.set_type, x.note, x.duration_sec, x.distance_m, x.load_mode,
+        x.speed_kmh ?? null, x.incline_pct ?? null, x.machine_level ?? null,
+      ]),
+    );
   }
   const packedGroups = [...groups.values()].map((g) => trimEnd<unknown>([g.ref, g.sets, g.card, g.ss]));
   return JSON.stringify(
@@ -166,7 +178,14 @@ export function unpackWorkout(json: string): UnpackedWorkout | null {
       if (!Array.isArray(raw)) return null;
       const setNo = num(at(raw, 0));
       if (setNo == null) return null;
+      // F64: only when the set carries them, so every other set unpacks to its old shape.
+      const speed = num(at(raw, 10));
+      const incline = num(at(raw, 11));
+      const level = num(at(raw, 12));
       sets.push({
+        ...(speed != null ? { speed_kmh: speed } : {}),
+        ...(incline != null ? { incline_pct: incline } : {}),
+        ...(level != null ? { machine_level: level } : {}),
         ref: g[0],
         set_number: setNo,
         weight_kg: num(at(raw, 1)) ?? 0,

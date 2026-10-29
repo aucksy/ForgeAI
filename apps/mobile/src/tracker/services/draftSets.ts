@@ -11,6 +11,7 @@
  * only…), and the TYPED weight becomes the stored one here — help on an assisted move is
  * typed as 20 and stored as −20 (see engine/logTypes).
  */
+import { cleanMachine } from '@/tracker/engine/cardioMachine';
 import { isLoggable, storedWeight, type LogType } from '@/tracker/engine/logTypes';
 import type { DraftExercise, DraftSet } from '@/tracker/store/activeWorkoutStore';
 import type { RichSet } from '@/tracker/db/trackerSets';
@@ -74,6 +75,8 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
           if (st.loadMode != null) kept.loadMode = st.loadMode;
           else if (opts.stampLoadMode && ex.loadMode != null) kept.loadMode = ex.loadMode;
           if (cardIndex > 0) kept.cardIndex = cardIndex;
+          const keptMachine = cleanMachine(st.machine);
+          if (keptMachine) kept.machine = keptMachine;
           flat.push(kept);
           firstOfExercise = false;
         }
@@ -97,6 +100,10 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
       if (st.loadMode != null) row.loadMode = st.loadMode;
       else if (opts.stampLoadMode && ex.loadMode != null) row.loadMode = ex.loadMode;
       if (cardIndex > 0) row.cardIndex = cardIndex;
+      // F64: a machine set's speed / incline / level — only when one was typed, so every other
+      // row keeps its exact shape.
+      const machine = cleanMachine(st.machine);
+      if (machine) row.machine = machine;
       flat.push(row);
       firstOfExercise = false;
     }

@@ -26,6 +26,7 @@ import type { SetEntry } from '@/types/models';
 import type { TrackedSetEntry } from '../db/exerciseHistory';
 import type { SetMeta } from '../db/trackerSets';
 import type { TrackerExercise } from '../db/exerciseInfo';
+import { machineText } from '../engine/cardioMachine';
 import { fmtSetCompact, fmtTotalDistance, typedWeight } from '../engine/logTypes';
 import type { RecordKind, RecordSet } from '../engine/records';
 import { durationText } from './finishCheck';
@@ -127,10 +128,12 @@ export function detailSetRows(
     const meta = setMeta[s.id];
     const type = meta?.setType;
     const mark = s.isWarmup ? 'W' : type === 'drop' ? 'D' : type === 'failure' ? 'F' : String(++n);
+    // F64: a machine set's speed / incline / level after its time or distance ('' on every other set).
+    const machine = machineText(meta?.machine, units);
     return {
       id: s.id,
       mark,
-      text: summarySetText(s, meta, kind, units),
+      text: machine ? `${summarySetText(s, meta, kind, units)} · ${machine}` : summarySetText(s, meta, kind, units),
       rpe: !s.isWarmup && meta?.rpe != null ? `@${trimNum(meta.rpe)}` : null,
       warmup: s.isWarmup,
       records: held.get(s.id) ?? [],
@@ -164,6 +167,7 @@ export function lastTimeRows(
       durationSec: s.durationSec ?? null,
       distanceM: s.distanceM ?? null,
       loadMode: s.loadMode ?? null,
+      ...(s.machine ? { machine: s.machine } : {}),
     };
   }
   return detailSetRows(all, meta, kind, units);

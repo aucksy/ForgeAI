@@ -34,6 +34,7 @@ import {
   setExerciseLoadMode,
   type TrackerExercise,
 } from '@/tracker/db/exerciseInfo';
+import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { liftsUp, OFF_MAIN_SHARE, type LiftUp } from '@/tracker/engine/progression';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
@@ -149,6 +150,11 @@ export interface DraftSet {
    * editing do not carry it: a number typed there is saved as before.
    */
   saved?: true;
+  /**
+   * F64: a cardio machine's speed (km/h), incline (%) and level for this set, as typed (absent =
+   * none). Never a hint or a fill; drafts saved before simply have none.
+   */
+  machine?: MachineDetails | null;
 }
 
 /** Last time's numbers for one set row, in TYPED form (help positive). */
@@ -427,7 +433,7 @@ export interface ActiveWorkoutState {
   updateSet: (
     exKey: string,
     setKey: string,
-    patch: Partial<Pick<DraftSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM'>>,
+    patch: Partial<Pick<DraftSet, 'weightKg' | 'reps' | 'durationSec' | 'distanceM' | 'machine'>>,
   ) => void;
   /**
    * Entry bar: one step of a box (weight ± the exercise's step, reps ± 1, time ± 15 s), from the

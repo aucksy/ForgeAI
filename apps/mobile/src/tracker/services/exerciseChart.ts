@@ -23,8 +23,32 @@ import { liftedWords } from '@/lib/units';
 import type { UnitSystem } from '@/types/models';
 
 import type { ExerciseHistoryEntry } from '../db/exerciseHistory';
+import { speedToShown, speedUnit } from '../engine/cardioMachine';
 import { distanceToUnit, fmtDuration, shownDistUnit, type DistUnit, type LogType } from '../engine/logTypes';
 import type { BestSetPoint } from './exerciseAnalytics';
+
+/**
+ * F64: the machine chips an exercise's history can draw — only for a detail some set carries, so
+ * an exercise logged without them shows exactly the chips it always did. PURE.
+ */
+export function machineChartMetrics(history: readonly ExerciseHistoryEntry[]): ChartMetric[] {
+  let speed = false;
+  let incline = false;
+  let level = false;
+  for (const h of history) {
+    if (h.easyWeek) continue;
+    for (const s of h.sets) {
+      if (s.machine?.speedKmh != null) speed = true;
+      if (s.machine?.inclinePct != null) incline = true;
+      if (s.machine?.level != null) level = true;
+    }
+  }
+  const out: ChartMetric[] = [];
+  if (speed) out.push('topSpeed');
+  if (incline) out.push('topIncline');
+  if (level) out.push('topLevel');
+  return out;
+}
 
 export type ChartMetric =
   | 'heaviest'
@@ -38,7 +62,11 @@ export type ChartMetric =
   | 'bestTime'
   | 'workoutTime'
   | 'longestDistance'
-  | 'workoutDistance';
+  | 'workoutDistance'
+  // F64: a cardio machine's details, offered only when some set carries them.
+  | 'topSpeed'
+  | 'topIncline'
+  | 'topLevel';
 
 export type ChartRange = '3m' | '1y' | 'all';
 
@@ -121,18 +149,27 @@ export function metricLabel(m: ChartMetric, units: UnitSystem, o: { shownAs?: Lo
       return 'Total time';
     case 'longestDistance':
       return 'Longest distance';
+    case 'topSpeed':
+      return 'Fastest speed'; // member-words
+    case 'topIncline':
+      return 'Steepest incline'; // member-words
+    case 'topLevel':
+      return 'Highest level'; // member-words
     case 'workoutDistance':
     default:
       return 'Total distance';
   }
 }
 
-export type MetricUnit = 'weight' | 'reps' | 'seconds' | 'distance';
+export type MetricUnit = 'weight' | 'reps' | 'seconds' | 'distance' | 'speed' | 'percent' | 'level';
 
 export function metricUnit(m: ChartMetric): MetricUnit {
   if (m === 'heaviest' || m === 'e1rm' || m === 'bestSet' || m === 'workoutLifted' || m === 'leastHelp') return 'weight';
   if (m === 'bestTime' || m === 'workoutTime') return 'seconds';
   if (m === 'longestDistance' || m === 'workoutDistance') return 'distance';
+  if (m === 'topSpeed') return 'speed';
+  if (m === 'topIncline') return 'percent';
+  if (m === 'topLevel') return 'level';
   return 'reps';
 }
 
@@ -163,6 +200,12 @@ export function metricValueText(m: ChartMetric, y: number, units: UnitSystem, di
       return fmtDuration(y);
     case 'distance':
       return `${chartNumber(y, 2)} ${shownDistUnit(distUnit)}`;
+    case 'speed':
+      return `${chartNumber(y)} ${speedUnit(units)}`; // member-words
+    case 'percent':
+      return `incline ${chartNumber(y)}%`; // member-words
+    case 'level':
+      return `level ${chartNumber(y)}`; // member-words
     case 'reps':
     default:
       return `${chartNumber(y)} ${y === 1 ? 'rep' : 'reps'}`;
@@ -243,6 +286,17 @@ export function metricSeries(
       case 'workoutDistance': {
         const d = sumOf(sets.map((s) => s.distanceM ?? 0));
         y = d > 0 ? distanceToUnit(d, distUnit) : null;
+        break;
+      }
+      case 'topSpeed': {
+        const v = maxOf(sets.map((s) => s.machine?.speedKmh ?? 0));
+        y = v > 0 ? speedToShown(v, units) : null;
+        break;
+      }
+      case 'topIncline':
+      case 'topLevel': {
+        const vals = sets.map((s) => (m === 'topIncline' ? s.machine?.inclinePct : s.machine?.level)).filter((v): v is number => v != null);
+        y = vals.length > 0 ? maxOf(vals) : null;
         break;
       }
       default:

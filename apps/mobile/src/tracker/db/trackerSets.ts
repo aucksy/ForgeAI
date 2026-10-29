@@ -19,6 +19,7 @@ import { getDb } from '@/db';
 import { addSets } from '@/db/repos/workoutRepo';
 import type { SetEntry } from '@/types/models';
 
+import { cleanMachine, machineFromRow, type MachineDetails } from '../engine/cardioMachine';
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
 
 export type SetType = 'normal' | 'warmup' | 'drop' | 'failure';
@@ -46,6 +47,8 @@ export interface RichSet {
    * (0 / absent = the first). Heavy and back-off Bench stay two cards after saving.
    */
   cardIndex?: number | null;
+  /** F64 (schema v15): a cardio machine's speed / incline / level (absent = none logged). */
+  machine?: MachineDetails | null;
 }
 
 export interface SetMeta {
@@ -62,6 +65,8 @@ export interface SetMeta {
   cardIndex?: number;
   /** LW-28: the order the set was written in (its rowid), so split cards keep their place. */
   seq?: number;
+  /** F64: the set's machine details; absent on every set without any (all older sets). */
+  machine?: MachineDetails;
 }
 
 /** Append sets (frozen set-numbering + PR detection), then persist their rpe/type/note/time/distance. */
@@ -76,6 +81,17 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
   const db = getDb();
   for (let i = 0; i < created.length; i++) {
     const s = sets[i];
+    // F64: a machine set's details, in their own statement, only when there are some — every
+    // other set writes exactly what it wrote before (and needs no v15 column).
+    const machine = cleanMachine(s.machine);
+    if (machine) {
+      await db.runAsync('UPDATE set_entries SET speed_kmh = ?, incline_pct = ?, machine_level = ? WHERE id = ?', [
+        machine.speedKmh ?? null,
+        machine.inclinePct ?? null,
+        machine.level ?? null,
+        created[i].id,
+      ]);
+    }
     const setType: SetType = s.isWarmup ? 'warmup' : s.setType ?? 'normal';
     // A plain working set has nothing to write: `addSets` INSERTs leave all the
     // additive columns NULL, and that IS the no-metadata state — `getSessionSetMeta`
@@ -130,12 +146,18 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
     load_mode: string | null;
     card_index?: number | null;
     seq?: number | null;
+    speed_kmh?: number | null;
+    incline_pct?: number | null;
+    machine_level?: number | null;
   }>(
-    'SELECT id, rpe, set_type, note, superset_group, duration_sec, distance_m, load_mode, card_index, rowid AS seq FROM set_entries WHERE session_id = ?',
+    `SELECT id, rpe, set_type, note, superset_group, duration_sec, distance_m, load_mode, card_index, rowid AS seq,
+            speed_kmh, incline_pct, machine_level
+       FROM set_entries WHERE session_id = ?`,
     [sessionId],
   );
   const out: Record<string, SetMeta> = {};
   for (const r of rows) {
+    const machine = machineFromRow(r);
     out[r.id] = {
       rpe: r.rpe,
       setType: (r.set_type as SetType | null) ?? 'normal',
@@ -146,6 +168,7 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
       loadMode: isLoadMode(r.load_mode) ? r.load_mode : null,
       ...(r.card_index != null && r.card_index > 0 ? { cardIndex: Number(r.card_index) } : {}),
       ...(r.seq != null ? { seq: Number(r.seq) } : {}),
+      ...(machine ? { machine } : {}),
     };
   }
   return out;

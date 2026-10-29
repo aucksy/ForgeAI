@@ -181,7 +181,7 @@ describe('Save my history: a Hevy CSV the app reads back (real SQLite)', () => {
     const { csv } = await saveAndReimport('metric');
     const [header, ...rows] = csv.trim().split('\n');
     expect(header).toBe(
-      '"title","start_time","end_time","description","exercise_title","superset_id","exercise_notes","set_index","set_type","weight_kg","reps","distance_km","duration_seconds","rpe"',
+      '"title","start_time","end_time","description","exercise_title","superset_id","exercise_notes","set_index","set_type","weight_kg","reps","distance_km","duration_seconds","rpe","speed_kmh","incline_percent","level"',
     );
     expect(rows).toHaveLength(10);
     // The zone is really +5:30: the old export's plain local reading of that start was 01:30 next day.

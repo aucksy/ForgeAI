@@ -34,6 +34,7 @@ import {
   chartAxisNumber,
   CHART_RANGES,
   chartMetrics,
+  machineChartMetrics,
   metricLabel,
   metricSeries,
   metricUnit,
@@ -80,7 +81,8 @@ export function ExerciseMetricChart({
   range: heldRange,
   onRangeChange,
 }: ExerciseMetricChartProps) {
-  const metrics = useMemo(() => chartMetrics(shownAs), [shownAs]);
+  // F64: a machine's speed / incline / level chips join only when some set carries one.
+  const metrics = useMemo(() => [...chartMetrics(shownAs), ...machineChartMetrics(history)], [shownAs, history]);
   const [ownMetric, setOwnMetric] = useState<ChartMetric>(metrics[0]);
   const picked = heldMetric ?? ownMetric;
   const metric = metrics.includes(picked) ? picked : metrics[0];

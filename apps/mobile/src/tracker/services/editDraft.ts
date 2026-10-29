@@ -63,6 +63,8 @@ export function buildEditDraft(
       if (m?.durationSec != null) draft.durationSec = m.durationSec;
       if (m?.distanceM != null) draft.distanceM = m.distanceM;
       if (m?.loadMode != null) draft.loadMode = m.loadMode;
+      // F64: a machine set's speed / incline / level come back into their boxes.
+      if (m?.machine) draft.machine = { ...m.machine };
       // A stored row that doesn't fit this exercise's type is carried as it was: the
       // editor can't show it, and Save must not drop a set that happened.
       if (!isLoggable(lt, draft)) {

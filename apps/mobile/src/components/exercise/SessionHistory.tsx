@@ -6,6 +6,7 @@ import { dateWithYear } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 import { StatsRow } from '@/tracker/components/StatsRow';
 import type { ExerciseHistoryEntry, TrackedSetEntry } from '@/tracker/db/exerciseHistory';
+import { machineText } from '@/tracker/engine/cardioMachine';
 import { type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import { exerciseWorkoutStats, historySetText as setText, topSetIndex } from '@/tracker/services/exerciseWorkoutStats';
 import type { UnitSystem } from '@/types/models';
@@ -102,9 +103,7 @@ export function SessionHistory({
                   }}
                 >
                   <Text style={{ width: 20, fontFamily: type.monoBold, fontSize: type.size.sub, color: mark === 'D' || mark === 'F' ? color.accent : color.inkMuted }}>{mark}</Text>
-                  <Text style={{ flex: 1, fontFamily: isTop ? type.monoBold : type.mono, fontSize: type.size.sub, color: isTop ? color.accentBright : color.ink }}>
-                    {setText(s, logType, units, distUnit)}
-                  </Text>
+                  <SetLine s={s} isTop={isTop} logType={logType} units={units} distUnit={distUnit} />
                 </View>
               );
             })}
@@ -123,6 +122,38 @@ export function SessionHistory({
           </Text>
         </Pressable>
       ) : null}
+    </View>
+  );
+}
+
+/**
+ * One set's words. F64: a machine set adds its speed / incline / level on a muted second line;
+ * every other set renders exactly the single line it always did.
+ */
+function SetLine({
+  s,
+  isTop,
+  logType,
+  units,
+  distUnit,
+}: {
+  s: TrackedSetEntry;
+  isTop: boolean;
+  logType: LogType;
+  units: UnitSystem;
+  distUnit: DistUnit;
+}) {
+  const main = (
+    <Text style={{ flex: 1, fontFamily: isTop ? type.monoBold : type.mono, fontSize: type.size.sub, color: isTop ? color.accentBright : color.ink }}>
+      {setText(s, logType, units, distUnit)}
+    </Text>
+  );
+  const extra = machineText(s.machine, units);
+  if (!extra) return main;
+  return (
+    <View style={{ flex: 1 }}>
+      {main}
+      <Text style={{ fontFamily: type.mono, fontSize: type.size.caption, color: color.inkMuted }}>{extra}</Text>
     </View>
   );
 }
@@ -182,9 +213,7 @@ function CurrentCard({
               }}
             >
               <Text style={{ width: 20, fontFamily: type.monoBold, fontSize: type.size.sub, color: mark === 'D' || mark === 'F' ? color.accent : color.inkMuted }}>{mark}</Text>
-              <Text style={{ flex: 1, fontFamily: isTop ? type.monoBold : type.mono, fontSize: type.size.sub, color: isTop ? color.accentBright : color.ink }}>
-                {setText(s, logType, units, distUnit)}
-              </Text>
+              <SetLine s={s} isTop={isTop} logType={logType} units={units} distUnit={distUnit} />
             </View>
           );
         })}

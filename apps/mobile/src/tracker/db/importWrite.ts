@@ -25,6 +25,7 @@ import { e1rmRecordOf, estimatedOneRepMax, raiseE1rmBar, type E1rmRecordBar } fr
 import { uuid } from '@/lib/uuid';
 import type { DayType } from '@/types/models';
 
+import { cleanMachine } from '../engine/cardioMachine';
 import { isLoadMode } from '../engine/logTypes';
 import { addSetsWithMeta, type RichSet, type SetType } from './trackerSets';
 
@@ -95,6 +96,8 @@ export const SESSION_COLS = ['id', 'date_iso', 'started_at', 'ended_at', 'day_ty
 export const SET_COLS = [
   'id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
   'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode', 'card_index',
+  // F64 (tracker schema v15): a machine's speed / incline / level, NULL on every other set.
+  'speed_kmh', 'incline_pct', 'machine_level',
 ] as const;
 export const RECORD_COLS = ['id', 'exercise_id', 'kind', 'value', 'weight_kg', 'reps', 'date_iso', 'session_id'] as const;
 
@@ -113,6 +116,7 @@ export function importSetRow(id: string, sessionId: string, setNumber: number, s
   const rpe = s.rpe ?? null;
   const note = s.note ?? null;
   const group = s.supersetGroup ?? null;
+  const machine = cleanMachine(s.machine);
   const hasMeta =
     rpe !== null ||
     note !== null ||
@@ -138,6 +142,10 @@ export function importSetRow(id: string, sessionId: string, setNumber: number, s
     distanceM,
     loadMode,
     cardIndex,
+    // F64: as addSetsWithMeta writes them (its own UPDATE, which leaves set_type alone).
+    machine?.speedKmh ?? null,
+    machine?.inclinePct ?? null,
+    machine?.level ?? null,
   ];
 }
 

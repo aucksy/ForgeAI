@@ -34,6 +34,7 @@ import { originalStarts } from '@/tracker/db/importKeys';
 import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { catalogEntry, catalogEntryByName } from '@/tracker/catalog/exerciseCatalog';
 import { fastImportWriter, legacyImportWriter, type ImportWriter } from '@/tracker/db/importWrite';
+import { cleanMachine, type MachineDetails } from '@/tracker/engine/cardioMachine';
 import { isLoadMode, isLogType, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
 import type { DayType, Exercise, MuscleGroup } from '@/types/models';
 
@@ -94,6 +95,8 @@ interface ParsedSet {
   card?: number;
   /** The set's row in the file, so the cards are written back in the file's order. */
   row?: number;
+  /** F64: a machine's speed / incline / level, from our own export's extra columns. */
+  machine?: MachineDetails;
 }
 
 interface ParsedExercise {
@@ -622,6 +625,11 @@ function milesToKm(v: number | null): number | null {
   return v == null ? null : v * 1.609344;
 }
 
+/** F64: an mph speed column → km/h (3 places, as a typed speed is kept). */
+function mphToKmh(v: number | null): number | null {
+  return v == null ? null : Math.round(v * 1.609344 * 1000) / 1000;
+}
+
 function asString(v: unknown): string {
   return v == null ? '' : String(v);
 }
@@ -801,6 +809,11 @@ export function parseHevyBase64(base64: string, opts: { dateOrder?: DateOrder } 
       card: blockOf.get(exercise) ?? 0,
       row: totalSetRows,
     };
+    // F64: "Save my history" writes a machine's speed / incline / level in three extra columns
+    // (Hevy has none, so its files leave this out).
+    const speedKmh = r['speed_kmh'] !== undefined ? n(r['speed_kmh']) : r['speed_mph'] !== undefined ? mphToKmh(n(r['speed_mph'])) : null;
+    const machine = cleanMachine({ speedKmh, inclinePct: n(r['incline_percent']), level: n(r['level']) });
+    if (machine) set.machine = machine;
     orderOf.set(set, (blockOf.get(exercise) ?? 0) * 100_000 + setIndex);
     exercise.sets.push(set);
   }
@@ -1325,6 +1338,8 @@ export async function runImport(
         durationSec: st.durationSec,
         distanceM: st.distanceM,
         loadMode: target.setMode ?? null,
+        // F64: our own file's machine columns come back (absent in a Hevy file).
+        ...(st.machine ? { machine: st.machine } : {}),
       }));
     };
 
