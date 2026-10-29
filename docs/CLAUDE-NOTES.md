@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-194. "Yes, switch on 0041 so receipts printed offline are never refused" — 30 Oct 2026
+**He said:** exactly that (his live-database yes for 0041).
+**Doing:** apply supabase/migrations/0041_offline_desk_receipts.sql (from feat/offline-desk-3, 3f1b37f) in the live SQL editor, run its
+live test, copy both files to main marked APPLIED LIVE. Only the receipt rule changes: a NEW receipt marked offline, numbered in a
+desk series (/D<n>-0001) that this gym really gave out, skips the "more than owed" check. Everything else in 0021 stays.
+
 ## R-193. Messages: "Everyone (0)" while "In the app: 1" — 30 Oct 2026
 **He said:** (screenshot, Test GYM) "Why does everyone in drop down shows 0 but line below says 1. 1 is correct. Check this piece".
 **Cause:** "Everyone (N)" counted only members on the gym's list; a member who joined in the app but is not on the list was left out,
