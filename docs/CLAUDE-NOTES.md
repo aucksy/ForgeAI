@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-196. Tracker: the feature-rating module moves to Home, as its own permanent section — 30 Oct 2026
+**He said:** "that feature rating module in tracker, move that in Home section as a dedicated permanent section".
+**Done:** Home has "Rate features for marketing" (above "Claude is working on"): the explanation and both top-5 lists always show;
+the list to rate folds under "Rate the features (n of m rated)". Removed from Waiting for you. Checked on a headless screenshot.
+
 ## R-195. Message overload: nudge the owner, quiet after 2 a day, cap 10 — 30 Oct 2026
 **He said:** owners must not flood members with notifications (members stop taking them seriously; harms our brand); nudge the owner
 at e.g. the 3rd of the day or after a number in the week; not a hard stop; maybe an owner setting. Then: "okay build it" (all 3 of

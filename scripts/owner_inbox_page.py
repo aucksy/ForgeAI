@@ -533,7 +533,7 @@ details[open] > summary .chev, button[aria-expanded="true"] .chev { transform: r
 a.goto { font-family: var(--f-mono); font-size: 0.92em; }
 .latest { margin: 8px 0 10px; padding: 10px 12px 2px; border-left: 4px solid var(--accent); border-radius: 10px; background: var(--accent-soft); }
 /* R-176: the feature-rating module in Waiting for you. */
-.ratebox > summary { color: var(--accent); }
+.ratebox > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--accent); font-size: 0.92rem; font-weight: 700; }
 .rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 10px; margin-bottom: 8px; min-width: 0; }
 .rdet { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .rrow { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
@@ -1054,6 +1054,8 @@ function homeHtml() {
     '<h3 class="grp">Questions for you <span class="cnt">' + qs.length + "</span></h3>" +
     (qs.length ? rows(qs.map((e) => rowEntry(e)), 6) : empty("No questions wait for you.")) +
     (fresh.length ? '<h3 class="grp">New answers to read <span class="cnt">' + fresh.length + "</span></h3>" + rows(fresh.map((e) => rowEntry(e)), 6) : "") +
+    // R-196 (owner, 30 Oct 2026): the feature-rating module lives on Home, always, as its own section.
+    '<h3 class="grp" id="sec-rate">Rate features for marketing</h3>' + rateHtml() +
     '<h3 class="grp">Claude is working on</h3>' +
     (doing.length ? rows(doing.map((x) => rowTask(x, esc(x.t.details.length > 160 ? x.t.details.slice(0, 157).replace(/\s+\S*$/, "") + "…" : x.t.details)))) : empty("Nothing marked Doing right now.")) +
     (blocked.length ? '<p class="hint"><a href="#" data-tab="mine">' + blocked.length + " of Claude's tasks wait for you</a>: each names the # it waits on.</p>" : "") +
@@ -1101,13 +1103,14 @@ function rateCounts() {
   const all = RATE_SIDES.map((side) => rateFeats(side));
   return { all, total: all.reduce((n, xs) => n + xs.length, 0), rated: all.reduce((n, xs) => n + xs.filter((x) => rateFull(rateOf(x.f.id))).length, 0) };
 }
-const rateSum = (c) => "Rate features for marketing (" + c.rated + " of " + c.total + " rated)";
+const rateSum = (c) => "Rate the features (" + c.rated + " of " + c.total + " rated)";
 const rateBtn = () => { const u = unsavedRates().length; return "Save my ratings" + (u ? " (" + u + ")" : ""); };
 function rateHtml() {
   const c = rateCounts(), u = unsavedRates().length;
-  return '<details class="donebox ratebox" data-box="rate"' + (doneOpen.rate ? " open" : "") + '><summary><span id="rsum">' + rateSum(c) + "</span>" + CHEV + "</summary>" +
-    '<p class="hint">Rate each feature from 1 to 5. <b>Convenience</b>: how much easier it makes the day of the person who uses it. <b>Value</b>: how much a gym owner buying MettleUp would care about it. Tap a number again to clear it. The top 5 on each side become our selling points and marketing hooks.</p>' +
+  // On Home the top 5 always show; the list to rate folds under them (R-196).
+  return '<p class="hint">Rate each feature from 1 to 5. <b>Convenience</b>: how much easier it makes the day of the person who uses it. <b>Value</b>: how much a gym owner buying MettleUp would care about it. Tap a number again to clear it. The top 5 on each side become our selling points and marketing hooks.</p>' +
     '<div id="rtops">' + rateTopHtml() + "</div>" +
+    '<details class="ratebox" data-box="rate"' + (doneOpen.rate ? " open" : "") + '><summary><span id="rsum">' + rateSum(c) + "</span>" + CHEV + "</summary>" +
     '<div class="actions" style="margin:12px 0 4px"><button class="btn" id="rsave" data-act="ratesave"' + (u ? "" : " disabled") + ">" + rateBtn() + "</button>" +
     '<label class="rhide"><input type="checkbox" id="rhide"' + (rateHideDone ? " checked" : "") + "> Hide rated ones</label>" +
     '<span class="msg" id="ratemsg" role="status"></span></div>' +
@@ -1160,7 +1163,6 @@ function waitingHtml() {
   if (feats.length) out += '<h3 class="grp" id="sec-f">Features waiting for you <span class="cnt">' + feats.length + "</span></h3>" +
     '<p class="hint" style="margin:-4px 0 10px">Each needs you: an answer, a yes, a purchase or a setup step. Open “Comment” and tell me, for example “Yes, go ahead” or “Not now”.</p>' +
     feats.map(({ f, i }) => featHtml(f, i)).join("");
-  out += rateHtml();
   const n = doneList.length + sentFeats.length;
   if (n) out += doneBox("waiting", "Answered and done (" + n + ")", doneList.map(card).join("") + sentFeats.map(({ f, i }) => featHtml(f, i)).join(""));
   return out;
