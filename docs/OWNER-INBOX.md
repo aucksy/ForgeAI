@@ -16,6 +16,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 |---|---|---|
 | 75 | Add the desk photo table to the live server? | A: yes |
 | 76 | Add the pause and renew requests table to the live server? | A: yes |
+| 77 | Add the workout report table to the live server, with the member words? | A: yes |
 
 ---
 
@@ -412,7 +413,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F118 Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
 | F119 Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | F120 QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| F121 Member data export by the gym, on request | Planned | Your rule (29 Oct, R-220): a member's data is never locked behind the membership. Members save their own full report any time, and the gym can also ask for a copy. I build it; your live server yes comes at the end. | Members already save their own workouts as Excel (Settings → Export), with or without a gym. For the gym: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable report and the desk downloads it. The gym never gets workouts from before the join date. |
+| F121 Member data export by the gym, on request | Waiting for you | Built 30 Oct (R-220): the desk asks, the member says yes in the app, the desk downloads. Only workouts from the join date. Waiting for your live yes and your OK on the words: #77. | Members already save their own workouts as Excel (Settings → Export), with or without a gym. For the gym: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable report and the desk downloads it. The gym never gets workouts from before the join date. |
 | F122 A member's own history from before joining a gym | Planned | Your rule (29 Oct, R-217): a member's workouts are theirs. Before joining, during and after leaving a gym, they stay in the app; the gym never sees the ones from before the join date. Members of a gym get every feature free; members with no gym get the basics free and pay for some features (which ones: your call, later). | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off. |
 | F123 FitPass and other pass members | Planned | Pass members (FitPass, cultpass) join without a plan, get the gym's plans and shop, and the owner counts their visits apart. I build it; your live server yes comes at the end. | The desk adds the person as a "Pass member" (FitPass, cultpass and so on): no plan, no dues, never on the renewal list. They join in the app with the gym code and get the gym's plans, shop and messages. Each check-in counts as a pass visit, and a monthly count per pass company lets the owner match that company's payment. FITPASS and cultpass publish no check-in link for other apps (checked 29 Oct): their member shows a QR in their own app. So the desk taps "Pass visit" in our app, or the member scans the gym's MettleUp QR and picks the pass. If either company later gives us a link, the visit can count itself. Needs a live server change (your yes). |
 | F124 After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
@@ -480,6 +481,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 77. Workout report for the gym: may I add its table to the live server, and are the words OK? — 30 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** F121 is built. The desk taps "Request workout report" on a member's page. The member's app asks first; only on yes does the phone send the report, and the desk downloads it. Everything stays hidden until the live server has a new private table. I tested it on the test server: all 64 report checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing.
+**What the gym can and cannot get:** only workouts from the day the member joined the gym (the server reads the join date from your records, never from the phone, and refuses a file with older workouts). Only that gym can download it. A request with no answer ends after 30 days; a sent report is deleted 30 days after it arrives.
+**What the member reads (privacy wording, needs your OK):**
+- "Send your report to the gym?"
+- "<Gym> wants a copy of your workouts from <date>, the day you joined: exercises, sets, weights, reps and your notes. The gym owner and desk can see it. Older workouts stay on your phone."
+- Buttons: "Yes, send it" / "No". After No: "OK. Nothing was sent to the gym."
+- "Want your own copy? Go to Settings and save all your workouts."
+**Decide:** May I add the report table to the live server with these words?
+- A: Yes, add it with these words. The desk then sees "Request workout report". (recommended)
+- B: Not yet. Everything stays hidden.
 
 ## 76. Pause and renew requests: may I add their table to the live server? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
