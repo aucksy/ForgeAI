@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-218. FitPass / cultpass: can a scan count the visit by itself? — 29 Oct 2026
+He said (comment on F123): "were you able to check if FitPass or CultPass and all these things have any kind of API integration? So if users scans their QR code, we can mark the attendance ... [the owner] can choose to add this member as a FitPass or a CultPass member."
+What I found (29 Oct, web): neither FITPASS nor cultpass publishes an API for gym software. Both use their own app QR scanned at the desk; FITPASS partners see visits in their Partner Portal. Wellhub (Gympass) does have an Access Control API, but it is not big in India. So F123 works without them: desk taps "Pass visit", or the member scans our gym QR and picks the pass. Asking FITPASS's partner team for a link is possible later, through a real gym that is their partner. F123 row updated.
+
+## R-217. A member's data is theirs; members without a gym pay for some features — 29 Oct 2026
+He said (comment on F122): "if the member leaves the gym, their data continues to stay within the app ... previously we were trying to lock members data behind the gym membership, but I don't think that is going to work. So ... if they use the app within their membership plan, then they get all the features for free. But if they do not have a gym membership, then they will have to pay for certain features and only have basic features free of cost."
+What I do: the rule is now: workouts always stay with the member (before, during, after a gym). Gym members get everything free; no-gym members get basics free and pay for some features. Which features are paid and the price are money decisions: his, later (no inbox entry until he asks). F122 row updated.
+
 ## R-216. A 1-10 score on every feature and task; IDs on tasks too — 29 Oct 2026
 He said: "I think I need a drop-down on each feature card to rate the feature so any feature that I'm rating 9 or 10 you can pick that up first anything that I'm rating less you can pick that up later you can build this I guess under feature Backlog and under Claude's task as well and you can give IDs in the tasks section also."
 What I do: a "Your score" drop-down (1-10) on every feature not built yet and every task not done. Scores save themselves a few seconds after he picks, into a "## Your scores" table in docs/OWNER-INBOX.md (by ID). Tasks get fixed IDs T1, T2 … like features. A "Your score first" sort on both tabs. WORK RULE from now on: items he scores 9-10 are built first, then 7-8, then lower; unscored items keep their usual place after scored ones of 7+. Every build prints his top-scored open items.
