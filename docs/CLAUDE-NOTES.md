@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-200. Leaderboard: off by default; a switch-on button on the leaderboard screen; switch off in Settings — 30 Oct 2026
+**He said:** "Okay we keep it off by default but we give them a switch on option on leaderboard screen but switch off in settings".
+**Doing:** member app: a member hidden on the leaderboard sees a clear card there, "Show me to my gym" (name + my workouts to gym
+mates), with what it shares in one line, a "Show me" button and a "Not now"; one tap switches on the two existing settings. Switching
+off stays in Settings → Your gym → What my gym can see. Photo sharing is not built (needs a server change + privacy line): offered as
+a later step. Privacy notice: only "or from the leaderboard" added to where the switch is, for his OK.
+
 ## R-199. Leaderboard and gym-mate sharing ON by default (inside the gym) — asked 30 Oct 2026, waiting on his pick
 **He said:** leaderboard settings on by default: name, display picture, workout history and numbers visible to the member's own gym by
 default (Hevy makes workouts public to the world by default; people want this); the member can switch it off.
