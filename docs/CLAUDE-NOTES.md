@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-205. Watch: no "Complete set" button; the watch is for resting and walking — 30 Oct 2026
+He said: "remove the requirement of complete set button on the watch ... people log their reps in the phone app and hit
+the check mark which automatically completes the set. It's only when I'm resting and walking I want to be able to see the
+rest timer and what's coming next." The rest of the Claude Design prompt is OK.
+Did: gave him the revised Claude Design prompt (watch = look-only: rest timer, next set, heart rate; no buttons to log).
+Plan: the current watch app keeps its button until the new design is built; the redesign drops it (and its tap path).
+
 ## R-204. "A" on #72 + do Play Console declarations yourself — 30 Oct 2026
 He said: "A" (approve crash-report privacy line, #72) and "the Play Console steps ... you should be able to do it yourself ...
 ask me to do something on the Chrome only when you cannot literally do it because of safety rules" (rule use-the-browser-yourself, 5th time).
