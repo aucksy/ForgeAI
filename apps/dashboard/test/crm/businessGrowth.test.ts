@@ -381,9 +381,11 @@ describe('the demo gym tells a growth story', () => {
     expect(s.members.filter((m) => m.joinedOn < r.start).every((m) => m.importId)).toBe(true);
     expect(s.payments.filter((p) => p.paidOn >= r.start).some((p) => p.importId)).toBe(false);
   });
-  it('collects more money and has more active members since', () => {
-    expect(r.compare.money.better).toBe(true);
-    expect(r.compare.active.better).toBe(true);
+  it('is a believable success since the start: more money, members and visits, better renewals, fewer lost', () => {
+    for (const m of ['money', 'active', 'visits', 'renewal', 'lost'] as const) expect(r.compare[m].better, m).toBe(true);
+    // Not perfect: some month since the start still loses more members than the month before it.
+    const since = r.chartRows.filter((x) => x.phase === 'since' && x.settled).map((x) => x.lost);
+    expect(since.some((n, i) => i > 0 && n > since[i - 1])).toBe(true);
     expect(summaryLines(r).length).toBeGreaterThanOrEqual(3);
   });
 });

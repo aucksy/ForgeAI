@@ -149,7 +149,7 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
     const female = FIRST_NAMES.indexOf(first) >= 20;
 
     // Joined anywhere from 2 years ago to yesterday, skewed toward recent.
-    const joinedDaysAgo = Math.floor(Math.pow(rnd(), 1.6) * 730) + 1;
+    const joinedDaysAgo = Math.floor(Math.pow(rnd(), JOIN_CURVE) * 730) + 1;
     const joinedOn = addDays(today, -joinedDaysAgo);
 
     const member: Member = {
@@ -263,10 +263,13 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
       firstTerm = false;
       cursor = addDays(endsOn, 1);
 
-      // Renewal is not automatic: a real share of members simply stop.
-      if (cursor <= today && rnd() < 0.28) lapsed = true;
+      // Renewal is not automatic: a real share of members simply stop. "Your growth" (30 Oct 2026):
+      // the demo is the sales story of a gym that started on MettleUp DEMO_START_DAYS_AGO days ago and
+      // then kept more members, so a plan ending before that start lapses more often than one after.
+      const sinceStart = cursor >= addDays(today, -DEMO_START_DAYS_AGO);
+      if (cursor <= today && rnd() < (sinceStart ? LAPSE_SINCE : LAPSE_BEFORE)) lapsed = true;
       // A few let it lapse for a while and come back.
-      else if (cursor <= today && rnd() < 0.12) cursor = addDays(cursor, int(10, 70));
+      else if (cursor <= today && rnd() < (sinceStart ? BREAK_SINCE : BREAK_BEFORE)) cursor = addDays(cursor, int(10, 70));
     }
 
     // ------------------------------------------------------------ attendance
@@ -322,6 +325,18 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
  * the page has six months before it (brought in from the old register and fee book) and six since.
  */
 export const DEMO_START_DAYS_AGO = 214;
+
+/** The share of demo members who stop when a plan ends, before and since the demo gym's start. */
+const LAPSE_BEFORE = 0.33;
+const LAPSE_SINCE = 0.2;
+/** The share who take a break of 10-70 days and come back. */
+const BREAK_BEFORE = 0.14;
+const BREAK_SINCE = 0.06;
+/**
+ * How strongly join days lean to recent months (1 = even over two years). 1.1: a gym that grows steadily
+ * rather than one that doubled in a year, so the money and members since the start rise modestly.
+ */
+const JOIN_CURVE = 1.1;
 
 /**
  * "Your growth" needs the demo to tell the story a real gym's would: it started on MettleUp a few

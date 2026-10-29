@@ -2692,8 +2692,10 @@
   months after the start month (latest 12); renewals/lost use only months past the 15-day window, and the table/charts
   show "–" for those. Summary lines only with both sides; "since", never "because of"; season/prices note. CSV of every
   month. Demo: gym made 214 days ago, everything dated before marked with one importId, plus check-ins 60-400 days back
-  from a second PRNG (register rows before the start, checkedInAt 0); the main demo sequence is unchanged. Demo story:
-  money +23%, active 49 -> 71, visits 5.7 -> 8.0, renewals 70% -> 55% (shown red; left honest).
+  from a second PRNG (register rows before the start, checkedInAt 0). Coordinator follow-up: the demo is what prospects
+  see, so its story is a believable success: plans ending before the start lapse at 33% (+14% break), since at 20%
+  (+6%), joins lean less to recent months (curve 1.1). Demo story (today 17 Oct): money +27%, active 55 -> 78,
+  renewals 60% -> 76%, members lost 2.8 -> 2.2 a month, visits 6.1 -> 7.9; Sep still has a high-loss month.
   Words: member-words + Gemini 3.8 Flash pass. Research: docs/overhaul/research/R-business-growth.md.
   Checks: tsc -b 0, vitest 1356 (businessGrowth.test.ts 27 new; demo.test.ts register rows have no time), playwright
   103 passed + 1 skipped (growth.spec.mjs J-G1..3 new), crawl 33 pages x 2 widths clean, axe 0 serious.
