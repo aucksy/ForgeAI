@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-202. "privacy line OK"; email sent; payment photos — 30 Oct 2026
+**He said:** "privacy line OK" (the leaderboard "Show me" line, EN + HI); he sent the Anthropic support email himself; photos of the
+client gym's payment setup (HDFC PayZapp UPI QR + SmartHub Vyapar sound box), "research for integration possibilities".
+**Done:** privacy line added on feat/leaderboard-show-me (ships with it; rebuild privacy.html at merge). Researched: SmartHub Vyapar
+has no published API/webhook; reports download as PDF/Excel. Answer in tracker #69: route 1 = daily report import + match to dues
+(free), route 2 = HDFC SmartGateway / Razorpay webhooks (automatic, fee). New task: a sample report from the owner.
+
 ## R-201. Idea: balance check + time-boxed focus block (swap exercises for weak muscles) — 30 Oct 2026
 **He said:** detect body parts trained less or not at all, suggest replacing a few routine exercises for ~2 months for better
 coverage; or a quick switch when he wants e.g. more shoulders and less biceps; suggest the top exercise for that part, or the next

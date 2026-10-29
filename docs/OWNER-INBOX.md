@@ -445,9 +445,18 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **Fees:** the company keeps a small cut per payment, about 2% on cards. UPI is often cheaper. I confirm the exact fee for the company the gym picks before anything goes live.
 - **Their current UPI sound box:** some companies (Paytm, PhonePe) can also report payments from the existing QR. If theirs can, we use it and the gym changes nothing at the desk.
 **Your task:** At the client gym, take a photo of the UPI QR stand or sound box, front and back, so the company name shows.
+**TASK DONE (30 Oct)**
 **Your task:** Ask the owner which app they check payments in (for example "Paytm for Business"), and whether the account is in the gym's name.
 **Your task:** Ask whether they would open a Razorpay (or similar) account in the gym's name. It needs the gym's PAN, bank account and an ID, and takes about a day online.
 **After that:** I pick the best route for this gym, tell you the exact steps and fees, and build it. Nothing switches on without your OK.
+**YOUR REPLY (30 Oct):** photos of the gym's payment setup (HDFC PayZapp UPI QR stand and an HDFC "SmartHub Vyapar" sound box); research integration possibilities.
+**My answer (30 Oct):** The gym uses **HDFC Bank SmartHub Vyapar**: an HDFC current account, a UPI QR and a sound box that speaks each payment. What I found:
+- **No public connection from HDFC.** SmartHub Vyapar has no published way for other software to read payments as they arrive (no API, no webhook). The sound box only speaks; nothing comes out of it. HDFC may offer one to big businesses through a relationship manager, but nothing is published.
+- **What it does have:** the app and its website download a transaction report for any dates (PDF or Excel).
+- **Route 1, free, works with what they have (my pick to start):** once a day, the desk downloads the SmartHub Vyapar report and drops it into our admin app. We match each payment to the member who owes that amount at that time, and the desk confirms each receipt with one tap. Nothing changes at the counter.
+- **Route 2, later, fully automatic:** HDFC's own online payment service, **HDFC SmartGateway**, or Razorpay/Cashfree. These tell our server about each payment as it happens, so receipts make themselves. The gym applies for it (same HDFC account works), and pays a small fee per payment.
+- **Not doing:** reading the sound box or the phone's payment alerts. It is fragile and HDFC can break it at any time.
+**Your task:** Ask the owner to open SmartHub Vyapar → Reports, download yesterday's transaction report as Excel, and send it to you (it holds members' payments, so share it only with me, not on WhatsApp groups).
 
 ## 68. Busy machines by day and hour: can it work? — 28 Oct 2026
 **Chat:** ForgeAI Local Chat
