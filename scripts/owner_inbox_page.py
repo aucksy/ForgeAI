@@ -264,8 +264,44 @@ def parse_mine(text):
     return out
 
 
+# R-214 (owner, 29 Oct 2026): every feature carries a fixed ID, "F12 Name" in its Feature cell. The ID never
+# changes when the row moves or is renamed; the name without it stays the key for moves, notes and ratings.
+FID_RE = re.compile(r"^F(\d+)\s+(.+)$")
+
+
+def split_fid(cell):
+    """("F12 Workout logging") -> (12, "Workout logging"); a cell without an ID -> (None, cell)."""
+    m = FID_RE.match(cell)
+    return (int(m.group(1)), m.group(2).strip()) if m else (None, cell)
+
+
+def ensure_fids(text):
+    """Give every backlog row without an ID the next free one, in file order. Returns (text, how many added)."""
+    m = BACKLOG_RE.search(text)
+    if not m:
+        return text, 0
+    lines = m.group(1).split("\n")
+    rows = []
+    for k, line in enumerate(lines):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.strip().startswith("|") or len(cells) not in (3, 4) or cells[0] in ("Feature", "") or set(cells[0]) <= set("-: "):
+            continue
+        rows.append((k, cells))
+    nxt = max([split_fid(c[0])[0] or 0 for _, c in rows] + [0]) + 1
+    added = 0
+    for k, cells in rows:
+        if split_fid(cells[0])[0] is None:
+            cells[0] = "F%d %s" % (nxt, cells[0])
+            nxt += 1
+            added += 1
+            lines[k] = "| " + " | ".join(cells) + " |"
+    if not added:
+        return text, 0
+    return text[: m.start(1)] + "\n".join(lines) + text[m.end(1):], added
+
+
 def parse_backlog(text):
-    """[{id, group, name, status, kind, details, how}] from the "## Feature backlog" section ([] without one).
+    """[{id, num, group, name, status, kind, details, how}] from the "## Feature backlog" section ([] without one).
     R-52 (owner, 22 Oct 2026): an optional 4th cell, "How it will work", for features not built yet."""
     m = BACKLOG_RE.search(text)
     if not m:
@@ -279,11 +315,12 @@ def parse_backlog(text):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if not line.strip().startswith("|") or len(cells) not in (3, 4) or cells[0] in ("Feature", "") or set(cells[0]) <= set("-: "):
             continue
-        fid = slug(group) + "/" + slug(cells[0])
+        num, name = split_fid(cells[0])
+        fid = slug(group) + "/" + slug(name)
         if fid in seen:
             continue
         seen.add(fid)
-        items.append({"id": fid, "group": group, "name": cells[0], "status": cells[1],
+        items.append({"id": fid, "num": num, "group": group, "name": name, "status": cells[1],
                       "kind": BACKLOG_KIND.get(cells[1].lower(), "idea"), "details": cells[2],
                       "how": cells[3] if len(cells) == 4 else ""})
     return items
@@ -375,7 +412,7 @@ def move_features(text, moves):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if not line.strip().startswith("|") or len(cells) not in (3, 4):
             continue
-        mv = moves.get(slug(group) + "/" + slug(cells[0]))
+        mv = moves.get(slug(group) + "/" + slug(split_fid(cells[0])[1]))
         if not mv or mv.get("to") not in MOVE_TO or cells[1] == mv["to"]:
             continue
         cells[1] = mv["to"]
@@ -402,6 +439,7 @@ def absorb(saved_html, md_path=INBOX):
         text = set_task_done(text, int(num), str(when) if when else None)
     text, _ = move_features(text, data.get("moves") or {})
     text = write_ratings(text, data.get("ratings") or {})
+    text, _ = ensure_fids(text)
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -632,6 +670,7 @@ mark { background: var(--wait-bg); color: inherit; border-radius: 3px; padding: 
 .feat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 6px; margin-bottom: 8px; min-width: 0; scroll-margin-top: calc(var(--hdr, 130px) + 12px); }
 .feat.task { padding-bottom: 12px; }
 .fh { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; justify-content: space-between; }
+.fid { font-family: var(--f-mono); font-weight: 700; font-size: 0.86em; color: var(--accent); font-variant-numeric: tabular-nums; }
 .feat .name { font-family: var(--f-body); font-weight: 700; font-size: 1rem; margin: 0; overflow-wrap: anywhere; min-width: 0; flex: 1 1 12em; }
 .feat .det { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; overflow-wrap: anywhere; }
 .feat .how { margin: 4px 0 6px; font-size: 0.93rem; overflow-wrap: anywhere; }
@@ -982,7 +1021,10 @@ const doneBox = (key, label, inner) => inner
 const empty = (title, line) => '<div class="empty"><p><b>' + esc(title) + "</b></p>" + (line ? "<p>" + esc(line) + "</p>" : "") + "</div>";
 const rowEntry = (e, sub) => '<li><a class="row" href="#e' + e.num + '" data-goto="' + e.num + '"><span class="rn">#' + e.num + '</span><span class="rb"><span class="rt">' + esc(e.title) + "</span>" +
   (sub ? '<span class="rs">' + sub + "</span>" : "") + "</span>" + GO + "</a></li>";
-const rowFeat = (f, sub) => '<li><a class="row" href="#" data-feat="' + esc(f.id) + '"><span class="rn"></span><span class="rb"><span class="rt">' + esc(f.name) + "</span>" +
+// R-214: a feature's fixed ID ("F12"), shown before its name and found by search.
+const fidOf = (f) => (f.num ? "F" + f.num : "");
+const fidTag = (f) => (f.num ? '<span class="fid">' + fidOf(f) + "</span> " : "");
+const rowFeat = (f, sub) => '<li><a class="row" href="#" data-feat="' + esc(f.id) + '"><span class="rn">' + fidOf(f) + '</span><span class="rb"><span class="rt">' + esc(f.name) + "</span>" +
   '<span class="rs">' + (sub || '<span class="status k-' + f.kind + '">' + esc(f.status) + "</span> " + esc(f.group)) + "</span></span>" + GO + "</a></li>";
 const rowTask = (x, sub) => '<li><a class="row" href="#" data-task="' + x.i + '"><span class="rn"></span><span class="rb"><span class="rt">' + esc(x.t.task) + "</span>" +
   '<span class="rs">' + (sub || '<span class="status k-' + x.k + '">' + esc(x.t.status) + "</span>") + "</span></span>" + GO + "</a></li>";
@@ -1189,7 +1231,7 @@ function featHtml(f, i, withGroup) {
   const sent = DATA.notes[f.id], mv = DATA.moves[f.id], canMove = !SHIPPED.includes(f.kind);
   const btn = (k, label) => '<button type="button" class="fbtn" data-act="panel" data-p="fp' + k + i + '" aria-expanded="false" aria-controls="fp' + k + i + '">' + label + CHEV + "</button>";
   const pri = canMove && f.kind !== "no" ? priHtml(f.prio) : "";
-  return '<div class="feat" id="f' + i + '"><div class="fh"><h4 class="name">' + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
+  return '<div class="feat" id="f' + i + '"><div class="fh"><h4 class="name">' + fidTag(f) + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
     (pri || withGroup ? '<p class="pris">' + pri + (withGroup ? "<span>" + esc(f.group) + "</span>" : "") + "</p>" : "") +
     '<p class="det">' + esc(f.details) + "</p>" +
     (mv ? '<p class="moved">Moved here by you, ' + esc(mv.at) + ".</p>" : "") +
@@ -1282,7 +1324,7 @@ function searchHtml() {
     const text = e.title + " " + softCaps(e.status) + " " + e.decides.map((d) => d.q + " " + d.opts.map((o) => o.key + ": " + o.text).join(" ")).join(" ") + " " + tasksOf(e).join(" ") + " " + plain(e.body);
     return { e, text, hay: ("#" + e.num + " " + chatLabel(e.chat) + " " + text).toLowerCase() };
   }).filter((x) => hit(x.hay)).sort((a, b) => (nm ? (b.e.num === Number(nm[1])) - (a.e.num === Number(nm[1])) : 0) || byNum(a.e, b.e));
-  const fs = DATA.backlog.map((f, i) => ({ f, i, text: f.name + " " + f.status + " " + f.details + " " + f.how })).filter((x) => hit((x.f.group + " " + x.text).toLowerCase()));
+  const fs = DATA.backlog.map((f, i) => ({ f, i, text: f.name + " " + f.status + " " + f.details + " " + f.how })).filter((x) => hit((fidOf(x.f) + " " + x.f.group + " " + x.text).toLowerCase()));
   const ts = mineAll().map((x) => Object.assign(x, { text: x.t.task + " " + x.t.status + " " + x.t.details })).filter((x) => hit(x.text.toLowerCase()));
   const total = es.length + fs.length + ts.length;
   let out = '<div class="tabhead"><h2>Search: “' + esc(q) + '”</h2><button class="btn ghost quiet" data-act="clearq">Clear</button></div>' +
@@ -1661,6 +1703,9 @@ $("findform").addEventListener("submit", (ev) => {
   const v = $("find").value.trim();
   const nm = v.match(/^#?(\d{1,4})$/);
   if (nm) { $("find").blur(); goTo(Number(nm[1])); return; }
+  const fm = v.match(/^f-?(\d{1,4})$/i);
+  const ff = fm && DATA.backlog.find((f) => f.num === Number(fm[1]));
+  if (ff) { $("find").blur(); goFeat(ff.id); return; }
   if (!v) { $("findmsg").textContent = "Type a number (for example 51) or a word."; return; }
   query = v; render(); scrollTo(0, 0); $("find").blur(); // closes the phone keyboard on the results
 });
@@ -1716,6 +1761,12 @@ def main(argv):
         print(__doc__)
         return 2
     md_path = argv[2] if len(argv) == 3 else INBOX
+    with open(md_path, encoding="utf-8") as f:
+        text, added = ensure_fids(f.read())
+    if added:
+        with open(md_path, "w", encoding="utf-8") as f:
+            f.write(text)
+        print("R-214: feature IDs given to %d new backlog rows (commit docs/OWNER-INBOX.md)" % added)
     page = build(md_path)
     with open(argv[1], "w", encoding="utf-8") as f:
         f.write(page)

@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-215. More detail on "Ask the desk to freeze or renew" — 29 Oct 2026
+He commented on the tracker feature (F150): "add more details for it here. I dont remember what this is about."
+What I did: rewrote its Details (where it came from, #58; what a freeze is; what it changes for a member) and How it will work (the two buttons, the desk's one-tap yes, payment stays at the desk).
+
 ## R-214. Give every feature in the backlog an ID — 29 Oct 2026
 He said: "can you add IDs to features in features backlog please".
 What I do: every backlog row gets a fixed number, F1, F2 …, written in the Feature cell of docs/OWNER-INBOX.md so it never changes when a row moves or is renamed. New rows get the next free number automatically when the page is built. The page shows the number on each feature card and in search; typing "F12" in the search box jumps to that feature.
