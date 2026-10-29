@@ -1,6 +1,7 @@
 # ForgeAI progress
 
 ## Done
+- 30 Oct: F20 merged (Start/End pictures for 243 exercises from RepDB free; pictures are NOT in git, public repo + licence term 3; .github/actions/exercise-pictures fetches RepDB @d5e09343 and shrinks them in every build workflow, cached). F64 merged (speed/incline/level per cardio set, schema 14->15 additive). Main 3834 tests, typecheck clean.
 - 29 Oct: F63 1-rep max and % calculator merged (exercise Summary link + plate calculator link; fresh-reader word fixes). F67 watch install prompt merged. Test server "mettleup-staging" made and matched to live (0001-0042).
 - 2026-10-29: R-207 watch UI rebuilt to the designer's "Ring" hand-off (direction 2a; not built or
   committed yet, needs the cloud wear build). Glance-only: the app screen's "Complete set" is gone
