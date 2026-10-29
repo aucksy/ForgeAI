@@ -22,7 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,7 +103,25 @@ internal val AmbientPalette = Palette(
   upcoming = Color(0xFF1C1C1C),
 )
 
-internal fun palette(ambient: Boolean): Palette = if (ambient) AmbientPalette else ActivePalette
+/**
+ * The gym's colour (BrandColour, already made readable on black) the screens draw in; null =
+ * MettleUp orange. Set by [WatchScreen] from the phone's /forge/workout "accent".
+ */
+internal val LocalBrandAccent = staticCompositionLocalOf<Int?> { null }
+
+/** The palette for [brand] (null = MettleUp's own): only the accent changes; ambient dims it. */
+internal fun paletteFor(ambient: Boolean, brand: Int?): Palette {
+  val base = if (ambient) AmbientPalette else ActivePalette
+  if (brand == null) return base
+  val accent = if (ambient) BrandColour.dim(brand) else brand
+  return Palette(Color(accent), base.text, base.grey, base.track, base.done, base.upcoming)
+}
+
+@Composable
+internal fun palette(ambient: Boolean): Palette {
+  val brand = LocalBrandAccent.current
+  return remember(ambient, brand) { paletteFor(ambient, brand) }
+}
 
 /** Ambient big numerals: no fill, a 1.5 px outline in this colour. */
 private val OutlineInk = Color(0xFFD4D4D4)
@@ -152,16 +172,19 @@ internal fun WatchScreen(
   onSkipAlerts: () -> Unit = {},
 ) {
   val px = rememberPx()
-  val pal = palette(ambient)
+  val pal = remember(ambient, snap.accent) { paletteFor(ambient, snap.accent) }
+  // "Rest is over" fills the screen with the gym's colour (MettleUp orange without a gym).
+  val fill = remember(snap.accent) { paletteFor(false, snap.accent).accent }
   val kind = ScreenSelector.select(snap, askHeartRate, askAlerts, phoneConnected)
   val orange = kind == WatchScreenKind.REST_IS_OVER && !ambient
   // The orange fills the round glass only (a square fill would paint the corners a round watch hides).
   val round = LocalConfiguration.current.isScreenRound
+  CompositionLocalProvider(LocalBrandAccent provides snap.accent) {
   Box(
     Modifier
       .fillMaxSize()
       .background(Color.Black)
-      .background(if (orange) ActivePalette.accent else Color.Black, if (round) CircleShape else RectangleShape)
+      .background(if (orange) fill else Color.Black, if (round) CircleShape else RectangleShape)
       .testTag("screen-${kind.name}"),
     contentAlignment = Alignment.Center,
   ) {
@@ -186,6 +209,7 @@ internal fun WatchScreen(
       WatchScreenKind.BETWEEN_RESTS -> BetweenRestsScreen(card, heart, ambient, px)
     }
     Clock(px, if (orange) Color.Black else pal.grey)
+  }
   }
 }
 

@@ -48,6 +48,17 @@ internal object WearWire {
     }
   }
 
+  private val HEX6 = Regex("^#[0-9A-F]{6}$")
+
+  /**
+   * 29 Oct 2026: the gym's colour as the watch takes it: "#RRGGBB" in capitals, or "" (no gym, or
+   * anything else: the watch stays MettleUp orange).
+   */
+  fun watchAccent(hex: String?): String {
+    val s = hex?.trim()?.uppercase() ?: return ""
+    return if (HEX6.matches(s)) s else ""
+  }
+
   /** The row JSON without its "watch" lines (the watch gets them as their own fields). */
   fun withoutWatch(rowJson: String): String {
     if (rowJson.isEmpty()) return rowJson

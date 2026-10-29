@@ -187,6 +187,19 @@ abstract class WatchScreensRenderBase(private val size: String) {
 
   @Test fun largerText() = both("x8-larger-text", Shot(resting(), ring = true, fontScale = 1.3f))
 
+  // "Watch in the gym's colour" (29 Oct 2026): a gym green as sent, and a navy too dark for black
+  // (made lighter by BrandColour.readable, as the watch does with the phone's "accent").
+  private val green = BrandColour.accentFor("#16A34A")
+  private val navy = BrandColour.accentFor("#1E3A8A")
+
+  @Test fun brandGreenRestTimer() = both("b1-gym-green-rest-timer", Shot(resting().copy(accent = green), ring = true))
+
+  @Test fun brandNavyRestTimer() = both("b2-gym-navy-rest-timer", Shot(resting().copy(accent = navy), ring = true))
+
+  @Test fun brandNavyRestIsOver() = both("b3-gym-navy-rest-is-over", Shot(over().copy(accent = navy), ring = false))
+
+  @Test fun brandNavyBetweenRests() = both("b4-gym-navy-between-rests", Shot(workout("Bench Press", betweenSet).copy(accent = navy), ring = true))
+
   @Test fun longOvertime() = both("x9-long-overtime", Shot(workout("Bench Press", restSet).copy(overAt = now - 3_725_000L), ring = false))
 }
 

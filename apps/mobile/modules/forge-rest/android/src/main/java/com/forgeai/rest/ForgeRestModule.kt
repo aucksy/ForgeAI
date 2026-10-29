@@ -275,6 +275,20 @@ class ForgeRestModule : Module() {
       true
     }
 
+    // 29 Oct 2026: the gym's colour for the watch app ("#RRGGBB"; null = no gym, MettleUp orange).
+    Function("setWatchAccent") { hex: String? ->
+      val c = ctx ?: return@Function false
+      WearSync.setAccent(c, hex)
+      true
+    }
+
+    // 29 Oct 2026: a workout was just STARTED (never a resume): open the watch app (WearSync.openWatch).
+    Function("openWatch") { startedAt: Double ->
+      val c = ctx ?: return@Function false
+      WearSync.openWatch(c, startedAt.toLong())
+      true
+    }
+
     Function("clearWorkoutCard") {
       val c = ctx ?: return@Function false
       WorkoutCard.clear(c)

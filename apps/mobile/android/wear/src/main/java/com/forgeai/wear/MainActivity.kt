@@ -186,10 +186,14 @@ class MainActivity : ComponentActivity() {
     hrAllowed = hasHeartPermission()
     afterNotificationChange()
     onScreen = true
+    visible = true
+    // The app is open: a "Workout started" card has done its job.
+    WorkoutStarted.cancel(this)
   }
 
   override fun onStop() {
     onScreen = false
+    visible = false
     super.onStop()
   }
 
@@ -358,11 +362,16 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  private companion object {
-    const val READ_HEART_RATE = "android.permission.health.READ_HEART_RATE"
-    const val KEY_ASKED_HR = "askedHr"
-    const val KEY_ASKED_NOTIF = "askedNotif"
-    const val KEY_ASKED_EXACT = "askedExact"
-    const val PHONE_CHECK_MS = 15_000L
+  companion object {
+    private const val READ_HEART_RATE = "android.permission.health.READ_HEART_RATE"
+    private const val KEY_ASKED_HR = "askedHr"
+    private const val KEY_ASKED_NOTIF = "askedNotif"
+    private const val KEY_ASKED_EXACT = "askedExact"
+    private const val PHONE_CHECK_MS = 15_000L
+
+    /** The screen is up (between onStart and onStop): [WorkoutStarted] then posts no card. */
+    @Volatile
+    var visible = false
+      private set
   }
 }

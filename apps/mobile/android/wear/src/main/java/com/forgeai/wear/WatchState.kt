@@ -55,6 +55,8 @@ object WatchState {
     val text: String = "",
     val next: NextSet = NextSet.NONE,
     val overAt: Long = 0L,
+    /** The gym's colour, readable on black ([BrandColour]); null = MettleUp orange (no gym, older phone app). */
+    val accent: Int? = null,
   )
 
   private val main = Handler(Looper.getMainLooper())
@@ -91,6 +93,7 @@ object WatchState {
       p.getString("text", "") ?: "",
       next,
       p.getLong("overAt", 0L),
+      BrandColour.accentFor(p.getString("accent", "")),
     )
   }
 
@@ -215,7 +218,16 @@ object WatchState {
 
   /** A /forge/workout item from the phone. */
   @Synchronized
-  fun onWorkout(ctx: Context, active: Boolean, title: String, seq: Long, text: String = "", done: String = "", next: NextSet = NextSet.NONE) {
+  fun onWorkout(
+    ctx: Context,
+    active: Boolean,
+    title: String,
+    seq: Long,
+    text: String = "",
+    done: String = "",
+    next: NextSet = NextSet.NONE,
+    accent: String = "",
+  ) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
     // R-207: "Rest is over" waits for the set after the rest; the phone naming another row (the set
@@ -232,7 +244,11 @@ object WatchState {
       .putString("set", if (active) next.set else "")
       .putString("last", if (active) next.last else "")
       .putString("goal", if (active) next.goal else "")
+      // The gym's colour ("" = none, or an older phone app: MettleUp orange). Kept after the
+      // workout too, so the next screen is already in the gym's colour.
+      .putString("accent", accent)
       .commit()
+    if (!active) WorkoutStarted.cancel(ctx)
     if (!active) {
       // Workout finished or discarded: no rest may buzz after it, and (C5-9) a "Rest is over ·
       // Next: …" still up goes too (it stayed until its 2-minute timeout).

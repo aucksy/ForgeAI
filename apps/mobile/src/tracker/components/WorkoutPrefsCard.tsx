@@ -164,6 +164,8 @@ export function RestPrefsCard() {
   const loadDefault = useRestTimer((s) => s.loadDefault);
   const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
   const setRingThroughDnd = useRestAlertPrefs((s) => s.setRingThroughDnd);
+  const watchOpen = useRestAlertPrefs((s) => s.watchOpen);
+  const setWatchOpen = useRestAlertPrefs((s) => s.setWatchOpen);
   const [picking, setPicking] = useState(false);
   const [choosingSound, setChoosingSound] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -215,6 +217,17 @@ export function RestPrefsCard() {
           caption="Rest is over still rings while Do Not Disturb is on"
           value={ringThroughDnd}
           onChange={setRingThroughDnd}
+          divider
+        />
+      ) : null}
+      {/* 29 Oct 2026: starting a workout opens MettleUp on a Wear OS watch (watchOpen.ts). */}
+      {Platform.OS === 'android' ? (
+        <ToggleRow
+          icon="clock"
+          title="Open MettleUp on my watch"
+          caption="When you start a workout, your watch opens MettleUp too"
+          value={watchOpen}
+          onChange={setWatchOpen}
           divider
         />
       ) : null}

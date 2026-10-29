@@ -125,7 +125,7 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
     'inUseAfterSet',
   ],
   'forgeai-plate-setup': ['metric', 'imperial'],
-  'forgeai-rest-alert-prefs': ['ringThroughDnd'],
+  'forgeai-rest-alert-prefs': ['ringThroughDnd', 'watchOpen'],
   // healthConnect: carried, but a restore never switches it on by itself (Android asks for the
   // permission on each phone): the member is told to turn it on again (backupSettings.ts).
   'forgeai-phone-prefs': ['healthConnect', 'remindersOn', 'reminderDays', 'reminderMinutes', 'reminderChosen', 'gymRemindersOn', 'gymMessagesOn'],

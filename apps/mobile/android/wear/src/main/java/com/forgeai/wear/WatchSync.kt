@@ -12,6 +12,9 @@ object WatchSync {
   const val PATH_REST = "/forge/rest"
   const val PATH_WORKOUT = "/forge/workout"
 
+  /** A message: the member just started a workout on the phone ([WorkoutStarted]). */
+  const val PATH_OPEN = "/forge/open"
+
   fun apply(ctx: Context, item: DataItem) {
     try {
       val path = item.uri.path ?: return
@@ -41,6 +44,8 @@ object WatchSync {
           m.getString("done", "") ?: "",
           // R-166: the next set's lines (an older phone app sends none: the screen uses text).
           NextSet(m.getString("set", "") ?: "", m.getString("last", "") ?: "", m.getString("goal", "") ?: ""),
+          // The gym's colour, "#RRGGBB" (an older phone app sends none: MettleUp orange).
+          m.getString("accent", "") ?: "",
         )
       }
     } catch (e: Exception) {
