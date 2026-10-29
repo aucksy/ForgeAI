@@ -40,6 +40,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Steps and water each day | Low | Medium |
 | Feature: 1-rep max and % calculator | Medium | Low |
 | Feature: Treadmill and cycle details | Medium | Medium |
+| Feature: Watch in the gym's colour | Low | Low |
 | Feature: Log sets on the watch | Low | High |
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
