@@ -2843,6 +2843,16 @@
   - Server: 0041_offline_desk_receipts.sql (NOT APPLIED LIVE): an offline-series receipt of a claimed desk skips
     OVER_DUE. Test 0041 PASS 18 on PGlite; fails 4 against the 0021 rule.
   - Design doc: docs/overhaul/OFFLINE-DESK.md. Checks: tsc -b, vitest 1311, panel 63, e2e (J34b list + phone fit).
+- 2026-10-30: **Message calm (R-195), branch feat/message-calm, NOT merged, 0042 NOT APPLIED.** (1) Admin app Messages:
+  messages.calmNudge = one calm line above "Send in the app" from the 3rd in-app message of the India day (or the 8th in
+  the 7 days ending that day); counted like capProblem (appear day, taken-back not counted); the pop-up sentence only
+  once the server's rows carry "quiet" (0042 live); Sent list pill "No phone pop-up". (2) Quiet after 2 a day:
+  supabase/migrations/0042_message_calm.sql adds gym_messages.quiet (BEFORE INSERT trigger: 2+ not-taken-back messages
+  already on its India day), _push_job_message finishes a quiet message's push job at once ('quiet'), _message_json
+  carries "quiet"; member app noticeAlerts.planNoticeAlerts never pops up a quiet one (the 15-minute check; needs the
+  next member release, older apps still pop it up from that check). (3) DAY_MAX and the server's TOO_MANY 20 -> 10
+  (0025's owner_send_message copied, one number changed). Tests: 0042 PASS 22 and all 32 DB suites on PGlite (0038 test
+  moves its first two messages to yesterday before the paging step); dashboard vitest 1331, e2e J35c (nudge + shot).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

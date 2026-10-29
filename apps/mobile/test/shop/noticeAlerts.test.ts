@@ -47,6 +47,14 @@ describe('which notices pop up', () => {
     expect(p.alerted).toEqual(['a', 'b']);
   });
 
+  it('a quiet notice (the gym\'s 3rd or later of the day, R-195) never pops up, but is remembered', () => {
+    const p = planNoticeAlerts({ messages: [msg('a', 30), msg('b', 20), msg('c', 10, { quiet: true })], alerted: [], inFront: false, now: NOW });
+    expect(p.notify.map((m) => m.id)).toEqual(['a', 'b']);
+    expect(p.alerted).toEqual(['a', 'b', 'c']);
+    // Later checks never pop it up either.
+    expect(planNoticeAlerts({ messages: [msg('c', 10, { quiet: true })], alerted: [], inFront: false, now: NOW }).notify).toEqual([]);
+  });
+
   it('with the app in front nothing pops up, but the notices are remembered for the background job', () => {
     const list = [msg('a', 30), msg('b', 10)];
     const front = planNoticeAlerts({ messages: list, alerted: ['a'], inFront: true, now: NOW });

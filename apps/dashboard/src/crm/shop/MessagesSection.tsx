@@ -82,6 +82,7 @@ import {
   BODY_MAX,
   MESSAGE_KINDS,
   TITLE_MAX,
+  calmNudge,
   capProblem,
   draftProblem,
   isCapped,
@@ -168,6 +169,8 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   const problem = personal ? null : missing.length > 0 ? `Fill in: ${missing.map((s) => s.label).join(', ')}.` : draftProblem(draft);
   const later = groups && when === 'later' ? sendAtFromLocal(laterText, now) : null;
   const cap = capProblem(kind, sent, now, later?.ok ? later.at : now);
+  // R-195: a calm line from the 3rd message of a day or the 8th in a week (sending stays open).
+  const nudge = cap ? null : calmNudge(sent, now, later?.ok ? later.at : now);
 
   const gymName = snapshot.gym.name;
   const sign = signLine(snapshot.gym, lang === 'hi' ? 'hi' : 'en');
@@ -565,6 +568,11 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                     {cap}
                   </p>
                 )}
+                {nudge && !alreadySent && (
+                  <p role="status" data-testid="message-nudge" style={{ ...quiet, marginBottom: space.sm }}>
+                    {nudge}
+                  </p>
+                )}
                 {groupLoading && !alreadySent && (
                   <p role="status" style={{ ...quiet, marginBottom: space.sm }}>
                     Still loading who in this group has the app…
@@ -665,6 +673,7 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', marginBottom: 6 }}>
                     <Pill tone={isCapped(m.kind) ? 'accent' : 'muted'}>{kindLabel(m.kind)}</Pill>
                     {m.toGroup && <Pill tone="muted">To a group</Pill>}
+                    {m.quiet && !m.withdrawn && <Pill tone="muted">No phone pop-up</Pill>}
                     {m.withdrawn && <Pill tone="critical">{m.sendAt !== null && m.sendAt > m.createdAt ? 'Cancelled' : 'Taken back'}</Pill>}
                     <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{timeAgo(m.createdAt, now)}</span>
                   </div>

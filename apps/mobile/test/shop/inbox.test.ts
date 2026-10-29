@@ -31,6 +31,15 @@ describe('inbox rows', () => {
     expect(inboxFromRows(null)).toEqual([]);
   });
 
+  it('reads the quiet mark (0042): only a true one is kept, and it still counts as unread', () => {
+    const list = inboxFromRows([
+      { id: 'q', kind: 'timing', title: 'New timings', createdAt: '2026-10-14T05:00:00Z', seen: false, quiet: true },
+      { id: 'n', kind: 'timing', title: 'Old timings', createdAt: '2026-10-14T04:00:00Z', seen: false, quiet: false },
+    ]);
+    expect(list.map((m) => `${m.id}:${String(m.quiet)}`)).toEqual(['q:true', 'n:undefined']);
+    expect(unreadCount(list)).toBe(2);
+  });
+
   it('keeps what this phone saw even before the server heard', () => {
     const list = mergeSeen(inboxFromRows(ROWS), new Set(['b']));
     expect(unreadCount(list)).toBe(0);
