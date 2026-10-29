@@ -6,7 +6,8 @@
 // never in the app (anyone can pull a key out of an APK). The phone's own speech to text was poor,
 // worse with gym music.
 //
-// Nothing of the clip is kept: not the sound, not the text. Only a count per install per India day in
+// Nothing of the clip is kept: not the sound, not the text. Only a count per install per India day (deleted
+// after KEEP_COUNT_DAYS by the daily clean-up) in
 // D1 `forgeai-web`, table `ai_usage` (kind 'voice', gym_id = 'v:' + the install id or the address hash),
 // so no new table is needed.
 //
@@ -37,6 +38,16 @@ function answer(status, body) {
 /** India date, YYYY-MM-DD. PURE. */
 export function indiaDay(now) {
   return new Date(now.getTime() + 330 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+/** Days the per-install and per-address counts are kept (privacy notice, #73, 30 Oct 2026). */
+export const KEEP_COUNT_DAYS = 7;
+
+/** The daily clean-up: spoken-feedback counts older than KEEP_COUNT_DAYS go. -> rows deleted. */
+export async function deleteOldVoiceCounts(db, now = new Date()) {
+  const before = indiaDay(new Date(now.getTime() - KEEP_COUNT_DAYS * 24 * 60 * 60 * 1000));
+  const r = await db.prepare("DELETE FROM ai_usage WHERE kind LIKE 'voice%' AND day < ?").bind(before).run();
+  return Number(r?.meta?.changes ?? 0);
 }
 
 /** Whisper's text, tidied: one line of spaces, no "[music]"-style tags, cut to the feedback limit. PURE. */

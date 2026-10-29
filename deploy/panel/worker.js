@@ -26,7 +26,7 @@
 import { deleteOldCrashes, handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
 import { handleLead } from './leads.js';
-import { handleVoice } from './voice.js';
+import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
@@ -91,6 +91,13 @@ export default {
       deleteOldCrashes(env.WEB).then(
         (n) => console.log('[crash] clean-up: deleted', n, 'reports older than 90 days'),
         (e) => console.error('[crash] clean-up failed', e),
+      ),
+    );
+    // #73: the spoken-feedback counts per phone and per address are kept 7 days.
+    ctx.waitUntil(
+      deleteOldVoiceCounts(env.WEB).then(
+        (n) => console.log('[voice] clean-up: deleted', n, 'counts older than 7 days'),
+        (e) => console.error('[voice] clean-up failed', e),
       ),
     );
   },

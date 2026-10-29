@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-208. #73 decided A; watch in the gym's colour goes to the backlog — 30 Oct 2026
+He picked A on #73 ("Done for #73"). Did: the spoken-feedback line in PRIVACY-NOTICE.md + -HI.md (table row, Groq under "Where it is kept", change line), legal_pages.py rebuilt privacy.html. Added for truth: per-address counts are named, and the counts now go after 7 days (deleteOldVoiceCounts in the daily cron; test added, panel 82/82). His task: Groq Zero Data Retention on the account of the VastuFirst key (the server uses that key since his own key got 401). Mine: Play Data safety "Voice or sound recordings".
+He also asked: "did we ensure that the colors on the watch app also changes if the colors in the app changes for the gym? If not, just put it inside the feature backlog. It's not priority." Checked: no, the watch colours are fixed orange (WatchScreens.kt palette, RestAlerts EMBER). Added backlog row "Watch in the gym's colour", Planned, after 0.61.0.
+
 ## R-207. Watch redesign hand-off arrived; how to install the watch app — 30 Oct 2026
 He said: "Watch OS designs are here: D:\Apps\ForgeAI\Wear OS\Designs\MettleUp Wear OS watch app\design_handoff_mettleup_wear_ring" and "Wear OS review on play console is complete. How do I install it on my watch".
 Plan: rebuild the watch screens to the "Ring" direction (2a) exactly per its README (Compose for Wear, Manrope, scale by width/456, no taps during a workout, Complete-set button gone), with render-gate previews compared to screens/*.png; ship in the next watch release.

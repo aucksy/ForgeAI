@@ -75,6 +75,7 @@ Server changes 0039 and 0040 are live.
 | Only if your phone is in a gym with "Messages from my gym" on: a push address for this phone (made by Google's Firebase), so your gym's messages and offers can pop up | So your gym's messages can pop up on your phone | Deleted when you leave the gym or turn messages off (or turn off the app's notifications), and when the phone has not used it for 60 days |
 | Feedback you choose to send (Settings → Send feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number | To fix problems and decide what to build next | 1 year |
 | Crash reports, sent by the app when it crashes: a short error message, the place in the app where it broke, and the app version. They hold no workouts, name, mobile number, gym or phone details. A copy of the error text goes to our private bug list on GitHub | Only to fix the problem | 90 days |
+| Spoken feedback (only when you tap Speak in Settings → Send feedback, then Stop): your recording goes through our server to Groq, a speech-to-text service in the USA, to turn it into text. The text comes back to your phone, and reaches us only if you tap Send. We count how many recordings each phone, and each network address (in a scrambled form), makes a day | To turn your voice into text; the counts are only to stop misuse | The recording: neither we nor Groq keep it. The counts: 7 days |
 | Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts" | So you can get them back on a new phone | Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days |
 | Only if you sign in with Google: your MettleUp account (your Google email address, and the name and picture link Google shares) | So only you can open your saved workouts | Until you delete your account (one exception, explained below) |
 | Technical logs (sign-ins, errors, the network address of requests) | To keep the service working and safe | Up to 7 days today (our provider's limit); from May 2027, 1 year, as the law then requires |
@@ -131,7 +132,7 @@ Google's own privacy terms apply to it.
 Our main database is in **Mumbai, India** (Supabase). Some service providers may process limited
 data outside India: Cloudflare (delivers the desk app and passes both apps' requests on to our
 database), Google (sign-in with Google, and Google Drive if you turn on that backup), Google Play
-and GitHub (app downloads, and our private bug list for crash reports), and, only when your gym's owner imports an old member list,
+GitHub (app downloads, and our private bug list for crash reports), Groq in the USA (turns spoken feedback into text and keeps nothing), and, only when your gym's owner imports an old member list,
 Google Gemini or Anthropic Claude (they see the list's column names, 5 example rows and simple
 counts per column, with names, addresses, mobile numbers, emails and ID numbers hidden). Google's Firebase Cloud Messaging carries each pop-up to your phone: your
 gym's name and the first line of the message or offer; nothing about your workouts goes with it. They
@@ -169,8 +170,9 @@ Board ourselves and tell you directly.
 ### Changes
 We tell you in the app before a change that affects you. The date below is the latest version.
 
-Last updated: 30 Oct 2026. What changed: crash reports are now listed (what they hold, and that they
-are deleted after 90 days).
+Last updated: 30 Oct 2026. What changed: spoken feedback is now listed (your recording goes to Groq in
+the USA to become text, and nobody keeps it), and crash reports (what they hold, and that they are
+deleted after 90 days).
 
 ---
 

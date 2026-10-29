@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import { deleteOldCrashes } from './crash.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 import { takeOne } from './aiMatch.js';
-import { ALL_PER_DAY, GROQ_URL, MAX_BYTES, PER_ADDRESS_PER_DAY, PER_INSTALL_PER_DAY, cleanText, handleVoice, indiaDay, takeClip } from './voice.js';
+import { ALL_PER_DAY, GROQ_URL, MAX_BYTES, PER_ADDRESS_PER_DAY, PER_INSTALL_PER_DAY, cleanText, deleteOldVoiceCounts, handleVoice, indiaDay, takeClip } from './voice.js';
 
 const ENV = (db) => ({ WEB: db, FEEDBACK_SALT: 'salt', GROQ_API_KEY: 'gsk_test' });
 const NOW = new Date('2026-10-30T10:00:00Z');
@@ -144,4 +144,17 @@ test('#72: the daily clean-up deletes crash reports older than 90 days, never fe
   add('2026-01-01T00:00:00.000Z', 'new'); // old feedback: stays (kept 1 year, another rule)
   assert.equal(await deleteOldCrashes(db, NOW), 1);
   assert.deepEqual(db.sqlite.prepare('SELECT at, status FROM feedback ORDER BY at').all().map((r) => r.status), ['new', 'crash']);
+});
+
+test('the daily clean-up deletes spoken-feedback counts older than 7 days, and nothing else', async () => {
+  const db = sqliteD1();
+  const ins = db.sqlite.prepare('INSERT INTO ai_usage (day, gym_id, kind, calls) VALUES (?, ?, ?, 1)');
+  ins.run('2026-10-20', 'v:old', 'voice');
+  ins.run('2026-10-20', 'v:ip:old', 'voice-ip');
+  ins.run('2026-10-20', 'gym-1', 'match');
+  ins.run('2026-10-25', 'v:new', 'voice');
+  const now = new Date('2026-10-30T06:00:00Z');
+  assert.equal(await deleteOldVoiceCounts(db, now), 2);
+  const left = db.sqlite.prepare('SELECT gym_id FROM ai_usage ORDER BY gym_id').all().map((r) => r.gym_id);
+  assert.deepEqual(left, ['gym-1', 'v:new']);
 });

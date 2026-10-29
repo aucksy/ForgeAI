@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| #73 | Say in the privacy notice that spoken feedback goes to Groq for speech-to-text? | A: yes, and switch on Groq's "keep nothing" setting |
 
 ---
 
@@ -302,6 +301,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Steps and water each day | Planned | Steps from Health Connect and a water tap on Today, from #58. | Reads today's steps from Health Connect (one new permission), shown on Today with a water tap. Stays on the phone. A gym-wide step challenge is parked (owner, 24 Oct: nothing that costs server space). |
 | 1-rep max and % calculator | Planned | Type a weight and reps to see your 1-rep max, then 50-95% of it in plate-ready weights, from #58. | Opens from an exercise's chart and from the plate calculator. Uses the same formula as the estimated 1-rep max chart. On the phone only. |
 | Treadmill and cycle details | Planned | Log speed, incline, level and intervals for cardio machines, from #58. | Cardio exercises get extra fields (speed, incline or level) added without changing old workouts. History and charts show them. |
+| Watch in the gym's colour | Planned | Your idea, 30 Oct: today the watch is always MettleUp orange, even when the phone app uses the gym's colour. Not urgent; after 0.61.0. | The phone sends the gym's colour to the watch with each workout update. The watch uses it for the ring, the buttons and the "Rest is over" screen, made lighter if it is too dark to read on black. With no gym, it stays orange. |
 | Log sets on the watch | Idea | Parked (Claude, 24 Oct): few members wear Wear OS watches; from #58. | The watch would show the current set with a Done button. Waits until members ask. |
 | Floating feedback button, by voice or typing | Next release | Built 28 Oct, ships in 0.60.0 (R-149). A small button on every screen; speak in Hindi or English, or type. | A small round button floats on every screen of the member app. Tap it, then speak (Hindi, English or Hinglish) or type; the phone turns speech into text for free. The note reaches us with the screen it came from. Claude reads the notes twice a day, fixes what it can and releases the fix after the tests pass. |
 | Big "kg lifted vs last time" on the finish screen | Next release | Built 28 Oct, ships in 0.60.0 (R-147): "Last time 1,880 kg, today 1,925 kg" as the headline. | At the top of the workout-complete screen, one large card: today's kg lifted, last time's for the same routine, and "+45 kg" in green. A lighter day gets a kind line. |
@@ -445,9 +445,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
 **Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
-**Decide:** Add this line to the privacy notice (English and Hindi): "Spoken feedback: when you tap Speak and then Stop, your recording goes through our server to Groq, a speech-to-text service in the USA, to turn it into text. Neither we nor Groq keep the recording. The text comes back to your phone, and reaches us only if you tap Send. We count how many recordings each phone makes a day, to stop misuse." In Play's Data safety form I tick "Voice or sound recordings": used only for this, not kept, not shared.
-- A: Yes, as written. You also switch on Zero Data Retention in Groq Console, Settings, Data Controls (2 minutes) (recommended)
-- B: Hold spoken feedback back: 0.61.0 goes out with typing only, and we decide later
+**DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. I tick "Voice or sound recordings" in Play's Data safety form.
+**Your task:** Open console.groq.com, then Settings, then Data Controls, and switch on Zero Data Retention. Use the Groq account that holds your VastuFirst key: the server now uses that key. If you already did this, tap "I have done it".
 
 ## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
