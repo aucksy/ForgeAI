@@ -94,6 +94,8 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t38_is('6group', (r->'tokens')::text, jsonb_build_array(tb)::text);
 
   -- 7. Large gyms: page by page, never the same phone twice, the last page says so.
+  -- (0042: the 3rd message of a day gets no push, so the two above are moved to yesterday first.)
+  update public.gym_messages set created_at = created_at - interval '1 day' where gym_id = gid;
   msg := public.owner_send_message(kop, 'timing', 'New timings', '5 am to 11 pm');
   for i in 1..4 loop
     r := public.hq_push_next(1);
