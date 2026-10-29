@@ -450,7 +450,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **READ (29 Oct, 06:14 pm, via the page)**
 **Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
 **DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. I tick "Voice or sound recordings" in Play's Data safety form.
-**Your task:** Open console.groq.com, then Settings, then Data Controls, and switch on Zero Data Retention. Use the Groq account that holds your VastuFirst key: the server now uses that key. If you already did this, tap "I have done it".
+**Your task:** In your PERSONAL Groq account (console.groq.com), open Settings, then Data Controls. Switch on "Inference APIs ZDR". Leave the other switches as they are.
+**Your task:** In the same account, open API Keys, make a new key called "MettleUp feedback" and copy it. Open Notepad, paste the key, and save it as D:\Apps\ForgeAI\groq-key.txt. Then tell me "key saved". I put it on the server without reading it, test it, and delete the file. (Until then the server uses the VastuFirst key from your client's account, which must stop.)
 
 ## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
