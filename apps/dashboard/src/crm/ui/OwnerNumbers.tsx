@@ -459,11 +459,44 @@ export function NumbersSection() {
           : `Last ${range.kind} days, and plans ending in the next ${range.kind}. Tap a number to see who is behind it.`}
       </p>
       <Grid min={compact ? 150 : 190}>{ids.map(tile)}</Grid>
+      {/* Owner, 30 Oct 2026: the long view (money, members, renewals month by month). Owner only. */}
+      {seeTotals && <GrowthLink />}
     </section>
   );
 }
 
-/** "up ₹4k in 30 days" / "down ₹1.2k since 29 Sep" / "no change in 30 days"; short money, so it fits a tile. */
+/** The way to "Your growth": is the gym growing since MettleUp, month by month. */
+function GrowthLink() {
+  return (
+    <Link to="/growth" style={{ display: 'block', marginTop: space.md }}>
+      <span
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space.md,
+          minHeight: TOUCH + 12,
+          padding: `${space.md}px ${space.lg}px`,
+          borderRadius: radius.lg,
+          border: `1px solid ${color.border}`,
+          background: color.accentSoft,
+          color: color.ink,
+        }}
+      >
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: 'block', fontFamily: font.body, fontSize: 15, fontWeight: 700 }}>Your growth</span>
+          <span style={{ display: 'block', fontFamily: font.body, fontSize: 13, color: color.inkSecondary, textWrap: 'pretty' }}>
+            Is the gym growing since MettleUp? Money, members and renewals, month by month.
+          </span>
+        </span>
+        <span aria-hidden style={{ color: color.inkMuted, fontSize: 20 }}>
+          ›
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+/** "up ₹4k in 30 days"/ "down ₹1.2k since 29 Sep" / "no change in 30 days"; short money, so it fits a tile. */
 function moneyChangeWords(now: number, before: number, since: string): string {
   if (now === before) return `no change ${since}`;
   return `${now > before ? 'up' : 'down'} ${formatINRShort(Math.abs(now - before))} ${since}`;

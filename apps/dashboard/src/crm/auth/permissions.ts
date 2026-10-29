@@ -117,6 +117,8 @@ export function canOpen(role: Role, path: string): boolean {
   if (head === 'branches') return can(role, 'seeTotals');
   // R-168: the "Money owed" list behind its Today tile is a money total (the other numbers are people).
   if (head === 'numbers' && sub === 'owed') return can(role, 'seeTotals');
+  // Owner, 30 Oct 2026: "Your growth" is the gym's money and members month by month: the owner's.
+  if (head === 'growth') return can(role, 'seeTotals');
   return true;
 }
 

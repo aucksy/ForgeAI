@@ -303,6 +303,8 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
     members[i * 7 % members.length].appUserId = `user_demo_${i}`;
   }
 
+  markOldHistoryImported(gym, members, memberships, payments, visits, today, seed);
+
   // Receipt numbers are assigned LAST, in payment-date order. Issuing them as we
   // generated member-by-member produced a book where receipt 0003 predated 0001 —
   // unique, but the first thing an owner or their accountant would query.
@@ -313,6 +315,71 @@ export function buildDemoGym(opts: DemoOptions): CrmSnapshot {
   }
 
   return { gym, members, plans, memberships, payments, visits, enquiries: [], expenses: [], workoutPlans: [] };
+}
+
+/**
+ * How long ago the demo gym started on MettleUp ("Your growth", 30 Oct 2026): about seven months, so
+ * the page has six months before it (brought in from the old register and fee book) and six since.
+ */
+export const DEMO_START_DAYS_AGO = 214;
+
+/**
+ * "Your growth" needs the demo to tell the story a real gym's would: it started on MettleUp a few
+ * months ago and brought its old records in. Runs AFTER everything above and draws from its OWN
+ * random numbers, so every member, plan, receipt and recent check-in stays exactly as it was:
+ *  - the gym was made DEMO_START_DAYS_AGO days ago (Settings says "Set up <that day>");
+ *  - every member, plan and receipt dated before then carries one import's id (`importId`), like the
+ *    Excel import marks the rows it brings in;
+ *  - check-ins further back than the 60 days drawn above: before the start they are paper-register
+ *    rows (source 'import', no time), after it desk and app check-ins with a time. They stop 60 days
+ *    back, so the last 60 days (and the at-risk lists read from them) keep their own visits; the
+ *    habit check reads at most 8 visits back, which older rows can only fill in for a rare member.
+ */
+function markOldHistoryImported(
+  gym: GymRecord,
+  members: Member[],
+  memberships: Membership[],
+  payments: Payment[],
+  visits: Visit[],
+  today: DateISO,
+  seed: number,
+): void {
+  if (members.length === 0) return;
+  const startOn = addDays(today, -DEMO_START_DAYS_AGO);
+  gym.createdAt = epochOfLocalNoon(startOn);
+  const importId = `import-${gym.createdAt.toString(36)}`;
+  for (const m of members) if (m.joinedOn < startOn) m.importId = importId;
+  for (const m of memberships) if (m.startsOn < startOn) m.importId = importId;
+  for (const p of payments) if (p.paidOn < startOn) p.importId = importId;
+
+  const rnd = mulberry32(seed ^ 0x5eed);
+  const byMember = new Map<string, Membership[]>();
+  for (const m of memberships) {
+    const list = byMember.get(m.memberId);
+    if (list) list.push(m);
+    else byMember.set(m.memberId, [m]);
+  }
+  let n = 0;
+  for (const member of members) {
+    if (member.archived) continue;
+    const terms = byMember.get(member.id) ?? [];
+    const habit = 0.1 + rnd() * 0.35;
+    for (let d = 60; d < 400; d += 1) {
+      const day = addDays(today, -d);
+      if (!terms.some((t) => t.startsOn <= day && t.endsOn >= day)) continue;
+      const before = day < startOn;
+      // A paper register misses days (nobody wrote them down), so it reads a little thinner.
+      if (rnd() >= (before ? habit * 0.8 : habit)) continue;
+      visits.push({
+        id: `vis_old_${(n += 1).toString(36).padStart(5, '0')}`,
+        gymId: gym.gymId,
+        memberId: member.id,
+        visitedOn: day,
+        checkedInAt: before ? 0 : epochOfLocalTime(day, 6 + Math.floor(rnd() * 16), 15),
+        source: before ? 'import' : rnd() < 0.25 ? 'app' : 'desk',
+      });
+    }
+  }
 }
 
 /** Epoch ms for local noon on `day` — timezone-correct, unlike parsing a `Z` string. */

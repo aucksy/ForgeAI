@@ -2679,6 +2679,24 @@
   pushes). Play upload did not start by itself (workflow_run never fired); run by hand it crashed in the AAB upload
   (httplib2 followed Google's 308 "Resume Incomplete" as a redirect): play_common.service() drops 308 (aeef836, guard
   test). Then 57000 committed on internal + alpha. APK: releases/download/v0.57.0/mettleup-v0.57.0.apk
+- 2026-10-29: **"Your growth" BUILT on branch feat/business-growth (on top of feat/owner-analytics; not merged, not deployed).**
+  Owner, 30 Oct: "does buying our system truly impact their revenue and growth?" Owner-only page `/growth` (canOpen:
+  seeTotals), reached from a link under "Your numbers" on Today, More, and the side menu; `/growth/print` = one A4 page
+  (gym name + logo from ownerGym brand, summary, before/since table, 2 charts, months) for browser Print / PDF.
+  Logic `logic/businessGrowth.ts` (pure): per month money (non-voided receipts by paidOn), active members on month end
+  (gym terms, not cancelled, >= 7 days; archived members kept in the past), joined, renewed/lost/waiting by the month
+  the plan ended (renewed = a later plan starting <= endsOn + 15 days, early renewal included), visits / active.
+  Start = gym createdAt or the earliest non-imported member/membership/payment createdAt. Before = up to 6 months before
+  the start month that have a plan ending in them (a day-one roster has none, so it never fakes an empty past); needs 2,
+  else "first N vs latest N finished months" (N <= 3) and an "Add old records" card -> /members/import. Since = finished
+  months after the start month (latest 12); renewals/lost use only months past the 15-day window, and the table/charts
+  show "–" for those. Summary lines only with both sides; "since", never "because of"; season/prices note. CSV of every
+  month. Demo: gym made 214 days ago, everything dated before marked with one importId, plus check-ins 60-400 days back
+  from a second PRNG (register rows before the start, checkedInAt 0); the main demo sequence is unchanged. Demo story:
+  money +23%, active 49 -> 71, visits 5.7 -> 8.0, renewals 70% -> 55% (shown red; left honest).
+  Words: member-words + Gemini 3.8 Flash pass. Research: docs/overhaul/research/R-business-growth.md.
+  Checks: tsc -b 0, vitest 1356 (businessGrowth.test.ts 27 new; demo.test.ts register rows have no time), playwright
+  103 passed + 1 skipped (growth.spec.mjs J-G1..3 new), crawl 33 pages x 2 widths clean, axe 0 serious.
 - 2026-10-28: **0.58.1 prepared: gym notices pop up on the phone (R-153 step 1, no Firebase).** Root cause of R-151:
   push was never built (no FCM token, no sender; the inbox was read only while the app ran). expo-background-task +
   expo-task-manager (new native modules, autolinked): task mettleup-gym-notices (shop/noticeTask.ts, imported by

@@ -84,7 +84,12 @@ describe('demo gym', () => {
   it('timestamps a check-in inside the day it is recorded against', () => {
     // Building the timestamp from `${day}T21:15:00Z` put a 9pm visit at 02:45
     // IST the NEXT calendar day — outside the day it belongs to.
-    for (const v of snap.visits) {
+    // "Your growth" (30 Oct 2026): the old paper-register rows before the gym started on MettleUp
+    // carry no time at all (checkedInAt 0), exactly like a real register import.
+    const register = snap.visits.filter((v) => v.source === 'import');
+    expect(register.length).toBeGreaterThan(0);
+    expect(register.every((v) => v.checkedInAt === 0)).toBe(true);
+    for (const v of snap.visits.filter((x) => x.source !== 'import')) {
       const d = new Date(v.checkedInAt);
       const localDay = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       expect(localDay).toBe(v.visitedOn);
@@ -268,7 +273,8 @@ describe('demo gym', () => {
     // which survives the bug it named: the demo peaks at 9pm, and read in UTC that
     // shifts to 15:30 — still inside the band. Asserting every visit is what
     // actually bites, because a 6am check-in read in UTC becomes 00:30.
-    const hours = snap.visits.map((v) => hourOfEpoch(v.checkedInAt));
+    // Register rows from before MettleUp have no time (checkedInAt 0): see the test above.
+    const hours = snap.visits.filter((v) => v.source !== 'import').map((v) => hourOfEpoch(v.checkedInAt));
     expect(hours.length).toBeGreaterThan(100);
     expect(hours.every((h) => h !== null && h >= 6 && h <= 21)).toBe(true);
 
