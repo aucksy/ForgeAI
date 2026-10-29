@@ -87,6 +87,7 @@ object RestAlerts {
   // ------------------------------------------------------------------ the rest's life
   fun restStarted(ctx: Context, r: WatchState.Rest) {
     cancel(ctx, OVER_ID) // an old "Rest is over" goes when the next rest starts
+    WorkoutStarted.cancel(ctx) // the rest's own card (and its watch-face icon) now opens the app
     arm(ctx, r.endsAt)
     showLive(ctx, r)
   }
@@ -165,7 +166,7 @@ object RestAlerts {
       val nextLine = RestText.nextLine(r.next)
       val b = NotificationCompat.Builder(ctx, CH_LIVE)
         .setSmallIcon(R.drawable.ic_stat_forge)
-        .setColor(EMBER)
+        .setColor(tint(ctx))
         .setContentTitle("Rest")
         .setContentText(nextLine ?: "Resting")
         .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
@@ -237,7 +238,7 @@ object RestAlerts {
       ensureChannels(ctx)
       val b = NotificationCompat.Builder(ctx, CH_OVER)
         .setSmallIcon(R.drawable.ic_stat_forge)
-        .setColor(EMBER)
+        .setColor(tint(ctx))
         .setContentTitle("Rest is over")
         .setContentText(RestText.nextLine(r.next) ?: "Time for your next set")
         // As the phone: an alarm only with "Ring through Do Not Disturb", else a reminder DND holds.
@@ -267,4 +268,8 @@ object RestAlerts {
 
   /** ForgeAI's ember orange. */
   const val EMBER = 0xFFF26B2A.toInt()
+
+  /** The cards' tint: the gym's colour the phone sent ([BrandColour]), else ember orange. */
+  private fun tint(ctx: Context): Int =
+    BrandColour.accentFor(ctx.applicationContext.getSharedPreferences("forgeai_watch", Context.MODE_PRIVATE).getString("accent", "")) ?: EMBER
 }

@@ -53,6 +53,17 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+      <!-- "Watch opens when a workout starts": the phone asks Wear OS to open this screen
+           (RemoteActivityHelper, WearSync.openWatch), which needs a VIEW + BROWSABLE filter. It only
+           opens the app; the link carries nothing the app reads. -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+          android:host="workout"
+          android:scheme="mettleup-watch" />
+      </intent-filter>
     </activity>
 
     <!-- The phone's rest and workout state (Data Layer items /forge/rest and /forge/workout), and
@@ -73,6 +84,14 @@
         <data
           android:host="*"
           android:pathPrefix="/forge/nack"
+          android:scheme="wear" />
+      </intent-filter>
+      <!-- A workout was just started on the phone (/forge/open, WorkoutStarted.kt). -->
+      <intent-filter>
+        <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+        <data
+          android:host="*"
+          android:path="/forge/open"
           android:scheme="wear" />
       </intent-filter>
     </service>

@@ -9,6 +9,7 @@
  *    tap away meanwhile. Null on a phone that saved its answer before 0.56.1: asked once more.
  *  - `exactAnswer`: what the member picked ('allow' | 'later'), for the record.
  *  - `ringThroughDnd` (RT-12): "Rest is over" rings through Do Not Disturb. Off by default.
+ *  - `watchOpen` (29 Oct 2026): starting a workout opens MettleUp on the watch. On by default.
  *  - `alertsHintFor` (RT-02, not persisted): the workout (its start time) that already showed
  *    the rest bar's "Alerts off" hint, so it shows once per workout.
  */
@@ -21,9 +22,11 @@ export interface RestAlertPrefsState {
   exactAskedAt: number | null;
   exactAnswer: 'allow' | 'later' | null;
   ringThroughDnd: boolean;
+  watchOpen: boolean;
   alertsHintFor: number | null;
   answerExact: (answer: 'allow' | 'later', at?: number) => void;
   setRingThroughDnd: (on: boolean) => void;
+  setWatchOpen: (on: boolean) => void;
   markAlertsHint: (workoutStartedAt: number) => void;
 }
 
@@ -34,9 +37,11 @@ export const useRestAlertPrefs = create<RestAlertPrefsState>()(
       exactAskedAt: null,
       exactAnswer: null,
       ringThroughDnd: false,
+      watchOpen: true,
       alertsHintFor: null,
       answerExact: (exactAnswer, at = Date.now()) => set({ exactAsked: true, exactAskedAt: at, exactAnswer }),
       setRingThroughDnd: (ringThroughDnd) => set({ ringThroughDnd }),
+      setWatchOpen: (watchOpen) => set({ watchOpen }),
       markAlertsHint: (alertsHintFor) => set({ alertsHintFor }),
     }),
     {
@@ -47,6 +52,7 @@ export const useRestAlertPrefs = create<RestAlertPrefsState>()(
         exactAskedAt: s.exactAskedAt,
         exactAnswer: s.exactAnswer,
         ringThroughDnd: s.ringThroughDnd,
+        watchOpen: s.watchOpen,
       }),
     },
   ),

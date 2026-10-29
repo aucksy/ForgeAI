@@ -2,9 +2,11 @@ package com.forgeai.rest
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wearable.CapabilityClient
@@ -54,6 +56,10 @@ object WearSync {
   const val PATH_ACT = "/forge/act"
   /** C5-3: the capability the ForgeAI watch app declares (wear/src/main/res/values/wear.xml). */
   const val CAP_WATCH_APP = "forgeai_watch_app"
+  /** The watch app's "a workout just started" message (wear WorkoutStarted.kt). */
+  const val PATH_OPEN = "/forge/open"
+  /** The link the watch app's screen answers to (wear AndroidManifest.xml, VIEW + BROWSABLE). */
+  const val WATCH_OPEN_URI = "mettleup-watch://workout"
 
   /** C5-7: after "not on this phone", ask again after this long. */
   private const val RETRY_MS = 5L * 60_000L
@@ -157,7 +163,9 @@ object WearSync {
   internal fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "", lines: WatchLines = WatchLines.NONE) {
     // R-166: + the next set's lines (set, last time's numbers, what a tick saves); "" = none.
     val l = if (active) lines else WatchLines.NONE
-    val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal) else listOf<Any>(false, "", "", "", "", "", "")
+    // 29 Oct 2026: + the gym's colour ("#RRGGBB", "" = MettleUp orange); an older watch app ignores it.
+    val accent = accent(ctx)
+    val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal, accent) else listOf<Any>(false, "", "", "", "", "", "", accent)
     if (now == lastWorkout) {
       flush(ctx) // nothing new, but a state still waiting goes now if it can
       return
@@ -174,8 +182,81 @@ object WearSync {
         "set" to now[4],
         "last" to now[5],
         "goal" to now[6],
+        "accent" to now[7],
       ),
     )
+  }
+
+  // ------------------------------------------------------------------ the gym's colour
+  /**
+   * 29 Oct 2026 ("Watch in the gym's colour"): the gym's accent the app is painted in ("#RRGGBB"),
+   * or null / "" with no gym (the watch stays MettleUp orange). Sent with the next /forge/workout.
+   */
+  fun setAccent(ctx: Context, hex: String?) {
+    try {
+      ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+        .putString("accent", WearWire.watchAccent(hex)).apply()
+    } catch (e: Exception) {
+      Log.w(TAG, "watch colour not saved", e)
+    }
+  }
+
+  private fun accent(ctx: Context): String = try {
+    ctx.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("accent", "") ?: ""
+  } catch (e: Exception) {
+    Log.w(TAG, "watch colour not read", e)
+    ""
+  }
+
+  // ------------------------------------------------------------------ open the watch app
+  /**
+   * 29 Oct 2026 ("Watch opens when a workout starts"): called once when the member STARTS a workout
+   * (never on a resume; the app decides, restCard.ts openWatchApp). For every reachable watch with the
+   * MettleUp watch app:
+   *  1. Wear OS is asked to open its screen (RemoteActivityHelper: the system starts it, which the
+   *     watch app could not do itself from the background);
+   *  2. the message /forge/open {startedAt} goes too: if the screen is not up a few seconds later
+   *     (watch locked, off the wrist, Wear OS refused), the watch shows a "Workout started" card with
+   *     an icon on the watch face, and one tap opens the app (WorkoutStarted.kt).
+   * Fire and forget: failures are only logged.
+   */
+  fun openWatch(ctx: Context, startedAt: Long) {
+    if (unavailable()) return
+    val app = ctx.applicationContext
+    val data = startedAt.toString().toByteArray(Charsets.UTF_8)
+    try {
+      Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
+        .addOnSuccessListener { info ->
+          if (info.nodes.isEmpty()) Log.i(TAG, "no watch with the app to open")
+          for (node in info.nodes) {
+            Wearable.getMessageClient(app).sendMessage(node.id, PATH_OPEN, data)
+              .addOnFailureListener { e -> failed(e, "watch open message not sent") }
+            openRemote(app, node.id)
+          }
+        }
+        .addOnFailureListener { e -> failed(e, "watch app not looked up to open") }
+    } catch (e: Exception) {
+      Log.w(TAG, "watch app not opened", e)
+    }
+  }
+
+  private fun openRemote(app: Context, nodeId: String) {
+    try {
+      val intent = Intent(Intent.ACTION_VIEW)
+        .addCategory(Intent.CATEGORY_BROWSABLE)
+        .setData(Uri.parse(WATCH_OPEN_URI))
+      val f = RemoteActivityHelper(app).startRemoteActivity(intent, nodeId)
+      f.addListener({
+        try {
+          f.get()
+          Log.i(TAG, "watch asked to open MettleUp")
+        } catch (e: Exception) {
+          Log.w(TAG, "watch did not take the open request", e)
+        }
+      }, { r -> r.run() })
+    } catch (e: Exception) {
+      Log.w(TAG, "watch open request not sent", e)
+    }
   }
 
   /** U-W2: [values] becomes the path's latest state; everything waiting is sent if it can be. */

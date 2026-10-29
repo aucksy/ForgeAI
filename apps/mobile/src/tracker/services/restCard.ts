@@ -19,6 +19,7 @@
  */
 import { Platform } from 'react-native';
 
+import { appliedBrand, appliedBrandPalette } from '@/theme/brandTokens';
 import { color } from '@/theme/tokens';
 
 import type { CardDone, DoneRequest, QueuedTick } from './restDone';
@@ -88,6 +89,10 @@ interface Native {
   dismissRestOver?(): boolean;
   /** D5: the gym's accent for both cards ("#RRGGBB"; null = ForgeAI orange). */
   setAccent?(hex: string | null): boolean;
+  /** 29 Oct 2026: the gym's colour for the watch app ("#RRGGBB"; null = MettleUp orange). Older native pieces lack it. */
+  setWatchAccent?(hex: string | null): boolean;
+  /** 29 Oct 2026: a workout was just started: open the watch app. Older native pieces lack it. */
+  openWatch?(startedAt: number): boolean;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -131,6 +136,7 @@ export function showRestCard(
   if (!n) return false;
   try {
     syncNotifAccent();
+    syncWatchAccent();
     try {
       if (quiet !== undefined) n.setQuiet?.(quiet); // "Workout sounds" off: "Rest is over" only vibrates
     } catch {
@@ -196,6 +202,40 @@ export function syncNotifAccent(): void {
   } catch {
     // ignore: ForgeAI orange
   }
+}
+
+/**
+ * "Watch in the gym's colour" (29 Oct 2026): the colour the watch app is drawn in. Only a gym that
+ * set its own accent counts (a gym with only a background tone, or no gym: null, the watch stays
+ * MettleUp orange). The palette's accent is the one the app shows (already tuned for a dark app);
+ * the watch lightens it further if it is too dark for its black screen. PURE.
+ */
+export function watchAccent(
+  brand: { accent: string | null } | null | undefined,
+  palette: { color: { accent: string } } | null | undefined,
+): string | null {
+  if (!brand?.accent || !palette) return null;
+  return notifAccent(palette.color.accent);
+}
+
+let watchAccentSent: string | null | undefined;
+/** Hand the gym's colour to the watch link when it changed (sent with the next workout update). */
+export function syncWatchAccent(): void {
+  const n = N();
+  if (!n?.setWatchAccent) return;
+  const hex = watchAccent(appliedBrand(), appliedBrandPalette());
+  if (hex === watchAccentSent) return;
+  try {
+    n.setWatchAccent(hex);
+    watchAccentSent = hex;
+  } catch (e) {
+    console.warn('[ForgeErr] the gym colour was not handed to the watch', e);
+  }
+}
+
+/** "Watch opens when a workout starts": ask the watch app to open (fire and forget). */
+export function openWatchApp(startedAt: number): void {
+  call((n) => n.openWatch?.(startedAt));
 }
 
 /** Remove the card (and, with `dismissOver`, a "Rest is over" still showing). */
@@ -557,6 +597,7 @@ export function showLiveWorkoutCard(
   if (!n?.showWorkoutCard) return false;
   try {
     syncNotifAccent();
+    syncWatchAccent();
     const json = rowJson(done, label, watch);
     return n.showWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {
@@ -583,6 +624,7 @@ export function hideLiveWorkoutCard(
   if (!n?.hideWorkoutCard) return false;
   try {
     syncNotifAccent();
+    syncWatchAccent();
     const json = rowJson(done, label, watch);
     return n.hideWorkoutCard(title, text, image, json, plan, clock ? JSON.stringify(clock) : null) === true;
   } catch {

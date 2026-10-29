@@ -18,6 +18,11 @@ dependencies {
   // v0.46: the Wear OS companion. The rest and the open workout are published as Data Layer items
   // (WearSync.kt); without Google Play services the calls fail quietly (logged) and nothing changes.
   implementation "com.google.android.gms:play-services-wearable:20.0.1"
+  // 29 Oct 2026 ("Watch opens when a workout starts"): asks Wear OS to open the watch app's screen
+  // (RemoteActivityHelper, WearSync.openWatch). No permission. Its ListenableFuture type comes from
+  // listenablefuture (Gradle swaps in the empty 9999 build when full Guava is on the classpath).
+  implementation "androidx.wear:wear-remote-interactions:1.1.0"
+  implementation "com.google.guava:listenablefuture:1.0"
 
   // U-W2 / U-W3 (UAT, 17 Oct 2026): JVM tests of the pure watch-link pieces (WearWire.kt), run by
   // wear-build.yml and release-apk.yml (:forge-rest:test...UnitTest). The real org.json: android.jar's

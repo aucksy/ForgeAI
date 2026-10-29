@@ -176,4 +176,13 @@ class WearWireTest {
     assertTrue(bad.isEmpty())
     assertNotNull(bad.encode(0L))
   }
+
+  @Test
+  fun watchAccentIsSixDigitHexOrEmpty() {
+    assertEquals("#1E3A8A", WearWire.watchAccent(" #1e3a8a "))
+    assertEquals("", WearWire.watchAccent(null))
+    assertEquals("", WearWire.watchAccent(""))
+    assertEquals("", WearWire.watchAccent("#abc"))
+    assertEquals("", WearWire.watchAccent("1E3A8A"))
+  }
 }
