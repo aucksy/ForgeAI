@@ -142,7 +142,7 @@ describe('the card', () => {
     expect(requestLine(renew({ status: 'approved', startsOn: '2027-01-26', endsOn: '2027-04-25' }), TODAY)).toBe(
       'Renewed: Gold 3 months, 26 Jan 2027 to 25 Apr 2027. Pay at the desk if you have not yet.',
     );
-    expect(requestLine(renew({ status: 'declined' }), TODAY)).toBe('Renew: Gold 3 months. The desk could not do this one. Ask them about it.');
+    expect(requestLine(renew({ status: 'declined' }), TODAY)).toBe('Renew: Gold 3 months. The desk could not do this request. Please ask them.');
   });
 
   it('"Got it" marks only the answered ones as read', () => {

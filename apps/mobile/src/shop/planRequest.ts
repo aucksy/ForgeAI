@@ -162,7 +162,7 @@ export const PLAN_REQUEST_WORDS = {
   gotIt: 'Got it', // member-words
   pickStart: 'Tap the first day of your pause.', // member-words
   pickEnd: 'Now tap the last day of your pause.', // member-words
-  startPast: 'Pick a day from today on.', // member-words
+  startPast: 'Pick today or a later day.', // member-words
   startFar: 'A pause can start up to 90 days from today.', // member-words
   endBeforeStart: 'The last day must be on or after the first day.', // member-words
   tooLong: 'A pause can be up to 365 days.', // member-words
@@ -177,7 +177,7 @@ export function refusedWords(code: string): string {
     case 'TOO_MANY':
       return 'You have sent a lot of requests today. Try again tomorrow, or ask the desk.'; // member-words
     case 'NO_PLAN':
-      return 'You need a running plan to pause. Ask the desk.'; // member-words
+      return 'You need an active plan to pause. Ask the desk.'; // member-words
     case 'BAD_PLAN':
       return 'That plan is no longer offered. Pick another.'; // member-words
     case 'BAD_DATES':
@@ -202,7 +202,7 @@ export function requestWhat(r: PlanRequest, today: string): string {
 export function requestLine(r: PlanRequest, today: string): string {
   const what = requestWhat(r, today);
   if (r.status === 'pending') return `${what}. ${PLAN_REQUEST_WORDS.sent}`; // member-words
-  if (r.status === 'declined') return `${what}. The desk could not do this one. Ask them about it.`; // member-words
+  if (r.status === 'declined') return `${what}. The desk could not do this request. Please ask them.`; // member-words
   if (r.kind === 'freeze') {
     return r.endsOn
       ? `Your plan is paused. It now ends ${tinyDateWithYear(r.endsOn, today)}.` // member-words

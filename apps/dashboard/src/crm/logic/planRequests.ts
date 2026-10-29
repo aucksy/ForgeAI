@@ -247,8 +247,8 @@ export function decideErrorWords(err: unknown): string {
   const text = isObj(err) ? str(err.message) : err instanceof Error ? err.message : typeof err === 'string' ? err : '';
   if (/\bALREADY_DECIDED\b/.test(text)) return 'Someone already answered this request. The list is up to date now.'; // member-words
   if (/\bGONE\b/.test(text)) return 'This request is no longer there. The member may have taken it back.'; // member-words
-  if (/\bNOT_DONE\b/.test(text)) return 'The change has not reached the server yet. Check the internet and press Approve again.'; // member-words
-  if (/\bSUSPENDED\b/.test(text)) return 'This gym is paused, so requests can’t be answered now.'; // member-words
+  if (/\bNOT_DONE\b/.test(text)) return 'Not saved yet. Check the internet and press Approve again.'; // member-words
+  if (/\bSUSPENDED\b/.test(text)) return 'Your gym account is on hold, so requests can’t be answered now.'; // member-words
   if (/\bBAD_KEY\b/.test(text)) return 'You have been signed out. Sign in again.'; // member-words
   return PLAN_REQUEST_DESK_WORDS.failed;
 }
