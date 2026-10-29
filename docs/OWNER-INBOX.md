@@ -268,9 +268,9 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/steps-and-water-each-day | F62 Steps and water each day | 5 | 29 Oct, 10:42 pm |
 | member-app/watch-in-the-gym-s-colour | F66 Watch in the gym's colour | 5 | 29 Oct, 10:41 pm |
 | member-app/which-muscles-are-ready-today | F59 Which muscles are ready today | 5 | 29 Oct, 10:35 pm |
-| t:trainer-view-without-a-tick-box-46 | T19 Trainer view without a tick box (#46) | 5 | 29 Oct, 10:43 pm |
 | gym-member-links/the-gym-s-own-form-videos | F148 The gym's own form videos | 4 | 29 Oct, 10:36 pm |
 | member-app/ask-your-own-ai | F61 Ask your own AI | 4 | 29 Oct, 10:35 pm |
+| t:trainer-view-without-a-tick-box-46 | T19 Trainer view without a tick box (#46) | 4 | 29 Oct, 10:44 pm |
 
 ## Feature backlog
 Every feature, built and pending, in one line each; every feature not built yet also says how it will
