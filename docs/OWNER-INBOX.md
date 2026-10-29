@@ -171,7 +171,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
 | T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
 | T4 Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
-| T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
+| T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | Done | Released to testers 29 Oct (v0.60.0). The watch app goes on Play after your answer to Play's health question. |
 | T6 Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
 | T7 Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
 | T8 Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
@@ -256,6 +256,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/long-rest-that-inflates-your-reps | F73 Long rest that inflates your reps | 7 | 29 Oct, 10:39 pm |
 | member-app/next-sets-adjust-to-how-hard-this-set-felt-rpe | F74 Next sets adjust to how hard this set felt (RPE) | 7 | 29 Oct, 10:38 pm |
 | member-app/strength-level-for-each-main-lift | F57 Strength level for each main lift | 7 | 29 Oct, 10:35 pm |
+| t:automated-support-and-fixes-a-plan-33 | T22 Automated support and fixes: a plan (#33) | 7 | 29 Oct, 10:45 pm |
 | admin-app-gym-owner-and-staff/trainer-view-of-member-progress | F109 Trainer view of member progress | 6 | 29 Oct, 10:34 pm |
 | gym-member-links/fitpass-and-other-pass-members | F123 FitPass and other pass members | 6 | 29 Oct, 10:40 pm |
 | member-app/quick-workout-i-have-30-minutes | F60 Quick workout: "I have 30 minutes" | 6 | 29 Oct, 10:34 pm |
@@ -270,6 +271,8 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/which-muscles-are-ready-today | F59 Which muscles are ready today | 5 | 29 Oct, 10:35 pm |
 | gym-member-links/the-gym-s-own-form-videos | F148 The gym's own form videos | 4 | 29 Oct, 10:36 pm |
 | member-app/ask-your-own-ai | F61 Ask your own AI | 4 | 29 Oct, 10:35 pm |
+| t:18-trainer-view-of-member-progress-reps-to-beat-your-notes-2 | T40 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | 4 | 29 Oct, 10:44 pm |
+| t:check-in-qr-live-camera-only-no-gallery-r-152 | T8 Check-in QR: live camera only, no gallery (R-152) | 4 | 29 Oct, 10:45 pm |
 | t:trainer-view-without-a-tick-box-46 | T19 Trainer view without a tick box (#46) | 4 | 29 Oct, 10:44 pm |
 
 ## Feature backlog

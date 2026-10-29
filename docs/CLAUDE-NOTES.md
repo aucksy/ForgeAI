@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-221. Build 10s, 9s and 8s first — 29 Oct 2026
+He said: "I have rated many features so you can now prioritize the ones with 10, 9 and 8 first."
+Order I chose: (1) finish the 10s: 0.61.0 release, the test server (T15/F175), the watch app on Play (waits on his Play answer). (2) The 9s in parallel on separate branches: F63 1-rep max, F67 install the watch app, F107 webcam photo. (3) The 8s: F150 freeze/renew request, F121 member report for the gym, F64 treadmill details, F20 demos (after the research). T5 (0.60.0) is released, so marked Done.
+
 ## R-220. Members export their own data; rewrite F121 — 29 Oct 2026
 He said (page comment on F121): a member's data is not locked behind the membership. Members can export it themselves too. Rewrite F121 and drop any feature text that still says otherwise.
 Done: F121 now says members save their own report any time (Settings, as today), and the desk can also ask for a copy, which the member approves. Removed "whether that stays is your call". F122 no longer lists "what a gym export may include" as open.
