@@ -18,9 +18,9 @@ Run by .github/workflows/play-upload.yml after a v* tag's release is published (
 
   play_upload.py --wear --tag v0.60.0 --aab mettleup-v0.60.0-wear.aab [--dry-run]
 R-167 (28 Oct 2026): the WATCH app's bundle (the Wear OS form factor of the same Play app) to the
-Wear OS internal testing track, "wear:qa" (Android Publisher API: a form-factor track is
-"<prefix>:<default name>", Wear OS prefix "wear", internal testing "qa";
-developers.google.com/android-publisher/tracks). Its versionCode is the watch's own
+Wear OS internal testing track, "wear:internal". 29 Oct 2026: Google's docs say "wear:qa", but Play's
+own track list for this app shows "wear:internal" and answered "Track not found: wear:qa" (v0.60.0
+release run 40838435757), so the live list wins. Its versionCode is the watch's own
 (release_checks.wear_version_code_for). In --wear mode only "wear:" tracks are accepted, and the
 phone mode refuses every form-factor track, so neither run can touch the other's releases.
 Production (any form factor) is always refused.
@@ -40,13 +40,14 @@ INTERNAL = "internal"
 CLOSED = "alpha"
 PRODUCTION = "production"
 WEAR_PREFIX = "wear:"
-WEAR_INTERNAL = "wear:qa"
-# Google's built-in form-factor tracks (developers.google.com/android-publisher/tracks, checked 29 Oct 2026):
-# "<prefix>:production", "<prefix>:beta" (open testing), "<prefix>:qa" (internal testing). Closed tracks are
-# made by hand in Play Console with custom names, so any other "wear:" name must already be listed on Play.
-WEAR_BUILTIN = {"wear:qa", "wear:beta"}
-# Phone-style names that look right but are NOT Play's Wear OS internal track.
-WEAR_LOOKALIKES = {"wear:internal", "wear:internal-testing", "wear:internaltesting", "wear:test"}
+WEAR_INTERNAL = "wear:internal"
+# Play's own track list for com.mettleup.app (29 Oct 2026): wear:production, wear:beta, wear:internal. Google's
+# docs name the internal one "wear:qa", but Play answered "Track not found: wear:qa", so the live list wins.
+# Closed tracks are made by hand in Play Console with custom names, so any other "wear:" name must already
+# be listed on Play.
+WEAR_BUILTIN = {"wear:internal", "wear:beta"}
+# Names that look right but are NOT this app's Wear OS internal track on Play.
+WEAR_LOOKALIKES = {"wear:qa", "wear:internal-testing", "wear:internaltesting", "wear:test"}
 
 
 def is_production(name):
@@ -67,7 +68,7 @@ def check_tracks(tracks, wear):
             raise ValueError(f"the watch bundle goes only to Wear OS tracks ('wear:...'), not '{t}'")
         if wear and t.lower() in WEAR_LOOKALIKES:
             raise ValueError(f"'{t}' is not a Play track name: Play names the Wear OS internal testing track "
-                             f"'{WEAR_INTERNAL}' (developers.google.com/android-publisher/tracks)")
+                             f"'{WEAR_INTERNAL}' (Play's own track list for this app)")
         if not wear and ":" in t:
             raise ValueError(f"the phone bundle never goes to a form-factor track ('{t}')")
     return tracks

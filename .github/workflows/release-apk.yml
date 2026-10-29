@@ -11,7 +11,7 @@ name: Build & Release (APK + AAB)
 # com.mettleup.app): the watch's own AAB, mettleup-<tag>-wear.aab, signed with the same upload key as
 # the phone AAB, with the watch's own versionCode = 1_000_000_000 + the phone's
 # (release_checks.wear_version_code_for: never equal to a phone code, always above it). play-upload.yml
-# puts it on Play's Wear OS internal testing track (wear:qa).
+# puts it on Play's Wear OS internal testing track (wear:internal).
 # MettleUp (0.56.0 on): the phone APK and AAB are published as mettleup-<tag>.apk / .aab. Installed
 # ForgeAI apps (com.forgeai.app, 0.55.x and older) look for forgeai-<tag>.apk in the latest release;
 # they must NOT find it, or they would offer MettleUp (another package: a second, empty app) as an

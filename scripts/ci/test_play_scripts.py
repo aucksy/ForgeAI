@@ -146,22 +146,23 @@ class WearTracks(unittest.TestCase):
     """R-167: the watch bundle goes to the Wear OS internal track only; neither run touches the other's."""
 
     def test_wear_internal_track_name(self):
-        # developers.google.com/android-publisher/tracks: "<prefix>:<default name>", Wear OS "wear", internal "qa".
-        self.assertEqual(pu.WEAR_INTERNAL, "wear:qa")
-        self.assertEqual(pu.check_tracks([pu.WEAR_INTERNAL], wear=True), ["wear:qa"])
+        # Play's own track list for this app (29 Oct 2026); Play refused the docs' "wear:qa" as not found.
+        self.assertEqual(pu.WEAR_INTERNAL, "wear:internal")
+        self.assertEqual(pu.check_tracks([pu.WEAR_INTERNAL], wear=True), ["wear:internal"])
 
     def test_watch_run_takes_wear_tracks_only(self):
-        for bad in (["internal"], ["alpha"], ["wear:qa", "internal"]):
+        for bad in (["internal"], ["alpha"], ["wear:internal", "internal"]):
             with self.assertRaises(ValueError, msg=bad):
                 pu.check_tracks(bad, wear=True)
 
     def test_watch_lookalike_track_names_fail_loudly(self):
         # A phone-style name for the Wear OS internal track is refused before anything reaches Play.
-        for bad in ("wear:internal", "wear:Internal", "wear:test"):
+        for bad in ("wear:qa", "wear:QA", "wear:test"):
             with self.assertRaises(ValueError, msg=bad) as ctx:
                 pu.check_tracks([bad], wear=True)
-            self.assertIn("wear:qa", str(ctx.exception))
-        self.assertIn("wear:qa", pu.WEAR_BUILTIN)
+            self.assertIn("wear:internal", str(ctx.exception))
+        self.assertIn("wear:internal", pu.WEAR_BUILTIN)
+        self.assertNotIn("wear:qa", pu.WEAR_BUILTIN)
         self.assertNotIn("wear:production", pu.WEAR_BUILTIN)
 
     def test_phone_run_never_takes_a_form_factor_track(self):
@@ -182,12 +183,13 @@ class WearTracks(unittest.TestCase):
     def test_watch_version_code(self):
         self.assertEqual(pu.wear_version_code_for("0.60.0"), 1_000_060_000)
 
-    def test_workflow_uploads_the_watch_bundle_to_wear_qa_only(self):
+    def test_workflow_uploads_the_watch_bundle_to_wear_internal_only(self):
         with open(os.path.join(ROOT, ".github", "workflows", "play-upload.yml"), encoding="utf-8") as f:
             wf = f.read()
         self.assertIn('--pattern "mettleup-$TAG-wear.aab"', wf)
         self.assertIn("--wear", wf)
-        self.assertIn("--tracks wear:qa", wf)
+        self.assertIn("--tracks wear:internal", wf)
+        self.assertNotIn("wear:qa", wf)
         self.assertNotIn("wear:production", wf)
 
 
