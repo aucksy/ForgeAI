@@ -69,6 +69,7 @@ import {
 import { Link, navigate } from '../router';
 import { CheckInQrScreen } from '../../shop/CheckInQrScreen';
 import { VisitorsCard } from '../../branches/VisitorsCard';
+import { MemberAvatar } from '../MemberPhoto';
 import { useBranches } from '../../branches/context';
 
 type Tab = 'register' | 'risk';
@@ -527,7 +528,8 @@ function SearchResult({
       }}
     >
       <Row gap={space.md} wrap={false}>
-        <Avatar text={initials(member.fullName)} size={36} />
+        {/* F107: the member's photo when the desk took one, so the desk knows who is who. */}
+        <MemberAvatar memberId={member.id} name={member.fullName} size={44} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <Link to={`/members/${member.id}`}>
             <span style={{ ...tapTarget, fontSize: 14, fontWeight: 600, color: color.ink }}>

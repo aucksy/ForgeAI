@@ -23,7 +23,7 @@ import {
 import { addDays, diffDays, formatDay, relativeDay } from '../../logic/dates';
 import { daysLeftTile, historyLine, isChased, STATE_LABEL, stateTone, toMembershipView, unpaidForMembership } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
-import { formatPhone, initials } from '../../logic/members';
+import { formatPhone } from '../../logic/members';
 import { memberBatch } from '../../logic/batches';
 import { methodLabel } from '../../logic/payments';
 import {
@@ -58,7 +58,6 @@ import { NOT_ONLINE_YET, SendPlanSheet, WorkoutPlanSheet } from './WorkoutPlans'
 import { MemberMeasurementsCard } from './MemberMeasurements';
 import { MemberDietCard } from './DietPlans';
 import {
-  Avatar,
   Button,
   Card,
   EmptyState,
@@ -83,6 +82,19 @@ import {
 import { Link, navigate } from '../router';
 import { WaitingPill } from '../offline';
 import { NEEDS_INTERNET_WORDS, useOffline } from '../offlineContext';
+import { DeskCameraSheet } from '../DeskCameraSheet';
+import { MemberAvatar, useDeskPhotoKey, useMemberPhoto } from '../MemberPhoto';
+import { MemberPhotoError, removeMemberPhoto, saveMemberPhoto } from '../../shop/memberPhotoApi';
+import { photoServerWords } from '../../logic/memberPhoto';
+import { errorWords } from '../../shop/logic';
+
+/** The photo under the member's initials (F107). */
+export const MEMBER_PHOTO_WORDS = {
+  take: 'Take photo', // member-words
+  change: 'Change photo', // member-words
+  saved: 'Photo saved.', // member-words
+  removed: 'Photo removed.', // member-words
+} as const;
 
 export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const {
@@ -136,6 +148,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   /** A plan just sent in one tap: the Undo bar takes this member off it again. */
   const [sentPlan, setSentPlan] = useState<WorkoutPlan | null>(null);
   const canSendPlan = allowed('editWorkoutPlans');
+  // F107: the member's photo (owner and desk alike), when this gym's server keeps photos (0043).
+  const photoKey = useDeskPhotoKey();
+  const memberPhoto = useMemberPhoto(memberId);
+  const [photoSheet, setPhotoSheet] = useState(false);
 
   // A stray `setTimeout` that outlives the screen sets state on an unmounted tree.
   const toastTimer = useRef<number | undefined>(undefined);
@@ -362,7 +378,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Card style={{ marginBottom: space.lg }}>
         <Row gap={space.lg} wrap={false} align="flex-start">
-          <Avatar text={initials(member.fullName)} size={52} />
+          <div style={{ display: 'grid', justifyItems: 'center', gap: space.xs, flexShrink: 0 }}>
+            <MemberAvatar memberId={member.id} name={member.fullName} size={photoKey ? 72 : 52} />
+            {photoKey && (
+              <Button variant="quiet" onClick={() => setPhotoSheet(true)}>
+                {memberPhoto ? MEMBER_PHOTO_WORDS.change : MEMBER_PHOTO_WORDS.take}
+              </Button>
+            )}
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Row gap={space.sm}>
               <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
@@ -610,13 +633,40 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       {card && (
         <MemberCardSheet
-          facts={memberCardFacts(snapshot.gym.name, member, view)}
+          facts={{ ...memberCardFacts(snapshot.gym.name, member, view), photoUrl: memberPhoto }}
           phone={member.phone}
           onClose={() => setCard(false)}
           say={flash}
         />
       )}
       {editing && <MemberFormSheet editing={member} onClose={() => setEditing(false)} />}
+      {photoSheet && photoKey && (
+        <DeskCameraSheet
+          title={memberPhoto ? MEMBER_PHOTO_WORDS.change : MEMBER_PHOTO_WORDS.take}
+          onClose={() => setPhotoSheet(false)}
+          onUse={async (blob) => {
+            try {
+              await saveMemberPhoto(photoKey, member.id, blob);
+            } catch (e) {
+              if (e instanceof MemberPhotoError) throw e;
+              throw new MemberPhotoError(photoServerWords(e) ?? errorWords(e));
+            }
+            flash(MEMBER_PHOTO_WORDS.saved);
+          }}
+          onRemove={
+            memberPhoto
+              ? async () => {
+                  try {
+                    await removeMemberPhoto(photoKey, member.id);
+                  } catch (e) {
+                    throw new MemberPhotoError(errorWords(e));
+                  }
+                  flash(MEMBER_PHOTO_WORDS.removed);
+                }
+              : undefined
+          }
+        />
+      )}
       {sendingPlan && (
         <SendPlanSheet
           member={member}

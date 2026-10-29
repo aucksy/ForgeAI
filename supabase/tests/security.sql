@@ -48,6 +48,8 @@ declare
     'member_gym_busy',
     -- 0040: a gym mate's profile (each checks a member key; sharing acts on that member only, reading only a same-gym mate who shares).
     'member_mate_share','member_mate_stop','member_mate_board','member_mate_profile',
+    -- 0043: a member's photo taken at the desk (each checks an owner or desk key; only that gym's own members).
+    'owner_member_photos','owner_save_member_photo','owner_remove_member_photo',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
