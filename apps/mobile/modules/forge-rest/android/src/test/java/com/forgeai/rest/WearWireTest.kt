@@ -185,4 +185,28 @@ class WearWireTest {
     assertEquals("", WearWire.watchAccent("#abc"))
     assertEquals("", WearWire.watchAccent("1E3A8A"))
   }
+
+  // ------------------------------------------------------------------ F67: install on the watch
+  @Test
+  fun watchAppStateReadsConnectedWatchesOnly() {
+    assertEquals("none", WearWire.watchAppState(emptyList(), listOf("w1")))
+    assertEquals("installed", WearWire.watchAppState(listOf("w1"), listOf("w1")))
+    assertEquals("missing", WearWire.watchAppState(listOf("w1"), emptyList()))
+    // Two watches, one without the app: missing (its Play Store opens).
+    assertEquals("missing", WearWire.watchAppState(listOf("w1", "w2"), listOf("w1")))
+    // A watch that declares the app but is not connected does not count.
+    assertEquals("missing", WearWire.watchAppState(listOf("w2"), listOf("w1")))
+  }
+
+  @Test
+  fun installTargetsAreTheWatchesWithoutTheApp() {
+    assertEquals(listOf("w2"), WearWire.installTargets(listOf("w1", "w2", "w2"), listOf("w1")))
+    assertEquals(emptyList<String>(), WearWire.installTargets(listOf("w1"), listOf("w1")))
+    assertEquals(emptyList<String>(), WearWire.installTargets(emptyList(), emptyList()))
+  }
+
+  @Test
+  fun playStoreUriNamesThePackage() {
+    assertEquals("market://details?id=com.mettleup.app", WearWire.playStoreUri("com.mettleup.app"))
+  }
 }

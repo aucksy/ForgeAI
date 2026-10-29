@@ -2898,3 +2898,14 @@
   once (askedExact), double start/finish guards, clip deleted on leave even if stop fails. LOW left: dimmed phone check,
   late-answer retry, long "Rest is over" with an old phone app. Play Data safety updated and sent for review (voice
   ephemeral optional; crash logs + diagnostics). Checks: tsc 0, vitest 3761 pass.
+- 2026-10-29: **F67 Install the watch app from the phone, branch feat/watch-install-from-phone (not merged).**
+  - Native (modules/forge-rest, NOT compiled locally): WearSync.watchAppState (NodeClient connected nodes + CapabilityClient
+    "forgeai_watch_app" FILTER_REACHABLE -> none / installed / missing; unknown on error or 8 s) and WearSync.installOnWatch
+    (RemoteActivityHelper + market://details?id=<phone package = com.mettleup.app, the watch's id> on each connected watch
+    without the app -> opened / installed / none / failed after 15 s / unknown); pure WearWire.watchAppState / installTargets /
+    playStoreUri with JVM tests; ForgeRestModule AsyncFunctions watchAppState, installOnWatch. wear.xml already declared the capability.
+  - JS: tracker/services/watchInstall.ts (pure watchCardShows etc., meta `watch_install_card` = 'done' after Not now, the Play
+    Store opening, or the app seen); components/WatchInstallCard.tsx in the Workout tab's one notice slot (NOTICE_ORDER: link,
+    update, whatsNew, watch, backup); Settings -> Reminders and phone -> "Your watch" (Installed / Install on watch; left out
+    with no watch or no answer). Every failure shows "Open Play Store on your watch and search MettleUp." The watch app is
+    not on Play yet: the link is right for when it is.

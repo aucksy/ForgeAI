@@ -23,6 +23,7 @@ import { GymBrandMark } from '@/components/GymBrandMark';
 import { UpdateCard } from '@/components/UpdateCard';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { BackupNudgeCard } from '@/components/BackupNudgeCard';
+import { WatchInstallCard } from '@/components/WatchInstallCard';
 import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
@@ -390,6 +391,14 @@ export default function WorkoutScreen() {
         <UpdateCard hidden={notice !== 'update'} onWant={want('update')} onDone={noticeClosed} />
         {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
         <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
+        {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}
+        <WatchInstallCard
+          hidden={notice !== 'watch'}
+          onWant={want('watch')}
+          onDone={noticeClosed}
+          hasWorkouts={counts ? counts.total > 0 : null}
+          demo={demo}
+        />
         {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
         <BackupNudgeCard hidden={notice !== 'backup'} onWant={want('backup')} />
 

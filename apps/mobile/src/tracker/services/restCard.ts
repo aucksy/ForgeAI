@@ -93,6 +93,10 @@ interface Native {
   setWatchAccent?(hex: string | null): boolean;
   /** 29 Oct 2026: a workout was just started: open the watch app. Older native pieces lack it. */
   openWatch?(startedAt: number): boolean;
+  /** F67: "none" | "installed" | "missing" | "unknown" (watchInstall.ts). Older native pieces lack it. */
+  watchAppState?(): Promise<string>;
+  /** F67: open the watch's Play Store on MettleUp: "opened" | "installed" | "none" | "failed" | "unknown". */
+  installOnWatch?(): Promise<string>;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -236,6 +240,33 @@ export function syncWatchAccent(): void {
 /** "Watch opens when a workout starts": ask the watch app to open (fire and forget). */
 export function openWatchApp(startedAt: number): void {
   call((n) => n.openWatch?.(startedAt));
+}
+
+/**
+ * F67 ("Install the watch app from the phone"): the raw Wear OS answer, or null with no native piece
+ * (web, tests, an older build). Read by watchInstall.ts; never throws.
+ */
+export async function nativeWatchAppState(): Promise<string | null> {
+  const n = N();
+  if (!n?.watchAppState) return null;
+  try {
+    return await n.watchAppState();
+  } catch (e) {
+    console.warn('[ForgeErr] the watch could not be looked up', e);
+    return null;
+  }
+}
+
+/** F67: ask the watch to open its Play Store on MettleUp; null with no native piece. Never throws. */
+export async function nativeInstallOnWatch(): Promise<string | null> {
+  const n = N();
+  if (!n?.installOnWatch) return null;
+  try {
+    return await n.installOnWatch();
+  } catch (e) {
+    console.warn('[ForgeErr] the watch Play Store could not be opened', e);
+    return null;
+  }
 }
 
 /** Remove the card (and, with `dismissOver`, a "Rest is over" still showing). */

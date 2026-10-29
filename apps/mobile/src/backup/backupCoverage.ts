@@ -40,6 +40,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   whats_new_seen: 'one-off "seen" flag',
   notice_rest_day: 'one-off notice',
   redesign_tabs_notice: 'one-off "it moved" hint',
+  watch_install_card: 'one-off "Install on watch" card (F67; about the watch paired to this phone)',
   activeWorkoutDraft: 'a workout in progress (a restore waits until it is finished)',
   phoneReminderSchedule: 'notification schedule of this phone (rebuilt from the reminder settings)',
   link_guessed_exercise_types: 'import bookkeeping (row ids of this phone)',

@@ -259,6 +259,143 @@ object WearSync {
     }
   }
 
+  // ------------------------------------------------------------------ F67: install on the watch
+  /** F67: the Wear OS answer could not be had (no Play services, no Wear OS app, an error, a timeout). */
+  const val WATCH_UNKNOWN = "unknown"
+  /** F67 [installOnWatch]: the Play Store was asked to open on at least one watch. */
+  const val INSTALL_OPENED = "opened"
+  /** F67 [installOnWatch]: no watch took the request (refused, error, timeout). */
+  const val INSTALL_FAILED = "failed"
+  /** F67: how long a Wear OS question may take before the app is told "unknown" / "failed". */
+  private const val ASK_TIMEOUT_MS = 8_000L
+  /** F67: the watch must confirm the Play Store opened within this (it may be asleep). */
+  private const val OPEN_TIMEOUT_MS = 15_000L
+
+  /** One answer per question, whichever comes first: Wear OS or the timeout. */
+  private class Once(private val done: (String) -> Unit) {
+    private val answered = java.util.concurrent.atomic.AtomicBoolean(false)
+    /** Not answered yet (the timeout only logs when it is the one answering). */
+    fun pending(): Boolean = !answered.get()
+    fun answer(v: String) {
+      if (!answered.compareAndSet(false, true)) return
+      try {
+        done(v)
+      } catch (e: Exception) {
+        Log.w(TAG, "watch answer not passed on", e)
+      }
+    }
+  }
+
+  /**
+   * F67: the connected watches and the ones with the MettleUp watch app (capability
+   * [CAP_WATCH_APP]); [onFail] with a reason if Wear OS cannot say.
+   */
+  private fun askWatches(app: Context, onFail: (String) -> Unit, then: (connected: List<String>, withApp: List<String>) -> Unit) {
+    if (unavailable()) {
+      onFail("Wear Data Layer paused (not on this phone)")
+      return
+    }
+    try {
+      Wearable.getNodeClient(app).connectedNodes
+        .addOnSuccessListener { nodes ->
+          val connected = nodes.map { it.id }
+          if (connected.isEmpty()) {
+            then(connected, emptyList())
+            return@addOnSuccessListener
+          }
+          Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
+            .addOnSuccessListener { info -> then(connected, info.nodes.map { it.id }) }
+            .addOnFailureListener { e ->
+              failed(e, "watch app not looked up (install)")
+              onFail("capability lookup failed")
+            }
+        }
+        .addOnFailureListener { e ->
+          failed(e, "connected watches not read (install)")
+          onFail("connected watches not read")
+        }
+    } catch (e: Exception) {
+      // No Play services at all lands here on some phones.
+      Log.w(TAG, "watches not looked up (install)", e)
+      onFail("lookup threw")
+    }
+  }
+
+  /**
+   * F67 ("Install the watch app from the phone"): "none" (no watch connected), "installed" (every
+   * connected watch has the MettleUp watch app), "missing" (one lacks it) or "unknown" (Wear OS
+   * could not say within [ASK_TIMEOUT_MS]). Never throws; [done] is called exactly once.
+   */
+  fun watchAppState(ctx: Context, done: (String) -> Unit) {
+    val once = Once(done)
+    main.postDelayed({
+      if (once.pending()) Log.w(TAG, "watch app state: Wear OS did not answer in time")
+      once.answer(WATCH_UNKNOWN)
+    }, ASK_TIMEOUT_MS)
+    askWatches(
+      ctx.applicationContext,
+      { why ->
+        Log.i(TAG, "watch app state unknown: $why")
+        once.answer(WATCH_UNKNOWN)
+      },
+    ) { connected, withApp ->
+      val s = WearWire.watchAppState(connected, withApp)
+      Log.i(TAG, "watch app state: $s")
+      once.answer(s)
+    }
+  }
+
+  /**
+   * F67: opens the Play Store on the MettleUp page on every connected watch without the watch app
+   * (RemoteActivityHelper + market://details?id=<package>; the watch app has the phone's package
+   * name). Answers "opened" (at least one watch took it), "installed" (nothing to install), "none"
+   * (no watch connected), "failed" (refused, error, or [OPEN_TIMEOUT_MS]) or "unknown" (Wear OS could
+   * not say which watches there are). Never throws; [done] is called exactly once.
+   */
+  fun installOnWatch(ctx: Context, done: (String) -> Unit) {
+    val app = ctx.applicationContext
+    val once = Once(done)
+    main.postDelayed({
+      if (once.pending()) Log.w(TAG, "watch Play Store request timed out")
+      once.answer(INSTALL_FAILED)
+    }, OPEN_TIMEOUT_MS)
+    askWatches(
+      app,
+      { why ->
+        Log.w(TAG, "watch Play Store not opened: $why")
+        once.answer(WATCH_UNKNOWN)
+      },
+    ) { connected, withApp ->
+      val state = WearWire.watchAppState(connected, withApp)
+      val targets = WearWire.installTargets(connected, withApp)
+      if (state != WearWire.WATCH_MISSING || targets.isEmpty()) {
+        once.answer(state)
+        return@askWatches
+      }
+      val left = java.util.concurrent.atomic.AtomicInteger(targets.size)
+      val uri = Uri.parse(WearWire.playStoreUri(app.packageName))
+      for (node in targets) {
+        try {
+          val intent = Intent(Intent.ACTION_VIEW).addCategory(Intent.CATEGORY_BROWSABLE).setData(uri)
+          val f = RemoteActivityHelper(app).startRemoteActivity(intent, node)
+          f.addListener({
+            try {
+              f.get()
+              Log.i(TAG, "watch Play Store opened on MettleUp")
+              once.answer(INSTALL_OPENED)
+            } catch (e: Exception) {
+              Log.w(TAG, "watch did not open its Play Store", e)
+              if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+            }
+          }, { r -> r.run() })
+        } catch (e: Exception) {
+          Log.w(TAG, "watch Play Store request not sent", e)
+          if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+        }
+      }
+    }
+  }
+
   /** U-W2: [values] becomes the path's latest state; everything waiting is sent if it can be. */
   private fun put(ctx: Context, path: String, values: Map<String, Any>) {
     loadOutbox(ctx)
