@@ -101,6 +101,9 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Exercise pictures (RepDB, fetched at build time)
+        uses: ./.github/actions/exercise-pictures
+
       # Fail fast on a type error BEFORE the ~10-min Gradle build — the local
       # ship-gate is manual, so this is CI's guard that a broken tag can't ship.
       - name: Typecheck (mobile)

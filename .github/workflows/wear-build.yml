@@ -53,6 +53,9 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Exercise pictures (RepDB, fetched at build time)
+        uses: ./.github/actions/exercise-pictures
+
       - name: Work out the version
         id: version
         run: |

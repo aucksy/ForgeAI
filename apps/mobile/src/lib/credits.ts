@@ -26,7 +26,24 @@ export interface Credit {
   fullText?: string;
 }
 
+/**
+ * F20: the RepDB free licence (term 2) asks for this exact visible link on the About/credits
+ * screen. Do not reword it. Shown in Settings → About and on Credits.
+ */
+export const REPDB_CREDIT = 'Exercise data by RepDB (repdb.co)'; // member-words (licence wording, verbatim)
+export const REPDB_URL = 'https://repdb.co';
+
 export const CREDITS: readonly Credit[] = [
+  {
+    id: 'repdb',
+    what: 'Exercise start and end pictures', // member-words
+    author: 'RepDB', // member-words
+    source: REPDB_CREDIT,
+    sourceUrl: REPDB_URL,
+    licenceName: 'RepDB Free Tier licence', // member-words
+    licenceUrl: 'https://github.com/RepDB/exercise-dataset/blob/main/LICENSE-DATA.md',
+    changes: 'Resized for the phone screen.', // member-words
+  },
   {
     id: 'everkinetic',
     what: 'Exercise drawings',

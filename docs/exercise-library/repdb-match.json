@@ -1,0 +1,758 @@
+{
+  "_about": "MettleUp exercise key -> RepDB free-tier exercise id (github.com/RepDB/exercise-dataset). Matched by script and checked by eye: same movement, same equipment, same body position only. \"swap\": RepDB draws the end position first, so its two pictures are swapped. \"doubt\": a close but not perfect match, kept on purpose. Build: apps/mobile/scripts/build-exercise-pictures.py.",
+  "dropped": {
+    "smith_machine_incline_press": "RepDB picture looks like an upright seated press, not an incline bench.",
+    "handstand_push_up": "RepDB uses parallettes with no wall; ours is against a wall.",
+    "smith_machine_good_morning": "RepDB end picture is a deep squat, not a hip hinge.",
+    "zottman_curl": "Both RepDB pictures show the arms down; the curl itself is not shown.",
+    "standing_barbell_overhead_extension": "RepDB picture is seated; ours is standing.",
+    "hanging_leg_raise": "RepDB end picture shows bent knees (a knee raise).",
+    "toes_to_bar": "RepDB end picture shows bent knees, not toes to the bar."
+  },
+  "matches": {
+    "ab_crunch_machine": {
+      "repdb": "machine-seated-crunch"
+    },
+    "ab_wheel_rollout": {
+      "repdb": "ab-wheel-rollout"
+    },
+    "air_squat": {
+      "repdb": "bodyweight-squat"
+    },
+    "archer_push_up": {
+      "repdb": "archer-push-ups"
+    },
+    "arnold_press": {
+      "repdb": "arnold-press"
+    },
+    "assisted_dip": {
+      "repdb": "assisted-dips"
+    },
+    "assisted_pull_up": {
+      "repdb": "assisted-pull-ups"
+    },
+    "back_extension": {
+      "repdb": "back-extension"
+    },
+    "band_assisted_pull_up": {
+      "repdb": "band-assisted-pull-ups"
+    },
+    "banded_lateral_walk": {
+      "repdb": "banded-lateral-walk"
+    },
+    "barbell_back_squat": {
+      "repdb": "squat"
+    },
+    "barbell_bench_press": {
+      "repdb": "bench-press"
+    },
+    "barbell_bulgarian_split_squat": {
+      "repdb": "barbell-bulgarian-split-squat"
+    },
+    "barbell_calf_raise": {
+      "repdb": "barbell-calf-raise"
+    },
+    "barbell_curl": {
+      "repdb": "barbell-curl"
+    },
+    "barbell_drag_curl": {
+      "repdb": "drag-curl"
+    },
+    "barbell_front_raise": {
+      "repdb": "barbell-front-raise"
+    },
+    "barbell_glute_bridge": {
+      "repdb": "barbell-glute-bridge"
+    },
+    "barbell_hip_thrust": {
+      "repdb": "hip-thrust",
+      "doubt": "The start and end pictures look very alike."
+    },
+    "barbell_lunge": {
+      "repdb": "barbell-lunge"
+    },
+    "barbell_preacher_curl": {
+      "repdb": "barbell-preacher-curl"
+    },
+    "barbell_pullover": {
+      "repdb": "barbell-pullover"
+    },
+    "barbell_reverse_lunge": {
+      "repdb": "barbell-reverse-lunge"
+    },
+    "barbell_rollout": {
+      "repdb": "barbell-ab-rollout"
+    },
+    "barbell_row": {
+      "repdb": "barbell-row"
+    },
+    "barbell_shrug": {
+      "repdb": "shrug"
+    },
+    "barbell_skull_crusher": {
+      "repdb": "skull-crusher"
+    },
+    "barbell_sumo_squat": {
+      "repdb": "sumo-squat"
+    },
+    "barbell_upright_row": {
+      "repdb": "upright-row"
+    },
+    "barbell_wrist_curl": {
+      "repdb": "barbell-wrist-curl"
+    },
+    "bench_dip": {
+      "repdb": "bench-dips"
+    },
+    "bicycle_crunch": {
+      "repdb": "bicycle-crunch"
+    },
+    "bird_dog": {
+      "repdb": "bird-dog"
+    },
+    "bodyweight_calf_raise": {
+      "repdb": "bodyweight-calf-raise",
+      "doubt": "RepDB stands on flat ground; our steps use a step edge."
+    },
+    "bodyweight_lunge": {
+      "repdb": "lunge"
+    },
+    "box_jump": {
+      "repdb": "box-jump"
+    },
+    "box_squat": {
+      "repdb": "barbell-box-squat"
+    },
+    "bulgarian_split_squat": {
+      "repdb": "bulgarian-split-squat"
+    },
+    "cable_chest_press": {
+      "repdb": "cable-chest-press"
+    },
+    "cable_crunch": {
+      "repdb": "cable-crunch"
+    },
+    "cable_curl": {
+      "repdb": "cable-curl"
+    },
+    "cable_fly": {
+      "repdb": "cable-fly"
+    },
+    "cable_glute_kickback": {
+      "repdb": "cable-kickback"
+    },
+    "cable_overhead_triceps_extension": {
+      "repdb": "cable-overhead-tricep-extension",
+      "doubt": "RepDB pulls from a low pulley, facing away; ours may use a high pulley."
+    },
+    "cable_pull_through": {
+      "repdb": "cable-pull-through"
+    },
+    "cable_rear_delt_fly": {
+      "repdb": "cable-reverse-fly"
+    },
+    "cable_triceps_kickback": {
+      "repdb": "cable-tricep-kickback"
+    },
+    "cable_upright_row": {
+      "repdb": "cable-upright-row"
+    },
+    "captains_chair_knee_raise": {
+      "repdb": "captains-chair-knee-raise"
+    },
+    "captains_chair_leg_raise": {
+      "repdb": "captains-chair-leg-raise"
+    },
+    "chest_dip": {
+      "repdb": "dips"
+    },
+    "chest_supported_dumbbell_row": {
+      "repdb": "chest-supported-db-row"
+    },
+    "chin_up": {
+      "repdb": "chin-ups"
+    },
+    "clamshell": {
+      "repdb": "clamshells"
+    },
+    "clap_push_up": {
+      "repdb": "clap-push-ups"
+    },
+    "close_grip_barbell_curl": {
+      "repdb": "close-grip-barbell-curl"
+    },
+    "close_grip_bench_press": {
+      "repdb": "close-grip-bench-press"
+    },
+    "close_grip_ez_bar_curl": {
+      "repdb": "close-grip-ez-bar-curl"
+    },
+    "close_grip_lat_pulldown": {
+      "repdb": "v-bar-lat-pulldown"
+    },
+    "close_grip_push_up": {
+      "repdb": "close-grip-push-ups",
+      "doubt": "Hands under the chest rather than touching."
+    },
+    "concentration_curl": {
+      "repdb": "concentration-curl"
+    },
+    "cross_body_crunch": {
+      "repdb": "cross-body-crunch"
+    },
+    "cross_body_hammer_curl": {
+      "repdb": "cross-body-hammer-curl"
+    },
+    "crunch": {
+      "repdb": "crunches"
+    },
+    "dead_bug": {
+      "repdb": "dead-bug"
+    },
+    "deadlift": {
+      "repdb": "deadlift"
+    },
+    "decline_barbell_bench_press": {
+      "repdb": "decline-bench-press-barbell"
+    },
+    "decline_crunch": {
+      "repdb": "decline-crunch"
+    },
+    "decline_dumbbell_fly": {
+      "repdb": "decline-db-fly"
+    },
+    "decline_dumbbell_press": {
+      "repdb": "decline-bench-press"
+    },
+    "decline_push_up": {
+      "repdb": "decline-push-up"
+    },
+    "deficit_push_up": {
+      "repdb": "deficit-push-ups"
+    },
+    "diamond_push_up": {
+      "repdb": "diamond-push-ups"
+    },
+    "donkey_calf_raise": {
+      "repdb": "plate-loaded-donkey-calf-raise",
+      "doubt": "RepDB shows a plate-loaded donkey calf machine."
+    },
+    "donkey_kick": {
+      "repdb": "glute-kickback"
+    },
+    "dumbbell_bench_press": {
+      "repdb": "db-bench-press"
+    },
+    "dumbbell_bent_over_row": {
+      "repdb": "bent-over-db-row"
+    },
+    "dumbbell_calf_raise": {
+      "repdb": "dumbbell-calf-raise"
+    },
+    "dumbbell_curl": {
+      "repdb": "bicep-curl"
+    },
+    "dumbbell_deadlift": {
+      "repdb": "dumbbell-deadlift"
+    },
+    "dumbbell_floor_press": {
+      "repdb": "dumbbell-floor-press"
+    },
+    "dumbbell_fly": {
+      "repdb": "db-fly"
+    },
+    "dumbbell_front_raise": {
+      "repdb": "dumbbell-front-raise"
+    },
+    "dumbbell_hip_thrust": {
+      "repdb": "dumbbell-hip-thrust"
+    },
+    "dumbbell_lunge": {
+      "repdb": "db-lunge"
+    },
+    "dumbbell_preacher_curl": {
+      "repdb": "db-preacher-curl"
+    },
+    "dumbbell_pullover": {
+      "repdb": "db-pullover"
+    },
+    "dumbbell_reverse_curl": {
+      "repdb": "db-reverse-curl"
+    },
+    "dumbbell_reverse_lunge": {
+      "repdb": "reverse-lunge"
+    },
+    "dumbbell_romanian_deadlift": {
+      "repdb": "dumbbell-romanian-deadlift",
+      "swap": true
+    },
+    "dumbbell_shoulder_press": {
+      "repdb": "seated-db-press"
+    },
+    "dumbbell_shrug": {
+      "repdb": "db-shrug"
+    },
+    "dumbbell_side_bend": {
+      "repdb": "dumbbell-side-bend"
+    },
+    "dumbbell_skull_crusher": {
+      "repdb": "db-skull-crusher"
+    },
+    "dumbbell_spider_curl": {
+      "repdb": "spider-curl"
+    },
+    "dumbbell_split_squat": {
+      "repdb": "dumbbell-split-squat"
+    },
+    "dumbbell_squat": {
+      "repdb": "db-squat"
+    },
+    "dumbbell_squeeze_press": {
+      "repdb": "close-grip-db-bench-press",
+      "doubt": "RepDB \"close-grip dumbbell bench press\"; the dumbbells touch, as in a squeeze press."
+    },
+    "dumbbell_triceps_kickback": {
+      "repdb": "tricep-kickback"
+    },
+    "dumbbell_upright_row": {
+      "repdb": "dumbbell-upright-row"
+    },
+    "dumbbell_wrist_curl": {
+      "repdb": "wrist-curl"
+    },
+    "ez_bar_curl": {
+      "repdb": "ez-bar-curl"
+    },
+    "ez_bar_preacher_curl": {
+      "repdb": "preacher-curl"
+    },
+    "ez_bar_reverse_curl": {
+      "repdb": "ez-bar-reverse-curl"
+    },
+    "ez_bar_skull_crusher": {
+      "repdb": "ez-bar-lying-tricep-extension"
+    },
+    "ez_bar_spider_curl": {
+      "repdb": "ez-bar-spider-curl"
+    },
+    "face_pull": {
+      "repdb": "face-pull",
+      "doubt": "RepDB sets the pulley a little higher than our face height."
+    },
+    "fire_hydrant": {
+      "repdb": "fire-hydrant"
+    },
+    "flutter_kicks": {
+      "repdb": "flutter-kicks"
+    },
+    "front_squat": {
+      "repdb": "front-squat"
+    },
+    "glute_bridge": {
+      "repdb": "glute-bridge"
+    },
+    "goblet_squat": {
+      "repdb": "db-goblet-squat"
+    },
+    "good_morning": {
+      "repdb": "good-morning"
+    },
+    "hack_squat": {
+      "repdb": "hack-squat"
+    },
+    "hammer_curl": {
+      "repdb": "hammer-curl"
+    },
+    "hanging_knee_raise": {
+      "repdb": "hanging-knee-raise"
+    },
+    "heel_touch": {
+      "repdb": "heel-touches"
+    },
+    "hip_abduction_machine": {
+      "repdb": "hip-abduction"
+    },
+    "hip_adduction_machine": {
+      "repdb": "hip-adduction"
+    },
+    "hip_thrust_machine": {
+      "repdb": "plate-loaded-glute-drive",
+      "doubt": "RepDB shows a plate-loaded glute drive machine."
+    },
+    "incline_barbell_press": {
+      "repdb": "incline-bench-press"
+    },
+    "incline_dumbbell_curl": {
+      "repdb": "incline-db-curl"
+    },
+    "incline_dumbbell_fly": {
+      "repdb": "incline-dumbbell-fly"
+    },
+    "incline_dumbbell_press": {
+      "repdb": "incline-db-press"
+    },
+    "incline_hammer_curl": {
+      "repdb": "incline-hammer-curl"
+    },
+    "incline_push_up": {
+      "repdb": "incline-push-ups"
+    },
+    "inverted_row": {
+      "repdb": "inverted-row"
+    },
+    "jump_squat": {
+      "repdb": "jump-squat"
+    },
+    "jumping_jack": {
+      "repdb": "jumping-jacks"
+    },
+    "jumping_lunge": {
+      "repdb": "plyo-lunge"
+    },
+    "kettlebell_swing": {
+      "repdb": "kettlebell-swing"
+    },
+    "knee_push_up": {
+      "repdb": "knee-push-ups"
+    },
+    "landmine_press": {
+      "repdb": "one-arm-landmine-press"
+    },
+    "lat_pulldown": {
+      "repdb": "lat-pulldown"
+    },
+    "lateral_lunge": {
+      "repdb": "side-lunge"
+    },
+    "lateral_raise": {
+      "repdb": "lateral-raise"
+    },
+    "leg_extension": {
+      "repdb": "leg-extension"
+    },
+    "leg_press": {
+      "repdb": "leg-press"
+    },
+    "lying_leg_curl": {
+      "repdb": "leg-curl"
+    },
+    "lying_leg_raise": {
+      "repdb": "lying-leg-raise"
+    },
+    "machine_back_extension": {
+      "repdb": "machine-back-extension"
+    },
+    "machine_bicep_curl": {
+      "repdb": "machine-bicep-curl"
+    },
+    "machine_chest_press": {
+      "repdb": "chest-press-machine"
+    },
+    "machine_lateral_raise": {
+      "repdb": "plate-loaded-lateral-raise",
+      "doubt": "RepDB shows a plate-loaded lateral raise machine; many gyms have a stack machine."
+    },
+    "machine_shoulder_press": {
+      "repdb": "machine-shoulder-press"
+    },
+    "machine_shrug": {
+      "repdb": "plate-loaded-shrug",
+      "doubt": "RepDB shows a plate-loaded shrug machine."
+    },
+    "machine_triceps_extension": {
+      "repdb": "machine-triceps-extension"
+    },
+    "medicine_ball_slam": {
+      "repdb": "medicine-ball-slam"
+    },
+    "mountain_climber": {
+      "repdb": "mountain-climbers"
+    },
+    "muscle_up": {
+      "repdb": "muscle-ups"
+    },
+    "negative_pull_up": {
+      "repdb": "negative-pull-ups"
+    },
+    "neutral_grip_pull_up": {
+      "repdb": "neutral-grip-pull-ups"
+    },
+    "nordic_curl": {
+      "repdb": "nordic-hamstring-curl"
+    },
+    "one_arm_dumbbell_row": {
+      "repdb": "single-arm-db-row"
+    },
+    "overhead_press": {
+      "repdb": "ohp"
+    },
+    "overhead_squat": {
+      "repdb": "overhead-squat"
+    },
+    "overhead_triceps_extension": {
+      "repdb": "overhead-tricep-extension"
+    },
+    "pallof_press": {
+      "repdb": "cable-pallof-press"
+    },
+    "pause_squat": {
+      "repdb": "pause-squat"
+    },
+    "pec_deck_fly": {
+      "repdb": "machine-chest-fly"
+    },
+    "pendlay_row": {
+      "repdb": "pendlay-row"
+    },
+    "pike_push_up": {
+      "repdb": "pike-push-ups"
+    },
+    "pistol_squat": {
+      "repdb": "pistol-squat"
+    },
+    "plate_pinch": {
+      "repdb": "plate-pinch"
+    },
+    "preacher_curl": {
+      "repdb": "machine-preacher-curl"
+    },
+    "preacher_hammer_curl": {
+      "repdb": "preacher-hammer-curl"
+    },
+    "pull_up": {
+      "repdb": "pull-up"
+    },
+    "push_press": {
+      "repdb": "push-press"
+    },
+    "push_up": {
+      "repdb": "push-up",
+      "swap": true
+    },
+    "rack_pull": {
+      "repdb": "rack-pull"
+    },
+    "rear_delt_fly": {
+      "repdb": "rear-delt-fly"
+    },
+    "reverse_barbell_curl": {
+      "repdb": "reverse-curl"
+    },
+    "reverse_crunch": {
+      "repdb": "reverse-crunches"
+    },
+    "reverse_dumbbell_wrist_curl": {
+      "repdb": "db-reverse-wrist-curl"
+    },
+    "reverse_grip_barbell_row": {
+      "repdb": "reverse-grip-bent-over-row"
+    },
+    "reverse_grip_lat_pulldown": {
+      "repdb": "reverse-grip-lat-pulldown"
+    },
+    "reverse_pec_deck": {
+      "repdb": "machine-reverse-fly"
+    },
+    "romanian_deadlift": {
+      "repdb": "romanian-deadlift"
+    },
+    "rope_hammer_curl": {
+      "repdb": "cable-hammer-curl"
+    },
+    "rowing_machine": {
+      "repdb": "rowing-machine"
+    },
+    "russian_twist": {
+      "repdb": "russian-twist"
+    },
+    "seated_barbell_shoulder_press": {
+      "repdb": "seated-barbell-overhead-press"
+    },
+    "seated_cable_row": {
+      "repdb": "seated-cable-row"
+    },
+    "seated_calf_raise": {
+      "repdb": "seated-calf-raise"
+    },
+    "seated_dip_machine": {
+      "repdb": "seated-dip-machine"
+    },
+    "seated_dumbbell_curl": {
+      "repdb": "seated-dumbbell-curl"
+    },
+    "seated_lateral_raise": {
+      "repdb": "seated-dumbbell-lateral-raise"
+    },
+    "seated_leg_curl": {
+      "repdb": "seated-leg-curl"
+    },
+    "seated_leg_press": {
+      "repdb": "horizontal-leg-press"
+    },
+    "seated_machine_row": {
+      "repdb": "chest-supported-machine-row",
+      "doubt": "RepDB shows a plate-loaded chest-supported row machine."
+    },
+    "seated_overhead_dumbbell_extension": {
+      "repdb": "seated-dumbbell-tricep-extension"
+    },
+    "side_lying_leg_raise": {
+      "repdb": "side-lying-hip-abduction"
+    },
+    "single_arm_cable_front_raise": {
+      "repdb": "cable-front-raise"
+    },
+    "single_arm_cable_lateral_raise": {
+      "repdb": "cable-lateral-raise"
+    },
+    "single_arm_cable_pushdown": {
+      "repdb": "single-arm-tricep-pushdown"
+    },
+    "single_arm_cable_row": {
+      "repdb": "one-arm-seated-cable-row"
+    },
+    "single_arm_dumbbell_bench_press": {
+      "repdb": "single-arm-dumbbell-bench-press"
+    },
+    "single_arm_dumbbell_preacher_curl": {
+      "repdb": "one-arm-dumbbell-preacher-curl"
+    },
+    "single_arm_dumbbell_shoulder_press": {
+      "repdb": "one-arm-dumbbell-shoulder-press"
+    },
+    "single_arm_hammer_curl": {
+      "repdb": "single-arm-hammer-curl"
+    },
+    "single_arm_lat_pulldown": {
+      "repdb": "one-arm-lat-pulldown"
+    },
+    "single_arm_overhead_dumbbell_extension": {
+      "repdb": "single-arm-dumbbell-overhead-tricep-extension"
+    },
+    "single_dumbbell_skull_crusher": {
+      "repdb": "lying-tricep-extension"
+    },
+    "single_leg_extension": {
+      "repdb": "single-leg-extension"
+    },
+    "single_leg_glute_bridge": {
+      "repdb": "single-leg-glute-bridge"
+    },
+    "single_leg_hip_thrust": {
+      "repdb": "single-leg-hip-thrust"
+    },
+    "single_leg_press": {
+      "repdb": "single-leg-press"
+    },
+    "single_leg_romanian_deadlift": {
+      "repdb": "one-arm-single-leg-dumbbell-romanian-deadlift",
+      "swap": true
+    },
+    "sit_up": {
+      "repdb": "sit-ups"
+    },
+    "smith_machine_bench_press": {
+      "repdb": "smith-machine-bench-press"
+    },
+    "smith_machine_calf_raise": {
+      "repdb": "smith-machine-calf-raise"
+    },
+    "smith_machine_decline_press": {
+      "repdb": "smith-machine-decline-bench-press"
+    },
+    "smith_machine_hip_thrust": {
+      "repdb": "smith-machine-hip-thrust",
+      "doubt": "The start and end pictures look very alike."
+    },
+    "smith_machine_row": {
+      "repdb": "smith-machine-bent-over-row"
+    },
+    "smith_machine_shoulder_press": {
+      "repdb": "seated-smith-machine-shoulder-press"
+    },
+    "smith_machine_shrug": {
+      "repdb": "smith-machine-shrug"
+    },
+    "smith_machine_split_squat": {
+      "repdb": "smith-machine-split-squat"
+    },
+    "smith_machine_squat": {
+      "repdb": "smith-machine-squat"
+    },
+    "smith_machine_upright_row": {
+      "repdb": "smith-machine-upright-row"
+    },
+    "spiderman_push_up": {
+      "repdb": "spiderman-push-up"
+    },
+    "stability_ball_knee_tuck": {
+      "repdb": "stability-ball-knee-tuck"
+    },
+    "standing_calf_raise": {
+      "repdb": "machine-calf-raise"
+    },
+    "standing_dumbbell_shoulder_press": {
+      "repdb": "dumbbell-shoulder-press"
+    },
+    "stiff_leg_deadlift": {
+      "repdb": "stiff-leg-deadlift"
+    },
+    "straight_arm_pulldown": {
+      "repdb": "straight-arm-pulldown"
+    },
+    "sumo_deadlift": {
+      "repdb": "sumo-deadlift"
+    },
+    "sumo_squat": {
+      "repdb": "db-sumo-squat"
+    },
+    "superman": {
+      "repdb": "superman"
+    },
+    "svend_press": {
+      "repdb": "svend-press"
+    },
+    "swiss_ball_leg_curl": {
+      "repdb": "ball-leg-curl"
+    },
+    "t_bar_row": {
+      "repdb": "t-bar-row"
+    },
+    "trap_bar_deadlift": {
+      "repdb": "hex-bar-deadlift"
+    },
+    "triceps_pushdown": {
+      "repdb": "tricep-pushdown"
+    },
+    "turkish_get_up": {
+      "repdb": "kettlebell-turkish-get-ups"
+    },
+    "v_bar_triceps_pushdown": {
+      "repdb": "v-bar-tricep-pushdown"
+    },
+    "v_up": {
+      "repdb": "v-ups"
+    },
+    "weighted_dip": {
+      "repdb": "weighted-dips"
+    },
+    "weighted_pull_up": {
+      "repdb": "weighted-pull-up"
+    },
+    "wide_grip_bench_press": {
+      "repdb": "wide-grip-bench-press"
+    },
+    "wide_grip_cable_row": {
+      "repdb": "wide-grip-seated-cable-row"
+    },
+    "wide_grip_pull_up": {
+      "repdb": "wide-grip-pull-ups"
+    },
+    "wide_push_up": {
+      "repdb": "wide-grip-push-ups"
+    },
+    "wrist_roller": {
+      "repdb": "wrist-roller"
+    }
+  }
+}
