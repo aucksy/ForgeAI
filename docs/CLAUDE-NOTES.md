@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-197. "Yes, switch on 0042 so from the 3rd message of the day members get no phone pop-up, and the daily maximum is 10." — 30 Oct 2026
+**He said:** exactly that (his live-database yes for 0042).
+**Doing:** apply supabase/migrations/0042_message_calm.sql (feat/message-calm, 9000579) live, run its live test, copy both files to
+main marked APPLIED LIVE. Changes: gym_messages.quiet (set when the gym already has 2+ messages that India day), no push job for a
+quiet message, "quiet" in the message JSON, owner_send_message cap 20 -> 10. Checked: the 3 functions equal their latest live
+versions (0038, 0008 + 0012 search_path, 0025) except the planned lines.
+
 ## R-196. Tracker: the feature-rating module moves to Home, as its own permanent section — 30 Oct 2026
 **He said:** "that feature rating module in tracker, move that in Home section as a dedicated permanent section".
 **Done:** Home has "Rate features for marketing" (above "Claude is working on"): the explanation and both top-5 lists always show;
