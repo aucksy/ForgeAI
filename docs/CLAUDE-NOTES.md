@@ -132,6 +132,10 @@ the gym imported. Honest wording: shows change since start, never claims MettleU
 exercise clips and the watch app (signed watch bundle to Play's Wear OS internal track) on main and release v0.60.0 through
 the full gate. Conflicts: keep main's APPLIED LIVE 0039/0040 files and main's approved privacy text; combine security.sql.
 FEEDBACK.md's release rule becomes R-175's.
+**Result:** v0.60.0 released to testers (Play internal + alpha, 60000; APK on GitHub). Gate run ids and the flaky steps are in
+PROGRESS.md. Watch app: the right track is "wear:internal" (Play's list; the docs' "wear:qa" is not found). The upload reached
+Play, but Play will not commit until he answers "does your app include health features" in Play Console. Then re-run Play upload
+for v0.60.0 (dry run off); the phone tracks skip themselves.
 
 ## R-186. Overnight: "pick up whatever you can from the feature backlog and make the best decisions" — 29 Oct 2026
 **He said:** going to sleep; pick up what I can from the backlog, best decisions; he checks in the morning; looking forward to

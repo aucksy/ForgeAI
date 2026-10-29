@@ -2693,6 +2693,22 @@
   hq_push_next/drop). App: google-services plugin + google-services.json, shop/pushToken.ts (save/refresh/clear the
   FCM address), push task in noticeTask.ts (marks shown so the 15-min check never repeats it). Left: live 0038 (owner
   yes), FCM_SERVICE_ACCOUNT secret, privacy line OK, release. Details CLAUDE-NOTES R-153.
+- 2026-10-29: **v0.60.0 RELEASED to testers; watch app NOT on Play yet (owner must answer Play's health question).**
+  Tag on af5dd2c = tested 81697eb + one release self-test fix (tracker page test read the old Waiting filter after R-184).
+  Phone gate on 81697eb: Device QA default+clip 40799027591 green, owner 40824664436 green, journeys 40799034012 green,
+  CI 40795951095 green. Two real app bugs found by the gate and fixed first: the feedback button covered the Calendar's
+  Sunday column (hidden on Calendar) and a row's "More" button (default spot moved). Flaky steps shipped under the
+  test-only rule (same step passed on the same commit, cause outside the app): owner part R (shared test gym stock 25 vs
+  24, the parallel default run ordered the same shaker), owner part J ("Save and add to workout" not found; passed on
+  the same commit before and after), UK2/UK3 shortcut (passed alone on 0.60.0 both profiles and on v0.59.0), journeys
+  J1/J5 (passed on 81697eb). Release run 40838435757: gate, build, publish green; phone 60000 on Play internal + alpha.
+  Tag was re-made lightweight (an annotated tag made the Play job's tag fetch refuse; deleting it drafted the release,
+  re-published). Watch: Play answered "Track not found: wear:qa" (Google's docs name) - Play's own list for this app is
+  wear:production / wear:beta / wear:internal, so the upload now targets wear:internal (50035a8). Re-run 40843843284
+  uploaded the watch bundle (1000060000) to wear:internal, then Play refused the commit: "You must let us know whether
+  your app includes any health features." Nothing changed on Play. After the owner answers that in Play Console (App
+  content), re-run "Play upload" for tag v0.60.0 with dry run off. Admin app deployed (forgeai-panel b1724ef3); HQ unchanged.
+  APK: https://github.com/aucksy/ForgeAI/releases/download/v0.60.0/mettleup-v0.60.0.apk
 - 2026-10-29: **0.60.0 prepared (R-187): seven built branches on main, cherry-picked in order onto 0cafe18.** Feedback button
   (R-149), progress trio (finish-screen kg vs last time, kg per workout on exercise History, body-weight moves read every
   workout), how busy the gym is (0039 live), gym-mate profiles (0040 live), admin What's new + crash/outage alerts (#34),
