@@ -107,7 +107,7 @@ describe('tracker schema v14: the column and its triggers', () => {
     await bootRealApp({ db }); // the new release starts
     expect(db.columns('exercise_prefs').map((c) => c.name)).toEqual(['exercise_id', 'rest_sec', 'records_from']);
     expect(prefs(bench)).toEqual([{ rest_sec: 150, records_from: null }]);
-    expect(db.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '14' }]);
+    expect(db.all("SELECT value FROM meta WHERE key = 'tracker_schema_version'")).toEqual([{ value: '15' }]);
     expect(db.count('sqlite_master', "type = 'trigger' AND name LIKE 'rf\\_%' ESCAPE '\\'")).toBe(3);
     // Idempotent: a second start changes nothing.
     const sql = db.all('SELECT type, name, sql FROM sqlite_master ORDER BY name');

@@ -13,7 +13,7 @@
  * to one that fits the plan's equipment and sore areas. The routine stays as it is.
  */
 import { useRouter } from 'expo-router';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
@@ -52,6 +52,8 @@ import { cardSourceLine } from '../lib/previousSource';
 import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
+import { MachineDetailsRow } from './MachineDetailsRow';
+import { machineFieldsOf, machineKindOf } from '../engine/cardioMachine';
 import type { DragWrap } from './DragList';
 import { rpeTickDelayMs, shouldAutoTick } from '../lib/rpeTick';
 import { useReduceMotion } from '@/components/ui/useReduceMotion';
@@ -150,6 +152,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const loadMode = exercise.loadMode ?? 'one';
   const distUnit = exercise.distUnit ?? 'km';
   const heads = columnHeads(logType, loadMode, distUnit);
+  // F64: the machine boxes this exercise shows under each set (none for anything but a machine).
+  const machineFields = machineFieldsOf(machineKindOf({ catalogKey: exercise.catalogKey, name: exercise.name, logType }));
 
   // Two RN Modals swapping in the same frame can drop the second on Android —
   // let the first finish sliding out.
@@ -647,8 +651,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         </View>
 
         {rows.map((r) => (
+          <Fragment key={r.set.key}>
           <SetRow
-            key={r.set.key}
             exKey={exercise.key}
             set={r.set}
             label={r.label}
@@ -663,6 +667,18 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             exName={exercise.name}
             spoken={r.spoken}
           />
+          {/* F64: a treadmill's speed and incline, a bike's / rower's level — only on those machines. */}
+          {machineFields.length > 0 ? (
+            <MachineDetailsRow
+              exKey={exercise.key}
+              setKey={r.set.key}
+              machine={r.set.machine}
+              fields={machineFields}
+              spoken={r.spoken}
+              insetLeft={rowLayout.padX + rowLayout.setW + rowLayout.gap}
+            />
+          ) : null}
+          </Fragment>
         ))}
       </View>
 

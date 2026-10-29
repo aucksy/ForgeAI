@@ -89,8 +89,11 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     // Drive backup lossless. Old backups lack these keys → batchInsert's `row[c] ?? null`
     // restores them as NULL (backward-compatible; no SCHEMA_VERSION bump needed).
     // + `card_index` (tracker schema v10, LW-28): heavy and back-off cards of one lift stay two.
+    // + `speed_kmh` / `incline_pct` / `machine_level` (tracker schema v15, F64): a cardio
+    //   machine's details; older backups restore them as NULL, like the rest.
     cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
-      'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode', 'card_index'],
+      'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode', 'card_index',
+      'speed_kmh', 'incline_pct', 'machine_level'],
   },
   {
     name: 'personal_records',

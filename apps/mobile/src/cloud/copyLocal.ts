@@ -104,7 +104,7 @@ export async function readLocalItems(db: Tx = getDb()): Promise<LocalItem[]> {
   );
   const sets = await db.getAllAsync<SetRow & { session_id: string }>(
     `SELECT session_id, exercise_id, set_number, weight_kg, reps, is_warmup, rpe, set_type, note, superset_group,
-            duration_sec, distance_m, load_mode, card_index
+            duration_sec, distance_m, load_mode, card_index, speed_kmh, incline_pct, machine_level
        FROM set_entries ORDER BY session_id, rowid`,
   );
   const bySession = new Map<string, SetRow[]>();
@@ -419,10 +419,13 @@ async function applyOne(
         touched.add(exerciseId);
         await tx.runAsync(
           `INSERT INTO set_entries (id, session_id, exercise_id, set_number, weight_kg, reps, is_warmup, rpe, set_type, note,
-                                    superset_group, duration_sec, distance_m, load_mode, card_index)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                    superset_group, duration_sec, distance_m, load_mode, card_index,
+                                    speed_kmh, incline_pct, machine_level)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [uuid(), a.id, exerciseId, x.set_number, x.weight_kg, x.reps, x.is_warmup, x.rpe, x.set_type, x.note, x.superset_group,
-            x.duration_sec, x.distance_m, x.load_mode, x.card_index],
+            x.duration_sec, x.distance_m, x.load_mode, x.card_index,
+            // F64 (tracker schema v15): a machine's details (null on every other set).
+            x.speed_kmh ?? null, x.incline_pct ?? null, x.machine_level ?? null],
         );
       }
       return 'ok';

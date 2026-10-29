@@ -24,6 +24,7 @@ import * as Sharing from 'expo-sharing';
 
 import { getDb } from '@/db';
 import { todayISO } from '@/lib/date';
+import { machineFromRow } from '@/tracker/engine/cardioMachine';
 import { DAY_LABEL, TITLE_SEP } from '@/tracker/services/hevyImport';
 import type { DayType, UnitSystem } from '@/types/models';
 
@@ -48,6 +49,11 @@ export function hevyColumns(units: UnitSystem): string[] {
     imperial ? 'distance_miles' : 'distance_km',
     'duration_seconds',
     'rpe',
+    // F64: a cardio machine's details, after Hevy's 14 (its importer reads columns by name, so
+    // extra ones are harmless; ours reads them back).
+    imperial ? 'speed_mph' : 'speed_kmh',
+    'incline_percent',
+    'level',
   ];
 }
 
@@ -75,6 +81,10 @@ export interface HistorySetRow {
   title?: string | null;
   /** LW-28: the set's card among the workout's cards of this exercise (NULL / 0 = the first). */
   card_index?: number | null;
+  /** F64 (tracker schema v15): a machine's speed (km/h), incline (%) and level; NULL = none. */
+  speed_kmh?: number | null;
+  incline_pct?: number | null;
+  machine_level?: number | null;
 }
 
 /**
@@ -183,6 +193,7 @@ export function hevyCsvEncoder(units: UnitSystem): { header: string; encode(rows
                 : s.distance_m / 1000
               : '';
           const warm = hevySetType(s) === 'warmup';
+          const machine = machineFromRow(s);
           lines.push(
             [
               title,
@@ -199,6 +210,9 @@ export function hevyCsvEncoder(units: UnitSystem): { header: string; encode(rows
               distance,
               s.duration_sec != null && s.duration_sec > 0 ? Math.round(s.duration_sec) : '',
               !warm && s.rpe != null ? s.rpe : '',
+              machine?.speedKmh != null ? (imperial ? round(machine.speedKmh / (M_PER_MILE / 1000), 5) : machine.speedKmh) : '',
+              machine?.inclinePct ?? '',
+              machine?.level ?? '',
             ]
               .map(csvCell)
               .join(','),
@@ -229,7 +243,7 @@ export async function readHistoryRows(): Promise<HistorySetRow[]> {
     `SELECT s.id AS session_id, s.date_iso, s.started_at, s.ended_at, s.day_type, s.notes, s.title,
             se.exercise_id, e.name AS exercise_name, e.log_type,
             se.weight_kg, se.reps, se.is_warmup, se.rpe, se.set_type, se.note, se.superset_group,
-            se.duration_sec, se.distance_m, se.card_index
+            se.duration_sec, se.distance_m, se.card_index, se.speed_kmh, se.incline_pct, se.machine_level
        FROM workout_sessions s
        JOIN set_entries se ON se.session_id = s.id
        JOIN exercises e ON e.id = se.exercise_id
@@ -240,7 +254,7 @@ export async function readHistoryRows(): Promise<HistorySetRow[]> {
 const HISTORY_SELECT = `SELECT s.id AS session_id, s.date_iso, s.started_at, s.ended_at, s.day_type, s.notes, s.title,
             se.exercise_id, e.name AS exercise_name, e.log_type,
             se.weight_kg, se.reps, se.is_warmup, se.rpe, se.set_type, se.note, se.superset_group,
-            se.duration_sec, se.distance_m, se.card_index
+            se.duration_sec, se.distance_m, se.card_index, se.speed_kmh, se.incline_pct, se.machine_level
        FROM workout_sessions s
        JOIN set_entries se ON se.session_id = s.id
        JOIN exercises e ON e.id = se.exercise_id`;

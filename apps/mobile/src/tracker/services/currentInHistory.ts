@@ -11,6 +11,7 @@
  * the member sees where today's sets will land).
  */
 import type { TrackedSetEntry } from '../db/exerciseHistory';
+import { cleanMachine } from '../engine/cardioMachine';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 
 export const CURRENT_SESSION_ID = 'current-workout';
@@ -29,6 +30,7 @@ export function currentWorkoutSets(
   cards.forEach((card, cardIndex) => {
     for (const s of card.sets) {
       if (!s.done || s.isWarmup) continue;
+      const machine = cleanMachine(s.machine);
       out.push({
         id: `${card.key}:${s.key}`,
         sessionId: CURRENT_SESSION_ID,
@@ -42,6 +44,7 @@ export function currentWorkoutSets(
         ...(s.setType === 'drop' || s.setType === 'failure' ? { setType: s.setType } : {}),
         ...(cardIndex > 0 ? { cardIndex } : {}),
         ...(s.rpe != null ? { rpe: s.rpe } : {}),
+        ...(machine ? { machine } : {}),
       });
     }
   });

@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 14;
+export const TRACKER_SCHEMA_VERSION = 15;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -138,6 +138,13 @@ export async function initTrackerSchema(): Promise<void> {
   // training change counter, so every kept record is worked out again (see below).
   await ensureColumn('exercise_prefs', 'records_from', 'TEXT');
   for (const sql of RECORDS_FROM_TRIGGERS) await getDb().execAsync(sql);
+  // v15 (F64, treadmill and cycle details): a cardio machine set's speed (km/h, shown in mph under
+  // "lb, miles"), incline (%) and level (the machine's own number). NULL on every older set and on
+  // every set that is not a machine's, so those read exactly as before. Records and Targets never
+  // read them, so the v13 training-change triggers stay as they are.
+  await ensureColumn('set_entries', 'speed_kmh', 'REAL');
+  await ensureColumn('set_entries', 'incline_pct', 'REAL');
+  await ensureColumn('set_entries', 'machine_level', 'REAL');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }
