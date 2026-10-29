@@ -16,7 +16,7 @@
  * schema v14 — a new gym or machine: records count from today, History and charts keep all)
  * and, once set, "Count all records again".
  */
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -445,6 +445,21 @@ export default function ExerciseScreen() {
                       range={chartRange}
                       onRangeChange={setChartRange}
                     />
+                    {/* F63: the 1-rep max and % calculator, starting on this exercise's best recent set */}
+                    {shownAs === 'weight_reps' ? (
+                      <Pressable
+                        onPress={() => go(() => router.push({ pathname: '/one-rep-max', params: { exerciseId: ex.id } } as unknown as Href))}
+                        accessibilityRole="link"
+                        accessibilityLabel={`Open the 1-rep max and percent calculator for ${ex.name}`} // member-words
+                        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 48, opacity: pressed ? 0.6 : 1 })}
+                      >
+                        <Icon name="dumbbell" size={16} color={color.accent} />
+                        <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>
+                          {'1-rep max and % calculator' /* member-words */}
+                        </Text>
+                        <Icon name="chevron-right" size={18} color={color.inkMuted} />
+                      </Pressable>
+                    ) : null}
                     {recordCtx ? (
                       <ExercisePrRows bests={bests} kinds={ov.records.kinds} ctx={recordCtx} ladder={ladder} units={units} onOpenSession={openSession} />
                     ) : null}
