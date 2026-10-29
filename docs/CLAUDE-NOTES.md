@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-198. Active workout: show the routine's name (top of the screen and the "Resume workout" bar) — 30 Oct 2026
+**He said:** the active workout screen does not tell me which routine I am doing; at the top near the duration, or below it, show
+e.g. "Pull 2" (the routine's name). Also the bar to resume the workout (seen after leaving the active screen) should show the name.
+**Doing:** member app: the routine's name on the active workout screen near the timer, and on the resume bar; an empty workout shows
+its own name ("Workout"/what the app calls it). Ships with the next member app release.
+
 ## R-197. "Yes, switch on 0042 so from the 3rd message of the day members get no phone pop-up, and the daily maximum is 10." — 30 Oct 2026
 **He said:** exactly that (his live-database yes for 0042).
 **Doing:** apply supabase/migrations/0042_message_calm.sql (feat/message-calm, 9000579) live, run its live test, copy both files to
