@@ -1,6 +1,6 @@
 /**
- * Today → "Get started" (launch plan I5): a new gym's first five steps (logic/getStarted.ts). The
- * owner only; gone when every step is done or when hidden. The two hand-ticked steps and "hidden"
+ * Today → "Get started" (launch plan I5): a new gym's first six steps (logic/getStarted.ts). The
+ * owner only; gone when every step is done or when hidden. The hand-ticked steps and "hidden"
  * are kept in this browser per gym (a convenience: losing them only shows the card again).
  */
 import { useState } from 'react';
@@ -29,6 +29,12 @@ function save(gymId: string, v: { ticked: StepKey[]; hidden: boolean }) {
   } catch (e) {
     console.warn('[get started] could not save', e);
   }
+}
+
+/** Ticks a hand-ticked step from another screen (Branding ticks "logo and colours" once a look is saved). */
+export function tickGetStarted(gymId: string, key: StepKey) {
+  const v = readSaved(gymId);
+  if (!v.ticked.includes(key)) save(gymId, { ...v, ticked: [...v.ticked, key] });
 }
 
 export function GetStartedCard() {

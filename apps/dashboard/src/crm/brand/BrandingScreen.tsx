@@ -18,6 +18,8 @@ import { brandReport, normalizeHex, type BrandPalette, type GymBrand, type Headi
 import * as api from '../shop/api';
 import { JoinCodeCard } from '../shop/JoinCode';
 import { useShop } from '../shop/ShopProvider';
+import { useCrm } from '../store';
+import { tickGetStarted } from '../ui/GetStartedCard';
 import { Button, Card, ErrorBanner, PageHeader, SectionTitle, Sheet, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { CLEAR_ARGS, brandErrorWords, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, type BrandDraft } from './brandLogic';
@@ -58,6 +60,7 @@ type Load = { state: 'loading' } | { state: 'error'; message: string } | { state
 
 function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string }) {
   const { handleError } = useShop();
+  const gymId = useCrm().snapshot.gym.gymId;
   const compact = useIsCompact();
   const [load, setLoad] = useState<Load>({ state: 'loading' });
   const [draft, setDraft] = useState<BrandDraft>(() => draftFromBrand(null));
@@ -80,12 +83,13 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     try {
       const g = await api.ownerGym(ownerKey);
       const saved = g.brand ?? null;
+      if (saved) tickGetStarted(gymId, 'brand');
       setDraft(draftFromBrand(saved));
       setLoad({ state: 'ready', saved });
     } catch (e) {
       setLoad({ state: 'error', message: handleError(e) });
     }
-  }, [ownerKey, handleError]);
+  }, [ownerKey, handleError, gymId]);
 
   useEffect(() => {
     void fetchBrand();
@@ -130,6 +134,7 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
       const next = await api.setBrand(ownerKey, saveArgs(draft));
       setLoad({ state: 'ready', saved: next });
       setDraft(draftFromBrand(next));
+      tickGetStarted(gymId, 'brand');
       flash(savedWords());
     } catch (e) {
       setError(brandErrorWords(e));

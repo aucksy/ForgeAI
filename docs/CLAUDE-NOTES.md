@@ -5,6 +5,18 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-191. Idea under discussion: remove the background from uploaded gym logos — 30 Oct 2026
+**He said:** is there a small, free utility (GitHub etc.) for our admin server that removes the background from logos owners
+upload, so the logo looks good in the member app? Small, fast, correct, free. "Let's keep this under discussion for now."
+**Answered in chat (not built, not in the tracker):** our admin server is a Cloudflare Worker (no Python), so rembg-type tools
+do not fit there; @imgly/background-removal runs in the browser but is AGPL. Recommended: our own tiny edge-fill in the owner's
+browser (logos mostly sit on one flat colour), with a before/after preview and "Keep my logo as it is".
+
+## R-190. Get started: add the logo and brand colours step — 30 Oct 2026
+**He said:** "Get Started Section on Admin Home Page. Add the step about adding their logo and brand colors".
+**Done:** step 3 of 6, "Add your logo and colours" (opens Branding). Ticks itself when the Branding screen finds or saves a look;
+the owner can also tap Done. Typecheck clean, 1,323 unit tests pass. Goes live with the next admin app deploy.
+
 ## R-189. Shoulder press v7 rejected: "uncanny valley" shoulder/armpit, left dumbbell angled — 30 Oct 2026
 **He said:** the area around the shoulder and armpit flexes, presses itself and seems to twist, "very disturbing to watch"; the
 dumbbell in the left hand is angled, not straight; "you must examine the details even more closely and truly understand how the
