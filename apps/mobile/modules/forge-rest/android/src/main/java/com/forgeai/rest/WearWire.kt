@@ -48,6 +48,38 @@ internal object WearWire {
     }
   }
 
+  // ------------------------------------------------------------------ F67: install on the watch
+  /** F67: no watch connected. */
+  const val WATCH_NONE = "none"
+  /** F67: every connected watch has the MettleUp watch app (its capability, wear.xml). */
+  const val WATCH_INSTALLED = "installed"
+  /** F67: at least one connected watch lacks it. */
+  const val WATCH_MISSING = "missing"
+
+  /**
+   * F67 ("Install the watch app from the phone"): what the phone tells the app, from the connected
+   * watches ([connected], node ids) and those that declare the MettleUp watch app ([withApp]). A
+   * node that declares it but is not connected does not count.
+   */
+  fun watchAppState(connected: Collection<String>, withApp: Collection<String>): String {
+    if (connected.isEmpty()) return WATCH_NONE
+    val has = withApp.toSet()
+    return if (connected.all { it in has }) WATCH_INSTALLED else WATCH_MISSING
+  }
+
+  /** F67: the connected watches the Play Store should open on (those without the watch app). */
+  fun installTargets(connected: Collection<String>, withApp: Collection<String>): List<String> {
+    val has = withApp.toSet()
+    return connected.filter { it !in has }.distinct()
+  }
+
+  /**
+   * F67: the watch's Play Store page of the MettleUp watch app. The watch app has the phone's
+   * applicationId (com.mettleup.app, android/wear/build.gradle: the Data Layer needs the same id),
+   * so the phone's own package name is the right one.
+   */
+  fun playStoreUri(pkg: String): String = "market://details?id=$pkg"
+
   private val HEX6 = Regex("^#[0-9A-F]{6}$")
 
   /**

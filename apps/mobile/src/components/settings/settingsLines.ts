@@ -23,6 +23,7 @@ export type SettingsRowKey =
   | 'reminders'
   | 'health'
   | 'widgets'
+  | 'watch'
   | 'gymJoin'
   | 'gymLogo'
   | 'gymSees'
@@ -61,6 +62,11 @@ export interface SettingsContext {
   hasHealth: boolean;
   /** The AI coach or voice is switched on in this build (hidden today, D4). */
   coach: boolean;
+  /**
+   * F67: a Wear OS watch is connected (Wear OS said "installed" or "missing"): the "Your watch" row
+   * shows. Left out with no watch, or when Wear OS cannot say.
+   */
+  watch?: boolean;
 }
 
 /** The groups and rows, in order, for this phone. PURE. */
@@ -84,6 +90,8 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
   const phone: SettingsRow[] = [{ key: 'reminders', title: 'Reminders', href: '/settings/notifications' }];
   if (ctx.hasHealth) phone.push({ key: 'health', title: 'Health Connect', href: '/settings/health' });
   phone.push({ key: 'widgets', title: 'Widgets', href: '/settings/widgets' });
+  // F67: acts on the spot ("Install on watch" opens the watch's Play Store), so no page.
+  if (ctx.watch) phone.push({ key: 'watch', title: 'Your watch' }); // member-words
 
   const gym: SettingsRow[] = [];
   if (ctx.gymName) {

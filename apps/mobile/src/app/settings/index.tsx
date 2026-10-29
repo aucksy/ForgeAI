@@ -30,6 +30,7 @@ import { getProfile } from '@/db/repos/userRepo';
 import { FEATURES, profileParts } from '@/lib/features';
 import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
+import { tell } from '@/lib/tell';
 import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
 import { useGymShop } from '@/shop/gymStore';
@@ -43,6 +44,7 @@ import { widgetsPlaced } from '@/tracker/phone/widgets';
 import { plateSetupLine } from '@/tracker/services/plateMath';
 import { fmtRest } from '@/tracker/services/restRules';
 import { choiceLabel, REP_RANGE_CHOICES, WEIGHT_JUMP_CHOICES } from '@/tracker/services/targetChoices';
+import { WATCH_WORDS, installNote, installOnWatch, readWatchState, watchRowLine, type WatchState } from '@/tracker/services/watchInstall';
 import { useMuscleTips } from '@/tracker/store/muscleTipsStore';
 import { usePlateSetupFor } from '@/tracker/store/plateSetupStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
@@ -65,6 +67,7 @@ const ICON: Record<SettingsRowKey, IconName> = {
   reminders: 'calendar',
   health: 'heart',
   widgets: 'home',
+  watch: 'clock',
   gymJoin: 'key',
   gymLogo: 'home',
   gymSees: 'trophy',
@@ -126,6 +129,9 @@ export default function SettingsScreen() {
   const [health, setHealth] = useState<HealthState | null>(null);
   const [placed, setPlaced] = useState(0);
   const [name, setName] = useState<string | null>(null);
+  // F67: what Wear OS says about the watch ("Your watch" row: Installed / Install on watch).
+  const [watch, setWatch] = useState<WatchState>('unknown');
+  const installing = useRef(false);
   // UAT U-G2: the gym joined in the app (the old typed "Your gym" answer is no longer asked, A2).
   const link = useGymShop((s) => s.link);
   // One page per tap, however fast the taps.
@@ -141,6 +147,7 @@ export default function SettingsScreen() {
       .then(setHealth)
       .catch(() => setHealth('none'));
     setPlaced(widgetsPlaced());
+    void readWatchState().then(setWatch);
     void getProfile()
       .then((p) => setName(p?.name?.trim() || null))
       .catch((e: unknown) => console.warn('[settings] profile could not be read', e));
@@ -169,6 +176,7 @@ export default function SettingsScreen() {
     reminders: notificationsLine(remindersOn, fmtReminderTime(reminderMinutes)),
     health: healthLine(health),
     widgets: widgetsLine(placed),
+    watch: watchRowLine(watch),
     gymJoin: 'Type your gym’s code or scan its poster',
     about: versionLine(Constants.expoConfig?.version),
   };
@@ -179,7 +187,26 @@ export default function SettingsScreen() {
     // Health Connect only on a build that carries it (as the old card left it out).
     hasHealth: health !== null && health !== 'none',
     coach: PARTS.has('aiCoach') || PARTS.has('voice'),
+    watch: watchRowLine(watch) != null,
   });
+
+  // F67: "Your watch". Missing: open the watch's Play Store on MettleUp, then say what happened.
+  const onWatch = (): void => {
+    if (watch === 'installed') {
+      void tell(WATCH_WORDS.already);
+      return;
+    }
+    if (installing.current) return;
+    installing.current = true;
+    void installOnWatch()
+      .then((r) => {
+        if (r === 'installed') setWatch('installed');
+        return tell(installNote(r));
+      })
+      .finally(() => {
+        installing.current = false;
+      });
+  };
 
   const open = (href: string): void => {
     // The Gym tab is a tab: switch to it rather than stack a page on Settings.
@@ -197,7 +224,15 @@ export default function SettingsScreen() {
               <JoinedGymRows link={link} leading={(k) => <Dot icon={ICON[k]} />} />
             ) : (
               g.rows.map((r) =>
-                r.href ? (
+                r.key === 'watch' ? (
+                  <LinkRow
+                    key={r.key}
+                    title={r.title}
+                    sub={lines.watch ?? undefined}
+                    leading={<Dot icon={ICON.watch} />}
+                    onPress={onWatch}
+                  />
+                ) : r.href ? (
                   <LinkRow
                     key={r.key}
                     title={r.title}

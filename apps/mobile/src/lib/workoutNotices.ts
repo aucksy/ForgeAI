@@ -4,7 +4,7 @@
  * and push Start below the fold on a large-text phone.
  *
  *  - Notices, in this order: "That link didn't work" (the answer to the member's own tap, gone after
- *    a few seconds), a new version, What's new, the backup reminder. Once the member has closed one
+ *    a few seconds), a new version, What's new, the watch app offer (F67, once), the backup reminder. Once the member has closed one
  *    today (Later, Got it), the others wait for the next day.
  *  - Inside Up next: the easy week, else the easy-week offer, else the muscle tip.
  * The cards still decide for themselves whether they have something to say (`want`); this only
@@ -13,9 +13,9 @@
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 
-export type NoticeKind = 'link' | 'update' | 'whatsNew' | 'backup';
+export type NoticeKind = 'link' | 'update' | 'whatsNew' | 'watch' | 'backup';
 
-export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'update', 'whatsNew', 'backup'];
+export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'update', 'whatsNew', 'watch', 'backup'];
 
 /**
  * The one notice to draw now, or null. `restDay`: the day a notice was last closed; `undefined` =

@@ -1,6 +1,7 @@
 package com.forgeai.rest
 
 import android.content.Context
+import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -46,6 +47,10 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - restBell()                    — "native" (the app-open "Rest is over" rings itself, at
  *                                    notification volume), "hold" (Do Not Disturb holds it, and
  *                                    "Ring through" is off) or "app" (the app's own bell, as before).
+ * F67 (Install the watch app from the phone), async:
+ *  - watchAppState()               — "none" | "installed" | "missing" | "unknown" (WearSync.watchAppState);
+ *  - installOnWatch()              — opens the watch's Play Store on MettleUp: "opened" | "installed" |
+ *                                    "none" | "failed" | "unknown" (WearSync.installOnWatch).
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -287,6 +292,26 @@ class ForgeRestModule : Module() {
       val c = ctx ?: return@Function false
       WearSync.openWatch(c, startedAt.toLong())
       true
+    }
+
+    // F67 ("Install the watch app from the phone"): "none" | "installed" | "missing" | "unknown".
+    AsyncFunction("watchAppState") { promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(WearSync.WATCH_UNKNOWN)
+        return@AsyncFunction
+      }
+      WearSync.watchAppState(c) { s -> promise.resolve(s) }
+    }
+
+    // F67: open the watch's Play Store on MettleUp: "opened" | "installed" | "none" | "failed" | "unknown".
+    AsyncFunction("installOnWatch") { promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(WearSync.INSTALL_FAILED)
+        return@AsyncFunction
+      }
+      WearSync.installOnWatch(c) { s -> promise.resolve(s) }
     }
 
     Function("clearWorkoutCard") {
