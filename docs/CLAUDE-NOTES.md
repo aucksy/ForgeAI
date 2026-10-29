@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-189. Shoulder press v7 rejected: "uncanny valley" shoulder/armpit, left dumbbell angled — 30 Oct 2026
+**He said:** the area around the shoulder and armpit flexes, presses itself and seems to twist, "very disturbing to watch"; the
+dumbbell in the left hand is angled, not straight; "you must examine the details even more closely and truly understand how the
+human body moves."
+**Doing:** v8 by a helper: real shoulder movement (collarbone and shoulder blade rise and turn as the arm goes overhead, about 1 part
+for every 2 parts of arm), smoother skin at the shoulder, both dumbbells level and matching every frame, close-up review of both
+shoulders/armpits/hands at 6 points from 2 sides plus a fresh reviewer, before he sees it. Hard preference saved:
+D:\Brain\How I Like Things\exercise-clips-review-like-a-human-eye.md. Skill updated with the same review steps.
+
 ## R-188. Business-growth view: "does buying our system really grow their revenue?" — 30 Oct 2026
 **He said:** the analytics he asked for were meant to track whether membership numbers and engagement are increasing: overall
 business-growth analytics. "My genuine focus is to determine whether purchasing our system truly impacts their revenue and other
