@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-195. Message overload: nudge the owner, quiet after 2 a day, cap 10 — 30 Oct 2026
+**He said:** owners must not flood members with notifications (members stop taking them seriously; harms our brand); nudge the owner
+at e.g. the 3rd of the day or after a number in the week; not a hard stop; maybe an owner setting. Then: "okay build it" (all 3 of
+my suggestions).
+**Building:** (1) a soft line above Send at the 3rd message of the day / the 8th of the week (India days), send still allowed;
+(2) from the 3rd message of the day, members get it in the app's message list with no phone pop-up; (3) the daily maximum 20 -> 10.
+Not doing: an owner self-limit setting (owners who over-send would not switch it on). Later idea: member choice "All / Only
+important / None". Any server change waits for his live yes.
+
 ## R-194. "Yes, switch on 0041 so receipts printed offline are never refused" — 30 Oct 2026
 **He said:** exactly that (his live-database yes for 0041).
 **Doing:** apply supabase/migrations/0041_offline_desk_receipts.sql (from feat/offline-desk-3, 3f1b37f) in the live SQL editor, run its
