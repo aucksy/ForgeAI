@@ -30,8 +30,10 @@ describe('workout names', () => {
   it('the routine name is looked up by the plan day OR the routine id (a Repeat)', () => {
     const a = src('src/app/session/active.tsx');
     expect(a).toMatch(/const ownRoutineId = planDayId \|\| routineId \|\| null;/);
-    expect(a).toMatch(/getRoutine\(ownRoutineId\)/);
-    expect(a).toMatch(/\}, \[ownRoutineId\]\);/);
+    // R-198: read once beside the navigator (workoutTitleSync, by the same planDayId || routineId)
+    // and shared; the screen takes it only for its own routine.
+    expect(a).toMatch(/useWorkoutTitle\(\(s\) => \(ownRoutineId && s\.routineId === ownRoutineId/);
+    expect(src('src/tracker/services/workoutTitleSync.ts')).toMatch(/s\.planDayId \|\| s\.routineId \|\| null/);
   });
 
   it('a Repeat of a time-of-day workout is named by its own start time', () => {

@@ -35,7 +35,9 @@ import { FeedbackHeaderButton } from '@/components/feedback/FeedbackButton';
 import { FinishSheet, type FinishChoice } from '@/tracker/components/FinishSheet';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
-import { getRoutine } from '@/tracker/db/routineRepo';
+import { useLiveWorkoutTitle } from '@/tracker/lib/useLiveWorkoutTitle';
+import { refreshWorkoutTitle } from '@/tracker/services/workoutTitleSync';
+import { useWorkoutTitle } from '@/tracker/store/workoutTitleStore';
 import { autoSpanText, COUNT_IT, defaultWorkoutName, editLeftOutText, idlePauseNote, untickedSavedCounts } from '@/tracker/services/finishCheck';
 import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
@@ -165,21 +167,16 @@ export default function ActiveWorkoutScreen() {
   const [finishOpen, setFinishOpen] = useState(false);
   // LW-10: the routine's own name is the workout's default name — also on a Repeat of a
   // routine's workout (13 Oct 2026 audit, A5: it asked a name there).
-  const [routineName, setRoutineName] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    setRoutineName(null);
-    if (ownRoutineId) {
-      void getRoutine(ownRoutineId)
-        .then((r) => {
-          if (alive) setRoutineName(r?.name ?? null);
-        })
-        .catch(() => undefined);
-    }
-    return () => {
-      alive = false;
-    };
-  }, [ownRoutineId]);
+  // R-198: read once beside the navigator (workoutTitleSync) and shared with the minimised bar and
+  // the Workout tab; it follows a rename of the routine while this workout is open.
+  const routineName = useWorkoutTitle((s) => (ownRoutineId && s.routineId === ownRoutineId ? (s.name ?? null) : null));
+  // R-198 (owner, 30 Oct 2026): the workout's name under WORKOUT DURATION ("Pull 2").
+  const liveTitle = useLiveWorkoutTitle();
+  useFocusEffect(
+    useCallback(() => {
+      void refreshWorkoutTitle();
+    }, []),
+  );
 
   // Keep the screen awake and load the rest-timer default while logging. The rest
   // timer is NOT cleared on leaving this screen any more — minimising keeps it
@@ -564,7 +561,7 @@ export default function ActiveWorkoutScreen() {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: space.md,
+          marginBottom: isEditing ? space.md : space.xs,
         }}
       >
         {isEditing ? (
@@ -603,6 +600,27 @@ export default function ActiveWorkoutScreen() {
             R-149: the feedback button lives in that 42 dp slot here (clear of ticks, rest timer, Finish). */}
         <FeedbackHeaderButton screen="session/active" />
       </View>
+      {isEditing ? null : (
+        // R-198 (owner, 30 Oct 2026): which workout this is ("Pull 2"), on its own line under the
+        // clock so the clock and the two buttons never move; one line, "…" when too long. The line
+        // is kept while the routine's name is read (a few ms) so nothing below jumps.
+        <Text
+          testID="active-workout-name"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          accessibilityRole="header"
+          style={{
+            textAlign: 'center',
+            fontFamily: type.bodySemi,
+            fontSize: type.size.body,
+            color: color.ink,
+            paddingHorizontal: space.md,
+            marginBottom: space.md,
+          }}
+        >
+          {liveTitle ?? ' '}
+        </Text>
+      )}
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}

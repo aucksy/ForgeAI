@@ -9,9 +9,10 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
-import { countWord } from '@/lib/words';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { miniBarWords } from '../lib/miniBar';
+import { useLiveWorkoutTitle } from '../lib/useLiveWorkoutTitle';
 import { liveCounts } from '../services/finishCheck';
 import { activeMs } from '../services/workoutPause';
 import { openActiveWorkout } from '../services/workoutStart';
@@ -49,10 +50,13 @@ export function WorkoutMiniBar() {
     return () => clearInterval(id);
   }, [active, editing, paused]);
 
+  // R-198 (owner, 30 Oct 2026): the bar names the workout ("Pull 2"); the state moves to the line under it.
+  const name = useLiveWorkoutTitle();
+
   if (!active) return null;
 
   const resting = remaining > 0;
-  const title = editing ? 'Editing a workout' : resting ? 'Rest' : paused ? 'Workout paused' : 'Workout in progress';
+  const { title, line } = miniBarWords({ editing, resting, paused, name, done });
   const right = editing
     ? 'Open'
     : resting
@@ -69,7 +73,7 @@ export function WorkoutMiniBar() {
         openActiveWorkout(router);
       }}
       accessibilityRole="button"
-      accessibilityLabel={`${title}. ${editing ? '' : `${countWord(done, 'set')} done. `}Tap to open the workout`}
+      accessibilityLabel={`${title}. ${line ? `${line}. ` : ''}Tap to open the workout`}
       style={{
         marginHorizontal: space.md,
         marginBottom: space.sm,
@@ -93,12 +97,12 @@ export function WorkoutMiniBar() {
         }}
       />
       <View style={{ flex: 1 }}>
-        <Text numberOfLines={1} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
           {title}
         </Text>
-        {!editing ? (
-          <Text numberOfLines={1} style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkSecondary }}>
-            {`${countWord(done, 'set')} done`}
+        {line ? (
+          <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkSecondary }}>
+            {line}
           </Text>
         ) : null}
       </View>

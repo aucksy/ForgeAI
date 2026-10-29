@@ -15,6 +15,7 @@ import { onRestOpen, takeRestOpenRequest } from '../services/restCard';
 import { startRestDone } from '../services/restDoneRun';
 import { listenForAlertTaps, setupWorkoutAlerts, WORKOUT_ROUTE } from '../services/workoutAlerts';
 import { startWorkoutPresence } from '../services/workoutPresence';
+import { startWorkoutTitleSync } from '../services/workoutTitleSync';
 import { isCorrecting, useActiveWorkout, type ActiveWorkoutState } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
@@ -92,6 +93,8 @@ export function WorkoutPresenceHost() {
       },
     });
     stop = startWorkoutPresence();
+    // R-198: the open workout's routine name (workout screen, minimised bar, Workout tab).
+    const stopTitle = startWorkoutTitleSync();
     // v0.28.0: an export shared to ForgeAI opens the import with it (after the navigator mounts).
     // Audit IM-17: one ForgeAI could not take opens the import too, saying why.
     const unlistenShare = listenForShares((f) =>
@@ -108,6 +111,7 @@ export function WorkoutPresenceHost() {
     return () => {
       unwatch();
       stop();
+      stopTitle();
       unlisten();
       unlistenCard();
       stopDone();

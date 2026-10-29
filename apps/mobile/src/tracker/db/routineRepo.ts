@@ -29,6 +29,7 @@ import type { PlanDayFull } from '@/db/repos/planRepo';
 import { uuid } from '@/lib/uuid';
 import { adoptWorkoutsByName } from '@/tracker/db/historyScope';
 import { nameKey } from '@/tracker/plans/todayPlan';
+import { noteRoutineRenamed } from '@/tracker/store/workoutTitleStore';
 import type { DayType, Goal, UserProfile } from '@/types/models';
 
 /** Day types offered in the editor (rotation days — 'rest' isn't a startable routine). */
@@ -140,6 +141,8 @@ export async function updateRoutine(
       await adoptWorkoutsByName(dayId, before.name).catch(() => 0);
     }
   });
+  // R-198: a workout open from this routine shows its new name (screen, bar, Workout tab).
+  if (patch.name != null) noteRoutineRenamed(dayId, patch.name.trim() || 'Routine');
 }
 
 /** Delete a routine. Its plan_exercises cascade (FK ON DELETE CASCADE, PRAGMA foreign_keys=ON). */

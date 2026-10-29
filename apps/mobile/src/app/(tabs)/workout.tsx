@@ -46,6 +46,7 @@ import { UpNextCard } from '@/tracker/components/UpNextCard';
 import { WorkoutRoutines } from '@/tracker/components/WorkoutRoutines';
 import { followedFolder, getRoutineAnywhere } from '@/tracker/db/folderRepo';
 import { showsImportOffer, upNextCard, type UpNextAction, type UpNextToday } from '@/tracker/lib/upNext';
+import { useLiveWorkoutTitle } from '@/tracker/lib/useLiveWorkoutTitle';
 import { offerEarlyEasy } from '@/tracker/plans/effort';
 import { stalledLiftsInPlan } from '@/tracker/services/coachTargets';
 import { liveCountsLine } from '@/tracker/services/finishCheck';
@@ -92,7 +93,8 @@ export default function WorkoutScreen() {
   const active = useActiveWorkout((s) => s.active);
   // LW-23: ticked working sets only — never "6 exercises logged" before anything is logged.
   const countsLine = useActiveWorkout((s) => liveCountsLine(s.exercises));
-  const workoutName = useActiveWorkout((s) => s.workoutName);
+  // R-198: "Workout in progress" names the workout ("Pull 2 · 3 sets done"), a routine's too.
+  const workoutName = useLiveWorkoutTitle();
   const hydrate = useActiveWorkout((s) => s.hydrate);
   const startEmpty = useActiveWorkout((s) => s.startEmpty);
   const discard = useActiveWorkout((s) => s.discard);

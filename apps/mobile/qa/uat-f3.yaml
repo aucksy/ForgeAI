@@ -59,7 +59,8 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "Workout in progress"
-- assertVisible: '^2 sets done · 1 exercise$'
+# R-198: the line now starts with the workout's name ("Evening workout · 2 sets done · 1 exercise").
+- assertVisible: '^.+ · 2 sets done · 1 exercise$'
 - takeScreenshot: uf-04b-still-open-two-sets
 - tapOn:
     text: "^Resume workout$"
