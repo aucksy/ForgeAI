@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-219 result. Exercise demos: RepDB free start/end pictures — 29 Oct 2026
+Research (helper, 29 Oct): no free animation set is good enough. Best free option: RepDB free edition (github.com/sergei-argutin/exercise-dataset): a start and an end picture for 516 exercises, clean flat style, licence allows commercial use inside apps with a visible credit "Exercise data by RepDB (repdb.co)" on an About/Credits screen; no republishing the set, no AI restyling. Covers about 230-250 of our 402 exercises. Paid upgrade: RepDB Standard $499 one-time adds grey-3D looping animations (same coverage); only with his yes. Rejected: MuscleWiki (no offline storage), wger (mixed licences), Everkinetic (dated, ShareAlike), WorkoutLabs ($1,200+/yr), Lottie packs (too few), Mixamo.
+Decision (his rule: free start/end pictures if no good free animation): use RepDB free. Blender clips stop. Build after F63 merges (same exercise page). Gaps (~150) keep the text-only page for now.
+
 ## R-221. Build 10s, 9s and 8s first — 29 Oct 2026
 He said: "I have rated many features so you can now prioritize the ones with 10, 9 and 8 first."
 Order I chose: (1) finish the 10s: 0.61.0 release, the test server (T15/F175), the watch app on Play (waits on his Play answer). (2) The 9s in parallel on separate branches: F63 1-rep max, F67 install the watch app, F107 webcam photo. (3) The 8s: F150 freeze/renew request, F121 member report for the gym, F64 treadmill details, F20 demos (after the research). T5 (0.60.0) is released, so marked Done.

@@ -248,7 +248,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/install-the-watch-app-from-the-phone | F67 Install the watch app from the phone | 9 | 29 Oct, 10:38 pm |
 | gym-member-links/ask-the-desk-to-freeze-or-renew | F150 Ask the desk to freeze or renew | 8 | 29 Oct, 10:36 pm |
 | gym-member-links/member-data-export-by-the-gym-on-request | F121 Member data export by the gym, on request | 8 | 29 Oct, 10:40 pm |
-| member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
+| member-app/moving-exercise-demo-clips | F20 Exercise demo pictures | Planned | Your call (29 Oct, R-219): the home-made 3D clips stop. Free start and end pictures from RepDB for about 230-250 of our 402 exercises, credit line on the About screen. Moving 3D demos for the same exercises cost $499 once, only if you want them later. | Each exercise page shows 2 pictures at the top: the start position and the end position. They come with the app, so they work offline. Exercises without a picture keep today's text page. |
 | member-app/treadmill-and-cycle-details | F64 Treadmill and cycle details | 8 | 29 Oct, 10:38 pm |
 | gym-member-links/busy-times-by-exercise | F137 Busy times by exercise | 7 | 29 Oct, 10:42 pm |
 | gym-member-links/challenge-rewards-given-out-by-themselves | F143 Challenge rewards given out by themselves | 7 | 29 Oct, 10:40 pm |
