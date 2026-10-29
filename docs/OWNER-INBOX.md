@@ -14,7 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| #72 | Add the corrected crash-report line to the privacy notice? | A: yes, plus a 90-day clean-up |
+| #73 | Say in the privacy notice that spoken feedback goes to Groq for speech-to-text? | A: yes, and switch on Groq's "keep nothing" setting |
 
 ---
 
@@ -47,7 +47,8 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Compare with a friend | Low | Medium |
 | #65 | High | Low |
 | #67 | High | Low |
-| #72 | High | Low |
+| #73 | High | Low |
+| #74 | High | Low |
 | #71 | High | Low |
 | #70 | High | Low |
 | #69 | High | Low |
@@ -431,20 +432,34 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
+## 74. Switch on spoken feedback: put your Groq key on our server — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**Why:** spoken feedback is built and live on the server, but it stays off until the server has your Groq key. I never type keys. Until then the app tells members to type instead.
+**Your task:** Open console.groq.com, then API Keys, and copy your key (or make a new one called "MettleUp feedback").
+**Your task:** Open PowerShell and run: `cd D:\Apps\ForgeAI\Codebase\deploy\panel; $env:PATH = "$env:LOCALAPPDATA\nodejs;$env:PATH"; npx wrangler secret put GROQ_API_KEY`
+**Your task:** When it asks for the value, paste the key and press Enter. Then tell me "Groq key set" and I will test it with a real recording.
+
+## 73. Spoken feedback: one line in the privacy notice — 30 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
+**Decide:** Add this line to the privacy notice (English and Hindi): "Spoken feedback: when you tap Speak and then Stop, your recording goes through our server to Groq, a speech-to-text service in the USA, to turn it into text. Neither we nor Groq keep the recording. The text comes back to your phone, and reaches us only if you tap Send. We count how many recordings each phone makes a day, to stop misuse." In Play's Data safety form I tick "Voice or sound recordings": used only for this, not kept, not shared.
+- A: Yes, as written. You also switch on Zero Data Retention in Groq Console, Settings, Data Controls (2 minutes) (recommended)
+- B: Hold spoken feedback back: 0.61.0 goes out with typing only, and we decide later
+
+## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** DONE
 **Why:** 0.60.0 sends crash reports so I can fix problems fast. The privacy notice and Play's Data safety form must say so. Today the notice holds an empty placeholder for it.
 **YOUR REPLY (30 Oct 2026):** A
 **My answer (30 Oct 2026):** Sorry: my first wording was wrong. I checked the app. A crash report does NOT send the phone model, and today nothing deletes old reports. So I did not add it. The true version is below. Please pick again.
-**Decide:** Add this line to the privacy notice (English and Hindi): "When the app crashes, it sends a crash report to MettleUp: a short error message, the place in the app where it broke, and the app version. It holds no workouts, name, mobile number, gym or phone details. We use it only to fix the problem. A copy of the error text goes to our private bug list on GitHub. Crash reports are deleted after 90 days." Then tick "Crash logs" in Play's Data safety form.
-- A: Yes, as written. I also build the small daily clean-up that deletes reports older than 90 days on the live server (recommended)
-- B: Same line, but say "kept until the problem is fixed" instead of 90 days. No clean-up job; I delete them by hand
+**DECIDED (30 Oct 2026):** A. Done the same day: the line is in the privacy notice (English and Hindi) and on the website, and the live server now deletes crash reports older than 90 days every night at 3 am. Left for me: tick "Crash logs" in Play's Data safety form.
 
 ## 71. Play: answer the health question so the watch app can go out — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
-**TASK DONE (30 Oct 2026):** Claude did it in Play Console: uploaded the watch app to watch testers, answered the heart-rate question (the watch shows heart rate on its own screen during a workout; it is never saved or sent), added 4 watch pictures to the store page and switched on Wear OS. Google is now reviewing it (usually up to 7 days).
+**TASK DONE (30 Oct 2026):** Claude did it in Play Console: uploaded the watch app to watch testers, answered the heart-rate question (the watch shows heart rate on its own screen during a workout; it is never saved or sent), added 4 watch pictures to the store page and switched on Wear OS. Google finished its review on 30 Oct: the watch app is out to testers.
 **Why:** 0.60.0 is on Play for testers, but Play holds back the watch app until this one question is answered. The phone app is not affected.
 **Your task:** Open Play Console, pick MettleUp, then App content. Find the question about health features. Answer it (MettleUp logs workouts, so the answer is Yes, then tick the fitness or activity tracking box). Save, then tell me "health question done".
 
