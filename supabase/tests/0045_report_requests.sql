@@ -111,6 +111,10 @@ begin
   -- 5. The file: the export's own header, nothing from before the join date, not too big.
   checks := checks + 1; fails := fails || pg_temp.t45_is('5early',
     public.member_attach_report(ka, ra, early, 1, 1)->>'error', 'TOO_EARLY');
+  -- A workout note shaped like an old date is not read as a workout day (only start,end pairs are).
+  checks := checks + 1; fails := fails || pg_temp.t45_is('5note',
+    (select d.first_day::text from public._report_csv_days(
+      '"Push","1 Jun 2026, 18:00","1 Jun 2026, 19:05","12 Jan 2020, 10:00","Bench"') d), '2026-06-01');
   checks := checks + 1; fails := fails || pg_temp.t45_is('5header',
     public.member_attach_report(ka, ra, 'a,b,c', 1, 1)->>'error', 'BAD_FILE');
   checks := checks + 1; fails := fails || pg_temp.t45_is('5count',

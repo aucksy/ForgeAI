@@ -85,16 +85,16 @@ export const GYM_REPORT_WORDS = {
   declined: 'OK. Nothing was sent to the gym.', // member-words
   tryAgain: 'Try again', // member-words
   failed: "Couldn't send it. Check your internet and try again.", // member-words
-  ownCopy: 'You can always save all your workouts yourself in Settings.', // member-words
+  ownCopy: 'Want your own copy? Go to Settings and save all your workouts.', // member-words
 } as const;
 
 /**
- * "Your gym asked for your workout report. It has only the workouts you logged from 1 Jun on, the
- * day you joined. Older workouts stay on your phone." PURE.
+ * "Your gym wants a copy of your workouts from 1 Jun, the day you joined: exercises, sets, weights,
+ * reps and your notes. The gym owner and desk can see it. Older workouts stay on your phone." PURE.
  */
 export function reportAskLine(gymName: string, fromDay: string, today: string): string {
   const gym = gymName.trim() || 'Your gym';
-  return `${gym} asked for your workout report. It has only the workouts you logged from ${tinyDateWithYear(fromDay, today)} on, the day you joined. Older workouts stay on your phone.`; // member-words
+  return `${gym} wants a copy of your workouts from ${tinyDateWithYear(fromDay, today)}, the day you joined: exercises, sets, weights, reps and your notes. The gym owner and desk can see it. Older workouts stay on your phone.`; // member-words
 }
 
 /** The words for a refusal code from the server (0045), or the phone's own TOO_BIG. PURE. */
@@ -103,7 +103,7 @@ export function reportRefusedWords(code: string): string {
     case 'GONE':
       return 'The gym no longer needs this report.'; // member-words
     case 'TOO_BIG':
-      return 'Your report is too big to send from the app. Please tell the desk.'; // member-words
+      return 'We could not send your report because it is too big. Please tell the gym desk.'; // member-words
     case 'SUSPENDED':
       return 'Your gym is not taking reports in the app right now.'; // member-words
     default:

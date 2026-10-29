@@ -65,8 +65,8 @@ describe('what the card says and offers', () => {
       .toBe('Sent on 14 Mar 2026: 12 workouts, from 10 Mar 2026 to 13 Mar 2026.');
     expect(reportStatusLine(row({ status: 'sent', sentAt: MAR14, workouts: 1, firstDay: '2026-03-12', lastDay: '2026-03-12' }))).toContain(': 1 workout,');
     expect(reportStatusLine(row({ status: 'sent', sentAt: MAR14, workouts: 0 }))).toBe('Sent on 14 Mar 2026: 0 workouts (nothing logged since joining).');
-    expect(reportStatusLine(row({ status: 'declined', answeredAt: MAR14 }))).toBe('The member said no on 14 Mar 2026. Nothing was sent.');
-    expect(reportStatusLine(row({ status: 'expired' }))).toBe('This request ended without a report. You can ask again.');
+    expect(reportStatusLine(row({ status: 'declined', answeredAt: MAR14 }))).toBe('The member said no on 14 Mar 2026. No report was sent. You can ask again later.');
+    expect(reportStatusLine(row({ status: 'expired' }))).toBe('No report came within 30 days. You can ask again.');
     expect(reportCoverLine(row())).toBe('Workouts since 10 Mar 2026, the day they joined.');
     expect(reportKeptLine(row({ status: 'sent', expiresAt: MAR14 + 30 * DAY }))).toBe('You can download it until 13 Apr 2026.');
     expect(reportKeptLine(row())).toBeNull();

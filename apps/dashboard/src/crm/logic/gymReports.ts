@@ -103,8 +103,8 @@ const onDay = (ms: number | null): string => (ms == null ? '—' : formatDay(dat
  *   pending  "Asked on 12 Mar 2026. Waiting for the member to say yes in the app."
  *            (agreed: "The member said yes. The report is on its way.")
  *   sent     "Sent on 14 Mar 2026: 12 workouts, from 10 Mar 2026 to 13 Mar 2026."
- *   declined "The member said no on 13 Mar 2026. Nothing was sent."
- *   expired  "This request ended without a report. You can ask again."
+ *   declined "The member said no on 13 Mar 2026. No report was sent. You can ask again later."
+ *   expired  "No report came within 30 days. You can ask again."
  * PURE.
  */
 export function reportStatusLine(r: ReportRow): string {
@@ -120,9 +120,9 @@ export function reportStatusLine(r: ReportRow): string {
       return `Sent on ${onDay(r.sentAt)}: ${count}${span}.`; // member-words
     }
     case 'declined':
-      return `The member said no on ${onDay(r.answeredAt)}. Nothing was sent.`; // member-words
+      return `The member said no on ${onDay(r.answeredAt)}. No report was sent. You can ask again later.`; // member-words
     case 'expired':
-      return 'This request ended without a report. You can ask again.'; // member-words
+      return 'No report came within 30 days. You can ask again.'; // member-words
   }
 }
 

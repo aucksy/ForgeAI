@@ -87,9 +87,9 @@ describe('the words', () => {
       expect(w).not.toMatch(/volume|\bPRs?\b|session/i);
       expect(w.length).toBeLessThan(200);
     }
-    expect(reportAskLine('Iron Den', '2026-03-10', '2026-03-20')).toContain('Iron Den asked for your workout report');
+    expect(reportAskLine('Iron Den', '2026-03-10', '2026-03-20')).toContain('Iron Den wants a copy of your workouts');
     expect(reportAskLine('Iron Den', '2026-03-10', '2026-03-20')).toContain('10 Mar');
-    expect(reportAskLine('  ', '2026-03-10', '2026-03-20')).toMatch(/^Your gym asked/);
+    expect(reportAskLine('  ', '2026-03-10', '2026-03-20')).toMatch(/^Your gym wants a copy/);
     expect(reportRefusedWords('SOMETHING_NEW')).toBe(GYM_REPORT_WORDS.failed);
   });
 

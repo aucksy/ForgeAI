@@ -146,12 +146,13 @@ create or replace function public._report_join_day(p_gym uuid, p_roster text) re
         and x.data->>'memberId' = p_roster and coalesce(x.data->>'cancelled', 'false') <> 'true'))
 $$;
 
--- The first and last workout day written in a report: every "7 Jul 2026, 14:24" time in it (the
--- export's start and end times). Nulls for a file with no workouts.
+-- The first and last workout day written in a report: every start time in it, read only where a
+-- "7 Jul 2026, 14:24" cell is followed straight away by a second one (the start_time,end_time pair),
+-- so a note that happens to look like a date is not taken for a workout day. Nulls for no workouts.
 create or replace function public._report_csv_days(p text, out first_day date, out last_day date)
   language sql immutable set search_path = public as $$
   select min(to_date(m[1], 'DD Mon YYYY')), max(to_date(m[1], 'DD Mon YYYY'))
-    from regexp_matches(p, '"([0-9]{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}), [0-9]{2}:[0-9]{2}"', 'g') as m
+    from regexp_matches(p, '"([0-9]{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}), [0-9]{2}:[0-9]{2}","[0-9]{1,2} [A-Z][a-z]{2} [0-9]{4}, [0-9]{2}:[0-9]{2}"', 'g') as m
 $$;
 
 -- One request as both sides read it.

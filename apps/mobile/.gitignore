@@ -37,4 +37,4 @@ android/app/release.keystore
 qa/test-assets/
 
 # F20: RepDB pictures are fetched at build time (licence: no republishing; this repo is public)
-apps/mobile/assets/exercise-pictures/
+/assets/exercise-pictures/
