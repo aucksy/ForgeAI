@@ -17,6 +17,7 @@ import { apiMembership } from './gymApi';
 import { refreshGymReminders } from './gymReminders';
 import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
 import { keepMembership, readKeptMembership } from './membershipKept';
+import { PlanRequestPanel } from './PlanRequestPanel';
 import type { GymLink } from './types';
 import { WorkoutCodeSheet } from './WorkoutCodeSheet';
 import { WORKOUT_CODE_WORDS } from './workoutCodeWords';
@@ -86,6 +87,9 @@ export function MembershipCard({ link }: { link: GymLink }) {
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs }}>{keptLine(shown.keptAt, Date.now(), clockTime)}</Text>
         ) : null}
       </View>
+      {/* F150: "Pause my plan" / "Renew my plan" - only for a member the gym's list knows, and only
+          once the server has 0044 (the panel hides itself until then). Not on a kept (offline) plan. */}
+      {shown.answer.ok && shown.keptAt == null ? <PlanRequestPanel link={link} hasCurrentPlan={shown.answer.current != null} /> : null}
       <View style={{ marginTop: space.sm }}>
         <GhostButton label={WORKOUT_CODE_WORDS.button} icon="dumbbell" onPress={() => setCodeOpen(true)} />
       </View>

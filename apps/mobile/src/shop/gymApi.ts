@@ -22,6 +22,7 @@ import type { GymHours } from '@forgeai/theme';
 import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
+import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanRequestsAnswer } from './planRequest';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -239,6 +240,51 @@ export async function apiBoardPush(key: string, days: readonly BoardDay[], showN
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const data = Array.isArray(r.data) ? r.data[0] : r.data;
   return (data as { ok?: unknown } | null)?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ pause / renew requests (0044, F150)
+
+export type PlanRequestCall<T> = { ok: true; data: T } | { ok: false; missing: true } | { ok: false; refused: string } | { ok: false; error: GymError };
+
+/**
+ * The member's pause / renew requests and the plans they may renew on (member_plan_requests).
+ * `missing`: the server has not had 0044 yet, so the two buttons stay hidden.
+ */
+export async function apiPlanRequests(key: string): Promise<PlanRequestCall<PlanRequestsAnswer>> {
+  const r = await call('member_plan_requests', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = planRequestsFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Ask the desk to pause (from..to) or renew (on a plan) (member_ask_plan_change). */
+export async function apiAskPlanChange(
+  key: string,
+  ask: { kind: 'freeze'; from: string; to: string } | { kind: 'renew'; planId: string },
+): Promise<PlanRequestCall<PlanRequest>> {
+  const args = ask.kind === 'freeze'
+    ? { p_key: key, p_kind: 'freeze', p_from: ask.from, p_to: ask.to, p_plan: null }
+    : { p_key: key, p_kind: 'renew', p_from: null, p_to: null, p_plan: ask.planId };
+  const r = await call('member_ask_plan_change', args, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = askAnswerFromRow(r.data);
+  if (!answer) return { ok: false, error: { kind: 'other' } };
+  return answer.ok ? { ok: true, data: answer.request } : { ok: false, refused: answer.refused };
+}
+
+/** Take back a request the desk has not answered yet (member_cancel_plan_request). True when it was. */
+export async function apiCancelPlanRequest(key: string, requestId: string): Promise<PlanRequestCall<boolean>> {
+  const r = await call('member_cancel_plan_request', { p_key: key, p_request: requestId }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = Array.isArray(r.data) ? r.data[0] : r.data;
+  return { ok: true, data: (data as { cancelled?: unknown } | null)?.cancelled === true };
+}
+
+/** Tell the gym the member has read these answers, so they stop showing (member_saw_plan_requests). */
+export async function apiSawPlanRequests(key: string, ids: string[]): Promise<PlanRequestCall<number>> {
+  const r = await call('member_saw_plan_requests', { p_key: key, p_ids: ids }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  return { ok: true, data: Number(r.data) || 0 };
 }
 
 // ------------------------------------------------------------------ gym mate profiles (0040, R-164)
