@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026
+He said: "stop this effort.. need to re-think.. cant spend these many tokens for this poor of an output".
+Also: his "I approved" earlier meant an app prompt, not the shoulder press clip; that approval was undone (4f09e30).
+Done: the daily clip schedule (forgeai-daily-exercise-clip) is switched off. QUEUE.md says paused. Shoulder press v8
+stays unapproved and out of the app. Lateral raise and incline dumbbell press (approved v6) stay in the app.
+Nothing more is made until he decides a new approach.
+
 ## R-203. Auto-compact at 25% — 29 Oct 2026
 He said: "Cant we setup auto compact ... automatically at 25% after you are done replying and updating current state in your notes".
 Did: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=25 in ~/.claude/settings.json env + Windows user variable (needs a new session / app restart).

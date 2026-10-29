@@ -1,5 +1,8 @@
 # Exercise clip queue (owner, 29 Oct 2026, R-170)
 
+**PAUSED by the owner, 29 Oct 2026 (R-204):** too many tokens for the quality. The daily job is off.
+Make no new clips until he chooses a new approach.
+
 One new clip a day, most-used exercises first. A clip is made only when the one before it is approved.
 The owner approves in any chat ("approve <name>"); that chat sets the row to `approved` and the research file's
 `status` to `owner-approved`. Less common exercises get 2 still pictures (start and end) later, not a clip.
