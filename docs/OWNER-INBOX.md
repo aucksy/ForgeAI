@@ -233,6 +233,35 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T64 Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
 ---
 
+## Your scores
+His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds 9-10 first, then 7-8, then the rest; unscored items come after those scored 7 or more.
+
+| Item id | Item | Score | Scored |
+|---|---|---|---|
+| member-app/watch-opens-when-a-workout-starts | F65 Watch opens when a workout starts | 10 | 29 Oct, 10:38 pm |
+| member-app/1-rep-max-and-calculator | F63 1-rep max and % calculator | 9 | 29 Oct, 10:36 pm |
+| member-app/install-the-watch-app-from-the-phone | F67 Install the watch app from the phone | 9 | 29 Oct, 10:38 pm |
+| gym-member-links/ask-the-desk-to-freeze-or-renew | F150 Ask the desk to freeze or renew | 8 | 29 Oct, 10:36 pm |
+| gym-member-links/member-data-export-by-the-gym-on-request | F121 Member data export by the gym, on request | 8 | 29 Oct, 10:40 pm |
+| member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
+| member-app/treadmill-and-cycle-details | F64 Treadmill and cycle details | 8 | 29 Oct, 10:38 pm |
+| gym-member-links/challenge-rewards-given-out-by-themselves | F143 Challenge rewards given out by themselves | 7 | 29 Oct, 10:40 pm |
+| member-app/badge-shelf | F58 Badge shelf | 7 | 29 Oct, 10:35 pm |
+| member-app/long-rest-that-inflates-your-reps | F73 Long rest that inflates your reps | 7 | 29 Oct, 10:39 pm |
+| member-app/next-sets-adjust-to-how-hard-this-set-felt-rpe | F74 Next sets adjust to how hard this set felt (RPE) | 7 | 29 Oct, 10:38 pm |
+| member-app/strength-level-for-each-main-lift | F57 Strength level for each main lift | 7 | 29 Oct, 10:35 pm |
+| admin-app-gym-owner-and-staff/trainer-view-of-member-progress | F109 Trainer view of member progress | 6 | 29 Oct, 10:34 pm |
+| gym-member-links/fitpass-and-other-pass-members | F123 FitPass and other pass members | 6 | 29 Oct, 10:40 pm |
+| member-app/quick-workout-i-have-30-minutes | F60 Quick workout: "I have 30 minutes" | 6 | 29 Oct, 10:34 pm |
+| platform-and-quality/test-server-before-live | F175 Test server before live | 6 | 29 Oct, 10:41 pm |
+| gym-member-links/a-member-s-own-history-from-before-joining-a-gym | F122 A member's own history from before joining a gym | 5 | 29 Oct, 10:40 pm |
+| gym-member-links/bring-a-friend | F147 Bring a friend | 5 | 29 Oct, 10:34 pm |
+| gym-member-links/gym-s-logo-on-share-pictures-and-a-before-after-share | F146 Gym's logo on share pictures and a before/after share | 5 | 29 Oct, 10:34 pm |
+| gym-member-links/the-gym-s-workout-of-the-day | F151 The gym's workout of the day | 5 | 29 Oct, 10:36 pm |
+| member-app/which-muscles-are-ready-today | F59 Which muscles are ready today | 5 | 29 Oct, 10:35 pm |
+| gym-member-links/the-gym-s-own-form-videos | F148 The gym's own form videos | 4 | 29 Oct, 10:36 pm |
+| member-app/ask-your-own-ai | F61 Ask your own AI | 4 | 29 Oct, 10:35 pm |
+
 ## Feature backlog
 Every feature, built and pending, in one line each; every feature not built yet also says how it will
 work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box on every feature. Status: Live · Next release (v0.49.0) · Planned · Waiting for you · Idea · Not doing.
@@ -368,8 +397,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F118 Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
 | F119 Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | F120 QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| F121 Member data export by the gym, on request | Planned | When a member asks, the owner gets that member's workout report in our own format. I build it; your live server yes comes at the end. | Catch: workouts live on the member's phone, not on our server. So I see it like this: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable PDF or Excel report in our own layout (not a file Hevy or Strong can import) and the desk downloads it. Members can already save their own Excel today; whether that stays is your call. |
-| F122 A member's own history from before joining a gym | Planned | Your rule (29 Oct, R-217): a member's workouts are theirs. Before joining, during and after leaving a gym, they stay in the app; the gym never sees the ones from before the join date. Members of a gym get every feature free; members with no gym get the basics free and pay for some features (which ones: your call, later). | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off, and what a gym export may include. |
+| F121 Member data export by the gym, on request | Planned | Your rule (29 Oct, R-220): a member's data is never locked behind the membership. Members save their own full report any time, and the gym can also ask for a copy. I build it; your live server yes comes at the end. | Members already save their own workouts as Excel (Settings → Export), with or without a gym. For the gym: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable report and the desk downloads it. The gym never gets workouts from before the join date. |
+| F122 A member's own history from before joining a gym | Planned | Your rule (29 Oct, R-217): a member's workouts are theirs. Before joining, during and after leaving a gym, they stay in the app; the gym never sees the ones from before the join date. Members of a gym get every feature free; members with no gym get the basics free and pay for some features (which ones: your call, later). | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off. |
 | F123 FitPass and other pass members | Planned | Pass members (FitPass, cultpass) join without a plan, get the gym's plans and shop, and the owner counts their visits apart. I build it; your live server yes comes at the end. | The desk adds the person as a "Pass member" (FitPass, cultpass and so on): no plan, no dues, never on the renewal list. They join in the app with the gym code and get the gym's plans, shop and messages. Each check-in counts as a pass visit, and a monthly count per pass company lets the owner match that company's payment. FITPASS and cultpass publish no check-in link for other apps (checked 29 Oct): their member shows a QR in their own app. So the desk taps "Pass visit" in our app, or the member scans the gym's MettleUp QR and picks the pass. If either company later gives us a link, the visit can count itself. Needs a live server change (your yes). |
 | F124 After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
 | F125 QR scan opens the door | Not doing | The scan could open a networked door lock, but the client must buy the lock first. | The member scans the gate QR; our server checks the plan is active and tells a networked door lock to open for a few seconds. The QR on a small gate screen changes every 30 seconds, so a forwarded photo does not work. The desk button and a keypad PIN still work when the internet is down, and the lock opens on power loss (fire safety). |

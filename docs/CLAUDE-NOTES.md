@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-220. Members export their own data; rewrite F121 — 29 Oct 2026
+He said (page comment on F121): a member's data is not locked behind the membership. Members can export it themselves too. Rewrite F121 and drop any feature text that still says otherwise.
+Done: F121 now says members save their own report any time (Settings, as today), and the desk can also ask for a copy, which the member approves. Removed "whether that stays is your call". F122 no longer lists "what a gym export may include" as open.
+
+## R-219. Exercise demo clips: research free, better options first — 29 Oct 2026
+He said (page comment on F20, score 8): he does not like the Blender clips route (too many rounds, too many tokens). Research again for something better that is free or cheap and good quality. If no good free animations exist, use free start-and-end position images instead.
+Doing: a research helper checks free and cheap animation and image sets (licence, quality, count, Indian gym fit). The Blender work stops until he picks.
+
 ## R-218. FitPass / cultpass: can a scan count the visit by itself? — 29 Oct 2026
 He said (comment on F123): "were you able to check if FitPass or CultPass and all these things have any kind of API integration? So if users scans their QR code, we can mark the attendance ... [the owner] can choose to add this member as a FitPass or a CultPass member."
 What I found (29 Oct, web): neither FITPASS nor cultpass publishes an API for gym software. Both use their own app QR scanned at the desk; FITPASS partners see visits in their Partner Portal. Wellhub (Gympass) does have an Access Control API, but it is not big in India. So F123 works without them: desk taps "Pass visit", or the member scans our gym QR and picks the pass. Asking FITPASS's partner team for a link is possible later, through a real gym that is their partner. F123 row updated.
