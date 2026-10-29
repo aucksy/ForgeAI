@@ -28,7 +28,10 @@ export interface ButtonSpot {
   side: DockSide;
   y: number;
 }
-export const DEFAULT_SPOT: ButtonSpot = { side: 'right', y: 0.62 };
+// 0.60.0 phone test (part G, both profiles): at 0.62 the button sat mid-screen on the right, over a
+// list row's own "More" button once that row was scrolled to the middle. Lowest spot of the free band
+// (still clear of the tab bar and a screen's main button), where list ends scroll out from under it.
+export const DEFAULT_SPOT: ButtonSpot = { side: 'right', y: 1 };
 
 /** Screens where the floating button never shows. */
 /**
