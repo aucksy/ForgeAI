@@ -15,6 +15,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 | # | Decision | My pick |
 |---|---|---|
 | 75 | Add the desk photo table to the live server? | A: yes |
+| 76 | Add the pause and renew requests table to the live server? | A: yes |
 
 ---
 
@@ -440,7 +441,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F147 Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
 | F148 The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
 | F149 Ask your trainer | Idea | Parked (owner, 24 Oct). A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
-| F150 Ask the desk to freeze or renew | Planned | From #58 (what other apps have that we don't; Glofox and Mindbody have it). Today a member who wants to pause their plan for a while (travel, illness) or renew it must phone or visit the gym desk. With this they ask from the app, and the desk says yes. Freezing pauses the plan, so the member does not lose those days. | On the member's plan card in the app, two buttons: "Pause my plan" (pick the dates) and "Renew my plan" (pick a plan). The gym's admin app shows each request with the member's name. One tap approves it, using the freeze and renew tools the desk already has (F81). The member gets a message when it is done; a renewal is still paid at the desk. |
+| F150 Ask the desk to freeze or renew | Waiting for you | Built and tested on the test server (#76). Members see "Pause my plan" and "Renew my plan" after your yes to add its table to the live server; the desk approves each request with one tap. A renewal is still paid at the desk. | On the member's plan card in the app, two buttons: "Pause my plan" (pick the dates) and "Renew my plan" (pick a plan). The gym's admin app shows each request with the member's name. One tap approves it, using the freeze and renew tools the desk already has (F81). The member gets a message when it is done; a renewal is still paid at the desk. |
 | F151 The gym's workout of the day | Planned | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
 | F152 "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
 | F153 Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
@@ -479,6 +480,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 76. Pause and renew requests: may I add their table to the live server? — 30 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** F150 (members ask the desk from the app to pause or renew their plan) is built. The buttons in the app and the request list at the desk stay hidden until the live server has a new requests table. I tested it on the test server first: all 63 request checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. A renewal is still paid at the desk.
+**Decide:** May I add the requests table to the live server?
+- A: Yes, add it. Members then see "Pause my plan" and "Renew my plan", and the desk sees their requests. (recommended)
+- B: Not yet. Everything stays hidden.
 
 ## 75. Desk photos: may I add their table to the live server? — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
