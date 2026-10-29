@@ -434,7 +434,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 74. Switch on spoken feedback: put your Groq key on our server — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**TASK DONE (30 Oct 2026)**: the key you sent was refused by Groq, so the server now uses the working Groq key from your VastuFirst project. A real spoken test came back as correct text.
 **Why:** spoken feedback is built and live on the server, but it stays off until the server has your Groq key. I never type keys. Until then the app tells members to type instead.
 **Your task:** Open console.groq.com, then API Keys, and copy your key (or make a new one called "MettleUp feedback").
 **Your task:** Open PowerShell and run: `cd D:\Apps\ForgeAI\Codebase\deploy\panel; $env:PATH = "$env:LOCALAPPDATA\nodejs;$env:PATH"; npx wrangler secret put GROQ_API_KEY`
