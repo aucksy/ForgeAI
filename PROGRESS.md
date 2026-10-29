@@ -1,6 +1,7 @@
 # ForgeAI progress
 
 ## Done
+- 29 Oct: F63 1-rep max and % calculator merged (exercise Summary link + plate calculator link; fresh-reader word fixes). F67 watch install prompt merged. Test server "mettleup-staging" made and matched to live (0001-0042).
 - 2026-10-29: R-207 watch UI rebuilt to the designer's "Ring" hand-off (direction 2a; not built or
   committed yet, needs the cloud wear build). Glance-only: the app screen's "Complete set" is gone
   (notification buttons kept). Seven screens chosen from state (`ScreenSelector`, WatchLayout.kt):

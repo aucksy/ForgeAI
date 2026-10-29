@@ -132,9 +132,9 @@ export default function OneRepMaxScreen() {
       {rows.length > 0 ? (
         <Card style={{ gap: 0, marginBottom: space.lg }}>
           <View style={{ flexDirection: 'row', paddingBottom: space.sm, borderBottomWidth: 1, borderBottomColor: color.border }}>
-            <Text style={[headCell(), { width: 56 }]}>{'Of max' /* member-words */}</Text>
-            <Text style={[headCell(), { width: 88 }]}>{'Load' /* member-words */}</Text>
-            <Text style={[headCell(), { flex: 1 }]}>{'Plates a side' /* member-words */}</Text>
+            <Text style={[headCell(), { width: 56 }]}>{'% of max' /* member-words */}</Text>
+            <Text style={[headCell(), { width: 88 }]}>{'Weight' /* member-words */}</Text>
+            <Text style={[headCell(), { flex: 1 }]}>{'Plates per side' /* member-words */}</Text>
           </View>
           {rows.map((r) => {
             const plates =
@@ -147,7 +147,7 @@ export default function OneRepMaxScreen() {
               <View
                 key={r.pct}
                 accessible
-                accessibilityLabel={`${r.pct} percent: ${showW(r.loadKg, units)} ${unit}${plates ? `, ${plates}${r.perSide.length > 0 ? ' a side' : ''}` : ''}`} // member-words
+                accessibilityLabel={`${r.pct} percent: ${showW(r.loadKg, units)} ${unit}${plates ? `, ${plates}${r.perSide.length > 0 ? ' per side' : ''}` : ''}`} // member-words
                 style={{ flexDirection: 'row', alignItems: 'center', minHeight: 44, borderBottomWidth: 1, borderBottomColor: color.border }}
               >
                 <Text style={[cell(), { width: 56, color: color.inkSecondary }]}>{r.pct}%</Text>
@@ -161,7 +161,7 @@ export default function OneRepMaxScreen() {
             );
           })}
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.md }}>
-            {`Rounded to what a ${showW(gym.barKg, units)} ${unit} bar and your plates can make.` /* member-words */}
+            {`Weights are rounded to what your ${showW(gym.barKg, units)} ${unit} bar and your plates can load.` /* member-words */}
           </Text>
           <Pressable
             onPress={() => router.push('/settings/plates' as Href)}
