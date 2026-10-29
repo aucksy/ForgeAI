@@ -174,7 +174,7 @@ class MainActivity : ComponentActivity() {
         onAllowHeartRate = ::allowHeartRate,
         onSkipHeartRate = { answered(KEY_ASKED_HR) },
         onAllowAlerts = ::allowNotifications,
-        onSkipAlerts = { answered(KEY_ASKED_NOTIF) },
+        onSkipAlerts = ::skipAlerts,
       )
     }
   }
@@ -209,7 +209,44 @@ class MainActivity : ComponentActivity() {
   /** Which first-launch screens still show: never for a permission already on. */
   private fun refreshAsks() {
     askHeartRate = !hasHeartPermission() && !asked(KEY_ASKED_HR)
-    askAlerts = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationsOn() && !asked(KEY_ASKED_NOTIF)
+    askAlerts = needNotifAsk() || needExactAsk()
+  }
+
+  private fun needNotifAsk(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationsOn() && !asked(KEY_ASKED_NOTIF)
+
+  /**
+   * 0.61.0 review: "Alarms & reminders" is off on new Wear OS 5+ installs, and without it the end-of-rest
+   * buzz can come late with the screen off. The "Rest alerts" screen asks for it too, once, under its own
+   * key (the old "asked" pref does not cover it, so watches updated from 0.60 are asked once as well).
+   */
+  private fun needExactAsk(): Boolean = !exactAllowed && !prefs().getBoolean(KEY_ASKED_EXACT, false)
+
+  private fun skipAlerts() {
+    prefs().edit().putBoolean(KEY_ASKED_NOTIF, true).putBoolean(KEY_ASKED_EXACT, true).apply()
+    refreshAsks()
+  }
+
+  /** Opens this app's "Alarms & reminders" switch (the rest's buzz on the second). */
+  private fun allowExactAlarms() {
+    answered(KEY_ASKED_EXACT)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+    try {
+      startActivity(
+        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))
+          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+      )
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "alarm settings did not open", e)
+      try {
+        startActivity(
+          Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+      } catch (e2: Exception) {
+        Log.w("ForgeWear", "app settings did not open", e2)
+      }
+    }
   }
 
   /** One check of the phone link; "not connected" only after two empty answers in a row. */
@@ -282,9 +319,9 @@ class MainActivity : ComponentActivity() {
   }
 
   /**
-   * R-167: "Alarms & reminders" (SCHEDULE_EXACT_ALARM; off by default on Wear OS 5+ installs). R-207:
-   * the screen no longer offers it (not in the design); without it the screen itself buzzes on time
-   * while it is up (the wake-lock wait above).
+   * R-167: "Alarms & reminders" (SCHEDULE_EXACT_ALARM; off by default on Wear OS 5+ installs). Asked on
+   * the "Rest alerts" screen ([needExactAsk]); without it the screen itself buzzes on time while it is up
+   * (the wake-lock wait above).
    */
   private var exactAllowed by mutableStateOf(true)
 
@@ -297,6 +334,10 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun allowNotifications() {
+    if (!needNotifAsk()) {
+      allowExactAlarms()
+      return
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !prefs().getBoolean("notifBlocked", false)) {
       try {
         askNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -321,6 +362,7 @@ class MainActivity : ComponentActivity() {
     const val READ_HEART_RATE = "android.permission.health.READ_HEART_RATE"
     const val KEY_ASKED_HR = "askedHr"
     const val KEY_ASKED_NOTIF = "askedNotif"
+    const val KEY_ASKED_EXACT = "askedExact"
     const val PHONE_CHECK_MS = 15_000L
   }
 }

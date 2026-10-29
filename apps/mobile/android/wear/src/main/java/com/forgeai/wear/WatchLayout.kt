@@ -32,14 +32,15 @@ object ScreenSelector {
     // 1. Unasked permissions: heart rate first, then alerts.
     askHeartRate -> WatchScreenKind.PERMISSION_HEART_RATE
     askAlerts -> WatchScreenKind.PERMISSION_ALERTS
-    // 2. Phone disconnected.
+    // 2. Rest running, then rest ended and the set after it not logged yet. Before "phone not
+    //    connected" (0.61.0 review): the watch runs the countdown and the buzz itself, so a phone left
+    //    in a locker mid-rest must not hide them.
+    workoutOpen && restRunning -> WatchScreenKind.REST_TIMER
+    workoutOpen && restOver -> WatchScreenKind.REST_IS_OVER
+    // 3. Phone disconnected.
     !phoneConnected -> WatchScreenKind.PHONE_NOT_CONNECTED
-    // 3. No workout open.
+    // 4. No workout open.
     !workoutOpen -> WatchScreenKind.NOTHING_OPEN
-    // 4. Rest running.
-    restRunning -> WatchScreenKind.REST_TIMER
-    // 5. Rest ended and the set after it not logged on the phone yet.
-    restOver -> WatchScreenKind.REST_IS_OVER
     // 6. Otherwise.
     else -> WatchScreenKind.BETWEEN_RESTS
   }

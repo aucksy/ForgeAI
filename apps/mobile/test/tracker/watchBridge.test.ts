@@ -101,13 +101,14 @@ describe('a set the phone cannot log is reported back to the watch (U-W3)', () =
     expect(sync).toContain('val d = WearWire.parseDone(data)');
   });
 
-  it('the watch listens for it and shows its button again at once', () => {
+  it('the watch listens for it and tells the member at once', () => {
     expect(read(`${WATCH}WatchActions.kt`)).toContain('const val PATH_NACK_DONE = "/forge/nack/done"');
     const svc = read(`${WATCH}ForgeListenerService.kt`);
     expect(svc).toMatch(/onMessageReceived[\s\S]*WatchActions\.PATH_NACK_DONE[\s\S]*WatchActions\.refused/);
     const manifest = read('android/wear/src/main/AndroidManifest.xml');
     expect(manifest).toMatch(/com\.google\.android\.gms\.wearable\.MESSAGE_RECEIVED[\s\S]*android:pathPrefix="\/forge\/nack"/);
-    expect(read(`${WATCH}WatchActions.kt`)).toMatch(/fun refused\(ctx: Context\)[\s\S]*WatchState\.sendFailed\(ctx\)/);
+    // R-207: the app screen is glance-only (no button to show again), so a refused set is a short note.
+    expect(read(`${WATCH}WatchActions.kt`)).toMatch(/fun refused\(ctx: Context\)[\s\S]*note\(ctx, "Not saved\. Tick it on your phone"\)/);
   });
 });
 

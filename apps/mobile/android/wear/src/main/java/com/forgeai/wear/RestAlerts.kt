@@ -43,9 +43,9 @@ object RestAlerts {
   /** "Rest is over" removes itself after this long. */
   private const val OVER_TIMEOUT_MS = 120_000L
 
-  /** Strong, clear, ~1.5 s: three long pulses. */
-  private val WAVE_MS = longArrayOf(0L, 400L, 150L, 400L, 150L, 400L)
-  private val WAVE_AMP = intArrayOf(0, 255, 0, 255, 0, 255)
+  /** R-207 hand-off: long, pause, short (~1.2 s, full strength). Felt as "rest over", not a call. */
+  private val WAVE_MS = longArrayOf(0L, 700L, 250L, 250L)
+  private val WAVE_AMP = intArrayOf(0, 255, 0, 255)
 
   private fun nm(ctx: Context) = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

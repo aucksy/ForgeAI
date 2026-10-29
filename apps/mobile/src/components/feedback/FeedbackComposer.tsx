@@ -53,22 +53,34 @@ export function FeedbackComposer({ text, onText, onSpoke, placeholder, minHeight
   const stageRef = useRef<Stage>('idle');
   stageRef.current = stage;
   const alive = useRef(true);
+  // The clip's file, known once recording is prepared: the recorder may already be released when we leave.
+  const clipUri = useRef<string | null>(null);
+  // The longest length seen while recording. At 2 minutes the recorder stops itself and its own length
+  // reads 0 from then on, which made a full note look "too short" (0.61.0 review).
+  const lastMs = useRef(0);
+  // One start and one finish at a time: a double tap, or Stop at the same instant as the 2-minute stop.
+  const starting = useRef(false);
+  const finishing = useRef(false);
+  if (state.isRecording && state.durationMillis > lastMs.current) lastMs.current = state.durationMillis;
 
   useEffect(
     () => () => {
       alive.current = false;
-      // Leaving mid-recording: stop and throw the clip away.
+      // Leaving mid-recording: stop and throw the clip away (even when the stop fails).
       if (stageRef.current === 'recording') {
+        const uri = clipUri.current;
         recorder
           .stop()
-          .then(() => deleteClip(recorder.uri))
-          .catch((e: unknown) => console.warn('[feedback-voice] stop on leave failed', e));
+          .catch((e: unknown) => console.warn('[feedback-voice] stop on leave failed', e))
+          .finally(() => deleteClip(uri));
       }
     },
     [recorder],
   );
 
   const start = async () => {
+    if (starting.current || stageRef.current !== 'idle') return;
+    starting.current = true;
     setNote(null);
     try {
       let perm = await getRecordingPermissionsAsync();
@@ -78,24 +90,33 @@ export function FeedbackComposer({ text, onText, onSpoke, placeholder, minHeight
         return;
       }
       await recorder.prepareToRecordAsync();
+      clipUri.current = recorder.uri;
+      lastMs.current = 0;
+      finishing.current = false;
       recorder.record({ forDuration: MAX_CLIP_MS / 1000 });
+      stageRef.current = 'recording';
       setStage('recording');
     } catch (e) {
       console.warn('[feedback-voice] could not start recording', e);
       setStage('idle');
       setNote({ words: VOICE_WORDS.failed });
+    } finally {
+      starting.current = false;
     }
   };
 
   const finish = async (keep: boolean) => {
-    const ms = state.durationMillis;
+    if (finishing.current) return;
+    finishing.current = true;
+    const ms = Math.max(state.durationMillis, lastMs.current);
+    stageRef.current = keep ? 'writing' : 'idle';
     setStage(keep ? 'writing' : 'idle');
     try {
       await recorder.stop();
     } catch (e) {
       console.warn('[feedback-voice] stop failed', e);
     }
-    const uri = recorder.uri;
+    const uri = recorder.uri ?? clipUri.current;
     if (!keep || !uri) {
       deleteClip(uri);
       if (keep) setNote({ words: VOICE_WORDS.failed });

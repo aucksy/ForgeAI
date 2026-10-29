@@ -20,8 +20,11 @@ class WatchLayoutTest {
   }
 
   @Test
-  fun disconnectedOutranksEverythingButPermissions() {
-    assertEquals(WatchScreenKind.PHONE_NOT_CONNECTED, ScreenSelector.select(open.copy(rest = rest), false, false, false))
+  fun disconnectedHidesNothingTheWatchRunsItself() {
+    // 0.61.0 review: the watch runs the countdown and the buzz, so a lost phone link never hides them.
+    assertEquals(WatchScreenKind.REST_TIMER, ScreenSelector.select(open.copy(rest = rest), false, false, false))
+    assertEquals(WatchScreenKind.REST_IS_OVER, ScreenSelector.select(open.copy(overAt = 5L), false, false, false))
+    assertEquals(WatchScreenKind.PHONE_NOT_CONNECTED, ScreenSelector.select(open, false, false, false))
     assertEquals(WatchScreenKind.PHONE_NOT_CONNECTED, ScreenSelector.select(WatchState.Snapshot(null, false, ""), false, false, false))
   }
 
@@ -45,10 +48,10 @@ class WatchLayoutTest {
       val want = when {
         hr -> WatchScreenKind.PERMISSION_HEART_RATE
         al -> WatchScreenKind.PERMISSION_ALERTS
+        wo && re -> WatchScreenKind.REST_TIMER
+        wo && ov -> WatchScreenKind.REST_IS_OVER
         !ph -> WatchScreenKind.PHONE_NOT_CONNECTED
         !wo -> WatchScreenKind.NOTHING_OPEN
-        re -> WatchScreenKind.REST_TIMER
-        ov -> WatchScreenKind.REST_IS_OVER
         else -> WatchScreenKind.BETWEEN_RESTS
       }
       assertEquals(want, ScreenSelector.select(hr, al, ph, wo, re, ov))

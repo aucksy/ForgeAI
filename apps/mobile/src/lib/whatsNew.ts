@@ -54,6 +54,21 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-206 + R-195: member-words, Gemini 3.8 Flash pass (line 1 took its "writes it as text"), facts checked.
+    version: '0.61.0',
+    date: '29 Oct',
+    lines: [
+      {
+        text: 'In the feedback box, tap "Speak" and talk in Hindi or English. The app writes it as text you can fix before "Send".',
+        go: { label: 'Feedback settings', href: '/settings/feedback' },
+      },
+      {
+        text: 'Your gym\'s first 2 messages a day still pop up. Any more that day wait quietly in the Gym tab, so your phone stays calm.',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
+    ],
+  },
+  {
     // R-181: member-words, Gemini 3.8 Flash pass, facts checked. 6 lines max, so the finish-screen kg and
     // the History kg share a line; the watch app (testers only, Wear OS track) is left to its Play notes.
     version: '0.60.0',
