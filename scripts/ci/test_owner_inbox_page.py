@@ -249,7 +249,7 @@ class Backlog(unittest.TestCase):
     def test_page_lists_tasks_under_waiting(self):
         html = page.fill(page.TEMPLATE, {"entries": [], "answers": {}})
         self.assertIn("const needsYou", html)
-        self.assertIn('if (filter === "waiting") return needsYou(e);', html)
+        self.assertIn('if (filter === "waiting") return inWaiting(e);', html)
         self.assertIn('data-act="done"', html)
 
     def test_priority_is_read_and_gaps_are_named(self):
@@ -283,5 +283,5 @@ if __name__ == "__main__":
 def test_questions_tab_holds_only_answers():
     # R-108 (owner, 24 Oct 2026): a pick or a task waiting on him lives under "Waiting for you" only.
     src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "owner_inbox_page.py"), encoding="utf-8").read()
-    assert 'if (filter === "all") return !needsYou(e);' in src
-    assert 'if (filter === "waiting") return needsYou(e);' in src
+    assert 'if (filter === "all") return !inWaiting(e);' in src
+    assert 'if (filter === "waiting") return inWaiting(e);' in src
