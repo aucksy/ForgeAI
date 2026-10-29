@@ -449,7 +449,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Status:** DONE
 **TASK DONE (30 Oct 2026)**: Zero Data Retention is on in your personal Groq account, and your new key is on the server. A real spoken test came back as correct text. The key file is deleted. MettleUp no longer uses your client's key.
 **Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
-**DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. I tick "Voice or sound recordings" in Play's Data safety form.
+**DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. Play's Data safety form now says it too (30 Oct): voice is collected, optional, not kept, used only for the app. Sent to Google for review.
 **Your task:** In your PERSONAL Groq account (console.groq.com), open Settings, then Data Controls. Switch on "Inference APIs ZDR". Leave the other switches as they are.
 **Your task:** In the same account, open API Keys, make a new key called "MettleUp feedback" and copy it. Open Notepad, paste the key, and save it as D:\Apps\ForgeAI\groq-key.txt. Then tell me "key saved". I put it on the server without reading it, test it, and delete the file. (Until then the server uses the VastuFirst key from your client's account, which must stop.)
 
@@ -460,7 +460,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Why:** 0.60.0 sends crash reports so I can fix problems fast. The privacy notice and Play's Data safety form must say so. Today the notice holds an empty placeholder for it.
 **YOUR REPLY (30 Oct 2026):** A
 **My answer (30 Oct 2026):** Sorry: my first wording was wrong. I checked the app. A crash report does NOT send the phone model, and today nothing deletes old reports. So I did not add it. The true version is below. Please pick again.
-**DECIDED (30 Oct 2026):** A. Done the same day: the line is in the privacy notice (English and Hindi) and on the website, and the live server now deletes crash reports older than 90 days every night at 3 am. Left for me: tick "Crash logs" in Play's Data safety form.
+**DECIDED (30 Oct 2026):** A. Done the same day: the line is in the privacy notice (English and Hindi) and on the website, and the live server now deletes crash reports older than 90 days every night at 3 am. Play's Data safety form now lists crash logs too (30 Oct). Sent to Google for review.
 
 ## 71. Play: answer the health question so the watch app can go out — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
