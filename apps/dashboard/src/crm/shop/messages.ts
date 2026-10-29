@@ -117,8 +117,8 @@ export function draftProblem(d: MessageDraft): string | null {
   return null;
 }
 
-/** The most messages a gym can send in one day (the server's TOO_MANY, 0008). */
-export const DAY_MAX = 20;
+/** The most messages a gym can send in one day (the server's TOO_MANY, 0008; 20 -> 10 in 0042, R-195). */
+export const DAY_MAX = 10;
 /** Offers and events: at most this many a day and in any 7 days (OFFER_TODAY / OFFER_WEEK). */
 export const OFFERS_A_DAY = 1;
 export const OFFERS_A_WEEK = 3;
@@ -153,6 +153,48 @@ export function capProblem(kind: MessageKind, sent: readonly SentMessage[] | nul
   return null;
 }
 
+/** R-195: the calm line shows from this in-app message of a day (and members get it with no phone pop-up, 0042). */
+export const CALM_DAY = 3;
+/** ...or from this in-app message in any 7 days. */
+export const CALM_WEEK = 8;
+
+/** 1st, 2nd, 3rd, 4th, 11th, 12th, 13th, 21st. PURE. */
+export function ordinal(n: number): string {
+  const tens = n % 100;
+  if (tens >= 11 && tens <= 13) return `${n}th`;
+  return `${n}${n % 10 === 1 ? 'st' : n % 10 === 2 ? 'nd' : n % 10 === 3 ? 'rd' : 'th'}`;
+}
+
+/**
+ * R-195 (30 Oct 2026): one calm line above "Send in the app" when this would be the 3rd (or later)
+ * in-app message of its India day, or the 8th (or later) in the 7 days ending that day. Sending is
+ * still allowed. Counted like capProblem: India days, a timed message on the day it appears, a
+ * message taken back not at all. The pop-up sentence shows only once the server says it marks
+ * messages quiet (0042 live: its rows carry "quiet"). Null below those counts. PURE.
+ */
+export function calmNudge(sent: readonly SentMessage[] | null, now: number, at: number = now): string | null {
+  if (!sent) return null;
+  const today = dateISOFromEpoch(now);
+  const target = dateISOFromEpoch(at);
+  const weekStart = addDays(target, -6);
+  const live = sent.filter((m) => !m.withdrawn);
+  const dayOf = (m: SentMessage) => dateISOFromEpoch(m.sendAt ?? m.createdAt);
+  const thisDay = live.filter((m) => dayOf(m) === target).length + 1;
+  const ignore = 'Members who get many messages start to ignore them';
+  if (thisDay >= CALM_DAY) {
+    const day = target === today ? 'today' : 'for that day';
+    const quietLive = sent.some((m) => m.quiet !== undefined);
+    return quietLive
+      ? `This is your ${ordinal(thisDay)} message ${day}, so members get it in the app without a phone pop-up. ${ignore}.`
+      : `This is your ${ordinal(thisDay)} message ${day}. ${ignore}, so send only what matters.`;
+  }
+  const thisWeek = live.filter((m) => dayOf(m) >= weekStart && dayOf(m) <= target).length + 1;
+  if (thisWeek >= CALM_WEEK) {
+    return `This is your ${ordinal(thisWeek)} message ${target === today ? 'this week' : 'that week'}. ${ignore}, so send only what matters.`;
+  }
+  return null;
+}
+
 export interface SentMessage {
   id: string;
   kind: MessageKind;
@@ -169,6 +211,11 @@ export interface SentMessage {
   sendAt: number | null;
   /** 0025: sent to a group of members, not every app member. */
   toGroup: boolean;
+  /**
+   * 0042 (R-195): members got it in the app with no phone pop-up (the 3rd or later of its day).
+   * Absent while the server does not say (0042 not live yet).
+   */
+  quiet?: boolean;
 }
 
 const KINDS = new Set<string>(MESSAGE_KINDS.map((k) => k.kind));
@@ -193,6 +240,7 @@ export function sentFromRow(raw: unknown): SentMessage | null {
     withdrawn: r.withdrawn === true,
     sendAt: typeof r.sendAt === 'string' && Number.isFinite(Date.parse(r.sendAt)) ? Date.parse(r.sendAt) : null,
     toGroup: r.toGroup === true,
+    ...(typeof r.quiet === 'boolean' ? { quiet: r.quiet } : {}),
   };
 }
 
@@ -246,7 +294,7 @@ export function messageErrorWords(err: unknown): string {
   if (/\bOFFER_WEEK\b/.test(text))
     return 'You sent 3 offers or events this week. Members get at most 3 a week. Wait a few days.';
   if (/\bTOO_MANY\b/.test(text))
-    return 'You sent 20 messages today. That is the most for one day. Send it tomorrow.';
+    return `You sent ${DAY_MAX} messages today. That is the most for one day. Send it tomorrow.`;
   if (/\bTOO_LONG\b/.test(text))
     return `Keep the title to ${TITLE_MAX} letters and the message to ${BODY_MAX}.`;
   if (/\bEMPTY\b/.test(text)) return 'Write a title.';

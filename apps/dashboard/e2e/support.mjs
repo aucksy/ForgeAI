@@ -681,6 +681,13 @@ export class FakeServer {
         // 0025: a group (app member ids; none left: NO_ONE) and a time to appear.
         const to = Array.isArray(args.p_to) ? args.p_to.filter((id) => this.appMembers.some((a) => a.member_id === id)) : null;
         if (to && to.length === 0) throw new Refusal('NO_ONE');
+        // 0042: at most 10 a day (by the India day it was sent), and from the 3rd of the day it
+        // appears on, members get it with no phone pop-up ("quiet"; taken-back ones do not count).
+        const istDay = (iso) => new Date(Date.parse(iso) + 330 * 60_000).toISOString().slice(0, 10);
+        const sendAt = typeof args.p_send_at === 'string' ? new Date(args.p_send_at).toISOString() : null;
+        const appears = istDay(sendAt ?? NOW.toISOString());
+        if (this.messages.filter((x) => istDay(x.createdAt) === istDay(NOW.toISOString())).length >= 10) throw new Refusal('TOO_MANY');
+        const sameDay = this.messages.filter((x) => !x.withdrawn && istDay(x.sendAt ?? x.createdAt) === appears).length;
         const m = {
           id: `msg-${this.messages.length + 1}`,
           kind: args.p_kind,
@@ -690,8 +697,9 @@ export class FakeServer {
           recipients: to ? to.length : this.appMembers.length,
           seen: 0,
           withdrawn: false,
-          sendAt: typeof args.p_send_at === 'string' ? new Date(args.p_send_at).toISOString() : null,
+          sendAt,
           toGroup: Boolean(to),
+          quiet: sameDay >= 2,
         };
         this.messages.unshift(m);
         return m;

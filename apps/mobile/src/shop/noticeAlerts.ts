@@ -8,6 +8,7 @@
  *  - The first look after joining (or after this update) alerts nothing: the old notices are only
  *    remembered, so a member never gets a flood.
  *  - A notice pops up once. Seen ones, ones already alerted and ones older than a week never do.
+ *  - From the gym's 3rd message of a day ("quiet", R-195 / 0042) none pops up: it waits in the inbox.
  *  - With the app open in front nothing pops up (the bell shows it), but the notices are still
  *    remembered, so the background job does not pop them later.
  */
@@ -66,7 +67,8 @@ export function planNoticeAlerts(input: { messages: readonly InboxMessage[]; ale
     if (known.has(m.id)) continue;
     known.add(m.id);
     keep.push(m.id);
-    if (input.alerted === null || input.inFront || m.seen) continue;
+    // A quiet message (0042: the gym's 3rd or later of its day) is only remembered: inbox, no pop-up.
+    if (input.alerted === null || input.inFront || m.seen || m.quiet) continue;
     const age = now - Date.parse(m.createdAt);
     if (Number.isFinite(age) && age > MAX_ALERT_AGE_MS) continue;
     notify.push(m);

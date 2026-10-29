@@ -17,6 +17,11 @@ export interface InboxMessage {
   createdAt: string;
   /** The member has seen it (the server's word, or this phone's since). */
   seen: boolean;
+  /**
+   * 0042 (R-195): the gym's 3rd or later message of its day. It stays in the inbox but never pops
+   * up on the phone (the server sends no push for it either). Absent = an ordinary message.
+   */
+  quiet?: boolean;
 }
 
 const KINDS: readonly InboxKind[] = ['announcement', 'closed', 'timing', 'offer', 'event', 'reminder'];
@@ -36,6 +41,7 @@ export function inboxFromRow(raw: unknown): InboxMessage | null {
     body: typeof r.body === 'string' ? r.body.trim() : '',
     createdAt: r.createdAt,
     seen: r.seen === true,
+    ...(r.quiet === true ? { quiet: true } : {}),
   };
 }
 

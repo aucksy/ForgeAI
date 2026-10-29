@@ -8,6 +8,51 @@ import { expectFitsPhone, open, openApp, sheet, startDemo } from './support.mjs'
 
 test.use({ viewport: { width: 360, height: 780 } });
 
+test('J35c R-195: from the 3rd app message of the day a calm line shows above "Send in the app"; sending still works', async ({ page }, testInfo) => {
+  const server = await openApp(page);
+  server.appMembers = [
+    { member_id: 'app-1', name: 'App One', phone: '+919000000001', joined_at: '2026-10-01T10:00:00Z', last_seen: '2026-10-16T10:00:00Z', orders: 0, spent_p: 0 },
+  ];
+  // One message already sent today (07:00 India time), with the server's quiet mark (0042 live).
+  const earlier = (n, hour) => ({
+    id: `old-${n}`, kind: 'announcement', title: `Earlier news ${n}`, body: '', createdAt: `2026-10-17T0${hour}:00:00+05:30`,
+    recipients: 1, seen: 0, withdrawn: false, sendAt: null, toGroup: false, quiet: false,
+  });
+  server.messages = [earlier(1, 7)];
+  await startDemo(page);
+  await open(page, 'Messages & offers');
+  await page.getByRole('group', { name: 'Kind of message' }).getByRole('button', { name: 'Write my own' }).tap();
+  await page.getByLabel('Title', { exact: true }).fill('Water cooler fixed');
+  const send = page.getByRole('button', { name: 'Send in the app' });
+  await expect(send).toBeEnabled();
+  // The 2nd message of the day: no line.
+  await expect(page.getByTestId('message-nudge')).toHaveCount(0);
+
+  // A 2nd one already went (one taken back does not count): this is the 3rd.
+  server.messages = [earlier(2, 8), { ...earlier(3, 9), withdrawn: true }, earlier(1, 7)];
+  await page.reload();
+  await open(page, 'Messages & offers');
+  await page.getByRole('group', { name: 'Kind of message' }).getByRole('button', { name: 'Write my own' }).tap();
+  await page.getByLabel('Title', { exact: true }).fill('Water cooler fixed');
+  const line = page.getByTestId('message-nudge');
+  await expect(line).toHaveText(
+    'This is your 3rd message today, so members get it in the app without a phone pop-up. Members who get many messages start to ignore them.',
+  );
+  await expect(send).toBeEnabled();
+  await line.scrollIntoViewIfNeeded();
+  await expectFitsPhone(page, 'with the calm line');
+  const shot = process.env.NUDGE_SHOT || testInfo.outputPath('message-nudge-phone.png');
+  await page.screenshot({ path: shot });
+
+  // Sending is still allowed; the Sent list marks it "No phone pop-up".
+  await send.tap();
+  await page.getByRole('button', { name: 'Yes, send' }).tap();
+  await expect(page.getByText('Sent to 1 member in the app.')).toBeVisible();
+  await expect(page.getByTestId('message-nudge')).toHaveCount(0);
+  expect(server.messages[0].quiet).toBe(true);
+  await expect(page.getByText('No phone pop-up', { exact: true })).toHaveCount(1);
+});
+
 /** The "Closed for a festival" boxes, filled the way an owner would. */
 async function fillClosedForDiwali(page, openAt = '06:00') {
   await page.getByLabel('Closed on', { exact: true }).fill('2026-11-08');
