@@ -5,6 +5,15 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-199. Leaderboard and gym-mate sharing ON by default (inside the gym) — asked 30 Oct 2026, waiting on his pick
+**He said:** leaderboard settings on by default: name, display picture, workout history and numbers visible to the member's own gym by
+default (Hevy makes workouts public to the world by default; people want this); the member can switch it off.
+**Today:** numbers go to the leaderboard as "A member"; name off until switched on; gym-mate workouts off until switched on (0040,
+privacy notice approved 29 Oct says "off unless you turn it on"); no photo shared.
+**My advice in chat:** India's DPDP Act needs consent by a clear action, so silent default-on is a legal risk; under-18 members need
+parental consent. Offered A (one-tap "Show me to my gym" step when joining, pre-explained, most will tap yes) vs B (default on as
+asked, after a lawyer check, never for under-18). Waiting for his pick; nothing changed.
+
 ## R-198. Active workout: show the routine's name (top of the screen and the "Resume workout" bar) — 30 Oct 2026
 **He said:** the active workout screen does not tell me which routine I am doing; at the top near the duration, or below it, show
 e.g. "Pull 2" (the routine's name). Also the bar to resume the workout (seen after leaving the active screen) should show the name.
