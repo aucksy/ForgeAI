@@ -99,7 +99,7 @@ object WorkoutStarted {
       if (m.getNotificationChannel(CH) == null) {
         m.createNotificationChannel(
           NotificationChannel(CH, "Workout started", NotificationManager.IMPORTANCE_DEFAULT).apply {
-            description = "When you start a workout on your phone, one tap opens MettleUp here"
+            description = "Shows a card when you start a workout on your phone. Tap it to open MettleUp."
             setSound(null, null)
             setShowBadge(false)
           },
