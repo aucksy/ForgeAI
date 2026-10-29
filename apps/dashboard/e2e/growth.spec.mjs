@@ -22,6 +22,16 @@ async function shoot(page, testInfo, name, opts = {}) {
   }
 }
 
+/** How many cards side by side: the distinct left edges of the six number cards. */
+function cardColumns(page) {
+  return page.evaluate(() => {
+    const lefts = [...document.querySelectorAll('main h2')]
+      .filter((h) => ['Money collected', 'Active members', 'New members', 'Renewal rate', 'Members lost', 'Visits per member'].includes(h.textContent ?? ''))
+      .map((h) => Math.round(h.getBoundingClientRect().left));
+    return new Set(lefts).size;
+  });
+}
+
 test('J-G1 owner: Your growth from Today and More; six numbers; Excel file; the report to share', async ({ page }, testInfo) => {
   await openApp(page);
   await startDemo(page);
@@ -46,6 +56,7 @@ test('J-G1 owner: Your growth from Today and More; six numbers; Excel file; the 
   // The demo has its old records: no "add your old records" card.
   await expect(page.getByText('To compare with before MettleUp, add your old records')).toHaveCount(0);
   await expectFitsPhone(page, 'on Your growth');
+  expect(await cardColumns(page)).toBe(1);
   await shoot(page, testInfo, 'growth-phone.png', { fullPage: true });
 
   // The Excel file: one row a month, the same columns as the table.
@@ -80,10 +91,13 @@ test('J-G1 owner: Your growth from Today and More; six numbers; Excel file; the 
   await expect(page.getByRole('heading', { level: 1, name: 'Your growth' })).toBeVisible();
 
   // A computer screen: the menu on the side has it too.
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.reload();
   await expect(page.getByRole('heading', { level: 1, name: 'Your growth' })).toBeVisible();
   await expect(page.getByRole('navigation').getByRole('link', { name: /^Your growth/ })).toBeVisible();
+  // The six cards sit three across on a wide screen (one column on a phone, above). The grid measures
+  // itself after a resize, so wait for it: a busy test machine once photographed it mid-reload.
+  await expect.poll(() => cardColumns(page)).toBe(3);
   await shoot(page, testInfo, 'growth-desktop.png', { fullPage: true });
 
   // Light theme on a phone.
