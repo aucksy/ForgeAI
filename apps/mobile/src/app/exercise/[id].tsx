@@ -38,6 +38,7 @@ import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { DrawingCredit } from '@/tracker/components/DrawingCredit';
 import { ExerciseClip } from '@/tracker/components/ExerciseClip';
 import { ExerciseDemoSheet } from '@/tracker/components/ExerciseDemoSheet';
+import { ExercisePictures } from '@/tracker/components/ExercisePictures';
 import { ExerciseMetricChart } from '@/tracker/components/ExerciseMetricChart';
 import { ExercisePickerList } from '@/tracker/components/ExercisePickerList';
 import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
@@ -218,6 +219,8 @@ export default function ExerciseScreen() {
   const openSession = (sid: string) => go(() => router.push(`/session/${sid}`));
   const media = ex ? { uri: ex.mediaUri, type: ex.mediaType } : null;
   const hasPicture = Boolean(ex?.mediaUri) || mediaFor(ex?.catalogKey) != null;
+  // F20: when an exercise's moving clip cannot be had, its start and end pictures stand in.
+  const clipStandIn = ex ? <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} asFallback marginBottom={space.lg} /> : null;
   // EX-09: only a video or the library's two-drawing loop moves; the member's photo is still.
   const stillPhoto = Boolean(ex?.mediaUri) && ex?.mediaType === 'image';
   const easier = catalogEntry(entry?.easier);
@@ -398,7 +401,9 @@ export default function ExerciseScreen() {
             {tab === 'summary' ? (
               <>
                 {/* R-170: the owner-approved demo clip, at the top (nothing for exercises without one) */}
-                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
+                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} fallback={clipStandIn} />
+                {/* F20: start and end pictures (nothing for exercises without a match, or with a clip) */}
+                <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
                 {/* EX-07: the answer first — last time and best, in the way it is logged */}
                 {last ? (
                   <Card style={{ gap: space.sm, marginBottom: space.lg }}>
@@ -497,7 +502,9 @@ export default function ExerciseScreen() {
             {tab === 'howto' ? (
               <>
                 {/* R-170: the demo clip above the steps, as on Summary */}
-                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
+                <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} fallback={clipStandIn} />
+                {/* F20: start and end pictures, as on Summary */}
+                <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
                 {/* how to — the picture (a tap opens it larger) and the steps, once */}
                 {hasPicture || (entry?.steps.length ?? 0) > 0 ? (
                   <Card style={{ gap: space.md, marginBottom: space.lg }}>
