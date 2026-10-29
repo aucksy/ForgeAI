@@ -50,6 +50,9 @@ declare
     'member_mate_share','member_mate_stop','member_mate_board','member_mate_profile',
     -- 0043: a member's photo taken at the desk (each checks an owner or desk key; only that gym's own members).
     'owner_member_photos','owner_save_member_photo','owner_remove_member_photo',
+    -- 0044: pause / renew requests from the app (members check their member key; the desk its owner or desk key).
+    'member_plan_requests','member_ask_plan_change','member_cancel_plan_request','member_saw_plan_requests',
+    'owner_plan_requests','owner_decide_plan_request',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
