@@ -314,9 +314,9 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
         label:
           t === 'plan' || t === 'batch'
             ? `${AUDIENCE_LABEL[t]}…`
-            : `${AUDIENCE_LABEL[t]} (${t === 'everyone' ? everyoneCount(data.views, phones, appMembers?.length ?? null) : audienceMembers({ type: t }, data).length})`,
+            : `${AUDIENCE_LABEL[t]} (${t === 'everyone' ? everyoneCount(data.views, appMembers) : audienceMembers({ type: t }, data).length})`,
       })),
-    [plans, batches, data, phones, appMembers],
+    [plans, batches, data, appMembers],
   );
   const planOptions = useMemo(
     () => plans.map((p) => ({ value: p.id, label: `${p.name} (${audienceMembers({ type: 'plan', planId: p.id }, data).length})` })),

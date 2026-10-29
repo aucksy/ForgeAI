@@ -131,12 +131,14 @@ describe('in the app, or not', () => {
 
   it('"Everyone (N)" matches who a send reaches: app members joined only in the app count too', () => {
     const everyone = audienceMembers({ type: 'everyone' }, data);
-    const notInApp = reachOf({ type: 'everyone' }, everyone, phones, 2).notInApp;
-    expect(everyoneCount(everyone, phones, 2)).toBe(notInApp + 2);
+    const listPhone = everyone.map((v) => v.member.phone).find((p) => p) ?? null;
+    // App members already on the list add nobody; one who is not on the list adds one.
+    expect(everyoneCount(everyone, [{ phone: listPhone }])).toBe(everyone.length);
+    expect(everyoneCount(everyone, [{ phone: listPhone }, { phone: '9111122222' }])).toBe(everyone.length + 1);
     // The owner's case: nobody on the list yet, one member joined in the app.
-    expect(everyoneCount([], new Set(), 1)).toBe(1);
+    expect(everyoneCount([], [{ phone: '9111122222' }])).toBe(1);
     // App members not loaded yet (offline): the list.
-    expect(everyoneCount(everyone, phones, null)).toBe(everyone.length);
+    expect(everyoneCount(everyone, null)).toBe(everyone.length);
   });
 
   it('"In the app: N. Not in the app: M." — for everyone, N is every app member of the gym', () => {
