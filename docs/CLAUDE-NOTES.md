@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-216. A 1-10 score on every feature and task; IDs on tasks too — 29 Oct 2026
+He said: "I think I need a drop-down on each feature card to rate the feature so any feature that I'm rating 9 or 10 you can pick that up first anything that I'm rating less you can pick that up later you can build this I guess under feature Backlog and under Claude's task as well and you can give IDs in the tasks section also."
+What I do: a "Your score" drop-down (1-10) on every feature not built yet and every task not done. Scores save themselves a few seconds after he picks, into a "## Your scores" table in docs/OWNER-INBOX.md (by ID). Tasks get fixed IDs T1, T2 … like features. A "Your score first" sort on both tabs. WORK RULE from now on: items he scores 9-10 are built first, then 7-8, then lower; unscored items keep their usual place after scored ones of 7+. Every build prints his top-scored open items.
+
 ## R-215. More detail on "Ask the desk to freeze or renew" — 29 Oct 2026
 He commented on the tracker feature (F150): "add more details for it here. I dont remember what this is about."
 What I did: rewrote its Details (where it came from, #58; what a freeze is; what it changes for a member) and How it will work (the two buttons, the desk's one-tap yes, payment stays at the desk).
