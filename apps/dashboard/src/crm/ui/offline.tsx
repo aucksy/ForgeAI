@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 import { useRole } from '../auth/AuthProvider';
 import type { DeskState } from '../data/cloud';
+import type { WaitingRow } from '../data/outbox';
 import { formatINR } from '../logic/money';
 import { Button, Card, EmptyState, PageHeader, Pill, color, font, space } from './kit';
 import { useOffline } from './offlineContext';
@@ -18,6 +19,60 @@ import { useCrm } from '../store';
 /** "3 waiting to send" (things, not only payments). */
 export function waitingWords(n: number): string {
   return `${n} waiting to send`;
+}
+
+/** The calm first line of the bar while offline: "Offline: 3 waiting to send." PURE. */
+export function offlineHeadline(n: number): string {
+  return n > 0 ? `Offline: ${waitingWords(n)}.` : 'Offline: nothing waiting to send.';
+}
+
+/** What one waiting thing is, in the desk's words ("Payment ₹1,000, receipt 2026-27/D1-0001"). PURE. */
+export function waitingRowWords(row: WaitingRow): string {
+  const money = row.amountP !== null ? formatINR(row.amountP) : null;
+  const receipt = row.receiptNo ? `, receipt ${row.receiptNo}` : '';
+  switch (row.kind) {
+    case 'checkIn':
+      return 'Check-in';
+    case 'member':
+      return 'New member';
+    case 'memberEdit':
+      return 'Change to details';
+    case 'sale':
+      return money ? `Plan sold, ${money} paid${receipt}` : 'Plan sold';
+    case 'push':
+      return `Payment${money ? ` ${money}` : ''} (not confirmed yet)${receipt}`;
+    default:
+      return `Payment${money ? ` ${money}` : ''}${receipt}`;
+  }
+}
+
+/** The tag beside a waiting thing. PURE. */
+export function waitingStateWords(state: WaitingRow['state']): string {
+  return state === 'held' ? 'Not sent: ask the owner' : 'Waiting to send';
+}
+
+/** "7:42 pm", or "27 Oct, 7:42 pm" when it was not today. PURE (given `now`). */
+export function waitingTime(at: number, now: number): string {
+  const d = new Date(at);
+  const time = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+  return d.toDateString() === new Date(now).toDateString() ? time : `${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, ${time}`;
+}
+
+/** "See what is waiting": everything kept on this device, oldest first (owner #7, 29 Oct 2026). */
+function WaitingListView({ rows, names }: { rows: readonly WaitingRow[]; names: (memberId: string) => string }) {
+  const now = Date.now();
+  return (
+    <ul aria-label="Waiting to send from this device" style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 4 }}>
+      {rows.map((r) => (
+        <li key={r.id} style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', minWidth: 0 }}>
+          <span style={{ flex: '1 1 220px', minWidth: 0, overflowWrap: 'anywhere' }}>
+            {waitingRowWords(r)} · {r.name ?? names(r.memberId)} · {waitingTime(r.at, now)}
+          </span>
+          <Pill tone="warn">{waitingStateWords(r.state)}</Pill>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 /** Beside a receipt, member or check-in made on this device and not on the server yet. */
@@ -52,7 +107,8 @@ export function DeskBar({
   const owner = useRole() === 'owner';
   const [confirming, setConfirming] = useState<string | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
-  const act = (kind: 'cancelled' | 'remove' | 'today', id: string) => {
+  const [listOpen, setListOpen] = useState(false);
+  const act =(kind: 'cancelled' | 'remove' | 'today', id: string) => {
     setFailed(null);
     setConfirming(null);
     onAction(kind, id).catch((e: unknown) => {
@@ -85,11 +141,18 @@ export function DeskBar({
     >
       {showOffline && (
         <div>
-          <strong>Offline mode.</strong> No internet. Check-ins, payments and new members are saved on this device and sent
-          when the internet is back. Other things wait. Details shown are from {at}.
-          {state.waiting > 0 ? ` ${waitingWords(state.waiting)}.` : ''}
+          <strong>{offlineHeadline(state.waiting)}</strong> No internet. Check-ins, payments and new members are saved on this
+          device and sent when the internet is back. Other things wait. Details shown are from {at}.
         </div>
       )}
+      {state.list.length > 0 && (
+        <div>
+          <Button variant="quiet" onClick={() => setListOpen((o) => !o)}>
+            {listOpen ? 'Hide the list' : 'See what is waiting'}
+          </Button>
+        </div>
+      )}
+      {listOpen && state.list.length > 0 && <WaitingListView rows={state.list} names={names} />}
       {showOffline && !state.canPayOffline && (
         <div>Connect this device to the internet once so it can take payments offline.</div>
       )}

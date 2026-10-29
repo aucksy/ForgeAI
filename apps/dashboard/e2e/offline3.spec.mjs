@@ -50,7 +50,7 @@ test('J34b offline: a payment, a new member and a check-in made offline survive 
   await page.context().setOffline(true);
   server.disconnect();
   await page.reload();
-  const bar = page.getByRole('status').filter({ hasText: 'Offline mode.' });
+  const bar = page.getByRole('status').filter({ hasText: 'Offline: ' });
   await expect(bar).toBeVisible({ timeout: 15_000 });
   await expect(bar).toContainText('Check-ins, payments and new members are saved on this device');
 
@@ -75,7 +75,17 @@ test('J34b offline: a payment, a new member and a check-in made offline survive 
   await addMember(page, { name: 'Ravi Kumar', phone: '98290 22222' });
   await page.getByRole('button', { name: 'Check in', exact: true }).tap();
   await expect(page.getByRole('button', { name: 'Checked in today' })).toBeVisible({ timeout: 15_000 });
-  await expect(bar).toContainText('3 waiting to send.');
+  await expect(bar).toContainText('Offline: 3 waiting to send.');
+  // The desk reviews what is waiting (owner #7, 29 Oct 2026): each thing, for whom, oldest first.
+  await bar.getByRole('button', { name: 'See what is waiting' }).tap();
+  const list = page.getByRole('list', { name: 'Waiting to send from this device' });
+  await expect(list.getByRole('listitem')).toHaveCount(3);
+  await expect(list.getByRole('listitem').nth(0)).toContainText('Payment ₹1,000, receipt 2026-27/D1-0001 · Asha Verma');
+  await expect(list.getByRole('listitem').nth(1)).toContainText('New member · Ravi Kumar');
+  await expect(list.getByRole('listitem').nth(2)).toContainText('Check-in · Ravi Kumar');
+  await expectFitsPhone(page, 'offline, the waiting list open');
+  await bar.getByRole('button', { name: 'Hide the list' }).tap();
+  await expect(list).toBeHidden();
   expect(server.pushes.flat().some((r) => r.k === 'payment' && r.d?.receiptNo === '2026-27/D1-0001')).toBe(false);
 
   // Restart while still offline: everything is still on this device.
@@ -123,7 +133,7 @@ test('J34c offline: pages that need the internet say so; signing out waits until
   await page.context().setOffline(true);
   server.disconnect();
   await page.reload();
-  await expect(page.getByRole('status').filter({ hasText: 'Offline mode.' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('status').filter({ hasText: 'Offline: ' })).toBeVisible({ timeout: 15_000 });
 
   // Messages, staff and sign-in: one plain card instead of the page.
   await open(page, 'Messages & offers');

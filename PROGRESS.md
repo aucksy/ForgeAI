@@ -2835,6 +2835,14 @@
   public `product-photos` and `gym-logos`); records are capped at 20 kB each and pulled whole, and the privacy notice
   does not cover gym-held member photos. Needed first: a PRIVATE bucket + staff-session upload/read rules (migration),
   a retention/delete rule with member delete, and the owner's privacy-notice wording.
+- 2026-10-29: **Offline front desk step 3 finish (#7, R-185/R-186), branch feat/offline-desk-3, not merged/deployed.**
+  - Found: step 3 itself (payments, sales, new members, edits offline; per-device receipt series D1/D2; conflicts) was
+    built 24 Oct (9c832be) and is in the live admin bundle; the tracker row was stale.
+  - Added: bar headline "Offline: N waiting to send." + "See what is waiting" list (outbox.ts waitingList, DeskState.list,
+    ui/offline.tsx); over-paid note when two desks took money for one plan (outbox.ts overPaidP in replayRecords).
+  - Server: 0041_offline_desk_receipts.sql (NOT APPLIED LIVE): an offline-series receipt of a claimed desk skips
+    OVER_DUE. Test 0041 PASS 18 on PGlite; fails 4 against the 0021 rule.
+  - Design doc: docs/overhaul/OFFLINE-DESK.md. Checks: tsc -b, vitest 1311, panel 63, e2e (J34b list + phone fit).
 
 ## Next (pre-B2B2C, still valid)
 - The release key is made privately on the owner's PC (never in this repo or a workflow log);

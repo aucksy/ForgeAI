@@ -62,6 +62,7 @@ import {
   overlay,
   replayRecords,
   unconfirmedReceiptIds,
+  waitingList,
   waitingSummary,
   type DeskSeries,
   type OutboxDoc,
@@ -71,6 +72,7 @@ import {
   type OutboxStore,
   type Replay,
   type TakenBy,
+  type WaitingRow,
 } from './outbox';
 import { financialYear, highestOfflineSeq, nextReceiptNo, offlineReceiptNo } from '../logic/receipts';
 
@@ -389,6 +391,8 @@ export interface DeskState {
   paidP: number;
   /** This device has its own receipt series, so it can take payments offline. */
   canPayOffline: boolean;
+  /** Everything waiting on this device, oldest first ("See the list" on the bar). */
+  list: WaitingRow[];
 }
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
@@ -554,6 +558,7 @@ export class CloudCrmData implements CrmData {
       payments: s.payments,
       paidP: s.paidP,
       canPayOffline: this.desk !== null && Boolean(this.opts.outbox),
+      list: waitingList(this.items),
     };
   }
 

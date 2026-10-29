@@ -17,11 +17,15 @@ import {
   memoryOutbox,
   nextDeskNo,
   overlay,
+  overPaidP,
   replayRecords,
   usableOutbox,
+  waitingList,
   waitingSummary,
   type OutboxItem,
+  type WaitingRow,
 } from '../../src/crm/data/outbox';
+import { offlineHeadline, waitingRowWords, waitingStateWords } from '../../src/crm/ui/offline';
 import { highestOfflineSeq, nextReceiptNo, offlineReceiptNo, parseOfflineReceiptNo } from '../../src/crm/logic/receipts';
 import type { Member, MemberDraft, Membership, Payment, PlanDraft } from '../../src/crm/types';
 
@@ -527,5 +531,51 @@ describe('offline front desk, step 3: replay and overlay (pure)', () => {
     const withServerVisit = overlay({ ...snap(), visits: [{ id: 'v0', memberId: 'm1', visitedOn: TODAY } as never] }, items);
     expect(withServerVisit.visits.map((x) => x.id)).toEqual(['v0']);
     expect(waitingSummary(items)).toMatchObject({ waiting: 2, payments: 1, paidP: 700 });
+  });
+
+  it('two desks took money for the same plan: the offline receipt is sent as printed, and the desk is told how much too much', () => {
+    const plan = { id: 'ms1', memberId: 'm1', priceP: 150_000, joiningFeeP: 0 } as Membership;
+    const theirs = { id: 'p0', memberId: 'm1', membershipId: 'ms1', receiptNo: '2026-27/0001', amountP: 100_000 } as Payment;
+    const ours = { id: 'p1', memberId: 'm1', membershipId: 'ms1', receiptNo: '2026-27/D1-0001', amountP: 100_000, offline: true } as Payment;
+    const server = { ...snap(), memberships: [plan], payments: [theirs] };
+    expect(overPaidP(ours, plan, server)).toBe(50_000);
+    expect(overPaidP(ours, plan, { ...server, payments: [{ ...theirs, voided: true }] })).toBe(0);
+    const r = replayRecords(item({ records: [{ k: 'payment', id: 'p1', d: ours }] }), server);
+    expect(r.records.map((x) => x.id)).toEqual(['p1']);
+    expect((r.records[0].d as Payment).receiptNo).toBe('2026-27/D1-0001');
+    expect(r.note).toBe('Asha has now paid ₹500 too much: another desk also took money for the same plan. Please ask the owner to check.');
+    // Within what is owed: no note.
+    expect(replayRecords(item({ records: [{ k: 'payment', id: 'p1', d: { ...ours, amountP: 50_000 } }] }), server).note).toBeUndefined();
+  });
+
+  it('the review list: every waiting thing, oldest first, with its money, receipt and where it stands', () => {
+    const asha = { id: 'm2', fullName: 'Ravi Kumar', phone: '+912' } as Member;
+    const rows = waitingList([
+      item({ id: 'b', kind: 'member', at: 20, memberId: 'm2', records: [{ k: 'member', id: 'm2', d: asha }] }),
+      item({ id: 'a', at: 10, records: [{ k: 'payment', id: 'p1', d: { id: 'p1', amountP: 700, receiptNo: '2026-27/D1-0001' } }], held: 'Not sent' }),
+      item({ id: 'c', kind: 'checkIn', at: 30, memberId: 'm2', records: [{ k: 'visit', id: 'v1', d: { id: 'v1' } }], waitReason: 'later' }),
+    ]);
+    expect(rows.map((r) => [r.id, r.state, r.name, r.amountP, r.receiptNo])).toEqual([
+      ['a', 'held', null, 700, '2026-27/D1-0001'],
+      ['b', 'sending', 'Ravi Kumar', null, null],
+      ['c', 'waits', null, null, null],
+    ]);
+  });
+});
+
+describe('offline front desk: the words on the bar (pure)', () => {
+  const row = (over: Partial<WaitingRow>): WaitingRow => ({ id: 'i', kind: 'payment', at: 0, memberId: 'm', name: null, amountP: null, receiptNo: null, state: 'sending', ...over });
+  it('says how many wait, and what each one is', () => {
+    expect(offlineHeadline(3)).toBe('Offline: 3 waiting to send.');
+    expect(offlineHeadline(0)).toBe('Offline: nothing waiting to send.');
+    expect(waitingRowWords(row({ amountP: 100_000, receiptNo: '2026-27/D1-0001' }))).toBe('Payment ₹1,000, receipt 2026-27/D1-0001');
+    expect(waitingRowWords(row({ kind: 'sale', amountP: 150_000, receiptNo: 'B2/26-27/D1-0002' }))).toBe('Plan sold, ₹1,500 paid, receipt B2/26-27/D1-0002');
+    expect(waitingRowWords(row({ kind: 'sale' }))).toBe('Plan sold');
+    expect(waitingRowWords(row({ kind: 'push', amountP: 50_000, receiptNo: '2026-27/0002' }))).toBe('Payment ₹500 (not confirmed yet), receipt 2026-27/0002');
+    expect(waitingRowWords(row({ kind: 'checkIn' }))).toBe('Check-in');
+    expect(waitingRowWords(row({ kind: 'member' }))).toBe('New member');
+    expect(waitingRowWords(row({ kind: 'memberEdit' }))).toBe('Change to details');
+    expect(waitingStateWords('held')).toBe('Not sent: ask the owner');
+    expect(waitingStateWords('waits')).toBe('Waiting to send');
   });
 });

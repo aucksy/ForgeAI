@@ -25,6 +25,7 @@
 import type { CrmSnapshot } from './adapter';
 import type { CrmRecord } from './cloud';
 import { findDuplicatePhone } from '../logic/members';
+import { formatINR } from '../logic/money';
 import type { Member, MemberDraft, Membership, Payment, Visit } from '../types';
 
 /**
@@ -313,6 +314,45 @@ export function waitingSummary(items: readonly OutboxItem[]): { ids: Set<string>
   return { ids, waiting: items.length, held, payments, paidP };
 }
 
+/**
+ * One line of the "See the list" review on the desk bar (owner #7, step 3 finish, 29 Oct 2026): what
+ * the desk did, for whom, when, and where it stands. `state`: `sending` goes by itself when the
+ * internet is back; `waits` is not refused but waits for a reason shown on the bar; `held` was refused
+ * by the server and waits for the owner (never in the totals).
+ */
+export interface WaitingRow {
+  id: string;
+  kind: OutboxKind;
+  at: number;
+  memberId: string;
+  /** The member's name as the desk typed it (a new member, or any record that carries it). */
+  name: string | null;
+  /** The money on the receipt, in paise (payments and sales), else null. */
+  amountP: number | null;
+  receiptNo: string | null;
+  state: 'sending' | 'waits' | 'held';
+}
+
+/** Everything on this device's waiting list, oldest first, for the desk to review. PURE. */
+export function waitingList(items: readonly OutboxItem[]): WaitingRow[] {
+  return items
+    .map((i): WaitingRow => {
+      const pay = i.records.find((r) => r.k === 'payment' && !r.x)?.d as Payment | undefined;
+      const mem = i.records.find((r) => r.k === 'member' && !r.x)?.d as Member | undefined;
+      return {
+        id: i.id,
+        kind: i.kind,
+        at: i.at,
+        memberId: i.memberId,
+        name: mem && typeof mem.fullName === 'string' ? mem.fullName : null,
+        amountP: pay && Number.isFinite(Number(pay.amountP)) ? Number(pay.amountP) : null,
+        receiptNo: pay && typeof pay.receiptNo === 'string' ? pay.receiptNo : null,
+        state: i.held ? 'held' : i.waitReason ? 'waits' : 'sending',
+      };
+    })
+    .sort((a, b) => a.at - b.at);
+}
+
 /** Receipts from an online save that got no answer: their number is only sure once sent. PURE. */
 export function unconfirmedReceiptIds(items: readonly OutboxItem[]): Set<string> {
   const out = new Set<string>();
@@ -332,6 +372,18 @@ export function moneyMemberId(records: readonly CrmRecord[]): string {
     if ((r.k === 'payment' || r.k === 'membership') && d && typeof d.memberId === 'string') return d.memberId;
   }
   return '';
+}
+
+/**
+ * How much `pay` takes the plan past its price + joining fee, counting the live receipts already on
+ * the server (the same sum as the server's OVER_DUE check, 0021). 0 when it fits. PURE.
+ */
+export function overPaidP(pay: Payment, plan: Membership, server: CrmSnapshot): number {
+  const paid = server.payments
+    .filter((p) => p.id !== pay.id && p.membershipId === plan.id && !p.voided)
+    .reduce((sum, p) => sum + (Number(p.amountP) || 0), 0);
+  const owed = (Number(plan.priceP) || 0) + (Number(plan.joiningFeeP) || 0) - paid;
+  return Math.max(0, (Number(pay.amountP) || 0) - Math.max(0, owed));
 }
 
 /** Same value, as the server keeps it (JSON). */
@@ -463,6 +515,17 @@ export function replayRecords(item: OutboxItem, server: CrmSnapshot, opts: { ren
           return { records: [], hold: `Another receipt already has the number ${pay.receiptNo}.` };
         }
         out.push(rec('payment', pay));
+        // Two devices took money for the same plan while apart. The cash was taken and the receipt
+        // printed, so an offline receipt is sent as it is (the server takes it once 0041 is live; until
+        // then it refuses it as OVER_DUE and the bar keeps it for the owner). The desk is told.
+        const over = pay.offline && !pay.voided ? overPaidP(pay, plan, server) : 0;
+        if (over > 0) {
+          const who = members.get(pay.memberId)?.fullName ?? 'This member';
+          return {
+            records: out,
+            note: `${who} has now paid ${formatINR(over)} too much: another desk also took money for the same plan. Please ask the owner to check.`,
+          };
+        }
       }
       return { records: out };
     }
