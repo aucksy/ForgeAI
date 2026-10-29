@@ -5,6 +5,17 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-206. Voice feedback: transcribe with HIS Groq key on our server; rethink the feedback UI. #72 = A — 30 Oct 2026
+He said: (1) "A" on #72 (add the crash-report line and a daily 90-day clean-up job; his yes for that live job).
+(2) "we discussed this feedback loop feature where people can record the feedback ... Use my Groq key for transcription,
+not on-device transcription [it is bad, worse with gym music]. And then you can also rethink the UI around it."
+(3) Chat is compacted every 25%: never tell him "we never discussed X" without searching the notes and transcript first.
+Plan: the app records the member's voice (new microphone permission), sends the clip to our server
+(app.mettleup.fit/api/feedback/voice), the server sends it to Groq Whisper with his key (Worker secret GROQ_API_KEY; never
+in the app), returns the text, the clip is not kept. The member sees the text, can fix it, then Send (input 'voice').
+Limits: Groq free = 20 a minute, 2,000 a day, 7,200 s audio an hour; ours: 20 clips an install a day, 1,000 all, 2 min a clip.
+Privacy notice + Play Data safety must name the microphone and Groq: wording goes to him (rule: privacy wording = his yes).
+
 ## R-205. Watch: no "Complete set" button; the watch is for resting and walking — 30 Oct 2026
 He said: "remove the requirement of complete set button on the watch ... people log their reps in the phone app and hit
 the check mark which automatically completes the set. It's only when I'm resting and walking I want to be able to see the
