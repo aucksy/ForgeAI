@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-214. Give every feature in the backlog an ID — 29 Oct 2026
+He said: "can you add IDs to features in features backlog please".
+What I do: every backlog row gets a fixed number, F1, F2 …, written in the Feature cell of docs/OWNER-INBOX.md so it never changes when a row moves or is renamed. New rows get the next free number automatically when the page is built. The page shows the number on each feature card and in search; typing "F12" in the search box jumps to that feature.
+
 ## R-213. Let members install the watch app from the phone app — 29 Oct 2026
 He said: "we need to give an option for users to download the watch app from the phone app - research the best experience around connected watches and create this journey where user get to know that they can install a watch also".
 What I do: research how Wear OS apps and leading fitness apps tell members about their watch app (detect a connected watch, check if our watch app is on it, open Play on the watch). Then build the journey in the phone app. Built after the two watch features in progress (same files). Backlog row added (he confirmed the feature).
