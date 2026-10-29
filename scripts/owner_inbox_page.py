@@ -179,7 +179,7 @@ def parse(text):
         f["prio"] = prio.get("Feature: " + f["name"])
     for t in mine:
         t["prio"] = prio.get("Task: " + t["task"])
-    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine, "ratings": parse_ratings(text)}
+    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine, "ratings": parse_ratings(text), "scores": parse_scores(text)}
 
 
 RATINGS_HEAD = "## Feature ratings"
@@ -219,6 +219,55 @@ def write_ratings(text, ratings):
     return text[:i] + section + text[i:]
 
 
+SCORES_HEAD = "## Your scores"
+SCORES_RE = re.compile(r"^## Your scores[^\n]*\n(.*?)(?=^## |\Z)", re.M | re.S)
+
+
+def parse_scores(text):
+    """R-216: his 1-10 scores: {item id: {s, at}} from the ## Your scores table (id = feature id or "t:<task slug>")."""
+    m = SCORES_RE.search(text)
+    out = {}
+    for line in (m.group(1).splitlines() if m else []):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 4 and cells[2].isdigit() and 1 <= int(cells[2]) <= 10:
+            out[cells[0]] = {"s": int(cells[2]), "at": cells[3]}
+    return out
+
+
+def write_scores(text, scores):
+    """Merge the page's scores into the .md table (its own section just above ## Feature backlog). s 0 = cleared."""
+    if not scores:
+        return text
+    cur = parse_scores(text)
+    for k, v in scores.items():
+        n = int((v or {}).get("s") or 0)
+        if 1 <= n <= 10:
+            cur[k] = {"s": n, "at": str(v.get("at") or "")}
+        else:
+            cur.pop(k, None)
+    names = {f["id"]: ("F%d " % f["num"] if f.get("num") else "") + f["name"] for f in parse_backlog(text)}
+    names.update({t["id"]: ("T%d " % t["num"] if t.get("num") else "") + t["task"] for t in parse_mine(text)})
+    rows = ["| Item id | Item | Score | Scored |", "|---|---|---|---|"]
+    rows += ["| %s | %s | %d | %s |" % (k, names.get(k, "?").replace("|", "/"), r["s"], r["at"]) for k, r in sorted(cur.items(), key=lambda kv: (-kv[1]["s"], kv[0]))]
+    nl = "\n"
+    section = (SCORES_HEAD + nl + "His 1-10 scores from the tracker's \"Your score\" drop-down (R-216). Claude builds 9-10 first, then 7-8, "
+               "then the rest; unscored items come after those scored 7 or more." + nl + nl + nl.join(rows) + nl + nl)
+    m = SCORES_RE.search(text)
+    if m:
+        return text[: m.start()] + section + text[m.end():]
+    i = text.index(nl + "## Feature backlog") + 1
+    return text[:i] + section + text[i:]
+
+
+def top_scored(text):
+    """R-216: open items he scored, highest first: [(score, label)]."""
+    data = parse(text)
+    sc = data["scores"]
+    out = [(sc[f["id"]]["s"], "F%s %s" % (f.get("num") or "?", f["name"])) for f in data["backlog"] if f["id"] in sc and f["kind"] not in ("done", "built", "no")]
+    out += [(sc[t["id"]]["s"], "T%s %s" % (t.get("num") or "?", t["task"])) for t in data["mine"] if t["id"] in sc and not t["done"]]
+    return sorted(out, key=lambda x: -x[0])
+
+
 PRIO_LEVELS = ("High", "Medium", "Low")
 
 
@@ -254,14 +303,50 @@ def slug(s):
 def parse_mine(text):
     """R-33 (owner, 19 Oct 2026): [{task, status, details, done}] from "## Claude's tasks"
     (| Task | Status | Details |; Status Done / Doing / To do / Blocked)."""
-    m = re.search(r"^## Claude's tasks[^\n]*\n(.*?)^---[ \t]*$", text, re.M | re.S)
+    m = MINE_RE.search(text)
     out = []
     for line in (m.group(1).splitlines() if m else []):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if not line.strip().startswith("|") or len(cells) != 3 or cells[0] in ("Task", "") or set(cells[0]) <= set("-: "):
             continue
-        out.append({"task": cells[0], "status": cells[1], "details": cells[2], "done": cells[1].lower().startswith("done")})
+        num, task = split_tid(cells[0])
+        out.append({"task": task, "num": num, "id": "t:" + slug(task), "status": cells[1], "details": cells[2], "done": cells[1].lower().startswith("done")})
     return out
+
+
+# R-216 (owner, 29 Oct 2026): every task carries a fixed ID too, "T12 Task" in its Task cell (like F12 on features).
+TID_RE = re.compile(r"^T(\d+)\s+(.+)$")
+MINE_RE = re.compile(r"^## Claude's tasks[^\n]*\n(.*?)^---[ \t]*$", re.M | re.S)
+
+
+def split_tid(cell):
+    m = TID_RE.match(cell)
+    return (int(m.group(1)), m.group(2).strip()) if m else (None, cell)
+
+
+def ensure_tids(text):
+    """Give every task row without an ID the next free T-number, in file order. Returns (text, how many added)."""
+    m = MINE_RE.search(text)
+    if not m:
+        return text, 0
+    lines = m.group(1).split("\n")
+    rows = []
+    for k, line in enumerate(lines):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.strip().startswith("|") or len(cells) != 3 or cells[0] in ("Task", "") or set(cells[0]) <= set("-: "):
+            continue
+        rows.append((k, cells))
+    nxt = max([split_tid(c[0])[0] or 0 for _, c in rows] + [0]) + 1
+    added = 0
+    for k, cells in rows:
+        if split_tid(cells[0])[0] is None:
+            cells[0] = "T%d %s" % (nxt, cells[0])
+            nxt += 1
+            added += 1
+            lines[k] = "| " + " | ".join(cells) + " |"
+    if not added:
+        return text, 0
+    return text[: m.start(1)] + "\n".join(lines) + text[m.end(1):], added
 
 
 # R-214 (owner, 29 Oct 2026): every feature carries a fixed ID, "F12 Name" in its Feature cell. The ID never
@@ -440,6 +525,8 @@ def absorb(saved_html, md_path=INBOX):
     text, _ = move_features(text, data.get("moves") or {})
     text = write_ratings(text, data.get("ratings") or {})
     text, _ = ensure_fids(text)
+    text, _ = ensure_tids(text)
+    text = write_scores(text, data.get("scores") or {})
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(text)
     return answers
@@ -687,6 +774,10 @@ mark { background: var(--wait-bg); color: inherit; border-radius: 3px; padding: 
 .pri { font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 1px 7px; white-space: nowrap; color: var(--muted); border: 1px solid var(--line-strong); }
 .pri.i3 { color: var(--accent); border-color: currentColor; }
 .pri.e1 { color: var(--done); border-color: currentColor; }
+.score { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.score select { font: inherit; font-weight: 700; min-height: 36px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); }
+.score.top select { border-color: var(--accent); color: var(--accent); }
+.score .msg { font-weight: 400; }
 .pris { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }
 .sortbar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
 
@@ -861,16 +952,52 @@ const mineAll = () => DATA.mine.map((t, i) => ({ t, i, k: taskKind(t) }));
 // R-96: a pending item's prio is [impact, effort] (High / Medium / Low). The Sort picker orders the four list tabs;
 // rated items come first, unrated ones after them in their usual order. The choice is kept on this phone.
 const LV = { High: 3, Medium: 2, Low: 1 };
-const SORTS = { best: "Best first (high impact, low effort)", impact: "Biggest impact first", quick: "Quickest first", order: "Original order" };
+const SORTS = { score: "Your score first (10 down)", best: "Best first (high impact, low effort)", impact: "Biggest impact first", quick: "Quickest first", order: "Original order" };
 let sortBy = ls.get("inbox-sort");
-if (!(sortBy in SORTS)) sortBy = "best";
-const priKey = (p) => !p ? null : sortBy === "best" ? [LV[p[0]] - LV[p[1]], LV[p[0]]] : sortBy === "impact" ? [LV[p[0]], -LV[p[1]]] : [-LV[p[1]], LV[p[0]]];
-const byPrio = (get, fallback) => (a, b) => {
+if (!(sortBy in SORTS) || !ls.get("inbox-sort-r216")) { sortBy = "score"; ls.set("inbox-sort-r216", "1"); } // R-216: his score is the new default once
+const priKey = (p) => !p ? null : sortBy === "best" || sortBy === "score" ? [LV[p[0]] - LV[p[1]], LV[p[0]]] : sortBy === "impact" ? [LV[p[0]], -LV[p[1]]] : [-LV[p[1]], LV[p[0]]];
+// R-216: "Your score first": his 1-10 score decides first (unscored = 6.5, so after 7+ and before 6 and lower);
+// Impact/Effort settles ties. sid(x) gives the item's score id (features and tasks only).
+const byPrio = (get, fallback, sid) => (a, b) => {
   if (sortBy === "order") return fallback(a, b);
+  if (sortBy === "score" && sid) {
+    const sa = scoreOf(sid(a)) || 6.5, sb = scoreOf(sid(b)) || 6.5;
+    if (sa !== sb) return sb - sa;
+  }
   const ka = priKey(get(a)), kb = priKey(get(b));
   if (!ka || !kb) return (kb ? 1 : 0) - (ka ? 1 : 0) || fallback(a, b);
   return kb[0] - ka[0] || kb[1] - ka[1] || fallback(a, b);
 };
+// R-216: his 1-10 score per feature / task. Picks wait 3 s on this phone (so several go into one save), then save.
+DATA.scores = DATA.scores || {};
+let sdraft = {};
+try { sdraft = JSON.parse(ls.get("inbox-sdraft") || "{}") || {}; } catch (e) { sdraft = {}; /* quiet: a broken draft starts empty */ }
+const scoreOf = (id) => { const d = sdraft[id]; return d ? d.s : (DATA.scores[id] || {}).s || 0; };
+const scoreHtml = (id, cls) => {
+  const s = scoreOf(id), safe = esc(id);
+  return '<span class="score' + (s >= 9 ? " top" : "") + '"><label for="sc-' + cls + safe + '">Your score</label><select id="sc-' + cls + safe + '" data-score="' + safe + '">' +
+    '<option value="0">–</option>' + [10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((n) => '<option value="' + n + '"' + (n === s ? " selected" : "") + ">" + n + "</option>").join("") +
+    '</select><span class="msg" role="status"></span></span>';
+};
+let scoreTimer = null;
+function pickScore(sel) {
+  sdraft[sel.dataset.score] = { s: Number(sel.value), at: stamp() };
+  ls.set("inbox-sdraft", JSON.stringify(sdraft));
+  sel.parentElement.classList.toggle("top", Number(sel.value) >= 9);
+  const msg = sel.parentElement.querySelector(".msg");
+  msg.textContent = "Saving in a moment…";
+  clearTimeout(scoreTimer);
+  scoreTimer = setTimeout(() => saveScores(msg), 3000);
+}
+function saveScores(msg) {
+  if (saving) { scoreTimer = setTimeout(() => saveScores(msg), 1500); return; }
+  const add = sdraft, n = Object.keys(add).length;
+  if (!n) return;
+  const before = JSON.stringify(DATA.scores);
+  save(() => { Object.assign(DATA.scores, add); /* a cleared pick stays as s 0 so --absorb removes it from the .md */ sdraft = {}; ls.set("inbox-sdraft", "{}"); },
+    () => { DATA.scores = JSON.parse(before); sdraft = add; ls.set("inbox-sdraft", JSON.stringify(add)); },
+    msg, "Owner inbox scores: " + Object.keys(add).map((id) => id + " = " + (add[id].s || "none")).join("; "), n === 1 ? "Score saved." : n + " scores saved.");
+}
 const priHtml = (p) => p ? '<span class="pri i' + LV[p[0]] + '">Impact ' + p[0] + '</span><span class="pri e' + LV[p[1]] + '">Effort ' + p[1] + "</span>" : "";
 const sortHtml = () => '<div class="sortbar"><div class="selrow"><label for="sortby">Sort</label><select id="sortby">' +
   Object.keys(SORTS).map((k) => '<option value="' + k + '"' + (k === sortBy ? " selected" : "") + ">" + SORTS[k] + "</option>").join("") + "</select></div>" +
@@ -1023,10 +1150,12 @@ const rowEntry = (e, sub) => '<li><a class="row" href="#e' + e.num + '" data-got
   (sub ? '<span class="rs">' + sub + "</span>" : "") + "</span>" + GO + "</a></li>";
 // R-214: a feature's fixed ID ("F12"), shown before its name and found by search.
 const fidOf = (f) => (f.num ? "F" + f.num : "");
+const tidOf = (t) => (t.num ? "T" + t.num : "");
+const tidTag = (t) => (t.num ? '<span class="fid">' + tidOf(t) + "</span> " : "");
 const fidTag = (f) => (f.num ? '<span class="fid">' + fidOf(f) + "</span> " : "");
 const rowFeat = (f, sub) => '<li><a class="row" href="#" data-feat="' + esc(f.id) + '"><span class="rn">' + fidOf(f) + '</span><span class="rb"><span class="rt">' + esc(f.name) + "</span>" +
   '<span class="rs">' + (sub || '<span class="status k-' + f.kind + '">' + esc(f.status) + "</span> " + esc(f.group)) + "</span></span>" + GO + "</a></li>";
-const rowTask = (x, sub) => '<li><a class="row" href="#" data-task="' + x.i + '"><span class="rn"></span><span class="rb"><span class="rt">' + esc(x.t.task) + "</span>" +
+const rowTask = (x, sub) => '<li><a class="row" href="#" data-task="' + x.i + '"><span class="rn">' + tidOf(x.t) + '</span><span class="rb"><span class="rt">' + esc(x.t.task) + "</span>" +
   '<span class="rs">' + (sub || '<span class="status k-' + x.k + '">' + esc(x.t.status) + "</span>") + "</span></span>" + GO + "</a></li>";
 const rows = (items, cap) => {
   if (!cap || items.length <= cap + 2) return '<ul class="rows">' + items.join("") + "</ul>";
@@ -1233,6 +1362,7 @@ function featHtml(f, i, withGroup) {
   const pri = canMove && f.kind !== "no" ? priHtml(f.prio) : "";
   return '<div class="feat" id="f' + i + '"><div class="fh"><h4 class="name">' + fidTag(f) + esc(f.name) + '</h4><span class="status k-' + f.kind + '">' + esc(f.status) + "</span></div>" +
     (pri || withGroup ? '<p class="pris">' + pri + (withGroup ? "<span>" + esc(f.group) + "</span>" : "") + "</p>" : "") +
+    (canMove && f.kind !== "no" ? '<p class="pris">' + scoreHtml(f.id, "f") + "</p>" : "") +
     '<p class="det">' + esc(f.details) + "</p>" +
     (mv ? '<p class="moved">Moved here by you, ' + esc(mv.at) + ".</p>" : "") +
     (sent ? '<div class="sentbox"><p class="sentline">' + CHECK + "Comment sent " + esc(sent.at) + '</p><p class="sentnote">' + esc(sent.text) + "</p>" +
@@ -1281,7 +1411,7 @@ function backlogHtml() {
     '<p class="legend"><b>Planned</b> = Claude builds it, no need to ask you. <b>Waiting for you</b> = needs your answer, a yes, money or a setup step. Open “Move to” on a feature to change it.</p></div>' + sortHtml();
   // R-96: a Sort other than "Original order" lists the features not built as one list (each card names its group).
   const listed = (xs) => sortBy === "order" ? groupedHtml(sortIn(xs))
-    : '<div style="margin-top:14px">' + sortIn(xs).sort(byPrio((x) => (x.f.kind === "no" ? null : x.f.prio), () => 0)).map(({ f, i }) => featHtml(f, i, true)).join("") + "</div>";
+    : '<div style="margin-top:14px">' + sortIn(xs).sort(byPrio((x) => (x.f.kind === "no" ? null : x.f.prio), () => 0, (x) => (x.f.kind === "no" ? null : x.f.id))).map(({ f, i }) => featHtml(f, i, true)).join("") + "</div>";
   if (blKind) return head + filters + (SHIPPED.includes(blKind) ? groupedHtml(sortIn(inGroup.filter((x) => x.f.kind === blKind))) : listed(inGroup.filter((x) => x.f.kind === blKind)));
   const built = inGroup.filter((x) => SHIPPED.includes(x.f.kind));
   const pending = inGroup.filter((x) => !SHIPPED.includes(x.f.kind));
@@ -1291,8 +1421,9 @@ function backlogHtml() {
 function taskRow(x) {
   const waits = x.k === "blocked" ? numsIn(x.t.details) : [];
   const pri = x.k === "done" ? "" : priHtml(x.t.prio);
-  return '<div class="feat task" id="t' + x.i + '"><div class="fh"><h4 class="name">' + esc(x.t.task) + '</h4><span class="status k-' + x.k + '">' + esc(x.t.status) + "</span></div>" +
+  return '<div class="feat task" id="t' + x.i + '"><div class="fh"><h4 class="name">' + tidTag(x.t) + esc(x.t.task) + '</h4><span class="status k-' + x.k + '">' + esc(x.t.status) + "</span></div>" +
     (pri ? '<p class="pris">' + pri + "</p>" : "") +
+    (x.k === "done" ? "" : '<p class="pris">' + scoreHtml(x.t.id, "t") + "</p>") +
     (waits.length ? '<p class="waits">Waits for ' + waits.map((n) => '<a class="chipnum" href="#e' + n + '" data-goto="' + n + '"><b>#' + n + "</b>" + esc(entryOf(n).title.length > 34 ? entryOf(n).title.slice(0, 32).replace(/\s+\S*$/, "") + "…" : entryOf(n).title) + "</a>").join("") + "</p>" : "") +
     (x.t.details ? '<p class="det">' + esc(x.t.details) + "</p>" : "") + "</div>";
 }
@@ -1300,7 +1431,7 @@ function mineHtml() {
   const mine = mineAll();
   const head = '<div class="tabhead"><h2>Claude’s tasks</h2></div><p class="hint">What I do myself. Blocked ones wait for you: tap the # to answer it.</p>' + sortHtml();
   if (!mine.length) return head + empty("No tasks yet.");
-  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k).sort(byPrio((x) => x.t.prio, (a, b) => a.i - b.i)); return xs.length ? '<h3 class="grp">' + title + ' <span class="cnt">' + xs.length + "</span></h3>" + xs.map(taskRow).join("") : ""; };
+  const sec = (k, title) => { const xs = mine.filter((x) => x.k === k).sort(byPrio((x) => x.t.prio, (a, b) => a.i - b.i, (x) => x.t.id)); return xs.length ? '<h3 class="grp">' + title + ' <span class="cnt">' + xs.length + "</span></h3>" + xs.map(taskRow).join("") : ""; };
   const done = mine.filter((x) => x.k === "done");
   return head + sec("doing", "Doing now") + sec("blocked", "Blocked: waits for you") + sec("todo", "To do next") +
     (mine.some((x) => x.k !== "done") ? "" : empty("Nothing open: all my tasks are done.")) +
@@ -1325,7 +1456,7 @@ function searchHtml() {
     return { e, text, hay: ("#" + e.num + " " + chatLabel(e.chat) + " " + text).toLowerCase() };
   }).filter((x) => hit(x.hay)).sort((a, b) => (nm ? (b.e.num === Number(nm[1])) - (a.e.num === Number(nm[1])) : 0) || byNum(a.e, b.e));
   const fs = DATA.backlog.map((f, i) => ({ f, i, text: f.name + " " + f.status + " " + f.details + " " + f.how })).filter((x) => hit((fidOf(x.f) + " " + x.f.group + " " + x.text).toLowerCase()));
-  const ts = mineAll().map((x) => Object.assign(x, { text: x.t.task + " " + x.t.status + " " + x.t.details })).filter((x) => hit(x.text.toLowerCase()));
+  const ts = mineAll().map((x) => Object.assign(x, { text: x.t.task + " " + x.t.status + " " + x.t.details })).filter((x) => hit((tidOf(x.t) + " " + x.text).toLowerCase()));
   const total = es.length + fs.length + ts.length;
   let out = '<div class="tabhead"><h2>Search: “' + esc(q) + '”</h2><button class="btn ghost quiet" data-act="clearq">Clear</button></div>' +
     '<p class="hint">' + (total ? total + " found" + (nm ? ". Press Go to jump to #" + Number(nm[1]) + "." : ".") : "") + "</p>";
@@ -1637,6 +1768,7 @@ document.addEventListener("change", (ev) => {
     const ag = document.querySelector('button[data-act="agree"][data-n="' + n + '"]');
     if (ag) ag.hidden = true;
   }
+  if (t.matches("select[data-score]")) { pickScore(t); return; }
   if (t.id === "blgroup") { blGroup = t.value; blKind = null; render(); }
   if (t.id === "sortby" && t.value in SORTS) { sortBy = t.value; ls.set("inbox-sort", sortBy); render(); const s = $("sortby"); if (s) s.focus(); }
 });
@@ -1706,6 +1838,9 @@ $("findform").addEventListener("submit", (ev) => {
   const fm = v.match(/^f-?(\d{1,4})$/i);
   const ff = fm && DATA.backlog.find((f) => f.num === Number(fm[1]));
   if (ff) { $("find").blur(); goFeat(ff.id); return; }
+  const tm = v.match(/^t-?(\d{1,4})$/i);
+  const ti = tm ? DATA.mine.findIndex((t) => t.num === Number(tm[1])) : -1;
+  if (ti >= 0) { $("find").blur(); goTask(ti); return; }
   if (!v) { $("findmsg").textContent = "Type a number (for example 51) or a word."; return; }
   query = v; render(); scrollTo(0, 0); $("find").blur(); // closes the phone keyboard on the results
 });
@@ -1752,6 +1887,7 @@ def main(argv):
         for fid, mv in (saved.get("moves") or {}).items():
             print("feature moved by the owner (written into the inbox): " + json.dumps({"feature": fid, **mv}, ensure_ascii=False))
         print("feature ratings saved on the page (written into the inbox): " + str(len(saved.get("ratings") or {})))
+        print("R-216 scores on the page (written into the inbox): " + str(len(saved.get("scores") or {})))
         notes = saved.get("notes") or {}
         print("feature comments to act on (write each into the inbox as a new entry): " + str(len(notes)))
         for fid, n in notes.items():
@@ -1763,10 +1899,11 @@ def main(argv):
     md_path = argv[2] if len(argv) == 3 else INBOX
     with open(md_path, encoding="utf-8") as f:
         text, added = ensure_fids(f.read())
-    if added:
+    text, tadded = ensure_tids(text)
+    if added or tadded:
         with open(md_path, "w", encoding="utf-8") as f:
             f.write(text)
-        print("R-214: feature IDs given to %d new backlog rows (commit docs/OWNER-INBOX.md)" % added)
+        print("R-214/R-216: IDs given to %d new backlog rows and %d new tasks (commit docs/OWNER-INBOX.md)" % (added, tadded))
     page = build(md_path)
     with open(argv[1], "w", encoding="utf-8") as f:
         f.write(page)
@@ -1777,6 +1914,9 @@ def main(argv):
         print("R-96: pending, no Impact/Effort in ## Priority: " + k)
     for k in stale:
         print("R-96: ## Priority row matches nothing (renamed or removed?): " + k)
+    for n, label in top_scored(text):
+        if n >= 7:
+            print("R-216: his score %d (build first): %s" % (n, label))
     return 0
 
 

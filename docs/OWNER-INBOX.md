@@ -167,70 +167,70 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
-| Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
-| Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
-| Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
-| 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
-| Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
-| Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
-| Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
-| Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
-| AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
-| Members' workouts on our server (#50, #27) | Done | Server part live since #59 (24 Oct); "Continue with Google" shipped in 0.57.0 (25 Oct).
-| Online terms acceptance for gyms (#38) | Done | Live 24 Oct after your yes in #59. |
-| Simpler app layout (4 fixed tabs, 6 settings groups) | Done | Shipped in 0.56.0 (Workout, Progress, Gym, Profile tabs; Settings in 6 groups). |
-| Play Store pictures, redone (R-126) | To do | Paused by you (25 Oct, R-129). Good screens are saved; only screen 2 needs a retake; a full design review before any upload.
-| Test server and crash alerts (#34) | Doing | Crash and outage alerts built 28 Oct (live with 0.60.0). Next: the free test server in your Chrome. |
-| Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
-| The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
-| Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
-| Trainer view without a tick box (#46) | To do | You picked A on 24 Oct. I build it next; you approve the exact words before it goes live. |
-| Free vs gym-member limits + Google sign-in (#43) | Done | Google sign-in live since 0.57.0 (25 Oct). The free limits stay OFF until you switch them on in your owner panel.
-| Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
-| Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
-| 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
-| 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
-| 3. "New version ready" prompt in the app | Done | 21 Oct: a card on the Workout tab when a newer release exists ("Get it" / "Later"); checks at most every 6 hours. The release now stops if its number differs from the app's own (review find). Ships in v0.49.0 (C6). |
-| 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Done | 21 Oct: released. The phone tests caught a real bug coming back (no tab bar after resuming a workout from the app-icon shortcut) and it was fixed before release. APK: https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk |
-| 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
-| 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
-| 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
-| 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
-| 9. Keep access logs for 1 year | Done | 23 Oct, live on the server (part of #51): every admin-app sign-in, sign-out, failed code, save and full download is written down; kept 7 days now and 1 year from 13 May 2027, as the privacy notice says. The nightly clean-up starts when the HQ app is set up (#52). |
-| 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
-| 11. v0.51.0: workout time on the notification card, rest-over sound choice, "What's new" with earlier updates, block-proof address | Done | 22 Oct: released inside v0.54.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.0/forgeai-v0.54.0.apk). |
-| 12. Research you asked for: Google login, new brand name | Done | 22 Oct: two ways to sign in (#43) and 5 names with free domains (#44), for your pick. |
-| 13. Block-proof server address | Done | 22 Oct: live for the admin app (forgeai.aakashpahuja.in/sb); the member app gets it with v0.51.0. If our address ever fails, both apps switch to Supabase's own for 10 minutes by themselves, and never send a payment or check-in twice. |
-| 14. Full GST tax invoices (admin app) | Done | 22 Oct, live: a gym with a GST number now prints a "Tax invoice" with the place of supply (its state), "Reverse charge: No" and a signature line. Not done: the paying company's own GST number (needs a live database change, your yes). |
-| 15. Offline front desk (admin app) | Blocked | Steps 1 and 2 live 22 Oct (opens without internet; desk check-ins kept offline and sent later, with their real time). Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
-| 16. Landing page: dedicated animated sections (your note, 22 Oct) | Done | 22 Oct, live: workout + new record, the shop order, free notices to every member, the lock screen with a watch. |
-| 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
-| 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Reps to beat: live in v0.54.0. Trainer view: #46 decided A (24 Oct); built after the MettleUp release. |
-| 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
-| 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Done | 24 Oct: all live. Step 1 live 22 Oct; step 2 server and admin 23 Oct; the member app card released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk). |
-| 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
-| 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
-| 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
-| 24. AI import of old records (#47) | Done | 23 Oct: live (Gemini first, Claude Haiku 5.5 as backup); reviewed, all fixes in. The AI part waits for your two keys (#47). |
-| 25. System owner panel ("ForgeAI HQ", #51) | Done | 23 Oct, live at https://forgeai-hq.aakashpahuja.in: you sign in with Google and see every gym (counts only). All 3 server parts live and tested (64 + 49 checks); the gym owner's "ForgeAI access" list is live in the admin app. |
-| 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
-| 27. Automatic reminders to members (your note, 23 Oct) | Done | 24 Oct: released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk); server part live 23 Oct (#53). Owners switch each one on or off in Messages & offers. |
-| Pilot + data agreement | Blocked | D3: the price is set (#30, decided 24 Oct); needs your answer to #33 (support hours). Medium. |
-| Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
-| Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
-| GGMS column mapping and trial imports | Blocked | F3, F4: needs the GGMS export (#36). Large. |
-| Play Store listing, data safety answers, internal test | Blocked | C2, C3: needs the Play account (#35). Medium. |
-| In-app "Delete my data" for members | Blocked | "Leave gym" already erases the phone number; a full erase needs a new server rule = a LIVE database change (your yes). Until then by email. |
-| "Claude's tasks" tab on the tracker page | Done | 19 Oct. This list. |
-| Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (D7). |
-| WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
-| Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
-| Clean old notes that now say wrong things | Done | 19 Oct: admin README, old owner to-do list retired, U-A14 fixed (H5). |
-| Confirm the app targets Android 16 (API 36) | Done | 20 Oct: targetSdk 36, minSdk 24 (C4). |
-| Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check: docs/launch/PRIVACY-NOTICE.md (+ gym notice), PRIVACY-NOTICE-HI.md. Blanks: your name + email (#37) (D1). |
-| Terms of use | Done | 20 Oct FINAL: docs/launch/TERMS.md (members + staff) (D2). |
-| Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
+| T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
+| T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
+| T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
+| T4 Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
+| T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | To do | Released right after 0.59.0, after the phone tests pass. |
+| T6 Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
+| T7 Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
+| T8 Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
+| T9 Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
+| T10 AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
+| T11 Members' workouts on our server (#50, #27) | Done | Server part live since #59 (24 Oct); "Continue with Google" shipped in 0.57.0 (25 Oct). |
+| T12 Online terms acceptance for gyms (#38) | Done | Live 24 Oct after your yes in #59. |
+| T13 Simpler app layout (4 fixed tabs, 6 settings groups) | Done | Shipped in 0.56.0 (Workout, Progress, Gym, Profile tabs; Settings in 6 groups). |
+| T14 Play Store pictures, redone (R-126) | To do | Paused by you (25 Oct, R-129). Good screens are saved; only screen 2 needs a retake; a full design review before any upload. |
+| T15 Test server and crash alerts (#34) | Doing | Crash and outage alerts built 28 Oct (live with 0.60.0). Next: the free test server in your Chrome. |
+| T16 Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
+| T17 The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
+| T18 Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
+| T19 Trainer view without a tick box (#46) | To do | You picked A on 24 Oct. I build it next; you approve the exact words before it goes live. |
+| T20 Free vs gym-member limits + Google sign-in (#43) | Done | Google sign-in live since 0.57.0 (25 Oct). The free limits stay OFF until you switch them on in your owner panel. |
+| T21 Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
+| T22 Automated support and fixes: a plan (#33) | To do | Research, then a plan for your OK. Small. |
+| T23 1. Re-check the two old open server refusals | Done | 21 Oct: both (U-A4, U-G3) already covered by the server test suites, which passed on the LIVE server 18 Oct: 438 permission checks (66 cross-gym attempts all refused) + 66 shop-order checks. Closed in FINDINGS (H1). |
+| T24 2. "I agree" + 18+ check + privacy link when joining a gym | Done | 21 Oct: one tick box above Join on the Shop tab and the invite-link screen ("I'm 18 or older, and I agree to ForgeAI's terms and privacy notice", links to both); wrong codes are still told first; 13 phone-test steps tick it (qa/sub-agree.yaml); 3021 tests + typecheck green. Pages privacy.html + terms.html built by scripts/legal_pages.py; they go live with the admin deploy once #37 fills the contact. Ships in v0.49.0 (D5, D6). |
+| T25 3. "New version ready" prompt in the app | Done | 21 Oct: a card on the Workout tab when a newer release exists ("Get it" / "Later"); checks at most every 6 hours. The release now stops if its number differs from the app's own (review find). Ships in v0.49.0 (C6). |
+| T26 4. Next release (v0.49.0) with 2 + 3 + microphone removed | Done | 21 Oct: released. The phone tests caught a real bug coming back (no tab bar after resuming a workout from the app-icon shortcut) and it was fixed before release. APK: https://github.com/aucksy/ForgeAI/releases/download/v0.49.0/forgeai-v0.49.0.apk |
+| T27 5. Admin app security header + rollback note | Done | 21 Oct: live. The admin app runs only its own scripts and talks only to the gym server; every admin journey runs under that rule (J29). Rollback = one command, written in the admin README (A6). |
+| T28 6. Feedback button + automatic sorting | Done | 21 Oct: More → Send feedback in the admin app (live) and Settings → Send feedback in the member app (v0.49.0). Kept in Cloudflare's free database, not the gym server; no name or number; 20 a day per phone. How Claude sorts it: docs/launch/FEEDBACK.md. The twice-a-day schedule starts with trial week 3 (H7). |
+| T29 7. Gym data export and delete | Done | 21 Oct, live: Settings → Your data → "Download all your gym's data" (Excel, one sheet per record type, + full copy). Online gyms: "Delete our gym from ForgeAI" sends a request; the real delete is a checked step with your yes each time (docs/launch/GYM-DELETE.md) (D8). |
+| T30 8. Landing page + lead form + /app sign-in + "Get started" checklist | Done | 22 Oct, live on your yes (#40): https://forgeai.aakashpahuja.in/home/ with the demo form; "Get started" list live since 21 Oct. Changed from the plan: the page sits at /home/ and the admin app keeps its address (no move behind /app). Later: an email to you for each new request, once the contact email is set (#37). |
+| T31 9. Keep access logs for 1 year | Done | 23 Oct, live on the server (part of #51): every admin-app sign-in, sign-out, failed code, save and full download is written down; kept 7 days now and 1 year from 13 May 2027, as the privacy notice says. The nightly clean-up starts when the HQ app is set up (#52). |
+| T32 10. Night build (21 Oct, you asleep): backlog features | Done | 22 Oct: v0.50.0 released (https://github.com/aucksy/ForgeAI/releases/download/v0.50.0/forgeai-v0.50.0.apk): "Machine in use", rest change moves the running timer, "Save as routine" after a first free workout, automatic Google Drive backup, "What's new" (shows from v0.51). Admin app: quick buttons on Today (live). Two reviews; one real backup risk caught and fixed before release. |
+| T33 11. v0.51.0: workout time on the notification card, rest-over sound choice, "What's new" with earlier updates, block-proof address | Done | 22 Oct: released inside v0.54.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.0/forgeai-v0.54.0.apk). |
+| T34 12. Research you asked for: Google login, new brand name | Done | 22 Oct: two ways to sign in (#43) and 5 names with free domains (#44), for your pick. |
+| T35 13. Block-proof server address | Done | 22 Oct: live for the admin app (forgeai.aakashpahuja.in/sb); the member app gets it with v0.51.0. If our address ever fails, both apps switch to Supabase's own for 10 minutes by themselves, and never send a payment or check-in twice. |
+| T36 14. Full GST tax invoices (admin app) | Done | 22 Oct, live: a gym with a GST number now prints a "Tax invoice" with the place of supply (its state), "Reverse charge: No" and a signature line. Not done: the paying company's own GST number (needs a live database change, your yes). |
+| T37 15. Offline front desk (admin app) | Blocked | Steps 1 and 2 live 22 Oct (opens without internet; desk check-ins kept offline and sent later, with their real time). Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
+| T38 16. Landing page: dedicated animated sections (your note, 22 Oct) | Done | 22 Oct, live: workout + new record, the shop order, free notices to every member, the lock screen with a watch. |
+| T39 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
+| T40 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Reps to beat: live in v0.54.0. Trainer view: #46 decided A (24 Oct); built after the MettleUp release. |
+| T41 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
+| T42 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Done | 24 Oct: all live. Step 1 live 22 Oct; step 2 server and admin 23 Oct; the member app card released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk). |
+| T43 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
+| T44 22. Join screen: Terms and Privacy opened the admin app (your report, 22 Oct) | Done | 22 Oct, live: both links open a short "being finished" page, never the admin app; a test stops it coming back. The full pages need #37 (your contact name and email). |
+| T45 23. After joining: the gym's welcome, its icon pop-up, Shop only when on (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. The gym's welcome screen after joining, then a pop-up to add its logo to the home screen and how to take the ForgeAI icon off (Android lets no app remove its own icon). No gym = no Shop tab; a gym = "Gym" tab; its shop on = "Shop". "Leave gym" on its own row in Settings. |
+| T46 24. AI import of old records (#47) | Done | 23 Oct: live (Gemini first, Claude Haiku 5.5 as backup); reviewed, all fixes in. The AI part waits for your two keys (#47). |
+| T47 25. System owner panel ("ForgeAI HQ", #51) | Done | 23 Oct, live at https://forgeai-hq.aakashpahuja.in: you sign in with Google and see every gym (counts only). All 3 server parts live and tested (64 + 49 checks); the gym owner's "ForgeAI access" list is live in the admin app. |
+| T48 26. Swipe that starts on a weight or reps box (found 22 Oct) | Done | 23 Oct: fixed and released in v0.54.1 (https://github.com/aucksy/ForgeAI/releases/download/v0.54.1/forgeai-v0.54.1.apk). A phone test swipes from a box and checks the page moved. |
+| T49 27. Automatic reminders to members (your note, 23 Oct) | Done | 24 Oct: released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk); server part live 23 Oct (#53). Owners switch each one on or off in Messages & offers. |
+| T50 Pilot + data agreement | Blocked | D3: the price is set (#30, decided 24 Oct); needs your answer to #33 (support hours). Medium. |
+| T51 Crash reports and outage alerts wired in | Blocked | B1, B2: needs your free Sentry + Better Stack accounts (#34). Medium. |
+| T52 Staging server, backups check, restore drill | Blocked | A2, A3, A5: needs #27 (paid server) and #34. Medium. |
+| T53 GGMS column mapping and trial imports | Blocked | F3, F4: needs the GGMS export (#36). Large. |
+| T54 Play Store listing, data safety answers, internal test | Blocked | C2, C3: needs the Play account (#35). Medium. |
+| T55 In-app "Delete my data" for members | Blocked | "Leave gym" already erases the phone number; a full erase needs a new server rule = a LIVE database change (your yes). Until then by email. |
+| T56 "Claude's tasks" tab on the tracker page | Done | 19 Oct. This list. |
+| T57 Breach plan (first hour, 24 h, 72 h) | Done | 19 Oct: docs/launch/BREACH-PLAN.md (D7). |
+| T58 WhatsApp texts for members, Hindi + English | Done | 19 Oct: docs/launch/MEMBER-MESSAGES.md (G5). |
+| T59 Desk cheat sheet, Hindi + English | Done | 19 Oct: docs/launch/DESK-CHEAT-SHEET.md (G2); button names checked in the code. |
+| T60 Clean old notes that now say wrong things | Done | 19 Oct: admin README, old owner to-do list retired, U-A14 fixed (H5). |
+| T61 Confirm the app targets Android 16 (API 36) | Done | 20 Oct: targetSdk 36, minSdk 24 (C4). |
+| T62 Privacy notice (English + Hindi) | Done | 20 Oct FINAL after an independent legal check: docs/launch/PRIVACY-NOTICE.md (+ gym notice), PRIVACY-NOTICE-HI.md. Blanks: your name + email (#37) (D1). |
+| T63 Terms of use | Done | 20 Oct FINAL: docs/launch/TERMS.md (members + staff) (D2). |
+| T64 Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
 ---
 
 ## Feature backlog
