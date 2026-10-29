@@ -248,7 +248,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/install-the-watch-app-from-the-phone | F67 Install the watch app from the phone | 9 | 29 Oct, 10:38 pm |
 | gym-member-links/ask-the-desk-to-freeze-or-renew | F150 Ask the desk to freeze or renew | 8 | 29 Oct, 10:36 pm |
 | gym-member-links/member-data-export-by-the-gym-on-request | F121 Member data export by the gym, on request | 8 | 29 Oct, 10:40 pm |
-| member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | Planned | Your call (29 Oct, R-219): the home-made 3D clips stop. Free start and end pictures from RepDB for about 230-250 of our 402 exercises, credit line on the About screen. Moving 3D demos for the same exercises cost $499 once, only if you want them later. | Each exercise page shows 2 pictures at the top: the start position and the end position. They come with the app, so they work offline. Exercises without a picture keep today's text page. |
+| member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
 | member-app/treadmill-and-cycle-details | F64 Treadmill and cycle details | 8 | 29 Oct, 10:38 pm |
 | gym-member-links/busy-times-by-exercise | F137 Busy times by exercise | 7 | 29 Oct, 10:42 pm |
 | gym-member-links/challenge-rewards-given-out-by-themselves | F143 Challenge rewards given out by themselves | 7 | 29 Oct, 10:40 pm |
@@ -301,7 +301,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F17 Targets (progressive overload) | Live | Each exercise suggests the next weight and reps from your history, using your weight-jump and rep-range settings. |
 | F18 Kg to beat per exercise | Live | Start screen shows "1,125 kg to beat · +15%" and the planned weight × reps for each set. |
 | F19 Exercise library and your own exercises | Live | 402 exercises with steps and drawings; add your own and hide the ones you don't use. |
-| F20 Moving exercise demo clips | Planned | I make them with our own free clip maker, in batches (2 done). The paid ready-made set (about $405) stays optional; ask me if you want it faster. | Each exercise page shows a short looping clip at the top: a grey 3D figure doing the move, with the worked muscles in red. A clip downloads the first time you open that exercise, then works offline. The 402 clips come from our own clip maker (free, made in batches) or the ready-made set (about $405, your yes). |
+| F20 Moving exercise demo clips | Planned | Your call (29 Oct, R-219): the home-made 3D clips stop. Free start and end pictures from RepDB for about 230-250 of our 402 exercises, credit line on the About screen. Moving 3D demos for the same exercises cost $499 once, only if you want them later. | Each exercise page shows 2 pictures at the top: the start position and the end position. They come with the app, so they work offline. Exercises without a picture keep today's text page. |
 | F21 Routines and folders | Live | Build routines, group them in folders, and press-and-hold to drag them into order. |
 | F22 Ready programs and plan builder | Live | Push Pull Legs, Upper/Lower and Full Body, or a plan built for your equipment and sore joints. |
 | F23 Easy weeks | Live | A lighter week every 6 weeks, kept out of records and targets. |
