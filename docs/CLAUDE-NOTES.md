@@ -5,6 +5,14 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-201. Idea: balance check + time-boxed focus block (swap exercises for weak muscles) — 30 Oct 2026
+**He said:** detect body parts trained less or not at all, suggest replacing a few routine exercises for ~2 months for better
+coverage; or a quick switch when he wants e.g. more shoulders and less biceps; suggest the top exercise for that part, or the next
+best two; accuracy grows with data. "research on it, and put your thoughts in the ideas".
+**Done:** researched (Hevy/Fitbod show muscles, no swap suggestions; Jefit closest; ~10 hard sets a week per muscle as a full dose,
+Schoenfeld 2017, Pelland meta-regression); added to the backlog as Idea "Balance check and focus block". The app already has sets per
+muscle, the body map, the plan builder's swapInPlan/alternativesFor: most of the parts exist.
+
 ## R-200. Leaderboard: off by default; a switch-on button on the leaderboard screen; switch off in Settings — 30 Oct 2026
 **He said:** "Okay we keep it off by default but we give them a switch on option on leaderboard screen but switch off in settings".
 **Doing:** member app: a member hidden on the leaderboard sees a clear card there, "Show me to my gym" (name + my workouts to gym
