@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 75 | Add the desk photo table to the live server? | A: yes |
 
 ---
 
@@ -392,7 +393,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F104 Automatic SMS or WhatsApp reminders | Not doing | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
 | F105 Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
 | F106 AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
-| F107 Webcam photo at the desk | Planned | Take a new member's photo with the desk computer's camera. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
+| F107 Webcam photo at the desk | Waiting for you | Built and tested on the test server (#75). It appears at the desk after your yes to add its table to the live server. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
 | F108 Body measurements taken by the gym | Live | 25 Oct: the trainer records weight, body fat and tape measurements on the member's profile in the admin app; the member sees them in Progress → Body, marked "From <gym>" (server 0035 live, #64). |  |
 | F109 Trainer view of member progress | Planned | Decided in #46 (A, no tick box). I build it; your OK on the exact words and the live server yes come at the end. | The member is told on the join screen that the gym's trainers see their workouts, and can turn it off in Settings. A trainer's "My members" shows one line each, like "New best: Leg press 120 kg × 10", with ready WhatsApp messages. Body weight, photos and food never leave the phone. |
 | F110 AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
@@ -478,6 +479,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 75. Desk photos: may I add their table to the live server? — 29 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** F107 (take a new member's photo with the desk computer's camera) is built and in the desk panel. The button stays hidden until the live server has a new, private photo table. I tested that table on the new test server first: all 31 photo checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. Each photo takes about 50 KB of database space.
+**Decide:** May I add the photo table to the live server?
+- A: Yes, add it. The "Take photo" button then appears at the desk. (recommended)
+- B: Not yet. The button stays hidden.
 
 ## 74. Switch on spoken feedback: put your Groq key on our server — 30 Oct 2026
 **Chat:** ForgeAI Local Chat

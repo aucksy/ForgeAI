@@ -58,7 +58,7 @@ export function photoFits(bytes: number): boolean {
 
 /** A picked file we will not even open: plain words, or null when it may be tried. PURE. */
 export function checkPickedFile(file: { size: number; type: string; name?: string }): string | null {
-  if (!file.size) return 'That file is empty. Pick another photo.'; // member-words
+  if (!file.size) return 'That file has no picture in it. Pick another photo.'; // member-words
   if (file.size > PICKED_FILE_MAX_BYTES) return 'That file is too big. Pick a photo under 25 MB.'; // member-words
   const type = (file.type || '').toLowerCase();
   const name = (file.name || '').toLowerCase();
@@ -97,13 +97,13 @@ export function cameraTrouble(errorName: string | null | undefined): CameraTroub
 export function cameraTroubleWords(t: CameraTrouble): string {
   switch (t) {
     case 'refused':
-      return 'The camera is blocked for this site. Allow it with the camera icon in the address bar, or tap Upload a photo.'; // member-words
+      return 'The camera is blocked. Tap the camera or lock icon next to the web address, choose Allow, then reload the page. Or tap Upload a photo.'; // member-words
     case 'none':
       return 'No camera was found on this computer. Tap Upload a photo to pick a picture instead.'; // member-words
     case 'busy':
       return 'The camera is in use by another app. Close that app and tap Try again, or tap Upload a photo.'; // member-words
     case 'unsupported':
-      return 'This browser can’t open the camera here. Tap Upload a photo to pick a picture instead.'; // member-words
+      return 'This browser can’t use the camera. Tap Upload a photo to pick a picture instead.'; // member-words
     default:
       return 'The camera didn’t start. Tap Try again, or tap Upload a photo.'; // member-words
   }
@@ -117,9 +117,9 @@ export function photoServerWords(err: unknown): string | null {
       : typeof err === 'object' && err && typeof (err as { message?: unknown }).message === 'string'
         ? String((err as { message: string }).message)
         : String(err ?? '');
-  if (/\bTOO_BIG\b/.test(msg)) return 'That photo is too big to save. Take it again.'; // member-words
+  if (/\bTOO_BIG\b/.test(msg)) return 'That photo is too big. Take it again, or pick a smaller one.'; // member-words
   if (/\bBAD_PHOTO\b/.test(msg)) return 'That photo couldn’t be saved. Take it again, or pick a JPG or PNG picture.'; // member-words
-  if (/\bNO_MEMBER\b/.test(msg)) return 'This member isn’t saved online yet. Wait a moment for the internet, then add the photo from their page.'; // member-words
+  if (/\bNO_MEMBER\b/.test(msg)) return 'This member is not saved yet. Check the internet, wait a minute, then add the photo on their page.'; // member-words
   return null;
 }
 

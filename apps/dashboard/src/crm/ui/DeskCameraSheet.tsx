@@ -34,7 +34,7 @@ export const CAMERA_WORDS = {
   tryAgain: 'Try again', // member-words
   switchCamera: 'Switch camera', // member-words
   startingButton: 'Starting camera…', // member-words
-  capture: 'Capture', // member-words
+  capture: 'Take photo', // member-words
   cameraLabel: 'Camera picture', // member-words
   shotAlt: 'The photo just taken', // member-words
   starting: 'Starting the camera… If the browser asks, tap Allow.', // member-words
@@ -42,7 +42,7 @@ export const CAMERA_WORDS = {
   howTo: 'Ask the member to look at the camera, with their face inside the oval.', // member-words
   privacy: 'Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in.', // member-words
   remove: 'Remove photo', // member-words
-  captureFailed: 'The photo didn’t work. Try again.', // member-words
+  captureFailed: 'The photo was not taken. Try again.', // member-words
   pickFailed: 'That photo couldn’t be used. Pick a JPG or PNG picture.', // member-words
   saveFailed: 'The photo didn’t save. Try again.', // member-words
   removeFailed: 'The photo wasn’t removed. Try again.', // member-words

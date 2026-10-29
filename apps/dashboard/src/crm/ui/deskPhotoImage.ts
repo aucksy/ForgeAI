@@ -51,7 +51,7 @@ export async function shrinkToSquare(pic: Drawable, mirror = false): Promise<Blo
     if (next === null) break;
     step = next;
   }
-  if (!photoFits(last.size)) throw new MemberPhotoError('That photo is too big to save. Try again.'); // member-words
+  if (!photoFits(last.size)) throw new MemberPhotoError('That photo is too big. Take it again, or pick a smaller one.'); // member-words
   return last;
 }
 

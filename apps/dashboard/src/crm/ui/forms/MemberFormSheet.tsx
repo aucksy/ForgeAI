@@ -45,11 +45,11 @@ export const FORM_PHOTO_WORDS = {
   take: 'Take photo', // member-words
   change: 'Change photo', // member-words
   remove: 'Remove', // member-words
-  hint: 'Helps the desk know who is who at check-in. Only your gym’s staff can see it.', // member-words
-  done: 'Done', // member-words
+  hint: 'Helps staff recognise members at check-in. Only your gym’s staff can see it.', // member-words
+  done: 'Close', // member-words
   /** The member was added, but their photo did not save. */
-  notSaved: (name: string, why: string) =>
-    `${name} is added, but the photo didn’t save. ${why} You can add it later on their page with Take photo.`, // member-words
+  notSaved: (name: string, _why: string) =>
+    `${name} is added, but the photo was not saved. Open ${name}’s page and tap Take photo to try again.`, // member-words
 } as const;
 
 export function MemberFormSheet({

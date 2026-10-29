@@ -92,7 +92,7 @@ describe('checkPickedFile', () => {
     expect(checkPickedFile({ size: 3_000_000, type: '', name: 'IMG_0001.HEIC' })).toBeNull();
   });
   it('refuses empty, huge and non-picture files in plain words', () => {
-    expect(checkPickedFile({ size: 0, type: 'image/jpeg' })).toMatch(/empty/);
+    expect(checkPickedFile({ size: 0, type: 'image/jpeg' })).toMatch(/no picture/);
     expect(checkPickedFile({ size: PICKED_FILE_MAX_BYTES + 1, type: 'image/jpeg' })).toMatch(/too big/);
     expect(checkPickedFile({ size: 1000, type: 'application/pdf', name: 'id.pdf' })).toMatch(/not a photo/);
   });
@@ -120,7 +120,7 @@ describe('server answers', () => {
   it('turns the server refusals into plain words, and leaves others to the caller', () => {
     expect(photoServerWords(new Error('TOO_BIG'))).toMatch(/too big/);
     expect(photoServerWords({ message: 'BAD_PHOTO' })).toMatch(/couldn’t be saved/);
-    expect(photoServerWords('NO_MEMBER')).toMatch(/isn’t saved online/);
+    expect(photoServerWords('NO_MEMBER')).toMatch(/is not saved yet/);
     expect(photoServerWords(new Error('network down'))).toBeNull();
     expect(photoServerWords(null)).toBeNull();
   });
