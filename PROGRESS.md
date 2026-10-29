@@ -2877,3 +2877,5 @@
 - Commit messages with inner double-quotes: use `git commit -F <file>`, not a
   PowerShell here-string (the quotes word-split the -m arg).
 - Node not on default PATH: prepend `%LOCALAPPDATA%\nodejs`.
+
+- 2026-10-29: **Admin branches merged to main and deployed.** Merged in order: feat/owner-analytics, feat/business-growth, feat/gym-colour-webcam, feat/offline-desk-3, feat/message-calm (mobile test files of message-calm kept; they ship in the next phone release). Conflicts: crawl.mjs route list (kept /settings/news and the numbers routes), PROGRESS.md (kept both sides), migrations 0041/0042 add/add (kept main's "applied live" copies; no SQL run). Landing page: the lock-screen messages line now shows as available (English + Hindi). Checks: tsc -b 0, vitest 1396 pass, build 0, e2e 107 pass + 1 skipped (Edge via E2E_CHROME). Deployed with wrangler from deploy/panel.
