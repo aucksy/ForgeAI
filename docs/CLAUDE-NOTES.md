@@ -22,6 +22,12 @@ BODY_SENSORS + health.READ_HEART_RATE: Play does not list them because the watch
 Wear OS form factor still needs: Wear screenshots on store listings, a Wear bundle on a testing track, then opt-in.
 Plan: re-run the watch upload and read the exact Play error; if it is the health form, reopen Health apps after the bundle
 is in the edit and re-save. #72 wording NOT yet corrected/asked.
+DONE (30 Oct, Play Console by hand): Wear OS internal track release 1000060000 (0.60.0) published; testers = both lists
+(MettleUp testers group + Testers List A); accepted Play's 'version code much higher' warning (watch = 1e9 + phone code, by design).
+Health apps: heart rate + body sensors now listed; wrote both use texts (shown on watch only during a workout, never stored or sent).
+Store listing: 4 Wear screenshots from branding/mettleup/store/wear, AI label = don't label. Wear OS opt-in done.
+All 3 sent for review together (Publishing overview). Watch AAB copy left in forgeai-apk/ (never commit).
+Future watch releases can go by the API again (the 403 was the missing health answer).
 Next: 0.60.0 to production after 24 h; 0.61.0 = workout-name-header, leaderboard-show-me (privacy.html), message-calm mobile.
 
 ## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026

@@ -14,7 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| #72 | Add the crash-report line to the privacy notice? | A: yes, as written |
+| #72 | Add the corrected crash-report line to the privacy notice? | A: yes, plus a 90-day clean-up |
 
 ---
 
@@ -434,14 +434,17 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 72. Crash reports: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**Why:** 0.60.0 sends crash reports (what broke in the app, the phone model and app version; no workouts, no name) so I can fix problems fast. The privacy notice and Play's Data safety form must say so. Today the notice holds an empty placeholder for it.
-**Decide:** Add this line to the privacy notice: "When the app crashes, it sends a crash report: what went wrong, your phone model and the app version. It holds no workouts, name or mobile number. Crash reports are deleted after 90 days." And tick "Crash logs" in Play's Data safety form.
-- A: Yes, add it as written (recommended)
-- B: Change the wording (write how)
+**Why:** 0.60.0 sends crash reports so I can fix problems fast. The privacy notice and Play's Data safety form must say so. Today the notice holds an empty placeholder for it.
+**YOUR REPLY (30 Oct 2026):** A
+**My answer (30 Oct 2026):** Sorry: my first wording was wrong. I checked the app. A crash report does NOT send the phone model, and today nothing deletes old reports. So I did not add it. The true version is below. Please pick again.
+**Decide:** Add this line to the privacy notice (English and Hindi): "When the app crashes, it sends a crash report to MettleUp: a short error message, the place in the app where it broke, and the app version. It holds no workouts, name, mobile number, gym or phone details. We use it only to fix the problem. A copy of the error text goes to our private bug list on GitHub. Crash reports are deleted after 90 days." Then tick "Crash logs" in Play's Data safety form.
+- A: Yes, as written. I also build the small daily clean-up that deletes reports older than 90 days on the live server (recommended)
+- B: Same line, but say "kept until the problem is fixed" instead of 90 days. No clean-up job; I delete them by hand
 
 ## 71. Play: answer the health question so the watch app can go out — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**TASK DONE (30 Oct 2026):** Claude did it in Play Console: uploaded the watch app to watch testers, answered the heart-rate question (the watch shows heart rate on its own screen during a workout; it is never saved or sent), added 4 watch pictures to the store page and switched on Wear OS. Google is now reviewing it (usually up to 7 days).
 **Why:** 0.60.0 is on Play for testers, but Play holds back the watch app until this one question is answered. The phone app is not affected.
 **Your task:** Open Play Console, pick MettleUp, then App content. Find the question about health features. Answer it (MettleUp logs workouts, so the answer is Yes, then tick the fitness or activity tracking box). Save, then tell me "health question done".
 
