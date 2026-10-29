@@ -18,6 +18,7 @@
 export const CLIP_VERSIONS: Readonly<Record<string, number>> = {
   incline_dumbbell_press: 6,
   lateral_raise: 6,
+  dumbbell_shoulder_press: 8,
 };
 
 /** The public release that holds every clip's files. */
