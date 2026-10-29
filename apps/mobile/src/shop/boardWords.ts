@@ -34,6 +34,26 @@ export const BOARD_WORDS = {
   leaveSub: 'Your workouts stay on this phone. Your leaderboard numbers are removed from the gym.',
 } as const;
 
+/**
+ * R-200: the "Show me to my gym" box at the top of the leaderboard (shop/ShowMeCard.tsx). What it
+ * shares must match the privacy notice (docs/launch/PRIVACY-NOTICE.md) and MATE_WORDS.shareCaption:
+ * first name + first letter of the last name; bio and up to 30 workouts of the last 60 days (name,
+ * date, length, kg lifted, best set); never body weight, photos, notes or the mobile number.
+ * `both`/`doneBoth` also when only the name is switched on but the workouts switch was on already
+ * (gym mates can open shared workouts only while the name shows, so the tap opens them too).
+ */
+export const SHOW_ME_WORDS = {
+  title: 'Show me to my gym mates',
+  both: 'Members of your gym will see your first name and last initial here, plus your bio and up to 30 workouts from the last 60 days (name, date, time, kg lifted, best sets). Never your body weight, photos, notes or mobile number.',
+  name: "Members of your gym will see your first name and last initial here, instead of 'A member'.",
+  showMe: 'Show me',
+  notNow: 'Not now',
+  offNote: 'You can switch this off any time in Settings → Your gym.',
+  failed: "Couldn't switch this on, so nothing changed. Check your internet and try again.",
+  doneBoth: 'Done. Members of your gym now see your name and workouts.',
+  doneName: 'Done. Members of your gym now see your name.',
+} as const;
+
 /** "1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd". PURE. */
 export function rankText(n: number): string {
   const v = Math.max(0, Math.floor(n));

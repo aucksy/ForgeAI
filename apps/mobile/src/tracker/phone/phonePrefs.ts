@@ -62,6 +62,12 @@ export interface PhonePrefsState {
   /** R-164: the share switch changed and the gym has not heard yet (offline); sent again with no wait. */
   mateSharePending: boolean;
   setMateSharePending: (on: boolean) => void;
+  /**
+   * R-200: "Not now" on the leaderboard's "Show me to my gym" card, per gym (gym id -> epoch ms).
+   * The card stays away for 30 days after (shop/showMe.ts SHOW_ME_SNOOZE_MS).
+   */
+  showMeSnoozed: Record<string, number>;
+  snoozeShowMe: (gymId: string, at: number) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
@@ -103,6 +109,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setShareWorkoutsWithGym: (shareWorkoutsWithGym) => set({ shareWorkoutsWithGym }),
       mateSharePending: false,
       setMateSharePending: (mateSharePending) => set({ mateSharePending }),
+      showMeSnoozed: {},
+      snoozeShowMe: (gymId, at) => set((st) => ({ showMeSnoozed: { ...st.showMeSnoozed, [gymId]: at } })),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
@@ -122,6 +130,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           boardNamePending: false,
           shareWorkoutsWithGym: false,
           mateSharePending: false,
+          showMeSnoozed: {},
         }),
     }),
     {

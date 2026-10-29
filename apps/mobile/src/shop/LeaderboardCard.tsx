@@ -10,6 +10,9 @@
  *
  * R-164: a name opens that member's workouts when the gym says they share them (member_mate_board:
  * their name shows and their "Let my gym mates see my workouts" switch is on). Other rows stay plain.
+ *
+ * R-200: "Show me to my gym" sits on top for a member whose name is off (ShowMeCard.tsx); after it
+ * switches the name on, the board is read again.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -27,6 +30,7 @@ import { challengeFill, type Board, type BoardChallenge, type BoardList, type Bo
 import { peekBoard, pushBoard, readBoard, type BoardRead } from './leaderboardSync';
 import { MATE_WORDS, profileFor, type MateBoard } from './mateProfile';
 import { readMateBoard } from './mateSync';
+import { ShowMeCard } from './ShowMeCard';
 import type { GymLink } from './types';
 
 /** Read when drawn: a gym's branding repaints the colour tokens. */
@@ -62,6 +66,15 @@ export function LeaderboardCard({ link }: { link: GymLink }) {
     }, [link]),
   );
 
+  const reread = (): void => {
+    void (async () => {
+      const r = await readBoard(link);
+      if (r.kind === 'board') setBoard(r.board);
+      else if (r.kind === 'hidden') setBoard(null);
+      setMates(await readMateBoard(link));
+    })().catch((e: unknown) => console.warn('[board] read after show me', e));
+  };
+
   if (!board) return null;
   const list: BoardList = board[tab];
   const today = todayISO();
@@ -73,6 +86,7 @@ export function LeaderboardCard({ link }: { link: GymLink }) {
 
   return (
     <Card style={{ gap: space.sm, marginTop: space.md }}>
+      <ShowMeCard link={link} board={board} onShown={reread} />
       {board.challenge ? <ChallengeBlock c={board.challenge} today={today} units={units} /> : null}
       <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
         {BOARD_WORDS.title}

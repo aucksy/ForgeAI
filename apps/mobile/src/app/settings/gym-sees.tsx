@@ -9,6 +9,9 @@
  * once the gym's server can hold shared workouts (0040 live). On: the phone shares its bio and
  * recent workouts at once (mateShare.ts); off: the gym deletes them at once (kept and sent again
  * with no signal). Gym mates can open them only while the name switch is on too.
+ *
+ * R-200: both can also be switched ON from the leaderboard ("Show me to my gym"); switching off
+ * stays here. Both places use shop/showMeRun.ts, and this page reads the same saved switches.
  */
 import { Redirect } from 'expo-router';
 import { Text } from 'react-native';
@@ -21,6 +24,7 @@ import { useGymShop } from '@/shop/gymStore';
 import { MATE_WORDS } from '@/shop/mateProfile';
 import { useGymHydrated } from '@/shop/shopSource';
 import { useBoardLive } from '@/shop/useBoardLive';
+import { switchBoardName, switchMateShare } from '@/shop/showMeRun';
 import { useMatesLive } from '@/shop/useMatesLive';
 import { color, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
@@ -33,23 +37,9 @@ export default function GymSeesPage() {
   const on = usePhonePrefs((s) => s.showNameOnBoard);
   const sharing = usePhonePrefs((s) => s.shareWorkoutsWithGym);
   if (hydrated && !link) return <Redirect href="/shop" />;
-  const flip = (v: boolean): void => {
-    const prefs = usePhonePrefs.getState();
-    prefs.setShowNameOnBoard(v);
-    // Kept until the gym has heard it, so a change made with no signal is sent again later.
-    prefs.setBoardNamePending(true);
-    void import('@/shop/leaderboardSync')
-      .then((m) => m.pushBoard('setting'))
-      .catch((e: unknown) => console.warn('[board] name switch push', e));
-  };
-  const flipShare = (v: boolean): void => {
-    const prefs = usePhonePrefs.getState();
-    prefs.setShareWorkoutsWithGym(v);
-    prefs.setMateSharePending(true);
-    void import('@/shop/mateSync')
-      .then((m) => m.shareWithMates('setting'))
-      .catch((e: unknown) => console.warn('[mates] share switch', e));
-  };
+  // R-200: the same calls as the leaderboard's "Show me to my gym" box (shop/showMeRun.ts).
+  const flip = (v: boolean): void => switchBoardName(v);
+  const flipShare = (v: boolean): void => switchMateShare(v);
   const body = { fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary } as const;
   return (
     <SettingsPage title={BOARD_WORDS.seesTitle}>

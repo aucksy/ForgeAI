@@ -108,6 +108,7 @@ export const FIELDS_LEFT_OUT: Readonly<Record<string, Readonly<Record<string, st
     boardNamePending: 'bookkeeping: the gym has not been told the name switch yet (this phone only)',
     shareWorkoutsWithGym: 'a privacy choice made per gym (R-164); asked again after a restore',
     mateSharePending: 'bookkeeping: the gym has not been told the share switch yet (this phone only)',
+    showMeSnoozed: '"Not now" on the leaderboard box "Show me to my gym mates" (R-200; this phone only, at most 30 days)',
   },
   'forgeai-muscle-tips': {
     snoozedUntil: 'a tip snoozed for a few days',
