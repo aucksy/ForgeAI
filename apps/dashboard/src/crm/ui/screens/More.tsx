@@ -30,6 +30,7 @@ export function MoreScreen() {
   const owner = role === 'owner';
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
+    { path: '/growth', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
     { path: '/plans', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
     {
       path: '/enquiries',

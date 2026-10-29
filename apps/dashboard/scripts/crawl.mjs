@@ -36,6 +36,8 @@ const ROUTES = [
   '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/settings/news', '/more', '/workouts', '/feedback',
   // R-168: the lists behind the "Your numbers" tiles on Today.
   '/numbers/renewals/30', '/numbers/owed/30', '/numbers/stopped/90', '/numbers/new/90', '/numbers/busy/30',
+  // Owner, 30 Oct 2026: "Your growth" and its one-page report.
+  '/growth', '/growth/print',
 ];
 
 async function waitForServer() {

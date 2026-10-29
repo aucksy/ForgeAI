@@ -56,6 +56,7 @@ import { Welcome } from './ui/Welcome';
 import { WhatsNewScreen } from './ui/WhatsNew';
 import { AllBranchesScreen } from './branches/AllBranches';
 import { NumbersScreen } from './ui/OwnerNumbers';
+import { GrowthPrintScreen, GrowthScreen } from './ui/BusinessGrowth';
 import { BranchProvider } from './branches/BranchProvider';
 import { useBranches } from './branches/context';
 import { TermsGate } from './auth/TermsGate';
@@ -178,6 +179,8 @@ export function Routes({ online }: { online: boolean }) {
       // pattern on both mobile platforms.
       { path: '/attendance', label: 'Visits', icon: 'visits', badge: atRisk },
       { path: '/money', label: 'Money', icon: 'money', badge: overdue },
+      // Owner, 30 Oct 2026: month by month since the gym started on MettleUp (owner only: money totals).
+      { path: '/growth', label: 'Your growth', icon: 'growth' },
       { path: '/plans', label: 'Plans', icon: 'plans' },
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
       { path: '/enquiries', label: 'Enquiries', icon: 'members', badge: enquiriesDue || undefined },
@@ -296,6 +299,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <FeedbackScreen />;
     case 'branches':
       return <AllBranchesScreen />;
+    case 'growth':
+      // Owner, 30 Oct 2026: is the gym growing since MettleUp? `/growth/print` is the one-page report.
+      return id === 'print' ? <GrowthPrintScreen /> : <GrowthScreen />;
     case 'numbers':
       // R-168: `/numbers/<tile>/<range>`, the list behind a "Your numbers" tile on Today.
       return <NumbersScreen key={id} which={id} rangeSeg={segments[2]} />;
