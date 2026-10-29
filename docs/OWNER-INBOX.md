@@ -42,6 +42,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | Feature: Treadmill and cycle details | Medium | Medium |
 | Feature: Watch opens when a workout starts | Medium | Medium |
 | Feature: Watch in the gym's colour | Low | Low |
+| Feature: Install the watch app from the phone | Medium | Medium |
 | Feature: Log sets on the watch | Low | High |
 | Feature: "Stronger than X% of your gym" | Medium | Medium |
 | Feature: Follow gym mates (a feed of your gym) | Medium | High |
