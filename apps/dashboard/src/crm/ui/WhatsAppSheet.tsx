@@ -50,7 +50,16 @@ function SendLink({ href, onSent, disabled }: { href: string; onSent?: () => voi
   );
 }
 
-export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: () => void }) {
+export function WhatsAppSheet({
+  view,
+  onClose,
+  startWith,
+}: {
+  view: MemberView;
+  onClose: () => void;
+  /** R-168: the message to open on, when it fits this member (a list of renewals opens on "Plan ending"). */
+  startWith?: MessageKind;
+}) {
   const { snapshot, today } = useCrm();
   const [lang, setLang] = useMessageLang();
   const kinds = useMemo(() => {
@@ -62,8 +71,9 @@ export function WhatsAppSheet({ view, onClose }: { view: MemberView; onClose: ()
       yearsWithGym: yearsWithGym(view.member.joinedOn, today),
     });
   }, [view, today, snapshot.members, snapshot.memberships, snapshot.visits]);
-  const [kind, setKind] = useState<MessageKind>(kinds[0]);
-  const [text, setText] = useState(() => buildMessage(kinds[0], view, snapshot.gym, today, lang));
+  const first = startWith && kinds.includes(startWith) ? startWith : kinds[0];
+  const [kind, setKind] = useState<MessageKind>(first);
+  const [text, setText] = useState(() => buildMessage(first, view, snapshot.gym, today, lang));
   const pick = (k: MessageKind) => {
     setKind(k);
     setText(buildMessage(k, view, snapshot.gym, today, lang));

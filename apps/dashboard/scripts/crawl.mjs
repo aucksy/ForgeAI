@@ -34,6 +34,8 @@ const ROUTES = [
   '/', '/members', '/members/import', '/members/f/exp-1-3', '/members/f/active', '/members/app', 'MEMBER', '/shop', '/shop/messages', '/messages', '/messages/birthday',
   '/attendance', '/money', '/money/dues', '/money/today', 'RECEIPT', '/plans', '/enquiries', '/expenses',
   '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/settings/news', '/more', '/workouts', '/feedback',
+  // R-168: the lists behind the "Your numbers" tiles on Today.
+  '/numbers/renewals/30', '/numbers/owed/30', '/numbers/stopped/90', '/numbers/new/90', '/numbers/busy/30',
 ];
 
 async function waitForServer() {

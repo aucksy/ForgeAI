@@ -55,6 +55,7 @@ import { MessagesScreen } from './ui/screens/Messages';
 import { Welcome } from './ui/Welcome';
 import { WhatsNewScreen } from './ui/WhatsNew';
 import { AllBranchesScreen } from './branches/AllBranches';
+import { NumbersScreen } from './ui/OwnerNumbers';
 import { BranchProvider } from './branches/BranchProvider';
 import { useBranches } from './branches/context';
 import { TermsGate } from './auth/TermsGate';
@@ -295,6 +296,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <FeedbackScreen />;
     case 'branches':
       return <AllBranchesScreen />;
+    case 'numbers':
+      // R-168: `/numbers/<tile>/<range>`, the list behind a "Your numbers" tile on Today.
+      return <NumbersScreen key={id} which={id} rangeSeg={segments[2]} />;
     case 'settings':
       // Gym branding: Settings -> Branding (the gym's look in the member app).
       if (id === 'branding') return <BrandingScreen />;

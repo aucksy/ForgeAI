@@ -51,6 +51,7 @@ import {
   space,
 } from '../kit';
 import { WaitingMoneyLine } from '../offline';
+import { NumbersSection } from '../OwnerNumbers';
 import { Link, navigate } from '../router';
 
 export function TodayScreen() {
@@ -242,6 +243,9 @@ export function TodayScreen() {
         {/* "Losing the habit" is not a tile: it is the list right below, and the
             same number twice on one screen is a duplicate, not a summary. */}
       </Grid>
+
+      {/* R-168: five numbers with a trend line each (money owed is the owner's); a tap opens the list. */}
+      <NumbersSection />
 
       <div style={{ height: space.xl }} />
 
