@@ -23,7 +23,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
 import { getDb } from '@/db';
-import { todayISO } from '@/lib/date';
+import { toISO, todayISO } from '@/lib/date';
 import { machineFromRow } from '@/tracker/engine/cardioMachine';
 import { DAY_LABEL, TITLE_SEP } from '@/tracker/services/hevyImport';
 import type { DayType, UnitSystem } from '@/types/models';
@@ -259,12 +259,24 @@ const HISTORY_SELECT = `SELECT s.id AS session_id, s.date_iso, s.started_at, s.e
        JOIN set_entries se ON se.session_id = s.id
        JOIN exercises e ON e.id = se.exercise_id`;
 
+/**
+ * F121: the rows of the workouts on or after `fromDay` (YYYY-MM-DD) - the gym's report holds only
+ * workouts from the member's join date at that gym on. A workout counts only when BOTH its day and
+ * the day its start time shows (the time written in the file) are on or after `fromDay`, so a
+ * workout that began the evening before never slips in. PURE (uses the phone's time zone).
+ */
+export function rowsFromDay(rows: readonly HistorySetRow[], fromDay: string): HistorySetRow[] {
+  return rows.filter((r) => r.date_iso >= fromDay && toISO(new Date(realStartOf(r.started_at, r.date_iso))) >= fromDay);
+}
+
 /** Workouts the export holds (at least one set of a known exercise), in its order. Reads only. */
-async function exportedSessionIds(): Promise<string[]> {
+async function exportedSessionIds(fromDay?: string): Promise<string[]> {
   const rows = await getDb().getAllAsync<{ id: string }>(
     `SELECT s.id FROM workout_sessions s
       WHERE EXISTS (SELECT 1 FROM set_entries se JOIN exercises e ON e.id = se.exercise_id WHERE se.session_id = s.id)
+      ${fromDay ? 'AND s.date_iso >= ?' : ''}
       ORDER BY s.started_at, s.id`,
+    fromDay ? [fromDay] : [],
   );
   return rows.map((r) => r.id);
 }
@@ -289,9 +301,10 @@ async function historyRowsOf(ids: readonly string[]): Promise<HistorySetRow[]> {
 export async function writeHistoryCsv(
   units: UnitSystem,
   write: (chunk: string, first: boolean) => Promise<void>,
-  opts: { workoutsPerPage?: number } = {},
+  /** fromDay (F121): only the workouts on or after this day (`rowsFromDay`); default all. */
+  opts: { workoutsPerPage?: number; fromDay?: string } = {},
 ): Promise<{ workouts: number; sets: number }> {
-  const ids = await exportedSessionIds();
+  const ids = await exportedSessionIds(opts.fromDay);
   if (ids.length === 0) return { workouts: 0, sets: 0 };
   const per = Math.max(1, opts.workoutsPerPage ?? 100);
   const enc = hevyCsvEncoder(units);
@@ -299,7 +312,8 @@ export async function writeHistoryCsv(
   let workouts = 0;
   let first = true;
   for (let i = 0; i < ids.length; i += per) {
-    const rows = await historyRowsOf(ids.slice(i, i + per));
+    const page = await historyRowsOf(ids.slice(i, i + per));
+    const rows = opts.fromDay ? rowsFromDay(page, opts.fromDay) : page;
     if (rows.length === 0) continue; // deleted since the list was read
     sets += rows.length;
     workouts += new Set(rows.map((r) => r.session_id)).size;

@@ -83,6 +83,7 @@ import { Link, navigate } from '../router';
 import { WaitingPill } from '../offline';
 import { NEEDS_INTERNET_WORDS, useOffline } from '../offlineContext';
 import { DeskCameraSheet } from '../DeskCameraSheet';
+import { GymReportCard } from '../GymReportCard';
 import { MemberAvatar, useDeskPhotoKey, useMemberPhoto } from '../MemberPhoto';
 import { MemberPhotoError, removeMemberPhoto, saveMemberPhoto } from '../../shop/memberPhotoApi';
 import { photoServerWords } from '../../logic/memberPhoto';
@@ -513,6 +514,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           </div>
         </Card>
       )}
+
+      {/* F121: ask for the member's workout report from the app; hidden until the server has 0045. */}
+      <GymReportCard memberId={memberId} />
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Memberships</SectionTitle>

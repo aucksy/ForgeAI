@@ -15,6 +15,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import { apiMembership } from './gymApi';
 import { refreshGymReminders } from './gymReminders';
+import { GymReportPanel } from './GymReportPanel';
 import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
 import { keepMembership, readKeptMembership } from './membershipKept';
 import { PlanRequestPanel } from './PlanRequestPanel';
@@ -90,6 +91,9 @@ export function MembershipCard({ link }: { link: GymLink }) {
       {/* F150: "Pause my plan" / "Renew my plan" - only for a member the gym's list knows, and only
           once the server has 0044 (the panel hides itself until then). Not on a kept (offline) plan. */}
       {shown.answer.ok && shown.keptAt == null ? <PlanRequestPanel link={link} hasCurrentPlan={shown.answer.current != null} /> : null}
+      {/* F121: "Send your report to the gym?" - only while this gym's desk has asked, and only once
+          the server has 0045 (the panel hides itself until then). Not on a kept (offline) plan. */}
+      {shown.answer.ok && shown.keptAt == null ? <GymReportPanel link={link} /> : null}
       <View style={{ marginTop: space.sm }}>
         <GhostButton label={WORKOUT_CODE_WORDS.button} icon="dumbbell" onPress={() => setCodeOpen(true)} />
       </View>

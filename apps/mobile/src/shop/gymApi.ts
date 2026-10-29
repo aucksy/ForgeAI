@@ -23,6 +23,7 @@ import { membershipFromRow, type MembershipAnswer } from './membership';
 import { inboxFromRows, type InboxMessage } from './inbox';
 import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
 import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanRequestsAnswer } from './planRequest';
+import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -285,6 +286,40 @@ export async function apiSawPlanRequests(key: string, ids: string[]): Promise<Pl
   const r = await call('member_saw_plan_requests', { p_key: key, p_ids: ids }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
   return { ok: true, data: Number(r.data) || 0 };
+}
+
+// ------------------------------------------------------------------ workout reports the gym asks for (0045, F121)
+
+/** A report can be a few MB on a slow gym connection: more time than a plain write. */
+const REPORT_MS = 60000;
+
+/**
+ * The gym's waiting request for this member's workout report (member_report_requests).
+ * `missing`: the server has not had 0045 yet, so the card stays hidden.
+ */
+export async function apiReportRequests(key: string): Promise<PlanRequestCall<ReportRequestsAnswer>> {
+  const r = await call('member_report_requests', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = reportRequestsFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The member's yes or no to the gym's request (member_answer_report_request). */
+export async function apiAnswerReportRequest(key: string, requestId: string, answer: 'yes' | 'no'): Promise<PlanRequestCall<ReportRequest>> {
+  const r = await call('member_answer_report_request', { p_key: key, p_request: requestId, p_answer: answer }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const a = reportAnswerFromRow(r.data);
+  if (!a) return { ok: false, error: { kind: 'other' } };
+  return a.ok ? { ok: true, data: a.request } : { ok: false, refused: a.refused };
+}
+
+/** Send the report the phone made to the gym that asked, after the yes (member_attach_report). */
+export async function apiAttachReport(key: string, requestId: string, file: { csv: string; workouts: number; sets: number }): Promise<PlanRequestCall<ReportRequest>> {
+  const r = await call('member_attach_report', { p_key: key, p_request: requestId, p_csv: file.csv, p_workouts: file.workouts, p_sets: file.sets }, REPORT_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const a = reportAnswerFromRow(r.data);
+  if (!a) return { ok: false, error: { kind: 'other' } };
+  return a.ok ? { ok: true, data: a.request } : { ok: false, refused: a.refused };
 }
 
 // ------------------------------------------------------------------ gym mate profiles (0040, R-164)

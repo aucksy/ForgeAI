@@ -53,6 +53,9 @@ declare
     -- 0044: pause / renew requests from the app (members check their member key; the desk its owner or desk key).
     'member_plan_requests','member_ask_plan_change','member_cancel_plan_request','member_saw_plan_requests',
     'owner_plan_requests','owner_decide_plan_request',
+    -- 0045: workout reports the gym asks for (members check their member key; the desk its owner or desk key).
+    'member_report_requests','member_answer_report_request','member_attach_report',
+    'owner_report_requests','owner_request_report','owner_report_file',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
