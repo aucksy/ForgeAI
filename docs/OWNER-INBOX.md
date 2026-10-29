@@ -239,12 +239,18 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | Item id | Item | Score | Scored |
 |---|---|---|---|
 | member-app/watch-opens-when-a-workout-starts | F65 Watch opens when a workout starts | 10 | 29 Oct, 10:38 pm |
+| t:0-60-0-feedback-button-finish-screen-kg-exercise-history-bod | T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | 10 | 29 Oct, 10:43 pm |
+| t:floating-feedback-button-voice-or-typing-auto-fix-loop-r-149 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | 10 | 29 Oct, 10:43 pm |
+| t:test-server-and-crash-alerts-34 | T15 Test server and crash alerts (#34) | 10 | 29 Oct, 10:43 pm |
+| t:watch-app-next-set-heart-rate-rest-timer-on-play-r-139-r-166 | T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | 10 | 29 Oct, 10:43 pm |
+| admin-app-gym-owner-and-staff/webcam-photo-at-the-desk | F107 Webcam photo at the desk | 9 | 29 Oct, 10:41 pm |
 | member-app/1-rep-max-and-calculator | F63 1-rep max and % calculator | 9 | 29 Oct, 10:36 pm |
 | member-app/install-the-watch-app-from-the-phone | F67 Install the watch app from the phone | 9 | 29 Oct, 10:38 pm |
 | gym-member-links/ask-the-desk-to-freeze-or-renew | F150 Ask the desk to freeze or renew | 8 | 29 Oct, 10:36 pm |
 | gym-member-links/member-data-export-by-the-gym-on-request | F121 Member data export by the gym, on request | 8 | 29 Oct, 10:40 pm |
 | member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
 | member-app/treadmill-and-cycle-details | F64 Treadmill and cycle details | 8 | 29 Oct, 10:38 pm |
+| gym-member-links/busy-times-by-exercise | F137 Busy times by exercise | 7 | 29 Oct, 10:42 pm |
 | gym-member-links/challenge-rewards-given-out-by-themselves | F143 Challenge rewards given out by themselves | 7 | 29 Oct, 10:40 pm |
 | member-app/badge-shelf | F58 Badge shelf | 7 | 29 Oct, 10:35 pm |
 | member-app/long-rest-that-inflates-your-reps | F73 Long rest that inflates your reps | 7 | 29 Oct, 10:39 pm |
@@ -254,11 +260,15 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | gym-member-links/fitpass-and-other-pass-members | F123 FitPass and other pass members | 6 | 29 Oct, 10:40 pm |
 | member-app/quick-workout-i-have-30-minutes | F60 Quick workout: "I have 30 minutes" | 6 | 29 Oct, 10:34 pm |
 | platform-and-quality/test-server-before-live | F175 Test server before live | 6 | 29 Oct, 10:41 pm |
+| t:play-store-pictures-redone-r-126 | T14 Play Store pictures, redone (R-126) | 6 | 29 Oct, 10:43 pm |
 | gym-member-links/a-member-s-own-history-from-before-joining-a-gym | F122 A member's own history from before joining a gym | 5 | 29 Oct, 10:40 pm |
 | gym-member-links/bring-a-friend | F147 Bring a friend | 5 | 29 Oct, 10:34 pm |
 | gym-member-links/gym-s-logo-on-share-pictures-and-a-before-after-share | F146 Gym's logo on share pictures and a before/after share | 5 | 29 Oct, 10:34 pm |
 | gym-member-links/the-gym-s-workout-of-the-day | F151 The gym's workout of the day | 5 | 29 Oct, 10:36 pm |
+| member-app/steps-and-water-each-day | F62 Steps and water each day | 5 | 29 Oct, 10:42 pm |
+| member-app/watch-in-the-gym-s-colour | F66 Watch in the gym's colour | 5 | 29 Oct, 10:41 pm |
 | member-app/which-muscles-are-ready-today | F59 Which muscles are ready today | 5 | 29 Oct, 10:35 pm |
+| t:trainer-view-without-a-tick-box-46 | T19 Trainer view without a tick box (#46) | 5 | 29 Oct, 10:43 pm |
 | gym-member-links/the-gym-s-own-form-videos | F148 The gym's own form videos | 4 | 29 Oct, 10:36 pm |
 | member-app/ask-your-own-ai | F61 Ask your own AI | 4 | 29 Oct, 10:35 pm |
 
