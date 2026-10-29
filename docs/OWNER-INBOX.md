@@ -332,7 +332,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Gym branding | Live | Upload the gym's logo and colours, which members' apps then use. |
 | Gym workout plans | Live | Trainers build or pick a plan, add starting weights, and send it to members or a whole membership plan. |
 | Works on phone and computer | Live | One website that installs like an app, with dark and light looks. |
-| Offline front desk | Next release | Steps 1-3 built: the admin app opens and works without internet; check-ins, payments, new members and member changes made offline are sent when the internet is back. New (30 Oct): "Offline: 3 waiting to send" with a list, and each desk device gets its own receipt numbers (2026-27/D1-0001). One server change (0041) needs your yes so the server never refuses a receipt printed offline. | Step 2: check-ins made offline are kept on the device and sent once the internet is back. Step 3: payments and new members offline, with a receipt-number series of their own per desk (a tax invoice's number must never change after it is printed). |
+| Offline front desk | Next release | Steps 1-3 built: the admin app opens and works without internet; check-ins, payments, new members and member changes made offline are sent when the internet is back. New (30 Oct): "Offline: 3 waiting to send" with a list, and each desk device gets its own receipt numbers (2026-27/D1-0001). The server change 0041 is live (30 Oct): a receipt printed offline is never refused. | Step 2: check-ins made offline are kept on the device and sent once the internet is back. Step 3: payments and new members offline, with a receipt-number series of their own per desk (a tax invoice's number must never change after it is printed). |
 | Full GST tax invoices | Live | 22 Oct: a GST-registered gym's receipt is a tax invoice (GST number, service code, CGST + SGST, place of supply, reverse charge No, signature line). The paying company's own GST number waits for a live database change. |
 | Entry machine (turnstile, face or fingerprint) | Waiting for you | Matrix machine linked to us, blocking expired members; tripod turnstile is the standard offer, and the client buys it. Waits for the client to buy the machine. | The gym buys the machine; it talks to our server over the internet. A new member added in the admin app goes to the machine by itself and the desk scans the finger or face once; an expired or frozen member is blocked even when the internet is down, and a renewal unblocks them at once. Every entry becomes a check-in in the attendance register, and the desk gets an "Open door" button. |
 | Automatic SMS or WhatsApp reminders | Not doing | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
@@ -424,6 +424,12 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 70. Belvee: check whether the old GST is still live — 30 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** if Belvee's 2021 GST was never cancelled, late fees may be adding up each month (see #32). I cannot check it myself: the official page needs a captcha.
+**Your task:** Open https://services.gst.gov.in/services/searchtp , type Belvee's GSTIN (on the GST certificate in D:\Belvee\Legal\BELVEE GST.pdf, ends R1ZW), fill the captcha, press Search, and tell me the "Status" it shows (Active or Cancelled, and the date).
 
 ## 69. Online payments (UPI and card), recorded by themselves: what I need — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1243,7 +1249,14 @@ the Play account exists (SimpleApps108, a personal account). Claude prepares the
 **Next step:** a 30-minute call with a CA in Jaipur to confirm (1) the 6% scheme fits a software business, (2) the account and Udyam setup. About ₹1,000 to ₹2,000.
 Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44ada/ , https://www.taxaj.com/learn/section-44ad-presumptive-taxation-fy-2026-27-turnover-limit-and-opt-ou/
 **YOUR REPLY (29 Oct, 01:30 am):** find the chat (or the Gmail thread) about the PAN of my old, inactive sole proprietorship "Belvee"; work out how to reactivate it as a sole proprietorship. Do not activate it yet: tell me what would happen, and whether I can activate it without paying and use it whenever I want.
-**My answer (30 Oct):** I am looking for that chat and the Gmail thread now, then checking the rules. The full answer comes here. Nothing will be submitted or activated.
+**My answer (30 Oct):** General information, not tax advice. I found no saved chat about it; the facts come from your Gmail and the Belvee papers on your computer (D:\Belvee\Legal). I submitted and changed nothing.
+- **Belvee is already a sole proprietorship on your own PAN** (ending 601R; personal, not a firm's). Your PAN works: returns and refunds went through in 2026.
+- **What it has:** GST (ending R1ZW, Rajasthan, from 29 Jan 2021, trade name BELVEE), an Udyam registration (ending 9886, 18 Jan 2021, set to clothing), a trademark application for clothing only, and an RBL current account "MS BELVEE" (last statement March 2022).
+- **The August Udyam block was Belvee itself:** only one Udyam is allowed per PAN, and Belvee's never expires. So there is nothing to "reactivate": you update it.
+- **Free and quick:** on udyamregistration.gov.in (your Aadhaar OTP), change the activity to software and add MettleUp as a unit. About 15 minutes, no fee. Then use a current account in the business name (ask RBL if the old one is open). No yearly duty while unused; the income goes in your normal income tax return.
+- **The one unknown is the old GST.** If it was cancelled (most likely after 4 years without returns), do nothing now and take a fresh GST near ₹20 lakh of sales (free; about ₹1,000-3,000 through a CA). If it is still live, unfiled returns keep adding late fees (up to ₹500 per return; roughly ₹18,000-54,000 by now), and returns older than 3 years can no longer be filed; a CA files what can be filed and cancels it for free.
+- **Ekam Ek (the Delhi firm):** a different business with its own PAN, so it does not block Belvee. While your name stays on its deed and GST, you share its tax risk; closing your part needs the amended deed, a Registrar of Firms filing and a GST change (still pending since your 5 Aug email).
+**My pick:** use Belvee through the free Udyam update now; leave GST alone until sales near ₹20 lakh; first check the old GST's status (task #70). Ask a CA: is the old GST cancelled or live, and will a fresh GST be accepted later?
 
 ## 31. Launch decision: lawyer check of the privacy notice and the agreement — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
