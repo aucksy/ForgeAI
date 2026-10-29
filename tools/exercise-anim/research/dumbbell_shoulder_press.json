@@ -782,7 +782,7 @@
       "key": "dumbbell_shoulder_press",
       "check": "primary muscle is the strongest red in the bottom, middle and top frames",
       "target": "front shoulder reads as the deepest red in all three",
-      "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade; confirmed on the v7 sheet (8 frames); loop seam 0.05, seamless",
+      "measured": "preview frames 0/36/72 at clip size, cropped: front shoulder is the deepest red at bottom and middle; at the top it is the deepest red on the far arm, while on the near arm (facing the key light) it washes to about the triceps' shade; v8 sheet (cloud render, 8 frames): front shoulder red at bottom and middle; at the top it is fainter on the near arm (red also faded in the armpit, see skin row); loop seam 0.29, seamless true",
       "pass": "yes",
       "tool": "rendered frames"
     },
