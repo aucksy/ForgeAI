@@ -105,6 +105,10 @@ appId: com.mettleup.app
     direction: UP
     centerElement: true
     timeout: 20000
+# Run 41025683445 (owner): the tap landed during the scroll's last movement and opened the round
+# "Send feedback" button instead (the same step passed on 986d19e5). Let the list stop first.
+- waitForAnimationToEnd:
+    timeout: 5000
 - tapOn: "More for Jaipur"
 - extendedWaitUntil:
     visible: "Rename folder"
