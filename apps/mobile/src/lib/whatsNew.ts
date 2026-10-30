@@ -64,6 +64,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
         text: '"Check in" on the Gym tab now opens a scanner in MettleUp. Point it at the QR poster at your gym’s desk.',
         go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
       },
+      { text: 'Fixed: MettleUp could close by itself when a message from your gym came in.' },
     ],
   },
   {

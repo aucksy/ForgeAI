@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "node scripts/patch-native.js",
     "typecheck:mobile": "npm run typecheck --workspace apps/mobile",
     "typecheck:dashboard": "npm run typecheck --workspace apps/dashboard",
     "build:dashboard": "npm run build --workspace apps/dashboard"
