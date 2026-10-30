@@ -56,6 +56,8 @@ declare
     -- 0045: workout reports the gym asks for (members check their member key; the desk its owner or desk key).
     'member_report_requests','member_answer_report_request','member_attach_report',
     'owner_report_requests','owner_request_report','owner_report_file',
+    -- 0046: which pack the gym is on (an owner/desk key or a member key, checked by each; read only, no money fields).
+    'owner_gym_pack','member_gym_pack',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

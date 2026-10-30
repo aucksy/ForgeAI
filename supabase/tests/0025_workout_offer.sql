@@ -247,16 +247,17 @@ begin
   fails := fails || pg_temp.t25_is('12 no one', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, %L::uuid[])', kop, 'announcement', 'x', '', array[mid_x])), 'NO_ONE');
   fails := fails || pg_temp.t25_is('12 too far', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'announcement', 'x', '', now() + interval '40 days')), 'BAD_TIME');
   -- A timed offer cancelled before it goes does not use up its day.
-  msg2 := (public.owner_send_message(kop, 'offer', 'T25 cancelled', '', null, now() + interval '2 days') ->> 'id')::uuid;
+  msg2 := (public.owner_send_message(kop, 'offer', 'T25 cancelled', '', null, ((td + 2)::timestamp + interval '12 hours') at time zone 'Asia/Kolkata') ->> 'id')::uuid;
   perform public.owner_withdraw_message(kop, msg2);
   checks := checks + 1;
-  fails := fails || pg_temp.t25_is('12 cancelled frees day', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'offer', 'T25 day 2', '', now() + interval '2 days 1 minute')), 'ok');
+  fails := fails || pg_temp.t25_is('12 cancelled frees day', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'offer', 'T25 day 2', '', ((td + 2)::timestamp + interval '12 hours 1 minute') at time zone 'Asia/Kolkata')), 'ok');
   -- Tomorrow's offer, then today's: both fit (each day has one). A second one tomorrow does not.
-  msg2 := (public.owner_send_message(kop, 'offer', 'T25 tomorrow', '', null, now() + interval '1 day') ->> 'id')::uuid;
+  -- (Noon India time, not now() + 1 day: run at 23:59:59 IST, "+1 day 1 minute" fell on the day after; CI 41107264257.)
+  msg2 := (public.owner_send_message(kop, 'offer', 'T25 tomorrow', '', null, ((td + 1)::timestamp + interval '12 hours') at time zone 'Asia/Kolkata') ->> 'id')::uuid;
   checks := checks + 4;
   fails := fails || pg_temp.t25_is('12 timed hidden', (select count(*) from jsonb_array_elements(public.member_messages(ka)) e where e->>'id' = msg2::text)::text, '0');
   fails := fails || pg_temp.t25_is('12 today', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L)', kop, 'offer', 'T25 today', '')), 'ok');
-  fails := fails || pg_temp.t25_is('12 tomorrow again', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'offer', 'T25 again', '', now() + interval '1 day 1 minute')), 'OFFER_TODAY');
+  fails := fails || pg_temp.t25_is('12 tomorrow again', pg_temp.t25_try(format('select public.owner_send_message(%L, %L, %L, %L, null, %L::timestamptz)', kop, 'offer', 'T25 again', '', ((td + 1)::timestamp + interval '12 hours 1 minute') at time zone 'Asia/Kolkata')), 'OFFER_TODAY');
   -- The admin app's Sent list says when and to whom.
   fails := fails || pg_temp.t25_is('12 sent list', (select (e->>'toGroup') || ':' || (e->>'sendAt' is not null)::text
       from jsonb_array_elements(public.owner_messages(kop)) e where e->>'id' = msg2::text), 'false:true');
