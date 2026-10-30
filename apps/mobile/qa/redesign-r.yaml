@@ -558,10 +558,20 @@ appId: com.mettleup.app
 # Release A: the Gym tab, membership first, then Check in (A3); no Leave at its foot (A4).
 - assertVisible: "Your gym's shop · pay at the desk"
 - assertVisible: "Bag, empty"
+# R-225 (0.62.0): the Gym tab opens on its "Shop" part when the gym sells things; Check in is in the
+# "My gym" part (runs 40999689414, 40999691263 failed here). Then back to the Shop part.
+- tapOn: "^My gym$"
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "^Check in$"
+- scrollUntilVisible:
+    element: "^Shop$"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "^Shop$"
+    index: 0
 # FORGE1 lists products, so the Gym tab shows its "Shop" part once the list arrives.
 - scrollUntilVisible:
     element: 'Whey protein 1 kg, .*'

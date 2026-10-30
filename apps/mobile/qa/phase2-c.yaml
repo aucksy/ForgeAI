@@ -92,7 +92,12 @@ appId: com.mettleup.app
     visible: "How to do it"
     timeout: 15000
 - takeScreenshot: 23-exercise-page
-- assertVisible: "Easier:.*|Harder:.*"
+# 0.62.0 put the start/end pictures on top of How to: on the owner's phone (360 dp, font 1.3) the
+# versions line is below the edge now (run 40999691263), so scroll to it before the check.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Easier:.*|Harder:.*"
 - back
 - back
 # ---------------------------------------------------------------- empty workout, new set kinds
