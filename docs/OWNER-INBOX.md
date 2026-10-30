@@ -510,6 +510,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 74. Switch on spoken feedback: put your Groq key on our server — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**TASK DONE (30 Oct, 08:35 pm, via the page)**
 **TASK DONE (30 Oct 2026)**: the server now uses the new key from your personal Groq account (it replaced the VastuFirst key from your client's account, see #73). A real spoken test came back as correct text.
 **Why:** spoken feedback is built and live on the server, but it stays off until the server has your Groq key. I never type keys. Until then the app tells members to type instead.
 **Your task:** Open console.groq.com, then API Keys, and copy your key (or make a new one called "MettleUp feedback").
@@ -519,6 +520,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 73. Spoken feedback: one line in the privacy notice — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**TASK DONE (30 Oct, 08:37 pm, via the page)**
 **TASK DONE (30 Oct 2026)**: Zero Data Retention is on in your personal Groq account, and your new key is on the server. A real spoken test came back as correct text. The key file is deleted. MettleUp no longer uses your client's key.
 **Why:** members can now tap Speak in "Send feedback". The recording goes to Groq (a US speech-to-text company) on your key, to turn it into text. The privacy notice and Play's Data safety form must say so before this goes out in 0.61.0. Groq's own page says it does not keep what it is sent by default, and it has a "Zero Data Retention" switch that makes sure.
 **DECIDED (30 Oct 2026):** A. The line is in the privacy notice (English and Hindi) and on the live privacy page. Two small additions so it stays true: the daily counts are deleted after 7 days, and we also count per network address (in a scrambled form), not only per phone. Play's Data safety form now says it too (30 Oct): voice is collected, optional, not kept, used only for the app. Sent to Google for review.
@@ -537,6 +539,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 71. Play: answer the health question so the watch app can go out — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**TASK DONE (30 Oct, 08:37 pm, via the page)**
 **TASK DONE (30 Oct 2026):** Claude did it in Play Console: uploaded the watch app to watch testers, answered the heart-rate question (the watch shows heart rate on its own screen during a workout; it is never saved or sent), added 4 watch pictures to the store page and switched on Wear OS. Google finished its review on 30 Oct: the watch app is out to testers.
 **Why:** 0.60.0 is on Play for testers, but Play holds back the watch app until this one question is answered. The phone app is not affected.
 **Your task:** Open Play Console, pick MettleUp, then App content. Find the question about health features. Answer it (MettleUp logs workouts, so the answer is Yes, then tick the fitness or activity tracking box). Save, then tell me "health question done".
@@ -544,6 +547,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 70. Belvee: check whether the old GST is still live — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (30 Oct, 08:39 pm, via the page)**
 **Why:** if Belvee's 2021 GST was never cancelled, late fees may be adding up each month (see #32). I cannot check it myself: the official page needs a captcha.
 **Your task:** Open https://services.gst.gov.in/services/searchtp , type Belvee's GSTIN (on the GST certificate in D:\Belvee\Legal\BELVEE GST.pdf, ends R1ZW), fill the captcha, press Search, and tell me the "Status" it shows (Active or Cancelled, and the date).
 
@@ -1392,6 +1396,7 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (30 Oct, 08:35 pm, via the page)**
 **DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 **YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."

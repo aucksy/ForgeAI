@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-229. Website: latest features, prices and screenshots; Belvee GST and what he really needs - 30 Oct 2026
+He said (tracker #30, picked A: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999): "Ensure that you have latest features / prices and screenshots are updated on website".
+He said (tracker #70): Belvee's GST shows "Cancelled on application of Taxpayer (Effective from 01/01/2023)" (apparel). "I dont need a GST right.. I just want to be able to open current account and start taking payments using razorpay and also be able to submit apps without 14 days testing - and you can tell what other benefits I should have by doing this or that".
+What I do: (1) bring mettleup.fit up to date: the chosen prices, the newest features, fresh app screenshots. (2) answer #70: what a current account, Razorpay and a Play organisation account each need, with and without GST, and the other benefits.
+
 ## R-228. Check-in scanner opens the camera and only takes a picture - 30 Oct 2026
 He said: "Check in scanner does not work in the app. It launches the phone camera and takes a picture. thats just a stupid mistake you made..."
 Cause: "Check in" sent Android's plain photo-camera action (scanPoster.ts). Many camera apps do not read QR codes in that mode.
