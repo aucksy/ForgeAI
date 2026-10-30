@@ -5,7 +5,8 @@ appId: com.mettleup.app
 - takeScreenshot: j3-after-drag
 - scrollUntilVisible:
     element: "Discard workout"
-    centerElement: true
+# No centerElement: the button is the last thing in the list and cannot reach the middle, so
+# Maestro kept scrolling for 20 s with it in plain view (run 41098827956, owner).
     timeout: 20000
 - tapOn: "Discard workout"
 - extendedWaitUntil:
