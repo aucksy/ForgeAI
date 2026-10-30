@@ -721,6 +721,10 @@ appId: com.mettleup.app
       FIND: '(\d+ in stock|Only \d+ left)'
 - copyTextFrom:
     text: '(\d+ in stock|Only \d+ left)'
+# Run 41042338951 (owner): the shared FORGE1 gym is used by the other QA runs at the same time, and
+# one of them held a shaker order while this count was read (24, then 25 at the end). So the end
+# check accepts this count or up to 3 more; a LOWER count (an order left behind) still fails.
+- evalScript: '${output.stockBack = (function (t) { var n = parseInt(t.replace(/[^0-9]/g, ""), 10); var a = []; for (var k = n; k <= n + 3; k++) { a.push(k + " in stock", "Only " + k + " left"); } return "^(" + a.join("|") + ")$"; })(maestro.copiedText)}'
 - scrollUntilVisible:
     element: "Add to bag"
     centerElement: true
@@ -800,7 +804,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^${maestro.copiedText}$"
+      FIND: "${output.stockBack}"
 - takeScreenshot: r-27e-stock-back
 # And out again: nothing open now, so the plain question and its "Leave gym".
 - back
