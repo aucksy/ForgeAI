@@ -5,6 +5,12 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-226. Demo PDF: unique features first; Shop, Messages, Offers were missing - 30 Oct 2026
+He said: "for the PDF you created, I want unique features at the top which other softwares, specially GGMS does not give..
+you missed out shop for GYM... please dont kid with me here.. take this seriously ... Did you forget Messages and offers too ?"
+What I do: a new first section "Only in MettleUp" (checked against GGMS: ggms.in, its Play listing, R-ggms-competitor.md),
+then Shop, Messages and Offers added with their exact taps. Every claim checked in the code; no claim GGMS cannot disprove.
+
 ## R-225. Gym section with tabs; why scan a QR when the phone numbers match — 30 Oct 2026
 He said: "We need to create dedicated section with tabs for GYM section in the app. First default landing should be
 shop if active. Then GYM info, checkins etc. Then leaderboard". And: "if the phone number of the member in the gym
