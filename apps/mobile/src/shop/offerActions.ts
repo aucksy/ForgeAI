@@ -10,6 +10,8 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { hasFeature } from '@forgeai/theme';
+
 import { getDb } from '@/db';
 import { todayISO } from '@/lib/date';
 
@@ -157,6 +159,8 @@ export function syncOfferDates(link: GymLink, known?: OffersAnswer): Promise<Off
   const epoch = offerEpoch;
   const p = (async (): Promise<OfferLoad> => {
     await retryPendingOfferLeave(link).catch((e: unknown) => console.warn('[ForgeErr] offer: resending a leave', e));
+    // T66: workout offers are Pro; a Starter gym's card stays hidden (always allowed while PLAN_GATE_ON is off).
+    if (!hasFeature(link, 'workoutOffer')) return { kind: 'missing' };
     let load: OfferLoad = known ? { kind: 'answer', answer: known } : loadFrom(await apiOffers(link.memberKey));
     if (epoch !== offerEpoch) return { kind: 'stale' };
     if (load.kind !== 'answer') return load;

@@ -53,11 +53,14 @@ import {
 } from '../kit';
 import { WaitingMoneyLine } from '../offline';
 import { NumbersSection } from '../OwnerNumbers';
+import { useHasFeature } from '../../plan/GymPackProvider';
+import { ProNote } from '../../plan/ProNote';
 import { Link, navigate } from '../router';
 
 export function TodayScreen() {
   const { snapshot, memberViews, allMemberViews, today, desk } = useCrm();
   const compact = useIsCompact();
+  const numbersOn = useHasFeature('yourNumbers');
   // Staff (front desk) sees counts of people, never the gym's money totals (permissions.ts).
   const seeTotals = useCan()('seeTotals');
 
@@ -250,7 +253,8 @@ export function TodayScreen() {
       </Grid>
 
       {/* R-168: five numbers with a trend line each (money owed is the owner's); a tap opens the list. */}
-      <NumbersSection />
+      {/* T66: Pro (closed only once PLAN_GATE_ON is on and the gym is on Starter). */}
+      {numbersOn ? <NumbersSection /> : <ProNote feature="yourNumbers" />}
 
       <div style={{ height: space.xl }} />
 

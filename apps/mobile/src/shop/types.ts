@@ -104,6 +104,12 @@ export interface GymLink {
    * theme follows it (theme/gymTheme.ts).
    */
   brand?: GymBrand | null;
+  /**
+   * T66 (#30 A): the gym's MettleUp pack ('starter' | 'pro' | 'ai', from member_gym_pack, 0046). Absent
+   * = not known = every feature on. Only ever asked while PLAN_GATE_ON (@forgeai/theme) is on;
+   * `hasFeature(link, ...)` reads it.
+   */
+  plan?: string;
 }
 
 /** S2: an order the gym holds (from `member_orders`). Paid at the desk, never in the app. */

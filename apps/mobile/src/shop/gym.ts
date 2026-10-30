@@ -6,7 +6,7 @@
  * and the persisted blob's cleaning. No Supabase here (it is a native-backed client); the calls
  * live in gymApi.ts and the store in gymStore.ts.
  */
-import { parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
+import { packOf, parseGymBrand, sameBrand, type GymBrand } from '@forgeai/theme';
 
 import { SHOP_CATEGORIES } from './catalog';
 import { lineKey, lineName, priceBag, rupees } from './money';
@@ -224,6 +224,8 @@ export function linkFromJoin(raw: unknown): GymLink | null {
   if (!memberKey || !memberId || !gymId || !gymName) return null;
   // Gym branding: the join's (and a saved link's) brand; an unbranded gym carries none.
   const brand = parseGymBrand(raw.brand);
+  // T66: a saved link's pack (only a known word; anything else = not known = every feature on).
+  const plan = packOf(raw.plan);
   return {
     memberKey,
     memberId,
@@ -232,7 +234,21 @@ export function linkFromJoin(raw: unknown): GymLink | null {
     joinCode: typeof raw.joinCode === 'string' ? raw.joinCode : '',
     name: typeof raw.name === 'string' ? raw.name : '',
     ...(brand ? { brand } : {}),
+    ...(plan ? { plan } : {}),
   };
+}
+
+/**
+ * T66: the link with the gym's pack as member_gym_pack (0046) says it now: the same link (same object)
+ * when nothing changed; null (no pack) removes it. PURE.
+ */
+export function linkWithPack(link: GymLink, raw: unknown): GymLink {
+  const plan = packOf(raw);
+  if ((link.plan ?? null) === plan) return link;
+  const next: GymLink = { ...link };
+  if (plan) next.plan = plan;
+  else delete next.plan;
+  return next;
 }
 
 /** What member_me says about the gym now: its name and brand (the owner may have changed them). */

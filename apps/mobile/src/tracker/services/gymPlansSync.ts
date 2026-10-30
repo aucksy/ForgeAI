@@ -13,6 +13,8 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { hasFeature } from '@forgeai/theme';
+
 import { todayISO } from '@/lib/date';
 import { apiGymPlans } from '@/shop/gymApi';
 import type { GymPlan } from '@/shop/gymPlans';
@@ -80,6 +82,8 @@ export function retireGymFolders(): Promise<boolean> {
 /** Ask the gym and save what changed. True when a folder was added, updated or relabelled. Never throws. */
 export function syncGymPlans(link: GymLink | null, opts: { force?: boolean; now?: number } = {}): Promise<boolean> {
   if (!link) return Promise.resolve(false);
+  // T66: trainer plans are Pro; plans already on the phone stay (always allowed while PLAN_GATE_ON is off).
+  if (!hasFeature(link, 'trainerPlans')) return Promise.resolve(false);
   const now = opts.now ?? Date.now();
   if (!opts.force && lastAsked?.key === link.memberKey && now - lastAsked.at < GYM_PLANS_EVERY_MS) return Promise.resolve(false);
   if (running) return running;

@@ -24,7 +24,7 @@ import { GymBrandMark } from '@/components/GymBrandMark';
 import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, radius, space, type } from '@/theme/tokens';
-import { isBranded } from '@forgeai/theme';
+import { hasFeature, isBranded } from '@forgeai/theme';
 import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 
 import { SHOP_CATEGORIES } from './catalog';
@@ -110,7 +110,9 @@ function GymShop({ link }: { link: GymLink }) {
   const products = useGymShop((s) => s.products);
   const hasList = useGymShop((s) => s.productsAt != null);
   // R-77: the shop shows once the gym lists something (its owner turned it on in the admin app).
-  const shopOn = gymShopOn(true, products.length);
+  // T66: the shop is Pro (always allowed while PLAN_GATE_ON is off).
+  const shopOn = gymShopOn(true, products.length) && hasFeature(link, 'shop');
+  const plansOn = hasFeature(link, 'trainerPlans');
   const productsAt = useGymShop((s) => s.productsAt);
   const bag = useGymShop((s) => s.bag);
   const orderCount = useGymShop((s) => s.orders.length);
@@ -263,7 +265,7 @@ function GymShop({ link }: { link: GymLink }) {
               />
             </View>
             {/* R-120: the diet plan the trainer sent (only once one has come). */}
-            {diets && diets.length > 0 ? (
+            {plansOn && diets && diets.length > 0 ? (
               <View style={{ marginTop: space.md }}>
                 <LinkRow
                   title="Diet plan"

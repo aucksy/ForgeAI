@@ -106,6 +106,17 @@ export async function apiMe(key: string): Promise<GymResult<GymNow>> {
   return now ? { ok: true, data: now } : { ok: false, error: { kind: 'other' } };
 }
 
+/**
+ * T66: the gym's MettleUp pack (member_gym_pack, 0046): the raw word, or null for none. Only called while
+ * PLAN_GATE_ON is on. A server without 0046 answers `missing` (every feature then stays on).
+ */
+export async function apiGymPack(key: string): Promise<GymResult<unknown> | { ok: false; missing: true }> {
+  const r = await call('member_gym_pack', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const row = Array.isArray(r.data) ? r.data[0] : r.data;
+  return { ok: true, data: row && typeof row === 'object' ? (row as { pack?: unknown }).pack ?? null : null };
+}
+
 export async function apiProducts(key: string): Promise<GymResult<Product[]>> {
   const r = await call('member_products', { p_key: key }, READ_MS);
   return r.ok ? { ok: true, data: productsFromRows(r.data) } : r;

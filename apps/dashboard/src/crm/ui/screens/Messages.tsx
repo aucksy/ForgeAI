@@ -16,6 +16,8 @@ import { useCan } from '../../auth/AuthProvider';
 import { MessagesSection } from '../../shop/MessagesSection';
 import { AutoRemindersSection } from '../../shop/AutoRemindersSection';
 import { OffersSection } from '../../shop/OffersSection';
+import { useHasFeature } from '../../plan/GymPackProvider';
+import { ProNote } from '../../plan/ProNote';
 import { ChipToggle, PageHeader, space } from '../kit';
 import { navigate } from '../router';
 
@@ -24,6 +26,7 @@ export const REMINDERS_SECTION = 'reminders';
 
 export function MessagesScreen({ startWith }: { startWith?: string }) {
   const owner = useCan()('manageGym');
+  const offerOn = useHasFeature('workoutOffer');
   const reminders = startWith === REMINDERS_SECTION;
   // The front desk has no Messages section: anything else is the workout offer.
   const offer = startWith === OFFER_SECTION || (!owner && !reminders);
@@ -55,7 +58,8 @@ export function MessagesScreen({ startWith }: { startWith?: string }) {
         />
       </div>
       {/* A new address (a Today nudge) starts the page again with that message picked. */}
-      {reminders ? <AutoRemindersSection /> : offer ? <OffersSection /> : <MessagesSection key={startWith ?? ''} startWith={startWith} />}
+      {/* T66: the workout offer is Pro (closed only once the switch is on and the gym is on Starter). */}
+      {reminders ? <AutoRemindersSection /> : offer ? (offerOn ? <OffersSection /> : <ProNote feature="workoutOffer" />) : <MessagesSection key={startWith ?? ''} startWith={startWith} />}
     </>
   );
 }

@@ -10,3 +10,5 @@ export * from './brand';
 export * from './logoColour';
 // R-124: the gym's opening hours (rules, India-time "open now", words), shared so both apps agree.
 export * from './gymHours';
+// T66 (#30 A): which pack a gym is on and what each pack has; hasFeature() behind PLAN_GATE_ON (off).
+export * from './plans';

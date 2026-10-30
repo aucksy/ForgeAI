@@ -64,6 +64,9 @@ import { PinPrompt } from './auth/PinForms';
 import { Redirect, useRoute } from './ui/router';
 import { MoveBanner } from './move/MoveBanner';
 import { DemoNeedsRealGym, demoNeedsRealGym, useDemo } from './demo/demoMode';
+import { GymPackProvider, useFeatureCheck } from './plan/GymPackProvider';
+import { proFeatureOfPage } from './plan/pack';
+import { ProPage } from './plan/ProNote';
 
 export function CrmApp() {
   return (
@@ -111,7 +114,10 @@ function SessionRoot() {
     <>
       <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
         <ShopProvider>
-          <Routes online={onlineKey !== null} />
+          {/* T66: the gym's pack (Starter or Pro). Asks nothing while PLAN_GATE_ON is off. */}
+          <GymPackProvider sessionKey={onlineKey}>
+            <Routes online={onlineKey !== null} />
+          </GymPackProvider>
         </ShopProvider>
       </CrmProvider>
       {/* R-117: once, after a sign-in with a one-time code by someone with no PIN yet. */}
@@ -248,11 +254,15 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
 function Screen({ segments, role }: { segments: string[]; role: Role }) {
   const [head, id] = segments;
   const { offline } = useOffline();
+  const proOn = useFeatureCheck();
   // R-119: the demo gym shows a plain card in place of any page that only works in a real gym.
   const demoPage = useDemo() ? demoNeedsRealGym(head, id) : null;
   if (demoPage) return <DemoNeedsRealGym page={demoPage} />;
   const blocked = offline ? offlinePage(head, id) : null;
   if (blocked) return <NeedsInternetPage what={blocked} />;
+  // T66 (#30 A): a Pro page on a Starter gym shows what it is instead (only once PLAN_GATE_ON is on).
+  const pro = proFeatureOfPage(head, id);
+  if (pro && !proOn(pro)) return <ProPage feature={pro} />;
 
   switch (head) {
     case undefined:

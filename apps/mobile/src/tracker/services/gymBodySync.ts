@@ -8,6 +8,8 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { hasFeature } from '@forgeai/theme';
+
 import { apiGymDiets, apiGymMeasures } from '@/shop/gymApi';
 import {
   parseGymDietsCopy,
@@ -54,6 +56,8 @@ export async function readGymMeasures(): Promise<GymMeasuresStore> {
 /** Ask the gym and keep its answer. True when the kept copy changed. */
 export async function syncGymMeasures(link: GymLink | null, opts: { force?: boolean; now?: number } = {}): Promise<boolean> {
   if (!link) return false;
+  // T66: body measurements from the trainer are Pro (always allowed while PLAN_GATE_ON is off).
+  if (!hasFeature(link, 'trainerPlans')) return false;
   const now = opts.now ?? Date.now();
   if (!due('measures', link, now, opts.force)) return false;
   try {
@@ -100,6 +104,8 @@ export type DietSync =
 /** Ask the gym for its diet plans and keep them. */
 export async function syncGymDiets(link: GymLink | null, opts: { force?: boolean; now?: number } = {}): Promise<DietSync> {
   if (!link) return { kind: 'kept' };
+  // T66: diet plans from the trainer are Pro (always allowed while PLAN_GATE_ON is off).
+  if (!hasFeature(link, 'trainerPlans')) return { kind: 'kept' };
   const now = opts.now ?? Date.now();
   if (!due('diets', link, now, opts.force)) return { kind: 'kept' };
   try {

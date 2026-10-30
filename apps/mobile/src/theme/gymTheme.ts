@@ -21,7 +21,7 @@
  */
 import { create } from 'zustand';
 
-import { isBranded, sameBrand, type HeadingStyle } from '@forgeai/theme';
+import { hasFeature, isBranded, sameBrand, type HeadingStyle } from '@forgeai/theme';
 
 import { useGymShop } from '@/shop/gymStore';
 import { phoneNative } from '@/tracker/phone/native';
@@ -92,7 +92,9 @@ function saveLook(m: ThemeMirror | null): void {
 }
 
 function mirrorOf(link: GymLink | null): ThemeMirror | null {
-  return link ? { gymId: link.gymId, gymName: link.gymName, brand: link.brand ?? null } : null;
+  // T66: the gym's logo and colours are Pro; a Starter gym keeps MettleUp's own look (with its name).
+  // Always true while PLAN_GATE_ON (@forgeai/theme) is off.
+  return link ? { gymId: link.gymId, gymName: link.gymName, brand: hasFeature(link, 'branding') ? (link.brand ?? null) : null } : null;
 }
 
 function setShown(m: ThemeMirror | null): void {

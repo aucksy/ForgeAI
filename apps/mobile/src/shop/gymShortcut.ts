@@ -9,6 +9,8 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { hasFeature } from '@forgeai/theme';
+
 import { pictureUrl } from '@/cloud/picture';
 import { phoneNative, type GymShortcutResult } from '@/tracker/phone/native';
 
@@ -27,7 +29,9 @@ const HEX = /^#[0-9A-Fa-f]{6}$/;
 export const SHORTCUT_PLAIN_BG = '#FFFFFF';
 
 /** The shortcut for this gym, or null with no gym or no logo (an https picture). PURE. */
-export function gymShortcutPlan(link: Pick<GymLink, 'gymName' | 'brand'> | null): GymShortcutPlan | null {
+export function gymShortcutPlan(link: Pick<GymLink, 'gymName' | 'brand' | 'plan'> | null): GymShortcutPlan | null {
+  // T66: the gym's logo is Pro (always allowed while PLAN_GATE_ON is off).
+  if (link && !hasFeature(link, 'branding')) return null;
   const logo = link?.brand?.logoUrl;
   if (!link || !logo || !logo.startsWith('https://')) return null;
   const bg = link.brand?.bg && HEX.test(link.brand.bg) ? link.brand.bg : SHORTCUT_PLAIN_BG;

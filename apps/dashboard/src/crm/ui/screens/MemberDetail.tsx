@@ -56,6 +56,8 @@ import { memberCardFacts } from '../../logic/memberCard';
 import { plansForMember, withoutMember } from '../../logic/workoutPlans';
 import { NOT_ONLINE_YET, SendPlanSheet, WorkoutPlanSheet } from './WorkoutPlans';
 import { MemberMeasurementsCard } from './MemberMeasurements';
+import { useHasFeature } from '../../plan/GymPackProvider';
+import { ProNote } from '../../plan/ProNote';
 import { MemberDietCard } from './DietPlans';
 import {
   Button,
@@ -148,7 +150,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [buildingPlan, setBuildingPlan] = useState<WorkoutPlanDraft | null>(null);
   /** A plan just sent in one tap: the Undo bar takes this member off it again. */
   const [sentPlan, setSentPlan] = useState<WorkoutPlan | null>(null);
-  const canSendPlan = allowed('editWorkoutPlans');
+  // T66: workout plans, diet plans and measurements are Pro. `trainerOn` is always true while
+  // PLAN_GATE_ON is off; with it on, a Starter gym sees one Pro note in their place.
+  const trainerOn = useHasFeature('trainerPlans');
+  const mayPlan = allowed('editWorkoutPlans');
+  const canSendPlan = mayPlan && trainerOn;
   // F107: the member's photo (owner and desk alike), when this gym's server keeps photos (0043).
   const photoKey = useDeskPhotoKey();
   const memberPhoto = useMemberPhoto(memberId);
@@ -552,6 +558,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         )}
       </Card>
 
+      {mayPlan && !trainerOn && <ProNote feature="trainerPlans" />}
       {canSendPlan && (
         <Card style={{ marginBottom: space.lg }}>
           <SectionTitle

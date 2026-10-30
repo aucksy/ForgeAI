@@ -5,12 +5,13 @@
  * and the join card says why.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PLAN_GATE_ON } from '@forgeai/theme';
 
 import { uuid } from '@/lib/uuid';
 import { prefetchGymLogo } from '@/theme/logoPrefetch';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
-import { apiCancelOrder, apiCheckIn, apiJoin, apiMe, apiPreview, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
+import { apiCancelOrder, apiCheckIn, apiGymPack, apiJoin, apiMe, apiPreview, apiMessages, apiOrders, apiPlaceOrder, apiProducts, apiSawMessages } from './gymApi';
 import { useGymInbox } from './inboxStore';
 import { leaveOnServer, leavePendingText, retryPendingLeaves } from './pendingLeave';
 import {
@@ -255,6 +256,8 @@ async function checkGymNow(): Promise<void> {
   // A new logo is in the cache before the opening that will show it (D13).
   prefetchGymLogo(r.data.brand?.logoUrl);
   useGymShop.getState().setGymNow(r.data);
+  // T66: the gym's pack, only once PLAN_GATE_ON is on (the owner's yes; until then nothing is asked).
+  if (PLAN_GATE_ON) void refreshGymPack(key);
   // Gym messages: the bell's count is fresh whenever the gym was asked anyway (launch, hourly).
   void refreshInbox().catch(() => undefined);
   // R-77: and whether its shop is on (the tab says "Shop" or "Gym").
@@ -263,6 +266,20 @@ async function checkGymNow(): Promise<void> {
   syncOfferQuietly();
   // R-86: the automatic reminders (the owner's switches, the plan, the member's dates).
   syncGymRemindersQuietly();
+}
+
+/**
+ * T66: ask which pack the gym is on and keep it on the link. Quiet: offline or a server without 0046
+ * keeps what the phone has (no pack known = every feature on). Never throws.
+ */
+async function refreshGymPack(key: string): Promise<void> {
+  try {
+    const r = await apiGymPack(key);
+    if (r.ok) useGymShop.getState().setGymPack(key, r.data);
+    else if (!('missing' in r) && r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[ForgeErr] gym check: the pack', r.error);
+  } catch (e) {
+    console.warn('[ForgeErr] gym check: the pack', e);
+  }
 }
 
 /** Best effort, in the background: a failure keeps what the offer card shows. */

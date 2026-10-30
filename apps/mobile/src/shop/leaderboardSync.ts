@@ -7,6 +7,8 @@
  * A server without 0037 (leaderboard not live): the push stops for this run and the card stays
  * hidden: no words, no error.
  */
+import { hasFeature } from '@forgeai/theme';
+
 import { todayISO } from '@/lib/date';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
@@ -116,6 +118,12 @@ export function peekBoard(link: GymLink | null): Board | null {
  */
 export async function readBoard(link: GymLink): Promise<BoardRead> {
   if (boardMissing) return { kind: 'hidden' };
+  // T66: the monthly challenge and its board are Pro (always allowed while PLAN_GATE_ON is off).
+  if (!hasFeature(link, 'challenge')) {
+    kept = null;
+    setLive(false);
+    return { kind: 'hidden' };
+  }
   try {
     const r = await apiBoard(link.memberKey);
     if (r.ok) {
