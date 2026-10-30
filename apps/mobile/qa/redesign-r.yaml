@@ -724,7 +724,10 @@ appId: com.mettleup.app
 # Run 41042338951 (owner): the shared FORGE1 gym is used by the other QA runs at the same time, and
 # one of them held a shaker order while this count was read (24, then 25 at the end). So the end
 # check accepts this count or up to 3 more; a LOWER count (an order left behind) still fails.
-- evalScript: '${output.stockBack = (function (t) { var n = parseInt(t.replace(/[^0-9]/g, ""), 10); var a = []; for (var k = n; k <= n + 3; k++) { a.push(k + " in stock", "Only " + k + " left"); } return "^(" + a.join("|") + ")$"; })(maestro.copiedText)}'
+# (No braces inside ${...}: Maestro ends the script at the first one; run 41058073501.)
+- evalScript: '${output.stockN = parseInt(maestro.copiedText.replace(/[^0-9]/g, ""), 10)}'
+- evalScript: '${output.stockAny = "(" + output.stockN + "|" + (output.stockN + 1) + "|" + (output.stockN + 2) + "|" + (output.stockN + 3) + ")"}'
+- evalScript: '${output.stockBack = "^(" + output.stockAny + " in stock|Only " + output.stockAny + " left)$"}'
 - scrollUntilVisible:
     element: "Add to bag"
     centerElement: true
