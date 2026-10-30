@@ -548,6 +548,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 70. Belvee: check whether the old GST is still live — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** ANSWERED
+**READ (30 Oct, 08:39 pm, via the page)**
 **TASK DONE (30 Oct, 08:39 pm, via the page)**
 **Why:** if Belvee's 2021 GST was never cancelled, late fees may be adding up each month (see #32). I cannot check it myself: the official page needs a captcha.
 **Your task:** Open https://services.gst.gov.in/services/searchtp , type Belvee's GSTIN (on the GST certificate in D:\Belvee\Legal\BELVEE GST.pdf, ends R1ZW), fill the captcha, press Search, and tell me the "Status" it shows (Active or Cancelled, and the date).
@@ -1405,6 +1406,7 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DECIDED
+**READ (30 Oct, 08:35 pm, via the page)**
 **DECIDED (24 Oct 2026, R-97):** replaced by the 30 Oct decision below.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 **YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."
