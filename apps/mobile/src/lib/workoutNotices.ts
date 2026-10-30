@@ -5,7 +5,7 @@
  *
  *  - Notices, in this order: "That link didn't work" (the answer to the member's own tap, gone after
  *    a few seconds), a new version, What's new, the watch app offer (F67, once), the backup reminder. Once the member has closed one
- *    today (Later, Got it), the others wait for the next day.
+ *    today (Later, Got it), the others wait for the next day; What's new after an update never waits.
  *  - Inside Up next: the easy week, else the easy-week offer, else the muscle tip.
  * The cards still decide for themselves whether they have something to say (`want`); this only
  * decides which one is drawn.
@@ -26,8 +26,10 @@ export function pickNotice(wants: Partial<Record<NoticeKind, boolean>>, restDay:
   if (restDay === undefined) return null;
   for (const kind of NOTICE_ORDER) {
     if (!wants[kind]) continue;
-    // A link the member just tapped is always answered; the rest wait a day after one was closed.
-    if (kind !== 'link' && restDay === today) continue;
+    // A link the member just tapped is always answered, and so is their own update: What's new waits for
+    // nothing (owner, 30 Oct 2026: 0.61.0 came the same day as 0.60.0, whose news he had closed, so its
+    // news never showed). The rest wait a day after one was closed.
+    if (kind !== 'link' && kind !== 'whatsNew' && restDay === today) continue;
     return kind;
   }
   return null;

@@ -5,6 +5,23 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-224. Demo PDF, voice feedback, What's new, AI import before a migration — 30 Oct 2026
+He said: "create a PDF for me to give walkthru/demo to client today ... add top 20 most useful/valuable features for GYM
+and member also", "keep the number of pages less - dont add screenshtos.. only the path to reach a setting", "Audio
+Feedback did not work" (screenshot: "Couldn't reach us"), "the most recent update also did not have What's new section",
+"test the excel import with AI feature again because today we will be migrating their data so it should work".
+What I did:
+- docs/demo/MettleUp-demo-guide.pdf (3 pages, from the .html beside it): demo order, top 20 gym, top 20 member, exact
+  taps read from the source. Only live features; pause/renew and the workout report are under "coming".
+- Voice: the live server turns a real clip into text in 1-2 s from both addresses, so the fault is on the phone
+  (its upload throws). Fix goes into 0.62.0.
+- What's new: the Workout tab shows one notice a day; 0.61.0 came the same day as 0.60.0, whose news he closed, so
+  0.61.0's news waited. Now What's new after an update never waits (workoutNotices.ts). Ships in 0.62.0.
+- AI import: live AI matched 11/11 and 12/12 columns, but on a real sheet it overruled our correct rules: "Fees Paid"
+  became Plan price and "DOJ" Plan start (wrong money, wrong join date). Fixed: a money or date column our rules
+  placed never moves to another money/date field (AI only notes it); chained corrections still land. Live on the
+  desk; checked on the live import screen with a fake 3-row file (all boxes right, 0 problems, nothing imported).
+
 ## R-223. Never stop while he is away; pending decisions are not a reason to stop — 30 Oct 2026
 He said: "in future if possible do not stop working on other items because of my pending decisions. I did tell you that I'm going to sleep and you still stopped." He answered #75, #76, #77 (all A: yes).
 Cause: not compaction. My reply ended with a Next list and no background job, so nothing woke me for six hours.

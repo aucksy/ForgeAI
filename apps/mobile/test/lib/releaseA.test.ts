@@ -162,7 +162,9 @@ describe('A12: one notice at a time above Up next, one extra line inside it', ()
     expect(pickNotice({}, null, today)).toBeNull();
   });
   it('one closed today: the others wait for tomorrow; a tapped link is still answered', () => {
-    expect(pickNotice({ whatsNew: true }, today, today)).toBeNull();
+    expect(pickNotice({ backup: true }, today, today)).toBeNull();
+    // Owner, 30 Oct 2026: the news of a just-installed update never waits for tomorrow.
+    expect(pickNotice({ whatsNew: true, backup: true }, today, today)).toBe('whatsNew');
     expect(pickNotice({ whatsNew: true }, '2026-10-25', today)).toBe('whatsNew');
     expect(pickNotice({ link: true, whatsNew: true }, today, today)).toBe('link');
   });

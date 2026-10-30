@@ -14,9 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 75 | Add the desk photo table to the live server? | A: yes |
-| 76 | Add the pause and renew requests table to the live server? | A: yes |
-| 77 | Add the workout report table to the live server, with the member words? | A: yes |
 
 ---
 
@@ -395,7 +392,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F104 Automatic SMS or WhatsApp reminders | Not doing | Reminders sent by themselves cost money per message, so a paid provider needs your OK. | The owner picks which reminders go out by themselves (plan ends in 3 days, fee due, birthday) and at what time. They go through a paid WhatsApp business provider under the gym's name, about ₹0.13 a message (about ₹200 a month for 500 members). The admin app lists every message sent and any that failed. |
 | F105 Trainer profiles and schedules | Idea | Trainers can already send plans; no trainer profile or schedule screen yet. | Each trainer gets a page: photo, what they teach, working hours, their personal-training members and sessions left. A weekly calendar shows the booked personal-training slots, so the desk can book a member with a free trainer. |
 | F106 AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
-| F107 Webcam photo at the desk | Waiting for you | Built and tested on the test server (#75). It appears at the desk after your yes to add its table to the live server. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
+| F107 Webcam photo at the desk | Live | Live 30 Oct (#75): "Take photo" on "New member" at the desk. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
 | F108 Body measurements taken by the gym | Live | 25 Oct: the trainer records weight, body fat and tape measurements on the member's profile in the admin app; the member sees them in Progress → Body, marked "From <gym>" (server 0035 live, #64). |  |
 | F109 Trainer view of member progress | Planned | Decided in #46 (A, no tick box). I build it; your OK on the exact words and the live server yes come at the end. | The member is told on the join screen that the gym's trainers see their workouts, and can turn it off in Settings. A trainer's "My members" shows one line each, like "New best: Leg press 120 kg × 10", with ready WhatsApp messages. Body weight, photos and food never leave the phone. |
 | F110 AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
@@ -413,7 +410,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F118 Gym's colours and logo in the app | Live | After joining, the app takes on the gym's colours and shows its logo at start-up. |
 | F119 Gym logo on the home screen | Live | After joining, add a home-screen shortcut with the gym's logo that opens ForgeAI. |
 | F120 QR check-in | Live | Members scan the gym's poster and tap once; the desk sees the check-in and plan status. |
-| F121 Member data export by the gym, on request | Waiting for you | Built 30 Oct (R-220): the desk asks, the member says yes in the app, the desk downloads. Only workouts from the join date. Waiting for your live yes and your OK on the words: #77. | Members already save their own workouts as Excel (Settings → Export), with or without a gym. For the gym: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable report and the desk downloads it. The gym never gets workouts from before the join date. |
+| F121 Member data export by the gym, on request | Next release | Server live 30 Oct (#77); the desk can ask now. Members get the "Send your report to the gym?" prompt in 0.62.0. | Members already save their own workouts as Excel (Settings → Export), with or without a gym. For the gym: the desk taps "Request workout report"; the member's app asks "Send your report to the gym?"; on yes, the phone makes a readable report and the desk downloads it. The gym never gets workouts from before the join date. |
 | F122 A member's own history from before joining a gym | Planned | Your rule (29 Oct, R-217): a member's workouts are theirs. Before joining, during and after leaving a gym, they stay in the app; the gym never sees the ones from before the join date. Members of a gym get every feature free; members with no gym get the basics free and pay for some features (which ones: your call, later). | Workouts logged before the join date stay the member's alone: the gym never sees them, even if the member shares progress. Leaving the gym keeps every workout on the phone; only the gym's plans stop updating. Still to settle with you: the exact cut-off. |
 | F123 FitPass and other pass members | Planned | Pass members (FitPass, cultpass) join without a plan, get the gym's plans and shop, and the owner counts their visits apart. I build it; your live server yes comes at the end. | The desk adds the person as a "Pass member" (FitPass, cultpass and so on): no plan, no dues, never on the renewal list. They join in the app with the gym code and get the gym's plans, shop and messages. Each check-in counts as a pass visit, and a monthly count per pass company lets the owner match that company's payment. FITPASS and cultpass publish no check-in link for other apps (checked 29 Oct): their member shows a QR in their own app. So the desk taps "Pass visit" in our app, or the member scans the gym's MettleUp QR and picks the pass. If either company later gives us a link, the visit can count itself. Needs a live server change (your yes). |
 | F124 After check-in, start the workout | Live | "You're in ✓" then offers today's routine, or Push Pull Legs for a member with no routines. |
@@ -442,7 +439,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F147 Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
 | F148 The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
 | F149 Ask your trainer | Idea | Parked (owner, 24 Oct). A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
-| F150 Ask the desk to freeze or renew | Waiting for you | Built and tested on the test server (#76). Members see "Pause my plan" and "Renew my plan" after your yes to add its table to the live server; the desk approves each request with one tap. A renewal is still paid at the desk. | On the member's plan card in the app, two buttons: "Pause my plan" (pick the dates) and "Renew my plan" (pick a plan). The gym's admin app shows each request with the member's name. One tap approves it, using the freeze and renew tools the desk already has (F81). The member gets a message when it is done; a renewal is still paid at the desk. |
+| F150 Ask the desk to freeze or renew | Next release | Server live 30 Oct (#76); the desk sees requests now. Members get "Pause my plan" and "Renew my plan" in 0.62.0. | On the member's plan card in the app, two buttons: "Pause my plan" (pick the dates) and "Renew my plan" (pick a plan). The gym's admin app shows each request with the member's name. One tap approves it, using the freeze and renew tools the desk already has (F81). The member gets a message when it is done; a renewal is still paid at the desk. |
 | F151 The gym's workout of the day | Planned | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
 | F152 "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
 | F153 Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
@@ -484,7 +481,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 77. Workout report for the gym: may I add its table to the live server, and are the words OK? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**DECIDED (30 Oct 2026, page + chat):** A, with these words. The report table is on the live server (safety test 9 checks pass). The desk sees "Request workout report" now; members get the "Send your report to the gym?" prompt in app 0.62.0.
 **READ (30 Oct, 07:31 am, via the page)**
 **Why:** F121 is built. The desk taps "Request workout report" on a member's page. The member's app asks first; only on yes does the phone send the report, and the desk downloads it. Everything stays hidden until the live server has a new private table. I tested it on the test server: all 64 report checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing.
 **What the gym can and cannot get:** only workouts from the day the member joined the gym (the server reads the join date from your records, never from the phone, and refuses a file with older workouts). Only that gym can download it. A request with no answer ends after 30 days; a sent report is deleted 30 days after it arrives.
@@ -493,27 +491,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - "<Gym> wants a copy of your workouts from <date>, the day you joined: exercises, sets, weights, reps and your notes. The gym owner and desk can see it. Older workouts stay on your phone."
 - Buttons: "Yes, send it" / "No". After No: "OK. Nothing was sent to the gym."
 - "Want your own copy? Go to Settings and save all your workouts."
-**Decide:** May I add the report table to the live server with these words?
-- A: Yes, add it with these words. The desk then sees "Request workout report". (recommended)
-- B: Not yet. Everything stays hidden.
 
 ## 76. Pause and renew requests: may I add their table to the live server? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**DECIDED (30 Oct 2026, page + chat):** A. The requests table is on the live server (safety test 9 checks pass). The desk sees requests now; members get "Pause my plan" and "Renew my plan" in app 0.62.0.
 **READ (30 Oct, 07:32 am, via the page)**
 **Why:** F150 (members ask the desk from the app to pause or renew their plan) is built. The buttons in the app and the request list at the desk stay hidden until the live server has a new requests table. I tested it on the test server first: all 63 request checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. A renewal is still paid at the desk.
-**Decide:** May I add the requests table to the live server?
-- A: Yes, add it. Members then see "Pause my plan" and "Renew my plan", and the desk sees their requests. (recommended)
-- B: Not yet. Everything stays hidden.
 
 ## 75. Desk photos: may I add their table to the live server? — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**DECIDED (30 Oct 2026, page + chat):** A. The photo table is on the live server (safety test 9 checks pass) and the desk website is updated: "Take photo" shows on "New member".
 **READ (30 Oct, 07:32 am, via the page)**
 **Why:** F107 (take a new member's photo with the desk computer's camera) is built and in the desk panel. The button stays hidden until the live server has a new, private photo table. I tested that table on the new test server first: all 31 photo checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. Each photo takes about 50 KB of database space.
-**Decide:** May I add the photo table to the live server?
-- A: Yes, add it. The "Take photo" button then appears at the desk. (recommended)
-- B: Not yet. The button stays hidden.
 
 ## 74. Switch on spoken feedback: put your Groq key on our server — 30 Oct 2026
 **Chat:** ForgeAI Local Chat

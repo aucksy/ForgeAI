@@ -499,7 +499,13 @@ export function applyAiPicks(
   const aiFields: ImportField[] = [];
   const extras: AiApplied['extras'] = {};
   const held: string[] = [];
-  const sorted = [...picks].sort((a, b) => b.confidence - a.confidence);
+  // A column our rules placed in a field of the kind the AI names (money to money, date to date) waits
+  // for the end: another pick may take its field first ("Valid Upto" takes Valid till from "Renewal
+  // Date"), and then the AI may place it where it says ("Renewal Date" to Plan start).
+  const kindOf = (f: ImportField | null) => (f && MONEY_FIELDS.includes(f) ? 'money' : f && DATE_FIELDS.includes(f) ? 'date' : null);
+  const waits = (p: AiPick) => 'field' in p.target && kindOf(fieldAt(p.column)) !== null && kindOf(fieldAt(p.column)) === kindOf(p.target.field) && fieldAt(p.column) !== p.target.field;
+  const byConfidence = [...picks].sort((a, b) => b.confidence - a.confidence);
+  const sorted = [...byConfidence.filter((p) => !waits(p)), ...byConfidence.filter(waits)];
   for (const p of sorted) {
     if (ids.has(p.column)) continue;
     const name = columnName(headers, p.column);
@@ -511,7 +517,12 @@ export function applyAiPicks(
       }
       const holder = fieldAt(p.column);
       const free = out[field] === null && holder === null;
-      const backed = stats !== undefined && statsBack(field, p.column, out[field], stats);
+      // Owner's migration test, 30 Oct 2026: Gemini moved "Fees Paid" from Fees paid to Plan price and
+      // "DOJ" from Joining date to Plan start. Numbers (or dates) look alike in every money (or date)
+      // field, so the counts can never back such a move; only the header's words can, and our rules
+      // read those. A column our rules placed never moves to another field of the same kind.
+      const sameKind = holder !== null && kindOf(holder) !== null && kindOf(holder) === kindOf(field);
+      const backed = !sameKind && stats !== undefined && statsBack(field, p.column, out[field], stats);
       const allowed = free
         ? stats === undefined || backed
         : backed && !locked.has(field) && (holder === null || !locked.has(holder));
