@@ -7,6 +7,8 @@
  *    lists something (category chips, a 2-column grid, the bag top right). The bell (gym messages)
  *    stays top right. The last good product list is kept, so the tab opens at once and reads offline.
  *    Leaving the gym lives in Settings → Your gym only (A4).
+ *  - R-225 (30 Oct 2026): the joined page has its own tabs: Shop (first and opened first when the gym's
+ *    shop is on: My orders and the products), My gym (the rest above), Leaderboard.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -23,6 +25,7 @@ import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, radius, space, type } from '@/theme/tokens';
 import { isBranded } from '@forgeai/theme';
+import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 
 import { SHOP_CATEGORIES } from './catalog';
 import { listAgeText } from './gym';
@@ -30,7 +33,7 @@ import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
-import { gymShopOn } from './gymTab';
+import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
 import { LeaderboardCard } from './LeaderboardCard';
@@ -113,6 +116,9 @@ function GymShop({ link }: { link: GymLink }) {
   const orderCount = useGymShop((s) => s.orders.length);
   const unread = useGymInbox((s) => unreadCount(inboxFor(s, link.memberId)));
   const [filter, setFilter] = useState<Filter>('all');
+  // R-225: Shop (first when on) · My gym · Leaderboard. The member's pick holds while the tab is open.
+  const [picked, setPicked] = useState<GymSection | null>(null);
+  const section = gymSectionShown(picked, shopOn);
   const [loading, setLoading] = useState(false);
   const [pulling, setPulling] = useState(false);
   // R-163: each pull to refresh asks the busy card again at once.
@@ -228,68 +234,77 @@ function GymShop({ link }: { link: GymLink }) {
         ) : null}
         {hasList && problem ? <QuietLine text={withListAge(problem, listAgeText(productsAt, Date.now()))} /> : null}
 
-        {/* A4: My membership lives here only (not in Settings any more). First: the most used. */}
-        <MembershipCard link={link} />
-        {/* R-124: open or closed now, in India time (only once the gym has set its hours). */}
-        <GymHoursRow hours={hours} />
-        {/* R-163: how busy the gym is now and its quiet hours (hidden until 0039 is live and the gym has enough check-ins). */}
-        <GymBusyCard link={link} hours={hours} refreshKey={pulls} />
-        {/* A3: Check in from the app: the phone's camera reads the poster at the desk. */}
-        <View style={{ marginTop: space.md }}>
-          <LinkRow
-            title="Check in"
-            sub="Scan the poster at the desk to mark today's visit"
-            leading={
-              <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
-                <Icon name="camera" size={16} color={color.accent} />
-              </View>
-            }
-            onPress={() => void openPosterScan()}
-          />
-        </View>
-        {/* R-120: the diet plan the trainer sent (only once one has come). */}
-        {diets && diets.length > 0 ? (
-          <View style={{ marginTop: space.md }}>
-            <LinkRow
-              title="Diet plan"
-              sub={dietRowWords(diets)}
-              leading={
-                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="meal" size={16} color={color.accent} />
-                </View>
-              }
-              onPress={() => router.push('/shop/diet')}
-            />
-          </View>
-        ) : null}
-        {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
-        <OfferCard link={link} />
-        {/* R-133: the gym's leaderboard and challenge (hidden until the gym's server has them). */}
-        <LeaderboardCard link={link} />
-        {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
-        {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
-        {shopOn ? (
+        <SegmentedTabs tabs={gymSections(shopOn).map((id) => ({ id, label: GYM_SECTION_LABELS[id] }))} value={section} onChange={setPicked} />
+        {section === 'gym' ? (
           <>
-            <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink, marginTop: space.xl }}>
-              Shop
-            </Text>
-            {shopHint ? (
-              <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, marginTop: space.sm }}>
-                <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>{HINT_TEXT.shopInGym}</Text>
-                <Pressable
-                  onPress={() => {
-                    setShopHint(false);
-                    dismissHint('shopInGym').catch((e: unknown) => console.warn('[gym] could not save the hint', e));
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Got it. Hide this note"
-                  style={{ minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
-                </Pressable>
-              </Card>
+            {/* A4: My membership lives here only (not in Settings any more). First: the most used. */}
+            <MembershipCard link={link} />
+            {/* R-124: open or closed now, in India time (only once the gym has set its hours). */}
+            <GymHoursRow hours={hours} />
+            {/* R-163: how busy the gym is now and its quiet hours (hidden until 0039 is live and the gym has enough check-ins). */}
+            <GymBusyCard link={link} hours={hours} refreshKey={pulls} />
+            {/* A3: Check in from the app: the phone's camera reads the poster at the desk. */}
+            <View style={{ marginTop: space.md }}>
+              <LinkRow
+                title="Check in"
+                sub="Scan the poster at the desk to mark today's visit"
+                leading={
+                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon name="camera" size={16} color={color.accent} />
+                  </View>
+                }
+                onPress={() => void openPosterScan()}
+              />
+            </View>
+            {/* R-120: the diet plan the trainer sent (only once one has come). */}
+            {diets && diets.length > 0 ? (
+              <View style={{ marginTop: space.md }}>
+                <LinkRow
+                  title="Diet plan"
+                  sub={dietRowWords(diets)}
+                  leading={
+                    <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon name="meal" size={16} color={color.accent} />
+                    </View>
+                  }
+                  onPress={() => router.push('/shop/diet')}
+                />
+              </View>
             ) : null}
-            <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." />
+            {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
+            <OfferCard link={link} />
+          </>
+        ) : null}
+        {/* R-133: the gym's leaderboard and challenge. */}
+        {section === 'board' ? <LeaderboardCard link={link} emptyText="Your gym's leaderboard shows here once your gym turns it on." /> : null}
+        {section === 'shop' ? (
+          <>
+            {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
+            {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
+            {shopOn ? (
+              <>
+                <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink, marginTop: space.md }}>
+                  Shop
+                </Text>
+                {shopHint ? (
+                  <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, marginTop: space.sm }}>
+                    <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>{HINT_TEXT.shopInGym}</Text>
+                    <Pressable
+                      onPress={() => {
+                        setShopHint(false);
+                        dismissHint('shopInGym').catch((e: unknown) => console.warn('[gym] could not save the hint', e));
+                      }}
+                      accessibilityRole="button"
+                      accessibilityLabel="Got it. Hide this note"
+                      style={{ minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Got it</Text>
+                    </Pressable>
+                  </Card>
+                ) : null}
+                <ProductGrid products={products} filter={filter} onFilter={setFilter} onOpen={(id) => router.push({ pathname: '/shop/[id]', params: { id } })} emptyText="Your gym has nothing in its shop yet." />
+              </>
+            ) : null}
           </>
         ) : null}
       </ScrollView>

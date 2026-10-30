@@ -32,7 +32,8 @@ import type { GymLink } from './types';
 /** Read when drawn: a gym's branding repaints the colour tokens. */
 const textStyle = () => ({ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }) as const;
 
-export function LeaderboardCard({ link }: { link: GymLink }) {
+/** `emptyText`: shown instead of nothing while the gym has no leaderboard (the Gym tab's Leaderboard tab). */
+export function LeaderboardCard({ link, emptyText }: { link: GymLink; emptyText?: string }) {
   const units = useUnits();
   const [board, setBoard] = useState<Board | null>(() => peekBoard(link));
   const [tab, setTab] = useState<BoardMeasure>('workouts');
@@ -62,7 +63,13 @@ export function LeaderboardCard({ link }: { link: GymLink }) {
     }, [link]),
   );
 
-  if (!board) return null;
+  if (!board) {
+    return emptyText ? (
+      <Card style={{ marginTop: space.md }}>
+        <Text style={textStyle()}>{emptyText}</Text>
+      </Card>
+    ) : null;
+  }
   const list: BoardList = board[tab];
   const today = todayISO();
   const tabs = [

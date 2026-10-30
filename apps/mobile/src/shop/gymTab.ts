@@ -12,3 +12,20 @@ export const GYM_TAB_LABEL = 'Gym';
 export function gymShopOn(joined: boolean, productCount: number): boolean {
   return joined && productCount > 0;
 }
+
+/**
+ * The Gym tab's own tabs (owner, 30 Oct 2026, R-225): "Shop" first and opened first when the gym's
+ * shop is on, then "My gym" (plan, hours, check in, diet, offer), then "Leaderboard". PURE.
+ */
+export type GymSection = 'shop' | 'gym' | 'board';
+export const GYM_SECTION_LABELS: Record<GymSection, string> = { shop: 'Shop', gym: 'My gym', board: 'Leaderboard' };
+
+export function gymSections(shopOn: boolean): GymSection[] {
+  return shopOn ? ['shop', 'gym', 'board'] : ['gym', 'board'];
+}
+
+/** The tab to show: the member's pick while it exists, else the first. PURE. */
+export function gymSectionShown(picked: GymSection | null, shopOn: boolean): GymSection {
+  const all = gymSections(shopOn);
+  return picked && all.includes(picked) ? picked : all[0];
+}
