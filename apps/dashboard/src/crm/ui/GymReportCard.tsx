@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
+import { guardCsv } from '../logic/csv';
 import { dateISOFromEpoch, todayISO } from '../logic/dates';
 import {
   GYM_REPORT_DESK_WORDS as W,
@@ -72,7 +73,7 @@ export function GymReportCard({ memberId }: { memberId: string }) {
       const file = await downloadReportFile(key, r.id);
       if (!file) throw new Error('unreadable report');
       // The byte-order mark makes Excel read names in any language correctly.
-      downloadCsv(reportFileName(file.row.memberName, file.row.sentAt != null ? dateISOFromEpoch(file.row.sentAt) : todayISO()), `﻿${file.csv}`);
+      downloadCsv(reportFileName(file.row.memberName, file.row.sentAt != null ? dateISOFromEpoch(file.row.sentAt) : todayISO()), `﻿${guardCsv(file.csv)}`);
     } catch (e) {
       console.warn('[ForgeErr] gym reports: download', e);
       setProblem(reportErrorWords(e));

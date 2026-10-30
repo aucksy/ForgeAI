@@ -21,7 +21,7 @@ export default function AboutPage() {
         </Pressable>
         {/* F20: the RepDB licence asks for this visible link, in its own words (lib/credits.ts) */}
         <Pressable
-          onPress={() => void Linking.openURL(REPDB_URL).catch(() => undefined)}
+          onPress={() => void Linking.openURL(REPDB_URL).catch((e: unknown) => console.warn('[about] could not open the exercise database page', e))}
           accessibilityRole="link"
           accessibilityLabel={REPDB_CREDIT}
           style={{ minHeight: 48 }}

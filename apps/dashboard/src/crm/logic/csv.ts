@@ -70,3 +70,41 @@ export function csvFilename(parts: readonly string[]): string {
     .replace(/^-+|-+$/g, '');
   return `${slug || 'export'}.csv`;
 }
+
+/**
+ * A CSV someone else wrote (a member's workout report, made on their phone), parsed and written
+ * again through csvField, so a cell typed as "=HYPERLINK(...)" opens as text in the gym's Excel.
+ * Review, 30 Oct 2026. PURE.
+ */
+export function guardCsv(raw: string): string {
+  const text = raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw;
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = '';
+  let quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (c === '"') quoted = false;
+      else cell += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else cell += c;
+  }
+  if (cell !== '' || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows.map((r) => r.map(csvField).join(',')).join('\r\n');
+}

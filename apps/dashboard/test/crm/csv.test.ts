@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { CSV_BOM, csvDocument, csvField, csvFilename, toCsv } from '../../src/crm/logic/csv';
+import { CSV_BOM, csvDocument, csvField, csvFilename, guardCsv, toCsv } from '../../src/crm/logic/csv';
 
 describe('escaping', () => {
   it('leaves an ordinary value alone', () => {
@@ -87,5 +87,15 @@ describe('filenames', () => {
 
   it('never produces a name that is only punctuation', () => {
     expect(csvFilename(['///'])).toBe('export.csv');
+  });
+});
+
+describe('guardCsv: a member-made report opens safely', () => {
+  it('turns formula cells into text and keeps every other cell', () => {
+    const phone = String.fromCharCode(0xfeff) + '"title","weight_kg","notes"\r\n"Push","60","=HYPERLINK(""http://x"",""click"")"\n"Pull","","@SUM(1)"';
+    expect(guardCsv(phone)).toBe('title,weight_kg,notes\r\nPush,60,"\'=HYPERLINK(""http://x"",""click"")"\r\nPull,,"\'@SUM(1)"');
+  });
+  it('keeps commas and new lines inside a quoted cell', () => {
+    expect(guardCsv('"a,b","line1\nline2"')).toBe('"a,b","line1\nline2"');
   });
 });
