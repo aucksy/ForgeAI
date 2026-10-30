@@ -166,7 +166,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
-| T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Doing | 30 Oct: mettleup.fit still showed Pro ₹1,999 and 50 founding gyms. English and Hindi. |
+| T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Done | 30 Oct: live on mettleup.fit in English and Hindi. Pro ₹1,499, Pro + AI ₹2,499 (coming), founding pack for the first 25 gyms until 31 March 2027, QR check-in and watch lines added, fresh owner-panel pictures. |
 | T66 Split features between Starter and Pro (#30) | To do | Today every gym gets every feature. Pro adds the gym's logo and colours, the shop, challenges, workout offers, trainer and diet plans. |
 | T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
@@ -451,7 +451,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
 | F155 Free 3-month trial (HQ can extend to 6) | Live | Live since 24 Oct, after your yes in #55 (live test passed 41 checks). | Every new gym gets 3 months free, no card. Your owner panel shows days left and extends a trial up to 6 months, with a reason. The gym owner sees the days left on Today. Nothing locks when it ends; members keep their app. |
-| F156 Prices and packs on the landing page | Live | Starter ₹999, Pro ₹1,999, AI ₹2,999 (coming) a month, yearly prices, and a founding-gym lifetime pack (₹29,999, first 50 gyms). Live 24 Oct. |
+| F156 Prices and packs on the landing page | Live | Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499 (coming) a month, yearly prices, extra branches at half price, and a founding-gym lifetime pack (₹29,999, first 25 gyms, until 31 March 2027). Updated 30 Oct (#30). |
 | F157 Start the free trial from the landing page | Live | "Start free" buttons open the gym sign-up straight away (forgeai.aakashpahuja.in/start). Live 24 Oct. |
 | F158 Owner panel: search, filters, export, trial controls | Live | Search, sort, filters (on trial, ending soon, ended, paying), a summary, a gym list export (gym facts only) and confirm questions. Trial controls switch on with #55. Live 24 Oct. |
 | F159 "What's new" with a button to try each change | Live | v0.55.1: every note rewritten in plain words; a button opens the screen or setting it talks about; Settings shows the last 3 updates. |
