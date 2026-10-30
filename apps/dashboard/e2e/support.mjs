@@ -996,8 +996,24 @@ export function toast(page) {
 
 /** Welcome -> Start demo (answered by the fake server) -> the demo gym opens on Today. */
 export async function startDemo(page) {
-  await page.getByRole('button', { name: 'Start demo' }).tap();
-  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  const start = page.getByRole('button', { name: 'Start demo' });
+  const today = page.getByRole('heading', { name: 'Today', exact: true });
+  await start.tap();
+  // About 1 run in 20 the first tap is lost: no request, Welcome stays (CI 41025664836, 41107264257,
+  // 41109463634; the trace shows "tap action done" and nothing after). Tap once more, and say so.
+  try {
+    await expect(today).toBeVisible({ timeout: 8_000 });
+    return;
+  } catch {
+    // The button reads "Starting your demo gym…" while it works: a slow start, not a lost tap.
+    if (!(await start.isVisible())) {
+      await expect(today).toBeVisible({ timeout: 15_000 });
+      return;
+    }
+    console.warn('[e2e] Start demo: the first tap was lost; tapping again');
+  }
+  await start.tap();
+  await expect(today).toBeVisible({ timeout: 15_000 });
 }
 
 /** Settings -> Erase and start fresh -> confirm. Leaves an empty gym that keeps its name. */
