@@ -13,7 +13,15 @@ their plan? Is it like a one-time thing for the first time it is required? Even 
 What I did:
 - Voice feedback: when the form upload throws, the phone's own uploader (expo-file-system File.upload, same form,
   so the server needs no change) sends the clip; both errors reach us as non-fatal crash reports. Ships in 0.62.0.
-- Gym section and QR answer: in progress (see the next note or PROGRESS.md).
+- Gym section: built (ab15b7d8). Tabs under the Gym title: Shop (first and opened first when the gym sells
+  something; My orders + products), My gym (plan, hours, busy, check in, diet, offer), Leaderboard (an honest line
+  while the gym has none). Ships in 0.62.0.
+- QR answer: members never sign in with a phone number. The app account is Google; joining a gym is code + name;
+  the phone typed is not checked (no SMS code). So a phone match alone proves nothing: anyone could type another
+  member's number and see their plan. The first check-in scan proves the person stands in the gym and then saves
+  the matched number; after that the plan shows by itself (one time only). Ways to drop the scan: (A) a personal
+  invite link the desk sends on WhatsApp to the number on the list (tapping it proves they own that WhatsApp; free),
+  or (B) an SMS code at join (paid per SMS). My pick: A. Waits for his choice.
 
 ## R-224. Demo PDF, voice feedback, What's new, AI import before a migration — 30 Oct 2026
 He said: "create a PDF for me to give walkthru/demo to client today ... add top 20 most useful/valuable features for GYM
