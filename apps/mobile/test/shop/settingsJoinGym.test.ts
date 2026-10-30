@@ -38,14 +38,12 @@ describe('Settings → Your gym: join with a code', () => {
     expect(read('src/components/settings/settingsLines.ts')).toMatch(/title: 'Join your gym', href: '\/shop'/);
   });
 
-  it('the card also offers the poster scan (the phone camera reads the gym’s QR code)', () => {
+  it('the card also offers the poster scan (MettleUp’s own QR scanner, R-228)', () => {
     const card = read('src/components/settings/JoinGymCard.tsx');
     expect(card).toMatch(/label="Scan the poster"/);
-    expect(card).toMatch(/openPosterScan\(\)/);
-    const scan = read('src/shop/scanPoster.ts');
-    expect(scan).toMatch(/Linking\.sendIntent\(CAMERA_ACTION\)/);
-    expect(scan).toMatch(/await tell\(NO_CAMERA_TITLE, NO_CAMERA_BODY\)/);
-    expect(read('android/app/src/main/AndroidManifest.xml')).toMatch(/android\.media\.action\.STILL_IMAGE_CAMERA/);
+    expect(card).toMatch(/router\.push\('\/scan'\)/);
+    expect(read('src/app/scan.tsx')).toMatch(/ScanPosterScreen/);
+    expect(read('src/shop/ShopScreen.tsx')).toMatch(/router\.push\('\/scan'\)/);
   });
 
   it('the card goes through the invite screen (it asks before joining), never joins by itself', () => {

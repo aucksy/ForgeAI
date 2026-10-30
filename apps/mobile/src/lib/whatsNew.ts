@@ -56,6 +56,17 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-228: member-words, fresh-reader pass on the scanner words; facts checked.
+    version: '0.62.1',
+    date: '30 Oct',
+    lines: [
+      {
+        text: '"Check in" on the Gym tab now opens a scanner in MettleUp. Point it at the QR poster at your gym’s desk.',
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
+      },
+    ],
+  },
+  {
     // R-225 + R-224: member-words, fresh-reader pass (lines 2, 4, 5 and 6 took its wording), facts checked.
     version: '0.62.0',
     date: '30 Oct',

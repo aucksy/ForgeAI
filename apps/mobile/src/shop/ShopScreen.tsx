@@ -44,7 +44,6 @@ import { bagBadgeCount, cardPriceText, displayName, isOutOfStock } from './money
 import { MembershipCard } from './MembershipCard';
 import { OfferCard } from './OfferCard';
 import { ProductPicture } from './ProductPicture';
-import { openPosterScan } from './scanPoster';
 import { BagButton, BellButton, DemoNote, MyOrdersRow, QuietLine } from './ShopParts';
 import { unreadCount } from './inbox';
 import { inboxFor, useGymInbox } from './inboxStore';
@@ -250,7 +249,7 @@ function GymShop({ link }: { link: GymLink }) {
             <GymHoursRow hours={hours} />
             {/* R-163: how busy the gym is now and its quiet hours (hidden until 0039 is live and the gym has enough check-ins). */}
             <GymBusyCard link={link} hours={hours} refreshKey={pulls} />
-            {/* A3: Check in from the app: the phone's camera reads the poster at the desk. */}
+            {/* A3 + R-228: Check in from the app: MettleUp's own scanner reads the poster at the desk. */}
             <View style={{ marginTop: space.md }}>
               <LinkRow
                 title="Check in"
@@ -260,7 +259,7 @@ function GymShop({ link }: { link: GymLink }) {
                     <Icon name="camera" size={16} color={color.accent} />
                   </View>
                 }
-                onPress={() => void openPosterScan()}
+                onPress={() => router.push('/scan')}
               />
             </View>
             {/* R-120: the diet plan the trainer sent (only once one has come). */}

@@ -14,7 +14,7 @@ import { Text, TextInput, View } from 'react-native';
 import { GhostButton, GlassCard, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { JOIN_CODE_LENGTH, joinCodeFromTyped, joinPathFromSettings } from '@/shop/gym';
-import { openPosterScan, SCAN_POSTER_LINE } from '@/shop/scanPoster';
+import { SCAN_POSTER_LINE } from '@/shop/scanPoster';
 import { shopInputStyle } from '@/shop/ShopParts';
 import { color, space, type } from '@/theme/tokens';
 
@@ -65,7 +65,7 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
       {scan ? (
         <View style={{ gap: space.sm, paddingTop: space.sm, borderTopWidth: 1, borderTopColor: color.border }}>
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>No code? Your gym&apos;s poster has one.</Text>
-          <GhostButton label="Scan the poster" icon="camera" onPress={() => void openPosterScan()} />
+          <GhostButton label="Scan the poster" icon="camera" onPress={() => router.push('/scan')} />
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{SCAN_POSTER_LINE}</Text>
         </View>
       ) : null}

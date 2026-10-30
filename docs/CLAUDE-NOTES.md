@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-228. Check-in scanner opens the camera and only takes a picture - 30 Oct 2026
+He said: "Check in scanner does not work in the app. It launches the phone camera and takes a picture. thats just a stupid mistake you made..."
+Cause: "Check in" sent Android's plain photo-camera action (scanPoster.ts). Many camera apps do not read QR codes in that mode.
+What I do: a real QR scanner inside the app (expo-camera, QR only). It reads the poster and opens the check-in screen directly.
+
 ## R-227. Demo PDF: one list each for gym and member; keep the QR check-in - 30 Oct 2026
 He said: "just give me single list for each GYM and Member just keep the unique / USP ones at the top of the list..
 keep it portrait mode... and let it be with the check in QR Code"

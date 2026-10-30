@@ -1,15 +1,15 @@
 /**
  * R-152 (owner, 28 Oct 2026): scanning the gym's check-in QR is camera only — never "pick a photo
  * from the gallery" (a saved photo or screenshot of the poster would check a member in from home).
- * MettleUp has no scanner of its own: "Scan the poster" opens the phone's camera app straight in
- * photo mode. This guard fails if any check-in / scan code gains a gallery or file path.
+ * R-228: "Scan the poster" opens MettleUp's own scanner (expo-camera, live camera, QR only).
+ * This guard fails if any check-in / scan code gains a gallery or file path.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { CAMERA_ACTION } from '@/shop/scanPoster';
+import { posterRoute } from '@/shop/scanPoster';
 
 const root = resolve(__dirname, '../..');
 const read = (p: string) => readFileSync(join(root, p), 'utf8');
@@ -21,7 +21,7 @@ function files(dir: string): string[] {
     return statSync(join(root, p)).isDirectory() ? files(p) : /\.(ts|tsx)$/.test(n) ? [p] : [];
   });
 }
-const SCAN_CODE = [...files('src/shop'), ...files('src/app/c'), 'src/components/settings/JoinGymCard.tsx'];
+const SCAN_CODE = [...files('src/shop'), ...files('src/app/c'), 'src/app/scan.tsx', 'src/components/settings/JoinGymCard.tsx'];
 
 /** Ways a picture could come from the gallery or a file instead of the live camera. */
 const GALLERY = [
@@ -37,8 +37,20 @@ const GALLERY = [
 ];
 
 describe('R-152: the check-in scan is camera only', () => {
-  it('"Scan the poster" opens the camera app in photo mode, nothing else', () => {
-    expect(CAMERA_ACTION).toBe('android.media.action.STILL_IMAGE_CAMERA');
+  it('"Scan the poster" uses the live camera scanner, QR codes only, no picture taken', () => {
+    const screen = read('src/shop/ScanPosterScreen.tsx');
+    expect(screen).toMatch(/<CameraView/);
+    expect(screen).toMatch(/barcodeTypes: \['qr'\]/);
+    expect(screen).not.toMatch(/takePictureAsync|recordAsync/);
+  });
+
+  it('R-228: a scanned gym QR opens check-in or join; anything else opens nothing', () => {
+    expect(posterRoute('https://app.mettleup.fit/c/rams01')).toBe('/c/RAMS01');
+    expect(posterRoute('https://forgeai.aakashpahuja.in/c/RAMS01')).toBe('/c/RAMS01');
+    expect(posterRoute('https://app.mettleup.fit/j/RAMS01')).toBe('/j/RAMS01');
+    expect(posterRoute('https://evil.example/c/RAMS01')).toBeNull();
+    expect(posterRoute('hello')).toBeNull();
+    expect(posterRoute('')).toBeNull();
   });
 
   it('no check-in or scan code offers the gallery, a file or a saved photo', () => {
