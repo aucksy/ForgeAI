@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
 
@@ -167,7 +168,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Task | Status | Details |
 |---|---|---|
 | T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Done | 30 Oct: live on mettleup.fit in English and Hindi. Pro ₹1,499, Pro + AI ₹2,499 (coming), founding pack for the first 25 gyms until 31 March 2027, QR check-in and watch lines added, fresh owner-panel pictures. |
-| T66 Split features between Starter and Pro (#30) | To do | Today every gym gets every feature. Pro adds the gym's logo and colours, the shop, challenges, workout offers, trainer and diet plans. |
+| T66 Split features between Starter and Pro (#30, #78) | Blocked | Built 31 Oct, behind a switch that is off: every gym still gets every feature. All tests pass. Turning it on needs your yes (#78). |
 | T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
 | T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
@@ -480,6 +481,20 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 
 ---
+
+## 78. Starter and Pro: may I turn on the split? — 31 Oct 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** T66 is built, behind a switch that is off. Today every gym still gets every feature. Nothing on the live server has changed.
+**What a Starter gym loses when the switch is on:** its logo and colours in the member app, the shop, the monthly challenge and leaderboard, the workout offer, trainer and diet plans, and "Your numbers". Pro and Pro + AI gyms keep everything. A gym on its free trial, or with no pack set, keeps everything.
+**What a Starter gym reads in place of a Pro page (words need your OK):**
+- "Part of the Pro pack"
+- One line per feature, for example: "Selling your gym's products in the member app comes with the Pro pack."
+- "Your gym is on Starter. To move to Pro, open Send feedback in the menu and write: Move us to Pro."
+**What happens on yes:** I add 2 read-only lookups to the live server (they only read which pack a gym is on; they change nothing). You check in HQ that each real gym has the right pack. Then I turn the switch on and ship the app and the dashboard.
+**Decide:** Turn on the Starter and Pro split now?
+- A: Not yet. Keep every feature for every gym until the first gym pays. (recommended)
+- B: Yes. Add the 2 lookups to the live server, then turn the switch on.
 
 ## 77. Workout report for the gym: may I add its table to the live server, and are the words OK? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
