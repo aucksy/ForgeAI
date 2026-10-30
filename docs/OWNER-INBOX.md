@@ -86,7 +86,6 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 | #34 | High | Low |
 | #33 | Medium | Low |
 | #32 | Medium | Low |
-| #30 | High | Low |
 | #28 | High | Low |
 | #27 | High | Low |
 | #26 | High | Medium |
@@ -167,6 +166,8 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Doing | 30 Oct: mettleup.fit still showed Pro ₹1,999 and 50 founding gyms. English and Hindi. |
+| T66 Split features between Starter and Pro (#30) | To do | Today every gym gets every feature. Pro adds the gym's logo and colours, the shop, challenges, workout offers, trainer and diet plans. |
 | T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
 | T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
@@ -546,10 +547,18 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 70. Belvee: check whether the old GST is still live — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**READ (30 Oct, 08:39 pm, via the page)**
+**Status:** ANSWERED
+**TASK DONE (30 Oct, 08:39 pm, via the page)**
 **Why:** if Belvee's 2021 GST was never cancelled, late fees may be adding up each month (see #32). I cannot check it myself: the official page needs a captcha.
 **Your task:** Open https://services.gst.gov.in/services/searchtp , type Belvee's GSTIN (on the GST certificate in D:\Belvee\Legal\BELVEE GST.pdf, ends R1ZW), fill the captcha, press Search, and tell me the "Status" it shows (Active or Cancelled, and the date).
+**YOUR REPLY (30 Oct, 08:39 pm):** the GST shows "Cancelled on application of Taxpayer (Effective from 01/01/2023)" (it was for knitted clothing). "I don't need a GST, right? I just want to open a current account, take payments with Razorpay, and submit apps without the 14-day testing. Tell me what other benefits I get by doing this or that."
+**My answer (30 Oct):** General information, not tax advice. Good news first: the old GST is closed, so no late fees are adding up. You do not need GST for any of your 3 goals while yearly sales stay under ₹20 lakh. (One small check for the CA call: a closed GST number should also have a final return. If it was never filed, a notice can come; a CA can see this in 5 minutes.)
+- **Current account:** the bank wants your PAN, Aadhaar, and 2 papers that prove the business. Without GST, use (1) Belvee's Udyam, updated to software (free, 15 minutes, Aadhaar OTP), and (2) a Rajasthan Shops and Establishments registration (online, small or no fee). Some banks, and Razorpay's own current account, take Udyam alone; most branches want both.
+- **Razorpay:** works without GST. It needs your PAN, the business bank account, and a website with prices, terms, a refund policy, a privacy policy and contact details (mettleup.fit has most of these; I check it before you apply). Fee: about 2% of each payment.
+- **Skip Play's 14-day test:** only an "organisation" Play account skips it. It needs a D-U-N-S number (a free business ID from Dun & Bradstreet India, 1 to 4 weeks) in the business's name and address, matching the Udyam and the bank. Then either "Change account type" in your Play Console, if Google offers it, or a new account ($25) and the apps moved over. Google does not say clearly that it accepts a one-person business in India. People report it works, but Google may ask for papers.
+- **Other benefits:** Play and Razorpay show "Belvee" (or a trade name such as "MettleUp") instead of your own name and home address. Business money stays apart from personal money, which keeps the easy 6% tax scheme clean (#32). Udyam also gives MSME benefits: cheaper bank loans and protection when a customer pays late.
+- **The order I would follow:** 1. update Udyam (add MettleUp as the trade name). 2. Shops and Establishments. 3. current account. 4. D-U-N-S, with those papers. 5. Play organisation account. 6. Razorpay. Steps 1 and 2 cost nothing and take about one evening. Tell me when you want to start, and I will write the exact clicks for each step.
+Sources: https://ontest.app/blog/google-play-12-testers-14-days-requirement-explained , https://support.google.com/googleplay/android-developer/answer/13628312?hl=en , https://www.ujjivansfb.bank.in/banking-blogs/current-account/current-account-without-gst , https://razorpay.com/docs/x/icici-current-account/sole-proprietorship
 
 ## 69. Online payments (UPI and card), recorded by themselves: what I need — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
@@ -1395,9 +1404,8 @@ Sources: https://treelife.in/taxation/presumptive-taxation-under-section-44ad-44
 
 ## 30. Launch decision: the price after the trial — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**READ (30 Oct, 08:35 pm, via the page)**
-**DECIDED (24 Oct 2026, R-97: you left the prices to me):** the free trial is 3 months, not 8 weeks, and ForgeAI HQ can extend it to 6. After it: Starter ₹999 a month or ₹9,990 a year; Pro (adds the shop, and soon online payments and the entry gate) ₹1,999 a month or ₹19,990 a year; AI (coming) ₹2,999 a month; a founding-gym lifetime Pro pack, ₹29,999 once, for the first 50 gyms. Prices are per branch and shown on the landing page. Market check, 24 Oct: Indian gym software costs ₹500-3,000 a month, trials run 7-30 days, and nobody sells a lifetime pack.
+**Status:** DECIDED
+**DECIDED (24 Oct 2026, R-97):** replaced by the 30 Oct decision below.
 **Why it matters:** small Indian gyms pay ₹1,000-3,500 a month for software; GGMS costs them about ₹12,000 a year. Writing the price down now means the trial ends with a decision, not a negotiation. Our running cost: about ₹2,100 a month (server).
 **YOUR REPLY (29 Oct):** careful work: strong analysis and well-placed plans for Jaipur first, then India. The basic plan gives real value; bigger plans add value people can live without but see as great for the money. Compare with competing software and price to match. Each price level should feel worth it for that budget. "I leave it up to you."
 **My answer (29 Oct):** Started. A helper is researching the Jaipur gym software market (GGMS and others, one-time vs monthly, what owners pay for). It will design 3 plans, plus a "buy once + yearly upkeep" option and a launch offer. The full plan comes back here with sources, for your pick. It also answers your #4 points: the GGMS-style one-time price, and getting your ₹12,000 a month back.
@@ -1412,10 +1420,8 @@ Prices are per branch. A yearly plan costs the same as 10 months.
 - **Your costs back:** about 10 gyms on Pro, or 5 founding gyms (₹1.5 lakh up front, about 10 months of costs).
 **Why it works:** Pro yearly (₹14,990) matches the GGMS app plan (₹14,999) with far more inside. Free messages to phones save a gym about ₹1,000 a month in WhatsApp costs. Pro costs only ₹500 more than Starter, so most owners pick it.
 **Risks:** we cannot yet connect fingerprint or face entry machines, and GGMS can. Today every gym gets every feature, so splitting the plans needs a small build. A few prices could not be checked directly; the file marks which ones.
-**Decide:** Which prices go on the website and into the sales talk?
-- A: The plan above: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999 (recommended)
-- B: Keep today's prices (Pro ₹1,999, AI ₹2,999) and only add the GGMS switching offer
-- C: Wait until the first client gym's trial ends, then decide with real usage
+**DECIDED (30 Oct 2026):** A. Starter ₹999 a month (₹9,990 a year); Pro ₹1,499 (₹14,990 a year); Pro + AI ₹2,499 (₹24,990 a year), sold once the AI parts are built; "Own it" on request only; founding gyms ₹29,999 once, Pro for life, the first 25 gyms, until 31 Mar 2027. Your note: "Ensure that you have latest features / prices and screenshots are updated on website."
+**My answer (30 Oct):** Started. The website still showed the old prices (Pro ₹1,999, AI ₹2,999, 50 founding gyms). I am updating mettleup.fit now: the new prices in English and Hindi, the newest features, and fresh app pictures. Next, the small build that splits features between Starter and Pro (today every gym gets everything).
 
 ## 29. Launch decision: members under 18 — 19 Oct 2026
 **Chat:** ForgeAI Local Chat
