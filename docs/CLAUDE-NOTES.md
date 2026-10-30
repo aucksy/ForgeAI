@@ -5,6 +5,13 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-227. Demo PDF: one list each for gym and member; keep the QR check-in - 30 Oct 2026
+He said: "just give me single list for each GYM and Member just keep the unique / USP ones at the top of the list..
+keep it portrait mode... and let it be with the check in QR Code"
+What I did: the PDF is now 2 portrait A4 pages. Page 1 = the gym list, page 2 = the member list. Each list starts
+with an "Only in MettleUp" block, then "Everything else". The demo order and the setup box are gone.
+QR decision: he keeps the check-in QR as it is (no WhatsApp invite link, no SMS). Nothing to build.
+
 ## R-226. Demo PDF: unique features first; Shop, Messages, Offers were missing - 30 Oct 2026
 He said: "for the PDF you created, I want unique features at the top which other softwares, specially GGMS does not give..
 you missed out shop for GYM... please dont kid with me here.. take this seriously ... Did you forget Messages and offers too ?"

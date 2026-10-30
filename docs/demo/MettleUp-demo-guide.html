@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>MettleUp demo guide</title>
 <style>
-  @page { size: A4; margin: 11mm 12mm 10mm; }
+  @page { size: A4 portrait; margin: 11mm 12mm 10mm; }
   * { box-sizing: border-box; }
   body { font-family: "Segoe UI", Arial, sans-serif; font-size: 9.2pt; line-height: 1.26; color: #16181d; margin: 0; }
   h1 { font-size: 19pt; margin: 0 0 1mm; letter-spacing: -0.3px; }
@@ -31,122 +31,76 @@
   .box { border: 1px solid #d6d8dd; border-radius: 2mm; padding: 2.5mm 3.2mm; margin: 2mm 0; }
   .soon { color: #555; font-size: 8.8pt; margin-top: 2mm; }
   .new { display: inline-block; font-size: 7.4pt; font-weight: 700; color: #fff; background: #ff6a2b; border-radius: 1mm; padding: 0 1mm; margin-left: 1mm; vertical-align: 0.3mm; }
+  tr.grp td { background: #fff1ea; color: #b0451a; font-weight: 700; font-size: 8.8pt; padding: 0.9mm 1.4mm; border-bottom: 1px solid #ff6a2b; }
+  tr.grp2 td { background: #f3f4f6; color: #444; font-weight: 700; font-size: 8.8pt; padding: 0.9mm 1.4mm; }
+  td, th { padding: 0.7mm 1.4mm; }
+  td.f { width: 40%; }
+  body { font-size: 8.9pt; line-height: 1.22; }
 </style>
 </head>
 <body>
 
 <div class="page">
   <h1>MettleUp &mdash; demo guide</h1>
-  <p class="sub">Gym desk website: <b>app.mettleup.fit</b> (laptop or phone) &nbsp;&middot;&nbsp; Member app: <b>MettleUp</b> on Android. &nbsp;Arrows (&rarr;) show what to tap, in order. On a phone, the desk keeps Shop, Messages &amp; offers and the rest under <b>More</b>.</p>
-
-  <h2>Only in MettleUp &mdash; what GGMS does not give</h2>
-  <p class="sub" style="margin-bottom:1.5mm">Checked against GGMS's own website (ggms.in) and its app listing. Show these first.</p>
-  <table class="u">
-    <tr><th></th><th>What only MettleUp gives</th><th>Show it (desk, then member phone)</th></tr>
-    <tr><td class="n">1</td><td class="f"><b>A shop for the gym, inside the member app</b><span>Members order protein, creatine, gear and drinks from their phone. The desk gets the order, marks it ready, and the member pays when they collect it. Stock goes down by itself.</span><i>Extra money from the members the gym already has.</i></td><td class="p">Desk: Shop &rarr; Turn on the shop (12 sample products) &rarr; Products &rarr; + Add product<br>Phone: Gym &rarr; Shop &rarr; product &rarr; Add to bag &rarr; bag icon &rarr; Place order<br>Desk: Shop &rarr; Orders &rarr; Mark ready &rarr; Collected (paid)</td></tr>
-    <tr><td class="n">2</td><td class="f"><b>Workout offers that reward coming to the gym</b><span>&ldquo;Train 12 times in 30 days, get 7 extra days.&rdquo; Members join on their phone and see their count go up. The days are added by the desk or by themselves.</span><i>New members build the habit, so they renew.</i></td><td class="p">Desk: Messages &amp; offers &rarr; Workout offer &rarr; Start offer<br>Phone: Gym &rarr; My gym &rarr; offer card &rarr; Join the offer<br>Desk: Give N days (or set &ldquo;By themselves&rdquo;)</td></tr>
-    <tr><td class="n">3</td><td class="f"><b>Messages and offers straight to members' phones</b><span>Ready messages for festival offers, gym closed, new timings, events and more. They pop up on the phone, at no SMS cost. The desk sees who read each one and can take it back.</span><i>Not spam: only 2 pop-ups a day, 1 offer a day.</i></td><td class="p">Desk: Messages &amp; offers &rarr; Messages &rarr; Offers &rarr; Festival offer &rarr; Who gets it &rarr; Send in the app &rarr; Yes, send<br>Phone: pop-up, or Gym &rarr; bell icon &rarr; Messages</td></tr>
-    <tr><td class="n">4</td><td class="f"><b>A full workout app for every member</b><span>Log sets, kg and reps; rest timer; the kg to beat; records, charts and a monthly report. GGMS's member app shows plan, attendance and payments only.</span><i>Members open it every workout, with the gym's name on it.</i></td><td class="p">Phone: Workout &rarr; Start empty workout &rarr; Add exercise &rarr; Add set &rarr; Finish workout &rarr; Progress</td></tr>
-    <tr><td class="n">5</td><td class="f"><b>Challenges and a gym leaderboard</b><span>A 7 to 31 day challenge by workouts or kg lifted, with free days as the prize. Members see their rank in the gym.</span></td><td class="p">Desk: Challenges &rarr; New challenge &rarr; Start challenge<br>Phone: Gym &rarr; Leaderboard</td></tr>
-    <tr><td class="n">6</td><td class="f"><b>The gym's own logo and colours in the app</b><span>The member app shows the gym's logo and brand colour.</span></td><td class="p">Desk: Branding &rarr; Upload logo &rarr; Your brand colour &rarr; Save</td></tr>
-    <tr><td class="n">7</td><td class="f"><b>&ldquo;How busy is the gym?&rdquo; for members</b><span>Members see if the gym is quiet now, and the quietest time later today. Made from check-ins; nothing to set up.</span></td><td class="p">Phone: Gym &rarr; My gym &rarr; How busy the gym is</td></tr>
-    <tr><td class="n">8</td><td class="f"><b>Pause or renew from the app<span class="new">NEW</span></b><span>The member asks; the desk approves with one tap. Renewal is still paid at the desk.</span></td><td class="p">Phone: Gym &rarr; My gym &rarr; Pause my plan / Renew my plan &rarr; Send to the desk<br>Desk: Today &rarr; Requests from the app &rarr; Approve</td></tr>
-    <tr><td class="n">9</td><td class="f"><b>Move in from any Excel, with AI</b><span>AI reads any column layout, so nothing is retyped. One tap undoes an import.</span></td><td class="p">Desk: Members &rarr; Import from Excel &rarr; Choose file &rarr; Add N members &middot; Past imports &rarr; Undo this import</td></tr>
-    <tr><td class="n">10</td><td class="f"><b>Members losing the habit</b><span>Everyone who has not come for 10 days, before their plan ends.</span></td><td class="p">Desk: Visits &rarr; Losing the habit &middot; or Today &rarr; Losing the habit &rarr; See all</td></tr>
-  </table>
-  <p class="soon">Members also get: smartwatch, home-screen widgets, Health Connect, and bringing in old workouts from Hevy or Strong.</p>
-</div>
-
-<div class="page">
-  <div class="box" style="margin-top:0">
-    <b>Before the client arrives</b><br>
-    <span class="tick"></span>Desk: sign in at app.mettleup.fit with a <b>real gym</b> (the demo gym hides Shop, Messages and Challenges). The gym must be online: <span class="path">Settings &rarr; Put your gym online</span>.<br>
-    <span class="tick"></span>Shop: <span class="path">Shop &rarr; Turn on the shop</span>, and give 2 products a photo. Start one <span class="path">Workout offer</span> and one <span class="path">Challenge</span>.<br>
-    <span class="tick"></span>Phone: MettleUp <b>0.62.0</b>, joined to that gym (<span class="path">Gym &rarr; Join your gym</span>). Check in once with the poster so &ldquo;My gym&rdquo; shows the plan.<br>
-    <span class="tick"></span>Print the gym QR poster: <span class="path">Visits &rarr; Check-in QR &rarr; Print poster</span>.
-  </div>
-
-  <h2>Demo order (about 25 minutes)</h2>
-  <ol class="steps">
-    <li><b>The shop.</b> Phone: <span class="path">Gym &rarr; Shop</span> &rarr; order a protein &rarr; <span class="path">Place order</span>. Desk: <span class="path">Shop &rarr; Orders</span> shows it &rarr; <span class="path">Mark ready</span> &rarr; the phone says &ldquo;Collect it at the desk&rdquo; &rarr; <span class="path">Collected (paid)</span>.</li>
-    <li><b>A festival offer to every member.</b> Desk: <span class="path">Messages &amp; offers &rarr; Messages &rarr; Offers &rarr; Festival offer</span> &rarr; <span class="path">Send in the app</span>. The phone gets the pop-up. Desk shows who read it.</li>
-    <li><b>The workout offer.</b> Phone: <span class="path">Gym &rarr; My gym &rarr; Join the offer</span>. Show &ldquo;C of N workouts&rdquo;. Desk: the member is in the offer list.</li>
-    <li><b>The owner's morning.</b> Desk: <span class="path">Today</span>: money owed, renewals due, members losing the habit, shop orders, requests from the app.</li>
-    <li><b>Plans ending soon.</b> <span class="path">Ending in 1-3 days &rarr; WhatsApp all</span>. One tap per member, the message is already written.</li>
-    <li><b>Join and pay.</b> <span class="path">Today &rarr; New member</span> &rarr; <span class="path">Take photo</span> &rarr; <span class="path">Sell membership</span> &rarr; <span class="path">Collect payment</span> &rarr; receipt &rarr; <span class="path">Send on WhatsApp</span>.</li>
-    <li><b>Check in with the poster.</b> Phone: <span class="path">Gym &rarr; My gym &rarr; Check in</span> &rarr; scan. Desk: <span class="path">Visits</span> shows the visit.</li>
-    <li><b>Log a workout.</b> Phone: <span class="path">Workout &rarr; Start empty workout &rarr; Add exercise &rarr; Add set</span>. Show the rest timer and the kg to beat &rarr; <span class="path">Finish workout</span> &rarr; <span class="path">Picture</span>.</li>
-    <li><b>Challenge and leaderboard.</b> Phone: <span class="path">Gym &rarr; Leaderboard</span>. Desk: <span class="path">Challenges</span>.</li>
-    <li><b>Pause from the app.</b> Phone: <span class="path">Gym &rarr; My gym &rarr; Pause my plan &rarr; Send to the desk</span>. Desk: <span class="path">Today &rarr; Requests from the app &rarr; Approve</span>.</li>
-    <li><b>Gym sends a plan.</b> Desk: member &rarr; <span class="path">Workout plans &rarr; Send a plan</span>. Phone: it shows on the <span class="path">Workout</span> tab.</li>
-    <li><b>Their logo.</b> Desk: <span class="path">Branding &rarr; Upload logo &rarr; Save</span>. The phone shows the gym's logo.</li>
-    <li><b>Moving from GGMS.</b> Desk: <span class="path">Members &rarr; Import from Excel &rarr; Choose file</span>. AI matches the columns.</li>
-    <li><b>The money picture.</b> Desk: <span class="path">Money</span> and <span class="path">Expenses</span> &rarr; <span class="path">Download Excel file</span>.</li>
-  </ol>
-
-  <div class="box" style="margin-top:3mm">
-    <b>Points to say</b><br>
-    &bull; Shop, workout offers and messages to phones: the gym earns more, and members keep coming.<br>
-    &bull; Members get a full workout app for free, with the gym's name on it.<br>
-    &bull; The desk works on a laptop or a phone. Each staff member gets their own sign-in code and PIN.
-  </div>
-</div>
-
-<div class="page">
-  <h2 style="margin-top:0">Top 20 for the gym (desk website)</h2>
+  <p class="sub">Gym desk website: <b>app.mettleup.fit</b> (laptop or phone) &nbsp;&middot;&nbsp; Member app: <b>MettleUp</b> on Android. Arrows (&rarr;) show what to tap, in order. On a phone, the desk keeps Shop, Messages &amp; offers and the rest under <b>More</b>.</p>
+  <h2>For the gym (desk website)</h2>
   <table>
     <tr><th></th><th>Feature</th><th>Where to find it</th></tr>
-    <tr><td class="n">1</td><td class="f"><b>Gym shop</b><span>Products, stock and member orders.</span></td><td class="p">Shop &rarr; Turn on the shop &middot; Products &rarr; + Add product &middot; Orders &rarr; Mark ready &rarr; Collected (paid)</td></tr>
-    <tr><td class="n">2</td><td class="f"><b>Messages to members' phones</b><span>Ready messages; pick who gets them; see who read.</span></td><td class="p">Messages &amp; offers &rarr; Messages &rarr; Pick a message &rarr; Who gets it &rarr; Send in the app</td></tr>
-    <tr><td class="n">3</td><td class="f"><b>Offer messages</b><span>Festival, renew early, bring a friend, student, family.</span></td><td class="p">Messages &amp; offers &rarr; Messages &rarr; Offers</td></tr>
-    <tr><td class="n">4</td><td class="f"><b>Workout offer</b><span>Free days for members who train enough.</span></td><td class="p">Messages &amp; offers &rarr; Workout offer &rarr; Start offer</td></tr>
-    <tr><td class="n">5</td><td class="f"><b>Automatic reminders</b><span>Plan ending, birthday, welcome, haven't seen you.</span></td><td class="p">Messages &amp; offers &rarr; Reminders &rarr; Save changes</td></tr>
-    <tr><td class="n">6</td><td class="f"><b>Members and plans</b><span>Add a member, sell a plan.</span></td><td class="p">Members &rarr; + Add member &rarr; Sell membership &rarr; Plan &rarr; Confirm</td></tr>
-    <tr><td class="n">7</td><td class="f"><b>Payments and receipts</b><span>Collect, print or WhatsApp a receipt; GST lines print by themselves.</span></td><td class="p">Member &rarr; Collect payment &rarr; Save payment &middot; GSTIN: Settings &rarr; Gym details</td></tr>
-    <tr><td class="n">8</td><td class="f"><b>Dues</b><span>Everyone who owes money, in one list.</span></td><td class="p">Money &rarr; Dues &rarr; Collect &middot; or Today &rarr; Collect dues</td></tr>
-    <tr><td class="n">9</td><td class="f"><b>Today screen</b><span>The numbers an owner needs each morning.</span></td><td class="p">Today</td></tr>
-    <tr><td class="n">10</td><td class="f"><b>Plans ending soon + WhatsApp</b><span>Today, 1-3, 4-7, 8-15 days; one tap each.</span></td><td class="p">Today &rarr; Ending in 1-3 days &rarr; WhatsApp all</td></tr>
-    <tr><td class="n">11</td><td class="f"><b>Requests from the app<span class="new">NEW</span></b><span>Pause and renew requests from members.</span></td><td class="p">Today &rarr; Requests from the app &rarr; Approve / Decline</td></tr>
-    <tr><td class="n">12</td><td class="f"><b>Challenges and leaderboard</b><span>Workouts or kg lifted; free days as the prize.</span></td><td class="p">Challenges &rarr; New challenge &rarr; Start challenge</td></tr>
-    <tr><td class="n">13</td><td class="f"><b>Branding</b><span>Gym logo and colour in the member app.</span></td><td class="p">Branding &rarr; Upload logo &rarr; Save</td></tr>
-    <tr><td class="n">14</td><td class="f"><b>Visits, QR check-in, losing the habit</b><span>Members scan a poster; no machine needed.</span></td><td class="p">Visits &rarr; Register / Losing the habit &middot; Visits &rarr; Check-in QR &rarr; Print poster</td></tr>
-    <tr><td class="n">15</td><td class="f"><b>Enquiries</b><span>Walk-ins and calls, with follow-up dates.</span></td><td class="p">Enquiries &rarr; + Add enquiry &rarr; Save enquiry &rarr; Add as member</td></tr>
-    <tr><td class="n">16</td><td class="f"><b>Expenses and profit</b><span>Collected, Expenses and Profit each month.</span></td><td class="p">Expenses &rarr; + Add expense</td></tr>
-    <tr><td class="n">17</td><td class="f"><b>Workout and diet plans</b><span>Send a plan straight to the member's phone.</span></td><td class="p">Member &rarr; Workout plans &rarr; Send a plan &middot; Member &rarr; Diet plan &rarr; Send a diet plan</td></tr>
-    <tr><td class="n">18</td><td class="f"><b>Import from Excel, with AI</b><span>AI matches the columns; undo any import.</span></td><td class="p">Members &rarr; Import from Excel &rarr; Choose file</td></tr>
+    <tr class="grp"><td colspan="3">Only in MettleUp &mdash; GGMS does not list these. Show them first.</td></tr>
+    <tr><td class="n">1</td><td class="f"><b>Gym shop</b><span>Members order protein, gear and drinks on the phone. Pay and collect at the desk.</span></td><td class="p">Shop &rarr; Turn on the shop &middot; Products &rarr; + Add product &middot; Orders &rarr; Mark ready &rarr; Collected (paid)</td></tr>
+    <tr><td class="n">2</td><td class="f"><b>Messages and offers to members' phones</b><span>Festival offer, gym closed, new timings and more. Pop-up on the phone, no SMS cost. See who read it.</span></td><td class="p">Messages &amp; offers &rarr; Messages &rarr; Offers &rarr; Festival offer &rarr; Who gets it &rarr; Send in the app</td></tr>
+    <tr><td class="n">3</td><td class="f"><b>Workout offer</b><span>Train enough, get free days. Builds the habit, so members renew.</span></td><td class="p">Messages &amp; offers &rarr; Workout offer &rarr; Start offer</td></tr>
+    <tr><td class="n">4</td><td class="f"><b>Challenges and leaderboard</b><span>Workouts or kg lifted; free days as the prize.</span></td><td class="p">Challenges &rarr; New challenge &rarr; Start challenge</td></tr>
+    <tr><td class="n">5</td><td class="f"><b>Gym logo and colours in the member app</b><span>The app carries the gym's name, logo and colour.</span></td><td class="p">Branding &rarr; Upload logo &rarr; Save</td></tr>
+    <tr><td class="n">6</td><td class="f"><b>Requests from the app<span class="new">NEW</span></b><span>Members ask to pause or renew; approve with one tap.</span></td><td class="p">Today &rarr; Requests from the app &rarr; Approve / Decline</td></tr>
+    <tr><td class="n">7</td><td class="f"><b>Import from any Excel, with AI</b><span>AI matches the columns. One tap undoes an import.</span></td><td class="p">Members &rarr; Import from Excel &rarr; Choose file &middot; Past imports &rarr; Undo</td></tr>
+    <tr class="grp2"><td colspan="3">Everything else</td></tr>
+    <tr><td class="n">8</td><td class="f"><b>Today screen</b><span>The numbers an owner needs each morning.</span></td><td class="p">Today</td></tr>
+    <tr><td class="n">9</td><td class="f"><b>Members and plans</b><span>Add a member, sell a plan.</span></td><td class="p">Members &rarr; + Add member &rarr; Sell membership &rarr; Plan &rarr; Confirm</td></tr>
+    <tr><td class="n">10</td><td class="f"><b>Payments and receipts</b><span>Collect, print or WhatsApp a receipt; GST lines print by themselves.</span></td><td class="p">Member &rarr; Collect payment &rarr; Save payment &middot; GSTIN: Settings &rarr; Gym details</td></tr>
+    <tr><td class="n">11</td><td class="f"><b>Dues</b><span>Everyone who owes money, in one list.</span></td><td class="p">Money &rarr; Dues &rarr; Collect</td></tr>
+    <tr><td class="n">12</td><td class="f"><b>Plans ending soon + WhatsApp</b><span>Today, 1-3, 4-7, 8-15 days; one tap each.</span></td><td class="p">Today &rarr; Ending in 1-3 days &rarr; WhatsApp all</td></tr>
+    <tr><td class="n">13</td><td class="f"><b>Automatic reminders</b><span>Plan ending, birthday, welcome, haven't seen you.</span></td><td class="p">Messages &amp; offers &rarr; Reminders &rarr; Save changes</td></tr>
+    <tr><td class="n">14</td><td class="f"><b>QR check-in and visits</b><span>Members scan a poster; no machine needed.</span></td><td class="p">Visits &rarr; Check-in QR &rarr; Print poster &middot; Visits &rarr; Register</td></tr>
+    <tr><td class="n">15</td><td class="f"><b>Members losing the habit</b><span>Everyone who has not come for 10 days.</span></td><td class="p">Visits &rarr; Losing the habit</td></tr>
+    <tr><td class="n">16</td><td class="f"><b>Enquiries</b><span>Walk-ins and calls, with follow-up dates.</span></td><td class="p">Enquiries &rarr; + Add enquiry &rarr; Save enquiry &rarr; Add as member</td></tr>
+    <tr><td class="n">17</td><td class="f"><b>Expenses and profit</b><span>Collected, expenses and profit each month.</span></td><td class="p">Expenses &rarr; + Add expense</td></tr>
+    <tr><td class="n">18</td><td class="f"><b>Workout and diet plans</b><span>Send a plan straight to the member's phone.</span></td><td class="p">Member &rarr; Workout plans &rarr; Send a plan &middot; Member &rarr; Diet plan</td></tr>
     <tr><td class="n">19</td><td class="f"><b>Staff sign-ins and PIN</b><span>Each person as Staff or Owner.</span></td><td class="p">Settings &rarr; Staff &amp; sign-in &rarr; Add a person &rarr; Make sign-in code</td></tr>
     <tr><td class="n">20</td><td class="f"><b>Excel downloads</b><span>Receipts, dues, growth, or all gym data.</span></td><td class="p">Money &rarr; Collections &rarr; Download Excel file &middot; Settings &rarr; Your data</td></tr>
   </table>
-  <p class="soon"><b>Also live:</b> personal training plans (Plans &rarr; + Add plan &rarr; PT plan) &middot; member ID card (Member &rarr; Member card) &middot; desk photo (Member &rarr; Take photo) &middot; body measurements (Member &rarr; Body measurements) &middot; gym timings (Gym timings &rarr; Every week) &middot; more than one branch (Settings &rarr; Branches).</p>
+  <p class="soon"><b>Also live:</b> personal training plans &middot; member ID card &middot; desk photo &middot; body measurements &middot; gym timings &middot; more than one branch.</p>
 </div>
 
 <div class="page">
-  <h2 style="margin-top:0">Top 20 for the member (MettleUp app)</h2>
+  <h2 style="margin-top:0">For the member (MettleUp app)</h2>
   <p class="sub" style="margin-bottom:1.5mm">Tabs at the bottom: Workout, Progress, Gym, Profile. The Gym tab has 3 parts at the top: Shop (when the gym sells things), My gym, Leaderboard.</p>
   <table>
     <tr><th></th><th>Feature</th><th>Where to find it</th></tr>
-    <tr><td class="n">1</td><td class="f"><b>Gym shop</b><span>Order, then pay and collect at the desk.</span></td><td class="p">Gym &rarr; Shop &rarr; product &rarr; Add to bag &rarr; Place order &middot; My orders</td></tr>
+    <tr class="grp"><td colspan="3">Only in MettleUp &mdash; GGMS does not list these. Show them first.</td></tr>
+    <tr><td class="n">1</td><td class="f"><b>Gym shop</b><span>Order on the phone; pay and collect at the desk.</span></td><td class="p">Gym &rarr; Shop &rarr; product &rarr; Add to bag &rarr; Place order &middot; My orders</td></tr>
     <tr><td class="n">2</td><td class="f"><b>Messages and offers from the gym</b><span>Pop-ups, and all of them in one list.</span></td><td class="p">Gym &rarr; bell icon &rarr; Messages</td></tr>
     <tr><td class="n">3</td><td class="f"><b>Workout offer</b><span>Train enough, get free days.</span></td><td class="p">Gym &rarr; My gym &rarr; offer card &rarr; Join the offer</td></tr>
     <tr><td class="n">4</td><td class="f"><b>Leaderboard and challenges</b><span>Rank in the gym; prize at the desk.</span></td><td class="p">Gym &rarr; Leaderboard</td></tr>
-    <tr><td class="n">5</td><td class="f"><b>My membership, pause and renew<span class="new">NEW</span></b><span>Plan end date; ask to pause or renew.</span></td><td class="p">Gym &rarr; My gym &rarr; My membership &rarr; Pause my plan / Renew my plan</td></tr>
-    <tr><td class="n">6</td><td class="f"><b>Check in</b><span>Scan the desk poster; the desk sees it.</span></td><td class="p">Gym &rarr; My gym &rarr; Check in</td></tr>
-    <tr><td class="n">7</td><td class="f"><b>How busy the gym is</b><span>Quiet now? Quietest time later today.</span></td><td class="p">Gym &rarr; My gym &rarr; How busy the gym is</td></tr>
-    <tr><td class="n">8</td><td class="f"><b>Plans from the gym</b><span>Trainer's workout plan and diet plan.</span></td><td class="p">Workout tab: folder &ldquo;From &lsaquo;gym&rsaquo;&rdquo; &middot; Gym &rarr; My gym &rarr; Diet plan</td></tr>
-    <tr><td class="n">9</td><td class="f"><b>Log a workout</b><span>Sets, kg and reps in a few taps.</span></td><td class="p">Workout &rarr; Start empty workout &rarr; Add exercise &rarr; Add set &rarr; Finish workout</td></tr>
-    <tr><td class="n">10</td><td class="f"><b>Rest timer</b><span>Starts by itself; sound when rest is over.</span></td><td class="p">In a workout: &hellip; on an exercise &rarr; Rest timer</td></tr>
-    <tr><td class="n">11</td><td class="f"><b>Target to beat</b><span>The kg to beat on every exercise.</span></td><td class="p">Each exercise in a workout: the &ldquo;Target&rdquo; line</td></tr>
-    <tr><td class="n">12</td><td class="f"><b>Routines and ready plans</b><span>Save a routine, or pick a ready plan.</span></td><td class="p">Workout &rarr; New routine &middot; Workout &rarr; Find a plan</td></tr>
-    <tr><td class="n">13</td><td class="f"><b>Records</b><span>Best lifts, kept by themselves.</span></td><td class="p">Progress &rarr; Records</td></tr>
-    <tr><td class="n">14</td><td class="f"><b>Charts and muscles worked</b><span>Strength over time; muscles this week.</span></td><td class="p">Progress &rarr; Charts</td></tr>
-    <tr><td class="n">15</td><td class="f"><b>Body and progress photos</b><span>Weight, waist; before-and-after.</span></td><td class="p">Progress &rarr; Body &rarr; Add measures &middot; Progress photos</td></tr>
-    <tr><td class="n">16</td><td class="f"><b>Monthly report</b><span>The month's workouts and gains.</span></td><td class="p">Progress &rarr; Reports</td></tr>
-    <tr><td class="n">17</td><td class="f"><b>Share a workout picture</b><span>For WhatsApp or Instagram.</span></td><td class="p">After Finish &rarr; Picture</td></tr>
-    <tr><td class="n">18</td><td class="f"><b>Plate calculator</b><span>Which plates to put on the bar.</span></td><td class="p">In a workout: &hellip; on an exercise &rarr; Plate calculator</td></tr>
-    <tr><td class="n">19</td><td class="f"><b>Move from Hevy or Strong</b><span>Brings in all old workouts.</span></td><td class="p">Settings &rarr; Your data &rarr; Bring in from Hevy or Strong</td></tr>
-    <tr><td class="n">20</td><td class="f"><b>Never lose a workout</b><span>Google Drive backup.</span></td><td class="p">Settings &rarr; Your data &rarr; Backup &rarr; Link Google Drive &rarr; Back up now</td></tr>
+    <tr><td class="n">5</td><td class="f"><b>My membership, pause and renew<span class="new">NEW</span></b><span>Plan end date; ask the desk to pause or renew.</span></td><td class="p">Gym &rarr; My gym &rarr; My membership &rarr; Pause my plan / Renew my plan</td></tr>
+    <tr><td class="n">6</td><td class="f"><b>How busy the gym is</b><span>Quiet now? Quietest time later today.</span></td><td class="p">Gym &rarr; My gym &rarr; How busy the gym is</td></tr>
+    <tr><td class="n">7</td><td class="f"><b>Log a workout</b><span>Sets, kg and reps in a few taps. GGMS's app has no workout log.</span></td><td class="p">Workout &rarr; Start empty workout &rarr; Add exercise &rarr; Add set &rarr; Finish workout</td></tr>
+    <tr><td class="n">8</td><td class="f"><b>Rest timer and target to beat</b><span>Timer starts by itself; the kg to beat on every exercise.</span></td><td class="p">In a workout: the &ldquo;Target&rdquo; line &middot; &hellip; on an exercise &rarr; Rest timer</td></tr>
+    <tr class="grp2"><td colspan="3">Everything else</td></tr>
+    <tr><td class="n">9</td><td class="f"><b>Check in</b><span>Scan the desk poster; the desk sees it.</span></td><td class="p">Gym &rarr; My gym &rarr; Check in</td></tr>
+    <tr><td class="n">10</td><td class="f"><b>Plans from the gym</b><span>Trainer's workout plan and diet plan.</span></td><td class="p">Workout tab: folder &ldquo;From &lsaquo;gym&rsaquo;&rdquo; &middot; Gym &rarr; My gym &rarr; Diet plan</td></tr>
+    <tr><td class="n">11</td><td class="f"><b>Routines and ready plans</b><span>Save a routine, or pick a ready plan.</span></td><td class="p">Workout &rarr; New routine &middot; Workout &rarr; Find a plan</td></tr>
+    <tr><td class="n">12</td><td class="f"><b>Records</b><span>Best lifts, kept by themselves.</span></td><td class="p">Progress &rarr; Records</td></tr>
+    <tr><td class="n">13</td><td class="f"><b>Charts and muscles worked</b><span>Strength over time; muscles this week.</span></td><td class="p">Progress &rarr; Charts</td></tr>
+    <tr><td class="n">14</td><td class="f"><b>Body and progress photos</b><span>Weight, waist; before-and-after.</span></td><td class="p">Progress &rarr; Body &rarr; Add measures &middot; Progress photos</td></tr>
+    <tr><td class="n">15</td><td class="f"><b>Monthly report</b><span>The month's workouts and gains.</span></td><td class="p">Progress &rarr; Reports</td></tr>
+    <tr><td class="n">16</td><td class="f"><b>Share a workout picture</b><span>For WhatsApp or Instagram.</span></td><td class="p">After Finish &rarr; Picture</td></tr>
+    <tr><td class="n">17</td><td class="f"><b>Plate calculator</b><span>Which plates to put on the bar.</span></td><td class="p">In a workout: &hellip; on an exercise &rarr; Plate calculator</td></tr>
+    <tr><td class="n">18</td><td class="f"><b>Move from Hevy or Strong</b><span>Brings in all old workouts.</span></td><td class="p">Settings &rarr; Your data &rarr; Bring in from Hevy or Strong</td></tr>
+    <tr><td class="n">19</td><td class="f"><b>Never lose a workout</b><span>Google Drive backup.</span></td><td class="p">Settings &rarr; Your data &rarr; Backup &rarr; Link Google Drive &rarr; Back up now</td></tr>
+    <tr><td class="n">20</td><td class="f"><b>History and calendar</b><span>Every past workout by date.</span></td><td class="p">Profile &rarr; Calendar</td></tr>
   </table>
-  <p class="soon"><b>Also live:</b> history and calendar (Profile &rarr; Calendar) &middot; weekly goal (Settings &rarr; Workouts &rarr; Weekly goal) &middot; smartwatch, widgets and Health Connect (Settings &rarr; Reminders and phone) &middot; kg or lb (Settings &rarr; You &rarr; Units) &middot; feedback from any screen (the round button). Settings: the gear at the top of Profile.</p>
+  <p class="soon"><b>Also live:</b> weekly goal &middot; smartwatch, widgets and Health Connect &middot; kg or lb &middot; feedback from any screen (the round button). Settings: the gear at the top of Profile.</p>
 </div>
 
 </body>
