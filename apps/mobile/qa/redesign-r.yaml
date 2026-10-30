@@ -725,9 +725,8 @@ appId: com.mettleup.app
 # one of them held a shaker order while this count was read (24, then 25 at the end). So the end
 # check accepts this count or up to 3 more; a LOWER count (an order left behind) still fails.
 # (No braces inside ${...}: Maestro ends the script at the first one; run 41058073501.)
-- evalScript: '${output.stockN = parseInt(maestro.copiedText.replace(/[^0-9]/g, ""), 10)}'
-- evalScript: '${output.stockAny = "(" + output.stockN + "|" + (output.stockN + 1) + "|" + (output.stockN + 2) + "|" + (output.stockN + 3) + ")"}'
-- evalScript: '${output.stockBack = "^(" + output.stockAny + " in stock|Only " + output.stockAny + " left)$"}'
+# The pattern is built at the end check from maestro.copiedText itself: values put in output.* here
+# were gone ("undefined") by then, after the runFlow sub-flows in between (runs 41077579109/41077583876).
 - scrollUntilVisible:
     element: "Add to bag"
     centerElement: true
@@ -807,7 +806,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "${output.stockBack}"
+      FIND: "${'^(' + '(' + maestro.copiedText.replace(/[^0-9]/g, '') * 1 + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 1) + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 2) + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 3) + ')' + ' in stock|Only ' + '(' + maestro.copiedText.replace(/[^0-9]/g, '') * 1 + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 1) + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 2) + '|' + (maestro.copiedText.replace(/[^0-9]/g, '') * 1 + 3) + ')' + ' left)$'}"
 - takeScreenshot: r-27e-stock-back
 # And out again: nothing open now, so the plain question and its "Leave gym".
 - back

@@ -247,15 +247,29 @@ def summary(out):
     timeline = read(os.path.join(out, "timeline.txt"))
     started = re.findall(r"part (\w+) start", timeline)
     results = dict(parts(out))
+
+    # Part P2 runs as two flows (part-p2a.xml, part-p2b.xml) and has no part-p2.xml of its own: it
+    # showed "no result file" in runs where both halves passed (30 Oct 2026). Such a part takes its
+    # halves' result, and a "P2 PAUSE FAILED" line between them fails it too.
+    def result_of(p):
+        P = p.upper()
+        if P in results:
+            r = results[P]
+        else:
+            halves = [v for k, v in results.items() if re.fullmatch(re.escape(P) + "[A-Z]", k)]
+            if not halves:
+                return "no result file (did not finish)"
+            r = "failed" if "failed" in halves else "passed"
+        if f"PART {P} FAILED" in timeline or re.search(rf"\[qa\] {re.escape(P)} \w+ FAILED", timeline):
+            r = "failed"
+        return r
+
     md = ["## Cloud phone test", ""]
     md.append("| Part | Result |")
     md.append("|---|---|")
     for p in started:
-        r = results.get(p.upper(), "no result file (did not finish)")
-        if f"PART {p.upper()} FAILED" in timeline:
-            r = "failed"
-        md.append(f"| {p} | {r} |")
-    n_pass = sum(1 for p in started if results.get(p.upper()) == "passed" and f"PART {p.upper()} FAILED" not in timeline)
+        md.append(f"| {p} | {result_of(p)} |")
+    n_pass = sum(1 for p in started if result_of(p) == "passed")
     md += ["", f"**Parts run:** {len(started)} · **passed:** {n_pass} · **failed:** {len(started) - n_pass}", ""]
 
     side = [l for l in timeline.splitlines() if re.search(
