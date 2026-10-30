@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-230. Going to sleep: take the best decisions - 30 Oct 2026
+He said: "I am goin to sleep.. so you can do and take best decisions If I am needed for anyting".
+He also asked why the phone tests fail so often. Answer given: 2 real app bugs caught, 1 shared-test-gym clash, 2 of my own test-edit mistakes, 1 cloud download glitch. New practice: after a test edit, run that one part (only=<part>) before the full round.
+What I do overnight: finish 0.62.1 (fix any test failure, ship, paste the APK link); then T66 (Starter/Pro split) built so it changes nothing for any live gym until he says so; then keep test runs from sharing one shop item. No money, no LIVE data change, no new promises or legal wording without him.
+
 ## R-229. Website: latest features, prices and screenshots; Belvee GST and what he really needs - 30 Oct 2026
 He said (tracker #30, picked A: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999): "Ensure that you have latest features / prices and screenshots are updated on website".
 He said (tracker #70): Belvee's GST shows "Cancelled on application of Taxpayer (Effective from 01/01/2023)" (apparel). "I dont need a GST right.. I just want to be able to open current account and start taking payments using razorpay and also be able to submit apps without 14 days testing - and you can tell what other benefits I should have by doing this or that".
