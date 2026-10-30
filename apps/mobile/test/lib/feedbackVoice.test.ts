@@ -114,6 +114,27 @@ describe('spoken feedback (R-206)', () => {
     expect(moved).toHaveBeenCalledTimes(2);
   });
 
+  it('a send that ran out of time is never sent again, by either way', async () => {
+    const slow = vi.fn(async () => {
+      throw new DOMException('Aborted', 'AbortError');
+    });
+    const upload = vi.fn();
+    const report = vi.fn();
+    expect(await transcribe('file:///clip.m4a', slow, upload, report)).toEqual({ ok: false, words: VOICE_WORDS.offline });
+    expect(slow).toHaveBeenCalledTimes(1);
+    expect(upload).not.toHaveBeenCalled();
+    expect(report.mock.calls.map((c) => c[1])).toEqual(['form upload timed out']);
+
+    const down = vi.fn(async () => {
+      throw new TypeError('Network request failed');
+    });
+    const nativeSlow = vi.fn(async () => {
+      throw new Error('The operation was aborted');
+    });
+    expect(await transcribe('file:///clip.m4a', down, nativeSlow, report)).toEqual({ ok: false, words: VOICE_WORDS.offline });
+    expect(nativeSlow).toHaveBeenCalledTimes(1);
+  });
+
   it('a form upload that works never touches the phone uploader or reports anything', async () => {
     const ok = vi.fn(async () => new Response(JSON.stringify({ text: 'hi' }), { status: 200 }));
     const upload = vi.fn();

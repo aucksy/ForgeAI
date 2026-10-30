@@ -33,6 +33,7 @@ import { refreshGymNow, refreshOrders, refreshProducts } from './gymActions';
 import { useGymShop } from './gymStore';
 import { dietRowWords, type GymDietPlan } from './gymBody';
 import { readGymDiets, syncGymDiets, syncGymMeasures } from '@/tracker/services/gymBodySync';
+import { useGymSectionRequest } from './gymSectionRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
@@ -119,6 +120,12 @@ function GymShop({ link }: { link: GymLink }) {
   // R-225: Shop (first when on) · My gym · Leaderboard. The member's pick holds while the tab is open.
   const [picked, setPicked] = useState<GymSection | null>(null);
   const section = gymSectionShown(picked, shopOn);
+  // A reminder tap or a What's new button asked for one part (also when the tab is already open).
+  const asked = useGymSectionRequest((s) => s.n);
+  useEffect(() => {
+    const want = useGymSectionRequest.getState().want;
+    if (want) setPicked(want);
+  }, [asked]);
   const [loading, setLoading] = useState(false);
   const [pulling, setPulling] = useState(false);
   // R-163: each pull to refresh asks the busy card again at once.
@@ -273,14 +280,16 @@ function GymShop({ link }: { link: GymLink }) {
             ) : null}
             {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
             <OfferCard link={link} />
+            {/* Review: with the shop off there is no Shop part, so past orders show here. */}
+            {!shopOn && orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
           </>
         ) : null}
         {/* R-133: the gym's leaderboard and challenge. */}
-        {section === 'board' ? <LeaderboardCard link={link} emptyText="Your gym's leaderboard shows here once your gym turns it on." /> : null}
+        {section === 'board' ? <LeaderboardCard link={link} emptyText="Your gym's leaderboard shows here when your gym turns it on and your phone is online." /> : null}
         {section === 'shop' ? (
           <>
             {/* R-77: the home-screen icon is offered in a pop-up right after joining (GymIconOffer.tsx). */}
-            {shopOn || orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
+            {shopOn ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
             {shopOn ? (
               <>
                 <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink, marginTop: space.md }}>

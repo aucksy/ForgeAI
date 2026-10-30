@@ -15,6 +15,8 @@
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 
+import type { GymSection } from '@/shop/gymTab';
+
 import { isNewer } from './appUpdate';
 
 /**
@@ -23,7 +25,7 @@ import { isNewer } from './appUpdate';
  */
 export interface WhatsNewLine {
   text: string;
-  go?: { label: string; href: WhatsNewTab | `/settings/${string}` };
+  go?: { label: string; href: WhatsNewTab | `/settings/${string}`; section?: GymSection };
 }
 
 /** The tabs a line's button can switch to (0.56.0: the new Progress tab too). */
@@ -54,6 +56,25 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-225 + R-224: member-words, fresh-reader pass (lines 2, 4, 5 and 6 took its wording), facts checked.
+    version: '0.62.0',
+    date: '30 Oct',
+    lines: [
+      {
+        text: 'The Gym tab now has 3 parts at the top: "Shop" (only if your gym sells things), "My gym" and "Leaderboard".',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
+      {
+        text: 'To pause or renew your membership, go to Gym, then "My gym", and tap "Pause my plan" or "Renew my plan".',
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
+      },
+      { text: 'If your gym wants to see your workout report, the app asks you first. Nothing is sent unless you say yes.' },
+      { text: 'Many exercises now show a start and an end picture, so you can check your body position.' },
+      { text: 'On an exercise page, tap "1-rep max and % calculator" to see the most you can lift once, and any % of it.' },
+      { text: 'Voice feedback now has a second way to send. If you saw "Couldn\'t reach us" before, please try again.' },
+    ],
+  },
+  {
     // R-206 + R-195: member-words, Gemini 3.8 Flash pass (line 1 took its "writes it as text"), facts checked.
     version: '0.61.0',
     date: '29 Oct',
@@ -80,7 +101,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       },
       { text: 'After a workout, see the kg you lifted today next to last time. Each exercise\'s History shows kg per workout too.' },
       { text: 'Pull-ups, push-ups and other body-weight moves now show last time\'s numbers from any workout, in any routine.' },
-      { text: 'On the Gym tab, see how busy your gym is right now and its quiet hours later today.', go: { label: 'Open the Gym tab', href: '/shop' } },
+      { text: 'On the Gym tab, see how busy your gym is right now and its quiet hours later today.', go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' } },
       {
         text: 'Tap a name on your gym\'s leaderboard to see the workouts that member shares. Sharing yours is off until you turn it on.',
         go: { label: 'Share my workouts', href: '/settings/gym-sees' },
@@ -111,7 +132,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       {
         // R-133: words checked by a fresh reader.
         text: 'Gym tab: a leaderboard of your gym for the last 30 days, by workouts or by kg lifted. See your place and the top 10.',
-        go: { label: 'Open Gym', href: '/shop' },
+        go: { label: 'Open Gym', href: '/shop', section: 'board' },
       },
       { text: 'Reach the challenge goal shown in the Gym tab, then show that screen at the front desk for your reward.' },
       {
@@ -156,12 +177,12 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       },
       {
         text: 'Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.',
-        go: { label: 'Open the Gym tab', href: '/shop' },
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
       },
       {
         // R-124: shows once the gym adds its timings in the admin app.
         text: 'The Gym tab now shows if your gym is open right now, with its hours for the week and any holiday.',
-        go: { label: 'Open the Gym tab', href: '/shop' },
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
       },
     ],
   },
@@ -188,7 +209,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       },
       {
         text: 'In the Gym tab, join your gym, or check in at the front desk by scanning the poster with your camera.',
-        go: { label: 'Open the Gym tab', href: '/shop' },
+        go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' },
       },
       {
         text: 'Settings is now in clear groups. Rest timer options and sounds have their own page, "Rest timer and sounds".',
@@ -217,7 +238,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     lines: [
       {
         text: 'Gym members: your gym can reward you for training. Hit its target days and get free days on your membership.',
-        go: { label: "See your gym's offer", href: '/shop' },
+        go: { label: "See your gym's offer", href: '/shop', section: 'gym' },
       },
       { text: 'Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.' },
     ],
@@ -250,7 +271,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       },
       {
         text: 'Gym members: show your workout days to the front desk on your screen, from "My membership".',
-        go: { label: 'Open My membership', href: '/shop' },
+        go: { label: 'Open My membership', href: '/shop', section: 'gym' },
       },
     ],
   },
@@ -315,7 +336,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
       { text: 'In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.' },
       {
         text: 'New "My membership" page: your plan, end date, days left and visits this month.',
-        go: { label: 'Open My membership', href: '/shop' },
+        go: { label: 'Open My membership', href: '/shop', section: 'gym' },
       },
       { text: "Scan the QR code at your gym's desk, then start today's workout in one tap." },
       { text: "Got a code from your gym? Join from the first screen and add your gym's logo to your home screen." },

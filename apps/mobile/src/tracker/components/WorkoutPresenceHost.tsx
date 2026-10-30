@@ -7,6 +7,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { requestGymSection } from '@/shop/gymSectionRequest';
 import { NOTICE_ROUTE } from '@/shop/noticeAlerts';
 
 import { phoneWorkoutLive, startPhoneSync } from '../phone/phoneSync';
@@ -48,8 +49,9 @@ export function WorkoutPresenceHost() {
         setTimeout(() => router.navigate('/workout'), 300);
         return;
       }
-      // R-86: a gym reminder opens the gym's tab (the offer card and My membership at its top).
+      // R-86: a gym reminder opens the gym's tab (its "My gym" part: the offer card and My membership).
       if (route === '/shop') {
+        requestGymSection('gym');
         setTimeout(() => router.navigate('/shop'), 300);
         return;
       }

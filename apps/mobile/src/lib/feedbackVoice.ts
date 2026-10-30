@@ -136,6 +136,17 @@ function parse(body: string): unknown {
  * transcription for the same clip. When every address gave no answer, the phone's own uploader tries
  * once more (same order, same rule), and the first error is reported so we can see the cause.
  */
+/**
+ * A send that ran out of time (the 45 s timer), not one that failed at once. The box may still be
+ * turning that clip into text, so it is never sent again: that would cost a second transcription
+ * and keep the member waiting up to 3 minutes (review, 30 Oct 2026).
+ */
+export function timedOut(e: unknown): boolean {
+  const name = (e as { name?: unknown } | null)?.name;
+  const message = (e as { message?: unknown } | null)?.message;
+  return name === 'AbortError' || (typeof message === 'string' && /abort/i.test(message));
+}
+
 export async function transcribe(
   uri: string,
   post: typeof fetchWithTimeout = fetchWithTimeout,
@@ -166,6 +177,10 @@ export async function transcribe(
       return voiceAnswer(res.status, body);
     } catch (e) {
       console.warn('[feedback-voice] box address gave no answer', VOICE_URLS[i], e);
+      if (timedOut(e)) {
+        report(e, 'form upload timed out');
+        return { ok: false, words: VOICE_WORDS.offline };
+      }
       firstError ??= e;
     }
   }
@@ -182,6 +197,7 @@ export async function transcribe(
     } catch (e) {
       console.warn('[feedback-voice] phone uploader gave no answer', VOICE_URLS[i], e);
       nativeError ??= e;
+      if (timedOut(e)) break;
     }
   }
   if (nativeError !== null) report(nativeError, 'phone uploader');

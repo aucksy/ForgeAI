@@ -9,6 +9,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { goFor, type WhatsNewEntry, type WhatsNewLine, type WhatsNewTab } from '@/lib/whatsNew';
 import { useGymShop } from '@/shop/gymStore';
+import { requestGymSection } from '@/shop/gymSectionRequest';
 import { color, space, type } from '@/theme/tokens';
 
 interface LinesProps {
@@ -34,6 +35,7 @@ export function WhatsNewLines({ lines, onGo, here }: LinesProps) {
                 <Pressable
                   onPress={() => {
                     onGo?.();
+                    if (l.go?.section && inGym) requestGymSection(l.go.section);
                     if (go.tab) router.navigate(go.href as WhatsNewTab);
                     else router.push(go.href as `/settings/${string}`);
                   }}
