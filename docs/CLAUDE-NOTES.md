@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-223. Never stop while he is away; pending decisions are not a reason to stop — 30 Oct 2026
+He said: "in future if possible do not stop working on other items because of my pending decisions. I did tell you that I'm going to sleep and you still stopped." He answered #75, #76, #77 (all A: yes).
+Cause: not compaction. My reply ended with a Next list and no background job, so nothing woke me for six hours.
+Did: brain note never-stop-while-he-is-away (hard); two global hooks: away_flag.py (his "going to sleep/away" prompt sets a 10-hour flag; his next prompt clears it) and keep_working.py (Stop hook blocks ending the turn while the flag is on). Pipe-tested both. Live runs of 0043/0044/0045 were blocked by the permission check, which wants his yes in chat; asked him.
+
 ## R-219 result. Exercise demos: RepDB free start/end pictures — 29 Oct 2026
 Research (helper, 29 Oct): no free animation set is good enough. Best free option: RepDB free edition (github.com/sergei-argutin/exercise-dataset): a start and an end picture for 516 exercises, clean flat style, licence allows commercial use inside apps with a visible credit "Exercise data by RepDB (repdb.co)" on an About/Credits screen; no republishing the set, no AI restyling. Covers about 230-250 of our 402 exercises. Paid upgrade: RepDB Standard $499 one-time adds grey-3D looping animations (same coverage); only with his yes. Rejected: MuscleWiki (no offline storage), wger (mixed licences), Everkinetic (dated, ShareAlike), WorkoutLabs ($1,200+/yr), Lottie packs (too few), Mixamo.
 Decision (his rule: free start/end pictures if no good free animation): use RepDB free. Blender clips stop. Build after F63 merges (same exercise page). Gaps (~150) keep the text-only page for now.

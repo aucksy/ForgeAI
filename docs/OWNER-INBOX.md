@@ -485,6 +485,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 77. Workout report for the gym: may I add its table to the live server, and are the words OK? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (30 Oct, 07:31 am, via the page)**
 **Why:** F121 is built. The desk taps "Request workout report" on a member's page. The member's app asks first; only on yes does the phone send the report, and the desk downloads it. Everything stays hidden until the live server has a new private table. I tested it on the test server: all 64 report checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing.
 **What the gym can and cannot get:** only workouts from the day the member joined the gym (the server reads the join date from your records, never from the phone, and refuses a file with older workouts). Only that gym can download it. A request with no answer ends after 30 days; a sent report is deleted 30 days after it arrives.
 **What the member reads (privacy wording, needs your OK):**
@@ -499,6 +500,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 76. Pause and renew requests: may I add their table to the live server? — 30 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (30 Oct, 07:32 am, via the page)**
 **Why:** F150 (members ask the desk from the app to pause or renew their plan) is built. The buttons in the app and the request list at the desk stay hidden until the live server has a new requests table. I tested it on the test server first: all 63 request checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. A renewal is still paid at the desk.
 **Decide:** May I add the requests table to the live server?
 - A: Yes, add it. Members then see "Pause my plan" and "Renew my plan", and the desk sees their requests. (recommended)
@@ -507,6 +509,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 75. Desk photos: may I add their table to the live server? — 29 Oct 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
+**READ (30 Oct, 07:32 am, via the page)**
 **Why:** F107 (take a new member's photo with the desk computer's camera) is built and in the desk panel. The button stays hidden until the live server has a new, private photo table. I tested that table on the new test server first: all 31 photo checks and all 9 safety checks pass. It only adds things; it changes and deletes nothing. Each photo takes about 50 KB of database space.
 **Decide:** May I add the photo table to the live server?
 - A: Yes, add it. The "Take photo" button then appears at the desk. (recommended)
