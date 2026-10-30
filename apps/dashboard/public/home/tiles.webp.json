@@ -1,4 +1,4 @@
 {
-  "prompt": "Origin: real screenshot of the ForgeAI admin app (demo gym, made-up data), captured 21 Oct 2026 by apps/dashboard/e2e/zz-shots.spec.mjs at 390x844 @2x; cropped to the Today tiles (rows 470-1430) with PIL, webp quality 80. Not generated.",
-  "createdAt": "2026-10-21T14:43:16.812Z"
+  "prompt": "Origin: real screenshot of the MettleUp admin app (demo gym, made-up data), captured 30 Oct 2026 by apps/dashboard/e2e/zz-shots.spec.mjs at 390x844 @2x; cropped to the four 'Ending' tiles (box 20,708-760,1198 of today.png) with PIL, webp quality 80. Not generated.",
+  "createdAt": "2026-10-30T15:22:00.000Z"
 }

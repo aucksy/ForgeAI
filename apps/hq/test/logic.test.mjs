@@ -268,7 +268,9 @@ test('gym groups (0031, #41): each business with its branches, members per branc
   assert.equal(cards[0].branches[0].gym.plan, 'pro');
   assert.equal(cards[0].branches[1].gym, null);
   assert.equal(L.groupCards(null, []).length, 0, 'a server without 0031: no groups, no crash');
-  assert.equal(L.groupPriceWords(3), '3 branches: priced per branch, so Starter ₹2,997 or Pro ₹5,997 a month for all of them. Information only: nothing is billed here.');
+  assert.equal(L.groupPriceWords(3), '3 branches: the first at full price, the others at half, so Starter ₹1,997 or Pro ₹2,997 a month for all of them. Information only: nothing is billed here.');
+  assert.equal(L.extraBranchPrice(999), 499);
+  assert.equal(L.extraBranchPrice(1499), 749);
 });
 
 test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: the page)", () => {
@@ -278,5 +280,19 @@ test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: 
     const m = new RegExp(`${word} ₹([0-9,]+) a month`).exec(text);
     assert.ok(m, `${word} price not found on the landing page`);
     assert.equal(Number(m[1].replace(/,/g, '')), L.BRANCH_PRICES[plan], `${word}: HQ and the landing page disagree`);
+  }
+});
+
+test('the landing page carries the prices the owner picked on 30 Oct 2026 (#30 A), in English and Hindi', () => {
+  // Raw HTML, so the Hindi copies in data-hi count too.
+  const html = readFileSync(new URL('../../dashboard/public/home/index.html', import.meta.url), 'utf8');
+  for (const want of ['₹999', '₹9,990', '₹1,499', '₹14,990', '₹2,499', '₹24,990', 'Pro + AI', '₹29,999',
+    'first 25 gyms, and only until 31 March 2027', 'पहले 25 जिम, और सिर्फ 31 मार्च 2027 तक', 'FIRST 25', 'पहले 25',
+    'each extra branch pays half', 'हर अगली ब्रांच आधे दाम पर']) {
+    assert.ok(html.includes(want), `landing page is missing "${want}"`);
+  }
+  // The old prices, and "Own it" (offered on the phone only, never on the website).
+  for (const gone of ['₹1,999', '₹19,990', '₹2,999', 'FIRST 50', 'पहले 50', 'first 50', '₹19,990 once', '₹4,990']) {
+    assert.ok(!html.includes(gone), `landing page still says "${gone}"`);
   }
 });

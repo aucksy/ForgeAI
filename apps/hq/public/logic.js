@@ -518,8 +518,14 @@ export function csvName(now = Date.now()) {
 // prices are PER BRANCH (the landing page says so); HQ shows that as information only: nothing is
 // billed from here.
 
-/** The landing page's monthly prices per branch, in rupees (apps/dashboard/public/home). */
-export const BRANCH_PRICES = { starter: 999, pro: 1999 };
+/** The landing page's monthly prices per branch, in rupees (apps/dashboard/public/home).
+ *  Owner's pick A on #30 (30 Oct 2026): Starter ₹999, Pro ₹1,499. A 2nd or later branch pays half (#41). */
+export const BRANCH_PRICES = { starter: 999, pro: 1499 };
+
+/** A 2nd or later branch's monthly price: half, rounded down (₹999 -> ₹499, ₹1,499 -> ₹749). PURE. */
+export function extraBranchPrice(price) {
+  return Math.floor((Number(price) || 0) / 2);
+}
 
 /** gymId -> { groupId, groupName, branchNo, branches } for every gym in a group. PURE. */
 export function branchOf(groups) {
@@ -549,9 +555,10 @@ export function groupCards(groups, gyms) {
     .sort((a, b) => b.branches.length - a.branches.length || b.membersRegister - a.membersRegister || String(a.name).localeCompare(String(b.name)));
 }
 
-/** "3 branches: priced per branch, e.g. Starter ₹2,997 or Pro ₹5,997 a month in all (information only)." PURE. */
+/** "3 branches: the first at full price, the others at half, so Starter ₹1,997 or Pro ₹2,997 a month
+ *  for all of them (information only)." PURE. */
 export function groupPriceWords(branches) {
   const n = Number(branches) || 0;
-  const r = (x) => `₹${(x * n).toLocaleString('en-IN')}`;
-  return `${count(n, 'branch', 'branches')}: priced per branch, so Starter ${r(BRANCH_PRICES.starter)} or Pro ${r(BRANCH_PRICES.pro)} a month for all of them. Information only: nothing is billed here.`;
+  const r = (x) => `₹${(n > 0 ? x + extraBranchPrice(x) * (n - 1) : 0).toLocaleString('en-IN')}`;
+  return `${count(n, 'branch', 'branches')}: the first at full price, the others at half, so Starter ${r(BRANCH_PRICES.starter)} or Pro ${r(BRANCH_PRICES.pro)} a month for all of them. Information only: nothing is billed here.`;
 }

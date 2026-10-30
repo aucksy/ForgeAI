@@ -1,4 +1,4 @@
 {
-  "prompt": "Origin: real screenshot of the ForgeAI admin app (demo gym, made-up data), captured 21 Oct 2026 by apps/dashboard/e2e/zz-shots.spec.mjs at 390x844 @2x; cropped to the fees-due list (rows 195-900) with PIL, webp quality 80. Not generated.",
-  "createdAt": "2026-10-21T14:43:16.952Z"
+  "prompt": "Origin: real screenshot of the MettleUp admin app (demo gym, made-up data), captured 30 Oct 2026 by apps/dashboard/e2e/zz-shots.spec.mjs at 390x844 @2x; cropped to two fees-due rows (box 61,300-719,773 of dues.png) with PIL, webp quality 80. Not generated.",
+  "createdAt": "2026-10-30T15:22:00.000Z"
 }

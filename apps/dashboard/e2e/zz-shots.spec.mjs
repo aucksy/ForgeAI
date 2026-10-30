@@ -1,7 +1,9 @@
 // Pictures of the real admin app (demo gym, phone size) for the landing page (launch I2).
 // Only with SHOTS=1:  SHOTS=1 npx playwright test zz-shots  ->  public/home/*.png. The page ships two webp
-// crops of them, made with PIL (quality 80): tiles.webp = today.png rows 470-1430, dues-list.webp =
-// dues.png rows 195-900. Delete the .png files afterwards; the page loads only the two crops.
+// crops of them, made with PIL (quality 80). 30 Oct 2026 boxes (Today now opens with the shop card):
+// tiles.webp = today.png box (20, 708, 760, 1198), the four "Ending" tiles; dues-list.webp = dues.png
+// box (61, 300, 719, 773), two fees-due rows. Check the boxes against the new .png before cropping.
+// Delete the .png files afterwards; the page loads only the two crops.
 import { test } from '@playwright/test';
 
 import { open, openApp, startDemo } from './support.mjs';
