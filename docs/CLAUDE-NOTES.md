@@ -5,6 +5,16 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-225. Gym section with tabs; why scan a QR when the phone numbers match — 30 Oct 2026
+He said: "We need to create dedicated section with tabs for GYM section in the app. First default landing should be
+shop if active. Then GYM info, checkins etc. Then leaderboard". And: "if the phone number of the member in the gym
+database and the login phone number of the member matches, then why do they have to like scan the QR code to show
+their plan? Is it like a one-time thing for the first time it is required? Even if it is, then why?"
+What I did:
+- Voice feedback: when the form upload throws, the phone's own uploader (expo-file-system File.upload, same form,
+  so the server needs no change) sends the clip; both errors reach us as non-fatal crash reports. Ships in 0.62.0.
+- Gym section and QR answer: in progress (see the next note or PROGRESS.md).
+
 ## R-224. Demo PDF, voice feedback, What's new, AI import before a migration — 30 Oct 2026
 He said: "create a PDF for me to give walkthru/demo to client today ... add top 20 most useful/valuable features for GYM
 and member also", "keep the number of pages less - dont add screenshtos.. only the path to reach a setting", "Audio

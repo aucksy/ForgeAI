@@ -9,8 +9,10 @@
  * The pure parts (tested in test/lib/feedbackVoice.test.ts) and the upload.
  */
 import type { RecordingOptions } from 'expo-audio';
-import { File } from 'expo-file-system';
+import Constants from 'expo-constants';
+import { File, UploadType } from 'expo-file-system';
 
+import { crashBody, describeError, postCrash } from '@/lib/crashReport';
 import { FEEDBACK_MAX, FEEDBACK_URLS, senderId } from '@/lib/feedback';
 import { fetchWithTimeout } from '@/lib/fetchTimeout';
 
@@ -84,13 +86,64 @@ export function levelFromMetering(db: number | undefined): number {
 /** The voice address next to each feedback box address, newest first. PURE. */
 export const VOICE_URLS = FEEDBACK_URLS.map((u) => `${u}/voice`);
 
+/** The phone's own uploader (expo-file-system): status and body text, or a throw when nothing answered. */
+export type NativeUpload = (url: string, uri: string, sender: string) => Promise<{ status: number; body: string }>;
+
+/**
+ * The second way to send (owner, 30 Oct 2026: "Audio Feedback did not work"; the live box turned a real
+ * clip into text in 1-2 s from both addresses, so the phone's upload threw). React Native's FormData
+ * reads the file through its own network layer; this hands the file to expo-file-system's native
+ * uploader instead, as the same form (`audio` + `sender`), so the box needs no change.
+ */
+export const nativeUpload: NativeUpload = async (url, uri, sender) => {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 45_000);
+  try {
+    const res = await new File(uri).upload(url, {
+      uploadType: UploadType.MULTIPART,
+      fieldName: 'audio',
+      mimeType: 'audio/mp4',
+      parameters: sender ? { sender } : {},
+      sessionType: 'foreground',
+      signal: ctrl.signal,
+    });
+    return { status: res.status, body: res.body };
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+/** Why a send failed reaches us as a non-fatal crash report (no clip, no words: only the error). */
+export type ReportFailure = (error: unknown, where: string) => void;
+const reportFailure: ReportFailure = (error, where) => {
+  const d = describeError(error);
+  postCrash(crashBody(`[feedback-voice] ${where}: ${d.message}`, d.stack, Constants.expoConfig?.version ?? '', 'feedback-voice', false)).catch((e: unknown) =>
+    console.warn('[feedback-voice] failure report not sent', e),
+  );
+};
+
+function parse(body: string): unknown {
+  try {
+    return JSON.parse(body);
+  } catch {
+    return null; // quiet: judged by its status alone
+  }
+}
+
 /**
  * Send the clip; the next address only when one gave no answer or "not here" (404). A server answer
  * (502 Groq failed, 503 switched off) is final: trying the next address would spend a second
- * transcription for the same clip.
+ * transcription for the same clip. When every address gave no answer, the phone's own uploader tries
+ * once more (same order, same rule), and the first error is reported so we can see the cause.
  */
-export async function transcribe(uri: string, post: typeof fetchWithTimeout = fetchWithTimeout): Promise<VoiceResult> {
+export async function transcribe(
+  uri: string,
+  post: typeof fetchWithTimeout = fetchWithTimeout,
+  upload: NativeUpload = nativeUpload,
+  report: ReportFailure = reportFailure,
+): Promise<VoiceResult> {
   const sender = await senderId();
+  let firstError: unknown = null;
   for (let i = 0; i < VOICE_URLS.length; i++) {
     const last = i === VOICE_URLS.length - 1;
     const form = new FormData();
@@ -113,9 +166,25 @@ export async function transcribe(uri: string, post: typeof fetchWithTimeout = fe
       return voiceAnswer(res.status, body);
     } catch (e) {
       console.warn('[feedback-voice] box address gave no answer', VOICE_URLS[i], e);
-      if (last) return { ok: false, words: VOICE_WORDS.offline };
+      firstError ??= e;
     }
   }
+  if (firstError !== null) report(firstError, 'form upload');
+  let nativeError: unknown = null;
+  for (let i = 0; i < VOICE_URLS.length; i++) {
+    const last = i === VOICE_URLS.length - 1;
+    try {
+      const res = await upload(VOICE_URLS[i], uri, sender ?? '');
+      if (!last && res.status === 404) continue;
+      const body = parse(res.body);
+      if (res.status !== 200) console.warn('[feedback-voice] box answered the phone uploader', res.status, body);
+      return voiceAnswer(res.status, body);
+    } catch (e) {
+      console.warn('[feedback-voice] phone uploader gave no answer', VOICE_URLS[i], e);
+      nativeError ??= e;
+    }
+  }
+  if (nativeError !== null) report(nativeError, 'phone uploader');
   return { ok: false, words: VOICE_WORDS.offline };
 }
 
