@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-253. New ideas for the picture across Play shots 1 and 2: the barbell covers the screens — 31 Oct 2026
+
+He said: "Can you try some new ideas to do this continuous field thing? I mean this barbell is good enough but it's blocking some of the stuff right?"
+
+Did: brand.store_scene got prop= options drawn BEHIND the phones (they show only in the margins and the gap): bar-behind (the same barbell, lower and behind), rise (one orange strength line climbing from shot 1 bottom-left to a record dot at shot 2 top-right), hex (one big brand hex across the seam). Default is still the old barbell in front; the Play pictures are unchanged until he picks. Recommended: rise.
+
 ## R-252. Bring back the picture across Play shots 1 and 2; is the after-workout photo compressed? — 31 Oct 2026
 
 He said: "we actually wanted to do that little thing with, you know, a picture running across two screenshots. That's something I really wanted to do. So I don't know why you took it away... bring that back". The rest of the new pictures and captions are fine. Also: "we are giving users the option to take a picture at the end of their workout and maybe share it but I wonder how much space it will take up on the free server. Are we doing any kind of compression before saving it online?"

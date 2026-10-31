@@ -492,7 +492,28 @@ def dumbbell(x0, x1, cy, R, uid):
     return defs, body
 
 
-def store_scene(shots, captions, screens, uid='s'):
+def rising_line(W, uid):
+    """R-253 idea: one strength line climbing from shot 1's bottom-left to a record dot at shot 2's
+    top-right. Drawn behind the phones, so it shows only in the margins and the gap between them."""
+    pts = [(-60, 1770), (112, 1660), (1000, 1250), (1160, 1130), (2052, 600), (2240, 500)]
+    d = 'M' + ' L'.join(f'{n(x)} {n(y)}' for x, y in pts)
+    area = d + f' L{W + 240} {SHOT_H} L-60 {SHOT_H} Z'
+    defs = (f'<linearGradient id="ra{uid}" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{FORGE}" stop-opacity="0.30"/>'
+            f'<stop offset="1" stop-color="{FORGE}" stop-opacity="0"/></linearGradient>'
+            f'<filter id="rg{uid}" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="18"/></filter>')
+    body = (f'<path d="{area}" fill="url(#ra{uid})"/>'
+            f'<path d="{d}" fill="none" stroke="{FORGE}" stroke-width="40" stroke-linejoin="round" opacity="0.55" filter="url(#rg{uid})"/>'
+            f'<path d="{d}" fill="none" stroke="{MOLTEN}" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>')
+    for x, y in pts[1:-2]:
+        body += f'<circle cx="{n(x)}" cy="{n(y)}" r="20" fill="{STEEL}" stroke="{MOLTEN}" stroke-width="9"/>'
+    rx, ry = pts[-2]
+    body += (f'<circle cx="{n(rx)}" cy="{n(ry)}" r="64" fill="{FORGE}" opacity="0.5" filter="url(#rg{uid})"/>'
+             f'<circle cx="{n(rx)}" cy="{n(ry)}" r="34" fill="{MOLTEN}" stroke="#FFFFFF" stroke-width="7"/>')
+    return defs, body
+
+
+def store_scene(shots, captions, screens, uid='s', prop='dumbbell'):
     """Render one store canvas. shots: list of shot indexes laid side by side (1 or 2 for the
     panorama). screens: {index: image path | PIL image | None}. Returns svg text, width."""
     W = SHOT_W * len(shots)
@@ -504,6 +525,16 @@ def store_scene(shots, captions, screens, uid='s'):
     # (Review, 24 Oct 2026: a dumbbell head peeking from a corner of shots 3-8 was tried and
     # removed: at 140 px beside the phone it read as an accidental orange sliver.)
     defs, body = background(W, SHOT_H, uid, glows)
+    # R-253 (owner, 31 Oct 2026): the barbell in front covered the app. These props sit BEHIND
+    # the phones and show only in the margins and the gap between them.
+    if pano and prop == 'bar-behind':
+        d3, b3 = dumbbell(96, W - 96, 1480, 230, uid + 'db')
+        defs, body = defs + d3, body + b3
+    elif pano and prop == 'rise':
+        d3, b3 = rising_line(W, uid + 'rl')
+        defs, body = defs + d3, body + b3
+    elif pano and prop == 'hex':
+        body += mark(W / 2, 1150, 600, uid + 'hx', with_m=False)
     for k, idx in enumerate(shots):
         x0 = k * SHOT_W
         g = phone_geom(x0 + SHOT_W / 2)
@@ -517,7 +548,7 @@ def store_scene(shots, captions, screens, uid='s'):
         defs += d2
         body += b2
         body += headline(captions[idx], x0, f'{uid}{idx}')
-    if pano:
+    if pano and prop == 'dumbbell':
         R = 250
         d3, b3 = dumbbell(118, W - 118, 1712, R, uid + 'db')
         defs += d3
