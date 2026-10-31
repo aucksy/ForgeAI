@@ -56,6 +56,18 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-256/R-258/R-259, R-260, UK2: member-words, Gemini 3.8 Flash pass (took its "where" order on the logo
+    // line and "touch and hold ... instead of leaving you on the Workout tab"); its "Later ... so it never
+    // interrupts you" dropped (wrong cause). Facts checked.
+    version: '0.65.0',
+    date: '31 Oct',
+    lines: [
+      { text: 'The new MettleUp logo now shows when the app opens and at the top of the Workout, Progress and Gym tabs.' },
+      { text: 'When a new version is ready, a pop-up tells you (never during a workout). "Later" asks again in 3 days.' },
+      { text: 'Touch and hold the app icon and tap "Resume workout". It now opens your workout, not the Workout tab.' },
+    ],
+  },
+  {
     // R-248: member-words, Gemini Flash pass (took "at the top of the screen"); facts checked. The intro
     // screens are for new members only, so no line.
     version: '0.64.0',
