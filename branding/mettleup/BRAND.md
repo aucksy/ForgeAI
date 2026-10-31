@@ -172,5 +172,5 @@ renders `brand/*.png` from `brand/mark.svg`. Use one or the other; whichever run
 Tagline: **Stronger every week.**
 
 The 8 screenshot captions live in ONE place: `store/captions.json` (headline, sub line, and the screen
-each one shows). R-249, 31 Oct 2026: each shot stands alone (no panorama pair); the pictures come from
+each one shows). Shots 1 and 2 are the panorama pair: one artwork across both (R-252). The pictures come from
 the store-shots run named in its `_source` line. Never copy them here: a second list drifts.

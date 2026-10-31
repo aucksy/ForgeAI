@@ -4,6 +4,7 @@
 Run: python3 -m unittest discover -s scripts/ci -p 'test_*.py'   (or pytest scripts/ci)
 No Google library is needed: the scripts import those inside the functions that call Play.
 """
+import json
 import os
 import struct
 import sys
@@ -205,10 +206,15 @@ class ReviewRefusals(unittest.TestCase):
 
 class ScreenshotOrder(unittest.TestCase):
     def test_all_eight_in_order(self):
-        # R-249: every shot stands alone; no panorama pair to keep side by side.
         self.assertEqual(pl.SCREENSHOT_ORDER, [1, 2, 3, 4, 5, 6, 7, 8])
         names = [os.path.basename(p) for p in pl.screenshot_paths()]
         self.assertEqual(names, [f"shot-0{n}.png" for n in range(1, 9)])
+
+    def test_panorama_pair_comes_first_side_by_side(self):
+        # R-252: the owner wants the barbell artwork across shots 1 and 2.
+        self.assertEqual(pl.SCREENSHOT_ORDER[:2], [1, 2])
+        with open(os.path.join(pl.STORE, "captions.json"), encoding="utf-8") as fh:
+            self.assertEqual(json.load(fh)["panorama"], [1, 2])
 
     def test_committed_files_pass_plays_rules(self):
         for p in pl.screenshot_paths():

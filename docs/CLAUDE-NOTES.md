@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-252. Bring back the picture across Play shots 1 and 2; is the after-workout photo compressed? — 31 Oct 2026
+
+He said: "we actually wanted to do that little thing with, you know, a picture running across two screenshots. That's something I really wanted to do. So I don't know why you took it away... bring that back". The rest of the new pictures and captions are fine. Also: "we are giving users the option to take a picture at the end of their workout and maybe share it but I wonder how much space it will take up on the free server. Are we doing any kind of compression before saving it online?"
+
+Did: panorama [1, 2] back in store/captions.json (shots 1 + 2 = one artwork, cut at x 1080), re-composed, play_listing keeps 1 and 2 first; the side-by-side test is back. Not uploaded (still waits for his yes). Photo answer: workout photos are never uploaded (workoutPhotos.ts: kept on the phone only, shared through the phone's own share menu), so they use 0 bytes of our server. On the phone they are saved at 85 % JPEG quality, full size; the optional Google Drive photo backup (the member's own Drive) shrinks each to 1080 px, 70 % (~100-250 KB).
+
 ## R-251. Backlog: a guided flow for new users to make their first routine in a folder — 31 Oct 2026
 
 He said: "Add to your feature backlog, we will need to build a guided flow for new users to create a new routine in a folder." Then: "Add it."

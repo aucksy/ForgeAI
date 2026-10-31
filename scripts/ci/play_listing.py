@@ -5,8 +5,9 @@
 
 Run by .github/workflows/play-listing.yml (manual). In one Play edit:
   1. deletes every en-US phone screenshot, then uploads branding/mettleup/store/out/shot-0N.png in
-     SCREENSHOT_ORDER (Play shows them in upload order). R-249 (31 Oct 2026): all 8, each a picture
-     on its own (no panorama pair any more), every caption checked against its screen.
+     SCREENSHOT_ORDER (Play shows them in upload order). R-249 (31 Oct 2026): all 8, every caption
+     checked against its screen. Shots 1 and 2 are the barbell panorama pair (R-252, the owner wants
+     it) and must sit first, side by side.
   2. replaces the feature graphic (1024x500) and the icon (512x512).
   3. --with-text: title, short and full description from branding/mettleup/store/listing-draft.txt.
   4. reads the screenshots back, names each by its SHA-256, and stops (nothing committed) unless the
@@ -25,7 +26,7 @@ from play_common import PACKAGE, fail, finish_edit, log, service  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 STORE = os.path.join(ROOT, "branding", "mettleup", "store")
-SCREENSHOT_ORDER = [1, 2, 3, 4, 5, 6, 7, 8]  # R-249: all 8, no panorama pair
+SCREENSHOT_ORDER = [1, 2, 3, 4, 5, 6, 7, 8]  # R-249: all 8; 1 + 2 are the panorama pair (R-252)
 FEATURE_GRAPHIC = os.path.join(STORE, "feature-graphic-1024x500.png")
 ICON = os.path.join(STORE, "play-icon-512.png")
 LISTING_TEXT = os.path.join(STORE, "listing-draft.txt")
