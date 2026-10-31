@@ -1,6 +1,7 @@
 package com.forgeai.phone
 
 import android.content.Context
+import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -19,7 +20,42 @@ class ForgePhoneModule : Module() {
 
   override fun definition() = ModuleDefinition {
     Name("ForgePhone")
-    Events("onSharedFile")
+    Events("onSharedFile", "onPlayUpdate")
+
+    // ---------------------------------------------------------------- Google Play's update flow (R-260)
+    AsyncFunction("playUpdateCheck") { promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(null)
+      } else {
+        PlayUpdate.check(c) { promise.resolve(it) }
+      }
+    }
+
+    AsyncFunction("playUpdateStart") { promise: Promise ->
+      val c = ctx
+      val a = appContext.currentActivity
+      if (c == null || a == null) {
+        promise.resolve("failed")
+      } else {
+        PlayUpdate.start(
+          c,
+          a,
+          { status ->
+            try {
+              sendEvent("onPlayUpdate", mapOf("status" to status))
+            } catch (_: Exception) {
+              // JS asks playUpdateCheck again when it comes back
+            }
+          },
+        ) { promise.resolve(it) }
+      }
+    }
+
+    Function("playUpdateFinish") {
+      val c = ctx ?: return@Function false
+      PlayUpdate.finish(c)
+    }
 
     // ---------------------------------------------------------------- a shared export (v0.28.0)
     // The app already running: Android hands the share to onNewIntent; JS takes it on the event.

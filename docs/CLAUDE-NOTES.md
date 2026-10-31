@@ -16,8 +16,14 @@ be a persistent notification somewhere, but yeah, just, you know, do the best im
 Found: GitHub copies already get a quiet "A new version of MettleUp is ready" card on the Workout tab.
 Play copies get nothing (Play updates them only when the member has auto-update on).
 
-Did: (in progress) a pop-up on launch for both kinds of copy, Google Play's own in-app update for Play
-copies, the Workout tab card kept as the always-there reminder, never during an open workout.
+Did (built, ships in 0.65.0): a pop-up "Update MettleUp" on the first launch that finds a newer version.
+"Later" waits 3 days; daily once 2+ versions behind or the update is 14+ days old. Never during an open
+workout, at most once a day. Play copies use Google's own in-app update (downloads while the member trains,
+then "Restart now"; a finished download installs quietly when the app goes to the background with no
+workout open; if Google's box fails, the store page opens). GitHub copies open the new APK. The Workout tab
+card stays as the reminder ("Later" there = 3 days). No phone notification: Play sends its own, and extra
+alerts push members to switch off ours (the rest-timer alert with them). Words checked with Gemini.
+Code: lib/updatePrompt.ts (when), lib/updateStore.ts (what), components/UpdatePrompt.tsx, PlayUpdate.kt.
 
 ## R-259. Name style A picked — 31 Oct 2026
 

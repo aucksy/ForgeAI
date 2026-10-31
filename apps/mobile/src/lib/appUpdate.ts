@@ -85,6 +85,16 @@ function readSeen(raw: string | null): (AppUpdate & { at: number }) | null {
 
 /** The update to offer, asking GitHub when the last answer is older than 6 hours. Never throws. */
 export async function findUpdate(current: string | null | undefined, now = Date.now()): Promise<AppUpdate | null> {
+  const seen = await findLatest(current, now);
+  const later = await readMeta(LATER_KEY);
+  return updateToShow(seen, current, later);
+}
+
+/**
+ * R-260: the newest release when it is newer than this app, with no "Later" applied (the pop-up and the
+ * card keep their own reminders now: lib/updatePrompt.ts). Never throws.
+ */
+export async function findLatest(current: string | null | undefined, now = Date.now()): Promise<AppUpdate | null> {
   let seen = readSeen(await readMeta(SEEN_KEY));
   if (!seen || now - seen.at > CHECK_EVERY_MS) {
     try {
@@ -101,8 +111,16 @@ export async function findUpdate(current: string | null | undefined, now = Date.
       console.warn('[update] release check failed', e); // offline: keep the last answer
     }
   }
-  const later = await readMeta(LATER_KEY);
-  return updateToShow(seen && seen.version ? seen : null, current, later);
+  return updateToShow(seen && seen.version ? { version: seen.version, url: seen.url } : null, current, null);
+}
+
+/** R-260: a saved value for the update reminders, or null (logged) when the database cannot say. */
+export async function readUpdateMeta(key: string): Promise<string | null> {
+  return readMeta(key);
+}
+
+export async function writeUpdateMeta(key: string, value: string): Promise<void> {
+  await enqueueWrite(() => setMeta(key, value));
 }
 
 export async function updateLater(version: string): Promise<void> {

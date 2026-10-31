@@ -46,6 +46,23 @@ export interface ForgePhone {
   /** v0.28.0: an export shared to ForgeAI (copied into the app's cache), taken once. */
   takeSharedFile(): Promise<{ uri: string; name: string; type: string } | { error: 'too_big' | 'unreadable' } | null>;
   addListener(event: 'onSharedFile', cb: () => void): { remove: () => void };
+  /** R-260: what Google Play says about a newer version (null: not a Play copy, or Play cannot say). */
+  playUpdateCheck?(): Promise<PlayUpdateInfo | null>;
+  /** R-260: Google's update box; the download then runs while the app is used. */
+  playUpdateStart?(): Promise<'accepted' | 'declined' | 'unavailable' | 'failed'>;
+  /** R-260: install the downloaded update (the app restarts into it). */
+  playUpdateFinish?(): boolean;
+  addListener(event: 'onPlayUpdate', cb: (e: { status: PlayUpdateStatus }) => void): { remove: () => void };
+}
+
+export type PlayUpdateStatus = 'none' | 'pending' | 'downloading' | 'downloaded' | 'installing' | 'installed' | 'failed' | 'canceled';
+
+export interface PlayUpdateInfo {
+  available: boolean;
+  /** Days since Play first offered this update to this phone (null: Play does not know yet). */
+  staleDays: number | null;
+  status: PlayUpdateStatus;
+  versionCode: number;
 }
 
 let mod: ForgePhone | null | undefined;

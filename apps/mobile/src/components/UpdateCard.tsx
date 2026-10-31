@@ -1,61 +1,79 @@
 /**
- * The Workout tab's "A new version is ready" card (launch plan C6; the check is lib/appUpdate.ts).
- * "Get it" opens the new APK in the browser; "Later" hides the card until the next version.
- * Shows nothing while there is no newer release, and nothing during the phone tests' own build
- * (its version is never older than the latest release).
- * 0.56.0: never on a copy installed from Google Play (lib/installSource.ts): Android refuses the GitHub
- * APK there (another signing key), and Play updates the app itself. GitHub is not even asked.
+ * The Workout tab's "A new version is ready" card (launch plan C6). R-260: it is now the always-there
+ * reminder next to the launch pop-up (components/UpdatePrompt.tsx), for GitHub AND Google Play copies;
+ * both read lib/updateStore.ts. "Later" hides it for 3 days (it used to hide until the next version).
+ * Shows nothing while there is no newer version, and nothing during the phone tests' own build (its
+ * version is never older than the latest release).
  */
-import Constants from 'expo-constants';
-import { useEffect, useState } from 'react';
-import { Linking, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui';
-import { findUpdate, updateLater, type AppUpdate } from '@/lib/appUpdate';
-import { offersGithubUpdate, readInstaller } from '@/lib/installSource';
+import { useAppUpdate } from '@/lib/updateStore';
 import { color, space, type } from '@/theme/tokens';
-import { phoneNative } from '@/tracker/phone/native';
+import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 import { useReportWant, type NoticeSlotProps } from './noticeSlot';
 
 export const UPDATE_TITLE = 'A new version of MettleUp is ready';
-export const UPDATE_LINE = 'Tap Get it, then open the file to install. Your workouts stay.';
+export const UPDATE_LINE = 'Tap "Get it" to download the file, then open it to install. Your workouts stay safe.';
+export const UPDATE_PLAY_LINE = 'Tap "Update" to download it while you keep using the app. Your workouts stay safe.';
+export const UPDATE_DOWNLOADING = 'Downloading the new version. You can keep using the app.';
+export const UPDATE_READY_TITLE = 'The new version is ready to install';
+export const UPDATE_READY_LINE = 'Tap "Restart" to open the new version. It takes a few seconds. Your workouts stay safe.';
+export const UPDATE_AFTER_WORKOUT = 'The update installs when you leave the app after your workout.';
 
 export function UpdateCard({ hidden = false, onWant, onDone }: NoticeSlotProps = {}) {
-  const [update, setUpdate] = useState<AppUpdate | null>(null);
-  useEffect(() => {
-    let live = true;
-    if (!offersGithubUpdate(readInstaller(phoneNative()), Constants.expoConfig?.extra?.distribution)) return;
-    findUpdate(Constants.expoConfig?.version)
-      .then((u) => live && setUpdate(u))
-      .catch((e: unknown) => console.warn('[update] check failed', e));
-    return () => {
-      live = false;
-    };
-  }, []);
-  useReportWant(update != null, onWant);
-  if (!update || hidden) return null;
+  const kind = useAppUpdate((s) => s.kind);
+  const version = useAppUpdate((s) => s.version);
+  const playStatus = useAppUpdate((s) => s.playStatus);
+  const card = useAppUpdate((s) => s.card);
+  const busy = useAppUpdate((s) => s.busy);
+  const workout = useActiveWorkout((s) => s.active != null);
+  const want = kind != null && card;
+  useReportWant(want, onWant);
+  if (!want || hidden) return null;
 
-  const get = () => {
-    Linking.openURL(update.url).catch((e: unknown) => console.warn('[update] could not open', update.url, e));
+  const ready = kind === 'play' && playStatus === 'downloaded';
+  const downloading = kind === 'play' && (playStatus === 'downloading' || playStatus === 'pending');
+  const title = ready ? UPDATE_READY_TITLE : UPDATE_TITLE;
+  const line = ready
+    ? workout
+      ? UPDATE_AFTER_WORKOUT
+      : UPDATE_READY_LINE
+    : downloading
+      ? UPDATE_DOWNLOADING
+      : kind === 'github'
+        ? UPDATE_LINE
+        : UPDATE_PLAY_LINE;
+  const action = ready ? (workout ? null : 'Restart') : downloading ? null : kind === 'github' ? 'Get it' : 'Update';
+  const go = () => {
+    void useAppUpdate.getState().update();
   };
   const later = () => {
-    setUpdate(null);
+    useAppUpdate.getState().laterCard();
     onDone?.();
-    updateLater(update.version).catch((e: unknown) => console.warn('[update] could not save Later', e));
   };
   const link = { minHeight: 48, minWidth: 48, justifyContent: 'center' as const };
   return (
     <Card style={{ gap: space.xs }}>
       <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-        {`${UPDATE_TITLE} (${update.version})`}
+        {title}
       </Text>
-      <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>{UPDATE_LINE}</Text>
+      <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>{line}</Text>
       <View style={{ flexDirection: 'row', gap: space.xl }}>
-        <Pressable onPress={get} accessibilityRole="button" accessibilityLabel={`Get version ${update.version}`} style={link}>
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Get it</Text>
-        </Pressable>
-        <Pressable onPress={later} accessibilityRole="button" accessibilityLabel="Later. Hide until the next version" style={link}>
+        {action ? (
+          <Pressable
+            onPress={go}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityState={{ busy }}
+            accessibilityLabel={kind === 'github' && version && !ready ? `Get version ${version}` : action}
+            style={link}
+          >
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{action}</Text>
+          </Pressable>
+        ) : null}
+        <Pressable onPress={later} accessibilityRole="button" accessibilityLabel="Later. Hide for 3 days" style={link}>
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>Later</Text>
         </Pressable>
       </View>

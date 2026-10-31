@@ -21,4 +21,6 @@ dependencies {
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
   // The permission screen's contract type (already in the app through appcompat).
   implementation 'androidx.activity:activity:1.8.0'
+  // R-260: Google Play's in-app update flow (a Play copy updates without leaving the app).
+  implementation 'com.google.android.play:app-update:2.1.0'
 }

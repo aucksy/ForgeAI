@@ -51,11 +51,14 @@ describe('the build and the card are wired to it', () => {
     const app = JSON.parse(readFileSync(join(root, 'app.json'), 'utf8')) as { expo: { extra: { distribution?: string } } };
     expect(app.expo.extra.distribution).toBe('github');
   });
-  it('UpdateCard asks before it asks GitHub, with the phone\'s installer and the build flag', () => {
-    const src = readFileSync(join(root, 'src', 'components', 'UpdateCard.tsx'), 'utf8');
+  it('the update store (R-260) asks before it asks GitHub, with the phone\'s installer and the build flag', () => {
+    const src = readFileSync(join(root, 'src', 'lib', 'updateStore.ts'), 'utf8');
     const gate = src.indexOf('offersGithubUpdate(readInstaller(phoneNative()), Constants.expoConfig?.extra?.distribution)');
     expect(gate).toBeGreaterThan(-1);
-    expect(gate).toBeLessThan(src.indexOf('findUpdate(Constants'));
+    const play = src.indexOf('if (isPlayCopy())');
+    expect(play).toBeGreaterThan(gate);
+    // The GitHub check runs only in the else branch, after the Play gate.
+    expect(src.indexOf('findLatest(current, now)')).toBeGreaterThan(play);
   });
   it('the native module has the call (Android 11+ install source, older phones the old one)', () => {
     const kt = readFileSync(join(root, 'modules', 'forge-phone', 'android', 'src', 'main', 'java', 'com', 'forgeai', 'phone', 'ForgePhoneModule.kt'), 'utf8');
