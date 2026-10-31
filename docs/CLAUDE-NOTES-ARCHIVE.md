@@ -2,6 +2,10 @@
 
 Older entries moved out of docs/CLAUDE-NOTES.md by scripts/trim_notes.py. Newest on top.
 
+## R-222. Supabase is in his personal Chrome; do console tasks myself — 29 Oct 2026
+**He said:** "Supabase is signed in my personal account browser ... aakashpahuja1990 account. Console is with simpleApps - and why are you not able to do the Google Play's health question yourself ... dont ask me to do these things if you can do them"
+**What I did:** Chrome "Browser 2" = personal (Supabase), "Browser 1" = simpleapps108 (Play Console). The health question was already done on 30 Oct (#71); my Needs you was stale. Made "mettleup-staging" (ref kqlvmjoxdrytxzmkunkj, Mumbai, free) and ran migrations 0001-0042 from commit 721a51d through the Management API with the dashboard session. Checked against live (read-only): 48 tables, 245 functions, 6 policies, 35 triggers, same function list hash. Brain notes updated (do-as-much-as-you-can-yourself, work-where-he-said-it-is).
+
 ## R-221. Build 10s, 9s and 8s first — 29 Oct 2026
 He said: "I have rated many features so you can now prioritize the ones with 10, 9 and 8 first."
 Order I chose: (1) finish the 10s: 0.61.0 release, the test server (T15/F175), the watch app on Play (waits on his Play answer). (2) The 9s in parallel on separate branches: F63 1-rep max, F67 install the watch app, F107 webcam photo. (3) The 8s: F150 freeze/renew request, F121 member report for the gym, F64 treadmill details, F20 demos (after the research). T5 (0.60.0) is released, so marked Done.
