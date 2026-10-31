@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-257. Font options again: none suit the hex logo — 31 Oct 2026
+
+He said: "None of the font looks good with the logo. The logo has this hexagonal, dumbbell kind of look. And none of the font is really complimenting that. So think about it. Try again."
+
+Did: second sheet, all built on cut corners like the hex mark: A custom wordmark drawn from straight strokes with corners cut at the hexagon's 30-degree angle (its M copies the logo's M; script in the session scratchpad, fonts2.py), B Chakra Petch Bold, C Tomorrow ExtraBold, D Oxanium ExtraBold, E Russo One (all free, OFL). A three-tone shaded custom version was tried and dropped (looked dirty). Recommended A; C if he prefers a ready font.
+
 ## R-256. Name on the splash screen; logo + name top-right on the tabs (not Profile); font options — 31 Oct 2026
 
 He said: "the splash screen every time the app is launched have the Mettle Up logo, but it doesn't have, you know, the name Mettle Up mentioned. I'm also thinking to put the logo and the name on the right upper corner of the screen for the three sections of the app except for the profile for branding, bro. Give me few font options for Mettle Up"
