@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-234. Work the 30 Oct UAT report; find more UX gaps than Sonnet did - 31 Oct 2026
+He said: read docs/uat/UAT-2026-10-30.md; confirm each Table A problem against the code before fixing, drop the false ones and say why, fix the rest by severity. Table B: list the ideas I agree with, the ones I skip and why, build the small ones. Follow the ship gate. Also find end-to-end UX gaps or improvements the Sonnet 5.5 review missed.
+Did: (in progress)
+
 ## R-233. Notes too big; save the 35% fact at 34%; tracker rows left at "Next release" after release - 31 Oct 2026
 He said: at 34% save in the notes that the chat compacts at 35%; my notes are too big, set up automatic cleanup; backlog rows tagged "Next release" are already released, "I shouldn't have to tell you this every time".
 Did: context_meter.py at 34% now says LAST SAVE and to write 'Chat compacts at 35% now' into these notes; brain_load.py prints a plain notice right after a compaction. scripts/trim_notes.py keeps the newest 40 entries here and moves older ones to docs/CLAUDE-NOTES-ARCHIVE.md; it runs on every tracker build. owner_inbox_page.py mark_shipped(): every build flips a "Next release" row to Live when its F-id is in a commit a release tag holds. 17 rows flipped now (v0.60.0 / v0.62.0).
