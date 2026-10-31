@@ -11,7 +11,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 
 He said: "upload" (his yes for R-249/R-254).
 
-Did: dispatched play-listing.yml on main (pictures only, with_text false; the title and descriptions stay as they are).
+Did: dispatched play-listing.yml on main (pictures only, with_text false; the title and descriptions stay as they are). Run 41197033375 green: 8 shots + feature graphic + icon uploaded; Play read back shot-01..08 in order (named by SHA-256); edit COMMITTED. Play can take a few hours to show them.
 
 ## R-254. Play shots 1 and 2: use the barbell behind the phones — 31 Oct 2026
 
