@@ -33,6 +33,8 @@ export function Welcome() {
   const [busy, setBusy] = useState<'demo' | 'local' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [demoFailed, setDemoFailed] = useState(false);
+  // UAT B-11 (30 Oct 2026): staff who only sign in scrolled past the whole set-up form. Two tabs, one form at a time.
+  const [tab, setTab] = useState<'signin' | 'start'>(startFirst ? 'start' : 'signin');
 
   const run = async (which: 'demo' | 'local', fn: () => Promise<void>) => {
     setBusy(which);
@@ -47,12 +49,12 @@ export function Welcome() {
   };
 
   const signInCard: ReactNode = (
-    <Card style={startFirst ? { marginTop: space.lg } : undefined}>
+    <Card>
       <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
         {startFirst ? 'Already use MettleUp? Sign in' : 'Sign in'}
       </h2>
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        Your gym already uses MettleUp? Sign in with your mobile number and the code from your gym owner.
+        Sign in with your mobile number and your 6-digit PIN.
       </p>
       <SignInForm />
     </Card>
@@ -61,7 +63,6 @@ export function Welcome() {
   const startCard: ReactNode = (
     <div
       style={{
-        marginTop: startFirst ? 0 : space.lg,
         // Same inset as the cards around it, so all their text shares one left edge.
         padding: space.xl,
         border: startFirst ? `1px solid ${color.accent}` : `1px dashed ${color.borderStrong}`,
@@ -131,9 +132,36 @@ export function Welcome() {
           </div>
         )}
 
-        {startFirst ? startCard : signInCard}
+        <div role="tablist" aria-label="Sign in or set up" style={{ display: 'flex', gap: space.sm, marginBottom: space.md }}>
+          {([
+            ['signin', 'Sign in'],
+            ['start', 'Set up a new gym'],
+          ] as const).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={tab === id}
+              onClick={() => setTab(id)}
+              style={{
+                flex: 1,
+                minHeight: 44,
+                borderRadius: radius.pill,
+                border: `1px solid ${tab === id ? color.accent : color.borderStrong}`,
+                background: tab === id ? color.accentSoft : 'transparent',
+                color: tab === id ? color.accentBright : color.inkSecondary,
+                fontFamily: font.body,
+                fontSize: 15,
+                fontWeight: tab === id ? 700 : 500,
+                cursor: 'pointer',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
-        {startFirst ? signInCard : startCard}
+        <div role="tabpanel">{tab === 'start' ? startCard : signInCard}</div>
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>

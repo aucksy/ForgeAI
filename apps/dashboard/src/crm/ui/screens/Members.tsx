@@ -51,9 +51,23 @@ type Filter = 'all' | MemberState | 'dues' | 'archived' | 'pt-ending' | `tile:${
  * Two lists under one tab: the gym's own roster (everyone who pays), and the
  * members who joined in the MettleUp app with the gym's code (`/members/app`).
  */
+/**
+ * UAT A-30 (30 Oct 2026): "Joined in the app" opened an EMPTY add form, so the desk retyped a name and
+ * phone the app already had (and a typo made the very mismatch it was fixing). The list hands them over here.
+ */
+let pendingAdd: { fullName?: string; phone?: string } | null = null;
+export function prefillNextAdd(p: { fullName?: string; phone?: string }): void {
+  pendingAdd = p;
+}
+
 export function MembersScreen({ section, filter: initialFilter, startAdding }: { section?: 'app'; filter?: TileFilter; startAdding?: boolean } = {}) {
   const { memberViews } = useCrm();
   const [adding, setAdding] = useState(Boolean(startAdding));
+  const [addInitial] = useState(() => {
+    const p = startAdding ? pendingAdd : null;
+    pendingAdd = null;
+    return p ?? undefined;
+  });
   const app = section === 'app';
   return (
     <>
@@ -88,7 +102,7 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
           ]}
         />
       </div>
-      {app ? <AppMembersSection /> : <RosterSection adding={adding} setAdding={setAdding} initialFilter={initialFilter} />}
+      {app ? <AppMembersSection /> : <RosterSection adding={adding} setAdding={setAdding} addInitial={addInitial} initialFilter={initialFilter} />}
     </>
   );
 }
@@ -96,10 +110,12 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
 function RosterSection({
   adding,
   setAdding,
+  addInitial,
   initialFilter,
 }: {
   adding: boolean;
   setAdding: (v: boolean) => void;
+  addInitial?: { fullName?: string; phone?: string };
   /** Opened from a home tile: the same rule as the tile's number. */
   initialFilter?: TileFilter;
 }) {
@@ -311,6 +327,7 @@ function RosterSection({
 
       {adding && (
         <MemberFormSheet
+          initial={addInitial}
           onClose={() => setAdding(false)}
           onSaved={(m) => navigate(`/members/${m.id}`)}
         />

@@ -10,5 +10,5 @@ appId: com.mettleup.app
 - tapOn: "^Open your gym$"
 # FORGE1 lists products, so its page is its shop.
 - extendedWaitUntil:
-    visible: "Your gym's shop · pay at the desk"
+    visible: "Pay at the desk"
     timeout: 20000

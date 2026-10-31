@@ -450,7 +450,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
         onChange={set('followUpOn')}
         type="date"
         error={errorFor('followUpOn')}
-        hint={form.followUpOn ? relativeDay(form.followUpOn, today) : 'No date: it goes under Later.'}
+        hint={form.followUpOn ? `Call back on ${formatDay(form.followUpOn)} (${relativeDay(form.followUpOn, today)})` : 'No date: it goes under Later.'}
       />
       <QuickPicks today={today} value={form.followUpOn} onPick={set('followUpOn')} />
     </Sheet>

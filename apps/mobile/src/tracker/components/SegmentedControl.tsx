@@ -59,7 +59,9 @@ export function SegmentedControl<T extends string>({
             accessibilityLabel={o.label}
             hitSlop={compact ? { top: 6, bottom: 6 } : undefined}
             style={({ pressed }) => ({
-              flex: compact ? undefined : 1,
+              // UAT A-05 (30 Oct 2026): equal widths shrank "12 months" below its neighbours; each segment now
+              // starts at its label's width and shares what is left, so every label keeps one size.
+              ...(compact ? null : { flexGrow: 1, flexShrink: 1, flexBasis: 'auto' as const }),
               minWidth: compact ? 60 : 0,
               minHeight: compact ? 32 : large ? 48 : 40,
               paddingHorizontal: compact ? 12 : 4,

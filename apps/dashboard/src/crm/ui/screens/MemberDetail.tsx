@@ -138,6 +138,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [rewardDays, setRewardDays] = useState<number | undefined>(undefined);
   const [voiding, setVoiding] = useState<Payment | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [whatsApp, setWhatsApp] = useState(false);
   /** The member ID card sheet (owner and staff alike). */
@@ -265,11 +266,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
   const run = async (fn: () => Promise<void>, done: string) => {
     setError(null);
+    setBusy(true);
     try {
       await fn();
       flash(done);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'That didn’t work. Please try again.');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -299,10 +303,11 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
       <Button
         full
         variant="ghost"
-        disabled={visitedToday}
+        disabled={visitedToday || busy}
         onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
       >
-        {visitedToday ? 'Checked in today' : 'Check in'}
+        {/* UAT A-31 (30 Oct 2026): no sign for a second after the tap, and a second tap was possible. */}
+        {visitedToday ? 'Checked in today' : busy ? 'Saving…' : 'Check in'}
       </Button>
       <Button
         full
@@ -950,7 +955,8 @@ function AttendanceStrip({
         {/* The rate is measured over the days their plan actually covered, so it says
             so — otherwise a member who renewed six days ago reads "20 visits in 56
             days · about 20.0 a week" and the two numbers cannot both be true. */}
-        {profile.weeklyRate > 0 &&
+        {/* UAT A-23 (30 Oct 2026): one visit on day one read "about 7.0 a week". Wait for 2 weeks of plan. */}
+        {profile.weeklyRate > 0 && profile.coveredDaysN >= 14 &&
           ` · about ${profile.weeklyRate.toFixed(1)} a week while their plan was running`}
         {band !== 'ok' && ` · ${riskReason({ profile, band })}`}
       </div>

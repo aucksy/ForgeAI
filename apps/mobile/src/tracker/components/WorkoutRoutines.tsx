@@ -84,8 +84,11 @@ import { ShareRoutineSheet } from './ShareRoutineSheet';
 import { Glyph } from './TrackerGlyph';
 import { SheetRow, TrackerSheet } from './TrackerSheet';
 
-/** At this text size and up, side-by-side buttons stack (200 % text never squeezes a label). */
-const STACK_AT_FONT_SCALE = 1.5;
+/**
+ * At this text size and up, side-by-side buttons stack (200 % text never squeezes a label). UAT A-04 (30 Oct
+ * 2026): at large text (1.3) on a 360 dp phone "New routine" wrapped and "Find a plan" did not; stacked, both fit.
+ */
+const STACK_AT_FONT_SCALE = 1.3;
 /** Two RN Modals swapping in the same frame can drop the second on Android. */
 const SHEET_SWAP_MS = 260;
 

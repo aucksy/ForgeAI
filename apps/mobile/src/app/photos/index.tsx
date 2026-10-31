@@ -17,7 +17,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import { FlatList, Modal, Pressable, Text, useWindowDimensions, View } from 'react-native';
+import { FlatList, Linking, Modal, Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -87,6 +87,13 @@ export default function ProgressPhotosScreen() {
   const [picked, setPicked] = useState<string[]>([]);
   const [backupOn, setBackupOn] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  // UAT B-04 (30 Oct 2026): a blocked camera gets an "Allow the camera in Settings" button (opens the phone's settings for this app) under the message.
+  const [cameraBlocked, setCameraBlocked] = useState(false);
+  // Review of 0.63.0: any other message drops the camera button, so it never sits under a delete error.
+  const say = (n: string): void => {
+    setCameraBlocked(false);
+    setNote(n);
+  };
   // PG-16: the photo whose day is being set, and why ('undated' = it came without one).
   const [dating, setDating] = useState<{ photo: ProgressPhoto; why: 'undated' | 'change' } | null>(null);
 
@@ -130,6 +137,7 @@ export default function ProgressPhotosScreen() {
     if (busy) return;
     setBusy(true);
     setNote(null);
+    setCameraBlocked(false);
     try {
       const photo = from === 'camera' ? await addPhotoFromCamera() : await addPhotoFromGallery();
       if (photo) {
@@ -139,6 +147,8 @@ export default function ProgressPhotosScreen() {
       }
     } catch (e) {
       const denied = e instanceof Error && e.message === 'camera-denied';
+      if (!denied) console.warn('progress photo not added', e);
+      setCameraBlocked(denied);
       setNote(
         denied
           ? 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.'
@@ -162,16 +172,16 @@ export default function ProgressPhotosScreen() {
       await deleteProgressPhoto(photo);
       changed();
     } catch {
-      setNote('Couldn’t delete the photo. Please try again.');
+      say('Couldn’t delete the photo. Please try again.');
     }
   };
 
   const onSave = async (photo: ProgressPhoto): Promise<void> => {
     try {
       const ok = await savePhotoToGallery(photo.uri);
-      if (!ok) setNote('This phone has no share list, so the photo couldn’t be handed over.');
+      if (!ok) say('This phone has no share list, so the photo couldn’t be handed over.');
     } catch {
-      setNote('Couldn’t hand the photo over. Please try again.');
+      say('Couldn’t hand the photo over. Please try again.');
     }
   };
 
@@ -184,7 +194,7 @@ export default function ProgressPhotosScreen() {
       if (d.why === 'change') setViewing({ ...d.photo, dateISO: iso });
       changed();
     } catch {
-      setNote('Couldn’t change the date. Please try again.');
+      say('Couldn’t change the date. Please try again.');
     }
   };
 
@@ -301,6 +311,13 @@ export default function ProgressPhotosScreen() {
               <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, lineHeight: 17, color: color.criticalText }}>
                 {note}
               </Text>
+            ) : null}
+            {note && cameraBlocked ? (
+              <GhostButton
+                label="Allow the camera in Settings"
+                icon="settings"
+                onPress={() => void Linking.openSettings().catch((e) => console.warn('phone settings not opened', e))}
+              />
             ) : null}
           </View>
         }

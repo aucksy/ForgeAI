@@ -199,7 +199,8 @@ function GymShop({ link }: { link: GymLink }) {
   // painted in (it can wait for a safe moment), so the title and the header mark agree.
   const look = useGymTheme((s) => s.look);
   const branded = look?.gymId === link.gymId && isBranded(look.brand);
-  const tagline = shopOn ? "Your gym's shop · pay at the desk" : 'Your gym';
+  // UAT A-03 (30 Oct 2026): "shop" was said three times on one screen (this line, the tab, a heading).
+  const tagline = shopOn ? 'Pay at the desk' : 'Your gym';
 
   return (
     <Screen
@@ -293,9 +294,6 @@ function GymShop({ link }: { link: GymLink }) {
             {shopOn ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
             {shopOn ? (
               <>
-                <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink, marginTop: space.md }}>
-                  Shop
-                </Text>
                 {shopHint ? (
                   <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, marginTop: space.sm }}>
                     <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>{HINT_TEXT.shopInGym}</Text>

@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections } from '../../src/shop/gymTab';
 
 describe('the Gym tab has its own tabs (R-225)', () => {
-  it('Shop first and opened first when the shop is on, then My gym, then Leaderboard', () => {
-    expect(gymSections(true).map((s) => GYM_SECTION_LABELS[s])).toEqual(['Shop', 'My gym', 'Leaderboard']);
+  it('Shop first and opened first when the shop is on, then My gym, then Ranking', () => {
+    expect(gymSections(true).map((s) => GYM_SECTION_LABELS[s])).toEqual(['Shop', 'My gym', 'Ranking']);
     expect(gymSectionShown(null, true)).toBe('shop');
   });
   it('no shop: My gym opens first and Shop is not offered', () => {

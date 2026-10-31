@@ -168,3 +168,10 @@ describe('month buckets', () => {
     expect(endOfMonth('2024-02-10')).toBe('2024-02-29');
   });
 });
+
+describe('UAT A-16: spans between 18 and 24 months', () => {
+  it('says months, not "2 years"', () => {
+    expect(relativeDay('2028-08-05', '2026-10-30')).toBe('in 21 months');
+    expect(relativeDay('2029-10-30', '2026-10-30')).toBe('in 3 years');
+  });
+});

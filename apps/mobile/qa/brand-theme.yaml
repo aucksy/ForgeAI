@@ -81,7 +81,7 @@ appId: com.mettleup.app
     text: "^Gym$"
     index: 0
 - extendedWaitUntil:
-    visible: "Your gym's shop · pay at the desk"
+    visible: "Pay at the desk"
     timeout: 30000
 - assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
 # Owner profile (360 dp, font 1.3): membership, Check in and My orders come first, so the "Shop"

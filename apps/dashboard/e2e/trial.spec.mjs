@@ -54,7 +54,9 @@ test('J97b the sign-up link /start opens "Start my gym" first, and lands on the 
   const first = page.getByRole('heading', { level: 2 }).first();
   await expect(first).toHaveText('Start your gym');
   await expect(page.getByText('Free for 3 months. No card. Your members’ app is free, always.')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Already use MettleUp? Sign in' })).toBeVisible();
+  // UAT: sign-in now sits behind its own tab; the sign-up link opens on "Set up a new gym".
+  await expect(page.getByRole('tab', { name: 'Set up a new gym' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tab', { name: 'Sign in' })).toBeVisible();
   await expectFitsPhone(page, 'on the sign-up link');
   await startOnlineGym(page);
   expect(new URL(page.url()).pathname, 'the address is the app’s own after sign-up').toBe('/');

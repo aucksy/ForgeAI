@@ -25,6 +25,7 @@ import {
   splitE164,
   validateMember,
   type MemberField,
+  type MemberFieldError,
   type MemberFormDraft,
 } from '../../logic/members';
 import { batchKey, BATCH_MAX, listBatches, resolveBatch, type BatchCount } from '../../logic/batches';
@@ -79,7 +80,7 @@ export function MemberFormSheet({
       phone: phone?.national ?? '',
     };
   });
-  const [fieldError, setFieldError] = useState<{ field: MemberField; message: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<MemberFieldError[]>([]);
   const [formError, setFormError] = useState<string | null>(null);
   const [archivedClash, setArchivedClash] = useState<Member | null>(null);
   const [saving, setSaving] = useState(false);
@@ -103,12 +104,12 @@ export function MemberFormSheet({
 
   const set = (key: keyof MemberFormDraft) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
-    setFieldError(null);
+    setFieldErrors((es) => es.filter((e) => e.field !== key));
     setFormError(null);
     setArchivedClash(null);
   };
 
-  const errorFor = (field: MemberField) => (fieldError?.field === field ? fieldError.message : null);
+  const errorFor = (field: MemberField) => fieldErrors.find((e) => e.field === field)?.message ?? null;
 
   // The dial code stored on an existing member may not be in our shortlist.
   const dialOptions = [...new Set<string>([...DIAL_CODES, form.dialCode])].map((c) => ({
@@ -121,7 +122,13 @@ export function MemberFormSheet({
     const typed = { ...form, batch: resolveBatch(form.batch, batches.map((b) => b.name)) ?? '' };
     const result = validateMember(typed, today);
     if (!result.ok) {
-      setFieldError({ field: result.field, message: result.message });
+      // UAT A-28 (30 Oct 2026): mark every wrong box at once and bring the first into view.
+      setFieldErrors(result.all ?? [{ field: result.field, message: result.message }]);
+      requestAnimationFrame(() => {
+        const first = document.querySelector<HTMLElement>('[aria-invalid="true"]');
+        first?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        first?.focus({ preventScroll: true });
+      });
       return;
     }
 
@@ -156,10 +163,10 @@ export function MemberFormSheet({
           // someone who appears not to exist.
           setArchivedClash(e.existing);
         } else {
-          setFieldError({
+          setFieldErrors([{
             field: 'phone',
             message: `${e.existing.fullName} already has this mobile number in Members.`,
-          });
+          }]);
         }
       } else {
         setFormError(e instanceof Error ? e.message : 'Could not save this member.');

@@ -41,6 +41,8 @@ describe('Settings → Your gym: join with a code', () => {
   it('the card also offers the poster scan (MettleUp’s own QR scanner, R-228)', () => {
     const card = read('src/components/settings/JoinGymCard.tsx');
     expect(card).toMatch(/label="Scan the poster"/);
+    // UAT B-05: the scan comes before the typed code.
+    expect(card.indexOf('label="Scan the poster"')).toBeLessThan(card.indexOf('<TextInput'));
     expect(card).toMatch(/router\.push\('\/scan'\)/);
     expect(read('src/app/scan.tsx')).toMatch(/ScanPosterScreen/);
     expect(read('src/shop/ShopScreen.tsx')).toMatch(/router\.push\('\/scan'\)/);

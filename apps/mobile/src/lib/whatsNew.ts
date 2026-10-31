@@ -56,6 +56,23 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-234 / R-236: member-words, Gemini 3.6 Flash pass (line 6 took its "Progress
+    // photos screen"); its invented "check your form" dropped. Facts checked.
+    version: '0.63.0',
+    date: '31 Oct',
+    lines: [
+      { text: 'Your watch now keeps MettleUp open all workout. It dims with your wrist down and lights up when you look.' },
+      { text: 'During a workout, each exercise now shows your next set first, like "Next: 75 kg × 5".' },
+      { text: 'In the exercises list, exercises without a drawing now show a photo of the start position.' },
+      {
+        text: 'On the Gym tab, "Leaderboard" is now called "Ranking", so it fits when you use big text.',
+        go: { label: 'Open the Gym tab', href: '/shop' },
+      },
+      { text: 'To join a gym, "Scan the poster" is now the first button on the Gym tab. You can still type the code.' },
+      { text: 'On the Progress photos screen, if your phone blocks the camera, tap "Allow the camera in Settings" to turn it on.' },
+    ],
+  },
+  {
     // R-228: member-words, fresh-reader pass on the scanner words; facts checked.
     version: '0.62.1',
     date: '30 Oct',

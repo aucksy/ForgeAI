@@ -236,10 +236,19 @@ export function SettingsScreen() {
           </Button>
         </div>
 
-        {/* Launch D8: take everything away (Excel + full copy); an online gym can ask to be deleted. */}
-        {canErase && <GymDataActions online={online} />}
-        {/* Offline front desk: the copy and the waiting list kept on this device (owner only). */}
-        {online && canErase && <ClearDeviceCard />}
+        {/* UAT A-18 / B-17 (30 Oct 2026): Delete and Clear sat right under the harmless Download, at
+            the same size. They now sit apart under their own heading, with a line and space above. */}
+        {canErase && (
+          <div style={{ marginTop: space.xl, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
+            <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.criticalText }}>
+              Danger zone: these can’t be undone
+            </p>
+            {/* Launch D8: take everything away (Excel + full copy); an online gym can ask to be deleted. */}
+            <GymDataActions online={online} />
+            {/* Offline front desk: the copy and the waiting list kept on this device (owner only). */}
+            {online && <ClearDeviceCard />}
+          </div>
+        )}
 
         {/* UAT U-A13: a gym this browser could not read is kept, and stays downloadable here. */}
         {kept && (

@@ -4,8 +4,8 @@
  * the gym's colours (part BR).
  *
  * Release A (A2/A3, docs/ux/MEMBER-APP-MAP.md): the card is the top of the Gym tab's no-gym screen,
- * the one place to join. With `scan`, it also offers "Scan the poster": the phone's camera reads the
- * QR code at the gym's desk, which opens the same invite (or check-in) screen.
+ * the one place to join. With `scan`, "Scan the poster" comes first (UAT B-05): the phone's camera reads
+ * the QR code at the gym's desk, which opens the same invite (or check-in) screen; typing the code is second.
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -42,6 +42,19 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
           Got a code from your gym? Join to check in, order from its shop, and see the app in its colours. Your workouts stay as they are.
         </Text>
       </View>
+      {/* UAT B-05 (30 Oct 2026): most members stand in front of the poster, and scanning beats typing
+          6 letters, so the scan comes first and the typed code second. */}
+      {scan ? (
+        <View style={{ gap: space.sm }}>
+          <PrimaryButton label="Scan the poster" icon="camera" onPress={() => router.push('/scan')} />
+          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{SCAN_POSTER_LINE}</Text>
+        </View>
+      ) : null}
+      {scan ? (
+        <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, paddingTop: space.sm, borderTopWidth: 1, borderTopColor: color.border }}>
+          Or type your gym&apos;s code
+        </Text>
+      ) : null}
       <TextInput
         value={code}
         onChangeText={(t) => {
@@ -61,14 +74,11 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
         style={[shopInputStyle(), { fontFamily: type.monoBold, letterSpacing: 2 }]}
       />
       <InlineError message={error} />
-      <PrimaryButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
       {scan ? (
-        <View style={{ gap: space.sm, paddingTop: space.sm, borderTopWidth: 1, borderTopColor: color.border }}>
-          <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>No code? Your gym&apos;s poster has one.</Text>
-          <GhostButton label="Scan the poster" icon="camera" onPress={() => router.push('/scan')} />
-          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{SCAN_POSTER_LINE}</Text>
-        </View>
-      ) : null}
+        <GhostButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
+      ) : (
+        <PrimaryButton label="Next" accessibilityLabel="Find my gym" onPress={next} />
+      )}
     </GlassCard>
   );
 }

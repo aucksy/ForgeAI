@@ -48,13 +48,13 @@ export function SignInForm({ submitLabel = 'Sign in' }: { submitLabel?: string }
     <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label="Your mobile number" prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <TextField
-        label="Sign-in code or PIN (6 digits)"
+        label="PIN (6 digits)"
         type="password"
         inputMode="numeric"
         value={code}
         onChange={(v) => setCode(cleanCode(v))}
         placeholder="000000"
-        hint="Type your own PIN. No PIN yet? Use the one-time code your gym owner makes in Settings → Staff & sign-in."
+        hint="No PIN yet? Type the one-time code your gym owner gives you (Settings → Staff & sign-in)."
       />
       {error && (
         <div style={{ marginTop: space.md }}>

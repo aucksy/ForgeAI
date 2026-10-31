@@ -22,6 +22,8 @@ export function rpeMeaning(rpe: number): string {
   if (rpe >= 8) return '2 more reps left';
   if (rpe >= 7.5) return '2 or 3 more reps left';
   if (rpe >= 7) return '3 more reps left';
+  // UAT A-08 (30 Oct 2026): 6.5 and 6 both said "4 or more".
+  if (rpe >= 6.5) return '3 or 4 more reps left';
   return '4 or more reps left';
 }
 

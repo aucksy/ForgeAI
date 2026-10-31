@@ -96,8 +96,9 @@ export function GetStartedCard() {
             <span aria-hidden style={{ fontFamily: font.body, fontSize: 20, color: color.inkMuted, flexShrink: 0 }}>›</span>
             </button>
             {s.manual && !s.done && (
-              <button type="button" onClick={() => update({ ...state, ticked: [...state.ticked, s.key] })} style={{ ...link, color: color.accentBright }} aria-label={`Mark "${s.title}" as done`}>
-                Done
+              <button type="button" onClick={() => update({ ...state, ticked: [...state.ticked, s.key] })} style={{ ...link, color: color.inkSecondary, fontWeight: 400 }} aria-label={`Mark "${s.title}" as done`}>
+                {/* UAT A-14 (30 Oct 2026): a bare orange "Done" read as a status, not a button. */}
+                Mark done
               </button>
             )}
           </li>

@@ -1151,6 +1151,7 @@ export const DESK = { name: 'Sunita Verma', phone: '98290 54321' };
 
 /** Welcome -> "New here? Set up your gym" -> Create my gym. Ends on Today, signed in as the owner. */
 export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name, phone = OWNER.phone, pin = OWNER.pin } = {}) {
+  await page.getByRole('tab', { name: 'Set up a new gym' }).click(); // UAT B-11: one form at a time
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill(gym);
   await start.getByLabel('Your name').fill(name);
@@ -1200,7 +1201,7 @@ export async function fillNewPin(scope, pin, again = pin) {
 export async function typeSignIn(page, phone, code) {
   const form = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
   await form.getByLabel('Your mobile number').fill(phone);
-  await form.getByLabel('Sign-in code or PIN (6 digits)').fill(code);
+  await form.getByLabel('PIN (6 digits)').fill(code);
   await form.getByRole('button', { name: 'Sign in' }).tap();
   return form;
 }

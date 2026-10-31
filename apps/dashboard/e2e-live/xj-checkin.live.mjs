@@ -24,7 +24,7 @@ function registerRow(page, name) {
 
 async function expectAppVisit(page, name, testInfo, shotName) {
   await open(page, 'Visits');
-  await expect(page.getByRole('heading', { name: 'Attendance', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Visits', exact: true })).toBeVisible();
   // The admin app reads new check-ins every 15 s; a reload between looks.
   await waitFor(page, () => registerRow(page, name).isVisible(), {
     what: `${name}'s check-in under "In today"`,

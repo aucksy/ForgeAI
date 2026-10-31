@@ -66,8 +66,9 @@ export function CollectPaymentSheet({
 
   // Default to settling the balance in full — the common case at a counter.
   const amountP = amountText.trim() === '' ? (selected?.unpaidP ?? null) : parseRupeeInput(amountText);
+  // UAT A-29 (30 Oct 2026): an amount above the due (refused on save) no longer shows "clears all dues".
   const remainingP =
-    selected && amountP !== null ? Math.max(0, selected.unpaidP - amountP) : null;
+    selected && amountP !== null && amountP > 0 && amountP <= selected.unpaidP ? selected.unpaidP - amountP : null;
 
   const submit = async () => {
     if (!selected) return setError('Pick the membership this payment is for.');

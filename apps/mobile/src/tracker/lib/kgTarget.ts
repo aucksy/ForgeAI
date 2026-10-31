@@ -307,7 +307,9 @@ export function kgBeaten(g: KgProgress): boolean {
 }
 
 /**
- * During the workout: "410 of 765 kg · next 42.5 kg × 7, 7" / "765 kg beaten ✓ (780 kg done)".
+ * During the workout: "Next: 42.5 kg × 7 · 410 of 765 kg" / "765 kg beaten ✓ (780 kg done)".
+ * UAT A-10 / B-09 (30 Oct 2026): "0 of 1,500 kg · next 75 kg × 5, 5, 5, 5" was read twice. The next set
+ * leads, alone (the sets after it are on their own rows); the running total follows.
  * R-146 (owner, 27 Oct 2026): done = the plan exactly (as it reads on screen) is "765 kg reached ✓";
  * "beaten" only when more was lifted. PURE.
  */
@@ -319,9 +321,6 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
   if (g.next.length === 0) return `${head} · ${total(g.left)} short, add a set if you have it in you`;
-  const sameKg = g.next.every((s) => Math.abs(s.weightKg - g.next[0].weightKg) < 1e-9);
-  const plan = sameKg
-    ? `${weight(g.next[0].weightKg)} × ${g.next.map((s) => s.reps).join(', ')}`
-    : g.next.map((s) => `${weight(s.weightKg)} × ${s.reps}`).join(', ');
-  return `${head} · next ${plan}${g.short ? ' (a little short is fine)' : ''}`;
+  const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
+  return `Next: ${plan} · ${head}${g.short ? ' (a little short is fine)' : ''}`;
 }

@@ -199,7 +199,7 @@ test('J8 check in by hand, undo it; a back-dated check-in; a future day is refus
   await sell(page, { received: '2000' });
 
   await open(page, 'Visits');
-  await expect(page.getByRole('heading', { name: 'Attendance', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Visits', exact: true })).toBeVisible();
   const search = page.getByRole('searchbox', { name: 'Type a name or the last 4 digits of a mobile' })
     .or(page.getByLabel('Type a name or the last 4 digits of a mobile'));
 

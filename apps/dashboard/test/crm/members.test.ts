@@ -107,6 +107,16 @@ describe('names', () => {
 });
 
 describe('validateMember', () => {
+  it('UAT A-28: names every wrong box at once, an empty mobile first in its own words', () => {
+    const r = validateMember(form({ fullName: ' ', phone: '' }), TODAY);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.field).toBe('fullName');
+      expect(r.all?.map((e) => e.field)).toEqual(['fullName', 'phone']);
+      expect(r.all?.[1]?.message).toBe('Type their mobile number.');
+    }
+  });
+
   it('accepts the minimum a rushed front desk can supply', () => {
     const result = validateMember(form({ email: '', address: '' }), TODAY);
     expect(result.ok).toBe(true);

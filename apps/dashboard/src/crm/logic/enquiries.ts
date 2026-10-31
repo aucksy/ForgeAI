@@ -148,7 +148,9 @@ export function validateEnquiry(form: EnquiryFormDraft, today: DateISO): Enquiry
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: 'This mobile number looks wrong. Check it and type it again.' };
+    // UAT A-25 (30 Oct 2026): an empty box is not a "wrong" number.
+    const message = form.phone.trim() ? 'This mobile number looks wrong. Check it and type it again.' : 'Type their mobile number.';
+    return { ok: false, field: 'phone', message };
   }
 
   const interest = form.interest.trim().replace(/\s+/g, ' ');

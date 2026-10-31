@@ -31,7 +31,7 @@ import { useCrm } from '../../store';
 import { atRiskList, isRegisterInUse, riskReasonShort } from '../../logic/attendance';
 import { formatDay, monthKey, relativeDay } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
-import { formatINR, formatINRShort, sumPaise } from '../../logic/money';
+import { formatINR, sumPaise } from '../../logic/money';
 import { countOf } from '../../logic/plural';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
 import type { Member } from '../../types';
@@ -126,7 +126,6 @@ export function TodayScreen() {
         // second copy as the page title said nothing about which page this is.
         title="Today"
         subtitle={formatDay(today)}
-        actions={<Button onClick={() => navigate('/members')}>Open Members</Button>}
       />
 
       {/* R-148: once after an admin-app update, what changed (Settings -> What's new keeps the list). */}
@@ -173,10 +172,10 @@ export function TodayScreen() {
         {seeTotals && (
           <StatTile
             label="Today's collection"
-            value={formatINRShort(collectedToday)}
+            value={formatINR(collectedToday)}
             tone="good"
             onClick={() => navigate('/money/today')}
-            sub={`This month ${formatINRShort(stats.collectedThisMonth)}`}
+            sub={`This month ${formatINR(stats.collectedThisMonth)}`}
           />
         )}
         <StatTile
@@ -223,7 +222,7 @@ export function TodayScreen() {
         {seeTotals && (
           <StatTile
             label="Fees due"
-            value={formatINRShort(stats.duesTotalP)}
+            value={formatINR(stats.duesTotalP)}
             tone={stats.duesTotalP > 0 ? 'warn' : undefined}
             onClick={() => navigate('/money/dues')}
             sub={countOf(stats.dues.length, 'member')}

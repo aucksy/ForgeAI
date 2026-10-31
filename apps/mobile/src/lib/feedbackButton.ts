@@ -19,6 +19,11 @@ export const TOP_CLEAR = 76;
 export const BOTTOM_CLEAR = 150;
 /** Gap between the button and the screen edge it docks to. */
 export const EDGE_GAP = 6;
+/**
+ * UAT A-01 (30 Oct 2026): a whole round button on the edge covered list arrows, the end of "Find a plan"
+ * and card text on most screens. It now tucks behind the edge: only this much of it shows, as a tab.
+ */
+export const PEEK = 24;
 /** A finger that moves less than this is a tap, not a drag. */
 export const DRAG_SLOP = 8;
 
@@ -39,7 +44,8 @@ export const DEFAULT_SPOT: ButtonSpot = { side: 'right', y: 1 };
  * docked button sat over the Sunday column and took a tap meant for a day, so the Calendar has none
  * (its grid fills the width; the Settings page and every other screen still reach feedback).
  */
-const HIDDEN_ON = new Set(['/session/active', '/settings/feedback', '/calendar']);
+// UAT A-01: and the workout-complete screen, whose main buttons sit where the tab would.
+const HIDDEN_ON = new Set(['/session/active', '/session/finish', '/settings/feedback', '/calendar']);
 
 export interface ScreenRoom {
   width: number;
@@ -60,7 +66,7 @@ const clamp01 = (n: number): number => (Number.isFinite(n) ? Math.min(1, Math.ma
 /** The button's top-left corner for a saved spot. */
 export function spotToXY(spot: ButtonSpot, room: ScreenRoom): { x: number; y: number } {
   const { minY, maxY } = freeBand(room);
-  const x = spot.side === 'left' ? EDGE_GAP : room.width - FEEDBACK_BUTTON_SIZE - EDGE_GAP;
+  const x = spot.side === 'left' ? PEEK - FEEDBACK_BUTTON_SIZE : room.width - PEEK;
   return { x, y: Math.round(minY + clamp01(spot.y) * (maxY - minY)) };
 }
 

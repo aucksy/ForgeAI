@@ -113,7 +113,7 @@ function AttendanceTabs({ section }: { section?: string }) {
   return (
     <>
       <PageHeader
-        title="Attendance"
+        title="Visits"
         subtitle={
           tab === 'risk'
             ? 'Paying members who are losing the habit'
@@ -424,11 +424,14 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
         <StatTile
           label={`Visits in ${TREND_DAYS} days`}
           value={summary.visitsN}
-          sub={`${summary.membersN} different members`}
+          sub={summary.membersN === 1 ? '1 member' : `${summary.membersN} different members`}
         />
+        {/* UAT A-24 / B-21 (30 Oct 2026): a young gym read "0.0 a day". Under 1 a day, count the week. */}
         <StatTile
-          label="Check-ins a day"
-          value={summary.perDay.toFixed(1)}
+          label={summary.perDay > 0 && summary.perDay < 1 ? 'Check-ins a week' : 'Check-ins a day'}
+          value={summary.perDay > 0 && summary.perDay < 1
+            ? (summary.perDay * 7 < 1 ? 'Under 1' : (summary.perDay * 7).toFixed(1))
+            : summary.perDay.toFixed(1)}
           sub={`Average over the last ${TREND_DAYS} days`}
         />
         <StatTile

@@ -133,7 +133,7 @@ export function SellMembershipSheet({
       setProblem(found);
       return;
     }
-    const warning = saleWarning({ priceP, joiningFeeP: joiningP, listPriceP: plan?.priceP ?? null, listJoiningFeeP: plan?.joiningFeeP ?? null });
+    const warning = saleWarning({ priceP, joiningFeeP: joiningP, listPriceP: plan?.priceP ?? null, listJoiningFeeP: plan?.joiningFeeP ?? null, startsOn, today, usualStart: defaults?.startsOn });
     if (warning && warned !== warning) {
       setWarned(warning);
       return;
@@ -237,6 +237,7 @@ export function SellMembershipSheet({
           }}
           type="date"
           error={errorFor('startsOn')}
+          hint={!startsOnOverride && defaults && defaults.startsOn > today ? `The day after their current plan ends (${formatDay(addDays(defaults.startsOn, -1))}).` : undefined}
         />
         <div style={{ marginTop: space.md }}>
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>

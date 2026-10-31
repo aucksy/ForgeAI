@@ -15,10 +15,11 @@ export function gymShopOn(joined: boolean, productCount: number): boolean {
 
 /**
  * The Gym tab's own tabs (owner, 30 Oct 2026, R-225): "Shop" first and opened first when the gym's
- * shop is on, then "My gym" (plan, hours, check in, diet, offer), then "Leaderboard". PURE.
+ * shop is on, then "My gym" (plan, hours, check in, diet, offer), then "Ranking". PURE.
+ * UAT A-02 (30 Oct 2026): "Leaderboard" broke mid-word at large text; "Ranking" fits.
  */
 export type GymSection = 'shop' | 'gym' | 'board';
-export const GYM_SECTION_LABELS: Record<GymSection, string> = { shop: 'Shop', gym: 'My gym', board: 'Leaderboard' };
+export const GYM_SECTION_LABELS: Record<GymSection, string> = { shop: 'Shop', gym: 'My gym', board: 'Ranking' };
 
 export function gymSections(shopOn: boolean): GymSection[] {
   return shopOn ? ['shop', 'gym', 'board'] : ['gym', 'board'];

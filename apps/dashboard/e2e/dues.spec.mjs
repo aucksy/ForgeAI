@@ -49,10 +49,10 @@ test('J14 dues list: 10, 40 and 70 days in their age groups; collect from the li
   await open(page, 'Money');
   await page.getByRole('button', { name: 'Dues' }).tap();
   await expectFitsPhone(page, 'on Dues');
-  await expect(tile(page, 'Total due')).toContainText('₹6k');
+  await expect(tile(page, 'Total due')).toContainText('₹6,000');
   await expect(tile(page, 'Total due')).toContainText('3 members');
   for (const m of OWE) {
-    await expect(tile(page, m.group)).toContainText('₹2k');
+    await expect(tile(page, m.group)).toContainText('₹2,000');
     await expect(tile(page, m.group)).toContainText('1 membership');
     const row = duesRow(page, m.name);
     await expect(row).toContainText(`${m.days} days`);
@@ -68,7 +68,7 @@ test('J14 dues list: 10, 40 and 70 days in their age groups; collect from the li
   await chip(page, 'Over 60 days').tap();
   await expect(duesRow(page, 'Manju Yadav')).toBeVisible();
   await expect(duesRow(page, 'Komal Saini')).toHaveCount(0);
-  await expect(tile(page, 'Total due')).toContainText('₹2k');
+  await expect(tile(page, 'Total due')).toContainText('₹2,000');
   await expect(tile(page, 'Total due')).toContainText('1 of 3 members shown');
   await chip(page, 'All').tap();
 
@@ -86,15 +86,15 @@ test('J14 dues list: 10, 40 and 70 days in their age groups; collect from the li
   await expect(duesRow(page, 'Lalit Bansal')).toHaveCount(0);
   await expect(tile(page, '31–60 days')).toContainText('₹0');
   await expect(tile(page, '31–60 days')).toContainText('0 memberships');
-  await expect(tile(page, 'Total due')).toContainText('₹4k');
+  await expect(tile(page, 'Total due')).toContainText('₹4,000');
   await expect(tile(page, 'Total due')).toContainText('2 members');
   await expect(chip(page, '31–60 days')).toHaveText(/0/);
   await expect(moneyTab(page)).toHaveText(/^Money\s*2$/);
 
   await open(page, 'Today');
-  await expect(tile(page, 'Fees due')).toContainText('₹4k');
+  await expect(tile(page, 'Fees due')).toContainText('₹4,000');
   await expect(tile(page, 'Fees due')).toContainText('2 members');
-  await expect(tile(page, "Today's collection")).toContainText('₹2k');
+  await expect(tile(page, "Today's collection")).toContainText('₹2,000');
 
   // The receipt is in Collections, taken today by UPI.
   await open(page, 'Money');

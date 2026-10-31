@@ -8,12 +8,12 @@
  * app. Neither is a squashed version of the other.
  */
 
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
-import { color, font, radius, space, TOUCH, useIsCompact } from './kit';
+import { color, font, radius, space, useIsCompact } from './kit';
 import { Link, useRoute } from './router';
 
 export interface NavItem {
@@ -22,6 +22,8 @@ export interface NavItem {
   icon: IconName;
   /** Number shown as an attention badge (dues, expiries) — hidden at 0. */
   badge?: number;
+  /** UAT A-19 (30 Oct 2026): rows marked 'setup' sit under a small "Set up and help" heading in the sidebar. */
+  group?: 'setup';
 }
 
 /** Height of the demo gym's banner (demo/demoMode.tsx), set as a page variable by the shell; 0 in the real app. */
@@ -105,7 +107,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: space.xs,
+        gap: 2,
         background: color.surfaceSunken,
       }}
     >
@@ -120,8 +122,24 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         </div>
       </div>
 
-      {nav.map((item) => (
-        <SidebarLink key={item.path} item={item} active={item.path === activePath} />
+      {nav.map((item, i) => (
+        <Fragment key={item.path}>
+          {item.group === 'setup' && nav[i - 1]?.group !== 'setup' ? (
+            <div
+              style={{
+                margin: `${space.md}px ${space.md}px ${space.xs}px`,
+                fontFamily: font.body,
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: 0.6,
+                color: color.inkMuted,
+              }}
+            >
+              SET UP AND HELP
+            </div>
+          ) : null}
+          <SidebarLink item={item} active={item.path === activePath} />
+        </Fragment>
       ))}
     </nav>
   );
@@ -136,7 +154,9 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
           display: 'flex',
           alignItems: 'center',
           gap: space.md,
-          minHeight: TOUCH,
+          // UAT A-19 (30 Oct 2026): 44px rows pushed Settings and Send feedback below a 1280x800 window. The
+          // sidebar only shows on a computer (a mouse), so 36px is enough.
+          minHeight: 36,
           padding: `0 ${space.md}px`,
           borderRadius: radius.md,
           background: active ? color.accentSoft : 'transparent',

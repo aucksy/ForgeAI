@@ -56,7 +56,7 @@ test('J23a two tabs: the second tab\'s sale is not lost and takes the next recei
   await open(page, 'Members');
   await expect(page.getByText('4 members', { exact: true })).toBeVisible();
   await open(page, 'Money');
-  await expect(tile(page, 'Collected')).toContainText('₹4.5k');
+  await expect(tile(page, 'Collected')).toContainText('₹4,500');
   await expect(tile(page, 'Collected')).toContainText('3 receipts');
   for (const no of ['2026-27/0001', '2026-27/0002', '2026-27/0003']) {
     await expect(page.getByRole('main').getByRole('link', { name: no, exact: true })).toHaveCount(1);

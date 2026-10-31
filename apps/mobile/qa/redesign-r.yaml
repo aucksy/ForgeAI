@@ -560,7 +560,7 @@ appId: com.mettleup.app
     visible: "^ForgeAI Test Gym$"
     timeout: 45000
 # Release A: the Gym tab, membership first, then Check in (A3); no Leave at its foot (A4).
-- assertVisible: "Your gym's shop · pay at the desk"
+- assertVisible: "Pay at the desk"
 - assertVisible: "Bag, empty"
 # R-225 (0.62.0): the Gym tab opens on its "Shop" part when the gym sells things; Check in is in the
 # "My gym" part (runs 40999689414, 40999691263 failed here). Then back to the Shop part.

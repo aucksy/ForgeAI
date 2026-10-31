@@ -16,7 +16,7 @@
  */
 
 import type { DateISO, Membership, Paise, Payment, Plan } from '../types';
-import { addDays, formatDay } from './dates';
+import { addDays, diffDays, formatDay } from './dates';
 import { coverageEndsOn, endDateForPlan, nextTermStart } from './membership';
 import { formatINR } from './money';
 import { EARLIEST_DATE } from '../data/adapter';
@@ -105,15 +105,32 @@ function lastGymPlanEnd(memberships: readonly Membership[], today: DateISO): Dat
  * Admin audit C7-30 (16 Oct 2026): a price or joining fee typed ABOVE the plan's (₹15000 for ₹1500)
  * made a large false due without a word. The sheet asks once before saving. Null when nothing to ask.
  */
-export function saleWarning(s: { priceP: Paise | null; joiningFeeP: Paise | null; listPriceP: Paise | null; listJoiningFeeP: Paise | null }): string | null {
+export function saleWarning(s: {
+  priceP: Paise | null; joiningFeeP: Paise | null; listPriceP: Paise | null; listJoiningFeeP: Paise | null;
+  startsOn?: DateISO; today?: DateISO;
+  /** The start the sheet suggested (the day after the current plan ends); a renewal starting then never asks. */
+  usualStart?: DateISO;
+}): string | null {
+  // Review of 0.63.0: every reason goes in ONE message. The sheet saves on a second tap of the same
+  // message, so returning only the first reason let a far start date through unseen.
+  const why: string[] = [];
   if (s.priceP !== null && s.listPriceP !== null && s.priceP > s.listPriceP) {
-    return `The price ${formatINR(s.priceP)} is more than the plan price, ${formatINR(s.listPriceP)}. Tap again to save it anyway.`;
+    why.push(`The price ${formatINR(s.priceP)} is more than the plan price, ${formatINR(s.listPriceP)}.`);
   }
   if (s.joiningFeeP !== null && s.listJoiningFeeP !== null && s.joiningFeeP > s.listJoiningFeeP) {
-    return `The joining fee ${formatINR(s.joiningFeeP)} is more than the plan’s joining fee, ${formatINR(s.listJoiningFeeP)}. Tap again to save it anyway.`;
+    why.push(`The joining fee ${formatINR(s.joiningFeeP)} is more than the plan’s joining fee, ${formatINR(s.listJoiningFeeP)}.`);
   }
-  return null;
+  // UAT A-16 / B-18 (30 Oct 2026): a plan sold to start months away hid a paid member as "Upcoming".
+  // A renewal starts the day after the current plan ends, often 30+ days away: count from that day.
+  const from = s.usualStart && s.today && s.usualStart > s.today ? s.usualStart : s.today;
+  if (s.startsOn && s.today && from && diffDays(from, s.startsOn) > FAR_START_DAYS) {
+    why.push(`This plan starts on ${formatDay(s.startsOn)}, ${diffDays(s.today, s.startsOn)} days from today.`);
+  }
+  return why.length ? `${why.join(' ')} Tap again to save it anyway.` : null;
 }
+
+/** A sale that starts more than this many days ahead is asked about once. */
+export const FAR_START_DAYS = 30;
 
 /** A front-desk (Staff) sale may start at most this many days before today (the server's rule too). */
 export const STAFF_BACKDATE_DAYS = DESK_BACKDATE_DAYS;

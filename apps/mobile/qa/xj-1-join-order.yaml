@@ -27,7 +27,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^${GYM}$"
     timeout: 45000
-- assertVisible: "Your gym's shop · pay at the desk"
+- assertVisible: "Pay at the desk"
 # Release A: the Gym tab, membership and Check in first; its "Shop" part once the list arrives.
 - scrollUntilVisible:
     element: "QA Shaker, .*"

@@ -188,7 +188,10 @@ function describeSpan(days: number): string {
   // "12 months" one day and "1 year" the next for what is the same span.
   if (days < 335) return `${Math.round(days / 30)} months`;
   const years = days / 365;
-  return years < 1.5 ? '1 year' : `${Math.round(years)} years`;
+  if (years < 1.5) return '1 year';
+  // UAT A-16 (30 Oct 2026): 644 days read "2 years". Between 18 and 24 months say the months.
+  if (days < 730) return `${Math.floor(days / 30.44)} months`;
+  return `${Math.round(years)} years`;
 }
 
 /** Month key `'YYYY-MM'` — the bucket every revenue report groups by. */

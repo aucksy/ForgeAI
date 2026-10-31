@@ -43,6 +43,7 @@ async function reopenPeople(page) {
 test('J80 Create my gym: the owner chooses a PIN, then signs in with mobile + PIN', async ({ page }) => {
   const server = await openApp(page);
   server.pinServer = true;
+  await page.getByRole('tab', { name: 'Set up a new gym' }).click(); // UAT B-11: one form at a time
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill(OWNER.gym);
   await start.getByLabel('Your name').fill(OWNER.name);

@@ -24,7 +24,6 @@ import {
 } from '@/components/ui';
 import { fmtInt } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
-import { onAccentTint } from '@/theme/tint';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 
 import { CompareNote } from '@/tracker/components/CompareNote';
@@ -286,11 +285,12 @@ export default function FinishScreen() {
                   {milestone}
                 </Text>
               ) : null}
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onAccentTint(0.72) }}>
+              {/* UAT A-07 (30 Oct 2026): faded brown on orange was hard to read in sunlight; full strength now. */}
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onAccent }}>
                 {finishAnswer(data)}
               </Text>
               {comparison ? (
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: onAccentTint(0.6), marginTop: 2 }}>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.onAccent, marginTop: 2 }}>
                   That's about {comparison}.
                 </Text>
               ) : null}

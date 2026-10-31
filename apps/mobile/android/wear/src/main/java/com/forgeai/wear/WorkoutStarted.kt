@@ -9,8 +9,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.wear.ongoing.OngoingActivity
-import androidx.wear.ongoing.Status
 
 /**
  * "Watch opens when a workout starts" (29 Oct 2026). When the member starts a workout on the phone
@@ -22,7 +20,9 @@ import androidx.wear.ongoing.Status
  *
  * On the message: try to open the screen from here too (Android 10+ usually refuses a start from the
  * background: it is only logged), then, if the screen is still not up after [CHECK_MS], post a
- * "Workout started" card with an Ongoing Activity (an icon on the watch face): one tap opens the app.
+ * "Workout started" card that pops up over the watch face with one buzz (R-237): one tap opens the app.
+ * R-237 also: the phone's first "a workout is open" message ([onWorkoutBegan]) does the same, for when
+ * /forge/open was lost.
  * The card goes when the app opens, a rest starts, the workout ends, or after [TIMEOUT_MS].
  *
  * Only on the START of a workout: the phone sends the message only then, and each workout (its start
@@ -31,7 +31,8 @@ import androidx.wear.ongoing.Status
 object WorkoutStarted {
   private const val TAG = "ForgeWear"
   private const val PREFS = "forgeai_watch_open"
-  private const val CH = "workout-started"
+  private const val CH = "workout-started-popup"
+  private const val OLD_CH = "workout-started"
   const val ID = 51003
 
   /** How long the opened screen has to come up before the card is posted. */
@@ -70,8 +71,32 @@ object WorkoutStarted {
         Log.i(TAG, "open request for $startedAt ignored")
         return
       }
-      p.edit().putLong("handled", startedAt).commit()
+      val now = System.currentTimeMillis()
+      // The backup ([onWorkoutBegan]) may have acted on this workout first: Wear OS does not keep the
+      // two messages in order. Then only note it, no second open or card.
+      val done = kotlin.math.abs(now - p.getLong("handledAt", 0L)) <= Rule.MAX_AGE_MS
+      p.edit().putLong("handled", startedAt).putLong("handledAt", now).commit()
+      if (done) return
     }
+    open(app)
+  }
+
+  /**
+   * R-237 (31 Oct 2026): the phone said a workout is open and the watch had none: open the app (or pop
+   * the card up) as for /forge/open. Not when /forge/open was handled under [Rule.MAX_AGE_MS] ago.
+   */
+  fun onWorkoutBegan(ctx: Context) {
+    val app = ctx.applicationContext
+    val p = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val now = System.currentTimeMillis()
+    synchronized(this) {
+      if (kotlin.math.abs(now - p.getLong("handledAt", 0L)) <= Rule.MAX_AGE_MS) return
+      p.edit().putLong("handledAt", now).commit()
+    }
+    open(app)
+  }
+
+  private fun open(app: Context) {
     if (MainActivity.visible) return
     try {
       app.startActivity(openIntent(app))
@@ -81,6 +106,8 @@ object WorkoutStarted {
     main.postDelayed({
       if (MainActivity.visible) {
         Log.i(TAG, "watch app opened for the workout")
+      } else if (WatchState.rest(app) != null) {
+        Log.i(TAG, "a rest runs: its own card opens the app")
       } else {
         Log.i(TAG, "watch app did not open: posting Workout started")
         post(app)
@@ -96,11 +123,18 @@ object WorkoutStarted {
   private fun post(ctx: Context) {
     try {
       val m = nm(ctx)
+      // R-237 (31 Oct 2026): the old channel ("workout-started", default importance, silent) only put
+      // the card at the bottom of the list: the owner never saw it. A channel's importance cannot change
+      // once made, so a new one: high importance (it pops up over the watch face and lights the screen)
+      // with one buzz. The old channel is deleted.
+      m.deleteNotificationChannel(OLD_CH)
       if (m.getNotificationChannel(CH) == null) {
         m.createNotificationChannel(
-          NotificationChannel(CH, "Workout started", NotificationManager.IMPORTANCE_DEFAULT).apply {
-            description = "Shows a card when you start a workout on your phone. Tap it to open MettleUp."
+          NotificationChannel(CH, "Workout started", NotificationManager.IMPORTANCE_HIGH).apply {
+            description = "Pops up when you start a workout on your phone. Tap it to open MettleUp."
             setSound(null, null)
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0L, 250L)
             setShowBadge(false)
           },
         )
@@ -113,18 +147,13 @@ object WorkoutStarted {
         .setContentTitle("Workout started")
         .setContentText("Tap to open MettleUp")
         .setCategory(NotificationCompat.CATEGORY_WORKOUT)
-        .setOngoing(true)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setOnlyAlertOnce(true)
         .setAutoCancel(true)
         .setContentIntent(open)
         .setTimeoutAfter(TIMEOUT_MS)
-      // The watch face / Recents icon: one tap opens the app.
-      OngoingActivity.Builder(ctx, ID, b)
-        .setStaticIcon(R.drawable.ic_stat_forge)
-        .setTouchIntent(open)
-        .setStatus(Status.Builder().addTemplate("Workout started").build())
-        .build()
-        .apply(ctx)
+      // R-237: no Ongoing Activity here any more: it makes the card "ongoing", and Wear OS never pops
+      // an ongoing card up. The watch-face icon for the whole workout is WorkoutLive's.
       m.notify(ID, b.build())
     } catch (e: Exception) {
       // Notifications refused (or no channel): nothing else to show.

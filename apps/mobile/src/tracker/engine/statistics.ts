@@ -202,7 +202,8 @@ export function chartFrom(range: StatRange, today: string, firstWorkoutISO: stri
  * since 7 Sep" — never a bare number with no period.
  */
 export function setsSinceText(total: number, from: string, today: string): string {
-  return `${setsText(total)} since ${tinyDateWithYear(from, today)}`;
+  // UAT A-05 (30 Oct 2026): "111.5 sets" read oddly; the headline is a whole number (the bars keep halves).
+  return `${setsText(Math.round(total))} since ${tinyDateWithYear(from, today)}`;
 }
 
 /** Every bucket from `from` to `to`, oldest first (empty ones included, so gaps show). */

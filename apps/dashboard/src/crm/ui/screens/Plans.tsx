@@ -275,11 +275,14 @@ function PlanSheet({
   const [sessions, setSessions] = useState(editing && isPtPlan(editing) ? String(editing.ptSessions) : '12');
   const [trainer, setTrainer] = useState(editing?.trainer ?? '');
   const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
     const trimmed = name.trim();
-    if (trimmed.length < 2) return setError('Give the plan a name.');
+    // UAT A-27 (30 Oct 2026): every other form puts the error under the box that is wrong.
+    if (trimmed.length < 2) return setNameError('Give the plan a name.');
+    setNameError(null);
 
     // Strict: `Number('0x10')` is 16 and `Number('1e2')` is 100 — the same trap
     // `parseRupeeInput` two lines below already guards against.
@@ -352,7 +355,7 @@ function PlanSheet({
         </p>
       )}
 
-      <TextField label="Plan name" value={name} onChange={setName} placeholder="Quarterly" autoFocus />
+      <TextField label="Plan name" value={name} onChange={(v) => { setName(v); setNameError(null); }} placeholder="Quarterly" autoFocus error={nameError} />
 
       <Grid min={200}>
         <TextField label="Duration" value={count} onChange={setCount} inputMode="numeric" />

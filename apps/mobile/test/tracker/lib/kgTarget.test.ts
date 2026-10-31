@@ -105,12 +105,12 @@ describe('#9 kg to beat: during the workout', () => {
     expect(g.left).toBe(720);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 }, { weightKg: 45, reps: 8 }]);
     expect(g.short).toBe(false);
-    expect(kgLiveLine(p, g, total, weight)).toBe('405 of 1,125 kg · next 45 kg × 8, 8');
+    expect(kgLiveLine(p, g, total, weight)).toBe('Next: 45 kg × 8 · 405 of 1,125 kg'); // UAT A-10
   });
   it('release review: dumbbells ("each") keep the number before "of"', () => {
     const g = kgProgress(p, [row(45, 9, true), row(null, null, false), row(null, null, false)]);
     const each = (kg: number) => `${total(kg)} each`;
-    expect(kgLiveLine(p, g, each, weight)).toBe('405 of 1,125 kg each · next 45 kg × 8, 8');
+    expect(kgLiveLine(p, g, each, weight)).toBe('Next: 45 kg × 8 · 405 of 1,125 kg each');
   });
   it('a short set: the open sets catch up, at most 2 reps above plan each', () => {
     const g = kgProgress(p, [row(45, 6, true), row(null, null, false), row(null, null, false)]);

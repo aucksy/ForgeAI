@@ -96,7 +96,7 @@ test('J2 sell the plan three ways: full, part Rs 1,000, Rs 0 now', async ({ page
   // Money -> Dues: the two who owe, with their amounts; Rs 3,000 in all.
   await open(page, 'Money');
   await page.getByRole('button', { name: 'Dues' }).tap();
-  await expect(tile(page, 'Total due')).toContainText('₹3k');
+  await expect(tile(page, 'Total due')).toContainText('₹3,000');
   await expect(tile(page, 'Total due')).toContainText('2 members');
   await expect(duesRow(page, MEMBERS.part.name)).toContainText('₹1,000');
   await expect(duesRow(page, MEMBERS.none.name)).toContainText('₹2,000');
@@ -104,9 +104,9 @@ test('J2 sell the plan three ways: full, part Rs 1,000, Rs 0 now', async ({ page
 
   // Today: Rs 3,000 came in today (Rs 2,000 + Rs 1,000), and Rs 3,000 is still due from 2 members.
   await open(page, 'Today');
-  await expect(tile(page, "Today's collection")).toContainText('₹3k');
-  await expect(tile(page, "Today's collection")).toContainText('This month ₹3k');
-  await expect(tile(page, 'Fees due')).toContainText('₹3k');
+  await expect(tile(page, "Today's collection")).toContainText('₹3,000');
+  await expect(tile(page, "Today's collection")).toContainText('This month ₹3,000');
+  await expect(tile(page, 'Fees due')).toContainText('₹3,000');
   await expect(tile(page, 'Fees due')).toContainText('2 members');
   await expect(tile(page, 'Active members')).toContainText('3');
 
@@ -114,7 +114,7 @@ test('J2 sell the plan three ways: full, part Rs 1,000, Rs 0 now', async ({ page
   await tile(page, "Today's collection").tap();
   await expect(page.getByRole('heading', { name: 'Money', exact: true })).toBeVisible();
   const main = page.getByRole('main');
-  await expect(tile(page, 'Collected')).toContainText('₹3k');
+  await expect(tile(page, 'Collected')).toContainText('₹3,000');
   await expect(main.getByRole('link', { name: '2026-27/0001' })).toBeVisible();
   await expect(main.getByRole('link', { name: '2026-27/0002' })).toBeVisible();
   await expect(main.getByRole('link', { name: '2026-27/0003' })).toHaveCount(0);
@@ -147,12 +147,12 @@ test('J3 collect the rest of a due; more than the due is refused', async ({ page
   await open(page, 'Money');
   await page.getByRole('button', { name: 'Dues' }).tap();
   await expect(duesRow(page, MEMBERS.part.name)).toHaveCount(0);
-  await expect(tile(page, 'Total due')).toContainText('₹2k');
+  await expect(tile(page, 'Total due')).toContainText('₹2,000');
   await expect(tile(page, 'Total due')).toContainText('1 member');
   // Rs 4,000 has come in today: Rs 2,000 + Rs 1,000 + the Rs 1,000 just collected.
   await open(page, 'Today');
-  await expect(tile(page, "Today's collection")).toContainText('₹4k');
-  await expect(tile(page, 'Fees due')).toContainText('₹2k');
+  await expect(tile(page, "Today's collection")).toContainText('₹4,000');
+  await expect(tile(page, 'Fees due')).toContainText('₹2,000');
   // One person owes now: "1 member", not "1 members" (U-A8).
   await expect(tile(page, 'Fees due')).toHaveText(/Fees due1 member$/);
   await open(page, 'Money');
@@ -202,10 +202,10 @@ test('J4 cancel a receipt with a reason: the due comes back, CANCELLED, number n
 
   // Money: the cancelled receipt is not counted. Rs 2,000 came in today, not Rs 3,000.
   await open(page, 'Today');
-  await expect(tile(page, "Today's collection")).toContainText('₹2k');
-  await expect(tile(page, 'Fees due')).toContainText('₹4k');
+  await expect(tile(page, "Today's collection")).toContainText('₹2,000');
+  await expect(tile(page, 'Fees due')).toContainText('₹4,000');
   await tile(page, "Today's collection").tap();
-  await expect(tile(page, 'Cancelled')).toContainText('₹1k');
+  await expect(tile(page, 'Cancelled')).toContainText('₹1,000');
   await expect(tile(page, 'Cancelled')).toContainText('1 not counted');
 
   // The next receipt takes the next number, 0003. 0002 is never given again.

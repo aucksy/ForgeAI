@@ -161,7 +161,9 @@ export type MemberField = keyof MemberFields;
 
 export type MemberValidation =
   | { ok: true; value: MemberFields }
-  | { ok: false; field: MemberField; message: string };
+  | { ok: false; field: MemberField; message: string; all?: MemberFieldError[] };
+
+export type MemberFieldError = { field: MemberField; message: string };
 
 /** Raw strings straight off the add/edit form. */
 export interface MemberFormDraft {
@@ -258,34 +260,39 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * up mid-rush must not be blocked on an email address nobody has.
  */
 export function validateMember(form: MemberFormDraft, today: DateISO): MemberValidation {
+  // UAT A-28 (30 Oct 2026): the desk saw one wrong box per press. Every wrong box is now named at
+  // once (`all`); `field`/`message` stay the first one, so older callers behave as before.
+  const errs: MemberFieldError[] = [];
   const fullName = normalizeName(form.fullName);
   if (fullName.length < 2) {
-    return { ok: false, field: 'fullName', message: 'Type the member’s name.' };
-  }
-  if (fullName.length > NAME_MAX) {
-    return { ok: false, field: 'fullName', message: `The name can be at most ${NAME_MAX} letters.` };
+    errs.push({ field: 'fullName', message: 'Type the member’s name.' });
+  } else if (fullName.length > NAME_MAX) {
+    errs.push({ field: 'fullName', message: `The name can be at most ${NAME_MAX} letters.` });
   }
 
   const phone = normalizePhone(form.dialCode, form.phone);
   if (!phone) {
-    return { ok: false, field: 'phone', message: 'This mobile number looks wrong. Check it and type it again.' };
+    // UAT A-25: an empty box is not a "wrong" number.
+    errs.push({
+      field: 'phone',
+      message: form.phone.trim() ? 'This mobile number looks wrong. Check it and type it again.' : 'Type their mobile number.',
+    });
   }
 
   const emailRaw = form.email.trim();
   if (emailRaw && !EMAIL_RE.test(emailRaw)) {
-    return { ok: false, field: 'email', message: 'That email address doesn’t look right.' };
+    errs.push({ field: 'email', message: 'That email address doesn’t look right.' });
   }
 
   const dobRaw = form.dateOfBirth.trim();
   if (dobRaw && !isValidDateISO(dobRaw)) {
-    return { ok: false, field: 'dateOfBirth', message: 'Date of birth must be a real date.' };
-  }
-  if (dobRaw && dobRaw > today) {
-    return { ok: false, field: 'dateOfBirth', message: 'Date of birth can’t be in the future.' };
+    errs.push({ field: 'dateOfBirth', message: 'Date of birth must be a real date.' });
+  } else if (dobRaw && dobRaw > today) {
+    errs.push({ field: 'dateOfBirth', message: 'Date of birth can’t be in the future.' });
   }
 
   if (!isValidDateISO(form.joinedOn)) {
-    return { ok: false, field: 'joinedOn', message: 'Joining date must be a real date.' };
+    errs.push({ field: 'joinedOn', message: 'Joining date must be a real date.' });
   }
 
   const emergencyRaw = form.emergencyPhone.trim();
@@ -293,14 +300,20 @@ export function validateMember(form: MemberFormDraft, today: DateISO): MemberVal
   if (emergencyRaw) {
     const parsed = normalizePhone(DEFAULT_DIAL_CODE, emergencyRaw) ?? null;
     if (!parsed) {
-      return { ok: false, field: 'emergencyPhone', message: 'The emergency number looks wrong. Check it and type it again.' };
+      errs.push({ field: 'emergencyPhone', message: 'The emergency number looks wrong. Check it and type it again.' });
+    } else {
+      emergencyPhone = parsed.e164;
     }
-    emergencyPhone = parsed.e164;
   }
 
   const batch = normalizeBatch(form.batch);
   if (batch !== null && batch.length > BATCH_MAX) {
-    return { ok: false, field: 'batch', message: `The batch name can be at most ${BATCH_MAX} letters.` };
+    errs.push({ field: 'batch', message: `The batch name can be at most ${BATCH_MAX} letters.` });
+  }
+
+  if (errs.length > 0 || !phone) {
+    const first = errs[0];
+    return { ok: false, field: first.field, message: first.message, all: errs };
   }
 
   const gender = form.gender === 'male' || form.gender === 'female' || form.gender === 'other'

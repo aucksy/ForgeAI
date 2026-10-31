@@ -68,7 +68,7 @@ test('J27a 31 March to 1 April at midnight: the receipt series restarts; two che
   await expect(page.getByRole('main').getByRole('link', { name: '2026-27/0001' })).toBeVisible();
   await expect(page.getByRole('main').getByRole('link', { name: '2025-26/0001' })).toHaveCount(0);
   await period.getByRole('button', { name: 'Last month' }).tap();
-  await expect(tile(page, 'Collected')).toContainText('₹1k');
+  await expect(tile(page, 'Collected')).toContainText('₹1,000');
   await expect(page.getByRole('main').getByRole('link', { name: '2025-26/0001' })).toBeVisible();
 });
 

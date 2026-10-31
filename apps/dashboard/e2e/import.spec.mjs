@@ -67,15 +67,15 @@ test('J18 import plans and payments: a payments list with a running total and tw
   // Dues: only Ravi, Rs 1,500, owed since 1 Aug (77 days: over 60).
   await open(page, 'Money');
   await page.getByRole('button', { name: 'Dues' }).tap();
-  await expect(tile(page, 'Total due')).toContainText('₹1.5k');
+  await expect(tile(page, 'Total due')).toContainText('₹1,500');
   await expect(tile(page, 'Total due')).toContainText('1 member');
-  await expect(tile(page, 'Over 60 days')).toContainText('₹1.5k');
+  await expect(tile(page, 'Over 60 days')).toContainText('₹1,500');
   await expect(main).toContainText('77 days');
 
   // Collections over this financial year: Rs 6,000 on three receipts.
   await page.getByRole('button', { name: 'Collections' }).tap();
   await page.getByRole('group', { name: 'Period' }).getByRole('button', { name: 'This financial year' }).tap();
-  await expect(tile(page, 'Collected')).toContainText('₹6k');
+  await expect(tile(page, 'Collected')).toContainText('₹6,000');
   await expect(tile(page, 'Collected')).toContainText('3 receipts');
 
   // Plans: the two plan names from the file, at the file's prices.

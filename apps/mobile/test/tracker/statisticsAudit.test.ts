@@ -59,7 +59,7 @@ describe('Sets per muscle group: every bar is a whole week or month', () => {
   it('says what the total counts and from when, with the phone\'s grouping', () => {
     expect(setsSinceText(412, '2026-09-07', TODAY)).toBe('412 sets since 7 Sep');
     expect(setsSinceText(1, '2026-10-12', TODAY)).toBe('1 set since 12 Oct');
-    expect(setsSinceText(4.5, '2026-10-12', TODAY)).toBe('4.5 sets since 12 Oct');
+    expect(setsSinceText(4.5, '2026-10-12', TODAY)).toBe('5 sets since 12 Oct'); // UAT A-05: whole sets
     // All time: the year is said, and a big total is grouped ("12,480", not "12480").
     expect(setsSinceText(12480, '2023-01-16', TODAY)).toMatch(/^12.480 sets since 16 Jan 2023$/);
   });

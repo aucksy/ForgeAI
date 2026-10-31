@@ -105,6 +105,11 @@ object WatchState {
   /** The screen came up: show what is saved (and set a lost alarm again, [recover]). */
   fun load(ctx: Context) {
     recover(ctx)
+    // R-236: after an app update or a reboot the workout's Ongoing Activity is gone: put it back.
+    // Only for a workout the phone spoke of in the last WorkoutLive.CAP_MS: a phone that died, was reset
+    // or lost MettleUp never sends "ended", and the watch must not keep the notice forever.
+    val p = prefs(ctx)
+    WorkoutLive.sync(ctx, p.getBoolean("active", false) && WorkoutLive.fresh(p.getLong("workoutAt", 0L), System.currentTimeMillis()))
     publish(ctx)
   }
 
@@ -230,6 +235,11 @@ object WatchState {
   ) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
+    // R-237: a workout the watch did not know of yet (none open, or the last one went silent over
+    // WorkoutLive.CAP_MS ago): open the app, for when the phone's /forge/open was lost.
+    // An open workout with no workoutAt was saved by an older watch app (before 0.63.0): known, no buzz.
+    val at = p.getLong("workoutAt", 0L)
+    val began = active && !(p.getBoolean("active", false) && (at == 0L || WorkoutLive.fresh(at, System.currentTimeMillis())))
     // R-207: "Rest is over" waits for the set after the rest; the phone naming another row (the set
     // was logged) or closing the workout moves the screen on.
     if (p.getLong("overAt", 0L) > 0L && (!active || setKey(done, next.set) != (p.getString("overKey", "") ?: ""))) {
@@ -238,6 +248,7 @@ object WatchState {
     p.edit()
       .putLong("workoutSeq", seq)
       .putBoolean("active", active)
+      .putLong("workoutAt", System.currentTimeMillis())
       .putString("title", title)
       .putString("text", if (active) text else "")
       .putString("done", if (active) done else "")
@@ -249,6 +260,9 @@ object WatchState {
       .putString("accent", accent)
       .commit()
     if (!active) WorkoutStarted.cancel(ctx)
+    // R-236: the whole workout keeps the app on the watch (dim, bright on a wrist raise).
+    WorkoutLive.sync(ctx, active)
+    if (began) WorkoutStarted.onWorkoutBegan(ctx)
     if (!active) {
       // Workout finished or discarded: no rest may buzz after it, and (C5-9) a "Rest is over ·
       // Next: …" still up goes too (it stayed until its 2-minute timeout).

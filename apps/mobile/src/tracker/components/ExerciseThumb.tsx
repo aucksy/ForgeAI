@@ -14,6 +14,7 @@ import { color } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
 import { mediaFor } from '../catalog/media';
+import { picturesFor } from '../catalog/pictures';
 import { Glyph } from './TrackerGlyph';
 
 export interface ThumbMedia {
@@ -41,7 +42,10 @@ export function ExerciseThumb({
   /** Opens the demo. Omitted (or nothing to show) → a plain, non-tappable picture. */
   onPress?: () => void;
 }) {
+  // UAT A-09 (30 Oct 2026): rows with no clip thumbnail showed a plain dumbbell next to rows with a
+  // drawing. Use the exercise's start picture when it has one, so the list has one look.
   const bundled = mediaFor(catalogKey);
+  const still = bundled ? null : picturesFor(catalogKey)?.start ?? null;
   const tappable = onPress != null && hasDemo(catalogKey, media);
   const r = Math.round(size * 0.28);
   // The member's photo can be gone (replaced mid-workout, or a restore on another phone):
@@ -76,11 +80,11 @@ export function ExerciseThumb({
         <Glyph name="play" size={Math.round(size * 0.45)} color={color.accent} />
       </View>
     );
-  } else if (bundled) {
+  } else if (bundled || still) {
     // Light line drawing on the app's raised surface (calm on the dark theme).
     body = (
       <Image
-        source={bundled.thumb}
+        source={bundled ? bundled.thumb : still}
         style={{
           width: size,
           height: size,

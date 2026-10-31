@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -114,6 +114,52 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
       <path d="M8 6H4.5v1.5A3 3 0 0 0 8 10.5M16 6h3.5v1.5a3 3 0 0 1-3.5 3" />
       <path d="M12 13v4M8.5 20h7M10 17h4" />
+    </>
+  ),
+  // UAT A-17 (30 Oct 2026): every More row gets its own picture.
+  // An apple: Diet plans.
+  diet: (
+    <>
+      <path d="M12 7.5c-1.6-1.2-4.6-1.4-6.2.6-1.9 2.4-1.2 6.9.9 9.8 1.2 1.6 2.7 2.6 4 1.9.8-.4 1.8-.4 2.6 0 1.3.7 2.8-.3 4-1.9 2.1-2.9 2.8-7.4.9-9.8-1.6-2-4.6-1.8-6.2-.6Z" />
+      <path d="M12 7.5c0-2 1-3.5 3-4" />
+    </>
+  ),
+  // A phone with a question: Enquiries (people who asked about joining).
+  enquiries: (
+    <>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+      <path d="M10 9.2a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.3v.4" />
+      <path d="M12 15.6v.1M10.5 18.5h3" />
+    </>
+  ),
+  // A key: Staff & sign-in.
+  key: (
+    <>
+      <circle cx="8" cy="15" r="4.5" />
+      <path d="m11.2 11.8 8.8-8.8M16.5 6.5l2.5 2.5M14 9l2 2" />
+    </>
+  ),
+  // A QR square: Invite members (link and QR poster).
+  invite: (
+    <>
+      <rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1" />
+      <rect x="14" y="3.5" width="6.5" height="6.5" rx="1" />
+      <rect x="3.5" y="14" width="6.5" height="6.5" rx="1" />
+      <path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 20.5h1.5M20.5 14v1.5" />
+    </>
+  ),
+  // A spark: What's new.
+  news: (
+    <>
+      <path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9Z" />
+      <path d="M18.5 16v4M16.5 18h4" />
+    </>
+  ),
+  // A speech bubble with "!": Send feedback.
+  feedback: (
+    <>
+      <path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5V16.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z" />
+      <path d="M12 8.5v3.5M12 14.2v.1" />
     </>
   ),
   settings: (

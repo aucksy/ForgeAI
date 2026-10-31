@@ -189,23 +189,23 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/growth', label: 'Your growth', icon: 'growth' },
       { path: '/plans', label: 'Plans', icon: 'plans' },
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
-      { path: '/enquiries', label: 'Enquiries', icon: 'members', badge: enquiriesDue || undefined },
+      { path: '/enquiries', label: 'Enquiries', icon: 'enquiries', badge: enquiriesDue || undefined },
       { path: '/expenses', label: 'Expenses', icon: 'money' },
       // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
       { path: '/workouts', label: 'Workout plans', icon: 'workouts' },
       // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
-      { path: '/diet', label: 'Diet plans', icon: 'workouts' },
-      // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
-      // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
-      { path: '/settings/branding', label: 'Branding', icon: 'brand' },
-      // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
-      { path: '/settings/timings', label: 'Gym timings', icon: 'clock' },
+      { path: '/diet', label: 'Diet plans', icon: 'diet' },
       // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
       { path: '/challenges', label: 'Challenges', icon: 'trophy' },
-      { path: '/settings', label: 'Settings', icon: 'settings' },
+      // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
+      // Settings -> Open branding. The owner's (permissions.ts canOpen hides it from the front desk).
+      { path: '/settings/branding', label: 'Branding', icon: 'brand', group: 'setup' },
+      // R-124 (25 Oct 2026): when the gym is open, for members to see. The owner edits; the desk reads.
+      { path: '/settings/timings', label: 'Gym timings', icon: 'clock', group: 'setup' },
+      { path: '/settings', label: 'Settings', icon: 'settings', group: 'setup' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
-      ...(demo ? [] : [{ path: '/feedback', label: 'Send feedback', icon: 'more' } as NavItem]),
+      ...(demo ? [] : [{ path: '/feedback', label: 'Send feedback', icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
   }, [memberViews, snapshot, today, newCount, role, allBranches, demo]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,

@@ -111,7 +111,9 @@ function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnT
           width: 48,
           height: 48,
           borderRadius: radius.pill,
-          alignItems: 'center',
+          // UAT A-01: half of it sits behind the screen edge, so the icon sits in the half that shows.
+          alignItems: spot.side === 'left' ? 'flex-end' : 'flex-start',
+          paddingHorizontal: 3,
           justifyContent: 'center',
           backgroundColor: color.surfaceRaised,
           borderWidth: 1,
@@ -120,7 +122,7 @@ function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnT
           ...shadow.card,
         }}
       >
-        <Icon name="chat" size={22} color={color.accent} />
+        <Icon name="chat" size={18} color={color.accent} />
       </Pressable>
     </Animated.View>
   );

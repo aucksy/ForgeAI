@@ -80,7 +80,7 @@ test('J24 owner sells at a discount, free, and above the list price (asked first
   // Money: Rs 2,300 + Rs 2,300 still due; Asha and Bharat owe nothing.
   await open(page, 'Money');
   await page.getByRole('button', { name: 'Dues' }).tap();
-  await expect(tile(page, 'Total due')).toContainText('₹4.6k');
+  await expect(tile(page, 'Total due')).toContainText('₹4,600');
   await expect(tile(page, 'Total due')).toContainText('2 members');
   await expect(page.getByRole('main').getByRole('link', { name: 'Bharat Singh' })).toHaveCount(0);
   await expect(page.getByRole('main').getByRole('link', { name: 'Asha Verma' })).toHaveCount(0);

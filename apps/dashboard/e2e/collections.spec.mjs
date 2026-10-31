@@ -154,7 +154,7 @@ test('J15 collections for a date range, by who took the money; the Excel file ad
   await wait(page, 16_000);
   await open(page, 'Money');
   await expectFitsPhone(page, 'on Collections');
-  await expect(tile(page, 'Collected')).toContainText('₹6k');
+  await expect(tile(page, 'Collected')).toContainText('₹6,000');
 
   // The 800 was typed wrong: the owner cancels it.
   await receiptCard(page, '2026-27/0005').getByRole('button', { name: 'Cancel receipt' }).tap();
@@ -170,7 +170,7 @@ test('J15 collections for a date range, by who took the money; the Excel file ad
   await expectFitsPhone(page, 'on Collections, custom dates');
   const main = page.getByRole('main');
   await expect(main).toContainText('8 Oct 2026 → 17 Oct 2026');
-  await expect(tile(page, 'Collected')).toContainText('₹3.2k');
+  await expect(tile(page, 'Collected')).toContainText('₹3,200');
   await expect(tile(page, 'Collected')).toContainText('3 receipts');
   await expect(tile(page, 'Cancelled')).toContainText('₹800');
   await expect(tile(page, 'Cancelled')).toContainText('1 not counted');
@@ -191,7 +191,7 @@ test('J15 collections for a date range, by who took the money; the Excel file ad
   expect((await takenBy.locator('option').allTextContents()).sort()).toEqual(['Everyone', OWNER.name, DESK.name].sort());
   await takenBy.selectOption({ label: DESK.name });
   await expect(main).toContainText(`Taken by ${DESK.name}`);
-  await expect(tile(page, 'Collected')).toContainText('₹2.2k');
+  await expect(tile(page, 'Collected')).toContainText('₹2,200');
   await expect(tile(page, 'Collected')).toContainText('2 receipts');
   shown = await listedReceipts(page);
   expect(shown.sort()).toEqual(['2026-27/0003', '2026-27/0004']);
@@ -201,7 +201,7 @@ test('J15 collections for a date range, by who took the money; the Excel file ad
 
   // Only what Ramesh took: Rs 1,000 on one receipt.
   await takenBy.selectOption({ label: OWNER.name });
-  await expect(tile(page, 'Collected')).toContainText('₹1k');
+  await expect(tile(page, 'Collected')).toContainText('₹1,000');
   await expect(tile(page, 'Collected')).toContainText('1 receipt');
   await expect(tile(page, 'Cancelled')).toContainText('₹0');
   expect(await listedReceipts(page)).toEqual(['2026-27/0002']);
@@ -210,7 +210,7 @@ test('J15 collections for a date range, by who took the money; the Excel file ad
   await takenBy.selectOption({ label: 'Everyone' });
   await page.getByLabel('Show cancelled receipts').check();
   await expect(receiptCard(page, '2026-27/0005')).toContainText('CANCELLED');
-  await expect(tile(page, 'Collected')).toContainText('₹3.2k');
+  await expect(tile(page, 'Collected')).toContainText('₹3,200');
 
   // The Excel file: Amount adds up to Collected; the cancelled Rs 800 sits in its own column.
   const download = page.waitForEvent('download');

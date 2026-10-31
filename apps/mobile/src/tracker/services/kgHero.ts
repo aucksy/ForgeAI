@@ -13,6 +13,8 @@
  *    "Your number to beat next time." — nothing made up.
  *  - A workout with no weight at all (push-ups, pull-ups): the same in reps.
  *  - Nothing lifted and no reps (a run): no card.
+ *  - UAT A-06 / B-02 (30 Oct 2026): a much shorter workout (under 60 % of last time's reps) is not
+ *    compared at all: 2 sets in 4 minutes read "Lighter than last time" against a full workout.
  * Member words: "kg lifted", never "volume", "PR" or "session".
  */
 import { fmtInt } from '@/lib/format';
@@ -48,6 +50,9 @@ export interface KgHero {
   shareLine: string | null;
 }
 
+/** Under this share of last time's reps, today is a different-sized workout and is not compared. */
+export const SHORT_SHARE = 0.6;
+
 /** Today's numbers against last time's (null = no last time). null = nothing to show (no weight, no reps). PURE. */
 export function kgHero(today: HeroTotals, last: HeroLast | null, units: UnitSystem, easyWeek = false): KgHero | null {
   const kgMode = today.kg > 0.5;
@@ -62,6 +67,12 @@ export function kgHero(today: HeroTotals, last: HeroLast | null, units: UnitSyst
   const comparable = last != null && (kgMode ? last.kg > 0.5 : !(last.kg > 0.5) && last.reps > 0);
   if (!last || !comparable) {
     return { ...base, tone: 'first', line: 'Your number to beat next time.', lastLine: null, shareLine: null };
+  }
+  // Review of 0.63.0: in kilos, fewer reps alone is not shorter (5x5 at 100 kg beats 4x15 at 20 kg);
+  // the kilos must be well under too.
+  const short = last.reps > 0 && today.reps < SHORT_SHARE * last.reps && (!kgMode || today.kg < SHORT_SHARE * last.kg);
+  if (!easyWeek && short) {
+    return { ...base, tone: 'first', line: 'A shorter workout than last time. Every workout counts.', lastLine: null, shareLine: null };
   }
   const then = shown(kgMode ? last.kg : last.reps);
   const diff = now - then;

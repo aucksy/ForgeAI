@@ -5,6 +5,7 @@ import {
   saleDefaults,
   STAFF_BACKDATE_DAYS,
   validateSale,
+  saleWarning,
 } from '../../src/crm/logic/selling';
 import { makeMembership, makePayment, makePlan } from './fixtures';
 
@@ -150,5 +151,21 @@ describe('validateSale', () => {
   it('allows any start date for a lapsed member', () => {
     const lapsed = makeMembership({ startsOn: '2026-01-01', endsOn: '2026-04-30' });
     expect(validateSale({ ...ok, startsOn: TODAY }, [lapsed], TODAY)).toBeNull();
+  });
+});
+
+describe('UAT B-18: a plan that starts far ahead is asked about once', () => {
+  const base = { priceP: null, joiningFeeP: null, listPriceP: null, listJoiningFeeP: null };
+  it('warns past 30 days, stays quiet up to 30', () => {
+    expect(saleWarning({ ...base, startsOn: '2027-08-05', today: '2026-10-30' })).toMatch(/279 days from today/);
+    expect(saleWarning({ ...base, startsOn: '2026-11-29', today: '2026-10-30' })).toBeNull();
+  });
+  it('two reasons show together, so a second tap never skips one', () => {
+    const w = saleWarning({ priceP: 200_000, joiningFeeP: null, listPriceP: 150_000, listJoiningFeeP: null, startsOn: '2027-02-01', today: '2026-10-30' });
+    expect(w).toBe('The price ₹2,000 is more than the plan price, ₹1,500. This plan starts on 1 Feb 2027, 94 days from today. Tap again to save it anyway.');
+  });
+  it('a renewal starting the day after the current plan ends stays quiet, even 31+ days out', () => {
+    expect(saleWarning({ ...base, startsOn: '2026-12-01', today: '2026-10-30', usualStart: '2026-12-01' })).toBeNull();
+    expect(saleWarning({ ...base, startsOn: '2027-02-01', today: '2026-10-30', usualStart: '2026-12-01' })).toMatch(/94 days from today/);
   });
 });

@@ -36,7 +36,7 @@ import {
   type RangePresetId,
 } from '../../logic/collections';
 import { csvDocument, csvFilename } from '../../logic/csv';
-import { formatINR, formatINRShort, paiseToRupees, sumPaise } from '../../logic/money';
+import { formatINR, paiseToRupees, sumPaise } from '../../logic/money';
 import { formatPhone, phoneForExport } from '../../logic/members';
 import { methodLabel, methodOptions } from '../../logic/payments';
 import type { MemberView, Payment, PaymentMethod } from '../../types';
@@ -210,7 +210,9 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
     <>
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Period</SectionTitle>
+        {/* UAT A-20 (30 Oct 2026): on a phone the chips ran off the edge ("La...") with no hint. */}
         <ChipToggle
+          wrap
           label="Period"
           value={presetId}
           onChange={(v) => usePreset(v as RangePresetId | 'custom')}
@@ -237,7 +239,7 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
       <Grid min={165}>
         <StatTile
           label="Collected"
-          value={formatINRShort(summary.netP)}
+          value={formatINR(summary.netP)}
           tone="good"
           sub={
             summary.receiptsN === 1
@@ -247,17 +249,17 @@ function Collections({ onToast, startOn = 'thisMonth' }: { onToast: (msg: string
         />
         <StatTile
           label="Average receipt"
-          value={formatINRShort(summary.averageP)}
+          value={formatINR(summary.averageP)}
           sub="Per payment in this period"
         />
         <StatTile
           label="Largest receipt"
-          value={formatINRShort(summary.largestP)}
+          value={formatINR(summary.largestP)}
           sub="Single payment in this period"
         />
         <StatTile
           label="Cancelled"
-          value={formatINRShort(summary.voidedP)}
+          value={formatINR(summary.voidedP)}
           tone={summary.voidedN > 0 ? 'critical' : undefined}
           sub={`${summary.voidedN} not counted`}
         />
@@ -683,7 +685,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
         <Grid min={165}>
           <StatTile
             label="Total due"
-            value={formatINRShort(owedP)}
+            value={formatINR(owedP)}
             tone="warn"
             sub={
               people.length === allPeople.length
@@ -697,7 +699,7 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
             <StatTile
               key={t.bucket}
               label={AGING_LABEL[t.bucket]}
-              value={formatINRShort(t.amountP)}
+              value={formatINR(t.amountP)}
               tone={t.amountP > 0 ? tileTone(t.bucket) : undefined}
               sub={
                 t.countN === 1

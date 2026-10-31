@@ -16,6 +16,7 @@ import { radius } from '../../theme';
 import * as api from './api';
 import { JoinCodeCard } from './JoinCode';
 import { rosterIdFor, timeAgo, type AppMember } from './logic';
+import { prefillNextAdd } from '../ui/screens/Members';
 import { usePoll, useShop } from './ShopProvider';
 
 export function AppMembersSection() {
@@ -68,7 +69,10 @@ export function AppMembersSection() {
             <button
               key={m.memberId}
               type="button"
-              onClick={() => navigate(rosterId ? `/members/${rosterId}` : '/members/new')}
+              onClick={() => {
+                if (!rosterId) prefillNextAdd({ fullName: m.name, phone: m.phone ? (m.phone.startsWith('+') ? m.phone : `+91${m.phone.replace(/\D/g, '').slice(-10)}`) : undefined });
+                navigate(rosterId ? `/members/${rosterId}` : '/members/new');
+              }}
               aria-label={rosterId ? `Open ${m.name}` : `${m.name} is not in your member list. Add them`}
               style={{ all: 'unset', display: 'block', cursor: 'pointer', borderRadius: radius.lg }}
               className="tap-card"
@@ -94,9 +98,10 @@ export function AppMembersSection() {
                         : `${m.orders} orders`}
                   </div>
                   <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
+                    {/* UAT A-30: this counts shop orders only; "paid at the desk" read as membership fees. */}
                     {m.spentP > 0
-                      ? `${formatINR(m.spentP)} paid at the desk`
-                      : 'Nothing paid at the desk yet'}
+                      ? `${formatINR(m.spentP)} paid for shop orders`
+                      : 'No shop orders paid yet'}
                   </div>
                 </div>
                 <span aria-hidden style={{ fontFamily: font.body, fontSize: 20, color: color.inkMuted, flexShrink: 0 }}>›</span>

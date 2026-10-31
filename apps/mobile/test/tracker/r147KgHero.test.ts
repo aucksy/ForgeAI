@@ -121,3 +121,16 @@ describe('R-147: the share picture', () => {
     expect(completeLine(`+${'9'.repeat(80)} kg more than last time`)).toBe('Workout complete');
   });
 });
+
+describe('UAT A-06: a much shorter workout is not compared', () => {
+  it('2 sets against a full workout: no "lighter", no last-time line', () => {
+    const h = kgHero({ kg: 1875, reps: 10 }, { kg: 7463, reps: 60, against: null }, 'metric')!;
+    expect(h.tone).toBe('first');
+    expect(h.line).toBe('A shorter workout than last time. Every workout counts.');
+    expect(h.lastLine).toBeNull();
+  });
+  it('fewer reps but far more kilos is a win, not "shorter"', () => {
+    const h = kgHero({ kg: 2500, reps: 25 }, { kg: 1200, reps: 60, against: null }, 'metric')!;
+    expect(h.tone).toBe('up');
+  });
+});

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BOTTOM_CLEAR,
   DEFAULT_SPOT,
-  EDGE_GAP,
+  PEEK,
   FEEDBACK_BUTTON_SIZE,
   FEEDBACK_BUTTON_WORDS,
   TOP_CLEAR,
@@ -31,8 +31,9 @@ describe('the floating feedback button (R-149)', () => {
   });
 
   it('docks to the edge it is dropped nearer to, and stays in the free band', () => {
-    expect(spotToXY({ side: 'left', y: 0 }, pixel).x).toBe(EDGE_GAP);
-    expect(spotToXY({ side: 'right', y: 0 }, pixel).x).toBe(pixel.width - FEEDBACK_BUTTON_SIZE - EDGE_GAP);
+    // UAT A-01: tucked behind the edge, only PEEK dp shows.
+    expect(spotToXY({ side: 'left', y: 0 }, pixel).x).toBe(PEEK - FEEDBACK_BUTTON_SIZE);
+    expect(spotToXY({ side: 'right', y: 0 }, pixel).x).toBe(pixel.width - PEEK);
     expect(spotFromDrop(40, 300, pixel).side).toBe('left');
     expect(spotFromDrop(250, 300, pixel).side).toBe('right');
     expect(spotFromDrop(250, -500, pixel).y).toBe(0);
@@ -63,7 +64,7 @@ describe('the floating feedback button (R-149)', () => {
     const on = { enabled: true, keyboardOpen: false };
     expect(showsFloatingButton({ ...on, pathname: '/' })).toBe(true);
     expect(showsFloatingButton({ ...on, pathname: '/progress' })).toBe(true);
-    expect(showsFloatingButton({ ...on, pathname: '/session/finish' })).toBe(true);
+    expect(showsFloatingButton({ ...on, pathname: '/session/finish' })).toBe(false); // UAT A-01: it covered the finish page's buttons;
     expect(showsFloatingButton({ ...on, pathname: '/session/active' })).toBe(false); // its own top-bar button
     expect(showsFloatingButton({ ...on, pathname: '/session/active/' })).toBe(false);
     expect(showsFloatingButton({ ...on, pathname: '/calendar' })).toBe(false); // its day grid fills the width (part UH)

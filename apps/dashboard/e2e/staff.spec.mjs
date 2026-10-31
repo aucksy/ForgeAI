@@ -10,6 +10,7 @@ test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   const server = await openApp(page);
 
   // The owner starts the gym online.
+  await page.getByRole('tab', { name: 'Set up a new gym' }).click(); // UAT B-11: one form at a time
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill('Shakti Gym');
   await start.getByLabel('Your name').fill('Ramesh Sharma');
@@ -55,7 +56,7 @@ test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   // Sunita signs in with her mobile and the code.
   const signIn = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
   await signIn.getByLabel('Your mobile number').fill('98290 54321');
-  await signIn.getByLabel('Sign-in code or PIN (6 digits)').fill(SIGN_IN_CODE);
+  await signIn.getByLabel('PIN (6 digits)').fill(SIGN_IN_CODE);
   await signIn.getByRole('button', { name: 'Sign in' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
 

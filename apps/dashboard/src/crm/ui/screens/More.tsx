@@ -20,7 +20,16 @@ interface Row {
   hint: string;
   icon: IconName;
   badge?: number;
+  /** UAT B-15 (30 Oct 2026): the 16 rows sit under three headings. */
+  group: Group;
 }
+
+type Group = 'run' | 'talk' | 'setup';
+const GROUPS: { id: Group; title: string }[] = [
+  { id: 'run', title: 'Run the gym' },
+  { id: 'talk', title: 'Talk to members' },
+  { id: 'setup', title: 'Set up and help' },
+];
 
 export function MoreScreen() {
   const { newCount } = useShop();
@@ -30,52 +39,70 @@ export function MoreScreen() {
   const owner = role === 'owner';
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
-    { path: '/growth', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
-    { path: '/plans', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
+    { path: '/growth', group: 'run', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
+    { path: '/plans', group: 'run', label: 'Plans', hint: 'Prices and durations', icon: 'plans' },
     {
-      path: '/enquiries',
+      path: '/enquiries', group: 'run',
       label: 'Enquiries',
       hint: 'People who asked about joining',
-      icon: 'members',
+      icon: 'enquiries',
       badge: enquiriesDue,
     },
-    { path: '/expenses', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
-    { path: '/workouts', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
-    { path: '/diet', label: 'Diet plans', hint: 'Send members what to eat', icon: 'workouts' },
-    { path: '/shop', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
-    { path: '/messages', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
-    { path: '/settings/branding', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
-    { path: '/settings/timings', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
-    { path: '/challenges', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
+    { path: '/expenses', group: 'run', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
+    { path: '/workouts', group: 'talk', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
+    { path: '/diet', group: 'talk', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
+    { path: '/shop', group: 'run', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
+    { path: '/messages', group: 'talk', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
+    { path: '/settings/branding', group: 'setup', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },
+    { path: '/settings/timings', group: 'setup', label: 'Gym timings', hint: owner ? 'When you are open, for members to see' : 'When the gym is open', icon: 'clock' },
+    { path: '/challenges', group: 'talk', label: 'Challenges', hint: owner ? 'A monthly goal for members, and the leaderboard' : 'Who has reached the goal', icon: 'trophy' },
     {
-      path: '/settings/people',
+      path: '/settings/people', group: 'setup',
       label: 'Staff & sign-in',
       hint: owner ? 'Who can open this admin app, and your PIN' : 'Your PIN, and signing out',
-      icon: 'members',
+      icon: 'key',
     },
     {
-      path: '/settings/invite',
+      path: '/settings/invite', group: 'talk',
       label: 'Invite members',
       hint: 'Link and QR poster',
-      icon: 'today',
+      icon: 'invite',
     },
     {
-      path: '/settings',
+      path: '/settings', group: 'setup',
       label: 'Settings',
       hint: owner ? 'Gym details, screen colours, app' : 'Screen colours, app, sign-in',
       icon: 'settings',
     },
     // R-148: what changed in the admin app.
-    { path: '/settings/news', label: "What's new", hint: 'Changes to this admin app', icon: 'settings' },
+    { path: '/settings/news', group: 'setup', label: "What's new", hint: 'Changes to this admin app', icon: 'news' },
     // Launch H7 (21 Oct 2026).
-    { path: '/feedback', label: 'Send feedback', hint: 'Tell MettleUp a problem or an idea', icon: 'more' },
+    { path: '/feedback', group: 'setup', label: 'Send feedback', hint: 'Tell MettleUp a problem or an idea', icon: 'feedback' },
   ]);
   return (
     <>
       <PageHeader title="More" />
+      {GROUPS.map((g) => {
+        const inGroup = rows.filter((r) => r.group === g.id);
+        if (inGroup.length === 0) return null;
+        return (
+      <section key={g.id} aria-label={g.title} style={{ marginBottom: space.lg }}>
+      <h2
+        style={{
+          margin: `0 0 ${space.sm}px`,
+          fontFamily: font.body,
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: 0.6,
+          textTransform: 'uppercase',
+          color: color.inkMuted,
+        }}
+      >
+        {g.title}
+      </h2>
       <Card>
         <div style={{ display: 'grid' }}>
-          {rows.map((r, i) => (
+          {inGroup.map((r, i) => (
             <Link key={r.path} to={r.path}>
               <span
                 style={{
@@ -133,6 +160,9 @@ export function MoreScreen() {
           ))}
         </div>
       </Card>
+      </section>
+        );
+      })}
     </>
   );
 }
