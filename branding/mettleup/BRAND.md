@@ -171,13 +171,6 @@ renders `brand/*.png` from `brand/mark.svg`. Use one or the other; whichever run
 
 Tagline: **Stronger every week.**
 
-| # | Headline | Sub line | Screen to show |
-|---|---|---|---|
-| 1 (panorama, left) | Your gym, in your **pocket** | Log workouts, check in, see progress. | Home / today's workout |
-| 2 (panorama, right) | Every set. Every rep. **Logged.** | Tap a set the moment it's done. | A workout in progress |
-| 3 | Beat **last week's** weight | Last time's numbers sit beside every set. | An exercise with last time's numbers |
-| 4 | Rest timer on your **lock screen** | Know when to lift again, without unlocking. | Lock screen with the timer |
-| 5 | Check in with **one scan** | Scan the code at your gym's front desk. | The check-in scan |
-| 6 | See your **strength** grow | A chart for every lift, week by week. | A lift's progress chart |
-| 7 | Works without **internet** | No signal in the gym? Keep logging. | A workout logged offline |
-| 8 | **Free** with your gym | Your gym sets you up. You just train. | The join / welcome screen |
+The 8 screenshot captions live in ONE place: `store/captions.json` (headline, sub line, and the screen
+each one shows). R-249, 31 Oct 2026: each shot stands alone (no panorama pair); the pictures come from
+the store-shots run named in its `_source` line. Never copy them here: a second list drifts.

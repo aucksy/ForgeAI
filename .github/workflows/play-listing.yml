@@ -1,9 +1,8 @@
 name: Play store listing (pictures in order)
 
 # R-125 (25 Oct 2026): replaces MettleUp's Play store pictures for en-US, in order, from the
-# committed files: phone screenshots branding/mettleup/store/out/shot-01, 02, 03, 05, 06, 07, 08
-# (shot 04 is left out: its caption does not match its screen; 01 + 02 are the barbell panorama
-# pair and must sit first, side by side), the feature graphic and the icon. Optionally the title,
+# committed files: phone screenshots branding/mettleup/store/out/shot-01 to 08 (R-249, 31 Oct 2026:
+# all 8, each on its own, no panorama pair), the feature graphic and the icon. Optionally the title,
 # short and full description from branding/mettleup/store/listing-draft.txt. The script reads the
 # order back from Play and commits only when it is exactly right; the log shows the final order.
 # Keyless sign-in exactly as play-upload.yml (Workload Identity Federation, repository variables).

@@ -204,14 +204,11 @@ class ReviewRefusals(unittest.TestCase):
 
 
 class ScreenshotOrder(unittest.TestCase):
-    def test_order_without_shot_4(self):
-        self.assertEqual(pl.SCREENSHOT_ORDER, [1, 2, 3, 5, 6, 7, 8])
+    def test_all_eight_in_order(self):
+        # R-249: every shot stands alone; no panorama pair to keep side by side.
+        self.assertEqual(pl.SCREENSHOT_ORDER, [1, 2, 3, 4, 5, 6, 7, 8])
         names = [os.path.basename(p) for p in pl.screenshot_paths()]
-        self.assertEqual(names, ["shot-01.png", "shot-02.png", "shot-03.png", "shot-05.png",
-                                 "shot-06.png", "shot-07.png", "shot-08.png"])
-
-    def test_panorama_pair_comes_first_side_by_side(self):
-        self.assertEqual(pl.SCREENSHOT_ORDER[:2], [1, 2])
+        self.assertEqual(names, [f"shot-0{n}.png" for n in range(1, 9)])
 
     def test_committed_files_pass_plays_rules(self):
         for p in pl.screenshot_paths():

@@ -23,7 +23,7 @@ Did: owner desk, member page: a "Change start date" button on a plan that has no
 
 He said: "once you're done with everything that you're doing we can also now start updating the screenshots on Google Play Store to also fix that continuous two screenshot theme and ensure it's all like accurate up to date as for the app today"
 
-Did: (after R-248)
+Did: fresh pictures from store-shots run 41183932405 on the v0.64.0 code (normal Pixel 6, 09:41 bar, Iron Temple Fitness, +876 kg finish). Panorama and barbell gone: every shot stands alone. 8 new captions (member-words; Gemini down with 503, fresh-reader check instead) in store/captions.json; BRAND.md now points there. Upload list is all 8. NOT uploaded: the Play listing upload waits for his yes.
 
 ## R-248. Member app: offer the watch app when a watch is connected; 2-3 welcome screens — 31 Oct 2026
 

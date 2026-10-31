@@ -1,57 +1,55 @@
 {
-  "_how": "headline: max 6 words, max 2 lines ('\\n' = line break), *word* = orange accent. sub: max 8 words, optional. Shots 1 and 2 are the panorama pair: one artwork across both.",
-  "panorama": [
-    1,
-    2
-  ],
+  "_how": "headline: max 6 words, max 2 lines ('\\n' = line break), *word* = orange accent. sub: max 8 words, optional. No panorama (R-126, R-249): every shot stands alone; the Play Store shows them one at a time on most phones.",
+  "panorama": [],
   "shots": [
     {
       "id": 1,
-      "screen": "Home / today's workout",
-      "headline": "Your gym,\nin your *pocket*",
-      "sub": "Log workouts, check in, see progress."
+      "screen": "Workout: each set shows last time's weight and reps",
+      "headline": "Beat your\n*last workout*",
+      "sub": "Last time's weight and reps on every set."
     },
     {
       "id": 2,
-      "screen": "A workout in progress, sets ticked",
-      "headline": "Every set.\nEvery rep. *Logged.*",
-      "sub": "Tap a set the moment it's done."
+      "screen": "Workout: the new-record pop-up",
+      "headline": "Know when you\nlift your *best*",
+      "sub": "A message when you beat your record."
     },
     {
       "id": 3,
-      "screen": "Exercise with last time's numbers beside each set",
-      "headline": "Beat *last week's*\nweight",
-      "sub": "Last time's numbers sit beside every set."
+      "screen": "Workout complete: kg lifted vs last time",
+      "headline": "Today vs your\n*last workout*",
+      "sub": "Total kg lifted, next to last time."
     },
     {
       "id": 4,
-      "screen": "Workout tab with the gym trainer's plan",
-      "headline": "Your trainer's\nplan, *ready*",
-      "sub": "Plans from your gym appear by themselves."
+      "screen": "Workout tab: Up next with Start",
+      "headline": "Start your next\nworkout, *one tap*",
+      "sub": "The app shows which workout is due next."
     },
     {
       "id": 5,
-      "screen": "Check-in scan",
-      "headline": "Check in with\n*one scan*",
-      "sub": "Scan the code at your gym's front desk."
+      "screen": "Bench press page: heaviest-weight chart and history",
+      "headline": "See your\n*strength* grow",
+      "sub": "A progress graph for every exercise."
     },
     {
       "id": 6,
-      "screen": "Progress chart for one lift",
-      "headline": "See your\n*strength* grow",
-      "sub": "A chart for every lift, week by week."
+      "screen": "Charts: body map of the last 7 days",
+      "headline": "See which muscles\nyou *worked*",
+      "sub": "A body picture of your last 7 days."
     },
     {
       "id": 7,
-      "screen": "A workout logged in aeroplane mode",
-      "headline": "Works without\n*internet*",
-      "sub": "No signal in the gym? Keep logging."
+      "screen": "Gym tab: Join your gym, scan the poster",
+      "headline": "Link your gym\nwith *one scan*",
+      "sub": "Scan the QR poster at gym reception."
     },
     {
       "id": 8,
-      "screen": "Join link / gym welcome",
-      "headline": "Free. *Better*\nwith your gym",
-      "sub": "Join with your gym's code to unlock everything."
+      "screen": "Find a plan: build one or pick a program",
+      "headline": "Ready-made plans,\nor *make your own*",
+      "sub": "Built from your goal, days and equipment."
     }
-  ]
+  ],
+  "_source": "R-249 (31 Oct 2026): raw/0N.png from store-shots run 41183932405 (v0.64.0 code): s-01-workout, s-01t-record-toast, s-04-complete, s-02-up-next, s-03-bench-history, s-07e-charts, s-06-join-gym, s-08-find-a-plan. Words: member-words; Gemini was down (503), fresh-reader check instead."
 }
