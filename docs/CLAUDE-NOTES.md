@@ -272,39 +272,3 @@ Decision (his rule: free start/end pictures if no good free animation): use RepD
 ## R-222. Supabase is in his personal Chrome; do console tasks myself — 29 Oct 2026
 **He said:** "Supabase is signed in my personal account browser ... aakashpahuja1990 account. Console is with simpleApps - and why are you not able to do the Google Play's health question yourself ... dont ask me to do these things if you can do them"
 **What I did:** Chrome "Browser 2" = personal (Supabase), "Browser 1" = simpleapps108 (Play Console). The health question was already done on 30 Oct (#71); my Needs you was stale. Made "mettleup-staging" (ref kqlvmjoxdrytxzmkunkj, Mumbai, free) and ran migrations 0001-0042 from commit 721a51d through the Management API with the dashboard session. Checked against live (read-only): 48 tables, 245 functions, 6 policies, 35 triggers, same function list hash. Brain notes updated (do-as-much-as-you-can-yourself, work-where-he-said-it-is).
-
-## R-221. Build 10s, 9s and 8s first — 29 Oct 2026
-He said: "I have rated many features so you can now prioritize the ones with 10, 9 and 8 first."
-Order I chose: (1) finish the 10s: 0.61.0 release, the test server (T15/F175), the watch app on Play (waits on his Play answer). (2) The 9s in parallel on separate branches: F63 1-rep max, F67 install the watch app, F107 webcam photo. (3) The 8s: F150 freeze/renew request, F121 member report for the gym, F64 treadmill details, F20 demos (after the research). T5 (0.60.0) is released, so marked Done.
-
-## R-220. Members export their own data; rewrite F121 — 29 Oct 2026
-He said (page comment on F121): a member's data is not locked behind the membership. Members can export it themselves too. Rewrite F121 and drop any feature text that still says otherwise.
-Done: F121 now says members save their own report any time (Settings, as today), and the desk can also ask for a copy, which the member approves. Removed "whether that stays is your call". F122 no longer lists "what a gym export may include" as open.
-
-## R-219. Exercise demo clips: research free, better options first — 29 Oct 2026
-He said (page comment on F20, score 8): he does not like the Blender clips route (too many rounds, too many tokens). Research again for something better that is free or cheap and good quality. If no good free animations exist, use free start-and-end position images instead.
-Doing: a research helper checks free and cheap animation and image sets (licence, quality, count, Indian gym fit). The Blender work stops until he picks.
-
-## R-218. FitPass / cultpass: can a scan count the visit by itself? — 29 Oct 2026
-He said (comment on F123): "were you able to check if FitPass or CultPass and all these things have any kind of API integration? So if users scans their QR code, we can mark the attendance ... [the owner] can choose to add this member as a FitPass or a CultPass member."
-What I found (29 Oct, web): neither FITPASS nor cultpass publishes an API for gym software. Both use their own app QR scanned at the desk; FITPASS partners see visits in their Partner Portal. Wellhub (Gympass) does have an Access Control API, but it is not big in India. So F123 works without them: desk taps "Pass visit", or the member scans our gym QR and picks the pass. Asking FITPASS's partner team for a link is possible later, through a real gym that is their partner. F123 row updated.
-
-## R-217. A member's data is theirs; members without a gym pay for some features — 29 Oct 2026
-He said (comment on F122): "if the member leaves the gym, their data continues to stay within the app ... previously we were trying to lock members data behind the gym membership, but I don't think that is going to work. So ... if they use the app within their membership plan, then they get all the features for free. But if they do not have a gym membership, then they will have to pay for certain features and only have basic features free of cost."
-What I do: the rule is now: workouts always stay with the member (before, during, after a gym). Gym members get everything free; no-gym members get basics free and pay for some features. Which features are paid and the price are money decisions: his, later (no inbox entry until he asks). F122 row updated.
-
-## R-216. A 1-10 score on every feature and task; IDs on tasks too — 29 Oct 2026
-He said: "I think I need a drop-down on each feature card to rate the feature so any feature that I'm rating 9 or 10 you can pick that up first anything that I'm rating less you can pick that up later you can build this I guess under feature Backlog and under Claude's task as well and you can give IDs in the tasks section also."
-What I do: a "Your score" drop-down (1-10) on every feature not built yet and every task not done. Scores save themselves a few seconds after he picks, into a "## Your scores" table in docs/OWNER-INBOX.md (by ID). Tasks get fixed IDs T1, T2 … like features. A "Your score first" sort on both tabs. WORK RULE from now on: items he scores 9-10 are built first, then 7-8, then lower; unscored items keep their usual place after scored ones of 7+. Every build prints his top-scored open items.
-
-## R-215. More detail on "Ask the desk to freeze or renew" — 29 Oct 2026
-He commented on the tracker feature (F150): "add more details for it here. I dont remember what this is about."
-What I did: rewrote its Details (where it came from, #58; what a freeze is; what it changes for a member) and How it will work (the two buttons, the desk's one-tap yes, payment stays at the desk).
-
-## R-214. Give every feature in the backlog an ID — 29 Oct 2026
-He said: "can you add IDs to features in features backlog please".
-What I do: every backlog row gets a fixed number, F1, F2 …, written in the Feature cell of docs/OWNER-INBOX.md so it never changes when a row moves or is renamed. New rows get the next free number automatically when the page is built. The page shows the number on each feature card and in search; typing "F12" in the search box jumps to that feature.
-
-## R-213. Let members install the watch app from the phone app — 29 Oct 2026
-He said: "we need to give an option for users to download the watch app from the phone app - research the best experience around connected watches and create this journey where user get to know that they can install a watch also".
-What I do: research how Wear OS apps and leading fitness apps tell members about their watch app (detect a connected watch, check if our watch app is on it, open Play on the watch). Then build the journey in the phone app. Built after the two watch features in progress (same files). Backlog row added (he confirmed the feature).
