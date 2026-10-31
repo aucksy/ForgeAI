@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-260. Ask members on an old version to update — 31 Oct 2026
+
+He said: "If someone is running an old version and we have a new one released, we have to give them a
+pop-up on their launches to update the app. I don't know how many times we should, or if there should
+be a persistent notification somewhere, but yeah, just, you know, do the best implementation."
+
+Found: GitHub copies already get a quiet "A new version of MettleUp is ready" card on the Workout tab.
+Play copies get nothing (Play updates them only when the member has auto-update on).
+
+Did: (in progress) a pop-up on launch for both kinds of copy, Google Play's own in-app update for Play
+copies, the Workout tab card kept as the always-there reminder, never during an open workout.
+
 ## R-259. Name style A picked — 31 Oct 2026
 
 He said: "now you are talking... A is gooood"

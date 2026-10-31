@@ -59,6 +59,8 @@ test('XJ4b owner sees the app check-in under Visits, tagged App', async ({ page 
 test('XJ6a owner sets the brand colour', async ({ page }, testInfo) => {
   await openAsOwner(page, 'B');
   await open(page, 'Settings');
+  // R-247: branding sits on the Settings "Member app" tab.
+  await page.getByRole('group', { name: 'Settings view' }).getByRole('button', { name: 'Member app' }).tap();
   await page.getByRole('button', { name: 'Open branding' }).tap();
   await expect(page.getByRole('heading', { name: 'Branding', exact: true })).toBeVisible();
   const hex = page.getByLabel('Your brand colour', { exact: true });
