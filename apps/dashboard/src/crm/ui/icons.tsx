@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -153,6 +153,13 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9Z" />
       <path d="M18.5 16v4M16.5 18h4" />
+    </>
+  ),
+  // A bell: Notifications (R-239).
+  bell: (
+    <>
+      <path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z" />
+      <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
     </>
   ),
   // A speech bubble with "!": Send feedback.

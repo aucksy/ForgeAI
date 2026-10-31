@@ -514,7 +514,7 @@ export function ImportMembersScreen() {
     <>
       <PageHeader
         title="Import members from Excel"
-        subtitle="Move your register or sheet in a few minutes"
+        subtitle="Bring in your members from an Excel sheet or your old gym software"
         actions={
           stage !== 'running' ? (
             <Button variant="ghost" wrap onClick={() => navigate('/members')}>

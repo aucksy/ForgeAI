@@ -38,8 +38,35 @@ test('J148 What is new: not on a first visit, once after an update, its button o
   await page.getByRole('button', { name: 'Open Gym timings ›' }).tap();
   await expect(page).toHaveURL(/#\/settings\/timings$/);
 
-  // And from Settings.
+  // R-239: not under Settings any more.
   await open(page, 'Settings');
-  await page.getByRole('button', { name: 'See all updates ›' }).tap();
+  await expect(page.getByRole('button', { name: 'See all updates ›' })).toHaveCount(0);
+});
+
+// R-239 (31 Oct 2026): the bell, top right: a count of new updates, the list and the version.
+test('J149 Notifications bell: counts new updates, lists them with the version, opening it marks them seen', async ({ page }) => {
+  await freshGym(page);
+  await open(page, 'Today');
+  // A first visit: nothing new.
+  await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
+
+  await page.evaluate(() => localStorage.setItem('forgeai.adminNews.seen.v1', '2026-10-01'));
+  await page.reload();
+  const bell = page.getByRole('button', { name: 'Notifications, 3 new' });
+  await expect(bell).toBeVisible();
+  await expect(page.getByRole('region', { name: CARD })).toBeVisible();
+  await bell.tap();
+  const list = page.getByRole('dialog', { name: 'Notifications' });
+  await expect(list).toContainText('Version 31 Oct 2026');
+  await expect(list).toContainText('Update of 31 Oct 2026');
+  await expect(list.getByText('New', { exact: true }).first()).toBeVisible();
+  await expectFitsPhone(page, 'with the notifications list open');
+  // Opening it marks them seen: the count and the Today card go.
+  await expect(page.getByRole('region', { name: CARD })).toHaveCount(0);
+  await list.getByRole('button', { name: 'See all updates ›' }).tap();
+  await expect(page).toHaveURL(/#\/news$/);
   await expect(page.getByRole('heading', { name: "What's new", level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
 });

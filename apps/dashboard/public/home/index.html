@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MettleUp for Gyms — gym software + member progress app</title>
-<meta name="description" content="Gym software and a member progress app in one. Free for 3 months, no card. Your members get a free workout app in your gym's name and colours: they see their own progress, order from your shop and read your messages. Plus the desk work, and your old Excel records moved in privately with AI. From ₹999 a month.">
+<meta name="description" content="Gym software and a member progress app in one. Free for 3 months, no card. Your members get a free workout app in your gym's name and colours: they see their own progress, order from your shop and read your messages. Plus the desk work, and your existing member data imported privately with AI. From ₹999 a month.">
 <meta property="og:title" content="MettleUp for Gyms — gym software + member progress app">
 <meta property="og:description" content="Free for 3 months. Your members see their own progress in an app with your gym's name on it. Your shop and your messages live there too.">
 <meta property="og:image" content="https://mettleup.fit/brand/og-1200x630.png">
@@ -85,9 +85,16 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 .band-in{padding:20px 0 18px}
 .band label{display:block;font:800 12px/1 var(--text);letter-spacing:.16em;text-transform:uppercase}
 :lang(hi) .band label{letter-spacing:0;font-size:14px}
-.band input{width:100%;margin-top:6px;border:0;border-bottom:2px dashed color-mix(in oklab,var(--on-flavour) 50%,transparent);background:none;color:inherit;padding:2px 0 4px;font:900 clamp(2.1rem,9vw,4rem)/1.02 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;outline:none;caret-color:currentColor;border-radius:0}
-.band input::placeholder{color:color-mix(in oklab,var(--on-flavour) 78%,transparent)}
-.band input:focus{border-bottom-style:solid}
+/* R-240 (owner, 31 Oct 2026): the name line must look like a box you type in, with a big blinking cursor. */
+.namebox{position:relative;margin-top:8px}
+.bigcaret{position:absolute;left:14px;top:20%;bottom:20%;width:5px;border-radius:3px;background:var(--on-flavour);display:none;pointer-events:none;animation:blink 1s steps(1) infinite}
+.band input:placeholder-shown{caret-color:transparent}
+.band input:placeholder-shown+.bigcaret{display:block}
+@keyframes askme{0%,100%{box-shadow:0 0 0 0 color-mix(in oklab,var(--on-flavour) 45%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in oklab,var(--on-flavour) 0%,transparent)}}
+@media (prefers-reduced-motion:no-preference){.band input:placeholder-shown:not(:focus){animation:askme 2.2s ease-in-out infinite}}
+.band input{width:100%;border:2px dashed color-mix(in oklab,var(--on-flavour) 60%,transparent);border-radius:14px;background:color-mix(in oklab,var(--on-flavour) 10%,transparent);color:inherit;padding:6px 14px 8px 30px;font:900 clamp(2.1rem,9vw,4rem)/1.02 var(--cond);font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;outline:none;caret-color:currentColor;border-radius:0}
+.band input::placeholder{color:color-mix(in oklab,var(--on-flavour) 78%,transparent);font-size:.7em}
+.band input:focus{border-style:solid;background:color-mix(in oklab,var(--on-flavour) 15%,transparent)}
 .swatches{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
 .sw{width:44px;height:44px;border-radius:50%;border:3px solid var(--on-flavour);cursor:pointer;padding:0;background:var(--c);transition:transform .25s var(--ease)}
 .sw[aria-pressed="true"]{transform:scale(1.12);box-shadow:0 0 0 3px var(--flavour),0 0 0 5px var(--on-flavour)}
@@ -603,7 +610,7 @@ section{position:relative}
   .stage.tagged>.ex{justify-self:center}
   .founder{grid-template-columns:110px 1fr auto;align-items:center;gap:26px;padding:24px 28px}
 }
-@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .record.slam{animation:none;opacity:1;scale:1;rotate:0deg} .roll i.flip{animation:none} .caret{animation:none} }
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .record.slam{animation:none;opacity:1;scale:1;rotate:0deg} .roll i.flip{animation:none} .caret,.bigcaret{animation:none} }
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.45s}
 </style>
 </head>
@@ -672,7 +679,7 @@ section{position:relative}
   <div class="band" id="band">
     <div class="wrap band-in">
       <label for="gymname" data-hi="आपके जिम का नाम लिखिए">Type your gym's name</label>
-      <input id="gymname" maxlength="34" autocomplete="organization" placeholder="For example: Shakti Gym" data-hi-ph="जैसे: शक्ति जिम" spellcheck="false">
+      <div class="namebox"><input id="gymname" maxlength="34" autocomplete="organization" placeholder="For example: Shakti Gym" data-hi-ph="जैसे: शक्ति जिम" spellcheck="false"><i class="bigcaret" aria-hidden="true"></i></div>
       <div class="swatches" role="group" aria-label="Your gym's colour" data-hi-label="आपके जिम का रंग">
         <button class="sw" type="button" style="--c:#FF7A2E" data-c="#FF7A2E" data-on="#1A0A02" aria-pressed="true" aria-label="Orange"></button>
         <button class="sw" type="button" style="--c:#E5322D" data-c="#E5322D" data-on="#FFFFFF" aria-pressed="false" aria-label="Red"></button>
@@ -943,16 +950,16 @@ section{position:relative}
   <div class="wrap scene">
     <div class="scene-col">
       <div class="scene-text">
-      <h2 id="move-h" class="cond panel-h" data-hi="Excel से अपनी मेंबर लिस्ट AI की मदद से लाइए।">Move your member list from Excel, with AI.</h2>
-      <p class="lede" data-hi="कोई भी शीट, कॉलम के कोई भी नाम, पुराने जिम सॉफ्टवेयर से निकाली फाइल भी। AI समझता है कि कौन सा कॉलम क्या है। कुछ भी सेव होने से पहले आप हर मेंबर और हर रुपया खुद जाँचते हैं।">Any sheet, any column names, even an export from your old gym software. AI works out which column is which. You check every member and rupee before anything is saved.</p>
+      <h2 id="move-h" class="cond panel-h" data-hi="अपने मौजूदा मेंबरों का डेटा AI से आसानी से इम्पोर्ट कीजिए।">Import your existing member data easily, with AI.</h2>
+      <p class="lede" data-hi="Excel, CSV या अपने पुराने जिम सॉफ्टवेयर से मेंबर लिस्ट अपलोड कीजिए। कॉलम का नाम कुछ भी हो, AI उन्हें पढ़ लेता है। सेव करने से पहले आप हर मेंबर और हर रकम जाँचते हैं।">Upload your member list from Excel, CSV or your old gym software. AI reads your columns, whatever you named them. You check every member and every amount before saving.</p>
     </div>
       <div class="beatcol">
       <div class="money rows wide" id="move-beats">
-        <div data-beat="1"><b data-hi="कोई भी शीट">Any sheet</b><span data-hi="“Mob No”, “Contact”, “Phone 1”: जो भी नाम रखा हो। Excel, CSV या पुराने सॉफ्टवेयर से निकाली फाइल।">“Mob No”, “Contact”, “Phone 1”: whatever you called them. Excel, CSV or an export from your old software.</span></div>
-        <div data-beat="2"><b data-hi="प्राइवेट">Private</b><span data-hi="AI सिर्फ कॉलम के नाम और 5 नमूना पंक्तियाँ देखता है, मोबाइल नंबर छुपाकर।">The AI sees only the column names and 5 sample rows, with mobile numbers hidden.</span></div>
-        <div data-beat="3"><b data-hi="जाँच">Checked</b><span data-hi="कुछ भी सेव होने से पहले आप हर मेंबर और हर रुपया जाँचते हैं।">You check every member and rupee before anything is saved.</span></div>
+        <div data-beat="1"><b data-hi="कोई भी शीट">Any sheet</b><span data-hi="“Mob No”, “Contact” या “Phone 1” जैसे कॉलम नाम भी चलेंगे। नाम बदलने की ज़रूरत नहीं।">Column names like “Mob No”, “Contact” or “Phone 1” all work. No need to rename them.</span></div>
+        <div data-beat="2"><b data-hi="प्राइवेट">Private</b><span data-hi="AI सिर्फ आपके कॉलम के नाम और 5 नमूना पंक्तियाँ देखता है। मोबाइल नंबर छुपे रहते हैं।">The AI sees only your column names and 5 sample rows. Mobile numbers stay hidden.</span></div>
+        <div data-beat="3"><b data-hi="आप जाँचते हैं">You check</b><span data-hi="कुछ भी सेव होने से पहले आप हर मेंबर और हर रकम स्क्रीन पर देखते हैं।">You see every member and every amount on screen before anything is saved.</span></div>
       </div>
-      <p class="onlyhere"><span class="only" data-hi="सिर्फ MettleUp में">Only on MettleUp</span> <span data-hi="भारत और बाहर के जिन 12 जिम सॉफ़्टवेयर को हमने देखा (अक्टूबर 2026), उनमें से कोई भी AI से किसी भी Excel को नहीं पढ़ता।">None of the 12 gym software products we checked in India and abroad (Oct 2026) reads any Excel layout with AI.</span></p>
+      <p class="onlyhere"><span class="only" data-hi="सिर्फ MettleUp में">Only on MettleUp</span> <span data-hi="हमने भारत और बाहर के 12 जिम सॉफ्टवेयर देखे (अक्टूबर 2026)। कोई भी आपकी Excel शीट AI से नहीं पढ़ता।">We checked 12 gym software products in India and abroad (Oct 2026). None uses AI to read your Excel sheet.</span></p>
     </div>
     </div>
     <div class="stage solo play" id="move-scene">

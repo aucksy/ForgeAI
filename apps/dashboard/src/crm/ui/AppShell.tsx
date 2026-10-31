@@ -13,6 +13,7 @@ import { Fragment, type ReactNode } from 'react';
 import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
+import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { color, font, radius, space, useIsCompact } from './kit';
 import { Link, useRoute } from './router';
 
@@ -85,6 +86,12 @@ export function AppShell({
           maxWidth: 1180,
         }}
       >
+        {/* R-239: the bell, top right on a computer (a phone has it in the header). */}
+        {compact ? null : (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -space.lg, marginBottom: space.sm }}>
+            <NewsBell />
+          </div>
+        )}
         {children}
       </main>
 
@@ -141,6 +148,23 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           <SidebarLink item={item} active={item.path === activePath} />
         </Fragment>
       ))}
+
+      {/* R-239: What's new and the version, at the bottom left. */}
+      <div
+        style={{
+          // Stuck to the bottom: the sidebar scrolls on a short window, and this row must stay in view.
+          marginTop: 'auto',
+          position: 'sticky',
+          bottom: -space.xl,
+          paddingTop: space.sm,
+          paddingBottom: space.xl,
+          marginBottom: -space.xl,
+          borderTop: `1px solid ${color.border}`,
+          background: color.surfaceSunken,
+        }}
+      >
+        <NewsSidebarLink active={activePath === '/news'} />
+      </div>
     </nav>
   );
 }
@@ -191,7 +215,10 @@ function CompactHeader({ gymName }: { gymName: string }) {
       }}
     >
       <BranchSwitch gymName={gymName} compact />
-      <ThemeToggle compact />
+      <div style={{ display: 'flex', alignItems: 'center', gap: space.sm }}>
+        <NewsBell />
+        <ThemeToggle compact />
+      </div>
     </header>
   );
 }

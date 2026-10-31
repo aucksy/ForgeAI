@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-241. Website: "Move your member list" is wrong, and its paragraph reads badly — 31 Oct 2026
+
+He said: "On the website, you have mentioned move your member list. Why would you say move? It should be import your existing member data easily with AI. Something on those lines. You can improve it, of course." Then: "And the paragraph below it is also a mess. I don't think you checked it with Gemini, and your English is crap."
+
+Did: rewrote the import section (heading, paragraph, 3 points, the only-on-MettleUp line) and the page description: "Import your existing member data easily, with AI." Gemini 3.6 Flash second opinion; kept its "no need to rename them" and "on screen" ideas, dropped its made-up name "MettleUp AI". Hindi rewritten to match.
+
+## R-240. Website: make "type your gym's name" stand out — 31 Oct 2026
+
+He said: "On the website, you have this line, type your gym's name, highlight that so that user knows that they can type there. If possible, show that blinking cursor even more prominently."
+
+Did: the name line is now a box: dashed outline, light fill, a soft pulsing ring while empty, and a big 5px blinking cursor at its start (the real thin one is hidden until he types). Smaller example text so it is not cut on a phone. No motion with "reduce motion" on.
+
+## R-239. Admin panel: What's new out of Settings, a bell top right — 31 Oct 2026
+
+He said: "I don't want what's new buried under the settings. It should be outside maybe in the left bottom corner and then a notifications section on the right upper corner with the notifications bell which basically, you know, shows them the notification when there are new features along with the version and all that."
+
+Did: a bell at the top right of every page (phone: in the header). Its number = updates not seen yet; tapping it lists the newest 3 updates with "New" tags, the version ("Version 31 Oct 2026" = newest update day), "See all updates" and marks them seen (the Today card goes too). What's new moved out of Settings to its own page /news: the last row of the computer sidebar (stuck to the bottom, with the version) and More on a phone. e2e J149 added. HQ messages in the same bell: still needs a new server table and his live-database yes (R-238).
+
 ## R-238. Admin panel: a notifications place for new features and messages from headquarters - 31 Oct 2026
 He said: he thought the admin panel would get feature notifications like the app, but he has not seen any (logged in to Test Gym by Akash). He wants a notifications section in the admin panel, which could also carry messages he sends from headquarters. "What do you think?"
 Did: (1) The admin panel already has "What's new" (R-148): a card on Today once after each update (newest 3) and Settings / More -> What's new. I had added no entry since 28 Oct, so he saw nothing. Added 29, 30 and 31 Oct (10 lines, Gemini 3.6 Flash second opinion, facts checked against the code), J148 e2e updated, deployed. (2) His idea: a bell "Notifications" in the admin panel holding What's new AND messages from headquarters (HQ app writes, every gym or one gym reads, unread count). Needs a new server table: waits for his live-database yes before I build the server part.

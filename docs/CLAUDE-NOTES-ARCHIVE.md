@@ -2,6 +2,33 @@
 
 Older entries moved out of docs/CLAUDE-NOTES.md by scripts/trim_notes.py. Newest on top.
 
+## R-199. Leaderboard and gym-mate sharing ON by default (inside the gym) — asked 30 Oct 2026, waiting on his pick
+**He said:** leaderboard settings on by default: name, display picture, workout history and numbers visible to the member's own gym by
+default (Hevy makes workouts public to the world by default; people want this); the member can switch it off.
+**Today:** numbers go to the leaderboard as "A member"; name off until switched on; gym-mate workouts off until switched on (0040,
+privacy notice approved 29 Oct says "off unless you turn it on"); no photo shared.
+**My advice in chat:** India's DPDP Act needs consent by a clear action, so silent default-on is a legal risk; under-18 members need
+parental consent. Offered A (one-tap "Show me to my gym" step when joining, pre-explained, most will tap yes) vs B (default on as
+asked, after a lawyer check, never for under-18). Waiting for his pick; nothing changed.
+
+## R-198. Active workout: show the routine's name (top of the screen and the "Resume workout" bar) — 30 Oct 2026
+**He said:** the active workout screen does not tell me which routine I am doing; at the top near the duration, or below it, show
+e.g. "Pull 2" (the routine's name). Also the bar to resume the workout (seen after leaving the active screen) should show the name.
+**Doing:** member app: the routine's name on the active workout screen near the timer, and on the resume bar; an empty workout shows
+its own name ("Workout"/what the app calls it). Ships with the next member app release.
+
+## R-197. "Yes, switch on 0042 so from the 3rd message of the day members get no phone pop-up, and the daily maximum is 10." — 30 Oct 2026
+**He said:** exactly that (his live-database yes for 0042).
+**Doing:** apply supabase/migrations/0042_message_calm.sql (feat/message-calm, 9000579) live, run its live test, copy both files to
+main marked APPLIED LIVE. Changes: gym_messages.quiet (set when the gym already has 2+ messages that India day), no push job for a
+quiet message, "quiet" in the message JSON, owner_send_message cap 20 -> 10. Checked: the 3 functions equal their latest live
+versions (0038, 0008 + 0012 search_path, 0025) except the planned lines.
+
+## R-196. Tracker: the feature-rating module moves to Home, as its own permanent section — 30 Oct 2026
+**He said:** "that feature rating module in tracker, move that in Home section as a dedicated permanent section".
+**Done:** Home has "Rate features for marketing" (above "Claude is working on"): the explanation and both top-5 lists always show;
+the list to rate folds under "Rate the features (n of m rated)". Removed from Waiting for you. Checked on a headless screenshot.
+
 ## R-195. Message overload: nudge the owner, quiet after 2 a day, cap 10 — 30 Oct 2026
 **He said:** owners must not flood members with notifications (members stop taking them seriously; harms our brand); nudge the owner
 at e.g. the 3rd of the day or after a number in the week; not a hard stop; maybe an owner setting. Then: "okay build it" (all 3 of

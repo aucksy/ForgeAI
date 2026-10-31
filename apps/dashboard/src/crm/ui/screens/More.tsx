@@ -74,8 +74,8 @@ export function MoreScreen() {
       hint: owner ? 'Gym details, screen colours, app' : 'Screen colours, app, sign-in',
       icon: 'settings',
     },
-    // R-148: what changed in the admin app.
-    { path: '/settings/news', group: 'setup', label: "What's new", hint: 'Changes to this admin app', icon: 'news' },
+    // R-148: what changed in the admin app (R-239: its own page, /news).
+    { path: '/news', group: 'setup', label: "What's new", hint: 'Changes to this admin app', icon: 'news' },
     // Launch H7 (21 Oct 2026).
     { path: '/feedback', group: 'setup', label: 'Send feedback', hint: 'Tell MettleUp a problem or an idea', icon: 'feedback' },
   ]);

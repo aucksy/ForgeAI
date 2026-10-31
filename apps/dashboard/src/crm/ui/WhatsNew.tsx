@@ -1,19 +1,49 @@
 /**
- * "What's new" in the admin app (R-148; logic/whatsNew.ts). Two places:
+ * "What's new" in the admin app (R-148; logic/whatsNew.ts). Places:
+ * - NewsBell (R-239, owner 31 Oct 2026: "a notifications section on the right upper corner with the
+ *   notifications bell"): top right on every page, a count of updates not seen yet; tapping it lists the
+ *   newest updates and the admin app's version (its newest update day), and marks them seen.
+ * - NewsSidebarLink (R-239: "outside, maybe in the left bottom corner", not under Settings): the
+ *   sidebar's last row, with the version.
  * - WhatsNewCard: top of Today, once after an update ("Got it" hides it until the next one).
- * - WhatsNewScreen: Settings → What's new (/settings/news), every update to read again.
+ * - WhatsNewScreen: /news, every update to read again (also More -> What's new on a phone).
  * Each change may carry a button to the page where it is; a page this person cannot open has none.
- * Not in the demo gym (a visitor there has no "update" to hear about).
+ * The bell and the card are not in the demo gym (a visitor there has no "update" to hear about).
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRole } from '../auth/AuthProvider';
 import { canOpen } from '../auth/permissions';
 import type { Role } from '../auth/signin';
 import { useDemo } from '../demo/demoMode';
-import { ADMIN_NEWS, markNewsSeen, newsDay, readNews, type AdminNewsEntry, type AdminNewsLine } from '../logic/whatsNew';
-import { Card, PageHeader, SectionTitle, TOUCH, color, font, space } from './kit';
-import { navigate } from './router';
+import {
+  ADMIN_NEWS,
+  NEWS_SEEN_EVENT,
+  SHOWN_UPDATES,
+  currentNews,
+  markNewsSeen,
+  newsDay,
+  readNews,
+  type AdminNewsEntry,
+  type AdminNewsLine,
+} from '../logic/whatsNew';
+import { Icon } from './icons';
+import { Card, PageHeader, SectionTitle, TOUCH, color, font, radius, space, useIsCompact } from './kit';
+import { Link, navigate } from './router';
+
+/** "Version 31 Oct 2026": the admin app's version is its newest update's day. */
+export const ADMIN_VERSION = `Version ${newsDay(currentNews() ?? '')}`;
+
+/** The updates this browser has not seen yet; empties when they are marked seen anywhere on the page. */
+function useUnreadNews(demo: boolean): readonly AdminNewsEntry[] {
+  const [entries, setEntries] = useState<readonly AdminNewsEntry[]>(() => (demo ? [] : readNews()));
+  useEffect(() => {
+    const seen = () => setEntries([]);
+    window.addEventListener(NEWS_SEEN_EVENT, seen);
+    return () => window.removeEventListener(NEWS_SEEN_EVENT, seen);
+  }, []);
+  return entries;
+}
 
 /** The button a line gets for this person, or null. PURE. */
 export function newsGo(line: AdminNewsLine, role: Role): { label: string; path: string } | null {
@@ -72,12 +102,9 @@ function DayTitle({ id }: { id: string }) {
 export function WhatsNewCard() {
   const demo = useDemo() !== null;
   const role = useRole();
-  const [entries, setEntries] = useState(() => (demo ? [] : readNews()));
+  const entries = useUnreadNews(demo);
   if (demo || entries.length === 0) return null;
-  const done = () => {
-    setEntries([]);
-    markNewsSeen();
-  };
+  const done = () => markNewsSeen();
   return (
     <Card style={{ marginBottom: space.lg }}>
       <section aria-label="What's new in the admin app">
@@ -99,7 +126,7 @@ export function WhatsNewCard() {
             style={{ ...linkStyle, color: color.inkSecondary }}
             onClick={() => {
               done();
-              navigate('/settings/news');
+              navigate('/news');
             }}
           >
             See earlier updates
@@ -110,12 +137,12 @@ export function WhatsNewCard() {
   );
 }
 
-/** Settings → What's new: every update, newest first. */
+/** /news: every update, newest first. */
 export function WhatsNewScreen() {
   const role = useRole();
   return (
     <>
-      <PageHeader title="What's new" subtitle="Changes to the admin app, newest first" />
+      <PageHeader title="What's new" subtitle={`Changes to the admin app, newest first. ${ADMIN_VERSION}.`} />
       {ADMIN_NEWS.filter((e) => e.lines.length > 0).map((e) => (
         <Card key={e.id} style={{ marginBottom: space.lg }}>
           <SectionTitle>{newsDay(e.id)}</SectionTitle>
@@ -126,17 +153,166 @@ export function WhatsNewScreen() {
   );
 }
 
-/** Settings' small card that opens the list. */
-export function WhatsNewSettingsCard() {
+/** R-239: the bell, top right. Its number: updates not seen yet. Opening it marks them seen. */
+export function NewsBell() {
+  const demo = useDemo() !== null;
+  const role = useRole();
+  const compact = useIsCompact();
+  const unread = useUnreadNews(demo);
+  const [open, setOpen] = useState(false);
+  // Which updates were new when the list opened: they keep their "New" tag while it stays open.
+  const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      if (box.current && !box.current.contains(e.target as Node)) setOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', away);
+    document.addEventListener('keydown', esc);
+    return () => {
+      document.removeEventListener('pointerdown', away);
+      document.removeEventListener('keydown', esc);
+    };
+  }, [open]);
+  if (demo) return null;
+  const count = unread.length;
+  const recent = ADMIN_NEWS.filter((e) => e.lines.length > 0).slice(0, SHOWN_UPDATES);
+  const toggle = () => {
+    if (!open) {
+      setFresh(new Set(unread.map((e) => e.id)));
+      if (count > 0) markNewsSeen();
+    }
+    setOpen(!open);
+  };
   return (
-    <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>What's new</SectionTitle>
-      <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {`What changed in the admin app. Last update: ${newsDay(ADMIN_NEWS[0]?.id ?? '')}.`}
-      </p>
-      <button type="button" style={linkStyle} onClick={() => navigate('/settings/news')}>
-        See all updates ›
+    <div ref={box} style={{ position: 'relative' }}>
+      <button
+        type="button"
+        aria-label={count > 0 ? `Notifications, ${count} new` : 'Notifications'}
+        aria-expanded={open}
+        onClick={toggle}
+        style={{
+          position: 'relative',
+          width: TOUCH,
+          height: TOUCH,
+          display: 'grid',
+          placeItems: 'center',
+          background: open ? color.accentSoft : 'transparent',
+          border: `1px solid ${color.border}`,
+          borderRadius: radius.pill,
+          color: open ? color.accentBright : color.ink,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        <Icon name="bell" size={20} />
+        {count > 0 ? (
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              top: -2,
+              right: -2,
+              minWidth: 18,
+              height: 18,
+              padding: '0 5px',
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: radius.pill,
+              background: color.accent,
+              color: '#1F0D05',
+              fontFamily: font.body,
+              fontSize: 10,
+              fontWeight: 800,
+            }}
+          >
+            {count}
+          </span>
+        ) : null}
       </button>
-    </Card>
+      {open && (
+        <section
+          role="dialog"
+          aria-label="Notifications"
+          style={{
+            // A phone: the full width under the header. A computer: hangs from the bell.
+            position: compact ? 'fixed' : 'absolute',
+            top: compact ? 'calc(var(--demo-bar, 0px) + 64px)' : TOUCH + space.sm,
+            left: compact ? space.lg : undefined,
+            right: compact ? space.lg : 0,
+            width: compact ? undefined : 380,
+            maxHeight: compact ? 'calc(100vh - var(--demo-bar, 0px) - 160px)' : 'min(70vh, 560px)',
+            overflowY: 'auto',
+            zIndex: 50,
+            background: color.surface,
+            border: `1px solid ${color.border}`,
+            borderRadius: radius.lg,
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.28)',
+            padding: space.lg,
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: space.md, marginBottom: space.md }}>
+            <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>Notifications</h2>
+            <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{ADMIN_VERSION}</span>
+          </div>
+          <div style={{ display: 'grid', gap: space.lg }}>
+            {recent.map((e) => (
+              <div key={e.id}>
+                <p style={{ margin: `0 0 ${space.sm}px`, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
+                  {`Update of ${newsDay(e.id)}`}
+                  {fresh.has(e.id) ? (
+                    <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
+                  ) : null}
+                </p>
+                <NewsLines entry={e} role={role} onGo={() => setOpen(false)} />
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            style={{ ...linkStyle, marginTop: space.sm }}
+            onClick={() => {
+              setOpen(false);
+              navigate('/news');
+            }}
+          >
+            See all updates ›
+          </button>
+        </section>
+      )}
+    </div>
+  );
+}
+
+/** R-239: the sidebar's last row (a computer): What's new and the version, outside Settings. */
+export function NewsSidebarLink({ active }: { active: boolean }) {
+  return (
+    <Link to="/news">
+      <span
+        aria-current={active ? 'page' : undefined}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space.md,
+          minHeight: 44,
+          padding: `${space.xs}px ${space.md}px`,
+          borderRadius: radius.md,
+          background: active ? color.accentSoft : 'transparent',
+          color: active ? color.accentBright : color.inkSecondary,
+          fontFamily: font.body,
+        }}
+      >
+        <Icon name="news" size={20} />
+        <span style={{ display: 'grid' }}>
+          <span style={{ fontSize: 14, fontWeight: active ? 700 : 500 }}>What's new</span>
+          <span style={{ fontSize: 11, color: color.inkMuted }}>{ADMIN_VERSION}</span>
+        </span>
+      </span>
+    </Link>
   );
 }

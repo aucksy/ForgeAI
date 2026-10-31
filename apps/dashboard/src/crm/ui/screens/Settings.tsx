@@ -44,7 +44,6 @@ import { useTerms } from '../../auth/TermsGate';
 import { acceptedLine } from '../../auth/terms';
 import { GymDataActions } from '../GymDataActions';
 import { ClearDeviceCard } from '../offline';
-import { WhatsNewSettingsCard } from '../WhatsNew';
 
 export function SettingsScreen() {
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
@@ -195,9 +194,6 @@ export function SettingsScreen() {
           </Button>
         </div>
       </Card>
-
-      {/* R-148: what changed in the admin app. */}
-      <WhatsNewSettingsCard />
 
       {/* R-133: a monthly challenge and the leaderboard, shown in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
@@ -401,7 +397,6 @@ function StaffSettings() {
       </Card>
       <SignInCard />
       <InstallCard />
-      <WhatsNewSettingsCard />
     </>
   );
 }

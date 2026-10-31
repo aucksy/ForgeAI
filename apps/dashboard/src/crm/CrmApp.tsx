@@ -312,6 +312,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'growth':
       // Owner, 30 Oct 2026: is the gym growing since MettleUp? `/growth/print` is the one-page report.
       return id === 'print' ? <GrowthPrintScreen /> : <GrowthScreen />;
+    case 'news':
+      // R-239: What's new, out of Settings (the sidebar's bottom row, the bell, More on a phone).
+      return <WhatsNewScreen />;
     case 'numbers':
       // R-168: `/numbers/<tile>/<range>`, the list behind a "Your numbers" tile on Today.
       return <NumbersScreen key={id} which={id} rangeSeg={segments[2]} />;
@@ -324,7 +327,7 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.
       if (id === 'people') return <PeopleScreen />;
-      // R-148: Settings -> What's new (every admin-app update, newest first).
+      // R-148: the old address of What's new (now /news, R-239).
       if (id === 'news') return <WhatsNewScreen />;
       return <SettingsScreen />;
     default:

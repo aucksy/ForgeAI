@@ -219,4 +219,19 @@ export function markNewsSeen(store: NewsStore | null = browserStore(), log: read
   } catch (e) {
     console.warn('[whats new] could not save', e);
   }
+  notifyNewsSeen();
+}
+
+/**
+ * R-239: fired on the page when this browser marks the news seen, so the bell's count and the
+ * Today card agree (open the bell: the card goes; "Got it" on the card: the count goes).
+ */
+export const NEWS_SEEN_EVENT = 'forgeai:admin-news-seen';
+
+function notifyNewsSeen(): void {
+  try {
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event(NEWS_SEEN_EVENT));
+  } catch (e) {
+    console.warn('[whats new] could not tell the page', e);
+  }
 }
