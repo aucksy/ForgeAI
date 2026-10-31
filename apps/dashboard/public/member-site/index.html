@@ -140,11 +140,10 @@ p{margin:0;text-wrap:pretty}
 .score.armed.in .stamp{opacity:1;scale:1;transition:opacity .18s linear .25s,scale .5s cubic-bezier(.2,1.6,.4,1) .25s}
 
 /* rest timer + watch */
-.restbar{margin-top:26px;width:min(100%,420px);border-radius:16px;box-shadow:0 0 0 1px var(--rule),0 24px 40px -18px rgba(0,0,0,.8)}
-.watches{display:flex;justify-content:center;gap:14px;margin-top:6px}
-.watch{width:min(152px,40vw);aspect-ratio:1;border-radius:50%;padding:7px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 30px 50px -20px rgba(0,0,0,.85)}
-.watch img{width:100%;height:100%;border-radius:50%}
-.watch:nth-child(2){margin-top:34px}
+.restbar{margin-top:26px;width:min(100%,420px);height:auto;aspect-ratio:5/1;border-radius:16px;box-shadow:0 0 0 1px var(--rule),0 24px 40px -18px rgba(0,0,0,.8)}
+.watches{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:22px}
+.watch{flex:none;width:min(152px,40vw);height:auto;aspect-ratio:1;border-radius:50%;padding:7px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 30px 50px -20px rgba(0,0,0,.85)}
+.watch img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%}
 .soon{margin-top:22px;max-width:46ch;padding:14px 16px;border:1px dashed #4A4A52;border-radius:12px;color:var(--ink2);font-size:16px}
 .soon .chip{margin-right:6px}
 
@@ -343,7 +342,7 @@ p{margin:0;text-wrap:pretty}
       <h3 data-hi="ऐप में और भी">Also in the app</h3>
       <ul>
         <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="Hevy या Strong से आ रहे हैं? पुराने वर्कआउट इम्पोर्ट कीजिए और अपनी हिस्ट्री रखिए।">Moving from Hevy or Strong? Import your old workouts and keep your history.</span></li>
-        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="402 एक्सरसाइज़, कई में शुरू और आखिरी पोज़िशन की तस्वीरें, ताकि आप अपना फ़ॉर्म चेक कर सकें।">402 exercises, many with pictures of the start and end position, so you can check your form.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="402 एक्सरसाइज़।">402 exercises.</span></li>
         <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="वॉर्म-अप सेट, ड्रॉप सेट और सुपरसेट।">Warm-up sets, drop sets and supersets.</span></li>
         <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="हर एक्सरसाइज़ पेज पर 1-rep max और % कैलकुलेटर।">A 1-rep max and % calculator on every exercise page.</span></li>
         <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="प्रोग्रेस फ़ोटो जो सिर्फ़ आपके फ़ोन में रहती हैं, प्राइवेट।">Progress photos that stay on your phone, so they stay private.</span></li>

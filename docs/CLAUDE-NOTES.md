@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-262. Member website: fix the rest-timer and watch pictures; "402 exercises" — 31 Oct 2026
+He sent a phone screenshot of the member website preview. The rest-timer bar was squashed (round buttons drawn as tall ovals) and the two watch pictures were uneven. He also said: the exercise line must say only "402 exercises" (no promise of start/end pictures; fix later), and the "Get the app" button stays on GitHub for now.
+Done: the bar and watches keep their true shape at every width (height:auto + aspect-ratio, watches flex:none and level); the exercise line is "402 exercises." in English and Hindi. "Get the app" already goes to app.mettleup.fit/app, which sends people to the GitHub download page; left as is. Checked at 390 px in the browser: bar 358x72 (5:1), both watches 152x152.
+
 ## R-261. What happened to the member website on mettleup.fit? — 31 Oct 2026
 He said: "What happened to the user-facing website we were creating on the main URL today? And moving the one for the gyms on the other URL?"
 Did: told him F184 was Planned and never started; built it now (helper agent, then my review). Member page at apps/dashboard/public/member-site/ (mettleup.fit "/"), gym page moves to gyms.mettleup.fit, mettleup.fit/gyms and /home 301 there; lead source "member-referral" (?from=member, migration 0007). Review fix: the score card said "Last time / Today": changed to "Previous / Next" (hard rule). Tests: panel 90/90, HQ 56/56, trial 12/12, tsc 0. NOT deployed: wrangler deploy, migration 0007 and the gyms.mettleup.fit address wait for his yes. Preview sent as an Artifact.
