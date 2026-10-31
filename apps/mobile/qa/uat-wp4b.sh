@@ -247,7 +247,10 @@ uat_shortcut() {
   echo "$res" > "$OUT/uk-am-$sid.txt"
   # What the app did with the link: a launcher's shortcut adds NEW_TASK|CLEAR_TASK, so the screen
   # is made afresh, unlike the widget's tap (U-M6). The rest of the part's log is in part-uk*.
-  ( sleep 40; adb logcat -d -v time -T "$since" > "$OUT/uk-logcat-$sid-$(date +%H%M%S).txt" 2>/dev/null ) &
+  # 31 Oct 2026 (v0.64.0 UK2): Maestro's own lines filled the log buffer and pushed the app's out, so
+  # the failure left no trace. Only the app's tags are kept, read soon after the link.
+  ( sleep 12; adb logcat -d -v time -T "$since" -s ReactNativeJS:V ReactNative:V AndroidRuntime:E ActivityTaskManager:I ForgeErr:V \
+      > "$OUT/uk-logcat-$sid-$(date +%H%M%S).txt" 2>/dev/null ) &
   log "UAT UK: shortcut '$label' ($where record, flags $flags) opened: $(echo "$res" | grep -E '^(Status|Error|Warning)' | tr '\n' ' ')"
   echo "$res" | grep -qiE '^Error|unable to resolve' && return 1
   UK_URI="$uri"; UK_LABEL="$label"
@@ -255,6 +258,7 @@ uat_shortcut() {
 }
 part_uk() {
   local start_uri routine
+  adb logcat -G 16M >/dev/null 2>&1 || true  # room for the app's lines next to Maestro's
   uat_part uk1 uat-k1.yaml || return 1
   log "UAT UK: the real widget's Start started today's routine at once; its Resume brought the workout back"
   # Shortcut 1: Resume (a workout is open).

@@ -12,7 +12,7 @@
  *    the second waits, then finds the workout open and resumes it;
  *  - a correction or past log open goes to the Workout tab, never into the correction.
  */
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useNavigationContainerRef, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
@@ -20,10 +20,10 @@ import { GhostButton, PrimaryButton, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { space } from '@/theme/tokens';
 import { getRoutine } from '@/tracker/db/routineRepo';
-import { routineParam, startFailedText, widgetStartAction, widgetTokenOk } from '@/tracker/phone/widgetLink';
+import { frontScreen, routineParam, startFailedText, widgetStartAction, widgetTokenOk } from '@/tracker/phone/widgetLink';
 import { keptWidgetToken, rotateWidgetToken } from '@/tracker/phone/widgetToken';
 import { refreshWidgets } from '@/tracker/phone/widgets';
-import { showActiveWorkout } from '@/tracker/services/workoutStart';
+import { ACTIVE_WORKOUT_PATH, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
 /** Every decision and start here runs one after another, across copies of the screen. */
@@ -35,6 +35,29 @@ function oneAtATime<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 type Router = ReturnType<typeof useRouter>;
+type NavRef = ReturnType<typeof useNavigationContainerRef>;
+
+const HEAL_AFTER_MS = 1500;
+
+/**
+ * 31 Oct 2026 (v0.64.0 phone test UK2): the app-icon "Resume workout" shortcut once left the member on
+ * the Workout tab instead of the open workout (a warm start that rebuilds the screens; not reproduced).
+ * A moment after showing the workout, check it is really in front; if not, open it, and log why.
+ */
+function healResume(nav: NavRef, router: Router): void {
+  setTimeout(() => {
+    try {
+      const s = useActiveWorkout.getState();
+      if (!s.active || isCorrecting(s)) return;
+      const front = frontScreen(nav.getRootState() as Parameters<typeof frontScreen>[0]);
+      if (front === 'session/active') return;
+      console.warn('[ForgeErr] workout link: the workout is not in front after Resume; opening it', front);
+      router.navigate(ACTIVE_WORKOUT_PATH);
+    } catch (e) {
+      console.warn('[ForgeErr] workout link: could not check the screen in front', e);
+    }
+  }, HEAL_AFTER_MS);
+}
 
 /** Start the routine unless a workout opened meanwhile, then show the workout. */
 async function startAndShow(id: string, router: Router): Promise<boolean> {
@@ -50,6 +73,7 @@ async function startAndShow(id: string, router: Router): Promise<boolean> {
 export default function WidgetStart() {
   const { routine, t } = useLocalSearchParams<{ routine?: string | string[]; t?: string | string[] }>();
   const router = useRouter();
+  const nav = useNavigationContainerRef();
   const ran = useRef(false);
   // A link without the widget's key: the routine to offer ("Start Push 1?").
   const [ask, setAsk] = useState<{ id: string; name: string } | null>(null);
@@ -73,6 +97,7 @@ export default function WidgetStart() {
         found = !open && id != null ? await getRoutine(id).catch(() => null) : null;
         const tokenOk = widgetTokenOk(t, await keptWidgetToken().catch(() => ''));
         const action = widgetStartAction({ routineId: id, open, correcting: isCorrecting(s), routineExists: found != null, tokenOk });
+        console.log('[link] workout/start:', action, open ? 'workout open' : 'no workout');
         if (action === 'tab') {
           router.replace('/workout');
           return;
@@ -91,6 +116,7 @@ export default function WidgetStart() {
           return;
         }
         showActiveWorkout(router);
+        healResume(nav, router);
       } catch (e) {
         console.warn('[ForgeErr] widget or shortcut start failed', e);
         if (keyUsed) {
@@ -104,7 +130,7 @@ export default function WidgetStart() {
         setFailed(startFailedText(found?.name));
       }
     });
-  }, [routine, t, router]);
+  }, [routine, t, router, nav]);
 
   if (ask) {
     const onStart = (): void => {

@@ -53,3 +53,19 @@ export function startFailedText(routineName: string | null | undefined): string 
   const name = routineName?.trim();
   return name ? `Couldn't start ${name}.` : "Couldn't start the workout.";
 }
+
+type NavState = { index?: number; routes?: { name?: string; state?: NavState }[] } | undefined;
+
+/** The name of the screen in front ("session/active"), walking the nested navigators. PURE. */
+export function frontScreen(state: NavState): string | null {
+  let s = state;
+  let name: string | null = null;
+  for (let depth = 0; s && depth < 10; depth++) {
+    const routes = s.routes ?? [];
+    const r = routes[s.index ?? routes.length - 1];
+    if (!r) break;
+    name = r.name ?? null;
+    s = r.state;
+  }
+  return name;
+}
