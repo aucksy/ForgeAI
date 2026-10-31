@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-259. Name style A picked — 31 Oct 2026
+
+He said: "now you are talking... A is gooood"
+
+Did: (filled in below)
+
 ## R-258. Custom name A looks comical; needs strength and steel — 31 Oct 2026
 
 He said: "A is good but it looks a bit comical also.. not giving feel of strength and steel"
