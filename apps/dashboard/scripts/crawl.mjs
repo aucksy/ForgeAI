@@ -104,6 +104,10 @@ try {
       const fn = /rpc\/([a-z_]+)/.exec(route.request().url())?.[1] ?? '';
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(rpcAnswer(fn)) });
     });
+    // HQ news comes from the live Worker (deploy/panel/hqNews.js); vite preview has no /api.
+    await context.route('**/api/hq-news', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ messages: [] }) }),
+    );
     // CRAWL_SELFTEST=1 makes every page too wide, to prove the check can fail.
     if (process.env.CRAWL_SELFTEST) {
       await context.addInitScript(() => {
@@ -122,6 +126,10 @@ try {
     page.on('pageerror', (e) => failures.push(`${width}px ${where}: page error ${e.message}`));
     page.on('console', (m) => {
       if (m.type() === 'error' && !/fonts\.g/.test(m.text())) failures.push(`${width}px ${where}: console ${m.text().slice(0, 200)}`);
+    });
+    // A console 404 never names the file; this line does.
+    page.on('response', (r) => {
+      if (r.status() >= 400 && !/fonts\.g|supabase\.co/.test(r.url())) failures.push(`${width}px ${where}: ${r.status()} ${r.url().slice(0, 200)}`);
     });
     await page.goto(BASE);
     await page.getByRole('button', { name: 'Start demo' }).click();

@@ -284,11 +284,11 @@ test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: 
 });
 
 test('the landing page carries the prices the owner picked on 30 Oct 2026 (#30 A), in English and Hindi', () => {
-  // Raw HTML, so the Hindi copies in data-hi count too.
+  // Raw HTML, so the Hindi copies (Hinglish since R-247, 31 Oct 2026) in data-hi count too.
   const html = readFileSync(new URL('../../dashboard/public/home/index.html', import.meta.url), 'utf8');
   for (const want of ['₹999', '₹9,990', '₹1,499', '₹14,990', '₹2,499', '₹24,990', 'Pro + AI', '₹29,999',
     'first 25 gyms, and only until 31 March 2027', 'पहले 25 जिम, और सिर्फ 31 मार्च 2027 तक', 'FIRST 25', 'पहले 25',
-    'each extra branch pays half', 'हर अगली ब्रांच आधे दाम पर']) {
+    'each extra branch pays half', 'हर एक्स्ट्रा ब्रांच का हाफ प्राइस']) {
     assert.ok(html.includes(want), `landing page is missing "${want}"`);
   }
   // The old prices, and "Own it" (offered on the phone only, never on the website).
