@@ -1,3 +1,5 @@
+-- APPLIED LIVE (found live on 31 Oct 2026, every function equal to this file; owner: "Make the database
+-- change for 0044"; live test PASS 63). The NOT APPLIED line below is history.
 -- 0044: a member asks the desk to pause or renew their plan from the app (F150, 30 Oct 2026). NOT
 -- APPLIED LIVE: the owner must say yes before this goes to the gym server. Additive and re-runnable: one
 -- new table, new functions, one trigger on the new table; nothing existing is changed.

@@ -5,6 +5,11 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-231. "Make the database change for 0044" - 31 Oct 2026
+He said: exactly that (his live-database yes for 0044 only; 0043, 0045 and 0046 still wait).
+Doing: apply supabase/migrations/0044_plan_requests.sql live (members ask the desk to pause or renew their plan from the app: one new table + 6 new functions, additive, re-runnable; it uses but does not change _gym_not_suspended). Run its live test, then mark the file APPLIED LIVE on main.
+Result: 0044 was ALREADY live (all 8 functions equal this file by md5, table with RLS + trigger, 0 rows), so I did not run it again. Live test PASS 63, nothing left behind. 0043 (gym_member_photos, 1 row) and 0045 (gym_report_requests) are live too; 0046 is not. File marked APPLIED LIVE.
+
 ## R-230. Going to sleep: take the best decisions - 30 Oct 2026
 He said: "I am goin to sleep.. so you can do and take best decisions If I am needed for anyting".
 He also asked why the phone tests fail so often. Answer given: 2 real app bugs caught, 1 shared-test-gym clash, 2 of my own test-edit mistakes, 1 cloud download glitch. New practice: after a test edit, run that one part (only=<part>) before the full round.
