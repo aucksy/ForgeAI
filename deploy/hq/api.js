@@ -13,13 +13,17 @@ import {
   aiLimits,
   aiUsageByGym,
   aiUsageDays,
+  addMessage,
+  checkMessage,
   deleteRequestsInFeedback,
   getLead,
   indiaDay,
   listFeedback,
   listLeads,
+  listMessages,
   monthStart,
   newFeedbackByGym,
+  removeMessage,
   setAiLimit,
   setFeedbackStatus,
   setLeadStatus,
@@ -154,6 +158,17 @@ export async function handleApi(request, env, who, deps = {}) {
       return json(200, { rows: await listLeads(env.WEB) });
     }
 
+    if (route === 'GET /api/messages') {
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      try {
+        return json(200, { rows: await listMessages(env.WEB) });
+      } catch (e) {
+        // The table comes with deploy/panel/migrations/0006 (R-243): the page says it is not switched on.
+        console.warn('[hq-api] messages not readable', e instanceof Error ? e.message : 'error');
+        return refuse('MSG_NOT_READY', 503);
+      }
+    }
+
     if (route === 'GET /api/audit') {
       const before = q.get('before');
       const gym = q.get('gym');
@@ -207,6 +222,21 @@ export async function handleApi(request, env, who, deps = {}) {
       if (!Number.isInteger(b.id) || typeof b.status !== 'string') return refuse('BAD_REQUEST');
       await log('lead_status', null, null, { id: b.id, status: b.status });
       return (await setLeadStatus(env.WEB, b.id, b.status, text(b.note, 500))) ? json(200, { ok: true }) : refuse('GONE');
+    }
+
+    if (route === 'POST /api/messages/send') {
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      const checked = checkMessage(b);
+      if (checked.error) return refuse(checked.error);
+      await log('hq_message_sent', null, null, { title: checked.value.title });
+      return json(200, { ok: true, id: await addMessage(env.WEB, checked.value, now) });
+    }
+
+    if (route === 'POST /api/messages/remove') {
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      if (!Number.isInteger(b.id)) return refuse('BAD_REQUEST');
+      await log('hq_message_removed', null, null, { id: b.id });
+      return (await removeMessage(env.WEB, b.id, now)) ? json(200, { ok: true }) : refuse('GONE');
     }
 
     if (route === 'POST /api/gym/status') {

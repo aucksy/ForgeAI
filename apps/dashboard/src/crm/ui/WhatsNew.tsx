@@ -3,6 +3,8 @@
  * - NewsBell (R-239, owner 31 Oct 2026: "a notifications section on the right upper corner with the
  *   notifications bell"): top right on every page, a count of updates not seen yet; tapping it lists the
  *   newest updates and the admin app's version (its newest update day), and marks them seen.
+ *   R-243 ("yes, build HQ messages"): messages from MettleUp HQ (logic/hqNews.ts) come first in it,
+ *   under "From MettleUp", and count in the same number.
  * - NewsSidebarLink (R-239: "outside, maybe in the left bottom corner", not under Settings): the
  *   sidebar's last row, with the version.
  * - WhatsNewCard: top of Today, once after an update ("Got it" hides it until the next one).
@@ -16,10 +18,12 @@ import { useRole } from '../auth/AuthProvider';
 import { canOpen } from '../auth/permissions';
 import type { Role } from '../auth/signin';
 import { useDemo } from '../demo/demoMode';
+import { HQ_POLL_MS, fetchHqNews, markHqSeen, readHqUnread, type HqMessage } from '../logic/hqNews';
 import {
   ADMIN_NEWS,
   NEWS_SEEN_EVENT,
   SHOWN_UPDATES,
+  browserStore,
   currentNews,
   markNewsSeen,
   newsDay,
@@ -43,6 +47,87 @@ function useUnreadNews(demo: boolean): readonly AdminNewsEntry[] {
     return () => window.removeEventListener(NEWS_SEEN_EVENT, seen);
   }, []);
   return entries;
+}
+
+/** R-243: HQ's messages, asked for when the page opens and every HQ_POLL_MS; none in the demo gym. */
+function useHqNews(demo: boolean): { messages: HqMessage[]; unread: HqMessage[]; seen: () => void } {
+  const [messages, setMessages] = useState<HqMessage[]>([]);
+  const [unread, setUnread] = useState<HqMessage[]>([]);
+  useEffect(() => {
+    if (demo) return undefined;
+    let live = true;
+    const load = async () => {
+      const list = await fetchHqNews();
+      if (!live) return;
+      setMessages(list);
+      setUnread(readHqUnread(list, browserStore()));
+    };
+    void load();
+    const timer = window.setInterval(() => void load(), HQ_POLL_MS);
+    return () => {
+      live = false;
+      window.clearInterval(timer);
+    };
+  }, [demo]);
+  const seen = () => {
+    markHqSeen(messages, browserStore());
+    setUnread([]);
+  };
+  return { messages, unread, seen };
+}
+
+/** "31 Oct 2026" for a moment, by the India date. PURE. */
+export function hqDay(at: string): string {
+  const ms = Date.parse(at);
+  return Number.isNaN(ms) ? '' : newsDay(new Date(ms + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10));
+}
+
+/** The button an HQ message gets for this person: an admin app page they may open, or an https address. */
+export function hqGo(m: HqMessage, role: Role): { label: string; path?: string; href?: string } | null {
+  if (!m.link || !m.label) return null;
+  if (m.link.startsWith('https://')) return { label: m.label, href: m.link };
+  return canOpen(role, m.link) ? { label: m.label, path: m.link } : null;
+}
+
+const newTag = (
+  <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
+);
+
+function HqMessages({ messages, fresh, role, onGo }: { messages: readonly HqMessage[]; fresh: ReadonlySet<string>; role: Role; onGo: () => void }) {
+  return (
+    <section aria-label="From MettleUp" style={{ display: 'grid', gap: space.md, paddingBottom: space.lg, marginBottom: space.lg, borderBottom: `1px solid ${color.border}` }}>
+      <p style={{ margin: 0, fontFamily: font.body, fontSize: 12, fontWeight: 800, letterSpacing: 0.4, textTransform: 'uppercase', color: color.inkMuted }}>From MettleUp</p>
+      {messages.map((m) => {
+        const go = hqGo(m, role);
+        return (
+          <article key={m.id} style={{ display: 'grid', gap: 4 }}>
+            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+              {hqDay(m.at)}
+              {fresh.has(`hq-${m.id}`) ? newTag : null}
+            </p>
+            <h3 style={{ margin: 0, fontFamily: font.body, fontSize: 15, fontWeight: 700, color: color.ink }}>{m.title}</h3>
+            <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: 1.45, color: color.ink, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{m.body}</p>
+            {go?.path ? (
+              <button
+                type="button"
+                style={linkStyle}
+                onClick={() => {
+                  onGo();
+                  navigate(go.path as string);
+                }}
+              >
+                {go.label} ›
+              </button>
+            ) : go?.href ? (
+              <a href={go.href} target="_blank" rel="noopener noreferrer" style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
+                {go.label} ›
+              </a>
+            ) : null}
+          </article>
+        );
+      })}
+    </section>
+  );
 }
 
 /** The button a line gets for this person, or null. PURE. */
@@ -159,6 +244,7 @@ export function NewsBell() {
   const role = useRole();
   const compact = useIsCompact();
   const unread = useUnreadNews(demo);
+  const hq = useHqNews(demo);
   const [open, setOpen] = useState(false);
   // Which updates were new when the list opened: they keep their "New" tag while it stays open.
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
@@ -179,12 +265,13 @@ export function NewsBell() {
     };
   }, [open]);
   if (demo) return null;
-  const count = unread.length;
+  const count = unread.length + hq.unread.length;
   const recent = ADMIN_NEWS.filter((e) => e.lines.length > 0).slice(0, SHOWN_UPDATES);
   const toggle = () => {
     if (!open) {
-      setFresh(new Set(unread.map((e) => e.id)));
-      if (count > 0) markNewsSeen();
+      setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`)]));
+      if (unread.length > 0) markNewsSeen();
+      if (hq.unread.length > 0) hq.seen();
     }
     setOpen(!open);
   };
@@ -260,14 +347,13 @@ export function NewsBell() {
             <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>Notifications</h2>
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{ADMIN_VERSION}</span>
           </div>
+          {hq.messages.length > 0 ? <HqMessages messages={hq.messages.slice(0, SHOWN_UPDATES)} fresh={fresh} role={role} onGo={() => setOpen(false)} /> : null}
           <div style={{ display: 'grid', gap: space.lg }}>
             {recent.map((e) => (
               <div key={e.id}>
                 <p style={{ margin: `0 0 ${space.sm}px`, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
                   {`Update of ${newsDay(e.id)}`}
-                  {fresh.has(e.id) ? (
-                    <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
-                  ) : null}
+                  {fresh.has(e.id) ? newTag : null}
                 </p>
                 <NewsLines entry={e} role={role} onGo={() => setOpen(false)} />
               </div>

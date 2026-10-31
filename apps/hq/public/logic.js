@@ -130,6 +130,10 @@ const ERRORS = {
   NEED_DATE: 'Pick the date the payment covers until.',
   BAD_DATE: 'That date is too far ahead (3 years at most).',
   NOT_READY: 'Trials need the database update (waiting for your yes).',
+  MSG_NOT_READY: 'Messages need the database update (waiting for your yes).',
+  BAD_TITLE: 'Write a title (at least 3 letters).',
+  BAD_BODY: 'Write the message (at least 3 letters).',
+  BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
 export function errorWords(code) {
@@ -171,6 +175,8 @@ const ACTIONS = {
   set_trial: 'Changed a gym’s free trial',
   set_plan: 'Set a gym’s plan',
   export_gyms: 'Exported the gym list (CSV)',
+  hq_message_sent: 'Sent a message to every gym',
+  hq_message_removed: 'Took back a message to the gyms',
 };
 
 export function actionWords(action) {

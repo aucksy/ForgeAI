@@ -11,7 +11,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 
 He said: "yes, build HQ messages" (answer to: messages from MettleUp headquarters shown in the gym admin's notification bell; needs one new server table). Rule: build and test it all, then ask his final OK before the table goes on the LIVE database.
 
-Did: (in progress)
+Did: kept the messages in Cloudflare's small website database (D1 forgeai-web, table hq_messages, deploy/panel/migrations/0006), not the gym server: no Supabase change. HQ: new Messages page (send to every gym, take back; both written in the HQ log). Admin app: the bell asks GET /api/hq-news every 15 min, shows them first under "From MettleUp" with a "New" tag and a button, and counts them in its number. Deployed panel e0bec170 and HQ 8690e62d; without the table the bell shows no HQ messages and HQ's page says "waiting for your yes". NOT done: the D1 migration on the live database waits for his yes.
 
 ## R-242. Member-only website at mettleup.fit; free vs paid for the member app; plan the iPhone and Apple Watch apps — 31 Oct 2026
 

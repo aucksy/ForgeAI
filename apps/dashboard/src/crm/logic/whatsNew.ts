@@ -181,7 +181,8 @@ export interface NewsStore {
 
 export const SEEN_KEY = 'forgeai.adminNews.seen.v1';
 
-function browserStore(): NewsStore | null {
+/** This browser's storage, or null when it cannot be used (also for logic/hqNews.ts). */
+export function browserStore(): NewsStore | null {
   try {
     return typeof localStorage !== 'undefined' ? localStorage : null;
   } catch (e) {

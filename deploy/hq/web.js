@@ -164,3 +164,56 @@ export async function nightlyWeb(db, now) {
   const a = await db.prepare('DELETE FROM ai_usage WHERE day < ?').bind(yearAgo.slice(0, 10)).run();
   return { feedback: f?.meta?.changes ?? 0, leads: l?.meta?.changes ?? 0, aiUsage: a?.meta?.changes ?? 0 };
 }
+
+// ------------------------------------------------------------------ HQ messages (R-243)
+// What HQ sends to every gym's admin app (migrations/0006_hq_messages.sql). The panel Worker hands
+// them out (deploy/panel/hqNews.js); the admin app shows them in its notification bell.
+
+export const MESSAGE_LIMITS = { title: 80, body: 500, label: 30, link: 200 };
+const APP_PATH = /^\/[a-z0-9/-]{0,60}$/;
+
+/** The checked message, or an error code (BAD_TITLE, BAD_BODY, BAD_LINK). PURE. */
+export function checkMessage(b) {
+  const clean = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim() : '').slice(0, n);
+  const title = clean(b && b.title, MESSAGE_LIMITS.title);
+  // The body keeps its line breaks (a short list reads better), but no runs of empty lines.
+  const body = (typeof (b && b.body) === 'string' ? b.body : '').replace(/\r\n?/g, '\n').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, MESSAGE_LIMITS.body);
+  const link = clean(b && b.link, MESSAGE_LIMITS.link);
+  const label = clean(b && b.label, MESSAGE_LIMITS.label);
+  if (title.length < 3) return { error: 'BAD_TITLE' };
+  if (body.length < 3) return { error: 'BAD_BODY' };
+  if (link) {
+    let ok = APP_PATH.test(link);
+    if (!ok) {
+      try {
+        const u = new URL(link);
+        ok = u.protocol === 'https:' && !u.username && !u.password;
+      } catch {
+        ok = false; // quiet: answered as BAD_LINK
+      }
+    }
+    if (!ok || !label) return { error: 'BAD_LINK' };
+  }
+  return { value: { title, body, link, label: link ? label : '' } };
+}
+
+export async function listMessages(db, { limit = 100 } = {}) {
+  const lim = Math.min(Math.max(Number(limit) || 100, 1), 300);
+  return (await db.prepare('SELECT id, at, title, body, link, label, removed_at FROM hq_messages ORDER BY id DESC LIMIT ?').bind(lim).all()).results ?? [];
+}
+
+/** Saves a checked message; its new id. */
+export async function addMessage(db, v, now) {
+  const r = await db
+    .prepare('INSERT INTO hq_messages (at, title, body, link, label) VALUES (?, ?, ?, ?, ?)')
+    .bind(now.toISOString(), v.title, v.body, v.link, v.label)
+    .run();
+  return Number(r?.meta?.last_row_id) || null;
+}
+
+/** Takes a message back (the bell stops showing it). False when there is no such message. */
+export async function removeMessage(db, id, now) {
+  if (!Number.isInteger(id) || id < 1) return false;
+  const r = await db.prepare('UPDATE hq_messages SET removed_at = ? WHERE id = ? AND removed_at IS NULL').bind(now.toISOString(), id).run();
+  return Boolean(r && r.meta && r.meta.changes);
+}

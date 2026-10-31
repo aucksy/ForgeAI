@@ -732,6 +732,61 @@ function requestCard(r) {
     out);
 }
 
+// ------------------------------------------------------------------ Messages (R-243)
+// What HQ sends to every gym's admin app: it shows in the bell at the top right (the panel Worker's
+// /api/hq-news, deploy/panel/hqNews.js). Every gym gets the same words: never write one gym's details.
+async function messagesPage() {
+  loading();
+  let d;
+  try {
+    d = await api('/api/messages');
+  } catch (e) {
+    if (e instanceof HqError && e.code === 'MSG_NOT_READY') {
+      show(h('h1', {}, 'Messages'), note(errorWords('MSG_NOT_READY'), 'warn'));
+      return;
+    }
+    throw e;
+  }
+  const title = h('input', { maxlength: '80', placeholder: 'For example: New: gym timings' });
+  const body = h('textarea', { maxlength: '500', rows: '5', placeholder: 'What changed, where to find it, and what it does for the gym.' });
+  const label = h('input', { maxlength: '30', placeholder: 'For example: Open plans' });
+  const link = h('input', { maxlength: '200', placeholder: '/plans or https://…' });
+  const out = h('div');
+  const sent = d.rows.filter((r) => !r.removed_at);
+  const removed = d.rows.filter((r) => r.removed_at);
+  show(
+    h('h1', {}, 'Messages'),
+    h('p', { class: 'muted' }, 'A message here goes to every gym. It shows in the bell at the top right of their admin app, within a minute. Never write one gym’s or one member’s details.'),
+    h('div', { class: 'card' }, h('h2', {}, 'New message to every gym'),
+      field('Title', title),
+      field('Message', body, 'Up to 500 letters. Plain words: the gym owner reads it on a phone.'),
+      field('Button words (optional)', label),
+      field('Button opens (optional)', link, 'An admin app page, for example /plans or /settings, or an https:// address.'),
+      action('Send to every gym', async () => {
+        await api('/api/messages/send', { title: title.value, body: body.value, label: label.value, link: link.value });
+        await messagesPage();
+      }, { out, sure: () => `Send “${title.value.trim()}” to every gym now?` }),
+      out),
+    h('h2', {}, `Sent (${sent.length})`),
+    sent.length ? h('div', { class: 'stack' }, sent.map(messageCard)) : h('p', {}, 'Nothing sent yet.'),
+    removed.length ? h('details', {}, h('summary', {}, `Taken back (${removed.length})`), h('ul', { class: 'plain' }, removed.map((r) => h('li', {}, `${when(r.at)} · ${r.title} · taken back ${when(r.removed_at)}`)))) : null,
+  );
+}
+
+function messageCard(r) {
+  const out = h('div');
+  return h('div', { class: 'card' },
+    h('p', { class: 'muted' }, when(r.at)),
+    h('p', {}, h('strong', {}, r.title)),
+    h('p', { class: 'quote' }, r.body),
+    r.link ? h('p', { class: 'muted' }, `Button “${r.label}” opens ${r.link}`) : null,
+    action('Take back', async () => {
+      await api('/api/messages/remove', { id: r.id });
+      await messagesPage();
+    }, { out, tone: 'danger', sure: 'Take this message back? Gyms stop seeing it in their bell.' }),
+    out);
+}
+
 // ------------------------------------------------------------------ Log
 async function logPage(before = null, list = null) {
   if (!list) loading();
@@ -754,7 +809,7 @@ async function logPage(before = null, list = null) {
 }
 
 // ------------------------------------------------------------------ router
-const ROUTES = { gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, deletes: deletesPage, log: () => logPage() };
+const ROUTES = { gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
 
 async function route() {
   const hash = location.hash.replace(/^#/, '') || 'gyms';

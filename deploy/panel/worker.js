@@ -12,6 +12,7 @@
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
 //  - /api/crash     both apps' uncaught errors, no personal data (crash.js, #34 alerts).
+//  - /api/hq-news   messages from MettleUp HQ for the admin app's bell (hqNews.js, R-243).
 // Every day at 03:00 India time (Cron Trigger, wrangler.jsonc) crash reports older than 90 days are
 // deleted (#72, the privacy notice says so).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
@@ -25,6 +26,7 @@
 
 import { deleteOldCrashes, handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
+import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
@@ -71,6 +73,7 @@ export default {
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
     if (url.pathname === '/api/feedback/voice') return handleVoice(request, env);
     if (url.pathname === '/api/crash') return handleCrash(request, env);
+    if (url.pathname === '/api/hq-news') return handleHqNews(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).

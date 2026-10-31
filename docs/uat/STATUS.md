@@ -37,3 +37,4 @@ U-A14 sign-in refusal words by role.
 Admin deploy 1f2897c5 (8672a6b): U-A13 + U-A14. Later deploys: 3944c634 (93b7fd2, workout plans). Migrations 0021-0024 LIVE since 18 Oct.
 Admin deploy 62644ea7 (d6d23ca8, 31 Oct): What's new for 29-31 Oct (R-238). tsc 0, vitest 1455, playwright 107 of 107, CSP checked live.
 Admin deploy 67b68812 (a741ce79, 31 Oct): bell top right + What's new at the sidebar's bottom (R-239), website name box + import words (R-240, R-241). tsc 0, vitest 1455, playwright 108 of 108, CSP checked live.
+Admin deploy e0bec170 + HQ 8690e62d (31 Oct): HQ messages in the bell (R-243); D1 0006 NOT applied (waits for his yes). tsc 0, vitest 1458, playwright 109 of 109, node 162, CSP checked live.

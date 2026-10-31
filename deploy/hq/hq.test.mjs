@@ -27,7 +27,7 @@ import {
 import { handleApi } from './api.js';
 import { refusalCode, rpc } from './db.js';
 import { clearReleaseMemo, releases, removeFiles } from './outside.js';
-import { costRupees, deleteRequestsInFeedback, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
+import { checkMessage, costRupees, deleteRequestsInFeedback, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
 import worker, { CSP, PUBLIC_FILES, handle, nightly, sameOrigin, secure } from './worker.js';
 
 const enc = new TextEncoder();
@@ -513,14 +513,17 @@ const sqlite = (() => {
 
 function d1() {
   const db = new sqlite.DatabaseSync(':memory:');
-  for (const f of ['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql']) {
+  for (const f of ['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql', '0006_hq_messages.sql']) {
     db.exec(readFileSync(new URL(`../panel/migrations/${f}`, import.meta.url), 'utf8'));
   }
   const stmt = (sql, args) => db.prepare(sql);
   const wrap = (sql, args = []) => ({
     all: async () => ({ results: stmt(sql).all(...args) }),
     first: async () => stmt(sql).get(...args) ?? null,
-    run: async () => ({ meta: { changes: Number(stmt(sql).run(...args).changes) } }),
+    run: async () => {
+      const r = stmt(sql).run(...args);
+      return { meta: { changes: Number(r.changes), last_row_id: Number(r.lastInsertRowid) } };
+    },
   });
   return { raw: db, prepare: (sql) => ({ ...wrap(sql), bind: (...args) => wrap(sql, args) }) };
 }
@@ -548,6 +551,42 @@ test('D1: AI use, cost, limits, delete requests in feedback, statuses', { skip: 
   assert.equal(dr[0].checked, false, 'anyone in the admin app could have sent it: call the owner first');
   assert.equal(await setFeedbackStatus(db, dr[0].feedbackId, 'done', 'written in HQ', new Date()), true);
   assert.equal(await setFeedbackStatus(db, dr[0].feedbackId, 'deleted', '', new Date()), false);
+});
+
+test('HQ messages (R-243): checked words and links', () => {
+  assert.equal(checkMessage({ title: 'Hi', body: 'Some words' }).error, 'BAD_TITLE');
+  assert.equal(checkMessage({ title: 'New: gym timings', body: '' }).error, 'BAD_BODY');
+  assert.deepEqual(checkMessage({ title: '  New:   gym timings ', body: 'Line one\r\n\r\n\r\n\r\nLine  two' }).value, { title: 'New: gym timings', body: 'Line one\n\nLine two', link: '', label: '' });
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: '/plans' }).error, 'BAD_LINK', 'a link needs button words');
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: 'javascript:alert(1)', label: 'Go' }).error, 'BAD_LINK');
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: 'http://mettleup.fit', label: 'Go' }).error, 'BAD_LINK');
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: 'https://u:p@x.example', label: 'Go' }).error, 'BAD_LINK');
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: '/plans', label: 'Open plans' }).value.link, '/plans');
+  assert.equal(checkMessage({ title: 'Title', body: 'Body', link: 'https://mettleup.fit/help', label: 'Read' }).value.label, 'Read');
+  assert.equal(checkMessage({ title: 'x'.repeat(200), body: 'y'.repeat(900) }).value.body.length, 500);
+});
+
+test('HQ messages: send, list, take back; each step written in the log first', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1();
+  const net = fakeNet({ db: { hq_log: null } });
+  const e = env({ WEB: web });
+  assert.equal((await api('POST', '/api/messages/send', { title: 'Hi', body: 'Body' }, e, net)).status, 400);
+  const sent = await api('POST', '/api/messages/send', { title: 'New: gym timings', body: 'Set your hours in Settings.', link: '/settings', label: 'Open Settings' }, e, net);
+  assert.equal(sent.status, 200);
+  const { id } = await sent.json();
+  assert.equal(id, 1);
+  assert.equal(JSON.parse(net.rpcCalls('hq_log').at(-1).init.body).p_action, 'hq_message_sent');
+  const list = await (await api('GET', '/api/messages', null, e, net)).json();
+  assert.equal(list.rows[0].title, 'New: gym timings');
+  assert.equal(list.rows[0].removed_at, null);
+  assert.equal((await api('POST', '/api/messages/remove', { id }, e, net)).status, 200);
+  assert.equal(JSON.parse(net.rpcCalls('hq_log').at(-1).init.body).p_action, 'hq_message_removed');
+  assert.equal((await api('POST', '/api/messages/remove', { id }, e, net)).status, 400, 'already taken back: GONE');
+  assert.ok((await (await api('GET', '/api/messages', null, e, net)).json()).rows[0].removed_at);
+  web.raw.exec('DROP TABLE hq_messages');
+  const before = await api('GET', '/api/messages', null, e, net);
+  assert.equal(before.status, 503);
+  assert.deepEqual(await before.json(), { error: 'MSG_NOT_READY' });
 });
 
 test('D1 nightly clean-up: old feedback, old leads without a deal, old AI use', { skip: !sqlite && 'no node:sqlite here' }, async () => {

@@ -70,3 +70,32 @@ test('J149 Notifications bell: counts new updates, lists them with the version, 
   await page.reload();
   await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
 });
+
+// R-243 (31 Oct 2026): messages from MettleUp HQ come first in the bell and count in its number.
+test('J150 HQ messages: a new one counts in the bell, shows under From MettleUp with its button, then is seen', async ({ page }) => {
+  let messages = [{ id: 1, at: '2026-10-30T05:00:00Z', title: 'Welcome to MettleUp', body: 'Older message.', link: '', label: '' }];
+  await page.route('**/api/hq-news', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ messages }) }));
+  await freshGym(page);
+  await open(page, 'Today');
+  // A first look only remembers what is there.
+  await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
+
+  messages = [
+    { id: 2, at: '2026-10-31T05:00:00Z', title: 'New: gym timings', body: 'Set your opening hours. ' + String.fromCharCode(10) + 'Members see them in the app.', link: '/settings/timings', label: 'Open Gym timings' },
+    ...messages,
+  ];
+  await page.reload();
+  const bell = page.getByRole('button', { name: 'Notifications, 1 new' });
+  await expect(bell).toBeVisible();
+  await bell.tap();
+  const hq = page.getByRole('dialog', { name: 'Notifications' }).getByRole('region', { name: 'From MettleUp' });
+  await expect(hq).toContainText('New: gym timings');
+  await expect(hq).toContainText('31 Oct 2026');
+  await expect(hq).toContainText('Welcome to MettleUp');
+  await expect(hq.getByText('New', { exact: true })).toHaveCount(1);
+  await expectFitsPhone(page, 'with an HQ message in the bell');
+  await hq.getByRole('button', { name: 'Open Gym timings ›' }).tap();
+  await expect(page).toHaveURL(/#\/settings\/timings$/);
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
+});
