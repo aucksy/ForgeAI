@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-244. Yes to the HQ table and member prices; website: highlight the sentence, keep the old box — 31 Oct 2026
+
+He said: "yes, apply the HQ messages table" / "Yes for member app prices" / "And I wanted you to highlight the actual sentence that says, type your gym's name. And you seem to have just changed the design of the place where they type it. I liked the design before. Just highlight the actual sentence so it's visible for the user. And then once their attention is caught, they can see a blinking cursor there so they know they can start typing."
+
+Did: (1) D1 0006_hq_messages applied live (his yes). Live check: a test row inserted, /api/hq-news showed it, then marked removed; list empty again. Found and fixed: HQ Google sign-in was BLOCKED ("Invalid parameter value for max_age: Value should not exceed 86400"); auth.js sent max_age=30 days. Now GOOGLE_MAX_AGE=86400; our HQ session still 30 days; test added; HQ Worker 4557c85e. (2) Member prices approved: F56 now Planned, ₹149/mo, ₹999/yr, ₹2,499 lifetime. (3) Website: the R-240 box design undone (old underlined line back). Only the label "Type your gym's name" is highlighted: an ink-coloured tag pointing down at the line, soft looping pulse while the box is empty; a big blinking cursor sits at the start of the empty line. Phone: grey example 0.84em so "Shakti Gym" fits. Panel Worker fb61fc46.
+
 ## R-243. Build HQ messages in the admin bell — 31 Oct 2026
 
 He said: "yes, build HQ messages" (answer to: messages from MettleUp headquarters shown in the gym admin's notification bell; needs one new server table). Rule: build and test it all, then ask his final OK before the table goes on the LIVE database.
@@ -233,66 +239,3 @@ the check mark which automatically completes the set. It's only when I'm resting
 rest timer and what's coming next." The rest of the Claude Design prompt is OK.
 Did: gave him the revised Claude Design prompt (watch = look-only: rest timer, next set, heart rate; no buttons to log).
 Plan: the current watch app keeps its button until the new design is built; the redesign drops it (and its tap path).
-
-## R-204. "A" on #72 + do Play Console declarations yourself — 30 Oct 2026
-He said: "A" (approve crash-report privacy line, #72) and "the Play Console steps ... you should be able to do it yourself ...
-ask me to do something on the Chrome only when you cannot literally do it because of safety rules" (rule use-the-browser-yourself, 5th time).
-FOUND: the #72 wording I offered was wrong vs the code (apps/mobile/src/lib/crashReport.ts, deploy/panel/crash.js): reports
-carry message + short stack + app version + "screen"/"app" only (NO phone model), go to MettleUp's own server
-(app.mettleup.fit/api/crash), a daily GitHub Action opens a GitHub issue per new crash, and NOTHING deletes them (no 90 days).
-So the privacy line must be corrected before it ships: ask him (privacy wording) with the true version.
-STATE: 0.60.0 phone on Play internal+alpha; watch held by Play's health-features question (doing it now in Chrome Browser 2,
-deviceId 6026c851-96d4-463f-92d1-868a04d55ff0), then re-run the Play upload for the watch (release workflow on tag v0.60.0).
-Also tick "Crash logs" in Play Data safety. Admin branches all merged + deployed 30 Oct (4344194). Tracker v233.
-PROGRESS (30 Oct): Play Console is in Chrome "Browser 1" (deviceId 4086376c-e508-4b5c-956f-dbeb0b0c5eb6, simpleapps108),
-NOT Browser 2. App id 4973234719959672731, dev 8165750959522333478. App content: Health apps already declared 24 Oct
-("Activity and fitness" ticked) for phone perms WRITE_EXERCISE + WRITE_ACTIVE_CALORIES_BURNED. Watch manifest adds
-BODY_SENSORS + health.READ_HEART_RATE: Play does not list them because the watch bundle never finished uploading.
-Wear OS form factor still needs: Wear screenshots on store listings, a Wear bundle on a testing track, then opt-in.
-Plan: re-run the watch upload and read the exact Play error; if it is the health form, reopen Health apps after the bundle
-is in the edit and re-save. #72 wording NOT yet corrected/asked.
-DONE (30 Oct, Play Console by hand): Wear OS internal track release 1000060000 (0.60.0) published; testers = both lists
-(MettleUp testers group + Testers List A); accepted Play's 'version code much higher' warning (watch = 1e9 + phone code, by design).
-Health apps: heart rate + body sensors now listed; wrote both use texts (shown on watch only during a workout, never stored or sent).
-Store listing: 4 Wear screenshots from branding/mettleup/store/wear, AI label = don't label. Wear OS opt-in done.
-All 3 sent for review together (Publishing overview). Watch AAB copy left in forgeai-apk/ (never commit).
-Future watch releases can go by the API again (the 403 was the missing health answer).
-Next: 0.60.0 to production after 24 h; 0.61.0 = workout-name-header, leaderboard-show-me (privacy.html), message-calm mobile.
-
-## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026
-He said: "stop this effort.. need to re-think.. cant spend these many tokens for this poor of an output".
-Also: his "I approved" earlier meant an app prompt, not the shoulder press clip; that approval was undone (4f09e30).
-Done: the daily clip schedule (forgeai-daily-exercise-clip) is switched off. QUEUE.md says paused. Shoulder press v8
-stays unapproved and out of the app. Lateral raise and incline dumbbell press (approved v6) stay in the app.
-Nothing more is made until he decides a new approach.
-
-## R-203. Auto-compact at 25% — 29 Oct 2026
-He said: "Cant we setup auto compact ... automatically at 25% after you are done replying and updating current state in your notes".
-Did: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=25 in ~/.claude/settings.json env + Windows user variable (needs a new session / app restart).
-context_meter.py now asks Claude at 20% to save state (commit, push, notes). Brain note stop-at-90-percent-context rewritten.
-STATE at this point: release 0.60.0 run 40838435757 in progress (tag af5dd2c). After it lands on Play: Wear OS opt-in steps for him,
-then merge + deploy admin branches feat/owner-analytics, feat/business-growth, feat/gym-colour-webcam, feat/offline-desk-3,
-feat/message-calm; fix the landing "lock screen — Coming" line. Next member release 0.61.0: feat/workout-name-header,
-feat/leaderboard-show-me (rebuild privacy.html), message-calm mobile part.
-
-## R-202. "privacy line OK"; email sent; payment photos — 30 Oct 2026
-**He said:** "privacy line OK" (the leaderboard "Show me" line, EN + HI); he sent the Anthropic support email himself; photos of the
-client gym's payment setup (HDFC PayZapp UPI QR + SmartHub Vyapar sound box), "research for integration possibilities".
-**Done:** privacy line added on feat/leaderboard-show-me (ships with it; rebuild privacy.html at merge). Researched: SmartHub Vyapar
-has no published API/webhook; reports download as PDF/Excel. Answer in tracker #69: route 1 = daily report import + match to dues
-(free), route 2 = HDFC SmartGateway / Razorpay webhooks (automatic, fee). New task: a sample report from the owner.
-
-## R-201. Idea: balance check + time-boxed focus block (swap exercises for weak muscles) — 30 Oct 2026
-**He said:** detect body parts trained less or not at all, suggest replacing a few routine exercises for ~2 months for better
-coverage; or a quick switch when he wants e.g. more shoulders and less biceps; suggest the top exercise for that part, or the next
-best two; accuracy grows with data. "research on it, and put your thoughts in the ideas".
-**Done:** researched (Hevy/Fitbod show muscles, no swap suggestions; Jefit closest; ~10 hard sets a week per muscle as a full dose,
-Schoenfeld 2017, Pelland meta-regression); added to the backlog as Idea "Balance check and focus block". The app already has sets per
-muscle, the body map, the plan builder's swapInPlan/alternativesFor: most of the parts exist.
-
-## R-200. Leaderboard: off by default; a switch-on button on the leaderboard screen; switch off in Settings — 30 Oct 2026
-**He said:** "Okay we keep it off by default but we give them a switch on option on leaderboard screen but switch off in settings".
-**Doing:** member app: a member hidden on the leaderboard sees a clear card there, "Show me to my gym" (name + my workouts to gym
-mates), with what it shares in one line, a "Show me" button and a "Not now"; one tap switches on the two existing settings. Switching
-off stays in Settings → Your gym → What my gym can see. Photo sharing is not built (needs a server change + privacy line): offered as
-a later step. Privacy notice: only "or from the leaderboard" added to where the switch is, for his OK.

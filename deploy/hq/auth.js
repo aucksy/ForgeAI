@@ -27,6 +27,8 @@ export const OAUTH_COOKIE = '__Host-hq_oauth';
 // 30 days (owner, 25 Oct 2026: the installed HQ app asked him to sign in every time; 8 hours was too short
 // for a panel only his Google account can open). "Sign out" still ends it at once.
 export const SESSION_SECONDS = 30 * 24 * 60 * 60;
+/** The most Google accepts for max_age (one day). */
+export const GOOGLE_MAX_AGE = 24 * 60 * 60;
 export const OAUTH_SECONDS = 10 * 60;
 export const FRESH_SECONDS = 15 * 60;
 export const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -201,7 +203,9 @@ export async function googleStart(env, origin, { fresh = false, back = '/' } = {
     prompt: fresh ? 'login' : 'select_account',
   });
   // max_age makes Google put auth_time in the token; 0 asks for the password / passkey again.
-  q.set('max_age', fresh ? '0' : String(SESSION_SECONDS));
+  // Google refuses any value over one day ("Access blocked", found 31 Oct 2026): our own HQ session
+  // still lasts SESSION_SECONDS; this only lets Google skip the password when its sign-in is under a day old.
+  q.set('max_age', fresh ? '0' : String(GOOGLE_MAX_AGE));
   const safeBack = typeof back === 'string' && /^\/[A-Za-z0-9/_\-#?=&.]*$/.test(back) && !back.startsWith('//') ? back : '/';
   const sealed = await seal({ state, nonce, verifier, back: safeBack, exp: nowSec + OAUTH_SECONDS }, env.HQ_SESSION_SECRET);
   return { location: `${GOOGLE_AUTH}?${q}`, cookie: cookie(OAUTH_COOKIE, sealed, OAUTH_SECONDS) };

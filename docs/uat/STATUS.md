@@ -38,3 +38,4 @@ Admin deploy 1f2897c5 (8672a6b): U-A13 + U-A14. Later deploys: 3944c634 (93b7fd2
 Admin deploy 62644ea7 (d6d23ca8, 31 Oct): What's new for 29-31 Oct (R-238). tsc 0, vitest 1455, playwright 107 of 107, CSP checked live.
 Admin deploy 67b68812 (a741ce79, 31 Oct): bell top right + What's new at the sidebar's bottom (R-239), website name box + import words (R-240, R-241). tsc 0, vitest 1455, playwright 108 of 108, CSP checked live.
 Admin deploy e0bec170 + HQ 8690e62d (31 Oct): HQ messages in the bell (R-243); D1 0006 NOT applied (waits for his yes). tsc 0, vitest 1458, playwright 109 of 109, node 162, CSP checked live.
+Admin deploy fb61fc46 + HQ 4557c85e (31 Oct): D1 0006 applied live (his yes), live row test passed; HQ Google sign-in fixed (max_age over 1 day was blocked); website name line back to the old design, only the sentence highlighted (R-244). tsc 0, vitest 1458, playwright 109 of 109, HQ node 55, CSP checked live.

@@ -189,6 +189,8 @@ test('sign-in starts at Google with PKCE, a state and a nonce; a fresh sign-in a
   assert.ok(u.searchParams.get('state').length > 20 && u.searchParams.get('nonce').length > 20);
   assert.ok(s.cookie.startsWith(`${OAUTH_COOKIE}=`) && /HttpOnly; Secure; SameSite=Lax/.test(s.cookie));
   assert.ok(!s.location.includes('google-secret'), 'the client secret never goes to the browser');
+  // Google blocks the sign-in when max_age is over a day (31 Oct 2026).
+  assert.ok(Number(u.searchParams.get('max_age')) <= 86400, 'max_age at most one day');
   const f = new URL((await googleStart(env(), ORIGIN, { fresh: true }, NOW)).location);
   assert.equal(f.searchParams.get('prompt'), 'login');
   assert.equal(f.searchParams.get('max_age'), '0');

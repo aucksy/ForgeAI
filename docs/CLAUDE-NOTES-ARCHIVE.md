@@ -2,6 +2,69 @@
 
 Older entries moved out of docs/CLAUDE-NOTES.md by scripts/trim_notes.py. Newest on top.
 
+## R-204. "A" on #72 + do Play Console declarations yourself — 30 Oct 2026
+He said: "A" (approve crash-report privacy line, #72) and "the Play Console steps ... you should be able to do it yourself ...
+ask me to do something on the Chrome only when you cannot literally do it because of safety rules" (rule use-the-browser-yourself, 5th time).
+FOUND: the #72 wording I offered was wrong vs the code (apps/mobile/src/lib/crashReport.ts, deploy/panel/crash.js): reports
+carry message + short stack + app version + "screen"/"app" only (NO phone model), go to MettleUp's own server
+(app.mettleup.fit/api/crash), a daily GitHub Action opens a GitHub issue per new crash, and NOTHING deletes them (no 90 days).
+So the privacy line must be corrected before it ships: ask him (privacy wording) with the true version.
+STATE: 0.60.0 phone on Play internal+alpha; watch held by Play's health-features question (doing it now in Chrome Browser 2,
+deviceId 6026c851-96d4-463f-92d1-868a04d55ff0), then re-run the Play upload for the watch (release workflow on tag v0.60.0).
+Also tick "Crash logs" in Play Data safety. Admin branches all merged + deployed 30 Oct (4344194). Tracker v233.
+PROGRESS (30 Oct): Play Console is in Chrome "Browser 1" (deviceId 4086376c-e508-4b5c-956f-dbeb0b0c5eb6, simpleapps108),
+NOT Browser 2. App id 4973234719959672731, dev 8165750959522333478. App content: Health apps already declared 24 Oct
+("Activity and fitness" ticked) for phone perms WRITE_EXERCISE + WRITE_ACTIVE_CALORIES_BURNED. Watch manifest adds
+BODY_SENSORS + health.READ_HEART_RATE: Play does not list them because the watch bundle never finished uploading.
+Wear OS form factor still needs: Wear screenshots on store listings, a Wear bundle on a testing track, then opt-in.
+Plan: re-run the watch upload and read the exact Play error; if it is the health form, reopen Health apps after the bundle
+is in the edit and re-save. #72 wording NOT yet corrected/asked.
+DONE (30 Oct, Play Console by hand): Wear OS internal track release 1000060000 (0.60.0) published; testers = both lists
+(MettleUp testers group + Testers List A); accepted Play's 'version code much higher' warning (watch = 1e9 + phone code, by design).
+Health apps: heart rate + body sensors now listed; wrote both use texts (shown on watch only during a workout, never stored or sent).
+Store listing: 4 Wear screenshots from branding/mettleup/store/wear, AI label = don't label. Wear OS opt-in done.
+All 3 sent for review together (Publishing overview). Watch AAB copy left in forgeai-apk/ (never commit).
+Future watch releases can go by the API again (the 403 was the missing health answer).
+Next: 0.60.0 to production after 24 h; 0.61.0 = workout-name-header, leaderboard-show-me (privacy.html), message-calm mobile.
+
+## R-204. Exercise clips stopped: too many tokens for the quality - 29 Oct 2026
+He said: "stop this effort.. need to re-think.. cant spend these many tokens for this poor of an output".
+Also: his "I approved" earlier meant an app prompt, not the shoulder press clip; that approval was undone (4f09e30).
+Done: the daily clip schedule (forgeai-daily-exercise-clip) is switched off. QUEUE.md says paused. Shoulder press v8
+stays unapproved and out of the app. Lateral raise and incline dumbbell press (approved v6) stay in the app.
+Nothing more is made until he decides a new approach.
+
+## R-203. Auto-compact at 25% — 29 Oct 2026
+He said: "Cant we setup auto compact ... automatically at 25% after you are done replying and updating current state in your notes".
+Did: CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=25 in ~/.claude/settings.json env + Windows user variable (needs a new session / app restart).
+context_meter.py now asks Claude at 20% to save state (commit, push, notes). Brain note stop-at-90-percent-context rewritten.
+STATE at this point: release 0.60.0 run 40838435757 in progress (tag af5dd2c). After it lands on Play: Wear OS opt-in steps for him,
+then merge + deploy admin branches feat/owner-analytics, feat/business-growth, feat/gym-colour-webcam, feat/offline-desk-3,
+feat/message-calm; fix the landing "lock screen — Coming" line. Next member release 0.61.0: feat/workout-name-header,
+feat/leaderboard-show-me (rebuild privacy.html), message-calm mobile part.
+
+## R-202. "privacy line OK"; email sent; payment photos — 30 Oct 2026
+**He said:** "privacy line OK" (the leaderboard "Show me" line, EN + HI); he sent the Anthropic support email himself; photos of the
+client gym's payment setup (HDFC PayZapp UPI QR + SmartHub Vyapar sound box), "research for integration possibilities".
+**Done:** privacy line added on feat/leaderboard-show-me (ships with it; rebuild privacy.html at merge). Researched: SmartHub Vyapar
+has no published API/webhook; reports download as PDF/Excel. Answer in tracker #69: route 1 = daily report import + match to dues
+(free), route 2 = HDFC SmartGateway / Razorpay webhooks (automatic, fee). New task: a sample report from the owner.
+
+## R-201. Idea: balance check + time-boxed focus block (swap exercises for weak muscles) — 30 Oct 2026
+**He said:** detect body parts trained less or not at all, suggest replacing a few routine exercises for ~2 months for better
+coverage; or a quick switch when he wants e.g. more shoulders and less biceps; suggest the top exercise for that part, or the next
+best two; accuracy grows with data. "research on it, and put your thoughts in the ideas".
+**Done:** researched (Hevy/Fitbod show muscles, no swap suggestions; Jefit closest; ~10 hard sets a week per muscle as a full dose,
+Schoenfeld 2017, Pelland meta-regression); added to the backlog as Idea "Balance check and focus block". The app already has sets per
+muscle, the body map, the plan builder's swapInPlan/alternativesFor: most of the parts exist.
+
+## R-200. Leaderboard: off by default; a switch-on button on the leaderboard screen; switch off in Settings — 30 Oct 2026
+**He said:** "Okay we keep it off by default but we give them a switch on option on leaderboard screen but switch off in settings".
+**Doing:** member app: a member hidden on the leaderboard sees a clear card there, "Show me to my gym" (name + my workouts to gym
+mates), with what it shares in one line, a "Show me" button and a "Not now"; one tap switches on the two existing settings. Switching
+off stays in Settings → Your gym → What my gym can see. Photo sharing is not built (needs a server change + privacy line): offered as
+a later step. Privacy notice: only "or from the leaderboard" added to where the switch is, for his OK.
+
 ## R-199. Leaderboard and gym-mate sharing ON by default (inside the gym) — asked 30 Oct 2026, waiting on his pick
 **He said:** leaderboard settings on by default: name, display picture, workout history and numbers visible to the member's own gym by
 default (Hevy makes workouts public to the world by default; people want this); the member can switch it off.
