@@ -73,7 +73,7 @@ describe('the free-trial banner (R-97, 0030)', () => {
   });
 
   it('See prices goes to the price list on the landing page', () => {
-    expect(PLANS_URL).toBe('https://mettleup.fit/#pricing');
+    expect(PLANS_URL).toBe('https://gyms.mettleup.fit/#pricing');
   });
 
   it('the owner’s MettleUp access list names a trial or plan change in words', () => {

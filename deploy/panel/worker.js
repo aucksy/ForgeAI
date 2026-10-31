@@ -1,6 +1,6 @@
 // The panel's Worker (14 Oct 2026). Since MettleUp (R-105) it runs first for every path but the
 // hashed /assets/ files, and first sends each address where it belongs (hosts.js: mettleup.fit is
-// the landing page, app.mettleup.fit the admin app, the old address stays for good). Everything
+// the member page, gyms.mettleup.fit the gym landing page (F184), app.mettleup.fit the admin app, the old address stays for good). Everything
 // else is still the static panel (apps/dashboard/dist), except the paths that need server work:
 //  - /api/moved, /api/move  the old address's admin app moving a desk to app.mettleup.fit (hosts.js).
 //  - /j/<CODE>  the gym's invite link page (join.html), with the gym filled in before it is sent —
@@ -44,9 +44,11 @@ export default {
     // MettleUp (R-105): which address shows what (hosts.js). Redirects first, then the landing page.
     const where = routeFor(url.hostname, url.pathname, url.search, request.method, { moveOld: env.MOVE !== 'off' });
     if (where.kind === 'redirect') return new Response(null, { status: where.status, headers: { Location: where.to, 'Cache-Control': 'max-age=3600' } });
-    if (where.kind === 'landing') {
+    // F184: mettleup.fit "/" is the member page (/member-site/), gyms.mettleup.fit "/" the gym page (/home/).
+    // LANDING "off" hides both (the old kill switch).
+    if (where.kind === 'landing' || where.kind === 'members') {
       if (env.LANDING !== 'live') return Response.redirect(`${APP_ORIGIN}/`, 302);
-      return env.ASSETS.fetch(new Request(new URL('/home/', url), request));
+      return env.ASSETS.fetch(new Request(new URL(where.kind === 'members' ? '/member-site/' : '/home/', url), request));
     }
     // The old address's admin app asks whether to move (src/crm/move); "off" keeps every desk where it is.
     if (url.pathname === '/api/moved') {
@@ -77,7 +79,7 @@ export default {
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
-    if (url.pathname === '/home' || url.pathname.startsWith('/home/')) {
+    if (url.pathname === '/home' || url.pathname.startsWith('/home/') || url.pathname === '/member-site' || url.pathname.startsWith('/member-site/')) {
       return env.LANDING === 'live' ? env.ASSETS.fetch(request) : new Response('Not found', { status: 404 });
     }
     if (url.pathname.startsWith('/api/')) return new Response('Not found', { status: 404 });

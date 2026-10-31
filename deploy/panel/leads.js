@@ -8,12 +8,17 @@
 // top of the page; when that was empty the page refused, jumped up to it, and nothing was sent. A
 // number is enough to call back, so a lead is never refused for a missing gym name (HQ shows
 // "Gym name: not entered"). Every refusal is logged here (reason only, never the number).
+// F184 (R-242, 31 Oct 2026): `source` says where the lead came from. The gym page opened from a
+// member's shared link (gyms.mettleup.fit/?from=member) sends 'member-referral'; anything else is
+// kept as '' (the gym found us by itself). Only known words are kept (migrations/0007_lead_source.sql).
 
 export const PER_DAY = 5;
 export const ALL_PER_DAY = 300;
 const SIZES = ['Under 100', '100-300', '300-600', 'Over 600'];
 // 'ggms' stays accepted for forms sent before 24 Oct 2026; the page now offers 'software' (R-118).
 const TODAY = ['register', 'excel', 'software', 'other', 'ggms'];
+/** Where a lead came from (F184). '' = not said: the gym found the page by itself. */
+export const SOURCES = ['member-referral'];
 
 /** The checked lead, a bot (drop it), or a plain reason. PURE. */
 export function checkLead(body) {
@@ -33,6 +38,7 @@ export function checkLead(body) {
       size: SIZES.includes(body.size) ? body.size : '',
       today: TODAY.includes(body.today) ? body.today : '',
       lang: body.lang === 'hi' ? 'hi' : 'en',
+      source: SOURCES.includes(body.source) ? body.source : '',
     },
   };
 }
@@ -53,6 +59,25 @@ function answer(status, body) {
 function refused(status, words, why) {
   console.warn(`[lead] refused ${status}: ${why}`);
   return answer(status, { error: words });
+}
+
+/**
+ * Writes one lead. F184: with its source; if the live table has no `source` column yet (migration
+ * 0007 not applied: the Worker can be deployed first), the lead is still saved without it, so a
+ * demo request is never lost to a missing column. Logged so the missing migration can be spotted.
+ */
+async function saveLead(db, at, v, ipHash) {
+  try {
+    await db.prepare('INSERT INTO leads (at, phone, gym, city, size, today, lang, ip_hash, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(at, v.phone, v.gym, v.city, v.size, v.today, v.lang, ipHash, v.source)
+      .run();
+  } catch (e) {
+    if (!/no (such )?column|has no column/i.test(String(e && e.message))) throw e;
+    console.warn(`[lead] table has no source column yet (apply migration 0007); saved without source '${v.source}'`);
+    await db.prepare('INSERT INTO leads (at, phone, gym, city, size, today, lang, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(at, v.phone, v.gym, v.city, v.size, v.today, v.lang, ipHash)
+      .run();
+  }
 }
 
 /** POST /api/lead -> 201 { ok } | 400/405/413/429/503 { error }. A bot also gets 201 (and nothing is kept). */
@@ -88,9 +113,7 @@ export async function handleLead(request, env, now = new Date()) {
     if (row && (row.n >= ALL_PER_DAY || row.ip >= PER_DAY)) {
       return refused(429, 'You have sent too many demo requests today. Please try again tomorrow.', row.n >= ALL_PER_DAY ? `${ALL_PER_DAY} a day in all reached` : `${PER_DAY} a day from one address reached`);
     }
-    await env.WEB.prepare('INSERT INTO leads (at, phone, gym, city, size, today, lang, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .bind(at, v.phone, v.gym, v.city, v.size, v.today, v.lang, ipHash)
-      .run();
+    await saveLead(env.WEB, at, v, ipHash);
   } catch (e) {
     console.error('[lead] could not save', e);
     return answer(503, { error: 'Could not save. Try again.' });

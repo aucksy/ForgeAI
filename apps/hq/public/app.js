@@ -642,6 +642,8 @@ async function leadsPage() {
   show(
     h('h1', {}, 'Leads'),
     h('p', { class: 'muted' }, 'Gyms that asked for a free demo on the website. Kept 12 months unless they become a customer.'),
+    // F184: leads a member brought in (the "Recommend MettleUp to your gym" link on mettleup.fit).
+    d.rows.length ? h('p', {}, `From members’ shared links: ${d.rows.filter((r) => r.source === 'member-referral').length} of ${d.rows.length}`) : null,
     d.rows.length ? h('div', { class: 'stack' }, d.rows.map((r) => {
       const st = select(LEAD_STATUS, r.status);
       const nt = h('input', { value: r.note || '', maxlength: '500', placeholder: 'Note' });
@@ -650,7 +652,7 @@ async function leadsPage() {
       return h('div', { class: 'card' },
         // The website's top form can send a number without a gym name (deploy/panel/leads.js, 25 Oct).
         h('p', {}, h('strong', {}, r.gym || 'Gym name: not entered'), r.city ? ` · ${r.city}` : '', ' · ', h('a', { href: `tel:+91${r.phone}` }, r.phone)),
-        h('p', { class: 'muted' }, `${when(r.at)}${r.size ? ` · ${r.size} members` : ''}${r.today ? ` · uses ${r.today} today` : ''}${r.lang === 'hi' ? ' · Hindi' : ''}`),
+        h('p', { class: 'muted' }, `${when(r.at)}${r.size ? ` · ${r.size} members` : ''}${r.today ? ` · uses ${r.today} today` : ''}${r.lang === 'hi' ? ' · Hindi' : ''}${r.source === 'member-referral' ? ' · from a member’s shared link' : ''}`),
         h('div', { class: 'row wrap' }, st, nt, action('Save', async () => {
           await api('/api/leads/status', { id: r.id, status: st.value, note: nt.value });
           out.replaceChildren(note('Saved.', 'good'));

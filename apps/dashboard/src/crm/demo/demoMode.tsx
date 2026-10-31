@@ -35,7 +35,7 @@ export function useDemo(): DemoInfo | null {
 
 export const DEMO_BANNER_WORDS = 'Demo gym: made-up data. Nothing you do here is saved.';
 /** Where "Leave the demo" goes for someone with no gym of their own. */
-export const LANDING_URL = 'https://mettleup.fit/';
+export const LANDING_URL = 'https://gyms.mettleup.fit/';
 /** The fixed height of the banner; the sidebar and phone header sit under it (AppShell). */
 export const DEMO_BAR_HEIGHT = 60;
 

@@ -1,8 +1,12 @@
 // node --test deploy/panel. Launch I3, 21 Oct 2026: the landing page's demo form.
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { ALL_PER_DAY, PER_DAY, checkLead, handleLead } from './leads.js';
+import { DatabaseSync } from 'node:sqlite';
+
+import { ALL_PER_DAY, PER_DAY, SOURCES, checkLead, handleLead } from './leads.js';
+import { sqliteD1 } from './sqliteD1.mjs';
 
 function fakeD1() {
   const rows = [];
@@ -19,8 +23,8 @@ function fakeD1() {
             },
             async run() {
               assert.match(sql, /^INSERT INTO leads/);
-              const [at, phone, gym, city, size, today, lang, ip_hash] = a;
-              rows.push({ at, phone, gym, city, size, today, lang, ip_hash });
+              const [at, phone, gym, city, size, today, lang, ip_hash, source] = a;
+              rows.push({ at, phone, gym, city, size, today, lang, ip_hash, source });
             },
           };
         },
@@ -33,7 +37,7 @@ const post = (b, ip = '1.1.1.1') => new Request('https://x/api/lead', { method: 
 const good = { phone: '+91 98290 12345', gym: '  Shakti   Gym ', city: 'Jaipur', size: '100-300', today: 'software' };
 
 test('a good lead: 10 digits, tidy text, known choices only', () => {
-  assert.deepEqual(checkLead(good).value, { phone: '9829012345', gym: 'Shakti Gym', city: 'Jaipur', size: '100-300', today: 'software', lang: 'en' });
+  assert.deepEqual(checkLead(good).value, { phone: '9829012345', gym: 'Shakti Gym', city: 'Jaipur', size: '100-300', today: 'software', lang: 'en', source: '' });
   assert.equal(checkLead({ ...good, size: '<script>', today: 'drop' }).value.size, '');
   assert.ok(checkLead({ ...good, phone: '12345' }).error);
   assert.ok(checkLead({ ...good, phone: '1234567890' }).error); // Indian mobiles start 6-9
@@ -90,4 +94,43 @@ test('wrong method, not set up, too long', async () => {
   assert.equal((await handleLead(new Request('https://x/api/lead'), env(fakeD1()))).status, 405);
   assert.equal((await handleLead(post(good), { WEB: fakeD1() })).status, 503);
   assert.equal((await handleLead(post({ ...good, gym: 'x'.repeat(3000) }), env(fakeD1()))).status, 413);
+});
+
+// F184 (R-242): a demo request from the gym page opened through a member's shared link.
+test('source: only member-referral is kept; anything else is empty', () => {
+  assert.deepEqual(SOURCES, ['member-referral']);
+  assert.equal(checkLead({ ...good, source: 'member-referral' }).value.source, 'member-referral');
+  for (const bad of ['', 'Member-Referral', '<script>', 42, null, undefined]) assert.equal(checkLead({ ...good, source: bad }).value.source, '', String(bad));
+});
+
+test('source: saved into the real leads table built from the migrations', async () => {
+  const WEB = sqliteD1();
+  assert.equal((await handleLead(post({ ...good, source: 'member-referral' }), env(WEB))).status, 201);
+  assert.equal((await handleLead(post({ ...good, source: 'spam' }), env(WEB))).status, 201);
+  assert.equal((await handleLead(post(good), env(WEB))).status, 201);
+  const rows = WEB.sqlite.prepare('SELECT phone, source FROM leads ORDER BY id').all();
+  assert.deepEqual(rows.map((r) => r.source), ['member-referral', '', '']);
+});
+
+test('source: a live table without the column yet (0007 not applied) still keeps the lead', async () => {
+  const db = new DatabaseSync(':memory:');
+  db.exec(readFileSync(new URL('./migrations/0002_leads.sql', import.meta.url), 'utf8'));
+  const WEB = {
+    prepare: (sql) => ({
+      bind: (...a) => ({
+        first: async () => db.prepare(sql).get(...a) ?? null,
+        run: async () => db.prepare(sql).run(...a),
+      }),
+    }),
+  };
+  const warn = console.warn;
+  const lines = [];
+  console.warn = (...a) => lines.push(a.join(' '));
+  try {
+    assert.equal((await handleLead(post({ ...good, source: 'member-referral' }), env(WEB))).status, 201);
+  } finally {
+    console.warn = warn;
+  }
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM leads').get().n, 1);
+  assert.match(lines.join(' '), /apply migration 0007/);
 });

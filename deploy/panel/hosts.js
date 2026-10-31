@@ -1,32 +1,42 @@
 // MettleUp's addresses (R-105, 24 Oct 2026): which host shows what. One Worker serves them all
 // (wrangler.jsonc routes); this file only decides, so it can be tested without Cloudflare.
 //
-//   mettleup.fit                 the landing page at "/" (the old /home/ page). Its files, the legal
-//                                pages, icons and the demo form stay here; any other path moves to
-//                                app.mettleup.fit (same path), so mettleup.fit/j/CODE still works.
+//   mettleup.fit                 F184 (R-242, 31 Oct 2026): the MEMBER page at "/" (public/member-site/,
+//                                the phone and watch app, nothing about gym software but one "recommend
+//                                your gym" block). /gyms and /home (the old gym page) 301 to
+//                                gyms.mettleup.fit, keeping the query. Its files, the legal pages, icons
+//                                and the demo form stay here (an old open tab of the gym page still
+//                                works); any other path moves to app.mettleup.fit (same path), so
+//                                mettleup.fit/j/CODE still works.
+//   gyms.mettleup.fit            F184: the gym-owner landing page at "/" (the /home/ page), with its
+//                                files, the demo form (/api/lead), legal pages and icons. Any other
+//                                path moves to app.mettleup.fit (same path), as on mettleup.fit.
 //   www.mettleup.fit, mettleup.in, www.mettleup.in
 //                                301 to https://mettleup.fit, same path.
 //   app.mettleup.fit             the admin app, the gym server address (/sb), invite and check-in
 //                                links (/j, /c), /api, /start, the legal pages, the service worker.
-//                                /home moves to mettleup.fit.
+//                                /home moves to gyms.mettleup.fit (it is the gym page).
 //   forgeai.aakashpahuja.in      the old address, kept for good: old phones reach the gym server at
 //                                /sb, printed posters carry /j and /c, old apps call /api. Only /home
-//                                moves (to mettleup.fit). The admin app itself moves in the browser,
+//                                moves (to gyms.mettleup.fit). The admin app itself moves in the browser,
 //                                and only once nothing is waiting to be sent (src/crm/move).
 //   anything else (workers.dev, a laptop's `wrangler dev`)   behaves like the old address.
 
 export const OLD_HOST = 'forgeai.aakashpahuja.in';
 export const APP_HOST = 'app.mettleup.fit';
 export const SITE_HOST = 'mettleup.fit';
+export const GYMS_HOST = 'gyms.mettleup.fit';
 export const APP_ORIGIN = `https://${APP_HOST}`;
 export const SITE_ORIGIN = `https://${SITE_HOST}`;
+export const GYMS_ORIGIN = `https://${GYMS_HOST}`;
 /** Hosts that only send people to mettleup.fit. */
 export const REDIRECT_HOSTS = ['www.mettleup.fit', 'mettleup.in', 'www.mettleup.in'];
 
-/** Paths mettleup.fit keeps for itself (the landing page needs them, or they are fine anywhere). */
+/** Paths mettleup.fit and gyms.mettleup.fit keep (the pages need them, or they are fine anywhere). */
 const SITE_KEEPS = [
-  /^\/home\/[^/]+$/, // the landing page's own files (home.js, pictures)
-  /^\/api\/lead$/, // the landing page's "free demo" form
+  /^\/home\/[^/]+$/, // the gym page's own files (home.js, pictures)
+  /^\/member-site\/[^/]+$/, // the member page's own files (member.js, app pictures), F184
+  /^\/api\/lead$/, // the gym page's "free demo" form
   /^\/(icons|brand)\//,
   /^\/\.well-known\//,
   /^\/(privacy|terms|data-agreement)(\.html)?$/,
@@ -40,29 +50,38 @@ function move(to, method) {
 
 /**
  * What to do with one request, by host and path. PURE.
- * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'app' }.
- *  - 'landing': serve the landing page (the /home/ file) at this path.
+ * Returns { kind: 'redirect', to, status } | { kind: 'landing' } | { kind: 'members' } | { kind: 'app' }.
+ *  - 'landing': serve the gym-owner landing page (the /home/ file) at this path.
+ *  - 'members': serve the member page (the /member-site/ file) at this path (F184).
  *  - 'app': carry on as the admin app's Worker always did (static files, /j, /c, /sb, /api ...).
  * `moveOld` false (wrangler var MOVE "off") leaves the old address exactly as it was.
  */
 export function routeFor(host, pathname, search = '', method = 'GET', { moveOld = true } = {}) {
   const h = String(host || '').toLowerCase();
   const rest = `${pathname}${search}`;
+  // The gym page by any of its old names: /home (R-105) and, on mettleup.fit, /gyms (F184).
+  const homePage = pathname === '/home' || pathname === '/home/' || pathname === '/home/index.html';
+  const gymsPage = pathname === '/gyms' || pathname === '/gyms/' || pathname === '/gyms/index.html';
   if (REDIRECT_HOSTS.includes(h)) return move(`${SITE_ORIGIN}${rest}`, method);
   if (h === SITE_HOST) {
-    if (pathname === '/') return { kind: 'landing' };
-    if (pathname === '/home' || pathname === '/home/' || pathname === '/home/index.html') return move(`${SITE_ORIGIN}/${search}`, method);
+    if (pathname === '/') return { kind: 'members' };
+    if (homePage || gymsPage) return move(`${GYMS_ORIGIN}/${search}`, method);
     if (SITE_KEEPS.some((re) => re.test(pathname))) return { kind: 'app' };
     return move(`${APP_ORIGIN}${rest}`, method);
   }
-  const homePage = pathname === '/home' || pathname === '/home/' || pathname === '/home/index.html';
+  if (h === GYMS_HOST) {
+    if (pathname === '/') return { kind: 'landing' };
+    if (homePage || gymsPage) return move(`${GYMS_ORIGIN}/${search}`, method);
+    if (SITE_KEEPS.some((re) => re.test(pathname))) return { kind: 'app' };
+    return move(`${APP_ORIGIN}${rest}`, method);
+  }
   if (h === APP_HOST) {
-    if (homePage) return move(`${SITE_ORIGIN}/${search}`, method);
-    if (pathname.startsWith('/home/')) return move(`${SITE_ORIGIN}${rest}`, method);
+    if (homePage) return move(`${GYMS_ORIGIN}/${search}`, method);
+    if (pathname.startsWith('/home/')) return move(`${GYMS_ORIGIN}${rest}`, method);
     return { kind: 'app' };
   }
-  // The old address (and any other host): only the landing page moves.
-  if (moveOld && h === OLD_HOST && homePage) return move(`${SITE_ORIGIN}/${search}`, method);
+  // The old address (and any other host): only the gym page moves.
+  if (moveOld && h === OLD_HOST && homePage) return move(`${GYMS_ORIGIN}/${search}`, method);
   return { kind: 'app' };
 }
 

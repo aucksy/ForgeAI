@@ -330,6 +330,18 @@
     hi: { phone: '10 डिजिट का मोबाइल नंबर टाइप करें।', gym2: 'अपने जिम का नाम टाइप करें।', sending: 'भेज रहे हैं…', ok: 'थैंक यू! हम जल्दी आपको कॉल करेंगे।', many: 'आपने आज बहुत बार डेमो रिक्वेस्ट भेजी है। प्लीज़ कल फिर ट्राई करें।', fail: 'भेज नहीं पाए। इंटरनेट चेक करके फिर ट्राई करें।' },
   };
   function w() { return WORDS[root.lang === 'hi' ? 'hi' : 'en']; }
+  // F184 (R-242): a member shared this page with their gym owner (mettleup.fit's "Recommend MettleUp to
+  // your gym" sends gyms.mettleup.fit/?from=member). A demo request from that visit is marked
+  // 'member-referral' so HQ counts it as a lead a member brought in (deploy/panel/leads.js).
+  // Kept for this tab only, so a click to another page and back still counts.
+  var SOURCE = 'forgeai.home.from';
+  var source = '';
+  try {
+    if (new URLSearchParams(location.search).get('from') === 'member') sessionStorage.setItem(SOURCE, 'member-referral');
+    source = sessionStorage.getItem(SOURCE) || '';
+  } catch (e) {
+    source = /[?&]from=member(&|$)/.test(location.search) ? 'member-referral' : ''; // quiet: storage blocked
+  }
   Array.prototype.forEach.call(document.querySelectorAll('.lead-form'), function (form) {
     var msg = form.querySelector('.msg');
     var go = form.querySelector('.go');
@@ -366,6 +378,7 @@
           website: f.website.value,
           lang: root.lang,
           colour: read(COLOUR) || '',
+          source: source,
         }),
       })
         .then(function (r) {

@@ -75,3 +75,13 @@ test('the clean-up does delete a 13-month-old lead without a deal, and keeps a w
   assert.equal((await nightlyWeb(WEB, new Date())).leads, 1);
   assert.deepEqual((await hqLeads(WEB)).map((r) => r.gym), ['Won']);
 });
+
+// F184 (R-242): a member shares gyms.mettleup.fit/?from=member with their gym owner; the owner's demo
+// request from that visit (home.js adds source) reaches HQ marked as a member referral.
+test('a demo request from a member’s shared link reaches HQ as a member referral', async () => {
+  const WEB = sqliteD1();
+  assert.equal((await send(WEB, 'gyms.mettleup.fit', fromPage('9829012347', 'Muscle Hub', { source: 'member-referral' }))).status, 201);
+  assert.equal((await send(WEB, 'gyms.mettleup.fit', fromPage('9829012348', 'Fit Zone'))).status, 201);
+  const rows = await hqLeads(WEB);
+  assert.deepEqual(rows.map((r) => [r.gym, r.source]).sort(), [['Fit Zone', ''], ['Muscle Hub', 'member-referral']]);
+});

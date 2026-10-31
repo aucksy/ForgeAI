@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- F184 (owner R-242, 31 Oct 2026): mettleup.fit is the MEMBER website: the phone app (and the watch
+     app, coming soon). Nothing about gym software but the "recommend MettleUp to your gym" block at the
+     bottom. No prices. Served at "/" by deploy/panel (hosts.js kind 'members'); the gym page lives at
+     gyms.mettleup.fit. Every picture is a real app screen (store-shots, 31 Oct; *.webp.json says where).
+     Words: member-words skill + a Gemini 3.6 Flash pass. The security policy runs no inline script:
+     member.js does the language switch, the share button and the "Beaten" stamp. -->
+<title>MettleUp: free workout log for Android</title>
+<meta name="description" content="MettleUp is a free workout log for your Android phone. Every set shows your weight and reps from last time, so you know what to lift today. Records, charts, a rest timer that rings on time, and ready-made plans.">
+<link rel="canonical" href="https://mettleup.fit/">
+<meta property="og:url" content="https://mettleup.fit/">
+<meta property="og:title" content="MettleUp: beat your last workout">
+<meta property="og:description" content="A free workout log for your Android phone. Every set shows what you lifted last time.">
+<meta property="og:image" content="https://mettleup.fit/brand/og-1200x630.png">
+<meta name="theme-color" content="#0B0B0D">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" href="/brand/icon-192.png">
+<link rel="apple-touch-icon" href="/brand/apple-touch-icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..900&family=Khand:wght@600;700&family=Mukta:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* The gym page's world (apps/dashboard/DESIGN.md, "the tub label"), turned to the member: the same black
+   tub, condensed Archivo caps, white label panels with heavy rules and stuck-on notes. The flavour is
+   fixed to MettleUp orange (no gym picks a colour here), and the phones hold real app screenshots. */
+:root{
+  --tub:#0B0B0D; --tub2:#151518; --rule:#2C2C33;
+  --ink:#F4F4F2; --ink2:#C9C9CF; --ink3:#9A9AA3;
+  --label:#FFFFFF; --label-ink:#0B0B0D; --label-ink2:#3B3B42;
+  --flavour:#FF7A2E; --on-flavour:#1A0A02; --on-flavour2:#3A1A06;
+  --sticker:#FFD23F; --sticker-ink:#1C1600;
+  --good:#3ECF7A; --gold:#FFC53D;
+  --cond:"Archivo","Khand",system-ui,sans-serif; --text:"Archivo","Mukta",system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scrollbar-color:var(--rule) var(--tub);caret-color:var(--flavour)}
+body{margin:0;background:var(--tub);color:var(--ink);font:400 17px/1.55 var(--text);overflow-x:hidden}
+/* tilted panels and stickers must never widen a phone's page (Chrome zooms out to fit them) */
+main,footer{overflow-x:clip}
+::selection{background:var(--flavour);color:var(--on-flavour)}
+a{color:inherit;text-underline-offset:.2em}
+img,svg{display:block;max-width:100%}
+:focus-visible{outline:3px solid var(--flavour);outline-offset:3px;border-radius:4px}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+.cond{font-family:var(--cond);font-weight:900;font-stretch:62%;font-variation-settings:"wdth" 62;text-transform:uppercase;letter-spacing:-.01em;word-spacing:.14em;line-height:.88}
+:lang(hi) .cond{font-family:"Khand",var(--cond);font-weight:700;text-transform:none;letter-spacing:0;line-height:1.05}
+:lang(hi) body{font-family:"Mukta","Archivo",system-ui,sans-serif;line-height:1.7}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+.hot{color:var(--flavour)}
+
+/* ---------- lid ---------- */
+.lid{position:sticky;top:0;z-index:30;background:color-mix(in oklab,var(--tub) 88%,transparent);backdrop-filter:blur(12px) saturate(1.3);border-bottom:1px solid var(--rule)}
+.lid .wrap{display:flex;align-items:center;gap:8px;min-height:58px}
+.mark{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:auto;min-width:0}
+.mark img{width:26px;height:26px}
+.mark b{font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;letter-spacing:.01em}
+.pill{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:none;color:var(--ink2);font:700 15px var(--text);text-decoration:none;cursor:pointer;white-space:nowrap;flex:none}
+.pill:hover{border-color:var(--ink3);color:var(--ink)}
+.pill.get{background:var(--flavour);border-color:var(--flavour);color:var(--on-flavour);font-weight:800}
+.pill.get:hover{filter:brightness(1.08)}
+@media (max-width:359px){.pill{padding:0 11px;font-size:14px}.mark b{font-size:19px}}
+
+/* ---------- buttons ---------- */
+.go{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 24px;border:0;border-radius:14px;background:var(--flavour);color:var(--on-flavour);font:900 20px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;text-transform:uppercase;letter-spacing:.02em;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),filter .2s}
+:lang(hi) .go{font-family:"Khand",var(--cond);font-size:22px;text-transform:none}
+.go:hover{filter:brightness(1.08)}
+.go:active{transform:scale(.97)}
+.go svg{width:22px;height:22px;flex:none}
+.go.ink{background:var(--label-ink);color:var(--label)}
+.go.ghost{background:none;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+
+/* ---------- phones: real screenshots in a drawn body ---------- */
+.phone{--w:270px;position:relative;flex:none;width:min(var(--w),62vw);aspect-ratio:9/20;padding:9px;border-radius:38px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 44px 70px -26px rgba(0,0,0,.85),0 14px 30px rgba(0,0,0,.5)}
+.phone img{width:100%;height:100%;object-fit:cover;border-radius:29px;background:#07080C}
+.phone.tilt-l{rotate:-3deg} .phone.tilt-r{rotate:3deg}
+
+/* stuck-on notes and stickers */
+.callout{position:absolute;z-index:4;display:inline-block;max-width:16ch;padding:7px 11px;border-radius:10px;background:var(--label);color:var(--label-ink);font:800 14px/1.25 var(--text);box-shadow:0 8px 18px rgba(0,0,0,.35);rotate:-3deg}
+.callout::after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:var(--label);box-shadow:0 0 0 3px var(--flavour)}
+:lang(hi) .callout{font-size:15px}
+.sticker{position:absolute;z-index:5;pointer-events:none;filter:drop-shadow(0 8px 14px rgba(0,0,0,.4))}
+.sticker text{font-family:var(--cond);font-weight:900;font-stretch:62%;font-variation-settings:"wdth" 62;text-anchor:middle;fill:var(--label-ink)}
+:lang(hi) .sticker text{font-family:"Khand",var(--cond);font-weight:700}
+.chip{display:inline-block;padding:3px 8px;border-radius:5px;background:var(--sticker);color:var(--sticker-ink);font:800 12px/1.3 var(--text);letter-spacing:.08em;text-transform:uppercase;rotate:-2deg;vertical-align:middle}
+:lang(hi) .chip{letter-spacing:0;font-size:13px;text-transform:none}
+
+/* ---------- hero ---------- */
+.front{padding:26px 0 72px;position:relative;overflow:hidden}
+.front .wrap{display:grid;gap:36px}
+.mega{font-size:clamp(3.4rem,15.5vw,6rem)}
+:lang(hi) .mega{font-size:clamp(2.9rem,12.5vw,5rem)}
+.claim{margin-top:18px;font-size:clamp(1.08rem,2.6vw,1.3rem);line-height:1.55;color:var(--ink2);max-width:40ch}
+.claim strong{color:var(--ink);font-weight:700}
+.cta{margin-top:26px;display:grid;gap:12px;justify-items:start}
+.cta-note{font:600 15px/1.45 var(--text);color:var(--ink3);max-width:38ch}
+.cta-note.android{color:var(--sticker)}
+.net{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px 14px;font:800 12px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+:lang(hi) .net{letter-spacing:0;font-size:14px;text-transform:none}
+.net span{display:inline-flex;align-items:center;gap:8px}
+.net span+span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--flavour)}
+.hero-stage{position:relative;justify-self:center;padding:10px 30px 0}
+.hero-stage .callout{left:-4px;top:31%}
+.hero-stage .callout::after{right:-16px;top:50%;margin-top:-5px}
+.hero-stage .seal{width:92px;height:92px;right:0;top:-8px;rotate:10deg}
+
+/* ---------- section scaffolding ---------- */
+.sec{padding:84px 0;border-top:1px solid var(--rule)}
+.sec-h{font-size:clamp(2.7rem,11vw,4.6rem)}
+:lang(hi) .sec-h{font-size:clamp(2.4rem,9.5vw,3.9rem)}
+.lede{margin-top:16px;font-size:clamp(1.05rem,2.3vw,1.2rem);color:var(--ink2);max-width:46ch}
+.lede+.lede{margin-top:10px}
+.small{margin-top:14px;font-size:13px;line-height:1.45;color:var(--ink3)}
+.row{display:grid;gap:44px;align-items:center}
+.stage{position:relative;display:flex;justify-content:center;align-items:flex-start;padding:8px 0}
+.stage.pair .phone{--w:236px;width:min(var(--w),47vw)}
+.stage.pair .phone+.phone{margin-left:min(-58px,-6vw);margin-top:46px}
+
+/* the scorecard: the member's last time against today, on a white label panel (signature) */
+.score{position:relative;margin-top:30px;max-width:460px;padding:14px 16px 16px;border:3px solid var(--label-ink);border-radius:6px;background:var(--label);color:var(--label-ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);rotate:-1.2deg}
+.score h3{font:900 clamp(1.7rem,7vw,2.3rem)/.95 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;text-transform:uppercase;padding-bottom:8px;border-bottom:12px solid var(--label-ink)}
+:lang(hi) .score h3{font-family:"Khand",var(--cond);text-transform:none}
+.score .ex{display:flex;justify-content:space-between;gap:10px;padding:8px 0 6px;border-bottom:5px solid var(--label-ink);font:800 13px/1.2 var(--text);letter-spacing:.1em;text-transform:uppercase}
+:lang(hi) .score .ex{letter-spacing:0;text-transform:none;font-size:14px}
+.score dl{margin:0}
+.score .ln{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--label-ink)}
+.score dt{font:700 16px/1.2 var(--text);color:var(--label-ink2)}
+.score dd{margin:0;font:900 clamp(1.9rem,8vw,2.4rem)/1 var(--cond);font-stretch:70%;font-variation-settings:"wdth" 70;font-variant-numeric:tabular-nums;white-space:nowrap}
+.score .ln.now dd{color:#C2410C}
+.score .foot{padding-top:9px;border-top:12px solid var(--label-ink);margin-top:-1px;font:600 13px/1.4 var(--text);color:var(--label-ink2)}
+.stamp{position:absolute;right:-10px;top:-32px;padding:6px 12px 4px;border:4px solid var(--good);border-radius:8px;color:#16803C;background:color-mix(in oklab,var(--label) 80%,transparent);font:900 30px/1 var(--cond);font-stretch:70%;font-variation-settings:"wdth" 70;text-transform:uppercase;letter-spacing:.04em;rotate:-9deg}
+:lang(hi) .stamp{font-family:"Khand",var(--cond);text-transform:none;letter-spacing:0;font-size:28px}
+/* the page's one authored moment: the stamp lands when the card is seen (member.js); visible without it */
+.score.armed .stamp{opacity:0;scale:1.9}
+.score.armed.in .stamp{opacity:1;scale:1;transition:opacity .18s linear .25s,scale .5s cubic-bezier(.2,1.6,.4,1) .25s}
+
+/* rest timer + watch */
+.restbar{margin-top:26px;width:min(100%,420px);border-radius:16px;box-shadow:0 0 0 1px var(--rule),0 24px 40px -18px rgba(0,0,0,.8)}
+.watches{display:flex;justify-content:center;gap:14px;margin-top:6px}
+.watch{width:min(152px,40vw);aspect-ratio:1;border-radius:50%;padding:7px;background:#1B1B20;box-shadow:0 0 0 1px #34343C,0 30px 50px -20px rgba(0,0,0,.85)}
+.watch img{width:100%;height:100%;border-radius:50%}
+.watch:nth-child(2){margin-top:34px}
+.soon{margin-top:22px;max-width:46ch;padding:14px 16px;border:1px dashed #4A4A52;border-radius:12px;color:var(--ink2);font-size:16px}
+.soon .chip{margin-right:6px}
+
+/* also in the app: the facts panel */
+.facts{margin-top:34px;padding:14px 18px 18px;border:3px solid var(--label-ink);border-radius:6px;background:var(--label);color:var(--label-ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);rotate:.6deg}
+.facts h3{font:900 clamp(1.9rem,8vw,2.6rem)/.95 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;text-transform:uppercase;padding-bottom:8px;border-bottom:12px solid var(--label-ink)}
+:lang(hi) .facts h3{font-family:"Khand",var(--cond);text-transform:none}
+.facts ul{list-style:none;margin:0;padding:0;border-top:5px solid var(--label-ink);margin-top:6px}
+.facts li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid var(--label-ink);font:600 16px/1.4 var(--text)}
+.facts li:last-child{border-bottom:12px solid var(--label-ink)}
+.facts li svg{width:20px;height:20px;margin-top:2px;color:#C2410C}
+
+/* get the app */
+.get{background:var(--tub2)}
+.get .wrap{display:grid;gap:30px}
+.steps{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:14px;counter-reset:s;max-width:44ch}
+.steps li{counter-increment:s;position:relative;min-height:36px;padding:5px 0 0 52px;font-size:17px;color:var(--ink2)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--flavour);color:var(--on-flavour);font:900 20px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75}
+.steps strong{color:var(--ink)}
+
+/* the gym block: the flavour field, the only place the gym is named */
+.gym{background:var(--flavour);color:var(--on-flavour);border-top:3px solid var(--label-ink)}
+.gym ::selection{background:var(--on-flavour);color:var(--flavour)}
+.gym .lede{color:var(--on-flavour2)}
+.gym .small{color:var(--on-flavour2)}
+.gym .phone{box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 70px -24px rgba(0,0,0,.6)}
+.perks{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px;max-width:46ch}
+.perks li{display:grid;grid-template-columns:22px 1fr;gap:10px;font:700 17px/1.4 var(--text)}
+.perks svg{width:20px;height:20px;margin-top:3px}
+.share{margin-top:34px;padding:18px;border:3px solid var(--label-ink);border-radius:6px;background:var(--label);color:var(--label-ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.45);max-width:520px}
+.share h3{font:900 clamp(1.8rem,7.4vw,2.5rem)/.95 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;text-transform:uppercase}
+:lang(hi) .share h3{font-family:"Khand",var(--cond);text-transform:none}
+.share p{margin-top:10px;font-size:16px;color:var(--label-ink2)}
+.share .go{margin-top:16px;width:100%}
+.share .alts{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share .alt{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 12px;border-radius:12px;border:2px solid var(--label-ink);background:none;color:var(--label-ink);font:800 16px/1 var(--text);text-decoration:none;cursor:pointer}
+.share .alt:hover{background:#F1F1EE}
+.share .alt svg{width:20px;height:20px;flex:none}
+.share .link{margin-top:12px;display:block;width:100%;padding:10px 12px;border-radius:10px;border:1px solid #C9C9CF;background:#F6F6F4;color:var(--label-ink2);font:600 15px/1.3 var(--text);word-break:break-all}
+.share .msg{min-height:1.4em;margin-top:8px;font:700 15px/1.4 var(--text);color:#16803C}
+
+/* foot */
+.foot-bar{padding:30px 0 40px;border-top:1px solid var(--rule);font-size:14px;color:var(--ink3)}
+.foot-bar .wrap{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.foot-bar a{color:var(--ink2)}
+.foot-bar span{margin-right:auto}
+
+/* ---------- wider screens ---------- */
+@media (min-width:980px){
+  .front{padding:48px 0 96px}
+  .front .wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;gap:56px}
+  .mega{font-size:clamp(4.4rem,7vw,6rem)}
+  .hero-stage .phone{--w:300px}
+  .sec{padding:104px 0}
+  .row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px}
+  .row.flip>.stage{order:-1}
+  .stage.pair .phone{--w:260px}
+  .get .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:64px}
+  .facts{max-width:none}
+  .facts ul{columns:2;column-gap:36px}
+  .facts li{break-inside:avoid}
+  .facts li:last-child{border-bottom:1px solid var(--label-ink)}
+  .facts ul{border-bottom:12px solid var(--label-ink)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.score.armed .stamp{opacity:1;scale:1}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tick" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5M6 12v7h12v-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8.2 19L4 20z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 9.5c.3 2.3 2.2 4.3 4.6 4.9l1-1.2 2 .9-.4 1.6c-3.6.4-7.6-3.3-7.7-7.3l1.6-.4.9 2-1.2.9" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+</svg>
+
+<header class="lid">
+  <div class="wrap">
+    <a class="mark" href="/" aria-label="MettleUp home">
+      <img src="/brand/mark.svg" width="26" height="26" alt="">
+      <b>MettleUp</b>
+    </a>
+    <button class="pill" type="button" id="lang" lang="hi">हिंदी</button>
+    <a class="pill get" href="#get" data-hi="ऐप लें">Get the app</a>
+  </div>
+</header>
+
+<main>
+
+<!-- 1. HERO -->
+<section class="front" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <h1 id="h1" class="cond mega" data-hi="अपना &lt;span class=&quot;hot&quot;&gt;पिछला वर्कआउट&lt;/span&gt; बीट करें।">Beat your <span class="hot">last workout.</span></h1>
+      <p class="claim" data-hi="MettleUp आपके Android फ़ोन के लिए एक फ़्री वर्कआउट लॉग है। हर सेट पर पिछली बार का वज़न और रेप्स दिखते हैं, ताकि आपको पता हो कि आज कितना उठाना है।">MettleUp is a free workout log for your Android phone. <strong>Every set shows your weight and reps from last time</strong>, so you know what to lift today.</p>
+      <div class="cta">
+        <a class="go" href="https://app.mettleup.fit/app" data-dl><svg aria-hidden="true"><use href="#i-down"/></svg><span data-hi="फ़्री में ऐप लें">Get the app, free</span></a>
+        <p class="cta-note" data-hi="Android फ़ोन के लिए। आज यहीं से डाउनलोड करें; Google Play पर जल्द आ रहा है।">For Android phones. Download it here today; Google Play is coming soon.</p>
+        <p class="cta-note android" hidden data-hi="MettleUp अभी सिर्फ़ Android फ़ोन पर है। यह पेज किसी Android फ़ोन पर खोलें।">MettleUp is for Android phones for now. Open this page on an Android phone.</p>
+      </div>
+      <p class="net"><span data-hi="फ़्री">Free</span><span data-hi="बिना इंटरनेट भी चलता है">Works without internet</span><span data-hi="आपकी अपनी Google Drive में बैकअप">Backup to your own Google Drive</span></p>
+    </div>
+    <div class="hero-stage">
+      <span class="callout" data-hi="पिछला वज़न और रेप्स">Previous weight and reps</span>
+      <svg class="sticker seal" viewBox="0 0 100 100" role="img" aria-label="Free" data-hi-label="फ़्री"><path d="M50.0 2.0 L55.6 7.4 L62.4 3.6 L66.5 10.3 L74.0 8.4 L76.2 15.9 L83.9 16.1 L84.1 23.8 L91.6 26.0 L89.7 33.5 L96.4 37.6 L92.6 44.4 L98.0 50.0 L92.6 55.6 L96.4 62.4 L89.7 66.5 L91.6 74.0 L84.1 76.2 L83.9 83.9 L76.2 84.1 L74.0 91.6 L66.5 89.7 L62.4 96.4 L55.6 92.6 L50.0 98.0 L44.4 92.6 L37.6 96.4 L33.5 89.7 L26.0 91.6 L23.8 84.1 L16.1 83.9 L15.9 76.2 L8.4 74.0 L10.3 66.5 L3.6 62.4 L7.4 55.6 L2.0 50.0 L7.4 44.4 L3.6 37.6 L10.3 33.5 L8.4 26.0 L15.9 23.8 L16.1 16.1 L23.8 15.9 L26.0 8.4 L33.5 10.3 L37.6 3.6 L44.4 7.4Z" fill="var(--sticker)"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--label-ink)" stroke-width="1.6" stroke-dasharray="3 3"/><text x="50" y="53" font-size="30">₹0</text><text x="50" y="67" font-size="11" data-hi="फ़्री ऐप">FREE APP</text></svg>
+      <div class="phone tilt-r"><img src="/member-site/shot-last-time.webp" width="540" height="1200" alt="The MettleUp workout screen: Barbell Bench Press, each set showing last time's weight and reps, with a rest timer at the bottom." data-hi-alt="MettleUp का वर्कआउट स्क्रीन: Barbell Bench Press, हर सेट पर पिछली बार का वज़न और रेप्स, नीचे रेस्ट टाइमर।" fetchpriority="high"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. PREVIOUS and NEXT -->
+<section class="sec" aria-labelledby="beat-h">
+  <div class="wrap row">
+    <div>
+      <h2 id="beat-h" class="cond sec-h" data-hi="पता रहे क्या &lt;span class=&quot;hot&quot;&gt;बीट&lt;/span&gt; करना है।">Know what to <span class="hot">beat.</span></h2>
+      <p class="lede" data-hi="हर सेट पर पिछली बार का वज़न और रेप्स दिखते हैं। थोड़ा ज़्यादा उठाइए, और “kg to beat” हरा हो जाता है।">Each set shows your weight and reps from last time. Lift a little more and the “kg to beat” turns green.</p>
+      <p class="lede" data-hi="नोटबुक या याद रखने की ज़रूरत नहीं।">No notebook. Nothing to remember.</p>
+    </div>
+    <div>
+      <div class="score" id="score">
+        <h3 data-hi="पिछला और अगला">Previous and next</h3>
+        <div class="ex"><span>Barbell Bench Press</span><span data-hi="सेट 1">Set 1</span></div>
+        <dl>
+          <div class="ln"><dt data-hi="पिछला">Previous</dt><dd>80 kg × 8</dd></div>
+          <div class="ln now"><dt data-hi="अगला">Next</dt><dd>82.5 kg × 8</dd></div>
+        </dl>
+        <span class="stamp" aria-hidden="true" data-hi="बीट किया">Beaten</span>
+        <p class="foot" data-hi="ऊपर वाले स्क्रीन से उदाहरण।">Example from the workout screen above.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. RECORDS -->
+<section class="sec" aria-labelledby="rec-h">
+  <div class="wrap row flip">
+    <div>
+      <h2 id="rec-h" class="cond sec-h" data-hi="हर नया &lt;span class=&quot;hot&quot;&gt;रिकॉर्ड&lt;/span&gt; पकड़िए।">Catch every new <span class="hot">record.</span></h2>
+      <p class="lede" data-hi="अब तक का सबसे भारी वज़न या सबसे ज़्यादा रेप्स उठाइए, और उसी पल एक पॉप-अप बताता है कि कौन सा रिकॉर्ड टूटा।">Lift your heaviest weight or most reps ever, and a pop-up names the record the moment it happens.</p>
+      <p class="lede" data-hi="वर्कआउट खत्म होने पर, आज उठाए गए कुल kg पिछली बार के साथ दिखते हैं।">When you finish a workout, see the total kg you lifted next to last time.</p>
+    </div>
+    <div class="stage pair">
+      <div class="phone tilt-l"><img src="/member-site/shot-record.webp" width="540" height="1200" loading="lazy" alt="The new-record pop-up during a workout: heaviest weight 82.5 kg, rep record and most lifted in one set." data-hi-alt="वर्कआउट के दौरान नए रिकॉर्ड का पॉप-अप: सबसे भारी वज़न 82.5 kg।"></div>
+      <div class="phone tilt-r"><img src="/member-site/shot-complete.webp" width="540" height="1200" loading="lazy" alt="Workout complete: 5,568 kg lifted today, 876 kg more than last time." data-hi-alt="वर्कआउट पूरा: आज 5,568 kg उठाए, पिछली बार से 876 kg ज़्यादा।"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. REST TIMER + WATCH -->
+<section class="sec" aria-labelledby="rest-h">
+  <div class="wrap row">
+    <div>
+      <h2 id="rest-h" class="cond sec-h" data-hi="रेस्ट टाइमर जो &lt;span class=&quot;hot&quot;&gt;टाइम पर&lt;/span&gt; बजे।">A rest timer that rings <span class="hot">on time.</span></h2>
+      <p class="lede" data-hi="सेट पर टिक लगाइए और रेस्ट अपने आप शुरू हो जाता है। रेस्ट खत्म होने पर यह बजता है, फ़ोन लॉक होने पर भी।">Tick a set and your rest starts by itself. It rings when rest is over, even with your phone locked.</p>
+      <p class="lede" data-hi="आवाज़ चुनिए: chime, bell, double beep या whistle।">Choose the sound: chime, bell, double beep or whistle.</p>
+      <img class="restbar" src="/member-site/rest-bar.webp" width="600" height="120" loading="lazy" alt="The rest timer bar during a workout: Rest 1:07, with −15, +15 and Skip buttons." data-hi-alt="वर्कआउट के दौरान रेस्ट टाइमर: Rest 1:07, −15, +15 और Skip बटन।">
+    </div>
+    <div>
+      <div class="watches">
+        <div class="watch"><img src="/member-site/watch-rest.webp" width="304" height="304" loading="lazy" alt="The watch app counting down rest: 1:23, next set Bench Press, 62.5 kg × 8." data-hi-alt="वॉच ऐप पर रेस्ट का काउंटडाउन: 1:23, अगला सेट 62.5 kg × 8।"></div>
+        <div class="watch"><img src="/member-site/watch-next-set.webp" width="304" height="304" loading="lazy" alt="The watch app between sets: Bench Press, set 2 of 4, heart rate 132." data-hi-alt="सेट के बीच वॉच ऐप: Bench Press, सेट 2 of 4, हार्ट रेट 132।"></div>
+      </div>
+      <p class="soon"><span class="chip" data-hi="जल्द आ रहा है">Coming soon</span> <span data-hi="वॉच ऐप: आपकी Wear OS वॉच पर रेस्ट का काउंटडाउन, अगला सेट और हार्ट रेट।">The watch app: your rest countdown, next set and heart rate on your Wear OS watch.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. CHARTS -->
+<section class="sec" aria-labelledby="chart-h">
+  <div class="wrap row flip">
+    <div>
+      <h2 id="chart-h" class="cond sec-h" data-hi="अपनी &lt;span class=&quot;hot&quot;&gt;स्ट्रेंथ&lt;/span&gt; बढ़ती देखिए।">See your <span class="hot">strength</span> grow.</h2>
+      <p class="lede" data-hi="हर एक्सरसाइज़ का अपना ग्राफ़ है, आपके सबसे भारी वज़न का: 3 महीने, 12 महीने या शुरू से अब तक।">Every exercise has a graph of your heaviest weight: 3 months, 12 months or all time.</p>
+      <p class="lede" data-hi="बॉडी की एक तस्वीर दिखाती है कि पिछले 7 दिनों में आपने कौन सी मसल्स ट्रेन कीं।">A body picture shows which muscles you trained in the last 7 days.</p>
+    </div>
+    <div class="stage pair">
+      <div class="phone tilt-l"><img src="/member-site/shot-chart.webp" width="540" height="1200" loading="lazy" alt="Barbell Bench Press history: a graph of the heaviest weight rising to 82.5 kg over 3 months." data-hi-alt="Barbell Bench Press का ग्राफ़: 3 महीनों में सबसे भारी वज़न 82.5 kg तक।"></div>
+      <div class="phone tilt-r"><img src="/member-site/shot-body-map.webp" width="540" height="1200" loading="lazy" alt="Charts: a front and back body picture with the muscles trained in the last 7 days in orange." data-hi-alt="Charts: आगे और पीछे से बॉडी की तस्वीर, पिछले 7 दिनों में ट्रेन की गई मसल्स ऑरेंज में।"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. PLANS + EVERYTHING ELSE -->
+<section class="sec" aria-labelledby="plan-h">
+  <div class="wrap row">
+    <div>
+      <h2 id="plan-h" class="cond sec-h" data-hi="प्लान चुनिए, या &lt;span class=&quot;hot&quot;&gt;खुद बनाइए।&lt;/span&gt;">Pick a plan, or <span class="hot">make your own.</span></h2>
+      <p class="lede" data-hi="रेडीमेड प्लान चुनिए, या ऐप आपके गोल, ट्रेनिंग के दिन, इक्विपमेंट और दर्द वाले जोड़ों के हिसाब से प्लान बना देगा। या अपने रूटीन खुद बनाइए।">Choose a ready-made plan, or let the app build one from your goal, training days, equipment and sore joints. Or make your own routines.</p>
+    </div>
+    <div class="stage">
+      <div class="phone tilt-r"><img src="/member-site/shot-plans.webp" width="540" height="1200" loading="lazy" alt="Find a plan: build a plan, or pick one such as Full Body Basics, Push Pull Legs or Upper / Lower." data-hi-alt="Find a plan: प्लान बनाइए, या Full Body Basics, Push Pull Legs, Upper / Lower जैसा कोई चुनिए।"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="facts">
+      <h3 data-hi="ऐप में और भी">Also in the app</h3>
+      <ul>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="Hevy या Strong से आ रहे हैं? पुराने वर्कआउट इम्पोर्ट कीजिए और अपनी हिस्ट्री रखिए।">Moving from Hevy or Strong? Import your old workouts and keep your history.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="402 एक्सरसाइज़, कई में शुरू और आखिरी पोज़िशन की तस्वीरें, ताकि आप अपना फ़ॉर्म चेक कर सकें।">402 exercises, many with pictures of the start and end position, so you can check your form.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="वॉर्म-अप सेट, ड्रॉप सेट और सुपरसेट।">Warm-up sets, drop sets and supersets.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="हर एक्सरसाइज़ पेज पर 1-rep max और % कैलकुलेटर।">A 1-rep max and % calculator on every exercise page.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="प्रोग्रेस फ़ोटो जो सिर्फ़ आपके फ़ोन में रहती हैं, प्राइवेट।">Progress photos that stay on your phone, so they stay private.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="रेस्ट के दौरान एक बड़ी “In use” स्क्रीन, ताकि दूसरों को पता चले कि मशीन खाली नहीं है।">A big “In use” screen while you rest, so others know the machine is taken.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="अपनी Google Drive में बैकअप लीजिए और नए फ़ोन पर सब वापस पाइए।">Back up to your own Google Drive and get it all back on a new phone.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7. GET THE APP -->
+<section class="sec get" id="get" aria-labelledby="get-h">
+  <div class="wrap">
+    <div>
+      <h2 id="get-h" class="cond sec-h" data-hi="ऐप लीजिए, &lt;span class=&quot;hot&quot;&gt;फ़्री।&lt;/span&gt;">Get the app, <span class="hot">free.</span></h2>
+      <ol class="steps">
+        <li data-hi="&lt;strong&gt;“ऐप डाउनलोड करें”&lt;/strong&gt; दबाइए।">Tap <strong>“Download the app”</strong>.</li>
+        <li data-hi="डाउनलोड हुई फ़ाइल खोलिए और &lt;strong&gt;Install&lt;/strong&gt; दबाइए। फ़ोन पूछे तो Chrome से install allow कीजिए।">Open the downloaded file and tap <strong>Install</strong>. If your phone asks, allow installs from Chrome.</li>
+        <li data-hi="MettleUp खोलिए, अपना नाम लिखिए और पहला वर्कआउट शुरू कीजिए।">Open MettleUp, type your name and start your first workout.</li>
+      </ol>
+    </div>
+    <div class="cta">
+      <a class="go" href="https://app.mettleup.fit/app" data-dl><svg aria-hidden="true"><use href="#i-down"/></svg><span data-hi="ऐप डाउनलोड करें">Download the app</span></a>
+      <p class="cta-note" data-hi="Android फ़ोन के लिए। Google Play पर जल्द आ रहा है।">For Android phones. Google Play is coming soon.</p>
+      <p class="cta-note android" hidden data-hi="MettleUp अभी सिर्फ़ Android फ़ोन पर है। यह पेज किसी Android फ़ोन पर खोलें।">MettleUp is for Android phones for now. Open this page on an Android phone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. YOUR GYM (the only gym block, owner R-242: members bring us their gym) -->
+<section class="sec gym" aria-labelledby="gym-h">
+  <div class="wrap row">
+    <div>
+      <h2 id="gym-h" class="cond sec-h" data-hi="आपके जिम में MettleUp है?">Does your gym use MettleUp?</h2>
+      <p class="lede" data-hi="तो यही ऐप आपको ये भी दिखाता है:">Then the same app also gives you:</p>
+      <ul class="perks">
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="आपके ट्रेनर के वर्कआउट प्लान, सीधे ऐप में।">Your trainer's workout plans, right in the app.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="आपकी मेंबरशिप: प्लान, आखिरी तारीख और कितने दिन बचे।">Your membership: your plan, its end date and days left.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-tick"/></svg><span data-hi="डेस्क पर पोस्टर स्कैन करके चेक इन।">Check in by scanning the poster at the desk.</span></li>
+      </ul>
+      <p class="small" data-hi="जिम नहीं है, या आपका जिम MettleUp पर नहीं है? बाकी सब फिर भी चलता है।">No gym, or your gym doesn't use MettleUp? Everything else still works.</p>
+
+      <div class="share">
+        <h3 data-hi="अपने जिम को MettleUp बताइए।">Recommend MettleUp to your gym.</h3>
+        <p data-hi="यह लिंक अपने जिम के ओनर को भेजिए। यह जिम ओनर्स के लिए हमारा पेज खोलता है।">Send this link to your gym owner. It opens our page for gym owners.</p>
+        <button class="go ink" type="button" id="share"><svg aria-hidden="true"><use href="#i-share"/></svg><span data-hi="मेरे जिम को भेजें">Send to my gym</span></button>
+        <div class="alts">
+          <a class="alt" id="wa" href="https://wa.me/?text=Our%20gym%20could%20use%20MettleUp%3A%20gym%20software%20that%20comes%20with%20a%20free%20workout%20app%20for%20every%20member.%20Have%20a%20look%3A%20https%3A%2F%2Fgyms.mettleup.fit%2F%3Ffrom%3Dmember" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-chat"/></svg>WhatsApp</a>
+          <button class="alt" type="button" id="copy"><svg aria-hidden="true"><use href="#i-copy"/></svg><span data-hi="लिंक कॉपी करें">Copy link</span></button>
+        </div>
+        <span class="link" id="link">https://gyms.mettleup.fit/?from=member</span>
+        <p class="msg" id="share-msg" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="phone tilt-l"><img src="/member-site/shot-gym.webp" width="540" height="1200" loading="lazy" alt="The Gym tab: join your gym by scanning the poster or typing its code, and what you get with your gym in the app." data-hi-alt="Gym टैब: पोस्टर स्कैन करके या कोड टाइप करके अपने जिम से जुड़िए।"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot-bar">
+  <div class="wrap">
+    <span data-hi="जयपुर, इंडिया में बना">Made in Jaipur, India</span>
+    <a href="/privacy" data-hi="प्राइवेसी">Privacy</a>
+    <a href="/terms" data-hi="शर्तें">Terms</a>
+  </div>
+</footer>
+<script src="/member-site/member.js" defer></script>
+</body>
+</html>

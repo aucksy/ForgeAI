@@ -70,9 +70,18 @@ export async function deleteRequestsInFeedback(db) {
   });
 }
 
+// F184 (R-242): `source` 'member-referral' = the gym came through a member's shared link. Until migration
+// 0007 is applied the column is missing: the list is then read without it (every lead source '').
 export async function listLeads(db, { limit = 300 } = {}) {
   const lim = Math.min(Math.max(Number(limit) || 300, 1), 1000);
-  return (await db.prepare('SELECT id, at, phone, gym, city, size, today, lang, status, note FROM leads ORDER BY at DESC LIMIT ?').bind(lim).all()).results ?? [];
+  const cols = 'id, at, phone, gym, city, size, today, lang, status, note';
+  try {
+    return (await db.prepare(`SELECT ${cols}, source FROM leads ORDER BY at DESC LIMIT ?`).bind(lim).all()).results ?? [];
+  } catch (e) {
+    if (!/no (such )?column|has no column/i.test(String(e && e.message))) throw e;
+    const rows = (await db.prepare(`SELECT ${cols} FROM leads ORDER BY at DESC LIMIT ?`).bind(lim).all()).results ?? [];
+    return rows.map((r) => ({ ...r, source: '' }));
+  }
 }
 
 export async function getLead(db, id) {

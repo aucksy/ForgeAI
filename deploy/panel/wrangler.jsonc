@@ -1,8 +1,9 @@
 // MettleUp's web side on Cloudflare (R-105, 24 Oct 2026): one Worker with the admin app's static
 // files (apps/dashboard/dist) answers every address. Build first (apps/dashboard: npm run build),
 // then from this folder: npx wrangler deploy
-//   https://mettleup.fit            the landing page (www.mettleup.fit, mettleup.in, www.mettleup.in
-//                                   send people there, same path)
+//   https://mettleup.fit            the member page (www.mettleup.fit, mettleup.in, www.mettleup.in
+//                                   send people there, same path); /gyms goes to gyms.mettleup.fit
+//   https://gyms.mettleup.fit       the gym-owner landing page and its demo form (F184)
 //   https://app.mettleup.fit        the admin app, /sb, /j, /c, /api, /start, legal pages
 //   https://forgeai.aakashpahuja.in the old address, kept for good (old phones, printed posters)
 // Which host shows what: hosts.js. worker.js runs first for every path except the hashed /assets/
@@ -24,6 +25,8 @@
     { "pattern": "forgeai.aakashpahuja.in", "custom_domain": true },
     { "pattern": "app.mettleup.fit", "custom_domain": true },
     { "pattern": "mettleup.fit", "custom_domain": true },
+    // F184 (R-242): the gym-owner landing page. Takes effect on the next deploy (the owner's yes).
+    { "pattern": "gyms.mettleup.fit", "custom_domain": true },
     { "pattern": "www.mettleup.fit", "custom_domain": true },
     { "pattern": "mettleup.in", "custom_domain": true },
     { "pattern": "www.mettleup.in", "custom_domain": true }

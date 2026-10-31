@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-261. What happened to the member website on mettleup.fit? — 31 Oct 2026
+He said: "What happened to the user-facing website we were creating on the main URL today? And moving the one for the gyms on the other URL?"
+Did: told him F184 was Planned and never started; built it now (helper agent, then my review). Member page at apps/dashboard/public/member-site/ (mettleup.fit "/"), gym page moves to gyms.mettleup.fit, mettleup.fit/gyms and /home 301 there; lead source "member-referral" (?from=member, migration 0007). Review fix: the score card said "Last time / Today": changed to "Previous / Next" (hard rule). Tests: panel 90/90, HQ 56/56, trial 12/12, tsc 0. NOT deployed: wrangler deploy, migration 0007 and the gyms.mettleup.fit address wait for his yes. Preview sent as an Artifact.
+
 ## R-260. Ask members on an old version to update — 31 Oct 2026
 
 He said: "If someone is running an old version and we have a new one released, we have to give them a

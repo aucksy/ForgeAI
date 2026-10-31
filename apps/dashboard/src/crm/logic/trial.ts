@@ -27,7 +27,7 @@ export interface TrialBannerWords {
 }
 
 /** The landing page's price list (opens in a new tab). */
-export const PLANS_URL = 'https://mettleup.fit/#pricing';
+export const PLANS_URL = 'https://gyms.mettleup.fit/#pricing';
 export const SEE_PLANS = 'See prices';
 /** From this many days left, the banner gets stronger and offers the plans. */
 export const STRONG_FROM_DAYS = 14;
