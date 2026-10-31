@@ -35,6 +35,14 @@ appId: com.mettleup.app
 - assertNotVisible: '.*You also leave .*'
 - takeScreenshot: ue-01-erase-solo-question
 - tapOn: "^Erase everything$"
+# R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
+# erase. Skip them; an older build without them goes straight on.
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
+    optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000
@@ -50,6 +58,14 @@ appId: com.mettleup.app
 - launchApp
 - tapOn:
     text: "Wait"
+    optional: true
+# R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
+# erase. Skip them; an older build without them goes straight on.
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
     optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
@@ -150,6 +166,14 @@ appId: com.mettleup.app
 - assertVisible: '.*You also leave ForgeAI Test Gym\. With no internet, the gym is told the next time the app is online\.'
 - takeScreenshot: ue-06-erase-gym-question
 - tapOn: "^Erase everything$"
+# R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
+# erase. Skip them; an older build without them goes straight on.
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
+    optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000

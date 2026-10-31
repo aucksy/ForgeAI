@@ -56,6 +56,15 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-248: member-words, Gemini Flash pass (took "at the top of the screen"); facts checked. The intro
+    // screens are for new members only, so no line.
+    version: '0.64.0',
+    date: '31 Oct',
+    lines: [
+      { text: 'Have a Wear OS watch? Start a workout and tap "Install on watch" at the top to see rest, next set and heart rate there.' },
+    ],
+  },
+  {
     // R-234 / R-236: member-words, Gemini 3.6 Flash pass (line 6 took its "Progress
     // photos screen"); its invented "check your form" dropped. Facts checked.
     version: '0.63.0',

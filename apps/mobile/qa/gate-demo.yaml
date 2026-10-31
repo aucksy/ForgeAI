@@ -10,6 +10,14 @@ appId: com.mettleup.app
 - tapOn:
     text: "Wait"
     optional: true
+# R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
+# erase. Skip them; an older build without them goes straight on.
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
+    optional: true
 - extendedWaitUntil:
     visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000

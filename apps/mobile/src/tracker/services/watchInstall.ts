@@ -90,6 +90,9 @@ export const WATCH_WORDS = {
   noWatch: 'Your watch is not connected. Open Play Store on your watch and search MettleUp.', // member-words
   fallback: 'Open Play Store on your watch and search MettleUp.', // member-words
   opening: 'Opening on your watch…', // member-words
+  // R-248: the card at the first workout start (member-words + Gemini, 31 Oct 2026)
+  startTitle: 'Install MettleUp on your watch', // member-words
+  startBody: 'See your rest timer, next set and heart rate on your wrist while you train.', // member-words
 } as const;
 
 /** The Settings row's grey line; null = leave the row out (no watch, or Wear OS cannot say). PURE. */
@@ -169,4 +172,59 @@ export async function readWatchCardMark(): Promise<string | null> {
 /** "Not now", the Play Store opened, or the app is on the watch: the card never shows again. */
 export async function markWatchCardDone(): Promise<void> {
   await enqueueWrite(() => setMeta(CARD_KEY, CARD_DONE));
+}
+
+// ------------------------------------------------------------------ R-248: at the first workout start
+/**
+ * R-248 (owner 31 Oct 2026: "we give them a notification when they start the workout for the first
+ * time"): the first time a member STARTS a workout with a watch that lacks the app, a slim card at
+ * the top of the workout screen offers the watch app. In the app, not a phone notification: the
+ * workout and rest notifications are already in the shade, and the notification permission may be
+ * off (FotMob's in-app prompt doubled its watch installs). Shown once (`START_KEY`); the
+ * after-workout card above stays as the one second chance, unless the watch's Play Store opened.
+ */
+export const START_KEY = 'watch_install_start';
+
+export interface StartCardInput {
+  /** What Wear OS says now. */
+  state: WatchState;
+  /** A live workout that has just begun (watchOpen.ts START_WINDOW_MS): not a resume, an edit or a past log. */
+  freshStart: boolean;
+  /** The welcome demo's sample workouts are loaded. */
+  demo: boolean;
+  /** The stored `START_KEY` mark; undefined = not read yet. */
+  startStored: string | null | undefined;
+  /** The stored `CARD_KEY` mark; 'done' = the watch app was already offered to the end. */
+  cardStored: string | null | undefined;
+}
+
+/** The workout screen's card: a fresh start, a watch that lacks the app, never shown before. Unknown counts as no. PURE. */
+export function watchStartCardShows(o: StartCardInput): boolean {
+  if (o.startStored === undefined || o.startStored === CARD_DONE) return false;
+  if (o.cardStored === undefined || o.cardStored === CARD_DONE) return false;
+  if (!o.freshStart || o.demo) return false;
+  return o.state === 'missing';
+}
+
+/** The stored start-card mark, or null. Never throws (a failed read hides the card this time). */
+export async function readStartCardMark(): Promise<string | null> {
+  try {
+    return await getMeta(START_KEY);
+  } catch (e) {
+    console.warn('[watch install] could not read the start card mark', e);
+    return CARD_DONE;
+  }
+}
+
+/**
+ * R-248 review: the watch state, or 'unknown' after [ms]. The start card and the intro screens wait
+ * only this long, so nothing pops in or changes after the member has started (the full wait is 10 s).
+ */
+export function readWatchStateQuick(ms: number): Promise<WatchState> {
+  return within(readWatchState(), ms, 'unknown', 'quick watch lookup');
+}
+
+/** The start card was shown: it never shows again. */
+export async function markStartCardDone(): Promise<void> {
+  await enqueueWrite(() => setMeta(START_KEY, CARD_DONE));
 }

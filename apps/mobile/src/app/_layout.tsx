@@ -22,6 +22,7 @@ import { phoneAfterLookChange } from '@/tracker/phone/phoneSync';
 import { photoBackupAtStart } from '@/tracker/services/photoBackup';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { BootErrorScreen } from '@/onboarding/components/BootErrorScreen';
+import { IntroGate } from '@/onboarding/components/IntroSlides';
 import { WelcomeScreen } from '@/onboarding/components/WelcomeScreen';
 import { useOnboarding, type BootStatus } from '@/onboarding/store/onboardingStore';
 import { refreshGymIfDue, refreshGymNow } from '@/shop/gymActions';
@@ -216,7 +217,13 @@ function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
     return (
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
         <StatusBar style="light" />
-        <KeyboardRoom>{status === 'welcome' ? <WelcomeScreen /> : <BootErrorScreen />}</KeyboardRoom>
+        <KeyboardRoom>{status === 'welcome' ? (
+            <IntroGate>
+              <WelcomeScreen />
+            </IntroGate>
+          ) : (
+            <BootErrorScreen />
+          )}</KeyboardRoom>
       </GestureHandlerRootView>
     );
   }
