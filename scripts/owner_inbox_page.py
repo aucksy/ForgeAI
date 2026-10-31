@@ -1870,6 +1870,35 @@ window.addEventListener("hashchange", fromHash);
 """
 
 
+def mark_shipped(text):
+    """R-233 (owner, 31 Oct 2026: "they are now released ... I shouldn't have to tell you this every time").
+    A backlog row still at "Next release" whose F-id is named in a commit that a release tag already holds
+    is flipped to "Live", with the first release that had it. Runs on every build, so it never goes stale."""
+    import subprocess
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    def git(*a):
+        try:
+            return subprocess.run(["git", "-C", root, *a], capture_output=True, text=True, timeout=30).stdout
+        except Exception as e:  # quiet: no git here = nothing flipped, said once
+            print("mark_shipped: git not usable (" + str(e) + "); rows left as they are")
+            return ""
+    flipped = []
+    def one(m):
+        fid = m.group(2)
+        commits = git("log", "--format=%H", "-E", r"--grep=\b" + fid + r"\b").split()
+        if not commits:
+            return m.group(0)
+        tags = git("tag", "--contains", commits[-1], "--sort=creatordate", "--list", "v*").split()
+        if not tags:
+            return m.group(0)
+        flipped.append(fid + " -> " + tags[0])
+        return m.group(1) + "Live" + m.group(3) + "Released in " + tags[0] + ". "
+    text = re.sub(r"^(\| (F\d+) [^|\n]*\| )Next release( \| )", one, text, flags=re.M)
+    for f in flipped:
+        print("R-233: shipped, now Live: " + f)
+    return text, len(flipped)
+
+
 def main(argv):
     # Group names hold marks like "↔" that Windows' default console code page cannot print.
     if hasattr(sys.stdout, "reconfigure"):
@@ -1900,10 +1929,18 @@ def main(argv):
     with open(md_path, encoding="utf-8") as f:
         text, added = ensure_fids(f.read())
     text, tadded = ensure_tids(text)
-    if added or tadded:
+    text, shipped = mark_shipped(text)
+    if added or tadded or shipped:
         with open(md_path, "w", encoding="utf-8") as f:
             f.write(text)
         print("R-214/R-216: IDs given to %d new backlog rows and %d new tasks (commit docs/OWNER-INBOX.md)" % (added, tadded))
+    try:  # R-233: keep Claude's notes small on every build
+        import trim_notes
+        moved = trim_notes.trim()
+        if moved:
+            print("R-233: moved %d old note entries to docs/CLAUDE-NOTES-ARCHIVE.md (commit both)" % moved)
+    except Exception as e:  # quiet: a notes trim must never stop the tracker build
+        print("trim_notes failed: %s" % e)
     page = build(md_path)
     with open(argv[1], "w", encoding="utf-8") as f:
         f.write(page)
