@@ -1,3 +1,5 @@
+-- APPLIED LIVE (found live on 31 Oct 2026; owner confirmed: "I did say Yes"). Live code not yet
+-- compared with this file (a read of the live server was blocked). The NOT APPLIED line below is history.
 -- 0045: the gym asks for a member's workout report, the member says yes or no in the app (F121, 30 Oct
 -- 2026). NOT APPLIED LIVE: the owner must say yes before this goes to the gym server. Additive and
 -- re-runnable: two new tables, new functions, triggers on the new tables only; nothing existing changes.

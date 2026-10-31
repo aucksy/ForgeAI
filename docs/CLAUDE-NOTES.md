@@ -5,6 +5,10 @@ about how to work, is written here first (chat can be compacted), with what was 
 the owner's inbox page; the inbox holds only questions and answers, his decisions, and the feature
 backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md with their old numbers.
 
+## R-232. "I did say Yes" to 0043 and 0045; compaction 25% -> 35% globally - 31 Oct 2026
+He said: he did approve 0043 and 0045 (both found live), and "should we increase it to 35% globally".
+Did: 0043/0045 marked APPLIED LIVE (live-vs-file compare not done: the permission check blocked a second live read). CLAUDE_AUTOCOMPACT_PCT_OVERRIDE 25 -> 35 in ~/.claude/settings.json and the Windows user variable; context_meter.py now warns at 30/32/34%; brain note stop-at-90-percent-context updated, index rebuilt. Takes effect in a new session or after an app restart.
+
 ## R-231. "Make the database change for 0044" - 31 Oct 2026
 He said: exactly that (his live-database yes for 0044 only; 0043, 0045 and 0046 still wait).
 Doing: apply supabase/migrations/0044_plan_requests.sql live (members ask the desk to pause or renew their plan from the app: one new table + 6 new functions, additive, re-runnable; it uses but does not change _gym_not_suspended). Run its live test, then mark the file APPLIED LIVE on main.

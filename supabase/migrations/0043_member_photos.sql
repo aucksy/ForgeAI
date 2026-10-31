@@ -1,3 +1,5 @@
+-- APPLIED LIVE (found live on 31 Oct 2026; owner confirmed: "I did say Yes"). Live code not yet
+-- compared with this file (a read of the live server was blocked). The NOT APPLIED line below is history.
 -- 0043: a member's photo, taken at the desk (F107, 29 Oct 2026). NOT APPLIED LIVE: the owner must say
 -- yes before this goes to the gym server. Additive and re-runnable: one new table, new functions;
 -- nothing existing is changed.
