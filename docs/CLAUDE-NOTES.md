@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-248. Member app: offer the watch app when a watch is connected; 2-3 welcome screens — 31 Oct 2026
+
+He said: "I wanted to build a functionality wherein if someone does not have a watch app installed, like first of all, we are able to detect that there is a watch connected, which is compatible. And if they do not have the watch app installed, we give them a notification when they start the workout for the first time that they can actually install a watch to track their rest timers and whatnot, and a link to directly open that and install it, right? And I think we also need to plan the onboarding screens, the launch screens, with some hook lines, how this is going to help their workout and all that. And that also can have the watch installation screen. Not too many, just maximum 2 or 3, and that's it."
+
+Did: (in progress)
+
 ## R-247. Admin app: Settings is disorganized; group it into tabs like the other pages — 31 Oct 2026
 
 He said: "please see if you can better reorganize the settings section of the admin panel, because for most of the sections you have these tabs, but the settings sections is like kind of disorganized and it's too much to understand and interpret. So if you can put similar themed tabs under the section settings section as well and make it easier to kind of go through and interpret and act."
@@ -15,7 +21,7 @@ Also (R-246 follow-up): "In Hindi, the hero line should be member jab apni tarak
 
 Then, on Settings: "Just keep the user experience consistent across all the settings, right? So when the admin user is building the habit, then it's kind of not changing across."
 
-Did (Settings): three tabs, the same tab bar as Money and Attendance, always in the same order: Gym (details, branches, opening times), Member app (gym code, your look, challenges), Sign-in & data (going online, install, your records, danger zone, MettleUp access). A gym not online yet sees a short note on the Gym tab with a button to Sign-in & data. The front desk keeps its one short page (like Money, a single tab shows no tab bar). Panel Worker 963fb138. Hinglish: (in progress)
+Did (Settings): three tabs, the same tab bar as Money and Attendance, always in the same order: Gym (details, branches, opening times), Member app (gym code, your look, challenges), Sign-in & data (going online, install, your records, danger zone, MettleUp access). A gym not online yet sees a short note on the Gym tab with a button to Sign-in & data. The front desk keeps its one short page (like Money, a single tab shows no tab bar). Panel Worker 963fb138. Hinglish: the whole Hindi website is now everyday Hinglish (Gemini drafted 326 lines, I checked each against the English). His exact hero line, progress instead of tarakki everywhere, free instead of muft, the header button kept short. Phone header checked in Hindi at 360 and 320 px: no overlap. Panel Worker 61772aca.
 
 ## R-246. Website: the phone header overlaps ("for Gyms" runs into the English button) — 31 Oct 2026
 

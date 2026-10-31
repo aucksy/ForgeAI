@@ -41,3 +41,4 @@ Admin deploy e0bec170 + HQ 8690e62d (31 Oct): HQ messages in the bell (R-243); D
 Admin deploy fb61fc46 + HQ 4557c85e (31 Oct): D1 0006 applied live (his yes), live row test passed; HQ Google sign-in fixed (max_age over 1 day was blocked); website name line back to the old design, only the sentence highlighted (R-244). tsc 0, vitest 1458, playwright 109 of 109, HQ node 55, CSP checked live.
 
 - 31 Oct 2026: panel 963fb138: R-245 bell (What is new moved off Today into the bell, HQ first-look count), R-246 phone header, R-247 Settings tabs. tsc, vitest 1458, e2e 109 passed.
+- 31 Oct 2026: panel 61772aca: mettleup.fit Hindi is now Hinglish (R-247), his hero line. tsc, vitest, e2e 109 passed; header checked at 360/320 px.

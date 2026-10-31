@@ -327,7 +327,7 @@
   // (deploy/panel/leads.js takes a lead without one), and every message is scrolled into view.
   var WORDS = {
     en: { phone: 'Type a 10-digit mobile number.', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', many: 'You have sent too many demo requests today. Please try again tomorrow.', fail: 'Could not send. Check your internet and try again.' },
-    hi: { phone: '10 अंकों का मोबाइल नंबर लिखें।', gym2: 'जिम का नाम लिखें।', sending: 'भेज रहे हैं…', ok: 'धन्यवाद! हम जल्दी फोन करेंगे।', many: 'आपने आज कई बार डेमो का अनुरोध भेजा है। कृपया कल फिर कोशिश करें।', fail: 'भेज नहीं पाए। इंटरनेट देखकर फिर कोशिश करें।' },
+    hi: { phone: '10 डिजिट का मोबाइल नंबर टाइप करें।', gym2: 'अपने जिम का नाम टाइप करें।', sending: 'भेज रहे हैं…', ok: 'थैंक यू! हम जल्दी आपको कॉल करेंगे।', many: 'आपने आज बहुत बार डेमो रिक्वेस्ट भेजी है। प्लीज़ कल फिर ट्राई करें।', fail: 'भेज नहीं पाए। इंटरनेट चेक करके फिर ट्राई करें।' },
   };
   function w() { return WORDS[root.lang === 'hi' ? 'hi' : 'en']; }
   Array.prototype.forEach.call(document.querySelectorAll('.lead-form'), function (form) {
