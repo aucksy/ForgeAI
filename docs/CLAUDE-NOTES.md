@@ -7,6 +7,18 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-243. Build HQ messages in the admin bell — 31 Oct 2026
+
+He said: "yes, build HQ messages" (answer to: messages from MettleUp headquarters shown in the gym admin's notification bell; needs one new server table). Rule: build and test it all, then ask his final OK before the table goes on the LIVE database.
+
+Did: (in progress)
+
+## R-242. Member-only website at mettleup.fit; free vs paid for the member app; plan the iPhone and Apple Watch apps — 31 Oct 2026
+
+He said: "So add this in your feature backlog that we will be creating a separate website just for the member facing app which will not promote anything with the gym. So this website for the app only sits at the actual URL, main URL that we have today that is metalup.fit So this will be just for the member facing app and then we will have another URL for gyms that you can figure out. So let's do that. And then this member facing app just for the mobile app and the watch app will not have, will probably have something about the gym, you know, somewhere at the bottom that suggests the user that recommend your gym so you can use all these features as part of your membership. and that will be probably our way of generating leads and also a URL for the gym facing website that the member can share with the gyms." Then: "And for the member facing app as well, for the mobile app, you can research and then create the, you know, feature division between free and paid version. But I don't think we have to put the pricing on the website for the mobile app. I don't think anyone does that. and of course when people join the app for the first time as we discussed maybe we will give them free everything for six months. I don't know you have to research and tell me the best implementation because we have to generate revenue from direct user as well." Then: "and then also add to the feature backlog once we have done making all the improvements in the app we have to now plan building the Apple mobile and watch app"
+
+Did: (in progress)
+
 ## R-241. Website: "Move your member list" is wrong, and its paragraph reads badly — 31 Oct 2026
 
 He said: "On the website, you have mentioned move your member list. Why would you say move? It should be import your existing member data easily with AI. Something on those lines. You can improve it, of course." Then: "And the paragraph below it is also a mess. I don't think you checked it with Gemini, and your English is crap."
