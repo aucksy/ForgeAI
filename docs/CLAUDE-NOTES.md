@@ -7,11 +7,29 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-251. Backlog: a guided flow for new users to make their first routine in a folder — 31 Oct 2026
+
+He said: "Add to your feature backlog, we will need to build a guided flow for new users to create a new routine in a folder." Then: "Add it."
+
+Did: added to the feature backlog as F186 (Member app, Planned). Research of how Hevy and Strong guide a first routine comes first when it is built.
+
+## R-250. Admin app: a plan sold with a wrong future start date cannot be changed — 31 Oct 2026
+
+He said: "In my test gym by aakash, I added this member and added a future date for their plan start but I dont see any option to edit this when I click edit. I only see option to edit Joining Date which is not impacting this" (screenshot: Upcoming, Annual 5 Aug 2027 to 4 Aug 2028, member since 1 Aug 2026).
+
+Did: owner desk, member page: a "Change start date" button on a plan that has not started yet (owners only; not on a cancelled plan). The plan keeps its length: an untouched plan ends where its plan ends from the new start (leap-year safe), a plan with extra days keeps its day count. New start at most 31 days ago; never onto the days of the member's other gym plan (PT packs exempt). History line "Start date changed: A → B". No server change: the server already lets an owner change a plan (0019). Words via member-words + Gemini. Tests: test/crm/moveStart.test.ts (7).
+
+## R-249. Play Store screenshots: fix the two-screenshot theme, make them match the app today — 31 Oct 2026
+
+He said: "once you're done with everything that you're doing we can also now start updating the screenshots on Google Play Store to also fix that continuous two screenshot theme and ensure it's all like accurate up to date as for the app today"
+
+Did: (after R-248)
+
 ## R-248. Member app: offer the watch app when a watch is connected; 2-3 welcome screens — 31 Oct 2026
 
 He said: "I wanted to build a functionality wherein if someone does not have a watch app installed, like first of all, we are able to detect that there is a watch connected, which is compatible. And if they do not have the watch app installed, we give them a notification when they start the workout for the first time that they can actually install a watch to track their rest timers and whatnot, and a link to directly open that and install it, right? And I think we also need to plan the onboarding screens, the launch screens, with some hook lines, how this is going to help their workout and all that. And that also can have the watch installation screen. Not too many, just maximum 2 or 3, and that's it."
 
-Did: (in progress)
+Did: built (v0.64.0). In-app card at the top of the workout screen on the first fresh workout start when a Wear OS watch lacks the app ("Install on watch" / "Not now"; once ever; not in the demo or a past log). 2-3 intro screens before the welcome (last time's weights, auto rest timer, and the watch one only when needed); Skip / Previous / Next / Get started. Review fixes: the screen list is fixed after a 1.5 s watch check (a button no longer changes under a thumb); the card gives up after 2 s (never pops in late); the screens scroll on a big display size; the seen mark goes through the write queue. Erase all data shows the screens again (fresh start, on purpose). Blocker: the watch app is only on Play's Wear internal test track; for the public, the watch store says "not available" until it is public.
 
 ## R-247. Admin app: Settings is disorganized; group it into tabs like the other pages — 31 Oct 2026
 
