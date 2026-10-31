@@ -35,3 +35,4 @@ Admin deploys: 72c91b1e (WP3+WP5 fixes), 9d7f0132 (WP5b fixes U-A10/11/12/15, ch
 Decided by me (tell owner): U-A13 damaged-browser-data screen (Try again / Download saved data / Start new gym);
 U-A14 sign-in refusal words by role.
 Admin deploy 1f2897c5 (8672a6b): U-A13 + U-A14. Later deploys: 3944c634 (93b7fd2, workout plans). Migrations 0021-0024 LIVE since 18 Oct.
+Admin deploy 62644ea7 (d6d23ca8, 31 Oct): What's new for 29-31 Oct (R-238). tsc 0, vitest 1455, playwright 107 of 107, CSP checked live.
