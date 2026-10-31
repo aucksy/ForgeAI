@@ -20,6 +20,7 @@ import { AppState, Pressable, Text, View } from 'react-native';
 
 import { DangerLink } from '@/components/DangerLink';
 import { GymBrandMark } from '@/components/GymBrandMark';
+import { BrandCorner } from '@/components/brand/BrandCorner';
 import { UpdateCard } from '@/components/UpdateCard';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { BackupNudgeCard } from '@/components/BackupNudgeCard';
@@ -368,7 +369,7 @@ export default function WorkoutScreen() {
   };
 
   return (
-    <Screen title="Workout">
+    <Screen title="Workout" right={<BrandCorner />}>
       <View style={{ gap: space.lg }}>
         {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
         <GymBrandMark />

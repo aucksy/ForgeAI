@@ -16,6 +16,7 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import brand as B  # noqa: E402
+import steel_wordmark as SW  # noqa: E402
 from brand import n, poly  # noqa: E402
 
 OUT = B.BRAND
@@ -161,6 +162,21 @@ ADAPTIVE_XML = '''<?xml version="1.0" encoding="utf-8"?>
 
 
 # ------------------------------------------------------------------ android
+def splash_svg():
+    """Android 12+ splash (R-259): the mark over the "steel plate" name, all inside the 192 dp circle
+    that Android shows of the 288 dp canvas (the name's bottom corners sit ~93 dp from the middle)."""
+    cap = 144 / SW.width() * SW.H
+    word, ww = SW.svg_body(144 - 72, 179, cap, 'spw', steel=True)
+    return B.svg(288, 288, B.mark(144, 124, 44, 'sp') + word)
+
+
+def build_splash():
+    for d, k in DENS:
+        sp = int(288 * k)
+        out(B.render(splash_svg(), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+    out(B.render(splash_svg(), os.path.join(AND, 'expo', 'splash-icon.png'), 1024, 1024))
+
+
 def build_android():
     fg, bg, mono = adaptive_fg_svg(), adaptive_bg_svg(), mono_svg()
     B.write(out(os.path.join(AND, 'source', 'adaptive-foreground.svg')), fg)
@@ -178,8 +194,7 @@ def build_android():
         out(B.render(tile_svg(s, 'round'), os.path.join(folder, 'ic_launcher_round.png'), s, s))
         # Android 12+ splash: 288 dp canvas, only the middle 192 dp circle is shown.
         sp = int(288 * k)
-        splash = B.svg(288, 288, B.mark(144, 144, 75, 'sp'))
-        out(B.render(splash, os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+        out(B.render(splash_svg(), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
         ni = int(24 * k)
         out(B.render(notif_svg(), os.path.join(AND, 'notification', f'notification_icon-{d}-{ni}px.png'), ni, ni))
     for nm in ('ic_launcher.xml', 'ic_launcher_round.xml'):
@@ -191,7 +206,7 @@ def build_android():
     out(B.render(bg, os.path.join(M, 'android-icon-background.png'), 1024, 1024))
     out(B.render(mono, os.path.join(M, 'android-icon-monochrome.png'), 1024, 1024))
     out(B.render(tile_svg(1024, bleed=True), os.path.join(M, 'icon.png'), 1024, 1024, 'RGB'))
-    out(B.render(B.svg(1024, 1024, B.mark(512, 512, 496, 'spm')), os.path.join(M, 'splash-icon.png'), 1024, 1024))
+    out(B.render(splash_svg(), os.path.join(M, 'splash-icon.png'), 1024, 1024))
     out(B.render(notif_svg(), os.path.join(M, 'notification-icon.png'), 96, 96))
     out(B.render(favicon_svg(), os.path.join(M, 'favicon.png'), 48, 48))
     out(B.render(fg, os.path.join(AND, 'adaptive-foreground-432.png'), 432, 432))
@@ -528,6 +543,11 @@ def contact_sheet():
 
 
 def main():
+    if '--splash' in sys.argv:   # only the splash pictures (R-259)
+        build_splash()
+        for p in MADE:
+            print(' ', rel(p))
+        return
     fast = '--fast' in sys.argv
     build_android()
     build_web()

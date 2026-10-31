@@ -9,7 +9,18 @@ import { join } from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
 import { describe, expect, it } from 'vitest';
 
-import { clipToConvex, HEX, M_CUT, MARK_BOX, MARK_FACES, METTLEUP_COLOURS, signedArea2 } from '@/components/brand/mettleUpMark';
+import {
+  clipToConvex,
+  HEX,
+  M_CUT,
+  MARK_BOX,
+  MARK_FACES,
+  METTLEUP_COLOURS,
+  signedArea2,
+  WORDMARK_BOX,
+  WORDMARK_METTLE_D,
+  WORDMARK_UP_D,
+} from '@/components/brand/mettleUpMark';
 
 const SIZE = 512;
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 512 512">${MARK_FACES.map((f) => `<path d="${f.d}" fill="${f.fill}"/>`).join('')}</svg>`;
@@ -75,5 +86,36 @@ describe('the welcome screen shows MettleUp, not the frozen FORGEAI Logo', () =>
     const logo = src('components/brand/MettleUpLogo.tsx');
     expect(logo).toContain('accessibilityLabel="MettleUp"');
     expect(logo).toContain('fill={METTLEUP_COLOURS.forge}');
+  });
+});
+
+describe('R-259: the "steel plate" name (branding/mettleup/_src/steel_wordmark.py)', () => {
+  const word = `<svg xmlns="http://www.w3.org/2000/svg" width="675" height="100" viewBox="0 0 675 100"><path d="${WORDMARK_METTLE_D}" fill="#FFFFFF"/><path d="${WORDMARK_UP_D}" fill="#FFFFFF"/></svg>`;
+  const w = new Resvg(word, { fitTo: { mode: 'width', value: 675 } }).render().pixels;
+  const alpha = (x: number, y: number) => w[(y * 675 + x) * 4 + 3];
+  it('straight strokes only: no curves in either path', () => {
+    for (const d of [WORDMARK_METTLE_D, WORDMARK_UP_D]) expect(d).toMatch(/^[MLZ0-9 .]+$/);
+  });
+  it('fills its box: cap height 100, M at the left edge, P at the right edge', () => {
+    expect(WORDMARK_BOX).toEqual({ x: 0, y: 0, w: 675, h: 100 });
+    expect(alpha(4, 50)).toBe(255);
+    expect(alpha(670, 30)).toBe(255);
+  });
+  it("the P's bowl is open (the hole cuts through) and its stem is solid", () => {
+    expect(alpha(637, 30)).toBe(0);
+    expect(alpha(610, 80)).toBe(255);
+  });
+});
+
+describe('R-256 / R-259: the logo sits top-right on Workout, Progress and Gym, not Profile', () => {
+  const src = (p: string) => readFileSync(join(__dirname, '..', '..', 'src', ...p.split('/')), 'utf8');
+  it('the 3 tabs pass the BrandCorner as the right side of the page header', () => {
+    expect(src('app/(tabs)/workout.tsx')).toContain('<Screen title="Workout" right={<BrandCorner />}>');
+    expect(src('app/(tabs)/progress.tsx')).toContain('<Screen title="Progress" right={<BrandCorner />}>');
+    const gym = src('shop/ShopScreen.tsx');
+    expect(gym.match(/<BrandCorner/g)?.length).toBe(3); // loading, no gym, and in a gym (over the bell and bag)
+  });
+  it('Profile has no corner logo', () => {
+    expect(src('app/(tabs)/profile.tsx')).not.toContain('BrandCorner');
   });
 });

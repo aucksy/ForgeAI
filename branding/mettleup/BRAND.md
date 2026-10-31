@@ -50,9 +50,13 @@ and Forge both work.
 
 ## Type
 
-- **Wordmark**: METTLEUP in Manrope ExtraBold, capitals, letter-spacing +0.06 em, outlined to
-  paths (no live font). "METTLE" in Iron (dark) or Steel (light); "UP" in Molten (dark) or
-  Ember (light).
+- **Wordmark (owner pick, R-259, 31 Oct 2026)**: the "steel plate" letters: METTLEUP drawn from
+  straight strokes, wide and heavy, small corner cuts at the hexagon's 30-degree angle, tight
+  spacing. One source: `_src/steel_wordmark.py` (exact polygons). Big sizes (splash, hero) use the
+  polished-steel fill, "UP" in orange metal; small sizes are flat: "METTLE" in Iron, "UP" in Forge.
+  In use: the Android splash (mark over the name) and the app's lockup (Welcome screen, and top-right
+  on the Workout, Progress and Gym tabs). Still on the older Manrope wordmark until switched: the
+  website files in `web/`, the store pictures and the share pictures.
 - **Store and marketing headlines**: Manrope ExtraBold, sentence case, -0.02 em, line height 1.04,
   max two lines, accent words in Molten.
 - **Sub lines**: Manrope SemiBold.
@@ -85,7 +89,7 @@ and Forge both work.
 - Don't fill the M: it is a cut, so the background shows through (painted Steel only where a
   format cannot cut, like Android vector drawables on a Steel tile).
 - Don't rotate it: a flat-top hex is a different shape (a nut, not a dumbbell head).
-- Don't set "MettleUp" in another font, or in mixed case, in a logo position.
+- Don't set "MettleUp" in a font, or in mixed case, in a logo position: use the steel-plate letters.
 - Don't put white text on Molten or Forge at body size.
 
 ## Files, sizes, and where each one goes
@@ -103,7 +107,7 @@ then `--apply`). Paths on the right are from the repo root.
 | `.../ic_launcher.png` (legacy square, Android 7) | 48, 72, 96, 144, 192 px | same |
 | `.../ic_launcher_round.png` (legacy round) | 48, 72, 96, 144, 192 px | same |
 | `android/res/mipmap-anydpi-v26/ic_launcher.xml`, `ic_launcher_round.xml` | | same (unchanged wiring: background + foreground + monochrome) |
-| `android/res/drawable-*/splashscreen_logo.png` (Android 12 splash, 288 dp canvas) | 288, 432, 576, 864, 1152 px | `res/drawable-*/` |
+| `android/res/drawable-*/splashscreen_logo.png` (Android 12 splash, 288 dp canvas: mark over the steel name, inside the 192 dp circle; `make_assets.py --splash` makes only these) | 288, 432, 576, 864, 1152 px | `res/drawable-*/` |
 | `android/res/drawable/notification_icon.xml` (vector status-bar icon) | 24 dp | `res/drawable/` (already wired in the manifest) |
 | `android/expo/icon.png` (no alpha) | 1024 | `assets/images/icon.png` (app.json `icon`) |
 | `android/expo/android-icon-foreground.png` | 1024 | `assets/images/` (app.json `android.adaptiveIcon.foregroundImage`) |

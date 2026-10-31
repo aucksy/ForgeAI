@@ -21,6 +21,7 @@ import { InlineError } from '@/components/ui/InlineError';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
 import { GymBrandMark } from '@/components/GymBrandMark';
+import { BrandCorner } from '@/components/brand/BrandCorner';
 import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { useGymTheme } from '@/theme/gymTheme';
 import { color, radius, space, type } from '@/theme/tokens';
@@ -55,7 +56,7 @@ type Filter = 'all' | ShopCategory;
 export function ShopScreen() {
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
-  if (!hydrated) return <Screen key="wait" title="Gym" />;
+  if (!hydrated) return <Screen key="wait" title="Gym" right={<BrandCorner />} />;
   if (link) return <GymShop key={`gym-${link.memberId}`} link={link} />;
   return <JoinGymDoor key="door" />;
 }
@@ -78,7 +79,7 @@ function JoinGymDoor() {
   // Why this phone is in no gym, when the gym let it go (gymActions.ts → unlink(UNLINKED_TEXT)).
   const notice = useGymShop((s) => s.notice);
   return (
-    <Screen title="Gym">
+    <Screen title="Gym" right={<BrandCorner />}>
       <View style={{ gap: space.lg, paddingBottom: space.xl }}>
         {notice ? <DemoNote text={notice} /> : null}
         <JoinGymCard scan />
@@ -209,10 +210,12 @@ function GymShop({ link }: { link: GymLink }) {
       scroll={false}
       noPad
       right={
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
-          <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
-          {shopOn ? <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} /> : null}
-        </View>
+        <BrandCorner>
+          <View style={{ flexDirection: 'row', gap: space.sm }}>
+            <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
+            {shopOn ? <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} /> : null}
+          </View>
+        </BrandCorner>
       }
     >
       <ScrollView

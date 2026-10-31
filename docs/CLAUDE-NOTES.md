@@ -11,7 +11,11 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 
 He said: "now you are talking... A is gooood"
 
-Did: (filled in below)
+Did: made A the brand's name style. One drawing (branding/mettleup/_src/steel_wordmark.py) feeds
+everything. Android splash: the logo over the steel name, inside the circle Android shows. The app's
+lockup now uses A, and it sits top-right on Workout, Progress and Gym (on Gym, above the bell and bag
+buttons); not on Profile. BRAND.md updated. Website, store and share pictures still use the old
+name style. Ships in the next release (0.64.0's phone tests failed, being fixed).
 
 ## R-258. Custom name A looks comical; needs strength and steel — 31 Oct 2026
 

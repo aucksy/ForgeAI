@@ -18,6 +18,7 @@ import { Text, View } from 'react-native';
 import { chartAllowed } from '@/cloud/limitsFlag';
 import { explainLimit, monthsOfRange } from '@/cloud/limitsPrompt';
 import { GymBrandMark } from '@/components/GymBrandMark';
+import { BrandCorner } from '@/components/brand/BrandCorner';
 import { LinkRow } from '@/components/stats/parts';
 import { Icon, Screen, type IconName } from '@/components/ui';
 import { todayISO } from '@/lib/date';
@@ -146,7 +147,7 @@ export default function ProgressScreen() {
   const reports = months ? reportRows(months, todayISO()) : [];
 
   return (
-    <Screen title="Progress">
+    <Screen title="Progress" right={<BrandCorner />}>
       <View style={{ gap: space.sm, paddingBottom: space.xl }}>
         {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
         <GymBrandMark />

@@ -1,6 +1,6 @@
 /**
  * MettleUp's lockup for the app's own screens (first MettleUp release, 0.56.0): the Forged
- * hex-dumbbell mark + "METTLEUP", "UP" in Forge orange. Replaces the frozen components/ui/Logo
+ * hex-dumbbell mark + "METTLEUP" in the "steel plate" letters (R-259), "UP" in Forge orange. Replaces the frozen components/ui/Logo
  * (it still draws "FORGEAI" and may not be edited) at the same sizes: `height` is the mark's
  * square, as it was the old mark's, and the name sits to its right at the old name's size.
  *
@@ -18,6 +18,8 @@ import { MARK_BOX, MARK_FACES, METTLEUP_COLOURS, WORDMARK_BOX, WORDMARK_METTLE_D
 export interface MettleUpLogoProps {
   /** The mark's height (and width) in px; the name follows. Default 28, as the old Logo. */
   height?: number;
+  /** The name's cap height in px (default `height` x CAP). */
+  cap?: number;
 }
 
 /** The name's cap height as a share of the mark (the old "FORGEAI" in Sora at 0.64 x height). */
@@ -36,8 +38,8 @@ export function MettleUpMark({ size = 28 }: { size?: number }) {
   );
 }
 
-export function MettleUpLogo({ height = 28 }: MettleUpLogoProps) {
-  const cap = height * CAP;
+export function MettleUpLogo({ height = 28, cap: capPx }: MettleUpLogoProps) {
+  const cap = capPx ?? height * CAP;
   const wordH = (cap * WORDMARK_BOX.h) / 100;
   const wordW = (cap * WORDMARK_BOX.w) / 100;
   return (
