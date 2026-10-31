@@ -167,6 +167,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| T67 0.63.0: your 30 Oct test report, phone price list, watch stays open and pops up (R-234 to R-237) | Doing | 31 Oct: built and pushed; the desk and mettleup.fit are live. The phone app waits for the cloud phone test (about 2 hours), then goes to your testers. Watch rest-timer redesign (smaller timer, bigger next-set words) waits for your yes on the picture. |
 | T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Done | 30 Oct: live on mettleup.fit in English and Hindi. Pro ₹1,499, Pro + AI ₹2,499 (coming), founding pack for the first 25 gyms until 31 March 2027, QR check-in and watch lines added, fresh owner-panel pictures. |
 | T66 Split features between Starter and Pro (#30, #78) | Blocked | Built 31 Oct, behind a switch that is off: every gym still gets every feature. All tests pass. Turning it on needs your yes (#78). |
 | T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
