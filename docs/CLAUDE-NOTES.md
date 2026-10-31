@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-258. Custom name A looks comical; needs strength and steel — 31 Oct 2026
+
+He said: "A is good but it looks a bit comical also.. not giving feel of strength and steel"
+
+Did: redrew the custom name heavier: wide letters, one thick even stroke, small machined 30-degree corner cuts, tight spacing, and a polished-steel shine (orange metal on UP). Sheet 3 shows A (custom steel), B Michroma (thin, engraved), C Tomorrow ExtraBold (heavy cut-corner font), each big and at phone-header size, plus a splash mock with the logo over name A. Waiting for his pick.
+
 ## R-257. Font options again: none suit the hex logo — 31 Oct 2026
 
 He said: "None of the font looks good with the logo. The logo has this hexagonal, dumbbell kind of look. And none of the font is really complimenting that. So think about it. Try again."
