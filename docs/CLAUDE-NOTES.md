@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-255. Upload the 8 new Play Store pictures — 31 Oct 2026
+
+He said: "upload" (his yes for R-249/R-254).
+
+Did: dispatched play-listing.yml on main (pictures only, with_text false; the title and descriptions stay as they are).
+
 ## R-254. Play shots 1 and 2: use the barbell behind the phones — 31 Oct 2026
 
 He picked "Top-right, barbell behind" from the R-253 sheet.
