@@ -18,6 +18,15 @@ class ForgePhoneModule : Module() {
   @Suppress("DEPRECATION")
   private fun legacyInstaller(c: Context): String? = c.packageManager.getInstallerPackageName(c.packageName)
 
+  /** R-260: Play download progress to JS. */
+  private fun playEvent(status: String) {
+    try {
+      sendEvent("onPlayUpdate", mapOf("status" to status))
+    } catch (_: Exception) {
+      // quiet: no JS listening yet; JS asks playUpdateCheck again when it comes back
+    }
+  }
+
   override fun definition() = ModuleDefinition {
     Name("ForgePhone")
     Events("onSharedFile", "onPlayUpdate")
@@ -28,7 +37,7 @@ class ForgePhoneModule : Module() {
       if (c == null) {
         promise.resolve(null)
       } else {
-        PlayUpdate.check(c) { promise.resolve(it) }
+        PlayUpdate.check(c, { status -> playEvent(status) }) { promise.resolve(it) }
       }
     }
 
@@ -41,13 +50,7 @@ class ForgePhoneModule : Module() {
         PlayUpdate.start(
           c,
           a,
-          { status ->
-            try {
-              sendEvent("onPlayUpdate", mapOf("status" to status))
-            } catch (_: Exception) {
-              // JS asks playUpdateCheck again when it comes back
-            }
-          },
+          { status -> playEvent(status) },
         ) { promise.resolve(it) }
       }
     }

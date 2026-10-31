@@ -23,8 +23,9 @@ import { getRoutine } from '@/tracker/db/routineRepo';
 import { frontScreen, routineParam, startFailedText, widgetStartAction, widgetTokenOk } from '@/tracker/phone/widgetLink';
 import { keptWidgetToken, rotateWidgetToken } from '@/tracker/phone/widgetToken';
 import { refreshWidgets } from '@/tracker/phone/widgets';
-import { ACTIVE_WORKOUT_PATH, showActiveWorkout } from '@/tracker/services/workoutStart';
+import { ACTIVE_WORKOUT_PATH, openActiveWorkout, showActiveWorkout } from '@/tracker/services/workoutStart';
 import { isCorrecting, useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
+import { useWorkoutUi } from '@/tracker/store/workoutUiStore';
 
 /** Every decision and start here runs one after another, across copies of the screen. */
 let chain: Promise<unknown> = Promise.resolve();
@@ -50,9 +51,12 @@ function healResume(nav: NavRef, router: Router): void {
       const s = useActiveWorkout.getState();
       if (!s.active || isCorrecting(s)) return;
       const front = frontScreen(nav.getRootState() as Parameters<typeof frontScreen>[0]);
-      if (front === 'session/active') return;
+      // Review fix: the workout, or a screen the member opened over it (add exercise), is in front: leave it.
+      if (front?.startsWith('session/')) return;
       console.warn('[ForgeErr] workout link: the workout is not in front after Resume; opening it', front);
-      router.navigate(ACTIVE_WORKOUT_PATH);
+      // Never a second workout screen: go back to the one underneath, else open one (guarded).
+      if (useWorkoutUi.getState().screenOpen) router.dismissTo(ACTIVE_WORKOUT_PATH);
+      else openActiveWorkout(router);
     } catch (e) {
       console.warn('[ForgeErr] workout link: could not check the screen in front', e);
     }

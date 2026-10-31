@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
@@ -21,6 +22,8 @@ import com.google.android.play.core.install.model.UpdateAvailability
 object PlayUpdate {
   private var manager: AppUpdateManager? = null
   private var listener: InstallStateUpdatedListener? = null
+  /** Where download progress goes (the module's onPlayUpdate event); the latest caller wins. */
+  @Volatile private var onState: ((String) -> Unit)? = null
 
   private fun of(c: Context): AppUpdateManager =
     manager ?: AppUpdateManagerFactory.create(c.applicationContext).also { manager = it }
@@ -36,11 +39,27 @@ object PlayUpdate {
     else -> "none"
   }
 
+  /**
+   * Review fix: one progress listener for the app's whole life, registered on the first check too.
+   * A download that was already running when the app was opened again then still reports
+   * "downloaded" (before, only a download started in this run did, and the card stayed on
+   * "Downloading" with no button).
+   */
+  private fun listen(m: AppUpdateManager, to: (String) -> Unit) {
+    onState = to
+    if (listener != null) return
+    val l = InstallStateUpdatedListener { state -> onState?.invoke(statusName(state.installStatus())) }
+    listener = l
+    m.registerListener(l)
+  }
+
   /** What Play says now: { available, staleDays, status, versionCode }; null when Play cannot say. */
-  fun check(c: Context, done: (Map<String, Any?>?) -> Unit) {
+  fun check(c: Context, to: (String) -> Unit, done: (Map<String, Any?>?) -> Unit) {
     try {
-      of(c).appUpdateInfo
+      val m = of(c)
+      m.appUpdateInfo
         .addOnSuccessListener { info ->
+          listen(m, to)
           val available = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
             info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
           done(
@@ -70,19 +89,7 @@ object PlayUpdate {
   fun start(c: Context, activity: Activity, onState: (String) -> Unit, done: (String) -> Unit) {
     try {
       val m = of(c)
-      listener?.let { m.unregisterListener(it) }
-      val l = InstallStateUpdatedListener { state ->
-        val name = statusName(state.installStatus())
-        onState(name)
-        if (state.installStatus() == InstallStatus.INSTALLED || state.installStatus() == InstallStatus.FAILED ||
-          state.installStatus() == InstallStatus.CANCELED
-        ) {
-          listener?.let { m.unregisterListener(it) }
-          listener = null
-        }
-      }
-      listener = l
-      m.registerListener(l)
+      listen(m, onState)
       // Play's info can start one flow only: ask afresh every time.
       m.appUpdateInfo
         .addOnSuccessListener { info ->
@@ -93,7 +100,16 @@ object PlayUpdate {
             return@addOnSuccessListener
           }
           m.startUpdateFlow(info, activity, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
-            .addOnSuccessListener { code -> done(if (code == Activity.RESULT_OK) "accepted" else "declined") }
+            .addOnSuccessListener { code ->
+              done(
+                when (code) {
+                  Activity.RESULT_OK -> "accepted"
+                  // Review fix: Play's own failure is not the member saying no: JS opens the store page.
+                  ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> "failed"
+                  else -> "declined"
+                },
+              )
+            }
             .addOnFailureListener { e ->
               android.util.Log.w("ForgeErr", "Play update box could not open", e)
               done("failed")
@@ -112,6 +128,7 @@ object PlayUpdate {
   /** Install the downloaded update: the app restarts into the new version (quietly if in the background). */
   fun finish(c: Context): Boolean = try {
     of(c).completeUpdate()
+      .addOnFailureListener { e -> android.util.Log.w("ForgeErr", "Play update could not install", e) }
     true
   } catch (e: Throwable) {
     android.util.Log.w("ForgeErr", "Play update could not finish", e)

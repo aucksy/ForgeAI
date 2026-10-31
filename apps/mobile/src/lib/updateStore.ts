@@ -47,6 +47,8 @@ export interface UpdateState {
   restart: () => boolean;
   laterPopup: () => void;
   laterCard: () => void;
+  /** The pop-up is really on screen now: start its "Later" wait (review fix: not when it was only due). */
+  shown: () => void;
 }
 
 function workoutOpen(): boolean {
@@ -127,10 +129,11 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
         const later = await readCardLater();
         // The pop-up only on a launch (or a return after hours away), never while it is already up.
         const due = opts?.launch === true && !get().popup && popupDue({ now, mark, urgent, workoutOpen: workoutOpen() });
-        const next = due ? { ...mark, lastAt: now } : mark;
-        if (due || saved?.key !== key) {
-          writeUpdateMeta(POPUP_KEY, JSON.stringify(next)).catch((e: unknown) => console.warn('[update] could not save the pop-up mark', e));
+        if (saved?.key !== key) {
+          writeUpdateMeta(POPUP_KEY, JSON.stringify(mark)).catch((e: unknown) => console.warn('[update] could not save the pop-up mark', e));
         }
+        // Review fix: a "downloaded" heard from Play while this check waited is newer than what it read.
+        if (kind === 'play' && get().playStatus === 'downloaded') playStatus = 'downloaded';
         set({
           key,
           kind,
@@ -198,6 +201,16 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
 
   laterPopup: () => set({ popup: false }),
 
+  shown: () => {
+    const key = get().key;
+    if (!key) return;
+    void (async () => {
+      const now = Date.now();
+      const mark = markFor(readMark(await readUpdateMeta(POPUP_KEY)), key, now);
+      await writeUpdateMeta(POPUP_KEY, JSON.stringify({ ...mark, lastAt: now }));
+    })().catch((e: unknown) => console.warn('[update] could not save the pop-up mark', e));
+  },
+
   laterCard: () => {
     const key = get().key;
     set({ card: false });
@@ -209,7 +222,11 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
   },
 }));
 
-/** The app went to the background: a finished Play download installs now, unless a workout is open. */
+/**
+ * The app has been in the background for a while (components/UpdatePrompt.tsx waits 60 s: Android also
+ * says "background" while a share sheet or photo picker covers the app): a finished Play download
+ * installs now, unless a workout is open.
+ */
 export function installDownloadedQuietly(): void {
   const s = useAppUpdate.getState();
   if (s.kind === 'play' && s.playStatus === 'downloaded' && !workoutOpen()) {
