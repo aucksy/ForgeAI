@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-256. Name on the splash screen; logo + name top-right on the tabs (not Profile); font options — 31 Oct 2026
+
+He said: "the splash screen every time the app is launched have the Mettle Up logo, but it doesn't have, you know, the name Mettle Up mentioned. I'm also thinking to put the logo and the name on the right upper corner of the screen for the three sections of the app except for the profile for branding, bro. Give me few font options for Mettle Up"
+
+Did: font sheet sent (logo + METTLEUP in 6 free fonts, big and at phone-header size): 1 Manrope ExtraBold (the logo today, on the website, store pictures and icons), 2 Sora ExtraBold, 3 Space Grotesk Bold, 4 Archivo Black, 5 Barlow Condensed ExtraBold Italic, 6 Bebas Neue. Recommended 1 (one look everywhere); 4 if he wants heavier. Splash name + top-right header on the 3 tabs (not Profile) wait for his font pick; they ship in the next app release.
+
 ## R-255. Upload the 8 new Play Store pictures — 31 Oct 2026
 
 He said: "upload" (his yes for R-249/R-254).
