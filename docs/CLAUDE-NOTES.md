@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-254. Play shots 1 and 2: use the barbell behind the phones — 31 Oct 2026
+
+He picked "Top-right, barbell behind" from the R-253 sheet.
+
+Did: captions.json "panorama_prop": "bar-behind"; compose.py passes it to store_scene; shot-01/02 and the 2160 panorama re-composed. Not uploaded (waits for his "upload").
+
 ## R-253. New ideas for the picture across Play shots 1 and 2: the barbell covers the screens — 31 Oct 2026
 
 He said: "Can you try some new ideas to do this continuous field thing? I mean this barbell is good enough but it's blocking some of the stuff right?"

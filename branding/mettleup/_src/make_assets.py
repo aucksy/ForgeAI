@@ -250,8 +250,8 @@ def build_store(fast=False):
         out(p)
     out(os.path.join(tdir, 'panorama-01-02-2160.png'))
     # editable vector templates (placeholder slots), for anyone who prefers a vector editor
-    caps, pano = compose.load_captions(os.path.join(STORE, 'captions.json'))
-    svg, _ = B.store_scene(list(pano), caps, {}, uid='p')
+    caps, pano, prop = compose.load_captions(os.path.join(STORE, 'captions.json'))
+    svg, _ = B.store_scene(list(pano), caps, {}, uid='p', prop=prop)
     B.write(out(os.path.join(tdir, 'panorama-01-02.svg')), svg)
 
 

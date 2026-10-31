@@ -1,5 +1,6 @@
 {
   "_how": "headline: max 6 words, max 2 lines ('\\n' = line break), *word* = orange accent. sub: max 8 words, optional. Shots 1 and 2 are the panorama pair: one artwork across both (owner wants it, R-252).",
+  "panorama_prop": "bar-behind",
   "panorama": [
     1,
     2

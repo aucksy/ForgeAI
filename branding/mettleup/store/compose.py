@@ -10,7 +10,8 @@ Input
                    width, anchored to the top, and the bottom is cut by the canvas edge.
                    A missing one leaves the labelled "APP SCREEN n" slot in place.
   captions.json    headline (max 2 lines, "\\n" breaks, *word* = orange accent) + sub per shot,
-                   and which pair is the panorama.
+                   which pair is the panorama, and panorama_prop (R-253: dumbbell in front,
+                   bar-behind, rise or hex; the last three sit behind the phones).
 
 Output
   out/shot-NN.png  1080x1920, 24-bit PNG, no alpha, sRGB. Shots of the panorama pair are
@@ -37,7 +38,7 @@ def load_captions(path):
     pano = tuple(data.get('panorama') or ())
     if pano and (len(pano) != 2 or pano[1] != pano[0] + 1):
         raise SystemExit('panorama must be two neighbouring shots, e.g. [1, 2]')
-    return caps, pano
+    return caps, pano, data.get('panorama_prop', 'dumbbell')
 
 
 def find_raw(raw_dir, idx):
@@ -73,7 +74,7 @@ def fit_screen(path):
 
 
 def compose(captions_path, raw_dir, out_dir, quiet=False):
-    caps, pano = load_captions(captions_path)
+    caps, pano, prop = load_captions(captions_path)
     screens = {}
     for idx in caps:
         p = find_raw(raw_dir, idx) if raw_dir else None
@@ -87,7 +88,7 @@ def compose(captions_path, raw_dir, out_dir, quiet=False):
         if idx in done:
             continue
         if pano and idx == pano[0]:
-            svg, W = B.store_scene(list(pano), caps, screens, uid='p')
+            svg, W = B.store_scene(list(pano), caps, screens, uid='p', prop=prop)
             im = B.raster(svg, W, B.SHOT_H)
             for k, j in enumerate(pano):
                 part = im.crop((k * B.SHOT_W, 0, (k + 1) * B.SHOT_W, B.SHOT_H))
