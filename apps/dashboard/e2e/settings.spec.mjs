@@ -2,7 +2,7 @@
 // records (U-A3): Load demo gym, Erase and start fresh, Start over with a new demo gym.
 import { expect, test } from '@playwright/test';
 
-import { addMember, expectFitsPhone, open, openApp, sheet, startDemo } from './support.mjs';
+import { addMember, expectFitsPhone, open, openApp, sheet, startDemo, openSettings } from './support.mjs';
 
 /** The page's own background colour, as the browser paints it. */
 const background = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -36,7 +36,7 @@ test('J10a Dark/Light: the colours change, and the choice is kept after a reload
 test('J10b Load demo gym and Erase and start fresh: say what they replace, then do exactly that (U-A3)', async ({ page }) => {
   await openApp(page);
   await startDemo(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   const main = page.getByRole('main');
   // The demo gym of 17 Oct 2026 (a fixed seed: the same gym every time).
   const dataLine = main.getByText(/^\d+ members · \d+ memberships · \d+ payments · \d+ check-ins\./);
@@ -46,7 +46,7 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
 
   // A real record next to the demo: one new member.
   await addMember(page, { name: 'Real Person', phone: '98290 80808' });
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(dataLine).toContainText('129 members');
 
   // Load demo gym: the warning names what goes. Cancel first: nothing changes.
@@ -70,7 +70,7 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
   await expect(page.getByText('Nobody matches that')).toBeVisible();
 
   // Erase and start fresh: the warning, then an empty gym that keeps its name.
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await page.getByRole('button', { name: 'Erase and start fresh' }).tap();
   const erase = sheet(page, 'Erase everything?');
   await expect(erase.getByRole('alert')).toHaveText(
@@ -88,14 +88,14 @@ test('J10b Load demo gym and Erase and start fresh: say what they replace, then 
 
   // After a reload it is still empty (nothing came back from storage).
   await page.reload();
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(dataLine).toHaveText(/^0 members · 0 memberships · 0 payments · 0 check-ins\./);
 });
 
 test('J10c Start over with a new demo gym: back to the first screen', async ({ page }) => {
   await openApp(page);
   await startDemo(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await page.getByRole('button', { name: 'Start over with a new demo gym' }).tap();
   const over = sheet(page, 'Start over with a new demo gym?');
   await expect(over).toContainText('gym code QA0001');
@@ -118,7 +118,7 @@ test('J10d no internet at Start demo: the demo opens without the shop, in this b
   expect(server.calls).toContain('demo_start_gym (offline)');
 
   // A browser-only gym: the data actions are there, but no shop to start over or disconnect.
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('128 members');
   await expect(page.getByRole('button', { name: 'Load demo gym' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Erase and start fresh' })).toBeVisible();

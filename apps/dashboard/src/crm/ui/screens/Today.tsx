@@ -14,7 +14,6 @@ import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { TrialBanner } from '../TrialBanner';
-import { WhatsNewCard } from '../WhatsNew';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
 import { endingSoon } from '../../logic/audience';
@@ -127,9 +126,6 @@ export function TodayScreen() {
         title="Today"
         subtitle={formatDay(today)}
       />
-
-      {/* R-148: once after an admin-app update, what changed (Settings -> What's new keeps the list). */}
-      <WhatsNewCard />
 
       {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
       <TrialBanner />

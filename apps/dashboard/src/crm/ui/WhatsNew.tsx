@@ -3,14 +3,17 @@
  * - NewsBell (R-239, owner 31 Oct 2026: "a notifications section on the right upper corner with the
  *   notifications bell"): top right on every page, a count of updates not seen yet; tapping it lists the
  *   newest updates and the admin app's version (its newest update day), and marks them seen.
- *   R-243 ("yes, build HQ messages"): messages from MettleUp HQ (logic/hqNews.ts) come first in it,
- *   under "From MettleUp", and count in the same number.
+ *   R-243 ("yes, build HQ messages"): messages from MettleUp HQ (logic/hqNews.ts) are in it, under
+ *   "From MettleUp", and count in the same number.
+ *   R-245 (owner 31 Oct 2026: "I do not want what's new ... right on the landing page. It should be first
+ *   part of notifications panel ... a quick summary ... then they click on see more"): the panel opens
+ *   with a short summary of the newest update and "See what's new", then HQ's messages. Anything new is
+ *   tinted with an orange edge and a "New" tag.
  * - NewsSidebarLink (R-239: "outside, maybe in the left bottom corner", not under Settings): the
  *   sidebar's last row, with the version.
- * - WhatsNewCard: top of Today, once after an update ("Got it" hides it until the next one).
  * - WhatsNewScreen: /news, every update to read again (also More -> What's new on a phone).
  * Each change may carry a button to the page where it is; a page this person cannot open has none.
- * The bell and the card are not in the demo gym (a visitor there has no "update" to hear about).
+ * The bell is not in the demo gym (a visitor there has no "update" to hear about).
  */
 import { useEffect, useRef, useState } from 'react';
 
@@ -64,9 +67,15 @@ function useHqNews(demo: boolean): { messages: HqMessage[]; unread: HqMessage[];
     };
     void load();
     const timer = window.setInterval(() => void load(), HQ_POLL_MS);
+    // R-245: a desk that comes back to the tab sees a new message without waiting for the timer.
+    const back = () => {
+      if (document.visibilityState === 'visible') void load();
+    };
+    document.addEventListener('visibilitychange', back);
     return () => {
       live = false;
       window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', back);
     };
   }, [demo]);
   const seen = () => {
@@ -93,14 +102,65 @@ const newTag = (
   <span style={{ padding: '1px 8px', borderRadius: radius.pill, background: color.accentSoft, color: color.accentBright, fontSize: 11, fontWeight: 800 }}>New</span>
 );
 
+const sectionLabel = { margin: 0, fontFamily: font.body, fontSize: 12, fontWeight: 800, letterSpacing: 0.4, textTransform: 'uppercase', color: color.inkMuted } as const;
+
+/** R-245: one item in the bell. While it is new: a raised background, an orange edge (and a "New" tag). */
+function rowStyle(isNew: boolean) {
+  return {
+    display: 'grid',
+    gap: 4,
+    padding: `${space.sm}px ${space.md}px`,
+    borderRadius: radius.md,
+    borderLeft: `3px solid ${isNew ? color.accent : 'transparent'}`,
+    background: isNew ? color.surfaceRaised : 'transparent',
+  } as const;
+}
+
+/** How many lines of the newest update the bell shows before "See what's new". */
+const SUMMARY_LINES = 2;
+
+/** R-245: the bell's first part: the newest update in short, and the way to the whole list. */
+function NewsSummary({ entry, isNew, newCount, onSee }: { entry: AdminNewsEntry; isNew: boolean; newCount: number; onSee: () => void }) {
+  const more = entry.lines.length - SUMMARY_LINES;
+  return (
+    <section aria-label="What's new in the admin app" style={{ display: 'grid', gap: space.sm }}>
+      <p style={sectionLabel}>What's new in the admin app</p>
+      <div style={rowStyle(isNew)}>
+        <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
+          {`Update of ${newsDay(entry.id)}`}
+          {isNew ? newTag : null}
+        </p>
+        <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4 }}>
+          {entry.lines.slice(0, SUMMARY_LINES).map((l) => (
+            <li
+              key={l.text}
+              style={{ fontFamily: font.body, fontSize: 14, lineHeight: 1.45, color: color.ink, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+            >
+              {l.text}
+            </li>
+          ))}
+        </ul>
+        {more > 0 || newCount > 1 ? (
+          <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
+            {[more > 0 ? `${more} more ${more === 1 ? 'change' : 'changes'}` : '', newCount > 1 ? `${newCount} updates since you last looked` : ''].filter(Boolean).join(' · ')}
+          </p>
+        ) : null}
+        <button type="button" style={linkStyle} onClick={onSee}>
+          See what's new ›
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function HqMessages({ messages, fresh, role, onGo }: { messages: readonly HqMessage[]; fresh: ReadonlySet<string>; role: Role; onGo: () => void }) {
   return (
-    <section aria-label="From MettleUp" style={{ display: 'grid', gap: space.md, paddingBottom: space.lg, marginBottom: space.lg, borderBottom: `1px solid ${color.border}` }}>
-      <p style={{ margin: 0, fontFamily: font.body, fontSize: 12, fontWeight: 800, letterSpacing: 0.4, textTransform: 'uppercase', color: color.inkMuted }}>From MettleUp</p>
+    <section aria-label="From MettleUp" style={{ display: 'grid', gap: space.sm }}>
+      <p style={sectionLabel}>From MettleUp</p>
       {messages.map((m) => {
         const go = hqGo(m, role);
         return (
-          <article key={m.id} style={{ display: 'grid', gap: 4 }}>
+          <article key={m.id} style={rowStyle(fresh.has(`hq-${m.id}`))}>
             <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
               {hqDay(m.at)}
               {fresh.has(`hq-${m.id}`) ? newTag : null}
@@ -175,53 +235,6 @@ function NewsLines({ entry, role, onGo }: { entry: AdminNewsEntry; role: Role; o
   );
 }
 
-function DayTitle({ id }: { id: string }) {
-  return (
-    <p style={{ margin: `0 0 ${space.sm}px`, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
-      {`Update of ${newsDay(id)}`}
-    </p>
-  );
-}
-
-/** Today: what changed since this browser last looked, once. */
-export function WhatsNewCard() {
-  const demo = useDemo() !== null;
-  const role = useRole();
-  const entries = useUnreadNews(demo);
-  if (demo || entries.length === 0) return null;
-  const done = () => markNewsSeen();
-  return (
-    <Card style={{ marginBottom: space.lg }}>
-      <section aria-label="What's new in the admin app">
-        <SectionTitle>What's new in the admin app</SectionTitle>
-        <div style={{ display: 'grid', gap: space.lg }}>
-          {entries.map((e) => (
-            <div key={e.id}>
-              <DayTitle id={e.id} />
-              <NewsLines entry={e} role={role} onGo={done} />
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', columnGap: space.lg, marginTop: space.sm }}>
-          <button type="button" style={linkStyle} onClick={done} aria-label="Got it. Hide what's new">
-            Got it
-          </button>
-          <button
-            type="button"
-            style={{ ...linkStyle, color: color.inkSecondary }}
-            onClick={() => {
-              done();
-              navigate('/news');
-            }}
-          >
-            See earlier updates
-          </button>
-        </div>
-      </section>
-    </Card>
-  );
-}
-
 /** /news: every update, newest first. */
 export function WhatsNewScreen() {
   const role = useRole();
@@ -266,7 +279,8 @@ export function NewsBell() {
   }, [open]);
   if (demo) return null;
   const count = unread.length + hq.unread.length;
-  const recent = ADMIN_NEWS.filter((e) => e.lines.length > 0).slice(0, SHOWN_UPDATES);
+  const newest = ADMIN_NEWS.find((e) => e.lines.length > 0);
+  const newUpdates = ADMIN_NEWS.filter((e) => fresh.has(e.id)).length;
   const toggle = () => {
     if (!open) {
       setFresh(new Set([...unread.map((e) => e.id), ...hq.unread.map((m) => `hq-${m.id}`)]));
@@ -347,28 +361,23 @@ export function NewsBell() {
             <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 18, color: color.ink }}>Notifications</h2>
             <span style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{ADMIN_VERSION}</span>
           </div>
-          {hq.messages.length > 0 ? <HqMessages messages={hq.messages.slice(0, SHOWN_UPDATES)} fresh={fresh} role={role} onGo={() => setOpen(false)} /> : null}
-          <div style={{ display: 'grid', gap: space.lg }}>
-            {recent.map((e) => (
-              <div key={e.id}>
-                <p style={{ margin: `0 0 ${space.sm}px`, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.inkSecondary }}>
-                  {`Update of ${newsDay(e.id)}`}
-                  {fresh.has(e.id) ? newTag : null}
-                </p>
-                <NewsLines entry={e} role={role} onGo={() => setOpen(false)} />
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            style={{ ...linkStyle, marginTop: space.sm }}
-            onClick={() => {
-              setOpen(false);
-              navigate('/news');
-            }}
-          >
-            See all updates ›
-          </button>
+          {newest ? (
+            <NewsSummary
+              entry={newest}
+              isNew={fresh.has(newest.id)}
+              newCount={newUpdates}
+              onSee={() => {
+                setOpen(false);
+                navigate('/news');
+              }}
+            />
+          ) : null}
+          {hq.messages.length > 0 ? (
+            <>
+              <div style={{ borderTop: `1px solid ${color.border}`, margin: `${space.lg}px 0` }} />
+              <HqMessages messages={hq.messages.slice(0, SHOWN_UPDATES)} fresh={fresh} role={role} onGo={() => setOpen(false)} />
+            </>
+          ) : null}
         </section>
       )}
     </div>

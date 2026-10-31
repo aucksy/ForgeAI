@@ -329,7 +329,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'people') return <PeopleScreen />;
       // R-148: the old address of What's new (now /news, R-239).
       if (id === 'news') return <WhatsNewScreen />;
-      return <SettingsScreen />;
+      // R-247: the Gym, Member app (/settings/app) and Sign-in & data (/settings/data) tabs.
+      return <SettingsScreen section={id} />;
     default:
       return <TodayScreen />;
   }

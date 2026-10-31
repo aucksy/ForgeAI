@@ -1,6 +1,12 @@
 /**
  * Settings — the gym's own details, and the data actions.
  *
+ * R-247 (owner 31 Oct 2026: "the settings section is ... disorganized and it's too much to understand.
+ * ... put similar themed tabs under the settings section as well"): three tabs, like Money and
+ * Attendance: Gym (/settings: details, branches, timings), Member app (/settings/app: the app code,
+ * branding, challenges) and Sign-in & data (/settings/data: going online, the app on this device, the
+ * gym's records, MettleUp support access).
+ *
  * "Load demo gym" and "Start fresh" are both destructive, so both confirm first and
  * both say plainly what will happen. The mobile app learned this the hard way in
  * Phase O2: a reset that quietly regenerates fake data over someone's real records
@@ -25,6 +31,7 @@ import { downloadSavedData } from '../../store';
 import {
   Button,
   Card,
+  ChipToggle,
   ErrorBanner,
   Grid,
   PageHeader,
@@ -45,7 +52,24 @@ import { acceptedLine } from '../../auth/terms';
 import { GymDataActions } from '../GymDataActions';
 import { ClearDeviceCard } from '../offline';
 
-export function SettingsScreen() {
+export type SettingsTab = 'gym' | 'app' | 'data';
+
+/** Which Settings tab a route opens. PURE. */
+export function settingsTabFor(section: string | undefined): SettingsTab {
+  return section === 'app' || section === 'data' ? section : 'gym';
+}
+
+const TAB_PATH: Record<SettingsTab, string> = { gym: '/settings', app: '/settings/app', data: '/settings/data' };
+const TAB_SUBTITLE: Record<SettingsTab, string> = {
+  gym: 'Your gym’s name, address, branches and opening times',
+  app: 'What your members see in the MettleUp app',
+  data: 'Going online, this device, and your gym’s records',
+};
+/** Where a greyed-out button sends the owner first. */
+const GO_ONLINE = 'First put your gym online in Settings → Sign-in & data.';
+
+export function SettingsScreen({ section }: { section?: string }) {
+  const tab = settingsTabFor(section);
   const { snapshot, updateGym, loadDemoGym, startEmptyGym } = useCrm();
   const { gym } = snapshot;
   const { cloud, startOver, disconnectShop, renameCloudGym } = useShop();
@@ -122,14 +146,39 @@ export function SettingsScreen() {
 
   return (
     <>
-      <PageHeader title="Settings" subtitle="Your gym's details and data" />
+      <PageHeader title="Settings" subtitle={TAB_SUBTITLE[tab]} />
+
+      <div style={{ marginBottom: space.lg }}>
+        <ChipToggle
+          variant="tabs"
+          label="Settings view"
+          value={tab}
+          onChange={(v) => navigate(TAB_PATH[v as SettingsTab])}
+          options={[
+            { value: 'gym', label: 'Gym' },
+            { value: 'app', label: 'Member app' },
+            { value: 'data', label: 'Sign-in & data' },
+          ]}
+        />
+      </div>
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
-      {/* Sign-in first: "put your records online" is the one thing here that protects the gym. */}
-      <SignInCard />
-
-      <InstallCard />
+      {tab === 'gym' && (
+      <>
+      {/* R-247: going online is what protects the gym, so a gym that is not online yet is told here too. */}
+      {!online && (
+        <Card style={{ marginBottom: space.lg }}>
+          <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+            Your gym is saved in this browser only. Put it online to keep it safe and open it on any phone or computer.
+          </p>
+          <div style={{ marginTop: space.md }}>
+            <Button variant="ghost" onClick={() => navigate('/settings/data')}>
+              Open Sign-in & data
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>{multi ? 'This branch’s details' : 'Gym details'}</SectionTitle>
@@ -161,6 +210,26 @@ export function SettingsScreen() {
       {/* #41: the gym's branches and "Add a branch". */}
       <BranchesCard />
 
+      {/* R-124: when the gym is open; members see "Open now · closes 10:00 pm" in the app. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>Gym timings</SectionTitle>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          {online
+            ? 'Morning and evening times for each day, or 24 hours, and holidays. Members see whether you are open now.'
+            : `${GO_ONLINE} Then you can add your timings for members to see.`}
+        </p>
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" disabled={!online} needsInternet onClick={() => navigate('/settings/timings')}>
+            Open gym timings
+          </Button>
+        </div>
+      </Card>
+
+      </>
+      )}
+
+      {tab === 'app' && (
+      <>
       {/* Titled inside its card like the sections above and below it — the title
           used to sit outside, on the page, the only one that did. */}
       <JoinCodeCard title="Member app" />
@@ -180,28 +249,13 @@ export function SettingsScreen() {
         </div>
       </Card>
 
-      {/* R-124: when the gym is open; members see "Open now · closes 10:00 pm" in the app. */}
-      <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Gym timings</SectionTitle>
-        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          {online
-            ? 'Morning and evening times for each day, or 24 hours, and holidays. Members see whether you are open now.'
-            : 'First put your gym online (above). Then you can add your timings for members to see.'}
-        </p>
-        <div style={{ marginTop: space.lg }}>
-          <Button variant="ghost" disabled={!online} needsInternet onClick={() => navigate('/settings/timings')}>
-            Open gym timings
-          </Button>
-        </div>
-      </Card>
-
       {/* R-133: a monthly challenge and the leaderboard, shown in the member app. */}
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Challenges</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {online
             ? 'Give members a goal for the month. Everyone who reaches it wins free days. A top 10 list shows in the app.'
-            : 'First put your gym online (above). Then you can start a challenge for members.'}
+            : `${GO_ONLINE} Then you can start a challenge for members.`}
         </p>
         <div style={{ marginTop: space.lg }}>
           <Button variant="ghost" disabled={!online} needsInternet onClick={() => navigate('/challenges')}>
@@ -210,7 +264,17 @@ export function SettingsScreen() {
         </div>
       </Card>
 
-      <Card>
+      </>
+      )}
+
+      {tab === 'data' && (
+      <>
+      {/* Sign-in first: "put your records online" is the one thing here that protects the gym. */}
+      <SignInCard />
+
+      <InstallCard />
+
+      <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {`${countOf(counts.members, 'member')} · ${countOf(counts.memberships, 'membership')} · ${countOf(counts.payments, 'payment')} · ${countOf(counts.visits, 'check-in')}. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
@@ -295,6 +359,8 @@ export function SettingsScreen() {
 
       {/* #51: when MettleUp support looked at this gym's records, and the button to let them. */}
       {online && canErase && <ForgeAccessCard />}
+      </>
+      )}
 
       {confirming && (
         <Sheet

@@ -7,6 +7,28 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-247. Admin app: Settings is disorganized; group it into tabs like the other pages — 31 Oct 2026
+
+He said: "please see if you can better reorganize the settings section of the admin panel, because for most of the sections you have these tabs, but the settings sections is like kind of disorganized and it's too much to understand and interpret. So if you can put similar themed tabs under the section settings section as well and make it easier to kind of go through and interpret and act."
+
+Also (R-246 follow-up): "In Hindi, the hero line should be member jab apni tarakki dekhte hain to wo zyada samay tak jude rehte hain aur tarakki we should use progress instead of tarakki. We can do English. We don't have to use pure Hindi for the whole website." Then: "Hinglish".
+
+Then, on Settings: "Just keep the user experience consistent across all the settings, right? So when the admin user is building the habit, then it's kind of not changing across."
+
+Did (Settings): three tabs, the same tab bar as Money and Attendance, always in the same order: Gym (details, branches, opening times), Member app (gym code, your look, challenges), Sign-in & data (going online, install, your records, danger zone, MettleUp access). A gym not online yet sees a short note on the Gym tab with a button to Sign-in & data. The front desk keeps its one short page (like Money, a single tab shows no tab bar). Panel Worker 963fb138. Hinglish: (in progress)
+
+## R-246. Website: the phone header overlaps ("for Gyms" runs into the English button) — 31 Oct 2026
+
+He said (with a phone screenshot of mettleup.fit in Hindi): "The top section in the mobile view has this messed up overlapping happening, and it's happening with English as well. So the words for gym overlap the English button."
+
+Did: header buttons never wrap or shrink; on phones up to 440 px the small "for Gyms" is hidden and the buttons are a little tighter; under 350 px the name is smaller. Measured in Hindi at 360 and 320 px: nothing overlaps, no sideways scroll.
+
+## R-245. Admin bell: no count for the HQ message; What's new off Today, into the bell — 31 Oct 2026
+
+He said: "Okay, so the notification from headquarters to admin panel did go through, but there was no like count badge on the notifications icon. For admin panel, I do not want what's new every time there is something new right on the landing page. It should be first part of notifications panel for them to click on to see what's new, or maybe a bit quick summary in the notifications panel of what's new, and then they click on see more to go there. And then for every new message, there should be a, you know, a new kind of indication that there is something new in the notifications panel. You know how it works, right? Just implement the best way."
+
+Did: the bell's number now counts HQ messages a desk never saw (a browser that never opened the bell counts the last 14 days; before, it silently remembered the first message and counted nothing). It also reloads when the desk comes back to the tab. The What's new card is gone from Today. The bell panel opens with "What's new in the admin app": the newest update's first 2 lines, "N more changes", and "See what's new" to the full page; then "From MettleUp". Anything new has a raised background, an orange edge and a New tag. Panel Worker 963fb138.
+
 ## R-244. Yes to the HQ table and member prices; website: highlight the sentence, keep the old box — 31 Oct 2026
 
 He said: "yes, apply the HQ messages table" / "Yes for member app prices" / "And I wanted you to highlight the actual sentence that says, type your gym's name. And you seem to have just changed the design of the place where they type it. I liked the design before. Just highlight the actual sentence so it's visible for the user. And then once their attention is caught, they can see a blinking cursor there so they know they can start typing."
@@ -232,10 +254,3 @@ Plan: the app records the member's voice (new microphone permission), sends the 
 in the app), returns the text, the clip is not kept. The member sees the text, can fix it, then Send (input 'voice').
 Limits: Groq free = 20 a minute, 2,000 a day, 7,200 s audio an hour; ours: 20 clips an install a day, 1,000 all, 2 min a clip.
 Privacy notice + Play Data safety must name the microphone and Groq: wording goes to him (rule: privacy wording = his yes).
-
-## R-205. Watch: no "Complete set" button; the watch is for resting and walking — 30 Oct 2026
-He said: "remove the requirement of complete set button on the watch ... people log their reps in the phone app and hit
-the check mark which automatically completes the set. It's only when I'm resting and walking I want to be able to see the
-rest timer and what's coming next." The rest of the Claude Design prompt is OK.
-Did: gave him the revised Claude Design prompt (watch = look-only: rest timer, next set, heart rate; no buttons to log).
-Plan: the current watch app keeps its button until the new design is built; the redesign drops it (and its tap path).

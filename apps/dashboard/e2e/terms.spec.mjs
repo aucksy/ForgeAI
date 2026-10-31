@@ -8,7 +8,7 @@
 // J74: the data agreement link opens its own page (#59).
 import { expect, test } from '@playwright/test';
 
-import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn } from './support.mjs';
+import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn, openSettings } from './support.mjs';
 
 const BOX = /I agree to the MettleUp terms and the data agreement/;
 
@@ -38,7 +38,7 @@ test('J70 Create my gym: the terms box must be ticked, and the acceptance is kep
   // Not asked again: the box at "Create my gym" was the acceptance.
   await expect(page.getByText('Before you go on')).toHaveCount(0);
 
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-10-24).');
 });
 
@@ -63,7 +63,7 @@ test('J71 an existing gym: the owner is asked once at sign-in; the desk never', 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('Before you go on')).toHaveCount(0);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-10-24).');
 });
 
@@ -85,7 +85,7 @@ test('J72 a server without the terms update asks nothing', async ({ page }) => {
   await typeSignIn(page, '98290 12345', SIGN_IN_CODE);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('Before you go on')).toHaveCount(0);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).not.toContainText('You accepted the terms');
 });
 

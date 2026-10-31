@@ -5,12 +5,12 @@ import { readFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
 
-import { open, openApp, sheet, startDemo, startOnlineGym } from './support.mjs';
+import { open, openApp, sheet, startDemo, startOnlineGym, openSettings } from './support.mjs';
 
 test('J31a Download all your gym’s data: an Excel file and a full copy, with the demo gym inside', async ({ page }) => {
   await openApp(page);
   await startDemo(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   const files = [];
   page.on('download', (d) => files.push(d));
   await page.getByRole('button', { name: 'Download all your gym’s data' }).tap();
@@ -34,7 +34,7 @@ test('J31b an online gym asks to be deleted: asked first, request sent, nothing 
   });
   await openApp(page);
   await startOnlineGym(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await page.getByRole('button', { name: 'Delete our gym from MettleUp' }).tap();
   const ask = sheet(page, 'Delete your gym from MettleUp?');
   await expect(ask).toContainText('Download your data first.');

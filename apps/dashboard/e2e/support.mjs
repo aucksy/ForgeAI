@@ -1016,9 +1016,15 @@ export async function startDemo(page) {
   await expect(today).toBeVisible({ timeout: 15_000 });
 }
 
-/** Settings -> Erase and start fresh -> confirm. Leaves an empty gym that keeps its name. */
-export async function eraseAndStartFresh(page) {
+/** R-247: Settings has three tabs: 'Gym', 'Member app' and 'Sign-in & data'. Open Settings on one. */
+export async function openSettings(page, tab = 'Gym') {
   await open(page, 'Settings');
+  if (tab !== 'Gym') await page.getByRole('group', { name: 'Settings view' }).getByRole('button', { name: tab }).tap();
+}
+
+/** Settings -> Sign-in & data -> Erase and start fresh -> confirm. Leaves an empty gym that keeps its name. */
+export async function eraseAndStartFresh(page) {
+  await openSettings(page, 'Sign-in & data');
   await page.getByRole('button', { name: 'Erase and start fresh' }).tap();
   const confirm = sheet(page, 'Erase everything?');
   await expect(confirm).toBeVisible();

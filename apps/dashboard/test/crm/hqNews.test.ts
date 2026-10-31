@@ -26,16 +26,19 @@ describe('HQ messages in the bell (R-243)', () => {
     expect(cleanMessages(null)).toEqual([]);
   });
 
-  it('a first look remembers and counts nothing; later messages count until the bell opens', () => {
+  it('R-245: before the bell was ever opened, the last 14 days count; after, only newer messages', () => {
+    const now = Date.parse('2026-10-31T12:00:00Z');
     const s = store();
-    expect(readHqUnread([msg(2), msg(1)], s)).toEqual([]);
+    // The owner's case: the desk never opened the bell, then HQ's first message arrived: it must count.
+    const old = msg(1, { at: '2026-10-10T10:00:00Z' });
+    expect(readHqUnread([msg(2), old], s, now).map((m) => m.id)).toEqual([2]);
+    expect(s.m.has(HQ_SEEN_KEY)).toBe(false);
+    markHqSeen([msg(2), old], s);
     expect(s.m.get(HQ_SEEN_KEY)).toBe('2');
-    expect(readHqUnread([msg(4), msg(3), msg(2)], s).map((m) => m.id)).toEqual([4, 3]);
+    expect(readHqUnread([msg(4), msg(3), msg(2)], s, now).map((m) => m.id)).toEqual([4, 3]);
     markHqSeen([msg(4), msg(3)], s);
-    expect(readHqUnread([msg(4), msg(3)], s)).toEqual([]);
-    const empty = store();
-    expect(readHqUnread([], empty)).toEqual([]);
-    expect(empty.m.get(HQ_SEEN_KEY)).toBe('0');
+    expect(readHqUnread([msg(4), msg(3)], s, now)).toEqual([]);
+    expect(readHqUnread([], store(), now)).toEqual([]);
     expect(unreadHq([msg(1)], 0)).toHaveLength(1);
     expect(readHqUnread([msg(1)], null)).toEqual([]);
   });

@@ -9,7 +9,7 @@ import { readFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
 
-import { addMember, addPlan, expectFitsPhone, freshGym, open, openApp, openMember, sell, sheet, tile } from './support.mjs';
+import { addMember, addPlan, expectFitsPhone, freshGym, open, openApp, openMember, sell, sheet, tile, openSettings } from './support.mjs';
 
 const STORE = 'forgeai-crm-v1';
 
@@ -126,7 +126,7 @@ test('J23c a save cut off half-way (damaged data): "We couldn’t read the gym",
   // Later, in the new gym's Settings: the kept copy is still there to download.
   await page.getByRole('button', { name: 'Start demo' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('A gym this browser couldn’t read is kept here.');
   const again = page.waitForEvent('download');
   await page.getByRole('main').getByRole('button', { name: 'Download the saved data' }).tap();

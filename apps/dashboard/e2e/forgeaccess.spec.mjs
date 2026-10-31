@@ -2,14 +2,14 @@
 // a gym MettleUp paused (0027: looking works, saving says why it cannot). Pretend server: support.mjs.
 import { expect, test } from '@playwright/test';
 
-import { expectFitsPhone, open, openApp, sheet, startOnlineGym } from './support.mjs';
+import { expectFitsPhone, open, openApp, sheet, startOnlineGym, openSettings } from './support.mjs';
 
 const PAUSED = 'MettleUp has paused this gym, so nothing can be changed or saved.';
 
 test('J51a the owner lets MettleUp support look for an hour, sees it listed, and closes it early', async ({ page }) => {
   await openApp(page);
   await startOnlineGym(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('heading', { name: 'MettleUp access' })).toBeVisible();
   await expect(page.getByText('never a member’s name or number', { exact: false })).toBeVisible();
   const card = page.getByRole('main');
@@ -35,7 +35,7 @@ test('J51b a gym MettleUp paused: records still open, a save says why it cannot'
   server.hqStatus = 'suspended';
   server.hqActions = [{ at: new Date('2026-10-17T09:00:00+05:30').toISOString(), action: 'suspend_gym', reason: 'Unpaid for 3 months' }];
 
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByText(PAUSED).first()).toBeVisible();
   await expect(page.getByText('17 Oct, 09:00: MettleUp paused your gym. Reason: Unpaid for 3 months')).toBeVisible();
 

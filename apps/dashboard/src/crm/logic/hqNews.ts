@@ -3,8 +3,10 @@
  * in the admin app's notification bell (ui/WhatsNew.tsx NewsBell) next to the app's own updates.
  * They come from the same site's GET /api/hq-news (deploy/panel/hqNews.js); HQ writes them on its
  * Messages page. The same words go to every gym, so no sign-in is needed to read them.
- * "Seen" is the newest message id this browser has shown in the bell (localStorage). A browser that
- * never looked remembers what is there and counts nothing: only messages sent after count as new.
+ * "Seen" is the newest message id this browser has shown in the bell (localStorage).
+ * R-245 (owner 31 Oct 2026: "there was no like count badge"): a browser that never opened the bell used
+ * to remember what was there and count nothing, so the first real message never counted. Now it counts
+ * every message of the last FIRST_LOOK_DAYS as new, until the bell is opened.
  */
 import type { NewsStore } from './whatsNew';
 
@@ -22,6 +24,9 @@ export const HQ_SEEN_KEY = 'forgeai.hqNews.seen.v1';
 
 /** How often an open admin app asks again (a desk stays open all day). */
 export const HQ_POLL_MS = 15 * 60 * 1000;
+
+/** A browser that never opened the bell counts the messages of these last days as new. */
+export const FIRST_LOOK_DAYS = 14;
 
 /** Only well-formed messages, newest first. PURE. */
 export function cleanMessages(raw: unknown): HqMessage[] {
@@ -44,16 +49,16 @@ export function unreadHq(messages: readonly HqMessage[], seen: number): HqMessag
 }
 
 /**
- * The messages this browser has not seen. A first look remembers the newest id (or 0) and counts
- * nothing. Never throws (no storage = nothing new).
+ * The messages this browser has not seen. Before the bell was ever opened: the messages of the last
+ * FIRST_LOOK_DAYS (nothing is written; opening the bell does that). Never throws (no storage = nothing new).
  */
-export function readHqUnread(messages: readonly HqMessage[], store: NewsStore | null): HqMessage[] {
+export function readHqUnread(messages: readonly HqMessage[], store: NewsStore | null, now = Date.now()): HqMessage[] {
   if (!store) return [];
   try {
     const raw = store.getItem(HQ_SEEN_KEY);
     if (raw == null) {
-      store.setItem(HQ_SEEN_KEY, String(messages[0]?.id ?? 0));
-      return [];
+      const since = now - FIRST_LOOK_DAYS * 24 * 60 * 60 * 1000;
+      return messages.filter((m) => Date.parse(m.at) >= since);
     }
     const seen = Number(raw);
     return unreadHq(messages, Number.isFinite(seen) ? seen : 0);

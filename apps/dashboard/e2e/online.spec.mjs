@@ -7,17 +7,7 @@
 // J22: "Turn on the shop": no internet first (says so), then the gym code and the 12 sample products.
 import { expect, test } from '@playwright/test';
 
-import {
-  OWNER,
-  addMember,
-  browserOnlyGym,
-  eraseAndStartFresh,
-  chooseFile,
-  expectFitsPhone,
-  membersFile,
-  open,
-  openApp,
-} from './support.mjs';
+import { OWNER, addMember, browserOnlyGym, eraseAndStartFresh, chooseFile, expectFitsPhone, membersFile, open, openApp, openSettings } from './support.mjs';
 
 /** Settings -> "Put your gym online" card. */
 function putOnlineCard(page) {
@@ -32,7 +22,7 @@ function putOnlineCard(page) {
 test('J20 put the browser gym online: the records go up and the owner is signed in', async ({ page }) => {
   const server = await browserOnlyGym(page);
   await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('Saved in this browser only.');
   const card = putOnlineCard(page);
   await expect(card).toContainText('Right now your members and payments are only in this browser.');
@@ -49,7 +39,7 @@ test('J20 put the browser gym online: the records go up and the owner is signed 
   expect(server.rows('member').map((m) => m.fullName)).toEqual(['Asha Verma']);
 
   // Settings now says online; the member is read back from the server.
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('Saved online. Safe if a phone or computer breaks.');
   await expect(page.getByRole('main')).toContainText('1 member · 0 memberships · 0 payments · 0 check-ins.');
   await expect(page.getByRole('button', { name: 'Erase and start fresh' })).toHaveCount(0);
@@ -64,7 +54,7 @@ test('J20b the demo opened without internet is made up: it is never offered to g
   await page.getByRole('button', { name: 'Open the demo without the shop (works without internet)' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   server.reconnect();
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   const main = page.getByRole('main');
   await expect(main).toContainText('This is the demo gym');
   await expect(main).toContainText(
@@ -82,7 +72,7 @@ test('J21 going online stops half-way: nothing lost; "Finish going online" ends 
   const server = await browserOnlyGym(page);
 
   // The shop was turned on earlier: this gym has a code and an old owner key.
-  await open(page, 'Settings');
+  await openSettings(page, 'Member app');
   await page.getByRole('button', { name: 'Turn on the shop' }).tap();
   await expect(page.getByLabel('Gym code Q A 0 0 0 1')).toBeVisible();
   const oldKey = [...server.ownerKeys][0];
@@ -94,7 +84,7 @@ test('J21 going online stops half-way: nothing lost; "Finish going online" ends 
   await expect(page.getByText('420 added, 0 skipped')).toBeVisible();
 
   // Put it online. The first step goes up, then the internet drops.
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   const card = putOnlineCard(page);
   await card.getByLabel('Your name').fill(OWNER.name);
   await card.getByLabel('Your mobile number').fill(OWNER.phone);
@@ -128,15 +118,16 @@ test('J21 going online stops half-way: nothing lost; "Finish going online" ends 
 
   await open(page, 'Members');
   await expect(page.getByText('420 members', { exact: true })).toBeVisible();
-  await open(page, 'Settings');
+  await openSettings(page, 'Sign-in & data');
   await expect(page.getByRole('main')).toContainText('Saved online.');
   // The gym code stays the same for members.
+  await page.getByRole('group', { name: 'Settings view' }).getByRole('button', { name: 'Member app' }).tap();
   await expect(page.getByLabel('Gym code Q A 0 0 0 1')).toBeVisible();
 });
 
 test('J22 turn on the shop: no internet says so; then the gym code and the 12 sample products', async ({ page }) => {
   const server = await browserOnlyGym(page);
-  await open(page, 'Settings');
+  await openSettings(page, 'Member app');
   const turnOn = page.getByRole('button', { name: 'Turn on the shop' });
   await expect(page.getByRole('main')).toContainText('Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.');
 

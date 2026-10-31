@@ -453,6 +453,11 @@ section{position:relative}
 .pill.start{background:var(--flavour);border-color:var(--flavour);color:var(--on-flavour);font-weight:800;transition:background .5s var(--ease),color .5s var(--ease),filter .2s}
 .pill.start:hover{color:var(--on-flavour);filter:brightness(1.08)}
 @media (max-width:440px){.pill.signin{display:none}}
+/* R-246 (owner 31 Oct 2026: "the words for gym overlap the English button"): a phone header never wraps or overlaps. */
+.pill{white-space:nowrap;flex:none}
+.mark{min-width:0}
+@media (max-width:440px){.mark small{display:none}.lid .wrap{gap:8px}.pill{padding:0 12px;font-size:14px}}
+@media (max-width:350px){.mark b{font-size:18px}.pill{padding:0 9px}}
 .go{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .go.big{min-height:62px;padding:0 30px;font-size:23px;box-shadow:0 16px 30px -14px rgba(0,0,0,.7)}
 :lang(hi) .go.big{font-size:25px}
