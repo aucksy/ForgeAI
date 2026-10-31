@@ -334,6 +334,8 @@ export interface CrmData {
    * its notes. Days only move forward here; a mistake is fixed by cancelling and selling again.
    */
   extendMembership(id: string, days: number, reason: string): Promise<Membership>;
+  /** R-250: a plan that has not started yet starts on [newStart]; it keeps its length. */
+  moveMembershipStart(id: string, newStart: DateISO): Promise<Membership>;
 
   /**
    * PT (15 Oct 2026, logic/pt.ts): one session used on `day` on a PT pack. Refuses a day that is not

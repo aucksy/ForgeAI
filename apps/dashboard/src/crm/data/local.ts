@@ -47,7 +47,7 @@ import type {
   WorkoutPlanDraft,
 } from '../types';
 import { addDays, diffDays, formatDay, isValidDateISO, minDate, todayISO, type DateISO } from '../logic/dates';
-import { endDateForPlan, unpaidForMembership } from '../logic/membership';
+import { endDateForPlan, movedEndDate, moveStartProblem, unpaidForMembership } from '../logic/membership';
 import {
   overDueProblem,
   priceProblem,
@@ -1011,6 +1011,28 @@ export class LocalCrmData implements CrmData {
       const before = membership.endsOn;
       membership.endsOn = addDays(membership.endsOn, days);
       membership.notes = appendNote(membership.notes, `+${days} days (${reason.trim() || 'extra days'}): ${before} -> ${membership.endsOn}`);
+      membership.updatedAt = this.now();
+      return { ...membership };
+    });
+  }
+
+  /**
+   * R-250 (owner, 31 Oct 2026): move the start of a plan that has not started yet. A plan sold with a
+   * future start could not be changed; Edit on the member page changes only the joining date. The
+   * plan keeps its length (the last day moves by the same days) and a note records the move.
+   */
+  async moveMembershipStart(id: string, newStart: DateISO): Promise<Membership> {
+    return this.update((db) => {
+      const membership = db.memberships.find((m) => m.id === id);
+      if (!membership) throw new NotFoundError('That membership');
+      requireDay(newStart, 'The new start date');
+      const plan = db.plans.find((p) => p.id === membership.planId) ?? null;
+      const problem = moveStartProblem(membership, newStart, this.today(), db.memberships, plan);
+      if (problem) throw new Error(problem);
+      const before = membership.startsOn;
+      membership.endsOn = movedEndDate(membership, newStart, plan);
+      membership.startsOn = newStart;
+      membership.notes = appendNote(membership.notes, `Start moved: ${before} -> ${newStart}`);
       membership.updatedAt = this.now();
       return { ...membership };
     });

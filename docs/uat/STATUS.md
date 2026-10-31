@@ -42,3 +42,4 @@ Admin deploy fb61fc46 + HQ 4557c85e (31 Oct): D1 0006 applied live (his yes), li
 
 - 31 Oct 2026: panel 963fb138: R-245 bell (What is new moved off Today into the bell, HQ first-look count), R-246 phone header, R-247 Settings tabs. tsc, vitest 1458, e2e 109 passed.
 - 31 Oct 2026: panel 61772aca: mettleup.fit Hindi is now Hinglish (R-247), his hero line. tsc, vitest, e2e 109 passed; header checked at 360/320 px.
+- 31 Oct 2026: panel 24984d74 live. R-250 Change start date for a plan not started yet (owner desk, member page). tsc, vitest 1465, build, playwright 109 passed.

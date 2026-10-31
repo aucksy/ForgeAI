@@ -106,6 +106,7 @@ interface CrmContextValue {
   addExpense: (draft: ExpenseDraft) => Promise<void>;
   removeExpense: (id: string) => Promise<void>;
   extendMembership: (id: string, days: number, reason: string) => Promise<void>;
+  moveMembershipStart: (id: string, newStart: string) => Promise<void>;
   /** PT: one session used today (or on `day`). Owner and Staff. */
   markPtSession: (membershipId: string, day?: DateISO) => Promise<void>;
   /** PT: take back the session marked on `day`. */
@@ -414,6 +415,7 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       addExpense: async (draft) => void (await mutate((a) => a.addExpense(draft))),
       removeExpense: async (id) => void (await mutate((a) => a.removeExpense(id))),
       extendMembership: async (id, days, reason) => void (await mutate((a) => a.extendMembership(id, days, reason))),
+      moveMembershipStart: async (id, newStart) => void (await mutate((a) => a.moveMembershipStart(id, newStart))),
       markPtSession: async (membershipId, day) =>
         void (await mutate((a) => a.markPtSession(membershipId, day ?? today, today))),
       undoPtSession: async (membershipId, day) => void (await mutate((a) => a.undoPtSession(membershipId, day))),

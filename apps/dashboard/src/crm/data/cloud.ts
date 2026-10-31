@@ -1411,6 +1411,10 @@ export class CloudCrmData implements CrmData {
   extendMembership(id: string, days: number, reason: string) {
     return this.run((d) => d.extendMembership(id, days, reason));
   }
+
+  moveMembershipStart(id: string, newStart: DateISO) {
+    return this.run((d) => d.moveMembershipStart(id, newStart));
+  }
   markPtSession(membershipId: string, day: string, today: string) {
     return this.run((d) => d.markPtSession(membershipId, day, today));
   }

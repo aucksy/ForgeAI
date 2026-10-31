@@ -45,6 +45,7 @@ import {
 } from '../../logic/pt';
 import type { Membership, Payment, WorkoutPlan, WorkoutPlanDraft } from '../../types';
 import { CollectPaymentSheet } from '../forms/CollectPaymentSheet';
+import { ChangeStartSheet } from '../forms/ChangeStartSheet';
 import { ExtendMembershipSheet } from '../forms/ExtendMembershipSheet';
 import { useAuth, useCan } from '../../auth/AuthProvider';
 import { MemberFormSheet } from '../forms/MemberFormSheet';
@@ -133,6 +134,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   const [collecting, setCollecting] = useState(false);
   const [cancelling, setCancelling] = useState<Membership | null>(null);
   const [extending, setExtending] = useState<Membership | null>(null);
+  /** R-250: the not-started plan whose start date is being changed. */
+  const [movingStart, setMovingStart] = useState<Membership | null>(null);
   // #49 step 1: the workout offer's claim code, and a reward given from it (opens on Gift, 3 days).
   const [checkingCode, setCheckingCode] = useState(false);
   const [rewardDays, setRewardDays] = useState<number | undefined>(undefined);
@@ -547,6 +550,8 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 today={today}
                 onCancel={canCancel ? () => setCancelling(m) : undefined}
                 onExtend={canExtendRow(m) ? () => setExtending(m) : undefined}
+                // R-250: owners only (the server refuses a Staff change to a plan), a plan not started yet.
+                onMoveStart={canFreeze && !m.cancelled && m.startsOn > today ? () => setMovingStart(m) : undefined}
                 onRestore={
                   canCancel && !restoreBusy
                     ? () => {
@@ -748,6 +753,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
             setCancelling(null);
             flash('Membership cancelled.');
           }}
+        />
+      )}
+      {movingStart && (
+        <ChangeStartSheet
+          membership={movingStart}
+          others={memberships}
+          onClose={() => setMovingStart(null)}
+          onDone={(day) => flash(`Start date changed to ${formatDay(day)}.`)}
         />
       )}
       {extending && (
@@ -1170,6 +1183,7 @@ function MembershipRow({
   onCancel,
   onRestore,
   onExtend,
+  onMoveStart,
 }: {
   membership: Membership;
   payments: Payment[];
@@ -1179,6 +1193,8 @@ function MembershipRow({
   onRestore?: () => void;
   /** Only on the plan that ends last: opens Freeze / Extra din. */
   onExtend?: () => void;
+  /** R-250: only on a plan that has not started yet: opens Change start date. */
+  onMoveStart?: () => void;
 }) {
   const view = toMembershipView(membership, today);
   const unpaid = unpaidForMembership(membership, payments);
@@ -1281,6 +1297,13 @@ function MembershipRow({
               </Button>
             )}
       </Row>
+      {onMoveStart && (
+        <div style={{ marginTop: space.sm }}>
+          <Button variant="ghost" full needsInternet onClick={onMoveStart}>
+            Change start date
+          </Button>
+        </div>
+      )}
       {onExtend && (
         <div style={{ marginTop: space.sm }}>
           <Button variant="ghost" full needsInternet onClick={onExtend}>

@@ -24,7 +24,7 @@ import type {
 } from '../types';
 import { addDays, addMonths, diffDays, formatDay, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
-import { gymTerms } from './pt';
+import { gymTerms, isPtMembership } from './pt';
 
 /** A term inside this many days of its end is surfaced as "expiring". */
 export const EXPIRING_WINDOW_DAYS = 7;
@@ -284,12 +284,55 @@ export function rewardTakenBackLine(line: string): { from: DateISO; to: DateISO 
 }
 
 /**
+ * R-250: the last day after the start moves to [newStart]. A plan still as sold (its plan's own end
+ * date) ends where that plan ends from the new start, so an Annual stays "to the day before the
+ * anniversary" across a leap year. A plan with extra days or an edited plan keeps its day count. PURE.
+ */
+export function movedEndDate(m: Pick<Membership, 'startsOn' | 'endsOn'>, newStart: DateISO, plan: Plan | null): DateISO {
+  if (plan && endDateForPlan(m.startsOn, plan) === m.endsOn) return endDateForPlan(newStart, plan);
+  return addDays(newStart, diffDays(m.startsOn, m.endsOn));
+}
+
+/** R-250: the earliest new start, in days before today (a late entry; the same reach as a back-dated sale). */
+export const MOVE_START_BACK_DAYS = 31;
+
+/**
+ * R-250: why a plan's start cannot move to [newStart], or null when it can. Only a plan that has not
+ * started yet (moving a running plan would change days already used: Freeze / extra days does that),
+ * never a cancelled one, and a gym plan never onto the days of the member's other gym plan (PT packs
+ * run beside gym plans, logic/pt.ts). PURE.
+ */
+export function moveStartProblem(
+  m: Pick<Membership, 'id' | 'memberId' | 'startsOn' | 'endsOn' | 'cancelled' | 'ptSessions' | 'planName'>,
+  newStart: DateISO,
+  today: DateISO,
+  all: readonly Pick<Membership, 'id' | 'memberId' | 'startsOn' | 'endsOn' | 'cancelled' | 'ptSessions' | 'planName'>[],
+  plan: Plan | null = null,
+): string | null {
+  if (m.cancelled) return 'This plan is cancelled. Undo the cancel first.';
+  if (m.startsOn <= today) return 'This plan has already started. Use "Freeze / extra days" to move its last day.';
+  if (newStart === m.startsOn) return 'Pick a different start date.';
+  if (newStart < addDays(today, -MOVE_START_BACK_DAYS)) return `The start can't be more than ${MOVE_START_BACK_DAYS} days ago.`;
+  if (isPtMembership(m)) return null;
+  const newEnd = movedEndDate(m, newStart, plan);
+  const clash = all.find(
+    (o) => o.memberId === m.memberId && o.id !== m.id && !o.cancelled && !isPtMembership(o) && o.startsOn <= newEnd && o.endsOn >= newStart,
+  );
+  if (clash) {
+    return `These dates overlap their ${clash.planName} plan (${formatDay(clash.startsOn)} → ${formatDay(clash.endsOn)}). Pick a start after it ends.`;
+  }
+  return null;
+}
+
+/**
  * One line of a plan's history, as the page shows it (admin audit C7-31 / C7-32, 16 Oct 2026).
  * The lines are stored with raw dates ("+7 days (Freeze - medical): 2026-06-04 -> 2026-06-11");
  * here they get the page's dates. A line typed by a person is shown as written. PURE.
  */
 export function historyLine(line: string): string {
   const ext = extensionLine(line);
+  const moved = /^Start moved: (\d{4}-\d{2}-\d{2}) -> (\d{4}-\d{2}-\d{2})$/.exec(line.trim());
+  if (moved) return `Start date changed: ${formatDay(moved[1])} → ${formatDay(moved[2])}`;
   // #49 step 2: a workout-offer reward (given by the desk's tap or by itself, 0025) is free days, not
   // a sale: "Extended free by 3 days (reward): 30 Nov → 3 Dec".
   if (ext && /^reward\b/i.test(ext.reason.trim()))
