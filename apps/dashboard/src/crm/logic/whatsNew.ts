@@ -33,6 +33,65 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    id: '2026-10-31',
+    lines: [
+      {
+        // R-234 A-15: full rupees on Money and Today.
+        text: 'On Money and Today you now see full amounts, like ₹12,500, not short forms like ₹12.5k.',
+        go: { label: 'Open Money', path: '/money' },
+      },
+      {
+        // R-234 B-18: saleWarning, one warning with every reason.
+        text: 'Sell membership: if the price is above the plan’s price, or the plan starts over 30 days later than usual, the app asks you to check once. Tap "Yes, save" to keep it.',
+      },
+      {
+        // R-234 A-29: no collection over the amount due.
+        text: 'Collect payment: the app no longer takes more than the member owes.',
+      },
+      {
+        // R-234 B-11: Welcome tabs.
+        text: 'The sign-in page now has two tabs: "Sign in" and "Set up a new gym".',
+      },
+    ],
+  },
+  {
+    id: '2026-10-30',
+    lines: [
+      {
+        // F150, 0044 live.
+        text: 'On Today, "Requests from the app" shows members who asked to pause or renew their plan. Tap Approve or Decline.',
+      },
+      {
+        // F121, 0045 live.
+        text: 'On a member’s page, tap "Request workout report". When their app sends it, tap "Download report".',
+        go: { label: 'Open Members', path: '/members' },
+      },
+    ],
+  },
+  {
+    id: '2026-10-29',
+    lines: [
+      {
+        // R-168: Your numbers on Today.
+        text: 'On Today, "Your numbers" shows 5 key numbers for your gym. Tap one to see the members behind it, call or WhatsApp them, or download the list.',
+      },
+      {
+        // Your growth, owner only.
+        text: '"Your growth" (owners only, under More): see month by month if your gym is growing since it started on MettleUp.',
+        go: { label: 'Open Your growth', path: '/growth' },
+      },
+      {
+        // F107: desk webcam photo.
+        text: 'When you add or edit a member, "Take photo" uses the desk computer’s camera.',
+      },
+      {
+        // R-160: colour from the logo, no AI.
+        text: 'Settings → Branding: the app suggests a gym colour from your logo.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+    ],
+  },
+  {
     id: '2026-10-28',
     lines: [
       {

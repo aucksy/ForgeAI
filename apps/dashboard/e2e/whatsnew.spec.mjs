@@ -17,11 +17,11 @@ test('J148 What is new: not on a first visit, once after an update, its button o
   await page.reload();
   const card = page.getByRole('region', { name: CARD });
   await expect(card).toBeVisible();
-  await expect(card).toContainText('Update of 28 Oct 2026');
-  await expect(card).toContainText('matches your Excel columns by itself');
+  await expect(card).toContainText('Update of 31 Oct 2026');
+  await expect(card).toContainText('full amounts, like');
   await expectFitsPhone(page, 'with the What is new card');
-  await card.getByRole('button', { name: 'Import members ›' }).tap();
-  await expect(page).toHaveURL(/#\/members\/import$/);
+  await card.getByRole('button', { name: 'Open Money ›' }).tap();
+  await expect(page).toHaveURL(/#\/money$/);
 
   // Seen: gone from Today, even after a reload.
   await open(page, 'Today');

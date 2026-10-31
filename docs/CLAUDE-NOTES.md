@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-238. Admin panel: a notifications place for new features and messages from headquarters - 31 Oct 2026
+He said: he thought the admin panel would get feature notifications like the app, but he has not seen any (logged in to Test Gym by Akash). He wants a notifications section in the admin panel, which could also carry messages he sends from headquarters. "What do you think?"
+Did: (1) The admin panel already has "What's new" (R-148): a card on Today once after each update (newest 3) and Settings / More -> What's new. I had added no entry since 28 Oct, so he saw nothing. Added 29, 30 and 31 Oct (10 lines, Gemini 3.6 Flash second opinion, facts checked against the code), J148 e2e updated, deployed. (2) His idea: a bell "Notifications" in the admin panel holding What's new AND messages from headquarters (HQ app writes, every gym or one gym reads, unread count). Needs a new server table: waits for his live-database yes before I build the server part.
+
 ## R-237. Watch still does not open on workout start; timer smaller, next-set text bigger, show the design first - 31 Oct 2026
 He said: the watch app does not launch when he starts a workout; it only shows a notification at the bottom of the watch after the first set. He wants it to open by itself and stay awake, dim and bright (R-236). Also: the text under the timer is too small. Make the timer 20-30% smaller and move it up a little (about the same place), and the next-set text below it 15-20% bigger. "Build that design and show me before you add it."
 Did: (1) Design: mock of the rest timer (countdown 128->96 px, long 112->84, column moved up 16 px; next-set line 22->26, previous/next lines 20->24; words stay "Previous"/"Next") shown to him side by side with the real 0.62 screen; waits for his yes before WatchScreens.kt changes. (2) Auto-open (0.63.0): no device logs to read. Found the fallback "Workout started" card was ongoing, default importance and silent, so Wear OS filed it at the bottom with no pop-up, and the first rest then removed it. Now a new channel workout-started-popup (high importance, one 250 ms buzz, not ongoing, no Ongoing Activity) so it pops up over the watch face; WorkoutLive gives the watch-face icon. Backup trigger: the phone's first "workout open" message for a workout the watch did not know (WatchState.onWorkout -> WorkoutStarted.onWorkoutBegan), at most once per 10 min; no card while a rest runs. Android 10+ still blocks a silent background start, so a tap on the pop-up may be needed. (3) Saved hard rule previous-and-next-never-last-and-today; the old Play watch store pictures say Last/Today and get replaced.
@@ -262,30 +266,3 @@ muscle, the body map, the plan builder's swapInPlan/alternativesFor: most of the
 mates), with what it shares in one line, a "Show me" button and a "Not now"; one tap switches on the two existing settings. Switching
 off stays in Settings → Your gym → What my gym can see. Photo sharing is not built (needs a server change + privacy line): offered as
 a later step. Privacy notice: only "or from the leaderboard" added to where the switch is, for his OK.
-
-## R-199. Leaderboard and gym-mate sharing ON by default (inside the gym) — asked 30 Oct 2026, waiting on his pick
-**He said:** leaderboard settings on by default: name, display picture, workout history and numbers visible to the member's own gym by
-default (Hevy makes workouts public to the world by default; people want this); the member can switch it off.
-**Today:** numbers go to the leaderboard as "A member"; name off until switched on; gym-mate workouts off until switched on (0040,
-privacy notice approved 29 Oct says "off unless you turn it on"); no photo shared.
-**My advice in chat:** India's DPDP Act needs consent by a clear action, so silent default-on is a legal risk; under-18 members need
-parental consent. Offered A (one-tap "Show me to my gym" step when joining, pre-explained, most will tap yes) vs B (default on as
-asked, after a lawyer check, never for under-18). Waiting for his pick; nothing changed.
-
-## R-198. Active workout: show the routine's name (top of the screen and the "Resume workout" bar) — 30 Oct 2026
-**He said:** the active workout screen does not tell me which routine I am doing; at the top near the duration, or below it, show
-e.g. "Pull 2" (the routine's name). Also the bar to resume the workout (seen after leaving the active screen) should show the name.
-**Doing:** member app: the routine's name on the active workout screen near the timer, and on the resume bar; an empty workout shows
-its own name ("Workout"/what the app calls it). Ships with the next member app release.
-
-## R-197. "Yes, switch on 0042 so from the 3rd message of the day members get no phone pop-up, and the daily maximum is 10." — 30 Oct 2026
-**He said:** exactly that (his live-database yes for 0042).
-**Doing:** apply supabase/migrations/0042_message_calm.sql (feat/message-calm, 9000579) live, run its live test, copy both files to
-main marked APPLIED LIVE. Changes: gym_messages.quiet (set when the gym already has 2+ messages that India day), no push job for a
-quiet message, "quiet" in the message JSON, owner_send_message cap 20 -> 10. Checked: the 3 functions equal their latest live
-versions (0038, 0008 + 0012 search_path, 0025) except the planned lines.
-
-## R-196. Tracker: the feature-rating module moves to Home, as its own permanent section — 30 Oct 2026
-**He said:** "that feature rating module in tracker, move that in Home section as a dedicated permanent section".
-**Done:** Home has "Rate features for marketing" (above "Claude is working on"): the explanation and both top-5 lists always show;
-the list to rate folds under "Rate the features (n of m rated)". Removed from Waiting for you. Checked on a headless screenshot.
