@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-272. Start building the backlog items he rated 7 — 1 Nov 2026
+
+He said: "You can also start building the backlog items rated 7".
+Rated 7 on the page: F143 Challenge rewards given out by themselves (Planned; live server step needs his yes at the end) and T22 Automated support and fixes: a plan (#33; research, then a plan for his OK).
+Plan: build F143 and push it (no release until he says release; no LIVE database change without his yes). Research T22 and write the plan for his OK.
+
 ## R-271. Big banner on the Play listing like Apple TV's — 1 Nov 2026
 
 He said: "How is apple showing this large banner on their play listing" then "No the tap isn't taking me anywhere its just a picture. Do it for my listing also".
