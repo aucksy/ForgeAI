@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-265. "Start free buttons on the website open the demo gym" — 1 Nov 2026
+He reported it, then realised it was his own test gym, and asked if it is because he stays signed in to the admin panel in the same browser. Answer: yes. Checked in a clean browser: mettleup.fit "Start free" opens app.mettleup.fit/start with the "Start your gym" form. A browser already signed in to a gym opens that gym instead (by design). No change: only someone already signed in sees it. To test as a stranger: a private (incognito) window.
+
 ## R-264. Push back on a bad ask; no MettleUp logo on the joined Gym screen — 1 Nov 2026
 He said: "Why dont you correct me if I am asking for something wrong. I asked you to put MettleUp Logo on GYM section also because I forgot the right upper section on this screen is also occupied. I asked you to be the SME for all tasks and be a partner... make it a rule to analyze and contradict if you think my ask is not a good idea and tell me why." Also (same day): user-facing words must be complete simple sentences; Gemini only for longer texts with full context.
 Done: the joined Gym screen's corner is the bell and bag only (logo removed; the gym's own name leads); loading shows no logo (no flash); the no-gym screen keeps it. Rules saved in D:/Brain (be-his-product-partner-push-back, member-words-are-complete-sentences) and the member-words skill. Ships in 0.66.0 with R-263.
