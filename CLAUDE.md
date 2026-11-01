@@ -104,6 +104,7 @@ every number on a screenshot read against its label. Lesson: D:/Brain/Lessons/fo
 `initTracker…`-style migration; never edit `schema.ts`). See `docs/CONTRACTS.md`.
 
 ## Build & ship
+- **⭐ Owner rule (1 Nov 2026, R-266): batch releases.** Push each change to `main`, but do NOT bump the version, tag `v*` or start release runs until he says "release". Keep the waiting changes listed in PROGRESS.md and the What's new draft; then run the ship gate once for the batch.
 - **Cloud builds only.** Never run Gradle locally (the local toolchain is deleted; low-RAM machine
   crashes on builds). Ship by pushing a **`v*` tag** → GitHub Actions builds a signed APK+AAB and
   publishes a Release. A plain push to `main` does **not** build.

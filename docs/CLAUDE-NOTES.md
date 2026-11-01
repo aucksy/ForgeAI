@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-266. Batch app releases: release only when he says — 1 Nov 2026
+He said: "Going forward let's not release every change for the apps. We will collate few changes and I will tell you when to release." Done: rule in CLAUDE.md (Build & ship) and D:/Brain (release-only-when-he-says). 0.66.0 was already tagged and building before this; it finishes as is.
+
 ## R-265. "Start free buttons on the website open the demo gym" — 1 Nov 2026
 He reported it, then realised it was his own test gym, and asked if it is because he stays signed in to the admin panel in the same browser. Answer: yes. Checked in a clean browser: mettleup.fit "Start free" opens app.mettleup.fit/start with the "Start your gym" form. A browser already signed in to a gym opens that gym instead (by design). No change: only someone already signed in sees it. To test as a stranger: a private (incognito) window.
 
