@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-264. Push back on a bad ask; no MettleUp logo on the joined Gym screen — 1 Nov 2026
+He said: "Why dont you correct me if I am asking for something wrong. I asked you to put MettleUp Logo on GYM section also because I forgot the right upper section on this screen is also occupied. I asked you to be the SME for all tasks and be a partner... make it a rule to analyze and contradict if you think my ask is not a good idea and tell me why." Also (same day): user-facing words must be complete simple sentences; Gemini only for longer texts with full context.
+Done: the joined Gym screen's corner is the bell and bag only (logo removed; the gym's own name leads); loading shows no logo (no flash); the no-gym screen keeps it. Rules saved in D:/Brain (be-his-product-partner-push-back, member-words-are-complete-sentences) and the member-words skill. Ships in 0.66.0 with R-263.
+
 ## R-263. Gym tab (no gym): say what MettleUp for gyms is + "Recommend to my gym" funnel — 1 Nov 2026
 He said: the app's join-your-gym screen needs a little information about what it is, and the same funnel as the member website: a member who uses the app without a gym can recommend MettleUp to their gym. Make the point that MettleUp for gyms is also software that runs a gym, and every member of such a gym gets all the app's features free. Website can say it too; in the app a two-liner. I decide the implementation.
 Plan: Gym tab no-gym screen gets a short card under the join card: what MettleUp for gyms is (2 lines) + "Recommend MettleUp to my gym" button (phone share sheet; text + https://gyms.mettleup.fit/?from=member, so the lead shows "from a member"). Member website "Recommend" block gets the same point. Ship in the next app release.

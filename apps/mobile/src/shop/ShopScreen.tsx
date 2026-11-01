@@ -12,7 +12,7 @@
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Share, Text, View, useWindowDimensions } from 'react-native';
 
 import { JoinGymCard } from '@/components/settings/JoinGymCard';
 import { LinkRow } from '@/components/stats/parts';
@@ -38,6 +38,7 @@ import { useGymSectionRequest } from './gymSectionRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
+import { RECOMMEND_BODY, RECOMMEND_BUTTON, RECOMMEND_TITLE, recommendMessage } from './recommendGym';
 import { LeaderboardCard } from './LeaderboardCard';
 import { readGymHours, syncGymHours } from './gymTimingsSync';
 import type { GymHours } from '@forgeai/theme';
@@ -56,7 +57,7 @@ type Filter = 'all' | ShopCategory;
 export function ShopScreen() {
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
-  if (!hydrated) return <Screen key="wait" title="Gym" right={<BrandCorner />} />;
+  if (!hydrated) return <Screen key="wait" title="Gym" />;
   if (link) return <GymShop key={`gym-${link.memberId}`} link={link} />;
   return <JoinGymDoor key="door" />;
 }
@@ -96,11 +97,30 @@ function JoinGymDoor() {
             </View>
           ))}
         </View>
+        <RecommendGymCard />
         <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkMuted }}>
           No gym? Everything else works without one.
         </Text>
       </View>
     </Screen>
+  );
+}
+
+/** R-263: what MettleUp for gyms is, and a share of the gym-owner page (?from=member) to their gym. */
+function RecommendGymCard() {
+  const recommend = (): void => {
+    Share.share({ message: recommendMessage() }).catch((e: unknown) => {
+      console.warn('[gym] recommend share did not open', e);
+    });
+  };
+  return (
+    <Card style={{ gap: space.sm }}>
+      <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+        {RECOMMEND_TITLE}
+      </Text>
+      <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{RECOMMEND_BODY}</Text>
+      <GhostButton label={RECOMMEND_BUTTON} icon="send" onPress={recommend} />
+    </Card>
   );
 }
 
@@ -210,12 +230,12 @@ function GymShop({ link }: { link: GymLink }) {
       scroll={false}
       noPad
       right={
-        <BrandCorner>
-          <View style={{ flexDirection: 'row', gap: space.sm }}>
-            <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
-            {shopOn ? <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} /> : null}
-          </View>
-        </BrandCorner>
+        // R-264 (1 Nov 2026, owner): no MettleUp logo here. The bell and the bag own this corner, and the
+        // logo squeezed in above them looked bad. Same row as before R-259; the logo stays on the no-gym screen.
+        <View style={{ flexDirection: 'row', gap: space.sm }}>
+          <BellButton count={unread} onPress={() => router.push('/shop/inbox')} />
+          {shopOn ? <BagButton count={bagBadgeCount(bag, products)} onPress={() => router.push('/shop/bag')} /> : null}
+        </View>
       }
     >
       <ScrollView

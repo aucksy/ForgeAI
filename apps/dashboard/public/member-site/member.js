@@ -57,12 +57,12 @@
   var LINK = 'https://gyms.mettleup.fit/?from=member';
   var WORDS = {
     en: {
-      text: 'Our gym could use MettleUp: gym software that comes with a free workout app for every member. Have a look:',
+      text: 'Our gym could use MettleUp. MettleUp is software that runs a gym: it handles memberships and check-ins, and it can also run a shop. Every member also gets a free workout app. Have a look:',
       copied: 'Link copied. Paste it in a chat with your gym owner.',
       manual: 'Press and hold the link above to copy it.',
     },
     hi: {
-      text: 'हमारे जिम के लिए MettleUp देखिए: जिम सॉफ़्टवेयर, जिसके साथ हर मेंबर को फ़्री वर्कआउट ऐप मिलता है। यहाँ देखिए:',
+      text: 'हमारे जिम के लिए MettleUp देखिए। MettleUp एक सॉफ़्टवेयर है जो जिम चलाता है: मेंबरशिप और चेक इन संभालता है, और शॉप भी चला सकता है। हर मेंबर को फ़्री वर्कआउट ऐप भी मिलता है। यहाँ देखिए:',
       copied: 'लिंक कॉपी हो गया। इसे अपने जिम ओनर की चैट में पेस्ट कीजिए।',
       manual: 'ऊपर वाले लिंक को दबाकर रखिए और कॉपी कीजिए।',
     },

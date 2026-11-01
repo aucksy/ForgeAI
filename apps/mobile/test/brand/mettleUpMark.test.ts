@@ -113,7 +113,8 @@ describe('R-256 / R-259: the logo sits top-right on Workout, Progress and Gym, n
     expect(src('app/(tabs)/workout.tsx')).toContain('<Screen title="Workout" right={<BrandCorner />}>');
     expect(src('app/(tabs)/progress.tsx')).toContain('<Screen title="Progress" right={<BrandCorner />}>');
     const gym = src('shop/ShopScreen.tsx');
-    expect(gym.match(/<BrandCorner/g)?.length).toBe(3); // loading, no gym, and in a gym (over the bell and bag)
+    // R-264: only the no-gym screen. A joined gym's corner is the bell and bag; loading shows none (no flash).
+    expect(gym.match(/<BrandCorner/g)?.length).toBe(1);
   });
   it('Profile has no corner logo', () => {
     expect(src('app/(tabs)/profile.tsx')).not.toContain('BrandCorner');

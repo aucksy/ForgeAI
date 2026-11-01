@@ -56,6 +56,14 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-263: member-words; owner rule 1 Nov: complete simple sentences, no Gemini for short lines.
+    version: '0.66.0',
+    date: '1 Nov',
+    lines: [
+      { text: 'Is your gym not on MettleUp yet? Open the Gym tab and tap "Recommend MettleUp to my gym".' },
+    ],
+  },
+  {
     // R-256/R-258/R-259, R-260, UK2: member-words, Gemini 3.8 Flash pass (took its "where" order on the logo
     // line and "touch and hold ... instead of leaving you on the Workout tab"); its "Later ... so it never
     // interrupts you" dropped (wrong cause). Facts checked.
