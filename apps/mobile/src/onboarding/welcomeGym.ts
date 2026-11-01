@@ -18,6 +18,15 @@ export function welcomeGymCode(typed: string): { ok: true; code: string } | { ok
   return { ok: true, code };
 }
 
+/**
+ * Release QA 1 Nov 2026: the code is checked by itself the moment the box first holds a whole code
+ * (the last letter typed, or a gym link pasted). Android's Back closes the keyboard without leaving
+ * the box, so waiting for the box to lose focus missed it. PURE.
+ */
+export function welcomeGymAutoCheck(before: string, after: string): boolean {
+  return welcomeGymCode(after).ok && !welcomeGymCode(before).ok;
+}
+
 /** The line once a code is kept. PURE. */
 export function welcomeGymKept(code: string): string {
   return `Gym code ${code} saved. Your gym's join screen opens right after setup.`;

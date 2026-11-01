@@ -75,14 +75,19 @@ appId: com.mettleup.app
 - tapOn: "Gym code"
 - eraseText: 10
 - inputText: "FORGE1"
+# The last letter checks the code by itself; the box closes once the gym answers. Only if a key was
+# dropped (trap 5) is the box still open without the answer: type it again.
+- extendedWaitUntil:
+    visible: "ForgeAI Test Gym found.*"
+    timeout: 20000
+    optional: true
 - runFlow:
     when:
-      notVisible: "^FORGE1$"
+      notVisible: "ForgeAI Test Gym found.*"
     commands:
       - tapOn: "Gym code"
       - eraseText: 10
       - inputText: "FORGE1"
-- assertVisible: "^FORGE1$"
 - hideKeyboard
 - extendedWaitUntil:
     visible: "ForgeAI Test Gym found.*"

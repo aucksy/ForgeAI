@@ -26,6 +26,7 @@ import {
   WELCOME_GYM_WHY,
   WELCOME_SCAN_WORDS,
   welcomeGymChecked,
+  welcomeGymAutoCheck,
   welcomeGymCode,
   welcomeGymKept,
   welcomeGymScanned,
@@ -201,8 +202,11 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
       <TextInput
         value={typed}
         onChangeText={(t) => {
-          setTyped(t.slice(0, 120));
+          const next = t.slice(0, 120);
+          const whole = welcomeGymAutoCheck(typed, next);
+          setTyped(next);
           setError(null);
+          if (whole) void save(next);
         }}
         autoCapitalize="characters"
         autoCorrect={false}

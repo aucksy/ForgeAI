@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { WELCOME_SCAN_WORDS, welcomeGymChecked, welcomeGymCode, welcomeGymKept, welcomeGymScanned } from '@/onboarding/welcomeGym';
+import { WELCOME_SCAN_WORDS, welcomeGymAutoCheck, welcomeGymChecked, welcomeGymCode, welcomeGymKept, welcomeGymScanned } from '@/onboarding/welcomeGym';
 
 describe('welcome screen gym code (OWNER-INBOX #11)', () => {
   it('keeps a 6-character code, in capitals', () => {
@@ -67,5 +67,17 @@ describe('the phone test of the welcome gym code (qa/welcome-gym.yaml)', () => {
   it('is run by the whole phone test (part UBK)', () => {
     const script = readFileSync(path.resolve(__dirname, '../../qa/run-device-qa.sh'), 'utf8');
     expect(script).toMatch(/gate_flow ubk_gym welcome-gym\.yaml/);
+  });
+});
+describe('welcome gym code is checked by itself (release QA, 1 Nov 2026)', () => {
+  it('checks when the last letter makes a whole code', () => {
+    expect(welcomeGymAutoCheck('ZZZZZ', 'ZZZZZ9')).toBe(true);
+  });
+  it('checks a pasted gym link at once', () => {
+    expect(welcomeGymAutoCheck('', 'https://app.mettleup.fit/j/RAMS01')).toBe(true);
+  });
+  it('does not check a part code, or the same whole code again', () => {
+    expect(welcomeGymAutoCheck('ZZZZ', 'ZZZZZ')).toBe(false);
+    expect(welcomeGymAutoCheck('ZZZZZ9', 'ZZZZZ9 ')).toBe(false);
   });
 });
