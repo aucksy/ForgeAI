@@ -61,6 +61,7 @@ import { countOwnWorkouts } from '../db/dataActions';
 import type { Experience, OnboardingDraft } from '../form';
 import { validateOnboarding, welcomeDraft } from '../form';
 import { useOnboarding } from '../store/onboardingStore';
+import { readWelcomeResume, saveWelcomeResume } from '../welcomeResume';
 import {
   nextStep,
   previousStep,
@@ -206,6 +207,31 @@ export function WelcomeScreen() {
   // Nothing is chosen for the member: step 2 waits for a tap (the pick is saved at once).
   const [units, setPickedUnits] = useState<UnitSystem | null>(null);
   const [problem, setProblem] = useState<WelcomeProblem | null>(null);
+  // R-267: the 3 steps' answers are kept on the phone, so a closed app resumes where the member was.
+  const resumeRead = useRef(false);
+  const resumeTouched = useRef(false);
+  useEffect(() => {
+    let live = true;
+    void readWelcomeResume().then((r) => {
+      if (!live) return;
+      // Only when the member has not started typing meanwhile.
+      if (r && !resumeTouched.current) {
+        setDraft(r.draft);
+        setPickedUnits(r.units);
+        setStarted(true);
+        setStep(r.step);
+      }
+      resumeRead.current = true;
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (!resumeRead.current) return;
+    const t = setTimeout(() => void saveWelcomeResume(started ? { step, units, draft } : null), 400);
+    return () => clearTimeout(t);
+  }, [started, step, units, draft]);
 
   const scrollRef = useRef<ScrollView>(null);
   const nameRef = useRef<TextInput>(null);
@@ -218,6 +244,7 @@ export function WelcomeScreen() {
   };
 
   const patch = (p: Partial<OnboardingDraft>): void => {
+    resumeTouched.current = true;
     setDraft((d) => ({ ...d, ...p }));
     setProblem((cur) => (cur && cur.field in p ? null : cur));
   };
@@ -356,6 +383,7 @@ export function WelcomeScreen() {
     setSaveProblem(null);
     try {
       await complete(result.value);
+      void saveWelcomeResume(null);
       success();
     } catch {
       thud();
