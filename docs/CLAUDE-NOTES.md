@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-263. Gym tab (no gym): say what MettleUp for gyms is + "Recommend to my gym" funnel — 1 Nov 2026
+He said: the app's join-your-gym screen needs a little information about what it is, and the same funnel as the member website: a member who uses the app without a gym can recommend MettleUp to their gym. Make the point that MettleUp for gyms is also software that runs a gym, and every member of such a gym gets all the app's features free. Website can say it too; in the app a two-liner. I decide the implementation.
+Plan: Gym tab no-gym screen gets a short card under the join card: what MettleUp for gyms is (2 lines) + "Recommend MettleUp to my gym" button (phone share sheet; text + https://gyms.mettleup.fit/?from=member, so the lead shows "from a member"). Member website "Recommend" block gets the same point. Ship in the next app release.
+
 ## R-262. Member website: fix the rest-timer and watch pictures; "402 exercises" — 31 Oct 2026
 He sent a phone screenshot of the member website preview. The rest-timer bar was squashed (round buttons drawn as tall ovals) and the two watch pictures were uneven. He also said: the exercise line must say only "402 exercises" (no promise of start/end pictures; fix later), and the "Get the app" button stays on GitHub for now.
 Done: the bar and watches keep their true shape at every width (height:auto + aspect-ratio, watches flex:none and level); the exercise line is "402 exercises." in English and Hindi. "Get the app" already goes to app.mettleup.fit/app, which sends people to the GitHub download page; left as is. Checked at 390 px in the browser: bar 358x72 (5:1), both watches 152x152.
