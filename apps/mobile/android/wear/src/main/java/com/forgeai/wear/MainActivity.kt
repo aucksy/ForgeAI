@@ -54,6 +54,9 @@ class MainActivity : ComponentActivity() {
   /** R-207: "Phone not connected" (two empty checks in a row; unknown counts as connected). */
   private var phoneConnected by mutableStateOf(true)
   private var emptyChecks by mutableIntStateOf(0)
+  // Release review: "Get MettleUp" only after two empty capability answers in a row (Wear OS may not
+  // have shared the phone's details yet right after Bluetooth reconnects).
+  private var emptyAppChecks = 0
   /** R-269: a phone is connected but MettleUp is not on it ([PhoneApp.missing]; unknown counts as there). */
   private var phoneAppMissing by mutableStateOf(false)
   /** R-269: what "Open on phone" did last (the line under "Get MettleUp on your phone"). */
@@ -315,7 +318,9 @@ class MainActivity : ComponentActivity() {
         .addOnSuccessListener { info ->
           val has = info.nodes.isNotEmpty()
           if (has) WatchState.markPhoneAppSeen(this)
-          val missing = PhoneApp.missing(connected = true, hasCapability = has, seenBefore = WatchState.phoneAppSeen(this))
+          emptyAppChecks = if (has) 0 else emptyAppChecks + 1
+          val missing = emptyAppChecks >= 2 &&
+            PhoneApp.missing(connected = true, hasCapability = has, seenBefore = WatchState.phoneAppSeen(this))
           if (!missing) phoneAppRequest = PhoneApp.Request.IDLE
           phoneAppMissing = missing
         }

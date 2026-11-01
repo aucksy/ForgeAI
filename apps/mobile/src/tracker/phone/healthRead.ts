@@ -146,11 +146,13 @@ export function planWeightImport(
     if (!r || typeof r.id !== 'string' || r.id === '' || !Number.isFinite(r.timeMs)) continue;
     if (Object.prototype.hasOwnProperty.call(seen, r.id) || done.has(r.id)) continue;
     done.add(r.id);
+    const day = recordDay(r.timeMs, r.offsetSec, offsetAt(r.timeMs));
+    // Release review: a reading dated after the phone's today (travel, a scale clock running fast) is
+    // not marked as seen, so the next read picks it up once that day comes.
+    if (day > today) continue;
     if (r.timeMs >= pruneBefore) nextSeen[r.id] = r.timeMs;
     if (!Number.isFinite(r.kg) || r.kg < KG_MIN || r.kg > KG_MAX) continue;
     const kg = Math.round(r.kg * 100) / 100;
-    const day = recordDay(r.timeMs, r.offsetSec, offsetAt(r.timeMs));
-    if (day > today) continue;
     const have = log[day];
     const mark = nextDays[day];
     if (!have) {
@@ -234,17 +236,27 @@ export async function readHealthWeights(opts: { force?: boolean; now?: number } 
   if (!p.healthWeightOn || p.healthRevoked) return { kind: 'off' };
   if (!opts.force && !shouldReadWeights(now, lastAutoRead, true)) return { kind: 'off' };
   if (reading) return reading;
-  lastAutoRead = now;
-  reading = readOnce(now).finally(() => {
-    reading = null;
-  });
+  // Release review: the 10-minute wait starts only after a read that got an answer, so a failed
+  // read is tried again the next time the member opens or comes back to the app.
+  reading = readOnce(now)
+    .then((r) => {
+      if (r.kind === 'added' || r.kind === 'not-allowed') lastAutoRead = now;
+      return r;
+    })
+    .finally(() => {
+      reading = null;
+    });
   return reading;
 }
 
 async function readOnce(now: number): Promise<WeightReadResult> {
   const n = phoneNative();
   if (!n?.healthReadWeights || n.healthStatus() !== 'available') return { kind: 'off' };
-  if (await isDemoData().catch(() => true)) return { kind: 'off' };
+  const demo = await isDemoData().catch((e: unknown) => {
+    console.warn('[ForgeErr] health: demo-data check failed; weigh-ins not read this time', e);
+    return true;
+  });
+  if (demo) return { kind: 'off' };
   const p = usePhonePrefs.getState();
   const since = weightReadSince(now, p.healthWeightRead);
   let got: HealthWeightRecord[] | null;
@@ -334,7 +346,7 @@ export function stepsText(steps: number): string {
 
 export const HC_WEIGHT_TITLE = 'Weight from Health Connect';
 export const HC_WEIGHT_ABOUT =
-  'Add weigh-ins from your smart scale or another health app to your body weight by themselves. A weight you typed yourself is never changed.';
+  'Weigh-ins from your smart scale or another health app go into your body weight by themselves. A weight you typed yourself is never changed.';
 export const HC_WEIGHT_ON =
   'On. When you open MettleUp, new weigh-ins from Health Connect are added to your body weight. A weight you typed yourself is never changed.';
 export const HC_WEIGHT_NOT_ALLOWED =

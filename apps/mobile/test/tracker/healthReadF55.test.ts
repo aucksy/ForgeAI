@@ -186,6 +186,14 @@ describe('planWeightImport (pure)', () => {
     expect(p.seen).toEqual({ a: T0 });
   });
 
+  it('a weigh-in dated after the phone\'s today waits, and is added once that day comes (release review)', () => {
+    const early = planWeightImport([rec('f', 5, 78)], {}, {}, {}, '2026-11-01', 0, ist);
+    expect(early.writes).toEqual([]);
+    expect(early.seen).toEqual({});
+    const later = planWeightImport([rec('f', 5, 78)], {}, early.days, early.seen, '2026-11-02', 0, ist);
+    expect(later.writes).toEqual([{ kind: 'insert', dateISO: '2026-11-02', kg: 78 }]);
+  });
+
   it('a weight the member typed that day is never changed', () => {
     const p = planWeightImport([rec('a', 0, 79)], { '2026-10-28': { id: 'typed', kg: 81 } }, {}, {}, '2026-11-01', 0, ist);
     expect(p.writes).toEqual([]);

@@ -109,8 +109,9 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
     } catch (e: unknown) {
       console.warn('[welcome] gym code check failed; kept for after setup', e);
     }
-    inFlight.current = false;
+    // A check that "Change the code" cancelled leaves the lock to the newer one (release review).
     if (run !== checkRun.current) return;
+    inFlight.current = false;
     setChecking(false);
     const checked = welcomeGymChecked(r.code, answer);
     if (!checked.keep) {
@@ -139,6 +140,7 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
 
   const change = (): void => {
     checkRun.current += 1;
+    inFlight.current = false;
     setChecking(false);
     setKeptLine(null);
     setPendingInvite(null);

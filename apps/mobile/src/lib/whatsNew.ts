@@ -56,10 +56,17 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
-    // R-263: member-words; owner rule 1 Nov: complete simple sentences, no Gemini for short lines.
-    version: '0.66.0',
+    // R-263 + R-267 + R-269 (0.66.0 was never published; it ships here): member-words; owner rule 1 Nov:
+    // complete simple sentences, no Gemini for short lines. Facts checked against the code.
+    version: '0.67.0',
     date: '1 Nov',
     lines: [
+      {
+        text: "Settings → Health Connect can now add weigh-ins from your smart scale to your body weight, and show today's steps.",
+        go: { label: 'Open Health Connect', href: '/settings/health' },
+      },
+      { text: 'On your watch, the rest timer has bigger text, and "Workout saved" shows when you finish.' },
+      { text: 'When you join a gym, you can scan the gym poster instead of typing the code. A wrong code is caught at once.' },
       { text: 'Is your gym not on MettleUp yet? Open the Gym tab and tap "Recommend MettleUp to my gym".' },
     ],
   },
