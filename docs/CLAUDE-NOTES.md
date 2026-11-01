@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-273. Redo the welcome screen: Google first, then two simple choices — 1 Nov 2026
+
+He said (on a picture of the welcome screen): "This looks crap... like a Excel sheet. We have to think through the onboarding properly. It has to be simple. Google login should be primary, and then there can be two buttons: join via your gym membership or import from Hevy or Strong. You tell me what's the best way of implementing this."
+My answer: one hero screen, one big orange "Continue with Google", two quiet buttons ("Join my gym", "Bring my workouts"), one small "Use without an account" link. The gym code, the poster scan and the imports each move to their own next screen. Ship 0.67.0 first; the new welcome goes in the next release.
+
 ## R-272. Start building the backlog items he rated 7 — 1 Nov 2026
 
 He said: "You can also start building the backlog items rated 7".

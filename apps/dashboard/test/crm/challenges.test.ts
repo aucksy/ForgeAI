@@ -16,8 +16,12 @@ import {
   challengePayload,
   challengesFromAnswer,
   draftFromChallenge,
+  needsHand,
   newDraft,
   pastChallenges,
+  pastSummary,
+  prizeNote,
+  rewardWords,
   periodWords,
   prizeWords,
   reachedWords,
@@ -47,8 +51,8 @@ const challenge = (over: Partial<Challenge> = {}): Challenge => ({
   status: 'running',
   entrants: 12,
   hitters: [
-    { memberId: 'm1', name: 'Aarav Test', phone: '9876500101', value: 20 },
-    { memberId: 'm2', name: 'Bhavna Test', phone: null, value: 16 },
+    { memberId: 'm1', name: 'Aarav Test', phone: '9876500101', value: 20, reward: null },
+    { memberId: 'm2', name: 'Bhavna Test', phone: null, value: 16, reward: null },
   ],
   ...over,
 });
@@ -69,13 +73,14 @@ describe('the server answers, read back', () => {
     expect(a.canEdit).toBe(true);
     expect(a.challenges).toHaveLength(1);
     expect(a.challenges[0]).toMatchObject({ title: 'Nov', measure: 'kg', goal: 50000.5, status: 'running', entrants: 3, createdByName: null });
-    expect(a.challenges[0]!.hitters).toEqual([{ memberId: 'm1', name: 'Aarav  Test', phone: '9876500101', value: 60000 }]);
+    expect(a.challenges[0]!.hitters).toEqual([{ memberId: 'm1', name: 'Aarav  Test', phone: '9876500101', value: 60000, reward: null }]);
+    expect(a.autoRewards).toBe(false);
   });
 
   it('anything odd reads as nothing, and the desk cannot edit', () => {
-    expect(challengesFromAnswer(null)).toEqual({ canEdit: false, challenges: [] });
-    expect(challengesFromAnswer('x')).toEqual({ canEdit: false, challenges: [] });
-    expect(challengesFromAnswer([{ canEdit: false, challenges: [] }])).toEqual({ canEdit: false, challenges: [] });
+    expect(challengesFromAnswer(null)).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
+    expect(challengesFromAnswer('x')).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
+    expect(challengesFromAnswer([{ canEdit: false, challenges: [] }])).toEqual({ canEdit: false, autoRewards: false, challenges: [] });
     expect(challengesFromAnswer({ challenges: 5 }).challenges).toEqual([]);
   });
 
@@ -243,6 +248,106 @@ describe('the winners list', () => {
     expect(COUNTED_FROM_PHONE).toBe('Counted from each member’s phone. Check a surprising number with the member before giving free days.');
     const page = readFileSync(fileURLToPath(new URL('../../src/crm/ui/screens/Challenges.tsx', import.meta.url)), 'utf8');
     expect(page).toContain('{COUNTED_FROM_PHONE}');
+  });
+});
+
+describe('F143: free days given out by themselves (0047)', () => {
+  const ended = (hitters: Challenge['hitters']): Challenge => challenge({ status: 'ended', hitters });
+  const added = { state: 'added' as const, reason: null, days: 7, newEnd: '2026-12-08' };
+  const noPlan = { state: 'by_hand' as const, reason: 'no_plan' as const, days: 7, newEnd: null };
+  const noMatch = { state: 'by_hand' as const, reason: 'no_match' as const, days: 7, newEnd: null };
+  const left = { state: 'by_hand' as const, reason: 'left' as const, days: 7, newEnd: null };
+  const pending = { state: 'pending' as const, reason: null, days: 7, newEnd: null };
+  const h = (name: string, reward: Challenge['hitters'][number]['reward']) => ({ memberId: name, name, phone: null, value: 16, reward });
+
+  it('reads autoRewards and each winner’s reward; anything odd reads as null', () => {
+    const a = challengesFromAnswer({
+      canEdit: true,
+      autoRewards: true,
+      challenges: [
+        {
+          id: 'c1', title: 'Nov', measure: 'workouts', goal: 2, startsOn: '2026-10-01', endsOn: '2026-10-30', prizeDays: 7, status: 'ended', entrants: 4,
+          hitters: [
+            { memberId: 'm1', name: 'A', value: 3, reward: { state: 'added', reason: null, days: 7, newEnd: '2026-12-08' } },
+            { memberId: 'm2', name: 'B', value: 3, reward: { state: 'by_hand', reason: 'no_plan', days: 7, newEnd: null } },
+            { memberId: 'm3', name: 'C', value: 3, reward: null },
+            { memberId: 'm4', name: 'D', value: 3, reward: { state: 'given?', days: 7 } },
+            { memberId: 'm5', name: 'E', value: 3, reward: { state: 'by_hand', reason: 'whatever', days: 7, newEnd: 'soon' } },
+          ],
+        },
+      ],
+    });
+    expect(a.autoRewards).toBe(true);
+    expect(a.challenges[0]!.hitters.map((x) => x.reward)).toEqual([
+      added,
+      noPlan,
+      null,
+      null,
+      { state: 'by_hand', reason: null, days: 7, newEnd: null },
+    ]);
+  });
+
+  it('each winner’s line says what happened to their free days', () => {
+    expect(rewardWords(h('A', added))).toBe('7 free days added. Plan now ends 8 Dec.');
+    expect(rewardWords(h('A', { ...added, days: 1 }))).toBe('1 free day added. Plan now ends 8 Dec.');
+    expect(rewardWords(h('B', noPlan))).toBe('Give by hand: 7 free days. No active membership.');
+    expect(rewardWords(h('C', noMatch))).toBe('Give by hand: 7 free days. Not matched to a member on your list.');
+    expect(rewardWords(h('D', left))).toBe('Left the gym. No free days added.');
+    expect(rewardWords(h('E', pending))).toBe('7 free days not added yet. They will be added soon.');
+    expect(rewardWords(h('F', null))).toBeNull();
+    expect(rewardWords(h('G', { state: 'none', reason: null, days: 0, newEnd: null }))).toBeNull();
+    expect([added, noPlan, noMatch, left, pending].map((r) => needsHand(h('x', r)))).toEqual([false, true, true, false, false]);
+  });
+
+  it('the line under the list: by themselves, by hand for some, or the old by-hand line', () => {
+    expect(prizeNote(ended([h('A', added)]), true, true)).toBe('The free days were added to each winner’s plan by themselves. Each winner got a message in the app.');
+    expect(prizeNote(ended([h('A', added), h('B', noPlan)]), true, true)).toBe(
+      'For each member marked “Give by hand”: open the member and tap Freeze / extra days. They got a message to ask at the front desk.',
+    );
+    expect(prizeNote(ended([h('A', added), h('B', noPlan)]), false, true)).toContain('the owner adds the days');
+    expect(prizeNote(ended([h('A', pending)]), true, true)).toBe('The free days will be added soon. Each winner will get a message in the app.');
+    // Winners kept before the server gave rewards by itself, or a server without 0047: as before.
+    expect(prizeNote(ended([h('A', null)]), true, true)).toBe('To give the 7 free days: open the member and tap Freeze / extra days.');
+    expect(prizeNote(ended([h('A', null)]), true, false)).toBe('To give the 7 free days: open the member and tap Freeze / extra days.');
+    expect(prizeNote(challenge(), true, false)).toBe('To give the 7 free days: open the member and tap Freeze / extra days.');
+    // Still running, on a server that gives them by itself.
+    expect(prizeNote(challenge(), true, true)).toBe('When it ends, each winner gets the 7 free days added to their plan by themselves, and a message in the app.');
+    // Nothing to give.
+    expect(prizeNote(challenge({ prizeDays: 0 }), true, true)).toBeNull();
+    expect(prizeNote(challenge({ status: 'cancelled' }), true, true)).toBeNull();
+    expect(prizeNote(ended([]), true, true)).toBeNull();
+  });
+
+  it('a past challenge’s line counts who still needs the days by hand', () => {
+    expect(pastSummary(ended([h('A', added), h('B', noPlan), h('C', left)]))).toBe('3 reached the goal, 1 to give by hand');
+    expect(pastSummary(ended([h('A', added)]))).toBe('1 reached the goal');
+  });
+
+  it('the copied list carries each winner’s reward', () => {
+    const lines = winnersText(ended([h('Asha', added), h('Bilal', noPlan)])).split('\n');
+    expect(lines.slice(-2)).toEqual([
+      '1. Asha, 16 workouts. 7 free days added. Plan now ends 8 Dec.',
+      '2. Bilal, 16 workouts. Give by hand: 7 free days. No active membership.',
+    ]);
+  });
+
+  it('the page shows each winner’s reward and the note, not the old by-hand line written out', () => {
+    const page = readFileSync(fileURLToPath(new URL('../../src/crm/ui/screens/Challenges.tsx', import.meta.url)), 'utf8');
+    expect(page).toContain('rewardWords(h)');
+    expect(page).toContain('prizeNote(c, canEdit, autoRewards)');
+    expect(page).toContain('autoRewards={challenges.autoRewards}');
+    expect(page).not.toContain('open the member and tap Freeze / extra days');
+  });
+
+  it('the server file gives the days through the workout offer’s own plan pick and notes line', () => {
+    const sql = readFileSync(fileURLToPath(new URL('../../../../supabase/migrations/0047_challenge_rewards.sql', import.meta.url)), 'utf8');
+    expect(sql).toContain('public._offer_plan(c.gym_id, who.roster_id, today, false)');
+    expect(sql).toContain("'+' || c.prize_days || ' days (Reward - Gym challenge): '");
+    expect(sql).toMatch(/revoke all on function public\._challenge_rewards\(uuid\) from public, anon, authenticated;/);
+    // The member's words: no banned words.
+    const said = sql.match(/'You [^']*'|'You won '|'\. Ask at the front desk[^']*'|' added to your membership\.'/g) ?? [];
+    expect(said.length).toBeGreaterThan(0);
+    expect(said.filter((s) => /\b(volume|PR|session)\b/i.test(s))).toEqual([]);
   });
 });
 

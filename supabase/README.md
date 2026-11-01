@@ -266,3 +266,15 @@ stops asking). The privacy line is in the notice (EN + HI, approved 29 Oct).
 Member functions `member_mate_share`, `member_mate_stop`, `member_mate_board`, `member_mate_profile`: a member who
 turns on "Let my gym mates see my workouts" shares short workout summaries (60 days, at most 30) that same-gym
 mates can open from the leaderboard. Test: `tests/0040_gym_mate_profiles.sql` → live PASS 46, then `tests/security.sql`.
+
+## Challenge rewards given out by themselves (0047, F143) — NOT APPLIED LIVE (needs the owner's yes)
+Additive and re-runnable; apply after 0046. New columns on `gym_challenge_hits` (reward_state, reward_reason,
+reward_days, given_at, given_membership_id, old_end, new_end), the helper `_challenge_rewards` (no grants), and
+0037's `_challenge_results` and `owner_challenges` replaced (copies with the marked changes). When a finished
+challenge's winners are kept, each winner's free days are added to their gym plan the same way the workout
+offer's automatic reward does it (0025: the plan that ends last, a "+7 days (Reward - Gym challenge)" notes line,
+the records version moved on), once only. No plan running, not matched to the gym's list, or left the gym: marked
+"give by hand". Each winner gets one in-app message saying what they won and where to collect it. Results kept
+before 0047 are never touched. A paused gym gets its rewards on the first read after it is back on.
+Test: `tests/0047_challenge_rewards.sql` → `RESULT PASS (31 checks)`, then `tests/0037_leaderboard.sql` and
+`tests/security.sql` → `RESULT PASS`.

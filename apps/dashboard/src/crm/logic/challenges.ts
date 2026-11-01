@@ -25,11 +25,32 @@ export const CHALLENGE_LIMITS = {
   kgGoalMax: 1_860_000,
 } as const;
 
+/**
+ * F143 (0047): what happened to a winner's free days once the challenge was over. The server adds them to
+ * the member's plan by itself, or marks the member to be given them by hand.
+ *   pending  - not added yet (the gym was paused); added on a later read.
+ *   added    - added to the plan that ends last; `newEnd` is its new last day.
+ *   by_hand  - `reason`: no_plan (no plan running today or later), no_match (the app member could not be
+ *              matched to the gym's list), left (left the gym before the days were added).
+ *   none     - the challenge had no free days.
+ */
+export type RewardState = 'pending' | 'added' | 'by_hand' | 'none';
+export type RewardReason = 'no_plan' | 'no_match' | 'left';
+
+export interface HitterReward {
+  state: RewardState;
+  reason: RewardReason | null;
+  days: number;
+  newEnd: DateISO | null;
+}
+
 export interface Hitter {
   memberId: string;
   name: string;
   phone: string | null;
   value: number;
+  /** F143: null while the challenge runs, and for winners kept before the server gave rewards by itself. */
+  reward: HitterReward | null;
 }
 
 export interface Challenge {
@@ -55,6 +76,8 @@ export interface Challenge {
 export interface ChallengesAnswer {
   /** The owner (or an old owner key) may change challenges; the front desk may only read. */
   canEdit: boolean;
+  /** F143: the gym's server adds the free days by itself when a challenge ends (0047 is applied). */
+  autoRewards: boolean;
   /** Newest first. */
   challenges: Challenge[];
 }
@@ -90,10 +113,25 @@ const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
 const unwrap = (raw: unknown): unknown => (Array.isArray(raw) ? raw[0] : raw);
 
+function rewardFrom(raw: unknown): HitterReward | null {
+  const r = obj(raw);
+  if (!r) return null;
+  const state = r.state === 'pending' || r.state === 'added' || r.state === 'by_hand' || r.state === 'none' ? r.state : null;
+  if (!state) return null;
+  const reason = r.reason === 'no_plan' || r.reason === 'no_match' || r.reason === 'left' ? r.reason : null;
+  return { state, reason, days: num(r.days), newEnd: isValidDateISO(r.newEnd) ? r.newEnd : null };
+}
+
 function hitterFrom(raw: unknown): Hitter | null {
   const r = obj(raw);
   if (!r || !text(r.memberId)) return null;
-  return { memberId: text(r.memberId), name: text(r.name).trim() || 'A member', phone: text(r.phone).trim() || null, value: num(r.value) };
+  return {
+    memberId: text(r.memberId),
+    name: text(r.name).trim() || 'A member',
+    phone: text(r.phone).trim() || null,
+    value: num(r.value),
+    reward: rewardFrom(r.reward),
+  };
 }
 
 function challengeFrom(raw: unknown): Challenge | null {
@@ -120,9 +158,13 @@ function challengeFrom(raw: unknown): Challenge | null {
 /** owner_challenges' answer, checked. PURE. */
 export function challengesFromAnswer(raw: unknown): ChallengesAnswer {
   const r = obj(unwrap(raw));
-  if (!r) return { canEdit: false, challenges: [] };
+  if (!r) return { canEdit: false, autoRewards: false, challenges: [] };
   const list = Array.isArray(r.challenges) ? r.challenges : [];
-  return { canEdit: r.canEdit === true, challenges: list.map(challengeFrom).filter((c): c is Challenge => c !== null) };
+  return {
+    canEdit: r.canEdit === true,
+    autoRewards: r.autoRewards === true,
+    challenges: list.map(challengeFrom).filter((c): c is Challenge => c !== null),
+  };
 }
 
 function rowFrom(raw: unknown): BoardRow | null {
@@ -330,11 +372,69 @@ export function reachedWords(c: Pick<Challenge, 'hitters' | 'entrants'>): string
   return `${n} of ${countOf(c.entrants, 'member')} reached the goal.`;
 }
 
+/**
+ * F143: what happened to one winner's free days, in a few words for their line on the list, or null when
+ * there is nothing to say (no free days, a challenge still running, or a winner kept before the server
+ * gave rewards by itself). PURE.
+ */
+export function rewardWords(h: Pick<Hitter, 'reward'>): string | null {
+  const r = h.reward;
+  if (!r || r.state === 'none' || r.days <= 0) return null;
+  const prize = prizeWords(r.days);
+  if (r.state === 'added') return r.newEnd ? `${prize} added. Plan now ends ${formatDayShort(r.newEnd)}.` : `${prize} added.`;
+  if (r.state === 'pending') return `${prize} not added yet. They will be added soon.`;
+  if (r.reason === 'left') return 'Left the gym. No free days added.';
+  if (r.reason === 'no_match') return `Give by hand: ${prize}. Not matched to a member on your list.`;
+  return `Give by hand: ${prize}. No active membership.`;
+}
+
+/** True when this winner's free days must be given by hand at the desk. PURE. */
+export function needsHand(h: Pick<Hitter, 'reward'>): boolean {
+  return h.reward?.state === 'by_hand' && h.reward.reason !== 'left' && h.reward.days > 0;
+}
+
+/** A past challenge's line: "3 reached the goal" or "3 reached the goal, 1 to give by hand". PURE. */
+export function pastSummary(c: Pick<Challenge, 'hitters'>): string {
+  const hand = c.hitters.filter(needsHand).length;
+  return `${c.hitters.length} reached the goal${hand > 0 ? `, ${hand} to give by hand` : ''}`;
+}
+
+/**
+ * The line under the winners about the free days, or null when there are none to give. `autoRewards`:
+ * the server adds them by itself (0047). Winners kept before that still get the old by-hand line. PURE.
+ */
+export function prizeNote(
+  c: Pick<Challenge, 'prizeDays' | 'status' | 'hitters'>,
+  canEdit: boolean,
+  autoRewards: boolean,
+): string | null {
+  if (c.prizeDays <= 0 || c.status === 'cancelled' || c.hitters.length === 0) return null;
+  const byHand = canEdit
+    ? `To give the ${prizeWords(c.prizeDays)}: open the member and tap Freeze / extra days.`
+    : `The owner gives the ${prizeWords(c.prizeDays)} (the member’s page, Freeze / extra days). Share this list with them.`;
+  if (!autoRewards) return byHand;
+  if (c.status === 'running' || c.status === 'upcoming') {
+    return `When it ends, each winner gets the ${prizeWords(c.prizeDays)} added to their plan by themselves, and a message in the app.`;
+  }
+  const kept = c.hitters.filter((h) => h.reward !== null);
+  if (kept.length < c.hitters.length) return byHand;
+  if (kept.some(needsHand)) {
+    return canEdit
+      ? 'For each member marked “Give by hand”: open the member and tap Freeze / extra days. They got a message to ask at the front desk.'
+      : 'For each member marked “Give by hand”, the owner adds the days (the member’s page, Freeze / extra days). They got a message to ask at the front desk.';
+  }
+  if (kept.some((h) => h.reward?.state === 'pending')) return 'The free days will be added soon. Each winner will get a message in the app.';
+  return 'The free days were added to each winner’s plan by themselves. Each winner got a message in the app.';
+}
+
 /** The list of winners as plain text to copy and send or print. PURE. */
 export function winnersText(c: Challenge): string {
   const head = [`${c.title}`, `${periodWords(c)}`, `${askWords(c)}`, ''];
   if (c.hitters.length === 0) return [...head, 'Nobody has reached the goal yet.'].join('\n');
-  const lines = c.hitters.map((h, i) => `${i + 1}. ${h.name}${h.phone ? `, ${h.phone}` : ''}, ${valueWords(c.measure, h.value)}`);
+  const lines = c.hitters.map((h, i) => {
+    const reward = rewardWords(h);
+    return `${i + 1}. ${h.name}${h.phone ? `, ${h.phone}` : ''}, ${valueWords(c.measure, h.value)}${reward ? `. ${reward}` : ''}`;
+  });
   return [...head, `Reached the goal (${c.hitters.length}):`, ...lines].join('\n');
 }
 

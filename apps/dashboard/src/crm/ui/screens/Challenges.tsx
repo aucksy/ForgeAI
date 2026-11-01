@@ -24,11 +24,14 @@ import {
   challengePayload,
   draftFromChallenge,
   measureLabel,
+  needsHand,
   newDraft,
   pastChallenges,
+  pastSummary,
   periodWords,
-  prizeWords,
+  prizeNote,
   reachedWords,
+  rewardWords,
   runningChallenge,
   statusLabel,
   upcomingChallenges,
@@ -199,7 +202,15 @@ function Ready({
       )}
 
       {running ? (
-        <ChallengeCard c={running} today={today} canEdit={canEdit} onCancel={() => setCancelling(running)} flash={flash} showWinners />
+        <ChallengeCard
+          c={running}
+          today={today}
+          canEdit={canEdit}
+          autoRewards={challenges.autoRewards}
+          onCancel={() => setCancelling(running)}
+          flash={flash}
+          showWinners
+        />
       ) : (
         <Card style={{ marginBottom: space.lg }}>
           <SectionTitle>No challenge is running</SectionTitle>
@@ -217,6 +228,7 @@ function Ready({
           c={c}
           today={today}
           canEdit={canEdit}
+          autoRewards={challenges.autoRewards}
           onChange={() => setForm(draftFromChallenge(c))}
           onCancel={() => setCancelling(c)}
           flash={flash}
@@ -230,7 +242,7 @@ function Ready({
           <SectionTitle>Past challenges</SectionTitle>
           <div style={{ display: 'grid', gap: space.md }}>
             {past.map((c) => (
-              <PastRow key={c.id} c={c} flash={flash} />
+              <PastRow key={c.id} c={c} canEdit={canEdit} autoRewards={challenges.autoRewards} flash={flash} />
             ))}
           </div>
         </Card>
@@ -277,7 +289,19 @@ function Ready({
 
 // ---------------------------------------------------------------- one challenge
 
-function Winners({ c, canEdit, flash }: { c: Challenge; canEdit: boolean; flash: (m: string) => void }) {
+function Winners({
+  c,
+  canEdit,
+  autoRewards,
+  flash,
+}: {
+  c: Challenge;
+  canEdit: boolean;
+  autoRewards: boolean;
+  flash: (m: string) => void;
+}) {
+  // F143: under the list, how the free days reach the winners (by themselves, or by hand).
+  const note = prizeNote(c, canEdit, autoRewards);
   const copy = async () => {
     const ok = await copyText(winnersText(c));
     flash(ok ? 'List copied. You can paste it into WhatsApp.' : 'Could not copy. Select the names and copy them by hand.');
@@ -288,15 +312,23 @@ function Winners({ c, canEdit, flash }: { c: Challenge; canEdit: boolean; flash:
       {c.hitters.length > 0 && (
         <>
           <ul aria-label={`Members who reached the goal of ${c.title}`} style={{ margin: `${space.sm}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
-            {c.hitters.map((h) => (
-              <li
-                key={h.memberId}
-                style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, justifyContent: 'space-between', fontFamily: font.body, fontSize: 14, color: color.ink }}
-              >
-                <span style={{ fontWeight: 700 }}>{h.name}</span>
-                <span style={{ color: color.inkSecondary }}>{[h.phone, valueWords(c.measure, h.value)].filter(Boolean).join(' · ')}</span>
-              </li>
-            ))}
+            {c.hitters.map((h) => {
+              const reward = rewardWords(h);
+              return (
+                <li
+                  key={h.memberId}
+                  style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, justifyContent: 'space-between', fontFamily: font.body, fontSize: 14, color: color.ink }}
+                >
+                  <span style={{ fontWeight: 700 }}>{h.name}</span>
+                  <span style={{ color: color.inkSecondary }}>{[h.phone, valueWords(c.measure, h.value)].filter(Boolean).join(' · ')}</span>
+                  {reward && (
+                    <span style={{ flexBasis: '100%', fontSize: 13, fontWeight: needsHand(h) ? 700 : 400, color: needsHand(h) ? color.ink : color.inkSecondary }}>
+                      {reward}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <p style={{ ...small, marginTop: space.sm }}>{COUNTED_FROM_PHONE}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
@@ -309,13 +341,7 @@ function Winners({ c, canEdit, flash }: { c: Challenge; canEdit: boolean; flash:
               </Button>
             )}
           </div>
-          {c.prizeDays > 0 && c.status !== 'cancelled' && (
-            <p style={{ ...small, marginTop: space.sm }}>
-              {canEdit
-                ? `To give the ${prizeWords(c.prizeDays)}: open the member and tap Freeze / extra days.`
-                : `The owner gives the ${prizeWords(c.prizeDays)} (the member’s page, Freeze / extra days). Share this list with them.`}
-            </p>
-          )}
+          {note && <p style={{ ...small, marginTop: space.sm }}>{note}</p>}
         </>
       )}
     </div>
@@ -326,6 +352,7 @@ function ChallengeCard({
   c,
   today,
   canEdit,
+  autoRewards,
   onChange,
   onCancel,
   flash,
@@ -334,6 +361,7 @@ function ChallengeCard({
   c: Challenge;
   today: string;
   canEdit: boolean;
+  autoRewards: boolean;
   onChange?: () => void;
   onCancel: () => void;
   flash: (m: string) => void;
@@ -349,7 +377,7 @@ function ChallengeCard({
       <p style={{ ...small, marginTop: space.xs }}>
         {periodWords(c)} · {whenWords(c, today)}
       </p>
-      {showWinners && <Winners c={c} canEdit={canEdit} flash={flash} />}
+      {showWinners && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} />}
       <p style={{ ...small, marginTop: space.md }}>{MEMBERS_SEE_CHALLENGE}</p>
       {canEdit && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
@@ -367,7 +395,7 @@ function ChallengeCard({
   );
 }
 
-function PastRow({ c, flash }: { c: Challenge; flash: (m: string) => void }) {
+function PastRow({ c, canEdit, autoRewards, flash }: { c: Challenge; canEdit: boolean; autoRewards: boolean; flash: (m: string) => void }) {
   return (
     <details style={{ borderTop: `1px solid ${color.border}`, paddingTop: space.sm }}>
       <summary style={{ cursor: 'pointer', fontFamily: font.body, fontSize: 15, color: color.ink }}>
@@ -376,11 +404,11 @@ function PastRow({ c, flash }: { c: Challenge; flash: (m: string) => void }) {
           {' · '}
           {periodWords(c)}
           {' · '}
-          {c.status === 'cancelled' ? 'Cancelled' : `${c.hitters.length} reached the goal`}
+          {c.status === 'cancelled' ? 'Cancelled' : pastSummary(c)}
         </span>
       </summary>
       <p style={{ ...small, marginTop: space.sm }}>{askWords(c)}</p>
-      {c.status !== 'cancelled' && <Winners c={c} canEdit={false} flash={flash} />}
+      {c.status !== 'cancelled' && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} />}
     </details>
   );
 }
