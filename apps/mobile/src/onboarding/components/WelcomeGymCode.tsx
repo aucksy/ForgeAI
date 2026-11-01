@@ -168,7 +168,8 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
         placeholderTextColor={color.inkFaint}
         accessibilityLabel="Gym code"
         accessibilityHint={`The ${JOIN_CODE_LENGTH} letters and numbers your gym gave you`}
-        style={[shopInputStyle(), { fontFamily: type.monoBold, letterSpacing: 2 }]}
+        // R-267: the wide code look only for the code itself; the hint in body type fits a large display size.
+        style={[shopInputStyle(), typed ? { fontFamily: type.monoBold, letterSpacing: 2 } : null]}
       />
       <InlineError message={error} />
       <GhostButton label={checking ? 'Checking the code…' : 'Save the code'} onPress={() => void save()} />

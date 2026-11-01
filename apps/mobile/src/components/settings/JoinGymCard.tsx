@@ -71,7 +71,8 @@ export function JoinGymCard({ scan = false }: { scan?: boolean }) {
         placeholderTextColor={color.inkFaint}
         accessibilityLabel="Gym code"
         accessibilityHint={`The ${JOIN_CODE_LENGTH} letters and numbers your gym gave you`}
-        style={[shopInputStyle(), { fontFamily: type.monoBold, letterSpacing: 2 }]}
+        // R-267: the wide code look only for the code itself; the hint in body type fits a large display size.
+        style={[shopInputStyle(), code ? { fontFamily: type.monoBold, letterSpacing: 2 } : null]}
       />
       <InlineError message={error} />
       {scan ? (
