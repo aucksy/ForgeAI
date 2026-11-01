@@ -23,6 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.wear.ambient.AmbientLifecycleObserver
+import androidx.wear.remote.interactions.RemoteActivityHelper
+import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.delay
 
@@ -52,6 +54,10 @@ class MainActivity : ComponentActivity() {
   /** R-207: "Phone not connected" (two empty checks in a row; unknown counts as connected). */
   private var phoneConnected by mutableStateOf(true)
   private var emptyChecks by mutableIntStateOf(0)
+  /** R-269: a phone is connected but MettleUp is not on it ([PhoneApp.missing]; unknown counts as there). */
+  private var phoneAppMissing by mutableStateOf(false)
+  /** R-269: what "Open on phone" did last (the line under "Get MettleUp on your phone"). */
+  private var phoneAppRequest by mutableStateOf(PhoneApp.Request.IDLE)
   private lateinit var heart: HeartRate
 
   private val ambientObserver = AmbientLifecycleObserver(
@@ -125,6 +131,16 @@ class MainActivity : ComponentActivity() {
         }
       }
       var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+      // R-269: "Workout saved" shows for WorkoutSaved.SHOW_MS, then the screen moves on by itself.
+      val savedAt = snap.savedAt
+      LaunchedEffect(savedAt) {
+        now = System.currentTimeMillis()
+        val left = WorkoutSaved.left(savedAt, now)
+        if (left > 0L) {
+          delay(left + 50L)
+          now = System.currentTimeMillis()
+        }
+      }
       val endsAt = snap.rest?.endsAt
       val overAt = snap.overAt
       LaunchedEffect(endsAt, overAt, ambient, ambientTick, exactAllowed) {
@@ -185,6 +201,9 @@ class MainActivity : ComponentActivity() {
         onSkipHeartRate = { answered(KEY_ASKED_HR) },
         onAllowAlerts = ::allowNotifications,
         onSkipAlerts = ::skipAlerts,
+        phoneAppMissing = phoneAppMissing,
+        phoneAppRequest = phoneAppRequest,
+        onGetPhoneApp = ::openPlayStoreOnPhone,
       )
     }
   }
@@ -276,11 +295,59 @@ class MainActivity : ComponentActivity() {
           } else {
             emptyChecks = 0
             phoneConnected = true
+            checkPhoneApp()
           }
         }
         .addOnFailureListener { e -> Log.w("ForgeWear", "phone check failed", e) }
     } catch (e: Exception) {
       Log.w("ForgeWear", "phone check failed", e)
+    }
+  }
+
+  /**
+   * R-269: does the connected phone have MettleUp? Its app declares the capability
+   * [PhoneApp.CAPABILITY]; a phone that already sent a workout counts as having it (older phone apps
+   * declare nothing). A failed lookup changes nothing.
+   */
+  private fun checkPhoneApp() {
+    try {
+      Wearable.getCapabilityClient(this).getCapability(PhoneApp.CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+        .addOnSuccessListener { info ->
+          val has = info.nodes.isNotEmpty()
+          if (has) WatchState.markPhoneAppSeen(this)
+          val missing = PhoneApp.missing(connected = true, hasCapability = has, seenBefore = WatchState.phoneAppSeen(this))
+          if (!missing) phoneAppRequest = PhoneApp.Request.IDLE
+          phoneAppMissing = missing
+        }
+        .addOnFailureListener { e -> Log.w("ForgeWear", "phone app check failed", e) }
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "phone app check failed", e)
+    }
+  }
+
+  /**
+   * R-269: "Open on phone" on "Get MettleUp on your phone": the phone's Play Store opens on MettleUp
+   * (the watch app has the phone app's package name). The mirror of the phone's installOnWatch.
+   */
+  private fun openPlayStoreOnPhone() {
+    val intent = Intent(Intent.ACTION_VIEW)
+      .addCategory(Intent.CATEGORY_BROWSABLE)
+      .setData(Uri.parse(PhoneApp.playStoreUri(packageName)))
+    try {
+      val f = RemoteActivityHelper(this).startRemoteActivity(intent)
+      f.addListener({
+        phoneAppRequest = try {
+          f.get()
+          Log.i("ForgeWear", "phone Play Store opened on MettleUp")
+          PhoneApp.Request.SENT
+        } catch (e: Exception) {
+          Log.w("ForgeWear", "phone did not open its Play Store", e)
+          PhoneApp.Request.FAILED
+        }
+      }, mainExecutor)
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "phone Play Store request not sent", e)
+      phoneAppRequest = PhoneApp.Request.FAILED
     }
   }
 

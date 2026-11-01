@@ -17,6 +17,9 @@ import java.io.File
 import kotlin.math.hypot
 
 /**
+ * R-237 (1 Nov 2026): the rest-timer captures (01, 04, 10, 11, x1, x3, x8, x10, b1, b2) show the
+ * approved bigger words under the smaller countdown (RestTimerSizes); the same edge checks apply.
+ *
  * R-207 (29 Oct 2026): every screen of the designer's "Ring" hand-off (screens/01..12) and its
  * ambient twin, rendered headlessly on a SMALL round watch (192 dp: Pixel Watch 41 mm, 384 px) and
  * a LARGE one (228 dp: Pixel Watch 45 mm, 456 px, the design's own size), as PNGs
@@ -62,6 +65,8 @@ abstract class WatchScreensRenderBase(private val size: String) {
     val alertsAlarmOnly: Boolean = false,
     val phoneConnected: Boolean = true,
     val fontScale: Float = 1f,
+    val phoneAppMissing: Boolean = false,
+    val phoneAppRequest: PhoneApp.Request = PhoneApp.Request.IDLE,
   )
 
   /** Each screen in its active and its ambient form. */
@@ -85,6 +90,8 @@ abstract class WatchScreensRenderBase(private val size: String) {
           askAlerts = s.askAlerts,
           alertsAlarmOnly = s.alertsAlarmOnly,
           phoneConnected = s.phoneConnected,
+          phoneAppMissing = s.phoneAppMissing,
+          phoneAppRequest = s.phoneAppRequest,
         )
       }
     }
@@ -168,6 +175,18 @@ abstract class WatchScreensRenderBase(private val size: String) {
   @Test fun phoneNotConnected() = both("12-phone-not-connected", Shot(idle, ring = false, bpm = null, phoneConnected = false))
 
   @Test fun phoneNotConnectedResting() = both("12b-phone-not-connected-resting", Shot(resting(), ring = true, phoneConnected = false))
+
+  // R-269: the phone is connected but has no MettleUp; then the button's two answers.
+  @Test fun phoneAppMissing() = both("13-get-mettleup-on-phone", Shot(idle, ring = false, bpm = null, phoneAppMissing = true))
+
+  @Test fun phoneAppMissingSent() =
+    both("13b-get-mettleup-sent", Shot(idle, ring = false, bpm = null, phoneAppMissing = true, phoneAppRequest = PhoneApp.Request.SENT))
+
+  @Test fun phoneAppMissingFailed() =
+    both("13c-get-mettleup-failed", Shot(idle, ring = false, bpm = null, phoneAppMissing = true, phoneAppRequest = PhoneApp.Request.FAILED))
+
+  // R-269: right after Finish on the phone (saved 1 s ago).
+  @Test fun workoutSaved() = both("14-workout-saved", Shot(idle.copy(savedAt = now - 1_000L), ring = false, bpm = null))
 
   @Test fun permissionAlarmsOnly() = both("09b-permission-alarms", Shot(idle, ring = false, askAlerts = true, alertsAlarmOnly = true))
 

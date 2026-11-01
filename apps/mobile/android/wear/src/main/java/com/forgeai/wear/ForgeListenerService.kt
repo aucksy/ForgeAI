@@ -26,6 +26,10 @@ class ForgeListenerService : WearableListenerService() {
   override fun onMessageReceived(event: MessageEvent) {
     if (event.path == WatchActions.PATH_NACK_DONE) WatchActions.refused(applicationContext)
     // A workout was just started on the phone: open the app, or post "Workout started".
-    if (event.path == WatchSync.PATH_OPEN) WorkoutStarted.onRequest(applicationContext, event.data)
+    if (event.path == WatchSync.PATH_OPEN) {
+      // R-269: only MettleUp on the phone sends this: the phone app is there.
+      WatchState.markPhoneAppSeen(applicationContext)
+      WorkoutStarted.onRequest(applicationContext, event.data)
+    }
   }
 }

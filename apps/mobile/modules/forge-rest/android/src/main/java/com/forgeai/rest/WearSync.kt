@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicLong
  *                    goes — ended = false: skipped / cleared / settled quietly; ended = true: it ran
  *                    out here ([RestCard.fireEnd]), so a watch whose own alarm has not gone off yet
  *                    buzzes now.
- *  - /forge/workout  {active, title, text, done, set, last, goal, seq} from [WorkoutCard] (its words
- *                    as kept) and [WorkoutCard.clear]. R-166: set / last / goal are the next set's
+ *  - /forge/workout  {active, title, text, done, set, last, goal, accent, saved, seq} from [WorkoutCard]
+ *                    (its words as kept) and [WorkoutCard.clear] (R-269: saved = closed with Finish). R-166: set / last / goal are the next set's
  *                    lines (WearWire.WatchLines); a watch app older than R-166 ignores them.
  *
  * C5-2 (16 Oct 2026): `done` is the row a tap ticks, as JSON ({workout, exKey, setKey, open, values,
@@ -160,12 +160,23 @@ object WearSync {
    * The workout is open ([active], [title] = the exercise the live card names, [text] = its set
    * line, [done] = the row "Complete set" ticks, "" = none) or over.
    */
-  internal fun workout(ctx: Context, active: Boolean, title: String, text: String = "", done: String = "", lines: WatchLines = WatchLines.NONE) {
+  internal fun workout(
+    ctx: Context,
+    active: Boolean,
+    title: String,
+    text: String = "",
+    done: String = "",
+    lines: WatchLines = WatchLines.NONE,
+    saved: Boolean = false,
+  ) {
     // R-166: + the next set's lines (set, last time's numbers, what a tick saves); "" = none.
     val l = if (active) lines else WatchLines.NONE
     // 29 Oct 2026: + the gym's colour ("#RRGGBB", "" = MettleUp orange); an older watch app ignores it.
     val accent = accent(ctx)
-    val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal, accent) else listOf<Any>(false, "", "", "", "", "", "", accent)
+    // R-269: + saved (closed with Finish, not a discard): the watch shows "Workout saved" for ~4 s.
+    // An older watch app ignores it.
+    val closedSaved = !active && saved
+    val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal, accent, false) else listOf<Any>(false, "", "", "", "", "", "", accent, closedSaved)
     if (now == lastWorkout) {
       flush(ctx) // nothing new, but a state still waiting goes now if it can
       return
@@ -183,6 +194,7 @@ object WearSync {
         "last" to now[5],
         "goal" to now[6],
         "accent" to now[7],
+        "saved" to now[8],
       ),
     )
   }

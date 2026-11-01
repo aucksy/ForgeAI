@@ -117,7 +117,7 @@ describe('5 LOW: the live card is always cleared when the workout ends', () => {
   it('not only when this app run posted it', () => {
     const src = read('src/tracker/services/workoutPresence.ts');
     expect(src).not.toContain('if (live) clearLiveWorkoutCard()');
-    expect(src).toMatch(/\n\s+clearLiveWorkoutCard\(\);/);
+    expect(src).toMatch(/\n\s+clearLiveWorkoutCard\((justSaved)?\);/);
   });
 });
 

@@ -57,6 +57,8 @@ object WatchState {
     val overAt: Long = 0L,
     /** The gym's colour, readable on black ([BrandColour]); null = MettleUp orange (no gym, older phone app). */
     val accent: Int? = null,
+    /** R-269: when the phone's "workout saved" reached the watch (0 = none); [WorkoutSaved]. */
+    val savedAt: Long = 0L,
   )
 
   private val main = Handler(Looper.getMainLooper())
@@ -94,6 +96,7 @@ object WatchState {
       next,
       p.getLong("overAt", 0L),
       BrandColour.accentFor(p.getString("accent", "")),
+      p.getLong("savedAt", 0L),
     )
   }
 
@@ -232,9 +235,12 @@ object WatchState {
     done: String = "",
     next: NextSet = NextSet.NONE,
     accent: String = "",
+    saved: Boolean = false,
   ) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
+    // R-269: Finish on the phone (saved = true) for a workout the watch had open: "Workout saved".
+    val justSaved = WorkoutSaved.justSaved(active, saved, p.getBoolean("active", false))
     // R-237: a workout the watch did not know of yet (none open, or the last one went silent over
     // WorkoutLive.CAP_MS ago): open the app, for when the phone's /forge/open was lost.
     // An open workout with no workoutAt was saved by an older watch app (before 0.63.0): known, no buzz.
@@ -245,7 +251,10 @@ object WatchState {
     if (p.getLong("overAt", 0L) > 0L && (!active || setKey(done, next.set) != (p.getString("overKey", "") ?: ""))) {
       clearOver(ctx)
     }
-    p.edit()
+    val edit = p.edit()
+    // R-269: a new workout ends the last one's "Workout saved"; a later closed item leaves it to its timer.
+    if (justSaved) edit.putLong("savedAt", System.currentTimeMillis()) else if (active) edit.remove("savedAt")
+    edit
       .putLong("workoutSeq", seq)
       .putBoolean("active", active)
       .putLong("workoutAt", System.currentTimeMillis())
@@ -289,6 +298,18 @@ object WatchState {
     saveRest(ctx, null)
     restOver(ctx, cur)
     publish(ctx)
+  }
+
+  /**
+   * R-269: has this phone ever sent this watch a workout or a rest? A phone app older than the
+   * "mettleup_phone_app" capability declares none, so this keeps its members off "Get MettleUp on
+   * your phone" ([PhoneApp.missing]).
+   */
+  fun phoneAppSeen(ctx: Context): Boolean = prefs(ctx).getBoolean("phoneAppSeen", false)
+
+  fun markPhoneAppSeen(ctx: Context) {
+    val p = prefs(ctx)
+    if (!p.getBoolean("phoneAppSeen", false)) p.edit().putBoolean("phoneAppSeen", true).apply()
   }
 
   /** A saved rest this far past its end reads as none. */

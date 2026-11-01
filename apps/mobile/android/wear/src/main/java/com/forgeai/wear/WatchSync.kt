@@ -20,6 +20,8 @@ object WatchSync {
       val path = item.uri.path ?: return
       if (path != PATH_REST && path != PATH_WORKOUT) return
       val m = DataMapItem.fromDataItem(item).dataMap
+      // R-269: an item from MettleUp on the phone: the app is there (older phone apps declare no capability).
+      WatchState.markPhoneAppSeen(ctx)
       val seq = m.getLong("seq", 0L)
       if (path == PATH_REST) {
         WatchState.onRest(
@@ -46,6 +48,8 @@ object WatchSync {
           NextSet(m.getString("set", "") ?: "", m.getString("last", "") ?: "", m.getString("goal", "") ?: ""),
           // The gym's colour, "#RRGGBB" (an older phone app sends none: MettleUp orange).
           m.getString("accent", "") ?: "",
+          // R-269: the phone closed the workout with Finish (an older phone app sends none).
+          m.getBoolean("saved", false),
         )
       }
     } catch (e: Exception) {

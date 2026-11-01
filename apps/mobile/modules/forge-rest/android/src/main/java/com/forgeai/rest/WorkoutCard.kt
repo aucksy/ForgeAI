@@ -348,12 +348,15 @@ object WorkoutCard {
     }
   }
 
-  /** The workout ended: the card goes, and its kept words with it (nothing to restore). */
+  /**
+   * The workout ended: the card goes, and its kept words with it (nothing to restore).
+   * R-269: [saved] = it ended with Finish (the watch says "Workout saved"); false = discarded.
+   */
   @Synchronized
-  fun clear(ctx: Context) {
+  fun clear(ctx: Context, saved: Boolean = false) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
     cancel(ctx)
-    WearSync.workout(ctx, false, "")
+    WearSync.workout(ctx, false, "", saved = saved)
   }
 
   /**

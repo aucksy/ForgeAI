@@ -96,6 +96,9 @@ dependencies {
   implementation "androidx.wear:wear-ongoing:1.0.0"
   // BridgingManager: keep the phone's "Rest is over" off the watch (the watch alerts itself).
   implementation "androidx.wear:wear-phone-interactions:1.1.0"
+  // R-269: "Get MettleUp on your phone" opens the phone's Play Store (RemoteActivityHelper), as the
+  // phone's "Install on watch" does the other way (modules/forge-rest uses the same version).
+  implementation "androidx.wear:wear-remote-interactions:1.1.0"
   implementation "androidx.health:health-services-client:1.1.0"
   // Health Services returns ListenableFuture (unregisterMeasureCallbackAsync) but ships Guava only
   // at runtime; the same version on the compile classpath.

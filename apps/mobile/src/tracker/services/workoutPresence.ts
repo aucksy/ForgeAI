@@ -116,6 +116,17 @@ function ongoingBody(
   return `${done} of ${countWord(total, 'set')} done`;
 }
 
+type SavedProbe = { active: boolean; committing?: boolean; editingSessionId?: string | null; pastLog?: boolean };
+
+/**
+ * R-269: did this store change just SAVE a live workout with Finish? finish() sets `committing`
+ * first and clears it together with `active` once the workout is written; a discard never sets
+ * `committing`, and saving an edit or a past workout is not a live workout. PURE.
+ */
+export function workoutJustSaved(prev: SavedProbe, next: SavedProbe): boolean {
+  return prev.active && prev.committing === true && !prev.editingSessionId && !prev.pastLog && !next.active;
+}
+
 /** The row the live card names (a change is a tick, or a set added / removed ahead of it). PURE. */
 export function liveRow(c: Pick<LiveCard, 'exKey' | 'done'>): string {
   return JSON.stringify([c.exKey, c.done?.setKey ?? null]);
@@ -153,6 +164,8 @@ export function startWorkoutPresence(): () => void {
   /** The live card as last posted: up or down, and the row it names (v0.37.1, C8). */
   let lastShown: boolean | null = null;
   let lastRow = '';
+  /** R-269: the workout just ended with Finish (not a discard): the watch says "Workout saved". */
+  let justSaved = false;
 
   /** Post the live card for the workout as it is now; false = no native card (use the old one). */
   const postLive = (): boolean => {
@@ -213,7 +226,7 @@ export function startWorkoutPresence(): () => void {
         stopLiveTimer();
         // Always (review fix): a card left by a killed app run goes too, as the old card does.
         // First, so the rest's clearing below never brings it back (WorkoutCard.restore).
-        clearLiveWorkoutCard();
+        clearLiveWorkoutCard(justSaved);
         live = false;
         downForRest = false;
         lastShown = null;
@@ -223,6 +236,7 @@ export function startWorkoutPresence(): () => void {
         if (!w.active) void cancelRestEnd();
       }
       if (!w.active && r.endsAt != null) r.skip(); // workout over → no stray bell
+      justSaved = false;
       return;
     }
     // 13 Oct 2026: the live card, when the native piece has it (at most every LIVE_CARD_EVERY_MS).
@@ -282,7 +296,8 @@ export function startWorkoutPresence(): () => void {
   });
   if (AppState.currentState === 'active') dismissRestOver();
 
-  const u1 = useActiveWorkout.subscribe((s) => {
+  const u1 = useActiveWorkout.subscribe((s, prev) => {
+    if (prev && workoutJustSaved(prev, s)) justSaved = true;
     if (s.hydrated && !wasHydrated) {
       wasHydrated = true;
       catchUp();

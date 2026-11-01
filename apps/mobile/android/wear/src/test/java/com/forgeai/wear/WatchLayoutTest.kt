@@ -5,6 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 /** R-207: the "Ring" design's maths, copy and screen choice (WatchLayout.kt), on the plain JVM. */
 class WatchLayoutTest {
@@ -44,18 +45,108 @@ class WatchLayoutTest {
   @Test
   fun everyFlagCombinationPicksExactlyTheSpecOrder() {
     val b = listOf(false, true)
-    for (hr in b) for (al in b) for (ph in b) for (wo in b) for (re in b) for (ov in b) {
+    for (hr in b) for (al in b) for (ph in b) for (wo in b) for (re in b) for (ov in b) for (miss in b) for (sv in b) {
       val want = when {
         hr -> WatchScreenKind.PERMISSION_HEART_RATE
         al -> WatchScreenKind.PERMISSION_ALERTS
         wo && re -> WatchScreenKind.REST_TIMER
         wo && ov -> WatchScreenKind.REST_IS_OVER
+        !wo && sv -> WatchScreenKind.WORKOUT_SAVED
         !ph -> WatchScreenKind.PHONE_NOT_CONNECTED
+        !wo && miss -> WatchScreenKind.PHONE_APP_MISSING
         !wo -> WatchScreenKind.NOTHING_OPEN
         else -> WatchScreenKind.BETWEEN_RESTS
       }
-      assertEquals(want, ScreenSelector.select(hr, al, ph, wo, re, ov))
+      assertEquals(want, ScreenSelector.select(hr, al, ph, wo, re, ov, phoneAppMissing = miss, saved = sv))
     }
+    // Without the two R-269 flags: exactly the hand-off's order, as before.
+    for (hr in b) for (al in b) for (ph in b) for (wo in b) for (re in b) for (ov in b) {
+      assertEquals(ScreenSelector.select(hr, al, ph, wo, re, ov, false, false), ScreenSelector.select(hr, al, ph, wo, re, ov))
+    }
+  }
+
+  // ---------------------------------------------------------------- R-269: workout saved
+
+  @Test
+  fun workoutSavedShowsForAboutFourSecondsThenNothingOpen() {
+    val saved = WatchState.Snapshot(null, false, "", savedAt = 100_000L)
+    assertEquals(WatchScreenKind.WORKOUT_SAVED, ScreenSelector.select(saved, false, false, true, now = 100_000L))
+    assertEquals(WatchScreenKind.WORKOUT_SAVED, ScreenSelector.select(saved, false, false, true, now = 103_999L))
+    assertEquals(WatchScreenKind.NOTHING_OPEN, ScreenSelector.select(saved, false, false, true, now = 104_000L))
+    // A watch clock behind the save time, or no save at all: no "Workout saved".
+    assertEquals(WatchScreenKind.NOTHING_OPEN, ScreenSelector.select(saved, false, false, true, now = 99_000L))
+    assertEquals(WatchScreenKind.NOTHING_OPEN, ScreenSelector.select(saved.copy(savedAt = 0L), false, false, true, now = 100_000L))
+    // A new workout already open wins.
+    assertEquals(WatchScreenKind.BETWEEN_RESTS, ScreenSelector.select(open.copy(savedAt = 100_000L), false, false, true, now = 101_000L))
+    assertEquals(4_000L, WorkoutSaved.SHOW_MS)
+    assertEquals(3_000L, WorkoutSaved.left(100_000L, 101_000L))
+    assertEquals(0L, WorkoutSaved.left(100_000L, 105_000L))
+    assertEquals(0L, WorkoutSaved.left(0L, 1L))
+  }
+
+  @Test
+  fun onlyAFinishOfAnOpenWorkoutIsSaved() {
+    assertTrue(WorkoutSaved.justSaved(active = false, saved = true, wasActive = true))
+    // A discard, an older phone app (no "saved"), a workout the watch never had open, a new workout.
+    assertFalse(WorkoutSaved.justSaved(active = false, saved = false, wasActive = true))
+    assertFalse(WorkoutSaved.justSaved(active = false, saved = true, wasActive = false))
+    assertFalse(WorkoutSaved.justSaved(active = true, saved = true, wasActive = true))
+  }
+
+  // ---------------------------------------------------------------- R-269: no MettleUp on the phone
+
+  @Test
+  fun getMettleUpOnlyWhenAConnectedPhoneLacksTheApp() {
+    assertTrue(PhoneApp.missing(connected = true, hasCapability = false, seenBefore = false))
+    assertFalse(PhoneApp.missing(connected = true, hasCapability = true, seenBefore = false))
+    // A phone app older than the capability that already sent a workout: it is there.
+    assertFalse(PhoneApp.missing(connected = true, hasCapability = false, seenBefore = true))
+    assertFalse(PhoneApp.missing(connected = false, hasCapability = false, seenBefore = false))
+    val idle = WatchState.Snapshot(null, false, "")
+    assertEquals(WatchScreenKind.PHONE_APP_MISSING, ScreenSelector.select(idle, false, false, true, phoneAppMissing = true))
+    // Not connected says so first; an open workout means the app is there.
+    assertEquals(WatchScreenKind.PHONE_NOT_CONNECTED, ScreenSelector.select(idle, false, false, false, phoneAppMissing = true))
+    assertEquals(WatchScreenKind.BETWEEN_RESTS, ScreenSelector.select(open, false, false, true, phoneAppMissing = true))
+    // The app is there but no workout: still "Open MettleUp on your phone".
+    assertEquals(WatchScreenKind.NOTHING_OPEN, ScreenSelector.select(idle, false, false, true, phoneAppMissing = false))
+  }
+
+  @Test
+  fun openOnPhoneGoesToMettleUpInThePlayStore() {
+    assertEquals("market://details?id=com.mettleup.app", PhoneApp.playStoreUri("com.mettleup.app"))
+    assertEquals(WatchCopy.GET_PHONE_APP_REASON, PhoneApp.reason(PhoneApp.Request.IDLE))
+    assertEquals(WatchCopy.GET_PHONE_APP_SENT, PhoneApp.reason(PhoneApp.Request.SENT))
+    assertEquals(WatchCopy.GET_PHONE_APP_FAILED, PhoneApp.reason(PhoneApp.Request.FAILED))
+  }
+
+  /** The phone app must declare the very capability the watch looks for (two files, two apps). */
+  @Test
+  fun thePhoneAppDeclaresTheCapabilityTheWatchAsksFor() {
+    // Gradle runs this module's tests from apps/mobile/android/wear.
+    val xml = File("../../modules/forge-rest/android/src/main/res/values/wear.xml")
+    assertTrue("missing ${xml.absolutePath}", xml.exists())
+    val text = xml.readText()
+    assertTrue(text.contains("<item>${PhoneApp.CAPABILITY}</item>"))
+    assertTrue(text.contains("name=\"android_wear_capabilities\""))
+    assertTrue(text.contains("tools:keep=\"@array/android_wear_capabilities\""))
+    // Not the watch's own capability (the phone would then look like a watch with the app).
+    assertFalse(text.contains("forgeai_watch_app</item>"))
+  }
+
+  // ---------------------------------------------------------------- R-237: rest timer sizes
+
+  @Test
+  fun restTimerSizesAreTheApprovedMock() {
+    assertEquals(96f, RestTimerSizes.COUNTDOWN, 0f)
+    assertEquals(84f, RestTimerSizes.COUNTDOWN_LONG, 0f)
+    assertEquals(16f, RestTimerSizes.LIFT, 0f)
+    assertEquals(26f, RestTimerSizes.NEXT_SET, 0f)
+    assertEquals(24f, RestTimerSizes.NEXT_SET_TWO_LINES, 0f)
+    assertEquals(24f, RestTimerSizes.PREVIOUS_NEXT, 0f)
+    // The words stay "Previous" / "Next" (owner's hard rule: never "Last" / "Today").
+    val c = WatchCopy.card(open)
+    assertTrue(c.previous!!.startsWith("Previous "))
+    assertTrue(c.next!!.startsWith("Next "))
   }
 
   // ---------------------------------------------------------------- ring
@@ -186,6 +277,8 @@ class WatchLayoutTest {
     val words = listOf(
       WatchCopy.START_A_WORKOUT, WatchCopy.NOTHING_OPEN_HINT, WatchCopy.PHONE_NOT_CONNECTED, WatchCopy.KEEP_PHONE_NEAR,
       WatchCopy.REASON_HEART_RATE, WatchCopy.REASON_ALERTS, WatchCopy.REASON_ALARMS, WatchCopy.ALL_SETS_DONE, WatchCopy.ADD_AN_EXERCISE,
+      WatchCopy.GET_PHONE_APP, WatchCopy.GET_PHONE_APP_REASON, WatchCopy.OPEN_ON_PHONE, WatchCopy.GET_PHONE_APP_SENT,
+      WatchCopy.GET_PHONE_APP_FAILED, WatchCopy.WORKOUT_SAVED, WatchCopy.WORKOUT_SAVED_REASON,
     )
     val banned = Regex("(^|[^A-Za-z])(volume|pr|prs|session)([^A-Za-z]|$)", RegexOption.IGNORE_CASE)
     for (w in words) assertFalse(w, banned.containsMatchIn(w))
@@ -218,5 +311,14 @@ class WatchLayoutTest {
     assertEquals("Rest alerts", WatchCopy.TITLE_ALERTS)
     assertEquals("Shows how hard your heart works while you rest.", WatchCopy.REASON_HEART_RATE)
     assertEquals("Your watch buzzes when rest is over.", WatchCopy.REASON_ALERTS)
+    assertEquals("Get MettleUp on your phone", WatchCopy.GET_PHONE_APP)
+    assertEquals("Your watch needs the MettleUp app on your phone.", WatchCopy.GET_PHONE_APP_REASON)
+    assertEquals("Open on phone", WatchCopy.OPEN_ON_PHONE)
+    assertEquals("Look at your phone to install MettleUp.", WatchCopy.GET_PHONE_APP_SENT)
+    assertEquals("Your phone did not answer. Try again.", WatchCopy.GET_PHONE_APP_FAILED)
+    assertEquals("Workout saved", WatchCopy.WORKOUT_SAVED)
+    assertEquals("Well done. See the details on your phone.", WatchCopy.WORKOUT_SAVED_REASON)
+    // The app-is-there hint is kept as it was.
+    assertEquals("Open MettleUp on your phone. Your rest timer shows up here.", WatchCopy.NOTHING_OPEN_HINT)
   }
 }

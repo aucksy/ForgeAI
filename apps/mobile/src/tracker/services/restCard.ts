@@ -77,6 +77,8 @@ interface Native {
    */
   showWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null, clock: string | null): boolean;
   clearWorkoutCard?(): boolean;
+  /** R-269: the same after Finish saved the workout (the watch says "Workout saved"). Older native pieces lack it. */
+  clearWorkoutCardSaved?(): boolean;
   /** One at a time (13 Oct 2026): keep the card's words but take it down while a rest runs. */
   hideWorkoutCard?(title: string, text: string, image: string | null, done: string | null, plan: string | null, clock: string | null): boolean;
   /** R-55: the "Rest is over" sound ("forge" | "bell" | "beep" | "whistle"); an older native piece lacks it. */
@@ -668,7 +670,10 @@ export function liveWorkoutCardAvailable(): boolean {
   return call((n) => typeof n.showWorkoutCard === 'function') === true;
 }
 
-/** Remove the live workout card (the workout ended). */
-export function clearLiveWorkoutCard(): void {
-  call((n) => n.clearWorkoutCard?.());
+/**
+ * Remove the live workout card (the workout ended). R-269: `saved` = it ended with Finish, so the
+ * MettleUp watch app shows "Workout saved" for a few seconds; an older native piece just clears.
+ */
+export function clearLiveWorkoutCard(saved = false): void {
+  call((n) => (saved && n.clearWorkoutCardSaved ? n.clearWorkoutCardSaved() : n.clearWorkoutCard?.()));
 }

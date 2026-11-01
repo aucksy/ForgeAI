@@ -320,6 +320,13 @@ class ForgeRestModule : Module() {
       true
     }
 
+    // R-269: the same, after Finish saved the workout: the watch shows "Workout saved" for ~4 s.
+    Function("clearWorkoutCardSaved") {
+      val c = ctx ?: return@Function false
+      WorkoutCard.clear(c, saved = true)
+      true
+    }
+
     Function("takeOpenRequest") {
       val intent = appContext.currentActivity?.intent ?: return@Function false
       if (!intent.getBooleanExtra(RestCard.EXTRA_OPEN, false)) return@Function false

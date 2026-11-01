@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- R-269 (1 Nov 2026): tells the MettleUp watch app (apps/mobile/android/wear, PhoneApp.CAPABILITY)
+     that this phone runs MettleUp. A watch connected to a phone WITHOUT it shows "Get MettleUp on
+     your phone" with a button that opens the phone's Play Store. The mirror of the watch app's own
+     "forgeai_watch_app" (wear/src/main/res/values/wear.xml), which this app asks about (WearSync).
+     tools:keep: release builds shrink resources, and nothing in code names this array. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@array/android_wear_capabilities">
+  <string-array name="android_wear_capabilities" translatable="false">
+    <item>mettleup_phone_app</item>
+  </string-array>
+</resources>

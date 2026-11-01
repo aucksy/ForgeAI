@@ -13,7 +13,11 @@ enum class WatchScreenKind {
   PERMISSION_HEART_RATE,
   PERMISSION_ALERTS,
   PHONE_NOT_CONNECTED,
+  /** R-269: the phone is connected but has no MettleUp app ([PhoneApp.missing]). */
+  PHONE_APP_MISSING,
   NOTHING_OPEN,
+  /** R-269: the member just tapped Finish on the phone ([WorkoutSaved], about 4 s). */
+  WORKOUT_SAVED,
   REST_TIMER,
   REST_IS_OVER,
   BETWEEN_RESTS,
@@ -28,6 +32,8 @@ object ScreenSelector {
     workoutOpen: Boolean,
     restRunning: Boolean,
     restOver: Boolean,
+    phoneAppMissing: Boolean = false,
+    saved: Boolean = false,
   ): WatchScreenKind = when {
     // 1. Unasked permissions: heart rate first, then alerts.
     askHeartRate -> WatchScreenKind.PERMISSION_HEART_RATE
@@ -37,8 +43,12 @@ object ScreenSelector {
     //    in a locker mid-rest must not hide them.
     workoutOpen && restRunning -> WatchScreenKind.REST_TIMER
     workoutOpen && restOver -> WatchScreenKind.REST_IS_OVER
+    // R-269: the workout was just saved on the phone: "Workout saved" for a few seconds.
+    !workoutOpen && saved -> WatchScreenKind.WORKOUT_SAVED
     // 3. Phone disconnected.
     !phoneConnected -> WatchScreenKind.PHONE_NOT_CONNECTED
+    // R-269: connected, but MettleUp is not on the phone: say how to get it.
+    !workoutOpen && phoneAppMissing -> WatchScreenKind.PHONE_APP_MISSING
     // 4. No workout open.
     !workoutOpen -> WatchScreenKind.NOTHING_OPEN
     // 6. Otherwise.
@@ -51,6 +61,8 @@ object ScreenSelector {
     askHeartRate: Boolean,
     askAlerts: Boolean,
     phoneConnected: Boolean,
+    phoneAppMissing: Boolean = false,
+    now: Long = 0L,
   ): WatchScreenKind = select(
     askHeartRate = askHeartRate,
     askAlerts = askAlerts,
@@ -58,7 +70,58 @@ object ScreenSelector {
     workoutOpen = snap.workoutActive,
     restRunning = snap.rest != null,
     restOver = snap.overAt > 0L,
+    phoneAppMissing = phoneAppMissing,
+    saved = WorkoutSaved.showing(snap.savedAt, now),
   )
+}
+
+/**
+ * R-269 (1 Nov 2026, owner's UAT list): after Finish on the phone the watch says "Workout saved" for
+ * about [SHOW_MS], then the normal "Start a workout on your phone". Before, it jumped straight back,
+ * so the member could not tell a saved workout from a lost phone link.
+ */
+object WorkoutSaved {
+  const val SHOW_MS = 4_000L
+
+  /** [savedAt] = when the phone's "saved" reached the watch (0 = none). PURE. */
+  fun showing(savedAt: Long, now: Long): Boolean = savedAt > 0L && now - savedAt in 0L until SHOW_MS
+
+  /** How long the screen still has to show (0 = gone). PURE. */
+  fun left(savedAt: Long, now: Long): Long = if (showing(savedAt, now)) SHOW_MS - (now - savedAt) else 0L
+
+  /**
+   * Does this /forge/workout item mean "just saved"? Only a workout the watch had open ([wasActive])
+   * that the phone closed with saved = true. A discard sends saved = false; an older phone app never
+   * sends it, so its members keep the old jump straight back. PURE.
+   */
+  fun justSaved(active: Boolean, saved: Boolean, wasActive: Boolean): Boolean = !active && saved && wasActive
+}
+
+/**
+ * R-269 (1 Nov 2026): is MettleUp on the phone? The phone app declares the capability [CAPABILITY]
+ * (modules/forge-rest/android/src/main/res/values/wear.xml), the mirror of this app's
+ * "forgeai_watch_app". A phone app older than that declares nothing, so a phone that already sent
+ * this watch a workout ([seenBefore]) counts as having it.
+ */
+object PhoneApp {
+  const val CAPABILITY = "mettleup_phone_app"
+
+  /** "Get MettleUp on your phone" only when a phone IS connected and nothing says the app is there. PURE. */
+  fun missing(connected: Boolean, hasCapability: Boolean, seenBefore: Boolean): Boolean =
+    connected && !hasCapability && !seenBefore
+
+  /** The phone's Play Store page for [pkg] (the watch app has the phone app's package name). */
+  fun playStoreUri(pkg: String): String = "market://details?id=$pkg"
+
+  /** What the "Open on phone" button did last: nothing yet, the phone took it, or it did not answer. */
+  enum class Request { IDLE, SENT, FAILED }
+
+  /** The line under "Get MettleUp on your phone" after the button's [r]. PURE. */
+  fun reason(r: Request): String = when (r) {
+    Request.IDLE -> WatchCopy.GET_PHONE_APP_REASON
+    Request.SENT -> WatchCopy.GET_PHONE_APP_SENT
+    Request.FAILED -> WatchCopy.GET_PHONE_APP_FAILED
+  }
 }
 
 /** Ring and set-segment geometry (WatchScreen.dc.html, direction "a"). Angles are Compose's: 0 = 3 o'clock, clockwise. */
@@ -146,6 +209,16 @@ object WatchCopy {
 
   /** UAT 1 Nov 2026: says what to check, not only "keep it near" (Bluetooth off is the usual cause). */
   const val KEEP_PHONE_NEAR = "Keep your phone near you with Bluetooth on."
+  /** R-269: the phone is connected, but MettleUp is not on it. */
+  const val GET_PHONE_APP = "Get MettleUp on your phone"
+  const val GET_PHONE_APP_REASON = "Your watch needs the MettleUp app on your phone."
+  const val OPEN_ON_PHONE = "Open on phone"
+  const val GET_PHONE_APP_SENT = "Look at your phone to install MettleUp."
+  const val GET_PHONE_APP_FAILED = "Your phone did not answer. Try again."
+
+  /** R-269: right after Finish on the phone. */
+  const val WORKOUT_SAVED = "Workout saved"
+  const val WORKOUT_SAVED_REASON = "Well done. See the details on your phone."
   const val ALLOW = "Allow"
   const val NOT_NOW = "Not now"
   const val STEP_HEART_RATE = "1 of 2"

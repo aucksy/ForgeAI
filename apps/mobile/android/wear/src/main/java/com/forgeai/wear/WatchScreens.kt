@@ -171,12 +171,15 @@ internal fun WatchScreen(
   onSkipHeartRate: () -> Unit = {},
   onAllowAlerts: () -> Unit = {},
   onSkipAlerts: () -> Unit = {},
+  phoneAppMissing: Boolean = false,
+  phoneAppRequest: PhoneApp.Request = PhoneApp.Request.IDLE,
+  onGetPhoneApp: () -> Unit = {},
 ) {
   val px = rememberPx()
   val pal = remember(ambient, snap.accent) { paletteFor(ambient, snap.accent) }
   // "Rest is over" fills the screen with the gym's colour (MettleUp orange without a gym).
   val fill = remember(snap.accent) { paletteFor(false, snap.accent).accent }
-  val kind = ScreenSelector.select(snap, askHeartRate, askAlerts, phoneConnected)
+  val kind = ScreenSelector.select(snap, askHeartRate, askAlerts, phoneConnected, phoneAppMissing, now)
   val orange = kind == WatchScreenKind.REST_IS_OVER && !ambient
   // The orange fills the round glass only (a square fill would paint the corners a round watch hides).
   val round = LocalConfiguration.current.isScreenRound
@@ -197,7 +200,9 @@ internal fun WatchScreen(
       WatchScreenKind.PERMISSION_HEART_RATE -> PermissionScreen(true, ambient, px, onAllowHeartRate, onSkipHeartRate)
       WatchScreenKind.PERMISSION_ALERTS -> PermissionScreen(false, ambient, px, onAllowAlerts, onSkipAlerts, alarmOnly = alertsAlarmOnly)
       WatchScreenKind.PHONE_NOT_CONNECTED -> PhoneNotConnectedScreen(ambient, px)
+      WatchScreenKind.PHONE_APP_MISSING -> PhoneAppMissingScreen(ambient, px, phoneAppRequest, onGetPhoneApp)
       WatchScreenKind.NOTHING_OPEN -> NothingOpenScreen(ambient, px)
+      WatchScreenKind.WORKOUT_SAVED -> WorkoutSavedScreen(ambient, px)
       WatchScreenKind.REST_TIMER -> snap.rest?.let { r ->
         RestTimerScreen(
           card,
@@ -298,15 +303,17 @@ private fun NextSetLines(
   nameColor: Color,
   nameWeight: FontWeight,
   gap: Float,
+  oneLineSize: Float = 22f,
+  twoLineSize: Float = 20f,
 ) {
   val oneLine = WatchCopy.nextSetLine(card) ?: return
   if (!long) {
-    Line(oneLine, px, 22f, FontWeight.Bold, shortColor, tabular = true, tag = "nextSet")
+    Line(oneLine, px, oneLineSize, FontWeight.Bold, shortColor, tabular = true, tag = "nextSet")
     return
   }
-  Line(WatchCopy.nextSetHeader(card) ?: return, px, 20f, FontWeight.SemiBold, headerColor, tabular = true, tag = "nextSet")
+  Line(WatchCopy.nextSetHeader(card) ?: return, px, twoLineSize, FontWeight.SemiBold, headerColor, tabular = true, tag = "nextSet")
   if (gap > 0f) Spacer(Modifier.height(px.dp(gap)))
-  Line(card.exercise, px, 20f, nameWeight, nameColor, maxWidth = NAME_MAX_WIDTH, tag = "exercise")
+  Line(card.exercise, px, twoLineSize, nameWeight, nameColor, maxWidth = NAME_MAX_WIDTH, tag = "exercise")
 }
 
 /** The widest a status line may be inside the ring, and on a screen without one (design px). */
@@ -315,8 +322,8 @@ private const val STATUS_MAX_WIDTH = 320f
 
 /** UAT 1 Nov 2026: what the phone says when it names no set ([WatchCopy.statusLine]), up to two lines. */
 @Composable
-private fun StatusLine(text: String, px: Px, color: Color, maxWidth: Float) {
-  Line(text, px, 20f, FontWeight.Bold, color, lineHeight = 1.25f, maxWidth = maxWidth, maxLines = 2, balanced = true, tag = "status")
+private fun StatusLine(text: String, px: Px, color: Color, maxWidth: Float, size: Float = 20f) {
+  Line(text, px, size, FontWeight.Bold, color, lineHeight = 1.25f, maxWidth = maxWidth, maxLines = 2, balanced = true, tag = "status")
 }
 
 // ------------------------------------------------------------------ ring and segments
@@ -378,6 +385,24 @@ private fun SetSegments(card: SetCard, pal: Palette, ambient: Boolean) {
 
 // ------------------------------------------------------------------ 1. rest timer
 
+/**
+ * R-237 sizes (owner's yes, 1 Nov 2026): the rest timer with bigger words under a smaller countdown.
+ * Countdown 128 -> 96 px (long-name form 112 -> 84), the column moved up 16 px, the next-set line
+ * 22 -> 26 px (two-line form 20 -> 24), the Previous / Next lines 20 -> 24 px. Only this screen:
+ * "Rest is over" and between rests keep the hand-off's sizes.
+ */
+internal object RestTimerSizes {
+  const val COUNTDOWN = 96f
+  const val COUNTDOWN_LONG = 84f
+
+  /** Bottom padding: the column's centre sits 8 px above the screen's (the hand-off: 8 px below). */
+  const val LIFT = 16f
+  const val NEXT_SET = 26f
+  const val NEXT_SET_TWO_LINES = 24f
+  const val PREVIOUS_NEXT = 24f
+  const val STATUS = 22f
+}
+
 /** Rest timer (screen 1; 4b without the heart line; 5a with "♥ —"). */
 @Composable
 internal fun RestTimerScreen(
@@ -394,7 +419,7 @@ internal fun RestTimerScreen(
   Box(Modifier.fillMaxSize()) {
     RestRing(fractionLeft, pal, ambient)
     Column(
-      Modifier.fillMaxSize().padding(top = px.dp(16f)),
+      Modifier.fillMaxSize().padding(bottom = px.dp(RestTimerSizes.LIFT)),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -404,7 +429,7 @@ internal fun RestTimerScreen(
       Line(
         countdown,
         px,
-        if (long) 112f else 128f,
+        if (long) RestTimerSizes.COUNTDOWN_LONG else RestTimerSizes.COUNTDOWN,
         FontWeight.ExtraBold,
         pal.text,
         spacing = -0.045f,
@@ -414,15 +439,26 @@ internal fun RestTimerScreen(
         tag = "countdown",
       )
       Spacer(Modifier.height(px.dp(10f)))
-      NextSetLines(card, long, px, pal.text, pal.grey, pal.text, FontWeight.Bold, gap = 0f)
-      status?.let { StatusLine(it, px, pal.text, maxWidth = STATUS_MAX_WIDTH_RING) }
+      NextSetLines(
+        card,
+        long,
+        px,
+        pal.text,
+        pal.grey,
+        pal.text,
+        FontWeight.Bold,
+        gap = 0f,
+        oneLineSize = RestTimerSizes.NEXT_SET,
+        twoLineSize = RestTimerSizes.NEXT_SET_TWO_LINES,
+      )
+      status?.let { StatusLine(it, px, pal.text, maxWidth = STATUS_MAX_WIDTH_RING, size = RestTimerSizes.STATUS) }
       card.previous?.let {
         Spacer(Modifier.height(px.dp(6f)))
-        Line(it, px, 20f, FontWeight.Medium, pal.grey, tabular = true, tag = "previous")
+        Line(it, px, RestTimerSizes.PREVIOUS_NEXT, FontWeight.Medium, pal.grey, tabular = true, tag = "previous")
       }
       card.next?.let {
         Spacer(Modifier.height(px.dp(2f)))
-        Line(it, px, 20f, FontWeight.ExtraBold, pal.accent, tabular = true, tag = "next")
+        Line(it, px, RestTimerSizes.PREVIOUS_NEXT, FontWeight.ExtraBold, pal.accent, tabular = true, tag = "next")
       }
     }
   }
@@ -543,6 +579,8 @@ private const val PHONE_SLASH = "M3.5 3.5l17 17"
 private const val HEART_OUTLINE = "M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"
 private const val BELL_BODY = "M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"
 private const val BELL_CLAPPER = "M10 20.5a2 2 0 0 0 4 0"
+private const val CHECK_CIRCLE = "M12 2.75a9.25 9.25 0 1 1 0 18.5a9.25 9.25 0 1 1 0 -18.5z"
+private const val CHECK_MARK = "M7.5 12.4l3 3l6 -6.3"
 
 private class IconPath(val d: String, val color: Color)
 
@@ -583,6 +621,64 @@ internal fun NothingOpenScreen(ambient: Boolean, px: Px) {
     Line(WatchCopy.START_A_WORKOUT, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
     // UAT 1 Nov 2026: what to open, and what then shows here.
     Line(WatchCopy.NOTHING_OPEN_HINT, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+  }
+}
+
+// ------------------------------------------------------------------ R-269: workout saved
+
+/** Right after Finish on the phone, about 4 s ([WorkoutSaved]): a tick, "Workout saved", one line. */
+@Composable
+internal fun WorkoutSavedScreen(ambient: Boolean, px: Px) {
+  val pal = palette(ambient)
+  Column(
+    Modifier.fillMaxSize().padding(horizontal = px.dp(72f)),
+    verticalArrangement = Arrangement.spacedBy(px.dp(14f), Alignment.CenterVertically),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    StrokeIcon(px.dp(56f), "savedIcon", "saved", pal.accent) {
+      strokeIcon(listOf(IconPath(CHECK_CIRCLE, pal.accent), IconPath(CHECK_MARK, pal.accent)), 1.8f, StrokeCap.Round, StrokeJoin.Round)
+    }
+    Line(WatchCopy.WORKOUT_SAVED, px, 30f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 2, balanced = true, tag = "title")
+    Line(WatchCopy.WORKOUT_SAVED_REASON, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+  }
+}
+
+// ------------------------------------------------------------------ R-269: no MettleUp on the phone
+
+/**
+ * The phone is connected but MettleUp is not on it ([PhoneApp.missing]). "Open on phone" opens the
+ * phone's Play Store on MettleUp (MainActivity, RemoteActivityHelper); the line under the title then
+ * says to look at the phone, or that the phone did not answer ([PhoneApp.reason]).
+ */
+@Composable
+internal fun PhoneAppMissingScreen(ambient: Boolean, px: Px, request: PhoneApp.Request, onOpen: () -> Unit) {
+  val pal = palette(ambient)
+  Column(
+    Modifier.fillMaxSize().padding(top = px.dp(8f), start = px.dp(64f), end = px.dp(64f)),
+    verticalArrangement = Arrangement.spacedBy(px.dp(10f), Alignment.CenterVertically),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    StrokeIcon(px.dp(38f), "phoneIcon", "phone", pal.accent) {
+      strokeIcon(listOf(IconPath(PHONE_BODY, pal.accent), IconPath(PHONE_SPEAKER, pal.accent)), 1.6f, StrokeCap.Round, StrokeJoin.Miter)
+    }
+    Line(WatchCopy.GET_PHONE_APP, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
+    Line(PhoneApp.reason(request), px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+    // Ambient: an outline button with accent text, and no taps (as on the permission screens).
+    Box(
+      Modifier
+        .padding(top = px.dp(4f))
+        .height(px.dp(52f))
+        .widthIn(min = px.dp(184f))
+        .clip(Pill)
+        .background(if (ambient) Color.Transparent else pal.accent)
+        .border(px.dp(2f), pal.accent, Pill)
+        .then(if (ambient) Modifier else Modifier.clickable(onClick = onOpen))
+        .padding(horizontal = px.dp(28f))
+        .testTag("openOnPhone"),
+      contentAlignment = Alignment.Center,
+    ) {
+      Line(WatchCopy.OPEN_ON_PHONE, px, 20f, FontWeight.Bold, if (ambient) pal.accent else Color.Black)
+    }
   }
 }
 
