@@ -1,6 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- 0.66.0 (R-263 recommend card, R-264 no logo on the joined Gym screen) was tagged but NEVER published: its release gate refused because ci.yml failed on 6d12a118 (DST-hour editPast flake + two dashboard e2e still expecting mettleup.fit; both fixed later on main). It ships with this batch. At "release": app.json is already 0.66.0; delete the unpublished v0.66.0 tag (remote + local) and tag the batch commit v0.66.0, or bump to 0.67.0 and fold the 0.66.0 What's new lines in.
 - R-267 UAT (1 Nov 2026), pushed, not released:
   - Phone onboarding: welcome gym code checked at once (welcomeGymChecked, 6 s cap); unknown-code page "No gym has this code"; Google restore with no profile stops spinning; "Continue with Google" outlined; intro/setup words; setup answers survive a kill (onboarding/welcomeResume.ts, meta welcome_resume, cleared at Start training).
   - Watch app (wear-build proves it): empty-state line, "Phone not connected" after ~3 s, Alarms & reminders step, all-sets-done / no-exercise / warm-up lines, stale workout dropped after 4 h.
