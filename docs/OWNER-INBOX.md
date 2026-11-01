@@ -491,7 +491,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 82. Help and support: the plan for your OK — 1 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**READ (1 Nov, 07:06 pm, via the page)**
 **Why:** You asked in #33 for a system that answers gym owners and members and turns repeat problems into fixes. Most of the base is already built: both apps have Send feedback, and crashes are reported every day. What is missing: nobody gets an answer back.
 **The plan:** (1) The feedback sheet becomes "Help and feedback". An AI answers from 10 to 15 short help pages, and asks "Did this solve it?". A "No" is logged, and the reply from us shows in the same sheet. (2) Twice a day I group the problems and draft replies for you to approve in HQ. (3) A problem 3 people report, or any crash, becomes a fix that I build, test and release. Cost: about ₹2 a month at 1 gym, ₹20 at 10 gyms, ₹200 at 100 gyms. Build: about 7 to 9 days in 3 steps.
 **Decide:** May the AI answers use a paid Claude key, capped at ₹500 a month?
@@ -501,6 +502,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Note:** A WhatsApp AI bot waits until 10 gyms (Meta charges for it, and resellers add ₹999 a month or more). Until then the admin app links to your own WhatsApp.
 
 ---
+**My answer (1 Nov 2026):** You picked A. The help answers will use a paid Claude Haiku key, only for MettleUp, with a ₹500 monthly cap. I start building it after the 0.67.0 release.
 
 ## 81. Challenge rewards: may I switch them on? — 1 Nov 2026
 **Chat:** ForgeAI Local Chat

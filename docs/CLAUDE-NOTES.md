@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-275. Help answers: use a paid Claude key, capped at ₹500 a month — 1 Nov 2026
+He picked A on tracker #82 (page, 7:06 pm): yes, a paid Claude Haiku key with a ₹500 monthly cap, because free AI keys may learn from what people type.
+To do: build T22 (docs/plans/T22-automated-support.md) in its 3 steps. A NEW key for ForgeAI only (never borrow one). He creates the key and sets the cap himself; I never type or paste a key. The approved privacy line goes into the notice the day the answers go live.
+
 ## R-274. Live yes for challenge rewards; privacy line for help answers approved — 1 Nov 2026
 
 He said: "yes, switch on challenge rewards" (his LIVE database yes for 0047 only), "privacy line in tracker #82 Approved", and asked "What is support plan?". He also asked to see the welcome design: canvas https://claude.ai/artifact/HgYB2U7cdYHvAJRRExDDSV (3 phone screens).
