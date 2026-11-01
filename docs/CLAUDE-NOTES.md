@@ -8,7 +8,7 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
 ## R-268. Put the websites live: member site on mettleup.fit, gym site on gyms.mettleup.fit — 1 Nov 2026
-He said: "You can move the websites now. Member app to main url. And GYM to gym url". This is his yes to inbox #79 (migration 0007 lead source, deploy, gyms.mettleup.fit address).
+He said: "You can move the websites now. Member app to main url. And GYM to gym url". This is his yes to inbox #79 (migration 0007 lead source, deploy, gyms.mettleup.fit address). Done 1 Nov: 0007 applied to forgeai-web (remote); dashboard built (pipefail, exit 0); forgeai-panel and forgeai-hq deployed. Checked: mettleup.fit = member site, gyms.mettleup.fit = gym site, /gyms /home www mettleup.in redirect, privacy/terms/demo 200, no broken images, no sideways scroll at 375 px. The deploy also put the R-267 admin fixes live. Inbox #79 TASK DONE, F184 Live.
 
 ## R-267. UAT of onboarding (admin, member phone, watch) + Health Connect audit — 1 Nov 2026
 He said: "I want you to perform professional proper UAT of onboarding journeys for Admin App and Member App (Phone and Watch) and fix all issues/gaps found. please share with me all areas of improvement. also audit and UAT the health connect feature and give me breakdown on how it works after you fix the issues and also share area of improvement for this one".
@@ -235,65 +235,3 @@ What I do overnight: finish 0.62.1 (fix any test failure, ship, paste the APK li
 He said (tracker #30, picked A: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999): "Ensure that you have latest features / prices and screenshots are updated on website".
 He said (tracker #70): Belvee's GST shows "Cancelled on application of Taxpayer (Effective from 01/01/2023)" (apparel). "I dont need a GST right.. I just want to be able to open current account and start taking payments using razorpay and also be able to submit apps without 14 days testing - and you can tell what other benefits I should have by doing this or that".
 What I do: (1) bring mettleup.fit up to date: the chosen prices, the newest features, fresh app screenshots. (2) answer #70: what a current account, Razorpay and a Play organisation account each need, with and without GST, and the other benefits.
-
-## R-228. Check-in scanner opens the camera and only takes a picture - 30 Oct 2026
-He said: "Check in scanner does not work in the app. It launches the phone camera and takes a picture. thats just a stupid mistake you made..."
-Cause: "Check in" sent Android's plain photo-camera action (scanPoster.ts). Many camera apps do not read QR codes in that mode.
-What I do: a real QR scanner inside the app (expo-camera, QR only). It reads the poster and opens the check-in screen directly.
-
-## R-227. Demo PDF: one list each for gym and member; keep the QR check-in - 30 Oct 2026
-He said: "just give me single list for each GYM and Member just keep the unique / USP ones at the top of the list..
-keep it portrait mode... and let it be with the check in QR Code"
-What I did: the PDF is now 2 portrait A4 pages. Page 1 = the gym list, page 2 = the member list. Each list starts
-with an "Only in MettleUp" block, then "Everything else". The demo order and the setup box are gone.
-QR decision: he keeps the check-in QR as it is (no WhatsApp invite link, no SMS). Nothing to build.
-
-## R-226. Demo PDF: unique features first; Shop, Messages, Offers were missing - 30 Oct 2026
-He said: "for the PDF you created, I want unique features at the top which other softwares, specially GGMS does not give..
-you missed out shop for GYM... please dont kid with me here.. take this seriously ... Did you forget Messages and offers too ?"
-What I do: a new first section "Only in MettleUp" (checked against GGMS: ggms.in, its Play listing, R-ggms-competitor.md),
-then Shop, Messages and Offers added with their exact taps. Every claim checked in the code; no claim GGMS cannot disprove.
-
-## R-225. Gym section with tabs; why scan a QR when the phone numbers match — 30 Oct 2026
-He said: "We need to create dedicated section with tabs for GYM section in the app. First default landing should be
-shop if active. Then GYM info, checkins etc. Then leaderboard". And: "if the phone number of the member in the gym
-database and the login phone number of the member matches, then why do they have to like scan the QR code to show
-their plan? Is it like a one-time thing for the first time it is required? Even if it is, then why?"
-What I did:
-- Voice feedback: when the form upload throws, the phone's own uploader (expo-file-system File.upload, same form,
-  so the server needs no change) sends the clip; both errors reach us as non-fatal crash reports. Ships in 0.62.0.
-- Gym section: built (ab15b7d8). Tabs under the Gym title: Shop (first and opened first when the gym sells
-  something; My orders + products), My gym (plan, hours, busy, check in, diet, offer), Leaderboard (an honest line
-  while the gym has none). Ships in 0.62.0.
-- QR answer: members never sign in with a phone number. The app account is Google; joining a gym is code + name;
-  the phone typed is not checked (no SMS code). So a phone match alone proves nothing: anyone could type another
-  member's number and see their plan. The first check-in scan proves the person stands in the gym and then saves
-  the matched number; after that the plan shows by itself (one time only). Ways to drop the scan: (A) a personal
-  invite link the desk sends on WhatsApp to the number on the list (tapping it proves they own that WhatsApp; free),
-  or (B) an SMS code at join (paid per SMS). My pick: A. Waits for his choice.
-
-## R-224. Demo PDF, voice feedback, What's new, AI import before a migration — 30 Oct 2026
-He said: "create a PDF for me to give walkthru/demo to client today ... add top 20 most useful/valuable features for GYM
-and member also", "keep the number of pages less - dont add screenshtos.. only the path to reach a setting", "Audio
-Feedback did not work" (screenshot: "Couldn't reach us"), "the most recent update also did not have What's new section",
-"test the excel import with AI feature again because today we will be migrating their data so it should work".
-What I did:
-- docs/demo/MettleUp-demo-guide.pdf (3 pages, from the .html beside it): demo order, top 20 gym, top 20 member, exact
-  taps read from the source. Only live features; pause/renew and the workout report are under "coming".
-- Voice: the live server turns a real clip into text in 1-2 s from both addresses, so the fault is on the phone
-  (its upload throws). Fix goes into 0.62.0.
-- What's new: the Workout tab shows one notice a day; 0.61.0 came the same day as 0.60.0, whose news he closed, so
-  0.61.0's news waited. Now What's new after an update never waits (workoutNotices.ts). Ships in 0.62.0.
-- AI import: live AI matched 11/11 and 12/12 columns, but on a real sheet it overruled our correct rules: "Fees Paid"
-  became Plan price and "DOJ" Plan start (wrong money, wrong join date). Fixed: a money or date column our rules
-  placed never moves to another money/date field (AI only notes it); chained corrections still land. Live on the
-  desk; checked on the live import screen with a fake 3-row file (all boxes right, 0 problems, nothing imported).
-
-## R-223. Never stop while he is away; pending decisions are not a reason to stop — 30 Oct 2026
-He said: "in future if possible do not stop working on other items because of my pending decisions. I did tell you that I'm going to sleep and you still stopped." He answered #75, #76, #77 (all A: yes).
-Cause: not compaction. My reply ended with a Next list and no background job, so nothing woke me for six hours.
-Did: brain note never-stop-while-he-is-away (hard); two global hooks: away_flag.py (his "going to sleep/away" prompt sets a 10-hour flag; his next prompt clears it) and keep_working.py (Stop hook blocks ending the turn while the flag is on). Pipe-tested both. Live runs of 0043/0044/0045 were blocked by the permission check, which wants his yes in chat; asked him.
-
-## R-219 result. Exercise demos: RepDB free start/end pictures — 29 Oct 2026
-Research (helper, 29 Oct): no free animation set is good enough. Best free option: RepDB free edition (github.com/sergei-argutin/exercise-dataset): a start and an end picture for 516 exercises, clean flat style, licence allows commercial use inside apps with a visible credit "Exercise data by RepDB (repdb.co)" on an About/Credits screen; no republishing the set, no AI restyling. Covers about 230-250 of our 402 exercises. Paid upgrade: RepDB Standard $499 one-time adds grey-3D looping animations (same coverage); only with his yes. Rejected: MuscleWiki (no offline storage), wger (mixed licences), Everkinetic (dated, ShareAlike), WorkoutLabs ($1,200+/yr), Lottie packs (too few), Mixamo.
-Decision (his rule: free start/end pictures if no good free animation): use RepDB free. Blender clips stop. Build after F63 merges (same exercise page). Gaps (~150) keep the text-only page for now.
