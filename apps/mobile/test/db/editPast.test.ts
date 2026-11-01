@@ -175,6 +175,9 @@ describe('the start time and the length', () => {
     const { todayISO } = await import('@/lib/date');
     const in10 = new Date(Date.now() - 10 * 60_000);
     if (in10.getDate() !== new Date().getDate()) return; // just after midnight
+    // R-267: in the hour a clock goes back (CI runs in a US zone; failed 1 Nov 2026), a typed time means two moments.
+    const typed = new Date(in10.getFullYear(), in10.getMonth(), in10.getDate(), in10.getHours(), in10.getMinutes());
+    if (Math.abs(typed.getTime() - in10.getTime()) >= 60_000) return;
     expect(
       useActiveWorkout.getState().startPastWorkout({ dateISO: todayISO(), hour: in10.getHours(), minute: in10.getMinutes(), minutes: 60 }),
     ).toMatch(/end after now/);
