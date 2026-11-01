@@ -31,7 +31,7 @@ test('J97a the owner sees how long the free trial has left; nothing before the s
   await backToToday(page);
   await expect(main.getByText('Free trial: 7 days left (ends 24 Oct 2026). Pick a MettleUp pack to keep going after that.')).toBeVisible();
   const plans = main.getByRole('link', { name: 'See prices' });
-  await expect(plans).toHaveAttribute('href', 'https://mettleup.fit/#pricing');
+  await expect(plans).toHaveAttribute('href', 'https://gyms.mettleup.fit/#pricing');
   await expect(plans).toHaveAttribute('target', '_blank');
 
   // After the end: words only, nothing locked.

@@ -111,7 +111,7 @@ test('J-DEMO-b a device with no gym of its own: the way out is the landing page;
   const calls = watchServerCalls(page);
   await page.goto('./demo');
   const banner = page.getByRole('region', { name: 'Demo gym' });
-  await expect(banner.getByRole('link', { name: 'Leave the demo' })).toHaveAttribute('href', 'https://mettleup.fit/');
+  await expect(banner.getByRole('link', { name: 'Leave the demo' })).toHaveAttribute('href', 'https://gyms.mettleup.fit/');
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   // Nothing was written to this browser for the demo, apart from the dark/light choice if made.
   expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k !== 'forgeai.theme.v1'))).toEqual([]);
