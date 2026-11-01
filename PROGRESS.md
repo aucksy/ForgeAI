@@ -5,10 +5,15 @@
 - R-267 UAT (1 Nov 2026), pushed, not released:
   - Phone onboarding: welcome gym code checked at once (welcomeGymChecked, 6 s cap); unknown-code page "No gym has this code"; Google restore with no profile stops spinning; "Continue with Google" outlined; intro/setup words; setup answers survive a kill (onboarding/welcomeResume.ts, meta welcome_resume, cleared at Start training).
   - Watch app (wear-build proves it): empty-state line, "Phone not connected" after ~3 s, Alarms & reminders step, all-sets-done / no-exercise / warm-up lines, stale workout dropped after 4 h.
-  - No "Install on watch" offer until the watch app is on Play (watchInstall.ts WATCH_APP_ON_PLAY=false; set true in the release after inbox #71).
+  - "Install on watch" offer: R-269 turned it back on (WATCH_APP_ON_PLAY=true): registered testers can install the watch app from Play.
   - Health Connect: privacy link opens the privacy notice (HealthRationaleActivity + alias in modules/forge-phone, NATIVE: check on the release build), owed workouts re-sent on open/return, delete after Stop removes it, Stop says what it did.
   - Admin (web, not deployed): Get started poster/members/staff steps fixed; slow "Create my gym" offers Sign in instead; Create is the main button; "Forgot your PIN?" line; Visits search hint fits 390 px.
   - What's new draft (next version): "If the app closes while you set it up, your answers are kept." / "A wrong gym code is now caught as soon as you type it." / "Your watch tells you what to do when no workout is open."
+- R-269 (1 Nov 2026), pushed, not released:
+  - Phone welcome: "Scan the poster" fills the gym code (shop/PosterScanner.tsx); Google vs backup sentences; QA flow qa/welcome-gym.yaml (first real run = next cloud QA). 8a257c4f.
+  - Health Connect F55/F62: "Read my weight" (weigh-ins into the body-weight log), "Show my steps" (today, not stored), "Stop and remove MettleUp's access". Manifest READ_WEIGHT + READ_STEPS. NATIVE: check on the release build. Owner: Play Health Connect declaration (write Exercise + Active calories; read Weight + Steps) and a privacy paragraph BEFORE this ships. 2e2432c2.
+  - Watch: R-237 rest sizes; "Get MettleUp on your phone" (phone announces mettleup_phone_app); "Workout saved" for 4 s after Finish. Phone side needs the release build. cca1748d.
+  - Before release: member-words / Gemini pass on the new Health Connect page lines.
 
 ## Done
 - 2026-11-01: **0.66.0** (R-263). Gym tab with no gym (ShopScreen JoinGymDoor): new RecommendGymCard under the join card: MettleUp is also gym software; members of a MettleUp gym get every app feature free (shop and trainer plans worded as "can", they are Pro in plans.ts). "Recommend MettleUp to my gym" opens the RN Share sheet (shop/recommendGym.ts: pure words + recommendMessage(); link https://gyms.mettleup.fit/?from=member so HQ marks the lead as from a member). Test test/shop/recommendGym.test.ts. Member website (not deployed, #79) got the same paragraph and share text. Owner rule saved: user-facing words are complete simple sentences; Gemini only for longer texts with full context. R-264: the joined Gym screen drops the MettleUp corner logo (bell and bag only; BrandCorner only on the no-gym screen; loading has none). mettleUpMark.test.ts count 3 -> 1.
