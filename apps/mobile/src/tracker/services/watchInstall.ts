@@ -147,7 +147,20 @@ export async function readWatchState(): Promise<WatchState> {
   const s = parseWatchState(raw);
   if (raw != null && s === 'unknown') console.warn('[watch install] Wear OS could not say', raw);
   if (stateEndsCard(s)) markWatchCardDone().catch((e: unknown) => console.warn('[watch install] could not save the card mark', e));
-  return s;
+  return offerableState(s);
+}
+
+/**
+ * R-267 UAT (1 Nov 2026): the watch app is not on Play yet (it waits on the owner's answer to Play's
+ * health question, inbox #71). Until it is, "Install on watch" ends in a Play Store search that finds
+ * nothing, so no screen offers it: a watch that lacks the app reads as 'unknown' (no intro screen,
+ * no Workout cards, no Settings row). Set true in the release after the watch app goes live on Play.
+ */
+export const WATCH_APP_ON_PLAY = false;
+
+/** The state the offers may use: 'missing' only once the watch app is on Play. PURE. */
+export function offerableState(s: WatchState, onPlay: boolean = WATCH_APP_ON_PLAY): WatchState {
+  return s === 'missing' && !onPlay ? 'unknown' : s;
 }
 
 /** "Install on watch": opens the watch's Play Store on MettleUp. Never throws. */

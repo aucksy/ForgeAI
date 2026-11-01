@@ -11,6 +11,8 @@ import { settingsGroups } from '@/components/settings/settingsLines';
 import { NOTICE_ORDER, pickNotice } from '@/lib/workoutNotices';
 import { usesBannedWord } from '@/lib/words';
 import {
+  WATCH_APP_ON_PLAY,
+  offerableState,
   CARD_DONE,
   WATCH_WORDS,
   installNote,
@@ -139,5 +141,18 @@ describe('native wiring (text)', () => {
     expect(read('android/wear/src/main/res/values/wear.xml')).toMatch(/<item>forgeai_watch_app<\/item>/);
     expect(read('android/wear/build.gradle')).toMatch(/applicationId 'com\.mettleup\.app'/);
     expect(read('android/app/build.gradle')).toMatch(/applicationId 'com\.mettleup\.app'/);
+  });
+});
+
+describe('R-267: no watch-app offer until the watch app is on Play', () => {
+  it('is off today', () => {
+    expect(WATCH_APP_ON_PLAY).toBe(false);
+  });
+  it('a watch that lacks the app reads as unknown while the app is not on Play', () => {
+    expect(offerableState('missing')).toBe('unknown');
+    expect(offerableState('missing', true)).toBe('missing');
+  });
+  it('every other state is kept', () => {
+    for (const s of ['none', 'installed', 'unknown'] as const) expect(offerableState(s)).toBe(s);
   });
 });
