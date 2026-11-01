@@ -12,11 +12,14 @@
  *    only when something changed — the time zone included).
  *  - Erase all data → everything off and cleared.
  *  - R-267: the app opens or comes back → workouts still owed to Health Connect are sent again.
+ *  - F55: the app opens or comes back → new weigh-ins in Health Connect join the body-weight log
+ *    (only after the member's yes; at most every 10 minutes).
  */
 import { AppState } from 'react-native';
 
 import { getRoutine } from '../db/routineRepo';
 import { removeWorkoutFromHealth, retryOwedHealth, sendWorkoutToHealth } from './healthConnect';
+import { readHealthWeights } from './healthRead';
 import { phoneNative } from './native';
 import { setLiveWorkout, type LiveWorkout } from './liveWorkout';
 import { usePhonePrefs } from './phonePrefs';
@@ -129,6 +132,15 @@ async function retryOwedLater(): Promise<void> {
   }
 }
 
+/** F55: new weigh-ins from Health Connect (at most every 10 minutes; never throws, never waited on). */
+async function readWeightsLater(): Promise<void> {
+  try {
+    await readHealthWeights();
+  } catch (e) {
+    console.warn('[ForgeErr] health: weigh-ins could not be read', e);
+  }
+}
+
 let started = false;
 export function startPhoneSync(): void {
   if (started) return;
@@ -138,11 +150,13 @@ export function startPhoneSync(): void {
   void pushBoardLater('start');
   // R-267: workouts Health Connect has not got yet (refused, or the app closed mid-send) go by themselves.
   void retryOwedLater();
+  void readWeightsLater();
   AppState.addEventListener('change', (s) => {
     if (s === 'active') {
       void refreshWidgets();
       void refreshReminders();
       void retryOwedLater();
+      void readWeightsLater();
       // R-133: back in the app: a name switch the gym has not heard yet is sent again.
       void pushBoardLater('active');
     } else if (s === 'background') void refreshWidgets();

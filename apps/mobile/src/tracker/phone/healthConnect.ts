@@ -1,6 +1,7 @@
 /**
  * Health Connect (v0.27.0, tracker plan Phase 5): each finished workout and its estimated
- * calories go to Health Connect, which Google Health (the Fitbit app) and Samsung Health read. Write only.
+ * calories go to Health Connect, which Google Health (the Fitbit app) and Samsung Health read. Workouts are
+ * only written; weigh-ins and steps are read in healthRead.ts, each after its own yes (F55 / F62).
  *  - Off until the member taps "Connect" (Profile) and allows it on Health Connect's own screen.
  *  - Then every finished workout is sent; an edited one is sent again (it replaces the old
  *    copy — the native side keys each record on the workout id), a deleted one is taken out.
@@ -104,6 +105,9 @@ export async function healthCheck(): Promise<HealthCheck> {
   let access = await readAccess(n);
   // Nothing shown yet to fall back on: one more try before calling it Off.
   if (access === 'error' && !lastCheck) access = await readAccess(n);
+  // "Stop and remove MettleUp's access": Android 14+ may still report the permissions until the
+  // app restarts, so the page shows Off until the member connects again.
+  if (usePhonePrefs.getState().healthRevoked) access = { exercise: false, calories: false };
   // Read after the wait, so a choice saved meanwhile (and the saved choice at start-up) counts.
   lastCheck = healthCheckFrom({ status, access, sending: usePhonePrefs.getState().healthConnect }, lastCheck);
   return lastCheck;
@@ -131,7 +135,58 @@ export const HC_NOT_ALLOWED =
 
 /** Open Health Connect's permission screen. Profile re-checks when the app is back. */
 export function askHealthConnect(): boolean {
+  try {
+    if (usePhonePrefs.getState().healthRevoked) usePhonePrefs.getState().setHealthRead({ healthRevoked: false });
+  } catch (e) {
+    console.warn('[ForgeErr] health: the removed-access mark could not be cleared', e);
+  }
   return phoneNative()?.healthRequest() ?? false;
+}
+
+/** Can this build take back MettleUp's Health Connect access (an older native piece cannot)? */
+export function canRemoveHealthAccess(): boolean {
+  return typeof phoneNative()?.healthRevokeAll === 'function';
+}
+
+/** The question before "Stop and remove MettleUp's access". */
+export const HC_REMOVE_ASK = {
+  title: "Remove MettleUp's access to Health Connect?",
+  body:
+    'MettleUp will stop sending your workouts and stop reading your weight and steps. ' +
+    'Workouts already sent stay in Health Connect. Weigh-ins already added stay in your body weight.',
+  confirm: 'Remove access',
+} as const;
+
+/** The line after the access was removed. */
+export const HC_REMOVED =
+  "Removed. MettleUp can no longer use Health Connect. Health Connect may still list MettleUp until you close and reopen MettleUp. Workouts already sent stay there. To remove them, open Health Connect.";
+
+/** The line when the access could not be removed. */
+export const HC_REMOVE_FAILED =
+  "Couldn't remove MettleUp's access. Open Health Connect, find MettleUp and turn off its access there.";
+
+/**
+ * "Stop and remove MettleUp's access": every Health Connect permission is taken back, and sending,
+ * weight and steps are switched off here. True when Health Connect took it. Never throws.
+ */
+export async function removeHealthAccess(): Promise<boolean> {
+  const n = phoneNative();
+  let ok = false;
+  try {
+    ok = (await n?.healthRevokeAll?.()) === true;
+  } catch (e) {
+    console.warn('[ForgeErr] health: access could not be removed', e);
+    ok = false;
+  }
+  if (!ok) {
+    console.warn('[ForgeErr] health: Health Connect did not take the access back');
+    return false;
+  }
+  const p = usePhonePrefs.getState();
+  p.setHealthConnect(false);
+  p.setHealthUnsent([]);
+  p.setHealthRead({ healthWeightOn: false, healthStepsOn: false, healthRevoked: true });
+  return true;
 }
 
 /** Audit M1: what "Open Health Connect" says when nothing opened. */

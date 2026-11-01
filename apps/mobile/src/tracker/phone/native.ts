@@ -14,8 +14,16 @@ export interface ForgePhone {
    * 24 Oct 2026: each of ForgeAI's two Health Connect permissions on its own (null = no Health
    * Connect). Rejects when Health Connect could not be asked. Absent on builds before it.
    */
-  healthAccess?(): Promise<{ exercise: boolean; calories: boolean } | null>;
+  healthAccess?(): Promise<{ exercise: boolean; calories: boolean; weight?: boolean; steps?: boolean } | null>;
   healthRequest(): boolean;
+  /** F55 / F62: ask only for reading weight and/or steps. Absent on builds before it. */
+  healthRequestRead?(kinds: ('weight' | 'steps')[]): boolean;
+  /** F55: weigh-ins from `sinceMs` on, oldest first; null = not allowed. Rejects on a failure. */
+  healthReadWeights?(sinceMs: number): Promise<HealthWeightRecord[] | null>;
+  /** F62: today's steps in the phone's time zone; null = not allowed. Rejects on a failure. */
+  healthStepsToday?(): Promise<number | null>;
+  /** Take back every Health Connect permission MettleUp holds. False = nothing could be removed. */
+  healthRevokeAll?(): Promise<boolean>;
   healthOpenSettings(): boolean;
   healthWrite(json: string): Promise<number>;
   healthDelete(id: string): Promise<boolean>;
@@ -53,6 +61,17 @@ export interface ForgePhone {
   /** R-260: install the downloaded update (the app restarts into it). */
   playUpdateFinish?(): boolean;
   addListener(event: 'onPlayUpdate', cb: (e: { status: PlayUpdateStatus }) => void): { remove: () => void };
+}
+
+/** F55: one weigh-in read from Health Connect. */
+export interface HealthWeightRecord {
+  /** Health Connect's own id for the record. */
+  id: string;
+  /** Epoch ms. */
+  timeMs: number;
+  /** The record's offset from UTC in seconds; null when Health Connect has none. */
+  offsetSec: number | null;
+  kg: number;
 }
 
 export type PlayUpdateStatus = 'none' | 'pending' | 'downloading' | 'downloaded' | 'installing' | 'installed' | 'failed' | 'canceled';

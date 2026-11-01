@@ -265,10 +265,25 @@ describe('Play: the "privacy policy" link shows the privacy notice', () => {
     expect(app).not.toContain('VIEW_PERMISSION_USAGE');
   });
 
-  it('only the two write permissions are asked for (they match what is written)', () => {
+  it('only the permissions MettleUp uses are declared (two writes; F55 weight and F62 steps reads)', () => {
     const perms = [...mod.matchAll(/android\.permission\.health\.[A-Z_]+/g)].map((m) => m[0]);
-    expect(new Set(perms)).toEqual(new Set(['android.permission.health.WRITE_EXERCISE', 'android.permission.health.WRITE_ACTIVE_CALORIES_BURNED']));
-    expect(app).not.toMatch(/android\.permission\.health\.READ_/);
+    expect(new Set(perms)).toEqual(
+      new Set([
+        'android.permission.health.WRITE_EXERCISE',
+        'android.permission.health.WRITE_ACTIVE_CALORIES_BURNED',
+        'android.permission.health.READ_WEIGHT',
+        'android.permission.health.READ_STEPS',
+      ]),
+    );
+    // The app manifest declares none itself (the module's are merged in).
+    expect(app).not.toMatch(/android\.permission\.health\./);
+  });
+
+  it('every declared read is used by the native code (Play rejects unused health permissions)', () => {
+    const kt = read('modules/forge-phone/android/src/main/java/com/forgeai/phone/Health.kt');
+    expect(kt).toContain('getReadPermission(WeightRecord::class)');
+    expect(kt).toContain('getReadPermission(StepsRecord::class)');
+    expect(kt).toContain('revokeAllPermissions()');
   });
 });
 

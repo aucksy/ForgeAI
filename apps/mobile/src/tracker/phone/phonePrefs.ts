@@ -7,6 +7,7 @@
  *    then, switching reminders on fills in "your usual training days and time".
  *  - gymRemindersOn (R-86): the gym's automatic reminders; on by default.
  *  - gymMessagesOn: a pop-up for the gym's new notices; on by default.
+ *  - healthWeightOn / healthStepsOn (F55 / F62): read weigh-ins and today's steps from Health Connect.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -62,11 +63,41 @@ export interface PhonePrefsState {
   /** R-164: the share switch changed and the gym has not heard yet (offline); sent again with no wait. */
   mateSharePending: boolean;
   setMateSharePending: (on: boolean) => void;
+  /**
+   * F55 (1 Nov 2026): the member said yes to "Weight from Health Connect": weigh-ins there are
+   * added to the body-weight log when the app opens or comes back (healthRead.ts).
+   */
+  healthWeightOn: boolean;
+  /** F55: when weigh-ins were last read (epoch ms); null = never. The next read starts a week before it. */
+  healthWeightRead: number | null;
+  /**
+   * F55: the days whose body-weight entry came from Health Connect, with the value and the time of
+   * the reading used. A day whose entry no longer has this value was typed by the member (never
+   * changed). Shown as "Weight from Health Connect" in the weigh-in list.
+   */
+  healthWeightDays: Record<string, HealthWeightDay>;
+  /** F55: Health Connect record ids already looked at (id → record time), so none is added twice. */
+  healthWeightSeen: Record<string, number>;
+  /** F62: the member said yes to today's steps on the Health Connect page. */
+  healthStepsOn: boolean;
+  /**
+   * "Stop and remove MettleUp's access" was used. Android 14+ may still report the permissions
+   * until the app restarts, so until the member connects again the page shows everything off.
+   */
+  healthRevoked: boolean;
+  setHealthRead: (p: Partial<Pick<PhonePrefsState, 'healthWeightOn' | 'healthWeightRead' | 'healthWeightDays' | 'healthWeightSeen' | 'healthStepsOn' | 'healthRevoked'>>) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
   setHealthUnsent: (ids: string[]) => void;
   setReminders: (p: Partial<Pick<PhonePrefsState, 'remindersOn' | 'reminderDays' | 'reminderMinutes' | 'reminderChosen'>>) => void;
   reset: () => void;
+}
+
+/** F55: a body-weight day filled from Health Connect. */
+export interface HealthWeightDay {
+  kg: number;
+  /** Epoch ms of the Health Connect reading. */
+  at: number;
 }
 
 /** R-72: the last time workouts reached Health Connect. */
@@ -103,6 +134,13 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setShareWorkoutsWithGym: (shareWorkoutsWithGym) => set({ shareWorkoutsWithGym }),
       mateSharePending: false,
       setMateSharePending: (mateSharePending) => set({ mateSharePending }),
+      healthWeightOn: false,
+      healthWeightRead: null,
+      healthWeightDays: {},
+      healthWeightSeen: {},
+      healthStepsOn: false,
+      healthRevoked: false,
+      setHealthRead: (p) => set(p),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
       setHealthUnsent: (healthUnsent) => set({ healthUnsent }),
@@ -116,6 +154,12 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           reminderChosen: false,
           healthUnsent: [],
           healthLast: null,
+          healthWeightOn: false,
+          healthWeightRead: null,
+          healthWeightDays: {},
+          healthWeightSeen: {},
+          healthStepsOn: false,
+          healthRevoked: false,
           gymRemindersOn: true,
           gymMessagesOn: true,
           showNameOnBoard: false,

@@ -135,6 +135,53 @@ class ForgePhoneModule : Module() {
       true
     }
 
+    // F55 / F62: ask only for reading weight and/or steps ("weight", "steps").
+    Function("healthRequestRead") { kinds: List<String> ->
+      val a = appContext.currentActivity ?: return@Function false
+      a.runOnUiThread {
+        try {
+          Health.requestRead(a, kinds)
+        } catch (e: Throwable) {
+          android.util.Log.w("ForgeHealth", "read permission screen did not open", e)
+        }
+      }
+      true
+    }
+
+    // F55: weigh-ins since a time; null = not allowed. A failure rejects (logged) so the app
+    // keeps its place and tries again later.
+    AsyncFunction("healthReadWeights") { sinceMs: Double ->
+      val c = ctx ?: return@AsyncFunction null
+      try {
+        Health.readWeights(c, sinceMs.toLong())
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "Health Connect weight read failed", e)
+        throw e
+      }
+    }
+
+    // F62: today's steps; null = not allowed. A failure rejects (logged).
+    AsyncFunction("healthStepsToday") {
+      val c = ctx ?: return@AsyncFunction null
+      try {
+        Health.stepsToday(c)?.toDouble()
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "Health Connect steps read failed", e)
+        throw e
+      }
+    }
+
+    // "Stop and remove MettleUp's access": false when nothing could be removed (logged).
+    AsyncFunction("healthRevokeAll") {
+      val c = ctx ?: return@AsyncFunction false
+      try {
+        Health.revokeAll(c)
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "Health Connect access could not be removed", e)
+        false
+      }
+    }
+
     Function("healthOpenSettings") {
       val c = ctx ?: return@Function false
       Health.openSettings(c)

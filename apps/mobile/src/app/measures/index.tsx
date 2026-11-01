@@ -42,6 +42,8 @@ import { getProgressPhotos, type ProgressPhoto } from '@/tracker/services/progre
 import { readGymMeasures, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { fromGymWords, gymPointsFor, type GymMeasuresStore, type GymPoint } from '@/shop/gymBody';
 import { useGymShop } from '@/shop/gymStore';
+import { isHealthWeight, WEIGHT_FROM_HC } from '@/tracker/phone/healthRead';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import type { BodyWeightEntry } from '@/types/models';
 
 const STRIP_MAX = 12;
@@ -129,6 +131,9 @@ export default function MeasuresScreen() {
   const [saving, setSaving] = useState(false);
   const [undo, setUndo] = useState<Undo[]>([]);
 
+  // F55: the days whose weigh-in came from Health Connect (still the value it gave).
+  const hcDays = usePhonePrefs((st) => st.healthWeightDays);
+  const fromHc = (r: Row): boolean => r.weight != null && isHealthWeight(r.dateISO, r.value, hcDays ?? {});
   const valueText = (c: MeasureChip, v: number): string => `${trimNum(shown(c, v))} ${unitOf(c)}`;
   // The member's own entries only: a gym entry on that day simply gives way to theirs.
   const otherOn = (iso: string, r: Row): Row | undefined => rows.find((x) => !x.gym && x.dateISO === iso && x.id !== r.id);
@@ -343,7 +348,7 @@ export default function MeasuresScreen() {
                     setEditing(r);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={`${dateWithYear(r.dateISO)}, ${valueText(chip, r.value)}. Fix or delete`}
+                  accessibilityLabel={`${dateWithYear(r.dateISO)}, ${valueText(chip, r.value)}.${fromHc(r) ? ` ${WEIGHT_FROM_HC}.` : ''} Fix or delete`}
                   style={({ pressed }) => ({
                     minHeight: 48,
                     flexDirection: 'row',
@@ -359,7 +364,13 @@ export default function MeasuresScreen() {
                     borderColor: color.border,
                   })}
                 >
-                  <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{dateWithYear(r.dateISO)}</Text>
+                  <View style={{ flexShrink: 1, gap: 2 }}>
+                    <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary }}>{dateWithYear(r.dateISO)}</Text>
+                    {/* F55: a weigh-in added from Health Connect says so (until the member fixes it). */}
+                    {fromHc(r) ? (
+                      <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>{WEIGHT_FROM_HC}</Text>
+                    ) : null}
+                  </View>
                   <Text style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>{valueText(chip, r.value)}</Text>
                 </Pressable>
                 ),

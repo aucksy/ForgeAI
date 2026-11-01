@@ -25,9 +25,13 @@ import {
   HC_OLDER_LEFT_OUT,
   HC_OPEN_FAILED,
   HC_SEND_OLDER,
+  HC_REMOVED,
+  HC_REMOVE_ASK,
+  HC_REMOVE_FAILED,
   HC_STOPPED,
   SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
+  canRemoveHealthAccess,
   healthCheck,
   lastSentText,
   olderSendAsk,
@@ -35,6 +39,7 @@ import {
   pastSendAsk,
   pastSince,
   pastWorkoutsSummary,
+  removeHealthAccess,
   resendUnsentToHealth,
   sendAllWorkoutsToHealth,
   sendProgressText,
@@ -43,6 +48,26 @@ import {
   type HealthState,
   type SendResult,
 } from './healthConnect';
+import {
+  HC_STEPS_ABOUT,
+  HC_STEPS_ERROR,
+  HC_STEPS_NOT_ALLOWED,
+  HC_STEPS_TITLE,
+  HC_WEIGHT_ABOUT,
+  HC_WEIGHT_NOT_ALLOWED,
+  HC_WEIGHT_ON,
+  HC_WEIGHT_STOPPED,
+  HC_WEIGHT_TITLE,
+  askHealthRead,
+  canReadHealth,
+  healthReadAccess,
+  readHealthWeights,
+  readStepsToday,
+  stepsText,
+  weightResultText,
+  type HealthReadAccess,
+  type StepsResult,
+} from './healthRead';
 import { usePhonePrefs } from './phonePrefs';
 import { openFixFor } from '../services/restAlertAccess';
 import {
@@ -72,6 +97,8 @@ function HealthRow() {
   const on = usePhonePrefs((s) => s.healthConnect);
   const setOn = usePhonePrefs((s) => s.setHealthConnect);
   const setUnsent = usePhonePrefs((s) => s.setHealthUnsent);
+  // "Stop and remove MettleUp's access" was used: look again, so the row shows Off.
+  const revoked = usePhonePrefs((s) => s.healthRevoked);
   const [state, setState] = useState<HealthState | null>(null);
   // 24 Oct 2026: calories have their own switch in Health Connect; workouts go without them.
   const [calories, setCalories] = useState(true);
@@ -214,7 +241,7 @@ function HealthRow() {
       if (a === 'active') void check();
     });
     return () => sub.remove();
-  }, [check, on]);
+  }, [check, on, revoked]);
 
   if (state === null || state === 'none') return null;
 
@@ -717,11 +744,318 @@ export function RemindersCard() {
   );
 }
 
+/**
+ * "Stop and remove MettleUp's access" (1 Nov 2026), next to Stop: every Health Connect permission
+ * is taken back after a yes, and the page then shows everything off.
+ */
+function RemoveAccessRow() {
+  const sending = usePhonePrefs((s) => s.healthConnect);
+  const weightOn = usePhonePrefs((s) => s.healthWeightOn);
+  const stepsOn = usePhonePrefs((s) => s.healthStepsOn);
+  const revoked = usePhonePrefs((s) => s.healthRevoked);
+  const [held, setHeld] = useState(false);
+  const [done, setDone] = useState<'removed' | 'failed' | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const check = useCallback(async () => {
+    const [c, r] = await Promise.all([
+      healthCheck().catch((e: unknown) => {
+        console.warn('[ForgeErr] health: Health Connect could not be checked', e);
+        return null;
+      }),
+      healthReadAccess(),
+    ]);
+    const write = c != null && (c.state === 'on' || c.state === 'allowed');
+    const read = r != null && r !== 'error' && (r.weight || r.steps);
+    setHeld(write || read);
+  }, []);
+
+  useEffect(() => {
+    void check();
+    const sub = AppState.addEventListener('change', (a) => {
+      if (a === 'active') void check();
+    });
+    return () => sub.remove();
+  }, [check, sending, weightOn, stepsOn, revoked]);
+
+  if (!canRemoveHealthAccess()) return null;
+  if (done === 'removed') {
+    return (
+      <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm }}>
+        {HC_REMOVED}
+      </Text>
+    );
+  }
+  if (!held || revoked) return null;
+
+  const remove = async (): Promise<void> => {
+    if (busy) return;
+    tap();
+    const yes = await askConfirm({ title: HC_REMOVE_ASK.title, body: HC_REMOVE_ASK.body, confirmLabel: HC_REMOVE_ASK.confirm, cancelLabel: 'Not now', destructive: true });
+    if (!yes) return;
+    setBusy(true);
+    try {
+      setDone((await removeHealthAccess()) ? 'removed' : 'failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+      <GhostButton label={busy ? 'Removing…' : "Stop and remove MettleUp's access"} icon="close" onPress={() => void remove()} />
+      {done === 'failed' ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center' }}>
+          {HC_REMOVE_FAILED}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/** A small "Stop" on the right of a Health Connect row (48 dp target). */
+function StopButton({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={{ minHeight: TOUCH, minWidth: TOUCH, alignItems: 'center', justifyContent: 'center' }}
+    >
+      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkMuted }}>Stop</Text>
+    </Pressable>
+  );
+}
+
+type ReadLook = HealthReadAccess | 'error' | null | undefined;
+
+/** The read permissions, looked at on show, on every return to the app and when `a` / `b` change. */
+function useReadAccess(a: unknown, b: unknown): ReadLook {
+  const [access, setAccess] = useState<ReadLook>(undefined);
+  const looks = useRef(0);
+  const recheck = useCallback(async () => {
+    const mine = ++looks.current;
+    const got = await healthReadAccess();
+    // Could not ask this time: keep what was shown (never flip to Off on a hiccup).
+    if (mine === looks.current) setAccess((prev) => (got === 'error' && prev != null ? prev : got));
+  }, []);
+  useEffect(() => {
+    void recheck();
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') void recheck();
+    });
+    return () => sub.remove();
+  }, [recheck, a, b]);
+  return access;
+}
+
+/** F55: weigh-ins from Health Connect go into the body-weight log, after the member's yes. */
+function WeightRow() {
+  const on = usePhonePrefs((s) => s.healthWeightOn);
+  const revoked = usePhonePrefs((s) => s.healthRevoked);
+  const setRead = usePhonePrefs((s) => s.setHealthRead);
+  const access = useReadAccess(on, revoked);
+  const allowed = access != null && access !== 'error' && access.weight;
+  const [line, setLine] = useState<{ text: string; bad: boolean } | null>(null);
+  const [stopped, setStopped] = useState(false);
+  const [openFailed, setOpenFailed] = useState(false);
+  // The member just said yes: read at once, without the 10-minute wait.
+  const fresh = useRef(false);
+
+  useEffect(() => {
+    if (!on || !allowed) return;
+    let live = true;
+    const force = fresh.current;
+    fresh.current = false;
+    void readHealthWeights({ force }).then((r) => {
+      const t = weightResultText(r);
+      if (!live || !t) return;
+      // Automatic reads speak up only when something was added or went wrong.
+      if (force || r.kind === 'error' || (r.kind === 'added' && r.added > 0)) setLine({ text: t, bad: r.kind === 'error' });
+    });
+    return () => {
+      live = false;
+    };
+  }, [on, allowed]);
+
+  if (access === undefined || access === null) return null;
+
+  const start = (): void => {
+    tap();
+    setStopped(false);
+    setLine(null);
+    fresh.current = true;
+    setRead({ healthWeightOn: true, healthRevoked: false });
+    // Already allowed (from before a Stop): nothing to ask.
+    if (!allowed) askHealthRead(['weight']);
+  };
+  const openHc = (): void => {
+    tap();
+    const opened = openHealthConnect();
+    if (!opened) console.warn('[ForgeErr] Health Connect did not open');
+    setOpenFailed(!opened);
+  };
+
+  const shownOn = on && (allowed || access === 'error');
+  const caption = shownOn ? HC_WEIGHT_ON : on ? HC_WEIGHT_NOT_ALLOWED : stopped ? HC_WEIGHT_STOPPED : HC_WEIGHT_ABOUT;
+
+  return (
+    <View>
+      <SettingRow
+        icon="scale"
+        title={HC_WEIGHT_TITLE}
+        caption={caption}
+        right={
+          shownOn ? (
+            <StopButton
+              label="Stop adding weigh-ins from Health Connect"
+              onPress={() => {
+                tap();
+                setRead({ healthWeightOn: false });
+                setLine(null);
+                setStopped(true);
+              }}
+            />
+          ) : undefined
+        }
+      />
+      {!on ? <GhostButton label="Read my weight" icon="scale" onPress={start} /> : null}
+      {on && !shownOn ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          <GhostButton label="Read my weight" icon="scale" onPress={start} />
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+        </View>
+      ) : null}
+      {openFailed ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center', paddingBottom: space.sm }}>
+          {HC_OPEN_FAILED}
+        </Text>
+      ) : null}
+      {shownOn && line ? (
+        <Text
+          accessibilityLiveRegion="polite"
+          style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm, color: line.bad ? color.criticalText : color.goodText }}
+        >
+          {line.text}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/**
+ * F62: today's steps, on this page only (builder's pick, 1 Nov 2026): the Workout tab shows one
+ * card at a time for the gym day, and steps there would push "Up next" down for every member,
+ * also those who never connect Health Connect. Here they sit next to their permission.
+ */
+function StepsRow() {
+  const on = usePhonePrefs((s) => s.healthStepsOn);
+  const revoked = usePhonePrefs((s) => s.healthRevoked);
+  const setRead = usePhonePrefs((s) => s.setHealthRead);
+  const access = useReadAccess(on, revoked);
+  const allowed = access != null && access !== 'error' && access.steps;
+  const [steps, setSteps] = useState<StepsResult | null>(null);
+  const [openFailed, setOpenFailed] = useState(false);
+
+  useEffect(() => {
+    if (!on || !allowed) {
+      setSteps(null);
+      return;
+    }
+    let live = true;
+    const load = (): void => {
+      void readStepsToday().then((r) => {
+        if (live) setSteps(r);
+      });
+    };
+    load();
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') load();
+    });
+    return () => {
+      live = false;
+      sub.remove();
+    };
+  }, [on, allowed]);
+
+  if (access === undefined || access === null) return null;
+
+  const start = (): void => {
+    tap();
+    setRead({ healthStepsOn: true, healthRevoked: false });
+    if (!allowed) askHealthRead(['steps']);
+  };
+  const openHc = (): void => {
+    tap();
+    const opened = openHealthConnect();
+    if (!opened) console.warn('[ForgeErr] Health Connect did not open');
+    setOpenFailed(!opened);
+  };
+
+  const shownOn = on && (allowed || access === 'error');
+  const refused = on && (!shownOn || steps?.kind === 'not-allowed');
+  const caption = !on
+    ? HC_STEPS_ABOUT
+    : refused
+      ? HC_STEPS_NOT_ALLOWED
+      : steps?.kind === 'steps'
+        ? stepsText(steps.steps)
+        : steps?.kind === 'error'
+          ? HC_STEPS_ERROR
+          : 'Reading your steps…';
+
+  return (
+    <View>
+      <SettingRow
+        icon="route"
+        title={HC_STEPS_TITLE}
+        caption={caption}
+        right={
+          shownOn ? (
+            <StopButton
+              label="Stop showing steps from Health Connect"
+              onPress={() => {
+                tap();
+                setRead({ healthStepsOn: false });
+              }}
+            />
+          ) : undefined
+        }
+      />
+      {!on ? <GhostButton label="Show my steps" icon="route" onPress={start} /> : null}
+      {refused ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          <GhostButton label="Show my steps" icon="route" onPress={start} />
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+        </View>
+      ) : null}
+      {openFailed ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center', paddingBottom: space.sm }}>
+          {HC_OPEN_FAILED}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
 export function HealthCard() {
   return (
-    <Card style={{ paddingVertical: space.xs }}>
-      <HealthRow />
-    </Card>
+    <>
+      <Card style={{ paddingVertical: space.xs }}>
+        <HealthRow />
+        <RemoveAccessRow />
+      </Card>
+      {canReadHealth() ? (
+        <>
+          <Card style={{ paddingVertical: space.xs }}>
+            <WeightRow />
+          </Card>
+          <Card style={{ paddingVertical: space.xs }}>
+            <StepsRow />
+          </Card>
+        </>
+      ) : null}
+    </>
   );
 }
 

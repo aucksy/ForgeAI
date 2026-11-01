@@ -13,18 +13,26 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.Record
+import androidx.health.connect.client.records.StepsRecord
+import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
+import androidx.health.connect.client.request.AggregateRequest
+import androidx.health.connect.client.request.ReadRecordsRequest
+import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.health.connect.client.units.Energy
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
 /**
  * Health Connect (v0.27.0, tracker plan Phase 5): each finished workout goes to Health Connect
  * as a strength-training session with its estimated active calories, so Google Fit and Samsung
- * Health (which read Health Connect) show it. Write only — ForgeAI reads nothing back.
+ * Health (which read Health Connect) show it. Workouts are never read back. Since 1 Nov 2026
+ * (F55 / F62), with the member's separate yes, MettleUp also reads weigh-ins (added to the
+ * body-weight log) and today's step count (shown on the Health Connect page).
  *
  * Records carry a client id ("forgeai-<session id>") and the time of sending as their version,
  * so sending an edited workout again replaces it instead of adding a second one, and a deleted
@@ -37,6 +45,14 @@ object Health {
   private val EXERCISE = HealthPermission.getWritePermission(ExerciseSessionRecord::class)
   private val CALORIES = HealthPermission.getWritePermission(ActiveCaloriesBurnedRecord::class)
   val PERMISSIONS: Set<String> = setOf(EXERCISE, CALORIES)
+
+  // F55 / F62 (1 Nov 2026): read access, each asked on its own when the member says yes on the
+  // Health Connect page (never together with the write switches above).
+  private val READ_WEIGHT = HealthPermission.getReadPermission(WeightRecord::class)
+  private val READ_STEPS = HealthPermission.getReadPermission(StepsRecord::class)
+
+  /** The most weigh-ins one read returns (a month of a scale used several times a day fits easily). */
+  private const val WEIGHT_READ_MAX = 2000
 
   /** "available", "update" (Health Connect app missing or too old), or "unavailable". */
   fun status(ctx: Context): String {
@@ -67,7 +83,12 @@ object Health {
   fun access(ctx: Context): Map<String, Boolean>? {
     val c = client(ctx) ?: return null
     val g = runBlocking { c.permissionController.getGrantedPermissions() }
-    return mapOf("exercise" to g.contains(EXERCISE), "calories" to g.contains(CALORIES))
+    return mapOf(
+      "exercise" to g.contains(EXERCISE),
+      "calories" to g.contains(CALORIES),
+      "weight" to g.contains(READ_WEIGHT),
+      "steps" to g.contains(READ_STEPS),
+    )
   }
 
   private fun caloriesAllowed(c: HealthConnectClient): Boolean =
@@ -82,7 +103,25 @@ object Health {
    * the error was swallowed, and "Connect" did nothing on every Android 14-16 phone. The registry
    * turns it into the system's real permission request. Must run on the UI thread.
    */
-  fun request(activity: Activity): Boolean {
+  fun request(activity: Activity): Boolean = launch(activity, PERMISSIONS)
+
+  /**
+   * F55 / F62: ask for read access only ("weight", "steps"), on Health Connect's own screen. The
+   * write switches are not asked again here.
+   */
+  fun requestRead(activity: Activity, kinds: List<String>): Boolean {
+    val perms = kinds.mapNotNull {
+      when (it) {
+        "weight" -> READ_WEIGHT
+        "steps" -> READ_STEPS
+        else -> null
+      }
+    }.toSet()
+    if (perms.isEmpty()) return false
+    return launch(activity, perms)
+  }
+
+  private fun launch(activity: Activity, permissions: Set<String>): Boolean {
     if (status(activity) != "available") return false
     val contract = PermissionController.createRequestPermissionResultContract(PROVIDER)
     val owner = activity as? ComponentActivity
@@ -93,10 +132,78 @@ object Health {
         holder[0]?.unregister()
       }
       holder[0] = launcher
-      launcher.launch(PERMISSIONS)
+      launcher.launch(permissions)
       return true
     }
-    activity.startActivityForResult(contract.createIntent(activity, PERMISSIONS), REQUEST_CODE)
+    activity.startActivityForResult(contract.createIntent(activity, permissions), REQUEST_CODE)
+    return true
+  }
+
+  /**
+   * F55: weigh-ins in Health Connect from `sinceMs` on, oldest first: { id, timeMs, offsetSec
+   * (null when Health Connect has none), kg }. Null when weight may not be read (or no Health
+   * Connect). The app decides which day each one is and whether it goes into the body-weight log.
+   */
+  fun readWeights(ctx: Context, sinceMs: Long): List<Map<String, Any?>>? {
+    val c = client(ctx) ?: return null
+    return runBlocking {
+      if (!c.permissionController.getGrantedPermissions().contains(READ_WEIGHT)) return@runBlocking null
+      val out = mutableListOf<Map<String, Any?>>()
+      var token: String? = null
+      do {
+        val res = c.readRecords(
+          ReadRecordsRequest(
+            recordType = WeightRecord::class,
+            timeRangeFilter = TimeRangeFilter.after(Instant.ofEpochMilli(sinceMs)),
+            ascendingOrder = true,
+            pageSize = 500,
+            pageToken = token,
+          ),
+        )
+        for (r in res.records) {
+          out.add(
+            mapOf(
+              "id" to r.metadata.id,
+              "timeMs" to r.time.toEpochMilli().toDouble(),
+              "offsetSec" to r.zoneOffset?.totalSeconds,
+              "kg" to r.weight.inKilograms,
+            ),
+          )
+        }
+        token = res.pageToken
+      } while (!token.isNullOrEmpty() && out.size < WEIGHT_READ_MAX)
+      out
+    }
+  }
+
+  /**
+   * F62: today's steps (midnight to now in the phone's time zone), counted by Health Connect
+   * itself so a phone and a watch counting the same walk are not added twice. Null when steps
+   * may not be read (or no Health Connect); 0 when none were recorded today.
+   */
+  fun stepsToday(ctx: Context): Long? {
+    val c = client(ctx) ?: return null
+    return runBlocking {
+      if (!c.permissionController.getGrantedPermissions().contains(READ_STEPS)) return@runBlocking null
+      val zone = ZoneId.systemDefault()
+      val start = LocalDate.now(zone).atStartOfDay(zone).toInstant()
+      val res = c.aggregate(
+        AggregateRequest(
+          metrics = setOf(StepsRecord.COUNT_TOTAL),
+          timeRangeFilter = TimeRangeFilter.between(start, Instant.now()),
+        ),
+      )
+      res[StepsRecord.COUNT_TOTAL] ?: 0L
+    }
+  }
+
+  /**
+   * "Stop and remove MettleUp's access": every Health Connect permission MettleUp holds is taken
+   * back. On Android 14+ Health Connect may list them until MettleUp is closed and opened again.
+   */
+  fun revokeAll(ctx: Context): Boolean {
+    val c = client(ctx) ?: return false
+    runBlocking { c.permissionController.revokeAllPermissions() }
     return true
   }
 

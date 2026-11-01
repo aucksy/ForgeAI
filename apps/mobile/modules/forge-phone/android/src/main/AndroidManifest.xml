@@ -1,8 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <uses-sdk tools:overrideLibrary="androidx.health.connect.client"/>
-  <!-- Health Connect: write each finished workout and its calories. Nothing is read. -->
+  <!-- Health Connect: write each finished workout and its calories. -->
   <uses-permission android:name="android.permission.health.WRITE_EXERCISE"/>
   <uses-permission android:name="android.permission.health.WRITE_ACTIVE_CALORIES_BURNED"/>
+  <!-- F55 / F62 (1 Nov 2026): read weigh-ins into the body-weight log, and today's step count.
+       Each is asked only when the member says yes on the Health Connect page. -->
+  <uses-permission android:name="android.permission.health.READ_WEIGHT"/>
+  <uses-permission android:name="android.permission.health.READ_STEPS"/>
   <queries>
     <package android:name="com.google.android.apps.healthdata"/>
   </queries>
