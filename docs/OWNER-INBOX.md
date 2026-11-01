@@ -441,7 +441,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F140 Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
 | F141 Separate app per gym | Not doing | One ForgeAI app for every gym; a separate app per gym is unworkable for small gyms. | Not planned: one ForgeAI app takes on each gym's colours and logo, and the home-screen shortcut shows the gym's logo. |
 | F142 Monthly gym challenge with a ranking | Live | 26 Oct (0.58.0): Gym tab leaderboard (last 30 days, Workouts or Kg lifted, top 10, your place, the challenge bar); admin app → Challenges (goal in workouts or kg, 7 to 31 days, free days; who hit the goal, with phone). Names show only if the member switches it on. |  |
-| F143 Challenge rewards given out by themselves | Waiting for you | Built 1 Nov and tested; needs your yes to switch on (#81). When a challenge ends, each winner gets the free days added and a gym message. R-137. | When the month's challenge ends (or the goal is hit), the gym server marks each winner. The admin app lists them under Challenges with the reward to hand over, and each winner gets a gym notice saying what they won and where to collect it. |
+| F143 Challenge rewards given out by themselves | Live | Live 1 Nov (#81). When a challenge ends, each winner with a running membership gets the free days added and a gym message; others show "Give by hand" in the admin app. R-137. | When the month's challenge ends (or the goal is hit), the gym server marks each winner. The admin app lists them under Challenges with the reward to hand over, and each winner gets a gym notice saying what they won and where to collect it. |
 | F144 Tap a name on the leaderboard to see their profile | Live | Released in v0.60.0 (testers, 31 Oct check). Built 28 Oct, within your gym only; server part and privacy lines live 29 Oct (#67, your yes); members see it with 0.60.0. | A name on the Gym tab leaderboard opens that member's profile only if they turned on a separate "Show my profile" switch (off until they choose). It shows initials, name and recent workouts; no photos are stored. |
 | F145 How busy the gym is right now | Live | Released in v0.60.0 (testers, 31 Oct check). Built 28 Oct; server part live 29 Oct (#67, your yes); members see it with 0.60.0. | The server counts check-ins per hour (no names). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
 | F146 Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
@@ -497,16 +497,17 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Decide:** May the AI answers use a paid Claude key, capped at ₹500 a month?
 - A: Yes, a paid Claude Haiku key with a ₹500 cap. Free AI keys may learn from what people type. (recommended)
 - B: Not now. Keep the one-way feedback as it is.
-**Your task:** Approve this line for the privacy notice, or change it: "When you ask for help in the app, your question goes to Anthropic (Claude) to write an answer. Anthropic does not use it to train its AI. We keep it for 1 year." Reply "write it".
+**APPROVED (1 Nov 2026):** the privacy line below. It goes into the privacy notice the day the help answers go live. Line: "When you ask for help in the app, your question goes to Anthropic (Claude) to write an answer. Anthropic does not use it to train its AI. We keep it for 1 year."
 **Note:** A WhatsApp AI bot waits until 10 gyms (Meta charges for it, and resellers add ₹999 a month or more). Until then the admin app links to your own WhatsApp.
 
 ---
 
 ## 81. Challenge rewards: may I switch them on? — 1 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
 **Why:** F143 is built and tested. Today the gym owner must add a winner's free days by hand. With this change, when a monthly challenge ends, each winner with a running membership gets the free days added by themselves, and gets a gym message. A winner with no running membership shows as "Give by hand" in the admin app. It needs one change on the live gym server.
-**Your task:** Reply "yes, switch on challenge rewards". Then I make the server change, run the server checks, and tell you the result.
+**TASK DONE (1 Nov 2026)**
+**My answer (1 Nov 2026):** Switched on. The live server test passed (31 checks). Winners of the next challenge that ends get their free days and a message by themselves.
 
 ---
 

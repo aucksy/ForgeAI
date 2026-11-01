@@ -267,7 +267,7 @@ Member functions `member_mate_share`, `member_mate_stop`, `member_mate_board`, `
 turns on "Let my gym mates see my workouts" shares short workout summaries (60 days, at most 30) that same-gym
 mates can open from the leaderboard. Test: `tests/0040_gym_mate_profiles.sql` → live PASS 46, then `tests/security.sql`.
 
-## Challenge rewards given out by themselves (0047, F143) — NOT APPLIED LIVE (needs the owner's yes)
+## Challenge rewards given out by themselves (0047, F143) — APPLIED LIVE 1 Nov 2026
 Additive and re-runnable; apply after 0046. New columns on `gym_challenge_hits` (reward_state, reward_reason,
 reward_days, given_at, given_membership_id, old_end, new_end), the helper `_challenge_rewards` (no grants), and
 0037's `_challenge_results` and `owner_challenges` replaced (copies with the marked changes). When a finished

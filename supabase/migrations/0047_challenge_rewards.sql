@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE: the owner must say yes before this goes to the gym server.
+-- APPLIED LIVE 1 Nov 2026 (owner's yes, R-274; SQL Editor, file sha256 2a323549...b2ab35 from 9cd7f1e5).
+-- Live tests: 0047 RESULT PASS (31 checks); security fails only on 0046's owner_gym_pack/member_gym_pack (0046 not live).
 --
 -- 0047: challenge rewards given out by themselves (F143, 1 Nov 2026; owner's backlog: "When the month's
 -- challenge ends, the gym server marks each winner. The admin app lists them under Challenges with the
