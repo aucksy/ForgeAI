@@ -26,6 +26,10 @@ android.permission.POST_NOTIFICATIONS
 # added back here; the rest timer asks for "Alarms & reminders" (SCHEDULE_EXACT_ALARM) instead.
 android.permission.health.WRITE_EXERCISE
 android.permission.health.WRITE_ACTIVE_CALORIES_BURNED
+# R-269/R-270 (1 Nov 2026, owner approved): read body weight and steps from Health Connect;
+# Play's Health apps form declares both ("Nutrition and weight management").
+android.permission.health.READ_WEIGHT
+android.permission.health.READ_STEPS
 
 # libraries
 android.permission.ACCESS_NETWORK_STATE
