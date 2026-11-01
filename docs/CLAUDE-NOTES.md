@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-274. Live yes for challenge rewards; privacy line for help answers approved — 1 Nov 2026
+
+He said: "yes, switch on challenge rewards" (his LIVE database yes for 0047 only), "privacy line in tracker #82 Approved", and asked "What is support plan?". He also asked to see the welcome design: canvas https://claude.ai/artifact/HgYB2U7cdYHvAJRRExDDSV (3 phone screens).
+Plan: wait for CI's database test of 0047 to pass, apply 0047 in the Supabase SQL Editor (his Chrome; file fetched from GitHub raw at the pushed commit), run its test, 0037's and security on live. The approved privacy line goes into the notice when the in-app help answers ship (it would be untrue before). Paid key (#82 A or B) is still his to pick.
+
 ## R-273. Redo the welcome screen: Google first, then two simple choices — 1 Nov 2026
 
 He said (on a picture of the welcome screen): "This looks crap... like a Excel sheet. We have to think through the onboarding properly. It has to be simple. Google login should be primary, and then there can be two buttons: join via your gym membership or import from Hevy or Strong. You tell me what's the best way of implementing this."
@@ -239,12 +244,3 @@ He said: read docs/uat/UAT-2026-10-30.md; confirm each Table A problem against t
 Did (0.63.0 + desk/landing deploy): Table A, 31 items. FALSE or not reproduced: A-11 (the red cloud gate was 0.62.0's; fixed and green in 0.62.1), A-12 (run 41012405375 message journey: the code path is right and later runs passed; not reproduced). A-16 was wording only ("644 days" now reads in months). A-18: the delete/sign-out confirms already exist; only spacing changed. Fixed: A-01..A-10, A-13..A-17, A-19..A-21, A-23..A-31 (feedback button hidden on the finish page, tab bars fit large text, Board tab, exercise pictures as thumbs, next-set target first, full rupees not "5k", one word "Visits", Call back on <date>, form errors, overpay refused, 1-member wording). NOT done: A-22 (gym hours page too long; medium, next batch).
 Table B: built B-01 (via A-01), B-02, B-04 (camera blocked: "Allow the camera in Settings"), B-05 (scan the poster first on the join card), B-09, B-10, B-11 (Sign in / Set up a new gym tabs), B-12, B-13, B-15, B-17, B-18 (a plan starting 30+ days after its usual start asks once; a normal early renewal does not), B-19, B-21. Skipped: B-06 (one range control: medium, Statistics rework), B-14, B-16, B-20 (see the UAT file reasons in chat). Partly: B-07 (hardness picker labels), B-03 (month report) left.
 Desk e2e caught my own B-18 bug (a normal early renewal 31 days out was asked); fixed with usualStart + a test. Desk: 107 browser tests + 1,454 unit tests pass; phone: 3,874 tests pass, typecheck clean.
-
-## R-233. Notes too big; save the 35% fact at 34%; tracker rows left at "Next release" after release - 31 Oct 2026
-He said: at 34% save in the notes that the chat compacts at 35%; my notes are too big, set up automatic cleanup; backlog rows tagged "Next release" are already released, "I shouldn't have to tell you this every time".
-Did: context_meter.py at 34% now says LAST SAVE and to write 'Chat compacts at 35% now' into these notes; brain_load.py prints a plain notice right after a compaction. scripts/trim_notes.py keeps the newest 40 entries here and moves older ones to docs/CLAUDE-NOTES-ARCHIVE.md; it runs on every tracker build. owner_inbox_page.py mark_shipped(): every build flips a "Next release" row to Live when its F-id is in a commit a release tag holds. 17 rows flipped now (v0.60.0 / v0.62.0).
-Chat compacts at 35% now (31 Oct 2026); after it, read these notes before saying we never discussed or he never approved something.
-
-## R-232. "I did say Yes" to 0043 and 0045; compaction 25% -> 35% globally - 31 Oct 2026
-He said: he did approve 0043 and 0045 (both found live), and "should we increase it to 35% globally".
-Did: 0043/0045 marked APPLIED LIVE (live-vs-file compare not done: the permission check blocked a second live read). CLAUDE_AUTOCOMPACT_PCT_OVERRIDE 25 -> 35 in ~/.claude/settings.json and the Windows user variable; context_meter.py now warns at 30/32/34%; brain note stop-at-90-percent-context updated, index rebuilt. Takes effect in a new session or after an app restart.
