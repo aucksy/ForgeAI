@@ -128,6 +128,11 @@ copies at our provider expire within 7 more days. You can also ask us by email
 backup file in your own Google Drive. It does not go through our server, and we cannot open it.
 Google's own privacy terms apply to it.
 
+**Health Connect** (Settings → Health Connect) is also optional. With your permission, MettleUp reads your
+weight from Health Connect to add it to your body-weight log, and today's step count to show it to you.
+It also saves each finished workout to Health Connect. This data stays on your phone and is not shared.
+You can stop it at any time with **Stop and remove MettleUp's access**.
+
 ### Where it is kept
 Our main database is in **Mumbai, India** (Supabase). Some service providers may process limited
 data outside India: Cloudflare (delivers the desk app and passes both apps' requests on to our
@@ -170,7 +175,8 @@ Board ourselves and tell you directly.
 ### Changes
 We tell you in the app before a change that affects you. The date below is the latest version.
 
-Last updated: 30 Oct 2026. What changed: spoken feedback is now listed (your recording goes to Groq in
+Last updated: 1 Nov 2026. What changed: Health Connect is now listed (with your permission the app reads
+your weight and today's steps, and saves each workout there; it stays on your phone). Before that, 30 Oct 2026: spoken feedback is now listed (your recording goes to Groq in
 the USA to become text, and nobody keeps it), and crash reports (what they hold, and that they are
 deleted after 90 days).
 
