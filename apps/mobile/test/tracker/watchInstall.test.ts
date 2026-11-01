@@ -145,14 +145,14 @@ describe('native wiring (text)', () => {
 });
 
 describe('R-267: no watch-app offer until the watch app is on Play', () => {
-  it('is off today', () => {
-    expect(WATCH_APP_ON_PLAY).toBe(false);
+  it('is on: testers install it from Play (R-269)', () => {
+    expect(WATCH_APP_ON_PLAY).toBe(true);
   });
   it('a watch that lacks the app reads as unknown while the app is not on Play', () => {
-    expect(offerableState('missing')).toBe('unknown');
+    expect(offerableState('missing', false)).toBe('unknown');
     expect(offerableState('missing', true)).toBe('missing');
   });
   it('every other state is kept', () => {
-    for (const s of ['none', 'installed', 'unknown'] as const) expect(offerableState(s)).toBe(s);
+    for (const s of ['none', 'installed', 'unknown'] as const) expect(offerableState(s, false)).toBe(s);
   });
 });

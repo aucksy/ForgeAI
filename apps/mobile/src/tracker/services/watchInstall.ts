@@ -154,9 +154,11 @@ export async function readWatchState(): Promise<WatchState> {
  * R-267 UAT (1 Nov 2026): the watch app is not on Play yet (it waits on the owner's answer to Play's
  * health question, inbox #71). Until it is, "Install on watch" ends in a Play Store search that finds
  * nothing, so no screen offers it: a watch that lacks the app reads as 'unknown' (no intro screen,
- * no Workout cards, no Settings row). Set true in the release after the watch app goes live on Play.
+ * no Workout cards, no Settings row).
+ * R-269 (owner, 1 Nov): back on. Registered testers can install the watch app from Play, and the
+ * same link works once it is in production.
  */
-export const WATCH_APP_ON_PLAY = false;
+export const WATCH_APP_ON_PLAY = true;
 
 /** The state the offers may use: 'missing' only once the watch app is on Play. PURE. */
 export function offerableState(s: WatchState, onPlay: boolean = WATCH_APP_ON_PLAY): WatchState {
