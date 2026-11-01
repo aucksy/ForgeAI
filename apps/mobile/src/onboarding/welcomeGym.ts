@@ -4,7 +4,9 @@
  * waits), and the gym's own "Join <gym>" screen opens once setup is done: it shows the gym and asks
  * before joining. No internet is needed during setup.
  */
+import { checkInCodeFromUrl } from '@/shop/checkIn';
 import { JOIN_CODE_LENGTH, joinCodeFromTyped } from '@/shop/gym';
+import { inviteCodeFromUrl } from '@/shop/pendingInvite';
 
 export const WELCOME_GYM_ASK = 'Have a gym code? Join your gym';
 export const WELCOME_GYM_WHY = 'Your gym gives you a code to check in and order from its shop. Your workouts stay on this phone.';
@@ -42,3 +44,22 @@ export function welcomeGymChecked(code: string, answer: { gymName: string } | nu
     line: name ? `${name} found. Its join screen opens right after setup.` : welcomeGymKept(code),
   };
 }
+
+/**
+ * 1 Nov 2026: "Scan the poster" on the welcome screen, as on the Gym tab. The poster's QR holds the gym's
+ * check-in link (/c/CODE) or its invite link (/j/CODE); both carry the gym's join code, which then fills
+ * the box and is checked exactly as if it had been typed. null = not a gym's QR (keep scanning). PURE.
+ */
+export function welcomeGymScanned(data: string | null | undefined): string | null {
+  return checkInCodeFromUrl(data) ?? inviteCodeFromUrl(data);
+}
+
+/** The welcome's scan words (member-words skill). The camera lines keep typing in view. */
+export const WELCOME_SCAN_WORDS = {
+  scan: 'Scan the poster',
+  close: 'Close the camera',
+  asking: "MettleUp needs your camera to read the QR code on your gym's poster.",
+  refused: "MettleUp is not allowed to use your camera, so type your gym's code below instead.",
+  camOff: "The camera is off for MettleUp, so type your gym's code below, or turn the camera on in Settings.",
+  noCamera: "The camera didn't start, so type your gym's code below instead.",
+} as const;

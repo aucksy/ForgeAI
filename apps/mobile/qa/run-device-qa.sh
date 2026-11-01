@@ -1551,6 +1551,9 @@ fi
 # from a fresh install's welcome screen, check the routines' order and the settings, then "Save a
 # backup": the share sheet is in front and the app's cache holds mettleup-backup-<date>.zip.
 if qa_runs ubk; then
+  # 1 Nov 2026: first, the welcome's gym code is checked with the live gym at once: ZZZZZ9 -> "No gym
+  # has the code", FORGE1 -> "ForgeAI Test Gym found" (welcome-gym.yaml). uat-bk.yaml starts afresh.
+  gate_flow ubk_gym welcome-gym.yaml && log "UAT UBK GYM: welcome gym code ZZZZZ9 -> 'No gym has the code', FORGE1 -> 'ForgeAI Test Gym found', 'Scan the poster' shown"
   push_fixture "$QA_DIR/fixtures/qa-backup.zip" /sdcard/Download/qa-backup.zip
   adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
   log "downloads: $(wait_media qa-backup 1 20 downloads) backup file for UBK"

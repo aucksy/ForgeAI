@@ -1,0 +1,102 @@
+# Part UBK, first step (1 Nov 2026): the welcome screen's gym code is checked with the gym at once.
+# A fresh install's start view, "Do you train at a gym?" card:
+#   1. "Scan the poster" and "Enter your gym code" are both there (the scanner itself needs a real
+#      poster, so it is not opened here).
+#   2. A code no gym has (ZZZZZ9, as part INV-d) -> "No gym has the code ZZZZZ9. ..." under the box.
+#   3. The test gym's real code (FORGE1, "ForgeAI Test Gym", as parts INV and R) -> "ForgeAI Test Gym
+#      found. Its join screen opens right after setup."
+#   4. "Change the code" lets it go again. uat-bk.yaml then starts from a fresh install (clearState),
+#      so nothing here is left for it.
+# The check is the live gym_preview (WelcomeGymCode.tsx, welcomeGymChecked): the box losing focus
+# (hideKeyboard right after typing, while the keyboard is surely open: trap 20) checks a full code.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+# R-248: the intro screens come first on a fresh install. Skip them.
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start fresh|Welcome to MettleUp|Restore from a backup|Load demo data instead"
+    timeout: 90000
+# ---------------------------------------------------------------- 1. the gym card's two ways in
+# Owner profile (360 dp, font 1.3): the card can sit below the edge (trap 27).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Do you train at a gym\\?$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Scan the poster$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Enter your gym code$"
+- takeScreenshot: wg-01-gym-card
+- tapOn: "^Enter your gym code$"
+# ---------------------------------------------------------------- 2. a code no gym has
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Gym code"
+# The emulator can drop the first key into a freshly focused box (trap 5): type it again if needed.
+- tapOn: "Gym code"
+- inputText: "ZZZZZ9"
+- runFlow:
+    when:
+      notVisible: "^ZZZZZ9$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "ZZZZZ9"
+- assertVisible: "^ZZZZZ9$"
+# The keyboard is open after typing, so this is not Android's Back. The box loses focus: the check runs.
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "No gym has the code ZZZZZ9.*"
+    timeout: 30000
+- assertVisible: 'No gym has the code ZZZZZ9\. Check the code with your gym''s desk and type it again\.'
+- takeScreenshot: wg-02-no-gym
+# ---------------------------------------------------------------- 3. the test gym's real code
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Gym code"
+- tapOn: "Gym code"
+- eraseText: 10
+- inputText: "FORGE1"
+- runFlow:
+    when:
+      notVisible: "^FORGE1$"
+    commands:
+      - tapOn: "Gym code"
+      - eraseText: 10
+      - inputText: "FORGE1"
+- assertVisible: "^FORGE1$"
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "ForgeAI Test Gym found.*"
+    timeout: 30000
+- assertVisible: 'ForgeAI Test Gym found\. Its join screen opens right after setup\.'
+# A wrong code's line has gone with it.
+- assertNotVisible: "No gym has the code.*"
+- takeScreenshot: wg-03-gym-found
+# ---------------------------------------------------------------- 4. let it go again
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Change the code$"
+- tapOn: "^Change the code$"
+- extendedWaitUntil:
+    notVisible: "ForgeAI Test Gym found.*"
+    timeout: 10000

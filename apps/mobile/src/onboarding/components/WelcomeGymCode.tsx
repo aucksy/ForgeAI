@@ -3,19 +3,33 @@
  * 18 Oct 2026). Folded to one line until tapped. The code is kept like a gym's invite link
  * (shop/pendingInvite.ts) and the gym's "Join <gym>" screen opens once setup is done (app/_layout.tsx),
  * where the member sees the gym and says yes. Nothing is joined here, and no internet is needed.
+ *
+ * 1 Nov 2026: "Scan the poster", as on the Gym tab (the same PosterScanner panel; no new native module).
+ * A scanned poster fills the box and is checked exactly like a typed code (welcomeGymChecked). If the
+ * camera is refused, the panel says so in one sentence and the code box stays right under it.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Linking, Pressable, Text, TextInput, View } from 'react-native';
 
 import { GhostButton, GlassCard } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { JOIN_CODE_LENGTH } from '@/shop/gym';
 import { apiPreview } from '@/shop/gymApi';
+import { PosterScanner } from '@/shop/PosterScanner';
 import { peekPendingInvite, restorePendingLinks, setPendingInvite } from '@/shop/pendingInvite';
 import { shopInputStyle } from '@/shop/ShopParts';
 import { color, space, type } from '@/theme/tokens';
 
-import { WELCOME_GYM_ASK, WELCOME_GYM_CHECK_MS, WELCOME_GYM_WHY, welcomeGymChecked, welcomeGymCode, welcomeGymKept } from '../welcomeGym';
+import {
+  WELCOME_GYM_ASK,
+  WELCOME_GYM_CHECK_MS,
+  WELCOME_GYM_WHY,
+  WELCOME_SCAN_WORDS,
+  welcomeGymChecked,
+  welcomeGymCode,
+  welcomeGymKept,
+  welcomeGymScanned,
+} from '../welcomeGym';
 import { START_WORDS } from '../welcomeStart';
 
 /**
@@ -36,6 +50,8 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
   // UAT 1 Nov 2026: the line once the gym answered ("<Gym> found. ..."); null = the plain saved line.
   const [keptLine, setKeptLine] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
+  // The poster scanner is open (over the code box, which stays usable under it).
+  const [scanning, setScanning] = useState(false);
   const checkRun = useRef(0);
   // One check at a time: Done and the box losing focus can both ask in the same frame.
   const inFlight = useRef(false);
@@ -67,13 +83,15 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
     setKeptLine(line);
     setKept(code);
     setOpen(false);
+    setScanning(false);
   };
 
   // A wrong code is told now when the phone is online; offline or slow, the code is kept and the
   // gym's join screen checks it after setup (no internet is needed to finish setting up).
-  const save = async (): Promise<void> => {
+  // `text`: a scanned poster's code; else what is in the box.
+  const save = async (text: string = typed): Promise<void> => {
     if (inFlight.current) return;
-    const r = welcomeGymCode(typed);
+    const r = welcomeGymCode(text);
     if (!r.ok) {
       setError(r.error);
       return;
@@ -101,6 +119,24 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
     }
     keep(r.code, checked.line);
   };
+  // A gym's poster read: the code goes in the box and is checked as if typed. Any other QR: keep scanning.
+  const onScanned = (data: string): boolean => {
+    const code = welcomeGymScanned(data);
+    if (!code) return false;
+    setScanning(false);
+    setTyped(code);
+    setError(null);
+    void save(code);
+    return true;
+  };
+  const scanRef = useRef(onScanned);
+  scanRef.current = onScanned;
+  const onRead = useCallback((data: string) => scanRef.current(data), []);
+  const startScan = (): void => {
+    setOpen(true);
+    setScanning(true);
+  };
+
   const change = (): void => {
     checkRun.current += 1;
     setChecking(false);
@@ -125,7 +161,14 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
   }
 
   if (!open) {
-    if (inSection) return <GhostButton label={START_WORDS.gymButton} icon="key" onPress={() => setOpen(true)} />;
+    if (inSection) {
+      return (
+        <View style={{ gap: space.sm }}>
+          <GhostButton label={WELCOME_SCAN_WORDS.scan} icon="camera" onPress={startScan} />
+          <GhostButton label={START_WORDS.gymButton} icon="key" onPress={() => setOpen(true)} />
+        </View>
+      );
+    }
     return (
       <Pressable
         onPress={() => setOpen(true)}
@@ -147,6 +190,12 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
           <Text style={body()}>{WELCOME_GYM_WHY}</Text>
         </View>
       )}
+      {scanning ? (
+        <View style={{ gap: space.sm }}>
+          <PosterScanner onRead={onRead} words={WELCOME_SCAN_WORDS} />
+          <GhostButton label={WELCOME_SCAN_WORDS.close} onPress={() => setScanning(false)} />
+        </View>
+      ) : null}
       <TextInput
         value={typed}
         onChangeText={(t) => {
@@ -157,7 +206,8 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
         autoCorrect={false}
         autoComplete="off"
         spellCheck={false}
-        autoFocus
+        // Not over the camera: the keyboard would cover the scanner.
+        autoFocus={!scanning}
         returnKeyType="done"
         onSubmitEditing={() => void save()}
         // Typed in full, then another button tapped without "Save the code": keep it anyway.
@@ -173,6 +223,7 @@ export function WelcomeGymCode({ onKept, inSection = false }: { onKept?: (code: 
       />
       <InlineError message={error} />
       <GhostButton label={checking ? 'Checking the code…' : 'Save the code'} onPress={() => void save()} />
+      {scanning || checking ? null : <GhostButton label={WELCOME_SCAN_WORDS.scan} icon="camera" onPress={startScan} />}
     </Box>
   );
 }

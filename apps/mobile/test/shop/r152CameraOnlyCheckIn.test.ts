@@ -21,7 +21,15 @@ function files(dir: string): string[] {
     return statSync(join(root, p)).isDirectory() ? files(p) : /\.(ts|tsx)$/.test(n) ? [p] : [];
   });
 }
-const SCAN_CODE = [...files('src/shop'), ...files('src/app/c'), 'src/app/scan.tsx', 'src/components/settings/JoinGymCard.tsx'];
+const SCAN_CODE = [
+  ...files('src/shop'),
+  ...files('src/app/c'),
+  'src/app/scan.tsx',
+  'src/components/settings/JoinGymCard.tsx',
+  // 1 Nov 2026: the welcome screen scans the poster too.
+  'src/onboarding/components/WelcomeGymCode.tsx',
+  'src/onboarding/welcomeGym.ts',
+];
 
 /** Ways a picture could come from the gallery or a file instead of the live camera. */
 const GALLERY = [
@@ -38,7 +46,10 @@ const GALLERY = [
 
 describe('R-152: the check-in scan is camera only', () => {
   it('"Scan the poster" uses the live camera scanner, QR codes only, no picture taken', () => {
-    const screen = read('src/shop/ScanPosterScreen.tsx');
+    // The camera panel is shared by the Gym tab's scanner screen and the welcome screen.
+    expect(read('src/shop/ScanPosterScreen.tsx')).toMatch(/<PosterScanner/);
+    expect(read('src/onboarding/components/WelcomeGymCode.tsx')).toMatch(/<PosterScanner/);
+    const screen = read('src/shop/PosterScanner.tsx');
     expect(screen).toMatch(/<CameraView/);
     expect(screen).toMatch(/barcodeTypes: \['qr'\]/);
     expect(screen).not.toMatch(/takePictureAsync|recordAsync/);

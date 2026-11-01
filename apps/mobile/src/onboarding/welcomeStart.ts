@@ -8,7 +8,9 @@ export const START_WORDS = {
   title: 'Welcome to MettleUp',
   sub: 'Your gym workout tracker. Pick one way to start.',
   googleTitle: 'Sign in with Google',
-  googleBody: 'We check your Google Drive for a MettleUp backup, so you can bring your workouts back.',
+  // 1 Nov 2026: strangers could not tell "Continue with Google" from "Restore from a backup"; each body now
+  // says in one sentence what its button does (the Drive copy vs a file on this phone or another app).
+  googleBody: 'Sign in with your Google account. If you saved a backup to Google Drive, your workouts come back.',
   googleButton: 'Continue with Google',
   looking: 'Checking your Google Drive for a backup…',
   restoreButton: 'Restore my backup',
@@ -20,7 +22,7 @@ export const START_WORDS = {
   gymBody: 'Your gym’s code unlocks check-in, your membership, trainer plans and the gym shop.',
   gymButton: 'Enter your gym code',
   haveTitle: 'Already have workouts?',
-  haveBody: 'Bring them from a backup file, Hevy or Strong.',
+  haveBody: 'Bring back a backup file saved on this phone, or move your workouts from Hevy or Strong.',
   restoreFile: 'Restore from a backup',
   startFresh: 'Start fresh',
   startFreshNote: 'Answer 3 quick questions and start training. No sign-in needed.',

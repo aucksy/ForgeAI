@@ -27,6 +27,15 @@ describe('welcome start view words (R-131)', () => {
     expect(START_WORDS.startFresh).toBe('Start fresh');
   });
 
+  it('Google and the backup file each say what they do in one complete sentence (1 Nov 2026)', () => {
+    expect(START_WORDS.googleBody).toBe('Sign in with your Google account. If you saved a backup to Google Drive, your workouts come back.');
+    expect(START_WORDS.haveBody).toBe('Bring back a backup file saved on this phone, or move your workouts from Hevy or Strong.');
+    // The two never blur: Google names Google Drive, the file names this phone and the other apps.
+    expect(START_WORDS.googleBody).toMatch(/Google Drive/);
+    expect(START_WORDS.haveBody).not.toMatch(/Google/);
+    expect(START_WORDS.haveBody).toMatch(/this phone.*Hevy or Strong/);
+  });
+
   it('never uses banned or inside words', () => {
     const all = Object.values(START_WORDS).join(' ');
     expect(all).not.toMatch(/\b(sync|session|PR|volume|cloud)\b/i);

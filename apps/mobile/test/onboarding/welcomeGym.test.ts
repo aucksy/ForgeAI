@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
-import { welcomeGymCode, welcomeGymKept } from '@/onboarding/welcomeGym';
+import { WELCOME_SCAN_WORDS, welcomeGymChecked, welcomeGymCode, welcomeGymKept, welcomeGymScanned } from '@/onboarding/welcomeGym';
 
 describe('welcome screen gym code (OWNER-INBOX #11)', () => {
   it('keeps a 6-character code, in capitals', () => {
@@ -18,5 +21,51 @@ describe('welcome screen gym code (OWNER-INBOX #11)', () => {
   });
   it('the saved line names the code and when the gym opens', () => {
     expect(welcomeGymKept('RAMS01')).toBe("Gym code RAMS01 saved. Your gym's join screen opens right after setup.");
+  });
+});
+
+describe('welcome screen "Scan the poster" (1 Nov 2026)', () => {
+  it('reads the gym code from the poster check-in QR and from an invite QR', () => {
+    expect(welcomeGymScanned('https://app.mettleup.fit/c/rams01')).toBe('RAMS01');
+    expect(welcomeGymScanned('https://forgeai.aakashpahuja.in/j/FORGE1')).toBe('FORGE1');
+    expect(welcomeGymScanned('mettleup://c/FORGE1')).toBe('FORGE1');
+  });
+  it('any other QR is not a gym code (scanning goes on)', () => {
+    for (const d of ['https://evil.example/c/RAMS01', 'hello', '', null, undefined, 'https://app.mettleup.fit/c/RAM']) {
+      expect(welcomeGymScanned(d)).toBeNull();
+    }
+  });
+  it('a scanned code is checked exactly like a typed one', () => {
+    const code = welcomeGymScanned('https://app.mettleup.fit/c/FORGE1');
+    expect(code).not.toBeNull();
+    const typed = welcomeGymCode(code ?? '');
+    expect(typed).toEqual({ ok: true, code: 'FORGE1' });
+    expect(welcomeGymChecked('FORGE1', { gymName: 'ForgeAI Test Gym' })).toEqual({ keep: true, line: 'ForgeAI Test Gym found. Its join screen opens right after setup.' });
+    expect(welcomeGymChecked('ZZZZZ9', null)).toEqual({ keep: false, error: "No gym has the code ZZZZZ9. Check the code with your gym's desk and type it again." });
+  });
+  it('a refused camera is said in one complete sentence that keeps typing in view', () => {
+    for (const line of [WELCOME_SCAN_WORDS.refused, WELCOME_SCAN_WORDS.camOff, WELCOME_SCAN_WORDS.noCamera]) {
+      expect(line).toMatch(/^[A-Z].*\.$/);
+      expect(line.split(/\.\s/).length).toBe(1);
+      expect(line).toMatch(/type your gym's code below/);
+    }
+    expect(WELCOME_SCAN_WORDS.scan).toBe('Scan the poster');
+  });
+});
+
+describe('the phone test of the welcome gym code (qa/welcome-gym.yaml)', () => {
+  const flow = readFileSync(path.resolve(__dirname, '../../qa/welcome-gym.yaml'), 'utf8');
+  const unescape = (re: string) => re.replace(/\\./g, '.').replace(/''/g, "'");
+  it('looks for the exact lines the app says', () => {
+    const lines = [...flow.matchAll(/assertVisible: '([^\n]+)'\n/g)].map((m) => unescape(m[1]));
+    const wrong = welcomeGymChecked('ZZZZZ9', null);
+    const found = welcomeGymChecked('FORGE1', { gymName: 'ForgeAI Test Gym' });
+    expect(lines).toContain(wrong.keep ? '' : wrong.error);
+    expect(lines).toContain(found.keep ? found.line : '');
+    expect(flow).toContain(`"^${WELCOME_SCAN_WORDS.scan}$"`);
+  });
+  it('is run by the whole phone test (part UBK)', () => {
+    const script = readFileSync(path.resolve(__dirname, '../../qa/run-device-qa.sh'), 'utf8');
+    expect(script).toMatch(/gate_flow ubk_gym welcome-gym\.yaml/);
   });
 });
