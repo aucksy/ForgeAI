@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-268. Put the websites live: member site on mettleup.fit, gym site on gyms.mettleup.fit — 1 Nov 2026
+He said: "You can move the websites now. Member app to main url. And GYM to gym url". This is his yes to inbox #79 (migration 0007 lead source, deploy, gyms.mettleup.fit address).
+
 ## R-267. UAT of onboarding (admin, member phone, watch) + Health Connect audit — 1 Nov 2026
 He said: "I want you to perform professional proper UAT of onboarding journeys for Admin App and Member App (Phone and Watch) and fix all issues/gaps found. please share with me all areas of improvement. also audit and UAT the health connect feature and give me breakdown on how it works after you fix the issues and also share area of improvement for this one".
 Plan: walk each first-run journey as a stranger (admin: website Start free -> new gym -> first member; member phone: install -> welcome -> setup -> join gym; watch: install -> pair -> first workout), plus Health Connect (permission, what is written/read, failures). Fix what is broken; push to main; NO release (R-266). Report fixes + improvement list + Health Connect breakdown in chat. Done 1 Nov: 4 UAT agents (admin web driven in a browser on a local stand-in server; phone from QA screenshots + code; watch from render goldens + code; Health Connect from code + QA). Fixes pushed in ec38bb50, ecbd3b37, 26d030e5, 90362dc2, 8fef3999 (list in PROGRESS "Waiting for release"). Not released (R-266). Owner items: privacy notice lacks Health Connect; Play Health Connect declaration; deploy order for gyms.mettleup.fit (admin "See prices" link, #79).
