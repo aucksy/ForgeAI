@@ -145,7 +145,11 @@ export default function SettingsScreen() {
   const readState = useCallback(() => {
     void healthState()
       .then(setHealth)
-      .catch(() => setHealth('none'));
+      .catch((e: unknown) => {
+        // R-267: logged (the Health Connect row is left out when its state cannot be read).
+        console.warn('[ForgeErr] settings: Health Connect state could not be read', e);
+        setHealth('none');
+      });
     setPlaced(widgetsPlaced());
     void readWatchState().then(setWatch);
     void getProfile()

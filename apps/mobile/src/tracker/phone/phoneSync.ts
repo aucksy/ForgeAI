@@ -11,11 +11,12 @@
  *    screen) → widgets redone; reminders checked on open and return (PH-08: they are set again
  *    only when something changed — the time zone included).
  *  - Erase all data → everything off and cleared.
+ *  - R-267: the app opens or comes back → workouts still owed to Health Connect are sent again.
  */
 import { AppState } from 'react-native';
 
 import { getRoutine } from '../db/routineRepo';
-import { removeWorkoutFromHealth, sendWorkoutToHealth } from './healthConnect';
+import { removeWorkoutFromHealth, retryOwedHealth, sendWorkoutToHealth } from './healthConnect';
 import { phoneNative } from './native';
 import { setLiveWorkout, type LiveWorkout } from './liveWorkout';
 import { usePhonePrefs } from './phonePrefs';
@@ -29,7 +30,7 @@ export async function phoneAfterWorkout(sessionId: string): Promise<void> {
   void import('@/tracker/services/prRebuild')
     .then((m) => m.reconcileRecordStartsForSession(sessionId))
     .catch(() => undefined);
-  await sendWorkoutToHealth(sessionId).catch(() => undefined);
+  await sendWorkoutToHealth(sessionId).catch((e: unknown) => console.warn('[ForgeErr] health: the finished workout was not sent', e));
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
   // R-86 review NIT 3: a saved workout may move the workout offer's count; the offer sync sends
@@ -84,7 +85,7 @@ export async function phoneAfterLookChange(): Promise<void> {
 }
 
 export async function phoneAfterDelete(sessionId: string): Promise<void> {
-  await removeWorkoutFromHealth(sessionId).catch(() => undefined);
+  await removeWorkoutFromHealth(sessionId).catch((e: unknown) => console.warn('[ForgeErr] health: the deleted workout was not removed', e));
   await refreshWidgets().catch(() => undefined);
   await refreshReminders().catch(() => undefined);
   // R-133: a deleted workout leaves the gym's leaderboard too.
@@ -119,6 +120,15 @@ export async function phoneAfterErase(): Promise<void> {
   clearShortcuts();
 }
 
+/** R-267: send owed workouts again (at most every 10 minutes; never throws, never waited on). */
+async function retryOwedLater(): Promise<void> {
+  try {
+    await retryOwedHealth();
+  } catch (e) {
+    console.warn('[ForgeErr] health: owed workouts could not be sent again', e);
+  }
+}
+
 let started = false;
 export function startPhoneSync(): void {
   if (started) return;
@@ -126,10 +136,13 @@ export function startPhoneSync(): void {
   void refreshWidgets();
   void refreshReminders();
   void pushBoardLater('start');
+  // R-267: workouts Health Connect has not got yet (refused, or the app closed mid-send) go by themselves.
+  void retryOwedLater();
   AppState.addEventListener('change', (s) => {
     if (s === 'active') {
       void refreshWidgets();
       void refreshReminders();
+      void retryOwedLater();
       // R-133: back in the app: a name switch the gym has not heard yet is sent again.
       void pushBoardLater('active');
     } else if (s === 'background') void refreshWidgets();

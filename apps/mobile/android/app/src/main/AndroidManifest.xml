@@ -90,10 +90,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="https" android:host="forgeai.aakashpahuja.in" android:pathPrefix="/c/"/>
       </intent-filter>
-      <!-- Health Connect (Android 13 and older): "why MettleUp asks" opens the app. -->
-      <intent-filter>
-        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
-      </intent-filter>
+      <!-- Health Connect's "privacy policy" link: R-267 moved it to modules/forge-phone (HealthRationaleActivity). -->
       <!-- v0.28.0: a Hevy / Strong export shared from the share menu opens the import. -->
       <intent-filter>
         <action android:name="android.intent.action.SEND"/>
@@ -105,12 +102,5 @@
         <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
       </intent-filter>
     </activity>
-    <!-- Health Connect (Android 14+): the same, from the system's permission screens. -->
-    <activity-alias android:name="ViewPermissionUsageActivity" android:exported="true" android:targetActivity=".MainActivity" android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
-        <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
-      </intent-filter>
-    </activity-alias>
   </application>
 </manifest>

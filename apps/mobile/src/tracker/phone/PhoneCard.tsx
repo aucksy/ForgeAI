@@ -25,6 +25,7 @@ import {
   HC_OLDER_LEFT_OUT,
   HC_OPEN_FAILED,
   HC_SEND_OLDER,
+  HC_STOPPED,
   SEE_THEM_IN_GOOGLE_HEALTH,
   askHealthConnect,
   healthCheck,
@@ -92,6 +93,8 @@ function HealthRow() {
   const [resending, setResending] = useState(false);
   // 0.56.0: workouts from before MettleUp first ran (the old ForgeAI app's), left out by default.
   const [older, setOlder] = useState(0);
+  // R-267: "Stop" says what it did, and that the workouts already sent stay in Health Connect.
+  const [stopped, setStopped] = useState(false);
 
   const openHc = (): void => {
     tap();
@@ -247,6 +250,7 @@ function HealthRow() {
                 // Connect again sends every workout).
                 setUnsent([]);
                 setResent(null);
+                setStopped(true);
               }}
               style={{ minHeight: TOUCH, minWidth: TOUCH, alignItems: 'center', justifyContent: 'center' }}
             >
@@ -283,8 +287,22 @@ function HealthRow() {
           onPress={() => {
             tap();
             setOn(true);
+            setStopped(false);
           }}
         />
+      ) : null}
+      {state === 'allowed' && stopped ? (
+        <View style={{ gap: space.xs, paddingBottom: space.sm }}>
+          <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center' }}>
+            {HC_STOPPED}
+          </Text>
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+          {openFailed ? (
+            <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center' }}>
+              {HC_OPEN_FAILED}
+            </Text>
+          ) : null}
+        </View>
       ) : null}
       {state === 'update' ? <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} /> : null}
       {openFailed && (state === 'off' || state === 'update') ? (

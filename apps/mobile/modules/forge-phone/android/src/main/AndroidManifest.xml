@@ -7,6 +7,21 @@
     <package android:name="com.google.android.apps.healthdata"/>
   </queries>
   <application>
+    <!-- R-267: Health Connect's "privacy policy" link (Android 13 and older) shows MettleUp's privacy
+         notice, as Google requires (it used to open the app's home screen). -->
+    <activity android:name="com.forgeai.phone.HealthRationaleActivity" android:exported="true" android:excludeFromRecents="true" android:noHistory="true" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      <intent-filter>
+        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
+      </intent-filter>
+    </activity>
+    <!-- R-267: the same from Android 14+'s permission screens. Declared right after its target
+         (an alias must follow the activity it points to in the merged manifest). -->
+    <activity-alias android:name="com.forgeai.phone.ViewPermissionUsageActivity" android:exported="true" android:targetActivity="com.forgeai.phone.HealthRationaleActivity" android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+        <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+      </intent-filter>
+    </activity-alias>
     <!-- Home-screen widgets: today's workout, and this week. -->
     <receiver android:name="com.forgeai.phone.TodayWidget" android:exported="true" android:label="@string/forge_widget_today_label">
       <intent-filter>

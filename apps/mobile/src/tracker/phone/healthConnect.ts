@@ -515,12 +515,68 @@ async function sendInParts(ids: readonly string[]): Promise<SendResult> {
   return total === 0 ? { kind: 'none' } : { kind: 'sent', sent, total };
 }
 
+/**
+ * PURE (R-267). The owed list with this workout added first (once, newest last): a workout is
+ * owed from the moment it is saved until Health Connect has it, so an app closed or killed
+ * between the save and the send still sends it on the next open (`retryOwedHealth`).
+ */
+export function owedWith(prev: readonly string[], id: string): string[] {
+  const out = prev.filter((x) => x !== id);
+  out.push(id);
+  return out.length > UNSENT_CAP ? out.slice(out.length - UNSENT_CAP) : out;
+}
+
 /** After a workout is finished or edited: send it, if Health Connect is on. A refusal is kept. */
 export async function sendWorkoutToHealth(sessionId: string): Promise<void> {
   if (!usePhonePrefs.getState().healthConnect) return;
+  // R-267: owed first; the send below takes it off the list once Health Connect has it.
+  try {
+    const p = usePhonePrefs.getState();
+    p.setHealthUnsent(owedWith(p.healthUnsent ?? [], sessionId));
+  } catch (e) {
+    console.warn('[ForgeErr] health: the workout could not be marked as owed', e);
+  }
   const r = await sendIds([sessionId]);
   if (r.kind === 'sent') noteLastSent(r.sent, false);
 }
+
+/** R-267: how long after one automatic "Send again" the next may run (app opened / back again). */
+export const RETRY_GAP_MS = 10 * 60 * 1000;
+
+/**
+ * PURE (R-267). Whether owed workouts are sent again by themselves now: sending is on, some are
+ * owed, and the last automatic try was at least RETRY_GAP_MS ago (null = none yet).
+ */
+export function shouldRetryOwed(now: number, lastTry: number | null, on: boolean, owed: number): boolean {
+  if (!on || owed <= 0) return false;
+  return lastTry == null || now - lastTry >= RETRY_GAP_MS || now < lastTry;
+}
+
+let lastAutoRetry: number | null = null;
+
+/**
+ * R-267 (Health Connect audit): owed workouts went only when the member found "Send again" on
+ * the Health Connect page. Now, when the app opens or comes back, they are sent by themselves —
+ * only while sending is on and Health Connect allows workouts (no try, and no error line, while
+ * access is off). What is still refused stays on the list and on the page's "Send again".
+ */
+export async function retryOwedHealth(now: number = Date.now()): Promise<SendResult | null> {
+  const p = usePhonePrefs.getState();
+  if (!shouldRetryOwed(now, lastAutoRetry, p.healthConnect, (p.healthUnsent ?? []).length)) return null;
+  lastAutoRetry = now;
+  const c = await healthCheck();
+  if (c.state !== 'on') return null;
+  return resendUnsentToHealth();
+}
+
+/** Tests only: forget the last automatic try. */
+export function resetAutoRetryForTests(): void {
+  lastAutoRetry = null;
+}
+
+/** R-267: the line on the Health Connect page after "Stop". */
+export const HC_STOPPED =
+  'Stopped. New workouts will not go to Health Connect. Workouts already sent stay there. To remove them, open Health Connect.';
 
 /** IM-16: workouts just imported — sent, if Health Connect is on. A refusal is kept. */
 export async function sendWorkoutsToHealth(sessionIds: readonly string[]): Promise<void> {
@@ -562,13 +618,27 @@ export async function sendAllWorkoutsToHealth(onProgress?: SendProgress, since: 
   }
 }
 
-/** A workout was deleted: take it out of Health Connect too. */
+/**
+ * A workout was deleted: take it out of Health Connect too.
+ * R-267: also after "Stop" — a workout sent while sending was on used to stay in Health Connect
+ * (Google Health, Samsung Health) after the member deleted it here. Tried only when this phone
+ * has sent before and Health Connect still lets MettleUp manage its workouts.
+ */
 export async function removeWorkoutFromHealth(sessionId: string): Promise<void> {
-  const owed = usePhonePrefs.getState().healthUnsent ?? [];
-  if (owed.includes(sessionId)) usePhonePrefs.getState().setHealthUnsent(owed.filter((id) => id !== sessionId));
-  if (!usePhonePrefs.getState().healthConnect) return;
+  const p = usePhonePrefs.getState();
+  const owed = p.healthUnsent ?? [];
+  if (owed.includes(sessionId)) p.setHealthUnsent(owed.filter((id) => id !== sessionId));
+  const n = phoneNative();
+  if (!n) return;
+  if (!p.healthConnect) {
+    if (p.healthLast == null) return;
+    if (n.healthStatus() !== 'available') return;
+    const a = await readAccess(n);
+    if (a === 'error' || !a.exercise) return;
+  }
   try {
-    await phoneNative()?.healthDelete(sessionId);
+    const ok = await n.healthDelete(sessionId);
+    if (ok === false) console.warn('[ForgeErr] Health Connect: deleted workout not removed (refused)');
   } catch (e) {
     console.warn('[ForgeErr] Health Connect: deleted workout not removed', e);
   }
