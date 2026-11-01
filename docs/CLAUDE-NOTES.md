@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-271. Big banner on the Play listing like Apple TV's — 1 Nov 2026
+
+He said: "How is apple showing this large banner on their play listing" then "No the tap isn't taking me anywhere its just a picture. Do it for my listing also".
+
+What I found: our listing already has a 1024x500 feature graphic (MettleUp lockup, "Stronger every week") and an icon. Play shows the feature graphic at the top of the app page only when the listing has a YouTube promo video (the graphic becomes the video cover); big apps can also get it in featured spots. Our Video field is empty. Also, the public page play.google.com/store/apps/details?id=com.mettleup.app returns 404: the app is only in closed testing, so no stranger sees the listing yet.
+Next: a short promo video (own pipeline, free) uploaded to YouTube as Unlisted, URL in the listing Video field. Uploading to YouTube = publishing, so it waits for his yes.
+
 ## R-270. Do the Play Console Health Connect form yourself; write the privacy line; release the batch — 1 Nov 2026
 He said: "How many times I have to tell you that these browser actions need to be completed by you? ... about that privacy notice line, yes you can write it ... I have deleted the folders from the D drive and yes you can release all the changes that we have done."
 Plan: (1) fill the Play Console Health Connect declaration in his Chrome (write Exercise + Active calories; read Weight + Steps); (2) add the approved Health Connect line to the privacy notice (English + Hindi) and deploy the website; (3) release the R-266 batch (0.66.0 + R-267 + R-269) through the full ship gate; (4) close inbox #80. D:\Users: he deleted it.
