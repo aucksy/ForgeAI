@@ -63,10 +63,10 @@ svg.leaders circle{fill:var(--lead,var(--ink))}
 /* ---------- top strip: the tub's lid ---------- */
 .lid{position:sticky;top:0;z-index:30;background:color-mix(in oklab,var(--tub) 88%,transparent);backdrop-filter:blur(12px) saturate(1.3);border-bottom:1px solid var(--rule)}
 .lid .wrap{display:flex;align-items:center;gap:10px;min-height:58px}
-.mark{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:auto}
-.mark img{width:26px;height:26px;display:block}
-.mark small{font-size:13px;font-weight:600;line-height:1;opacity:.75;letter-spacing:.02em;white-space:nowrap}
-.mark b{font:900 21px/1 var(--cond);font-stretch:75%;font-variation-settings:"wdth" 75;letter-spacing:.01em}
+.mark{display:flex;align-items:baseline;gap:8px;text-decoration:none;margin-right:auto}
+.mark img{height:26px;width:auto;display:block;flex:none}
+/* "for Gyms" sits on the name's baseline: 28% of the logo's height above its bottom edge (lockup-steel.svg) */
+.mark small{position:relative;top:-7.3px;font-size:13px;font-weight:600;line-height:1;opacity:.75;letter-spacing:.02em;white-space:nowrap}
 .pill{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:none;color:var(--ink2);font:700 15px var(--text);text-decoration:none;cursor:pointer}
 .pill:hover{border-color:var(--ink3);color:var(--ink)}
 
@@ -459,7 +459,7 @@ section{position:relative}
 .pill{white-space:nowrap;flex:none}
 .mark{min-width:0}
 @media (max-width:440px){.mark small{display:none}.lid .wrap{gap:8px}.pill{padding:0 12px;font-size:14px}}
-@media (max-width:350px){.mark b{font-size:18px}.pill{padding:0 9px}}
+@media (max-width:350px){.mark img{height:23px}.pill{padding:0 9px}}
 .go{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .go.big{min-height:62px;padding:0 30px;font-size:23px;box-shadow:0 16px 30px -14px rgba(0,0,0,.7)}
 :lang(hi) .go.big{font-size:25px}
@@ -629,9 +629,9 @@ section{position:relative}
 <header class="lid">
   <div class="wrap">
     <a class="mark" href="/" aria-label="MettleUp for Gyms home">
-      <!-- R-105: the logo mark (public/brand/mark.svg, from branding/mettleup/web) and the name as text. -->
-      <img src="/brand/mark.svg" width="26" height="26" alt="">
-      <b>MettleUp</b><small>for Gyms</small>
+      <!-- The app's logo: mark + "steel plate" name (public/brand/lockup-steel.svg, from branding/mettleup/_src/web_steel_lockup.py). -->
+      <img src="/brand/lockup-steel.svg" width="112" height="26" alt="MettleUp">
+      <small>for Gyms</small>
     </a>
     <button class="pill" type="button" id="lang" lang="hi">हिंदी</button>
     <a class="pill signin" href="https://app.mettleup.fit/" data-hi="साइन इन">Sign in</a>
