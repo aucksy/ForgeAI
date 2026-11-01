@@ -8,7 +8,7 @@
 // J74: the data agreement link opens its own page (#59).
 import { expect, test } from '@playwright/test';
 
-import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn, openSettings } from './support.mjs';
+import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn, openSettings, closeGymReady } from './support.mjs';
 
 const BOX = /I agree to the MettleUp terms and the data agreement/;
 
@@ -33,6 +33,7 @@ test('J70 Create my gym: the terms box must be ticked, and the acceptance is kep
   await start.getByRole('checkbox', { name: BOX }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await closeGymReady(page);
   const made = server.log.find((c) => c.fn === 'gym_create_online');
   expect(made.args.p_terms_version).toBe('2026-10-24');
   // Not asked again: the box at "Create my gym" was the acceptance.

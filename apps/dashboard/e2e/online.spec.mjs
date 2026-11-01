@@ -51,7 +51,7 @@ test('J20 put the browser gym online: the records go up and the owner is signed 
 test('J20b the demo opened without internet is made up: it is never offered to go online (U-A12)', async ({ page }) => {
   const server = await openApp(page, { offline: ['demo_start_gym'] });
   await page.getByRole('button', { name: 'Start demo' }).tap();
-  await page.getByRole('button', { name: 'Open the demo without the shop (works without internet)' }).tap();
+  await page.getByRole('button', { name: 'Open the demo without the shop. It works without internet.' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   server.reconnect();
   await openSettings(page, 'Sign-in & data');
@@ -142,7 +142,7 @@ test('J22 turn on the shop: no internet says so; then the gym code and the 12 sa
   server.reconnect();
   await turnOn.tap();
   await expect(page.getByLabel('Gym code Q A 0 0 0 1')).toBeVisible();
-  await expect(page.getByRole('main')).toContainText('Members join in the MettleUp app with gym code');
+  await expect(page.getByRole('main')).toContainText('Members join in the MettleUp app with this gym code');
   await expect(page.getByRole('button', { name: 'Turn on the shop' })).toHaveCount(0);
   // The shop is this gym's own: named after it.
   expect(server.log.filter((c) => c.fn === 'demo_start_gym').at(-1)?.args.p_name).toBe('Iron Temple Fitness');

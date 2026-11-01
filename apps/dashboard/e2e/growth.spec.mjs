@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, addDeskPerson, bottomBar, expectFitsPhone, openApp, sheet, signIn, startDemo, startOnlineGym, toast } from './support.mjs';
+import { DESK, addDeskPerson, addMember, bottomBar, expectFitsPhone, openApp, sheet, signIn, startDemo, startOnlineGym, toast } from './support.mjs';
 
 const NUMBERS = ['Money collected', 'Active members', 'New members', 'Renewal rate', 'Members lost', 'Visits per member'];
 
@@ -127,6 +127,8 @@ test('J-G2 a new gym with no old records: no made-up comparison, and the way to 
 test('J-G3 front desk: no Your growth on Today or More, and its address is closed', async ({ page }) => {
   await openApp(page);
   await startOnlineGym(page);
+  // R-269: a gym with no records hides the tiles; one member brings "Your numbers" back.
+  await addMember(page, { name: 'Kiran Das', phone: '98290 60001' });
   await addDeskPerson(page);
   await page.getByRole('button', { name: 'Sign out of this device' }).tap();
   await sheet(page, 'Sign out of this device?').getByRole('button', { name: 'Sign out' }).tap();

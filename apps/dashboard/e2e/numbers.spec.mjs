@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 import { expect, test } from '@playwright/test';
 
-import { DESK, addDeskPerson, expectFitsPhone, openApp, signIn, sheet, startDemo, startOnlineGym, tile, toast } from './support.mjs';
+import { DESK, addDeskPerson, addMember, expectFitsPhone, openApp, signIn, sheet, startDemo, startOnlineGym, tile, toast } from './support.mjs';
 
 const TILES = ['Renewals due', 'Money owed', 'Stopped coming', 'New members', 'Busy hours'];
 
@@ -121,6 +121,8 @@ test('J-N1 owner: five numbers with lines; a tile opens its people; days change;
 test('J-N2 front desk: no money tile, and the money list is closed to them', async ({ page }) => {
   await openApp(page);
   await startOnlineGym(page);
+  // R-269: a gym with no records hides the tiles; one member brings "Your numbers" back.
+  await addMember(page, { name: 'Kiran Das', phone: '98290 60001' });
   await addDeskPerson(page);
   await page.getByRole('button', { name: 'Sign out of this device' }).tap();
   await sheet(page, 'Sign out of this device?').getByRole('button', { name: 'Sign out' }).tap();

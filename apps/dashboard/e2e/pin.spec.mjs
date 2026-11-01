@@ -22,6 +22,7 @@ import {
   signIn,
   startOnlineGym,
   typeSignIn,
+  closeGymReady,
 } from './support.mjs';
 
 const OWNER_TEN = '9829012345';
@@ -70,6 +71,7 @@ test('J80 Create my gym: the owner chooses a PIN, then signs in with mobile + PI
   await fillNewPin(start, OWNER.pin);
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await closeGymReady(page);
   expect(server.log.find((c) => c.fn === 'gym_create_online').args.p_pin).toBe(OWNER.pin);
   // He chose it himself: nothing more to ask.
   await expect(sheet(page, 'Set your own PIN')).toHaveCount(0);

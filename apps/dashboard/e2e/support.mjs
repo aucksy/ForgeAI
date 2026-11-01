@@ -1168,7 +1168,16 @@ export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name,
   await start.getByRole('checkbox', { name: /I agree to the MettleUp terms and the data agreement/ }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await closeGymReady(page);
   await expect(page.getByRole('banner')).toContainText(gym);
+}
+
+/** R-269: right after Create my gym, "Your gym is ready" shows the gym code once; Done closes it. */
+export async function closeGymReady(page) {
+  const ready = sheet(page, 'Your gym is ready');
+  await expect(ready).toContainText('Members type this code in the MettleUp app to join your gym.');
+  await ready.getByRole('button', { name: 'Done', exact: true }).tap();
+  await expect(ready).toBeHidden();
 }
 
 /** One person's card on Staff & sign-in. */
@@ -1261,7 +1270,7 @@ export async function membersFile(testInfo, name, n, first = 1) {
 export async function browserOnlyGym(page) {
   const server = await openApp(page, { offline: ['demo_start_gym'] });
   await page.getByRole('button', { name: 'Start demo' }).tap();
-  await page.getByRole('button', { name: 'Open the demo without the shop (works without internet)' }).tap();
+  await page.getByRole('button', { name: 'Open the demo without the shop. It works without internet.' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await eraseAndStartFresh(page);
   server.reconnect();

@@ -4,7 +4,7 @@
 // mobile and code on the same phone, the way the app does it.
 import { expect, test } from '@playwright/test';
 
-import { SIGN_IN_CODE, addMember, fillNewPin, addPlan, expectFitsPhone, open, openApp, openMember, sell, sheet, tile } from './support.mjs';
+import { SIGN_IN_CODE, addMember, fillNewPin, addPlan, expectFitsPhone, open, openApp, openMember, sell, sheet, tile, closeGymReady } from './support.mjs';
 
 test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   const server = await openApp(page);
@@ -19,6 +19,7 @@ test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   await start.getByRole('checkbox', { name: /I agree to the MettleUp terms and the data agreement/ }).check();
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await closeGymReady(page);
   await expect(page.getByRole('banner')).toContainText('Shakti Gym');
 
   // Owner sets up: a plan, a member who paid, an expense.

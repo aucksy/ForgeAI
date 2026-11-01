@@ -113,7 +113,7 @@ test('J10d no internet at Start demo: the demo opens without the shop, in this b
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
   // U-A9: the long "without the shop" button wraps; the screen stays as wide as the phone.
   await expectFitsPhone(page, 'on Welcome after a failed demo start');
-  await page.getByRole('button', { name: 'Open the demo without the shop (works without internet)' }).tap();
+  await page.getByRole('button', { name: 'Open the demo without the shop. It works without internet.' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   expect(server.calls).toContain('demo_start_gym (offline)');
 

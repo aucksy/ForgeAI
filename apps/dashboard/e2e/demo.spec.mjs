@@ -65,7 +65,7 @@ test('J-DEMO the demo link opens the made-up gym, never the signed-in one, and l
   expect(link.height).toBeGreaterThanOrEqual(44);
 
   // Things the screens remember on a device (a "Get started" tick) are remembered in the page only.
-  await page.getByRole('button', { name: 'Mark "Add your desk staff" as done' }).tap();
+  await page.getByRole('button', { name: 'Mark “Add your desk staff” as done' }).tap();
   await expect(page.getByText('4 of 6 done')).toBeVisible();
 
   // Used like the real app: members are there, a member can be added.
