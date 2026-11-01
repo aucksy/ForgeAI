@@ -14,7 +14,8 @@ test('J32 Get started: ticks itself, takes a hand tick, hides for good', async (
   await expect(page.getByText('2 of 6 done')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add your plans (done). Open' })).toBeVisible();
   await page.getByRole('button', { name: 'Bring in your members. Open' }).tap();
-  await expect(page).toHaveURL(/#\/members\/import$/);
+  // UAT 1 Nov 2026: Members (Add member and Import side by side), not the import screen alone.
+  await expect(page).toHaveURL(/#\/members$/);
   await open(page, 'Today');
   await page.getByRole('button', { name: 'Hide this list' }).tap();
   await expect(page.getByText('Get started', { exact: true })).toHaveCount(0);

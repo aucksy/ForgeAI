@@ -34,6 +34,7 @@ import {
   space,
 } from '../ui/kit';
 import { navigate } from '../ui/router';
+import { tickGetStarted } from '../ui/GetStartedCard';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { staffRightsWords } from './permissions';
@@ -304,6 +305,8 @@ export function PeopleScreen() {
           onAdded={async (name) => {
             setSheet(null);
             setToast(`${name} added. Now make a sign-in code for them.`);
+            // UAT 1 Nov 2026: Today's "Get started" step "Add your desk staff" ticks itself.
+            tickGetStarted(snapshot.gym.gymId, 'staff');
             await load();
           }}
           add={(name, phone, role) => authApi.addPerson(key, name, phone, role)}

@@ -339,7 +339,9 @@ function Register({ onToast }: { onToast: (msg: string) => void }) {
             <SearchField
               value={query}
               onChange={setQuery}
-              placeholder="Type a name or the last 4 digits of a mobile"
+              // UAT 1 Nov 2026: the long words were cut off ("...of a mobi") on a 390px phone.
+              placeholder="Name or last 4 digits of mobile"
+              label="Type a name or the last 4 digits of a mobile"
             />
           </div>
         ) : (

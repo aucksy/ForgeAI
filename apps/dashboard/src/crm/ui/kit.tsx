@@ -657,10 +657,13 @@ export function SearchField({
   value,
   onChange,
   placeholder,
+  label,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
+  /** The box's name for screen readers, when the placeholder is shortened to fit a phone. */
+  label?: string;
 }) {
   return (
     <input
@@ -668,7 +671,7 @@ export function SearchField({
       onChange={(e) => onChange(e.target.value)}
       type="search"
       placeholder={placeholder}
-      aria-label={placeholder}
+      aria-label={label ?? placeholder}
       style={{ ...fieldShell, maxWidth: 360 }}
     />
   );

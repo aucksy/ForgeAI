@@ -35,6 +35,8 @@ export function Welcome() {
   const [demoFailed, setDemoFailed] = useState(false);
   // UAT B-11 (30 Oct 2026): staff who only sign in scrolled past the whole set-up form. Two tabs, one form at a time.
   const [tab, setTab] = useState<'signin' | 'start'>(startFirst ? 'start' : 'signin');
+  // UAT 1 Nov 2026: "Create my gym" got no answer: Sign in opens with the mobile already typed.
+  const [signInPhone, setSignInPhone] = useState('');
 
   const run = async (which: 'demo' | 'local', fn: () => Promise<void>) => {
     setBusy(which);
@@ -56,7 +58,7 @@ export function Welcome() {
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
         Sign in with your mobile number and your 6-digit PIN.
       </p>
-      <SignInForm />
+      <SignInForm key={signInPhone} startPhone={signInPhone} />
     </Card>
   );
 
@@ -76,7 +78,12 @@ export function Welcome() {
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
         Starts empty. You add your own members and prices.
       </p>
-      <StartGymForm />
+      <StartGymForm
+        onSignInInstead={(phone) => {
+          setSignInPhone(phone);
+          setTab('signin');
+        }}
+      />
     </div>
   );
 
@@ -178,7 +185,8 @@ export function Welcome() {
           )}
 
           <div style={{ marginTop: space.lg }}>
-            <Button full disabled={busy !== null} onClick={() => run('demo', startDemo)}>
+            {/* UAT 1 Nov 2026: on "Set up a new gym" the bright button is "Create my gym", not the demo. */}
+            <Button full variant={tab === 'start' ? 'ghost' : 'primary'} disabled={busy !== null} onClick={() => run('demo', startDemo)}>
               {busy === 'demo'
                 ? 'Starting your demo gym…'
                 : demoFailed

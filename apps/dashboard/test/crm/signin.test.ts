@@ -5,6 +5,10 @@ import {
   authErrorWords,
   cleanCode,
   codeMessage,
+  CREATE_UNSURE_WORDS,
+  createGymErrorWords,
+  createGymUnsure,
+  FORGOT_PIN_WORDS,
   formatCode,
   formatMobile,
   normalizeMobile,
@@ -105,5 +109,27 @@ describe('U-A14: refusal words that fit the owner too, and a removed person', ()
     for (const raw of ['signed_out', 'live', 'unknown', null, 42]) {
       expect(lostWords(keyStatusFromRow(raw))).toBe(SIGNED_OUT_WORDS);
     }
+  });
+});
+
+describe('UAT 1 Nov 2026: "Create my gym" with no answer', () => {
+  it('a timeout or a dropped connection may have made the gym: send the owner to Sign in, not "try again"', () => {
+    for (const e of [new Error('timed out'), new TypeError('Failed to fetch'), { message: 'NetworkError when attempting to fetch resource.' }]) {
+      expect(createGymUnsure(e)).toBe(true);
+      expect(createGymErrorWords(e)).toBe(CREATE_UNSURE_WORDS);
+    }
+    expect(CREATE_UNSURE_WORDS).toContain('Sign in instead');
+  });
+
+  it('a clear refusal keeps its own words and is not "unsure"', () => {
+    const busy = { message: 'BUSY' };
+    expect(createGymUnsure(busy)).toBe(false);
+    expect(createGymErrorWords(busy)).toBe(authErrorWords(busy));
+    expect(createGymUnsure(new SignInError('WEAK_PIN'))).toBe(false);
+  });
+
+  it('the sign-in box says what an owner with no other signed-in device does', () => {
+    expect(FORGOT_PIN_WORDS).toMatch(/owner/);
+    expect(FORGOT_PIN_WORDS).toMatch(/contact@mettleup\.fit/);
   });
 });

@@ -13,14 +13,14 @@ import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { PinFields } from './PinForms';
 import { rememberAskPin, shouldOfferPin } from './pinPrompt';
-import { authErrorWords, cleanCode, newPinError, normalizeMobile } from './signin';
+import { authErrorWords, cleanCode, createGymErrorWords, createGymUnsure, FORGOT_PIN_WORDS, newPinError, normalizeMobile } from './signin';
 import { TermsWords, TERMS_VERSION } from './TermsGate';
 
 const badPhone = () => 'Type a 10-digit mobile number, like 98290 12345.';
 
-export function SignInForm({ submitLabel = 'Sign in' }: { submitLabel?: string }) {
+export function SignInForm({ submitLabel = 'Sign in', startPhone = '' }: { submitLabel?: string; startPhone?: string }) {
   const { adopt } = useAuth();
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(startPhone);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,11 +66,13 @@ export function SignInForm({ submitLabel = 'Sign in' }: { submitLabel?: string }
           {busy ? 'Signing in…' : submitLabel}
         </Button>
       </div>
+      <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{FORGOT_PIN_WORDS}</p>
     </form>
   );
 }
 
-export function StartGymForm() {
+/** `onSignInInstead`: opens Sign in with this mobile typed in (after a "Create my gym" with no answer). */
+export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: string) => void } = {}) {
   const { adopt } = useAuth();
   const [gymName, setGymName] = useState('');
   const [name, setName] = useState('');
@@ -82,9 +84,12 @@ export function StartGymForm() {
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // UAT 1 Nov 2026: no answer from the server: the gym may exist, so offer Sign in before a second try.
+  const [unsure, setUnsure] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setUnsure(false);
     const ten = normalizeMobile(phone);
     if (gymName.trim().length < 2) return setError('Type your gym’s name.');
     if (!name.trim()) return setError('Type your name.');
@@ -105,7 +110,8 @@ export function StartGymForm() {
       replace('/');
       adopt(signed, { online: true });
     } catch (err) {
-      setError(authErrorWords(err));
+      setError(createGymErrorWords(err));
+      setUnsure(createGymUnsure(err));
       setBusy(false);
     }
   };
@@ -132,8 +138,16 @@ export function StartGymForm() {
           <ErrorBanner>{error}</ErrorBanner>
         </div>
       )}
+      {unsure && onSignInInstead && (
+        <div style={{ marginTop: space.sm }}>
+          <Button variant="ghost" full onClick={() => onSignInInstead(normalizeMobile(phone) ?? phone)}>
+            Sign in instead
+          </Button>
+        </div>
+      )}
       <div style={{ marginTop: space.lg }}>
-        <Button type="submit" variant="ghost" full disabled={busy}>
+        {/* UAT 1 Nov 2026: the main button of this form (it was an outline, under a bright "Start demo"). */}
+        <Button type="submit" full disabled={busy}>
           {busy ? 'Setting up…' : 'Create my gym'}
         </Button>
       </div>

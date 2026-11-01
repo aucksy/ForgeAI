@@ -19,6 +19,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { useCrm } from '../store';
 import { Button, Card, EmptyState, PageHeader, SectionTitle, Toast, color, font, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
+import { tickGetStarted } from '../ui/GetStartedCard';
 import * as api from './api';
 import { CHECKIN_POSTER, checkInLink } from './checkin';
 import { Poster, PrintSheet, downloadPoster } from './InviteScreen';
@@ -41,7 +42,7 @@ export function CheckInQrScreen() {
         }
       />
       {online && session && joinCode ? (
-        <PosterBody ownerKey={session.ownerKey} gymName={snapshot.gym.name} joinCode={joinCode} />
+        <PosterBody ownerKey={session.ownerKey} gymId={snapshot.gym.gymId} gymName={snapshot.gym.name} joinCode={joinCode} />
       ) : (
         <Card>
           <EmptyState
@@ -55,7 +56,7 @@ export function CheckInQrScreen() {
   );
 }
 
-function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName: string; joinCode: string }) {
+function PosterBody({ ownerKey, gymId, gymName, joinCode }: { ownerKey: string; gymId: string; gymName: string; joinCode: string }) {
   const compact = useIsCompact();
   const link = checkInLink(joinCode);
   const [brand, setBrand] = useState<GymBrand | null>(null);
@@ -88,11 +89,20 @@ function PosterBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>Print poster</Button>
+          {/* UAT 1 Nov 2026: printing or saving the poster ticks Today's "Print the check-in poster" step. */}
+          <Button
+            onClick={() => {
+              tickGetStarted(gymId, 'poster');
+              window.print();
+            }}
+          >
+            Print poster
+          </Button>
           <Button
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(CHECKIN_POSTER, gymName, joinCode, link, brand);
+              if (ok) tickGetStarted(gymId, 'poster');
               say(
                 ok
                   ? 'Poster saved as a picture.'

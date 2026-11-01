@@ -376,6 +376,29 @@ export const REMOVED_WORDS = 'You no longer have access to this gym. Talk to the
 export const SIGNED_OUT_WORDS =
   'You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in.';
 
+/**
+ * UAT 1 Nov 2026: "Create my gym" gets no answer (slow internet: the panel stops waiting after 15 s,
+ * but the server may finish and make the gym). "Try again" would make a SECOND gym on the same
+ * mobile, so the owner is sent to Sign in with the PIN he just chose first.
+ */
+export const CREATE_UNSURE_WORDS =
+  'We could not hear back from MettleUp, so your gym may already be made. Tap “Sign in instead” and type your mobile number and the PIN you just chose. If that does not work, come back here and tap “Create my gym” again.';
+
+/** Did "Create my gym" fail without a clear answer (the gym may exist)? PURE. */
+export function createGymUnsure(err: unknown): boolean {
+  const code = err instanceof SignInError ? err.code : authErrorCode(err);
+  return code === 'OFFLINE';
+}
+
+/** The words for a failed "Create my gym". PURE. */
+export function createGymErrorWords(err: unknown): string {
+  return createGymUnsure(err) ? CREATE_UNSURE_WORDS : authErrorWords(err);
+}
+
+/** UAT 1 Nov 2026: the sign-in box said what staff do with a forgotten PIN, but not an owner with no other device. */
+export const FORGOT_PIN_WORDS =
+  'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.';
+
 /** Plain words for a failed sign-in, people change or code. PURE. */
 export function authErrorWords(err: unknown): string {
   const code = err instanceof SignInError ? err.code : authErrorCode(err);

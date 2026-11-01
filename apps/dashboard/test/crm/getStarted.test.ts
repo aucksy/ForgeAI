@@ -26,4 +26,16 @@ describe('Get started (I5)', () => {
     const steps = getStartedSteps({ plans: [{ active: false } as never], members: [m(true, 'u1')] }, new Set());
     expect(stepsLine(steps)).toBe('0 of 6 done');
   });
+
+  it('UAT 1 Nov 2026: members opens Members, the poster step opens the CHECK-IN poster, not the join poster', () => {
+    const steps = getStartedSteps({ plans: [], members: [] }, new Set());
+    const by = (k: string) => steps.find((s) => s.key === k)!;
+    expect(by('members').path).toBe('/members');
+    expect(by('poster').path).toBe('/attendance/qr');
+    expect(by('app').path).toBe('/settings/invite');
+  });
+
+  it('UAT 1 Nov 2026: every hint is a whole sentence', () => {
+    for (const s of getStartedSteps({ plans: [], members: [] }, new Set())) expect(s.hint).toMatch(/^[A-Z].*\.$/);
+  });
 });
