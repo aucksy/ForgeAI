@@ -12,7 +12,7 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 He said: "How is apple showing this large banner on their play listing" then "No the tap isn't taking me anywhere its just a picture. Do it for my listing also".
 
 What I found: our listing already has a 1024x500 feature graphic (MettleUp lockup, "Stronger every week") and an icon. Play shows the feature graphic at the top of the app page only when the listing has a YouTube promo video (the graphic becomes the video cover); big apps can also get it in featured spots. Our Video field is empty. Also, the public page play.google.com/store/apps/details?id=com.mettleup.app returns 404: the app is only in closed testing, so no stranger sees the listing yet.
-Next: a short promo video (own pipeline, free) uploaded to YouTube as Unlisted, URL in the listing Video field. Uploading to YouTube = publishing, so it waits for his yes.
+Next: a short promo video (own pipeline, free) uploaded to YouTube as Unlisted, URL in the listing Video field. Uploading to YouTube = publishing, so it waits for his yes. He said "add it to backlog for now": tracker row F188 (Idea). Tracker #80 closed (privacy line done; the Play form is my job).
 
 ## R-270. Do the Play Console Health Connect form yourself; write the privacy line; release the batch — 1 Nov 2026
 He said: "How many times I have to tell you that these browser actions need to be completed by you? ... about that privacy notice line, yes you can write it ... I have deleted the folders from the D drive and yes you can release all the changes that we have done."
@@ -237,18 +237,3 @@ Chat compacts at 35% now (31 Oct 2026); after it, read these notes before saying
 ## R-232. "I did say Yes" to 0043 and 0045; compaction 25% -> 35% globally - 31 Oct 2026
 He said: he did approve 0043 and 0045 (both found live), and "should we increase it to 35% globally".
 Did: 0043/0045 marked APPLIED LIVE (live-vs-file compare not done: the permission check blocked a second live read). CLAUDE_AUTOCOMPACT_PCT_OVERRIDE 25 -> 35 in ~/.claude/settings.json and the Windows user variable; context_meter.py now warns at 30/32/34%; brain note stop-at-90-percent-context updated, index rebuilt. Takes effect in a new session or after an app restart.
-
-## R-231. "Make the database change for 0044" - 31 Oct 2026
-He said: exactly that (his live-database yes for 0044 only; 0043, 0045 and 0046 still wait).
-Doing: apply supabase/migrations/0044_plan_requests.sql live (members ask the desk to pause or renew their plan from the app: one new table + 6 new functions, additive, re-runnable; it uses but does not change _gym_not_suspended). Run its live test, then mark the file APPLIED LIVE on main.
-Result: 0044 was ALREADY live (all 8 functions equal this file by md5, table with RLS + trigger, 0 rows), so I did not run it again. Live test PASS 63, nothing left behind. 0043 (gym_member_photos, 1 row) and 0045 (gym_report_requests) are live too; 0046 is not. File marked APPLIED LIVE.
-
-## R-230. Going to sleep: take the best decisions - 30 Oct 2026
-He said: "I am goin to sleep.. so you can do and take best decisions If I am needed for anyting".
-He also asked why the phone tests fail so often. Answer given: 2 real app bugs caught, 1 shared-test-gym clash, 2 of my own test-edit mistakes, 1 cloud download glitch. New practice: after a test edit, run that one part (only=<part>) before the full round.
-What I do overnight: finish 0.62.1 (fix any test failure, ship, paste the APK link); then T66 (Starter/Pro split) built so it changes nothing for any live gym until he says so; then keep test runs from sharing one shop item. No money, no LIVE data change, no new promises or legal wording without him.
-
-## R-229. Website: latest features, prices and screenshots; Belvee GST and what he really needs - 30 Oct 2026
-He said (tracker #30, picked A: Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499, "Own it" on request, 25 founding gyms at ₹29,999): "Ensure that you have latest features / prices and screenshots are updated on website".
-He said (tracker #70): Belvee's GST shows "Cancelled on application of Taxpayer (Effective from 01/01/2023)" (apparel). "I dont need a GST right.. I just want to be able to open current account and start taking payments using razorpay and also be able to submit apps without 14 days testing - and you can tell what other benefits I should have by doing this or that".
-What I do: (1) bring mettleup.fit up to date: the chosen prices, the newest features, fresh app screenshots. (2) answer #70: what a current account, Razorpay and a Play organisation account each need, with and without GST, and the other benefits.

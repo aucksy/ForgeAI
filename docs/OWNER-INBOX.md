@@ -484,15 +484,16 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F180 Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
 | F181 Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
+| F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
 
 ## 80. Health Connect: two things before the next app release — 1 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
-**Why:** The app can now read a member's weight and today's steps from Health Connect (F55, F62), and still sends each workout to it. Google Play asks every app that uses Health Connect to say what it reads and writes, and why. Our privacy notice must say it too. The app waits for your "release", so nothing is live yet.
-**Your task:** In Play Console, open MettleUp, then App content, then Health apps (Health Connect). Tick these: Write: Exercise, Active calories burned. Read: Weight, Steps. For "why", write: "To add your weigh-ins to your body-weight log, to show today's steps, and to save each workout to Health Connect."
-**Your task:** Approve this line for the privacy notice, or change it: "With your permission, MettleUp reads your weight from Health Connect to add it to your body-weight log, and today's step count to show it to you. It also saves each finished workout to Health Connect. This data stays on your phone and is not shared." Reply "write it" and I add it in English and Hindi.
+**Status:** DONE
+**Why:** The app can now read a member's weight and today's steps from Health Connect (F55, F62), and still sends each workout to it. Google Play asks every app that uses Health Connect to say what it reads and writes. Our privacy notice must say it too.
+**TASK DONE (1 Nov 2026)**
+**My answer (1 Nov 2026):** The privacy line is live in English and Hindi on every MettleUp website. Claude fills the Play Console Health apps form after the 0.67.0 app reaches Play. Nothing more is needed from you.
 
 ---
 
