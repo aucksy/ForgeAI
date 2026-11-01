@@ -23,7 +23,7 @@ import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, type GymPreview } from './gym';
+import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, unknownCodeWords, type GymPreview } from './gym';
 import { joinFromInvite } from './gymActions';
 import { JoinAgreement } from './JoinAgreement';
 import { agreementWords } from './joinTerms';
@@ -79,7 +79,7 @@ export function InviteScreen() {
       .then((p) => {
         if (live && !nameTouched.current && p.name) setName(p.name);
       })
-      .catch(() => undefined);
+      .catch((e: unknown) => console.warn('[invite] could not read the profile name', e));
     return () => {
       live = false;
     };
@@ -126,13 +126,9 @@ export function InviteScreen() {
       ) : look.state === 'none' ? (
         <Card style={{ gap: space.md }}>
           <Text accessibilityRole="header" style={heading()}>
-            This link is not a gym's
+            {unknownCodeWords(code).title}
           </Text>
-          <Text style={body()}>
-            {code
-              ? `No gym has the code ${code}. Ask your gym for a new link, or type their code in the Gym tab.`
-              : 'Ask your gym for a new link, or type their code in the Gym tab.'}
-          </Text>
+          <Text style={body()}>{unknownCodeWords(code).body}</Text>
           <GhostButton label="Type a gym code" onPress={toCodeBox} />
         </Card>
       ) : (

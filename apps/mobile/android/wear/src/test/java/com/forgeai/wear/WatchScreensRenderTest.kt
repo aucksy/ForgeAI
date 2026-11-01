@@ -59,6 +59,7 @@ abstract class WatchScreensRenderBase(private val size: String) {
     val hrAllowed: Boolean = true,
     val askHeartRate: Boolean = false,
     val askAlerts: Boolean = false,
+    val alertsAlarmOnly: Boolean = false,
     val phoneConnected: Boolean = true,
     val fontScale: Float = 1f,
   )
@@ -82,6 +83,7 @@ abstract class WatchScreensRenderBase(private val size: String) {
           now = now,
           askHeartRate = s.askHeartRate,
           askAlerts = s.askAlerts,
+          alertsAlarmOnly = s.alertsAlarmOnly,
           phoneConnected = s.phoneConnected,
         )
       }
@@ -161,7 +163,27 @@ abstract class WatchScreensRenderBase(private val size: String) {
   @Test fun heartRateWaiting() =
     both("11-heart-rate-waiting", Shot(resting(), ring = true, bpm = null, hrStatus = HeartRate.Status.WAITING))
 
-  @Test fun phoneNotConnected() = both("12-phone-not-connected", Shot(resting(), ring = false, phoneConnected = false))
+  // UAT 1 Nov 2026: this used a running rest, which (0.61.0 review) beats "Phone not connected", so the
+  // screen itself was never photographed or checked. Now: no workout, and the rest case on its own.
+  @Test fun phoneNotConnected() = both("12-phone-not-connected", Shot(idle, ring = false, bpm = null, phoneConnected = false))
+
+  @Test fun phoneNotConnectedResting() = both("12b-phone-not-connected-resting", Shot(resting(), ring = true, phoneConnected = false))
+
+  @Test fun permissionAlarmsOnly() = both("09b-permission-alarms", Shot(idle, ring = false, askAlerts = true, alertsAlarmOnly = true))
+
+  @Test fun allSetsDoneResting() = both(
+    "x10-all-sets-done-resting",
+    Shot(resting("Push 1", NextSet.NONE).copy(text = "All sets done · Finish"), ring = true),
+  )
+
+  @Test fun allSetsDoneRestIsOver() = both(
+    "x11-all-sets-done-rest-is-over",
+    Shot(over("Push 1", NextSet.NONE).copy(text = "All sets done · Finish"), ring = false),
+  )
+
+  @Test fun warmUpBetweenRests() = both("x12-warm-up", Shot(workout("Bench Press", NextSet("Warm-up 1 of 2", "", "20 kg × 10")), ring = true))
+
+  @Test fun noExerciseYet() = both("x13-no-exercise-yet", Shot(workout("Workout in progress", NextSet.NONE, text = "Add an exercise to start"), ring = true))
 
   // Real data the hand-off does not draw: each must still fit inside the round glass.
 

@@ -50,3 +50,15 @@ export function replaceBody(workouts: number): string {
     ? 'The 1 workout on this phone is deleted and your backup takes its place.'
     : `The ${workouts} workouts on this phone are deleted and your backup takes their place.`;
 }
+
+/** Said when a backup came back but held no profile: the welcome stays up for the name. */
+export const RESTORED_NO_PROFILE = 'Your workouts are back. Tap "Start fresh" and add your name to carry on.';
+
+/**
+ * After a welcome restore (even one whose tidy-up failed): 'open' when the app now opens on the backup,
+ * else 'needs-name' — the welcome must stop waiting and say RESTORED_NO_PROFILE (UAT 1 Nov 2026: the
+ * tidy-up path left the start view held with a spinning button for good). PURE.
+ */
+export function welcomeRestoreOutcome(status: string): 'open' | 'needs-name' {
+  return status === 'ready' ? 'open' : 'needs-name';
+}

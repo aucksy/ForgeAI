@@ -136,8 +136,16 @@ object WatchCopy {
   const val HEART = "♥"
   const val REST_IS_OVER = "Rest is over"
   const val START_A_WORKOUT = "Start a workout on your phone"
+
+  /**
+   * UAT 1 Nov 2026 (first run): under "Start a workout on your phone", what to open and what then
+   * shows here. A member who just installed the watch app did not know it needs MettleUp on the phone.
+   */
+  const val NOTHING_OPEN_HINT = "Open MettleUp on your phone. Your rest timer shows up here."
   const val PHONE_NOT_CONNECTED = "Phone not connected"
-  const val KEEP_PHONE_NEAR = "Keep your phone near you."
+
+  /** UAT 1 Nov 2026: says what to check, not only "keep it near" (Bluetooth off is the usual cause). */
+  const val KEEP_PHONE_NEAR = "Keep your phone near you with Bluetooth on."
   const val ALLOW = "Allow"
   const val NOT_NOW = "Not now"
   const val STEP_HEART_RATE = "1 of 2"
@@ -146,6 +154,39 @@ object WatchCopy {
   const val TITLE_ALERTS = "Rest alerts"
   const val REASON_HEART_RATE = "Shows how hard your heart works while you rest."
   const val REASON_ALERTS = "Your watch buzzes when rest is over."
+
+  /**
+   * UAT 1 Nov 2026: the "Rest alerts" screen's second step. After notifications were allowed, the same
+   * screen came back unchanged (Alarms & reminders still off) and a second "Allow" jumped into the
+   * watch's settings unannounced. Now that step says what it opens.
+   */
+  const val REASON_ALARMS = "Turn on Alarms & reminders so your watch buzzes on time."
+  const val OPEN_SETTINGS = "Open settings"
+
+  /**
+   * UAT 1 Nov 2026: the phone's live-card words when no set is named. The watch showed only the
+   * workout's name, so after the last set nothing said the workout was done.
+   */
+  const val ALL_SETS_DONE = "All sets done. Tap Finish on your phone."
+  const val ADD_AN_EXERCISE = "Add an exercise on your phone."
+
+  private const val PAUSED = "Paused · "
+
+  /**
+   * The line shown when the phone named no set ([text] = its live card's set line, liveCard.ts):
+   * "All sets done · Finish" and "Add an exercise to start" in watch words, an older phone app's
+   * "Set 3 of 5 · 62.5 kg × 8" as it is; null when there is nothing to say.
+   */
+  fun statusLine(text: String): String? {
+    val t = text.trim().removePrefix(PAUSED).trim()
+    if (t.isEmpty()) return null
+    if (t.startsWith("All sets done")) return ALL_SETS_DONE
+    if (t.startsWith("Add an exercise")) return ADD_AN_EXERCISE
+    return t
+  }
+
+  /** [statusLine] only while the phone sent no set line (with one, the screens show the set). */
+  fun status(snap: WatchState.Snapshot): String? = if (snap.next.set.isBlank()) statusLine(snap.text) else null
 
   /** "Next: Set 3 of 5 · Bench Press" longer than this splits into two lines. */
   const val LONG_NAME_CHARS = 30

@@ -44,6 +44,13 @@ object WorkoutLive {
   /** True while the phone's last workout message ([at], epoch ms) is under [CAP_MS] old. PURE. */
   fun fresh(at: Long, now: Long): Boolean = at > 0L && now - at in 0L until CAP_MS
 
+  /**
+   * UAT 1 Nov 2026: is the saved workout still open for the SCREEN? The same cap as the notice: a
+   * phone that was reset or lost MettleUp mid-workout never sends "ended", and the watch showed that
+   * old set for good. [at] = 0: saved by a watch app older than 0.63.0, taken as open. PURE.
+   */
+  fun openOnScreen(active: Boolean, at: Long, now: Long): Boolean = active && (at == 0L || fresh(at, now))
+
   /** Show or remove the workout's Ongoing Activity to match [active]. Safe to call again. */
   fun sync(ctx: Context, active: Boolean) {
     val app = ctx.applicationContext

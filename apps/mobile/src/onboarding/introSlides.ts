@@ -26,8 +26,9 @@ export const INTRO_SLIDES: Record<IntroSlide['key'], IntroSlide> = {
   last: {
     key: 'last',
     icon: 'target',
-    title: 'See what you lifted last time', // member-words
-    body: 'Each set shows your last weight and reps, so you know what to beat today.', // member-words
+    // UAT 1 Nov 2026: the set line's own word is "Previous" (never "last" / "today").
+    title: 'See what you lifted the previous time', // member-words
+    body: 'Each set shows the weight and reps from your previous workout, so you know what to beat.', // member-words
   },
   rest: {
     key: 'rest',

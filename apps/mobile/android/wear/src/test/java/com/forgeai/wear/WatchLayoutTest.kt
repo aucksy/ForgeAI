@@ -161,12 +161,55 @@ class WatchLayoutTest {
     assertNull(WatchCopy.heartLine(true, HeartRate.Status.READING, 132.0, true))
   }
 
+  // ---------------------------------------------------------------- UAT 1 Nov 2026
+
+  @Test
+  fun statusLineSaysWhatToDoWhenThePhoneNamesNoSet() {
+    assertEquals(WatchCopy.ALL_SETS_DONE, WatchCopy.statusLine("All sets done · Finish"))
+    assertEquals(WatchCopy.ALL_SETS_DONE, WatchCopy.statusLine("Paused · All sets done · Finish"))
+    assertEquals(WatchCopy.ADD_AN_EXERCISE, WatchCopy.statusLine("Add an exercise to start"))
+    // An older phone app (no set lines): its own set line, as before R-207.
+    assertEquals("Set 3 of 5 · 62.5 kg × 8", WatchCopy.statusLine("Set 3 of 5 · 62.5 kg × 8"))
+    assertNull(WatchCopy.statusLine(""))
+    assertNull(WatchCopy.statusLine("  "))
+  }
+
+  @Test
+  fun statusShowsOnlyWithoutASetLine() {
+    assertNull(WatchCopy.status(open.copy(text = "Set 3 of 5 · 62.5 kg × 8")))
+    val done = WatchState.Snapshot(null, true, "Push 1", text = "All sets done · Finish")
+    assertEquals(WatchCopy.ALL_SETS_DONE, WatchCopy.status(done))
+  }
+
+  @Test
+  fun bannedMemberWordsNeverShow() {
+    val words = listOf(
+      WatchCopy.START_A_WORKOUT, WatchCopy.NOTHING_OPEN_HINT, WatchCopy.PHONE_NOT_CONNECTED, WatchCopy.KEEP_PHONE_NEAR,
+      WatchCopy.REASON_HEART_RATE, WatchCopy.REASON_ALERTS, WatchCopy.REASON_ALARMS, WatchCopy.ALL_SETS_DONE, WatchCopy.ADD_AN_EXERCISE,
+    )
+    val banned = Regex("(^|[^A-Za-z])(volume|pr|prs|session)([^A-Za-z]|$)", RegexOption.IGNORE_CASE)
+    for (w in words) assertFalse(w, banned.containsMatchIn(w))
+  }
+
+  @Test
+  fun aWorkoutThePhoneWentSilentOnIsNotShownForever() {
+    val now = 10L * 60 * 60 * 1000
+    assertTrue(WorkoutLive.openOnScreen(true, now - 60_000L, now))
+    assertFalse(WorkoutLive.openOnScreen(true, now - WorkoutLive.CAP_MS, now))
+    assertFalse(WorkoutLive.openOnScreen(false, now, now))
+    // Saved by a watch app older than 0.63.0 (no time kept): still open, as before.
+    assertTrue(WorkoutLive.openOnScreen(true, 0L, now))
+  }
+
   @Test
   fun everyWordIsTheHandOffsCopy() {
     assertEquals("Rest is over", WatchCopy.REST_IS_OVER)
     assertEquals("Start a workout on your phone", WatchCopy.START_A_WORKOUT)
     assertEquals("Phone not connected", WatchCopy.PHONE_NOT_CONNECTED)
-    assertEquals("Keep your phone near you.", WatchCopy.KEEP_PHONE_NEAR)
+    assertEquals("Keep your phone near you with Bluetooth on.", WatchCopy.KEEP_PHONE_NEAR)
+    assertEquals("Open MettleUp on your phone. Your rest timer shows up here.", WatchCopy.NOTHING_OPEN_HINT)
+    assertEquals("Turn on Alarms & reminders so your watch buzzes on time.", WatchCopy.REASON_ALARMS)
+    assertEquals("Open settings", WatchCopy.OPEN_SETTINGS)
     assertEquals("Allow", WatchCopy.ALLOW)
     assertEquals("Not now", WatchCopy.NOT_NOW)
     assertEquals("1 of 2", WatchCopy.STEP_HEART_RATE)

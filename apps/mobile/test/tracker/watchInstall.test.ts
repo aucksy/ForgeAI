@@ -86,7 +86,7 @@ describe('the words', () => {
 
   it('every failure ends with the search-on-the-watch way', () => {
     expect(installNote('opened')).toMatch(/Play Store is open on MettleUp/);
-    expect(installNote('installed')).toBe('MettleUp is already on your watch.');
+    expect(installNote('installed')).toBe('MettleUp is already on your watch. When you start a workout, it opens on your watch too.');
     expect(installNote('failed')).toBe('Open Play Store on your watch and search MettleUp.');
     expect(installNote('unknown')).toBe('Open Play Store on your watch and search MettleUp.');
     expect(installNote('none')).toMatch(/Open Play Store on your watch and search MettleUp\.$/);

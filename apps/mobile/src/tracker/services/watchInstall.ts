@@ -86,7 +86,7 @@ export const WATCH_WORDS = {
   rowTitle: 'Your watch', // member-words
   installed: 'Installed', // member-words
   opened: 'Check your watch: its Play Store is open on MettleUp. Tap Install there.', // member-words
-  already: 'MettleUp is already on your watch.', // member-words
+  already: 'MettleUp is already on your watch. When you start a workout, it opens on your watch too.', // member-words (UAT 1 Nov 2026: says what happens next)
   noWatch: 'Your watch is not connected. Open Play Store on your watch and search MettleUp.', // member-words
   fallback: 'Open Play Store on your watch and search MettleUp.', // member-words
   opening: 'Opening on your watch…', // member-words

@@ -165,6 +165,7 @@ internal fun WatchScreen(
   now: Long,
   askHeartRate: Boolean = false,
   askAlerts: Boolean = false,
+  alertsAlarmOnly: Boolean = false,
   phoneConnected: Boolean = true,
   onAllowHeartRate: () -> Unit = {},
   onSkipHeartRate: () -> Unit = {},
@@ -190,9 +191,11 @@ internal fun WatchScreen(
   ) {
     val card = WatchCopy.card(snap)
     val heart = WatchCopy.heartLine(hrAllowed, hrStatus, bpm, ambient)
+    // UAT 1 Nov 2026: the phone named no set ("All sets done", no exercise yet, an older phone app).
+    val status = WatchCopy.status(snap)
     when (kind) {
       WatchScreenKind.PERMISSION_HEART_RATE -> PermissionScreen(true, ambient, px, onAllowHeartRate, onSkipHeartRate)
-      WatchScreenKind.PERMISSION_ALERTS -> PermissionScreen(false, ambient, px, onAllowAlerts, onSkipAlerts)
+      WatchScreenKind.PERMISSION_ALERTS -> PermissionScreen(false, ambient, px, onAllowAlerts, onSkipAlerts, alarmOnly = alertsAlarmOnly)
       WatchScreenKind.PHONE_NOT_CONNECTED -> PhoneNotConnectedScreen(ambient, px)
       WatchScreenKind.NOTHING_OPEN -> NothingOpenScreen(ambient, px)
       WatchScreenKind.REST_TIMER -> snap.rest?.let { r ->
@@ -203,10 +206,11 @@ internal fun WatchScreen(
           heart,
           ambient,
           px,
+          status,
         )
       }
-      WatchScreenKind.REST_IS_OVER -> RestIsOverScreen(card, WatchCopy.overtime(now, snap.overAt), ambient, px)
-      WatchScreenKind.BETWEEN_RESTS -> BetweenRestsScreen(card, heart, ambient, px)
+      WatchScreenKind.REST_IS_OVER -> RestIsOverScreen(card, WatchCopy.overtime(now, snap.overAt), ambient, px, status)
+      WatchScreenKind.BETWEEN_RESTS -> BetweenRestsScreen(card, heart, ambient, px, status)
     }
     Clock(px, if (orange) Color.Black else pal.grey)
   }
@@ -305,6 +309,16 @@ private fun NextSetLines(
   Line(card.exercise, px, 20f, nameWeight, nameColor, maxWidth = NAME_MAX_WIDTH, tag = "exercise")
 }
 
+/** The widest a status line may be inside the ring, and on a screen without one (design px). */
+private const val STATUS_MAX_WIDTH_RING = 300f
+private const val STATUS_MAX_WIDTH = 320f
+
+/** UAT 1 Nov 2026: what the phone says when it names no set ([WatchCopy.statusLine]), up to two lines. */
+@Composable
+private fun StatusLine(text: String, px: Px, color: Color, maxWidth: Float) {
+  Line(text, px, 20f, FontWeight.Bold, color, lineHeight = 1.25f, maxWidth = maxWidth, maxLines = 2, balanced = true, tag = "status")
+}
+
 // ------------------------------------------------------------------ ring and segments
 
 private fun DrawScope.ringBox(): Pair<Offset, Size> {
@@ -373,6 +387,7 @@ internal fun RestTimerScreen(
   heart: WatchCopy.HeartLine?,
   ambient: Boolean,
   px: Px,
+  status: String? = null,
 ) {
   val pal = palette(ambient)
   val long = WatchCopy.isLongName(card)
@@ -400,6 +415,7 @@ internal fun RestTimerScreen(
       )
       Spacer(Modifier.height(px.dp(10f)))
       NextSetLines(card, long, px, pal.text, pal.grey, pal.text, FontWeight.Bold, gap = 0f)
+      status?.let { StatusLine(it, px, pal.text, maxWidth = STATUS_MAX_WIDTH_RING) }
       card.previous?.let {
         Spacer(Modifier.height(px.dp(6f)))
         Line(it, px, 20f, FontWeight.Medium, pal.grey, tabular = true, tag = "previous")
@@ -416,7 +432,7 @@ internal fun RestTimerScreen(
 
 /** Rest is over (screen 1b): the whole screen accent, all text black; ambient: black, an outline ring. */
 @Composable
-internal fun RestIsOverScreen(card: SetCard, overtime: String, ambient: Boolean, px: Px) {
+internal fun RestIsOverScreen(card: SetCard, overtime: String, ambient: Boolean, px: Px, status: String? = null) {
   val pal = palette(ambient)
   val ink = if (ambient) pal.text else Color.Black
   val nextInk = if (ambient) pal.accent else Color.Black
@@ -443,6 +459,7 @@ internal fun RestIsOverScreen(card: SetCard, overtime: String, ambient: Boolean,
       )
       // The column's 6 px gap also sits between the two long-name lines.
       NextSetLines(card, long, px, ink, ink, ink, FontWeight.ExtraBold, gap = 0f)
+      status?.let { StatusLine(it, px, ink, maxWidth = STATUS_MAX_WIDTH) }
       card.previous?.let { Line(it, px, 20f, FontWeight.Medium, ink, tabular = true, tag = "previous") }
       card.next?.let { Line(it, px, 20f, FontWeight.ExtraBold, nextInk, tabular = true, tag = "next") }
     }
@@ -453,7 +470,7 @@ internal fun RestIsOverScreen(card: SetCard, overtime: String, ambient: Boolean,
 
 /** Between rests (screen 2): a workout open, no rest running. View only; set segments on the ring. */
 @Composable
-internal fun BetweenRestsScreen(card: SetCard, heart: WatchCopy.HeartLine?, ambient: Boolean, px: Px) {
+internal fun BetweenRestsScreen(card: SetCard, heart: WatchCopy.HeartLine?, ambient: Boolean, px: Px, status: String? = null) {
   val pal = palette(ambient)
   Box(Modifier.fillMaxSize()) {
     SetSegments(card, pal, ambient)
@@ -495,6 +512,15 @@ internal fun BetweenRestsScreen(card: SetCard, heart: WatchCopy.HeartLine?, ambi
           Line(of, px, 36f, FontWeight.Bold, pal.grey, Modifier.alignByBaseline(), tabular = true, tag = "setOf")
         }
         Spacer(Modifier.height(px.dp(8f)))
+      } else if (card.setLabel.isNotEmpty()) {
+        // UAT 1 Nov 2026: "Warm-up 1 of 2" (no "Set N of M" to split): the label itself, not nothing.
+        Spacer(Modifier.height(px.dp(4f)))
+        Line(card.setLabel, px, 36f, FontWeight.Bold, pal.text, maxWidth = NAME_MAX_WIDTH, tabular = true, tag = "setLabel")
+        Spacer(Modifier.height(px.dp(8f)))
+      }
+      status?.let {
+        Spacer(Modifier.height(px.dp(8f)))
+        StatusLine(it, px, pal.text, maxWidth = STATUS_MAX_WIDTH_RING)
       }
       card.previous?.let { Line(it, px, 20f, FontWeight.Medium, pal.grey, tabular = true, tag = "previous") }
       card.next?.let {
@@ -555,6 +581,8 @@ internal fun NothingOpenScreen(ambient: Boolean, px: Px) {
       strokeIcon(listOf(IconPath(PHONE_BODY, pal.accent), IconPath(PHONE_SPEAKER, pal.accent)), 1.6f, StrokeCap.Round, StrokeJoin.Miter)
     }
     Line(WatchCopy.START_A_WORKOUT, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
+    // UAT 1 Nov 2026: what to open, and what then shows here.
+    Line(WatchCopy.NOTHING_OPEN_HINT, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
   }
 }
 
@@ -562,7 +590,14 @@ internal fun NothingOpenScreen(ambient: Boolean, px: Px) {
 
 /** First launch (screen 4): heart rate ("1 of 2") or rest alerts ("2 of 2"). Allow / Not now. */
 @Composable
-internal fun PermissionScreen(heartRate: Boolean, ambient: Boolean, px: Px, onAllow: () -> Unit, onNotNow: () -> Unit) {
+internal fun PermissionScreen(
+  heartRate: Boolean,
+  ambient: Boolean,
+  px: Px,
+  onAllow: () -> Unit,
+  onNotNow: () -> Unit,
+  alarmOnly: Boolean = false,
+) {
   val pal = palette(ambient)
   Column(
     Modifier.fillMaxSize().padding(top = px.dp(12f), start = px.dp(64f), end = px.dp(64f)),
@@ -581,7 +616,11 @@ internal fun PermissionScreen(heartRate: Boolean, ambient: Boolean, px: Px, onAl
     }
     Line(if (heartRate) WatchCopy.TITLE_HEART_RATE else WatchCopy.TITLE_ALERTS, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.1f, tag = "title")
     Line(
-      if (heartRate) WatchCopy.REASON_HEART_RATE else WatchCopy.REASON_ALERTS,
+      when {
+        heartRate -> WatchCopy.REASON_HEART_RATE
+        alarmOnly -> WatchCopy.REASON_ALARMS
+        else -> WatchCopy.REASON_ALERTS
+      },
       px,
       18f,
       FontWeight.Medium,
@@ -605,7 +644,8 @@ internal fun PermissionScreen(heartRate: Boolean, ambient: Boolean, px: Px, onAl
         .testTag("allow"),
       contentAlignment = Alignment.Center,
     ) {
-      Line(WatchCopy.ALLOW, px, 20f, FontWeight.Bold, if (ambient) pal.accent else Color.Black)
+      // UAT 1 Nov 2026: the Alarms & reminders step opens the watch's settings, and says so.
+      Line(if (alarmOnly && !heartRate) WatchCopy.OPEN_SETTINGS else WatchCopy.ALLOW, px, 20f, FontWeight.Bold, if (ambient) pal.accent else Color.Black)
     }
     Box(
       Modifier
@@ -641,6 +681,6 @@ internal fun PhoneNotConnectedScreen(ambient: Boolean, px: Px) {
       )
     }
     Line(WatchCopy.PHONE_NOT_CONNECTED, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 2, balanced = true, tag = "title")
-    Line(WatchCopy.KEEP_PHONE_NEAR, px, 18f, FontWeight.Medium, pal.grey, maxLines = 2, tag = "reason")
+    Line(WatchCopy.KEEP_PHONE_NEAR, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
   }
 }

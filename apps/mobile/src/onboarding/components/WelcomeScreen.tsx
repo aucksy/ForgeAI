@@ -102,8 +102,9 @@ const STEP_TEXT: Record<WelcomeStep, { title: string; sub: string }> = {
     title: 'Welcome to MettleUp',
     sub: 'Three quick questions and you are training. Every number in here will be one you lifted.',
   },
-  1: { title: 'Kilograms or pounds?', sub: 'For every weight in the app. You can change it in Profile.' },
-  2: { title: 'Your goal and experience', sub: 'They shape your Targets. You can change them in Profile.' },
+  // UAT 1 Nov 2026: whole sentences, and no app word ("Targets") a first-time member has not met yet.
+  1: { title: 'Kilograms or pounds?', sub: 'The app shows every weight in the one you pick. You can change it in Profile.' },
+  2: { title: 'Your goal and experience', sub: 'Your answers set the weights and reps the app suggests. You can change them in Profile.' },
 };
 
 // Read when drawn: gym branding repaints the tokens.
@@ -265,7 +266,7 @@ export function WelcomeScreen() {
       .then((n) => {
         if (live) setKept(n);
       })
-      .catch(() => undefined);
+      .catch((e: unknown) => console.warn('[welcome] could not count the workouts on this phone', e));
     return () => {
       live = false;
     };

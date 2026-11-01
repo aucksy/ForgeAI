@@ -20,3 +20,25 @@ export function welcomeGymCode(typed: string): { ok: true; code: string } | { ok
 export function welcomeGymKept(code: string): string {
   return `Gym code ${code} saved. Your gym's join screen opens right after setup.`;
 }
+
+/** How long the welcome waits for the gym's answer before it simply keeps the code (ms). */
+export const WELCOME_GYM_CHECK_MS = 6000;
+
+/**
+ * UAT 1 Nov 2026: a typed code is checked with the gym at once when the phone is online, so a wrong
+ * code is told here, not after the 3 setup steps (where the old screen said "This link is not a gym's").
+ * `answer`: the gym's preview answer — a gym, `null` (no gym has this code), or `'unknown'` (offline,
+ * slow, or any failure: the code is kept and the join screen checks it after setup). PURE.
+ */
+export type WelcomeGymCheck = { keep: true; line: string } | { keep: false; error: string };
+export function welcomeGymChecked(code: string, answer: { gymName: string } | null | 'unknown'): WelcomeGymCheck {
+  if (answer === null) {
+    return { keep: false, error: `No gym has the code ${code}. Check the code with your gym's desk and type it again.` };
+  }
+  if (answer === 'unknown') return { keep: true, line: welcomeGymKept(code) };
+  const name = answer.gymName.trim();
+  return {
+    keep: true,
+    line: name ? `${name} found. Its join screen opens right after setup.` : welcomeGymKept(code),
+  };
+}

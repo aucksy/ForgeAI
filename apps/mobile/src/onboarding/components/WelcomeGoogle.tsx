@@ -33,7 +33,7 @@ import { useBackup } from '@/store/backupStore';
 import { color, space, type } from '@/theme/tokens';
 
 import { useOnboarding } from '../store/onboardingStore';
-import { foundBackupLine, replaceBody, START_WORDS } from '../welcomeStart';
+import { foundBackupLine, replaceBody, RESTORED_NO_PROFILE, START_WORDS, welcomeRestoreOutcome } from '../welcomeStart';
 
 type Phase =
   | { kind: 'idle' }
@@ -167,15 +167,21 @@ export function WelcomeGoogle({
       await refreshAfterRestore();
       await useOnboarding.getState().boot();
       // A backup without a profile leaves the welcome up: say so instead of spinning.
-      if (useOnboarding.getState().status !== 'ready') {
+      if (welcomeRestoreOutcome(useOnboarding.getState().status) === 'needs-name') {
         setPhase({ kind: 'nothing' });
-        setLine('Your workouts are back. Tap "Start fresh" and add your name to carry on.');
+        setLine(RESTORED_NO_PROFILE);
       }
     } catch (e) {
       if (e instanceof RestoredUntidyError) {
         // The data WAS replaced: open the app on it (the next start finishes the tidy-up).
         await refreshAfterRestore();
         await useOnboarding.getState().boot();
+        // UAT 1 Nov 2026: a backup without a profile leaves the welcome up. Without this the button kept
+        // spinning and the whole start view (and Back) stayed held for good.
+        if (welcomeRestoreOutcome(useOnboarding.getState().status) === 'needs-name') {
+          setPhase({ kind: 'nothing' });
+          setLine(RESTORED_NO_PROFILE);
+        }
         return;
       }
       thud();
@@ -196,12 +202,13 @@ export function WelcomeGoogle({
 
   return (
     <View style={{ gap: space.md }}>
+      {/* UAT 1 Nov 2026: an outlined button, so "Start fresh" stays the one orange button a new member
+          sees on the start view (two equal orange buttons made the backup search look like the way in).
+          Double taps wait on `inFlight` / `working` inside go(). */}
       {phase.kind === 'idle' || phase.kind === 'looking' ? (
-        <PrimaryButton
+        <GhostButton
           label={phase.kind === 'looking' ? START_WORDS.looking : accountBusy || backupBusy ? 'Signing in…' : START_WORDS.googleButton}
           icon="person"
-          loading={working}
-          disabled={working}
           onPress={() => void go()}
         />
       ) : null}

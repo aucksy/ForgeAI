@@ -3,14 +3,14 @@
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "This link is not a gym's"
+    visible: "No gym has this code"
     timeout: 30000
-- assertVisible: 'No gym has the code ZZZZZ9\. Ask your gym for a new link, or type their code in the Gym tab\.'
+- assertVisible: 'No gym has the code ZZZZZ9\. Check the code with your gym''s desk, then type it in the Gym tab\.'
 - takeScreenshot: inv-06-unknown-code
 - tapOn: "^Type a gym code$"
 # Release A: the Gym tab's "Join your gym" screen with its code box.
 - extendedWaitUntil:
-    notVisible: "This link is not a gym's"
+    notVisible: "No gym has this code"
     timeout: 20000
 - scrollUntilVisible:
     element: "Gym code"

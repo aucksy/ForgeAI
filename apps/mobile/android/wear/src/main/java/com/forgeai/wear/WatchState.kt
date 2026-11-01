@@ -88,7 +88,7 @@ object WatchState {
     val next = NextSet(p.getString("set", "") ?: "", p.getString("last", "") ?: "", p.getString("goal", "") ?: "")
     return Snapshot(
       rest,
-      p.getBoolean("active", false),
+      WorkoutLive.openOnScreen(p.getBoolean("active", false), p.getLong("workoutAt", 0L), now),
       p.getString("title", "") ?: "",
       p.getString("text", "") ?: "",
       next,

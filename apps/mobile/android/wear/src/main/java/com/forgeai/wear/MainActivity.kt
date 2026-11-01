@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
   /** R-207: the first-launch screens still to show (heart rate "1 of 2", rest alerts "2 of 2"). */
   private var askHeartRate by mutableStateOf(false)
   private var askAlerts by mutableStateOf(false)
+  /** UAT 1 Nov 2026: "Rest alerts" has only the Alarms & reminders step left (notifications done). */
+  private var alertsAlarmOnly by mutableStateOf(false)
   /** R-207: "Phone not connected" (two empty checks in a row; unknown counts as connected). */
   private var phoneConnected by mutableStateOf(true)
   private var emptyChecks by mutableIntStateOf(0)
@@ -108,11 +110,18 @@ class MainActivity : ComponentActivity() {
         }
       }
       // R-207: is the phone there? Checked while the screen is up and not dimmed.
+      // UAT 1 Nov 2026: after one empty answer the second check comes in 3 s, not 15 s, so a watch
+      // with no phone says "Phone not connected" quickly instead of "Start a workout on your phone".
       LaunchedEffect(onScreen, ambient) {
         if (!onScreen || ambient) return@LaunchedEffect
+        var lastCheck = 0L
         while (true) {
-          checkPhone()
-          delay(PHONE_CHECK_MS)
+          val t = System.currentTimeMillis()
+          if (t - lastCheck >= PHONE_CHECK_MS || emptyChecks == 1) {
+            lastCheck = t
+            checkPhone()
+          }
+          delay(PHONE_RECHECK_MS)
         }
       }
       var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -170,6 +179,7 @@ class MainActivity : ComponentActivity() {
         now,
         askHeartRate = askHeartRate,
         askAlerts = askAlerts,
+        alertsAlarmOnly = alertsAlarmOnly,
         phoneConnected = phoneConnected,
         onAllowHeartRate = ::allowHeartRate,
         onSkipHeartRate = { answered(KEY_ASKED_HR) },
@@ -213,7 +223,9 @@ class MainActivity : ComponentActivity() {
   /** Which first-launch screens still show: never for a permission already on. */
   private fun refreshAsks() {
     askHeartRate = !hasHeartPermission() && !asked(KEY_ASKED_HR)
-    askAlerts = needNotifAsk() || needExactAsk()
+    val notif = needNotifAsk()
+    askAlerts = notif || needExactAsk()
+    alertsAlarmOnly = !notif && askAlerts
   }
 
   private fun needNotifAsk(): Boolean =
@@ -368,6 +380,7 @@ class MainActivity : ComponentActivity() {
     private const val KEY_ASKED_NOTIF = "askedNotif"
     private const val KEY_ASKED_EXACT = "askedExact"
     private const val PHONE_CHECK_MS = 15_000L
+    private const val PHONE_RECHECK_MS = 3_000L
 
     /** The screen is up (between onStart and onStop): [WorkoutStarted] then posts no card. */
     @Volatile

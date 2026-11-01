@@ -895,3 +895,16 @@ export function joinPathFromSettings(typed: string): string | null {
   const code = joinCodeFromTyped(typed);
   return code.length === JOIN_CODE_LENGTH ? `/j/${code}` : null;
 }
+
+/**
+ * UAT 1 Nov 2026: what the join screen says when no gym has the code. The same screen opens for a
+ * gym's link AND for a code the member typed (welcome setup, Gym tab), so it never says "link". PURE.
+ */
+export function unknownCodeWords(code: string | null): { title: string; body: string } {
+  return {
+    title: 'No gym has this code',
+    body: code
+      ? `No gym has the code ${code}. Check the code with your gym's desk, then type it in the Gym tab.`
+      : "Check the code with your gym's desk, then type it in the Gym tab.",
+  };
+}
