@@ -405,7 +405,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F111 Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
 | F112 Several branches | Live | One owner runs 2 or more branches from one sign-in. Server live 24 Oct (0031, your yes in #59); admin app live 24 Oct. |  |
 | F113 Own sign-in PIN for owners and staff | Live | Your pick A (24 Oct): sign in with mobile + your own 6-digit PIN every time; chosen at "Create my gym"; 5 wrong tries lock it for 15 minutes. Server 0034 live with your yes (68 checks pass). |  |
-| F114 Hinglish in the admin app | Not doing | Removed on your word; the admin app is in plain English. | Not planned: the admin app stays in plain English. The desk cheat sheet is in Hindi and English. |
+| F114 Hinglish in the admin app | Planned | Back on 1 Nov 2026 (R-269): you said "Do Hinglish not hindi". Being built now for the first-day screens. | A switch "English / Hinglish" on the sign-in page and in Settings. Hinglish is Hindi in English letters, the way owners type on WhatsApp. First the sign-in, Create my gym, Get started, Today, Members, Plans and Invite screens; more screens follow. |
+| F187 Forgot PIN: a reset code by WhatsApp or text | Idea | You added it 1 Nov 2026 (R-269) and said: later. Today an owner with no other signed-in device emails contact@mettleup.fit. | The owner taps "Forgot your PIN?" and types his mobile number. MettleUp sends a 6-digit code by WhatsApp (or text). He types the code and picks a new PIN. It needs a paid WhatsApp or SMS service, so it waits for your go. |
 
 ### Gym ↔ member links
 | Feature | Status | Details | How it will work |
