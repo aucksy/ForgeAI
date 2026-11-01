@@ -20,6 +20,7 @@ import { useCrm } from '../store';
 import { Icon } from './icons';
 import { Button, Sheet, TOUCH, color, font, radius, space } from './kit';
 import { Link } from './router';
+import { t } from '../lang/lang';
 
 const keyFor = (gymId: string) => `forgeai.quickActions.${gymId}`;
 
@@ -56,7 +57,7 @@ export function QuickActions() {
   };
 
   return (
-    <nav aria-label="Quick actions" style={{ marginBottom: space.lg }}>
+    <nav aria-label={t('Quick actions')} style={{ marginBottom: space.lg }}>
       {buttons.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: space.sm }}>
           {buttons.map((b) => (
@@ -80,7 +81,7 @@ export function QuickActions() {
                 <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, borderRadius: radius.md, background: color.accentSoft, color: color.accentBright, flexShrink: 0 }}>
                   <Icon name={b.icon} size={20} />
                 </span>
-                {b.label}
+                {t(b.label)}
               </span>
             </Link>
           ))}
@@ -92,13 +93,13 @@ export function QuickActions() {
           onClick={() => setEditing(true)}
           style={{ marginTop: space.xs, minHeight: TOUCH, background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: color.inkSecondary, fontFamily: font.body, fontSize: 14, fontWeight: 700 }}
         >
-          Change buttons
+          {t('Change buttons')}
         </button>
       ) : null}
       {editing ? (
-        <Sheet title="Quick buttons" onClose={() => setEditing(false)} footer={<Button onClick={() => setEditing(false)}>Done</Button>}>
+        <Sheet title={t('Quick buttons')} onClose={() => setEditing(false)} footer={<Button onClick={() => setEditing(false)}>{t('Done')}</Button>}>
           <p style={{ margin: `0 0 ${space.md}px`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-            {`Pick up to ${MAX_QUICK} and put them in order. Staff see only the ones they may use.`}
+            {t('Pick up to {max} buttons and put them in order. Staff see only the ones they may use.', { max: MAX_QUICK })}
           </p>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid' }}>
             {QUICK_ACTIONS.map((a, i) => {
@@ -109,7 +110,7 @@ export function QuickActions() {
                 <li key={a.id} style={{ display: 'flex', alignItems: 'center', gap: space.sm, minHeight: TOUCH + 4, borderTop: i ? `1px solid ${color.border}` : 'none' }}>
                   <label style={{ flex: 1, display: 'flex', alignItems: 'center', gap: space.sm, fontFamily: font.body, fontSize: 15, color: full ? color.inkMuted : color.ink, cursor: full ? 'not-allowed' : 'pointer', minHeight: TOUCH }}>
                     <input type="checkbox" checked={on} disabled={full} onChange={() => update(toggleQuick(ids, a.id))} style={{ width: 20, height: 20 }} />
-                    {a.label}
+                    {t(a.label)}
                   </label>
                   {on ? (
                     <>

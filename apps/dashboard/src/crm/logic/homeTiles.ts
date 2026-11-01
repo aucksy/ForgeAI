@@ -115,3 +115,18 @@ export function tileLabel(id: TileFilter): string {
       return 'Came in today';
   }
 }
+
+/**
+ * Owner, 1 Nov 2026: a brand-new gym's Today hides the tiles (every one would say 0) until the gym has
+ * anything to count: a member (archived too), a membership sold, a payment, a visit or an enquiry.
+ * Plans alone do not count: no tile reads them. PURE.
+ */
+export function gymHasRecords(s: {
+  members: readonly unknown[];
+  memberships: readonly unknown[];
+  payments: readonly unknown[];
+  visits: readonly unknown[];
+  enquiries?: readonly unknown[];
+}): boolean {
+  return s.members.length > 0 || s.memberships.length > 0 || s.payments.length > 0 || s.visits.length > 0 || (s.enquiries?.length ?? 0) > 0;
+}

@@ -21,24 +21,25 @@ import { useShop } from './ShopProvider';
 import { inviteLink, inviteMessage, whatsAppHref } from './invite';
 import { Button, Card, PageHeader, SectionTitle, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
+import { t } from '../lang/lang';
 
 export function InviteScreen() {
   const { cloud } = useShop();
   return (
     <>
       <PageHeader
-        title="Invite members"
-        subtitle="Send your gym's link on WhatsApp, or put a QR at the front desk"
+        title={t('Invite members')}
+        subtitle={t('Send your gym’s link on WhatsApp, or put a QR poster at the front desk.')}
         actions={
           <Button variant="ghost" onClick={() => navigate('/settings')}>
-            Back to Settings
+            {t('Back to Settings')}
           </Button>
         }
       />
       {cloud ? (
         <InviteBody ownerKey={cloud.ownerKey} gymName={cloud.name} joinCode={cloud.joinCode} />
       ) : (
-        <JoinCodeCard title="Turn on the member app first" />
+        <JoinCodeCard title={t('Turn on the member app first')} />
       )}
     </>
   );
@@ -103,7 +104,7 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
   return (
     <div style={{ display: 'grid', gap: space.lg, gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)', alignItems: 'start' }}>
       <Card>
-        <SectionTitle>Your gym's link</SectionTitle>
+        <SectionTitle>{t('Your gym’s link')}</SectionTitle>
         <div
           style={{
             fontFamily: font.mono,
@@ -120,29 +121,29 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {link}
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {`A member taps it on their phone. The MettleUp app opens on “Join ${gymName}”. One more tap and they are in. If they don’t have the app, the link shows how to get it, and your gym code ${joinCode}.`}
+          {t('A member taps it on their phone. The MettleUp app opens on “Join {gym}”. One more tap and they are in. If they don’t have the app, the link shows how to get it, and your gym code {code}.', { gym: gymName, code: joinCode })}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>Send on WhatsApp</Button>
+          <Button onClick={() => window.open(whatsAppHref(message), '_blank', 'noopener')}>{t('Send on WhatsApp')}</Button>
           <Button
             variant="ghost"
             onClick={async () =>
-              say((await copyText(link)) ? 'Link copied.' : 'This browser blocked copying.')
+              say((await copyText(link)) ? t('Link copied.') : t('This browser blocked copying. Select the text and copy it.'))
             }
           >
-            Copy link
+            {t('Copy link')}
           </Button>
           <Button
             variant="ghost"
             onClick={async () =>
-              say((await copyText(message)) ? 'Message copied.' : 'This browser blocked copying.')
+              say((await copyText(message)) ? t('Message copied.') : t('This browser blocked copying. Select the text and copy it.'))
             }
           >
-            Copy message
+            {t('Copy message')}
           </Button>
         </div>
         <div style={{ height: space.xl }} />
-        <SectionTitle>The message members get</SectionTitle>
+        <SectionTitle>{t('The message members get')}</SectionTitle>
         <pre
           style={{
             margin: 0,
@@ -159,35 +160,35 @@ function InviteBody({ ownerKey, gymName, joinCode }: { ownerKey: string; gymName
           {message}
         </pre>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          To invite one member, open them in Members and tap “Send app invite”.
+          {t('To invite one member, open them in Members and tap “Send app invite”.')}
         </p>
       </Card>
 
       <Card>
-        <SectionTitle>Front-desk QR poster</SectionTitle>
+        <SectionTitle>{t('Front-desk QR poster')}</SectionTitle>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: 360 }}>
             <Poster words={POSTER} gymName={gymName} joinCode={joinCode} link={link} brand={brand} />
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.lg }}>
-          <Button onClick={() => window.print()}>Print poster</Button>
+          <Button onClick={() => window.print()}>{t('Print poster')}</Button>
           <Button
             variant="ghost"
             onClick={async () => {
               const ok = await downloadPoster(POSTER, gymName, joinCode, link, brand);
               say(
                 ok
-                  ? 'Poster saved as a picture.'
-                  : 'Could not make the picture. Try Print poster.',
+                  ? t('Poster saved as a picture.')
+                  : t('Could not make the picture. Try Print poster.'),
               );
             }}
           >
-            Download picture
+            {t('Download picture')}
           </Button>
         </div>
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-          Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.
+          {t('Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.')}
         </p>
       </Card>
 

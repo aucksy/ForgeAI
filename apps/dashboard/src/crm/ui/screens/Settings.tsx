@@ -19,6 +19,8 @@ import { useAuth, useCan } from '../../auth/AuthProvider';
 import { SignInCard } from '../../auth/GoOnlineCard';
 import { InstallCard } from '../InstallCard';
 import { ThemeToggle } from '../ThemeToggle';
+import { LangToggle } from '../LangToggle';
+import { t } from '../../lang/lang';
 import { JoinCodeCard } from '../../shop/JoinCode';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
@@ -166,6 +168,7 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       {tab === 'gym' && (
       <>
+      <LanguageCard />
       {/* R-247: going online is what protects the gym, so a gym that is not online yet is told here too. */}
       {!online && (
         <Card style={{ marginBottom: space.lg }}>
@@ -445,6 +448,19 @@ export function SettingsScreen({ section }: { section?: string }) {
   );
 }
 
+/** English | Hinglish (owner, 1 Nov 2026), kept on this device. */
+function LanguageCard() {
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>{t('Language')}</SectionTitle>
+      <LangToggle />
+      <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        {t('Hinglish shows the main screens in Hindi words written in English letters. Other screens stay in English for now. Your choice is kept on this device.')}
+      </p>
+    </Card>
+  );
+}
+
 /** Settings for a Staff person: screen colours, the app on this phone, and their own sign-in (sign out). */
 function StaffSettings() {
   return (
@@ -454,6 +470,7 @@ function StaffSettings() {
         <SectionTitle>Dark or light</SectionTitle>
         <ThemeToggle />
       </Card>
+      <LanguageCard />
       {/* Adding members is front-desk work, so Staff may import a list too. */}
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Members</SectionTitle>

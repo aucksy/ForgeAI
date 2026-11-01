@@ -16,6 +16,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { color, font, radius, space, useIsCompact } from './kit';
 import { Link, useRoute } from './router';
+import { t } from '../lang/lang';
 
 export interface NavItem {
   path: string;
@@ -142,7 +143,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
                 color: color.inkMuted,
               }}
             >
-              SET UP AND HELP
+              {t('Set up and help').toUpperCase()}
             </div>
           ) : null}
           <SidebarLink item={item} active={item.path === activePath} />

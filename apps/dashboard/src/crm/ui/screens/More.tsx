@@ -13,6 +13,7 @@ import { useCrm } from '../../store';
 import { Icon, type IconName } from '../icons';
 import { Card, PageHeader, TOUCH, color, font, radius, space } from '../kit';
 import { Link } from '../router';
+import { t } from '../../lang/lang';
 
 interface Row {
   path: string;
@@ -81,12 +82,12 @@ export function MoreScreen() {
   ]);
   return (
     <>
-      <PageHeader title="More" />
+      <PageHeader title={t('More')} />
       {GROUPS.map((g) => {
         const inGroup = rows.filter((r) => r.group === g.id);
         if (inGroup.length === 0) return null;
         return (
-      <section key={g.id} aria-label={g.title} style={{ marginBottom: space.lg }}>
+      <section key={g.id} aria-label={t(g.title)} style={{ marginBottom: space.lg }}>
       <h2
         style={{
           margin: `0 0 ${space.sm}px`,
@@ -98,7 +99,7 @@ export function MoreScreen() {
           color: color.inkMuted,
         }}
       >
-        {g.title}
+        {t(g.title)}
       </h2>
       <Card>
         <div style={{ display: 'grid' }}>
@@ -130,8 +131,8 @@ export function MoreScreen() {
                   <Icon name={r.icon} size={22} />
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontFamily: font.body, fontSize: 16, fontWeight: 700 }}>{r.label}</span>
-                  <span style={{ display: 'block', fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{r.hint}</span>
+                  <span style={{ display: 'block', fontFamily: font.body, fontSize: 16, fontWeight: 700 }}>{t(r.label)}</span>
+                  <span style={{ display: 'block', fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{t(r.hint)}</span>
                 </span>
                 {r.badge ? (
                   <span

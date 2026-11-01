@@ -15,7 +15,6 @@ import { useCrm } from '../../store';
 import { formatDay, relativeDay } from '../../logic/dates';
 import { compareByAttention, STATE_LABEL, stateTone } from '../../logic/membership';
 import { formatINR } from '../../logic/money';
-import { countOf } from '../../logic/plural';
 import { formatPhone, initials, matchesQuery } from '../../logic/members';
 import { isPtMembership, ptEndingMemberIds } from '../../logic/pt';
 import { activeBatches, ALL_BATCHES, countWithoutBatch, inBatch, listBatches, memberBatch, NO_BATCH } from '../../logic/batches';
@@ -40,6 +39,7 @@ import {
   useIsCompact,
 } from '../kit';
 import { Link, navigate } from '../router';
+import { t } from '../../lang/lang';
 
 /**
  * A home tile's list is kept apart from the status chips (`tile:<id>`): the "Active members" tile
@@ -72,19 +72,21 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
   return (
     <>
       <PageHeader
-        title="Members"
+        title={t('Members')}
         subtitle={
           app
-            ? 'Who has the MettleUp app on their phone'
-            : countOf(memberViews.length, 'member')
+            ? t('Who has the MettleUp app on their phone')
+            : memberViews.length === 1
+              ? t('1 member')
+              : t('{n} members', { n: memberViews.length })
         }
         actions={
           app ? undefined : (
             <>
-              <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
+              <Button wrap onClick={() => setAdding(true)}>{t('+ Add member')}</Button>
               {/* Day one: a register or sheet comes in all at once (RESEARCH.md §9 rec 9). */}
               <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
-                Import from Excel
+                {t('Import from Excel')}
               </Button>
             </>
           )
@@ -93,12 +95,12 @@ export function MembersScreen({ section, filter: initialFilter, startAdding }: {
       <div style={{ marginBottom: space.lg }}>
         <ChipToggle
           variant="tabs"
-          label="Which members"
+          label={t('Which members')}
           value={app ? 'app' : 'roster'}
           onChange={(v) => navigate(v === 'app' ? '/members/app' : '/members')}
           options={[
-            { value: 'roster', label: 'All members' },
-            { value: 'app', label: 'Joined in the app' },
+            { value: 'roster', label: t('All members') },
+            { value: 'app', label: t('Joined in the app') },
           ]}
         />
       </div>
@@ -197,10 +199,10 @@ function RosterSection({
         ? [{ value: batch, label: `${inRows.find((b) => b.key === batch)?.name ?? batch} (${here.get(batch) ?? 0})` }]
         : [];
     return [
-      { value: ALL_BATCHES, label: `All batches (${members.length})` },
+      { value: ALL_BATCHES, label: t('All batches ({n})', { n: members.length }) },
       ...batches.map((b) => ({ value: b.key, label: `${b.name} (${here.get(b.key) ?? 0})` })),
       ...picked,
-      { value: NO_BATCH, label: `No batch (${none})` },
+      { value: NO_BATCH, label: t('No batch ({n})', { n: none }) },
     ];
   }, [statusRows, batches, batch]);
   const narrowed = Boolean(query.trim()) || batch !== ALL_BATCHES;
@@ -208,11 +210,11 @@ function RosterSection({
   return (
     <>
       <Row gap={space.md}>
-        <SearchField value={query} onChange={setQuery} placeholder="Search name or mobile number" />
+        <SearchField value={query} onChange={setQuery} placeholder={t('Search name or mobile number')} />
         {/* Only once the gym uses batches: a filter with nothing in it is a blank hole. */}
         {(batches.length > 0 || batch !== ALL_BATCHES) && (
           <select
-            aria-label="Filter by batch"
+            aria-label={t('Filter by batch')}
             value={batch}
             onChange={(e) => setBatch(e.target.value)}
             style={batchSelect}
@@ -228,22 +230,22 @@ function RosterSection({
 
       <div style={{ margin: `${space.md}px 0 ${space.lg}px` }}>
         <ChipToggle
-          label="Filter members"
+          label={t('Filter members')}
           value={filter}
           onChange={(v) => setFilter(v as Filter)}
           options={[
-            { value: 'all', label: 'All', count: counts.all },
-            { value: 'expired', label: 'Expired', count: counts.expired ?? 0 },
-            { value: 'expiring', label: 'Expiring', count: counts.expiring ?? 0 },
-            { value: 'active', label: 'Active', count: counts.active ?? 0 },
-            { value: 'dues', label: 'Has dues', count: counts.dues },
-            { value: 'never', label: 'No membership', count: counts.never ?? 0 },
+            { value: 'all', label: t('All'), count: counts.all },
+            { value: 'expired', label: t('Expired'), count: counts.expired ?? 0 },
+            { value: 'expiring', label: t('Expiring'), count: counts.expiring ?? 0 },
+            { value: 'active', label: t('Active'), count: counts.active ?? 0 },
+            { value: 'dues', label: t('Has dues'), count: counts.dues },
+            { value: 'never', label: t('No membership'), count: counts.never ?? 0 },
             ...(sellsPt || filter === 'pt-ending'
-              ? [{ value: 'pt-ending', label: 'PT ending', count: counts['pt-ending'] ?? 0 }]
+              ? [{ value: 'pt-ending', label: t('PT ending'), count: counts['pt-ending'] ?? 0 }]
               : []),
-            { value: 'archived', label: 'Archived', count: counts.archived },
+            { value: 'archived', label: t('Archived'), count: counts.archived },
             // A home tile's list: its own chip, first in mind, until another chip is picked.
-            ...(tile ? [{ value: filter, label: tileLabel(tile), count: rows.length }] : []),
+            ...(tile ? [{ value: filter, label: t(tileLabel(tile)), count: rows.length }] : []),
           ]}
         />
       </div>
@@ -252,7 +254,7 @@ function RosterSection({
       {queueKind && rows.length > 0 && (
         <div style={{ marginBottom: space.lg }}>
           <Button needsInternet onClick={() => setQueue(true)}>
-            {`WhatsApp all ${rows.length}, one by one`}
+            {t('WhatsApp all {n}, one by one', { n: rows.length })}
           </Button>
         </div>
       )}
@@ -261,21 +263,21 @@ function RosterSection({
       {rows.length === 0 ? (
         <Card>
           <EmptyState
-            title={narrowed ? 'Nobody matches that' : 'No members yet'}
+            title={narrowed ? t('Nobody matches that') : t('No members yet')}
             body={
               !query.trim() && batch !== ALL_BATCHES
-                ? 'Nobody in this batch fits this filter. Pick “All batches” to see everyone.'
+                ? t('Nobody in this batch fits this filter. Pick “All batches” to see everyone.')
                 : query
-                ? 'Try part of a name, or the last four digits of their mobile number.'
-                : 'Add your first member. Then you can sell them a membership.'
+                ? t('Try part of a name, or the last four digits of their mobile number.')
+                : t('Add your first member. Then you can sell them a membership.')
             }
             action={
               !narrowed && (
                 <Row gap={space.sm}>
-                  <Button wrap onClick={() => setAdding(true)}>+ Add member</Button>
+                  <Button wrap onClick={() => setAdding(true)}>{t('+ Add member')}</Button>
                   {memberViews.length === 0 && (
                     <Button variant="ghost" wrap needsInternet onClick={() => navigate('/members/import')}>
-                      Import from Excel
+                      {t('Import from Excel')}
                     </Button>
                   )}
                 </Row>
@@ -310,7 +312,7 @@ function RosterSection({
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {h}
+                      {t(h)}
                     </th>
                   ))}
                 </tr>
@@ -363,7 +365,7 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
         </Row>
       </td>
       <td style={cell}>
-        <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
+        <Pill tone={stateTone(view.state)}>{t(STATE_LABEL[view.state])}</Pill>
       </td>
       <td style={{ ...cell, color: color.inkSecondary, fontSize: 13 }}>{current?.planName ?? '—'}</td>
       <td style={{ ...cell, fontSize: 13 }}>
@@ -377,7 +379,7 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
         )}
       </td>
       <td style={{ ...cell, fontSize: 13, color: color.inkSecondary }}>
-        {view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : 'never'}
+        {view.lastVisitOn ? relativeDay(view.lastVisitOn, today) : t('never')}
       </td>
       <td style={{ ...cell, textAlign: 'right' }}>
         {view.outstandingP > 0 ? (
@@ -404,7 +406,7 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
               <span style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>
                 {member.fullName}
               </span>
-              <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>
+              <Pill tone={stateTone(view.state)}>{t(STATE_LABEL[view.state])}</Pill>
             </Row>
             <div style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, marginTop: 2 }}>
               {formatPhone(member.phone)}
@@ -416,11 +418,11 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
                     view.coversUntil ?? current.endsOn,
                     today,
                   )}`
-                : 'No membership'}
+                : t('No membership')}
               {view.outstandingP > 0 && (
                 <span style={{ color: color.warning, fontWeight: 700 }}>
                   {' '}
-                  · {`${formatINR(view.outstandingP)} due`}
+                  · {t('{amount} due', { amount: formatINR(view.outstandingP) })}
                 </span>
               )}
             </div>
@@ -445,7 +447,7 @@ function BatchLine({ name }: { name: string }) {
         whiteSpace: 'nowrap',
       }}
     >
-      {`Batch: ${name}`}
+      {t('Batch: {name}', { name })}
     </div>
   );
 }

@@ -7,7 +7,8 @@
  * category on whether it saves them a task, not on how it looks.
  */
 
-import { collectedOn, tileCounts } from '../../logic/homeTiles';
+import { collectedOn, gymHasRecords, tileCounts } from '../../logic/homeTiles';
+import { t } from '../../lang/lang';
 import { dueCount } from '../../logic/enquiries';
 import { GetStartedCard } from '../GetStartedCard';
 import { QuickActions } from '../QuickActions';
@@ -31,7 +32,6 @@ import { atRiskList, isRegisterInUse, riskReasonShort } from '../../logic/attend
 import { formatDay, monthKey, relativeDay } from '../../logic/dates';
 import { compareByAttention, needsAttentionToday, WINBACK_WINDOW_DAYS } from '../../logic/membership';
 import { formatINR, sumPaise } from '../../logic/money';
-import { countOf } from '../../logic/plural';
 import { formatPhone, initials, phoneDigits } from '../../logic/members';
 import type { Member } from '../../types';
 import {
@@ -118,12 +118,16 @@ export function TodayScreen() {
   // two completely different messages.
   const registerUsed = useMemo(() => isRegisterInUse(snapshot.visits, today), [snapshot.visits, today]);
 
+  // Owner, 1 Nov 2026: a brand-new gym sees Get started, not a wall of zeros. The tiles and lists
+  // come back by themselves with the first member, sale, payment, visit or enquiry.
+  const hasRecords = gymHasRecords(snapshot);
+
   return (
     <>
       <PageHeader
         // The gym's name is already in the sidebar (and the phone's top bar); a
         // second copy as the page title said nothing about which page this is.
-        title="Today"
+        title={t('Today')}
         subtitle={formatDay(today)}
       />
 
@@ -160,6 +164,8 @@ export function TodayScreen() {
       </Grid>
       <div style={{ height: space.md }} />
 
+      {hasRecords && (
+      <>
       {/* Gym Panel step 3 (15 Oct 2026): the tiles Jaipur owners already know from GoGym4U and
           GymBook, in their order — today's money first, then who is about to end (today, 1-3,
           4-7, 8-15 days), who has ended, fees due, birthdays and who came in today. Every tile
@@ -167,81 +173,81 @@ export function TodayScreen() {
       <Grid min={compact ? 140 : 200}>
         {seeTotals && (
           <StatTile
-            label="Today's collection"
+            label={t("Today's collection")}
             value={formatINR(collectedToday)}
             tone="good"
             onClick={() => navigate('/money/today')}
-            sub={`This month ${formatINR(stats.collectedThisMonth)}`}
+            sub={t('This month {amount}', { amount: formatINR(stats.collectedThisMonth) })}
           />
         )}
         <StatTile
-          label="Active members"
+          label={t('Active members')}
           value={tiles.active}
           tone="accent"
           onClick={() => navigate('/members/f/active')}
-          sub="With a running plan"
+          sub={t('With a running plan')}
         />
         <StatTile
-          label="Ending today"
+          label={t('Ending today')}
           value={tiles['exp-today']}
           tone={tiles['exp-today'] > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/exp-today')}
-          sub="Last day of their plan"
+          sub={t('Last day of their plan')}
         />
         <StatTile
-          label="Ending in 1-3 days"
+          label={t('Ending in 1-3 days')}
           value={tiles['exp-1-3']}
           tone={tiles['exp-1-3'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-1-3')}
-          sub="Renew them now"
+          sub={t('Renew them now')}
         />
         <StatTile
-          label="Ending in 4-7 days"
+          label={t('Ending in 4-7 days')}
           value={tiles['exp-4-7']}
           tone={tiles['exp-4-7'] > 0 ? 'warn' : undefined}
           onClick={() => navigate('/members/f/exp-4-7')}
-          sub="Remind them this week"
+          sub={t('Remind them this week')}
         />
         <StatTile
-          label="Ending in 8-15 days"
+          label={t('Ending in 8-15 days')}
           value={tiles['exp-8-15']}
           onClick={() => navigate('/members/f/exp-8-15')}
-          sub="Coming up"
+          sub={t('Coming up')}
         />
         <StatTile
-          label="Expired"
+          label={t('Expired')}
           value={tiles.expired}
           tone={tiles.expired > 0 ? 'critical' : undefined}
           onClick={() => navigate('/members/f/expired')}
-          sub={`${stats.recentlyLapsed} in the last ${WINBACK_WINDOW_DAYS} days`}
+          sub={t('{n} in the last {days} days', { n: stats.recentlyLapsed, days: WINBACK_WINDOW_DAYS })}
         />
         {seeTotals && (
           <StatTile
-            label="Fees due"
+            label={t('Fees due')}
             value={formatINR(stats.duesTotalP)}
             tone={stats.duesTotalP > 0 ? 'warn' : undefined}
             onClick={() => navigate('/money/dues')}
-            sub={countOf(stats.dues.length, 'member')}
+            sub={stats.dues.length === 1 ? t('1 member') : t('{n} members', { n: stats.dues.length })}
           />
         )}
         <StatTile
-          label="Birthdays today"
+          label={t('Birthdays today')}
           value={tiles.birthday}
           onClick={() => navigate('/members/f/birthday')}
-          sub="Send a wish"
+          sub={t('Send a wish')}
         />
         <StatTile
-          label="Came in today"
+          label={t('Came in today')}
           value={stats.visitsToday}
           onClick={() => navigate('/attendance')}
-          sub="Open the register"
+          sub={t('Open the register')}
         />
         <StatTile
-          label="Enquiries to call"
+          label={t('Enquiries to call')}
           value={enquiriesDue}
           tone={enquiriesDue > 0 ? 'warn' : undefined}
           onClick={() => navigate('/enquiries')}
-          sub="Follow-ups due"
+          sub={t('Follow-ups due')}
         />
         {/* "Losing the habit" is not a tile: it is the list right below, and the
             same number twice on one screen is a duplicate, not a summary. */}
@@ -258,16 +264,16 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/members">
-                <span style={moreLink}>See all</span>
+                <span style={moreLink}>{t('See all')}</span>
               </Link>
             }
           >
-            Talk to these members
+            {t('Talk to these members')}
           </SectionTitle>
           {renewals.length === 0 ? (
             <EmptyState
-              title="Nobody to follow up"
-              body={`No plans are ending soon, and no plan ended in the last ${WINBACK_WINDOW_DAYS} days.`}
+              title={t('Nobody to follow up')}
+              body={t('No plans are ending soon, and no plan ended in the last {days} days.', { days: WINBACK_WINDOW_DAYS })}
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -280,7 +286,7 @@ export function TodayScreen() {
                       ? `${v.current.planName} · ${
                           v.state === 'expired' ? 'expired' : 'ends'
                         } ${relativeDay(v.coversUntil ?? v.current.endsOn, today)}`
-                      : 'No membership'
+                      : t('No membership')
                   }
                   tone={v.state === 'expired' ? color.criticalText : color.warning}
                 />
@@ -293,24 +299,24 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/attendance/risk">
-                <span style={moreLink}>See all</span>
+                <span style={moreLink}>{t('See all')}</span>
               </Link>
             }
           >
-            Losing the habit
+            {t('Losing the habit')}
           </SectionTitle>
           {atRisk.length === 0 ? (
             registerUsed ? (
               <EmptyState
-                title="Everybody is training"
-                body="Every member with a running plan is coming as usual."
+                title={t('Everybody is training')}
+                body={t('Every member with a running plan is coming as usual.')}
               />
             ) : (
               // Claiming everyone is training would be inventing evidence this gym
               // has not yet produced.
               <EmptyState
-                title="Start checking members in"
-                body="After a few days of check-ins, this fills in by itself."
+                title={t('Start checking members in')}
+                body={t('After a few days of check-ins, this fills in by itself.')}
               />
             )
           ) : (
@@ -333,16 +339,16 @@ export function TodayScreen() {
           <SectionTitle
             action={
               <Link to="/money/dues">
-                <span style={moreLink}>See all</span>
+                <span style={moreLink}>{t('See all')}</span>
               </Link>
             }
           >
-            Money to collect
+            {t('Money to collect')}
           </SectionTitle>
           {duesList.length === 0 ? (
             <EmptyState
-              title="Everyone has paid"
-              body="No member has dues."
+              title={t('Everyone has paid')}
+              body={t('No member has dues.')}
             />
           ) : (
             <div style={{ display: 'grid', gap: space.sm }}>
@@ -350,7 +356,7 @@ export function TodayScreen() {
                 <PersonRow
                   key={v.member.id}
                   member={v.member}
-                  detail={`${formatINR(v.outstandingP)} due`}
+                  detail={t('{amount} due', { amount: formatINR(v.outstandingP) })}
                   tone={color.warning}
                 />
               ))}
@@ -358,6 +364,8 @@ export function TodayScreen() {
           )}
         </Card>
       </Grid>
+      </>
+      )}
     </>
   );
 }
@@ -380,19 +388,19 @@ function MessageNudges() {
   if (!canOpen(role, '/messages') || (counts.birthdays === 0 && counts.ending === 0)) return null;
   const rows = [
     counts.birthdays > 0 && {
-      text: counts.birthdays === 1 ? '1 birthday today' : `${counts.birthdays} birthdays today`,
-      action: 'Send wishes',
+      text: counts.birthdays === 1 ? t('1 birthday today') : t('{n} birthdays today', { n: counts.birthdays }),
+      action: t('Send wishes'),
       to: '/messages/birthday',
     },
     counts.ending > 0 && {
-      text: counts.ending === 1 ? '1 plan ends this week' : `${counts.ending} plans end this week`,
-      action: 'Remind them',
+      text: counts.ending === 1 ? t('1 plan ends this week') : t('{n} plans end this week', { n: counts.ending }),
+      action: t('Remind them'),
       to: '/messages/ending',
     },
   ].filter((r): r is { text: string; action: string; to: string } => Boolean(r));
   return (
     <Card pad={space.lg} style={{ marginBottom: space.md }}>
-      <SectionTitle>Messages to send</SectionTitle>
+      <SectionTitle>{t('Messages to send')}</SectionTitle>
       <div style={{ display: 'grid', gap: space.sm, marginTop: -space.sm }}>
         {rows.map((r) => (
           <Row key={r.to} gap={space.md} wrap={false}>
@@ -489,7 +497,7 @@ function PersonRow({ member, detail, tone }: { member: Member; detail: string; t
           justifyContent: 'center',
         }}
       >
-        Message
+        {t('Message')}
       </a>
     </Row>
   );

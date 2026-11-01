@@ -14,9 +14,12 @@ import { demoSnapshot } from '../data/demo';
 import { todayISO } from '../logic/dates';
 import { ShopProvider } from '../shop/ShopProvider';
 import { CrmProvider } from '../store';
+import { useLang } from '../lang/lang';
 import { DEMO_BAR_HEIGHT, DemoBar, DemoProvider, type DemoInfo } from './demoMode';
 
 export function DemoApp({ hasOwnGym }: DemoInfo) {
+  // English | Hinglish: a switch draws the demo gym again in the new words.
+  useLang();
   // A new copy of the sample gym every time the page opens. `memoryStore` is a Map, not localStorage.
   const data = useMemo(() => new LocalCrmData({ store: memoryStore(), seed: () => demoSnapshot(todayISO()) }), []);
   const info = useMemo<DemoInfo>(() => ({ hasOwnGym }), [hasOwnGym]);

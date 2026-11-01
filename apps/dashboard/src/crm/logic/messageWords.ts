@@ -3,8 +3,8 @@
  * (Messages & offers step 1, 22 Oct 2026; docs/overhaul/research/R-offers-notices.md §7). PURE.
  *
  * Hindi is Devanagari and natural spoken Hindi ("रविवार 8 नवंबर", "सुबह 6 बजे"), never Hinglish:
- * the admin app's own screens stay English (test/crm/englishOnly.test.ts); only the words that go
- * to members may be Hindi, and only when the owner picks it.
+ * the admin app's own screens are English, or Hinglish in Latin letters if the owner picks it (lang/,
+ * test/crm/hinglish.test.ts); only the words that go to members may be Hindi, and only when the owner picks it.
  */
 
 import { isValidDateISO, partsOf, type DateISO } from './dates';

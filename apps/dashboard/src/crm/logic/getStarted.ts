@@ -40,3 +40,25 @@ export function getStartedSteps(s: Pick<CrmSnapshot, 'plans' | 'members'>, ticke
 export function stepsLine(steps: readonly Step[]): string {
   return `${steps.filter((x) => x.done).length} of ${steps.length} done`;
 }
+
+/**
+ * Owner, 1 Nov 2026: the Get started step a screen belongs to (its own path, or a page under it:
+ * "/members/<id>" after adding a member is still the members step). PURE.
+ */
+export function stepForPath(steps: readonly Step[], path: string): Step | null {
+  const p = path.split('?')[0]!.replace(/\/+$/, '') || '/';
+  return steps.find((s) => p === s.path || p.startsWith(`${s.path}/`)) ?? null;
+}
+
+/**
+ * The next step still to do after `key`, in the list's order, starting again at the top; never
+ * `key` itself. Null when every other step is done. PURE.
+ */
+export function nextStepAfter(steps: readonly Step[], key: StepKey): Step | null {
+  const at = steps.findIndex((s) => s.key === key);
+  for (let i = 1; i < steps.length; i++) {
+    const s = steps[(at + i) % steps.length]!;
+    if (!s.done && s.key !== key) return s;
+  }
+  return null;
+}

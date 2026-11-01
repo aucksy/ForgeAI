@@ -12,6 +12,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { t } from '../lang/lang';
 import { Button, ErrorBanner, Sheet, TextField, Toast, color, font } from '../ui/kit';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
@@ -23,7 +24,7 @@ export function PinFields({
   again,
   onPin,
   onAgain,
-  label = 'Choose a 6-digit PIN',
+  label,
 }: {
   pin: string;
   again: string;
@@ -34,16 +35,16 @@ export function PinFields({
   return (
     <>
       <TextField
-        label={label}
+        label={label ?? t('Choose a 6-digit PIN')}
         type="password"
         inputMode="numeric"
         value={pin}
         onChange={(v) => onPin(cleanCode(v))}
         placeholder="••••••"
-        hint={PIN_HINT}
+        hint={t(PIN_HINT)}
       />
       <TextField
-        label="Type the PIN again"
+        label={t('Type the PIN again')}
         type="password"
         inputMode="numeric"
         value={again}

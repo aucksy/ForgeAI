@@ -17,6 +17,8 @@ import { useState, type ReactNode } from 'react';
 
 import { useAuth } from '../auth/AuthProvider';
 import { ThemeToggle } from './ThemeToggle';
+import { LangToggle } from './LangToggle';
+import { t } from '../lang/lang';
 import { SignInForm, StartGymForm } from '../auth/SignInForms';
 import { isStartLink, START_PROMISE } from '../logic/trial';
 import { useShop } from '../shop/ShopProvider';
@@ -45,7 +47,7 @@ export function Welcome() {
       await fn();
     } catch (e) {
       if (which === 'demo') setDemoFailed(true);
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+      setError(e instanceof Error ? e.message : t('Something went wrong. Please try again.'));
       setBusy(null);
     }
   };
@@ -53,10 +55,10 @@ export function Welcome() {
   const signInCard: ReactNode = (
     <Card>
       <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-        {startFirst ? 'Already use MettleUp? Sign in' : 'Sign in'}
+        {startFirst ? t('Already use MettleUp? Sign in') : t('Sign in')}
       </h2>
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        Sign in with your mobile number and your 6-digit PIN.
+        {t('Sign in with your mobile number and your 6-digit PIN.')}
       </p>
       <SignInForm key={signInPhone} startPhone={signInPhone} />
     </Card>
@@ -72,11 +74,11 @@ export function Welcome() {
       }}
     >
       <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-        {startFirst ? 'Start your gym' : 'New here? Set up your gym'}
+        {startFirst ? t('Start your gym') : t('New here? Set up your gym')}
       </h2>
-      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{START_PROMISE}</p>
+      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{t(START_PROMISE)}</p>
       <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        Starts empty. You add your own members and prices.
+        {t('Starts empty. You add your own members and prices.')}
       </p>
       <StartGymForm
         onSignInInstead={(phone) => {
@@ -98,7 +100,9 @@ export function Welcome() {
       }}
     >
       <div style={{ width: '100%', maxWidth: 460 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: space.lg }}>
+        {/* 1 Nov 2026: English | Hinglish beside Dark | Light; both wrap under each other on a narrow phone. */}
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: space.sm, marginBottom: space.lg }}>
+          <LangToggle />
           <ThemeToggle />
         </div>
         <div style={{ textAlign: 'center', marginBottom: space.xxl }}>
@@ -115,10 +119,10 @@ export function Welcome() {
             Mettle<span style={{ color: color.accent }}>Up</span>
           </div>
           <div style={{ marginTop: 2, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.inkSecondary, letterSpacing: 0.4 }}>
-            for Gyms
+            {t('for Gyms')}
           </div>
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 15, color: color.inkSecondary }}>
-            Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the MettleUp app.
+            {t('Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the MettleUp app.')}
           </p>
         </div>
 
@@ -139,10 +143,10 @@ export function Welcome() {
           </div>
         )}
 
-        <div role="tablist" aria-label="Sign in or set up" style={{ display: 'flex', gap: space.sm, marginBottom: space.md }}>
+        <div role="tablist" aria-label={t('Sign in or set up')} style={{ display: 'flex', gap: space.sm, marginBottom: space.md }}>
           {([
-            ['signin', 'Sign in'],
-            ['start', 'Set up a new gym'],
+            ['signin', t('Sign in')],
+            ['start', t('Set up a new gym')],
           ] as const).map(([id, label]) => (
             <button
               key={id}
@@ -172,10 +176,10 @@ export function Welcome() {
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-            See it working
+            {t('See it working')}
           </h2>
           <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-            Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the MettleUp app can join and order, and you see the order here.
+            {t('Opens a sample gym with made-up members, payments and a shop. You get a real gym code. A phone with the MettleUp app can join and order, and you see the order here.')}
           </p>
 
           {error && (
@@ -188,10 +192,10 @@ export function Welcome() {
             {/* UAT 1 Nov 2026: on "Set up a new gym" the bright button is "Create my gym", not the demo. */}
             <Button full variant={tab === 'start' ? 'ghost' : 'primary'} disabled={busy !== null} onClick={() => run('demo', startDemo)}>
               {busy === 'demo'
-                ? 'Starting your demo gym…'
+                ? t('Starting your demo gym…')
                 : demoFailed
-                  ? 'Try again'
-                  : 'Start demo'}
+                  ? t('Try again')
+                  : t('Start demo')}
             </Button>
           </div>
 
@@ -200,7 +204,7 @@ export function Welcome() {
               {/* U-A9 (17 Oct 2026): `wrap`. On one line this label is ~430px, so on a 390px phone the
                   whole welcome screen went wider than the phone and its right edge was cut off. */}
               <Button variant="quiet" wrap disabled={busy !== null} onClick={() => run('local', loadDemoGym)}>
-                Open the demo without the shop (works without internet)
+                {t('Open the demo without the shop. It works without internet.')}
               </Button>
             </div>
           )}

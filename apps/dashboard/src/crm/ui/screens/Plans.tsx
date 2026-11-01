@@ -15,6 +15,7 @@ import { formatDay } from '../../logic/dates';
 import { computeEndDate } from '../../logic/membership';
 import { formatINR, parseCount, parseRupeeInput } from '../../logic/money';
 import { starterPlans } from '../../data/demo';
+import { t } from '../../lang/lang';
 import { cleanTrainer, isPtPlan, PT_MAX_SESSIONS, ptPlanLine } from '../../logic/pt';
 import type { DurationUnit, Plan, PlanDraft } from '../../types';
 import {
@@ -74,8 +75,8 @@ export function PlansScreen() {
     } catch (e) {
       setError(
         e instanceof Error
-          ? `${e.message} Some plans may already be added. Check the list.`
-          : 'Could not add the starter plans.',
+          ? `${e.message} ${t('Some plans may already be added. Check the list.')}`
+          : t('Could not add the starter plans. Please try again.'),
       );
     } finally {
       setSeeding(false);
@@ -85,9 +86,9 @@ export function PlansScreen() {
   return (
     <>
       <PageHeader
-        title="Plans"
-        subtitle="What you sell, and for how much"
-        actions={canEdit ? <Button needsInternet onClick={() => setAdding(true)}>+ Add plan</Button> : undefined}
+        title={t('Plans')}
+        subtitle={t('What you sell, and for how much')}
+        actions={canEdit ? <Button needsInternet onClick={() => setAdding(true)}>{t('+ Add plan')}</Button> : undefined}
       />
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -95,18 +96,18 @@ export function PlansScreen() {
       {plans.length === 0 ? (
         <Card>
           <EmptyState
-            title="No plans yet"
+            title={t('No plans yet')}
             body={
               canEdit
-                ? 'Add your own, or start from a typical Indian gym price list and edit the numbers.'
-                : 'Ask your gym owner to add the plans you sell.'
+                ? t('Add your own, or start from a typical Indian gym price list and edit the numbers.')
+                : t('Ask your gym owner to add the plans you sell.')
             }
             action={
               canEdit && (
               <Row gap={space.sm}>
-                <Button needsInternet onClick={() => setAdding(true)}>+ Add plan</Button>
+                <Button needsInternet onClick={() => setAdding(true)}>{t('+ Add plan')}</Button>
                 <Button variant="ghost" needsInternet onClick={addStarterPlans} disabled={seeding}>
-                  {seeding ? 'Adding…' : 'Use a starter price list'}
+                  {seeding ? t('Adding…') : t('Use a starter price list')}
                 </Button>
               </Row>
               )
@@ -163,7 +164,7 @@ function PlanRow({
     <div style={{ minWidth: 0 }}>
       <Row gap={space.sm}>
         <span style={{ fontFamily: font.display, fontSize: 16, fontWeight: 700, color: color.ink }}>{plan.name}</span>
-        {!plan.active && <Pill tone="muted">Not for sale</Pill>}
+        {!plan.active && <Pill tone="muted">{t('Not for sale')}</Pill>}
       </Row>
       {ptPlanLine(plan) && (
         <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 2, overflowWrap: 'anywhere' }}>
@@ -187,20 +188,20 @@ function PlanRow({
       {durationLabel(plan.durationUnit, plan.durationCount)}
       <div style={{ color: color.inkMuted, fontSize: 12, marginTop: 2 }}>
         {plan.joiningFeeP > 0
-          ? `+ ${formatINR(plan.joiningFeeP)} joining fee`
-          : 'No joining fee'}
+          ? t('+ {amount} joining fee', { amount: formatINR(plan.joiningFeeP) })
+          : t('No joining fee')}
       </div>
     </div>
   );
   const runs = (
     <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-      Sold today, runs until
+      {t('Sold today, runs until')}
       <div style={{ color: color.inkSecondary, fontSize: 13, marginTop: 2 }}>{formatDay(sample)}</div>
     </div>
   );
   const edit = onEdit ? (
-    <Button variant="ghost" needsInternet onClick={onEdit} ariaLabel={`Edit ${plan.name}`}>
-      Edit
+    <Button variant="ghost" needsInternet onClick={onEdit} ariaLabel={t('Edit {name}', { name: plan.name })}>
+      {t('Edit')}
     </Button>
   ) : null;
 
@@ -248,9 +249,9 @@ function PlanRow({
 }
 
 function durationLabel(unit: DurationUnit, count: number): string {
-  if (unit === 'day') return count === 1 ? '1 day' : `${count} days`;
-  if (count === 12) return '12 months (1 year)';
-  return count === 1 ? '1 month' : `${count} months`;
+  if (unit === 'day') return count === 1 ? t('1 day') : t('{n} days', { n: count });
+  if (count === 12) return t('12 months (1 year)');
+  return count === 1 ? t('1 month') : t('{n} months', { n: count });
 }
 
 function PlanSheet({
@@ -281,7 +282,7 @@ function PlanSheet({
   const submit = async () => {
     const trimmed = name.trim();
     // UAT A-27 (30 Oct 2026): every other form puts the error under the box that is wrong.
-    if (trimmed.length < 2) return setNameError('Give the plan a name.');
+    if (trimmed.length < 2) return setNameError(t('Give the plan a name.'));
     setNameError(null);
 
     // Strict: `Number('0x10')` is 16 and `Number('1e2')` is 100 — the same trap
@@ -289,20 +290,20 @@ function PlanSheet({
     const countNum = parseCount(count, 1, 120);
     if (countNum === null) {
       return setError(
-        'Duration must be a whole number between 1 and 120.',
+        t('Duration must be a whole number between 1 and 120.'),
       );
     }
 
     const priceP = parseRupeeInput(price);
-    if (priceP === null) return setError('The price looks wrong. Type it again.');
+    if (priceP === null) return setError(t('The price looks wrong. Type it again.'));
 
     const joiningFeeP = joining.trim() === '' ? 0 : parseRupeeInput(joining);
-    if (joiningFeeP === null) return setError('The joining fee looks wrong. Type it again.');
+    if (joiningFeeP === null) return setError(t('The joining fee looks wrong. Type it again.'));
 
     const ptSessions = pt ? parseCount(sessions, 1, PT_MAX_SESSIONS) : null;
     if (pt && ptSessions === null) {
       return setError(
-        `PT sessions must be a whole number between 1 and ${PT_MAX_SESSIONS}.`,
+        t('PT sessions must be a whole number between 1 and {max}.', { max: PT_MAX_SESSIONS }),
       );
     }
 
@@ -326,7 +327,7 @@ function PlanSheet({
       else await createPlan(draft);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save this plan.');
+      setError(e instanceof Error ? e.message : t('Could not save this plan. Please try again.'));
     } finally {
       setSaving(false);
     }
@@ -334,15 +335,15 @@ function PlanSheet({
 
   return (
     <Sheet
-      title={editing ? 'Edit plan' : 'Add plan'}
+      title={editing ? t('Edit plan') : t('Add plan')}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button onClick={submit} disabled={saving}>
-            {saving ? 'Saving…' : 'Save plan'}
+            {saving ? t('Saving…') : t('Save plan')}
           </Button>
         </>
       }
@@ -351,33 +352,33 @@ function PlanSheet({
 
       {editing && (
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
-          A new price is used only for new sales. Memberships already sold keep their old price.
+          {t('A new price is used only for new sales. Memberships already sold keep their old price.')}
         </p>
       )}
 
-      <TextField label="Plan name" value={name} onChange={(v) => { setName(v); setNameError(null); }} placeholder="Quarterly" autoFocus error={nameError} />
+      <TextField label={t('Plan name')} value={name} onChange={(v) => { setName(v); setNameError(null); }} placeholder="Quarterly" autoFocus error={nameError} />
 
       <Grid min={200}>
-        <TextField label="Duration" value={count} onChange={setCount} inputMode="numeric" />
+        <TextField label={t('Duration')} value={count} onChange={setCount} inputMode="numeric" />
         <SelectField
-          label="Unit"
+          label={t('Unit')}
           value={unit}
           onChange={(v) => setUnit(v as DurationUnit)}
           options={[
-            { value: 'month', label: 'Months' },
-            { value: 'day', label: 'Days' },
+            { value: 'month', label: t('Months') },
+            { value: 'day', label: t('Days') },
           ]}
         />
       </Grid>
 
       <Grid min={200}>
-        <TextField label="Price (₹)" value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
+        <TextField label={t('Price (₹)')} value={price} onChange={setPrice} inputMode="decimal" placeholder="3000" />
         <TextField
-          label="Joining fee (₹)"
+          label={t('Joining fee (₹)')}
           value={joining}
           onChange={setJoining}
           inputMode="decimal"
-          hint="Charged once, on a member's first plan."
+          hint={t('Charged once, on a member’s first plan.')}
         />
       </Grid>
 
@@ -385,15 +386,15 @@ function PlanSheet({
       {pt && (
         <Grid min={200}>
           <TextField
-            label="PT sessions"
+            label={t('PT sessions')}
             value={sessions}
             onChange={setSessions}
             inputMode="numeric"
             placeholder="12"
-            hint="How many sessions this plan includes."
+            hint={t('How many sessions this plan includes.')}
           />
           <TextField
-            label="Trainer (optional)"
+            label={t('Trainer (optional)')}
             value={trainer}
             onChange={setTrainer}
             placeholder="Rohit"
@@ -401,15 +402,15 @@ function PlanSheet({
         </Grid>
       )}
 
-      <TextField label="Description (optional)" value={description} onChange={setDescription} multiline />
+      <TextField label={t('Description (optional)')} value={description} onChange={setDescription} multiline />
 
       <SelectField
-        label="For sale?"
+        label={t('For sale?')}
         value={active ? 'active' : 'retired'}
         onChange={(v) => setActive(v === 'active')}
         options={[
-          { value: 'active', label: 'For sale' },
-          { value: 'retired', label: 'Not for sale (hidden when selling)' },
+          { value: 'active', label: t('For sale') },
+          { value: 'retired', label: t('Not for sale (hidden when selling)') },
         ]}
       />
     </Sheet>
@@ -445,10 +446,10 @@ function PtSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => voi
       />
       <span style={{ minWidth: 0 }}>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 14, fontWeight: 700, color: color.ink }}>
-          PT plan
+          {t('PT plan')}
         </span>
         <span style={{ display: 'block', fontFamily: font.body, fontSize: 12, color: color.inkSecondary }}>
-          Personal training with a set number of sessions. Sold on top of their gym plan.
+          {t('Personal training with a set number of sessions. Sold on top of their gym plan.')}
         </span>
       </span>
     </label>

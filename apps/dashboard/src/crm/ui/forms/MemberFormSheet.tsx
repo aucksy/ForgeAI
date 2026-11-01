@@ -39,6 +39,7 @@ import { useDeskPhotoKey } from '../MemberPhoto';
 import { MemberPhotoError, saveMemberPhoto } from '../../shop/memberPhotoApi';
 import { photoServerWords } from '../../logic/memberPhoto';
 import { errorWords } from '../../shop/logic';
+import { t } from '../../lang/lang';
 
 /** The photo row on "Add member" (F107). */
 export const FORM_PHOTO_WORDS = {
@@ -123,7 +124,7 @@ export function MemberFormSheet({
     const result = validateMember(typed, today);
     if (!result.ok) {
       // UAT A-28 (30 Oct 2026): mark every wrong box at once and bring the first into view.
-      setFieldErrors(result.all ?? [{ field: result.field, message: result.message }]);
+      setFieldErrors((result.all ?? [{ field: result.field, message: result.message }]).map((e) => ({ ...e, message: t(e.message) })));
       requestAnimationFrame(() => {
         const first = document.querySelector<HTMLElement>('[aria-invalid="true"]');
         first?.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -165,11 +166,11 @@ export function MemberFormSheet({
         } else {
           setFieldErrors([{
             field: 'phone',
-            message: `${e.existing.fullName} already has this mobile number in Members.`,
+            message: t('{name} already has this mobile number in Members.', { name: e.existing.fullName }),
           }]);
         }
       } else {
-        setFormError(e instanceof Error ? e.message : 'Could not save this member.');
+        setFormError(e instanceof Error ? e.message : t('Could not save this member. Please try again.'));
       }
     } finally {
       setSaving(false);
@@ -213,7 +214,7 @@ export function MemberFormSheet({
 
   return (
     <Sheet
-      title={editing ? 'Edit member' : 'Add member'}
+      title={editing ? t('Edit member') : t('Add member')}
       onClose={close}
       wide
       footer={
@@ -222,14 +223,14 @@ export function MemberFormSheet({
         ) : (
           <>
             <Button variant="ghost" onClick={onClose}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button onClick={save} disabled={saving}>
               {saving
-                ? 'Saving…'
+                ? t('Saving…')
                 : editing
-                  ? 'Save changes'
-                  : 'Add member'}
+                  ? t('Save changes')
+                  : t('Add member')}
             </Button>
           </>
         )
@@ -290,7 +291,7 @@ export function MemberFormSheet({
       )}
 
       <TextField
-        label="Full name"
+        label={t('Full name')}
         value={form.fullName}
         onChange={set('fullName')}
         error={errorFor('fullName')}
@@ -300,17 +301,17 @@ export function MemberFormSheet({
 
       <Row gap={space.sm} align="flex-start">
         <div style={{ width: 110 }}>
-          <SelectField label="Code" value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
+          <SelectField label={t('Code')} value={form.dialCode} onChange={set('dialCode')} options={dialOptions} />
         </div>
         <div style={{ flex: 1, minWidth: 180 }}>
           <TextField
-            label="Mobile number"
+            label={t('Mobile number')}
             value={form.phone}
             onChange={set('phone')}
             error={errorFor('phone')}
             inputMode="tel"
             placeholder="98765 43210"
-            hint="Used to find them, and to send them WhatsApp messages."
+            hint={t('Used to find them, and to send them WhatsApp messages.')}
           />
         </div>
       </Row>
@@ -324,35 +325,35 @@ export function MemberFormSheet({
 
       <Grid min={220}>
         <TextField
-          label="Joining date"
+          label={t('Joining date')}
           value={form.joinedOn}
           onChange={set('joinedOn')}
           type="date"
           error={errorFor('joinedOn')}
         />
         <SelectField
-          label="Gender (optional)"
+          label={t('Gender (optional)')}
           value={form.gender}
           onChange={set('gender')}
           options={[
-            { value: '', label: 'Not stated' },
-            { value: 'male', label: 'Male' },
-            { value: 'female', label: 'Female' },
-            { value: 'other', label: 'Other' },
+            { value: '', label: t('Not stated') },
+            { value: 'male', label: t('Male') },
+            { value: 'female', label: t('Female') },
+            { value: 'other', label: t('Other') },
           ]}
         />
       </Grid>
 
       <Grid min={220}>
         <TextField
-          label="Date of birth (optional)"
+          label={t('Date of birth (optional)')}
           value={form.dateOfBirth}
           onChange={set('dateOfBirth')}
           type="date"
           error={errorFor('dateOfBirth')}
         />
         <TextField
-          label="Email (optional)"
+          label={t('Email (optional)')}
           value={form.email}
           onChange={set('email')}
           type="email"
@@ -361,16 +362,16 @@ export function MemberFormSheet({
         />
       </Grid>
 
-      <TextField label="Address (optional)" value={form.address} onChange={set('address')} />
+      <TextField label={t('Address (optional)')} value={form.address} onChange={set('address')} />
 
       <Grid min={220}>
         <TextField
-          label="Emergency contact (optional)"
+          label={t('Emergency contact (optional)')}
           value={form.emergencyName}
           onChange={set('emergencyName')}
         />
         <TextField
-          label="Emergency number (optional)"
+          label={t('Emergency number (optional)')}
           value={form.emergencyPhone}
           onChange={set('emergencyPhone')}
           inputMode="tel"
@@ -379,11 +380,11 @@ export function MemberFormSheet({
       </Grid>
 
       <TextField
-        label="Notes (optional)"
+        label={t('Notes (optional)')}
         value={form.notes}
         onChange={set('notes')}
         multiline
-        placeholder="Injuries, preferences, who referred them…"
+        placeholder={t('Injuries, preferences, who referred them…')}
       />
 
       {canSetBranches && (
@@ -427,12 +428,12 @@ function BatchField({
   if (batches.length === 0) {
     return (
       <TextField
-        label="Batch (optional)"
+        label={t('Batch (optional)')}
         value={value}
         onChange={onChange}
         error={error}
         placeholder="Morning 6-8"
-        hint="The time they train. Next time, you can pick it with one tap."
+        hint={t('The time they train. Next time, you can pick it with one tap.')}
       />
     );
   }
@@ -444,10 +445,10 @@ function BatchField({
     // whole form 570px wide on a 375px screen; this way the row fills the form and scrolls.
     <div style={{ marginTop: space.md, width: 0, minWidth: '100%' }}>
       <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
-        Batch (optional)
+        {t('Batch (optional)')}
       </div>
       <ChipToggle
-        label="Batch"
+        label={t('Batch')}
         value={picked}
         onChange={(v) => {
           if (v === NEW_BATCH) {
@@ -460,19 +461,19 @@ function BatchField({
         }}
         options={[
           ...batches.map((b) => ({ value: b.key, label: b.name, count: b.countN })),
-          { value: NONE, label: 'None' },
-          { value: NEW_BATCH, label: '+ New batch' },
+          { value: NONE, label: t('None') },
+          { value: NEW_BATCH, label: t('+ New batch') },
         ]}
       />
       {typing ? (
         <TextField
-          label="New batch name"
+          label={t('New batch name')}
           value={value}
           onChange={onChange}
           error={error}
           autoFocus
           placeholder="Evening 6-9"
-          hint={`Up to ${BATCH_MAX} letters.`}
+          hint={t('Up to {max} letters.', { max: BATCH_MAX })}
         />
       ) : (
         error && (

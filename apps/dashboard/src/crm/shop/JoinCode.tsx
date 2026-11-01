@@ -12,6 +12,7 @@ import { useCan } from '../auth/AuthProvider';
 import { useShop } from './ShopProvider';
 import { inviteMessage, whatsAppHref } from './invite';
 import { navigate } from '../ui/router';
+import { t } from '../lang/lang';
 
 export async function copyText(text: string): Promise<boolean> {
   try {
@@ -60,7 +61,7 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          The member app and shop are not turned on yet. Only an owner can turn them on.
+          {t('The member app and shop are not turned on yet. Only an owner can turn them on.')}
         </p>
       </Card>
     );
@@ -70,10 +71,10 @@ export function JoinCodeCard({
     return (
       <Card style={{ marginBottom: flush ? 0 : space.lg }}>
         <div style={{ fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>
-          Let members order from your gym in the MettleUp app
+          {t('Let members order from your gym in the MettleUp app.')}
         </div>
         <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-          Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.
+          {t('Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.')}
         </p>
         {error && (
           <div style={{ marginTop: space.md }}>
@@ -89,13 +90,13 @@ export function JoinCodeCard({
               try {
                 await connectShop();
               } catch (e) {
-                setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+                setError(e instanceof Error ? e.message : t('Something went wrong. Please try again.'));
               } finally {
                 setBusy(false);
               }
             }}
           >
-            {busy ? 'Turning on…' : 'Turn on the shop'}
+            {busy ? t('Turning on…') : t('Turn on the shop')}
           </Button>
         </div>
       </Card>
@@ -106,9 +107,7 @@ export function JoinCodeCard({
     <Card style={{ marginBottom: flush ? 0 : space.lg }} pad={space.xl}>
       {title && <SectionTitle>{title}</SectionTitle>}
       <div style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-        {'Members join in the '}
-        <strong style={{ color: color.ink }}>MettleUp app</strong>
-        {' with gym code'}
+        {t('Members join in the MettleUp app with this gym code:')}
       </div>
       <div
         style={{
@@ -154,28 +153,28 @@ export function JoinCodeCard({
             window.setTimeout(() => setCopied(null), 3000);
           }}
         >
-          {copied === 'yes' ? 'Copied ✓' : 'Copy code'}
+          {copied === 'yes' ? `${t('Copied')} ✓` : t('Copy code')}
         </Button>
       </div>
       {copied === 'no' && (
         <div role="status" style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          This browser blocked copying. The code is selected. Press Ctrl+C to copy it.
+          {t('This browser blocked copying. The code is selected. Press Ctrl+C to copy it.')}
         </div>
       )}
       <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
-        Easiest way: send members your gym’s link. One tap in the app and they are in. Or they can type this code in the app’s Shop tab. Their orders show up here.
+        {t('Easiest way: send members your gym’s link. One tap in the app and they are in. Or they can type this code in the app’s Shop tab. Their orders show up here.')}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
         <Button onClick={() => window.open(whatsAppHref(inviteMessage(cloud.name, cloud.joinCode)), '_blank', 'noopener')}>
-          Send link on WhatsApp
+          {t('Send link on WhatsApp')}
         </Button>
         <Button variant="ghost" onClick={() => navigate('/settings/invite')}>
-          Invite & QR poster
+          {t('Invite & QR poster')}
         </Button>
       </div>
       {!online && (
         <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.warning }}>
-          No internet right now. The code still works. New orders show up when the internet is back.
+          {t('No internet right now. The code still works. New orders show up when the internet is back.')}
         </div>
       )}
     </Card>
