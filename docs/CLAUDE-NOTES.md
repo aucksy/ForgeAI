@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-288. Build F52, F186 and every score-7 feature, then release — 2 Nov 2026
+
+He said (going to sleep): "Keep working. Also build F52 and F186 and then release everything once done. Update the tracker if you already built the features scored 7 otherwise build and release them too." This is his "release" for this batch (R-284 Settings, R-282 backup, R-286 body map, R-287 security, and the features below), after the full ship gate.
+
+Score 7: F137 busy times by exercise (Planned), F143 challenge rewards (Live; R-287 makes the owner confirm winners), F58 badge shelf, F73 long rest that inflates reps, F74 next sets follow RPE, F57 strength level per main lift (all Planned), T22 (Done, plan in #82). To build: F52, F186, F58, F73, F74, F57, F137. Helpers build each in its own worktree; I merge, test, run the whole phone round, release.
+
 ## R-287. Fix the 4 security holes (live database yes) — 2 Nov 2026
 
 He said: "yes, fix security" (his LIVE database yes for the R-286 security fixes: a typed check-in number needs one desk approval, a daily cap on wrong owner PIN tries, owners confirm challenge winners before free days, no AI import for demo gyms), and "will make buying decisions when we make money out of this" (RepDB Standard / TricksUp animations: not now, do not re-pitch until there is revenue).
