@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { ALL_PER_DAY, MAX_TEXT, PER_DAY, checkFeedback, handleFeedback } from './feedback.js';
+import { ALL_PER_DAY, MAX_TEXT, PER_DAY, checkFeedback, handleFeedback, limitNet } from './feedback.js';
 
 /** A tiny D1 stand-in: the two statements feedback.js uses. */
 function fakeD1({ fail = false } = {}) {
@@ -125,4 +125,14 @@ test('real SQL (every migration): an old app, the admin app and the new floating
       ['rest timer jumps', 'session/active', 'voice', 'new'],
     ],
   );
+});
+
+// R-286 security check: IPv6 limits count the /64, so one phone cannot dodge them with new addresses.
+test('limitNet keeps IPv4 and cuts IPv6 to its /64', () => {
+  assert.equal(limitNet('203.0.113.9'), '203.0.113.9');
+  assert.equal(limitNet('2401:4900:1c2a:5e10:aaaa:bbbb:cccc:dddd'), '2401:4900:1c2a:5e10::/64');
+  assert.equal(limitNet('2401:4900:1c2a:5e10::1'), '2401:4900:1c2a:5e10::/64');
+  assert.equal(limitNet('2401:4900::1'), '2401:4900:0:0::/64');
+  assert.equal(limitNet('2401:0db8:0001:0000:1::'), '2401:db8:1:0::/64');
+  assert.equal(limitNet('unknown'), 'unknown');
 });

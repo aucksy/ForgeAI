@@ -39,8 +39,22 @@ export function checkFeedback(body) {
   };
 }
 
+/**
+ * The network a limit counts by: an IPv4 address as it is, an IPv6 address cut to its /64 (one home
+ * or phone gets a whole /64, so per-address limits on IPv6 were free to dodge; R-286 security check).
+ */
+export function limitNet(ip) {
+  const s = String(ip ?? '').trim().toLowerCase();
+  if (!s.includes(':')) return s;
+  const [head, tail = ''] = s.split('::');
+  const left = head ? head.split(':') : [];
+  const right = tail ? tail.split(':') : [];
+  const full = s.includes('::') ? [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right] : left;
+  return `${full.slice(0, 4).map((g) => (g || '0').replace(/^0+(?=.)/, '')).join(':')}::/64`;
+}
+
 export async function hashIp(ip, salt, day) {
-  const data = new TextEncoder().encode(`${salt}:${day}:${ip}`);
+  const data = new TextEncoder().encode(`${salt}:${day}:${limitNet(ip)}`);
   const digest = await crypto.subtle.digest('SHA-256', data);
   return [...new Uint8Array(digest)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
