@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-289. Batch built: security 0048, F52, F186, F57, F58, F73, F74, F137 — 2 Nov 2026
+
+Done for R-288: all on main, tests green (member app 4145, admin 1534, every database test incl. 0048 39 checks, 0049 62 checks). Admin app: Numbers to confirm card, challenge Give/Skip. Phone QA flows handle the desk check (before and after 0048 is live). F137's server part (0049) waits for his yes (inbox #84); 0048 is applied live at release under his R-287 yes. Tracker: F52/F57/F58/F73/F74/F186 to Next release; F137 Waiting for you; F143 note. Next: review, whole phone round, release 0.69.0.
+
 ## R-288. Build F52, F186 and every score-7 feature, then release — 2 Nov 2026
 
 He said (going to sleep): "Keep working. Also build F52 and F186 and then release everything once done. Update the tracker if you already built the features scored 7 otherwise build and release them too." This is his "release" for this batch (R-284 Settings, R-282 backup, R-286 body map, R-287 security, and the features below), after the full ship gate.
