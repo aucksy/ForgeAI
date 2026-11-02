@@ -13,6 +13,8 @@
  */
 import { cleanMachine } from '@/tracker/engine/cardioMachine';
 import { isLoggable, storedWeight, type LogType } from '@/tracker/engine/logTypes';
+import { restsOfCard } from '@/tracker/engine/restTaken';
+import { effectiveRestSec } from '@/tracker/services/restRules';
 import type { DraftExercise, DraftSet } from '@/tracker/store/activeWorkoutStore';
 import type { RichSet } from '@/tracker/db/trackerSets';
 
@@ -40,7 +42,19 @@ export function isCommittable(s: DraftSet, logType: LogType = 'weight_reps'): bo
  * change (Add set, warm-ups) would otherwise be saved without one and read with the
  * exercise's own counting.
  */
-export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tickedOnly?: boolean; stampLoadMode?: boolean } = {}): RichSet[] {
+export function draftToRichSets(
+  exercises: readonly DraftExercise[],
+  opts: {
+    tickedOnly?: boolean;
+    stampLoadMode?: boolean;
+    /**
+     * F73: the default rest (seconds). Given, the rest before each set is measured from the
+     * ticks (engine/restTaken) against the card's rest. Absent: only a rest kept from a saved
+     * set is written back.
+     */
+    restDefaultSec?: number;
+  } = {},
+): RichSet[] {
   const flat: RichSet[] = [];
   // LW-28: each card's number among the cards of the same exercise (heavy Bench 0, back-off 1),
   // saved with its sets so the two cards stay two after saving. #10: the number the card was
@@ -55,7 +69,11 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
     const lt = draftLogType(ex);
     const timed = lt === 'time' || lt === 'distance' || lt === 'time_distance';
     let firstOfExercise = true;
-    for (const st of ex.sets) {
+    const rests =
+      opts.restDefaultSec != null
+        ? restsOfCard(ex.sets, effectiveRestSec(ex, opts.restDefaultSec), { superset: ex.supersetGroup != null })
+        : ex.sets.map(() => null);
+    for (const [i, st] of ex.sets.entries()) {
       if (opts.tickedOnly && !st.done) continue;
       if (!isCommittable(st, lt)) {
         // Editing: a saved row that doesn't fit the type goes back exactly as it was.
@@ -104,6 +122,9 @@ export function draftToRichSets(exercises: readonly DraftExercise[], opts: { tic
       // row keeps its exact shape.
       const machine = cleanMachine(st.machine);
       if (machine) row.machine = machine;
+      // F73: the rest before the set (measured now, else as it was saved).
+      const rest = rests[i] ?? st.rest ?? null;
+      if (rest) row.rest = rest;
       flat.push(row);
       firstOfExercise = false;
     }

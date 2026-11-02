@@ -18,7 +18,7 @@
  */
 import { getDb, getMeta, setMeta } from '@/db';
 
-export const TRACKER_SCHEMA_VERSION = 15;
+export const TRACKER_SCHEMA_VERSION = 16;
 const META_KEY = 'tracker_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -145,6 +145,12 @@ export async function initTrackerSchema(): Promise<void> {
   await ensureColumn('set_entries', 'speed_kmh', 'REAL');
   await ensureColumn('set_entries', 'incline_pct', 'REAL');
   await ensureColumn('set_entries', 'machine_level', 'REAL');
+  // v16 (F73, long rest): the real rest taken before a set and the rest planned then (seconds;
+  // engine/restTaken). NULL on every older set, the first set of a card and superset sets, so
+  // those read as before. Written in the same transaction as the set's INSERT (whose trigger
+  // already moves the training change counter), so the v13 triggers stay as they are.
+  await ensureColumn('set_entries', 'rest_sec', 'INTEGER');
+  await ensureColumn('set_entries', 'rest_plan_sec', 'INTEGER');
 
   await setMeta(META_KEY, String(TRACKER_SCHEMA_VERSION));
 }

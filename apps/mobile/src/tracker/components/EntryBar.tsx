@@ -20,7 +20,7 @@ import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { tap } from '@/lib/haptics';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
-import { targetFill } from '@/tracker/engine/progression';
+import { rowTargetFill } from '@/tracker/engine/progression';
 
 import { entryBarModel, type EntryBarModel } from '../services/setEntry';
 import { fillForSet, useActiveWorkout } from '../store/activeWorkoutStore';
@@ -36,7 +36,7 @@ export function useEntryBar(): EntryBarModel | null {
   const target = useTargets((s) => (focus ? s.targets.get(focus.exKey) ?? null : null));
   if (!kb || !focus || !ex) return null;
   // The row's own hint (ExerciseLogCard passes the same Target fill to the row).
-  const fill = fillForSet(ex, focus.setKey, target ? targetFill(target) : null);
+  const fill = fillForSet(ex, focus.setKey, target ? rowTargetFill(target) : null);
   return entryBarModel(ex, focus.setKey, focus.field, fill, units);
 }
 

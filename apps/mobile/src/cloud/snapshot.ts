@@ -91,9 +91,11 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     // + `card_index` (tracker schema v10, LW-28): heavy and back-off cards of one lift stay two.
     // + `speed_kmh` / `incline_pct` / `machine_level` (tracker schema v15, F64): a cardio
     //   machine's details; older backups restore them as NULL, like the rest.
+    // + `rest_sec` / `rest_plan_sec` (tracker schema v16, F73): the rest taken before a set and
+    //   the rest planned; older backups restore them as NULL (no long-rest mark).
     cols: ['id', 'session_id', 'exercise_id', 'set_number', 'weight_kg', 'reps', 'is_warmup',
       'rpe', 'set_type', 'note', 'superset_group', 'duration_sec', 'distance_m', 'load_mode', 'card_index',
-      'speed_kmh', 'incline_pct', 'machine_level'],
+      'speed_kmh', 'incline_pct', 'machine_level', 'rest_sec', 'rest_plan_sec'],
   },
   {
     name: 'personal_records',

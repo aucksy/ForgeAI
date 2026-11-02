@@ -27,7 +27,7 @@ import { AppState } from 'react-native';
 
 import { writeQueueIdle } from '@/db/writeQueue';
 
-import { targetFill } from '../engine/progression';
+import { rowTargetFill } from '../engine/progression';
 import { fillForSet, useActiveWorkout, type ActiveWorkoutState, type DraftExercise, type SetFill } from '../store/activeWorkoutStore';
 import { useTargets } from '../store/targetStore';
 import { onRestCardChange, postDoneNote, settleDone, takePendingDone, takeQueuedTicks } from './restCard';
@@ -37,7 +37,7 @@ import { missingText, type TickMissing } from './setTick';
 /** The grey hint the row shows on screen: `fillForSet` with the card's Target (as the card does). */
 export function rowFill(ex: DraftExercise, setKey: string): SetFill | null {
   const t = useTargets.getState().targets.get(ex.key);
-  return fillForSet(ex, setKey, t ? targetFill(t) : null);
+  return fillForSet(ex, setKey, t ? rowTargetFill(t) : null);
 }
 
 /**

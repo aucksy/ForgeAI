@@ -65,6 +65,8 @@ export function buildEditDraft(
       if (m?.loadMode != null) draft.loadMode = m.loadMode;
       // F64: a machine set's speed / incline / level come back into their boxes.
       if (m?.machine) draft.machine = { ...m.machine };
+      // F73: the rest taken before the set is kept as it was logged.
+      if (m?.rest) draft.rest = { ...m.rest };
       // A stored row that doesn't fit this exercise's type is carried as it was: the
       // editor can't show it, and Save must not drop a set that happened.
       if (!isLoggable(lt, draft)) {

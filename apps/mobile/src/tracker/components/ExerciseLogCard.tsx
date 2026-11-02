@@ -25,7 +25,7 @@ import { tap } from '@/lib/haptics';
 import { useUnits } from '@/lib/useUnits';
 import { color, radius, space, type } from '@/theme/tokens';
 import { columnHeads, LOAD_MODE_LABEL, LOAD_MODES, repsPerSide, weightIsEach } from '@/tracker/engine/logTypes';
-import { targetBadge, targetFill, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
+import { rowTargetFill, targetBadge, targetLine, type ProgressionTarget } from '@/tracker/engine/progression';
 import { planStartLine } from '@/tracker/lib/planStart';
 import { tell } from '@/lib/tell';
 import { fmtInt, fmtWeight, kgToDisplay, weightUnit } from '@/lib/format';
@@ -38,7 +38,8 @@ import { earlierCards, liveRecordFlags } from '../services/liveRecords';
 import { effectiveRestSec, fmtRest } from '../services/restRules';
 import { computeWarmups, warmupBarFor } from '../services/warmupMath';
 import { moveKind, supersetChoices } from '../services/workoutOrder';
-import { fillForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
+import { fillForSet, nudgeForSet, prevForSet, useActiveWorkout } from '../store/activeWorkoutStore';
+import { nudgeLine } from '../engine/rpeNudge';
 import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
@@ -203,7 +204,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // Target weight + rep goal for the set rows' hints (null off-plan). Memoised so the
   // rows (and SetRow's memo) keep identity while the target is unchanged.
-  const fillTarget = useMemo(() => (target ? targetFill(target) : null), [target]);
+  const fillTarget = useMemo(() => (target ? rowTargetFill(target) : null), [target]);
   // U-M8: the RPE tick fills from the target as it is WHEN it fires, not when the RPE was picked.
   const fillTargetRef = useRef(fillTarget);
   fillTargetRef.current = fillTarget;
@@ -235,6 +236,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     const flags = easyWeek ? new Map<string, never>() : liveRecordFlags(exercise, earlier);
     let working = 0;
     let warm = 0;
+    // F74: the "felt easy / very hard" reason line goes under the FIRST row it applies to only.
+    let nudgeShown = false;
     return exercise.sets.map((s) => {
       // PREVIOUS is prevForSet() itself, so display + auto-fill agree: a working row by
       // WORKING-set ordinal (previousSets excludes warm-ups), a warm-up row by warm-up order
@@ -252,9 +255,17 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         spoken = `${s.setType === 'drop' ? 'drop set' : 'set'} ${label}`;
         working += 1;
       }
-      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null };
+      let nudge: string | null = null;
+      if (!nudgeShown && !easyWeek) {
+        const n = nudgeForSet(exercise, s.key, fillTarget);
+        if (n) {
+          nudgeShown = true;
+          nudge = nudgeLine(n, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`);
+        }
+      }
+      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null, nudge };
     });
-  }, [exercise, fillTarget, earlier, easyWeek]);
+  }, [exercise, fillTarget, earlier, easyWeek, units, loadMode]);
 
   // #9: the line starts from what each row hints (never disagreeing with the rows), see kgProgress.
   // Phone runs 39095656699 / 39095657897 (part UR): worked out on every keystroke, the line grew from
@@ -677,6 +688,21 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               spoken={r.spoken}
               insetLeft={rowLayout.padX + rowLayout.setW + rowLayout.gap}
             />
+          ) : null}
+          {/* F74: why this row's hint moved ("Set 1 felt easy, so try 1 more rep."). */}
+          {r.nudge ? (
+            <Text
+              style={{
+                fontFamily: type.bodyMedium,
+                fontSize: type.size.sub,
+                color: color.inkSecondary,
+                paddingLeft: rowLayout.padX + rowLayout.setW + rowLayout.gap,
+                paddingRight: rowLayout.padX,
+                paddingBottom: space.xs,
+              }}
+            >
+              {r.nudge}
+            </Text>
           ) : null}
           </Fragment>
         ))}
