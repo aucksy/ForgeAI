@@ -36,6 +36,8 @@ import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { getCloudCoachNote, getSessionCoachNote, type CoachNote } from '@/tracker/services/coachNote';
 import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
+import { newBadgeLine } from '@/tracker/engine/badges';
+import { getBadgesEarnedIn } from '@/tracker/services/badgesService';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
 import { autoBackupAfterWorkout } from '@/cloud/autoBackup';
 import { copySoon } from '@/cloud/copySync';
@@ -97,7 +99,7 @@ function ShareButton({
 }
 
 export default function FinishScreen() {
-  useUnits(); // v0.27.0: the record and set texts follow Profile → Units
+  const units = useUnits(); // v0.27.0: the record and set texts follow Profile → Units
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : params.id?.[0];
@@ -241,6 +243,20 @@ export default function FinishScreen() {
     };
   }, [data, id]);
 
+  // F58: "New badge: Early bird" when this workout earned one (workout counts are the milestone
+  // line above). Read after the summary shows; a failed read only leaves the line out.
+  const [badgeLine, setBadgeLine] = useState<string | null>(null);
+  useEffect(() => {
+    if (!data || !id) return;
+    let alive = true;
+    void getBadgesEarnedIn(id).then((b) => {
+      if (alive) setBadgeLine(newBadgeLine(b, units));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [data, id, units]);
+
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
   // R-147: the big card compares with last time (it then holds the exercise list).
   const heroCompared = hero?.hero != null && hero.hero.tone !== 'first';
@@ -283,6 +299,11 @@ export default function FinishScreen() {
                   style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.onAccent, marginBottom: 2 }}
                 >
                   {milestone}
+                </Text>
+              ) : null}
+              {badgeLine ? (
+                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onAccent, marginBottom: 2 }}>
+                  {badgeLine}
                 </Text>
               ) : null}
               {/* UAT A-07 (30 Oct 2026): faded brown on orange was hard to read in sunlight; full strength now. */}
