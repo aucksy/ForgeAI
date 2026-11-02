@@ -60,6 +60,8 @@ declare
     'owner_gym_pack','member_gym_pack',
     -- 0048: typed check-in numbers the desk confirms (owner/desk key), and challenge winners the owner confirms (owners only).
     'owner_phone_links','owner_decide_phone_link','owner_confirm_challenge_reward',
+    -- 0049: busy machines by day and hour (members check their member key and get only proven gym-level levels; the gym its owner or desk key, saving: owners only).
+    'member_machine_busy','member_machine_push','owner_machine_setup','owner_save_machine_setup',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

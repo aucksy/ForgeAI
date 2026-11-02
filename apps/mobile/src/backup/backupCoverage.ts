@@ -13,6 +13,7 @@ export const META_IN_BACKUP: readonly string[] = ['hidden_exercises', 'importOri
 /** `meta` keys left out, and why. */
 export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   demo_data: 'demo flag',
+  machineTipHidden: 'gym busy-machine tips hidden with "Not now" (30 days; a new phone may show one again)',
   demo_until: 'demo flag',
   demo_legacy_checked: 'demo flag',
   seeded: 'demo flag (the sample data was loaded)',

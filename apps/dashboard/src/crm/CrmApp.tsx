@@ -49,6 +49,7 @@ import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { DietPlansScreen } from './ui/screens/DietPlans';
 import { GymTimingsScreen } from './ui/screens/GymTimings';
+import { BusyMachinesScreen } from './ui/screens/BusyMachines';
 import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
@@ -257,6 +258,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'settings' && id === 'people') return 'Staff & sign-in';
   if (head === 'settings' && id === 'branding') return 'Branding';
   if (head === 'settings' && id === 'timings') return 'Gym timings';
+  if (head === 'settings' && id === 'machines') return 'Busy machines';
   if (head === 'settings' && id === 'invite') return 'The invite link';
   return null;
 }
@@ -333,6 +335,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'branding') return <BrandingScreen />;
       // R-124: Settings -> Gym timings (when the gym is open, shown in the member app).
       if (id === 'timings') return <GymTimingsScreen />;
+      // F137: Settings -> Member app -> Busy machines (hidden until the gym's server has 0049).
+      if (id === 'machines') return <BusyMachinesScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.

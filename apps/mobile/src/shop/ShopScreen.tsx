@@ -38,6 +38,7 @@ import { useGymSectionRequest } from './gymSectionRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
+import { MachineTipCard } from './MachineTipCard';
 import { RECOMMEND_BODY, RECOMMEND_BUTTON, RECOMMEND_TITLE, recommendMessage } from './recommendGym';
 import { LeaderboardCard } from './LeaderboardCard';
 import { readGymHours, syncGymHours } from './gymTimingsSync';
@@ -275,6 +276,8 @@ function GymShop({ link }: { link: GymLink }) {
             <GymHoursRow hours={hours} />
             {/* R-163: how busy the gym is now and its quiet hours (hidden until 0039 is live and the gym has enough check-ins). */}
             <GymBusyCard link={link} hours={hours} refreshKey={pulls} />
+            {/* F137: "Leg day is quieter on Tuesday" (hidden until 0049 is live, switched on, and its guesses proven). */}
+            <MachineTipCard link={link} hours={hours} />
             {/* A3 + R-228: Check in from the app: MettleUp's own scanner reads the poster at the desk. */}
             <View style={{ marginTop: space.md }}>
               <LinkRow
