@@ -50,6 +50,9 @@ type Phase =
   /** A gym member signed in to the server copy: on to the setup questions. */
   | { kind: 'signedIn' };
 
+/** The section's last settled state, kept while the welcome shows another of its screens (R-281). */
+const googleKept: { phase: Phase; line: string | null } = { phase: { kind: 'idle' }, line: null };
+
 /** Is the Google section shown at all? PURE (exported for the welcome screen's layout). */
 export function welcomeGoogleShown(i: { driveReady: boolean; configured: boolean; inGym: boolean; gymCodeWaiting: boolean }): boolean {
   return i.driveReady || accountOffered({ configured: i.configured, inGym: i.inGym, gymCodeWaiting: i.gymCodeWaiting });
@@ -79,8 +82,18 @@ export function WelcomeGoogle({
   const ready = useAccount((s) => s.ready);
   const accountBusy = useAccount((s) => s.busy);
   const backupBusy = useBackup((s) => s.busy);
-  const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
-  const [line, setLine] = useState<string | null>(null);
+  // R-281 review: "Join my gym" / "Bring workouts" unmount this section; a found backup (or the sign-in note)
+  // is remembered so Back shows it again. A search or restore in progress is never remembered.
+  const [phase, setPhaseNow] = useState<Phase>(() => googleKept.phase);
+  const [line, setLineNow] = useState<string | null>(() => googleKept.line);
+  const setPhase = (p: Phase): void => {
+    googleKept.phase = p.kind === 'looking' || p.kind === 'restoring' ? googleKept.phase : p;
+    setPhaseNow(p);
+  };
+  const setLine = (l: string | null): void => {
+    googleKept.line = l;
+    setLineNow(l);
+  };
   const [error, setError] = useState<string | null>(null);
   const [askReplace, setAskReplace] = useState(false);
   // One sign-in or restore at a time, however fast the taps.

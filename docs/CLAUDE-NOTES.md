@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-281. Release the waiting batch as 0.68.0 — 2 Nov 2026
+
+He said: "Release". This is his yes for the PROGRESS waiting list: help answers (R-277/R-278), new welcome screen (R-276/R-277), "Show my workouts to the desk" removed (R-279), exercise pictures in theme colours (R-280). Plan: adversarial review of v0.67.0..HEAD, fix, What's new lines (member words), push, whole qa-device on default + owner and qa-journeys on that commit, then bump app.json to 0.68.0, tag v0.68.0, watch release-apk, paste the APK link. After it ships: remove the admin "Check workout code" (PROGRESS).
+
 ## R-280. Exercise pictures: start and end for the top 50, close-up list pictures, theme colours — 2 Nov 2026
 
 He said: "create/update the starting and the end images for the exercises, like for top 50 exercises, and also replace their display pic", then "the colors that you're using here for the images, let's match them with the theme". Did: the CI picture build now recolours every RepDB picture with plain pixel maths (no AI; licence term 4 allows recolouring): pale-blue ground -> app surface, floor shadow -> a slightly lighter surface, bright blue clothes -> accent orange, navy shorts -> charcoal. Each exercise also gets a close-up list picture (the start picture cropped to the person, 144 px). Added 4 matches (triceps dip, cable lateral raise, walking lunge, plank as one 'Hold' picture): 247 exercises. Top 50 check: 50 of 52 have pictures. rope_triceps_pushdown has no RepDB source; hanging_leg_raise was a wrong picture and stays off. New art for those 2 is not possible from RepDB (no generative AI on RepDB).

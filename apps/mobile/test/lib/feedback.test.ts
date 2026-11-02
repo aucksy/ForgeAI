@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { deviceLine, FEEDBACK_URLS, FEEDBACK_WORDS, feedbackAnswer, HELP_URLS, postToBox } from '@/lib/feedback';
+import { deviceLine, FEEDBACK_URLS, FEEDBACK_WORDS, feedbackAnswer, HELP_URLS, postToBox, sendToHelp } from '@/lib/feedback';
 
 describe('Send feedback (launch H7)', () => {
   it('names the phone the way it tells about itself', () => {
@@ -37,5 +37,22 @@ describe('Help and feedback (T22, R-277)', () => {
     };
     expect((await postToBox('{}', post as never, HELP_URLS)).status).toBe(201);
     expect(sent).toEqual([HELP_URLS[0], HELP_URLS[1]]);
+  });
+  it('help: only a 404 goes to every plain box; a timeout tries the backup address only (R-281)', async () => {
+    const sent: string[] = [];
+    const notThere = async (url: string) => {
+      sent.push(url);
+      return new Response('{}', { status: url.endsWith('/api/help') ? 404 : 201 });
+    };
+    expect((await sendToHelp('{}', notThere as never)).status).toBe(201);
+    expect(sent).toEqual([HELP_URLS[0], FEEDBACK_URLS[0]]);
+    sent.length = 0;
+    const slow = async (url: string) => {
+      sent.push(url);
+      if (url.endsWith('/api/help')) throw new Error('timeout');
+      return new Response('{}', { status: 201 });
+    };
+    expect((await sendToHelp('{}', slow as never)).status).toBe(201);
+    expect(sent).toEqual([HELP_URLS[0], FEEDBACK_URLS[FEEDBACK_URLS.length - 1]]);
   });
 });

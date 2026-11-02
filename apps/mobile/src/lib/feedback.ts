@@ -109,6 +109,24 @@ export async function postToBox(
 
 export const HELP_TIMEOUT_MS = 25_000;
 
+/**
+ * R-281 review: the help box saves the message BEFORE it asks Claude, so a slow answer may already be saved.
+ * Only a 404 (no help box on this server yet) sends it to every plain box. A timeout, a lost connection or a
+ * server error tries only the backup address, with the plain 15 s limit: at most one extra copy, and the
+ * member waits about 40 s, not 75 s.
+ */
+export async function sendToHelp(json: string, post: typeof fetchWithTimeout = fetchWithTimeout): Promise<Response> {
+  try {
+    const res = await post(HELP_URLS[0], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json }, HELP_TIMEOUT_MS);
+    if (res.status === 404) return postToBox(json, post, FEEDBACK_URLS);
+    if (res.status < 500) return res;
+    console.warn('[feedback] help box answered', res.status, '; trying the backup address');
+  } catch (e) {
+    console.warn('[feedback] help box gave no answer; trying the backup address', e);
+  }
+  return postToBox(json, post, FEEDBACK_URLS.slice(-1));
+}
+
 /** "Did this solve it?" One tap, kept beside the message. False when it could not be sent (logged). */
 export async function rateHelp(id: number, helped: 'yes' | 'no', post: typeof fetchWithTimeout = fetchWithTimeout): Promise<boolean> {
   try {
@@ -143,8 +161,8 @@ export async function sendFeedback(
     sender: await senderId(),
   };
   try {
-    // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer here.
-    const res = await postToBox(JSON.stringify(body), fetchWithTimeout, HELP_URLS, HELP_TIMEOUT_MS);
+    // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer (sendToHelp).
+    const res = await sendToHelp(JSON.stringify(body));
     let answer: unknown = null;
     try {
       answer = await res.json();

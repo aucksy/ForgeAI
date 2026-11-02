@@ -56,6 +56,16 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-281 (R-276..R-280): member-words; short lines, no Gemini (owner rule 1 Nov). The new welcome screen
+    // is for new members only and help answers are not live until the AI credit lands, so no line for them.
+    version: '0.68.0',
+    date: '2 Nov',
+    lines: [
+      { text: 'Exercise pictures now use the MettleUp colours. The exercise list shows a close-up of each one.' },
+      { text: 'Triceps Dip, Cable Lateral Raise, Walking Lunge and Plank now have pictures.' },
+    ],
+  },
+  {
     // R-263 + R-267 + R-269 (0.66.0 was never published; it ships here): member-words; owner rule 1 Nov:
     // complete simple sentences, no Gemini for short lines. Facts checked against the code.
     version: '0.67.0',
