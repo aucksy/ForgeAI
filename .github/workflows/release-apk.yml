@@ -202,6 +202,12 @@ jobs:
           cp "$AAB" "mettleup-${GITHUB_REF_NAME}.aab"
           cp "$WEAR" "mettleup-${GITHUB_REF_NAME}-wear.apk"
           cp "$WEAR_AAB" "mettleup-${GITHUB_REF_NAME}-wear.aab"
+          # R-286: the JS source map (Hermes-composed), so a release crash stack (crash.js -> GitHub issue)
+          # can be read back as file:line. Not shipped in the APK; published beside it on the Release.
+          MAP="$(find apps/mobile/android/app/build/generated/sourcemaps -name '*.bundle.map' 2>/dev/null | head -1)"
+          echo "Found source map: $MAP"
+          if [ -n "$MAP" ]; then cp "$MAP" "mettleup-${GITHUB_REF_NAME}.js.map"
+          else echo "::warning::No JS source map was found: release crash stacks will not be readable."; fi
           ls -la mettleup-*
 
       # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
@@ -332,6 +338,7 @@ jobs:
           path: |
             mettleup-*.apk
             mettleup-*.aab
+            mettleup-*.js.map
 
       # Checks on the built APK itself. A FAIL stops here, before the Release is published
       # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public
@@ -425,6 +432,7 @@ jobs:
           files: |
             mettleup-*.apk
             mettleup-*.aab
+            mettleup-*.js.map
           generate_release_notes: true
 
   # R-125 / 26 Oct 2026: the published release's AAB to Google Play's internal + closed tests, as part of
