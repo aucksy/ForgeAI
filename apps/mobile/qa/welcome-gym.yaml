@@ -119,7 +119,20 @@ appId: com.mettleup.app
     element: "^Back$"
     direction: UP
     timeout: 20000
+# A tap while the fast scroll still moves only stops it (run 41395557501): wait, tap, and tap once more
+# if the Join your gym screen is still there.
+- waitForAnimationToEnd
 - tapOn: "^Back$"
+- extendedWaitUntil:
+    visible: "Get stronger every week"
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Scan the poster at your gym$"
+    commands:
+      - waitForAnimationToEnd
+      - tapOn: "^Back$"
 - extendedWaitUntil:
     visible: "Get stronger every week"
     timeout: 15000
