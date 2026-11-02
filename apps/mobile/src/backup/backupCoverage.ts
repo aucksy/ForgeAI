@@ -44,6 +44,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   watch_install_start: 'one-off watch card at the first workout start (R-248; about the watch paired to this phone)',
   welcome_resume: 'half-done setup answers, cleared at Start training (R-267; a restored phone is already set up)',
   intro_seen: 'the intro screens before the welcome were seen on this phone (R-248)',
+  auto_backup_owed: 'a Drive backup this phone still owes after a workout (R-282; bookkeeping of this phone)',
   activeWorkoutDraft: 'a workout in progress (a restore waits until it is finished)',
   phoneReminderSchedule: 'notification schedule of this phone (rebuilt from the reminder settings)',
   link_guessed_exercise_types: 'import bookkeeping (row ids of this phone)',

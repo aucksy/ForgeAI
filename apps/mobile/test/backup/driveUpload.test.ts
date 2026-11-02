@@ -59,7 +59,10 @@ beforeEach(() => {
 });
 
 describe('Drive: the backup file goes up and comes back as a file', () => {
-  it('uploads with a resumable session from disk, then keeps only the newest 5', async () => {
+  it('uploads with a resumable session from disk, then keeps the newest 5 and one a day', async () => {
+    // R-282: a second copy of 3 Oct (f0, older than f3) is the only one that goes: the
+    // other five are each the one copy of their day.
+    h.files = [...h.files, { id: 'f0', name: 'mettleup-backup-2026-10-03-060000.zip', modifiedTime: '2026-10-03T06:00:00.000Z' }];
     const { uploadBackupFile } = await import('@/cloud/drive');
     await uploadBackupFile('file:///cache/mettleup-backup-2026-10-25.zip', 123456, 42);
     const start = h.calls.find((c) => c.url.includes('uploadType=resumable'))!;
@@ -70,9 +73,9 @@ describe('Drive: the backup file goes up and comes back as a file', () => {
     expect(meta.name).toMatch(/^mettleup-backup-\d{4}-\d{2}-\d{2}-\d{6}\.zip$/);
     // The file itself: one PUT to the session, streamed by the phone from disk.
     expect(h.uploads).toEqual([{ url: 'https://upload.example/session-1', file: 'file:///cache/mettleup-backup-2026-10-25.zip', options: expect.objectContaining({ httpMethod: 'PUT', uploadType: 0 }) }]);
-    // Six on Drive: the oldest one goes (5 kept), and only after the upload.
+    // Seven on Drive: the newest 5 stay, f1 stays as the one copy of its day, f0 goes; only after the upload.
     const deletes = h.calls.filter((c) => c.method === 'DELETE').map((c) => c.url.split('/').pop());
-    expect(deletes).toEqual(['f1']);
+    expect(deletes).toEqual(['f0']);
     expect(h.calls.findIndex((c) => c.method === 'DELETE')).toBeGreaterThan(h.calls.indexOf(start));
   });
 
