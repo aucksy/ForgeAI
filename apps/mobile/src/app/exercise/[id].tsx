@@ -54,6 +54,7 @@ import { ladderAtLeast, RECORD_LABEL } from '@/tracker/engine/records';
 import { headlineBest } from '@/tracker/services/exerciseHeadline';
 import { lastTimeRows } from '@/tracker/services/workoutDetail';
 import { SetTable } from '@/tracker/components/SetTable';
+import { StrengthLevelLine } from '@/tracker/components/StrengthLevelLine';
 import { getWarmupSets, type TrackedSetEntry } from '@/tracker/db/exerciseHistory';
 import { deleteKeptMedia } from '@/tracker/services/exerciseMedia';
 import { getExerciseOverview, type ExerciseOverview } from '@/tracker/services/exerciseStats';
@@ -245,6 +246,16 @@ export default function ExerciseScreen() {
     return rows.length > 0 ? { dateISO: lastEntry.dateISO, sessionId: lastEntry.sessionId, rows } : null;
   }, [lastEntry, lastWarm, ex, shownAs, units]);
   const best = ov && ex ? headlineBest(ov.records.bests, shownAs) : null;
+  // F57: the strength level reads the best estimated 1-rep max (weight × reps lifts only).
+  const strengthBest = useMemo(() => {
+    if (shownAs !== 'weight_reps') return null;
+    const hit = ov?.records.bests.find((b) => b.kind === 'e1rm');
+    return hit ? { value: hit.value, dateISO: hit.dateISO, loadMode: hit.set?.loadMode ?? null } : null;
+  }, [ov, shownAs]);
+  const openBodyWeight = () => go(() => router.push({ pathname: '/measures', params: { kind: 'bodyweight' } }));
+  const strengthLine = ex ? (
+    <StrengthLevelLine catalogKey={ex.catalogKey} best={strengthBest} exerciseLoadMode={ex.loadMode} onLogWeight={openBodyWeight} />
+  ) : null;
 
   const runOnce = async (action: () => Promise<void>, failText: string): Promise<void> => {
     if (busy.current) return;
@@ -450,6 +461,8 @@ export default function ExerciseScreen() {
                       range={chartRange}
                       onRangeChange={setChartRange}
                     />
+                    {/* F57: "Strength level: …" under the chart (main lifts only) */}
+                    {strengthLine}
                     {/* F63: the 1-rep max and % calculator, starting on this exercise's best recent set */}
                     {shownAs === 'weight_reps' ? (
                       <Pressable
@@ -491,6 +504,7 @@ export default function ExerciseScreen() {
                     onRangeChange={setChartRange}
                   />
                   ) : null}
+                  {hasHistory ? strengthLine : null}
                   {hasHistory ? <View style={{ height: space.lg }} /> : null}
                   <SessionHistory history={ov?.history ?? []} units={units} logType={shownAs} distUnit={ex.distUnit} names={names} onOpen={openSession} current={current} loadMode={ex.loadMode} />
                 </>
