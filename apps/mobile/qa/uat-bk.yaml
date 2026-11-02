@@ -121,11 +121,25 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "^5 a week$"
+# R-284: the next-weight line sits behind "More workout choices" (run 41471781094 looked for it on
+# Settings itself). Open that page, check it, and go Back to Settings for the backup rows below.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^More workout choices$"
+- tapOn: "^More workout choices$"
+- extendedWaitUntil:
+    visible: "^How the app picks your next weight$"
+    timeout: 15000
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "^Large step, Strength$"
 - takeScreenshot: bk-04-settings
+- back
+- extendedWaitUntil:
+    visible: "^Settings$"
+    timeout: 15000
 # ---------------------------------------------------------------- 3. save a backup
 # R-284: the backup file's pages sit on Settings -> Your data -> "Backup and restore".
 - runFlow:
