@@ -37,6 +37,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { Avatar } from '@/tracker/components/profile/Avatar';
+import { BadgeShelfRow } from '@/tracker/components/profile/BadgeShelf';
 import { FeedCard } from '@/tracker/components/profile/FeedCard';
 import { FeedMenu, type FeedMenuRequest } from '@/tracker/components/profile/FeedMenu';
 import { HistoryChartCard } from '@/tracker/components/profile/HistoryChartCard';
@@ -422,6 +423,9 @@ export default function ProfileScreen() {
         </Text>
         <Icon name="chevron-right" size={18} color={color.inkMuted} />
       </Pressable>
+
+      {/* F58: the badge shelf (opens /badges). */}
+      <BadgeShelfRow />
 
       {/* 12 Oct 2026: no "Workouts" heading over the feed — the first month line ("October ·
           12 workouts") already heads it, and the two stacked with a gap. */}
