@@ -10,13 +10,14 @@
 # Health apps' row shows only once the app has read Health Connect's state: it is waited for.
 # R-284: three rare workout pages sit behind "More workout choices", and the backup file's two pages
 # behind "Backup and restore": for those PAGE values this taps through that row first.
+# Plain == checks only: a /regex/.test(PAGE) condition came out true for EVERY page (run 41453967886).
 appId: com.mettleup.app
 ---
 - runFlow:
     file: sub-settings-open.yaml
 - runFlow:
     when:
-      true: ${/^(How the app picks your next weight|Last time's numbers|Muscle tips)$/.test(PAGE)}
+      true: ${PAGE == 'How the app picks your next weight' || PAGE == "Last time's numbers" || PAGE == 'Muscle tips'}
     commands:
       - scrollUntilVisible:
           element: "^More workout choices$"
@@ -28,7 +29,7 @@ appId: com.mettleup.app
           timeout: 15000
 - runFlow:
     when:
-      true: ${/^(Save a backup|Restore from a backup)$/.test(PAGE)}
+      true: ${PAGE == 'Save a backup' || PAGE == 'Restore from a backup'}
     commands:
       - scrollUntilVisible:
           element: "^Backup and restore$"
