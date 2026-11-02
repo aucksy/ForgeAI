@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-282. Automatic Google Drive backup after each workout — 2 Nov 2026
+
+He said: "I think we need to set up automatic Google Drive backup after each workout." Found: it exists (F36, autoBackup.ts, since 0.57.0) but has 3 gaps: (1) it runs only after this phone made one backup by hand; (2) it runs only on Wi-Fi at the moment the finish screen closes, and on mobile data it waits for the NEXT workout, so a member who trains on gym mobile data may never be backed up; (3) Drive keeps only the newest 5 copies (drive.ts KEEP_BACKUPS), the Spends trap (Lessons: keep-newest-n-pruning-wipes-history): 5 bad copies wipe every good one. Plan: a pending flag after each finish, retried when the app opens or comes back on Wi-Fi; the first automatic copy allowed when Drive has no backup yet; keep the newest 5 plus one per day for 30 days. Built AFTER the 0.68.0 tag (a code commit now would void the phone-test gate); next release.
+
 ## R-281. Release the waiting batch as 0.68.0 — 2 Nov 2026
 
 He said: "Release". This is his yes for the PROGRESS waiting list: help answers (R-277/R-278), new welcome screen (R-276/R-277), "Show my workouts to the desk" removed (R-279), exercise pictures in theme colours (R-280). Plan: adversarial review of v0.67.0..HEAD, fix, What's new lines (member words), push, whole qa-device on default + owner and qa-journeys on that commit, then bump app.json to 0.68.0, tag v0.68.0, watch release-apk, paste the APK link. After it ships: remove the admin "Check workout code" (PROGRESS).
