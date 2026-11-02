@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-283. UAT of Settings: organise and simplify it for the member — 2 Nov 2026
+
+He said: "Once you're done updating this, I want you to also perform a user acceptance testing on the settings and see how we can better organize and simplify it for the user." Plan: walk every Settings page as a new member and as a gym member on his phone size (screenshots from the cloud phone), list what is confusing, too deep or duplicated, research how Hevy and Strong lay out settings, then propose a simpler layout (2 options max, one recommended) before building.
+
 ## R-282. Automatic Google Drive backup after each workout — 2 Nov 2026
 
 He said: "I think we need to set up automatic Google Drive backup after each workout." Found: it exists (F36, autoBackup.ts, since 0.57.0) but has 3 gaps: (1) it runs only after this phone made one backup by hand; (2) it runs only on Wi-Fi at the moment the finish screen closes, and on mobile data it waits for the NEXT workout, so a member who trains on gym mobile data may never be backed up; (3) Drive keeps only the newest 5 copies (drive.ts KEEP_BACKUPS), the Spends trap (Lessons: keep-newest-n-pruning-wipes-history): 5 bad copies wipe every good one. Plan: a pending flag after each finish, retried when the app opens or comes back on Wi-Fi; the first automatic copy allowed when Drive has no backup yet; keep the newest 5 plus one per day for 30 days. Built AFTER the 0.68.0 tag (a code commit now would void the phone-test gate); next release.
