@@ -13,6 +13,10 @@
  * in to MettleUp's server copy instead, as before 0.57.1: their workouts come back from there.
  * Hidden when the build cannot sign in to Google at all.
  *
+ * R-277 (owner-approved design, 2 Nov 2026): the welcome's ONE orange button, with Google's G. With nothing
+ * to bring back (or a backup without a profile, or a gym member signed in), "Next" goes on to the 3 setup
+ * questions (`onContinue`), as "Start fresh" did before.
+ *
  * 0.57.1 review: one sign-in and one restore at a time (a ref, not the drawn phase: two taps in one frame
  * both saw "found"); the welcome around it is held while a restore runs (`onBusy`, cleared on unmount).
  */
@@ -34,6 +38,7 @@ import { color, space, type } from '@/theme/tokens';
 
 import { useOnboarding } from '../store/onboardingStore';
 import { foundBackupLine, replaceBody, RESTORED_NO_PROFILE, START_WORDS, welcomeRestoreOutcome } from '../welcomeStart';
+import { GoogleG, OrangePill } from './WelcomeParts';
 
 type Phase =
   | { kind: 'idle' }
@@ -41,7 +46,9 @@ type Phase =
   | { kind: 'found'; file: DriveBackupFile }
   | { kind: 'declined'; file: DriveBackupFile }
   | { kind: 'nothing' }
-  | { kind: 'restoring'; file: DriveBackupFile };
+  | { kind: 'restoring'; file: DriveBackupFile }
+  /** A gym member signed in to the server copy: on to the setup questions. */
+  | { kind: 'signedIn' };
 
 /** Is the Google section shown at all? PURE (exported for the welcome screen's layout). */
 export function welcomeGoogleShown(i: { driveReady: boolean; configured: boolean; inGym: boolean; gymCodeWaiting: boolean }): boolean {
@@ -54,6 +61,7 @@ export function WelcomeGoogle({
   keptWorkouts,
   onBusy,
   onBeforeRestore,
+  onContinue,
 }: {
   onName: (name: string) => void;
   gymCodeWaiting: boolean;
@@ -63,6 +71,8 @@ export function WelcomeGoogle({
   onBusy?: (busy: boolean) => void;
   /** Just before a restore: the welcome forgets a Hevy / Strong pick (it would open the import afterwards). */
   onBeforeRestore?: () => void;
+  /** "Next": on to the 3 setup questions (nothing to bring back, or signed in to the gym's copy). */
+  onContinue: () => void;
 }) {
   const configured = useAccount((s) => s.configured);
   const inGym = useGymShop((s) => s.link != null);
@@ -103,6 +113,7 @@ export function WelcomeGoogle({
     success();
     if (r.name) onName(r.name);
     setLine(r.note);
+    setPhase({ kind: 'signedIn' });
   };
 
   // Everyone else: their own Google Drive.
@@ -202,13 +213,12 @@ export function WelcomeGoogle({
 
   return (
     <View style={{ gap: space.md }}>
-      {/* UAT 1 Nov 2026: an outlined button, so "Start fresh" stays the one orange button a new member
-          sees on the start view (two equal orange buttons made the backup search look like the way in).
-          Double taps wait on `inFlight` / `working` inside go(). */}
+      {/* R-277: the welcome's one orange button. Double taps wait on `inFlight` / `working` inside go(). */}
       {phase.kind === 'idle' || phase.kind === 'looking' ? (
-        <GhostButton
+        <OrangePill
           label={phase.kind === 'looking' ? START_WORDS.looking : accountBusy || backupBusy ? 'Signing in…' : START_WORDS.googleButton}
-          icon="person"
+          glyph={<GoogleG />}
+          loading={phase.kind === 'looking'}
           onPress={() => void go()}
         />
       ) : null}
@@ -227,16 +237,23 @@ export function WelcomeGoogle({
         </>
       ) : null}
 
-      {/* "Not now": the backup stays on offer, quietly. */}
-      {phase.kind === 'declined' ? <GhostButton label={START_WORDS.restoreButton} icon="check" onPress={() => onRestore(phase.file)} /> : null}
+      {/* "Not now": the backup stays on offer, quietly; Next goes on without it. */}
+      {phase.kind === 'declined' ? (
+        <>
+          <OrangePill label={START_WORDS.next} onPress={onContinue} />
+          <GhostButton label={START_WORDS.restoreButton} icon="check" onPress={() => onRestore(phase.file)} />
+        </>
+      ) : null}
 
+      {line ? <Said>{line}</Said> : null}
       {phase.kind === 'nothing' ? (
         <>
           {line ? null : <Said>{START_WORDS.nothing}</Said>}
+          <OrangePill label={START_WORDS.next} onPress={onContinue} />
           <GhostButton label={START_WORDS.otherAccount} icon="person" onPress={() => void otherAccount()} />
         </>
       ) : null}
-      {line ? <Said>{line}</Said> : null}
+      {phase.kind === 'signedIn' ? <OrangePill label={START_WORDS.next} onPress={onContinue} /> : null}
       <InlineError message={error} />
 
       <ConfirmSheet

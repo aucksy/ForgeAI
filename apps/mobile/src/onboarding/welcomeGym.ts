@@ -32,6 +32,16 @@ export function welcomeGymKept(code: string): string {
   return `Gym code ${code} saved. Your gym's join screen opens right after setup.`;
 }
 
+/**
+ * The "Join my gym" screen's bottom button (R-277 design: "Join Iron Den Gym"): the gym's own name once
+ * the gym answered, else "Join my gym". Tapping it keeps the code and goes on to the 3 setup questions;
+ * the gym's join screen then opens and asks before anything is joined. PURE.
+ */
+export function welcomeJoinLabel(gymName: string | null | undefined): string {
+  const name = (gymName ?? '').trim();
+  return name ? `Join ${name}` : 'Join my gym';
+}
+
 /** How long the welcome waits for the gym's answer before it simply keeps the code (ms). */
 export const WELCOME_GYM_CHECK_MS = 6000;
 

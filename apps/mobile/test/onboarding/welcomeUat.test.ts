@@ -64,7 +64,8 @@ describe('a welcome restore that brings no profile', () => {
     const src = read('onboarding/components/WelcomeGoogle.tsx');
     expect(src.match(/welcomeRestoreOutcome\(useOnboarding\.getState\(\)\.status\) === 'needs-name'/g)?.length).toBe(2);
     expect(src.match(/setLine\(RESTORED_NO_PROFILE\)/g)?.length).toBe(2);
-    expect(RESTORED_NO_PROFILE).toMatch(/Start fresh/);
+    // R-277: "Next" (shown with the line) goes on to the setup questions.
+    expect(RESTORED_NO_PROFILE).toMatch(/Tap Next/);
   });
 });
 
@@ -81,8 +82,9 @@ describe('first-run words', () => {
     expect(src).not.toContain("sub: 'For every weight in the app.");
     expect(src).not.toContain('shape your Targets');
   });
-  it('the start view has one orange button: Google is outlined', () => {
+  it('R-277: Continue with Google is the orange button on the start view, with Next after a sign-in that brings nothing', () => {
     const src = read('onboarding/components/WelcomeGoogle.tsx');
-    expect(src).toMatch(/<GhostButton\s+label=\{phase\.kind === 'looking'/);
+    expect(src).toMatch(/<OrangePill\s+label=\{phase\.kind === 'looking'/);
+    expect(src.match(/<OrangePill label=\{START_WORDS\.next\} onPress=\{onContinue\} \/>/g)?.length).toBe(3);
   });
 });

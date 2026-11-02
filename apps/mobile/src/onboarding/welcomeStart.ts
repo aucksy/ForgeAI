@@ -5,27 +5,44 @@
  * the plainer replace warning. PURE.
  */
 export const START_WORDS = {
-  title: 'Welcome to MettleUp',
-  sub: 'Your gym workout tracker. Pick one way to start.',
-  googleTitle: 'Sign in with Google',
-  // 1 Nov 2026: strangers could not tell "Continue with Google" from "Restore from a backup"; each body now
-  // says in one sentence what its button does (the Drive copy vs a file on this phone or another app).
-  googleBody: 'Sign in with your Google account. If you saved a backup to Google Drive, your workouts come back.',
+  // R-273 / R-277 (owner, 1-2 Nov 2026): one hero screen. Approved words from the design canvas
+  // (HgYB2U7cdYHvAJRRExDDSV): the headline, the line under it and the four ways in.
+  title: 'Get stronger every week',
+  sub: 'Log every set at the gym. See what you lifted last time.',
   googleButton: 'Continue with Google',
+  joinGym: 'Join my gym',
+  bringWorkouts: 'Bring workouts',
+  useWithout: 'Use without an account',
+  /** Spoken for the decorative set card (hidden from screen readers otherwise). */
+  exampleCard: 'Example of a logged bench press',
   looking: 'Checking your Google Drive for a backup…',
   restoreButton: 'Restore my backup',
   notNow: 'Not now',
-  nothing: 'No MettleUp backup in your Google Drive yet. Tap "Start fresh" below to begin.',
+  nothing: 'No MettleUp backup in your Google Drive yet. Tap Next to set up the app.',
+  /** After Google: on to the 3 setup questions. */
+  next: 'Next',
   restoring: 'Bringing back your backup…',
   otherAccount: 'Use another Google account',
-  gymTitle: 'Do you train at a gym?',
-  gymBody: 'Your gym’s code unlocks check-in, your membership, trainer plans and the gym shop.',
-  gymButton: 'Enter your gym code',
-  haveTitle: 'Already have workouts?',
-  haveBody: 'Bring back a backup file saved on this phone, or move your workouts from Hevy or Strong.',
+  // "Join my gym" screen.
+  gymTitle: 'Join your gym',
+  gymBody: "Check in, see your membership and get your trainer's plan.",
+  scanTitle: 'Scan the poster at your gym',
+  scanHint: 'It is on the wall near the front desk',
+  orType: 'or type the gym code',
+  codeLabel: 'Gym code',
+  // "Bring workouts" screen.
+  bringTitle: 'Bring your workouts',
+  bringBody: 'Keep every set you logged before. Your history and best lifts come with it.',
+  fromHevy: 'From Hevy',
+  fromHevyHint: 'Export a file in Hevy. Pick it after 3 quick questions',
+  fromStrong: 'From Strong',
+  fromStrongHint: 'Export a file in Strong. Pick it after 3 quick questions',
+  fromBackup: 'A MettleUp backup',
+  fromBackupHint: 'A backup file saved on this phone',
+  /** Only in a build whose Google button looks in the member's Google Drive (WelcomeGoogle goDrive). */
+  driveNote: 'Saved a backup to Google Drive? Go back and tap Continue with Google to find it.',
+  /** The title of the backup-file view (also the Settings row's name). */
   restoreFile: 'Restore from a backup',
-  startFresh: 'Start fresh',
-  startFreshNote: 'Answer 3 quick questions and start training. No sign-in needed.',
   replaceTitle: 'Replace the workouts on this phone?',
   replaceConfirm: 'Replace',
 } as const;
@@ -54,7 +71,12 @@ export function replaceBody(workouts: number): string {
 }
 
 /** Said when a backup came back but held no profile: the welcome stays up for the name. */
-export const RESTORED_NO_PROFILE = 'Your workouts are back. Tap "Start fresh" and add your name to carry on.';
+export const RESTORED_NO_PROFILE = 'Your workouts are back. Tap Next and add your name to carry on.';
+
+/** The start view's line when workouts are kept on this phone (after "Remove demo data"). PURE. */
+export function keptWorkoutsLine(n: number): string {
+  return `Your ${n} workout${n === 1 ? ' is' : 's are'} still here. Tap "${START_WORDS.useWithout}" and add your details to carry on.`;
+}
 
 /**
  * After a welcome restore (even one whose tidy-up failed): 'open' when the app now opens on the backup,

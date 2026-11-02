@@ -17,8 +17,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# R-131: the first screen of the welcome is now the start view ("Start fresh"), not "Step 1 of 3".
-- assertNotVisible: "Step 1 of 3|Start fresh"
+# R-277: the first screen of the welcome is the one-screen start view, not "Step 1 of 3".
+- assertNotVisible: "Step 1 of 3|Start fresh|Get stronger every week|Use without an account"
 - assertNotVisible: "Load demo data instead"
 - takeScreenshot: 181-after-reinstall-first-screen
 # Redesign R6: the Backup card is Settings → Backup (the Profile page's gear).

@@ -119,7 +119,7 @@ export function feedbackScreenName(pathname: string): string {
 /** The words a member reads (member-words skill, R-98). */
 export const FEEDBACK_BUTTON_WORDS = {
   button: 'Send feedback about this screen',
-  intro: 'Ask a question about this screen and get an answer at once. Or tell us what is wrong or what you want here. We see which screen you were on.',
+  intro: 'Ask about this screen and get an answer at once, or tell us what is wrong here.',
   placeholder: 'Type here, or tap Speak',
   hideHow: 'To turn off this round button: Settings → "Help and feedback".',
   switchTitle: 'Show the feedback button on every screen',

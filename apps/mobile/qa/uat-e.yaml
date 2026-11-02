@@ -38,20 +38,20 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000
-# R-131: the welcome opens on the start view (no step label). Back to the top.
+# R-277: the welcome opens on its one-screen start view (no step label). Back to the top.
 - scrollUntilVisible:
-    element: "Welcome to MettleUp"
+    element: "Get stronger every week"
     direction: UP
     timeout: 20000
-- assertVisible: "Welcome to MettleUp"
+- assertVisible: "Get stronger every week"
 - assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
 - takeScreenshot: ue-02-erased-welcome
 # Stopped and opened again: still the welcome, nothing kept.
@@ -62,25 +62,30 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000
-# R-131: the welcome opens on the start view (no step label). Back to the top.
+# R-277: the welcome opens on its one-screen start view (no step label). Back to the top.
 - scrollUntilVisible:
-    element: "Welcome to MettleUp"
+    element: "Get stronger every week"
     direction: UP
     timeout: 20000
 - assertNotVisible: "^Profile$"
 - assertNotVisible: 'Your \d+ workouts? (is|are) still here.*'
 - takeScreenshot: ue-03-reopened-welcome
 # ---------------------------------------------------------------- 2. U-M2: "From Hevy" opens the import
-# R-131: the chip is on the start view ("Already have workouts?"); tapping it goes straight on to step 1,
-# where the name is typed.
+# R-277: "Bring workouts" on the start view opens its screen; "From Hevy" there goes straight on to
+# step 1, where the name is typed.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring workouts$"
+- tapOn: "^Bring workouts$"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -169,20 +174,20 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 60000
-# R-131: the welcome opens on the start view (no step label). Back to the top.
+# R-277: the welcome opens on its one-screen start view (no step label). Back to the top.
 - scrollUntilVisible:
-    element: "Welcome to MettleUp"
+    element: "Get stronger every week"
     direction: UP
     timeout: 20000
-- assertVisible: "Welcome to MettleUp"
+- assertVisible: "Get stronger every week"
 # Into the app the quickest way (the demo), then: no gym.
 - scrollUntilVisible:
     element: "Load demo data instead"

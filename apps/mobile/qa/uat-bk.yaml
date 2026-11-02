@@ -1,7 +1,7 @@
 # Part UBK (R-123, owner 25 Oct 2026: "There is no option on welcome page to restore backup"): a
 # member back on a fresh install restores their backup from the WELCOME screen, and everything comes
 # back in one go — then saves a new backup from Settings.
-#   1. Fresh install -> welcome -> "Restore from a backup" -> "Choose backup file" -> Downloads ->
+#   1. Fresh install -> welcome -> "Bring workouts" -> "A MettleUp backup" -> "Choose backup file" -> Downloads ->
 #      qa-backup.zip (pushed by the script; qa/tools/make_backup_zip.py, a backup as ForgeAI 0.55.2
 #      writes it) -> the summary names what is inside and who made it -> "Restore".
 #   2. The app opens on the restored data: routines in their saved ORDER (QA Push, QA Pull, QA Legs),
@@ -20,23 +20,31 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# R-131: the first screen is the start view: "Restore from a backup" is the button in its 3rd card
-# ("Already have workouts?"); sub-find below scrolls to it before the tap.
+# R-277: the first screen is the one-screen welcome: "Bring workouts" opens its screen, where
+# "A MettleUp backup" opens "Restore from a backup"; sub-find scrolls to each before the tap.
 # ---------------------------------------------------------------- 1. restore from the welcome screen
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Restore from a backup$"
+      FIND: "^Bring workouts$"
 - takeScreenshot: bk-01-welcome-links
-- tapOn: "^Restore from a backup$"
+- tapOn: "^Bring workouts$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^A MettleUp backup$"
+- tapOn: "^A MettleUp backup$"
+- extendedWaitUntil:
+    visible: "^Restore from a backup$"
+    timeout: 15000
 - extendedWaitUntil:
     visible: "^Choose backup file$"
     timeout: 15000

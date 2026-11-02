@@ -1,12 +1,12 @@
 # Part UBK, first step (1 Nov 2026): the welcome screen's gym code is checked with the gym at once.
-# A fresh install's start view, "Do you train at a gym?" card:
-#   1. "Scan the poster" and "Enter your gym code" are both there (the scanner itself needs a real
-#      poster, so it is not opened here).
+# A fresh install's start view (R-277: one screen), "Join my gym" -> the "Join your gym" screen:
+#   1. "Scan the poster at your gym" and the "Gym code" box are both there (the scanner itself needs a
+#      real poster, so it is not opened here).
 #   2. A code no gym has (ZZZZZ9, as part INV-d) -> "No gym has the code ZZZZZ9. ..." under the box.
 #   3. The test gym's real code (FORGE1, "ForgeAI Test Gym", as parts INV and R) -> "ForgeAI Test Gym
-#      found. Its join screen opens right after setup."
-#   4. "Change the code" lets it go again. uat-bk.yaml then starts from a fresh install (clearState),
-#      so nothing here is left for it.
+#      found. Its join screen opens right after setup." and the button "Join ForgeAI Test Gym".
+#   4. "Change the code" lets it go again, and Back returns to the start view. uat-bk.yaml then starts
+#      from a fresh install (clearState), so nothing here is left for it.
 # The check is the live gym_preview (WelcomeGymCode.tsx, welcomeGymChecked): the box losing focus
 # (hideKeyboard right after typing, while the keyboard is surely open: trap 20) checks a full code.
 appId: com.mettleup.app
@@ -20,30 +20,33 @@ appId: com.mettleup.app
     optional: true
 # R-248: the intro screens come first on a fresh install. Skip them.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Restore from a backup|Load demo data instead"
     timeout: 90000
-# ---------------------------------------------------------------- 1. the gym card's two ways in
-# Owner profile (360 dp, font 1.3): the card can sit below the edge (trap 27).
+# ---------------------------------------------------------------- 1. "Join my gym" and its two ways in
+# Owner profile (360 dp, font 1.3): the buttons can sit below the edge (trap 27).
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Do you train at a gym\\?$"
+      FIND: "^Join my gym$"
+- tapOn: "^Join my gym$"
+- extendedWaitUntil:
+    visible: "^Join your gym$"
+    timeout: 15000
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Scan the poster$"
+      FIND: "^Scan the poster at your gym$"
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Enter your gym code$"
+      FIND: "^or type the gym code$"
 - takeScreenshot: wg-01-gym-card
-- tapOn: "^Enter your gym code$"
 # ---------------------------------------------------------------- 2. a code no gym has
 - runFlow:
     file: sub-find.yaml
@@ -93,6 +96,11 @@ appId: com.mettleup.app
     visible: "ForgeAI Test Gym found.*"
     timeout: 30000
 - assertVisible: 'ForgeAI Test Gym found\. Its join screen opens right after setup\.'
+# R-277: the bottom button names the gym (it keeps the code and goes on to the setup questions).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Join ForgeAI Test Gym$"
 # A wrong code's line has gone with it.
 - assertNotVisible: "No gym has the code.*"
 - takeScreenshot: wg-03-gym-found
@@ -105,3 +113,13 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: "ForgeAI Test Gym found.*"
     timeout: 10000
+# Back on the start view (the code is let go, so no "saved" line there).
+- scrollUntilVisible:
+    element: "^Back$"
+    direction: UP
+    timeout: 20000
+- tapOn: "^Back$"
+- extendedWaitUntil:
+    visible: "Get stronger every week"
+    timeout: 15000
+- assertNotVisible: "Gym code .* saved.*|ForgeAI Test Gym found.*"

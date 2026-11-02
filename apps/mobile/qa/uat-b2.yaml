@@ -17,8 +17,8 @@ appId: com.mettleup.app
 - assertVisible: 'MettleUp couldn.t open your data\. Your workouts are still on this phone\. Tap Try again\.'
 - assertVisible: "^Try again$"
 - assertVisible: "^Save my data file$"
-# R-131: "Start fresh" is the welcome's first screen now.
-- assertNotVisible: "Step 1 of 3|Your name|Start fresh|Load demo data instead"
+# R-277: the welcome opens on "Get stronger every week" (its one-screen start view).
+- assertNotVisible: "Step 1 of 3|Your name|Start fresh|Get stronger every week|Use without an account|Load demo data instead"
 - assertNotVisible: "^Profile$"
 - takeScreenshot: ub-02-error-screen
 - tapOn: "^Details$"

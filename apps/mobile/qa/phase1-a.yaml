@@ -13,38 +13,59 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# R-131: the first screen is the start view (no step label): three cards, "Start fresh", then the demo.
-# The chips are checked first, then "Start fresh" opens step 1 (checked), and Back returns here.
-- assertVisible: "Welcome to MettleUp"
-# Audit Phase 4 (point 6): switchers are met where they arrive. R-131: the "Already have workouts?"
-# card on the start view holds "From Hevy" / "From Strong". Not tapped here: a pick goes on to step 1
-# and opens the import on the Workout tab after Start training.
-- scrollUntilVisible:
-    element: "Already have workouts\\?"
-    timeout: 30000
-# Its chips sit below the heading: at font 2.0 on 360 dp the heading alone was on screen
-# (UAT WP14 run 39000428116). Scrolled to, then they must be visible (sub-find).
+# R-277: the first screen is the one-screen welcome (no step label): the example set card, "Get
+# stronger every week", Continue with Google, "Join my gym", "Bring workouts", "Use without an account",
+# then the demo. "Bring workouts" is checked first, then "Use without an account" opens step 1
+# (checked), and Back returns here.
+- assertVisible: "Get stronger every week"
+# The decorative set card is one picture to a screen reader, with one label.
+- assertVisible: "Example of a logged bench press"
+# Audit Phase 4 (point 6): switchers are met where they arrive. R-277: "Bring workouts" opens its own
+# screen with "From Hevy" / "From Strong" / "A MettleUp backup". Not tapped here: a pick goes on to
+# step 1 and opens the import on the Workout tab after Start training.
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "From Hevy"
+      FIND: "^Bring workouts$"
+- tapOn: "^Bring workouts$"
+- extendedWaitUntil:
+    visible: "^Bring your workouts$"
+    timeout: 15000
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "From Strong"
-# R-131: "Start fresh" opens step 1.
+      FIND: "^From Hevy$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^From Strong$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^A MettleUp backup$"
+- takeScreenshot: 00-welcome-bring
 - scrollUntilVisible:
-    element: "Start fresh"
-    timeout: 30000
-- tapOn: "Start fresh"
+    element: "^Back$"
+    direction: UP
+    timeout: 20000
+- tapOn: "^Back$"
+- extendedWaitUntil:
+    visible: "Get stronger every week"
+    timeout: 15000
+# R-277: "Use without an account" opens step 1.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Use without an account$"
+- tapOn: "^Use without an account$"
 - extendedWaitUntil:
     visible: "Step 1 of 3"
     timeout: 15000
@@ -62,7 +83,7 @@ appId: com.mettleup.app
 # R-131: Back on step 1 returns to the start view, where the demo link is.
 - tapOn: "Back"
 - extendedWaitUntil:
-    visible: "Welcome to MettleUp"
+    visible: "Get stronger every week"
     timeout: 15000
 - scrollUntilVisible:
     element: "Load demo data instead"

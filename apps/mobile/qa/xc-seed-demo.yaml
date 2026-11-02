@@ -12,16 +12,16 @@ appId: com.mettleup.app
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
 # erase. Skip them; an older build without them goes straight on.
 - extendedWaitUntil:
-    visible: "^Skip$|Start fresh|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
     timeout: 90000
 - tapOn:
     text: "^Skip$"
     optional: true
 - extendedWaitUntil:
-    visible: "Start fresh|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 90000
-# R-131: the first screen is the start view (no step label); "Load demo data instead" is at its
-# bottom, so scroll down to it (no "Start fresh").
+# R-277: the first screen is the one-screen start view (no step label); "Load demo data instead" is
+# its last link, so scroll down to it.
 - scrollUntilVisible:
     element: "Load demo data instead"
     timeout: 30000

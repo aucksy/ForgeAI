@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { backupDay, foundBackupLine, replaceBody, START_WORDS } from '@/onboarding/welcomeStart';
+import { backupDay, foundBackupLine, keptWorkoutsLine, replaceBody, RESTORED_NO_PROFILE, START_WORDS } from '@/onboarding/welcomeStart';
 
 describe('welcome start view words (R-131)', () => {
   it('names the day of a Drive backup', () => {
@@ -24,16 +24,28 @@ describe('welcome start view words (R-131)', () => {
   it('keeps the labels the phone tests and Settings use', () => {
     expect(START_WORDS.restoreFile).toBe('Restore from a backup');
     expect(START_WORDS.googleButton).toBe('Continue with Google');
-    expect(START_WORDS.startFresh).toBe('Start fresh');
   });
 
-  it('Google and the backup file each say what they do in one complete sentence (1 Nov 2026)', () => {
-    expect(START_WORDS.googleBody).toBe('Sign in with your Google account. If you saved a backup to Google Drive, your workouts come back.');
-    expect(START_WORDS.haveBody).toBe('Bring back a backup file saved on this phone, or move your workouts from Hevy or Strong.');
-    // The two never blur: Google names Google Drive, the file names this phone and the other apps.
-    expect(START_WORDS.googleBody).toMatch(/Google Drive/);
-    expect(START_WORDS.haveBody).not.toMatch(/Google/);
-    expect(START_WORDS.haveBody).toMatch(/this phone.*Hevy or Strong/);
+  it('uses the owner-approved words of the new welcome (R-277, 2 Nov 2026)', () => {
+    expect(START_WORDS.title).toBe('Get stronger every week');
+    expect(START_WORDS.sub).toBe('Log every set at the gym. See what you lifted last time.');
+    expect(START_WORDS.joinGym).toBe('Join my gym');
+    expect(START_WORDS.bringWorkouts).toBe('Bring workouts');
+    expect(START_WORDS.useWithout).toBe('Use without an account');
+    expect(START_WORDS.exampleCard).toBe('Example of a logged bench press');
+    expect([START_WORDS.fromHevy, START_WORDS.fromStrong, START_WORDS.fromBackup]).toEqual(['From Hevy', 'From Strong', 'A MettleUp backup']);
+    // Google Drive is named only by the Google button's own note; the file row names this phone.
+    expect(START_WORDS.driveNote).toMatch(/Google Drive.*Continue with Google/);
+    expect(START_WORDS.fromBackupHint).toMatch(/this phone/);
+    expect(START_WORDS.fromBackupHint).not.toMatch(/Google/);
+  });
+
+  it('says how to carry on with workouts kept on this phone, naming a button that is there', () => {
+    expect(keptWorkoutsLine(1)).toBe('Your 1 workout is still here. Tap "Use without an account" and add your details to carry on.');
+    expect(keptWorkoutsLine(3)).toMatch(/^Your 3 workouts are still here\./);
+    // "Start fresh" is gone from the welcome: no line may send a member to it.
+    expect(Object.values(START_WORDS).join(' ')).not.toMatch(/Start fresh/);
+    expect(RESTORED_NO_PROFILE).not.toMatch(/Start fresh/);
   });
 
   it('never uses banned or inside words', () => {
