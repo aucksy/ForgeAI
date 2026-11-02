@@ -5,8 +5,18 @@
  * old. A member who never linked Drive is never touched: no network call, no card (the offline
  * firewall in backupStore.init stays the gate). Failures are logged and retried after the next
  * workout; the member is told only through the 3-day card.
+ *
+ * R-282 (owner, 2 Nov 2026: "automatic Google Drive backup after each workout"): a finished workout now
+ * leaves a "backup owed" mark on the phone. A backup skipped for mobile data (or a failure) is tried again
+ * whenever the app comes back to the screen, not only after the next workout. And a phone that never
+ * backed up may make the FIRST automatic copy when Drive holds no backup yet (nothing to bury).
  */
+import { getMeta, setMeta } from '@/db';
+import { enqueueWrite } from '@/db/writeQueue';
 import { useBackup } from '@/store/backupStore';
+
+/** Meta key: when a finished workout last asked for a backup ('' = none owed). Never inside a backup. */
+export const BACKUP_OWED_KEY = 'auto_backup_owed';
 
 /** The 3-day line after which the Workout tab says the backup is old. */
 export const STALE_AFTER_MS = 3 * 24 * 60 * 60 * 1000;
@@ -27,8 +37,10 @@ export const AUTO_BACKUP_WORDS = {
  * time is kept on the phone only, never inside a backup, so a restored phone starts without it.
  * Not again within 10 minutes. PURE.
  */
-export function autoBackupDue(linked: boolean, lastAt: string | null, now: number): boolean {
-  if (!linked || !lastAt) return false;
+export function autoBackupDue(linked: boolean, lastAt: string | null, now: number, driveEmpty = false): boolean {
+  if (!linked) return false;
+  // R-282: the first copy is safe when Drive has nothing it could bury.
+  if (!lastAt) return driveEmpty;
   const t = Date.parse(lastAt);
   return !Number.isNaN(t) && now - t >= MIN_GAP_MS;
 }
@@ -46,13 +58,33 @@ export function staleBackupDays(linked: boolean, lastAt: string | null, now: num
   return age > STALE_AFTER_MS ? Math.floor(age / (24 * 60 * 60 * 1000)) : null;
 }
 
-/** After a finished workout. Never throws; never touches the network for an unlinked member. */
+/** After a finished workout: marks a backup owed, then tries it. Never throws. */
 export async function autoBackupAfterWorkout(now = Date.now()): Promise<'done' | 'skipped' | 'failed'> {
   try {
+    await enqueueWrite(() => setMeta(BACKUP_OWED_KEY, new Date(now).toISOString()));
+  } catch (e) {
+    console.warn('[auto backup] could not mark a backup owed; trying now only', e);
+  }
+  return backUpIfOwed(now, true);
+}
+
+/**
+ * When a backup is owed (R-282): the app came back to the screen, or a workout just finished. Never throws;
+ * never touches the network for an unlinked member or when nothing is owed.
+ */
+export async function backUpIfOwed(now = Date.now(), justFinished = false): Promise<'done' | 'skipped' | 'failed'> {
+  try {
+    const owed = justFinished || Boolean(await getMeta(BACKUP_OWED_KEY));
+    if (!owed) return 'skipped';
     const store = useBackup.getState();
     await store.init();
     const s = useBackup.getState();
-    if (!s.configured || s.busy || !autoBackupDue(Boolean(s.googleEmail), s.lastBackupAt, now)) return 'skipped';
+    if (!s.configured || s.busy || !s.googleEmail) return 'skipped';
+    // A phone that never backed up: only when Drive is empty (one look, only for a linked member).
+    const driveEmpty = s.lastBackupAt
+      ? false
+      : await import('./drive').then((m) => m.peekNewestDriveBackup()).then((f) => f == null);
+    if (!autoBackupDue(true, s.lastBackupAt, now, driveEmpty)) return 'skipped';
     // R-123: a Drive backup is the whole backup file (photos too), so the automatic one waits for
     // Wi-Fi rather than spend mobile data after every workout; "Back up now" works on any network.
     const net = await import('@react-native-community/netinfo')
@@ -63,9 +95,10 @@ export async function autoBackupAfterWorkout(now = Date.now()): Promise<'done' |
       });
     if (net?.type === 'cellular') return 'skipped';
     await s.backupNow();
+    await enqueueWrite(() => setMeta(BACKUP_OWED_KEY, ''));
     return 'done';
   } catch (e) {
-    console.warn('[auto backup] failed; tries again after the next workout', e);
+    console.warn('[auto backup] failed; tries again when the app comes back', e);
     return 'failed';
   }
 }

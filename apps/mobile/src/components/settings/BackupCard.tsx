@@ -227,7 +227,7 @@ function DriveBackup() {
     try {
       await backupNow();
       success();
-      say('Backed up. Drive keeps your last 5 backups.');
+      say('Backed up. From now on, MettleUp also backs up by itself after each workout, on Wi-Fi.');
     } catch (e) {
       warn();
       say(null, shownBackupError(e, 'Backup failed. Nothing on this phone changed. Please try again.', 'backup'));

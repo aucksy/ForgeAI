@@ -94,10 +94,11 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'Join your gym in the app',
     text:
-      '1. Open the Gym tab at the bottom. ' +
-      '2. Tap "Scan the poster" and point your camera at the QR code on the poster at your gym\'s desk. Or type your gym\'s code (6 letters or numbers) and tap Next.' +
+      '1. Open the Gym tab. ' +
+      '2. Tap "Scan the poster" and point your camera at the poster at your gym\'s desk. Or type your gym\'s code (6 letters or numbers) and tap Next. ' +
       '3. Check the gym name, type your name, and tick the box: you are 18 or older and agree to the terms. ' +
       '4. Tap "Join this gym". ' +
+      'New to the app? Tap "Join my gym" on the first screen. ' +
       'To check in later, open the Gym tab, tap "Check in" and scan the check-in poster at the desk. The first time, it asks for the mobile number your gym has. ' +
       'Is your gym not on MettleUp yet? Tap "Recommend MettleUp to my gym" in the Gym tab.',
   },

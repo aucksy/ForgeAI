@@ -65,13 +65,20 @@ describe('Google Drive backup keeps 5 copies and refuses an empty overwrite (DS-
     expect(isBackupFileName('notes.txt')).toBe(false);
   });
 
-  it('keeps the newest 5 and deletes only older ones', async () => {
-    const { backupsToPrune, KEEP_BACKUPS } = await import('@/cloud/drive');
+  it('keeps the newest 5 and one a day for 14 days; deletes only the rest (R-282)', async () => {
+    const { backupsToPrune, KEEP_BACKUPS, KEEP_DAILY_DAYS } = await import('@/cloud/drive');
     expect(KEEP_BACKUPS).toBe(5);
+    expect(KEEP_DAILY_DAYS).toBe(14);
+    // One a day, all within 14 days: every one stays.
     const files = [3, 7, 1, 9, 5, 8, 2].map((d) => file(d));
-    expect(backupsToPrune(files).map((f) => f.id).sort()).toEqual(['f1', 'f2']);
-    expect(backupsToPrune(files.slice(0, 5))).toEqual([]);
+    expect(backupsToPrune(files)).toEqual([]);
     expect(backupsToPrune([])).toEqual([]);
+    // The Spends trap: 8 copies on day 12 (a burst after workouts) must not delete days 1-9.
+    const burst = Array.from({ length: 8 }, (_, i) => ({ ...file(12), id: `b${i}`, modifiedTime: `2026-10-12T1${i}:00:00.000Z` }));
+    const pruned = backupsToPrune([...burst, ...files]).map((f) => f.id).sort();
+    expect(pruned).toEqual(['b0', 'b1', 'b2']); // the oldest 3 of the burst; every older day stays
+    // Older than 14 days before the newest, and not in the newest 5: deleted.
+    expect(backupsToPrune([file(30), file(29), file(28), file(27), file(26), file(5)]).map((f) => f.id)).toEqual(['f5']);
   });
 
   it('an empty phone may not back up over a backup with workouts — it is told to restore instead', async () => {

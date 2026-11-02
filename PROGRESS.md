@@ -1,7 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- (empty: 0.68.0 shipped the list on 2 Nov)
+- Automatic Drive backup gaps (R-282): a workout finished on mobile data is backed up later on Wi-Fi when the app opens (meta auto_backup_owed, backUpIfOwed in _layout on start and on return); the first backup runs by itself when Drive has none; Drive keeps the newest 5 plus one copy a day for 14 days (KEEP_DAILY_DAYS), so a burst of bad copies cannot delete every good one. Help article "join-your-gym" names "Join my gym" (panel deploy).
 
 ## Done
 - 0.68.0 RELEASED 2 Nov 2026 (owner said "Release", R-281). Gate: CI + whole qa-device on default and owner + qa-journeys green on 9eb1149b. Contents (the old waiting list):

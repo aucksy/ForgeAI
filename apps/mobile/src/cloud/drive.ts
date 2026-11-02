@@ -4,7 +4,8 @@
  * Ported from ColorCloset's proven `src/lib/drive.ts` (same Expo SDK 56 / RN 0.85
  * stack). Sign-in is native (`@react-native-google-signin/google-signin`), so it
  * needs a dev/preview build — NOT Expo Go. We request the narrow `drive.file` scope
- * (the app only sees files it created), keep the last KEEP_BACKUPS dated backup files inside a
+ * (the app only sees files it created), keep the last KEEP_BACKUPS dated backup files (and one a day for
+ * KEEP_DAILY_DAYS days, R-282) inside a
  * dedicated "MettleUp" folder (audit DS-10), and talk to the Drive v3 REST API directly with the
  * access token.
  * R-123 (25 Oct 2026): each Drive backup is the SAME file "Save a backup" makes (src/backup:
@@ -266,10 +267,29 @@ export function isOldDriveBackup(name: string): boolean {
   return name.endsWith('.json');
 }
 
-/** The backups to delete so only the newest `keep` remain (input in any order). PURE. */
-export function backupsToPrune(files: readonly DriveBackupFile[], keep = KEEP_BACKUPS): DriveBackupFile[] {
+/** R-282: besides the newest KEEP_BACKUPS, the newest copy of each day for this many days stays. */
+export const KEEP_DAILY_DAYS = 14;
+
+/**
+ * The backups to delete (input in any order). PURE.
+ * R-282 (the Spends lesson, 1 Nov 2026: "keep the newest 5" let one burst of bad copies delete every good
+ * one): the newest `keep` stay, AND the newest copy of each day within `days` days of the newest backup.
+ * With a backup after every workout, a bad week can no longer push out last week's good copy.
+ */
+export function backupsToPrune(files: readonly DriveBackupFile[], keep = KEEP_BACKUPS, days = KEEP_DAILY_DAYS): DriveBackupFile[] {
   const newestFirst = [...files].sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
-  return newestFirst.slice(keep);
+  if (newestFirst.length === 0) return [];
+  const newestAt = Date.parse(newestFirst[0].modifiedTime);
+  const seenDays = new Set<string>();
+  return newestFirst.filter((f, i) => {
+    const day = f.modifiedTime.slice(0, 10);
+    const firstOfDay = !seenDays.has(day);
+    seenDays.add(day);
+    if (i < keep) return false;
+    const at = Date.parse(f.modifiedTime);
+    const recent = !Number.isNaN(at) && !Number.isNaN(newestAt) && newestAt - at < days * 24 * 60 * 60 * 1000;
+    return !(firstOfDay && recent);
+  });
 }
 
 /**
@@ -367,7 +387,7 @@ export async function uploadBackupFile(fileUri: string, size: number, workouts?:
     throw new DriveError(driveStatusWords(res.status, res.body ?? ''), `upload failed (${res.status}) ${(res.body ?? '').slice(0, 400)}`);
   }
 
-  // Only after the new copy is safely up: drop the oldest beyond KEEP_BACKUPS. A failed
+  // Only after the new copy is safely up: drop the old ones (backupsToPrune). A failed
   // delete leaves an extra copy, never fewer.
   const all = await listBackups(token, folderId).catch((e: unknown) => {
     console.warn('[drive] could not list the backups to tidy (an extra copy stays)', e);
