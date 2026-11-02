@@ -45,7 +45,9 @@ export function ExerciseThumb({
   // UAT A-09 (30 Oct 2026): rows with no clip thumbnail showed a plain dumbbell next to rows with a
   // drawing. Use the exercise's start picture when it has one, so the list has one look.
   const bundled = mediaFor(catalogKey);
-  const still = bundled ? null : picturesFor(catalogKey)?.start ?? null;
+  // R-280: the close-up crop of that picture, in the app's colours (the whole start picture shrank
+  // a person and a machine to a speck at 38 dp).
+  const still = bundled ? null : picturesFor(catalogKey)?.thumb ?? null;
   const tappable = onPress != null && hasDemo(catalogKey, media);
   const r = Math.round(size * 0.28);
   // The member's photo can be gone (replaced mid-workout, or a restore on another phone):
@@ -81,7 +83,8 @@ export function ExerciseThumb({
       </View>
     );
   } else if (bundled || still) {
-    // Light line drawing on the app's raised surface (calm on the dark theme).
+    // A clip's line drawing on the raised surface; a picture (R-280) is drawn on the card colour,
+    // so it fills the square.
     body = (
       <Image
         source={bundled ? bundled.thumb : still}
@@ -89,11 +92,11 @@ export function ExerciseThumb({
           width: size,
           height: size,
           borderRadius: r,
-          backgroundColor: color.surfaceRaised,
+          backgroundColor: bundled ? color.surfaceRaised : color.surface,
           borderWidth: 1,
           borderColor: color.border,
         }}
-        contentFit="contain"
+        contentFit={bundled ? 'contain' : 'cover'}
         accessibilityIgnoresInvertColors
       />
     );

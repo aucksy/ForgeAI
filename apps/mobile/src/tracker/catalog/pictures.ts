@@ -4,13 +4,17 @@
  * F20: start and end pictures for the exercise page, from the RepDB free edition
  * (https://github.com/RepDB/exercise-dataset). Matches are hand-checked in
  * docs/exercise-library/repdb-match.json. Licence: in-app use with the visible credit
- * "Exercise data by RepDB (repdb.co)" (Settings → About → Credits); resized only.
+ * "Exercise data by RepDB (repdb.co)" (Settings → About → Credits); resized and recoloured to
+ * the app theme (R-280). A hold (plank) has one picture: `end` is null.
  */
 import type { ImageSourcePropType } from 'react-native';
 
 export interface ExercisePictures {
   start: ImageSourcePropType;
-  end: ImageSourcePropType;
+  /** The start picture cropped close to the person, for the small picture in lists (R-280). */
+  thumb: ImageSourcePropType;
+  /** null: a hold, drawn once. */
+  end: ImageSourcePropType | null;
 }
 
 /** Our exercise key -> RepDB id, for checks (the same list as repdb-match.json). */
@@ -58,6 +62,7 @@ export const PICTURE_SOURCE_IDS: Readonly<Record<string, string>> = {
   cable_curl: 'cable-curl',
   cable_fly: 'cable-fly',
   cable_glute_kickback: 'cable-kickback',
+  cable_lateral_raise: 'cable-lateral-raise',
   cable_overhead_triceps_extension: 'cable-overhead-tricep-extension',
   cable_pull_through: 'cable-pull-through',
   cable_rear_delt_fly: 'cable-reverse-fly',
@@ -178,6 +183,7 @@ export const PICTURE_SOURCE_IDS: Readonly<Record<string, string>> = {
   pendlay_row: 'pendlay-row',
   pike_push_up: 'pike-push-ups',
   pistol_squat: 'pistol-squat',
+  plank: 'plank',
   plate_pinch: 'plate-pinch',
   preacher_curl: 'machine-preacher-curl',
   preacher_hammer_curl: 'preacher-hammer-curl',
@@ -247,10 +253,12 @@ export const PICTURE_SOURCE_IDS: Readonly<Record<string, string>> = {
   swiss_ball_leg_curl: 'ball-leg-curl',
   t_bar_row: 't-bar-row',
   trap_bar_deadlift: 'hex-bar-deadlift',
+  triceps_dip: 'dips',
   triceps_pushdown: 'tricep-pushdown',
   turkish_get_up: 'kettlebell-turkish-get-ups',
   v_bar_triceps_pushdown: 'v-bar-tricep-pushdown',
   v_up: 'v-ups',
+  walking_lunge: 'walking-lunge',
   weighted_dip: 'weighted-dips',
   weighted_pull_up: 'weighted-pull-up',
   wide_grip_bench_press: 'wide-grip-bench-press',
@@ -264,974 +272,1237 @@ export const PICTURE_SOURCE_IDS: Readonly<Record<string, string>> = {
 export const EXERCISE_PICTURES: Readonly<Record<string, ExercisePictures>> = {
   ab_crunch_machine: {
     start: require('../../../assets/exercise-pictures/ab_crunch_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ab_crunch_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ab_crunch_machine__end.webp'),
   },
   ab_wheel_rollout: {
     start: require('../../../assets/exercise-pictures/ab_wheel_rollout__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ab_wheel_rollout__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ab_wheel_rollout__end.webp'),
   },
   air_squat: {
     start: require('../../../assets/exercise-pictures/air_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/air_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/air_squat__end.webp'),
   },
   archer_push_up: {
     start: require('../../../assets/exercise-pictures/archer_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/archer_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/archer_push_up__end.webp'),
   },
   arnold_press: {
     start: require('../../../assets/exercise-pictures/arnold_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/arnold_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/arnold_press__end.webp'),
   },
   assisted_dip: {
     start: require('../../../assets/exercise-pictures/assisted_dip__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/assisted_dip__thumb.webp'),
     end: require('../../../assets/exercise-pictures/assisted_dip__end.webp'),
   },
   assisted_pull_up: {
     start: require('../../../assets/exercise-pictures/assisted_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/assisted_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/assisted_pull_up__end.webp'),
   },
   back_extension: {
     start: require('../../../assets/exercise-pictures/back_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/back_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/back_extension__end.webp'),
   },
   band_assisted_pull_up: {
     start: require('../../../assets/exercise-pictures/band_assisted_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/band_assisted_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/band_assisted_pull_up__end.webp'),
   },
   banded_lateral_walk: {
     start: require('../../../assets/exercise-pictures/banded_lateral_walk__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/banded_lateral_walk__thumb.webp'),
     end: require('../../../assets/exercise-pictures/banded_lateral_walk__end.webp'),
   },
   barbell_back_squat: {
     start: require('../../../assets/exercise-pictures/barbell_back_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_back_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_back_squat__end.webp'),
   },
   barbell_bench_press: {
     start: require('../../../assets/exercise-pictures/barbell_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_bench_press__end.webp'),
   },
   barbell_bulgarian_split_squat: {
     start: require('../../../assets/exercise-pictures/barbell_bulgarian_split_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_bulgarian_split_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_bulgarian_split_squat__end.webp'),
   },
   barbell_calf_raise: {
     start: require('../../../assets/exercise-pictures/barbell_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_calf_raise__end.webp'),
   },
   barbell_curl: {
     start: require('../../../assets/exercise-pictures/barbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_curl__end.webp'),
   },
   barbell_drag_curl: {
     start: require('../../../assets/exercise-pictures/barbell_drag_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_drag_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_drag_curl__end.webp'),
   },
   barbell_front_raise: {
     start: require('../../../assets/exercise-pictures/barbell_front_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_front_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_front_raise__end.webp'),
   },
   barbell_glute_bridge: {
     start: require('../../../assets/exercise-pictures/barbell_glute_bridge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_glute_bridge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_glute_bridge__end.webp'),
   },
   barbell_hip_thrust: {
     start: require('../../../assets/exercise-pictures/barbell_hip_thrust__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_hip_thrust__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_hip_thrust__end.webp'),
   },
   barbell_lunge: {
     start: require('../../../assets/exercise-pictures/barbell_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_lunge__end.webp'),
   },
   barbell_preacher_curl: {
     start: require('../../../assets/exercise-pictures/barbell_preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_preacher_curl__end.webp'),
   },
   barbell_pullover: {
     start: require('../../../assets/exercise-pictures/barbell_pullover__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_pullover__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_pullover__end.webp'),
   },
   barbell_reverse_lunge: {
     start: require('../../../assets/exercise-pictures/barbell_reverse_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_reverse_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_reverse_lunge__end.webp'),
   },
   barbell_rollout: {
     start: require('../../../assets/exercise-pictures/barbell_rollout__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_rollout__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_rollout__end.webp'),
   },
   barbell_row: {
     start: require('../../../assets/exercise-pictures/barbell_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_row__end.webp'),
   },
   barbell_shrug: {
     start: require('../../../assets/exercise-pictures/barbell_shrug__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_shrug__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_shrug__end.webp'),
   },
   barbell_skull_crusher: {
     start: require('../../../assets/exercise-pictures/barbell_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_skull_crusher__end.webp'),
   },
   barbell_sumo_squat: {
     start: require('../../../assets/exercise-pictures/barbell_sumo_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_sumo_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_sumo_squat__end.webp'),
   },
   barbell_upright_row: {
     start: require('../../../assets/exercise-pictures/barbell_upright_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_upright_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_upright_row__end.webp'),
   },
   barbell_wrist_curl: {
     start: require('../../../assets/exercise-pictures/barbell_wrist_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/barbell_wrist_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/barbell_wrist_curl__end.webp'),
   },
   bench_dip: {
     start: require('../../../assets/exercise-pictures/bench_dip__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bench_dip__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bench_dip__end.webp'),
   },
   bicycle_crunch: {
     start: require('../../../assets/exercise-pictures/bicycle_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bicycle_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bicycle_crunch__end.webp'),
   },
   bird_dog: {
     start: require('../../../assets/exercise-pictures/bird_dog__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bird_dog__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bird_dog__end.webp'),
   },
   bodyweight_calf_raise: {
     start: require('../../../assets/exercise-pictures/bodyweight_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bodyweight_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bodyweight_calf_raise__end.webp'),
   },
   bodyweight_lunge: {
     start: require('../../../assets/exercise-pictures/bodyweight_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bodyweight_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bodyweight_lunge__end.webp'),
   },
   box_jump: {
     start: require('../../../assets/exercise-pictures/box_jump__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/box_jump__thumb.webp'),
     end: require('../../../assets/exercise-pictures/box_jump__end.webp'),
   },
   box_squat: {
     start: require('../../../assets/exercise-pictures/box_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/box_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/box_squat__end.webp'),
   },
   bulgarian_split_squat: {
     start: require('../../../assets/exercise-pictures/bulgarian_split_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/bulgarian_split_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/bulgarian_split_squat__end.webp'),
   },
   cable_chest_press: {
     start: require('../../../assets/exercise-pictures/cable_chest_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_chest_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_chest_press__end.webp'),
   },
   cable_crunch: {
     start: require('../../../assets/exercise-pictures/cable_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_crunch__end.webp'),
   },
   cable_curl: {
     start: require('../../../assets/exercise-pictures/cable_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_curl__end.webp'),
   },
   cable_fly: {
     start: require('../../../assets/exercise-pictures/cable_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_fly__end.webp'),
   },
   cable_glute_kickback: {
     start: require('../../../assets/exercise-pictures/cable_glute_kickback__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_glute_kickback__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_glute_kickback__end.webp'),
+  },
+  cable_lateral_raise: {
+    start: require('../../../assets/exercise-pictures/cable_lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_lateral_raise__thumb.webp'),
+    end: require('../../../assets/exercise-pictures/cable_lateral_raise__end.webp'),
   },
   cable_overhead_triceps_extension: {
     start: require('../../../assets/exercise-pictures/cable_overhead_triceps_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_overhead_triceps_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_overhead_triceps_extension__end.webp'),
   },
   cable_pull_through: {
     start: require('../../../assets/exercise-pictures/cable_pull_through__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_pull_through__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_pull_through__end.webp'),
   },
   cable_rear_delt_fly: {
     start: require('../../../assets/exercise-pictures/cable_rear_delt_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_rear_delt_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_rear_delt_fly__end.webp'),
   },
   cable_triceps_kickback: {
     start: require('../../../assets/exercise-pictures/cable_triceps_kickback__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_triceps_kickback__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_triceps_kickback__end.webp'),
   },
   cable_upright_row: {
     start: require('../../../assets/exercise-pictures/cable_upright_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cable_upright_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cable_upright_row__end.webp'),
   },
   captains_chair_knee_raise: {
     start: require('../../../assets/exercise-pictures/captains_chair_knee_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/captains_chair_knee_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/captains_chair_knee_raise__end.webp'),
   },
   captains_chair_leg_raise: {
     start: require('../../../assets/exercise-pictures/captains_chair_leg_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/captains_chair_leg_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/captains_chair_leg_raise__end.webp'),
   },
   chest_dip: {
     start: require('../../../assets/exercise-pictures/chest_dip__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/chest_dip__thumb.webp'),
     end: require('../../../assets/exercise-pictures/chest_dip__end.webp'),
   },
   chest_supported_dumbbell_row: {
     start: require('../../../assets/exercise-pictures/chest_supported_dumbbell_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/chest_supported_dumbbell_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/chest_supported_dumbbell_row__end.webp'),
   },
   chin_up: {
     start: require('../../../assets/exercise-pictures/chin_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/chin_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/chin_up__end.webp'),
   },
   clamshell: {
     start: require('../../../assets/exercise-pictures/clamshell__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/clamshell__thumb.webp'),
     end: require('../../../assets/exercise-pictures/clamshell__end.webp'),
   },
   clap_push_up: {
     start: require('../../../assets/exercise-pictures/clap_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/clap_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/clap_push_up__end.webp'),
   },
   close_grip_barbell_curl: {
     start: require('../../../assets/exercise-pictures/close_grip_barbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/close_grip_barbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/close_grip_barbell_curl__end.webp'),
   },
   close_grip_bench_press: {
     start: require('../../../assets/exercise-pictures/close_grip_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/close_grip_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/close_grip_bench_press__end.webp'),
   },
   close_grip_ez_bar_curl: {
     start: require('../../../assets/exercise-pictures/close_grip_ez_bar_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/close_grip_ez_bar_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/close_grip_ez_bar_curl__end.webp'),
   },
   close_grip_lat_pulldown: {
     start: require('../../../assets/exercise-pictures/close_grip_lat_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/close_grip_lat_pulldown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/close_grip_lat_pulldown__end.webp'),
   },
   close_grip_push_up: {
     start: require('../../../assets/exercise-pictures/close_grip_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/close_grip_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/close_grip_push_up__end.webp'),
   },
   concentration_curl: {
     start: require('../../../assets/exercise-pictures/concentration_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/concentration_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/concentration_curl__end.webp'),
   },
   cross_body_crunch: {
     start: require('../../../assets/exercise-pictures/cross_body_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cross_body_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cross_body_crunch__end.webp'),
   },
   cross_body_hammer_curl: {
     start: require('../../../assets/exercise-pictures/cross_body_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/cross_body_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/cross_body_hammer_curl__end.webp'),
   },
   crunch: {
     start: require('../../../assets/exercise-pictures/crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/crunch__end.webp'),
   },
   dead_bug: {
     start: require('../../../assets/exercise-pictures/dead_bug__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dead_bug__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dead_bug__end.webp'),
   },
   deadlift: {
     start: require('../../../assets/exercise-pictures/deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/deadlift__end.webp'),
   },
   decline_barbell_bench_press: {
     start: require('../../../assets/exercise-pictures/decline_barbell_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/decline_barbell_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/decline_barbell_bench_press__end.webp'),
   },
   decline_crunch: {
     start: require('../../../assets/exercise-pictures/decline_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/decline_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/decline_crunch__end.webp'),
   },
   decline_dumbbell_fly: {
     start: require('../../../assets/exercise-pictures/decline_dumbbell_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/decline_dumbbell_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/decline_dumbbell_fly__end.webp'),
   },
   decline_dumbbell_press: {
     start: require('../../../assets/exercise-pictures/decline_dumbbell_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/decline_dumbbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/decline_dumbbell_press__end.webp'),
   },
   decline_push_up: {
     start: require('../../../assets/exercise-pictures/decline_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/decline_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/decline_push_up__end.webp'),
   },
   deficit_push_up: {
     start: require('../../../assets/exercise-pictures/deficit_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/deficit_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/deficit_push_up__end.webp'),
   },
   diamond_push_up: {
     start: require('../../../assets/exercise-pictures/diamond_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/diamond_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/diamond_push_up__end.webp'),
   },
   donkey_calf_raise: {
     start: require('../../../assets/exercise-pictures/donkey_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/donkey_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/donkey_calf_raise__end.webp'),
   },
   donkey_kick: {
     start: require('../../../assets/exercise-pictures/donkey_kick__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/donkey_kick__thumb.webp'),
     end: require('../../../assets/exercise-pictures/donkey_kick__end.webp'),
   },
   dumbbell_bench_press: {
     start: require('../../../assets/exercise-pictures/dumbbell_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_bench_press__end.webp'),
   },
   dumbbell_bent_over_row: {
     start: require('../../../assets/exercise-pictures/dumbbell_bent_over_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_bent_over_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_bent_over_row__end.webp'),
   },
   dumbbell_calf_raise: {
     start: require('../../../assets/exercise-pictures/dumbbell_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_calf_raise__end.webp'),
   },
   dumbbell_curl: {
     start: require('../../../assets/exercise-pictures/dumbbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_curl__end.webp'),
   },
   dumbbell_deadlift: {
     start: require('../../../assets/exercise-pictures/dumbbell_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_deadlift__end.webp'),
   },
   dumbbell_floor_press: {
     start: require('../../../assets/exercise-pictures/dumbbell_floor_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_floor_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_floor_press__end.webp'),
   },
   dumbbell_fly: {
     start: require('../../../assets/exercise-pictures/dumbbell_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_fly__end.webp'),
   },
   dumbbell_front_raise: {
     start: require('../../../assets/exercise-pictures/dumbbell_front_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_front_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_front_raise__end.webp'),
   },
   dumbbell_hip_thrust: {
     start: require('../../../assets/exercise-pictures/dumbbell_hip_thrust__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_hip_thrust__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_hip_thrust__end.webp'),
   },
   dumbbell_lunge: {
     start: require('../../../assets/exercise-pictures/dumbbell_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_lunge__end.webp'),
   },
   dumbbell_preacher_curl: {
     start: require('../../../assets/exercise-pictures/dumbbell_preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_preacher_curl__end.webp'),
   },
   dumbbell_pullover: {
     start: require('../../../assets/exercise-pictures/dumbbell_pullover__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_pullover__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_pullover__end.webp'),
   },
   dumbbell_reverse_curl: {
     start: require('../../../assets/exercise-pictures/dumbbell_reverse_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_reverse_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_reverse_curl__end.webp'),
   },
   dumbbell_reverse_lunge: {
     start: require('../../../assets/exercise-pictures/dumbbell_reverse_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_reverse_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_reverse_lunge__end.webp'),
   },
   dumbbell_romanian_deadlift: {
     start: require('../../../assets/exercise-pictures/dumbbell_romanian_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_romanian_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_romanian_deadlift__end.webp'),
   },
   dumbbell_shoulder_press: {
     start: require('../../../assets/exercise-pictures/dumbbell_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_shoulder_press__end.webp'),
   },
   dumbbell_shrug: {
     start: require('../../../assets/exercise-pictures/dumbbell_shrug__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_shrug__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_shrug__end.webp'),
   },
   dumbbell_side_bend: {
     start: require('../../../assets/exercise-pictures/dumbbell_side_bend__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_side_bend__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_side_bend__end.webp'),
   },
   dumbbell_skull_crusher: {
     start: require('../../../assets/exercise-pictures/dumbbell_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_skull_crusher__end.webp'),
   },
   dumbbell_spider_curl: {
     start: require('../../../assets/exercise-pictures/dumbbell_spider_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_spider_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_spider_curl__end.webp'),
   },
   dumbbell_split_squat: {
     start: require('../../../assets/exercise-pictures/dumbbell_split_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_split_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_split_squat__end.webp'),
   },
   dumbbell_squat: {
     start: require('../../../assets/exercise-pictures/dumbbell_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_squat__end.webp'),
   },
   dumbbell_squeeze_press: {
     start: require('../../../assets/exercise-pictures/dumbbell_squeeze_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_squeeze_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_squeeze_press__end.webp'),
   },
   dumbbell_triceps_kickback: {
     start: require('../../../assets/exercise-pictures/dumbbell_triceps_kickback__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_triceps_kickback__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_triceps_kickback__end.webp'),
   },
   dumbbell_upright_row: {
     start: require('../../../assets/exercise-pictures/dumbbell_upright_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_upright_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_upright_row__end.webp'),
   },
   dumbbell_wrist_curl: {
     start: require('../../../assets/exercise-pictures/dumbbell_wrist_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/dumbbell_wrist_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/dumbbell_wrist_curl__end.webp'),
   },
   ez_bar_curl: {
     start: require('../../../assets/exercise-pictures/ez_bar_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ez_bar_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ez_bar_curl__end.webp'),
   },
   ez_bar_preacher_curl: {
     start: require('../../../assets/exercise-pictures/ez_bar_preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ez_bar_preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ez_bar_preacher_curl__end.webp'),
   },
   ez_bar_reverse_curl: {
     start: require('../../../assets/exercise-pictures/ez_bar_reverse_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ez_bar_reverse_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ez_bar_reverse_curl__end.webp'),
   },
   ez_bar_skull_crusher: {
     start: require('../../../assets/exercise-pictures/ez_bar_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ez_bar_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ez_bar_skull_crusher__end.webp'),
   },
   ez_bar_spider_curl: {
     start: require('../../../assets/exercise-pictures/ez_bar_spider_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/ez_bar_spider_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/ez_bar_spider_curl__end.webp'),
   },
   face_pull: {
     start: require('../../../assets/exercise-pictures/face_pull__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/face_pull__thumb.webp'),
     end: require('../../../assets/exercise-pictures/face_pull__end.webp'),
   },
   fire_hydrant: {
     start: require('../../../assets/exercise-pictures/fire_hydrant__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/fire_hydrant__thumb.webp'),
     end: require('../../../assets/exercise-pictures/fire_hydrant__end.webp'),
   },
   flutter_kicks: {
     start: require('../../../assets/exercise-pictures/flutter_kicks__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/flutter_kicks__thumb.webp'),
     end: require('../../../assets/exercise-pictures/flutter_kicks__end.webp'),
   },
   front_squat: {
     start: require('../../../assets/exercise-pictures/front_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/front_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/front_squat__end.webp'),
   },
   glute_bridge: {
     start: require('../../../assets/exercise-pictures/glute_bridge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/glute_bridge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/glute_bridge__end.webp'),
   },
   goblet_squat: {
     start: require('../../../assets/exercise-pictures/goblet_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/goblet_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/goblet_squat__end.webp'),
   },
   good_morning: {
     start: require('../../../assets/exercise-pictures/good_morning__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/good_morning__thumb.webp'),
     end: require('../../../assets/exercise-pictures/good_morning__end.webp'),
   },
   hack_squat: {
     start: require('../../../assets/exercise-pictures/hack_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hack_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hack_squat__end.webp'),
   },
   hammer_curl: {
     start: require('../../../assets/exercise-pictures/hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hammer_curl__end.webp'),
   },
   hanging_knee_raise: {
     start: require('../../../assets/exercise-pictures/hanging_knee_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hanging_knee_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hanging_knee_raise__end.webp'),
   },
   heel_touch: {
     start: require('../../../assets/exercise-pictures/heel_touch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/heel_touch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/heel_touch__end.webp'),
   },
   hip_abduction_machine: {
     start: require('../../../assets/exercise-pictures/hip_abduction_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hip_abduction_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hip_abduction_machine__end.webp'),
   },
   hip_adduction_machine: {
     start: require('../../../assets/exercise-pictures/hip_adduction_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hip_adduction_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hip_adduction_machine__end.webp'),
   },
   hip_thrust_machine: {
     start: require('../../../assets/exercise-pictures/hip_thrust_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/hip_thrust_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/hip_thrust_machine__end.webp'),
   },
   incline_barbell_press: {
     start: require('../../../assets/exercise-pictures/incline_barbell_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_barbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_barbell_press__end.webp'),
   },
   incline_dumbbell_curl: {
     start: require('../../../assets/exercise-pictures/incline_dumbbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_dumbbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_dumbbell_curl__end.webp'),
   },
   incline_dumbbell_fly: {
     start: require('../../../assets/exercise-pictures/incline_dumbbell_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_dumbbell_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_dumbbell_fly__end.webp'),
   },
   incline_dumbbell_press: {
     start: require('../../../assets/exercise-pictures/incline_dumbbell_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_dumbbell_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_dumbbell_press__end.webp'),
   },
   incline_hammer_curl: {
     start: require('../../../assets/exercise-pictures/incline_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_hammer_curl__end.webp'),
   },
   incline_push_up: {
     start: require('../../../assets/exercise-pictures/incline_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/incline_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/incline_push_up__end.webp'),
   },
   inverted_row: {
     start: require('../../../assets/exercise-pictures/inverted_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/inverted_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/inverted_row__end.webp'),
   },
   jump_squat: {
     start: require('../../../assets/exercise-pictures/jump_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/jump_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/jump_squat__end.webp'),
   },
   jumping_jack: {
     start: require('../../../assets/exercise-pictures/jumping_jack__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/jumping_jack__thumb.webp'),
     end: require('../../../assets/exercise-pictures/jumping_jack__end.webp'),
   },
   jumping_lunge: {
     start: require('../../../assets/exercise-pictures/jumping_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/jumping_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/jumping_lunge__end.webp'),
   },
   kettlebell_swing: {
     start: require('../../../assets/exercise-pictures/kettlebell_swing__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/kettlebell_swing__thumb.webp'),
     end: require('../../../assets/exercise-pictures/kettlebell_swing__end.webp'),
   },
   knee_push_up: {
     start: require('../../../assets/exercise-pictures/knee_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/knee_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/knee_push_up__end.webp'),
   },
   landmine_press: {
     start: require('../../../assets/exercise-pictures/landmine_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/landmine_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/landmine_press__end.webp'),
   },
   lat_pulldown: {
     start: require('../../../assets/exercise-pictures/lat_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/lat_pulldown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/lat_pulldown__end.webp'),
   },
   lateral_lunge: {
     start: require('../../../assets/exercise-pictures/lateral_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/lateral_lunge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/lateral_lunge__end.webp'),
   },
   lateral_raise: {
     start: require('../../../assets/exercise-pictures/lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/lateral_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/lateral_raise__end.webp'),
   },
   leg_extension: {
     start: require('../../../assets/exercise-pictures/leg_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/leg_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/leg_extension__end.webp'),
   },
   leg_press: {
     start: require('../../../assets/exercise-pictures/leg_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/leg_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/leg_press__end.webp'),
   },
   lying_leg_curl: {
     start: require('../../../assets/exercise-pictures/lying_leg_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/lying_leg_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/lying_leg_curl__end.webp'),
   },
   lying_leg_raise: {
     start: require('../../../assets/exercise-pictures/lying_leg_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/lying_leg_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/lying_leg_raise__end.webp'),
   },
   machine_back_extension: {
     start: require('../../../assets/exercise-pictures/machine_back_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_back_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_back_extension__end.webp'),
   },
   machine_bicep_curl: {
     start: require('../../../assets/exercise-pictures/machine_bicep_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_bicep_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_bicep_curl__end.webp'),
   },
   machine_chest_press: {
     start: require('../../../assets/exercise-pictures/machine_chest_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_chest_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_chest_press__end.webp'),
   },
   machine_lateral_raise: {
     start: require('../../../assets/exercise-pictures/machine_lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_lateral_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_lateral_raise__end.webp'),
   },
   machine_shoulder_press: {
     start: require('../../../assets/exercise-pictures/machine_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_shoulder_press__end.webp'),
   },
   machine_shrug: {
     start: require('../../../assets/exercise-pictures/machine_shrug__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_shrug__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_shrug__end.webp'),
   },
   machine_triceps_extension: {
     start: require('../../../assets/exercise-pictures/machine_triceps_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/machine_triceps_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/machine_triceps_extension__end.webp'),
   },
   medicine_ball_slam: {
     start: require('../../../assets/exercise-pictures/medicine_ball_slam__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/medicine_ball_slam__thumb.webp'),
     end: require('../../../assets/exercise-pictures/medicine_ball_slam__end.webp'),
   },
   mountain_climber: {
     start: require('../../../assets/exercise-pictures/mountain_climber__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/mountain_climber__thumb.webp'),
     end: require('../../../assets/exercise-pictures/mountain_climber__end.webp'),
   },
   muscle_up: {
     start: require('../../../assets/exercise-pictures/muscle_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/muscle_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/muscle_up__end.webp'),
   },
   negative_pull_up: {
     start: require('../../../assets/exercise-pictures/negative_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/negative_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/negative_pull_up__end.webp'),
   },
   neutral_grip_pull_up: {
     start: require('../../../assets/exercise-pictures/neutral_grip_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/neutral_grip_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/neutral_grip_pull_up__end.webp'),
   },
   nordic_curl: {
     start: require('../../../assets/exercise-pictures/nordic_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/nordic_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/nordic_curl__end.webp'),
   },
   one_arm_dumbbell_row: {
     start: require('../../../assets/exercise-pictures/one_arm_dumbbell_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/one_arm_dumbbell_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/one_arm_dumbbell_row__end.webp'),
   },
   overhead_press: {
     start: require('../../../assets/exercise-pictures/overhead_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/overhead_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/overhead_press__end.webp'),
   },
   overhead_squat: {
     start: require('../../../assets/exercise-pictures/overhead_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/overhead_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/overhead_squat__end.webp'),
   },
   overhead_triceps_extension: {
     start: require('../../../assets/exercise-pictures/overhead_triceps_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/overhead_triceps_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/overhead_triceps_extension__end.webp'),
   },
   pallof_press: {
     start: require('../../../assets/exercise-pictures/pallof_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pallof_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pallof_press__end.webp'),
   },
   pause_squat: {
     start: require('../../../assets/exercise-pictures/pause_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pause_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pause_squat__end.webp'),
   },
   pec_deck_fly: {
     start: require('../../../assets/exercise-pictures/pec_deck_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pec_deck_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pec_deck_fly__end.webp'),
   },
   pendlay_row: {
     start: require('../../../assets/exercise-pictures/pendlay_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pendlay_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pendlay_row__end.webp'),
   },
   pike_push_up: {
     start: require('../../../assets/exercise-pictures/pike_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pike_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pike_push_up__end.webp'),
   },
   pistol_squat: {
     start: require('../../../assets/exercise-pictures/pistol_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pistol_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pistol_squat__end.webp'),
+  },
+  plank: {
+    start: require('../../../assets/exercise-pictures/plank__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/plank__thumb.webp'),
+    end: null,
   },
   plate_pinch: {
     start: require('../../../assets/exercise-pictures/plate_pinch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/plate_pinch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/plate_pinch__end.webp'),
   },
   preacher_curl: {
     start: require('../../../assets/exercise-pictures/preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/preacher_curl__end.webp'),
   },
   preacher_hammer_curl: {
     start: require('../../../assets/exercise-pictures/preacher_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/preacher_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/preacher_hammer_curl__end.webp'),
   },
   pull_up: {
     start: require('../../../assets/exercise-pictures/pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/pull_up__end.webp'),
   },
   push_press: {
     start: require('../../../assets/exercise-pictures/push_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/push_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/push_press__end.webp'),
   },
   push_up: {
     start: require('../../../assets/exercise-pictures/push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/push_up__end.webp'),
   },
   rack_pull: {
     start: require('../../../assets/exercise-pictures/rack_pull__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/rack_pull__thumb.webp'),
     end: require('../../../assets/exercise-pictures/rack_pull__end.webp'),
   },
   rear_delt_fly: {
     start: require('../../../assets/exercise-pictures/rear_delt_fly__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/rear_delt_fly__thumb.webp'),
     end: require('../../../assets/exercise-pictures/rear_delt_fly__end.webp'),
   },
   reverse_barbell_curl: {
     start: require('../../../assets/exercise-pictures/reverse_barbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_barbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_barbell_curl__end.webp'),
   },
   reverse_crunch: {
     start: require('../../../assets/exercise-pictures/reverse_crunch__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_crunch__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_crunch__end.webp'),
   },
   reverse_dumbbell_wrist_curl: {
     start: require('../../../assets/exercise-pictures/reverse_dumbbell_wrist_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_dumbbell_wrist_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_dumbbell_wrist_curl__end.webp'),
   },
   reverse_grip_barbell_row: {
     start: require('../../../assets/exercise-pictures/reverse_grip_barbell_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_grip_barbell_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_grip_barbell_row__end.webp'),
   },
   reverse_grip_lat_pulldown: {
     start: require('../../../assets/exercise-pictures/reverse_grip_lat_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_grip_lat_pulldown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_grip_lat_pulldown__end.webp'),
   },
   reverse_pec_deck: {
     start: require('../../../assets/exercise-pictures/reverse_pec_deck__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/reverse_pec_deck__thumb.webp'),
     end: require('../../../assets/exercise-pictures/reverse_pec_deck__end.webp'),
   },
   romanian_deadlift: {
     start: require('../../../assets/exercise-pictures/romanian_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/romanian_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/romanian_deadlift__end.webp'),
   },
   rope_hammer_curl: {
     start: require('../../../assets/exercise-pictures/rope_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/rope_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/rope_hammer_curl__end.webp'),
   },
   rowing_machine: {
     start: require('../../../assets/exercise-pictures/rowing_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/rowing_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/rowing_machine__end.webp'),
   },
   russian_twist: {
     start: require('../../../assets/exercise-pictures/russian_twist__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/russian_twist__thumb.webp'),
     end: require('../../../assets/exercise-pictures/russian_twist__end.webp'),
   },
   seated_barbell_shoulder_press: {
     start: require('../../../assets/exercise-pictures/seated_barbell_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_barbell_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_barbell_shoulder_press__end.webp'),
   },
   seated_cable_row: {
     start: require('../../../assets/exercise-pictures/seated_cable_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_cable_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_cable_row__end.webp'),
   },
   seated_calf_raise: {
     start: require('../../../assets/exercise-pictures/seated_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_calf_raise__end.webp'),
   },
   seated_dip_machine: {
     start: require('../../../assets/exercise-pictures/seated_dip_machine__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_dip_machine__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_dip_machine__end.webp'),
   },
   seated_dumbbell_curl: {
     start: require('../../../assets/exercise-pictures/seated_dumbbell_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_dumbbell_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_dumbbell_curl__end.webp'),
   },
   seated_lateral_raise: {
     start: require('../../../assets/exercise-pictures/seated_lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_lateral_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_lateral_raise__end.webp'),
   },
   seated_leg_curl: {
     start: require('../../../assets/exercise-pictures/seated_leg_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_leg_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_leg_curl__end.webp'),
   },
   seated_leg_press: {
     start: require('../../../assets/exercise-pictures/seated_leg_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_leg_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_leg_press__end.webp'),
   },
   seated_machine_row: {
     start: require('../../../assets/exercise-pictures/seated_machine_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_machine_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_machine_row__end.webp'),
   },
   seated_overhead_dumbbell_extension: {
     start: require('../../../assets/exercise-pictures/seated_overhead_dumbbell_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/seated_overhead_dumbbell_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/seated_overhead_dumbbell_extension__end.webp'),
   },
   side_lying_leg_raise: {
     start: require('../../../assets/exercise-pictures/side_lying_leg_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/side_lying_leg_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/side_lying_leg_raise__end.webp'),
   },
   single_arm_cable_front_raise: {
     start: require('../../../assets/exercise-pictures/single_arm_cable_front_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_cable_front_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_cable_front_raise__end.webp'),
   },
   single_arm_cable_lateral_raise: {
     start: require('../../../assets/exercise-pictures/single_arm_cable_lateral_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_cable_lateral_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_cable_lateral_raise__end.webp'),
   },
   single_arm_cable_pushdown: {
     start: require('../../../assets/exercise-pictures/single_arm_cable_pushdown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_cable_pushdown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_cable_pushdown__end.webp'),
   },
   single_arm_cable_row: {
     start: require('../../../assets/exercise-pictures/single_arm_cable_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_cable_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_cable_row__end.webp'),
   },
   single_arm_dumbbell_bench_press: {
     start: require('../../../assets/exercise-pictures/single_arm_dumbbell_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_dumbbell_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_dumbbell_bench_press__end.webp'),
   },
   single_arm_dumbbell_preacher_curl: {
     start: require('../../../assets/exercise-pictures/single_arm_dumbbell_preacher_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_dumbbell_preacher_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_dumbbell_preacher_curl__end.webp'),
   },
   single_arm_dumbbell_shoulder_press: {
     start: require('../../../assets/exercise-pictures/single_arm_dumbbell_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_dumbbell_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_dumbbell_shoulder_press__end.webp'),
   },
   single_arm_hammer_curl: {
     start: require('../../../assets/exercise-pictures/single_arm_hammer_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_hammer_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_hammer_curl__end.webp'),
   },
   single_arm_lat_pulldown: {
     start: require('../../../assets/exercise-pictures/single_arm_lat_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_lat_pulldown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_lat_pulldown__end.webp'),
   },
   single_arm_overhead_dumbbell_extension: {
     start: require('../../../assets/exercise-pictures/single_arm_overhead_dumbbell_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_arm_overhead_dumbbell_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_arm_overhead_dumbbell_extension__end.webp'),
   },
   single_dumbbell_skull_crusher: {
     start: require('../../../assets/exercise-pictures/single_dumbbell_skull_crusher__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_dumbbell_skull_crusher__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_dumbbell_skull_crusher__end.webp'),
   },
   single_leg_extension: {
     start: require('../../../assets/exercise-pictures/single_leg_extension__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_leg_extension__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_leg_extension__end.webp'),
   },
   single_leg_glute_bridge: {
     start: require('../../../assets/exercise-pictures/single_leg_glute_bridge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_leg_glute_bridge__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_leg_glute_bridge__end.webp'),
   },
   single_leg_hip_thrust: {
     start: require('../../../assets/exercise-pictures/single_leg_hip_thrust__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_leg_hip_thrust__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_leg_hip_thrust__end.webp'),
   },
   single_leg_press: {
     start: require('../../../assets/exercise-pictures/single_leg_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_leg_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_leg_press__end.webp'),
   },
   single_leg_romanian_deadlift: {
     start: require('../../../assets/exercise-pictures/single_leg_romanian_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/single_leg_romanian_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/single_leg_romanian_deadlift__end.webp'),
   },
   sit_up: {
     start: require('../../../assets/exercise-pictures/sit_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/sit_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/sit_up__end.webp'),
   },
   smith_machine_bench_press: {
     start: require('../../../assets/exercise-pictures/smith_machine_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_bench_press__end.webp'),
   },
   smith_machine_calf_raise: {
     start: require('../../../assets/exercise-pictures/smith_machine_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_calf_raise__end.webp'),
   },
   smith_machine_decline_press: {
     start: require('../../../assets/exercise-pictures/smith_machine_decline_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_decline_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_decline_press__end.webp'),
   },
   smith_machine_hip_thrust: {
     start: require('../../../assets/exercise-pictures/smith_machine_hip_thrust__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_hip_thrust__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_hip_thrust__end.webp'),
   },
   smith_machine_row: {
     start: require('../../../assets/exercise-pictures/smith_machine_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_row__end.webp'),
   },
   smith_machine_shoulder_press: {
     start: require('../../../assets/exercise-pictures/smith_machine_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_shoulder_press__end.webp'),
   },
   smith_machine_shrug: {
     start: require('../../../assets/exercise-pictures/smith_machine_shrug__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_shrug__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_shrug__end.webp'),
   },
   smith_machine_split_squat: {
     start: require('../../../assets/exercise-pictures/smith_machine_split_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_split_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_split_squat__end.webp'),
   },
   smith_machine_squat: {
     start: require('../../../assets/exercise-pictures/smith_machine_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_squat__end.webp'),
   },
   smith_machine_upright_row: {
     start: require('../../../assets/exercise-pictures/smith_machine_upright_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/smith_machine_upright_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/smith_machine_upright_row__end.webp'),
   },
   spiderman_push_up: {
     start: require('../../../assets/exercise-pictures/spiderman_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/spiderman_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/spiderman_push_up__end.webp'),
   },
   stability_ball_knee_tuck: {
     start: require('../../../assets/exercise-pictures/stability_ball_knee_tuck__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/stability_ball_knee_tuck__thumb.webp'),
     end: require('../../../assets/exercise-pictures/stability_ball_knee_tuck__end.webp'),
   },
   standing_calf_raise: {
     start: require('../../../assets/exercise-pictures/standing_calf_raise__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/standing_calf_raise__thumb.webp'),
     end: require('../../../assets/exercise-pictures/standing_calf_raise__end.webp'),
   },
   standing_dumbbell_shoulder_press: {
     start: require('../../../assets/exercise-pictures/standing_dumbbell_shoulder_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/standing_dumbbell_shoulder_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/standing_dumbbell_shoulder_press__end.webp'),
   },
   stiff_leg_deadlift: {
     start: require('../../../assets/exercise-pictures/stiff_leg_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/stiff_leg_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/stiff_leg_deadlift__end.webp'),
   },
   straight_arm_pulldown: {
     start: require('../../../assets/exercise-pictures/straight_arm_pulldown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/straight_arm_pulldown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/straight_arm_pulldown__end.webp'),
   },
   sumo_deadlift: {
     start: require('../../../assets/exercise-pictures/sumo_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/sumo_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/sumo_deadlift__end.webp'),
   },
   sumo_squat: {
     start: require('../../../assets/exercise-pictures/sumo_squat__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/sumo_squat__thumb.webp'),
     end: require('../../../assets/exercise-pictures/sumo_squat__end.webp'),
   },
   superman: {
     start: require('../../../assets/exercise-pictures/superman__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/superman__thumb.webp'),
     end: require('../../../assets/exercise-pictures/superman__end.webp'),
   },
   svend_press: {
     start: require('../../../assets/exercise-pictures/svend_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/svend_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/svend_press__end.webp'),
   },
   swiss_ball_leg_curl: {
     start: require('../../../assets/exercise-pictures/swiss_ball_leg_curl__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/swiss_ball_leg_curl__thumb.webp'),
     end: require('../../../assets/exercise-pictures/swiss_ball_leg_curl__end.webp'),
   },
   t_bar_row: {
     start: require('../../../assets/exercise-pictures/t_bar_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/t_bar_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/t_bar_row__end.webp'),
   },
   trap_bar_deadlift: {
     start: require('../../../assets/exercise-pictures/trap_bar_deadlift__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/trap_bar_deadlift__thumb.webp'),
     end: require('../../../assets/exercise-pictures/trap_bar_deadlift__end.webp'),
+  },
+  triceps_dip: {
+    start: require('../../../assets/exercise-pictures/triceps_dip__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/triceps_dip__thumb.webp'),
+    end: require('../../../assets/exercise-pictures/triceps_dip__end.webp'),
   },
   triceps_pushdown: {
     start: require('../../../assets/exercise-pictures/triceps_pushdown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/triceps_pushdown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/triceps_pushdown__end.webp'),
   },
   turkish_get_up: {
     start: require('../../../assets/exercise-pictures/turkish_get_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/turkish_get_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/turkish_get_up__end.webp'),
   },
   v_bar_triceps_pushdown: {
     start: require('../../../assets/exercise-pictures/v_bar_triceps_pushdown__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/v_bar_triceps_pushdown__thumb.webp'),
     end: require('../../../assets/exercise-pictures/v_bar_triceps_pushdown__end.webp'),
   },
   v_up: {
     start: require('../../../assets/exercise-pictures/v_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/v_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/v_up__end.webp'),
+  },
+  walking_lunge: {
+    start: require('../../../assets/exercise-pictures/walking_lunge__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/walking_lunge__thumb.webp'),
+    end: require('../../../assets/exercise-pictures/walking_lunge__end.webp'),
   },
   weighted_dip: {
     start: require('../../../assets/exercise-pictures/weighted_dip__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/weighted_dip__thumb.webp'),
     end: require('../../../assets/exercise-pictures/weighted_dip__end.webp'),
   },
   weighted_pull_up: {
     start: require('../../../assets/exercise-pictures/weighted_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/weighted_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/weighted_pull_up__end.webp'),
   },
   wide_grip_bench_press: {
     start: require('../../../assets/exercise-pictures/wide_grip_bench_press__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/wide_grip_bench_press__thumb.webp'),
     end: require('../../../assets/exercise-pictures/wide_grip_bench_press__end.webp'),
   },
   wide_grip_cable_row: {
     start: require('../../../assets/exercise-pictures/wide_grip_cable_row__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/wide_grip_cable_row__thumb.webp'),
     end: require('../../../assets/exercise-pictures/wide_grip_cable_row__end.webp'),
   },
   wide_grip_pull_up: {
     start: require('../../../assets/exercise-pictures/wide_grip_pull_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/wide_grip_pull_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/wide_grip_pull_up__end.webp'),
   },
   wide_push_up: {
     start: require('../../../assets/exercise-pictures/wide_push_up__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/wide_push_up__thumb.webp'),
     end: require('../../../assets/exercise-pictures/wide_push_up__end.webp'),
   },
   wrist_roller: {
     start: require('../../../assets/exercise-pictures/wrist_roller__start.webp'),
+    thumb: require('../../../assets/exercise-pictures/wrist_roller__thumb.webp'),
     end: require('../../../assets/exercise-pictures/wrist_roller__end.webp'),
   },
 };

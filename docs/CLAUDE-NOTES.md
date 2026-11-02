@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-280. Exercise pictures: start and end for the top 50, close-up list pictures, theme colours — 2 Nov 2026
+
+He said: "create/update the starting and the end images for the exercises, like for top 50 exercises, and also replace their display pic", then "the colors that you're using here for the images, let's match them with the theme". Did: the CI picture build now recolours every RepDB picture with plain pixel maths (no AI; licence term 4 allows recolouring): pale-blue ground -> app surface, floor shadow -> a slightly lighter surface, bright blue clothes -> accent orange, navy shorts -> charcoal. Each exercise also gets a close-up list picture (the start picture cropped to the person, 144 px). Added 4 matches (triceps dip, cable lateral raise, walking lunge, plank as one 'Hold' picture): 247 exercises. Top 50 check: 50 of 52 have pictures. rope_triceps_pushdown has no RepDB source; hanging_leg_raise was a wrong picture and stays off. New art for those 2 is not possible from RepDB (no generative AI on RepDB).
+
 ## R-279. Remove "Show my workouts to the desk" — 2 Nov 2026
 
 He sent a screenshot of Gym → My gym and said: "We still have show my workouts to the desk...thats not needed anymore right". Right: the workout offer (F90, live since 0.55.0) adds the free days by itself, so the desk code (#49 step 1) is not needed. Did: removed the button and its sheet from the phone app (next release). The admin "Check workout code" stays until that release reaches members (old phones can still show a code), then goes too (PROGRESS waiting list).

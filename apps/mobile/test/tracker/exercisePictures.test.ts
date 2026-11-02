@@ -19,7 +19,7 @@ const MATCH = resolve(MOBILE, '../../docs/exercise-library/repdb-match.json');
 const PICTURES_TS = resolve(MOBILE, 'src/tracker/catalog/pictures.ts');
 
 const match = JSON.parse(readFileSync(MATCH, 'utf8')) as {
-  matches: Record<string, { repdb: string; swap?: boolean; doubt?: string }>;
+  matches: Record<string, { repdb: string; swap?: boolean; doubt?: string; single?: boolean }>;
   dropped: Record<string, string>;
 };
 
@@ -36,13 +36,17 @@ describe('the RepDB match list', () => {
     for (const key of keys) expect(catalogEntry(key)?.key, key).toBe(key);
   });
 
-  it('every entry points to two bundled pictures that exist and are not empty', () => {
+  // The files of one exercise: start, the list close-up and end (a hold has no end picture).
+  const filesOf = (k: string): string[] => (match.matches[k].single ? ['start', 'thumb'] : ['start', 'thumb', 'end']);
+
+  it('every entry points to its bundled pictures that exist and are not empty', () => {
     const src = readFileSync(PICTURES_TS, 'utf8');
     for (const key of keys) {
-      for (const end of ['start', 'end']) {
+      for (const end of filesOf(key)) {
         const file = resolve(ASSETS, `${key}__${end}.webp`);
         expect(existsSync(file), file).toBe(true);
-        expect(statSync(file).size, file).toBeGreaterThan(1000);
+        // The 144 px list close-up is small (about 0.9 KB and up); a blank WebP is under 100 bytes.
+        expect(statSync(file).size, file).toBeGreaterThan(end === 'thumb' ? 400 : 1000);
         expect(src).toContain(`require('../../../assets/exercise-pictures/${key}__${end}.webp')`);
       }
     }
@@ -50,7 +54,7 @@ describe('the RepDB match list', () => {
 
   it('bundles only matched pictures (nothing else ships from the set)', () => {
     const files = readdirSync(ASSETS).sort();
-    expect(files).toEqual(keys.flatMap((k) => [`${k}__end.webp`, `${k}__start.webp`]).sort());
+    expect(files).toEqual(keys.flatMap((k) => filesOf(k).map((f) => `${k}__${f}.webp`)).sort());
   });
 
   it('a dropped exercise is not matched', () => {
@@ -60,12 +64,12 @@ describe('the RepDB match list', () => {
 
 describe('what the exercise page shows', () => {
   it('an exercise with no match gets no pictures: the page is unchanged', () => {
-    expect(picturesFor('plank')).toBeNull();
+    expect(picturesFor('side_plank')).toBeNull();
     expect(picturesFor('no_such_exercise')).toBeNull();
     expect(picturesFor(null)).toBeNull();
     expect(picturesFor(undefined)).toBeNull();
     expect(picturesFor('')).toBeNull();
-    expect(pictureChoice('plank')).toBeNull();
+    expect(pictureChoice('side_plank')).toBeNull();
     expect(pictureChoice(null)).toBeNull();
     // A custom exercise has no library key at all.
     expect(pictureChoice(undefined)).toBeNull();
@@ -82,6 +86,22 @@ describe('what the exercise page shows', () => {
     expect(p?.start).toBeDefined();
     expect(p?.end).toBeDefined();
     expect(p?.start).not.toBe(p?.end);
+  });
+
+  it('a hold (plank) has one picture: no end picture', () => {
+    const p = pictureChoice('plank');
+    expect(p?.start).toBeDefined();
+    expect(p?.thumb).toBeDefined();
+    expect(p?.end).toBeNull();
+    for (const [k, m] of Object.entries(match.matches)) expect(picturesFor(k)?.end === null, k).toBe(Boolean(m.single));
+  });
+
+  it('the pictures are recoloured to the app theme in the build (R-280)', () => {
+    const script = readFileSync(resolve(MOBILE, 'scripts/build-exercise-pictures.py'), 'utf8');
+    expect(script).toContain('im = recolour(Image.open(src)');
+    expect(script).toContain('SURFACE = np.array([0x10, 0x13, 0x1C])');
+    const action = readFileSync(resolve(MOBILE, '../../.github/actions/exercise-pictures/action.yml'), 'utf8');
+    expect(action).toContain('install --quiet pillow numpy scipy');
   });
 
   it("the member's own photo wins: no pictures", () => {

@@ -3,6 +3,7 @@
 ## Waiting for release (R-266: tag only when the owner says "release")
 - Help and feedback with AI answers (T22 step 1, R-277, 78be2cf1): both apps. Server side LIVE 2 Nov (R-278: 0008 applied, CLAUDE_HELP_KEY set, panel deployed); AI answers start when the Anthropic credit lands (~12 Nov).
 - "Show my workouts to the desk" removed from My membership (R-279): the workout offer (F90) adds the days by itself. AFTER this release reaches members: also remove the admin "Check workout code" (MemberDetail + WorkoutCodeCheckSheet + claimMatch + e2e/workoutcode.spec.mjs) and the OffersSection "Until then" line. Until then the apps fall back to the plain feedback box.
+- Exercise pictures in theme colours (R-280): every picture recoloured to the app colours in the CI build (no AI), close-up list pictures, 4 new exercises (triceps dip, cable lateral raise, walking lunge, plank hold). 247 exercises.
 - New welcome screen (R-276/R-277, canvas HgYB2U7cdYHvAJRRExDDSV): real set card with kg beaten and RPE; Join my gym and Bring workouts screens.
 
 ## Done

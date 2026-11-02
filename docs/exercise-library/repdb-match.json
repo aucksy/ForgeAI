@@ -1,5 +1,5 @@
 {
-  "_about": "MettleUp exercise key -> RepDB free-tier exercise id (github.com/RepDB/exercise-dataset). Matched by script and checked by eye: same movement, same equipment, same body position only. \"swap\": RepDB draws the end position first, so its two pictures are swapped. \"doubt\": a close but not perfect match, kept on purpose. Build: apps/mobile/scripts/build-exercise-pictures.py.",
+  "_about": "MettleUp exercise key -> RepDB free-tier exercise id (github.com/RepDB/exercise-dataset). Matched by script and checked by eye: same movement, same equipment, same body position only. \"swap\": RepDB draws the end position first, so its two pictures are swapped. \"doubt\": a close but not perfect match, kept on purpose. Build: apps/mobile/scripts/build-exercise-pictures.py. \"single\": RepDB has one picture (a hold); the page shows it once (R-280).",
   "dropped": {
     "smith_machine_incline_press": "RepDB picture looks like an upright seated press, not an incline bench.",
     "handstand_push_up": "RepDB uses parallettes with no wall; ours is against a wall.",
@@ -140,6 +140,9 @@
     },
     "cable_glute_kickback": {
       "repdb": "cable-kickback"
+    },
+    "cable_lateral_raise": {
+      "repdb": "cable-lateral-raise"
     },
     "cable_overhead_triceps_extension": {
       "repdb": "cable-overhead-tricep-extension",
@@ -510,6 +513,10 @@
     "pistol_squat": {
       "repdb": "pistol-squat"
     },
+    "plank": {
+      "repdb": "plank",
+      "single": true
+    },
     "plate_pinch": {
       "repdb": "plate-pinch"
     },
@@ -721,6 +728,9 @@
     "trap_bar_deadlift": {
       "repdb": "hex-bar-deadlift"
     },
+    "triceps_dip": {
+      "repdb": "dips"
+    },
     "triceps_pushdown": {
       "repdb": "tricep-pushdown"
     },
@@ -732,6 +742,9 @@
     },
     "v_up": {
       "repdb": "v-ups"
+    },
+    "walking_lunge": {
+      "repdb": "walking-lunge"
     },
     "weighted_dip": {
       "repdb": "weighted-dips"

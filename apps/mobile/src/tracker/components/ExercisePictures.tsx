@@ -1,7 +1,8 @@
 /**
  * F20: the start and end positions of a library exercise, side by side at the top of its page.
  *
- * Pictures: RepDB free edition (catalog/pictures.ts, credited in Settings → About → Credits).
+ * Pictures: RepDB free edition (catalog/pictures.ts, credited in Settings → About → Credits),
+ * recoloured to the app's dark theme (R-280). A hold (plank) has one picture: one pane, "Hold".
  * Exercises without a matched picture render nothing, so their page looks exactly as before.
  * The member's own photo or video wins (nothing is shown then), as for the demo clip. An
  * exercise with an owner-approved moving clip shows the clip instead; these pictures are then
@@ -13,8 +14,8 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { pictureChoice } from '../catalog/pictureChoice';
 
-/** The drawings are on a light blue ground; the frame keeps it edge to edge. */
-const PICTURE_BACKGROUND = '#DCEFFA';
+/** R-280: the drawings are recoloured onto the card colour, so the frame matches them edge to edge. */
+const PICTURE_BACKGROUND = color.surface;
 
 export function ExercisePictures({
   catalogKey,
@@ -34,14 +35,17 @@ export function ExercisePictures({
 }) {
   const pictures = pictureChoice(catalogKey, { hidden, asFallback });
   if (!pictures) return null;
-  const panes = [
-    { source: pictures.start, label: 'Start' /* member-words */, a11y: `Start position of ${name}` /* member-words */ },
-    { source: pictures.end, label: 'End' /* member-words */, a11y: `End position of ${name}` /* member-words */ },
-  ];
+  const panes = pictures.end
+    ? [
+        { source: pictures.start, label: 'Start' /* member-words */, a11y: `Start position of ${name}` /* member-words */ },
+        { source: pictures.end, label: 'End' /* member-words */, a11y: `End position of ${name}` /* member-words */ },
+      ]
+    : [{ source: pictures.start, label: 'Hold' /* member-words */, a11y: `Hold position of ${name}` /* member-words */ }];
   return (
-    <View style={{ flexDirection: 'row', gap: space.sm, marginBottom }} testID="exercise-pictures">
+    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: space.sm, marginBottom }} testID="exercise-pictures">
       {panes.map((p) => (
-        <View key={p.label} style={{ flex: 1, gap: space.xs }}>
+        // One picture (a hold) keeps the size of one of the pair, centred.
+        <View key={p.label} style={panes.length > 1 ? { flex: 1, gap: space.xs } : { width: '50%', gap: space.xs }}>
           <View
             style={{
               aspectRatio: 1,
