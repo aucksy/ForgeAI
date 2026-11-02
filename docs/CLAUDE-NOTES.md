@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-287. Fix the 4 security holes (live database yes) — 2 Nov 2026
+
+He said: "yes, fix security" (his LIVE database yes for the R-286 security fixes: a typed check-in number needs one desk approval, a daily cap on wrong owner PIN tries, owners confirm challenge winners before free days, no AI import for demo gyms), and "will make buying decisions when we make money out of this" (RepDB Standard / TricksUp animations: not now, do not re-pitch until there is revenue).
+
+Doing: one additive migration 0048 + its SQL test, CI database test green, then apply in the Supabase SQL Editor and run the tests live; admin app and member app changes for the desk approval and the winner confirmation.
+
 ## R-286. Compare the Brain repos with ours, run the security check, find exercise animations — 2 Nov 2026
 
 He said: for the ideas we already have, still study those repos and see if theirs is better and we can improve ours. "Okay, let's do that security check." He remembers a famous gym tracker repo from a reel (openGym, saved 19 Oct) and wonders if it has exercise animations; and wants a thorough search (GitHub and elsewhere) for good-quality exercise animations at a fair cost.
