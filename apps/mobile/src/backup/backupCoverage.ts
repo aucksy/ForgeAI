@@ -8,7 +8,7 @@
  */
 
 /** `meta` table keys a backup carries (besides SETTINGS_KEYS.meta). */
-export const META_IN_BACKUP: readonly string[] = ['hidden_exercises', 'importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'strength_standard'];
+export const META_IN_BACKUP: readonly string[] = ['hidden_exercises', 'importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'strength_standard', 'balance_check'];
 
 /** `meta` keys left out, and why. */
 export const META_LEFT_OUT: Readonly<Record<string, string>> = {

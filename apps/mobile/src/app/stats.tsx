@@ -11,6 +11,7 @@ import { useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import { BodyMapSection, ReportsCard, SectionSkeleton, StrengthSection } from '@/components/analytics';
+import { BalanceCard } from '@/components/analytics/BalanceCard';
 import { BarChart } from '@/components/charts';
 import { LinkRow, StatHeading, leavePage } from '@/components/stats/parts';
 import { Card, Chip, EmptyState, LoadError, Screen, StatTile } from '@/components/ui';
@@ -140,6 +141,8 @@ export default function StatisticsScreen() {
         {/* 1. Last 7 days */}
         <StatHeading title="Last 7 days" sub={workoutsWord(d.week)} />
         <BodyMapSection sets={d.weekMuscles} index={0} onOpenExercise={openExercise} />
+        {/* F52 balance check: a muscle trained much less than the rest, and an 8-week swap. */}
+        <BalanceCard stamp={d} onOpenExercise={openExercise} />
 
         {/* 2. Sets per muscle group */}
         {/* 12 Oct 2026 design pass: Week · Month is a small switch on the title row, the range a
