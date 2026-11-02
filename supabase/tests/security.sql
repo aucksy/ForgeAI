@@ -58,6 +58,8 @@ declare
     'owner_report_requests','owner_request_report','owner_report_file',
     -- 0046: which pack the gym is on (an owner/desk key or a member key, checked by each; read only, no money fields).
     'owner_gym_pack','member_gym_pack',
+    -- 0049: busy machines by day and hour (members check their member key and get only proven gym-level levels; the gym its owner or desk key, saving: owners only).
+    'member_machine_busy','member_machine_push','owner_machine_setup','owner_save_machine_setup',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
