@@ -14,9 +14,6 @@ import { color, radius, space, type } from '@/theme/tokens';
 
 import { pictureChoice } from '../catalog/pictureChoice';
 
-/** R-280: the drawings are recoloured onto the card colour, so the frame matches them edge to edge. */
-const PICTURE_BACKGROUND = color.surface;
-
 export function ExercisePictures({
   catalogKey,
   name,
@@ -53,7 +50,8 @@ export function ExercisePictures({
               overflow: 'hidden',
               borderWidth: 1,
               borderColor: color.border,
-              backgroundColor: PICTURE_BACKGROUND,
+              // R-280: the drawings are recoloured onto color.surface, so the frame matches them edge to edge.
+              backgroundColor: color.surface,
             }}
             accessible
             accessibilityRole="image"
