@@ -105,15 +105,24 @@ begin
   -- The gym-wide cap: 30 new requests an hour, then no more.
   delete from public.gym_phone_links where gym_id = ga;
   insert into public.gym_phone_links(gym_id, app_member, roster_id, phone, status, decided_at)
-    select ga, ma, 'm-asha', '+919829048001', 'declined', now() from generate_series(1, 30);
+    select ga, ma, 'm-asha', '+919829048001', 'declined', now() from generate_series(1, 60);
   r := public.member_check_in(kb, 'T48GYA', '9829048002');
   fails := fails || pg_temp.t48_is('5 cap', (r->>'error') || '|' || coalesce(r->>'deskCheck', '-') || '|' ||
-    (select count(*)::text from public.gym_phone_links where app_member = mb), 'TOO_MANY_NUMBERS|-|0');
-  checks := checks + 1;
+    (select count(*)::text from public.gym_phone_links where app_member = mb), 'TOO_MANY|-|0');
+  -- A yes for a member who left since: GONE, nothing marked.
+  delete from public.gym_phone_links where gym_id = ga;
+  delete from public.member_checkin_tries where member_id = mb;
+  r := public.member_check_in(kb, 'T48GYA', '9829048002');
+  select link_id into lid2 from public.gym_phone_links where app_member = mb and status = 'pending';
+  update public.gym_members set left_at = now() where member_id = mb;
+  fails := fails || pg_temp.t48_is('5b left', pg_temp.t48_try(format('select public.owner_decide_phone_link(%L, %L::uuid, %L)', kown, lid2, 'approved'))
+    || '|' || (select status from public.gym_phone_links where link_id = lid2), 'GONE|pending');
+  update public.gym_members set left_at = null where member_id = mb;
+  checks := checks + 2;
 
   -- ---------------------------------------------------------------- 6. PIN locks grow
   fails := fails || pg_temp.t48_is('6a lengths', (public._pin_lock_for(1) || '|' || public._pin_lock_for(2) || '|' ||
-    public._pin_lock_for(3) || '|' || public._pin_lock_for(4)), '00:15:00|00:15:00|01:00:00|24:00:00');
+    public._pin_lock_for(3) || '|' || public._pin_lock_for(4)), '00:15:00|00:15:00|01:00:00|01:00:00');
   r := public.staff_set_pin(kop, pin_own);
   for i in 1..5 loop r := pg_temp.t48_in(ph_own, '000000', '10.48.0.' || i); end loop;
   fails := fails || pg_temp.t48_is('6b first lock 15 min', (select (lock_streak || '|' ||
@@ -127,8 +136,8 @@ begin
     (locked_until between now() + interval '59 minutes' and now() + interval '61 minutes'))::text from public.gym_staff_pins where staff_id = s_own), '3|true');
   update public.gym_staff_pins set locked_until = now() - interval '1 second' where staff_id = s_own;
   for i in 1..5 loop r := pg_temp.t48_in(ph_own, '000000', '10.48.3.' || i); end loop;
-  fails := fails || pg_temp.t48_is('6d fourth lock 24 h', (select (lock_streak || '|' ||
-    (locked_until > now() + interval '23 hours'))::text from public.gym_staff_pins where staff_id = s_own), '4|true');
+  fails := fails || pg_temp.t48_is('6d fourth lock still 1 h', (select (lock_streak || '|' ||
+    (locked_until between now() + interval '59 minutes' and now() + interval '61 minutes'))::text from public.gym_staff_pins where staff_id = s_own), '4|true');
   -- Locked: even the right PIN does not sign in.
   r := pg_temp.t48_in(ph_own, pin_own, '10.48.4.1');
   fails := fails || pg_temp.t48_is('6e locked', r->>'error', 'TOO_MANY_TRIES');

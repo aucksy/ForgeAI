@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { askConfirm, Card, GhostButton, PrimaryButton, Sheet, SheetRow } from '@/components/ui';
@@ -41,6 +41,8 @@ export function BalanceCard({ stamp, onOpenExercise }: BalanceCardProps) {
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState(0);
   const [busy, setBusy] = useState(false);
+  // State is one render late: two fast taps would both pass `busy` (review, 2 Nov). The ref is not.
+  const running = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
@@ -57,7 +59,8 @@ export function BalanceCard({ stamp, onOpenExercise }: BalanceCardProps) {
   const reload = () => setAttempt((n) => n + 1);
 
   const run = async (fn: () => Promise<void>, failText: string) => {
-    if (busy) return;
+    if (running.current) return;
+    running.current = true;
     setBusy(true);
     setError(null);
     try {
@@ -68,6 +71,7 @@ export function BalanceCard({ stamp, onOpenExercise }: BalanceCardProps) {
       console.warn('[ForgeErr] balance check action failed', e);
       setError(failText);
     } finally {
+      running.current = false;
       setBusy(false);
     }
   };

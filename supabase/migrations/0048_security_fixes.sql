@@ -12,11 +12,11 @@
 --    gymName}: no first name, no plan state. The desk sees the requests (owner_phone_links) and approves
 --    or declines (owner_decide_phone_link; owner and front desk alike). Approve sets the app member's
 --    check-in number, so the next scan is an ordinary check-in. A member already linked is not touched.
---    At most 30 new requests per gym per hour.
--- 2. OWNER PINS: each lock in the last day lasts longer: 15 minutes for the 1st and 2nd, 1 hour for the
---    3rd, 24 hours from the 4th (was: 15 minutes, again and again, about 480 guesses a day). A correct
---    sign-in (PIN or one-time code) clears it. Never locked for good, so nobody can lock an owner out
---    forever by guessing wrong on purpose.
+--    At most 60 new requests per gym per hour (then "too many tries, wait a minute").
+-- 2. OWNER PINS: each lock in the last day lasts longer: 15 minutes for the 1st and 2nd, 1 hour from
+--    the 3rd (was: 15 minutes, again and again, about 480 guesses a day; now about 120). A correct
+--    sign-in (PIN or one-time code) clears it. Never longer than 1 hour (review, 2 Nov): a stranger who
+--    knows the owner's mobile must not be able to lock the owner out for a day on purpose.
 -- 3. CHALLENGE REWARDS WAIT FOR THE OWNER (was: free days given by themselves on numbers the phone
 --    sends). A finished challenge's winners are marked 'confirm'. The owner gives (or skips) each one
 --    with owner_confirm_challenge_reward; give = 0047's _challenge_rewards, unchanged. Lines already
@@ -164,7 +164,8 @@ begin
     if link.link_id is null then
       select count(*) into n_open from public.gym_phone_links
        where gym_id = g.gym_id and created_at > now() - interval '1 hour';
-      if n_open >= 30 then return jsonb_build_object('error', 'TOO_MANY_NUMBERS'); end if;
+      -- A busy hour (a launch day): "wait a minute", not "too many numbers" (review, 2 Nov).
+      if n_open >= 60 then return jsonb_build_object('error', 'TOO_MANY'); end if;
       insert into public.gym_phone_links(gym_id, app_member, roster_id, phone)
         values (g.gym_id, m.member_id, roster.id, '+91' || ph);
     elsif link.phone is distinct from '+91' || ph then
@@ -251,6 +252,11 @@ begin
     if q.status = p_decision then return jsonb_build_object('id', q.link_id, 'status', q.status); end if;
     raise exception 'ALREADY_DECIDED';
   end if;
+  -- The member left the gym (or deleted the app's link) since: nothing to link (review, 2 Nov).
+  if p_decision = 'approved' and not exists (select 1 from public.gym_members
+       where member_id = q.app_member and gym_id = g and left_at is null) then
+    raise exception 'GONE';
+  end if;
   update public.gym_phone_links
      set status = p_decision, decided_at = now(), decided_by = st.staff_id, decided_by_name = coalesce(st.name, 'Owner')
    where link_id = q.link_id;
@@ -268,7 +274,7 @@ alter table public.gym_staff_pins add column if not exists last_locked_at timest
 -- How long the n-th lock in a day lasts.
 create or replace function public._pin_lock_for(p_streak int) returns interval
   language sql immutable set search_path = public as $$
-  select case when p_streak <= 2 then interval '15 minutes' when p_streak = 3 then interval '1 hour' else interval '24 hours' end
+  select case when p_streak <= 2 then interval '15 minutes' else interval '1 hour' end
 $$;
 
 -- 0034's staff_sign_in. Changed: the lock length (lock_streak) and its reset on a correct sign-in (marked 0048).
@@ -413,6 +419,8 @@ begin
   if st.staff_id is not null and st.role <> 'owner' then raise exception 'NOT_OWNER'; end if;
   select * into c from public.gym_challenges where id = p_challenge and gym_id = g;
   if c.id is null then raise exception 'GONE'; end if;
+  -- The gym row first, then the line: the same order as _challenge_rewards (no deadlock, review 2 Nov).
+  perform 1 from public.gyms where gym_id = g for update;
   select * into h from public.gym_challenge_hits where challenge_id = c.id and member_id = p_member for update;
   if h.challenge_id is null then raise exception 'GONE'; end if;
   if h.reward_state = 'confirm' then
