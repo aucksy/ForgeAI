@@ -9,9 +9,11 @@
 import {
   boardFromAnswer,
   challengesFromAnswer,
+  rewardFrom,
   type BoardAnswer,
   type ChallengePayload,
   type ChallengesAnswer,
+  type HitterReward,
 } from '../logic/challenges';
 import { call } from './api';
 
@@ -36,4 +38,14 @@ export async function getBoard(key: string): Promise<BoardAnswer> {
 /** Hide a member from (or show them again on) the members' leaderboard. Owner only. */
 export async function hideOnBoard(key: string, memberId: string, hidden: boolean): Promise<void> {
   await call<unknown>('owner_hide_on_board', { p_key: key, p_member: memberId, p_hidden: hidden });
+}
+
+/**
+ * 0048: the owner gives (give true) or skips one finished challenge's winner's free days. Answers the
+ * winner's reward as it is now. Throws NOT_OWNER / GONE / SUSPENDED.
+ */
+export async function confirmChallengeReward(key: string, challengeId: string, memberId: string, give: boolean): Promise<HitterReward | null> {
+  return rewardFrom(
+    await call<unknown>('owner_confirm_challenge_reward', { p_key: key, p_challenge: challengeId, p_member: memberId, p_give: give }),
+  );
 }

@@ -32,10 +32,11 @@ export const CHALLENGE_LIMITS = {
  *   added    - added to the plan that ends last; `newEnd` is its new last day.
  *   by_hand  - `reason`: no_plan (no plan running today or later), no_match (the app member could not be
  *              matched to the gym's list), left (left the gym before the days were added).
- *   none     - the challenge had no free days.
+ *   none     - the challenge had no free days, or (`reason` skipped, 0048) the owner skipped this winner.
+ *   confirm  - 0048: waiting for the owner to give (or skip) them: owner_confirm_challenge_reward.
  */
-export type RewardState = 'pending' | 'added' | 'by_hand' | 'none';
-export type RewardReason = 'no_plan' | 'no_match' | 'left';
+export type RewardState = 'confirm' | 'pending' | 'added' | 'by_hand' | 'none';
+export type RewardReason = 'no_plan' | 'no_match' | 'left' | 'skipped';
 
 export interface HitterReward {
   state: RewardState;
@@ -113,12 +114,14 @@ const text = (v: unknown): string => (typeof v === 'string' ? v : '');
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
 const unwrap = (raw: unknown): unknown => (Array.isArray(raw) ? raw[0] : raw);
 
-function rewardFrom(raw: unknown): HitterReward | null {
-  const r = obj(raw);
+/** One winner's reward as the server says it (owner_challenges' hitters, owner_confirm_challenge_reward). PURE. */
+export function rewardFrom(raw: unknown): HitterReward | null {
+  const r = obj(unwrap(raw));
   if (!r) return null;
-  const state = r.state === 'pending' || r.state === 'added' || r.state === 'by_hand' || r.state === 'none' ? r.state : null;
+  const state =
+    r.state === 'confirm' || r.state === 'pending' || r.state === 'added' || r.state === 'by_hand' || r.state === 'none' ? r.state : null;
   if (!state) return null;
-  const reason = r.reason === 'no_plan' || r.reason === 'no_match' || r.reason === 'left' ? r.reason : null;
+  const reason = r.reason === 'no_plan' || r.reason === 'no_match' || r.reason === 'left' || r.reason === 'skipped' ? r.reason : null;
   return { state, reason, days: num(r.days), newEnd: isValidDateISO(r.newEnd) ? r.newEnd : null };
 }
 
@@ -379,13 +382,41 @@ export function reachedWords(c: Pick<Challenge, 'hitters' | 'entrants'>): string
  */
 export function rewardWords(h: Pick<Hitter, 'reward'>): string | null {
   const r = h.reward;
+  if (r?.state === 'none' && r.reason === 'skipped') return 'Skipped';
   if (!r || r.state === 'none' || r.days <= 0) return null;
   const prize = prizeWords(r.days);
+  if (r.state === 'confirm') return `Won ${prize}. Waiting for the owner.`;
   if (r.state === 'added') return r.newEnd ? `${prize} added. Plan now ends ${formatDayShort(r.newEnd)}.` : `${prize} added.`;
   if (r.state === 'pending') return `${prize} not added yet. They will be added soon.`;
   if (r.reason === 'left') return 'Left the gym. No free days added.';
   if (r.reason === 'no_match') return `Give by hand: ${prize}. Not matched to a member on your list.`;
   return `Give by hand: ${prize}. No active membership.`;
+}
+
+/** 0048: true when this winner's free days wait for the owner's Give or Skip. PURE. */
+export function needsConfirm(h: Pick<Hitter, 'reward'>): boolean {
+  return h.reward?.state === 'confirm' && h.reward.days > 0;
+}
+
+/** The owner's button for one winner: "Give 7 free days" / "Give 1 free day". PURE. */
+export function giveLabel(days: number): string {
+  return `Give ${prizeWords(days).toLowerCase()}`;
+}
+
+/** The owner's button for every winner still waiting: "Give all 3 their free days". PURE. */
+export function giveAllLabel(n: number): string {
+  return `Give all ${n} their free days`;
+}
+
+/** What the owner's Give or Skip did, for the toast. PURE. */
+export function confirmedWords(name: string, r: HitterReward | null): string {
+  if (!r) return 'Saved.';
+  if (r.state === 'none') return `Skipped. ${name} gets no free days.`;
+  const prize = prizeWords(r.days);
+  if (r.state === 'added') return r.newEnd ? `${prize} added for ${name}. Plan now ends ${formatDayShort(r.newEnd)}.` : `${prize} added for ${name}.`;
+  if (r.state === 'pending') return `${prize} for ${name} will be added soon.`;
+  if (r.state === 'by_hand') return `${name}: give the ${prize.toLowerCase()} by hand (see their line).`;
+  return 'Saved.';
 }
 
 /** True when this winner's free days must be given by hand at the desk. PURE. */
@@ -396,7 +427,9 @@ export function needsHand(h: Pick<Hitter, 'reward'>): boolean {
 /** A past challenge's line: "3 reached the goal" or "3 reached the goal, 1 to give by hand". PURE. */
 export function pastSummary(c: Pick<Challenge, 'hitters'>): string {
   const hand = c.hitters.filter(needsHand).length;
-  return `${c.hitters.length} reached the goal${hand > 0 ? `, ${hand} to give by hand` : ''}`;
+  const wait = c.hitters.filter(needsConfirm).length;
+  const more = [wait > 0 ? `${wait} waiting for the owner` : '', hand > 0 ? `${hand} to give by hand` : ''].filter(Boolean);
+  return `${c.hitters.length} reached the goal${more.length > 0 ? `, ${more.join(', ')}` : ''}`;
 }
 
 /**
@@ -418,6 +451,12 @@ export function prizeNote(
   }
   const kept = c.hitters.filter((h) => h.reward !== null);
   if (kept.length < c.hitters.length) return byHand;
+  // 0048: the owner gives (or skips) each winner's days first.
+  if (kept.some(needsConfirm)) {
+    return canEdit
+      ? `Check each winner, then tap ${giveLabel(c.prizeDays)} or Skip. The days go on their plan, and they get a message in the app.`
+      : `The owner gives each winner the ${prizeWords(c.prizeDays)} here. Ask them to look at this list.`;
+  }
   if (kept.some(needsHand)) {
     return canEdit
       ? 'For each member marked “Give by hand”: open the member and tap Freeze / extra days. They got a message to ask at the front desk.'
@@ -441,7 +480,8 @@ export function winnersText(c: Challenge): string {
 /** Plain words for a refused action, or null when it is not one of these codes. PURE. */
 export function challengeErrorWords(err: unknown): string | null {
   const t = err instanceof Error ? err.message : typeof err === 'object' && err && 'message' in err ? String((err as { message: unknown }).message) : String(err);
-  if (/\bOWNER_ONLY\b/.test(t)) return 'Only the owner can do this.';
+  if (/\bOWNER_ONLY\b|\bNOT_OWNER\b/.test(t)) return 'Only the owner can do this.';
+  if (/\bGONE\b/.test(t)) return 'This is no longer there. The list is up to date now.';
   if (/\bOVERLAP\b/.test(t)) return 'Another challenge already uses some of these days. Pick days that are free, or cancel the other challenge first.';
   if (/\bINVALID\b/.test(t)) return 'Your gym’s server could not take this. Check each box and try again. A challenge that has started can only be cancelled.';
   return null;
