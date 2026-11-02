@@ -1,7 +1,8 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- Nothing waiting: 0.67.0 (1 Nov 2026) shipped everything that was here.
+- Help and feedback with AI answers (T22 step 1, R-277, 78be2cf1): both apps. Server side goes live separately: apply migrations/0008 + `wrangler secret put CLAUDE_HELP_KEY` + deploy (needs the owner's yes; the Anthropic account also needs credit). Until then the apps fall back to the plain feedback box.
+- New welcome screen (R-276/R-277, canvas HgYB2U7cdYHvAJRRExDDSV): real set card with kg beaten and RPE; Join my gym and Bring workouts screens.
 
 ## Done
 - 0.67.0 RELEASED 1 Nov 2026 (owner said "release", R-270). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3e46ba47 (default shard 4 re-run once: the emulator image download was corrupt). Contents (the old waiting list):
