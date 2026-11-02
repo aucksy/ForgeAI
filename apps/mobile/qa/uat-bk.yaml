@@ -137,8 +137,9 @@ appId: com.mettleup.app
       FIND: "^Large step, Strength$"
 - takeScreenshot: bk-04-settings
 - back
+# Back lands on Settings scrolled to the row (run 41494356761): its title is off screen, the row is not.
 - extendedWaitUntil:
-    visible: "^Settings$"
+    visible: "^More workout choices$"
     timeout: 15000
 # ---------------------------------------------------------------- 3. save a backup
 # R-284: the backup file's pages sit on Settings -> Your data -> "Backup and restore".

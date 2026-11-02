@@ -10,4 +10,13 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Join your gym$"
     timeout: 30000
-- assertVisible: "No gym\\? Everything else works without one\\."
+# The "You left <gym>" note on top pushes this line below the screen edge (run 41494369247, C2c):
+# scroll to it, then back to the top, as sub-gym-none.yaml does.
+- runFlow:
+    file: xc-sub-find.yaml
+    env:
+      FIND: "No gym\\? Everything else works without one\\."
+- scrollUntilVisible:
+    element: "^Join your gym$"
+    direction: UP
+    timeout: 20000

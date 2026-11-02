@@ -498,6 +498,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Status:** WAITING FOR YOU
 **Why:** Busy times by exercise (F137) is built. The owner switches it on in the admin app and types how many of each machine the gym has. The phone then sends only the day, the hour and which listed machines were used: no names. The server checks its own guesses for 4 weeks before any member sees a tip like "Leg day is quieter on Tuesday".
 **Until you say yes:** nothing changes. The admin screen and the member tip stay hidden.
+**Also needs your OK (privacy words):** the member app's "What my gym can see" page says "MettleUp never sends which exercises you did". With busy machines on, that is no longer true. I suggest: "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name." I will also add a switch so a member can turn it off for themselves.
 **Your task:** Tell me "yes, switch on busy machines". I then add it to the live gym database and run its test there (62 checks pass on a test copy).
 
 ---

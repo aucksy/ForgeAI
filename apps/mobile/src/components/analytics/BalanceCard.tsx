@@ -48,9 +48,11 @@ export function BalanceCard({ stamp, onOpenExercise }: BalanceCardProps) {
 
   useEffect(() => {
     let alive = true;
-    getBalanceCard().then((d) => {
-      if (alive) setData(d);
-    });
+    getBalanceCard()
+      .then((d) => {
+        if (alive) setData(d);
+      })
+      .catch((e: unknown) => console.warn('[ForgeErr] balance check not loaded', e));
     return () => {
       alive = false;
     };
