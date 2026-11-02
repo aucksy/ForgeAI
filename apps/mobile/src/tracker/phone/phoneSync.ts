@@ -59,6 +59,13 @@ async function pushBoardLater(trigger: 'workout' | 'start' | 'active'): Promise<
   } catch (e) {
     console.warn('[mates] share could not start', e);
   }
+  // F137: busy machines; sends only when the gym switched it on (machineBusySync.ts decides; never throws).
+  try {
+    const { syncMachinesQuietly } = await import('@/shop/machineBusySync');
+    await syncMachinesQuietly(trigger);
+  } catch (e) {
+    console.warn('[machines] sync could not start', e);
+  }
 }
 
 async function syncOfferAfterWorkout(): Promise<void> {

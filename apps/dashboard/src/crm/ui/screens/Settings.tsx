@@ -53,6 +53,7 @@ import { useTerms } from '../../auth/TermsGate';
 import { acceptedLine } from '../../auth/terms';
 import { GymDataActions } from '../GymDataActions';
 import { ClearDeviceCard } from '../offline';
+import { BusyMachinesCard } from './BusyMachines';
 
 export type SettingsTab = 'gym' | 'app' | 'data';
 
@@ -266,6 +267,9 @@ export function SettingsScreen({ section }: { section?: string }) {
           </Button>
         </div>
       </Card>
+
+      {/* F137: busy machines for members (shown only once the gym's server has 0049). */}
+      <BusyMachinesCard />
 
       </>
       )}

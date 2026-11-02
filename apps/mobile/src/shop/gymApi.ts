@@ -16,6 +16,7 @@ import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { gymHoursFromRow } from './gymTimings';
 import { busyFromRow, type GymBusy } from './gymBusy';
+import { machineBusyFromRow, type MachineBusyAnswer, type PushWorkout } from './machineBusy';
 import { boardFromRow, type Board, type BoardDay } from './leaderboard';
 import { mateBoardFrom, mateProfileFrom, type MateBoard, type MateProfile, type MateShare } from './mateProfile';
 import type { GymHours } from '@forgeai/theme';
@@ -438,4 +439,27 @@ export async function apiClearPushToken(key: string, token: string): Promise<Pus
   const r = await call('member_clear_push_token', { p_key: key, p_token: token }, WRITE_MS);
   if (r.ok) return { ok: true };
   return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+}
+
+// ------------------------------------------------------------------ busy machines (0049, F137)
+
+export type MachineCall<T> = { ok: true; data: T } | { ok: false; missing: true } | { ok: false; error: GymError };
+
+/**
+ * Busy machines (member_machine_busy): whether the gym switched it on, which exercise keys may be sent, and
+ * the proven machines. `missing`: the server has not had 0049 yet: nothing shows and nothing is sent.
+ */
+export async function apiMachineBusy(key: string): Promise<MachineCall<MachineBusyAnswer>> {
+  const r = await call('member_machine_busy', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const answer = machineBusyFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Send the last 35 days' workout starts (member_machine_push): day, hour and the gym's machine keys only. */
+export async function apiMachinePush(key: string, workouts: readonly PushWorkout[]): Promise<MachineCall<{ on: boolean }>> {
+  const r = await call('member_machine_push', { p_key: key, p_workouts: workouts }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown; on?: unknown } | null;
+  return data?.ok === true ? { ok: true, data: { on: data.on === true } } : { ok: false, error: { kind: 'other' } };
 }
