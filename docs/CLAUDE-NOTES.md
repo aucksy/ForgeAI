@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-277. Welcome design: add RPE, then build it; and build help answers — 2 Nov 2026
+
+He said: "You missed RPE. Add that and its good to go! and then you build the help answers also". Done: RPE column added to the design card (7 green, 8 amber, 9 orange, as rpeColor) and "@ 8" under PREVIOUS (last time's RPE). Design approved: build the new welcome screen (3 screens in canvas HgYB2U7cdYHvAJRRExDDSV) for the next batch release. Then build T22 step 1 (docs/plans/T22-automated-support.md): Help with AI answers, Claude Haiku via the saved paid key, cap ₹500 a month, privacy line the day it ships.
+
 ## R-276. Welcome design: show the real set logger with kg beaten — 2 Nov 2026
 
 He said the welcome design's set logger "looks nothing like our app" and asked to show exactly what the app shows, with total kg beaten. Done: the card in canvas https://claude.ai/artifact/HgYB2U7cdYHvAJRRExDDSV (Main) is now a copy of ExerciseLogCard: name, Chest chip, rest 1:30, "Last: 23 Oct", the green Target box "1,500 kg beaten ✓ (1,650 kg done)" (kgLiveLine text), SET/PREVIOUS/KG/REPS/✓ columns, 4 ticked green rows. App colours from packages/theme. Saved as a brain rule: app-pictures-copy-the-real-screen.
