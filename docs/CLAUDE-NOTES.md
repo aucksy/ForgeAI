@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-284. Build the simpler Settings layout — 2 Nov 2026
+
+He said: "okay go ahead" (to the R-283 plan: 6 groups like Hevy, one Backup and restore row, watch settings in one place, rare workout choices behind one row, Leave gym last in red, plain name for Health Connect). 0.68.0 released first (v0.68.0, 2 Nov). Building it for the next update.
+
 ## R-283. UAT of Settings: organise and simplify it for the member — 2 Nov 2026
 
 He said: "Once you're done updating this, I want you to also perform a user acceptance testing on the settings and see how we can better organize and simplify it for the user." Plan: walk every Settings page as a new member and as a gym member on his phone size (screenshots from the cloud phone), list what is confusing, too deep or duplicated, research how Hevy and Strong lay out settings, then propose a simpler layout (2 options max, one recommended) before building.
