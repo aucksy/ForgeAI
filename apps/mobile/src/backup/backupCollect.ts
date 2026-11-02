@@ -23,7 +23,7 @@ import {
 import { readLocalItems } from './readItems';
 
 /** The `meta` keys that belong to the workouts (as the Drive backup carries them, snapshot.ts). */
-export const BACKUP_META_KEYS: readonly string[] = ['importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks'];
+export const BACKUP_META_KEYS: readonly string[] = ['importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'balance_check'];
 
 /** Coach chat and the food log: their columns, as the Drive backup lists them. */
 export const BACKUP_ROW_TABLES: Readonly<Record<string, readonly string[]>> = {
