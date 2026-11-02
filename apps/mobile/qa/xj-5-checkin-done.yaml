@@ -1,0 +1,21 @@
+# Cross-role journey 5, member step 2 of 2 (after xj-5-checkin.yaml and the admin step XJ5c). The
+# check-in screen is still open. 0048: if it asked for the desk's yes, the desk has said it (XJ5c), so
+# Check in again goes in. Either way: matched to the imported row, in as Meera. The imported row came
+# with no plan, so "Please see the desk" shows under it (the visit is still written).
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: '(You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    timeout: 30000
+- runFlow:
+    when:
+      visible: 'Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.'
+    commands:
+      - tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
+    timeout: 30000
+- assertVisible: 'Checked in at ${GYM_B} as Meera\. Have a good workout\.'
+- assertVisible: 'Your gym membership is not active today\. Please see the desk\.'
+- takeScreenshot: xj5-01-checked-in-imported
+- tapOn: "^Done$"

@@ -12,6 +12,8 @@ holds after a phone went offline, slow or was cut off mid-request:
                                          the owner adds a product (owner_save_product)
   add-roster <slot> <full name> <mobile> the owner's desk list gets a member with that mobile and
                                          a plan covering today (crm_push, as the admin app saves)
+  confirm-numbers <slot> <+91mobile>    0048: the desk's yes to that typed check-in number, when one
+                                         is waiting (owner_phone_links / owner_decide_phone_link)
   set-orders <slot> <status>             every open order (ordered / ready) moves to <status>
                                          (owner_set_order_status: collected, cancelled, ...)
   check <slot> <what> [args...]          one assertion; prints "CHECK OK ..." / "CHECK FAILED ..."
@@ -68,6 +70,24 @@ def add_roster(st, full_name, mobile):
     return f"'{full_name}' on the desk list with a plan {day}..{end} (version {v})"
 
 
+def confirm_numbers(st, phone):
+    """0048: the desk's yes ("Numbers to confirm") to every pending typed check-in number equal to
+    `phone` (+91...). A server without 0048 (owner_phone_links missing) or nothing waiting: nothing to
+    do, said so."""
+    try:
+        rows = xj.rpc("owner_phone_links", {"p_key": st["key"]}) or []
+    except RuntimeError as e:
+        if "PGRST202" in str(e):
+            return "nothing to confirm (0048 not on this server)"
+        raise
+    done = 0
+    for q in rows:
+        if q.get("status") == "pending" and q.get("phone") == phone:
+            xj.rpc("owner_decide_phone_link", {"p_key": st["key"], "p_link": q["id"], "p_decision": "approved"})
+            done += 1
+    return f"{done} typed number(s) {phone} approved" if done else f"nothing waiting for {phone}"
+
+
 def set_orders(st, status):
     rows = xj.rpc("owner_orders", {"p_key": st["key"]}) or []
     moved = []
@@ -120,13 +140,15 @@ def main(argv):
     cmd, slot = argv[0], argv[1]
     if cmd in ("new-gym", "code", "sign-out"):
         return xj.main(argv)
-    if cmd in ("add-product", "add-roster", "set-orders"):
+    if cmd in ("add-product", "add-roster", "set-orders", "confirm-numbers"):
         st = xj.load(slot)
         try:
             if cmd == "add-product":
                 said = add_product(st, argv[2], argv[3], argv[4])
             elif cmd == "add-roster":
                 said = add_roster(st, argv[2], argv[3])
+            elif cmd == "confirm-numbers":
+                said = confirm_numbers(st, argv[2])
             else:
                 said = set_orders(st, argv[2])
             print(f"OWNER {slot} {cmd}: {said}")
