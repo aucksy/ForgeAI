@@ -447,7 +447,10 @@ if runs 2 || runs 3; then
     step C2b 1 member "offline: Check in -> plain words, a Check in button again" -- member xc-2b-checkin-offline GYM="$GYM"
     step C2b 2 server "no visit yet" -- server visits-today 0
     online
-    step C2b 3 member "online: Check in again -> the mobile once -> in as Asha" -- member xc-2b-checkin-online GYM="$GYM"
+    step C2b 3 member "online: Check in again -> the mobile once, Check in" -- member xc-2b-checkin-online GYM="$GYM"
+    # 0048: a typed number waits for the desk's yes (none waiting before 0048 is live: passes as it is).
+    step C2b 3 owner "the desk's yes to the typed mobile (if asked)" -- owner confirm-numbers "+91$ROSTER_MOBILE"
+    step C2b 3 member "in as Asha" -- member xc-2b-checkin-online-done GYM="$GYM"
     step C2b 4 server "ONE visit, from the app" -- server visit "$ROSTER" app ";" visits-today 1
     open_link "$CODE"
     step C2b 5 member "the poster scanned again -> already checked in" -- member xc-2b-checkin-again GYM="$GYM"

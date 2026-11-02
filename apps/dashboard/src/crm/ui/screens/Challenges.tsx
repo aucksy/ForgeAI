@@ -22,8 +22,12 @@ import {
   askWords,
   challengeErrorWords,
   challengePayload,
+  confirmedWords,
   draftFromChallenge,
+  giveAllLabel,
+  giveLabel,
   measureLabel,
+  needsConfirm,
   needsHand,
   newDraft,
   pastChallenges,
@@ -209,6 +213,8 @@ function Ready({
           autoRewards={challenges.autoRewards}
           onCancel={() => setCancelling(running)}
           flash={flash}
+          ownerKey={ownerKey}
+          reload={reload}
           showWinners
         />
       ) : (
@@ -232,6 +238,8 @@ function Ready({
           onChange={() => setForm(draftFromChallenge(c))}
           onCancel={() => setCancelling(c)}
           flash={flash}
+          ownerKey={ownerKey}
+          reload={reload}
         />
       ))}
 
@@ -242,7 +250,7 @@ function Ready({
           <SectionTitle>Past challenges</SectionTitle>
           <div style={{ display: 'grid', gap: space.md }}>
             {past.map((c) => (
-              <PastRow key={c.id} c={c} canEdit={canEdit} autoRewards={challenges.autoRewards} flash={flash} />
+              <PastRow key={c.id} c={c} canEdit={canEdit} autoRewards={challenges.autoRewards} flash={flash} ownerKey={ownerKey} reload={reload} />
             ))}
           </div>
         </Card>
@@ -289,19 +297,43 @@ function Ready({
 
 // ---------------------------------------------------------------- one challenge
 
+type WinnerLinks = { ownerKey: string; reload: () => Promise<void> };
+
 function Winners({
   c,
   canEdit,
   autoRewards,
   flash,
+  ownerKey,
+  reload,
 }: {
   c: Challenge;
   canEdit: boolean;
   autoRewards: boolean;
   flash: (m: string) => void;
-}) {
+} & WinnerLinks) {
   // F143: under the list, how the free days reach the winners (by themselves, or by hand).
   const note = prizeNote(c, canEdit, autoRewards);
+  // 0048: a finished challenge's winners wait for the owner's Give or Skip (the desk only reads).
+  const waiting = canEdit ? c.hitters.filter(needsConfirm) : [];
+  const [busy, setBusy] = useState<string | null>(null);
+  const confirm = async (who: Challenge['hitters'], give: boolean, one: string | null) => {
+    setBusy(one ?? 'all');
+    let last = '';
+    try {
+      for (const h of who) {
+        const r = await challengesApi.confirmChallengeReward(ownerKey, c.id, h.memberId, give);
+        last = confirmedWords(h.name, r);
+      }
+      flash(who.length === 1 ? last : `Done for ${who.length} winners. Each line says what happened.`);
+    } catch (e) {
+      console.warn('[ForgeErr] challenges: giving free days', e);
+      flash(failWords(e));
+    } finally {
+      await reload();
+      setBusy(null);
+    }
+  };
   const copy = async () => {
     const ok = await copyText(winnersText(c));
     flash(ok ? 'List copied. You can paste it into WhatsApp.' : 'Could not copy. Select the names and copy them by hand.');
@@ -313,7 +345,8 @@ function Winners({
         <>
           <ul aria-label={`Members who reached the goal of ${c.title}`} style={{ margin: `${space.sm}px 0 0`, padding: 0, listStyle: 'none', display: 'grid', gap: space.xs }}>
             {c.hitters.map((h) => {
-              const reward = rewardWords(h);
+              const ask = canEdit && needsConfirm(h);
+              const reward = ask ? null : rewardWords(h);
               return (
                 <li
                   key={h.memberId}
@@ -326,12 +359,32 @@ function Winners({
                       {reward}
                     </span>
                   )}
+                  {ask && h.reward && (
+                    <span style={{ flexBasis: '100%', display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center' }}>
+                      <Button
+                        needsInternet
+                        disabled={busy !== null}
+                        onClick={() => void confirm([h], true, h.memberId)}
+                        ariaLabel={`${giveLabel(h.reward.days)}: ${h.name}`}
+                      >
+                        {busy === h.memberId ? 'Saving…' : giveLabel(h.reward.days)}
+                      </Button>
+                      <Button variant="ghost" needsInternet disabled={busy !== null} onClick={() => void confirm([h], false, h.memberId)} ariaLabel={`Skip: ${h.name}`}>
+                        Skip
+                      </Button>
+                    </span>
+                  )}
                 </li>
               );
             })}
           </ul>
           <p style={{ ...small, marginTop: space.sm }}>{COUNTED_FROM_PHONE}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
+            {waiting.length > 1 && (
+              <Button needsInternet disabled={busy !== null} onClick={() => void confirm(waiting, true, null)}>
+                {busy === 'all' ? 'Saving…' : giveAllLabel(waiting.length)}
+              </Button>
+            )}
             <Button variant="ghost" onClick={copy}>
               Copy this list
             </Button>
@@ -357,6 +410,8 @@ function ChallengeCard({
   onCancel,
   flash,
   showWinners,
+  ownerKey,
+  reload,
 }: {
   c: Challenge;
   today: string;
@@ -366,7 +421,7 @@ function ChallengeCard({
   onCancel: () => void;
   flash: (m: string) => void;
   showWinners?: boolean;
-}) {
+} & WinnerLinks) {
   return (
     <Card style={{ marginBottom: space.lg }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, alignItems: 'center', justifyContent: 'space-between' }}>
@@ -377,7 +432,7 @@ function ChallengeCard({
       <p style={{ ...small, marginTop: space.xs }}>
         {periodWords(c)} · {whenWords(c, today)}
       </p>
-      {showWinners && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} />}
+      {showWinners && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} ownerKey={ownerKey} reload={reload} />}
       <p style={{ ...small, marginTop: space.md }}>{MEMBERS_SEE_CHALLENGE}</p>
       {canEdit && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm, marginTop: space.md }}>
@@ -395,7 +450,14 @@ function ChallengeCard({
   );
 }
 
-function PastRow({ c, canEdit, autoRewards, flash }: { c: Challenge; canEdit: boolean; autoRewards: boolean; flash: (m: string) => void }) {
+function PastRow({
+  c,
+  canEdit,
+  autoRewards,
+  flash,
+  ownerKey,
+  reload,
+}: { c: Challenge; canEdit: boolean; autoRewards: boolean; flash: (m: string) => void } & WinnerLinks) {
   return (
     <details style={{ borderTop: `1px solid ${color.border}`, paddingTop: space.sm }}>
       <summary style={{ cursor: 'pointer', fontFamily: font.body, fontSize: 15, color: color.ink }}>
@@ -408,7 +470,7 @@ function PastRow({ c, canEdit, autoRewards, flash }: { c: Challenge; canEdit: bo
         </span>
       </summary>
       <p style={{ ...small, marginTop: space.sm }}>{askWords(c)}</p>
-      {c.status !== 'cancelled' && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} />}
+      {c.status !== 'cancelled' && <Winners c={c} canEdit={canEdit} autoRewards={autoRewards} flash={flash} ownerKey={ownerKey} reload={reload} />}
     </details>
   );
 }

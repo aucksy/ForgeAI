@@ -1113,6 +1113,8 @@ print(json.dumps({'p_key': key, 'p_base': 0, 'p_records': [{'k': 'member', 'id':
     status=1
     log "PART INV-f FAILED: could not make the online test gym ($(printf '%s' "$ci_gym" | head -c 120))"
   else
+    # The test gym's owner key goes to Maestro (F2's desk yes): masked in the Actions log.
+    [ -n "${GITHUB_ACTIONS:-}" ] && echo "::add-mask::$ci_session"
     for step in f1 f2 f3; do
       case $step in
         f1) inv_open "https://forgeai.aakashpahuja.in/j/$ci_code" ;;
@@ -1120,7 +1122,9 @@ print(json.dumps({'p_key': key, 'p_base': 0, 'p_records': [{'k': 'member', 'id':
       esac
       free_maestro
       log "part INV-$step start (member_check_in probe: $CI_PROBE)"
-      maestro test --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/checkin-$step.yaml" \
+      # 0048: F2 gives the desk's yes to the typed number as the test gym's owner (js/desk-approve.js).
+      maestro test -e CI_URL="$inv_url" -e CI_APIKEY="$inv_key" -e CI_OWNER_KEY="$ci_session" \
+        --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/checkin-$step.yaml" \
         > "$OUT/part-inv-$step.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/inv-$step-failed.png"; log "PART INV-$step FAILED (part-inv-$step.log, inv-$step-failed.png)"; }
     done
     mkdir -p "$OUT/invite"

@@ -13,9 +13,10 @@
 #   J3 message chain   owner sends -> bell 1 + inbox -> opened: owner's "Seen by 1 of 1" -> owner
 #                      takes it back -> gone from the inbox
 #   J4 check-in chain  owner adds a member with a mobile + sells Monthly -> poster link c/<code>,
-#                      mobile typed -> in, NO "see the desk" -> owner's Visits: the visit, tagged App
+#                      mobile typed -> (0048: owner's "Numbers to confirm": yes) -> in, NO "see the
+#                      desk" -> owner's Visits: the visit, tagged App
 #   J5 import chain    owner imports a 2-row CSV (one row = the member's mobile) -> poster link ->
-#                      matched to that row -> owner's Visits: tagged App
+#                      (0048: "Numbers to confirm": yes) -> matched to that row -> Visits: tagged App
 #   J6 branding        owner sets a brand colour -> the member app joins and relaunches in it (the
 #                      gym's name under the titles, the start-up screen, the colour read off the screen)
 #
@@ -251,9 +252,14 @@ step J3 7 member "the inbox is empty" -- member xj-3-gone "${A[@]}"
 # ---------------------------------------------------------------- J4 check-in chain
 step J4 1 admin "adds Kiran Desk with a mobile, sells Monthly" -- admin XJ4a
 step J4 2 server "her plan covers today" -- server A plan-today "Kiran Desk"
-step J4 3 member "poster link, types the mobile, in with no see-the-desk line" -- checkin_at "$CODE_A" xj-4-checkin "${A[@]}"
-step J4 4 server "one visit today, source app" -- server A visit "Kiran Desk" app ";" visits-today 1
-step J4 5 admin "Visits shows her, tagged App" -- admin XJ4b
+# 0048 (R-287): a typed number waits for the desk's yes. Step 3 ends on "You're in" (0048 not live) or
+# on "Ask the front desk to confirm..."; step 4 says yes in the admin app's "Numbers to confirm" when one
+# is waiting (passes when none is); step 5 taps Check in again if asked and checks she is in.
+step J4 3 member "poster link, types the mobile, Check in" -- checkin_at "$CODE_A" xj-4-checkin "${A[@]}"
+step J4 4 admin "Numbers to confirm: yes, it's Kiran's (if asked)" -- admin XJ4c
+step J4 5 member "in, with no see-the-desk line" -- member xj-4-checkin-done "${A[@]}"
+step J4 6 server "one visit today, source app" -- server A visit "Kiran Desk" app ";" visits-today 1
+step J4 7 admin "Visits shows her, tagged App" -- admin XJ4b
 # #47: the real AI column match through the live panel Worker (gym A; nothing imported).
 step J7 1 admin "asks AI to match an odd register (real AI)" -- admin XJ7
 
@@ -284,9 +290,11 @@ else
 fi
 step J6 4 member "relaunch: starts in the gym's look" -- member xj-6-relaunch "${B[@]}"
 step J6 5 phone "the brand colour read off the screen" -- colour_check
-step J5 4 member "poster link, types the mobile, matched to the imported row" -- checkin_at "$CODE_B" xj-5-checkin "${B[@]}"
-step J5 5 server "one visit today for Meera Import, source app" -- server B visit "Meera Import" app ";" visits-today 1
-step J5 6 admin "Visits shows the imported member, tagged App" -- admin XJ5b
+step J5 4 member "poster link, types the mobile, Check in" -- checkin_at "$CODE_B" xj-5-checkin "${B[@]}"
+step J5 5 admin "Numbers to confirm: yes, it's Meera's (if asked)" -- admin XJ5c
+step J5 6 member "matched to the imported row: in" -- member xj-5-checkin-done "${B[@]}"
+step J5 7 server "one visit today for Meera Import, source app" -- server B visit "Meera Import" app ";" visits-today 1
+step J5 8 admin "Visits shows the imported member, tagged App" -- admin XJ5b
 if [ "$IN_B" = 1 ]; then
   if member xj-5-leave "${B[@]}" > "$J_OUT/leave-b.log" 2>&1; then
     log "phone left gym B (ForgeAI's look back)"

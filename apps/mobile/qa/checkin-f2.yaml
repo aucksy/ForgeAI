@@ -5,6 +5,11 @@
 # at Join, so it asks for it ONCE. A wrong number first (not on the roster: the desk words, with
 # the number), then the roster's number → in, as the first name only. The roster member has no
 # plan, so "Please see the desk" shows under it (0016).
+# 0048 (R-287): a typed number that matches the list now waits for the desk's yes first ("Ask the
+# front desk to confirm your mobile number..."). When that shows, the desk says yes the way the admin
+# app's "Numbers to confirm" card does (js/desk-approve.js, with the test gym's owner key that
+# run-device-qa.sh passes as CI_URL / CI_APIKEY / CI_OWNER_KEY), and the phone taps Check in again.
+# Before 0048 is live the number checks in at once, and that step is skipped.
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
@@ -33,6 +38,22 @@ appId: com.mettleup.app
 - inputText: '98765 00002'
 - hideKeyboard
 - tapOn: '^Check in$'
+- extendedWaitUntil:
+    visible: '(You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    timeout: 30000
+- runFlow:
+    when:
+      visible: 'Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.'
+    commands:
+      - takeScreenshot: inv-f2-desk-check
+      - runScript:
+          file: js/desk-approve.js
+          env:
+            DESK_URL: ${CI_URL}
+            DESK_APIKEY: ${CI_APIKEY}
+            DESK_KEY: ${CI_OWNER_KEY}
+            DESK_PHONE: '+919876500002'
+      - tapOn: '^Check in$'
 - extendedWaitUntil:
     visible: 'You''re in ✓ [0-9]{1,2}:[0-9]{2} [ap]m'
     timeout: 30000

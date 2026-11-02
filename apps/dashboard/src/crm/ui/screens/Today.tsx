@@ -13,6 +13,7 @@ import { dueCount } from '../../logic/enquiries';
 import { GetStartedCard } from '../GetStartedCard';
 import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
+import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { TrialBanner } from '../TrialBanner';
 import { useCan, useRole } from '../../auth/AuthProvider';
@@ -155,6 +156,10 @@ export function TodayScreen() {
       {/* F150: members' "Pause my plan" / "Renew my plan" from the app, one tap to approve (owner and
           desk). Hidden until the gym server has 0044, and when there is nothing to show. */}
       <PlanRequestsCard />
+
+      {/* 0048 (R-287): numbers members typed at the poster check-in, waiting for the desk's yes (owner
+          and desk). Hidden until the gym server has 0048, and when none are waiting. */}
+      <PhoneLinksCard />
 
       {/* The join code first: it is how members get into the app, and the shop
           card beside it is the part of the demo that moves on its own. */}

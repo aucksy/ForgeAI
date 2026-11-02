@@ -1,0 +1,19 @@
+# Phone conditions (UAT WP7), condition 2b, after xc-2b-checkin-online.yaml and the desk's yes
+# (0048). The check-in screen is still open: if it asked for the desk, Check in again goes in. Before
+# 0048 is live the phone is already in. Either way: in as Asha.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: '(You''re in ✓.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    timeout: 60000
+- runFlow:
+    when:
+      visible: 'Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.'
+    commands:
+      - tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'You''re in ✓.*'
+    timeout: 60000
+- assertVisible: 'Checked in at ${GYM} as Asha\. Have a good workout\.'
+- takeScreenshot: xc2b-02-checkin-online
+- tapOn: "^Done$"

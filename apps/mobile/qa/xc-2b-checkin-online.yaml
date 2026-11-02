@@ -1,5 +1,9 @@
 # Phone conditions (UAT WP7), condition 2b, back online: the same screen's "Check in" again. The gym
-# asks for the mobile once (98765 00031, on its desk list with a plan today) -> in as Asha.
+# asks for the mobile once (98765 00031, on its desk list with a plan today), typed, Check in.
+# 0048 (R-287): a typed number now waits for the desk's yes first ("Ask the front desk to confirm your
+# mobile number..."); before 0048 is live it checks in at once. This step ends on either screen and
+# leaves it open: run-conditions.sh then says the desk's yes (xc_server.py confirm-numbers) and
+# xc-2b-checkin-online-done.yaml finishes: in as Asha.
 appId: com.mettleup.app
 ---
 - tapOn: "^Check in$"
@@ -11,8 +15,10 @@ appId: com.mettleup.app
 - hideKeyboard
 - tapOn: "^Check in$"
 - extendedWaitUntil:
-    visible: 'You''re in ✓.*'
+    visible: '(You''re in ✓.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
     timeout: 60000
-- assertVisible: 'Checked in at ${GYM} as Asha\. Have a good workout\.'
-- takeScreenshot: xc2b-02-checkin-online
-- tapOn: "^Done$"
+- runFlow:
+    when:
+      visible: 'Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.'
+    commands:
+      - takeScreenshot: xc2b-02a-desk-check
