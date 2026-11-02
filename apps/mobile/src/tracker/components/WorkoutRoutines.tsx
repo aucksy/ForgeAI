@@ -72,12 +72,14 @@ import {
   type RoutineAction,
   type UpNextRef,
 } from '../lib/workoutTab';
+import { countRoutines } from '../lib/firstRoutine';
 import { moveEasyWeek, setEasyWeeks, type PlanNow } from '../services/planState';
 import { syncGymPlans } from '../services/gymPlansSync';
 import { forgetWorkoutFolders, getWorkoutFolders } from '../services/workoutFolders';
 import { askAboutOpenWorkout, openActiveWorkout } from '../services/workoutStart';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { useFolderOpen } from '../store/folderOpenStore';
+import { FirstRoutineCard } from './FirstRoutineCard';
 import { FolderPickerSheet } from './FolderPickerSheet';
 import { NameSheet } from './NameSheet';
 import { ShareRoutineSheet } from './ShareRoutineSheet';
@@ -255,6 +257,8 @@ export function WorkoutRoutines({
   const [naming, setNaming] = useState<{ mode: 'new' } | { mode: 'rename'; folder: Folder } | null>(null);
   const [picking, setPicking] = useState(false);
   const [sharing, setSharing] = useState<{ folder: string | null; routines: RoutineFull[] } | null>(null);
+  // F186: the guided first routine's card is up (it takes the place of the empty line).
+  const [guideOn, setGuideOn] = useState(false);
 
   const reload = useCallback(() => {
     let alive = true;
@@ -520,6 +524,9 @@ export function WorkoutRoutines({
 
       {buttons}
 
+      {/* F186: no routines yet: the guided first routine (folder, routine, exercises, save). */}
+      <FirstRoutineCard routineCount={folders ? countRoutines(folders) : null} onShows={setGuideOn} />
+
       {folders == null && loadFailed ? (
         <LoadError what="your routines" onRetry={reload} />
       ) : folders == null ? (
@@ -528,7 +535,7 @@ export function WorkoutRoutines({
           <Skeleton width="100%" height={48} radius={radius.md} />
         </View>
       ) : folders.length === 0 ? (
-        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>
+        guideOn ? null : <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 19, color: color.inkSecondary }}>
           No routines yet. Make your own, or explore ready programs.
         </Text>
       ) : (
