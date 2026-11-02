@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-279. Remove "Show my workouts to the desk" — 2 Nov 2026
+
+He sent a screenshot of Gym → My gym and said: "We still have show my workouts to the desk...thats not needed anymore right". Right: the workout offer (F90, live since 0.55.0) adds the free days by itself, so the desk code (#49 step 1) is not needed. Did: removed the button and its sheet from the phone app (next release). The admin "Check workout code" stays until that release reaches members (old phones can still show a code), then goes too (PROGRESS waiting list).
+
 ## R-278. Switch on help answers; credit comes in 10 days — 2 Nov 2026
 
 He said: "yes, switch on help answers. I will get $100 credit when plan resets in 10 days". This is his yes for the LIVE change (migration 0008) and the deploy. Did: applied 0008 to forgeai-web, set CLAUDE_HELP_KEY from the key file, built the dashboard and deployed forgeai-panel. Until the credit lands (about 12 Nov) every AI call fails fast with "credit balance too low": the message is still saved, the person reads the plain thanks, help_usage counts it as failed. Once credit is there, answers start by themselves. Then: test 3 real questions and show him.

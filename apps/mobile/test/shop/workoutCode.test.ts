@@ -7,7 +7,6 @@ import { describe, expect, it } from 'vitest';
 
 import { CLAIM_DAYS, decodeClaim, encodeClaim } from '@/shop/claimCode';
 import { countedDays, workoutCounts, type CountRow } from '@/shop/workoutCode';
-import { WORKOUT_CODE_WORDS, workoutCodeCount } from '@/shop/workoutCodeWords';
 
 const TODAY = '2026-10-22';
 const MIN = 60_000;
@@ -103,12 +102,3 @@ describe('the claim code', () => {
   });
 });
 
-describe('the words', () => {
-  it('count and explain plainly', () => {
-    expect(workoutCodeCount(0)).toBe('No workout in the last 30 days counts yet.');
-    expect(workoutCodeCount(1)).toBe('1 workout in the last 30 days counts.');
-    expect(workoutCodeCount(9)).toBe('9 workouts in the last 30 days count.');
-    expect(WORKOUT_CODE_WORDS.rule).toContain('20 minutes or more');
-    for (const w of Object.values(WORKOUT_CODE_WORDS)) expect(w).not.toMatch(/\b(volume|PR|session)\b/i);
-  });
-});

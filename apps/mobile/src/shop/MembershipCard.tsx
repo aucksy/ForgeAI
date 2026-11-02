@@ -3,13 +3,14 @@
  * gym's Shop and in Settings → Your gym. Read on every visit; the last answer is kept on the phone
  * so it still shows at the gym with no signal. Hidden until the server has 0023 (and on any answer
  * it can't read), so nothing half-working is ever on screen. Words: membership.ts (tested).
- * #49 step 1: "Show my workouts to the desk" opens the workout offer's claim code (WorkoutCodeSheet).
+ * "Show my workouts to the desk" (#49 step 1) was removed 2 Nov 2026 (R-279): the workout offer (#49 step 2,
+ * offerActions.ts) adds the free days by itself, so the desk code was not needed any more.
  */
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card, GhostButton } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { clockTime } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
 
@@ -20,8 +21,6 @@ import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } 
 import { keepMembership, readKeptMembership } from './membershipKept';
 import { PlanRequestPanel } from './PlanRequestPanel';
 import type { GymLink } from './types';
-import { WorkoutCodeSheet } from './WorkoutCodeSheet';
-import { WORKOUT_CODE_WORDS } from './workoutCodeWords';
 
 type Shown = { answer: MembershipAnswer; keptAt: number | null } | null;
 
@@ -29,8 +28,6 @@ const toneColor = (t: MembershipTone): string => (t === 'good' ? color.goodText 
 
 export function MembershipCard({ link }: { link: GymLink }) {
   const [shown, setShown] = useState<Shown>(null);
-  // #49 step 1: the workout offer's claim code for the desk (nothing is sent).
-  const [codeOpen, setCodeOpen] = useState(false);
   // Another gym (or a rejoin) on a screen that stays open: never keep the last member's plan.
   const [forMember, setForMember] = useState(link.memberId);
   if (forMember !== link.memberId) {
@@ -94,10 +91,6 @@ export function MembershipCard({ link }: { link: GymLink }) {
       {/* F121: "Send your report to the gym?" - only while this gym's desk has asked, and only once
           the server has 0045 (the panel hides itself until then). Not on a kept (offline) plan. */}
       {shown.answer.ok && shown.keptAt == null ? <GymReportPanel link={link} /> : null}
-      <View style={{ marginTop: space.sm }}>
-        <GhostButton label={WORKOUT_CODE_WORDS.button} icon="dumbbell" onPress={() => setCodeOpen(true)} />
-      </View>
-      <WorkoutCodeSheet visible={codeOpen} onClose={() => setCodeOpen(false)} />
     </Card>
   );
 }
