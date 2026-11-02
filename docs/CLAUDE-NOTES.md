@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-278. Switch on help answers; credit comes in 10 days — 2 Nov 2026
+
+He said: "yes, switch on help answers. I will get $100 credit when plan resets in 10 days". This is his yes for the LIVE change (migration 0008) and the deploy. Did: applied 0008 to forgeai-web, set CLAUDE_HELP_KEY from the key file, built the dashboard and deployed forgeai-panel. Until the credit lands (about 12 Nov) every AI call fails fast with "credit balance too low": the message is still saved, the person reads the plain thanks, help_usage counts it as failed. Once credit is there, answers start by themselves. Then: test 3 real questions and show him.
+
 ## R-277. Welcome design: add RPE, then build it; and build help answers — 2 Nov 2026
 
 He said: "You missed RPE. Add that and its good to go! and then you build the help answers also". Done: RPE column added to the design card (7 green, 8 amber, 9 orange, as rpeColor) and "@ 8" under PREVIOUS (last time's RPE). Design approved: build the new welcome screen (3 screens in canvas HgYB2U7cdYHvAJRRExDDSV) for the next batch release. Then build T22 step 1 (docs/plans/T22-automated-support.md): Help with AI answers, Claude Haiku via the saved paid key, cap ₹500 a month, privacy line the day it ships.

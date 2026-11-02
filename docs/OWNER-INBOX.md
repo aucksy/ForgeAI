@@ -167,6 +167,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| T68 Help answers: test 3 real questions when the credit comes (#83, R-278) | Blocked | Live since 2 Nov with no credit, so every person gets the plain thanks. About 12 Nov, when your credit comes: send 3 real questions, check the answers and the cost, show you. |
 | T67 0.63.0: your 30 Oct test report, phone price list, watch stays open and pops up (R-234 to R-237) | Doing | 31 Oct: built and pushed; the desk and mettleup.fit are live. The phone app waits for the cloud phone test (about 2 hours), then goes to your testers. Watch rest-timer redesign (smaller timer, bigger next-set words) waits for your yes on the picture. |
 | T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Done | 30 Oct: live on mettleup.fit in English and Hindi. Pro ₹1,499, Pro + AI ₹2,499 (coming), founding pack for the first 25 gyms until 31 March 2027, QR check-in and watch lines added, fresh owner-panel pictures. |
 | T66 Split features between Starter and Pro (#30, #78) | Blocked | Built 31 Oct, behind a switch that is off: every gym still gets every feature. All tests pass. Turning it on needs your yes (#78). |
@@ -484,7 +485,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F179 Privacy notice, terms and consent | Live | Notice, terms and gym data agreement complete (English + Hindi), contact@mettleup.fit; owners accept with a tick at "Create my gym" (0033 live 24 Oct). |  |
 | F180 Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
 | F181 Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
-| F189 Help answers in both apps | Next release | #83. Built 2 Nov 2026 (R-277): "Send feedback" becomes "Help and feedback"; an AI answers at once from 15 help pages, then "Did this solve it? Yes / No". Needs your credit and yes to go live (#83). |
+| F189 Help answers in both apps | Next release | #83. Built 2 Nov 2026 (R-277): "Send feedback" becomes "Help and feedback"; an AI answers at once from 15 help pages, then "Did this solve it? Yes / No". Admin website: live 2 Nov; the AI answers start when your credit comes (about 12 Nov). Phone app: next release (#83). |
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
@@ -492,7 +493,9 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 83. Switch on the help answers — 2 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**TASK DONE (2 Nov)** You said yes. Your $100 credit comes when your plan resets, in about 10 days.
+**Now (2 Nov):** It is switched on: the web database has the new table, the key is on the server, and the server is live. Until your credit comes, each question gets the plain thanks and is kept in the feedback box, as before. When the credit comes, AI answers start by themselves. I will then send 3 test questions and show you the answers. In the phone app it comes with the next release.
 **Why:** The help answers (#82) are built and tested in both apps. A person asks a question and gets an AI answer at once, then taps "Did this solve it? Yes / No". Two things stop it from going live.
 **Your task:** Add credit to your Anthropic account: console.anthropic.com → Billing → buy about $5 (about ₹440). Today the key answers "credit balance too low". You can also set a monthly spend limit there.
 **Your task:** Tell me "yes, switch on help answers". I then add one table to the web database, store the key on the server, and make it live. Until then, messages go to the old feedback box.
