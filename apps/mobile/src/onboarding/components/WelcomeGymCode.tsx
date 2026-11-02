@@ -238,7 +238,13 @@ export function WelcomeGymCode({ gym, onJoin }: { gym: WaitingGym; onJoin: () =>
       <View style={{ gap: 10 }}>
         {/* Tapping the label opens the box (phone tests tap "Gym code"). */}
         <Text
-          onPress={() => (kept ? undefined : inputRef.current?.focus())}
+          onPress={() => {
+            if (kept) return;
+            // Phone runs 41384338194/41384341259: the box is centred, so a tap put the cursor mid-code and
+            // a new code was typed into the old one ("FORGE1E1ZZ9"). Focus afresh so the whole code is selected.
+            inputRef.current?.blur();
+            inputRef.current?.focus();
+          }}
           importantForAccessibility="no"
           style={{ fontFamily: type.body, fontSize: 14, color: color.inkMuted }}
         >
@@ -256,6 +262,8 @@ export function WelcomeGymCode({ gym, onJoin }: { gym: WaitingGym; onJoin: () =>
             if (whole) void save(next);
           }}
           autoCapitalize="characters"
+          // A tap selects the whole code, so typing a new one replaces it (never mixes into it).
+          selectTextOnFocus
           autoCorrect={false}
           autoComplete="off"
           spellCheck={false}

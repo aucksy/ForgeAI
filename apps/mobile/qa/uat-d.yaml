@@ -32,6 +32,8 @@ appId: com.mettleup.app
 - tapOn:
     text: "Select Barbell Bench Press"
     index: 0
+# Phone runs 41384338194/41384341259: the keyboard stayed open over "Add 1" and the tap hit a key.
+- hideKeyboard
 - tapOn: "Add 1"
 - extendedWaitUntil:
     visible: "Barbell Bench Press set 1 weight, kilograms"
