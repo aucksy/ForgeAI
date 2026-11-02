@@ -1,12 +1,14 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- Help and feedback with AI answers (T22 step 1, R-277, 78be2cf1): both apps. Server side LIVE 2 Nov (R-278: 0008 applied, CLAUDE_HELP_KEY set, panel deployed); AI answers start when the Anthropic credit lands (~12 Nov).
-- "Show my workouts to the desk" removed from My membership (R-279): the workout offer (F90) adds the days by itself. AFTER this release reaches members: also remove the admin "Check workout code" (MemberDetail + WorkoutCodeCheckSheet + claimMatch + e2e/workoutcode.spec.mjs) and the OffersSection "Until then" line. Until then the apps fall back to the plain feedback box.
-- Exercise pictures in theme colours (R-280): every picture recoloured to the app colours in the CI build (no AI), close-up list pictures, 4 new exercises (triceps dip, cable lateral raise, walking lunge, plank hold). 247 exercises.
-- New welcome screen (R-276/R-277, canvas HgYB2U7cdYHvAJRRExDDSV): real set card with kg beaten and RPE; Join my gym and Bring workouts screens.
+- (empty: 0.68.0 shipped the list on 2 Nov)
 
 ## Done
+- 0.68.0 RELEASED 2 Nov 2026 (owner said "Release", R-281). Gate: CI + whole qa-device on default and owner + qa-journeys green on 9eb1149b. Contents (the old waiting list):
+  - Help and feedback with AI answers (T22 step 1, R-277, 78be2cf1): both apps. Server side LIVE 2 Nov (R-278: 0008 applied, CLAUDE_HELP_KEY set, panel deployed); AI answers start when the Anthropic credit lands (~12 Nov).
+  - "Show my workouts to the desk" removed from My membership (R-279): the workout offer (F90) adds the days by itself. AFTER this release reaches members: also remove the admin "Check workout code" (MemberDetail + WorkoutCodeCheckSheet + claimMatch + e2e/workoutcode.spec.mjs) and the OffersSection "Until then" line. Until then the apps fall back to the plain feedback box.
+  - Exercise pictures in theme colours (R-280): every picture recoloured to the app colours in the CI build (no AI), close-up list pictures, 4 new exercises (triceps dip, cable lateral raise, walking lunge, plank hold). 247 exercises.
+  - New welcome screen (R-276/R-277, canvas HgYB2U7cdYHvAJRRExDDSV): real set card with kg beaten and RPE; Join my gym and Bring workouts screens.
 - 0.67.0 RELEASED 1 Nov 2026 (owner said "release", R-270). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3e46ba47 (default shard 4 re-run once: the emulator image download was corrupt). Contents (the old waiting list):
   - 0.66.0 (R-263 recommend card, R-264 no logo on the joined Gym screen) was tagged but NEVER published: its release gate refused because ci.yml failed on 6d12a118 (DST-hour editPast flake + two dashboard e2e still expecting mettleup.fit; both fixed later on main). It ships with this batch. At "release": app.json is already 0.66.0; delete the unpublished v0.66.0 tag (remote + local) and tag the batch commit v0.66.0, or bump to 0.67.0 and fold the 0.66.0 What's new lines in.
   - R-267 UAT (1 Nov 2026), pushed, not released:
