@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 82 | A paid Claude key (capped at ₹500 a month) for help answers in the apps? | A: yes, Claude Haiku |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
@@ -340,7 +339,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F52 Balance check and focus block | Idea | Your idea (30 Oct, R-201): the app spots muscles you train little or not at all (and ones you train a lot), and suggests swapping 1-2 exercises in your routines for the best exercise for the weak muscle, with 2 next-best choices. Or you pick a focus yourself (for example more shoulders, less biceps) for about 2 months. Hevy and Fitbod show which muscles you trained but do not suggest swaps; Jefit comes closest. | Our app already counts sets per muscle (the body map and "Sets per muscle") and can swap exercises when it builds a plan. After at least 4 weeks of workouts, a card says for example "Rear shoulders: 2 sets a week (most muscles get 10)". Tap it: it shows which exercise to replace (one for a muscle you already train a lot) and the best 3 exercises for the weak muscle. The swap lasts 8 weeks, then the app asks: keep it or go back to your old routine (the old one is kept). |
 | F53 Calorie tracking from a food photo (AI) | Idea | Your bigger vision (24 Oct): click a picture of the plate and the app estimates calories; manual logging with Indian foods too. Later. Research of free food data and photo methods: docs/research/R-calorie-tracking.md. | The member takes a photo of the meal; AI names the foods and guesses portions; the member checks and fixes them, then the calories and protein count toward the day. Manual search with Indian dishes and katori/roti portions works without a photo. Builds on the hidden food log. |
 | F54 Hindi screens | Idea | Not built; the member app is in English today. | Settings gets a language choice, English or हिन्दी, and the app starts in the phone's language. Every button and message gets a Hindi version. Exercise names stay in English, because Indian gyms use the English names. |
-| F55 Body weight from Health Connect | Next release | Built 1 Nov 2026 (R-269): "Read my weight" on the Health Connect page. Ships with your next "release". Before it goes out, you fill the Play Health Connect form and approve one privacy line. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
+| F55 Body weight from Health Connect | Live | Released in v0.67.0. Built 1 Nov 2026 (R-269): "Read my weight" on the Health Connect page. Ships with your next "release". Before it goes out, you fill the Play Health Connect form and approve one privacy line. | With one permission, weigh-ins from a smart scale or another health app appear in Body weight by themselves, marked "From Health Connect". If you also typed a weight that day, your typed one wins. |
 | F56 Paid plan for people without a gym | Planned | Researched 31 Oct (R-242): free forever = unlimited logging, history, routines, the phone rest timer, backup and export, and the last 3 months of charts. Paid = the watch app, older charts, weight suggestions, the calculators and unlimited own exercises. New users get every feature free for 30 days, no card. Prices on the app's website: no (your call). Prices: ₹149 a month, ₹999 a year, ₹2,499 once (your yes, 31 Oct). | On day 1 every feature is open for 30 days; the app keeps the count itself, so no card is asked. Around day 25 a screen shows what stays free and what is paid. After day 30 the free part stays and nothing is deleted. Paying is through Google Play (Google keeps 15%). The pay screen also says "Train at a MettleUp gym? Enter your gym code": a gym member gets everything free. |
 | F184 A website just for the member app, at mettleup.fit | Live | #79. Live 1 Nov 2026: mettleup.fit is the member site, gyms.mettleup.fit the gym site. Your idea, 31 Oct (R-242): mettleup.fit shows only the phone and watch app, with nothing about gym software. The gym website moves to gyms.mettleup.fit; old gym links still work. No prices on it. | mettleup.fit gets a new page about the app: the workout log, charts, rest timer, watch app and a Play Store button. The gym page moves to gyms.mettleup.fit, and mettleup.fit/gyms sends people there. At the bottom: "Want all this free? Recommend MettleUp to your gym", with a link the member can share with the gym owner. Each shared link counts as a lead in HQ. |
 | F185 iPhone app and Apple Watch app | Idea | Your call, 31 Oct (R-242): plan them after the current app improvements are done. | We plan the iPhone app and the Apple Watch app when the Android app improvements are finished. It needs an Apple developer account (about $99 a year, in your name) and a Mac in the cloud to build. Members on iPhone then log workouts and see the rest timer on their Apple Watch. |
@@ -349,7 +348,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F59 Which muscles are ready today | Planned | A body map that shows which muscles rested enough to train again, from #58. | Colours each muscle on the body drawing from the workouts you logged. Free here; Fitbod charges for it. The words say it is worked out from logged workouts only. |
 | F60 Quick workout: "I have 30 minutes" | Planned | Builds a workout for the time and equipment you have today, from #58. | Pick the time and the muscles; the app picks exercises with the plan builder's rules (no AI) and your history, ready to start. |
 | F61 Ask your own AI | Planned | One tap sends your workout history as text to ChatGPT or Gemini, from #58. | Settings → Export shows "Ask an AI": it makes a short text of your recent workouts and opens the phone's share sheet. You use your own free AI. |
-| F62 Steps and water each day | Next release | Steps built 1 Nov 2026 (R-269): "Show my steps" on the Health Connect page shows today's steps. The water tap is not built yet. Ships with your next "release". | Reads today's steps from Health Connect (one new permission), shown on Today with a water tap. Stays on the phone. A gym-wide step challenge is parked (owner, 24 Oct: nothing that costs server space). |
+| F62 Steps and water each day | Live | Released in v0.67.0. Steps built 1 Nov 2026 (R-269): "Show my steps" on the Health Connect page shows today's steps. The water tap is not built yet. Ships with your next "release". | Reads today's steps from Health Connect (one new permission), shown on Today with a water tap. Stays on the phone. A gym-wide step challenge is parked (owner, 24 Oct: nothing that costs server space). |
 | F63 1-rep max and % calculator | Live | Released in v0.62.0 (testers, 31 Oct check). Type a weight and reps to see your 1-rep max, then 50-95% of it in plate-ready weights, from #58. | Opens from an exercise's chart and from the plate calculator. Uses the same formula as the estimated 1-rep max chart. On the phone only. |
 | F64 Treadmill and cycle details | Live | Released in v0.62.0 (testers, 31 Oct check). Built 30 Oct, from #58: optional small boxes under each set. Treadmill: speed and incline. Bike, elliptical, stair climber, rower: level. History shows "8.5 km/h · incline 6%"; charts get Fastest speed, Steepest incline, Highest level. Old workouts unchanged. | Cardio exercises get extra fields (speed, incline or level) added without changing old workouts. History and charts show them. |
 | F65 Watch opens when a workout starts | Live | Released in v0.62.0 (testers, 31 Oct check). Built 29 Oct; ships in 0.62.0. When you start a workout on the phone, MettleUp opens on your watch. If the watch is locked, it shows a "Workout started" card; one tap opens it. Settings has a switch to turn it off. | When you tap Start on the phone, the phone asks the watch to open the MettleUp screen. This works when the watch is on your wrist and unlocked. If the watch says no, it shows a "Workout started" card instead; one tap opens it. A switch in Settings turns this off. |
@@ -365,6 +364,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F75 Next set's weight and reps on the watch | Live | Released in v0.60.0 (testers, 31 Oct check). Built 28 Oct, ships in 0.60.0 (R-139, R-166), with heart rate and the rest timer. | During rest the watch shows the countdown, your heart rate and the next set: "Last 60 kg × 8" and, when different, "Today 62.5 kg × 8". The watch app also goes on Play for the tester group. |
 | F76 Make a routine by speaking | Idea | Members say "push day: bench, incline dumbbell, flyes" in Hindi, English or Hinglish and get a routine (R-134). About 5 paise each with the phone's free speech-to-text and a small AI. | The member taps a mic on the routines screen and speaks. The phone writes the words down for free, a small AI turns them into a routine with our exercise names, and the member checks it before saving. A daily limit keeps the cost tiny; the AI key stays on our server. |
 | F186 Guided first routine, in a folder | Planned | Your idea, 31 Oct (R-251): a new member is walked step by step through making their first routine and putting it in a folder. | A new member with no routines sees "Make your first routine" on the Workout tab. Step 1 names the folder (for example "My plan"), step 2 names the routine (for example "Push Day"), step 3 picks exercises, step 4 saves it. Each step shows one short hint, and Skip is always there. Before building, we check how Hevy and Strong guide a first routine and what their members complain about. |
+| F190 New welcome screen | Next release | Built 2 Nov 2026 (R-276/R-277): the real set card with "1,500 kg beaten" and RPE, Continue with Google, Join my gym and Bring workouts screens. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
@@ -484,8 +484,18 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F179 Privacy notice, terms and consent | Live | Notice, terms and gym data agreement complete (English + Hindi), contact@mettleup.fit; owners accept with a tick at "Create my gym" (0033 live 24 Oct). |  |
 | F180 Gym data export and delete | Live | A gym can download all its data in one tap (Excel), and ask to be deleted if it leaves. |
 | F181 Feedback by text or voice, sorted and fixed by Claude | Live | A "Send feedback" button in both apps; Claude sorts it every few hours, adds ideas to this list, fixes bugs through the full tests, and replies to the sender (#39). |
+| F189 Help answers in both apps | Next release | #83. Built 2 Nov 2026 (R-277): "Send feedback" becomes "Help and feedback"; an AI answers at once from 15 help pages, then "Did this solve it? Yes / No". Needs your credit and yes to go live (#83). |
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
+
+---
+
+## 83. Switch on the help answers — 2 Nov 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** The help answers (#82) are built and tested in both apps. A person asks a question and gets an AI answer at once, then taps "Did this solve it? Yes / No". Two things stop it from going live.
+**Your task:** Add credit to your Anthropic account: console.anthropic.com → Billing → buy about $5 (about ₹440). Today the key answers "credit balance too low". You can also set a monthly spend limit there.
+**Your task:** Tell me "yes, switch on help answers". I then add one table to the web database, store the key on the server, and make it live. Until then, messages go to the old feedback box.
 
 ---
 
@@ -495,9 +505,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **READ (1 Nov, 07:06 pm, via the page)**
 **Why:** You asked in #33 for a system that answers gym owners and members and turns repeat problems into fixes. Most of the base is already built: both apps have Send feedback, and crashes are reported every day. What is missing: nobody gets an answer back.
 **The plan:** (1) The feedback sheet becomes "Help and feedback". An AI answers from 10 to 15 short help pages, and asks "Did this solve it?". A "No" is logged, and the reply from us shows in the same sheet. (2) Twice a day I group the problems and draft replies for you to approve in HQ. (3) A problem 3 people report, or any crash, becomes a fix that I build, test and release. Cost: about ₹2 a month at 1 gym, ₹20 at 10 gyms, ₹200 at 100 gyms. Build: about 7 to 9 days in 3 steps.
-**Decide:** May the AI answers use a paid Claude key, capped at ₹500 a month?
-- A: Yes, a paid Claude Haiku key with a ₹500 cap. Free AI keys may learn from what people type. (recommended)
-- B: Not now. Keep the one-way feedback as it is.
+**DECIDED (1 Nov 2026):** A: a paid Claude Haiku key, capped at ₹500 a month.
 **APPROVED (1 Nov 2026):** the privacy line below. It goes into the privacy notice the day the help answers go live. Line: "When you ask for help in the app, your question goes to Anthropic (Claude) to write an answer. Anthropic does not use it to train its AI. We keep it for 1 year."
 **Note:** A WhatsApp AI bot waits until 10 gyms (Meta charges for it, and resellers add ₹999 a month or more). Until then the admin app links to your own WhatsApp.
 
@@ -507,6 +515,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 81. Challenge rewards: may I switch them on? — 1 Nov 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (1 Nov, 07:09 pm, via the page)**
 **Why:** F143 is built and tested. Today the gym owner must add a winner's free days by hand. With this change, when a monthly challenge ends, each winner with a running membership gets the free days added by themselves, and gets a gym message. A winner with no running membership shows as "Give by hand" in the admin app. It needs one change on the live gym server.
 **TASK DONE (1 Nov 2026)**
 **My answer (1 Nov 2026):** Switched on. The live server test passed (31 checks). Winners of the next challenge that ends get their free days and a message by themselves.
@@ -516,6 +525,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ## 80. Health Connect: two things before the next app release — 1 Nov 2026
 **Chat:** ForgeAI Local Chat
 **Status:** DONE
+**READ (1 Nov, 07:09 pm, via the page)**
 **Why:** The app can now read a member's weight and today's steps from Health Connect (F55, F62), and still sends each workout to it. Google Play asks every app that uses Health Connect to say what it reads and writes. Our privacy notice must say it too.
 **TASK DONE (1 Nov 2026)**
 **My answer (1 Nov 2026):** The privacy line is live in English and Hindi on every MettleUp website. Claude fills the Play Console Health apps form after the 0.67.0 app reaches Play. Nothing more is needed from you.
