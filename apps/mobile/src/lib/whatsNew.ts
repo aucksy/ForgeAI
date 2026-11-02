@@ -56,6 +56,21 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-282..R-289: member-words; short complete sentences, no Gemini (owner rule 1 Nov). Busy machines (F137)
+    // stays hidden until its server part is switched on, and new members never see this list, so no line
+    // for either it or the first-routine guide (F186). Facts checked against the code.
+    version: '0.69.0',
+    date: '3 Nov',
+    lines: [
+      { text: 'Your main lifts now show a strength level on the exercise page. Your body weight stays private.' },
+      { text: 'Earn badges by training, like 50 workouts. Tap "Badges" on your Profile to see them all.' },
+      { text: 'If a set felt easy, the next sets suggest a little more. Rest that runs over now shows in red.' },
+      { text: 'Charts spots a muscle you train much less than the rest and offers one exercise swap for 8 weeks.' },
+      { text: 'Settings is simpler, with one place for backup. The muscle map can show the last 30 or 90 days.' },
+      { text: 'At gym check-in, the front desk confirms your mobile number once, so nobody else can use it.' },
+    ],
+  },
+  {
     // R-281 (R-276..R-280): member-words; short lines, no Gemini (owner rule 1 Nov). The new welcome screen
     // is for new members only and help answers are not live until the AI credit lands, so no line for them.
     version: '0.68.0',
