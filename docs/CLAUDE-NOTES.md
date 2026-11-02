@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-286. Compare the Brain repos with ours, run the security check, find exercise animations — 2 Nov 2026
+
+He said: for the ideas we already have, still study those repos and see if theirs is better and we can improve ours. "Okay, let's do that security check." He remembers a famous gym tracker repo from a reel (openGym, saved 19 Oct) and wonders if it has exercise animations; and wants a thorough search (GitHub and elsewhere) for good-quality exercise animations at a fair cost.
+
+Doing: 3 helpers in parallel. (1) openGym body map + the crash-to-fix loop vs ours. (2) security-review of the admin server (deploy/panel), the dashboard and the member app's server calls. (3) exercise animation sources: licence, quality, price, offline use allowed. Licence rules stand: no ExerciseDB/Gymvisual re-hosts, no scraped sets, RepDB pictures never into AI.
+
 ## R-285. What in D:\Brain can make MettleUp better — 2 Nov 2026
 
 He asked: "We have been collating a lot of resources in D:\Brain - is there anything we can use to make this software system better - check". Read Skills/_resource-notes.md, candidates.md, _connections.md and the 11 saved reels that mention gyms or apps.
