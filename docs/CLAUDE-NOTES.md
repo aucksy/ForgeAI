@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-285. What in D:\Brain can make MettleUp better — 2 Nov 2026
+
+He asked: "We have been collating a lot of resources in D:\Brain - is there anything we can use to make this software system better - check". Read Skills/_resource-notes.md, candidates.md, _connections.md and the 11 saved reels that mention gyms or apps.
+
+Already in MettleUp (no work): body map with "Not trained" muscles (openGym idea, BodyMapSection), crash reports that open a GitHub issue (crashReport.ts + deploy/panel/crash.js; 0 open issues today), the design, words, clips, voice and film skills (already used).
+
+Worth doing (offered, not built; ideas stay here until he says yes): (1) a security check of the admin server and member data with the built-in security-review skill, free, never done before; (2) mettleup.fit has no robots.txt (it returns the app page) and no sitemap.xml (301), and no Search Console note: add both at the next panel deploy (held for the release because help articles go out with it), then submit the site in Google Search Console in his Chrome; (3) a daily scheduled check of new crash issues that drafts a fix (the Sentry-loop reel idea, our own crash pipe).
+
+Not for MettleUp now: Twenty CRM (we have our own panel), Evolution API and Whatomate WhatsApp (unofficial, a gym's number can be blocked; AGPL), Strix (needs an AI key and network; security-review covers the first pass), app-store-screenshots (only when MettleUp goes on Play).
+
 ## R-284. Build the simpler Settings layout — 2 Nov 2026
 
 He said: "okay go ahead" (to the R-283 plan: 6 groups like Hevy, one Backup and restore row, watch settings in one place, rare workout choices behind one row, Leave gym last in red, plain name for Health Connect). 0.68.0 released first (v0.68.0, 2 Nov). Building it for the next update.
