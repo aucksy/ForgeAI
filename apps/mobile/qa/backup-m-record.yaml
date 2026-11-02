@@ -15,7 +15,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Backup"
+      PAGE: "Backup and restore"
 # The count loads a moment after the card ("Your workouts" first); wait for the number.
 - scrollUntilVisible:
     element: '^[0-9]+ workouts?$'

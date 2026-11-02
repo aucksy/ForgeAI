@@ -449,7 +449,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Backup$"
+      FIND: "^Backup and restore$"
 - runFlow:
     file: sub-find.yaml
     env:

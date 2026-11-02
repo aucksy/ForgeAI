@@ -68,8 +68,9 @@ appId: com.mettleup.app
     element: "Previous, Target and notes come from the last time you did the exercise, in any folder. Applies from your next workout."
     timeout: 30000
 - takeScreenshot: p9-01b-previous-values
-# Last time's numbers → Settings → Profile → the Workout tab. Part L finished Push 1 today, so the card is
-# "Done today: Push 1" with its goal line, "This week: N of 3 workouts".
+# Last time's numbers → More workout choices (R-284) → Settings → Profile → the Workout tab. Part L
+# finished Push 1 today, so the card is "Done today: Push 1" with its goal line, "This week: N of 3 workouts".
+- back
 - back
 - back
 - extendedWaitUntil:

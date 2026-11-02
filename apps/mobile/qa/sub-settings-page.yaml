@@ -7,11 +7,37 @@
 # PAGE is a regex for the row's visible title (src/components/settings/settingsLines.ts
 # settingsGroups; never a group heading). No `env:` default here: a flow-level default would override the caller's (trap 22).
 # The page's own title is the same words, so the caller waits for something ON the page after this.
-# Health Connect's row shows only once the app has read Health Connect's state: it is waited for.
+# Health apps' row shows only once the app has read Health Connect's state: it is waited for.
+# R-284: three rare workout pages sit behind "More workout choices", and the backup file's two pages
+# behind "Backup and restore": for those PAGE values this taps through that row first.
 appId: com.mettleup.app
 ---
 - runFlow:
     file: sub-settings-open.yaml
+- runFlow:
+    when:
+      true: ${/^(How the app picks your next weight|Last time's numbers|Muscle tips)$/.test(PAGE)}
+    commands:
+      - scrollUntilVisible:
+          element: "^More workout choices$"
+          centerElement: true
+          timeout: 20000
+      - tapOn: "^More workout choices$"
+      - extendedWaitUntil:
+          visible: "^How the app picks your next weight$"
+          timeout: 15000
+- runFlow:
+    when:
+      true: ${/^(Save a backup|Restore from a backup)$/.test(PAGE)}
+    commands:
+      - scrollUntilVisible:
+          element: "^Backup and restore$"
+          centerElement: true
+          timeout: 20000
+      - tapOn: "^Backup and restore$"
+      - extendedWaitUntil:
+          visible: "^Restore from a backup$|^Save a backup$"
+          timeout: 15000
 - scrollUntilVisible:
     element: "^${PAGE}$"
     centerElement: true

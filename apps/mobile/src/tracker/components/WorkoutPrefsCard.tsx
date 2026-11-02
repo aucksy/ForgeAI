@@ -151,6 +151,26 @@ export function WeeklyGoalCard() {
  * tap fixes it), the optional "Ring through Do Not Disturb" (Android only, off by default, RT-12), and a
  * default rest that could not be saved says so (RT-11). R-55: the rest-over sound. R-70: "In use".
  */
+/**
+ * 29 Oct 2026: starting a workout opens MettleUp on a Wear OS watch (watchOpen.ts). R-284: on the
+ * Settings → Your watch page, beside installing the watch app (it was inside Rest timer and sounds).
+ */
+export function WatchOpenSwitch() {
+  const watchOpen = useRestAlertPrefs((s) => s.watchOpen);
+  const setWatchOpen = useRestAlertPrefs((s) => s.setWatchOpen);
+  return (
+    <Card style={{ paddingVertical: space.xs }}>
+      <ToggleRow
+        icon="clock"
+        title="Open MettleUp on my watch"
+        caption="When you start a workout, your watch opens MettleUp too"
+        value={watchOpen}
+        onChange={setWatchOpen}
+      />
+    </Card>
+  );
+}
+
 export function RestPrefsCard() {
   const sounds = useTrackerPrefs((s) => s.sounds);
   const setSounds = useTrackerPrefs((s) => s.setSounds);
@@ -164,8 +184,6 @@ export function RestPrefsCard() {
   const loadDefault = useRestTimer((s) => s.loadDefault);
   const ringThroughDnd = useRestAlertPrefs((s) => s.ringThroughDnd);
   const setRingThroughDnd = useRestAlertPrefs((s) => s.setRingThroughDnd);
-  const watchOpen = useRestAlertPrefs((s) => s.watchOpen);
-  const setWatchOpen = useRestAlertPrefs((s) => s.setWatchOpen);
   const [picking, setPicking] = useState(false);
   const [choosingSound, setChoosingSound] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -220,17 +238,7 @@ export function RestPrefsCard() {
           divider
         />
       ) : null}
-      {/* 29 Oct 2026: starting a workout opens MettleUp on a Wear OS watch (watchOpen.ts). */}
-      {Platform.OS === 'android' ? (
-        <ToggleRow
-          icon="clock"
-          title="Open MettleUp on my watch"
-          caption="When you start a workout, your watch opens MettleUp too"
-          value={watchOpen}
-          onChange={setWatchOpen}
-          divider
-        />
-      ) : null}
+      {/* R-284: "Open MettleUp on my watch" moved to Settings → Your watch (WatchOpenSwitch). */}
       <RestAlertsStatusRow divider />
       {/* R-70 (owner, 22 Oct 2026): "In use" opens by itself when a set's rest starts. */}
       <ToggleRow

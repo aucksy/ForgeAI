@@ -112,9 +112,9 @@ describe('where it shows', () => {
     expect(pickNotice({ whatsNew: true, watch: true }, null, '2026-10-29')).toBe('whatsNew');
   });
 
-  it('Settings has "Your watch" under Reminders and phone only with a watch', () => {
+  it('Settings has "Your watch" under Phone and watch only with a watch (R-284: its own page)', () => {
     const ctx = { gymName: null, canAddGymLogo: false, hasHealth: false, coach: false };
-    const phone = (watch?: boolean) => settingsGroups({ ...ctx, watch }).find((g) => g.title === 'Reminders and phone')!.rows.map((r) => r.key);
+    const phone = (watch?: boolean) => settingsGroups({ ...ctx, watch }).find((g) => g.title === 'Phone and watch')!.rows.map((r) => r.key);
     expect(phone(true)).toContain('watch');
     expect(phone(false)).not.toContain('watch');
     expect(phone(undefined)).not.toContain('watch');

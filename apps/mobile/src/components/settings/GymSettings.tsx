@@ -66,7 +66,7 @@ export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key
       {canAddGymShortcut(link) ? (
         <LinkRow
           title="Gym logo on my home screen"
-          sub={`${link.gymName}'s logo on your home screen. It opens MettleUp.`}
+          sub="Opens MettleUp from your home screen" // member-words (R-284: was a 4-line sentence)
           leading={leading?.('gymLogo')}
           onPress={() => void addShortcut()}
         />
@@ -81,7 +81,7 @@ export function JoinedGymRows({ link, leading }: { link: GymLink; leading?: (key
           onPress={() => router.push('/settings/gym-sees')}
         />
       ) : null}
-      <LinkRow title={`Leave ${link.gymName}`} sub={BOARD_WORDS.leaveSub} leading={leading?.('gymLeave')} onPress={() => void leave()} />
+      <LinkRow title={`Leave ${link.gymName}`} sub={BOARD_WORDS.leaveSub} leading={leading?.('gymLeave')} onPress={() => void leave()} danger />
     </>
   );
 }

@@ -1,24 +1,39 @@
 # Sub-flow (not a part of its own; called with runFlow from other flows). Release A (A7,
 # docs/ux/MEMBER-APP-MAP.md §3.3): Settings, behind the Profile page's gear (accessibilityLabel
 # "Settings", src/app/(tabs)/profile.tsx), is ONE page in 6 headed groups (src/components/settings/
-# settingsLines.ts): You (Your profile, Units) · Workouts (Weekly goal, Rest timer and sounds, How the
-# app picks your next weight, Plates and bars, Last time's numbers, Rate how hard each set felt,
-# Muscle tips) · Reminders and phone (Reminders, Health Connect, Widgets) · Your gym (Join your gym,
-# or Gym logo on my home screen + Leave <gym>) · Your data (Backup, Save as a spreadsheet, Bring in
-# from Hevy or Strong, Erase or start over) · Help (What's new, Send feedback, About).
+# settingsLines.ts). R-284: You (Your profile, Units, Reminders) · Workouts (Rest timer and sounds,
+# Weekly goal, Plates and bars, Rate how hard each set felt, More workout choices) · Your gym (Join
+# your gym, or Gym logo on my home screen + Leave <gym>) · Phone and watch (Your watch, Health apps,
+# Widgets) · Your data (Backup and restore, Save as a spreadsheet, Bring in from Hevy or Strong, Erase
+# or start over) · Help (Help and feedback, What's new, About). Pages behind a row: sub-settings-page.yaml.
 # This opens that page. Call it with the app's tab bar on screen (any tab), or already on the page.
 # The Profile tab is tapped with index 0: the top-most match (trap 18, 3-button navigation).
 # The page is taller than the screen: any of three rows says "on the page", and it is then scrolled
 # back to its top. Group headings are drawn in capitals: tap rows, never headings.
 appId: com.mettleup.app
 ---
+# R-284: a page behind a Settings row ("More workout choices", "Backup and restore") is one Back
+# away from Settings. Back from one of ITS pages lands there: one more Back reaches Settings (or,
+# if Settings was scrolled so that only that row shows, the Profile page: the steps below recover).
+- runFlow:
+    when:
+      visible: "^Muscle tips$"
+      notVisible: "^Your profile$"
+    commands:
+      - back
+- runFlow:
+    when:
+      visible: "^Restore from a backup$"
+      notVisible: "^Your profile$"
+    commands:
+      - back
 # Back from a Settings page lands on Settings scrolled to that page's row: the middle of the page
 # (Workouts / Reminders and phone), where none of the rows below is on screen (run 40097554901,
 # part I: it then waited for the tab bar Settings hides). No tab bar and none of those rows = on a
 # page above the tabs: look UP for the page's first row before deciding we are elsewhere.
 - runFlow:
     when:
-      notVisible: "^Profile$|^Your profile$|^Backup$|^About$|^Your details$|^Export & import$"
+      notVisible: "^Profile$|^Your profile$|^Backup and restore$|^About$|^Your details$|^Export & import$"
     commands:
       - scrollUntilVisible:
           element: "^Your profile$|^Your details$"
@@ -27,7 +42,7 @@ appId: com.mettleup.app
           optional: true
 - runFlow:
     when:
-      notVisible: "^Your profile$|^Backup$|^About$|^Your details$|^Export & import$"
+      notVisible: "^Your profile$|^Backup and restore$|^About$|^Your details$|^Export & import$"
     commands:
       - extendedWaitUntil:
           visible: "^Profile$"

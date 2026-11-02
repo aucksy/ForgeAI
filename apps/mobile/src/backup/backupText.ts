@@ -73,7 +73,7 @@ export function restoredText(o: { mode: 'replace' | 'add'; workouts: number; rou
 }
 
 /** The backup had Health Connect on: Android asks for it on each phone, so the member turns it on. */
-export const HEALTH_AGAIN = 'Health Connect was on in your backup. Android asks for permission on each phone, so turn it on again in Settings → Health Connect.';
+export const HEALTH_AGAIN = 'Health Connect was on in your backup. Android asks for permission on each phone, so turn it on again in Settings → Health apps.';
 
 export const RESTORE_FAILED = 'Couldn’t restore the backup. Nothing was changed. Please try again.';
 export const FINISH_WORKOUT_FIRST = 'Finish your workout first: finish or discard the workout in progress, then restore.';

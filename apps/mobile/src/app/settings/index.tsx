@@ -1,6 +1,6 @@
 /**
  * Settings (Release A, A7, docs/ux/MEMBER-APP-MAP.md §3.3), behind the Profile's gear: ONE page in 6
- * headed groups, like Hevy's — You · Workouts · Reminders and phone · Your gym · Your data · Help (the
+ * headed groups, like Hevy's — R-284: You · Workouts · Your gym · Phone and watch · Your data · Help (the
  * groups and their rows: components/settings/settingsLines.ts). Each row opens its own page; the gym's
  * two rows act on the spot. Where it helps, a row says how that page is set now in one grey line
  * ("kg, km", "Rest 2:00", "Reminders on, 6:00 pm").
@@ -30,7 +30,6 @@ import { getProfile } from '@/db/repos/userRepo';
 import { FEATURES, profileParts } from '@/lib/features';
 import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
-import { tell } from '@/lib/tell';
 import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
 import { useGymShop } from '@/shop/gymStore';
@@ -44,7 +43,7 @@ import { widgetsPlaced } from '@/tracker/phone/widgets';
 import { plateSetupLine } from '@/tracker/services/plateMath';
 import { fmtRest } from '@/tracker/services/restRules';
 import { choiceLabel, REP_RANGE_CHOICES, WEIGHT_JUMP_CHOICES } from '@/tracker/services/targetChoices';
-import { WATCH_WORDS, installNote, installOnWatch, readWatchState, watchRowLine, type WatchState } from '@/tracker/services/watchInstall';
+import { readWatchState, watchRowLine, type WatchState } from '@/tracker/services/watchInstall';
 import { useMuscleTips } from '@/tracker/store/muscleTipsStore';
 import { usePlateSetupFor } from '@/tracker/store/plateSetupStore';
 import { useRestTimer } from '@/tracker/store/restTimerStore';
@@ -64,6 +63,7 @@ const ICON: Record<SettingsRowKey, IconName> = {
   lastTime: 'list',
   effort: 'gauge',
   muscleTips: 'sparkle',
+  moreWorkout: 'list',
   reminders: 'calendar',
   health: 'heart',
   widgets: 'home',
@@ -131,7 +131,6 @@ export default function SettingsScreen() {
   const [name, setName] = useState<string | null>(null);
   // F67: what Wear OS says about the watch ("Your watch" row: Installed / Install on watch).
   const [watch, setWatch] = useState<WatchState>('unknown');
-  const installing = useRef(false);
   // UAT U-G2: the gym joined in the app (the old typed "Your gym" answer is no longer asked, A2).
   const link = useGymShop((s) => s.link);
   // One page per tap, however fast the taps.
@@ -194,24 +193,6 @@ export default function SettingsScreen() {
     watch: watchRowLine(watch) != null,
   });
 
-  // F67: "Your watch". Missing: open the watch's Play Store on MettleUp, then say what happened.
-  const onWatch = (): void => {
-    if (watch === 'installed') {
-      void tell(WATCH_WORDS.already);
-      return;
-    }
-    if (installing.current) return;
-    installing.current = true;
-    void installOnWatch()
-      .then((r) => {
-        if (r === 'installed') setWatch('installed');
-        return tell(installNote(r));
-      })
-      .finally(() => {
-        installing.current = false;
-      });
-  };
-
   const open = (href: string): void => {
     // The Gym tab is a tab: switch to it rather than stack a page on Settings.
     if (href === '/shop') navigateOnce(busy, () => router.navigate('/shop'));
@@ -228,15 +209,7 @@ export default function SettingsScreen() {
               <JoinedGymRows link={link} leading={(k) => <Dot icon={ICON[k]} />} />
             ) : (
               g.rows.map((r) =>
-                r.key === 'watch' ? (
-                  <LinkRow
-                    key={r.key}
-                    title={r.title}
-                    sub={lines.watch ?? undefined}
-                    leading={<Dot icon={ICON.watch} />}
-                    onPress={onWatch}
-                  />
-                ) : r.href ? (
+                r.href ? (
                   <LinkRow
                     key={r.key}
                     title={r.title}

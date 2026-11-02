@@ -182,6 +182,8 @@ appId: com.mettleup.app
     visible: "^Any workout$"
     timeout: 20000
 - takeScreenshot: w-05b-previous-values
+# R-284: Last time's numbers → More workout choices → Settings → Profile.
+- back
 - back
 - back
 # ---------------------------------------------------------------- Profile on a Monday the 1st

@@ -25,7 +25,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-settings-page.yaml
     env:
-      PAGE: "Backup"
+      PAGE: "Backup and restore"
 - scrollUntilVisible:
     element: "^${WORKOUTS_LINE}$"
     centerElement: true

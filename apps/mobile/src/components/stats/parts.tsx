@@ -70,7 +70,7 @@ export function ChoiceRow<T extends string>({ options, value, onChange, label }:
 }
 
 /** A tappable row: title, a grey line, a value on the right and a chevron — 56 dp or taller. */
-export function LinkRow({ title, sub, value, onPress, leading, spoken }: { title: string; sub?: string; value?: string; onPress: () => void; leading?: ReactNode; spoken?: string }) {
+export function LinkRow({ title, sub, value, onPress, leading, spoken, danger }: { title: string; sub?: string; value?: string; onPress: () => void; leading?: ReactNode; spoken?: string; /** R-284: a row that removes something (Leave gym): red title. */ danger?: boolean }) {
   return (
     <PressScale
       onPress={onPress}
@@ -92,7 +92,7 @@ export function LinkRow({ title, sub, value, onPress, leading, spoken }: { title
     >
       {leading}
       <View style={{ flex: 1 }}>
-        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{title}</Text>
+        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: danger ? color.criticalText : color.ink }}>{title}</Text>
         {sub ? <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: 2 }}>{sub}</Text> : null}
       </View>
       {value ? <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.inkSecondary }}>{value}</Text> : null}

@@ -218,11 +218,11 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-settings-open.yaml
 - scrollUntilVisible:
-    element: "^Health Connect$"
+    element: "^Health apps$"
     centerElement: true
     timeout: 30000
 - takeScreenshot: 126-settings-list
-- tapOn: "^Health Connect$"
+- tapOn: "^Health apps$"
 # v0.39.0: the script took Health Connect access AWAY before this part (the install grants it),
 # so the page must say "Connect" and Connect must really open the system's permission screen.
 # Before v0.39.0 this step accepted "Turn on" and an optional permission screen, so it never saw

@@ -9,7 +9,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  BACKUP_FILE_ROWS,
   MAX_ROWS_PER_GROUP,
+  MORE_WORKOUT_ROWS,
   nextWeightLine,
   onOffLine,
   settingsGroups,
@@ -61,7 +63,7 @@ describe('A7: Settings in 6 headed groups', () => {
   it('the groups, in order, each with at most 7 rows', () => {
     for (const ctx of [NO_GYM, IN_GYM, { ...IN_GYM, coach: true }]) {
       const groups = settingsGroups(ctx);
-      expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Reminders and phone', 'Your gym', 'Back up and restore', 'Your data', 'Help']);
+      expect(groups.map((g) => g.title)).toEqual(['You', 'Workouts', 'Your gym', 'Phone and watch', 'Your data', 'Help']);
       for (const g of groups) {
         expect(g.rows.length, g.title).toBeGreaterThan(0);
         expect(g.rows.length, g.title).toBeLessThanOrEqual(MAX_ROWS_PER_GROUP);
@@ -70,21 +72,15 @@ describe('A7: Settings in 6 headed groups', () => {
   });
   it('the rows the review named (labels in plain words)', () => {
     const rows = Object.fromEntries(settingsGroups(NO_GYM).map((g) => [g.title, g.rows.map((r) => r.title)]));
-    expect(rows.You).toEqual(['Your profile', 'Units']);
-    expect(rows.Workouts).toEqual([
-      'Weekly goal',
-      'Rest timer and sounds',
-      'How the app picks your next weight',
-      'Plates and bars',
-      "Last time's numbers",
-      'Rate how hard each set felt',
-      'Muscle tips',
-    ]);
-    expect(rows['Reminders and phone']).toEqual(['Reminders', 'Health Connect', 'Widgets']);
+    // R-284 (2 Nov 2026 UAT): reminders under You; the rare workout choices behind one row; one backup row.
+    expect(rows.You).toEqual(['Your profile', 'Units', 'Reminders']);
+    expect(rows.Workouts).toEqual(['Rest timer and sounds', 'Weekly goal', 'Plates and bars', 'Rate how hard each set felt', 'More workout choices']);
+    expect(MORE_WORKOUT_ROWS.map((r) => r.title)).toEqual(['How the app picks your next weight', "Last time's numbers", 'Muscle tips']);
+    expect(rows['Phone and watch']).toEqual(['Health apps', 'Widgets']);
     expect(rows['Your gym']).toEqual(['Join your gym']);
-    expect(rows['Back up and restore']).toEqual(['Save a backup', 'Restore from a backup']);
-    expect(rows['Your data']).toEqual(['Backup', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
-    expect(rows.Help).toEqual(["What's new", 'Help and feedback', 'About']);
+    expect(rows['Your data']).toEqual(['Backup and restore', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
+    expect(BACKUP_FILE_ROWS.map((r) => r.title)).toEqual(['Save a backup', 'Restore from a backup']);
+    expect(rows.Help).toEqual(['Help and feedback', "What's new", 'About']);
   });
   it('with a gym: the logo (when it has one) and Leave, which act on the spot', () => {
     const gym = settingsGroups(IN_GYM).find((g) => g.title === 'Your gym');
@@ -93,14 +89,13 @@ describe('A7: Settings in 6 headed groups', () => {
     expect(settingsGroups({ ...IN_GYM, canAddGymLogo: false }).find((g) => g.title === 'Your gym')?.rows.map((r) => r.key)).toEqual(['gymLeave']);
   });
   it('no Health Connect on the phone: no row; the coach row only while the coach is on', () => {
-    const phone = settingsGroups({ ...NO_GYM, hasHealth: false }).find((g) => g.title === 'Reminders and phone');
-    expect(phone?.rows.map((r) => r.key)).toEqual(['reminders', 'widgets']);
+    const phone = settingsGroups({ ...NO_GYM, hasHealth: false }).find((g) => g.title === 'Phone and watch');
+    expect(phone?.rows.map((r) => r.key)).toEqual(['widgets']);
     expect(settingsGroups(NO_GYM).flatMap((g) => g.rows).some((r) => r.key === 'coach')).toBe(false);
     expect(settingsGroups({ ...NO_GYM, coach: true }).find((g) => g.title === 'You')?.rows.map((r) => r.key)).toContain('coach');
   });
   it('every row that opens a page opens one that exists, and no two rows open the same page', () => {
-    const hrefs = settingsGroups({ ...NO_GYM, coach: true })
-      .flatMap((g) => g.rows)
+    const hrefs = [...settingsGroups({ ...NO_GYM, coach: true, watch: true }).flatMap((g) => g.rows), ...MORE_WORKOUT_ROWS, ...BACKUP_FILE_ROWS]
       .map((r) => r.href)
       .filter((h): h is string => h != null);
     for (const h of hrefs) expect(routeFile(h), h).not.toBeNull();

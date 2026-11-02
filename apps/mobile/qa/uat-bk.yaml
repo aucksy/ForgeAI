@@ -127,6 +127,12 @@ appId: com.mettleup.app
       FIND: "^Large step, Strength$"
 - takeScreenshot: bk-04-settings
 # ---------------------------------------------------------------- 3. save a backup
+# R-284: the backup file's pages sit on Settings -> Your data -> "Backup and restore".
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Backup and restore$"
+- tapOn: "^Backup and restore$"
 - runFlow:
     file: sub-find.yaml
     env:

@@ -113,7 +113,7 @@ export const HELP_ARTICLES = [
       '4. When you are done, tap "Finish workout". ' +
       'The PREVIOUS column shows what you did last time for each set. ' +
       'Tap an exercise name to open its page. Its History shows every time you did it. ' +
-      'To choose where last time\'s numbers come from, open Profile, tap Settings, then "Last time\'s numbers": "Any workout" or "Same routine".',
+      'To choose where last time\'s numbers come from, open Profile, tap Settings, then "More workout choices", then "Last time\'s numbers": "Any workout" or "Same routine".',
   },
   {
     id: 'kg-to-beat-box',
@@ -155,11 +155,11 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'Back up and restore your workouts',
     text:
-      'To save a backup: open Profile, tap Settings, then "Save a backup", and tap "Save the backup file". ' +
+      'To save a backup: open Profile, tap Settings, then "Backup and restore", then "Save a backup", and tap "Save the backup file". ' +
       'It is one file with your workouts, routines, body weight, measurements, photos, profile and settings. Keep it in Files, Google Drive or WhatsApp. ' +
-      'To restore on any phone: Settings, then "Restore from a backup", tap "Choose backup file", check what is inside, then pick "Replace everything on this phone" or "Add to what\'s here". ' +
+      'To restore on any phone: Settings, then "Backup and restore", then "Restore from a backup". Tap "Choose backup file", check what is inside, then pick "Replace everything on this phone" or "Add to what\'s here". ' +
       'Backups from the old ForgeAI app work too. ' +
-      'Gym members may also see "Continue with Google" in Settings, then Backup. It saves your workouts on MettleUp, and "Bring back my workouts" returns them on a new phone.',
+      'Gym members may also see "Continue with Google" on the same "Backup and restore" page. It saves your workouts on MettleUp, and "Bring back my workouts" returns them on a new phone.',
   },
   {
     id: 'rate-how-hard-rpe',
