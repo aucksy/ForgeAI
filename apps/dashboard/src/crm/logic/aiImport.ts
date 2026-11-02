@@ -580,6 +580,8 @@ export function aiAnswer(status: number, body: unknown, width: number): AiAnswer
     return { ok: true, picks: parseAiPicks(b, width), left };
   }
   if (status === 429) return { ok: false, why: 'limit' };
+  // 0048: a demo gym gets no AI reads; our own matching stands, like AI being off.
+  if (status === 403 && b.reason === 'demo') return { ok: false, why: 'off' };
   if (status === 403) return { ok: false, why: 'owner' };
   if (status === 401) return { ok: false, why: 'signin' };
   if (status === 503 && b.reason === 'off') return { ok: false, why: 'off' };

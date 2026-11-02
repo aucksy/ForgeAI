@@ -61,6 +61,8 @@ export function formatMobile(raw: string | null | undefined): string {
 export type CheckInProblem =
   | 'TOO_MANY'
   | 'TOO_MANY_NUMBERS'
+  /** 0048 (R-287): the typed number is on the gym's list, but the front desk confirms it once first. */
+  | 'DESK_CHECK'
   | 'OTHER_GYM'
   | 'BAD_PHONE'
   | 'NO_PHONE'
@@ -102,7 +104,7 @@ export function checkInFromRow(raw: unknown): CheckInAnswer | null {
       planOk: typeof row.planOk === 'boolean' ? row.planOk : null,
     };
   }
-  const problem = PROBLEMS.find((p) => p === row.error);
+  const problem = row.error === 'TOO_MANY_NUMBERS' && row.deskCheck === true ? 'DESK_CHECK' : PROBLEMS.find((p) => p === row.error);
   if (!problem) return null;
   return { ok: false, problem, gymName: text(row.gymName), phone: text(row.phone) };
 }
@@ -166,6 +168,8 @@ export function problemText(p: { problem: CheckInProblem; gymName: string | null
       return 'Too many tries in a minute. Wait a minute, then scan again.';
     case 'TOO_MANY_NUMBERS':
       return 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.';
+    case 'DESK_CHECK':
+      return "Ask the front desk to confirm your mobile number. They do this only once. Then tap Check in.";
     case 'OTHER_GYM':
       return `You're not a member of ${p.gymName ?? 'this gym'} in the app.`;
   }

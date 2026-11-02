@@ -7,12 +7,14 @@ declare
   gid uuid; gid2 uuid;
   ka text := 'qr-test-key-a'; kb text := 'qr-test-key-b'; kc text := 'qr-test-key-c';
   kd text := 'qr-test-key-d'; ke text := 'qr-test-key-e'; kf text := 'qr-test-key-f'; kz text := 'qr-test-key-z';
+  kown text := 'qr-test-owner';
   r jsonb; n int; ver bigint; fails text := ''; checks int := 0;
   day text := to_char((now() at time zone 'Asia/Kolkata')::date, 'YYYY-MM-DD');
   i int;
 begin
   insert into public.gyms(name, join_code) values ('QR Test Gym', 'QRTST1') returning gym_id into gid;
   insert into public.gyms(name, join_code) values ('QR Other Gym', 'QRTST2') returning gym_id into gid2;
+  insert into public.gym_owner_keys(gym_id, key_hash) values (gid, public._hash_key(kown));
   -- App members. A gave a number at Join: it is NOT trusted for check-in (review, 15 Oct 2026).
   insert into public.gym_members(gym_id, name, phone, key_hash) values
     (gid, 'Asha app', '9829012345', public._hash_key(ka)),
@@ -58,8 +60,18 @@ begin
   checks := checks + 1;
   if r->>'error' is distinct from 'OTHER_GYM' then fails := fails || ' 3:' || r::text; end if;
 
-  -- 4. Typed '9829012345' matches roster '+919829012345'; plan covers today.
+  -- 4. Typed '9829012345' matches roster '+919829012345'. 0048: a typed number waits for the desk;
+  --    the answer names nobody and links nothing. After the desk's yes, a scan checks in; plan covers today.
   r := public.member_check_in(ka, 'qrtst1', '9829012345');
+  checks := checks + 1;
+  if r->>'error' is distinct from 'TOO_MANY_NUMBERS' or (r->>'deskCheck')::boolean is distinct from true
+     or r ? 'memberName' or r ? 'planOk' then fails := fails || ' 4desk:' || r::text; end if;
+  select count(*) into n from public.gym_members where key_hash = public._hash_key(ka) and checkin_phone is null;
+  checks := checks + 1;
+  if n <> 1 then fails := fails || ' 4notLinked'; end if;
+  perform public.owner_decide_phone_link(kown, (select l.link_id from public.gym_phone_links l join public.gym_members m
+    on m.member_id = l.app_member where m.key_hash = public._hash_key(ka) and l.status = 'pending'), 'approved');
+  r := public.member_check_in(ka, 'qrtst1');
   checks := checks + 1;
   if not coalesce((r->>'ok')::boolean, false) or (r->>'alreadyIn')::boolean or r->>'memberName' is distinct from 'Asha'
      or r->>'day' is distinct from day or r->>'gymName' is distinct from 'QR Test Gym'
@@ -80,6 +92,11 @@ begin
 
   -- 6. Desk already checked Dev in (different id); '09876543210' against '919876543210'; plan ended.
   r := public.member_check_in(kd, 'QRTST1', '09876543210');
+  checks := checks + 1;
+  if (r->>'deskCheck')::boolean is distinct from true then fails := fails || ' 6desk:' || r::text; end if;
+  perform public.owner_decide_phone_link(kown, (select l.link_id from public.gym_phone_links l join public.gym_members m
+    on m.member_id = l.app_member where m.key_hash = public._hash_key(kd) and l.status = 'pending'), 'approved');
+  r := public.member_check_in(kd, 'QRTST1');
   select count(*) into n from public.crm_records where gym_id = gid and kind = 'visit' and data->>'memberId' = 'm-dev';
   checks := checks + 1;
   if not coalesce((r->>'alreadyIn')::boolean, false) or (r->>'checkedInAt')::bigint is distinct from 1700000000000 or n <> 1
@@ -93,6 +110,11 @@ begin
   checks := checks + 1;
   if r->>'error' is distinct from 'BAD_PHONE' then fails := fails || ' 7b:' || r::text; end if;
   r := public.member_check_in(kb, 'QRTST1', '+91 98290-54321');
+  checks := checks + 1;
+  if (r->>'deskCheck')::boolean is distinct from true then fails := fails || ' 7desk:' || r::text; end if;
+  perform public.owner_decide_phone_link(kown, (select l.link_id from public.gym_phone_links l join public.gym_members m
+    on m.member_id = l.app_member where m.key_hash = public._hash_key(kb) and l.status = 'pending'), 'approved');
+  r := public.member_check_in(kb, 'QRTST1');
   checks := checks + 1;
   if not coalesce((r->>'ok')::boolean, false) or r->>'memberName' is distinct from 'Bilal'
      or (r->>'planOk')::boolean is distinct from false then fails := fails || ' 7c:' || r::text; end if;

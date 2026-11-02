@@ -130,6 +130,16 @@ describe("member_check_in's answer", () => {
     expect(checkInFromRow({ error: 'NOT_ON_ROSTER', phone: '+919829012345' })).toMatchObject({ phone: '+919829012345', gymName: null });
   });
 
+  it('reads the desk check (0048): a typed number waits for the front desk', () => {
+    expect(checkInFromRow({ error: 'TOO_MANY_NUMBERS', deskCheck: true, gymName: 'G' })).toEqual({ ok: false, problem: 'DESK_CHECK', gymName: 'G', phone: null });
+    // deskCheck must be exactly true; anything else stays the old answer.
+    expect(checkInFromRow({ error: 'TOO_MANY_NUMBERS', deskCheck: 'yes' })).toMatchObject({ problem: 'TOO_MANY_NUMBERS' });
+    expect(checkInFromRow({ error: 'NOT_ON_ROSTER', deskCheck: true })).toMatchObject({ problem: 'NOT_ON_ROSTER' });
+    expect(problemText({ problem: 'DESK_CHECK', gymName: 'G', phone: null })).toBe(
+      'Ask the front desk to confirm your mobile number. They do this only once. Then tap Check in.',
+    );
+  });
+
   it('refuses anything else', () => {
     expect(checkInFromRow(null)).toBeNull();
     expect(checkInFromRow({ error: 'SOMETHING_NEW' })).toBeNull();

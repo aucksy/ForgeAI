@@ -648,7 +648,10 @@ export async function whoIsAsking(key, fetchImpl = fetch) {
   if (!me || typeof me.gymId !== 'string' || !me.gymId) return { denied: true };
   // An old owner key has no person; a signed-in person carries a role.
   const owner = me.person === null || me.person === undefined || me.person?.role === 'owner';
-  return { gymId: me.gymId, owner };
+  // 0048 (R-287): a bare owner key on a gym with nobody signed in is a demo gym (demo_start_gym).
+  // Its uploads are anyone's, so no AI reads for it. An older server sends no hasPeople: allowed.
+  const demo = (me.person === null || me.person === undefined) && me.hasPeople === false;
+  return { gymId: me.gymId, owner, demo };
 }
 
 /**
@@ -741,6 +744,7 @@ export async function handleMatchColumns(request, env, { now = new Date(), fetch
   if (who.unreachable) return answer(503, { reason: 'unreachable', error: 'The gym server could not be reached.' });
   if (who.denied) return answer(401, { error: 'Sign in first.' });
   if (!who.owner) return answer(403, { error: 'Only the owner can use AI matching.' });
+  if (who.demo) return answer(403, { error: 'AI matching is not on in the demo gym.', reason: 'demo' });
 
   const day = indiaDay(now);
   const perDay = await gymLimit(env.WEB, who.gymId);

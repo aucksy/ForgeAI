@@ -301,6 +301,7 @@ describe('the AI answer', () => {
     expect(aiAnswer(503, { reason: 'unreachable' }, 2)).toEqual({ ok: false, why: 'unreachable' });
     expect(aiAnswer(502, { reason: 'failed' }, 2)).toEqual({ ok: false, why: 'failed' });
     expect(aiAnswer(403, {}, 2)).toEqual({ ok: false, why: 'owner' });
+    expect(aiAnswer(403, { reason: 'demo' }, 2)).toEqual({ ok: false, why: 'off' });
     expect(aiAnswer(401, {}, 2)).toEqual({ ok: false, why: 'signin' });
     expect(aiAnswer(500, null, 2)).toEqual({ ok: false, why: 'failed' });
     // R-157: a 200 that is not the answer (the app's own page, a proxy's error) is a failure.

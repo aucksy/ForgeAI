@@ -290,6 +290,9 @@ export function CheckInScreen() {
             <PrimaryButton label="Check in" onPress={() => void run(view.typed)} />
             <GhostButton label="Change my number" onPress={() => setView({ state: 'ask-phone', error: null })} />
           </>
+        ) : p.problem === 'DESK_CHECK' ? (
+          // The same number again: before the desk's yes it waits again; after it, it checks in.
+          <PrimaryButton label="Check in" onPress={() => void run(view.typed)} />
         ) : p.problem === 'TOO_MANY' ? (
           <PrimaryButton label="Check in" onPress={() => void run(null)} />
         ) : (

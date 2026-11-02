@@ -80,6 +80,15 @@ begin
   -- 2. The first owner read keeps the results and hands out the rewards.
   r := public.owner_challenges(kok);
   checks := checks + 1; fails := fails || pg_temp.t47_is('2auto', r->>'autoRewards', 'true');
+  -- 0048: winners wait for the owner's yes; nothing is given before it.
+  checks := checks + 1; fails := fails || pg_temp.t47_is('2confirm', pg_temp.t47_winners(kok, cid),
+    'Asha Verma confirm/-/7/-, Bilal Khan confirm/-/7/-, Chand Rao confirm/-/7/-');
+  checks := checks + 1; fails := fails || pg_temp.t47_is('2notYet',
+    (select data->>'endsOn' from public.crm_records where gym_id = ga and id = 'ms-a') || '/' ||
+    (select count(*)::text from public.gym_messages where gym_id = ga), end_a || '/0');
+  perform public.owner_confirm_challenge_reward(kok, cid, ma, true);
+  perform public.owner_confirm_challenge_reward(kok, cid, mb, true);
+  perform public.owner_confirm_challenge_reward(kok, cid, mc, true);
   checks := checks + 1; fails := fails || pg_temp.t47_is('2winners', pg_temp.t47_winners(kok, cid),
     'Asha Verma added/-/7/' || end_a7 || ', Bilal Khan by_hand/no_plan/7/-, Chand Rao by_hand/no_match/7/-');
   checks := checks + 1; fails := fails || pg_temp.t47_is('2plan',
@@ -97,8 +106,9 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t47_is('2byHandNotGiven',
     (select count(*)::text from public.gym_challenge_hits where challenge_id = cid and reward_state = 'by_hand' and given_at is null), '2');
 
-  -- 3. The messages: one to Asha (days added), one to Bilal and Chand (ask at the desk); none to Dev.
-  checks := checks + 1; fails := fails || pg_temp.t47_is('3count', (select count(*)::text from public.gym_messages where gym_id = ga), '2');
+  -- 3. The messages: one to Asha (days added), one each to Bilal and Chand (ask at the desk; 0048: one per
+  --    owner yes); none to Dev.
+  checks := checks + 1; fails := fails || pg_temp.t47_is('3count', (select count(*)::text from public.gym_messages where gym_id = ga), '3');
   checks := checks + 1; fails := fails || pg_temp.t47_is('3asha',
     (select string_agg((m->>'title') || ': ' || (m->>'body'), ' # ') from jsonb_array_elements(public.member_messages(ka)) m),
     'You won the gym challenge: You reached the goal in the gym challenge "October push". 7 free days were added to your membership.');
@@ -108,7 +118,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t47_is('3chand', (select jsonb_array_length(public.member_messages(kc))::text), '1');
   checks := checks + 1; fails := fails || pg_temp.t47_is('3dev', (select jsonb_array_length(public.member_messages(kd))::text), '0');
   checks := checks + 1; fails := fails || pg_temp.t47_is('3recipients',
-    (select string_agg(recipients::text || '/' || to_group::text, ',' order by recipients) from public.gym_messages where gym_id = ga), '1/true,2/true');
+    (select string_agg(recipients::text || '/' || to_group::text, ',' order by recipients) from public.gym_messages where gym_id = ga), '1/true,1/true,1/true');
 
   -- 4. Once only: more reads (owner and member) change nothing.
   perform public.owner_challenges(kok);
@@ -119,7 +129,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t47_is('4once',
     (select data->>'endsOn' from public.crm_records where gym_id = ga and id = 'ms-a') || '/' ||
     (select crm_version::text from public.gyms where gym_id = ga) || '/' ||
-    (select count(*)::text from public.gym_messages where gym_id = ga), end_a7 || '/6/2');
+    (select count(*)::text from public.gym_messages where gym_id = ga), end_a7 || '/6/3');
   checks := checks + 1; fails := fails || pg_temp.t47_is('4noPending',
     (select count(*)::text from public.gym_challenge_hits where reward_state = 'pending' and challenge_id = cid), '0');
 
@@ -131,7 +141,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t47_is('5none', pg_temp.t47_winners(kok, c0), 'Asha Verma none/-/0/-');
   checks := checks + 1; fails := fails || pg_temp.t47_is('5quiet',
     (select count(*)::text from public.gym_messages where gym_id = ga) || '/' || (select data->>'endsOn' from public.crm_records where gym_id = ga and id = 'ms-a'),
-    '2/' || end_a7);
+    '3/' || end_a7);
 
   -- 6. Results kept before 0047 (reward_state null) are never touched: the owner may have given them by hand.
   insert into public.gym_challenges(gym_id, title, measure, goal, starts_on, ends_on, prize_days, results_at, entrants)
@@ -162,7 +172,10 @@ begin
   update public.gyms set status = 'suspended' where gym_id = gb;
   perform set_config('forgeai.hq', 'off', true);
   checks := checks + 1; fails := fails || pg_temp.t47_is('7pausedRead', pg_temp.t47_try(format('select public.owner_challenges(%L)', kob)), 'ok');
-  checks := checks + 1; fails := fails || pg_temp.t47_is('7pending', pg_temp.t47_winners(kob, cb), 'Esha Nair pending/-/1/-, Farah Ali pending/-/1/-');
+  checks := checks + 1; fails := fails || pg_temp.t47_is('7confirm', pg_temp.t47_winners(kob, cb), 'Esha Nair confirm/-/1/-, Farah Ali confirm/-/1/-');
+  -- 0048: the owner's yes while paused is refused (nothing changes in a paused gym).
+  checks := checks + 1; fails := fails || pg_temp.t47_is('7pausedYes',
+    pg_temp.t47_try(format('select public.owner_confirm_challenge_reward(%L, %L::uuid, %L::uuid, true)', kob, cb, me)), 'SUSPENDED');
   checks := checks + 1; fails := fails || pg_temp.t47_is('7nothing',
     (select data->>'endsOn' from public.crm_records where gym_id = gb and id = 'ms-e') || '/' ||
     (select count(*)::text from public.gym_messages where gym_id = gb) || '/' || coalesce(current_setting('forgeai.hq', true), 'off'),
@@ -171,6 +184,8 @@ begin
   update public.gym_members set left_at = now() where member_id = mf;
   update public.gyms set status = 'active' where gym_id = gb;
   perform set_config('forgeai.hq', 'off', true);
+  perform public.owner_confirm_challenge_reward(kob, cb, me, true);
+  perform public.owner_confirm_challenge_reward(kob, cb, mf, true);
   checks := checks + 1; fails := fails || pg_temp.t47_is('7backOn', pg_temp.t47_winners(kob, cb),
     'Esha Nair added/-/1/' || to_char(td + 29, 'YYYY-MM-DD') || ', Farah Ali by_hand/left/1/-');
   checks := checks + 1; fails := fails || pg_temp.t47_is('7oneMessage',

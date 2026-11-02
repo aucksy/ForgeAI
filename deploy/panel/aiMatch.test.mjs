@@ -563,6 +563,14 @@ test('only an owner: no key 401, a wrong key 401, the front desk 403, gym server
   // An old owner key (no person) is the owner.
   const oldKey = fakeNet({ me: () => json(200, { gymId: 'gym-2', person: null }) });
   assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: oldKey.fetchImpl, log: quiet })).status, 200);
+  // 0048: a demo gym (bare owner key, nobody signed in) gets no AI reads; a real gym's old key still does.
+  const demo = fakeNet({ me: () => json(200, { gymId: 'gym-3', person: null, hasPeople: false }) });
+  const rDemo = await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: demo.fetchImpl, log: quiet });
+  assert.equal(rDemo.status, 403);
+  assert.equal((await rDemo.json()).reason, 'demo');
+  assert.equal(demo.calls.filter((c) => !c.url.endsWith('/rpc/staff_me')).length, 0);
+  const realOld = fakeNet({ me: () => json(200, { gymId: 'gym-4', person: null, hasPeople: true }) });
+  assert.equal((await handleMatchColumns(post({ columns: COLUMNS }), bothKeys(), { fetchImpl: realOld.fetchImpl, log: quiet })).status, 200);
 });
 
 test('no AI key set: 503 off, and nothing is asked or counted', async () => {

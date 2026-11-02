@@ -133,7 +133,9 @@ begin
     (gid, 'visit', 'paper-1', jsonb_build_object('id','paper-1','gymId',gid::text,'memberId','m-dev',
       'visitedOn', day, 'checkedInAt', 0, 'source','import'), 2);
   update public.gyms set crm_version = 2 where gym_id = gid;
-  r := public.member_check_in(km, 'T20GYA', '9876543210');
+  -- (0048: a typed number waits for the desk; here the desk has already said yes.)
+  update public.gym_members set checkin_phone = '+919876543210' where key_hash = public._hash_key(km);
+  r := public.member_check_in(km, 'T20GYA');
   fails := fails || pg_temp.t20_is('4a already in', r->>'alreadyIn', 'true');
   fails := fails || pg_temp.t20_is('4b no time', coalesce(r->'checkedInAt', 'null'::jsonb)::text, 'null');
   checks := checks + 2;
