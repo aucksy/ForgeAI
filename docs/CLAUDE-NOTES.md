@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-290. 0.69.0 released; 0048 loaded but not run — 3 Nov 2026
+
+Gate: first round red (BalanceCard floating promise; uat-bk waited for the Settings title after Back; xc-sub-gym-none did not scroll past the new You left note). Fixed in fba40da4; CI, qa-device default + owner, qa-journeys, conditions 2 all green. PROGRESS moved to Done (b3db9314), tag v0.69.0, release run green, APK 200. Panel deployed (wrangler), 3 sites 200. 0048: loaded in the SQL Editor in his Chrome (sha256 45a4620d64a8, from b3db9314), but the auto-mode classifier refused the Run click [Production Deploy]: not worked around. Inbox #85 asks him to press Run; then I run tests/0048 + security.sql live and mark the header APPLIED LIVE. Admin card and member app both behave as before until then. Tracker: F52/F57/F58/F73/F74 Live; F137 still waits for #84 (now also asks his OK for the privacy line).
+
 ## R-289. Batch built: security 0048, F52, F186, F57, F58, F73, F74, F137 — 2 Nov 2026
 
 Done for R-288: all on main, tests green (member app 4145, admin 1534, every database test incl. 0048 39 checks, 0049 62 checks). Admin app: Numbers to confirm card, challenge Give/Skip. Phone QA flows handle the desk check (before and after 0048 is live). F137's server part (0049) waits for his yes (inbox #84); 0048 is applied live at release under his R-287 yes. Tracker: F52/F57/F58/F73/F74/F186 to Next release; F137 Waiting for you; F143 note. Next: review, whole phone round, release 0.69.0.
