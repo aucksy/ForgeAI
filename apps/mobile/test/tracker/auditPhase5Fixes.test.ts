@@ -505,7 +505,8 @@ describe('9: this week so far against the usual week up to the same day', () => 
     expect(src('components/analytics/WeekCard.tsx')).toContain('usualByText(');
     const map = src('components/analytics/BodyMapSection.tsx');
     expect(map).not.toMatch(/this week/i);
-    expect(map).toContain('in the last 7 days.');
+    // R-286: the range is 7 / 30 / 90 days; the line names the chosen range.
+    expect(map).toContain('in the last ${days} days.');
   });
 });
 

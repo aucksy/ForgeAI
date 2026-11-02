@@ -7,7 +7,7 @@ import { getDb } from '@/db';
 import { addDays, todayISO, weekStartISO } from '@/lib/date';
 
 import { getTrackerExercisesByIds } from '../db/exerciseInfo';
-import type { MuscleGroupSets } from '../engine/bodyMap';
+import type { ExerciseLastDay, MuscleGroupSets } from '../engine/bodyMap';
 import { liftPoints, topLifts, USUAL_WEEKS, weekVsUsual, type LiftSeries, type ProgressSession, type ProgressSet, type WeekVsUsual } from '../engine/progressTop';
 import { getRecordEvents } from './recordsService';
 
@@ -100,6 +100,21 @@ export async function getWeekVsUsual(today: string = todayISO()): Promise<WeekVs
   ]);
   const infos = await getTrackerExercisesByIds([...new Set(window.sets.map((s) => s.exerciseId))]);
   return weekVsUsual({ ...window, infos, events, today, firstWorkoutISO: first?.first ?? null });
+}
+
+/** R-286: each exercise's newest day with a working set, ever (the body map's "last trained"). */
+export async function getExerciseLastDays(): Promise<ExerciseLastDay[]> {
+  const rows = await getDb().getAllAsync<{ exercise_id: string; last: string }>(
+    `SELECT se.exercise_id, MAX(ws.date_iso) AS last FROM set_entries se JOIN workout_sessions ws ON ws.id = se.session_id
+      WHERE se.is_warmup = 0 GROUP BY se.exercise_id`,
+  );
+  const infos = await getTrackerExercisesByIds(rows.map((r) => r.exercise_id));
+  const out: ExerciseLastDay[] = [];
+  for (const r of rows) {
+    const info = infos.get(r.exercise_id);
+    if (info && r.last) out.push({ muscles: info.muscles, lastISO: r.last });
+  }
+  return out;
 }
 
 /** Each exercise's working sets between two days, with the muscles it trains (the body-map sheet). */

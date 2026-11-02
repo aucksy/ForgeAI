@@ -6,7 +6,7 @@
  * main muscle, ½ for each helper). Four steps, from the weekly-volume guidance the
  * progression research uses (about 10 hard sets a week per muscle is a full dose):
  *   1  under 3 sets     2  3–5 sets     3  6–9 sets     4  10 sets or more
- * A month uses the same steps scaled to four weeks.
+ * Longer ranges use the same steps times the weeks in them (stepsFor).
  */
 import type { MuscleSetsSlice } from './volume';
 import { MUSCLES, setShares, type Muscle, type MuscleMap } from '../catalog/muscles';
@@ -99,9 +99,77 @@ export function muscleBreakdown(groups: readonly MuscleGroupSets[], muscle: Musc
   return { sets: total, exercises };
 }
 
-/** A gentle "what to train next" hint for a muscle under a full week's dose; null otherwise. */
-export function lowSetsHint(sets: number): string | null {
-  if (sets >= FULL_WEEK_SETS) return null;
-  if (!(sets > 0)) return 'No sets in the last 7 days — a good one to train next.';
-  return `Under ${FULL_WEEK_SETS} sets in the last 7 days — a good one to train next.`;
+/** A gentle "what to train next" hint for a muscle under a full dose for the range; null otherwise. */
+export function lowSetsHint(sets: number, days: MapRange = 7): string | null {
+  const full = stepsFor(days)[2];
+  if (sets >= full) return null;
+  if (!(sets > 0)) return `No sets in the last ${days} days — a good one to train next.`;
+  return `Under ${full} sets in the last ${days} days — a good one to train next.`;
+}
+
+// ---------------------------------------------------------------- ranges and ages (R-286)
+// Ideas from the openGym tracker (2 Nov 2026 study; no code taken): a longer window shows a muscle
+// skipped for a whole month, and "how long ago" turns "not trained" into something to act on.
+
+/** The map's windows, in days. */
+export type MapRange = 7 | 30 | 90;
+export const MAP_RANGES: readonly MapRange[] = [7, 30, 90];
+
+/** The week's steps times the weeks in the range (30 days = 4 weeks, 90 days = 13). */
+export function stepsFor(days: MapRange): readonly [number, number, number] {
+  const weeks = days === 7 ? 1 : days === 30 ? 4 : 13;
+  return [WEEK_STEPS[0] * weeks, WEEK_STEPS[1] * weeks, WEEK_STEPS[2] * weeks];
+}
+
+/** The legend for a range: ['1–2 sets', '3–5', '6–9', '10+'] for a week. */
+export function legendFor(days: MapRange): string[] {
+  const [a, b, c] = stepsFor(days);
+  return [`1–${a - 1} sets`, `${a}–${b - 1}`, `${b}–${c - 1}`, `${c}+`];
+}
+
+/** One exercise's newest day with a working set, and the muscles it trains. */
+export interface ExerciseLastDay {
+  muscles: MuscleMap;
+  lastISO: string;
+}
+
+/** Each muscle's newest day with a working set (main muscle or helper, as the map counts). */
+export function lastTrainedByMuscle(rows: readonly ExerciseLastDay[]): Map<Muscle, string> {
+  const out = new Map<Muscle, string>();
+  for (const r of rows) {
+    for (const [m, share] of setShares(r.muscles)) {
+      if (!(share > 0)) continue;
+      const cur = out.get(m);
+      if (!cur || r.lastISO > cur) out.set(m, r.lastISO);
+    }
+  }
+  return out;
+}
+
+function daysBetween(fromISO: string, toISO: string): number {
+  return Math.round((Date.parse(`${toISO}T00:00:00Z`) - Date.parse(`${fromISO}T00:00:00Z`)) / 86_400_000);
+}
+
+/** "today", "yesterday", "5 days ago", "3 weeks ago", "never". */
+export function agoText(lastISO: string | undefined, todayISO: string): string {
+  if (!lastISO) return 'never';
+  const d = Math.max(0, daysBetween(lastISO, todayISO));
+  if (d === 0) return 'today';
+  if (d === 1) return 'yesterday';
+  if (d < 14) return `${d} days ago`;
+  return `${Math.floor(d / 7)} weeks ago`;
+}
+
+/**
+ * The untrained muscles, longest untouched first (never-trained last: often a muscle the member
+ * does not train on purpose), each with its age: "Calves (5 weeks ago)".
+ */
+export function untrainedWithAge(muscles: readonly Muscle[], last: ReadonlyMap<Muscle, string>, todayISO: string, label: (m: Muscle) => string): string[] {
+  const order = [...muscles].sort((x, y) => {
+    const a = last.get(x);
+    const b = last.get(y);
+    if (!a !== !b) return a ? -1 : 1;
+    return a && b && a !== b ? (a < b ? -1 : 1) : 0;
+  });
+  return order.map((m) => `${label(m)} (${agoText(last.get(m), todayISO)})`);
 }

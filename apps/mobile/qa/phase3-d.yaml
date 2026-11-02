@@ -164,7 +164,7 @@ appId: com.mettleup.app
     text: '^[A-Z][A-Za-z ]+ · [\d.]+$'
     index: 0
 - extendedWaitUntil:
-    visible: '.* in the last 7 days'
+    visible: '.* in the last 7 days · last trained .*'
     timeout: 15000
 - takeScreenshot: 47c-muscle-sheet
 - back

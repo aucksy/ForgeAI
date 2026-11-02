@@ -5,13 +5,17 @@ import { LoadError, Sheet, SheetRow, Skeleton } from '@/components/ui';
 import { addDays, todayISO } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL, type Muscle } from '@/tracker/catalog/muscles';
-import { lowSetsHint, muscleBreakdown, type MuscleGroupSets } from '@/tracker/engine/bodyMap';
+import { agoText, lowSetsHint, muscleBreakdown, type MapRange, type MuscleGroupSets } from '@/tracker/engine/bodyMap';
 import { setsText } from '@/tracker/engine/volume';
 import { getMuscleGroupsBetween } from '@/tracker/services/progressTop';
 
 export interface MuscleSheetProps {
   /** The tapped muscle; null = closed. */
   muscle: Muscle | null;
+  /** The map's range in days (R-286). */
+  days?: MapRange;
+  /** The muscle's newest day with a working set, if any (R-286 "Last trained"). */
+  lastISO?: string;
   onClose: () => void;
   onOpenExercise: (exerciseId: string) => void;
 }
@@ -20,7 +24,7 @@ export interface MuscleSheetProps {
  * Tap a muscle on the body map (audit Phase 5): its sets in the last 7 days, the exercises
  * that trained it, and a gentle "under 10 sets" hint — what to train next.
  */
-export function MuscleSheet({ muscle, onClose, onOpenExercise }: MuscleSheetProps) {
+export function MuscleSheet({ muscle, days = 7, lastISO, onClose, onOpenExercise }: MuscleSheetProps) {
   const [groups, setGroups] = useState<MuscleGroupSets[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -30,7 +34,7 @@ export function MuscleSheet({ muscle, onClose, onOpenExercise }: MuscleSheetProp
     let alive = true;
     setFailed(false);
     const today = todayISO();
-    getMuscleGroupsBetween(addDays(today, -6), today)
+    getMuscleGroupsBetween(addDays(today, -(days - 1)), today)
       .then((g) => {
         if (alive) setGroups(g);
       })
@@ -40,20 +44,21 @@ export function MuscleSheet({ muscle, onClose, onOpenExercise }: MuscleSheetProp
     return () => {
       alive = false;
     };
-  }, [muscle, attempt]);
+  }, [muscle, attempt, days]);
 
   // Review fix (Phase 5): the title stays while the sheet slides away (muscle is already null).
   const lastMuscle = useRef<Muscle | null>(null);
   if (muscle) lastMuscle.current = muscle;
   const shown = muscle ?? lastMuscle.current;
   const detail = shown && groups ? muscleBreakdown(groups, shown) : null;
-  const hint = detail ? lowSetsHint(detail.sets) : null;
+  const hint = detail ? lowSetsHint(detail.sets, days) : null;
+  const ago = muscle ? agoText(lastISO, todayISO()) : null;
 
   return (
     <Sheet
       visible={muscle != null}
       title={shown ? MUSCLE_LABEL[shown] : ''}
-      subtitle={detail ? `${setsText(detail.sets)} in the last 7 days` : undefined}
+      subtitle={detail ? `${setsText(detail.sets)} in the last ${days} days · last trained ${ago}` : undefined}
       onClose={onClose}
     >
       {failed ? (
