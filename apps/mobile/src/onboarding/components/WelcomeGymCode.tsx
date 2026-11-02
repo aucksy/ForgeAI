@@ -14,7 +14,7 @@
  * refused, the panel says so in one sentence and the code box stays right under it.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, Linking, Pressable, Text, TextInput, View } from 'react-native';
+import { AppState, Keyboard, Linking, Pressable, Text, TextInput, View } from 'react-native';
 
 import { GhostButton, Icon } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
@@ -120,6 +120,13 @@ export function WelcomeGymCode({ gym, onJoin }: { gym: WaitingGym; onJoin: () =>
   useEffect(() => {
     if (kept) setTyped(kept);
   }, [kept]);
+
+  // Android's Back closes the keyboard but leaves the box focused, so the next tap does not select the
+  // code and a new one is typed into the old (phone run 41389032578: "FORGE1E1ZZ9"). Let go with it.
+  useEffect(() => {
+    const sub = Keyboard.addListener('keyboardDidHide', () => inputRef.current?.blur());
+    return () => sub.remove();
+  }, []);
 
   // A wrong code is told now when the phone is online; offline or slow, the code is kept and the
   // gym's join screen checks it after setup (no internet is needed to finish setting up).
