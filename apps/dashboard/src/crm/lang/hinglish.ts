@@ -31,7 +31,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Branding: 'Logo aur rang',
   'Gym timings': 'Gym ka time',
   Settings: 'Settings',
-  'Send feedback': 'Feedback bhejo',
+  'Help and feedback': 'Help aur feedback',
   'All branches': 'Saari branches',
   More: 'Aur',
   'Set up and help': 'Setup aur madad',
@@ -59,7 +59,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Gym details, screen colours, app': 'Gym ki details, screen ke rang, app',
   'Screen colours, app, sign-in': 'Screen ke rang, app, sign-in',
   'Changes to this admin app': 'Is admin app mein kya badla',
-  'Tell MettleUp a problem or an idea': 'MettleUp ko koi dikkat ya idea batao',
+  'Ask a question, or tell MettleUp a problem or an idea': 'Sawaal poocho, ya MettleUp ko koi dikkat ya idea batao',
 
   // ── Start page, sign in, Create my gym ─────────────────────────────────
   'for Gyms': 'Gyms ke liye',

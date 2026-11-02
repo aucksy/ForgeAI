@@ -17,18 +17,32 @@ import { uuid } from '@/lib/uuid';
  * is tried only when the one before gave no answer, or answered "not here" (404) or a server error.
  */
 export const FEEDBACK_URLS = ['https://app.mettleup.fit/api/feedback', 'https://forgeai.aakashpahuja.in/api/feedback'] as const;
+/**
+ * T22 (R-277, 2 Nov 2026): "Help and feedback". The help box saves the message as the feedback box
+ * does, then answers it with Claude. Until the server has it (404) the plain feedback box takes it.
+ */
+export const HELP_URLS = ['https://app.mettleup.fit/api/help', ...FEEDBACK_URLS] as const;
+export const HELP_RATE_URL = 'https://app.mettleup.fit/api/help/rate';
 export const FEEDBACK_MAX = 2000;
 const SENDER_KEY = 'feedback_sender';
 
 export const FEEDBACK_WORDS = {
-  intro: 'Tell us what works, what is hard, or what you want next. Tap Speak and talk, or type.',
+  intro: 'Ask a question and get an answer at once. Or tell us what works, what is hard, or what you want next. Tap Speak and talk, or type.',
   placeholder: 'Type here, or tap Speak',
   sent: 'Thanks! We read every message.',
+  solved: 'Did this solve it?',
+  yes: 'Yes',
+  no: 'No',
+  thanksYes: 'Great! Glad it helped.',
+  thanksNo: 'Got it. We reply as soon as we can.',
+  aiNote: 'Answer written by AI from our help pages.',
   empty: 'Write something first.',
   offline: "Couldn't send. Check your internet and try again. Your message is still here.",
 } as const;
 
-export type FeedbackResult = { ok: true } | { ok: false; words: string };
+/** The help box's answer: `id` is the saved message (for "Did this solve it?"), `ai` false = the plain thanks. */
+export type HelpReply = { id: number | null; text: string; ai: boolean };
+export type FeedbackResult = { ok: true; reply?: HelpReply } | { ok: false; words: string };
 
 /** "Pixel 7 (Google), Android 14" — what the phone tells about itself. PURE given the constants. */
 export function deviceLine(c: { Model?: unknown; Brand?: unknown; Release?: unknown } | undefined, os: string): string {
@@ -41,7 +55,13 @@ export function deviceLine(c: { Model?: unknown; Brand?: unknown; Release?: unkn
 
 /** What the box shows when it answers. PURE. */
 export function feedbackAnswer(status: number, body: unknown): FeedbackResult {
-  if (status === 201) return { ok: true };
+  if (status === 201) {
+    const b = body && typeof body === 'object' ? (body as { id?: unknown; answer?: unknown; ai?: unknown }) : null;
+    if (b && typeof b.answer === 'string' && b.answer.trim()) {
+      return { ok: true, reply: { id: typeof b.id === 'number' && b.id > 0 ? b.id : null, text: b.answer.trim(), ai: b.ai === true } };
+    }
+    return { ok: true };
+  }
   const error = body && typeof body === 'object' && typeof (body as { error?: unknown }).error === 'string' ? (body as { error: string }).error : '';
   return { ok: false, words: status >= 400 && status < 500 && error ? error : FEEDBACK_WORDS.offline };
 }
@@ -65,21 +85,44 @@ export function tryNextBox(status: number): boolean {
 }
 
 /** POST to the first address that answers; the last address's answer (or error) is the result. */
-export async function postToBox(json: string, post: typeof fetchWithTimeout = fetchWithTimeout): Promise<Response> {
+export async function postToBox(
+  json: string,
+  post: typeof fetchWithTimeout = fetchWithTimeout,
+  urls: readonly string[] = FEEDBACK_URLS,
+  timeoutMs?: number,
+): Promise<Response> {
   let lastError: unknown = null;
-  for (let i = 0; i < FEEDBACK_URLS.length; i++) {
-    const last = i === FEEDBACK_URLS.length - 1;
+  for (let i = 0; i < urls.length; i++) {
+    const last = i === urls.length - 1;
     try {
-      const res = await post(FEEDBACK_URLS[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json });
+      const res = await post(urls[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json }, timeoutMs);
       if (last || !tryNextBox(res.status)) return res;
-      console.warn('[feedback] box address answered', res.status, FEEDBACK_URLS[i], '; trying the next');
+      console.warn('[feedback] box address answered', res.status, urls[i], '; trying the next');
     } catch (e) {
       lastError = e;
       if (last) throw e;
-      console.warn('[feedback] box address gave no answer', FEEDBACK_URLS[i], '; trying the next', e);
+      console.warn('[feedback] box address gave no answer', urls[i], '; trying the next', e);
     }
   }
   throw lastError ?? new Error('no feedback address');
+}
+
+export const HELP_TIMEOUT_MS = 25_000;
+
+/** "Did this solve it?" One tap, kept beside the message. False when it could not be sent (logged). */
+export async function rateHelp(id: number, helped: 'yes' | 'no', post: typeof fetchWithTimeout = fetchWithTimeout): Promise<boolean> {
+  try {
+    const res = await post(HELP_RATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, sender: await senderId(), helped }),
+    });
+    if (res.status !== 200) console.warn('[feedback] help rating answered', res.status);
+    return res.status === 200;
+  } catch (e) {
+    console.warn('[feedback] could not send the help rating', e);
+    return false;
+  }
 }
 
 export async function sendFeedback(
@@ -100,7 +143,8 @@ export async function sendFeedback(
     sender: await senderId(),
   };
   try {
-    const res = await postToBox(JSON.stringify(body));
+    // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer here.
+    const res = await postToBox(JSON.stringify(body), fetchWithTimeout, HELP_URLS, HELP_TIMEOUT_MS);
     let answer: unknown = null;
     try {
       answer = await res.json();

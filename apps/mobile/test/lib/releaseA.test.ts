@@ -84,7 +84,7 @@ describe('A7: Settings in 6 headed groups', () => {
     expect(rows['Your gym']).toEqual(['Join your gym']);
     expect(rows['Back up and restore']).toEqual(['Save a backup', 'Restore from a backup']);
     expect(rows['Your data']).toEqual(['Backup', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
-    expect(rows.Help).toEqual(["What's new", 'Send feedback', 'About']);
+    expect(rows.Help).toEqual(["What's new", 'Help and feedback', 'About']);
   });
   it('with a gym: the logo (when it has one) and Leave, which act on the spot', () => {
     const gym = settingsGroups(IN_GYM).find((g) => g.title === 'Your gym');

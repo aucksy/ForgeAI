@@ -117,7 +117,7 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
 
   const help: SettingsRow[] = [
     { key: 'news', title: "What's new", href: '/settings/news' },
-    { key: 'feedback', title: 'Send feedback', href: '/settings/feedback' },
+    { key: 'feedback', title: 'Help and feedback', href: '/settings/feedback' },
     { key: 'about', title: 'About', href: '/settings/about' },
   ];
 

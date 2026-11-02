@@ -43,7 +43,7 @@ export const PRO_LINE: Readonly<Record<ProFeature, string>> = {
 };
 
 /** The second line, the same on every closed part: where the gym is, and what to do. */
-export const PRO_HOW = 'Your gym is on Starter. To move to Pro, open Send feedback in the menu and write: Move us to Pro.';
+export const PRO_HOW = 'Your gym is on Starter. To move to Pro, open Help and feedback in the menu and write: Move us to Pro.';
 
 /** The heading on a closed page or part. */
 export const PRO_TITLE = 'Part of the Pro pack';

@@ -21,7 +21,7 @@ export const ACCOUNT_WORDS = {
   notCopiedYet: 'Your workouts will be saved on MettleUp in a moment.',
   waiting: (n: number): string => `${n} ${n === 1 ? 'change is' : 'changes are'} waiting for the internet. They are saved by themselves when you are online.`,
   needsSignIn: 'Sign in again to keep saving your workouts on MettleUp.',
-  full: 'Your space on MettleUp is full, so new workouts stay on this phone only. Please tell us in Settings → "Send feedback".',
+  full: 'Your space on MettleUp is full, so new workouts stay on this phone only. Please tell us in Settings → "Help and feedback".',
   bringBack: 'Bring back my workouts',
   broughtBack: (workouts: number): string =>
     workouts === 0 ? 'Everything was already on this phone.' : `${workouts} ${workouts === 1 ? 'workout' : 'workouts'} brought back to this phone.`,

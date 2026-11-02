@@ -211,7 +211,7 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/settings', label: t('Settings'), icon: 'settings', group: 'setup' },
       // Launch H7 (21 Oct 2026): write to MettleUp (problems, ideas). Owner and Staff. Not in the demo
       // gym, which sends nothing to anyone.
-      ...(demo ? [] : [{ path: '/feedback', label: t('Send feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
+      ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
   }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang]);
@@ -250,7 +250,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'workouts') return 'Workout plans';
   if (head === 'diet') return 'Diet plans';
   if (head === 'challenges') return 'Challenges';
-  if (head === 'feedback') return 'Send feedback';
+  if (head === 'feedback') return 'Help and feedback';
   if (head === 'branches') return 'All branches';
   if (head === 'members' && id === 'import') return 'Importing members';
   if (head === 'members' && id === 'app') return 'Members using the app';

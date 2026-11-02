@@ -10,6 +10,7 @@
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the MettleUp app to check in" + get the app).
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
+//  - /api/help, /api/help/rate  "Help and feedback": the message saved as above, then a Claude answer (help.js, T22).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
 //  - /api/crash     both apps' uncaught errors, no personal data (crash.js, #34 alerts).
 //  - /api/hq-news   messages from MettleUp HQ for the admin app's bell (hqNews.js, R-243).
@@ -26,6 +27,7 @@
 
 import { deleteOldCrashes, handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
+import { handleHelp, handleHelpRate } from './help.js';
 import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
@@ -73,6 +75,8 @@ export default {
     const storeArt = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\/(store-[a-z0-9-]+\.png)$/.exec(url.pathname);
     if (storeArt) return playBundle(request, storeArt[1], storeArt[2], 'image/png');
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
+    if (url.pathname === '/api/help') return handleHelp(request, env);
+    if (url.pathname === '/api/help/rate') return handleHelpRate(request, env);
     if (url.pathname === '/api/feedback/voice') return handleVoice(request, env);
     if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/hq-news') return handleHqNews(request, env);

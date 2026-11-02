@@ -4,17 +4,17 @@ import { expect, test } from '@playwright/test';
 
 import { open, openApp, startDemo } from './support.mjs';
 
-test('J30 Send feedback: written, sent, thanked; offline keeps the message', async ({ page }) => {
+test('J30 Help and feedback: written, sent, thanked; offline keeps the message', async ({ page }) => {
   const sent = [];
   let up = false;
-  await page.route('**/api/feedback', async (route) => {
+  await page.route('**/api/help', async (route) => {
     if (!up) return route.abort('internetdisconnected');
     sent.push(route.request().postDataJSON());
     return route.fulfill({ status: 201, contentType: 'application/json', body: '{"ok":true}' });
   });
   await openApp(page);
   await startDemo(page);
-  await open(page, 'Send feedback');
+  await open(page, 'Help and feedback');
   const box = page.getByLabel('Your message');
   const send = page.getByRole('button', { name: 'Send', exact: true });
   await expect(send).toBeDisabled();

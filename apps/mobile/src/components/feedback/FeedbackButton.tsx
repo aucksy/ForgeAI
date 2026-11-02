@@ -17,7 +17,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon, PrimaryButton, Sheet } from '@/components/ui';
-import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
+import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
+import { HelpReply } from '@/components/feedback/HelpReply';
 import {
   DRAG_SLOP,
   FEEDBACK_BUTTON_SIZE,
@@ -159,7 +160,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
   const [text, setText] = useState('');
   const [input, setInput] = useState<FeedbackInput>('typed');
   const [sending, setSending] = useState(false);
-  const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
+  const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReplyData } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   const busy = useRef(false);
 
@@ -180,7 +181,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
     if (r.ok) {
       setText('');
       setInput('typed');
-      setNote({ ok: true, words: FEEDBACK_WORDS.sent });
+      setNote({ ok: true, words: FEEDBACK_WORDS.sent, reply: r.reply });
     } else {
       setNote({ ok: false, words: r.words });
     }
@@ -189,7 +190,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
   return (
     <Sheet
       visible={screen != null}
-      title="Send feedback"
+      title="Help and feedback"
       onClose={onClose}
       footer={<PrimaryButton label="Send" icon="chat" loading={sending} disabled={!text.trim()} onPress={() => void send()} />}
     >
@@ -204,7 +205,9 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
           onSpoke={() => setInput('voice')}
           placeholder={FEEDBACK_BUTTON_WORDS.placeholder}
         />
-        {note ? (
+        {note?.reply ? (
+          <HelpReply reply={note.reply} />
+        ) : note ? (
           <Text
             accessibilityLiveRegion="polite"
             style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: note.ok ? color.goodText : color.criticalText }}

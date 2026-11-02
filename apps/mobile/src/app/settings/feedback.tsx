@@ -8,7 +8,8 @@ import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { Card, PrimaryButton } from '@/components/ui';
-import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
+import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
+import { HelpReply } from '@/components/feedback/HelpReply';
 import { FEEDBACK_BUTTON_WORDS } from '@/lib/feedbackButton';
 import { useFeedbackButton } from '@/lib/feedbackButtonStore';
 import { useGymShop } from '@/shop/gymStore';
@@ -18,7 +19,7 @@ export default function FeedbackPage() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [input, setInput] = useState<'voice' | 'typed'>('typed');
-  const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
+  const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReplyData } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
   const busy = useRef(false);
@@ -39,14 +40,14 @@ export default function FeedbackPage() {
     if (r.ok) {
       setText('');
       setInput('typed');
-      setNote({ ok: true, words: FEEDBACK_WORDS.sent });
+      setNote({ ok: true, words: FEEDBACK_WORDS.sent, reply: r.reply });
     } else {
       setNote({ ok: false, words: r.words });
     }
   };
 
   return (
-    <SettingsPage title="Send feedback">
+    <SettingsPage title="Help and feedback">
       <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>{FEEDBACK_WORDS.intro}</Text>
       <Card>
         <FeedbackComposer
@@ -60,7 +61,9 @@ export default function FeedbackPage() {
           minHeight={140}
         />
       </Card>
-      {note ? (
+      {note?.reply ? (
+        <HelpReply reply={note.reply} />
+      ) : note ? (
         <Text
           accessibilityLiveRegion="polite"
           style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: note.ok ? color.goodText : color.criticalText }}
