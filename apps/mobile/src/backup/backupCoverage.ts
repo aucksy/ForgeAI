@@ -42,6 +42,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   redesign_tabs_notice: 'one-off "it moved" hint',
   watch_install_card: 'one-off "Install on watch" card (F67; about the watch paired to this phone)',
   watch_install_start: 'one-off watch card at the first workout start (R-248; about the watch paired to this phone)',
+  first_routine_guide: 'one-off "Make your first routine" card (F186; a restored phone with routines never shows it anyway)',
   welcome_resume: 'half-done setup answers, cleared at Start training (R-267; a restored phone is already set up)',
   intro_seen: 'the intro screens before the welcome were seen on this phone (R-248)',
   auto_backup_owed: 'a Drive backup this phone still owes after a workout (R-282; bookkeeping of this phone)',
