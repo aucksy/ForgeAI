@@ -91,7 +91,8 @@ appId: com.mettleup.app
       - tapOn: "Gym code"
       - eraseText: 10
       - inputText: "FORGE1"
-- hideKeyboard
+# No hideKeyboard here: the found gym closes the keyboard itself, and hideKeyboard on a closed
+# keyboard is Android's Back, which left "Join my gym" (run 41392839160). The 6th letter checks the code.
 - extendedWaitUntil:
     visible: "ForgeAI Test Gym found.*"
     timeout: 30000
