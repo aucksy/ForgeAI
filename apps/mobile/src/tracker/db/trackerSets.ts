@@ -21,6 +21,7 @@ import type { SetEntry } from '@/types/models';
 
 import { cleanMachine, machineFromRow, type MachineDetails } from '../engine/cardioMachine';
 import { isLoadMode, type LoadMode } from '../engine/logTypes';
+import type { RestTaken } from '../engine/restTaken';
 
 export type SetType = 'normal' | 'warmup' | 'drop' | 'failure';
 
@@ -49,6 +50,8 @@ export interface RichSet {
   cardIndex?: number | null;
   /** F64 (schema v15): a cardio machine's speed / incline / level (absent = none logged). */
   machine?: MachineDetails | null;
+  /** F73 (schema v16): the rest taken before this set and the rest planned (absent = not measured). */
+  rest?: RestTaken | null;
 }
 
 export interface SetMeta {
@@ -67,6 +70,8 @@ export interface SetMeta {
   seq?: number;
   /** F64: the set's machine details; absent on every set without any (all older sets). */
   machine?: MachineDetails;
+  /** F73: the rest taken before the set and the rest planned; absent when not measured (all older sets). */
+  rest?: RestTaken;
 }
 
 /** Append sets (frozen set-numbering + PR detection), then persist their rpe/type/note/time/distance. */
@@ -89,6 +94,15 @@ export async function addSetsWithMeta(sessionId: string, sets: RichSet[]): Promi
         machine.speedKmh ?? null,
         machine.inclinePct ?? null,
         machine.level ?? null,
+        created[i].id,
+      ]);
+    }
+    // F73: the rest before the set, in its own statement, only when it was measured.
+    const rest = s.rest;
+    if (rest && Number.isFinite(rest.sec) && Number.isFinite(rest.planSec) && rest.sec >= 0 && rest.planSec > 0) {
+      await db.runAsync('UPDATE set_entries SET rest_sec = ?, rest_plan_sec = ? WHERE id = ?', [
+        Math.round(rest.sec),
+        Math.round(rest.planSec),
         created[i].id,
       ]);
     }
@@ -149,9 +163,11 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
     speed_kmh?: number | null;
     incline_pct?: number | null;
     machine_level?: number | null;
+    rest_sec?: number | null;
+    rest_plan_sec?: number | null;
   }>(
     `SELECT id, rpe, set_type, note, superset_group, duration_sec, distance_m, load_mode, card_index, rowid AS seq,
-            speed_kmh, incline_pct, machine_level
+            speed_kmh, incline_pct, machine_level, rest_sec, rest_plan_sec
        FROM set_entries WHERE session_id = ?`,
     [sessionId],
   );
@@ -169,6 +185,9 @@ export async function getSessionSetMeta(sessionId: string): Promise<Record<strin
       ...(r.card_index != null && r.card_index > 0 ? { cardIndex: Number(r.card_index) } : {}),
       ...(r.seq != null ? { seq: Number(r.seq) } : {}),
       ...(machine ? { machine } : {}),
+      ...(r.rest_sec != null && r.rest_plan_sec != null && r.rest_plan_sec > 0
+        ? { rest: { sec: Number(r.rest_sec), planSec: Number(r.rest_plan_sec) } }
+        : {}),
     };
   }
   return out;

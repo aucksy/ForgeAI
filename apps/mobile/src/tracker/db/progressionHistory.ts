@@ -10,6 +10,7 @@
 import { getDb } from '@/db';
 import { isLoadMode, type LoadMode } from '@/tracker/engine/logTypes';
 import type { ProgSession, ProgSet, ProgSetType } from '@/tracker/engine/progression';
+import { isLongRest } from '@/tracker/engine/restTaken';
 
 import { historyScopeSql, type HistoryScope } from './historyScope';
 
@@ -23,6 +24,9 @@ interface Row {
   duration_sec?: number | null;
   /** TG-03: the counting the set was logged with (NULL = the exercise's current one). */
   load_mode?: string | null;
+  /** F73 (schema v16): the rest taken before the set and the rest planned (NULL = not measured). */
+  rest_sec?: number | null;
+  rest_plan_sec?: number | null;
 }
 
 const TYPES: readonly ProgSetType[] = ['normal', 'warmup', 'drop', 'failure'];
@@ -57,7 +61,8 @@ async function readHistory(exerciseId: string, limit: number, cardIndex: number 
   // Phase 4: easy-week workouts never move the Target (half the sets, the same weight, reps
   // left in the tank) — next week picks up from the last normal week.
   const rows = await getDb().getAllAsync<Row>(
-    `SELECT se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe, se.set_type, se.duration_sec, se.load_mode
+    `SELECT se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe, se.set_type, se.duration_sec, se.load_mode,
+            se.rest_sec, se.rest_plan_sec
        FROM set_entries se
        JOIN workout_sessions ws ON ws.id = se.session_id
       WHERE se.exercise_id = ? ${card} AND se.is_warmup = 0 AND COALESCE(ws.easy_week, 0) = 0
@@ -96,6 +101,8 @@ export function groupRows(rows: Row[]): ProgSession[] {
     };
     if (r.duration_sec != null) set.durationSec = Number(r.duration_sec);
     if (isLoadMode(r.load_mode)) set.loadMode = r.load_mode;
+    // F73: done after a much longer rest than planned (its reps never raise the Target).
+    if (isLongRest(r.rest_sec, r.rest_plan_sec)) set.longRest = true;
     s.sets.push(set);
   }
   return out;
@@ -176,7 +183,7 @@ async function readHistoryBatch(
           WHERE COALESCE(w2.easy_week, 0) = 0 ${inScope.sql}
        )
        SELECT r.ex AS ex, r.card AS card, se.session_id, ws.date_iso AS date_iso, se.weight_kg, se.reps, se.rpe,
-              se.set_type, se.duration_sec, se.load_mode
+              se.set_type, se.duration_sec, se.load_mode, se.rest_sec, se.rest_plan_sec
          FROM ranked r
          JOIN set_entries se ON se.session_id = r.sid AND se.exercise_id = r.ex AND se.is_warmup = 0
               ${byCard ? 'AND COALESCE(se.card_index, 0) = r.card' : ''}

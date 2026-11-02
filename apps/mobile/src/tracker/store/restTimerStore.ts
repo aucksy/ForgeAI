@@ -56,6 +56,12 @@ export interface RestTimerState {
   nextLabel: string | null;
   /** RT-03: the set whose tick started this rest (null: adopted from the card, or unknown). */
   source: RestSource | null;
+  /**
+   * F73: when the last rest ran out by itself (epoch ms) and no set has been ticked since — the
+   * bar then counts the extra time in red ("+1:20 over"). null after Skip, "−15" past zero, a
+   * new rest, a tick, or the card's Skip.
+   */
+  overFrom: number | null;
   defaultSec: number;
   loaded: boolean;
   loadDefault: () => Promise<void>;
@@ -75,6 +81,8 @@ export interface RestTimerState {
   cancelIfStartedBy: (exKey: string, setKey: string) => void;
   addSec: (delta: number) => void;
   skip: () => void;
+  /** F73: "Hide" on the red "over" bar — stops the count only (alerts and cards untouched). */
+  hideOver: () => void;
   /**
    * v0.26.1: the rest was changed on the watch card ("+15 s" / "Skip") or the card's rest is
    * adopted after the app slept. Changes the app's timer only — the card already knows.
@@ -124,7 +132,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
         // the member's only alert, and it fires at this same moment — dismissing it
         // would delete it as it appears (seen on the device QA emulator). In the
         // foreground the alert handler suppresses it anyway.
-        set({ endsAt: null, source: null });
+        set({ endsAt: null, source: null, overFrom: endsAt });
       },
       Math.max(0, endsAt - Date.now()),
     );
@@ -136,6 +144,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
     startedAt: null,
     nextLabel: null,
     source: null,
+    overFrom: null,
     defaultSec: DEFAULT_REST_SEC,
     loaded: false,
 
@@ -170,7 +179,7 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       // Hand the rest to the card BEFORE the state changes, so the "Workout in progress" card
       // (updated on that change) already knows the rest card shows the rest (RT-05).
       void (done === undefined ? scheduleRestEnd(endsAt, nextLabel, startedAt) : scheduleRestEnd(endsAt, nextLabel, startedAt, done));
-      set({ endsAt, durationSec: dur, nextLabel, startedAt, source });
+      set({ endsAt, durationSec: dur, nextLabel, startedAt, source, overFrom: null });
     },
 
     afterTickRest: (sec, nextLabel, done) => {
@@ -181,10 +190,13 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
       // Skip clears the card and "Rest is over" too (clearRestCard(true)).
       if (get().endsAt != null) get().skip();
       else dismissRestOver();
+      if (get().overFrom != null) set({ overFrom: null });
     },
 
     noteTick: (exKey, setKey) => {
       pendingTick = { exKey, setKey, at: Date.now() };
+      // F73: the next set is done; the "over" count stops.
+      if (get().overFrom != null) set({ overFrom: null });
     },
 
     cancelIfStartedBy: (exKey, setKey) => {
@@ -214,14 +226,18 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
 
     skip: () => {
       clearExpiry();
-      if (get().endsAt != null || get().source) set({ endsAt: null, source: null });
+      if (get().endsAt != null || get().source || get().overFrom != null) set({ endsAt: null, source: null, overFrom: null });
       void cancelRestEnd();
+    },
+
+    hideOver: () => {
+      if (get().overFrom != null) set({ overFrom: null });
     },
 
     fromCard: (c) => {
       if (c.kind === 'stop') {
         clearExpiry();
-        if (get().endsAt != null || get().source) set({ endsAt: null, source: null });
+        if (get().endsAt != null || get().source || get().overFrom != null) set({ endsAt: null, source: null, overFrom: null });
         return;
       }
       const now = Date.now();
@@ -235,9 +251,10 @@ export const useRestTimer = create<RestTimerState>()((set, get) => {
           durationSec: Math.max(left, Math.round((c.endsAt - c.startedAt) / 1000)),
           nextLabel: c.next,
           source: null,
+          overFrom: null,
         });
       } else {
-        set({ endsAt: c.endsAt, startedAt: c.startedAt, durationSec: Math.max(get().durationSec, left) });
+        set({ endsAt: c.endsAt, startedAt: c.startedAt, durationSec: Math.max(get().durationSec, left), overFrom: null });
       }
       arm(c.endsAt);
     },

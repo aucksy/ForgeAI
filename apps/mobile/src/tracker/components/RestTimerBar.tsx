@@ -22,6 +22,7 @@ import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { OVER_SHOW_MAX_SEC, overText } from '../engine/restTaken';
 import { EXACT_ASK, openFixFor, readAlertAccess, shouldAskExact } from '../services/restAlertAccess';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
@@ -137,6 +138,77 @@ function useAlertChecks(endsAt: number | null): {
   };
 }
 
+/**
+ * F73: seconds past the end of the rest that ran out by itself in THIS workout, ticking once a
+ * second; null when there is none, or after OVER_SHOW_MAX_SEC (then it hides by itself).
+ */
+function useOverSec(): number | null {
+  const overFrom = useRestTimer((s) => s.overFrom);
+  const workoutStart = useActiveWorkout((s) => s.startedAt);
+  const [now, setNow] = useState(() => Date.now());
+  const live = overFrom != null && workoutStart != null && overFrom >= workoutStart;
+  useEffect(() => {
+    if (!live || overFrom == null) return undefined;
+    setNow(Date.now());
+    const id = setInterval(() => {
+      const t = Date.now();
+      setNow(t);
+      if ((t - overFrom) / 1000 > OVER_SHOW_MAX_SEC) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [live, overFrom]);
+  if (!live || overFrom == null) return null;
+  const sec = Math.max(0, Math.floor((now - overFrom) / 1000));
+  return sec > OVER_SHOW_MAX_SEC ? null : sec;
+}
+
+/**
+ * F73 (R-140): the rest ran out and the next set has not been ticked: the bar stays, counting the
+ * extra time in red ("Rest +1:20 over"), so a long rest is seen while it happens. It goes at the
+ * next tick, a new rest, "Hide", or 10 minutes over. No extra buzz: the rest-over alert has two
+ * sound paths (in-app and the phone's notification) that must stay in step, so it is left as is.
+ */
+function RestOverRow() {
+  const over = useOverSec();
+  const hideOver = useRestTimer((s) => s.hideOver);
+  if (over == null) return null;
+  const text = overText(over);
+  return (
+    <View style={{ marginBottom: space.sm }}>
+      <View
+        style={{
+          borderRadius: radius.lg,
+          backgroundColor: color.surfaceRaised,
+          borderWidth: 1,
+          borderColor: color.critical,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space.sm,
+          padding: space.sm,
+        }}
+      >
+        <View
+          accessible
+          accessibilityRole="timer"
+          accessibilityLabel={`Rest is over. ${Math.floor(over / 60)} minutes ${over % 60} seconds over`}
+          style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+            style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.criticalText, textAlign: 'center' }}
+          >
+            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
+            {text}
+          </Text>
+        </View>
+        <TimerBtn label="Hide" a11y="Hide the time over rest" onPress={() => hideOver()} />
+      </View>
+    </View>
+  );
+}
+
 /** R-70 review: how long after a rest starts "In use" opens by itself. */
 const IN_USE_DELAY_MS = 300;
 
@@ -189,7 +261,14 @@ export function RestTimerBar() {
     />
   );
 
-  if (endsAt == null) return ask;
+  if (endsAt == null) {
+    return (
+      <>
+        <RestOverRow />
+        {ask}
+      </>
+    );
+  }
   const pct = durationSec > 0 ? Math.min(1, Math.max(0, remaining / durationSec)) : 0;
 
   return (

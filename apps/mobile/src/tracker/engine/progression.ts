@@ -77,6 +77,12 @@ export interface ProgSet {
   durationSec?: number | null;
   /** TG-03: the counting this set was logged with (absent = the exercise's current one). */
   loadMode?: LoadMode | null;
+  /**
+   * F73 (R-140): done after a much longer rest than planned (engine/restTaken). Its reps never
+   * raise a goal and never move the weight up. Ignored on a workout's first main set (fresh
+   * anyway, so a long rest before it adds nothing).
+   */
+  longRest?: boolean;
 }
 
 export interface ProgSession {
@@ -141,6 +147,12 @@ export interface ProgressionTarget extends OverloadTarget {
    * screen: 165 lb logged, shown in kg -> 75). The easy week keeps this weight.
    */
   sameWeightKg?: number;
+  /**
+   * F74: one rung of the member's ladder above / a small step below `targetWeightKg` (weight ×
+   * reps lifts only; absent elsewhere; down null = nothing lighter on his rack).
+   */
+  stepUpKg?: number;
+  stepDownKg?: number | null;
 }
 
 /**
@@ -384,6 +396,12 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const same = per === 2 && Math.abs(sameRung - w) > w * 0.03 + 1e-9 ? w : sameRung;
   const upTo = (n: number): number => upRungsKg(w / per, n, ladder)[n - 1] * per;
   const lighter = (): number | null => both(downRungKg(w / per, ladder));
+  /** F74: the next rung above / a small step (about 5%) below any weight on this ladder. */
+  const upTo1 = (kg: number): number => upRungsKg(kg / per, 1, ladder)[0] * per;
+  const lighterOf = (kg: number): number | null => {
+    const d = both(downRungKg(kg / per, ladder, 0.05));
+    return d == null ? null : round3(d);
+  };
   /** " at 40 kg", " at +10 kg", " with 20 kg of help" — how the weight reads in a sentence. */
   const at = (kg: number) =>
     assisted ? (kg < 0 ? ` with ${targetKgText(-kg)} of help` : ' with no help') : kg > 0 ? ` at ${targetKgText(kg)}` : '';
@@ -407,8 +425,15 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
     // Last time's weight on the ladder is "the same weight", even when it reads cleaner.
     const change = sameWeight(weightKg, same) ? null : weightKg > w + 1e-6 ? 'up' : weightKg < w - 1e-6 ? 'down' : null;
     const setGoals = perSet && perSet.length > 0 ? perSet : Array.from({ length: Math.max(1, target.targetSets) }, () => repGoal);
+    // F74: one step of the member's own ladder above and below the Target weight, for the live
+    // "this set felt easy / very hard" suggestion on the sets after it (engine/rpeNudge).
+    const steps =
+      logType === 'weight_reps' && !assisted && !bodyweightOnly && weightKg > 0
+        ? { stepUpKg: round3(upTo1(weightKg)), stepDownKg: lighterOf(weightKg) }
+        : {};
     return {
       ...base,
+      ...steps,
       last,
       sameWeightKg: round3(same),
       targetWeightKg: round3(weightKg),
@@ -458,7 +483,11 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   const needOf = (s: Summary) => Math.max(1, target.targetSets - s.offMain - 1);
   const need = needOf(L);
   // C3-13: only the routine's own number of sets is judged (an extra set at the end never blocks).
-  const scores = L.mainSets.map(score).sort((a, b) => b - a).slice(0, Math.max(1, target.targetSets));
+  // F73 (R-140): a set after a long rest never counts as reaching the top (no weight move from it).
+  const scores = L.mainSets
+    .map((s, i) => (heldAt(L.mainSets, i) ? Math.min(score(s), max - 1) : score(s)))
+    .sort((a, b) => b - a)
+    .slice(0, Math.max(1, target.targetSets));
   const minScore = Math.min(...scores);
   const enoughSets = L.ramp || L.mainSets.length >= need;
   const best = (s: Summary) => Math.max(...s.mainSets.map(score));
@@ -645,20 +674,52 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
   // 4 set every goal to 4).
   const G = sessions.find((s) => sameWeight(s.mainWeight, w) && s.mainSets.length >= needOf(s)) ?? L;
   const miss = best(G) < min;
-  const goals = perSetGoals(G.mainSets, target.targetSets, max, miss, min);
+  // F73 (R-140): sets of G done after a long rest are held — no extra rep — and capped at the
+  // same set's reps in an earlier workout at this weight with a normal rest, when there is one.
+  const held = G.mainSets.map((_, i) => heldAt(G.mainSets, i));
+  const normalBase = held.map((h, i) => (h ? normalRestReps(sessions, G, w, i) : null));
+  const goals = perSetGoals(G.mainSets, target.targetSets, max, miss, min, { held, base: normalBase });
   const top = Math.max(...goals);
   const uniform = goals.every((g) => g === goals[0]);
   const aim = uniform ? `aim for ${goals[0]} on every set` : `aim for ${goals.join(', ')}`;
+  const restNote = longRestNote(held);
   return out(
     'R5',
     same,
     top,
-    miss
+    (miss
       ? `Last time ${repsList}${atLast}. Same weight: match it, ${uniform ? `${goals[0]} on every set` : goals.join(', ')}, then build from there.`
-      : `Last time ${repsList}${atLast}. Same weight, ${aim}.`,
+      : `Last time ${repsList}${atLast}. Same weight, ${aim}.`) + restNote,
     null,
     goals,
   );
+}
+
+/** F73: main set `i` was done after a long rest (never the first main set: fresh anyway). PURE. */
+export function heldAt(sets: readonly ProgSet[], i: number): boolean {
+  return i > 0 && sets[i]?.longRest === true;
+}
+
+/**
+ * F73: set `i`'s reps in the newest OTHER workout at weight `w` (within the rule window) where that
+ * set was done after a normal rest — what the member does at the planned rest. null = none.
+ */
+function normalRestReps(sessions: readonly Summary[], G: Summary, w: number, i: number): number | null {
+  for (const s of sessions) {
+    if (s === G || !sameWeight(s.mainWeight, w)) continue;
+    const x = s.mainSets[i];
+    if (x && !heldAt(s.mainSets, i) && x.reps > 0) return x.reps;
+  }
+  return null;
+}
+
+/** F73: " Set 2 came after a long rest, so its goal is not raised." (empty when no set did). PURE. */
+export function longRestNote(held: readonly boolean[]): string {
+  const nums = held.flatMap((h, i) => (h ? [i + 1] : []));
+  if (nums.length === 0) return '';
+  if (nums.length === 1) return ` Set ${nums[0]} came after a long rest, so its goal is not raised.`;
+  const list = `${nums.slice(0, -1).join(', ')} and ${nums[nums.length - 1]}`;
+  return ` Sets ${list} came after a long rest, so their goals are not raised.`;
 }
 
 /**
@@ -670,15 +731,30 @@ export function computeProgressionTarget(input: ProgressionInput): ProgressionTa
  *  - Not a miss: no set aims under the bottom of the range `min` (review fix: 10, 7, 6 in 8-12
  *    -> 11, 8, 8, never "11, 7, 6").
  *  - A miss: last time's numbers again.
+ *  - F73 (R-140): a `held` set (done after a long rest) never gets the extra rep, and its number
+ *    is capped at its `base` (the same set after a normal rest in an earlier workout), if any.
  */
-export function perSetGoals(sets: readonly ProgSet[], targetSets: number, max: number, miss: boolean, min = 1): number[] {
+export function perSetGoals(
+  sets: readonly ProgSet[],
+  targetSets: number,
+  max: number,
+  miss: boolean,
+  min = 1,
+  rest: { held?: readonly boolean[]; base?: readonly (number | null)[] } = {},
+): number[] {
   if (sets.length === 0) return [];
   const n = Math.max(1, targetSets);
-  const last = Array.from({ length: n }, (_, i) => sets[Math.min(i, sets.length - 1)].reps);
+  const src = (i: number) => Math.min(i, sets.length - 1);
+  const isHeld = (i: number) => rest.held?.[src(i)] === true;
+  const last = Array.from({ length: n }, (_, i) => {
+    const reps = sets[src(i)].reps;
+    const base = isHeld(i) ? rest.base?.[src(i)] ?? null : null;
+    return base != null && base > 0 ? Math.min(reps, base) : reps;
+  });
   if (miss) return last;
   const floor = Math.min(Math.max(1, min), max);
   const goals = last.map((g) => Math.max(g, floor));
-  const i = last.findIndex((g) => g < max);
+  const i = last.findIndex((g, k) => g < max && !isHeld(k));
   if (i < 0) return goals;
   const rpe = i < sets.length ? sets[i].rpe : null;
   const easy = rpe != null && Number.isFinite(rpe) && rpe >= 6 && rpe <= EASY_SET_RPE;
@@ -933,6 +1009,12 @@ export interface TargetFill {
   fromKg?: number;
   /** R-143: where a lighter last-time set that reached the top of the range moves (`liftUpOf`). */
   liftUp?: LiftUp;
+  /**
+   * F74: what the live "felt easy / very hard" suggestion needs (engine/rpeNudge): the effort
+   * planned (this plan week's RPE, else none = the app's default), the top of the rep range, and
+   * one weight step up / down from the Target weight. Absent when not known.
+   */
+  nudge?: { effortRpe?: number; repMax?: number; stepUpKg?: number; stepDownKg?: number | null };
 }
 
 /** An easy week stops with this many reps left (easyWeek.ts: "stop with 3 or more reps left"). */
@@ -949,7 +1031,8 @@ export function targetFill(
     Partial<
       Pick<
         ProgressionTarget,
-        'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'
+        | 'logType' | 'holdSec' | 'version' | 'free' | 'easy' | 'last' | 'setGoals' | 'change' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'
+        | 'effortRpe' | 'stepUpKg' | 'stepDownKg'
       >
     >,
 ): TargetFill | null {
@@ -972,6 +1055,22 @@ export function targetFill(
     if (up) out.liftUp = up;
   }
   return out;
+}
+
+/**
+ * F74: `targetFill` plus what the live "felt easy / very hard" suggestion needs (`nudge`) — the
+ * fill every set row of the live workout uses. Never in an easy week (no rep number to chase
+ * there). PURE.
+ */
+export function rowTargetFill(t: Parameters<typeof targetFill>[0]): TargetFill | null {
+  const out = targetFill(t);
+  if (!out || t.easy || out.durationSec != null) return out;
+  const nudge: NonNullable<TargetFill['nudge']> = {};
+  if (t.effortRpe != null) nudge.effortRpe = t.effortRpe;
+  if (t.targetRepsMax != null && t.targetRepsMax > 0) nudge.repMax = t.targetRepsMax;
+  if (t.stepUpKg != null && t.stepUpKg > t.targetWeightKg) nudge.stepUpKg = t.stepUpKg;
+  if (t.stepDownKg !== undefined) nudge.stepDownKg = t.stepDownKg;
+  return Object.keys(nudge).length > 0 ? { ...out, nudge } : out;
 }
 
 /** A word only when the weight changes. null = say nothing (the first-time line already says "First time"). */

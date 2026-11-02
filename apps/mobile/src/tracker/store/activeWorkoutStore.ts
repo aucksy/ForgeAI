@@ -36,7 +36,9 @@ import {
 } from '@/tracker/db/exerciseInfo';
 import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { liftsUp, OFF_MAIN_SHARE, type LiftUp } from '@/tracker/engine/progression';
+import { liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
+import { isLongRest, restsOfCard, type RestTaken } from '@/tracker/engine/restTaken';
+import { rpeNudge, type RpeNudge } from '@/tracker/engine/rpeNudge';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import {
   getCarriedNote,
@@ -155,6 +157,11 @@ export interface DraftSet {
    * none). Never a hint or a fill; drafts saved before simply have none.
    */
   machine?: MachineDetails | null;
+  /**
+   * F73: editing a saved workout — the rest taken before this set when it was logged (absent =
+   * not measured). Written back unchanged; a live workout measures it from the ticks at Finish.
+   */
+  rest?: RestTaken;
 }
 
 /** Last time's numbers for one set row, in TYPED form (help positive). */
@@ -1289,8 +1296,87 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  *
  * R-61 (owner, 22 Oct 2026): a warm-up row is last time's warm-up as it was, weight and reps, even
  * when the Target moves the working weight (it used to scale with it: 10 kg for 20 became 7.5 for 15).
+ *
+ * F74 (R-144): after a set ticked with its effort, the blank rows after it may carry a suggestion
+ * from it (one more rep, one weight step, or lighter: `nudgeForSet`). It is a hint like any
+ * other: a number the member typed is never changed.
  */
 export function fillForSet(
+  ex: DraftExercise,
+  setKey: string,
+  target?: TargetFillLike | null,
+): SetFill | null {
+  return fillAndNudge(ex, setKey, target).fill;
+}
+
+/** What `fillForSet` takes as the card's Target fill. */
+type TargetFillLike = SetFill & { setReps?: readonly number[]; fromKg?: number; liftUp?: LiftUp; nudge?: TargetFill['nudge'] };
+
+/**
+ * F74: the "felt easy / very hard" suggestion for a row, or null. Shown as one reason line under
+ * the row (the hint itself already carries the numbers). PURE.
+ */
+export function nudgeForSet(ex: DraftExercise, setKey: string, target?: TargetFillLike | null): RpeNudge | null {
+  return fillAndNudge(ex, setKey, target).nudge;
+}
+
+function fillAndNudge(
+  ex: DraftExercise,
+  setKey: string,
+  target?: TargetFillLike | null,
+): { fill: SetFill | null; nudge: RpeNudge | null } {
+  const fill = baseFillForSet(ex, setKey, target);
+  if (!fill) return { fill, nudge: null };
+  const lt: LogType = ex.logType ?? 'weight_reps';
+  if (lt !== 'weight_reps' && lt !== 'reps') return { fill, nudge: null };
+  const idx = ex.sets.findIndex((s) => s.key === setKey);
+  const row = ex.sets[idx];
+  // Only a blank working row still to do: never a typed number, a warm-up or a drop set.
+  if (!row || row.done || row.isWarmup || row.setType === 'drop' || row.weightKg != null || row.reps != null) {
+    return { fill, nudge: null };
+  }
+  // The nearest ticked working row above; it must be a plain set with its effort logged.
+  let doneIdx = -1;
+  for (let i = idx - 1; i >= 0; i--) {
+    const s = ex.sets[i];
+    if (s.isWarmup || !s.done) continue;
+    doneIdx = i;
+    break;
+  }
+  const done = doneIdx >= 0 ? ex.sets[doneIdx] : null;
+  if (!done || (done.setType ?? 'normal') !== 'normal' || done.reps == null || done.rpe == null) return { fill, nudge: null };
+  if (lt === 'weight_reps' && done.weightKg == null) return { fill, nudge: null };
+  const before = ex.sets.slice(0, doneIdx);
+  const setNo = before.filter((s) => !s.isWarmup).length + 1;
+  // The reps planned for the done set: the Target's goal for its working-set number, else the routine's.
+  const n = before.filter((s) => !s.isWarmup && s.setType !== 'drop').length;
+  const list = target?.setReps;
+  const goalOf = target ? (list && list.length > 0 ? list[Math.min(n, list.length - 1)] : target.reps) : done.plan?.reps;
+  const doneGoal = goalOf != null && goalOf > 0 ? goalOf : null;
+  // F73: a set after a long rest felt easier than the next one will.
+  const planSec = effectiveRestSec(ex, useRestTimer.getState().defaultSec);
+  const longRest = (() => {
+    const r = restsOfCard(ex.sets, planSec, { superset: ex.supersetGroup != null })[doneIdx];
+    return r != null && isLongRest(r.sec, r.planSec);
+  })();
+  const plainCounting = (ex.loadMode ?? 'one') === 'one';
+  const nudge = rpeNudge({
+    logType: lt,
+    done: { weightKg: lt === 'reps' ? 0 : (done.weightKg as number), reps: done.reps, rpe: done.rpe, setNo, longRest },
+    doneGoal,
+    base: { weightKg: lt === 'reps' ? 0 : fill.weightKg, reps: fill.reps },
+    targetRpe: target?.nudge?.effortRpe ?? null,
+    repMax: target?.nudge?.repMax ?? null,
+    stepUpKg: target?.nudge?.stepUpKg ?? null,
+    stepDownKg: target?.nudge?.stepDownKg ?? null,
+    bestE1rm: plainCounting && lt === 'weight_reps' ? ex.bests?.e1rm ?? null : null,
+  });
+  if (!nudge) return { fill, nudge: null };
+  if (nudge.kind === 'hold') return { fill, nudge };
+  return { fill: { weightKg: lt === 'reps' ? 0 : nudge.weightKg, reps: nudge.reps }, nudge };
+}
+
+function baseFillForSet(
   ex: DraftExercise,
   setKey: string,
   /** The card's Target fill (`targetFill`), or null off-plan / before it is known. */
@@ -2263,7 +2349,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       // and leave the original untouched.
       if (s.editingSessionId || s.pastLog) return null;
       // LW-03: a row that was never ticked is saved only when the member chose "Save them".
-      const flat = draftToRichSets(s.exercises, { tickedOnly: opts.keepUnticked !== true });
+      // F73: the rest before each set is measured from the ticks against each card's rest.
+      const flat = draftToRichSets(s.exercises, { tickedOnly: opts.keepUnticked !== true, restDefaultSec: useRestTimer.getState().defaultSec });
       // Need at least one working set — a warm-up-only session would be invisible
       // to history/PREVIOUS (the history read excludes warm-ups).
       if (!hasWorkingSet(flat)) return null;
