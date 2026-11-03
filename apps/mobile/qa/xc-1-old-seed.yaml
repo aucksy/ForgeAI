@@ -135,10 +135,11 @@ appId: com.mettleup.app
     timeout: 30000
 - takeScreenshot: xc1-02-old-routine
 # ---------------------------------------------------------------- a measurement
+# 0.70.0 (the released side now): measures live under Progress -> Body (R2), not a Profile tile.
 - runFlow:
-    file: xc-sub-profile-tile.yaml
+    file: xc-sub-progress-row.yaml
     env:
-      TILE: "Measures"
+      ROW: "Body"
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 20000
@@ -157,7 +158,7 @@ appId: com.mettleup.app
       FIND: "^Save$"
 - tapOn: "^Save$"
 - extendedWaitUntil:
-    visible: "^Measures$"
+    visible: "^Body$|^Measures$"
     timeout: 15000
 - takeScreenshot: xc1-03-old-measure
 - runFlow: xc-sub-back-to-tabs.yaml
@@ -179,8 +180,9 @@ appId: com.mettleup.app
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: "^Workouts$"
-- tapOn: "^Workouts$"
+      FIND: "^Workouts$|^Rest timer and sounds$"
+# 0.70.0: "Ring through Do Not Disturb" sits on Settings -> "Rest timer and sounds" (no Workouts page).
+- tapOn: "^Workouts$|^Rest timer and sounds$"
 - runFlow:
     file: xc-sub-find.yaml
     env:
