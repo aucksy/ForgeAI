@@ -72,7 +72,8 @@ export interface PhonePrefsState {
   setShareMachineUse: (on: boolean) => void;
   /**
    * F109 (OWNER-INBOX #46, DECIDED 24 Oct 2026): "Share my workouts with my trainers" (Settings → Your gym →
-   * What my gym can see), shown only once the gym's server has the trainer view (0050). On by default; off: the
+   * What my gym can see), shown only once the gym's server has the trainer view (0050). Off until the member joins a
+   * gym on the join screen that tells them (R-296, owner 3 Nov: members who joined before 0.70.0 start off); off: the
    * gym deletes the weekly summary at once (shop/trainerSync.ts). Carried by a backup, so "off" survives a restore.
    */
   shareWithTrainers: boolean;
@@ -153,7 +154,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setMateSharePending: (mateSharePending) => set({ mateSharePending }),
       shareMachineUse: true,
       setShareMachineUse: (shareMachineUse) => set({ shareMachineUse }),
-      shareWithTrainers: true,
+      shareWithTrainers: false,
       setShareWithTrainers: (shareWithTrainers) => set({ shareWithTrainers }),
       trainerSharePending: false,
       setTrainerSharePending: (trainerSharePending) => set({ trainerSharePending }),
@@ -190,7 +191,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           shareWorkoutsWithGym: false,
           mateSharePending: false,
           shareMachineUse: true,
-          shareWithTrainers: true,
+          shareWithTrainers: false,
           trainerSharePending: false,
         }),
     }),

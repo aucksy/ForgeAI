@@ -18,24 +18,24 @@ export const TRAINER_RECORD_DAYS = 30;
 export const TRAINER_RECORDS = 5;
 const NAME_MAX = 40;
 
-/** Every word a member reads about it. Each line still needs the owner's yes before it goes live. */
+/** Every word a member reads about it. The owner approved them as written, 3 Nov 2026 (#86). */
 export const TRAINER_WORDS = {
-  // words: owner approves before live (#46)
-  joinNote: "Your gym's trainers see your workouts, so they can help you progress.",
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86); "gym and your trainer" R-296
+  joinNote: 'Your gym and your trainer see your workouts, so they can help you progress.',
+  // words: owner approved 3 Nov 2026 (#86)
   shareSwitch: 'Share my workouts with my trainers',
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86); "gym and your trainer" R-296
   shareCaption:
-    'Your trainers see a weekly summary: how many workouts, kg lifted, your best sets and new bests. Never your body weight, photos or notes. Off: the gym deletes it at once.',
-  // words: owner approves before live (#46)
+    'Your gym and your trainer see a weekly summary: how many workouts, kg lifted, your best sets and new bests. Never your body weight, photos or notes. Off: the gym deletes it at once.',
+  // words: owner approved 3 Nov 2026 (#86)
   yourTrainer: (name: string): string => `Your trainer: ${name}`,
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86)
   helpButton: 'Ask my trainer for help',
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86)
   helpSent: 'Sent. Your trainer will get in touch.',
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86)
   helpAlready: 'Already sent today. Your trainer will get in touch.',
-  // words: owner approves before live (#46)
+  // words: owner approved 3 Nov 2026 (#86)
   helpFailed: 'Could not send. Check your internet and try again.',
 } as const;
 
@@ -83,7 +83,8 @@ export interface TrainerSummary {
 
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 const finite = (n: unknown): number => (typeof n === 'number' && Number.isFinite(n) ? n : 0);
-const clean = (s: string): string => s.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX).trim();
+// Whole characters (release review, 3 Nov): a cut emoji half makes the server refuse the whole summary.
+const clean = (s: string): string => Array.from(s.replace(/\s+/g, ' ').trim()).slice(0, NAME_MAX).join('').trim();
 const kg1 = (w: number): number => Math.round(Math.min(1000, Math.max(0, finite(w))) * 10) / 10;
 const reps = (r: number): number => Math.min(1000, Math.max(0, Math.floor(finite(r))));
 

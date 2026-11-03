@@ -75,6 +75,7 @@ export const deviceSettingsIo: SettingsIo = {
   },
   async apply(given, opts) {
     const { blob, healthConnectWasOn } = settingsToApply(given, opts?.fromBackup === true);
+    const trainersBefore = usePhonePrefs.getState().shareWithTrainers;
     for (const [name, picked] of Object.entries(blob)) {
       const store = STORES[name];
       if (!store) continue;
@@ -107,6 +108,14 @@ export const deviceSettingsIo: SettingsIo = {
           if (photos === null) await getDb().runAsync('DELETE FROM meta WHERE key = ?', [PHOTO_BACKUP_KEY]);
         })
         .catch((e: unknown) => console.warn('[backup] "Include photos in my backup" not put back', e));
+    }
+    // F109 (release review, 3 Nov): a restore that flips "Share my workouts with my trainers" tells the gym at once,
+    // like the switch itself: off deletes the gym's copy, on sends it. Kept pending (sent again) with no signal.
+    if (usePhonePrefs.getState().shareWithTrainers !== trainersBefore) {
+      usePhonePrefs.getState().setTrainerSharePending(true);
+      await import('@/shop/trainerSync')
+        .then((m) => m.shareWithTrainers('setting'))
+        .catch((e: unknown) => console.warn('[backup] the trainer share switch was not sent (sent again on the next start)', e));
     }
     // Reminders follow their switch and days at once (scheduled by the phone).
     await import('@/tracker/phone/reminders')

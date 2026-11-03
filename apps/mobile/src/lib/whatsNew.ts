@@ -56,6 +56,22 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-295: member-words; short complete sentences, no Gemini (owner rule 1 Nov). Server parts 0049-0051 live
+    // 3 Nov (R-294). Trainer lines use the words he approved in #86; the busy-machines line follows #84.
+    version: '0.70.0',
+    date: '3 Nov',
+    lines: [
+      { text: 'Your gym can post a workout of the day. Find it on the Workout tab and start it with one tap.', go: { label: 'Open Workout', href: '/workout' } },
+      { text: 'If your trainer filmed an exercise, tap "Watch your trainer" on that exercise\'s page.' },
+      {
+        // R-296: members who joined before 0.70.0 start with sharing off, so the line asks; it never says it is on.
+        text: 'Want your trainer to follow your progress? Switch on "Share my workouts with my trainers".',
+        go: { label: 'What my gym can see', href: '/settings/gym-sees' },
+      },
+      { text: 'If your gym shows busy machines, "What my gym can see" says what is shared, and you can switch it off.' },
+    ],
+  },
+  {
     // R-282..R-289: member-words; short complete sentences, no Gemini (owner rule 1 Nov). Busy machines (F137)
     // stays hidden until its server part is switched on, and new members never see this list, so no line
     // for either it or the first-routine guide (F186). Facts checked against the code.

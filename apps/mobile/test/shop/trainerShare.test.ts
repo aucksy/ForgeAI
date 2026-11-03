@@ -147,8 +147,8 @@ describe('member words', () => {
     ];
     for (const l of lines) {
       expect(l, l).not.toMatch(BANNED);
-      expect(l.length, l).toBeLessThanOrEqual(180);
+      expect(l.length, l).toBeLessThanOrEqual(190); // R-296: the caption names "your gym and your trainer"
     }
-    expect(TRAINER_WORDS.joinNote).toBe("Your gym's trainers see your workouts, so they can help you progress.");
+    expect(TRAINER_WORDS.joinNote).toBe('Your gym and your trainer see your workouts, so they can help you progress.');
   });
 });

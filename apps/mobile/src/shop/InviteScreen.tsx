@@ -22,6 +22,7 @@ import { Card, GhostButton, PrimaryButton, Screen } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { getProfile } from '@/db/repos/userRepo';
 import { color, radius, space, type } from '@/theme/tokens';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, unknownCodeWords, type GymPreview } from './gym';
 import { joinFromInvite } from './gymActions';
@@ -120,9 +121,18 @@ export function InviteScreen() {
     const words = standing === 'other' ? await askAndSwitchGym(code, name, gymName) : await joinFromInvite(code, name);
     setBusy(false);
     if (words === 'stayed') return;
-    if (words) setError(words);
+    if (words) {
+      setError(words);
+      return;
+    }
+    if (trainersLive) {
+      // F109 (R-296): the member read "Your gym and your trainer see your workouts" above the button, so sharing starts.
+      const prefs = usePhonePrefs.getState();
+      prefs.setShareWithTrainers(true);
+      prefs.setTrainerSharePending(true);
+    }
     // C6-16: opened from the check-in poster → straight back to the check-in, not the Shop.
-    else router.replace(afterJoinPath(code, params.then));
+    router.replace(afterJoinPath(code, params.then));
   };
 
   const standing = code && hydrated ? inviteStanding(link, code) : null;
