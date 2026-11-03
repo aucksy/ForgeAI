@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -275,8 +276,11 @@ private fun NextSetScreen(
     // The name, the set and Previous sit above the pills (bottom-aligned, as the design's stack).
     val k = px.labelScale
     val stackH = ceil(2f * 22f * k * 1.15f + 2f * 18f * k * 1.3f + 8f)
+    // One column: a taller stack (a long name at the largest text) pushes the pills down instead
+    // of sliding under them (3 Nov render: "Previous" was hidden).
+    Column(Modifier.fillMaxWidth().padding(top = px.dp(58f)), horizontalAlignment = Alignment.CenterHorizontally) {
     Column(
-      Modifier.fillMaxWidth().padding(top = px.dp(58f)).height(px.dp(stackH)),
+      Modifier.fillMaxWidth().heightIn(min = px.dp(stackH)),
       verticalArrangement = Arrangement.spacedBy(px.dp(4f), Alignment.Bottom),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -301,7 +305,8 @@ private fun NextSetScreen(
       }
     }
     // The big numbers, fixed size whatever the text size.
-    Centered(px, 58f + stackH + 6f) {
+    Spacer(Modifier.height(px.dp(6f)))
+    run {
       Row(verticalAlignment = Alignment.CenterVertically) {
         if (e.wOn) {
           NumberPill(px, LogMath.num(w), e.unit, adjust == Adjust.WEIGHT, adjust == Adjust.REPS, ambient, "weight", actions.onTapWeight)
@@ -319,6 +324,7 @@ private fun NextSetScreen(
           Line(snap.next.goal.ifEmpty { "—" }, px, 36f, FontWeight.ExtraBold, ink.ink, maxWidth = 340f, tag = "goal")
         }
       }
+    }
     }
     if (adjust != Adjust.NONE) {
       // The crown's arc at the right edge (design: 6 px, 68 to 112 degrees from 12 o'clock).
