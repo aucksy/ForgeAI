@@ -39,7 +39,7 @@ const SITE_KEEPS = [
   /^\/api\/lead$/, // the gym page's "free demo" form
   /^\/(icons|brand)\//,
   /^\/\.well-known\//,
-  /^\/(privacy|terms|data-agreement)(\.html)?$/,
+  /^\/(privacy|terms|data-agreement|delete-account)(\.html)?$/, // delete-account: Play's account-deletion page (3 Nov 2026)
   /^\/(favicon\.ico|robots\.txt)$/,
 ];
 

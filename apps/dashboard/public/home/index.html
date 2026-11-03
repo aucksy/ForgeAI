@@ -274,6 +274,11 @@ section{position:relative}
 .desk figcaption{margin-top:8px;font:700 14px var(--text);color:var(--ink2)}
 
 /* back of the label: the form */
+/* Footer: the member page's .foot-bar (member-site/index.html), launch audit ops #3 */
+.foot-bar{padding:30px 0 40px;border-top:1px solid var(--rule);font-size:14px;color:var(--ink3)}
+.foot-bar .wrap{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.foot-bar a{color:var(--ink2)}
+.foot-bar .wrap>span{margin-right:auto}
 .back{padding:96px 0 40px;background:var(--label);color:var(--label-ink)}
 .back .grid{display:grid;gap:36px}
 .back .lede{color:var(--label-ink2)}
@@ -851,11 +856,11 @@ section{position:relative}
         <li><span data-hi="बिना इंटरनेट भी वर्कआउट लॉग करें">Logs workouts with no internet</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="मैसेज फोन की लॉक स्क्रीन पर पॉप-अप">Messages pop up on the phone's lock screen</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="Android (Wear OS) वॉच पर रेस्ट टाइमर और हार्ट रेट">Rest timer and heart rate on an Android (Wear OS) watch</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
-        <li><span data-hi="जिम देखे कौन प्रोग्रेस कर रहा है (मेंबर के OK से)">Gym sees who is progressing (with the member's OK)</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
+        <li><span data-hi="ट्रेनर हर मेंबर की हफ्ते की प्रोग्रेस देखते हैं (मेंबर इसे बंद कर सकते हैं)">Trainers see each member's weekly progress (members can turn it off)</span><span class="v" role="img" aria-label="included" data-hi-label="शामिल"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l3.6 3.4L15 4.8" stroke="#0B0B0D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></li>
         <li><span data-hi="हिंदी में मेंबर ऐप">Member app in Hindi</span><span class="v"><span class="soon" data-hi="जल्द">Coming</span></span></li>
       </ul>
       <div class="cost"><span data-hi="मेंबर के लिए कॉस्ट">Cost to the member</span><span>₹0</span></div>
-      <p class="foot" data-hi="वर्कआउट मेंबर के फोन पर ही रहते हैं; जिम को सिर्फ चेक-इन, ऑर्डर और मैसेज मिलते हैं। डेटा भारत (मुंबई) में।">Workouts stay on the member's phone; the gym gets check-ins, orders and messages only. Data kept in India (Mumbai).</p>
+      <p class="foot" data-hi="वर्कआउट मेंबर के फोन पर रहते हैं (या, अगर वे साइन इन करें, उनके अपने MettleUp बैकअप में)। ट्रेनर्स को हफ्ते की एक समरी मिलती है, जिसे मेंबर बंद कर सकते हैं। डेटा भारत (मुंबई) में।">Workouts stay on the member's phone (or in their own MettleUp backup, if they sign in). Trainers get a weekly summary, and the member can turn it off. Data kept in India (Mumbai).</p>
     </div>
   </div>
 </section>
@@ -1257,6 +1262,15 @@ section{position:relative}
   </div>
 </section>
 </main>
+
+<footer class="foot-bar">
+  <div class="wrap">
+    <span><span data-hi="सवाल? हमें लिखें:">Questions? Write to us:</span> <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a></span>
+    <a href="/privacy" data-hi="प्राइवेसी">Privacy</a>
+    <a href="/terms" data-hi="शर्तें">Terms</a>
+    <a href="/data-agreement" data-hi="डेटा एग्रीमेंट">Data agreement</a>
+  </div>
+</footer>
 <script src="/home/home.js" defer></script>
 </body>
 </html>
