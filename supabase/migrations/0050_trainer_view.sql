@@ -1,4 +1,4 @@
--- NOT APPLIED. Needs the owner's yes (F109).
+-- APPLIED LIVE 3 Nov 2026 (owner pressed Run in the SQL Editor on one query with 0049 + 0050 + 0051, text = git; functions answer live).
 --
 -- 0050: trainers see their members' progress (F109; owner's plan OWNER-INBOX #46, DECIDED 24 Oct 2026: option A,
 -- no tick box: one line on the join screen and an off switch in Settings -> Your gym, on by default; research

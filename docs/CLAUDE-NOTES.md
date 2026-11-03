@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-294. 0049 + 0050 + 0051 are LIVE — 3 Nov 2026
+
+He said: "I hit Run and it came back with Success. No rows returned". Checked live with the public key: member_machine_busy, member_trainer_status, member_gym_wod and owner_gym_wods all run and refuse a fake key (P0001 BAD_KEY), so the functions exist. Marked the 3 migration headers APPLIED LIVE; #84 TASK DONE; F137/F109/F148/F151 moved to Next release. Members see the new screens after the next release. Busy machines stays off until a gym owner switches it on.
+
 ## R-293. Yes to trainer features; one query holds 0049 + 0050 + 0051 — 3 Nov 2026
 
 He said: "App updated. I dont see any query present in SQL editor. I just opened it. Check. yes, switch on trainer features". The old SQL tab had been closed (Browser 2's tab group gone), so the unsaved 0049 query was lost. New tab 867678661 (Browser 2, Supabase): one query = 0049 + 0050 + 0051 fetched from GitHub main (sha256 1ff49cb12c46, 1f12c6f16a0c, 66443c5ef389, all = git). Run and even Save were refused by the classifier [Production Deploy]; not worked around. #86 DECIDED (yes, words as written); #84 tasks now point at that one tab. After his Run: read-only checks for the 0049/0050/0051 functions, mark the 3 headers APPLIED LIVE, tracker F137/F109/F148/F151 to Next release.

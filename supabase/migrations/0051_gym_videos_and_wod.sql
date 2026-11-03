@@ -1,4 +1,4 @@
--- NOT APPLIED. Needs the owner's yes (F148, F151).
+-- APPLIED LIVE 3 Nov 2026 (owner pressed Run in the SQL Editor on one query with 0049 + 0050 + 0051, text = git; functions answer live).
 --
 -- 0051: the gym's own form videos (F148) and the gym's workout of the day (F151), from OWNER-INBOX #58.
 -- Additive and re-runnable: one new table, new functions, one changed check (_workout_plan_ok, 0024's copy

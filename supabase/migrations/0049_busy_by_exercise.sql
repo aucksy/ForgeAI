@@ -1,4 +1,4 @@
--- NOT APPLIED. Needs the owner's yes (F137).
+-- APPLIED LIVE 3 Nov 2026 (owner pressed Run in the SQL Editor on one query with 0049 + 0050 + 0051, text = git; functions answer live).
 --
 -- 0049: busy machines by day and hour (F137; owner's words in OWNER-INBOX #68, 28-29 Oct 2026: "predict which
 -- machines get busy on each day and hour ... show it only when it is proven accurate"; "make it a feature the
