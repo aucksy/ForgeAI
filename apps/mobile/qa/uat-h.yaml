@@ -272,6 +272,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "Wait"
     optional: true
+- runFlow: sub-inuse-close-launch.yaml
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 60000

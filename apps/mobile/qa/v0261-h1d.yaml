@@ -73,6 +73,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "Wait"
     optional: true
+- runFlow: sub-inuse-close-launch.yaml
 # The app comes back on the workout it was left on; if it opens on the tabs, resume it.
 - extendedWaitUntil:
     visible: "More for Barbell Bench Press|Resume workout|^Workout$"
