@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-297. Watch: dim, then wake on a wrist raise, like Pixel's own workouts; and the Jaipur gym email — 3 Nov 2026
+
+He asked: during a workout the watch screen should not turn off. Like a workout started in the Pixel Watch's own app, it goes dim and lights up again when he looks at the watch. Put it in the backlog, build after the gym email. Checked: R-166 ambient mode works only when the watch's Always-on screen setting is on; with it off the watch falls back to the watch face. Added F191 (Planned).
+
+Same day he asked for a cold email to Jaipur gyms (3-month trial, New Year rush, USPs, screenshots), in his drafts, with phone and tablet views. Done: draft in pahuja.aakash108@gmail.com; images on mail.mettleup.fit (a separate static Worker); 262 gyms, 53 published emails in D:/Apps/ForgeAI/Marketing/jaipur-gyms (outside git). Sending needs his yes.
+
 ## R-296. Release review: old members start with trainer sharing off; words say gym + trainer — 3 Nov 2026
 
 Review agent found: members who joined before 0.70.0 never saw the join line, and the caption says only trainers see the summary while the owner sees it too. Asked him; he chose: "Start OFF" for members who joined before this update (new joiners stay on, the join screen tells them) and "Say gym + trainer" in the words. Also fixed: a restore that flips the trainer switch now tells the gym; exercise names cut by whole characters.
