@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-313. Play "What's new" every release, in simple complete sentences — 3 Nov 2026
+
+He said: going forward, update the release notes on Google Play under What's new as well; the rule about simple, complete sentences still holds.
+Found: already automatic since the Play upload step: 0.70.0 sent its 4 in-app What's new lines (381 of 500 characters) to internal + closed testing and the watch track. Saved as a rule (CLAUDE.md + brain note play-whats-new-every-release): every release quotes the Play notes in chat; lines are complete sentences, most useful first, all within 500 characters. Next release has about 8 draft lines: they must be trimmed to fit.
+
+Also 3 Nov: he asked for UAT before release. Cloud: a new opt-in qa-device part for every waiting phone feature, plus qa-journeys and qa-conditions on main. Not testable in the cloud: watch-to-phone round trip (pairing needs a Google sign-in); his watch after release.
+
 ## R-312. Step-back card words OK; watch logging design arrived — 3 Nov 2026
 
 He said: "card OK" (the step-back card: "Stuck at 45 kg for 4 workouts. Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). Try 40 kg today?"). Release blocker cleared.
