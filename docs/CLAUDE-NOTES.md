@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-303. Rep goals should follow his "Weight jumps" choice — 3 Nov 2026
+
+He asked about R-301's +1.5%: "We also have to consider the user choice from settings... 1.5 for each set so total comes out to match user choice approx right".
+
+Answered: 1.5% was the whole workout (+1 rep on one set), not each set. Settings "Weight jumps" (Small 2.5%, Standard 5%, Large 10%) today sets only the size of a WEIGHT step; rep goals ignore it (+1 rep on one set, about 1-2%).
+
+My view (proposed, waiting for his yes): rep goals use the same choice. The workout's kg to beat aims for about that % more than last time, made of whole reps, added to the sets with the most left in the tank first (earlier set, lower RPE), at most +1 rep a set (+2 when the set was RPE 7 or easier), never past the cap. So a choice can be cut short in one workout; say so. Applies to R2b and R5 alike. Lateral raise example (1,280 kg last time): Small 19,17,16,14 = 1,320 (+3%); Standard 19,17,16,15 = 1,340 (+5%); Large same as Standard this time (capped at +1 a set).
+
 ## R-302. Watch: log the set from the wrist (reps, weight, RPE, Complete set); Claude Design prompt — 3 Nov 2026
 
 He said: the watch needs options to pick the weight, reps and RPE and mark the set completed. After rest, show the orange "rest is over" banner, but then do not go to a black screen: keep showing the previous set and the suggested set, with a way to complete the set after picking RPE and reps. The design must be thought through, neat, clean, intuitive. Check how Hevy's watch app does it and do it better. Give him a prompt for Claude Design to update the existing design.
