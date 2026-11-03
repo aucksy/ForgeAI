@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-296. Release review: old members start with trainer sharing off; words say gym + trainer — 3 Nov 2026
+
+Review agent found: members who joined before 0.70.0 never saw the join line, and the caption says only trainers see the summary while the owner sees it too. Asked him; he chose: "Start OFF" for members who joined before this update (new joiners stay on, the join screen tells them) and "Say gym + trainer" in the words. Also fixed: a restore that flips the trainer switch now tells the gym; exercise names cut by whole characters.
+
 ## R-295. Release — 3 Nov 2026
 
 He said: "Release". Releasing the waiting batch (F137 privacy switch, F109 trainer view, F148 trainer videos, F151 workout of the day) as 0.70.0 through the full gate: CI, qa-device default + owner, qa-journeys, conditions, review agent, What's new via member-words.
