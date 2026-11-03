@@ -168,17 +168,17 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | Task | Status | Details |
 |---|---|---|
 | T68 Help answers: test 3 real questions when the credit comes (#83, R-278) | Blocked | Live since 2 Nov with no credit, so every person gets the plain thanks. About 12 Nov, when your credit comes: send 3 real questions, check the answers and the cost, show you. |
-| T67 0.63.0: your 30 Oct test report, phone price list, watch stays open and pops up (R-234 to R-237) | Doing | 31 Oct: built and pushed; the desk and mettleup.fit are live. The phone app waits for the cloud phone test (about 2 hours), then goes to your testers. Watch rest-timer redesign (smaller timer, bigger next-set words) waits for your yes on the picture. |
+| T67 0.63.0: your 30 Oct test report, phone price list, watch stays open and pops up (R-234 to R-237) | Done | Released in 0.63.0 (31 Oct). |
 | T65 Website: the new prices, newest features and fresh app pictures (#30, R-229) | Done | 30 Oct: live on mettleup.fit in English and Hindi. Pro ₹1,499, Pro + AI ₹2,499 (coming), founding pack for the first 25 gyms until 31 March 2027, QR check-in and watch lines added, fresh owner-panel pictures. |
 | T66 Split features between Starter and Pro (#30, #78) | Blocked | Built 31 Oct, behind a switch that is off: every gym still gets every feature. All tests pass. Turning it on needs your yes (#78). |
 | T1 Gym messages and offers pop up on the phone (R-151, R-153, R-158) | Done | Released in 0.59.0, 29 Oct. |
-| T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Doing | Built 28 Oct; ships in 0.60.0. Then a twice-a-day check of feedback and crash notes on this PC. |
-| T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Doing | Built and checked on round-screen pictures 28 Oct; ships in 0.60.0, with the watch app on Play for your tester group. |
+| T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | Done | Released in 0.60.0 (29 Oct); feedback and crash notes are checked twice a day. |
+| T3 Watch app: next set, heart rate, rest timer, on Play (R-139, R-166, R-167) | Done | Released in 0.60.0 (29 Oct); the watch app is on Play for your testers (1 Nov). |
 | T4 Marketing: our selling point, top 3-5 features and hooks (R-176) | Blocked | Waits for your ratings in Waiting for you → "Rate features for marketing". Then: a check of what Indian gym software sells on, our one-line selling point, the top 3-5 features for buyers, and 3-5 marketing hooks in English and Hindi for your OK. |
 | T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | Done | Released to testers 29 Oct (v0.60.0). The watch app goes on Play after your answer to Play's health question. |
 | T6 Fix: "kg to beat" reads a different last time than PREVIOUS (R-138, R-143, R-146) | Done | Released in 0.59.0, 29 Oct. |
 | T7 Fix: Excel import picks the wrong phone column (R-155, R-157) | Done | 28 Oct, live: no "Ask AI" button; the AI matches the columns by itself from the values; the phone column with the most real mobiles wins, even without AI. |
-| T8 Check-in QR: live camera only, no gallery (R-152) | To do | So a member cannot scan an old photo of the QR from home. |
+| T8 Check-in QR: live camera only, no gallery (R-152) | Done | Built 31 Oct (R-228): the app's own scanner uses the live camera only, never a saved photo. |
 | T9 Multi-branch gyms, end to end (#41) | Done | Live 24 Oct after your yes in #59 (server 0031 + admin app). |
 | T10 AI import that never fails (#41, #36) | Done | 24 Oct: built and reviewed; goes live with #59 (no server change). Branch column, extra columns kept, a list of rows to fix instead of stopping; tested on 10+ sheet shapes incl. GGMS. Large. |
 | T11 Members' workouts on our server (#50, #27) | Done | Server part live since #59 (24 Oct); "Continue with Google" shipped in 0.57.0 (25 Oct). |
@@ -404,7 +404,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F106 AI import of a gym's old records | Live | 23 Oct: Import asks "Ask AI to match the columns?"; AI fills only the columns our rules could not match, extra columns are kept as extra details, Aadhaar and PAN never imported. The AI switches on when you add the two keys (#47); until then the owner matches by hand. |
 | F107 Webcam photo at the desk | Live | Live 30 Oct (#75): "Take photo" on "New member" at the desk. | On "New member", a "Take photo" button opens the desk computer's camera in the browser. The photo saves to the member and shows on the ID card and at check-in, so staff know who is who. |
 | F108 Body measurements taken by the gym | Live | 25 Oct: the trainer records weight, body fat and tape measurements on the member's profile in the admin app; the member sees them in Progress → Body, marked "From <gym>" (server 0035 live, #64). |  |
-| F109 Trainer view of member progress | Planned | Decided in #46 (A, no tick box). I build it; your OK on the exact words and the live server yes come at the end. | The member is told on the join screen that the gym's trainers see their workouts, and can turn it off in Settings. A trainer's "My members" shows one line each, like "New best: Leg press 120 kg × 10", with ready WhatsApp messages. Body weight, photos and food never leave the phone. |
+| F109 Trainer view of member progress | Waiting for you | Built 3 Nov (#46 plan). Waits for your OK on the words and your yes to switch it on (#86). | The member is told on the join screen that the gym's trainers see their workouts, and can turn it off in Settings. A trainer's "My members" shows one line each, like "New best: Leg press 120 kg × 10", with ready WhatsApp messages. Body weight, photos and food never leave the phone. |
 | F110 AI assistant for the owner | Idea | Ask questions like "peak hours today?"; reports already show peak hours. | A question box in the admin app: "Who hasn't paid this month?", "Busiest hour this week?". It reads only this gym's records, answers in a sentence with the list, and never changes anything. Each question costs a little on a paid AI service, so it needs your yes on cost. |
 | F111 Staff and trainer salaries | Not doing | Left out on purpose; small gyms handle pay outside the software. | Not planned: small gyms pay staff outside the software. If you change your mind, the first step would be staff attendance from the entry machine. |
 | F112 Several branches | Live | One owner runs 2 or more branches from one sign-in. Server live 24 Oct (0031, your yes in #59); admin app live 24 Oct. |  |
@@ -449,10 +449,10 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F145 How busy the gym is right now | Live | Released in v0.60.0 (testers, 31 Oct check). Built 28 Oct; server part live 29 Oct (#67, your yes); members see it with 0.60.0. | The server counts check-ins per hour (no names). The member app shows "Quiet now" or "Busy" and a weekly best-time chart. |
 | F146 Gym's logo on share pictures and a before/after share | Planned | Every shared workout picture carries the gym's name and logo; a before/after photo picture too, from #58. | Share pictures add the gym's logo and name. Progress photos get a "Share before/after" button. Photos leave the phone only when you tap share; body weight never shows. |
 | F147 Bring a friend | Planned | A member's invite link; the friend lands in the owner's enquiries list; free days when they join, from #58. | The member shares a link from the app. The friend fills a short form, which shows up in the owner's enquiries. When the friend joins, the member gets the free days the owner set. |
-| F148 The gym's own form videos | Planned | The trainer adds a YouTube link to an exercise; members see their own trainer, from #58. | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
+| F148 The gym's own form videos | Waiting for you | Built 3 Nov. Waits for your yes to switch it on (#86). | Admin app: a video link field on any exercise in the gym's plans. The member's exercise page shows "Watch your trainer". |
 | F149 Ask your trainer | Idea | Parked (owner, 24 Oct). A chat between a member and the gym's trainer, from #58. | A message box in the member app and an inbox in the admin app, with phone alerts. Waits for the phone alerts setup (Firebase). |
 | F150 Ask the desk to freeze or renew | Live | Released in v0.62.0 (testers, 31 Oct check). Server live 30 Oct (#76); the desk sees requests now. Members get "Pause my plan" and "Renew my plan" in 0.62.0. | On the member's plan card in the app, two buttons: "Pause my plan" (pick the dates) and "Renew my plan" (pick a plan). The gym's admin app shows each request with the member's name. One tap approves it, using the freeze and renew tools the desk already has (F81). The member gets a message when it is done; a renewal is still paid at the desk. |
-| F151 The gym's workout of the day | Planned | One workout from the trainer for everyone today, from #58. | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
+| F151 The gym's workout of the day | Waiting for you | Built 3 Nov. Waits for your yes to switch it on (#86). | The trainer picks or builds today's workout in the admin app. Members see it on Today and start it with one tap. |
 | F152 "Stronger than X% of your gym" | Idea | Parked (owner, 24 Oct: server space): compare your best lifts with your own gym, opt-in, from #58. | Needs every member's best lifts on our server. Waits for the paid server plan. |
 | F153 Follow gym mates (a feed of your gym) | Idea | Parked (owner, 24 Oct: server space and moderation), from #58. | See gym mates' workouts, with likes. Needs workouts on our server, a privacy choice and reports. Waits for the paid server plan. |
 | F154 Compare with a friend | Idea | Parked (owner, 24 Oct), from #58. | Pick a gym mate and compare the same lifts side by side. Comes after the feed. |
@@ -490,6 +490,23 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F189 Help answers in both apps | Live | #83. Built 2 Nov 2026 (R-277): "Send feedback" becomes "Help and feedback"; an AI answers at once from 15 help pages, then "Did this solve it? Yes / No". Admin website: live 2 Nov; the AI answers start when your credit comes (about 12 Nov). Phone app: released in 0.68.0 on 2 Nov (#83). |
 | F182 Launch plan for the client gym | Waiting for you | 8-week trial: gym visit, data move from GGMS, training, side-by-side run, switch-over, go/no-go (docs/LAUNCH-PLAN.md). Starts with your gym visit and the GGMS export (#36). | Over 8 weeks: your gym visit and the GGMS export, two trial imports until the totals match, staff training, 10 days of entering everything in both systems, then switch-over mid-week. A go / no-go review in week 6; paid from week 8. GGMS stays paid until then. |
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
+
+---
+
+## 86. Trainer view, trainer videos, workout of the day: your OK — 3 Nov 2026
+**Chat:** ForgeAI Local Chat
+**Status:** WAITING FOR YOU
+**Why:** 3 features are built and tested. Each needs one switch on the gym server, and the trainer view also needs your OK on its words.
+- **Trainer view (F109, your plan in #46):** you tick "Trainer" on a staff person and pick a trainer on each member's page. The trainer opens "My members": one line per member ("New best: Leg press 120 kg × 10", "No workout for 9 days") and ready WhatsApp messages. You see every member. The desk sees nothing.
+- **Trainer videos (F148):** in Workout plans, the trainer adds a YouTube link to an exercise. Members see "Watch your trainer" on that exercise.
+- **Workout of the day (F151):** in Workout plans, you set one workout for a day. Members see "Today at <your gym>" on the Workout tab and start it with one tap.
+**Words members see (trainer view):**
+- Join screen: "Your gym's trainers see your workouts, so they can help you progress."
+- Switch: "Share my workouts with my trainers" (on). Under it: "Your trainers see a weekly summary: how many workouts, kg lifted, your best sets and new bests. Never your body weight, photos or notes. Off: the gym deletes it at once."
+- Button: "Ask my trainer for help". After: "Sent. Your trainer will get in touch."
+- One change: "What my gym can see" now says "MettleUp never sends which exercises you did". With the trainer view on, best sets name the exercise. I suggest: "MettleUp never sends your body weight, photos or notes."
+**Until you say yes:** nothing changes. Both apps hide all 3 features.
+**Your task:** Tell me "yes, switch on trainer features" (or send changes to the words). I then load the switch into the Supabase SQL Editor in Chrome. The safety system does not let me press Run on the live database, so you press "Run" once; then I check it live.
 
 ---
 

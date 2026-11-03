@@ -2,6 +2,7 @@
 
 ## Waiting for release (R-266: tag only when the owner says "release")
 - F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."
+- F109 trainer view (a148e186), F148 trainer videos + F151 workout of the day (77510387): built, hidden until 0050 / 0051 are live (inbox #86 asks his OK and yes). What's new drafts once live: "Your gym can set a workout of the day: find it on the Workout tab and start it with one tap." / "If your trainer filmed an exercise, tap Watch your trainer on its page."
 - 0048 security fixes are LIVE on the gym server (3 Nov, owner pressed Run).
 
 ## Done
