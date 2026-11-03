@@ -12,12 +12,20 @@ declare
   want   int;
   uid    uuid := gen_random_uuid();
   g      jsonb;
+  before jsonb := '{}'::jsonb;
 begin
   -- Some rows to copy: a demo gym (gym, owner key, shop) and one sign-in account with a password and a token.
   g := public.demo_start_gym('T52 Backup Gym');
   insert into auth.users(id, instance_id, aud, role, email, encrypted_password, confirmation_token, created_at, updated_at)
     values (uid, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 't52@example.com',
             'secret-hash-t52', 'token-t52', now(), now());
+
+  -- Row counts BEFORE the copy (the copy then writes its own audit row, which it cannot contain).
+  for t in select c.relname as name from pg_class c join pg_namespace n on n.oid = c.relnamespace
+            where n.nspname = 'public' and c.relkind in ('r', 'p') and not c.relispartition loop
+    execute format('select count(*) from public.%I', t.name) into want;
+    before := before || jsonb_build_object(t.name, want);
+  end loop;
 
   snap := public.hq_backup_snapshot();
 
@@ -29,7 +37,7 @@ begin
   for t in select c.relname as name from pg_class c join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public' and c.relkind in ('r', 'p') and not c.relispartition loop
     checks := checks + 1;
-    execute format('select count(*) from public.%I', t.name) into want;
+    want := (before->>t.name)::int;
     if not (snap->'tables' ? t.name) then fails := fails || ' 2:missing ' || t.name;
     elsif jsonb_array_length(snap->'tables'->t.name) <> want or (snap->'counts'->>t.name)::int <> want then
       fails := fails || ' 2:' || t.name || ' has ' || jsonb_array_length(snap->'tables'->t.name) || ' of ' || want;
