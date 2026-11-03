@@ -438,7 +438,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F134 Payments shown in the app | Not doing | Left out on purpose, because the app can't prove who is holding the phone. | Not planned: the app knows a member only by a typed phone number, so it can't prove who holds the phone. Members see their plan and end date in "My membership"; receipts go by WhatsApp from the desk. |
 | F135 Gym workout plans in Routines | Live | Plans the trainer sends appear in the member's Workout tab by themselves. |
 | F136 First-time starting weight from the trainer | Live | The first workout of a gym plan starts at the trainer's weight, e.g. "start at 20 kg × 8". |
-| F137 Busy times by exercise | Waiting for you | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. Built 2 Nov: off until you say yes to the gym server part (#84). | Off by default; the owner switches it on in the admin app and enters how many of each machine the gym has, from a ready list (and adds any missing machine). Only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour and checks its guesses weekly; when right most weeks, members see "Leg day is quieter on Tuesday. Move it?". Later (Ultra plan idea): AI fills the list from photos or speech. |
+| F137 Busy times by exercise | Waiting for you | Your idea (28 Oct, #68): predict which machines get busy on each day and hour, from check-ins and routines; show it only when it is proven accurate. Built 2 Nov. Privacy line approved 3 Nov. Only the server switch is left: press Run (#84). | Off by default; the owner switches it on in the admin app and enters how many of each machine the gym has, from a ready list (and adds any missing machine). Only machines with 1 or 2 units count. The server learns which exercises members start per weekday and hour and checks its guesses weekly; when right most weeks, members see "Leg day is quieter on Tuesday. Move it?". Later (Ultra plan idea): AI fills the list from photos or speech. |
 | F138 Google login | Live | 0.57.0 (25 Oct): "Continue with Google" is the first card on the welcome screen (R-131). | An optional "Continue with Google" on the first screen, next to "Join with your gym code" and "Use without an account". Signing in keeps a copy of the member's workouts on our server, readable only by them, so a new phone gets everything back. |
 | F139 Class booking | Waiting for you | Timetable and spaces left; waits for your gym visit to learn whether gyms run classes. | The owner sets a weekly timetable: class, trainer, time, spaces. Members see it in the app, book or cancel with one tap, and join a waiting list when a class is full. The desk sees each class's list. Waits for your gym visit to learn if the gym runs classes. |
 | F140 Diet plans from the trainer | Live | 25 Oct: admin app Diet plans page (3 starter plans), sent to a member or a whole membership plan; the member sees it under Gym → Diet plan (server 0035 live, #64). |  |
@@ -495,20 +495,23 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 85. Press "Run" once to switch on the new security fix — 3 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DONE
+**TASK DONE (3 Nov)** You pressed Run. I checked the live database: all 6 new security parts are there. Check-in by typed number now waits for the desk's yes, and challenge rewards wait for your Give / Skip.
 **Why:** App 0.69.0 is out. Its security fix (you said "yes, fix security") must also go on the gym server. The safety system did not let me press "Run" on the live database myself.
 **Until you do it:** the app works as before. Typed numbers at check-in skip the desk's yes, and challenge winners get their reward without your Give / Skip.
 **Your task:** Open Chrome. The Supabase tab "SQL Editor" already holds the fix (it starts with "-- 0048"). If the tab is gone, tell me and I load it again.
 **Your task:** Press the green "Run" button (top right). Wait for "Success. No rows returned".
 **Your task:** Tell me "done". I then run the live checks and mark the fix as live.
 
-## 84. Busy machines: may I switch on the server part? — 2 Nov 2026
+## 84. Busy machines: press Run once to switch it on — 2 Nov 2026
 **Chat:** ForgeAI Local Chat
 **Status:** WAITING FOR YOU
-**Why:** Busy times by exercise (F137) is built. The owner switches it on in the admin app and types how many of each machine the gym has. The phone then sends only the day, the hour and which listed machines were used: no names. The server checks its own guesses for 4 weeks before any member sees a tip like "Leg day is quieter on Tuesday".
-**Until you say yes:** nothing changes. The admin screen and the member tip stay hidden.
-**Also needs your OK (privacy words):** the member app's "What my gym can see" page says "MettleUp never sends which exercises you did". With busy machines on, that is no longer true. I suggest: "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name." I will also add a switch so a member can turn it off for themselves.
-**Your task:** Tell me "yes, switch on busy machines". I then add it to the live gym database and run its test there (62 checks pass on a test copy).
+**APPROVED (3 Nov 2026):** you said "yes for the privacy line". The app now shows it on "What my gym can see" while a gym has Busy machines on: "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name." A new switch, "Share which machines I use", lets a member stop it. It comes with the next release.
+**Why:** Busy times by exercise (F137) is built. The owner switches it on in the admin app and types how many of each machine the gym has. The server checks its own guesses for 4 weeks before any member sees a tip like "Leg day is quieter on Tuesday". The safety system did not let me press Run on the live database myself.
+**Until you do it:** nothing changes. The admin screen and the member tip stay hidden.
+**Your task:** Open Chrome. The Supabase tab "SQL Editor" already holds the switch (it starts with "-- NOT APPLIED. Needs the owner's yes (F137)"). If the tab is gone, tell me and I load it again.
+**Your task:** Press the green "Run" button (top right). If a "Potential issue detected" box shows, press "Run query". Wait for "Success. No rows returned".
+**Your task:** Tell me "done". I then check it on the live database and mark it as live.
 
 ---
 

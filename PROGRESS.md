@@ -1,7 +1,8 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- (none yet)
+- F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."
+- 0048 security fixes are LIVE on the gym server (3 Nov, owner pressed Run).
 
 ## Done
 - 0.69.0 RELEASED 3 Nov 2026 (owner said "build F52 and F186 and then release everything once done", R-288). Gate: CI + whole qa-device on default and owner + qa-journeys + conditions 2 green on fba40da4. Contents (the old waiting list):

@@ -8,9 +8,12 @@
  *  - A server without 0049 (not live yet): one log line, then nothing is asked or sent until the app restarts,
  *    and the Gym tab shows nothing.
  *  - "Not now" on a tip is kept on the phone (meta 'machineTipHidden') for 30 days.
+ *  - The member's "Share which machines I use" switch off (phonePrefs shareMachineUse): nothing is sent. The
+ *    gym's answer is still read, so the tip and the switch can show.
  */
 import { getDb, getMeta, setMeta } from '@/db';
 import { addDays, todayISO } from '@/lib/date';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import { sessionTitle } from '@/tracker/services/finishSummary';
 import type { GymHours } from '@forgeai/theme';
 
@@ -93,7 +96,7 @@ export async function syncMachines(link: GymLink, trigger: MachineTrigger, now =
         console.warn('[machines] could not read busy machines', r.error.kind);
       }
     }
-    if (answer?.on && answer.keys.length && machinePushDue(trigger, pushedAt?.key === key ? pushedAt.at : null, now) && !(await isDemo())) {
+    if (answer?.on && answer.keys.length && usePhonePrefs.getState().shareMachineUse && machinePushDue(trigger, pushedAt?.key === key ? pushedAt.at : null, now) && !(await isDemo())) {
       const today = todayISO();
       const workouts = pushPayload(await readWorkoutStarts(addDays(today, -PUSH_DAYS)), answer.keys, today);
       const p = await apiMachinePush(key, workouts);

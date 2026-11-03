@@ -9,8 +9,13 @@
  * once the gym's server can hold shared workouts (0040 live). On: the phone shares its bio and
  * recent workouts at once (mateShare.ts); off: the gym deletes them at once (kept and sent again
  * with no signal). Gym mates can open them only while the name switch is on too.
+ *
+ * F137 (owner approved the words, 3 Nov 2026, #84): while the gym has Busy machines on, the intro drops
+ * "never sends which exercises you did", says what is sent, and a third switch "Share which machines I use"
+ * (on by default) lets the member stop it.
  */
 import { Redirect } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 
 import { SettingsPage } from '@/components/settings/SettingsPage';
@@ -32,6 +37,22 @@ export default function GymSeesPage() {
   const matesLive = useMatesLive(link);
   const on = usePhonePrefs((s) => s.showNameOnBoard);
   const sharing = usePhonePrefs((s) => s.shareWorkoutsWithGym);
+  const machinesShared = usePhonePrefs((s) => s.shareMachineUse);
+  // F137: does the gym have Busy machines on? Asked once per open (kept 30 minutes by machineBusySync).
+  const [machinesOn, setMachinesOn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    if (link)
+      void import('@/shop/machineBusySync')
+        .then((m) => m.syncMachines(link, 'focus'))
+        .then((a) => {
+          if (alive) setMachinesOn(a?.on === true);
+        })
+        .catch((e: unknown) => console.warn('[machines] could not read the gym switch', e));
+    return () => {
+      alive = false;
+    };
+  }, [link]);
   if (hydrated && !link) return <Redirect href="/shop" />;
   const flip = (v: boolean): void => {
     const prefs = usePhonePrefs.getState();
@@ -55,11 +76,22 @@ export default function GymSeesPage() {
     <SettingsPage title={BOARD_WORDS.seesTitle}>
       {live ? (
         <>
-          <Text style={body}>{BOARD_WORDS.seesIntro}</Text>
+          <Text style={body}>{machinesOn ? BOARD_WORDS.seesIntroMachines : BOARD_WORDS.seesIntro}</Text>
+          {machinesOn ? <Text style={body}>{BOARD_WORDS.machinesLine}</Text> : null}
           <GlassCard>
             <ToggleRow icon="trophy" title={BOARD_WORDS.nameSwitch} caption={BOARD_WORDS.nameCaption} value={on} onChange={flip} />
             {matesLive || sharing ? (
               <ToggleRow icon="person" title={MATE_WORDS.shareSwitch} caption={MATE_WORDS.shareCaption} value={sharing} onChange={flipShare} divider />
+            ) : null}
+            {machinesOn ? (
+              <ToggleRow
+                icon="dumbbell"
+                title={BOARD_WORDS.machinesSwitch}
+                caption={BOARD_WORDS.machinesCaption}
+                value={machinesShared}
+                onChange={(v) => usePhonePrefs.getState().setShareMachineUse(v)}
+                divider
+              />
             ) : null}
           </GlassCard>
           {sharing && !on ? <Text style={body}>{MATE_WORDS.needsName}</Text> : null}

@@ -64,6 +64,13 @@ export interface PhonePrefsState {
   mateSharePending: boolean;
   setMateSharePending: (on: boolean) => void;
   /**
+   * F137 (owner approved the words 3 Nov 2026, #84): "Share which machines I use" (Settings → Your gym →
+   * What my gym can see), shown only while the gym has Busy machines on. On by default; off: this phone never
+   * sends its workout starts (shop/machineBusySync.ts). Carried by a backup, so "off" survives a restore.
+   */
+  shareMachineUse: boolean;
+  setShareMachineUse: (on: boolean) => void;
+  /**
    * F55 (1 Nov 2026): the member said yes to "Weight from Health Connect": weigh-ins there are
    * added to the body-weight log when the app opens or comes back (healthRead.ts).
    */
@@ -134,6 +141,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setShareWorkoutsWithGym: (shareWorkoutsWithGym) => set({ shareWorkoutsWithGym }),
       mateSharePending: false,
       setMateSharePending: (mateSharePending) => set({ mateSharePending }),
+      shareMachineUse: true,
+      setShareMachineUse: (shareMachineUse) => set({ shareMachineUse }),
       healthWeightOn: false,
       healthWeightRead: null,
       healthWeightDays: {},
@@ -166,6 +175,7 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           boardNamePending: false,
           shareWorkoutsWithGym: false,
           mateSharePending: false,
+          shareMachineUse: true,
         }),
     }),
     {

@@ -28,6 +28,13 @@ export const BOARD_WORDS = {
   seesTitle: 'What my gym can see',
   seesIntro:
     "Your gym's staff see how many workouts you did and how much weight you lifted each day, with your name, so they can run challenges and give rewards. Other members see you as 'A member' unless you switch your name on. MettleUp never sends which exercises you did, your body weight, photos or notes.",
+  // F137: shown instead of seesIntro while the gym has Busy machines on (owner approved machinesLine, 3 Nov 2026, #84).
+  seesIntroMachines:
+    "Your gym's staff see how many workouts you did and how much weight you lifted each day, with your name, so they can run challenges and give rewards. Other members see you as 'A member' unless you switch your name on. MettleUp never sends your body weight, photos or notes.",
+  machinesLine:
+    "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name.",
+  machinesSwitch: 'Share which machines I use',
+  machinesCaption: 'Off: the app sends nothing about the machines you use.',
   nameSwitch: "Show my name on my gym's leaderboard",
   nameCaption: "Off: other members see 'A member'. On: they see your first name and the first letter of your last name. Your gym's staff always see your name.",
   notLive: "Your gym's leaderboard is not switched on yet.",

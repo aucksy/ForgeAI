@@ -106,6 +106,15 @@ describe('member words', () => {
     );
   });
 
+  it('Busy machines on (F137): the owner-approved line, word for word (3 Nov 2026, #84), and the intro drops "which exercises"', () => {
+    expect(BOARD_WORDS.machinesLine).toBe(
+      "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name.",
+    );
+    expect(BOARD_WORDS.seesIntroMachines).not.toMatch(/which exercises/);
+    expect(BOARD_WORDS.seesIntroMachines).toMatch(/never sends your body weight, photos or notes\.$/);
+    expect(BOARD_WORDS.machinesSwitch).toBe('Share which machines I use');
+  });
+
   it('the not-live page line and the Leave row line', () => {
     expect(BOARD_WORDS.notLive).toBe("Your gym's leaderboard is not switched on yet.");
     expect(BOARD_WORDS.leaveSub).toBe('Your workouts stay on this phone. Your leaderboard numbers are removed from the gym.');
@@ -122,7 +131,7 @@ describe('member words', () => {
 
   it('nothing is long: each line fits a phone line or two (the page intro is a short paragraph)', () => {
     for (const [k, v] of Object.entries(BOARD_WORDS)) {
-      if (typeof v === 'string') expect(v.length, v).toBeLessThanOrEqual(k === 'seesIntro' ? 330 : 160);
+      if (typeof v === 'string') expect(v.length, v).toBeLessThanOrEqual(k.startsWith('seesIntro') ? 330 : 160);
     }
   });
 });

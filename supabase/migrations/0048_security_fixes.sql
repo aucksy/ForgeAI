@@ -1,3 +1,4 @@
+-- APPLIED LIVE 3 Nov 2026 (owner pressed Run in the SQL Editor; text sha256 45a4620d64a8 = b3db9314; all 6 new or replaced functions checked live).
 -- 0048: the R-286 security check fixes (2 Nov 2026, owner's yes R-287: "yes, fix security").
 -- Additive and re-runnable: one new table, two new columns, three new functions, and four existing
 -- functions replaced (each copied from its last file with only the marked changes):
