@@ -50,6 +50,7 @@ appId: com.mettleup.app
           text: "Mark .* set 1 complete"
           below:
             text: "More for Pull[- ][Uu]p"
+      - runFlow: sub-inuse-close.yaml
       - tapOn:
           text: "Skip rest"
           optional: true
@@ -106,6 +107,7 @@ appId: com.mettleup.app
     visible: "New record.*"
     timeout: 3000
 - takeScreenshot: 60-most-reps-record
+- runFlow: sub-inuse-close.yaml
 # D7: 40 reps may be 3x or more the member's best, so the row may ask "40 reps — that's …×
 # your best. Keep it?" (already saved; it never refuses). It is on purpose: Keep.
 - tapOn:

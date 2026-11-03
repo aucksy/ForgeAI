@@ -208,6 +208,7 @@ appId: com.mettleup.app
 - tapOn:
     text: 'Mark .* set 1 complete'
     index: 0
+- runFlow: sub-inuse-close.yaml
 - takeScreenshot: 08-first-set-ticked-rest-running
 # D8, 0.56.1 (Google Play policy: no USE_EXACT_ALARM): run-device-qa.sh allows "Alarms & reminders"
 # before every flow (a member who said yes), so with exact alarms on the first rest must NOT ask
@@ -234,6 +235,7 @@ appId: com.mettleup.app
     visible: "New record.*"
     timeout: 3000
 - takeScreenshot: 09-new-record
+- runFlow: sub-inuse-close.yaml
 # D7: 300 kg is ~4x the demo bench best (72.5 kg), so the row asks "300 kg — that's 4× your
 # best. Keep it?" under the set (already saved; it never refuses). It is on purpose: Keep.
 - tapOn:

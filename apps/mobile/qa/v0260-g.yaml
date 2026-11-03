@@ -390,6 +390,7 @@ appId: com.mettleup.app
     timeout: 1500
 - assertNotVisible: "New record.*"
 - takeScreenshot: 101-easy-no-record
+- runFlow: sub-inuse-close.yaml
 # D7: 300 kg may be 2.5x or more this lift's best, so the row may ask "… Keep it?" (already
 # saved; it never refuses). It is on purpose: Keep.
 - tapOn:

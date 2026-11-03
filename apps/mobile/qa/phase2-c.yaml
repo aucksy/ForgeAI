@@ -168,6 +168,7 @@ appId: com.mettleup.app
     text: "Mark .* set 1 complete"
     below:
       text: "More for Pull[- ][Uu]p"
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Skip rest"
     optional: true

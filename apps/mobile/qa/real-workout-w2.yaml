@@ -58,6 +58,7 @@ appId: com.mettleup.app
     text: 'Mark .*Bench Press warm-up 1 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000

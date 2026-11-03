@@ -89,6 +89,7 @@ appId: com.mettleup.app
     below:
       text: "More for Treadmill Run"
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - takeScreenshot: 72-sprint-no-record
 - tapOn:
     text: "Skip rest"
@@ -115,6 +116,7 @@ appId: com.mettleup.app
     visible: 'New record.*Best pace.*'
     timeout: 3000
 - takeScreenshot: 73-best-pace-record
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Skip rest"
     optional: true

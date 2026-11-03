@@ -1,0 +1,26 @@
+# Copied for the phone-conditions run (run-conditions.sh) from sub-inuse-close.yaml, so a change to the
+# phone test parts never moves these flows. Same behaviour.
+# Sub-flow (called with runFlow; not a part of its own): right after a set's tick, close the "In use"
+# screen if it opened, and do nothing when it did not.
+#   - runFlow: sub-inuse-close.yaml
+# R-304/R-307 (3 Nov 2026): In use opens BY ITSELF 0.3 s after a rest starts, when the ticked exercise
+# is on a machine, cable, barbell or a dumbbell bench move AND it still has an open working set. It is
+# a full-screen pop-up: a tap anywhere on it only closes it, so the flow's next tap ("Skip rest", the
+# next row, Finish) would land on it and do nothing else. Android Back closes it (its onRequestClose),
+# exactly as the member's own "I'm back". The rest keeps running, as for the member.
+# It waits up to 2 s for it (it opens 0.3 s after the tick; a slow cloud phone needs the margin).
+# The UAT part (uat-rel-4-workout.yaml) checks the screen itself; this only gets it out of the way.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 2000
+    optional: true
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - back
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000

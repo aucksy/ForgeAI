@@ -228,6 +228,7 @@ appId: com.mettleup.app
     text: "Mark .*Skull ?[Cc]rusher set 1 complete"
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Skip rest"
     optional: true

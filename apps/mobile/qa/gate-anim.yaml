@@ -36,6 +36,7 @@ appId: com.mettleup.app
     text: 'Mark .* set 1 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 10000
@@ -57,6 +58,7 @@ appId: com.mettleup.app
     visible: "New record.*"
     timeout: 5000
 - takeScreenshot: anim-05-new-record
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: 'Keep 300.*'
     optional: true

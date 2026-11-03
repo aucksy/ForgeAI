@@ -15,5 +15,6 @@ appId: com.mettleup.app
 - tapOn:
     text: 'Mark .* set 2 complete'
     index: 0
+- runFlow: sub-inuse-close.yaml
 - assertVisible: "Skip rest"
 - takeScreenshot: gate-second-rest-running

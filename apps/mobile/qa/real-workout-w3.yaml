@@ -25,6 +25,7 @@ appId: com.mettleup.app
     text: 'Mark .*Bench Press warm-up 2 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000
@@ -44,6 +45,7 @@ appId: com.mettleup.app
 # 15 Oct 2026 (owner): RPE is its own sheet; ONE tap saves it and closes it — no ✓ "Done".
 - assertNotVisible: "^Done$"
 - tapOn: "RPE 8: .*"
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     notVisible: "How hard was it\\? \\(RPE\\)"
     timeout: 5000
@@ -92,6 +94,7 @@ appId: com.mettleup.app
     text: 'Mark .*Bench Press drop set 2 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000
@@ -118,6 +121,7 @@ appId: com.mettleup.app
     text: 'Mark .*Bench Press set 3 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000
@@ -158,6 +162,7 @@ appId: com.mettleup.app
     visible: "New record.*"
     timeout: 4000
 - takeScreenshot: w-36-heavier-set-record
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Skip rest"
     optional: true
@@ -209,6 +214,7 @@ appId: com.mettleup.app
     text: 'Mark .*Lateral Raise set 1 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 # The first exercise of the round: straight on to its partner, no rest.
 - assertNotVisible: "Skip rest"
 - takeScreenshot: w-38-superset-first-no-rest
@@ -220,6 +226,7 @@ appId: com.mettleup.app
     text: 'Mark .*Triceps.* set 1 complete'
     index: 0
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 5000

@@ -128,6 +128,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "Mark QA Bench Twin set 1 complete"
     waitToSettleTimeoutMs: 300
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Keep [0-9].*"
     optional: true
