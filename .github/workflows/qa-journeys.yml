@@ -62,6 +62,16 @@ jobs:
           find app/build/outputs/apk/release -name '*.apk' -exec cp {} "$GITHUB_WORKSPACE/qa.apk" \;
           ls -la "$GITHUB_WORKSPACE/qa.apk"
 
+      # This one runner builds the app, the admin app and then boots the emulator: twice in a day
+      # (runs 41633735599, 41654445925) the system-image download died with "No space left on
+      # device". The APK is copied out by now, so the NDK, the build folders and unused toolchains go.
+      - name: Free disk space for the emulator
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost /opt/hostedtoolcache/CodeQL || true
+          rm -rf "$ANDROID_SDK_ROOT/ndk" "$ANDROID_HOME/ndk" apps/mobile/android/app/build apps/mobile/android/build apps/mobile/android/.gradle ~/.gradle/caches || true
+          df -h / | tail -1
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
