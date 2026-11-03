@@ -421,7 +421,7 @@ function CameInCard() {
         {t('They checked in today. Ask them to renew or pay before they leave.')}
       </p>
       <div style={{ display: 'grid', gap: space.sm }}>
-        {rows.slice(0, 8).map((r) => (
+        {rows.slice(0, 5).map((r) => (
           <Row key={r.view.member.id} gap={space.md} wrap={false}>
             <Link to={`/members/${r.view.member.id}`}>
               <span style={{ display: 'flex', alignItems: 'center', gap: space.md, minHeight: TOUCH, minWidth: 0 }}>
@@ -441,9 +441,11 @@ function CameInCard() {
           </Row>
         ))}
       </div>
-      {rows.length > 8 && (
+      {rows.length > 5 && (
         <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-          {t('{n} more in the register.', { n: rows.length - 8 })}
+          <Link to="/attendance">
+            <span style={moreLink}>{t('{n} more in the register.', { n: rows.length - 5 })}</span>
+          </Link>
         </p>
       )}
       {open && (

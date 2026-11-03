@@ -15,7 +15,6 @@ import { expect, test } from '@playwright/test';
 
 import {
   addMember,
-  clockTo,
   expectFitsPhone,
   gymWithMonthlyPlan,
   MEMBERS,
@@ -100,7 +99,9 @@ for (const size of ['phone', 'computer']) {
       await expectFitsPhone(page, 'on Today');
 
       // 5. The download is its own card, never under Danger zone.
-      await openSettings(page, 'Sign-in & data');
+      // A phone goes through More; a computer has no bottom bar, so it opens the address.
+      if (size === 'phone') await openSettings(page, 'Sign-in & data');
+      else await page.goto('./#/settings/data');
       await expect(page.getByRole('heading', { name: 'Keep a copy of your data' })).toBeVisible();
       await expect(page.getByText('Not downloaded from this browser yet.')).toBeVisible();
       const copyTop = await topOf(page, 'Keep a copy of your data');
@@ -142,7 +143,10 @@ test('U2 phone: UPI ID in Settings; fee, renewal and receipt messages carry the 
   // 3. A month and more later Asha's plan has ended; both come in today.
   await addMember(page, MEMBERS.full);
   await sell(page, { received: '2000' });
-  await clockTo(page, '2026-11-26T10:00:00+05:30');
+  // Jump the clock (setSystemTime: fastForward refused this jump in CI), then run the app's
+  // one-minute check so Today becomes 26 Nov.
+  await page.clock.setSystemTime(new Date('2026-11-26T10:00:00+05:30'));
+  await page.clock.runFor(61_000);
   await open(page, 'Visits');
   const search = page.getByLabel('Type a name or the last 4 digits of a mobile');
   for (const who of ['Asha', 'Bharat']) {
