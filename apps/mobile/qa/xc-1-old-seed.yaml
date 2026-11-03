@@ -17,9 +17,29 @@ appId: com.mettleup.app
 - tapOn:
     text: "Wait"
     optional: true
+# 0.69.0 (the released side from 0.70.0 on): the intro screens come first (R-248), then the one-screen
+# start view (R-277), where "Use without an account" goes on to step 1. An older release goes straight on.
 - extendedWaitUntil:
-    visible: "Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    visible: "^Skip$|Use without an account|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
     timeout: 180000
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Use without an account|Step 1 of 3"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Use without an account"
+    commands:
+      - scrollUntilVisible:
+          element: "^Use without an account$"
+          centerElement: true
+          timeout: 20000
+      - tapOn: "^Use without an account$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 30000
 # Owner phone: the emulator can open the welcome scrolled down (a text box took focus); the
 # step label sits above the screen since 0.57.0's two links under Next (R-123). Back to the top.
 - scrollUntilVisible:
