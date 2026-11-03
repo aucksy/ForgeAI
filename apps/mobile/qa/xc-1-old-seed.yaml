@@ -115,8 +115,9 @@ appId: com.mettleup.app
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: "^Explore$"
-- tapOn: "^Explore$"
+      FIND: "^Explore$|^Find a plan$"
+# 0.70.0 renamed the Workout tab's "Explore" to "Find a plan"; both open "Build a plan".
+- tapOn: "^Explore$|^Find a plan$"
 - extendedWaitUntil:
     visible: "Build a plan"
     timeout: 20000
