@@ -1,0 +1,82 @@
+# Part UAT, flow 3 of 5: rep goals per set, grown by Settings "Weight step" (R-300/R-301/R-303/
+# R-307), and the step-back card (R-306/R-308) with machine weights on the stack's grid (R-310).
+# History (tools/make_uat_hevy.py): bench last time 60 kg x 10, 8, 6 (range 6-10, just moved up).
+#  - Standard (5 %): 24 reps -> 25: 10, 9, 6 (one goal per set, never one flat number).
+#  - Large (10 %): 24 -> 26: 10, 9, 7.
+# The Target box's spoken label is "Target <weight> · <goals>. <kg line>. Tap for why."
+# Then, with the workout started under Large (it stays open for flow 4):
+#  - Pec Deck Fly, stuck 4 workouts at 40 kg: "Stuck at 40 kg for 4 workouts. ... Try 35 kg today?"
+#    with "Try 35 kg" / "Stay at 40 kg" (never 38: R-310, an odd 38 kg is in its history);
+#  - Leg Extension, stuck 4 workouts at 45 kg: the same card for 45 -> 40 kg.
+appId: com.mettleup.app
+---
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Target 60 kg · .*Tap for why\.$'
+- assertVisible: '^Target 60 kg · 10, 9, 6\. .*'
+- takeScreenshot: rel-20-bench-goals-standard
+- assertNotVisible: '(?i).*add a set.*'
+# Leave it (the tabs), throw it away the member's way, and choose Large.
+- back
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "How the app picks your next weight"
+- extendedWaitUntil:
+    visible: '^Weight step, Standard\. Change$'
+    timeout: 15000
+- tapOn: '^Weight step, Standard\. Change$'
+- extendedWaitUntil:
+    visible: '^Large\. About 10% more each time$'
+    timeout: 10000
+- tapOn: '^Large\. About 10% more each time$'
+- extendedWaitUntil:
+    visible: '^Weight step, Large\. Change$'
+    timeout: 10000
+- takeScreenshot: rel-21-weight-step-large
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: Machine Day.*'
+    timeout: 30000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Target 60 kg · .*Tap for why\.$'
+- assertVisible: '^Target 60 kg · 10, 9, 7\. .*'
+- takeScreenshot: rel-22-bench-goals-large
+# ---------------------------------------------------------------- the step-back cards (Ask me)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Stuck at 40 kg for 4 workouts\. .*Try 35 kg today\?'
+- assertVisible: "^Try 35 kg$"
+- assertVisible: "^Stay at 40 kg$"
+- assertNotVisible: '.*\b38 kg.*'
+- takeScreenshot: rel-23-pec-deck-step-back-card
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Stuck at 45 kg for 4 workouts\. .*Try 40 kg today\?'
+- assertVisible: "^Try 40 kg$"
+- assertVisible: "^Stay at 45 kg$"
+- takeScreenshot: rel-24-leg-extension-step-back-card
+- assertNotVisible: '(?i).*add a set.*'

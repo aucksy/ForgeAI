@@ -1,0 +1,18 @@
+# Sub-flow (called with runFlow; not a part of its own): tick one set row by its spoken name, e.g.
+#   - runFlow:
+#       file: sub-uat-tick.yaml
+#       env:
+#         WHO: ".*Bench Press set 1"
+# WHO is a regex for the row ("<exercise> set <n>", SetRow's `who`), never with a backslash (it goes
+# through Maestro's ${...}). The row is centred first (owner profile: it can sit below the edge);
+# the tap does not wait for a still screen (the rest clock ticks, trap 4). No `env:` default (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark ${WHO} complete"
+- tapOn:
+    text: "Mark ${WHO} complete"
+    index: 0
+    waitToSettleTimeoutMs: 300

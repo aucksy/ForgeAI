@@ -106,12 +106,12 @@ log "exact alarms: USE_EXACT_ALARM $(adb shell dumpsys package $PKG | tr -d '\r'
 # Which parts run (qa-device.yml inputs, audit v2 phase B).
 #   QA_ONLY  (`only`):  empty = the whole phone test (A ... M, the UAT-M parts, then W). Otherwise ONLY
 #                       the parts named, comma or space separated, from the whole run's parts (OLD_PARTS
-#                       and UAT_PARTS below, in their usual order) and w, dnd, longrest, anim, mk, clip. Such a run is
+#                       and UAT_PARTS below, in their usual order) and w, dnd, longrest, anim, mk, clip, uat. Such a run is
 #                       named "(partial ...)" and never opens the release gate. A part leans on
 #                       what the parts before it left (part A's workout for b, h, h3; part J's
 #                       routines for j2, j3), so name those too; when `a` is not named, the demo
 #                       data is loaded first (gate-demo.yaml) so the other parts have data.
-#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (dnd, longrest, anim, mk, clip): dnd, clip, longrest
+#   QA_EXTRA (`extra`): opt-in parts added to a WHOLE run (dnd, longrest, anim, mk, clip, uat): dnd, clip, longrest
 #                       and anim run after part M, mk after part W. Empty = the whole run exactly as before.
 #   QA_PROFILE (`profile`): default = the emulator as it boots (411 dp, font 1.0, UTC). owner = the
 #                       owner's phone for EVERY part: ~360 dp wide (density 480), font 1.3,
@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip"
+GATE_PARTS="w dnd longrest anim mk clip uat"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1738,6 +1738,52 @@ part_clip() {
   adb logcat -d -v time 2>/dev/null | grep -i 'exercise clip' > "$OUT/clip-errors.txt" || true
   log "CLIP: $(wc -l < "$OUT/clip-errors.txt" | tr -d ' ') clip errors in the log (clip-errors.txt; the offline run may log none: it reads from the phone)"
 }
+
+# ---------------------------------------------------------------- part UAT (release UAT, opt-in)
+# The features waiting for release (PROGRESS.md, 3 Nov 2026), pressed and read as a member on a
+# fresh install with a small Hevy history made for them (tools/make_uat_hevy.py, dated from the
+# phone's own today): R-300..R-308 per-set goals by "Weight step", the step-back card (Try / Stay)
+# and "When I'm stuck at a weight"; R-310 machine weights on the 5 kg grid (35, never 38); R-298/
+# R-299/R-304/R-305/R-307 the rest bar and "In use" (by equipment, never after a last set, "Tap: In
+# use", the beat line, no over-count); R-311 the finish line and the chart label open that workout.
+# Flows qa/uat-rel-1..5.yaml in order; a failed flow stops the part (the next leans on it).
+# Evidence: qa-out/uat-release/rel-*.png, plus uat-<flow>-failed.png / -hierarchy.json on a failure.
+uat_flow() {  # $1 = name, $2 = flow file, then -e NAME=value pairs
+  local n=$1 f=$2
+  shift 2
+  free_maestro
+  log "part $n start"
+  if ! maestro test --format junit --output "$OUT/part-$n.xml" --test-output-dir "$OUT/part-$n" "$@" "$QA_DIR/$f" \
+    > "$OUT/part-$n.log" 2>&1; then
+    status=1
+    adb exec-out screencap -p > "$OUT/$n-failed.png" 2>/dev/null || true
+    timeout 60 maestro hierarchy > "$OUT/$n-hierarchy.json" 2>/dev/null || true
+    log "PART $(echo "$n" | tr '[:lower:]' '[:upper:]') FAILED ($f: part-$n.log, $n-failed.png, $n-hierarchy.json)"
+    return 1
+  fi
+  return 0
+}
+part_uat() {
+  local today lastday
+  today=$(adb shell date +%Y-%m-%d | tr -d '\r')
+  lastday=$(python3 "$QA_DIR/tools/make_uat_hevy.py" "$OUT/qa-uat-hevy.csv" --today "$today")
+  log "UAT: phone date $today; history to $lastday ($(wc -l < "$OUT/qa-uat-hevy.csv" | tr -d ' ') lines)"
+  adb shell rm -f /sdcard/Download/qa-uat-hevy.csv >/dev/null 2>&1 || true
+  push_fixture "$OUT/qa-uat-hevy.csv" /sdcard/Download/qa-uat-hevy.csv
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "downloads: $(wait_media qa-uat-hevy 1 20 downloads) UAT Hevy history file"
+  adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  uat_flow uat1 uat-rel-1-seed.yaml \
+    && uat_flow uat2 uat-rel-2-settings.yaml \
+    && uat_flow uat3 uat-rel-3-goals.yaml \
+    && uat_flow uat4 uat-rel-4-workout.yaml \
+    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
+}
+qa_runs uat && { log "gate part UAT begins"; part_uat; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

@@ -1,0 +1,29 @@
+# Sub-flow (called with runFlow; not a part of its own): after a tick, close the "In use" screen if it
+# opened (R-304: it opens by itself 0.3 s after the rest starts on machines, cables, barbells and
+# bench moves) with Back (= "I'm back"), then skip the rest, so the next row can be tapped.
+# Flows that CHECK whether In use opened do that themselves before calling this.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: 'Skip rest|In use\. .*'
+    timeout: 8000
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 2500
+    optional: true
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      # Android Back closes it (the screen's onRequestClose), wherever its "I'm back" is drawn.
+      - back
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
+- runFlow:
+    when:
+      visible: "Skip rest"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          waitToSettleTimeoutMs: 300

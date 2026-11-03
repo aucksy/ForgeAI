@@ -1,0 +1,170 @@
+# Part UAT (opt-in: only=uat or extra=uat), flow 1 of 5: the release UAT of what waits for release
+# (PROGRESS.md "Waiting for release", 3 Nov 2026). A fresh install as a member coming from Hevy,
+# bringing a small history made for these checks (tools/make_uat_hevy.py, dated from the phone's
+# own today): nine "Machine Day" workouts with a stuck Pec Deck (4 workouts at 40 kg, one odd 38 kg
+# long ago), a stuck Leg Extension (4 at 45 kg), a bench that just moved to 60 kg and a lateral
+# raise. The import's "Bring my routines in" rebuilds the routine "Machine Day"; the member follows
+# it; "Rate how hard each set felt" goes on (the very-hard step of R-310 needs effort).
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    timeout: 90000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring workouts$"
+- tapOn: "^Bring workouts$"
+- scrollUntilVisible:
+    element: "^From Hevy$"
+    centerElement: true
+    timeout: 30000
+- tapOn: "^From Hevy$"
+- extendedWaitUntil:
+    visible: "Step 1 of 3"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Step 1 of 3"
+    direction: UP
+    timeout: 20000
+- tapOn: "Your name"
+- inputText: "Aakash"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Kilograms or pounds\\?"
+    timeout: 15000
+- tapOn: "^Kilograms$"
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 20000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Step 3 of 3"
+    timeout: 15000
+- tapOn: "Build muscle"
+- scrollUntilVisible:
+    element: "Intermediate"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Intermediate"
+- scrollUntilVisible:
+    element: "Start training"
+    centerElement: true
+    timeout: 20000
+- tapOn: "Start training"
+# ---------------------------------------------------------------- the Hevy import (9 workouts)
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 60000
+- tapOn: "Choose Hevy file"
+- extendedWaitUntil:
+    visible: '(?i).*(recent|downloads|files|qa-uat).*'
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: "qa-uat-hevy.*"
+    commands:
+      - tapOn:
+          text: "Show roots"
+          optional: true
+      - tapOn:
+          text: "Downloads"
+          optional: true
+- tapOn: "qa-uat-hevy.*"
+- extendedWaitUntil:
+    visible: "^Date range$"
+    timeout: 120000
+- tapOn:
+    text: "^Merge$"
+    optional: true
+- scrollUntilVisible:
+    element: 'Import 9 workouts'
+    centerElement: true
+    timeout: 30000
+- takeScreenshot: rel-01-import-preview
+- tapOn: 'Import 9 workouts'
+- extendedWaitUntil:
+    visible: '9 workouts imported'
+    timeout: 120000
+- takeScreenshot: rel-02-imported
+- scrollUntilVisible:
+    element: "Bring my routines in"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Bring my routines in"
+- extendedWaitUntil:
+    visible: "We found 1 routine in your Hevy workouts"
+    timeout: 60000
+- takeScreenshot: rel-03-routine-found
+- tapOn: "^Check it$"
+- extendedWaitUntil:
+    visible: "1 of 1"
+    timeout: 20000
+- assertVisible: "Machine Day"
+- takeScreenshot: rel-04-routine-check
+- scrollUntilVisible:
+    element: "^Next$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Next$"
+- extendedWaitUntil:
+    visible: "Follow these as your plan\\?|routine in .*|routines in .*|Which folder.*|Open routines"
+    timeout: 20000
+- takeScreenshot: rel-05-after-check
+- runFlow:
+    when:
+      visible: "Follow these as your plan\\?"
+    commands:
+      - tapOn: "Follow them"
+- extendedWaitUntil:
+    visible: "Open routines"
+    timeout: 20000
+- tapOn: "Open routines"
+# ---------------------------------------------------------------- effort on (the very-hard step needs it)
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Rate how hard each set felt"
+- extendedWaitUntil:
+    visible: "Adds a box to each set.*"
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        text: "Rate how hard each set felt"
+        checked: false
+    commands:
+      - tapOn:
+          text: "Rate how hard each set felt"
+          checked: false
+- assertVisible:
+    text: "Rate how hard each set felt"
+    checked: true
+- back
+- back
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: Machine Day.*'
+    timeout: 30000
+- takeScreenshot: rel-06-up-next

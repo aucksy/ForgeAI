@@ -1,0 +1,49 @@
+# Part UAT, flow 2 of 5: the two Settings choices behind the new rep goals and the step back.
+#  - R-308: Settings -> More workout choices -> "When I'm stuck at a weight": a sheet with exactly
+#    three choices, Ask me (recommended, the one set), Step back by itself, Never suggest it.
+#  - R-303/R-307: Settings -> More workout choices -> How the app picks your next weight -> "Weight
+#    step" (was "Weight jumps"): Standard by default. Flow 3 reads the bench's goals under it, then
+#    under Large.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "More workout choices"
+- extendedWaitUntil:
+    visible: "^How the app picks your next weight$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^When I'm stuck at a weight$"
+- assertVisible: "^Ask me$"
+- takeScreenshot: rel-10-more-workout-choices
+- tapOn: "^When I'm stuck at a weight$"
+- extendedWaitUntil:
+    visible: '^Ask me, recommended\. The exercise card offers a lighter weight\. You choose\.$'
+    timeout: 10000
+- assertVisible: '^Step back by itself\. The app picks a lighter weight for you\.$'
+- assertVisible: '^Never suggest it\. Keep the weight and keep adding reps\.$'
+- assertVisible: 'Stuck means 4 workouts at the same weight with no progress\..*'
+- takeScreenshot: rel-11-stuck-choices
+# Ask me stays chosen (the step-back card needs it); a tap on a choice closes the sheet.
+- tapOn: '^Ask me, recommended\..*'
+- extendedWaitUntil:
+    notVisible: '^Never suggest it\..*'
+    timeout: 10000
+- assertVisible: "^Ask me$"
+- tapOn: "^How the app picks your next weight$"
+- extendedWaitUntil:
+    visible: '^Weight step, Standard\. Change$'
+    timeout: 15000
+- takeScreenshot: rel-12-weight-step-standard
+- back
+- back
+- back
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Up next: Machine Day.*'
+    timeout: 30000

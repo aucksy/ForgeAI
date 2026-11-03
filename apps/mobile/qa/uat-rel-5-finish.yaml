@@ -1,0 +1,95 @@
+# Part UAT, flow 5 of 5: R-311 (owner, 3 Nov 2026) "open a past workout".
+#  - Finish: the big card's "Last time: ... in Machine Day ..." line is a link (spoken "... Open that
+#    workout"): it opens the COMPARED workout, the last Machine Day of the history (LASTDAY, from
+#    tools/make_uat_hevy.py, e.g. "Sunday, 1 Nov 2026", 4:10).
+#  - The bench's exercise page: one tap on the chart picks a point; it STAYS after the finger lifts
+#    (and a wait); its label (chart-open-workout) opens that day's workout.
+# LASTDAY is passed by run-device-qa.sh (-e LASTDAY=...); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - takeScreenshot: rel-50-update-routine
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- assertNotVisible: '(?i).*add a set.*'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Last time: .*\. Open that workout$'
+- takeScreenshot: rel-51-finish-last-time-link
+- tapOn: '^Last time: .*\. Open that workout$'
+- extendedWaitUntil:
+    visible: "^Share$"
+    timeout: 15000
+- assertVisible: "${LASTDAY} · 04:10.*"
+- assertVisible: "Machine Day"
+- takeScreenshot: rel-52-compared-workout-opened
+# ---------------------------------------------------------------- the bench's chart (that workout's page)
+- scrollUntilVisible:
+    element: '.*Bench Press.*\. Open the exercise'
+    centerElement: true
+    timeout: 20000
+- tapOn:
+    text: '.*Bench Press.*\. Open the exercise'
+    index: 0
+- extendedWaitUntil:
+    visible: "^Summary$"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    id: "date-line-chart"
+- copyTextFrom:
+    id: "chart-readout"
+- evalScript: '${output.picked = maestro.copiedText}'
+# The point must not vanish when the finger lifts (nor a few seconds later).
+- extendedWaitUntil:
+    notVisible:
+      id: "chart-readout"
+      text: "${output.picked}"
+    timeout: 4000
+    optional: true
+- assertVisible:
+    id: "chart-readout"
+    text: "${output.picked}"
+- assertVisible:
+    id: "chart-open-workout"
+- takeScreenshot: rel-53-chart-point-stays
+- tapOn:
+    id: "chart-open-workout"
+- extendedWaitUntil:
+    visible: "^Share$"
+    timeout: 10000
+- assertVisible: '[A-Z][a-z]+day, \d{1,2} [A-Z][a-z]{2} \d{4} · \d\d:\d\d.*'
+- takeScreenshot: rel-54-chart-opened-workout
