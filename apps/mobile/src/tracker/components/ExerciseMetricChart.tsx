@@ -13,6 +13,9 @@
  * 13 Oct 2026: the History tab shows the same chart at its top. The page passes `metric` /
  * `range` and their setters, so both tabs share what the member picked (switching tabs keeps
  * them); without them the chart keeps its own choice, as before.
+ *
+ * R-311 (owner, 3 Nov 2026): the picked point's label stays and opens the workout behind it
+ * (`workoutForPoint`), on every range, "All time" too, so an old high day can be looked at.
  */
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -41,6 +44,7 @@ import {
   metricValueText,
   openingRange,
   pointsInRange,
+  workoutForPoint,
   type ChartMetric,
   type ChartRange,
 } from '@/tracker/services/exerciseChart';
@@ -67,6 +71,8 @@ export interface ExerciseMetricChartProps {
   /** The range, held by the page; absent/null = the chart's own (opening on `openingRange`). */
   range?: ChartRange | null;
   onRangeChange?: (r: ChartRange) => void;
+  /** R-311: opens a workout (its id) from the picked point's label; absent = the label is not a button. */
+  onOpenWorkout?: (sessionId: string) => void;
 }
 
 export function ExerciseMetricChart({
@@ -80,6 +86,7 @@ export function ExerciseMetricChart({
   onMetricChange,
   range: heldRange,
   onRangeChange,
+  onOpenWorkout,
 }: ExerciseMetricChartProps) {
   // F64: a machine's speed / incline / level chips join only when some set carries one.
   const metrics = useMemo(() => [...chartMetrics(shownAs), ...machineChartMetrics(history)], [shownAs, history]);
@@ -110,6 +117,16 @@ export function ExerciseMetricChart({
 
   const words = (m: ChartMetric): string => metricLabel(m, units, { shownAs, cardio });
   const shownLabel = words(metric);
+  // R-311: the picked point's label opens the workout that made the point.
+  const openPicked = onOpenWorkout
+    ? (p: { x: string; y: number }): void => {
+        const sid = workoutForPoint(metric, p, history, units, distUnit);
+        if (sid) {
+          tap();
+          onOpenWorkout(sid);
+        }
+      }
+    : undefined;
 
   return (
     <Animated.View entering={FadeInDown.duration(motion.slow).delay(80)} style={{ gap: space.md }}>
@@ -167,7 +184,11 @@ export function ExerciseMetricChart({
         {data.length > 0 ? (
           // resetKey: switching to a metric (or range) with the same numbers still clears the
           // picked point, as it clears the readout above (13 Oct 2026 audit).
-          <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect} resetKey={`${metric}|${range}`} />
+          <DateLineChart data={data} height={200} color={chart.series[0]} fillGradient yFormat={yFormat} onInspect={setInspect}
+            resetKey={`${metric}|${range}`}
+            onOpenPicked={openPicked}
+            pickedDate={(x) => tinyDateWithYear(x)}
+          />
         ) : null}
       </Card>
       <TrackerSheet visible={picking} title="Chart shows" onClose={() => setPicking(false)}>

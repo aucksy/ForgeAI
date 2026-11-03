@@ -3,6 +3,8 @@
  * big, "+45 kg more than last time" in green (a kind line when lower, never red), last time's total and
  * which workout it was. The words are `kgHero` (PURE, tested). With the comparison's exercises it
  * also opens to each one (up, down, why), as the comparison line did (R-75), so one card says it all.
+ * R-311 (owner, 3 Nov 2026): with `onOpenLast` the "Last time: ... on 15 Oct" line is a quiet link
+ * (a chevron, 44 dp tall) that opens that workout, to see what was done then.
  */
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -14,13 +16,24 @@ import type { ExerciseDelta } from '../lib/workoutCompare';
 import type { KgHero } from '../services/kgHero';
 import { DeltaRow } from './CompareNote';
 
-export function KgHeroCard({ hero, exercises, cause }: { hero: KgHero; exercises?: readonly ExerciseDelta[]; cause?: string | null }) {
+export function KgHeroCard({
+  hero,
+  exercises,
+  cause,
+  onOpenLast,
+}: {
+  hero: KgHero;
+  exercises?: readonly ExerciseDelta[];
+  cause?: string | null;
+  onOpenLast?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const rows = exercises ?? [];
+  const lastLink = hero.lastLine ? onOpenLast : undefined;
   const lineColor = hero.tone === 'up' ? color.goodText : color.inkSecondary;
   return (
     <Card style={{ gap: space.sm, borderWidth: 2, borderColor: hero.tone === 'up' ? color.goodText : color.border }}>
-      <View accessible accessibilityRole="header" accessibilityLabel={`${hero.label}: ${hero.big}. ${hero.line}${hero.lastLine ? ` ${hero.lastLine}.` : ''}`}>
+      <View accessible accessibilityRole="header" accessibilityLabel={`${hero.label}: ${hero.big}. ${hero.line}${hero.lastLine && !lastLink ? ` ${hero.lastLine}.` : ''}`}>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkMuted }}>{hero.label}</Text>
         <Text
           numberOfLines={1}
@@ -31,10 +44,23 @@ export function KgHeroCard({ hero, exercises, cause }: { hero: KgHero; exercises
           {hero.big}
         </Text>
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: lineColor, marginTop: space.xs }}>{hero.line}</Text>
-        {hero.lastLine ? (
+        {hero.lastLine && !lastLink ? (
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: 2 }}>{hero.lastLine}</Text>
         ) : null}
       </View>
+      {hero.lastLine && lastLink ? (
+        // R-311: last time's line opens that workout.
+        <Pressable
+          onPress={lastLink}
+          accessibilityRole="link"
+          accessibilityLabel={`${hero.lastLine}. Open that workout`} // member-words
+          hitSlop={4}
+          style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 44, marginTop: -space.xs, opacity: pressed ? 0.6 : 1 })}
+        >
+          <Text style={{ flex: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted }}>{hero.lastLine}</Text>
+          <Icon name="chevron-right" size={18} color={color.inkMuted} />
+        </Pressable>
+      ) : null}
       {rows.length > 0 ? (
         <>
           <Pressable

@@ -327,6 +327,39 @@ export function bestPerDay(m: ChartMetric, points: readonly { x: string; y: numb
   return [...best.entries()].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([x, y]) => ({ x, y }));
 }
 
+/**
+ * R-311 (owner, 3 Nov 2026: "I want to jump to that session and see why and how I did so much"):
+ * the workout behind a picked chart point. The chart keeps one point per day (`bestPerDay`), so the
+ * day's workouts are read again: the one whose own number IS the point, else the day's best for the
+ * chip (the least help for an assisted lift). For "Best set" (counted elsewhere) the day's workout
+ * with the biggest weight x reps set. Any workout of that day when none has a number (an easy week);
+ * null when no workout is on that day. PURE.
+ */
+export function workoutForPoint(
+  m: ChartMetric,
+  point: { x: string; y: number },
+  history: readonly ExerciseHistoryEntry[],
+  units: UnitSystem,
+  distUnit: DistUnit,
+): string | null {
+  const day = history.filter((h) => h.dateISO === point.x);
+  if (day.length === 0) return null;
+  const lowerIsBetter = m === 'leastHelp';
+  let best: { id: string; y: number } | null = null;
+  for (const h of day) {
+    let y: number | undefined;
+    if (m === 'bestSet') {
+      y = h.sets.length > 0 ? maxOf(h.sets.map((s) => Math.max(0, s.weightKg) * Math.max(0, s.reps))) : undefined;
+    } else {
+      y = metricSeries(m, [h], [], units, distUnit)[0]?.y;
+      if (y != null && Math.abs(y - point.y) < 1e-6) return h.sessionId;
+    }
+    if (y == null || !Number.isFinite(y)) continue;
+    if (!best || (lowerIsBetter ? y < best.y : y > best.y)) best = { id: h.sessionId, y };
+  }
+  return best?.id ?? day[0].sessionId;
+}
+
 /** The first day a range shows (null = all time). PURE. */
 export function rangeStart(range: ChartRange, today: string): string | null {
   if (range === '3m') return addDays(today, -90);

@@ -109,7 +109,7 @@ export default function FinishScreen() {
   const [note, setNote] = useState<Pick<CoachNote, 'text' | 'exercises' | 'cause' | 'source'> | null>(null);
   // R-147: the big "kg lifted vs last time" card and the exercises it opens to (kept when the AI
   // note replaces the line).
-  const [hero, setHero] = useState<Pick<CoachNote, 'hero' | 'exercises' | 'cause'> | null>(null);
+  const [hero, setHero] = useState<Pick<CoachNote, 'hero' | 'exercises' | 'cause' | 'againstId'> | null>(null);
   const [sharing, setSharing] = useState(false);
   const [routineLine, setRoutineLine] = useState<string | null>(null);
   // Backlog (21 Oct): no routines yet and an empty workout -> one quiet "Save as routine" button.
@@ -138,7 +138,7 @@ export default function FinishScreen() {
             setData(d);
             if (n) {
               setNote(n);
-              setHero({ hero: n.hero, exercises: n.exercises, cause: n.cause });
+              setHero({ hero: n.hero, exercises: n.exercises, cause: n.cause, againstId: n.againstId ?? null });
             }
             setLoading(false);
           }
@@ -260,6 +260,11 @@ export default function FinishScreen() {
   const comparison = data ? volumeComparison(data.totalVolumeKg) : null;
   // R-147: the big card compares with last time (it then holds the exercise list).
   const heroCompared = hero?.hero != null && hero.hero.tone !== 'first';
+  // R-311 (owner, 3 Nov 2026): the line naming last time's workout opens it, to see what was done then.
+  const lastId = hero?.againstId ?? null;
+  const openLast = lastId ? () => router.push({ pathname: '/session/[id]', params: { id: lastId } }) : undefined;
+  // The AI note compares in its own way; only the engine's line is about that workout.
+  const noteOpensLast = note?.source === 'engine';
 
   const sharingText = useRef(false);
   const shareText = (title: string, getText: () => string): void => {
@@ -280,7 +285,7 @@ export default function FinishScreen() {
       ) : data ? (
         <View style={{ gap: space.lg }}>
           {/* R-147: kg lifted today against last time, the screen's headline. */}
-          {hero?.hero ? <KgHeroCard hero={hero.hero} exercises={heroCompared ? hero.exercises : undefined} cause={hero.cause} /> : null}
+          {hero?.hero ? <KgHeroCard hero={hero.hero} exercises={heroCompared ? hero.exercises : undefined} cause={hero.cause} onOpenLast={openLast} /> : null}
 
           <HeroCard gradient={gradients.ember}>
             {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole
@@ -325,7 +330,7 @@ export default function FinishScreen() {
           {/* R-147: the big card already says the engine's comparison; the line stays for an easy week,
               the AI note, or a comparison the card could not make. */}
           {note?.text && !(note.source === 'engine' && heroCompared && !data.easyWeek) ? (
-            <CompareNote text={note.text} exercises={heroCompared ? undefined : note.exercises} cause={note.cause} />
+            <CompareNote text={note.text} exercises={heroCompared ? undefined : note.exercises} cause={note.cause} onOpenLast={noteOpensLast ? openLast : undefined} />
           ) : null}
 
           {routineLine ? (

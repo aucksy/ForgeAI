@@ -114,12 +114,24 @@ export const TAP_MAX_MS = 250;
  *    = "put it away"); a finger held on it and lifted keeps it (audit B6);
  *  - a tap on another point picks that one, and it STAYS after the finger lifts;
  *  - a touch another view TOOK (`taken`: the page scrolled under the finger) leaves what was
- *    picked before it — never a point the finger only brushed on its way to scroll (audit B4).
+ *    picked before it — never a point the finger only brushed on its way to scroll (audit B4);
+ *  - R-311 (owner, 3 Nov 2026: "when I tap and lift my finger off, that kg amount pop up goes away"):
+ *    a touch the page took although the page did NOT move (`scrolled: false`, a tap whose finger
+ *    wobbled past the phone's scroll slop) is a tap after all, so the point it landed on stays.
  * `before`: picked when the finger went down; `at`: the point under it then; `heldMs`: how long it
  * was down (absent = a tap). PURE.
  */
-export function chartTap(t: { before: number | null; at: number | null; moved: boolean; outside: boolean; now: number | null; heldMs?: number; taken?: boolean }): number | null {
-  if (t.taken) return t.before;
+export function chartTap(t: {
+  before: number | null;
+  at: number | null;
+  moved: boolean;
+  outside: boolean;
+  now: number | null;
+  heldMs?: number;
+  taken?: boolean;
+  scrolled?: boolean;
+}): number | null {
+  if (t.taken && t.scrolled !== false) return t.before;
   if (t.outside) return null;
   if (t.moved) return t.now;
   if (t.at == null) return t.before;

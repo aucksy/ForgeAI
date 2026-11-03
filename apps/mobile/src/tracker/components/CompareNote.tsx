@@ -3,6 +3,8 @@
  * went up, which went down, and the main reason ("2 sets fewer"). "Let this be collapsible ...
  * show the arrow on the right hand side". Starts shut; the chevron on the right turns when open.
  * Member words: never "volume", "PR" or "session".
+ * R-311 (owner, 3 Nov 2026): with `onOpenLast` a quiet "See that workout" link under the line opens
+ * the workout it compares with.
  */
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -40,15 +42,35 @@ export function CompareNote({
   text,
   exercises,
   cause,
+  onOpenLast,
 }: {
   text: string;
   exercises?: readonly ExerciseDelta[];
   cause?: string | null;
+  onOpenLast?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const line = <Text style={{ fontFamily: type.body, fontSize: type.size.body, color: color.ink, lineHeight: 21 }}>{text}</Text>;
   const rows = exercises ?? [];
-  if (rows.length === 0) return <Card>{line}</Card>;
+  const link = onOpenLast ? (
+    <Pressable
+      onPress={onOpenLast}
+      accessibilityRole="link"
+      accessibilityLabel="See the workout this is compared with" // member-words
+      hitSlop={4}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: 44, opacity: pressed ? 0.6 : 1 })}
+    >
+      <Text style={{ flex: 1, fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{'See that workout' /* member-words */}</Text>
+      <Icon name="chevron-right" size={20} color={color.inkMuted} />
+    </Pressable>
+  ) : null;
+  if (rows.length === 0)
+    return (
+      <Card style={link ? { gap: space.xs } : undefined}>
+        {line}
+        {link}
+      </Card>
+    );
   return (
     <Card style={{ gap: space.sm }}>
       <Pressable
@@ -79,6 +101,7 @@ export function CompareNote({
           ))}
         </View>
       ) : null}
+      {link}
     </Card>
   );
 }

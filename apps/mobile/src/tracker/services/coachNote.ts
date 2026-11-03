@@ -121,6 +121,8 @@ export interface CoachNote {
   cause?: string | null;
   /** R-147: the finish screen's big "kg lifted vs last time" card (null = no card). */
   hero?: KgHero | null;
+  /** R-311 (owner, 3 Nov 2026): the id of the workout compared with, so its line opens it (null = none). */
+  againstId?: string | null;
 }
 
 /** R-75: a workout's exercises as the comparison reads them (warm-ups out). PURE. */
@@ -207,12 +209,13 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
     units,
     data.easyWeek,
   );
-  if (!text || !cmp || data.easyWeek) return { text, source: 'engine', hero };
+  const againstId = cmp?.detail.id ?? null;
+  if (!text || !cmp || data.easyWeek) return { text, source: 'engine', hero, againstId };
   const exercises = exerciseDeltas(compareExercises(data.session), compareExercises(cmp.detail), (kg) => fmtW(kg, units));
   // "About the same" in the line: no "Mostly …" under it (review nit).
   const moved = data.totalVolumeKg - cmp.detail.totalVolumeKg;
   const cause = cmp.detail.totalVolumeKg > 0 && Math.abs(moved) / cmp.detail.totalVolumeKg >= 0.05 ? mainCause(exercises, moved) : null;
-  return { text, source: 'engine', exercises, cause, hero };
+  return { text, source: 'engine', exercises, cause, hero, againstId };
 }
 
 /** Compact, grounded fact sheet handed to Groq — only real numbers, no prose. */

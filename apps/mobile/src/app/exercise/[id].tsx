@@ -463,6 +463,7 @@ export default function ExerciseScreen() {
                       onMetricChange={setChartMetric}
                       range={chartRange}
                       onRangeChange={setChartRange}
+                      onOpenWorkout={openSession}
                     />
                     {/* F57: "Strength level: …" under the chart (main lifts only) */}
                     {strengthLine}
@@ -505,6 +506,7 @@ export default function ExerciseScreen() {
                     onMetricChange={setChartMetric}
                     range={chartRange}
                     onRangeChange={setChartRange}
+                    onOpenWorkout={openSession}
                   />
                   ) : null}
                   {hasHistory ? strengthLine : null}

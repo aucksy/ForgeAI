@@ -15,12 +15,19 @@
  * the scroll view) leaves the chart as it was before the touch (B4); a finger HELD on the picked
  * point and lifted keeps it — only a short tap puts it away (B6); `resetKey` (what the chart shows)
  * clears the pick when the member switches between two metrics with identical numbers (B10).
+ *
+ * R-311 (owner, 3 Nov 2026: the kg pop-up still went away when his finger lifted, and he wants to
+ * tap it to jump to that workout, "very, very crucial"): a touch the page took while the page did
+ * not actually move (a tap whose finger wobbled past the phone's scroll slop) is a tap after all,
+ * so the point stays (`scrolled: false` in `chartTap`). With `onOpenPicked` the picked point's label
+ * is a button (at least 44 dp tall, a chevron) that opens the workout behind the point.
  */
 import { useEffect, useId, useRef, useState } from 'react';
-import { Text as RNText, View } from 'react-native';
+import { Pressable, Text as RNText, View } from 'react-native';
 import type { GestureResponderEvent } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient as SvgGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
+import { Icon } from '@/components/ui';
 import { AXIS_FONT, areaPath, monotonePath, niceTicks, padDomain, r2, xLabel } from '@/components/charts/util';
 import { clamp, fmtCompact } from '@/lib/format';
 import { chart, color as palette, radius, type } from '@/theme/tokens';
@@ -53,6 +60,13 @@ export interface DateLineChartProps {
    * new points equal the old ones (13 Oct 2026 audit).
    */
   resetKey?: string;
+  /**
+   * R-311 (owner, 3 Nov 2026): makes the picked point's label a button that calls this with the
+   * point (the screen opens the workout behind it). Absent = the label is only a label.
+   */
+  onOpenPicked?: (p: { x: string; y: number }) => void;
+  /** How the picked point's day reads (default `xLabel`, "12 Mar"); the exercise chart adds the year. */
+  pickedDate?: (x: string) => string;
 }
 
 const PAD_L = 40;
@@ -60,9 +74,23 @@ const PAD_R = 12;
 const PAD_T = 16;
 const PAD_B = 20;
 
-export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect, resetKey }: DateLineChartProps) {
+export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect, resetKey, onOpenPicked, pickedDate }: DateLineChartProps) {
   const [w, setW] = useState(0);
   const [active, setActive] = useState<number | null>(null);
+  // R-311: the picked index for the delayed "did the page really scroll?" check, and the chart's
+  // own view, measured on the window to tell.
+  const activeRef = useRef<number | null>(null);
+  activeRef.current = active;
+  const viewRef = useRef<View>(null);
+  const alive = useRef(true);
+  useEffect(
+    () => () => {
+      alive.current = false;
+    },
+    [],
+  );
+  // The label's own width, so it centres on the point and never leaves the chart.
+  const [tipW, setTipW] = useState(98);
   const gradId = `dl${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const stroke = color ?? chart.series[0];
@@ -87,9 +115,10 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
   }, [dataKey]);
 
   // One touch: where and when it went down, which point was picked then, and whether it dragged.
-  const touch = useRef<{ startIdx: number | null; before: number | null; moved: boolean; outside: boolean; downAt: number } | null>(null);
+  const touch = useRef<{ startIdx: number | null; before: number | null; moved: boolean; outside: boolean; downAt: number; winY?: number } | null>(null);
   const pick = (idx: number | null) => {
     if (!onInspect) return;
+    activeRef.current = idx;
     setActive(idx);
     onInspect(idx == null ? null : data[idx] ?? null);
   };
@@ -98,7 +127,12 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     const { locationX } = e.nativeEvent;
     const outside = locationX < PAD_L - 4 || locationX > w - PAD_R + 4;
     const idx = outside ? null : nearestIndex(xs, locationX);
-    touch.current = { startIdx: idx != null && idx >= 0 ? idx : null, before: active, moved: false, outside, downAt: Date.now() };
+    const t: NonNullable<typeof touch.current> = { startIdx: idx != null && idx >= 0 ? idx : null, before: active, moved: false, outside, downAt: Date.now() };
+    touch.current = t;
+    // R-311: where the chart sits on the screen now, to tell later whether the page really scrolled.
+    viewRef.current?.measureInWindow((_x, y) => {
+      t.winY = y;
+    });
     // A finger on a new point shows it at once (it stays after the finger lifts).
     if (!outside && idx != null && idx >= 0 && idx !== active) pick(idx);
   };
@@ -117,13 +151,27 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     if (next !== active) pick(next);
   };
   // Another view took the touch (the page scrolled under the finger): back to what was picked
-  // before it went down — the point it brushed on the way is not a pick.
+  // before it went down — the point it brushed on the way is not a pick. R-311: unless the page did
+  // not move after all (a wobbly tap): a moment later the chart checks where it sits on the screen.
   const onTaken = () => {
     const t = touch.current;
     touch.current = null;
     if (!onInspect || !t) return;
-    const next = chartTap({ before: t.before, at: t.startIdx, moved: t.moved, outside: t.outside, now: active, taken: true });
-    if (next !== active) pick(next);
+    const heldMs = Date.now() - t.downAt;
+    const settle = (scrolled: boolean) => {
+      if (!alive.current || touch.current) return;
+      const now = activeRef.current;
+      const next = chartTap({ before: t.before, at: t.startIdx, moved: t.moved, outside: t.outside, now, heldMs, taken: true, scrolled });
+      if (next !== now) pick(next);
+    };
+    setTimeout(() => {
+      const v = viewRef.current;
+      if (!v || t.winY == null) {
+        settle(true);
+        return;
+      }
+      v.measureInWindow((_x, y) => settle(Math.abs(y - (t.winY ?? y)) > 3));
+    }, 150);
   };
 
   const body = (() => {
@@ -228,7 +276,42 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
           ) : null}
         </Svg>
 
-        {activePt && activeDatum ? (
+        {activePt && activeDatum && onOpenPicked ? (
+          // R-311: the label stays and is a button: it opens the workout behind the point.
+          <Pressable
+            testID="chart-open-workout"
+            onLayout={(e) => setTipW(e.nativeEvent.layout.width)}
+            onPress={() => onOpenPicked(activeDatum)}
+            accessibilityRole="button"
+            accessibilityLabel={`Open the workout from ${(pickedDate ?? xLabel)(activeDatum.x)}. ${fmt(activeDatum.y)}`} // member-words
+            hitSlop={6}
+            style={({ pressed }) => ({
+              position: 'absolute',
+              top: 0,
+              left: clamp(activePt.x - tipW / 2, 2, Math.max(2, w - tipW - 2)),
+              minHeight: 44,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              backgroundColor: palette.surfaceRaised,
+              borderWidth: 1,
+              borderColor: palette.accent,
+              borderRadius: radius.sm,
+              paddingLeft: 10,
+              paddingRight: 6,
+              paddingVertical: 4,
+              opacity: pressed ? 0.7 : 1,
+            })}
+          >
+            <View style={{ alignItems: 'flex-start' }}>
+              <RNText style={{ fontFamily: type.monoBold, fontSize: type.size.sub, color: palette.ink }}>{fmt(activeDatum.y)}</RNText>
+              <RNText style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: palette.inkMuted }}>
+                {(pickedDate ?? xLabel)(activeDatum.x)}
+              </RNText>
+            </View>
+            <Icon name="chevron-right" size={18} color={palette.accent} />
+          </Pressable>
+        ) : activePt && activeDatum ? (
           <View
             pointerEvents="none"
             style={{
@@ -258,6 +341,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
   return (
     <View
       testID="date-line-chart"
+      ref={viewRef}
       style={{ width: '100%', height }}
       onLayout={(e) => setW(e.nativeEvent.layout.width)}
       onStartShouldSetResponder={() => Boolean(onInspect)}
