@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-298. Hide the red "rest over" counter; keep the quiet long-rest rule — 3 Nov 2026
+
+He said: when the rest ends he just starts the next set without telling the app, so the red count-up keeps going and looks like he is resting longer. He does not think members need to see it, and members must not do any extra task beyond ticking the set. Also: be his product expert and give an opinion on every request (saved as a preference + global CLAUDE.md rule 7).
+
+Checked: the long-rest rule (F73) never uses the red counter. It measures tick to tick minus about 3 s a rep (15-60 s), marks a set only past 2x the planned rest AND 90 s over it, and then only stops the goal going up (never lowers it, never asks anything). My view: agree, remove the red counter row (and its Hide button); keep the quiet rule. Build in the next batch, after 0.70.0 ships (a code change now would restart the 2-hour phone tests).
+
 ## R-297. Watch: dim, then wake on a wrist raise, like Pixel's own workouts; and the Jaipur gym email — 3 Nov 2026
 
 He asked: during a workout the watch screen should not turn off. Like a workout started in the Pixel Watch's own app, it goes dim and lights up again when he looks at the watch. Put it in the backlog, build after the gym email. Checked: R-166 ambient mode works only when the watch's Always-on screen setting is on; with it off the watch falls back to the watch face. Added F191 (Planned).
