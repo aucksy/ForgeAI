@@ -12,7 +12,7 @@
  */
 
 import { validateE164 } from '../../logic/members';
-import { receiptMessage } from '../../logic/whatsapp';
+import { messageGym, receiptMessage } from '../../logic/whatsapp';
 import { whatsAppHref } from '../../shop/invite';
 import { useMemo } from 'react';
 
@@ -39,7 +39,7 @@ const SERIF = "'Manrope', system-ui, sans-serif";
 const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
 export function ReceiptScreen({ paymentId }: { paymentId: string }) {
-  const { snapshot, today, desk } = useCrm();
+  const { snapshot, today, desk, allMemberViews } = useCrm();
   // Review MUST 1: an online save that got no answer: its number is sure only once it is sent.
   const unconfirmed = desk?.unconfirmedIds.includes(paymentId) ?? false;
   const { offline } = useOffline();
@@ -64,8 +64,10 @@ export function ReceiptScreen({ paymentId }: { paymentId: string }) {
     const payment = snapshot.payments.find((p) => p.id === paymentId);
     const member = payment ? snapshot.members.find((m) => m.id === payment.memberId) : undefined;
     if (!payment || !member || payment.voided || !validateE164(member.phone)) return null;
-    return whatsAppHref(receiptMessage(payment, member.fullName, snapshot.gym), member.phone);
-  }, [snapshot, paymentId]);
+    // Launch audit 3 Nov 2026: what is still owed, so a part payment's receipt carries the UPI pay link.
+    const stillDueP = allMemberViews.find((v) => v.member.id === member.id)?.outstandingP ?? 0;
+    return whatsAppHref(receiptMessage(payment, member.fullName, messageGym(snapshot), stillDueP), member.phone);
+  }, [snapshot, paymentId, allMemberViews]);
 
   if (!doc) {
     return (

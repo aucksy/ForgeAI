@@ -24,6 +24,7 @@ import { isStartLink, START_PROMISE } from '../logic/trial';
 import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
+import { SupportLine } from './SupportLine';
 
 export function Welcome() {
   // R-97: the direct sign-up link (https://app.mettleup.fit/start) puts "Start my gym" first.
@@ -209,6 +210,9 @@ export function Welcome() {
             </div>
           )}
         </Card>
+
+        {/* Launch audit 3 Nov 2026: a locked-out owner can reach MettleUp from the first screen. */}
+        <SupportLine center />
       </div>
     </div>
   );

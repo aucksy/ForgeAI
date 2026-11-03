@@ -52,7 +52,7 @@ import {
 } from '../logic/messageTemplates';
 import { countOf } from '../logic/plural';
 import { browserStore, messageSignature, queueList, readDone } from '../logic/sendQueue';
-import { buildMessage, signLine } from '../logic/whatsapp';
+import { buildMessage, messageGym, signLine } from '../logic/whatsapp';
 import { useCrm } from '../store';
 import type { MemberView } from '../types';
 import { LanguagePicker, useMessageLang } from '../ui/MessageLanguage';
@@ -222,8 +222,8 @@ export function MessagesSection({ startWith }: { startWith?: string }) {
   const doneHere = queuePeople.filter((v) => remembered.has(v.member.id)).length;
 
   const textFor = useCallback(
-    (v: MemberView) => (personal ? buildMessage(personal.waKind, v, snapshot.gym, today, lang) : waText),
-    [personal, snapshot.gym, today, lang, waText],
+    (v: MemberView) => (personal ? buildMessage(personal.waKind, v, messageGym(snapshot), today, lang) : waText),
+    [personal, snapshot, today, lang, waText],
   );
 
   // ------------------------------------------------ actions

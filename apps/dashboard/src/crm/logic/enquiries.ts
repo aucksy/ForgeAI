@@ -10,7 +10,71 @@
 import { firstName } from '../shop/invite';
 import { addDays, isValidDateISO, type DateISO } from './dates';
 import { DEFAULT_DIAL_CODE, normalizeName, normalizePhone } from './members';
-import type { Enquiry, EnquiryDraft } from '../types';
+import type { Enquiry, EnquiryDraft, EnquiryLostReason, EnquirySource } from '../types';
+
+// ---------------------------------------------------------------- where they heard, why lost
+
+/** Launch audit 3 Nov 2026 (owner side #8): where the person heard about the gym. */
+export const ENQUIRY_SOURCES: readonly { value: EnquirySource; label: string }[] = [
+  { value: 'walk-in', label: 'Walk-in' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'friend', label: 'Friend' },
+  { value: 'google', label: 'Google' },
+  { value: 'justdial', label: 'Justdial' },
+  { value: 'other', label: 'Other' },
+];
+
+/** Why someone did not join. */
+export const LOST_REASONS: readonly { value: EnquiryLostReason; label: string }[] = [
+  { value: 'price', label: 'Price too high' },
+  { value: 'distance', label: 'Too far' },
+  { value: 'timings', label: 'Timings do not suit' },
+  { value: 'other-gym', label: 'Joined another gym' },
+  { value: 'just-asking', label: 'Was only asking' },
+  { value: 'other', label: 'Other' },
+];
+
+export function sourceLabel(s: EnquirySource | null | undefined): string | null {
+  return ENQUIRY_SOURCES.find((x) => x.value === s)?.label ?? null;
+}
+
+export function lostReasonLabel(r: EnquiryLostReason | null | undefined): string | null {
+  return LOST_REASONS.find((x) => x.value === r)?.label ?? null;
+}
+
+/** A typed or picked source, or null for "not asked" / anything unknown. PURE. */
+export function asSource(v: string | null | undefined): EnquirySource | null {
+  return ENQUIRY_SOURCES.some((x) => x.value === v) ? (v as EnquirySource) : null;
+}
+
+export function asLostReason(v: string | null | undefined): EnquiryLostReason | null {
+  return LOST_REASONS.some((x) => x.value === v) ? (v as EnquiryLostReason) : null;
+}
+
+export interface SourceRow {
+  source: EnquirySource;
+  label: string;
+  total: number;
+  joined: number;
+}
+
+/**
+ * How many enquiries came from each source and how many of them joined, biggest source first.
+ * Only enquiries with a source count; sources nobody named are left out. PURE.
+ */
+export function joinedBySource(list: readonly Enquiry[]): SourceRow[] {
+  const rows: SourceRow[] = [];
+  for (const s of ENQUIRY_SOURCES) {
+    const mine = list.filter((e) => e.source === s.value);
+    if (mine.length) rows.push({ source: s.value, label: s.label, total: mine.length, joined: mine.filter((e) => e.status === 'joined').length });
+  }
+  return rows.sort((a, b) => b.total - a.total || b.joined - a.joined);
+}
+
+/** "Instagram: 2 of 5 joined (40%)". PURE. */
+export function sourceRowWords(r: SourceRow): string {
+  return `${r.label}: ${r.joined} of ${r.total} joined (${Math.round((r.joined / r.total) * 100)}%)`;
+}
 
 // ---------------------------------------------------------------- buckets
 

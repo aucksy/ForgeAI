@@ -151,6 +151,18 @@ jobs:
           # The folder's name starts with a dot: without this nothing was ever uploaded (17 Oct 2026).
           include-hidden-files: true
 
+      # Owner rule R-314 (3 Nov 2026): UAT pictures of every changed owner screen, phone and computer,
+      # for a person to read (e2e/launch-uat.spec.mjs writes them). Kept whether the run passed or not.
+      - name: Admin journeys - UAT pictures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-uat-pictures
+          path: apps/dashboard/e2e/.results/uat
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+
   # Audit toolkit pick 6 (15 Oct 2026): every migration applied, in order, to a throw-away local
   # Supabase. Then the security check (RLS on, fixed search paths, the exact list of functions
   # callable without signing in, gym A never reads gym B) and the feature tests must all pass.

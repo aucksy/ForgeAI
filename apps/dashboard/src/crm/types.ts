@@ -308,11 +308,24 @@ export interface Enquiry extends GymScoped {
   followUpOn: DateISO | null;
   status: 'open' | 'joined' | 'lost';
   memberId: string | null;
+  /**
+   * Launch audit 3 Nov 2026 (owner side #8): where they heard about the gym, when the desk asked.
+   * Optional; an older enquiry has none. Kept on the enquiry record (JSON), no database change.
+   */
+  source?: EnquirySource | null;
+  /** Launch audit 3 Nov 2026: why they did not join, when the desk knows. Only on a lost enquiry. */
+  lostReason?: EnquiryLostReason | null;
   createdAt: number;
   updatedAt: number;
 }
 
-export type EnquiryDraft = Pick<Enquiry, 'name' | 'phone' | 'interest' | 'followUpOn'> & { requestId?: string | null };
+export type EnquirySource = 'walk-in' | 'instagram' | 'friend' | 'google' | 'justdial' | 'other';
+export type EnquiryLostReason = 'price' | 'distance' | 'timings' | 'other-gym' | 'just-asking' | 'other';
+
+export type EnquiryDraft = Pick<Enquiry, 'name' | 'phone' | 'interest' | 'followUpOn'> & {
+  requestId?: string | null;
+  source?: EnquirySource | null;
+};
 
 export type ExpenseCategory = 'rent' | 'salary' | 'electricity' | 'equipment' | 'stock' | 'repairs' | 'other';
 

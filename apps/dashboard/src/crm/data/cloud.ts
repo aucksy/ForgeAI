@@ -120,7 +120,7 @@ export interface CrmCloudApi {
 }
 
 /** The gym's own details that live in a record (name, join code and created date are the server's). */
-type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix'>;
+type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId'>;
 
 const COLLECTIONS = [
   ['member', 'members'],
@@ -175,6 +175,8 @@ export function applyRecords(rows: Rows, records: readonly CrmRecord[]): boolean
           gstin: typeof d.gstin === 'string' ? d.gstin : null,
           // #41: a branch's receipt prefix; the server writes it on the record and keeps it (0031).
           receiptPrefix: typeof d.receiptPrefix === 'string' && d.receiptPrefix ? d.receiptPrefix : null,
+          // Launch audit 3 Nov 2026: the gym's UPI ID, on the same record (no database change).
+          upiId: typeof d.upiId === 'string' && d.upiId ? d.upiId : null,
         };
       }
       continue;
@@ -203,6 +205,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
       address: rows.gym?.address ?? null,
       gstin: rows.gym?.gstin ?? null,
       receiptPrefix: rows.gym?.receiptPrefix ?? null,
+      upiId: rows.gym?.upiId ?? null,
       createdAt: gym.createdAt,
     },
     members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0).map(normalizeMember),
@@ -221,6 +224,8 @@ function gymDetails(g: GymRecord): GymDetails {
   const out: GymDetails = { name: g.name, phone: g.phone, address: g.address, gstin: g.gstin };
   // Only a branch has one; the first branch's record stays exactly as it always was.
   if (g.receiptPrefix) out.receiptPrefix = g.receiptPrefix;
+  // Only once a UPI ID is set, so a gym without one keeps exactly the record it always had.
+  if (g.upiId) out.upiId = g.upiId;
   return out;
 }
 

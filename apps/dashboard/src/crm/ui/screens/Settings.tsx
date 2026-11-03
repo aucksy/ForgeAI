@@ -51,7 +51,8 @@ import { BranchesCard } from '../../branches/BranchesCard';
 import { useBranches } from '../../branches/context';
 import { useTerms } from '../../auth/TermsGate';
 import { acceptedLine } from '../../auth/terms';
-import { GymDataActions } from '../GymDataActions';
+import { DownloadDataCard, GymDataActions } from '../GymDataActions';
+import { cleanUpiId, upiIdError } from '../../logic/upiPay';
 import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
 
@@ -92,6 +93,9 @@ export function SettingsScreen({ section }: { section?: string }) {
   const [phone, setPhone] = useState(gym.phone ?? '');
   const [address, setAddress] = useState(gym.address ?? '');
   const [gstin, setGstin] = useState(gym.gstin ?? '');
+  // Launch audit 3 Nov 2026: the gym's UPI ID, for the pay link in fee and renewal messages.
+  const [upiId, setUpiId] = useState(gym.upiId ?? '');
+  const [upiError, setUpiError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +117,9 @@ export function SettingsScreen({ section }: { section?: string }) {
     // C7-11 / C7-41: a wrong GSTIN or a blank name is said on its field, never saved with "Saved.".
     const problem = checkGymDetails({ name, gstin });
     setFieldError(problem);
-    if (problem) return;
+    const upiProblem = upiIdError(upiId);
+    setUpiError(upiProblem);
+    if (problem || upiProblem) return;
     setSaving(true);
     setError(null);
     try {
@@ -122,6 +128,7 @@ export function SettingsScreen({ section }: { section?: string }) {
         phone: phone.trim() || null,
         address: address.trim() || null,
         gstin: gstin.trim().toUpperCase() || null,
+        upiId: cleanUpiId(upiId),
       });
       // The app shows members the gym's name, so a rename goes to the cloud too.
       await renameCloudGym(name.trim());
@@ -204,6 +211,17 @@ export function SettingsScreen({ section }: { section?: string }) {
           />
         </Grid>
         <TextField label="Address" value={address} onChange={setAddress} multiline />
+        <TextField
+          label="Gym UPI ID (optional)"
+          value={upiId}
+          onChange={(v) => {
+            setUpiId(v);
+            setUpiError(null);
+          }}
+          placeholder="irontemple@okhdfc"
+          error={upiError}
+          hint="Fee reminders, renewal messages and receipts show this UPI ID and a link that opens the member's UPI app with the amount filled in."
+        />
         <div style={{ marginTop: space.lg }}>
           <Button onClick={save} disabled={saving} needsInternet>
             {saving ? 'Saving…' : 'Save details'}
@@ -281,6 +299,9 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       <InstallCard />
 
+      {/* Launch audit 3 Nov 2026: keeping a copy is a good habit, not a danger: its own card. */}
+      {canErase && <DownloadDataCard />}
+
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Your data</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
@@ -305,15 +326,15 @@ export function SettingsScreen({ section }: { section?: string }) {
 
         {/* UAT A-18 / B-17 (30 Oct 2026): Delete and Clear sat right under the harmless Download, at
             the same size. They now sit apart under their own heading, with a line and space above. */}
-        {canErase && (
+        {canErase && online && (
           <div style={{ marginTop: space.xl, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
             <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.criticalText }}>
               Danger zone: these can’t be undone
             </p>
-            {/* Launch D8: take everything away (Excel + full copy); an online gym can ask to be deleted. */}
+            {/* Launch D8: an online gym can ask to be deleted (the download is its own card above). */}
             <GymDataActions online={online} />
             {/* Offline front desk: the copy and the waiting list kept on this device (owner only). */}
-            {online && <ClearDeviceCard />}
+            <ClearDeviceCard />
           </div>
         )}
 

@@ -312,9 +312,15 @@ const CODES: readonly AuthErrorCode[] = [
   'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', ...RECEIPT_REFUSALS,
 ];
 
-/** MettleUp HQ (#51): what a desk sees when MettleUp has paused the gym (every save is refused). */
+/** Launch audit 3 Nov 2026: MettleUp's support email, shown wherever a gym is told to contact us. */
+export const SUPPORT_EMAIL = 'contact@mettleup.fit';
+
+/**
+ * MettleUp HQ (#51): what a desk sees when MettleUp has paused the gym (every save is refused).
+ * Launch audit 3 Nov 2026: it said "Call MettleUp" with no number; it now names the email.
+ */
 export const SUSPENDED_WORDS =
-  'MettleUp has paused this gym, so nothing can be changed or saved. You can still look at everything and download your data from Settings. Call MettleUp to switch it back on.';
+  'MettleUp has paused this gym, so nothing can be changed or saved. You can still look at everything and download your data from Settings. To switch it back on, email MettleUp at contact@mettleup.fit.';
 
 function errorText(err: unknown): string {
   if (!err) return '';

@@ -90,6 +90,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'No PIN yet? Type the one-time code your gym owner gives you (Settings → Staff & sign-in).':
     'Abhi PIN nahi hai? Gym owner ka diya hua ek baar wala code daalo (Settings → Staff aur sign-in).',
   'Signing in…': 'Sign in ho raha hai…',
+  'Need help? Email MettleUp at': 'Madad chahiye? MettleUp ko is email par likho:',
   'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.':
     'PIN bhool gaye? Gym owner se sign-in code maango. Agar aap hi owner ho aur kisi aur phone ya computer par sign in nahi hai, to madad ke liye contact@mettleup.fit par email karo.',
   'Type a 10-digit mobile number, like 98290 12345.': '10 number ka mobile number daalo, jaise 98290 12345.',
@@ -207,6 +208,18 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Start checking members in': 'Members ka check-in shuru karo',
   'After a few days of check-ins, this fills in by itself.': 'Kuch din ke check-in ke baad yeh apne aap bhar jayega.',
   'Money to collect': 'Lene wala paisa',
+  // Launch audit 3 Nov 2026: came in today with an ended plan or fees due; Monday's summary.
+  'Came in today with an ended plan or fees due': 'Aaj aaye: plan khatam ya fees baaki',
+  'They checked in today. Ask them to renew or pay before they leave.':
+    'Ye aaj gym aaye. Jaane se pehle renew ya payment ke liye bolo.',
+  '{n} more in the register.': 'Register mein {n} aur hain.',
+  'Plan ended {date}': 'Plan {date} ko khatam',
+  'No plan bought': 'Koi plan nahi liya',
+  'No running plan today': 'Aaj koi plan chalu nahi',
+  'Last week at your gym': 'Pichhle hafte aapka gym',
+  'Send last week’s money, plans sold and check-ins to yourself or your partner on WhatsApp.':
+    'Pichhle hafte ka paisa, bike plan aur check-in WhatsApp par khud ko ya partner ko bhejo.',
+  'Share on WhatsApp': 'WhatsApp par bhejo',
   'Everyone has paid': 'Sabne paise de diye',
   'No member has dues.': 'Kisi member ki fees baaki nahi hai.',
   '{amount} due': '{amount} baaki',

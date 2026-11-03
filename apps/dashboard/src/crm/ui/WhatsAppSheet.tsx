@@ -13,7 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { atRiskList } from '../logic/attendance';
 import { isBirthdayToday } from '../logic/homeTiles';
-import { buildMessage, kindLabel, messageKindsFor, yearsWithGym, type MessageKind } from '../logic/whatsapp';
+import { buildMessage, kindLabel, messageGym, messageKindsFor, yearsWithGym, type MessageKind } from '../logic/whatsapp';
 import { validateE164 } from '../logic/members';
 import { whatsAppHref } from '../shop/invite';
 import { useCrm } from '../store';
@@ -73,10 +73,10 @@ export function WhatsAppSheet({
   }, [view, today, snapshot.members, snapshot.memberships, snapshot.visits]);
   const first = startWith && kinds.includes(startWith) ? startWith : kinds[0];
   const [kind, setKind] = useState<MessageKind>(first);
-  const [text, setText] = useState(() => buildMessage(first, view, snapshot.gym, today, lang));
+  const [text, setText] = useState(() => buildMessage(first, view, messageGym(snapshot), today, lang));
   const pick = (k: MessageKind) => {
     setKind(k);
-    setText(buildMessage(k, view, snapshot.gym, today, lang));
+    setText(buildMessage(k, view, messageGym(snapshot), today, lang));
   };
   const phoneOk = validateE164(view.member.phone) !== null;
   return (
@@ -92,7 +92,7 @@ export function WhatsAppSheet({
           value={lang}
           onChange={(l) => {
             setLang(l);
-            setText(buildMessage(kind, view, snapshot.gym, today, l));
+            setText(buildMessage(kind, view, messageGym(snapshot), today, l));
           }}
         />
       </div>
@@ -124,7 +124,7 @@ export function WhatsAppQueue({ views, kind, onClose }: { views: MemberView[]; k
   const [sent, setSent] = useState<Set<string>>(() => new Set());
   const v = people[i];
   const [edited, setEdited] = useState<Record<string, string>>({});
-  const text = v ? edited[v.member.id] ?? buildMessage(kind, v, snapshot.gym, today, lang) : '';
+  const text = v ? edited[v.member.id] ?? buildMessage(kind, v, messageGym(snapshot), today, lang) : '';
   const markSent = useCallback(() => {
     if (!v) return;
     setSent((s) => new Set(s).add(v.member.id));

@@ -53,6 +53,10 @@ import {
 } from '../kit';
 import { WaitingMoneyLine } from '../offline';
 import { NumbersSection } from '../OwnerNumbers';
+import { WhatsAppSheet } from '../WhatsAppSheet';
+import { cameInWithProblem, type CameInRow } from '../../logic/cameInToday';
+import { isMonday, weekNumbers, weekSummaryText } from '../../logic/weekSummary';
+import { whatsAppHref } from '../../shop/invite';
 import { useHasFeature } from '../../plan/GymPackProvider';
 import { ProNote } from '../../plan/ProNote';
 import { Link, navigate } from '../router';
@@ -123,6 +127,12 @@ export function TodayScreen() {
   // come back by themselves with the first member, sale, payment, visit or enquiry.
   const hasRecords = gymHasRecords(snapshot);
 
+  // Launch audit 3 Nov 2026: on a phone, once a member has joined in the app (the last Get started
+  // step) the gym code card has done its job on Today; it stays in Settings -> Member app and Invite.
+  // The shop card moves below the lists. A new gym, and a computer, keep both at the top.
+  const appInUse = useMemo(() => snapshot.members.some((m) => !m.archived && Boolean(m.appUserId)), [snapshot.members]);
+  const setupAtBottom = compact && hasRecords && appInUse;
+
   return (
     <>
       <PageHeader
@@ -163,11 +173,15 @@ export function TodayScreen() {
 
       {/* The join code first: it is how members get into the app, and the shop
           card beside it is the part of the demo that moves on its own. */}
-      <Grid min={320}>
-        <JoinCodeCard compact flush />
-        <ShopTodayCard flush />
-      </Grid>
-      <div style={{ height: space.md }} />
+      {!setupAtBottom && (
+        <>
+          <Grid min={320}>
+            <JoinCodeCard compact flush />
+            <ShopTodayCard flush />
+          </Grid>
+          <div style={{ height: space.md }} />
+        </>
+      )}
 
       {hasRecords && (
       <>
@@ -258,12 +272,16 @@ export function TodayScreen() {
             same number twice on one screen is a duplicate, not a summary. */}
       </Grid>
 
-      {/* R-168: five numbers with a trend line each (money owed is the owner's); a tap opens the list. */}
-      {/* T66: Pro (closed only once PLAN_GATE_ON is on and the gym is on Starter). */}
-      {numbersOn ? <NumbersSection /> : <ProNote feature="yourNumbers" />}
+      <div style={{ height: space.lg }} />
 
-      <div style={{ height: space.xl }} />
+      {/* Launch audit 3 Nov 2026: came in today with no running plan or owing money. */}
+      <CameInCard />
 
+      {/* Launch audit 3 Nov 2026: Mondays, last week's numbers for the owner's own WhatsApp. */}
+      {seeTotals && isMonday(today) && <WeekSummaryCard />}
+
+      {/* Launch audit 3 Nov 2026: the people to act on come right under the tiles, money to
+          collect second (it sat at the very bottom of a ~12-screen phone page), then the habit list. */}
       <Grid min={290}>
         <Card>
           <SectionTitle
@@ -301,6 +319,36 @@ export function TodayScreen() {
         </Card>
 
         <Card>
+          {/* Every list on this screen has a "See all" — without one this title sat
+              11px higher than its neighbours. */}
+          <SectionTitle
+            action={
+              <Link to="/money/dues">
+                <span style={moreLink}>{t('See all')}</span>
+              </Link>
+            }
+          >
+            {t('Money to collect')}
+          </SectionTitle>
+          {duesList.length === 0 ? (
+            <EmptyState
+              title={t('Everyone has paid')}
+              body={t('No member has dues.')}
+            />
+          ) : (
+            <div style={{ display: 'grid', gap: space.sm }}>
+              {duesList.map((v) => (
+                <PersonRow
+                  key={v.member.id}
+                  member={v.member}
+                  detail={t('{amount} due', { amount: formatINR(v.outstandingP) })}
+                  tone={color.warning}
+                />
+              ))}
+            </div>
+          )}
+        </Card>
+        <Card>
           <SectionTitle
             action={
               <Link to="/attendance/risk">
@@ -337,41 +385,111 @@ export function TodayScreen() {
             </div>
           )}
         </Card>
-
-        <Card>
-          {/* Every list on this screen has a "See all" — without one this title sat
-              11px higher than its neighbours. */}
-          <SectionTitle
-            action={
-              <Link to="/money/dues">
-                <span style={moreLink}>{t('See all')}</span>
-              </Link>
-            }
-          >
-            {t('Money to collect')}
-          </SectionTitle>
-          {duesList.length === 0 ? (
-            <EmptyState
-              title={t('Everyone has paid')}
-              body={t('No member has dues.')}
-            />
-          ) : (
-            <div style={{ display: 'grid', gap: space.sm }}>
-              {duesList.map((v) => (
-                <PersonRow
-                  key={v.member.id}
-                  member={v.member}
-                  detail={t('{amount} due', { amount: formatINR(v.outstandingP) })}
-                  tone={color.warning}
-                />
-              ))}
-            </div>
-          )}
-        </Card>
       </Grid>
+
+      <div style={{ height: space.xl }} />
+
+      {/* R-168: five numbers with a trend line each (money owed is the owner's); a tap opens the list. */}
+      {/* T66: Pro (closed only once PLAN_GATE_ON is on and the gym is on Starter). */}
+      {numbersOn ? <NumbersSection /> : <ProNote feature="yourNumbers" />}
+
+      {setupAtBottom && (
+        <div style={{ marginTop: space.xl }}>
+          <ShopTodayCard flush />
+        </div>
+      )}
       </>
       )}
     </>
+  );
+}
+
+/**
+ * Launch audit 3 Nov 2026 (owner side #5): members who checked in today with no running plan or
+ * owing money (an ended plan does not stop a check-in, at the desk or by the QR poster). Each row
+ * opens the ready WhatsApp message: fees when they owe, plan ended otherwise. Gone when nobody.
+ */
+function CameInCard() {
+  const { snapshot, allMemberViews, today } = useCrm();
+  const rows = useMemo(() => cameInWithProblem(snapshot.visits, allMemberViews, today), [snapshot.visits, allMemberViews, today]);
+  const [open, setOpen] = useState<CameInRow | null>(null);
+  if (rows.length === 0) return null;
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>{t('Came in today with an ended plan or fees due')}</SectionTitle>
+      <p style={{ margin: `-${space.sm}px 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        {t('They checked in today. Ask them to renew or pay before they leave.')}
+      </p>
+      <div style={{ display: 'grid', gap: space.sm }}>
+        {rows.slice(0, 8).map((r) => (
+          <Row key={r.view.member.id} gap={space.md} wrap={false}>
+            <Link to={`/members/${r.view.member.id}`}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: space.md, minHeight: TOUCH, minWidth: 0 }}>
+                <Avatar text={initials(r.view.member.fullName)} size={32} />
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.ink }}>{r.view.member.fullName}</div>
+                  <div style={{ fontFamily: font.body, fontSize: 12, color: r.noPlan ? color.criticalText : color.warning, textWrap: 'pretty' }}>
+                    {cameInDetail(r)}
+                  </div>
+                </div>
+              </span>
+            </Link>
+            <span style={{ flex: 1 }} />
+            <Button variant="ghost" onClick={() => setOpen(r)} ariaLabel={`${t('Message')}: ${r.view.member.fullName}`}>
+              {t('Message')}
+            </Button>
+          </Row>
+        ))}
+      </div>
+      {rows.length > 8 && (
+        <p style={{ margin: `${space.md}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+          {t('{n} more in the register.', { n: rows.length - 8 })}
+        </p>
+      )}
+      {open && (
+        <WhatsAppSheet view={open.view} startWith={open.dueP > 0 ? 'fees' : 'ended'} onClose={() => setOpen(null)} />
+      )}
+    </Card>
+  );
+}
+
+/** "Plan ended 1 Nov · ₹1,500 due", "No plan bought", "₹800 due". */
+function cameInDetail(r: CameInRow): string {
+  const parts: string[] = [];
+  if (r.noPlan) {
+    const ended = r.view.current?.endsOn;
+    parts.push(
+      r.view.state === 'expired' && ended
+        ? t('Plan ended {date}', { date: formatDay(r.view.coversUntil ?? ended) })
+        : r.view.state === 'never'
+          ? t('No plan bought')
+          : t('No running plan today'),
+    );
+  }
+  if (r.dueP > 0) parts.push(t('{amount} due', { amount: formatINR(r.dueP) }));
+  return parts.join(' · ');
+}
+
+/**
+ * Launch audit 3 Nov 2026 (revenue ideas): Mondays, the owner sends last week's numbers to himself
+ * or a partner from his own WhatsApp (logic/weekSummary.ts). Owner and money-seeing roles only.
+ */
+function WeekSummaryCard() {
+  const { snapshot, allMemberViews, today } = useCrm();
+  const text = useMemo(
+    () => weekSummaryText(snapshot.gym.name, weekNumbers(snapshot, allMemberViews, today)),
+    [snapshot, allMemberViews, today],
+  );
+  return (
+    <Card style={{ marginBottom: space.lg }}>
+      <SectionTitle>{t('Last week at your gym')}</SectionTitle>
+      <p style={{ margin: `-${space.sm}px 0 ${space.md}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+        {t('Send last week’s money, plans sold and check-ins to yourself or your partner on WhatsApp.')}
+      </p>
+      <Button variant="ghost" onClick={() => window.open(whatsAppHref(text), '_blank', 'noopener')}>
+        {t('Share on WhatsApp')}
+      </Button>
+    </Card>
   );
 }
 

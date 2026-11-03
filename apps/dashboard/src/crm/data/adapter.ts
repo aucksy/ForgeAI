@@ -47,6 +47,13 @@ export interface GymRecord {
    * branch is added and keeps it (supabase 0031); null or absent = the first branch's own series.
    */
   receiptPrefix?: string | null;
+  /**
+   * Launch audit 3 Nov 2026: the gym's UPI ID ("irontemple@okhdfc"), typed in Settings -> Gym
+   * details. Fee, renewal and receipt messages carry it with a upi://pay link (logic/upiPay.ts).
+   * Kept on the gym's details record (a JSON document on the server), so no database change.
+   * Absent or null = not set.
+   */
+  upiId?: string | null;
   createdAt: number;
 }
 
@@ -318,7 +325,7 @@ export interface CrmData {
 
   // Step 5 (15 Oct 2026)
   createEnquiry(draft: EnquiryDraft): Promise<Enquiry>;
-  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId'>>): Promise<Enquiry>;
+  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason'>>): Promise<Enquiry>;
   addExpense(draft: ExpenseDraft): Promise<Expense>;
   /** An expense typed wrong is taken out (it is not a receipt: no number to keep). */
   removeExpense(id: string): Promise<void>;

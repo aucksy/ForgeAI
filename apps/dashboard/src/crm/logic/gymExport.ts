@@ -6,6 +6,17 @@
  * JSON (exactly what MettleUp holds) for a move that wants every field. PURE except `downloadGymData`.
  */
 import type { CrmSnapshot } from '../data/adapter';
+import { dateISOFromEpoch, formatDay } from './dates';
+
+/**
+ * Launch audit 3 Nov 2026: "Last downloaded on 3 Nov 2026 from this browser." under the download
+ * button, or the nudge to make a first copy. PURE.
+ */
+export function lastDownloadWords(at: number | null): string {
+  return at
+    ? `Last downloaded on ${formatDay(dateISOFromEpoch(at))} from this browser.`
+    : 'Not downloaded from this browser yet.';
+}
 
 export type Cell = string | number | boolean | null;
 export interface ExportSheet {

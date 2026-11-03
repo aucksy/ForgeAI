@@ -13,8 +13,16 @@ import { useCallback, useEffect, useMemo, useState, type CSSProperties, type Rea
 import { useCrm } from '../../store';
 import { formatDay, relativeDay } from '../../logic/dates';
 import {
+  asLostReason,
+  asSource,
   emptyEnquiryForm,
+  ENQUIRY_SOURCES,
   enquiryBucket,
+  joinedBySource,
+  LOST_REASONS,
+  lostReasonLabel,
+  sourceLabel,
+  sourceRowWords,
   ENQUIRY_FILTERS,
   filterCounts,
   filterEnquiries,
@@ -39,6 +47,7 @@ import {
   PageHeader,
   Pill,
   Row,
+  SectionTitle,
   SelectField,
   Sheet,
   TextField,
@@ -78,6 +87,8 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
   const [undo, setUndo] = useState<Enquiry | null>(null);
 
   const counts = useMemo(() => filterCounts(enquiries, today), [enquiries, today]);
+  // Launch audit 3 Nov 2026: which source brings people who join (only enquiries with a source).
+  const sources = useMemo(() => joinedBySource(enquiries), [enquiries]);
   const rows = useMemo(() => filterEnquiries(enquiries, filter, today), [enquiries, filter, today]);
 
   // The undo bar goes away on its own; the "Nahi aayenge" chip keeps a permanent way back.
@@ -104,8 +115,13 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
 
   const reopen = (e: Enquiry) =>
     run(async () => {
-      await updateEnquiry(e.id, { status: 'open' });
+      await updateEnquiry(e.id, { status: 'open', lostReason: null });
       setUndo(null);
+    });
+
+  const setLostReason = (e: Enquiry, value: string) =>
+    run(async () => {
+      await updateEnquiry(e.id, { lostReason: asLostReason(value) });
     });
 
   const addButton = <Button needsInternet onClick={() => setAdding(true)}>+ Add enquiry</Button>;
@@ -129,6 +145,17 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
         />
       </div>
 
+      {sources.length > 0 && (
+        <Card style={{ marginBottom: space.lg }}>
+          <SectionTitle>Where enquiries came from</SectionTitle>
+          <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4, fontFamily: font.body, fontSize: 14, color: color.ink }}>
+            {sources.map((r) => (
+              <li key={r.source}>{sourceRowWords(r)}</li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
       {rows.length === 0 ? (
         <Card>
           <EmptyEnquiries filter={filter} total={enquiries.length} action={addButton} />
@@ -146,6 +173,7 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
               onReschedule={() => setRescheduling(e)}
               onLost={() => void markLost(e)}
               onReopen={() => void reopen(e)}
+              onLostReason={(v) => void setLostReason(e, v)}
             />
           ))}
         </Card>
@@ -206,6 +234,7 @@ function EnquiryRow({
   onReschedule,
   onLost,
   onReopen,
+  onLostReason,
 }: {
   enquiry: Enquiry;
   first: boolean;
@@ -215,6 +244,7 @@ function EnquiryRow({
   onReschedule: () => void;
   onLost: () => void;
   onReopen: () => void;
+  onLostReason: (value: string) => void;
 }) {
   const bucket = enquiryBucket(e, today);
   const open = e.status === 'open';
@@ -242,6 +272,11 @@ function EnquiryRow({
           {e.interest && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
+            </div>
+          )}
+          {sourceLabel(e.source) && (
+            <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 4 }}>
+              {`Heard about us: ${sourceLabel(e.source)}`}
             </div>
           )}
           {open && (
@@ -292,6 +327,18 @@ function EnquiryRow({
           </Button>
         )}
       </div>
+
+      {/* Launch audit 3 Nov 2026: why they did not join (optional), so the owner sees a pattern. */}
+      {e.status === 'lost' && (
+        <div style={{ marginTop: -space.md }}>
+          <SelectField
+            label={`Why did ${e.name} not join? (optional)`}
+            value={e.lostReason ?? ''}
+            onChange={onLostReason}
+            options={[{ value: '', label: lostReasonLabel(e.lostReason) ? 'Clear the reason' : 'Not known' }, ...LOST_REASONS]}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -351,6 +398,8 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
   const [saving, setSaving] = useState(false);
   // C7-1: one id for this sheet's save, so a second press after "no internet" saves once.
   const [requestId] = useState(newRequestId);
+  // Launch audit 3 Nov 2026: where they heard about the gym (optional).
+  const [source, setSource] = useState('');
 
   const set = (key: EnquiryField) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -374,7 +423,7 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
     }
     setSaving(true);
     try {
-      await createEnquiry({ ...result.value, requestId });
+      await createEnquiry({ ...result.value, requestId, source: asSource(source) });
       onClose();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : 'Could not save this enquiry.');
@@ -442,6 +491,13 @@ function AddEnquirySheet({ onClose }: { onClose: () => void }) {
         onChange={set('interest')}
         error={errorFor('interest')}
         placeholder="3 months, evening batch"
+      />
+
+      <SelectField
+        label="Where did they hear about us? (optional)"
+        value={source}
+        onChange={setSource}
+        options={[{ value: '', label: 'Not asked' }, ...ENQUIRY_SOURCES]}
       />
 
       <TextField

@@ -22,12 +22,48 @@ import { isBirthdayToday } from './homeTiles';
 import { formatDayHi, type MessageLang } from './messageWords';
 import { formatINR } from './money';
 import { methodLabel } from './payments';
-import type { MemberView, Payment } from '../types';
+import { longerPlanOffer, renewAmountP } from './renewOffer';
+import { payLines } from './upiPay';
+import type { MemberView, Payment, Plan } from '../types';
 
 export type MessageKind = 'fees' | 'ending' | 'ended' | 'birthday' | 'welcome' | 'away' | 'anniversary';
 
 export interface GymWords {
   name: string;
+  /**
+   * Launch audit 3 Nov 2026: the gym's UPI ID (Settings -> Gym details). With it, the fees, renewal
+   * and receipt messages carry the ID and a upi://pay link with the exact amount (logic/upiPay.ts).
+   */
+  upiId?: string | null;
+  /** The gym's plans: the renewal price and the longer-plan line come from them (logic/renewOffer.ts). */
+  plans?: readonly Plan[];
+}
+
+/** The payee name a UPI app shows: the gym's name, or "Gym" while it has none. */
+function payee(gym: GymWords): string {
+  return gymName(gym) ?? 'Gym';
+}
+
+/** The UPI lines for this amount, or nothing (no UPI ID, nothing to pay). */
+function upiFor(gym: GymWords, amountP: number | null, note: string, lang: 'en' | 'hi'): string[] {
+  if (amountP === null) return [];
+  return payLines({ upiId: gym.upiId, payee: payee(gym), amountP, note }, lang) ?? [];
+}
+
+/** The renewal lines: the gym's longer plan when it saves money, then how to pay for a renewal. */
+function renewLines(v: MemberView, gym: GymWords, lang: 'en' | 'hi'): string[] {
+  const out: string[] = [];
+  const offer = longerPlanOffer(v, gym.plans);
+  if (offer) {
+    out.push(
+      lang === 'hi'
+        ? `या ${offer.months} महीने का प्लान ${formatINR(offer.priceP)} में लें। हर महीने फ़ीस देने के मुक़ाबले ${formatINR(offer.savingP)} की बचत।`
+        : `Or take the ${offer.months}-month plan for ${formatINR(offer.priceP)} and save ${formatINR(offer.savingP)} over paying month by month.`,
+    );
+  }
+  const amount = renewAmountP(v, gym.plans);
+  out.push(...upiFor(gym, amount, `${greetingName(v.member.fullName)} renewal`.trim(), lang));
+  return out;
 }
 
 const HONORIFIC = /^(mr|mrs|ms|dr|shri|smt|sri)\.?$/i;
@@ -119,18 +155,22 @@ function englishLines(kind: MessageKind, v: MemberView, gym: GymWords, today: Da
   const sign = signLine(gym, 'en');
   switch (kind) {
     case 'fees':
-      return [`${hi} ${formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.`, sign];
+      return [
+        `${hi} ${formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.`,
+        ...upiFor(gym, v.outstandingP, `${greetingName(v.member.fullName)} fees`.trim(), 'en'),
+        sign,
+      ];
     case 'ending': {
       const end = v.coversUntil ?? today;
       const when = v.daysRemaining === 0 ? 'today' : `on ${formatDay(end)}`;
-      return [`${hi} your ${plan} plan ends ${when}. Renew at the desk to keep training without a break.`, sign];
+      return [`${hi} your ${plan} plan ends ${when}. Renew at the desk to keep training without a break.`, ...renewLines(v, gym, 'en'), sign];
     }
     case 'ended': {
       const ended = v.current?.endsOn ? formatDay(v.current.endsOn) : '';
       const words = ended
         ? `your ${plan} plan ended on ${ended}. We miss you at the gym. Renew and come back any day.`
         : 'we miss you at the gym. Renew and come back any day.';
-      return [`${hi} ${words}`, sign];
+      return [`${hi} ${words}`, ...renewLines(v, gym, 'en'), sign];
     }
     case 'birthday': {
       const n = greetingName(v.member.fullName);
@@ -168,17 +208,21 @@ function hindiLines(kind: MessageKind, v: MemberView, gym: GymWords, today: Date
   const sign = signLine(gym, 'hi');
   switch (kind) {
     case 'fees':
-      return [`${hi} आपकी ${formatINR(v.outstandingP)} फ़ीस बाक़ी है। कृपया डेस्क पर या UPI से जमा करें।`, sign];
+      return [
+        `${hi} आपकी ${formatINR(v.outstandingP)} फ़ीस बाक़ी है। कृपया डेस्क पर या UPI से जमा करें।`,
+        ...upiFor(gym, v.outstandingP, `${greetingName(v.member.fullName)} fees`.trim(), 'hi'),
+        sign,
+      ];
     case 'ending': {
       const end = v.coversUntil ?? today;
       const when = v.daysRemaining === 0 ? 'आज' : `${formatDayHi(end)} को`;
-      return [`${hi} ${plan} ${when} ख़त्म हो रहा है। बिना ब्रेक ट्रेनिंग जारी रखने के लिए डेस्क पर रिन्यू करें।`, sign];
+      return [`${hi} ${plan} ${when} ख़त्म हो रहा है। बिना ब्रेक ट्रेनिंग जारी रखने के लिए डेस्क पर रिन्यू करें।`, ...renewLines(v, gym, 'hi'), sign];
     }
     case 'ended': {
       const words = v.current?.endsOn
         ? `${plan} ${formatDayHi(v.current.endsOn)} को ख़त्म हो गया। जिम में आपकी कमी महसूस हो रही है। कभी भी रिन्यू करके वापस आइए।`
         : 'जिम में आपकी कमी महसूस हो रही है। कभी भी रिन्यू करके वापस आइए।';
-      return [`${hi} ${words}`, sign];
+      return [`${hi} ${words}`, ...renewLines(v, gym, 'hi'), sign];
     }
     case 'birthday': {
       const n = greetingName(v.member.fullName);
@@ -216,19 +260,32 @@ export function buildMessage(kind: MessageKind, v: MemberView, gym: GymWords, to
   if (lang === 'hi') return hindiLines(kind, v, gym, today).join('\n');
   const en = englishLines(kind, v, gym, today);
   if (lang === 'en') return en.join('\n');
-  return `${en.slice(0, -1).join('\n')}\n\n${hindiLines(kind, v, gym, today).join('\n')}`;
+  // "Both": the UPI ID and pay link once, under the Hindi, not twice.
+  const enText = en.slice(0, -1).filter((l) => !l.startsWith('upi://') && !/^Pay ₹[\d,.]+ on UPI to /.test(l));
+  return `${enText.join('\n')}\n\n${hindiLines(kind, v, gym, today).join('\n')}`;
 }
 
-/** A receipt as a WhatsApp message (the printed receipt stays the record). */
+/**
+ * A receipt as a WhatsApp message (the printed receipt stays the record). `stillDueP`: what the
+ * member still owes after this payment; with a UPI ID it is said, with the UPI ID and a pay link.
+ */
 export function receiptMessage(
   p: Pick<Payment, 'amountP' | 'paidOn' | 'method' | 'receiptNo'> & Partial<Pick<Payment, 'collectedByName'>>,
   memberName: string,
   gym: GymWords,
+  stillDueP = 0,
 ): string {
   // UAT U-A1: who took the money, when the receipt has a name (an old one may not).
   const taker = p.collectedByName?.trim();
+  const pay = stillDueP > 0 ? upiFor(gym, stillDueP, `${greetingName(memberName)} fees`.trim(), 'en') : [];
   return [
     `${hello(memberName)} we received your ${formatINR(p.amountP)} on ${formatDay(p.paidOn)} (${methodLabel(p.method)}). Receipt no. ${p.receiptNo}.${taker ? ` Received by ${taker}.` : ''} Thank you!`,
+    ...(pay.length ? [`${formatINR(stillDueP)} is still due.`, ...pay] : []),
     signLine(gym),
   ].join('\n');
+}
+
+/** The words a message needs from the gym: its name, UPI ID and plans. PURE. */
+export function messageGym(s: { gym: { name: string; upiId?: string | null }; plans: readonly Plan[] }): GymWords {
+  return { name: s.gym.name, upiId: s.gym.upiId ?? null, plans: s.plans };
 }

@@ -365,7 +365,7 @@ export function PeopleScreen() {
           title={pin.hasPin ? 'Change my PIN' : 'Set my PIN'}
           forgot={
             isOwner
-              ? 'Forgot it? Make yourself a sign-in code in the list below, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one.'
+              ? 'Forgot it? Make yourself a sign-in code in the list below, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one. Stuck? Email MettleUp at contact@mettleup.fit.'
               : 'Forgot it? Ask your gym owner for a sign-in code, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one.'
           }
           onClose={closeSheet}
