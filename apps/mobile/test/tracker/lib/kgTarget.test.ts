@@ -138,7 +138,7 @@ describe('#9 kg to beat: during the workout', () => {
   it('all ticked and still short: no plan, says how much', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true)]);
     expect(g.next).toEqual([]);
-    expect(kgLiveLine(p, g, total, weight)).toBe('675 of 1,125 kg · 450 kg short, add a set if you have it in you');
+    expect(kgLiveLine(p, g, total, weight)).toBe('675 of 1,125 kg · 450 kg short, fine for today');
   });
   it('starts from what each row hints, and stays within 2 reps of it', () => {
     // Set 1 done at 7: the rows hint 7, 7 (fillForSet caps at the row above) — never 8 + 2.

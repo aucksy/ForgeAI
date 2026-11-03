@@ -178,7 +178,8 @@ export interface KgProgress {
  * How far the workout is, and what the open sets need. Ticked working sets count (drop sets too:
  * they help, never block). An open row starts from what it hints (else what is typed, else the
  * plan's set for that place), so the line never disagrees with the rows; then reps are added one
- * at a time from the last open set back, at most 2 a set above that hint. PURE.
+ * at a time to the NEXT open set first (R-304, owner, 3 Nov 2026: the last set is the most tired), at
+ * most 2 a set above that hint. When ahead, the plan stays (a good day stays a good day). PURE.
  */
 export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   let done = 0;
@@ -207,7 +208,7 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   const next = open.map((s) => ({ ...s }));
   const sum = () => next.reduce((a, s) => a + s.weightKg * s.reps, 0);
   for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < left - 1e-9; extra++) {
-    for (let i = next.length - 1; i >= 0 && sum() < left - 1e-9; i--) next[i].reps = open[i].reps + extra;
+    for (let i = 0; i < next.length && sum() < left - 1e-9; i++) next[i].reps = open[i].reps + extra;
   }
   return { done, left, next, short: sum() < left - 1e-9 };
 }
@@ -274,7 +275,8 @@ export function repLiveLine(p: KgPlan, g: KgProgress): string {
     return `${repsText(p.total)} beaten ✓ (${Math.round(g.done)} done)`;
   }
   const head = `${Math.round(g.done)} of ${repsText(p.total)}`;
-  if (g.next.length === 0) return `${head} · ${repsText(g.left)} short, add a set if you have it in you`;
+  // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
+  if (g.next.length === 0) return `${head} · ${repsText(g.left)} short, fine for today`;
   return `${head} · next ${g.next.map((s) => s.reps).join(', ')}${g.short ? ' (a little short is fine)' : ''}`;
 }
 
@@ -320,7 +322,8 @@ export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: We
   }
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
   const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
-  if (g.next.length === 0) return `${head} · ${total(g.left)} short, add a set if you have it in you`;
+  // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
+  if (g.next.length === 0) return `${head} · ${total(g.left)} short, fine for today`;
   const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
   return `Next: ${plan} · ${head}${g.short ? ' (a little short is fine)' : ''}`;
 }

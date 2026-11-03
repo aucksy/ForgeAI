@@ -45,6 +45,8 @@ import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { useKgLeft } from '../store/kgLeftStore';
+import { answerStepBack } from '../store/targetStore';
+import { dropLine, showStepBack, stepBackAsk } from '../lib/stepBack';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseThumb } from './ExerciseThumb';
 import { HoldTimerSheet } from './HoldTimerSheet';
@@ -216,6 +218,13 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     ? (planStartLine(target, firstPlan, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`) ??
       targetLine({ ...target, each: weightIsEach(loadMode), perSide: repsPerSide(loadMode) }))
     : null;
+
+  // R-306 / R-308 (owner, 3 Nov 2026): a stuck lift asks before going lighter (gone once a set of it is
+  // ticked); a lighter Target says why in one line.
+  const anyTicked = exercise.sets.some((s) => s.done);
+  const kgWords = (kg: number): string => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`;
+  const ask = showStepBack(target, anyTicked) ? stepBackAsk(target.stepBack, kgWords) : null;
+  const drop = dropLine(target);
 
   // OWNER-INBOX #9: the kg to beat and what the open sets need (decision 2 A: at most 2 extra reps a
   // set; it never blocks anything). Last time = this card's own PREVIOUS sets, drops left out.
@@ -630,6 +639,52 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             </Pressable>
           ) : null}
         </Pressable>
+      ) : null}
+      {/* R-306: why the weight went down, one muted line under the Target. */}
+      {drop ? (
+        <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, paddingHorizontal: space.xs }}>{drop}</Text>
+      ) : null}
+      {/* R-308: a stuck lift asks first: Try the lighter weight today, or Stay. Inline, never a pop-up. */}
+      {ask ? (
+        <View
+          style={{
+            gap: space.sm,
+            borderRadius: radius.sm,
+            backgroundColor: color.surfaceSunken,
+            borderWidth: 1,
+            borderColor: color.border,
+            paddingHorizontal: space.md,
+            paddingVertical: space.sm,
+          }}
+        >
+          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 18 }}>{ask.text}</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+            <Pressable
+              onPress={() => {
+                tap();
+                answerStepBack(exercise.key, exercise.exerciseId, 'tried');
+              }}
+              hitSlop={7}
+              accessibilityRole="button"
+              accessibilityLabel={ask.tryLabel}
+              style={{ paddingHorizontal: space.md, minHeight: 34, justifyContent: 'center', borderRadius: radius.pill, backgroundColor: color.accentSoft }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>{ask.tryLabel}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                tap();
+                answerStepBack(exercise.key, exercise.exerciseId, 'declined');
+              }}
+              hitSlop={7}
+              accessibilityRole="button"
+              accessibilityLabel={ask.stayLabel}
+              style={{ paddingHorizontal: space.md, minHeight: 34, justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1, borderColor: color.border }}
+            >
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkSecondary }}>{ask.stayLabel}</Text>
+            </Pressable>
+          </View>
+        </View>
       ) : null}
       {/* R-65 / R-73: the live kg line now sits in the Target box above (green once beaten). A plan with
           no Target line to hold it (never today) shows it here. */}

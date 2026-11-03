@@ -266,7 +266,9 @@ describe('per-set goals at the same weight', () => {
   });
 
   it('+2 when that set was logged at RPE 7 or easier, never past the top', () => {
-    expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])]).setGoals).toEqual([11, 9, 8]);
+    // R-307: +2 only when the workout's share needs it (Standard 26 -> 27 reps; Large 26 -> 29).
+    expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])]).setGoals).toEqual([10, 9, 8]);
+    expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])], { jump: 'large' }).setGoals).toEqual([11, 10, 8]);
     expect(run(ex(), [sess('2026-10-03', [[40, 9, 8], [40, 9], [40, 8]])]).setGoals).toEqual([10, 9, 8]);
     expect(run(ex(), [sess('2026-10-03', [[40, 11, 6], [40, 9], [40, 8]])]).setGoals).toEqual([12, 9, 8]);
   });
@@ -301,10 +303,11 @@ describe('per-set goals at the same weight', () => {
     expect(run(ex(), [sess('2026-10-03', [[40, 7, 8], [40, 7, 8], [40, 7, 8]])]).setGoals).toEqual([8, 8, 8]);
   });
 
-  it('review fix: a later set never aims under the bottom of the range (10, 7, 6 in 8–12 → 11, 8, 8)', () => {
+  it('review fix: a later set never aims under the bottom of the range (10, 7, 6 in 8–12 → 10, 8, 8)', () => {
+    // R-307: raising 7 and 6 to 8 is already +3 reps, more than Standard's 5% of 23, so no extra.
     const t = run(ex(), [sess('2026-10-03', [[60, 10], [60, 7], [60, 6]])]);
-    expect(t.setGoals).toEqual([11, 8, 8]);
-    expect(targetLine(t)).toBe('60 kg · 11, 8, 8');
+    expect(t.setGoals).toEqual([10, 8, 8]);
+    expect(targetLine(t)).toBe('60 kg · 10, 8, 8');
     // The first set under the range takes the +1 and is floored too: 7, 9, 10 → 8, 9, 10.
     expect(run(ex(), [sess('2026-10-03', [[60, 7], [60, 9], [60, 10]])]).setGoals).toEqual([8, 9, 10]);
     for (const reps of [[12, 7, 5], [9, 6, 6], [10, 8, 3]]) {
@@ -446,7 +449,7 @@ describe('Rep range', () => {
     const t = computeProgressionTarget({ exercise: curl, target: { targetSets: 3, ...r }, history: [three(10, 15)], todayISO: TODAY });
     expect(t.rule).toBe('R5');
     expect(t.targetRepsMin).toBe(12);
-    expect(t.setGoals).toEqual([16, 15, 15]);
+    expect(t.setGoals).toEqual([16, 16, 15]); // R-307: Standard, 45 -> 47 reps
   });
 });
 

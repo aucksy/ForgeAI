@@ -33,13 +33,17 @@ import { bodyWeightAnyWorkout, historyScopeOrAll, scopeFor, scopeKey, type Histo
 import { getProgressionHistoryMany, getWeightLadders, type LadderWeight } from '@/tracker/db/progressionHistory';
 import { convertCounting, getsTarget, repsPerSide, weightIsEach, type LoadMode } from '@/tracker/engine/logTypes';
 import {
+  applyStepBack,
   computeProgressionTarget,
   DEFAULT_JUMP,
+  DEFAULT_STUCK,
   freeTarget,
+  isStuckChoice,
   isWeightJump,
   toEasyTarget,
   withEffort,
   type ProgressionTarget,
+  type StuckChoice,
   type VersionLink,
   type WeightJump,
 } from '@/tracker/engine/progression';
@@ -53,7 +57,7 @@ import { displayUnits } from '@/lib/units';
 import { folderOfRoutine } from '@/tracker/db/folderRepo';
 import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
-import { useTrackerPrefs, type PreviousFrom } from '@/tracker/store/trackerPrefsStore';
+import { useTrackerPrefs, type PreviousFrom, type StepBackChoice } from '@/tracker/store/trackerPrefsStore';
 import type { KgSet } from '@/tracker/lib/kgTarget';
 import type { Exercise, Goal, PlanExercise, TodaysWorkout, UserProfile } from '@/types/models';
 
@@ -95,6 +99,10 @@ export interface TargetPrefs {
    * null = his own steps from his history, as before (review fix).
    */
   gym: GymPlates | null;
+  /** R-308: "When I'm stuck at a weight" (absent = ask). */
+  stuck?: StuckChoice;
+  /** R-308: each exercise's Try / Stay answer to a step-back offer (absent = none). */
+  stepBack?: Readonly<Record<string, StepBackChoice>>;
 }
 
 /** The saved settings, with any given ones on top. Never throws (a store that cannot be read = the defaults). */
@@ -102,10 +110,14 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
   let jump: WeightJump = DEFAULT_JUMP;
   let repRange: RepRangeChoice = 'goal';
   let gym: GymPlates | null = null;
+  let stuck: StuckChoice = DEFAULT_STUCK;
+  let stepBack: Readonly<Record<string, StepBackChoice>> = {};
   try {
     const p = useTrackerPrefs.getState();
     if (isWeightJump(p.weightJump)) jump = p.weightJump;
     if (isRepRangeChoice(p.repRange)) repRange = p.repRange;
+    if (isStuckChoice(p.stuckChoice)) stuck = p.stuckChoice;
+    if (p.stepBackByExercise && typeof p.stepBackByExercise === 'object') stepBack = p.stepBackByExercise;
   } catch {
     // quiet: an unreadable settings store means the defaults; nothing the member typed is lost
   }
@@ -123,6 +135,8 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
     jump: given.jump && isWeightJump(given.jump) ? given.jump : jump,
     repRange: given.repRange && isRepRangeChoice(given.repRange) ? given.repRange : repRange,
     gym: given.gym !== undefined ? given.gym : gym,
+    stuck: given.stuck && isStuckChoice(given.stuck) ? given.stuck : stuck,
+    stepBack: given.stepBack ?? stepBack,
   };
 }
 
@@ -231,7 +245,8 @@ async function targetsFor(
         ...h,
         sets: h.sets.map((x) => ({ ...x, weightKg: convertCounting(x.weightKg, x.loadMode ?? dbMode, mode) })),
       }));
-    const t = computeProgressionTarget({
+    const sb = prefs.stepBack?.[id];
+    let t = computeProgressionTarget({
       exercise: { ...exercise, id },
       target,
       history,
@@ -248,7 +263,12 @@ async function targetsFor(
       // R-61: a two-dumbbell move (the library's counting) typed as one total.
       pair: (entry?.loadMode === 'both' || entry?.loadMode === 'both_side') && !weightIsEach(mode),
       ...(breakFrom?.[i] ? { breakFromISO: breakFrom[i] } : {}),
+      // R-308: "When I'm stuck at a weight", and a "Stay" that waits for 4 more stuck workouts.
+      stuck: prefs.stuck ?? DEFAULT_STUCK,
+      stepBackDeclinedISO: sb?.declinedISO ?? null,
     });
+    // R-308: "Try 40 kg" today: today's Target is the lighter one, on every screen.
+    if (t.stepBack && sb?.triedISO === today) t = applyStepBack(t);
     if (weightIsEach(mode)) t.each = true;
     if (repsPerSide(mode)) t.perSide = true;
     // OWNER-INBOX #9: last time's working sets (warm-ups and drops out), so "kg to beat" can say
@@ -346,6 +366,9 @@ function memoKey(
     prefs.jump,
     prefs.repRange,
     gymKey(prefs.gym),
+    // R-308: the stuck choice and the Try / Stay answers change the Target too.
+    prefs.stuck ?? DEFAULT_STUCK,
+    prefs.stepBack ?? {},
     displayUnits(),
     scopeKey(scope),
     allForBodyWeight,

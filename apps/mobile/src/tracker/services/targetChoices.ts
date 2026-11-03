@@ -10,7 +10,7 @@
  * 2017 / 2021). So: three jump sizes with the middle one recommended, and the member's own goal
  * as the recommended rep range.
  */
-import type { WeightJump } from '../engine/progression';
+import type { StuckChoice, WeightJump } from '../engine/progression';
 import type { RepRangeChoice } from '../engine/repRanges';
 
 export interface PrefChoice<T extends string> {
@@ -37,6 +37,19 @@ export const REP_RANGE_CHOICES: readonly PrefChoice<RepRangeChoice>[] = [
   { value: 'muscle', label: 'Muscle', detail: '6–10 on big lifts, 8–12 on the rest, 10–15 on small isolation moves' },
   { value: 'higher', label: 'Higher reps', detail: '12–20 reps on every exercise' },
 ];
+
+/**
+ * R-308 (owner, 3 Nov 2026): Settings → More workout choices → "When I'm stuck at a weight". Never
+ * a weight drop by itself unless the member picks it.
+ */
+export const STUCK_CHOICES: readonly PrefChoice<StuckChoice>[] = [
+  { value: 'ask', label: 'Ask me', detail: 'The exercise card offers a lighter weight. You choose.', recommended: true },
+  { value: 'auto', label: 'Step back by itself', detail: 'The app picks a lighter weight for you.' },
+  { value: 'never', label: 'Never suggest it', detail: 'Keep the weight and keep adding reps.' },
+];
+
+/** The line under "When I'm stuck at a weight" (the sheet). */
+export const STUCK_HELP = 'Stuck means 4 workouts at the same weight with no progress. A slightly lighter weight with more reps often gets you moving again.';
 
 /** The line under "Rep range" (the row and the sheet). */
 export const REP_RANGE_HELP = 'Muscle grows in any of these if you finish close to your limit. Strength likes fewer reps.';

@@ -89,7 +89,9 @@ describe('defects found in the old engine', () => {
     const t = run(lat, range(12, 15), h);
     expect(t.rule).toBe('R2b');
     expect(t.targetWeightKg).toBe(5);
-    expect(t.repGoal).toBe(17);
+    // R-301 / R-307 (owner, 3 Nov 2026): a goal per set, the workout +5% (Standard): 45 -> 47 reps.
+    expect(t.setGoals).toEqual([16, 16, 15]);
+    expect(t.repGoal).toBe(16);
     expect(t.reason).toContain('50% jump');
   });
 
@@ -111,8 +113,9 @@ describe('defects found in the old engine', () => {
     const t = run(ex(), range(8, 12), h);
     expect(t.rule).toBe('R5');
     expect(t.targetWeightKg).toBe(40);
-    // Oct 2026 per-set goals: set 1 is at the top (12), so the extra rep goes to set 2.
-    expect(t.setGoals).toEqual([12, 12, 10]);
+    // Oct 2026 per-set goals: set 1 is at the top (12), so the extra reps go to sets 2 and 3
+    // (R-307: Standard aims about 5% more, 33 -> 35 reps).
+    expect(t.setGoals).toEqual([12, 12, 11]);
     expect(t.repGoal).toBe(12);
   });
 
@@ -123,9 +126,11 @@ describe('defects found in the old engine', () => {
     expect(run(ex(), range(5, 8), three).rule).toBe('R5');
     const t = run(ex(), range(5, 8), [...three, flat('2026-09-24')]);
     expect(t.rule).toBe('R4');
-    expect(t.targetWeightKg).toBe(55);
-    expect(t.reason).toContain('4 workouts');
-    expect(t.reason).not.toMatch(/week/);
+    // R-308 (owner, 3 Nov 2026): "Ask me" keeps the weight and offers the step back.
+    expect(t.targetWeightKg).toBe(60);
+    expect(t.stepBack?.weightKg).toBe(55);
+    expect(t.stepBack?.reason).toContain('4 workouts');
+    expect(t.stepBack?.reason).not.toMatch(/week/);
   });
 
   it('J: a heavy top single does not become the working weight', () => {

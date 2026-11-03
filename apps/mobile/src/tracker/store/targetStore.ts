@@ -14,7 +14,8 @@ import { create } from 'zustand';
 
 import { displayUnits, type UnitSystem } from '@/lib/units';
 import type { LoadMode } from '@/tracker/engine/logTypes';
-import type { ProgressionTarget, WeightJump } from '@/tracker/engine/progression';
+import { applyStepBack, withoutStepBack, type ProgressionTarget, type StuckChoice, type WeightJump } from '@/tracker/engine/progression';
+import { todayISO } from '@/lib/date';
 import type { RepRangeChoice } from '@/tracker/engine/repRanges';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
 import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
@@ -51,6 +52,8 @@ export interface TargetQuery {
    * (his own steps, as before) or no plate on (review fix).
    */
   gym: GymPlates | null;
+  /** R-308: "When I'm stuck at a weight" (absent = ask). */
+  stuck?: StuckChoice;
 }
 
 /** The gym's bar and plates for a unit, from the saved Plates and bars (null = not set up). Never throws. */
@@ -97,6 +100,7 @@ export function targetQuery(
     jump: opts.jump ?? prefs.weightJump,
     repRange: opts.repRange ?? prefs.repRange,
     gym: opts.gym !== undefined ? opts.gym : gymPlatesNow(units),
+    stuck: prefs.stuckChoice,
   };
 }
 
@@ -105,7 +109,7 @@ export function querySignature(q: TargetQuery): string {
   const cards = q.cards
     .map((c) => `${c.key}:${c.exerciseId}:${c.planExerciseId ?? ''}:${c.loadMode ?? ''}:${c.card ?? ''}:${c.planCard ?? ''}:${c.splitFrom ?? ''}`)
     .join(',');
-  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${gymKey(q.gym)}|${cards}`;
+  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${gymKey(q.gym)}|${q.stuck ?? 'ask'}|${cards}`;
 }
 
 interface TargetState {
@@ -134,6 +138,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
           jump: q.jump,
           repRange: q.repRange,
           gym: q.gym,
+          ...(q.stuck ? { stuck: q.stuck } : {}),
         })
       : new Map();
   } catch {
@@ -176,4 +181,22 @@ export function seedTargets(q: TargetQuery, byIndex: Map<string, ProgressionTarg
   });
   inflight = null;
   useTargets.setState({ sig: querySignature(q), targets });
+}
+
+/**
+ * R-308 (owner, 3 Nov 2026): the member's answer to a step-back offer on a card. "Try" makes today's
+ * Target the lighter one (the open rows hint its weight and goals; remembered for today, so a reload
+ * keeps it); "Stay" hides the offer until 4 more stuck workouts. Never throws.
+ */
+export function answerStepBack(cardKey: string, exerciseId: string, kind: 'tried' | 'declined'): void {
+  try {
+    useTrackerPrefs.getState().setStepBack(exerciseId, kind, todayISO());
+    const t = useTargets.getState().targets.get(cardKey);
+    if (!t?.stepBack) return;
+    const targets = new Map(useTargets.getState().targets);
+    targets.set(cardKey, kind === 'tried' ? applyStepBack(t) : withoutStepBack(t));
+    useTargets.setState({ targets });
+  } catch (e) {
+    console.warn('[ForgeErr] targets: the step-back answer could not be kept', e);
+  }
 }
