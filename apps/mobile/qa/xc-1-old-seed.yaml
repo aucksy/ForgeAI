@@ -25,8 +25,10 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Skip$"
     optional: true
-- extendedWaitUntil:
-    visible: "Use without an account|Step 1 of 3"
+# The 0.69.0 start view is taller than the owner-size phone: "Use without an account" sits below
+# the Google button, off the screen. Scroll down to it (an older release shows step 1 at once).
+- scrollUntilVisible:
+    element: "Use without an account|Step 1 of 3"
     timeout: 30000
 - runFlow:
     when:
