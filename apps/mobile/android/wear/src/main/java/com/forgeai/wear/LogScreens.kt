@@ -340,7 +340,7 @@ private fun NextSetScreen(
     try {
       requester.requestFocus()
     } catch (_: Exception) {
-      // No focus (a render without a window): the crown simply does nothing.
+      // quiet: no focus (a render without a window): the dial simply does nothing.
     }
   }
 }

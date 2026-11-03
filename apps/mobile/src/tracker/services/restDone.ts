@@ -45,6 +45,7 @@ export function parseWatchLog(raw: unknown): WatchLog | null {
     try {
       v = JSON.parse(raw);
     } catch {
+      // quiet: a message that is not JSON is simply not a watch log; the caller treats null as "no log".
       return null;
     }
   }
@@ -71,6 +72,9 @@ export function watchPatch(log: WatchLog, lt: LogType): { weightKg?: number; rep
 function watchFill(log: WatchLog, lt: LogType, fill: SetFill | null): SetFill | null {
   const p = watchPatch(log, lt);
   if (p.weightKg == null && p.reps == null) return fill;
+  // No weight from the watch: never invent 0 kg. The weight comes from the row or its hint, exactly as a tick on
+  // the phone; an empty box with no hint comes back as "weight missing", so the phone opens the row.
+  if (hasWeight(lt) && p.weightKg == null) return fill;
   return { ...(fill ?? { weightKg: 0, reps: 0 }), weightKg: p.weightKg ?? fill?.weightKg ?? 0, reps: p.reps ?? fill?.reps ?? 0 };
 }
 

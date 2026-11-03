@@ -261,8 +261,12 @@ object LogFlow {
 
   fun confirmed(ui: LogUi, now: Long): LogUi = ui.copy(phase = LogPhase.IDLE, phaseAt = now, sentKey = "", savedAt = now)
 
-  /** The phone refused it, did not answer, or could not be reached. */
-  fun notSaved(ui: LogUi, now: Long): LogUi = ui.copy(phase = LogPhase.NOT_SAVED, phaseAt = now, sentKey = "", exDone = false)
+  /**
+   * The phone refused it, did not answer, or could not be reached. [keepKey] (no answer in time): the set may still
+   * arrive late, so the key stays and a late confirm can still turn "Not saved" into "Saved".
+   */
+  fun notSaved(ui: LogUi, now: Long, keepKey: Boolean = false): LogUi =
+    ui.copy(phase = LogPhase.NOT_SAVED, phaseAt = now, sentKey = if (keepKey) ui.sentKey else "", exDone = false)
 
   fun dismiss(ui: LogUi, now: Long): LogUi = ui.copy(phase = LogPhase.IDLE, phaseAt = now)
 

@@ -116,6 +116,20 @@ describe('the phone ticks the watch\'s numbers', () => {
     expect(d).toMatchObject({ do: 'open' });
   });
 
+  it('review fix: reps only from the watch and no weight anywhere is never saved as 0 kg', () => {
+    const repsOnly = { ...req, log: { w: null, r: 9, rpe: null, unit: 'kg' as const } };
+    const d = decideRestDone(repsOnly, w([set('a1')]), hints({ a1: null }), START + 1_000);
+    expect(d).toMatchObject({ do: 'open', missing: 'weight' });
+    const q = decideQueuedTick(
+      { workout: START, exKey: 'a', setKey: 'a1', values: null, at: START + 1_000, label: null, log: { w: null, r: 9, rpe: null, unit: 'kg' } },
+      w([set('a1')]),
+    );
+    expect(q).toMatchObject({ do: 'open', missing: 'weight' });
+    // A weight typed in the row still counts, as on the phone.
+    const typed = decideRestDone(repsOnly, w([set('a1', { weightKg: 50 })]), hints({ a1: null }), START + 1_000);
+    expect(typed).toMatchObject({ do: 'tick' });
+  });
+
   it('a tick queued with the app closed carries the watch\'s numbers too', () => {
     const d = decideQueuedTick(
       { workout: START, exKey: 'a', setKey: 'a1', values: '62.5|8', at: START + 1_000, label: null, log: { w: 70, r: 6, rpe: null, unit: 'kg' } },
