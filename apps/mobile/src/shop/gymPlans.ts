@@ -7,6 +7,8 @@
  */
 import { parseRoutineFile, ROUTINE_FILE_KIND, ROUTINE_FILE_VERSION, type RoutineFile } from '@/tracker/plans/routineFile';
 
+import { videosInRoutines, type TrainerVideo } from './trainerVideo';
+
 export interface GymPlan {
   id: string;
   /** The gym's row version: an unchanged plan is not saved again. */
@@ -16,6 +18,8 @@ export interface GymPlan {
   /** Who made it ("Ravi"); null for an old owner key. */
   byName: string | null;
   file: RoutineFile;
+  /** F148: the trainer's YouTube links on its exercises (only good ones; none before 0051). */
+  videos: TrainerVideo[];
 }
 
 export type GymPlansAnswer =
@@ -35,7 +39,8 @@ export function gymPlanFromRow(raw: unknown): GymPlan | null {
   if (!id || !name || !Number.isFinite(version) || !Array.isArray(raw.routines) || raw.routines.length === 0) return null;
   const parsed = parseRoutineFile(JSON.stringify({ kind: ROUTINE_FILE_KIND, version: ROUTINE_FILE_VERSION, folder: name, routines: raw.routines }));
   if (!parsed.ok || parsed.file.routines.length === 0) return null;
-  return { id, version, name, note: str(raw.note) || null, byName: str(raw.byName) || null, file: parsed.file };
+  const byName = str(raw.byName) || null;
+  return { id, version, name, note: str(raw.note) || null, byName, file: parsed.file, videos: videosInRoutines(raw.routines, byName) };
 }
 
 /** The server's answer, checked; null when it is not one. PURE. */

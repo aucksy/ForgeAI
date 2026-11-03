@@ -62,6 +62,8 @@ declare
     'owner_phone_links','owner_decide_phone_link','owner_confirm_challenge_reward',
     -- 0049: busy machines by day and hour (members check their member key and get only proven gym-level levels; the gym its owner or desk key, saving: owners only).
     'member_machine_busy','member_machine_push','owner_machine_setup','owner_save_machine_setup',
+    -- 0051: the gym's workout of the day (members check their member key; the gym its owner or desk key).
+    'member_gym_wod','owner_gym_wods','owner_save_gym_wod','owner_clear_gym_wod',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

@@ -13,6 +13,7 @@ import { classifyRpcError, gymNowFromMe, linkFromJoin, orderFromRow, ordersFromR
 import { autoAnswerFromRow, type AutoRemindersAnswer } from './autoReminders';
 import { checkInFromRow, type CheckInAnswer } from './checkIn';
 import { gymPlansFromRow, type GymPlansAnswer } from './gymPlans';
+import { gymWodAnswerFromRow, type GymWodAnswer } from './gymWod';
 import { gymDietsFromRow, gymMeasuresFromRow, type GymDietsAnswer, type GymMeasuresAnswer } from './gymBody';
 import { gymHoursFromRow } from './gymTimings';
 import { busyFromRow, type GymBusy } from './gymBusy';
@@ -190,6 +191,17 @@ export async function apiGymPlans(key: string): Promise<GymResult<GymPlansAnswer
   const r = await call('member_gym_plans', { p_key: key }, READ_MS);
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
   const answer = gymPlansFromRow(r.data);
+  return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
+}
+
+/**
+ * Today's workout from the gym (member_gym_wod, 0051, F151). `missing`: the server has not had 0051 yet, so
+ * the Workout tab shows no card.
+ */
+export async function apiGymWod(key: string): Promise<GymResult<GymWodAnswer> | { ok: false; missing: true }> {
+  const r = await call('member_gym_wod', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  const answer = gymWodAnswerFromRow(r.data);
   return answer ? { ok: true, data: answer } : { ok: false, error: { kind: 'other' } };
 }
 

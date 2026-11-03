@@ -14,6 +14,12 @@ export interface FolderLite {
 
 export type GymSyncStep<F extends FolderLite = FolderLite> = { kind: 'save'; plan: GymPlan; before: F | null } | { kind: 'gone'; folder: F; from: FromGym };
 
+/**
+ * F151: the plan id of the folder "Workouts of the day" (services/gymWodSync.ts). It is from the gym but is
+ * not one of its plans, so the plans' sync never relabels or updates it.
+ */
+export const WOD_PLAN_ID = 'gym-wod';
+
 /** The key a plan is remembered by on this phone ("this gym sent it once"). PURE. */
 export function gymPlanKey(gymId: string, planId: string): string {
   return `${gymId}:${planId}`;
@@ -31,7 +37,7 @@ export function gymSyncSteps<F extends FolderLite>(
   folders: readonly F[],
   known: ReadonlySet<string> = new Set(),
 ): GymSyncStep<F>[] {
-  const mine = folders.filter((f) => f.settings.fromGym?.gymId === gymId);
+  const mine = folders.filter((f) => f.settings.fromGym?.gymId === gymId && f.settings.fromGym.planId !== WOD_PLAN_ID);
   const steps: GymSyncStep<F>[] = [];
   for (const plan of plans) {
     const before = mine.find((f) => f.settings.fromGym?.planId === plan.id) ?? null;

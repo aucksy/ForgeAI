@@ -42,6 +42,7 @@ import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
 
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
+import { GymWodCard } from '@/tracker/components/GymWodCard';
 import { MuscleTipNote } from '@/tracker/components/MuscleTipNote';
 import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 import { UpNextCard } from '@/tracker/components/UpNextCard';
@@ -452,6 +453,9 @@ export default function WorkoutScreen() {
         ) : null}
         {/* Packet B: the one destructive style — a red link that asks first. */}
         {card.discard ? <DangerLink label={card.discard.label} onPress={onDiscard} /> : null}
+
+        {/* F151: the workout the member's gym set for everyone today (nothing without one, or while a workout is open). */}
+        <GymWodCard hidden={active} startGuard={startGuard} refreshKey={tick} />
 
         {importOffer ? <SwitcherCard onPick={openImport} /> : null}
 

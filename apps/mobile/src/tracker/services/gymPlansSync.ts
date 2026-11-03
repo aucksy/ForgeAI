@@ -24,6 +24,7 @@ import { listFolders, setFolderSettings, type FromGym } from '../db/folderRepo';
 import { gymPlanKey, gymSyncSteps, leftGymSteps, type FolderLite, type GymSyncStep } from '../lib/gymPlanSteps';
 import { resolveSharedRoutines } from './plansService';
 import { saveImportedFolder } from './routineMerge';
+import { forgetTrainerVideos, saveTrainerVideos } from './trainerVideos';
 import { forgetWorkoutFolders } from './workoutFolders';
 
 /** At most this often (ms) on its own; a pull to refresh can ask sooner. */
@@ -66,6 +67,8 @@ export function retireGymFolders(): Promise<boolean> {
       if (before) await before;
       const steps = leftGymSteps(await listFolders(), null);
       await markGone(steps);
+      // F148: the old gym's video links go with it.
+      await forgetTrainerVideos();
       if (steps.length > 0) forgetWorkoutFolders();
       return steps.length > 0;
     } catch (e) {
@@ -99,6 +102,8 @@ export function syncGymPlans(link: GymLink | null, opts: { force?: boolean; now?
       // "See the desk" answers (no check-in yet, a name that doesn't match): nothing to save.
       if (!r.data.ok) return false;
       const { gymId, gymName, plans } = r.data;
+      // F148: the trainer's video links in every plan sent now (a link taken off goes too).
+      await saveTrainerVideos('plans', plans.flatMap((p) => p.videos));
       const folders = await listFolders();
       const known = await readKnown();
       const knownAtStart = known.size;

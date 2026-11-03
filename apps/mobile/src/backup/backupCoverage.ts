@@ -75,6 +75,8 @@ export const STORAGE_LEFT_OUT: Readonly<Record<string, string>> = {
   'forgeai-gym-plans-known': 'gym plans bookkeeping (from the gym\'s server)',
   'forgeai-gym-measures': 'gym trainer\'s measurements (from the gym\'s server)',
   'forgeai-gym-diets': 'gym diet plans (from the gym\'s server)',
+  'forgeai-trainer-videos-plans': 'gym trainer\'s video links, F148 (from the gym\'s server)',
+  'forgeai-trainer-videos-wod': 'gym trainer\'s video links, F148 (from the gym\'s server)',
   'forgeai-gym-reminders': 'gym reminders (from the gym\'s server)',
   'forgeai-gym-reminders-sent': 'gym reminders bookkeeping',
   'forgeai-gym-reminders-stamp': 'gym reminders bookkeeping',

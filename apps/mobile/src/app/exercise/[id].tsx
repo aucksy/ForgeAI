@@ -45,6 +45,7 @@ import { ExercisePrRows } from '@/tracker/components/ExercisePrRows';
 import { ExerciseThumb } from '@/tracker/components/ExerciseThumb';
 import { SegmentedTabs } from '@/tracker/components/SegmentedTabs';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
+import { TrainerVideoLink } from '@/tracker/components/TrainerVideoLink';
 import { getExerciseIdsByCatalogKey, type TrackerExercise } from '@/tracker/db/exerciseInfo';
 import { hideRefusal, mergeExercise, mergeRefusal, setExerciseHidden } from '@/tracker/db/exerciseManage';
 import { setRecordsFrom } from '@/tracker/db/recordStart';
@@ -415,6 +416,8 @@ export default function ExerciseScreen() {
                 <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} fallback={clipStandIn} />
                 {/* F20: start and end pictures (nothing for exercises without a match, or with a clip) */}
                 <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
+                {/* F148: the gym trainer's own video of it (nothing when there is none) */}
+                <TrainerVideoLink catalogKey={ex.catalogKey} name={ex.name} marginBottom={space.lg} />
                 {/* EX-07: the answer first — last time and best, in the way it is logged */}
                 {last ? (
                   <Card style={{ gap: space.sm, marginBottom: space.lg }}>
@@ -519,6 +522,8 @@ export default function ExerciseScreen() {
                 <ExerciseClip catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} fallback={clipStandIn} />
                 {/* F20: start and end pictures, as on Summary */}
                 <ExercisePictures catalogKey={ex.catalogKey} name={ex.name} hidden={Boolean(ex.mediaUri)} marginBottom={space.lg} />
+                {/* F148: the gym trainer's own video of it (nothing when there is none) */}
+                <TrainerVideoLink catalogKey={ex.catalogKey} name={ex.name} marginBottom={space.lg} />
                 {/* how to — the picture (a tap opens it larger) and the steps, once */}
                 {hasPicture || (entry?.steps.length ?? 0) > 0 ? (
                   <Card style={{ gap: space.md, marginBottom: space.lg }}>

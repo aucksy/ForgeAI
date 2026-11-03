@@ -375,6 +375,11 @@ export interface WorkoutExercise {
   /** Rest between sets, in seconds; null = the member's own default. */
   restSec?: number | null;
   note?: string | null;
+  /**
+   * F148: the trainer's own video of this exercise (YouTube only, logic/trainerVideos.ts). The member's
+   * exercise page shows "Watch your trainer". Absent or null: none.
+   */
+  videoUrl?: string | null;
 }
 
 /** One routine (one day): the member app's `SharedRoutine`. */

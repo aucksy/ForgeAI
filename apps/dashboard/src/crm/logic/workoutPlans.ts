@@ -26,6 +26,7 @@
 import { catalogExercise, EXERCISE_CATALOG, type CatalogExercise } from './exerciseCatalog';
 import READY_PLAN_FILE from './programTemplates.json';
 import { countOf } from './plural';
+import { cleanVideoUrl, VIDEO_URL_PROBLEM, videoUrlOk } from './trainerVideos';
 import type { DateISO } from './dates';
 import type {
   Membership,
@@ -307,6 +308,10 @@ export function cleanDraft(d: WorkoutPlanDraft): WorkoutPlanDraft {
         // A start of another kind (kg on what is now a timed hold) is dropped.
         const start = startKind(e.logType) === startKind(logType) ? roundKg(startOf(e)) : null;
         const setList = buildSetList(logType, e.sets, e.repMin, start);
+        // F148: a YouTube link as saved (https, small-letter host); one that is not stays as typed so
+        // the check below names it. Blank: no link.
+        const video = cleanVideoUrl(e.videoUrl);
+        const videoUrl = video === 'bad' ? (e.videoUrl ?? '').trim() : video;
         return {
           name: tidy(e.name),
           catalogKey,
@@ -318,6 +323,7 @@ export function cleanDraft(d: WorkoutPlanDraft): WorkoutPlanDraft {
           primary: [...e.primary],
           restSec: e.restSec ?? null,
           note: noteOf(e.note, WP_NOTE_MAX),
+          ...(videoUrl ? { videoUrl } : {}),
         };
       }),
     })),
@@ -421,6 +427,7 @@ export function workoutPlanProblem(d: WorkoutPlanDraft, record?: unknown): strin
       if (typeof e.note === 'string' && e.note.trim().length > WP_NOTE_MAX) {
         return `${what}: keep the note to ${WP_NOTE_MAX} letters.`;
       }
+      if (e.videoUrl !== null && e.videoUrl !== undefined && !videoUrlOk(e.videoUrl)) return `${what}: ${VIDEO_URL_PROBLEM}`;
     }
   }
   const { memberIds, planIds } = d.assign;

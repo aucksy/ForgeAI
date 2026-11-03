@@ -243,6 +243,9 @@ function deviceSteps(): EraseStep[] {
         // Which gym plans already made a folder (a deleted one never comes back): a fresh start forgets.
         const { GYM_PLANS_KNOWN_KEY } = await import('@/tracker/services/gymPlansSync');
         await AsyncStorage.removeItem(GYM_PLANS_KNOWN_KEY);
+        // F148: the trainer's video links kept on the phone.
+        const { forgetTrainerVideos } = await import('@/tracker/services/trainerVideos');
+        await forgetTrainerVideos();
         // R-120: the gym's measurements and diet plans kept on the phone.
         const { GYM_MEASURES_KEY, GYM_DIETS_KEY } = await import('@/tracker/services/gymBodySync');
         await AsyncStorage.removeItem(GYM_MEASURES_KEY);

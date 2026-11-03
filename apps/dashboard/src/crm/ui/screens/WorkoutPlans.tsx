@@ -56,6 +56,7 @@ import {
   WP_MAX_SETS,
   WP_MIN_HOLD_SEC,
 } from '../../logic/workoutPlans';
+import { cleanVideoUrl } from '../../logic/trainerVideos';
 import type { Member, WorkoutDayType, WorkoutExercise, WorkoutPlan, WorkoutPlanDraft, WorkoutRoutine } from '../../types';
 import {
   Button,
@@ -78,6 +79,8 @@ import {
   space,
   TOUCH,
 } from '../kit';
+import { useWodServer } from './useWodServer';
+import { WorkoutOfTheDayCard } from './WorkoutOfTheDay';
 
 /** The line every builder and list shows: when the member gets it. */
 export const MEMBERS_SEE_IT = 'Members see it in the MettleUp app after one check-in at the gym.';
@@ -117,6 +120,9 @@ export function WorkoutPlansScreen() {
       {error && <ErrorBanner>{error}</ErrorBanner>}
 
       <p style={{ margin: `0 0 ${space.lg}px`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{membersSeeIt(online)}</p>
+
+      {/* F151: today's workout for everyone (hidden until the server has 0051). */}
+      <WorkoutOfTheDayCard plans={open} />
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Plans</SectionTitle>
@@ -302,6 +308,8 @@ export function WorkoutPlanSheet({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const isNew = !initial.id;
+  // F148: the video link box shows once the server keeps links (0051).
+  const videos = useWodServer() === 'yes';
 
   const routine = draft.routines[Math.min(day, draft.routines.length - 1)];
   const dayIndex = draft.routines.indexOf(routine);
@@ -460,6 +468,7 @@ export function WorkoutPlanSheet({
                 exercise={e}
                 position={i}
                 count={routine.exercises.length}
+                videos={videos}
                 onChange={(patch) => setExercises((es) => es.map((x, j) => (j === i ? { ...x, ...patch } : x)))}
                 onMove={(by) => setExercises((es) => moveItem(es, i, by))}
                 onRemove={() => setExercises((es) => es.filter((_, j) => j !== i))}
@@ -487,7 +496,7 @@ export function WorkoutPlanSheet({
   );
 }
 
-function Hint({ children }: { children: ReactNode }) {
+export function Hint({ children }: { children: ReactNode }) {
   return <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{children}</p>;
 }
 
@@ -557,10 +566,11 @@ function KgBox({
   );
 }
 
-function ExerciseEditor({
+export function ExerciseEditor({
   exercise,
   position,
   count,
+  videos = false,
   onChange,
   onMove,
   onRemove,
@@ -568,11 +578,15 @@ function ExerciseEditor({
   exercise: WorkoutExercise;
   position: number;
   count: number;
+  /** F148: show the video link box (the server keeps links). A link already saved always shows. */
+  videos?: boolean;
   onChange: (patch: Partial<WorkoutExercise>) => void;
   onMove: (by: number) => void;
   onRemove: () => void;
 }) {
   const [noteOpen, setNoteOpen] = useState(Boolean(exercise.note));
+  const [videoOpen, setVideoOpen] = useState(Boolean(exercise.videoUrl));
+  const videoBad = Boolean(exercise.videoUrl?.trim()) && cleanVideoUrl(exercise.videoUrl) === 'bad';
   const muscles = musclesWords(exercise.primary);
   const how = logTypeWords(exercise.logType);
   // The start box: kg, kg added to body weight, or seconds for a hold; none for reps only.
@@ -653,12 +667,30 @@ function ExerciseEditor({
           </Button>
         </div>
       )}
+      {videos || exercise.videoUrl ? (
+        videoOpen ? (
+          <TextField
+            label="Your video of it (YouTube link, optional)"
+            value={exercise.videoUrl ?? ''}
+            onChange={(v) => onChange({ videoUrl: v })}
+            placeholder="https://youtu.be/…"
+            hint="Members see “Watch your trainer” on this exercise in their app."
+            error={videoBad ? 'Paste a YouTube link (youtube.com or youtu.be).' : null}
+          />
+        ) : (
+          <div style={{ marginTop: space.xs }}>
+            <Button variant="quiet" onClick={() => setVideoOpen(true)}>
+              + Add your video
+            </Button>
+          </div>
+        )
+      ) : null}
     </div>
   );
 }
 
 /** Search the exercise list by any name; or add one that is not in it. */
-function ExercisePicker({ onPick }: { onPick: (e: WorkoutExercise) => void }) {
+export function ExercisePicker({ onPick }: { onPick: (e: WorkoutExercise) => void }) {
   const [query, setQuery] = useState('');
   const results = useMemo(() => (query.trim() ? searchExercises(query, 8) : []), [query]);
   const typed = query.replace(/\s+/g, ' ').trim();
