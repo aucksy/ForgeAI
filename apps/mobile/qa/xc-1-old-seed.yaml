@@ -180,9 +180,10 @@ appId: com.mettleup.app
 - runFlow:
     file: xc-sub-find.yaml
     env:
-      FIND: "^Workouts$|^Rest timer and sounds$"
-# 0.70.0: "Ring through Do Not Disturb" sits on Settings -> "Rest timer and sounds" (no Workouts page).
-- tapOn: "^Workouts$|^Rest timer and sounds$"
+      FIND: "^Rest timer and sounds$"
+# 0.70.0: "Ring through Do Not Disturb" sits on Settings -> "Rest timer and sounds". Never match
+# "Workouts": since 0.70.0 that is the group heading above it, and a tap on it does nothing.
+- tapOn: "^Rest timer and sounds$"
 - runFlow:
     file: xc-sub-find.yaml
     env:
