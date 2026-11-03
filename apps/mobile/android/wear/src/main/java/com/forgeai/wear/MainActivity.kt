@@ -218,14 +218,16 @@ class MainActivity : ComponentActivity() {
           }
           LogPhase.SENDING -> {
             delay((LogMath.CONFIRM_MS - (System.currentTimeMillis() - ui.sentAt)).coerceAtLeast(0L))
-            if (logUi.phase == LogPhase.SENDING && logUi.sentAt == ui.sentAt) notSaved("no answer from the phone")
+            if (logUi.phase == LogPhase.SENDING && logUi.sentAt == ui.sentAt) notSaved("no answer from the phone", keepKey = true)
           }
           else -> Unit
         }
       }
-      // The phone took the set: it names the next row (or the workout closed).
+      // The phone took the set: it names the next row (or the workout closed). A late answer after "Not saved"
+      // (no answer in time) still counts, so the member is not told to log a set that was saved.
       LaunchedEffect(snap.row, snap.workoutActive, ui.sentKey) {
-        if (logUi.phase == LogPhase.SENDING && LogMath.confirmed(logUi.sentKey, snap.row, snap.workoutActive)) {
+        val waiting = logUi.phase == LogPhase.SENDING || logUi.phase == LogPhase.NOT_SAVED
+        if (waiting && LogMath.confirmed(logUi.sentKey, snap.row, snap.workoutActive)) {
           LogBus.waiting = false
           logUi = LogFlow.confirmed(logUi, System.currentTimeMillis())
           now = System.currentTimeMillis()
@@ -332,10 +334,10 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  private fun notSaved(why: String) {
+  private fun notSaved(why: String, keepKey: Boolean = false) {
     Log.w("ForgeWear", "set logged here not saved: $why")
     LogBus.waiting = false
-    logUi = LogFlow.notSaved(logUi, System.currentTimeMillis())
+    logUi = LogFlow.notSaved(logUi, System.currentTimeMillis(), keepKey)
   }
 
   override fun onStart() {

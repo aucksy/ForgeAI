@@ -173,6 +173,15 @@ class WatchLogTest {
     assertEquals(LogPhase.NOT_SAVED, ns.phase)
     assertFalse(ns.exDone)
     assertEquals(LogPhase.IDLE, LogFlow.dismiss(ns, 2L).phase)
+    assertEquals("", ns.sentKey)
+  }
+
+  @Test fun noAnswerKeepsTheKeySoALateConfirmStillCounts() {
+    val ui = LogFlow.sent(LogUi(), "set-4", 0L, lastOfExercise = false, exercise = "Bench Press", sets = 4)
+    val ns = LogFlow.notSaved(ui, 1L, keepKey = true)
+    assertEquals(LogPhase.NOT_SAVED, ns.phase)
+    assertEquals(ui.sentKey, ns.sentKey)
+    assertTrue(LogMath.confirmed(ns.sentKey, "set-5", true))
   }
 
   @Test fun restClockDimShowsMinutesOnly() {
