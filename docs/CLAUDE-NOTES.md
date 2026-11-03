@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-299. "In use" after every set: make the switch on the workout screen easy to find — 3 Nov 2026
+
+He asked: an option on the active workout screen to turn on the "In use" screen that pops up when a set is ticked and the rest starts.
+
+Checked: it exists (R-70) but is hidden: tap the rest clock during a rest, the big In use screen opens, and its tick box "Show after every set" turns on the pop-up after every set (same setting as Settings, Workouts). Nothing on the bar says the clock can be tapped. My view: no second switch on the busy rest bar (one row: -15, clock, +15, Skip, tight at his font size); instead, while the setting is off, a small line under the clock, "Tap: In use", so the existing 2-tap path is visible. Next batch, after 0.70.0.
+
 ## R-298. Hide the red "rest over" counter; keep the quiet long-rest rule — 3 Nov 2026
 
 He said: when the rest ends he just starts the next set without telling the app, so the red count-up keeps going and looks like he is resting longer. He does not think members need to see it, and members must not do any extra task beyond ticking the set. Also: be his product expert and give an opinion on every request (saved as a preference + global CLAUDE.md rule 7).
