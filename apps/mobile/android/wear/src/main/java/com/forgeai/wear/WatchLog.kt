@@ -127,7 +127,7 @@ object LogMath {
     return if (dir < 0 && next >= b && b > 0) b else next
   }
 
-  /** The line under the set while the crown is live: "Turn the crown · 2.5 kg steps". */
+  /** The line under the set while the crown is live: "Turn the dial · 2.5 kg steps". */
   fun crownHint(adjust: Adjust, e: SetEntry): String = when (adjust) {
     Adjust.WEIGHT -> "${WatchCopy.TURN_THE_CROWN} · ${num(e.step)} ${e.unit} steps"
     Adjust.REPS -> "${WatchCopy.TURN_THE_CROWN} · 1 rep steps"

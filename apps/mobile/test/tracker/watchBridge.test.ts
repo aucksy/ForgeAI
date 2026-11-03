@@ -108,7 +108,7 @@ describe('a set the phone cannot log is reported back to the watch (U-W3)', () =
     const manifest = read('android/wear/src/main/AndroidManifest.xml');
     expect(manifest).toMatch(/com\.google\.android\.gms\.wearable\.MESSAGE_RECEIVED[\s\S]*android:pathPrefix="\/forge\/nack"/);
     // R-207: the app screen is glance-only (no button to show again), so a refused set is a short note.
-    expect(read(`${WATCH}WatchActions.kt`)).toMatch(/fun refused\(ctx: Context\)[\s\S]*note\(ctx, "Not saved\. Tick it on your phone"\)/);
+    expect(read(`${WATCH}WatchActions.kt`)).toMatch(/fun refused\(ctx: Context\)[\s\S]*note\(ctx, "Not saved\. Log this set on your phone"\)/);
   });
 });
 

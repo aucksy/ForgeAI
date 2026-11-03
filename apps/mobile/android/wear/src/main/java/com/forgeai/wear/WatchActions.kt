@@ -59,7 +59,7 @@ object WatchActions {
       main.post { LogBus.refusedAt = System.currentTimeMillis() }
       return
     }
-    note(ctx, "Not saved. Tick it on your phone")
+    note(ctx, "Not saved. Log this set on your phone")
   }
 
   /**

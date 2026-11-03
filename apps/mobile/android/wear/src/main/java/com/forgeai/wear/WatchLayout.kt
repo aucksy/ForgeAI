@@ -218,13 +218,13 @@ object WatchCopy {
 
   /** Watch logging (3 Nov 2026, the owner's approved design): every word of the logging screens. */
   const val NOT_SAVED = "Not saved"
-  const val TICK_IT_ON_YOUR_PHONE = "Tick it on your phone"
+  const val TICK_IT_ON_YOUR_PHONE = "Log this set on your phone"
   const val OK = "OK"
   const val SAVED = "Saved"
   const val SKIP = "Skip"
   const val HOW_HARD = "How hard was it?"
   const val EFFORT_SCALE = "6 easy · 10 max"
-  const val TURN_THE_CROWN = "Turn the crown"
+  const val TURN_THE_CROWN = "Turn the dial"
   const val NEXT_EXERCISE = "Next exercise"
   const val NEXT = "Next"
   const val WARM_UP_CHIP = "W"
