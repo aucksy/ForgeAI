@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-315. Overnight: finish UAT, then release, then a 360 launch-readiness analysis and fix — 3 Nov 2026
+
+He said (going to sleep): "Make all decisions yourself and complete all browser actions yourself. Don't stop until all is done. Once this part is done you can actually release the changes and then I want you to conduct another end-to-end independent new analysis for the whole system to actually prepare the system for launch... we will onboard the first gym for trial and have real users test them. ... a 360 analysis from every angle ... add that missing polish ... gaps in the user experiences ... features that we could add to really realize the value of something that we already have to increase convenience or save time or to increase revenue for the gym owner. ... Whatever we find, we fix that and then we start building the iPhone app and we will talk more about that."
+This is his "release" for ONE version: the current waiting list (R-297 watch service, R-298..R-311 rest bar / In use / rep goals / step-back / machine grid / chart + finish links, watch logging) once UAT and the full gate are green. Then: independent 360 audit (member app, watch, owner dashboard, website, admin; UX polish, gaps, value-adding features, owner revenue), fix what it finds (each fix through UAT), then iPhone app planning with him. Limits that still hold: no LIVE database changes, no money, no privacy/legal wording, no emails/messages sent, no public posts without his yes.
+
 ## R-313. Play "What's new" every release, in simple complete sentences — 3 Nov 2026
 
 He said: going forward, update the release notes on Google Play under What's new as well; the rule about simple, complete sentences still holds.
