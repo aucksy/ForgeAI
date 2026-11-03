@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-307. DECIDED: bench dumbbell moves get In use ON; rep goals follow Weight jumps — 3 Nov 2026
+
+He said "Yes to both": (1) dumbbell moves done on a bench (incline dumbbell press, seated press...) have the In use banner ON by default (R-304 table stands). (2) Rep goals follow Settings "Weight jumps" (R-303: about the chosen % more than the previous total, whole reps, at most +1 a set, +2 when RPE 7 or easier, earlier/easier sets first, never past the cap). Build in the next batch with R-298..R-306.
+
 ## R-306. Pec Deck Fly suggests 40 kg after 45 kg — 3 Nov 2026
 
 He sent a screenshot: previous 45x12 @9, 45x9 @9.5, 45x7 @9.5 (20 Oct); suggested 40 x 13 on all 3 sets, 0 of 1,560 kg. "Expected or correct? I dont think so".
