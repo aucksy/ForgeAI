@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-312. Step-back card words OK; watch logging design arrived — 3 Nov 2026
+
+He said: "card OK" (the step-back card: "Stuck at 45 kg for 4 workouts. Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). Try 40 kg today?"). Release blocker cleared.
+He said: the Claude Design result for watch logging + rest -15/+15 is in D:/Apps/ForgeAI/Wear OS/Designs/MettleUp Wear OS watch app New/mettleup_watch_logging (12 screens: Next set, crown-adjust weight / reps, optional effort 6-10 with 4 s auto-skip, Saved, rest ring with -15/+15, orange Rest over 5 s then back to Next set, Exercise done, Not saved, warm-up, long name, largest text).
+My view: good and close to how the best watch apps do it: one big Done logs the suggested set, the crown fixes a number. Heart rate shows only when the member allowed it (no new prompt mid-set). Building it now with a helper; it waits for release like the rest.
+
 ## R-311. Tap a chart point or the finish-screen line to open that workout; no In use after the last set — 3 Nov 2026
 
 He said: (1) on an exercise's history chart, the kg label from a tap must stay after the finger lifts and be tappable to jump to that workout ("very, very crucial": All time showed a much higher total 3 years ago, he wants to see why). (2) The finish screen's "higher/lower than <date>" line must open that workout. (3) The In use banner must not open by itself after the last set of an exercise.
