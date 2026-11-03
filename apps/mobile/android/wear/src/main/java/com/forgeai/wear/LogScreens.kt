@@ -155,7 +155,7 @@ private fun TopBar(px: Px, top: Float, now: Long, heart: WatchCopy.HeartLine?, a
   val time = remember(minute) { android.text.format.DateFormat.getTimeFormat(ctx).format(Date(now)) }
   Centered(px, top) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-      Line(time, px, 20f, FontWeight.SemiBold, timeInk, spacing = 0.02f, tabular = true, tag = "clock", label = true)
+      Line(time, px, 20f, FontWeight.SemiBold, timeInk, spacing = 0.02f, lineHeight = 1.2f, tabular = true, tag = "clock", label = true)
       if (heart != null && !ambient) {
         Spacer(Modifier.width(px.dp(12f)))
         StrokeIcon(px.dp(14f), "heartIcon", "heartFill", ink.acc) { fillIcon(HEART_FILL, ink.acc) }
@@ -293,11 +293,11 @@ private fun NextSetScreen(
           }
           Spacer(Modifier.width(px.dp(8f)))
         }
-        if (card.setLabel.isNotEmpty()) Line(card.setLabel, px, 18f, FontWeight.SemiBold, ink.grey, tabular = true, tag = "setLabel", label = true)
+        if (card.setLabel.isNotEmpty()) Line(card.setLabel, px, 18f, FontWeight.SemiBold, ink.grey, lineHeight = 1.3f, tabular = true, tag = "setLabel", label = true)
       }
       val sub = if (adjust != Adjust.NONE) LogMath.crownHint(adjust, e) else card.previous.orEmpty()
       if (sub.isNotEmpty()) {
-        Line(sub, px, 18f, if (adjust != Adjust.NONE) FontWeight.Bold else FontWeight.Medium, if (adjust != Adjust.NONE) ink.acc else ink.grey, tabular = true, maxWidth = 360f, tag = "previous", label = true)
+        Line(sub, px, 18f, if (adjust != Adjust.NONE) FontWeight.Bold else FontWeight.Medium, if (adjust != Adjust.NONE) ink.acc else ink.grey, lineHeight = 1.3f, tabular = true, maxWidth = 360f, tag = "previous", label = true)
       }
     }
     // The big numbers, fixed size whatever the text size.
