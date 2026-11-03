@@ -91,6 +91,8 @@ class MainActivity : ComponentActivity() {
     }
     answered(KEY_ASKED_HR)
     afterNotificationChange()
+    // R-297: heart rate just allowed mid-workout: the health-type service may start now.
+    if (hrAllowed) WorkoutLive.onScreenUp(this)
   }
 
   private val askNotif = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -221,6 +223,13 @@ class MainActivity : ComponentActivity() {
     visible = true
     // The app is open: a "Workout started" card has done its job.
     WorkoutStarted.cancel(this)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    // R-297: the screen is in front now (Android lets a foreground service start only then): an open
+    // workout gets WorkoutService, which keeps MettleUp up instead of the watch face to the end.
+    WorkoutLive.onScreenUp(this)
   }
 
   override fun onStop() {

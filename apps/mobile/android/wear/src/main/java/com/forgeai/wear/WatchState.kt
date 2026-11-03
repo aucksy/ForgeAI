@@ -111,10 +111,21 @@ object WatchState {
     // R-236: after an app update or a reboot the workout's Ongoing Activity is gone: put it back.
     // Only for a workout the phone spoke of in the last WorkoutLive.CAP_MS: a phone that died, was reset
     // or lost MettleUp never sends "ended", and the watch must not keep the notice forever.
-    val p = prefs(ctx)
-    WorkoutLive.sync(ctx, p.getBoolean("active", false) && WorkoutLive.fresh(p.getLong("workoutAt", 0L), System.currentTimeMillis()))
+    WorkoutLive.sync(ctx, workoutOpen(ctx))
     publish(ctx)
   }
+
+  /**
+   * R-297: a workout is open and the phone spoke of it under [WorkoutLive.CAP_MS] ago (what keeps the
+   * workout's Ongoing Activity and its foreground service, [WorkoutService], up).
+   */
+  fun workoutOpen(ctx: Context): Boolean {
+    val p = prefs(ctx)
+    return p.getBoolean("active", false) && WorkoutLive.fresh(p.getLong("workoutAt", 0L), System.currentTimeMillis())
+  }
+
+  /** R-297: when the phone last spoke of the open workout (epoch ms; 0 = never). */
+  fun workoutAt(ctx: Context): Long = prefs(ctx).getLong("workoutAt", 0L)
 
   /**
    * After a reboot, an app update or a force-stop the rest's alarm and countdown are gone: a rest

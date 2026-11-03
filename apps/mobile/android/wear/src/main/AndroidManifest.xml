@@ -23,6 +23,12 @@
        install from Wear OS 5): R-207: the screen no longer asks for it; while it is off the end alarm
        is inexact (RestAlerts.arm) and the open screen buzzes on time itself (MainActivity). -->
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+  <!-- R-297: while a workout is open, WorkoutService runs in the foreground (type health) and posts
+       the workout's Ongoing Activity, so Wear OS keeps MettleUp up instead of the watch face (also
+       with "Always-on screen" off). Both are install-time permissions: no dialog. Android 14+ also
+       needs heart rate allowed for the health type; refused, the plain notice stays (as before). -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
 
   <application
     android:allowBackup="false"
@@ -95,6 +101,12 @@
           android:scheme="wear" />
       </intent-filter>
     </service>
+
+    <!-- R-297: the open workout, held in the foreground (WorkoutService.kt). -->
+    <service
+      android:name=".WorkoutService"
+      android:exported="false"
+      android:foregroundServiceType="health" />
 
     <!-- Restart / app update: a running rest's alarm and countdown come back. -->
     <receiver

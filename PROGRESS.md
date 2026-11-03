@@ -3,6 +3,9 @@
 ## Waiting for release (R-266: tag only when the owner says "release")
 - R-305 In use screen: "300 kg more to beat the previous total" under the lift's name, and the MettleUp logo at the foot (marketing: people nearby ask which app). What's new draft: "When your phone shows In use, it also shows how many kg you need to beat your previous total."
 
+- R-310 machine and cable weights stay on a 2.5 or 5 kg grid (Pec Deck never 38 kg). What's new draft: "Suggested weights on machines now follow the machine's steps, like 35, 40, 45 kg."
+- R-297 watch: a workout service keeps MettleUp in front instead of the watch face (needs a real-watch check). AT RELEASE: Play Console -> App content -> Foreground service permissions form for the watch app (health type), or the watch upload may be blocked.
+
 ## Done
 - 0.70.0 RELEASED 3 Nov 2026 (owner said "Release", R-296). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3d911a76 (later commits docs only). qa-conditions failed at C1 only (the old-seed test flow did not know 0.69.0's intro screens; flow fixed after the tag). Contents (the old waiting list):
   - F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."

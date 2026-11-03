@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-311. Tap a chart point or the finish-screen line to open that workout; no In use after the last set — 3 Nov 2026
+
+He said: (1) on an exercise's history chart, the kg label from a tap must stay after the finger lifts and be tappable to jump to that workout ("very, very crucial": All time showed a much higher total 3 years ago, he wants to see why). (2) The finish screen's "higher/lower than <date>" line must open that workout. (3) The In use banner must not open by itself after the last set of an exercise.
+My view: all three good. (1)+(2) one helper building now. (3) passed to the rest-bar helper; tapping the clock still opens it by hand.
+
+## R-310. Pec Deck Fly suggested 38 kg — 3 Nov 2026
+
+He said: "its suggesting weight of 38. Thats trash. Weight increments should only be 2.5 or 5 kg. For this machine I only have 5 kg increments." Cause: the F74 "very hard, go lighter" step picks a rung about 5% below from his own weights; any weight he ever typed (38) was a rung. Fix (weightLadder.ts stackGrid): a kg machine or cable moves on a 5 kg grid (catalogue step 5 and 80% of his weights on 5) or 2.5 kg (80% on 2.5); off-grid weights are not suggested; a learned step is a whole number of the grid. An odd stack (7 kg plates) keeps his own weights. Pec deck now: 40 -> 35, never 38. Tests: machineStackGrid.test.ts. Later idea: a per-exercise "weight step" choice if a member's machine differs.
+
 ## R-309. "Are you still releasing yourself?" — 3 Nov 2026
 
 He asked if I am releasing without his word, and said this must be in CLAUDE.md. Checked the transcript: 0.70.0 was tagged on his own message "Release" at 09:39 IST today (04:09 UTC, 3 Nov), the answer to my "Say release when you want members to get the trainer view...". 0.69.0 was his 2 Nov "build F52 and F186 and then release everything once done". No release without his word. Still, the proof was not shown to him. Added to both CLAUDE.md files: before any tag, quote his release message with date and time; one release = one version.

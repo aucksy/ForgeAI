@@ -164,9 +164,15 @@ export function buildLadder(
   } = {},
 ): Ladder {
   const u = opts.units ?? displayUnits();
-  const own = [...new Set(weightsKg.filter((w) => Number.isFinite(w) && w > EPS).map((kg) => cleanRung(kgToUnit(kg, u), kind, u)))].sort(
+  const seen = [...new Set(weightsKg.filter((w) => Number.isFinite(w) && w > EPS).map((kg) => cleanRung(kgToUnit(kg, u), kind, u)))].sort(
     (a, b) => a - b,
   );
+  // R-310 (owner, 3 Nov 2026, "it suggests 38 kg... increments should only be 2.5 or 5 kg; this
+  // machine only has 5 kg"): a machine or cable in kg moves on its stack's grid, never an odd weight
+  // typed once. The grid is 5 kg when the catalogue says 5 and nearly all his weights sit on it,
+  // else 2.5 kg; weights off the grid are not rungs.
+  const stack = kind === 'own' && !imperial(u) ? stackGrid(seen, opts.catalogStepKg) : null;
+  const own = stack == null ? seen : seen.filter((v) => isMultiple(v, stack));
   const thin = own.length < THIN_LADDER;
   const plates = kind === 'plates' && opts.gym && opts.gym.platesKg.some((p) => p > EPS) ? opts.gym : null;
   const gym = plates ? r3(kgToUnit(Math.min(...plates.platesKg.filter((p) => p > EPS)) * 2, u)) : null;
@@ -189,6 +195,8 @@ export function buildLadder(
       step = cleanStep(kgToUnit(cat, u), kind, u);
     }
   }
+  // R-310: the step is a whole number of the stack's grid (a learned 2 kg on a 5 kg stack is 5).
+  if (stack != null && step != null && !isMultiple(step, stack)) step = r3(Math.max(1, Math.round(step / stack)) * stack);
 
   // Review fix: with the gym's plates, each of his own weights is put on a weight they can load
   // (61 kg with no 0.5 kg plates → 62.5), and nothing under the bar is a rung.
@@ -215,6 +223,18 @@ export function buildLadder(
   // decision, review of 8b7c0c9); otherwise past the top he keeps his own learned step.
   const fine = kind === 'plates' && step != null && plates ? Math.min(step, smallest) : step;
   return { kind, units: u, own, rungs, step, fine, gym: plates };
+}
+
+/**
+ * R-310: a kg machine's or cable's weight grid: 5 when the catalogue step is 5 or more and at least
+ * 80% of his weights are multiples of 5 (none at all counts as yes), else 2.5 when 80% sit on
+ * 2.5, else null (an odd stack: his own weights stay). PURE.
+ */
+export function stackGrid(own: readonly number[], catalogStepKg?: number): number | null {
+  const share = (g: number) => own.filter((v) => isMultiple(v, g)).length >= own.length * 0.8 - EPS;
+  if ((catalogStepKg ?? 0) >= 5 - EPS && share(5)) return 5;
+  // A stack of its own (7 kg plates: 12, 19, 26 ... kg) keeps his own weights.
+  return share(2.5) ? 2.5 : null;
 }
 
 /** Can the gym load this weight (shown unit)? Always true with no gym. */
