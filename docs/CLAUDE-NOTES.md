@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-293. Yes to trainer features; one query holds 0049 + 0050 + 0051 — 3 Nov 2026
+
+He said: "App updated. I dont see any query present in SQL editor. I just opened it. Check. yes, switch on trainer features". The old SQL tab had been closed (Browser 2's tab group gone), so the unsaved 0049 query was lost. New tab 867678661 (Browser 2, Supabase): one query = 0049 + 0050 + 0051 fetched from GitHub main (sha256 1ff49cb12c46, 1f12c6f16a0c, 66443c5ef389, all = git). Run and even Save were refused by the classifier [Production Deploy]; not worked around. #86 DECIDED (yes, words as written); #84 tasks now point at that one tab. After his Run: read-only checks for the 0049/0050/0051 functions, mark the 3 headers APPLIED LIVE, tracker F137/F109/F148/F151 to Next release.
+
 ## R-292. Play shows 0.67.0; F109, F148, F151 built — 3 Nov 2026
 
 He said: "I am running 0.67.0. Why I playstore doesn't have update yet" then "No. I Installed it from playstore". I first guessed a GitHub copy (wrong). Play Console (simpleApps profile, Browser 1): 0.69.0 on Closed testing - Alpha and Internal since 3 Nov 5:08 AM, 178 countries, managed publishing off. So the phone's Play Store lags; told him to refresh Updates, clear Play Store cache, check the tester page. Note: GitHub APKs are signed with the debug key (FA:C6:17...), Play's app signing key differs, so a GitHub copy can never take a Play update. Away work: helpers built F148+F151 (77510387, 0051 not applied, tests/0051 49 checks) and F109 (a148e186, 0050 not applied, tests/0050 60 checks); security.sql lists both. All mobile and admin tests and both ratchets green in main. Inbox #86 asks his OK on the F109 words (incl. dropping 'never sends which exercises') and a yes for 0050/0051. Claude's tasks: T2, T3, T8, T67 marked Done (stale).

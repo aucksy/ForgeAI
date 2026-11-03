@@ -495,7 +495,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 86. Trainer view, trainer videos, workout of the day: your OK — 3 Nov 2026
 **Chat:** ForgeAI Local Chat
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (3 Nov) — switched on by the Run in #84
+**DECIDED (3 Nov 2026):** you said "yes, switch on trainer features", with the words as written. One Run (see #84) switches on all of it.
 **Why:** 3 features are built and tested. Each needs one switch on the gym server, and the trainer view also needs your OK on its words.
 - **Trainer view (F109, your plan in #46):** you tick "Trainer" on a staff person and pick a trainer on each member's page. The trainer opens "My members": one line per member ("New best: Leg press 120 kg × 10", "No workout for 9 days") and ready WhatsApp messages. You see every member. The desk sees nothing.
 - **Trainer videos (F148):** in Workout plans, the trainer adds a YouTube link to an exercise. Members see "Watch your trainer" on that exercise.
@@ -506,7 +507,6 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - Button: "Ask my trainer for help". After: "Sent. Your trainer will get in touch."
 - One change: "What my gym can see" now says "MettleUp never sends which exercises you did". With the trainer view on, best sets name the exercise. I suggest: "MettleUp never sends your body weight, photos or notes."
 **Until you say yes:** nothing changes. Both apps hide all 3 features.
-**Your task:** Tell me "yes, switch on trainer features" (or send changes to the words). I then load the switch into the Supabase SQL Editor in Chrome. The safety system does not let me press Run on the live database, so you press "Run" once; then I check it live.
 
 ---
 
@@ -526,9 +526,9 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **APPROVED (3 Nov 2026):** you said "yes for the privacy line". The app now shows it on "What my gym can see" while a gym has Busy machines on: "If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name." A new switch, "Share which machines I use", lets a member stop it. It comes with the next release.
 **Why:** Busy times by exercise (F137) is built. The owner switches it on in the admin app and types how many of each machine the gym has. The server checks its own guesses for 4 weeks before any member sees a tip like "Leg day is quieter on Tuesday". The safety system did not let me press Run on the live database myself.
 **Until you do it:** nothing changes. The admin screen and the member tip stay hidden.
-**Your task:** Open Chrome. The Supabase tab "SQL Editor" already holds the switch (it starts with "-- NOT APPLIED. Needs the owner's yes (F137)"). If the tab is gone, tell me and I load it again.
+**Your task:** In Chrome, open the Supabase tab "Untitled query" that has an orange dot. It holds all 3 switches: Busy machines, the trainer view, trainer videos and workout of the day. Its first line starts with "-- MettleUp: switch on Busy machines". Do not close the tab first: an unsaved query is lost when its tab closes.
 **Your task:** Press the green "Run" button (top right). If a "Potential issue detected" box shows, press "Run query". Wait for "Success. No rows returned".
-**Your task:** Tell me "done". I then check it on the live database and mark it as live.
+**Your task:** Tell me "done". I then check all 3 on the live database.
 
 ---
 
