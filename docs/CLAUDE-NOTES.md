@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-301. Lateral raise asked 20 kg x 17 on every set — 3 Nov 2026
+
+He asked: is "20 kg x 17" on all 4 sets correct? Last time 19, 16, 15, 14 (RPE 9, 9, 9.5, 9).
+
+Found: rule R2b (progression.ts). Range 10-15. Effort credit (10 - RPE) lifts 14@9 to 15, so every set counts as 'at the top'. The next dumbbell step is over 20% heavier, so R2b says 'add reps first' with ONE goal for every set: min(max+4, max(max+2, lowest+1)) = 17. So the code did what it says; the rule is the problem: set 1 asks 2 FEWER reps than he did, sets 3-4 ask +2 and +3 after RPE 9+ sets, and the kg to beat (1,360) is built from that flat 17.
+
+My view: R2b should use per-set goals like R5 (perSetGoals with the top raised to max+4): 19, 17, 15, 14 (+1 rep on the first set below the cap), 1,300 kg, about +1.5%. Then the weight goes up when every set reaches the cap. Build in the next batch, after 0.70.0, with tests for this exact workout.
+
 ## R-300. Falling short: no "add a set"; next time aims for the missed goal again — 3 Nov 2026
 
 He said: incline dumbbell press 80 kg short with the same sets; the app said "80 kg short, add a set if you have it in you". Years ago chasing every workout with extra sets hurt his cortisol, recovery and sleep. Sets must be sustainable. His idea: when short, do not suggest a set; next time show a note ("last time 80 kg short") and add a rep to recover it.
