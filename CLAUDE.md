@@ -105,6 +105,7 @@ every number on a screenshot read against its label. Lesson: D:/Brain/Lessons/fo
 
 ## Build & ship
 - **⭐ Owner rule (3 Nov 2026, R-309): proof before any release.** Before bumping, tagging or starting a release run, quote in chat HIS message that said "release", with its date and time, and name what it covers (the waiting list at that moment). One "release" = one version. No quoted message from this conversation = no release. A summary line or a note saying "he said release" is not proof.
+- **⭐ Owner rule (3 Nov 2026, R-313): Play "What's new" every release.** The release run sends this version's in-app What's new lines to Play (phone + watch tracks, 500 characters max). Write them as simple, complete sentences, most useful first, so the whole set fits. After the release, quote the play-upload log's "Release notes" block in chat.
 - **⭐ Owner rule (1 Nov 2026, R-266): batch releases.** Push each change to `main`, but do NOT bump the version, tag `v*` or start release runs until he says "release". Keep the waiting changes listed in PROGRESS.md and the What's new draft; then run the ship gate once for the batch.
 - **Cloud builds only.** Never run Gradle locally (the local toolchain is deleted; low-RAM machine
   crashes on builds). Ship by pushing a **`v*` tag** → GitHub Actions builds a signed APK+AAB and
