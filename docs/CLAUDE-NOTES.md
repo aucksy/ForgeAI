@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-316. 0.71.0 released (phone); watch upload blocked by Play terms — 4 Nov 2026
+Owner release message: 3 Nov 2026 ~22:34 IST ("Once this part is done you can actually release the changes"). One version: 0.71.0.
+Review blocker fixed first (ff7a2311, on main as 4a4c2551): a watch set with no weight is never saved as 0 kg; a late phone
+confirm turns "Not saved" into "Saved". Gate on ff7a2311 all green: CI 41698237494, wear 41698241873, qa-device default + uat
+41698246237, owner 41698250882, journeys 41698255526. Tag v0.71.0 -> release run 41719678247: phone built, published, Play
+phone tracks done (482-char notes). Watch upload failed: Play 403 "You must let us know whether your app uses any Foreground
+Service permissions". Opening Play Console shows NEW Terms of Service to accept: needs the owner (accepting terms = his yes).
+After he accepts: App content -> Foreground service permissions -> Health (heart rate during a workout on the watch), then
+re-run the failed play-upload job of run 41719678247.
+
 ## R-315. Overnight: finish UAT, then release, then a 360 launch-readiness analysis and fix — 3 Nov 2026
 
 He said (going to sleep): "Make all decisions yourself and complete all browser actions yourself. Don't stop until all is done. Once this part is done you can actually release the changes and then I want you to conduct another end-to-end independent new analysis for the whole system to actually prepare the system for launch... we will onboard the first gym for trial and have real users test them. ... a 360 analysis from every angle ... add that missing polish ... gaps in the user experiences ... features that we could add to really realize the value of something that we already have to increase convenience or save time or to increase revenue for the gym owner. ... Whatever we find, we fix that and then we start building the iPhone app and we will talk more about that."
