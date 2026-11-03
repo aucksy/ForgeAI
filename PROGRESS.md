@@ -1,11 +1,13 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."
-- F109 trainer view (a148e186), F148 trainer videos + F151 workout of the day (77510387): built; 0049 + 0050 + 0051 LIVE 3 Nov (owner pressed Run, R-294), so the screens show once this release is on phones. What's new drafts once live: "Your gym can set a workout of the day: find it on the Workout tab and start it with one tap." / "If your trainer filmed an exercise, tap Watch your trainer on its page."
-- 0048 security fixes are LIVE on the gym server (3 Nov, owner pressed Run).
+- (nothing yet)
 
 ## Done
+- 0.70.0 RELEASED 3 Nov 2026 (owner said "Release", R-296). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3d911a76 (later commits docs only). qa-conditions failed at C1 only (the old-seed test flow did not know 0.69.0's intro screens; flow fixed after the tag). Contents (the old waiting list):
+  - F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."
+  - F109 trainer view (a148e186), F148 trainer videos + F151 workout of the day (77510387): built; 0049 + 0050 + 0051 LIVE 3 Nov (owner pressed Run, R-294), so the screens show once this release is on phones. What's new drafts once live: "Your gym can set a workout of the day: find it on the Workout tab and start it with one tap." / "If your trainer filmed an exercise, tap Watch your trainer on its page."
+  - 0048 security fixes are LIVE on the gym server (3 Nov, owner pressed Run).
 - 0.69.0 RELEASED 3 Nov 2026 (owner said "build F52 and F186 and then release everything once done", R-288). Gate: CI + whole qa-device on default and owner + qa-journeys + conditions 2 green on fba40da4. Contents (the old waiting list):
   - R-287/R-288/R-289 (2 Nov, owner asleep, said "build F52 and F186 and release everything"): security 0048 (typed check-in number waits for the desk's yes: owner_phone_links / owner_decide_phone_link, admin "Numbers to confirm" card on Today; PIN locks 15/15 min then 1 h; challenge winners wait for the owner's Give / Skip; no AI import for demo gyms, aiMatch demo flag). 0048 is NOT live: apply it in the SQL Editor at release (R-287 yes), run its test + security.sql live, header APPLIED LIVE. Features: F52 balance check (Charts card, one swap for 8 weeks), F186 guided first routine (Workout tab), F57 strength level (exercise page), F58 badges (Profile), F73 long rest + F74 effort-based next sets (tracker schema 16), F137 busy machines (built, hidden; 0049 waits for his yes, inbox #84). Review fixes 914310eb. What's new drafts (member-words):
     - "New here? On the Workout tab, "Make a routine" walks you through your first routine in 4 short steps."
