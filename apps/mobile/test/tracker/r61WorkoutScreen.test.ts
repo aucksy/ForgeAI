@@ -86,12 +86,14 @@ describe('R-61: two dumbbells typed as one total', () => {
 
 describe('R-61: "Previous values" goes back to Any workout once; "Same folder" is retired', () => {
   it('an older saved blob starts on Any workout and keeps everything else', () => {
-    expect(migratePrefs({ previousFrom: 'folder', sounds: false }, 0)).toEqual({ previousFrom: 'any', sounds: false });
-    expect(migratePrefs({ previousFrom: 'routine' }, 0)).toEqual({ previousFrom: 'any' });
-    expect(migratePrefs(null, 0)).toEqual({ previousFrom: 'any' });
+    // R-304 (3 Nov 2026): version 2 also turns "Show In use after sets" (now the master switch) on once.
+    expect(migratePrefs({ previousFrom: 'folder', sounds: false }, 0)).toEqual({ previousFrom: 'any', sounds: false, inUseAfterSet: true });
+    expect(migratePrefs({ previousFrom: 'routine' }, 0)).toEqual({ previousFrom: 'any', inUseAfterSet: true });
+    expect(migratePrefs(null, 0)).toEqual({ previousFrom: 'any', inUseAfterSet: true });
     // Chosen again after the reset: kept.
-    expect(migratePrefs({ previousFrom: 'routine' }, 1)).toEqual({ previousFrom: 'routine' });
-    expect(useTrackerPrefs.persist.getOptions().version).toBe(1);
+    expect(migratePrefs({ previousFrom: 'routine' }, 1)).toEqual({ previousFrom: 'routine', inUseAfterSet: true });
+    expect(migratePrefs({ previousFrom: 'routine', inUseAfterSet: false }, 2)).toEqual({ previousFrom: 'routine', inUseAfterSet: false });
+    expect(useTrackerPrefs.persist.getOptions().version).toBe(2);
   });
 
   it('a saved "Same folder" reads as Any workout; Same routine stays', () => {

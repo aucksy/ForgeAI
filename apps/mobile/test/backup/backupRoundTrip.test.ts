@@ -143,6 +143,8 @@ async function fillPhone(io: MemIo): Promise<void> {
   p.setSounds(false);
   p.setAdvancedSets(true);
   p.setInUseAfterSet(true);
+  // R-304: the member's own In use choice for one exercise travels too.
+  p.setInUseFor('ex-lateral', true);
   p.setPreviousFrom('routine');
   p.setBodyFigure('female');
   p.setChartRange('all' as never);
@@ -304,7 +306,7 @@ describe('save, then restore on an empty phone', () => {
     expect(settingsAfter).toEqual({ ...settingsBefore, 'forgeai-phone-prefs': { ...phoneBefore, healthConnect: false } });
     expect(result.healthConnectWasOn).toBe(true);
     const { useTrackerPrefs } = await import('@/tracker/store/trackerPrefsStore');
-    expect(useTrackerPrefs.getState()).toMatchObject({ weightJump: 'large', repRange: 'strength', weeklyGoal: 4, restSound: 'whistle', advancedSets: true, inUseAfterSet: true });
+    expect(useTrackerPrefs.getState()).toMatchObject({ weightJump: 'large', repRange: 'strength', weeklyGoal: 4, restSound: 'whistle', advancedSets: true, inUseAfterSet: true, inUseByExercise: { 'ex-lateral': true } });
 
     // Never the phone number; records worked out again from the sets.
     expect(db.all('SELECT phone FROM user_profile')).toEqual([{ phone: null }]);

@@ -12,19 +12,23 @@
  *    "Hear "Rest is over" on time" — Allow opens that Android page; "Not now" waits 7 days before
  *    asking again (0.56.1: the app no longer gets exact alarms at install, Google Play policy).
  *    Settings → Rest timer and sounds keeps the fix meanwhile (RestAlertsStatusRow).
+ *
+ * R-298 (owner, 3 Nov 2026: he starts his next set without telling the app, so a count past the
+ * rest looks like a longer rest): no red "Rest +0:30 over" row any more. When the rest ends the bar
+ * hides, exactly as a skipped rest does. The quiet long-rest rule (F73, engine/restTaken) measures
+ * tick to tick and never used that row, so it is unchanged.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
-import { MachineInUse, machineName } from './MachineInUse';
-import { inUseBeatLine } from '../lib/inUse';
+import { MachineInUse, machineName, type InUseExercise } from './MachineInUse';
+import { IN_USE_WORDS, inUseAutoOn, inUseBeatLine, inUseHasOpenWorkingSet } from '../lib/inUse';
 import { useKgLeft } from '../store/kgLeftStore';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { OVER_SHOW_MAX_SEC, overText } from '../engine/restTaken';
 import { EXACT_ASK, openFixFor, readAlertAccess, shouldAskExact } from '../services/restAlertAccess';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
@@ -140,77 +144,6 @@ function useAlertChecks(endsAt: number | null): {
   };
 }
 
-/**
- * F73: seconds past the end of the rest that ran out by itself in THIS workout, ticking once a
- * second; null when there is none, or after OVER_SHOW_MAX_SEC (then it hides by itself).
- */
-function useOverSec(): number | null {
-  const overFrom = useRestTimer((s) => s.overFrom);
-  const workoutStart = useActiveWorkout((s) => s.startedAt);
-  const [now, setNow] = useState(() => Date.now());
-  const live = overFrom != null && workoutStart != null && overFrom >= workoutStart;
-  useEffect(() => {
-    if (!live || overFrom == null) return undefined;
-    setNow(Date.now());
-    const id = setInterval(() => {
-      const t = Date.now();
-      setNow(t);
-      if ((t - overFrom) / 1000 > OVER_SHOW_MAX_SEC) clearInterval(id);
-    }, 1000);
-    return () => clearInterval(id);
-  }, [live, overFrom]);
-  if (!live || overFrom == null) return null;
-  const sec = Math.max(0, Math.floor((now - overFrom) / 1000));
-  return sec > OVER_SHOW_MAX_SEC ? null : sec;
-}
-
-/**
- * F73 (R-140): the rest ran out and the next set has not been ticked: the bar stays, counting the
- * extra time in red ("Rest +1:20 over"), so a long rest is seen while it happens. It goes at the
- * next tick, a new rest, "Hide", or 10 minutes over. No extra buzz: the rest-over alert has two
- * sound paths (in-app and the phone's notification) that must stay in step, so it is left as is.
- */
-function RestOverRow() {
-  const over = useOverSec();
-  const hideOver = useRestTimer((s) => s.hideOver);
-  if (over == null) return null;
-  const text = overText(over);
-  return (
-    <View style={{ marginBottom: space.sm }}>
-      <View
-        style={{
-          borderRadius: radius.lg,
-          backgroundColor: color.surfaceRaised,
-          borderWidth: 1,
-          borderColor: color.critical,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: space.sm,
-          padding: space.sm,
-        }}
-      >
-        <View
-          accessible
-          accessibilityRole="timer"
-          accessibilityLabel={`Rest is over. ${Math.floor(over / 60)} minutes ${over % 60} seconds over`}
-          style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.5}
-            style={{ fontFamily: type.monoBold, fontSize: type.size.h3, color: color.criticalText, textAlign: 'center' }}
-          >
-            <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
-            {text}
-          </Text>
-        </View>
-        <TimerBtn label="Hide" a11y="Hide the time over rest" onPress={() => hideOver()} />
-      </View>
-    </View>
-  );
-}
-
 /** R-70 review: how long after a rest starts "In use" opens by itself. */
 const IN_USE_DELAY_MS = 300;
 
@@ -222,7 +155,16 @@ export function RestTimerBar() {
   const nextLabel = useRestTimer((s) => s.nextLabel);
   // "In use" names the lift whose tick started this rest (the machine the member is on), not the next one.
   const startedBy = useRestTimer((s) => s.source?.exKey ?? null);
-  const machine = useActiveWorkout((s) => (startedBy ? s.exercises.find((e) => e.key === startedBy)?.name ?? null : null));
+  const startedEx = useActiveWorkout((s) => (startedBy ? s.exercises.find((e) => e.key === startedBy) ?? null : null));
+  const machine = startedEx?.name ?? null;
+  // R-304: the lift's own In use choice (remembered per exercise), else its equipment's default.
+  const exId = startedEx?.exerciseId ?? null;
+  const exName = startedEx?.name ?? '';
+  const exEquipment = startedEx?.equipment ?? null;
+  const inUseEx: InUseExercise | null = useMemo(() => (exId ? { id: exId, name: exName, equipment: exEquipment } : null), [exId, exName, exEquipment]);
+  const master = useTrackerPrefs((s) => s.inUseAfterSet);
+  const chosen = useTrackerPrefs((s) => (exId ? s.inUseByExercise[exId] : undefined));
+  const autoInUse = inUseAutoOn(master, chosen, inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
   // R-305: "300 kg more to beat the previous total" for that same lift.
   const beatLine = useKgLeft((s) => inUseBeatLine(startedBy ? s.byEx[startedBy] ?? null : null));
   const remaining = useRestRemaining();
@@ -235,10 +177,10 @@ export function RestTimerBar() {
   useEffect(() => {
     if (endsAt == null) setInUse(false);
   }, [endsAt]);
-  // R-70: with "Show after every set" on, a rest that starts now opens it by itself. A rest already
-  // running when the screen opens (an app restart, coming back to the workout) does not.
+  // R-70: with "Show after every set" on (R-304: for THIS exercise), a rest that starts now opens it by
+  // itself. A rest already running when the screen opens (an app restart, coming back to the workout)
+  // does not.
   const startedAt = useRestTimer((s) => s.startedAt);
-  const autoInUse = useTrackerPrefs((s) => s.inUseAfterSet);
   const seenStart = useRef(startedAt);
   useEffect(() => {
     if (startedAt == null || startedAt === seenStart.current) return;
@@ -247,11 +189,15 @@ export function RestTimerBar() {
     // ("Is 1000 kg right?"). It opens a moment later, so a sheet closing in the same moment (a hold's
     // timer) never swallows it.
     if (!autoInUse || endsAt == null || !nextLabel) return undefined;
+    // Owner decision (3 Nov 2026): not after the LAST set of this exercise (no open working set left
+    // on its card): the member leaves that machine anyway. The clock still opens it by hand.
+    const card = startedBy ? useActiveWorkout.getState().exercises.find((e) => e.key === startedBy) : undefined;
+    if (!inUseHasOpenWorkingSet(card?.sets)) return undefined;
     const t = setTimeout(() => {
       if (useWorkoutUi.getState().typoAsk == null && !askingRef.current && useRestTimer.getState().endsAt != null) setInUse(true);
     }, IN_USE_DELAY_MS);
     return () => clearTimeout(t);
-  }, [startedAt, endsAt, autoInUse, nextLabel]);
+  }, [startedAt, endsAt, autoInUse, nextLabel, startedBy]);
 
   const ask = (
     <ConfirmSheet
@@ -265,14 +211,8 @@ export function RestTimerBar() {
     />
   );
 
-  if (endsAt == null) {
-    return (
-      <>
-        <RestOverRow />
-        {ask}
-      </>
-    );
-  }
+  // R-298: no rest running = no bar (the red "over" row is gone).
+  if (endsAt == null) return ask;
   const pct = durationSec > 0 ? Math.min(1, Math.max(0, remaining / durationSec)) : 0;
 
   return (
@@ -318,6 +258,19 @@ export function RestTimerBar() {
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
               {fmtClock(remaining)}
             </Text>
+            {/* R-299 (owner, 3 Nov 2026): while this exercise's In use does not open by itself, say the
+                clock opens it. One small line, so the bar stays one row of buttons. */}
+            {!autoInUse ? (
+              <Text
+                accessible={false}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+                style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.accent, textAlign: 'center' }}
+              >
+                {IN_USE_WORDS.tapHint}
+              </Text>
+            ) : null}
           </Pressable>
           <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
           <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
@@ -341,7 +294,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
-      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} beatLine={beatLine} onClose={() => setInUse(false)} />
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} beatLine={beatLine} exercise={inUseEx} onClose={() => setInUse(false)} />
     </View>
   );
 }

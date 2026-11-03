@@ -34,10 +34,11 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { isShareLook, isShareSize, type ShareLook, type ShareSize } from '../share/frame';
-import { DEFAULT_JUMP, isWeightJump, type WeightJump } from '../engine/progression';
+import { DEFAULT_JUMP, DEFAULT_STUCK, isStuckChoice, isWeightJump, type StuckChoice, type WeightJump } from '../engine/progression';
 import { isRepRangeChoice, type RepRangeChoice } from '../engine/repRanges';
 import { DEFAULT_REST_SOUND, isRestSoundId, type RestSoundId } from '../services/restSounds';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
+import { cleanInUseChoices } from '../lib/inUse';
 
 /** Where an exercise's past numbers come from in a workout: any workout, this routine, this folder. */
 export type PreviousFrom = 'any' | 'routine' | 'folder';
@@ -56,6 +57,10 @@ export function shownPreviousFrom(v: unknown): PreviousFrom {
 export function migratePrefs(persisted: unknown, version: number): Record<string, unknown> {
   const p = persisted != null && typeof persisted === 'object' ? { ...(persisted as Record<string, unknown>) } : {};
   if (version < 1) p.previousFrom = 'any';
+  // R-304 (owner, 3 Nov 2026): "Show In use after sets" is now the master switch and the equipment
+  // decides per exercise, so it starts ON once for every install (it was off by default before, so a
+  // saved "off" almost always meant "never touched").
+  if (version < 2) p.inUseAfterSet = true;
   return p;
 }
 
@@ -94,9 +99,24 @@ export interface TrackerPrefsState {
   repRange: RepRangeChoice;
   /**
    * R-70 (owner, 22 Oct 2026): "In use" fills the screen by itself the moment a set's rest starts,
-   * so people nearby see the machine is taken while the member walks away. Off by default.
+   * so people nearby see the machine is taken while the member walks away.
+   * R-304 (owner, 3 Nov 2026): now the MASTER switch, ON by default: off = never by itself; on = each
+   * exercise decides (`inUseByExercise`, else `inUseDefault` by equipment, lib/inUse.ts).
    */
   inUseAfterSet: boolean;
+  /**
+   * R-304 (owner, 3 Nov 2026: "the member's own switch per exercise wins and is remembered"): the
+   * member's own In use choice per exercise id (the tick on the In use screen). Missing = the
+   * equipment default.
+   */
+  inUseByExercise: Record<string, boolean>;
+  /** R-308 (owner, 3 Nov 2026): Settings → More workout choices → "When I'm stuck at a weight". */
+  stuckChoice: StuckChoice;
+  /**
+   * R-308: per exercise id, the day the member tapped "Try" on a step-back offer (today's Target is
+   * the lighter one) or "Stay" (no new offer until 4 more stuck workouts from that day).
+   */
+  stepBackByExercise: Record<string, StepBackChoice>;
   setAdvancedSets: (value: boolean) => void;
   setCoachNotes: (value: boolean) => void;
   setSounds: (value: boolean) => void;
@@ -111,7 +131,34 @@ export interface TrackerPrefsState {
   setShareLook: (value: ShareLook) => void;
   setWeightJump: (value: WeightJump) => void;
   setInUseAfterSet: (value: boolean) => void;
+  setInUseFor: (exerciseId: string, on: boolean) => void;
   setRepRange: (value: RepRangeChoice) => void;
+  setStuckChoice: (value: StuckChoice) => void;
+  /** R-308: "Try 40 kg" (tried) or "Stay at 45 kg" (declined), on `dateISO`. */
+  setStepBack: (exerciseId: string, kind: 'tried' | 'declined', dateISO: string) => void;
+}
+
+/** R-308: what the member said to a step-back offer, by day (YYYY-MM-DD). */
+export interface StepBackChoice {
+  triedISO?: string;
+  declinedISO?: string;
+}
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** R-308: a stored step-back map, keeping only well-formed days. PURE. */
+export function cleanStepBackChoices(v: unknown): Record<string, StepBackChoice> {
+  if (v == null || typeof v !== 'object') return {};
+  const out: Record<string, StepBackChoice> = {};
+  for (const [id, c] of Object.entries(v as Record<string, unknown>)) {
+    if (!id || c == null || typeof c !== 'object') continue;
+    const { triedISO, declinedISO } = c as Record<string, unknown>;
+    const one: StepBackChoice = {};
+    if (typeof triedISO === 'string' && ISO_DAY.test(triedISO)) one.triedISO = triedISO;
+    if (typeof declinedISO === 'string' && ISO_DAY.test(declinedISO)) one.declinedISO = declinedISO;
+    if (one.triedISO || one.declinedISO) out[id] = one;
+  }
+  return out;
 }
 
 /** A goal the app accepts: a whole 1–7, else off. PURE. */
@@ -146,7 +193,10 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       shareLook: 'dark',
       weightJump: DEFAULT_JUMP,
       repRange: 'goal',
-      inUseAfterSet: false,
+      inUseAfterSet: true,
+      inUseByExercise: {},
+      stuckChoice: DEFAULT_STUCK,
+      stepBackByExercise: {},
       setAdvancedSets: (advancedSets) => set({ advancedSets }),
       setCoachNotes: (coachNotes) => set({ coachNotes }),
       setSounds: (sounds) => set({ sounds }),
@@ -162,12 +212,23 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
       setRepRange: (value) => set({ repRange: isRepRangeChoice(value) ? value : 'goal' }),
       setInUseAfterSet: (inUseAfterSet) => set({ inUseAfterSet: inUseAfterSet === true }),
+      setStuckChoice: (value) => set({ stuckChoice: isStuckChoice(value) ? value : DEFAULT_STUCK }),
+      setStepBack: (exerciseId, kind, dateISO) => {
+        if (!exerciseId || !ISO_DAY.test(dateISO)) return;
+        // Tried today replaces a decline; a decline replaces today's try.
+        set((s) => ({ stepBackByExercise: { ...s.stepBackByExercise, [exerciseId]: kind === 'tried' ? { triedISO: dateISO } : { declinedISO: dateISO } } }));
+      },
+      setInUseFor: (exerciseId, on) => {
+        if (!exerciseId) return;
+        set((s) => ({ inUseByExercise: { ...s.inUseByExercise, [exerciseId]: on === true } }));
+      },
     }),
     {
       name: 'forgeai-tracker-prefs',
       storage: createJSONStorage(() => AsyncStorage),
       // R-61: version 1 = "Previous values" starts again on Any workout once, for every install.
-      version: 1,
+      // R-304: version 2 = "Show In use after sets" (now the master switch) starts on once.
+      version: 2,
       migrate: (persisted, version) => migratePrefs(persisted, version) as unknown as TrackerPrefsState,
       // A stored chip, range, Previous, share, weight-jump or rep-range choice this version does not
       // know falls back to the first-time one.
@@ -185,6 +246,9 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
           restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,
           inUseAfterSet: typeof p.inUseAfterSet === 'boolean' ? p.inUseAfterSet : current.inUseAfterSet,
+          inUseByExercise: cleanInUseChoices(p.inUseByExercise),
+          stuckChoice: isStuckChoice(p.stuckChoice) ? p.stuckChoice : current.stuckChoice,
+          stepBackByExercise: cleanStepBackChoices(p.stepBackByExercise),
           bodyWeightAnyWorkout: typeof p.bodyWeightAnyWorkout === 'boolean' ? p.bodyWeightAnyWorkout : current.bodyWeightAnyWorkout,
         };
       },

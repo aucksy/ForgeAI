@@ -123,6 +123,11 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
     'weightJump',
     'repRange',
     'inUseAfterSet',
+    // R-304: the member's own In use choice per exercise (the tick on the In use screen).
+    'inUseByExercise',
+    // R-308: "When I'm stuck at a weight", and each exercise's Try / Stay answer.
+    'stuckChoice',
+    'stepBackByExercise',
   ],
   'forgeai-plate-setup': ['metric', 'imperial'],
   'forgeai-rest-alert-prefs': ['ringThroughDnd', 'watchOpen'],

@@ -6,6 +6,8 @@
 - R-310 machine and cable weights stay on a 2.5 or 5 kg grid (Pec Deck never 38 kg). What's new draft: "Suggested weights on machines now follow the machine's steps, like 35, 40, 45 kg."
 - R-297 watch: a workout service keeps MettleUp in front instead of the watch face (needs a real-watch check). AT RELEASE: Play Console -> App content -> Foreground service permissions form for the watch app (health type), or the watch upload may be blocked.
 
+- R-298/R-299/R-304/R-307/R-311 rest bar: no red "+0:30 over" row (the bar hides when rest ends); In use opens by itself per exercise by equipment (machine, cable, barbell, dumbbell on a bench), never after an exercise's last set; one choice per exercise on the In use screen; Settings switch is the master (turned ON once for everyone, prefs v2); "Tap: In use" line under the clock when off. What's new draft: "The In use screen now opens by itself on machines, cables, barbells and benches, so people know you are coming back. Change it for one exercise on that screen." Also update the old whatsNew.ts In use line.
+
 ## Done
 - 0.70.0 RELEASED 3 Nov 2026 (owner said "Release", R-296). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3d911a76 (later commits docs only). qa-conditions failed at C1 only (the old-seed test flow did not know 0.69.0's intro screens; flow fixed after the tag). Contents (the old waiting list):
   - F137 privacy (R-291, owner approved the line 3 Nov): "What my gym can see" shows the busy-machines line while the gym has it on, and a new switch "Share which machines I use" (on by default, kept in backups) stops all sending. What's new draft: "Settings → Your gym → What my gym can see: if your gym uses Busy machines, you can see what is shared and switch it off."

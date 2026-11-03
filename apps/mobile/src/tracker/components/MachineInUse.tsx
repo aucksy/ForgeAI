@@ -10,6 +10,9 @@
  * opens by itself when a set's rest starts, and it says "Resting" over the clock so people nearby
  * know the member is coming back. The set's pop-up (a record, better than last time) shows on top.
  *
+ * R-304 (owner, 3 Nov 2026): the tick is per exercise ("Show after every set of this exercise") and
+ * remembered for that exercise; its first state comes from the equipment (lib/inUse.ts inUseDefault).
+ *
  * R-305 (owner, 3 Nov 2026, "a marketing move: people look at the phone and ask which app"): under
  * the lift's name, "300 kg more to beat the previous total", and the MettleUp logo at the foot.
  */
@@ -20,7 +23,7 @@ import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { Icon } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
 
-import { IN_USE_WORDS } from '../lib/inUse';
+import { IN_USE_WORDS, inUseAutoOn, type InUseEquipment } from '../lib/inUse';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { RecordToast } from './RecordToast';
 
@@ -33,6 +36,7 @@ export function MachineInUse({
   clock,
   machine,
   beatLine = null,
+  exercise = null,
   onClose,
 }: {
   visible: boolean;
@@ -42,6 +46,8 @@ export function MachineInUse({
   machine: string | null;
   /** R-305: "300 kg more to beat the previous total", or null. */
   beatLine?: string | null;
+  /** R-304: the lift whose tick started this rest, for its own "Show after every set" tick; null = no tick. */
+  exercise?: InUseExercise | null;
   onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -85,7 +91,7 @@ export function MachineInUse({
         <View style={{ marginTop: space.lg, minHeight: 56, paddingHorizontal: space.xl, borderRadius: radius.pill, borderWidth: 1, borderColor: color.borderStrong, justifyContent: 'center' }}>
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IN_USE_WORDS.close}</Text>
         </View>
-        <AutoTick />
+        {exercise ? <AutoTick exercise={exercise} /> : null}
         <View style={{ opacity: 0.85 }}>
           <MettleUpLogo height={22} />
         </View>
@@ -99,13 +105,29 @@ export function MachineInUse({
   );
 }
 
-/** R-70: "Show after every set" — the same setting as Settings → Workouts. A tap here never closes the screen. */
-function AutoTick() {
-  const on = useTrackerPrefs((s) => s.inUseAfterSet);
-  const setOn = useTrackerPrefs((s) => s.setInUseAfterSet);
+/** R-304: what the tick needs to know about the lift. */
+export interface InUseExercise {
+  id: string;
+  name: string;
+  equipment: InUseEquipment | string | null;
+}
+
+/**
+ * R-70 / R-304: "Show after every set of this exercise" — this exercise only, remembered for it. A tick
+ * with Settings' master switch off turns that switch on too (else the tick would do nothing). A tap
+ * here never closes the screen.
+ */
+function AutoTick({ exercise }: { exercise: InUseExercise }) {
+  const master = useTrackerPrefs((s) => s.inUseAfterSet);
+  const chosen = useTrackerPrefs((s) => s.inUseByExercise[exercise.id]);
+  const on = inUseAutoOn(master, chosen, { name: exercise.name, key: exercise.id, equipment: exercise.equipment });
   return (
     <Pressable
-      onPress={() => setOn(!on)}
+      onPress={() => {
+        const prefs = useTrackerPrefs.getState();
+        prefs.setInUseFor(exercise.id, !on);
+        if (!on && !prefs.inUseAfterSet) prefs.setInUseAfterSet(true);
+      }}
       hitSlop={8}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: on }}
