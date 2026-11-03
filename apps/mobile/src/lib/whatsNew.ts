@@ -56,6 +56,19 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-315 (owner's release, 3 Nov 22:34 IST): member-words, short complete sentences; fresh-reader pass on the watch
+    // words (R-312..R-314). Together these fit Play's 500 characters (R-313).
+    version: '0.71.0',
+    date: '4 Nov',
+    lines: [
+      { text: 'After a set on a machine or barbell, your phone shows "In use" and how many kg you need to beat your previous total.' },
+      { text: 'Each set now gets its own rep goal. If you are stuck at a weight, the app asks before it suggests a lighter one.', go: { label: 'Workout choices', href: '/settings/workout-choices' } },
+      { text: 'Suggested machine weights now follow the steps on the machine, like 35, 40 and 45 kg.' },
+      { text: 'On the chart of an exercise, tap a point and then its label to open that workout.' },
+      { text: 'On your watch, you can now log each set with the dial and one tap on Done.', go: { label: 'Your watch', href: '/settings/watch' } },
+    ],
+  },
+  {
     // R-295: member-words; short complete sentences, no Gemini (owner rule 1 Nov). Server parts 0049-0051 live
     // 3 Nov (R-294). Trainer lines use the words he approved in #86; the busy-machines line follows #84.
     version: '0.70.0',
