@@ -32,7 +32,28 @@ export const CHECKS = [
     headers: { apikey: KEY },
     ok: (s) => s === 200,
   },
+  {
+    // The nightly backup (deploy/hq/backup.js, launch audit 3 Nov 2026): "down" when last night's copy failed or
+    // is older than 30 hours. Before the backup is deployed and switched on, this address answers with the
+    // sign-in page (not this JSON) or setUp:false: that is "not switched on yet", never an alarm.
+    name: 'Nightly backup (hq.mettleup.fit/backup/status)',
+    url: 'https://hq.mettleup.fit/backup/status',
+    ok: (s, t) => backupOk(s, t),
+    why: () => "last night's copy of the gym data failed or is late (older than 30 hours)",
+  },
 ];
+
+/** The backup's answer: fine, or not switched on yet. PURE. */
+export function backupOk(status, text) {
+  let b;
+  try {
+    b = JSON.parse(text);
+  } catch {
+    return true; // not deployed yet: the sign-in page answers
+  }
+  if (!b || typeof b !== 'object' || !('fresh' in b) || b.setUp === false) return true;
+  return status === 200 && b.fresh === true;
+}
 
 /** One check, tried up to `tries` times. Returns null when fine, else what went wrong (plain words). */
 export async function runCheck(check, { fetchImpl = fetch, tries = 3, gapMs = 20_000, timeoutMs = 20_000, wait = (ms) => new Promise((r) => setTimeout(r, ms)) } = {}) {
@@ -45,7 +66,7 @@ export async function runCheck(check, { fetchImpl = fetch, tries = 3, gapMs = 20
       const res = await fetchImpl(check.url, { headers: { 'User-Agent': 'mettleup-watch', ...check.headers }, signal: ctrl.signal, redirect: 'follow' });
       const text = await res.text();
       if (check.ok(res.status, text)) return null;
-      last = `answered ${res.status}`;
+      last = check.why ? check.why(res.status, text) : `answered ${res.status}`;
     } catch (e) {
       last = e?.name === 'AbortError' ? `no answer in ${timeoutMs / 1000} s` : `could not connect (${String(e?.message ?? e).slice(0, 120)})`;
     } finally {

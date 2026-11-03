@@ -53,5 +53,12 @@
   // Messaging API Admin") and migration 0038; without either it stops at once and sends nothing.
   // Optional var PUSH_SUBREQUESTS (default 45, for the free plan's 50 calls per run).
   "triggers": { "crons": ["30 21 * * *", "* * * * *"] },
+  // The nightly backup (backup.js, launch audit 3 Nov 2026) runs in the 21:30 trigger above, before the clean-up.
+  // It needs ONE more binding, a free KV namespace (no card, no secret). NOT ADDED YET: a binding with a made-up
+  // id would break every HQ deploy. When the owner says yes, from this folder:
+  //   npx wrangler kv namespace create forgeai-backups
+  // and put the id it prints into this block (uncommented), then apply migration 0052 and deploy:
+  //   "kv_namespaces": [{ "binding": "BACKUP", "id": "<the id>" }],
+  // Until then the backup logs "off: no BACKUP binding" once a night and changes nothing. Docs: docs/BACKUP-RESTORE.md.
   "observability": { "enabled": true }
 }

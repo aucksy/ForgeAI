@@ -11,7 +11,8 @@
 //   PUBLIC_FILES below                          the install files (manifest, icons, sw.js, offline page):
 //                                               no sign-in, because a browser fetches them without cookies
 //   everything else                             the static page (apps/hq/public), signed in only
-// A Cron Trigger runs the nightly clean-up at 03:00 India time (scheduled() below).
+// A Cron Trigger runs the nightly backup (backup.js) and then the clean-up at 03:00 India time (scheduled() below).
+// /backup/status (no sign-in) says only whether last night's backup worked; the watch workflow reads it.
 // Phone pop-ups for the gym's messages and offers (push.js, R-153 step 2): a second Cron Trigger every
 // minute, and POST /push/run (no sign-in: it only sends what is already due, at most once every 3 s).
 // Strict headers on every answer (the install files too): a Content-Security-Policy that allows only this address
@@ -22,6 +23,7 @@ import { handleApi, json } from './api.js';
 import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
+import { backupStatus, runBackup } from './backup.js';
 
 export const CSP = [
   "default-src 'self'",
@@ -201,10 +203,13 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/push/run') return secure(handlePushKick(request, env, ctx));
+    // The nightly backup's health, no sign-in: only whether it is fresh and when (backup.js). The watch reads it.
+    if (url.pathname === '/backup/status' && request.method === 'GET') return secure(await backupStatus(env));
     return secure(await handle(request, env));
   },
   async scheduled(event, env, ctx) {
-    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(nightly(env));
+    // The backup first (backup.js; it never throws), so the copy still holds what the clean-up removes.
+    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)));
     else ctx.waitUntil(runPush(env));
   },
 };

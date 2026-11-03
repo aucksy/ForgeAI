@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { fenceSafe, issueFor, main as crashMain, newKinds, sigOfTitle } from './crashes.mjs';
-import { CHECKS, main as outageMain, plan, reportBody, runCheck, titleFor } from './outage.mjs';
+import { CHECKS, backupOk, main as outageMain, plan, reportBody, runCheck, titleFor } from './outage.mjs';
 
 const quiet = { tries: 2, gapMs: 0, timeoutMs: 1000, wait: async () => undefined };
 
@@ -137,4 +137,14 @@ test('crash alerts stay off without the Cloudflare token, and open issues for ne
   } finally {
     console.log = log;
   }
+});
+
+test('the nightly backup check: alarms only when switched on and late or failed', async () => {
+  assert.equal(backupOk(200, '<html>sign in</html>'), true, 'not deployed yet');
+  assert.equal(backupOk(200, '{"setUp":false,"fresh":false}'), true, 'no KV namespace yet');
+  assert.equal(backupOk(200, '{"setUp":true,"fresh":true,"lastRunOk":true}'), true);
+  assert.equal(backupOk(200, '{"setUp":true,"fresh":false,"lastRunOk":false}'), false);
+  const check = CHECKS.find((c) => c.url.endsWith('/backup/status'));
+  const late = async () => new Response('{"setUp":true,"fresh":false}', { status: 200 });
+  assert.match(await runCheck(check, { fetchImpl: late, ...quiet }), /failed or is late/);
 });

@@ -110,7 +110,8 @@ jobs:
       - name: Panel Worker tests
         # Node 22 takes files, not a folder (a folder is run as a script and fails).
         # #34 alerts: the outage and crash watch scripts (.github/workflows/watch.yml) run with them.
-        run: node --test deploy/panel/*.test.mjs scripts/watch/*.test.mjs
+        # Backup (3 Nov 2026): the restore file maker (scripts/backup); the real round trip is the database job.
+        run: node --test deploy/panel/*.test.mjs scripts/watch/*.test.mjs scripts/backup/*.test.mjs
 
       # ForgeAI HQ (#51): the system owner's panel Worker (sign-in, API, clean-up) and its page logic.
       - name: HQ Worker and page tests
@@ -173,3 +174,12 @@ jobs:
 
       - name: Security check and feature tests
         run: bash scripts/ci/db_checks.sh
+
+      # Launch audit ops #1 (3 Nov 2026): the nightly backup's restore drill. Copy -> wipe -> restore -> the
+      # same rows, table by table, on this throw-away database (the real-data drill: docs/BACKUP-RESTORE.md).
+      - name: Set up Node (backup restore drill)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Backup restore drill
+        run: bash scripts/backup/ci_drill.sh
