@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-308. A weight step back must be the member's choice — 3 Nov 2026
+
+He said: the decrease in weight should be opted in by the user, off by default. When the stall is detected, a pop-up asks to opt in, with simple reasoning backed by research, naming the research if possible. "You can decide if this is good."
+
+My view (decided, building): yes, but not a pop-up during the workout and not a buried setting first. When R4 fires, the weight stays and a small card on that exercise asks: "Stuck at 45 kg for 4 workouts. Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). Try 40 kg today?" [Try 40 kg] [Stay at 45 kg]. Stay = not asked again until 4 more stalled workouts. Settings -> More workout choices: "When I'm stuck at a weight": Ask me (default) / Step back by itself / Never suggest it. Research note: Schoenfeld, Grgic, Ogborn, Krieger 2017 (J Strength Cond Res) meta-analysis: low and high loads build similar muscle when sets are hard; strength gains favour heavy loads, so the card says muscle, not strength. Coleman et al. 2024 (PeerJ) is about a week off, not a lighter weight: not cited. The exact card words need his OK before release (a research claim).
+
 ## R-307. DECIDED: bench dumbbell moves get In use ON; rep goals follow Weight jumps — 3 Nov 2026
 
 He said "Yes to both": (1) dumbbell moves done on a bench (incline dumbbell press, seated press...) have the In use banner ON by default (R-304 table stands). (2) Rep goals follow Settings "Weight jumps" (R-303: about the chosen % more than the previous total, whole reps, at most +1 a set, +2 when RPE 7 or easier, earlier/easier sets first, never past the cap). Build in the next batch with R-298..R-306.
