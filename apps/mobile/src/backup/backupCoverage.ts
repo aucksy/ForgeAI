@@ -117,6 +117,7 @@ export const FIELDS_LEFT_OUT: Readonly<Record<string, Readonly<Record<string, st
     boardNamePending: 'bookkeeping: the gym has not been told the name switch yet (this phone only)',
     shareWorkoutsWithGym: 'a privacy choice made per gym (R-164); asked again after a restore',
     mateSharePending: 'bookkeeping: the gym has not been told the share switch yet (this phone only)',
+    trainerSharePending: 'bookkeeping: the gym has not been told the trainer switch yet (this phone only)',
     healthWeightOn: 'F55: a Health Connect permission is per phone; asked again on the new phone',
     healthWeightRead: 'F55 bookkeeping: when this phone last read weigh-ins from Health Connect',
     healthWeightDays: 'F55 bookkeeping: which weigh-ins this phone added from Health Connect (the weigh-ins themselves are in the backup)',

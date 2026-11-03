@@ -66,6 +66,13 @@ async function pushBoardLater(trigger: 'workout' | 'start' | 'active'): Promise<
   } catch (e) {
     console.warn('[machines] sync could not start', e);
   }
+  // F109: the weekly summary for the gym's trainers, only while that switch is on (trainerSync.ts; never throws).
+  try {
+    const { shareWithTrainers } = await import('@/shop/trainerSync');
+    await shareWithTrainers(trigger);
+  } catch (e) {
+    console.warn('[trainer] share could not start', e);
+  }
 }
 
 async function syncOfferAfterWorkout(): Promise<void> {

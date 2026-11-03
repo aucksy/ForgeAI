@@ -26,6 +26,7 @@ import { inboxFromRows, type InboxMessage } from './inbox';
 import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
 import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanRequestsAnswer } from './planRequest';
 import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
+import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -474,4 +475,43 @@ export async function apiMachinePush(key: string, workouts: readonly PushWorkout
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
   const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown; on?: unknown } | null;
   return data?.ok === true ? { ok: true, data: { on: data.on === true } } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ trainer view (0050, F109)
+
+export type TrainerCall<T> = { ok: true; data: T } | { ok: false; missing: true } | { ok: false; notShared: true } | { ok: false; error: GymError };
+
+/** Whether this member shares and who their trainer is (member_trainer_status). `missing`: 0050 is not live yet. */
+export async function apiTrainerStatus(key: string): Promise<TrainerCall<TrainerStatus>> {
+  const r = await call('member_trainer_status', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const s = trainerStatusFrom(r.data);
+  return s ? { ok: true, data: s } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Send the weekly summary (member_trainer_share); it replaces the last one. */
+export async function apiTrainerShare(key: string, summary: TrainerSummary): Promise<TrainerCall<true>> {
+  const r = await call('member_trainer_share', { p_key: key, p_summary: summary }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown } | null;
+  return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Delete the shared summary (member_trainer_stop). */
+export async function apiTrainerStop(key: string): Promise<TrainerCall<true>> {
+  const r = await call('member_trainer_stop', { p_key: key }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  return { ok: true, data: true };
+}
+
+/** "Ask my trainer for help" (member_trainer_help). `notShared`: sharing is off, so no trainer would see it. */
+export async function apiTrainerHelp(key: string): Promise<TrainerCall<'sent' | 'already'>> {
+  const r = await call('member_trainer_help', { p_key: key }, WRITE_MS);
+  if (!r.ok) {
+    if (r.noSuchFunction) return { ok: false, missing: true };
+    if (r.message?.trim() === 'NOT_SHARED') return { ok: false, notShared: true };
+    return { ok: false, error: r.error };
+  }
+  const a = trainerHelpFrom(r.data);
+  return a ? { ok: true, data: a } : { ok: false, error: { kind: 'other' } };
 }

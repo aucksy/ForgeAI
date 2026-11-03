@@ -13,6 +13,7 @@ import { useCrm } from '../../store';
 import { Icon, type IconName } from '../icons';
 import { Card, PageHeader, TOUCH, color, font, radius, space } from '../kit';
 import { Link } from '../router';
+import { useTrainerAccess } from '../TrainerParts';
 import { t } from '../../lang/lang';
 
 interface Row {
@@ -38,6 +39,8 @@ export function MoreScreen() {
   const enquiriesDue = dueCount(snapshot.enquiries, today);
   const role = useRole();
   const owner = role === 'owner';
+  const trainerAccess = useTrainerAccess();
+  const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
   // Staff never sees Expenses (permissions.ts); the rest stays, with words that fit what they can do.
   const rows: Row[] = navFor<Row>(role, [
     { path: '/growth', group: 'run', label: 'Your growth', hint: 'Is the gym growing since MettleUp? Month by month', icon: 'growth' },
@@ -52,6 +55,10 @@ export function MoreScreen() {
     { path: '/expenses', group: 'run', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
     { path: '/workouts', group: 'talk', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
     { path: '/diet', group: 'talk', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
+    // F109 (#46): hidden until the gym's server has the trainer view (0050), and for the desk without the Trainer tick.
+    ...(trainerNav
+      ? [{ path: '/trainer', group: 'talk', label: 'My members', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]
+      : []),
     { path: '/shop', group: 'run', label: 'Shop', hint: 'Orders from the app', icon: 'shop', badge: newCount },
     { path: '/messages', group: 'talk', label: 'Messages & offers', hint: 'Messages, offers and wishes to members', icon: 'messages' },
     { path: '/settings/branding', group: 'setup', label: 'Branding', hint: 'Your logo and colours in the member app', icon: 'brand' },

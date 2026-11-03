@@ -27,6 +27,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   Expenses: 'Kharche',
   'Workout plans': 'Workout plans',
   'Diet plans': 'Diet plans',
+  // F109 (#46): words: owner approves before live.
+  'My members': 'Mere members',
   Challenges: 'Challenges',
   Branding: 'Logo aur rang',
   'Gym timings': 'Gym ka time',

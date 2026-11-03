@@ -35,6 +35,7 @@ import {
 } from '../ui/kit';
 import { navigate } from '../ui/router';
 import { tickGetStarted } from '../ui/GetStartedCard';
+import { TrainerTick, useTrainerSetup } from '../ui/TrainerParts';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { staffRightsWords } from './permissions';
@@ -89,6 +90,7 @@ export function PeopleScreen() {
   const isOwner = me?.role === 'owner';
   // #41: with branches, this list is the OPEN branch's (owners are on every branch's list).
   const { multi: multiBranch } = useBranches();
+  const trainers = useTrainerSetup();
 
   const [people, setPeople] = useState<PersonRow[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -272,6 +274,8 @@ export function PeopleScreen() {
                   {pinWords(p)}
                   {p.codeUntil ? ` · Code works till ${clock(p.codeUntil)}` : ''}
                 </p>
+                {/* F109: the Trainer tick (hidden until the gym's server has the trainer view, 0050). */}
+                <TrainerTick staffId={p.staffId} setup={trainers.setup} save={trainers.save} />
                 <div style={{ marginTop: space.md }}>
                   <Row gap={space.sm}>
                     <Button disabled={busyId !== null} onClick={() => void makeCode(p)}>

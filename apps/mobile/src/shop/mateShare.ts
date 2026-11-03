@@ -21,7 +21,9 @@ export type MateSendResult = 'ok' | 'missing' | 'failed';
 export const MATE_EVERY_MS = 6 * 60 * 60 * 1000;
 export const MATE_RETRY_MS = 60 * 1000;
 
-export interface MateDeps {
+export interface MateDeps<S = MateShare> {
+  /** The log lines' first word (default '[mates]'); F109's trainer share (trainerSync.ts) uses '[trainer]'. */
+  tag?: string;
   now: () => number;
   memberKey: () => Promise<string | null>;
   isDemo: () => Promise<boolean>;
@@ -30,8 +32,8 @@ export interface MateDeps {
   /** The switch changed and the gym has not heard yet (kept on the phone). */
   pending: () => boolean;
   clearPending: () => void;
-  build: () => Promise<MateShare>;
-  send: (key: string, share: MateShare) => Promise<MateSendResult>;
+  build: () => Promise<S>;
+  send: (key: string, share: S) => Promise<MateSendResult>;
   stop: (key: string) => Promise<MateSendResult>;
   log: (message: string, detail?: unknown) => void;
 }
@@ -47,7 +49,8 @@ export function mateDue(now: number, sentAt: number | null, retryAt: number | nu
   return pending || sentAt == null || now - sentAt >= MATE_EVERY_MS;
 }
 
-export function createMateSharer(deps: MateDeps): { share: (t: MateTrigger) => Promise<MateOutcome>; stopped: () => boolean } {
+export function createMateSharer<S = MateShare>(deps: MateDeps<S>): { share: (t: MateTrigger) => Promise<MateOutcome>; stopped: () => boolean } {
+  const tag = deps.tag ?? '[mates]';
   let stopped = false;
   let inFlight = false;
   let again = false;
@@ -80,7 +83,7 @@ export function createMateSharer(deps: MateDeps): { share: (t: MateTrigger) => P
     const r = await deps.send(key, share);
     if (r === 'missing') {
       stopped = true;
-      deps.log('[mates] the gym server cannot hold shared workouts yet; not trying again this time');
+      deps.log(`${tag} the gym server cannot hold shared workouts yet; not trying again this time`);
       return 'stopped';
     }
     if (r === 'failed') {
@@ -96,7 +99,7 @@ export function createMateSharer(deps: MateDeps): { share: (t: MateTrigger) => P
     try {
       return await attempt(t);
     } catch (e) {
-      deps.log('[mates] share failed', e);
+      deps.log(`${tag} share failed`, e);
       return 'failed';
     }
   }

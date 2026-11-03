@@ -71,6 +71,16 @@ export interface PhonePrefsState {
   shareMachineUse: boolean;
   setShareMachineUse: (on: boolean) => void;
   /**
+   * F109 (OWNER-INBOX #46, DECIDED 24 Oct 2026): "Share my workouts with my trainers" (Settings → Your gym →
+   * What my gym can see), shown only once the gym's server has the trainer view (0050). On by default; off: the
+   * gym deletes the weekly summary at once (shop/trainerSync.ts). Carried by a backup, so "off" survives a restore.
+   */
+  shareWithTrainers: boolean;
+  setShareWithTrainers: (on: boolean) => void;
+  /** F109: the trainer switch changed and the gym has not heard yet (offline); sent again with no wait. */
+  trainerSharePending: boolean;
+  setTrainerSharePending: (on: boolean) => void;
+  /**
    * F55 (1 Nov 2026): the member said yes to "Weight from Health Connect": weigh-ins there are
    * added to the body-weight log when the app opens or comes back (healthRead.ts).
    */
@@ -143,6 +153,10 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       setMateSharePending: (mateSharePending) => set({ mateSharePending }),
       shareMachineUse: true,
       setShareMachineUse: (shareMachineUse) => set({ shareMachineUse }),
+      shareWithTrainers: true,
+      setShareWithTrainers: (shareWithTrainers) => set({ shareWithTrainers }),
+      trainerSharePending: false,
+      setTrainerSharePending: (trainerSharePending) => set({ trainerSharePending }),
       healthWeightOn: false,
       healthWeightRead: null,
       healthWeightDays: {},
@@ -176,6 +190,8 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           shareWorkoutsWithGym: false,
           mateSharePending: false,
           shareMachineUse: true,
+          shareWithTrainers: true,
+          trainerSharePending: false,
         }),
     }),
     {

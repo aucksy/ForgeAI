@@ -50,6 +50,8 @@ import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { DietPlansScreen } from './ui/screens/DietPlans';
 import { GymTimingsScreen } from './ui/screens/GymTimings';
 import { BusyMachinesScreen } from './ui/screens/BusyMachines';
+import { MyMembersScreen } from './ui/screens/MyMembers';
+import { useTrainerAccess } from './ui/TrainerParts';
 import { ChallengesScreen } from './ui/screens/Challenges';
 import { FeedbackScreen } from './ui/screens/Feedback';
 import { MessagesScreen } from './ui/screens/Messages';
@@ -143,6 +145,9 @@ export function Routes({ online }: { online: boolean }) {
   const { multi, canOpenOthers } = useBranches();
   const allBranches = multi && canOpenOthers;
   const lang = useLang();
+  // F109: "My members" for the owner and ticked trainers, once the gym's server has the trainer view (0050).
+  const trainerAccess = useTrainerAccess();
+  const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
 
   // Never set up: no plans, no members, and still the placeholder name.
   // An online gym is always set up: it was named when it was made, and its welcome screen's
@@ -202,6 +207,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/workouts', label: t('Workout plans'), icon: 'workouts' },
       // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
       { path: '/diet', label: t('Diet plans'), icon: 'diet' },
+      // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
+      ...(trainerNav ? [{ path: '/trainer', label: t('My members'), icon: 'growth' } as NavItem] : []),
       // R-133 (26 Oct 2026): a monthly challenge and the leaderboard. The owner changes; the desk reads.
       { path: '/challenges', label: t('Challenges'), icon: 'trophy' },
       // R-119 (owner, 24 Oct 2026): the gym's logo and colours, one tap from the menu instead of
@@ -215,7 +222,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {
@@ -315,6 +322,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       return <WorkoutPlansScreen />;
     case 'diet':
       return <DietPlansScreen />;
+    case 'trainer':
+      // F109: the server decides who may read it (owner, ticked trainer); the page says so to anyone else.
+      return <MyMembersScreen />;
     case 'challenges':
       return <ChallengesScreen />;
     case 'feedback':

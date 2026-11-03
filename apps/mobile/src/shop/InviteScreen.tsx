@@ -28,6 +28,7 @@ import { joinFromInvite } from './gymActions';
 import { JoinAgreement } from './JoinAgreement';
 import { agreementWords } from './joinTerms';
 import { BOARD_WORDS } from './boardWords';
+import { TRAINER_WORDS } from './trainerShare';
 import { askAndSwitchGym } from './leaveFlow';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
@@ -53,6 +54,21 @@ export function InviteScreen() {
   // This screen is open: a code kept from the welcome flow (app/_layout.tsx) has done its job.
   useEffect(() => {
     takePendingInvite();
+  }, []);
+
+  // F109 (#46): "Your gym's trainers see your workouts" only once the gym's server has the trainer view (0050).
+  const [trainersLive, setTrainersLive] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void import('./trainerSync')
+      .then((m) => m.trainerServerLive())
+      .then((v) => {
+        if (alive) setTrainersLive(v);
+      })
+      .catch((e: unknown) => console.warn('[trainer] join line check', e));
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const ask = useCallback(async () => {
@@ -149,6 +165,7 @@ export function InviteScreen() {
               </Text>
               {/* R-133 (owner, 26 Oct: automatic + a line at join): said before joining, as the privacy notice does. */}
               <Text style={body()}>{BOARD_WORDS.joinNote}</Text>
+              {trainersLive ? <Text style={body()}>{TRAINER_WORDS.joinNote}</Text> : null}
               <View>
                 <Text style={label()}>Your name</Text>
                 <TextInput
