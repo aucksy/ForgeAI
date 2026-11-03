@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-306. Pec Deck Fly suggests 40 kg after 45 kg — 3 Nov 2026
+
+He sent a screenshot: previous 45x12 @9, 45x9 @9.5, 45x7 @9.5 (20 Oct); suggested 40 x 13 on all 3 sets, 0 of 1,560 kg. "Expected or correct? I dont think so".
+
+Found: matches rule R4 exactly (progression.ts): 4+ workouts at 45 kg with no better total than the oldest -> one weight step back (45 -> 40) and ONE goal for every set, the middle of the 10-15 range (12.5 -> 13). The reason is only behind the (i).
+
+My view: a step back after a real stall is a standard, sound method. Two faults: (1) the drop has no visible reason, so it looks like a bug; show one short line on the card when the weight goes down ("Stuck at 45 kg, so a small step back to 40 kg"). (2) Same flat-goal fault as R-301: 13 on every set is easy for set 1 (45x12 @9 means about 18 at 40 kg) and hard for set 3 (45x7 @9.5 means about 12 at 40 kg). Goals per set from his own pattern instead. Next batch with R-301/R-303.
+
 ## R-305. In use screen: "300 kg more to beat the previous total" + logo; watch rest +/- — 3 Nov 2026
 
 He said: put how many kg more beat the previous total on the In use banner, in simple words ("300 kg more to beat previous total"). A marketing move: people see the phone and ask which app. Build it.
