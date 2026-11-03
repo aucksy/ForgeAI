@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-302. Watch: log the set from the wrist (reps, weight, RPE, Complete set); Claude Design prompt — 3 Nov 2026
+
+He said: the watch needs options to pick the weight, reps and RPE and mark the set completed. After rest, show the orange "rest is over" banner, but then do not go to a black screen: keep showing the previous set and the suggested set, with a way to complete the set after picking RPE and reps. The design must be thought through, neat, clean, intuitive. Check how Hevy's watch app does it and do it better. Give him a prompt for Claude Design to update the existing design.
+
+This REVERSES R-205 (30 Oct: watch look-only, no Complete set button). His newest word wins.
+
+My view: good change, with one guard: zero extra work by default. The set screen comes pre-filled with the suggested weight and reps, so one tap on Done logs it as planned. Change a number only when it differs (rotate the crown/bezel). RPE is optional, one tap on a small row, never a blocker. Gave him the prompt in chat. Build after the design comes back; the next batch also holds R-298 to R-301 and F191.
+
 ## R-301. Lateral raise asked 20 kg x 17 on every set — 3 Nov 2026
 
 He asked: is "20 kg x 17" on all 4 sets correct? Last time 19, 16, 15, 14 (RPE 9, 9, 9.5, 9).
