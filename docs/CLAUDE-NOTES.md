@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-295. Release — 3 Nov 2026
+
+He said: "Release". Releasing the waiting batch (F137 privacy switch, F109 trainer view, F148 trainer videos, F151 workout of the day) as 0.70.0 through the full gate: CI, qa-device default + owner, qa-journeys, conditions, review agent, What's new via member-words.
+
 ## R-294. 0049 + 0050 + 0051 are LIVE — 3 Nov 2026
 
 He said: "I hit Run and it came back with Success. No rows returned". Checked live with the public key: member_machine_busy, member_trainer_status, member_gym_wod and owner_gym_wods all run and refuse a fake key (P0001 BAD_KEY), so the functions exist. Marked the 3 migration headers APPLIED LIVE; #84 TASK DONE; F137/F109/F148/F151 moved to Next release. Members see the new screens after the next release. Busy machines stays off until a gym owner switches it on.
