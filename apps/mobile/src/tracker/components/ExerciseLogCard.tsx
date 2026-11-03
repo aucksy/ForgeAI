@@ -44,6 +44,7 @@ import type { DraftExercise } from '../store/activeWorkoutStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
+import { useKgLeft } from '../store/kgLeftStore';
 import { ExerciseDemoSheet } from './ExerciseDemoSheet';
 import { ExerciseThumb } from './ExerciseThumb';
 import { HoldTimerSheet } from './HoldTimerSheet';
@@ -287,10 +288,18 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
       beaten: kgBeaten(g),
+      // R-305: what the "In use" screen says ("300 kg more to beat the previous total"), in the member's unit.
+      left: { left: kgPlanned.reps ? g.left : kgToDisplay(g.left, units), reps: kgPlanned.reps === true, unit: weightUnit(units), each: weightIsEach(loadMode) },
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kgPlanned, tickKey, units, loadMode]);
+  // R-305: hand it to the "In use" screen; gone when this card leaves the workout.
+  const putLeft = useKgLeft((s) => s.put);
+  useEffect(() => {
+    putLeft(exercise.key, kgLine?.left ?? null);
+  }, [putLeft, exercise.key, kgLine]);
+  useEffect(() => () => putLeft(exercise.key, null), [putLeft, exercise.key]);
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);

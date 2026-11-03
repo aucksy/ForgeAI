@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-305. In use screen: "300 kg more to beat the previous total" + logo; watch rest +/- — 3 Nov 2026
+
+He said: put how many kg more beat the previous total on the In use banner, in simple words ("300 kg more to beat previous total"). A marketing move: people see the phone and ask which app. Build it.
+My view: good, cheap, and it also motivates the member. Added the MettleUp logo at the foot so people can find the app. Words say "previous", never "last". Built: lib/inUse.ts inUseBeatLine (tested), store/kgLeftStore.ts (each exercise card hands its kg left to the In use screen), MachineInUse beatLine + logo. Dumbbells per hand: "80 kg more per hand"; a reps-only move: "6 more reps"; reached: "Previous total beaten ✓". Waiting for release.
+
+He said (2): the watch also needs - / + buttons to change the rest timer, small, either side of the running timer. Wait for Claude Design, or give a prompt to update it. Gave a short add-on prompt in chat (the main R-302 prompt already asked for -15 / +15).
+
 ## R-304. In use per exercise by equipment; live reps keep chasing the total — 3 Nov 2026
 
 He said (1): the In use banner option shows on the active workout screen. ON by default for exercises on machines or benches (the bigger equipment), OFF for dumbbell or bodyweight exercises; think through the rest.

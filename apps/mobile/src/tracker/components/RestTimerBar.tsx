@@ -17,6 +17,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { MachineInUse, machineName } from './MachineInUse';
+import { inUseBeatLine } from '../lib/inUse';
+import { useKgLeft } from '../store/kgLeftStore';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -221,6 +223,8 @@ export function RestTimerBar() {
   // "In use" names the lift whose tick started this rest (the machine the member is on), not the next one.
   const startedBy = useRestTimer((s) => s.source?.exKey ?? null);
   const machine = useActiveWorkout((s) => (startedBy ? s.exercises.find((e) => e.key === startedBy)?.name ?? null : null));
+  // R-305: "300 kg more to beat the previous total" for that same lift.
+  const beatLine = useKgLeft((s) => inUseBeatLine(startedBy ? s.byEx[startedBy] ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
   // 0.56.1: the "Alarms & reminders" ask now shows on many new phones; "In use" never opens over it.
@@ -337,7 +341,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
-      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} onClose={() => setInUse(false)} />
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} beatLine={beatLine} onClose={() => setInUse(false)} />
     </View>
   );
 }

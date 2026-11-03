@@ -1,7 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
-- (nothing yet)
+- R-305 In use screen: "300 kg more to beat the previous total" under the lift's name, and the MettleUp logo at the foot (marketing: people nearby ask which app). What's new draft: "When your phone shows In use, it also shows how many kg you need to beat your previous total."
 
 ## Done
 - 0.70.0 RELEASED 3 Nov 2026 (owner said "Release", R-296). Gate: CI + whole qa-device on default and owner + qa-journeys green on 3d911a76 (later commits docs only). qa-conditions failed at C1 only (the old-seed test flow did not know 0.69.0's intro screens; flow fixed after the tag). Contents (the old waiting list):

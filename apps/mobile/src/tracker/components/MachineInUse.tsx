@@ -9,10 +9,14 @@
  * to take away the weights"): with "Show after every set" ticked (here, or Settings → Workouts) it
  * opens by itself when a set's rest starts, and it says "Resting" over the clock so people nearby
  * know the member is coming back. The set's pop-up (a record, better than last time) shows on top.
+ *
+ * R-305 (owner, 3 Nov 2026, "a marketing move: people look at the phone and ask which app"): under
+ * the lift's name, "300 kg more to beat the previous total", and the MettleUp logo at the foot.
  */
 import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { Icon } from '@/components/ui';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -28,6 +32,7 @@ export function MachineInUse({
   remaining,
   clock,
   machine,
+  beatLine = null,
   onClose,
 }: {
   visible: boolean;
@@ -35,6 +40,8 @@ export function MachineInUse({
   clock: string;
   /** The lift whose tick started this rest (RestTimerBar finds it), or null. */
   machine: string | null;
+  /** R-305: "300 kg more to beat the previous total", or null. */
+  beatLine?: string | null;
   onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -43,7 +50,7 @@ export function MachineInUse({
       <Pressable
         onPress={onClose}
         accessibilityRole="button"
-        accessibilityLabel={`In use. Back in ${remaining} seconds. Tap to close`}
+        accessibilityLabel={`In use. ${beatLine ? `${beatLine}. ` : ''}Back in ${remaining} seconds. Tap to close`}
         style={{ flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', padding: space.xl, gap: space.lg }}
       >
         <View style={{ borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: space.lg, paddingHorizontal: space.xl }}>
@@ -60,6 +67,11 @@ export function MachineInUse({
             {machine}
           </Text>
         ) : null}
+        {beatLine ? (
+          <Text numberOfLines={2} style={{ fontFamily: type.bodySemi, fontSize: 20, color: color.accentBright, textAlign: 'center' }}>
+            {beatLine}
+          </Text>
+        ) : null}
         <View style={{ alignItems: 'center' }}>
           <Text style={{ fontFamily: type.bodySemi, fontSize: 22, color: color.inkSecondary, textAlign: 'center' }}>{IN_USE_WORDS.back}</Text>
           <Text
@@ -74,6 +86,9 @@ export function MachineInUse({
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IN_USE_WORDS.close}</Text>
         </View>
         <AutoTick />
+        <View style={{ opacity: 0.85 }}>
+          <MettleUpLogo height={22} />
+        </View>
       </Pressable>
       {/* The set's own pop-up (a record, better than last time) stays readable over this screen, below
           the status bar (this screen draws behind it). */}
