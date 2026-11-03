@@ -35,7 +35,9 @@ and the alarm says so.
 4. The next morning: `https://hq.mettleup.fit/backup/status` shows `"fresh":true,"lastRunOk":true`.
 
 ## Restore drill on staging (do once after switching on, then once mid-pilot)
-Needs the staging Supabase project (launch plan A2) with **every migration applied and no data**.
+Uses the staging project "mettleup-staging" (made 29 Oct 2026, launch plan A2). It must have **every migration
+applied (0052 too) and no gym data**: if it has test rows, restore into a fresh free project instead, or the restore
+stops at the first table that has rows (on purpose).
 
 1. **Pick a copy.** From `deploy/hq`: `npx wrangler kv key list --binding BACKUP --remote --prefix snap/` and pick the
    newest day that has a `meta` key. Read it: `npx wrangler kv key get --binding BACKUP --remote "snap/<day>/meta"`

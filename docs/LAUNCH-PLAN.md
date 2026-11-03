@@ -9,6 +9,10 @@ India law and money; how gym-software pilots run). Sources are listed at the end
 
 **Status keys:** TODO · DOING · DONE · LATER (after the beta starts).
 
+**Status refreshed 4 Nov 2026** from PROGRESS.md, the Project Tracker and the launch audit of 3 Nov
+(docs/LAUNCH-AUDIT-2026-11-03.md). Dates are when an item was built or decided. Rows still TODO with "yours"
+wait on you; the audit's new findings are tracked there, not here.
+
 ---
 
 ## 1. The verdict in one paragraph
@@ -43,21 +47,21 @@ GGMS stays paid and usable **until week 8**. Rule for the gym owner: do not canc
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| A1 | Move the live database to **Supabase Pro** (about $25 a month). The free plan pauses after 7 quiet days and has no downloadable backups. Pro: no pausing, daily backups kept 7 days, spend cap on | You pay (inbox decision) | TODO |
-| A2 | A second, free **staging** project; every database change goes to staging first, then live | Claude (you create the project: Supabase allows the owner only) | TODO |
-| A3 | **Restore drill**: restore a daily backup into staging and check the gym's totals; repeat once mid-pilot | Claude | TODO |
-| A4 | Two-step sign-in on the Supabase, GitHub, Cloudflare and Google accounts (one person losing a password must not lose the business) | You | TODO |
-| A5 | Supabase security check: the built-in Security Advisor, SSL enforced, rate limits reviewed | Claude | TODO |
-| A6 | Admin app: add a content security policy header; write down how to roll back a deploy (Cloudflare keeps old versions) | Claude | TODO |
-| A7 | Release signing key: confirm the 2 offline copies still open (losing it means every member reinstalls and loses data) | You (5 min) | TODO |
+| A1 | Move the live database to **Supabase Pro** (about $25 a month). The free plan pauses after 7 quiet days and has no downloadable backups. Pro: no pausing, daily backups kept 7 days, spend cap on | You pay (inbox decision) | NOT DOING (decided 24 Oct, #27 B: no paid plan until testing and the market check are done; our own nightly backup instead, A3) |
+| A2 | A second, free **staging** project; every database change goes to staging first, then live | Claude (you create the project: Supabase allows the owner only) | DONE 29 Oct: "mettleup-staging", Mumbai, free, matched to live (F175) |
+| A3 | **Restore drill**: restore a daily backup into staging and check the gym's totals; repeat once mid-pilot | Claude | DOING: nightly backup to Cloudflare KV + restore script built 3 Nov (docs/BACKUP-RESTORE.md); CI restores a copy on every push. Waits for your yes to switch on; then one drill on staging with real data |
+| A4 | Two-step sign-in on the Supabase, GitHub, Cloudflare and Google accounts (one person losing a password must not lose the business) | You | TODO (#34, yours) |
+| A5 | Supabase security check: the built-in Security Advisor, SSL enforced, rate limits reviewed | Claude | DONE in part: security advisor clean-up (0012) and a database safety check in CI on every push (15 Oct); SSL and rate limits not reviewed |
+| A6 | Admin app: add a content security policy header; write down how to roll back a deploy (Cloudflare keeps old versions) | Claude | DONE 21 Oct (live; rollback in the admin README) |
+| A7 | Release signing key: confirm the 2 offline copies still open (losing it means every member reinstalls and loses data) | You (5 min) | TODO (#34, yours) |
 | A8 | Point-in-time restore ($100 a month) | LATER: when the data passes about 4 GB or a second gym joins | LATER |
 
 ### B. Knowing about problems before the gym does (Claude + You)
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| B1 | **Crash reporting** in the member app and the admin app (Sentry, free plan: 5,000 errors a month) | You make the free account; Claude wires it | TODO |
-| B2 | **Uptime check** every minute on the admin app and the database, alert to your phone and email (Better Stack, free plan) | You make the free account; Claude sets the checks | TODO |
+| B1 | **Crash reporting** in the member app and the admin app (Sentry, free plan: 5,000 errors a month) | You make the free account; Claude wires it | DONE 28-30 Oct without Sentry: crash reports from both apps go to Cloudflare (90 days); a daily GitHub check would open an issue per new crash, but it is OFF: it needs a CLOUDFLARE_API_TOKEN secret (checked 3 Nov) |
+| B2 | **Uptime check** every minute on the admin app and the database, alert to your phone and email (Better Stack, free plan) | You make the free account; Claude sets the checks | DONE in part 28 Oct without Better Stack: a GitHub check opens an issue (GitHub emails you). Scheduled "every 10 min" but GitHub ran it only every 3-8 hours (29 Oct-3 Nov), and no phone alert. Fix proposed 3 Nov: free UptimeRobot |
 | B3 | Google Play's own crash numbers (once on Play) | Claude reads weekly | LATER |
 | B4 | A daily "is everything fine" summary in the admin app for us (last check-ins, payments, errors) | Claude | TODO |
 | B5 | Firebase Test Lab on real phones after each release (built; waits for inbox task #25). It closes 30 Sep 2027; move to its successor before then | You (#25), then Claude | TODO |
@@ -66,12 +70,12 @@ GGMS stays paid and usable **until week 8**. Rule for the gym owner: do not canc
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| C1 | **Google Play Console account** ($25 once). A new personal account must run a closed test with **12 testers for 14 days** before it can go public: the gym's own members can be the testers | You (inbox decision + task) | TODO |
-| C2 | Play **internal testing** track for the first weeks (up to 100 people, updates in minutes, no review wait) | Claude after C1 | TODO |
-| C3 | Store listing, screenshots, data safety form, privacy policy link | Claude drafts; you submit (your account) | TODO |
-| C4 | App targets **Android 16 (API 36)** (Play rule since 31 Aug 2026): confirm from the built app and fix if not | Claude | TODO |
-| C5 | Remove unused permissions and old wording (microphone, speech, camera text still say "AI coach" though the coach is off) | Claude | TODO |
-| C6 | "A new version is ready" prompt inside the app (today members never hear of an update) | Claude | TODO |
+| C1 | **Google Play Console account** ($25 once). A new personal account must run a closed test with **12 testers for 14 days** before it can go public: the gym's own members can be the testers | You (inbox decision + task) | DONE 24 Oct: personal account SimpleApps108 (12 testers x 14 days still needed before production) |
+| C2 | Play **internal testing** track for the first weeks (up to 100 people, updates in minutes, no review wait) | Claude after C1 | DONE 25 Oct: 0.56.1 on internal + closed tests; each release uploads by itself |
+| C3 | Store listing, screenshots, data safety form, privacy policy link | Claude drafts; you submit (your account) | DOING: listing live in tests; Data safety voice + crash lines sent 30 Oct; server-saved workouts, store line and the account-deletion page drafted 3 Nov for your yes (docs/launch/PLAY-DATA-SAFETY-2026-11-03.md) |
+| C4 | App targets **Android 16 (API 36)** (Play rule since 31 Aug 2026): confirm from the built app and fix if not | Claude | DONE 20 Oct: targetSdk 36 |
+| C5 | Remove unused permissions and old wording (microphone, speech, camera text still say "AI coach" though the coach is off) | Claude | DONE 21 Oct (v0.49.0: microphone removed) |
+| C6 | "A new version is ready" prompt inside the app (today members never hear of an update) | Claude | DONE 21 Oct (v0.49.0); update reminder pop-up 31 Oct (0.65.0) |
 | C7 | The GitHub APK link stays as a backup. Google will start blocking unregistered APK installs worldwide in 2027 (India's date not announced); being on Play with Play App Signing registers us for free | Claude watches | LATER |
 
 ### D. Privacy, law and paperwork (Claude drafts, You decide and sign)
@@ -83,32 +87,32 @@ the gym. For workout data members enter in our app, we are responsible ourselves
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| D1 | **Privacy notice** (plain English + Hindi): what we keep, why, where, for how long, how to withdraw, who to complain to. On the website and in both apps | Claude drafts; you approve | TODO |
-| D2 | **Terms of use** for members and for gym staff | Claude drafts; you approve | TODO |
-| D3 | **Pilot agreement + data agreement with the gym**: dates and success measures; the gym owns its data; full export within 7 days and deletion within 30 if they leave; our security duties; we tell the gym of a breach within 24 hours; support hours; liability cap; it is a beta | Claude drafts; you and the gym owner sign | TODO |
-| D4 | **Complaints contact** (a "grievance officer"): a named person and email, answered within 90 days | You (inbox task) | TODO |
-| D5 | **Consent screen** when a member joins the gym in the app: itemised data, purpose, "withdraw any time" | Claude builds | TODO |
-| D6 | **Members under 18**: the law needs a parent's verified consent | You decide (inbox) | TODO |
-| D7 | **Breach plan** (1 page): who does what in the first hour, tell the gym in 24 hours, the gym tells the Board and members | Claude writes | TODO |
-| D8 | **Gym leaves = export + delete**: one-tap full export of the gym's data, and a delete path (today an online gym cannot be erased) | Claude builds | TODO |
-| D9 | List of the services that hold data for us (Supabase Mumbai, Cloudflare, GitHub, Google Play, Sentry) in the privacy notice | Claude | TODO |
-| D10 | A lawyer's read of D1-D3 | You decide (inbox): free drafts for the beta, lawyer before the 2nd gym | TODO |
+| D1 | **Privacy notice** (plain English + Hindi): what we keep, why, where, for how long, how to withdraw, who to complain to. On the website and in both apps | Claude drafts; you approve | DONE 20 Oct (final), live 24 Oct with your contact; updated since (latest 2 Nov) |
+| D2 | **Terms of use** for members and for gym staff | Claude drafts; you approve | DONE 20 Oct, live 24 Oct |
+| D3 | **Pilot agreement + data agreement with the gym**: dates and success measures; the gym owns its data; full export within 7 days and deletion within 30 if they leave; our security duties; we tell the gym of a breach within 24 hours; support hours; liability cap; it is a beta | Claude drafts; you and the gym owner sign | DOING: data agreement live 24 Oct (owners tick it); the pilot agreement is not signed yet (yours + the gym) |
+| D4 | **Complaints contact** (a "grievance officer"): a named person and email, answered within 90 days | You (inbox task) | DONE 24 Oct: Aakash Pahuja, contact@mettleup.fit (#37) |
+| D5 | **Consent screen** when a member joins the gym in the app: itemised data, purpose, "withdraw any time" | Claude builds | DONE 21 Oct (v0.49.0: 18+ and terms tick before joining) |
+| D6 | **Members under 18**: the law needs a parent's verified consent | You decide (inbox) | DONE 20 Oct: decided 18+ only for the trial (#29); teen accounts are #63 |
+| D7 | **Breach plan** (1 page): who does what in the first hour, tell the gym in 24 hours, the gym tells the Board and members | Claude writes | DONE 19 Oct: docs/launch/BREACH-PLAN.md |
+| D8 | **Gym leaves = export + delete**: one-tap full export of the gym's data, and a delete path (today an online gym cannot be erased) | Claude builds | DONE 21 Oct: "Download all your gym's data" + delete request (live) |
+| D9 | List of the services that hold data for us (Supabase Mumbai, Cloudflare, GitHub, Google Play, Sentry) in the privacy notice | Claude | DONE: the privacy notice names every provider (Supabase Mumbai, Cloudflare, Google, GitHub, Groq, Anthropic) |
+| D10 | A lawyer's read of D1-D3 | You decide (inbox): free drafts for the beta, lawyer before the 2nd gym | LATER: decided 20 Oct (#31 A): our checked drafts for the trial, a lawyer before the 2nd gym |
 
 ### E. Money (You decide)
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| E1 | **Price after the pilot**, written into the pilot agreement before it starts. Market: small Indian gyms pay ₹1,000-3,500 a month; GGMS about ₹12,000 a year; our earlier draft ₹1,499 a month | You decide (inbox) | TODO |
-| E2 | **Our GST registration**: needed only above ₹20 lakh a year. Gyms cannot claim back GST since Sep 2025, so our 18% would be a straight extra cost to them. Recommended: not now | You decide (inbox) | TODO |
+| E1 | **Price after the pilot**, written into the pilot agreement before it starts. Market: small Indian gyms pay ₹1,000-3,500 a month; GGMS about ₹12,000 a year; our earlier draft ₹1,499 a month | You decide (inbox) | DONE 24-30 Oct (#30 A): Starter ₹999, Pro ₹1,499, Pro + AI ₹2,499 a month; on the website 30 Oct |
+| E2 | **Our GST registration**: needed only above ₹20 lakh a year. Gyms cannot claim back GST since Sep 2025, so our 18% would be a straight extra cost to them. Recommended: not now | You decide (inbox) | DONE 24 Oct: decided not now (#32 A) |
 | E3 | The gym's receipts already use **5% GST** from 22 Sep 2025 and number by financial year (checked 19 Oct). Ask the gym whether it is GST-registered (gym visit) | Claude (done) / gym visit | DONE |
-| E4 | Full GST tax invoices (planned) | LATER, if the gym needs them | LATER |
+| E4 | Full GST tax invoices (planned) | LATER, if the gym needs them | DONE 22 Oct: GST tax invoices live (F102) |
 
 ### F. The gym visit and the gym's data (You + Gym, Claude prepares)
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| F1 | **Gym visit** with a one-page question sheet (Claude writes it): desk computer or phone, internet at the desk, printer, member count, staff names and shifts, GST status, cash/UPI split, group classes, FitPass members, the #1 daily headache, will members install an app | You (inbox task) | TODO |
-| F2 | **Export from GGMS**: members, plans, dues, payment history, attendance (whatever GGMS can export: Excel, PDF report, or the database backup) + 2 sample receipts | You ask the gym (inbox task) | TODO |
+| F1 | **Gym visit** with a one-page question sheet (Claude writes it): desk computer or phone, internet at the desk, printer, member count, staff names and shifts, GST status, cash/UPI split, group classes, FitPass members, the #1 daily headache, will members install an app | You (inbox task) | TODO (yours): question sheet ready 19 Oct (docs/launch/GYM-VISIT.md); visit not done |
+| F2 | **Export from GGMS**: members, plans, dues, payment history, attendance (whatever GGMS can export: Excel, PDF report, or the database backup) + 2 sample receipts | You ask the gym (inbox task) | TODO (yours): export not received |
 | F3 | Map the GGMS columns into our import (our import takes Excel / CSV and has "Undo this import") | Claude | TODO |
 | F4 | Trial import 1 and 2 into a test gym; totals match (active members, dues, payments per month); 20 members checked by hand | Claude + gym champion | TODO |
 | F5 | Freeze day, final import into the real gym, totals match | Claude + gym | TODO |
@@ -119,22 +123,22 @@ the gym. For workout data members enter in our app, we are responsible ourselves
 | # | Item | Who | Status |
 |---|---|---|---|
 | G1 | Name the gym's **champion** (usually the head of the desk) | Gym, you ask | TODO |
-| G2 | **Desk cheat sheet**, one laminated page, Hindi + English: check-in, new member, renewal, part payment, dues, cancel a receipt, shop order, print | Claude makes | TODO |
+| G2 | **Desk cheat sheet**, one laminated page, Hindi + English: check-in, new member, renewal, part payment, dues, cancel a receipt, shop order, print | Claude makes | DONE 19 Oct: docs/launch/DESK-CHEAT-SHEET.md |
 | G3 | **Training**: 60-90 min per shift, on the desk computer and phones | You run it with Claude's script | TODO |
-| G4 | **WhatsApp support group**: gym owner, champion, you. Reply within 15 minutes in gym hours for "cannot take payments"; same-day fix | You (decide your support hours, inbox) | TODO |
-| G5 | **Member messages**: 2 WhatsApp texts before go-live ("your plan, price and dues stay the same; get the app") + the QR poster (built: Invite & QR poster) | Claude drafts; gym sends | TODO |
+| G4 | **WhatsApp support group**: gym owner, champion, you. Reply within 15 minutes in gym hours for "cannot take payments"; same-day fix | You (decide your support hours, inbox) | TODO (yours): support hours decided 24 Oct ("as soon as we can", #33); the WhatsApp group is not made |
+| G5 | **Member messages**: 2 WhatsApp texts before go-live ("your plan, price and dues stay the same; get the app") + the QR poster (built: Invite & QR poster) | Claude drafts; gym sends | DONE 19 Oct: docs/launch/MEMBER-MESSAGES.md (the gym sends them at go-live) |
 | G6 | Staff help members install at check-in during weeks 3-5 | Gym | TODO |
 
 ### H. Product work before go-live (Claude)
 
 | # | Item | Status |
 |---|---|---|
-| H1 | Re-check the two old open server refusals (other gyms' shop and messages kept apart) and close them | TODO |
+| H1 | Re-check the two old open server refusals (other gyms' shop and messages kept apart) and close them | DONE 21 Oct (both covered by server tests that passed on the live server) |
 | H2 | Fix the open rest-card item (U-C1, low) | TODO |
-| H3 | Offline front desk (decided #7): needed only if the gym's internet is unreliable; decide after the gym visit | TODO after F1 |
+| H3 | Offline front desk (decided #7): needed only if the gym's internet is unreliable; decide after the gym visit | DOING: steps 1-2 live 22 Oct (opens and checks in offline); payments offline wait for the gym visit |
 | H4 | FitPass / pass members (planned): needed only if the gym has many; decide after the gym visit | TODO after F1 |
-| H5 | Clean old notes that now say wrong things (old README, old to-do list, old phase table) | TODO |
-| H7 | "Send feedback" (type or speak) in both apps; Claude sorts it every few hours, records bugs and ideas, fixes bugs through the full tests, replies to the sender. Decided (inbox #39, 19-20 Oct): fully automatic; each fix goes to the testers first, then to everyone after 24 h with no reported problem or crash (a report stops it; crash / money / privacy fixes skip the wait). Useful from the side-by-side run (week 3) | TODO |
+| H5 | Clean old notes that now say wrong things (old README, old to-do list, old phase table) | DONE 19 Oct |
+| H7 | "Send feedback" (type or speak) in both apps; Claude sorts it every few hours, records bugs and ideas, fixes bugs through the full tests, replies to the sender. Decided (inbox #39, 19-20 Oct): fully automatic; each fix goes to the testers first, then to everyone after 24 h with no reported problem or crash (a report stops it; crash / money / privacy fixes skip the wait). Useful from the side-by-side run (week 3) | DONE 21 Oct (typed), 29 Oct (floating button and voice, 0.60.0) |
 | H6 | Release freeze 3 days before switch-over and the week after; then weekly releases, never on Monday or month-end | TODO |
 
 ### I. New gyms: landing page, leads, sign-in, onboarding (owner R-46, 20 Oct; decided by Claude)
@@ -168,13 +172,13 @@ the gym. For workout data members enter in our app, we are responsible ourselves
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| I1 | Research gym-software landing pages and Indian owners' buying reasons | Claude | TODO |
-| I2 | Landing page (Hindi + English), real screenshots, design checks | Claude | TODO |
-| I3 | Lead form + D1 + Turnstile + private leads page (Cloudflare Access) | Claude (you approve the Google email for Access) | TODO |
-| I4 | Admin app behind "Sign in" at /app, old links redirected | Claude | TODO |
-| I5 | "Get started" checklist for a new gym | Claude | TODO |
+| I1 | Research gym-software landing pages and Indian owners' buying reasons | Claude | DONE 20-22 Oct |
+| I2 | Landing page (Hindi + English), real screenshots, design checks | Claude | DONE 22 Oct (live on your yes, #40); gym page moved to gyms.mettleup.fit and member page to mettleup.fit 1 Nov (F184) |
+| I3 | Lead form + D1 + Turnstile + private leads page (Cloudflare Access) | Claude (you approve the Google email for Access) | DONE 22 Oct: lead form into Cloudflare D1, leads in HQ (bot trap instead of Turnstile) |
+| I4 | Admin app behind "Sign in" at /app, old links redirected | Claude | DONE 24 Oct: admin app at app.mettleup.fit; old links still work |
+| I5 | "Get started" checklist for a new gym | Claude | DONE 21 Oct: "Get started" list live |
 | I6 | New-lead email alert | Claude, after the contact email (#37) | LATER |
-| I7 | Own product domain | You decide (money) | LATER |
+| I7 | Own product domain | You decide (money) | DONE 24 Oct: mettleup.fit (+ mettleup.in) |
 
 ## 4. Success measures (signed with the gym before week 3)
 
