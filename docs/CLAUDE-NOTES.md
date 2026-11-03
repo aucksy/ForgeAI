@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-304. In use per exercise by equipment; live reps keep chasing the total — 3 Nov 2026
+
+He said (1): the In use banner option shows on the active workout screen. ON by default for exercises on machines or benches (the bigger equipment), OFF for dumbbell or bodyweight exercises; think through the rest.
+My view: catalogue equipment is barbell 69, bodyweight 90, cable 63, dumbbell 88, machine 66, other 26. ON: machine, cable, barbell (rack or bench). OFF: bodyweight, and other (bands, kettlebells) unless the name says bench, rack or station. Dumbbell: OFF, EXCEPT a dumbbell move on a bench (name has bench, incline, decline, seated, chest-supported): the bench is what people wait for. The member's own switch per exercise wins and is remembered for that exercise; the global Settings switch becomes the default for 'other'. Replaces R-299's single global switch. Next batch.
+
+He said (2): keep changing the suggested reps or weight for the next set when the member is not on track to beat the total. Checked: kgProgress does this for reps after every tick (open sets get up to +2 reps each, from the last set back; capped at the row above). It never lowers reps below the plan when ahead, and never changes weight mid-exercise. My view: keep reps-only (a weight change mid-exercise means re-racking and guesswork); add the extra reps to the NEXT set first, not the last (the last set is the most tired); when ahead, keep the plan (a good day stays a good day); when it cannot be reached, R-300 (no add-a-set line).
+
 ## R-303. Rep goals should follow his "Weight jumps" choice — 3 Nov 2026
 
 He asked about R-301's +1.5%: "We also have to consider the user choice from settings... 1.5 for each set so total comes out to match user choice approx right".
