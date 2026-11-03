@@ -120,10 +120,16 @@ appId: com.mettleup.app
                       duration: 700
             - takeScreenshot: p7-big-${NAV}-03a-swiped-from-box
             - assertVisible: "Discard workout"
-      - scrollUntilVisible:
-          element: "Discard workout"
-          centerElement: true
-          timeout: 10000
+      # Only when the link is not already on screen: at the page's bottom it cannot be centred, and
+      # a centring scroll then timed out with the link in full view (owner run 41646213145, p7nav3).
+      - runFlow:
+          when:
+            notVisible: "Discard workout"
+          commands:
+            - scrollUntilVisible:
+                element: "Discard workout"
+                centerElement: true
+                timeout: 10000
       - takeScreenshot: p7-big-${NAV}-03b-open-workout-bottom
       - tapOn: "Discard workout"
       - extendedWaitUntil:

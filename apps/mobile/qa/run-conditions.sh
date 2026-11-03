@@ -151,6 +151,23 @@ ok_so_far() { [ -z "${PFAIL[$1]:-}" ]; }
 # 0.56.1: "Alarms & reminders" (SCHEDULE_EXACT_ALARM app-op) for the next flow: allow (default) or deny (C6a).
 EXACT_MODE=allow
 exact_mode() { adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM "$EXACT_MODE" >/dev/null 2>&1 || true; }
+# A slow emulator's launcher can throw an "isn't responding" box that then sits over the app for
+# the rest of the run (runs 41646220597 and 41652566660: every part failed behind "Pixel Launcher
+# isn't responding"). Before each flow: if another app's box is up, stop that app (Android drops the
+# box; the launcher comes back by itself). Our own app's box is never touched: that would be a finding.
+clear_anr() {
+  local pkg
+  pkg=$(adb shell dumpsys window 2>/dev/null | tr -d '\r' | grep -m1 -oE 'Application Not Responding: [A-Za-z0-9_.]+' | sed 's/.*: //')
+  [ -z "$pkg" ] && return 0
+  if [ "$pkg" = "$PKG" ]; then
+    log "ANR box for $PKG itself is up (left for the flow to see)"
+    return 0
+  fi
+  log "ANR box for $pkg was up over the app: $pkg stopped so the box goes"
+  adb shell am force-stop "$pkg" >/dev/null 2>&1 || true
+  sleep 3
+  adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+}
 member() {  # member <flow> [KEY=VALUE ...]: one Maestro flow
   local flow=$1
   shift
@@ -158,6 +175,7 @@ member() {  # member <flow> [KEY=VALUE ...]: one Maestro flow
   for kv in "$@"; do envs+=(-e "$kv"); done
   free_maestro
   exact_mode
+  clear_anr
   maestro test "${envs[@]}" --format junit --output "$C_OUT/$flow.xml" --test-output-dir "$C_OUT/$flow" "$QA_DIR/$flow.yaml"
 }
 server() {  # server <check> [args...], `;` between checks (the run's gym, slot C)
