@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-309. "Are you still releasing yourself?" — 3 Nov 2026
+
+He asked if I am releasing without his word, and said this must be in CLAUDE.md. Checked the transcript: 0.70.0 was tagged on his own message "Release" at 09:39 IST today (04:09 UTC, 3 Nov), the answer to my "Say release when you want members to get the trainer view...". 0.69.0 was his 2 Nov "build F52 and F186 and then release everything once done". No release without his word. Still, the proof was not shown to him. Added to both CLAUDE.md files: before any tag, quote his release message with date and time; one release = one version.
+
 ## R-308. A weight step back must be the member's choice — 3 Nov 2026
 
 He said: the decrease in weight should be opted in by the user, off by default. When the stall is detected, a pop-up asks to opt in, with simple reasoning backed by research, naming the research if possible. "You can decide if this is good."
