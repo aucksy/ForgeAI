@@ -51,6 +51,8 @@ object OfflineTick {
     val label: String?,
     val restSec: Int,
     val next: JSONObject,
+    /** Watch logging: the numbers logged on the watch (JSON); null = the card's numbers. */
+    val log: String? = null,
   )
 
   /** The tapped row in the kept plan, or null when the plan cannot place it. */
@@ -80,7 +82,7 @@ object OfflineTick {
       // other numbers than the ones it showed.
       val tapped = intent.getStringExtra(RestCard.EXTRA_DONE_VALUES)
       if (tapped != null && tapped != values) return null
-      Step(workout, exKey, setKey, values, str(step, "label"), step.optInt("rest", 0), next)
+      Step(workout, exKey, setKey, values, str(step, "label"), step.optInt("rest", 0), next, intent.getStringExtra(RestCard.EXTRA_DONE_LOG))
     } catch (_: Exception) {
       null
     }
@@ -183,7 +185,9 @@ object OfflineTick {
           .put("setKey", s.setKey)
           .put("values", s.values ?: JSONObject.NULL)
           .put("label", s.label ?: JSONObject.NULL)
-          .put("at", at),
+          .put("at", at)
+          // Watch logging: the app saves the numbers chosen on the watch (restDone.ts decideQueuedTick).
+          .apply { s.log?.let { put("log", it) } },
       )
       p.edit().putString("ticks", arr.toString()).commit()
       Queued.ADDED

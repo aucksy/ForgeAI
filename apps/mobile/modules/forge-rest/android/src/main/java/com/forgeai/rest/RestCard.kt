@@ -124,6 +124,8 @@ object RestCard {
   private val CH_OVER_OLD = listOf("rest-timer", "rest-over-alarm")
   const val ACTION_ADD = "com.forgeai.rest.ADD15"
   const val ACTION_SKIP = "com.forgeai.rest.SKIP"
+  /** Watch logging (3 Nov 2026): "−15" on the watch's rest timer ([sub]). */
+  const val ACTION_SUB = "com.forgeai.rest.SUB15"
   const val ACTION_END = "com.forgeai.rest.END"
   const val ACTION_DONE = "com.forgeai.rest.DONE"
   /** 13 Oct 2026: "Rest is over" swiped away — the live workout card comes back ([WorkoutCard]). */
@@ -136,6 +138,8 @@ object RestCard {
   const val EXTRA_DONE_SET = "forgeai_done_set"
   const val EXTRA_DONE_LABEL = "forgeai_done_label"
   const val EXTRA_DONE_VALUES = "forgeai_done_values"
+  /** Watch logging (3 Nov 2026): the numbers logged on the watch ({w, r, rpe, unit}); absent = none. */
+  const val EXTRA_DONE_LOG = "forgeai_done_log"
   /** The longest a Done tap's broadcast is kept open for the app to act on it. */
   const val DONE_HOLD_MS = 2_000L
   /** A Done tap the app has not read by then is dropped by the app; the note goes too. */
@@ -195,6 +199,8 @@ object RestCard {
     val open: Boolean,
     val label: String?,
     val values: String?,
+    /** Watch logging: the numbers logged on the watch (JSON), null = the card's numbers. */
+    val log: String? = null,
   )
 
   /** Set by the module while JS is alive: (kind, endsAt, startedAt). */
@@ -540,6 +546,23 @@ object RestCard {
     return r
   }
 
+  /**
+   * Watch logging (3 Nov 2026): "−15" on the watch's rest timer. The rest ends 15 s sooner, but never
+   * sooner than a second from now (the app's own timer then adopts it, as for "+15 s").
+   */
+  @Synchronized
+  fun sub(ctx: Context): Rest? {
+    val cur = load(ctx) ?: return null
+    val now = System.currentTimeMillis()
+    if (cur.endsAt <= now) return null
+    val r = cur.copy(endsAt = maxOf(now + 1_000L, cur.endsAt - ADD_SEC * 1000L))
+    save(ctx, r)
+    post(ctx, r)
+    arm(ctx, r.endsAt)
+    WearSync.rest(ctx, r)
+    return r
+  }
+
   /** "Skip" on the card, or the app skipped / the workout ended. */
   @Synchronized
   fun clear(ctx: Context, dismissOver: Boolean) {
@@ -666,6 +689,7 @@ object RestCard {
       open = open,
       label = intent.getStringExtra(EXTRA_DONE_LABEL),
       values = intent.getStringExtra(EXTRA_DONE_VALUES),
+      log = intent.getStringExtra(EXTRA_DONE_LOG),
     )
   }
 
@@ -681,6 +705,7 @@ object RestCard {
       .putBoolean("open", d.open)
       .putString("label", d.label)
       .putString("values", d.values)
+      .putString("log", d.log)
       .commit()
   }
 
@@ -716,6 +741,7 @@ object RestCard {
     intent.removeExtra(EXTRA_DONE_WORKOUT)
     intent.removeExtra(EXTRA_DONE_LABEL)
     intent.removeExtra(EXTRA_DONE_VALUES)
+    intent.removeExtra(EXTRA_DONE_LOG)
     intent.removeExtra(EXTRA_ENDS)
     keepPending(ctx, d)
     cancelOver(ctx)
@@ -738,6 +764,7 @@ object RestCard {
         open = p.getBoolean("open", false),
         label = p.getString("label", null),
         values = p.getString("values", null),
+        log = p.getString("log", null),
       )
     } else {
       null
@@ -871,9 +898,11 @@ object RestCard {
    * C5-2: a Done / "Complete set" tapped on the ForgeAI watch app ([WearActionService]), as the
    * same broadcast a phone button sends, so it takes the same road (the app, or [OfflineTick]).
    */
-  internal fun doneBroadcast(ctx: Context, t: DoneTarget, endsAt: Long, label: String?): Intent {
+  internal fun doneBroadcast(ctx: Context, t: DoneTarget, endsAt: Long, label: String?, log: String? = null): Intent {
     val i = Intent(ctx, RestActionReceiver::class.java).setAction(ACTION_DONE)
     putDone(i, t, endsAt, label)
+    // Watch logging: the numbers logged on the watch ride along (the app saves them as chosen).
+    if (log != null) i.putExtra(EXTRA_DONE_LOG, log)
     return i
   }
 

@@ -88,6 +88,43 @@ class WearWireTest {
     assertNull(WearWire.parseDone(bytes("""{"workout":42,"exKey":"a","setKey":"a1","open":true}""")))
   }
 
+  // ------------------------------------------------------------------ watch logging (3 Nov 2026)
+  @Test
+  fun theNextSetsBoxesAreReadForTheWatch() {
+    val row = """{"workout":42,"exKey":"b","setKey":"b2","watch":{"set":"Set 2 of 4","last":"20 kg × 15","goal":"20 kg × 16",""" +
+      """"entry":{"wOn":true,"rOn":true,"w":20,"r":16,"unit":"kg","step":2.5,"warm":false,"rpe":true,"rest":120}}}"""
+    val e = WearWire.watchLines(row).entry
+    assertEquals(WatchEntry(true, true, "20", 16L, "kg", "2.5", false, true, 120L), e)
+    // An empty weight box, pounds, a warm-up, no step sent.
+    val f = WearWire.entry(JSONObject("""{"wOn":true,"rOn":true,"w":null,"r":null,"unit":"lb","warm":true,"rest":0}"""))
+    assertEquals(WatchEntry(true, true, "", -1L, "lb", "2.5", true, false, 0L), f)
+    // Nonsense numbers read as empty; an older app sends no entry.
+    val g = WearWire.entry(JSONObject("""{"wOn":true,"rOn":true,"w":-5,"r":5000,"rest":99999}"""))
+    assertEquals("", g!!.w)
+    assertEquals(-1L, g.r)
+    assertEquals(3600L, g.rest)
+    assertNull(WearWire.watchLines("""{"watch":{"set":"Set 1 of 3","last":"","goal":""}}""").entry)
+  }
+
+  @Test
+  fun aDoneLoggedOnTheWatchCarriesItsNumbers() {
+    val row = """{"workout":42,"exKey":"b","setKey":"b2","values":"20|15","log":{"w":22.5,"r":16,"rpe":8,"unit":"kg"}}"""
+    val d = WearWire.parseDone(bytes(row))
+    assertNotNull(d)
+    val log = JSONObject(d!!.log!!)
+    assertEquals(22.5, log.getDouble("w"), 1e-9)
+    assertEquals(16L, log.getLong("r"))
+    assertEquals(8.0, log.getDouble("rpe"), 1e-9)
+    assertEquals("kg", log.getString("unit"))
+    // Reps only, pounds; an effort out of range is dropped, the set still goes.
+    val r = JSONObject(WearWire.watchLog(JSONObject("""{"r":20,"rpe":12,"unit":"lb"}"""))!!)
+    assertTrue(!r.has("w") && !r.has("rpe"))
+    assertEquals("lb", r.getString("unit"))
+    // No numbers at all: a plain Done (the card's numbers).
+    assertNull(WearWire.watchLog(JSONObject("""{"rpe":8}""")))
+    assertNull(WearWire.parseDone(bytes("""{"workout":42,"exKey":"b","setKey":"b2"}"""))!!.log)
+  }
+
   // ------------------------------------------------------------------ U-W2: the outbox
   @Test
   fun aStateStaysUntilItsPutSucceeds() {

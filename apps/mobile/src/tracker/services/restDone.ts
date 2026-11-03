@@ -20,8 +20,59 @@
  *    tap older than 10 minutes, stay quiet when that row is already ticked (a second tap, or
  *    ticked in the app), or — the workout ended or changed, the set is gone — save nothing.
  */
+import { hasReps, hasWeight, type LogType } from '../engine/logTypes';
 import type { DraftExercise, DraftSet, SetFill } from '../store/activeWorkoutStore';
 import { missingText, tickValues, type TickMissing } from './setTick';
+
+const KG_PER_LB = 0.45359237;
+
+/**
+ * Watch logging (3 Nov 2026): the numbers the member logged on the watch's own Done, as the watch
+ * showed them (`unit`), and the effort picked there (null = skipped, or "Track RPE" is off).
+ */
+export interface WatchLog {
+  w: number | null;
+  r: number | null;
+  rpe: number | null;
+  unit: 'kg' | 'lb';
+}
+
+/** A watch log from the phone's message (an object or its JSON); null when it is not one. PURE. */
+export function parseWatchLog(raw: unknown): WatchLog | null {
+  let v: unknown = raw;
+  if (typeof raw === 'string') {
+    if (!raw) return null;
+    try {
+      v = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  if (!v || typeof v !== 'object') return null;
+  const o = v as Record<string, unknown>;
+  const num = (x: unknown, min: number, max: number): number | null =>
+    typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max ? x : null;
+  const w = num(o.w, 0, 2000);
+  const r = num(o.r, 0, 1000);
+  const rpe = num(o.rpe, 1, 10);
+  if (w == null && r == null) return null;
+  return { w, r: r == null ? null : Math.round(r), rpe, unit: o.unit === 'lb' ? 'lb' : 'kg' };
+}
+
+/** The boxes a watch log fills on a row of this log type (stored kg). PURE. */
+export function watchPatch(log: WatchLog, lt: LogType): { weightKg?: number; reps?: number } {
+  const out: { weightKg?: number; reps?: number } = {};
+  if (hasWeight(lt) && log.w != null) out.weightKg = log.unit === 'lb' ? Math.round(log.w * KG_PER_LB * 1000) / 1000 : log.w;
+  if (hasReps(lt) && log.r != null) out.reps = log.r;
+  return out;
+}
+
+/** The row's grey hint with the watch's numbers over it: what the tick saves. PURE. */
+function watchFill(log: WatchLog, lt: LogType, fill: SetFill | null): SetFill | null {
+  const p = watchPatch(log, lt);
+  if (p.weightKg == null && p.reps == null) return fill;
+  return { ...(fill ?? { weightKg: 0, reps: 0 }), weightKg: p.weightKg ?? fill?.weightKg ?? 0, reps: p.reps ?? fill?.reps ?? 0 };
+}
 
 /** A Done tap older than this is not acted on (the member has moved on). */
 export const DONE_MAX_AGE_MS = 10 * 60_000;
@@ -59,6 +110,8 @@ export interface DoneRequest {
   label: string | null;
   /** The row's hint when the card was posted (`hintSignature`); null = not carried ("open" Done). */
   values: string | null;
+  /** Watch logging: the numbers (and effort) logged on the watch's own Done; absent = a plain Done. */
+  log?: WatchLog | null;
 }
 
 /** The grey hint a row shows (`fillForSet` with the card's Target). */
@@ -71,7 +124,7 @@ export type DoneStep =
   | { do: 'stale' }
   /** That row is already ticked (a second tap, or ticked in the app): nothing to do or say. */
   | { do: 'already' }
-  | { do: 'tick'; exKey: string; setKey: string; fill: SetFill | null }
+  | { do: 'tick'; exKey: string; setKey: string; fill: SetFill | null; log?: WatchLog | null }
   | { do: 'open'; exKey: string; setKey: string; missing: TickMissing | null; text: string | null };
 
 /** "Bench Press, set 2" (warm-ups not counted) or "Bench Press, warm-up 1". */
@@ -154,6 +207,8 @@ export interface QueuedTick {
   /** When it was tapped (epoch ms). */
   at: number;
   label: string | null;
+  /** Watch logging: the numbers (and effort) logged on the watch; absent = the card's numbers. */
+  log?: WatchLog | null;
 }
 
 /** The fill a `hintSignature` stands for ("80|8||" → 80 kg × 8; "none" → null). PURE. */
@@ -195,8 +250,16 @@ export function decideQueuedTick(
   const s = ex?.sets.find((x) => x.key === q.setKey);
   if (!ex || !s) return { do: 'stale' };
   if (s.done) return { do: 'already' };
+  const lt = ex.logType ?? 'weight_reps';
+  if (q.log) {
+    // Watch logging: the numbers the member chose on the watch, over the card's.
+    const fill = watchFill(q.log, lt, fillFromSignature(q.values));
+    const out = tickValues(lt, { ...s, ...watchPatch(q.log, lt) }, fill);
+    if (!out.ok) return { do: 'open', exKey: ex.key, setKey: s.key, missing: out.missing, text: missingText(out.missing) };
+    return { do: 'tick', exKey: ex.key, setKey: s.key, fill, log: q.log };
+  }
   const fill = fillFromSignature(q.values);
-  const out = tickValues(ex.logType ?? 'weight_reps', s, fill);
+  const out = tickValues(lt, s, fill);
   if (!out.ok) return { do: 'open', exKey: ex.key, setKey: s.key, missing: out.missing, text: missingText(out.missing) };
   return { do: 'tick', exKey: ex.key, setKey: s.key, fill };
 }
@@ -223,6 +286,15 @@ export function decideRestDone(
   // Already ticked (in the app, or a second tap — a watch can lag behind the newer card): the
   // set IS saved, so nothing is said. Done never moves on to another row by itself.
   if (s.done) return { do: 'already' };
+  if (req.log) {
+    // Watch logging: the member saw and chose these numbers on the watch, so they are saved as
+    // chosen (the row's own hint is not compared): exactly as typing them and ticking on the phone.
+    const lt = ex.logType ?? 'weight_reps';
+    const fill = watchFill(req.log, lt, fillFor(ex, s.key));
+    const out = tickValues(lt, { ...s, ...watchPatch(req.log, lt) }, fill);
+    if (!out.ok) return { do: 'open', exKey: ex.key, setKey: s.key, missing: out.missing, text: missingText(out.missing) };
+    return { do: 'tick', exKey: ex.key, setKey: s.key, fill, log: req.log };
+  }
   const c = checkRow(ex, s, fillFor);
   if (!c.ok) return { do: 'open', exKey: ex.key, setKey: s.key, missing: c.missing, text: missingText(c.missing) };
   // The hint is not the one the card's Done was for (a cold start before the Targets are back

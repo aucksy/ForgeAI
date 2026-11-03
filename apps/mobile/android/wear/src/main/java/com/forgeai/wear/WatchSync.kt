@@ -50,11 +50,30 @@ object WatchSync {
           m.getString("accent", "") ?: "",
           // R-269: the phone closed the workout with Finish (an older phone app sends none).
           m.getBoolean("saved", false),
+          // Watch logging (3 Nov 2026): the phone takes sets logged here, and the next set's boxes.
+          m.getBoolean("logFlow", false),
+          entry(m),
         )
       }
     } catch (e: Exception) {
       Log.w(TAG, "phone item not read", e)
     }
+  }
+
+  /** Watch logging: the next set's boxes from the item's "e…" keys; null = none (older phone app). */
+  private fun entry(m: com.google.android.gms.wearable.DataMap): SetEntry? {
+    if (!m.getBoolean("eOn", false)) return null
+    return SetEntry(
+      wOn = m.getBoolean("eWOn", false),
+      rOn = m.getBoolean("eROn", false),
+      w = (m.getString("eW", "") ?: "").toDoubleOrNull(),
+      r = m.getLong("eR", -1L).let { if (it < 0L) null else it.toInt() },
+      unit = if (m.getString("eUnit", "kg") == "lb") "lb" else "kg",
+      step = (m.getString("eStep", "") ?: "").toDoubleOrNull()?.takeIf { it > 0.0 } ?: 2.5,
+      warm = m.getBoolean("eWarm", false),
+      rpe = m.getBoolean("eRpe", false),
+      rest = m.getLong("eRest", 0L).toInt(),
+    )
   }
 
   /**

@@ -22,7 +22,7 @@ import { Platform } from 'react-native';
 import { appliedBrand, appliedBrandPalette } from '@/theme/brandTokens';
 import { color } from '@/theme/tokens';
 
-import type { CardDone, DoneRequest, QueuedTick } from './restDone';
+import { parseWatchLog, type CardDone, type DoneRequest, type QueuedTick, type WatchLog } from './restDone';
 import type { WatchLines } from './liveCard';
 import type { LiveClock } from './liveClock';
 import type { RestSoundId } from './restSounds';
@@ -338,7 +338,15 @@ export function parsePendingDone(raw: unknown): DoneRequest | null {
     open: r.open === true,
     label: typeof r.label === 'string' ? r.label : null,
     values: typeof r.values === 'string' && r.values ? r.values : null,
+    // Watch logging: the numbers logged on the watch (absent on a phone tap or an older phone module).
+    ...withLog(r.log),
   };
+}
+
+/** `{ log }` when a watch log rides along, else nothing (the key stays absent). PURE. */
+function withLog(raw: unknown): { log?: WatchLog } {
+  const log = parseWatchLog(raw);
+  return log ? { log } : {};
 }
 
 /**
@@ -380,6 +388,7 @@ export function parseQueuedTicks(raw: unknown): QueuedTick[] {
       values: typeof r.values === 'string' && r.values ? r.values : null,
       at: Number.isFinite(at) ? at : 0,
       label: typeof r.label === 'string' ? r.label : null,
+      ...withLog(r.log),
     });
   }
   return out;

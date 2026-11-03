@@ -177,26 +177,40 @@ object WearSync {
     // An older watch app ignores it.
     val closedSaved = !active && saved
     val now = if (active) listOf<Any>(true, title, text, done, l.set, l.last, l.goal, accent, false) else listOf<Any>(false, "", "", "", "", "", "", accent, closedSaved)
-    if (now == lastWorkout) {
+    // Watch logging (3 Nov 2026): + the row's boxes (the watch's own Done and crown); compared too.
+    val entry = if (active) l.entry else null
+    val key = now + listOf<Any>(entry?.toString() ?: "")
+    if (key == lastWorkout) {
       flush(ctx) // nothing new, but a state still waiting goes now if it can
       return
     }
-    lastWorkout = now
-    put(
-      ctx,
-      PATH_WORKOUT,
-      linkedMapOf(
-        "active" to active,
-        "title" to now[1],
-        "text" to now[2],
-        "done" to now[3],
-        "set" to now[4],
-        "last" to now[5],
-        "goal" to now[6],
-        "accent" to now[7],
-        "saved" to now[8],
-      ),
+    lastWorkout = key
+    val values = linkedMapOf<String, Any>(
+      "active" to active,
+      "title" to now[1],
+      "text" to now[2],
+      "done" to now[3],
+      "set" to now[4],
+      "last" to now[5],
+      "goal" to now[6],
+      "accent" to now[7],
+      "saved" to now[8],
+      // This phone app takes sets logged on the watch (the watch shows its logging screens only then).
+      "logFlow" to true,
+      "eOn" to (entry != null),
     )
+    if (entry != null) {
+      values["eWOn"] = entry.wOn
+      values["eROn"] = entry.rOn
+      values["eW"] = entry.w
+      values["eR"] = entry.r
+      values["eUnit"] = entry.unit
+      values["eStep"] = entry.step
+      values["eWarm"] = entry.warm
+      values["eRpe"] = entry.rpe
+      values["eRest"] = entry.rest
+    }
+    put(ctx, PATH_WORKOUT, values)
   }
 
   // ------------------------------------------------------------------ the gym's colour
@@ -569,6 +583,8 @@ object WearSync {
     return when (path) {
       "$PATH_ACT/add" -> Intent(ctx, RestActionReceiver::class.java).setAction(RestCard.ACTION_ADD)
       "$PATH_ACT/skip" -> Intent(ctx, RestActionReceiver::class.java).setAction(RestCard.ACTION_SKIP)
+      // Watch logging (3 Nov 2026): "−15" on the watch's rest timer.
+      "$PATH_ACT/sub" -> Intent(ctx, RestActionReceiver::class.java).setAction(RestCard.ACTION_SUB)
       "$PATH_ACT/done" -> {
         // U-W3: the parsing is pure (WearWire.parseDone, JVM-tested); null = the watch is told.
         val d = WearWire.parseDone(data)
@@ -577,7 +593,7 @@ object WearSync {
           return null
         }
         try {
-          RestCard.doneBroadcast(ctx, RestCard.DoneTarget(d.workout, d.exKey, d.setKey, false, d.values), d.endsAt, d.label)
+          RestCard.doneBroadcast(ctx, RestCard.DoneTarget(d.workout, d.exKey, d.setKey, false, d.values), d.endsAt, d.label, d.log)
         } catch (e: Exception) {
           Log.w(TAG, "watch Done not passed on", e)
           null

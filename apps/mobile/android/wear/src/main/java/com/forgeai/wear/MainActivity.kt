@@ -62,6 +62,8 @@ class MainActivity : ComponentActivity() {
   /** R-269: what "Open on phone" did last (the line under "Get MettleUp on your phone"). */
   private var phoneAppRequest by mutableStateOf(PhoneApp.Request.IDLE)
   private lateinit var heart: HeartRate
+  /** Watch logging (3 Nov 2026): the logging screens' state ([LogFlow]); kept while the app runs. */
+  private var logUi by mutableStateOf(LogUi())
 
   private val ambientObserver = AmbientLifecycleObserver(
     this,
@@ -191,6 +193,55 @@ class MainActivity : ComponentActivity() {
           delay(200L)
         }
       }
+      // Watch logging: the clock and the effort ring move while a workout is open on screen.
+      val ui = logUi
+      val logging = snap.logFlow && snap.workoutActive && !ambient
+      LaunchedEffect(logging, ui.phase, ambientTick) {
+        now = System.currentTimeMillis()
+        while (logging) {
+          delay(if (ui.phase == LogPhase.EFFORT) 100L else 1_000L)
+          now = System.currentTimeMillis()
+        }
+      }
+      // 3 s without a turn or a tap: the crown's change ends.
+      LaunchedEffect(ui.adjust, ui.adjustAt) {
+        if (ui.adjust == Adjust.NONE) return@LaunchedEffect
+        delay((LogMath.ADJUST_IDLE_MS - (System.currentTimeMillis() - ui.adjustAt)).coerceAtLeast(0L) + 20L)
+        logUi = LogFlow.idle(logUi, System.currentTimeMillis())
+      }
+      // Effort: 4 s untouched saves the set without it. Sending: no answer in 10 s is "Not saved".
+      LaunchedEffect(ui.phase, ui.phaseAt) {
+        when (ui.phase) {
+          LogPhase.EFFORT -> {
+            delay((LogMath.EFFORT_MS - (System.currentTimeMillis() - ui.phaseAt)).coerceAtLeast(0L))
+            if (logUi.phase == LogPhase.EFFORT && logUi.phaseAt == ui.phaseAt) sendSet(null)
+          }
+          LogPhase.SENDING -> {
+            delay((LogMath.CONFIRM_MS - (System.currentTimeMillis() - ui.sentAt)).coerceAtLeast(0L))
+            if (logUi.phase == LogPhase.SENDING && logUi.sentAt == ui.sentAt) notSaved("no answer from the phone")
+          }
+          else -> Unit
+        }
+      }
+      // The phone took the set: it names the next row (or the workout closed).
+      LaunchedEffect(snap.row, snap.workoutActive, ui.sentKey) {
+        if (logUi.phase == LogPhase.SENDING && LogMath.confirmed(logUi.sentKey, snap.row, snap.workoutActive)) {
+          LogBus.waiting = false
+          logUi = LogFlow.confirmed(logUi, System.currentTimeMillis())
+          now = System.currentTimeMillis()
+        }
+      }
+      // The phone said it could not log it.
+      val refusedAt = LogBus.refusedAt
+      LaunchedEffect(refusedAt) {
+        if (refusedAt > 0L && logUi.phase == LogPhase.SENDING && refusedAt >= logUi.sentAt) notSaved("the phone could not log it")
+      }
+      // "Saved" shows 2 s, then goes.
+      LaunchedEffect(ui.savedAt) {
+        if (ui.savedAt <= 0L) return@LaunchedEffect
+        delay(LogMath.SAVED_MS + 50L)
+        now = System.currentTimeMillis()
+      }
       WatchScreen(
         snap,
         bpm,
@@ -209,8 +260,82 @@ class MainActivity : ComponentActivity() {
         phoneAppMissing = phoneAppMissing,
         phoneAppRequest = phoneAppRequest,
         onGetPhoneApp = ::openPlayStoreOnPhone,
+        log = ui,
+        actions = logActions,
       )
     }
+  }
+
+  /** Watch logging: what each tap and crown turn on the logging screens does. */
+  private val logActions = LogActions(
+    onTapWeight = { onEntry { e, key -> logUi = LogFlow.tapWeight(logUi, e, key, System.currentTimeMillis()) } },
+    onTapReps = { onEntry { e, key -> logUi = LogFlow.tapReps(logUi, e, key, System.currentTimeMillis()) } },
+    onCrown = { steps -> onEntry { e, key -> logUi = LogFlow.crown(logUi, e, key, steps, System.currentTimeMillis()) } },
+    onDone = ::doneTapped,
+    onRpe = { v -> if (logUi.phase == LogPhase.EFFORT) sendSet(v) },
+    onSkipEffort = { if (logUi.phase == LogPhase.EFFORT) sendSet(null) },
+    onMinus15 = {
+      WatchState.shiftRest(this, -15_000L)
+      WatchActions.send(this, "sub", "", quiet = true)
+    },
+    onPlus15 = {
+      WatchState.shiftRest(this, 15_000L)
+      WatchActions.send(this, "add", "", quiet = true)
+    },
+    onSkipRest = {
+      WatchState.skipRest(this)
+      WatchActions.send(this, "skip", "", quiet = true)
+    },
+    onOk = { logUi = LogFlow.dismiss(logUi, System.currentTimeMillis()) },
+    onGo = { logUi = LogFlow.go(logUi) },
+  )
+
+  private fun onEntry(block: (SetEntry, String) -> Unit) {
+    val snap = WatchState.snapshot
+    val e = snap.entry ?: return
+    block(e, LogMath.setKeyOf(snap.row))
+  }
+
+  /** Done on "Next set": the effort question when the phone asks for it, else the set goes now. */
+  private fun doneTapped() {
+    val snap = WatchState.snapshot
+    val e = snap.entry
+    val key = LogMath.setKeyOf(snap.row)
+    if (logUi.phase == LogPhase.SENDING || logUi.phase == LogPhase.EFFORT) return
+    val w = e?.let { LogMath.weight(logUi, it, key) }
+    val r = e?.let { LogMath.repsNow(logUi, it, key) }
+    if (!LogMath.canLog(snap.row, e, w, r)) return
+    val u = LogFlow.done(logUi, e, System.currentTimeMillis())
+    logUi = u
+    if (u.phase != LogPhase.EFFORT) sendSet(null)
+  }
+
+  /**
+   * The set goes to the phone with the numbers shown ([LogMath.withLog]); the rest starts here at
+   * once (it still runs if the phone does not answer). [rpe]: the effort picked, or null.
+   */
+  private fun sendSet(rpe: Double?) {
+    val snap = WatchState.snapshot
+    val e = snap.entry
+    val key = LogMath.setKeyOf(snap.row)
+    val w = e?.let { LogMath.weight(logUi, it, key) }
+    val r = e?.let { LogMath.repsNow(logUi, it, key) }
+    val payload = LogMath.withLog(snap.row, e, w, r, rpe)
+    val card = WatchCopy.card(snap)
+    val last = e != null && !e.warm && card.setCount > 0 && card.setIndex == card.setCount
+    val t = System.currentTimeMillis()
+    logUi = LogFlow.sent(logUi, key, t, last, snap.title, card.setCount)
+    LogBus.waiting = true
+    if (e != null) WatchState.startLocalRest(this, e.rest)
+    WatchActions.logSet(this, payload) { ok ->
+      if (!ok && logUi.phase == LogPhase.SENDING && logUi.sentAt == t) notSaved("not sent")
+    }
+  }
+
+  private fun notSaved(why: String) {
+    Log.w("ForgeWear", "set logged here not saved: $why")
+    LogBus.waiting = false
+    logUi = LogFlow.notSaved(logUi, System.currentTimeMillis())
   }
 
   override fun onStart() {

@@ -15,6 +15,27 @@ internal data class WatchDone(
   val values: String?,
   val label: String?,
   val endsAt: Long,
+  /**
+   * Watch logging (3 Nov 2026): the numbers the member logged on the watch's own Done, as JSON
+   * {w, r, rpe, unit} (w in the unit the watch showed); null = a plain Done (the card's numbers).
+   */
+  val log: String? = null,
+)
+
+/**
+ * Watch logging (3 Nov 2026): the next set's boxes for the watch's own Done and crown (liveCard.ts
+ * `WatchEntry`). [w] / [step] are numbers as text in [unit] ("" = the box is empty); [r] -1 = empty.
+ */
+internal data class WatchEntry(
+  val wOn: Boolean,
+  val rOn: Boolean,
+  val w: String,
+  val r: Long,
+  val unit: String,
+  val step: String,
+  val warm: Boolean,
+  val rpe: Boolean,
+  val rest: Long,
 )
 
 /**
@@ -22,7 +43,7 @@ internal data class WatchDone(
  * (liveCard.ts `watch`): [set] "Set 3 of 5", [last] last time's numbers for that set ("60 kg × 8"),
  * [goal] what "Complete set" saves ("62.5 kg × 8"). Each "" when unknown.
  */
-internal data class WatchLines(val set: String, val last: String, val goal: String) {
+internal data class WatchLines(val set: String, val last: String, val goal: String, val entry: WatchEntry? = null) {
   companion object {
     val NONE = WatchLines("", "", "")
   }
@@ -41,10 +62,63 @@ internal object WearWire {
     return try {
       val w = JSONObject(rowJson).optJSONObject("watch") ?: return WatchLines.NONE
       fun line(k: String): String = if (w.isNull(k)) "" else w.optString(k, "").trim().take(MAX_LINE)
-      WatchLines(line("set"), line("last"), line("goal"))
+      WatchLines(line("set"), line("last"), line("goal"), entry(w.optJSONObject("entry")))
     } catch (e: Exception) {
       // quiet: no lines is the old watch screen (title and text only), never a crash in the card.
       WatchLines.NONE
+    }
+  }
+
+  /** A number as the watch reads it ("62.5", "60"); "" when not a sane number. */
+  private fun numText(o: JSONObject, k: String, max: Double): String {
+    if (o.isNull(k) || !o.has(k)) return ""
+    val v = o.optDouble(k, Double.NaN)
+    if (v.isNaN() || v < 0.0 || v > max) return ""
+    return if (v == Math.floor(v)) v.toLong().toString() else (Math.round(v * 100.0) / 100.0).toString()
+  }
+
+  /** Watch logging: the row's boxes (liveCard.ts `watchEntry`); null when there are none. */
+  fun entry(e: JSONObject?): WatchEntry? {
+    if (e == null) return null
+    return try {
+      val r = if (e.isNull("r") || !e.has("r")) -1L else e.optDouble("r", -1.0).let { if (it.isNaN() || it < 0.0 || it > 1000.0) -1L else Math.round(it) }
+      WatchEntry(
+        wOn = e.optBoolean("wOn", false),
+        rOn = e.optBoolean("rOn", false),
+        w = numText(e, "w", 2000.0),
+        r = r,
+        unit = if (e.optString("unit", "kg") == "lb") "lb" else "kg",
+        step = numText(e, "step", 100.0).ifEmpty { "2.5" },
+        warm = e.optBoolean("warm", false),
+        rpe = e.optBoolean("rpe", false),
+        rest = e.optLong("rest", 0L).coerceIn(0L, 3600L),
+      )
+    } catch (e2: Exception) {
+      // quiet: no entry is the watch's older screen (glance only), never a crash in the card.
+      null
+    }
+  }
+
+  /**
+   * Watch logging: the numbers a watch Done carries ({w, r, rpe, unit}), checked and re-written;
+   * null when there are none (a plain Done) or they are not sane.
+   */
+  fun watchLog(o: JSONObject?): String? {
+    if (o == null) return null
+    return try {
+      val out = JSONObject()
+      val w = o.optDouble("w", Double.NaN)
+      val r = o.optDouble("r", Double.NaN)
+      val rpe = o.optDouble("rpe", Double.NaN)
+      if (!w.isNaN() && w >= 0.0 && w <= 2000.0) out.put("w", w)
+      if (!r.isNaN() && r >= 0.0 && r <= 1000.0) out.put("r", Math.round(r))
+      if (!rpe.isNaN() && rpe >= 1.0 && rpe <= 10.0) out.put("rpe", rpe)
+      if (!out.has("w") && !out.has("r")) return null
+      out.put("unit", if (o.optString("unit", "kg") == "lb") "lb" else "kg")
+      out.toString()
+    } catch (e: Exception) {
+      // quiet: unreadable numbers make a plain Done (the card's numbers), never a lost tap.
+      null
     }
   }
 
@@ -121,7 +195,7 @@ internal object WearWire {
       if (workout <= 0L || ex.isEmpty() || set.isEmpty() || o.optBoolean("open", false)) return null
       val values = if (o.isNull("values")) null else o.optString("values", "").ifEmpty { null }
       val label = if (o.isNull("label")) null else o.optString("label", "").ifEmpty { null }
-      WatchDone(workout, ex, set, values, label, o.optLong("endsAt", 0L))
+      WatchDone(workout, ex, set, values, label, o.optLong("endsAt", 0L), watchLog(o.optJSONObject("log")))
     } catch (e: Exception) {
       // quiet: not JSON is not a row; WearSync.actionIntent logs the refusal and the watch is told.
       null

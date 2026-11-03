@@ -18,7 +18,7 @@
 import type { UnitSystem } from '@/lib/units';
 
 import type { DraftExercise } from '../store/activeWorkoutStore';
-import { liveCardContent, type WatchLines } from './liveCard';
+import { liveCardContent, type WatchLines, type WatchOpts } from './liveCard';
 import type { RowFill } from './restDone';
 import { afterSetCompleted } from './restRules';
 import { tickValues } from './setTick';
@@ -59,6 +59,7 @@ export function livePlan(
   units: UnitSystem,
   defaultRestSec: number,
   imageFor: (exKey: string) => string | null = () => null,
+  opts: WatchOpts = {},
 ): LivePlan | null {
   if (w.startedAt == null || w.exercises.length === 0) return null;
   let exercises: DraftExercise[] = [...w.exercises];
@@ -67,7 +68,7 @@ export function livePlan(
   for (const e of exercises) for (const s of e.sets) if (s.doneAt != null && s.doneAt > clock) clock = s.doneAt;
   const steps: PlanStep[] = [];
   for (let i = 0; i < PLAN_MAX_ROWS; i += 1) {
-    const card = liveCardContent({ startedAt: w.startedAt, exercises, workoutName: w.workoutName }, fillFor, units);
+    const card = liveCardContent({ startedAt: w.startedAt, exercises, workoutName: w.workoutName }, fillFor, units, opts);
     const d = card.done;
     const base = { title: card.title, text: card.text, image: card.exKey ? imageFor(card.exKey) : null, watch: card.watch ?? null };
     if (!d) {
@@ -87,7 +88,25 @@ export function livePlan(
     const ticked = { ...s, done: true, doneAt: clock, weightKg: out.weightKg, reps: out.reps, durationSec: out.durationSec, distanceM: out.distanceM };
     exercises = exercises.map((e) => (e.key === ex.key ? { ...e, sets: e.sets.map((x) => (x.key === s.key ? ticked : x)) } : e));
     const rest = afterSetCompleted(exercises, ex.key, s.key, defaultRestSec).restSec ?? 0;
-    steps.push({ exKey: d.exKey, setKey: d.setKey, open: false, values: d.values, label: card.label, ...base, rest });
+    // Watch logging: the watch also learns the rest after this row (it starts it itself if the phone
+    // cannot be reached when the set is logged there).
+    steps.push({ exKey: d.exKey, setKey: d.setKey, open: false, values: d.values, label: card.label, ...base, watch: withRest(base.watch, rest), rest });
   }
   return { workout: w.startedAt, steps };
+}
+
+/** The watch lines with the rest after the row filled in. PURE. */
+function withRest(watch: WatchLines | null, rest: number): WatchLines | null {
+  if (!watch?.entry) return watch;
+  return { ...watch, entry: { ...watch.entry, rest } };
+}
+
+/**
+ * Watch logging (3 Nov 2026): the live card's watch lines with the rest after its row, taken from
+ * the plan's first row when it is that same row (else unchanged: no rest known). PURE.
+ */
+export function watchWithPlanRest(watch: WatchLines | null, setKey: string | null, plan: LivePlan | null): WatchLines | null {
+  const first = plan?.steps[0];
+  if (!watch?.entry || !first || first.setKey == null || first.setKey !== setKey) return watch;
+  return withRest(watch, first.rest);
 }

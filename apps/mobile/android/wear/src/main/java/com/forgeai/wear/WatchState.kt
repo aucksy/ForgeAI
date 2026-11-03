@@ -59,6 +59,12 @@ object WatchState {
     val accent: Int? = null,
     /** R-269: when the phone's "workout saved" reached the watch (0 = none); [WorkoutSaved]. */
     val savedAt: Long = 0L,
+    /** Watch logging (3 Nov 2026): the phone app takes sets logged here (its logging screens show). */
+    val logFlow: Boolean = false,
+    /** Watch logging: the next set's boxes (weight, reps, step); null = none (no set named). */
+    val entry: SetEntry? = null,
+    /** The row the phone's live card ticks next, as its JSON ("" = none); Done sends it back. */
+    val row: String = "",
   )
 
   private val main = Handler(Looper.getMainLooper())
@@ -97,6 +103,25 @@ object WatchState {
       p.getLong("overAt", 0L),
       BrandColour.accentFor(p.getString("accent", "")),
       p.getLong("savedAt", 0L),
+      p.getBoolean("logFlow", false),
+      readEntry(p),
+      p.getString("done", "") ?: "",
+    )
+  }
+
+  /** Watch logging: the saved entry (keys "e…", as [onWorkout] keeps them); null = none. */
+  private fun readEntry(p: android.content.SharedPreferences): SetEntry? {
+    if (!p.getBoolean("eOn", false)) return null
+    return SetEntry(
+      wOn = p.getBoolean("eWOn", false),
+      rOn = p.getBoolean("eROn", false),
+      w = p.getString("eW", "")?.toDoubleOrNull(),
+      r = p.getLong("eR", -1L).let { if (it < 0L) null else it.toInt() },
+      unit = p.getString("eUnit", "kg") ?: "kg",
+      step = p.getString("eStep", "")?.toDoubleOrNull()?.takeIf { it > 0.0 } ?: 2.5,
+      warm = p.getBoolean("eWarm", false),
+      rpe = p.getBoolean("eRpe", false),
+      rest = p.getLong("eRest", 0L).toInt(),
     )
   }
 
@@ -247,6 +272,8 @@ object WatchState {
     next: NextSet = NextSet.NONE,
     accent: String = "",
     saved: Boolean = false,
+    logFlow: Boolean = false,
+    entry: SetEntry? = null,
   ) {
     val p = prefs(ctx)
     if (seq != 0L && seq <= p.getLong("workoutSeq", 0L)) return
@@ -278,6 +305,18 @@ object WatchState {
       // The gym's colour ("" = none, or an older phone app: MettleUp orange). Kept after the
       // workout too, so the next screen is already in the gym's colour.
       .putString("accent", accent)
+      // Watch logging (3 Nov 2026): the phone takes sets logged here, and the next set's boxes.
+      .putBoolean("logFlow", logFlow)
+      .putBoolean("eOn", active && entry != null)
+      .putBoolean("eWOn", entry?.wOn ?: false)
+      .putBoolean("eROn", entry?.rOn ?: false)
+      .putString("eW", entry?.w?.toString() ?: "")
+      .putLong("eR", entry?.r?.toLong() ?: -1L)
+      .putString("eUnit", entry?.unit ?: "kg")
+      .putString("eStep", entry?.step?.toString() ?: "")
+      .putBoolean("eWarm", entry?.warm ?: false)
+      .putBoolean("eRpe", entry?.rpe ?: false)
+      .putLong("eRest", (entry?.rest ?: 0).toLong())
       .commit()
     if (!active) WorkoutStarted.cancel(ctx)
     // R-236: the whole workout keeps the app on the watch (dim, bright on a wrist raise).
@@ -289,6 +328,47 @@ object WatchState {
       if (read(ctx).rest != null) saveRest(ctx, null)
       RestAlerts.workoutEnded(ctx)
     }
+    publish(ctx)
+  }
+
+  /**
+   * Watch logging (3 Nov 2026): a set logged here starts its rest at once on the watch ([sec] long),
+   * so the rest timer shows straight away and still runs if the phone cannot be reached ("Not
+   * saved": the rest timer still starts). The phone's own rest, when it comes, replaces it (its seq
+   * is untouched here, so nothing of the phone's is ever dropped for this one).
+   */
+  @Synchronized
+  fun startLocalRest(ctx: Context, sec: Int, next: String = "") {
+    if (sec <= 0) return
+    val now = System.currentTimeMillis()
+    val r = Rest(now, now + sec * 1000L, next, prefs(ctx).getBoolean("ringThroughDnd", false))
+    saveRest(ctx, r)
+    clearOver(ctx)
+    RestAlerts.restStarted(ctx, r)
+    publish(ctx)
+  }
+
+  /**
+   * Watch logging: −15 / +15 on the watch's rest timer, shown at once (the phone is told too and its
+   * answer replaces this). −15 never ends the rest sooner than a second from now.
+   */
+  @Synchronized
+  fun shiftRest(ctx: Context, deltaMs: Long) {
+    val cur = read(ctx).rest ?: return
+    val now = System.currentTimeMillis()
+    val ends = if (deltaMs >= 0L) maxOf(cur.endsAt, now) + deltaMs else maxOf(now + 1_000L, cur.endsAt + deltaMs)
+    val r = cur.copy(endsAt = ends, startedAt = minOf(cur.startedAt, ends))
+    saveRest(ctx, r)
+    RestAlerts.restStarted(ctx, r)
+    publish(ctx)
+  }
+
+  /** Watch logging: Skip on the watch's rest timer (the phone is told too). */
+  @Synchronized
+  fun skipRest(ctx: Context) {
+    if (read(ctx).rest == null) return
+    saveRest(ctx, null)
+    RestAlerts.restCleared(ctx)
     publish(ctx)
   }
 

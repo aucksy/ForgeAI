@@ -221,6 +221,8 @@ class ForgeRestModule : Module() {
         "open" to d.open,
         "label" to d.label,
         "values" to d.values,
+        // Watch logging (3 Nov 2026): the numbers logged on the watch (JSON), or null.
+        "log" to d.log,
       )
     }
 

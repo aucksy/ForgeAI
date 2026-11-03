@@ -17,12 +17,14 @@
  *    is ("Set 3 of 5"), last time's numbers for that very set (`prevForSet`, the PREVIOUS column's
  *    own source) and what a tick saves (`goal`: the text's numbers, the Target else last time's).
  */
-import type { UnitSystem } from '@/lib/units';
+import { kgToShown, weightUnitOf, type UnitSystem } from '@/lib/units';
 
+import { hasReps, hasWeight } from '../engine/logTypes';
 import { setInWords } from '../lib/previousSource';
-import { prevForSet, type DraftExercise } from '../store/activeWorkoutStore';
+import { prevForSet, type DraftExercise, type DraftSet, type SetFill } from '../store/activeWorkoutStore';
 import { cardDoneTarget, restTarget, rowLabel, type CardDone, type RowFill } from './restDone';
 import { afterSetCompleted } from './restRules';
+import { shownValues, weightStepShown } from './setEntry';
 import { tickValues } from './setTick';
 
 export interface LiveCard {
@@ -48,6 +50,56 @@ export interface WatchLines {
   set: string;
   last: string;
   goal: string;
+  /** Watch logging (3 Nov 2026): the row's numbers for the watch's own Done; null = none. */
+  entry?: WatchEntry | null;
+}
+
+/**
+ * Watch logging (3 Nov 2026, the owner's approved watch design): the next set's boxes as the watch
+ * shows and edits them. Numbers are in the member's unit, exactly what the row's boxes show (typed,
+ * else the grey hint), so a Done on the watch saves what a tick on the phone would.
+ */
+export interface WatchEntry {
+  /** The row has a weight box / a reps box. */
+  wOn: boolean;
+  rOn: boolean;
+  /** The weight shown (kg to 0.01, lb to 0.1); null = the box is empty. */
+  w: number | null;
+  /** The reps shown; null = the box is empty. */
+  r: number | null;
+  unit: 'kg' | 'lb';
+  /** One crown step of weight, in `unit` (the exercise's own step, as the phone's +/- uses). */
+  step: number;
+  warm: boolean;
+  /** "Track RPE" is on: the watch asks how hard the set was (not for warm-ups). */
+  rpe: boolean;
+  /** Seconds of rest after this set (0 = none): the watch starts it if the phone cannot be reached. */
+  rest: number;
+}
+
+/** Options for the watch lines (the store's "Track RPE"). */
+export interface WatchOpts {
+  rpe?: boolean;
+}
+
+/** The row's boxes for the watch (`WatchEntry`); rest 0 until the plan fills it. PURE. */
+export function watchEntry(ex: DraftExercise, s: DraftSet, fill: SetFill | null, units: UnitSystem, opts: WatchOpts = {}): WatchEntry {
+  const lt = ex.logType ?? 'weight_reps';
+  const shown = shownValues(s, fill, lt);
+  const wOn = hasWeight(lt);
+  const rOn = hasReps(lt);
+  const dp = units === 'imperial' ? 10 : 100;
+  return {
+    wOn,
+    rOn,
+    w: wOn && shown.weightKg != null ? Math.round(kgToShown(shown.weightKg, units) * dp) / dp : null,
+    r: rOn && shown.reps != null ? Math.round(shown.reps) : null,
+    unit: weightUnitOf(units),
+    step: weightStepShown(ex.incrementKg, units),
+    warm: s.isWarmup === true,
+    rpe: opts.rpe === true && !s.isWarmup,
+    rest: 0,
+  };
 }
 
 /** The most recently ticked set (by tick time), or null. PURE. */
@@ -101,8 +153,9 @@ export function liveCardContent(
   w: { startedAt: number | null; exercises: readonly DraftExercise[]; workoutName?: string | null; pausedAt?: number | null },
   fillFor: RowFill,
   units: UnitSystem,
+  opts: WatchOpts = {},
 ): LiveCard {
-  const card = cardNow(w, fillFor, units);
+  const card = cardNow(w, fillFor, units, opts);
   return w.pausedAt != null ? { ...card, text: `Paused · ${card.text}` } : card;
 }
 
@@ -110,6 +163,7 @@ function cardNow(
   w: { startedAt: number | null; exercises: readonly DraftExercise[]; workoutName?: string | null },
   fillFor: RowFill,
   units: UnitSystem,
+  opts: WatchOpts,
 ): LiveCard {
   const name = w.workoutName?.trim() || 'Workout in progress';
   if (w.exercises.length === 0) return { title: name, text: 'Add an exercise to start', exKey: null, done: null, label: null };
@@ -120,7 +174,8 @@ function cardNow(
   if (!t || !ex || !s) return { title: name, text: 'All sets done · Finish', exKey: null, done: null, label: null };
   const where = setPosition(ex, s.key) ?? '';
   const lt = ex.logType ?? 'weight_reps';
-  const out = tickValues(lt, s, fillFor(ex, s.key));
+  const fill = fillFor(ex, s.key);
+  const out = tickValues(lt, s, fill);
   const what = out.ok
     ? setInWords(
         { weightKg: out.weightKg ?? 0, reps: out.reps ?? 0, durationSec: out.durationSec, distanceM: out.distanceM },
@@ -138,7 +193,7 @@ function cardNow(
     exKey: ex.key,
     done: cardDoneTarget(w, t, fillFor),
     label: rowLabel(ex, s.key),
-    watch: { set: where, last: last ?? '', goal: out.ok ? (what ?? '') : '' },
+    watch: { set: where, last: last ?? '', goal: out.ok ? (what ?? '') : '', entry: watchEntry(ex, s, fill, units, opts) },
   };
 }
 

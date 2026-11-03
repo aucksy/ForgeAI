@@ -216,6 +216,21 @@ object WatchCopy {
   const val GET_PHONE_APP_SENT = "Look at your phone to install MettleUp."
   const val GET_PHONE_APP_FAILED = "Your phone did not answer. Try again."
 
+  /** Watch logging (3 Nov 2026, the owner's approved design): every word of the logging screens. */
+  const val NOT_SAVED = "Not saved"
+  const val TICK_IT_ON_YOUR_PHONE = "Tick it on your phone"
+  const val OK = "OK"
+  const val SAVED = "Saved"
+  const val SKIP = "Skip"
+  const val HOW_HARD = "How hard was it?"
+  const val EFFORT_SCALE = "6 easy · 10 max"
+  const val TURN_THE_CROWN = "Turn the crown"
+  const val NEXT_EXERCISE = "Next exercise"
+  const val NEXT = "Next"
+  const val WARM_UP_CHIP = "W"
+  const val MINUS_15 = "−15"
+  const val PLUS_15 = "+15"
+
   /** R-269: right after Finish on the phone. */
   const val WORKOUT_SAVED = "Workout saved"
   const val WORKOUT_SAVED_REASON = "Well done. See the details on your phone."

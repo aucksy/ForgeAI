@@ -8,6 +8,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.setValue
 import com.google.android.gms.wearable.Wearable
 
 /**
@@ -51,7 +54,26 @@ object WatchActions {
    */
   fun refused(ctx: Context) {
     Log.w(TAG, "the phone could not log the set sent from here")
+    // Watch logging (3 Nov 2026): a set logged on the watch's own screen gets "Not saved" there.
+    if (LogBus.waiting) {
+      main.post { LogBus.refusedAt = System.currentTimeMillis() }
+      return
+    }
     note(ctx, "Not saved. Tick it on your phone")
+  }
+
+  /**
+   * Watch logging (3 Nov 2026): the set logged on the watch's Done ([row] = the phone's row plus the
+   * numbers, [LogMath.withLog]). [onSent] runs on the main thread with false when no phone took the
+   * message (the screen then says "Not saved" at once); true only means it reached the phone, which
+   * still has to confirm it ([LogMath.confirmed]).
+   */
+  fun logSet(ctx: Context, row: String, onSent: (Boolean) -> Unit) {
+    if (row.isEmpty()) {
+      onSent(false)
+      return
+    }
+    send(ctx, "done", row, quiet = true, onResult = { ok -> main.post { onSent(ok) } })
   }
 
   /** "Complete set" / Done for [row] (the phone's JSON), from a card's button. */
@@ -67,13 +89,22 @@ object WatchActions {
    * Sends one message to every connected phone (there is one); [onDone] runs once when all have
    * answered. Nothing connected or a failure: a short note on the watch.
    */
-  fun send(ctx: Context, what: String, row: String, onDone: () -> Unit = {}) {
+  fun send(
+    ctx: Context,
+    what: String,
+    row: String,
+    onDone: () -> Unit = {},
+    quiet: Boolean = false,
+    onResult: (Boolean) -> Unit = {},
+  ) {
     val app = ctx.applicationContext
     val path = "$PATH/$what"
     val bytes = row.toByteArray(Charsets.UTF_8)
     val fail: (String) -> Unit = { why ->
       Log.w(TAG, "$path not sent: $why")
-      note(app, "Phone not reachable")
+      // Watch logging: the screen says it itself ("Not saved"); no extra note.
+      if (!quiet) note(app, "Phone not reachable")
+      onResult(false)
       onDone()
     }
     try {
@@ -94,6 +125,7 @@ object WatchActions {
                 if (left == 0) {
                   if (sent) {
                     Log.i(TAG, "$path sent")
+                    onResult(true)
                     onDone()
                   } else {
                     fail("every phone refused it")
@@ -116,6 +148,15 @@ object WatchActions {
       .putExtra(EXTRA_ROW, row)
     return PendingIntent.getBroadcast(ctx, code, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
   }
+}
+
+/**
+ * Watch logging (3 Nov 2026): what the listener service hears for the screen (main thread state).
+ * [waiting]: a set logged here waits for the phone; [refusedAt]: the phone's last "could not log".
+ */
+object LogBus {
+  @Volatile var waiting = false
+  var refusedAt by mutableLongStateOf(0L)
 }
 
 /** A button on this app's countdown or "Rest is over": the message goes to the phone ([WatchActions]). */

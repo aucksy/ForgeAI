@@ -31,7 +31,7 @@ import { rowTargetFill } from '../engine/progression';
 import { fillForSet, useActiveWorkout, type ActiveWorkoutState, type DraftExercise, type SetFill } from '../store/activeWorkoutStore';
 import { useTargets } from '../store/targetStore';
 import { onRestCardChange, postDoneNote, settleDone, takePendingDone, takeQueuedTicks } from './restCard';
-import { cardDoneTarget, decideQueuedTick, decideRestDone, restTarget, type CardDone } from './restDone';
+import { cardDoneTarget, decideQueuedTick, decideRestDone, restTarget, watchPatch, type CardDone, type WatchLog } from './restDone';
 import { missingText, type TickMissing } from './setTick';
 
 /** The grey hint the row shows on screen: `fillForSet` with the card's Target (as the card does). */
@@ -48,6 +48,23 @@ export function nextForCard(fromExKey: string): { label: string | null; done: Ca
   const w = useActiveWorkout.getState();
   const t = restTarget(w.exercises, fromExKey);
   return { label: t?.label ?? null, done: cardDoneTarget(w, t, rowFill) };
+}
+
+/**
+ * Watch logging (3 Nov 2026): a set logged on the watch, saved exactly as typing those numbers into
+ * the row and ticking it on the phone (and the effort picked there, as the RPE box would). Returns
+ * what is missing, or null when it ticked.
+ */
+export function tickFromWatch(exKey: string, setKey: string, log: WatchLog, fill: SetFill | null, at?: number): TickMissing | null {
+  const w = useActiveWorkout.getState();
+  const ex = w.exercises.find((e) => e.key === exKey);
+  const s = ex?.sets.find((x) => x.key === setKey);
+  if (!ex || !s) return null;
+  const patch = watchPatch(log, ex.logType ?? 'weight_reps');
+  if (patch.weightKg != null || patch.reps != null) w.updateSet(exKey, setKey, patch);
+  // Before the tick, so the tick's own save carries it (warm-ups keep none, as on the phone).
+  if (log.rpe != null && !s.isWarmup) w.setRpe(exKey, setKey, log.rpe);
+  return useActiveWorkout.getState().toggleDone(exKey, setKey, fill, at);
 }
 
 export interface RestDoneDeps {
@@ -75,7 +92,7 @@ export function startRestDone(deps: RestDoneDeps): () => void {
       const step = decideQueuedTick(q, w);
       if (step.do === 'tick') {
         // Its own moment (review fix): the workout's length and end time stay real.
-        const missing = w.toggleDone(step.exKey, step.setKey, step.fill, q.at);
+        const missing = step.log ? tickFromWatch(step.exKey, step.setKey, step.log, step.fill, q.at) : w.toggleDone(step.exKey, step.setKey, step.fill, q.at);
         if (missing && AppState.currentState === 'active') deps.openSet(step.exKey, step.setKey, missing);
       } else if (step.do === 'open' && AppState.currentState === 'active') {
         deps.openSet(step.exKey, step.setKey, step.missing);
@@ -119,7 +136,7 @@ export function startRestDone(deps: RestDoneDeps): () => void {
         openOrNote(step.exKey, step.setKey, step.missing);
         return;
       case 'tick': {
-        const missing = w.toggleDone(step.exKey, step.setKey, step.fill);
+        const missing = step.log ? tickFromWatch(step.exKey, step.setKey, step.log, step.fill) : w.toggleDone(step.exKey, step.setKey, step.fill);
         if (missing) {
           openOrNote(step.exKey, step.setKey, missing);
           return;

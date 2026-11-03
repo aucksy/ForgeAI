@@ -95,7 +95,7 @@ abstract class WatchScreensRenderBase(private val size: String) {
         )
       }
     }
-    check(file, s.ring)
+    checkRoundCapture(file, size, s.ring)
   }
 
   @Composable
@@ -106,43 +106,6 @@ abstract class WatchScreensRenderBase(private val size: String) {
     }
     val d = LocalDensity.current
     CompositionLocalProvider(LocalDensity provides Density(d.density, fontScale)) { content() }
-  }
-
-  /** Fails on anything a round screen would clip; writes the "-round" copy. */
-  private fun check(file: File, ring: Boolean) {
-    assertTrue("no capture at ${file.path}", file.exists() && file.length() > 0)
-    val img = BitmapFactory.decodeFile(file.absolutePath)
-    assertTrue("${file.name} could not be read", img != null)
-    val w = img.width
-    val h = img.height
-    assertTrue("$file is ${w}x$h, not square", w == h)
-    val dp = w / (if (size == "small") 192f else 228f)
-    val c = (w - 1) / 2f
-    val r = w / 2f
-    // The text may not come closer to the edge than this: the ring's inside edge (208 - 14 / 2 px
-    // from the centre at 456, so 27 design px in from the edge), else 2 dp.
-    val limit = if (ring) r - (RingMath.DESIGN_PX / 2f - RingMath.RADIUS + RingMath.STROKE / 2f) * RingMath.scale(w.toFloat()) else r - 2f * dp
-    var outside = 0
-    var onRing = 0
-    val round = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-    for (y in 0 until h) {
-      for (x in 0 until w) {
-        val p = img.getPixel(x, y)
-        val red = (p shr 16) and 0xFF
-        val g = (p shr 8) and 0xFF
-        val b = p and 0xFF
-        val d = hypot(x - c, y - c)
-        val bright = maxOf(red, g, b) > 60
-        val neutral = red > 110 && g > 110 && b > 110 && red - b < 45
-        val clockZone = y < h * 0.2f
-        if (d > r + 0.5f && bright) outside++
-        if (d > limit && d <= r + 0.5f && neutral && !clockZone) onRing++
-        round.setPixel(x, y, if (d > r) 0xFF303030.toInt() else (p or 0xFF000000.toInt()))
-      }
-    }
-    File(file.parentFile, file.nameWithoutExtension + "-round.png").outputStream().use { round.compress(Bitmap.CompressFormat.PNG, 100, it) }
-    assertTrue("${file.name}: $outside bright pixels outside the round screen (clipped on a watch)", outside == 0)
-    assertTrue("${file.name}: $onRing text pixels too close to the edge${if (ring) " (on the ring)" else ""}", onRing <= 3)
   }
 
   // The hand-off's twelve screens (screens/NN-name.png and NN-name-ambient.png).
@@ -253,3 +216,45 @@ class WatchScreensSmallRoundTest : WatchScreensRenderBase("small")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w228dp-h228dp-round-watch-xhdpi")
 class WatchScreensLargeRoundTest : WatchScreensRenderBase("large")
+
+/**
+ * Fails on anything a round screen would clip; writes the "-round" copy. [size]: "small" (192 dp)
+ * or "large" (228 dp). [edgeRing]: the screen draws a thin grey ring at 218 px (the effort
+ * countdown): that band is left out (it is drawn, not text).
+ */
+internal fun checkRoundCapture(file: File, size: String, ring: Boolean, edgeRing: Boolean = false) {
+  assertTrue("no capture at ${file.path}", file.exists() && file.length() > 0)
+  val img = BitmapFactory.decodeFile(file.absolutePath)
+  assertTrue("${file.name} could not be read", img != null)
+  val w = img.width
+  val h = img.height
+  assertTrue("$file is ${w}x$h, not square", w == h)
+  val dp = w / (if (size == "small") 192f else 228f)
+  val c = (w - 1) / 2f
+  val r = w / 2f
+  // The text may not come closer to the edge than this: the ring's inside edge (208 - 14 / 2 px
+  // from the centre at 456, so 27 design px in from the edge), else 2 dp.
+  val limit = if (ring) r - (RingMath.DESIGN_PX / 2f - RingMath.RADIUS + RingMath.STROKE / 2f) * RingMath.scale(w.toFloat()) else r - 2f * dp
+  var outside = 0
+  var onRing = 0
+  val round = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+  for (y in 0 until h) {
+    for (x in 0 until w) {
+      val p = img.getPixel(x, y)
+      val red = (p shr 16) and 0xFF
+      val g = (p shr 8) and 0xFF
+      val b = p and 0xFF
+      val d = hypot(x - c, y - c)
+      val bright = maxOf(red, g, b) > 60
+      val neutral = red > 110 && g > 110 && b > 110 && red - b < 45
+      val clockZone = y < h * 0.2f
+      if (d > r + 0.5f && bright) outside++
+      val inBand = edgeRing && d > r - 13.5f * RingMath.scale(w.toFloat()) && d < r - 6.5f * RingMath.scale(w.toFloat())
+      if (d > limit && d <= r + 0.5f && neutral && !clockZone && !inBand) onRing++
+      round.setPixel(x, y, if (d > r) 0xFF303030.toInt() else (p or 0xFF000000.toInt()))
+    }
+  }
+  File(file.parentFile, file.nameWithoutExtension + "-round.png").outputStream().use { round.compress(Bitmap.CompressFormat.PNG, 100, it) }
+  assertTrue("${file.name}: $outside bright pixels outside the round screen (clipped on a watch)", outside == 0)
+  assertTrue("${file.name}: $onRing text pixels too close to the edge${if (ring) " (on the ring)" else ""}", onRing <= 3)
+}

@@ -31,14 +31,14 @@ describe('R-166: the next set for the watch', () => {
     const sets = [set('a1', { done: true, doneAt: 10, weightKg: 60, reps: 10 }), set('a2', { done: true, doneAt: 20, weightKg: 60, reps: 9 }), set('a3'), set('a4'), set('a5')];
     const w = { startedAt: START, exercises: [ex('a', 'Bench Press', sets, { previousSets: [prev(60, 10), prev(60, 9), prev(60, 8), prev(57.5, 8), prev(55, 8)] })] };
     const c = liveCardContent(w, hints(), 'metric');
-    expect(c.watch).toEqual({ set: 'Set 3 of 5', last: '60 kg × 8', goal: '62.5 kg × 8' });
+    expect(c.watch).toMatchObject({ set: 'Set 3 of 5', last: '60 kg × 8', goal: '62.5 kg × 8' });
     // The phone card is unchanged.
     expect(c.text).toBe('Set 3 of 5 · 62.5 kg × 8');
   });
 
   it('first time: no last time, the goal stays', () => {
     const w = { startedAt: START, exercises: [ex('a', 'Bench Press', [set('a1')])] };
-    expect(liveCardContent(w, hints(), 'metric').watch).toEqual({ set: 'Set 1 of 1', last: '', goal: '62.5 kg × 8' });
+    expect(liveCardContent(w, hints(), 'metric').watch).toMatchObject({ set: 'Set 1 of 1', last: '', goal: '62.5 kg × 8' });
   });
 
   it('pounds: both lines in lb', () => {
@@ -50,7 +50,7 @@ describe('R-166: the next set for the watch', () => {
 
   it('nothing to save: no goal; all sets done: no lines', () => {
     const w = { startedAt: START, exercises: [ex('a', 'Bench Press', [set('a1')], { previousSets: [prev(60, 8)] })] };
-    expect(liveCardContent(w, hints({ a1: null }), 'metric').watch).toEqual({ set: 'Set 1 of 1', last: '60 kg × 8', goal: '' });
+    expect(liveCardContent(w, hints({ a1: null }), 'metric').watch).toMatchObject({ set: 'Set 1 of 1', last: '60 kg × 8', goal: '' });
     const done = { startedAt: START, exercises: [ex('a', 'Bench Press', [set('a1', { done: true, doneAt: 5, weightKg: 60, reps: 8 })])] };
     expect(liveCardContent(done, hints(), 'metric').watch ?? null).toBeNull();
   });
@@ -65,7 +65,7 @@ describe('R-166: the next set for the watch', () => {
   it('the plan carries each row\'s lines (a tap with the app closed moves the watch on too)', () => {
     const w = { startedAt: START, exercises: [ex('a', 'Bench Press', [set('a1'), set('a2')], { previousSets: [prev(60, 8), prev(60, 7)] })] };
     const plan = livePlan(w, hints(), 'metric', 90);
-    expect(plan?.steps.map((s) => s.watch)).toEqual([
+    expect(plan?.steps.map((s) => s.watch && { set: s.watch.set, last: s.watch.last, goal: s.watch.goal })).toEqual([
       { set: 'Set 1 of 2', last: '60 kg × 8', goal: '62.5 kg × 8' },
       { set: 'Set 2 of 2', last: '60 kg × 7', goal: '62.5 kg × 8' },
       null,

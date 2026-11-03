@@ -133,7 +133,7 @@ private const val CLOCK_TOP = 36f
 /** The widest a one-line exercise name may be before it ends in "…". */
 private const val NAME_MAX_WIDTH = 320f
 
-private val Pill = RoundedCornerShape(percent = 50)
+internal val Pill = RoundedCornerShape(percent = 50)
 
 /**
  * The hand-off's px to this screen: value x (screen width / 456). Text is converted without the
@@ -142,6 +142,18 @@ private val Pill = RoundedCornerShape(percent = 50)
 internal class Px(private val dpPerPx: Float, private val fontScale: Float) {
   fun dp(px: Float): Dp = (px * dpPerPx).dp
   fun sp(px: Float): TextUnit = (px * dpPerPx / fontScale).sp
+
+  /**
+   * Watch logging (3 Nov 2026, design "Largest system text"): labels grow with the member's text
+   * size up to x1.24; the big numbers ([sp]) stay fixed, so nothing crosses the round edge.
+   */
+  val labelScale: Float = fontScale.coerceIn(1f, LABEL_SCALE_MAX)
+
+  fun label(px: Float): TextUnit = (px * labelScale * dpPerPx / fontScale).sp
+
+  companion object {
+    const val LABEL_SCALE_MAX = 1.24f
+  }
 }
 
 @Composable
@@ -174,13 +186,19 @@ internal fun WatchScreen(
   phoneAppMissing: Boolean = false,
   phoneAppRequest: PhoneApp.Request = PhoneApp.Request.IDLE,
   onGetPhoneApp: () -> Unit = {},
+  log: LogUi = LogUi(),
+  actions: LogActions = LogActions(),
 ) {
   val px = rememberPx()
   val pal = remember(ambient, snap.accent) { paletteFor(ambient, snap.accent) }
   // "Rest is over" fills the screen with the gym's colour (MettleUp orange without a gym).
   val fill = remember(snap.accent) { paletteFor(false, snap.accent).accent }
-  val kind = ScreenSelector.select(snap, askHeartRate, askAlerts, phoneConnected, phoneAppMissing, now)
-  val orange = kind == WatchScreenKind.REST_IS_OVER && !ambient
+  // Watch logging (3 Nov 2026): heart rate is never asked for mid-workout (it shows only if allowed).
+  val askHr = askHeartRate && !(snap.workoutActive && snap.logFlow)
+  val kind = ScreenSelector.select(snap, askHr, askAlerts, phoneConnected, phoneAppMissing, now)
+  // Watch logging: the logging screens replace the workout screens when the phone app takes sets.
+  val logScreen = LogFlow.screen(kind, snap, log, now)
+  val orange = !ambient && (if (logScreen != null) logScreen == LogScreen.REST_OVER else kind == WatchScreenKind.REST_IS_OVER)
   // The orange fills the round glass only (a square fill would paint the corners a round watch hides).
   val round = LocalConfiguration.current.isScreenRound
   CompositionLocalProvider(LocalBrandAccent provides snap.accent) {
@@ -189,13 +207,17 @@ internal fun WatchScreen(
       .fillMaxSize()
       .background(Color.Black)
       .background(if (orange) fill else Color.Black, if (round) CircleShape else RectangleShape)
-      .testTag("screen-${kind.name}"),
+      .testTag("screen-${logScreen?.name ?: kind.name}"),
     contentAlignment = Alignment.Center,
   ) {
     val card = WatchCopy.card(snap)
     val heart = WatchCopy.heartLine(hrAllowed, hrStatus, bpm, ambient)
     // UAT 1 Nov 2026: the phone named no set ("All sets done", no exercise yet, an older phone app).
     val status = WatchCopy.status(snap)
+    if (logScreen != null && logScreen != LogScreen.BETWEEN) {
+      LogScreens(logScreen, snap, card, heart, ambient, px, now, log, actions, status)
+      return@Box
+    }
     when (kind) {
       WatchScreenKind.PERMISSION_HEART_RATE -> PermissionScreen(true, ambient, px, onAllowHeartRate, onSkipHeartRate)
       WatchScreenKind.PERMISSION_ALERTS -> PermissionScreen(false, ambient, px, onAllowAlerts, onSkipAlerts, alarmOnly = alertsAlarmOnly)
@@ -214,7 +236,14 @@ internal fun WatchScreen(
           status,
         )
       }
-      WatchScreenKind.REST_IS_OVER -> RestIsOverScreen(card, WatchCopy.overtime(now, snap.overAt), ambient, px, status)
+      WatchScreenKind.REST_IS_OVER ->
+        // Watch logging: "Rest is over" shows about 5 s; with no set left to log, the between-rests
+        // screen (its "All sets done" line) follows, never a blank screen.
+        if (logScreen == LogScreen.BETWEEN) {
+          BetweenRestsScreen(card, heart, ambient, px, status)
+        } else {
+          RestIsOverScreen(card, WatchCopy.overtime(now, snap.overAt), ambient, px, status)
+        }
       WatchScreenKind.BETWEEN_RESTS -> BetweenRestsScreen(card, heart, ambient, px, status)
     }
     Clock(px, if (orange) Color.Black else pal.grey)
@@ -241,7 +270,7 @@ private fun Clock(px: Px, color: Color) {
  * [outlined]: ambient big numerals (no fill, a 1.5 px light outline); [maxWidth] px, then "…".
  */
 @Composable
-private fun Line(
+internal fun Line(
   text: String,
   px: Px,
   size: Float,
@@ -256,11 +285,12 @@ private fun Line(
   maxLines: Int = 1,
   balanced: Boolean = false,
   tag: String = "",
+  label: Boolean = false,
 ) {
   val outlinePx = with(LocalDensity.current) { px.dp(OUTLINE_PX).toPx() }
   var style = TextStyle(
     color = if (outlined) OutlineInk else color,
-    fontSize = px.sp(size),
+    fontSize = if (label) px.label(size) else px.sp(size),
     fontWeight = weight,
     fontFamily = Manrope,
     letterSpacing = spacing.em,
@@ -573,18 +603,18 @@ internal fun BetweenRestsScreen(card: SetCard, heart: WatchCopy.HeartLine?, ambi
 
 // ------------------------------------------------------------------ icons (24 px viewBox, stroked)
 
-private const val PHONE_BODY = "M9.5 2.5h5a2.5 2.5 0 0 1 2.5 2.5v14a2.5 2.5 0 0 1 -2.5 2.5h-5a2.5 2.5 0 0 1 -2.5 -2.5v-14a2.5 2.5 0 0 1 2.5 -2.5z"
-private const val PHONE_SPEAKER = "M11 18h2"
-private const val PHONE_SLASH = "M3.5 3.5l17 17"
+internal const val PHONE_BODY = "M9.5 2.5h5a2.5 2.5 0 0 1 2.5 2.5v14a2.5 2.5 0 0 1 -2.5 2.5h-5a2.5 2.5 0 0 1 -2.5 -2.5v-14a2.5 2.5 0 0 1 2.5 -2.5z"
+internal const val PHONE_SPEAKER = "M11 18h2"
+internal const val PHONE_SLASH = "M3.5 3.5l17 17"
 private const val HEART_OUTLINE = "M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"
 private const val BELL_BODY = "M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"
 private const val BELL_CLAPPER = "M10 20.5a2 2 0 0 0 4 0"
 private const val CHECK_CIRCLE = "M12 2.75a9.25 9.25 0 1 1 0 18.5a9.25 9.25 0 1 1 0 -18.5z"
 private const val CHECK_MARK = "M7.5 12.4l3 3l6 -6.3"
 
-private class IconPath(val d: String, val color: Color)
+internal class IconPath(val d: String, val color: Color)
 
-private fun strokeIcon(paths: List<IconPath>, width: Float, cap: StrokeCap, join: StrokeJoin): ImageVector {
+internal fun strokeIcon(paths: List<IconPath>, width: Float, cap: StrokeCap, join: StrokeJoin): ImageVector {
   val b = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
   for (p in paths) {
     b.addPath(
@@ -599,7 +629,7 @@ private fun strokeIcon(paths: List<IconPath>, width: Float, cap: StrokeCap, join
 }
 
 @Composable
-private fun StrokeIcon(size: Dp, tag: String, vararg key: Any, build: () -> ImageVector) {
+internal fun StrokeIcon(size: Dp, tag: String, vararg key: Any, build: () -> ImageVector) {
   val vector = remember(*key) { build() }
   Image(rememberVectorPainter(vector), contentDescription = null, modifier = Modifier.size(size).testTag(tag))
 }

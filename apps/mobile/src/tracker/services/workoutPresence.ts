@@ -60,7 +60,7 @@ import { clearLiveWorkoutCard, hideLiveWorkoutCard, liveWorkoutCardAvailable, sh
 import { liveCardContent, liveCardKey, type LiveCard } from './liveCard';
 import { liveCardImage } from './liveCardImage';
 import { liveClock } from './liveClock';
-import { livePlan } from './livePlan';
+import { livePlan, watchWithPlanRest } from './livePlan';
 import { rowFill } from './restDoneRun';
 
 /** The live card is re-posted at most this often (Android drops faster updates). */
@@ -172,7 +172,9 @@ export function startWorkoutPresence(): () => void {
     if (!liveWorkoutCardAvailable()) return false;
     const w = useActiveWorkout.getState();
     const units = displayUnits();
-    const card = liveCardContent(w, rowFill, units);
+    // Watch logging (3 Nov 2026): the watch asks for effort only when "Track RPE" is on.
+    const watchOpts = { rpe: useTrackerPrefs.getState().advancedSets };
+    const card = liveCardContent(w, rowFill, units, watchOpts);
     const image = liveCardImage(w.exercises.find((e) => e.key === card.exKey));
     const shown = liveCardShown(useRestTimer.getState(), restCardHolds());
     // v0.37.1 (C1): the sets ahead, so "Complete set" works with the app closed (OfflineTick.kt).
@@ -181,15 +183,16 @@ export function startWorkoutPresence(): () => void {
       if (!images.has(exKey)) images.set(exKey, liveCardImage(w.exercises.find((e) => e.key === exKey)));
       return images.get(exKey) ?? null;
     };
-    const plan = livePlan(w, rowFill, units, useRestTimer.getState().defaultSec, imageFor);
+    const plan = livePlan(w, rowFill, units, useRestTimer.getState().defaultSec, imageFor, watchOpts);
+    const watch = watchWithPlanRest(card.watch ?? null, card.done?.setKey ?? null, plan);
     const planJson = plan ? JSON.stringify(plan) : null;
     // R-55: the workout time in the card's header; the same every second while it runs (no re-post to tick).
     const clock = liveClock(w.startedAt, w, Date.now());
     const key = `live:${shown ? 'up' : 'down'}:${liveCardKey(card, image)}:${planJson ?? ''}:${JSON.stringify(clock)}`;
     if (key === last) return true;
     const ok = shown
-      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, card.watch ?? null)
-      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, card.watch ?? null);
+      ? showLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, watch)
+      : hideLiveWorkoutCard(card.title, card.text, image, card.done, card.label, planJson, clock, watch);
     if (!ok) return false;
     lastShown = shown;
     lastRow = liveRow(card);
@@ -326,6 +329,8 @@ export function startWorkoutPresence(): () => void {
   const u3 = useTrackerPrefs.subscribe((p, prev) => {
     if (p.sounds !== prev.sounds) setRestQuiet(!p.sounds);
     if (p.restSound !== prev.restSound) setRestSoundNative(p.restSound);
+    // Watch logging: "Track RPE" turned on or off: the watch's effort question follows.
+    if (p.advancedSets !== prev.advancedSets) update();
   });
   const u4 = useRestAlertPrefs.subscribe((p, prev) => {
     if (p.ringThroughDnd !== prev.ringThroughDnd) setRestRingThroughDnd(p.ringThroughDnd);

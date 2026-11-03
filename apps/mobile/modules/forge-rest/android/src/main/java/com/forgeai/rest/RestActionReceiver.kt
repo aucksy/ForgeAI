@@ -26,6 +26,11 @@ class RestActionReceiver : BroadcastReceiver() {
         val r = RestCard.add(ctx) ?: return
         RestCard.listener?.invoke("add", r.endsAt, r.startedAt)
       }
+      // Watch logging (3 Nov 2026): "−15" on the watch; the app's timer adopts the new end as for "+15 s".
+      RestCard.ACTION_SUB -> {
+        val r = RestCard.sub(ctx) ?: return
+        RestCard.listener?.invoke("add", r.endsAt, r.startedAt)
+      }
       RestCard.ACTION_SKIP -> {
         RestCard.clear(ctx, dismissOver = false)
         RestCard.listener?.invoke("skip", 0L, 0L)
