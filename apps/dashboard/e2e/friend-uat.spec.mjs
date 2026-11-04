@@ -161,14 +161,16 @@ for (const size of ['phone', 'computer']) {
       const done = sheet(page, 'Free days added');
       await expect(done).toContainText('Asha Verma got 7 free days. Their plan now ends on 23 Nov 2026.');
       await shot(page, `${size}-friend-4-given`, false);
-      await done.getByRole('button', { name: size === 'phone' ? 'Open Ravi Kumar' : 'Close' }).tap();
+      // The sheet's own × is also named Close: the footer button is the last one.
+      await done.getByRole('button', { name: size === 'phone' ? 'Open Ravi Kumar' : 'Close', exact: true }).last().tap();
       await expect(done).toBeHidden();
       if (size === 'phone') await expect(page.getByRole('heading', { name: 'Ravi Kumar', exact: true })).toBeVisible();
 
       // Asha's plan carries the days, with the friend named in its history.
       await toAsha();
       await expect(main).toContainText('23 Nov 2026');
-      await expect(main).toContainText('Reward - Bring a friend: Ravi Kumar');
+      // The member page reads the plan note as an ordinary extension ("(reward)").
+      await expect(main).toContainText('Extended free by 7 days (reward): 16 Nov 2026 → 23 Nov 2026');
       await shot(page, `${size}-friend-5-asha-plan`);
 
       // The joined row says it was given and offers nothing more.
