@@ -15,7 +15,7 @@ import { mkdirSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { OWNER, addMember, addPlan, expectFitsPhone, openApp, openMember, openSettings, sell, sheet, startOnlineGym } from './support.mjs';
+import { OWNER, addMember, addPlan, expectFitsPhone, openApp, sell, sheet, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -109,8 +109,9 @@ async function payServer(page) {
 
 for (const size of ['phone', 'computer']) {
   test.describe(`online payments on a ${size}`, () => {
-    if (size === 'phone') test.use({ viewport: { width: 375, height: 812 } });
-    else test.use({ viewport: { width: 1280, height: 900 }, isMobile: false });
+    // The gym is set up at phone size (the shared helpers tap the phone's bottom bar); the computer run
+    // then turns the window to 1280 x 900 and goes on by address, like a desk computer would.
+    test.use({ viewport: { width: 375, height: 812 } });
 
     test(`F79 ${size}: Settings -> Payments, the UPI QR, a test-mode payment link and its receipt`, async ({ page }) => {
       const server = await openApp(page);
@@ -119,9 +120,14 @@ for (const size of ['phone', 'computer']) {
       await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
       await sell(page, { received: '500' });
       const main = page.getByRole('main');
+      if (size === 'computer') await page.setViewportSize({ width: 1280, height: 900 });
+      const go = (path) => page.evaluate((p) => {
+        window.location.hash = p;
+      }, path);
 
       // The gym's UPI ID (Settings -> Gym details).
-      await openSettings(page, 'Gym');
+      await go('/settings');
+      await expect(page.getByLabel('Gym UPI ID (optional)')).toBeVisible();
       await page.getByLabel('Gym UPI ID (optional)').fill('irontemple@okhdfc');
       await page.getByRole('button', { name: 'Save details' }).tap();
       await expect(page.getByText('Saved.')).toBeVisible();
@@ -157,7 +163,9 @@ for (const size of ['phone', 'computer']) {
       await shot(page, `${size}-pay-3-connected`);
 
       // 3. Collect payment for the ₹1,000 due: the UPI QR first.
-      await openMember(page, 'Asha Verma');
+      await go('/members');
+      await main.getByRole('link', { name: /Asha Verma/ }).first().click();
+      await expect(page.getByRole('heading', { name: 'Asha Verma', exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Collect payment' }).tap();
       const c = sheet(page, 'Collect payment');
       await expect(c).toBeVisible();
