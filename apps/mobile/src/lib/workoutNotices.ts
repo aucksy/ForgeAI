@@ -5,7 +5,7 @@
  *
  *  - Notices, in this order: "That link didn't work" (the answer to the member's own tap, gone after
  *    a few seconds), a new version, What's new, the watch app offer (F67, once), "Your plan ends on Friday" (a gym member,
- *    within a week of the plan's end: shop/planEnds.ts), the backup reminder, and "Your workouts are
+ *    within a week of the plan's end: shop/planEnds.ts), "Backups now go to your MettleUp account" (R-320, once, for a phone with Drive linked), and "Your workouts are
  *    only on this phone" (launch audit 3 Nov 2026, lib/safekeepNudge.ts). Once the member has closed one
  *    today (Later, Got it), the others wait for the next day; What's new after an update never waits.
  *  - Inside Up next: the easy week, else the easy-week offer, else the muscle tip.

@@ -23,7 +23,7 @@ import { GymBrandMark } from '@/components/GymBrandMark';
 import { BrandCorner } from '@/components/brand/BrandCorner';
 import { UpdateCard } from '@/components/UpdateCard';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
-import { BackupNudgeCard } from '@/components/BackupNudgeCard';
+import { BackupMovedCard } from '@/components/BackupMovedCard';
 import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
 import { PlanEndsCard } from '@/shop/PlanEndsCard';
 import { WatchInstallCard } from '@/components/WatchInstallCard';
@@ -405,8 +405,8 @@ export default function WorkoutScreen() {
         />
         {/* Launch audit 3 Nov 2026: a gym member's plan ends within a week, no renewal on record. */}
         <PlanEndsCard hidden={notice !== 'planEnds'} onWant={want('planEnds')} />
-        {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
-        <BackupNudgeCard hidden={notice !== 'backup'} onWant={want('backup')} />
+        {/* R-320: a phone with Google Drive linked is told once that backups now go to the MettleUp account. */}
+        <BackupMovedCard hidden={notice !== 'backup'} onWant={want('backup')} onDone={noticeClosed} />
         {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone". */}
         <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
 

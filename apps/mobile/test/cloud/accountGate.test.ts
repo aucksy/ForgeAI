@@ -7,10 +7,10 @@ import { accountOffered } from '@/cloud/accountGate';
 
 const ROOT = join(__dirname, '..', '..');
 
-describe('R-106: the member account (server copy) is for gym members only', () => {
-  it('a member without a gym is not offered it; Drive backup is theirs instead', () => {
-    expect(accountOffered({ configured: true, inGym: false })).toBe(false);
-    expect(accountOffered({ configured: true, inGym: false, gymCodeWaiting: false, signedIn: false })).toBe(false);
+describe('R-320: the MettleUp account is the one backup, for every member', () => {
+  it('a member without a gym is offered it too (Drive backup is no longer a choice)', () => {
+    expect(accountOffered({ configured: true, inGym: false })).toBe(true);
+    expect(accountOffered({ configured: true, inGym: false, gymCodeWaiting: false, signedIn: false })).toBe(true);
   });
 
   it('a gym member is offered it, and so is a new phone with a gym code waiting to be joined', () => {

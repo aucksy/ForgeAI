@@ -14,6 +14,7 @@ import { AppState, Pressable, Text, View } from 'react-native';
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
 import { Card, GhostButton, PrimaryButton, Sheet } from '@/components/ui';
 import { askConfirm } from '@/components/ui/confirmStore';
+import { useGymShop } from '@/shop/gymStore';
 import { tap } from '@/lib/haptics';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -82,7 +83,7 @@ import {
   stepReminderMinute,
   type ReminderResult,
 } from './reminders';
-import { PIN_CHECK_MS, pinNotPlaced, placeWidget, refreshWidgets, widgetHintText, widgetsPlaced } from './widgets';
+import { PIN_CHECK_MS, pinNotPlaced, placeWidget, refreshWidgets, widgetHintText, widgetsPlaced, type WidgetKind } from './widgets';
 
 const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -650,6 +651,7 @@ function TimeStep({ label, sign, onPress }: { label: string; sign: string; onPre
 
 function WidgetsRow({ divider = true }: { divider?: boolean }) {
   const [placed, setPlaced] = useState(0);
+  const inGym = useGymShop((g) => g.link != null);
   const [hint, setHint] = useState<'refused' | 'notPlaced' | null>(null);
   // Audit H3: the widget count when a pin was asked for (null = none waiting). Android's "yes"
   // does not mean placed, so the count is read again when the member is back.
@@ -683,7 +685,7 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
     };
   }, [settlePin]);
 
-  const add = (kind: 'today' | 'week'): void => {
+  const add = (kind: WidgetKind): void => {
     tap();
     void refreshWidgets();
     setHint(null);
@@ -723,6 +725,13 @@ function WidgetsRow({ divider = true }: { divider?: boolean }) {
           <GhostButton label="Add This week" icon="plus" onPress={() => add('week')} />
         </View>
       </View>
+      {/* R-320: "Gym right now" (how busy the gym is, tap to check in), for a phone in a gym (R-106: gym-only). */}
+      {inGym ? (
+        <View style={{ paddingBottom: space.sm, gap: space.xs }}>
+          <GhostButton label="Add Gym right now" icon="plus" onPress={() => add('gym')} />
+          <Text style={{ ...CAPTION(), textAlign: 'center' }}>How busy your gym is now. Tap it to check in.</Text>
+        </View>
+      ) : null}
       {hint ? (
         <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), textAlign: 'center', paddingBottom: space.sm }}>
           {widgetHintText(hint)}

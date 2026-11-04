@@ -228,6 +228,16 @@ class ForgePhoneModule : Module() {
       }
     }
 
+    // R-320: widgets of one kind ("today", "week", "gym"): the app asks the gym only for a placed "gym".
+    Function("widgetCountOf") { kind: String ->
+      val c = ctx ?: return@Function 0
+      try {
+        Widgets.countOf(c, kind)
+      } catch (_: Throwable) {
+        0
+      }
+    }
+
     Function("widgetPin") { kind: String ->
       val c = ctx ?: return@Function false
       try {

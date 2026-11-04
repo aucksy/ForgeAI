@@ -66,10 +66,12 @@ appId: com.mettleup.app
           timeout: 20000
 - takeScreenshot: 181a-backup-prep-photo
 - runFlow: sub-back-to-tabs.yaml
-- runFlow:
-    file: sub-settings-page.yaml
-    env:
-      PAGE: "Backup and restore"
+# R-320: Android's own backup (the workout count, "Include photos in my backup") left the Backup page,
+# which now shows only the MettleUp account. Its page stays for this check, opened by its link.
+- openLink: "forgeai://settings/phone-backup"
+- extendedWaitUntil:
+    visible: "^Your workouts$|^[0-9]+ workouts?$|^No workouts yet$"
+    timeout: 30000
 - scrollUntilVisible:
     element: "Include photos in my backup"
     centerElement: true

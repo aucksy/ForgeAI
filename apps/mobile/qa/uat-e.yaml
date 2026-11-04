@@ -31,7 +31,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Erase all data\?'
     timeout: 10000
-- assertVisible: 'Every workout, record, routine, body entry, photo and video, your gym and Google Drive links, and your settings\. This phone goes back to new\..*'
+# R-320: Google Drive is named only while a Drive link exists (none on this phone).
+- assertVisible: 'Every workout, record, routine, body entry, photo and video, your gym link, and your settings\. This phone goes back to new\..*'
 - assertNotVisible: '.*You also leave .*'
 - takeScreenshot: ue-01-erase-solo-question
 - tapOn: "^Erase everything$"

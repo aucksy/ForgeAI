@@ -119,7 +119,7 @@ export function SaveBackupPanel() {
       else {
         setProgress(null);
         if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(res.uri, { mimeType: 'application/zip', dialogTitle: 'Save a backup', UTI: 'public.zip-archive' });
+          await Sharing.shareAsync(res.uri, { mimeType: 'application/zip', dialogTitle: 'Download my data', UTI: 'public.zip-archive' });
           success();
           setNote({ text: savedText({ name: res.name, bytes: res.bytes, workouts: res.counts.workouts, photos: res.counts.photos, photosLeftOut: res.photosLeftOut }), tone: 'good' });
         } else setNote({ text: SHARE_MISSING, tone: 'error' });

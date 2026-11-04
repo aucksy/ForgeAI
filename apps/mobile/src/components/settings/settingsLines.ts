@@ -142,7 +142,8 @@ export const MORE_WORKOUT_ROWS: readonly SettingsRow[] = [
 
 /** R-284: the backup file's two pages, listed on the one "Backup and restore" page. */
 export const BACKUP_FILE_ROWS: readonly SettingsRow[] = [
-  { key: 'saveBackup', title: 'Save a backup', href: '/settings/save-backup' },
+  // R-320: the backup FILE is the member's own copy for their records, not a second backup.
+  { key: 'saveBackup', title: 'Download my data', href: '/settings/save-backup' },
   { key: 'restoreBackup', title: 'Restore from a backup', href: '/settings/restore-backup' },
 ];
 

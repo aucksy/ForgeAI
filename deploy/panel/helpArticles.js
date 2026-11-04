@@ -155,11 +155,11 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'Back up and restore your workouts',
     text:
-      'To save a backup: open Profile, tap Settings, then "Backup and restore", then "Save a backup", and tap "Save the backup file". ' +
-      'It is one file with your workouts, routines, body weight, measurements, photos, profile and settings. Keep it in Files, Google Drive or WhatsApp. ' +
-      'To restore on any phone: Settings, then "Backup and restore", then "Restore from a backup". Tap "Choose backup file", check what is inside, then pick "Replace everything on this phone" or "Add to what\'s here". ' +
-      'Backups from the old ForgeAI app work too. ' +
-      'Gym members may also see "Continue with Google" on the same "Backup and restore" page. It saves your workouts on MettleUp, and "Bring back my workouts" returns them on a new phone.',
+      'Your MettleUp account is your backup. Open Profile, tap Settings, then "Backup and restore", and tap "Continue with Google". ' +
+      'MettleUp then saves your workouts, routines and body weight to your account by itself. On a new phone, sign in with the same Google account and tap "Bring back my workouts". ' +
+      '"Download my data" makes one file with everything, a copy for your own records. Keep it in Files, Google Drive or WhatsApp. ' +
+      '"Restore from a backup" brings your workouts back from a file you saved: tap "Choose backup file", check what is inside, then pick "Replace everything on this phone" or "Add to what\'s here". Files from the old ForgeAI app work too. ' +
+      'Backed up to Google Drive with an older version of the app? On the same page, tap "Bring back a Google Drive backup", then "Find my Drive backup", and pick the same Google account.',
   },
   {
     id: 'rate-how-hard-rpe',

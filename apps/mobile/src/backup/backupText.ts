@@ -6,9 +6,9 @@ import { sizeWords } from './backupSave';
 
 const n = (x: number, one: string, many: string = `${one}s`): string => `${x} ${x === 1 ? one : many}`;
 
-/** What the file holds, under "Save a backup". */
+/** What the file holds, under "Download my data" (R-320: a copy for the member's records; the backup is the MettleUp account). */
 export const SAVE_ABOUT =
-  'One file with your workouts, routines in their order, your own exercises, rest times, body weight, measurements, photos, profile and settings. Keep it in Files, Google Drive or WhatsApp, then open it in MettleUp on any phone with “Restore from a backup”.';
+  'One file with your workouts, routines in their order, your own exercises, rest times, body weight, measurements, photos, profile and settings. A copy for your own records: keep it in Files, Google Drive or WhatsApp. MettleUp can open it on any phone with “Restore from a backup”.';
 
 /** What is never in it. */
 export const SAVE_NEVER = 'Your phone number and your gym membership are never in the file.';

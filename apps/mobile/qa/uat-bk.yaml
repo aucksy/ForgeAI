@@ -6,7 +6,7 @@
 #      writes it) -> the summary names what is inside and who made it -> "Restore".
 #   2. The app opens on the restored data: routines in their saved ORDER (QA Push, QA Pull, QA Legs),
 #      the profile name, and settings away from the defaults (lb, weekly goal 5, Large step + Strength).
-#   3. Settings -> Back up and restore -> "Save a backup" -> "Save the backup file": Android's share
+#   3. Settings -> Backup and restore -> "Download my data" (R-320) -> "Save the backup file": Android's share
 #      sheet opens (system words only, trap 10); Back; the page says what was saved.
 appId: com.mettleup.app
 ---
@@ -151,8 +151,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Save a backup$"
-- tapOn: "^Save a backup$"
+      FIND: "^Download my data$"
+- tapOn: "^Download my data$"
 - extendedWaitUntil:
     visible: "^Save the backup file$"
     timeout: 15000

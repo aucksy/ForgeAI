@@ -1,7 +1,8 @@
 # Part UAT, flow 6: launch polish (launch audit 3 Nov 2026, member app), after flow 5 (10 workouts on the
 # phone: 9 from Hevy + the one just finished; no account, Google Drive never linked).
 #  - #3 "Your workouts are only on this phone. ..." on the Workout tab (from the 3rd workout):
-#    "Back up my workouts" opens Backup and restore; "Hide for 30 days" hides it, also after a restart.
+#    R-320: "Sign in to keep them safe" opens Backup and restore (the MettleUp account); "Hide for 30
+#    days" hides it, also after a restart.
 #  - #4 the floating feedback button: ON by default on every copy, Google Play included (owner, 4 Nov
 #    2026: early days, to get feedback; unit test test/lib/feedbackButton.test.ts).
 #    Settings -> "Help and feedback" still sends feedback.
@@ -20,15 +21,15 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Your workouts are only on this phone\. Back them up to Google Drive so you never lose them\.$'
-- assertVisible: "^Back up my workouts$"
+      FIND: '^Your workouts are only on this phone\. Sign in with Google and MettleUp keeps them safe in your account\.$'
+- assertVisible: "^Sign in to keep them safe$"
 - assertVisible: "^Hide for 30 days$"
 - takeScreenshot: rel-60-backup-card
-- tapOn: "^Back up my workouts$"
+- tapOn: "^Sign in to keep them safe$"
 - extendedWaitUntil:
     visible: "^Backup and restore$"
     timeout: 15000
-- assertVisible: "^Save a backup$"
+- assertVisible: "^Continue with Google$"
 - takeScreenshot: rel-61-backup-page-from-card
 - back
 - runFlow:

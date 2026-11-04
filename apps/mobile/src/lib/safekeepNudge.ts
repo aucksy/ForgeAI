@@ -4,9 +4,14 @@
  *
  * After the member's 3rd workout (their own; the demo's never count), the Workout tab shows one card:
  * "Your workouts are only on this phone. ..." with a button to Settings -> Backup and restore, and
- * "Hide for 30 days". It never shows to a member who signed in, linked Google Drive, or has backed up
- * to Drive before, nor on a build without Drive backup (the button would lead nowhere useful).
+ * "Hide for 30 days". It never shows to a member who signed in, nor on a build that cannot sign in
+ * (the button would lead nowhere useful).
  * It is one of the Workout tab's notices (lib/workoutNotices.ts), drawn last, one at a time.
+ *
+ * R-320 (owner, 4 Nov 2026: "Backups - Lets go with A"): the MettleUp account is the one backup, so the
+ * card points to signing in only. Google Drive no longer counts: Drive backups stopped, so a member who
+ * linked Drive before is told once by the "Backups now go to your MettleUp account" card
+ * (lib/backupMoved.ts) and, after that, by this card like everyone else.
  *
  * The rule is PURE (`safekeepDue`); the reads are below it and never throw.
  */
@@ -20,10 +25,10 @@ export const SAFEKEEP_AFTER_WORKOUTS = 3;
 export const SAFEKEEP_HIDE_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// member-words (3 Nov 2026): a first-time reader, what it is about, what the button does.
+// member-words (3 Nov 2026; R-320, 4 Nov): a first-time reader, what it is about, what the button does.
 export const SAFEKEEP_WORDS = {
-  body: 'Your workouts are only on this phone. Back them up to Google Drive so you never lose them.',
-  button: 'Back up my workouts',
+  body: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.',
+  button: 'Sign in to keep them safe',
   hide: 'Hide for 30 days',
 } as const;
 
@@ -32,12 +37,8 @@ export interface SafekeepFacts {
   workouts: number;
   /** Signed in with a MettleUp account (its own copy on our server). */
   signedIn: boolean;
-  /** Google Drive backup was linked on this phone. */
-  driveLinked: boolean;
-  /** When the last Drive backup was made (null = never). */
-  lastBackupAt: string | null;
-  /** This build can back up to Google Drive. */
-  driveAvailable: boolean;
+  /** This build can sign in to a MettleUp account (useAccount.configured). */
+  accountAvailable: boolean;
   /** "Hide for 30 days" was tapped: hidden until this time (ms; null = never hidden). */
   hiddenUntil: number | null;
   now: number;
@@ -45,8 +46,8 @@ export interface SafekeepFacts {
 
 /** True when the card should show. PURE. */
 export function safekeepDue(f: SafekeepFacts): boolean {
-  if (!f.driveAvailable) return false;
-  if (f.signedIn || f.driveLinked || f.lastBackupAt) return false;
+  if (!f.accountAvailable) return false;
+  if (f.signedIn) return false;
   if (!(f.workouts >= SAFEKEEP_AFTER_WORKOUTS)) return false;
   if (f.hiddenUntil != null && Number.isFinite(f.hiddenUntil) && f.now < f.hiddenUntil) return false;
   return true;
@@ -65,9 +66,6 @@ export function parseHiddenUntil(raw: string | null | undefined): number | null 
 }
 
 const HIDE_KEY = 'safekeep_hidden_until';
-// The same keys the backup store keeps (store/backupStore.ts).
-const DRIVE_LINKED_KEY = 'drive_linked';
-const DRIVE_LAST_KEY = 'drive_last_backup_at';
 
 /** The member's own workouts on this phone (the demo's left out). Never throws (0 on a failure). */
 export async function ownWorkoutCount(): Promise<number> {
@@ -81,15 +79,13 @@ export async function ownWorkoutCount(): Promise<number> {
   }
 }
 
-/** What the phone has saved about backups. Never throws. */
-export async function readSafekeepMeta(): Promise<{ driveLinked: boolean; lastBackupAt: string | null; hiddenUntil: number | null }> {
+/** When "Hide for 30 days" ends. Never throws (a failed read = hidden for now, rather than nag). */
+export async function readSafekeepHidden(now = Date.now()): Promise<number | null> {
   try {
-    const [linked, last, hidden] = await Promise.all([getMeta(DRIVE_LINKED_KEY), getMeta(DRIVE_LAST_KEY), getMeta(HIDE_KEY)]);
-    return { driveLinked: linked === '1', lastBackupAt: last || null, hiddenUntil: parseHiddenUntil(hidden) };
+    return parseHiddenUntil(await getMeta(HIDE_KEY));
   } catch (e) {
-    console.warn('[safekeep] could not read the backup state', e);
-    // Unknown: say nothing rather than nag a member who may well be backed up.
-    return { driveLinked: true, lastBackupAt: null, hiddenUntil: null };
+    console.warn('[safekeep] could not read when the card was hidden', e);
+    return now + DAY_MS;
   }
 }
 

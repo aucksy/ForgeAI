@@ -25,6 +25,15 @@ export function peekGymBusy(link: GymLink | null, now = Date.now()): GymBusy | n
   return link && kept?.key === link.memberKey && now - kept.at < GYM_BUSY_STALE_MS ? kept.busy : null;
 }
 
+/**
+ * R-320 (the "Gym right now" home-screen widget): the last answer for this gym link and WHEN it was read,
+ * however old (the widget shows "as of 18:05" and stops claiming "now" by itself once it is old).
+ * null: nothing read yet for this link.
+ */
+export function lastGymBusy(link: GymLink | null): { busy: GymBusy | null; at: number } | null {
+  return link && kept?.key === link.memberKey ? { busy: kept.busy, at: kept.at } : null;
+}
+
 export async function readGymBusy(link: GymLink, opts: { force?: boolean; now?: number } = {}): Promise<BusyRead> {
   if (missing) return { kind: 'hidden' };
   const now = opts.now ?? Date.now();

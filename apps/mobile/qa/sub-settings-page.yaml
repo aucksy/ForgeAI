@@ -29,7 +29,7 @@ appId: com.mettleup.app
           timeout: 15000
 - runFlow:
     when:
-      true: ${PAGE == 'Save a backup' || PAGE == 'Restore from a backup'}
+      true: ${PAGE == 'Download my data' || PAGE == 'Restore from a backup'}
     commands:
       - scrollUntilVisible:
           element: "^Backup and restore$"
@@ -37,7 +37,7 @@ appId: com.mettleup.app
           timeout: 20000
       - tapOn: "^Backup and restore$"
       - extendedWaitUntil:
-          visible: "^Restore from a backup$|^Save a backup$"
+          visible: "^Restore from a backup$|^Download my data$"
           timeout: 15000
 - scrollUntilVisible:
     element: "^${PAGE}$"

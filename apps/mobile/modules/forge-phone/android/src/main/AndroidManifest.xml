@@ -26,7 +26,7 @@
         <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
       </intent-filter>
     </activity-alias>
-    <!-- Home-screen widgets: today's workout, and this week. -->
+    <!-- Home-screen widgets: today's workout, this week, and (R-320) how busy the gym is. -->
     <receiver android:name="com.forgeai.phone.TodayWidget" android:exported="true" android:label="@string/forge_widget_today_label">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -44,6 +44,13 @@
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/forge_widget_week"/>
+    </receiver>
+    <!-- R-320: "Gym right now": how busy the member's gym is; tap to check in. -->
+    <receiver android:name="com.forgeai.phone.GymWidget" android:exported="true" android:label="@string/forge_widget_gym_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/forge_widget_gym"/>
     </receiver>
   </application>
 </manifest>

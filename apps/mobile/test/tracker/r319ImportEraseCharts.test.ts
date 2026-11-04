@@ -91,10 +91,15 @@ describe('item 5: Erase all data says where the data lives', () => {
     expect(eraseNeedsChoice(true)).toBe(true);
     expect(eraseNeedsChoice(false)).toBe(false);
   });
-  it('not signed in, no Drive: exactly the old words', () => {
+  it('not signed in, no Drive link: the old words, without Google Drive (R-320)', () => {
     expect(eraseConfirmBody({ ...base, scope: null })).toBe(
-      'Every workout, record, routine, body entry, photo and video, your gym and Google Drive links, and your settings. This phone goes back to new.',
+      'Every workout, record, routine, body entry, photo and video, your gym link, and your settings. This phone goes back to new.',
     );
+  });
+  it('R-320: Google Drive is named only while a Drive link still exists on this phone', () => {
+    const b = eraseConfirmBody({ ...base, scope: null, driveUsed: true });
+    expect(b.startsWith('Every workout, record, routine, body entry, photo and video, your gym and Google Drive links, and your settings.')).toBe(true);
+    expect(read('store/backupStore.ts')).toMatch(/return \(await getMeta\(LINKED_KEY\)\) === '1';/);
   });
   it('this phone only: the MettleUp copy stays and comes back', () => {
     const b = eraseConfirmBody({ ...base, scope: 'phone' });

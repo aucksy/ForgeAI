@@ -1,0 +1,78 @@
+# Part UAT, flow 11: R-320 backup A (owner, 4 Nov 2026: "Backups - Lets go with A"), after flow 10
+# (10 workouts on the phone; no MettleUp account, Google Drive never linked).
+#  - Settings -> "Backup and restore" shows ONE backup: the MettleUp account ("Keep your workouts on
+#    MettleUp", "Sign in with Google to keep your workouts safe. ...", "Continue with Google"). No Google
+#    Drive backup, no "Back up now", no Android-backup card or "Include photos in my backup".
+#  - Below it: "Download my data" (a copy for their records: the backup file page) and "Restore from a
+#    backup"; at the bottom the small "Bring back a Google Drive backup" link, whose page only brings an
+#    old Drive backup back ("Find my Drive backup"; not tapped: Google's sign-in cannot run here).
+#  - The Workout tab shows no Drive card ("last backed up to Google Drive", "Backups now go to your
+#    MettleUp account": this phone never linked Drive).
+#  Not testable in the cloud: signing in (Google) and the one-off card on a phone with Drive linked
+#  (unit test test/lib/safekeepNudge.test.ts; a short check on his phone after release).
+# Leaves the app on the tabs.
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- the Backup page: one backup
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Backup and restore"
+- extendedWaitUntil:
+    visible: "^Keep your workouts on MettleUp$"
+    timeout: 15000
+- assertVisible: '^Sign in with Google to keep your workouts safe\. MettleUp then saves your workouts, routines and body weight to your account by itself\..*'
+- assertVisible: "^Continue with Google$"
+- assertNotVisible: ".*Google Drive backup on.*|^Link Google Drive$|^Back up now$"
+- assertNotVisible: "Android backs this up.*"
+- assertNotVisible: "Include photos in my backup"
+- takeScreenshot: rel-110-backup-one-account
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Download my data$"
+- assertVisible: "^One file with everything, a copy for your own records$"
+- assertVisible: "^Restore from a backup$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring back a Google Drive backup$"
+- assertNotVisible: "Include photos in my backup"
+- takeScreenshot: rel-111-backup-rows
+# ---------------------------------------------------------------- Download my data
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Download my data$"
+- tapOn: "^Download my data$"
+- extendedWaitUntil:
+    visible: "^Save the backup file$"
+    timeout: 15000
+- assertVisible: '.*A copy for your own records: keep it in Files, Google Drive or WhatsApp\..*'
+- takeScreenshot: rel-112-download-my-data
+- back
+# ---------------------------------------------------------------- the old Drive backup: bring back only
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Bring back a Google Drive backup$"
+- tapOn: "^Bring back a Google Drive backup$"
+- extendedWaitUntil:
+    visible: "^Find my Drive backup$"
+    timeout: 15000
+- assertVisible: '^Backed up to Google Drive with an older version of MettleUp\?.*'
+- assertNotVisible: "^Back up now$"
+- takeScreenshot: rel-113-drive-bring-back-only
+- back
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- no Drive card on the Workout tab
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*"
+    timeout: 30000
+- assertNotVisible: ".*backed up to Google Drive.*"
+- assertNotVisible: "^Backups now go to your MettleUp account\\..*"
+- takeScreenshot: rel-114-workout-no-drive-card

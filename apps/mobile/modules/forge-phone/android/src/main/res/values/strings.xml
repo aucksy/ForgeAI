@@ -1,6 +1,8 @@
 <resources>
   <string name="forge_widget_today_label">MettleUp · Today</string>
   <string name="forge_widget_week_label">MettleUp · This week</string>
-  <string name="forge_widget_today_desc">Today\'s workout from your plan. Tap to open it.</string>
+  <string name="forge_widget_gym_label">MettleUp · Gym right now</string>
+  <string name="forge_widget_today_desc">Today\'s workout and what to beat from last time. Tap to start it.</string>
   <string name="forge_widget_week_desc">Your workouts this week, day by day.</string>
+  <string name="forge_widget_gym_desc">How busy your gym is right now. Tap to check in.</string>
 </resources>

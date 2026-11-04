@@ -12,12 +12,13 @@ import type { SendFailure } from './copyPlan';
 
 export const ACCOUNT_WORDS = {
   cardTitle: 'Keep your workouts on MettleUp',
+  // R-320 (owner, 4 Nov 2026): the MettleUp account is the one backup. member-words: what it does for them first.
   cardBody:
-    'Sign in with Google and MettleUp saves your workouts, routines and body weight on its own server. On a new phone, sign in again and everything comes back.',
+    'Sign in with Google to keep your workouts safe. MettleUp then saves your workouts, routines and body weight to your account by itself. On a new phone, sign in again and everything comes back.',
   privacy: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.',
   signIn: 'Continue with Google',
   signedInAs: (email: string | null): string => (email ? `Signed in as ${email}` : 'Signed in with Google'),
-  allCopied: (when: string): string => `Your workouts are saved on MettleUp. Last saved: ${when}.`,
+  allCopied: (when: string): string => `Your workouts are saved to your MettleUp account automatically. Last saved: ${when}.`,
   notCopiedYet: 'Your workouts will be saved on MettleUp in a moment.',
   waiting: (n: number): string => `${n} ${n === 1 ? 'change is' : 'changes are'} waiting for the internet. They are saved by themselves when you are online.`,
   needsSignIn: 'Sign in again to keep saving your workouts on MettleUp.',

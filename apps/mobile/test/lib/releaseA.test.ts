@@ -79,7 +79,7 @@ describe('A7: Settings in 6 headed groups', () => {
     expect(rows['Phone and watch']).toEqual(['Health apps', 'Widgets']);
     expect(rows['Your gym']).toEqual(['Join your gym']);
     expect(rows['Your data']).toEqual(['Backup and restore', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
-    expect(BACKUP_FILE_ROWS.map((r) => r.title)).toEqual(['Save a backup', 'Restore from a backup']);
+    expect(BACKUP_FILE_ROWS.map((r) => r.title)).toEqual(['Download my data', 'Restore from a backup']);
     expect(rows.Help).toEqual(['Help and feedback', "What's new", 'About']);
   });
   it('with a gym: the logo (when it has one) and Leave, which act on the spot', () => {
@@ -178,7 +178,7 @@ describe('A12: one notice at a time above Up next, one extra line inside it', ()
     const w = readFileSync(join(APP, '(tabs)', 'workout.tsx'), 'utf8');
     expect(w).toMatch(/<UpdateCard hidden=\{notice !== 'update'\}/);
     expect(w).toMatch(/<WhatsNewCard hidden=\{notice !== 'whatsNew'\}/);
-    expect(w).toMatch(/<BackupNudgeCard hidden=\{notice !== 'backup'\}/);
+    expect(w).toMatch(/<BackupMovedCard hidden=\{notice !== 'backup'\}/);
     expect(w).toMatch(/await startShownWorkout\(router, today\?\.nextId \?\? null\)/);
     expect(w).not.toMatch(/TABS_NOTICE_TEXT/);
   });

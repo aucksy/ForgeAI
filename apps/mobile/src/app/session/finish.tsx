@@ -39,7 +39,6 @@ import { workoutMilestone } from '@/tracker/services/milestones';
 import { newBadgeLine } from '@/tracker/engine/badges';
 import { getBadgesEarnedIn } from '@/tracker/services/badgesService';
 import { applyRoutineOffer, takeRoutineOffer } from '@/tracker/services/routineOffer';
-import { autoBackupAfterWorkout } from '@/cloud/autoBackup';
 import { copySoon } from '@/cloud/copySync';
 import { SAVE_FIRST_ROUTINE, offersFirstRoutine, routineCount, saveFirstRoutine } from '@/tracker/services/saveFirstRoutine';
 import { workoutText } from '@/tracker/services/shareText';
@@ -165,20 +164,11 @@ export default function FinishScreen() {
     };
   }, [data]);
 
-  // Backlog (21 Oct): members who linked Google Drive get a backup after each workout, by itself:
-  // when they leave this screen (review: the export holds the write queue, so not while it loads).
-  const loaded = useRef(false);
+  // #50: the finished workout is copied to the member's MettleUp account when signed in (a no-op otherwise).
+  // R-320: that account is the one backup; the automatic Google Drive backup after each workout is gone.
   useEffect(() => {
-    if (data) loaded.current = true;
-    // #50: the finished workout is copied to ForgeAI's server for a signed-in member (a no-op otherwise).
     if (data) copySoon('finished a workout', 1500);
   }, [data]);
-  useEffect(
-    () => () => {
-      if (loaded.current) void autoBackupAfterWorkout();
-    },
-    [],
-  );
 
   const onSaveFirst = () => {
     if (!data || savingFirst.current) return;

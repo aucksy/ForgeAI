@@ -6,7 +6,9 @@
  *   - signed in to a MettleUp account: a choice — this phone only (the copy on MettleUp stays and
  *     comes back at the next sign-in), or this phone AND the account (the same delete as Settings →
  *     Backup → "Delete my account", done first, so nothing is erased if it fails);
- *   - Google Drive used on this phone: the backup file in Drive stays, and the line says so;
+ *   - Google Drive still linked on this phone: the backup file in Drive stays, and the line says so.
+ *     R-320: Drive backup is no longer offered, so this line (and "Google Drive links" in what goes)
+ *     shows only while a Drive link still exists (backupStore.driveUsedOnThisPhone);
  *   - neither: the one question as before. Health Connect and the gym keep their lines. PURE.
  */
 export type EraseScope = 'phone' | 'phone-and-account';
@@ -32,9 +34,10 @@ export function eraseNeedsChoice(signedIn: boolean): boolean {
   return signedIn;
 }
 
-/** What the phone part of the erase removes, in one line. */
-export function erasePhoneWhat(withCoach: boolean): string {
-  return `Every workout, record, routine, body entry, photo and video, ${withCoach ? 'your AI keys, ' : ''}your gym and Google Drive links, and your settings. This phone goes back to new.`;
+/** What the phone part of the erase removes, in one line. Names the Drive link only while there is one (R-320). */
+export function erasePhoneWhat(withCoach: boolean, driveLinked = false): string {
+  const links = driveLinked ? 'your gym and Google Drive links' : 'your gym link';
+  return `Every workout, record, routine, body entry, photo and video, ${withCoach ? 'your AI keys, ' : ''}${links}, and your settings. This phone goes back to new.`;
 }
 
 /**
@@ -49,7 +52,7 @@ export function eraseConfirmBody(opts: {
   healthConnectUsed: boolean;
   gymNote: string;
 }): string {
-  const lines = [erasePhoneWhat(opts.withCoach)];
+  const lines = [erasePhoneWhat(opts.withCoach, opts.driveUsed)];
   if (opts.scope === 'phone') lines.push(ERASE_WORDS.phoneOnlySub);
   if (opts.scope === 'phone-and-account') lines.push(ERASE_WORDS.withAccountSub);
   if (opts.driveUsed) lines.push(ERASE_WORDS.driveStays);

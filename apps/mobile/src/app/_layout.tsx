@@ -16,7 +16,6 @@ import { ConfirmHost } from '@/components/ui';
 import { startUnitSync } from '@/lib/useUnits';
 import { FEATURES } from '@/lib/features';
 import { useCloud } from '@/store/cloudStore';
-import { backUpIfOwed } from '@/cloud/autoBackup';
 import { startCloudCopy } from '@/cloud/copySync';
 import { WorkoutPresenceHost } from '@/tracker/components/WorkoutPresenceHost';
 import { phoneAfterLookChange } from '@/tracker/phone/phoneSync';
@@ -128,7 +127,6 @@ export default function RootLayout() {
     // Back while the logo is still up → shown at once; later → the next time the app comes back
     // with no workout open (below). Joined phones only; quiet on failure.
     void refreshGymNow().catch(() => undefined);
-    void backUpIfOwed();
     // Back to the foreground: a look that is waiting is shown now (under the gym's logo) unless a
     // workout is open, and the gym is asked again at most about once an hour.
     // Review fix: only after a real time away (a share sheet or picker is not a new visit).
@@ -143,8 +141,6 @@ export default function RootLayout() {
       awaySince = null;
       showWaitingLook(away);
       void refreshGymIfDue().catch(() => undefined);
-      // R-282: a Drive backup a finished workout still owes (skipped on mobile data, or failed).
-      if (away > 0) void backUpIfOwed();
     });
     // A new look once the app is up (join, Leave, an owner's change shown): the home-screen
     // widgets and the reminders scheduled with the old colour are drawn again in the new one.

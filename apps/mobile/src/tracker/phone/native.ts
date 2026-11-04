@@ -29,7 +29,9 @@ export interface ForgePhone {
   healthDelete(id: string): Promise<boolean>;
   widgetSave(json: string): boolean;
   widgetCount(): number;
-  widgetPin(kind: 'today' | 'week'): boolean;
+  /** R-320: widgets of one kind on the home screen; absent on older builds (count them all instead). */
+  widgetCountOf?(kind: 'today' | 'week' | 'gym'): number;
+  widgetPin(kind: 'today' | 'week' | 'gym'): boolean;
   /** Audit Phase 9: the app icon's long-press shortcuts (JSON list of `AppShortcut`); absent on older builds. */
   shortcutsSave?(json: string): boolean;
   /**

@@ -44,12 +44,13 @@ const LINKED_KEY = 'drive_linked';
 const LAST_BACKUP_KEY = 'drive_last_backup_at';
 
 /**
- * R-319 item 5: has this phone ever linked Google Drive (or saved a backup there)? Read before
- * "Erase all data", whose confirm then says the backup file in Drive stays. No network call.
+ * R-319 item 5: is Google Drive linked on this phone? Read before "Erase all data", whose confirm then
+ * says the backup file in Drive stays. R-320: only while a Drive link still exists (Drive backup is no
+ * longer offered; "Unlink Google Drive" ends the line). No network call.
  */
 export async function driveUsedOnThisPhone(): Promise<boolean> {
   try {
-    return (await getMeta(LINKED_KEY)) === '1' || Boolean(await getMeta(LAST_BACKUP_KEY));
+    return (await getMeta(LINKED_KEY)) === '1';
   } catch {
     return false;
   }

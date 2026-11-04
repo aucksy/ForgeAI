@@ -1,17 +1,17 @@
 /**
  * Launch audit, 3 Nov 2026 (member app #3): the Workout tab's "Your workouts are only on this phone"
  * card for a member with no account and no backup, from their 3rd workout (lib/safekeepNudge.ts).
- * "Back up my workouts" opens Settings -> Backup and restore; "Hide for 30 days" hides it for 30 days.
- * Read again on every visit, so the card goes by itself once the member signs in or links Drive.
+ * R-320: "Sign in to keep them safe" opens Settings -> Backup and restore (the MettleUp account, the one
+ * backup); "Hide for 30 days" hides it for 30 days. Read again on every visit, so the card goes by itself
+ * once the member signs in.
  */
 import { useFocusEffect, useRouter, type Href } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { isDriveConfigured } from '@/cloud/drive';
 import { Card } from '@/components/ui';
 import { navigateOnce } from '@/lib/guardedAction';
-import { SAFEKEEP_WORDS, hideSafekeep, ownWorkoutCount, readSafekeepMeta, safekeepDue } from '@/lib/safekeepNudge';
+import { SAFEKEEP_WORDS, hideSafekeep, ownWorkoutCount, readSafekeepHidden, safekeepDue } from '@/lib/safekeepNudge';
 import { useAccount } from '@/store/accountStore';
 import { color, space, type } from '@/theme/tokens';
 
@@ -31,19 +31,10 @@ export function SafekeepNudgeCard({ hidden = false, onWant, onDone }: NoticeSlot
           .getState()
           .init()
           .catch((e: unknown) => console.warn('[safekeep] could not read the account', e));
-        const [workouts, meta] = await Promise.all([ownWorkoutCount(), readSafekeepMeta()]);
+        const [workouts, hiddenUntil] = await Promise.all([ownWorkoutCount(), readSafekeepHidden()]);
         if (!live) return;
-        setDue(
-          safekeepDue({
-            workouts,
-            signedIn: useAccount.getState().account != null,
-            driveLinked: meta.driveLinked,
-            lastBackupAt: meta.lastBackupAt,
-            driveAvailable: isDriveConfigured(),
-            hiddenUntil: meta.hiddenUntil,
-            now: Date.now(),
-          }),
-        );
+        const a = useAccount.getState();
+        setDue(safekeepDue({ workouts, signedIn: a.account != null, accountAvailable: a.configured, hiddenUntil, now: Date.now() }));
       })();
       return () => {
         live = false;

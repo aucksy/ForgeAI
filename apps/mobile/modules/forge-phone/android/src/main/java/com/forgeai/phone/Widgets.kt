@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -46,6 +47,15 @@ import java.util.Locale
  * The app writes the data again whenever its look changes. Each day mark's shape is an image
  * tinted with a colour filter (the layout puts the letter on top), which every Android version
  * can do on a home-screen widget.
+ *
+ * R-320 (owner, 4 Nov 2026: "Widget - Lets go with A"):
+ *  - Today shows what to beat under the routine: up to two lines the app wrote ("beats" on the
+ *    entry, e.g. "Bench Press 60 kg × 8 last time · try 62.5 × 8"). No lines: the views are gone.
+ *  - A third widget, "Gym right now" ([GymWidget]): how busy the gym is ("gym" in the data: name,
+ *    word, line, and "at", when it was read). Within 30 minutes of "at" it shows the word and
+ *    "as of 18:05"; older, it never claims "now": "Last checked 18:05" and asks to open the app.
+ *    The 30-minute update redraws it, so the switch happens without the app. Tap: the check-in
+ *    scanner (forgeai://scan); a phone in no gym ("gym": null) opens the Gym tab to join.
  */
 object Widgets {
   private const val PREFS = "forgeai_widgets"
@@ -60,6 +70,8 @@ object Widgets {
   private const val AFTER_MIDNIGHT_MS = 5_000L
   private const val TICK_WINDOW_MS = 10L * 60_000L
   private val DAY_NAMES = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+  /** R-320: how long a gym reading may be called "now" (the app's GYM_BUSY_STALE_MS). */
+  private const val GYM_FRESH_MS = 30L * 60_000L
 
   fun save(ctx: Context, json: String) {
     ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY, json).apply()
@@ -113,6 +125,7 @@ object Widgets {
     val m = AppWidgetManager.getInstance(ctx)
     for (id in m.getAppWidgetIds(ComponentName(ctx, TodayWidget::class.java))) m.updateAppWidget(id, today(ctx))
     for (id in m.getAppWidgetIds(ComponentName(ctx, WeekWidget::class.java))) m.updateAppWidget(id, week(ctx))
+    for (id in m.getAppWidgetIds(ComponentName(ctx, GymWidget::class.java))) m.updateAppWidget(id, gym(ctx))
     armMidnight(ctx)
   }
 
@@ -151,10 +164,18 @@ object Widgets {
     }
   }
 
-  fun count(ctx: Context): Int {
+  fun count(ctx: Context): Int = countOf(ctx, "today") + countOf(ctx, "week") + countOf(ctx, "gym")
+
+  /** R-320: widgets of one kind on the home screen ("today", "week" or "gym"). */
+  fun countOf(ctx: Context, kind: String): Int {
     val m = AppWidgetManager.getInstance(ctx)
-    return m.getAppWidgetIds(ComponentName(ctx, TodayWidget::class.java)).size +
-      m.getAppWidgetIds(ComponentName(ctx, WeekWidget::class.java)).size
+    return m.getAppWidgetIds(ComponentName(ctx, classOf(kind))).size
+  }
+
+  private fun classOf(kind: String): Class<out AppWidgetProvider> = when (kind) {
+    "week" -> WeekWidget::class.java
+    "gym" -> GymWidget::class.java
+    else -> TodayWidget::class.java
   }
 
   /** Ask the home screen to add a widget ("today" or "week"). False when it cannot. */
@@ -162,8 +183,7 @@ object Widgets {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false
     val m = AppWidgetManager.getInstance(ctx)
     if (!m.isRequestPinAppWidgetSupported) return false
-    val cls = if (kind == "week") WeekWidget::class.java else TodayWidget::class.java
-    return m.requestPinAppWidget(ComponentName(ctx, cls), null, null)
+    return m.requestPinAppWidget(ComponentName(ctx, classOf(kind)), null, null)
   }
 
   private fun open(ctx: Context, path: String, code: Int): PendingIntent {
@@ -184,6 +204,10 @@ object Widgets {
     v.setTextColor(R.id.forge_today_label, accent)
     v.setTextColor(R.id.forge_today_action, accent)
     var path = "workout"
+    // R-320: what to beat (up to two lines); none = both gone.
+    val beats = t?.optJSONArray("beats")
+    beat(v, R.id.forge_today_beat1, beats?.optString(0, "") ?: "")
+    beat(v, R.id.forge_today_beat2, beats?.optString(1, "") ?: "")
     if (t == null) {
       v.setTextViewText(R.id.forge_today_title, "MettleUp")
       v.setTextViewText(R.id.forge_today_line, "Open MettleUp to see your workout")
@@ -196,7 +220,8 @@ object Widgets {
       v.setTextViewText(R.id.forge_today_title, title)
       v.setTextViewText(R.id.forge_today_line, line)
       v.setTextViewText(R.id.forge_today_action, action)
-      v.setContentDescription(R.id.forge_today_root, "Today: $title. $line. $action")
+      val said = listOfNotNull(beats?.optString(0, ""), beats?.optString(1, "")).filter { it.isNotEmpty() }.joinToString(". ")
+      v.setContentDescription(R.id.forge_today_root, if (said.isEmpty()) "Today: $title. $line. $action" else "Today: $title. $line. $said. $action")
       val routineId = t.optString("routineId", "")
       // The widget's own key: only a link that carries it starts a workout by itself.
       val token = d?.optString("token", "") ?: ""
@@ -208,6 +233,82 @@ object Widgets {
       }
     }
     v.setOnClickPendingIntent(R.id.forge_today_root, open(ctx, path, 21))
+    return v
+  }
+
+  /** One what-to-beat line: shown with its words, or gone when there are none. */
+  private fun beat(v: RemoteViews, id: Int, text: String) {
+    v.setTextViewText(id, text)
+    v.setViewVisibility(id, if (text.isEmpty()) View.GONE else View.VISIBLE)
+  }
+
+  /** "18:05" or "6:05 pm", as the phone writes the time. */
+  private fun clockOf(ctx: Context, ms: Long): String = try {
+    android.text.format.DateFormat.getTimeFormat(ctx).format(Date(ms))
+  } catch (_: Exception) {
+    SimpleDateFormat("HH:mm", Locale.US).format(Date(ms))
+  }
+
+  /**
+   * R-320: "Gym right now". The app wrote "gym": absent = an older app (open it), null = in no gym,
+   * else the gym's name and the last reading with the time it was read ("at", ms).
+   */
+  fun gym(ctx: Context): RemoteViews {
+    val v = RemoteViews(ctx.packageName, R.layout.forge_widget_gym)
+    val d = data(ctx)
+    val accent = colourOf(d, "accent", ACCENT)
+    v.setTextColor(R.id.forge_gym_label, accent)
+    v.setTextColor(R.id.forge_gym_action, accent)
+    if (d == null || !d.has("gym")) {
+      v.setTextViewText(R.id.forge_gym_name, "MettleUp")
+      v.setTextViewText(R.id.forge_gym_word, "Open MettleUp")
+      v.setTextViewText(R.id.forge_gym_line, "Open the app once to see how busy your gym is")
+      v.setTextViewText(R.id.forge_gym_time, "")
+      v.setTextViewText(R.id.forge_gym_action, "Open")
+      v.setContentDescription(R.id.forge_gym_root, "Gym right now. Open the app once to see how busy your gym is")
+      v.setOnClickPendingIntent(R.id.forge_gym_root, open(ctx, "shop", 23))
+      return v
+    }
+    val g = d.optJSONObject("gym")
+    if (g == null) {
+      v.setTextViewText(R.id.forge_gym_name, "MettleUp")
+      v.setTextViewText(R.id.forge_gym_word, "No gym yet")
+      v.setTextViewText(R.id.forge_gym_line, "Join your gym in the app to see how busy it is")
+      v.setTextViewText(R.id.forge_gym_time, "")
+      v.setTextViewText(R.id.forge_gym_action, "Join your gym")
+      v.setContentDescription(R.id.forge_gym_root, "Gym right now. Join your gym in the app to see how busy it is")
+      v.setOnClickPendingIntent(R.id.forge_gym_root, open(ctx, "shop", 23))
+      return v
+    }
+    val name = g.optString("name", "Your gym")
+    val word = g.optString("word", "")
+    val line = g.optString("line", "")
+    val at = g.optLong("at", 0L)
+    val age = System.currentTimeMillis() - at
+    val word2: String
+    val line2: String
+    val time: String
+    if (word.isEmpty() || at <= 0L) {
+      word2 = "Not known yet"
+      line2 = "Open the Gym tab in MettleUp to see how busy it is"
+      time = ""
+    } else if (age in 0L..GYM_FRESH_MS) {
+      word2 = word
+      line2 = line
+      time = "as of " + clockOf(ctx, at)
+    } else {
+      // Never claim "now" with an old reading.
+      word2 = "Check again"
+      line2 = "Open MettleUp to see how busy it is now"
+      time = "Last checked " + clockOf(ctx, at)
+    }
+    v.setTextViewText(R.id.forge_gym_name, name)
+    v.setTextViewText(R.id.forge_gym_word, word2)
+    v.setTextViewText(R.id.forge_gym_line, line2)
+    v.setTextViewText(R.id.forge_gym_time, time)
+    v.setTextViewText(R.id.forge_gym_action, "Check in")
+    v.setContentDescription(R.id.forge_gym_root, "$name right now: $word2. $line2. $time. Tap to check in")
+    v.setOnClickPendingIntent(R.id.forge_gym_root, open(ctx, "scan", 23))
     return v
   }
 
@@ -300,6 +401,14 @@ class TodayWidget : AppWidgetProvider() {
 class WeekWidget : AppWidgetProvider() {
   override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
     for (id in ids) manager.updateAppWidget(id, Widgets.week(context))
+    Widgets.armMidnight(context)
+  }
+}
+
+/** R-320: "Gym right now". Its 30-minute update redraws it, so an old reading stops saying "now". */
+class GymWidget : AppWidgetProvider() {
+  override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
+    for (id in ids) manager.updateAppWidget(id, Widgets.gym(context))
     Widgets.armMidnight(context)
   }
 }
