@@ -1810,7 +1810,7 @@ part_uat() {
     && uat_flow uat2 uat-rel-2-settings.yaml \
     && uat_flow uat3 uat-rel-3-goals.yaml \
     && uat_flow uat4 uat-rel-4-workout.yaml \
-    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"     && uat_flow uat6 uat-rel-6-member.yaml     && uat_flow uat10 uat-rel-10-r319.yaml     && uat_flow uat11 uat-rel-11-backup.yaml     && part_uat_gym "$today"
+    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"     && uat_flow uat6 uat-rel-6-member.yaml     && uat_flow uat10 uat-rel-10-r319.yaml     && uat_flow uat11 uat-rel-11-backup.yaml     && uat_flow uat13 uat-rel-13-help-questions.yaml     && part_uat_gym "$today"
   # Launch audit #6 (3 Nov 2026): starts afresh (demo, then the member's own first workout), so it runs
   # whatever happened above.
   uat_flow uat9 uat-rel-9-demo-first.yaml
