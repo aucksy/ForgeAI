@@ -101,7 +101,7 @@ describe('questions from the server', () => {
     expect(questionErrorWords(new Error('timed out'))).toBeNull();
   });
   it('staff words stay plain', () => {
-    const lines = Object.values(QUESTION_WORDS).filter((v): v is string => typeof v === 'string');
+    const lines = (Object.values(QUESTION_WORDS) as unknown[]).filter((v): v is string => typeof v === 'string');
     for (const l of lines) expect(l, l).not.toMatch(/\b(volume|sessions?|PRs?|sync)\b/i);
   });
 });
