@@ -30,7 +30,7 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
   useFocusEffect(
     useCallback(() => {
       readKeptMembership(link.memberId)
-        .then((k) => setOnPass(Boolean(k?.answer.pass)))
+        .then((k) => setOnPass(Boolean(k && k.answer.ok && k.answer.pass)))
         .catch(() => setOnPass(false));
       const showStandIn = (): void => {
         if (!QA_STAND_IN) return;
