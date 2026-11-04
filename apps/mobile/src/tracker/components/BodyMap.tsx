@@ -18,11 +18,13 @@ function Figure({
   levels,
   height,
   onPressMuscle,
+  palette,
 }: {
   view: BodyView;
   levels: ReadonlyMap<Muscle, MapLevel>;
   height: number;
   onPressMuscle?: (m: Muscle) => void;
+  palette?: readonly string[];
 }) {
   const vb = view.viewBox;
   return (
@@ -31,7 +33,7 @@ function Figure({
         <Path
           key={i}
           d={p.d}
-          fill={regionFill(p.region, levels)}
+          fill={regionFill(p.region, levels, palette)}
           onPress={onPressMuscle && p.region !== 'body' ? () => onPressMuscle(p.region as Muscle) : undefined}
         />
       ))}
@@ -46,6 +48,8 @@ export function BodyMap({
   height = 220,
   labels = true,
   onPressMuscle,
+  palette,
+  accessibilityLabel,
 }: {
   levels: ReadonlyMap<Muscle, MapLevel>;
   figure?: BodyFigure;
@@ -53,6 +57,10 @@ export function BodyMap({
   labels?: boolean;
   /** Audit Phase 5: tap a muscle on the drawing (Progress opens its sets and exercises). */
   onPressMuscle?: (m: Muscle) => void;
+  /** F59: the colours for levels 0..4 (default: the trained-sets ramp). */
+  palette?: readonly string[];
+  /** What a screen reader says (default: the trained-muscles map). */
+  accessibilityLabel?: string;
 }) {
   const views = BODY_VIEWS[figure];
   return (
@@ -62,14 +70,14 @@ export function BodyMap({
       style={{ flexDirection: 'row', justifyContent: 'center', gap: space.lg }}
       accessible
       accessibilityRole="image"
-      accessibilityLabel={`Body map of the muscles you trained, ${figure} figure, front and back`}
+      accessibilityLabel={accessibilityLabel ?? `Body map of the muscles you trained, ${figure} figure, front and back`}
     >
       {[
         { view: views.front, label: 'Front' },
         { view: views.back, label: 'Back' },
       ].map(({ view, label }) => (
         <View key={label} style={{ alignItems: 'center' }}>
-          <Figure view={view} levels={levels} height={height} onPressMuscle={onPressMuscle} />
+          <Figure view={view} levels={levels} height={height} onPressMuscle={onPressMuscle} palette={palette} />
           {labels ? (
             <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted, marginTop: space.xs }}>
               {label}

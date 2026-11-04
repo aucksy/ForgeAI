@@ -22,7 +22,16 @@ export function mapLevels(): readonly [string, string, string, string, string] {
   return [MAP_IDLE, chart.ramp[2], chart.ramp[3], chart.ramp[4], chart.ramp[5]];
 }
 
-export function regionFill(region: BodyRegion, levels: ReadonlyMap<Muscle, MapLevel>): string {
+export function regionFill(region: BodyRegion, levels: ReadonlyMap<Muscle, MapLevel>, palette?: readonly string[]): string {
   if (region === 'body') return MAP_BODY;
-  return mapLevels()[regionLevel(region, levels)];
+  return (palette ?? mapLevels())[regionLevel(region, levels)] ?? MAP_IDLE;
+}
+
+/**
+ * F59 "ready today": level 1 ready (green), 2 almost ready (amber), 3 still resting (red). The
+ * screen always names each muscle in words too, so the colours are never the only telling.
+ * Read when drawn.
+ */
+export function readyPalette(): readonly string[] {
+  return [MAP_IDLE, color.good, color.warning, color.critical, color.critical];
 }
