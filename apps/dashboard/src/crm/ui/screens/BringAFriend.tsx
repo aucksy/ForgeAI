@@ -60,8 +60,8 @@ export function BringAFriendCard() {
 
   if (!key || !shown) return null;
 
-  const check = checkFriendDays(text);
-  const changed = check.ok && check.days !== saved;
+  // Any change can be tapped: a wrong number is then explained under the box (a greyed button explains nothing).
+  const changed = text.trim() !== (saved ? String(saved) : '');
 
   const save = async () => {
     const c = checkFriendDays(text);

@@ -59,8 +59,9 @@ const statusChip = (page, label) => page.getByRole('group', { name: 'Show enquir
 
 for (const size of ['phone', 'computer']) {
   test.describe(`bring a friend on a ${size}`, () => {
-    if (size === 'phone') test.use({ viewport: { width: 375, height: 812 } });
-    else test.use({ viewport: { width: 1280, height: 900 }, isMobile: false });
+    // The gym is set up at phone size (the shared helpers tap the phone's bottom bar); the computer run then
+    // turns the window to 1280 x 900 and goes on by address, the way the payments UAT does.
+    test.use({ viewport: { width: 375, height: 812 } });
 
     test(`F147 ${size}: free days in Settings, the referred enquiry, the owner's one-tap thank-you`, async ({ page }) => {
       const server = await openApp(page);
@@ -69,16 +70,37 @@ for (const size of ['phone', 'computer']) {
       await addMember(page, { name: 'Asha Verma', phone: '98290 11111' });
       await sell(page, { received: '1500' });
       const main = page.getByRole('main');
+      if (size === 'computer') await page.setViewportSize({ width: 1280, height: 900 });
+      const phone = size === 'phone';
+      const go = (path) =>
+        page.evaluate((p) => {
+          window.location.hash = p;
+        }, path);
+      const toSettingsApp = async () => {
+        if (phone) await openSettings(page, 'Member app');
+        else await go('/settings/app');
+      };
+      const toEnquiries = async () => {
+        if (phone) await open(page, 'Enquiries');
+        else await go('/enquiries');
+        await expect(page.getByRole('heading', { name: 'Enquiries', exact: true })).toBeVisible();
+      };
+      const toAsha = async () => {
+        if (phone) return openMember(page, 'Asha Verma');
+        await go('/members');
+        await main.getByRole('link', { name: /Asha Verma/ }).first().click();
+        await expect(page.getByRole('heading', { name: 'Asha Verma', exact: true })).toBeVisible();
+      };
 
       // 1. A server without 0056: no card.
-      await openSettings(page, 'Member app');
+      await toSettingsApp();
       await expect(main.getByText('Busy machines', { exact: true }).or(main.getByText('Challenges', { exact: true })).first()).toBeVisible();
       await expect(main.getByText('Bring a friend', { exact: true })).toHaveCount(0);
 
       // 2. With 0056: the card, empty (off) by default; the owner sets 7.
       server.friendServer = true;
       await page.reload();
-      await openSettings(page, 'Member app');
+      await toSettingsApp();
       const card = main.locator('section, div').filter({ has: page.getByText('Bring a friend', { exact: true }) }).filter({ has: page.getByLabel('Free days for each friend who joins') }).last();
       await expect(card).toBeVisible({ timeout: 15_000 });
       const days = page.getByLabel('Free days for each friend who joins');
@@ -99,7 +121,7 @@ for (const size of ['phone', 'computer']) {
       // 3. Ravi fills Asha's invite page: the enquiry comes in with the usual sync.
       friendFillsThePage(server);
       await page.reload();
-      await open(page, 'Enquiries');
+      await toEnquiries();
       const row = main.locator('div').filter({ has: page.getByText('Ravi Kumar', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Make Ravi Kumar a member' }) }).last();
       await expect(row).toBeVisible({ timeout: 15_000 });
       await expect(row).toContainText('Referred by Asha Verma');
@@ -128,7 +150,7 @@ for (const size of ['phone', 'computer']) {
         // Later: "Not now" opens Ravi; the joined row keeps the offer.
         await thank.getByRole('button', { name: 'Not now' }).tap();
         await expect(page.getByRole('heading', { name: 'Ravi Kumar', exact: true })).toBeVisible();
-        await open(page, 'Enquiries');
+        await toEnquiries();
         await statusChip(page, 'Joined').tap();
         const joined = main.locator('div').filter({ has: page.getByText('Ravi Kumar', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Give Asha Verma free days for bringing Ravi Kumar' }) }).last();
         await expect(joined).toContainText('Referred by Asha Verma');
@@ -144,13 +166,13 @@ for (const size of ['phone', 'computer']) {
       if (size === 'phone') await expect(page.getByRole('heading', { name: 'Ravi Kumar', exact: true })).toBeVisible();
 
       // Asha's plan carries the days, with the friend named in its history.
-      await openMember(page, 'Asha Verma');
+      await toAsha();
       await expect(main).toContainText('23 Nov 2026');
       await expect(main).toContainText('Reward - Bring a friend: Ravi Kumar');
       await shot(page, `${size}-friend-5-asha-plan`);
 
       // The joined row says it was given and offers nothing more.
-      await open(page, 'Enquiries');
+      await toEnquiries();
       await statusChip(page, 'Joined').tap();
       await expect(main.getByText('Asha Verma got 7 free days for this friend.')).toBeVisible();
       await expect(main.getByRole('button', { name: /^Give Asha Verma free days/ })).toHaveCount(0);
@@ -158,7 +180,7 @@ for (const size of ['phone', 'computer']) {
       await shot(page, `${size}-friend-6-joined-row`);
 
       // The Settings count.
-      await openSettings(page, 'Member app');
+      await toSettingsApp();
       await expect(main.getByTestId('friend-summary')).toHaveText('Friends who left their number: 1 · Friends who joined: 1');
     });
   });
