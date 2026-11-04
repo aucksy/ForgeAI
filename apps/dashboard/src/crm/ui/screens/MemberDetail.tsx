@@ -387,8 +387,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
                 Collect payment
               </Button>
             )}
-            <Button onClick={() => setSelling(true)}>
-              {view.coversUntil ? 'Renew' : 'Sell membership'}
+            {/* F123: a pass member is never "renewed"; selling them a plan (they start paying the gym) stays possible,
+                but quieter, since their everyday button is "Pass visit". */}
+            <Button variant={passCompany ? 'ghost' : undefined} onClick={() => setSelling(true)}>
+              {view.coversUntil && !passCompany ? 'Renew' : 'Sell membership'}
             </Button>
           </>
         }

@@ -347,7 +347,8 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
   const { member, current } = view;
   // Coverage, not the live term — a member who renewed early expires later than
   // the row they are currently sitting inside.
-  const expiresOn = view.coversUntil ?? current?.endsOn ?? null;
+  // F123: a pass member has no plan to expire, even when an old one still runs (UAT picture, 5 Nov 2026).
+  const expiresOn = view.state === 'pass' ? null : (view.coversUntil ?? current?.endsOn ?? null);
   return (
     <tr
       onClick={() => navigate(`/members/${member.id}`)}

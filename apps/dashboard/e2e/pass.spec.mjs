@@ -119,6 +119,8 @@ for (const size of ['phone', 'computer']) {
       await expect(main.getByRole('link', { name: new RegExp(CHETAN.name) })).toBeVisible();
       await expect(main).toContainText('FITPASS');
       await expect(main).toContainText('cultpass');
+      // Chetan's old plan (ends 19 Oct) is not an expiry any more: the computer table showed it on 5 Nov.
+      await expect(main).not.toContainText('19 Oct 2026');
       await shot(page, `${size}-pass-3-members`);
 
       // Today: both came in, neither is "No plan bought", nobody to renew.
