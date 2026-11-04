@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-317. Dashboard deployed; watch on Play; health form in review; deletion page live — 4 Nov 2026
+Owner, 4 Nov: "deploy the owner dashboard" (deployed: Cloudflare forgeai-panel version 4af6a2c4, built by CI 41760683735,
+checked live at 375 and 1280 px). Owner rule saved: Play Console is ONLY the simpleapps108 Chrome window (global CLAUDE.md
+item 9). Watch 0.71.0 published by hand to Wear OS internal testing. Owner OK'd (4 Nov): the watch video (Unlisted on the
+SimpleApps channel, https://youtu.be/mEhvRw3mKjw; Play foreground-service health form saved and sent for review) and the
+account deletion page wording (live at app.mettleup.fit/delete-account.html). CI: Supabase CLI pinned to 3.0.0 (latest hit
+GitHub's rate limit). CI now keeps the built dashboard (artifact dashboard-dist) so a deploy never builds on the laptop.
+
 ## R-316. 0.71.0 released (phone); watch upload blocked by Play terms — 4 Nov 2026
 Owner release message: 3 Nov 2026 ~22:34 IST ("Once this part is done you can actually release the changes"). One version: 0.71.0.
 Review blocker fixed first (ff7a2311, on main as 4a4c2551): a watch set with no weight is never saved as 0 kg; a late phone
