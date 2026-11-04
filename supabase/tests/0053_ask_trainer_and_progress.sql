@@ -163,7 +163,9 @@ begin
   r := public.member_ask_trainer(ka, s_owner, 'Can I pause my plan for a week?');
   checks := checks + 1; fails := fails || pg_temp.t53_is('8toowner', (public.owner_question_count(kop)->>'open') || '/'
     || (public.owner_question_count(kok)->>'open') || '/' || (public.owner_question_count(kt2)->>'open'), '1/1/0');
-  checks := checks + 1; fails := fails || pg_temp.t53_is('8ownername', public.member_questions(ka)->'questions'->0->>'trainer', 'Owner S.');
+  checks := checks + 1; fails := fails || pg_temp.t53_is('8ownername',
+    -- by id: every question in this test has the same asked_at (one transaction), so "newest first" cannot pick it.
+    (select q->>'trainer' from jsonb_array_elements(public.member_questions(ka)->'questions') q where q->>'id' = r->'question'->>'id'), 'Owner S.');
 
   -- 9. Progress: recent workouts checked and rebuilt; only the owner and the member's own trainer read them.
   checks := checks + 1; fails := fails || pg_temp.t53_is('9notarray', pg_temp.t53_run(format('select public.member_trainer_share2(%L, %L::jsonb, %L::jsonb)', ka, good, '{}')), 'INVALID');
