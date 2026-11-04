@@ -4,6 +4,8 @@
  * Audit PG-18: each photo is shown WHOLE (contain, never cover) in two boxes of the same size,
  * so a wide photo next to a tall one keeps its arms and sides — both at the same scale against
  * the box. Tap either to open it full screen with pinch and double-tap zoom.
+ *
+ * F146: "Share before and after" makes one picture of these two (tracker/components/BeforeAfterShare).
  */
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -12,11 +14,12 @@ import { Modal, Pressable, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { EmptyState, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, GhostButton, IconButton, LoadError, Screen, Skeleton } from '@/components/ui';
 import { useLoad } from '@/lib/useLoad';
 import { goBack } from '@/lib/goBack';
 import { dateWithYear } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
+import { BeforeAfterShare } from '@/tracker/components/BeforeAfterShare';
 import { ZoomImage } from '@/tracker/components/ZoomImage';
 import { apartText } from '@/tracker/lib/months';
 import { getProgressPhotos, type ProgressPhoto } from '@/tracker/services/progressPhotos';
@@ -26,16 +29,18 @@ export default function ComparePhotosScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ a?: string; b?: string }>();
   const [zoomed, setZoomed] = useState<{ photo: ProgressPhoto; label: string } | null>(null);
+  const [sharing, setSharing] = useState(false);
   // A failed read says "Couldn't load these photos" — not "One of these photos was deleted".
-  const load = useLoad<[ProgressPhoto, ProgressPhoto] | null>(async () => {
+  const load = useLoad<{ pair: [ProgressPhoto, ProgressPhoto]; all: ProgressPhoto[] } | null>(async () => {
     const all = await getProgressPhotos();
     const a = all.find((p) => p.id === params.a);
     const b = all.find((p) => p.id === params.b);
     if (!a || !b) return null;
     const older = a.dateISO < b.dateISO || (a.dateISO === b.dateISO && a.createdAt <= b.createdAt) ? a : b;
-    return older === a ? [a, b] : [b, a];
+    return { pair: older === a ? [a, b] : [b, a], all };
   }, [params.a, params.b]);
-  const pair = load.state === 'ready' ? load.data : undefined;
+  const loaded = load.state === 'ready' ? load.data : undefined;
+  const pair = loaded === undefined ? undefined : loaded === null ? null : loaded.pair;
 
   return (
     <Screen
@@ -82,8 +87,10 @@ export default function ComparePhotosScreen() {
           <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>
             Tap a photo to open it and pinch to zoom.
           </Text>
+          <GhostButton label="Share before and after" icon="send" onPress={() => setSharing(true)} />
         </View>
       )}
+      {loaded ? <BeforeAfterShare visible={sharing} photos={loaded.all} start={loaded.pair} onClose={() => setSharing(false)} /> : null}
 
       <Modal visible={zoomed != null} animationType="fade" onRequestClose={() => setZoomed(null)} statusBarTranslucent>
         <GestureHandlerRootView style={{ flex: 1 }}>

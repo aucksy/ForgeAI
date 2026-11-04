@@ -38,7 +38,15 @@ export const WEB_FONT: Record<FontToken, { family: string; weight: number }> = {
   monoBold: { family: 'Space Grotesk', weight: 700 },
 };
 
-export type SceneNode =
+/**
+ * F146: what a node is FOR, so a later step can swap it without guessing from its place —
+ * `brand` (MettleUp's mark in the header), `kicker` (the words on the header's right), `footer`
+ * ("Logged with MettleUp"), `photo` (a progress photo and its label: the See-through look leaves
+ * these exactly as they are). See share/gymBrand.ts.
+ */
+export type NodeRole = 'brand' | 'kicker' | 'footer' | 'photo';
+
+export type SceneNode = (
   | { t: 'rect'; x: number; y: number; w: number; h: number; r?: number; fill: string; stroke?: string; strokeWidth?: number; opacity?: number }
   | { t: 'gradient'; x: number; y: number; w: number; h: number; r?: number; from: string; to: string }
   | { t: 'circle'; cx: number; cy: number; r: number; fill: string }
@@ -48,7 +56,14 @@ export type SceneNode =
   | { t: 'text'; x: number; y: number; text: string; font: FontToken; size: number; fill: string; anchor?: 'start' | 'middle' | 'end'; opacity?: number; shadow?: boolean }
   | { t: 'path'; d: string; fill?: string; stroke?: string; strokeWidth?: number; x?: number; y?: number; scale?: number }
   /** v0.25.1: `figure` is the member's choice in Profile (absent = male). */
-  | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[]; figure?: BodyFigure };
+  | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[]; figure?: BodyFigure }
+  /**
+   * F146: a picture (the gym's logo, a progress photo) in the box x, y, w, h. `fit: 'contain'`
+   * shows it whole, never stretched, and `align` says where it sits in a wider box; `'cover'`
+   * fills the box and trims the edges evenly. `r` rounds the box's corners.
+   */
+  | { t: 'image'; x: number; y: number; w: number; h: number; href: string; fit: 'contain' | 'cover'; align?: 'start' | 'middle'; r?: number }
+) & { role?: NodeRole };
 
 export interface Scene {
   width: number;
@@ -217,6 +232,14 @@ export function sceneToSvg(scene: Scene): string {
         );
         break;
       }
+      case 'image': {
+        const id = `c${gid++}`;
+        parts.push(
+          `<defs><clipPath id="${id}"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="${n.r ?? 0}"/></clipPath></defs>`,
+          `<image x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" href="${esc(n.href)}" preserveAspectRatio="${imageAspect(n)}" clip-path="url(#${id})"/>`,
+        );
+        break;
+      }
       case 'body': {
         const view = bodyView(n);
         const s = n.height / view.viewBox.height;
@@ -231,6 +254,17 @@ export function sceneToSvg(scene: Scene): string {
     }
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}">${scene.background === CLEAR_BACKGROUND ? '' : `<rect width="${scene.width}" height="${scene.height}" fill="${scene.background}"/>`}${parts.join('')}</svg>`;
+}
+
+/** The SVG `preserveAspectRatio` of an image node: whole (meet) or filling the box (slice). PURE. */
+export function imageAspect(n: Extract<SceneNode, { t: 'image' }>): string {
+  if (n.fit === 'cover') return 'xMidYMid slice';
+  return `${n.align === 'start' ? 'xMin' : 'xMid'}YMid meet`;
+}
+
+/** The pictures a scene draws (its share button waits until each has loaded). PURE. */
+export function sceneImages(scene: Scene): string[] {
+  return [...new Set(scene.nodes.flatMap((n) => (n.t === 'image' ? [n.href] : [])))];
 }
 
 /** A safe file name for the saved picture: letters, digits and dashes only. */

@@ -8,6 +8,7 @@
  * drawing and colours as the Progress screen. Sample data, so every picture says so.
  */
 import { mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { crc32, deflateSync } from 'node:zlib';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
@@ -17,6 +18,9 @@ import type { BodyFigure } from '@/tracker/catalog/bodyMapPaths';
 import type { Muscle } from '@/tracker/catalog/muscles';
 import { muscleLevels } from '@/tracker/engine/bodyMap';
 import { buildMonthReport, buildYearReview, type ReportSession } from '@/tracker/engine/reports';
+import { beforeAfterScene } from '@/tracker/share/beforeAfterCard';
+import { framedScene } from '@/tracker/share/frame';
+import { withGym } from '@/tracker/share/gymBrand';
 import { monthShareScene, yearShareScene } from '@/tracker/share/reportCard';
 import { sceneToSvg, type Scene, type SceneNode } from '@/tracker/share/scene';
 import { workoutShareScene, type WorkoutShareInput } from '@/tracker/share/workoutCard';
@@ -168,6 +172,87 @@ describe.runIf(OUT)('preview pictures (v0.25.1)', () => {
       to: '2026-09-30',
     });
     save('share-month-partly-timed', sampleNote(monthShareScene(month, 3)));
+  });
+});
+
+/** A PNG drawn pixel by pixel (sample photos and a sample logo for the F146 previews). */
+function png(w: number, h: number, px: (x: number, y: number) => [number, number, number, number]): string {
+  const raw = Buffer.alloc((w * 4 + 1) * h);
+  for (let y = 0; y < h; y += 1) {
+    raw[y * (w * 4 + 1)] = 0;
+    for (let x = 0; x < w; x += 1) {
+      const [r, g, b, a] = px(x, y);
+      const o = y * (w * 4 + 1) + 1 + x * 4;
+      raw[o] = r;
+      raw[o + 1] = g;
+      raw[o + 2] = b;
+      raw[o + 3] = a;
+    }
+  }
+  const chunk = (type: string, data: Buffer): Buffer => {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(data.length);
+    const td = Buffer.concat([Buffer.from(type, 'ascii'), data]);
+    const crc = Buffer.alloc(4);
+    crc.writeUInt32BE(crc32(td) >>> 0);
+    return Buffer.concat([len, td, crc]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 6;
+  const file = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
+  return `data:image/png;base64,${file.toString('base64')}`;
+}
+
+/** A 3:4 "photo": a wall, a floor and a standing figure (wider in the after one). */
+function samplePhoto(wide: number): string {
+  return png(300, 400, (x, y) => {
+    const dx = (x - 150) / wide;
+    const head = (x - 150) ** 2 + (y - 90) ** 2 < 30 ** 2;
+    const body = y > 125 && y < 330 && Math.abs(dx) < 1;
+    if (head || body) return [196, 140, 110, 255];
+    return y > 330 ? [70, 60, 55, 255] : [150 + (y >> 3), 160 + (y >> 3), 170 + (y >> 3), 255];
+  });
+}
+
+/** A 2:1 logo with a see-through background: a ring and a bar. */
+const SAMPLE_LOGO = png(256, 128, (x, y) => {
+  const r = Math.hypot(x - 64, y - 64);
+  if (r > 40 && r < 56) return [255, 196, 0, 255];
+  if (x > 124 && x < 244 && y > 52 && y < 76) return [255, 255, 255, 255];
+  return [0, 0, 0, 0];
+});
+
+describe.runIf(OUT)('preview pictures (F146: the gym on share pictures, before/after)', () => {
+  const gym = { name: 'Iron Temple Gym', logo: { href: SAMPLE_LOGO, width: 256, height: 128 } };
+  const workout = workoutShareScene({
+    title: 'Push Day',
+    dateText: 'Tue, 6 Oct 2026',
+    durationText: '1h 04m',
+    volumeText: '12,480',
+    sets: 18,
+    exercises: [
+      { name: 'Bench Press', sets: 4, best: '80 kg × 8' },
+      { name: 'Overhead Press', sets: 3, best: '45 kg × 8' },
+    ],
+    records: [{ exerciseName: 'Bench Press', label: 'Heaviest weight', value: '80 kg' }],
+    muscles: [
+      { muscle: 'chest', sets: 8 },
+      { muscle: 'triceps', sets: 6 },
+    ],
+  });
+  const pair = beforeAfterScene({ before: { uri: samplePhoto(42), dateISO: '2026-08-06' }, after: { uri: samplePhoto(52), dateISO: '2026-10-29' } });
+  it('workout picture with a gym logo and name, and with the name only', () => {
+    save('f146-workout-gym-logo', sampleNote(withGym(workout, gym)));
+    save('f146-workout-gym-name', sampleNote(withGym(workout, { ...gym, logo: null })));
+    save('f146-workout-gym-story-clear', sampleNote(framedScene(withGym(workout, gym), 'story', 'clear')));
+  });
+  it('before/after picture, with and without the gym', () => {
+    save('f146-before-after-gym', sampleNote(withGym(pair, gym)));
+    save('f146-before-after-plain', sampleNote(pair));
+    save('f146-before-after-story', sampleNote(framedScene(withGym(pair, gym), 'story', 'dark')));
   });
 });
 

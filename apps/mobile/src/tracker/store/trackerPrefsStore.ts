@@ -19,6 +19,8 @@
  *  - `shareSize` / `shareLook` (15 Oct 2026, Hevy's share backgrounds): the share picture's size
  *    (Post or Story) and background (Dark or See-through), as last picked on the share sheet.
  *    Post + Dark — the only picture before — the first time.
+ *  - `shareGym` (F146, 4 Nov 2026): the gym's name and logo on share pictures — Show (default) or
+ *    Hide, as last picked on the share sheet. Asked only of a member in a gym.
  *  - `weightJump` / `repRange` (Oct 2026, owner: "scientific Targets that follow two simple
  *    settings"): how much a Target adds when it is time to go up (Small ~2.5% · Standard ~5%,
  *    the default · Large ~10%) and which rep range routine rows with the default range use
@@ -93,6 +95,8 @@ export interface TrackerPrefsState {
   /** The share sheet's Size and Background choices. */
   shareSize: ShareSize;
   shareLook: ShareLook;
+  /** F146: the gym's name and logo on share pictures (true = Show). */
+  shareGym: boolean;
   /** Settings → Workouts → Weight jumps. */
   weightJump: WeightJump;
   /** Settings → Workouts → Rep range. */
@@ -129,6 +133,7 @@ export interface TrackerPrefsState {
   setBodyWeightAnyWorkout: (value: boolean) => void;
   setShareSize: (value: ShareSize) => void;
   setShareLook: (value: ShareLook) => void;
+  setShareGym: (value: boolean) => void;
   setWeightJump: (value: WeightJump) => void;
   setInUseAfterSet: (value: boolean) => void;
   setInUseFor: (exerciseId: string, on: boolean) => void;
@@ -191,6 +196,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       bodyWeightAnyWorkout: true,
       shareSize: 'post',
       shareLook: 'dark',
+      shareGym: true,
       weightJump: DEFAULT_JUMP,
       repRange: 'goal',
       inUseAfterSet: true,
@@ -209,6 +215,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setBodyWeightAnyWorkout: (value) => set({ bodyWeightAnyWorkout: value !== false }),
       setShareSize: (value) => set({ shareSize: isShareSize(value) ? value : 'post' }),
       setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
+      setShareGym: (value) => set({ shareGym: value !== false }),
       setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
       setRepRange: (value) => set({ repRange: isRepRangeChoice(value) ? value : 'goal' }),
       setInUseAfterSet: (inUseAfterSet) => set({ inUseAfterSet: inUseAfterSet === true }),
@@ -242,6 +249,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           previousFrom: isPreviousFrom(p.previousFrom) ? shownPreviousFrom(p.previousFrom) : current.previousFrom,
           shareSize: isShareSize(p.shareSize) ? p.shareSize : current.shareSize,
           shareLook: isShareLook(p.shareLook) ? p.shareLook : current.shareLook,
+          shareGym: typeof p.shareGym === 'boolean' ? p.shareGym : current.shareGym,
           weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
           restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,

@@ -13,9 +13,8 @@ import { fmtTotalDistance } from '../engine/logTypes';
 import { bigNumber, durationText, type MonthReport, type PeriodTotals, type PictureTotals, type YearReview } from '../engine/reports';
 import { setsText } from '../engine/volume';
 import { daysInMonth, firstWeekday, monthName, monthTitle } from '../lib/months';
-import { wordmark } from './brand';
 import { fitText, type Scene, type SceneNode } from './scene';
-import { cornerGlow, SHARE_H, SHARE_W, statBox } from './workoutCard';
+import { cornerGlow, footerLine, headerBrand, headerKicker, SHARE_H, SHARE_W, statBox } from './workoutCard';
 
 const M = 72;
 const BG = '#0A0C12';
@@ -24,8 +23,8 @@ const LINE = 'rgba(255,255,255,0.08)';
 function frame(kicker: string, title: string, sub: string): SceneNode[] {
   return [
     cornerGlow(),
-    ...wordmark(M, 64, 56).nodes,
-    { t: 'text', x: SHARE_W - M, y: 103, text: kicker, font: 'bodyMedium', size: 30, fill: color.inkSecondary, anchor: 'end' },
+    ...headerBrand(),
+    headerKicker(kicker),
     { t: 'text', x: M, y: 236, text: fitText(title, 'display', 84, SHARE_W - M * 2), font: 'display', size: 84, fill: color.ink },
     { t: 'text', x: M, y: 292, text: sub, font: 'bodySemi', size: 32, fill: color.accent },
   ];
@@ -38,7 +37,7 @@ function stats(items: [string, string][]): SceneNode[] {
 }
 
 function footer(): SceneNode {
-  return { t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with MettleUp', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle' };
+  return footerLine();
 }
 
 /**

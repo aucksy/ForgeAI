@@ -97,6 +97,8 @@ const BRAND = new Set<string>(Object.values(FORGE_MARK).map((c) => c.toUpperCase
 const WHITE = '#FFFFFF';
 
 function seeThrough(n: SceneNode): SceneNode | null {
+  // F146: a progress photo and its label stay as they are (the photo is its own background).
+  if (n.role === 'photo') return n;
   switch (n.t) {
     case 'glow':
     case 'gradient':

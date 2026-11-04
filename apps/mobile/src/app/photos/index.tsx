@@ -13,6 +13,9 @@
  * Audit Phase 8 (PG-19, years of photos): the grid is a virtualised list of rows of three
  * (`photoRows`), so only the rows near the screen are drawn — 500 photos open as fast as 5.
  * The tiles, the buttons above them and every state look exactly as before.
+ *
+ * F146: "Share before and after" (two photos or more): one picture of the first photo and the
+ * latest side by side, either one changeable (tracker/components/BeforeAfterShare).
  */
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -25,6 +28,7 @@ import { askConfirm, EmptyState, GhostButton, Icon, IconButton, LoadError, Prima
 import { dateWithYear, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';
 import { color, radius, space, type } from '@/theme/tokens';
+import { BeforeAfterShare } from '@/tracker/components/BeforeAfterShare';
 import { DatePickerSheet } from '@/tracker/components/DatePickerSheet';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
@@ -83,6 +87,7 @@ export default function ProgressPhotosScreen() {
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [viewing, setViewing] = useState<ProgressPhoto | null>(null);
+  const [sharingPair, setSharingPair] = useState(false);
   const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [backupOn, setBackupOn] = useState(false);
@@ -304,6 +309,9 @@ export default function ProgressPhotosScreen() {
                 {photos && photos.length >= 2 ? (
                   <GhostButton label="Compare two photos" icon="camera" onPress={() => setPicking(true)} />
                 ) : null}
+                {photos && photos.length >= 2 ? (
+                  <GhostButton label="Share before and after" icon="send" onPress={() => setSharingPair(true)} />
+                ) : null}
               </View>
             )}
 
@@ -375,6 +383,8 @@ export default function ProgressPhotosScreen() {
           </View>
         </GestureHandlerRootView>
       </Modal>
+
+      {photos && photos.length >= 2 ? <BeforeAfterShare visible={sharingPair} photos={photos} onClose={() => setSharingPair(false)} /> : null}
 
       <DatePickerSheet
         visible={dating != null}

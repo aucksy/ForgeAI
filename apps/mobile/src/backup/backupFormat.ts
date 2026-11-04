@@ -120,6 +120,8 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
     'bodyWeightAnyWorkout',
     'shareSize',
     'shareLook',
+    // F146: the gym's name and logo on share pictures (Show / Hide).
+    'shareGym',
     'weightJump',
     'repRange',
     'inUseAfterSet',

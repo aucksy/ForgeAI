@@ -4,9 +4,9 @@
  * the full picture size, so sharing needs no extra native add-on.
  */
 import { forwardRef } from 'react';
-import Svg, { Circle, Defs, G, LinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, ClipPath, Defs, G, Image as SvgImage, LinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
-import { CLEAR_BACKGROUND, mapOutline, NATIVE_FONT, bodyPaths, bodyView, textShadows, type Scene } from './scene';
+import { CLEAR_BACKGROUND, imageAspect, mapOutline, NATIVE_FONT, bodyPaths, bodyView, textShadows, type Scene } from './scene';
 
 export interface SceneSvgProps {
   scene: Scene;
@@ -14,6 +14,11 @@ export interface SceneSvgProps {
   width: number;
 }
 
+/**
+ * F146: a picture node (the gym's logo, a progress photo) is drawn only once it is in the phone's
+ * image memory — react-native-svg's Android `toDataURL` draws from Fresco's bitmap cache and skips a
+ * picture still loading — so the share sheet checks that memory before it saves (ShareSheet.tsx).
+ */
 export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene, width }, ref) {
   const height = (width * scene.height) / scene.width;
   let gid = 0;
@@ -68,6 +73,27 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
           }
           case 'circle':
             return <Circle key={i} cx={n.cx} cy={n.cy} r={n.r} fill={n.fill} />;
+          case 'image': {
+            const id = `sc${gid++}`;
+            return (
+              <G key={i}>
+                <Defs>
+                  <ClipPath id={id}>
+                    <Rect x={n.x} y={n.y} width={n.w} height={n.h} rx={n.r ?? 0} />
+                  </ClipPath>
+                </Defs>
+                <SvgImage
+                  x={n.x}
+                  y={n.y}
+                  width={n.w}
+                  height={n.h}
+                  href={{ uri: n.href }}
+                  preserveAspectRatio={imageAspect(n)}
+                  clipPath={`url(#${id})`}
+                />
+              </G>
+            );
+          }
           case 'text': {
             const text = (y: number, fill: string, opacity: number | undefined, key: string | number) => (
               <SvgText

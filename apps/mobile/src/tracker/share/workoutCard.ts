@@ -73,6 +73,21 @@ export function completeLine(beatLast: string | undefined): string {
   return fitText(full, 'bodySemi', 32, SHARE_W - M * 2) === full ? full : base;
 }
 
+/** F146: MettleUp's wordmark at the header's left — the spot the member's gym takes (share/gymBrand.ts). */
+export function headerBrand(): SceneNode[] {
+  return wordmark(M, 64, 56).nodes.map((n) => ({ ...n, role: 'brand' as const }));
+}
+
+/** The words at the header's right (the day, the month), on the wordmark's middle line. */
+export function headerKicker(text: string): SceneNode {
+  return { t: 'text', x: SHARE_W - M, y: 103, text, font: 'bodyMedium', size: 30, fill: color.inkSecondary, anchor: 'end', role: 'kicker' };
+}
+
+/** "Logged with MettleUp" at the foot (with a gym, gymBrand.ts redraws it with MettleUp's mark). */
+export function footerLine(): SceneNode {
+  return { t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with MettleUp', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle', role: 'footer' };
+}
+
 /** The soft ember glow in the top corner, like the app's own screens. */
 export function cornerGlow(): SceneNode {
   return { t: 'glow', cx: SHARE_W - 60, cy: 40, r: 560, color: color.accent, opacity: 0.16 };
@@ -83,8 +98,8 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   nodes.push(cornerGlow());
 
   // Header: wordmark left, the day right.
-  nodes.push(...wordmark(M, 64, 56).nodes);
-  nodes.push({ t: 'text', x: SHARE_W - M, y: 103, text: input.dateText, font: 'bodyMedium', size: 30, fill: color.inkSecondary, anchor: 'end' });
+  nodes.push(...headerBrand());
+  nodes.push(headerKicker(input.dateText));
 
   // Title.
   nodes.push({ t: 'text', x: M, y: 236, text: fitText(input.title, 'display', 92, SHARE_W - M * 2), font: 'display', size: 92, fill: color.ink });
@@ -185,7 +200,7 @@ export function workoutShareScene(input: WorkoutShareInput): Scene {
   }
 
   // Footer.
-  nodes.push({ t: 'text', x: SHARE_W / 2, y: SHARE_H - 44, text: 'Logged with MettleUp', font: 'bodyMedium', size: 26, fill: color.inkMuted, anchor: 'middle' });
+  nodes.push(footerLine());
 
   return { width: SHARE_W, height: SHARE_H, background: BG, nodes };
 }
