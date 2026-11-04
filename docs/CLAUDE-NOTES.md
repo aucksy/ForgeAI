@@ -13,6 +13,12 @@ delete) that SIM's WhatsApp account; the SIM is in his phone for the one Meta co
 app + WhatsApp Cloud API in his Chrome, display name "MettleUp", one authentication template (copy-code button),
 then the build (members + gym owners). Keep the SIM's validity pack recharged (prepaid SIMs lapse ~90 days).
 His Facebook sign-in and the SMS code stay his. Live switch-on needs his yes (money: ~₹0.14 per code with GST).
+Done 4 Nov: Meta app "MettleUp" (id 1118531290784840, email contact@mettleup.fit) under "Aakash Pahuja's Business"
+(unverified); he said "yes, agree" to Meta Platform + WhatsApp terms. The developer-console number step failed
+(#2494070, see D:/Brain/Lessons/whatsapp-dev-console-add-number-fails-use-whatsapp-manager.md); added the number in
+WhatsApp Manager instead: WhatsApp account "MettleUp", display name "MettleUp" (in review), category Other.
+Left: login-code template, payment method (his card), access token into Cloudflare secrets (his hands), build, and
+business verification (Udyam) so the name shows at the top of chats; delete the empty duplicate MettleUp account.
 
 ## R-321. Built R-319 items 1 (Ask a trainer) and 11 (gym sees member progress) — 4 Nov 2026
 Owner decision used (R-320, relayed 4 Nov): the question goes to the PICKED person only; the owner does not see other
