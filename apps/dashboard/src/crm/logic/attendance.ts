@@ -44,6 +44,7 @@ import {
   type DateISO,
 } from './dates';
 import { coverageEndsOn, EXPIRING_WINDOW_DAYS } from './membership';
+import { isPassMember } from './passMembers';
 import { gymTerms } from './pt';
 
 // ---------------------------------------------------------------- constants
@@ -581,6 +582,8 @@ export function atRiskList(
   const rows: AtRiskRow[] = [];
   for (const member of members) {
     if (member.archived) continue;
+    // F123: a pass member is not a paying member of this gym; their visits are the pass company's count.
+    if (isPassMember(member)) continue;
 
     const theirTerms = membershipsByMember.get(member.id) ?? [];
 

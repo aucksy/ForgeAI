@@ -33,6 +33,11 @@ export type MembershipAnswer =
       next: PlanSpan | null;
       lastEndedOn: string | null;
       visitsThisMonth: number;
+      /**
+       * F123 (supabase 0055): the pass company (FITPASS, cultpass...) when the member trains here on
+       * a pass, else null. A server without 0055 sends none: null.
+       */
+      pass?: string | null;
     }
   | { ok: false; problem: MembershipProblem; gymName: string };
 
@@ -75,6 +80,7 @@ export function membershipFromRow(raw: unknown): MembershipAnswer | null {
     next: spanFrom(r.next),
     lastEndedOn: day(r.lastEndedOn),
     visitsThisMonth: visits,
+    pass: str(r.pass).slice(0, 40) || null,
   };
 }
 
@@ -139,6 +145,19 @@ export function membershipView(a: MembershipAnswer): MembershipView {
     }
     lines.push(visits);
     return { tone: soon ? 'soon' : 'good', title: cur.planName, when: endsLine(cur.endsOn, a.day), lines };
+  }
+  // F123: a pass member (FITPASS, cultpass...) has no plan to renew; the gym counts each visit for the company.
+  if (a.pass) {
+    return {
+      tone: 'good',
+      title: `${a.pass} member`,
+      when: null,
+      lines: [
+        `You train at ${a.gymName} with ${a.pass}. There is no plan to renew.`,
+        `Scan the gym's check-in QR when you arrive. The gym counts it as a ${a.pass} visit.`,
+        visits,
+      ],
+    };
   }
   if (a.next) {
     return { tone: 'good', title: a.next.planName, when: `Starts ${tinyDateWithYear(a.next.startsOn, a.day)}`, lines: [visits] };

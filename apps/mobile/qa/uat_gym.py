@@ -9,6 +9,9 @@ yes to a typed number), the way qa-journeys and qa-conditions make their own gym
         started 20 days ago (India) and ends <days-left> days after the PHONE's today. Prints
         CODE=<join code> and ENDS=<the day as the app words it: "Friday, 6 Nov">.
   confirm <slot> <+91mobile>   the desk's yes to that typed check-in number (0048), if one waits
+  make-pass <slot> <full name> <company>
+        F123: that desk-list member becomes a pass member of <company> (FITPASS) from today, and their
+        plan is cancelled (a pass member has no plan), as the admin app's member form would save it.
   sign-out <slot>              end the owner session
 
 Security (WP6 rules, unchanged): the gym is made by this run; never FORGE1 / RAMS01; the owner session
@@ -53,6 +56,23 @@ def add_member_with_plan(st, full_name, mobile, ends_on):
     return f"'{full_name}' on the desk list with a plan {starts}..{ends_on} (version {v})"
 
 
+def make_pass(st, full_name, company):
+    pulled = xj.rpc("crm_pull", {"p_key": st["key"], "p_since": 0}) or {}
+    base = pulled.get("version")
+    rows = [r for r in pulled.get("records") or [] if not r.get("x") and r.get("d") is not None]
+    member = next((r["d"] for r in rows if r["k"] == "member" and r["d"].get("fullName") == full_name), None)
+    if not member:
+        return f"NO MEMBER '{full_name}' on the desk list"
+    now_ms = int(time.time() * 1000)
+    recs = [{"k": "member", "id": member["id"],
+             "d": {**member, "passCompany": company, "passSince": xj.today_ist(), "updatedAt": now_ms}}]
+    for r in rows:
+        if r["k"] == "membership" and r["d"].get("memberId") == member["id"]:
+            recs.append({"k": "membership", "id": r["id"], "d": {**r["d"], "cancelled": True, "updatedAt": now_ms}})
+    v = xj.rpc("crm_push", {"p_key": st["key"], "p_base": base, "p_records": recs, "p_push_id": str(uuid.uuid4())})
+    return f"'{full_name}' is now a {company} pass member, {len(recs) - 1} plan(s) cancelled (version {v})"
+
+
 def main(argv):
     if len(argv) < 2:
         print(__doc__)
@@ -71,6 +91,9 @@ def main(argv):
         return 0
     if cmd == "confirm":
         print(xc.confirm_numbers(xj.load(slot), argv[2]))
+        return 0
+    if cmd == "make-pass":
+        print(make_pass(xj.load(slot), argv[2], argv[3]))
         return 0
     if cmd == "sign-out":
         return xj.main(["sign-out", slot])

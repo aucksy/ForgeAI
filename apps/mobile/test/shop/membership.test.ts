@@ -89,3 +89,26 @@ describe('My membership: the words', () => {
     expect(keptLine(at, at + 2 * 86400_000, () => '6:42 pm')).toMatch(/earlier day/);
   });
 });
+
+describe('My membership: a pass member (F123, supabase 0055)', () => {
+  it('reads the pass company; a server without 0055 sends none', () => {
+    expect(membershipFromRow(row({ pass: '  FITPASS ' }))).toMatchObject({ ok: true, pass: 'FITPASS' });
+    expect(membershipFromRow(row())).toMatchObject({ ok: true, pass: null });
+    expect(membershipFromRow(row({ pass: 42 }))).toMatchObject({ pass: null });
+  });
+  it('no plan to renew: the company, the QR, and the days at the gym', () => {
+    expect(view({ current: null, lastEndedOn: '2026-07-31', pass: 'FITPASS' })).toEqual({
+      tone: 'good',
+      title: 'FITPASS member',
+      when: null,
+      lines: [
+        "You train at RAM'S FITNESS with FITPASS. There is no plan to renew.",
+        "Scan the gym's check-in QR when you arrive. The gym counts it as a FITPASS visit.",
+        '9 days at the gym this month.',
+      ],
+    });
+  });
+  it('a plan the gym sold them still shows as a plan', () => {
+    expect(view({ pass: 'cultpass' }).title).toBe('Quarterly + PT');
+  });
+});

@@ -71,6 +71,9 @@ import { CheckInQrScreen } from '../../shop/CheckInQrScreen';
 import { VisitorsCard } from '../../branches/VisitorsCard';
 import { MemberAvatar } from '../MemberPhoto';
 import { useBranches } from '../../branches/context';
+import { isPassMember, passCompanyOfVisit } from '../../logic/passMembers';
+import { t } from '../../lang/lang';
+import { PassVisitsScreen } from './PassVisits';
 
 type Tab = 'register' | 'risk';
 
@@ -83,12 +86,19 @@ const TREND_DAYS = 30;
 export function AttendanceScreen({ section }: { section?: string }) {
   // `/attendance/qr`: the "Scan to check in" poster (QR self check-in, 15 Oct 2026).
   if (section === 'qr') return <CheckInQrScreen />;
+  // `/attendance/pass`: F123, visits by FITPASS, cultpass and other pass members, month by month.
+  if (section === 'pass') return <PassVisitsScreen />;
   return <AttendanceTabs section={section} />;
 }
 
 function AttendanceTabs({ section }: { section?: string }) {
-  const tab: Tab = section === 'risk' ? 'risk' : 'register';
   const { snapshot, today } = useCrm();
+  // F123: the Pass visits tab, once the gym has a pass member (or a pass visit from one, archived since).
+  const hasPass = useMemo(
+    () => snapshot.members.some(isPassMember) || snapshot.visits.some((v) => Boolean(v.passCompany)),
+    [snapshot.members, snapshot.visits],
+  );
+  const tab: Tab = section === 'risk' ? 'risk' : 'register';
 
   const atRiskN = useMemo(
     () => atRiskList(snapshot.members, snapshot.memberships, snapshot.visits, today).length,
@@ -120,9 +130,17 @@ function AttendanceTabs({ section }: { section?: string }) {
             : 'Who trained, and when'
         }
         actions={
-          <Button variant="ghost" onClick={() => navigate('/attendance/qr')}>
-            Check-in QR
-          </Button>
+          <>
+            {/* F123: the monthly count per pass company, once the gym has a pass member. */}
+            {hasPass && (
+              <Button variant="ghost" onClick={() => navigate('/attendance/pass')}>
+                {t('Pass visits')}
+              </Button>
+            )}
+            <Button variant="ghost" onClick={() => navigate('/attendance/qr')}>
+              Check-in QR
+            </Button>
+          </>
         }
       />
 
@@ -588,7 +606,9 @@ function RegisterRowView({
   busy: boolean;
   onUndo: () => void;
 }) {
-  const planWarn = view !== null && view.state !== 'active' && view.state !== 'expiring';
+  const planWarn = view !== null && view.state !== 'active' && view.state !== 'expiring' && view.state !== 'pass';
+  // F123: a pass member's visit says which company it counts for.
+  const pass = passCompanyOfVisit(visit, view?.member);
   return (
     <Row gap={space.md} wrap={false}>
       <span style={{ fontFamily: font.mono, fontSize: 12, color: color.inkMuted, minWidth: 62 }}>
@@ -604,6 +624,7 @@ function RegisterRowView({
         )}
       </span>
       {view !== null && planWarn && <Pill tone={stateTone(view.state)}>{STATE_LABEL[view.state]}</Pill>}
+      {pass && <Pill tone="good">{t('{company} visit', { company: pass })}</Pill>}
       {view !== null && view.outstandingP > 0 && (
         <Pill tone="warn">{`${formatINR(view.outstandingP)} due`}</Pill>
       )}

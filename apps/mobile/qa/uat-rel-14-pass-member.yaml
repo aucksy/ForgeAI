@@ -1,0 +1,65 @@
+# Part UAT, flow 14 (gym, after flow 12): F123 pass members (FITPASS, cultpass), 4 Nov 2026.
+# run-device-qa.sh has just made "Uma Desk" a FITPASS pass member on the fresh "QA UAT Gym" (qa/uat_gym.py
+# make-pass: passCompany FITPASS from today, her plan cancelled), as the admin app's member form saves it.
+# The phone (member "Uma", already checked in today by flow 8) scans the gym's poster link again:
+#  - With supabase 0055 live: the check-in does NOT say "see the desk" (a pass member is covered), and the
+#    Gym tab's "My membership" reads "FITPASS member" with its two lines, and no "Renew my plan".
+#  - Until 0055 is live (NOT applied yet): the old words, "Please see the desk" and "No plan yet". The
+#    flow checks whichever the server gives, and the pictures show which.
+# The desk's side (Add member as a pass member, Pass visit, the monthly count) is the admin panel's e2e
+# (apps/dashboard/e2e/pass.spec.mjs). CODE and GYM are passed by run-device-qa.sh (-e); no `env:` default.
+appId: com.mettleup.app
+---
+- openLink: "forgeai://c/${CODE}"
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM}$"
+    timeout: 45000
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: '^You were already checked in at ${GYM} today\. Nothing more to do\.$'
+    timeout: 30000
+- takeScreenshot: rel-140-pass-checkin
+# ---------------------------------------------------------------- until 0055 is live: the old words
+- runFlow:
+    when:
+      visible: 'Your gym membership is not active today\. Please see the desk\.'
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^Done$"
+      - tapOn: "^Done$"
+      - tapOn:
+          text: "^Gym$"
+          index: 0
+          optional: true
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^No plan yet$"
+      - assertVisible: "${GYM} has no plan for you on record\\. Ask the desk\\."
+      - takeScreenshot: rel-141-pass-card-before-0055
+# ---------------------------------------------------------------- with 0055: a pass member
+- runFlow:
+    when:
+      notVisible: 'Your gym membership is not active today\. Please see the desk\.'
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^Done$"
+      - tapOn: "^Done$"
+      - tapOn:
+          text: "^Gym$"
+          index: 0
+          optional: true
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^FITPASS member$"
+      - assertVisible: "^You train at ${GYM} with FITPASS\\. There is no plan to renew\\.$"
+      - assertVisible: "^Scan the gym's check-in QR when you arrive\\. The gym counts it as a FITPASS visit\\.$"
+      - assertVisible: "^[0-9]+ days? at the gym this month\\.$"
+      - assertNotVisible: "^Renew my plan$"
+      - assertNotVisible: ".*Your plan has ended.*"
+      - takeScreenshot: rel-141-pass-card

@@ -441,6 +441,7 @@ export function countChangeWords(now: number, before: number, since: string): st
 /** The state shown beside a new member: their plan today, in the roster's words. */
 export function newMemberPlanWords(state: MemberState | undefined, planName: string | null): string {
   if (!state || state === 'never') return 'No plan yet';
+  if (state === 'pass') return 'Pass member';
   if (state === 'upcoming') return planName ? `${planName} · starts soon` : 'Plan starts soon';
   if (state === 'expired') return planName ? `${planName} · ended` : 'Plan ended';
   if (state === 'cancelled') return 'Plan cancelled';

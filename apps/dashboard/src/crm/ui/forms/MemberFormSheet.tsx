@@ -40,6 +40,7 @@ import { MemberPhotoError, saveMemberPhoto } from '../../shop/memberPhotoApi';
 import { photoServerWords } from '../../logic/memberPhoto';
 import { errorWords } from '../../shop/logic';
 import { t } from '../../lang/lang';
+import { isPassMember, normalizePassCompany, passCompanyChoices, passCompanyKey, passCompanyOf, passFields, PASS_COMPANY_MAX } from '../../logic/passMembers';
 
 /** The photo row on "Add member" (F107). */
 export const FORM_PHOTO_WORDS = {
@@ -90,6 +91,11 @@ export function MemberFormSheet({
   const allowed = useCan();
   const canSetBranches = multi && allowed('manageGym');
   const [allBranches, setAllBranches] = useState(editing?.allBranches === true);
+  // F123: comes with a pass (FITPASS, cultpass...): no plan, no dues, each visit counts for the company.
+  const [pass, setPass] = useState(() => (editing ? isPassMember(editing) : false));
+  const [passCompany, setPassCompany] = useState(() => (editing ? (passCompanyOf(editing) ?? '') : ''));
+  const [passError, setPassError] = useState<string | null>(null);
+  const passChoices = useMemo(() => passCompanyChoices(memberViews.map((v) => v.member)), [memberViews]);
   // F107: a photo taken at the desk, saved right after the new member is. Only on "Add member" and
   // only when this gym's server keeps photos (the key is null otherwise, and the row stays hidden).
   const photoKey = useDeskPhotoKey();
@@ -122,9 +128,11 @@ export function MemberFormSheet({
     // "morning 6-8" typed as new joins the gym's existing "Morning 6-8", never a second chip.
     const typed = { ...form, batch: resolveBatch(form.batch, batches.map((b) => b.name)) ?? '' };
     const result = validateMember(typed, today);
-    if (!result.ok) {
+    const passMissing = pass && !normalizePassCompany(passCompany);
+    if (passMissing) setPassError(t('Pick or type the pass company.'));
+    if (!result.ok || passMissing) {
       // UAT A-28 (30 Oct 2026): mark every wrong box at once and bring the first into view.
-      setFieldErrors((result.all ?? [{ field: result.field, message: result.message }]).map((e) => ({ ...e, message: t(e.message) })));
+      if (!result.ok) setFieldErrors((result.all ?? [{ field: result.field, message: result.message }]).map((e) => ({ ...e, message: t(e.message) })));
       requestAnimationFrame(() => {
         const first = document.querySelector<HTMLElement>('[aria-invalid="true"]');
         first?.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -139,9 +147,10 @@ export function MemberFormSheet({
       // Note what is NOT passed on edit: `archived` and `photoUri` are lifecycle
       // state, changed by their own actions, never as a side effect of a save.
       const branchPart = canSetBranches ? { allBranches } : {};
+      const passPart = passFields(pass, passCompany, editing, today);
       const saved = editing
-        ? await updateMember(editing.id, { ...result.value, ...branchPart })
-        : await createMember({ ...result.value, archived: false, photoUri: null, ...branchPart });
+        ? await updateMember(editing.id, { ...result.value, ...branchPart, ...passPart })
+        : await createMember({ ...result.value, archived: false, photoUri: null, ...branchPart, ...passPart });
       if (!editing && photo && photoKey) {
         try {
           await saveMemberPhoto(photoKey, saved.id, photo.blob);
@@ -323,6 +332,21 @@ export function MemberFormSheet({
         error={errorFor('batch')}
       />
 
+      <PassField
+        on={pass}
+        onToggle={(v) => {
+          setPass(v);
+          setPassError(null);
+        }}
+        company={passCompany}
+        onCompany={(v) => {
+          setPassCompany(v);
+          setPassError(null);
+        }}
+        choices={passChoices}
+        error={passError}
+      />
+
       <Grid min={220}>
         <TextField
           label={t('Joining date')}
@@ -479,6 +503,77 @@ function BatchField({
         error && (
           <div style={{ fontFamily: font.body, fontSize: 12, color: color.criticalText, marginTop: 5 }}>{error}</div>
         )
+      )}
+    </div>
+  );
+}
+
+const OTHER_PASS = ' other';
+
+/**
+ * F123: "Comes with a pass". Ticked, the desk taps the company (FITPASS, cultpass, or one this gym
+ * already uses) or types another. Such a member has no plan and no dues, and each visit counts for
+ * that company on Visits -> Pass visits.
+ */
+function PassField({
+  on,
+  onToggle,
+  company,
+  onCompany,
+  choices,
+  error,
+}: {
+  on: boolean;
+  onToggle: (v: boolean) => void;
+  company: string;
+  onCompany: (v: string) => void;
+  choices: string[];
+  error: string | null;
+}) {
+  const key = company.trim() ? passCompanyKey(company) : null;
+  const [typing, setTyping] = useState(() => key !== null && !choices.some((c) => passCompanyKey(c) === key));
+  const picked = typing ? OTHER_PASS : (choices.find((c) => passCompanyKey(c) === key) ?? '');
+  return (
+    <div style={{ width: 0, minWidth: '100%' }}>
+      <CheckField
+        checked={on}
+        onChange={onToggle}
+        hint={t('They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company.')}
+      >
+        {t('Comes with a pass (FITPASS, cultpass and others)')}
+      </CheckField>
+      {on && (
+        <div style={{ marginTop: space.sm }}>
+          <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginBottom: 5 }}>
+            {t('Pass company')}
+          </div>
+          <ChipToggle
+            label={t('Pass company')}
+            value={picked}
+            onChange={(v) => {
+              if (v === OTHER_PASS) {
+                setTyping(true);
+                onCompany('');
+              } else {
+                setTyping(false);
+                onCompany(v);
+              }
+            }}
+            options={[...choices.map((c) => ({ value: c, label: c })), { value: OTHER_PASS, label: t('+ Other company') }]}
+          />
+          {typing ? (
+            <TextField
+              label={t('Pass company name')}
+              value={company}
+              onChange={(v) => onCompany(v.slice(0, PASS_COMPANY_MAX))}
+              error={error}
+              autoFocus
+              placeholder="Fitternity"
+            />
+          ) : (
+            error && <div style={{ fontFamily: font.body, fontSize: 12, color: color.criticalText, marginTop: 5 }}>{error}</div>
+          )}
+        </div>
       )}
     </div>
   );

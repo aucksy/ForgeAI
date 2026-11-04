@@ -26,7 +26,7 @@ export async function keepMembership(memberId: string, answer: MembershipAnswer)
   try {
     // Kept in the server's own shape, so the same reader checks it when it is read back.
     const raw = answer.ok
-      ? { ok: true, gymName: answer.gymName, memberName: answer.memberName, day: answer.day, current: answer.current, next: answer.next, lastEndedOn: answer.lastEndedOn, visitsThisMonth: answer.visitsThisMonth }
+      ? { ok: true, gymName: answer.gymName, memberName: answer.memberName, day: answer.day, current: answer.current, next: answer.next, lastEndedOn: answer.lastEndedOn, visitsThisMonth: answer.visitsThisMonth, pass: answer.pass ?? null }
       : { error: answer.problem, gymName: answer.gymName };
     await AsyncStorage.setItem(MEMBERSHIP_STORAGE_KEY, JSON.stringify({ memberId, answer: raw, at: Date.now() }));
   } catch (e) {

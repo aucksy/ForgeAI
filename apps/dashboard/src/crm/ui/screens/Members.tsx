@@ -40,6 +40,7 @@ import {
 } from '../kit';
 import { Link, navigate } from '../router';
 import { t } from '../../lang/lang';
+import { passCompanyOf } from '../../logic/passMembers';
 
 /**
  * A home tile's list is kept apart from the status chips (`tile:<id>`): the "Active members" tile
@@ -240,6 +241,10 @@ function RosterSection({
             { value: 'active', label: t('Active'), count: counts.active ?? 0 },
             { value: 'dues', label: t('Has dues'), count: counts.dues },
             { value: 'never', label: t('No membership'), count: counts.never ?? 0 },
+            // F123: FITPASS, cultpass and other pass members, once the gym has one.
+            ...((counts.pass ?? 0) > 0 || filter === 'pass'
+              ? [{ value: 'pass', label: t('Pass members'), count: counts.pass ?? 0 }]
+              : []),
             ...(sellsPt || filter === 'pt-ending'
               ? [{ value: 'pt-ending', label: t('PT ending'), count: counts['pt-ending'] ?? 0 }]
               : []),
@@ -367,7 +372,9 @@ function MemberRow({ view, today }: { view: MemberView; today: string }) {
       <td style={cell}>
         <Pill tone={stateTone(view.state)}>{t(STATE_LABEL[view.state])}</Pill>
       </td>
-      <td style={{ ...cell, color: color.inkSecondary, fontSize: 13 }}>{current?.planName ?? '—'}</td>
+      <td style={{ ...cell, color: color.inkSecondary, fontSize: 13 }}>
+        {view.state === 'pass' ? passCompanyOf(member) : (current?.planName ?? '—')}
+      </td>
       <td style={{ ...cell, fontSize: 13 }}>
         {expiresOn ? (
           <>
@@ -413,7 +420,9 @@ function MemberCard({ view, today }: { view: MemberView; today: string }) {
             </div>
             {memberBatch(member) && <BatchLine name={memberBatch(member) as string} />}
             <div style={{ fontFamily: font.body, fontSize: 12, color: color.inkSecondary, marginTop: 6 }}>
-              {current
+              {view.state === 'pass'
+                ? t('Comes with {company}', { company: passCompanyOf(member) ?? '' })
+                : current
                 ? `${current.planName} · ${view.state === 'expired' ? 'ended' : 'ends'} ${relativeDay(
                     view.coversUntil ?? current.endsOn,
                     today,

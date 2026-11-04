@@ -93,6 +93,8 @@ import { MemberAvatar, useDeskPhotoKey, useMemberPhoto } from '../MemberPhoto';
 import { MemberPhotoError, removeMemberPhoto, saveMemberPhoto } from '../../shop/memberPhotoApi';
 import { photoServerWords } from '../../logic/memberPhoto';
 import { errorWords } from '../../shop/logic';
+import { monthOfDay, passCompanyOf, passCompanyOfVisit } from '../../logic/passMembers';
+import { t } from '../../lang/lang';
 
 /** The photo under the member's initials (F107). */
 export const MEMBER_PHOTO_WORDS = {
@@ -230,7 +232,21 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
   );
 
   const visitCount = memberVisits.length;
-  const daysTile = view ? daysLeftTile(view, today) : null;
+  // F123: a pass member (FITPASS, cultpass...): their page counts this month's pass visits instead of days left.
+  const passCompany = memberRowPass(snapshot.members, memberId);
+  const passVisitsThisMonth = useMemo(() => {
+    const m = snapshot.members.find((x) => x.id === memberId);
+    return memberVisits.filter((v) => monthOfDay(v.visitedOn) === monthOfDay(today) && passCompanyOfVisit(v, m)).length;
+  }, [snapshot.members, memberVisits, memberId, today]);
+  const daysTile = view
+    ? passCompany
+      ? {
+          label: t('Pass visits this month'),
+          value: String(passVisitsThisMonth),
+          sub: t('For {company}', { company: passCompany }),
+        }
+      : daysLeftTile(view, today)
+    : null;
 
   const visitedToday = useMemo(
     () => memberVisits.some((v) => v.visitedOn === today),
@@ -309,10 +325,24 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         full
         variant="ghost"
         disabled={visitedToday || busy}
-        onClick={() => run(() => checkIn(memberId, 'desk'), 'Checked in for today.')}
+        onClick={() =>
+          run(
+            () => checkIn(memberId, 'desk'),
+            passCompany ? t('Pass visit counted for {company}.', { company: passCompany }) : 'Checked in for today.',
+          )
+        }
       >
         {/* UAT A-31 (30 Oct 2026): no sign for a second after the tap, and a second tap was possible. */}
-        {visitedToday ? 'Checked in today' : busy ? 'Saving…' : 'Check in'}
+        {/* F123: for a pass member the same check-in is their pass visit. */}
+        {visitedToday
+          ? passCompany
+            ? t('Pass visit counted today')
+            : 'Checked in today'
+          : busy
+            ? 'Saving…'
+            : passCompany
+              ? t('Pass visit')
+              : 'Check in'}
       </Button>
       <Button
         full
@@ -410,10 +440,13 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
               {member.appUserId && <Pill tone="accent">Using the app</Pill>}
               {/* #41: may train at every branch (set on the member's form by an owner). */}
               {member.allBranches && <Pill tone="muted">Every branch</Pill>}
+              {passCompany && <Pill tone="accent">{passCompany}</Pill>}
               <WaitingPill id={member.id} />
             </Row>
             <div style={{ marginTop: space.sm, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
-              {current ? (
+              {passCompany ? (
+                t('Comes with {company}. No plan and no dues: {company} pays your gym for each visit.', { company: passCompany })
+              ) : current ? (
                 <>
                   {current.planName} · {formatDay(current.startsOn)} → {formatDay(current.endsOn)}
                   {view.coversUntil && view.coversUntil !== current.endsOn ? (
@@ -480,7 +513,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         <StatTile
           label={daysTile?.label ?? ''}
           value={daysTile?.value ?? '—'}
-          tone={view.coversUntil && view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
+          tone={!passCompany && view.coversUntil && view.daysRemaining !== null && view.daysRemaining <= 7 ? 'warn' : undefined}
           sub={daysTile?.sub}
         />
         <StatTile
@@ -1409,3 +1442,9 @@ const linkStyle: React.CSSProperties = {
   minHeight: 44,
   lineHeight: '44px',
 };
+
+/** F123: the member's pass company, or null for someone who pays the gym. */
+function memberRowPass(members: readonly { id: string; passCompany?: string | null }[], memberId: string): string | null {
+  const m = members.find((x) => x.id === memberId);
+  return m ? passCompanyOf(m) : null;
+}

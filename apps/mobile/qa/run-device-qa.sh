@@ -1792,6 +1792,10 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
     # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
     uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
+    # F123: Uma becomes a FITPASS pass member (her plan cancelled); the poster check-in and My membership
+    # then show the pass words once 0055 is live, the old ones until then (the flow checks either way).
+    python3 "$QA_DIR/uat_gym.py" make-pass U "Uma Desk" FITPASS 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+    uat_flow uat14 uat-rel-14-pass-member.yaml -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
   fi
   python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   return $rc

@@ -401,4 +401,43 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Download picture': 'Photo download karo',
   'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.':
     'Ise A4 par print karke desk par chipkao. Phone par Print → “Save as PDF” bhi chalta hai. Print shop ke liye photo use karo.',
+
+  // ── F123 pass members (FITPASS, cultpass) ────────────────────────────────
+  'Pass member': 'Pass member',
+  'Pass members': 'Pass members',
+  'Comes with {company}': '{company} se aate hain',
+  'Comes with a pass (FITPASS, cultpass and others)': 'Pass se aate hain (FITPASS, cultpass aur doosre)',
+  'They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company.':
+    'Yeh pass company ko paise dete hain, aapke gym ko nahi. Na plan, na baaki paise, aur renewal list mein kabhi nahi. Har visit pass company ke liye gini jaati hai.',
+  'Pass company': 'Pass company',
+  '+ Other company': '+ Doosri company',
+  'Pass company name': 'Pass company ka naam',
+  'Pick or type the pass company.': 'Pass company chuno ya naam likho.',
+  'Pass visit': 'Pass visit',
+  'Pass visit counted today': 'Aaj ki pass visit gin li',
+  'Pass visit counted for {company}.': '{company} ke liye pass visit gin li.',
+  'Pass visits this month': 'Is mahine ki pass visits',
+  'For {company}': '{company} ke liye',
+  'Comes with {company}. No plan and no dues: {company} pays your gym for each visit.':
+    '{company} se aate hain. Na plan, na baaki paise: {company} har visit ke paise aapke gym ko deti hai.',
+  '{company} visit': '{company} visit',
+  'Pass visits': 'Pass visits',
+  'Back to visits': 'Visits par wapas',
+  'Visits by FITPASS, cultpass and other pass members': 'FITPASS, cultpass aur doosre pass members ki visits',
+  'Pass members pay a pass company like FITPASS or cultpass, and the company pays your gym for each visit. Match these counts with the company’s monthly payment.':
+    'Pass members FITPASS ya cultpass jaisi company ko paise dete hain, aur company har visit ke paise aapke gym ko deti hai. Company ke mahine ke payment se yeh ginti milao.',
+  Month: 'Mahina',
+  'Pass members who came': 'Aaye hue pass members',
+  'Download Excel file': 'Excel file download karo',
+  'Visits by pass company': 'Pass company ke hisaab se visits',
+  'No pass visits in {month}': '{month} mein koi pass visit nahi',
+  'Add a pass member from Members, then check them in at the desk or let them scan your check-in QR. Each visit counts here.':
+    'Members se pass member jodo, phir desk par check-in karo ya unhe aapka check-in QR scan karne do. Har visit yahan gini jaati hai.',
+  People: 'Log',
+  'Who came on a pass': 'Pass se kaun aaya',
+  '{company} · last came {date}': '{company} · pichhli baar {date} ko aaye',
+  '1 visit': '1 visit',
+  '{n} visits': '{n} visits',
+  'Exported 1 pass visit.': '1 pass visit export ho gayi.',
+  'Exported {n} pass visits.': '{n} pass visits export ho gayi.',
 };

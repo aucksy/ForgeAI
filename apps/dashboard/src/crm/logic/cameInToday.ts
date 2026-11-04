@@ -17,9 +17,9 @@ export interface CameInRow {
   dueP: number;
 }
 
-/** Not covered today by any plan. */
+/** Covered today: a running plan, or a pass member (F123: the pass company pays for the visit). */
 export function coveredToday(v: Pick<MemberView, 'state'>): boolean {
-  return v.state === 'active' || v.state === 'expiring';
+  return v.state === 'active' || v.state === 'expiring' || v.state === 'pass';
 }
 
 /**

@@ -158,6 +158,10 @@ describe('the plan ending', () => {
     expect(kinds(input({ membership: plan({ current: null, lastEndedOn: '2026-08-01' }) }))).toEqual([]);
   });
 
+  it('F123: a pass member (FITPASS) gets no plan reminders, even with an old plan that just ended', () => {
+    expect(kinds(input({ membership: plan({ current: null, lastEndedOn: '2026-10-22', pass: 'FITPASS' }) }))).toEqual([]);
+  });
+
   it('nothing without a plan the gym can show (no check-in yet, a name mismatch...)', () => {
     const notYet = membershipFromRow({ error: 'NO_PHONE', gymName: GYM })!;
     expect(kinds(input({ membership: notYet }))).toEqual([]);

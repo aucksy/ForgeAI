@@ -24,6 +24,7 @@ import type {
 } from '../types';
 import { addDays, addMonths, diffDays, formatDay, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
+import { isPassMember } from './passMembers';
 import { gymTerms, isPtMembership } from './pt';
 
 /** A term inside this many days of its end is surfaced as "expiring". */
@@ -242,6 +243,13 @@ export function buildMemberView(
     state = 'never';
     daysRemaining = null;
   }
+  // F123: a pass member (FITPASS, cultpass...) pays the pass company, not the gym: never "expired",
+  // "expiring" or "no membership", so never on the renewal list. Their dates and dues stay as they are.
+  // No days left either, so no "ending in N days" tile or message ever counts them.
+  if (isPassMember(member)) {
+    state = 'pass';
+    daysRemaining = null;
+  }
 
   return {
     member,
@@ -388,6 +396,7 @@ export const STATE_LABEL: Record<MemberState, string> = {
   get upcoming() { return 'Upcoming'; },
   get cancelled() { return 'Cancelled'; },
   get never() { return 'No membership'; },
+  get pass() { return 'Pass member'; },
 };
 
 /** Tone for a status pill — `critical` is reserved for "costs the gym money today". */
@@ -400,6 +409,7 @@ export function stateTone(state: MemberState): 'good' | 'warn' | 'critical' | 'm
     case 'expired':
       return 'critical';
     case 'upcoming':
+    case 'pass':
       return 'good';
     default:
       return 'muted';
@@ -420,6 +430,7 @@ const STATE_RANK: Record<MemberState, number> = {
   active: 3,
   upcoming: 4,
   cancelled: 5,
+  pass: 6,
 };
 
 /**

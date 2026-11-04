@@ -87,7 +87,8 @@ export function MembershipCard({ link }: { link: GymLink }) {
       </View>
       {/* F150: "Pause my plan" / "Renew my plan" - only for a member the gym's list knows, and only
           once the server has 0044 (the panel hides itself until then). Not on a kept (offline) plan. */}
-      {shown.answer.ok && shown.keptAt == null ? <PlanRequestPanel link={link} hasCurrentPlan={shown.answer.current != null} /> : null}
+      {/* F123: not for a pass member (FITPASS, cultpass...): there is no plan to pause or renew. */}
+      {shown.answer.ok && shown.keptAt == null && !shown.answer.pass ? <PlanRequestPanel link={link} hasCurrentPlan={shown.answer.current != null} /> : null}
       {/* F121: "Send your report to the gym?" - only while this gym's desk has asked, and only once
           the server has 0045 (the panel hides itself until then). Not on a kept (offline) plan. */}
       {shown.answer.ok && shown.keptAt == null ? <GymReportPanel link={link} /> : null}

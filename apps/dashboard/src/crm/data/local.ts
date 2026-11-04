@@ -58,6 +58,7 @@ import {
 } from '../logic/receiptRules';
 import { findDuplicatePhone } from '../logic/members';
 import { normalizeBatch } from '../logic/batches';
+import { passCompanyOf } from '../logic/passMembers';
 import { nextImportReceiptNo, nextReceiptNo } from '../logic/receipts';
 import { cleanTrainer, isPtMembership, isPtPlan, PT_MAX_SESSIONS, ptDays, ptTotal } from '../logic/pt';
 import { planUndo } from '../logic/undoImport';
@@ -856,7 +857,8 @@ export class LocalCrmData implements CrmData {
     today: DateISO,
   ): Promise<Visit> {
     return this.update((db) => {
-      if (!db.members.some((m) => m.id === memberId)) throw new NotFoundError('That member');
+      const member = db.members.find((m) => m.id === memberId);
+      if (!member) throw new NotFoundError('That member');
 
       // Same guard the money paths get: a `type="date"` field hands over year 0002
       // without complaint, and a visit is what the at-risk list is computed from.
@@ -875,6 +877,9 @@ export class LocalCrmData implements CrmData {
         checkedInAt: this.now(),
         source,
       };
+      // F123: a pass member's visit names the pass company it counts for (logic/passMembers.ts).
+      const pass = passCompanyOf(member);
+      if (pass) visit.passCompany = pass;
       db.visits.push(visit);
       return { ...visit };
     });

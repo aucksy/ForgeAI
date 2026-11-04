@@ -97,6 +97,18 @@ export const HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/Attendance.tsx', 'apps/dashboard/src/crm/shop/CheckInQrScreen.tsx'],
   },
   {
+    id: 'pass-members',
+    who: 'owner',
+    title: 'FITPASS, cultpass and other pass members',
+    text:
+      'A pass member pays FITPASS, cultpass or another pass company, not your gym. The company pays your gym per visit. ' +
+      'To add one: tap Members, then "+ Add member", tick "Comes with a pass" and tap their company (or "+ Other company"). For someone already listed: their page, "Edit", the same box. ' +
+      'They have no plan and no dues, and are never on the renewal list. ' +
+      'Each visit counts: tap "Pass visit" on their page, or they scan your check-in QR in the MettleUp app. ' +
+      'Each month, open Visits, then "Pass visits": visits and people per company, to match the company’s payment. "Download Excel file" saves one line per visit.',
+    screens: ['apps/dashboard/src/crm/ui/screens/PassVisits.tsx'],
+  },
+  {
     id: 'import-members-from-excel',
     who: 'owner',
     title: 'Bring in members from Excel or old gym software',

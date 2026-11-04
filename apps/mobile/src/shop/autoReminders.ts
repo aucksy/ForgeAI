@@ -291,8 +291,8 @@ export function planGymReminders(o: PlanInput): PlanOutput {
   const fixed: Fixed[] = [];
   const once: Once[] = [];
 
-  // ---- the plan (none at all when a renewal is already paid)
-  if (m && !m.next) {
+  // ---- the plan (none at all when a renewal is already paid, nor for a pass member: F123, no plan to renew)
+  if (m && !m.next && !m.pass) {
     const cur = m.current;
     if (cur) {
       if (on('plan_ends_soon')) for (const n of s.plan_ends_soon.days) fixed.push({ kase: 'plan_ends_soon', day: addDays(cur.endsOn, -n), body: AUTO_WORDS.planEndsSoon(n, cur.endsOn, today) });

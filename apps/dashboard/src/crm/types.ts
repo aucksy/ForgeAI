@@ -80,6 +80,15 @@ export interface Member extends GymScoped {
    * "Checked" there (which saves null). Absent or null = nothing to check.
    */
   duplicateOf?: string | null;
+  /**
+   * F123 (4 Nov 2026): this person trains here on a pass bought from another company (FITPASS,
+   * cultpass...), named as the desk picked or typed it. A pass member has no plan and no dues, is never
+   * on the renewal list, and each check-in counts as a pass visit for that company (logic/passMembers.ts).
+   * Kept inside the member record like `batch`: no gym-database change. Absent or null = pays the gym.
+   */
+  passCompany?: string | null;
+  /** F123: the day they became a pass member; visits before it are not pass visits. */
+  passSince?: DateISO | null;
   archived: boolean;
   /** Set once the member installs the app and links; null for everyone else. */
   appUserId: string | null;
@@ -281,6 +290,12 @@ export interface Visit extends GymScoped {
   checkedInAt: number;
   source: 'desk' | 'app' | 'import';
   /**
+   * F123: the pass company of a pass member's visit, written when the desk checks them in (the QR
+   * check-in on the server leaves it out; logic/passMembers.ts then reads the member's own). Absent =
+   * not a pass visit, or a QR one.
+   */
+  passCompany?: string | null;
+  /**
    * #41 branches: set when the member trained at ANOTHER branch of the gym (its desk or its QR
    * checked them in; the visit is kept here, in their own branch, so their attendance stays true).
    * Absent = at this branch.
@@ -434,7 +449,7 @@ export type WorkoutPlanDraft = Pick<WorkoutPlan, 'name' | 'note' | 'routines' | 
 // ---------------------------------------------------------------- roster view
 
 /** Roster-level status for a member, derived from their memberships. */
-export type MemberState = MembershipState | 'never';
+export type MemberState = MembershipState | 'never' | 'pass';
 
 /**
  * A member joined to everything a list row or detail header needs. Built by pure
