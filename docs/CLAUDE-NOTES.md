@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-318. Feedback button on by default; Data safety links saved; browser rule global — 4 Nov 2026
+- Owner: "I want the floating feedback button On by default in early days to encourage users to send feedback."
+  Now ON on every copy, Google Play included (FEEDBACK_BUTTON_ON_ON_PLAY = true). A member's own choice still wins.
+  Committed in eecd71f2 with the member-app launch polish batch. Waits for UAT and his next "release".
+- Play Data safety: both deletion links now https://app.mettleup.fit/delete-account.html, SAVED but NOT sent for
+  review ("Submit 1 change for review" needs his yes; the safety check blocked an unasked submit).
+- Global CLAUDE.md rule 4: every browser action Claude can do, Claude does. Stop hook needs_you_guard.py enforces it.
+- Nightly backup (HQ worker -> Cloudflare KV, 03:00 IST, 15 days) is built but NOT switched on. Needs his yes for the
+  live migration 0052 and the privacy wording.
+
 ## R-317. Dashboard deployed; watch on Play; health form in review; deletion page live — 4 Nov 2026
 Owner, 4 Nov: "deploy the owner dashboard" (deployed: Cloudflare forgeai-panel version 4af6a2c4, built by CI 41760683735,
 checked live at 375 and 1280 px). Owner rule saved: Play Console is ONLY the simpleapps108 Chrome window (global CLAUDE.md
