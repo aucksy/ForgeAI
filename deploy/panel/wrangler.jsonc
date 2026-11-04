@@ -47,7 +47,13 @@
   "observability": { "enabled": true },
   // #72 (30 Oct 2026): 21:30 UTC = 03:00 India, every day: delete crash reports older than 90 days (worker.js scheduled).
   // R-206: spoken feedback (voice.js) needs the secret GROQ_API_KEY; optional var GROQ_MODEL swaps the Whisper model.
-  "triggers": { "crons": ["30 21 * * *"] },
+  // F79 (R-328): */10 = every 10 minutes, open payment links are checked with the gym's payment company
+  // (pay.js scheduledPay). Payments also need: the D1 tables (migrations/0011_payments.sql) and the secret
+  // PAYMENTS_MASTER_KEY (32 random bytes, base64; seals each gym's keys). Optional: PAY_LIVE "on" (real
+  // money; test/sandbox until then), PAY_OAUTH_RAZORPAY "on" + RAZORPAY_CLIENT_ID, RAZORPAY_CLIENT_SECRET,
+  // RAZORPAY_PARTNER_WEBHOOK_SECRET; PAY_OAUTH_CASHFREE "on" + CASHFREE_PARTNER_KEY, CASHFREE_CLIENT_ID,
+  // CASHFREE_CLIENT_SECRET (after MettleUp's partner approval).
+  "triggers": { "crons": ["30 21 * * *", "*/10 * * * *"] },
   "vars": { "LANDING": "live", "MOVE": "on" },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go

@@ -1,0 +1,74 @@
+/**
+ * F79 online payments (R-328): every word the owner and the desk read about online payments, and the
+ * small rules behind them. PURE (tested in test/crm/pay.test.ts). English, with Hinglish through t().
+ */
+
+import { t } from '../lang/lang';
+import { formatINR, type Paise } from '../logic/money';
+import type { PayConnection, PayRequest, ProviderId } from './payApi';
+
+/** Where the owner finds their keys in each company's own dashboard (opens in a new tab). */
+export const KEYS_HELP: Record<ProviderId, { where: string; url: string }> = {
+  razorpay: { where: 'In Razorpay, open Account & Settings, then API keys. Make a test key.', url: 'https://dashboard.razorpay.com/' },
+  cashfree: { where: 'In Cashfree, open Developers, then API keys. Use the Test keys.', url: 'https://merchant.cashfree.com/' },
+  payu: { where: 'In PayU, open Settings, then Key and Salt.', url: 'https://dashboard.payu.in/' },
+  phonepe: { where: 'In PhonePe Business, open Developer settings, then API keys.', url: 'https://business.phonepe.com/' },
+};
+
+/** The UPI note a payer sees for a receipt ("Receipt 2026-27-0042"); UPI apps drop a "/". PURE. */
+export function upiReceiptNote(receiptNo: string | null | undefined): string {
+  const n = String(receiptNo ?? '').replace(/\//g, '-').trim();
+  return n ? `Receipt ${n}` : '';
+}
+
+/** The one line under a company's name in Settings -> Payments. PURE. */
+export function connectionLine(name: string, c: PayConnection | null): string {
+  if (!c) return t('Not connected.');
+  if (c.on) {
+    return c.via === 'oauth'
+      ? t('Connected to your {name} account.', { name })
+      : t('Connected with the key ending {hint}.', { hint: c.hint });
+  }
+  if (c.offReason === 'revoked') return t('Your {name} account stopped this connection. Connect again to take payments online.', { name });
+  if (c.offReason === 'bad_keys') return t('{name} stopped accepting these keys. Paste your new keys to connect again.', { name });
+  return t('Not connected.');
+}
+
+/** Plain words for a refused connect. PURE. */
+export function connectProblem(code: string, words: string | null, name: string): string {
+  if (code === 'CHECK' && words) return words;
+  if (code === 'BAD_KEYS') return t('{name} did not accept these keys. Check them and try again.', { name });
+  if (code === 'OWNER_ONLY') return t('Only the gym owner can connect a payment company.');
+  if (code === 'NO_MASTER_KEY' || code === 'NOT_READY') return t('Online payments are not switched on yet.');
+  if (code === 'OFFLINE') return t('No internet. Try again.');
+  return t('Could not connect. Try again.');
+}
+
+/** What the desk sees about a payment link while the member pays. PURE. */
+export function requestLine(r: PayRequest): string {
+  if (r.status === 'paid') {
+    const how = r.method === 'card' ? t('by card') : r.method === 'bank' ? t('by net banking') : r.method === 'other' ? t('online') : t('by UPI');
+    return r.late
+      ? t('Paid {amount} {how}, after the link was closed.', { amount: formatINR(r.paidP || r.amountP), how })
+      : t('Paid {amount} {how}.', { amount: formatINR(r.paidP || r.amountP), how });
+  }
+  if (r.status === 'expired') return t('This link has run out. Make a new one.');
+  if (r.status === 'cancelled') return t('This link was cancelled.');
+  if (r.failed) return t('The last try did not go through. They can try again.');
+  return t('Waiting for the payment…');
+}
+
+/** The receipt's reference for an online payment: "Razorpay pay_ABC". PURE. */
+export function onlineReference(r: PayRequest): string {
+  return [r.providerName, r.paymentId].filter(Boolean).join(' ').slice(0, 60);
+}
+
+/** The receipt's method for an online payment (the ledger's own methods). PURE. */
+export function receiptMethod(r: PayRequest): 'upi' | 'card' | 'bank' | 'other' {
+  return r.method ?? 'upi';
+}
+
+/** "Pay ₹1,500 to Iron Temple" for the QR's caption. PURE. */
+export function payCaption(amountP: Paise, payee: string): string {
+  return t('Pay {amount} to {payee}', { amount: formatINR(amountP), payee: payee || t('the gym') });
+}

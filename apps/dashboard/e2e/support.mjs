@@ -903,6 +903,11 @@ export class FakeServer {
 
   /** Answer every Supabase function call made by this context (one phone). */
   async attach(context) {
+    // F79: online payments live on the MettleUp Worker (deploy/panel/pay.js), not in vite preview.
+    // "Not switched on yet" by default; a spec that tests payments routes /api/pay/** itself (the last route wins).
+    await context.route('**/api/pay/**', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ on: false, why: 'NOT_READY' }) }),
+    );
     await context.route(/\/rest\/v1\/rpc\/([a-z_]+)/, async (route) => {
       const fn = /rpc\/([a-z_]+)/.exec(route.request().url())?.[1] ?? '';
       if (this.dropped(fn)) {

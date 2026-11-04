@@ -23,6 +23,10 @@ import type { MemberView, Payment, PaymentMethod } from '../../types';
 import { EARLIEST_DATE as EARLIEST_SENSIBLE_DAY } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
+import { nextReceiptNo } from '../../logic/receipts';
+import { CollectOnline } from '../../pay/CollectOnline';
+import type { PayRequest } from '../../pay/payApi';
+import { onlineReference, receiptMethod, upiReceiptNote } from '../../pay/payWords';
 
 export function CollectPaymentSheet({
   view,
@@ -69,6 +73,27 @@ export function CollectPaymentSheet({
   // UAT A-29 (30 Oct 2026): an amount above the due (refused on save) no longer shows "clears all dues".
   const remainingP =
     selected && amountP !== null && amountP > 0 && amountP <= selected.unpaidP ? selected.unpaidP - amountP : null;
+
+  // F79 (R-328): paid online through the gym's payment company: the receipt saves itself, with the
+  // company's payment id as the reference and one request id per payment (a retry finds the same receipt).
+  const savePaidOnline = async (r: PayRequest): Promise<string | null> => {
+    if (!selected) return null;
+    const payment = await recordPayment({
+      memberId: view.member.id,
+      membershipId: selected.membership.id,
+      amountP: r.paidP || r.amountP,
+      method: receiptMethod(r),
+      paidOn: today,
+      reference: onlineReference(r) || null,
+      note: r.testMode ? 'Paid online (test mode)' : 'Paid online',
+      collectedBy: taker.id,
+      collectedByName: taker.name,
+      requestId: `pay-${r.id}`,
+    });
+    onCollected?.(payment);
+    onClose();
+    return payment.receiptNo;
+  };
 
   const submit = async () => {
     if (!selected) return setError('Pick the membership this payment is for.');
@@ -173,6 +198,22 @@ export function CollectPaymentSheet({
         placeholder={selected ? formatINR(selected.unpaidP) : ''}
         hint="Leave blank to collect the full amount due."
       />
+
+      {/* F79 (R-328): a UPI QR (and a payment link once a company is connected) for this amount. */}
+      {selected && (
+        <CollectOnline
+          amountP={amountP !== null && amountP > 0 && amountP <= selected.unpaidP ? amountP : null}
+          kind="fee"
+          memberId={view.member.id}
+          payRef={selected.membership.id}
+          label={selected.membership.planName}
+          note={upiReceiptNote(nextReceiptNo(snapshot.payments, today, snapshot.gym.receiptPrefix))}
+          memberName={view.member.fullName}
+          phone={view.member.phone}
+          onUpiShown={() => setMethod('upi')}
+          onPaid={savePaidOnline}
+        />
+      )}
 
       <Grid min={200}>
         <SelectField

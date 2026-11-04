@@ -37,6 +37,7 @@ import { handleLead } from './leads.js';
 import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
+import { handlePay, scheduledPay } from './pay.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
 
@@ -44,6 +45,8 @@ const SUPABASE = 'https://hdxzqbdiokjklnypfisq.supabase.co';
 // The public, read-only app key (the same one in the panel and the app).
 const KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
 const REPO = 'https://github.com/aucksy/ForgeAI';
+/** F79: the payment check's Cron Trigger (wrangler.jsonc). */
+const PAY_CRON = '*/10 * * * *';
 
 export default {
   async fetch(request, env, ctx) {
@@ -93,6 +96,8 @@ export default {
     if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/hq-news') return handleHqNews(request, env);
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
+    // F79 (R-328): online payments for gyms (pay.js). Off ("not switched on yet") until 0011 is applied.
+    if (url.pathname.startsWith('/api/pay/')) return handlePay(request, env, url);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
     if (url.pathname === '/home' || url.pathname.startsWith('/home/') || url.pathname === '/member-site' || url.pathname.startsWith('/member-site/')) {
@@ -103,7 +108,17 @@ export default {
   },
 
   // #72 (30 Oct 2026): crash reports are kept 90 days.
-  async scheduled(_controller, env, ctx) {
+  async scheduled(controller, env, ctx) {
+    // F79: every 10 minutes, open payment links are checked with each gym's payment company (pay.js).
+    if (controller && controller.cron === PAY_CRON) {
+      ctx.waitUntil(
+        scheduledPay(env).then(
+          (n) => n && console.log('[pay] scheduled check: payments found', n),
+          (e) => console.error('[pay] scheduled check failed', e instanceof Error ? e.message : 'error'),
+        ),
+      );
+      return;
+    }
     if (!env.WEB) {
       console.error('[crash] clean-up skipped: D1 binding WEB missing');
       return;

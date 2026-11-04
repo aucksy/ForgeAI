@@ -50,6 +50,7 @@ import { TodayScreen } from './ui/screens/Today';
 import { WorkoutPlansScreen } from './ui/screens/WorkoutPlans';
 import { DietPlansScreen } from './ui/screens/DietPlans';
 import { GymTimingsScreen } from './ui/screens/GymTimings';
+import { PaymentsScreen } from './pay/PaymentsScreen';
 import { BusyMachinesScreen } from './ui/screens/BusyMachines';
 import { MyMembersScreen } from './ui/screens/MyMembers';
 import { useTrainerAccess } from './ui/TrainerParts';
@@ -363,6 +364,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'branding') return <BrandingScreen />;
       // R-124: Settings -> Gym timings (when the gym is open, shown in the member app).
       if (id === 'timings') return <GymTimingsScreen />;
+      // F79 (R-328): Settings -> Payments (UPI QR and the gym's own payment company).
+      if (id === 'payments') return <PaymentsScreen />;
       // F137: Settings -> Member app -> Busy machines (hidden until the gym's server has 0049).
       if (id === 'machines') return <BusyMachinesScreen />;
       // Invite link + front-desk QR poster.

@@ -61,6 +61,7 @@ import { whatsAppHref } from '../../shop/invite';
 import { useHasFeature } from '../../plan/GymPackProvider';
 import { ProNote } from '../../plan/ProNote';
 import { Link, navigate } from '../router';
+import { PaidOnlineCard } from '../../pay/PaidOnline';
 
 export function TodayScreen() {
   const { snapshot, memberViews, allMemberViews, today, desk } = useCrm();
@@ -151,6 +152,9 @@ export function TodayScreen() {
 
       {/* Offline front desk, step 3: money taken on this device that is not on the server yet. */}
       <WaitingMoneyLine state={desk} />
+
+      {/* F79 (R-328): online payments whose receipt could not be made by itself (hidden when none). */}
+      <PaidOnlineCard />
 
       {/* Backlog (21 Oct): big buttons for the desk's common jobs, chosen and ordered by the owner. */}
       <QuickActions />

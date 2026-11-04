@@ -58,6 +58,7 @@ import { useRole } from '../auth/AuthProvider';
 import { shopTabFor, shopTabs } from '../auth/permissions';
 import { ProductSheet } from './ProductSheet';
 import { usePoll, useShop } from './ShopProvider';
+import { CollectOnline } from '../pay/CollectOnline';
 
 export function ShopScreen({ section }: { section?: string }) {
   const { cloud, newCount } = useShop();
@@ -268,6 +269,20 @@ function OrderCard({ order, now, onCancel }: { order: Order; now: number; onCanc
         <div style={{ marginTop: space.md }}>
           <ErrorBanner>{error}</ErrorBanner>
         </div>
+      )}
+
+      {/* F79 (R-328): the member pays for the order by UPI QR, or by a payment link when the gym
+          connected a payment company. Hidden when the gym has neither. */}
+      {(order.status === 'ordered' || order.status === 'ready') && (
+        <CollectOnline
+          amountP={order.totalP}
+          kind="shop"
+          payRef={order.orderId}
+          label={`Order ${order.orderNo}`}
+          note={`Order ${order.orderNo}`}
+          memberName={order.memberName}
+          quietWhenEmpty
+        />
       )}
 
       {actions.length > 0 && (

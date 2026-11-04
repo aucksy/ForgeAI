@@ -229,6 +229,19 @@ export function SettingsScreen({ section }: { section?: string }) {
         </div>
       </Card>
 
+      {/* F79 (R-328): members pay online: the UPI QR and the gym's own payment company. */}
+      <Card style={{ marginBottom: space.lg }}>
+        <SectionTitle>Payments</SectionTitle>
+        <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
+          Show a UPI QR with the amount at the desk, or connect your own payment company so members can pay by link and the receipt is made by itself.
+        </p>
+        <div style={{ marginTop: space.lg }}>
+          <Button variant="ghost" onClick={() => navigate('/settings/payments')}>
+            Open payments
+          </Button>
+        </div>
+      </Card>
+
       {/* #41: the gym's branches and "Add a branch". */}
       <BranchesCard />
 

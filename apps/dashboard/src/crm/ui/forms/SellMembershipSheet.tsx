@@ -24,6 +24,9 @@ import { DEFAULT_PAYMENT_METHOD, methodOptions } from '../../logic/payments';
 import type { MemberView, PaymentMethod, Plan } from '../../types';
 import type { SellMembershipResult } from '../../data/adapter';
 import { newRequestId } from '../../data/local';
+import { nextReceiptNo } from '../../logic/receipts';
+import { CollectOnline } from '../../pay/CollectOnline';
+import { upiReceiptNote } from '../../pay/payWords';
 import { Button, ErrorBanner, Grid, Row, SelectField, Sheet, TextField, color, font, space } from '../kit';
 import { isPtPlan, ptPlanLine } from '../../logic/pt';
 
@@ -327,6 +330,24 @@ export function SellMembershipSheet({
           placeholder="0"
           hint="Leave blank if they will pay later. It will show in Dues."
           error={errorFor('collectNowP')}
+        />
+
+        {/* F79 (R-328): a UPI QR for what they pay now (the whole total when nothing is typed). A payment
+            link needs a saved membership: save with nothing received, then Collect payment makes one. */}
+        <CollectOnline
+          amountP={collectP !== null && collectP > 0 ? collectP : totalP}
+          kind="fee"
+          memberId={view.member.id}
+          payRef={null}
+          label={plan?.name ?? ''}
+          note={upiReceiptNote(nextReceiptNo(snapshot.payments, isValidDateISO(paidOn) ? paidOn : today, snapshot.gym.receiptPrefix))}
+          memberName={view.member.fullName}
+          phone={view.member.phone}
+          onUpiShown={() => {
+            setMethod('upi');
+            if (collectText.trim() === '' && totalP !== null) setCollectText(String(totalP / 100));
+            setProblem(null);
+          }}
         />
 
         <Grid min={200}>

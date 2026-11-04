@@ -57,6 +57,17 @@ export const HELP_ARTICLES = [
       'To see who still owes money, open Money, then Dues. Never enter a payment twice to test it.',
   },
   {
+    id: 'online-payments',
+    who: 'owner',
+    title: 'Let members pay online (UPI QR or a payment link)',
+    text:
+      'UPI QR: add your gym’s UPI ID in Settings, Gym details. "Collect payment", "Renew" and shop orders then show "Show UPI QR" with the amount. The member scans it with any UPI app. When the money shows, tap "Save payment". ' +
+      'Payment link: open Settings, then Payments. Paste the keys of your own Razorpay, Cashfree, PayU or PhonePe account and tap "Test and connect". "Collect payment" then shows "Make a payment link", and the receipt is made by itself. ' +
+      'The money goes straight to your account; MettleUp takes no fee. "Test mode" means no real money moves yet. ' +
+      'If a receipt could not be made, Today shows "Paid online, receipt not made".',
+    screens: ['apps/dashboard/src/crm/pay/PaymentsScreen.tsx'],
+  },
+  {
     id: 'member-page-tools',
     who: 'owner',
     title: 'Other things you can do on a member\'s page',

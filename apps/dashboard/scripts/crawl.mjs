@@ -33,7 +33,7 @@ function rpcAnswer(fn) {
 const ROUTES = [
   '/', '/members', '/members/import', '/members/f/exp-1-3', '/members/f/active', '/members/app', 'MEMBER', '/shop', '/shop/messages', '/messages', '/messages/birthday',
   '/attendance', '/money', '/money/dues', '/money/today', 'RECEIPT', '/plans', '/enquiries', '/expenses',
-  '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/settings/news', '/more', '/workouts', '/feedback',
+  '/settings', '/settings/invite', '/settings/people', '/settings/branding', '/settings/news', '/settings/payments', '/more', '/workouts', '/feedback',
   // R-168: the lists behind the "Your numbers" tiles on Today.
   '/numbers/renewals/30', '/numbers/owed/30', '/numbers/stopped/90', '/numbers/new/90', '/numbers/busy/30',
   // Owner, 30 Oct 2026: "Your growth" and its one-page report.
@@ -107,6 +107,10 @@ try {
     // HQ news comes from the live Worker (deploy/panel/hqNews.js); vite preview has no /api.
     await context.route('**/api/hq-news', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ messages: [] }) }),
+    );
+    // F79: online payments come from the live Worker too (deploy/panel/pay.js): "not switched on yet".
+    await context.route('**/api/pay/**', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ on: false, why: 'NOT_READY' }) }),
     );
     // CRAWL_SELFTEST=1 makes every page too wide, to prove the check can fail.
     if (process.env.CRAWL_SELFTEST) {
