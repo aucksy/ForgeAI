@@ -123,6 +123,15 @@ jobs:
         working-directory: apps/dashboard
         run: npm run build
 
+      # Owner rule (nothing heavy on his laptop): the deploy takes this built copy, so the laptop
+      # only uploads it (deploy/panel: npx wrangler deploy). Small; kept 3 days.
+      - name: Keep the built dashboard for the deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-dist
+          path: apps/dashboard/dist
+          retention-days: 3
+
       # Audit toolkit pick 9 (15 Oct 2026): every panel page of a demo gym at 390 px and 1280 px,
       # dark theme; fails on a page error, console error, sideways overflow or a critical axe finding.
       - name: Panel crawl (every page, phone + computer, dark theme)
