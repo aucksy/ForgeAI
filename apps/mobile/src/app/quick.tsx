@@ -107,7 +107,10 @@ export default function QuickWorkoutScreen() {
         setStarting(true);
         try {
           await startQuickWorkout(quick);
-          openActiveWorkout(router, 'replace');
+          // Close Quick workout and Ready today first, so minimising the workout lands on the
+          // Workout tab (UAT run 41892416397 landed back on Ready today).
+          if (router.canDismiss()) router.dismissAll();
+          openActiveWorkout(router, 'push');
         } finally {
           setStarting(false);
         }
