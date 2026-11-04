@@ -48,7 +48,9 @@ export interface SummaryWorkout {
 export function setScore(s: SummarySet, t: LogType): number {
   switch (t) {
     case 'weight_reps':
-      return s.weightKg > 0 ? estimatedOneRepMax(s.weightKg, s.reps) : s.reps / 100;
+      // The estimate stops counting reps past a point, so 35 kg x 14 tied 35 kg x 12 and the older
+      // set was called the best (UAT run 41903972952). Ties go to more weight, then more reps.
+      return s.weightKg > 0 ? estimatedOneRepMax(s.weightKg, s.reps) + s.weightKg * 1e-4 + s.reps * 1e-7 : s.reps / 100;
     case 'reps':
     case 'weighted':
     case 'assisted':

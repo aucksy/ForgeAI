@@ -71,3 +71,16 @@ describe('aiSummaryText', () => {
     expect(setScore({ weightKg: 0, reps: 0, durationSec: 90 }, 'time')).toBe(90);
   });
 });
+
+describe('best set when the estimate ties (UAT run 41903972952: 35 kg x 12 beat 35 kg x 14)', () => {
+  it('more reps at the same weight is the better set', () => {
+    expect(setScore({ weightKg: 35, reps: 14 }, 'weight_reps')).toBeGreaterThan(setScore({ weightKg: 35, reps: 12 }, 'weight_reps'));
+  });
+  it('the line names the 14-rep set as best', () => {
+    const text = aiSummaryText(
+      [w('1', '2026-10-28', [BENCH([[35, 12]])]), w('2', '2026-11-03', [BENCH([[35, 14]])])],
+      '2026-11-04',
+    );
+    expect(text).toMatch(/Best set 35 kg × 14 \(3 Nov\)/);
+  });
+});
