@@ -108,8 +108,13 @@ test('J10c Start over with a new demo gym: back to the first screen', async ({ p
 
 test('J10d no internet at Start demo: the demo opens without the shop, in this browser only', async ({ page }) => {
   const server = await openApp(page, { offline: ['demo_start_gym'] });
-  await page.getByRole('button', { name: 'Start demo' }).tap();
-  await expect(page.getByRole('alert')).toContainText('internet');
+  // Flaky in CI (runs 41793819018-era and 41895244026): the first tap sometimes lands before the
+  // button is wired up, and the Welcome screen stays as it was (no alert). Tap again until the alert
+  // shows; every try fails offline the same way, so a second tap changes nothing else.
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Start demo' }).tap();
+    await expect(page.getByRole('alert')).toContainText('internet', { timeout: 3000 });
+  }).toPass({ timeout: 20000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
   // U-A9: the long "without the shop" button wraps; the screen stays as wide as the phone.
   await expectFitsPhone(page, 'on Welcome after a failed demo start');
