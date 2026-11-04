@@ -26,15 +26,15 @@ appId: com.mettleup.app
     when:
       notVisible: "^Pay your gym$"
     commands:
-      - assertNotVisible: "^Pay by UPI app$"
-      - assertNotVisible: "^Scan this QR with any UPI app\.$"
-      - assertNotVisible: "^Test mode: no real money moves\.$"
+      - assertNotVisible: '^Pay by UPI app$'
+      - assertNotVisible: '^Scan this QR with any UPI app\.$'
+      - assertNotVisible: '^Test mode: no real money moves\.$'
 # ---------------------------------------------------------------- server on and a fee asked
 - runFlow:
     when:
       visible: "^Pay your gym$"
     commands:
-      - assertVisible: "^Scan this QR with any UPI app\.$"
-      - assertVisible: "^Pay by UPI app$"
-      - assertVisible: "^Press and hold to copy the UPI ID\.$"
+      - assertVisible: '^Scan this QR with any UPI app\.$'
+      - assertVisible: '^Pay by UPI app$'
+      - assertVisible: '^Press and hold to copy the UPI ID\.$'
       - takeScreenshot: rel-f79-2-pay-card
