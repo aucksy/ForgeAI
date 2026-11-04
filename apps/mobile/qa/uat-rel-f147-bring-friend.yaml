@@ -37,7 +37,7 @@ appId: com.mettleup.app
             text: "^Invite a friend$"
           direction: DOWN
           timeout: 10000
-      - assertVisible: "^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$"
+      - assertVisible: '^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$'
       - assertVisible: "^Friends who joined: 0$"
       - assertNotVisible: "^When a friend joins, .*"
       - takeScreenshot: rel-f147-2-friend-card
