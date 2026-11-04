@@ -2,12 +2,12 @@
  * Where a live card's PREVIOUS comes from — the one muted line above its set table (13 Oct 2026,
  * the owner's Hevy comparison). PURE.
  *
- *  - Idea 1, the card has a previous: "Last: 3 Oct · Push 1A" — the day of the workout PREVIOUS
+ *  - Idea 1, the card has a previous: "Previous: 3 Oct · Push 1A" — the day of the workout PREVIOUS
  *    quotes (with its year when it isn't this year) and that workout's name (its title, else its
  *    routine's name; no name → the day alone). It is the workout of the "Previous values" scope,
  *    because it IS the workout PREVIOUS comes from. Spoken "Previous is from 3 October, Push 1A".
  *  - Idea 2, "Same routine" / "Same folder" found nothing, but the exercise was done elsewhere:
- *    "First time in this folder · last anywhere 100 kg × 5, 3 Oct" — that workout's best working
+ *    "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" — that workout's best working
  *    set, in the member's units and the card's counting. Information only: its numbers never
  *    reach PREVIOUS, a hint or a tick.
  *  - Neither (never done, or "Any workout" with no history): no line.
@@ -34,15 +34,15 @@ export function spokenDay(iso: string, today: string = todayISO()): string {
   return iso.slice(0, 4) === today.slice(0, 4) ? base : `${base} ${iso.slice(0, 4)}`;
 }
 
-/** Idea 1: "Last: 3 Oct · Push 1A" (no name: "Last: 3 Oct"); null without a source. PURE. */
+/** Idea 1: "Previous: 3 Oct · Push 1A" (no name: "Previous: 3 Oct"); null without a source. PURE. */
 export function lastFromLine(from: DraftExercise['lastFrom'] | null | undefined, today: string = todayISO()): SourceLine | null {
   if (!from?.dateISO) return null;
   const name = from.name?.trim() || null;
   const day = tinyDateWithYear(from.dateISO, today);
   const said = spokenDay(from.dateISO, today);
   return name
-    ? { text: `Last: ${day} · ${name}`, spoken: `Previous is from ${said}, ${name}` }
-    : { text: `Last: ${day}`, spoken: `Previous is from ${said}` };
+    ? { text: `Previous: ${day} · ${name}`, spoken: `Previous is from ${said}, ${name}` }
+    : { text: `Previous: ${day}`, spoken: `Previous is from ${said}` };
 }
 
 const repsWord = (n: number): string => `${n} ${n === 1 ? 'rep' : 'reps'}`;
@@ -120,7 +120,7 @@ export function setInWords(p: PrevSet, lt: LogType, units: UnitSystem, mode: Loa
 }
 
 /**
- * Idea 2: "First time in this folder · last anywhere 100 kg × 5, 3 Oct" ("…in this routine…").
+ * Idea 2: "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" ("…in this routine…").
  * null when there is nothing to say. PURE.
  */
 export function firstTimeLine(
@@ -135,8 +135,8 @@ export function firstTimeLine(
   const set = setInWords(e.set, lt, units, mode, distUnit);
   if (!set) return null;
   return {
-    text: `First time in this ${e.scope} · last anywhere ${set}, ${tinyDateWithYear(e.dateISO, today)}`,
-    spoken: `First time in this ${e.scope}. Last done anywhere: ${set}, on ${spokenDay(e.dateISO, today)}`,
+    text: `First time in this ${e.scope} · Previous in another workout: ${set}, ${tinyDateWithYear(e.dateISO, today)}`,
+    spoken: `First time in this ${e.scope}. Previous time in another workout: ${set}, on ${spokenDay(e.dateISO, today)}`,
   };
 }
 

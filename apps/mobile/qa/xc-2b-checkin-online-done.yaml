@@ -4,7 +4,7 @@
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: '(You''re in ✓.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    visible: '(You''re checked in.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
     timeout: 60000
 - runFlow:
     when:
@@ -12,7 +12,7 @@ appId: com.mettleup.app
     commands:
       - tapOn: "^Check in$"
 - extendedWaitUntil:
-    visible: 'You''re in ✓.*'
+    visible: 'You''re checked in.*'
     timeout: 60000
 - assertVisible: 'Checked in at ${GYM} as Asha\. Have a good workout\.'
 - takeScreenshot: xc2b-02-checkin-online

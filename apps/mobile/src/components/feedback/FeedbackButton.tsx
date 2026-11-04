@@ -131,9 +131,10 @@ function FloatingButton({ room, spot, onTap }: { room: ScreenRoom; spot: ReturnT
 
 /** The live workout screen's top-bar button (42 dp, like the Minimise button beside it). */
 export function FeedbackHeaderButton({ screen }: { screen: string }) {
-  const enabled = useFeedbackButton((s) => s.enabled);
+  // Launch audit 3 Nov 2026: the top-bar button stays for everyone (it covers nothing); only the
+  // floating one follows the Settings switch (on by default).
   const loaded = useFeedbackButton((s) => s.loaded);
-  if (!loaded || !enabled) return <View style={{ width: 42 }} />;
+  if (!loaded) return <View style={{ width: 42 }} />;
   return (
     <Pressable
       onPress={() => useFeedbackButton.getState().open(screen)}

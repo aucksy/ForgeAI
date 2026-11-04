@@ -1,9 +1,9 @@
 /**
  * 13 Oct 2026 (the owner's Hevy comparison), ideas 1 and 2 — the muted line above a live card's
  * set table:
- *  - "Last: 3 Oct · Push 1A" — where PREVIOUS comes from (day-first, the year when it isn't
+ *  - "Previous: 3 Oct · Push 1A" — where PREVIOUS comes from (day-first, the year when it isn't
  *    this year; the workout's title, else its routine's name, else the day alone);
- *  - "First time in this folder · last anywhere 100 kg × 5, 3 Oct" — "Same routine" / "Same
+ *  - "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" — "Same routine" / "Same
  *    folder" found nothing, but the exercise was done elsewhere (each log type in its own words,
  *    in the member's units and the card's counting).
  */
@@ -18,25 +18,25 @@ const TODAY = '2026-10-13';
 
 afterEach(() => setDisplayUnits('metric'));
 
-describe('idea 1: "Last: 3 Oct · Push 1A"', () => {
+describe('idea 1: "Previous: 3 Oct · Push 1A"', () => {
   it('this year: day-first, no year; spoken with the month in full', () => {
     expect(lastFromLine({ dateISO: '2026-10-03', name: 'Push 1A' }, TODAY)).toEqual({
-      text: 'Last: 3 Oct · Push 1A',
+      text: 'Previous: 3 Oct · Push 1A',
       spoken: 'Previous is from 3 October, Push 1A',
     });
   });
 
   it('another year: the year is added, written and spoken', () => {
     expect(lastFromLine({ dateISO: '2025-12-30', name: 'Push 1A' }, TODAY)).toEqual({
-      text: 'Last: 30 Dec 2025 · Push 1A',
+      text: 'Previous: 30 Dec 2025 · Push 1A',
       spoken: 'Previous is from 30 December 2025, Push 1A',
     });
     expect(spokenDay('2025-01-05', TODAY)).toBe('5 January 2025');
   });
 
   it('no name: the day alone (never "null", never a dangling dot)', () => {
-    expect(lastFromLine({ dateISO: '2026-10-03', name: null }, TODAY)).toEqual({ text: 'Last: 3 Oct', spoken: 'Previous is from 3 October' });
-    expect(lastFromLine({ dateISO: '2026-10-03', name: '   ' }, TODAY)?.text).toBe('Last: 3 Oct');
+    expect(lastFromLine({ dateISO: '2026-10-03', name: null }, TODAY)).toEqual({ text: 'Previous: 3 Oct', spoken: 'Previous is from 3 October' });
+    expect(lastFromLine({ dateISO: '2026-10-03', name: '   ' }, TODAY)?.text).toBe('Previous: 3 Oct');
   });
 
   it('no previous: no line', () => {
@@ -56,7 +56,7 @@ describe('idea 1: "Last: 3 Oct · Push 1A"', () => {
 
 type Card = Pick<DraftExercise, 'previousSets' | 'lastFrom' | 'elsewhere' | 'logType' | 'loadMode' | 'distUnit'>;
 
-describe('idea 2: "First time in this folder · last anywhere …"', () => {
+describe('idea 2: "First time in this folder · Previous in another workout: …"', () => {
   const at = (set: PrevSet, scope: 'routine' | 'folder' = 'folder') => ({
     scope,
     dateISO: '2026-10-03',
@@ -65,17 +65,17 @@ describe('idea 2: "First time in this folder · last anywhere …"', () => {
 
   it('each scope word', () => {
     expect(firstTimeLine(at({ weightKg: 100, reps: 5 }, 'folder'), 'weight_reps', 'metric', 'one', 'km', TODAY)).toEqual({
-      text: 'First time in this folder · last anywhere 100 kg × 5, 3 Oct',
-      spoken: 'First time in this folder. Last done anywhere: 100 kg × 5, on 3 October',
+      text: 'First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct',
+      spoken: 'First time in this folder. Previous time in another workout: 100 kg × 5, on 3 October',
     });
     expect(firstTimeLine(at({ weightKg: 100, reps: 5 }, 'routine'), 'weight_reps', 'metric', 'one', 'km', TODAY)?.text).toBe(
-      'First time in this routine · last anywhere 100 kg × 5, 3 Oct',
+      'First time in this routine · Previous in another workout: 100 kg × 5, 3 Oct',
     );
   });
 
   it('another year gets its year', () => {
     const e = { scope: 'folder' as const, dateISO: '2025-03-09', set: { weightKg: 100, reps: 5 } };
-    expect(firstTimeLine(e, 'weight_reps', 'metric', 'one', 'km', TODAY)?.text).toBe('First time in this folder · last anywhere 100 kg × 5, 9 Mar 2025');
+    expect(firstTimeLine(e, 'weight_reps', 'metric', 'one', 'km', TODAY)?.text).toBe('First time in this folder · Previous in another workout: 100 kg × 5, 9 Mar 2025');
   });
 
   it('each log type in its own words', () => {
@@ -100,7 +100,7 @@ describe('idea 2: "First time in this folder · last anywhere …"', () => {
   it('in pounds (and miles) when the member uses them', () => {
     setDisplayUnits('imperial');
     expect(firstTimeLine(at({ weightKg: 100, reps: 5 }), 'weight_reps', 'imperial', 'one', 'km', TODAY)?.text).toBe(
-      'First time in this folder · last anywhere 220.5 lb × 5, 3 Oct',
+      'First time in this folder · Previous in another workout: 220.5 lb × 5, 3 Oct',
     );
     expect(setInWords({ weightKg: 10, reps: 8 }, 'weighted', 'imperial')).toBe('+22 lb × 8');
     expect(setInWords({ weightKg: 20, reps: 8 }, 'assisted', 'imperial')).toBe('8 reps with 44.1 lb assistance');
@@ -128,15 +128,15 @@ describe('idea 2: "First time in this folder · last anywhere …"', () => {
 describe('the card shows one line: idea 1, else idea 2, else none', () => {
   const card = (c: Partial<Card>): Card => ({ previousSets: [], logType: 'weight_reps', loadMode: 'one', distUnit: 'km', ...c });
 
-  it('a previous: "Last: …"', () => {
+  it('a previous: "Previous: …"', () => {
     expect(cardSourceLine(card({ previousSets: [{ weightKg: 80, reps: 6 }], lastFrom: { dateISO: '2026-10-03', name: 'Push 1A' } }), 'metric', TODAY)?.text).toBe(
-      'Last: 3 Oct · Push 1A',
+      'Previous: 3 Oct · Push 1A',
     );
   });
 
   it('no previous but done elsewhere: the first-time line', () => {
     const c = card({ elsewhere: { scope: 'folder', dateISO: '2026-10-03', set: { weightKg: 100, reps: 5 } } });
-    expect(cardSourceLine(c, 'metric', TODAY)?.text).toBe('First time in this folder · last anywhere 100 kg × 5, 3 Oct');
+    expect(cardSourceLine(c, 'metric', TODAY)?.text).toBe('First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct');
   });
 
   it('neither, or a draft saved before these lines existed: no line', () => {

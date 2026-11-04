@@ -1,0 +1,63 @@
+# Part UAT, flow 9 (last: it starts afresh): launch audit 3 Nov 2026 (#6). A member who loads the demo
+# and then finishes their OWN first workout must see "Your first workout" and no "Last time" comparison
+# (the demo's workouts never count for either; before the fix the comparison picked a demo workout).
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*"
+    timeout: 30000
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".* set 1"
+- runFlow:
+    file: sub-uat-rest-clear.yaml
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "^Your first workout$"
+    timeout: 15000
+- assertVisible: '.*Your number to beat next time\..*'
+- assertNotVisible: '.*Last time.*'
+- assertNotVisible: '.*Open that workout$'
+- takeScreenshot: rel-90-first-workout-no-last-time

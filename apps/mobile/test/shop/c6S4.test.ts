@@ -62,9 +62,9 @@ describe('C6-10: the bag badge counts what can be ordered', () => {
 describe('C6-12: a visit with no real time shows no time', () => {
   it('0 and null are "no time"', () => {
     expect(checkInTime(0)).toBe('');
-    expect(doneHeadline({ checkedInAt: 0 })).toBe("You're in ✓");
+    expect(doneHeadline({ checkedInAt: 0 })).toBe("You're checked in");
     const a = checkInFromRow({ ok: true, alreadyIn: true, gymName: 'G', memberName: 'Asha', day: '2026-10-16', planOk: true, checkedInAt: null });
-    expect(a && a.ok && doneHeadline(a)).toBe("You're in ✓");
+    expect(a && a.ok && doneHeadline(a)).toBe("You're checked in");
   });
 });
 

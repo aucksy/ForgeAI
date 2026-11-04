@@ -24,6 +24,20 @@ export const EDGE_GAP = 6;
  * and card text on most screens. It now tucks behind the edge: only this much of it shows, as a tab.
  */
 export const PEEK = 24;
+/**
+ * Owner, 4 Nov 2026 (R-318): ON by default on every copy, Google Play included, in the early days, so members
+ * send feedback. (The launch audit had proposed off on Play because the button can sit over a button; it tucks
+ * behind the edge as a tab, PEEK, and the member can drag it or switch it off.) To turn it off by default on
+ * Play later, return `distribution === 'github'` here. A member's own choice in Settings always wins.
+ * PURE: `saved` is the stored '1' / '0' (null = never chosen).
+ */
+export const FEEDBACK_BUTTON_ON_ON_PLAY = true;
+export function feedbackButtonOn(saved: string | null | undefined, distribution: 'play' | 'github'): boolean {
+  if (saved === '1') return true;
+  if (saved === '0') return false;
+  return distribution === 'github' || FEEDBACK_BUTTON_ON_ON_PLAY;
+}
+
 /** A finger that moves less than this is a tap, not a drag. */
 export const DRAG_SLOP = 8;
 

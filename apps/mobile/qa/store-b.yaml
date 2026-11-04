@@ -1,6 +1,6 @@
 # Store screens (R-126), step B: today's Push Day. Start it from Up next, tick the bench's two
 # warm-ups and its first working set (s-01: the set table with last time's numbers and the
-# "Last: <day> · Push Day" line), then tick every other set and finish (s-04: Workout complete).
+# "Previous: <day> · Push Day" line), then tick every other set and finish (s-04: Workout complete).
 appId: com.mettleup.app
 ---
 - launchApp
@@ -33,7 +33,7 @@ appId: com.mettleup.app
     timeout: 12000
     optional: true
 - scrollUntilVisible:
-    element: 'Last: .*'
+    element: 'Previous: .*'
     direction: UP
     timeout: 15000
     optional: true

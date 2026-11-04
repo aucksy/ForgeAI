@@ -45,8 +45,8 @@ describe('welcome gym code, checked when online', () => {
 describe('join screen for a code no gym has', () => {
   it('never says "link" (a typed code opens the same screen)', () => {
     const w = unknownCodeWords('ZZZZZ9');
-    expect(w.title).toBe('No gym has this code');
-    expect(w.body).toBe("No gym has the code ZZZZZ9. Check the code with your gym's desk, then type it in the Gym tab.");
+    expect(w.title).toBe("We couldn't find this gym");
+    expect(w.body).toBe("No gym has the code ZZZZZ9, so scan the poster at your gym or type your gym's code again.");
     expect(`${w.title} ${w.body} ${unknownCodeWords(null).body}`).not.toMatch(/link/i);
   });
   it('the join note fits a member who lifts in pounds', () => {

@@ -1,0 +1,98 @@
+# Part UAT, flow 6: launch polish (launch audit 3 Nov 2026, member app), after flow 5 (10 workouts on the
+# phone: 9 from Hevy + the one just finished; no account, Google Drive never linked).
+#  - #3 "Your workouts are only on this phone. ..." on the Workout tab (from the 3rd workout):
+#    "Back up my workouts" opens Backup and restore; "Hide for 30 days" hides it, also after a restart.
+#  - #4 the floating feedback button: ON by default on every copy, Google Play included (owner, 4 Nov
+#    2026: early days, to get feedback; unit test test/lib/feedbackButton.test.ts).
+#    Settings -> "Help and feedback" still sends feedback.
+#  - #8 a check-in link whose code no gym has: "We couldn't find this gym", one sentence, "Scan the
+#    poster" and "Type a gym code" (which opens the Gym tab's code box).
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*"
+    timeout: 30000
+# ---------------------------------------------------------------- #3 the backup card
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Your workouts are only on this phone\. Back them up to Google Drive so you never lose them\.$'
+- assertVisible: "^Back up my workouts$"
+- assertVisible: "^Hide for 30 days$"
+- takeScreenshot: rel-60-backup-card
+- tapOn: "^Back up my workouts$"
+- extendedWaitUntil:
+    visible: "^Backup and restore$"
+    timeout: 15000
+- assertVisible: "^Save a backup$"
+- takeScreenshot: rel-61-backup-page-from-card
+- back
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Hide for 30 days$"
+- tapOn: "^Hide for 30 days$"
+- extendedWaitUntil:
+    notVisible: '^Your workouts are only on this phone\..*'
+    timeout: 10000
+- takeScreenshot: rel-62-backup-card-hidden
+# Still hidden after the app starts again.
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: '^Your workouts are only on this phone\..*'
+    timeout: 5000
+    optional: true
+- assertNotVisible: '^Your workouts are only on this phone\..*'
+- takeScreenshot: rel-63-still-hidden-after-restart
+# ---------------------------------------------------------------- #4 feedback still reachable
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Help and feedback"
+- extendedWaitUntil:
+    visible: "^Send$"
+    timeout: 15000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Show the feedback button on every screen"
+- assertVisible:
+    text: "Show the feedback button on every screen"
+    checked: true
+- takeScreenshot: rel-64-feedback-page-github-copy-on
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- #8 a gym link no gym has
+- openLink: "forgeai://c/ZZZZZ9"
+- extendedWaitUntil:
+    visible: "^We couldn't find this gym$"
+    timeout: 45000
+- assertVisible: "^No gym has the code ZZZZZ9, so scan the poster at your gym or type your gym's code again\\.$"
+- assertVisible: "^Scan the poster$"
+- assertVisible: "^Type a gym code$"
+- takeScreenshot: rel-65-gym-not-found
+- tapOn: "^Type a gym code$"
+- extendedWaitUntil:
+    notVisible: "^We couldn't find this gym$"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Gym code"
+    timeout: 20000
+- assertVisible: "^Join your gym$"
+- takeScreenshot: rel-66-type-a-gym-code

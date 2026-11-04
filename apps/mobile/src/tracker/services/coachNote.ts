@@ -24,6 +24,7 @@ import { getDb } from '@/db';
 import { getLastSessionOfDayType, getSessionDetail } from '@/db/repos/workoutRepo';
 import { tinyDateWithYear } from '@/lib/date';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
+import { demoSessionIds } from '@/onboarding/db/dataActions';
 import { getGroqKey } from '@/lib/keys';
 import { kgNum } from '@/lib/format';
 import { displayUnits, fmtVol, fmtW, liftedWords, weightUnitOf, type UnitSystem } from '@/lib/units';
@@ -168,6 +169,12 @@ async function comparisonWorkout(data: SessionSummaryData): Promise<{ detail: Se
       );
     }
   }
+  // Launch audit 3 Nov 2026 (#6): the demo's workouts never count as "last time" for the member's own
+  // workout. The milestone line leaves them out too (services/milestones.ts), so a member who tried the
+  // demo once could see "Your first workout" and a "Last time: ..." line together on one finish screen.
+  const demo = await demoSessionIds().catch(() => new Set<string>());
+  const mine = !demo.has(data.session.id);
+  if (id && mine && demo.has(id)) id = null;
   if (id) {
     const d = await getSessionDetail(id);
     if (!d) return null;
@@ -180,6 +187,7 @@ async function comparisonWorkout(data: SessionSummaryData): Promise<{ detail: Se
     return { detail: withKg, against: name ? `${name} on ${tinyDateWithYear(d.dateISO)}` : `your workout on ${tinyDateWithYear(d.dateISO)}` };
   }
   const prev = await lastSameTypeWithVolume(data);
+  if (prev && mine && demo.has(prev.id)) return null;
   return prev ? { detail: prev, against: null } : null;
 }
 

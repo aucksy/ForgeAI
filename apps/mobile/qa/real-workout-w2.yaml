@@ -3,7 +3,7 @@
 #   - "WORKOUT DURATION" (not "ELAPSED") over the clock;
 #   - the RPE column header is there at ~360 dp (it used to hide under 380 dp);
 #   - the warm-up rows show last time's warm-ups under PREVIOUS (they used to be blank);
-#   - "Last: <day> · Push A" says where PREVIOUS comes from;
+#   - "Previous: <day> · Push A" says where PREVIOUS comes from;
 #   - a WARM-UP tick starts the rest (it used to start none).
 # Ends with that rest running; run-device-qa.sh then checks the shade (the rest card alone).
 appId: com.mettleup.app
@@ -33,10 +33,10 @@ appId: com.mettleup.app
 # Where PREVIOUS comes from: the last Push A (Saturday's workout was Legs A; Push A was earlier).
 # R-61 (22 Oct 2026): the line now sits in the card's header (muscle and rest row), higher up.
 - scrollUntilVisible:
-    element: 'Last: .* · Push A'
+    element: 'Previous: .* · Push A'
     direction: UP
     timeout: 15000
-- assertVisible: 'Last: .* · Push A'
+- assertVisible: 'Previous: .* · Push A'
 # Two warm-ups for the bench (from the Hevy history), each with a PREVIOUS from last time.
 - assertVisible: 'Mark .*Bench Press warm-up 1 complete'
 - assertVisible: 'Mark .*Bench Press warm-up 2 complete'

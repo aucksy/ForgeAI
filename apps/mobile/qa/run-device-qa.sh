@@ -1746,7 +1746,9 @@ part_clip() {
 # and "When I'm stuck at a weight"; R-310 machine weights on the 5 kg grid (35, never 38); R-298/
 # R-299/R-304/R-305/R-307 the rest bar and "In use" (by equipment, never after a last set, "Tap: In
 # use", the beat line, no over-count); R-311 the finish line and the chart label open that workout.
-# Flows qa/uat-rel-1..5.yaml in order; a failed flow stops the part (the next leans on it).
+# Flows qa/uat-rel-1..5.yaml in order; a failed flow stops the part (the next leans on it). Launch polish
+# (3 Nov 2026): 6 (backup card, feedback page, a gym link no gym has), 7-8 (a fresh test gym: check-in
+# words and "Your plan ends on ..."), then 9 on its own (demo + own first workout: no "Last time").
 # Evidence: qa-out/uat-release/rel-*.png, plus uat-<flow>-failed.png / -hierarchy.json on a failure.
 uat_flow() {  # $1 = name, $2 = flow file, then -e NAME=value pairs
   local n=$1 f=$2
@@ -1763,6 +1765,34 @@ uat_flow() {  # $1 = name, $2 = flow file, then -e NAME=value pairs
   fi
   return 0
 }
+# Launch polish (3 Nov 2026), the gym half: a FRESH online test gym (qa/uat_gym.py on the xj/xc helpers,
+# as qa-journeys does every run; never FORGE1 / RAMS01) with "Uma Desk" (98765 00031) on its desk list
+# and a plan ending 4 days after the phone's today. Flow 7 joins it and checks in by its poster link;
+# the desk's yes to the typed number (0048); flow 8 reads "You're checked in at ...", the Gym tab's
+# plan, and the Workout tab's "Your plan ends on <day>. Renew at the front desk.". Signed out after.
+part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
+  local setup code ends rc=0
+  export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
+  mkdir -p "$XJ_STATE_DIR"
+  chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup U "$1" 4 "Uma Desk" 9876500031 2>&1)
+  echo "$setup" | grep -v '^CODE=' | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+  code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
+  ends=$(echo "$setup" | sed -n 's/^ENDS=//p' | tail -1)
+  if [ -z "$code" ] || [ -z "$ends" ]; then
+    log "PART UAT7 FAILED: the test gym could not be made (uat_gym.py setup)"
+    status=1
+    return 1
+  fi
+  log "UAT gym: plan ends $ends"
+  uat_flow uat7 uat-rel-7-gym-checkin.yaml -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
+  if [ $rc = 0 ]; then
+    python3 "$QA_DIR/uat_gym.py" confirm U +919876500031 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+    uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
+  fi
+  python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+  return $rc
+}
 part_uat() {
   local today lastday
   today=$(adb shell date +%Y-%m-%d | tr -d '\r')
@@ -1777,7 +1807,10 @@ part_uat() {
     && uat_flow uat2 uat-rel-2-settings.yaml \
     && uat_flow uat3 uat-rel-3-goals.yaml \
     && uat_flow uat4 uat-rel-4-workout.yaml \
-    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"
+    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"     && uat_flow uat6 uat-rel-6-member.yaml     && part_uat_gym "$today"
+  # Launch audit #6 (3 Nov 2026): starts afresh (demo, then the member's own first workout), so it runs
+  # whatever happened above.
+  uat_flow uat9 uat-rel-9-demo-first.yaml
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done

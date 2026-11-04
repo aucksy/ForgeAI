@@ -105,7 +105,7 @@ export function WelcomeSetCard() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Icon name="clock" size={13} color={color.inkMuted} />
                 <Text maxFontSizeMultiplier={CAP} style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted }}>
-                  1:30 · Last: 23 Oct
+                  1:30 · Previous: 23 Oct
                 </Text>
               </View>
             </View>

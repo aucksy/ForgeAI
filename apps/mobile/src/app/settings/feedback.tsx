@@ -23,7 +23,7 @@ export default function FeedbackPage() {
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
   const busy = useRef(false);
-  // R-149: the floating feedback button on every screen (on by default) is switched here.
+  // R-149: the floating feedback button on every screen is switched here (on by default, owner 4 Nov 2026).
   const buttonOn = useFeedbackButton((s) => s.enabled);
   useEffect(() => {
     void useFeedbackButton.getState().load();

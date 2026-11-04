@@ -24,7 +24,8 @@ import { getProfile } from '@/db/repos/userRepo';
 import { color, radius, space, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
-import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, unknownCodeWords, type GymPreview } from './gym';
+import { afterJoinPath, codeFromInvite, gymInitial, inviteStanding, previewErrorText, type GymPreview } from './gym';
+import { GymNotFoundCard } from './GymNotFoundCard';
 import { joinFromInvite } from './gymActions';
 import { JoinAgreement } from './JoinAgreement';
 import { agreementWords } from './joinTerms';
@@ -150,13 +151,7 @@ export function InviteScreen() {
           <PrimaryButton label="Try again" onPress={() => void ask()} />
         </Card>
       ) : look.state === 'none' ? (
-        <Card style={{ gap: space.md }}>
-          <Text accessibilityRole="header" style={heading()}>
-            {unknownCodeWords(code).title}
-          </Text>
-          <Text style={body()}>{unknownCodeWords(code).body}</Text>
-          <GhostButton label="Type a gym code" onPress={toCodeBox} />
-        </Card>
+        <GymNotFoundCard code={code} onClose={toCodeBox} />
       ) : (
         <Card style={{ gap: space.lg }}>
           <GymFace gym={look.gym} />

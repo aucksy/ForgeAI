@@ -312,14 +312,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);
-  // Where PREVIOUS comes from ("Last: 3 Oct · Push 1A"), or the first time in this routine /
-  // folder ("First time in this folder · last anywhere 100 kg × 5, 3 Oct"). Information only.
+  // Where PREVIOUS comes from ("Previous: 3 Oct · Push 1A"), or the first time in this routine /
+  // folder ("First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct"). Information only.
   const sourceLine = useMemo(
     () => cardSourceLine(exercise, units),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [exercise.previousSets, exercise.lastFrom, exercise.elsewhere, exercise.logType, exercise.loadMode, exercise.distUnit, units],
   );
-  // R-126 (owner, 25 Oct 2026): when "Last: ..." no longer fits at the end of the row it drops to
+  // R-126 (owner, 25 Oct 2026): when "Previous: ..." no longer fits at the end of the row it drops to
   // a line of its own; there it starts at the left, under the muscle tag, instead of floating right.
   const [sourceWrapped, setSourceWrapped] = useState(false);
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);

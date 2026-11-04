@@ -2,7 +2,7 @@
  * QR self check-in (15 Oct 2026): the screen the gym's check-in poster opens —
  * https://forgeai.aakashpahuja.in/c/RAMS01 scanned with the phone's camera (Android opens the app
  * straight here), or forgeai://c/RAMS01 from the poster link's web page.
- *  - in that gym     → one tap "Check in" (member_check_in, 0015/0016) → "You're in ✓ 6:42 pm".
+ *  - in that gym     → one tap "Check in" (member_check_in, 0015/0016) → "You're checked in at 6:42 pm".
  *    A tap, not at once (review, 15 Oct 2026): a poster link forwarded into a WhatsApp group must
  *    not check in everyone who opens it at home;
  *  - the first time  → asks once for the mobile number the gym has, then one tap "Check in";
@@ -10,7 +10,7 @@
  *  - not on the gym's list, gym not online, too many tries, offline → plain words, never a dead end;
  *  - in no gym, or another → "Join this gym" (the invite screen; the gym's name is the heading,
  *    audit C9-34), then scan again.
- *  - "You're in ✓" then offers the workout (OWNER-INBOX #12 step 1, 18 Oct 2026): "Start <today's
+ *  - "You're checked in" then offers the workout (OWNER-INBOX #12 step 1, 18 Oct 2026): "Start <today's
  *    routine>" from the Workout tab's own Today answer, "Back to your workout" when one is open, or
  *    "Add Push Pull Legs" with no routines yet (opens the program, which asks follow or keep).
  * The words are all in checkIn.ts (tested); this file only lays them out.
@@ -52,6 +52,7 @@ import { joinPathFromCheckIn, previewErrorText, UNLINKED_TEXT, type GymPreview }
 import { checkInAtGym } from './gymActions';
 import { apiPreview } from './gymApi';
 import { useGymShop } from './gymStore';
+import { GymNotFoundCard } from './GymNotFoundCard';
 import { takePendingCheckIn } from './pendingInvite';
 import { leave, shopInputStyle } from './ShopParts';
 import { useGymHydrated } from './shopSource';
@@ -329,18 +330,9 @@ function Busy({ words }: { words: string }) {
   );
 }
 
+// Launch audit 3 Nov 2026 (#8): the same "We couldn't find this gym" page as a join link.
 function NotAGymLink({ code, onShop }: { code: string | null; onShop: () => void }) {
-  return (
-    <Card style={{ gap: space.md }}>
-      <Text accessibilityRole="header" style={heading()}>
-        This link is not a gym's
-      </Text>
-      <Text style={bodyText()}>
-        {code ? `No gym has the code ${code}. Check in at the desk, and ask them for a new poster.` : 'Check in at the desk, and ask them for a new poster.'}
-      </Text>
-      <GhostButton label="Close" onPress={onShop} />
-    </Card>
-  );
+  return <GymNotFoundCard code={code} onClose={onShop} />;
 }
 
 /** Read when drawn: gym branding repaints the tokens. */

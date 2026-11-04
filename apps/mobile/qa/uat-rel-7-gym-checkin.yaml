@@ -1,0 +1,32 @@
+# Part UAT, flow 7 (gym, step 1 of 2): run-device-qa.sh made a FRESH online test gym (qa/uat_gym.py,
+# "QA UAT Gym": never FORGE1 / RAMS01) with "Uma Desk", mobile 98765 00031, on its desk list and a plan
+# that ends a few days from the phone's today. The phone joins it by its code as "Uma", opens its
+# check-in poster link, types the mobile once and taps Check in. With 0048 live the typed number waits
+# for the desk's yes: this flow ends on either screen; the script then says yes for the desk.
+# CODE and GYM are passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-join-gym.yaml
+    env:
+      CODE: "${CODE}"
+      NAME: "Uma"
+      GYM: "${GYM}"
+- openLink: "forgeai://c/${CODE}"
+- extendedWaitUntil:
+    visible: "^Check in at ${GYM}$"
+    timeout: 45000
+- assertVisible: 'Tap Check in when you are at the gym\.'
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: 'Type the mobile number your gym has for you\. The app asks only once\.'
+    timeout: 30000
+- tapOn: "Your mobile number"
+- inputText: "98765 00031"
+- hideKeyboard
+- takeScreenshot: rel-70-checkin-number-typed
+- tapOn: "^Check in$"
+- extendedWaitUntil:
+    visible: '(You''re checked in at [0-9]{1,2}:[0-9]{2} [ap]m|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    timeout: 30000
+- takeScreenshot: rel-71-checkin-first-answer

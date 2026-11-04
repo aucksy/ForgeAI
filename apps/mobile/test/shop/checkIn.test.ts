@@ -154,8 +154,8 @@ describe('the words', () => {
     expect(checkInTime(at)).toBe('6:42 pm');
     expect(checkInTime(new Date(2026, 9, 15, 0, 5).getTime())).toBe('12:05 am');
     expect(checkInTime(new Date(2026, 9, 15, 12, 0).getTime())).toBe('12:00 pm');
-    expect(doneHeadline({ checkedInAt: at })).toBe("You're in ✓ 6:42 pm");
-    expect(doneHeadline({ checkedInAt: NaN })).toBe("You're in ✓");
+    expect(doneHeadline({ checkedInAt: at })).toBe("You're checked in at 6:42 pm");
+    expect(doneHeadline({ checkedInAt: NaN })).toBe("You're checked in");
   });
 
   it('says where and as whom', () => {
@@ -167,7 +167,7 @@ describe('the words', () => {
 
   it('tells a member the gym does not have their number, with the number', () => {
     expect(problemText({ problem: 'NOT_ON_ROSTER', gymName: 'G', phone: '+919829012345' })).toBe(
-      "The gym doesn't have your mobile number yet. Ask the desk to add +91 98290 12345 — then scan again.",
+      "The gym doesn't have your mobile number yet. Ask the desk to add +91 98290 12345, then scan again.",
     );
     expect(problemText({ problem: 'NOT_ON_ROSTER', gymName: 'G', phone: null }, '9829054321')).toContain('+91 98290 54321');
     expect(problemText({ problem: 'NOT_ON_ROSTER', gymName: 'G', phone: null })).toContain('add your number');
@@ -182,8 +182,8 @@ describe('the words', () => {
     );
     expect(problemText({ problem: 'BAD_PHONE', gymName: null, phone: null })).toMatch(/10-digit/);
     expect(problemText({ problem: 'OTHER_GYM', gymName: 'G', phone: null })).toBe("You're not a member of G in the app.");
-    expect(notMemberText('fresh', "RAM'S", null)).toBe("Join RAM'S in the app first — then scan again to check in.");
-    expect(notMemberText('other', "RAM'S", 'Iron Temple')).toBe("You're in Iron Temple in the app, not RAM'S. Join RAM'S first — then scan again.");
+    expect(notMemberText('fresh', "RAM'S", null)).toBe("Join RAM'S in the app first, then scan again to check in.");
+    expect(notMemberText('other', "RAM'S", 'Iron Temple')).toBe("This phone is joined to Iron Temple, not RAM'S. Join RAM'S in the app first, then scan again.");
   });
 
   it('says offline and slow plainly, and logs only the unplanned', () => {

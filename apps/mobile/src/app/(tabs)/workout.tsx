@@ -24,6 +24,8 @@ import { BrandCorner } from '@/components/brand/BrandCorner';
 import { UpdateCard } from '@/components/UpdateCard';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { BackupNudgeCard } from '@/components/BackupNudgeCard';
+import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
+import { PlanEndsCard } from '@/shop/PlanEndsCard';
 import { WatchInstallCard } from '@/components/WatchInstallCard';
 import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
@@ -401,8 +403,12 @@ export default function WorkoutScreen() {
           hasWorkouts={counts ? counts.total > 0 : null}
           demo={demo}
         />
+        {/* Launch audit 3 Nov 2026: a gym member's plan ends within a week, no renewal on record. */}
+        <PlanEndsCard hidden={notice !== 'planEnds'} onWant={want('planEnds')} />
         {/* Backlog (21 Oct): members who linked Drive are told when the last backup is old. */}
         <BackupNudgeCard hidden={notice !== 'backup'} onWant={want('backup')} />
+        {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone". */}
+        <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
 
         {card.kind !== 'none' ? (
           <UpNextCard card={card} onAction={onAction} starting={starting}>

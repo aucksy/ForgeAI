@@ -901,10 +901,12 @@ export function joinPathFromSettings(typed: string): string | null {
  * gym's link AND for a code the member typed (welcome setup, Gym tab), so it never says "link". PURE.
  */
 export function unknownCodeWords(code: string | null): { title: string; body: string } {
+  // Launch audit 3 Nov 2026 (member app #8): one heading, one plain sentence, and the two ways on
+  // (GymNotFoundCard: "Scan the poster", "Type a gym code"). Never "link": a typed code lands here too.
   return {
-    title: 'No gym has this code',
+    title: "We couldn't find this gym",
     body: code
-      ? `No gym has the code ${code}. Check the code with your gym's desk, then type it in the Gym tab.`
-      : "Check the code with your gym's desk, then type it in the Gym tab.",
+      ? `No gym has the code ${code}, so scan the poster at your gym or type your gym's code again.`
+      : "Scan the poster at your gym, or type your gym's code.",
   };
 }

@@ -4,6 +4,7 @@
 #  - Standard (5 %): 24 reps -> 25: 10, 9, 6 (one goal per set, never one flat number).
 #  - Large (10 %): 24 -> 26: 10, 9, 7.
 # The Target box's spoken label is "Target <weight> · <goals>[ · RPE <n>]. <kg line>. Tap for why." (RPE: effort on).
+# Launch audit 3 Nov 2026: the label above each exercise's sets reads "Previous: <day> · <workout>".
 # Then, with the workout started under Large (it stays open for flow 4):
 #  - Pec Deck Fly, stuck 4 workouts at 40 kg: "Stuck at 40 kg for 4 workouts. ... Try 35 kg today?"
 #    with "Try 35 kg" / "Stay at 40 kg" (never 38: R-310, an odd 38 kg is in its history);
@@ -23,6 +24,14 @@ appId: com.mettleup.app
       FIND: '^Target 60 kg · .*Tap for why\.$'
 - assertVisible: '^Target 60 kg · 10, 9, 6( · RPE \d+)?\. .*'
 - takeScreenshot: rel-20-bench-goals-standard
+# Launch audit 3 Nov 2026 (#7): the line above the sets says where PREVIOUS comes from as "Previous:
+# <day> · <workout>", never "Last:" (owner rule: "Previous", never "Last", where the sets are).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})? · .*'
+- assertNotVisible: '^Last: \d.*'
+- takeScreenshot: rel-20b-previous-not-last
 - assertNotVisible: '(?i).*add a set.*'
 # Leave it (the tabs), throw it away the member's way, and choose Large.
 - back

@@ -1,16 +1,17 @@
-# Part INV, step D: a link whose code no gym has — says so, and points at the Gym tab's code box
+# Part INV, step D: a link whose code no gym has: "We couldn't find this gym", Scan the poster, and the Gym tab's code box
 # (Release A: the Gym tab's one "Join your gym" screen; the button is "Type a gym code").
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "No gym has this code"
+    visible: "We couldn.t find this gym"
     timeout: 30000
-- assertVisible: 'No gym has the code ZZZZZ9\. Check the code with your gym''s desk, then type it in the Gym tab\.'
+- assertVisible: 'No gym has the code ZZZZZ9, so scan the poster at your gym or type your gym''s code again\.'
+- assertVisible: "^Scan the poster$"
 - takeScreenshot: inv-06-unknown-code
 - tapOn: "^Type a gym code$"
 # Release A: the Gym tab's "Join your gym" screen with its code box.
 - extendedWaitUntil:
-    notVisible: "No gym has this code"
+    notVisible: "We couldn.t find this gym"
     timeout: 20000
 - scrollUntilVisible:
     element: "Gym code"

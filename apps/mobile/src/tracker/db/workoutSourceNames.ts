@@ -1,12 +1,12 @@
 /**
- * The name a workout is known by, for the live card's "Last: 3 Oct · Push 1A" line (13 Oct 2026).
+ * The name a workout is known by, for the live card's "Previous: 3 Oct · Push 1A" line (13 Oct 2026).
  * Kept apart from `workoutNames.ts` (which follows the History rule, day type included) so the
  * live workout's store reads it with nothing else attached.
  */
 import { getDb } from '@/db';
 
 /**
- * 13 Oct 2026 (the live card's "Last: 3 Oct · Push 1A"): the name a workout is known by — its
+ * 13 Oct 2026 (the live card's "Previous: 3 Oct · Push 1A"): the name a workout is known by — its
  * title, else the name of the routine it was started from (while that routine exists), else
  * null (the line then shows the day alone; never the day type). Read in pieces of 500.
  */

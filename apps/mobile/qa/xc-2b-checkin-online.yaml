@@ -15,7 +15,7 @@ appId: com.mettleup.app
 - hideKeyboard
 - tapOn: "^Check in$"
 - extendedWaitUntil:
-    visible: '(You''re in ✓.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    visible: '(You''re checked in.*|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
     timeout: 60000
 - runFlow:
     when:

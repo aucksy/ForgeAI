@@ -4,10 +4,10 @@
  *   folder Gym A: routines A1 "Gym A Push 1" and A2 "Gym A Push 2"; folder Gym B: routine B1.
  *   Bench logged ONLY from B1 (100 × 5 at RPE 9, the newest Bench of all).
  *  - "Same folder", start A1: nothing in Gym A — PREVIOUS stays empty (no cell, no hint), and the
- *    card says "First time in this folder · last anywhere 100 kg × 5, <today>" from Gym B.
+ *    card says "First time in this folder · Previous in another workout: 100 kg × 5, <today>" from Gym B.
  *  - "Same routine": the same, "…in this routine…".
  *  - "Any workout": PREVIOUS is B1's 100 × 5 (with its RPE), and the card says
- *    "Last: <today> · Gym B Push" — the workout's title, else its routine's name.
+ *    "Previous: <today> · Gym B Push" — the workout's title, else its routine's name.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -89,13 +89,13 @@ async function today(): Promise<string> {
 }
 
 describe('first time in a scope (idea 2)', () => {
-  it('Same folder, nothing in Gym A: "First time in this folder · last anywhere 100 kg × 5", and no PREVIOUS or hint from it', async () => {
+  it('Same folder, nothing in Gym A: "First time in this folder · Previous in another workout: 100 kg × 5", and no PREVIOUS or hint from it', async () => {
     await setting('folder');
     const { card, line, previous, hints } = await startA1();
     expect(card.previousSets).toEqual([]);
     expect(card.lastFrom).toBeUndefined();
     expect(card.elsewhere).toMatchObject({ scope: 'folder', set: { weightKg: 100, reps: 5 } });
-    expect(line).toBe(`First time in this folder · last anywhere 100 kg × 5, ${await today()}`);
+    expect(line).toBe(`First time in this folder · Previous in another workout: 100 kg × 5, ${await today()}`);
     // The numbers stay separate: no PREVIOUS cell and no hint quote Gym B.
     expect(previous.every((p) => p == null)).toBe(true);
     expect(hints.every((h) => h == null)).toBe(true);
@@ -112,7 +112,7 @@ describe('first time in a scope (idea 2)', () => {
   it('Same routine: "First time in this routine"', async () => {
     await setting('routine');
     const { line } = await startA1();
-    expect(line).toBe(`First time in this routine · last anywhere 100 kg × 5, ${await today()}`);
+    expect(line).toBe(`First time in this routine · Previous in another workout: 100 kg × 5, ${await today()}`);
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
     await useActiveWorkout.getState().discard();
   });
@@ -125,14 +125,14 @@ describe('first time in a scope (idea 2)', () => {
     expect(card.previousSets[0].rpe).toBeUndefined();
     expect(card.elsewhere).toBeUndefined();
     // No title: the routine's name.
-    expect(line).toBe(`Last: ${await today()} · ${NAMES.A1}`);
+    expect(line).toBe(`Previous: ${await today()} · ${NAMES.A1}`);
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
     await useActiveWorkout.getState().discard();
   });
 });
 
 describe('where PREVIOUS comes from (idea 1) and its RPE (item 1)', () => {
-  it('Any workout: PREVIOUS is Gym B’s 100 × 5 at RPE 9, and "Last: <today> · Gym B Push"', async () => {
+  it('Any workout: PREVIOUS is Gym B’s 100 × 5 at RPE 9, and "Previous: <today> · Gym B Push"', async () => {
     await setting('any');
     const { card, line } = await startA1();
     expect(card.previousSets.map((p) => [p.weightKg, p.reps, p.rpe])).toEqual([
@@ -142,7 +142,7 @@ describe('where PREVIOUS comes from (idea 1) and its RPE (item 1)', () => {
     ]);
     expect(card.elsewhere).toBeUndefined();
     expect(card.lastFrom?.name).toBe(NAMES.B1);
-    expect(line).toBe(`Last: ${await today()} · ${NAMES.B1}`);
+    expect(line).toBe(`Previous: ${await today()} · ${NAMES.B1}`);
     // The PREVIOUS cell with Track RPE on.
     const { prevLabel } = await import('@/tracker/components/setRowLayout');
     expect(prevLabel(card.previousSets[0], 'weight_reps', 'km', 'metric', true)).toBe('100 × 5\n@ 9');

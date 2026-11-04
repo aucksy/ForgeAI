@@ -7,6 +7,7 @@ import {
   FEEDBACK_BUTTON_SIZE,
   FEEDBACK_BUTTON_WORDS,
   TOP_CLEAR,
+  feedbackButtonOn,
   feedbackScreenName,
   freeBand,
   parseSpot,
@@ -87,5 +88,21 @@ describe('the floating feedback button (R-149)', () => {
       expect(w).not.toMatch(/\b(volume|PR|session)\b/i);
       expect(w.length).toBeLessThanOrEqual(100);
     }
+  });
+});
+
+describe('on or off by default (owner, 4 Nov 2026: on everywhere in the early days)', () => {
+  it('a member who never chose: on, on a Google Play copy and on a GitHub copy', () => {
+    expect(feedbackButtonOn(null, 'play')).toBe(true);
+    expect(feedbackButtonOn(undefined, 'play')).toBe(true);
+    expect(feedbackButtonOn(null, 'github')).toBe(true);
+  });
+  it("the member's own choice always wins", () => {
+    expect(feedbackButtonOn('1', 'play')).toBe(true);
+    expect(feedbackButtonOn('0', 'github')).toBe(false);
+  });
+  it('a broken saved value is the same as never chosen', () => {
+    expect(feedbackButtonOn('yes', 'play')).toBe(true);
+    expect(feedbackButtonOn('', 'github')).toBe(true);
   });
 });

@@ -123,10 +123,10 @@ export function checkInTime(epochMs: number): string {
   return `${twelve}:${String(d.getMinutes()).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
 }
 
-/** The big line after a check-in: "You're in ✓ 6:42 pm". PURE. */
+/** The big line after a check-in: "You're checked in at 6:42 pm" (audit 3 Nov 2026: no tick mark inside words). PURE. */
 export function doneHeadline(a: { checkedInAt: number }): string {
   const t = checkInTime(a.checkedInAt);
-  return t ? `You're in ✓ ${t}` : "You're in ✓";
+  return t ? `You're checked in at ${t}` : "You're checked in";
 }
 
 /** The line under it. PURE. */
@@ -156,7 +156,7 @@ export function problemText(p: { problem: CheckInProblem; gymName: string | null
     case 'NOT_ON_ROSTER': {
       const number = p.phone ?? typed ?? null;
       const yours = number ? formatMobile(number) : 'your number';
-      return `The gym doesn't have your mobile number yet. Ask the desk to add ${yours} — then scan again.`;
+      return `The gym doesn't have your mobile number yet. Ask the desk to add ${yours}, then scan again.`;
     }
     case 'GYM_NOT_ONLINE':
       return `${gym} doesn't take check-ins in the app yet. Check in at the desk today.`;
@@ -190,8 +190,9 @@ export function isRealFailure(err: GymError): boolean {
 
 /** The line for a phone not in the poster's gym (it is offered "Join <gym>"). PURE. */
 export function notMemberText(standing: CheckInStanding, posterGym: string, myGym: string | null): string {
-  if (standing === 'other' && myGym) return `You're in ${myGym} in the app, not ${posterGym}. Join ${posterGym} first — then scan again.`;
-  return `Join ${posterGym} in the app first — then scan again to check in.`;
+  // A fresh reader asked whether "in" meant "a member of": it says "joined to" now (launch audit 3 Nov 2026).
+  if (standing === 'other' && myGym) return `This phone is joined to ${myGym}, not ${posterGym}. Join ${posterGym} in the app first, then scan again.`;
+  return `Join ${posterGym} in the app first, then scan again to check in.`;
 }
 
 // ------------------------------------------------------------------ after the check-in
@@ -209,7 +210,7 @@ export type AfterCheckIn =
   | { kind: 'none' };
 
 /**
- * OWNER-INBOX #12 step 1: what "You're in ✓" offers next, from the Workout tab's own Today answer
+ * OWNER-INBOX #12 step 1: what "You're checked in" offers next, from the Workout tab's own Today answer
  * (so the two never disagree). A workout already open comes first; today's routine; nothing more
  * after today's workout is done; no routines yet → the ready Push Pull Legs plan. PURE.
  */
