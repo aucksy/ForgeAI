@@ -185,7 +185,8 @@ jobs:
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned (4 Nov 2026): "latest" asks GitHub's API without a token and failed twice on its rate limit.
+          version: 3.0.0
 
       - name: Start a local Supabase (applies every migration)
         run: supabase start -x studio,imgproxy,mailpit,realtime,edge-runtime,logflare,vector,supavisor,postgres-meta
