@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-324. New gym website (gyms.mettleup.fit): built for leads, modern, features as short animations — 4 Nov 2026
+He said: "Asses the MettleUp project ... and build me better website. New and nicer concept that is focused on converting leads and also looks modern and professional. I would still prefer the features shown with animations but not too much to read - just to the point most impactful and unique USPs that sets us apart from competition - research online ... make it world class and mobile friendly"
+Chose: the GYM site (gyms.mettleup.fit = public/home), since it is the page that collects leads (/api/lead). Research: one main button beats several; an outcome headline; proof right by the button; show the product, not paragraphs; Indian rivals sell a WhatsApp portal or charge extra for a branded app.
+Did: rebuilt public/home/index.html + home.js. Order: hero (his own headline, Start free for 3 months, See the demo gym, No card / No setup fee / Ready in 2 minutes, the call-me form, the phone that takes the typed gym name and colour, 3 floating app moments) -> 63% / Rs 0 / 2 min band -> Every set has a target (live workout scene) -> Your gym's name on every phone (QR poster, folded "Everything in the member app" list) -> 6 cards, each a tiny live scene (who stopped coming, AI import, offline desk, shop, free messages, trainer plans) -> safe and private -> prices (monthly/yearly switch, founding offer) -> 3 steps -> 5 questions -> start form -> footer; a phone-only bottom "Start free" bar. Same prices, words checked against the old page; Hinglish for every line; lead forms unchanged (tests L1-L5); no rival named (rule). Fonts now Sora + Manrope (+ Mukta). Test G1 opens the folded list first. Checked in a browser at 1280 and 390 px: no sideways scroll.
+NOT live yet: deploying replaces the public page; waits for his yes (then: CI dashboard-dist artifact -> wrangler deploy from deploy/panel).
+
 ## R-323. Go WhatsApp: login codes on a spare SIM — 4 Nov 2026
 Owner, 4 Nov: "good to go for <spare SIM, ends 0741>" (full number kept out of this public repo). He deleted (or will
 delete) that SIM's WhatsApp account; the SIM is in his phone for the one Meta code (SMS or call). Plan: Meta developer

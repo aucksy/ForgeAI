@@ -66,6 +66,8 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await expect(line.locator('[aria-label="included"]')).toHaveCount(1);
     await expect(line).not.toContainText('Coming');
     await expect(page.getByText('Gym sees who is progressing')).toHaveCount(0);
+    // R-324 (4 Nov 2026): the member app's full list sits folded shut under "Everything in the member app".
+    await page.locator('.panel summary').click();
     await line.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
     await line.locator('xpath=ancestor::div[contains(@class,"panel")][1]').screenshot({ path: `${DIR}/gyms-member-facts-${name}.png` });

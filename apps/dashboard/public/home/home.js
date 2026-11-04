@@ -1,27 +1,32 @@
-// The landing page's only script (launch I2/I3; rebuilt 21 Oct 2026 around the member app, owner
-// R-50). A separate file because the site's security policy runs no inline script. Four jobs:
+// The gym-owner page's only script (gyms.mettleup.fit; rebuilt 4 Nov 2026, R-324). A separate file because
+// the site's security policy runs no inline script. Jobs:
 //  1. English / Hindi (kept per browser);
-//  2. "Type your gym's name" + colour: every phone on the page wears it (View Transitions when the
-//     browser has them);
-//  3. the played scenes (the live workout, the shop, the messages, moving in), each
-//     with a list beside it that lights up step by step; since R-97 they loop by themselves;
-//  4. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js).
+//  2. "Type your gym's name" + colour: every phone and card on the page wears it;
+//  3. the live scenes (the workout, and one tiny scene per card): each plays by itself while it is on
+//     screen, holds its finished state, fades and starts again; off screen or in a hidden tab it stops.
+//     The HTML holds the finished state, which is what no script, reduced motion and a screenshot keep;
+//  4. small touches: the header line, the 63% count, the hero phone's tilt, monthly / yearly prices, the
+//     phone's bottom "Start free" bar;
+//  5. the "free demo" forms -> POST /api/lead (deploy/panel/leads.js). Unchanged in behaviour.
 (function () {
   var root = document.documentElement;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* quiet: private window; the choice just isn't kept */ } }
   function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; /* quiet: private window */ } }
+  function $(id) { return document.getElementById(id); }
+  function all(sel, el) { return Array.prototype.slice.call((el || document).querySelectorAll(sel)); }
+  var canWatch = 'IntersectionObserver' in window;
 
   // 1. Language --------------------------------------------------------------------------------
   var LANG = 'forgeai.home.lang';
-  var btn = document.getElementById('lang');
+  var btn = $('lang');
   var swaps = [
     ['[data-hi]', function (n) { return n.innerHTML; }, function (n, v) { n.innerHTML = v; }, 'data-hi'],
     ['[data-hi-alt]', function (n) { return n.getAttribute('alt'); }, function (n, v) { n.setAttribute('alt', v); }, 'data-hi-alt'],
     ['[data-hi-label]', function (n) { return n.getAttribute('aria-label'); }, function (n, v) { n.setAttribute('aria-label', v); }, 'data-hi-label'],
     ['[data-hi-ph]', function (n) { return n.getAttribute('placeholder'); }, function (n, v) { n.setAttribute('placeholder', v); }, 'data-hi-ph'],
   ].map(function (s) {
-    var nodes = Array.prototype.slice.call(document.querySelectorAll(s[0]));
+    var nodes = all(s[0]);
     nodes.forEach(function (n) { n.__en = n.__en || {}; n.__en[s[3]] = s[1](n); });
     return { nodes: nodes, set: s[2], attr: s[3] };
   });
@@ -39,25 +44,24 @@
   // 2. Your gym, your colour ---------------------------------------------------------------------
   var GYM = 'forgeai.home.gym';
   var COLOUR = 'forgeai.home.colour';
-  var nameBox = document.getElementById('gymname');
-  var swatches = Array.prototype.slice.call(document.querySelectorAll('.sw'));
-  // The empty box shows a grey example; the phone preview keeps its own made-up gym (owner, 25 Oct: a grey
+  var nameBox = $('gymname');
+  var swatches = all('.sw');
+  // The empty box shows a grey example; the phones keep their own made-up gym (owner, 25 Oct: a grey
   // "Iron Temple Fitness" in the box looked already filled in, so the call-back form seemed stuck on it).
   var DEMO_GYM = 'Iron Temple Fitness';
+  var formGym = document.querySelector('#demo input[name=gym]');
   function gymName() { return (nameBox.value || '').replace(/\s+/g, ' ').trim() || DEMO_GYM; }
   function paintGym() {
     var name = gymName();
-    Array.prototype.forEach.call(document.querySelectorAll('[data-gym]'), function (n) { n.textContent = name; });
-    Array.prototype.forEach.call(document.querySelectorAll('[data-initial]'), function (n) { n.textContent = name.charAt(0).toUpperCase(); });
-    Array.prototype.forEach.call(document.querySelectorAll('.back input[name=gym]'), function (n) { if (!n.dataset.touched) n.value = nameBox.value.trim(); });
+    all('[data-gym]').forEach(function (n) { n.textContent = name; });
+    all('[data-initial]').forEach(function (n) { n.textContent = name.charAt(0).toUpperCase(); });
+    if (formGym && !formGym.dataset.touched) formGym.value = nameBox.value.trim();
   }
   function paintColour(sw, animate) {
     var apply = function () {
       root.style.setProperty('--flavour', sw.dataset.c);
       root.style.setProperty('--on-flavour', sw.dataset.on);
       swatches.forEach(function (s) { s.setAttribute('aria-pressed', s === sw ? 'true' : 'false'); });
-      var meta = document.querySelector('meta[name=theme-color]');
-      if (meta) meta.setAttribute('content', sw.dataset.c);
     };
     if (animate && !reduce && document.startViewTransition) document.startViewTransition(apply);
     else apply();
@@ -65,26 +69,20 @@
   }
   swatches.forEach(function (sw) { sw.addEventListener('click', function () { paintColour(sw, true); }); });
   nameBox.addEventListener('input', function () { paintGym(); store(GYM, nameBox.value.slice(0, 34)); });
-  var back = document.querySelector('.back input[name=gym]');
-  if (back) back.addEventListener('input', function () { back.dataset.touched = '1'; });
+  if (formGym) formGym.addEventListener('input', function () { formGym.dataset.touched = '1'; });
   var savedGym = read(GYM);
   if (savedGym) nameBox.value = savedGym;
   var savedColour = read(COLOUR);
   swatches.forEach(function (sw) { if (sw.dataset.c === savedColour) paintColour(sw, false); });
   if (read(LANG) === 'hi') setLang('hi'); else paintGym();
 
-  // 3. The played scenes ------------------------------------------------------------------------
-  // R-97 (owner, 24 Oct 2026): every scene plays by itself, again and again, while it is on screen
-  // (no "Play it again"). One run ends on the finished state, held HOLD ms so it can be read; the
-  // stage fades for a moment and the run starts over. Off screen, or with the tab hidden, it stops
-  // (nothing runs in the background) and starts from the top when it is seen again. The HTML holds
-  // the finished state, which is what no script, reduced motion and a screenshot all keep.
+  // 3. The live scenes ---------------------------------------------------------------------------
+  // R-97 (owner, 24 Oct 2026): every scene plays by itself, again and again, while it is on screen.
+  // One run ends on the finished state, held HOLD ms so it can be read; it fades and starts over.
   var HOLD = 3400, FADE = 450;
-  function $(id) { return document.getElementById(id); }
-  /** R-57: light the list beside a phone up to step n (0 = none yet). */
   function beatsTo(list, n) {
     if (!list) return;
-    Array.prototype.forEach.call(list.querySelectorAll('[data-beat]'), function (li) { li.classList.toggle('on', Number(li.dataset.beat) <= n); });
+    all('[data-beat]', list).forEach(function (li) { li.classList.toggle('on', Number(li.dataset.beat) <= n); });
   }
   function fmt(n) { return n.toLocaleString('en-IN'); }
   // Split-flap roll: only the characters that change flip in.
@@ -105,16 +103,12 @@
     void el.offsetWidth;
     el.classList.add('tapping');
   }
-  /**
-   * stage: the element that fades between runs and is watched for being on screen.
-   * arm(): every part to its starting state. steps: [[ms, fn], ...]. stop(): optional, ends any
-   * interval a step started.
-   */
-  function loopScene(stage, arm, steps, stop) {
-    if (!stage || reduce || !('IntersectionObserver' in window)) return;
-    var ts = [], on = false, seen = false;
+  /** stage: watched for being on screen, fades between runs. arm(): the starting state. steps: [[ms, fn]]. */
+  function loopScene(stage, arm, steps) {
+    if (!stage || reduce || !canWatch) return;
+    var ts = [], on = false, seen = false, paused = false;
     var last = steps.reduce(function (m, s) { return Math.max(m, s[0]); }, 0);
-    function clear() { ts.forEach(clearTimeout); ts = []; if (stop) stop(); }
+    function clear() { ts.forEach(clearTimeout); ts = []; }
     function run() {
       clear();
       stage.classList.remove('rewind');
@@ -123,20 +117,17 @@
       ts.push(setTimeout(function () { stage.classList.add('rewind'); }, last + HOLD));
       ts.push(setTimeout(run, last + HOLD + FADE));
     }
-    var paused = false;
-    /** The finished state at once: every step run in order, then any interval stopped. */
-    function finish() { arm(); steps.slice().sort(function (a, b) { return a[0] - b[0]; }).forEach(function (st) { st[1](); }); if (stop) stop(); }
+    /** The finished state at once: every step run in order. */
+    function finish() { arm(); steps.slice().sort(function (a, b) { return a[0] - b[0]; }).forEach(function (st) { st[1](); }); }
     function begin() { if (on || paused) return; on = true; run(); }
     function end() { if (!on) return; on = false; clear(); stage.classList.remove('rewind'); finish(); }
-    arm();
     new IntersectionObserver(function (es) {
       es.forEach(function (e) { seen = e.isIntersecting; if (seen && !document.hidden) begin(); else end(); });
     }, { threshold: 0.35 }).observe(stage);
     document.addEventListener('visibilitychange', function () { if (document.hidden) end(); else if (seen) begin(); });
-    // A tap (or click) on the stage pauses it on the finished state; another tap plays it again.
+    // A tap (or click) pauses it on the finished state; another tap plays it again.
     stage.addEventListener('click', function () {
       paused = !paused;
-      stage.classList.toggle('paused', paused);
       if (paused) end(); else if (seen) begin();
     });
   }
@@ -145,9 +136,9 @@
   (function () {
     var live = $('live'), stage = $('lift-scene');
     if (!live) return;
-    var rows = Array.prototype.slice.call(live.querySelectorAll('tbody tr'));
+    var rows = all('tbody tr', live);
     var beat = $('beat'), record = $('record'), list = $('lift-beats');
-    var won = beat.closest('.live-beat');
+    var won = $('t-beat');
     var steps = [[0, function () { beatsTo(list, 1); }]];
     var left = 1125;
     rows.forEach(function (r, i) {
@@ -169,161 +160,172 @@
     }, steps);
   })();
 
-  // The shop: Add -> the bag -> Place order -> the desk gets it -> one fewer on the shelf.
+  // Who stopped coming: the morning list fills in, one member at a time, the WhatsApp button pressed.
   (function () {
-    var scene = $('shop-scene'), list = $('shop-beats');
-    if (!scene) return;
-    var add = $('shop-add'), bag = $('shop-bag'), bagN = $('shop-bagn'), sheet = $('shop-sheet');
-    var order = $('shop-order'), burst = $('shop-burst'), left = $('shop-left');
-    loopScene(scene, function () {
-      scene.classList.add('armed');
-      if (list) list.classList.add('armed');
-      beatsTo(list, 0);
-      add.classList.remove('on', 'tapping');
-      bag.classList.remove('has');
-      bagN.textContent = '0';
-      sheet.classList.remove('up', 'sent');
-      order.classList.remove('in');
-      burst.classList.remove('in');
-      left.textContent = '3';
-    }, [
-      [700, function () { tap(add); add.classList.add('on'); bag.classList.add('has'); bagN.textContent = '1'; beatsTo(list, 1); }],
-      [1500, function () { sheet.classList.add('up'); }],
-      [2600, function () { tap($('shop-place')); }],
-      [3000, function () { sheet.classList.add('sent'); beatsTo(list, 2); }],
-      [3700, function () { order.classList.add('in'); }],
-      [4500, function () { roll(left, '2'); beatsTo(list, 3); }],
-      [5000, function () { burst.classList.add('in'); }],
-    ]);
-  })();
-
-  // Messages: typed once, Send, it lands in the inbox, "read by" counts up.
-  (function () {
-    var scene = $('msg-scene'), compose = $('msg-compose'), typed = $('msg-typed');
-    var read = $('msg-read'), card = $('msg-new');
-    if (!scene) return;
-    var text = typed.textContent;
-    var steps = [];
-    for (var k = 1; k <= text.length; k++) {
-      (function (k) { steps.push([500 + k * 32, function () { typed.textContent = text.slice(0, k); }]); })(k);
-    }
-    var at = 500 + text.length * 32;
-    steps.push([at + 450, function () { tap($('msg-send')); }]);
-    steps.push([at + 850, function () { compose.classList.add('sent'); card.classList.add('in'); }]);
-    [9, 21, 35, 48, 58, 64].forEach(function (n, i) { steps.push([at + 1500 + i * 260, function () { roll(read, String(n)); }]); });
-    loopScene(scene, function () {
-      scene.classList.add('armed');
-      compose.classList.remove('sent');
-      typed.textContent = '';
-      read.textContent = '0';
-      card.classList.remove('in');
+    var cell = $('c-slip');
+    if (!cell) return;
+    var rows = all('.urow', cell);
+    var steps = rows.map(function (r, i) { return [400 + i * 550, function () { r.classList.remove('hide'); }]; });
+    steps.push([400 + rows.length * 550 + 300, function () { tap(rows[0].querySelector('.wa')); }]);
+    loopScene(cell, function () {
+      cell.classList.add('armed');
+      rows.forEach(function (r) { r.classList.add('hide'); });
     }, steps);
   })();
 
-  // Moving in (R-97): the owner's own sheet; each column gets its MettleUp name, the rows check out,
-  // and the count of members ready rolls up, with no mobile number shown to the AI.
+  // AI import: a scan runs over the sheet, each column gets its MettleUp name, the count rolls up.
   (function () {
-    var scene = $('move-scene'), list = $('move-beats');
-    if (!scene) return;
-    var head = $('mv-head'), ai = $('mv-ai'), count = $('mv-count'), done = scene.querySelector('.sh-done');
-    var chips = scene.querySelectorAll('.mv-chip'), rowsOk = scene.querySelectorAll('.sh-grid tbody tr');
-    var steps = [
-      [500, function () { beatsTo(list, 1); head.classList.add('scan'); ai.classList.add('on'); }],
-    ];
-    Array.prototype.forEach.call(chips, function (c, i) { steps.push([1300 + i * 420, function () { c.classList.add('in'); if (i === 1) beatsTo(list, 2); }]); });
-    var t = 1300 + chips.length * 420 + 200;
-    steps.push([t, function () { head.classList.remove('scan'); ai.classList.remove('on'); }]);
-    Array.prototype.forEach.call(rowsOk, function (r, i) { steps.push([t + 250 + i * 280, function () { r.classList.add('ok'); }]); });
-    t += 250 + rowsOk.length * 280;
-    steps.push([t + 200, function () { beatsTo(list, 3); done.classList.add('in'); }]);
-    [26, 74, 131, 178, 212].forEach(function (n, i) { steps.push([t + 300 + i * 160, function () { roll(count, String(n)); }]); });
-    loopScene(scene, function () {
-      scene.classList.add('armed');
-      if (list) list.classList.add('armed');
-      beatsTo(list, 0);
-      head.classList.remove('scan');
-      ai.classList.remove('on');
-      Array.prototype.forEach.call(chips, function (c) { c.classList.remove('in'); });
-      Array.prototype.forEach.call(rowsOk, function (r) { r.classList.remove('ok'); });
-      done.classList.remove('in');
+    var cell = $('c-ai');
+    if (!cell) return;
+    var cols = all('.col', cell), scan = cell.querySelector('.scan'), count = $('ai-count');
+    var steps = [[300, function () { scan.classList.add('go'); }]];
+    cols.forEach(function (c, i) { steps.push([800 + i * 380, function () { c.classList.add('in'); }]); });
+    var t = 800 + cols.length * 380 + 200;
+    [26, 74, 131, 178, 212].forEach(function (n, i) { steps.push([t + i * 150, function () { roll(count, String(n)); }]); });
+    loopScene(cell, function () {
+      scan.classList.remove('go');
+      cols.forEach(function (c) { c.classList.remove('in'); });
       count.textContent = '0';
     }, steps);
   })();
 
-  // Leader lines: each call-out or price tag (data-target, data-side) gets a hand-drawn line to the
-  // part of the app it names. The line runs to a gutter beside the phone (data-side = which side),
-  // along it, then into the target, so it never cuts across the label text it starts from.
-  var NS = 'http://www.w3.org/2000/svg';
-  function drawLeaders() {
-    Array.prototype.forEach.call(document.querySelectorAll('.leads-host'), function (host) {
-      var svg = host.querySelector(':scope > svg.leaders');
-      if (!svg) return;
-      while (svg.firstChild) svg.removeChild(svg.firstChild);
-      var H = host.getBoundingClientRect();
-      var lane = { left: 0, right: 0 };
-      Array.prototype.forEach.call(host.querySelectorAll('[data-target]'), function (tag) {
-        var target = host.querySelector(tag.dataset.target);
-        var phone = target && target.closest('.phone');
-        if (!target || !phone || !tag.offsetParent) return;
-        var T = tag.getBoundingClientRect(), G = target.getBoundingClientRect(), P = phone.getBoundingClientRect();
-        var right = tag.dataset.side === 'right';
-        // each line gets its own lane beside the phone, so two lines never run on top of each other
-        var k = lane[right ? 'right' : 'left']++;
-        var gx = (right ? P.right + 12 + k * 12 : P.left - 12 - k * 12) - H.left;
-        // R-97 review: the line stops at the edge of the card (or product, or table) that holds the
-        // named part, level with it, so it never runs through the words it points at.
-        var box = target.closest('.nc, .ac, .prod') || target;
-        var B = box.getBoundingClientRect();
-        var gy = G.top + G.height / 2 - H.top;
-        var ex = (right ? B.right + 3 : B.left - 3) - H.left;
-        var tl = T.left - H.left, tr = T.right - H.left, tt = T.top - H.top, tb = T.bottom - H.top;
-        var d;
-        if (gy > tt + 6 && gy < tb - 6 && (gx <= tl || gx >= tr)) {
-          // R-97: the target sits level with the note: one straight line, no corner.
-          d = 'M' + (gx > tr ? tr : tl) + ' ' + gy + ' H' + ex;
-        } else if (gx > tl && gx < tr) {
-          var sy = tt > gy ? tt : tb;
-          d = 'M' + gx + ' ' + sy + ' V' + gy + ' H' + ex;
-        } else {
-          var sx = gx > tr ? tr : tl;
-          var ty = tt + (tb - tt) / 2;
-          d = 'M' + sx + ' ' + ty + ' H' + gx + ' V' + gy + ' H' + ex;
-        }
-        var path = document.createElementNS(NS, 'path');
-        path.setAttribute('d', d);
-        var dot = document.createElementNS(NS, 'circle');
-        dot.setAttribute('cx', ex);
-        dot.setAttribute('cy', gy);
-        dot.setAttribute('r', 3.5);
-        var lead = getComputedStyle(tag).getPropertyValue('--lead');
-        if (lead) { path.style.stroke = lead; dot.style.fill = lead; }
-        svg.appendChild(path);
-        svg.appendChild(dot);
-      });
+  // Offline desk: saved while the internet is down, then sent one by one when it is back.
+  (function () {
+    var cell = $('c-off');
+    if (!cell) return;
+    var ui = cell.querySelector('.ui'), rows = all('.urow', cell);
+    var steps = [[1600, function () { ui.classList.add('online'); }]];
+    rows.forEach(function (r, i) { steps.push([2100 + i * 500, function () { r.classList.add('sent'); }]); });
+    loopScene(cell, function () {
+      ui.classList.remove('online');
+      rows.forEach(function (r) { r.classList.remove('sent'); });
+    }, steps);
+  })();
+
+  // Shop: the order lands on the desk, and the shelf shows one fewer.
+  (function () {
+    var cell = $('c-shop');
+    if (!cell) return;
+    var toast = cell.querySelector('.toast'), left = $('shop-left');
+    loopScene(cell, function () {
+      cell.classList.add('armed');
+      toast.classList.remove('in');
+      left.textContent = '3';
+    }, [
+      [600, function () { toast.classList.add('in'); }],
+      [1500, function () { roll(left, '2'); }],
+    ]);
+  })();
+
+  // Messages: typed once, Send, "read by" counts up.
+  (function () {
+    var cell = $('c-msg'), bubble = $('m-bubble'), typed = $('m-typed'), readBy = $('m-read');
+    if (!cell) return;
+    var text = typed.textContent;
+    var steps = [];
+    for (var k = 1; k <= text.length; k++) {
+      (function (k) { steps.push([300 + k * 30, function () { typed.textContent = text.slice(0, k); }]); })(k);
+    }
+    var at = 300 + text.length * 30;
+    steps.push([at + 400, function () { tap($('m-send')); }]);
+    steps.push([at + 700, function () { bubble.classList.add('sent'); }]);
+    [9, 21, 35, 48, 58, 64].forEach(function (n, i) { steps.push([at + 1200 + i * 240, function () { roll(readBy, String(n)); }]); });
+    loopScene(cell, function () {
+      bubble.classList.remove('sent');
+      typed.textContent = '';
+      readBy.textContent = '0';
+    }, steps);
+  })();
+
+  // Trainer plan: Send, and it is on its way to every member's app.
+  (function () {
+    var cell = $('c-plan'), ui = $('p-ui');
+    if (!cell) return;
+    loopScene(cell, function () {
+      cell.classList.add('armed');
+      ui.classList.remove('sent');
+    }, [
+      [1100, function () { tap($('p-send')); }],
+      [1450, function () { ui.classList.add('sent'); }],
+    ]);
+  })();
+
+  // 4. Small touches -------------------------------------------------------------------------------
+  // The header gets its line once the page moves.
+  var top = $('top');
+  function onScroll() { top.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // The 63% counts up the first time it is seen.
+  if (!reduce && canWatch) {
+    all('.count').forEach(function (el) {
+      var to = Number(el.dataset.to);
+      var io = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting) return;
+        io.disconnect();
+        var t0 = performance.now();
+        (function step(t) {
+          var p = Math.min(1, (t - t0) / 1100);
+          el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(step);
+        })(t0);
+      }, { threshold: 0.6 });
+      el.textContent = '0';
+      io.observe(el);
     });
   }
-  var leadQueued = false;
-  function queueLeaders() {
-    if (leadQueued) return;
-    leadQueued = true;
-    requestAnimationFrame(function () { leadQueued = false; drawLeaders(); });
-  }
-  window.addEventListener('resize', queueLeaders);
-  window.addEventListener('load', queueLeaders);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueLeaders);
-  if ('ResizeObserver' in window) {
-    var ro = new ResizeObserver(queueLeaders);
-    Array.prototype.forEach.call(document.querySelectorAll('.leads-host'), function (h) { ro.observe(h); });
-  }
-  btn.addEventListener('click', queueLeaders);
-  nameBox.addEventListener('input', queueLeaders);
-  queueLeaders();
 
-  // 4. Free demo forms ---------------------------------------------------------------------------
+  // The hero phone leans a little toward the mouse (a mouse only; phones keep it still).
+  var tilt = $('tilt'), hero = document.querySelector('.hero');
+  if (tilt && hero && !reduce && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var queued = false, px = 0, py = 0;
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      px = (e.clientX - r.left) / r.width - 0.5;
+      py = (e.clientY - r.top) / r.height - 0.5;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        tilt.style.setProperty('--ry', (px * 10).toFixed(2) + 'deg');
+        tilt.style.setProperty('--rx', (-py * 8).toFixed(2) + 'deg');
+      });
+    });
+    hero.addEventListener('pointerleave', function () { tilt.style.setProperty('--ry', '0deg'); tilt.style.setProperty('--rx', '0deg'); });
+  }
+
+  // Monthly / yearly prices.
+  var cards = $('cards'), bm = $('bill-m'), by = $('bill-y');
+  function bill(yearly) {
+    cards.classList.toggle('yr', yearly);
+    bm.setAttribute('aria-pressed', String(!yearly));
+    by.setAttribute('aria-pressed', String(yearly));
+  }
+  if (cards && bm && by) {
+    bm.addEventListener('click', function () { bill(false); });
+    by.addEventListener('click', function () { bill(true); });
+  }
+
+  // On a phone, the bottom "Start free" bar shows once the top buttons have scrolled away, and hides
+  // again near the end of the page (where the Start section and the footer have their own).
+  var dock = $('dock');
+  if (dock && canWatch) {
+    var away = false, near = false, nearSet = {};
+    var show = function () { dock.classList.toggle('show', away && !near); };
+    new IntersectionObserver(function (es) { away = !es[0].isIntersecting && es[0].boundingClientRect.top < 0; show(); }).observe(document.querySelector('.hero .ctas'));
+    var endIo = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { nearSet[e.target.id || 'foot'] = e.isIntersecting; });
+      near = Object.keys(nearSet).some(function (k) { return nearSet[k]; });
+      show();
+    });
+    endIo.observe($('start'));
+    endIo.observe(document.querySelector('.foot-bar'));
+  }
+
+  // 5. Free demo forms ---------------------------------------------------------------------------
   // 25 Oct 2026 (the owner's own request never reached HQ): the top form ("Or we call you") has only
-  // a number box. It used to refuse when the coloured gym-name box at the top was empty, and jump up
-  // to that box: the refusal sat below the screen, and pressing Go in that box sends nothing (it is
-  // in no form). So the top form now sends the number with whatever gym name is typed, or none
+  // a number box. It sends the number with whatever gym name is typed in the coloured box, or none
   // (deploy/panel/leads.js takes a lead without one), and every message is scrolled into view.
   var WORDS = {
     en: { phone: 'Type a 10-digit mobile number.', gym2: 'Type your gym’s name.', sending: 'Sending…', ok: 'Thank you! We will call you soon.', many: 'You have sent too many demo requests today. Please try again tomorrow.', fail: 'Could not send. Check your internet and try again.' },
@@ -332,8 +334,7 @@
   function w() { return WORDS[root.lang === 'hi' ? 'hi' : 'en']; }
   // F184 (R-242): a member shared this page with their gym owner (mettleup.fit's "Recommend MettleUp to
   // your gym" sends gyms.mettleup.fit/?from=member). A demo request from that visit is marked
-  // 'member-referral' so HQ counts it as a lead a member brought in (deploy/panel/leads.js).
-  // Kept for this tab only, so a click to another page and back still counts.
+  // 'member-referral' so HQ counts it as a lead a member brought in. Kept for this tab only.
   var SOURCE = 'forgeai.home.from';
   var source = '';
   try {
@@ -342,15 +343,14 @@
   } catch (e) {
     source = /[?&]from=member(&|$)/.test(location.search) ? 'member-referral' : ''; // quiet: storage blocked
   }
-  Array.prototype.forEach.call(document.querySelectorAll('.lead-form'), function (form) {
+  all('.lead-form').forEach(function (form) {
     var msg = form.querySelector('.msg');
     var go = form.querySelector('.go');
     var busy = false;
     function say(text, kind) {
       msg.textContent = text;
       msg.className = 'msg' + (kind ? ' ' + kind : '');
-      // A message the visitor cannot see is a silent failure: bring it on screen (a focus() call
-      // just before can have scrolled it away, or a phone keyboard can cover it).
+      // A message the visitor cannot see is a silent failure: bring it on screen.
       if (msg.scrollIntoView) msg.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
     }
     form.addEventListener('submit', function (e) {
@@ -359,8 +359,6 @@
       var f = form.elements;
       var digits = f.phone.value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
       if (!/^[6-9]\d{9}$/.test(digits)) { f.phone.focus(); say(w().phone, 'err'); return; }
-      // The Start form asks the gym name itself (its box is right above the button); the top form
-      // takes it from the coloured box when one is typed, and is sent without it otherwise.
       var gym = f.gym ? f.gym.value.trim() : nameBox.value.replace(/\s+/g, ' ').trim();
       if (f.gym && !gym) { f.gym.focus(); say(w().gym2, 'err'); return; }
       busy = true;
@@ -385,7 +383,6 @@
           return r.json().catch(function () { return {}; }).then(function (b) {
             if (r.status === 201) { f.phone.value = ''; say(w().ok, 'ok'); return; }
             console.warn('[lead] answered', r.status, b && b.error);
-            // The page's own words (English or Hindi); only the number can be refused (400) now.
             say(r.status === 429 ? w().many : r.status === 400 ? w().phone : w().fail, 'err');
           });
         })
