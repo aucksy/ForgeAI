@@ -187,9 +187,9 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T14 Play Store pictures, redone (R-126) | To do | Paused by you (25 Oct, R-129). Good screens are saved; only screen 2 needs a retake; a full design review before any upload. |
 | T15 Test server and crash alerts (#34) | Done | Crash and outage alerts built 28 Oct. The free test server was made 29 Oct and matches the live server.
 | T16 Health Connect switching on and off | Done | 24 Oct: two causes fixed (the calories switch blocked every workout; a slow reply showed "Off"). Ships in the next release with a phone test. |
-| T17 The 14 new features (#58) | To do | After the layout: phone-only ones first, then the gym ones, then bigger logging. |
+| T17 The 14 new features (#58) | Doing | 4 Nov night: building F59 muscles ready, F60 quick workout, F61 Ask an AI, F146 gym logo on share pictures, F147 Bring a friend. F56 and F122 wait for your choices. |
 | T18 Privacy and gym-terms words for the server copy (#59) | Done | You approved them (#64, A); live 25 Oct. |
-| T19 Trainer view without a tick box (#46) | To do | You picked A on 24 Oct. I build it next; you approve the exact words before it goes live. |
+| T19 Trainer view without a tick box (#46) | Done | Released as F109 trainer view in 0.70.0 (3 Nov, R-295). |
 | T20 Free vs gym-member limits + Google sign-in (#43) | Done | Google sign-in live since 0.57.0 (25 Oct). The free limits stay OFF until you switch them on in your owner panel. |
 | T21 Play Store internal test (#28) | Done | 0.56.1 is on the internal and closed tests (25 Oct). New versions now go up by themselves after each release. |
 | T22 Automated support and fixes: a plan (#33) | Done | Plan ready for your OK in #82 (1 Nov). |
@@ -210,7 +210,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T37 15. Offline front desk (admin app) | Blocked | Steps 1 and 2 live 22 Oct (opens without internet; desk check-ins kept offline and sent later, with their real time). Step 3 (payments offline) waits for your gym visit: needed only if the desk's internet really drops, and it carries money risk. |
 | T38 16. Landing page: dedicated animated sections (your note, 22 Oct) | Done | 22 Oct, live: workout + new record, the shop order, free notices to every member, the lock screen with a watch. |
 | T39 17. Missing-muscle suggestions (your note, 22 Oct) | Done | 22 Oct: released in v0.54.0. Now and then Up next suggests a few sets for a muscle group your last 3 weeks left out (never in an easy week); "Not now" waits 4 weeks; Settings → Workouts has the switch and "Bring back". |
-| T40 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | To do | Reps to beat: live in v0.54.0. Trainer view: #46 decided A (24 Oct); built after the MettleUp release. |
+| T40 18. Trainer view of member progress; reps to beat (your notes, 22 Oct) | Done | Reps to beat live in 0.54.0; trainer view released in 0.70.0 (3 Nov, R-295). |
 | T41 19. v0.52.0: your gym notes of 22 Oct | Done | 22 Oct: released inside v0.54.0: warm-ups keep last time's numbers; dumbbell pairs; newest workout anywhere; the box shows kilos/reps done and turns green; "Last" beside the rest timer; pop-ups longer; "In use" after each set; Health Connect asks first. |
 | T42 20. Offers and messages for gym owners, with the workout reward (your note, 22 Oct) | Done | 24 Oct: all live. Step 1 live 22 Oct; step 2 server and admin 23 Oct; the member app card released in v0.55.0 (https://github.com/aucksy/ForgeAI/releases/download/v0.55.0/forgeai-v0.55.0.apk). |
 | T43 21. Imported names with a title ("Mr. Ramesh") | Blocked | New imports leave titles out (admin app, live 22 Oct). Names already on the server need a small live server change: waits for your yes, which I will ask with the next live change. |
