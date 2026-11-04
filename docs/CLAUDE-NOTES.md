@@ -28,6 +28,16 @@ Done 4 Nov: Meta app "MettleUp" (id 1118531290784840, email contact@mettleup.fit
 WhatsApp Manager instead: WhatsApp account "MettleUp", display name "MettleUp" (in review), category Other.
 Left: login-code template, payment method (his card), access token into Cloudflare secrets (his hands), build, and
 business verification (Udyam) so the name shows at the top of chats; delete the empty duplicate MettleUp account.
+Update 4 Nov (later): number verified by SMS, status Pending (WhatsApp account 1007126462431898). His card saved
+(pay after use, no advance charge; a card fixes the account to invoiced billing for good); billing name "MettleUp",
+"not for business purposes" (no GST) - his choice "A". Login-code template "login_code" built (copy code, 10-min
+expiry, 10-min validity) but Meta REFUSED it: authentication templates need a VERIFIED business. He has no Udyam yet;
+he took a new-chat prompt to do Udyam (enterprise name "MettleUp") -> Meta Business Verification -> resubmit the
+template. Do NOT build WhatsApp login codes until that is approved. Gym owners keep the hand-made codes meanwhile.
+The 2 empty duplicate WhatsApp accounts are harmless (no number, no cost); left alone on purpose (removing them is hard to undo and gains nothing).
+When built: cap codes per day and per number per hour on the server, so nobody can run up his bill.
+UAT run 41793819018 (037a98f8, the Workout-tab scroll fix): green; all 62 pictures read. One small mismatch seen
+(rel-34): after "Set 1 was very hard, try 35 kg" the aim line says "Next: 35 kg x 12" but the set 2 box shows 10 reps.
 
 ## R-321. Built R-319 items 1 (Ask a trainer) and 11 (gym sees member progress) — 4 Nov 2026
 Owner decision used (R-320, relayed 4 Nov): the question goes to the PICKED person only; the owner does not see other
