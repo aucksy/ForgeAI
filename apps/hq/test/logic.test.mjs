@@ -282,7 +282,8 @@ test("BRANCH_PRICES are the landing page's monthly prices (one source of truth: 
   const html = readFileSync(new URL('../../dashboard/public/home/index.html', import.meta.url), 'utf8');
   const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ');
   for (const [plan, word] of [['starter', 'Starter'], ['pro', 'Pro']]) {
-    const m = new RegExp(`${word} ₹([0-9,]+) a month`).exec(text);
+    // R-324 (4 Nov 2026): each plan card has a line between its name and its price, so read the price inside the card.
+    const m = new RegExp(`<h3[^>]*>${word}</h3>[^]*?class="pm"><b>₹([0-9,]+)</b> <span[^>]*>a month`).exec(html);
     assert.ok(m, `${word} price not found on the landing page`);
     assert.equal(Number(m[1].replace(/,/g, '')), L.BRANCH_PRICES[plan], `${word}: HQ and the landing page disagree`);
   }
