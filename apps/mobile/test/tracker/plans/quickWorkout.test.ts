@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { fitsEquipment } from '@/tracker/plans/fit';
-import { buildQuickWorkout, estimateMinutes, QUICK_MINUTES, type QuickHistory, type QuickInput } from '@/tracker/plans/quickWorkout';
+import { buildQuickWorkout, estimateMinutes, QUICK_MINUTES, quickLastLine, quickTargetLine, type QuickHistory, type QuickInput } from '@/tracker/plans/quickWorkout';
 import { quickHistoryOf } from '@/tracker/services/quickWorkoutService';
 import { BANNED_MEMBER_WORDS } from '@/lib/words';
 
@@ -112,5 +112,31 @@ describe('uses the member\'s history', () => {
   it('the words on the plan never use a banned word', () => {
     const q = buildQuickWorkout({ ...base, minutes: 60, parts: ['legs', 'core'] });
     for (const b of BANNED_MEMBER_WORDS) expect(q.name).not.toMatch(b.re);
+  });
+});
+
+describe('the lines under each exercise (UAT run 41892416397: a plank said "pick a weight")', () => {
+  const kg = (n: number) => `${n} kg`;
+  it('a held exercise gets no reps and no weight', () => {
+    const x = { type: 'time' as const, sets: 3, repMin: 10, repMax: 15, last: null };
+    expect(quickTargetLine(x)).toBe('3 sets, held for time');
+    expect(quickLastLine(x, kg)).toBe('First time: hold it as long as you can with good form.');
+  });
+  it('a body-weight exercise never says "pick a weight"', () => {
+    expect(quickLastLine({ type: 'reps', repMin: 8, repMax: 12, last: null }, kg)).toBe('First time: use your body weight and aim for 8–12 reps.');
+  });
+  it('a weighted exercise shows last time, or how to pick a weight', () => {
+    const last = { lastISO: '2026-11-01', times: 2, lastKg: 60, lastReps: 8 };
+    expect(quickTargetLine({ type: 'weight_reps', sets: 4, repMin: 6, repMax: 10 })).toBe('4 sets of 6–10 reps');
+    expect(quickLastLine({ type: 'weight_reps', repMin: 6, repMax: 10, last }, kg)).toBe('Last time: 60 kg × 8 reps');
+    expect(quickLastLine({ type: 'weight_reps', repMin: 6, repMax: 10, last: null }, kg)).toBe('First time: pick a weight you can lift for 6–10 reps.');
+  });
+  it('a plank in a real pick is held for time, and the title says Abs once', () => {
+    const q = buildQuickWorkout({ ...base, minutes: 60, parts: ['back', 'legs', 'core'], equipment: 'dumbbells' });
+    expect(q.name).toBe('Quick workout: Back, Legs and Abs');
+    for (const x of q.exercises) {
+      expect(x.type).toBe(catalogEntry(x.key)!.type);
+      if (x.type === 'time') expect(quickTargetLine(x)).not.toMatch(/reps/);
+    }
   });
 });

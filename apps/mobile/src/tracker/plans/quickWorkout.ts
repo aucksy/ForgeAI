@@ -15,6 +15,7 @@
 import type { CatalogEntry } from '../catalog/types';
 import { defaultRepRange } from '../engine/repRanges';
 import { BODY_PART_LABEL, type BodyPart } from '../engine/readiness';
+import type { LogType } from '../engine/logTypes';
 import type { Goal } from '@/types/models';
 
 import { SLOT_FALLBACK, slotChoices, type Level, type SlotId } from './builder';
@@ -75,6 +76,8 @@ export interface QuickExercise {
   name: string;
   slot: SlotId;
   compound: boolean;
+  /** How it is logged: a plank is held for time, a push-up is reps with no weight. */
+  type: LogType;
   sets: number;
   repMin: number;
   repMax: number;
@@ -162,6 +165,7 @@ export function buildQuickWorkout(input: QuickInput): QuickWorkout {
       name: entry.name,
       slot,
       compound: entry.compound,
+      type: entry.type,
       sets: entry.compound || input.level !== 'beginner' ? 3 : 2,
       repMin: r.repRangeMin,
       repMax: r.repRangeMax,
@@ -199,10 +203,31 @@ export function buildQuickWorkout(input: QuickInput): QuickWorkout {
     exercises[i] = { ...exercises[i], sets: exercises[i].sets + 1 };
   }
 
-  const shownParts = parts.map((p) => BODY_PART_LABEL[p]);
+  // "Back, Legs and Abs", never "Back, Legs and Abs and core".
+  const shownParts = parts.map((p) => (p === 'core' ? 'Abs' : BODY_PART_LABEL[p]));
   return {
     name: `Quick workout: ${listWords(shownParts)}`,
     exercises,
     minutes: Math.round(estimateMinutes(exercises)),
   };
+}
+
+const HELD: ReadonlySet<LogType> = new Set<LogType>(['time', 'distance', 'time_distance']);
+const NO_WEIGHT: ReadonlySet<LogType> = new Set<LogType>(['reps', 'assisted']);
+
+/** The target under an exercise's name: "3 sets of 8–12 reps", or "3 sets, held for time" (a plank). */
+export function quickTargetLine(x: Pick<QuickExercise, 'type' | 'sets' | 'repMin' | 'repMax'>): string {
+  if (HELD.has(x.type)) return `${x.sets} sets, held for time`;
+  return `${x.sets} sets of ${x.repMin}–${x.repMax} reps`;
+}
+
+/**
+ * The line under the target: last time's best set, or how to start. Never "pick a weight" for a
+ * plank or a push-up (UAT run 41892416397 showed it for a plank). `fmtKg` formats in display units.
+ */
+export function quickLastLine(x: Pick<QuickExercise, 'type' | 'repMin' | 'repMax' | 'last'>, fmtKg: (kg: number) => string): string {
+  const range = `${x.repMin}–${x.repMax} reps`;
+  if (HELD.has(x.type)) return x.last ? 'Done before: try to hold a little longer.' : 'First time: hold it as long as you can with good form.';
+  if (!x.last) return NO_WEIGHT.has(x.type) ? `First time: use your body weight and aim for ${range}.` : `First time: pick a weight you can lift for ${range}.`;
+  return x.last.lastKg > 0 ? `Last time: ${fmtKg(x.last.lastKg)} × ${x.last.lastReps} reps` : `Last time: ${x.last.lastReps} reps`;
 }

@@ -19,7 +19,7 @@ import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { BODY_PART_LABEL, BODY_PARTS, bodyPartState, defaultBodyParts, type BodyPart, type ReadyState } from '@/tracker/engine/readiness';
 import { PLAN_EQUIPMENT, PLAN_EQUIPMENT_LABEL, type PlanEquipment } from '@/tracker/plans/fit';
-import { buildQuickWorkout, QUICK_MINUTES, type QuickExercise, type QuickHistory, type QuickWorkout } from '@/tracker/plans/quickWorkout';
+import { buildQuickWorkout, QUICK_MINUTES, quickLastLine, quickTargetLine, type QuickHistory, type QuickWorkout } from '@/tracker/plans/quickWorkout';
 import { getQuickHistory, getQuickSetup, startQuickWorkout, type QuickSetup } from '@/tracker/services/quickWorkoutService';
 import { getReadinessNow, type ReadinessNow } from '@/tracker/services/readinessService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
@@ -33,13 +33,6 @@ function Heading({ children }: { children: string }) {
       {children}
     </Text>
   );
-}
-
-function lastLine(x: QuickExercise, units: ReturnType<typeof useUnits>): string {
-  const range = `${x.repMin}–${x.repMax} reps`;
-  if (!x.last) return `First time: pick a weight you can lift for ${range}.`;
-  const l: QuickHistory = x.last;
-  return l.lastKg > 0 ? `Last time: ${fmtW(l.lastKg, units)} × ${l.lastReps} reps` : `Last time: ${l.lastReps} reps`;
 }
 
 export default function QuickWorkoutScreen() {
@@ -170,9 +163,9 @@ export default function QuickWorkoutScreen() {
                 <View key={x.key} style={{ gap: 2 }}>
                   <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{`${i + 1}. ${x.name}`}</Text>
                   <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary }}>
-                    {`${x.sets} sets of ${x.repMin}–${x.repMax} reps`}
+                    {quickTargetLine(x)}
                   </Text>
-                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>{lastLine(x, units)}</Text>
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>{quickLastLine(x, (kg) => fmtW(kg, units))}</Text>
                 </View>
               ))}
             </View>
