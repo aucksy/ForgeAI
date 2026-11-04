@@ -19,7 +19,7 @@ import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';
 import { BODY_PART_LABEL, BODY_PARTS, bodyPartState, defaultBodyParts, type BodyPart, type ReadyState } from '@/tracker/engine/readiness';
 import { PLAN_EQUIPMENT, PLAN_EQUIPMENT_LABEL, type PlanEquipment } from '@/tracker/plans/fit';
-import { buildQuickWorkout, QUICK_MINUTES, type QuickExercise, type QuickHistory } from '@/tracker/plans/quickWorkout';
+import { buildQuickWorkout, QUICK_MINUTES, type QuickExercise, type QuickHistory, type QuickWorkout } from '@/tracker/plans/quickWorkout';
 import { getQuickHistory, getQuickSetup, startQuickWorkout, type QuickSetup } from '@/tracker/services/quickWorkoutService';
 import { getReadinessNow, type ReadinessNow } from '@/tracker/services/readinessService';
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
@@ -79,10 +79,12 @@ export default function QuickWorkoutScreen() {
   const shownParts: BodyPart[] = parts ?? (ready ? defaultBodyParts(ready.rows, ready.lastTrained, minutes) : ['chest', 'back', 'legs']);
   const kit = equipment ?? setup?.equipment ?? 'gym';
   const quick = useMemo(
-    () =>
-      setup
-        ? buildQuickWorkout({ ...setup, equipment: kit, minutes, parts: shownParts, history })
-        : null,
+    (): QuickWorkout | null =>
+      !setup
+        ? null
+        : shownParts.length === 0
+          ? { name: 'Quick workout', exercises: [], minutes: 0 }
+          : buildQuickWorkout({ ...setup, equipment: kit, minutes, parts: shownParts, history }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [setup, kit, minutes, shownParts.join(','), history],
   );

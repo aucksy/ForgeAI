@@ -731,6 +731,26 @@ export const HELP_ARTICLES = [
     ],
   },
 
+  {
+    id: 'ready-today-and-quick-workout',
+    who: 'member',
+    title: 'See which muscles are ready today, and build a quick workout',
+    text:
+      'On the Workout tab, the "Muscles ready today" card names the muscles still resting from the workouts you logged. Tap it to open "Ready today": the body map shows each muscle as Ready (green), Almost ready (amber) or Still resting (red). Tap a muscle to see when it is ready. ' +
+      'It uses only the workouts you logged; sleep and soreness are not counted. ' +
+      'Tap "Quick workout for the time you have". Pick the time, what to train (the most rested parts are picked for you) and your equipment. The app picks the exercises, with your weights from last time. Tap "Start this workout".',
+    screens: ['apps/mobile/src/app/ready.tsx', 'apps/mobile/src/app/quick.tsx'],
+  },
+  {
+    id: 'ask-an-ai',
+    who: 'member',
+    title: 'Ask an AI app about your workouts',
+    text:
+      'Open Profile, tap Settings, then "Ask an AI about your workouts" under Your data. ' +
+      'The page shows a short text of your last 4 weeks of workouts: each exercise, your best set and how it is going, with a question at the end. ' +
+      'Tap "Share to an AI app" and pick ChatGPT, Gemini or any app on your phone. MettleUp sends nothing itself; you choose where the text goes. Your name, phone number and body weight are left out.',
+    screens: ['apps/mobile/src/app/settings/ask-ai.tsx'],
+  },
   // ------------------------------------------------------------------ both apps
   {
     id: 'send-feedback',
