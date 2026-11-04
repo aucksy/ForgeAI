@@ -10,6 +10,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Up next: .*"
     timeout: 30000
+# The "keep your workouts safe" card (R-320: every member) can push Start below the edge.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start$"
 - tapOn: "^Start$"
 - tapOn:
     text: "(?i)^allow$"

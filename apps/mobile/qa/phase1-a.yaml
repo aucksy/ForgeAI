@@ -171,6 +171,11 @@ appId: com.mettleup.app
     timeout: 30000
 # The card's own button, "Start" (a routine card's is "Start routine"; "Start <name>" only shows
 # after a workout today).
+# The "keep your workouts safe" card (R-320: every member) can push Start below the edge.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start$"
 - tapOn: "^Start$"
 - tapOn:
     text: "(?i)^allow$"
