@@ -64,6 +64,14 @@ describe('pushFromData: what a push carried, in every shape the library hands ov
   it('an offer gets its own pop-up id', () => {
     expect(pushFromData({ push: 'offer', noticeId: id, gymId: 'g1' })?.tag).toBe(`gym-offer-${id}`);
   });
+  it("a trainer's reply (0053) gets its own pop-up id", () => {
+    expect(pushFromData({ data: { body: JSON.stringify({ kind: 'gym-message', route: '/shop/ask', push: 'reply', noticeId: id, gymId: 'g1' }) } })).toEqual({
+      push: 'reply',
+      noticeId: id,
+      gymId: 'g1',
+      tag: `trainer-reply-${id}`,
+    });
+  });
   it('anything else is not ours', () => {
     expect(pushFromData(null)).toBeNull();
     expect(pushFromData({ data: { kind: 'rest' } })).toBeNull();

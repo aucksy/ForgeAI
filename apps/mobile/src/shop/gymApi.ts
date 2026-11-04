@@ -27,6 +27,8 @@ import { offerErrorOf, offersFromRow, type OffersAnswer } from './offer';
 import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanRequestsAnswer } from './planRequest';
 import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
 import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
+import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type AskQuestion } from './askTrainer';
+import type { RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
 export type GymResult<T> = { ok: true; data: T } | { ok: false; error: GymError };
@@ -514,4 +516,50 @@ export async function apiTrainerHelp(key: string): Promise<TrainerCall<'sent' | 
   }
   const a = trainerHelpFrom(r.data);
   return a ? { ok: true, data: a } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ ask a trainer + recent workouts (0053, R-319)
+
+/** `refused`: the server said no on purpose (OPEN_QUESTION, TOO_MANY, NOT_TRAINER, INVALID, NOT_FOUND); `message` is its code. */
+export type AskCall<T> = { ok: true; data: T } | { ok: false; missing: true } | { ok: false; error: GymError; message?: string };
+
+const askFail = (r: CallResult): { ok: false; missing: true } | { ok: false; error: GymError; message?: string } =>
+  r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.ok ? { kind: 'other' } : r.error, message: r.message?.trim() };
+
+/** The trainers to pick from and the member's own (member_ask_choices). `missing`: 0053 is not live yet. */
+export async function apiAskChoices(key: string): Promise<AskCall<AskChoices>> {
+  const r = await call('member_ask_choices', { p_key: key }, READ_MS);
+  if (!r.ok) return askFail(r);
+  const c = askChoicesFrom(r.data);
+  return c ? { ok: true, data: c } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Send one question to a trainer (staff id) or to any trainer (null). */
+export async function apiAskTrainer(key: string, staffId: string | null, question: string): Promise<AskCall<AskQuestion>> {
+  const r = await call('member_ask_trainer', { p_key: key, p_staff: staffId, p_question: question }, WRITE_MS);
+  if (!r.ok) return askFail(r);
+  const q = askSentFrom(r.data);
+  return q ? { ok: true, data: q } : { ok: false, error: { kind: 'other' } };
+}
+
+/** The member's last 20 questions with the replies (member_questions; it marks the replies seen). */
+export async function apiAskQuestions(key: string): Promise<AskCall<AskQuestion[]>> {
+  const r = await call('member_questions', { p_key: key }, READ_MS);
+  if (!r.ok) return askFail(r);
+  const list = askQuestionsFrom(r.data);
+  return list ? { ok: true, data: list } : { ok: false, error: { kind: 'other' } };
+}
+
+/** Take back a question that has no reply yet. */
+export async function apiAskWithdraw(key: string, questionId: string): Promise<AskCall<true>> {
+  const r = await call('member_withdraw_question', { p_key: key, p_id: questionId }, WRITE_MS);
+  return r.ok ? { ok: true, data: true } : askFail(r);
+}
+
+/** The weekly summary plus the recent workouts (member_trainer_share2). `missing`: 0053 is not live: use apiTrainerShare. */
+export async function apiTrainerShare2(key: string, summary: TrainerSummary, recent: readonly RecentWorkout[]): Promise<TrainerCall<true>> {
+  const r = await call('member_trainer_share2', { p_key: key, p_summary: summary, p_recent: recent }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown } | null;
+  return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
 }

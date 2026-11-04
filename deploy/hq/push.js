@@ -31,6 +31,8 @@ export const CHANNEL_ID = 'gym-messages';
 /** Same as the app's noticeAlerts.ts NOTICE_ROUTE / the gym tab (the offer card is at its top). */
 export const INBOX_ROUTE = '/shop/inbox';
 export const OFFER_ROUTE = '/shop';
+/** The member app's "Ask a trainer" page (src/app/shop/ask.tsx), where the reply shows. */
+export const ASK_ROUTE = '/shop/ask';
 /** The longest line a pop-up shows (the app's noticeAlertWords NOTICE_BODY_MAX). */
 export const LINE_MAX = 120;
 /** Phones sent to at the same time. */
@@ -81,11 +83,15 @@ export function line(title) {
 export function fcmMessage(page, token) {
   const gym = String(page.gymName || '').trim() || 'Your gym';
   const isOffer = page.kind === 'offer';
+  // R-319 item 1 (0053): a trainer replied to the member's question. Title = who replied (first name), body = the reply.
+  const isReply = page.kind === 'trainer_reply';
   const id = String(page.refId);
-  const tag = isOffer ? `gym-offer-${id}` : `gym-notice-${id}`;
-  const route = isOffer ? OFFER_ROUTE : INBOX_ROUTE;
-  const message = isOffer ? line(`New offer: ${page.title}`) : line(page.title);
-  const body = { kind: 'gym-message', route, push: isOffer ? 'offer' : 'message', noticeId: id, gymId: String(page.gymId || '') };
+  const tag = isReply ? `trainer-reply-${id}` : isOffer ? `gym-offer-${id}` : `gym-notice-${id}`;
+  const route = isReply ? ASK_ROUTE : isOffer ? OFFER_ROUTE : INBOX_ROUTE;
+  const who = String(page.title || '').trim() || 'Your trainer';
+  const message = isReply ? line(`${who} replied: ${page.body || ''}`) : isOffer ? line(`New offer: ${page.title}`) : line(page.title);
+  const push = isReply ? 'reply' : isOffer ? 'offer' : 'message';
+  const body = { kind: 'gym-message', route, push, noticeId: id, gymId: String(page.gymId || '') };
   return {
     message: {
       token,

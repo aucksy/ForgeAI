@@ -86,11 +86,11 @@ export function reportFileFrom(raw: unknown): { row: ReportRow; csv: string } | 
 }
 
 export const GYM_REPORT_DESK_WORDS = {
-  title: 'Workout report', // member-words
+  title: 'Full workout history', // member-words; R-319: the file is now the secondary option under Progress
   help: 'Ask this member to send their workouts from the app. Only workouts from the day they joined your gym are included.', // member-words
   request: 'Request workout report', // member-words
   asking: 'Asking…', // member-words
-  download: 'Download report', // member-words
+  download: 'Download full history', // member-words (R-319)
   downloading: 'Downloading…', // member-words
   failed: 'Couldn’t reach the server. Check the internet and try again.', // member-words
 } as const;

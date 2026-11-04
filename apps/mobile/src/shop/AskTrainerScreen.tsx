@@ -1,0 +1,251 @@
+/**
+ * R-319 item 1: Gym tab -> "Ask a trainer" (/shop/ask). Not a live chat: pick who should answer (the member's
+ * own trainer first; any ticked trainer, the gym owner, or "Any trainer"), type one question (500 letters at
+ * most), send. Only the person picked sees it ("Any trainer": every trainer and the owner; owner decision 4 Nov
+ * 2026). One question waits at a time; it can be taken back. The reply shows here, in a short history, and pops
+ * up on the phone when "Messages from my gym" is on (deploy/hq/push.js, kind 'trainer_reply'; a tap opens this
+ * page). Server: supabase/migrations/0053_ask_trainer_and_progress.sql; without it the page says it is not
+ * ready and the Gym tab hides the row. Words: askTrainer.ts ASK_WORDS.
+ */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
+
+import { Card, Chip, GhostButton, PrimaryButton, Screen } from '@/components/ui';
+import { goBack } from '@/lib/goBack';
+import { color, radius, space, type } from '@/theme/tokens';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
+
+import { ASK_MAX, ASK_WORDS, askWhen, closedLine, defaultPick, openQuestion, type AskChoices, type AskQuestion } from './askTrainer';
+import { useGymShop } from './gymStore';
+import { useGymHydrated } from './shopSource';
+import { askServerKnownMissing, readAskChoices, readAskQuestions, sendAskQuestion, withdrawAskQuestion } from './trainerSync';
+import type { GymLink } from './types';
+
+const SEEN_KEY = 'forgeai.askTrainer.seenReplies';
+
+/** The newest reply time (ms) this phone has shown, per member; 0 when none. Never throws. */
+export async function readAskSeen(memberId: string): Promise<number> {
+  try {
+    const raw = await AsyncStorage.getItem(SEEN_KEY);
+    const o = raw ? (JSON.parse(raw) as { memberId?: unknown; at?: unknown }) : null;
+    return o && o.memberId === memberId && typeof o.at === 'number' ? o.at : 0;
+  } catch {
+    return 0;
+  }
+}
+
+async function saveAskSeen(memberId: string, list: readonly AskQuestion[]): Promise<void> {
+  const at = Math.max(0, ...list.map((q) => q.answeredAt ?? 0));
+  if (at <= 0) return;
+  await AsyncStorage.setItem(SEEN_KEY, JSON.stringify({ memberId, at })).catch((e: unknown) => console.warn('[ask] could not save what was seen', e));
+}
+
+type Load = { state: 'loading' } | { state: 'missing' } | { state: 'failed' } | { state: 'ready'; choices: AskChoices; list: AskQuestion[] };
+
+export function AskTrainerScreen() {
+  const hydrated = useGymHydrated();
+  const link = useGymShop((s) => s.link);
+  if (hydrated && !link) return <Redirect href="/shop" />;
+  if (!link) return null;
+  return <AskTrainer link={link} />;
+}
+
+function AskTrainer({ link }: { link: GymLink }) {
+  const router = useRouter();
+  const pushOn = usePhonePrefs((s) => s.gymMessagesOn);
+  const [load, setLoad] = useState<Load>({ state: 'loading' });
+  const [pulling, setPulling] = useState(false);
+  const [pick, setPick] = useState<string | null>(null);
+  const [text, setText] = useState('');
+  const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
+  const [sending, setSending] = useState(false);
+  const busy = useRef(false);
+
+  const fetchAll = useCallback(
+    async (byPull: boolean) => {
+      if (byPull) setPulling(true);
+      const [choices, list] = await Promise.all([readAskChoices(link), readAskQuestions(link)]);
+      setPulling(false);
+      if (!choices || !list) {
+        setLoad((old) => (askServerKnownMissing() ? { state: 'missing' } : old.state === 'ready' ? old : { state: 'failed' }));
+        if (!askServerKnownMissing() && byPull) setNote({ ok: false, words: ASK_WORDS.failedRead });
+        return;
+      }
+      setLoad((old) => {
+        // The first read picks the member's own trainer; later reads keep the member's pick.
+        if (old.state !== 'ready') setPick(defaultPick(choices));
+        return { state: 'ready', choices, list };
+      });
+      void saveAskSeen(link.memberId, list);
+    },
+    [link],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      void fetchAll(false);
+    }, [fetchAll]),
+  );
+
+  const send = async (): Promise<void> => {
+    if (busy.current || load.state !== 'ready') return;
+    const t = text.trim();
+    if (!t) {
+      setNote({ ok: false, words: ASK_WORDS.errEmpty });
+      return;
+    }
+    busy.current = true;
+    setSending(true);
+    setNote(null);
+    const r = await sendAskQuestion(link, pick, t);
+    busy.current = false;
+    setSending(false);
+    if (r.ok) {
+      setText('');
+      setNote({ ok: true, words: ASK_WORDS.sent });
+      setLoad({ ...load, list: [r.question, ...load.list.filter((q) => q.id !== r.question.id)] });
+    } else {
+      setNote({ ok: false, words: r.words });
+    }
+    void fetchAll(false);
+  };
+
+  const takeBack = async (q: AskQuestion): Promise<void> => {
+    if (busy.current) return;
+    busy.current = true;
+    setNote(null);
+    const ok = await withdrawAskQuestion(link, q.id);
+    busy.current = false;
+    if (!ok) setNote({ ok: false, words: ASK_WORDS.failedOffline });
+    await fetchAll(false);
+  };
+
+  const small = { fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary } as const;
+  const now = Date.now();
+
+  let body: ReactNode;
+  if (load.state === 'loading') {
+    body = (
+      <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingVertical: space.lg }}>
+        <ActivityIndicator color={color.accent} />
+        <Text style={small}>Loading…</Text>
+      </View>
+    );
+  } else if (load.state === 'missing') {
+    body = <Text style={small}>{ASK_WORDS.notReady}</Text>;
+  } else if (load.state === 'failed') {
+    body = (
+      <View style={{ gap: space.md }}>
+        <Text style={small}>{ASK_WORDS.failedRead}</Text>
+        <GhostButton label="Try again" onPress={() => void fetchAll(false)} />
+      </View>
+    );
+  } else {
+    const { choices, list } = load;
+    const open = openQuestion(list);
+    const noTrainers = !choices.trainers.some((t) => !t.owner);
+    body = (
+      <View style={{ gap: space.md }}>
+        <Text style={small}>{ASK_WORDS.intro}</Text>
+        {open ? (
+          <Card style={{ gap: space.sm }}>
+            <Text style={{ ...small, color: color.inkMuted }}>{`${ASK_WORDS.askedTo(open.trainer)} · ${askWhen(open.askedAt, now)}`}</Text>
+            <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{open.question}</Text>
+            <Text style={{ ...small, color: color.ink }}>{ASK_WORDS.waiting}</Text>
+            <GhostButton label={ASK_WORDS.takeBack} onPress={() => void takeBack(open)} />
+          </Card>
+        ) : (
+          <Card style={{ gap: space.md }}>
+            <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+              {ASK_WORDS.toLabel}
+            </Text>
+            <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+              {choices.trainers.map((t) => (
+                <Chip
+                  key={t.id}
+                  role="radio"
+                  label={t.id === choices.mine ? ASK_WORDS.yours(t.name) : t.owner ? ASK_WORDS.owner(t.name) : t.name}
+                  selected={pick === t.id}
+                  onPress={() => setPick(t.id)}
+                />
+              ))}
+              <Chip role="radio" label={ASK_WORDS.anyTrainer} selected={pick === null} onPress={() => setPick(null)} />
+            </View>
+            <Text style={small}>{noTrainers ? ASK_WORDS.noTrainers : ASK_WORDS.onlyThem}</Text>
+            <TextInput
+              value={text}
+              onChangeText={(t) => {
+                setText(t);
+                if (note) setNote(null);
+              }}
+              placeholder={ASK_WORDS.placeholder}
+              placeholderTextColor={color.inkMuted}
+              accessibilityLabel="Your question"
+              multiline
+              maxLength={ASK_MAX}
+              textAlignVertical="top"
+              style={{
+                minHeight: 120,
+                backgroundColor: color.surfaceSunken,
+                borderWidth: 1,
+                borderColor: color.borderStrong,
+                borderRadius: radius.md,
+                padding: space.md,
+                fontFamily: type.body,
+                fontSize: type.size.body,
+                color: color.ink,
+              }}
+            />
+            <Text style={{ ...small, color: color.inkMuted, alignSelf: 'flex-end' }}>{ASK_WORDS.counter(text.length)}</Text>
+            <PrimaryButton label={ASK_WORDS.send} icon="send" loading={sending} disabled={!text.trim()} onPress={() => void send()} />
+          </Card>
+        )}
+        {note ? (
+          <Text accessibilityLiveRegion="polite" style={{ ...small, fontFamily: type.bodySemi, color: note.ok ? color.goodText : color.criticalText }}>
+            {note.words}
+          </Text>
+        ) : null}
+        {!pushOn ? <Text style={{ ...small, color: color.inkMuted }}>{ASK_WORDS.pushNote}</Text> : null}
+        <Text accessibilityRole="header" style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, marginTop: space.md }}>
+          {ASK_WORDS.history}
+        </Text>
+        {list.length === 0 ? <Text style={small}>{ASK_WORDS.empty}</Text> : null}
+        {list
+          .filter((q) => q !== open)
+          .map((q) => (
+            <Card key={q.id} style={{ gap: space.sm }}>
+              <Text style={{ ...small, color: color.inkMuted }}>{`${ASK_WORDS.askedTo(q.trainer)} · ${askWhen(q.askedAt, now)}`}</Text>
+              <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{q.question}</Text>
+              {q.answer ? (
+                <View style={{ gap: 4, borderLeftWidth: 3, borderLeftColor: color.accent, paddingLeft: space.md, marginTop: space.xs }}>
+                  <Text style={{ ...small, fontFamily: type.bodySemi, color: color.ink }}>
+                    {`${ASK_WORDS.replied(q.answeredBy)}${q.answeredAt ? ` · ${askWhen(q.answeredAt, now)}` : ''}`}
+                  </Text>
+                  <Text style={{ fontFamily: type.body, fontSize: type.size.body, lineHeight: 22, color: color.ink }}>{q.answer}</Text>
+                </View>
+              ) : (
+                <Text style={{ ...small, color: color.inkMuted }}>{closedLine(q)}</Text>
+              )}
+            </Card>
+          ))}
+      </View>
+    );
+  }
+
+  return (
+    <Screen title={ASK_WORDS.title} onBack={() => goBack(router, '/shop')} scroll={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: space.xxl }}
+        refreshControl={
+          <RefreshControl refreshing={pulling} onRefresh={() => void fetchAll(true)} colors={[color.accent]} tintColor={color.accent} progressBackgroundColor={color.surfaceRaised} />
+        }
+      >
+        {body}
+      </ScrollView>
+    </Screen>
+  );
+}

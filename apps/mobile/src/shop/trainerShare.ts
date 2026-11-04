@@ -27,6 +27,9 @@ export const TRAINER_WORDS = {
   // words: owner approved 3 Nov 2026 (#86); "gym and your trainer" R-296
   shareCaption:
     'Your gym and your trainer see a weekly summary: how many workouts, kg lifted, your best sets and new bests. Never your body weight, photos or notes. Off: the gym deletes it at once.',
+  // words: NEW (R-319 item 11, 4 Nov 2026), shown once the gym's server has 0053: what trainers now see. Owner checks at UAT.
+  shareCaptionRecent:
+    "Your gym and your trainer see your kg lifted each week, your best lifts, and up to 30 workouts from the last 3 months with each exercise's best set. Never your body weight, photos or notes. Off: the gym deletes it at once.",
   // words: owner approved 3 Nov 2026 (#86)
   yourTrainer: (name: string): string => `Your trainer: ${name}`,
   // words: owner approved 3 Nov 2026 (#86)

@@ -60,9 +60,9 @@ export function savedPushFrom(raw: unknown): SavedPush | null {
   return { memberKey: r.memberKey, token: r.token, savedAt: r.savedAt };
 }
 
-/** What one push said: a message (its id) or an offer, from which gym. */
+/** What one push said: a message (its id), an offer, or a trainer's reply (0053, R-319), from which gym. */
 export interface PushNotice {
-  push: 'message' | 'offer';
+  push: 'message' | 'offer' | 'reply';
   noticeId: string;
   gymId: string;
   /** The pop-up's id on the phone (the same one the 15-minute check uses for a message). */
@@ -93,9 +93,10 @@ export function pushFromData(raw: unknown): PushNotice | null {
     seen.add(r);
     const push = r.push;
     const id = r.noticeId;
-    if ((push === 'message' || push === 'offer') && typeof id === 'string' && /^[0-9a-f-]{8,64}$/i.test(id)) {
+    if ((push === 'message' || push === 'offer' || push === 'reply') && typeof id === 'string' && /^[0-9a-f-]{8,64}$/i.test(id)) {
       const gymId = typeof r.gymId === 'string' ? r.gymId : '';
-      return { push, noticeId: id, gymId, tag: push === 'offer' ? `gym-offer-${id}` : `gym-notice-${id}` };
+      const tag = push === 'reply' ? `trainer-reply-${id}` : push === 'offer' ? `gym-offer-${id}` : `gym-notice-${id}`;
+      return { push, noticeId: id, gymId, tag };
     }
     for (const k of ['data', 'body', 'dataString', 'content', 'request', 'notification']) {
       if (k in r) queue.push(r[k]);

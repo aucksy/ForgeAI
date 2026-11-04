@@ -88,6 +88,7 @@ import { NEEDS_INTERNET_WORDS, useOffline } from '../offlineContext';
 import { DeskCameraSheet } from '../DeskCameraSheet';
 import { GymReportCard } from '../GymReportCard';
 import { MemberTrainerCard } from '../TrainerParts';
+import { MemberProgressCard } from '../QuestionParts';
 import { MemberAvatar, useDeskPhotoKey, useMemberPhoto } from '../MemberPhoto';
 import { MemberPhotoError, removeMemberPhoto, saveMemberPhoto } from '../../shop/memberPhotoApi';
 import { photoServerWords } from '../../logic/memberPhoto';
@@ -530,7 +531,10 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         </Card>
       )}
 
-      {/* F121: ask for the member's workout report from the app; hidden until the server has 0045. */}
+      {/* R-319 item 11: live Progress for the owner and the member's own trainer while the member shares; hidden until 0053. */}
+      <MemberProgressCard memberId={memberId} />
+
+      {/* F121: ask for the member's workout report from the app ("Full workout history", the secondary option since R-319); hidden until the server has 0045. */}
       <GymReportCard memberId={memberId} />
 
       {/* F109: the owner picks this member's trainer; hidden until 0050 and until a trainer is ticked. */}

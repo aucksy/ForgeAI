@@ -114,6 +114,18 @@ test('a message is data-only, on the gym channel, under the tag the phone check 
   assert.equal(JSON.parse(o.data.body).route, '/shop');
 });
 
+test("a trainer's reply (0053) opens the Ask a trainer page and says who replied", () => {
+  const page = { ...PAGE, kind: 'trainer_reply', title: 'Rohit', body: 'Keep your chest up.\nAnd push your knees out.', msgKind: 'trainer_reply' };
+  const m = fcmMessage(page, 'tok-1').message;
+  assert.equal(m.data.title, 'Iron Den');
+  assert.equal(m.data.message, 'Rohit replied: Keep your chest up.');
+  assert.equal(m.data.tag, `trainer-reply-${PAGE.refId}`);
+  assert.equal(m.data.channelId, CHANNEL_ID);
+  assert.deepEqual(JSON.parse(m.data.body), { kind: 'gym-message', route: '/shop/ask', push: 'reply', noticeId: PAGE.refId, gymId: 'g1' });
+  for (const v of Object.values(m.data)) assert.equal(typeof v, 'string');
+  assert.equal(fcmMessage({ ...page, title: '' }, 't').message.data.message, 'Your trainer replied: Keep your chest up.');
+});
+
 test('line keeps the first line and cuts a long one', () => {
   assert.equal(line('\n  Gym  closed \nsecond'), 'Gym closed');
   const long = line('x'.repeat(300));

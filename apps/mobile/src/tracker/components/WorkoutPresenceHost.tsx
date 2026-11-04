@@ -60,6 +60,11 @@ export function WorkoutPresenceHost() {
         setTimeout(() => router.navigate(NOTICE_ROUTE), 400);
         return;
       }
+      // R-319: a trainer's reply that popped up opens "Ask a trainer", where the reply shows.
+      if (route === '/shop/ask') {
+        setTimeout(() => router.navigate('/shop/ask'), 400);
+        return;
+      }
       if (route !== WORKOUT_ROUTE) return;
       void useActiveWorkout
         .getState()

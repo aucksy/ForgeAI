@@ -38,6 +38,7 @@ import { useGymSectionRequest } from './gymSectionRequest';
 import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSection } from './gymTab';
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
+import { AskTrainerRow } from './AskTrainerRow';
 import { MachineTipCard } from './MachineTipCard';
 import { RECOMMEND_BODY, RECOMMEND_BUTTON, RECOMMEND_TITLE, recommendMessage } from './recommendGym';
 import { LeaderboardCard } from './LeaderboardCard';
@@ -291,6 +292,8 @@ function GymShop({ link }: { link: GymLink }) {
                 onPress={() => router.push('/scan')}
               />
             </View>
+            {/* R-319: "Ask a trainer" (hidden until the gym's server has 0053). */}
+            <AskTrainerRow link={link} refreshKey={pulls} />
             {/* R-120: the diet plan the trainer sent (only once one has come). */}
             {plansOn && diets && diets.length > 0 ? (
               <View style={{ marginTop: space.md }}>

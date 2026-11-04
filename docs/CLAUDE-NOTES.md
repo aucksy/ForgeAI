@@ -7,6 +7,27 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-321. Built R-319 items 1 (Ask a trainer) and 11 (gym sees member progress) — 4 Nov 2026
+Owner decision used (R-320, relayed 4 Nov): the question goes to the PICKED person only; the owner does not see other
+trainers' threads (transparency = later idea; one-line comment at `_tq_visible` in 0053).
+- Server: `supabase/migrations/0053_ask_trainer_and_progress.sql` (NOT APPLIED LIVE YET; needs his yes): table
+  trainer_questions; member calls (choices, ask, list, take back), gym calls (list, count, reply), push kind
+  'trainer_reply' (deploy/hq/push.js opens /shop/ask), recent workouts column + member_trainer_share2 +
+  owner_member_progress. Test supabase/tests/0053_ask_trainer_and_progress.sql. Additive; the app and panel work
+  without it (feature-detected, everything hidden).
+- Member app: Gym tab row "Ask a trainer" -> page (pick who answers, 500 letters, one open question, take back, history
+  with replies, 3 a day). Settings -> What my gym can see: new caption naming exactly what trainers see; its button
+  opens Ask a trainer. Phone now also sends up to 30 workouts of 3 months (best set per exercise, no notes/photos/body).
+- Admin panel: "Questions" (menu + More, badge = waiting), reply box; member page "Progress" card (kg/week line, workouts
+  per week, best lifts with days, new bests, recent workouts, staff-only "No new best in 6 weeks..." line). The CSV card
+  is now "Full workout history" / "Download full history" under it.
+- Help articles: ask-a-trainer (member), answer-member-questions, member-progress-card (owner). Privacy wording DRAFT
+  (EN + HI): docs/plans/R-319-privacy-draft.md (privacy.html untouched).
+- UAT: apps/mobile/qa/uat-rel-12-ask-trainer.yaml (part uat, gym step; checks the row is hidden until 0053). Panel
+  screens to check at 375 and 1280 px once 0053 is on the test server: Questions (empty, waiting, reply sent), More row
+  + badge, member page Progress (shared / not shared / older app), Full workout history card.
+- New words (member and staff) need his check at UAT.
+
 ## R-320. Decisions on R-319: backup A, widgets A, trainer ask as proposed, help answers invisible — 4 Nov 2026
 His words: "So for the ask your trainer thingy, I'm okay with the implementation that you're suggesting, but I feel
 like the gym owners would want to see these conversations. Not sure, but maybe let's build it this way and later we

@@ -1790,6 +1790,8 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
   if [ $rc = 0 ]; then
     python3 "$QA_DIR/uat_gym.py" confirm U +919876500031 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
+    # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
+    uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
   fi
   python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   return $rc

@@ -19,7 +19,7 @@
  * once), "Your trainer: <first name>" when the owner picked one, and "Ask my trainer for help" while sharing.
  * Without 0050 nothing of it shows and the page is exactly as before.
  */
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 
@@ -32,12 +32,14 @@ import { MATE_WORDS } from '@/shop/mateProfile';
 import { useGymHydrated } from '@/shop/shopSource';
 import { useBoardLive } from '@/shop/useBoardLive';
 import { useMatesLive } from '@/shop/useMatesLive';
+import { ASK_WORDS } from '@/shop/askTrainer';
 import { TRAINER_WORDS, type TrainerStatus } from '@/shop/trainerShare';
 import type { HelpOutcome } from '@/shop/trainerSync';
 import { color, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
 export default function GymSeesPage() {
+  const router = useRouter();
   const hydrated = useGymHydrated();
   const link = useGymShop((s) => s.link);
   const live = useBoardLive(link);
@@ -64,13 +66,18 @@ export default function GymSeesPage() {
   const trainersShared = usePhonePrefs((s) => s.shareWithTrainers);
   const [trainer, setTrainer] = useState<TrainerStatus | null>(null);
   const [help, setHelp] = useState<HelpOutcome | 'busy' | null>(null);
+  // R-319 (0053): with "Ask a trainer" and recent workouts live, the caption says what trainers now see, and
+  // the help button opens "Ask a trainer" instead of the old one-tap request.
+  const [askLive, setAskLive] = useState(false);
   useEffect(() => {
     let alive = true;
     if (link)
       void import('@/shop/trainerSync')
-        .then((m) => m.readTrainerStatus(link))
-        .then((s) => {
-          if (alive) setTrainer(s);
+        .then(async (m) => {
+          const [s, choices] = await Promise.all([m.readTrainerStatus(link), m.readAskChoices(link)]);
+          if (!alive) return;
+          setTrainer(s);
+          setAskLive(choices !== null);
         })
         .catch((e: unknown) => console.warn('[trainer] could not read the status', e));
     return () => {
@@ -155,11 +162,21 @@ export default function GymSeesPage() {
       {trainer ? (
         <>
           <GlassCard>
-            <ToggleRow icon="trend" title={TRAINER_WORDS.shareSwitch} caption={TRAINER_WORDS.shareCaption} value={trainersShared} onChange={flipTrainers} />
+            <ToggleRow
+              icon="trend"
+              title={TRAINER_WORDS.shareSwitch}
+              caption={askLive ? TRAINER_WORDS.shareCaptionRecent : TRAINER_WORDS.shareCaption}
+              value={trainersShared}
+              onChange={flipTrainers}
+            />
           </GlassCard>
           {trainersShared && trainer.trainer ? <Text style={body}>{TRAINER_WORDS.yourTrainer(trainer.trainer)}</Text> : null}
-          {trainersShared ? <GhostButton label={TRAINER_WORDS.helpButton} icon="chat" onPress={askHelp} /> : null}
-          {trainersShared && helpWords ? <Text style={body}>{helpWords}</Text> : null}
+          {askLive ? (
+            <GhostButton label={ASK_WORDS.rowTitle} icon="chat" onPress={() => router.push('/shop/ask')} />
+          ) : trainersShared ? (
+            <GhostButton label={TRAINER_WORDS.helpButton} icon="chat" onPress={askHelp} />
+          ) : null}
+          {!askLive && trainersShared && helpWords ? <Text style={body}>{helpWords}</Text> : null}
         </>
       ) : null}
     </SettingsPage>

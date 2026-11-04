@@ -67,6 +67,9 @@ declare
     'owner_trainer_members','owner_trainer_setup','owner_set_trainer','owner_assign_trainer',
     -- 0051: the gym's workout of the day (members check their member key; the gym its owner or desk key).
     'member_gym_wod','owner_gym_wods','owner_save_gym_wod','owner_clear_gym_wod',
+    -- 0053: "Ask a trainer" and the gym's Progress (members check their member key and act on their own questions and summary only; the gym: owner or a ticked trainer, each seeing only what is theirs).
+    'member_ask_choices','member_ask_trainer','member_questions','member_withdraw_question',
+    'owner_questions','owner_question_count','owner_answer_question','member_trainer_share2','owner_member_progress',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

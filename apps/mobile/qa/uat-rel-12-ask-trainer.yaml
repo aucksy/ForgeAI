@@ -1,0 +1,72 @@
+# Part UAT, flow 12 (gym, after flow 8): R-319 item 1 "Ask a trainer" (owner, 4 Nov 2026).
+# The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh.
+#  - Until the gym's server has 0053 (NOT applied live yet), the Gym tab shows NO "Ask a trainer" row and
+#    Settings -> What my gym can see keeps the old "Ask my trainer for help" button: this flow checks the
+#    row is absent and photographs the tab.
+#  - Once 0053 is live, the row shows: open it, read the words (who answers, the 500-letter limit), send a
+#    question to "Any trainer", read "Waiting for a reply", then take it back (the test gym keeps nothing open).
+# The gym's side (Questions page, the reply, the member's Progress card) is checked in the admin panel at a
+# phone and a desktop width; see docs/CLAUDE-NOTES.md R-319.
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Gym$"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "^Ask a trainer$"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-120-gym-tab-ask-row
+# ---------------------------------------------------------------- without 0053: nothing shows
+- runFlow:
+    when:
+      notVisible: "^Ask a trainer$"
+    commands:
+      - assertNotVisible: ".*Send a question to a trainer.*"
+# ---------------------------------------------------------------- with 0053: ask, wait, take back
+- runFlow:
+    when:
+      visible: "^Ask a trainer$"
+    commands:
+      - assertVisible: '^(Send a question to a trainer at your gym|Your question is waiting for a reply|A trainer replied to your question\. Tap to read it\.)$'
+      - tapOn: "^Ask a trainer$"
+      - extendedWaitUntil:
+          visible: 'Type one question for a trainer at your gym\. The reply shows on this page\.'
+          timeout: 30000
+      # A question left open by an earlier run: take it back first.
+      - runFlow:
+          when:
+            visible: "^Take back my question$"
+          commands:
+            - tapOn: "^Take back my question$"
+            - extendedWaitUntil:
+                visible: "^Who should answer\\?$"
+                timeout: 30000
+      - assertVisible: "^Who should answer\\?$"
+      - assertVisible: "^Any trainer$"
+      # The test gym ticks no trainer, so the owner answers; a gym with trainers reads the second line.
+      - assertVisible: '(Your gym has not listed its trainers in the app yet, so the gym owner will answer\.|Only the person you pick sees your question\. "Any trainer" sends it to every trainer and the gym owner\.)'
+      - tapOn: "^Any trainer$"
+      - tapOn: "For example: How can I squat deeper without pain in my knees\\?"
+      - inputText: "QA check: how many rest days a week?"
+      - hideKeyboard
+      - assertVisible: "^36 of 500 letters$"
+      - takeScreenshot: rel-121-ask-typed
+      - tapOn: "^Send question$"
+      - extendedWaitUntil:
+          visible: 'Waiting for a reply\. You can ask a new question once this one is answered\.'
+          timeout: 30000
+      - assertVisible: "QA check: how many rest days a week\\?"
+      - assertVisible: "^To any trainer · (Today|Yesterday), [0-9]{1,2}:[0-9]{2} [ap]m$"
+      - takeScreenshot: rel-122-ask-waiting
+      - tapOn: "^Take back my question$"
+      - extendedWaitUntil:
+          visible: "^Who should answer\\?$"
+          timeout: 30000
+      - assertVisible: "^You took this question back\\.$"
+      - takeScreenshot: rel-123-ask-taken-back
+      - back
