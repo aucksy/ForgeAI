@@ -221,11 +221,11 @@ export const HELP_ARTICLES = [
     title: 'Answer members\' questions (Questions)',
     text:
       'Members can ask a trainer a question from the MettleUp app ("Ask a trainer" on the Gym tab). ' +
-      'Only the person the member picked sees the question. A question sent to "Any trainer" goes to every trainer and the owner. The owner does not see questions asked to another trainer. ' +
+      'Only the person the member picked sees it; "Any trainer" questions go to every trainer and the owner. ' +
       '1. Open "Questions" (on a phone, under More). A number on it shows how many questions wait for a reply. ' +
       '2. "Waiting for your reply" lists them, the longest wait first. ' +
       '3. Type in "Your reply" and tap "Send reply". ' +
-      'The reply shows in the member\'s app, and their phone gets a notification if they allowed messages from the gym. One reply per question; the member can then ask a new one. ' +
+      'The reply shows in the member\'s app, with a notification if they allowed messages from the gym. ' +
       'Only trainers (ticked in Staff & sign-in) and the owner can open Questions.',
     screens: ['apps/dashboard/src/crm/ui/screens/Questions.tsx'],
   },
@@ -643,9 +643,9 @@ export const HELP_ARTICLES = [
     title: 'Watch, widgets and health apps',
     text:
       'Open Profile, tap Settings, and look under "Phone and watch". ' +
-      '"Your watch" shows when a Wear OS watch is connected. Tap the row that says "Install on watch", and switch on "Open MettleUp on my watch" so it opens when you start a workout. ' +
-      '"Widgets": tap "Add Today" or "Add This week" to put a widget on your home screen. The Today widget can start your next workout, and shows what to beat from last time on your first exercises. ' +
-      'Gym members can also tap "Add Gym right now": it shows how busy your gym is and when that was checked. Tap it to check in. ' +
+      '"Your watch": tap "Install on watch", and switch on "Open MettleUp on my watch" so it opens when you start a workout. ' +
+      '"Widgets": tap "Add Today" or "Add This week". Today starts your next workout and shows what to beat from last time. ' +
+      'Gym members can tap "Add Gym right now": how busy your gym is, and when that was checked. Tap it to check in. ' +
       '"Health apps": connect Health Connect to send your workouts, and to read your weight or steps. ' +
       'If a row is missing, this phone does not have it.',
     screens: [
@@ -678,10 +678,10 @@ export const HELP_ARTICLES = [
     title: 'Back up and restore your workouts',
     text:
       'Your MettleUp account is your backup. Open Profile, tap Settings, then "Backup and restore", and tap "Continue with Google". ' +
-      'MettleUp then saves your workouts, routines and body weight to your account by itself. On a new phone, sign in with the same Google account and tap "Bring back my workouts". ' +
-      '"Download my data" makes one file with everything, a copy for your own records. Keep it in Files, Google Drive or WhatsApp. ' +
-      '"Restore from a backup" brings your workouts back from a file you saved: tap "Choose backup file", check what is inside, then pick "Replace everything on this phone" or "Add to what\'s here". Files from the old ForgeAI app work too. ' +
-      'Backed up to Google Drive with an older version of the app? On the same page, tap "Bring back a Google Drive backup", then "Find my Drive backup", and pick the same Google account.',
+      'Your workouts, routines and body weight are then saved by themselves. On a new phone, sign in with the same Google account and tap "Bring back my workouts". ' +
+      '"Download my data" makes one file with everything, a copy for your own records. ' +
+      '"Restore from a backup" brings back a file you saved: tap "Choose backup file", then "Replace everything on this phone" or "Add to what\'s here". ' +
+      'Used Google Drive backup in an older version? Tap "Bring back a Google Drive backup", then "Find my Drive backup".',
     screens: [
       'apps/mobile/src/app/settings/backup.tsx',
       'apps/mobile/src/app/settings/save-backup.tsx',
