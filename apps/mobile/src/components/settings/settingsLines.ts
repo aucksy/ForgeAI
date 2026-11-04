@@ -34,6 +34,7 @@ export type SettingsRowKey =
   | 'restoreBackup'
   | 'backup'
   | 'spreadsheet'
+  | 'askAi'
   | 'import'
   | 'erase'
   | 'news'
@@ -110,6 +111,8 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
   const data: SettingsRow[] = [
     { key: 'backup', title: 'Backup and restore', href: '/settings/backup' }, // member-words
     { key: 'spreadsheet', title: 'Save as a spreadsheet', href: '/settings/export' },
+    // F61: a short text of the last 4 weeks for the member's own AI app (share sheet; nothing sent by us).
+    { key: 'askAi', title: 'Ask an AI about your workouts', href: '/settings/ask-ai' }, // member-words
     { key: 'import', title: 'Bring in from Hevy or Strong', href: '/settings/import' },
     { key: 'erase', title: 'Erase or start over', href: '/settings/data' },
   ];

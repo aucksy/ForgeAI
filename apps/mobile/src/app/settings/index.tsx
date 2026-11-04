@@ -76,6 +76,7 @@ const ICON: Record<SettingsRowKey, IconName> = {
   restoreBackup: 'import',
   backup: 'check',
   spreadsheet: 'list',
+  askAi: 'sparkle',
   import: 'import',
   erase: 'trash',
   news: 'sparkle',

@@ -78,7 +78,7 @@ describe('A7: Settings in 6 headed groups', () => {
     expect(MORE_WORKOUT_ROWS.map((r) => r.title)).toEqual(['How the app picks your next weight', "Last time's numbers", 'Muscle tips']);
     expect(rows['Phone and watch']).toEqual(['Health apps', 'Widgets']);
     expect(rows['Your gym']).toEqual(['Join your gym']);
-    expect(rows['Your data']).toEqual(['Backup and restore', 'Save as a spreadsheet', 'Bring in from Hevy or Strong', 'Erase or start over']);
+    expect(rows['Your data']).toEqual(['Backup and restore', 'Save as a spreadsheet', 'Ask an AI about your workouts', 'Bring in from Hevy or Strong', 'Erase or start over']);
     expect(BACKUP_FILE_ROWS.map((r) => r.title)).toEqual(['Download my data', 'Restore from a backup']);
     expect(rows.Help).toEqual(['Help and feedback', "What's new", 'About']);
   });
