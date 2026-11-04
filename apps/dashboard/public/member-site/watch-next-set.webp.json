@@ -1,4 +1,4 @@
 {
-  "prompt": "Origin: real Wear OS screen of the MettleUp watch app, branding/mettleup/store/wear/3-between-sets.png (Play watch pictures, 31 Oct 2026); resized 456 -> 304 px with PIL, webp quality 85. Not generated.",
-  "createdAt": "2026-10-31T18:00:00.000Z"
+ "source": "wear-build artifact watch-screens, large-L01-next-set-round.png (run 41698349445, commit 4a4c2551, 3 Nov 2026)",
+ "size": "360x360, round mask"
 }

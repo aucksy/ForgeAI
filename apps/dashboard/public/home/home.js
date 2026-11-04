@@ -202,18 +202,44 @@
     }, steps);
   })();
 
-  // Shop: the order lands on the desk, and the shelf shows one fewer.
+  // Shop: add to bag, place the order, the order lands on the desk.
   (function () {
+    // The shop (R-325, owner 4 Nov 2026: "how people add to cart"): two taps on "Add to bag", each
+    // dot flies into the bag, the bag counts up, "Place order" is tapped, and the order lands on the desk.
+    // The app's own words: "Add to bag", "Place order", "Pay at the desk" (apps/mobile/src/shop).
     var cell = $('c-shop');
     if (!cell) return;
-    var toast = cell.querySelector('.toast'), left = $('shop-left');
+    var app = cell.querySelector('.shopapp'), bag = $('shop-bag'), count = $('shop-count');
+    var p1 = $('shop-p1'), p2 = $('shop-p2'), bar = $('shop-bar'), po = $('shop-po'), toast = $('shop-toast'), fly = $('shop-fly');
+    function setCount(n) { count.textContent = String(n); count.classList.toggle('zero', n === 0); }
+    function add(prod, n) {
+      var btn = prod.querySelector('.add');
+      tap(btn);
+      prod.classList.add('added');
+      if (fly.animate) {
+        var a = app.getBoundingClientRect(), f = btn.getBoundingClientRect(), t = bag.getBoundingClientRect();
+        var x0 = f.left - a.left + f.width / 2 - 7, y0 = f.top - a.top + f.height / 2 - 7;
+        var x1 = t.left - a.left + t.width / 2 - 7, y1 = t.top - a.top + t.height / 2 - 7;
+        fly.animate([
+          { opacity: 1, transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)' },
+          { opacity: 1, transform: 'translate(' + (x0 + x1) / 2 + 'px,' + (Math.min(y0, y1) - 40) + 'px) scale(.9)', offset: 0.5 },
+          { opacity: 0, transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.5)' },
+        ], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)' });
+      }
+      setTimeout(function () { setCount(n); bag.classList.remove('bump'); void bag.offsetWidth; bag.classList.add('bump'); }, 620);
+    }
     loopScene(cell, function () {
       cell.classList.add('armed');
+      [p1, p2].forEach(function (p) { p.classList.remove('added'); });
+      bar.classList.remove('in');
       toast.classList.remove('in');
-      left.textContent = '3';
+      setCount(0);
     }, [
-      [600, function () { toast.classList.add('in'); }],
-      [1500, function () { roll(left, '2'); }],
+      [700, function () { add(p1, 1); }],
+      [1900, function () { add(p2, 2); }],
+      [2900, function () { bar.classList.add('in'); }],
+      [3800, function () { tap(po); }],
+      [4300, function () { toast.classList.add('in'); }],
     ]);
   })();
 
@@ -248,6 +274,19 @@
       [1100, function () { tap($('p-send')); }],
       [1450, function () { ui.classList.add('sent'); }],
     ]);
+  })();
+
+  // The watch (R-325): next set, the dial turned (20 -> 22.5 kg), the tick: saved and resting. Real screens.
+  (function () {
+    var stage = $('watch-scene');
+    if (!stage) return;
+    var faces = all('.face img', stage), list = $('watch-beats');
+    function show(i) { faces.forEach(function (f, j) { f.classList.toggle('on', j === i); }); }
+    loopScene(stage, function () {
+      if (list) list.classList.add('armed');
+      show(0);
+      beatsTo(list, 1);
+    }, [[1500, function () { show(1); beatsTo(list, 2); }], [3100, function () { show(2); beatsTo(list, 3); }]]);
   })();
 
   // 4. Small touches -------------------------------------------------------------------------------
