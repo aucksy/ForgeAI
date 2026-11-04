@@ -30,7 +30,9 @@ const BACKUP_PAGE_WORDS = {
 export default function BackupPage() {
   const router = useRouter();
   const busy = useRef(false);
-  const go = (href: string): void => navigateOnce(busy, () => router.push(href as Href));
+  const go = (href: string | undefined): void => {
+    if (href) navigateOnce(busy, () => router.push(href as Href));
+  };
   return (
     <SettingsPage title="Backup and restore">
       <AccountCard />
