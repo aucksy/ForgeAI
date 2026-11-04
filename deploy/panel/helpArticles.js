@@ -428,26 +428,6 @@ export const HELP_ARTICLES = [
       'If you do not see the card, your gym has not started it yet.',
   },
   {
-    id: 'ready-muscles-and-quick-workout',
-    who: 'member',
-    title: 'See which muscles are ready, and get a quick workout',
-    text:
-      'On the Workout tab, the "Muscles ready today" card shows which muscles have rested enough. Tap "See the body map" for the drawing: green is ready, amber almost ready, red still resting. It uses only the workouts you logged. ' +
-      'Short on time? Tap "Quick workout for the time you have". Pick how much time you have, what to train and your equipment. The app picks the exercises. Tap "Start this workout".',
-    screens: ['apps/mobile/src/app/ready.tsx', 'apps/mobile/src/app/quick.tsx'],
-  },
-  {
-    id: 'ask-an-ai',
-    who: 'member',
-    title: 'Ask an AI app about your workouts',
-    text:
-      '1. Open Profile, tap Settings, then "Ask an AI about your workouts". ' +
-      '2. The page shows a short text of your last 4 weeks of workouts, with a question at the end. ' +
-      '3. Tap "Share to an AI app" and pick ChatGPT, Gemini or any app. ' +
-      'MettleUp sends nothing itself. The text has no name, phone number or body weight.',
-    screens: ['apps/mobile/src/app/settings/ask-ai.tsx'],
-  },
-  {
     id: 'gym-reminders-and-messages',
     who: 'member',
     title: 'Workout reminders and messages from your gym',
