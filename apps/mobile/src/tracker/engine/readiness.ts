@@ -187,7 +187,7 @@ export function defaultBodyParts(rows: readonly MuscleReadiness[], lastTrained: 
   });
   // Abs never lead a short workout on their own: they come in only when nothing bigger is ready.
   const big = order.filter((p) => p !== 'core');
-  const picked = big.filter((p) => bodyPartState(p, rows) === 'ready').slice(0, want);
+  const picked: BodyPart[] = big.filter((p) => bodyPartState(p, rows) === 'ready').slice(0, want);
   if (picked.length === 0) return order.slice(0, want);
   if (picked.length < want && bodyPartState('core', rows) === 'ready') picked.push('core');
   return BODY_PARTS.filter((p) => picked.includes(p));
