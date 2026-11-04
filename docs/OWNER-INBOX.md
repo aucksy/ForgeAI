@@ -242,6 +242,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 
 | Item id | Item | Score | Scored |
 |---|---|---|---|
+| member-app/the-watch-dims-during-a-workout-and-wakes-when-you-look | F191 The watch dims during a workout and wakes when you look | 10 | 4 Nov, 10:46 pm |
 | member-app/watch-opens-when-a-workout-starts | F65 Watch opens when a workout starts | 10 | 29 Oct, 10:38 pm |
 | t:0-60-0-feedback-button-finish-screen-kg-exercise-history-bod | T5 0.60.0: feedback button, finish-screen kg, exercise History, body-weight moves, watch, admin What's new, crash alerts | 10 | 29 Oct, 10:43 pm |
 | t:floating-feedback-button-voice-or-typing-auto-fix-loop-r-149 | T2 Floating feedback button, voice or typing, auto-fix loop (R-149) | 10 | 29 Oct, 10:43 pm |
@@ -252,6 +253,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/balance-check-and-focus-block | F52 Balance check and focus block | 9 | 2 Nov, 08:22 pm |
 | member-app/install-the-watch-app-from-the-phone | F67 Install the watch app from the phone | 9 | 29 Oct, 10:38 pm |
 | gym-member-links/ask-the-desk-to-freeze-or-renew | F150 Ask the desk to freeze or renew | 8 | 29 Oct, 10:36 pm |
+| gym-member-links/fitpass-and-other-pass-members | F123 FitPass and other pass members | 8 | 4 Nov, 10:46 pm |
 | gym-member-links/member-data-export-by-the-gym-on-request | F121 Member data export by the gym, on request | 8 | 29 Oct, 10:40 pm |
 | member-app/guided-first-routine-in-a-folder | F186 Guided first routine, in a folder | 8 | 2 Nov, 08:24 pm |
 | member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
@@ -264,7 +266,6 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/strength-level-for-each-main-lift | F57 Strength level for each main lift | 7 | 29 Oct, 10:35 pm |
 | t:automated-support-and-fixes-a-plan-33 | T22 Automated support and fixes: a plan (#33) | 7 | 29 Oct, 10:45 pm |
 | admin-app-gym-owner-and-staff/trainer-view-of-member-progress | F109 Trainer view of member progress | 6 | 29 Oct, 10:34 pm |
-| gym-member-links/fitpass-and-other-pass-members | F123 FitPass and other pass members | 6 | 29 Oct, 10:40 pm |
 | member-app/quick-workout-i-have-30-minutes | F60 Quick workout: "I have 30 minutes" | 6 | 29 Oct, 10:34 pm |
 | platform-and-quality/test-server-before-live | F175 Test server before live | 6 | 29 Oct, 10:41 pm |
 | t:play-store-pictures-redone-r-126 | T14 Play Store pictures, redone (R-126) | 6 | 29 Oct, 10:43 pm |
