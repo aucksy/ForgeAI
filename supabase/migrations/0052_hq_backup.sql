@@ -1,8 +1,8 @@
--- NOT APPLIED LIVE YET (written 3 Nov 2026, launch audit ops #1 / owner #1). Needs the owner's yes:
+-- APPLIED LIVE 4 Nov 2026 (owner: 'apply migration 0052 to the live database now'). Written 3 Nov 2026, launch audit ops #1:
 -- SQL Editor -> paste this file -> Run. Additive and re-runnable: one new function, nothing else changes.
 --
 -- 0052: the nightly backup's one read (hq_backup_snapshot). The HQ Worker (deploy/hq/backup.js) calls it
--- once a night with the HQ key it already holds, and stores the answer, untouched, in Cloudflare KV for 14
+-- once a night with the HQ key it already holds, and stores the answer, untouched, in Cloudflare KV for 7
 -- days. Restore: scripts/backup/restore.mjs turns a stored copy into SQL; the drill is docs/BACKUP-RESTORE.md.
 --
 -- WHY ONE FUNCTION, not one read per table through the REST door:

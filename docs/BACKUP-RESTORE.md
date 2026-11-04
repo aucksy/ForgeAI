@@ -1,6 +1,6 @@
 # Nightly backup and restore drill
 
-Written 3 Nov 2026 (launch audit: ops #1, owner #1). **Owner said yes 4 Nov 2026; store made and wired; live once 0052 is applied and HQ deployed.** Switching it on needed the owner's yes
+Written 3 Nov 2026 (launch audit: ops #1, owner #1). **LIVE since 4 Nov 2026** (owner yes; 0052 applied live, HQ version d158fba5 deployed; first copy the night of 4-5 Nov). Switching it on needed the owner's yes
 (it changes the live gym server and deploys HQ).
 
 ## What it does
