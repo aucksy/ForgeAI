@@ -166,6 +166,12 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Workout$"
     index: 0
+# The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
+- scrollUntilVisible:
+    element: 'Up next: Machine Day.*'
+    direction: UP
+    timeout: 30000
+    optional: true
 - extendedWaitUntil:
     visible: 'Up next: Machine Day.*'
     timeout: 30000

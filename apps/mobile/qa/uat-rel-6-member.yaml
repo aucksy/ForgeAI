@@ -14,6 +14,12 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Workout$"
     index: 0
+# The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
+- scrollUntilVisible:
+    element: "Up next: .*|Done today: .*"
+    direction: UP
+    timeout: 30000
+    optional: true
 - extendedWaitUntil:
     visible: "Up next: .*|Done today: .*"
     timeout: 30000
@@ -53,6 +59,12 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Workout$"
     index: 0
+# The Workout tab keeps its scroll place, and cards sit above "Up next": look up first.
+- scrollUntilVisible:
+    element: "Up next: .*|Done today: .*"
+    direction: UP
+    timeout: 30000
+    optional: true
 - extendedWaitUntil:
     visible: "Up next: .*|Done today: .*"
     timeout: 30000
