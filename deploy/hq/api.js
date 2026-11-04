@@ -8,6 +8,8 @@
 import { isFresh } from './auth.js';
 import { DbError, rpc } from './db.js';
 import { releases, removeFiles } from './outside.js';
+import { fcmHelpReplyMessage, sendOne } from './push.js';
+import { newGymsToCheck } from '../../apps/hq/public/logic.js';
 import {
   AI_LIMIT_MAX,
   aiLimits,
@@ -15,6 +17,7 @@ import {
   aiUsageDays,
   addMessage,
   checkMessage,
+  cleanReply,
   deleteRequestsInFeedback,
   getLead,
   indiaDay,
@@ -24,9 +27,11 @@ import {
   monthStart,
   newFeedbackByGym,
   removeMessage,
+  saveReply,
   setAiLimit,
   setFeedbackStatus,
   setLeadStatus,
+  webNeeds,
   webTotals,
 } from './web.js';
 
@@ -152,6 +157,25 @@ export async function handleApi(request, env, who, deps = {}) {
       return json(200, { rows: await listFeedback(env.WEB, { status: q.get('status') }) });
     }
 
+    // R-319 item 8: HQ's "Needs you" (the page asks every minute). Counts only; a part that cannot be
+    // read is null. Not written to the audit log: it opens no gym and no message.
+    if (route === 'GET /api/needs') {
+      const web = env.WEB ? await webPart('needs', () => webNeeds(env.WEB)) : null;
+      let gymsNew = null;
+      try {
+        const gyms = await db('hq_gyms', {});
+        gymsNew = newGymsToCheck(Array.isArray(gyms) ? gyms : [], now.getTime()).length;
+      } catch (e) {
+        console.error('[hq-api] needs: gyms not readable', e instanceof Error ? e.message : 'error');
+      }
+      return json(200, {
+        leadsNew: web ? web.leadsNew : null,
+        feedbackNew: web ? web.feedbackNew : null,
+        helpNeedsReply: web ? web.helpNeedsReply : null,
+        gymsNew,
+      });
+    }
+
     if (route === 'GET /api/leads') {
       if (!env.WEB) return refuse('NO_WEB_DB', 503);
       await log('view_leads');
@@ -215,6 +239,27 @@ export async function handleApi(request, env, who, deps = {}) {
       if (!Number.isInteger(b.id) || typeof b.status !== 'string') return refuse('BAD_REQUEST');
       await log('feedback_status', null, null, { id: b.id, status: b.status });
       return (await setFeedbackStatus(env.WEB, b.id, b.status, text(b.note, 500), now)) ? json(200, { ok: true }) : refuse('GONE');
+    }
+
+    // R-319 item 10: the owner's reply to a help question. Saved beside the question (the app reads it
+    // with its own secret, deploy/panel/help.js /api/help/replies); the message is marked done; a phone
+    // that left a push address gets "The MettleUp team replied" once.
+    if (route === 'POST /api/feedback/reply') {
+      if (!env.WEB) return refuse('NO_WEB_DB', 503);
+      const reply = cleanReply(b.reply);
+      if (!Number.isInteger(b.id) || b.id < 1) return refuse('BAD_REQUEST');
+      if (reply.length < 2) return refuse('EMPTY');
+      await log('feedback_reply', null, null, { id: b.id, length: reply.length });
+      let saved;
+      try {
+        saved = await saveReply(env.WEB, b.id, reply, now);
+      } catch (e) {
+        console.error('[hq-api] reply not saved', e instanceof Error ? e.message : 'error');
+        return refuse('REPLY_NOT_READY', 503);
+      }
+      if (!saved) return refuse('GONE');
+      const pushed = saved.pushTo ? await sendOne(env, fcmHelpReplyMessage(b.id, saved.pushTo), { fetchImpl, now: now.getTime() }) : 'no-phone';
+      return json(200, { ok: true, pushed });
     }
 
     if (route === 'POST /api/leads/status') {

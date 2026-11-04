@@ -30,13 +30,100 @@ export function monthStart(now) {
 }
 
 const FEEDBACK_COLS = 'id, at, source, text, app, device, screen, gym, status, note, sorted_at';
+// R-277 (migrations/0008): the AI answer and the "Did this solve it?" tap. R-319 item 10 (0009): whether
+// the AI covered it, the team's reply, and whether the phone can get a pop-up (never the address itself).
+const HELP_COLS = "answer, helped, covered, reply, reply_at, (push_to <> '') AS can_push";
 
+/**
+ * A help question still waiting for a person (R-319 item 10): sent from an app, not sorted away
+ * (done, spam, a crash report), no reply yet, and the AI either did not answer, said the team will
+ * reply, or the person tapped "No, it did not help". Plain feedback (no AI box, covered '') with status
+ * 'question' counts too. PURE (one row).
+ */
+export function needsReply(r) {
+  if (!r || (r.source !== 'member' && r.source !== 'admin')) return false;
+  if (['done', 'spam', 'crash'].includes(r.status)) return false;
+  if (String(r.reply || '').trim()) return false;
+  return r.covered === 'no' || r.covered === 'none' || r.helped === 'no' || (r.covered === '' && r.status === 'question');
+}
+
+/** The same rule in SQL, for counting (keep it beside needsReply). */
+const NEEDS_REPLY_SQL =
+  "source IN ('member', 'admin') AND status NOT IN ('done', 'spam', 'crash') AND reply = '' " +
+  "AND (covered IN ('no', 'none') OR helped = 'no' OR (covered = '' AND status = 'question'))";
+
+/** True when D1 said a column is missing (a migration not applied yet). PURE. */
+export function missingColumn(e) {
+  return /no (such )?column|has no column/i.test(String(e && e.message));
+}
+
+/**
+ * Feedback rows, newest first. `status` filters by status; 'needs-reply' by needsReply. Before
+ * migrations 0008/0009 the rows come without the help columns (every row answer '' and so on).
+ */
 export async function listFeedback(db, { status = null, limit = 200 } = {}) {
   const lim = Math.min(Math.max(Number(limit) || 200, 1), 500);
-  if (status && FEEDBACK_STATUS.includes(status)) {
-    return (await db.prepare(`SELECT ${FEEDBACK_COLS} FROM feedback WHERE status = ? ORDER BY at DESC LIMIT ?`).bind(status, lim).all()).results ?? [];
+  const read = async (cols, where = '', args = []) =>
+    (await db.prepare(`SELECT ${cols} FROM feedback ${where} ORDER BY at DESC LIMIT ?`).bind(...args, lim).all()).results ?? [];
+  const where = status && FEEDBACK_STATUS.includes(status) ? ['WHERE status = ?', [status]] : ['', []];
+  try {
+    if (status === 'needs-reply') return (await read(`${FEEDBACK_COLS}, ${HELP_COLS}`, `WHERE ${NEEDS_REPLY_SQL}`)).map(withNeeds);
+    return (await read(`${FEEDBACK_COLS}, ${HELP_COLS}`, ...where)).map(withNeeds);
+  } catch (e) {
+    if (!missingColumn(e)) throw e;
+    console.warn('[hq-web] help columns missing (panel migrations 0008/0009 not applied?)');
+    if (status === 'needs-reply') return [];
+    return (await read(FEEDBACK_COLS, ...where)).map((r) => ({ ...r, answer: '', helped: '', covered: '', reply: '', reply_at: '', can_push: 0, needsReply: false }));
   }
-  return (await db.prepare(`SELECT ${FEEDBACK_COLS} FROM feedback ORDER BY at DESC LIMIT ?`).bind(lim).all()).results ?? [];
+}
+
+function withNeeds(r) {
+  return { ...r, can_push: Number(r.can_push) ? 1 : 0, needsReply: needsReply(r) };
+}
+
+export const REPLY_MAX = 1500;
+
+/** The owner's reply, checked: trimmed, line breaks kept, at most REPLY_MAX. '' when empty. PURE. */
+export function cleanReply(v) {
+  return (typeof v === 'string' ? v : '').replace(/\r\n?/g, '\n').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, REPLY_MAX);
+}
+
+/**
+ * Save the team's reply to one message; the message is marked done. -> { pushTo } (the phone's push
+ * address, '' when none; cleared here so it is used once) or null when there is no such message.
+ */
+export async function saveReply(db, id, reply, now) {
+  if (!Number.isInteger(id) || id < 1 || !reply) return null;
+  const row = await db.prepare('SELECT id, push_to FROM feedback WHERE id = ?').bind(id).first();
+  if (!row) return null;
+  await db
+    .prepare("UPDATE feedback SET reply = ?, reply_at = ?, push_to = '', status = 'done', sorted_at = ? WHERE id = ?")
+    .bind(reply, now.toISOString(), now.toISOString(), id)
+    .run();
+  return { pushTo: String(row.push_to || '') };
+}
+
+/**
+ * What waits for the owner in Cloudflare's database (HQ's "Needs you"): new leads, new feedback, help
+ * questions that need a reply. A part that cannot be read (a migration not applied) is null.
+ */
+export async function webNeeds(db) {
+  const count = async (sql) => {
+    try {
+      return Number((await db.prepare(sql).first())?.n) || 0;
+    } catch (e) {
+      console.warn('[hq-web] a Needs you count could not be read', e instanceof Error ? e.message : 'error');
+      return null;
+    }
+  };
+  return {
+    leadsNew: await count("SELECT COUNT(*) AS n FROM leads WHERE status = 'new'"),
+    // New feedback that is not already counted as a help question waiting for a reply.
+    feedbackNew:
+      (await count(`SELECT COUNT(*) AS n FROM feedback WHERE status = 'new' AND source IN ('member', 'admin') AND NOT (${NEEDS_REPLY_SQL})`)) ??
+      (await count("SELECT COUNT(*) AS n FROM feedback WHERE status = 'new' AND source IN ('member', 'admin')")),
+    helpNeedsReply: await count(`SELECT COUNT(*) AS n FROM feedback WHERE ${NEEDS_REPLY_SQL}`),
+  };
 }
 
 /** New feedback per 6-letter gym code (for the all-gyms table). */

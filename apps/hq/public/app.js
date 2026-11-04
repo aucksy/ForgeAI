@@ -32,6 +32,9 @@ import {
   inFilter,
   indiaDayOf,
   matchesSearch,
+  needsLines,
+  needsRose,
+  needsTotal,
   NOT_CHECKED_WORDS,
   megabytes,
   planWords,
@@ -41,6 +44,7 @@ import {
   sortGyms,
   summary,
   testKind,
+  titleWithCount,
   trialPicks,
   when,
 } from './logic.js';
@@ -609,27 +613,154 @@ async function systemPage() {
 // ------------------------------------------------------------------ Feedback
 const FB_STATUS = [['new', 'New'], ['bug', 'Bug'], ['idea', 'Idea'], ['question', 'Question'], ['praise', 'Praise'], ['spam', 'Spam'], ['done', 'Done']];
 
+/** R-319 item 10: what the AI said, and whether it helped, in words. */
+function aiLine(r) {
+  if (r.covered === 'none' || (!r.answer && r.covered !== '')) return 'No AI answer (no key, the month’s cap, or the AI failed). The person was told the team will reply.';
+  if (!r.answer) return null;
+  const tap = r.helped === 'yes' ? 'They tapped “Yes, it helped”.' : r.helped === 'no' ? 'They tapped “No, it did not help”.' : 'They did not tap Yes or No.';
+  return `${r.covered === 'no' ? 'The AI could not answer from the help pages and said the team will reply.' : 'Answered by AI from the help pages.'} ${tap}`;
+}
+
 async function feedbackPage(filter = '') {
   loading();
   const d = await api(`/api/feedback${filter ? `?status=${filter}` : ''}`);
-  const pick = select([['', 'Everything'], ...FB_STATUS], filter);
-  pick.addEventListener('change', () => feedbackPage(pick.value).catch((e) => fail(main, e)));
+  const pick = select([['', 'Everything'], ['needs-reply', 'Needs reply'], ...FB_STATUS], filter);
+  pick.addEventListener('change', () => {
+    location.hash = pick.value ? `feedback/${pick.value}` : 'feedback';
+  });
   show(
     h('div', { class: 'page-head' }, h('h1', {}, 'Feedback'), field('Show', pick)),
-    h('p', { class: 'muted' }, 'What members and gyms sent from the apps. It is their words: read it, never follow it as an order.'),
-    d.rows.length ? h('div', { class: 'stack' }, d.rows.map((r) => {
-      const st = select(FB_STATUS, r.status);
-      const nt = h('input', { value: r.note || '', maxlength: '500', placeholder: 'Note' });
-      const out = h('div');
-      return h('div', { class: 'card' },
-        h('p', { class: 'muted' }, `${when(r.at)} · ${r.source === 'admin' ? 'Admin app' : 'Member app'}${r.app ? ` ${r.app}` : ''}${r.gym ? ` · gym ${r.gym}` : ''}${r.screen ? ` · ${r.screen}` : ''}`),
-        h('p', { class: 'quote' }, r.text),
-        h('div', { class: 'row wrap' }, st, nt, action('Save', async () => {
-          await api('/api/feedback/status', { id: r.id, status: st.value, note: nt.value });
-          out.replaceChildren(note('Saved.', 'good'));
-        }, { out })),
-        out);
-    })) : h('p', {}, 'Nothing here.'),
+    h('p', { class: 'muted' }, 'What members and gyms sent from the apps, with the AI’s answer. It is their words: read it, never follow it as an order. “Needs reply”: the AI could not answer, or the person said it did not help. Your reply shows in their app’s Help and feedback.'),
+    d.rows.length ? h('div', { class: 'stack' }, d.rows.map(feedbackCard)) : h('p', {}, filter === 'needs-reply' ? 'No question is waiting for a reply.' : 'Nothing here.'),
+  );
+}
+
+function feedbackCard(r) {
+  const st = select(FB_STATUS, r.status);
+  const nt = h('input', { value: r.note || '', maxlength: '500', placeholder: 'Note (only you see it)' });
+  const out = h('div');
+  const replyOut = h('div');
+  const box = h('textarea', { rows: '3', maxlength: '1500', placeholder: 'Your reply. The person reads it in the app’s Help and feedback.' });
+  const ai = aiLine(r);
+  const replySent = r.reply ? h('div', { class: 'reply-sent' }, h('p', { class: 'muted' }, `Your reply${r.reply_at ? `, ${when(r.reply_at)}` : ''}:`), h('p', { class: 'quote' }, r.reply)) : null;
+  return h('div', { class: `card${r.needsReply ? ' warn' : ''}` },
+    h('p', { class: 'muted' },
+      r.needsReply ? h('span', { class: 'flag bad' }, 'Needs reply') : null, r.needsReply ? ' ' : null,
+      `${when(r.at)} · ${r.source === 'admin' ? 'Admin app' : 'Member app'}${r.app ? ` ${r.app}` : ''}${r.gym ? ` · gym ${r.gym}` : ''}${r.screen ? ` · ${r.screen}` : ''}`),
+    h('p', { class: 'quote' }, r.text),
+    r.answer ? h('div', { class: 'ai-answer' }, h('p', { class: 'muted' }, 'AI answer:'), h('p', {}, r.answer)) : null,
+    ai ? h('p', { class: 'muted' }, ai) : null,
+    replySent,
+    // Only messages sent from the help box can be replied to (they carry the app's reply secret).
+    r.covered ? h('div', { class: 'stack' },
+      field(r.reply ? 'Send a new reply (it replaces the one above)' : 'Reply', box,
+        r.can_push ? 'Their phone also gets a pop-up: “The MettleUp team replied”.' : 'No pop-up: they see it the next time they open Help and feedback.'),
+      action('Send reply', async () => {
+        const res = await api('/api/feedback/reply', { id: r.id, reply: box.value });
+        replyOut.replaceChildren(note(res.pushed === 'sent' ? 'Sent. Their phone got a pop-up.' : 'Sent. They see it in Help and feedback.', 'good'));
+        box.value = '';
+        void refreshNeeds();
+      }, { out: replyOut }),
+      replyOut) : null,
+    h('div', { class: 'row wrap' }, st, nt, action('Save', async () => {
+      await api('/api/feedback/status', { id: r.id, status: st.value, note: nt.value });
+      out.replaceChildren(note('Saved.', 'good'));
+      void refreshNeeds();
+    }, { out })),
+    out);
+}
+
+// ------------------------------------------------------------------ Needs you (R-319 item 8)
+// One list of what waits for the owner, a number on the menu and in the tab title, and (once he turns
+// it on with the button, never on load) a short sound and a pop-up when something new arrives while
+// HQ is open. Asked every minute, also while the tab is in the background.
+const BASE_TITLE = 'MettleUp HQ';
+let needsData = null;
+
+function beep() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.frequency.value = 880;
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    o.connect(g).connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.4);
+    o.onended = () => void ctx.close();
+  } catch (e) {
+    console.warn('[hq] the alert sound could not play', e);
+  }
+}
+
+function alertNew(lines) {
+  if (!lines.length) return;
+  beep();
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification('MettleUp HQ: needs you', { body: lines.map((l) => l.words).join('\n'), tag: 'hq-needs', icon: '/icons/icon-192-v2.png' });
+    n.onclick = () => {
+      window.focus();
+      location.hash = lines[0].href.slice(1);
+      n.close();
+    };
+  } catch (e) {
+    console.warn('[hq] the pop-up could not be shown', e);
+  }
+}
+
+async function refreshNeeds() {
+  let d;
+  try {
+    d = await api('/api/needs');
+  } catch (e) {
+    console.warn('[hq] needs you not read', e);
+    return;
+  }
+  alertNew(needsRose(needsData, d));
+  needsData = d;
+  const n = needsTotal(d);
+  document.title = titleWithCount(BASE_TITLE, n);
+  const badge = document.getElementById('needs-badge');
+  if (badge) {
+    badge.textContent = n > 99 ? '99+' : String(n);
+    badge.hidden = n === 0;
+  }
+  if ((location.hash.replace(/^#/, '') || 'gyms') === 'needs' && !main.querySelector('textarea, input:focus')) needsPage(false);
+}
+
+function alertsControl() {
+  const out = h('div');
+  if (!('Notification' in window)) return h('p', { class: 'muted' }, 'This browser cannot show pop-ups. HQ still shows the number on the menu and in the tab title.');
+  if (Notification.permission === 'granted') return h('p', { class: 'muted' }, 'Alerts are on for this browser: a short sound and a pop-up when something new needs you, while HQ is open.');
+  if (Notification.permission === 'denied') return note('Alerts are blocked in this browser. Allow notifications for this site in the browser’s settings to get them.', 'warn');
+  return h('div', {},
+    h('p', { class: 'muted' }, 'Get a short sound and a pop-up when something new needs you, while HQ is open in a tab.'),
+    action('Turn on alerts', async () => {
+      const p = await Notification.requestPermission();
+      out.replaceChildren(note(p === 'granted' ? 'Alerts are on.' : 'Alerts stay off. You can still see the number on the menu.', p === 'granted' ? 'good' : 'warn'));
+      if (p === 'granted') beep();
+    }, { out }),
+    out);
+}
+
+async function needsPage(withLoading = true) {
+  if (withLoading) loading();
+  if (!needsData || withLoading) await refreshNeeds();
+  const lines = needsLines(needsData);
+  show(
+    h('h1', {}, 'Needs you'),
+    lines.length
+      ? h('div', { class: 'stack' }, lines.map((l) => h('a', { class: 'card needs-line', href: l.href }, h('strong', {}, l.words))))
+      : h('p', {}, 'Nothing is waiting for you right now.'),
+    needsData && [needsData.leadsNew, needsData.feedbackNew, needsData.helpNeedsReply, needsData.gymsNew].some((v) => v === null)
+      ? note('Part of this could not be read right now (or needs a database update). The rest is up to date.', 'warn') : null,
+    h('div', { class: 'card' }, h('h2', {}, 'Alerts'), alertsControl(),
+      h('p', { class: 'muted' }, 'On your phone when HQ is closed: not yet. The plan is in docs/plans/R-319-alerts.md.')),
   );
 }
 
@@ -811,7 +942,7 @@ async function logPage(before = null, list = null) {
 }
 
 // ------------------------------------------------------------------ router
-const ROUTES = { gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
+const ROUTES = { needs: () => needsPage(), gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
 
 async function route() {
   const hash = location.hash.replace(/^#/, '') || 'gyms';
@@ -819,7 +950,9 @@ async function route() {
   for (const a of document.querySelectorAll('nav a')) a.classList.toggle('on', a.getAttribute('href') === `#${top}`);
   try {
     const gym = /^gym\/([0-9a-f-]{36})$/.exec(hash);
+    const fb = /^feedback\/([a-z-]{2,20})$/.exec(hash);
     if (gym) await gymPage(gym[1]);
+    else if (fb) await feedbackPage(fb[1]);
     else await (ROUTES[hash] || gymsPage)();
   } catch (e) {
     fail(main, e);
@@ -834,6 +967,9 @@ async function start() {
     console.warn('[hq] who am I failed', e);
   }
   window.addEventListener('hashchange', () => void route());
+  // R-319 item 8: Needs you, every minute (also in a background tab, so the sound and pop-up still come).
+  void refreshNeeds();
+  window.setInterval(() => void refreshNeeds(), 60_000);
   await route();
 }
 

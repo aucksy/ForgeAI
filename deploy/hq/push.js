@@ -111,6 +111,94 @@ export function fcmMessage(page, token) {
 }
 
 /**
+ * R-319 item 8 (migration 0054): the FCM v1 message for one of a member's own notes (their pause or
+ * renew request answered, the gym asked for their report, their order is ready or was cancelled).
+ * Same shape as fcmMessage, so the app shows it on the same channel and a tap opens `note.route`;
+ * `push` is the note's kind, which the app's push task does not count as an inbox message. PURE.
+ */
+export function fcmNoteMessage(note, token) {
+  const gym = String(note.gymName || '').trim() || 'Your gym';
+  const id = String(note.noteId);
+  const route = /^\/[a-z0-9/_-]{0,60}$/.test(String(note.route || '')) ? String(note.route) : OFFER_ROUTE;
+  const kind = String(note.kind || 'note').replace(/[^a-z_]/g, '').slice(0, 30) || 'note';
+  const body = { kind: 'gym-message', route, push: kind, noteId: id, gymId: String(note.gymId || '') };
+  return {
+    message: {
+      token,
+      data: {
+        title: gym,
+        message: line(note.line),
+        channelId: CHANNEL_ID,
+        tag: `gym-${kind}-${id}`,
+        body: JSON.stringify(body),
+        push: kind,
+        noteId: id,
+        gymId: body.gymId,
+      },
+      android: { priority: 'HIGH', ttl: TTL },
+    },
+  };
+}
+
+/**
+ * R-319 item 10: "The MettleUp team replied" for one phone (a help question's reply, sent from HQ).
+ * Shown on the same channel; a tap opens Help and feedback, where the reply is. PURE.
+ */
+export const HELP_ROUTE = '/settings/feedback';
+export function fcmHelpReplyMessage(feedbackId, token) {
+  const id = String(feedbackId);
+  const body = { kind: 'gym-message', route: HELP_ROUTE, push: 'help_reply', noteId: id };
+  return {
+    message: {
+      token,
+      data: {
+        title: 'MettleUp',
+        message: 'The MettleUp team replied to your question. Tap to read it.',
+        channelId: CHANNEL_ID,
+        tag: `help-reply-${id}`,
+        body: JSON.stringify(body),
+        push: 'help_reply',
+        noteId: id,
+      },
+      android: { priority: 'HIGH', ttl: '86400s' },
+    },
+  };
+}
+
+/**
+ * Send one message to one phone now (HQ's help reply). Never throws.
+ * -> 'sent' | 'dead' | 'retry' | 'auth' | 'no-secret' | 'google'
+ */
+export async function sendOne(env, message, { fetchImpl = fetch, now = Date.now() } = {}) {
+  const sa = readServiceAccount(env.FCM_SERVICE_ACCOUNT);
+  if (!sa) {
+    console.warn('[push] FCM_SERVICE_ACCOUNT missing or not a service-account key: no pop-up sent');
+    return 'no-secret';
+  }
+  let token;
+  try {
+    token = (await accessToken(sa, { fetchImpl, now })).token;
+  } catch (e) {
+    console.error('[push]', e instanceof Error ? e.message : 'error');
+    return 'google';
+  }
+  try {
+    const res = await fetchImpl(`https://fcm.googleapis.com/v1/projects/${sa.project}/messages:send`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(message),
+    });
+    const outcome = fcmOutcome(res.status, await res.text());
+    if (outcome === 'auth') forgetAccessToken();
+    if (outcome !== 'sent') console.warn('[push] one pop-up not sent:', outcome, res.status);
+    return outcome;
+  } catch (e) {
+    console.error('[push] one pop-up failed', e instanceof Error ? e.message : 'error');
+    return 'retry';
+  }
+}
+
+/**
  * What an FCM answer means: 'sent', 'dead' (delete the address), 'auth' (our key is refused: stop),
  * or 'retry' (Firebase is busy or down: this phone is skipped). PURE.
  */
@@ -240,6 +328,7 @@ async function runOnce(env, fetchImpl, now) {
   }
   const out = { jobs: 0, sent: 0, dead: 0, failed: 0, left: false };
   const url = `https://fcm.googleapis.com/v1/projects/${sa.project}/messages:send`;
+  let refused = false;
   while (budget >= 3) {
     const max = Math.min(100, budget - 2); // one call to ask, one to drop dead addresses
     let page;
@@ -297,11 +386,88 @@ async function runOnce(env, fetchImpl, now) {
     if (stop) {
       forgetAccessToken();
       console.error('[push] Firebase refused our access token; stopped this run');
+      refused = true;
       break;
     }
     if (budget < 3) out.left = true;
   }
-  if (out.jobs) console.log('[push] done', JSON.stringify(out));
+  // R-319 item 8 (0054): each member's own notes (request answered, report asked, order ready).
+  if (!refused && !out.left && budget >= 3) {
+    const notes = await sendNotes(env, fetchImpl, token, url, budget);
+    if (notes.notes) out.notes = notes.notes;
+    out.sent += notes.sent;
+    out.dead += notes.dead;
+    out.failed += notes.failed;
+    if (notes.left) out.left = true;
+  }
+  if (out.jobs || out.notes) console.log('[push] done', JSON.stringify(out));
+  return out;
+}
+
+/** The 0054 notes, within what is left of the run's call budget. Never throws. */
+async function sendNotes(env, fetchImpl, token, url, budget) {
+  const out = { notes: 0, sent: 0, dead: 0, failed: 0, left: false };
+  while (budget >= 3) {
+    let page;
+    try {
+      page = await rpc(env, 'hq_push_direct_next', { p_max: Math.min(100, budget - 2) }, { fetchImpl });
+    } catch (e) {
+      if (e && e.code === 'NOT_READY') {
+        warnOnce('notes-not-ready', '[push] the gym server has no member notes yet (migration 0054 not applied)');
+        return out;
+      }
+      console.error('[push] could not ask the gym server for member notes', e instanceof Error ? e.message : 'error');
+      return out;
+    }
+    budget -= 1;
+    const notes = page && Array.isArray(page.notes) ? page.notes : [];
+    if (!notes.length) return out;
+    const sends = [];
+    for (const n of notes) for (const t of Array.isArray(n.tokens) ? n.tokens : []) if (typeof t === 'string') sends.push({ n, t });
+    const dead = [];
+    let stop = false;
+    for (let i = 0; i < sends.length && !stop; i += PARALLEL) {
+      const group = sends.slice(i, i + PARALLEL);
+      budget -= group.length;
+      const results = await Promise.all(
+        group.map(async ({ n, t }) => {
+          try {
+            const res = await fetchImpl(url, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify(fcmNoteMessage(n, t)),
+            });
+            return { t, outcome: fcmOutcome(res.status, await res.text()) };
+          } catch {
+            return { t, outcome: 'retry' }; // quiet: counted as failed in the run's log line
+          }
+        }),
+      );
+      for (const r of results) {
+        if (r.outcome === 'sent') out.sent += 1;
+        else if (r.outcome === 'dead') {
+          out.dead += 1;
+          dead.push(r.t);
+        } else out.failed += 1;
+        if (r.outcome === 'auth') stop = true;
+      }
+    }
+    out.notes += notes.length;
+    if (dead.length) {
+      try {
+        await rpc(env, 'hq_push_drop', { p_tokens: dead }, { fetchImpl });
+      } catch (e) {
+        console.error('[push] could not delete dead addresses', e instanceof Error ? e.message : 'error');
+      }
+      budget -= 1;
+    }
+    if (stop) {
+      forgetAccessToken();
+      console.error('[push] Firebase refused our access token; stopped this run');
+      return out;
+    }
+    if (budget < 3) out.left = true;
+  }
   return out;
 }
 

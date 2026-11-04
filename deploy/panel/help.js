@@ -155,19 +155,122 @@ export async function answerFor(env, v, now, { fetchImpl = fetch, timeoutMs = TI
   return r.reply;
 }
 
+// ------------------------------------------------------------------ R-319 item 10: replies from the team
+// The app makes a random secret for each question (`replyKey`) and keeps it with the question on the
+// device. Only its SHA-256 is saved here (reply_key, migrations/0009). /api/help/replies hands back the
+// answer and the team's reply only for (install id + secret) pairs that match, so nobody can read
+// another person's question or reply, even knowing their install id. `pushTo`: the phone's push address,
+// if it has one (member app with gym messages on), used once by HQ for "the team replied".
+
+/** A reply secret as the app sends it, or '' when it is not one. PURE. */
+export function replyKeyOf(v) {
+  return typeof v === 'string' && /^[A-Za-z0-9-]{20,80}$/.test(v) ? v : '';
+}
+
+/** A push address as 0038 accepts it, or ''. PURE. */
+export function pushToOf(v) {
+  const t = typeof v === 'string' ? v.trim() : '';
+  return t.length >= 20 && t.length <= 4096 && /^[A-Za-z0-9_:.\-]+$/.test(t) ? t : '';
+}
+
+export async function sha256Hex(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(s)));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** 'yes' | 'no' | 'none': did the AI answer from the articles, say the team replies, or not answer. PURE. */
+export function coveredWord(reply) {
+  if (!reply) return 'none';
+  return reply.covered ? 'yes' : 'no';
+}
+
+/** The reply secret and push address from the raw body (takeMessage keeps only the feedback fields). */
+async function extras(request) {
+  try {
+    const body = JSON.parse((await request.clone().text()).slice(0, 20_000));
+    return { key: replyKeyOf(body?.replyKey), pushTo: pushToOf(body?.pushTo) };
+  } catch {
+    return { key: '', pushTo: '' }; // quiet: takeMessage answers a bad body itself
+  }
+}
+
 /** POST /api/help -> 201 { ok: true, id, answer, covered } | the same refusals as /api/feedback. */
 export async function handleHelp(request, env, now = new Date(), opts = {}) {
+  const extra = request.method === 'POST' ? await extras(request) : { key: '', pushTo: '' };
   const taken = await takeMessage(request, env, now);
   if (taken.refused) return taken.refused;
-  const reply = await answerFor(env, taken.value, now, opts);
-  if (reply && taken.id) {
+  // The secret first: a phone that gives up waiting for the AI can still find the answer later.
+  if (taken.id && (extra.key || extra.pushTo)) {
     try {
-      await env.WEB.prepare('UPDATE feedback SET answer = ? WHERE id = ?').bind(reply.text, taken.id).run();
+      await env.WEB.prepare('UPDATE feedback SET reply_key = ?, push_to = ? WHERE id = ?')
+        .bind(extra.key ? await sha256Hex(extra.key) : '', extra.pushTo, taken.id)
+        .run();
     } catch (e) {
-      console.error('[help] could not save the answer', e);
+      console.warn('[help] reply secret not saved (migration 0009 not applied?)', e instanceof Error ? e.message : e);
+    }
+  }
+  const reply = await answerFor(env, taken.value, now, opts);
+  if (taken.id) {
+    try {
+      await env.WEB.prepare('UPDATE feedback SET answer = ?, covered = ? WHERE id = ?').bind(reply?.text ?? '', coveredWord(reply), taken.id).run();
+    } catch (e) {
+      // Before migration 0009: no `covered` column. The answer alone, as before.
+      console.warn('[help] covered not saved (migration 0009 not applied?)', e instanceof Error ? e.message : e);
+      if (reply) {
+        try {
+          await env.WEB.prepare('UPDATE feedback SET answer = ? WHERE id = ?').bind(reply.text, taken.id).run();
+        } catch (e2) {
+          console.error('[help] could not save the answer', e2);
+        }
+      }
     }
   }
   return answer(201, { ok: true, id: taken.id, answer: reply?.text ?? NO_ANSWER, covered: reply?.covered ?? false, ai: !!reply });
+}
+
+export const MAX_REPLY_KEYS = 50;
+
+/**
+ * POST /api/help/replies { sender, keys: [secret, ...] } -> 200 { items: [{ key, id, at, answer, covered,
+ * reply, replyAt }] }: the questions this install asked with those secrets, with the AI answer and the
+ * team's reply ('' when none yet). Nothing for a pair that does not match. Before migration 0009: [].
+ */
+export async function handleHelpReplies(request, env) {
+  if (request.method !== 'POST') return answer(405, { error: 'Use POST.' });
+  if (!env.WEB) return answer(503, { error: 'Help is not set up yet.' });
+  let body;
+  try {
+    body = JSON.parse((await request.text()).slice(0, 10_000));
+  } catch {
+    return answer(400, { error: 'Send a JSON object.' }); // quiet: a bad body is the sender's mistake, answered
+  }
+  const sender = typeof body?.sender === 'string' && /^[A-Za-z0-9-]{8,64}$/.test(body.sender) ? body.sender : '';
+  const keys = Array.isArray(body?.keys) ? [...new Set(body.keys.map(replyKeyOf).filter(Boolean))].slice(0, MAX_REPLY_KEYS) : [];
+  if (!sender || !keys.length) return answer(400, { error: 'Bad request.' });
+  const byHash = new Map();
+  for (const k of keys) byHash.set(await sha256Hex(k), k);
+  const hashes = [...byHash.keys()];
+  let rows;
+  try {
+    rows = (await env.WEB.prepare(
+      `SELECT id, at, answer, covered, reply, reply_at, reply_key FROM feedback WHERE sender = ? AND reply_key IN (${hashes.map(() => '?').join(', ')})`,
+    )
+      .bind(sender, ...hashes)
+      .all()).results ?? [];
+  } catch (e) {
+    console.warn('[help] replies not readable (migration 0009 not applied?)', e instanceof Error ? e.message : e);
+    return answer(200, { items: [] });
+  }
+  const items = rows.map((r) => ({
+    key: byHash.get(r.reply_key),
+    id: Number(r.id),
+    at: r.at,
+    answer: String(r.answer || ''),
+    covered: String(r.covered || ''),
+    reply: String(r.reply || ''),
+    replyAt: String(r.reply_at || ''),
+  }));
+  return answer(200, { items });
 }
 
 /**

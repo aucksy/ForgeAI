@@ -34,6 +34,7 @@ import { duesByMember, duesLedger } from './logic/collections';
 import { needsAttentionToday } from './logic/membership';
 import { InviteScreen } from './shop/InviteScreen';
 import { ShopProvider, useShop } from './shop/ShopProvider';
+import { NeedsYouProvider, useNeedsYou } from './ui/NeedsYou';
 import { ShopScreen } from './shop/ShopScreen';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
@@ -124,10 +125,13 @@ function SessionRoot() {
     <>
       <CrmProvider key={`${session?.ownerKey ?? 'none'}:${onlineKey ? 'online' : 'browser'}`} data={data}>
         <ShopProvider>
-          {/* T66: the gym's pack (Starter or Pro). Asks nothing while PLAN_GATE_ON is off. */}
-          <GymPackProvider sessionKey={onlineKey}>
-            <Routes online={onlineKey !== null} />
-          </GymPackProvider>
+          {/* R-319 item 8a: what waits for the desk (Today's badge, the tab title, the alert). */}
+          <NeedsYouProvider>
+            {/* T66: the gym's pack (Starter or Pro). Asks nothing while PLAN_GATE_ON is off. */}
+            <GymPackProvider sessionKey={onlineKey}>
+              <Routes online={onlineKey !== null} />
+            </GymPackProvider>
+          </NeedsYouProvider>
         </ShopProvider>
       </CrmProvider>
       {/* R-117: once, after a sign-in with a one-time code by someone with no PIN yet. */}
@@ -141,6 +145,8 @@ export function Routes({ online }: { online: boolean }) {
   const demo = useDemo() !== null;
   const { snapshot, memberViews, today } = useCrm();
   const { newCount } = useShop();
+  // R-319 item 8a: everything waiting (plan requests, numbers to confirm, new orders) badges Today.
+  const { total: needsTotal } = useNeedsYou();
   const route = useRoute();
   const role = useRole();
   // #41: an owner with 2 or more branches gets "All branches" (totals and lists across branches).
@@ -184,7 +190,7 @@ export function Routes({ online }: { online: boolean }) {
     // A Staff person never sees a page they cannot open (permissions.ts): no Expenses.
     return navFor<NavItem>(role, [
       ...(allBranches ? [{ path: '/branches', label: t('All branches'), icon: 'branches' } as NavItem] : []),
-      { path: '/', label: t('Today'), icon: 'today' },
+      { path: '/', label: t('Today'), icon: 'today', badge: needsTotal || undefined },
       { path: '/members', label: t('Members'), icon: 'members', badge: needsAttention },
       // Badged with orders waiting at the desk — the one number on this bar that
       // changes by itself while the owner watches.
@@ -230,7 +236,7 @@ export function Routes({ online }: { online: boolean }) {
       ...(demo ? [] : [{ path: '/feedback', label: t('Help and feedback'), icon: 'feedback', group: 'setup' } as NavItem]),
     ]);
     // `lang`: the labels are words, so a language switch makes them again.
-  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen]);
+  }, [memberViews, snapshot, today, newCount, role, allBranches, demo, lang, trainerNav, questionsOpen, needsTotal]);
   // Step 3 (15 Oct 2026): five on a phone's bottom bar, like GoGym4U and GymBook — Aaj, Members,
   // Hisaab, Hazri and More (Plans, Shop, Settings). Six or seven icons were too small to read.
   const phoneNav = useMemo<NavItem[]>(() => {

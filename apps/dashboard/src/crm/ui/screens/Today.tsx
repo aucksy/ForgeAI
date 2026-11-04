@@ -15,6 +15,7 @@ import { QuickActions } from '../QuickActions';
 import { InstallCard } from '../InstallCard';
 import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
+import { NeedsYouCard } from '../NeedsYou';
 import { TrialBanner } from '../TrialBanner';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
@@ -143,6 +144,9 @@ export function TodayScreen() {
       />
 
       {/* R-97 (0030): the owner's free trial, in words (nothing locks when it ends). */}
+      {/* R-319 item 8a: everything waiting for the desk or the owner, at the top (hidden when nothing waits). */}
+      <NeedsYouCard />
+
       <TrialBanner />
 
       {/* Offline front desk, step 3: money taken on this device that is not on the server yet. */}
@@ -165,11 +169,15 @@ export function TodayScreen() {
 
       {/* F150: members' "Pause my plan" / "Renew my plan" from the app, one tap to approve (owner and
           desk). Hidden until the gym server has 0044, and when there is nothing to show. */}
-      <PlanRequestsCard />
+      <div id="needs-plan-requests">
+        <PlanRequestsCard />
+      </div>
 
       {/* 0048 (R-287): numbers members typed at the poster check-in, waiting for the desk's yes (owner
           and desk). Hidden until the gym server has 0048, and when none are waiting. */}
-      <PhoneLinksCard />
+      <div id="needs-phone-links">
+        <PhoneLinksCard />
+      </div>
 
       {/* The join code first: it is how members get into the app, and the shop
           card beside it is the part of the demo that moves on its own. */}

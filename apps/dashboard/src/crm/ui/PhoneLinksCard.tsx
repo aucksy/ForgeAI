@@ -20,6 +20,7 @@ import {
 } from '../logic/phoneLinks';
 import { decidePhoneLink, listPhoneLinks, phoneLinkServer } from '../shop/phoneLinkApi';
 import { usePoll } from '../shop/ShopProvider';
+import { useNeedsYou } from './NeedsYou';
 import { Button, Card, ErrorBanner, Row, SectionTitle, color, font, space } from './kit';
 
 export function PhoneLinksCard() {
@@ -28,6 +29,8 @@ export function PhoneLinksCard() {
   const [rows, setRows] = useState<PhoneLinkRow[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [problem, setProblem] = useState<{ id: string; text: string } | null>(null);
+  // R-319 item 8a: Today's "Needs you" count drops at once after an answer.
+  const needs = useNeedsYou();
 
   const load = useCallback(async () => {
     if (!key) return;
@@ -52,6 +55,7 @@ export function PhoneLinksCard() {
       setProblem({ id: r.id, text: linkErrorWords(e) });
     } finally {
       await load();
+      await needs.refresh();
       setBusy(null);
     }
   };

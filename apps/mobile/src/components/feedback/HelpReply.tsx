@@ -12,8 +12,9 @@ import { Pressable, Text, View } from 'react-native';
 import { FEEDBACK_WORDS, rateHelp, type HelpReply as Reply } from '@/lib/feedback';
 import { color, radius, space, type } from '@/theme/tokens';
 
-export function HelpReply({ reply }: { reply: Reply }) {
-  const [rated, setRated] = useState<'yes' | 'no' | null>(null);
+export function HelpReply({ reply, rated: ratedBefore = null }: { reply: Reply; rated?: 'yes' | 'no' | null }) {
+  // R-319 item 10: in "Your questions" the tap made earlier is shown, not asked again.
+  const [rated, setRated] = useState<'yes' | 'no' | null>(ratedBefore);
 
   if (!reply.ai) {
     return (

@@ -1,4 +1,8 @@
-/** Settings → Send feedback (launch H7): type, or tap Speak (R-206, FeedbackComposer), then Send. */
+/**
+ * Settings → Help and feedback (launch H7): type, or tap Speak (R-206, FeedbackComposer), then Send.
+ * R-319 item 10 / R-320: under it, "Your questions": every question from this phone with its answer and
+ * the MettleUp team's reply (HelpQuestions). The answer shows there as soon as it comes.
+ */
 import Constants from 'expo-constants';
 import { useEffect, useRef, useState } from 'react';
 import { Text } from 'react-native';
@@ -8,8 +12,9 @@ import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { SettingsPage } from '@/components/settings/SettingsPage';
 import { Card, PrimaryButton } from '@/components/ui';
-import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
-import { HelpReply } from '@/components/feedback/HelpReply';
+import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
+import { HelpQuestions } from '@/components/feedback/HelpQuestions';
+import { HELP_HISTORY_WORDS } from '@/lib/helpHistory';
 import { FEEDBACK_BUTTON_WORDS } from '@/lib/feedbackButton';
 import { useFeedbackButton } from '@/lib/feedbackButtonStore';
 import { useGymShop } from '@/shop/gymStore';
@@ -19,7 +24,7 @@ export default function FeedbackPage() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [input, setInput] = useState<'voice' | 'typed'>('typed');
-  const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReplyData } | null>(null);
+  const [note, setNote] = useState<{ ok: boolean; words: string } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   // A ref, not the state: two taps in the same frame both see `sending` still false (review, 21 Oct).
   const busy = useRef(false);
@@ -40,7 +45,8 @@ export default function FeedbackPage() {
     if (r.ok) {
       setText('');
       setInput('typed');
-      setNote({ ok: true, words: FEEDBACK_WORDS.sent, reply: r.reply });
+      // The answer itself shows in Your questions below (it is kept there).
+      setNote(r.reply ? null : { ok: true, words: FEEDBACK_WORDS.sent });
     } else {
       setNote({ ok: false, words: r.words });
     }
@@ -61,8 +67,10 @@ export default function FeedbackPage() {
           minHeight={140}
         />
       </Card>
-      {note?.reply ? (
-        <HelpReply reply={note.reply} />
+      {sending ? (
+        <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
+          {HELP_HISTORY_WORDS.sending}
+        </Text>
       ) : note ? (
         <Text
           accessibilityLiveRegion="polite"
@@ -72,6 +80,9 @@ export default function FeedbackPage() {
         </Text>
       ) : null}
       <PrimaryButton label="Send" icon="chat" loading={sending} disabled={!text.trim()} onPress={() => void send()} />
+      <Card>
+        <HelpQuestions />
+      </Card>
       <Card>
         <ToggleRow
           icon="chat"

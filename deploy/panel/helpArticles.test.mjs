@@ -2,21 +2,40 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { HELP_ARTICLES } from './helpArticles.js';
+import { coverageProblems, screensOnDisk } from '../../scripts/ci/help_coverage.mjs';
+import { HELP_ARTICLES, NO_HELP_SCREENS } from './helpArticles.js';
 
 const WHO = new Set(['member', 'owner', 'both']);
 const MAX_WORDS = 120;
-const MAX_TOTAL_CHARS = 12000;
+// The whole library goes into one cached prompt (help.js): keep it well under ~45,000 characters.
+const MAX_TOTAL_CHARS = 45000;
 // Member words: never these, as whole words, in any case.
 const BANNED = ['volume', 'PR', 'session'];
 
 const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
 
-test('12 to 15 articles, each with an id, who, title and text', () => {
-  assert.ok(HELP_ARTICLES.length >= 12 && HELP_ARTICLES.length <= 15, `${HELP_ARTICLES.length} articles`);
+test('12 to 60 articles, each with an id, who, title and text (and optional screens)', () => {
+  assert.ok(HELP_ARTICLES.length >= 12 && HELP_ARTICLES.length <= 60, `${HELP_ARTICLES.length} articles`);
+  const allowed = new Set(['id', 'who', 'title', 'text', 'screens']);
   for (const a of HELP_ARTICLES) {
-    assert.deepEqual(Object.keys(a).sort(), ['id', 'text', 'title', 'who'], a.id);
+    for (const k of Object.keys(a)) assert.ok(allowed.has(k), `${a.id}: unknown key ${k}`);
+    for (const k of ['id', 'who', 'title', 'text']) assert.ok(k in a, `${a.id}: missing ${k}`);
     for (const k of ['id', 'title', 'text']) assert.ok(typeof a[k] === 'string' && a[k].trim().length > 0, `${a.id}: ${k}`);
+    if ('screens' in a) {
+      assert.ok(Array.isArray(a.screens), `${a.id}: screens is not a list`);
+      for (const p of a.screens) assert.ok(typeof p === 'string' && /^apps\/[^\\]+\.tsx$/.test(p), `${a.id}: bad screen path ${p}`);
+    }
+  }
+});
+
+test('every screen on disk has a help decision (help_coverage.mjs)', () => {
+  assert.deepEqual(coverageProblems(screensOnDisk(), HELP_ARTICLES, NO_HELP_SCREENS), []);
+});
+
+test('every NO_HELP_SCREENS entry has a real one-line reason', () => {
+  for (const [p, why] of Object.entries(NO_HELP_SCREENS)) {
+    assert.ok(typeof why === 'string' && why.trim().length >= 5, `${p}: no reason`);
+    assert.ok(!/\n/.test(why), `${p}: reason is more than one line`);
   }
 });
 

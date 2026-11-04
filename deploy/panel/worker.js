@@ -27,7 +27,7 @@
 
 import { deleteOldCrashes, handleCrash } from './crash.js';
 import { handleFeedback } from './feedback.js';
-import { handleHelp, handleHelpRate } from './help.js';
+import { handleHelp, handleHelpRate, handleHelpReplies } from './help.js';
 import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
@@ -77,6 +77,8 @@ export default {
     if (url.pathname === '/api/feedback') return handleFeedback(request, env);
     if (url.pathname === '/api/help') return handleHelp(request, env);
     if (url.pathname === '/api/help/rate') return handleHelpRate(request, env);
+    // R-319 item 10: the answer and the team's reply, for the app that asked (its install id + secret).
+    if (url.pathname === '/api/help/replies') return handleHelpReplies(request, env);
     if (url.pathname === '/api/feedback/voice') return handleVoice(request, env);
     if (url.pathname === '/api/crash') return handleCrash(request, env);
     if (url.pathname === '/api/hq-news') return handleHqNews(request, env);

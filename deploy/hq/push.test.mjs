@@ -7,8 +7,12 @@ import { test, beforeEach } from 'node:test';
 import {
   CHANNEL_ID,
   accessToken,
+  fcmHelpReplyMessage,
   fcmMessage,
+  fcmNoteMessage,
   fcmOutcome,
+  HELP_ROUTE,
+  sendOne,
   forgetAccessToken,
   handlePushKick,
   line,
@@ -34,9 +38,10 @@ beforeEach(() => {
 });
 
 /** A stand-in for fetch: Google's token, the gym server's two functions, and FCM. */
-function fakeNet({ pages = [PAGE], fcm = () => ({ status: 200, body: '{"name":"x"}' }), google = { status: 200, body: { access_token: 'at-1', expires_in: 3599 } }, next = null } = {}) {
-  const calls = { google: 0, next: [], drop: [], fcm: [] };
+function fakeNet({ pages = [PAGE], fcm = () => ({ status: 200, body: '{"name":"x"}' }), google = { status: 200, body: { access_token: 'at-1', expires_in: 3599 } }, next = null, notes = [], direct = null } = {}) {
+  const calls = { google: 0, next: [], drop: [], fcm: [], direct: [] };
   const queue = pages.map((p) => ({ ...p }));
+  const noteQueue = notes.map((p) => ({ ...p }));
   const fetchImpl = async (url, init = {}) => {
     const u = String(url);
     if (u.startsWith('https://oauth2.googleapis.com/')) {
@@ -49,6 +54,11 @@ function fakeNet({ pages = [PAGE], fcm = () => ({ status: 200, body: '{"name":"x
       if (next) return next(JSON.parse(init.body).p_max);
       const p = queue.shift();
       return new Response(p ? JSON.stringify(p) : 'null', { status: 200 });
+    }
+    if (u === 'https://db.test/rest/v1/rpc/hq_push_direct_next') {
+      calls.direct.push(JSON.parse(init.body));
+      if (direct) return direct(JSON.parse(init.body).p_max);
+      return new Response(JSON.stringify(noteQueue.shift() || { notes: [] }), { status: 200 });
     }
     if (u === 'https://db.test/rest/v1/rpc/hq_push_drop') {
       calls.drop.push(JSON.parse(init.body).p_tokens);
@@ -269,6 +279,79 @@ test('POST /push/run answers at once and runs at most once every 3 seconds', asy
     console.warn = warn;
   }
   assert.equal(waits.length, 2);
+});
+
+// ------------------------------------------------------------------ R-319 item 8: member notes (0054)
+const NOTE = { noteId: '33333333-3333-3333-3333-333333333333', kind: 'order', refId: 'o1', gymId: 'g1', gymName: 'Iron Den', line: 'Your order 12 is ready. Collect it at the desk.', route: '/shop/orders', tokens: ['a'] };
+
+test('a member note pops up on the same channel and a tap opens its own page', () => {
+  const m = fcmNoteMessage(NOTE, 'tok-1').message;
+  assert.equal(m.token, 'tok-1');
+  assert.equal(m.data.title, 'Iron Den');
+  assert.equal(m.data.message, NOTE.line);
+  assert.equal(m.data.channelId, CHANNEL_ID);
+  assert.equal(m.data.tag, `gym-order-${NOTE.noteId}`);
+  assert.deepEqual(JSON.parse(m.data.body), { kind: 'gym-message', route: '/shop/orders', push: 'order', noteId: NOTE.noteId, gymId: 'g1' });
+  // A route that is not an app path never reaches the phone.
+  assert.equal(JSON.parse(fcmNoteMessage({ ...NOTE, route: 'https://evil.test' }, 't').message.data.body).route, '/shop');
+});
+
+test('a help reply pop-up opens Help and feedback', () => {
+  const m = fcmHelpReplyMessage(42, 'tok-9').message;
+  assert.equal(m.data.title, 'MettleUp');
+  assert.equal(m.data.tag, 'help-reply-42');
+  assert.deepEqual(JSON.parse(m.data.body), { kind: 'gym-message', route: HELP_ROUTE, push: 'help_reply', noteId: '42' });
+});
+
+test('after the messages, each member note goes to that member\'s phones; dead ones are deleted', async () => {
+  const { fetchImpl, calls } = fakeNet({
+    pages: [],
+    notes: [{ notes: [NOTE, { ...NOTE, noteId: '44444444-4444-4444-4444-444444444444', kind: 'plan_request', route: '/shop', tokens: ['b', 'gone'] }] }],
+    fcm: (t) => (t === 'gone' ? { status: 404, body: { error: { status: 'NOT_FOUND', details: [{ errorCode: 'UNREGISTERED' }] } } } : { status: 200, body: '{}' }),
+  });
+  const log = console.log;
+  console.log = () => undefined;
+  let out;
+  try {
+    out = await runPush(ENV, { fetchImpl });
+  } finally {
+    console.log = log;
+  }
+  assert.deepEqual(out, { jobs: 0, sent: 2, dead: 1, failed: 0, left: false, notes: 2 });
+  assert.equal(calls.fcm.length, 3);
+  assert.deepEqual(calls.drop, [['gone']]);
+  assert.equal(calls.direct.length, 2); // the notes, then "nothing waiting"
+  assert.equal(calls.fcm[1].message.data.tag, 'gym-plan_request-44444444-4444-4444-4444-444444444444');
+});
+
+test('before migration 0054 the member notes are skipped quietly; messages still go', async () => {
+  const { fetchImpl, calls } = fakeNet({ pages: [{ ...PAGE, tokens: ['a'] }], direct: () => new Response(JSON.stringify({ code: 'PGRST202', message: 'Could not find the function' }), { status: 404 }) });
+  const log = console.log;
+  const warn = console.warn;
+  console.log = () => undefined;
+  console.warn = () => undefined;
+  let out;
+  try {
+    out = await runPush(ENV, { fetchImpl });
+  } finally {
+    console.log = log;
+    console.warn = warn;
+  }
+  assert.deepEqual(out, { jobs: 1, sent: 1, dead: 0, failed: 0, left: false });
+  assert.equal(calls.direct.length, 1);
+});
+
+test('sendOne sends one pop-up now, and says when there is no key', async () => {
+  const { fetchImpl, calls } = fakeNet();
+  assert.equal(await sendOne(ENV, fcmHelpReplyMessage(7, 'tok-7'), { fetchImpl }), 'sent');
+  assert.equal(calls.fcm[0].message.token, 'tok-7');
+  const warn = console.warn;
+  console.warn = () => undefined;
+  try {
+    assert.equal(await sendOne({ ...ENV, FCM_SERVICE_ACCOUNT: '' }, fcmHelpReplyMessage(7, 'x'), { fetchImpl }), 'no-secret');
+  } finally {
+    console.warn = warn;
+  }
 });
 
 test('the nightly cron still runs the clean-up; the minute one sends pop-ups', () => {

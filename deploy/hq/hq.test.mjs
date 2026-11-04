@@ -27,7 +27,7 @@ import {
 import { handleApi } from './api.js';
 import { refusalCode, rpc } from './db.js';
 import { clearReleaseMemo, releases, removeFiles } from './outside.js';
-import { checkMessage, costRupees, deleteRequestsInFeedback, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
+import { checkMessage, cleanReply, costRupees, deleteRequestsInFeedback, needsReply, indiaDay, nightlyWeb, setAiLimit, aiLimits, aiUsageByGym, setFeedbackStatus } from './web.js';
 import worker, { CSP, PUBLIC_FILES, handle, nightly, sameOrigin, secure } from './worker.js';
 
 const enc = new TextEncoder();
@@ -513,9 +513,9 @@ const sqlite = (() => {
   }
 })();
 
-function d1() {
+function d1(files = ['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql', '0006_hq_messages.sql']) {
   const db = new sqlite.DatabaseSync(':memory:');
-  for (const f of ['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql', '0006_hq_messages.sql']) {
+  for (const f of files) {
     db.exec(readFileSync(new URL(`../panel/migrations/${f}`, import.meta.url), 'utf8'));
   }
   const stmt = (sql, args) => db.prepare(sql);
@@ -727,4 +727,93 @@ test('sw.js never stores an API answer or a page: the only cache writes are the 
   assert.match(code, /PRECACHE = \[OFFLINE, '\/offline\.css', '\/icons\/icon-192-v2\.png'\]/);
   assert.match(code, /req\.mode !== 'navigate'\) return/, 'API calls and files are left to the network');
   assert.doesNotMatch(code, /\/api\//);
+});
+
+// ------------------------------------------------------------------ R-319 items 8 and 10: Needs you, help replies
+const ALL_PANEL_MIGRATIONS = ['0001_feedback.sql', '0002_leads.sql', '0003_ai_usage.sql', '0004_ai_limits.sql', '0005_feedback_input.sql', '0006_hq_messages.sql', '0007_lead_source.sql', '0008_help_answers.sql', '0009_help_replies.sql'];
+
+test('needsReply: the AI could not answer, said the team replies, or the person tapped No; never once replied or done', () => {
+  const base = { source: 'member', status: 'new', reply: '', covered: 'yes', helped: '' };
+  assert.equal(needsReply(base), false);
+  assert.equal(needsReply({ ...base, covered: 'no' }), true);
+  assert.equal(needsReply({ ...base, covered: 'none' }), true);
+  assert.equal(needsReply({ ...base, helped: 'no' }), true);
+  assert.equal(needsReply({ ...base, covered: '', status: 'question' }), true);
+  assert.equal(needsReply({ ...base, covered: 'no', reply: 'Done it' }), false);
+  assert.equal(needsReply({ ...base, covered: 'no', status: 'done' }), false);
+  assert.equal(needsReply({ ...base, covered: 'no', status: 'crash' }), false);
+  assert.equal(needsReply({ ...base, covered: 'no', source: 'web' }), false);
+  assert.equal(cleanReply('  Hi\r\n\r\n\r\n\r\nthere  '), 'Hi\n\nthere');
+});
+
+test('Feedback shows the AI answer, the tap and "Needs reply"; a reply is saved, marked done, and pops up once', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1(ALL_PANEL_MIGRATIONS);
+  web.raw.exec(`INSERT INTO feedback (at, source, text, answer, helped, covered, push_to, sender, reply_key) VALUES
+    ('2026-11-04T10:00:00Z', 'member', 'Can I pause for 3 months?', 'The team will reply soon.', '', 'no', 'fcm-token-abcdefghijklmnopqrstuvwxyz', 'install-1', 'h1'),
+    ('2026-11-04T09:00:00Z', 'member', 'How do I start?', 'Tap Workout.', 'yes', 'yes', '', 'install-1', 'h2'),
+    ('2026-11-04T08:00:00Z', 'admin', 'Receipt?', '', '', 'none', '', 'install-2', 'h3');
+    INSERT INTO leads (at, phone, gym, city, status) VALUES ('2026-11-04T08:00:00Z', '9800000001', 'A', '', 'new');`);
+  const fcmSent = [];
+  const net = fakeNet({ db: { hq_log: null, hq_gyms: [
+    { gymId: GYM, name: 'Iron Den', status: 'trial', createdAt: new Date(NOW * 1000 - 2 * 86400000).toISOString(), staff: 1 },
+    { gymId: GYM, name: 'QA Gym', status: 'trial', createdAt: new Date(NOW * 1000).toISOString(), staff: 1 },
+    { gymId: GYM, name: 'Old Gym', status: 'trial', createdAt: '2026-01-01T00:00:00Z', staff: 1 },
+  ] } });
+  const fetchImpl = async (url, init) => {
+    const u = String(url);
+    if (u.startsWith('https://oauth2.googleapis.com/')) return jsonRes(200, { access_token: 'at-x', expires_in: 3599 });
+    if (u.startsWith('https://fcm.googleapis.com/')) {
+      fcmSent.push(JSON.parse(init.body));
+      return jsonRes(200, { name: 'm1' });
+    }
+    return net.fetchImpl(url, init);
+  };
+  const { generateKeyPairSync } = await import('node:crypto');
+  const pem = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
+  const e = env({ WEB: web, FCM_SERVICE_ACCOUNT: JSON.stringify({ client_email: 'p@forgeai-d7eea.iam.gserviceaccount.com', private_key: pem, project_id: 'forgeai-d7eea', token_uri: 'https://oauth2.googleapis.com/token' }) });
+  const n2 = { fetchImpl };
+
+  const rows = (await (await api('GET', '/api/feedback', null, e, n2)).json()).rows;
+  assert.deepEqual(rows.map((r) => [r.text, r.answer, r.helped, r.needsReply, r.can_push]), [
+    ['Can I pause for 3 months?', 'The team will reply soon.', '', true, 1],
+    ['How do I start?', 'Tap Workout.', 'yes', false, 0],
+    ['Receipt?', '', '', true, 0],
+  ]);
+  assert.ok(!JSON.stringify(rows).includes('fcm-token'), 'the push address never reaches the page');
+  const waiting = (await (await api('GET', '/api/feedback?status=needs-reply', null, e, n2)).json()).rows;
+  assert.equal(waiting.length, 2);
+
+  const needs = await (await api('GET', '/api/needs', null, e, n2)).json();
+  // 2 help questions waiting; the answered one is the only other new feedback; 1 real new gym (not QA, not old).
+  assert.deepEqual(needs, { leadsNew: 1, feedbackNew: 1, helpNeedsReply: 2, gymsNew: 1 });
+
+  assert.equal((await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: ' ' }, e, n2)).status, 400);
+  const sent = await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: 'Yes, up to 30 days. Ask at the desk.' }, e, n2);
+  assert.equal(sent.status, 200);
+  assert.deepEqual(await sent.json(), { ok: true, pushed: 'sent' });
+  assert.equal(fcmSent.length, 1);
+  assert.equal(fcmSent[0].message.token, 'fcm-token-abcdefghijklmnopqrstuvwxyz');
+  assert.equal(fcmSent[0].message.data.tag, `help-reply-${rows[0].id}`);
+  const row = web.raw.prepare('SELECT reply, status, push_to FROM feedback WHERE id = ?').get(rows[0].id);
+  assert.deepEqual([row.reply, row.status, row.push_to], ['Yes, up to 30 days. Ask at the desk.', 'done', '']);
+  // A second reply (a correction) is saved, with no second pop-up: the address was used once.
+  assert.deepEqual(await (await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: 'Correction: 45 days.' }, e, n2)).json(), { ok: true, pushed: 'no-phone' });
+  assert.equal(fcmSent.length, 1);
+  assert.equal((await (await api('GET', '/api/needs', null, e, n2)).json()).helpNeedsReply, 1);
+  assert.equal((await api('POST', '/api/feedback/reply', { id: 999, reply: 'Hello there' }, e, n2)).status, 400);
+});
+
+test('before panel migration 0009: Feedback still lists, a reply says it needs the update', { skip: !sqlite && 'no node:sqlite here' }, async () => {
+  const web = d1();
+  web.raw.exec("INSERT INTO feedback (at, source, text) VALUES ('2026-11-04T10:00:00Z', 'member', 'Hi')");
+  const net = fakeNet({ db: { hq_log: null, hq_gyms: [] } });
+  const e = env({ WEB: web });
+  const rows = (await (await api('GET', '/api/feedback', null, e, net)).json()).rows;
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].needsReply, false);
+  const res = await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: 'Thanks!' }, e, net);
+  assert.equal(res.status, 503);
+  assert.deepEqual(await res.json(), { error: 'REPLY_NOT_READY' });
+  const needs = await (await api('GET', '/api/needs', null, e, net)).json();
+  assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0 });
 });

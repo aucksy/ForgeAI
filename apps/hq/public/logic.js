@@ -133,6 +133,7 @@ const ERRORS = {
   MSG_NOT_READY: 'Messages need the database update (waiting for your yes).',
   BAD_TITLE: 'Write a title (at least 3 letters).',
   BAD_BODY: 'Write the message (at least 3 letters).',
+  REPLY_NOT_READY: 'Replies need the database update (waiting for your yes).',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
@@ -567,4 +568,52 @@ export function groupPriceWords(branches) {
   const n = Number(branches) || 0;
   const r = (x) => `₹${(n > 0 ? x + extraBranchPrice(x) * (n - 1) : 0).toLocaleString('en-IN')}`;
   return `${count(n, 'branch', 'branches')}: the first at full price, the others at half, so Starter ${r(BRANCH_PRICES.starter)} or Pro ${r(BRANCH_PRICES.pro)} a month for all of them. Information only: nothing is billed here.`;
+}
+
+// ------------------------------------------------------------------ Needs you (R-319 item 8)
+// "whenever there is a new action waiting to do anything, there is a notification waiting for the
+// user to really act on" - also in HQ. One list, one number on the menu and in the tab title.
+
+/** New gyms HQ has not checked yet: status 'trial', made in the last 14 days, not a test or demo gym. PURE. */
+export const NEW_GYM_DAYS = 14;
+export function newGymsToCheck(gyms, now = Date.now()) {
+  return (Array.isArray(gyms) ? gyms : []).filter((g) => {
+    if (!g || g.status !== 'trial' || testKind(g)) return false;
+    const made = Date.parse(g.createdAt || '');
+    return Number.isFinite(made) && now - made <= NEW_GYM_DAYS * 24 * 60 * 60 * 1000;
+  });
+}
+
+/**
+ * The lines of HQ's "Needs you" list, from /api/needs: { leadsNew, gymsNew, helpNeedsReply, feedbackNew }
+ * (a part that could not be read is null and left out). Each line: { key, n, words, href }. PURE.
+ */
+export function needsLines(d) {
+  const lines = [
+    ['help', d && d.helpNeedsReply, (n) => `${count(n, 'help question')} waiting for your reply`, '#feedback/needs-reply'],
+    ['leads', d && d.leadsNew, (n) => `${count(n, 'new lead')} to call`, '#leads'],
+    ['gyms', d && d.gymsNew, (n) => `${count(n, 'new gym')} to check`, '#gyms'],
+    ['feedback', d && d.feedbackNew, (n) => `${count(n, 'new feedback message')} to read`, '#feedback/new'],
+  ];
+  return lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
+}
+
+/** The number on the menu: every waiting thing once. PURE. */
+export function needsTotal(d) {
+  if (!d) return 0;
+  // feedbackNew already leaves out the help questions counted in helpNeedsReply (deploy/hq/web.js webNeeds).
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew].reduce((a, n) => a + (Number(n) || 0), 0);
+}
+
+/** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */
+export function titleWithCount(base, n) {
+  const clean = String(base || '').replace(/^\(\d+\+?\)\s*/, '');
+  if (!(Number(n) > 0)) return clean;
+  return `(${n > 99 ? '99+' : n}) ${clean}`;
+}
+
+/** Which counts went UP since the last look (for the sound and the pop-up). First look: none. PURE. */
+export function needsRose(before, now) {
+  if (!before || !now) return [];
+  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew' }[l.key]]) || 0));
 }

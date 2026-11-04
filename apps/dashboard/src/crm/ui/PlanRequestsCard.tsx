@@ -23,6 +23,7 @@ import {
 } from '../logic/planRequests';
 import { decidePlanRequest, listPlanRequests, planRequestServer } from '../shop/planRequestApi';
 import { usePoll } from '../shop/ShopProvider';
+import { useNeedsYou } from './NeedsYou';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, Row, SectionTitle, color, font, space } from './kit';
 
@@ -35,6 +36,8 @@ export function PlanRequestsCard() {
   const [rows, setRows] = useState<PlanRequestRow[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [problem, setProblem] = useState<{ id: string; text: string } | null>(null);
+  // R-319 item 8a: Today's "Needs you" count drops at once after an answer.
+  const needs = useNeedsYou();
 
   const load = useCallback(async () => {
     if (!key) return;
@@ -73,6 +76,7 @@ export function PlanRequestsCard() {
       setProblem({ id: r.id, text: approveErrorWords(e) });
       await load();
     } finally {
+      void needs.refresh();
       setBusy(null);
     }
   };
@@ -88,6 +92,7 @@ export function PlanRequestsCard() {
       setProblem({ id: r.id, text: decideErrorWords(e) });
       await load();
     } finally {
+      void needs.refresh();
       setBusy(null);
     }
   };

@@ -19,6 +19,7 @@ import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon, PrimaryButton, Sheet } from '@/components/ui';
 import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
 import { HelpReply } from '@/components/feedback/HelpReply';
+import { HELP_HISTORY_WORDS } from '@/lib/helpHistory';
 import {
   DRAG_SLOP,
   FEEDBACK_BUTTON_SIZE,
@@ -206,8 +207,17 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
           onSpoke={() => setInput('voice')}
           placeholder={FEEDBACK_BUTTON_WORDS.placeholder}
         />
+        {sending ? (
+          <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
+            {HELP_HISTORY_WORDS.sending}
+          </Text>
+        ) : null}
         {note?.reply ? (
-          <HelpReply reply={note.reply} />
+          <>
+            <HelpReply reply={note.reply} />
+            {/* R-319 item 10 / R-320: the answer is kept; say where, so it is never lost when the sheet closes. */}
+            <Text style={{ fontFamily: type.body, fontSize: type.size.caption, lineHeight: 18, color: color.inkMuted }}>{HELP_HISTORY_WORDS.keptHere}</Text>
+          </>
         ) : note ? (
           <Text
             accessibilityLiveRegion="polite"

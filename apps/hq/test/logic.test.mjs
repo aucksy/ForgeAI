@@ -12,6 +12,11 @@ import {
   flags,
   gymByCode,
   needsLook,
+  needsLines,
+  needsRose,
+  needsTotal,
+  newGymsToCheck,
+  titleWithCount,
   recordCells,
   rupees,
   rupeesExact,
@@ -295,4 +300,32 @@ test('the landing page carries the prices the owner picked on 30 Oct 2026 (#30 A
   for (const gone of ['₹1,999', '₹19,990', '₹2,999', 'FIRST 50', 'पहले 50', 'first 50', '₹19,990 once', '₹4,990']) {
     assert.ok(!html.includes(gone), `landing page still says "${gone}"`);
   }
+});
+
+// R-319 item 8: HQ's Needs you.
+test('Needs you: lines in order of urgency, one number, the tab title, and what rose', () => {
+  const d = { helpNeedsReply: 2, leadsNew: 1, gymsNew: 0, feedbackNew: null };
+  assert.deepEqual(needsLines(d).map((l) => [l.key, l.words, l.href]), [
+    ['help', '2 help questions waiting for your reply', '#feedback/needs-reply'],
+    ['leads', '1 new lead to call', '#leads'],
+  ]);
+  assert.equal(needsTotal(d), 3);
+  assert.equal(needsTotal(null), 0);
+  assert.equal(titleWithCount('MettleUp HQ', 3), '(3) MettleUp HQ');
+  assert.equal(titleWithCount('(3) MettleUp HQ', 0), 'MettleUp HQ');
+  assert.equal(titleWithCount('MettleUp HQ', 150), '(99+) MettleUp HQ');
+  assert.deepEqual(needsRose(null, d), [], 'the first look never rings');
+  assert.deepEqual(needsRose(d, { ...d, leadsNew: 2 }).map((l) => l.key), ['leads']);
+  assert.deepEqual(needsRose(d, { ...d, helpNeedsReply: 1 }), [], 'fewer is not new');
+});
+
+test('new gyms to check: trial, made in the last 14 days, not a test or demo gym', () => {
+  const now = Date.parse('2026-11-04T00:00:00Z');
+  const gyms = [
+    { name: 'Iron Den', status: 'trial', createdAt: '2026-11-01T00:00:00Z' },
+    { name: 'QA Gym', status: 'trial', createdAt: '2026-11-01T00:00:00Z' },
+    { name: 'Old Gym', status: 'trial', createdAt: '2026-10-01T00:00:00Z' },
+    { name: 'Checked', status: 'active', createdAt: '2026-11-01T00:00:00Z' },
+  ];
+  assert.deepEqual(newGymsToCheck(gyms, now).map((g) => g.name), ['Iron Den']);
 });

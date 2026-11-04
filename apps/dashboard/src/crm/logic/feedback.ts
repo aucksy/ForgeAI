@@ -4,6 +4,18 @@
  * never to the gym's records. With it: the browser and the page. No name, no mobile number.
  */
 
+import {
+  addQuestion,
+  keysToAsk,
+  markRepliesSeen,
+  mergeServer,
+  parseHistory,
+  rateQuestion,
+  serverItemsFrom,
+  settleQuestion,
+  type HelpQuestion,
+} from './helpHistory';
+
 export const FEEDBACK_MAX = 2000;
 
 export const FEEDBACK_WORDS = {
@@ -54,6 +66,8 @@ export function senderId(store: Pick<Storage, 'getItem' | 'setItem'> | null = ty
 
 /** "Did this solve it?" One tap, kept beside the message. False when it could not be sent (logged). */
 export async function rateHelp(id: number, helped: 'yes' | 'no', fetcher: typeof fetch = fetch): Promise<boolean> {
+  // R-319 item 10: the tap is kept with the question in "Your questions" too.
+  saveHistory(rateQuestion(readHistory(), id, helped));
   try {
     const res = await fetcher('/api/help/rate', {
       method: 'POST',
@@ -68,16 +82,113 @@ export async function rateHelp(id: number, helped: 'yes' | 'no', fetcher: typeof
   }
 }
 
-export async function sendFeedback(text: string, screen: string, fetcher: typeof fetch = fetch): Promise<FeedbackResult> {
+type Store = Pick<Storage, 'getItem' | 'setItem'> | null;
+const HISTORY_KEY = 'mettleup_help_questions';
+const browserStore = (): Store => (typeof localStorage === 'undefined' ? null : localStorage);
+
+/** R-319 item 10: "Your questions" kept in this browser ([] when it cannot be read; logged). */
+export function readHistory(store: Store = browserStore()): HelpQuestion[] {
+  try {
+    return parseHistory(store?.getItem(HISTORY_KEY) ?? null);
+  } catch (e) {
+    console.warn('[help] could not read your questions in this browser', e);
+    return [];
+  }
+}
+
+export function saveHistory(items: readonly HelpQuestion[], store: Store = browserStore()): void {
+  try {
+    store?.setItem(HISTORY_KEY, JSON.stringify(items));
+  } catch (e) {
+    console.warn('[help] could not keep your questions in this browser', e);
+  }
+}
+
+/** A fresh secret for one question: only this browser can read its answer and reply. '' when none. */
+function newHelpKey(): string {
+  try {
+    return `${crypto.randomUUID()}-${crypto.randomUUID()}`.slice(0, 73);
+  } catch (e) {
+    console.warn('[help] no question secret; this question is not kept in Your questions', e);
+    return '';
+  }
+}
+
+/**
+ * Ask the help box for late answers and the MettleUp team's replies to this browser's questions, merge
+ * them in and keep them. Returns the list (unchanged when the box could not be asked; logged).
+ */
+export async function refreshHistory(fetcher: typeof fetch = fetch, store: Store = browserStore()): Promise<HelpQuestion[]> {
+  const list = readHistory(store);
+  const keys = keysToAsk(list);
+  const sender = senderId(store);
+  if (!sender || keys.length === 0) return list;
+  try {
+    const res = await fetcher('/api/help/replies', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sender, keys }),
+    });
+    if (res.status === 404) return list; // an older help box without replies
+    if (res.status !== 200) {
+      console.warn('[help] replies answered', res.status);
+      return list;
+    }
+    const items = serverItemsFrom((await res.json()) as unknown);
+    if (items.length === 0) return list;
+    const next = mergeServer(readHistory(store), items);
+    saveHistory(next, store);
+    return next;
+  } catch (e) {
+    console.warn('[help] could not ask for replies', e);
+    return list;
+  }
+}
+
+/** Every reply counts as opened (the Help page showed them). */
+export function markHistorySeen(store: Store = browserStore()): HelpQuestion[] {
+  const next = markRepliesSeen(readHistory(store));
+  saveHistory(next, store);
+  return next;
+}
+
+export async function sendFeedback(text: string, screen: string, fetcher: typeof fetch = fetch, store: Store = browserStore()): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
+  // R-319 item 10: kept in "Your questions" at once, waiting for its answer.
+  const replyKey = newHelpKey();
+  if (replyKey) saveHistory(addQuestion(readHistory(store), replyKey, clean.slice(0, FEEDBACK_MAX), Date.now()), store);
+  const result = await sendToBox(clean, screen, fetcher, replyKey, store);
+  if (replyKey) {
+    saveHistory(
+      settleQuestion(
+        readHistory(store),
+        replyKey,
+        result.ok ? { id: result.reply?.id ?? null, answer: result.reply?.text ?? '', ai: result.reply?.ai ?? false, covered: result.covered } : null,
+      ),
+      store,
+    );
+  }
+  if (!result.ok) return { ok: false, words: result.words };
+  return result.reply ? { ok: true, reply: result.reply } : { ok: true };
+}
+
+async function sendToBox(
+  clean: string,
+  screen: string,
+  fetcher: typeof fetch,
+  replyKey: string,
+  store: Store,
+): Promise<FeedbackResult & { covered?: boolean }> {
   const body = {
     source: 'admin',
     text: clean.slice(0, FEEDBACK_MAX),
     app: 'admin',
     device: typeof navigator === 'undefined' ? '' : navigator.userAgent.slice(0, 120),
     screen,
-    sender: senderId(),
+    sender: senderId(store),
+    // R-319 item 10: this question's secret (only its hash is kept); an older box ignores it.
+    ...(replyKey ? { replyKey } : {}),
   };
   try {
     // T22: the help box saves the message and answers it; until the server has it (404), the plain box.
@@ -89,7 +200,8 @@ export async function sendFeedback(text: string, screen: string, fetcher: typeof
       return null;
     });
     if (res.status !== 201) console.warn('[feedback] box answered', res.status);
-    return feedbackAnswer(res.status, answer);
+    const covered = answer && typeof answer === 'object' ? (answer as { covered?: unknown }).covered === true : false;
+    return { ...feedbackAnswer(res.status, answer), covered };
   } catch (e) {
     console.warn('[feedback] could not send', e);
     return { ok: false, words: FEEDBACK_WORDS.offline };

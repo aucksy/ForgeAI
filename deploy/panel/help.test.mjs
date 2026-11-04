@@ -8,6 +8,11 @@ import {
   costInr,
   handleHelp,
   handleHelpRate,
+  handleHelpReplies,
+  coveredWord,
+  pushToOf,
+  replyKeyOf,
+  sha256Hex,
   helpPrompt,
   helpSystem,
   indiaMonth,
@@ -128,4 +133,60 @@ test('pure parts: prompt, month, cost, answer check', () => {
   assert.deepEqual(readAnswer('{"answer":" ok ","covered":false}'), { text: 'ok', covered: false });
   assert.equal(readAnswer('{"answer":""}'), null);
   assert.equal(readAnswer('nope'), null);
+});
+
+// ------------------------------------------------------------------ R-319 item 10: replies from the team
+const SECRET = 'q-secret-0123456789abcdef';
+const TOKEN = 'fcm-token-abcdefghijklmnopqrstuvwxyz:123';
+
+test('saves only a hash of the reply secret, the push address, and whether the AI covered it', async () => {
+  const e = env();
+  const ai = fakeClaude({ answer: 'The team will reply soon.', covered: false });
+  const res = await handleHelp(post('/api/help', { source: 'member', text: 'Can I freeze for 3 months?', sender: SENDER, replyKey: SECRET, pushTo: TOKEN }), e, new Date('2026-11-04T10:00:00Z'), { fetchImpl: ai.fetchImpl });
+  const j = await res.json();
+  const row = e.WEB.sqlite.prepare('SELECT * FROM feedback WHERE id = ?').get(j.id);
+  assert.equal(row.reply_key, await sha256Hex(SECRET));
+  assert.notEqual(row.reply_key, SECRET);
+  assert.equal(row.push_to, TOKEN);
+  assert.equal(row.covered, 'no');
+  // The secret and the push address never reach Claude.
+  const all = JSON.stringify(ai.calls[0].body);
+  assert.ok(!all.includes(SECRET) && !all.includes(TOKEN));
+  // No AI answer at all: 'none'. A bad secret or address is simply not kept.
+  const e2 = env({ CLAUDE_HELP_KEY: '' });
+  const j2 = await (await handleHelp(post('/api/help', { source: 'admin', text: 'Hi', sender: SENDER, replyKey: 'short', pushTo: 'bad token' }), e2)).json();
+  const row2 = e2.WEB.sqlite.prepare('SELECT * FROM feedback WHERE id = ?').get(j2.id);
+  assert.deepEqual([row2.covered, row2.reply_key, row2.push_to], ['none', '', '']);
+});
+
+test('replies: only the install that asked, only with its secret, gets the answer and the reply', async () => {
+  const e = env();
+  const ai = fakeClaude({ answer: 'Open Gym, then Pause.', covered: true });
+  const j = await (await handleHelp(post('/api/help', { source: 'member', text: 'Pause?', sender: SENDER, replyKey: SECRET }), e, new Date(), { fetchImpl: ai.fetchImpl })).json();
+  e.WEB.sqlite.prepare("UPDATE feedback SET reply = 'Yes, up to 30 days.', reply_at = '2026-11-04T11:00:00.000Z' WHERE id = ?").run(j.id);
+  const ask = (body) => handleHelpReplies(post('/api/help/replies', body), e).then(async (r) => [r.status, await r.json()]);
+  const [s, mine] = await ask({ sender: SENDER, keys: [SECRET, 'another-secret-0000000000'] });
+  assert.equal(s, 200);
+  assert.equal(mine.items.length, 1);
+  assert.deepEqual(
+    [mine.items[0].key, mine.items[0].id, mine.items[0].answer, mine.items[0].covered, mine.items[0].reply, mine.items[0].replyAt],
+    [SECRET, j.id, 'Open Gym, then Pause.', 'yes', 'Yes, up to 30 days.', '2026-11-04T11:00:00.000Z'],
+  );
+  // Another install with the same secret, or the right install with a wrong secret: nothing.
+  assert.deepEqual((await ask({ sender: 'install-99999999', keys: [SECRET] }))[1].items, []);
+  assert.deepEqual((await ask({ sender: SENDER, keys: ['wrong-secret-000000000000'] }))[1].items, []);
+  // Bad requests are refused.
+  assert.equal((await ask({ sender: SENDER, keys: [] }))[0], 400);
+  assert.equal((await ask({ sender: 'x', keys: [SECRET] }))[0], 400);
+  assert.equal((await handleHelpReplies(new Request('https://x/api/help/replies'), e)).status, 405);
+});
+
+test('pure parts of replies: secret, push address, covered', () => {
+  assert.equal(replyKeyOf(SECRET), SECRET);
+  assert.equal(replyKeyOf('a b c d e f g h i j k l m n'), '');
+  assert.equal(pushToOf(` ${TOKEN} `), TOKEN);
+  assert.equal(pushToOf('short'), '');
+  assert.equal(coveredWord(null), 'none');
+  assert.equal(coveredWord({ text: 'x', covered: true }), 'yes');
+  assert.equal(coveredWord({ text: 'x', covered: false }), 'no');
 });

@@ -44,6 +44,13 @@ jobs:
           node-version: 22
           cache: npm
 
+      # R-319 item 10 (owner, 4 Nov 2026: the help library must grow with the app). Every member-app
+      # screen and admin-app screen is named in a help article (deploy/panel/helpArticles.js) or in
+      # its list of screens with nothing to ask, with the reason. A new screen without either fails
+      # here, with the file to add. Reads the whole tree, so a rebase or an unrelated edit cannot fool it.
+      - name: Help library covers every screen
+        run: node scripts/ci/help_coverage.mjs
+
       - name: Install JS dependencies
         run: npm ci
 

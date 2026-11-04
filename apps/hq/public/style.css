@@ -186,3 +186,11 @@ textarea { width: 100%; }
   .stack-table td:empty { display: none; }
   .stack-table tbody tr:last-child { border-bottom: 0; }
 }
+
+/* R-319 item 8: Needs you (menu number) and item 10: the AI answer and the team reply on Feedback. */
+.nav-badge { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 4px; border-radius: 999px; background: var(--bad); color: #fff; font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; }
+.nav-badge[hidden] { display: none; }
+.needs-line { display: block; text-decoration: none; color: var(--ink); }
+.needs-line:hover { border-color: var(--ink); }
+.ai-answer, .reply-sent { border-left: 3px solid var(--line); padding-left: 10px; margin: 8px 0; }
+.reply-sent { border-left-color: var(--good); }

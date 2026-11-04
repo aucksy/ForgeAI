@@ -5,12 +5,18 @@
  * the gym server. With it: the app version, the phone model, the gym code and a random id for this
  * install. No name, no mobile number.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 import { fetchWithTimeout } from '@/lib/fetchTimeout';
+import { useHelpHistory } from '@/lib/helpHistoryStore';
 import { uuid } from '@/lib/uuid';
+import { savedPushFrom } from '@/shop/pushPlan';
+
+/** shop/pushToken.ts PUSH_TOKEN_KEY (not imported: that file loads the notification library). */
+const PUSH_TOKEN_KEY = 'forgeai-gym-push-token';
 
 /**
  * The feedback box's addresses, newest first (MettleUp, R-105): the old one stays for good. The next
@@ -129,6 +135,8 @@ export async function sendToHelp(json: string, post: typeof fetchWithTimeout = f
 
 /** "Did this solve it?" One tap, kept beside the message. False when it could not be sent (logged). */
 export async function rateHelp(id: number, helped: 'yes' | 'no', post: typeof fetchWithTimeout = fetchWithTimeout): Promise<boolean> {
+  // R-319 item 10: the tap is kept with the question in "Your questions" too.
+  await useHelpHistory.getState().rate(id, helped);
   try {
     const res = await post(HELP_RATE_URL, {
       method: 'POST',
@@ -143,12 +151,52 @@ export async function rateHelp(id: number, helped: 'yes' | 'no', post: typeof fe
   }
 }
 
+/** A fresh secret for one question (R-319 item 10): only this phone can read its answer and reply. '' when none. */
+function newHelpKey(): string {
+  try {
+    return `${uuid()}-${uuid()}`.slice(0, 73);
+  } catch (e) {
+    console.warn('[feedback] no question secret; this question is not kept in Your questions', e);
+    return '';
+  }
+}
+
+/** This phone's push address, if it saved one with its gym (shop/pushToken.ts), for "the team replied". */
+async function pushAddress(): Promise<string> {
+  try {
+    const raw = await AsyncStorage.getItem(PUSH_TOKEN_KEY);
+    return savedPushFrom(raw ? (JSON.parse(raw) as unknown) : null)?.token ?? '';
+  } catch (e) {
+    console.warn('[feedback] push address not read; a reply comes without a pop-up', e);
+    return '';
+  }
+}
+
 export async function sendFeedback(
   text: string,
   extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
 ): Promise<FeedbackResult> {
   const clean = text.trim();
   if (!clean) return { ok: false, words: FEEDBACK_WORDS.empty };
+  // R-319 item 10: kept on this phone in "Your questions" at once, waiting for its answer.
+  const key = newHelpKey();
+  const history = useHelpHistory.getState();
+  if (key) await history.add(key, clean.slice(0, FEEDBACK_MAX));
+  const result = await sendToBoxes(clean, extra, key);
+  if (key) {
+    await history.settle(
+      key,
+      result.ok ? { id: result.reply?.id ?? null, answer: result.reply?.text ?? '', ai: result.reply?.ai ?? false, covered: result.covered } : null,
+    );
+  }
+  return result;
+}
+
+async function sendToBoxes(
+  clean: string,
+  extra: { app?: string; gym?: string; screen?: string; input?: 'voice' | 'typed' },
+  replyKey: string,
+): Promise<FeedbackResult & { covered?: boolean }> {
   const body = {
     source: 'member',
     text: clean.slice(0, FEEDBACK_MAX),
@@ -159,6 +207,9 @@ export async function sendFeedback(
     // R-149: how it was written (the floating button's "Speak", or typed). An older box ignores it.
     input: extra.input ?? 'typed',
     sender: await senderId(),
+    // R-319 item 10: this question's secret and the phone's push address (older boxes ignore both).
+    ...(replyKey ? { replyKey } : {}),
+    ...(replyKey ? { pushTo: await pushAddress() } : {}),
   };
   try {
     // The help box waits for Claude's answer (up to 15 s on the server), so it gets longer (sendToHelp).
@@ -170,7 +221,8 @@ export async function sendFeedback(
       answer = null; // quiet: an answer without JSON is judged by its status alone
     }
     if (res.status !== 201) console.warn('[feedback] box answered', res.status);
-    return feedbackAnswer(res.status, answer);
+    const covered = answer && typeof answer === 'object' ? (answer as { covered?: unknown }).covered === true : false;
+    return { ...feedbackAnswer(res.status, answer), covered };
   } catch (e) {
     console.warn('[feedback] could not send', e);
     return { ok: false, words: FEEDBACK_WORDS.offline };
