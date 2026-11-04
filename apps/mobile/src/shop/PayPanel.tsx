@@ -40,7 +40,8 @@ export function PayQr({ text, label, px = 200 }: { text: string; label: string; 
   );
 }
 
-const small = { fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 18 } as const;
+/** Read when drawn (gym branding repaints the colours). */
+const small = () => ({ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 18 });
 
 /** One amount to pay: QR, UPI app, UPI ID, online link, test mode, status. */
 export function PayRequestView({ r, onOpened }: { r: MemberPayRequest; onOpened?: () => void }) {
@@ -65,7 +66,7 @@ export function PayRequestView({ r, onOpened }: { r: MemberPayRequest; onOpened?
       {upi ? (
         <View style={{ alignItems: 'center', gap: space.xs }}>
           <PayQr text={upi} label={`UPI QR code to pay ${askLine(r)}`} />
-          <Text style={small}>{W.scan}</Text>
+          <Text style={small()}>{W.scan}</Text>
         </View>
       ) : null}
       {upi ? <PrimaryButton label={W.upiApp} onPress={() => void open(upi, W.noUpiApp)} /> : null}
@@ -74,20 +75,20 @@ export function PayRequestView({ r, onOpened }: { r: MemberPayRequest; onOpened?
           <Text selectable style={{ fontFamily: type.mono, fontSize: type.size.body, color: color.ink }}>
             {r.upiId}
           </Text>
-          <Text style={small}>{W.holdToCopy}</Text>
+          <Text style={small()}>{W.holdToCopy}</Text>
         </View>
       ) : null}
       {r.status === 'open' && r.url ? <GhostButton label={onlineButton(r)} onPress={() => void open(r.url as string, W.linkProblem)} /> : null}
       {r.status === 'open' && r.url && r.testMode ? (
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.warning }}>{W.testMode}</Text>
       ) : null}
-      {r.status === 'open' && !r.url ? <Text style={small}>{W.deskConfirms}</Text> : null}
+      {r.status === 'open' && !r.url ? <Text style={small()}>{W.deskConfirms}</Text> : null}
       {status ? (
         <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: r.status === 'paid' ? color.goodText : color.inkSecondary }}>
           {status}
         </Text>
       ) : null}
-      {problem ? <Text style={{ ...small, color: color.criticalText }}>{problem}</Text> : null}
+      {problem ? <Text style={{ ...small(), color: color.criticalText }}>{problem}</Text> : null}
     </View>
   );
 }
@@ -161,6 +162,6 @@ export function OrderPay({ memberKey, orderId, known }: { memberKey: string; ord
 
   if (req && req.status === 'paid') return <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.goodText }}>{W.orderPaid}</Text>;
   if (req && req.status === 'open') return <PayRequestView r={req} />;
-  if (notOn) return <Text style={small}>{W.orderNotOn}</Text>;
+  if (notOn) return <Text style={small()}>{W.orderNotOn}</Text>;
   return <GhostButton label={busy ? 'Opening…' : W.orderPay} onPress={() => void start()} />;
 }
