@@ -1,0 +1,40 @@
+# Part UAT, flow F79 (gym, after flow F147): "Pay your gym" on the Gym tab's plan card (4 Nov 2026, R-328).
+# The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh.
+#  - Until MettleUp's server has online payments (deploy/panel 0011 + PAYMENTS_MASTER_KEY, NOT live yet), the
+#    app shows NO payment parts: this flow checks "Pay your gym", "Pay by UPI app" and "Pay for this order"
+#    are absent, and photographs the Gym tab.
+#  - Once it is live and the desk asked Uma to pay (Collect payment -> Send to their app), the card shows the
+#    UPI QR first, then "Pay by UPI app", the UPI ID: the flow reads those words and photographs them.
+# The desk's side (Settings -> Payments, the QR in Collect payment) is checked in the admin panel's e2e
+# (apps/dashboard/e2e/pay-uat.spec.mjs) at a phone and a desktop width.
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Gym$"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "^Pay your gym$"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-f79-1-gym-tab-pay
+# ---------------------------------------------------------------- server not on: nothing shows
+- runFlow:
+    when:
+      notVisible: "^Pay your gym$"
+    commands:
+      - assertNotVisible: "^Pay by UPI app$"
+      - assertNotVisible: "^Scan this QR with any UPI app\.$"
+      - assertNotVisible: "^Test mode: no real money moves\.$"
+# ---------------------------------------------------------------- server on and a fee asked
+- runFlow:
+    when:
+      visible: "^Pay your gym$"
+    commands:
+      - assertVisible: "^Scan this QR with any UPI app\.$"
+      - assertVisible: "^Pay by UPI app$"
+      - assertVisible: "^Press and hold to copy the UPI ID\.$"
+      - takeScreenshot: rel-f79-2-pay-card

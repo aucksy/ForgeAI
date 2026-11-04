@@ -20,6 +20,9 @@ import { GymOnly } from './GymOnly';
 import { useGymShop } from './gymStore';
 import { displayName, itemsText, orderTimeText, rupees } from './money';
 import { QuietLine, leave } from './ShopParts';
+import { apiPayMine } from './memberPayApi';
+import type { MemberPayRequest } from './memberPay';
+import { OrderPay } from './PayPanel';
 import type { GymOrder, Order, OrderLine } from './types';
 
 const STATUS_TONE: Record<Order['status'], 'accent' | 'good' | 'neutral'> = {
@@ -47,6 +50,25 @@ function GymOrders() {
   const router = useRouter();
   const navigation = useNavigation();
   const orders = useGymShop((s) => s.orders);
+  // F79 (R-328): "Pay for this order" only when the gym's server has online payments on.
+  const memberKey = useGymShop((s) => s.link?.memberKey ?? null);
+  const [pay, setPay] = useState<{ on: boolean; byOrder: Record<string, MemberPayRequest> }>({ on: false, byOrder: {} });
+  useFocusEffect(
+    useCallback(() => {
+      let live = true;
+      if (memberKey) {
+        void apiPayMine(memberKey).then((a) => {
+          if (!live) return;
+          const byOrder: Record<string, MemberPayRequest> = {};
+          for (const r of a?.requests ?? []) if (r.kind === 'shop' && r.ref && !byOrder[r.ref]) byOrder[r.ref] = r;
+          setPay({ on: a != null, byOrder });
+        });
+      }
+      return () => {
+        live = false;
+      };
+    }, [memberKey]),
+  );
   // "Order 12 placed…" is said once, on the My orders the bag opened: read it here, clear it in
   // the store (state, not a cleanup, so React's double effect run in development keeps it).
   const [flash, setFlash] = useState(() => useGymShop.getState().flash);
@@ -142,6 +164,9 @@ function GymOrders() {
               foot={gymPayText(o)}
             >
               <InlineError message={problems[o.id] ?? null} />
+              {pay.on && memberKey && (o.status === 'ordered' || o.status === 'ready' || pay.byOrder[o.id]?.status === 'paid') ? (
+                <OrderPay memberKey={memberKey} orderId={o.id} known={pay.byOrder[o.id] ?? null} />
+              ) : null}
               {canCancelGymOrder(o) ? (
                 <GhostButton
                   label={cancelling === o.id ? 'Cancelling…' : 'Cancel order'}

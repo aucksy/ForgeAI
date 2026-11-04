@@ -20,6 +20,7 @@ import { GymReportPanel } from './GymReportPanel';
 import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
 import { keepMembership, readKeptMembership } from './membershipKept';
 import { PlanRequestPanel } from './PlanRequestPanel';
+import { MembershipPayPanel } from './PayPanel';
 import type { GymLink } from './types';
 
 type Shown = { answer: MembershipAnswer; keptAt: number | null } | null;
@@ -92,6 +93,8 @@ export function MembershipCard({ link }: { link: GymLink }) {
       {/* F121: "Send your report to the gym?" - only while this gym's desk has asked, and only once
           the server has 0045 (the panel hides itself until then). Not on a kept (offline) plan. */}
       {shown.answer.ok && shown.keptAt == null ? <GymReportPanel link={link} /> : null}
+      {/* F79 (R-328): fees the desk asked this member to pay online (hidden until the server has it). */}
+      {shown.answer.ok && shown.keptAt == null ? <MembershipPayPanel link={link} /> : null}
     </Card>
   );
 }
