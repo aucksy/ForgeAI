@@ -13,11 +13,11 @@
 # Phases:
 #   C  control: no workout open. App up, screen off for HOLD_S, wake: what is in front (recorded).
 #   A  workout open: the service is in the foreground and the notice is posted; screen off for
-#      HOLD_S (checked: the watch is Asleep, not Dozing = Always-on screen really off); wake:
+#      HOLD_S (checked: Always-on screen off and the screen black while off); wake:
 #      MettleUp must be in front, showing the workout.
 #   B  workout over: the service and the notice must be gone; screen off for HOLD_S, wake: what is
 #      in front (recorded).
-# Required (exit 1 if not): A-service, A-notice, A-asleep, A-front, B-service, B-notice.
+# Required (exit 1 if not): A-service, A-notice, A-screen-off, A-front, B-service, B-notice.
 #
 # Usage: watch_keep_screen_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -58,14 +58,16 @@ service_fg() { # prints "fg", "bg" or "none"
 notice_up() { # 1 if the workout notice (id 51004) of this app is posted
   adb shell dumpsys notification --noredact 2>/dev/null | tr -d '\r' | grep -E "NotificationRecord.*pkg=$PKG.*id=51004" -q && echo 1 || echo 0
 }
-# Screen off for HOLD_S (Always-on off: the watch must be Asleep), then wake; records what is in front.
+# Screen off for HOLD_S (Always-on off: the screen must be black), then wake; records what is in front.
 off_and_wake() { # phase
   local p="$1"
   adb shell input keyevent KEYCODE_SLEEP
   sleep 4
   local w; w="$(wakefulness)"
+  adb shell dumpsys power 2>/dev/null | grep -E "mWakefulness=|Display Power|mScreenOn|state=" | head -8 > "$OUT/$p-power-off.txt"
   echo "$w" > "$OUT/$p-wakefulness-off.txt"
   shot "$p-2-screen-off"
+  OFF_DARK="$(dark "$OUT/shots/$p-2-screen-off.png")"
   sleep $((HOLD_S - 4))
   adb shell input keyevent KEYCODE_WAKEUP
   sleep 4
@@ -197,7 +199,11 @@ log "A: workout open"
 adb logcat -c || true
 adb shell input keyevent KEYCODE_WAKEUP
 adb shell am start -W -n $ACT >/dev/null || true
-sleep 8
+sleep 1
+# Before the app's phone check runs (no phone exists in CI: a few seconds later it says
+# "Phone not connected", which is what a real watch shows without its phone).
+shot "A-0-workout-screen"
+sleep 7
 shot "A-1-workout-open"
 adb shell dumpsys activity services $PKG > "$OUT/A-services.txt" 2>&1 || true
 adb shell dumpsys notification --noredact > "$OUT/A-notifications.txt" 2>&1 || true
@@ -207,10 +213,14 @@ S="$(service_fg)"
 [ "$(notice_up)" = "1" ] && result A-notice PASS "the workout notice (Ongoing Activity, id 51004) is posted" \
   || result A-notice FAIL "no workout notice (id 51004)"
 off_and_wake A
-case "$WAKE_OFF" in
-  Asleep) result A-asleep PASS "screen off with Always-on off: the watch was Asleep (not dimmed)" ;;
-  *) result A-asleep FAIL "after the screen went off the watch was '$WAKE_OFF', not Asleep: Always-on screen is not really off" ;;
-esac
+# Wear OS reports a screen that is off as "Dozing" too, so the proof is the picture: with Always-on
+# screen on, the app's dimmed twin would be drawn; off, the screen is black.
+AMB="$(adb shell settings get global ambient_enabled | tr -d '')"
+if [ "$AMB" = "0" ] && [ "$OFF_DARK" = "1" ]; then
+  result A-screen-off PASS "Always-on screen off (ambient_enabled=0) and the screen was black while off (power: $WAKE_OFF)"
+else
+  result A-screen-off FAIL "Always-on screen not proven off: ambient_enabled=$AMB, black picture=$OFF_DARK, power $WAKE_OFF"
+fi
 A_FRONT="$(cat "$OUT/A-front-after-wake.txt")"
 if grep -q "$PKG" <<< "$A_FRONT"; then
   result A-front PASS "after ${HOLD_S}s with the screen off, the wake shows MettleUp ($A_FRONT)"
