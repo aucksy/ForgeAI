@@ -425,6 +425,11 @@ export interface ActiveWorkoutState {
   startFromPlanDay: (dayId: string) => Promise<void>;
   /** Start a fresh workout pre-filled from a past session (repeat-this-workout). */
   startFromSession: (session: SessionDetail) => Promise<void>;
+  /**
+   * F60 quick workout: a fresh workout of these exercises, each with its sets, filled from last
+   * time the way an added exercise is ("Previous values" as set).
+   */
+  startQuick: (name: string, items: readonly { exercise: Exercise; sets: number }[]) => Promise<void>;
   addExercise: (ex: Exercise) => Promise<void>;
   /** LW-15: add several at once, in the order picked. All or none: a failed read adds nothing. */
   addExercises: (list: Exercise[]) => Promise<void>;
@@ -1889,6 +1894,44 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         routineId: ownRoutine,
         workoutName: session.title?.trim() ? session.title.trim() : null,
         previousFrom: previousFromNow(),
+        easyWeek: false,
+        exercises,
+        lastDeleted: null,
+        lastCopy: null,
+        editingSessionId: null,
+        editDateISO: null,
+        editNotes: null,
+        editEndedAt: null,
+        editOriginalDateISO: null,
+        pastLog: false,
+        ...NO_PAUSE,
+      });
+      persistNow();
+    },
+
+    startQuick: async (name, items) => {
+      const previousFrom = previousFromNow();
+      const scope = await scopeOfWorkout({ planDayId: null, routineId: '', previousFrom });
+      const numbered: Pick<DraftExercise, 'exerciseId' | 'card'>[] = [];
+      const cards = items.map(({ exercise }) => {
+        const card = nextCardNumber(numbered, exercise.id);
+        numbered.push({ exerciseId: exercise.id, card });
+        return card;
+      });
+      const facts = await prefetchCardFacts(items.map(({ exercise }, i) => ({ exerciseId: exercise.id, card: cards[i] })), null, scope);
+      const exercises = await Promise.all(
+        items.map(({ exercise, sets }, i) => buildDraftExercise(exercise, Math.max(1, sets), { card: cards[i], facts, scope })),
+      );
+      set({
+        active: true,
+        hydrated: true,
+        committing: false,
+        startedAt: liveStart(),
+        dayType: 'full',
+        planDayId: null,
+        routineId: '',
+        workoutName: name,
+        previousFrom,
         easyWeek: false,
         exercises,
         lastDeleted: null,

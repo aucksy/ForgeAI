@@ -177,6 +177,9 @@ const FALLBACK: Partial<Record<SlotId, SlotId>> = {
   v_push: 'h_push',
 };
 
+/** F60 quick workout: the same stand-ins, for a picker outside this file. */
+export const SLOT_FALLBACK: Readonly<Partial<Record<SlotId, SlotId>>> = FALLBACK;
+
 /** A slot in a routine template; `alt` takes the 2nd choice for variety on a "B" day. */
 type Step = [SlotId] | [SlotId, 'alt'];
 

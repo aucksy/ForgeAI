@@ -7,7 +7,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { Card, Icon } from '@/components/ui';
+import { Card, GhostButton, Icon } from '@/components/ui';
 import { navigateOnce } from '@/lib/guardedAction';
 import { thud } from '@/lib/haptics';
 import { color, space, type } from '@/theme/tokens';
@@ -43,24 +43,34 @@ export function ReadyCard({ hidden, refreshKey }: { hidden: boolean; refreshKey:
   const s = readySummary(now.rows, (m) => MUSCLE_LABEL[m]);
 
   return (
-    <Pressable
-      onPress={() => {
-        thud();
-        navigateOnce(busy, () => router.push('/ready'));
-      }}
-      accessibilityRole="button"
-      accessibilityLabel={`${s.title}. ${s.body} Opens the body map.`}
-    >
-      <Card>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+    <Card>
+      <View style={{ gap: space.md }}>
+        <Pressable
+          onPress={() => {
+            thud();
+            navigateOnce(busy, () => router.push('/ready'));
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={`${s.title}. ${s.body} Opens the body map.`}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}
+        >
           <View style={{ flex: 1, gap: space.xs }}>
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{s.title}</Text>
             <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>{s.body}</Text>
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See the body map</Text>
           </View>
           <Icon name="chevron-right" size={18} color={color.inkMuted} />
-        </View>
-      </Card>
-    </Pressable>
+        </Pressable>
+        {/* F60: a workout for the time there is today, from the muscles that are ready. */}
+        <GhostButton
+          label="Quick workout for the time you have"
+          icon="clock"
+          onPress={() => {
+            thud();
+            navigateOnce(busy, () => router.push('/quick'));
+          }}
+        />
+      </View>
+    </Card>
   );
 }

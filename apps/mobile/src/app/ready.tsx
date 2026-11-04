@@ -7,10 +7,11 @@
  * every muscle in words, so the colours are never the only telling. Rules: engine/readiness.ts.
  */
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card, EmptyState, Screen } from '@/components/ui';
+import { Card, EmptyState, GhostButton, Screen } from '@/components/ui';
+import { navigateOnce } from '@/lib/guardedAction';
 import { goBack } from '@/lib/goBack';
 import { todayISO } from '@/lib/date';
 import { color, space, type } from '@/theme/tokens';
@@ -42,6 +43,7 @@ export default function ReadyScreen() {
   const [data, setData] = useState<ReadinessNow | null>(null);
   const [failed, setFailed] = useState(false);
   const [picked, setPicked] = useState<Muscle | null>(null);
+  const busy = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -120,6 +122,8 @@ export default function ReadyScreen() {
             </Text>
           </>
         )}
+        {/* F60: from here straight to a workout of the ready muscles. */}
+        <GhostButton label="Quick workout for the time you have" icon="clock" onPress={() => navigateOnce(busy, () => router.push('/quick'))} />
       </View>
     </Screen>
   );
