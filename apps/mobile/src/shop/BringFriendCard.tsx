@@ -12,6 +12,7 @@ import { Share, Text, View } from 'react-native';
 import { Card, GhostButton } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
+import { hasQaPassStandIn, withQaPassStandIn } from './membership';
 import { readKeptMembership } from './membershipKept';
 import { FRIEND_WORDS, QA_STAND_IN_NOTE, friendJoinedLine, friendMessage, friendRewardLine, hasQaStandIn, qaStandInInvite, type FriendInvite } from './bringFriend';
 import { apiFriendInvite } from './gymApi';
@@ -21,6 +22,8 @@ import type { GymLink } from './types';
 let serverMissing = false;
 /** A device-UAT build (qa-device.yml): show the made-up answer while the server has no 0056. */
 const QA_STAND_IN = hasQaStandIn(Constants.expoConfig?.extra);
+/** A device-UAT build that reads the gym's stand-in plan as a pass (flow 14). */
+const QA_PASS = hasQaPassStandIn(Constants.expoConfig?.extra);
 
 export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKey: number }) {
   const [invite, setInvite] = useState<FriendInvite | null>(null);
@@ -29,15 +32,24 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
   const [onPass, setOnPass] = useState(false);
   useFocusEffect(
     useCallback(() => {
-      readKeptMembership(link.memberId)
-        .then((k) => setOnPass(Boolean(k && k.answer.ok && k.answer.pass)))
-        .catch(() => setOnPass(false));
+      // The kept answer can be written by other cards without the QA stand-in, and after this card asks:
+      // read it as the stand-in build does, now and again once the invite has come back.
+      const readPass = (): void => {
+        readKeptMembership(link.memberId)
+          .then((k) => {
+            const a = k ? withQaPassStandIn(k.answer, QA_PASS) : null;
+            setOnPass(Boolean(a && a.ok && a.pass));
+          })
+          .catch(() => setOnPass(false));
+      };
+      readPass();
       const showStandIn = (): void => {
         if (!QA_STAND_IN) return;
         setInvite(qaStandInInvite(link.gymName));
         setStandIn(true);
       };
       if (serverMissing) {
+        setTimeout(readPass, 1500);
         showStandIn();
         return;
       }
@@ -45,6 +57,7 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
       apiFriendInvite(link.memberKey)
         .then((r) => {
           if (!live) return;
+          readPass();
           if (r.ok) {
             setInvite(r.data);
             setStandIn(false);
