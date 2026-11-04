@@ -33,6 +33,12 @@ if [ "$(adb shell id -u | tr -d '\r')" != "0" ]; then
 fi
 
 # The screen stays on and bright for the whole recording (no dimming mid-take).
+# Off the charger: a watch on its charger shows the big charging clock over every app.
+adb shell dumpsys battery unplug || true
+adb shell dumpsys battery set ac 0 || true
+adb shell dumpsys battery set usb 0 || true
+adb shell dumpsys battery set status 3 || true
+adb shell dumpsys battery set level 82 || true
 adb shell svc power stayon true || true
 adb shell settings put system screen_off_timeout 1800000 || true
 adb shell input keyevent KEYCODE_WAKEUP || true
@@ -61,8 +67,8 @@ sleep 1
 DATA=/data/data/$PKG
 NOW_S=$(adb shell date +%s | tr -d '\r')
 NOW=$((NOW_S * 1000))
-# The rest ends ~34 s from now: ~22 s are left when the recording starts.
-ENDS=$((NOW + 34000))
+# The rest ends ~29 s from now: ~17 s are left when the recording starts.
+ENDS=$((NOW + 29000))
 STARTED=$((NOW - 56000))
 
 cat > /tmp/forgeai_watch.xml <<EOF
@@ -128,16 +134,16 @@ adb shell dumpsys activity services $PKG > "$OUT/services-before.txt" || true
 
 # ---- the recording (~38 s) ----
 adb shell rm -f /sdcard/demo.mp4
-adb shell screenrecord --time-limit 40 --bit-rate 8000000 /sdcard/demo.mp4 &
+adb shell screenrecord --time-limit 31 --bit-rate 8000000 /sdcard/demo.mp4 &
 REC=$!
 T0=$(date +%s.%N)
 mark() { echo "$(awk -v a="$(date +%s.%N)" -v b="$T0" 'BEGIN{printf "%.1f", a-b}') $1" | tee -a "$EV"; }
 shot() { adb shell screencap -p /sdcard/s.png && adb pull /sdcard/s.png "$OUT/stills/$1.png" >/dev/null || true; }
-sleep 1
+sleep 0.5
 mark app-rest
 sleep 2
 shot 01-rest-timer-heart-rate
-sleep 4
+sleep 3
 mark home
 adb shell input keyevent KEYCODE_HOME
 sleep 2
@@ -161,11 +167,8 @@ sleep 4
 mark next-set
 sleep 2
 shot 05-next-set-heart-rate
-sleep 2
-# The crown adds 2.5 kg (rotary input; ignored where unsupported).
-adb shell input rotaryencoder scroll --axis SCROLL -1 || adb shell input rotaryencoder scroll 0 -1 || true
-sleep 3
-shot 06-next-set-after-crown
+sleep 4
+shot 06-next-set-later
 mark end
 wait $REC || true
 sleep 2

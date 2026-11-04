@@ -43,7 +43,7 @@ filters = [
 ]
 title = textfile("cap-title.txt", TITLE)
 filters.append(
-    f"drawtext=fontfile={BOLD}:textfile={title}:fontcolor=white:fontsize=30:line_spacing=10:x=730:y=90"
+    f"drawtext=fontfile={BOLD}:textfile={title}:fontcolor=white:fontsize=26:line_spacing=10:x=700:y=90"
 )
 for i, (a, b, text) in enumerate(CAPTIONS):
     if a not in t:
@@ -52,11 +52,11 @@ for i, (a, b, text) in enumerate(CAPTIONS):
     end = t.get(b, 999.0)
     p = textfile(f"cap-{i}.txt", text)
     filters.append(
-        f"drawtext=fontfile={FONT}:textfile={p}:fontcolor=0xFFB37A:fontsize=26:line_spacing=10:x=730:y=330:"
+        f"drawtext=fontfile={FONT}:textfile={p}:fontcolor=0xFFB37A:fontsize=24:line_spacing=10:x=700:y=300:"
         f"enable='between(t,{start:.1f},{end:.1f})'"
     )
 filters.append(
-    f"drawtext=fontfile={FONT}:text='Wear OS emulator · synthetic heart-rate data':fontcolor=0x888888:fontsize=18:x=730:y=660"
+    f"drawtext=fontfile={FONT}:text='Wear OS emulator · synthetic heart-rate data':fontcolor=0x888888:fontsize=18:x=700:y=660"
 )
 vf = ",".join(filters)
 cmd = [
