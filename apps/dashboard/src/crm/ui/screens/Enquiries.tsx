@@ -233,7 +233,6 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
       )}
       {thanking && thankingEnquiry && (
         <ThankSheet
-          enquiry={thankingEnquiry}
           reward={friendReward(thankingEnquiry, snapshot, today)}
           friendName={thankingEnquiry.name}
           afterJoin={thanking.memberId !== null}
