@@ -71,6 +71,8 @@ export interface DateLineChartProps {
 
 const PAD_L = 40;
 const PAD_R = 12;
+/** The plot's side margins, so a screen can lay tap or screen-reader areas over the points. */
+export const DATE_CHART_PAD = { left: PAD_L, right: PAD_R } as const;
 const PAD_T = 16;
 const PAD_B = 20;
 

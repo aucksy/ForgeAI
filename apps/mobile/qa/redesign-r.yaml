@@ -200,7 +200,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "Tap a bar to see one week"
+      FIND: "Tap a point to see one week"
 # Tap a bar (each is a button "<period>: <number>"): the big number shows that bar.
 - tapOn:
     text: '.*: [1-9][\d,]* (kg|lb)'

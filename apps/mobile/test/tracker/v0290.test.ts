@@ -230,7 +230,8 @@ describe('the folder remembers its link', () => {
   // [source-text check] Reads source text, not behaviour: passes on dead code, fails on a harmless rename (audit QA-12).
   // Redesign R4: the Routines screen became the Workout tab; its "+" imports moved to Explore.
   it('[source-text check] Import routines is reachable from Profile and from Workout → Explore', () => {
-    expect(readFileSync('src/tracker/components/ImportCard.tsx', 'utf8')).toMatch(/router\.push\('\/import\/routines'\)/);
+    // R-319 item 4: the link is inside the Hevy branch of the one import flow ("Have a Hevy routine link?").
+    expect(readFileSync('src/app/import/index.tsx', 'utf8')).toMatch(/router\.push\('\/import\/routines'\)/);
     // Release A, A11: Find a plan links to the one import home, which holds Import routines.
     expect(readFileSync('src/app/programs/index.tsx', 'utf8')).toMatch(/Bring in from Hevy or Strong[\s\S]*router\.push\('\/settings\/import'\)/);
     expect(readFileSync('src/app/settings/import.tsx', 'utf8')).toMatch(/<ImportCard \/>/);

@@ -1,0 +1,124 @@
+# Part UAT, flow 10: R-319 items 4, 5 and 7 (owner, 4 Nov 2026), after flow 6 (10 workouts on the
+# phone: 9 from Hevy + the one just finished; no MettleUp account, Google Drive never linked).
+#  - 7: the Profile's history chart is a LINE. A tap on a point (a week with workouts) shows that
+#    week; "See these workouts" opens the workout history for exactly that week.
+#  - 4: Settings -> "Bring in from Hevy or Strong" asks ONE question ("Which app are you moving
+#    from?"). Strong: numbered export steps and "Strong doesn't export saved routines". Hevy: its
+#    steps and, inside that branch only, "Have a Hevy routine link?" -> "Paste a Hevy link".
+#    (Flow 1 reads the routines offer after the Hevy import: "Hevy's file has your workouts ...".)
+#  - 5: "Erase all data" with no account and no Drive: the one question as before, no Drive line.
+#    Cancelled (flows 7-8 need this phone). The signed-in choice ("Erase this phone only" / "...
+#    and delete my MettleUp account") needs a Google sign-in the cloud phone cannot do: unit test
+#    test/onboarding/eraseWords.test.ts, and a short check on his phone after release.
+# Leaves the app on the tabs.
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+# ---------------------------------------------------------------- 7. the line chart
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Tap a point to see one week"
+- assertVisible:
+    id: "date-line-chart"
+- takeScreenshot: rel-70-profile-line-chart
+# Each point is a screen-reader button "<period>: <number>"; a tap on it reaches the line under it.
+- tapOn:
+    text: '.*: [1-9][\d,]* (kg|lb)'
+    index: 0
+- extendedWaitUntil:
+    visible: "^See these workouts$"
+    timeout: 5000
+- assertVisible: "Show 12-week total"
+- takeScreenshot: rel-71-chart-point-picked
+- tapOn: "^See these workouts$"
+- extendedWaitUntil:
+    visible: '^[1-9]\d* workouts? in .*'
+    timeout: 15000
+- assertVisible: "^Your workouts$"
+- takeScreenshot: rel-72-workouts-of-that-week
+- back
+- extendedWaitUntil:
+    visible: "Show 12-week total"
+    timeout: 10000
+- tapOn: "Show 12-week total"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Tap a point to see one week"
+# ---------------------------------------------------------------- 4. one import flow
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Bring in from Hevy or Strong"
+- extendedWaitUntil:
+    visible: "^Which app are you moving from\\?$"
+    timeout: 15000
+- assertVisible: "^Bring in your workouts from another app$"
+- assertNotVisible: "^Import routines$"
+- takeScreenshot: rel-73-import-which-app
+- tapOn:
+    id: "import-from-strong"
+- extendedWaitUntil:
+    visible: "Choose Strong file"
+    timeout: 15000
+- assertVisible: '.*Settings → Export Strong Data\.$'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Strong doesn’t export saved routines\\. After your workouts come in, we build your routines from the workouts you repeat most\\.$"
+- assertNotVisible: "^Have a Hevy routine link\\?$"
+- takeScreenshot: rel-74-import-strong-steps
+- back
+- extendedWaitUntil:
+    visible: "^Which app are you moving from\\?$"
+    timeout: 15000
+- tapOn:
+    id: "import-from-hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
+    timeout: 15000
+- assertVisible: "Bring your Hevy history in"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Have a Hevy routine link\\?$"
+- takeScreenshot: rel-75-import-hevy-steps-and-link
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Paste a Hevy link$"
+- tapOn: "^Paste a Hevy link$"
+- extendedWaitUntil:
+    visible: "Copy your routines from Hevy"
+    timeout: 15000
+- takeScreenshot: rel-76-hevy-link-page
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- 5. erase: no account, no Drive
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Erase or start over"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Erase all data$"
+- tapOn: "^Erase all data$"
+- extendedWaitUntil:
+    visible: 'Erase all data\?'
+    timeout: 15000
+- assertVisible: 'Every workout, record, routine, body entry, photo and video, .*This phone goes back to new\..*'
+- assertNotVisible: '.*Your backup file in Google Drive stays.*'
+- assertNotVisible: "^Erase this phone only$"
+- takeScreenshot: rel-77-erase-question-no-account
+- tapOn: "^Cancel$"
+- extendedWaitUntil:
+    notVisible: 'Erase all data\?'
+    timeout: 10000
+- runFlow: sub-back-to-tabs.yaml

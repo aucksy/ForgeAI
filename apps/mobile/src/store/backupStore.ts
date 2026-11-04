@@ -44,6 +44,18 @@ const LINKED_KEY = 'drive_linked';
 const LAST_BACKUP_KEY = 'drive_last_backup_at';
 
 /**
+ * R-319 item 5: has this phone ever linked Google Drive (or saved a backup there)? Read before
+ * "Erase all data", whose confirm then says the backup file in Drive stays. No network call.
+ */
+export async function driveUsedOnThisPhone(): Promise<boolean> {
+  try {
+    return (await getMeta(LINKED_KEY)) === '1' || Boolean(await getMeta(LAST_BACKUP_KEY));
+  } catch {
+    return false;
+  }
+}
+
+/**
  * DS-10: the phone's own data, saved just before a restore replaces it, so a wrong or failed
  * restore can be undone. One file in the app's documents (not in Android's backup: only the
  * SQLite folder is), replaced by the next restore.

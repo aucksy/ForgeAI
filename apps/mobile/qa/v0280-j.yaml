@@ -21,11 +21,13 @@ appId: com.mettleup.app
     file: sub-settings-page.yaml
     env:
       PAGE: "Bring in from Hevy or Strong"
-- scrollUntilVisible:
-    element: "Import from Hevy"
-    centerElement: true
+# R-319: the page asks which app first.
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
     timeout: 30000
-- tapOn: "Import from Hevy"
+- tapOn:
+    id: "import-from-hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
@@ -182,11 +184,13 @@ appId: com.mettleup.app
     file: sub-settings-page.yaml
     env:
       PAGE: "Bring in from Hevy or Strong"
-- scrollUntilVisible:
-    element: "Import from Hevy"
-    centerElement: true
+# R-319: the page asks which app first.
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
     timeout: 30000
-- tapOn: "Import from Hevy"
+- tapOn:
+    id: "import-from-hevy"
 - tapOn: "Choose Hevy file"
 - extendedWaitUntil:
     visible: '(?i).*(recent|downloads|files|qa-hevy).*'

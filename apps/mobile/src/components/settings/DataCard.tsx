@@ -5,7 +5,10 @@
  * screen only. A real member's Profile shows:
  *   Remove demo data → only while the demo is loaded; the member's own workouts stay (DS-06)
  *   Erase all data   → back to a brand-new install (never reseeds), with a confirm that says
- *                      in one line what goes (DS-13) and that Health Connect copies stay (PH-05)
+ *                      in one line what goes (DS-13) and that Health Connect copies stay (PH-05).
+ *                      R-319 item 5: signed in to a MettleUp account, the member first chooses
+ *                      "Erase this phone only" or "... and delete my MettleUp account"; Google
+ *                      Drive used here adds "Your backup file in Google Drive stays" (eraseWords.ts).
  *
  * HIDDEN SALES SWITCH (for gym sales demos — do not advertise to members): press and HOLD the
  * line "Your training is stored on this phone." under the buttons for 2 seconds. It offers "Load demo
@@ -23,6 +26,9 @@ import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';
 import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { eraseGymNote, eraseLeftBehindText, healthConnectWasUsed } from '@/onboarding/eraseDevice';
+import { ERASE_WORDS, eraseConfirmBody, eraseNeedsChoice, type EraseScope } from '@/onboarding/eraseWords';
+import { useAccount } from '@/store/accountStore';
+import { driveUsedOnThisPhone } from '@/store/backupStore';
 import { useGymShop } from '@/shop/gymStore';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, space, type } from '@/theme/tokens';
@@ -40,18 +46,23 @@ const caption = () => ({
 export const DEMO_SWITCH_HOLD_MS = 2000;
 
 /**
- * The erase confirm's body: what goes, in one line, plus Health Connect when used, plus the gym
- * the member leaves (C6-2: told now, or the next time the app is online). PURE.
+ * The erase confirm's body: what goes, in one line, plus the Drive file when Drive was used, plus
+ * Health Connect when used, plus the gym the member leaves (C6-2: told now, or the next time the
+ * app is online). `scope`: the signed-in member's choice (R-319 item 5), null when not signed in. PURE.
  */
-export function eraseBody(healthConnectUsed: boolean, gymName: string | null = null): string {
-  const what =
+export function eraseBody(
+  healthConnectUsed: boolean,
+  gymName: string | null = null,
+  opts: { driveUsed?: boolean; scope?: EraseScope | null } = {},
+): string {
+  return eraseConfirmBody({
+    scope: opts.scope ?? null,
     // C9-18: AI keys are named only while members can see the coach that uses them.
-    `Every workout, record, routine, body entry, photo and video, ${FEATURES.coach ? 'your AI keys, ' : ''}your gym and Google Drive links, and your settings. This phone goes back to new.`;
-  const withHc = healthConnectUsed
-    ? `${what} Workouts already sent to Health Connect stay there; remove them in Health Connect.`
-    : what;
-  const gym = eraseGymNote(gymName);
-  return gym ? `${withHc} ${gym}` : withHc;
+    withCoach: FEATURES.coach,
+    driveUsed: opts.driveUsed === true,
+    healthConnectUsed,
+    gymNote: eraseGymNote(gymName),
+  });
 }
 
 /** The hidden demo switch's confirm body: exactly what is replaced. PURE. */
@@ -74,6 +85,8 @@ export function DataCard() {
   // An erase emptied the workouts but left something outside them (named in `problem`).
   const [leftBehind, setLeftBehind] = useState(false);
   const welcomeAfterErase = useOnboarding((s) => s.welcomeAfterErase);
+  // R-319 item 5: a signed-in member chooses what goes; what the confirm needs is read once, here.
+  const [choosing, setChoosing] = useState<{ hc: boolean; driveUsed: boolean; gymName: string | null } | null>(null);
 
   // A Drive restore or a history import can have replaced demo data with real data
   // since boot; re-read so the badge and the buttons tell the truth.
@@ -98,20 +111,21 @@ export function DataCard() {
     }
   };
 
-  const onErase = async (): Promise<void> => {
-    if (working) return;
-    setProblem(null);
-    const hc = await healthConnectWasUsed();
-    const ok = await askConfirm({
-      title: 'Erase all data?',
-      body: eraseBody(hc, useGymShop.getState().link?.gymName ?? null),
-      confirmLabel: 'Erase everything',
-      destructive: true,
-    });
-    if (!ok) return;
+  /** Erase the phone (the account, when chosen, is deleted first). */
+  const runErase = async (scope: EraseScope | null): Promise<void> => {
     setWorking('erase');
     setLeftBehind(false);
     try {
+      if (scope === 'phone-and-account') {
+        // The same delete as Settings → Backup → "Delete my account". It needs the internet: if it
+        // fails, nothing is erased, so the member never ends up with an empty phone and a full account.
+        await useAccount.getState().deleteAccount();
+        if (useAccount.getState().account != null) {
+          thud();
+          setProblem(ERASE_WORDS.accountNotDeleted);
+          return;
+        }
+      }
       // Audit H1: leave Settings only once everything is gone (just before the navigator
       // unmounts, so a re-onboarded member lands on Workout, not here). Anything left behind
       // is said here, by name.
@@ -130,6 +144,44 @@ export function DataCard() {
     } finally {
       setWorking(null);
     }
+  };
+
+  const onErase = async (): Promise<void> => {
+    if (working) return;
+    setProblem(null);
+    const hc = await healthConnectWasUsed();
+    const driveUsed = await driveUsedOnThisPhone();
+    const gymName = useGymShop.getState().link?.gymName ?? null;
+    await useAccount
+      .getState()
+      .init()
+      .catch((e: unknown) => console.warn('[ForgeErr] erase: could not read the MettleUp account', e));
+    if (eraseNeedsChoice(useAccount.getState().account != null)) {
+      setChoosing({ hc, driveUsed, gymName });
+      return;
+    }
+    const ok = await askConfirm({
+      title: ERASE_WORDS.title,
+      body: eraseBody(hc, gymName, { driveUsed }),
+      confirmLabel: ERASE_WORDS.confirm,
+      destructive: true,
+    });
+    if (!ok) return;
+    await runErase(null);
+  };
+
+  /** R-319 item 5: the signed-in member's choice, then one last question with exactly what goes. */
+  const onChoose = async (scope: EraseScope): Promise<void> => {
+    if (working || !choosing) return;
+    const ok = await askConfirm({
+      title: scope === 'phone' ? ERASE_WORDS.title : ERASE_WORDS.withAccountTitle,
+      body: eraseBody(choosing.hc, choosing.gymName, { driveUsed: choosing.driveUsed, scope }),
+      confirmLabel: scope === 'phone' ? ERASE_WORDS.confirm : ERASE_WORDS.withAccountConfirm,
+      destructive: true,
+    });
+    if (!ok) return;
+    setChoosing(null);
+    await runErase(scope);
   };
 
   // After a partial erase: the member can still start over without what was left behind.
@@ -185,6 +237,20 @@ export function DataCard() {
         onPress={() => void onErase()}
       />
       <Text style={caption()}>Deletes everything on this phone and starts over from the welcome screen.</Text>
+      {choosing ? (
+        <View testID="erase-choice" style={{ marginTop: space.md, gap: space.sm }}>
+          <Text accessibilityRole="header" style={{ fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
+            {ERASE_WORDS.chooseTitle}
+          </Text>
+          <Text style={{ ...caption(), marginTop: 0 }}>{ERASE_WORDS.chooseBody}</Text>
+          <GhostButton label={ERASE_WORDS.phoneOnly} onPress={() => void onChoose('phone')} />
+          <Text style={{ ...caption(), marginTop: 0 }}>{ERASE_WORDS.phoneOnlySub}</Text>
+          <GhostButton label={ERASE_WORDS.withAccount} icon="trash" onPress={() => void onChoose('phone-and-account')} />
+          <Text style={{ ...caption(), marginTop: 0 }}>{ERASE_WORDS.withAccountSub}</Text>
+          {choosing.driveUsed ? <Text style={{ ...caption(), marginTop: 0 }}>{ERASE_WORDS.driveStays}</Text> : null}
+          <GhostButton label={ERASE_WORDS.cancel} icon="close" onPress={() => setChoosing(null)} />
+        </View>
+      ) : null}
       {problem ? <Text style={{ ...caption(), color: color.criticalText }}>{problem}</Text> : null}
       {leftBehind ? (
         <View style={{ marginTop: space.sm }}>

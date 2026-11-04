@@ -4,7 +4,8 @@
  * same check-and-follow steps as the history import. One question per screen:
  *   1. the link (with how to copy it in Hevy) → 2. reading… → 3. the steps.
  * Strong's share links open only inside Strong (researched 9 Oct 2026), so Strong routines come
- * from its export file (Import from Strong → "Bring my routines in").
+ * from its export file (Import from Strong → "Bring my routines in"). R-319 item 4: this screen is
+ * reached from the Hevy branch only ("Have a Hevy routine link?"), so it no longer points at Strong.
  * Audit Phase 4 (IM-13): a read that got only part of the folder says so ("Only 4 of 6 routines
  * could be read — try again"), with Try again or Use these.
  */
@@ -177,13 +178,6 @@ export default function ImportRoutinesScreen() {
             <Text style={CAPTION()}>A folder: Workout tab → ⋯ on the folder → Share Folder → Copy Link.</Text>
             <Text style={CAPTION()}>One routine: Workout tab → ⋯ on the routine → Share Routine → Copy Link.</Text>
           </Card>
-          <Text style={CAPTION()}>
-            Coming from Strong? Strong’s links open only in Strong. Import your Strong file instead, then tap “Bring my routines in”.
-          </Text>
-          <GhostButton label="Import from Strong" icon="import" onPress={() => {
-              leaving.current = true;
-              router.replace({ pathname: '/import', params: { from: 'strong' } });
-            }} />
         </View>
       )}
     </Screen>

@@ -4,11 +4,13 @@
 # in ForgeAI"); the result is "12 workouts imported". Leaves the app on the result page.
 appId: com.mettleup.app
 ---
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "Import from Hevy"
-- tapOn: "Import from Hevy"
+# R-319: the page asks which app first; Hevy's row opens the Hevy import.
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
+    timeout: 15000
+- tapOn:
+    id: "import-from-hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000

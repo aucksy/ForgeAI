@@ -49,6 +49,7 @@ import { matchesFrom, suggestMatches, type NameSuggestion } from '@/tracker/serv
 import { allHereText, answerReadProblemText, dateRangeText, doneTitle, importButtonLabel, unitsQuestion } from '@/tracker/services/importWords';
 import { forgetKeptTrainingData } from '@/tracker/services/keptData';
 import { findRoutines } from '@/tracker/services/routineRebuild';
+import { IMPORT_FLOW_WORDS, exportSteps, routinesAheadText, routinesOfferText } from '@/tracker/services/importFlowWords';
 import { readProblemText } from '@/tracker/services/importProblem';
 import { looksLikeStrong, parseStrongText, strongFileInfo, unitsExample, type FileUnits } from '@/tracker/services/strongImport';
 import { NewNamesCard, RenamedList } from '@/tracker/components/NewNamesCard';
@@ -579,19 +580,15 @@ export default function ImportScreen() {
                   Bring your {appName} history in
                 </Text>
               </View>
-              {strong ? (
-                <Text style={CAPTION()}>
-                  In Strong, go to <Text style={{ color: color.inkSecondary }}>Settings → Export Strong Data</Text> and
-                  save the <Text style={{ color: color.inkSecondary }}>.csv</Text> file. Then pick that file here.
-                  Kilograms or pounds: both are read.
-                </Text>
-              ) : (
-                <Text style={CAPTION()}>
-                  In Hevy, go to <Text style={{ color: color.inkSecondary }}>Settings → Export &amp; Backup Data</Text> and
-                  export your workouts. Then pick that <Text style={{ color: color.inkSecondary }}>.csv</Text> (or{' '}
-                  <Text style={{ color: color.inkSecondary }}>.xlsx</Text>) file here. Kilograms or pounds: both are read.
-                </Text>
-              )}
+              {/* R-319 item 4: the steps to get the file out of the other app, numbered. */}
+              {exportSteps(strong ? 'strong' : 'hevy').map((step, i) => (
+                <View key={step} style={{ flexDirection: 'row', gap: space.sm }}>
+                  <Text style={{ ...CAPTION(), fontFamily: type.bodySemi, color: color.inkSecondary }}>{i + 1}.</Text>
+                  <Text style={{ ...CAPTION(), flex: 1 }}>{step}</Text>
+                </View>
+              ))}
+              <Text style={CAPTION()}>Kilograms or pounds: both are read.</Text>
+              <Text style={CAPTION()}>{routinesAheadText(strong ? 'strong' : 'hevy')}</Text>
               <Text style={CAPTION()}>Everything is processed on your phone — nothing is uploaded.</Text>
             </View>
           </Card>
@@ -601,6 +598,18 @@ export default function ImportScreen() {
             loading={busy}
             onPress={() => void onPick()}
           />
+          {/* R-319 item 4: a Hevy share link is a second way, inside the Hevy branch only. */}
+          {!strong ? (
+            <Card style={{ gap: space.sm }}>
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IMPORT_FLOW_WORDS.linkTitle}</Text>
+              <Text style={CAPTION()}>{IMPORT_FLOW_WORDS.linkBody}</Text>
+              <GhostButton
+                label={IMPORT_FLOW_WORDS.linkButton}
+                icon="globe"
+                onPress={() => router.push('/import/routines')}
+              />
+            </Card>
+          ) : null}
         </View>
       ) : null}
 
@@ -881,7 +890,7 @@ export default function ImportScreen() {
           {routineCount > 0 ? (
             <View style={{ gap: space.md }}>
               <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
-                Next: your {appName} routines. We found {routineCount} in this file.
+                {routinesOfferText(strong ? 'strong' : 'hevy', routineCount)}
               </Text>
               <PrimaryButton label="Bring my routines in" icon="chevron-right" onPress={() => setPhase('routines')} />
               <GhostButton label="Not now" icon="close" onPress={close} />

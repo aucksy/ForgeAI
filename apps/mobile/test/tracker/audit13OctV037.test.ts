@@ -210,10 +210,10 @@ describe('B9: every gap between the Profile bars is the same', () => {
       expect(l.barW).toBeLessThan(l.slot);
     });
   }
-  it('the card places bars and tap areas from the one layout', () => {
+  it('R-319: the card is a line now, drawn by the shared dated line chart (no bar layout)', () => {
     const src = read('tracker/components/profile/HistoryChartCard.tsx');
-    expect(src).toContain('barLayout(');
-    expect(src).not.toContain('plotW / list.length');
+    expect(src).toContain('<DateLineChart');
+    expect(src).not.toContain('barLayout(');
   });
 });
 
@@ -251,9 +251,9 @@ describe('B6: holding the picked point and letting go keeps it', () => {
     expect(tapBar(4, 4, 80)).toBeNull();
     expect(tapBar(4, 4, 600)).toBe(4);
     expect(tapBar(4, 6, 600)).toBe(6);
+    // R-319: the Profile chart is a line now; its taps follow the line chart's rule (chartTap).
     const src = read('tracker/components/profile/HistoryChartCard.tsx');
-    expect(src).toContain('onPressIn');
-    expect(src).toMatch(/tapBar\(s, i, /);
+    expect(src).toContain('onInspect={pickPoint}');
   });
   it('the line chart times the touch', () => {
     const src = read('tracker/components/DateLineChart.tsx');

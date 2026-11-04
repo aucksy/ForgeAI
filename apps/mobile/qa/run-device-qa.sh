@@ -1748,7 +1748,8 @@ part_clip() {
 # use", the beat line, no over-count); R-311 the finish line and the chart label open that workout.
 # Flows qa/uat-rel-1..5.yaml in order; a failed flow stops the part (the next leans on it). Launch polish
 # (3 Nov 2026): 6 (backup card, feedback page, a gym link no gym has), 7-8 (a fresh test gym: check-in
-# words and "Your plan ends on ..."), then 9 on its own (demo + own first workout: no "Last time").
+# words and "Your plan ends on ..."), 10 before them (R-319: the line chart and "See these workouts", the one
+# import flow, the erase question), then 9 on its own (demo + own first workout: no "Last time").
 # Evidence: qa-out/uat-release/rel-*.png, plus uat-<flow>-failed.png / -hierarchy.json on a failure.
 uat_flow() {  # $1 = name, $2 = flow file, then -e NAME=value pairs
   local n=$1 f=$2
@@ -1807,7 +1808,7 @@ part_uat() {
     && uat_flow uat2 uat-rel-2-settings.yaml \
     && uat_flow uat3 uat-rel-3-goals.yaml \
     && uat_flow uat4 uat-rel-4-workout.yaml \
-    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"     && uat_flow uat6 uat-rel-6-member.yaml     && part_uat_gym "$today"
+    && uat_flow uat5 uat-rel-5-finish.yaml -e "LASTDAY=$lastday"     && uat_flow uat6 uat-rel-6-member.yaml     && uat_flow uat10 uat-rel-10-r319.yaml     && part_uat_gym "$today"
   # Launch audit #6 (3 Nov 2026): starts afresh (demo, then the member's own first workout), so it runs
   # whatever happened above.
   uat_flow uat9 uat-rel-9-demo-first.yaml

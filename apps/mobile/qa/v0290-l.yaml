@@ -24,11 +24,13 @@ appId: com.mettleup.app
     file: sub-settings-page.yaml
     env:
       PAGE: "Bring in from Hevy or Strong"
-- scrollUntilVisible:
-    element: "Import from Hevy"
-    centerElement: true
+# R-319: the page asks which app first.
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
     timeout: 30000
-- tapOn: "Import from Hevy"
+- tapOn:
+    id: "import-from-hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
@@ -67,15 +69,22 @@ appId: com.mettleup.app
     timeout: 15000
 - tapOn: "^(Done|Not now)$"
 # ---------------------------------------------------------------- the link
-# Back on Settings → Export & import: "Import routines" is its last button.
+# Back on Settings → Bring in from Hevy or Strong. R-319: the link is inside the Hevy branch
+# ("Have a Hevy routine link?" → "Paste a Hevy link").
 - extendedWaitUntil:
-    visible: "Import from Strong"
+    visible:
+      id: "import-from-hevy"
+    timeout: 15000
+- tapOn:
+    id: "import-from-hevy"
+- extendedWaitUntil:
+    visible: "Choose Hevy file"
     timeout: 15000
 - scrollUntilVisible:
-    element: "^Import routines$"
+    element: "^Paste a Hevy link$"
     centerElement: true
     timeout: 30000
-- tapOn: "^Import routines$"
+- tapOn: "^Paste a Hevy link$"
 - extendedWaitUntil:
     visible: "Copy your routines from Hevy"
     timeout: 15000

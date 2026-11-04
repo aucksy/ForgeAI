@@ -307,9 +307,9 @@ export function chartBackText(range: ChartRange): string {
   return range === 'weeks' ? 'Show 12-week total' : range === 'year' ? 'Show 12-month total' : 'Show all-time total';
 }
 
-/** Before a tap, the same line says what a tap does: "Tap a bar to see one week". PURE. */
+/** Before a tap, the same line says what a tap does: "Tap a point to see one week" (R-319: a line now). PURE. */
 export function chartHintText(range: ChartRange): string {
-  return `Tap a bar to see one ${range === 'weeks' ? 'week' : 'month'}`;
+  return `Tap a point to see one ${range === 'weeks' ? 'week' : 'month'}`;
 }
 
 /** A label under the bars: "5 Oct" for a week, "May '22" for a month. PURE. */

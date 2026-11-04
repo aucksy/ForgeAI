@@ -51,11 +51,13 @@ appId: com.mettleup.app
     file: sub-settings-page.yaml
     env:
       PAGE: "Bring in from Hevy or Strong"
-- scrollUntilVisible:
-    element: "Import from Strong"
-    centerElement: true
+# R-319: the page asks which app first.
+- extendedWaitUntil:
+    visible:
+      id: "import-from-strong"
     timeout: 30000
-- tapOn: "Import from Strong"
+- tapOn:
+    id: "import-from-strong"
 - extendedWaitUntil:
     visible: "Choose Strong file"
     timeout: 15000
@@ -131,11 +133,12 @@ appId: com.mettleup.app
 # "Import from Hevy" reads as Strong (the screen turns into "Import from Strong"); IM-09: it was
 # just imported, so "All 2 workouts are already here". Closed without importing.
 # Done closes the import: back on Settings → Export & import.
-- scrollUntilVisible:
-    element: "Import from Hevy"
-    centerElement: true
+- extendedWaitUntil:
+    visible:
+      id: "import-from-hevy"
     timeout: 30000
-- tapOn: "Import from Hevy"
+- tapOn:
+    id: "import-from-hevy"
 - extendedWaitUntil:
     visible: "Choose Hevy file"
     timeout: 15000
@@ -164,7 +167,8 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- pounds and miles
 # Back on Export & import → Settings → Units.
 - extendedWaitUntil:
-    visible: "Import from Strong"
+    visible:
+      id: "import-from-strong"
     timeout: 15000
 - back
 - runFlow:

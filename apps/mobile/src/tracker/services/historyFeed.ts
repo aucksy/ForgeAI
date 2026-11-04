@@ -212,6 +212,18 @@ export async function getHistoryOnDay(dateISO: string): Promise<HistoryItem[]> {
   return itemsFor(rows);
 }
 
+/**
+ * R-319 item 7: every workout from `fromISO` to `toISO` (both included), newest first — the
+ * workouts behind one point of a chart (a week, a month or a day). At most 400.
+ */
+export async function getHistoryBetween(fromISO: string, toISO: string): Promise<HistoryItem[]> {
+  const rows = await getDb().getAllAsync<SessionRow>(
+    'SELECT * FROM workout_sessions WHERE date_iso >= ? AND date_iso <= ? ORDER BY date_iso DESC, started_at DESC, id DESC LIMIT 400',
+    [fromISO, toISO],
+  );
+  return itemsFor(rows);
+}
+
 /** The day of the first workout ever logged (how far back the calendar goes), or null. */
 export async function getFirstWorkoutDate(): Promise<string | null> {
   const r = await getDb().getFirstAsync<{ d: string | null }>('SELECT MIN(date_iso) AS d FROM workout_sessions');

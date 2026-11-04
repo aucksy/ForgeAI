@@ -1,11 +1,14 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { EmptyState, GhostButton } from '@/components/ui';
 import { tinyDateWithYear } from '@/lib/date';
+import { tap } from '@/lib/haptics';
 import { color, space, type } from '@/theme/tokens';
 import { DateLineChart } from '@/tracker/components/DateLineChart';
 import { InfoHeading } from '@/tracker/components/InfoHeading';
+import { historyRangeParams } from '@/tracker/lib/historyRange';
 import { strengthEmpty } from '@/tracker/engine/progressTop';
 
 import { InspectReadout, Section } from './Section';
@@ -20,6 +23,7 @@ export interface StrengthSectionProps {
 
 /** Strength score trend (0-100 composite of key-lift estimated 1-rep maxes vs body weight). */
 export function StrengthSection({ data, hasBodyWeight, onAddWeight, index }: StrengthSectionProps) {
+  const router = useRouter();
   const [inspect, setInspect] = useState<{ x: string; y: number } | null>(null);
 
   // SH-08 / PG-07: a score of 0 means "can't be worked out yet" (no body weight, or no key
@@ -56,6 +60,13 @@ export function StrengthSection({ data, hasBodyWeight, onAddWeight, index }: Str
           fillGradient
           yFormat={(n) => `${Math.round(n)}`}
           onInspect={setInspect}
+          // R-319 item 7: every dated chart taps alike: a tap picks a point; where a point is a
+          // workout day, its label opens that day's workouts.
+          onOpenPicked={(p) => {
+            tap();
+            router.push({ pathname: '/history', params: { ...historyRangeParams(p.x) } });
+          }}
+          pickedDate={(x) => tinyDateWithYear(x)}
         />
       ) : (
         <View>

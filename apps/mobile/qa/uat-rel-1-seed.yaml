@@ -110,6 +110,8 @@ appId: com.mettleup.app
     element: "Bring my routines in"
     centerElement: true
     timeout: 15000
+# R-319 item 4: the routines offer says plainly where the routines come from.
+- assertVisible: '^Hevy’s file has your workouts but not your saved routines\. We built 1 routine from the workouts you repeat most\. Tick the ones you want\.$'
 - tapOn: "Bring my routines in"
 - extendedWaitUntil:
     visible: "We found 1 routine in your Hevy workouts"
