@@ -349,8 +349,6 @@ export interface EnquiryReferral {
   time?: 'morning' | 'afternoon' | 'evening' | 'any' | null;
   /** The free days the owner gave the member for this friend (one tap, once). */
   rewardGiven?: { days: number; membershipId: string; on: DateISO } | null;
-  /** The owner said "Not now" to the free days for this friend. */
-  rewardSkipped?: boolean | null;
 }
 
 export type EnquirySource = 'walk-in' | 'instagram' | 'friend' | 'google' | 'justdial' | 'other';

@@ -28,6 +28,7 @@ import { askAnswerFromRow, planRequestsFromRow, type PlanRequest, type PlanReque
 import { reportAnswerFromRow, reportRequestsFromRow, type ReportRequest, type ReportRequestsAnswer } from './gymReport';
 import { trainerHelpFrom, trainerStatusFrom, type TrainerStatus, type TrainerSummary } from './trainerShare';
 import { askChoicesFrom, askQuestionsFrom, askSentFrom, type AskChoices, type AskQuestion } from './askTrainer';
+import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import type { RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -562,4 +563,17 @@ export async function apiTrainerShare2(key: string, summary: TrainerSummary, rec
   if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
   const data = (Array.isArray(r.data) ? r.data[0] : r.data) as { ok?: unknown } | null;
   return data?.ok === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
+// ------------------------------------------------------------------ bring a friend (0056, F147)
+
+/**
+ * The member's invite code, the gym's free days and how many invited friends joined (member_friend_invite).
+ * `missing`: 0056 is not live yet. `refused`: the member left or the gym is paused (the card stays hidden).
+ */
+export async function apiFriendInvite(key: string): Promise<{ ok: true; data: FriendInvite } | { ok: false; missing: true } | { ok: false; refused: true } | { ok: false; error: GymError }> {
+  const r = await call('member_friend_invite', { p_key: key }, READ_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : { ok: false, error: r.error };
+  const invite = friendInviteFrom(r.data);
+  return invite ? { ok: true, data: invite } : { ok: false, refused: true };
 }

@@ -39,6 +39,7 @@ import { GYM_SECTION_LABELS, gymSectionShown, gymSections, gymShopOn, type GymSe
 import { GymHoursRow } from './GymHoursRow';
 import { GymBusyCard } from './GymBusyCard';
 import { AskTrainerRow } from './AskTrainerRow';
+import { BringFriendCard } from './BringFriendCard';
 import { MachineTipCard } from './MachineTipCard';
 import { RECOMMEND_BODY, RECOMMEND_BUTTON, RECOMMEND_TITLE, recommendMessage } from './recommendGym';
 import { LeaderboardCard } from './LeaderboardCard';
@@ -311,6 +312,8 @@ function GymShop({ link }: { link: GymLink }) {
             ) : null}
             {/* #49 step 2: the gym's workout offer (hidden when there is none, or the server has none yet). */}
             <OfferCard link={link} />
+            {/* F147: invite a friend to the gym (hidden until the gym's server has 0056). */}
+            <BringFriendCard link={link} refreshKey={pulls} />
             {/* Review: with the shop off there is no Shop part, so past orders show here. */}
             {!shopOn && orderCount > 0 ? <MyOrdersRow count={orderCount} onPress={() => router.push('/shop/orders')} /> : null}
           </>

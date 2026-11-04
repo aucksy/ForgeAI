@@ -55,6 +55,7 @@ import { DownloadDataCard, GymDataActions } from '../GymDataActions';
 import { cleanUpiId, upiIdError } from '../../logic/upiPay';
 import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
+import { BringAFriendCard } from './BringAFriend';
 
 export type SettingsTab = 'gym' | 'app' | 'data';
 
@@ -301,6 +302,9 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       {/* F137: busy machines for members (shown only once the gym's server has 0049). */}
       <BusyMachinesCard />
+
+      {/* F147: bring a friend (shown only once the gym's server has 0056). */}
+      <BringAFriendCard />
 
       </>
       )}

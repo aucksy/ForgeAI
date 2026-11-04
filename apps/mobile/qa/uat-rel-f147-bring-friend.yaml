@@ -1,0 +1,48 @@
+# Part UAT, flow F147 (gym, after flow 12): "Bring a friend" on the Gym tab (4 Nov 2026).
+# The phone is a member ("Uma") of the fresh "QA UAT Gym" made by run-device-qa.sh.
+#  - Until the gym's server has 0056 (NOT applied live yet), the Gym tab shows NO "Bring a friend" card: this
+#    flow checks the card and its button are absent and photographs the tab.
+#  - Once 0056 is live, the card shows: read the words, "Friends who joined: 0" (a fresh gym), no free-days
+#    line (the test gym sets none), then tap "Invite a friend" and photograph the phone's share menu.
+# The friend's page and the gym's side (Enquiries, the free days) are checked in the admin panel's e2e
+# (apps/dashboard/e2e/friend-uat.spec.mjs) at a phone and a desktop width.
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Gym$"
+- extendedWaitUntil:
+    visible: "${GYM}"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "^Bring a friend$"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-f147-1-gym-tab-friend
+# ---------------------------------------------------------------- without 0056: nothing shows
+- runFlow:
+    when:
+      notVisible: "^Bring a friend$"
+    commands:
+      - assertNotVisible: "^Invite a friend$"
+      - assertNotVisible: "^Friends who joined: .*"
+# ---------------------------------------------------------------- with 0056: the card and the share menu
+- runFlow:
+    when:
+      visible: "^Bring a friend$"
+    commands:
+      - scrollUntilVisible:
+          element:
+            text: "^Invite a friend$"
+          direction: DOWN
+          timeout: 10000
+      - assertVisible: "^Send a friend a link to your gym\. They leave their number, and the gym calls them\.$"
+      - assertVisible: "^Friends who joined: 0$"
+      - assertNotVisible: "^When a friend joins, .*"
+      - takeScreenshot: rel-f147-2-friend-card
+      - tapOn: "^Invite a friend$"
+      - waitForAnimationToEnd:
+          timeout: 5000
+      - takeScreenshot: rel-f147-3-share-menu
+      - back

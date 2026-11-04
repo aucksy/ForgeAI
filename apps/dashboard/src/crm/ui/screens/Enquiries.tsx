@@ -10,6 +10,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 
+import { useCan } from '../../auth/AuthProvider';
 import { useCrm } from '../../store';
 import { formatDay, relativeDay } from '../../logic/dates';
 import {
@@ -34,6 +35,7 @@ import {
   type EnquiryFilter,
   type EnquiryFormDraft,
 } from '../../logic/enquiries';
+import { alreadyRewarded, friendReward, referralOf, type FriendReward } from '../../logic/referrals';
 import { DIAL_CODES, findDuplicatePhone, formatPhone, normalizePhone, phoneDigits } from '../../logic/members';
 import { whatsAppHref } from '../../shop/invite';
 import type { Enquiry, Member } from '../../types';
@@ -77,8 +79,12 @@ function filterLabel(f: EnquiryFilter): string {
 }
 
 export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {}) {
-  const { snapshot, today, updateEnquiry } = useCrm();
+  const { snapshot, today, updateEnquiry, extendMembership } = useCrm();
   const enquiries = snapshot.enquiries ?? [];
+  // F147: adding free days to a plan is the owner's (the same right as "Freeze / extra days").
+  const canReward = useCan()('freeze');
+  // memberId set = opened straight after "Add as member": closing it opens that new member's page.
+  const [thanking, setThanking] = useState<{ enquiryId: string; memberId: string | null } | null>(null);
   const [filter, setFilter] = useState<EnquiryFilter>('due');
   const [adding, setAdding] = useState(Boolean(startAdding));
   const [rescheduling, setRescheduling] = useState<Enquiry | null>(null);
@@ -123,6 +129,31 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
     run(async () => {
       await updateEnquiry(e.id, { lostReason: asLostReason(value) });
     });
+
+  /**
+   * F147: the owner's one tap. The days go on the member's plan as ordinary "extra days" (the note names
+   * the friend), then the enquiry remembers it so the offer never shows again. A second tap after a lost
+   * save finds the note already on the plan and only marks the enquiry.
+   */
+  const giveReward = async (e: Enquiry) => {
+    const r = friendReward(e, snapshot, today);
+    const ref = referralOf(e);
+    if (r.kind !== 'ready' || !ref) return;
+    if (!alreadyRewarded(snapshot.memberships, r.member.id, e.name)) {
+      await extendMembership(r.membership.id, r.days, r.reason);
+    }
+    await updateEnquiry(e.id, { referral: { ...ref, rewardGiven: { days: r.days, membershipId: r.membership.id, on: today } } });
+  };
+
+  /** After "Add as member": a referred friend opens the thank-you first, when there is one to give. */
+  const joined = (e: Enquiry, member: Member) => {
+    const ref = referralOf(e);
+    const ready = friendReward({ ...e, status: 'joined', memberId: member.id }, snapshot, today).kind === 'ready';
+    if (ref && ready && canReward) setThanking({ enquiryId: e.id, memberId: member.id });
+    else navigate(`/members/${member.id}`);
+  };
+
+  const thankingEnquiry = thanking ? enquiries.find((x) => x.id === thanking.enquiryId) ?? null : null;
 
   const addButton = <Button needsInternet onClick={() => setAdding(true)}>+ Add enquiry</Button>;
 
@@ -174,6 +205,9 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
               onLost={() => void markLost(e)}
               onReopen={() => void reopen(e)}
               onLostReason={(v) => void setLostReason(e, v)}
+              reward={friendReward(e, snapshot, today)}
+              canReward={canReward}
+              onReward={() => setThanking({ enquiryId: e.id, memberId: null })}
             />
           ))}
         </Card>
@@ -194,6 +228,21 @@ export function EnquiriesScreen({ startAdding }: { startAdding?: boolean } = {})
           members={snapshot.members}
           onClose={() => setConverting(null)}
           onError={setError}
+          onJoined={(member) => joined(converting, member)}
+        />
+      )}
+      {thanking && thankingEnquiry && (
+        <ThankSheet
+          enquiry={thankingEnquiry}
+          reward={friendReward(thankingEnquiry, snapshot, today)}
+          friendName={thankingEnquiry.name}
+          afterJoin={thanking.memberId !== null}
+          onGive={() => giveReward(thankingEnquiry)}
+          onClose={() => {
+            const next = thanking.memberId;
+            setThanking(null);
+            if (next) navigate(`/members/${next}`);
+          }}
         />
       )}
     </>
@@ -235,6 +284,9 @@ function EnquiryRow({
   onLost,
   onReopen,
   onLostReason,
+  reward,
+  canReward,
+  onReward,
 }: {
   enquiry: Enquiry;
   first: boolean;
@@ -245,8 +297,12 @@ function EnquiryRow({
   onLost: () => void;
   onReopen: () => void;
   onLostReason: (value: string) => void;
+  reward: FriendReward;
+  canReward: boolean;
+  onReward: () => void;
 }) {
   const bucket = enquiryBucket(e, today);
+  const referral = referralOf(e);
   const open = e.status === 'open';
   const followTone =
     bucket === 'overdue' ? color.criticalText : bucket === 'today' ? color.warning : color.inkSecondary;
@@ -272,6 +328,12 @@ function EnquiryRow({
           {e.interest && (
             <div style={{ fontFamily: font.body, fontSize: 13, color: color.ink, marginTop: 4, overflowWrap: 'anywhere' }}>
               {e.interest}
+            </div>
+          )}
+          {/* F147: a friend a member invited from the app. Only the member's name, never their number. */}
+          {referral && (
+            <div style={{ fontFamily: font.body, fontSize: 13, fontWeight: 600, color: color.accentBright, marginTop: 4, overflowWrap: 'anywhere' }}>
+              {`Referred by ${referral.by}`}
             </div>
           )}
           {sourceLabel(e.source) && (
@@ -326,7 +388,18 @@ function EnquiryRow({
             Reopen
           </Button>
         )}
+        {reward.kind === 'ready' && canReward && (
+          <Button wrap needsInternet onClick={onReward} ariaLabel={`Give ${reward.by} free days for bringing ${e.name}`}>
+            {`Thank ${reward.by}: give free days`}
+          </Button>
+        )}
       </div>
+
+      {reward.kind !== 'none' && reward.kind !== 'ready' && (reward.kind === 'given' || canReward) && (
+        <div style={{ marginTop: -space.sm, fontFamily: font.body, fontSize: 13, color: color.inkSecondary, overflowWrap: 'anywhere' }}>
+          {rewardNote(reward)}
+        </div>
+      )}
 
       {/* Launch audit 3 Nov 2026: why they did not join (optional), so the owner sees a pattern. */}
       {e.status === 'lost' && (
@@ -341,6 +414,19 @@ function EnquiryRow({
       )}
     </div>
   );
+}
+
+/** F147: why the thank-you is not offered on a joined friend's row (or that it was given). */
+function rewardNote(r: Exclude<FriendReward, { kind: 'none' } | { kind: 'ready' }>): string {
+  const days = `${r.days} free ${r.days === 1 ? 'day' : 'days'}`;
+  switch (r.kind) {
+    case 'given':
+      return `${r.by} got ${days} for this friend.`;
+    case 'no_member':
+      return `${r.by} is not on your member list, so the ${days} cannot be added here.`;
+    case 'no_plan':
+      return `${r.by} has no plan running, so there is nothing to add the ${days} to. Add them by hand when ${r.by} renews.`;
+  }
 }
 
 function StatusPill({ bucket }: { bucket: ReturnType<typeof enquiryBucket> }) {
@@ -606,11 +692,14 @@ function ConvertFlow({
   members,
   onClose,
   onError,
+  onJoined,
 }: {
   enquiry: Enquiry;
   members: readonly Member[];
   onClose: () => void;
   onError: (message: string) => void;
+  /** Opens the member's page, or first the F147 thank-you for a friend a member invited. */
+  onJoined: (member: Member) => void;
 }) {
   const { updateEnquiry, setMemberArchived } = useCrm();
   // Frozen when the flow opens: bringing an archived member back must not swap this sheet for the
@@ -622,7 +711,7 @@ function ConvertFlow({
   const link = async (member: Member) => {
     try {
       await updateEnquiry(enquiry.id, { status: 'joined', memberId: member.id });
-      navigate(`/members/${member.id}`);
+      onJoined(member);
     } catch (e) {
       onError(
         e instanceof Error
@@ -712,5 +801,88 @@ function ConvertFlow({
       onClose={onClose}
       onSaved={(member) => void link(member)}
     />
+  );
+}
+
+// ---------------------------------------------------------------- F147: thank the member who brought them
+
+/**
+ * One tap by the owner: add the gym's free days to the plan of the member who invited this friend.
+ * Opens right after "Add as member" for a referred friend, or from the joined row's button. Never
+ * automatic; "Not now" leaves the button on the row for later.
+ */
+function ThankSheet({
+  reward,
+  friendName,
+  afterJoin,
+  onGive,
+  onClose,
+}: {
+  reward: FriendReward;
+  friendName: string;
+  /** Opened straight after "Add as member": closing opens the new member's page. */
+  afterJoin: boolean;
+  onGive: () => Promise<void>;
+  onClose: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState<{ by: string; days: number; to: string } | null>(null);
+  const p = { margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 14, color: color.ink, overflowWrap: 'anywhere' } as const;
+  const closeWords = afterJoin ? `Open ${friendName}` : 'Close';
+
+  if (done) {
+    return (
+      <Sheet title="Free days added" onClose={onClose} footer={<Button onClick={onClose}>{closeWords}</Button>}>
+        <p style={p}>{`${done.by} got ${done.days} free ${done.days === 1 ? 'day' : 'days'}. Their plan now ends on ${formatDay(done.to)}.`}</p>
+      </Sheet>
+    );
+  }
+  if (reward.kind !== 'ready') {
+    return (
+      <Sheet title="Free days" onClose={onClose} footer={<Button onClick={onClose}>{closeWords}</Button>}>
+        <p style={p}>{reward.kind === 'none' ? 'There are no free days to give for this friend.' : rewardNote(reward)}</p>
+      </Sheet>
+    );
+  }
+  const days = `${reward.days} free ${reward.days === 1 ? 'day' : 'days'}`;
+  return (
+    <Sheet
+      title={`Thank ${reward.by}`}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="ghost" disabled={busy} onClick={onClose}>
+            Not now
+          </Button>
+          <Button
+            wrap
+            needsInternet
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setError(null);
+              try {
+                await onGive();
+                setDone({ by: reward.by, days: reward.days, to: reward.newEnd });
+              } catch (e) {
+                setError(e instanceof Error ? e.message : 'Could not add the free days. Try again.');
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            {`Give ${days}`}
+          </Button>
+        </>
+      }
+    >
+      {error && <ErrorBanner>{error}</ErrorBanner>}
+      <p style={p}>{`${friendName} joined. ${reward.by} invited them from the MettleUp app.`}</p>
+      <p style={p}>{`${reward.by}’s plan ends on ${formatDay(reward.membership.endsOn)}. With ${days} it ends on ${formatDay(reward.newEnd)}.`}</p>
+      <p style={{ ...p, fontSize: 13, color: color.inkSecondary }}>
+        You set these free days in Settings → Member app. If you tap Not now, you can still give them later from this enquiry.
+      </p>
+    </Sheet>
   );
 }

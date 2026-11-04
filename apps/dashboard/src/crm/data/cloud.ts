@@ -120,7 +120,7 @@ export interface CrmCloudApi {
 }
 
 /** The gym's own details that live in a record (name, join code and created date are the server's). */
-type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId'>;
+type GymDetails = Pick<GymRecord, 'name' | 'phone' | 'address' | 'gstin' | 'receiptPrefix' | 'upiId' | 'friendRewardDays'>;
 
 const COLLECTIONS = [
   ['member', 'members'],
@@ -177,6 +177,8 @@ export function applyRecords(rows: Rows, records: readonly CrmRecord[]): boolean
           receiptPrefix: typeof d.receiptPrefix === 'string' && d.receiptPrefix ? d.receiptPrefix : null,
           // Launch audit 3 Nov 2026: the gym's UPI ID, on the same record (no database change).
           upiId: typeof d.upiId === 'string' && d.upiId ? d.upiId : null,
+          // F147: free days per friend who joins (supabase 0056 reads the same key).
+          friendRewardDays: typeof d.friendRewardDays === 'number' && Number.isInteger(d.friendRewardDays) && d.friendRewardDays > 0 ? d.friendRewardDays : null,
         };
       }
       continue;
@@ -206,6 +208,7 @@ export function buildSnapshot(rows: Rows, gym: CloudGymRow): CrmSnapshot {
       gstin: rows.gym?.gstin ?? null,
       receiptPrefix: rows.gym?.receiptPrefix ?? null,
       upiId: rows.gym?.upiId ?? null,
+      friendRewardDays: rows.gym?.friendRewardDays ?? null,
       createdAt: gym.createdAt,
     },
     members: byTime(list<Member>(rows.member), (m) => m.createdAt ?? 0).map(normalizeMember),
@@ -226,6 +229,8 @@ function gymDetails(g: GymRecord): GymDetails {
   if (g.receiptPrefix) out.receiptPrefix = g.receiptPrefix;
   // Only once a UPI ID is set, so a gym without one keeps exactly the record it always had.
   if (g.upiId) out.upiId = g.upiId;
+  // F147: only once the owner sets free days for a friend who joins; clearing it removes the key.
+  if (g.friendRewardDays) out.friendRewardDays = g.friendRewardDays;
   return out;
 }
 

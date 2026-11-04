@@ -63,6 +63,8 @@ const BODY_FNS = [
 ];
 /** R-124 (0036): the gym's opening hours, answered only when `timingsServer` is on. */
 const TIMINGS_FNS = ['owner_gym_timings', 'owner_save_gym_timings'];
+/** F147 (0056): the Settings card's count. The friends' enquiries come through crm_pull like any record. */
+const FRIEND_FNS = ['owner_friend_summary'];
 const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
 
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
@@ -171,6 +173,10 @@ export class FakeServer {
     this.timingsServer = false;
     /** 0036's gym_timings row: {hours, updatedByName, updatedAt}, or null. */
     this.timings = null;
+    /** F147: does this server have 0056 (bring a friend)? Off by default (PGRST202, like a server before it). */
+    this.friendServer = false;
+    /** 0056 gym_friend_invites: how many members opened their invite. */
+    this.friendLinks = 0;
   }
 
   /** 0035 _roster_member_ok: a live member record of this gym. */
@@ -409,6 +415,9 @@ export class FakeServer {
     if (!this.bodyServer && BODY_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    if (!this.friendServer && FRIEND_FNS.includes(fn)) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     if (!this.timingsServer && TIMINGS_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
@@ -468,6 +477,10 @@ export class FakeServer {
           this.terms = { version: args.p_terms_version, at: NOW.toISOString(), by: args.p_name, how: 'create' };
         }
         return this.signedIn(this.people.get(args.p_phone) ?? { staffId });
+      }
+      case 'owner_friend_summary': {
+        const asked = this.rows('enquiry').filter((e) => e.referral);
+        return { ok: true, links: this.friendLinks, asked: asked.length, joined: asked.filter((e) => e.status === 'joined').length };
       }
       case 'owner_terms': {
         const p = this.anyone(args.p_key);
