@@ -7,7 +7,7 @@
 //   - the store: Cloudflare KV, binding BACKUP (free plan: 1 GB stored, 1,000 writes a day, 25 MiB a value).
 //     The answer is stored byte for byte, never parsed or compressed here: the free plan gives a run 10 ms
 //     of CPU, and copying bytes costs almost none. A copy bigger than one KV value is split into parts.
-//   - 14 days: every key is written with a 15-day expiry, so KV deletes old copies by itself (no clean-up code).
+//   - 7 days: every key is written with a 7-day expiry (the privacy page and gym agreement promise backups expire within 7 days; owner, 4 Nov 2026), so KV deletes old copies by itself (no clean-up code).
 // Keys:   snap/<India day>/part/<n>   the copy, in order (join the parts to get the JSON back)
 //         snap/<India day>/meta       { format, at, bytes, parts }  written LAST: no meta = an unfinished copy
 //         status                      the last run: { ok, at, error?, lastGoodAt, lastGoodDay, bytes }
@@ -15,7 +15,7 @@
 // Without the BACKUP binding (KV namespace not created yet) it logs once and does nothing else.
 
 export const PART_BYTES = 20 * 1024 * 1024; // under KV's 25 MiB value limit
-export const KEEP_SECONDS = 15 * 24 * 60 * 60; // 14 nightly copies, plus a day of slack
+export const KEEP_SECONDS = 7 * 24 * 60 * 60; // 7 nightly copies; never longer than the 7 days the privacy page promises
 export const FRESH_HOURS = 30; // the watch calls a backup "late" after this (nightly + 6 h of slack)
 
 /** The India calendar day of a moment, YYYY-MM-DD. PURE. */

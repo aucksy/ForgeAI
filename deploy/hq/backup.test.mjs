@@ -61,7 +61,7 @@ const join = (kv, day, n) => {
   return new TextDecoder().decode(new Uint8Array(chunks));
 };
 
-test('a night: one call with the HQ key, the copy stored byte for byte, kept 15 days, status written last', async () => {
+test('a night: one call with the HQ key, the copy stored byte for byte, kept 7 days, status written last', async () => {
   const snap = JSON.stringify({ format: 'mettleup-backup-1', counts: { gyms: 1 }, tables: { gyms: [{ name: 'Iron "Temple" ₹' }] } });
   const calls = [];
   const kv = fakeKv();
@@ -76,7 +76,7 @@ test('a night: one call with the HQ key, the copy stored byte for byte, kept 15 
   assert.equal(meta.bytes, new TextEncoder().encode(snap).length);
   assert.equal(kv.opts.get('snap/2026-11-04/part/0').expirationTtl, KEEP_SECONDS);
   assert.equal(kv.opts.get('snap/2026-11-04/meta').expirationTtl, KEEP_SECONDS);
-  assert.ok(KEEP_SECONDS >= 14 * 86400 && KEEP_SECONDS < 16 * 86400);
+  assert.equal(KEEP_SECONDS, 7 * 86400); // never past the 7 days the privacy page promises
   assert.deepEqual([...kv.data.keys()].at(-1), 'status');
   const status = JSON.parse(kv.data.get('status'));
   assert.equal(status.ok, true);

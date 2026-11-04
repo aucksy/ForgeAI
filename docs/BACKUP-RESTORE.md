@@ -1,15 +1,15 @@
 # Nightly backup and restore drill
 
-Written 3 Nov 2026 (launch audit: ops #1, owner #1). **Built, not switched on.** Switching it on needs the owner's yes
+Written 3 Nov 2026 (launch audit: ops #1, owner #1). **Owner said yes 4 Nov 2026; store made and wired; live once 0052 is applied and HQ deployed.** Switching it on needed the owner's yes
 (it changes the live gym server and deploys HQ).
 
 ## What it does
-Every night at 03:00 India time, HQ's existing Cron Trigger takes one copy of all gym data and keeps it for 14 days.
+Every night at 03:00 India time, HQ's existing Cron Trigger takes one copy of all gym data and keeps it for 7 days (the privacy page and gym agreement promise backups expire within 7 days).
 
 | Part | What | Cost |
 |---|---|---|
 | The read | One call to `hq_backup_snapshot()` (migration 0052) with the HQ key HQ already holds. Every public table, read in one go, so the copy is consistent. Sign-in accounts too, **without** password hashes or tokens. | Free, no new secret |
-| The store | Cloudflare KV, binding `BACKUP`, keys `snap/<India day>/part/<n>` + `snap/<day>/meta`. Stored byte for byte. Every key expires after 15 days, so KV deletes old copies by itself. | Free plan: 1 GB, 1,000 writes a day. A copy uses a handful of writes. |
+| The store | Cloudflare KV, binding `BACKUP`, keys `snap/<India day>/part/<n>` + `snap/<day>/meta`. Stored byte for byte. Every key expires after 7 days, so KV deletes old copies by itself. | Free plan: 1 GB, 1,000 writes a day. A copy uses a handful of writes. |
 | The alarm | `https://hq.mettleup.fit/backup/status` says only fresh / not fresh. The watch workflow reads it and opens a GitHub issue ("Outage: Nightly backup") when last night failed or the newest copy is over 30 hours old. | Free |
 | The proof | CI's database job runs `scripts/backup/ci_drill.sh` on every push: copy, wipe everything, restore, and every table must match row for row. | Free |
 
