@@ -2,7 +2,7 @@
 # before/after picture of two progress photos.
 # Before this flow run-device-qa.sh gave the run's fresh "QA UAT Gym" a sample 2:1 logo (qa/uat_logo.py)
 # and pushed the two SAMPLE progress pictures into the gallery. Here, as the member "Uma":
-#  1. the app picks the logo up (a launch saves the new look; coming back to the app shows it): the
+#  1. the app picks the logo up (a launch saves the new look; the next launch shows it): the
 #     header mark "Your gym: QA UAT Gym" appears;
 #  2. Profile -> a workout's Share -> "Share as a picture": the sheet has "Your gym" Show / Hide and says
 #     "The picture shows your gym. It never shows your name or body weight."; Hide and Show change the
@@ -22,10 +22,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 60000
-# The new look waits for a safe moment: leaving the app and coming back.
-- pressKey: Home
-- launchApp:
-    stopApp: false
+# The owner's new look reaches the phone after this launch (member_me) and is SAVED for the next
+# launch: a change the member did not make waits for a safe moment (theme/gymTheme.ts; a quick
+# trip out of the app does not count). Give the link time to refresh, then start the app again.
+- waitForAnimationToEnd:
+    timeout: 8000
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
 - extendedWaitUntil:
     visible: "Your gym: ${GYM}"
     timeout: 30000
@@ -34,9 +40,11 @@ appId: com.mettleup.app
     when:
       notVisible: "Your gym: ${GYM}"
     commands:
-      - pressKey: Home
-      - launchApp:
-          stopApp: false
+      - stopApp
+      - launchApp
+      - tapOn:
+          text: "Wait"
+          optional: true
       - extendedWaitUntil:
           visible: "Your gym: ${GYM}"
           timeout: 45000
