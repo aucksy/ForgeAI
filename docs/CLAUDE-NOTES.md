@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-327. Build F191 (watch dims, wakes on wrist raise) and F123 (FitPass and other pass members) now - 4 Nov 2026
+He said (4 Nov 2026): "I see the feature 191 is still in the planned stage ... that should be built immediately. and we can also build the feature 123, the FitPass and other Pass members. I hope it is already a rule that along with your standard testing ... you will also perform UAT and keep completing these tests and then ask me when to release." Yes: R-314 (UAT every change) and R-266 (batch releases, ask him). Building both now with two helper agents; each gets UAT before it joins the waiting list. F123's live database change waits for his yes at the end (migration written, not applied).
+
 ## R-326. A clear path is a go + reps line matches the box after a very hard set - 4 Nov 2026
 He said (4 Nov 2026, after I listed "Next: fix the reps box, run the app test again" and stopped): "whom are you waiting for to do that? ... If you have a clear path forward approved by me, then you don't have to stop at every step to get my approval unless you really have to because of your safety checks." Rule added to the project CLAUDE.md (R-324 heading there) and the brain note keep-going-through-the-plan.
 Fix: UAT rel-34 showed "Next: 35 kg × 12 · 280 of 1,160 kg (a little short is fine)" over a set-2 box of 10. Cause: kgProgress adds up to 2 extra reps to chase the total, even on a row the app had just eased after a very hard set. Now a row eased by a 'lighter' or 'hold' nudge gets no extra reps (line = box, × 10); the line also refreshes when the effort is picked after the tick. Test added (kgTarget.test.ts); UAT rel-34 now asserts 'Next: 35 kg × 10' and no '× 12'. Waiting for release.
