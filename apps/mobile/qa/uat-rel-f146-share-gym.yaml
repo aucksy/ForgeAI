@@ -1,0 +1,239 @@
+# Part UAT, F146 (gym, after flow 12): every share picture carries the gym's logo and name; a
+# before/after picture of two progress photos.
+# Before this flow run-device-qa.sh gave the run's fresh "QA UAT Gym" a sample 2:1 logo (qa/uat_logo.py)
+# and pushed the two SAMPLE progress pictures into the gallery. Here, as the member "Uma":
+#  1. the app picks the logo up (a launch saves the new look; coming back to the app shows it): the
+#     header mark "Your gym: QA UAT Gym" appears;
+#  2. Profile -> a workout's Share -> "Share as a picture": the sheet has "Your gym" Show / Hide and says
+#     "The picture shows your gym. It never shows your name or body weight."; Hide and Show change the
+#     words; Share picture writes the PNG (the script pulls cache/share/*.png for reading) and opens
+#     Android's share menu;
+#  3. Progress -> Body -> Progress photos: two photos added from the gallery (each asks its day), then
+#     "Share before and after": Before / After tiles, the note about photos staying on the phone, Share.
+# GYM is passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. the logo reaches the app
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+# The new look waits for a safe moment: leaving the app and coming back.
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM}"
+    timeout: 30000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "Your gym: ${GYM}"
+    commands:
+      - pressKey: Home
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible: "Your gym: ${GYM}"
+          timeout: 45000
+- takeScreenshot: rel-f146-10-gym-logo-in-app
+# ---------------------------------------------------------------- 2. a workout's share picture
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- scrollUntilVisible:
+    element: "^Share (?!as ).+"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "^Share (?!as ).+"
+    index: 0
+- extendedWaitUntil:
+    visible: "Share as a picture"
+    timeout: 15000
+- tapOn: "Share as a picture"
+- extendedWaitUntil:
+    visible: "Send it to WhatsApp, Instagram or any app."
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "^Story$"
+    commands:
+      - tapOn: "^Post$"
+- runFlow:
+    when:
+      visible: "^See-through$"
+    commands:
+      - tapOn: "^Dark$"
+- takeScreenshot: rel-f146-20-workout-share-sheet-top
+- scrollUntilVisible:
+    element: "^Your gym$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Hide$"
+- scrollUntilVisible:
+    element: "The picture never shows your name, your gym or your body weight\\."
+    timeout: 10000
+- takeScreenshot: rel-f146-21-workout-share-gym-hidden
+- scrollUntilVisible:
+    element: "^Your gym$"
+    direction: UP
+    centerElement: true
+    timeout: 10000
+- tapOn: "^Show$"
+- scrollUntilVisible:
+    element: "The picture shows your gym\\. It never shows your name or body weight\\."
+    timeout: 10000
+- scrollUntilVisible:
+    element: "^Share picture$"
+    centerElement: true
+    timeout: 10000
+- takeScreenshot: rel-f146-22-workout-share-gym-shown
+- tapOn: "^Share picture$"
+# Android's own share menu (only the system chooser shows these words).
+- extendedWaitUntil:
+    visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
+    timeout: 30000
+- takeScreenshot: rel-f146-23-android-share-menu
+- back
+- extendedWaitUntil:
+    visible: "^Share picture$"
+    timeout: 10000
+- back
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- 3. before and after
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Body"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Progress photos"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "See all progress photos|Add a progress photo"
+    index: 0
+- extendedWaitUntil:
+    visible: "Add a photo"
+    timeout: 15000
+# Two photos: the first dated the 1st of last month, the second the 15th.
+- runFlow:
+    when:
+      notVisible: "Share before and after"
+    commands:
+      - tapOn: "Add a photo"
+      - tapOn: "Choose from gallery"
+      - extendedWaitUntil:
+          visible: '(?i)photo taken on.*|^Albums$'
+          timeout: 20000
+      - tapOn:
+          text: '(?i)photo taken on.*'
+          index: 0
+          optional: true
+      - runFlow:
+          when:
+            visible: '^Albums$'
+          commands:
+            - tapOn:
+                id: '.*icon_thumbnail'
+                index: 0
+                optional: true
+      - extendedWaitUntil:
+          visible: 'When was this photo taken\?'
+          timeout: 20000
+      - tapOn: "Previous month"
+      - tapOn: '\d{4}-\d{2}-01'
+      - extendedWaitUntil:
+          visible: 'Progress photo, .*'
+          timeout: 20000
+- runFlow:
+    when:
+      notVisible: "Share before and after"
+    commands:
+      - tapOn: "Add a photo"
+      - tapOn: "Choose from gallery"
+      - extendedWaitUntil:
+          visible: '(?i)photo taken on.*|^Albums$'
+          timeout: 20000
+      - tapOn:
+          text: '(?i)photo taken on.*'
+          index: 1
+          optional: true
+      - runFlow:
+          when:
+            visible: '^Albums$'
+          commands:
+            - tapOn:
+                id: '.*icon_thumbnail'
+                index: 1
+                optional: true
+      - extendedWaitUntil:
+          visible: 'When was this photo taken\?'
+          timeout: 20000
+      - tapOn: "Previous month"
+      - tapOn: '\d{4}-\d{2}-15'
+- extendedWaitUntil:
+    visible: "Share before and after"
+    timeout: 20000
+- takeScreenshot: rel-f146-30-photos-with-share-button
+- tapOn: "Share before and after"
+- extendedWaitUntil:
+    visible: "Put two of your progress photos side by side in one picture\\."
+    timeout: 15000
+- assertVisible: "^Before$"
+- assertVisible: "^After$"
+- assertVisible: "The older photo is Before\\. Tap Before or After to pick another photo\\."
+- takeScreenshot: rel-f146-31-before-after-sheet-top
+- scrollUntilVisible:
+    element: "Your photos stay on this phone until you tap Share picture\\. The picture shows your gym\\. It never shows your name or body weight\\."
+    timeout: 15000
+- scrollUntilVisible:
+    element: "^Share picture$"
+    centerElement: true
+    timeout: 10000
+# The share-sized copies take a moment: the button is ready when the picture is.
+- extendedWaitUntil:
+    visible:
+      text: "^Share picture$"
+      enabled: true
+    timeout: 20000
+- takeScreenshot: rel-f146-32-before-after-sheet-ready
+- tapOn: "^Share picture$"
+- extendedWaitUntil:
+    visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
+    timeout: 30000
+- takeScreenshot: rel-f146-33-before-after-android-share-menu
+- back
+- extendedWaitUntil:
+    visible: "^Share picture$"
+    timeout: 10000
+# The Story size too (its PNG is pulled as well).
+- scrollUntilVisible:
+    element: "^Story$"
+    direction: UP
+    centerElement: true
+    timeout: 10000
+- tapOn: "^Story$"
+- scrollUntilVisible:
+    element: "^Share picture$"
+    centerElement: true
+    timeout: 10000
+- takeScreenshot: rel-f146-34-before-after-story-preview
+- tapOn: "^Share picture$"
+- extendedWaitUntil:
+    visible: '(Sharing image|Sharing 1 image|No recommended people to share with)'
+    timeout: 30000
+- back
+- extendedWaitUntil:
+    visible: "^Share picture$"
+    timeout: 10000
+- tapOn: "^Post$"
+- back
+- runFlow: sub-back-to-tabs.yaml

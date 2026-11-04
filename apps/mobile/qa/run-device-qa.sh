@@ -1766,6 +1766,35 @@ uat_flow() {  # $1 = name, $2 = flow file, then -e NAME=value pairs
   fi
   return 0
 }
+# F146 (4 Nov 2026): every share picture carries the gym's logo and name; a before/after picture of two
+# progress photos. The run's fresh "QA UAT Gym" gets a sample 2:1 logo (qa/uat_logo.py, as the admin app's
+# Branding page saves one), the two SAMPLE pictures go into the gallery, and flow uat-rel-f146 shares a
+# workout picture (Your gym: Hide, then Show) and a before/after picture (Post, then Story). Android's
+# share menu hides the picture itself, so the PNGs the app saved (cache/share/) are pulled as root into
+# qa-out/uat-release/rel-f146-picture-*.png for reading.
+part_uat_f146() {
+  local out rc=0 f n=0
+  out=$(python3 "$QA_DIR/uat_logo.py" logo U 2>&1)
+  echo "$out" | sed 's/^/[uat logo] /' | tee -a "$OUT/timeline.txt"
+  if ! echo "$out" | grep -q '^LOGO='; then
+    log "PART UATF146 FAILED: the test gym's logo could not be set (uat_logo.py)"
+    status=1
+    return 1
+  fi
+  push_fixture "$QA_DIR/fixtures/sample-progress-1.png" /sdcard/Pictures/forgeai-sample-1.png
+  push_fixture "$QA_DIR/fixtures/sample-progress-2.png" /sdcard/Pictures/forgeai-sample-2.png
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "media store: $(wait_media forgeai-sample 2 20 images/media) sample pictures for F146's before/after"
+  adb shell "su 0 rm -rf /data/data/$PKG/cache/share" >/dev/null 2>&1 || true
+  uat_flow uatf146 uat-rel-f146-share-gym.yaml -e "GYM=QA UAT Gym" || rc=1
+  mkdir -p "$OUT/uat-release"
+  for f in $(adb shell "su 0 ls /data/data/$PKG/cache/share/" 2>/dev/null | tr -d '\r' | grep '\.png$'); do
+    adb exec-out "su 0 cat /data/data/$PKG/cache/share/$f" > "$OUT/uat-release/rel-f146-picture-$f" 2>/dev/null && n=$((n + 1))
+  done
+  log "UAT F146: $n saved share picture(s) pulled into qa-out/uat-release/rel-f146-picture-*.png"
+  [ "$n" -ge 1 ] || { log "PART UATF146: no saved share picture could be pulled (cache/share/)"; rc=1; }
+  return $rc
+}
 # Launch polish (3 Nov 2026), the gym half: a FRESH online test gym (qa/uat_gym.py on the xj/xc helpers,
 # as qa-journeys does every run; never FORGE1 / RAMS01) with "Uma Desk" (98765 00031) on its desk list
 # and a plan ending 4 days after the phone's today. Flow 7 joins it and checks in by its poster link;
@@ -1796,6 +1825,8 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     # then show the pass words once 0055 is live, the old ones until then (the flow checks either way).
     python3 "$QA_DIR/uat_gym.py" make-pass U "Uma Desk" FITPASS 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
     uat_flow uat14 uat-rel-14-pass-member.yaml -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
+    # F146: the gym's logo and name on share pictures, and the before/after picture.
+    part_uat_f146 || rc=1
   fi
   python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   return $rc
