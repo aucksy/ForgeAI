@@ -1,0 +1,79 @@
+name: Watch demo video (Play foreground-service form)
+
+# Records the MettleUp watch app on a Wear OS emulator for Google Play's "Foreground service
+# permissions" declaration (FOREGROUND_SERVICE_HEALTH): a workout open, live heart rate, the member
+# leaving the app while the workout keeps running, the rest running out on its own, the next set.
+# Uses the RELEASED watch APK unchanged (release asset) and the emulator's synthetic heart-rate data.
+# No phone exists here: the workout is put on the watch by writing the state the phone's message
+# leaves behind (scripts/ci/watch_video.sh). Manual only; uploads the MP4s and stills as an artifact.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release whose watch APK is recorded"
+        required: false
+        default: "v0.71.0"
+      apis:
+        description: "Wear OS emulator API levels, JSON list (33 = Wear OS 4, 34 = Wear OS 5)"
+        required: false
+        default: '["33","34"]'
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api: ${{ fromJSON(inputs.apis || '["33","34"]') }}
+    name: record (api ${{ matrix.api }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get the released watch APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ inputs.tag || 'v0.71.0' }}"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "mettleup-${TAG}-wear.apk" --output watch.apk
+          ls -la watch.apk
+          sha256sum watch.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Record on the Wear OS emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: android-wear
+          arch: x86_64
+          profile: wearos_large_round
+          disable-animations: false
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/ci/watch_video.sh "$GITHUB_WORKSPACE/watch.apk" "$GITHUB_WORKSPACE/watch-video"
+
+      - name: Captioned version
+        if: always()
+        run: |
+          if [ -s watch-video/watch-demo-raw.mp4 ]; then
+            command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+            python3 scripts/ci/watch_video_captions.py watch-video
+            ffprobe -v error -show_entries format=duration -of csv=p=0 watch-video/watch-demo-raw.mp4
+            ffprobe -v error -show_entries format=duration -of csv=p=0 watch-video/watch-demo-captioned.mp4
+          fi
+
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watch-video-api${{ matrix.api }}
+          path: watch-video
+          retention-days: 14
