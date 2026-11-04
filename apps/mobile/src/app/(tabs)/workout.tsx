@@ -407,8 +407,6 @@ export default function WorkoutScreen() {
         <PlanEndsCard hidden={notice !== 'planEnds'} onWant={want('planEnds')} />
         {/* R-320: a phone with Google Drive linked is told once that backups now go to the MettleUp account. */}
         <BackupMovedCard hidden={notice !== 'backup'} onWant={want('backup')} onDone={noticeClosed} />
-        {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone". */}
-        <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
 
         {card.kind !== 'none' ? (
           <UpNextCard card={card} onAction={onAction} starting={starting}>
@@ -459,6 +457,10 @@ export default function WorkoutScreen() {
         ) : null}
         {/* Packet B: the one destructive style — a red link that asks first. */}
         {card.discard ? <DangerLink label={card.discard.label} onPress={onDiscard} /> : null}
+
+        {/* Launch audit 3 Nov 2026: no account and no backup, from the 3rd workout: "only on this phone".
+            Owner, 4 Nov 2026: below "Up next", so the next workout comes first. */}
+        <SafekeepNudgeCard hidden={notice !== 'safekeep'} onWant={want('safekeep')} onDone={noticeClosed} />
 
         {/* F151: the workout the member's gym set for everyone today (nothing without one, or while a workout is open). */}
         <GymWodCard hidden={active} startGuard={startGuard} refreshKey={tick} />
