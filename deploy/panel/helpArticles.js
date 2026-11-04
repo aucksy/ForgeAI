@@ -753,5 +753,6 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/(tabs)/coach.tsx': 'The AI coach is switched off in this app (hidden until its phase); members cannot open it.',
   'apps/mobile/src/app/settings/coach.tsx': 'AI coach settings: switched off with the AI coach; the page sends members back to Settings.',
   'apps/mobile/src/app/nutrition.tsx': 'Food logging is switched off in this app; the page sends members to the Workout tab.',
+  'apps/mobile/src/app/settings/phone-backup.tsx': 'No row in the app opens it since R-320 (Backup shows only the MettleUp account); kept for the cloud check of Android backup.',
   'apps/dashboard/src/crm/ui/screens/More.tsx': 'The phone menu: a list of links; every page it opens has its own article.',
 };
