@@ -96,6 +96,9 @@ appId: com.mettleup.app
 - assertNotVisible: '.*\b38 kg.*'
 - assertNotVisible: '^38$'
 - assertNotVisible: '(?i).*add a set.*'
+# R-324 (4 Nov 2026): the live line asks for what the box shows after a very hard set (× 10), never × 12.
+- assertVisible: '^Next: 35 kg × 10 · .*'
+- assertNotVisible: '.*35 kg × 12.*'
 - takeScreenshot: rel-34-pec-deck-very-hard-35-not-38
 - runFlow:
     file: sub-uat-tick.yaml

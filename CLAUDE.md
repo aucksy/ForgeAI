@@ -76,6 +76,11 @@ entry goes into it as `**YOUR REPLY (date):** ...` with your answer under it. A 
 feedback: log it in your notes and act; answer in the inbox only if it asks a question. When you add
 news to an entry he has read, delete its `**READ` line so it shows under "To read" again.
 
+## ⭐ Owner rule (4 Nov 2026, R-324): a clear path is a go — never stop to wait for nothing
+If the next step is clear and he approved the direction (or it is a "Next" item I wrote myself), do it in the
+same turn. Stop only for: a safety check, money, LIVE data, a release, or a step only he can do. Never end a
+reply listing work I could start now while nothing is running. This survives compaction: re-read it after one.
+
 ## ⭐ Research demand before building a feature
 Before building any NEW feature the owner asks for (not a bug fix): search the web first —
 Hevy/Strong and other competitor apps, their help pages and feature-request boards, Reddit.

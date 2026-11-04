@@ -273,7 +273,10 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           nudge = nudgeLine(n, (kg) => `${fmtWeight(kg, units)}${weightIsEach(loadMode) ? ' each' : ''}`);
         }
       }
-      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null, nudge };
+      // R-324: a row eased after a very hard set ("so try 35 kg") takes no extra reps in the live line.
+      const nk = nudgeForSet(exercise, s.key, fillTarget)?.kind;
+      const eased = nk === 'lighter' || nk === 'hold';
+      return { set: s, label, spoken, previous, fill: fillForSet(exercise, s.key, fillTarget), record: flags.get(s.key) ?? null, nudge, eased };
     });
   }, [exercise, fillTarget, earlier, easyWeek, units, loadMode]);
 
@@ -285,11 +288,13 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   const rowsRef = useRef(rows);
   rowsRef.current = rows;
   const tickKey = kgTickKey(rows.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType })));
+  // R-324: an effort picked after the tick ("very hard") eases the next row, so the line follows it too.
+  const easedKey = rows.map((r) => (r.eased ? 'e' : '-')).join('');
   const kgLine = useMemo(() => {
     if (!kgPlanned) return null;
     const g = kgProgress(
       kgPlanned,
-      rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps })),
+      rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps, eased: r.eased })),
     );
     const each = weightIsEach(loadMode) ? ' each' : '';
     return {
@@ -302,7 +307,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kgPlanned, tickKey, units, loadMode]);
+  }, [kgPlanned, tickKey, easedKey, units, loadMode]);
   // R-305: hand it to the "In use" screen; gone when this card leaves the workout.
   const putLeft = useKgLeft((s) => s.put);
   useEffect(() => {

@@ -163,6 +163,12 @@ export interface KgRow {
   /** What the row hints now (fillForSet: carries a weight typed above, caps reps at the row above). */
   hintKg?: number | null;
   hintReps?: number | null;
+  /**
+   * The row's hint was eased because the set above was very hard ("so try 35 kg" / "keep the same
+   * weight"). R-324 (owner UAT, 4 Nov 2026): the line then asks for exactly the hint, never extra reps:
+   * "Next: 35 kg × 12" over a box showing 10 contradicted the advice right under it.
+   */
+  eased?: boolean;
 }
 
 export interface KgProgress {
@@ -184,6 +190,7 @@ export interface KgProgress {
 export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   let done = 0;
   const open: KgSet[] = [];
+  const noExtra: boolean[] = [];
   let ordinal = 0;
   for (const r of rows) {
     if (r.isWarmup) continue;
@@ -201,14 +208,17 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
     const pos = (n: number | null | undefined): number | null => (n != null && Number.isFinite(n) && n > 0 ? n : null);
     const weightKg = plan.reps ? 1 : pos(r.weightKg) ?? pos(r.hintKg) ?? planned?.weightKg ?? 0;
     const reps = pos(r.hintReps) ?? planned?.reps ?? pos(r.reps) ?? 0;
-    if (weightKg > 0 && reps > 0) open.push({ weightKg, reps });
+    if (weightKg > 0 && reps > 0) {
+      open.push({ weightKg, reps });
+      noExtra.push(r.eased === true);
+    }
   }
   const left = Math.max(0, plan.total - done);
   if (left <= 1e-9 || open.length === 0) return { done, left, next: [], short: left > 1e-9 };
   const next = open.map((s) => ({ ...s }));
   const sum = () => next.reduce((a, s) => a + s.weightKg * s.reps, 0);
   for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < left - 1e-9; extra++) {
-    for (let i = 0; i < next.length && sum() < left - 1e-9; i++) next[i].reps = open[i].reps + extra;
+    for (let i = 0; i < next.length && sum() < left - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
   }
   return { done, left, next, short: sum() < left - 1e-9 };
 }
