@@ -12,6 +12,7 @@ import { Share, Text, View } from 'react-native';
 import { Card, GhostButton } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
+import { readKeptMembership } from './membershipKept';
 import { FRIEND_WORDS, QA_STAND_IN_NOTE, friendJoinedLine, friendMessage, friendRewardLine, hasQaStandIn, qaStandInInvite, type FriendInvite } from './bringFriend';
 import { apiFriendInvite } from './gymApi';
 import type { GymLink } from './types';
@@ -24,8 +25,13 @@ const QA_STAND_IN = hasQaStandIn(Constants.expoConfig?.extra);
 export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKey: number }) {
   const [invite, setInvite] = useState<FriendInvite | null>(null);
   const [standIn, setStandIn] = useState(false);
+  // F123: a pass member (FITPASS, cultpass...) has no plan, so free days cannot be added: no reward line.
+  const [onPass, setOnPass] = useState(false);
   useFocusEffect(
     useCallback(() => {
+      readKeptMembership(link.memberId)
+        .then((k) => setOnPass(Boolean(k?.answer.pass)))
+        .catch(() => setOnPass(false));
       const showStandIn = (): void => {
         if (!QA_STAND_IN) return;
         setInvite(qaStandInInvite(link.gymName));
@@ -64,7 +70,7 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
     }, [link, refreshKey]),
   );
   if (!invite) return null;
-  const reward = friendRewardLine(invite.rewardDays);
+  const reward = onPass ? null : friendRewardLine(invite.rewardDays);
   const share = (): void => {
     Share.share({ message: friendMessage({ code: invite.code, gymName: invite.gymName || link.gymName }) }).catch((e: unknown) => {
       console.warn('[friend] share did not open', e);

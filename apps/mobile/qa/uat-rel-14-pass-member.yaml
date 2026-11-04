@@ -58,3 +58,5 @@ appId: com.mettleup.app
     direction: DOWN
     timeout: 20000
 - takeScreenshot: rel-142-pass-gym-tab-below
+# 5 Nov 2026: a pass member has no plan, so the card never offers "free days to your plan".
+- assertNotVisible: '.*free days? to your plan.*'
