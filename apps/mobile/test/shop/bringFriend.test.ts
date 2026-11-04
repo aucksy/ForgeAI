@@ -1,7 +1,7 @@
 /** F147 Bring a friend: the Gym tab card's words, share text and the server answer reader. */
 import { describe, expect, it } from 'vitest';
 
-import { FRIEND_WORDS, friendInviteFrom, friendJoinedLine, friendLink, friendMessage, friendRewardLine } from '@/shop/bringFriend';
+import { FRIEND_WORDS, QA_STAND_IN_NOTE, friendInviteFrom, friendJoinedLine, friendLink, friendMessage, friendRewardLine, hasQaStandIn, qaStandInInvite } from '@/shop/bringFriend';
 
 describe('member_friend_invite answer', () => {
   it('reads a good answer', () => {
@@ -44,5 +44,19 @@ describe('the card words', () => {
   it('plain words: never volume, PR or session', () => {
     const all = [...Object.values(FRIEND_WORDS), friendMessage({ code: 'ABCD2345', gymName: 'G' }), friendRewardLine(5), friendJoinedLine(1)].join(' ');
     expect(all).not.toMatch(/\bvolume\b|\bPR\b|\bsession/i);
+  });
+});
+
+describe('the device-UAT stand-in (QA builds only)', () => {
+  it('only a build whose app.json lists it', () => {
+    expect(hasQaStandIn({ qaStandIns: ['friendInvite'] })).toBe(true);
+    expect(hasQaStandIn({ qaStandIns: ['other'] })).toBe(false);
+    expect(hasQaStandIn({ supabaseUrl: 'x' })).toBe(false);
+    expect(hasQaStandIn(undefined)).toBe(false);
+  });
+  it('is a valid invite the reader accepts, and says on screen that it is made up', () => {
+    const s = qaStandInInvite('QA UAT Gym');
+    expect(friendInviteFrom({ ok: true, ...s })).toEqual(s);
+    expect(QA_STAND_IN_NOTE).toMatch(/^Test build: made-up numbers/);
   });
 });

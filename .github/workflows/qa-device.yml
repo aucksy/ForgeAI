@@ -101,6 +101,20 @@ jobs:
       - name: Exercise pictures (RepDB, fetched at build time)
         uses: ./.github/actions/exercise-pictures
 
+      # F147 (5 Nov 2026): this QA build only shows a made-up "Bring a friend" answer while the gym server has no
+      # 0056, so the uat part can see the card, its words and the share menu; the card says on screen it is test
+      # data. Store and GitHub release builds never carry this (release-apk.yml builds from app.json as committed).
+      - name: QA-only stand-ins in app.json
+        run: |
+          python3 - <<'PY'
+          import json
+          f = 'apps/mobile/app.json'
+          j = json.load(open(f, encoding='utf-8'))
+          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite']
+          open(f, 'w', encoding='utf-8').write(json.dumps(j, indent=2, ensure_ascii=False) + chr(10))
+          print('qaStandIns', j['expo']['extra']['qaStandIns'])
+          PY
+
       - name: Build an emulator APK (x86_64)
         working-directory: apps/mobile/android
         run: |

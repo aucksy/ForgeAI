@@ -4,6 +4,7 @@
  * paused gym. The button opens the phone's share menu with a short ready message and the member's own link.
  * Words and the share text: bringFriend.ts.
  */
+import Constants from 'expo-constants';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Share, Text, View } from 'react-native';
@@ -11,30 +12,43 @@ import { Share, Text, View } from 'react-native';
 import { Card, GhostButton } from '@/components/ui';
 import { color, space, type } from '@/theme/tokens';
 
-import { FRIEND_WORDS, friendJoinedLine, friendMessage, friendRewardLine, type FriendInvite } from './bringFriend';
+import { FRIEND_WORDS, QA_STAND_IN_NOTE, friendJoinedLine, friendMessage, friendRewardLine, hasQaStandIn, qaStandInInvite, type FriendInvite } from './bringFriend';
 import { apiFriendInvite } from './gymApi';
 import type { GymLink } from './types';
 
 /** Remembered for the app's life once the server says it has no invites yet (no call on every visit). */
 let serverMissing = false;
+/** A device-UAT build (qa-device.yml): show the made-up answer while the server has no 0056. */
+const QA_STAND_IN = hasQaStandIn(Constants.expoConfig?.extra);
 
 export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKey: number }) {
   const [invite, setInvite] = useState<FriendInvite | null>(null);
+  const [standIn, setStandIn] = useState(false);
   useFocusEffect(
     useCallback(() => {
-      if (serverMissing) return;
+      const showStandIn = (): void => {
+        if (!QA_STAND_IN) return;
+        setInvite(qaStandInInvite(link.gymName));
+        setStandIn(true);
+      };
+      if (serverMissing) {
+        showStandIn();
+        return;
+      }
       let live = true;
       apiFriendInvite(link.memberKey)
         .then((r) => {
           if (!live) return;
           if (r.ok) {
             setInvite(r.data);
+            setStandIn(false);
             return;
           }
           if ('missing' in r) {
             serverMissing = true;
             console.log('[friend] the gym server has no "Bring a friend" yet (0056 not live)');
             setInvite(null);
+            showStandIn();
           } else if ('refused' in r) {
             setInvite(null);
           } else if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') {
@@ -67,6 +81,7 @@ export function BringFriendCard({ link, refreshKey }: { link: GymLink; refreshKe
         <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink }}>{friendJoinedLine(invite.joined)}</Text>
       </View>
       <GhostButton label={FRIEND_WORDS.button} icon="send" onPress={share} />
+      {standIn ? <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}>{QA_STAND_IN_NOTE}</Text> : null}
     </Card>
   );
 }

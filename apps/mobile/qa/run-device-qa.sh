@@ -1821,7 +1821,7 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uat8 uat-rel-8-gym-plan.yaml -e "GYM=QA UAT Gym" -e "ENDS=$ends" || rc=1
     # R-319 item 1: "Ask a trainer" (hidden until 0053 is live; the flow checks either way).
     uat_flow uat12 uat-rel-12-ask-trainer.yaml -e "GYM=QA UAT Gym" || rc=1
-    # F147: "Bring a friend" on the Gym tab (hidden until 0056 is live; the flow checks either way).
+    # F147: "Bring a friend" on the Gym tab (a QA-build stand-in until 0056 is live; the flow checks either way).
     uat_flow uatf147 uat-rel-f147-bring-friend.yaml -e "GYM=QA UAT Gym" || rc=1
     # F79: "Pay your gym" on the plan card (hidden until online payments are live; the flow checks either way).
     uat_flow uatf79 uat-rel-f79-pay.yaml -e "GYM=QA UAT Gym" || rc=1

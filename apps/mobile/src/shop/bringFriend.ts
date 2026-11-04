@@ -60,3 +60,21 @@ export function friendRewardLine(days: number | null): string | null {
 export function friendJoinedLine(joined: number): string {
   return `Friends who joined: ${joined}`;
 }
+
+/**
+ * QA builds only (qa-device.yml writes extra.qaStandIns = ['friendInvite'] into app.json before it builds the
+ * emulator APK; store and GitHub builds never carry it): while the gym's server has no 0056, the card shows
+ * this made-up answer so the device UAT can see the card, its words and the share menu. The card then says
+ * on screen that it is test data. Once 0056 is live the real answer wins and this is never used.
+ */
+export const QA_STAND_IN_NOTE = "Test build: made-up numbers, because your gym's server does not have this yet.";
+
+export function qaStandInInvite(gymName: string): FriendInvite {
+  return { code: 'QATEST23', gymName, rewardDays: 7, joined: 2 };
+}
+
+/** True when this build was made for the device UAT with the friend-invite stand-in. PURE. */
+export function hasQaStandIn(extra: unknown): boolean {
+  const list = extra && typeof extra === 'object' ? (extra as { qaStandIns?: unknown }).qaStandIns : undefined;
+  return Array.isArray(list) && list.includes('friendInvite');
+}
