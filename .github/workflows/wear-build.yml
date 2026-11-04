@@ -21,6 +21,7 @@ on:
       - 'apps/mobile/android/wear/**'
       - 'apps/mobile/modules/forge-rest/**'
       - '.github/workflows/wear-build.yml'
+      - 'scripts/ci/watch_keep_screen_uat.sh'
 
 # A newer push replaces a run still going for the same branch (a hand-started run is never cut).
 concurrency:
@@ -207,4 +208,51 @@ jobs:
             apps/mobile/android/wear/build/reports/tests
             apps/mobile/modules/forge-rest/android/build/reports/tests
           if-no-files-found: ignore
+          retention-days: 7
+
+  # F191 / R-297 UAT (R-314): on a Wear OS emulator with "Always-on screen" OFF, an open workout keeps
+  # MettleUp in front through a screen-off and wake, and lets go when the workout ends
+  # (scripts/ci/watch_keep_screen_uat.sh; it asserts, and uploads the pictures and dumps to read).
+  # API 34 = Wear OS 5 (Google: the Ongoing Activity keeps an app visible from Wear OS 5), 36 = Wear OS 6.
+  uat:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api: ["34", "36"]
+    name: watch UAT (api ${{ matrix.api }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get the watch APK built above
+        uses: actions/download-artifact@v4
+        with:
+          name: mettleup-wear
+          path: apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Workout keeps MettleUp in front (Always-on screen off)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: android-wear
+          arch: x86_64
+          profile: wearos_large_round
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/ci/watch_keep_screen_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat"
+
+      - name: Upload the UAT pictures and dumps
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watch-uat-api${{ matrix.api }}
+          path: watch-uat
           retention-days: 7
