@@ -54,6 +54,12 @@ export interface GymRecord {
    * Absent or null = not set.
    */
   upiId?: string | null;
+  /**
+   * F147 Bring a friend: free days the owner gives a member for each friend who joins (Settings ->
+   * Member app). 1 to 60; absent, null or 0 = off. Kept on the gym's details record; the gym server
+   * reads it so the member app can say what the gym gives (supabase 0056 _friend_reward_days).
+   */
+  friendRewardDays?: number | null;
   createdAt: number;
 }
 
@@ -325,7 +331,7 @@ export interface CrmData {
 
   // Step 5 (15 Oct 2026)
   createEnquiry(draft: EnquiryDraft): Promise<Enquiry>;
-  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason'>>): Promise<Enquiry>;
+  updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason' | 'referral'>>): Promise<Enquiry>;
   addExpense(draft: ExpenseDraft): Promise<Expense>;
   /** An expense typed wrong is taken out (it is not a receipt: no number to keep). */
   removeExpense(id: string): Promise<void>;

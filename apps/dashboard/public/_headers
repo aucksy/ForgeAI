@@ -22,6 +22,11 @@
   ! Content-Security-Policy
 /checkin.html
   ! Content-Security-Policy
+# F147: a member's "bring a friend" page, filled in the same way (the gym and the member's first name).
+/friend
+  ! Content-Security-Policy
+/friend.html
+  ! Content-Security-Policy
 
 # The page itself is always re-checked, so an open tab never keeps a page that points at
 # script files a newer deploy has replaced (that showed a blank screen once).

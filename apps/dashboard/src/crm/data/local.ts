@@ -907,7 +907,7 @@ export class LocalCrmData implements CrmData {
     });
   }
 
-  async updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason'>>): Promise<Enquiry> {
+  async updateEnquiry(id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason' | 'referral'>>): Promise<Enquiry> {
     return this.update((db) => {
       const enquiry = db.enquiries.find((e) => e.id === id);
       if (!enquiry) throw new NotFoundError('That enquiry');

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You are invited to a gym</title>
+<meta name="description" content="A friend invited you to their gym. Leave your name and number, and the gym will call you.">
+<meta property="og:title" content="You are invited to a gym">
+<meta property="og:description" content="Leave your name and number, and the gym will call you about joining.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07080C">
+<meta name="robots" content="noindex">
+<!--
+  F147 Bring a friend (4 Nov 2026): https://app.mettleup.fit/f/<CODE>, a link a member shares from the
+  MettleUp app's Gym tab. Served by the panel's Worker (deploy/panel/worker.js), which fills in the gym and
+  the member's first name (window.__GYM__, from friend_invite_preview, supabase 0056) and the WhatsApp
+  preview before sending it. The form posts to /api/friend (deploy/panel/friend.js), which hands it to the
+  gym server: it lands in that gym's Enquiries list, marked "Referred by <member>". Only that gym sees the
+  number; the member who shared the link never does. English first, Hinglish under it, like /j.
+-->
+<style>
+  :root { --bg:#07080C; --surface:#12141B; --field:#0C0E14; --ink:#F4F5F8; --ink2:#B9BFCC; --muted:#8B92A3; --accent:#F0570F; --on-accent:#1F0D05; --line:#262A35; --bad:#FF8A80; --good:#7BD88F; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:440px; margin:0 auto; padding:28px 16px 40px; }
+  .logo { width:88px; height:88px; border-radius:20px; background:var(--surface); display:flex; align-items:center; justify-content:center; overflow:hidden; margin:0 auto 14px; }
+  .logo img { max-width:76px; max-height:76px; object-fit:contain; }
+  .logo span { font-size:40px; font-weight:800; color:var(--accent); }
+  h1 { font-size:26px; line-height:1.2; text-align:center; margin:0 0 6px; text-wrap:balance; overflow-wrap:anywhere; }
+  .hi { color:var(--ink2); font-size:15px; text-align:center; margin:0; overflow-wrap:anywhere; }
+  .hi small, .lead small, label small, legend small, .note small, .card h2 small { display:block; color:var(--ink2); font-weight:500; }
+  .lead { text-align:center; margin:16px 0 20px; font-size:16px; line-height:1.45; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:16px; }
+  .card h2 { font-size:17px; margin:0 0 8px; }
+  form { display:grid; gap:16px; }
+  label, legend { font-size:15px; font-weight:700; line-height:1.35; }
+  label small, legend small { font-size:13px; }
+  input[type=text], input[type=tel] { display:block; width:100%; margin-top:6px; min-height:52px; padding:12px 14px; font:inherit; font-size:17px; color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:12px; }
+  input:focus-visible, .times label:focus-within, .btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .phone { display:flex; gap:8px; align-items:stretch; margin-top:6px; }
+  .phone span { display:flex; align-items:center; padding:0 12px; border:1px solid var(--line); border-radius:12px; color:var(--ink2); font-size:17px; }
+  .phone input { margin-top:0; }
+  fieldset { border:0; margin:0; padding:0; min-width:0; }
+  .times { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; margin-top:8px; }
+  .times label { position:relative; display:flex; flex-direction:column; justify-content:center; min-height:52px; padding:8px 12px; border:1px solid var(--line); border-radius:12px; background:var(--field); font-size:15px; cursor:pointer; }
+  .times input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+  .times label:has(input:checked) { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+  .err { color:var(--bad); font-size:14px; font-weight:600; margin:6px 0 0; }
+  .btn { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:60px; border:0; border-radius:16px; background:var(--accent); color:var(--on-accent); font:inherit; font-size:18px; font-weight:800; text-decoration:none; padding:10px 16px; cursor:pointer; }
+  .btn small { font-size:14px; font-weight:600; opacity:.85; }
+  .btn[disabled] { opacity:.6; cursor:wait; }
+  .note { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
+  .done h2 { color:var(--good); }
+  .trap { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+  .hide { display:none !important; }
+  @media (min-width:720px) { main { padding-top:56px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="logo" id="logo" aria-hidden="true"><span id="initial">M</span></div>
+  <h1 id="title">You are invited to a gym</h1>
+  <p class="hi" id="sub"></p>
+
+  <div id="found">
+    <p class="lead">Leave your name and number. The gym will call you about joining.
+      <small>Apna naam aur number dijiye. Gym aapko joining ke baare mein call karega.</small></p>
+
+    <form id="form" class="card" novalidate>
+      <div>
+        <label for="name">Your name<small>Aapka naam</small></label>
+        <input id="name" name="name" type="text" autocomplete="name" maxlength="80" required>
+        <p class="err hide" id="name-err" role="alert"></p>
+      </div>
+      <div>
+        <label for="phone">Mobile number<small>Mobile number</small></label>
+        <div class="phone"><span>+91</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="98765 43210" required></div>
+        <p class="err hide" id="phone-err" role="alert"></p>
+      </div>
+      <fieldset>
+        <legend>When would you like to train?<small>Aap kab train karna chahenge?</small></legend>
+        <div class="times">
+          <label><input type="radio" name="time" value="morning">Morning<small>Subah</small></label>
+          <label><input type="radio" name="time" value="afternoon">Afternoon<small>Dopahar</small></label>
+          <label><input type="radio" name="time" value="evening">Evening<small>Shaam</small></label>
+          <label><input type="radio" name="time" value="any" checked>Any time<small>Kabhi bhi</small></label>
+        </div>
+      </fieldset>
+      <!-- A bot fills every box; a person never sees this one. -->
+      <div class="trap" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <p class="err hide" id="form-err" role="alert"></p>
+      <button class="btn" id="send" type="submit">Send to the gym<small>Gym ko bhejein</small></button>
+      <p class="note" id="privacy">Only the gym sees your number. Your friend does not.<small>Aapka number sirf gym dekhega. Aapka dost nahi.</small></p>
+    </form>
+  </div>
+
+  <div class="card done hide" id="done" role="status">
+    <h2 id="done-title">Sent. The gym will call you soon.<small>Bhej diya. Gym aapko jaldi call karega.</small></h2>
+    <p class="note">You can close this page now.<small>Ab aap yeh page band kar sakte hain.</small></p>
+  </div>
+
+  <div class="card hide" id="none">
+    <h2>This invite link does not work any more<small>Yeh invite link ab kaam nahi karta</small></h2>
+    <p class="note">Ask your friend to send you a new link.<small>Apne dost se naya link maangiye.</small></p>
+  </div>
+
+  <div class="card hide" id="offline">
+    <h2>Could not reach the gym<small>Gym tak nahi pahunch paaye</small></h2>
+    <p class="note">Check your internet and open the link again.<small>Internet check karke link dobara kholiye.</small></p>
+  </div>
+</main>
+<script>
+(function () {
+  var KEY = 'sb_publishable_-GBJ1u036bdCX2mtff3ghQ_Gx-hZyGo';
+  var API = 'https://hdxzqbdiokjklnypfisq.supabase.co/rest/v1/rpc/friend_invite_preview';
+  var m = /^\/f\/([A-Za-z0-9]{8})\/?$/.exec(location.pathname);
+  var code = m ? m[1].toUpperCase() : null;
+  var $ = function (id) { return document.getElementById(id); };
+  var show = function (id, on) { $(id).classList.toggle('hide', !on); };
+  var gymName = '';
+
+  // Every message the page can show: English, then Hinglish.
+  var WORDS = {
+    BAD_NAME: ['Type your name.', 'Apna naam likhiye.'],
+    BAD_PHONE: ['Type a 10-digit mobile number.', '10 digit ka mobile number likhiye.'],
+    TOO_MANY: ['Too many requests from this link today. Please try again tomorrow.', 'Aaj is link se bahut requests aa chuki hain. Kal dobara try kijiye.'],
+    NOT_READY: ['This invite is not ready yet. Please try again later.', 'Yeh invite abhi taiyaar nahi hai. Thodi der baad try kijiye.'],
+    TRY_AGAIN: ['Could not send. Check your internet and try again.', 'Bhej nahi paaye. Internet check karke dobara try kijiye.']
+  };
+  function say(id, key) {
+    var w = WORDS[key] || WORDS.TRY_AGAIN;
+    var el = $(id);
+    el.textContent = w[0];
+    var s = document.createElement('small');
+    s.textContent = w[1];
+    el.appendChild(s);
+    show(id, true);
+  }
+  function clearErrors() { ['name-err', 'phone-err', 'form-err'].forEach(function (id) { show(id, false); }); }
+
+  function hexOk(h) { return typeof h === 'string' && /^#[0-9A-Fa-f]{6}$/.test(h); }
+  function onColour(h) {
+    var n = parseInt(h.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    var lin = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    var L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? '#111111' : '#FFFFFF';
+  }
+  function setLine(el, en, hi) {
+    el.textContent = en;
+    var s = document.createElement('small');
+    s.textContent = hi;
+    el.appendChild(s);
+  }
+
+  function render(gym) {
+    if (!gym) {
+      show('found', false); show('none', true);
+      $('title').textContent = 'Invite not found'; $('sub').textContent = '';
+      return;
+    }
+    gymName = gym.gymName;
+    var who = typeof gym.inviter === 'string' && gym.inviter.trim() ? gym.inviter.trim() : '';
+    document.title = who ? who + ' invites you to ' + gymName : 'You are invited to ' + gymName;
+    $('title').textContent = gymName;
+    if (who) setLine($('sub'), who + ' invited you to train here.', who + ' ne aapko yahan train karne bulaaya hai.');
+    else setLine($('sub'), 'A friend invited you to train here.', 'Ek dost ne aapko yahan train karne bulaaya hai.');
+    setLine($('privacy'), 'Only ' + gymName + ' sees your number. ' + (who ? who + ' does not.' : 'Your friend does not.'),
+      'Aapka number sirf ' + gymName + ' dekhega. ' + (who ? who + ' nahi.' : 'Aapka dost nahi.'));
+    setLine($('done-title'), 'Sent. ' + gymName + ' will call you soon.', 'Bhej diya. ' + gymName + ' aapko jaldi call karega.');
+    $('initial').textContent = (gymName.trim().charAt(0) || 'M').toUpperCase();
+    var b = gym.brand || {};
+    if (hexOk(b.accent)) {
+      document.documentElement.style.setProperty('--accent', b.accent);
+      document.documentElement.style.setProperty('--on-accent', onColour(b.accent));
+    }
+    if (hexOk(b.bg)) $('logo').style.background = b.bg;
+    if (typeof b.logoUrl === 'string' && /^https:\/\/hdxzqbdiokjklnypfisq\.supabase\.co\//.test(b.logoUrl)) {
+      var img = new Image();
+      img.alt = '';
+      img.onload = function () { $('logo').innerHTML = ''; $('logo').appendChild(img); };
+      img.src = b.logoUrl;
+    }
+  }
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    clearErrors();
+    var name = $('name').value.replace(/\s+/g, ' ').trim();
+    var digits = $('phone').value.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+    var bad = false;
+    if (name.length < 2) { say('name-err', 'BAD_NAME'); bad = true; }
+    if (!/^[6-9]\d{9}$/.test(digits)) { say('phone-err', 'BAD_PHONE'); bad = true; }
+    if (bad) { (name.length < 2 ? $('name') : $('phone')).focus(); return; }
+    var picked = document.querySelector('input[name=time]:checked');
+    var btn = $('send');
+    btn.disabled = true;
+    fetch('/api/friend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, name: name, phone: digits, time: picked ? picked.value : 'any', website: $('website').value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; }); })
+      .then(function (a) {
+        if (a.status === 201 && a.body && a.body.ok) {
+          show('found', false); show('done', true);
+          $('done').setAttribute('tabindex', '-1');
+          $('done').focus();
+          return;
+        }
+        var e = a.body && a.body.error;
+        if (e === 'NO_INVITE') { show('found', false); show('none', true); return; }
+        if (e === 'BAD_NAME') { say('name-err', e); $('name').focus(); }
+        else if (e === 'BAD_PHONE') { say('phone-err', e); $('phone').focus(); }
+        else say('form-err', e);
+      })
+      .catch(function () { say('form-err', 'TRY_AGAIN'); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  if (!code) { render(null); return; }
+  if (window.__GYM__ !== undefined) { render(window.__GYM__); return; }
+  fetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_code: code }) })
+    .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then(function (g) { render(g && g.gymName ? g : null); })
+    .catch(function () { show('found', false); show('offline', true); });
+})();
+</script>
+</body>
+</html>

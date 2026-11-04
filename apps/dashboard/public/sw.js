@@ -11,7 +11,8 @@
 //    which would otherwise be kept as the panel's own page).
 const CACHE = 'forgeai-panel-v1';
 const SHELL = '/';
-const SKIP = /^\/(sb|api|j|c|app|home)(\/|$)|^\/(join|checkin|privacy|terms|data-agreement)(\.html)?$/;
+// F147: /f/<CODE> and friend.html, a member's "bring a friend" page, are never the panel's page either.
+const SKIP = /^\/(sb|api|j|c|f|app|home)(\/|$)|^\/(join|checkin|friend|privacy|terms|data-agreement)(\.html)?$/;
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

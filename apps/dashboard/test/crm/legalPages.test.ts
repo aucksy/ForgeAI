@@ -52,7 +52,7 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     const src = /const SKIP = (\/.+\/);/.exec(sw)?.[1];
     expect(src).toBeDefined();
     const skip = new Function(`return ${src}`)() as RegExp;
-    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/data-agreement', '/data-agreement.html', '/join.html', '/home/']) expect(skip.test(path), path).toBe(true);
+    for (const path of ['/privacy', '/privacy.html', '/terms', '/terms.html', '/data-agreement', '/data-agreement.html', '/join.html', '/home/', '/f/ABCD2345', '/friend.html']) expect(skip.test(path), path).toBe(true);
     for (const path of ['/', '/members', '/settings']) expect(skip.test(path), path).toBe(false);
   });
 });

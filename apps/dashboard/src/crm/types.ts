@@ -330,8 +330,27 @@ export interface Enquiry extends GymScoped {
   source?: EnquirySource | null;
   /** Launch audit 3 Nov 2026: why they did not join, when the desk knows. Only on a lost enquiry. */
   lostReason?: EnquiryLostReason | null;
+  /**
+   * F147 Bring a friend: set by the gym server when a friend filled a member's invite page (supabase
+   * 0056). Absent on every enquiry the desk typed. Read it through logic/referrals.ts `referralOf`.
+   */
+  referral?: EnquiryReferral | null;
   createdAt: number;
   updatedAt: number;
+}
+
+/** F147: who brought this friend in, and the owner's thank-you once given. */
+export interface EnquiryReferral {
+  /** The member's name as the gym's list has it (else their app name). */
+  by: string;
+  /** Their id on the gym's list; null when the app member is not matched to it. */
+  memberId: string | null;
+  /** When the friend would like to train. */
+  time?: 'morning' | 'afternoon' | 'evening' | 'any' | null;
+  /** The free days the owner gave the member for this friend (one tap, once). */
+  rewardGiven?: { days: number; membershipId: string; on: DateISO } | null;
+  /** The owner said "Not now" to the free days for this friend. */
+  rewardSkipped?: boolean | null;
 }
 
 export type EnquirySource = 'walk-in' | 'instagram' | 'friend' | 'google' | 'justdial' | 'other';

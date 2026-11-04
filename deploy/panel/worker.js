@@ -9,6 +9,10 @@
 //  - /c/<CODE>  the gym's check-in poster link (checkin.html), filled in the same way: on a phone
 //               with the app, Android opens the app's "Check in at <gym>" screen instead; this page
 //               is for phones without it ("Open this in the MettleUp app to check in" + get the app).
+//  - /f/<CODE>  F147 Bring a friend: a member's invite page (friend.html), filled in the same way with the
+//               gym and the member's first name (friend_invite_preview, supabase 0056). Never opens an app.
+//  - /api/friend  that page's form (friend.js): checked, limited, then friend_invite_send writes the
+//               enquiry into that gym's own records.
 //  - /api/feedback  "Send feedback" from both apps (feedback.js, launch H7).
 //  - /api/help, /api/help/rate  "Help and feedback": the message saved as above, then a Claude answer (help.js, T22).
 //  - /api/feedback/voice  a spoken feedback clip -> text, via Groq Whisper (voice.js, R-206). Clip not kept.
@@ -30,6 +34,7 @@ import { handleFeedback } from './feedback.js';
 import { handleHelp, handleHelpRate, handleHelpReplies } from './help.js';
 import { handleHqNews } from './hqNews.js';
 import { handleLead } from './leads.js';
+import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
@@ -69,6 +74,11 @@ export default {
     const checkIn = /^\/c\/([A-Za-z0-9]{6})\/?$/.exec(url.pathname);
     if (checkIn) return joinPage(request, env, ctx, url, checkIn[1].toUpperCase(), CHECKIN);
     if (url.pathname.startsWith('/c/')) return joinPage(request, env, ctx, url, null, CHECKIN);
+    // F147: a member's "bring a friend" link (8 letters, no 0/O/1/I).
+    const friend = /^\/f\/([A-Za-z0-9]{8})\/?$/.exec(url.pathname);
+    if (friend) return joinPage(request, env, ctx, url, friend[1].toUpperCase(), FRIEND);
+    if (url.pathname.startsWith('/f/')) return joinPage(request, env, ctx, url, null, FRIEND);
+    if (url.pathname === '/api/friend') return handleFriend(request, env, rpc);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     const bundle = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$/.exec(url.pathname);
     if (bundle) return playBundle(request, bundle[1], `mettleup-${bundle[1]}.aab`, 'application/octet-stream');
@@ -111,17 +121,43 @@ export default {
         (e) => console.error('[voice] clean-up failed', e),
       ),
     );
+    // F147: the friend page's address hashes are kept 2 days (friend.js).
+    ctx.waitUntil(
+      deleteOldFriendAsks(env.WEB).then(
+        (n) => console.log('[friend] clean-up: deleted', n, 'address counts older than 2 days'),
+        (e) => console.warn('[friend] clean-up skipped (D1 migration 0010 applied?)', e),
+      ),
+    );
   },
 };
 
-/** gym_preview (migration 0007), kept 5 minutes per code. undefined = could not ask. */
-async function preview(code, ctx) {
+/** A gym server function, called with the public app key: {status, data}. Throws when it cannot be reached. */
+async function rpc(fn, args) {
+  const r = await fetch(`${SUPABASE}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: { apikey: KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args),
+  });
+  let data = null;
+  try {
+    data = await r.json();
+  } catch {
+    data = null;
+  }
+  return { status: r.status, data };
+}
+
+/**
+ * gym_preview (migration 0007), or another kind's preview function (F147: friend_invite_preview, 0056),
+ * kept 5 minutes per code. undefined = could not ask.
+ */
+async function preview(code, ctx, fn = 'gym_preview') {
   const cache = caches.default;
-  const cacheKey = new Request(`https://cache.forgeai/preview/${code}`);
+  const cacheKey = new Request(`https://cache.forgeai/${fn === 'gym_preview' ? 'preview' : fn}/${code}`);
   const hit = await cache.match(cacheKey);
   if (hit) return hit.json();
   try {
-    const r = await fetch(`${SUPABASE}/rest/v1/rpc/gym_preview`, {
+    const r = await fetch(`${SUPABASE}/rest/v1/rpc/${fn}`, {
       method: 'POST',
       headers: { apikey: KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_code: code }),
@@ -142,6 +178,13 @@ const JOIN = {
   title: (g) => `Join ${g.gymName} on MettleUp`,
   desc: (g) => `${g.gymName} invites you to the MettleUp app. Tap to join. Gym code ${g.joinCode}.`,
 };
+/** F147: a member's invite for a friend. The page names the member by first name only. */
+const FRIEND = {
+  asset: '/friend',
+  fn: 'friend_invite_preview',
+  title: (g) => (g.inviter ? `${g.inviter} invites you to ${g.gymName}` : `You are invited to ${g.gymName}`),
+  desc: (g) => `Leave your name and number, and ${g.gymName} will call you about joining.`,
+};
 const CHECKIN = {
   asset: '/checkin',
   title: (g) => `Check in at ${g.gymName}`,
@@ -156,7 +199,7 @@ async function joinPage(request, env, ctx, url, code, kind = JOIN) {
   ask.headers.delete('If-Modified-Since');
   const page = await env.ASSETS.fetch(ask);
   if (!page.ok) return page;
-  const gym = code ? await preview(code, ctx) : null;
+  const gym = code ? await preview(code, ctx, kind.fn) : null;
   let rw = new HTMLRewriter();
   if (gym !== undefined) {
     // Inside a <script>: "<" escaped so a gym name can never close the tag.

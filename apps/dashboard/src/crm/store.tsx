@@ -102,7 +102,7 @@ interface CrmContextValue {
 
   // Step 5 (15 Oct 2026): enquiries, expenses, freeze / extra days.
   createEnquiry: (draft: EnquiryDraft) => Promise<Enquiry>;
-  updateEnquiry: (id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason'>>) => Promise<void>;
+  updateEnquiry: (id: string, patch: Partial<EnquiryDraft & Pick<Enquiry, 'status' | 'memberId' | 'lostReason' | 'referral'>>) => Promise<void>;
   addExpense: (draft: ExpenseDraft) => Promise<void>;
   removeExpense: (id: string) => Promise<void>;
   extendMembership: (id: string, days: number, reason: string) => Promise<void>;
