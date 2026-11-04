@@ -98,7 +98,6 @@ appId: com.mettleup.app
     timeout: 10000
 - scrollUntilVisible:
     element: "^Share picture$"
-    centerElement: true
     timeout: 10000
 - takeScreenshot: rel-f146-22-workout-share-gym-shown
 - tapOn: "^Share picture$"
@@ -204,7 +203,6 @@ appId: com.mettleup.app
     timeout: 15000
 - scrollUntilVisible:
     element: "^Share picture$"
-    centerElement: true
     timeout: 10000
 # The share-sized copies take a moment: the button is ready when the picture is.
 - extendedWaitUntil:
@@ -231,7 +229,6 @@ appId: com.mettleup.app
 - tapOn: "^Story$"
 - scrollUntilVisible:
     element: "^Share picture$"
-    centerElement: true
     timeout: 10000
 - takeScreenshot: rel-f146-34-before-after-story-preview
 - tapOn: "^Share picture$"
