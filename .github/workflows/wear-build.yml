@@ -213,7 +213,7 @@ jobs:
   # F191 / R-297 UAT (R-314): on a Wear OS emulator with "Always-on screen" OFF, an open workout keeps
   # MettleUp in front through a screen-off and wake, and lets go when the workout ends
   # (scripts/ci/watch_keep_screen_uat.sh; it asserts, and uploads the pictures and dumps to read).
-  # API 34 = Wear OS 5, 35 = Wear OS 5.1 (Google: the Ongoing Activity keeps an app visible from Wear OS 5).
+  # API 34 = Wear OS 5, 35-ext15 = Wear OS 5.1 (the stable API 35 watch image) (Google: the Ongoing Activity keeps an app visible from Wear OS 5).
   # Wear OS 6 (API 36) exists only as a "signed" image without adb root, which this test needs.
   uat:
     needs: build
@@ -222,7 +222,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: ["34", "35"]
+        api: ["34", "35-ext15"]
     name: watch UAT (api ${{ matrix.api }})
     steps:
       - name: Checkout

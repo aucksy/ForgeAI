@@ -56,7 +56,20 @@ service_fg() { # prints "fg", "bg" or "none"
   else echo bg; fi
 }
 notice_up() { # 1 if the workout notice (id 51004) of this app is posted
-  adb shell dumpsys notification --noredact 2>/dev/null | tr -d '\r' | grep -E "NotificationRecord.*pkg=$PKG.*id=51004" -q && echo 1 || echo 0
+  # Read into a variable first: under pipefail a `grep -q` that stops early fails the whole pipe.
+  local n
+  n="$(adb shell dumpsys notification --noredact 2>/dev/null | tr -d '\r')"
+  if grep -Eq "NotificationRecord.*pkg=$PKG.*id=51004" <<< "$n"; then echo 1; else echo 0; fi
+}
+dark() { # 1 if the picture is (nearly) all black: the screen is really off, no dimmed app on it
+  python3 - "$1" <<'PY' 2>/dev/null || echo 0
+import struct, sys, zlib
+d = open(sys.argv[1], "rb").read()
+idat = b"".join(d[i + 8:i + 8 + struct.unpack(">I", d[i:i + 4])[0]] for i in range(8, len(d) - 8) if d[i + 4:i + 8] == b"IDAT")
+raw = zlib.decompress(idat)
+lit = sum(1 for b in raw if b > 40)
+print(1 if lit < len(raw) * 0.002 else 0)
+PY
 }
 # Screen off for HOLD_S (Always-on off: the screen must be black), then wake; records what is in front.
 off_and_wake() { # phase
