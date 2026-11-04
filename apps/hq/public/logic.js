@@ -167,6 +167,7 @@ const ACTIONS = {
   delete_gym_files_left: 'Some pictures were left after a delete',
   delete_gym_refused: 'A gym delete was refused (nothing deleted)',
   feedback_status: 'Changed a feedback status',
+  feedback_reply: 'Replied to a help question',
   lead_status: 'Changed a lead status',
   ai_limit_set: 'Changed a gym’s AI limit',
   support_open: 'Opened support access (emergency)',
