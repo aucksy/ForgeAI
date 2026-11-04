@@ -13,7 +13,6 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { Card, Chip, GhostButton, PrimaryButton, Screen } from '@/components/ui';
-import { goBack } from '@/lib/goBack';
 import { color, radius, space, type } from '@/theme/tokens';
 import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 
@@ -235,7 +234,7 @@ function AskTrainer({ link }: { link: GymLink }) {
   }
 
   return (
-    <Screen title={ASK_WORDS.title} onBack={() => goBack(router, '/shop')} scroll={false}>
+    <Screen title={ASK_WORDS.title} onBack={() => (router.canGoBack() ? router.back() : router.replace('/shop'))} scroll={false}>
       <ScrollView
         style={{ flex: 1 }}
         keyboardShouldPersistTaps="handled"

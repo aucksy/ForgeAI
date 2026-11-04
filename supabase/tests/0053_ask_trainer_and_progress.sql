@@ -174,7 +174,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t53_is('9badday', pg_temp.t53_run(format('select public.member_trainer_share2(%L, %L::jsonb, %L::jsonb)', ka, good,
     '[{"d":"2026-02-30","n":"A","x":[]}]')), 'INVALID');
   checks := checks + 1; fails := fails || pg_temp.t53_is('9on', public.member_trainer_share2(ka, good, recent)->>'on', 'true');
-  checks := checks + 1; fails := fails || pg_temp.t53_is('9kept', (select recent::text from public.gym_progress_summaries where member_id = ma),
+  checks := checks + 1; fails := fails || pg_temp.t53_is('9kept', (select s.recent::text from public.gym_progress_summaries s where s.member_id = ma),
     format('[{"d": "%s", "n": "Leg day", "x": [{"n": "Leg press", "r": 10, "s": 4, "w": 120.0}, {"n": "Pull-up", "r": 12, "s": 3, "w": 0.0}]}, {"d": "%s", "n": "Pull day", "x": [{"n": "Lat pulldown", "r": 10, "s": 3, "w": 50.0}]}]',
       to_char(td - 2, 'YYYY-MM-DD'), to_char(td - 9, 'YYYY-MM-DD')));
   r := public.owner_member_progress(kop, 'm-asha');

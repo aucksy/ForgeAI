@@ -96,8 +96,8 @@ describe('the questions', () => {
 describe('member words', () => {
   const BANNED = /\b(volume|sessions?|PRs?|sync(ing|ed)?|chat)\b/i;
   it('plain words, none of the banned ones, short', () => {
-    const lines = [
-      ...Object.values(ASK_WORDS).filter((v): v is string => typeof v === 'string'),
+    const lines: string[] = [
+      ...(Object.values(ASK_WORDS) as unknown[]).filter((v): v is string => typeof v === 'string'),
       ASK_WORDS.yours('Rohit S.'),
       ASK_WORDS.owner('Owner S.'),
       ASK_WORDS.counter(120),
