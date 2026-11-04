@@ -6,6 +6,7 @@
  * "Show my workouts to the desk" (#49 step 1) was removed 2 Nov 2026 (R-279): the workout offer (#49 step 2,
  * offerActions.ts) adds the free days by itself, so the desk code was not needed any more.
  */
+import Constants from 'expo-constants';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -17,7 +18,7 @@ import { color, space, type } from '@/theme/tokens';
 import { apiMembership } from './gymApi';
 import { refreshGymReminders } from './gymReminders';
 import { GymReportPanel } from './GymReportPanel';
-import { keptLine, membershipView, type MembershipAnswer, type MembershipTone } from './membership';
+import { hasQaPassStandIn, keptLine, membershipView, withQaPassStandIn, type MembershipAnswer, type MembershipTone } from './membership';
 import { keepMembership, readKeptMembership } from './membershipKept';
 import { PlanRequestPanel } from './PlanRequestPanel';
 import { MembershipPayPanel } from './PayPanel';
@@ -45,9 +46,11 @@ export function MembershipCard({ link }: { link: GymLink }) {
         const r = await apiMembership(link.memberKey);
         if (!live) return;
         if (r.ok) {
-          setShown({ answer: r.data, keptAt: null });
+          // F123: QA builds only - the device UAT's stand-in pass until the server has 0055 (membership.ts).
+          const answer = withQaPassStandIn(r.data, hasQaPassStandIn(Constants.expoConfig?.extra));
+          setShown({ answer, keptAt: null });
           // R-86: the gym reminders follow the plan (a renewal cancels "ends soon").
-          void keepMembership(link.memberId, r.data).then(() => refreshGymReminders());
+          void keepMembership(link.memberId, answer).then(() => refreshGymReminders());
         } else if ('missing' in r) {
           setShown(null);
         } else if (kept && (r.error.kind === 'offline' || r.error.kind === 'timeout')) {

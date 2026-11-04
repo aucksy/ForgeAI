@@ -38,6 +38,8 @@ export type MembershipAnswer =
        * a pass, else null. A server without 0055 sends none: null.
        */
       pass?: string | null;
+      /** QA builds only: the pass came from the device UAT's stand-in plan (withQaPassStandIn). */
+      qaStandIn?: boolean;
     }
   | { ok: false; problem: MembershipProblem; gymName: string };
 
@@ -133,6 +135,18 @@ export function membershipView(a: MembershipAnswer): MembershipView {
   const visits = a.visitsThisMonth === 0 ? 'No days at the gym yet this month.' : `${dayWord(a.visitsThisMonth)} at the gym this month.`;
   const nextLine = a.next ? `Next: ${a.next.planName}, from ${tinyDateWithYear(a.next.startsOn, a.day)}.` : null;
   const cur = a.current;
+  // F123: a pass member (FITPASS, cultpass...) has no plan to renew; the gym counts each visit for the company.
+  // Checked before a running plan: the desk may move a paying member to a pass while an old plan still runs,
+  // and the admin panel then shows them as a pass member too (logic/membership.ts there).
+  if (a.pass) {
+    const lines = [
+      `You train at ${a.gymName} with ${a.pass}. There is no plan to renew.`,
+      `Scan the gym's check-in QR when you arrive. The gym counts it as a ${a.pass} visit.`,
+      visits,
+    ];
+    if (a.qaStandIn) lines.push(QA_PASS_STAND_IN_NOTE);
+    return { tone: 'good', title: `${a.pass} member`, when: null, lines };
+  }
   if (cur) {
     const left = daysBetween(a.day, cur.endsOn);
     const soon = !a.next && left <= RENEW_SOON_DAYS;
@@ -145,19 +159,6 @@ export function membershipView(a: MembershipAnswer): MembershipView {
     }
     lines.push(visits);
     return { tone: soon ? 'soon' : 'good', title: cur.planName, when: endsLine(cur.endsOn, a.day), lines };
-  }
-  // F123: a pass member (FITPASS, cultpass...) has no plan to renew; the gym counts each visit for the company.
-  if (a.pass) {
-    return {
-      tone: 'good',
-      title: `${a.pass} member`,
-      when: null,
-      lines: [
-        `You train at ${a.gymName} with ${a.pass}. There is no plan to renew.`,
-        `Scan the gym's check-in QR when you arrive. The gym counts it as a ${a.pass} visit.`,
-        visits,
-      ],
-    };
   }
   if (a.next) {
     return { tone: 'good', title: a.next.planName, when: `Starts ${tinyDateWithYear(a.next.startsOn, a.day)}`, lines: [visits] };
@@ -173,3 +174,28 @@ export function keptLine(atMs: number, nowMs: number, clock: (ms: number) => str
   const sameDay = new Date(atMs).toDateString() === new Date(nowMs).toDateString();
   return sameDay ? `No internet. As of ${clock(atMs)} today.` : 'No internet. As of an earlier day: ask the desk if unsure.';
 }
+
+/**
+ * F123 device UAT, QA builds only (qa-device.yml writes extra.qaStandIns with 'passMember' into app.json before it
+ * builds the emulator APK; store and GitHub builds never carry it). Until the gym's server has 0055 it cannot say
+ * "pass member", so the UAT gym gives the test member a running plan with this name (qa/uat_gym.py make-pass): the
+ * old server then lets the check-in through, as 0055 does, and this build reads the plan as the pass it stands for.
+ * The card says on screen that it is test data. Once 0055 is live the server's own `pass` wins.
+ */
+export const QA_PASS_PLAN_PREFIX = 'QA pass stand-in: ';
+export const QA_PASS_STAND_IN_NOTE = "Test build: a stand-in pass, because your gym's server does not have this yet.";
+
+/** True when this build was made for the device UAT with the pass-member stand-in. PURE. */
+export function hasQaPassStandIn(extra: unknown): boolean {
+  const list = extra && typeof extra === 'object' ? (extra as { qaStandIns?: unknown }).qaStandIns : undefined;
+  return Array.isArray(list) && list.includes('passMember');
+}
+
+/** The answer as a QA build with the stand-in reads it; any other answer or build is returned unchanged. PURE. */
+export function withQaPassStandIn(a: MembershipAnswer, on: boolean): MembershipAnswer {
+  if (!on || !a.ok || a.pass || !a.current || !a.current.planName.startsWith(QA_PASS_PLAN_PREFIX)) return a;
+  const company = a.current.planName.slice(QA_PASS_PLAN_PREFIX.length).trim().slice(0, 40);
+  if (!company) return a;
+  return { ...a, current: null, next: null, pass: company, qaStandIn: true };
+}
+

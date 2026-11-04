@@ -104,13 +104,14 @@ jobs:
       # F147 (5 Nov 2026): this QA build only shows a made-up "Bring a friend" answer while the gym server has no
       # 0056, so the uat part can see the card, its words and the share menu; the card says on screen it is test
       # data. Store and GitHub release builds never carry this (release-apk.yml builds from app.json as committed).
+      # F123 (5 Nov 2026): 'passMember' reads qa/uat_gym.py's "QA pass stand-in: FITPASS" plan as a pass until 0055 is live.
       - name: QA-only stand-ins in app.json
         run: |
           python3 - <<'PY'
           import json
           f = 'apps/mobile/app.json'
           j = json.load(open(f, encoding='utf-8'))
-          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite']
+          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember']
           open(f, 'w', encoding='utf-8').write(json.dumps(j, indent=2, ensure_ascii=False) + chr(10))
           print('qaStandIns', j['expo']['extra']['qaStandIns'])
           PY

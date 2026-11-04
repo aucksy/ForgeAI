@@ -1,11 +1,13 @@
-# Part UAT, flow 14 (gym, after flow 12): F123 pass members (FITPASS, cultpass), 4 Nov 2026.
+# Part UAT, flow 14 (gym, after flow 12): F123 pass members (FITPASS, cultpass), 4-5 Nov 2026.
 # run-device-qa.sh has just made "Uma Desk" a FITPASS pass member on the fresh "QA UAT Gym" (qa/uat_gym.py
-# make-pass: passCompany FITPASS from today, her plan cancelled), as the admin app's member form saves it.
-# The phone (member "Uma", already checked in today by flow 8) scans the gym's poster link again:
-#  - With supabase 0055 live: the check-in does NOT say "see the desk" (a pass member is covered), and the
-#    Gym tab's "My membership" reads "FITPASS member" with its two lines, and no "Renew my plan".
-#  - Until 0055 is live (NOT applied yet): the old words, "Please see the desk" and "No plan yet". The
-#    flow checks whichever the server gives, and the pictures show which.
+# make-pass: passCompany FITPASS from today, her paid plan cancelled), as the admin app's member form saves it.
+# Until supabase 0055 is live (NOT applied yet) the server cannot say "pass member", so make-pass also gives her
+# a running plan named "QA pass stand-in: FITPASS": the old server then lets her check-in through, as 0055 does,
+# and this QA build (qa-device.yml: extra.qaStandIns has passMember) reads that plan as the pass and says so on
+# screen ("Test build: a stand-in pass ..."). Store builds never do. With 0055 live the server's answer wins and
+# the note is gone; every other word is the same either way.
+# The words BEFORE 0055 on a store build ("Please see the desk", "No plan yet") were photographed in qa-device
+# run 41890370772 (rel-140/141-pass-card-before-0055).
 # The desk's side (Add member as a pass member, Pass visit, the monthly count) is the admin panel's e2e
 # (apps/dashboard/e2e/pass.spec.mjs). CODE and GYM are passed by run-device-qa.sh (-e); no `env:` default.
 appId: com.mettleup.app
@@ -18,51 +20,41 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: '^You were already checked in at ${GYM} today\. Nothing more to do\.$'
     timeout: 30000
+# A pass member is covered: the check-in never sends her to the desk.
+- assertNotVisible: '.*Please see the desk.*'
 - takeScreenshot: rel-140-pass-checkin
-# The 0055 branch comes FIRST (fix, 5 Nov 2026): a `when` is checked when its runFlow starts, so after the
-# first branch has moved to the Gym tab the desk line is gone and a later `notVisible` branch ran too.
-# In this order each branch can only start from the check-in screen.
-# ---------------------------------------------------------------- with 0055: a pass member
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+- tapOn:
+    text: "^Gym$"
+    index: 0
+    optional: true
+# "My membership": the pass, no plan to renew.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^FITPASS member$"
+- assertVisible: '^You train at ${GYM} with FITPASS\. There is no plan to renew\.$'
+- assertVisible: '^Scan the gym''s check-in QR when you arrive\. The gym counts it as a FITPASS visit\.$'
+- assertVisible: '^[0-9]+ days? at the gym this month\.$'
+- assertNotVisible: "^Renew my plan$"
+- assertNotVisible: "^Pause my plan$"
+- assertNotVisible: ".*Your plan has ended.*"
+- assertNotVisible: ".*QA pass stand-in.*"
+# Until 0055 is live: this QA build's stand-in, said on screen.
 - runFlow:
     when:
-      notVisible: 'Your gym membership is not active today\. Please see the desk\.'
+      visible: "^Test build: a stand-in pass.*"
     commands:
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^Done$"
-      - tapOn: "^Done$"
-      - tapOn:
-          text: "^Gym$"
-          index: 0
-          optional: true
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^FITPASS member$"
-      - assertVisible: "^You train at ${GYM} with FITPASS\\. There is no plan to renew\\.$"
-      - assertVisible: "^Scan the gym's check-in QR when you arrive\\. The gym counts it as a FITPASS visit\\.$"
-      - assertVisible: "^[0-9]+ days? at the gym this month\\.$"
-      - assertNotVisible: "^Renew my plan$"
-      - assertNotVisible: ".*Your plan has ended.*"
-      - takeScreenshot: rel-141-pass-card
-# ---------------------------------------------------------------- until 0055 is live: the old words
-- runFlow:
-    when:
-      visible: 'Your gym membership is not active today\. Please see the desk\.'
-    commands:
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^Done$"
-      - tapOn: "^Done$"
-      - tapOn:
-          text: "^Gym$"
-          index: 0
-          optional: true
-      - runFlow:
-          file: sub-find.yaml
-          env:
-            FIND: "^No plan yet$"
-      - assertVisible: "${GYM} has no plan for you on record\\. Ask the desk\\."
-      - takeScreenshot: rel-141-pass-card-before-0055
+      - assertVisible: '^Test build: a stand-in pass, because your gym''s server does not have this yet\.$'
+- takeScreenshot: rel-141-pass-card
+# The rest of the Gym tab stays open to a pass member (nothing there needs a plan): Bring a friend is near the end.
+- scrollUntilVisible:
+    element:
+      text: "^Invite a friend$"
+    direction: DOWN
+    timeout: 20000
+- takeScreenshot: rel-142-pass-gym-tab-below

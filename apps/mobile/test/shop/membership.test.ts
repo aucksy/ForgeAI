@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { endsLine, keptLine, membershipFromRow, membershipView, RENEW_SOON_DAYS } from '@/shop/membership';
+import {
+  endsLine,
+  hasQaPassStandIn,
+  keptLine,
+  membershipFromRow,
+  membershipView,
+  QA_PASS_STAND_IN_NOTE,
+  RENEW_SOON_DAYS,
+  withQaPassStandIn,
+} from '@/shop/membership';
 
 const today = '2026-10-18';
 const row = (over: Record<string, unknown> = {}) => ({
@@ -108,7 +117,34 @@ describe('My membership: a pass member (F123, supabase 0055)', () => {
       ],
     });
   });
-  it('a plan the gym sold them still shows as a plan', () => {
-    expect(view({ pass: 'cultpass' }).title).toBe('Quarterly + PT');
+  it('an old plan still running does not win: the desk moved them to a pass (as the admin panel shows them)', () => {
+    const v = view({ pass: 'cultpass' });
+    expect(v.title).toBe('cultpass member');
+    expect(v.lines.join(' ')).not.toMatch(/Renew/);
+  });
+});
+
+describe('My membership: the F123 device-UAT stand-in (QA builds only)', () => {
+  const stand = (over: Record<string, unknown> = {}) =>
+    membershipFromRow(row({ current: { planName: 'QA pass stand-in: FITPASS', startsOn: '2026-10-17', endsOn: '2026-11-17' }, ...over }))!;
+  it('only a build with the flag uses it', () => {
+    expect(hasQaPassStandIn({ qaStandIns: ['friendInvite', 'passMember'] })).toBe(true);
+    expect(hasQaPassStandIn({ qaStandIns: ['friendInvite'] })).toBe(false);
+    expect(hasQaPassStandIn(undefined)).toBe(false);
+    expect(withQaPassStandIn(stand(), false)).toEqual(stand());
+  });
+  it('reads the stand-in plan as the pass, and says on screen it is test data', () => {
+    const a = withQaPassStandIn(stand(), true);
+    expect(a).toMatchObject({ ok: true, pass: 'FITPASS', current: null, qaStandIn: true });
+    const v = membershipView(a);
+    expect(v.title).toBe('FITPASS member');
+    expect(v.lines[v.lines.length - 1]).toBe(QA_PASS_STAND_IN_NOTE);
+  });
+  it('a real plan, or a server that already says the pass (0055 live), is left alone', () => {
+    const real = membershipFromRow(row())!;
+    expect(withQaPassStandIn(real, true)).toBe(real);
+    const live = stand({ pass: 'FITPASS' });
+    expect(withQaPassStandIn(live, true)).toBe(live);
+    expect(membershipView(live).lines).not.toContain(QA_PASS_STAND_IN_NOTE);
   });
 });

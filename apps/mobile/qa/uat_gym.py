@@ -12,6 +12,10 @@ yes to a typed number), the way qa-journeys and qa-conditions make their own gym
   make-pass <slot> <full name> <company>
         F123: that desk-list member becomes a pass member of <company> (FITPASS) from today, and their
         plan is cancelled (a pass member has no plan), as the admin app's member form would save it.
+        Until the live server has 0055 it cannot say "pass member", so the member also gets a running
+        plan named "QA pass stand-in: <company>": the old server lets their check-in through (as 0055
+        does), and only a QA build (extra.qaStandIns has passMember) reads it as the pass
+        (src/shop/membership.ts withQaPassStandIn). With 0055 live the server's own answer wins.
   sign-out <slot>              end the owner session
 
 Security (WP6 rules, unchanged): the gym is made by this run; never FORGE1 / RAMS01; the owner session
@@ -69,8 +73,16 @@ def make_pass(st, full_name, company):
     for r in rows:
         if r["k"] == "membership" and r["d"].get("memberId") == member["id"]:
             recs.append({"k": "membership", "id": r["id"], "d": {**r["d"], "cancelled": True, "updatedAt": now_ms}})
+    cancelled = len(recs) - 1
+    today = datetime.date.fromisoformat(xj.today_ist())
+    sid = member["id"] + "-qa-pass"
+    recs.append({"k": "membership", "id": sid, "d": {
+        "id": sid, "gymId": st["gymId"], "memberId": member["id"], "planName": "QA pass stand-in: " + company,
+        "startsOn": (today - datetime.timedelta(days=1)).isoformat(),
+        "endsOn": (today + datetime.timedelta(days=30)).isoformat(),
+        "pricePaise": 0, "cancelled": False, "createdAt": now_ms}})
     v = xj.rpc("crm_push", {"p_key": st["key"], "p_base": base, "p_records": recs, "p_push_id": str(uuid.uuid4())})
-    return f"'{full_name}' is now a {company} pass member, {len(recs) - 1} plan(s) cancelled (version {v})"
+    return f"'{full_name}' is now a {company} pass member, {cancelled} plan(s) cancelled, stand-in plan added (version {v})"
 
 
 def main(argv):

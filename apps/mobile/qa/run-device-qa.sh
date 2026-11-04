@@ -1825,8 +1825,8 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uatf147 uat-rel-f147-bring-friend.yaml -e "GYM=QA UAT Gym" || rc=1
     # F79: "Pay your gym" on the plan card (hidden until online payments are live; the flow checks either way).
     uat_flow uatf79 uat-rel-f79-pay.yaml -e "GYM=QA UAT Gym" || rc=1
-    # F123: Uma becomes a FITPASS pass member (her plan cancelled); the poster check-in and My membership
-    # then show the pass words once 0055 is live, the old ones until then (the flow checks either way).
+    # F123: Uma becomes a FITPASS pass member (her plan cancelled, plus a "QA pass stand-in: FITPASS" plan that this
+    # QA build reads as the pass until 0055 is live); the poster check-in lets her through and My membership shows the pass.
     python3 "$QA_DIR/uat_gym.py" make-pass U "Uma Desk" FITPASS 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
     uat_flow uat14 uat-rel-14-pass-member.yaml -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
     # F146: the gym's logo and name on share pictures, and the before/after picture.
