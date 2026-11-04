@@ -15,6 +15,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   demo_data: 'demo flag',
   machineTipHidden: 'gym busy-machine tips hidden with "Not now" (30 days; a new phone may show one again)',
   demo_until: 'demo flag',
+  safekeep_hidden_until: '"keep your workouts safe" card hidden with "Not now" (30 days; a new phone may show it again)',
   demo_legacy_checked: 'demo flag',
   seeded: 'demo flag (the sample data was loaded)',
   cloud_copy_owner: 'gym sign-in: who this phone copies for',

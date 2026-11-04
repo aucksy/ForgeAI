@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-320. Decisions on R-319: backup A, widgets A, trainer ask as proposed, help answers invisible — 4 Nov 2026
+His words: "So for the ask your trainer thingy, I'm okay with the implementation that you're suggesting, but I feel
+like the gym owners would want to see these conversations. Not sure, but maybe let's build it this way and later we
+can think about transparency to gym owner, we can put that in the idea." / "You're saying that AI already answers
+the questions, but where do I see the answer as a member? I don't see any place to see the answer. And when does
+that answer arrive? I just don't know. There is no record of the answers in my app today." / "Backups - Lets go with
+A" / "Widget - Lets go with A".
+- Ask a trainer: build as proposed (question goes to the picked trainer only). IDEA (not built): let the gym owner
+  see trainer-member conversations (transparency) — decide later.
+- Help answers: the member has no record of answers. Add a "Your questions" history in Help and feedback with each
+  question, the AI answer, the team's reply, and a notification when a team reply arrives.
+- Backup A: MettleUp account (Google sign-in) is the only backup; Google Drive backup removed as a choice;
+  "Download my data" file for own records; Drive restore kept for a few versions so current Drive users can bring
+  their backup in. Privacy wording change drafted for his approval.
+- Widgets A: new "Gym right now" widget (how busy + check-in code), and the Today widget shows what to beat
+  (last time's numbers + a target).
+- CI was red since eecd71f2: backup coverage test missed the new meta key safekeep_hidden_until. Fixed.
+
 ## R-319. Owner's settings + system review: 11 asks, every word kept — 4 Nov 2026
 Owner: "note all of this down, do not lose anything what I've said and act on what should be acted on and for
 others let me know what you think and let's start building". Status of each: see the table under R-319 in the
