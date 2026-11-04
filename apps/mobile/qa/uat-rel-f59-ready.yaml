@@ -1,0 +1,101 @@
+# Part UAT, F59 "Which muscles are ready today" and F60 "Quick workout" (4 Nov 2026). Runs after
+# flow 9 (the demo, then the member's own first workout today), on the owner's phone size (360 dp,
+# font 1.3; part_uat_f59 sets it). The Workout tab's card names what is still resting from the
+# logged workouts and opens the Ready today page (the body map in three colours, the muscles in
+# words, the note that it is worked out from logged workouts only); its button opens Quick workout:
+# the time, the body parts picked for you, the equipment, the plan that fits the time; Start opens
+# it as a normal workout, which is then thrown away.
+appId: com.mettleup.app
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+# ---------------------------------------------------------------- 1. the card on the Workout tab
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "(Muscles ready today|Every muscle is rested)\\. .* Opens the body map\\."
+# A workout was finished today (flow 9), so something is still resting.
+- assertVisible: "Muscles ready today\\. Still resting: .* Everything else is ready\\. Opens the body map\\."
+- assertVisible: "Quick workout for the time you have"
+- takeScreenshot: rel-f59-01-workout-tab-card
+# ---------------------------------------------------------------- 2. the Ready today page
+- tapOn: "Muscles ready today\\. .* Opens the body map\\."
+- extendedWaitUntil:
+    visible: "^Ready today$"
+    timeout: 15000
+- assertVisible: "Which muscles have rested enough to train"
+- assertVisible: "Body map of which muscles are ready, .* figure, front and back"
+- assertVisible: "^Ready$"
+- assertVisible: "^Almost ready$"
+- assertVisible: "^Still resting$"
+- assertVisible: "Tap a muscle to see when it is ready\\."
+- takeScreenshot: rel-f59-02-ready-page-top
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Worked out only from the workouts you logged in this app\\..*Sleep and soreness are not counted, so listen to your body too\\."
+- assertVisible: "Still resting: .*"
+- assertVisible: "Ready: .*"
+- takeScreenshot: rel-f59-03-ready-page-lists
+# ---------------------------------------------------------------- 3. Quick workout
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Quick workout for the time you have"
+- tapOn: "Quick workout for the time you have"
+- extendedWaitUntil:
+    visible: "^Quick workout$"
+    timeout: 15000
+- assertVisible: "Choose your time and body parts\\. The app picks the exercises for you\\."
+- assertVisible: "How much time do you have\\?"
+- assertVisible: "^30 min$"
+- assertVisible: "What do you want to train\\?"
+- assertVisible: "Picked for you: your most rested body parts, from the workouts you logged\\."
+- takeScreenshot: rel-f60-01-quick-top
+- tapOn: "^20 min$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Takes about ([0-9]|1[0-9]|20) minutes, including rests\\."
+- assertVisible: "Quick workout: .*"
+- assertVisible: "1\\. .*"
+- assertVisible: "[2-4] sets of [0-9]+–[0-9]+ reps"
+- takeScreenshot: rel-f60-02-quick-20-min
+- tapOn: "^60 min$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Takes about ([4-5][0-9]|60) minutes, including rests\\."
+- takeScreenshot: rel-f60-03-quick-60-min
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "What equipment do you have\\?"
+- tapOn: "^Dumbbells only$"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Takes about [0-9]+ minutes, including rests\\."
+- assertNotVisible: ".*Barbell.*|.*Machine.*|.*Cable.*"
+- takeScreenshot: rel-f60-04-quick-dumbbells
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start this workout"
+- takeScreenshot: rel-f60-05-quick-bottom
+- tapOn: "Start this workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- takeScreenshot: rel-f60-06-quick-started
+# Thrown away from the Workout tab (sub-workout-fresh: Discard workout -> Discard).
+- tapOn: "Minimise workout. It keeps running."
+- runFlow: sub-workout-fresh.yaml

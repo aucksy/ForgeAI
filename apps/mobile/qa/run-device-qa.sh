@@ -1849,6 +1849,12 @@ part_uat() {
   # Launch audit #6 (3 Nov 2026): starts afresh (demo, then the member's own first workout), so it runs
   # whatever happened above.
   uat_flow uat9 uat-rel-9-demo-first.yaml
+  # F59 / F60 / F61 (4 Nov 2026): on flow 9's data (the demo plus today's own workout, so something is
+  # still resting): the Workout tab's "Muscles ready today" card, the Ready today page, Quick workout (20,
+  # 60 min, dumbbells only, Start, thrown away), then Settings -> "Ask an AI about your workouts" and its
+  # share sheet. Run with profile=owner for the owner's 360 dp / font 1.3.
+  uat_flow uatf59 uat-rel-f59-ready.yaml
+  uat_flow uatf61 uat-rel-f61-ask-ai.yaml
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
