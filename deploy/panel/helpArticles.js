@@ -186,6 +186,16 @@ export const HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/Enquiries.tsx'],
   },
   {
+    id: 'bring-a-friend-admin',
+    who: 'owner',
+    title: 'Members bring a friend (free days for each friend who joins)',
+    text:
+      'Members can send a friend a link from the MettleUp app. The friend leaves a name and number, and it shows in Enquiries with "Referred by" and the member\'s name. ' +
+      'To give free days: open Settings, then "Member app". Under "Bring a friend", type the days in "Free days for each friend who joins" and tap "Save free days". Leave it empty to give none. ' +
+      'When the friend joins, tap "Add as member". A "Thank" page opens: tap "Give" to add the days to the member\'s plan, or "Not now" to do it later from the enquiry. Only the owner can give them.',
+    screens: ['apps/dashboard/src/crm/ui/screens/BringAFriend.tsx'],
+  },
+  {
     id: 'expenses-and-profit',
     who: 'owner',
     title: 'Note money going out and see profit (Expenses)',
@@ -405,6 +415,37 @@ export const HELP_ARTICLES = [
       'The desk confirms it. Changed your mind? Tap "Take back my request". If you do not see these buttons, ask the desk. ' +
       'On the same page, tap the open or closed line to see Gym timings, and "Diet plan" to see the plan your trainer sent.',
     screens: ['apps/mobile/src/app/shop/hours.tsx', 'apps/mobile/src/app/shop/diet.tsx'],
+  },
+  {
+    id: 'bring-a-friend',
+    who: 'member',
+    title: 'Invite a friend to your gym',
+    text:
+      '1. Open the Gym tab, then "My gym". ' +
+      '2. Under "Bring a friend", tap "Invite a friend" and pick WhatsApp or another app. ' +
+      'Your friend opens the link, leaves a name and number, and the gym calls them. Only the gym sees their number. ' +
+      '"Friends who joined" shows how many of your friends became members. If your gym gives free days for this, the card says how many. The gym adds them to your plan. ' +
+      'If you do not see the card, your gym has not started it yet.',
+  },
+  {
+    id: 'ready-muscles-and-quick-workout',
+    who: 'member',
+    title: 'See which muscles are ready, and get a quick workout',
+    text:
+      'On the Workout tab, the "Muscles ready today" card shows which muscles have rested enough. Tap "See the body map" for the drawing: green is ready, amber almost ready, red still resting. It uses only the workouts you logged. ' +
+      'Short on time? Tap "Quick workout for the time you have". Pick how much time you have, what to train and your equipment. The app picks the exercises. Tap "Start this workout".',
+    screens: ['apps/mobile/src/app/ready.tsx', 'apps/mobile/src/app/quick.tsx'],
+  },
+  {
+    id: 'ask-an-ai',
+    who: 'member',
+    title: 'Ask an AI app about your workouts',
+    text:
+      '1. Open Profile, tap Settings, then "Ask an AI about your workouts". ' +
+      '2. The page shows a short text of your last 4 weeks of workouts, with a question at the end. ' +
+      '3. Tap "Share to an AI app" and pick ChatGPT, Gemini or any app. ' +
+      'MettleUp sends nothing itself. The text has no name, phone number or body weight.',
+    screens: ['apps/mobile/src/app/settings/ask-ai.tsx'],
   },
   {
     id: 'gym-reminders-and-messages',
