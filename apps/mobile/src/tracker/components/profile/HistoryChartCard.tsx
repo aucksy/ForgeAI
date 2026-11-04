@@ -195,7 +195,9 @@ export function HistoryChartCard({
                 style={({ pressed }) => ({ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 4, opacity: pressed ? 0.7 : 1 })}
               >
                 <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>See these workouts</Text>
-                <Glyph name="chevron-right" size={16} color={color.accent} />
+                <View style={{ transform: [{ rotate: '180deg' }] }}>
+                  <Glyph name="chevron-left" size={16} color={color.accent} />
+                </View>
               </Pressable>
             ) : null}
           </View>
