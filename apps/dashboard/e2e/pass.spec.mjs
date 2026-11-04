@@ -40,11 +40,14 @@ async function makePass(s, company) {
 
 for (const size of ['phone', 'computer']) {
   test.describe(`pass members on a ${size}`, () => {
-    if (size === 'phone') test.use({ viewport: { width: 375, height: 812 } });
-    else test.use({ viewport: { width: 1280, height: 900 }, isMobile: false });
+    // The gym is set up at phone size (the shared set-up opens Settings through the phone's "More" tab,
+    // which a computer does not have). The computer run then turns the window to 1280 x 900 and does
+    // everything F123 does there, through the sidebar (it has Today, Members and Visits too).
+    test.use({ viewport: { width: 375, height: 812 } });
 
     test(`F123 ${size}: a pass member, a pass visit, off the renewal list, the monthly count`, async ({ page }) => {
       await gymWithMonthlyPlan(page);
+      if (size === 'computer') await page.setViewportSize({ width: 1280, height: 900 });
 
       // 1. Chetan pays; his month runs 20 Sep - 19 Oct, so it ends in 2 days.
       await addMember(page, CHETAN);
