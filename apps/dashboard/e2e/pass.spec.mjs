@@ -83,6 +83,7 @@ for (const size of ['phone', 'computer']) {
       await expect(main.getByText('Pass member', { exact: true })).toBeVisible();
       await expect(main.getByText('Comes with FITPASS. No plan and no dues: FITPASS pays your gym for each visit.')).toBeVisible();
       await expect(tile(page, 'Dues')).toContainText('—');
+      await expect(tile(page, 'Dues')).toContainText('No dues on a pass');
       await expect(tile(page, 'Pass visits this month')).toContainText('0');
       await expect(tile(page, 'Pass visits this month')).toContainText('For FITPASS');
 
@@ -93,6 +94,10 @@ for (const size of ['phone', 'computer']) {
       await expect(tile(page, 'Total visits')).toContainText('1');
       await expectFitsPhone(page, 'on a pass member');
       await shot(page, `${size}-pass-2-member-page`);
+      // The full-page picture has the phone's bottom bar over the second row of tiles: a picture of
+      // the screen as seen, scrolled to the tiles, so "1 pass visit this month" is read with its label.
+      await tile(page, 'Total visits').scrollIntoViewIfNeeded();
+      await shot(page, `${size}-pass-2b-member-tiles`, false);
 
       // 3. Chetan moves to cultpass: off the renewal list.
       await openMember(page, CHETAN.name);
@@ -120,6 +125,8 @@ for (const size of ['phone', 'computer']) {
       await open(page, 'Today');
       await expect(main).not.toContainText('No plan bought');
       await expect(tile(page, 'Ending in 1-3 days')).toContainText('0');
+      // Your numbers -> Renewals due must not count Chetan's old plan either (the 5 Nov picture showed 1).
+      await expect(tile(page, 'Renewals due').locator('div').first()).toHaveText('0');
       await shot(page, `${size}-pass-4-today`);
 
       // The register says which company each visit counts for.

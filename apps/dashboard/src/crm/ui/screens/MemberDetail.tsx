@@ -501,7 +501,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           label="Dues"
           value={view.outstandingP > 0 ? formatINR(view.outstandingP) : '—'}
           tone={view.outstandingP > 0 ? 'warn' : undefined}
-          sub={view.outstandingP > 0 ? 'Still to pay' : 'Fully paid'}
+          sub={view.outstandingP > 0 ? 'Still to pay' : passCompany ? t('No dues on a pass') : 'Fully paid'}
         />
         <StatTile
           label="Last visit"

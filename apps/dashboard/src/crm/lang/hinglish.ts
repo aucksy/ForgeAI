@@ -418,6 +418,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Pass visit counted for {company}.': '{company} ke liye pass visit gin li.',
   'Pass visits this month': 'Is mahine ki pass visits',
   'For {company}': '{company} ke liye',
+  'No dues on a pass': 'Pass par koi dues nahi',
   'Comes with {company}. No plan and no dues: {company} pays your gym for each visit.':
     '{company} se aate hain. Na plan, na baaki paise: {company} har visit ke paise aapke gym ko deti hai.',
   '{company} visit': '{company} visit',

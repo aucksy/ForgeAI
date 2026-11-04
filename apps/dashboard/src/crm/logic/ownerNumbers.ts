@@ -31,6 +31,7 @@ import { atRiskList, hourHistogram, isRegisterInUse, type AtRiskRow } from './at
 import { duesByMember, duesLedger, type MemberDueRow } from './collections';
 import { addDays, dateISOFromEpoch, diffDays, formatDay, formatDayShort, isValidDateISO, type DateISO } from './dates';
 import { sumPaise, type Paise } from './money';
+import { isPassMember } from './passMembers';
 import { gymTerms } from './pt';
 
 // ---------------------------------------------------------------- the tiles
@@ -223,6 +224,8 @@ export function renewalsDue(
   const rows: RenewalRow[] = [];
   for (const member of members) {
     if (member.archived) continue;
+    // F123: a pass member (FITPASS, cultpass...) is never due a renewal, even with an old plan ending.
+    if (isPassMember(member)) continue;
     const live = gymTerms(byMember.get(member.id) ?? []).filter((m) => !m.cancelled);
     let pick: Membership | null = null;
     for (const t of live) {

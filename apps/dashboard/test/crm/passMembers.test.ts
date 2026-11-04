@@ -8,6 +8,7 @@ import { emptySnapshot, LocalCrmData, memoryStore } from '../../src/crm/data/loc
 import { cameInWithProblem } from '../../src/crm/logic/cameInToday';
 import { atRiskList } from '../../src/crm/logic/attendance';
 import { buildMemberView, needsAttentionToday, STATE_LABEL } from '../../src/crm/logic/membership';
+import { aheadWindow, renewalsDue } from '../../src/crm/logic/ownerNumbers';
 import {
   isPassMember,
   normalizePassCompany,
@@ -82,6 +83,13 @@ describe('a pass member is never chased', () => {
     expect(needsAttentionToday(v)).toBe(false);
     // The same member without the pass would be on the renewal list.
     expect(needsAttentionToday(buildMemberView({ ...pass, passCompany: null }, [old], [], [], TODAY))).toBe(true);
+  });
+
+  it('is not counted in Today -> Your numbers -> Renewals due (found in the UAT picture, 5 Nov 2026)', () => {
+    const old = makeMembership({ memberId: 'p1', startsOn: '2026-10-08', endsOn: '2026-11-07' });
+    const w = aheadWindow({ kind: '30' }, TODAY);
+    expect(renewalsDue([pass], [old], w, TODAY)).toEqual([]);
+    expect(renewalsDue([{ ...pass, passCompany: null }], [old], w, TODAY)).toHaveLength(1);
   });
 
   it('coming in today is not "no plan bought"', () => {
