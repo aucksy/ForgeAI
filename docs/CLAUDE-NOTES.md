@@ -28,6 +28,11 @@ trainers' threads (transparency = later idea; one-line comment at `_tq_visible` 
   + badge, member page Progress (shared / not shared / older app), Full workout history card.
 - New words (member and staff) need his check at UAT.
 
+## R-322. Research: WhatsApp vs SMS login codes, without GST — 4 Nov 2026
+He asked: can he turn on WhatsApp login codes for members and gym owners without GST or a business, is WhatsApp or SMS cheaper long term, and which is easier.
+Found (vendor sources, Meta rate card cited by them): WhatsApp authentication message in India ~Rs 0.115 + 18% GST (Meta direct, Cloud API); SMS OTP ~Rs 0.13-0.25 + GST + DLT registration (~Rs 5,900, needs GST/CIN-type proof); Firebase phone auth ~$0.07 (~Rs 6) per SMS in India. Meta Cloud API works BEFORE business verification with a cap of ~250 unique people per 24 h; verification for a sole proprietor without GST: Udyam (free, online, Aadhaar + PAN) is the most-cited alternative, not confirmed by Meta itself. Needs a phone number not already on the WhatsApp app.
+My pick: WhatsApp via Meta Cloud API direct (no provider), start unverified for the pilot, get Udyam for verification; SMS only as a later fallback. Not built; waits for his yes.
+
 ## R-320. Decisions on R-319: backup A, widgets A, trainer ask as proposed, help answers invisible — 4 Nov 2026
 His words: "So for the ask your trainer thingy, I'm okay with the implementation that you're suggesting, but I feel
 like the gym owners would want to see these conversations. Not sure, but maybe let's build it this way and later we
