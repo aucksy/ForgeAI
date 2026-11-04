@@ -218,6 +218,15 @@ describe('previousExcludingSession', () => {
     expect(previousExcludingSession(history, 'sess-1', '2026-07-20')).toEqual([]);
   });
 
+  it('with no day given (history already read "before this workout"), a same-day earlier session counts', () => {
+    // 4 Nov 2026: editing the evening workout must show that morning's on PREVIOUS.
+    const history = [
+      { sessionId: 'sess-1', dateISO: '2026-07-20', sets: [{ weightKg: 80, reps: 5 }] },
+      { sessionId: 'sess-am', dateISO: '2026-07-20', sets: [{ weightKg: 75, reps: 6 }] },
+    ];
+    expect(previousExcludingSession(history, 'sess-1')).toEqual([{ weightKg: 75, reps: 6 }]);
+  });
+
   it('is empty when this is the only session for that lift', () => {
     expect(
       previousExcludingSession(

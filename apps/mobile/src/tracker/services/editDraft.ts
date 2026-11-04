@@ -113,15 +113,20 @@ export function buildEditDraft(
  * would then quote the most RECENT session's numbers — and PREVIOUS is not just
  * decoration: ticking a blank set auto-fills from it, so a future workout's weight
  * would be written into a past session.
+ *
+ * `beforeDateISO` drops every session on that day or later. Leave it out when `history` was
+ * already read "before this workout" (`HistoryBefore`: an earlier day, OR the same day and an
+ * earlier start) - a day-only check there would also drop that morning's workout when the
+ * evening one is edited, and PREVIOUS would show nothing (4 Nov 2026).
  */
 export function previousExcludingSession<
   S extends { weightKg: number; reps: number; durationSec?: number | null; distanceM?: number | null },
 >(
   history: { sessionId: string; dateISO: string; sets: S[] }[],
   editingSessionId: string,
-  beforeDateISO: string,
+  beforeDateISO?: string,
 ): S[] {
-  const prior = history.find((h) => h.sessionId !== editingSessionId && h.dateISO < beforeDateISO);
+  const prior = history.find((h) => h.sessionId !== editingSessionId && (beforeDateISO == null || h.dateISO < beforeDateISO));
   return prior?.sets ?? [];
 }
 

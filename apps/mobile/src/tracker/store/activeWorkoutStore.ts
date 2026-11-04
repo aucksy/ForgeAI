@@ -2483,13 +2483,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       const sources: { sessionId: string; exerciseId: string }[] = [];
       for (const h of histories) {
         const lt = kinds[h.exerciseId]?.logType ?? 'weight_reps';
-        const prior = previousExcludingSession(h.history, session.id, session.dateISO);
+        // `before` already keeps only workouts before this one (a same-day earlier one included).
+        const prior = previousExcludingSession(h.history, session.id);
         previous[h.exerciseId] = prior.map((s) => toPrevSet(s, lt));
         if (prior[0]) sources.push({ sessionId: prior[0].sessionId, exerciseId: h.exerciseId });
       }
       // A failed read never refuses the edit: the warm-up rows then show no PREVIOUS, the card
       // no "Last:" name, and no "First time in this folder" line.
-      const priorOf = new Map(histories.map((h) => [h.exerciseId, previousExcludingSession(h.history, session.id, session.dateISO)]));
+      const priorOf = new Map(histories.map((h) => [h.exerciseId, previousExcludingSession(h.history, session.id)]));
       const dayOf = new Map(histories.flatMap((h) => h.history.map((x) => [x.sessionId, x.dateISO] as const)));
       const empty = histories
         .filter((h) => (priorOf.get(h.exerciseId) ?? []).length === 0 && scopeOfEx(h.exerciseId) != null)

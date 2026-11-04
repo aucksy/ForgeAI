@@ -8,7 +8,7 @@
  *  - "Same routine" reads that routine's last workout's warm-ups;
  *  - a back-off card reads its own card's warm-ups; editing a past workout reads the one before.
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PreviousFrom } from '@/tracker/store/trackerPrefsStore';
 import { bootRealApp, type RealDb } from '../helpers/realDb';
@@ -34,14 +34,16 @@ async function logBench(
   title: string | null,
   warmups: Pair[],
   working: Pair[],
-  opts: { easy?: boolean; backoff?: { warmups: Pair[]; working: Pair[] }; daysAgo?: number } = {},
+  opts: { easy?: boolean; backoff?: { warmups: Pair[]; working: Pair[] }; daysAgo?: number; dateISO?: string } = {},
 ): Promise<string> {
   const { createSession } = await import('@/db/repos/workoutRepo');
   const { addSetsWithMeta } = await import('@/tracker/db/trackerSets');
   const { getDb } = await import('@/db');
-  const { toISO, todayISO } = await import('@/lib/date');
+  const { addDays, todayISO } = await import('@/lib/date');
   clock += 60_000;
-  const dateISO = opts.daysAgo ? toISO(new Date(Date.now() - opts.daysAgo * 86_400_000)) : todayISO();
+  // Calendar days, not 24-hour blocks: on the night the clocks go back, "now - 3 × 24 h" and
+  // "now - 2 × 24 h" fall on the SAME day (New York, 1 Nov 2026, 23:xx).
+  const dateISO = opts.dateISO ?? (opts.daysAgo ? addDays(todayISO(), -opts.daysAgo) : todayISO());
   const s = await createSession({ dateISO, dayType: 'push', source: 'manual', startedAt: clock });
   const rows = (w: Pair[], k: Pair[], cardIndex?: number) => [
     ...w.map(([weightKg, reps]) => ({ exerciseId: bench, weightKg, reps, isWarmup: true, ...(cardIndex ? { cardIndex } : {}) })),
@@ -200,6 +202,49 @@ describe('warm-up rows show last time’s warm-ups', () => {
     const { getSessionDetail } = await import('@/db/repos/workoutRepo');
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
     await useActiveWorkout.getState().startEditingSession((await getSessionDetail(second))!);
+    expect(await previousColumn()).toEqual(['W 40×10', '1 100×5', '2 100×5', '3 100×5']);
+    await useActiveWorkout.getState().discard();
+  });
+});
+
+describe('editing a past workout late in the evening, New York, the week the clocks went back', () => {
+  let tz: string | undefined;
+  beforeEach(() => {
+    tz = process.env.TZ;
+    process.env.TZ = 'America/New_York';
+    vi.setSystemTime(new Date('2026-11-04T04:40:00Z')); // Tue 3 Nov, 23:40 in New York
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    if (tz == null) delete process.env.TZ;
+    else process.env.TZ = tz;
+  });
+
+  it('the clock and zone are really fixed', async () => {
+    const { todayISO } = await import('@/lib/date');
+    expect(todayISO()).toBe('2026-11-03');
+    expect(new Date().getHours()).toBe(23);
+  });
+
+  it('3, 2 and 1 days ago are three different days; the middle one reads the first', async () => {
+    const first = await logBench(R1, 'Push 1', [[40, 10], [60, 5]], [[100, 5], [100, 5], [100, 5]], { daysAgo: 3 });
+    const second = await logBench(R1, 'Push 1', [[45, 10]], [[102.5, 5], [102.5, 5], [102.5, 5]], { daysAgo: 2 });
+    await logBench(R1, 'Push 1', [[50, 10]], [[105, 5], [105, 5], [105, 5]], { daysAgo: 1 });
+    const day = (id: string): string => db.all<{ d: string }>('SELECT date_iso AS d FROM workout_sessions WHERE id = ?', [id])[0].d;
+    expect([day(first), day(second)]).toEqual(['2026-10-31', '2026-11-01']);
+    const { getSessionDetail } = await import('@/db/repos/workoutRepo');
+    const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
+    await useActiveWorkout.getState().startEditingSession((await getSessionDetail(second))!);
+    expect(await previousColumn()).toEqual(['W 40×10', '1 100×5', '2 100×5', '3 100×5']);
+    await useActiveWorkout.getState().discard();
+  });
+
+  it('two workouts on one day: editing the evening one shows the morning one on PREVIOUS', async () => {
+    await logBench(R1, 'Push 1', [[40, 10], [60, 5]], [[100, 5], [100, 5], [100, 5]], { dateISO: '2026-11-01' });
+    const evening = await logBench(R1, 'Push 1', [[45, 10]], [[102.5, 5], [102.5, 5], [102.5, 5]], { dateISO: '2026-11-01' });
+    const { getSessionDetail } = await import('@/db/repos/workoutRepo');
+    const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
+    await useActiveWorkout.getState().startEditingSession((await getSessionDetail(evening))!);
     expect(await previousColumn()).toEqual(['W 40×10', '1 100×5', '2 100×5', '3 100×5']);
     await useActiveWorkout.getState().discard();
   });
