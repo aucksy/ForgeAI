@@ -210,6 +210,8 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .stats .say{font:800 clamp(1.5rem,3vw,2.1rem)/1.12 var(--display);letter-spacing:-.03em}
 :lang(hi) .stats .say{letter-spacing:0;line-height:1.3}
 .stat .n{display:block;font:800 clamp(3rem,7vw,4.4rem)/1 var(--display);letter-spacing:-.05em}
+.stat .n{white-space:nowrap}
+:lang(hi) .stat .n{font-size:clamp(1.7rem,8.4vw,3.8rem)}
 .stat .n.bad{color:var(--bad)} .stat .n.good{color:var(--good)} .stat .n.em{color:var(--ember)}
 .stat p{margin-top:8px;color:var(--ink2);font-size:15.5px;max-width:15em}
 .stat sup a{color:var(--ink3);text-decoration:none;font-size:11px}
@@ -483,9 +485,9 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 <section class="hero" aria-labelledby="h1">
   <div class="wrap">
     <div>
-      <a class="offer" href="#pricing"><b data-hi="ऑफ़र">OFFER</b><span data-hi="पहले 25 जिम्स को Pro लाइफ़टाइम, एक बार की पेमेंट">Pro for life for the first 25 gyms, one payment</span></a>
+      <a class="offer" href="#pricing"><b data-hi="ऑफ़र">OFFER</b><span data-hi="पहले 25 जिम्स एक बार पे करके Pro लाइफ़टाइम पाते हैं।">The first 25 gyms pay once and get Pro for life.</span></a>
       <h1 id="h1" data-hi="मेंबर जब अपनी प्रोग्रेस देखते हैं, तो वे &lt;span class=&quot;hot&quot;&gt;ज़्यादा समय तक&lt;/span&gt; जुड़े रहते हैं।">Members stay longer when they see <span class="hot">progress.</span></h1>
-      <p class="claim" data-hi="जिम का डेस्क चलाने का सॉफ़्टवेयर। साथ में हर मेंबर के लिए फ़्री वर्कआउट ऐप, आपके जिम के नाम से।">The software to run your gym's desk. Plus a free workout app for every member, in your gym's name.</p>
+      <p class="claim" data-hi="MettleUp आपके जिम का डेस्क चलाता है। साथ में यह हर मेंबर को आपके जिम के नाम से फ़्री वर्कआउट ऐप देता है।">MettleUp runs your gym's desk. It also gives every member a free workout app in your gym's name.</p>
       <div class="ctas">
         <a class="btn" href="https://app.mettleup.fit/start"><span data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</span><svg class="arr" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a class="btn ghost" href="https://app.mettleup.fit/demo" data-hi="डेमो जिम देखें">See the demo gym</a>
@@ -567,7 +569,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
     <h2 id="why-h" class="say rv" data-hi="बाकी सिर्फ़ फ़ीस गिनते हैं। &lt;span class=&quot;hot&quot;&gt;हम मेंबर रोकते हैं।&lt;/span&gt;">Others count fees. <span class="hot">We keep members.</span></h2>
     <div class="stat rv"><span class="n bad"><span class="count" data-to="63">63</span>%</span><p><span data-hi="नए मेंबर्स तीसरे महीने से पहले छोड़ देते हैं।">of new members quit before month 3.</span><sup><a href="#src1">1</a></sup></p></div>
     <div class="stat rv"><span class="n good">₹0</span><p data-hi="आपके मेंबर्स के लिए। ऐप उनके लिए फ़्री है।">for your members. The app is free for them.</p></div>
-    <div class="stat rv"><span class="n em" data-hi="2 मिनट">2 min</span><p data-hi="में आपका जिम तैयार। कार्ड की ज़रूरत नहीं।">to get your gym ready. No card needed.</p></div>
+    <div class="stat rv"><span class="n em" data-hi="2 मिनट">2 min</span><p data-hi="में आपका जिम तैयार हो जाता है।">to get your gym ready.</p></div>
     <p class="src" id="src1" data-hi="1. एक जिम के 5,240 मेंबर्स: Sperandei et al., J. Sci. Med. Sport, 2016.">1. 5,240 members at one gym: Sperandei et al., J. Sci. Med. Sport, 2016.</p>
   </div>
 </section>
@@ -580,9 +582,9 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
       <h2 id="lift-h" class="h2" data-hi="हर सेट का एक &lt;span class=&quot;hot&quot;&gt;टारगेट।&lt;/span&gt;">Every set has a <span class="hot">target.</span></h2>
       <p class="lede" data-hi="मेंबर देखते हैं कि पिछली बार कितना उठाया था, और आज उसे बीट करने की कोशिश करते हैं। इसीलिए वे वापस आते हैं।">Members see what they lifted last time, and try to beat it today. That is why they come back.</p>
       <ol class="beats" id="lift-beats">
-        <li data-beat="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span><div><b data-hi="टारगेट">Target</b><span data-hi="हर सेट के पास पिछली बार के नंबर।">Last time's numbers beside every set.</span></div></li>
+        <li data-beat="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span><div><b data-hi="टारगेट">Target</b><span data-hi="हर सेट पर पिछली बार के नंबर दिखते हैं।">Every set shows last time's numbers.</span></div></li>
         <li data-beat="2"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l5-5 4 4 7-7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 8h5v5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><b data-hi="बीट">Beat</b><span data-hi="बीट करने वाले किलो लाइव कम होते हैं।">The kilos to beat count down, live.</span></div></li>
-        <li data-beat="3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><div><b data-hi="रिकॉर्ड">Record</b><span data-hi="नया रिकॉर्ड, उसी पल।">A new record, the moment it falls.</span></div></li>
+        <li data-beat="3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg></span><div><b data-hi="रिकॉर्ड">Record</b><span data-hi="नया रिकॉर्ड बनते ही ऐप उसी पल दिखाता है।">The app shows a new record the moment it happens.</span></div></li>
       </ol>
     </div>
     <div>
@@ -626,7 +628,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
       <h2 id="own-h" class="h2" data-hi="हर मेंबर के फ़ोन पर &lt;span class=&quot;hot&quot;&gt;आपके जिम का नाम।&lt;/span&gt;">Your gym's name on <span class="hot">every member's phone.</span></h2>
       <p class="lede" data-hi="मेंबर आपका QR पोस्टर एक बार स्कैन करते हैं। उसके बाद ऐप आपके जिम के नाम से खुलता है।">Members scan your QR poster once. From then on, the app opens in your gym's name.</p>
       <ul class="points">
-        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4L19 7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-hi="हर पैक में, हर मेंबर के लिए फ़्री।">Free for every member, in every pack.</span> <span class="tag only" data-hi="बाकी इसके एक्स्ट्रा चार्ज लेते हैं">Others charge extra</span></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4L19 7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-hi="हर पैक में, हर मेंबर को यह फ़्री मिलता है।">Every member gets it free, in every pack.</span> <span class="tag only" data-hi="बाकी इसके एक्स्ट्रा चार्ज लेते हैं">Others charge extra</span></span></li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4L19 7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-hi="Pro में आपका लोगो और कलर्स भी।">Pro adds your logo and colours.</span></li>
       </ul>
       <div class="panel">
@@ -809,7 +811,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
     <div class="cards" id="cards">
       <div class="card rv">
         <h3 data-hi="स्टार्टर">Starter</h3>
-        <p class="desc" data-hi="डेस्क का सारा काम, और सबके लिए मेंबर ऐप।">All the desk work, and the member app for everyone.</p>
+        <p class="desc" data-hi="यह डेस्क का सारा काम करता है और हर मेंबर को ऐप देता है।">It runs all the desk work and gives every member the app.</p>
         <div class="price"><span class="pm"><b>₹999</b> <span data-hi="पर मंथ">a month</span></span><span class="py"><b>₹9,990</b> <span data-hi="साल का">a year</span></span></div>
         <a class="btn ghost" href="https://app.mettleup.fit/start" data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</a>
         <ul>
@@ -826,7 +828,7 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
       <div class="card best rv">
         <span class="ribbon" data-hi="हमारी सलाह">Recommended</span>
         <h3>Pro</h3>
-        <p class="desc" data-hi="स्टार्टर की सारी चीज़ें, और आपका ब्रांड, शॉप और ट्रेनर प्लान्स।">Everything in Starter, plus your brand, your shop and trainer plans.</p>
+        <p class="desc" data-hi="इसमें स्टार्टर की सारी चीज़ें हैं, साथ में आपका लोगो, शॉप और ट्रेनर प्लान्स।">It has everything in Starter, plus your logo, your shop and trainer plans.</p>
         <div class="price"><span class="pm"><b>₹1,499</b> <span data-hi="पर मंथ">a month</span></span><span class="py"><b>₹14,990</b> <span data-hi="साल का">a year</span></span></div>
         <a class="btn" href="https://app.mettleup.fit/start" data-hi="3 महीने फ़्री शुरू करें">Start free for 3 months</a>
         <ul>

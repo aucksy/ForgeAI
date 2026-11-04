@@ -320,6 +320,9 @@
       show();
     });
     endIo.observe($('start'));
+    // ...and while the gym-name box is on screen, so the bar never covers the colour buttons.
+    var make = document.querySelector('.make');
+    if (make) { make.id = make.id || 'make'; endIo.observe(make); }
     endIo.observe(document.querySelector('.foot-bar'));
   }
 
