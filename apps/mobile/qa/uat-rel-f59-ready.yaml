@@ -66,6 +66,11 @@ appId: com.mettleup.app
 - assertVisible: "1\\. .*"
 - assertVisible: "[2-4] sets of [0-9]+–[0-9]+ reps"
 - takeScreenshot: rel-f60-02-quick-20-min
+# The 20 min list scrolled the time chips off the top: bring them back first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^60 min$"
 - tapOn: "^60 min$"
 - runFlow:
     file: sub-find.yaml
