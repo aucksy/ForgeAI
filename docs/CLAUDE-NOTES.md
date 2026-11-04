@@ -7,6 +7,62 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-319. Owner's settings + system review: 11 asks, every word kept — 4 Nov 2026
+Owner: "note all of this down, do not lose anything what I've said and act on what should be acted on and for
+others let me know what you think and let's start building". Status of each: see the table under R-319 in the
+tracker once decided. His words, verbatim:
+
+1. **Ask your trainer.** "there's a feature called Ask Your Trainer You tap it and it just says that, you know, he will
+   get back to you or trainer will get back to you I'm not sure if that's how it's supposed to work ... which trainer
+   is it going to, right? and if there is a trainer logged in as a trainer in the admin panel like do they all get the
+   message this has to be more refined ... the most mature feature of this would be like a chat with a trainer that
+   they can select right or something like that or let them at least choose the trainer they want to help from. So
+   because this is currently not needed that much we can probably have a minimalistic but a mature implementation."
+2. **Widgets.** "rethink widgets and see how they can be more useful. Today the weekly widget just shows how much you
+   have done in a week. Today just shows what you're about to do today. ... is there something else we can do to make
+   it more valuable, more useful, so people would actually want to put it on the screen?"
+3. **Two backups.** "I find it very unprofessional, inconsistent to basically give two backup options. You're asking
+   user whether they want to store it in MettleUp servers and then also give them Google Drive backup. That is really
+   not how anyone does it. We need to come to a decision to just keep it professional ... you tell me what's the best
+   implementation."
+4. **Imports.** "we have import from Hevy we have import from Strong and then you have import routine so for import
+   routine directly opens the option to import from Hevy and then there is import routine from Strong that just lets
+   them follow the same steps so first of all are you sure that importing Routines from Strong is the same exact step
+   like when they export the backup they have everything including routines and then see if this experience can be a
+   bit better and intuitive"
+5. **Erase all data.** "simply states that all your data will be removed from this device. But is it expected to also
+   remove their data from our servers? And if they are using Google Drive backup, if we do make a decision to keep
+   it, should we tell them that it will not delete it from there? So rethink this as well. This is also very kind of
+   immature implementation"
+6. **About / credits.** "the about section contains credits and exercise data provided by RepDB Are we still using any
+   of that? Can you double check? We don't have unnecessary credits"
+7. **Line graphs.** "in our profile section we are showing bar graphs but I want to see line graphs because line graphs
+   give you a much clearer quicker impression on whether you're progressing or not ... I'm not sure if you already
+   implemented that. I don't know if it was there or in the progress section. ... It should be consistent. Even on bar
+   graphs, I should be able to tap on a certain point or a certain workout and then just tap on the history to go
+   back. ... let me know if you think that's a good idea."
+8. **Notifications for every waiting action.** "I submitted a request on the app to renew my plan and I did see the
+   request on admin panel but there was no notification to grab attention of the owner of the gym. So whenever there
+   is a new action required by the owner or by the member in the app, there has to be a notification ... throughout
+   the system, even in headquarters app ... whenever there is a new action waiting to do anything, there is a
+   notification waiting for the user to really act on."
+9. **Drive backup must be automatic.** "If we decide to retain the Google Drive backup, did you implement automatic
+   backup after each workout or not? Because I got a notification yesterday that my backup is old, it's not been
+   backed up for 4 days ... it should be automatic backup either after each workout which makes more sense to me or
+   every day you decide but it should be automatic."
+10. **Help answers.** "in the help and feedback section for the users, they can send questions but how am I responding
+   to them? In my headquarters, I do see that I am able to save the notes but I don't know how to send the answer back
+   to them and why do I have to do it manually? ... there should be a dedicated pre-configured pre-built help database
+   which keeps updating itself as the app progresses that should be a hard rule and then a very cheap AI basically can
+   answer questions by the users and if there is no answer then it can let them know that we will get back to you and
+   then I'm notified about it."
+11. **Gym sees member progress.** "gym owner gets the option to request member data. But I don't feel like the gym owner
+   has to request it. ... if the member has switched it on, then I want that even on admin panel, the member, the gym
+   owner or the trainers, if opted in, can see the similar view with graphs and history that the member sees today. ...
+   An excel sheet is not really user friendly. We want the gym owner and the trainers to be able to analyze the
+   progress of the user, right? And may be able to upsell a personal training plan looking at their progress and
+   their style."
+
 ## R-318. Feedback button on by default; Data safety links saved; browser rule global — 4 Nov 2026
 - Owner: "I want the floating feedback button On by default in early days to encourage users to send feedback."
   Now ON on every copy, Google Play included (FEEDBACK_BUTTON_ON_ON_PLAY = true). A member's own choice still wins.
