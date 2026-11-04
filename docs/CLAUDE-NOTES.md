@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-323. Go WhatsApp: login codes on a spare SIM — 4 Nov 2026
+Owner, 4 Nov: "good to go for <spare SIM, ends 0741>" (full number kept out of this public repo). He deleted (or will
+delete) that SIM's WhatsApp account; the SIM is in his phone for the one Meta code (SMS or call). Plan: Meta developer
+app + WhatsApp Cloud API in his Chrome, display name "MettleUp", one authentication template (copy-code button),
+then the build (members + gym owners). Keep the SIM's validity pack recharged (prepaid SIMs lapse ~90 days).
+His Facebook sign-in and the SMS code stay his. Live switch-on needs his yes (money: ~₹0.14 per code with GST).
+
 ## R-321. Built R-319 items 1 (Ask a trainer) and 11 (gym sees member progress) — 4 Nov 2026
 Owner decision used (R-320, relayed 4 Nov): the question goes to the PICKED person only; the owner does not see other
 trainers' threads (transparency = later idea; one-line comment at `_tq_visible` in 0053).
