@@ -94,17 +94,24 @@ appId: com.mettleup.app
 - tapOn:
     text: "Not now"
     optional: true
-# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+# Leg Extension is a machine: In use opens by itself a few seconds after set 1 (after any record toast,
+# R-357; run 42002288489 saw it 13 s in). Its tick is turned OFF for this exercise and it is closed with
+# "I'm back", so it never covers sets 2 and 3. Its own lines were right in those runs (Leg Extension,
+# "Previous 55 kg x 11", "Next 40 kg x 10": the NEXT set of the same exercise).
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
-    timeout: 5000
+    timeout: 20000
     optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
     commands:
+      - takeScreenshot: rel-r355-02-in-use-after-set-1
       - tapOn:
-          point: "50%,50%"
+          text: "Show after every set of this exercise"
+          waitToSettleTimeoutMs: 300
+      - tapOn:
+          text: "^I.m back$"
           waitToSettleTimeoutMs: 300
       - extendedWaitUntil:
           notVisible: 'In use\. .*Tap to close'
