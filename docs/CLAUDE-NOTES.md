@@ -48,6 +48,7 @@ Cause: R-61 (22 Oct) put it at the right end of that row, but the row lived insi
 He said (screenshot): Dumbbell Preacher Curl, changed Counting to "One side at a time"; 10 kg × 13 showed a new record though he did 10 × 15 last time (22 Oct, Pull 1). "Its wrong...its not most lifted in one set".
 
 Cause: Most lifted in one set counts both sides in that mode (10 × 13 × 2 = 260 kg) and compared it with old sets counted once (10 × 15 = 150 kg). Decided: records compare only sets logged with the same Counting; the first workout after a change sets the new mark quietly. The kg-to-beat line follows the same rule (no line when last time used another Counting). Records helper + progression helper building it.
+BUILT (kg line, progression helper, 5 Nov 2026): coachTargets.countingChanged: when any working set of last time used another Counting than the card now, no kg-to-beat line (no fall-back to an older workout). Suggested weights were already converted between Countings (one total vs one dumbbell), so nothing changed there. Test: Dumbbell Preacher Curl history 'one', now 'side' (test/tracker/r350SimpleRule).
 
 ## R-357. In use screen covers the record toast — 5 Nov 2026
 
@@ -92,12 +93,14 @@ My answer: today the app guesses each machine's step from his logged weights (st
 He said (screenshot, T-Bar Row 30x13, 30x13 done, set 3 open): "Also check this calculation. It says I have beaten last weight".
 Cause: the kg line compares with today's TARGET (32.5 x 6 x 3 = 585 kg, the R-349 bad goal), not with last time's 1,050 kg (30 x 13+12+10). 780 > 585 so it says beaten with a set to go, while he is 270 kg under last time.
 Fix (with R-350): the kg to beat is never under last time's total at the weight he lifts; the word 'beaten' only when today's total passes last time's. Built together with the simple rule after his A/B pick.
+BUILT (5 Nov 2026): src/tracker/lib/kgTarget.ts. Plan total = max(planned sets, last time's total); "1,050 kg to beat · your previous total". His screen (30 x 13, 30 x 13 done, set 3 open) now reads "Next set: 30 kg × 9 · Done: 780 of today's 1,050 kg" (not beaten); "beaten" only above 1,050, "reached" at exactly 1,050. The catch-up reps still aim at the planned sets.
 
 ## R-350. Simpler suggested weights: only the weight jump % and the rep range - 5 Nov 2026
 
 He said: "I feel like you may have complicated the logic behind the suggested weights ... we only have to consider two things ... the user selected increase in weight in percentage and what is the user selected rep range, and then we only have to increase either the weight or the rep by 1 from the previous one. And just like you do today for some, if there are 3 sets, then we don't increase it for the first set and then increase by 1 and increase it by the number or weight to achieve those two factors."
 Done: stopped the R-349 helper (its effort-based estimate draft saved at $TEMP/r349-e1rm-draft.patch, not committed). Agreed he is mostly right: today's rules (effort credit, big-jump, fast lane, stall, range-moved) are too many to explain.
 **DECIDED (5 Nov 2026): A** ("I pick A"): +1 rep on every set each workout. Simple rule: each set vs the same set last time: under the range top -> same kg, +1 rep; every set at the top -> next weight by his jump %, and each set's reps = what keeps that set's kg about the same, inside the range. One safety kept: under the range bottom twice -> one step lighter. A: +1 rep on every set each workout. B: +1 rep on one set per workout (gentler).
+BUILT (5 Nov 2026, progression helper): src/tracker/engine/progression.ts. T-Bar Row (6-10, last 30 x 13, 12, 10) -> "32.5 kg · 10, 10, 9", reason "All sets reached 10. Move up to 32.5 kg: 10, 10, 9."; 30 x 8, 8, 7 -> "30 kg · 9, 9, 8", "Add 1 rep to each set: 30 kg × 9, 9, 8.". Choices made: the step-down needs EVERY set under the bottom in both of the last two workouts at that weight (one good set means no step back); sets above the top count as the top; RPE is still logged and shown, never used; the Settings row "When I'm stuck at a weight" is removed (the saved choice is kept, unused). Assisted: help drops by one step once every set is at the top, goal = bottom on every set; bodyweight: +1 rep a set up to the rep cap, then the harder version; weighted bodyweight after a step: bottom of the range; timed holds unchanged (+5 s). Easy weeks and first targets unchanged.
 
 ## R-349. T-Bar Row: 32.5 kg x 6 on every set after 30 x 13, 12, 10 - 5 Nov 2026
 
@@ -236,154 +239,3 @@ He said: "Asses the MettleUp project ... and build me better website. New and ni
 Chose: the GYM site (gyms.mettleup.fit = public/home), since it is the page that collects leads (/api/lead). Research: one main button beats several; an outcome headline; proof right by the button; show the product, not paragraphs; Indian rivals sell a WhatsApp portal or charge extra for a branded app.
 Did: rebuilt public/home/index.html + home.js. Order: hero (his own headline, Start free for 3 months, See the demo gym, No card / No setup fee / Ready in 2 minutes, the call-me form, the phone that takes the typed gym name and colour, 3 floating app moments) -> 63% / Rs 0 / 2 min band -> Every set has a target (live workout scene) -> Your gym's name on every phone (QR poster, folded "Everything in the member app" list) -> 6 cards, each a tiny live scene (who stopped coming, AI import, offline desk, shop, free messages, trainer plans) -> safe and private -> prices (monthly/yearly switch, founding offer) -> 3 steps -> 5 questions -> start form -> footer; a phone-only bottom "Start free" bar. Same prices, words checked against the old page; Hinglish for every line; lead forms unchanged (tests L1-L5); no rival named (rule). Fonts now Sora + Manrope (+ Mukta). Test G1 opens the folded list first. Checked in a browser at 1280 and 390 px: no sideways scroll.
 Copy pass (member-words, short lines so no Gemini): 8 clipped lines made full sentences. UAT in a browser at 390 px: typed name + colour reach every phone, Hindi switch, yearly prices, form errors shown; fixes: bottom bar hid the colour buttons (now hides while that box shows), Hindi "2 minat" wrapped. STATE 4 Nov (chat compacts at 35% now; after it, read these notes before saying we never discussed or he never approved something): pushed a7823f41, 44488f2a, dd33e67f. CI 41818302424 failed at "HQ Worker and page tests": my page broke 2 HQ price tests (price line not next to the plan name; FIRST<br>25 badge). Fixed in 35827e72 (test reads the price inside the card; badge is one text). CI 41824337817 = success, all 116 browser tests incl. landing-lead + gyms-site-uat passed. Pictures sent to him. NOT live yet: deploying replaces the public page; waits for his yes (then: CI dashboard-dist artifact -> wrangler deploy from deploy/panel).
-
-## R-323. Go WhatsApp: login codes on a spare SIM — 4 Nov 2026
-Owner, 4 Nov: "good to go for <spare SIM, ends 0741>" (full number kept out of this public repo). He deleted (or will
-delete) that SIM's WhatsApp account; the SIM is in his phone for the one Meta code (SMS or call). Plan: Meta developer
-app + WhatsApp Cloud API in his Chrome, display name "MettleUp", one authentication template (copy-code button),
-then the build (members + gym owners). Keep the SIM's validity pack recharged (prepaid SIMs lapse ~90 days).
-His Facebook sign-in and the SMS code stay his. Live switch-on needs his yes (money: ~₹0.14 per code with GST).
-Done 4 Nov: Meta app "MettleUp" (id 1118531290784840, email contact@mettleup.fit) under "Aakash Pahuja's Business"
-(unverified); he said "yes, agree" to Meta Platform + WhatsApp terms. The developer-console number step failed
-(#2494070, see D:/Brain/Lessons/whatsapp-dev-console-add-number-fails-use-whatsapp-manager.md); added the number in
-WhatsApp Manager instead: WhatsApp account "MettleUp", display name "MettleUp" (in review), category Other.
-Left: login-code template, payment method (his card), access token into Cloudflare secrets (his hands), build, and
-business verification (Udyam) so the name shows at the top of chats; delete the empty duplicate MettleUp account.
-Update 4 Nov (later): number verified by SMS, status Pending (WhatsApp account 1007126462431898). His card saved
-(pay after use, no advance charge; a card fixes the account to invoiced billing for good); billing name "MettleUp",
-"not for business purposes" (no GST) - his choice "A". Login-code template "login_code" built (copy code, 10-min
-expiry, 10-min validity) but Meta REFUSED it: authentication templates need a VERIFIED business. He has no Udyam yet;
-he took a new-chat prompt to do Udyam (enterprise name "MettleUp") -> Meta Business Verification -> resubmit the
-template. Do NOT build WhatsApp login codes until that is approved. Gym owners keep the hand-made codes meanwhile.
-The 2 empty duplicate WhatsApp accounts are harmless (no number, no cost); left alone on purpose (removing them is hard to undo and gains nothing).
-When built: cap codes per day and per number per hour on the server, so nobody can run up his bill.
-UAT run 41793819018 (037a98f8, the Workout-tab scroll fix): green; all 62 pictures read. One small mismatch seen
-(rel-34): after "Set 1 was very hard, try 35 kg" the aim line says "Next: 35 kg x 12" but the set 2 box shows 10 reps.
-
-## R-321. Built R-319 items 1 (Ask a trainer) and 11 (gym sees member progress) — 4 Nov 2026
-Owner decision used (R-320, relayed 4 Nov): the question goes to the PICKED person only; the owner does not see other
-trainers' threads (transparency = later idea; one-line comment at `_tq_visible` in 0053).
-- Server: `supabase/migrations/0053_ask_trainer_and_progress.sql` (NOT APPLIED LIVE YET; needs his yes): table
-  trainer_questions; member calls (choices, ask, list, take back), gym calls (list, count, reply), push kind
-  'trainer_reply' (deploy/hq/push.js opens /shop/ask), recent workouts column + member_trainer_share2 +
-  owner_member_progress. Test supabase/tests/0053_ask_trainer_and_progress.sql. Additive; the app and panel work
-  without it (feature-detected, everything hidden).
-- Member app: Gym tab row "Ask a trainer" -> page (pick who answers, 500 letters, one open question, take back, history
-  with replies, 3 a day). Settings -> What my gym can see: new caption naming exactly what trainers see; its button
-  opens Ask a trainer. Phone now also sends up to 30 workouts of 3 months (best set per exercise, no notes/photos/body).
-- Admin panel: "Questions" (menu + More, badge = waiting), reply box; member page "Progress" card (kg/week line, workouts
-  per week, best lifts with days, new bests, recent workouts, staff-only "No new best in 6 weeks..." line). The CSV card
-  is now "Full workout history" / "Download full history" under it.
-- Help articles: ask-a-trainer (member), answer-member-questions, member-progress-card (owner). Privacy wording DRAFT
-  (EN + HI): docs/plans/R-319-privacy-draft.md (privacy.html untouched).
-- UAT: apps/mobile/qa/uat-rel-12-ask-trainer.yaml (part uat, gym step; checks the row is hidden until 0053). Panel
-  screens to check at 375 and 1280 px once 0053 is on the test server: Questions (empty, waiting, reply sent), More row
-  + badge, member page Progress (shared / not shared / older app), Full workout history card.
-- New words (member and staff) need his check at UAT.
-
-## R-322. Research: WhatsApp vs SMS login codes, without GST — 4 Nov 2026
-He asked: can he turn on WhatsApp login codes for members and gym owners without GST or a business, is WhatsApp or SMS cheaper long term, and which is easier.
-Found (vendor sources, Meta rate card cited by them): WhatsApp authentication message in India ~Rs 0.115 + 18% GST (Meta direct, Cloud API); SMS OTP ~Rs 0.13-0.25 + GST + DLT registration (~Rs 5,900, needs GST/CIN-type proof); Firebase phone auth ~$0.07 (~Rs 6) per SMS in India. Meta Cloud API works BEFORE business verification with a cap of ~250 unique people per 24 h; verification for a sole proprietor without GST: Udyam (free, online, Aadhaar + PAN) is the most-cited alternative, not confirmed by Meta itself. Needs a phone number not already on the WhatsApp app.
-My pick: WhatsApp via Meta Cloud API direct (no provider), start unverified for the pilot, get Udyam for verification; SMS only as a later fallback. Not built; waits for his yes.
-
-## R-320. Decisions on R-319: backup A, widgets A, trainer ask as proposed, help answers invisible — 4 Nov 2026
-His words: "So for the ask your trainer thingy, I'm okay with the implementation that you're suggesting, but I feel
-like the gym owners would want to see these conversations. Not sure, but maybe let's build it this way and later we
-can think about transparency to gym owner, we can put that in the idea." / "You're saying that AI already answers
-the questions, but where do I see the answer as a member? I don't see any place to see the answer. And when does
-that answer arrive? I just don't know. There is no record of the answers in my app today." / "Backups - Lets go with
-A" / "Widget - Lets go with A".
-- Ask a trainer: build as proposed (question goes to the picked trainer only). IDEA (not built): let the gym owner
-  see trainer-member conversations (transparency) — decide later.
-- Help answers: the member has no record of answers. Add a "Your questions" history in Help and feedback with each
-  question, the AI answer, the team's reply, and a notification when a team reply arrives.
-- Backup A: MettleUp account (Google sign-in) is the only backup; Google Drive backup removed as a choice;
-  "Download my data" file for own records; Drive restore kept for a few versions so current Drive users can bring
-  their backup in. Privacy wording change drafted for his approval.
-- Widgets A: new "Gym right now" widget (how busy + check-in code), and the Today widget shows what to beat
-  (last time's numbers + a target).
-- CI was red since eecd71f2: backup coverage test missed the new meta key safekeep_hidden_until. Fixed.
-
-## R-319. Owner's settings + system review: 11 asks, every word kept — 4 Nov 2026
-Owner: "note all of this down, do not lose anything what I've said and act on what should be acted on and for
-others let me know what you think and let's start building". Status of each: see the table under R-319 in the
-tracker once decided. His words, verbatim:
-
-1. **Ask your trainer.** "there's a feature called Ask Your Trainer You tap it and it just says that, you know, he will
-   get back to you or trainer will get back to you I'm not sure if that's how it's supposed to work ... which trainer
-   is it going to, right? and if there is a trainer logged in as a trainer in the admin panel like do they all get the
-   message this has to be more refined ... the most mature feature of this would be like a chat with a trainer that
-   they can select right or something like that or let them at least choose the trainer they want to help from. So
-   because this is currently not needed that much we can probably have a minimalistic but a mature implementation."
-2. **Widgets.** "rethink widgets and see how they can be more useful. Today the weekly widget just shows how much you
-   have done in a week. Today just shows what you're about to do today. ... is there something else we can do to make
-   it more valuable, more useful, so people would actually want to put it on the screen?"
-3. **Two backups.** "I find it very unprofessional, inconsistent to basically give two backup options. You're asking
-   user whether they want to store it in MettleUp servers and then also give them Google Drive backup. That is really
-   not how anyone does it. We need to come to a decision to just keep it professional ... you tell me what's the best
-   implementation."
-4. **Imports.** "we have import from Hevy we have import from Strong and then you have import routine so for import
-   routine directly opens the option to import from Hevy and then there is import routine from Strong that just lets
-   them follow the same steps so first of all are you sure that importing Routines from Strong is the same exact step
-   like when they export the backup they have everything including routines and then see if this experience can be a
-   bit better and intuitive"
-5. **Erase all data.** "simply states that all your data will be removed from this device. But is it expected to also
-   remove their data from our servers? And if they are using Google Drive backup, if we do make a decision to keep
-   it, should we tell them that it will not delete it from there? So rethink this as well. This is also very kind of
-   immature implementation"
-6. **About / credits.** "the about section contains credits and exercise data provided by RepDB Are we still using any
-   of that? Can you double check? We don't have unnecessary credits"
-7. **Line graphs.** "in our profile section we are showing bar graphs but I want to see line graphs because line graphs
-   give you a much clearer quicker impression on whether you're progressing or not ... I'm not sure if you already
-   implemented that. I don't know if it was there or in the progress section. ... It should be consistent. Even on bar
-   graphs, I should be able to tap on a certain point or a certain workout and then just tap on the history to go
-   back. ... let me know if you think that's a good idea."
-8. **Notifications for every waiting action.** "I submitted a request on the app to renew my plan and I did see the
-   request on admin panel but there was no notification to grab attention of the owner of the gym. So whenever there
-   is a new action required by the owner or by the member in the app, there has to be a notification ... throughout
-   the system, even in headquarters app ... whenever there is a new action waiting to do anything, there is a
-   notification waiting for the user to really act on."
-9. **Drive backup must be automatic.** "If we decide to retain the Google Drive backup, did you implement automatic
-   backup after each workout or not? Because I got a notification yesterday that my backup is old, it's not been
-   backed up for 4 days ... it should be automatic backup either after each workout which makes more sense to me or
-   every day you decide but it should be automatic."
-10. **Help answers.** "in the help and feedback section for the users, they can send questions but how am I responding
-   to them? In my headquarters, I do see that I am able to save the notes but I don't know how to send the answer back
-   to them and why do I have to do it manually? ... there should be a dedicated pre-configured pre-built help database
-   which keeps updating itself as the app progresses that should be a hard rule and then a very cheap AI basically can
-   answer questions by the users and if there is no answer then it can let them know that we will get back to you and
-   then I'm notified about it."
-11. **Gym sees member progress.** "gym owner gets the option to request member data. But I don't feel like the gym owner
-   has to request it. ... if the member has switched it on, then I want that even on admin panel, the member, the gym
-   owner or the trainers, if opted in, can see the similar view with graphs and history that the member sees today. ...
-   An excel sheet is not really user friendly. We want the gym owner and the trainers to be able to analyze the
-   progress of the user, right? And may be able to upsell a personal training plan looking at their progress and
-   their style."
-
-## R-318. Feedback button on by default; Data safety links saved; browser rule global — 4 Nov 2026
-- Owner: "I want the floating feedback button On by default in early days to encourage users to send feedback."
-  Now ON on every copy, Google Play included (FEEDBACK_BUTTON_ON_ON_PLAY = true). A member's own choice still wins.
-  Committed in eecd71f2 with the member-app launch polish batch. Waits for UAT and his next "release".
-- Play Data safety: both deletion links now https://app.mettleup.fit/delete-account.html, SAVED but NOT sent for
-  review ("Submit 1 change for review" needs his yes; the safety check blocked an unasked submit).
-- Global CLAUDE.md rule 4: every browser action Claude can do, Claude does. Stop hook needs_you_guard.py enforces it.
-- Nightly backup (HQ worker -> Cloudflare KV, 03:00 IST, 15 days) is built but NOT switched on. Needs his yes for the
-  live migration 0052 and the privacy wording.
-
-## R-317. Dashboard deployed; watch on Play; health form in review; deletion page live — 4 Nov 2026
-Owner, 4 Nov: "deploy the owner dashboard" (deployed: Cloudflare forgeai-panel version 4af6a2c4, built by CI 41760683735,
-checked live at 375 and 1280 px). Owner rule saved: Play Console is ONLY the simpleapps108 Chrome window (global CLAUDE.md
-item 9). Watch 0.71.0 published by hand to Wear OS internal testing. Owner OK'd (4 Nov): the watch video (Unlisted on the
-SimpleApps channel, https://youtu.be/mEhvRw3mKjw; Play foreground-service health form saved and sent for review) and the
-account deletion page wording (live at app.mettleup.fit/delete-account.html). CI: Supabase CLI pinned to 3.0.0 (latest hit
-GitHub's rate limit). CI now keeps the built dashboard (artifact dashboard-dist) so a deploy never builds on the laptop.
-
-## R-316. 0.71.0 released (phone); watch upload blocked by Play terms — 4 Nov 2026
-Owner release message: 3 Nov 2026 ~22:34 IST ("Once this part is done you can actually release the changes"). One version: 0.71.0.
-Review blocker fixed first (ff7a2311, on main as 4a4c2551): a watch set with no weight is never saved as 0 kg; a late phone
-confirm turns "Not saved" into "Saved". Gate on ff7a2311 all green: CI 41698237494, wear 41698241873, qa-device default + uat
-41698246237, owner 41698250882, journeys 41698255526. Tag v0.71.0 -> release run 41719678247: phone built, published, Play
-phone tracks done (482-char notes). Watch upload failed: Play 403 "You must let us know whether your app uses any Foreground
-Service permissions". Opening Play Console shows NEW Terms of Service to accept: needs the owner (accepting terms = his yes).
-After he accepts: App content -> Foreground service permissions -> Health (heart rate during a workout on the watch), then
-re-run the failed play-upload job of run 41719678247.
