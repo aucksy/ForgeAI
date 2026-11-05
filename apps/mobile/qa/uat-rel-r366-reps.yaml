@@ -62,7 +62,13 @@ appId: com.mettleup.app
     visible: "Saved as a routine"
     timeout: 15000
 - tapOn: "^Open routine$"
+# Run 42008396524: the routine opens on "Edit routine" with "Start routine" below the edge.
 - extendedWaitUntil:
-    visible: "^Start routine$"
+    visible: "Edit routine"
     timeout: 15000
+- assertVisible: "Pull[- ][Uu]p"
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 20000
 - takeScreenshot: rel-r366-a2-routine-saved
