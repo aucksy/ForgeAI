@@ -189,8 +189,11 @@ class WatchLayoutTest {
     assertTrue("circle reaches $far px from the centre", far <= RingMath.RADIUS - 10f)
     // The 78 px "1:23" is about 144 px wide (156..300): the circles stay 15 px clear of it.
     assertTrue(LogLayout.STEP_CENTRE_X + LogLayout.STEP_CIRCLE / 2f <= 156f - 15f)
-    // The countdown sits higher than before (its line top was 120 px).
-    assertTrue(LogLayout.REST_CLOCK_TOP < 120f)
+    // R-368: the countdown sits higher in its stack than before (its line top was 120 px); R-370 then moves the
+    // whole stack down, and Skip (292 + shift .. 382 + shift, 140 px wide) keeps its corners 16 px inside the glass.
+    assertTrue(LogLayout.REST_CLOCK_TOP - LogLayout.REST_SHIFT < 120f)
+    val skipBottom = 292f + LogLayout.REST_SHIFT + 90f
+    assertTrue(kotlin.math.hypot(70f, skipBottom - c) <= c - 16f)
   }
 
   @Test

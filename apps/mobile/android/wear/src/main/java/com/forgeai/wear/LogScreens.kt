@@ -180,11 +180,17 @@ internal object LogLayout {
   fun effortSkipTop(k: Float): Float = effortScaleTop(k) + grown(18f, 16f, k) * 1.2f + 8f
 
   /** R-368 rest screen: the countdown's line top (78 px digits centred between the name and Previous). */
-  const val REST_CLOCK_TOP = 111f
+  const val REST_CLOCK_TOP = 111f + REST_SHIFT
+
+  /**
+   * R-370 (owner, 5 Nov 2026: too much empty space under Skip): the rest screen's whole stack (name, timer with
+   * −15 / +15, Previous, Next, Skip) sits this much lower than in R-368; the time row and the ring stay put.
+   */
+  const val REST_SHIFT = 14f
 
   /** R-368 rest screen: −15 / +15, centred level with the digits, 96 px in from each side. */
   const val STEP_CENTRE_X = 96f
-  const val STEP_CENTRE_Y = 165f
+  const val STEP_CENTRE_Y = 165f + REST_SHIFT
   const val STEP_CIRCLE = 84f
   const val STEP_TAP = 116f
 }
@@ -539,12 +545,12 @@ private fun RestScreen(
   // R-343 (owner, 5 Nov 2026: "During the rest time, it's not showing the exercise name"): the exercise the next
   // set belongs to sits above the countdown, one line; the "Saved" chip takes its place for its few seconds.
   if (!savedChip && card.exercise.isNotEmpty()) {
-    Centered(px, 82f) {
+    Centered(px, 82f + LogLayout.REST_SHIFT) {
       Line(card.exercise, px, LogLayout.grown(22f, 20f, k), if (ambient) FontWeight.Medium else FontWeight.Bold, ink.ink, spacing = -0.01f, lineHeight = 1.1f, maxWidth = 280f, maxLines = 1, tag = "restExercise", minSize = 16f)
     }
   }
   if (savedChip) {
-    Centered(px, 80f) {
+    Centered(px, 80f + LogLayout.REST_SHIFT) {
       Row(
         Modifier
           .height(px.dp(34f))
@@ -572,13 +578,13 @@ private fun RestScreen(
     RoundSmall(px, 456f - LogLayout.STEP_CENTRE_X, WatchCopy.PLUS_15, "plus15", actions.onPlus15)
   }
   if (card.setLabel.isEmpty() && status != null) {
-    Centered(px, 220f) { Line(status, px, LogLayout.grown(20f, 18f, k), FontWeight.SemiBold, ink.grey, lineHeight = 1.25f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "status") }
+    Centered(px, 220f + LogLayout.REST_SHIFT) { Line(status, px, LogLayout.grown(20f, 18f, k), FontWeight.SemiBold, ink.grey, lineHeight = 1.25f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "status") }
   } else {
     // Previous 18 -> 20 px, Next 22 -> 24 px; tighter line boxes keep both above Skip.
-    card.previous?.let { Centered(px, 220f) { Line(it, px, LogLayout.grown(20f, 18f, k), FontWeight.Medium, ink.grey, lineHeight = 1.2f, tabular = true, maxWidth = 330f, tag = "previous") } }
-    card.next?.let { Centered(px, 246f) { Line(it, px, LogLayout.grown(24f, 22f, k), if (ambient) FontWeight.Medium else FontWeight.Bold, ink.acc, lineHeight = 1.2f, tabular = true, maxWidth = 330f, tag = "next") } }
+    card.previous?.let { Centered(px, 220f + LogLayout.REST_SHIFT) { Line(it, px, LogLayout.grown(20f, 18f, k), FontWeight.Medium, ink.grey, lineHeight = 1.2f, tabular = true, maxWidth = 330f, tag = "previous") } }
+    card.next?.let { Centered(px, 246f + LogLayout.REST_SHIFT) { Line(it, px, LogLayout.grown(24f, 22f, k), if (ambient) FontWeight.Medium else FontWeight.Bold, ink.acc, lineHeight = 1.2f, tabular = true, maxWidth = 330f, tag = "next") } }
   }
-  if (!ambient) PillButton(px, 158f, 292f, 140f, 90f, WatchCopy.SKIP, false, "skipRest", actions.onSkipRest)
+  if (!ambient) PillButton(px, 158f, 292f + LogLayout.REST_SHIFT, 140f, 90f, WatchCopy.SKIP, false, "skipRest", actions.onSkipRest)
 }
 
 /**
