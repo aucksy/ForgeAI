@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-333. Admin panel had no What's new for 1-5 Nov; the tip icon is an "i" — 5 Nov 2026
+
+He said: "on the admin panel there is an option now for a member to be enabled as a FitPass member. But why did I not see any notification for this new functionality added? This is the rule, isn't it? Please keep it consistent." and "it was not 'Eye' icon but 'i' icon for information". Did: ADMIN_NEWS entry 2026-11-05 (pass members, Bring a friend, Payments test mode, Trainer tick, Busy machines); rule saved (CLAUDE.md R-333 + brain every-update-tells-its-users); panel redeploy after CI; design canvas switched to an i icon.
+
 ## R-332. Two requests after the release + Claude Design rule — 5 Nov 2026
 
 He said: (1) the "Easy add today: 3 sets of reverse pec deck for your rear shoulders" suggestion card has no reason; put an eye (i) symbol on the right, in the same row as "I skipped this on purpose", that opens a simple-language reason. (2) The card shown when someone runs an older version should be a pop-up with a different look, so people do not dismiss it without noticing. (3) Global rule: UI/UX design goes through Claude Design (saved as D:/Brain/How I Like Things/ui-design-starts-in-claude-design.md).

@@ -33,6 +33,38 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // R-333 (owner, 5 Nov 2026: "why did I not see any notification for this new functionality?"): the 1-5 Nov
+    // deploys went out with no entry. One entry for all of them; only what is live (0053 Ask a trainer is not).
+    id: '2026-11-05',
+    lines: [
+      {
+        // F123 (0055 live 5 Nov).
+        text: 'FITPASS, cultpass and other pass members: open a member and turn on "Comes with a pass". They get no plan and no dues, and each check-in counts as a pass visit under Visits → Pass visits.',
+        go: { label: 'Open Members', path: '/members' },
+      },
+      {
+        // F147 (0056 + D1 0010 live 5 Nov).
+        text: 'Bring a friend: members can now send a friend a link to your gym from the MettleUp app. The friend shows in Enquiries with the member’s name. In Settings → Member app, choose free days for the member when a friend joins.',
+        go: { label: 'Open Settings', path: '/settings/app' },
+      },
+      {
+        // F79 (D1 0011 live 5 Nov, test mode).
+        text: 'Settings → Payments: add your UPI ID, and the desk can show a UPI QR code for each payment. Online payment links work in test mode only for now: no real money moves.',
+        go: { label: 'Open Payments', path: '/settings/payments' },
+      },
+      {
+        // F109 (0050 live 3 Nov).
+        text: 'Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "My members".',
+        go: { label: 'Open People', path: '/settings/people' },
+      },
+      {
+        // F137 (0049 live 3 Nov).
+        text: 'Busy machines: switch it on in Settings → Member app, and members see when each machine is usually busy, so they can pick a quieter time.',
+        go: { label: 'Open Settings', path: '/settings/app' },
+      },
+    ],
+  },
+  {
     id: '2026-10-31',
     lines: [
       {
