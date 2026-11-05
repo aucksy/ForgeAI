@@ -24,12 +24,7 @@ appId: com.mettleup.app
     visible: "Skip rest"
     timeout: 8000
 - takeScreenshot: rel-r355-04-rest-between-b-sets
-# Its other sets (history decides how many; at most 5), each rest skipped; the last one ends the workout.
-- runFlow:
-    when:
-      visible: "Skip rest"
-    commands:
-      - tapOn: "Skip rest"
+# Its other sets (history decides how many; at most 5); the last one ends the workout.
 - scrollUntilVisible:
     element: "Mark .*Lateral Raise set 2 complete"
     centerElement: true
@@ -39,6 +34,9 @@ appId: com.mettleup.app
     when:
       visible: "Mark .*Lateral Raise set 2 complete"
     commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
       - runFlow:
           file: sub-uat-tick.yaml
           env:
@@ -46,11 +44,6 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
-- runFlow:
-    when:
-      visible: "Skip rest"
-    commands:
-      - tapOn: "Skip rest"
 - scrollUntilVisible:
     element: "Mark .*Lateral Raise set 3 complete"
     centerElement: true
@@ -60,6 +53,9 @@ appId: com.mettleup.app
     when:
       visible: "Mark .*Lateral Raise set 3 complete"
     commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
       - runFlow:
           file: sub-uat-tick.yaml
           env:
@@ -67,11 +63,6 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
-- runFlow:
-    when:
-      visible: "Skip rest"
-    commands:
-      - tapOn: "Skip rest"
 - scrollUntilVisible:
     element: "Mark .*Lateral Raise set 4 complete"
     centerElement: true
@@ -81,6 +72,9 @@ appId: com.mettleup.app
     when:
       visible: "Mark .*Lateral Raise set 4 complete"
     commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
       - runFlow:
           file: sub-uat-tick.yaml
           env:
@@ -88,11 +82,6 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
-- runFlow:
-    when:
-      visible: "Skip rest"
-    commands:
-      - tapOn: "Skip rest"
 - scrollUntilVisible:
     element: "Mark .*Lateral Raise set 5 complete"
     centerElement: true
@@ -102,6 +91,9 @@ appId: com.mettleup.app
     when:
       visible: "Mark .*Lateral Raise set 5 complete"
     commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
       - runFlow:
           file: sub-uat-tick.yaml
           env:

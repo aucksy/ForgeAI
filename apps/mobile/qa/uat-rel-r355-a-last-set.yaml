@@ -3,8 +3,9 @@
 # (gate-demo: clearState + demo). The cloud emulator has no watch, so the run checks what the phone TELLS
 # the watch: run-device-qa.sh (part_u355) reads the phone's "watch next: <exercise> | <set> | <text>"
 # lines (WearSync, logcat) and the rest card in the notification list right after this flow.
-#   Exercise A: Leg Extension (a machine with no history: exactly ONE set, its last). Exercise B: Lateral
-#   Raise (the demo history gives it its sets; run 41989492320 showed 3, so A cannot be Lateral Raise).
+#   Exercise A: Leg Extension, B: Lateral Raise. The demo history decides how many sets each has (runs
+#   41989492320 / 41994556433: 3 each), so every set of A is ticked in order (rests skipped) and the rest
+#   after A's LAST set is the one read.
 #   A's set 1 ticked -> the rest. The flow ENDS during that rest (the shell reads it there).
 # Pictures rel-r355-*.png (qa-out/uat-release/).
 appId: com.mettleup.app
@@ -24,7 +25,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout|^Add exercise$"
     timeout: 30000
-# ---------------------------------------------------------------- A: Leg Extension (1 set, no history)
+# ---------------------------------------------------------------- A: Leg Extension
 - runFlow:
     file: sub-find.yaml
     env:
@@ -42,7 +43,6 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Leg Extension set 1 weight, kilograms"
     timeout: 20000
-- assertNotVisible: "Leg Extension set 2 weight, kilograms"
 - runFlow:
     file: sub-type.yaml
     env:
@@ -83,7 +83,7 @@ appId: com.mettleup.app
       FIELD: "Lateral Raise set 1 reps"
       VALUE: " 12"
 - takeScreenshot: rel-r355-01-two-exercises
-# ---------------------------------------------------------------- A's LAST (only) set: the rest names B
+# ---------------------------------------------------------------- every set of A; the rest after its LAST names B
 - runFlow:
     file: sub-uat-tick.yaml
     env:
@@ -94,6 +94,117 @@ appId: com.mettleup.app
 - tapOn:
     text: "Not now"
     optional: true
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+- scrollUntilVisible:
+    element: "Mark .*Leg Extension set 2 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Leg Extension set 2 complete"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Leg Extension set 2"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+- scrollUntilVisible:
+    element: "Mark .*Leg Extension set 3 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Leg Extension set 3 complete"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Leg Extension set 3"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+- scrollUntilVisible:
+    element: "Mark .*Leg Extension set 4 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Leg Extension set 4 complete"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Leg Extension set 4"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+- scrollUntilVisible:
+    element: "Mark .*Leg Extension set 5 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Leg Extension set 5 complete"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          optional: true
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Leg Extension set 5"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
 # In use never opens after an exercise's last set (R-299); closed here if it ever does.
 - runFlow:
     when:
