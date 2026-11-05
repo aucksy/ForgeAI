@@ -16,6 +16,7 @@ import { create } from 'zustand';
 
 import { findLatest, findReleaseNews, readUpdateMeta, writeUpdateMeta, type ReleaseNews } from '@/lib/appUpdate';
 import { offersGithubUpdate, readInstaller } from '@/lib/installSource';
+import { onIphone } from '@/lib/onIphone';
 import {
   countLaunch,
   hasUpdateStandIn,
@@ -124,6 +125,12 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
     if (checking) return checking;
     checking = (async () => {
       try {
+        // R-339: an iPhone copy is never offered the Android APK or Google Play. Its App Store check
+        // comes with the App Store release (docs/ios/PARITY.yaml app-updates); until then, no prompt.
+        if (onIphone()) {
+          set({ key: null, kind: null, version: null, url: null, behind: 1, news: [], standIn: false, popup: false });
+          return;
+        }
         const now = Date.now();
         const current = Constants.expoConfig?.version ?? null;
         let key: string | null = null;

@@ -1,0 +1,268 @@
+# iPhone parity manifest (R-339, 5 Nov 2026). The feature list behind scripts/ci/ios_parity.py.
+#
+# Every Android-only piece in the repo (native module functions, Android permissions, app.json
+# plugins and android keys, Gradle libraries, TypeScript that switches on Android, the Wear app)
+# must be named under exactly one feature's `covers`. The script reads the tree and fails CI when
+# something Android-only has no line here, or a line here no longer exists on disk.
+#
+#   android / ios: done | n-a | todo      (n-a = that phone cannot or need not do it)
+#   reason:        required unless ios is done; plain words, what iPhone will do instead
+#   blocking:      true = the iPhone app cannot be released without it (ios_parity.py --release)
+#
+# Today all iPhone gaps are blocking: false: nothing ships on iPhone yet, so nothing is blocked.
+# Flip the ones the first App Store release needs to true before that release.
+# Source of the facts: docs/ios/ANDROID-ONLY-INVENTORY.md (section numbers in brackets).
+
+features:
+  - id: rest-timer-card
+    name: Rest countdown on the lock screen, "Rest is over" alert, its sounds and Done button [1b]
+    android: done
+    ios: todo
+    reason: One Live Activity (ActivityKit) plus a scheduled local notification; buttons as App Intents. Until then the in-app rest bar still counts down.
+    blocking: false
+    covers:
+      functions: [forge-rest.show, forge-rest.clear, forge-rest.getState, forge-rest.setQuiet, forge-rest.setRestAllDone,
+                  forge-rest.setDoneTarget, forge-rest.takePendingDone, forge-rest.doneSettled, forge-rest.postDoneNote,
+                  forge-rest.takeQueuedTicks, forge-rest.dismissRestOver, forge-rest.setAccent, forge-rest.setRestSound,
+                  forge-rest.restBell, forge-rest.setRingThroughDnd, forge-rest.onRestChange, forge-rest.onOpenWorkout,
+                  forge-rest.takeOpenRequest]
+      permissions: [android.permission.POST_NOTIFICATIONS, android.permission.VIBRATE, android.permission.RECEIVE_BOOT_COMPLETED]
+      files: [src/tracker/services/restCard.ts, src/tracker/services/workoutAlerts.ts, src/tracker/services/workoutSounds.ts]
+
+  - id: workout-card
+    name: Live workout card with "Complete set" in the notification shade [1b]
+    android: done
+    ios: todo
+    reason: The same Live Activity as the rest timer, in its workout state.
+    blocking: false
+    covers:
+      functions: [forge-rest.showWorkoutCard, forge-rest.hideWorkoutCard, forge-rest.clearWorkoutCard, forge-rest.clearWorkoutCardSaved]
+
+  - id: rest-alert-settings
+    name: Alert health checks (exact alarms, notification channel, battery restriction, settings pages) [1b]
+    android: done
+    ios: todo
+    reason: Exact alarms and channels do not exist on iPhone; map notificationsEnabled / openAppSettings to UNUserNotificationCenter and hide the rest.
+    blocking: false
+    covers:
+      functions: [forge-rest.canScheduleExact, forge-rest.openExactAlarmSettings, forge-rest.notificationsEnabled,
+                  forge-rest.openNotificationSettings, forge-rest.alertChannelState, forge-rest.backgroundRestricted,
+                  forge-rest.openAlertChannelSettings, forge-rest.openAppSettings]
+      permissions: [android.permission.SCHEDULE_EXACT_ALARM]
+      files: [src/tracker/components/RestAlertsStatusRow.tsx, src/tracker/components/RestTimerBar.tsx,
+              src/tracker/components/WorkoutPrefsCard.tsx]
+
+  - id: phone-clock-and-ringer
+    name: 24-hour clock style and silent/vibrate mode [1b]
+    android: done
+    ios: todo
+    reason: is24Hour from DateFormatter; the silent switch has no public iPhone API, so ringerMode returns null (callers handle it).
+    blocking: false
+    covers:
+      functions: [forge-rest.is24Hour, forge-rest.ringerMode]
+
+  - id: watch-link-phone-side
+    name: Phone side of the watch link (open the watch app, install check, gym colour) [1b, 3b]
+    android: done
+    ios: todo
+    reason: WatchConnectivity inside forge-rest plus HKHealthStore.startWatchApp; written with the Apple Watch app.
+    blocking: false
+    covers:
+      functions: [forge-rest.setWatchAccent, forge-rest.openWatch, forge-rest.watchAppState, forge-rest.installOnWatch]
+      gradle: [com.google.android.gms:play-services-wearable, androidx.wear:wear-remote-interactions, com.google.guava:listenablefuture]
+
+  - id: watch-app
+    name: The watch app (Wear OS today) [3]
+    android: done
+    ios: todo
+    reason: React Native cannot run on Apple Watch; a SwiftUI watch app through @bacons/apple-targets, speaking the same protocol.
+    blocking: false
+    covers:
+      paths: [android/wear]
+
+  - id: health
+    name: Health Connect (write workouts, read weight and steps, remove access) [1a]
+    android: done
+    ios: todo
+    reason: HealthKit (@kingstinct/react-native-healthkit or Swift in forge-phone). iPhone cannot remove its own Health access or tell whether reading was allowed.
+    blocking: false
+    covers:
+      functions: [forge-phone.healthStatus, forge-phone.healthGranted, forge-phone.healthAccess, forge-phone.healthRequest,
+                  forge-phone.healthRequestRead, forge-phone.healthReadWeights, forge-phone.healthStepsToday,
+                  forge-phone.healthRevokeAll, forge-phone.healthOpenSettings, forge-phone.healthWrite, forge-phone.healthDelete]
+      permissions: [android.permission.health.WRITE_EXERCISE, android.permission.health.WRITE_ACTIVE_CALORIES_BURNED,
+                    android.permission.health.READ_WEIGHT, android.permission.health.READ_STEPS]
+      gradle: [androidx.health.connect:connect-client, androidx.activity:activity]
+
+  - id: home-widgets
+    name: Home-screen widgets Today, Week, Gym [1a]
+    android: done
+    ios: todo
+    reason: A WidgetKit extension (SwiftUI) fed through an App Group. iPhone cannot pin a widget for the member; show how to add one.
+    blocking: false
+    covers:
+      functions: [forge-phone.widgetSave, forge-phone.widgetCount, forge-phone.widgetCountOf, forge-phone.widgetPin]
+
+  - id: app-icon-shortcuts
+    name: App-icon long-press shortcuts [1a]
+    android: done
+    ios: todo
+    reason: UIApplication.shortcutItems (Quick Actions).
+    blocking: false
+    covers:
+      functions: [forge-phone.shortcutsSave]
+
+  - id: gym-logo-shortcut
+    name: The gym's logo as a home-screen shortcut [1a]
+    android: done
+    ios: n-a
+    reason: No iPhone app can place an icon on the home screen; the row hides (native module absent).
+    blocking: false
+    covers:
+      functions: [forge-phone.gymShortcutSupported, forge-phone.gymShortcutPin, forge-phone.gymShortcutOff]
+
+  - id: plain-splash
+    name: Plain start-up screen inside a branded gym [1a]
+    android: done
+    ios: n-a
+    reason: The iPhone launch screen is fixed at build time; callers already treat a missing answer as unsupported.
+    blocking: false
+    covers:
+      functions: [forge-phone.splashPlain]
+
+  - id: app-updates
+    name: Update prompt (Play in-app update, GitHub APK for side-loaded copies) [1a, 2a]
+    android: done
+    ios: todo
+    reason: No in-app update on iPhone. Look up the App Store version (iTunes lookup) and open the App Store page. Until then the iPhone build offers no update at all (never the APK).
+    blocking: false
+    covers:
+      functions: [forge-phone.playUpdateCheck, forge-phone.playUpdateStart, forge-phone.playUpdateFinish,
+                  forge-phone.onPlayUpdate, forge-phone.installerPackage]
+      gradle: [com.google.android.play:app-update]
+
+  - id: shared-file-import
+    name: A Hevy/Strong export shared to the app from the share menu [1a]
+    android: done
+    ios: todo
+    reason: Register CSV/XLSX document types so "Open in MettleUp" appears; the file arrives as a URL. The in-app file picker import works on iPhone already.
+    blocking: false
+    covers:
+      functions: [forge-phone.takeSharedFile, forge-phone.onSharedFile]
+
+  - id: reminders-and-gym-notices
+    name: Workout reminders, gym reminders, gym notices, background notice check, push [2a Group A]
+    android: done
+    ios: todo
+    reason: These switch off on everything but Android today. Needs APNs (Firebase iOS SDK or APNs key), pushToken passing 'ios', and BGTaskScheduler.
+    blocking: false
+    covers:
+      files: [src/tracker/phone/reminders.ts, src/shop/gymReminders.ts, src/shop/noticeAlertsRun.ts,
+              src/shop/noticeTaskSync.ts, src/shop/pushToken.ts]
+      plugins: [expo-notifications]
+      app_json_android: [googleServicesFile]
+
+  - id: native-loaders
+    name: The two native module loaders (null off Android) [2a Group B]
+    android: done
+    ios: todo
+    reason: Change to "not on web" when the Swift twins exist; until then iPhone gets null and every caller hides the feature.
+    blocking: false
+    covers:
+      files: [src/tracker/phone/native.ts]
+      gradle: [org.jetbrains.kotlinx:kotlinx-coroutines-android]
+
+  - id: keyboard-room
+    name: Android keyboard handling (edge-to-edge) [2a Group D]
+    android: done
+    ios: n-a
+    reason: iPhone screens use their own KeyboardAvoidingView; check them on the simulator.
+    blocking: false
+    covers:
+      files: [src/components/KeyboardRoom.tsx]
+
+  - id: back-button
+    name: Android back-button intercepts (live workout, plan builder, first routine, intro, welcome) [2a]
+    android: done
+    ios: todo
+    reason: iPhone has no back button; the swipe-back gesture skips these guards. Each screen needs its stack gesture switched off or handled.
+    blocking: false
+    covers:
+      files: [src/app/session/active.tsx, src/app/plan/build.tsx, src/app/routines/first.tsx,
+              src/onboarding/components/IntroSlides.tsx, src/onboarding/components/WelcomeScreen.tsx]
+      app_json_android: [predictiveBackGestureEnabled]
+
+  - id: app-identity
+    name: App id, icon and start-up screen [4]
+    android: done
+    ios: done
+    reason: ios.bundleIdentifier com.mettleup.app (same as Android, so Maestro flows keep their appId); iOS uses the plain icon.
+    blocking: false
+    covers:
+      app_json_android: [package, adaptiveIcon]
+      plugins: [expo-splash-screen]
+
+  - id: verified-links
+    name: Verified links app.mettleup.fit and forgeai.aakashpahuja.in (/j/, /c/) [4]
+    android: done
+    ios: todo
+    reason: Associated Domains entitlement plus apple-app-site-association on both hosts; needs the Apple team id.
+    blocking: false
+    covers:
+      app_json_android: [intentFilters]
+
+  - id: google-sign-in
+    name: Google sign-in and Drive backup [2b]
+    android: done
+    ios: todo
+    reason: Needs an iOS OAuth client id (iosUrlScheme) and, by App Review rule 4.8, Sign in with Apple next to it. Until then iPhone says sign-in is not in this version.
+    blocking: false
+    covers:
+      plugins: ["@react-native-google-signin/google-signin"]
+
+  - id: device-backup
+    name: Phone backup rules for the workout database [4]
+    android: done
+    ios: todo
+    reason: iCloud device backup includes app data by default; decide on the database and mark caches and exercise media excluded.
+    blocking: false
+    covers:
+      plugins: [./plugins/backup-rules/withBackupRules.js, expo-secure-store]
+
+  - id: build-settings
+    name: Build settings (Proguard, shrink) [2b]
+    android: done
+    ios: todo
+    reason: Add ios.deploymentTarget (17.0 for interactive Live Activities) when the Live Activity lands.
+    blocking: false
+    covers:
+      plugins: [expo-build-properties]
+
+  - id: shared-expo-plugins
+    name: Expo plugins that work on both phones as they are
+    android: done
+    ios: done
+    reason: Cross-platform; the permission words for camera, photos, microphone and speech are in their plugin options.
+    blocking: false
+    covers:
+      plugins: [expo-router, expo-image-picker, expo-speech-recognition, expo-sqlite, expo-sharing, expo-audio, expo-video]
+
+  - id: android-system-permissions
+    name: Android-only system permissions in the app manifest
+    android: done
+    ios: n-a
+    reason: Internet, storage and overlay need no iPhone permission; the microphone uses the usage string from the expo-audio / speech plugins.
+    blocking: false
+    covers:
+      permissions: [android.permission.INTERNET, android.permission.READ_EXTERNAL_STORAGE, android.permission.WRITE_EXTERNAL_STORAGE,
+                    android.permission.RECORD_AUDIO, android.permission.SYSTEM_ALERT_WINDOW]
+
+  - id: react-native-android-runtime
+    name: React Native's own Android libraries (React, Hermes, image codecs)
+    android: done
+    ios: n-a
+    reason: The iPhone project gets its own copies through CocoaPods on every prebuild.
+    blocking: false
+    covers:
+      gradle: [com.facebook.react:react-android, com.facebook.react:hermes-android, com.facebook.fresco:animated-gif,
+               com.facebook.fresco:webpsupport, com.facebook.fresco:animated-webp]

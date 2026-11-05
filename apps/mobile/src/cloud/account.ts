@@ -27,6 +27,7 @@ import { getSupabase } from './client';
 import { isAccountBuild, isCloudConfigured } from './config';
 import { clearCopyTables } from './copyLocal';
 import { forgetDriveConfigure } from './drive';
+import { onIphone } from '@/lib/onIphone';
 
 const webClientId: string = (Constants.expoConfig?.extra as { googleWebClientId?: string } | undefined)?.googleWebClientId ?? '';
 
@@ -48,6 +49,8 @@ function googleOf(res: unknown): { idToken: string | null; email: string | null;
  */
 export async function signInWithGoogle(): Promise<StoredAccount | null> {
   if (!isAccountConfigured()) throw new AccountError(ACCOUNT_WORDS.notInThisVersion, 'no googleWebClientId or Supabase config in this build');
+  // R-339: no iPhone OAuth client yet (docs/ios/PARITY.yaml google-sign-in): say so, never a broken Google sheet.
+  if (onIphone()) throw new AccountError(ACCOUNT_WORDS.notOnIphone, 'iPhone: no iOS Google client id yet');
   // Sign-in only (name and email): never Drive's permission. Drive sets its own again when used.
   GoogleSignin.configure({ webClientId, offlineAccess: false });
   forgetDriveConfigure();

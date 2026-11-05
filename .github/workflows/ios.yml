@@ -1,0 +1,164 @@
+name: iPhone build (simulator)
+
+# R-339 (5 Nov 2026, docs/ios/RESEARCH.md plan step 3): build the iPhone app on GitHub's free Mac
+# runner (public repo = free standard runners), install it on an iPhone simulator, open it and
+# photograph the first screens. No Apple account, no signing, no secrets: a simulator build only.
+#
+# The ios/ folder is never committed: `expo prebuild --platform ios --clean` makes it here on every
+# run from app.json and the config plugins, so nothing hand-edited can drift (inventory section 8.6).
+# Artifact "iphone-screens": the PNGs, the xcodebuild log, the simulator log and any crash report.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/**'
+      - 'package-lock.json'
+      - '.github/workflows/ios.yml'
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 120
+    env:
+      CI: 1
+      EXPO_NO_TELEMETRY: 1
+      OUT: ${{ github.workspace }}/ios-out
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Tools on this runner
+        run: |
+          mkdir -p "$OUT/shots"
+          sw_vers
+          xcodebuild -version
+          pod --version
+          xcrun simctl list runtimes | grep -i ios || true
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Exercise pictures (RepDB, fetched at build time)
+        uses: ./.github/actions/exercise-pictures
+
+      - name: Make the iPhone project (expo prebuild, CI only)
+        working-directory: apps/mobile
+        run: npx expo prebuild --platform ios --clean --no-install
+
+      - name: CocoaPods
+        working-directory: apps/mobile/ios
+        run: pod install 2>&1 | tee "$OUT/pod-install.log"
+
+      # Release configuration: the JavaScript is bundled into the app, so it opens with no Metro
+      # server. CODE_SIGNING_ALLOWED=NO: a simulator app needs no Apple signing.
+      - name: Build for the iPhone simulator
+        working-directory: apps/mobile/ios
+        run: |
+          set -o pipefail
+          WS=$(ls -d *.xcworkspace | head -1)
+          SCHEME="${WS%.xcworkspace}"
+          echo "workspace $WS, scheme $SCHEME"
+          if ! xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
+               -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+               -derivedDataPath "$RUNNER_TEMP/dd" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO \
+               build > "$OUT/xcodebuild.log" 2>&1; then
+            grep -E "error:|\*\* BUILD FAILED" "$OUT/xcodebuild.log" | head -60 || true
+            echo "----- last 150 lines -----"
+            tail -150 "$OUT/xcodebuild.log"
+            exit 1
+          fi
+          tail -5 "$OUT/xcodebuild.log"
+          APP=$(ls -d "$RUNNER_TEMP"/dd/Build/Products/Release-iphonesimulator/*.app | head -1)
+          echo "APP=$APP" >> "$GITHUB_ENV"
+          du -sh "$APP"
+
+      - name: Boot an iPhone simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys, re
+          d = json.load(sys.stdin)['devices']
+          best = None
+          for rt, devs in d.items():
+              if 'iOS' not in rt: continue
+              for x in devs:
+                  if re.match(r'iPhone \d+( Pro)?$', x['name']):
+                      key = (rt, x['name'])
+                      if best is None or key > best[0]: best = (key, x['udid'])
+          print(best[1] if best else '')")
+          [ -n "$UDID" ] || { xcrun simctl list devices available; echo "::error::no iPhone simulator"; exit 1; }
+          xcrun simctl list devices | grep "$UDID"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl ui "$UDID" appearance dark || true
+          xcrun simctl status_bar "$UDID" override --time "9:41" --batteryState charged --batteryLevel 100 || true
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Install, open and photograph (simctl)
+        run: |
+          xcrun simctl install "$UDID" "$APP"
+          ( xcrun simctl spawn "$UDID" log stream --level debug --style compact \
+              --predicate 'process == "MettleUp" OR subsystem == "com.facebook.react.log"' > "$OUT/simulator.log" 2>&1 & echo $! > "$RUNNER_TEMP/log.pid" )
+          xcrun simctl launch "$UDID" com.mettleup.app
+          last=0
+          for t in 8 20 40; do
+            sleep $(( t - last )); last=$t
+            xcrun simctl io "$UDID" screenshot "$OUT/shots/simctl-$(printf %02d $t)s.png"
+          done
+          if xcrun simctl spawn "$UDID" launchctl list | grep -q "com.mettleup.app"; then
+            echo "The app is still running after 40 s."
+          else
+            echo "::error::MettleUp is not running 40 s after launch (crash?). See crash reports in the artifact."
+            echo "CRASHED=1" >> "$GITHUB_ENV"
+          fi
+          xcrun simctl terminate "$UDID" com.mettleup.app || true
+
+      - name: Install Maestro
+        id: maestro
+        continue-on-error: true
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: First screens (Maestro)
+        if: steps.maestro.outcome == 'success' && env.CRASHED != '1'
+        continue-on-error: true
+        timeout-minutes: 25
+        working-directory: ${{ env.OUT }}/shots
+        run: |
+          export MAESTRO_CLI_NO_ANALYTICS=1
+          maestro --device "$UDID" test "$GITHUB_WORKSPACE/apps/mobile/qa/ios-first-screens.yaml" \
+            --debug-output "$OUT/maestro" 2>&1 | tee "$OUT/maestro.log"
+
+      - name: Crash reports and logs
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/log.pid" ] && kill "$(cat "$RUNNER_TEMP/log.pid")" 2>/dev/null || true
+          mkdir -p "$OUT/crashes"
+          find "$HOME/Library/Logs/DiagnosticReports" -name 'MettleUp*' -newer "$GITHUB_WORKSPACE/package.json" -exec cp {} "$OUT/crashes/" \; 2>/dev/null || true
+          ls -la "$OUT/shots" "$OUT/crashes" || true
+          if [ -f "$OUT/simulator.log" ]; then
+            echo "----- JS errors and warnings in the simulator log -----"
+            grep -iE "error|exception|fatal|unhandled|warn" "$OUT/simulator.log" | head -80 || true
+          fi
+          [ "${CRASHED:-0}" = "1" ] && exit 1 || true
+
+      - name: Upload screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iphone-screens
+          path: ${{ env.OUT }}
+          retention-days: 7
+          if-no-files-found: warn

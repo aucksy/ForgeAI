@@ -38,6 +38,10 @@ export class DriveError extends PlainError {
 export const DRIVE_NOT_IN_THIS_VERSION =
   'Google Drive backup isn’t working in this version of MettleUp. For now, keep a copy with Save my history (Settings → Save as a spreadsheet), and tell your gym.';
 
+/** R-339: the iPhone build has no Google sign-in yet, so no Drive backup either. */
+export const DRIVE_NOT_ON_IPHONE =
+  'Google Drive backup is not on iPhone yet. It comes in a later update. For now, keep a copy with Settings → Save as a spreadsheet.';
+
 export const DRIVE_NO_INTERNET = 'Couldn’t reach Google Drive. Check your internet and try again.';
 
 export const DRIVE_SIGN_IN_AGAIN = 'Google Drive needs you to sign in again. Tap Unlink Google, then Link Google Drive.';

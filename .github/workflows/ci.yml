@@ -36,6 +36,14 @@ jobs:
       - name: Silent-catch ratchet
         run: python3 scripts/ci/silent_catch_ratchet.py
 
+      # R-339 (5 Nov 2026, docs/ios/RESEARCH.md E6): every Android-only piece (native function,
+      # permission, plugin, Gradle library, Android switch in TS, the Wear app) needs its iPhone twin
+      # or a line in docs/ios/PARITY.yaml saying what iPhone does instead. Seconds; pyyaml is above.
+      - name: iPhone parity gate
+        run: |
+          python3 -m unittest discover -s scripts/ci -p 'test_ios_parity.py'
+          python3 scripts/ci/ios_parity.py
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

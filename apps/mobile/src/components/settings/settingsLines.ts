@@ -51,7 +51,15 @@ export interface SettingsRow {
 export interface SettingsGroup {
   title: string;
   rows: readonly SettingsRow[];
+  /** R-339: a plain line under the heading (iPhone: what is not there yet). */
+  note?: string;
 }
+
+/**
+ * R-339 (owner rule: never ship a lookalike stub): on iPhone these are not built yet, so their rows
+ * are left out and this line says so in their place.
+ */
+export const NOT_ON_IPHONE_YET = 'Not on iPhone yet: reminders, rest alerts, your watch, Health apps and widgets. They come in a later update.'; // member-words
 
 /** No more than this many rows in one group (the review's chunking rule). */
 export const MAX_ROWS_PER_GROUP = 7;
@@ -70,6 +78,8 @@ export interface SettingsContext {
    * shows. Left out with no watch, or when Wear OS cannot say.
    */
   watch?: boolean;
+  /** R-339: the iPhone build (reminders, watch, Health and widgets are not built there yet). */
+  iphone?: boolean;
 }
 
 /** The groups and rows, in order, for this phone. PURE. */
@@ -78,8 +88,8 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
   const you: SettingsRow[] = [
     { key: 'profile', title: 'Your profile', href: '/edit-profile' },
     { key: 'units', title: 'Units', href: '/settings/units' },
-    { key: 'reminders', title: 'Reminders', href: '/settings/notifications' },
   ];
+  if (!ctx.iphone) you.push({ key: 'reminders', title: 'Reminders', href: '/settings/notifications' });
   if (ctx.coach) you.push({ key: 'coach', title: 'AI coach', href: '/settings/coach' });
 
   // R-284: the four a member changes; the rarely changed three sit behind "More workout choices".
@@ -103,9 +113,11 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
 
   // R-284: everything about the watch is on its own page (install, and opening with a workout).
   const phone: SettingsRow[] = [];
-  if (ctx.watch) phone.push({ key: 'watch', title: 'Your watch', href: '/settings/watch' }); // member-words
-  if (ctx.hasHealth) phone.push({ key: 'health', title: 'Health apps', href: '/settings/health' }); // member-words
-  phone.push({ key: 'widgets', title: 'Widgets', href: '/settings/widgets' });
+  if (!ctx.iphone) {
+    if (ctx.watch) phone.push({ key: 'watch', title: 'Your watch', href: '/settings/watch' }); // member-words
+    if (ctx.hasHealth) phone.push({ key: 'health', title: 'Health apps', href: '/settings/health' }); // member-words
+    phone.push({ key: 'widgets', title: 'Widgets', href: '/settings/widgets' });
+  }
 
   // R-284: ONE row for every kind of backup (Google, Drive, the backup file); erase is last.
   const data: SettingsRow[] = [
@@ -127,7 +139,7 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
     { title: 'You', rows: you },
     { title: 'Workouts', rows: workouts },
     { title: 'Your gym', rows: gym },
-    { title: 'Phone and watch', rows: phone },
+    ctx.iphone ? { title: 'Phone and watch', rows: phone, note: NOT_ON_IPHONE_YET } : { title: 'Phone and watch', rows: phone },
     { title: 'Your data', rows: data },
     { title: 'Help', rows: help },
   ];

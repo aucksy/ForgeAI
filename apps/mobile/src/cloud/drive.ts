@@ -31,10 +31,12 @@ import {
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import { onIphone } from '@/lib/onIphone';
 
 import {
   DRIVE_NO_INTERNET,
   DRIVE_NOT_IN_THIS_VERSION,
+  DRIVE_NOT_ON_IPHONE,
   DRIVE_SIGN_IN_AGAIN,
   DriveError,
   driveStatusWords,
@@ -86,6 +88,8 @@ export function forgetDriveConfigure(): void {
 }
 
 function ensureReady(): void {
+  // R-339: no iPhone Google client yet (docs/ios/PARITY.yaml google-sign-in).
+  if (onIphone()) throw new DriveError(DRIVE_NOT_ON_IPHONE, 'iPhone: no iOS Google client id yet');
   if (!isDriveConfigured()) throw new DriveError(DRIVE_NOT_IN_THIS_VERSION, 'no googleWebClientId in this build');
   configureDrive();
 }

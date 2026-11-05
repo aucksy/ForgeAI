@@ -30,6 +30,7 @@ import { getProfile } from '@/db/repos/userRepo';
 import { FEATURES, profileParts } from '@/lib/features';
 import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
+import { onIphone } from '@/lib/onIphone';
 import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
 import { useGymShop } from '@/shop/gymStore';
@@ -192,6 +193,8 @@ export default function SettingsScreen() {
     hasHealth: health !== null && health !== 'none',
     coach: PARTS.has('aiCoach') || PARTS.has('voice'),
     watch: watchRowLine(watch) != null,
+    // R-339: on iPhone the not-built-yet rows are left out and one plain line says so.
+    iphone: onIphone(),
   });
 
   const open = (href: string): void => {
@@ -206,6 +209,9 @@ export default function SettingsScreen() {
         {groups.map((g) => (
           <View key={g.title} style={{ gap: space.sm }}>
             <GroupHeading title={g.title} />
+            {g.note ? (
+              <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>{g.note}</Text>
+            ) : null}
             {g.title === 'Your gym' && link ? (
               <JoinedGymRows link={link} leading={(k) => <Dot icon={ICON[k]} />} />
             ) : (

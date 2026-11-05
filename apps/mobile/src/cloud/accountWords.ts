@@ -44,6 +44,8 @@ export const ACCOUNT_WORDS = {
   welcomeNothing: 'You are signed in. Nothing is saved yet, so answer the 3 questions to start.',
   demo: 'This phone has the demo data. Remove it first (Settings → "Erase or start over"), then try again.',
   notInThisVersion: 'Google sign-in is not ready in this version of the app yet.',
+  /** R-339: the iPhone build has no Google sign-in yet (it needs an iPhone client id and Sign in with Apple). */
+  notOnIphone: 'Google sign-in is not on iPhone yet. It comes in a later update.',
   noPlayServices: 'Google sign-in needs Google Play services, and this phone does not have it.',
   couldNotSignIn: 'Could not sign in with Google. Check your internet and try again.',
 } as const;

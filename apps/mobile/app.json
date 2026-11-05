@@ -8,6 +8,10 @@
     "scheme": ["mettleup", "forgeai"],
     "userInterfaceStyle": "dark",
     "backgroundColor": "#07080C",
+    "ios": {
+      "bundleIdentifier": "com.mettleup.app",
+      "supportsTablet": false
+    },
     "android": {
       "package": "com.mettleup.app",
       "googleServicesFile": "./google-services.json",

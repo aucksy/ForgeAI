@@ -1,0 +1,68 @@
+# iPhone only (R-339, 5 Nov 2026): the first screens of the iPhone simulator build, photographed.
+# Run by .github/workflows/ios.yml (never by the Android QA scripts). Fresh install -> intro ->
+# welcome -> demo data -> each tab -> Settings (where the "Not on iPhone yet" line sits).
+# Every step after the launch is optional, so one changed word costs one picture, not the rest.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Restore from a backup|Load demo data instead"
+    timeout: 120000
+- takeScreenshot: ios-01-first-screen
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Step 1 of 3|Your name|^Next$|Restore from a backup|Load demo data instead"
+    timeout: 60000
+    optional: true
+- takeScreenshot: ios-02-welcome
+- scrollUntilVisible:
+    element: "Load demo data instead"
+    timeout: 30000
+    optional: true
+- tapOn:
+    text: "Load demo data instead"
+    optional: true
+- extendedWaitUntil:
+    visible: "(?i)load demo"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "(?i)^load demo$"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 90000
+    optional: true
+- takeScreenshot: ios-03-workout-tab
+- tapOn:
+    text: "^Progress$"
+    index: 0
+    optional: true
+- takeScreenshot: ios-04-progress-tab
+- tapOn:
+    text: "^Gym$"
+    index: 0
+    optional: true
+- takeScreenshot: ios-05-gym-tab
+- tapOn:
+    text: "^Profile$"
+    index: 0
+    optional: true
+- takeScreenshot: ios-06-profile-tab
+- tapOn:
+    text: "Settings"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Your profile$"
+    timeout: 15000
+    optional: true
+- takeScreenshot: ios-07-settings
+- scrollUntilVisible:
+    element: "Not on iPhone yet.*"
+    centerElement: true
+    timeout: 20000
+    optional: true
+- takeScreenshot: ios-08-settings-not-on-iphone
