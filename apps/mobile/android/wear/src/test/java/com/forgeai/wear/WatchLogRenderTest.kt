@@ -1,11 +1,13 @@
 package com.forgeai.wear
 
+import android.graphics.BitmapFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -39,6 +41,8 @@ abstract class WatchLogRenderBase(private val size: String) {
     val edgeRing: Boolean = false,
     val fontScale: Float = 1f,
     val bpm: Double? = 132.0,
+    /** R-354: the round Done / Go button must have clear space above it (nothing touching or cut). */
+    val clear: Boolean = false,
   )
 
   private fun both(name: String, s: Shot) {
@@ -62,6 +66,29 @@ abstract class WatchLogRenderBase(private val size: String) {
       }
     }
     checkRoundCapture(file, size, s.ring, s.edgeRing)
+    if (s.clear && !ambient) checkClearAboveButton(file)
+  }
+
+  /**
+   * R-354 (5 Nov 2026 render): at the largest text the number pills touched Done, and Exercise done's
+   * "Next 22.5 kg × 11" was cut off at Go. Finds the button's top on the centre line, then the nearest drawn
+   * row above it (anything not black in the middle 70 %): at least 6 design px must be clear.
+   */
+  private fun checkClearAboveButton(file: File) {
+    val img = BitmapFactory.decodeFile(file.absolutePath)
+    val w = img.width
+    val k = w / RingMath.DESIGN_PX
+    val cx = w / 2
+    fun accent(p: Int): Boolean = ((p shr 16) and 0xFF) > 200 && ((p shr 8) and 0xFF) in 70..150 && (p and 0xFF) < 90
+    // The button is the first row with a solid accent band 30 px wide on the centre line (orange text is not).
+    val half = (15f * k).toInt()
+    val top = ((200f * k).toInt() until w).firstOrNull { y -> ((cx - half)..(cx + half)).all { accent(img.getPixel(it, y)) } } ?: -1
+    assertTrue("${file.name}: no Done / Go button found", top > 0)
+    // Skip the button's own anti-aliased rim (3 rows), then look up for anything drawn.
+    var y = top - 3
+    while (y > 0 && (((w * 0.15f).toInt())..((w * 0.85f).toInt())).none { x -> img.getPixel(x, y).let { p -> maxOf((p shr 16) and 0xFF, (p shr 8) and 0xFF, p and 0xFF) > 16 } }) y--
+    val clear = top - 1 - y
+    assertTrue("${file.name}: only $clear px clear above the button (need ${(6f * k).toInt()})", clear >= (6f * k).toInt())
   }
 
   @Composable
@@ -76,7 +103,7 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   private val editing = LogUi(rowKey = "set-2", weight = 22.5, reps = 15, edited = true, adjustAt = now - 500L)
 
-  @Test fun nextSetScreen() = both("L01-next-set", Shot(nextSet()))
+  @Test fun nextSetScreen() = both("L01-next-set", Shot(nextSet(), clear = true))
 
   @Test fun warmUp() = both(
     "L02-warm-up",
@@ -87,7 +114,7 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   @Test fun adjustReps() = both("L04-adjust-reps", Shot(nextSet(), editing.copy(reps = 16, adjust = Adjust.REPS)))
 
-  @Test fun longName() = both("L05-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)")))
+  @Test fun longName() = both("L05-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), clear = true))
 
   @Test fun effort() = both(
     "L06-effort",
@@ -105,6 +132,7 @@ abstract class WatchLogRenderBase(private val size: String) {
     Shot(
       nextSet("Incline Dumbbell Press", entry.copy(w = 22.5, r = 10), NextSet("Set 1 of 3", "22.5 kg × 10", "22.5 kg × 11")),
       LogUi(exDone = true, doneExercise = "Bench Press", doneSets = 4),
+      clear = true,
     ),
   )
 
@@ -119,10 +147,10 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   @Test fun bigWeight() = both(
     "L13-big-weight",
-    Shot(nextSet(e = entry.copy(w = 102.5, r = 100), n = NextSet("Set 2 of 4", "102.5 kg × 100", "102.5 kg × 100"))),
+    Shot(nextSet(e = entry.copy(w = 102.5, r = 100), n = NextSet("Set 2 of 4", "102.5 kg × 100", "102.5 kg × 100")), clear = true),
   )
 
-  @Test fun largestText() = both("L14-largest-text", Shot(nextSet("Single-Arm Dumbbell Row"), fontScale = 1.3f))
+  @Test fun largestText() = both("L14-largest-text", Shot(nextSet("Single-Arm Dumbbell Row"), fontScale = 1.3f, clear = true))
 
   @Test fun largestTextRest() = both("L15-largest-text-rest", Shot(resting(), LogUi(savedAt = now - 600L), ring = true, fontScale = 1.3f))
 
@@ -145,6 +173,7 @@ abstract class WatchLogRenderBase(private val size: String) {
       nextSet("Incline Dumbbell Press", entry.copy(w = 22.5, r = 10), NextSet("Set 1 of 3", "22.5 kg × 10", "22.5 kg × 11")),
       LogUi(exDone = true, doneExercise = "Bench Press", doneSets = 4),
       fontScale = 1.3f,
+      clear = true,
     ),
   )
 }

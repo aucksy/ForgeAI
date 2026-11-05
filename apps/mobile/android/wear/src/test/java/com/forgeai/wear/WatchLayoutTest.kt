@@ -168,19 +168,14 @@ class WatchLayoutTest {
   }
 
   @Test
-  fun nextSetStackPillsAndDoneNeverOverlapAndDoneStaysOnTheGlass() {
-    for (step in 0..24) {
-      val k = 1f + step / 100f
-      // The stack starts under the time row; Done leaves 10 px under the pills.
-      assertTrue(LogLayout.nextSetTop(k) >= LogLayout.topBarBottom(k))
-      assertTrue("k=$k", LogLayout.doneTop(k) >= LogLayout.pillsBottom(k) + 10f)
-      // The round button stays at least 16 px inside the round screen (centre to centre + radius).
-      val centreY = LogLayout.doneTop(k) + LogLayout.BUTTON / 2f
-      val reach = (centreY - RingMath.DESIGN_PX / 2f) + LogLayout.BUTTON / 2f
-      assertTrue("k=$k: Done reaches $reach px from the centre", reach <= RingMath.DESIGN_PX / 2f - 16f)
-    }
-    // At the normal text size Done stays where it always was.
-    assertEquals(LogLayout.BUTTON_TOP, LogLayout.doneTop(1f), 0f)
+  fun largestTextTightensTheNextSetStack() {
+    assertFalse(LogLayout.tight(1f))
+    assertTrue(LogLayout.tight(Px.LABEL_SCALE_MAX))
+    // The stack's reserved height at the largest text is no taller than before R-354 (it was 129 px), so the
+    // 22 px lower time row does not push the pills into Done. The render test checks the real gap
+    // (WatchLogRenderTest.checkClearAboveButton).
+    assertTrue(LogLayout.nextSetStack(Px.LABEL_SCALE_MAX) <= 129f)
+    assertTrue(LogLayout.nextSetTop(1f) >= LogLayout.topBarBottom(1f))
   }
 
   @Test

@@ -164,12 +164,11 @@ internal object LogLayout {
   /** Next set: the top of the name / set / Previous stack, its reserved height (a two-line name), the pills' bottom. */
   fun nextSetTop(k: Float): Float = topBarBottom(k) + 2f
 
-  fun nextSetStack(k: Float): Float = ceil(2f * 22f * k * 1.1f + 2f * grown(20f, 18f, k) * 1.25f + 8f)
+  fun nextSetStack(k: Float): Float =
+    if (tight(k)) ceil(2f * 22f * k * 1f + 2f * grown(20f, 18f, k) * 1.1f + 4f) else ceil(2f * 22f * k * 1.1f + 2f * grown(20f, 18f, k) * 1.25f + 8f)
 
-  fun pillsBottom(k: Float): Float = nextSetTop(k) + nextSetStack(k) + 6f + 86f
-
-  /** Done sits at 304 px, lower only when the largest text pushes the pills down (never closer than 10 px). */
-  fun doneTop(k: Float): Float = maxOf(BUTTON_TOP, pillsBottom(k) + 10f)
+  /** Large text (x1.1 and up): the Next set stack and Exercise done sit tighter so they fit above Done / Go. */
+  fun tight(k: Float): Boolean = k > 1.1f
 
   /** Effort: the line over "How hard was it?" + the title; then the 2 x 4 grid, the scale line and Skip. */
   fun effortTop(k: Float): Float = topBarBottom(k) + 2f
@@ -224,7 +223,7 @@ private fun TopBar(px: Px, now: Long, heart: WatchCopy.HeartLine?, ambient: Bool
 
 /** The big round button (Done's check, or Go's arrow): 128 px, orange; dim: an outline. */
 @Composable
-private fun RoundButton(px: Px, ambient: Boolean, enabled: Boolean, arrow: Boolean, tag: String, top: Float = LogLayout.BUTTON_TOP, onClick: () -> Unit) {
+private fun RoundButton(px: Px, ambient: Boolean, enabled: Boolean, arrow: Boolean, tag: String, top: Float? = LogLayout.BUTTON_TOP, onClick: () -> Unit) {
   val ink = logInk(ambient)
   val bg = when {
     ambient -> Color.Transparent
@@ -239,7 +238,8 @@ private fun RoundButton(px: Px, ambient: Boolean, enabled: Boolean, arrow: Boole
   }
   Box(
     Modifier
-      .at(px, (RingMath.DESIGN_PX - LogLayout.BUTTON) / 2f, top, LogLayout.BUTTON, LogLayout.BUTTON)
+      // [top] null: placed by the column it sits in (Next set).
+      .then(if (top != null) Modifier.at(px, (RingMath.DESIGN_PX - LogLayout.BUTTON) / 2f, top, LogLayout.BUTTON, LogLayout.BUTTON) else Modifier.size(px.dp(LogLayout.BUTTON)))
       .clip(CircleShape)
       .background(bg)
       .border(px.dp(2f), line, CircleShape)
@@ -346,14 +346,19 @@ private fun NextSetScreen(
     val small = LogLayout.grown(20f, 18f, k)
     // One column: a taller stack (a long name at the largest text) pushes the pills down instead
     // of sliding under them (3 Nov render: "Previous" was hidden).
-    Column(Modifier.fillMaxWidth().padding(top = px.dp(LogLayout.nextSetTop(k))), horizontalAlignment = Alignment.CenterHorizontally) {
+    // R-354 render (5 Nov): Done sits in the same column, at its usual 304 px unless the pills reach it (a two-line
+    // name at the largest text): then 10 px under them. At the largest text the stack's lines sit tighter.
+    val tight = LogLayout.tight(k)
+    val top = LogLayout.nextSetTop(k)
+    Column(Modifier.fillMaxWidth().padding(top = px.dp(top)), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier.fillMaxWidth().heightIn(min = px.dp(LogLayout.BUTTON_TOP - 10f - top)), horizontalAlignment = Alignment.CenterHorizontally) {
     Column(
       Modifier.fillMaxWidth().heightIn(min = px.dp(stackH)),
-      verticalArrangement = Arrangement.spacedBy(px.dp(4f), Alignment.Bottom),
+      verticalArrangement = Arrangement.spacedBy(px.dp(if (tight) 2f else 4f), Alignment.Bottom),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       if (card.exercise.isNotEmpty()) {
-        Line(card.exercise, px, 22f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, spacing = -0.01f, lineHeight = 1.1f, maxWidth = 288f, maxLines = 2, balanced = true, tag = "exercise", label = true)
+        Line(card.exercise, px, 22f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, spacing = -0.01f, lineHeight = if (tight) 1f else 1.1f, maxWidth = 288f, maxLines = 2, balanced = true, tag = "exercise", label = true)
       }
       Row(verticalAlignment = Alignment.CenterVertically) {
         if (e.warm) {
@@ -365,11 +370,11 @@ private fun NextSetScreen(
           }
           Spacer(Modifier.width(px.dp(8f)))
         }
-        if (card.setLabel.isNotEmpty()) Line(card.setLabel, px, small, FontWeight.SemiBold, ink.grey, lineHeight = 1.25f, tabular = true, tag = "setLabel")
+        if (card.setLabel.isNotEmpty()) Line(card.setLabel, px, small, FontWeight.SemiBold, ink.grey, lineHeight = if (tight) 1.1f else 1.25f, tabular = true, tag = "setLabel")
       }
       val sub = if (adjust != Adjust.NONE) LogMath.crownHint(adjust, e) else card.previous.orEmpty()
       if (sub.isNotEmpty()) {
-        Line(sub, px, small, if (adjust != Adjust.NONE) FontWeight.Bold else FontWeight.Medium, if (adjust != Adjust.NONE) ink.acc else ink.grey, lineHeight = 1.25f, tabular = true, maxWidth = 360f, tag = "previous")
+        Line(sub, px, small, if (adjust != Adjust.NONE) FontWeight.Bold else FontWeight.Medium, if (adjust != Adjust.NONE) ink.acc else ink.grey, lineHeight = if (tight) 1.1f else 1.25f, tabular = true, maxWidth = 360f, tag = "previous")
       }
     }
     // The big numbers, fixed size whatever the text size.
@@ -394,6 +399,9 @@ private fun NextSetScreen(
       }
     }
     }
+    Spacer(Modifier.height(px.dp(10f)))
+    RoundButton(px, ambient, LogMath.canLog(snap.row, e, w, r) && !sending, arrow = false, tag = "done", top = null, onClick = actions.onDone)
+    }
     if (adjust != Adjust.NONE) {
       // The crown's arc at the right edge (design: 6 px, 68 to 112 degrees from 12 o'clock).
       Canvas(Modifier.fillMaxSize().testTag("crownArc")) {
@@ -402,7 +410,6 @@ private fun NextSetScreen(
         drawArc(ink.acc, 68f - 90f, 44f, false, topLeft = tl, size = box, style = Stroke(width = sw, cap = StrokeCap.Round))
       }
     }
-    RoundButton(px, ambient, LogMath.canLog(snap.row, e, w, r) && !sending, arrow = false, tag = "done", top = LogLayout.doneTop(k), onClick = actions.onDone)
   }
   LaunchedEffect(Unit) {
     try {
@@ -649,10 +656,15 @@ private fun ExerciseDoneScreen(
   ) {
     TopBar(px, now, heart, ambient, ink.grey, ink)
     // R-354: the column starts under the lower time row and ends 4 px above Go; the small lines 18 -> 20 px
-    // (as before at the largest text size) with tighter line boxes; the name stops growing past 35 px.
+    // (as before at the largest text size) with tighter line boxes; the 32 px name stays 32 px at every text size (a headline, like the big numbers).
     val k = px.labelScale
     val small = LogLayout.grown(20f, 18f, k)
     val top = LogLayout.exerciseDoneTop(k)
+    // R-354 render (5 Nov, L10 / L19): the lines sit tighter, or "Next 22.5 kg × 11" touched Go (and at the
+    // largest text was cut off by it).
+    val tight = LogLayout.tight(k)
+    val lh = 1.05f
+    val pad = 2f
     Column(
       Modifier.fillMaxWidth().padding(top = px.dp(top)).height(px.dp(LogLayout.BUTTON_TOP - 4f - top)),
       verticalArrangement = Arrangement.spacedBy(px.dp(2f), Alignment.CenterVertically),
@@ -662,18 +674,18 @@ private fun ExerciseDoneScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
           StrokeIcon(px.dp(22f), "doneIcon", "exDoneCheck", ink.acc) { strokeIcon(listOf(IconPath(CHECK, ink.acc)), 3f, StrokeCap.Round, StrokeJoin.Round) }
           Spacer(Modifier.width(px.dp(6f)))
-          Line(LogMath.setsDone(ui.doneSets), px, small, FontWeight.SemiBold, ink.grey, lineHeight = 1.2f, tag = "setsDone")
+          Line(LogMath.setsDone(ui.doneSets), px, small, FontWeight.SemiBold, ink.grey, lineHeight = lh, tag = "setsDone")
         }
       }
-      Line(WatchCopy.NEXT_EXERCISE, px, small, FontWeight.SemiBold, ink.grey, Modifier.padding(top = px.dp(4f)), lineHeight = 1.2f)
-      Line(card.exercise, px, minOf(32f * k, 35f), if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, spacing = -0.02f, lineHeight = 1.1f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "exercise")
-      card.previous?.let { Line(it, px, small, FontWeight.Medium, ink.grey, Modifier.padding(top = px.dp(4f)), lineHeight = 1.2f, tabular = true, maxWidth = 330f, tag = "previous") }
+      Line(WatchCopy.NEXT_EXERCISE, px, small, FontWeight.SemiBold, ink.grey, Modifier.padding(top = px.dp(pad)), lineHeight = lh)
+      Line(card.exercise, px, 32f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, spacing = -0.02f, lineHeight = if (tight) 1f else 1.05f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "exercise")
+      card.previous?.let { Line(it, px, small, FontWeight.Medium, ink.grey, Modifier.padding(top = px.dp(pad)), lineHeight = lh, tabular = true, maxWidth = 330f, tag = "previous") }
       val goal = snap.next.goal.trim()
       if (goal.isNotEmpty()) {
         Row(verticalAlignment = Alignment.Bottom) {
           Line(WatchCopy.NEXT, px, small, FontWeight.Bold, ink.acc, Modifier.alignByBaseline())
           Spacer(Modifier.width(px.dp(10f)))
-          Line(goal, px, if (goal.length > 10) 32f else 44f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.acc, Modifier.alignByBaseline(), spacing = -0.03f, lineHeight = 1.05f, tabular = true, maxWidth = 300f, tag = "next")
+          Line(goal, px, if (goal.length > 10) 32f else 44f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.acc, Modifier.alignByBaseline(), spacing = -0.03f, lineHeight = 1f, tabular = true, maxWidth = 300f, tag = "next")
         }
       }
     }
