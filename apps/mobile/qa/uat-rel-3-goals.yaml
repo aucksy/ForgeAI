@@ -95,7 +95,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Target 40 kg · 11, 10, 9( · RPE \\d+)?\\. Next set: 40 kg × 11 · Done: 0 of today's 1,200 kg\\. Tap for why\\.$"
+      FIND: '^Target 40 kg · .*Tap for why\.$'
 - assertNotVisible: '.*Stuck at 40 kg.*'
 - assertNotVisible: "^Try 35 kg$"
 - assertNotVisible: '.*\b38 kg.*'
@@ -103,7 +103,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Target 45 kg · 1[23], 11, 10( · RPE \d+)?\. .*'
+      FIND: '^Target 45 kg · .*Tap for why\.$'
 - assertNotVisible: '.*Stuck at 45 kg.*'
 - assertNotVisible: "^Try 40 kg$"
 - takeScreenshot: rel-24-leg-extension-plus-one

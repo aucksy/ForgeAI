@@ -35,3 +35,34 @@ appId: com.mettleup.app
       FIND: "^Done$"
 - tapOn: "^Done$"
 - runFlow: xc-sub-back-to-tabs.yaml
+# Run 42000331566: a card added on the spot gets no Target (only a routine's rows do), as the owner's
+# Pull-Up sits in a routine. Save this workout as a routine from the Profile feed, and open it.
+- tapOn: "^Profile$"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- tapOn: "Save as routine"
+- extendedWaitUntil:
+    visible: "Your plan only changes if you pick it."
+    timeout: 10000
+- tapOn:
+    text: "^My routines.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Saved as a routine"
+    timeout: 15000
+- tapOn: "^Open routine$"
+- extendedWaitUntil:
+    visible: "^Start routine$"
+    timeout: 15000
+- takeScreenshot: rel-r366-a2-routine-saved

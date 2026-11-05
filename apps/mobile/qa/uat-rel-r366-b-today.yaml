@@ -3,7 +3,18 @@
 appId: com.mettleup.app
 ---
 # ---------------------------------------------------------------- workout 2: today 7, 5, 5
-- runFlow: sub-uat-r366-start.yaml
+# Flow a left the saved routine open: start it today (the part moved the clock one day on).
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Pull[- ][Uu]p"
+    timeout: 30000
 - runFlow:
     file: sub-find.yaml
     env:
