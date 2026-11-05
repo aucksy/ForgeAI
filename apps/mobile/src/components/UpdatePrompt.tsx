@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSegments } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { AppState, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
@@ -138,7 +138,10 @@ export function UpdatePrompt() {
   }
   return (
     <Modal visible={visible} animationType="fade" onRequestClose={close} statusBarTranslucent navigationBarTranslucent>
-      <UpdateFullScreen onLater={close} />
+      {/* UAT finding: the insets outside a Modal window missed the gesture bar ("Later" sat on it). */}
+      <SafeAreaProvider>
+        <UpdateFullScreen onLater={close} />
+      </SafeAreaProvider>
     </Modal>
   );
 }
@@ -168,7 +171,7 @@ export function UpdateFullScreen({ onLater }: { onLater: () => void }) {
         contentContainerStyle={{
           flexGrow: 1,
           paddingTop: insets.top + space.xxxl,
-          paddingBottom: insets.bottom + space.lg,
+          paddingBottom: Math.max(insets.bottom, space.xl) + space.lg,
           paddingHorizontal: space.xl + 4,
           gap: space.xl + 4,
         }}

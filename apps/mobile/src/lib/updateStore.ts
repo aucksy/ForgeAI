@@ -108,6 +108,7 @@ function openPlayPage(): void {
 }
 
 let checking: Promise<void> | null = null;
+let qaRun: Promise<void> | null = null;
 
 export const useAppUpdate = create<UpdateState>()((set, get) => ({
   key: null,
@@ -255,13 +256,20 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
 
   laterPopup: () => set({ popup: false }),
 
-  qaStandIn: async (behind) => {
-    if (!hasUpdateStandIn(Constants.expoConfig?.extra)) return;
-    await setUpdateStandIn(behind);
-    // A check already running read the phone before the stand-in: wait for it, then check afresh.
-    while (checking) await checking;
-    set({ popup: false });
-    await get().check({ launch: true });
+  qaStandIn: (behind) => {
+    // UAT finding: one link can reach two listeners (two tab screens mounted at once); run it once.
+    if (qaRun) return qaRun;
+    qaRun = (async () => {
+      if (!hasUpdateStandIn(Constants.expoConfig?.extra)) return;
+      await setUpdateStandIn(behind);
+      // A check already running read the phone before the stand-in: wait for it, then check afresh.
+      while (checking) await checking;
+      set({ popup: false });
+      await get().check({ launch: true });
+    })().finally(() => {
+      qaRun = null;
+    });
+    return qaRun;
   },
 
   shown: () => {
