@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -286,11 +287,16 @@ internal fun Line(
   balanced: Boolean = false,
   tag: String = "",
   label: Boolean = false,
+  minSize: Float = 0f,
 ) {
   val outlinePx = with(LocalDensity.current) { px.dp(OUTLINE_PX).toPx() }
+  // R-368 (owner, 5 Nov 2026: a long exercise name must never be cut off): with [minSize] set, text that does
+  // not fit its lines steps down 1 px at a time to [minSize]; only past that does "…" appear.
+  val fit = remember(text, size, minSize) { mutableFloatStateOf(size) }
+  val shown = if (minSize > 0f) fit.floatValue else size
   var style = TextStyle(
     color = if (outlined) OutlineInk else color,
-    fontSize = if (label) px.label(size) else px.sp(size),
+    fontSize = if (label) px.label(shown) else px.sp(shown),
     fontWeight = weight,
     fontFamily = Manrope,
     letterSpacing = spacing.em,
@@ -316,7 +322,19 @@ internal fun Line(
     overflow = TextOverflow.Ellipsis,
     softWrap = maxLines > 1,
     maxLines = maxLines,
+    onTextLayout = { r ->
+      if (minSize > 0f && r.hasVisualOverflow && fit.floatValue > minSize) {
+        fit.floatValue = maxOf(minSize, fit.floatValue - 1f)
+      } else if (tag.isNotEmpty()) {
+        TextFit.cut[tag] = r.hasVisualOverflow
+      }
+    },
   )
+}
+
+/** Test hook (R-368): for each tagged line, whether its last layout still ran out of room ("…"). */
+internal object TextFit {
+  val cut = mutableMapOf<String, Boolean>()
 }
 
 /**

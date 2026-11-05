@@ -178,6 +178,21 @@ class WatchLayoutTest {
     assertTrue(LogLayout.nextSetTop(1f) >= LogLayout.topBarBottom(1f))
   }
 
+  // R-368 (owner, 5 Nov 2026): bigger -15 / +15 he can hit mid-workout, mirrored, on the glass, clear of the digits.
+  @Test
+  fun restStepButtonsAreBiggerMirroredAndClearOfTheCountdown() {
+    assertTrue(LogLayout.STEP_CIRCLE >= 80f)
+    assertTrue(LogLayout.STEP_TAP >= 112f)
+    val c = RingMath.DESIGN_PX / 2f
+    // The far edge of each circle stays 10 px inside the rest ring.
+    val far = kotlin.math.hypot(c - LogLayout.STEP_CENTRE_X, c - LogLayout.STEP_CENTRE_Y) + LogLayout.STEP_CIRCLE / 2f
+    assertTrue("circle reaches $far px from the centre", far <= RingMath.RADIUS - 10f)
+    // The 78 px "1:23" is about 144 px wide (156..300): the circles stay 15 px clear of it.
+    assertTrue(LogLayout.STEP_CENTRE_X + LogLayout.STEP_CIRCLE / 2f <= 156f - 15f)
+    // The countdown sits higher than before (its line top was 120 px).
+    assertTrue(LogLayout.REST_CLOCK_TOP < 120f)
+  }
+
   @Test
   fun effortGridSitsUnderTheTitleAndSkipStaysOnTheGlass() {
     for (step in 0..24) {

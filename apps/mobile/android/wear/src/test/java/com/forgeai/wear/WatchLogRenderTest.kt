@@ -43,6 +43,8 @@ abstract class WatchLogRenderBase(private val size: String) {
     val bpm: Double? = 132.0,
     /** R-354: the round Done / Go button must have clear space above it (nothing touching or cut). */
     val clear: Boolean = false,
+    /** R-368: tagged lines that must show whole (no "…"): a long name shrinks instead of being cut. */
+    val whole: List<String> = emptyList(),
   )
 
   private fun both(name: String, s: Shot) {
@@ -52,6 +54,7 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   private fun shot(name: String, s: Shot, ambient: Boolean) {
     val file = File(out, "$size-$name.png")
+    TextFit.cut.clear()
     captureRoboImage(file.absolutePath) {
       Scaled(s.fontScale) {
         WatchScreen(
@@ -67,6 +70,7 @@ abstract class WatchLogRenderBase(private val size: String) {
     }
     checkRoundCapture(file, size, s.ring, s.edgeRing)
     if (s.clear && !ambient) checkClearAboveButton(file)
+    for (tag in s.whole) assertTrue("${file.name}: \"$tag\" was cut off with …", TextFit.cut[tag] == false)
   }
 
   /**
@@ -103,7 +107,7 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   private val editing = LogUi(rowKey = "set-2", weight = 22.5, reps = 15, edited = true, adjustAt = now - 500L)
 
-  @Test fun nextSetScreen() = both("L01-next-set", Shot(nextSet(), clear = true))
+  @Test fun nextSetScreen() = both("L01-next-set", Shot(nextSet(), clear = true, whole = listOf("exercise")))
 
   @Test fun warmUp() = both(
     "L02-warm-up",
@@ -114,14 +118,14 @@ abstract class WatchLogRenderBase(private val size: String) {
 
   @Test fun adjustReps() = both("L04-adjust-reps", Shot(nextSet(), editing.copy(reps = 16, adjust = Adjust.REPS)))
 
-  @Test fun longName() = both("L05-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), clear = true))
+  @Test fun longName() = both("L05-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), clear = true, whole = listOf("exercise")))
 
   @Test fun effort() = both(
     "L06-effort",
     Shot(nextSet(), LogUi(phase = LogPhase.EFFORT, phaseAt = now - 1_600L), edgeRing = true),
   )
 
-  @Test fun restTimer() = both("L07-rest", Shot(resting(), ring = true))
+  @Test fun restTimer() = both("L07-rest", Shot(resting(), ring = true, whole = listOf("restExercise")))
 
   @Test fun saved() = both("L08-saved", Shot(resting(), LogUi(savedAt = now - 600L), ring = true))
 
@@ -176,7 +180,25 @@ abstract class WatchLogRenderBase(private val size: String) {
       clear = true,
     ),
   )
+
+  // R-368 (owner, 5 Nov 2026: "make sure a long exercise name works on this screen"): the longest name at the
+  // largest text and on exercise done: shrunk to fit, never cut with "…". The rest screen has one line for the
+  // name above the countdown: it shrinks to 16 px and only a name longer than that line still ends in "…".
+  @Test fun largestTextLongName() = both("L20-largest-text-long-name", Shot(nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), fontScale = 1.3f, clear = true, whole = listOf("exercise")))
+
+  @Test fun longNameRest() = both("L21-long-name-rest", Shot(resting("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)"), ring = true))
+
+  @Test fun longNameExerciseDone() = both(
+    "L22-long-name-exercise-done",
+    Shot(
+      nextSet("Single-Arm Dumbbell Bulgarian Split Squat (Rear Foot Elevated)", entry.copy(w = 22.5, r = 10), NextSet("Set 1 of 3", "22.5 kg × 10", "22.5 kg × 11")),
+      LogUi(exDone = true, doneExercise = "Bench Press", doneSets = 4),
+      clear = true,
+      whole = listOf("exercise"),
+    ),
+  )
 }
+
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
