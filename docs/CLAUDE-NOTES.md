@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-366. Bodyweight goal bar says "17 reps reached" without last time — 5 Nov 2026
+
+He said (screenshot, Pull-Up: last 7, 5, 4; today 7, 5, 5): the green bar shows "17 reps reached" but not last time; probably a bodyweight exercise issue.
+
+Fix (sent to the rule A / kg-to-beat helper, which owns that bar): the reps-only bar mirrors the kg bar: names last time's total (16) and what was done (17), one check mark; tests incl. negative and regression; UAT text check.
+
 ## R-365. At most 6 helpers at once (global) — 5 Nov 2026
 
 He said: 16 tasks running at once will chew through his limits; limit token-using tasks to about 6 to begin with; he may raise it later. Global rule. What runs now may finish; it applies going forward.
