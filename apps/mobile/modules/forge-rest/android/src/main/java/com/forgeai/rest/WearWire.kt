@@ -165,6 +165,16 @@ internal object WearWire {
     return if (HEX6.matches(s)) s else ""
   }
 
+  /**
+   * R-355 (5 Nov 2026): the name the watch shows as the exercise of the next set. The live card's
+   * title is the exercise only while the card names a set ([lines] set, or a row a tap ticks); with
+   * no set named ("All sets done · Finish", "Add an exercise to start") it is the WORKOUT's name
+   * ("Push Day", "Workout in progress"), which the watch drew above its countdown as if it were an
+   * exercise. Then "" goes: the watch shows its status line ("All sets done") and no stale name.
+   */
+  fun watchTitle(title: String, lines: WatchLines, row: String): String =
+    if (lines.set.isNotBlank() || row.isNotEmpty()) title else ""
+
   /** The row JSON without its "watch" lines (the watch gets them as their own fields). */
   fun withoutWatch(rowJson: String): String {
     if (rowJson.isEmpty()) return rowJson

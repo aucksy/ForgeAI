@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat"
+GATE_PARTS="w dnd longrest anim mk clip uat u355"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1866,6 +1866,7 @@ part_uat() {
   # (the QA build's 'updateOffer' stand-in, mettleup://qa-update?behind=N). Pictures rel-r336-*.png.
   uat_flow uatr336 uat-rel-r336-update.yaml
   part_u344
+  part_u355
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1892,7 +1893,44 @@ part_u344() {
     log "UAT R-344: phone date back to $(adb shell date +%F | tr -d '\r')"
   fi
 }
+# R-355 (owner, 5 Nov 2026): during the rest after an exercise's LAST set the watch names the NEXT
+# exercise (its set 1), and after the workout's final set no exercise name goes, only "All sets done".
+# No watch in the cloud: the phone's own log of what it tells the watch ("watch next: <exercise> |
+# <set> | <text>", WearSync) and the rest card are read. Also runs alone with only=u355. The watch's
+# own screen is checked by the watch render pictures (WatchLogRenderTest) and on his watch after release.
+part_u355() {
+  local rc=0 a b
+  adb logcat -c >/dev/null 2>&1 || true
+  if ! uat_flow uatr355a uat-rel-r355-a-last-set.yaml; then
+    return 1
+  fi
+  adb logcat -d -s ForgeWear:I > "$OUT/r355-a-logcat.txt" 2>/dev/null || true
+  adb shell dumpsys notification --noredact > "$OUT/r355-a-notif.txt" 2>/dev/null || true
+  a=$(grep -o 'watch next: .*' "$OUT/r355-a-logcat.txt" | tail -n 1)
+  log "UAT R-355 a: the watch was last told: ${a:-nothing}"
+  case "$a" in
+    "watch next: Barbell Bench Press | Set 1 of 2 | "*) log "UAT R-355 a PASSED: during the rest after Lateral Raise's last set the watch names Barbell Bench Press, Set 1 of 2" ;;
+    *) log "UAT R-355 a FAILED: expected 'Barbell Bench Press | Set 1 of 2' for the watch during the rest after Lateral Raise's last set"; rc=1 ;;
+  esac
+  python3 "$QA_DIR/notif.py" rest-up "$OUT/r355-a-notif.txt" "Rest" "Barbell Bench Press, set 1" >> "$OUT/timeline.txt"     || { log "UAT R-355 a FAILED: the rest card does not say Next: Barbell Bench Press, set 1"; rc=1; }
+  adb logcat -c >/dev/null 2>&1 || true
+  if uat_flow uatr355b uat-rel-r355-b-final-set.yaml; then
+    adb logcat -d -s ForgeWear:I > "$OUT/r355-b-logcat.txt" 2>/dev/null || true
+    grep -q 'watch next: Barbell Bench Press | Set 2 of 2 | ' "$OUT/r355-b-logcat.txt"       || { log "UAT R-355 b FAILED: the rest between the bench sets did not name Barbell Bench Press, Set 2 of 2"; rc=1; }
+    b=$(grep -o 'watch next: .*' "$OUT/r355-b-logcat.txt" | tail -n 1)
+    log "UAT R-355 b: after the final set the watch was last told: ${b:-nothing}"
+    case "$b" in
+      "watch next:  |  | All sets done"*) log "UAT R-355 b PASSED: after the final set no exercise name, the text 'All sets done'" ;;
+      *) log "UAT R-355 b FAILED: expected no exercise name and 'All sets done' after the final set"; rc=1 ;;
+    esac
+  else
+    rc=1
+  fi
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 qa_runs uat && { log "gate part UAT begins"; part_uat; }
+qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }

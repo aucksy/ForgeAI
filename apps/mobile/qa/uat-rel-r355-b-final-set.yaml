@@ -1,0 +1,50 @@
+# Part UAT, R-355 flow b: goes on from flow a's rest (no fresh start). Skip rest, then B's two sets:
+# B set 1 -> a rest naming B set 2; B set 2 is the workout's FINAL set -> "All sets done" and no exercise
+# name for the watch. run-device-qa.sh (part_u355) reads the phone's "watch next:" lines after it.
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "Skip rest"
+    optional: true
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 5000
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Barbell Bench Press set 1"
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 8000
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
+- takeScreenshot: rel-r355-04-rest-between-b-sets
+- tapOn: "Skip rest"
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 5000
+# ---------------------------------------------------------------- the workout's final set
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Barbell Bench Press set 2"
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "never shown, a 2 s wait for the card to be posted"
+    timeout: 2000
+    optional: true
+- takeScreenshot: rel-r355-05-after-final-set

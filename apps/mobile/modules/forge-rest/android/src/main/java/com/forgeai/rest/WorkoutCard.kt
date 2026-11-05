@@ -118,7 +118,8 @@ object WorkoutCard {
     // R-166: the next set's lines for the watch ride in the row JSON; the watch gets them apart.
     val lines = WearWire.watchLines(doneJson)
     val row = if (done != null && !done.first.open) WearWire.withoutWatch(doneJson.orEmpty()) else ""
-    WearSync.workout(ctx, true, title, text, row, lines)
+    // R-355: the workout's name never goes as the next set's exercise (no set named: "").
+    WearSync.workout(ctx, true, WearWire.watchTitle(title, lines, row), text, row, lines)
   }
 
   /**

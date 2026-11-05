@@ -1,0 +1,122 @@
+# Part UAT, R-355 flow a (owner, 5 Nov 2026: "the watch app stopped showing the exercise name ... after
+# the last set. So maybe we just have to start showing the name of the next exercise"). Starts afresh
+# (gate-demo: clearState + demo). The cloud emulator has no watch, so the run checks what the phone TELLS
+# the watch: run-device-qa.sh (part_u355) reads the phone's "watch next: <exercise> | <set> | <text>"
+# lines (WearSync, logcat) and the rest card in the notification list right after this flow.
+#   Exercise A: Lateral Raise, ONE set (its last). Exercise B: Barbell Bench Press, two sets.
+#   A's set 1 ticked -> the rest. The flow ENDS during that rest (the shell reads it there).
+# Pictures rel-r355-*.png (qa-out/uat-release/).
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start empty workout$"
+- tapOn: "^Start empty workout$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout|^Add exercise$"
+    timeout: 30000
+# ---------------------------------------------------------------- A: Lateral Raise (1 set)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Lateral Raise"
+- tapOn:
+    text: "Select Lateral Raise"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Lateral Raise set 1 weight, kilograms"
+    timeout: 20000
+# ---------------------------------------------------------------- B: Barbell Bench Press (2 sets)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Barbell Bench Press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Barbell Bench Press set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Barbell Bench Press set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, kilograms"
+      VALUE: " 40"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 reps"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 2 weight, kilograms"
+      VALUE: " 40"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 2 reps"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 1 weight, kilograms"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 1 reps"
+      VALUE: " 12"
+- takeScreenshot: rel-r355-01-two-exercises
+# ---------------------------------------------------------------- A's LAST set: the rest names B
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Lateral Raise set 1"
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 8000
+- tapOn:
+    text: "Not now"
+    optional: true
+# In use may open by itself (bench equipment): close it, the rest runs on.
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - takeScreenshot: rel-r355-02-in-use-names-next
+      - tapOn:
+          point: "50%,50%"
+          waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
+- assertVisible: "Skip rest"
+- takeScreenshot: rel-r355-03-rest-after-a-last-set

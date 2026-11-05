@@ -246,4 +246,23 @@ class WearWireTest {
   fun playStoreUriNamesThePackage() {
     assertEquals("market://details?id=com.mettleup.app", WearWire.playStoreUri("com.mettleup.app"))
   }
+
+  // ------------------------------------------------------------------ R-355: the next set's exercise name
+  @Test
+  fun theWatchGetsTheExerciseOfTheNextSet() {
+    // Rest after Bench Press's last set: the app's card already names Barbell Row, set 1.
+    val row = """{"workout":42,"exKey":"b","setKey":"b1","open":false,"values":"60|8","label":"Barbell Row, set 1",""" +
+      """"watch":{"set":"Set 1 of 3","last":"60 kg × 8","goal":"60 kg × 8"}}"""
+    val lines = WearWire.watchLines(row)
+    assertEquals("Barbell Row", WearWire.watchTitle("Barbell Row", lines, WearWire.withoutWatch(row)))
+    // A row with nothing to save (no Done) still names its exercise: the set line is there.
+    assertEquals("Barbell Row", WearWire.watchTitle("Barbell Row", WatchLines("Set 1 of 3", "", ""), ""))
+  }
+
+  @Test
+  fun afterTheFinalSetNoWorkoutNameGoesAsAnExercise() {
+    // "All sets done · Finish": the card's title is the workout's name, no row, no lines.
+    assertEquals("", WearWire.watchTitle("Push Day", WatchLines.NONE, ""))
+    assertEquals("", WearWire.watchTitle("Workout in progress", WearWire.watchLines(null), ""))
+  }
 }

@@ -185,6 +185,9 @@ object WearSync {
       return
     }
     lastWorkout = key
+    // R-355: what the watch is told the next set is, one line per change (the UAT reads it from logcat,
+    // since the cloud emulator has no watch): "watch next: <exercise> | <set> | <text>".
+    Log.i(TAG, "watch next: ${now[1]} | ${now[4]} | ${now[2]}")
     val values = linkedMapOf<String, Any>(
       "active" to active,
       "title" to now[1],
