@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-340. Apple account: his own Apple ID + a second-hand iPhone under 20K - 5 Nov 2026
+
+He asked: can he enrol with simpleapps108@gmail.com on his brother's iPhone, then said a second-hand iPhone is worth buying; find one under 20K.
+Answered: India enrols only in the Apple Developer app (iPhone/iPad/Apple Silicon Mac). Use a new Apple ID on simpleapps108@gmail.com with his own mobile number, sign in only inside the Developer app, Individual.
+Prices read live on Cashify 5 Nov (6-month warranty, 'Fair' = visible marks): iPhone 11 64 GB Rs 16,799; iPhone 12 64 GB Rs 21,199. iOS 27 supports iPhone 11 and later (Apple, WWDC 2026). Recommended iPhone 12 (one more year of updates), iPhone 11 if 20K is firm. He buys (payment is his).
+
 ## R-339. Start building the iPhone app now, alongside the 0.72.0 ship - 5 Nov 2026
 
 He said: "Ok, let's start building the iPhone app after you have shipped this batch with all the connections and then simultaneously let's start doing that first and I'll come back from the gym and start applying for the Apple developer account."
@@ -338,9 +344,3 @@ Checked: it exists (R-70) but is hidden: tap the rest clock during a rest, the b
 He said: when the rest ends he just starts the next set without telling the app, so the red count-up keeps going and looks like he is resting longer. He does not think members need to see it, and members must not do any extra task beyond ticking the set. Also: be his product expert and give an opinion on every request (saved as a preference + global CLAUDE.md rule 7).
 
 Checked: the long-rest rule (F73) never uses the red counter. It measures tick to tick minus about 3 s a rep (15-60 s), marks a set only past 2x the planned rest AND 90 s over it, and then only stops the goal going up (never lowers it, never asks anything). My view: agree, remove the red counter row (and its Hide button); keep the quiet rule. Build in the next batch, after 0.70.0 ships (a code change now would restart the 2-hour phone tests).
-
-## R-297. Watch: dim, then wake on a wrist raise, like Pixel's own workouts; and the Jaipur gym email — 3 Nov 2026
-
-He asked: during a workout the watch screen should not turn off. Like a workout started in the Pixel Watch's own app, it goes dim and lights up again when he looks at the watch. Put it in the backlog, build after the gym email. Checked: R-166 ambient mode works only when the watch's Always-on screen setting is on; with it off the watch falls back to the watch face. Added F191 (Planned).
-
-Same day he asked for a cold email to Jaipur gyms (3-month trial, New Year rush, USPs, screenshots), in his drafts, with phone and tablet views. Done: draft in pahuja.aakash108@gmail.com; images on mail.mettleup.fit (a separate static Worker); 262 gyms, 53 published emails in D:/Apps/ForgeAI/Marketing/jaipur-gyms (outside git). Sending needs his yes.
