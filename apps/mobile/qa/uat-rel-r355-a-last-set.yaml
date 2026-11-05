@@ -94,6 +94,11 @@ appId: com.mettleup.app
 - tapOn:
     text: "Not now"
     optional: true
+# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 5000
+    optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
@@ -101,6 +106,9 @@ appId: com.mettleup.app
       - tapOn:
           point: "50%,50%"
           waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 2 complete"
     centerElement: true
@@ -120,6 +128,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
+# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 5000
+    optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
@@ -127,6 +140,9 @@ appId: com.mettleup.app
       - tapOn:
           point: "50%,50%"
           waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 3 complete"
     centerElement: true
@@ -146,6 +162,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
+# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 5000
+    optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
@@ -153,6 +174,9 @@ appId: com.mettleup.app
       - tapOn:
           point: "50%,50%"
           waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 4 complete"
     centerElement: true
@@ -172,6 +196,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
+# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 5000
+    optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
@@ -179,6 +208,9 @@ appId: com.mettleup.app
       - tapOn:
           point: "50%,50%"
           waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
 - scrollUntilVisible:
     element: "Mark .*Leg Extension set 5 complete"
     centerElement: true
@@ -198,6 +230,11 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "Skip rest|All sets done|Finish workout"
           timeout: 8000
+# In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 5000
+    optional: true
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'
@@ -205,6 +242,9 @@ appId: com.mettleup.app
       - tapOn:
           point: "50%,50%"
           waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
 # In use never opens after an exercise's last set (R-299); closed here if it ever does.
 - runFlow:
     when:
