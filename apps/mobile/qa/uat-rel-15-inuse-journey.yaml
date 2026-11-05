@@ -10,7 +10,9 @@
 #   4. A tap on "I'm back" (the nearest thing to the tick) closes it; the tick turned off again.
 #   5. Leg Extension set 1 ticked (70 kg, a record): R-357 the "New record" pop-up first, then In use opens by itself with the watch's lines (R-346: "Previous ..."
 #      and "Next ...", no kg to beat); a middle tap closes it; the bar says In use opens after each set.
-# Pictures rel-345-*.png (qa-out/uat-release/).
+# R-364 (owner rule, 5 Nov 2026: every type of UAT): also the app sent to the background and back,
+# the notification shade, untick + tick again, a set edited during the rest, a long name on a cable.
+# Pictures rel-345-*.png, rel-357-*.png, rel-359-*.png (qa-out/uat-release/).
 appId: com.mettleup.app
 ---
 - runFlow: gate-demo.yaml
@@ -179,6 +181,35 @@ appId: com.mettleup.app
     optional: true
 - copyTextFrom: 'Rest, \d+ seconds left\. Show machine in use'
 - assertTrue: ${maestro.copiedText != output.restA}
+# ---------------------------------------------------------------- R-364 interruptions during the rest
+- pressKey: Home
+- extendedWaitUntil:
+    visible: "never shown, a 2 s wait"
+    timeout: 2000
+    optional: true
+- launchApp
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 20000
+- assertVisible: "^Tap to show In use$"
+- assertNotVisible: 'In use\. .*Tap to close'
+- takeScreenshot: rel-345-10-back-from-home
+- swipe:
+    start: "50%,1%"
+    end: "50%,70%"
+    duration: 600
+- extendedWaitUntil:
+    visible: "never shown, a 1.5 s wait"
+    timeout: 1500
+    optional: true
+- takeScreenshot: rel-345-11-shade-down
+- back
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 10000
+- assertVisible: "^Tap to show In use$"
+- assertNotVisible: 'In use\. .*Tap to close'
+- takeScreenshot: rel-345-12-shade-closed
 # ---------------------------------------------------------------- 3. a tap ON the tick
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
@@ -245,6 +276,29 @@ appId: com.mettleup.app
     timeout: 5000
 - assertVisible: "^Tap to show In use$"
 - takeScreenshot: rel-345-07-bar-after-tick-off
+# ---------------------------------------------------------------- R-364 untick, tick again
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: ".*Lateral Raise set 1 complete\\. Tap to undo"
+- tapOn:
+    text: ".*Lateral Raise set 1 complete\\. Tap to undo"
+    index: 0
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Lateral Raise set 1"
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 8000
+- runFlow: sub-popup-gone.yaml
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 2500
+    optional: true
+- assertNotVisible: 'In use\. .*Tap to close'
+- assertVisible: "^Tap to show In use$"
+- takeScreenshot: rel-345-13-untick-retick-bar
 - tapOn: "Skip rest"
 - extendedWaitUntil:
     notVisible: "Skip rest"
@@ -284,4 +338,78 @@ appId: com.mettleup.app
 - assertVisible: "Skip rest"
 - assertVisible: "^In use opens after each set$"
 - takeScreenshot: rel-345-09-machine-bar-after-close
+# ---------------------------------------------------------------- R-364 edit a set during the rest
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 2 reps"
+      VALUE: " 9"
+- assertVisible: "Skip rest"
+- assertVisible: "^In use opens after each set$"
+- assertNotVisible: 'In use\. .*Tap to close'
+- tapOn:
+    text: 'Rest, \d+ seconds left\. Show machine in use'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- assertVisible: '^Next .+ × 9$'
+- takeScreenshot: rel-345-14-next-follows-the-edit
+- back
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
+- tapOn: "Skip rest"
+# ---------------------------------------------------------------- R-364 edge: a long name on a cable
+# "Single-Arm Overhead Cable Extension" (35 letters, cable: In use opens by itself) at this phone's
+# size: the name, the Next line, the clock and the tick strip all fit.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Single-Arm Overhead Cable"
+- tapOn:
+    text: "Select Single-Arm Overhead Cable Extension"
+    index: 0
+- tapOn: "Add 1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Single-Arm Overhead Cable Extension set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Single-Arm Overhead Cable Extension set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Single-Arm Overhead Cable Extension set 1 weight, kilograms"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Single-Arm Overhead Cable Extension set 1 reps"
+      VALUE: " 12"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Single-Arm Overhead Cable Extension set 1"
+- runFlow: sub-popup-gone.yaml
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- assertVisible: "Single-Arm Overhead Cable Extension"
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: true
+- takeScreenshot: rel-345-15-long-name-in-use
+- back
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
 - tapOn: "Skip rest"
