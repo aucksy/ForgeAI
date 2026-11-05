@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-358. False "Most lifted in one set" after changing Counting to one side at a time — 5 Nov 2026
+
+He said (screenshot): Dumbbell Preacher Curl, changed Counting to "One side at a time"; 10 kg × 13 showed a new record though he did 10 × 15 last time (22 Oct, Pull 1). "Its wrong...its not most lifted in one set".
+
+Cause: Most lifted in one set counts both sides in that mode (10 × 13 × 2 = 260 kg) and compared it with old sets counted once (10 × 15 = 150 kg). Decided: records compare only sets logged with the same Counting; the first workout after a change sets the new mark quietly. The kg-to-beat line follows the same rule (no line when last time used another Counting). Records helper + progression helper building it.
+
 ## R-357. In use screen covers the record toast — 5 Nov 2026
 
 He said (screenshot, Dumbbell Preacher Curl): the In use banner messes up the achievement toast; let the banner start after the toast is done. The toast also sat on the status bar (clock drawn through it).
