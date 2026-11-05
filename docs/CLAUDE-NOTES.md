@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-337. Tracker after every release: hard rule + hook - 5 Nov 2026
+
+He said: "Are you updating the tracker after each release? If not, make it a hard rule to do that. Because yesterday I saw that the feature about dim screen on the watch and the fit pass thing was still there and you later told me that it was already released in version 71 ... I think it may not just be after release so your tasks for example those should be updated regularly as well".
+Cause: the inbox file was fixed but the page was not republished; "Waiting for you" rows (F123, F147) never moved after his live yes; Claude's tasks (T17, T54) were days old.
+Done: Stop hook ~/.claude/hooks/tracker_guard.py (+ PostToolUse stamp on Artifact): blocks the reply once when a release tag or an inbox change is newer than the last tracker publish. Swept every row: F123 and F147 to Next release, F79 details, T17 and T54 updated, T69 (update pop-up) and T70 (review fixes) added. Page republished (version 336). Rule in CLAUDE.md and the brain note tracker-matches-what-shipped.
+
 ## R-336. Update pop-up: option B (full screen) + top line + 7th launch - 5 Nov 2026
 
 He said (5 Nov 2026, on the design canvas): "B (full screen) - We can do the full screen thing but we have to ensure that we are not showing this every time the user launches the app. So once someone has tapped on the later button on this full screen notification, then there can be one simple line at the top of the homepage that update to latest version. that may be visible enough with a different color or something. And then we can probably show this again on, let's say, the seventh launch of the app. Also consider what happens if someone has not updated the app and we have rolled out quite a few different versions. Yeah, I don't know, you decide the best implementation."
