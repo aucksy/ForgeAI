@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-339. Start building the iPhone app now, alongside the 0.72.0 ship - 5 Nov 2026
+
+He said: "Ok, let's start building the iPhone app after you have shipped this batch with all the connections and then simultaneously let's start doing that first and I'll come back from the gym and start applying for the Apple developer account."
+Read as: go on the iPhone build now in parallel (it does not touch the 0.72.0 release commit, which is off main); he enrols in Apple's programme after the gym.
+My view: start with steps 2-3 of docs/ios/RESEARCH.md (parity gate + PARITY.yaml, then a free macOS CI job that builds the iPhone app in the simulator and photographs every screen). No Apple account is needed for these; the account is needed only for TestFlight and the store. Native twins (rest timer, HealthKit, watch link) and the SwiftUI watch app follow.
+Done: helper started on steps 2-3. 0.72.0 phone tests re-running on qa-072-fix (243f6986 = v0.72.0 + test-script fixes only).
+
 ## R-338. iPhone + Apple Watch: questions and parity framework research - 5 Nov 2026
 
 He said: "we need to start working on the iPhone app and the Apple Watch app ... how much time it's going to take to get the app published ... I don't have an iPhone ... figure out a way to clone this Android app so accurately and lay out a framework that anytime you make a change in Android app ... it automatically gets replicated to the iPhone app or the watch app ... Do not start any work right now. Well, you can start the research on this framework".
@@ -337,7 +344,3 @@ Checked: the long-rest rule (F73) never uses the red counter. It measures tick t
 He asked: during a workout the watch screen should not turn off. Like a workout started in the Pixel Watch's own app, it goes dim and lights up again when he looks at the watch. Put it in the backlog, build after the gym email. Checked: R-166 ambient mode works only when the watch's Always-on screen setting is on; with it off the watch falls back to the watch face. Added F191 (Planned).
 
 Same day he asked for a cold email to Jaipur gyms (3-month trial, New Year rush, USPs, screenshots), in his drafts, with phone and tablet views. Done: draft in pahuja.aakash108@gmail.com; images on mail.mettleup.fit (a separate static Worker); 262 gyms, 53 published emails in D:/Apps/ForgeAI/Marketing/jaipur-gyms (outside git). Sending needs his yes.
-
-## R-296. Release review: old members start with trainer sharing off; words say gym + trainer — 3 Nov 2026
-
-Review agent found: members who joined before 0.70.0 never saw the join line, and the caption says only trainers see the summary while the owner sees it too. Asked him; he chose: "Start OFF" for members who joined before this update (new joiners stay on, the join screen tells them) and "Say gym + trainer" in the words. Also fixed: a restore that flips the trainer switch now tells the gym; exercise names cut by whole characters.
