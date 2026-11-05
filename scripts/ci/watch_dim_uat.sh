@@ -163,7 +163,10 @@ workout_state() { # rest-ends-ms (0 = none)
   write_prefs /tmp/forgeai_watch.xml forgeai_watch.xml
 }
 
-workout_state 0
+# A long rest runs through the first phases, so the dimmed pictures show the workout's rest screen
+# (no phone exists in CI: without a rest the screen says "Phone not connected").
+NOW=$(( $(adb shell date +%s | tr -d '\r') * 1000 ))
+workout_state $((NOW + 25 * 60 * 1000))
 adb logcat -c || true
 bring_app
 shot "0-workout-open"
@@ -310,7 +313,12 @@ while :; do
   [ "$T" -ge $((ENDS + 12000)) ] && break
   sleep 3
 done
-adb shell dumpsys power 2>/dev/null | tr -d '\r' | grep -iE "mettleup:rest-end|ForgeAI:restOver" > "$OUT/N-wakelocks-after-rest.txt" || true
+# Only the wake locks HELD now (the "Wake Locks: size=" list: "PARTIAL_WAKE_LOCK 'tag' ACQ=..."), not
+# the history lines (ACQ/REL events), which every rest leaves behind.
+adb shell dumpsys power 2>/dev/null | tr -d '\r' > "$OUT/N-power.txt" || true
+grep -E "^ *PARTIAL_WAKE_LOCK +'(mettleup:rest-end|ForgeAI:restOver)'" "$OUT/N-power.txt" > "$OUT/N-wakelocks-after-rest.txt" || true
+LAST="$(grep -E " (ACQ|REL) (mettleup:rest-end|ForgeAI:restOver)" "$OUT/N-power.txt" | tail -2 | tr '\n' ' ')"
+result N-history INFO "last wake lock events: $LAST"
 if [ -s "$OUT/N-wakelocks-after-rest.txt" ]; then
   result N-wakelock FAIL "a wake lock is still held after the rest: $(tr '\n' ' ' < "$OUT/N-wakelocks-after-rest.txt")"
 else
