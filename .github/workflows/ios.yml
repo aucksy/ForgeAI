@@ -59,7 +59,9 @@ jobs:
 
       - name: CocoaPods
         working-directory: apps/mobile/ios
-        run: pod install 2>&1 | tee "$OUT/pod-install.log"
+        run: |
+          set -o pipefail
+          pod install 2>&1 | tee "$OUT/pod-install.log"
 
       # Release configuration: the JavaScript is bundled into the app, so it opens with no Metro
       # server. CODE_SIGNING_ALLOWED=NO: a simulator app needs no Apple signing.
