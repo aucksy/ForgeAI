@@ -691,6 +691,7 @@ export const HELP_ARTICLES = [
       '"Widgets": tap "Add Today" or "Add This week". Today starts your next workout and shows what to beat from last time. ' +
       'Gym members can tap "Add Gym right now": how busy your gym is, and when that was checked. Tap it to check in. ' +
       '"Health apps": connect Health Connect to send your workouts, and to read your weight or steps. ' +
+      'Turn on "Sleep and workouts" and, after a lighter workout, MettleUp tells you if you slept under 6 hours last night. Your sleep stays on this phone. ' +
       'If a row is missing, this phone does not have it.',
     screens: [
       'apps/mobile/src/app/settings/watch.tsx',
@@ -807,6 +808,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/+not-found.tsx': 'Shown only for a broken link; it sends the member back into the app.',
   'apps/mobile/src/app/index.tsx': 'Redirect: opens the Workout tab.',
   'apps/mobile/src/app/qa-update.tsx': 'Redirect: a test-build link for the update screen pictures; opens the Workout tab.',
+  'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',
   'apps/mobile/src/app/library/index.tsx': 'Redirect: an old link that opens Exercises.',
