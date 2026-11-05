@@ -183,6 +183,12 @@ export interface PrevSet {
    * reads last time's drop as its set 2. Never a hint or a fill.
    */
   setType?: 'drop';
+  /**
+   * T76 (R-358 family): the Counting this set was logged in, ONLY when it differs from the card's
+   * ("Weight as typed" last time, "One side at a time" now). Absent = the card's own. The "on last
+   * time" line never compares across Countings (records and the kg to beat already do not).
+   */
+  counting?: LoadMode;
 }
 
 /** What a tick fills into a blank row (and what its inputs show greyed). */
@@ -732,7 +738,17 @@ export function toPrevSet(
   if (s.rpe != null && Number.isFinite(s.rpe) && !s.isWarmup) p.rpe = s.rpe;
   // C1-3: a drop set stays a drop set, so PREVIOUS matches drops to drops.
   if (s.setType === 'drop' && !s.isWarmup) p.setType = 'drop';
+  // T76: logged in another Counting than the card's (kept so "on last time" stays quiet).
+  if (mode && s.loadMode && s.loadMode !== mode) p.counting = s.loadMode;
   return p;
+}
+
+/** T76: a PREVIOUS set (its weight in the card's counting `from`) re-read in `to`; the Counting it was logged in kept only when it differs from `to`. PURE. */
+export function recount(p: PrevSet, from: LoadMode, to: LoadMode): PrevSet {
+  const was = p.counting ?? from;
+  const rest: PrevSet = { ...p };
+  delete rest.counting;
+  return { ...rest, weightKg: convertCounting(p.weightKg, from, to), ...(was !== to ? { counting: was } : {}) };
 }
 
 /**
@@ -2342,9 +2358,9 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             ? {
                 ...e,
                 loadMode: mode,
-                previousSets: e.previousSets.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })),
+                previousSets: e.previousSets.map((p) => recount(p, e.loadMode ?? 'one', mode)),
                 ...(e.previousWarmups
-                  ? { previousWarmups: e.previousWarmups.map((p) => ({ ...p, weightKg: convertCounting(p.weightKg, e.loadMode ?? 'one', mode) })) }
+                  ? { previousWarmups: e.previousWarmups.map((p) => recount(p, e.loadMode ?? 'one', mode)) }
                   : {}),
                 // Idea 2's set reads in the card's counting too.
                 ...(e.elsewhere

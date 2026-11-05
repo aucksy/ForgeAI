@@ -191,7 +191,8 @@ describe('warm-up rows show last time’s warm-ups', () => {
     useActiveWorkout.getState().setLoadMode(card.key, 'both');
     const now = useActiveWorkout.getState().exercises[0];
     expect(now.previousSets[0].weightKg).toBe(50);
-    expect(now.previousWarmups).toEqual([{ weightKg: 20, reps: 10 }, { weightKg: 30, reps: 5 }]);
+    // T76: each keeps the Counting it was logged in, so "on last time" never compares across Countings.
+    expect(now.previousWarmups).toEqual([{ weightKg: 20, reps: 10, counting: 'one' }, { weightKg: 30, reps: 5, counting: 'one' }]);
     await useActiveWorkout.getState().discard();
   });
 

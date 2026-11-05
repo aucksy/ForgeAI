@@ -160,3 +160,54 @@ export function spokenTag(d: ExerciseDelta): string {
       return `${d.kind} ${deltaTag(d).slice(1).replace('%', ' percent')}`;
   }
 }
+
+/** A workout as `countingChangedNames` reads it: each exercise's sets with their ids. */
+export interface CountedWorkout {
+  exercises: readonly {
+    exercise: { id: string; name: string };
+    sets: readonly { id: string; isWarmup: boolean }[];
+  }[];
+}
+
+/**
+ * T76 (R-358 family, 5 Nov 2026): the exercises done in BOTH workouts whose Counting differs
+ * between them ("Weight as typed" last time, "One side at a time" today). Their kg lifted is
+ * counted once one time and twice the other, so a total across them is not a fair comparison:
+ * the finish screen said "+340 kg more than last time" (or "Lighter than last time" and then
+ * blamed last night's sleep) for the same work. Records and the kg to beat already compare only
+ * sets of one Counting (R-358); the finish screen's comparison now does the same.
+ * `setModes`: sets that keep their own counting (by set id); `current`: each exercise's counting
+ * now (a set without its own was logged in it). Names in today's order. PURE.
+ */
+export function countingChangedNames(
+  today: CountedWorkout,
+  last: CountedWorkout,
+  setModes: ReadonlyMap<string, string>,
+  current: ReadonlyMap<string, string>,
+): string[] {
+  const modesOf = (w: CountedWorkout): Map<string, Set<string>> => {
+    const m = new Map<string, Set<string>>();
+    for (const e of w.exercises) {
+      const id = e.exercise.id;
+      for (const s of e.sets) {
+        if (s.isWarmup) continue;
+        const mode = setModes.get(s.id) ?? current.get(id) ?? 'one';
+        const set = m.get(id) ?? new Set<string>();
+        set.add(mode);
+        m.set(id, set);
+      }
+    }
+    return m;
+  };
+  const now = modesOf(today);
+  const then = modesOf(last);
+  const out: string[] = [];
+  for (const e of today.exercises) {
+    const a = now.get(e.exercise.id);
+    const b = then.get(e.exercise.id);
+    if (!a || !b || out.includes(e.exercise.name)) continue;
+    const same = a.size === b.size && [...a].every((x) => b.has(x));
+    if (!same) out.push(e.exercise.name);
+  }
+  return out;
+}

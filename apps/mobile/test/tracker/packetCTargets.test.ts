@@ -121,7 +121,8 @@ describe('TG-03 Counting conversion', () => {
   });
 
   it('PREVIOUS reads an old "as typed" set in today\'s counting', () => {
-    expect(toPrevSet({ weightKg: 50, reps: 10, loadMode: 'one' }, 'weight_reps', 'both')).toEqual({ weightKg: 25, reps: 10 });
+    // T76: the Counting it was logged in rides along ("on last time" stays quiet across Countings).
+    expect(toPrevSet({ weightKg: 50, reps: 10, loadMode: 'one' }, 'weight_reps', 'both')).toEqual({ weightKg: 25, reps: 10, counting: 'one' });
     expect(toPrevSet({ weightKg: 25, reps: 10 }, 'weight_reps', 'both')).toEqual({ weightKg: 25, reps: 10 });
   });
 });

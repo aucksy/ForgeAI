@@ -56,6 +56,9 @@ export function vsLastTimeText(
   distUnit: DistUnit = 'km',
 ): string | null {
   if (!prev || set.isWarmup) return null;
+  // T76 (R-358 family): last time's set was logged in another Counting ("as typed" vs "per side"):
+  // its reps and kilos mean something else, so no "+6 reps on last time".
+  if (prev.counting && prev.counting !== loadMode) return null;
 
   if (logType === 'time') {
     const now = Math.round(pos(set.durationSec));

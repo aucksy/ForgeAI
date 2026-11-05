@@ -33,11 +33,12 @@ import { useSettings } from '@/store/settingsStore';
 import type { SessionDetail } from '@/types/models';
 
 import { RECORD_LABEL } from '../engine/records';
-import { exerciseDeltas, mainCause, type CompareExercise, type ExerciseDelta } from '../lib/workoutCompare';
+import { getTrackerExercisesByIds } from '../db/exerciseInfo';
+import { countingChangedNames, exerciseDeltas, mainCause, type CompareExercise, type ExerciseDelta } from '../lib/workoutCompare';
 import { dayTypeLabel } from './finishSummary';
 import { kgHero, workingReps, type KgHero } from './kgHero';
 import { recordValueText } from './recordText';
-import { withVolume } from './volumeService';
+import { getSetModesForSessions, withVolume } from './volumeService';
 import type { SessionSummaryData } from './finishSummary';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 
@@ -207,6 +208,28 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
   } catch (e) {
     console.warn('[ForgeErr] finish: the workout to compare with could not be read', e);
     cmp = null;
+  }
+  // T76 (R-358 family): an exercise whose Counting changed between the two workouts is counted once
+  // on one side and twice on the other, so the totals are not compared at all (no "+340 kg more",
+  // no "Lighter than last time" and so no sleep or protein line under it). Like a first workout
+  // after the change: today's total is the number to beat next time.
+  if (cmp) {
+    try {
+      const ids = [...new Set([...data.session.exercises, ...cmp.detail.exercises].map((e) => e.exercise.id))];
+      const [setModes, infos] = await Promise.all([
+        getSetModesForSessions([data.session.id, cmp.detail.id]),
+        getTrackerExercisesByIds(ids),
+      ]);
+      const current = new Map<string, string>();
+      for (const [id, info] of infos) current.set(id, info.loadMode);
+      const changed = countingChangedNames(data.session, cmp.detail, setModes, current);
+      if (changed.length > 0) {
+        console.log(`[ForgeQA] finish: not compared with last time, Counting changed on ${changed.join(', ')}`);
+        cmp = null;
+      }
+    } catch (e) {
+      console.warn('[ForgeErr] finish: the Counting of the compared workout could not be read', e);
+    }
   }
   const units = displayUnits();
   const text = buildSessionNote(data, cmp?.detail ?? null, units, cmp?.against);
