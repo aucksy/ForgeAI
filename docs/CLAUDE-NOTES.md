@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-353. Watch stopped dimming after a phone call — 5 Nov 2026
+
+He said: after a call (or leaving the app) the watch no longer shows the dim screen; the screen goes off and comes back bright on wrist lift.
+
+My read: the app's dim mode code (AmbientLifecycleObserver, MainActivity) did not change and stays registered for the activity's life. A screen that goes fully black means the watch itself is not giving apps an always-on screen: Always-on display switched off, Battery Saver, or Bedtime/Theatre mode (each turns it off). Asked him to check those three on the watch, then reopen the app. If all three are fine and it still fails, I add a log of ambient enter/exit to find the cause.
+
 ## R-352. A gym setting for machine weight steps (2.5 or 5 kg)? — 5 Nov 2026
 
 He said: Plates and bars lets members pick plates and bars. Add an option for machines with a built-in stack (pin moves). Some gyms step 2.5, his steps 5. What do I think?
