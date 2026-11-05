@@ -265,7 +265,7 @@ describe('Play: the "privacy policy" link shows the privacy notice', () => {
     expect(app).not.toContain('VIEW_PERMISSION_USAGE');
   });
 
-  it('only the permissions MettleUp uses are declared (two writes; F55 weight and F62 steps reads)', () => {
+  it('only the permissions MettleUp uses are declared (two writes; F55 weight, F62 steps and R-344 sleep reads)', () => {
     const perms = [...mod.matchAll(/android\.permission\.health\.[A-Z_]+/g)].map((m) => m[0]);
     expect(new Set(perms)).toEqual(
       new Set([
@@ -273,6 +273,7 @@ describe('Play: the "privacy policy" link shows the privacy notice', () => {
         'android.permission.health.WRITE_ACTIVE_CALORIES_BURNED',
         'android.permission.health.READ_WEIGHT',
         'android.permission.health.READ_STEPS',
+        'android.permission.health.READ_SLEEP',
       ]),
     );
     // The app manifest declares none itself (the module's are merged in).
