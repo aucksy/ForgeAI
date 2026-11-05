@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-361. A second false toast (Most lifted in one workout) and "are you not doing negative and regression UATs?" — 5 Nov 2026
+
+He said (screenshot 12:48): "Most lifted in one workout · 1,020 kg" on Dumbbell Preacher Curl, though he lifted as much before. "This is so obvious. Please figure out why you are not catching these things. Are you not doing negative and regression and other types of UATs?"
+
+Cause: the same as R-358: one side at a time counts both arms (51 reps × 10 × 2 = 1,020) against last time counted once (680). My R-358 brief already covered this kind; it had not shipped. Why we miss these: record tests only checked that records DO fire; nothing replayed a real history, changed a setting mid-history, or asserted that a pop-up must NOT show. Fix in process: the records helper adds an oracle replay over ~500 workouts with mutations (counting, units, edits, untick, warm-ups) and negative UAT assertions. Brain rule test-what-must-not-happen (hard).
+
 ## R-360. Watch: one vibration per value when turning the dial — 5 Nov 2026
 
 He said: add vibration in the watch app when the rotating dial increases or decreases the values, one vibration per value.
