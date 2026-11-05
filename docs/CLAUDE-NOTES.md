@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-369. PC restart mid-work: resume list - 5 Nov 2026
+
+He restarted the PC. Helpers stopped; cloud runs keep going. Unfinished edits stay on disk (watch LogScreens.kt/WatchScreens.kt = R-368 redesign; workoutAlerts.ts/workoutSounds.ts = another helper). Restart these, max 6: (1) R-366 Pull-Up reps bar + rule A UAT (u366); (2) R-345/R-346/R-357 In use after the toast, font 2.0 run 42014586705; (3) T74/R-356 round gym icon, runs 42019790827 + 42019802557; (4) R-353 watch dim after a call; (5) number box selects old number ("183" bug); (6) R-368 watch redesign round 2. Then T76 full test round.
+
 ## R-368. Watch redesign feedback on the 4 pictures (R-354) - 5 Nov 2026
 
 He said: next set screen is good, but plan for a long exercise name. Rest screen: make the timer about 15% smaller and move it up a bit; make the -15 and +15 taps bigger (he had trouble tapping them today); do NOT move the Previous and Next lines; keep it symmetric. Exercise done screen: keep "Next exercise", remove the "4 sets done" line, then space everything equally. Effort screen not mentioned (keep). "Redesign these and show me all 4 again."
