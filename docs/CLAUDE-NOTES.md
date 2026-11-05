@@ -15,7 +15,7 @@ Done: watch helper resumed with this brief; send all 4 before/after again.
 
 ## R-367. Sleep privacy sentence approved - 5 Nov 2026
 
-He said: "Approving the sleep privacy sentence". Done: sentence added to privacy.html (English + Hindi, Last updated 5 Nov); READ_SLEEP added to approved-permissions.txt; Play Health apps declaration: add Sleep (Claude does it in the simpleapps108 Chrome window).
+He said: "Approving the sleep privacy sentence". Done: sentence added to privacy.html (English + Hindi, Last updated 5 Nov); READ_SLEEP added to approved-permissions.txt; Play Health apps form (checked 5 Nov, simpleapps108): it lists only permissions in an uploaded bundle; READ_SLEEP is not in 0.72.0, so Sleep cannot be declared yet. Claude declares it (step 2, per-permission reason: on-device only, one line after a lighter workout, not stored or shared) right after the next release uploads to internal testing, before it goes further.
 
 ## R-366. Bodyweight goal bar says "17 reps reached" without last time — 5 Nov 2026
 
