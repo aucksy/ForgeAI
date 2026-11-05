@@ -167,6 +167,7 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| T72 Sleep link and protein tips, step 1 of F193 (R-344) | Doing | Started 5 Nov. A switch in Settings, then one calm line after a weaker workout when you slept little. Needs your OK on one privacy sentence before release. |
 | T71 iPhone app, step 1: the parity check and the iPhone build in the cloud (R-339) | Doing | Started 5 Nov. No Apple account needed for this step. Next steps: iPhone rest timer, Apple Health, watch link, then the Apple Watch app. |
 | T70 Fixes from the fresh-eyes review of the 4-5 Nov work (R-335) | Doing | Panel: fixed and LIVE 5 Nov (deploy after CI 41965722969): the UPI problem was only test data, plus one real gap closed (a form could keep the old gym's UPI ID after a demo reset); "Fees due" in full rupees; page names; button labels; pass member page. Checked live in Chrome. App: 18 fixes for the next version; the "In use" line keeps your words with the right number (840 kg). |
 | T69 Update pop-up: full screen once, then an orange line, again on the 7th launch (R-336) | Doing | Your pick 5 Nov: design B. Built 5 Nov; cloud checks and screen pictures running. Then a fresh-eyes review. Ships in the next version after 0.72.0. |
