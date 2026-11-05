@@ -137,6 +137,16 @@ abstract class WatchLogRenderBase(private val size: String) {
   )
 
   @Test fun noHeartRate() = both("L18-no-heart-rate", Shot(nextSet(), bpm = null))
+
+  // R-354: the lower time row leaves less room here; the largest text must still fit above Go.
+  @Test fun largestTextExerciseDone() = both(
+    "L19-largest-text-exercise-done",
+    Shot(
+      nextSet("Incline Dumbbell Press", entry.copy(w = 22.5, r = 10), NextSet("Set 1 of 3", "22.5 kg × 10", "22.5 kg × 11")),
+      LogUi(exDone = true, doneExercise = "Bench Press", doneSets = 4),
+      fontScale = 1.3f,
+    ),
+  )
 }
 
 @RunWith(AndroidJUnit4::class)

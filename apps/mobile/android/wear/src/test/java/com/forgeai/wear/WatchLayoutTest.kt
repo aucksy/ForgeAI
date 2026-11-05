@@ -149,6 +149,55 @@ class WatchLayoutTest {
     assertTrue(c.next!!.startsWith("Next "))
   }
 
+  // ---------------------------------------------------------------- R-354: logging screens' top row and small text
+
+  @Test
+  fun timeRowSitsAboutFivePercentLower() {
+    // Owner, 5 Nov 2026: "push that a bit lower, maybe by 5%". 22 px of 456 = 4.8 %.
+    val moved = (LogLayout.TOP_BAR - LogLayout.TOP_BAR_BEFORE) / RingMath.DESIGN_PX
+    assertTrue("moved ${moved * 100} %", moved in 0.045f..0.055f)
+  }
+
+  @Test
+  fun smallLinesGrowAtNormalTextAndStayPutAtTheLargest() {
+    assertEquals(20f, LogLayout.grown(20f, 18f, 1f), 0f)
+    assertEquals(22f, LogLayout.topBarText(1f), 0f)
+    // The largest text size: exactly the old size x 1.24 (no room left on the round screen).
+    assertEquals(18f * Px.LABEL_SCALE_MAX, LogLayout.grown(20f, 18f, Px.LABEL_SCALE_MAX), 0.001f)
+    assertEquals(20f * Px.LABEL_SCALE_MAX, LogLayout.topBarText(Px.LABEL_SCALE_MAX), 0.001f)
+  }
+
+  @Test
+  fun nextSetStackPillsAndDoneNeverOverlapAndDoneStaysOnTheGlass() {
+    for (step in 0..24) {
+      val k = 1f + step / 100f
+      // The stack starts under the time row; Done leaves 10 px under the pills.
+      assertTrue(LogLayout.nextSetTop(k) >= LogLayout.topBarBottom(k))
+      assertTrue("k=$k", LogLayout.doneTop(k) >= LogLayout.pillsBottom(k) + 10f)
+      // The round button stays at least 16 px inside the round screen (centre to centre + radius).
+      val centreY = LogLayout.doneTop(k) + LogLayout.BUTTON / 2f
+      val reach = (centreY - RingMath.DESIGN_PX / 2f) + LogLayout.BUTTON / 2f
+      assertTrue("k=$k: Done reaches $reach px from the centre", reach <= RingMath.DESIGN_PX / 2f - 16f)
+    }
+    // At the normal text size Done stays where it always was.
+    assertEquals(LogLayout.BUTTON_TOP, LogLayout.doneTop(1f), 0f)
+  }
+
+  @Test
+  fun effortGridSitsUnderTheTitleAndSkipStaysOnTheGlass() {
+    for (step in 0..24) {
+      val k = 1f + step / 100f
+      assertTrue(LogLayout.effortGridTop(k) >= LogLayout.effortTop(k) + 4f)
+      // Skip (80 px tall, 150 px wide) keeps its corners inside the round screen.
+      val bottom = LogLayout.effortSkipTop(k) + 80f
+      val dy = bottom - RingMath.DESIGN_PX / 2f
+      val halfChord = kotlin.math.sqrt((RingMath.DESIGN_PX / 2f) * (RingMath.DESIGN_PX / 2f) - dy * dy)
+      assertTrue("k=$k: Skip's bottom row is ${2 * halfChord} px wide", halfChord >= 75f + 16f)
+    }
+    // The grid (2 rows, 134 px) is centred on the screen at the normal text size.
+    assertEquals(RingMath.DESIGN_PX / 2f, LogLayout.effortGridTop(1f) + 134f / 2f, 16f)
+  }
+
   // ---------------------------------------------------------------- ring
 
   @Test

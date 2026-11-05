@@ -650,7 +650,7 @@ internal fun NothingOpenScreen(ambient: Boolean, px: Px) {
     }
     Line(WatchCopy.START_A_WORKOUT, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
     // UAT 1 Nov 2026: what to open, and what then shows here.
-    Line(WatchCopy.NOTHING_OPEN_HINT, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+    Line(WatchCopy.NOTHING_OPEN_HINT, px, 20f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
   }
 }
 
@@ -669,7 +669,7 @@ internal fun WorkoutSavedScreen(ambient: Boolean, px: Px) {
       strokeIcon(listOf(IconPath(CHECK_CIRCLE, pal.accent), IconPath(CHECK_MARK, pal.accent)), 1.8f, StrokeCap.Round, StrokeJoin.Round)
     }
     Line(WatchCopy.WORKOUT_SAVED, px, 30f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 2, balanced = true, tag = "title")
-    Line(WatchCopy.WORKOUT_SAVED_REASON, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+    Line(WatchCopy.WORKOUT_SAVED_REASON, px, 20f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
   }
 }
 
@@ -692,7 +692,7 @@ internal fun PhoneAppMissingScreen(ambient: Boolean, px: Px, request: PhoneApp.R
       strokeIcon(listOf(IconPath(PHONE_BODY, pal.accent), IconPath(PHONE_SPEAKER, pal.accent)), 1.6f, StrokeCap.Round, StrokeJoin.Miter)
     }
     Line(WatchCopy.GET_PHONE_APP, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 3, balanced = true, tag = "title")
-    Line(PhoneApp.reason(request), px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+    Line(PhoneApp.reason(request), px, 20f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
     // Ambient: an outline button with accent text, and no taps (as on the permission screens).
     Box(
       Modifier
@@ -748,7 +748,7 @@ internal fun PermissionScreen(
         else -> WatchCopy.REASON_ALERTS
       },
       px,
-      18f,
+      20f,
       FontWeight.Medium,
       pal.grey,
       lineHeight = 1.35f,
@@ -782,7 +782,7 @@ internal fun PermissionScreen(
         .testTag("notNow"),
       contentAlignment = Alignment.Center,
     ) {
-      Line(WatchCopy.NOT_NOW, px, 18f, FontWeight.SemiBold, pal.text)
+      Line(WatchCopy.NOT_NOW, px, 20f, FontWeight.SemiBold, pal.text)
     }
   }
 }
@@ -807,6 +807,6 @@ internal fun PhoneNotConnectedScreen(ambient: Boolean, px: Px) {
       )
     }
     Line(WatchCopy.PHONE_NOT_CONNECTED, px, 26f, FontWeight.ExtraBold, pal.text, lineHeight = 1.15f, maxLines = 2, balanced = true, tag = "title")
-    Line(WatchCopy.KEEP_PHONE_NEAR, px, 18f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
+    Line(WatchCopy.KEEP_PHONE_NEAR, px, 20f, FontWeight.Medium, pal.grey, lineHeight = 1.3f, maxLines = 3, balanced = true, tag = "reason")
   }
 }
