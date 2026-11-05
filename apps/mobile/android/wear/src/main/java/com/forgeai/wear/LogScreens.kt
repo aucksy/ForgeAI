@@ -238,7 +238,7 @@ private fun RoundButton(px: Px, ambient: Boolean, enabled: Boolean, arrow: Boole
   }
   Box(
     Modifier
-      // [top] null: placed by the column it sits in (Next set).
+      // [top] null: placed by the column it sits in (Next set, Exercise done).
       .then(if (top != null) Modifier.at(px, (RingMath.DESIGN_PX - LogLayout.BUTTON) / 2f, top, LogLayout.BUTTON, LogLayout.BUTTON) else Modifier.size(px.dp(LogLayout.BUTTON)))
       .clip(CircleShape)
       .background(bg)
@@ -665,8 +665,11 @@ private fun ExerciseDoneScreen(
     val tight = LogLayout.tight(k)
     val lh = 1.05f
     val pad = 2f
+    // R-354 render (5 Nov, L19): no fixed height (it cut "kg" in half at the largest text): Go sits in the same
+    // column, at its usual 304 px unless the words reach it, then 8 px under them.
+    Column(Modifier.fillMaxWidth().padding(top = px.dp(top)), horizontalAlignment = Alignment.CenterHorizontally) {
     Column(
-      Modifier.fillMaxWidth().padding(top = px.dp(top)).height(px.dp(LogLayout.BUTTON_TOP - 4f - top)),
+      Modifier.fillMaxWidth().heightIn(min = px.dp(LogLayout.BUTTON_TOP - 8f - top)),
       verticalArrangement = Arrangement.spacedBy(px.dp(2f), Alignment.CenterVertically),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -689,7 +692,9 @@ private fun ExerciseDoneScreen(
         }
       }
     }
-    RoundButton(px, ambient, true, arrow = true, tag = "go", onClick = actions.onGo)
+    Spacer(Modifier.height(px.dp(8f)))
+    RoundButton(px, ambient, true, arrow = true, tag = "go", top = null, onClick = actions.onGo)
+    }
   }
 }
 
