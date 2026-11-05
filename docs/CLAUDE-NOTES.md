@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-354. Watch: bigger small text, top time and heart rate 5% lower — 5 Nov 2026
+
+He said: ask Claude Design to check if the smaller fonts on the watch can be a bit bigger by moving things around, still symmetrical and pleasing. And push the time and heart rate at the very top a bit lower, maybe 5%.
+
+What I did: a design helper (impeccable skill) reviews every watch screen picture, enlarges the small text where it fits, moves the top time and heart rate about 5% lower, and checks the new watch pictures in the cloud. Ships with the next release after his UAT.
+
 ## R-353. Watch stopped dimming after a phone call — 5 Nov 2026
 
 He said: after a call (or leaving the app) the watch no longer shows the dim screen; the screen goes off and comes back bright on wrist lift.
