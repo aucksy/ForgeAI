@@ -18,7 +18,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-uat-tick.yaml
     env:
-      WHO: ".*Barbell Bench Press set 1"
+      WHO: ".*Leg Extension set 1"
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 8000
@@ -41,7 +41,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-uat-tick.yaml
     env:
-      WHO: ".*Barbell Bench Press set 2"
+      WHO: ".*Leg Extension set 2"
 - runFlow:
     when:
       visible: 'In use\. .*Tap to close'

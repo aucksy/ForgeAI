@@ -3,7 +3,7 @@
 # (gate-demo: clearState + demo). The cloud emulator has no watch, so the run checks what the phone TELLS
 # the watch: run-device-qa.sh (part_u355) reads the phone's "watch next: <exercise> | <set> | <text>"
 # lines (WearSync, logcat) and the rest card in the notification list right after this flow.
-#   Exercise A: Lateral Raise, ONE set (its last). Exercise B: Barbell Bench Press, two sets.
+#   Exercise A: Lateral Raise, ONE set (its last). Exercise B: Leg Extension (a machine, no history: one set + Add set = two).
 #   A's set 1 ticked -> the rest. The flow ENDS during that rest (the shell reads it there).
 # Pictures rel-r355-*.png (qa-out/uat-release/).
 appId: com.mettleup.app
@@ -41,49 +41,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Lateral Raise set 1 weight, kilograms"
     timeout: 20000
-# ---------------------------------------------------------------- B: Barbell Bench Press (2 sets)
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Add exercise$"
-- tapOn: "^Add exercise$"
-- extendedWaitUntil:
-    visible: "Search exercises"
-    timeout: 20000
-- tapOn: "Search exercises"
-- inputText: " Barbell Bench Press"
-- tapOn:
-    text: "Select Barbell Bench Press"
-    index: 0
-- tapOn: "Add 1"
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "Barbell Bench Press set 1 weight, kilograms"
-- tapOn:
-    text: "^Add set$"
-    below:
-      text: "Barbell Bench Press set 1 weight, kilograms"
-- runFlow:
-    file: sub-type.yaml
-    env:
-      FIELD: "Barbell Bench Press set 1 weight, kilograms"
-      VALUE: " 40"
-- runFlow:
-    file: sub-type.yaml
-    env:
-      FIELD: "Barbell Bench Press set 1 reps"
-      VALUE: " 10"
-- runFlow:
-    file: sub-type.yaml
-    env:
-      FIELD: "Barbell Bench Press set 2 weight, kilograms"
-      VALUE: " 40"
-- runFlow:
-    file: sub-type.yaml
-    env:
-      FIELD: "Barbell Bench Press set 2 reps"
-      VALUE: " 10"
+# A's numbers first, while it is on screen (the boxes scroll down only).
 - runFlow:
     file: sub-type.yaml
     env:
@@ -94,6 +52,49 @@ appId: com.mettleup.app
     env:
       FIELD: "Lateral Raise set 1 reps"
       VALUE: " 12"
+# ---------------------------------------------------------------- B: Leg Extension (2 sets)
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Leg Extension"
+- tapOn:
+    text: "Select Leg Extension"
+    index: 0
+- tapOn: "Add 1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Leg Extension set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Leg Extension set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 weight, kilograms"
+      VALUE: " 40"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 reps"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 2 weight, kilograms"
+      VALUE: " 40"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 2 reps"
+      VALUE: " 10"
 - takeScreenshot: rel-r355-01-two-exercises
 # ---------------------------------------------------------------- A's LAST set: the rest names B
 - runFlow:
@@ -121,7 +122,7 @@ appId: com.mettleup.app
 - assertVisible: "Skip rest"
 - takeScreenshot: rel-r355-03-rest-after-a-last-set
 # R-364 interruption: the app goes to the background mid-rest (Home). The shell reads the phone's last
-# word to the watch and the rest card AFTER this, so both must still name Barbell Bench Press, set 1.
+# word to the watch and the rest card AFTER this, so both must still name Leg Extension, set 1.
 - pressKey: Home
 - extendedWaitUntil:
     visible: "never shown, a 3 s wait in the background"

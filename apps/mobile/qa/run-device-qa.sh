@@ -1965,14 +1965,14 @@ part_u355() {
   a=$(grep -o 'watch next: .*' "$OUT/r355-a-logcat.txt" | tail -n 1)
   log "UAT R-355 a: the watch was last told: ${a:-nothing}"
   case "$a" in
-    "watch next: Barbell Bench Press | Set 1 of 2 | "*) log "UAT R-355 a PASSED: during the rest after Lateral Raise's last set the watch names Barbell Bench Press, Set 1 of 2" ;;
-    *) log "UAT R-355 a FAILED: expected 'Barbell Bench Press | Set 1 of 2' for the watch during the rest after Lateral Raise's last set"; rc=1 ;;
+    "watch next: Leg Extension | Set 1 of 2 | "*) log "UAT R-355 a PASSED: during the rest after Lateral Raise's last set the watch names Leg Extension, Set 1 of 2" ;;
+    *) log "UAT R-355 a FAILED: expected 'Leg Extension | Set 1 of 2' for the watch during the rest after Lateral Raise's last set"; rc=1 ;;
   esac
-  python3 "$QA_DIR/notif.py" rest-up "$OUT/r355-a-notif.txt" "Rest" "Barbell Bench Press, set 1" >> "$OUT/timeline.txt"     || { log "UAT R-355 a FAILED: the rest card does not say Next: Barbell Bench Press, set 1"; rc=1; }
+  python3 "$QA_DIR/notif.py" rest-up "$OUT/r355-a-notif.txt" "Rest" "Leg Extension, set 1" >> "$OUT/timeline.txt"     || { log "UAT R-355 a FAILED: the rest card does not say Next: Leg Extension, set 1"; rc=1; }
   adb logcat -c >/dev/null 2>&1 || true
   if uat_flow uatr355b uat-rel-r355-b-final-set.yaml; then
     adb logcat -d -s ForgeWear:I > "$OUT/r355-b-logcat.txt" 2>/dev/null || true
-    grep -q 'watch next: Barbell Bench Press | Set 2 of 2 | ' "$OUT/r355-b-logcat.txt"       || { log "UAT R-355 b FAILED: the rest between the bench sets did not name Barbell Bench Press, Set 2 of 2"; rc=1; }
+    grep -q 'watch next: Leg Extension | Set 2 of 2 | ' "$OUT/r355-b-logcat.txt"       || { log "UAT R-355 b FAILED: the rest between the Leg Extension sets did not name Leg Extension, Set 2 of 2"; rc=1; }
     b=$(grep -o 'watch next: .*' "$OUT/r355-b-logcat.txt" | tail -n 1)
     log "UAT R-355 b: after the final set the watch was last told: ${b:-nothing}"
     case "$b" in
