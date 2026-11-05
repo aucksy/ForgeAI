@@ -212,4 +212,65 @@ class GymShortcutRenderTest {
     // Nothing of the photo outside the 33 dp safe circle: the ring is the one background colour.
     assertEquals(1, ringColours(after).size)
   }
+
+  // ---------------------------------------------------------------- R-364: negative, edge, regression
+
+  private fun png(b: Bitmap): ByteArray = java.io.ByteArrayOutputStream().also { b.compress(Bitmap.CompressFormat.PNG, 100, it) }.toByteArray()
+
+  @Test fun regression_round_see_through_badge_still_looks_right() {
+    val logo = logo(512, 512) { c, p ->
+      p.color = 0xFF1E3A8A.toInt()
+      c.drawCircle(256f, 256f, 250f, p)
+      p.color = white
+      c.drawRect(200f, 200f, 312f, 312f, p)
+    }
+    val before = oldIcon(logo, 0xFF0A0A0C.toInt())
+    val after = GymShortcut.drawIcon(logo, listOf(0xFFF7D411.toInt(), 0xFF0A0A0C.toInt()))
+    sheet("05-round-see-through-badge", before, after)
+    // Navy on yellow stands out: the brand colour is behind it, and the ring is that one colour.
+    assertTrue(ringColours(after).all { near(it, 0xFFF7D411.toInt()) })
+    // The badge fills the middle (its navy at 25 dp from the centre).
+    assertTrue(near(after.getPixel(size / 2 - (25 * dp).toInt(), size / 2), 0xFF1E3A8A.toInt()))
+  }
+
+  @Test fun negative_a_broken_file_is_not_a_logo() {
+    assertEquals(null, GymShortcut.decodeLogo("<html>not a picture</html>".toByteArray()))
+    assertEquals(null, GymShortcut.decodeLogo(ByteArray(0)))
+  }
+
+  @Test fun negative_a_huge_logo_is_decoded_small_and_drawn_without_stretching() {
+    val big = logo(3000, 1500) { c, p ->
+      c.drawColor(white)
+      p.color = black
+      c.drawCircle(1500f, 750f, 600f, p)
+    }
+    val back = GymShortcut.decodeLogo(png(big))!!
+    assertTrue("decoded ${back.width}", back.width < 2048)
+    assertEquals(2.0f, back.width.toFloat() / back.height, 0.01f)
+    val icon = GymShortcut.drawIcon(back, emptyList())
+    sheet("06-huge-wide-logo", oldIcon(back, 0xFF101010.toInt()), icon)
+    assertEquals(size, icon.width)
+    assertTrue(ringColours(icon).all { near(it, white) })
+    // Never stretched: the black disc is as wide as it is tall.
+    val row = (0 until size).filter { near(icon.getPixel(it, size / 2), black) }
+    val col = (0 until size).filter { near(icon.getPixel(size / 2, it), black) }
+    assertEquals(row.size.toFloat(), col.size.toFloat(), 3f)
+  }
+
+  @Test fun negative_empty_tiny_and_thin_logos_draw_without_a_crash() {
+    val cases = mapOf(
+      "see-through-only" to logo(200, 200) { _, _ -> },
+      "one-pixel" to logo(1, 1) { c, _ -> c.drawColor(0xFFD7262E.toInt()) },
+      "thin-strip" to logo(2400, 40) { c, p -> c.drawColor(white); p.color = black; c.drawRect(100f, 10f, 2300f, 30f, p) },
+    )
+    for ((name, l) in cases) {
+      val icon = GymShortcut.drawIcon(l, emptyList())
+      assertEquals(name, size, icon.width)
+      assertEquals(name, size, icon.height)
+      // Nothing outside the safe circle but the one background colour.
+      assertEquals(name, 1, ringColours(icon).size)
+      sheet("07-$name", oldIcon(l, white), icon)
+    }
+  }
 }
+

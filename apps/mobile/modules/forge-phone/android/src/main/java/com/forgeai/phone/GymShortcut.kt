@@ -107,11 +107,29 @@ object GymShortcut {
           if (out.size() > MAX_BYTES) return null
         }
       }
-      val bytes = out.toByteArray()
-      return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+      return decodeLogo(out.toByteArray())
     } finally {
       conn.disconnect()
     }
+  }
+
+  /** The longest side a logo is decoded at (the icon is 432 px; a 4 MB PNG could be 6000 px). */
+  private const val DECODE_EDGE = 1024
+
+  /**
+   * T74 (R-356): the downloaded bytes as a picture, decoded at most about 2 x DECODE_EDGE on its
+   * long side (power-of-two sampling, so a huge logo never runs the phone out of memory); null
+   * when they are not a picture. Internal: GymShortcutRenderTest feeds it broken and huge logos.
+   */
+  internal fun decodeLogo(bytes: ByteArray): Bitmap? {
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+    val long = maxOf(bounds.outWidth, bounds.outHeight)
+    if (long <= 0) return null
+    var sample = 1
+    while (long / (sample * 2) >= DECODE_EDGE) sample *= 2
+    val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
   }
 
   /**

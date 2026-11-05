@@ -142,7 +142,7 @@ export function needsArtRedraw(saved: string | null, hasPlan: boolean): boolean 
   return hasPlan && saved !== SHORTCUT_ART_VERSION;
 }
 
-async function redrawOldArt(): Promise<void> {
+export async function redrawOldArt(): Promise<void> {
   try {
     const link = useGymShop.getState().link;
     const saved = await AsyncStorage.getItem(SHORTCUT_ART_KEY);

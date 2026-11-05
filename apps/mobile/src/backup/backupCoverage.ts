@@ -76,6 +76,7 @@ export const STORAGE_LEFT_OUT: Readonly<Record<string, string>> = {
   'forgeai-pending-link': 'gym invite in progress',
   'forgeai-gym-join-try': 'gym join in progress',
   'forgeai-gym-shortcut-offered': 'one-off "add the gym logo" offer',
+  'forgeai-gym-shortcut-art': 'which drawing the home-screen gym icon was last redrawn with (T74; this phone\'s icon)',
   'forgeai-membership': 'gym membership',
   'forgeai-gym-plans-known': 'gym plans bookkeeping (from the gym\'s server)',
   'forgeai-gym-measures': 'gym trainer\'s measurements (from the gym\'s server)',

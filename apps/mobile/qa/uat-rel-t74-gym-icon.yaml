@@ -1,0 +1,42 @@
+# Part UAT, T74 (R-356, 5 Nov 2026; gym, after F146): the gym's logo as a home-screen icon. The run's
+# fresh "QA UAT Gym" has the sample 2:1 logo F146 gave it (a gold ring and a white bar on see-through,
+# no gym colours) and the app already shows it ("Your gym: QA UAT Gym"). As the member "Uma":
+#  1. Settings -> "Gym logo on my home screen" -> Android's own "Add to home screen" question -> added;
+#  2. Home: the home screen with the new icon is photographed (rel-t74-20-home-screen).
+# run-device-qa.sh then reads `dumpsys shortcut` (a pinned "gym" shortcut) and pulls the icon picture
+# Android saved for it (rel-t74-icon-*.png) for reading: the see-through logo must sit on one plain
+# colour inside the circle, never a square.
+# GYM is passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM}"
+    timeout: 45000
+- runFlow:
+    file: sub-settings-open.yaml
+- scrollUntilVisible:
+    element: "^Gym logo on my home screen$"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "^Opens MettleUp from your home screen$"
+- takeScreenshot: rel-t74-10-settings-row
+- tapOn: "^Gym logo on my home screen$"
+# Android's own question (the launcher's "Add to home screen" sheet). Its words differ between
+# launchers: any of its add buttons.
+- extendedWaitUntil:
+    visible: "(?i)^(add to home screen|add automatically|add)$"
+    timeout: 30000
+- takeScreenshot: rel-t74-11-android-asks
+- tapOn: "(?i)^(add to home screen|add automatically|add)$"
+- waitForAnimationToEnd:
+    timeout: 5000
+# Negative: no "Couldn't add it" line in the app.
+- assertNotVisible: "^Couldn't add it\\. Try again\\.$"
+- pressKey: Home
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: rel-t74-20-home-screen
