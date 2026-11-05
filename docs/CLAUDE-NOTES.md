@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-345. In use: one touch closed it and the rest bar's 'tap' hint vanished too - 5 Nov 2026
+
+He said: "I just touched the banner that shows in use and it went away, and that little button on the rest hammer that says tap in use went away too. You need to check this journey."
+Reading: the full In use screen closes on any tap (by design, 'Tap to close'); the rest bar's 'Tap to show In use' hint shows only while this exercise's In use does not open by itself. Suspects: the tap landed on the 'Show after every set of this exercise' tick (turns auto on, hint hides by design but silently), or the rest ended at that moment (bar goes), or a real state bug. Sent to a helper to reproduce on the cloud phone and fix.
+
 ## R-344. Build the sleep link now + protein nudges; food database question - 5 Nov 2026
 
 He said: "Okay lets build the sleep integration. And sprinkle in suggestions around checking enough protien intake. For food.... you sure there is no open source calories/macro database we could use?"
@@ -333,19 +338,3 @@ He asked about R-301's +1.5%: "We also have to consider the user choice from set
 Answered: 1.5% was the whole workout (+1 rep on one set), not each set. Settings "Weight jumps" (Small 2.5%, Standard 5%, Large 10%) today sets only the size of a WEIGHT step; rep goals ignore it (+1 rep on one set, about 1-2%).
 
 My view (proposed, waiting for his yes): rep goals use the same choice. The workout's kg to beat aims for about that % more than last time, made of whole reps, added to the sets with the most left in the tank first (earlier set, lower RPE), at most +1 rep a set (+2 when the set was RPE 7 or easier), never past the cap. So a choice can be cut short in one workout; say so. Applies to R2b and R5 alike. Lateral raise example (1,280 kg last time): Small 19,17,16,14 = 1,320 (+3%); Standard 19,17,16,15 = 1,340 (+5%); Large same as Standard this time (capped at +1 a set).
-
-## R-302. Watch: log the set from the wrist (reps, weight, RPE, Complete set); Claude Design prompt — 3 Nov 2026
-
-He said: the watch needs options to pick the weight, reps and RPE and mark the set completed. After rest, show the orange "rest is over" banner, but then do not go to a black screen: keep showing the previous set and the suggested set, with a way to complete the set after picking RPE and reps. The design must be thought through, neat, clean, intuitive. Check how Hevy's watch app does it and do it better. Give him a prompt for Claude Design to update the existing design.
-
-This REVERSES R-205 (30 Oct: watch look-only, no Complete set button). His newest word wins.
-
-My view: good change, with one guard: zero extra work by default. The set screen comes pre-filled with the suggested weight and reps, so one tap on Done logs it as planned. Change a number only when it differs (rotate the crown/bezel). RPE is optional, one tap on a small row, never a blocker. Gave him the prompt in chat. Build after the design comes back; the next batch also holds R-298 to R-301 and F191.
-
-## R-301. Lateral raise asked 20 kg x 17 on every set — 3 Nov 2026
-
-He asked: is "20 kg x 17" on all 4 sets correct? Last time 19, 16, 15, 14 (RPE 9, 9, 9.5, 9).
-
-Found: rule R2b (progression.ts). Range 10-15. Effort credit (10 - RPE) lifts 14@9 to 15, so every set counts as 'at the top'. The next dumbbell step is over 20% heavier, so R2b says 'add reps first' with ONE goal for every set: min(max+4, max(max+2, lowest+1)) = 17. So the code did what it says; the rule is the problem: set 1 asks 2 FEWER reps than he did, sets 3-4 ask +2 and +3 after RPE 9+ sets, and the kg to beat (1,360) is built from that flat 17.
-
-My view: R2b should use per-set goals like R5 (perSetGoals with the top raised to max+4): 19, 17, 15, 14 (+1 rep on the first set below the cap), 1,300 kg, about +1.5%. Then the weight goes up when every set reaches the cap. Build in the next batch, after 0.70.0, with tests for this exact workout.
