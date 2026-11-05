@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-344. Build the sleep link now + protein nudges; food database question - 5 Nov 2026
+
+He said: "Okay lets build the sleep integration. And sprinkle in suggestions around checking enough protien intake. For food.... you sure there is no open source calories/macro database we could use?"
+Plan (F193 step 1): read sleep from Health Connect (SleepSessionRecord, read-only, on the phone only, never sent to the server or any AI); when a workout falls short, one line names last night's sleep when it was short; light protein tips (no food log live yet, so tips only, never a number about what they ate). Needs: Play Console health-permission declaration update (Claude, in the simpleApps window) and a privacy-policy line (his approval).
+Food databases answered: yes, open ones exist: Indian Nutrient Databank (INDB, 1,095 foods + 1,014 Indian recipes, from ICMR-NIN IFCT 2017, CC BY per the paper, repo has no licence file: confirm with the authors), Open Food Facts (ODbL, packaged products, ~10k Indian), USDA FoodData Central (public domain, generic foods). Suitable for F49/F53 later.
+
 ## R-343. Watch bug: the rest screen shows no exercise name - 5 Nov 2026
 
 He said: "There is bug in the watch app. During the rest time, it's not showing the exercise name."
@@ -343,11 +349,3 @@ He asked: is "20 kg x 17" on all 4 sets correct? Last time 19, 16, 15, 14 (RPE 9
 Found: rule R2b (progression.ts). Range 10-15. Effort credit (10 - RPE) lifts 14@9 to 15, so every set counts as 'at the top'. The next dumbbell step is over 20% heavier, so R2b says 'add reps first' with ONE goal for every set: min(max+4, max(max+2, lowest+1)) = 17. So the code did what it says; the rule is the problem: set 1 asks 2 FEWER reps than he did, sets 3-4 ask +2 and +3 after RPE 9+ sets, and the kg to beat (1,360) is built from that flat 17.
 
 My view: R2b should use per-set goals like R5 (perSetGoals with the top raised to max+4): 19, 17, 15, 14 (+1 rep on the first set below the cap), 1,300 kg, about +1.5%. Then the weight goes up when every set reaches the cap. Build in the next batch, after 0.70.0, with tests for this exact workout.
-
-## R-300. Falling short: no "add a set"; next time aims for the missed goal again — 3 Nov 2026
-
-He said: incline dumbbell press 80 kg short with the same sets; the app said "80 kg short, add a set if you have it in you". Years ago chasing every workout with extra sets hurt his cortisol, recovery and sleep. Sets must be sustainable. His idea: when short, do not suggest a set; next time show a note ("last time 80 kg short") and add a rep to recover it.
-
-Found in code: kgTarget.ts kgLiveLine/repLiveLine say "add a set if you have it in you" when every planned set is done and the total is short. Next time perSetGoals takes the SHORT day's reps as the floor (+1 rep on one set), so a bad day lowers the next goal and the missed kg are forgotten; only a miss under the rep range repeats it.
-
-Research: extra sets have diminishing returns past ~10-20 weekly sets a muscle, steeper for strength (Pelland et al. preprint, via summaries); sleep loss cuts multi-joint strength (Knowles 2018 review); standard double progression repeats the weight until the target is hit. My view (agreed with him, one change): drop the add-a-set line; do not pile the missed kg ON TOP of the normal step (two hard asks after a bad day); instead next time aims again for the goal that was missed (the better of last time's reps and last time's goal, set by set), with one line saying so. Short twice in a row at the same weight: keep the goal, no extra. Build in the next batch, after 0.70.0.
