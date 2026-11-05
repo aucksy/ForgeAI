@@ -240,10 +240,19 @@ describe('C1-8: the Target line shows the weight the hint shows', () => {
 
 describe("C1-9: the card's tag row wraps at 360 dp and font 1.3", () => {
   it('the muscle badge, superset badge and rest pill row wraps', () => {
-    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/marginTop: 6, flexDirection: 'row', flexWrap: 'wrap'/);
+    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/marginTop: 6, (marginLeft: [^,]+, )?flexDirection: 'row', flexWrap: 'wrap'/);
   });
 });
 
+
+describe("R-359: the tag row runs under the menu button to the card's edge", () => {
+  it('sits after the header row, aligned with the name, still wrapping', () => {
+    const src = read('src/tracker/components/ExerciseLogCard.tsx');
+    expect(src).toMatch(/marginTop: 6, marginLeft: 44 \+ space\.sm, flexDirection: 'row', flexWrap: 'wrap'/);
+    // The tag row comes after the menu button, not inside the name column beside it.
+    expect(src.indexOf("marginLeft: 44 + space.sm")).toBeGreaterThan(src.indexOf("setSheet('menu')"));
+  });
+});
 
 describe('C1-11: the Finish question counts warm-ups apart', () => {
   it('3 unticked warm-ups are called warm-ups, not sets', () => {
