@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-343. Watch bug: the rest screen shows no exercise name - 5 Nov 2026
+
+He said: "There is bug in the watch app. During the rest time, it's not showing the exercise name."
+Cause: the watch-logging rest screen (LogScreens.RestScreen) showed only the countdown, the previous and next set lines; the older rest screen (WatchScreens.RestTimerScreen) had the name.
+Done: the exercise of the next set shows above the countdown, one line (ellipsis), bright and dimmed; the 'Saved' chip takes its place for its few seconds. Next version; needs the watch render pictures checked and a check on his watch after release.
+
 ## R-342. Long-term vision: a muscle-growth ecosystem that explains a bad day - 5 Nov 2026
 
 He said: "my long-term vision for this app is to be a complete ecosystem of muscle growth, which also has sleep data, calorie data, so the algorithm can understand or try to understand why someone is not progressing. If my session today fell short, then you would immediately check if the person slept fine or if they're eating protein fine and suggest them corrections. ... Put this into idea and one day in future we'll build it. Sleep data we can get from the devices. Calorie, I think we'll build that AI calorie tracker."

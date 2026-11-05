@@ -445,7 +445,15 @@ private fun RestScreen(
   val ink = logInk(ambient)
   Ring(RingMath.RADIUS, if (ambient) RingMath.AMBIENT_STROKE else RingMath.STROKE, ink.track, ink.acc, RestText.fractionLeft(now, rest.startedAt, rest.endsAt), "ring")
   TopBar(px, 50f, now, heart, ambient, ink.grey, ink)
-  if (LogFlow.showSaved(ui, now)) {
+  val savedChip = LogFlow.showSaved(ui, now)
+  // R-343 (owner, 5 Nov 2026: "During the rest time, it's not showing the exercise name"): the exercise the next
+  // set belongs to sits above the countdown, one line; the "Saved" chip takes its place for its few seconds.
+  if (!savedChip && card.exercise.isNotEmpty()) {
+    Centered(px, 82f) {
+      Line(card.exercise, px, 20f, if (ambient) FontWeight.Medium else FontWeight.Bold, ink.ink, spacing = -0.01f, lineHeight = 1.1f, maxWidth = 280f, maxLines = 1, tag = "restExercise", label = true)
+    }
+  }
+  if (savedChip) {
     Centered(px, 80f) {
       Row(
         Modifier
