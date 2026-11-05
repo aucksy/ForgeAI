@@ -17,10 +17,12 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 20000
-- scrollUntilVisible:
-    element: "Start empty workout"
-    direction: UP
-    centerElement: true
-    timeout: 30000
+# 0.72.0 put "Muscles ready today" between Up next and "Start empty workout", so on the owner
+# profile (360 dp, font 1.3) the button sits below the edge of a tab that opens at the top: look
+# down first, then up (sub-find), never up only.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start empty workout"
 - assertNotVisible: "Resume workout"
 - pressKey: Home
