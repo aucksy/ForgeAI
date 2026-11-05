@@ -12,12 +12,22 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@react-native-async-storage/async-storage', () => ({
   default: { getItem: async () => null, setItem: async () => undefined, removeItem: async () => undefined },
 }));
-vi.mock('expo-constants', () => ({ default: { expoConfig: { extra: {} } } }));
+const fake = vi.hoisted(() => ({
+  extra: {} as Record<string, unknown>,
+  os: 'android',
+  native: null as null | Record<string, unknown>,
+}));
+vi.mock('expo-constants', () => ({ default: { get expoConfig() { return { extra: fake.extra }; } } }));
+vi.mock('react-native', () => ({ Platform: { get OS() { return fake.os; } } }));
+vi.mock('@/tracker/phone/native', () => ({ phoneNative: () => fake.native }));
 
 import { usesBannedWord } from '@/lib/words';
+import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import {
   asleepMinutes,
   hasSleepStandIn,
+  readLastNight,
+  setQaSleep,
   lastNight,
   PROTEIN_TIPS,
   proteinTipDue,
@@ -124,5 +134,88 @@ describe('QA stand-in', () => {
     expect(hasSleepStandIn({ qaStandIns: ['sleepSample'] })).toBe(true);
     expect(hasSleepStandIn({ qaStandIns: ['updateOffer'] })).toBe(false);
     expect(hasSleepStandIn(undefined)).toBe(false);
+  });
+});
+
+describe('reading last night: switch, Health Connect and permission states (R-364)', () => {
+  const START = Date.UTC(2026, 10, 5, 13, 0); // 18:30 IST
+  const night = [{ startMs: START - 14 * 3600e3, endMs: START - 9 * 3600e3, stages: [] }]; // 5 h, ended 09:30 IST
+  const hc = (over: Record<string, unknown> = {}) => ({
+    healthStatus: () => 'available',
+    healthRequestRead: () => true,
+    healthReadSleep: async () => night,
+    ...over,
+  });
+  const reset = (on: boolean) => {
+    fake.extra = {};
+    fake.os = 'android';
+    fake.native = hc();
+    setQaSleep(null);
+    usePhonePrefs.setState({ sleepLinkOn: on, healthRevoked: false });
+  };
+
+  it('switch on, Health Connect has a night: the night', async () => {
+    reset(true);
+    expect(await readLastNight(START)).toMatchObject({ asleepMin: 300 });
+  });
+  it('switch off: unknown, Health Connect is never asked', async () => {
+    reset(false);
+    let asked = false;
+    fake.native = hc({ healthReadSleep: async () => ((asked = true), night) });
+    expect(await readLastNight(START)).toBe('unknown');
+    expect(asked).toBe(false);
+  });
+  it('switch on, off, on again: follows the switch each time', async () => {
+    reset(true);
+    expect(await readLastNight(START)).not.toBe('unknown');
+    usePhonePrefs.setState({ sleepLinkOn: false });
+    expect(await readLastNight(START)).toBe('unknown');
+    usePhonePrefs.setState({ sleepLinkOn: true });
+    expect(await readLastNight(START)).not.toBe('unknown');
+  });
+  it('access removed later (Stop and remove access): unknown', async () => {
+    reset(true);
+    usePhonePrefs.setState({ healthRevoked: true });
+    expect(await readLastNight(START)).toBe('unknown');
+  });
+  it('permission refused in Health Connect (the read returns null): unknown', async () => {
+    reset(true);
+    fake.native = hc({ healthReadSleep: async () => null });
+    expect(await readLastNight(START)).toBe('unknown');
+  });
+  it('no Health Connect on the phone, or an old one: unknown', async () => {
+    reset(true);
+    fake.native = null;
+    expect(await readLastNight(START)).toBe('unknown');
+    fake.native = hc({ healthStatus: () => 'unavailable' });
+    expect(await readLastNight(START)).toBe('unknown');
+    fake.native = hc({ healthStatus: () => 'update' });
+    expect(await readLastNight(START)).toBe('unknown');
+  });
+  it('Health Connect fails or throws: unknown, never a crash', async () => {
+    reset(true);
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    fake.native = hc({ healthReadSleep: async () => { throw new Error('timeout'); } });
+    expect(await readLastNight(START)).toBe('unknown');
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+  it('iPhone: unknown (Apple Health later)', async () => {
+    reset(true);
+    fake.os = 'ios';
+    expect(await readLastNight(START)).toBe('unknown');
+  });
+  it('QA stand-in: used only on a QA build and only with the switch on', async () => {
+    reset(true);
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    setQaSleep(200); // not a QA build: ignored
+    expect(await readLastNight(START)).toMatchObject({ asleepMin: 300 });
+    fake.extra = { qaStandIns: ['sleepSample'] };
+    setQaSleep(200);
+    expect(await readLastNight(START)).toMatchObject({ asleepMin: 200 });
+    usePhonePrefs.setState({ sleepLinkOn: false });
+    expect(await readLastNight(START)).toBe('unknown');
+    setQaSleep(null);
+    log.mockRestore();
   });
 });

@@ -152,7 +152,7 @@ export function canRemoveHealthAccess(): boolean {
 export const HC_REMOVE_ASK = {
   title: "Remove MettleUp's access to Health Connect?",
   body:
-    'MettleUp will stop sending your workouts and stop reading your weight and steps. ' +
+    'MettleUp will stop sending your workouts and stop reading your weight, steps and sleep. ' +
     'Workouts already sent stay in Health Connect. Weigh-ins already added stay in your body weight.',
   confirm: 'Remove access',
 } as const;

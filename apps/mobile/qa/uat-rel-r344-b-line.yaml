@@ -9,6 +9,11 @@
 appId: com.mettleup.app
 ---
 - launchApp
+# Open the link only once the app is up (run 41983479905: a link sent while the app was still starting
+# was lost, and B showed the protein tip instead of the sleep line).
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
 - openLink: "mettleup://qa-sleep?min=310"
 - runFlow:
     file: sub-uat-r344-bench.yaml

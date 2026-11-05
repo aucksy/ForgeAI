@@ -1,0 +1,135 @@
+# Part UAT, R-344 flow 3 of 3 (R-364: state changes, negative, interruptions). Same day as flow 2, so the
+# protein tip is used up (one every 3 days) and only the sleep line can appear.
+#  E: switch OFF, made-up 5 h 10 min sleep -> NO sleep line (the switch wins over everything).
+#  F: switch ON again (already allowed: no second ask) -> the sleep line is back.
+#  Killed on the finish screen: the app opens again normally on the Workout tab.
+#  "Stop and remove MettleUp's access" -> the sleep switch goes back to Off; the next lighter
+#  workout G has no sleep line.
+appId: com.mettleup.app
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+# ---------------------------------------------------------------- E: switch off -> no sleep line
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Health apps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Sleep and workouts"
+- tapOn:
+    text: "Sleep and workouts"
+    checked: true
+- assertVisible:
+    text: "Sleep and workouts"
+    checked: false
+- takeScreenshot: rel-r344-08-switch-off-again
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- openLink: "mettleup://qa-sleep?min=310"
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: '.*Lighter than last time\. Every workout counts\..*'
+    timeout: 15000
+- assertNotVisible: "You slept .*"
+- assertNotVisible: 'Test build: made-up sleep\.'
+- assertNotVisible: ".*protein.*"
+- takeScreenshot: rel-r344-09-off-no-line
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- F: switch on again -> the line is back
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Health apps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Sleep and workouts"
+- tapOn:
+    text: "Sleep and workouts"
+    checked: false
+# Only if Health Connect asks again (it should not: the permission was kept).
+- tapOn:
+    text: '(?i)^allow all$'
+    optional: true
+- tapOn:
+    text: '(?i)^allow$'
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "Sleep and workouts"
+      checked: true
+    timeout: 15000
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- openLink: "mettleup://qa-sleep?min=310"
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: 'You slept 5 h 10 min last night\. A weaker day after short sleep is normal\. Aim for 7 hours or more tonight\.'
+    timeout: 15000
+- takeScreenshot: rel-r344-10-on-again
+# ---------------------------------------------------------------- the app is killed on the finish screen
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- assertNotVisible: "You slept .*"
+- takeScreenshot: rel-r344-11-after-kill
+# ---------------------------------------------------------------- access removed later -> switch Off, no line
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Health apps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Stop and remove MettleUp's access"
+- tapOn: "Stop and remove MettleUp's access"
+- extendedWaitUntil:
+    visible: "Remove MettleUp's access to Health Connect\\?"
+    timeout: 10000
+- assertVisible: ".*stop reading your weight, steps and sleep\\..*"
+- tapOn: "^Remove access$"
+- extendedWaitUntil:
+    visible: "Removed\\. MettleUp can no longer use Health Connect\\..*"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Sleep and workouts"
+- assertVisible:
+    text: "Sleep and workouts"
+    checked: false
+- takeScreenshot: rel-r344-12-access-removed
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 15000
+- openLink: "mettleup://qa-sleep?min=310"
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: '.*Lighter than last time\. Every workout counts\..*'
+    timeout: 15000
+- assertNotVisible: "You slept .*"
+- takeScreenshot: rel-r344-13-removed-no-line
+- tapOn: "^Done$"

@@ -230,6 +230,7 @@ let qaSleep: number | null = null;
 /** QA builds only: set by the qa-sleep link (ignored on every other build). */
 export function setQaSleep(min: number | null): void {
   qaSleep = hasSleepStandIn(Constants.expoConfig?.extra) ? min : null;
+  console.log(`[QA] sleep stand-in: ${qaSleep == null ? 'off' : `${qaSleep} min`}`);
 }
 
 /** True while the made-up night is in use (the line then says so on screen). */
@@ -243,12 +244,14 @@ export function qaSleepInUse(): boolean {
  * Nothing read here is stored or sent.
  */
 export async function readLastNight(workoutStartMs: number): Promise<LastNight> {
+  const p = usePhonePrefs.getState();
+  // The switch first, also for the QA stand-in, so UAT can see "switch off = no sleep line".
+  if (!p.sleepLinkOn) return 'unknown';
   if (qaSleepInUse()) {
     const min = qaSleep ?? -1;
     return min < 0 ? 'unknown' : { asleepMin: min, startMs: workoutStartMs - 10 * HOUR_MS, endMs: workoutStartMs - 10 * HOUR_MS + min * MIN_MS };
   }
-  const p = usePhonePrefs.getState();
-  if (!p.sleepLinkOn || p.healthRevoked || !canReadSleep()) return 'unknown';
+  if (p.healthRevoked || !canReadSleep()) return 'unknown';
   const n = phoneNative();
   if (!n?.healthReadSleep || n.healthStatus() !== 'available') return 'unknown';
   try {
