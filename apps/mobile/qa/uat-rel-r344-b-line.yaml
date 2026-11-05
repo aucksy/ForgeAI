@@ -43,7 +43,7 @@ appId: com.mettleup.app
     visible: '.*Lighter than last time\. Every workout counts\..*'
     timeout: 15000
 - extendedWaitUntil:
-    visible: 'Was today lighter than last time\? Check that you eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
+    visible: 'Eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
     timeout: 15000
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'

@@ -129,7 +129,8 @@ export function RecordToast() {
               lines.map((l) => (
                 <Text key={l.kind} numberOfLines={2} style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>
                   <Text style={{ fontFamily: type.bodyBold, color: color.accentBright }}>{l.title}</Text>
-                  {` · ${l.value}`}
+                  {/* R-335 fresh eyes (6 Nov): never "70" on one line and "kg" on the next, never a line starting with "·". */}
+                  {`\u00A0· ${keepUnits(l.value)}`}
                 </Text>
               ))
             ) : (
@@ -143,6 +144,11 @@ export function RecordToast() {
       </Animated.View>
     </>
   );
+}
+
+/** "70 kg × 12" with no-break spaces, so a number never parts from its unit or the × sign. PURE. */
+export function keepUnits(v: string): string {
+  return v.replace(/(\d) (kg|lb|×)/g, '$1\u00A0$2').replace(/× (\d)/g, '×\u00A0$1');
 }
 
 /** × on a pop-up (owner, 15 Oct 2026: "give an X button... to just remove it"). 48 dp to the finger. */

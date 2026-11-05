@@ -144,7 +144,8 @@ export function sleepLine(asleepMin: number): string {
 
 /** The protein tips, in turn (member-words, R-98). Never a number about what the member ate. */
 export const PROTEIN_TIPS: readonly string[] = [
-  'Was today lighter than last time? Check that you eat enough protein. A palm-sized portion with each meal helps your muscles recover.',
+  // R-335 fresh eyes (6 Nov): the card above already says "Lighter than last time", so no question about it.
+  'Eat enough protein. A palm-sized portion with each meal helps your muscles recover.',
   'Muscles grow back stronger between workouts, with protein and rest. Eggs, paneer, dal, curd, chicken or fish with each meal all help.',
   'Lighter days happen. Some protein at every meal, not just one big one, helps your muscles recover for next time.',
 ];
