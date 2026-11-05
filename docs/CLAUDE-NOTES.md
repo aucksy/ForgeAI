@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-349. T-Bar Row: 32.5 kg x 6 on every set after 30 x 13, 12, 10 - 5 Nov 2026
+
+He asked (screenshot): "These suggestions look good to you?" then "I only swapped the weight and reps for warm up sets...did that mess it up?"
+Answer: the warm-up did not cause it (warm-ups never count; the target was set before he typed). Rule R2 (progression.ts): every working set reached the top of the range (scores with effort credit 14.5, 13, 10.5 >= max, so the range is about 6-10), so +2.5 kg and the goal resets to the BOTTOM of the range, 6, on every set: 585 kg vs 1,050 last time. Too easy: from his sets he can likely do about 10, 9, 7 at 32.5 kg.
+My view / fix: after a weight step, a goal per set from what each set did last time (estimated reps at the new weight from reps + effort, minus a margin), kept inside the range, never under the bottom. Same spirit as R-301 per-set goals. Built by a helper with tests for this exact workout.
+
 ## R-348. Stop the iPhone app; perfect Android first - 5 Nov 2026
 
 He said: "Lets stop building iPhone app. We gotta perfect android first" (with a screenshot of T-Bar Row suggestions: "These suggestions look good to you?").
