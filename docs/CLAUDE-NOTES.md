@@ -213,6 +213,7 @@ My view / decision (he delegated it):
 - Never a forced update: "Later" always works. A minimum-version switch only if a server change ever breaks old versions.
 - Ships in the next release (waiting list), with UAT and a fresh-eyes review.
 - Built 5 Nov 2026 (helper): full screen + orange line + 7th/3rd-launch rule + whats-new.json release asset + UAT flow uat-rel-r336-update.yaml; waiting list in PROGRESS.md. The restart after a Play download stays the small sheet.
+- UAT passed 5 Nov 2026, runs 41987822659 (default) + 41987826057 (owner 360 dp/font 1.3), parts UATR336 + UATR336B (airplane mode): happy path, 3 behind, back = Later, never during a workout (shows next launch after discard), never twice after Later, killed on the screen, up to date, offline. Not testable on the emulator: a real Play download, Play unreachable (unit tests only), install over the old version (release update-proof job). Bug found by UAT: the pop-up never showed since R-260 (workout check `active != null` on a boolean).
 
 ## R-334. "My members" next to "Members": rename + root cause + global rule — 5 Nov 2026
 
