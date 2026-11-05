@@ -1,6 +1,4 @@
 /** "Machine in use" words and helpers (MachineInUse.tsx draws them). PURE. */
-import { groupInt } from '@/lib/numberFormat';
-
 export const IN_USE_WORDS = {
   title: 'IN USE',
   /** R-70: says the member is resting, so people nearby know they are coming back. */
@@ -14,7 +12,18 @@ export const IN_USE_WORDS = {
   /** R-299 (owner, 3 Nov 2026): under the rest clock while this exercise's In use stays closed. */
   /** Fresh-eyes review (5 Nov 2026): "Tap: In use" read as a riddle; it says what the tap does. */
   tapHint: 'Tap to show In use',
+  /**
+   * R-345 (owner, 5 Nov 2026: the hint "went away" after a touch on In use): while this exercise's In
+   * use opens by itself, the same line says so, instead of vanishing. The tick on In use flips the
+   * line between the two, so the member sees what the tick changed.
+   */
+  autoHint: 'In use opens after each set',
 } as const;
+
+/** R-345: the line under the rest clock: what In use does for this exercise now. Never empty. PURE. */
+export function inUseClockHint(autoOn: boolean): string {
+  return autoOn ? IN_USE_WORDS.autoHint : IN_USE_WORDS.tapHint;
+}
 
 /** The catalogue's equipment kinds (types/models Exercise['equipment']). */
 export type InUseEquipment = 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'other';
@@ -80,19 +89,16 @@ export function machineName(nextLabel: string | null): string | null {
 }
 
 /**
- * R-305 (owner, 3 Nov 2026: "300 kg more to beat previous total"): the "In use" screen's line under
- * the lift's name. People nearby read it and ask which app it is. `left`: kg (or reps) still to go;
- * `unit`: "kg" / "lb"; `each`: dumbbells counted per hand. null = no total to beat. PURE.
+ * R-346 (owner, 5 Nov 2026: "instead of showing the total kg, we can replicate the previous and next
+ * set thing that is being shown on the watch"): the In use screen's two lines under the lift's name,
+ * exactly as the watch's rest screen words them (WatchLayout.card: "Previous " + last, "Next " + goal).
+ * `w` is the row the phone already sends the watch (liveCard.ts `watch`: last time's numbers for the
+ * next set, and what its tick saves). Each null when unknown. PURE.
  */
-export function inUseBeatLine(p: { left: number; reps: boolean; unit: string; each: boolean } | null): string | null {
-  if (!p || !Number.isFinite(p.left)) return null;
-  // A little left (0.3) is still "1 more", never "beaten".
-  const n = p.left <= 1e-9 ? 0 : Math.max(1, Math.round(p.left));
-  // The owner's own words (R-305). `left` is the gap to the PREVIOUS workout's total for this
-  // exercise (kgTarget.previousLeft), never to today's target (fresh-eyes review, 5 Nov 2026).
-  if (n <= 0) return 'Previous total beaten ✓';
-  if (p.reps) return `${n} more ${n === 1 ? 'rep' : 'reps'} to beat the previous total`;
-  return `${groupInt(n)} ${p.unit} more${p.each ? ' per hand' : ''} to beat the previous total`;
+export function inUseSetLines(w: { last: string; goal: string } | null | undefined): { previous: string | null; next: string | null } {
+  const last = (w?.last ?? '').trim();
+  const goal = (w?.goal ?? '').trim();
+  return { previous: last ? `Previous ${last}` : null, next: goal ? `Next ${goal}` : null };
 }
 
 /**

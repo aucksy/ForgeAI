@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IN_USE_WORDS, cleanInUseChoices, inUseAutoOn, inUseBeatLine, inUseDefault, inUseHasOpenWorkingSet, machineName } from '@/tracker/lib/inUse';
+import { IN_USE_WORDS, cleanInUseChoices, inUseAutoOn, inUseClockHint, inUseDefault, inUseHasOpenWorkingSet, inUseSetLines, machineName } from '@/tracker/lib/inUse';
 
 describe('Machine in use (backlog, 21 Oct)', () => {
   it('names the machine, not the set', () => {
@@ -94,19 +94,14 @@ describe('R-304 / R-307: In use by equipment', () => {
   });
 });
 
-describe('R-305 inUseBeatLine', () => {
-  it('says how much more beats the previous total', () => {
-    expect(inUseBeatLine({ left: 300, reps: false, unit: 'kg', each: false })).toBe('300 kg more to beat the previous total');
-    expect(inUseBeatLine({ left: 1234.4, reps: false, unit: 'kg', each: false })).toMatch(/^1.?234 kg more to beat the previous total$/);
-    expect(inUseBeatLine({ left: 80, reps: false, unit: 'kg', each: true })).toBe('80 kg more per hand to beat the previous total');
-    expect(inUseBeatLine({ left: 1, reps: true, unit: 'kg', each: false })).toBe('1 more rep to beat the previous total');
-    expect(inUseBeatLine({ left: 6, reps: true, unit: 'kg', each: false })).toBe('6 more reps to beat the previous total');
+describe('R-346: In use shows the rest lines the watch shows (owner, 5 Nov 2026)', () => {
+  it('words them as the watch does: "Previous" + last time, "Next" + what the tick saves', () => {
+    expect(inUseSetLines({ last: '60 kg × 8', goal: '62.5 kg × 8' })).toEqual({ previous: 'Previous 60 kg × 8', next: 'Next 62.5 kg × 8' });
   });
-  it('says beaten at zero, nothing without a total', () => {
-    expect(inUseBeatLine({ left: 0, reps: false, unit: 'kg', each: false })).toBe('Previous total beaten ✓');
-    expect(inUseBeatLine({ left: 0.3, reps: false, unit: 'lb', each: false })).toBe('1 lb more to beat the previous total');
-    expect(inUseBeatLine({ left: -20, reps: false, unit: 'kg', each: false })).toBe('Previous total beaten ✓');
-    expect(inUseBeatLine(null)).toBeNull();
+  it('a line the watch would leave out is left out here too', () => {
+    expect(inUseSetLines({ last: '', goal: '40 kg × 10' })).toEqual({ previous: null, next: 'Next 40 kg × 10' });
+    expect(inUseSetLines({ last: ' ', goal: '' })).toEqual({ previous: null, next: null });
+    expect(inUseSetLines(null)).toEqual({ previous: null, next: null });
   });
 });
 
@@ -122,5 +117,26 @@ describe('owner decision (3 Nov 2026): no In use by itself after the last set of
     expect(inUseHasOpenWorkingSet([set(true), set(true), set(false, { setType: 'drop' })])).toBe(false);
     expect(inUseHasOpenWorkingSet([])).toBe(false);
     expect(inUseHasOpenWorkingSet(undefined)).toBe(false);
+  });
+});
+
+describe('R-345: the line under the rest clock never vanishes (owner, 5 Nov 2026)', () => {
+  it('says what In use does for this exercise now, in both states', () => {
+    expect(inUseClockHint(false)).toBe('Tap to show In use');
+    expect(inUseClockHint(true)).toBe('In use opens after each set');
+  });
+  it('the tick on In use flips the line: off -> on -> off, never empty', () => {
+    const ex = { name: 'Lateral Raise', key: 'lateral_raise', equipment: 'dumbbell' };
+    let chosen: boolean | undefined;
+    const line = () => inUseClockHint(inUseAutoOn(true, chosen, ex));
+    expect(line()).toBe(IN_USE_WORDS.tapHint);
+    chosen = true; // the member ticks "Show after every set of this exercise"
+    expect(line()).toBe(IN_USE_WORDS.autoHint);
+    chosen = false;
+    expect(line()).toBe(IN_USE_WORDS.tapHint);
+    // A machine is on by default: the line says so from the first set.
+    expect(inUseClockHint(inUseAutoOn(true, undefined, { name: 'Leg Extension', key: 'leg_extension', equipment: 'machine' }))).toBe(IN_USE_WORDS.autoHint);
+    // Settings' switch off: In use never opens by itself, and the line offers the tap.
+    expect(inUseClockHint(inUseAutoOn(false, true, ex))).toBe(IN_USE_WORDS.tapHint);
   });
 });

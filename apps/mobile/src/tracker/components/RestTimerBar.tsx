@@ -22,14 +22,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { MachineInUse, machineName, type InUseExercise } from './MachineInUse';
-import { IN_USE_WORDS, inUseAutoOn, inUseBeatLine, inUseHasOpenWorkingSet } from '../lib/inUse';
-import { useKgLeft } from '../store/kgLeftStore';
+import { inUseAutoOn, inUseClockHint, inUseHasOpenWorkingSet, inUseSetLines } from '../lib/inUse';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
+import { displayUnits } from '@/lib/units';
 import { color, radius, space, type } from '@/theme/tokens';
 
+import { liveCardContent } from '../services/liveCard';
 import { EXACT_ASK, openFixFor, readAlertAccess, shouldAskExact } from '../services/restAlertAccess';
+import { rowFill } from '../services/restDoneRun';
 import { useActiveWorkout } from '../store/activeWorkoutStore';
 import { restAlertPrefsReady, useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
@@ -147,6 +149,8 @@ function useAlertChecks(endsAt: number | null): {
   };
 }
 
+const NO_LINES = { previous: null, next: null } as const;
+
 /** R-70 review: how long after a rest starts "In use" opens by itself. */
 const IN_USE_DELAY_MS = 300;
 
@@ -168,14 +172,21 @@ export function RestTimerBar() {
   const master = useTrackerPrefs((s) => s.inUseAfterSet);
   const chosen = useTrackerPrefs((s) => (exId ? s.inUseByExercise[exId] : undefined));
   const autoInUse = inUseAutoOn(master, chosen, inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
-  // R-305: "300 kg more to beat the previous total" for that same lift.
-  const beatLine = useKgLeft((s) => inUseBeatLine(startedBy ? s.byEx[startedBy] ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);
   // 0.56.1: the "Alarms & reminders" ask now shows on many new phones; "In use" never opens over it.
   const askingRef = useRef(false);
   askingRef.current = checks.asking;
   const [inUse, setInUse] = useState(false);
+  // R-346 (owner, 5 Nov 2026): the In use screen shows the watch's rest lines, from the very row the
+  // phone sends the watch (liveCard `watch`), and only while that row is this lift's next set (after
+  // its last set the next one belongs to another exercise: no lines, the name stays this machine's).
+  const exercises = useActiveWorkout((s) => s.exercises);
+  const setLines = useMemo(() => {
+    if (!inUse) return NO_LINES;
+    const card = liveCardContent({ startedAt: null, exercises }, rowFill, displayUnits());
+    return startedBy && card.exKey === startedBy ? inUseSetLines(card.watch) : NO_LINES;
+  }, [inUse, exercises, startedBy]);
   // The rest ended (or was skipped): the in-use screen closes and stays closed for the next rest.
   useEffect(() => {
     if (endsAt == null) setInUse(false);
@@ -249,6 +260,7 @@ export function RestTimerBar() {
             }}
             accessibilityRole="button"
             accessibilityLabel={`Rest, ${remaining} seconds left. Show machine in use`}
+            accessibilityHint={inUseClockHint(autoInUse)}
             style={{ flex: 1, minWidth: 0, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
           >
             <Text
@@ -261,19 +273,19 @@ export function RestTimerBar() {
               <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>Rest </Text>
               {fmtClock(remaining)}
             </Text>
-            {/* R-299 (owner, 3 Nov 2026): while this exercise's In use does not open by itself, say the
-                clock opens it. One small line, so the bar stays one row of buttons. */}
-            {!autoInUse ? (
-              <Text
-                accessible={false}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.7}
-                style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.accent, textAlign: 'center' }}
-              >
-                {IN_USE_WORDS.tapHint}
-              </Text>
-            ) : null}
+            {/* R-299 (owner, 3 Nov 2026): say the clock opens In use. R-345 (owner, 5 Nov 2026: the line
+                "went away" after a touch on In use, because the tick there turned In use on for this
+                exercise and the line was then hidden): it always shows and says what is true now,
+                "Tap to show In use" or "In use opens after each set". One small line, one row of buttons. */}
+            <Text
+              accessible={false}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: autoInUse ? color.inkSecondary : color.accent, textAlign: 'center' }}
+            >
+              {inUseClockHint(autoInUse)}
+            </Text>
           </Pressable>
           <TimerBtn label="+15" a11y="15 seconds more" onPress={() => addSec(15)} />
           <TimerBtn label="Skip" a11y="Skip rest" onPress={() => skip()} />
@@ -297,7 +309,7 @@ export function RestTimerBar() {
         </Pressable>
       ) : null}
       {ask}
-      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} beatLine={beatLine} exercise={inUseEx} onClose={() => setInUse(false)} />
+      <MachineInUse visible={inUse} remaining={remaining} clock={fmtClock(remaining)} machine={machine ?? machineName(nextLabel)} previous={setLines.previous} next={setLines.next} exercise={inUseEx} onClose={() => setInUse(false)} />
     </View>
   );
 }

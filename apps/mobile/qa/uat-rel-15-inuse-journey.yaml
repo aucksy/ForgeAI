@@ -8,7 +8,8 @@
 #   3. Opened again, a tap ON the tick ("Show after every set of this exercise"): the screen must stay
 #      open, the tick shows ticked, and the rest bar then says In use now opens after every set.
 #   4. A tap on "I'm back" (the nearest thing to the tick) closes it; the tick turned off again.
-#   5. Leg Extension set 1 ticked: In use opens by itself; a middle tap closes it; the bar says so.
+#   5. Leg Extension set 1 ticked: In use opens by itself with the watch's lines (R-346: "Previous ..."
+#      and "Next ...", no kg to beat); a middle tap closes it; the bar says In use opens after each set.
 # Pictures rel-345-*.png (qa-out/uat-release/).
 appId: com.mettleup.app
 ---
@@ -145,6 +146,8 @@ appId: com.mettleup.app
 - assertVisible:
     text: "Show after every set of this exercise"
     checked: false
+# R-346: the Lateral Raise's only set is done, so its In use has no "Next" line; never the kg to beat.
+- assertNotVisible: '.*to beat the previous total.*'
 - takeScreenshot: rel-345-02-in-use-open
 # ---------------------------------------------------------------- 2. a tap in the middle closes it
 - tapOn:
@@ -210,7 +213,7 @@ appId: com.mettleup.app
     commands:
       - takeScreenshot: rel-345-06b-OBS-hint-GONE-after-tick
 # The bar names the new state (R-345 fix): In use now opens by itself after this exercise's sets.
-- assertVisible: "^In use: on after each set$"
+- assertVisible: "^In use opens after each set$"
 # Turn it back off from the In use screen: the bar's hint comes back.
 - tapOn:
     text: 'Rest, \d+ seconds left\. Show machine in use'
@@ -245,6 +248,10 @@ appId: com.mettleup.app
 - assertVisible:
     text: "Show after every set of this exercise"
     checked: true
+# R-346 (owner, 5 Nov 2026): the watch's rest lines for this machine's next set, never the kg to beat.
+- assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
+- assertVisible: '^Next .+ × \d+$'
+- assertNotVisible: '.*to beat the previous total.*'
 - takeScreenshot: rel-345-08-machine-in-use-by-itself
 - tapOn:
     point: "50%,50%"
@@ -253,6 +260,6 @@ appId: com.mettleup.app
     notVisible: 'In use\. .*Tap to close'
     timeout: 5000
 - assertVisible: "Skip rest"
-- assertVisible: "^In use: on after each set$"
+- assertVisible: "^In use opens after each set$"
 - takeScreenshot: rel-345-09-machine-bar-after-close
 - tapOn: "Skip rest"
