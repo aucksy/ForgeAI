@@ -3,6 +3,12 @@
 # name for the watch. run-device-qa.sh (part_u355) reads the phone's "watch next:" lines after it.
 appId: com.mettleup.app
 ---
+# Back from the background (flow a ends with Home): the same workout, still resting.
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Skip rest|Finish workout"
+    timeout: 15000
 - tapOn:
     text: "Skip rest"
     optional: true

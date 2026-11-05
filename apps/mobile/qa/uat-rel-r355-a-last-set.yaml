@@ -120,3 +120,11 @@ appId: com.mettleup.app
           timeout: 5000
 - assertVisible: "Skip rest"
 - takeScreenshot: rel-r355-03-rest-after-a-last-set
+# R-364 interruption: the app goes to the background mid-rest (Home). The shell reads the phone's last
+# word to the watch and the rest card AFTER this, so both must still name Barbell Bench Press, set 1.
+- pressKey: Home
+- extendedWaitUntil:
+    visible: "never shown, a 3 s wait in the background"
+    timeout: 3000
+    optional: true
+- takeScreenshot: rel-r355-03b-app-in-background

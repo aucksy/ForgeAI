@@ -99,6 +99,45 @@ describe('R-355: during a rest the watch names the exercise of the NEXT set', ()
   });
 });
 
+describe('R-355 (R-364 UAT types): state changes mid-workout keep the watch on the right exercise', () => {
+  const aDone = () => ex('a', 'Bench Press', [done('a1', 10), done('a2', 20)]);
+
+  it('exercises reordered during the rest after A\'s last set: the next one in the NEW order', () => {
+    const b = ex('b', 'Barbell Row', [set('b1')]);
+    const c = ex('c', 'Curl', [set('c1')]);
+    expect(watchDuringRest({ exercises: [aDone(), b, c] }).name).toBe('Barbell Row');
+    // Curl dragged above Barbell Row: Curl now follows A.
+    expect(watchDuringRest({ exercises: [aDone(), c, b] })).toMatchObject({ name: 'Curl', set: 'Set 1 of 1' });
+    // A dragged to the end: the wrap-around starts after A, so the first open exercise (B).
+    expect(watchDuringRest({ exercises: [b, c, aDone()] }).name).toBe('Barbell Row');
+  });
+
+  it('the next exercise removed: the one after it; every other one removed: "All sets done", no name', () => {
+    const c = ex('c', 'Curl', [set('c1'), set('c2')]);
+    expect(watchDuringRest({ exercises: [aDone(), c] })).toMatchObject({ name: 'Curl', set: 'Set 1 of 2' });
+    const alone = watchDuringRest({ exercises: [aDone()], workoutName: 'Push Day' });
+    expect(alone).toMatchObject({ name: '', set: '', text: 'All sets done · Finish' });
+  });
+
+  it('an exercise added after the final set: the watch names it (no longer "All sets done")', () => {
+    expect(watchDuringRest({ exercises: [aDone()] }).name).toBe('');
+    const added = ex('d', 'Dips', [set('d1'), set('d2'), set('d3')]);
+    expect(watchDuringRest({ exercises: [aDone(), added] })).toMatchObject({ name: 'Dips', set: 'Set 1 of 3' });
+  });
+
+  it('a set added to A after its last set: A again, "Set 3 of 3"', () => {
+    const a = ex('a', 'Bench Press', [done('a1', 10), done('a2', 20), set('a3')]);
+    const b = ex('b', 'Barbell Row', [set('b1')]);
+    expect(watchDuringRest({ exercises: [a, b] })).toMatchObject({ name: 'Bench Press', set: 'Set 3 of 3' });
+  });
+
+  it('A\'s last set unticked: A again, that set (never B)', () => {
+    const a = ex('a', 'Bench Press', [done('a1', 10), set('a2')]);
+    const b = ex('b', 'Barbell Row', [set('b1')]);
+    expect(watchDuringRest({ exercises: [a, b] })).toMatchObject({ name: 'Bench Press', set: 'Set 2 of 2' });
+  });
+});
+
 describe('R-355: the plan (taps with the app closed) moves the watch the same way', () => {
   it('each row\'s title and set line, across A\'s last set into B, ending at "All sets done"', () => {
     const a = ex('a', 'Bench Press', [done('a1', 10), set('a2')]);
