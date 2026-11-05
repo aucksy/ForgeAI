@@ -116,6 +116,9 @@ object WorkoutLive {
   fun onScreenUp(ctx: Context) {
     val app = ctx.applicationContext
     val mode = KeepAlive.mode(WatchState.workoutOpen(app), true, Build.VERSION.SDK_INT, heartAllowed(app))
+    // R-353: post the workout's Ongoing Activity again too. Another app (a call) may have been the
+    // ongoing task in between, and Wear OS keeps a dimmed app up only with its Ongoing Activity.
+    if (mode != KeepAlive.Mode.OFF) show(app)
     if (mode == KeepAlive.Mode.SERVICE) WorkoutService.start(app)
   }
 

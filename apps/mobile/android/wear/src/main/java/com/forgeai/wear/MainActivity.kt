@@ -70,6 +70,10 @@ class MainActivity : ComponentActivity() {
     object : AmbientLifecycleObserver.AmbientLifecycleCallback {
       override fun onEnterAmbient(ambientDetails: AmbientLifecycleObserver.AmbientDetails) {
         ambient = true
+        // R-353: the dim screen works (so the watch's always-on screen is on); rebuilds start over.
+        ambientWorked = true
+        rebuilds = 0
+        AmbientDiag.note(this@MainActivity, "ambient-enter", AmbientDiag.state(this@MainActivity))
       }
 
       override fun onUpdateAmbient() {
@@ -78,6 +82,7 @@ class MainActivity : ComponentActivity() {
 
       override fun onExitAmbient() {
         ambient = false
+        AmbientDiag.note(this@MainActivity, "ambient-exit")
       }
     },
   )
@@ -110,6 +115,10 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     lifecycle.addObserver(ambientObserver)
+    // R-353: a rebuild (below, onResume) keeps the set being logged.
+    keptLogUi?.let { logUi = it }
+    keptLogUi = null
+    AmbientDiag.note(this, "create", if (savedInstanceState != null) "restored" else "")
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot
@@ -365,12 +374,66 @@ class MainActivity : ComponentActivity() {
     // R-297: the screen is in front now (Android lets a foreground service start only then): an open
     // workout gets WorkoutService, which keeps MettleUp up instead of the watch face to the end.
     WorkoutLive.onScreenUp(this)
+    AmbientDiag.note(this, "resume", AmbientDiag.state(this))
+    // R-353: last time the screen went OFF where it should have dimmed (AmbientDiag.Heal). Rebuild this
+    // screen once, which registers it for the dim state again (the observer does that only in onCreate).
+    if (AmbientDiag.Heal.shouldRebuild(blackoutSeen && WatchState.workoutOpen(this), rebuilds)) {
+      blackoutSeen = false
+      rebuilds += 1
+      AmbientDiag.note(this, "rebuild", "try $rebuilds")
+      AmbientDiag.push(this, force = true)
+      window.decorView.post {
+        if (!isFinishing && !isDestroyed) {
+          keptLogUi = logUi
+          recreate()
+        }
+      }
+    } else {
+      blackoutSeen = false
+    }
+  }
+
+  override fun onPause() {
+    AmbientDiag.note(this, "pause", if (ambient) "ambient" else "")
+    super.onPause()
+  }
+
+  override fun onWindowFocusChanged(hasFocus: Boolean) {
+    super.onWindowFocusChanged(hasFocus)
+    // A call screen or a system panel over MettleUp takes the focus without stopping it.
+    AmbientDiag.note(this, if (hasFocus) "focus" else "focus-lost")
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    AmbientDiag.note(this, "new-intent", intent.action ?: "")
   }
 
   override fun onStop() {
     onScreen = false
     visible = false
+    val screenOn = try {
+      (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
+    } catch (e: Exception) {
+      true
+    }
+    val open = WatchState.workoutOpen(this)
+    if (AmbientDiag.Heal.blackout(screenOn, ambient, ambientWorked, open, isFinishing || isChangingConfigurations)) {
+      blackoutSeen = true
+    }
+    AmbientDiag.note(
+      this,
+      "stop",
+      "ambient=${if (ambient) 1 else 0} workout=${if (open) 1 else 0} blackout=${if (blackoutSeen) 1 else 0} " +
+        AmbientDiag.state(this),
+    )
+    AmbientDiag.push(this)
     super.onStop()
+  }
+
+  override fun onDestroy() {
+    AmbientDiag.note(this, "destroy", if (isChangingConfigurations) "rebuild" else "")
+    super.onDestroy()
   }
 
   private fun prefs() = getSharedPreferences("forgeai_watch_ui", MODE_PRIVATE)
@@ -602,5 +665,17 @@ class MainActivity : ComponentActivity() {
     @Volatile
     var visible = false
       private set
+
+    /** R-353: the dim screen was entered at least once since the app started (always-on is on). */
+    private var ambientWorked = false
+
+    /** R-353: the last stop was the screen going off instead of dimming ([AmbientDiag.Heal.blackout]). */
+    private var blackoutSeen = false
+
+    /** R-353: rebuilds since the dim screen last worked (capped by [AmbientDiag.Heal.MAX_TRIES]). */
+    private var rebuilds = 0
+
+    /** R-353: the logging flow's state, carried across one rebuild. */
+    private var keptLogUi: LogUi? = null
   }
 }
