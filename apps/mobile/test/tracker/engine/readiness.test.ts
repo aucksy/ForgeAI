@@ -93,6 +93,18 @@ describe('words', () => {
     expect(readySummary(muscleReadiness([], NOW), (m) => MUSCLE_LABEL[m]).title).toBe('Every muscle is rested');
     for (const b of BANNED_MEMBER_WORDS) expect(`${s.title} ${s.body}`).not.toMatch(b.re);
   });
+
+  it('names the hardest-worked muscle first, so "and 2 more" never hides it (owner, Pull day 5 Nov 2026)', () => {
+    const chin = { primary: ['lats'] as Muscle[], secondary: ['biceps'] as Muscle[] };
+    const curl = { primary: ['biceps'] as Muscle[], secondary: ['forearms'] as Muscle[] };
+    const tbar = { primary: ['upper_back', 'lats'] as Muscle[], secondary: ['rear_delts', 'biceps'] as Muscle[] };
+    // Biceps 12, Lats 6, Forearms 4.5, Upper back 3, Rear shoulders 1.5.
+    const rows = muscleReadiness([row(2, chin, 3, 'pull'), row(2, curl, 9, 'pull'), row(2, tbar, 3, 'pull')], NOW);
+    const s = readySummary(rows, (m) => MUSCLE_LABEL[m]);
+    expect(s.body).toBe(
+      `Still resting: ${MUSCLE_LABEL.biceps}, ${MUSCLE_LABEL.lats}, ${MUSCLE_LABEL.forearms} and 2 more. Everything else is ready.`,
+    );
+  });
 });
 
 describe('body parts for the quick workout', () => {

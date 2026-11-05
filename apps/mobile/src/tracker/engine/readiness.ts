@@ -109,11 +109,18 @@ export function namesLine(names: readonly string[], max = 3): string {
 
 /**
  * The Workout tab's one line: what is still resting, else that everything is ready. Muscles that
- * are resting come first (they decide today), then the ones almost ready.
+ * are resting come first (they decide today), then the ones almost ready. Within each, the muscle
+ * worked hardest comes first (body order on a tie), so "and 2 more" never hides the main one
+ * (owner, 5 Nov 2026: a Pull day with 13.5 Biceps sets named Rear shoulders, 1.5 sets, and hid Biceps).
  */
 export function readySummary(rows: readonly MuscleReadiness[], label: (m: Muscle) => string): { title: string; body: string } {
-  const resting = rows.filter((r) => r.state === 'resting').map((r) => label(r.muscle));
-  const almost = rows.filter((r) => r.state === 'almost').map((r) => label(r.muscle));
+  const names = (state: ReadyState) =>
+    rows
+      .filter((r) => r.state === state)
+      .sort((a, b) => b.sets - a.sets)
+      .map((r) => label(r.muscle));
+  const resting = names('resting');
+  const almost = names('almost');
   if (resting.length === 0 && almost.length === 0) {
     return { title: 'Every muscle is rested', body: 'Your logged workouts leave nothing resting. Train what you like today.' };
   }
