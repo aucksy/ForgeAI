@@ -19,11 +19,20 @@ appId: com.mettleup.app
 - takeScreenshot: rel-r358-b-10x13-per-side-no-record
 - runFlow: sub-uat-rest-clear.yaml
 # His edit after the tick: 13 -> 18 on the ticked row. Typing never pops up a record.
+# The reps box still has focus after the 13 (the keyboard was closed, the box kept it), so a tap
+# would only move the cursor and the erase would leave the "3": run 41999585893 saved 10 x 183, and
+# flow c's 10 x 19 was then rightly no record. Focus the weight box first, so the reps tap selects all.
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set 1 weight, .*"
+      VALUE: " 10"
 - runFlow:
     file: sub-type.yaml
     env:
       FIELD: "Dumbbell Preacher Curl set 1 reps.*"
       VALUE: " 18"
+- assertNotVisible: "183|1813|1183|138"
 - assertNotVisible: "New record.*"
 - runFlow:
     file: sub-uat-r358-set.yaml

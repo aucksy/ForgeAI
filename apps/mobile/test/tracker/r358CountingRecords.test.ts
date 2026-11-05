@@ -208,3 +208,29 @@ describe('R-358: one counting all along is unchanged', () => {
     expect(liveRecordHits(card(old, 'one', [s])).get(s.key)).toBeTruthy();
   });
 });
+
+describe('R-358 UAT flow c, exactly: 10 × 19 per side after a 360 kg per-side best must pop up', () => {
+  // Flow a: "Weight as typed" 10 × 15, 10 × 12 (stamped 'one' when flow b switched). Flow b: "One side
+  // at a time" 10 × 18 (13 edited to 18), 10 × 18, 10 × 15. Flow c, later (after midnight): 10 × 19.
+  const flowA = (): RecordSession => session('2026-11-05', sets('one', 10, [15, 12]));
+  const flowB = (mode: LoadMode | null): RecordSession => session('2026-11-05', sets(mode, 10, [18, 18, 15]));
+
+  for (const stamped of [null, 'side'] as const) {
+    it(`fires with flow b's sets saved as ${stamped ?? 'the exercise counting'}`, () => {
+      const bests = bestsFor([flowA(), flowB(stamped)], 'side')!;
+      expect(bests.mode).toBe('side');
+      expect(bests.by?.best_set).toBe(360);
+      const s = tick(10, 19);
+      // The card also holds the two rows not yet done (pre-filled from last time).
+      const open = [{ ...tick(10, 18), done: false }, { ...tick(10, 15), done: false }];
+      const hit = toastHit([card(bests, 'side', [s, ...open])], 'c', s.key);
+      expect(hit).not.toBeNull();
+      expect((hit?.all ?? [hit]).find((h) => h?.kind === 'best_set')?.value).toBe(380);
+      // R-362: then 10 × 20 keeps its medal but no second pop-up.
+      const s2 = tick(10, 20);
+      const shown = { ...card(bests, 'side', [s, s2]), recordToasted: true };
+      expect(liveRecordHits(shown).get(s2.key)).toBeTruthy();
+      expect(toastHit([shown], 'c', s2.key)).toBeNull();
+    });
+  }
+});

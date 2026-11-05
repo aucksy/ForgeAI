@@ -12,15 +12,27 @@ appId: com.mettleup.app
     env:
       COUNTING: "keep"
 - assertVisible: ".*REPS/SIDE.*"
+# Flow b's history must be 10 x 18 (not a mistyped 183): set 1 is pre-filled from it.
+- assertNotVisible: "183"
+# Set 1 typed and ticked here (not via sub-uat-r358-set): the pop-up is looked for straight after the
+# tick, with no wait for the rest bar in between (it shows for 6.2 s).
 - runFlow:
-    file: sub-uat-r358-set.yaml
+    file: sub-type.yaml
     env:
-      N: "1"
-      KG: "10"
-      REPS: "19"
+      FIELD: "Dumbbell Preacher Curl set 1 weight, .*"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set 1 reps.*"
+      VALUE: " 19"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Dumbbell Preacher Curl set 1"
 - extendedWaitUntil:
     visible: "New record.*"
-    timeout: 5000
+    timeout: 6000
 - takeScreenshot: rel-r358-c-real-record-pops-up
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:
