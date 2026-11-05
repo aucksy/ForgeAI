@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { groupRows } from '@/tracker/db/progressionHistory';
-import { computeProgressionTarget, longRestNote, perSetGoals, type ProgSession, type ProgSet } from '@/tracker/engine/progression';
+import { computeProgressionTarget, longRestNote, type ProgSession, type ProgSet } from '@/tracker/engine/progression';
 import { isLongRest, overText, restsOfCard, workSecOf } from '@/tracker/engine/restTaken';
 import { draftToRichSets } from '@/tracker/services/draftSets';
 import type { DraftExercise, DraftSet } from '@/tracker/store/activeWorkoutStore';
@@ -93,27 +93,13 @@ const set = (weightKg: number, reps: number, longRest = false): ProgSet => ({ we
 const range = { targetSets: 3, repRangeMin: 8, repRangeMax: 12 };
 
 describe('the Target never grows from a long-rest set', () => {
-  it('per-set goals: a held set gets no extra rep; the extra rep goes to the next set below the top', () => {
-    const sets = [set(60, 10), set(60, 10, true), set(60, 9)];
-    // Set 1 is the fresh first set: it still gets the +1 (a long rest before it adds nothing).
-    expect(perSetGoals(sets, 3, 12, false, 8, { held: [false, true, false] })).toEqual([11, 10, 9]);
-    // Set 1 at the top: the +1 skips the held set 2 and goes to set 3.
-    const top = [set(60, 12), set(60, 11, true), set(60, 9)];
-    expect(perSetGoals(top, 3, 12, false, 8, { held: [false, true, false] })).toEqual([12, 11, 10]);
-  });
-
-  it('per-set goals: a held set is capped at its normal-rest number from an earlier workout', () => {
-    const sets = [set(60, 12), set(60, 12, true), set(60, 10)];
-    expect(perSetGoals(sets, 3, 12, false, 8, { held: [false, true, false], base: [null, 9, null] })).toEqual([12, 9, 11]);
-  });
-
   it('the owner case: 4:30 of rest on a 1:30 plan gave set 2 extra reps; next time aims for the normal-rest number', () => {
     const before: ProgSession = { dateISO: '2026-10-13', sets: [set(60, 10), set(60, 8), set(60, 7)] };
     const after: ProgSession = { dateISO: '2026-10-20', sets: [set(60, 10), set(60, 10, true), set(60, 8)] };
     const t = computeProgressionTarget({ exercise: bench, target: range, history: [after, before], todayISO: '2026-10-27' });
     expect(t.targetWeightKg).toBe(60);
-    // Set 2 aims for 8 (what it did at the normal rest), not 10 or 11.
-    expect(t.setGoals).toEqual([11, 8, 8]);
+    // Set 2 aims for 8 (what it did at the normal rest), not 10 or 11; sets 1 and 3 +1 (R-350).
+    expect(t.setGoals).toEqual([11, 8, 9]);
     expect(t.reason).toContain('Set 2 came after a long rest, so its goal is not raised.');
   });
 
@@ -130,7 +116,7 @@ describe('the Target never grows from a long-rest set', () => {
   it('no long rest: nothing changes (no note)', () => {
     const s: ProgSession = { dateISO: '2026-10-20', sets: [set(60, 10), set(60, 9), set(60, 8)] };
     const t = computeProgressionTarget({ exercise: bench, target: range, history: [s], todayISO: '2026-10-27' });
-    expect(t.setGoals).toEqual([11, 9, 8]);
+    expect(t.setGoals).toEqual([11, 10, 9]);
     expect(t.reason).not.toContain('long rest');
   });
 

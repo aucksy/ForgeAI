@@ -84,13 +84,12 @@ describe('R-143: a lighter set that reached the top of the range moves up', () =
     { weightKg: 45, reps: 11 },
   ];
 
-  it('his case: the plan puts set 1 at 45 kg (bottom of the range), sets 2-3 keep their goals (13, and 11 raised to the bottom 12)', () => {
+  it('his case: the plan puts set 1 at 45 kg (bottom of the range), sets 2-3 +1 rep each (R-350: 13 -> 14, 11 -> 12)', () => {
     expect(t.targetWeightKg).toBe(45);
     const plan = kgPlan(t, lastSets)!;
-    // R-307: 13 + 11 = 24 reps; raising 11 to 12 already gives Standard's +5% (25), so 13 stays.
     expect(plan.sets.map((s) => [s.weightKg, s.reps, s.asLast])).toEqual([
       [45, 12, false],
-      [45, 13, false],
+      [45, 14, false],
       [45, 12, false],
     ]);
   });
@@ -101,7 +100,7 @@ describe('R-143: a lighter set that reached the top of the range moves up', () =
     expect(fill?.liftUp).toEqual({ topReps: 20, weightKg: 45, reps: 12 });
     expect(['a', 'b', 'c3'].map((k) => wr(fillForSet(c, k, fill)))).toEqual([
       [45, 12],
-      [45, 13],
+      [45, 14],
       [45, 12],
     ]);
   });

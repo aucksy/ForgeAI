@@ -75,7 +75,7 @@ describe('C3-4: back-off rows hint last time\'s back-off, not the top weight', (
 });
 
 describe('C3-5: one top set plus back-offs', () => {
-  it('100 x 5 then 3 x 85 x 8: row 1 hints 100 x 5, rows 2-4 the back-off goals 9, 8, 8', () => {
+  it('100 x 5 then 3 x 85 x 8: row 1 hints 100 x 5, rows 2-4 the back-off goals 9, 9, 9 (R-350: +1 on each set)', () => {
     const last = sess('2026-10-03', [[100, 5], [85, 8], [85, 8], [85, 8]]);
     const t = computeProgressionTarget({ exercise: bench, target: { targetSets: 4, repRangeMin: 6, repRangeMax: 10 }, history: [last], todayISO: '2026-10-06' });
     const c = card([row('a'), row('b'), row('c3'), row('d')], [prev(100, 5), prev(85, 8), prev(85, 8), prev(85, 8)]);
@@ -83,8 +83,8 @@ describe('C3-5: one top set plus back-offs', () => {
     expect(['a', 'b', 'c3', 'd'].map((k) => wr(fillForSet(c, k, fill)))).toEqual([
       [100, 5],
       [85, 9],
-      [85, 8],
-      [85, 8],
+      [85, 9],
+      [85, 9],
     ]);
   });
 });

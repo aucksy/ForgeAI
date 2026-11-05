@@ -4,10 +4,10 @@
 #    machine; never after an exercise's LAST set; a dumbbell move off a bench (Lateral Raise) does not
 #    open it, and its rest clock says "Tap: In use" (R-299) and opens it by hand.
 #  - R-346: the In use screen shows the watch's rest lines, "Previous ..." and "Next ..." (its spoken label).
-#  - R-308: Stay keeps the Pec Deck at 40 kg (the card goes); Try takes the Leg Extension to 40 kg
-#    with the reason line "Stuck at 45 kg, so a small step back to 40 kg."
+#  - R-350 (owner, 5 Nov 2026): no step-back card any more (the stall rule is gone); Pec Deck stays
+#    at 40 kg and Leg Extension at 45 kg, +1 rep on each set.
 #  - R-310 (owner: "suggesting 38 kg ... this machine only has 5 kg increments"): Pec Deck set 1 at
-#    40 kg x 7, RPE 10 (goal 10): the next set says "Set 1 was very hard, so try 35 kg." Never 38.
+#    40 kg x 7, RPE 10 (goal 11): the next set says "Set 1 was very hard, so try 35 kg." Never 38.
 #  - R-298: a rest that runs out leaves no red "+0:30 over" row: the bar goes.
 #  - R-300: a short set gives no "add a set" line.
 appId: com.mettleup.app
@@ -23,6 +23,14 @@ appId: com.mettleup.app
 - assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-30-in-use-bench-set-1
 - runFlow: sub-uat-rest-clear.yaml
+# R-350/R-351 exact numbers: set 1 ticked at 60 kg x 10 = 600 kg of today's 1,560; set 2's goal is 9.
+# Negative: never "beaten" or "reached" with two sets to go.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next set: 60 kg × 9 · Done: 600 of today's 1,560 kg$"
+- assertNotVisible: ".*Today's 1,560 kg (beaten|reached).*"
+- takeScreenshot: rel-30b-bench-live-line-600-of-1560
 - runFlow:
     file: sub-uat-tick.yaml
     env:
@@ -44,21 +52,13 @@ appId: com.mettleup.app
 - assertNotVisible: 'In use\. .*Tap to close'
 - takeScreenshot: rel-31-bench-last-set-no-in-use
 - runFlow: sub-uat-rest-clear.yaml
-# ---------------------------------------------------------------- Pec Deck: Stay, then very hard
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^Stay at 40 kg$"
-- tapOn: "^Stay at 40 kg$"
-- extendedWaitUntil:
-    notVisible: 'Stuck at 40 kg for 4 workouts\..*'
-    timeout: 10000
-- assertNotVisible: "^Try 35 kg$"
+# ---------------------------------------------------------------- Pec Deck: no card, then very hard
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: '^Target 40 kg · .*'
-- takeScreenshot: rel-32-pec-deck-after-stay
+- assertNotVisible: "^Stay at 40 kg$"
+- takeScreenshot: rel-32-pec-deck-no-card
 - runFlow:
     file: sub-type.yaml
     env:
@@ -97,10 +97,10 @@ appId: com.mettleup.app
 - assertNotVisible: '.*\b38 kg.*'
 - assertNotVisible: '^38$'
 - assertNotVisible: '(?i).*add a set.*'
-# R-324 (4 Nov 2026): the live line asks for what the box shows after a very hard set (× 10), never × 12.
-# R-335 (98ff8e0e): the live line now reads "Next set: 35 kg × 10 · Done: ...".
-- assertVisible: '^Next set: 35 kg × 10 · .*'
-- assertNotVisible: '.*35 kg × 12.*'
+# R-324 (4 Nov 2026): the live line asks for what the box shows after a very hard set, never extra reps.
+# R-350: goals are now 11, 10, 9 (+1 a set), so the eased row asks 10 or 11 at 35 kg, never 12+.
+- assertVisible: '^Next set: 35 kg × 1[01] · .*'
+- assertNotVisible: '.*35 kg × 1[2-9].*'
 - takeScreenshot: rel-34-pec-deck-very-hard-35-not-38
 - runFlow:
     file: sub-uat-tick.yaml
@@ -122,20 +122,14 @@ appId: com.mettleup.app
 - assertNotVisible: 'In use\. .*Tap to close'
 - takeScreenshot: rel-35-pec-deck-last-set-no-in-use
 - runFlow: sub-uat-rest-clear.yaml
-# ---------------------------------------------------------------- Leg Extension: Try 40 kg
+# ---------------------------------------------------------------- Leg Extension: stays at 45 kg (R-350)
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Try 40 kg$"
-- tapOn: "^Try 40 kg$"
-- extendedWaitUntil:
-    notVisible: 'Stuck at 45 kg for 4 workouts\..*'
-    timeout: 10000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: '^Stuck at 45 kg, so a small step back to 40 kg\.$'
-- takeScreenshot: rel-36-leg-extension-after-try
+      FIND: '^Target 45 kg · .*'
+- assertNotVisible: "^Try 40 kg$"
+- assertNotVisible: '.*small step back.*'
+- takeScreenshot: rel-36-leg-extension-same-weight
 - runFlow:
     file: sub-uat-tick.yaml
     env:

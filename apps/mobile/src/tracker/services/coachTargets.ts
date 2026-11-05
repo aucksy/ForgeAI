@@ -274,7 +274,10 @@ async function targetsFor(
     // OWNER-INBOX #9: last time's working sets (warm-ups and drops out), so "kg to beat" can say
     // "+6% on last time" before the workout (tracker/lib/kgTarget.ts). Same counting as the Target.
     const lastSession = t.last ? history.find((h) => h.dateISO === t.last?.dateISO) : undefined;
-    if (lastSession) {
+    // R-358 (owner, 5 Nov 2026): last time logged in another Counting (one / both / side / both_side)
+    // was counted differently ("side" counts both sides), so this time there is no kg to beat.
+    if (lastSession && countingChanged(lastSession.sets, dbMode, mode)) t.countingChanged = true;
+    else if (lastSession) {
       (t as KgTarget).lastSets = lastSession.sets
         .filter((x) => (x.setType === 'normal' || x.setType === 'failure') && x.reps > 0)
         .map((x) => ({ weightKg: x.weightKg, reps: x.reps }));
@@ -322,6 +325,14 @@ async function historiesByScope(
 
 /** A Target with last time's working sets (OWNER-INBOX #9, "kg to beat"); the engine's type is unchanged. */
 export type KgTarget = ProgressionTarget & { lastSets?: KgSet[] };
+
+/**
+ * R-358: a working set of that workout was logged in another Counting than today's `mode` (a set
+ * with none of its own was logged under the exercise's saved one, `dbMode`). PURE.
+ */
+export function countingChanged(sets: readonly { loadMode?: LoadMode | null; setType: string }[], dbMode: LoadMode, mode: LoadMode): boolean {
+  return sets.some((x) => x.setType !== 'warmup' && (x.loadMode ?? dbMode) !== mode);
+}
 
 /** The last few Target computations (Workout tab, Home, the routine being started). */
 const TARGET_MEMO_SIZE = 8;

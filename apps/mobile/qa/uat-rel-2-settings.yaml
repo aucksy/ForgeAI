@@ -1,6 +1,6 @@
-# Part UAT, flow 2 of 5: the two Settings choices behind the new rep goals and the step back.
-#  - R-308: Settings -> More workout choices -> "When I'm stuck at a weight": a sheet with exactly
-#    three choices, Ask me (recommended, the one set), Step back by itself, Never suggest it.
+# Part UAT, flow 2 of 5: the Settings choice behind the suggested weights.
+#  - R-350 (owner, 5 Nov 2026): the stall rule is gone, so Settings -> More workout choices has no
+#    "When I'm stuck at a weight" row any more (R-308's sheet was removed with it).
 #  - R-303/R-307: Settings -> More workout choices -> How the app picks your next weight -> "Weight
 #    step" (was "Weight jumps"): Standard by default. Flow 3 reads the bench's goals under it, then
 #    under Large.
@@ -13,26 +13,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^How the app picks your next weight$"
     timeout: 15000
-- runFlow:
-    file: sub-find.yaml
-    env:
-      FIND: "^When I'm stuck at a weight$"
-- assertVisible: "^Ask me$"
+- assertNotVisible: "^When I'm stuck at a weight$"
+- assertNotVisible: "^Ask me$"
 - takeScreenshot: rel-10-more-workout-choices
-- tapOn: "^When I'm stuck at a weight$"
-- extendedWaitUntil:
-    visible: '^Ask me, recommended\. The exercise card offers a lighter weight\. You choose\.$'
-    timeout: 10000
-- assertVisible: '^Step back by itself\. The app picks a lighter weight for you\.$'
-- assertVisible: '^Never suggest it\. Keep the weight and keep adding reps\.$'
-- assertVisible: 'Stuck means 4 workouts at the same weight with no progress\..*'
-- takeScreenshot: rel-11-stuck-choices
-# Ask me stays chosen (the step-back card needs it); a tap on a choice closes the sheet.
-- tapOn: '^Ask me, recommended\..*'
-- extendedWaitUntil:
-    notVisible: '^Never suggest it\..*'
-    timeout: 10000
-- assertVisible: "^Ask me$"
 - tapOn: "^How the app picks your next weight$"
 - extendedWaitUntil:
     visible: '^Weight step, Standard\. Change$'

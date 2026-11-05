@@ -81,7 +81,7 @@ describe('R-60: reps to beat', () => {
 });
 
 describe('R-60 review: a bodyweight Target never asks for fewer reps in all than last time', () => {
-  it('push-ups 12, 10, 9 last time: 12, 10, 10 (32 to beat, +1)', async () => {
+  it('push-ups 12, 10, 9 last time: 13, 11, 10 (34 to beat, +3; R-350 +1 on each set)', async () => {
     const { computeProgressionTarget } = await import('@/tracker/engine/progression');
     const t = computeProgressionTarget({
       exercise: { id: 'pu', name: 'Push-up', aliases: [], muscleGroup: 'chest', secondaryMuscles: [], equipment: 'bodyweight', isCompound: true, incrementKg: 0 },
@@ -90,8 +90,8 @@ describe('R-60 review: a bodyweight Target never asks for fewer reps in all than
       todayISO: '2026-10-22',
       logType: 'reps',
     });
-    expect(t.setGoals).toEqual([12, 10, 10]);
+    expect(t.setGoals).toEqual([13, 11, 10]);
     const p = repPlan(t, [12, 10, 9].map((reps) => ({ weightKg: 0, reps })))!;
-    expect(repsToBeatLine(p)).toBe('32 reps to beat · +1 on last time');
+    expect(repsToBeatLine(p)).toBe('34 reps to beat · +3 on last time');
   });
 });

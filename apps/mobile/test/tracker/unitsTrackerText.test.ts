@@ -44,8 +44,8 @@ describe('Targets in pounds', () => {
     const t = target([sess('2026-10-03', lb(135), [12, 12, 12])]);
     expect(t.rule).toBe('R2');
     expect(wNum(t.targetWeightKg)).toBe('140');
-    expect(t.reason).toBe('You did 12, 12, 12 at 135 lb. Time for 140 lb.');
-    expect(targetLine(t)).toBe('140 lb · aim for 8');
+    expect(t.reason).toMatch(/^All sets reached 12. Move up to 140 lb: /);
+    expect(targetLine(t)).toBe('140 lb · aim for 11'); // R-350: about the same kg a set
   });
 
   it('weights logged in kg before the switch still land on a clean pound number', () => {
@@ -59,8 +59,8 @@ describe('Targets in pounds', () => {
     // 60 / 62.5 / 65 kg read as 130 / 140 / 145 lb; the learned 2.5 kg step is 5 lb.
     const t = target([sess('2026-10-03', 65, [12, 12, 12]), sess('2026-09-30', 62.5, [12, 12, 12]), sess('2026-09-27', 60, [12, 12, 12])]);
     expect(wNum(t.targetWeightKg)).toBe('150');
-    expect(t.reason).toContain('Time for 150 lb.');
-    expect(targetLine(t)).toBe('150 lb · aim for 8');
+    expect(t.reason).toContain('Move up to 150 lb:');
+    expect(targetLine(t)).toBe('150 lb · aim for 11'); // R-350: about the same kg a set
   });
 
   it('the Target line on its own', () => {

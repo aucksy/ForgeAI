@@ -5,14 +5,13 @@ date, so the history is never "weeks ago" and rule R1's 3-week break never fires
 feature waiting for release can be reached in ONE workout, from a fresh install:
 
   - Pec Deck Fly ("Chest Fly (Machine)", a 5 kg stack): 25, 30, 35, an odd 38 kg, 45, then FOUR
-    workouts at 40 kg x 10, 9, 8 with no progress -> the step-back card "Stuck at 40 kg for 4
-    workouts ... Try 35 kg today?" (R-306/R-308), and R-310: 38 is never a suggestion (the very-hard
+    workouts at 40 kg x 10, 9, 8 with no progress -> since R-350 (5 Nov 2026) no step-back card, just
+    +1 rep on each set: 40 kg x 11, 10, 9; and R-310: 38 is never a suggestion (the very-hard
     step from 40 is 35). Unique weights 25/30/35/38/40/45: 5 of 6 on the 5 kg grid (>= 80 %).
-  - Leg Extension (Machine): 40 x4, 50, then FOUR at 45 kg x 12, 10, 9 -> "Stuck at 45 kg for 4
-    workouts ... Try 40 kg today?"; the flow taps Try.
+  - Leg Extension (Machine): 40 x4, 50, then FOUR at 45 kg x 12, 10, 9 -> stays at 45 kg, +1 rep on
+    each set below the top (R-350).
   - Bench Press (Barbell): 50 .. 57.5, the last at 60 kg x 10, 8, 6 (range 6-10, just moved up, so
-    no stall and no short-day repeat): per-set goals grow by Settings "Weight step" (R-303/R-307):
-    Standard (5 %) 10, 9, 6; Large (10 %) 10, 9, 7.
+    no short-day repeat): +1 rep on each set below the top, 10, 9, 7, under any "Weight step" (R-350).
   - Lateral Raise (Dumbbell) 8 kg x 12, 12: a dumbbell move off a bench, so "In use" does NOT open
     by itself and the rest bar says "Tap: In use" (R-299/R-304).
 Times are 4:10 am (trap 17: never near a demo workout's start; there is no demo here anyway).

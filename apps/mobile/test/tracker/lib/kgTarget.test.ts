@@ -86,7 +86,8 @@ describe('#9 kg to beat: the plan', () => {
     // 20 Oct: 40 x 12, 11, 9 (3 sets); the plan 40 x 13, 10, 8, 8 (4 sets): the first 3 aim 31 reps vs 32.
     const t = { ...base, targetWeightKg: 40, targetSets: 4, setGoals: [13, 10, 8, 8], repGoal: 13 };
     const p = kgPlan(t, [{ weightKg: 40, reps: 12 }, { weightKg: 40, reps: 11 }, { weightKg: 40, reps: 9 }])!;
-    expect(kgToBeatLine(p, total)).toBe('1,560 kg to beat · +1 set · first 3 sets lighter than last time');
+    // R-351: never under last time's total: the first 3 sets must pass 1,280 (+40 kg), so 1,600 in all.
+    expect(kgToBeatLine(p, total)).toBe('1,600 kg to beat · +1 set · first 3 sets same as last time');
   });
   it('the % words', () => {
     expect(pctWords(0.002)).toBe('same as last time');

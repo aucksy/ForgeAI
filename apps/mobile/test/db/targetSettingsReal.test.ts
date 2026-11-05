@@ -130,7 +130,7 @@ describe('Rep range reaches the Target', () => {
 
     const t0 = await targetOf(byDefault, bench);
     expect([t0.targetRepsMin, t0.targetRepsMax]).toEqual([6, 10]);
-    expect(t0.setGoals).toEqual([10, 8, 8]);
+    expect(t0.setGoals).toEqual([10, 9, 9]); // R-350: +1 rep on each set
 
     useTrackerPrefs.getState().setRepRange('strength');
     const t1 = await targetOf(byDefault, bench);

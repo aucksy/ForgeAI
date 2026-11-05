@@ -22,7 +22,6 @@ import {
   computeProgressionTarget,
   DEFAULT_JUMP,
   isWeightJump,
-  perSetGoals,
   targetFill,
   targetLine,
   type ProgSession,
@@ -108,7 +107,7 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
     const large = run(ex(), h, { jump: 'large' });
     expect(large.rule).toBe('R2');
     expect(large.targetWeightKg).toBe(65);
-    expect(large.reason).toContain('Time for 65 kg.');
+    expect(large.reason).toContain('Move up to 65 kg:');
     // No setting = Standard.
     expect(DEFAULT_JUMP).toBe('standard');
     expect(run(ex(), h).targetWeightKg).toBe(62.5);
@@ -139,30 +138,25 @@ describe('Weight jumps: the heaviest rung within the chosen share, always at lea
     expect(t.targetWeightKg / KG_PER_LB).toBeCloseTo(140, 2);
   });
 
-  it('the big-jump guard is unchanged: a 20 → 25 kg machine still asks for reps first, even on Large', () => {
+  it('R-350: no big-jump guard: a 20 → 25 kg machine moves up, each set keeping about its kg', () => {
     const machine = ex({ name: 'Leg Extension', equipment: 'machine', incrementKg: 5, isCompound: false });
-    expect(run(machine, [three(20, 15)], { min: 10, max: 15, jump: 'large' }).rule).toBe('R2b');
+    const t = run(machine, [three(20, 15)], { min: 10, max: 15, jump: 'large' });
+    expect(t.rule).toBe('R2');
+    expect(t.targetWeightKg).toBe(25);
+    expect(t.setGoals).toEqual([12, 12, 12]);
   });
 
-  it('a beginner who found it easy may go one size further (R2c); on Large it is a plain R2', () => {
+  it('R-350: no beginner fast lane (R2c): a beginner gets his own Weight jumps step', () => {
     const easy = [three(60, 15)];
-    const std = run(ex(), easy, { experience: 'beginner', jump: 'standard' });
-    expect(std.rule).toBe('R2c');
-    expect(std.targetWeightKg).toBe(65);
-    // Review fix: on Small the fast lane stops at the Standard share (60 + 5% = 63 → 62.5), never 65.
-    const small = run(ex(), easy, { experience: 'beginner', jump: 'small' });
-    expect(small.targetWeightKg).toBe(62.5);
-    expect(small.targetWeightKg).toBeLessThanOrEqual(60 * 1.05);
-    const large = run(ex(), easy, { experience: 'beginner', jump: 'large' });
-    expect(large.rule).toBe('R2');
-    expect(large.targetWeightKg).toBe(65);
-    expect(run(ex(), easy, { experience: 'intermediate', jump: 'standard' }).targetWeightKg).toBe(62.5);
+    expect(run(ex(), easy, { experience: 'beginner', jump: 'standard' }).targetWeightKg).toBe(62.5);
+    expect(run(ex(), easy, { experience: 'beginner', jump: 'small' }).targetWeightKg).toBe(62.5);
+    expect(run(ex(), easy, { experience: 'beginner', jump: 'large' }).targetWeightKg).toBe(65);
   });
 
-  it('after a jump, every set aims for the bottom of the range', () => {
+  it('R-350: after a jump each set aims for the reps that lift about its kg (60 x 12 -> 65 kg x 11)', () => {
     const t = run(ex(), [three(60, 12)], { jump: 'large' });
-    expect(t.setGoals).toEqual([8, 8, 8]);
-    expect(targetLine(t)).toBe('65 kg · aim for 8');
+    expect(t.setGoals).toEqual([11, 11, 11]);
+    expect(targetLine(t)).toBe('65 kg · aim for 11');
   });
 });
 
@@ -252,25 +246,26 @@ describe("the gym's real plates", () => {
   });
 });
 
-describe('per-set goals at the same weight', () => {
-  it('10, 9, 8 last time → 11, 9, 8; the line prints them', () => {
+describe('per-set goals at the same weight (R-350: +1 rep on each set, never past the top)', () => {
+  it('10, 9, 8 last time → 11, 10, 9; the line prints them', () => {
     const t = run(ex(), [sess('2026-10-03', [[40, 10], [40, 9], [40, 8]])]);
     expect(t.rule).toBe('R5');
-    expect(t.setGoals).toEqual([11, 9, 8]);
-    expect(targetLine(t)).toBe('40 kg · 11, 9, 8');
+    expect(t.setGoals).toEqual([11, 10, 9]);
+    expect(targetLine(t)).toBe('40 kg · 11, 10, 9');
   });
 
-  it('set 1 already at the top: the extra rep goes to the first set still below it', () => {
-    expect(run(ex(), [sess('2026-10-03', [[40, 12], [40, 9], [40, 8]])]).setGoals).toEqual([12, 10, 8]);
+  it('a set already at the top stays there', () => {
+    expect(run(ex(), [sess('2026-10-03', [[40, 12], [40, 9], [40, 8]])]).setGoals).toEqual([12, 10, 9]);
     expect(run(ex(), [sess('2026-10-03', [[40, 12], [40, 12], [40, 8]])]).setGoals).toEqual([12, 12, 9]);
   });
 
-  it('+2 when that set was logged at RPE 7 or easier, never past the top', () => {
-    // R-307: +2 only when the workout's share needs it (Standard 26 -> 27 reps; Large 26 -> 29).
-    expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])]).setGoals).toEqual([10, 9, 8]);
-    expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])], { jump: 'large' }).setGoals).toEqual([11, 10, 8]);
-    expect(run(ex(), [sess('2026-10-03', [[40, 9, 8], [40, 9], [40, 8]])]).setGoals).toEqual([10, 9, 8]);
-    expect(run(ex(), [sess('2026-10-03', [[40, 11, 6], [40, 9], [40, 8]])]).setGoals).toEqual([12, 9, 8]);
+  it('logged RPE and the Weight jumps choice never change the same-weight goals', () => {
+    for (const jump of ['small', 'standard', 'large'] as const) {
+      expect(run(ex(), [sess('2026-10-03', [[40, 9, 7], [40, 9], [40, 8]])], { jump }).setGoals).toEqual([10, 10, 9]);
+    }
+    expect(run(ex(), [sess('2026-10-03', [[40, 11, 6], [40, 9], [40, 8]])]).setGoals).toEqual([12, 10, 9]);
+    expect(run(ex(), [sess('2026-10-03', [[40, 7, 10], [40, 7, 10], [40, 7, 10]])]).setGoals).toEqual([8, 8, 8]);
+    expect(run(ex(), [sess('2026-10-03', [[40, 7, 8], [40, 7, 8], [40, 7, 8]])]).setGoals).toEqual([8, 8, 8]);
   });
 
   it('a failure set is a working set and can take the +1', () => {
@@ -278,7 +273,7 @@ describe('per-set goals at the same weight', () => {
   });
 
   it('more planned sets than last time: the extra ones aim for last time’s last set', () => {
-    expect(run(ex(), [sess('2026-10-03', [[40, 10], [40, 9], [40, 8]])], { sets: 4 }).setGoals).toEqual([11, 9, 8, 8]);
+    expect(run(ex(), [sess('2026-10-03', [[40, 10], [40, 9], [40, 8]])], { sets: 4 }).setGoals).toEqual([11, 10, 9, 8]);
   });
 
   it('a goal is never below last time’s same set', () => {
@@ -290,41 +285,23 @@ describe('per-set goals at the same weight', () => {
     }
   });
 
-  it('one miss (every set under the range): last time’s numbers again', () => {
+  it('under the range once: +1 rep on each set, same weight (6, 5, 5 → 7, 6, 6)', () => {
     const t = run(ex(), [sess('2026-10-03', [[40, 6], [40, 5], [40, 5]])]);
     expect(t.rule).toBe('R5');
-    expect(t.setGoals).toEqual([6, 5, 5]);
-    expect(t.reason).toContain('match it');
+    expect(t.setGoals).toEqual([7, 6, 6]);
+    expect(t.reason).toBe('Add 1 rep to each set: 40 kg × 7, 6, 6.');
   });
 
-  it('RPE 10 under the range is a miss; RPE 8 under it has reps to spare and is not', () => {
-    expect(run(ex(), [sess('2026-10-03', [[40, 7, 10], [40, 7, 10], [40, 7, 10]])]).setGoals).toEqual([7, 7, 7]);
-    // Not a miss: no set aims under the bottom of the range (review fix), so 8, 8, 8.
-    expect(run(ex(), [sess('2026-10-03', [[40, 7, 8], [40, 7, 8], [40, 7, 8]])]).setGoals).toEqual([8, 8, 8]);
-  });
-
-  it('review fix: a later set never aims under the bottom of the range (10, 7, 6 in 8–12 → 10, 8, 8)', () => {
-    // R-307: raising 7 and 6 to 8 is already +3 reps, more than Standard's 5% of 23, so no extra.
+  it('a set under the bottom also just takes +1 (10, 7, 6 in 8–12 → 11, 8, 7)', () => {
     const t = run(ex(), [sess('2026-10-03', [[60, 10], [60, 7], [60, 6]])]);
-    expect(t.setGoals).toEqual([10, 8, 8]);
-    expect(targetLine(t)).toBe('60 kg · 10, 8, 8');
-    // The first set under the range takes the +1 and is floored too: 7, 9, 10 → 8, 9, 10.
-    expect(run(ex(), [sess('2026-10-03', [[60, 7], [60, 9], [60, 10]])]).setGoals).toEqual([8, 9, 10]);
-    for (const reps of [[12, 7, 5], [9, 6, 6], [10, 8, 3]]) {
-      const g = run(ex(), [sess('2026-10-03', reps.map((r) => [60, r] as S))]).setGoals;
-      g.forEach((x) => expect(x).toBeGreaterThanOrEqual(8));
-    }
-    expect(perSetGoals([{ weightKg: 60, reps: 10, rpe: null, setType: 'normal' }, { weightKg: 60, reps: 6, rpe: null, setType: 'normal' }], 2, 12, false, 8)).toEqual([11, 8]);
+    expect(t.setGoals).toEqual([11, 8, 7]);
+    expect(targetLine(t)).toBe('60 kg · 11, 8, 7');
   });
 
-  it('perSetGoals is PURE and empty with no sets', () => {
-    expect(perSetGoals([], 3, 12, false)).toEqual([]);
-  });
-
-  it("bodyweight sets never aim under last time's same set (review v0.52.0); pyramids keep one goal", () => {
+  it("bodyweight sets +1 each (6, 5, 4 → 7, 6, 5); pyramids keep one goal", () => {
     const pull = ex({ name: 'Pull Up', equipment: 'bodyweight' });
     const b = run(pull, [sess('2026-10-03', [[0, 6], [0, 5], [0, 4]])]);
-    expect(b.setGoals).toEqual([6, 5, 5]);
+    expect(b.setGoals).toEqual([7, 6, 5]);
     const ramp = run(ex(), [sess('2026-10-03', [[60, 10], [70, 8], [80, 5]])], { min: 5, max: 8 });
     expect(ramp.topSetOnly).toBe(true);
     expect(new Set(ramp.setGoals).size).toBe(1);
@@ -332,7 +309,8 @@ describe('per-set goals at the same weight', () => {
 });
 
 describe('ONE source: targetFill → fillForSet', () => {
-  const t = run(ex(), [sess('2026-10-03', [[50, 10], [50, 9], [50, 8]])]);
+  // R-350: 10, 8, 7 last time -> 11, 9, 8 (+1 on each set).
+  const t = run(ex(), [sess('2026-10-03', [[50, 10], [50, 8], [50, 7]])]);
   const fill = targetFill(t)!;
 
   let n = 0;
@@ -347,7 +325,7 @@ describe('ONE source: targetFill → fillForSet', () => {
       name: 'Bench Press',
       muscleGroup: 'chest',
       equipment: 'barbell',
-      previousSets: [{ weightKg: 50, reps: 10 }, { weightKg: 50, reps: 9 }, { weightKg: 50, reps: 8 }],
+      previousSets: [{ weightKg: 50, reps: 10 }, { weightKg: 50, reps: 8 }, { weightKg: 50, reps: 7 }],
       sets,
     }) as DraftExercise;
 
@@ -396,7 +374,7 @@ describe('ONE source: targetFill → fillForSet', () => {
     const c = { ...card([w, s1]), previousSets: [{ weightKg: 60, reps: 12 }], previousWarmups: [{ weightKg: 40, reps: 8 }] } as DraftExercise;
     // Owner, 22 Oct 2026: "we're not changing the weight for the warm-up sets people do".
     expect(fillForSet(c, w.key, upFill)).toEqual({ weightKg: 40, reps: 8 });
-    expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 8 });
+    expect(fillForSet(c, s1.key, upFill)).toEqual({ weightKg: 65, reps: 11 }); // R-350: 60 x 12 = 720 kg -> 11 at 65
     // No change of working weight: last time's warm-up as it was.
     const same = run(ex(), [sess('2026-10-03', [[40, 8, null, 'warmup'], [60, 10], [60, 9], [60, 8]])]);
     expect(same.change).toBeNull();
@@ -449,7 +427,7 @@ describe('Rep range', () => {
     const t = computeProgressionTarget({ exercise: curl, target: { targetSets: 3, ...r }, history: [three(10, 15)], todayISO: TODAY });
     expect(t.rule).toBe('R5');
     expect(t.targetRepsMin).toBe(12);
-    expect(t.setGoals).toEqual([16, 16, 15]); // R-307: Standard, 45 -> 47 reps
+    expect(t.setGoals).toEqual([16, 16, 16]); // R-350: +1 rep on each set
   });
 });
 

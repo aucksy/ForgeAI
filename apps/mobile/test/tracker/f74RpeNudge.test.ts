@@ -145,10 +145,9 @@ describe('the live set rows (fillForSet / nudgeForSet)', () => {
   const t = computeProgressionTarget({
     exercise: bench,
     target: { targetSets: 3, repRangeMin: 8, repRangeMax: 12 },
-    history: [sess('2026-10-20', [10, 10, 10])],
+    // R-350: +1 rep on each set (10, 9, 9 -> 11, 10, 10), so sets 2-3 hint 10 as these checks were written.
+    history: [sess('2026-10-20', [10, 9, 9])],
     todayISO: '2026-10-27',
-    // R-307: Small (+1 rep on set 1: 11, 10, 10), so sets 2-3 hint 10 as these checks were written.
-    jump: 'small',
   });
   const fill = rowTargetFill(t);
 

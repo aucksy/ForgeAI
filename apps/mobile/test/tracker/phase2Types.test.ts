@@ -294,7 +294,7 @@ describe('assisted: the help goes DOWN (§4.4, Phase 2)', () => {
     expect(t.change).toBe('up');
     expect(targetLine(t)).toBe('Assist 15 kg · aim for 8');
     expect(targetFill(t)).toEqual({ weightKg: 15, reps: 8 }); // typed form: positive help
-    expect(t.reason).toContain('20 kg of help');
+    expect(t.reason).toBe('All sets reached 12. Move to 15 kg of help: 8 on every set.');
   });
   it('under the range twice → a little more help ("Lighter")', () => {
     const t = run([reps('2026-10-03', [[-20, 5], [-20, 5], [-20, 4]]), reps('2026-09-30', [[-20, 6], [-20, 5], [-20, 5]])]);
@@ -345,9 +345,9 @@ describe('a weighted bodyweight move shows "+kg"', () => {
       history: [reps('2026-10-03', [[25, 10], [25, 9], [25, 9]])],
       todayISO: TODAY,
     });
-    // Oct 2026 per-set goals (10, 9, 9 → 11, 9, 9).
-    expect(targetLine({ ...t, each: true })).toBe('25 kg each · 11, 9, 9');
-    expect(targetLine({ ...t, perSide: true })).toBe('25 kg · 11, 9, 9 per side');
+    // R-350: +1 rep on each set (10, 9, 9 → 11, 10, 10).
+    expect(targetLine({ ...t, each: true })).toBe('25 kg each · 11, 10, 10');
+    expect(targetLine({ ...t, perSide: true })).toBe('25 kg · 11, 10, 10 per side');
   });
 });
 

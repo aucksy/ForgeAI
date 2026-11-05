@@ -5,16 +5,17 @@
  * file stays as-is: the demo-history seed and its tests still use it). Spec and evidence:
  * `Resources/Progressive-Overload-Research-v3.docx` §4 (outside the repo).
  *
- * Core: double progression — same weight, add reps until every main set reaches the top
- * of the range, then add weight and start from the bottom again. Oct 2026 (owner): the jump is
- * the member's "Weight jumps" setting (about 2.5 / 5 / 10%, always at least the gym's smallest
- * step — `jumpRungKg`), and each set gets its own rep goal (`perSetGoals`, `setGoals`). Around it:
+ * Core (R-350, owner, 5 Nov 2026, option A): only the rep range and the member's "Weight jumps"
+ * choice decide. Each working set vs the same set last time: under the top of the range -> same
+ * weight, one rep more; every set at the top -> the next weight by his jump % (about 2.5 / 5 / 10%,
+ * always at least the gym's smallest step — `jumpRungKg`), each set aiming for the reps that lift
+ * about the kg it lifted, inside the range. Around it:
  *  - drop sets and lighter back-off sets never block progress (main-weight rule);
  *  - the weight step is LEARNED from the weights the member actually logs;
- *  - a step bigger than 20% of the weight asks for more reps first (big-jump guard);
- *  - logged RPE adds up to 2 "reps in the tank" to a set's score; no RPE = reps only;
+ *  - logged RPE is the member's own record: it never changes a Target's numbers;
  *  - bodyweight moves progress by reps, never by kilos the member has never added;
- *  - a long break holds or lightens the weight; a stall waits 4 workouts before a cut.
+ *  - a long break holds or lightens the weight; under the range twice running = one step lighter;
+ *  - R-300: after a short day each set aims again for the goal it missed.
  *
  * First time on an exercise (rule R0): no kilos at all — "find a weight for 8–12, stop
  * with about 2 left" (owner decision, 6 Oct 2026: a start weight by equipment was a guess
@@ -54,17 +55,6 @@ export const DEFAULT_JUMP: WeightJump = 'standard';
 export function isWeightJump(v: unknown): v is WeightJump {
   return v === 'small' || v === 'standard' || v === 'large';
 }
-
-/**
- * Review fix (Oct 2026): how far the beginner fast lane (R2c, "that looked easy") may go - at most
- * ONE size above the member's own choice: Small -> the Standard share, Standard -> the Large share,
- * Large -> no fast lane (it is already the largest).
- */
-const FAST_LANE_SHARE: Readonly<Record<WeightJump, number | null>> = {
-  small: JUMP_SHARE.standard,
-  standard: JUMP_SHARE.large,
-  large: null,
-};
 
 export type ProgSetType = 'normal' | 'warmup' | 'drop' | 'failure';
 
@@ -140,6 +130,11 @@ export interface ProgressionTarget extends OverloadTarget {
   free?: boolean;
   /** Phase 4: an easy week of the followed plan (`toEasyTarget`). */
   easy?: boolean;
+  /**
+   * R-358 (owner, 5 Nov 2026): last time was logged in another Counting (set by the caller,
+   * coachTargets): no kg or reps to beat this time (kgTarget `beatPlan`).
+   */
+  countingChanged?: boolean;
   /** Phase 4: this plan week's effort for members who log RPE (`withEffort`): the RPE to stop at. */
   effortRpe?: number;
   /**
@@ -159,6 +154,7 @@ export interface ProgressionTarget extends OverloadTarget {
    */
   dropNote?: string;
   /**
+   * R-350 (5 Nov 2026): never set any more (the stall rule R4 is gone); kept so saved choices still load.
    * R-308 (owner, 3 Nov 2026): a stall (rule R4) never drops the weight by itself under "Ask me": the
    * Target keeps the weight and carries this offer; the card asks "Try 40 kg today?" (`applyStepBack`).
    */
@@ -257,21 +253,10 @@ export function withEffort(t: ProgressionTarget, rir: number | null, reason: str
 
 /** Rules look at this many recent workouts; the step is learned from the whole input. */
 export const RULE_WINDOW = 4;
-/**
- * A step larger than this share of the weight is a "big jump": add reps first. ACSM's
- * 2–10% would make the empty 20 kg bar's first step (+2.5 kg = 12.5%) "big", so the line
- * is drawn at 20%: 5 → 7.5 kg dumbbells (+50%) and a 20 → 25 kg machine (+25%) are big;
- * 20 → 22.5 kg on the bar and 12.5 → 15 kg dumbbells are not.
- */
-const BIG_STEP_SHARE = 0.2;
 /** Wave-2 review: a workout of only sets this short (after one that reached the range) is a 1-rep-max test day. */
 const TEST_DAY_REPS = 2;
-/** C3-9: last time this many reps (or more) outside the range = the range moved, not a miss. */
+/** R-143: a lighter set this many reps (or more) past the top is a planned high-rep back-off. */
 const RANGE_MOVED_REPS = 2;
-/** Logged RPE at or under this on the set that gets the extra rep: aim 2 more instead of 1. */
-const EASY_SET_RPE = 7;
-/** At most this many reps-in-reserve count toward a set's score. */
-const MAX_EFFORT_CREDIT = 2;
 /** Timed holds: seconds added when every set reached its target (research §4.5). */
 export const HOLD_STEP_SEC = 5;
 
@@ -331,7 +316,7 @@ export interface ProgressionInput {
    * weights still come from `history`, so the Target, PREVIOUS and the grey hints agree.
    */
   breakFromISO?: string | null;
-  /** R-308: "When I'm stuck at a weight" (absent = ask). */
+  /** R-308: "When I'm stuck at a weight". R-350 (5 Nov 2026): no longer read (the stall rule is gone). */
   stuck?: StuckChoice;
   /**
    * R-308: the day the member tapped "Stay" on a step-back offer for this exercise. No new offer
@@ -532,34 +517,64 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
   const withDrop = (note: string, t: ProgressionTarget): ProgressionTarget =>
     t.change === 'down' && !assisted ? { ...t, dropNote: note } : t;
 
-  // Oct 2026 (owner, "Weight jumps"). R-303 / R-307 (owner, 3 Nov 2026): rep goals at the same
-  // weight follow the same choice (`growGoals`).
+  // R-350 (owner, 5 Nov 2026, option A): the simple rule. Only two things decide a Target: the
+  // member's rep range and his "Weight jumps" choice. Each working set is compared with the same set
+  // last time (warm-ups never count):
+  //  1. under the top of the range -> same weight, that set aims one rep more (never past the top);
+  //  2. every working set at the top -> the next weight by his jump %, every set at that one weight,
+  //     each set's goal the reps that lift about the kg it lifted last time, inside the range;
+  //  3. safety: under the bottom of the range two workouts running at this weight -> one step lighter;
+  //  4. R-300: after a short day each set aims again for the goal it missed.
+  // Logged RPE no longer changes the numbers (no effort credit, no big-jump, fast-lane, stall or
+  // range-moved rules).
   const jumpKey: WeightJump = isWeightJump(input.jump) ? input.jump : DEFAULT_JUMP;
   const jumpShare = JUMP_SHARE[jumpKey];
+  const nSets = Math.max(1, target.targetSets);
   /** F73 (R-140): S's sets done after a long rest, held at the same set's reps after a normal rest. */
   const heldRest = (S: Summary): { held: boolean[]; base: (number | null)[] } => {
     const held = S.mainSets.map((_, i) => heldAt(S.mainSets, i));
     return { held, base: held.map((h, i) => (h ? normalRestReps(sessions, S, w, i) : null)) };
   };
   /**
-   * R-300 (owner, 3 Nov 2026): the newest workout at this weight fell short of its own goals (the
-   * Target it had, worked out again from the workouts before it; goals are not saved) → each set
-   * aims again for the better of what it did and its goal, with nothing on top (never two hard asks
-   * after a bad day). Short twice running gives that same goal again. null = not short, or nothing
-   * to compare.
+   * Rule 1: each set one rep more than the same set did in S, never past `top`. A set planned past
+   * S's sets aims for S's last set as it was; a set after a long rest (F73) gets no extra rep.
    */
-  const missedGoals = (): number[] | null => {
-    if (depth >= RULE_WINDOW - 1 || logType !== 'weight_reps' || assisted || bodyweightOnly || L.ramp) return null;
+  const plusOne = (S: Summary, top: number): number[] => {
+    const sets = S.mainSets;
+    const rest = heldRest(S);
+    return Array.from({ length: nSets }, (_, i) => {
+      const k = Math.min(i, sets.length - 1);
+      const did = sets[k].reps;
+      if (rest.held[k]) {
+        const b = rest.base[k];
+        return Math.max(1, Math.min(top, b != null && b > 0 ? Math.min(did, b) : did));
+      }
+      return Math.max(1, Math.min(top, i < sets.length ? did + 1 : did));
+    });
+  };
+  /**
+   * R-300 (owner, 3 Nov 2026): the newest workout at this weight fell short of its own goals (the
+   * Target it had, worked out again from the workouts before it; goals are not saved) -> each set
+   * aims for the better of its usual +1 and the goal it missed, never past `top`. null = not short,
+   * or nothing to compare.
+   */
+  const missedGoals = (goals: readonly number[], top: number): number[] | null => {
+    if (depth >= RULE_WINDOW - 1 || L.ramp || w <= 0) return null;
     const before = input.history.filter((h) => h.dateISO < L.dateISO);
     if (before.length === 0) return null;
     const prev = computeAt({ ...input, history: before, todayISO: L.dateISO, breakFromISO: null }, depth + 1);
-    if (prev.rule !== 'R5' && prev.rule !== 'R2b' && prev.rule !== 'R4') return null;
-    if (prev.change !== null || !prev.last || !sameWeight(prev.last.weightKg, w) || prev.setGoals.length === 0) return null;
+    if (prev.action === 'start' || prev.version || prev.setGoals.length === 0 || !sameWeight(prev.targetWeightKg, w)) return null;
     const did = L.mainSets.map((s) => s.reps);
-    const sum = (xs: readonly number[]) => xs.reduce((a, b) => a + b, 0);
-    if (sum(did.slice(0, prev.setGoals.length)) >= sum(prev.setGoals)) return null;
-    const goalAt = (i: number) => prev.setGoals[Math.min(i, prev.setGoals.length - 1)];
-    return Array.from({ length: Math.max(1, target.targetSets) }, (_, i) => Math.max(did[i] ?? 0, goalAt(i)));
+    // Only a set that missed its goal takes it again; one rep short already aims for it (+1), so the
+    // note shows only when a goal really changes.
+    const again = goals.map((g, i) => (i < did.length && i < prev.setGoals.length && did[i] < prev.setGoals[i] ? Math.min(top, Math.max(g, prev.setGoals[i])) : g));
+    return again.some((g, i) => g !== goals[i]) ? again : null;
+  };
+  /** "Add 1 rep to each set: 30 kg × 9, 9, 8." (or "... under 10: ..." when a set is held at the top). */
+  const plusOneWords = (S: Summary, goals: readonly number[], top: number, loadText: string | null): string => {
+    const all = goals.every((g, i) => i >= S.mainSets.length || g > S.mainSets[i].reps);
+    const head = all ? 'Add 1 rep to each set' : `Add 1 rep to each set under ${top}`;
+    return `${head}: ${loadText ? `${loadText} × ` : ''}${goals.join(', ')}.`;
   };
 
   // R1 / R1b — coming back after a break. Review (R-61): from the newest day anywhere, when known.
@@ -594,30 +609,27 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
 
   // C3-4: a top set or back-offs are part of the routine's sets, not of the main sets needed.
   const needOf = (s: Summary) => Math.max(1, target.targetSets - s.offMain - 1);
-  const need = needOf(L);
-  // C3-13: only the routine's own number of sets is judged (an extra set at the end never blocks).
-  // F73 (R-140): a set after a long rest never counts as reaching the top (no weight move from it).
-  const scores = L.mainSets
-    .map((s, i) => (heldAt(L.mainSets, i) ? Math.min(score(s), max - 1) : score(s)))
-    .sort((a, b) => b - a)
-    .slice(0, Math.max(1, target.targetSets));
-  const minScore = Math.min(...scores);
-  const enoughSets = L.ramp || L.mainSets.length >= need;
-  const best = (s: Summary) => Math.max(...s.mainSets.map(score));
+  const enoughSets = L.ramp || L.mainSets.length >= needOf(L);
+  /**
+   * Every working set of the newest workout reached `top`. C3-13: only the routine's own number of
+   * sets is judged (an extra set at the end never blocks). F73: a set after a long rest never counts
+   * as reaching it.
+   */
+  const allAt = (top: number): boolean =>
+    enoughSets &&
+    Math.min(
+      ...L.mainSets
+        .map((s, i) => (heldAt(L.mainSets, i) ? Math.min(s.reps, top - 1) : s.reps))
+        .sort((a, b) => b - a)
+        .slice(0, nSets),
+    ) >= top;
+  const best = (s: Summary) => Math.max(...s.mainSets.map((x) => x.reps));
 
-  // B1 / B2 / B2cap — bodyweight the member has never loaded: reps only, never kilos.
+  // B1 / B2cap — bodyweight the member has never loaded: reps only, never kilos. The same +1 rep a
+  // set, up to the move's rep cap; then a harder version (its "one step").
   if (bodyweightOnly) {
     const cap = Math.max(input.repCap && input.repCap > 0 ? input.repCap : bodyweightCap(name), max + 2);
-    // Review (v0.52.0, reps to beat): with the same number of sets as last time, a set never aims for
-    // fewer reps than it did then (12, 10, 9 aims 12, 10, 10 — never 10, 10, 10 = fewer in all).
-    const sameCount = L.mainSets.length === target.targetSets;
-    const floorAt = (goal: number): number[] | undefined =>
-      sameCount ? L.mainSets.map((s) => Math.max(goal, s.reps)) : undefined;
-    const aimWords = (goal: number): string => {
-      const per = floorAt(goal);
-      return per && per.some((g) => g !== per[0]) ? `aim for ${per.join(', ')}` : `aim for ${goal} on every set`;
-    };
-    if (enoughSets && minScore >= cap) {
+    if (allAt(cap)) {
       // Never fill fewer reps than were just done (20, 20, 20 against a cap of 15 keeps 20).
       const keep = Math.max(cap, lowestReps);
       if (input.harder) {
@@ -629,52 +641,27 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
           { kind: 'harder', ...input.harder },
         );
       }
-      return out('B2cap', 0, keep, `You did ${repsList}. That's plenty — ready for a harder version, or a little added weight.`, null, floorAt(keep));
+      const floor = L.mainSets.length === nSets ? L.mainSets.map((s) => Math.max(keep, s.reps)) : undefined;
+      return out('B2cap', 0, keep, `You did ${repsList}. That's plenty — ready for a harder version, or a little added weight.`, null, floor);
     }
-    const goal = Math.min(cap, Math.max(1, lowestReps + 1));
-    if (enoughSets && minScore >= max) {
-      return out('B2', 0, goal, `You did ${repsList}. Keep adding reps: ${aimWords(goal)}.`, null, floorAt(goal));
-    }
+    const goals = plusOne(L, cap);
     // Four workouts running under the range at body weight → an easier version builds up to it.
     if (input.easier && sessions.length >= RULE_WINDOW && sessions.every((s) => s.mainWeight <= 0 && best(s) < min)) {
       return out(
         'B1easy',
         0,
-        goal,
+        Math.max(...goals),
         `Under ${min} reps for ${RULE_WINDOW} workouts. ${input.easier.name} builds you up to it — then come back.`,
         { kind: 'easier', ...input.easier },
+        goals,
       );
     }
-    const aim = aimWords(goal);
-    return out('B1', 0, goal, `Last time ${repsList}. ${aim.charAt(0).toUpperCase()}${aim.slice(1)}.`, null, floorAt(goal));
+    return out('B1', 0, Math.max(...goals), plusOneWords(L, goals, cap, null) + longRestNote(heldRest(L).held), null, goals);
   }
 
-  // R6 — 16 Oct 2026 audit (C3-9): last time was far UNDER this rep range (the member changed
-  // "Rep range", or the routine's): never "Reps fell", never 90% of a 5-rep weight for 12 reps.
-  // The weight he can lift for the bottom of the range, from last time's best set (Epley), on
-  // his ladder — never heavier than last time.
-  // Wave-2 review: never after a recent workout at this weight that reached the range (one bad day
-  // — 9, 8, 8 then 5, 5, 4 — is the usual rules' business, not a new range).
-  const reachedHere = sessions.some((x) => sameWeight(x.mainWeight, w) && Math.max(...x.mainSets.map((y) => y.reps)) >= min);
-  if (logType === 'weight_reps' && !L.ramp && w > 0 && topReps < min - RANGE_MOVED_REPS && enoughSets && !reachedHere) {
-    const e1 = w * (1 + topReps / 30);
-    const want = e1 / (1 + min / 30);
-    const down = want < w - 1e-6 ? both(downRungKg(w / per, ladder, 1 - want / w)) : null;
-    if (down != null) {
-      return withDrop(
-        `Well under ${min}–${max} reps at ${targetKgText(same)}, so ${targetKgText(down)} fits the range.`,
-        out('R6', down, min, `Last time ${repsList}${atLast}, well under ${min}–${max} reps. Start at ${targetKgText(down)} and aim for ${min}.`),
-      );
-    }
-    // Review (v0.52.0): nothing lighter on his rack or stack (a 7.5 kg dumbbell's next is half): keep
-    // the weight and aim for the bottom of the new range — never "Reps fell" or "match 5".
-    return out('R6', same, min, `Last time ${repsList}${atLast}, well under ${min}–${max} reps. Same weight: aim for ${min}.`);
-  }
-
-  // R2 / R2b / R2c — ready to add weight (or, assisted, to take help away).
-  if (enoughSets && minScore >= max) {
-    const usedCredit = L.mainSets.some((s) => s.reps < max);
-    const did = `You did ${repsList}${atLast}${usedCredit ? ' with reps to spare' : ''}.`;
+  // Rule 2 — every working set reached the top: the next weight (assisted: one step less help).
+  if (allAt(max)) {
+    const did = `All sets reached ${max}.`;
     if (assisted) {
       const next = clean(round3(w + step));
       if (next >= -1e-6) {
@@ -688,265 +675,82 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
           harder,
         );
       }
-      return out('R2', next, min, `${did} Time for ${load(next)}.`);
-    }
-    // The next rung of the member's own ladder (TG-01) — the single smallest step up.
-    const up = upTo(1);
-    // Added weight on a bodyweight move is small next to the body itself: never "big".
-    const big = !isBodyweight && w > 0 && (up - w) / w > BIG_STEP_SHARE + 1e-9;
-    if (big) {
-      const expandCap = max + 4;
-      if (minScore >= expandCap) {
-        const goal = Math.max(1, min - 2);
-        return out('R2', up, goal, `${did} Time for ${targetKgText(up)} — a big jump, so ${goal} reps is a win.`);
-      }
-      // R-301 / R-307 (owner, 3 Nov 2026): a goal per set, not one flat number (20 kg x 17 on every
-      // set asked set 1 for 2 FEWER reps than it did): each set starts from what it did, the workout
-      // grows by the "Weight jumps" share, never past max + 4. R-300: after a short day, the missed
-      // goals again.
-      const again = missedGoals();
-      const goals = again ?? growGoals(L.mainSets, target.targetSets, expandCap, min, jumpShare, heldRest(L));
-      const pct = Math.round(((up - w) / w) * 100);
-      const uniform = goals.every((g) => g === goals[0]);
-      return out(
-        'R2b',
-        same,
-        Math.max(...goals),
-        `The next step is ${targetKgText(up)}, a ${pct}% jump. Add reps first: aim for ${uniform ? `${goals[0]} on every set` : goals.join(', ')}.` +
-          (again ? SHORT_NOTE : ''),
-        null,
-        goals,
-      );
+      // Less help is a harder set: every set starts again from the bottom of the range.
+      return out('R2', next, min, `${did} Move to ${load(next)}: ${min} on every set.`);
     }
     // Oct 2026 (owner, "Weight jumps"): the heaviest rung within the chosen 2.5 / 5 / 10% —
-    // never less than one step (overrules TG-01's "never more than one rung").
-    const share = jumpShare;
-    const next = w > 0 ? jumpRungKg(w / per, share, ladder) * per : up;
-    // R2c - a beginner who found it easy may go ONE size further than his choice (review fix:
-    // Small never jumps past the Standard share; Large has no fast lane).
-    const fast = FAST_LANE_SHARE[jumpKey];
-    if (input.experience === 'beginner' && minScore >= max + 3 && w > 0 && fast != null) {
-      const jump = jumpRungKg(w / per, fast, ladder) * per;
-      if (jump > next + 1e-6) {
-        return out('R2c', jump, min, `That looked easy: ${repsList}${atLast}. Jumping to ${targetKgText(jump)}.`);
-      }
-    }
-    // C3-9: far ABOVE the range (a lower "Rep range" now) — still one size step, but aim for the
-    // top of the new range, not its bottom.
-    const after = lowestReps > max + RANGE_MOVED_REPS ? max : min;
-    return out('R2', next, after, `${did} Time for ${targetKgText(next)}.`);
+    // never less than one step of his own ladder (pairs of dumbbells, the gym's plates).
+    const next = w > 0 ? jumpRungKg(w / per, jumpShare, ladder) * per : upTo(1);
+    // Each set aims for the reps that lift about the kg it lifted last time, inside the range
+    // (30 x 13, 12, 10 -> 32.5 kg: 12, 11, 9 -> 10, 10, 9 in 6-10). Added weight on a bodyweight
+    // move is small next to the body itself, so there every set starts from the bottom.
+    const goals =
+      isBodyweight || !(next > 0)
+        ? Array.from({ length: nSets }, () => min)
+        : Array.from({ length: nSets }, (_, i) => {
+            const s = L.mainSets[Math.min(i, L.mainSets.length - 1)];
+            return Math.min(max, Math.max(min, Math.floor((w * s.reps) / next + 1e-9)));
+          });
+    return out('R2', next, Math.max(...goals), `${did} Move up to ${targetKgText(next)}: ${goals.join(', ')}.`, null, goals);
   }
 
-  // Sessions at today's main weight, newest first (the "run").
-  let runLen = 0;
-  while (runLen < sessions.length && sameWeight(sessions[runLen].mainWeight, w)) runLen++;
-  const run = sessions.slice(0, runLen);
-  // The first workout after a weight increase doesn't count toward a cut.
-  const afterIncrease = runLen < sessions.length && sessions[runLen].mainWeight < w - 1e-6;
-  const judged = afterIncrease ? run.slice(0, -1) : run;
-
-  // R3 — under the range two workouts running at this weight, and not climbing.
-  const sum = (s: Summary) => s.mainSets.map(score).reduce((a, b) => a + b, 0);
-  if (judged.length >= 2 && best(judged[0]) < min && best(judged[1]) < min && sum(judged[0]) <= sum(judged[1])) {
+  // Rule 3 — the one safety rule: under the bottom of the range (every set) two workouts running at
+  // this weight -> one step lighter (assisted: one step more help), every set at the bottom.
+  const run: Summary[] = [];
+  for (const s of sessions) {
+    if (!sameWeight(s.mainWeight, w)) break;
+    run.push(s);
+  }
+  if (!L.ramp && run.length >= 2 && best(run[0]) < min && best(run[1]) < min) {
     if (assisted) {
       const more = clean(round3(w - step));
-      return out('R3', more, min, `Reps fell under ${min} twice${atLast}. Use ${load(more)} and build back up.`);
+      return out('R3', more, min, `You did under ${min} reps twice${atLast}. Use ${load(more)}: ${min} on every set.`);
     }
     const down = lighter();
     if (down !== null) {
       return withDrop(
         `Reps fell under ${min} twice, so a step back to ${targetKgText(down)}.`,
-        out('R3', down, min, `Reps fell under ${min} twice at ${targetKgText(same)}. Drop to ${targetKgText(down)} and build back up.`),
+        out('R3', down, min, `You did under ${min} reps twice at ${targetKgText(same)}. Go one step lighter: ${targetKgText(down)} × ${min}.`),
       );
     }
-    return out('R3', same, min, `Reps fell under ${min} twice at ${targetKgText(same)}. Stay here and build back to ${min}.`);
+    // Nothing lighter on his rack: keep the weight, rule 1 below.
   }
 
-  // R4 — stalled: 4 workouts at this weight and no better than the oldest of them.
-  // Never when the newest workout was within one rep of moving up.
-  // R-308 (owner, 3 Nov 2026): under "Ask me" (the default) the weight never drops by itself: the
-  // Target stays at this weight (the R5 goals below) and carries the step back as an offer.
-  let offer: StepBackOffer | null = null;
-  let stalled = false;
-  if (judged.length >= 4 && minScore < max - 1) {
-    const n = Math.min(...judged.slice(0, 4).map((s) => s.mainSets.length));
-    const total = (s: Summary) =>
-      s.mainSets.map(score).sort((a, b) => b - a).slice(0, n).reduce((a, b) => a + b, 0);
-    const oldest = total(judged[3]);
-    if (judged.slice(0, 3).every((s) => total(s) <= oldest)) {
-      const mid = Math.round((min + max) / 2);
-      if (assisted) {
-        const more = clean(round3(w - step));
-        return out('R4', more, mid, `Stuck${atLast} for ${judged.length} workouts. A little more help, ${load(more)}, usually breaks it.`);
-      }
-      const down = lighter();
-      const choice: StuckChoice = isStuckChoice(input.stuck) ? input.stuck : DEFAULT_STUCK;
-      stalled = down !== null;
-      if (down !== null && choice !== 'never') {
-        // R-306 (owner, 3 Nov 2026): each set's goal at the lighter weight from its own reps and RPE
-        // (45x12 @9, 45x9 @9.5, 45x7 @9.5 -> 40 kg: 15, 13, 11), never one flat 13 on every set.
-        const goals = stepBackGoals(L.mainSets, target.targetSets, w, down, min, max);
-        const backed = withDrop(
-          `Stuck at ${targetKgText(same)}, so a small step back to ${targetKgText(down)}.`,
-          out(
-            'R4',
-            down,
-            Math.max(...goals),
-            `Stuck at ${targetKgText(same)} for ${judged.length} workouts. A small step back to ${targetKgText(down)} usually breaks it: aim for ${goals.every((g) => g === goals[0]) ? `${goals[0]} on every set` : goals.join(', ')}.`,
-            null,
-            goals,
-          ),
-        );
-        if (choice === 'auto') return backed;
-        // R-308: "Stay" waits for 4 MORE stuck workouts, counted from the day he said it.
-        const declined = input.stepBackDeclinedISO;
-        if (!declined || judged.slice(0, 4).every((s) => s.dateISO >= declined)) {
-          offer = {
-            weightKg: backed.targetWeightKg,
-            setGoals: backed.setGoals,
-            fromKg: round3(same),
-            workouts: judged.length,
-            reason: backed.reason,
-            dropNote: backed.dropNote ?? '',
-            ...(backed.stepUpKg != null ? { stepUpKg: backed.stepUpKg } : {}),
-            ...(backed.stepDownKg !== undefined ? { stepDownKg: backed.stepDownKg } : {}),
-          };
-        }
-      } else if (down === null) {
-        return out('R4', same, mid, `Stuck at ${targetKgText(same)} for ${judged.length} workouts. Keep the weight and aim for ${mid} clean reps.`);
-      }
-    }
-  }
-  /**
-   * R-308: the same-weight Target below, with the step-back offer when R4 made one. A stall kept at
-   * this weight still reads as rule R4 (the plan's stalled-lifts count, phase 4).
-   */
-  const offered = (t: ProgressionTarget): ProgressionTarget => ({ ...t, ...(stalled ? { rule: 'R4' as const } : {}), ...(offer ? { stepBack: offer } : {}) });
-
-  // R5 — same weight, one more rep.
-  // Assisted moves and pyramids keep one goal for every set (their own rules).
-  if (assisted || L.ramp) {
+  // Rule 1 — same weight, one more rep on each set below the top.
+  // Pyramids keep one goal at their heaviest weight (their own rule).
+  if (L.ramp) {
     const goal = Math.min(max, Math.max(min, lowestReps + 1));
-    return offered(
-      out(
-        'R5',
-        same,
-        goal,
-        `Last time ${repsList}${atLast}. ${assisted ? 'Same help' : 'Same weight'}, aim for ${goal} ${L.ramp ? 'at your heaviest weight' : 'on every set'}.`,
-      ),
-    );
+    return out('R5', same, goal, `Last time ${repsList}${atLast}. Same weight, aim for ${goal} at your heaviest weight.`);
   }
-  // Oct 2026 (owner): a goal per set. Last time under the range on every set (RPE 10 gives no
-  // credit, so a hard set under the range is a miss) → the same numbers again; else one more
-  // rep on the first set still below the top, every other set last time's own number.
-  // C3-12: the goals come from the newest FULL workout at this weight (a single cut-short set of
-  // 4 set every goal to 4).
+  // C3-12: the goals come from the newest FULL workout at this weight (a single cut-short set of 4
+  // set every goal to 4).
   const G = sessions.find((s) => sameWeight(s.mainWeight, w) && s.mainSets.length >= needOf(s)) ?? L;
-  const miss = best(G) < min;
-  // F73 (R-140): sets of G done after a long rest are held — no extra rep — and capped at the
-  // same set's reps in an earlier workout at this weight with a normal rest, when there is one.
-  const rest = heldRest(G);
-  // R-300: after a short day, each set aims again for its missed goal (nothing on top).
-  // R-303 / R-307: else the workout grows by the "Weight jumps" share, a rep or two a set.
-  const again = missedGoals();
-  const goals = again ?? (miss ? perSetGoals(G.mainSets, target.targetSets, max, true, min, rest) : growGoals(G.mainSets, target.targetSets, max, min, jumpShare, rest));
-  const top = Math.max(...goals);
-  const uniform = goals.every((g) => g === goals[0]);
-  const aim = uniform ? `aim for ${goals[0]} on every set` : `aim for ${goals.join(', ')}`;
-  const restNote = again ? '' : longRestNote(rest.held);
-  return offered(
-    out(
-      'R5',
-      same,
-      top,
-      (miss && !again
-        ? `Last time ${repsList}${atLast}. Same weight: match it, ${uniform ? `${goals[0]} on every set` : goals.join(', ')}, then build from there.`
-        : `Last time ${repsList}${atLast}. Same weight, ${aim}.`) +
-        restNote +
-        (again ? SHORT_NOTE : ''),
-      null,
-      goals,
-    ),
+  const plus = plusOne(G, max);
+  // R-300: after a short day, each set aims again for its missed goal (nothing piled on top).
+  const again = missedGoals(plus, max);
+  const goals = again ?? plus;
+  const loadText = assisted ? load(same) : targetKgText(same);
+  // Phase 4 (plan easy week): 4 workouts at this weight, none better than the oldest, and not one rep
+  // from the top, still read as rule R4, so a plan can offer its easy week early (`stalledLiftsInPlan`).
+  // R-350: it changes nothing the member sees here (no step back, no offer).
+  const top4 = (S: Summary, n: number) => S.mainSets.map((x) => x.reps).sort((a, b) => b - a).slice(0, n).reduce((a, b) => a + b, 0);
+  const n4 = run.length >= RULE_WINDOW ? Math.min(...run.slice(0, RULE_WINDOW).map((S) => S.mainSets.length)) : 0;
+  const stalled =
+    n4 > 0 &&
+    Math.min(...L.mainSets.map((x) => x.reps)) < max - 1 &&
+    run.slice(0, RULE_WINDOW - 1).every((S) => top4(S, n4) <= top4(run[RULE_WINDOW - 1], n4));
+  return out(
+    stalled ? 'R4' : 'R5',
+    same,
+    Math.max(...goals),
+    (again ? `${SHORT_NOTE} ${loadText} × ${goals.join(', ')}.` : plusOneWords(G, goals, max, loadText)) + longRestNote(heldRest(G).held),
+    null,
+    goals,
   );
 }
 
 /** R-300 (owner, 3 Nov 2026): the one line after a short day. Member words: never "last time" in new words. */
-const SHORT_NOTE = ' The previous workout fell a little short, so the same goals again.';
-
-/**
- * R-301 / R-303 / R-307 (owner, 3 Nov 2026): each working set's rep goal at the same weight, grown
- * by the member's "Weight jumps" share (Small 2.5%, Standard 5%, Large 10%). PURE.
- *  - Each set starts from what it did (`perSetGoals` floors: F73 held sets capped at `base`), lifted
- *    to the bottom of the range `min`. Never fewer reps than a set did.
- *  - The workout's reps aim for about `share` more than before (same weight, so the same % in kg),
- *    rounded to whole reps, at least +1; over the sets the previous workout had (a set planned past
- *    them aims for its last set as it is).
- *  - +1 rep a set (+2 when that set was RPE 7 or easier), never past `cap` (the range top for R5,
- *    top + 4 for R2b); held sets get none. Order: sets at RPE 7 or easier, then the rest, sets at
- *    RPE 10 last; earlier sets first within each. Caps can stop it short: fine.
- * Lateral raise 19, 16, 15, 14 (RPE 9, 9, 9.5, 9), cap 19: Small 19, 17, 16, 14; Standard and Large
- * 19, 17, 16, 15.
- */
-export function growGoals(
-  sets: readonly ProgSet[],
-  targetSets: number,
-  cap: number,
-  min: number,
-  share: number,
-  rest: { held?: readonly boolean[]; base?: readonly (number | null)[] } = {},
-): number[] {
-  const last = perSetGoals(sets, targetSets, cap, true, min, rest);
-  if (last.length === 0) return [];
-  const floor = Math.min(Math.max(1, min), cap);
-  const goals = last.map((g) => Math.max(g, floor));
-  // Only the places the previous workout had are compared and grown (an extra planned set, or a
-  // top set's place, aims for the previous last set as it is).
-  const k = Math.min(goals.length, sets.length);
-  const sum = (xs: readonly number[]) => xs.slice(0, k).reduce((a, b) => a + b, 0);
-  const before = sum(last);
-  const want = Math.max(before + 1, Math.round(before * (1 + Math.max(0, share))));
-  let need = want - sum(goals);
-  const src = (i: number) => Math.min(i, sets.length - 1);
-  const rpeOf = (i: number): number | null => {
-    const r = sets[src(i)].rpe;
-    return r != null && Number.isFinite(r) && r >= 6 && r <= 10 ? r : null;
-  };
-  const band = (i: number): number => {
-    const r = rpeOf(i);
-    return r == null ? 1 : r <= EASY_SET_RPE ? 0 : r >= 10 ? 2 : 1;
-  };
-  const order = goals.slice(0, k).map((_, i) => i).sort((a, b) => band(a) - band(b) || a - b);
-  for (const i of order) {
-    if (need <= 0) break;
-    if (rest.held?.[src(i)] === true) continue;
-    const reach = Math.min(cap, last[i] + (band(i) === 0 ? 2 : 1));
-    const gain = Math.min(need, Math.max(0, reach - goals[i]));
-    goals[i] += gain;
-    need -= gain;
-  }
-  return goals;
-}
-
-/**
- * R-306 (owner, 3 Nov 2026): each working set's rep goal after a step back from `fromKg` to `toKg`,
- * from that set's own reps and RPE. PURE.
- *  - Reps in the tank = 10 - RPE, at most 2 (as `score`); no RPE = none (the reps as they are).
- *  - Epley: the set's one-rep max = from x (1 + (reps + in the tank) / 30); the reps at the new
- *    weight at the same effort = 30 x (max / to - 1) - in the tank, rounded down (a bit under).
- *  - Kept inside the rep range [min, max].
- * Pec deck 45x12 @9, 45x9 @9.5, 45x7 @9.5 -> 40 kg in 10-15: 15, 13, 11.
- */
-export function stepBackGoals(sets: readonly ProgSet[], targetSets: number, fromKg: number, toKg: number, min: number, max: number): number[] {
-  if (sets.length === 0 || !(fromKg > 0) || !(toKg > 0)) return [];
-  const lo = Math.max(1, Math.min(min, max));
-  return Array.from({ length: Math.max(1, targetSets) }, (_, i) => {
-    const s = sets[Math.min(i, sets.length - 1)];
-    const rir = s.rpe != null && Number.isFinite(s.rpe) && s.rpe >= 6 && s.rpe <= 10 ? Math.min(MAX_EFFORT_CREDIT, 10 - s.rpe) : 0;
-    const oneRm = fromKg * (1 + (s.reps + rir) / 30);
-    const reps = Math.floor(30 * (oneRm / toKg - 1) - rir + 1e-9);
-    return Math.min(max, Math.max(lo, reps));
-  });
-}
+const SHORT_NOTE = 'The previous workout fell a little short, so aim for the same goals again:';
 
 /** F73: main set `i` was done after a long rest (never the first main set: fresh anyway). PURE. */
 export function heldAt(sets: readonly ProgSet[], i: number): boolean {
@@ -973,46 +777,6 @@ export function longRestNote(held: readonly boolean[]): string {
   if (nums.length === 1) return ` Set ${nums[0]} came after a long rest, so its goal is not raised.`;
   const list = `${nums.slice(0, -1).join(', ')} and ${nums[nums.length - 1]}`;
   return ` Sets ${list} came after a long rest, so their goals are not raised.`;
-}
-
-/**
- * Each working set's rep goal at the same weight (Oct 2026, owner). PURE.
- *  - Last time's set i is set i's floor (sets beyond last time's count take its last set).
- *  - Not a miss: the first set still below the top of the range aims one more (two when that
- *    set was logged at RPE 7 or easier), never past the top. So 10, 9, 8 → 11, 9, 8 and
- *    12, 9, 8 (range 8–12) → 12, 10, 8.
- *  - Not a miss: no set aims under the bottom of the range `min` (review fix: 10, 7, 6 in 8-12
- *    -> 11, 8, 8, never "11, 7, 6").
- *  - A miss: last time's numbers again.
- *  - F73 (R-140): a `held` set (done after a long rest) never gets the extra rep, and its number
- *    is capped at its `base` (the same set after a normal rest in an earlier workout), if any.
- */
-export function perSetGoals(
-  sets: readonly ProgSet[],
-  targetSets: number,
-  max: number,
-  miss: boolean,
-  min = 1,
-  rest: { held?: readonly boolean[]; base?: readonly (number | null)[] } = {},
-): number[] {
-  if (sets.length === 0) return [];
-  const n = Math.max(1, targetSets);
-  const src = (i: number) => Math.min(i, sets.length - 1);
-  const isHeld = (i: number) => rest.held?.[src(i)] === true;
-  const last = Array.from({ length: n }, (_, i) => {
-    const reps = sets[src(i)].reps;
-    const base = isHeld(i) ? rest.base?.[src(i)] ?? null : null;
-    return base != null && base > 0 ? Math.min(reps, base) : reps;
-  });
-  if (miss) return last;
-  const floor = Math.min(Math.max(1, min), max);
-  const goals = last.map((g) => Math.max(g, floor));
-  const i = last.findIndex((g, k) => g < max && !isHeld(k));
-  if (i < 0) return goals;
-  const rpe = i < sets.length ? sets[i].rpe : null;
-  const easy = rpe != null && Number.isFinite(rpe) && rpe >= 6 && rpe <= EASY_SET_RPE;
-  goals[i] = Math.min(max, Math.max(goals[i], last[i] + (easy ? 2 : 1)));
-  return goals;
 }
 
 /** The entry for an exercise with no Target rule (distance work, timed cardio). */
@@ -1402,12 +1166,6 @@ export function liftsUp(set: { weightKg: number; reps: number }, mainKg: number,
   // Far ABOVE the range (C3-9's "range moved" spread: 80 x 10 after 100 x 5 in 4-6) is a planned
   // high-rep back-off with its own aim: it stays as last time (16 Oct audit C3-4).
   return lighter && set.weightKg < up.weightKg - 1e-9 && set.reps >= up.topReps && set.reps <= up.topReps + RANGE_MOVED_REPS;
-}
-
-/** Reps plus logged reps-in-reserve (10 − RPE), capped at 2. RPE outside the app's 6–10 scale is ignored. */
-export function score(s: ProgSet): number {
-  if (s.rpe == null || !Number.isFinite(s.rpe) || s.rpe < 6 || s.rpe > 10) return s.reps;
-  return s.reps + Math.max(0, Math.min(MAX_EFFORT_CREDIT, 10 - s.rpe));
 }
 
 /**

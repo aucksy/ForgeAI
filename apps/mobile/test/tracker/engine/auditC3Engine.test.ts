@@ -119,7 +119,7 @@ describe('C3-6: after a unit switch the Up weight is one the plates can load', (
     const lb135 = 135 * KG_PER_LB;
     const t = run(ex(), [three(lb135, 12, '2026-10-03')], { jump: 'large' });
     expect([62.5, 65]).toContain(t.targetWeightKg);
-    expect(t.reason).toMatch(/Time for (62\.5|65) kg\./);
+    expect(t.reason).toMatch(/Move up to (62\.5|65) kg:/);
   });
 
   it('60 kg shown in lb → a multiple of 5 lb, never 137.3', () => {
@@ -146,7 +146,7 @@ describe('C3-7: "Weight jumps" works past the top of his ladder — with a custo
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }).targetWeightKg).toBe(62.5);
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'standard', gym }).targetWeightKg).toBe(62.5);
     expect(run(ex({ name: 'Bench Press' }), h, { jump: 'large', gym }).targetWeightKg).toBe(65);
-    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }))).toBe('62.5 kg · aim for 8');
+    expect(targetLine(run(ex({ name: 'Bench Press' }), h, { jump: 'small', gym }))).toBe('62.5 kg · aim for 11'); // R-350: 60 x 12 = 720 kg a set -> 11 at 62.5
   });
   it('no setup (owner decision, review of 8b7c0c9): his own learned 5 kg step — 65 on every setting', () => {
     for (const jump of ['small', 'standard', 'large'] as const) expect(run(ex({ name: 'Bench Press' }), h, { jump }).targetWeightKg).toBe(65);
@@ -189,13 +189,12 @@ describe('C3-8: the longer the break, the lighter the start', () => {
 });
 
 describe('C3-9: a changed rep range is never read as a failure', () => {
-  it('4 x 100 x 5 then Higher reps (12–20): no "Reps fell", a weight for about 12 reps', () => {
+  it('4 x 100 x 5 then Higher reps (12–20): R-350 (range-moved rule removed) = under the bottom twice, one step lighter at 12', () => {
     const h = dates(4).map((x) => three(100, 5, x));
     const t = run(ex(), h, { min: 12, max: 20 });
-    expect(t.reason).not.toContain('fell');
-    expect(t.targetWeightKg).toBeLessThanOrEqual(85);
-    expect(t.targetWeightKg).toBeGreaterThanOrEqual(75);
-    expect(t.reason).toContain('well under 12–20');
+    expect(t.rule).toBe('R3');
+    expect(t.change).toBe('down');
+    expect(t.repGoal).toBe(12);
   });
 
   it('60 x 10 then Strength (3–6): never more than one size step, aim for the top of the new range', () => {
@@ -207,9 +206,9 @@ describe('C3-9: a changed rep range is never read as a failure', () => {
 });
 
 describe('C3-12: one cut-short workout does not set every goal', () => {
-  it('8, 8, 8 then a single 4: the goals come from the last full workout (9, 8, 8)', () => {
+  it('8, 8, 8 then a single 4: the goals come from the last full workout (9, 9, 9)', () => {
     const t = run(ex(), [sess('2026-10-03', [[100, 4]]), three(100, 8, '2026-10-01')]);
-    expect(t.setGoals).toEqual([9, 8, 8]);
+    expect(t.setGoals).toEqual([9, 9, 9]);
   });
 });
 

@@ -82,8 +82,8 @@ describe('TG-02 pounds and kilos never mix', () => {
     const t = run(ex(), [sess('2026-10-03', lb165, [10, 9, 9])], [lb165]);
     expect(t.rule).toBe('R5');
     expect(t.change).toBeNull(); // the same weight, read cleanly — not an "Up"
-    // Oct 2026 per-set goals: set 1 one more than last time (10 → 11), the others last time's own.
-    expect(targetLine(t)).toBe('75 kg · 11, 9, 9');
+    // R-350: +1 rep on each set (10, 9, 9 -> 11, 10, 10).
+    expect(targetLine(t)).toBe('75 kg · 11, 10, 10');
     expect(kgToTyped(targetFill(t)!.weightKg)).toBe('75');
   });
 

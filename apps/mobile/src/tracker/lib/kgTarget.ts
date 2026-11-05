@@ -32,8 +32,19 @@ export interface KgPlan {
   /** R-60: counted in reps (a move with no kilos; every set's weightKg is 1). Absent = kilos. */
   reps?: true;
   sets: KgPlanSet[];
-  /** The kg to beat (weight × reps over the planned working sets). */
+  /**
+   * The kg to beat: weight × reps over the planned working sets, and R-351 (owner, 5 Nov 2026) never
+   * under last time's total over the same sets (what the member must pass).
+   */
   total: number;
+  /**
+   * R-351: the planned sets added up, only when that is under last time's total (after a weight step,
+   * 32.5 kg x 10, 10, 9 = 942.5 against 1,050). The open sets aim for this, so the live line never
+   * asks more reps than the set rows show; `total` stays the number to pass.
+   */
+  planned?: number;
+  /** R-351: `total` is last time's total (the plan alone is under it). */
+  atLast?: true;
   /**
    * Last time's sets that this plan is compared with, added up, or null with nothing to compare.
    * R-138 (28 Oct 2026): with a different number of sets than last time, the first sets both have
@@ -67,7 +78,7 @@ function compare(planned: readonly number[], lastEach: readonly number[], total:
 }
 
 type TargetIn = Pick<ProgressionTarget, 'action' | 'targetWeightKg' | 'targetSets' | 'repGoal' | 'setGoals' | 'topSetOnly' | 'logType' | 'bodyweightOnly'> &
-  Partial<Pick<ProgressionTarget, 'easy' | 'free' | 'version' | 'last' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg'>>;
+  Partial<Pick<ProgressionTarget, 'easy' | 'free' | 'version' | 'last' | 'targetRepsMin' | 'targetRepsMax' | 'sameWeightKg' | 'countingChanged'>>;
 
 /** At most this many reps above a set's plan when catching up (decision 2 A). */
 export const MAX_EXTRA_REPS = 2;
@@ -126,7 +137,24 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   const total = sets.reduce((a, s) => a + s.weightKg * s.reps, 0);
   // Review fix: a % never against a different number of sets (2 of 3 done last time is not "+60%");
   // R-138: set for set over the sets both have, the extra sets named apart.
-  return { sets, total, ...compare(sets.map((s) => s.weightKg * s.reps), last.map((s) => s.weightKg * s.reps), total) };
+  const cmp = compare(sets.map((s) => s.weightKg * s.reps), last.map((s) => s.weightKg * s.reps), total);
+  // R-351 (owner, 5 Nov 2026): the kg to beat is never under last time's total. After a weight step
+  // the plan (32.5 kg x 10, 10, 9 = 942.5) can be under it (30 x 13, 12, 10 = 1,050): the number to
+  // pass is then last time's, and "beaten" means more than that.
+  const short = cmp.last != null ? cmp.last - (cmp.comparedTotal ?? total) : 0;
+  if (short > 1e-9 && cmp.last != null) {
+    const beat = total + short;
+    return {
+      sets,
+      total: beat,
+      planned: total,
+      atLast: true,
+      ...cmp,
+      pct: 0,
+      ...(cmp.comparedTotal != null ? { comparedTotal: cmp.last } : {}),
+    };
+  }
+  return { sets, total, ...cmp };
 }
 
 /**
@@ -149,6 +177,8 @@ export function repPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null 
 
 /** The kilos to beat, else (R-60) the reps to beat; null when the exercise gets neither. PURE. */
 export function beatPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
+  // R-358 (owner, 5 Nov 2026): last time used another Counting, so its total meant something else.
+  if (t.countingChanged) return null;
   return kgPlan(t, lastSets) ?? repPlan(t, lastSets);
 }
 
@@ -215,12 +245,15 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   }
   const left = Math.max(0, plan.total - done);
   if (left <= 1e-9 || open.length === 0) return { done, left, next: [], short: left > 1e-9 };
+  // R-351: the open sets aim for the planned sets (`planned`, when last time's total is the number
+  // to pass), so the line never asks more than the rows show; `left` stays the kg still to pass.
+  const aim = Math.max(0, (plan.planned ?? plan.total) - done);
   const next = open.map((s) => ({ ...s }));
   const sum = () => next.reduce((a, s) => a + s.weightKg * s.reps, 0);
-  for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < left - 1e-9; extra++) {
-    for (let i = 0; i < next.length && sum() < left - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
+  for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < aim - 1e-9; extra++) {
+    for (let i = 0; i < next.length && sum() < aim - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
   }
-  return { done, left, next, short: sum() < left - 1e-9 };
+  return { done, left, next, short: sum() < aim - 1e-9 };
 }
 
 /**
@@ -298,9 +331,12 @@ export function pctWords(pct: number | null): string | null {
   return `+${Math.max(1, Math.round(pct * 100))}% on last time`;
 }
 
-/** Before the workout: "765 kg to beat · +6% on last time". PURE. */
+/**
+ * Before the workout: "765 kg to beat · +6% on last time"; R-351, when the plan alone is under last
+ * time's total: "1,050 kg to beat · your previous total". PURE.
+ */
 export function kgToBeatLine(p: KgPlan, total: TotalFmt): string {
-  const raw = pctWords(p.pct);
+  const raw = p.atLast && !p.setDiff ? 'your previous total' : pctWords(p.pct);
   const pct = setCountWords(p, raw) ?? raw;
   return `${total(p.total)} to beat${pct ? ` · ${pct}` : ''}`;
 }

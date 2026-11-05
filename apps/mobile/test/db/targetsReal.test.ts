@@ -171,7 +171,7 @@ describe('TG-11 Targets arrive with the cards', () => {
 });
 
 describe('SH-09 experience from Profile reaches the Targets', () => {
-  it('switching to "New to lifting" lets an easy set jump two steps', async () => {
+  it('R-350: switching to "New to lifting" no longer changes the step (the fast lane is gone)', async () => {
     const bench = idOf("name = 'Barbell Bench Press'");
     await logged(bench, 3, [[60, 15], [60, 15], [60, 15]]);
     const routine = await routineOf([bench]);
@@ -181,7 +181,7 @@ describe('SH-09 experience from Profile reaches the Targets', () => {
     expect(before.targetWeightKg).toBe(62.5);
     await updateProfile({ experience: 'beginner' });
     const after = (await getTargetsForCards(routine, [{ key: 'c', exerciseId: bench }])).get('c')!;
-    expect(after.rule).toBe('R2c');
-    expect(after.targetWeightKg).toBe(65);
+    expect(after.rule).toBe('R2');
+    expect(after.targetWeightKg).toBe(62.5);
   });
 });
