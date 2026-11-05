@@ -6,6 +6,8 @@ bucket under <ticket>/logo-<hex>.png, then owner_set_brand with that link (no co
 keeps MettleUp's own, only the logo is new).
 
   logo <slot>      upload a sample 2:1 logo (a gold ring and a white bar on see-through) and set it
+  square <slot>    T74 (R-356): the owner's reported case instead, a round black badge (a white ring
+                   and a white square inside) on a WHITE square, 512 x 512 with no see-through
 
 The logo is drawn here (no image library): 512 x 256, PNG with transparency, like the admin app's
 shrunk logos (at most 512 px). Prints LOGO=<public link>. The owner session key stays in the
@@ -49,6 +51,27 @@ def sample_logo_png(w=512, h=256):
     return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b"")
 
 
+def square_badge_png(n=512):
+    """T74: a round black badge on a white square (the logo that showed white corners on a round icon)."""
+    rows = []
+    c = n / 2
+    for y in range(n):
+        row = bytearray([0])
+        for x in range(n):
+            d2 = (x + 0.5 - c) ** 2 + (y + 0.5 - c) ** 2
+            black = d2 <= 230 ** 2 and not (173 ** 2 <= d2 <= 187 ** 2) and not (196 <= x < 316 and 196 <= y < 316)
+            row += bytes([0, 0, 0, 255]) if black else bytes([255, 255, 255, 255])
+        rows.append(bytes(row))
+    raw = b"".join(rows)
+
+    def chunk(kind, data):
+        body = kind + data
+        return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body) & 0xFFFFFFFF)
+
+    ihdr = struct.pack(">IIBBBBB", n, n, 8, 6, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b"")
+
+
 def upload(url, key, path, png):
     """POST the file into the bucket (anon may insert only into a live ticket folder)."""
     last = None
@@ -67,12 +90,12 @@ def upload(url, key, path, png):
     raise RuntimeError(f"logo upload answered {last}")
 
 
-def set_logo(slot):
+def set_logo(slot, png=None):
     st = xj.load(slot)
     url, key = xj.config()
     ticket = str(xj.rpc("owner_photo_ticket", {"p_key": st["key"]}))
     path = f"{ticket}/logo-{uuid.uuid4().hex}.png"
-    upload(url, key, path, sample_logo_png())
+    upload(url, key, path, png or sample_logo_png())
     link = f"{url}/storage/v1/object/public/gym-logos/{path}"
     g = xj.rpc("owner_set_brand", {"p_key": st["key"], "p_accent": None, "p_bg": None, "p_logo_url": link, "p_heading": "normal"}) or {}
     got = ((g.get("brand") or {}).get("logoUrl")) if isinstance(g, dict) else None
@@ -84,9 +107,9 @@ def set_logo(slot):
 
 
 def main(argv):
-    if len(argv) == 2 and argv[0] == "logo":
+    if len(argv) == 2 and argv[0] in ("logo", "square"):
         try:
-            return set_logo(argv[1])
+            return set_logo(argv[1], square_badge_png() if argv[0] == "square" else None)
         except Exception as e:  # noqa: BLE001 - one line for the run's timeline
             print(f"LOGO FAILED: {e}")
             return 1

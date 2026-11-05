@@ -1,0 +1,36 @@
+# Part UAT, T74 flow b (R-356 + R-364 "state change"): the gym changes its logo AFTER the member put it
+# on the home screen. Before this flow run-device-qa.sh swapped the test gym's logo for the owner's
+# reported case (qa/uat_logo.py square: a round black badge on a WHITE square). The app picks the new
+# logo up on a launch and redraws the icon already on the home screen by itself (no question asked).
+# The script then pulls the icon Android saved again (rel-t74-b-icon-*.png): white must fill the whole
+# icon, so a round mask shows a clean white circle with the badge, never a square poking out.
+# GYM is passed by run-device-qa.sh (-e); no `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+# The new logo reaches the phone on this launch (member_me); the icon is redrawn when it lands.
+- waitForAnimationToEnd:
+    timeout: 8000
+- stopApp
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Your gym: ${GYM}"
+    timeout: 45000
+# Negative: no question from Android this time (only a pinned icon is redrawn).
+- assertNotVisible: "(?i)^add to home screen$"
+- waitForAnimationToEnd:
+    timeout: 8000
+- pressKey: Home
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: rel-t74-30-home-screen-new-logo

@@ -1804,7 +1804,7 @@ part_uat_t74() {
   uat_flow uatt74 uat-rel-t74-gym-icon.yaml -e "GYM=QA UAT Gym" || rc=1
   mkdir -p "$OUT/uat-release"
   adb shell dumpsys shortcut > "$OUT/uat-release/t74-dumpsys-shortcut.txt" 2>/dev/null || true
-  if grep -E "ShortcutInfo \{id=gym," "$OUT/uat-release/t74-dumpsys-shortcut.txt" | grep "packageName=$PKG" | grep -q "Pin"; then
+  if grep -A1 -E "ShortcutInfo \{id=gym, .*Pin" "$OUT/uat-release/t74-dumpsys-shortcut.txt" | grep -q "packageName=$PKG"; then
     log "UAT T74: Android holds the pinned \"gym\" shortcut"
   else
     log "PART UATT74: no pinned \"gym\" shortcut in dumpsys shortcut (uat-release/t74-dumpsys-shortcut.txt)"
@@ -1814,6 +1814,30 @@ part_uat_t74() {
     adb exec-out "su 0 cat $dir/$f" > "$OUT/uat-release/rel-t74-icon-$f" 2>/dev/null && n=$((n + 1))
   done
   log "UAT T74: $n icon picture(s) Android saved pulled into qa-out/uat-release/rel-t74-icon-*"
+  # R-364 state change: the gym swaps its logo for the owner's reported case (a black badge on a white
+  # square); the app redraws the icon already on the home screen by itself (flow b, no question).
+  local before after out
+  before=$(adb shell "su 0 ls $dir" 2>/dev/null | tr -d '\r' | sort | tr '\n' ' ')
+  out=$(python3 "$QA_DIR/uat_logo.py" square U 2>&1)
+  echo "$out" | sed 's/^/[uat logo] /' | tee -a "$OUT/timeline.txt"
+  if echo "$out" | grep -q '^LOGO='; then
+    uat_flow uatt74b uat-rel-t74-b-new-logo.yaml -e "GYM=QA UAT Gym" || rc=1
+    adb shell dumpsys shortcut > "$OUT/uat-release/t74-b-dumpsys-shortcut.txt" 2>/dev/null || true
+    after=$(adb shell "su 0 ls $dir" 2>/dev/null | tr -d '\r' | sort | tr '\n' ' ')
+    for f in $after; do
+      case " $before " in *" $f "*) continue ;; esac
+      adb exec-out "su 0 cat $dir/$f" > "$OUT/uat-release/rel-t74-b-icon-$f" 2>/dev/null
+    done
+    if [ "$before" = "$after" ]; then
+      log "PART UATT74B: the icon on the home screen was not redrawn after the logo changed (bitmaps: $after)"
+      rc=1
+    else
+      log "UAT T74 b: the icon was redrawn with the new logo (rel-t74-b-icon-*; before: $before; after: $after)"
+    fi
+  else
+    log "PART UATT74B FAILED: the test gym's logo could not be swapped (uat_logo.py square)"
+    rc=1
+  fi
   return $rc
 }
 # Launch polish (3 Nov 2026), the gym half: a FRESH online test gym (qa/uat_gym.py on the xj/xc helpers,
