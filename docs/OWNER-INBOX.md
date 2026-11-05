@@ -495,16 +495,25 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
+## 88. 3 more server changes wait for your yes: Ask a trainer, gym pop-ups, team replies — 5 Nov 2026
+**Chat:** Mettle Up
+**Status:** WAITING FOR YOU
+**Why:** You asked for these on 4 Nov (R-319). The app part is built, tested and in version 0.72.0, but it stays hidden until its server change is on. I found today that nobody asked you for these 3 yeses.
+- **0053 Ask a trainer:** a member sends a question to the trainer they pick, and the trainer sees the member's weekly progress.
+- **0054 Gym pop-ups:** a member gets a phone pop-up when the gym approves a pause or renewal, asks for their workout report, or their shop order is ready.
+- **0009 Team replies:** when the MettleUp team answers a question from "Help and feedback", the member reads the reply in "Your questions" and gets a pop-up.
+**Your task:** Say "yes, apply 0053, 0054 and 0009" (or name the ones you want). I apply each, run its checks and tell you the result.
+
 ## 87. Overnight build (5 Nov): 3 features wait for your yes to go live — 5 Nov 2026
 **Chat:** Mettle Up
 **Status:** WAITING FOR YOU
 **Why:** While you slept I built Pass members (F123), Bring a friend (F147) and Online payments (F79). The tests pass with test data. Each one needs a change on the live gym server, and I do not change live data without your yes. Until then, all 3 stay hidden.
-**Your task:** Say "yes, apply 0055, 0056, 0057, 0010 and 0011" (or name the ones you want). I then load each change in the Supabase and Cloudflare tabs for you to press Run, and deploy the panel.
-**Your task:** Say yes to a new server key for payments (PAYMENTS_MASTER_KEY). It locks each gym's payment-company keys. Payments stay in test mode until you also say "payments live".
+**Done (5 Nov, 08:30):** you said yes. I applied 0055, 0056 and 0057 on the gym server (their checks pass: 20, 46 and 8) and 0010 and 0011 on the web server, and deployed the panel. Pass members and Bring a friend are now on.
+**Done (5 Nov):** the payments key is on the server. Payments stay in test mode until you say "payments live".
 **Your task:** Read the Bring a friend words: member card "Send a friend a link to your gym. They leave their number, and the gym calls them." and "When a friend joins, your gym can add 7 free days to your plan." Say if any word should change.
 **Your task (only you: KYC):** Razorpay partner sign-up at https://razorpay.com/partners/ (apply as a Technology Partner; bank, Aadhaar/PAN and business papers; about 2-3 weeks). When approved, create an application with the return address https://app.mettleup.fit/api/pay/oauth/razorpay/back and tell me. I open the place where you paste its client id and secret (I never type a secret).
 **Your task (only you: KYC):** Cashfree partner sign-up: contact Cashfree's partnerships team (https://www.cashfree.com/docs/partners/embedded/oauth-flow). Ask if a sole owner or Udyam registration is accepted.
-**Until you do it:** members and gyms see nothing new from these 3 features.
+**Still open:** the Bring a friend words, and the 2 partner sign-ups below. Payments work in test mode until then.
 
 ## 86. Trainer view, trainer videos, workout of the day: your OK — 3 Nov 2026
 **Chat:** ForgeAI Local Chat

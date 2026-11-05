@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-332. Two requests after the release + Claude Design rule — 5 Nov 2026
+
+He said: (1) the "Easy add today: 3 sets of reverse pec deck for your rear shoulders" suggestion card has no reason; put an eye (i) symbol on the right, in the same row as "I skipped this on purpose", that opens a simple-language reason. (2) The card shown when someone runs an older version should be a pop-up with a different look, so people do not dismiss it without noticing. (3) Global rule: UI/UX design goes through Claude Design (saved as D:/Brain/How I Like Things/ui-design-starts-in-claude-design.md).
+My view: (1) good; the reason must be the real one from the engine (which muscle, how long since it was trained), one or two lines. (2) good with guards: show it once per new version, never during a live workout, with "Update now" and "Later", and again after a few days if still old. Plan: after 0.72.0 ships, design both on the Claude Design canvas, then build, UAT, and add to the waiting list.
+
 ## R-331. Live yes + release yes for the overnight batch — 5 Nov 2026
 
 He said (5 Nov 2026, 08:24 IST): "yes make the server changes and yes you can release all seven features". This is the yes for supabase 0055/0056/0057, D1 0010/0011, the secret PAYMENTS_MASTER_KEY (payments stay test mode; PAY_LIVE needs "payments live"), a panel deploy, and ONE release covering the waiting list (R-326 reps box, F59/F60/F61, F146, F123, F147, F79, F191). Plan: apply + verify each, deploy panel, then ship gate (review, bump, tag, What's new via member-words, Play notes).
