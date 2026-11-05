@@ -82,6 +82,9 @@ describe('My membership: the words', () => {
   });
   it('the problems say what to do', () => {
     expect(membershipView({ ok: false, problem: 'NO_PHONE', gymName: 'G' }).lines[0]).toMatch(/Scan G's check-in QR/);
+    // Owner, 5 Nov 2026: a pass member has no plan; the first-check-in card must not promise one.
+    expect(membershipView({ ok: false, problem: 'NO_PHONE', gymName: 'G' }).title).toBe('Check in once to link your membership');
+    expect(membershipView({ ok: false, problem: 'NO_PHONE', gymName: 'G' }).lines[0]).toContain('plan or pass');
     expect(membershipView({ ok: false, problem: 'NOT_ON_ROSTER', gymName: 'G' }).lines[0]).toMatch(/Ask the desk/);
     expect(membershipView({ ok: false, problem: 'GYM_NOT_ONLINE', gymName: 'G' }).title).toBe('Not available yet');
     // Never names the other person on the gym's list.

@@ -119,7 +119,8 @@ export function endsLine(endsOn: string, today: string): string {
 export function membershipView(a: MembershipAnswer): MembershipView {
   if (!a.ok) {
     if (a.problem === 'NO_PHONE') {
-      return { tone: 'none', title: 'Check in once to see your plan', when: null, lines: [`Scan ${a.gymName}'s check-in QR at the gym. After that, your plan and its end date show here.`] };
+      // Owner, 5 Nov 2026: a pass member (FITPASS...) saw "to see your plan" and has no plan. Neutral words.
+      return { tone: 'none', title: 'Check in once to link your membership', when: null, lines: [`Scan ${a.gymName}'s check-in QR at the gym once. Then your plan or pass, and your visits, show here.`] };
     }
     if (a.problem === 'NAME_MISMATCH') {
       return { tone: 'none', title: 'Ask the desk to check your name', when: null, lines: [`${a.gymName}'s list has a different name for the number you checked in with. Your plan shows here once they match.`] };
