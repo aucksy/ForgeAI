@@ -118,6 +118,17 @@ appId: com.mettleup.app
     env:
       FIELD: "Lateral Raise set 1 reps"
       VALUE: " 12"
+# ---------------------------------------------------------------- R-359: the card's "Last: ..." row
+# The demo has Leg Extension history, so its card shows "Last: <date> · <routine>" in the muscle and
+# rest row (R-359: that row now runs under the menu button to the card's edge). Picture for the
+# owner's phone size: on the same row as the rest time, or wrapped?
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Leg Extension.*"
+# Its spoken label is "Previous is from <day>, <routine>" (the words on screen may read "Last: ...").
+- assertVisible: '(.*Last: .*|Previous is from .*|Previous: .*)'
+- takeScreenshot: rel-359-01-card-last-row
 # ---------------------------------------------------------------- 1. dumbbell: the bar and its hint
 - runFlow:
     file: sub-uat-tick.yaml
