@@ -26,6 +26,13 @@ appId: com.mettleup.app
       REPS: "4"
 - takeScreenshot: rel-r366-a-last-time-16
 - runFlow: sub-uat-r358-finish.yaml
+# Run 41989844589: the finish screen stays up; leave it the member's way (Done), then back to the tabs.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+- runFlow: xc-sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- workout 2: today 7, 5, 5
 - runFlow: sub-uat-r366-start.yaml
 - runFlow:
