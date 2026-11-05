@@ -73,6 +73,7 @@ import type { DraftSet, PrevSet, SetFill } from '../store/activeWorkoutStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 import { Glyph } from './TrackerGlyph';
+import { RetapLayer } from './RetapLayer';
 import { boxFontSize, hintTexts, prevLabel, rowLayout, SET_ROW, touchSlop, type RowLayout } from './setRowLayout';
 import { boxLabel, cleanTyped, distWord, kgToTyped, parseTyped, typedToKg, typedWeightMatches } from './unitText';
 
@@ -114,7 +115,6 @@ export function useRowLayout(logType: LogType = 'weight_reps'): RowLayout {
 
 /** After a tick lands in the store (moved to services/tickFollowUp so it can be tested). */
 import { afterTick } from '../services/tickFollowUp';
-import { selectAllSoon } from '../lib/selectAllOnTap';
 
 export { afterTick };
 
@@ -153,6 +153,7 @@ export const SetRow = memo(function SetRow({
   const [tText, setTText] = useState(set.durationSec ? fmtDuration(set.durationSec) : '');
   const [dText, setDText] = useState(set.distanceM ? String(distanceToUnit(set.distanceM, distUnit)) : '');
   const [tFocused, setTFocused] = useState(false);
+  const [focusedBox, setFocusedBox] = useState<EntryField | null>(null);
   // Packet B: what a tick could not save (LW-13), and the typo question (D7).
   const [note, setNote] = useState<string | null>(null);
   const [typo, setTypo] = useState<{ text: string; kind: 'weight' | 'reps' } | null>(null);
@@ -392,6 +393,7 @@ export const SetRow = memo(function SetRow({
 
   /** A number box whose empty state shows the hint as real text (it can't vanish). */
   const box = (p: {
+    field: EntryField;
     inputRef: RefObject<TextInputType | null>;
     value: string;
     hint: string;
@@ -405,21 +407,21 @@ export const SetRow = memo(function SetRow({
     // 2 dp above or below still lands in the box. The input stays the spoken element.
     <Pressable
       accessible={false}
-      onPress={() => {
-        p.inputRef.current?.focus();
-        selectAllSoon(() => p.inputRef.current, () => p.value.length);
-      }}
+      onPress={() => p.inputRef.current?.focus()}
       style={{ flex: 1, minHeight: SET_ROW.touch, justifyContent: 'center' }}
     >
       <TextInput
         ref={p.inputRef}
         value={p.value}
-        // Tap-selects-all: a tap on the box the cursor is already in (or one that reopens the keyboard)
-        // gets no focus event, so selectTextOnFocus misses it; select the whole number anyway.
-        onPress={() => selectAllSoon(() => p.inputRef.current, () => p.value.length)}
         onChangeText={(t) => p.onChangeText(t.replace(/[\r\n]/g, ''))}
-        onFocus={p.onFocus}
-        onBlur={p.onBlur}
+        onFocus={() => {
+          setFocusedBox(p.field);
+          p.onFocus?.();
+        }}
+        onBlur={() => {
+          setFocusedBox((f) => (f === p.field ? null : f));
+          p.onBlur();
+        }}
         keyboardType={p.keyboardType}
         // R-79 (22 Oct 2026): on Android a one-line box with centred text counts as "can scroll
         // sideways" (its text sits in a very wide strip), so React Native's box keeps a drag that
@@ -444,6 +446,8 @@ export const SetRow = memo(function SetRow({
           </Text>
         </View>
       ) : null}
+      {/* Tap-selects-all: a tap on the box that already has the cursor selects the whole number. */}
+      <RetapLayer focused={focusedBox === p.field} inputRef={p.inputRef} length={p.value.length} />
     </Pressable>
   );
 
@@ -518,6 +522,7 @@ export const SetRow = memo(function SetRow({
           {/* DISTANCE */}
           {hasDistance(logType)
             ? box({
+                field: 'distance',
                 inputRef: dRef,
                 value: dText,
                 hint: hints.distance,
@@ -535,6 +540,7 @@ export const SetRow = memo(function SetRow({
           {/* WEIGHT (+KG / ASSIST) */}
           {hasWeight(logType)
             ? box({
+                field: 'weight',
                 inputRef: wRef,
                 value: wText,
                 hint: hints.weight,
@@ -552,6 +558,7 @@ export const SetRow = memo(function SetRow({
           {/* REPS */}
           {hasReps(logType)
             ? box({
+                field: 'reps',
                 inputRef: rRef,
                 value: rText,
                 hint: hints.reps,
@@ -569,6 +576,7 @@ export const SetRow = memo(function SetRow({
           {/* TIME */}
           {hasTime(logType)
             ? box({
+                field: 'time',
                 inputRef: tRef,
                 value: tText,
                 hint: hints.time,

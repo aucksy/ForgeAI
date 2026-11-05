@@ -21,7 +21,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { computePlates, gymBarChoicesKg, gymBarKg, gymPlatesKg } from '../services/plateMath';
 import { usePlateSetupFor } from '../store/plateSetupStore';
 import { kgToTyped, parseTyped, showW } from './unitText';
-import { selectAllSoon } from '../lib/selectAllOnTap';
+import { RetapLayer } from './RetapLayer';
 
 export function PlateCalcSheet({
   visible,
@@ -36,6 +36,7 @@ export function PlateCalcSheet({
   const unit = weightUnitOf(units);
   const [text, setText] = useState('');
   const targetRef = useRef<TextInputType>(null);
+  const [targetFocused, setTargetFocused] = useState(false);
   const setup = usePlateSetupFor(units);
   const router = useRouter();
   const [barKg, setBarKg] = useState<number>(() => gymBarKg(setup, units));
@@ -121,30 +122,34 @@ export function PlateCalcSheet({
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.body, color: color.inkSecondary, width: 64 }}>
             Target
           </Text>
-          <TextInput
-            ref={targetRef}
-            value={text}
-            onChangeText={setText}
-            // Tap-selects-all: a second tap selects the whole number too (selectTextOnFocus only fires once).
-            onPress={() => selectAllSoon(() => targetRef.current, () => text.length)}
-            keyboardType="decimal-pad"
-            selectTextOnFocus
-            placeholder={unit}
-            placeholderTextColor={color.inkMuted}
-            style={{
-              flex: 1,
-              height: 44,
-              borderRadius: radius.md,
-              backgroundColor: color.surfaceSunken,
-              borderWidth: 1,
-              borderColor: color.border,
-              textAlign: 'center',
-              fontFamily: type.monoBold,
-              fontSize: type.size.h3,
-              color: color.ink,
-              paddingVertical: 0,
-            }}
-          />
+          <View style={{ flex: 1, height: 44 }}>
+            <TextInput
+              ref={targetRef}
+              value={text}
+              onChangeText={setText}
+              onFocus={() => setTargetFocused(true)}
+              onBlur={() => setTargetFocused(false)}
+              keyboardType="decimal-pad"
+              selectTextOnFocus
+              placeholder={unit}
+              placeholderTextColor={color.inkMuted}
+              style={{
+                flex: 1,
+                height: 44,
+                borderRadius: radius.md,
+                backgroundColor: color.surfaceSunken,
+                borderWidth: 1,
+                borderColor: color.border,
+                textAlign: 'center',
+                fontFamily: type.monoBold,
+                fontSize: type.size.h3,
+                color: color.ink,
+                paddingVertical: 0,
+              }}
+            />
+            {/* Tap-selects-all: a second tap selects the whole number too (selectTextOnFocus fires once). */}
+            <RetapLayer focused={targetFocused} inputRef={targetRef} length={text.length} />
+          </View>
         </View>
 
         {/* bar selector */}

@@ -1,7 +1,9 @@
 # Part USEL (owner bug, 5 Nov 2026): every tap on a weight or reps box selects the whole number, so typing
 # replaces it. Before the fix only the FIRST tap (the box gaining focus) selected; a tap on the box the
 # cursor was already in, or one that reopened the keyboard after Back closed it, kept the cursor where the
-# finger landed: "13" then "8" saved 183 (u358 flow b, run 41999585893).
+# finger landed: "13" then "8" saved 183 (u358 flow b, run 41999585893). T76 (5 Nov 2026): the first
+# fix selected 60 ms after the tap and swallowed a digit typed sooner; the steps marked NEGATIVE tap and
+# type at once (no settle wait) and require the whole number typed, never "00".
 # NO eraseText anywhere below on purpose: the erase is what hid the bug. Each tap is followed straight
 # by typing, as he does. VALUE starts with a space (trap 5: the emulator can drop the first key; a typed
 # space is dropped by the box). Run with the owner profile (360 dp, font 1.3, India time).
@@ -44,6 +46,20 @@ appId: com.mettleup.app
 - inputText: " 18"
 - assertNotVisible: "1618|1816|168|186"
 - assertVisible: "^18$"
+# NEGATIVE (T76): tap and type at once, keyboard open. The first fix's 60 ms timer caught the "1" and
+# the next digit replaced it: "100" became "00".
+- tapOn:
+    text: "Dumbbell Preacher Curl set 1 reps.*"
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
+- inputText: " 100"
+- assertNotVisible: "^00$|^0$|18100|10018|1800"
+- assertVisible: "^100$"
+- takeScreenshot: rel-usel-b-fast-100
+- tapOn: "Dumbbell Preacher Curl set 1 reps.*"
+- inputText: " 18"
+- assertNotVisible: "10018|18100|1008"
+- assertVisible: "^18$"
 - hideKeyboard
 - takeScreenshot: rel-usel-b-reps-again-18
 # ---- C. The weight box of the ticked set: first tap, a second tap with the keyboard open, a third after
@@ -56,7 +72,11 @@ appId: com.mettleup.app
 - assertNotVisible: "12.511|1112.5|12.11|112.5"
 - assertVisible: "^11$"
 - hideKeyboard
-- tapOn: "Dumbbell Preacher Curl set 1 weight, .*"
+# Keyboard closed, tap and type at once (T76 negative).
+- tapOn:
+    text: "Dumbbell Preacher Curl set 1 weight, .*"
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
 - inputText: " 10"
 - hideKeyboard
 - assertNotVisible: "1011|1110|101|110"
@@ -158,11 +178,14 @@ appId: com.mettleup.app
 - assertVisible:
     text: "^ ?80$"
     rightOf: "^Target$"
+# Keyboard open, tap and type at once (T76 negative: never "00").
 - tapOn:
     text: "^ ?80$"
     rightOf: "^Target$"
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
 - inputText: " 100"
-- assertNotVisible: "80100|10080|8100|1080"
+- assertNotVisible: "80100|10080|8100|1080|^ ?00$"
 - assertVisible:
     text: "^ ?100$"
     rightOf: "^Target$"
@@ -182,5 +205,36 @@ appId: com.mettleup.app
     notVisible: "Close the plate calculator"
     timeout: 10000
 # ---- Finish: set 1 = 10 x 18, set 2 = 10 x 12 saved (the bench row is left out, unticked).
-- runFlow: sub-uat-r358-finish.yaml
+# (Not sub-uat-r358-finish: it starts by clearing a rest, and no rest runs here; run 42027319469.)
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
 - takeScreenshot: rel-usel-finish
