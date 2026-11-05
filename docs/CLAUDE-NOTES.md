@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-362. The repeated toast came on the same arm — 5 Nov 2026
+
+He said: the repeated achievement toast came on the same side (right arm); a different side would have made sense, not this.
+
+My answer: the app does not know which arm a set is; both toasts came from the both-arms doubling (R-358/R-361). Decided on top: at most one record toast per exercise per workout; later records in that workout show only the medal on the set; the finish screen lists all. Sent to the records helper with replay and UAT checks.
+
 ## R-361. A second false toast (Most lifted in one workout) and "are you not doing negative and regression UATs?" — 5 Nov 2026
 
 He said (screenshot 12:48): "Most lifted in one workout · 1,020 kg" on Dumbbell Preacher Curl, though he lifted as much before. "This is so obvious. Please figure out why you are not catching these things. Are you not doing negative and regression and other types of UATs?"
