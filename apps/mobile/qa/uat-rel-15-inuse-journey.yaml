@@ -108,6 +108,10 @@ appId: com.mettleup.app
       FIELD: "Leg Extension set 1 reps"
       VALUE: " 10"
 - runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Lateral Raise set 1 weight, kilograms"
+- runFlow:
     file: sub-type.yaml
     env:
       FIELD: "Lateral Raise set 1 weight, kilograms"
