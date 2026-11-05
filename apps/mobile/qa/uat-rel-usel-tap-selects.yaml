@@ -115,6 +115,8 @@ appId: com.mettleup.app
 - takeScreenshot: rel-usel-e-after-background-12
 # ---- F. The plate calculator's Target box (a barbell exercise): first tap, again with the keyboard open,
 # again after Back closed it.
+# This box keeps a typed space (" 100"; run 42014514589 showed 100 replacing 80, not 80100), so its
+# checks allow one leading space.
 - runFlow:
     file: sub-find.yaml
     env:
@@ -154,25 +156,25 @@ appId: com.mettleup.app
     rightOf: "^Target$"
 - inputText: " 80"
 - assertVisible:
-    text: "^80$"
+    text: "^ ?80$"
     rightOf: "^Target$"
 - tapOn:
-    text: "^80$"
+    text: "^ ?80$"
     rightOf: "^Target$"
 - inputText: " 100"
 - assertNotVisible: "80100|10080|8100|1080"
 - assertVisible:
-    text: "^100$"
+    text: "^ ?100$"
     rightOf: "^Target$"
 - hideKeyboard
 - tapOn:
-    text: "^100$"
+    text: "^ ?100$"
     rightOf: "^Target$"
 - inputText: " 70"
 - hideKeyboard
 - assertNotVisible: "10070|70100|1070|7100"
 - assertVisible:
-    text: "^70$"
+    text: "^ ?70$"
     rightOf: "^Target$"
 - takeScreenshot: rel-usel-f-plates-70
 - tapOn: "Close the plate calculator"
