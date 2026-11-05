@@ -252,6 +252,14 @@ describe("R-359: the tag row runs under the menu button to the card's edge", () 
     // The tag row comes after the menu button, not inside the name column beside it.
     expect(src.indexOf("marginLeft: 44 + space.sm")).toBeGreaterThan(src.indexOf("setSheet('menu')"));
   });
+  it('tries the short date on the same row before it wraps (his phone, font 1.3)', () => {
+    const src = read('src/tracker/components/ExerciseLogCard.tsx');
+    // Full -> short ("31 Oct · Pull 1") -> wrapped; never back up while the text is the same.
+    expect(src).toMatch(/if \(wrapped && !sourceShort && sourceLine\.text\.startsWith\('Previous: '\)\)/);
+    expect(src).toMatch(/sourceShort \? sourceLine\.text\.slice\('Previous: '\.length\) : sourceLine\.text/);
+    // The spoken label keeps the full meaning.
+    expect(src).toMatch(/accessibilityLabel=\{sourceLine\.spoken\}/);
+  });
 });
 
 describe('C1-11: the Finish question counts warm-ups apart', () => {

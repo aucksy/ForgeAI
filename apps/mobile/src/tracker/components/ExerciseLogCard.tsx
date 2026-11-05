@@ -319,6 +319,14 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
   // R-126 (owner, 25 Oct 2026): when "Previous: ..." no longer fits at the end of the row it drops to
   // a line of its own; there it starts at the left, under the muscle tag, instead of floating right.
   const [sourceWrapped, setSourceWrapped] = useState(false);
+  // R-359 fix (owner, 5 Nov 2026: the date belongs in the rest timer row): when the full line does not fit,
+  // first try the short form ("31 Oct · Pull 1", no "Previous:") on the same row; only if that also does not
+  // fit does it drop to its own line. One way only (full -> short -> wrapped), so it never flickers.
+  const [sourceShort, setSourceShort] = useState(false);
+  useEffect(() => {
+    setSourceShort(false);
+    setSourceWrapped(false);
+  }, [sourceLine?.text]);
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenRpe = useCallback((setKey: string) => setRpeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
@@ -506,11 +514,15 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
             accessibilityLabel={sourceLine.spoken}
             onLayout={(e) => {
               const wrapped = e.nativeEvent.layout.y > 4;
+              if (wrapped && !sourceShort && sourceLine.text.startsWith('Previous: ')) {
+                setSourceShort(true);
+                return;
+              }
               if (wrapped !== sourceWrapped) setSourceWrapped(wrapped);
             }}
             style={{ marginLeft: sourceWrapped ? 0 : 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
           >
-            {sourceLine.text}
+            {sourceShort ? sourceLine.text.slice('Previous: '.length) : sourceLine.text}
           </Text>
         ) : null}
       </View>
