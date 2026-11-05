@@ -17,9 +17,11 @@ on:
       - 'package-lock.json'
       - '.github/workflows/ios.yml'
 
+# Other work pushes to main often: a running build always finishes (40 min of Mac time is not
+# thrown away); only the newest waiting one is kept.
 concurrency:
   group: ios-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   simulator:
