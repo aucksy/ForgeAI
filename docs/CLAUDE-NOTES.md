@@ -334,27 +334,3 @@ Review agent found: members who joined before 0.70.0 never saw the join line, an
 ## R-295. Release — 3 Nov 2026
 
 He said: "Release". Releasing the waiting batch (F137 privacy switch, F109 trainer view, F148 trainer videos, F151 workout of the day) as 0.70.0 through the full gate: CI, qa-device default + owner, qa-journeys, conditions, review agent, What's new via member-words.
-
-## R-294. 0049 + 0050 + 0051 are LIVE — 3 Nov 2026
-
-He said: "I hit Run and it came back with Success. No rows returned". Checked live with the public key: member_machine_busy, member_trainer_status, member_gym_wod and owner_gym_wods all run and refuse a fake key (P0001 BAD_KEY), so the functions exist. Marked the 3 migration headers APPLIED LIVE; #84 TASK DONE; F137/F109/F148/F151 moved to Next release. Members see the new screens after the next release. Busy machines stays off until a gym owner switches it on.
-
-## R-293. Yes to trainer features; one query holds 0049 + 0050 + 0051 — 3 Nov 2026
-
-He said: "App updated. I dont see any query present in SQL editor. I just opened it. Check. yes, switch on trainer features". The old SQL tab had been closed (Browser 2's tab group gone), so the unsaved 0049 query was lost. New tab 867678661 (Browser 2, Supabase): one query = 0049 + 0050 + 0051 fetched from GitHub main (sha256 1ff49cb12c46, 1f12c6f16a0c, 66443c5ef389, all = git). Run and even Save were refused by the classifier [Production Deploy]; not worked around. #86 DECIDED (yes, words as written); #84 tasks now point at that one tab. After his Run: read-only checks for the 0049/0050/0051 functions, mark the 3 headers APPLIED LIVE, tracker F137/F109/F148/F151 to Next release.
-
-## R-292. Play shows 0.67.0; F109, F148, F151 built — 3 Nov 2026
-
-He said: "I am running 0.67.0. Why I playstore doesn't have update yet" then "No. I Installed it from playstore". I first guessed a GitHub copy (wrong). Play Console (simpleApps profile, Browser 1): 0.69.0 on Closed testing - Alpha and Internal since 3 Nov 5:08 AM, 178 countries, managed publishing off. So the phone's Play Store lags; told him to refresh Updates, clear Play Store cache, check the tester page. Note: GitHub APKs are signed with the debug key (FA:C6:17...), Play's app signing key differs, so a GitHub copy can never take a Play update. Away work: helpers built F148+F151 (77510387, 0051 not applied, tests/0051 49 checks) and F109 (a148e186, 0050 not applied, tests/0050 60 checks); security.sql lists both. All mobile and admin tests and both ratchets green in main. Inbox #86 asks his OK on the F109 words (incl. dropping 'never sends which exercises') and a yes for 0050/0051. Claude's tasks: T2, T3, T8, T67 marked Done (stale).
-
-## R-291. 0048 live; privacy line approved; busy-machines switch for members — 3 Nov 2026
-
-He said: "I told you I was going to sleep and you still stopped for Yes - ridiculous. why are you not doing the browser actions yourself. yes for the privacy line" (saved to never-stop-while-he-is-away, 3rd time). Then: "I have clicked on Run". Retried the 0048 Run click with his chat yes: classifier refused again [Production Deploy]; not worked around. He pressed Run: Success. Read-only check live: all 6 new or replaced functions exist with the 0048 arguments. Running tests/0048 live (self-undoing) was refused by the classifier too; it passes on the throw-away copy in CI. Header marked APPLIED LIVE. #85 TASK DONE. Privacy line (#84) APPROVED: What my gym can see shows it while the gym has Busy machines on, the intro drops 'never sends which exercises', and a new switch 'Share which machines I use' (on by default, carried by backups) stops all sending. 0049: his yes covers it (the line was the condition); loaded in the SQL Editor (text = GitHub main, sha256 1ff49cb12c46), Run refused by the classifier; #84 now asks him to press Run. Waiting for release: the switch.
-
-## R-290. 0.69.0 released; 0048 loaded but not run — 3 Nov 2026
-
-Gate: first round red (BalanceCard floating promise; uat-bk waited for the Settings title after Back; xc-sub-gym-none did not scroll past the new You left note). Fixed in fba40da4; CI, qa-device default + owner, qa-journeys, conditions 2 all green. PROGRESS moved to Done (b3db9314), tag v0.69.0, release run green, APK 200. Panel deployed (wrangler), 3 sites 200. 0048: loaded in the SQL Editor in his Chrome (sha256 45a4620d64a8, from b3db9314), but the auto-mode classifier refused the Run click [Production Deploy]: not worked around. Inbox #85 asks him to press Run; then I run tests/0048 + security.sql live and mark the header APPLIED LIVE. Admin card and member app both behave as before until then. Tracker: F52/F57/F58/F73/F74 Live; F137 still waits for #84 (now also asks his OK for the privacy line).
-
-## R-289. Batch built: security 0048, F52, F186, F57, F58, F73, F74, F137 — 2 Nov 2026
-
-Done for R-288: all on main, tests green (member app 4145, admin 1534, every database test incl. 0048 39 checks, 0049 62 checks). Admin app: Numbers to confirm card, challenge Give/Skip. Phone QA flows handle the desk check (before and after 0048 is live). F137's server part (0049) waits for his yes (inbox #84); 0048 is applied live at release under his R-287 yes. Tracker: F52/F57/F58/F73/F74/F186 to Next release; F137 Waiting for you; F143 note. Next: review, whole phone round, release 0.69.0.
