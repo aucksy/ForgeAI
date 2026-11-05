@@ -1905,9 +1905,20 @@ part_uat() {
 # R-366 (owner, 5 Nov 2026): a reps-only Pull-Up names last time's total when beaten. Also runs alone
 # with only=u366 (a fresh install with the demo). Pictures rel-r366-*.png.
 part_u366() {
-  uat_flow uatr366 uat-rel-r366-reps.yaml && return 0
-  status=1
-  return 1
+  local rc=0 now
+  uat_flow uatr366 uat-rel-r366-reps.yaml || return 1
+  # The Target reads only workouts before today: move the phone clock one day on for today's workout.
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || true
+  log "UAT R-366 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (one day on)"
+  uat_flow uatr366b uat-rel-r366-b-today.yaml || rc=1
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT R-366: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
 }
 # R-344: also runs alone with only=u344 (flow a starts from a fresh install with the demo, gate-demo.yaml).
 part_u344() {
