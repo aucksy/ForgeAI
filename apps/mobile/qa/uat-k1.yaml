@@ -36,15 +36,18 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Home-screen widgets|^Profile$"
     timeout: 30000
+# 0.72.0 (R-320): the Today widget shows what to beat on the routine's first lifts, so it is spoken
+# "Today: Push Day A. 6 exercises. Barbell Bench Press 72.5 kg × 8 last time · try 75 × 5. Overhead
+# Press 40 kg × 8 last time · try 42.5 × 5. Start" (Widgets.kt); the demo has a last time for them.
 - pressKey: Home
 - extendedWaitUntil:
-    visible: 'Today: .+\. \d+ exercises? · .+ first\. Start'
+    visible: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
     timeout: 30000
-- copyTextFrom: 'Today: .+\. \d+ exercises? · .+ first\. Start'
+- copyTextFrom: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
 - runScript: js/uat-widget.js
 - takeScreenshot: uk-01-widget-start
 # ---------------------------------------------------------------- the widget's Start
-- tapOn: 'Today: .+\. \d+ exercises? · .+ first\. Start'
+- tapOn: 'Today: .+\. \d+ exercises?\. .+ × \d+ last time · try .+\. Start'
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000

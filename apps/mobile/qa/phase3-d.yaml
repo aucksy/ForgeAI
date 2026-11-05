@@ -67,8 +67,10 @@ appId: com.mettleup.app
     timeout: 15000
 - tapOn: "^Story$"
 - tapOn: "^See-through$"
+# 0.72.0 (F146, share/gymBrand.ts shareSheetNote): the see-through note now reads "It has no
+# background, so you can place it on a photo or an Instagram story." then what the picture shows.
 - extendedWaitUntil:
-    visible: "See-through: no background.*"
+    visible: 'It has no background, so you can place it on a photo or an Instagram story\..*'
     timeout: 15000
 - takeScreenshot: 44b-share-story-see-through
 - tapOn: "^Post$"

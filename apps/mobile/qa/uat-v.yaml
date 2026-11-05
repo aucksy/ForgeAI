@@ -199,11 +199,12 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Workout$"
     index: 0
-- scrollUntilVisible:
-    element: "Start empty workout"
-    direction: UP
-    centerElement: true
-    timeout: 30000
+# 0.72.0 (run 41960153708, owner): after a restart the tab is at its top and "Muscles ready today"
+# (F59) puts "Start empty workout" below the edge, so look down first, then up.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Start empty workout"
 - assertNotVisible: "Resume workout"
 - assertNotVisible: "Workout in progress"
 - takeScreenshot: uv-07-still-gone-after-restart
