@@ -4,6 +4,15 @@
 # body weight), then "Share to an AI app" opens Android's share sheet, which is closed again.
 appId: com.mettleup.app
 ---
+# Flow f59 used to open the app on the Workout tab before this flow; it is gone (R-372), and flow 9 ends on
+# the "Workout complete" screen, so start from the Workout tab here (run 42099510423 failed on that screen).
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
 - runFlow:
     file: sub-settings-page.yaml
     env:
