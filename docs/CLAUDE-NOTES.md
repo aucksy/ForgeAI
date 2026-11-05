@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-331. Live yes + release yes for the overnight batch — 5 Nov 2026
+
+He said (5 Nov 2026, 08:24 IST): "yes make the server changes and yes you can release all seven features". This is the yes for supabase 0055/0056/0057, D1 0010/0011, the secret PAYMENTS_MASTER_KEY (payments stay test mode; PAY_LIVE needs "payments live"), a panel deploy, and ONE release covering the waiting list (R-326 reps box, F59/F60/F61, F146, F123, F147, F79, F191). Plan: apply + verify each, deploy panel, then ship gate (review, bump, tag, What's new via member-words, Play notes).
+
 ## R-330. Overnight batch finished — 5 Nov 2026
 All helpers done (F59/F60/F61, F123, F146, F147, F79). Fixed the last red: Bring a friend typecheck + pass member saw the free-days line (771e1dee), F146 test asked to centre a bottom button (3291f91a). CI 41925615317 green. Full UAT 41925422540: 19/19 flows pass; I read the pass-member, before/after and pay pictures. Tracker #87 lists his live yeses (0055, 0056, 0057, 0010, 0011, PAYMENTS_MASTER_KEY) and the Razorpay/Cashfree KYC sign-ups. No release.
 
