@@ -691,7 +691,7 @@ export const HELP_ARTICLES = [
       '"Widgets": tap "Add Today" or "Add This week". Today starts your next workout and shows what to beat from last time. ' +
       'Gym members can tap "Add Gym right now": how busy your gym is, and when that was checked. Tap it to check in. ' +
       '"Health apps": connect Health Connect to send your workouts, and to read your weight or steps. ' +
-      'Turn on "Sleep and workouts" and, after a lighter workout, MettleUp tells you if you slept under 6 hours last night. Your sleep stays on this phone. ' +
+      '"Sleep and workouts" tells you, after a lighter workout, if you slept under 6 hours. ' +
       'If a row is missing, this phone does not have it.',
     screens: [
       'apps/mobile/src/app/settings/watch.tsx',
