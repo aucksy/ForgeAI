@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isNewer, phoneApkName, releaseUpdate, updateToShow, versionParts } from '@/lib/appUpdate';
+import { isNewer, phoneApkName, readReleaseNews, releaseUpdate, updateToShow, versionParts, WHATS_NEW_URL } from '@/lib/appUpdate';
 
 describe('appUpdate (launch C6)', () => {
   it('reads plain versions only', () => {
@@ -52,5 +52,25 @@ describe('appUpdate (launch C6)', () => {
     expect(updateToShow({ ...u, version: '0.50.0' }, '0.48.0', '0.49.0')).not.toBeNull();
     expect(updateToShow(u, '0.49.0', null)).toBeNull();
     expect(updateToShow(null, '0.48.0', null)).toBeNull();
+  });
+});
+
+describe('R-336: whats-new.json of the newest release', () => {
+  it('is a plain file download (no API rate limit)', () => {
+    expect(WHATS_NEW_URL).toBe('https://github.com/aucksy/ForgeAI/releases/latest/download/whats-new.json');
+  });
+  it('reads a version and up to 3 short, non-empty lines', () => {
+    expect(readReleaseNews({ version: '0.73.0', lines: ['  One.  ', '', 'Two.', 7, 'Three.', 'Four.'] })).toEqual({
+      version: '0.73.0',
+      lines: ['One.', 'Two.', 'Three.'],
+    });
+    expect(readReleaseNews({ version: 'v0.73.0', lines: [] })).toEqual({ version: '0.73.0', lines: [] });
+    expect(readReleaseNews({ version: '0.73.0', lines: ['x'.repeat(241)] })?.lines).toEqual([]);
+  });
+  it('anything else reads as nothing', () => {
+    expect(readReleaseNews(null)).toBeNull();
+    expect(readReleaseNews('0.73.0')).toBeNull();
+    expect(readReleaseNews({ version: 'latest', lines: ['a'] })).toBeNull();
+    expect(readReleaseNews({ lines: ['a'] })).toBeNull();
   });
 });

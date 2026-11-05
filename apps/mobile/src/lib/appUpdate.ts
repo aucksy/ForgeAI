@@ -114,6 +114,73 @@ export async function findLatest(current: string | null | undefined, now = Date.
   return updateToShow(seen && seen.version ? { version: seen.version, url: seen.url } : null, current, null);
 }
 
+/**
+ * R-336: the newest release's What's new lines, a file each release attaches (release-apk.yml writes it
+ * from lib/whatsNew.ts). The /releases/latest/download/ link is a plain file download: no API rate limit.
+ */
+export const WHATS_NEW_URL = 'https://github.com/aucksy/ForgeAI/releases/latest/download/whats-new.json';
+const NEWS_KEY = 'update_whats_new'; // JSON: { at, version, lines }
+/** Ask again when the saved answer is for another version and at least this old. */
+const NEWS_RECHECK_MS = 30 * 60 * 1000;
+const NEWS_TIMEOUT_MS = 8_000;
+/** At most this many lines are kept (the full screen shows 3). */
+export const NEWS_MAX = 3;
+
+export type ReleaseNews = { version: string; lines: string[] };
+
+/** whats-new.json read safely: a plain version and up to 3 short non-empty lines, else null. PURE. */
+export function readReleaseNews(v: unknown): ReleaseNews | null {
+  if (!v || typeof v !== 'object') return null;
+  const o = v as { version?: unknown; lines?: unknown };
+  const version = typeof o.version === 'string' ? o.version.trim().replace(/^v/, '') : '';
+  if (!versionParts(version)) return null;
+  const lines = (Array.isArray(o.lines) ? o.lines : [])
+    .filter((t): t is string => typeof t === 'string')
+    .map((t) => t.replace(/\s+/g, ' ').trim())
+    .filter((t) => t.length > 0 && t.length <= 240)
+    .slice(0, NEWS_MAX);
+  return { version, lines };
+}
+
+function readSavedNews(raw: string | null): (ReleaseNews & { at: number }) | null {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw) as { at?: unknown; version?: unknown; lines?: unknown };
+    if (typeof v.at !== 'number') return null;
+    const n = readReleaseNews(v);
+    return { at: v.at, version: n?.version ?? '', lines: n?.lines ?? [] };
+  } catch {
+    return null; // quiet: a broken saved answer is the same as none; the next check rewrites it
+  }
+}
+
+/**
+ * R-336: the newest release's What's new, or null when it cannot be read (offline, an older release
+ * without the file). Asks at most every 6 hours, or every 30 min while the saved answer is for another
+ * version than `want`. A failed answer is kept too, so an outage costs one short wait, not one per
+ * launch. Never throws.
+ */
+export async function findReleaseNews(want: string | null, now = Date.now()): Promise<ReleaseNews | null> {
+  const saved = readSavedNews(await readMeta(NEWS_KEY));
+  const age = saved ? now - saved.at : Infinity;
+  const stale = age < 0 || age > CHECK_EVERY_MS || (want != null && saved?.version !== want && age > NEWS_RECHECK_MS);
+  if (saved && !stale) return saved.version ? { version: saved.version, lines: saved.lines } : null;
+  let found: ReleaseNews | null = null;
+  try {
+    const res = await fetchWithTimeout(WHATS_NEW_URL, { headers: { Accept: 'application/json' } }, NEWS_TIMEOUT_MS);
+    if (res.ok) found = readReleaseNews(await res.json());
+    else console.warn('[update] whats-new.json answered', res.status);
+  } catch (e) {
+    console.warn('[update] whats-new.json could not be read', e);
+    if (saved?.version) return { version: saved.version, lines: saved.lines }; // offline: keep the last answer
+  }
+  const next = { at: now, version: found?.version ?? '', lines: found?.lines ?? [] };
+  await enqueueWrite(() => setMeta(NEWS_KEY, JSON.stringify(next))).catch((e: unknown) =>
+    console.warn('[update] could not save the What\'s new answer', e),
+  );
+  return found;
+}
+
 /** R-260: a saved value for the update reminders, or null (logged) when the database cannot say. */
 export async function readUpdateMeta(key: string): Promise<string | null> {
   return readMeta(key);

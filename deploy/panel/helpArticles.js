@@ -806,6 +806,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',
   'apps/mobile/src/app/+not-found.tsx': 'Shown only for a broken link; it sends the member back into the app.',
   'apps/mobile/src/app/index.tsx': 'Redirect: opens the Workout tab.',
+  'apps/mobile/src/app/qa-update.tsx': 'Redirect: a test-build link for the update screen pictures; opens the Workout tab.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',
   'apps/mobile/src/app/library/index.tsx': 'Redirect: an old link that opens Exercises.',

@@ -148,12 +148,12 @@ describe('A5: the one-time "it moved" hints', () => {
 
 describe('A12: one notice at a time above Up next, one extra line inside it', () => {
   const today = '2026-10-26';
-  it('the order: the link just tapped, a new version, What’s new, the backup reminder', () => {
-    expect(NOTICE_ORDER).toEqual(['link', 'update', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep']);
-    expect(pickNotice({ update: true, whatsNew: true, backup: true }, null, today)).toBe('update');
+  it('the order: the link just tapped, What’s new, the backup reminder (R-336: a new version is the orange line, not a notice)', () => {
+    expect(NOTICE_ORDER).toEqual(['link', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep']);
+    expect(pickNotice({ whatsNew: true, backup: true }, null, today)).toBe('whatsNew');
     expect(pickNotice({ whatsNew: true, backup: true }, null, today)).toBe('whatsNew');
     expect(pickNotice({ backup: true }, null, today)).toBe('backup');
-    expect(pickNotice({ link: true, update: true }, null, today)).toBe('link');
+    expect(pickNotice({ link: true, whatsNew: true }, null, today)).toBe('link');
     expect(pickNotice({}, null, today)).toBeNull();
   });
   it('one closed today: the others wait for tomorrow; a tapped link is still answered', () => {
@@ -164,7 +164,7 @@ describe('A12: one notice at a time above Up next, one extra line inside it', ()
     expect(pickNotice({ link: true, whatsNew: true }, today, today)).toBe('link');
   });
   it('0.56.0: nothing is drawn until the closed day has been read (no flash of a closed notice)', () => {
-    expect(pickNotice({ whatsNew: true, update: true }, undefined, today)).toBeNull();
+    expect(pickNotice({ whatsNew: true, backup: true }, undefined, today)).toBeNull();
     expect(pickNotice({ link: true }, undefined, today)).toBeNull();
     expect(pickNotice({ whatsNew: true }, null, today)).toBe('whatsNew');
   });
@@ -176,7 +176,10 @@ describe('A12: one notice at a time above Up next, one extra line inside it', ()
   });
   it('the Workout tab draws each card only when it is the one picked; Start is untouched', () => {
     const w = readFileSync(join(APP, '(tabs)', 'workout.tsx'), 'utf8');
-    expect(w).toMatch(/<UpdateCard hidden=\{notice !== 'update'\}/);
+    expect(w).not.toMatch(/UpdateCard/);
+    // R-336: the orange update line comes first, above every notice.
+    expect(w.indexOf('<UpdateLine />')).toBeGreaterThan(-1);
+    expect(w.indexOf('<UpdateLine />')).toBeLessThan(w.indexOf('<WhatsNewCard'));
     expect(w).toMatch(/<WhatsNewCard hidden=\{notice !== 'whatsNew'\}/);
     expect(w).toMatch(/<BackupMovedCard hidden=\{notice !== 'backup'\}/);
     expect(w).toMatch(/await startShownWorkout\(router, today\?\.nextId \?\? null\)/);

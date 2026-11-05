@@ -21,7 +21,7 @@ import { AppState, Pressable, Text, View } from 'react-native';
 import { DangerLink } from '@/components/DangerLink';
 import { GymBrandMark } from '@/components/GymBrandMark';
 import { BrandCorner } from '@/components/brand/BrandCorner';
-import { UpdateCard } from '@/components/UpdateCard';
+import { UpdateLine } from '@/components/UpdateLine';
 import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { BackupMovedCard } from '@/components/BackupMovedCard';
 import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
@@ -375,10 +375,13 @@ export default function WorkoutScreen() {
   return (
     <Screen title="Workout" right={<BrandCorner />}>
       <View style={{ gap: space.lg }}>
+        {/* R-336: while a newer version exists, the slim orange line sits above everything (no close
+            button; it goes when the app is up to date). It replaced the old update card. */}
+        <UpdateLine />
         {/* Gym branding: the member's gym, small, under the title (branded gyms only). */}
         <GymBrandMark />
         {/* Release A, A12: ONE notice at a time above Up next (lib/workoutNotices.ts): the answer to
-            a link just tapped, then a new version, What's new, the backup reminder. */}
+            a link just tapped, then What's new, the backup reminder. */}
         {/* SH-29: a wrong forgeai:// link lands here with one calm line. */}
         {notice === 'link' && linkNotice ? (
           <Pressable
@@ -392,8 +395,6 @@ export default function WorkoutScreen() {
             </Card>
           </Pressable>
         ) : null}
-        {/* Launch C6: a newer release on GitHub ("Get it" / "Later"). */}
-        <UpdateCard hidden={notice !== 'update'} onWant={want('update')} onDone={noticeClosed} />
         {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
         <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
         {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}

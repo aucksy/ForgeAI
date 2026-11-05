@@ -1859,6 +1859,9 @@ part_uat() {
   # share sheet. Run with profile=owner for the owner's 360 dp / font 1.3.
   uat_flow uatf59 uat-rel-f59-ready.yaml
   uat_flow uatf61 uat-rel-f61-ask-ai.yaml
+  # R-336 (5 Nov 2026): the full-screen update and the Workout tab's orange line, on a made-up update
+  # (the QA build's 'updateOffer' stand-in, mettleup://qa-update?behind=N). Pictures rel-r336-*.png.
+  uat_flow uatr336 uat-rel-r336-update.yaml
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done

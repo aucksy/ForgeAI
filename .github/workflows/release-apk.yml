@@ -187,6 +187,8 @@ jobs:
             --no-daemon --stacktrace
 
       - name: Stage artifacts
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.name }}
         run: |
           APK="$(find apps/mobile/android/app/build/outputs/apk/release -name '*.apk' | head -1)"
           AAB="$(find apps/mobile/android/app/build/outputs/bundle/release -name '*.aab' | head -1)"
@@ -208,7 +210,10 @@ jobs:
           echo "Found source map: $MAP"
           if [ -n "$MAP" ]; then cp "$MAP" "mettleup-${GITHUB_REF_NAME}.js.map"
           else echo "::warning::No JS source map was found: release crash stacks will not be readable."; fi
-          ls -la mettleup-*
+          # R-336: this version's What's new lines (whatsNew.ts, read as the Play upload reads them) for the
+          # app's full-screen "A new MettleUp is here"; phones read releases/latest/download/whats-new.json.
+          python3 scripts/ci/whats_new_json.py "$VERSION_NAME" apps/mobile/src/lib/whatsNew.ts whats-new.json
+          ls -la mettleup-* whats-new.json
 
       # Without the secrets (forks, or before the key exists) nothing changes: debug-signed, as today.
       - name: No release key (debug-signed build)
@@ -339,6 +344,7 @@ jobs:
             mettleup-*.apk
             mettleup-*.aab
             mettleup-*.js.map
+            whats-new.json
 
       # Checks on the built APK itself. A FAIL stops here, before the Release is published
       # (the run artifact above still holds the APK to inspect). ALLOWED_CERT_SHA256 is a public
@@ -433,6 +439,7 @@ jobs:
             mettleup-*.apk
             mettleup-*.aab
             mettleup-*.js.map
+            whats-new.json
           generate_release_notes: true
 
   # R-125 / 26 Oct 2026: the published release's AAB to Google Play's internal + closed tests, as part of

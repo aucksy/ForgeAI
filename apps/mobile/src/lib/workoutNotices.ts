@@ -4,20 +4,22 @@
  * and push Start below the fold on a large-text phone.
  *
  *  - Notices, in this order: "That link didn't work" (the answer to the member's own tap, gone after
- *    a few seconds), a new version, What's new, the watch app offer (F67, once), "Your plan ends on Friday" (a gym member,
+ *    a few seconds), What's new, the watch app offer (F67, once), "Your plan ends on Friday" (a gym member,
  *    within a week of the plan's end: shop/planEnds.ts), "Backups now go to your MettleUp account" (R-320, once, for a phone with Drive linked), and "Your workouts are
  *    only on this phone" (launch audit 3 Nov 2026, lib/safekeepNudge.ts). Once the member has closed one
  *    today (Later, Got it), the others wait for the next day; What's new after an update never waits.
  *  - Inside Up next: the easy week, else the easy-week offer, else the muscle tip.
+ * R-336: a new version is no longer a notice here: the orange line above everything says it
+ * (components/UpdateLine.tsx).
  * The cards still decide for themselves whether they have something to say (`want`); this only
  * decides which one is drawn.
  */
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 
-export type NoticeKind = 'link' | 'update' | 'whatsNew' | 'watch' | 'planEnds' | 'backup' | 'safekeep';
+export type NoticeKind = 'link' | 'whatsNew' | 'watch' | 'planEnds' | 'backup' | 'safekeep';
 
-export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'update', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep'];
+export const NOTICE_ORDER: readonly NoticeKind[] = ['link', 'whatsNew', 'watch', 'planEnds', 'backup', 'safekeep'];
 
 /** Notices that never wait a day after another was closed: answers and facts, not offers. */
 const NEVER_WAIT: ReadonlySet<NoticeKind> = new Set<NoticeKind>(['link', 'whatsNew', 'planEnds']);

@@ -19,6 +19,7 @@ My view / decision (he delegated it):
 - The list comes from a small whats-new.json that each release attaches (built from whatsNew.ts). No list when it cannot be read.
 - Never a forced update: "Later" always works. A minimum-version switch only if a server change ever breaks old versions.
 - Ships in the next release (waiting list), with UAT and a fresh-eyes review.
+- Built 5 Nov 2026 (helper): full screen + orange line + 7th/3rd-launch rule + whats-new.json release asset + UAT flow uat-rel-r336-update.yaml; waiting list in PROGRESS.md. The restart after a Play download stays the small sheet.
 
 ## R-334. "My members" next to "Members": rename + root cause + global rule — 5 Nov 2026
 
