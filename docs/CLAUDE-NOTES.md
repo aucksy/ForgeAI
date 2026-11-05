@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-336. Update pop-up: option B (full screen) + top line + 7th launch - 5 Nov 2026
+
+He said (5 Nov 2026, on the design canvas): "B (full screen) - We can do the full screen thing but we have to ensure that we are not showing this every time the user launches the app. So once someone has tapped on the later button on this full screen notification, then there can be one simple line at the top of the homepage that update to latest version. that may be visible enough with a different color or something. And then we can probably show this again on, let's say, the seventh launch of the app. Also consider what happens if someone has not updated the app and we have rolled out quite a few different versions. Yeah, I don't know, you decide the best implementation."
+
+My view / decision (he delegated it):
+- First launch that finds a newer version: the full-screen pop-up (design B). Never during a workout, only over the 4 main tabs.
+- "Later": a slim orange line at the top of the Workout tab ("A new version is ready. Update"). One tap starts the update. No close button; it goes when the app is updated. It replaces the old Workout-tab card.
+- The full screen comes back on the 7th launch after it last showed (a launch = app start, or a return after 6+ hours). Never twice in one day.
+- Far behind (2+ versions, or the update is 14+ days old): every 3rd launch instead of the 7th, and the screen says "You are N versions behind". Its list shows the newest version's What's new (3 lines), plus "and the changes from N earlier updates".
+- The list comes from a small whats-new.json that each release attaches (built from whatsNew.ts). No list when it cannot be read.
+- Never a forced update: "Later" always works. A minimum-version switch only if a server change ever breaks old versions.
+- Ships in the next release (waiting list), with UAT and a fresh-eyes review.
+
 ## R-334. "My members" next to "Members": rename + root cause + global rule — 5 Nov 2026
 
 He said: "on the edit panel there is a new tab added called my members and there is already one called members ... I did not expect you to make such a simple mistake ... figure out how did you make this simple mistake and then make that a global rule ... change the name of the tab." Root cause: F109's page was named on 24 Oct from the trainer's view; the owner was later given it too and the name was never re-read in the owner's menu beside "Members"; no check compared names; #86 showed the name inside a trainer story. Did: renamed to "Training progress" (nav, More, page, empty states, hints, Hinglish, ADMIN_NEWS line says it was "My members"); test apps/dashboard/test/crm/navNames.test.ts fails on two menu names that mean the same; global rule now D:/Brain/How I Like Things/fresh-eyes-review-before-anything-ships.md (R-335). Sweep: member app has "My gym" (Gym tab) and "Your gym" (Settings), different screens, left.
