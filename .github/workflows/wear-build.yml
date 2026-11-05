@@ -266,6 +266,20 @@ jobs:
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/ci/watch_keep_screen_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat"
 
+      # R-353 / R-364: Always-on screen ON: the workout dims, and still dims after a call, leaving the
+      # app, another app on top, a notification and the phone link dropping; the black-screen self-heal,
+      # the R-341 dim countdown, and no wake lock or busy loop left behind (scripts/ci/watch_dim_uat.sh).
+      - name: Workout dims after interruptions (Always-on screen on)
+        if: always()
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: android-wear
+          arch: x86_64
+          profile: wearos_large_round
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/ci/watch_dim_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/dim"
+
       - name: Upload the UAT pictures and dumps
         if: always()
         uses: actions/upload-artifact@v4
