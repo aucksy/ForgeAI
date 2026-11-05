@@ -1,0 +1,59 @@
+# Part UAT, R-358 / R-362 / R-364 flow c (after flow b; run-device-qa.sh moves the phone's clock to 75 s
+# before midnight first, so this workout crosses midnight). Preacher curl, still "One side at a time".
+#  - POSITIVE: 10 x 19 per side beats flow b's best one-side set (10 x 18): "New record" pops up.
+#  - R-362 NEGATIVE: 10 x 20 is a record too, but one pop-up per exercise per workout: none.
+#  - Interruption: the app is killed and opened again mid-workout; set 1 unticked and ticked again:
+#    no pop-up again (the workout remembers it already showed one).
+# Pictures rel-r358-c-*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+- assertVisible: ".*REPS/SIDE.*"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "19"
+- extendedWaitUntil:
+    visible: "New record.*"
+    timeout: 5000
+- takeScreenshot: rel-r358-c-real-record-pops-up
+- runFlow: sub-uat-rest-clear.yaml
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "2"
+      KG: "10"
+      REPS: "20"
+- assertNotVisible: "New record.*"
+- takeScreenshot: rel-r358-c-second-record-medal-only
+- runFlow: sub-uat-rest-clear.yaml
+# ---------------------------------------------------------------- the app killed mid-workout
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Resume workout|Dumbbell Preacher Curl set 1 complete.*"
+    timeout: 60000
+- tapOn:
+    text: "Resume workout"
+    optional: true
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Dumbbell Preacher Curl set 1 complete. Tap to undo"
+- tapOn: "Dumbbell Preacher Curl set 1 complete. Tap to undo"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Dumbbell Preacher Curl set 1"
+- extendedWaitUntil:
+    visible: 'Skip rest|In use\. .*'
+    timeout: 8000
+- assertNotVisible: "New record.*"
+- takeScreenshot: rel-r358-c-after-restart-no-repeat
+- runFlow: sub-uat-r358-finish.yaml
+- takeScreenshot: rel-r358-c-finish-lists-records

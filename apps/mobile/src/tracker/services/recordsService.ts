@@ -286,7 +286,12 @@ export async function getSessionRecords(sessionId: string): Promise<RecordEventR
  * The bests before a new workout, for the live pop-up. Built by the same rule as the finish
  * screen, so the pop-up and the saved record agree. null when the exercise has no history.
  */
-export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExercise, 'bwShare'>, bw: readonly BodyweightPoint[], today: string): PriorBests | null {
+export function priorBestsFrom(
+  records: ExerciseRecords,
+  info: Pick<TrackerExercise, 'bwShare'> & Partial<Pick<TrackerExercise, 'loadMode'>>,
+  bw: readonly BodyweightPoint[],
+  today: string,
+): PriorBests | null {
   if (records.bests.length === 0) return null;
   const by: Partial<Record<RecordKind, number>> = {};
   // 13 Oct 2026: who held each record (the overload gate's bar) and the Set records ladder.
@@ -307,6 +312,8 @@ export function priorBestsFrom(records: ExerciseRecords, info: Pick<TrackerExerc
     holderKg,
     // Review fix: the rep-record bar (no quiet lighter sets), else the table's ladder (older data).
     ladder: records.barLadder ?? (records.ladder ?? []).map((r) => [r.reps, r.weightKg] as [number, number]),
+    // R-358: the bests are the current counting's (engine/records); a set in another is not judged.
+    ...(info.loadMode ? { mode: info.loadMode } : {}),
   };
 }
 

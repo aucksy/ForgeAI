@@ -1,0 +1,37 @@
+# Sub-flow (called with runFlow; not a part of its own): R-358 UAT. Dumbbell Preacher Curl set N at
+# KG x REPS, typed and ticked (a row is added first when the card has fewer than N). Ends right after
+# the tick, once the rest (or "In use") is up: the record pop-up, when there is one, is shown by then
+# (afterTick shows it before it starts the rest). No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    when:
+      notVisible: "Dumbbell Preacher Curl set ${N} weight, .*"
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^Add set$"
+      - tapOn:
+          text: "^Add set$"
+          index: 0
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set ${N} weight, .*"
+      VALUE: " ${KG}"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set ${N} reps.*"
+      VALUE: " ${REPS}"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Dumbbell Preacher Curl set ${N}"
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Skip rest|In use\. .*'
+    timeout: 8000

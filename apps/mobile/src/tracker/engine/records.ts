@@ -50,7 +50,7 @@
  */
 import { estimatedOneRepMax } from '@/lib/e1rm';
 
-import { fmtDuration, shownDistUnit, type DistUnit, type LoadMode, type LogType } from './logTypes';
+import { fmtDuration, isLoadMode, shownDistUnit, type DistUnit, type LoadMode, type LogType } from './logTypes';
 import { bodyweightOn, setVolumeKg, type BodyweightPoint, type VolumeRule } from './volume';
 
 export type RecordKind = 'weight' | 'e1rm' | 'rep_record' | 'best_set' | 'best_session' | 'reps' | 'duration' | 'pace' | 'distance';
@@ -421,10 +421,62 @@ export function sessionBests(session: RecordSession, rule: RecordRule, kinds: re
 }
 
 /**
+ * R-358 (5 Nov 2026): the counting a set was logged with — its own, else the exercise's
+ * current one (`setExerciseLoadMode` stamps the old counting on every older set first). PURE.
+ */
+export function setCounting(s: Pick<RecordSet, 'loadMode'>, rule: Pick<VolumeRule, 'loadMode'>): LoadMode {
+  return isLoadMode(s.loadMode) ? s.loadMode : isLoadMode(rule.loadMode) ? rule.loadMode : 'one';
+}
+
+/**
  * Every record of one exercise across its history. `sessions` may come in any order; each
  * is judged only against the workouts BEFORE it.
+ *
+ * R-358 (owner, 5 Nov 2026): records compare only sets logged with the SAME counting. A
+ * dumbbell preacher curl logged "weight as typed" (10 kg × 15 = 150 kg in one set) and then
+ * switched to "one side at a time" (10 kg × 13 per side = 260 kg) is not a new "most lifted
+ * in one set" — the numbers mean different things. So each counting keeps its own history:
+ * events come from every counting (a set is judged only against earlier sets of its own
+ * counting, and the first workout in a counting is quiet, like any first time); the bests,
+ * the Set records ladder and the overload bars are those of the exercise's CURRENT counting —
+ * what the next set is judged against. No sets in the current counting yet: no bests. Every
+ * kind follows it (not just the totals): "as typed" may be the total of two dumbbells or the
+ * reps of both arms, so even the heaviest weight and most reps are not proven comparable.
  */
 export function exerciseRecords(sessions: readonly RecordSession[], rule: RecordRule, bw: readonly BodyweightPoint[]): ExerciseRecords {
+  const current = setCounting({}, rule);
+  const byCounting = new Map<LoadMode, RecordSession[]>();
+  for (const session of sessions) {
+    const split = new Map<LoadMode, RecordSet[]>();
+    for (const s of session.sets) {
+      const m = setCounting(s, rule);
+      const list = split.get(m);
+      if (list) list.push(s);
+      else split.set(m, [s]);
+    }
+    for (const [m, sets] of split) {
+      const list = byCounting.get(m) ?? [];
+      list.push(sets.length === session.sets.length ? session : { ...session, sets });
+      byCounting.set(m, list);
+    }
+  }
+  // One counting all along (nearly everyone): exactly as before.
+  if (byCounting.size === 0 || (byCounting.size === 1 && byCounting.has(current))) return oneCountingRecords(sessions, rule, bw);
+  const order = new Map(chronological(sessions).map((s, i) => [s.sessionId, i]));
+  const events: RecordEvent[] = [];
+  let mine: ExerciseRecords | null = null;
+  for (const [m, list] of byCounting) {
+    const r = oneCountingRecords(list, rule, bw);
+    events.push(...r.events);
+    if (m === current) mine = r;
+  }
+  // Oldest first, as one history (a stable sort: a workout's own events keep their order).
+  events.sort((a, b) => (order.get(a.sessionId) ?? 0) - (order.get(b.sessionId) ?? 0));
+  return mine ? { ...mine, events } : { kinds: kindsForRule(rule), bests: [], events, ladder: [], bars: {}, barLadder: [] };
+}
+
+/** `exerciseRecords` over sets that all share one counting. */
+function oneCountingRecords(sessions: readonly RecordSession[], rule: RecordRule, bw: readonly BodyweightPoint[]): ExerciseRecords {
   const kinds = kindsForRule(rule);
   const bests = new Map<RecordKind, RecordHit>();
   const events: RecordEvent[] = [];

@@ -1,0 +1,46 @@
+# Part UAT, R-358 flow b (after flow a): the owner's workout. Preacher curl, Counting changed to "One
+# side at a time" (his switch), then exactly his sets: 10 x 13 (was "Most lifted in one set · 10 kg x
+# 13"), 10 x 18, 10 x 18, 10 x 15 (was "Most lifted in one workout · 1,020 kg"). NEGATIVE: no "New
+# record" after any tick - nothing has been logged one side at a time before. Also the edit he made:
+# set 1 changed 13 -> 18 after its tick, no pop-up. Pictures rel-r358-b-*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "One side at a time"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "13"
+- assertNotVisible: "New record.*"
+- takeScreenshot: rel-r358-b-10x13-per-side-no-record
+- runFlow: sub-uat-rest-clear.yaml
+# His edit after the tick: 13 -> 18 on the ticked row. Typing never pops up a record.
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set 1 reps.*"
+      VALUE: " 18"
+- assertNotVisible: "New record.*"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "2"
+      KG: "10"
+      REPS: "18"
+- assertNotVisible: "New record.*"
+- runFlow: sub-uat-rest-clear.yaml
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "3"
+      KG: "10"
+      REPS: "15"
+- assertNotVisible: "New record.*"
+- assertNotVisible: ".*1,020 kg.*"
+- takeScreenshot: rel-r358-b-1020-kg-no-record
+- runFlow: sub-uat-r358-finish.yaml
+- takeScreenshot: rel-r358-b-finish

@@ -252,6 +252,13 @@ export interface DraftExercise {
   /** Phase 1: best weight / e1RM before this workout, for live record alerts. */
   bests?: PriorBests | null;
   /**
+   * R-362 (owner, 5 Nov 2026): this exercise already had its record pop-up in this workout. At
+   * most ONE per exercise per workout (any of its cards): later records show only the medal on
+   * the set row; Finish still lists every record. Saved with the draft, so a restart or an
+   * untick + retick never pops it up again.
+   */
+  recordToasted?: true;
+  /**
    * Phase 1: working set rows when the exercise was put on screen. "Update routine?"
    * only counts a set change when the member added or removed rows — leaving planned
    * sets blank is skipping, not re-planning (Hevy behaves the same way).
@@ -465,6 +472,8 @@ export interface ActiveWorkoutState {
    * A correction or past log has none (it never pops up) and is left alone.
    */
   refreshBests: (exerciseId: string) => Promise<void>;
+  /** R-362: this exercise's one record pop-up of the workout has been shown (every card of it). */
+  markRecordToasted: (exerciseId: string) => void;
   /** The copy's Undo bar ran out (only that copy's: `id`). */
   dismissCopy: (id: number) => void;
   toggleWarmup: (exKey: string, setKey: string) => void;
@@ -2129,6 +2138,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       persistSoon();
     },
 
+    markRecordToasted: (exerciseId) => {
+      if (!get().exercises.some((e) => e.exerciseId === exerciseId && !e.recordToasted)) return;
+      mutate((list) => list.map((e) => (e.exerciseId === exerciseId ? { ...e, recordToasted: true } : e)), true);
+    },
+
     undoCopy: () => {
       const lc = get().lastCopy;
       if (!lc) return;
@@ -2346,7 +2360,14 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
             : e,
         ),
       );
-      if (!correcting) void setExerciseLoadMode(ex.exerciseId, mode).catch(() => undefined);
+      // R-358: records compare only sets of one counting, so the card's bests are re-read in the
+      // new counting once it is saved (none yet = nothing announced; the old bests' `mode` keeps
+      // them from judging the new sets meanwhile).
+      if (!correcting) {
+        void setExerciseLoadMode(ex.exerciseId, mode)
+          .then(() => get().refreshBests(ex.exerciseId))
+          .catch(() => undefined);
+      }
     },
 
     swapExercise: async (exKey, next) => {

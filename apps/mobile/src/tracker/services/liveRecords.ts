@@ -66,6 +66,13 @@ export interface PriorBests {
    * rep record must beat. Absent or empty: no rep records (an older draft, or the first time).
    */
   ladder?: [number, number][];
+  /**
+   * R-358 (5 Nov 2026): the counting these bests were logged with (the exercise's counting when
+   * they were read). A set ticked under another counting is judged against nothing — the
+   * member changed Counting mid-workout, and 10 kg × 13 per side is not 10 kg × 15 as typed.
+   * Absent on older drafts: every set is judged, as before.
+   */
+  mode?: LoadMode;
 }
 
 export interface LiveHit {
@@ -93,6 +100,8 @@ interface LiveExercise {
   distUnit?: DistUnit;
   /** HI-21: a bike's plausible pace differs from a run's (the draft card's name). */
   name?: string;
+  /** R-362: this exercise's one record pop-up of the workout was shown (medals still follow). */
+  recordToasted?: boolean;
 }
 
 /** A ticked draft set in stored form. */
@@ -131,11 +140,15 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   const repLadder: RepLadder | null = keepsRepRecords(lt) && (ex.bests.ladder?.length ?? 0) > 0 ? new Map(ex.bests.ladder) : null;
   /** The overload gate: a lighter set neither takes nor raises "Most reps" / "Best set" here. */
   const gated = (kind: RecordKind, set: RecordSet): boolean => overloadGated(kind, lt, set.weightKg, holder[kind]);
+  /** R-358: only sets logged with the bests' own counting are judged (or count toward them). */
+  const priorMode = ex.bests.mode;
+  const sameCounting = (set: RecordSet): boolean => priorMode == null || set.loadMode === priorMode;
   let sessionTotal = 0;
   for (const card of earlier) {
     for (const s of card.sets) {
       if (!s.done || s.isWarmup) continue;
       const set = storedSet(s, lt, mode);
+      if (!sameCounting(set)) continue;
       for (const kind of kinds) {
         if (kind === 'best_session' || gated(kind, set)) continue;
         const v = setRecordValue(kind, set, rule, body);
@@ -153,6 +166,7 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   for (const s of ex.sets) {
     if (!s.done || s.isWarmup) continue;
     const set = storedSet(s, lt, mode);
+    if (!sameCounting(set)) continue;
     const all: LiveHit[] = [];
     for (const kind of RECORD_KINDS) {
       if (kind === 'rep_record') {
@@ -212,6 +226,9 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
 ): LiveHit | null {
   const ex = exercises.find((e) => e.key === exKey);
   if (!ex) return null;
+  // R-362 (owner, 5 Nov 2026): at most ONE record pop-up per exercise per workout — the first.
+  // A later record (another kind, or the same set after an edit or a retick) shows the medal only.
+  if (exercises.some((e) => e.exerciseId === ex.exerciseId && e.recordToasted)) return null;
   const hit = liveRecordHits(ex, earlierCards(exercises, exKey)).get(setKey);
   if (!hit) return null;
   const lt: LogType = ex.logType ?? 'weight_reps';
@@ -224,6 +241,8 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
       for (const s of card.sets) {
         if (s.key === setKey || !s.done || s.isWarmup) continue;
         const other = storedSet(s, lt, mode);
+        // R-358: a set in another counting never matches (nor hides) this one.
+        if (other.loadMode !== c.set.loadMode) continue;
         if (c.kind === 'rep_record') {
           // Another set this workout at least as heavy for at least as many reps.
           if (!beats(c.set.weightKg, other.weightKg) && other.reps >= c.set.reps) return true;

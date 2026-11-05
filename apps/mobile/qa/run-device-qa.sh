@@ -1895,6 +1895,7 @@ part_uat() {
   adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
   part_u344
   part_u355
+  part_u358
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1915,11 +1916,38 @@ part_u344() {
     adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || adb shell "su 0 date $(adb shell date -d @$((now + 86400)) +%m%d%H%M%Y.%S | tr -d '\r')" >/dev/null 2>&1 || true
     log "UAT R-344: phone date moved from $(date -u -d @"$now" +%F) to $(adb shell date +%F | tr -d '\r') for flow b"
     uat_flow uatr344b uat-rel-r344-b-line.yaml
+    # R-364: switch off/on again, killed on the finish screen, access removed later (flow c, same day).
+    uat_flow uatr344c uat-rel-r344-c-states.yaml
     now=$(adb shell date +%s | tr -d '\r')
     adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || adb shell "su 0 date $(adb shell date -d @$((now - 86400)) +%m%d%H%M%Y.%S | tr -d '\r')" >/dev/null 2>&1 || true
     adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
     log "UAT R-344: phone date back to $(adb shell date +%F | tr -d '\r')"
   fi
+}
+# R-358 / R-362 / R-364 (owner, 5 Nov 2026): no false "New record" after Counting changes. Flow a: a fresh
+# install + demo, the preacher curl "Weight as typed" 10 x 15, 10 x 12. Flow b: his workout, Counting "One
+# side at a time", 10 x 13 (edited to 18 after the tick), 10 x 18, 10 x 15: NO pop-up (negative). Flow c,
+# with the phone's clock 75 s before midnight (the workout crosses it): 10 x 19 pops up (positive), 10 x 20
+# does not (one pop-up per exercise per workout), the app killed and opened, set 1 unticked and ticked: none.
+# The clock is put back afterwards. Also runs alone with only=u358. Pictures rel-r358-*.png.
+part_u358() {
+  local rc=0 now secs delta
+  uat_flow uatr358a uat-rel-r358-a-history.yaml || return 1
+  uat_flow uatr358b uat-rel-r358-b-switch.yaml || return 1
+  now=$(adb shell date +%s | tr -d '\r')
+  secs=$(adb shell date +%H:%M:%S | tr -d '\r' | awk -F: '{print $1*3600 + $2*60 + $3}')
+  delta=$((86400 - secs - 75))
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + delta))" >/dev/null 2>&1 || true
+  log "UAT R-358 c: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (75 s before midnight)"
+  uat_flow uatr358c uat-rel-r358-c-real.yaml || rc=1
+  log "UAT R-358 c: phone clock after the flow $(adb shell date '+%F %T %z' | tr -d '\r')"
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - delta))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT R-358: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
 }
 # R-355 (owner, 5 Nov 2026): during the rest after an exercise's LAST set the watch names the NEXT
 # exercise (its set 1), and after the workout's final set no exercise name goes, only "All sets done".
@@ -1960,6 +1988,7 @@ part_u355() {
 qa_runs uat && { log "gate part UAT begins"; part_uat; }
 qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
+qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

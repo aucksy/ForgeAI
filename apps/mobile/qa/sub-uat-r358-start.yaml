@@ -1,0 +1,41 @@
+# Sub-flow (called with runFlow; not a part of its own): R-358 UAT. An empty workout with Dumbbell
+# Preacher Curl, its Counting set to COUNTING ("Weight as typed" / "One side at a time"; "keep" leaves
+# it as it is). No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Dumbbell Preacher Curl"
+- tapOn:
+    text: "Select Dumbbell Preacher Curl"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- runFlow:
+    when:
+      true: ${COUNTING != 'keep'}
+    commands:
+      - tapOn:
+          text: "More for Dumbbell Preacher Curl.*"
+          index: 0
+      - tapOn: "Counting"
+      - extendedWaitUntil:
+          visible: ".*Past workouts keep theirs.*"
+          timeout: 10000
+      - tapOn: "${COUNTING}.*"
+      - extendedWaitUntil:
+          notVisible: ".*Past workouts keep theirs.*"
+          timeout: 10000

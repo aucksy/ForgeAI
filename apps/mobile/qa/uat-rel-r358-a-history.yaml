@@ -1,0 +1,31 @@
+# Part UAT, R-358 flow a (owner, 5 Nov 2026). Dumbbell Preacher Curl: after he changed its Counting to
+# "One side at a time", 10 kg x 13 popped up "New record · Most lifted in one set" (13 x 2 sides = 260 kg
+# beat 10 x 15 = 150 kg typed as one), then 10 x 18, 10 x 18, 10 x 15 popped up "Most lifted in one
+# workout · 1,020 kg". Records now compare only sets logged with the same counting.
+# This flow lays down HIS history: a fresh install with the demo (gate-demo), then a workout of the
+# preacher curl "Weight as typed": 10 x 15 and 10 x 12. No record pop-up (a first time in that counting).
+# Pictures rel-r358-a-*.png.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "Weight as typed"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "15"
+- assertNotVisible: "New record.*"
+- runFlow: sub-uat-rest-clear.yaml
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "2"
+      KG: "10"
+      REPS: "12"
+- assertNotVisible: "New record.*"
+- takeScreenshot: rel-r358-a-history-as-typed
+- runFlow: sub-uat-r358-finish.yaml

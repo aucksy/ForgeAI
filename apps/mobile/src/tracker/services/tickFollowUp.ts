@@ -54,6 +54,8 @@ export function afterTick(exKey: string, setKey: string): void {
     playWorkoutSound('record');
     const ctx = { logType: ex.logType ?? 'weight_reps', loadMode: ex.loadMode ?? 'one', distUnit: ex.distUnit ?? 'km' } as const;
     useWorkoutUi.getState().showRecord(ex.name, recordLabel(hit, ctx), recordLines(hit, ctx));
+    // R-362: the exercise's one record pop-up of this workout; later records keep only the medal.
+    st.markRecordToasted(ex.exerciseId);
   } else if (!st.easyWeek && !done.isWarmup && done.setType !== 'drop') {
     // Review fix: a drop set is lighter on purpose, so drop sets are never compared.
     // Not a record, but better than the same set last time (the PREVIOUS the row shows): one

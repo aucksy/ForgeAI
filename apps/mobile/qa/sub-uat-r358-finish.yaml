@@ -1,0 +1,36 @@
+# Sub-flow (called with runFlow; not a part of its own): R-358 UAT. Finish the open workout (rows left
+# unticked are left out); ends on "Workout complete".
+appId: com.mettleup.app
+---
+- runFlow: sub-uat-rest-clear.yaml
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
