@@ -50,8 +50,12 @@ appId: com.mettleup.app
 # Following lands back on the Workout tab. Easy weeks start on (the open owner decision's
 # default): the Up next card names the plan's routine with its week line, week 1 with the easy
 # one in week 6.
-- extendedWaitUntil:
-    visible: "Up next: Full Body [AB]"
+# 0.72.0: the "Muscles ready today" card (F59) under Up next makes the tab come back scrolled
+# below the Up next card on the owner profile (run 41960153708): look up for it.
+- scrollUntilVisible:
+    element: "Up next: Full Body [AB]"
+    direction: UP
+    centerElement: true
     timeout: 20000
 - assertVisible: "Week 1 · easy week in week 6"
 - takeScreenshot: 84-workout-today-program

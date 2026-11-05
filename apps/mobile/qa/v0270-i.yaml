@@ -31,21 +31,9 @@ appId: com.mettleup.app
     visible: "^Profile$"
     timeout: 60000
 # Part H2 leaves its workout open: discard it first (its own Discard, then the dialog's).
-- tapOn:
-    text: "^Workout$"
-    index: 0
-- extendedWaitUntil:
-    visible: "Start empty workout|Resume workout"
-    timeout: 30000
-- runFlow:
-    when:
-      visible: "Resume workout"
-    commands:
-      - tapOn: "^Discard workout$"
-      - tapOn: "^Discard$"
-      - extendedWaitUntil:
-          visible: "Start empty workout"
-          timeout: 15000
+# 0.72.0 (run 41960153708, owner): Up next, the "only on this phone" sign-in card and "Muscles
+# ready today" push "Start empty workout" below the edge: the shared sub-flow scrolls to it.
+- runFlow: sub-workout-fresh.yaml
 # ---------------------------------------------------------------- import from Strong
 - runFlow:
     file: sub-settings-page.yaml
