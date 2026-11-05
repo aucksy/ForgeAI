@@ -168,7 +168,7 @@ export function RestTimerBar() {
   const master = useTrackerPrefs((s) => s.inUseAfterSet);
   const chosen = useTrackerPrefs((s) => (exId ? s.inUseByExercise[exId] : undefined));
   const autoInUse = inUseAutoOn(master, chosen, inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
-  // R-305: "300 kg more to reach today's target" for that same lift.
+  // R-305: "300 kg more to beat the previous total" for that same lift.
   const beatLine = useKgLeft((s) => inUseBeatLine(startedBy ? s.byEx[startedBy] ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);

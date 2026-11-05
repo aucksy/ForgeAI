@@ -3,7 +3,7 @@
 #  - R-304/R-307/R-311 "In use": opens by itself after a NON-last set on a barbell lift and on a
 #    machine; never after an exercise's LAST set; a dumbbell move off a bench (Lateral Raise) does not
 #    open it, and its rest clock says "Tap: In use" (R-299) and opens it by hand.
-#  - R-305: the In use screen says "<n> kg more to reach today's target" (its spoken label).
+#  - R-305: the In use screen says "<n> kg more to beat the previous total" (its spoken label).
 #  - R-308: Stay keeps the Pec Deck at 40 kg (the card goes); Try takes the Leg Extension to 40 kg
 #    with the reason line "Stuck at 45 kg, so a small step back to 40 kg."
 #  - R-310 (owner: "suggesting 38 kg ... this machine only has 5 kg increments"): Pec Deck set 1 at
@@ -20,7 +20,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 8000
-- assertVisible: 'In use\. [\d,]+ kg more to reach today''s target. Back in .*'
+- assertVisible: 'In use\. [\d,]+ kg more to beat the previous total\. Back in .*'
 - takeScreenshot: rel-30-in-use-bench-set-1
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:
@@ -86,7 +86,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 8000
-- assertVisible: 'In use\. [\d,]+ kg more to reach today''s target. Back in .*'
+- assertVisible: 'In use\. [\d,]+ kg more to beat the previous total\. Back in .*'
 - takeScreenshot: rel-33-in-use-pec-deck-beat-line
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:

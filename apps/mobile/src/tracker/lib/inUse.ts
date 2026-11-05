@@ -88,11 +88,11 @@ export function inUseBeatLine(p: { left: number; reps: boolean; unit: string; ea
   if (!p || !Number.isFinite(p.left)) return null;
   // A little left (0.3) is still "1 more", never "beaten".
   const n = p.left <= 1e-9 ? 0 : Math.max(1, Math.round(p.left));
-  // Fresh-eyes review (5 Nov 2026): `left` is what is still to go to TODAY's total (the exercise
-  // card's "of 1,560 kg"), not to last time's, so the words name today's target.
-  if (n <= 0) return "Today's target reached ✓";
-  if (p.reps) return `${n} more ${n === 1 ? 'rep' : 'reps'} to reach today's target`;
-  return `${groupInt(n)} ${p.unit} more${p.each ? ' per hand' : ''} to reach today's target`;
+  // The owner's own words (R-305). `left` is the gap to the PREVIOUS workout's total for this
+  // exercise (kgTarget.previousLeft), never to today's target (fresh-eyes review, 5 Nov 2026).
+  if (n <= 0) return 'Previous total beaten ✓';
+  if (p.reps) return `${n} more ${n === 1 ? 'rep' : 'reps'} to beat the previous total`;
+  return `${groupInt(n)} ${p.unit} more${p.each ? ' per hand' : ''} to beat the previous total`;
 }
 
 /**

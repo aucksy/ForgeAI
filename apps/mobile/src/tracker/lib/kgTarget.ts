@@ -152,6 +152,22 @@ export function beatPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null
   return kgPlan(t, lastSets) ?? repPlan(t, lastSets);
 }
 
+/**
+ * R-305 + fresh-eyes review (5 Nov 2026): what the "In use" screen's "N kg more to beat the previous
+ * total" needs — the PREVIOUS workout's total for this exercise (every set it logged, drops too: what
+ * it lifted) minus what is done today, in kg (weight × reps) or, for a rep plan, in reps. It used to be
+ * the gap to TODAY's target (960 kg where last time was 1,440 kg and 600 kg was done). null when there
+ * is no previous workout to beat. <= 0 = beaten. PURE.
+ */
+export function previousLeft(previous: readonly KgSet[], done: number, reps: boolean): number | null {
+  const total = previous.reduce((a, s) => {
+    if (!(Number.isFinite(s.reps) && s.reps > 0)) return a;
+    if (reps) return a + s.reps;
+    return Number.isFinite(s.weightKg) && s.weightKg > 0 ? a + s.weightKg * s.reps : a;
+  }, 0);
+  return total > 0 ? total - done : null;
+}
+
 /** A row of the open workout, as the card holds it. */
 export interface KgRow {
   weightKg: number | null;

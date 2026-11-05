@@ -53,7 +53,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine } from '../lib/kgTarget';
+import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, previousLeft, repLiveLine } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -297,17 +297,19 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       rowsRef.current.map((r) => ({ weightKg: r.set.weightKg, reps: r.set.reps, done: r.set.done, isWarmup: r.set.isWarmup, setType: r.set.setType, hintKg: r.fill?.weightKg, hintReps: r.fill?.reps, eased: r.eased })),
     );
     const each = weightIsEach(loadMode) ? ' each' : '';
+    // R-305: the gap to the PREVIOUS workout's total for this exercise (not to today's target).
+    const prevLeft = previousLeft(exercise.previousSets, g.done, kgPlanned.reps === true);
     return {
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
       beaten: kgBeaten(g),
-      // R-305: what the "In use" screen says ("300 kg more to reach today's target"), in the member's unit.
-      left: { left: kgPlanned.reps ? g.left : kgToDisplay(g.left, units), reps: kgPlanned.reps === true, unit: weightUnit(units), each: weightIsEach(loadMode) },
+      // R-305: what the "In use" screen says ("300 kg more to beat the previous total"), in the member's unit.
+      left: prevLeft == null ? null : { left: kgPlanned.reps ? prevLeft : kgToDisplay(prevLeft, units), reps: kgPlanned.reps === true, unit: weightUnit(units), each: weightIsEach(loadMode) },
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kgPlanned, tickKey, easedKey, units, loadMode]);
+  }, [kgPlanned, tickKey, easedKey, units, loadMode, exercise.previousSets]);
   // R-305: hand it to the "In use" screen; gone when this card leaves the workout.
   const putLeft = useKgLeft((s) => s.put);
   useEffect(() => {
