@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE - needs the owner's yes. Cloudflare D1 `forgeai-web` (our web server's own small
+-- APPLIED LIVE 5 Nov 2026 (owner's yes, R-331) with `wrangler d1 execute --file` (not via `migrations apply`, because 0009 has no yes yet; re-runnable: IF NOT EXISTS only).
+-- (was not applied) - needs the owner's yes. Cloudflare D1 `forgeai-web` (our web server's own small
 -- database), NOT the gym server.
 -- Apply with: npx wrangler d1 migrations apply forgeai-web --remote   (from deploy/panel)
 --

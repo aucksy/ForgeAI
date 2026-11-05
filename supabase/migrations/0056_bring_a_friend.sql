@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE - needs the owner's yes (a live database change).
+-- APPLIED LIVE 5 Nov 2026 (owner's yes, R-331; SQL Editor, sha256 checked; its test PASSED on live).
+-- (was not applied) - needs the owner's yes (a live database change).
 --
 -- 0056: Bring a friend (F147, from Project Tracker #58 item 4; built 4 Nov 2026). A member shares an invite
 -- link from the app's Gym tab. The link opens a small public page (app.mettleup.fit/f/<CODE>, the panel's

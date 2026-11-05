@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE - needs the owner's yes (paste into the Supabase SQL Editor after 0056).
+-- APPLIED LIVE 5 Nov 2026 (owner's yes, R-331; SQL Editor, sha256 checked; its test PASSED on live).
+-- (was not applied) - needs the owner's yes (paste into the Supabase SQL Editor after 0056).
 -- 0057: F79 online payments (R-328, 4 Nov 2026). Additive and re-runnable: ONE new read-only function.
 --
 -- member_pay_me(p_key) tells MettleUp's web server (deploy/panel/pay.js) which of the gym's own members

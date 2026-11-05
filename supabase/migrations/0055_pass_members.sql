@@ -1,4 +1,5 @@
--- NOT APPLIED LIVE - needs the owner's yes (a live database change).
+-- APPLIED LIVE 5 Nov 2026 (owner's yes, R-331; SQL Editor, sha256 checked; its test PASSED on live).
+-- (was not applied) - needs the owner's yes (a live database change).
 --
 -- 0055: pass members (F123, 4 Nov 2026). Someone who trains at the gym on a pass bought from another
 -- company (FITPASS, cultpass and the like) pays that company, not the gym. The admin app marks them on

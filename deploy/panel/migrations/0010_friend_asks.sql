@@ -1,4 +1,5 @@
--- F147 Bring a friend (4 Nov 2026). NOT APPLIED LIVE: needs the owner's yes
+-- APPLIED LIVE 5 Nov 2026 (owner's yes, R-331) with `wrangler d1 execute --file` (not via `migrations apply`, because 0009 has no yes yet; re-runnable: IF NOT EXISTS only).
+-- F147 Bring a friend (4 Nov 2026). (was not applied): needs the owner's yes
 -- (npx wrangler d1 migrations apply forgeai-web --remote).
 -- The friend invite page's form (app.mettleup.fit/f/<CODE>, friend.js) may be sent 5 times a day from one
 -- network address. This keeps only WHEN and a salted, daily one-way hash of the address: never the name,
