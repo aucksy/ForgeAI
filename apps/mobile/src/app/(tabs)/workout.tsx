@@ -46,7 +46,6 @@ import { color, space, type } from '@/theme/tokens';
 import { EasyWeekNote } from '@/tracker/components/EasyWeekNote';
 import { GymWodCard } from '@/tracker/components/GymWodCard';
 import { MuscleTipNote } from '@/tracker/components/MuscleTipNote';
-import { ReadyCard } from '@/tracker/components/ReadyCard';
 import { SwitcherCard, takePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
 import { UpNextCard } from '@/tracker/components/UpNextCard';
 import { WorkoutRoutines } from '@/tracker/components/WorkoutRoutines';
@@ -467,8 +466,8 @@ export default function WorkoutScreen() {
         {/* F151: the workout the member's gym set for everyone today (nothing without one, or while a workout is open). */}
         <GymWodCard hidden={active} startGuard={startGuard} refreshKey={tick} />
 
-        {/* F59: which muscles are still resting from the logged workouts (nothing while a workout is open). */}
-        <ReadyCard hidden={active} refreshKey={tick} />
+        {/* F59 "Muscles ready today" + F60 Quick workout: switched off (owner, 5 Nov 2026, R-372). The code stays
+            (tracker/components/ReadyCard.tsx, app/ready.tsx, app/quick.tsx) but nothing opens it. */}
 
         {importOffer ? <SwitcherCard onPick={openImport} /> : null}
 

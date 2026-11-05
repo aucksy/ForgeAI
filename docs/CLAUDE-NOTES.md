@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-372. Switch off Muscles ready + Quick workout - 5 Nov 2026
+
+He said: "Remove this feature... Muscles ready and quick workout. Disable it" (right after R-371 showed the card hid Biceps on his Pull day).
+
+Done: the Workout tab no longer shows the card (it held both). Code kept, nothing opens it (ready.tsx, quick.tsx). QA: uatf59 flow dropped from the uat part; uat-k4 now asserts neither shows. The R-371 sort fix stays (harmless). Next release What's new must say these two are gone. Tracker rows F59/F60 -> Not doing.
+
 ## R-371. Ready card hid Biceps on a Pull day - 5 Nov 2026
 
 He sent his Pull 1 day (Biceps 13.5 sets, Lats 7.5, Upper back 6, Forearms 4.5, Rear shoulders 1.5). The card said "Still resting: Rear shoulders, Lats, Upper back and 2 more": body order hid Biceps. Fix 5d566993: hardest-worked first. Unit test added; joins the release waiting list; needs a UAT check of the card text in the release round. He offered his Supabase data; not needed, his screenshot proves it.
