@@ -3,6 +3,16 @@
 # it as it is). No `env:` default here (trap 22).
 appId: com.mettleup.app
 ---
+# After the previous flow's finish: leave "Workout complete" by its own Done (run 41988257142 stopped
+# there, with no tab bar on screen).
+- runFlow:
+    when:
+      visible: "Workout complete"
+    commands:
+      - scrollUntilVisible:
+          element: "^Done$"
+          timeout: 15000
+      - tapOn: "^Done$"
 - runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
 - tapOn:

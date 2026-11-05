@@ -1,6 +1,7 @@
-# Part UAT, R-355 flow b: goes on from flow a's rest (no fresh start). Skip rest, then B's two sets:
-# B set 1 -> a rest naming B set 2; B set 2 is the workout's FINAL set -> "All sets done" and no exercise
-# name for the watch. run-device-qa.sh (part_u355) reads the phone's "watch next:" lines after it.
+# Part UAT, R-355 flow b: goes on from flow a's rest (the app in the background). Back to the app, skip
+# the rest, then B's (Lateral Raise's) sets in order: set 1 -> a rest naming Lateral Raise set 2; its
+# last set is the workout's FINAL set -> "All sets done" and no exercise name for the watch.
+# run-device-qa.sh (part_u355) reads the phone's "watch next:" lines after it.
 appId: com.mettleup.app
 ---
 # Back from the background (flow a ends with Home): the same workout, still resting.
@@ -18,37 +19,96 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-uat-tick.yaml
     env:
-      WHO: ".*Leg Extension set 1"
+      WHO: ".*Lateral Raise set 1"
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 8000
-- runFlow:
-    when:
-      visible: 'In use\. .*Tap to close'
-    commands:
-      - tapOn:
-          point: "50%,50%"
-          waitToSettleTimeoutMs: 300
-      - extendedWaitUntil:
-          notVisible: 'In use\. .*Tap to close'
-          timeout: 5000
 - takeScreenshot: rel-r355-04-rest-between-b-sets
-- tapOn: "Skip rest"
-- extendedWaitUntil:
-    notVisible: "Skip rest"
-    timeout: 5000
-# ---------------------------------------------------------------- the workout's final set
-- runFlow:
-    file: sub-uat-tick.yaml
-    env:
-      WHO: ".*Leg Extension set 2"
+# Its other sets (history decides how many; at most 5), each rest skipped; the last one ends the workout.
 - runFlow:
     when:
-      visible: 'In use\. .*Tap to close'
+      visible: "Skip rest"
     commands:
-      - tapOn:
-          point: "50%,50%"
-          waitToSettleTimeoutMs: 300
+      - tapOn: "Skip rest"
+- scrollUntilVisible:
+    element: "Mark .*Lateral Raise set 2 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Lateral Raise set 2 complete"
+    commands:
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Lateral Raise set 2"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: "Skip rest"
+    commands:
+      - tapOn: "Skip rest"
+- scrollUntilVisible:
+    element: "Mark .*Lateral Raise set 3 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Lateral Raise set 3 complete"
+    commands:
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Lateral Raise set 3"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: "Skip rest"
+    commands:
+      - tapOn: "Skip rest"
+- scrollUntilVisible:
+    element: "Mark .*Lateral Raise set 4 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Lateral Raise set 4 complete"
+    commands:
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Lateral Raise set 4"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
+- runFlow:
+    when:
+      visible: "Skip rest"
+    commands:
+      - tapOn: "Skip rest"
+- scrollUntilVisible:
+    element: "Mark .*Lateral Raise set 5 complete"
+    centerElement: true
+    timeout: 6000
+    optional: true
+- runFlow:
+    when:
+      visible: "Mark .*Lateral Raise set 5 complete"
+    commands:
+      - runFlow:
+          file: sub-uat-tick.yaml
+          env:
+            WHO: ".*Lateral Raise set 5"
+      - extendedWaitUntil:
+          visible: "Skip rest|All sets done|Finish workout"
+          timeout: 8000
 - extendedWaitUntil:
     visible: "never shown, a 2 s wait for the card to be posted"
     timeout: 2000
