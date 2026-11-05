@@ -179,6 +179,19 @@ export function finishHeadline(data: Pick<SessionSummaryData, 'session' | 'setMe
   return m > 0 ? `${fmtTotalDistance(m)} · ${sets}` : sets;
 }
 
+/** The milestone line of a member's very first own workout (services/milestones.ts milestoneText(1)). */
+export const FIRST_WORKOUT_LINE = 'Your first workout';
+
+/**
+ * Fresh-eyes review (5 Nov 2026): "Your first workout · 1 lift beat its best" on one card. A first
+ * workout has no best of the member's own to beat: the only earlier sets are the demo's. On the
+ * member's first own workout the finish screen shows no records (they still count from the next
+ * workout on, as every first time does). PURE.
+ */
+export function withoutFirstWorkoutRecords<T extends Pick<SessionSummaryData, 'records' | 'prs'>>(data: T, milestone: string | null): T {
+  return milestone === FIRST_WORKOUT_LINE ? ({ ...data, records: [], prs: [] } as T) : data;
+}
+
 /**
  * The finish screen's answer, in one line (LW-21): "52 min · 18 sets · 12,480 kg lifted ·
  * 2 lifts beat their best". With no kilos it says the distance; records only when there are

@@ -49,7 +49,12 @@ export const STUCK_CHOICES: readonly PrefChoice<StuckChoice>[] = [
 ];
 
 /** The line under "When I'm stuck at a weight" (the sheet). */
-export const STUCK_HELP = 'Stuck means 4 workouts at the same weight with no progress. A slightly lighter weight with more reps often gets you moving again.';
+export const STUCK_HELP = 'Stuck means 4 workouts at the same weight with no progress.';
+/**
+ * Fresh-eyes review (5 Nov 2026): the sheet's subtitle stops at 3 lines, so the second sentence was
+ * cut ("with more r…"). It now sits under the choices, where it wraps in full.
+ */
+export const STUCK_WHY = 'A slightly lighter weight with more reps often gets you moving again.';
 
 /** The line under "Rep range" (the row and the sheet). */
 export const REP_RANGE_HELP = 'Muscle grows in any of these if you finish close to your limit. Strength likes fewer reps.';

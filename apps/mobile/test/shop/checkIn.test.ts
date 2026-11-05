@@ -136,7 +136,7 @@ describe("member_check_in's answer", () => {
     expect(checkInFromRow({ error: 'TOO_MANY_NUMBERS', deskCheck: 'yes' })).toMatchObject({ problem: 'TOO_MANY_NUMBERS' });
     expect(checkInFromRow({ error: 'NOT_ON_ROSTER', deskCheck: true })).toMatchObject({ problem: 'NOT_ON_ROSTER' });
     expect(problemText({ problem: 'DESK_CHECK', gymName: 'G', phone: null })).toBe(
-      'Ask the front desk to confirm your mobile number. They do this only once. Then tap Check in.',
+      'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.',
     );
   });
 

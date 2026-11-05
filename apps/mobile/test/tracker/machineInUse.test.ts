@@ -41,7 +41,7 @@ describe('R-70 / R-304: "In use" after every set (owner, 22 Oct and 3 Nov 2026)'
   it('the screen says the member is resting, and the tick says what it does', () => {
     expect(IN_USE_WORDS.back).toBe('Resting · back in');
     expect(IN_USE_WORDS.auto).toBe('Show after every set of this exercise');
-    expect(IN_USE_WORDS.tapHint).toBe('Tap: In use');
+    expect(IN_USE_WORDS.tapHint).toBe('Tap to show In use');
   });
 });
 
@@ -95,17 +95,17 @@ describe('R-304 / R-307: In use by equipment', () => {
 });
 
 describe('R-305 inUseBeatLine', () => {
-  it('says how much more beats the previous total', () => {
-    expect(inUseBeatLine({ left: 300, reps: false, unit: 'kg', each: false })).toBe('300 kg more to beat the previous total');
-    expect(inUseBeatLine({ left: 1234.4, reps: false, unit: 'kg', each: false })).toMatch(/^1.?234 kg more to beat the previous total$/);
-    expect(inUseBeatLine({ left: 80, reps: false, unit: 'kg', each: true })).toBe('80 kg more per hand to beat the previous total');
-    expect(inUseBeatLine({ left: 1, reps: true, unit: 'kg', each: false })).toBe('1 more rep to beat the previous total');
-    expect(inUseBeatLine({ left: 6, reps: true, unit: 'kg', each: false })).toBe('6 more reps to beat the previous total');
+  it('says how much more reaches the total on the card (not last time)', () => {
+    expect(inUseBeatLine({ left: 300, reps: false, unit: 'kg', each: false })).toBe("300 kg more to reach today's target");
+    expect(inUseBeatLine({ left: 1234.4, reps: false, unit: 'kg', each: false })).toMatch(/^1.?234 kg more to reach today's target$/);
+    expect(inUseBeatLine({ left: 80, reps: false, unit: 'kg', each: true })).toBe("80 kg more per hand to reach today's target");
+    expect(inUseBeatLine({ left: 1, reps: true, unit: 'kg', each: false })).toBe("1 more rep to reach today's target");
+    expect(inUseBeatLine({ left: 6, reps: true, unit: 'kg', each: false })).toBe("6 more reps to reach today's target");
   });
-  it('says beaten at zero, nothing without a total', () => {
-    expect(inUseBeatLine({ left: 0, reps: false, unit: 'kg', each: false })).toBe('Previous total beaten ✓');
-    expect(inUseBeatLine({ left: 0.3, reps: false, unit: 'lb', each: false })).toBe('1 lb more to beat the previous total');
-    expect(inUseBeatLine({ left: -20, reps: false, unit: 'kg', each: false })).toBe('Previous total beaten ✓');
+  it('says reached at zero, nothing without a total', () => {
+    expect(inUseBeatLine({ left: 0, reps: false, unit: 'kg', each: false })).toBe("Today's target reached ✓");
+    expect(inUseBeatLine({ left: 0.3, reps: false, unit: 'lb', each: false })).toBe("1 lb more to reach today's target");
+    expect(inUseBeatLine({ left: -20, reps: false, unit: 'kg', each: false })).toBe("Today's target reached ✓");
     expect(inUseBeatLine(null)).toBeNull();
   });
 });

@@ -25,7 +25,11 @@ import { getReadinessNow, type ReadinessNow } from '@/tracker/services/readiness
 import { openActiveWorkout } from '@/tracker/services/workoutStart';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
-const STATE_TAG: Record<ReadyState, string> = { ready: '', almost: ' · almost', resting: ' · resting' };
+/**
+ * Fresh-eyes review (5 Nov 2026): "Chest · resting" read as "rested". The chips now use the Ready
+ * today page's words (Ready / Almost ready / Still resting).
+ */
+const STATE_TAG: Record<ReadyState, string> = { ready: ' · ready', almost: ' · almost ready', resting: ' · still resting' };
 
 function Heading({ children }: { children: string }) {
   return (

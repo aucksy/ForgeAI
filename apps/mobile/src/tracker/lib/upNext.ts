@@ -15,6 +15,7 @@
  * demo, nothing open) the import offer shows ("Moving from Hevy or Strong?").
  */
 import { countWord } from '@/lib/words';
+import { fromFolder } from '@/tracker/lib/folderWords';
 
 export type UpNextAction = 'resume' | 'discard' | 'start' | 'preview' | 'routines';
 
@@ -84,7 +85,7 @@ export function goalLine(goal: number | null, done: number | null): string | nul
 /** "from Push Pull Legs · 6 exercises · Lat Pulldown first". PURE. */
 export function routineLine(t: Pick<UpNextToday, 'folderName' | 'nextCount' | 'nextFirst'>): string {
   const parts: string[] = [];
-  if (t.folderName) parts.push(`from ${t.folderName}`);
+  if (t.folderName) parts.push(fromFolder(t.folderName));
   if (t.nextCount > 0) parts.push(countWord(t.nextCount, 'exercise'));
   if (t.nextFirst) parts.push(`${t.nextFirst} first`);
   return parts.join(' · ');

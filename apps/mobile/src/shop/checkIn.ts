@@ -169,7 +169,8 @@ export function problemText(p: { problem: CheckInProblem; gymName: string | null
     case 'TOO_MANY_NUMBERS':
       return 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.';
     case 'DESK_CHECK':
-      return "Ask the front desk to confirm your mobile number. They do this only once. Then tap Check in.";
+      // Fresh-eyes review (5 Nov 2026): says what the member does, in order, and that it is a one-time step.
+      return 'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.';
     case 'OTHER_GYM':
       return `You're not a member of ${p.gymName ?? 'this gym'} in the app.`;
   }

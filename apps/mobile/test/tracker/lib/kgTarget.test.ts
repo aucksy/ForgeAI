@@ -105,12 +105,12 @@ describe('#9 kg to beat: during the workout', () => {
     expect(g.left).toBe(720);
     expect(g.next).toEqual([{ weightKg: 45, reps: 8 }, { weightKg: 45, reps: 8 }]);
     expect(g.short).toBe(false);
-    expect(kgLiveLine(p, g, total, weight)).toBe('Next: 45 kg × 8 · 405 of 1,125 kg'); // UAT A-10
+    expect(kgLiveLine(p, g, total, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of today's 1,125 kg"); // UAT A-10
   });
   it('release review: dumbbells ("each") keep the number before "of"', () => {
     const g = kgProgress(p, [row(45, 9, true), row(null, null, false), row(null, null, false)]);
     const each = (kg: number) => `${total(kg)} each`;
-    expect(kgLiveLine(p, g, each, weight)).toBe('Next: 45 kg × 8 · 405 of 1,125 kg each');
+    expect(kgLiveLine(p, g, each, weight)).toBe("Next set: 45 kg × 8 · Done: 405 of today's 1,125 kg each");
   });
   it('a short set: the open sets catch up, at most 2 reps above plan each', () => {
     const g = kgProgress(p, [row(45, 6, true), row(null, null, false), row(null, null, false)]);
@@ -130,14 +130,14 @@ describe('#9 kg to beat: during the workout', () => {
     const eased: KgRow = { ...row(null, null, false), hintKg: 35, hintReps: 10, eased: true };
     const g = kgProgress(p, [row(45, 2, true), eased, row(null, null, false)]);
     expect(g.next[0]).toEqual({ weightKg: 35, reps: 10 });
-    expect(kgLiveLine(p, g, total, weight).startsWith('Next: 35 kg × 10 · ')).toBe(true);
+    expect(kgLiveLine(p, g, total, weight).startsWith('Next set: 35 kg × 10 · ')).toBe(true);
     // The row after it is not eased, so it may still take the extra reps.
     expect(g.next[1].reps).toBe(8 + MAX_EXTRA_REPS);
   });
   it('beaten: says so with what was done', () => {
     const g = kgProgress(p, [row(45, 10, true), row(45, 10, true), row(45, 9, true)]);
     expect(g.left).toBe(0);
-    expect(kgLiveLine(p, g, total, weight)).toBe('1,125 kg beaten ✓ (1,305 kg done)');
+    expect(kgLiveLine(p, g, total, weight)).toBe("Today's 1,125 kg beaten (1,305 kg done)");
   });
   it('a weight typed on an open row is kept; drop sets done count too', () => {
     const g = kgProgress(p, [row(45, 9, true), row(47.5, null, false), row(null, null, false), row(30, 10, true)]);
@@ -147,7 +147,7 @@ describe('#9 kg to beat: during the workout', () => {
   it('all ticked and still short: no plan, says how much', () => {
     const g = kgProgress(p, [row(45, 5, true), row(45, 5, true), row(45, 5, true)]);
     expect(g.next).toEqual([]);
-    expect(kgLiveLine(p, g, total, weight)).toBe('675 of 1,125 kg · 450 kg short, fine for today');
+    expect(kgLiveLine(p, g, total, weight)).toBe('Done: 675 of 1,125 kg · 450 kg short, fine for today');
   });
   it('starts from what each row hints, and stays within 2 reps of it', () => {
     // Set 1 done at 7: the rows hint 7, 7 (fillForSet caps at the row above) — never 8 + 2.

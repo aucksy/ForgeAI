@@ -6,11 +6,11 @@
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: '(You''re checked in at [0-9]{1,2}:[0-9]{2} [ap]m|Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.)'
+    visible: '(You''re checked in at [0-9]{1,2}:[0-9]{2} [ap]m|First check-in: go to the front desk and ask them to confirm your mobile number\. When they say it is done, tap Check in below\. You do this only once\.)'
     timeout: 30000
 - runFlow:
     when:
-      visible: 'Ask the front desk to confirm your mobile number\. They do this only once\. Then tap Check in\.'
+      visible: 'First check-in: go to the front desk and ask them to confirm your mobile number\. When they say it is done, tap Check in below\. You do this only once\.'
     commands:
       - tapOn: "^Check in$"
 - extendedWaitUntil:

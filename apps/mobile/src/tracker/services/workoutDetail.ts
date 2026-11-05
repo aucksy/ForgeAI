@@ -50,7 +50,7 @@ export function detailWhen(dateISO: string, startedAt: number): string {
 
 /** Time · Kg lifted (or Reps, or Distance — the feed card's order) · Sets · Records. PURE. */
 export function detailStats(
-  data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'durationSec' | 'totalVolumeKg' | 'workingSetCount'> & { records?: readonly unknown[] },
+  data: Pick<SessionSummaryData, 'session' | 'setMeta' | 'durationSec' | 'totalVolumeKg' | 'workingSetCount'> & { records?: readonly { exerciseId?: string }[] },
   units: UnitSystem,
 ): DetailStat[] {
   const out: DetailStat[] = [];
@@ -63,7 +63,10 @@ export function detailStats(
   else if (reps > 0) out.push({ label: 'Reps', value: fmtInt(reps) });
   else if (distance > 0) out.push({ label: 'Distance', value: fmtTotalDistance(distance) });
   out.push({ label: 'Sets', value: fmtInt(data.workingSetCount) });
-  const records = data.records?.length ?? 0;
+  // Fresh-eyes review (5 Nov 2026): "Records 15" here against "Records 11" on Profile. Both now count
+  // LIFTS that beat a best (one lift with three kinds of record is 1), as Profile and the feed card do
+  // (feedCard.recordsPerWorkout); each kind still shows on its set below.
+  const records = new Set((data.records ?? []).map((r, i) => r?.exerciseId ?? `#${i}`)).size;
   if (records > 0) out.push({ label: 'Records', value: fmtInt(records) });
   return out;
 }

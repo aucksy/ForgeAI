@@ -14,8 +14,9 @@ export const IMPORT_FLOW_WORDS = {
   question: 'Which app are you moving from?',
   hevy: 'Hevy',
   strong: 'Strong',
-  hevySub: 'Your workouts first, then your routines.',
-  strongSub: 'Your workouts first, then your routines.',
+  // Fresh-eyes review (5 Nov 2026): the two rows had one subtitle; each now says what it brings.
+  hevySub: 'Your workout file, or a link to a shared routine.',
+  strongSub: 'Your workout file. We build your routines from it.',
   privacy: 'Your file is read on your phone. Nothing is uploaded.',
   linkTitle: 'Have a Hevy routine link?',
   linkBody: 'If you or a friend shared a Hevy routine or folder, paste its link. The routines come in exactly as saved.',
@@ -47,6 +48,7 @@ export function routinesAheadText(app: SourceApp): string {
 
 /** After the import: the routines offer, in the same flow. `n` = routines found (at least 1). */
 export function routinesOfferText(app: SourceApp, n: number): string {
-  const built = `We built ${n} routine${n === 1 ? '' : 's'} from the workouts you repeat most. Tick the ones you want.`;
+  // Fresh-eyes review (5 Nov 2026): one routine reads in the singular ("Tick it if you want it").
+  const built = `We built ${n} routine${n === 1 ? '' : 's'} from the workouts you repeat most. ${n === 1 ? 'Tick it if you want it.' : 'Tick the ones you want.'}`;
   return app === 'strong' ? `Strong doesn’t export saved routines. ${built}` : `Hevy’s file has your workouts but not your saved routines. ${built}`;
 }

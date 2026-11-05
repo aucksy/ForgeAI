@@ -222,6 +222,11 @@ describe('a saved workout’s page', () => {
     ]);
   });
 
+  it('Records counts lifts, not kinds: as the Profile header and the feed card count them', () => {
+    const recs = [{ exerciseId: 'b' }, { exerciseId: 'b' }, { exerciseId: 'b' }, { exerciseId: 'c' }];
+    expect(detailStats(data({ records: recs } as never), 'metric').find((s) => s.label === 'Records')).toEqual({ label: 'Records', value: '2' });
+  });
+
   it('nothing lifted → Reps; no records → no Records; no length → no Time', () => {
     expect(detailStats(data({ totalVolumeKg: 0, records: [], durationSec: 0 }), 'metric')).toEqual([
       { label: 'Reps', value: '25' },

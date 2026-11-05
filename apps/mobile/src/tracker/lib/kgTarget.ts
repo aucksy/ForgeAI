@@ -280,14 +280,14 @@ export function repSetLines(p: KgPlan): string[] {
  * R-146: exactly the plan is "45 reps reached ✓" ("beaten" only for more). PURE.
  */
 export function repLiveLine(p: KgPlan, g: KgProgress): string {
+  // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
   if (kgBeaten(g)) {
-    if (Math.round(g.done) === Math.round(p.total)) return `${repsText(p.total)} reached ✓`;
-    return `${repsText(p.total)} beaten ✓ (${Math.round(g.done)} done)`;
+    if (Math.round(g.done) === Math.round(p.total)) return `Today's ${repsText(p.total)} reached`;
+    return `Today's ${repsText(p.total)} beaten (${Math.round(g.done)} done)`;
   }
-  const head = `${Math.round(g.done)} of ${repsText(p.total)}`;
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `${head} · ${repsText(g.left)} short, fine for today`;
-  return `${head} · next ${g.next.map((s) => s.reps).join(', ')}${g.short ? ' (a little short is fine)' : ''}`;
+  if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
+  return `Next sets: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of today's ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
 }
 
 /** "+6% on last time", "same as last time", "lighter than last time", or null. PURE. */
@@ -319,21 +319,24 @@ export function kgBeaten(g: KgProgress): boolean {
 }
 
 /**
- * During the workout: "Next: 42.5 kg × 7 · 410 of 765 kg" / "765 kg beaten ✓ (780 kg done)".
+ * During the workout: "Next set: 42.5 kg × 7 · Done: 410 of today's 765 kg" / "Today's 765 kg beaten (780 kg done)".
  * UAT A-10 / B-09 (30 Oct 2026): "0 of 1,500 kg · next 75 kg × 5, 5, 5, 5" was read twice. The next set
  * leads, alone (the sets after it are on their own rows); the running total follows.
  * R-146 (owner, 27 Oct 2026): done = the plan exactly (as it reads on screen) is "765 kg reached ✓";
  * "beaten" only when more was lifted. PURE.
  */
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
+  // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
   if (kgBeaten(g)) {
-    if (total(g.done) === total(p.total)) return `${total(p.total)} reached ✓`;
-    return `${total(p.total)} beaten ✓ (${total(g.done)} done)`;
+    if (total(g.done) === total(p.total)) return `Today's ${total(p.total)} reached`;
+    return `Today's ${total(p.total)} beaten (${total(g.done)} done)`;
   }
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").
-  const head = `${total(g.done).trim().split(/\s+/)[0]} of ${total(p.total)}`;
+  const doneN = total(g.done).trim().split(/\s+/)[0];
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
-  if (g.next.length === 0) return `${head} · ${total(g.left)} short, fine for today`;
+  if (g.next.length === 0) return `Done: ${doneN} of ${total(p.total)} · ${total(g.left)} short, fine for today`;
+  // Fresh-eyes review (5 Nov 2026): "Next: 60 kg × 10 · 0 of 1,560 kg" read as a puzzle; the total
+  // now says it is today's and how much of it is done.
   const plan = `${weight(g.next[0].weightKg)} × ${g.next[0].reps}`;
-  return `Next: ${plan} · ${head}${g.short ? ' (a little short is fine)' : ''}`;
+  return `Next set: ${plan} · Done: ${doneN} of today's ${total(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
 }

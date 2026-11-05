@@ -155,11 +155,11 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- 3. follow, in his real rotation
 # IM-03: his history (step 0) gives the order he does them in, so the folder goes in that order.
 - extendedWaitUntil:
-    visible: "Follow these as your plan\\?"
+    visible: "Follow (this|these) as your plan\\?"
     timeout: 10000
 - assertVisible: ".*in the order you do them: Push 1, Pull 1, Legs 1, Push 2, Pull 2, Leg 2\\..*"
 - takeScreenshot: 175-link-follow
-- tapOn: "Follow them"
+- tapOn: "^Follow (it|them)$"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
     visible: "6 routines in Jaipur"

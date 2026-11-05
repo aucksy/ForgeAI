@@ -181,10 +181,12 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
   const single = link?.kind === 'routine';
   // IM-15: a link's names ForgeAI knows under another name, shown with both.
   const [renamed, setRenamed] = useState<{ from: string; to: string }[]>([]);
+  // Fresh-eyes review (5 Nov 2026): a file import's check screen shows the names too ("Chest Fly
+  // (Machine) → Pec Deck Fly"), so the workout's own name is no surprise later.
   useEffect(() => {
-    if (!link) return undefined;
+    if (found.length === 0) return undefined;
     let live = true;
-    void renamedIn(link.found.flatMap((r) => r.exercises.map((e) => e.title)))
+    void renamedIn(found.flatMap((r) => r.exercises.map((e) => e.title)))
       .then((r) => {
         if (live) setRenamed(r);
       })
@@ -192,7 +194,13 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
     return () => {
       live = false;
     };
-  }, [link]);
+  }, [found]);
+  const renamedTo = useMemo(() => new Map(renamed.map((r) => [r.from, r.to])), [renamed]);
+  /** "Chest Fly (Machine) → Pec Deck Fly", or the name as it is. */
+  const shownName = (title: string): string => {
+    const to = renamedTo.get(title);
+    return to ? `${title} → ${to}` : title;
+  };
 
   const kept: FoundRoutine[] = found.filter((r) => keep.has(r.title));
   /** The step before the follow / folder / new-names screens: the last check, else the list. */
@@ -415,7 +423,7 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
         </View>
         <Card>
           {last.map((e) => (
-            <TickRow key={rowKey(e)} label={e.title} sub={setsText(e)} ticked={t.has(rowKey(e))} onPress={() => toggleExercise(r.title, rowKey(e))} />
+            <TickRow key={rowKey(e)} label={shownName(e.title)} sub={setsText(e)} ticked={t.has(rowKey(e))} onPress={() => toggleExercise(r.title, rowKey(e))} />
           ))}
         </Card>
         {more.length > 0 ? (
@@ -428,7 +436,7 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
               {more.map((e) => (
                 <TickRow
                   key={rowKey(e)}
-                  label={e.title}
+                  label={shownName(e.title)}
                   sub={`last ${when(e.lastISO)} · ${setsText(e)}`}
                   ticked={t.has(rowKey(e))}
                   onPress={() => toggleExercise(r.title, rowKey(e))}
@@ -577,7 +585,8 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
       <View style={{ gap: space.lg }}>
         <Card style={{ gap: space.md, paddingVertical: space.xl }}>
           <Icon name="list" size={26} color={color.accent} />
-          <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>Follow these as your plan?</Text>
+          {/* Fresh-eyes review (5 Nov 2026): one routine reads in the singular. */}
+          <Text style={{ fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.ink }}>{shown.length === 1 ? 'Follow this as your plan?' : 'Follow these as your plan?'}</Text>
           <Text style={{ ...CAPTION(), color: color.inkSecondary }}>
             {realOrder
               ? `The Workout tab will show your next routine each day, in the order you do them: ${shown.map((r) => r.title).join(', ')}.`
@@ -592,7 +601,7 @@ function useStepsBody({ app, workouts, link, onClose, backRef }: StepsProps, out
         </Card>
         {saveProblem ? <Text style={{ ...CAPTION(), color: color.criticalText }}>{saveProblem}</Text> : null}
         <View style={{ gap: space.md }}>
-          <PrimaryButton label={busy ? 'Saving…' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
+          <PrimaryButton label={busy ? 'Saving…' : shown.length === 1 ? 'Follow it' : 'Follow them'} icon="check" loading={busy} onPress={() => void save(true)} />
           <GhostButton
             label={question?.followingName ? `Keep “${question.followingName}”` : 'Save without following'}
             onPress={() => void save(false)}

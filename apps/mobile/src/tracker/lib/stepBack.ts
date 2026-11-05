@@ -19,9 +19,11 @@ export function stepBackAsk(o: StepBackOffer, fmt: (kg: number) => string): Step
   const n = o.workouts;
   return {
     text:
+      // Fresh-eyes review (5 Nov 2026): no research citation in member words, and it says plainly that
+      // the lighter weight is a suggestion instead of the plan above (which stays until "Try" is tapped).
       `Stuck at ${fmt(o.fromKg)} for ${n} ${n === 1 ? 'workout' : 'workouts'}. ` +
-      'Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). ' +
-      `Try ${fmt(o.weightKg)} today?`,
+      'A lighter weight with more reps builds about the same muscle. ' +
+      `Try ${fmt(o.weightKg)} today instead of ${fmt(o.fromKg)}?`,
     tryLabel: `Try ${fmt(o.weightKg)}`,
     stayLabel: `Stay at ${fmt(o.fromKg)}`,
   };

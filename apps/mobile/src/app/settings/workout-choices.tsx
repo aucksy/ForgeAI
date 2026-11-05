@@ -14,7 +14,7 @@ import { LinkRow } from '@/components/stats/parts';
 import { PrefChoiceSheet } from '@/tracker/components/PrefChoiceSheet';
 import { navigateOnce } from '@/lib/guardedAction';
 import { PREVIOUS_FROM_CHOICES } from '@/tracker/db/historyScope';
-import { choiceLabel, REP_RANGE_CHOICES, STUCK_CHOICES, STUCK_HELP, WEIGHT_JUMP_CHOICES } from '@/tracker/services/targetChoices';
+import { choiceLabel, REP_RANGE_CHOICES, STUCK_CHOICES, STUCK_HELP, STUCK_WHY, WEIGHT_JUMP_CHOICES } from '@/tracker/services/targetChoices';
 import { useMuscleTips } from '@/tracker/store/muscleTipsStore';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
 
@@ -49,6 +49,7 @@ export default function WorkoutChoicesPage() {
         visible={choosingStuck}
         title="When I'm stuck at a weight"
         subtitle={STUCK_HELP}
+        footnote={STUCK_WHY}
         choices={STUCK_CHOICES}
         value={stuck}
         onChoose={(v) => {

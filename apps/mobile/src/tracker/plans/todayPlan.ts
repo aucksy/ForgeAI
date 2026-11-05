@@ -23,6 +23,7 @@
  *    answer is "Done today: Push 1 · Next: Pull 1" (RP-10, SH-04).
  */
 import type { DayType } from '@/types/models';
+import { fromFolder } from '@/tracker/lib/folderWords';
 
 export interface TodayRoutineInput {
   id: string;
@@ -312,7 +313,7 @@ export function todayWords(a: {
       const n = a.routine?.exerciseIds.length ?? 0;
       const exercises = `${n} exercise${n === 1 ? '' : 's'}`;
       if (a.following === false) {
-        const line = a.folderName ? `${exercises} from ${a.folderName}` : exercises;
+        const line = a.folderName ? `${exercises} ${fromFolder(a.folderName)}` : exercises;
         return { title: name, line, sentence: `Up next: ${name} · ${line}` };
       }
       const line = `${exercises} from your plan`;

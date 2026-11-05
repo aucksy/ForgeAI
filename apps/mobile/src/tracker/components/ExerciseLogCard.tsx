@@ -302,7 +302,7 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
       beaten: kgBeaten(g),
-      // R-305: what the "In use" screen says ("300 kg more to beat the previous total"), in the member's unit.
+      // R-305: what the "In use" screen says ("300 kg more to reach today's target"), in the member's unit.
       left: { left: kgPlanned.reps ? g.left : kgToDisplay(g.left, units), reps: kgPlanned.reps === true, unit: weightUnit(units), each: weightIsEach(loadMode) },
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.

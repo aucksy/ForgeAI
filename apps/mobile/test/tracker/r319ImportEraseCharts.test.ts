@@ -76,7 +76,7 @@ describe('item 4: one import flow', () => {
       'Strong doesn’t export saved routines. We built 3 routines from the workouts you repeat most. Tick the ones you want.',
     );
     expect(routinesOfferText('hevy', 1)).toBe(
-      'Hevy’s file has your workouts but not your saved routines. We built 1 routine from the workouts you repeat most. Tick the ones you want.',
+      'Hevy’s file has your workouts but not your saved routines. We built 1 routine from the workouts you repeat most. Tick it if you want it.',
     );
   });
   it('no banned word in the flow', () => {

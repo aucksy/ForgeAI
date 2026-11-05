@@ -111,7 +111,7 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 # R-319 item 4: the routines offer says plainly where the routines come from.
-- assertVisible: '^Hevy’s file has your workouts but not your saved routines\. We built 1 routine from the workouts you repeat most\. Tick the ones you want\.$'
+- assertVisible: '^Hevy’s file has your workouts but not your saved routines\. We built 1 routine from the workouts you repeat most\. Tick it if you want it\.$'
 - tapOn: "Bring my routines in"
 - extendedWaitUntil:
     visible: "We found 1 routine in your Hevy workouts"
@@ -129,14 +129,14 @@ appId: com.mettleup.app
     timeout: 15000
 - tapOn: "^Next$"
 - extendedWaitUntil:
-    visible: "Follow these as your plan\\?|routine in .*|routines in .*|Which folder.*|Open routines"
+    visible: "Follow (this|these) as your plan\\?|routine in .*|routines in .*|Which folder.*|Open routines"
     timeout: 20000
 - takeScreenshot: rel-05-after-check
 - runFlow:
     when:
-      visible: "Follow these as your plan\\?"
+      visible: "Follow (this|these) as your plan\\?"
     commands:
-      - tapOn: "Follow them"
+      - tapOn: "^Follow (it|them)$"
 - extendedWaitUntil:
     visible: "Open routines"
     timeout: 20000

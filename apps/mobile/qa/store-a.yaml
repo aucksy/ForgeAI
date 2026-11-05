@@ -125,9 +125,9 @@ appId: com.mettleup.app
           timeout: 15000
       - tapOn: "^Next$"
 - extendedWaitUntil:
-    visible: "Follow these as your plan\\?"
+    visible: "Follow (this|these) as your plan\\?"
     timeout: 15000
-- tapOn: "Follow them"
+- tapOn: "^Follow (it|them)$"
 - extendedWaitUntil:
     visible: "3 routines in From Hevy"
     timeout: 20000

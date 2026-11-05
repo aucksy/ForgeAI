@@ -12,7 +12,8 @@ export const IN_USE_WORDS = {
    */
   auto: 'Show after every set of this exercise',
   /** R-299 (owner, 3 Nov 2026): under the rest clock while this exercise's In use stays closed. */
-  tapHint: 'Tap: In use',
+  /** Fresh-eyes review (5 Nov 2026): "Tap: In use" read as a riddle; it says what the tap does. */
+  tapHint: 'Tap to show In use',
 } as const;
 
 /** The catalogue's equipment kinds (types/models Exercise['equipment']). */
@@ -87,9 +88,11 @@ export function inUseBeatLine(p: { left: number; reps: boolean; unit: string; ea
   if (!p || !Number.isFinite(p.left)) return null;
   // A little left (0.3) is still "1 more", never "beaten".
   const n = p.left <= 1e-9 ? 0 : Math.max(1, Math.round(p.left));
-  if (n <= 0) return 'Previous total beaten ✓';
-  if (p.reps) return `${n} more ${n === 1 ? 'rep' : 'reps'} to beat the previous total`;
-  return `${groupInt(n)} ${p.unit} more${p.each ? ' per hand' : ''} to beat the previous total`;
+  // Fresh-eyes review (5 Nov 2026): `left` is what is still to go to TODAY's total (the exercise
+  // card's "of 1,560 kg"), not to last time's, so the words name today's target.
+  if (n <= 0) return "Today's target reached ✓";
+  if (p.reps) return `${n} more ${n === 1 ? 'rep' : 'reps'} to reach today's target`;
+  return `${groupInt(n)} ${p.unit} more${p.each ? ' per hand' : ''} to reach today's target`;
 }
 
 /**

@@ -25,17 +25,17 @@ describe('R-146: reached vs beaten', () => {
   it('his case: 40 x 20, 45 x 13, 45 x 12 = 1,925 exactly says "reached", still green', () => {
     const g = kgProgress(plan, [row(40, 20), row(45, 13), row(45, 12)]);
     expect(kgBeaten(g)).toBe(true);
-    expect(kgLiveLine(plan, g, total, weight)).toBe('1,925 kg reached ✓');
+    expect(kgLiveLine(plan, g, total, weight)).toBe("Today's 1,925 kg reached");
   });
   it('more than the plan says "beaten" with what was done', () => {
     const g = kgProgress(plan, [row(40, 20), row(45, 14), row(45, 12)]);
-    expect(kgLiveLine(plan, g, total, weight)).toBe('1,925 kg beaten ✓ (1,970 kg done)');
+    expect(kgLiveLine(plan, g, total, weight)).toBe("Today's 1,925 kg beaten (1,970 kg done)");
   });
   it('reps: exactly the plan is "reached", more is "beaten"', () => {
     const reps: KgPlan = { reps: true, sets: [1, 2, 3].map(() => ({ weightKg: 1, reps: 15, asLast: false })), total: 45, last: 42, pct: null };
     const at = (n: number[]) => kgProgress(reps, n.map((r) => row(1, r)));
-    expect(repLiveLine(reps, at([15, 15, 15]))).toBe('45 reps reached ✓');
-    expect(repLiveLine(reps, at([15, 16, 16]))).toBe('45 reps beaten ✓ (47 done)');
+    expect(repLiveLine(reps, at([15, 15, 15]))).toBe("Today's 45 reps reached");
+    expect(repLiveLine(reps, at([15, 16, 16]))).toBe("Today's 45 reps beaten (47 done)");
   });
   it('no member word says "volume", "PR" or "session"', () => {
     const lines = [kgLiveLine(plan, kgProgress(plan, [row(40, 20), row(45, 13), row(45, 12)]), total, weight)];

@@ -114,11 +114,11 @@ appId: com.mettleup.app
 - tapOn: "^Next$"
 # ---------------------------------------------------------------- 3. follow them?
 - extendedWaitUntil:
-    visible: "Follow these as your plan\\?"
+    visible: "Follow (this|these) as your plan\\?"
     timeout: 10000
 - assertVisible: ".*in the order you do them: Push A, Pull A.*"
 - takeScreenshot: 145-follow-question
-- tapOn: "Follow them"
+- tapOn: "^Follow (it|them)$"
 # ---------------------------------------------------------------- 4. done
 - extendedWaitUntil:
     visible: "2 routines in From Hevy"
@@ -234,9 +234,9 @@ appId: com.mettleup.app
     timeout: 15000
 - tapOn: "^Next$"
 - extendedWaitUntil:
-    visible: "Follow these as your plan\\?"
+    visible: "Follow (this|these) as your plan\\?"
     timeout: 10000
-- tapOn: "Follow them"
+- tapOn: "^Follow (it|them)$"
 - extendedWaitUntil:
     visible: ".*From Hevy is updated from this file.*"
     timeout: 15000

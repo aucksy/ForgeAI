@@ -14,7 +14,7 @@
  * remembered for that exercise; its first state comes from the equipment (lib/inUse.ts inUseDefault).
  *
  * R-305 (owner, 3 Nov 2026, "a marketing move: people look at the phone and ask which app"): under
- * the lift's name, "300 kg more to beat the previous total", and the MettleUp logo at the foot.
+ * the lift's name, "300 kg more to reach today's target", and the MettleUp logo at the foot.
  */
 import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -44,7 +44,7 @@ export function MachineInUse({
   clock: string;
   /** The lift whose tick started this rest (RestTimerBar finds it), or null. */
   machine: string | null;
-  /** R-305: "300 kg more to beat the previous total", or null. */
+  /** R-305: "300 kg more to reach today's target", or null. */
   beatLine?: string | null;
   /** R-304: the lift whose tick started this rest, for its own "Show after every set" tick; null = no tick. */
   exercise?: InUseExercise | null;

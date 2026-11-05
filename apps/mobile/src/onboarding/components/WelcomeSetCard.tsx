@@ -34,7 +34,7 @@ export const EXAMPLE_SETS = [
   { kg: 75, reps: 6, rpe: 9, prevRpe: 8 },
 ] as const;
 export const EXAMPLE_PREVIOUS = '72.5 × 5';
-export const EXAMPLE_LINE = '1,500 kg beaten ✓ (1,650 kg done)';
+export const EXAMPLE_LINE = "Today's 1,500 kg beaten (1,650 kg done)";
 
 // The columns, as the design (SET / PREVIOUS / KG / REPS / RPE / ✓).
 const W = { set: 22, kg: 50, reps: 42, rpe: 28, tick: 38 } as const;

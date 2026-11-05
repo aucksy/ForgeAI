@@ -62,14 +62,14 @@ describe('R-60: reps to beat', () => {
     const open = { weightKg: null, reps: null, done: false, isWarmup: false };
     const g1 = kgProgress(p, [{ weightKg: null, reps: 17, done: true, isWarmup: false }, { ...open, hintReps: 15 }, { ...open, hintReps: 14 }]);
     expect(g1.done).toBe(17);
-    expect(repLiveLine(p, g1)).toBe('17 of 45 reps · next 15, 14');
+    expect(repLiveLine(p, g1)).toBe("Next sets: 15, 14 reps · Done: 17 of today's 45 reps");
     const g2 = kgProgress(p, [
       { weightKg: null, reps: 17, done: true, isWarmup: false },
       { weightKg: null, reps: 16, done: true, isWarmup: false },
       { weightKg: null, reps: 14, done: true, isWarmup: false },
     ]);
     expect(kgBeaten(g2)).toBe(true);
-    expect(repLiveLine(p, g2)).toBe('45 reps beaten ✓ (47 done)');
+    expect(repLiveLine(p, g2)).toBe("Today's 45 reps beaten (47 done)");
     // A warm-up never counts.
     expect(kgProgress(p, [{ weightKg: null, reps: 20, done: true, isWarmup: true }]).done).toBe(0);
   });

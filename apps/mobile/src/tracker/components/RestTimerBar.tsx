@@ -36,8 +36,11 @@ import { restRemainingSec, useRestTimer } from '../store/restTimerStore';
 import { useTrackerPrefs } from '../store/trackerPrefsStore';
 import { useWorkoutUi } from '../store/workoutUiStore';
 
-/** The three pills share one width, so the row reads as a set; 52 dp holds "Skip" at large text. */
-const PILL_W = 52;
+/**
+ * The three pills share one width, so the row reads as a set. Fresh-eyes review (5 Nov 2026): at
+ * 52 dp "Skip" filled its pill edge to edge at large text and looked crowded; 58 dp gives it air.
+ */
+const PILL_W = 58;
 
 export function fmtClock(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -165,7 +168,7 @@ export function RestTimerBar() {
   const master = useTrackerPrefs((s) => s.inUseAfterSet);
   const chosen = useTrackerPrefs((s) => (exId ? s.inUseByExercise[exId] : undefined));
   const autoInUse = inUseAutoOn(master, chosen, inUseEx ? { name: inUseEx.name, key: inUseEx.id, equipment: inUseEx.equipment } : null);
-  // R-305: "300 kg more to beat the previous total" for that same lift.
+  // R-305: "300 kg more to reach today's target" for that same lift.
   const beatLine = useKgLeft((s) => inUseBeatLine(startedBy ? s.byEx[startedBy] ?? null : null));
   const remaining = useRestRemaining();
   const checks = useAlertChecks(endsAt);

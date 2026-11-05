@@ -48,6 +48,7 @@ import {
 import { useRestAlertPrefs } from '../store/restAlertPrefsStore';
 import { useRestTimer } from '../store/restTimerStore';
 import { stepWeeklyGoal, useTrackerPrefs } from '../store/trackerPrefsStore';
+import { inFolder } from '../lib/folderWords';
 import { PrefChoiceSheet } from './PrefChoiceSheet';
 import { RestAlertsStatusRow } from './RestAlertsStatusRow';
 import { RestPickerSheet } from './RestPickerSheet';
@@ -363,7 +364,7 @@ export function NextWeightCard() {
           <ToggleRow
             icon="heart"
             title="Easy weeks"
-            caption={`In ${plan.name}: every 6 weeks, half the sets at the same weights. Kept out of your records.`}
+            caption={`${inFolder(plan.name)}: every 6 weeks, half the sets at the same weights. Kept out of your records.`}
             value={!!plan.settings.easy}
             onChange={flipEasy}
           />

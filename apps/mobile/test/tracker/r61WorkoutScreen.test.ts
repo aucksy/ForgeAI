@@ -117,7 +117,7 @@ describe('R-65: the kg line knows when it is beaten', () => {
   it('beaten once nothing is left', () => {
     const done = { done: 140, left: 0, next: [], short: false };
     expect(kgBeaten(done)).toBe(true);
-    expect(kgLiveLine(plan, done, kg, kg)).toBe('135 kg beaten ✓ (140 kg done)');
+    expect(kgLiveLine(plan, done, kg, kg)).toBe("Today's 135 kg beaten (140 kg done)");
     expect(kgBeaten({ done: 90, left: 45, next: [{ weightKg: 15, reps: 9 }], short: false })).toBe(false);
   });
 });

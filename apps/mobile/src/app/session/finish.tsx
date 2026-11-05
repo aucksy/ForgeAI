@@ -34,7 +34,7 @@ import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { SHARE_TEXT_HINT, SHARE_TEXT_LABEL, shareTextNow } from '@/tracker/components/ShareTextRow';
 import { Glyph, type GlyphName } from '@/tracker/components/TrackerGlyph';
 import { getCloudCoachNote, getSessionCoachNote, type CoachNote } from '@/tracker/services/coachNote';
-import { finishAnswer, getSessionSummary, volumeComparison, workoutName } from '@/tracker/services/finishSummary';
+import { finishAnswer, getSessionSummary, volumeComparison, withoutFirstWorkoutRecords, workoutName } from '@/tracker/services/finishSummary';
 import { workoutMilestone } from '@/tracker/services/milestones';
 import { newBadgeLine } from '@/tracker/engine/badges';
 import { getBadgesEarnedIn } from '@/tracker/services/badgesService';
@@ -303,7 +303,7 @@ export default function FinishScreen() {
               ) : null}
               {/* UAT A-07 (30 Oct 2026): faded brown on orange was hard to read in sunlight; full strength now. */}
               <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onAccent }}>
-                {finishAnswer(data)}
+                {finishAnswer(withoutFirstWorkoutRecords(data, milestone))}
               </Text>
               {comparison ? (
                 <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.onAccent, marginTop: 2 }}>
@@ -338,7 +338,7 @@ export default function FinishScreen() {
           {id ? <WorkoutPhotos sessionId={id} /> : null}
 
           {/* The totals already lead in the card above — no second copy in tiles. */}
-          <SessionSummary data={data} showTotals={false} />
+          <SessionSummary data={withoutFirstWorkoutRecords(data, milestone)} showTotals={false} />
 
           {/* Oct 2026: one primary (Done), then the two ways to share side by side as equal
               buttons, then View history. It used to be four actions in three styles, with

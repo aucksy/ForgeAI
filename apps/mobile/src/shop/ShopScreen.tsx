@@ -284,7 +284,7 @@ function GymShop({ link }: { link: GymLink }) {
             <View style={{ marginTop: space.md }}>
               <LinkRow
                 title="Check in"
-                sub="Scan the poster at the desk to mark today's visit"
+                sub="Scan the gym's check-in QR at the desk to mark today's visit"
                 leading={
                   <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
                     <Icon name="camera" size={16} color={color.accent} />

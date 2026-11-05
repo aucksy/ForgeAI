@@ -49,7 +49,8 @@ export const VOICE_WORDS = {
   offline: "Couldn't reach us. Check your internet and try again, or type.",
   failed: "Couldn't turn your voice into text. Try again, or type.",
   // Same facts as the approved privacy notice line (#73 A), so the screen and the notice agree.
-  privacy: 'When you tap Stop, your recording goes through our server to Groq, a speech-to-text service in the USA. Neither we nor Groq keep it. The text reaches us only if you tap Send.',
+  // Fresh-eyes review (5 Nov 2026): no company name members do not know; what is sent and why.
+  privacy: 'When you tap Stop, your recording goes through our server to an AI service in the USA that turns speech into text. Only the recording is sent. Neither we nor that service keep it. The text reaches us only if you tap Send.',
 } as const;
 
 export type VoiceResult = { ok: true; text: string } | { ok: false; words: string };
