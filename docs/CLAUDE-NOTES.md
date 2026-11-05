@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-351. '585 kg beaten' after 2 sets, still under last time's 1,050 kg - 5 Nov 2026
+
+He said (screenshot, T-Bar Row 30x13, 30x13 done, set 3 open): "Also check this calculation. It says I have beaten last weight".
+Cause: the kg line compares with today's TARGET (32.5 x 6 x 3 = 585 kg, the R-349 bad goal), not with last time's 1,050 kg (30 x 13+12+10). 780 > 585 so it says beaten with a set to go, while he is 270 kg under last time.
+Fix (with R-350): the kg to beat is never under last time's total at the weight he lifts; the word 'beaten' only when today's total passes last time's. Built together with the simple rule after his A/B pick.
+
 ## R-350. Simpler suggested weights: only the weight jump % and the rep range - 5 Nov 2026
 
 He said: "I feel like you may have complicated the logic behind the suggested weights ... we only have to consider two things ... the user selected increase in weight in percentage and what is the user selected rep range, and then we only have to increase either the weight or the rep by 1 from the previous one. And just like you do today for some, if there are 3 sets, then we don't increase it for the first set and then increase by 1 and increase it by the number or weight to achieve those two factors."
