@@ -192,7 +192,9 @@ appId: com.mettleup.app
     visible: "never shown, a 2 s wait"
     timeout: 2000
     optional: true
-- launchApp
+# Back as a member comes back (the app was not closed): Maestro's launchApp stops the app unless told not to.
+- launchApp:
+    stopApp: false
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 20000
