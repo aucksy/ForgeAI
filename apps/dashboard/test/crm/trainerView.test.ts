@@ -1,5 +1,5 @@
 /**
- * F109 "My members": the server's answers read defensively, the one line per member, who comes first, the two
+ * F109 "Training progress": the server's answers read defensively, the one line per member, who comes first, the two
  * WhatsApp messages, the refusal words, and everything staying hidden until the server has 0050.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';

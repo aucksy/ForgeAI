@@ -54,7 +54,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       },
       {
         // F109 (0050 live 3 Nov).
-        text: 'Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "My members".',
+        text: 'Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "Training progress". This page was called "My members" before.',
         go: { label: 'Open People', path: '/settings/people' },
       },
       {

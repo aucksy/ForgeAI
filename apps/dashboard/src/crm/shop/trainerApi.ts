@@ -4,7 +4,7 @@
  * trainer read only their own members, and refuses the front desk without the tick (TRAINER_ONLY).
  *
  * Until 0050 is on the server, the first read answers PGRST202 ("no such function"): this page then remembers
- * "not here" for the life of the page, and "My members", the Trainer tick and the member's trainer stay hidden,
+ * "not here" for the life of the page, and "Training progress", the Trainer tick and the member's trainer stay hidden,
  * with no error shown and one quiet note in the console (as machinesApi.ts does for 0049). A desk person without
  * the tick is remembered as 'no' too (the link stays hidden). Any other failure is not remembered.
  */

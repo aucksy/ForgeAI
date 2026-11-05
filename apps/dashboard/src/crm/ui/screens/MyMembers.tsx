@@ -1,5 +1,5 @@
 /**
- * F109 "My members" (/trainer; OWNER-INBOX #46, DECIDED 24 Oct 2026). Who to talk to today and what to say: one
+ * F109 "Training progress" (/trainer; OWNER-INBOX #46, DECIDED 24 Oct 2026). Who to talk to today and what to say: one
  * plain line per member ("New best: Leg press 120 kg × 10", "No workout for 9 days", "Asked for help today"), this
  * week's workouts and kg, the best sets, and two ready WhatsApp messages ("Well done", "How's it going?").
  *
@@ -71,7 +71,7 @@ export function MyMembersScreen() {
   return (
     <>
       <PageHeader
-        title="My members"
+        title="Training progress"
         subtitle={owner ? 'Every member who shares their workouts, and their trainer' : 'Your members: who to talk to today'}
         actions={
           <Button variant="ghost" onClick={() => void fetchList()}>
@@ -81,11 +81,11 @@ export function MyMembersScreen() {
       />
       {!key ? (
         <Card>
-          <EmptyState title="My members needs your gym online" body="Put your gym online first (Settings → Sign-in & data)." />
+          <EmptyState title="Training progress needs your gym online" body="Put your gym online first (Settings → Sign-in & data)." />
         </Card>
       ) : load.state === 'missing' ? (
         <Card>
-          <EmptyState title="My members is not ready for your gym yet" body="It will appear here once your gym’s server has it." />
+          <EmptyState title="Training progress is not ready for your gym yet" body="It will appear here once your gym’s server has it." />
         </Card>
       ) : load.state === 'refused' ? (
         <Card>

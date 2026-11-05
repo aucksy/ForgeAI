@@ -1,6 +1,6 @@
 /**
- * F109 "Trainers see their members' progress": the small pieces outside the "My members" page.
- *  - useTrainerAccess(): may this signed-in key open "My members" ('owner' / 'trainer'), or not ('no')?
+ * F109 "Trainers see their members' progress": the small pieces outside the "Training progress" page.
+ *  - useTrainerAccess(): may this signed-in key open "Training progress" ('owner' / 'trainer'), or not ('no')?
  *  - TrainerTick: the owner's "Trainer" tick on a person (Settings -> Staff & sign-in). The person's role stays
  *    what it was, so a trainer never gets the owner's powers.
  *  - MemberTrainerCard: the owner picks a member's trainer on the member's page.
@@ -21,7 +21,7 @@ function useOnlineKey(): string | null {
   return session?.online ? (session.ownerKey ?? null) : null;
 }
 
-/** May this key open "My members"? Asks the server once per page load. */
+/** May this key open "Training progress"? Asks the server once per page load. */
 export function useTrainerAccess(): trainerApi.TrainerAccess {
   const key = useOnlineKey();
   const [, setTick] = useState(0);
@@ -83,7 +83,7 @@ export function TrainerTick({ staffId, setup, save }: { staffId: string; setup: 
           setError(null);
           void save((key) => trainerApi.setTrainer(key, staffId, v)).then(setError);
         }}
-        hint="Sees the workout progress of the members you give them, in My members. Nothing else changes."
+        hint="Sees the workout progress of the members you give them, in Training progress. Nothing else changes."
       >
         Trainer
       </CheckField>
@@ -105,7 +105,7 @@ export function MemberTrainerCard({ memberId }: { memberId: string }) {
   return (
     <Card style={{ marginBottom: space.lg }}>
       <SectionTitle>Trainer</SectionTitle>
-      <p style={quiet}>The trainer sees this member's workout progress in My members, if the member shares it from the app.</p>
+      <p style={quiet}>The trainer sees this member's workout progress in Training progress, if the member shares it from the app.</p>
       <div style={{ marginTop: space.md }}>
         <SelectField
           label="Trainer"

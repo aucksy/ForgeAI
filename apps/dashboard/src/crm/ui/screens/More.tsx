@@ -60,7 +60,7 @@ export function MoreScreen() {
     { path: '/diet', group: 'talk', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
     // F109 (#46): hidden until the gym's server has the trainer view (0050), and for the desk without the Trainer tick.
     ...(trainerNav
-      ? [{ path: '/trainer', group: 'talk', label: 'My members', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]
+      ? [{ path: '/trainer', group: 'talk', label: 'Training progress', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]
       : []),
     // R-319 item 1: members' "Ask a trainer" questions for this person; hidden until 0053 (count null).
     ...(trainerNav && questionsOpen !== null

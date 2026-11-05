@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-334. "My members" next to "Members": rename + root cause + global rule — 5 Nov 2026
+
+He said: "on the edit panel there is a new tab added called my members and there is already one called members ... I did not expect you to make such a simple mistake ... figure out how did you make this simple mistake and then make that a global rule ... change the name of the tab." Root cause: F109's page was named on 24 Oct from the trainer's view; the owner was later given it too and the name was never re-read in the owner's menu beside "Members"; no check compared names; #86 showed the name inside a trainer story. Did: renamed to "Training progress" (nav, More, page, empty states, hints, Hinglish, ADMIN_NEWS line says it was "My members"); test apps/dashboard/test/crm/navNames.test.ts fails on two menu names that mean the same; global rule D:/Brain/How I Like Things/new-names-checked-against-every-screen.md. Sweep: member app has "My gym" (Gym tab) and "Your gym" (Settings), different screens, left.
+
 ## R-333. Admin panel had no What's new for 1-5 Nov; the tip icon is an "i" — 5 Nov 2026
 
 He said: "on the admin panel there is an option now for a member to be enabled as a FitPass member. But why did I not see any notification for this new functionality added? This is the rule, isn't it? Please keep it consistent." and "it was not 'Eye' icon but 'i' icon for information". Did: ADMIN_NEWS entry 2026-11-05 (pass members, Bring a friend, Payments test mode, Trainer tick, Busy machines); rule saved (CLAUDE.md R-333 + brain every-update-tells-its-users); panel redeploy after CI; design canvas switched to an i icon.

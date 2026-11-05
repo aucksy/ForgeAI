@@ -154,7 +154,7 @@ export function Routes({ online }: { online: boolean }) {
   const { multi, canOpenOthers } = useBranches();
   const allBranches = multi && canOpenOthers;
   const lang = useLang();
-  // F109: "My members" for the owner and ticked trainers, once the gym's server has the trainer view (0050).
+  // F109: "Training progress" for the owner and ticked trainers, once the gym's server has the trainer view (0050).
   const trainerAccess = useTrainerAccess();
   const trainerNav = trainerAccess === 'owner' || trainerAccess === 'trainer';
   // R-319 item 1: questions members asked in the app, for the person they picked (null: hidden, no 0053).
@@ -219,7 +219,7 @@ export function Routes({ online }: { online: boolean }) {
       // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
       { path: '/diet', label: t('Diet plans'), icon: 'diet' },
       // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
-      ...(trainerNav ? [{ path: '/trainer', label: t('My members'), icon: 'growth' } as NavItem] : []),
+      ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth' } as NavItem] : []),
       // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
       ...(trainerNav && questionsOpen !== null
         ? [{ path: '/questions', label: t('Questions'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]

@@ -28,7 +28,7 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Workout plans': 'Workout plans',
   'Diet plans': 'Diet plans',
   // F109 (#46): words: owner approves before live.
-  'My members': 'Mere members',
+  'Training progress': 'Training progress',
   // R-319 item 1 (4 Nov 2026): words: owner checks at UAT.
   Questions: 'Sawaal',
   Challenges: 'Challenges',
