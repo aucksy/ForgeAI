@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-356. Gym logo: clean upload answer into the tracker; square logos look bad on round home-screen icons; yes to machine steps — 5 Nov 2026
+
+He said: put my answer about helping owners upload a good transparent logo into the tracker Q&A. A square logo looks bad on his round home-screen icon (screenshot: round badge on a white square, white corners). And "Yes for machine and cable steps".
+
+What I did: tracker #90 (answer: R-192 tip under the logo upload, F51 not doing; square logo fix). T74: a helper builds the shortcut as an adaptive icon on the logo's edge colour, updates icons already added, and adds a round preview on Branding. F194 + T75: the progression helper builds the Machine and cable steps line after rule A (T73).
+
 ## R-355. Watch rest screen loses the exercise name after the last set; dim screen follow-up — 5 Nov 2026
 
 He said: the name goes missing, he thinks after the last set of an exercise; maybe show the NEXT exercise's name. He also said the dim screen worked earlier today, so it is not a watch setting (do not ask him to check settings again; saved as Brain note it-worked-earlier-so-find-the-bug). He believes Plates and bars already has machine steps: it does not, it lists only plates and bars. Help credit: he will add it about 12 Nov.
@@ -23,7 +29,9 @@ What I did: a design helper (impeccable skill) reviews every watch screen pictur
 
 He said: after a call (or leaving the app) the watch no longer shows the dim screen; the screen goes off and comes back bright on wrist lift.
 
-My read: the app's dim mode code (AmbientLifecycleObserver, MainActivity) did not change and stays registered for the activity's life. A screen that goes fully black means the watch itself is not giving apps an always-on screen: Always-on display switched off, Battery Saver, or Bedtime/Theatre mode (each turns it off). Asked him to check those three on the watch, then reopen the app. If all three are fine and it still fails, I add a log of ambient enter/exit to find the cause.
+He confirmed the watch settings were fine (it dimmed earlier in the same workout), so the settings answer is withdrawn.
+Most likely cause (not proven; no public bug report found): androidx.wear 1.3.0's AmbientLifecycleObserver registers the activity for ambient ONCE, in onCreate (setAmbientEnabled); later it only forwards resume/pause/stop. After another app (the call screen) took the front, Wear OS stopped treating this MettleUp activity instance as ambient-capable, so the screen turned off instead of dimming.
+Fix (watch only, AmbientDiag.kt + MainActivity + WorkoutLive): (1) when the screen goes OFF mid-workout while not dimmed, and dimming already worked since the app started, the next wrist raise rebuilds the screen once (recreate), which registers ambient afresh; the set being logged is kept; at most 2 tries until dimming works again. (2) the workout's Ongoing Activity is posted again each time MettleUp comes back to the front. (3) an on-watch diary of screen events (ambient enter/exit, pause/resume/stop, focus, screen on/off, Battery Saver, always-on setting, theatre) kept on the watch and copied to the Data Layer at /forge/diag; the phone does not read it yet (its feedback screen has no attachment path), next step is for the feedback screen to attach it.
 
 ## R-352. A gym setting for machine weight steps (2.5 or 5 kg)? — 5 Nov 2026
 

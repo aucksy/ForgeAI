@@ -167,6 +167,8 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 
 | Task | Status | Details |
 |---|---|---|
+| T75 "Machine and cable steps" setting (R-352, you said yes 5 Nov) | To do | One line in Settings > Plates and bars: Learn from my weights / 2.5 kg / 5 kg. Suggested weights on every machine and cable then use that step. Starts after T73. Next version. |
+| T74 Round home-screen icon for square gym logos (#90) | Doing | Started 5 Nov. The gym's logo sits in the middle of the icon on its own edge colour, so no white corners in a circle. Already added icons update by themselves. Branding page shows a round preview. |
 | T73 Simpler suggested weights (your pick A) and a true "kg to beat" (R-350, R-351) | Doing | Started 5 Nov. +1 rep on each set until every set reaches the top of your rep range; then the weight goes up by your Weight jump, with reps that lift about the same kg. The kg to beat is last time's total, so "beaten" only shows when you really pass it. Next version. |
 | T72 Sleep link and protein tips, step 1 of F193 (R-344) | Doing | Started 5 Nov. A switch in Settings, then one calm line after a weaker workout when you slept little. Needs your OK on one privacy sentence before release. |
 | T71 iPhone app, step 1: the parity check and the iPhone build in the cloud (R-339) | Done | Done 5 Nov: the iPhone app builds in the cloud and opens on an iPhone simulator; all 4 tabs and Settings checked in pictures. A check now lists the 18 Android-only parts still missing on iPhone and stops any new one slipping through. Next: rest timer, Apple Health, watch link, then the Apple Watch app. |
@@ -377,6 +379,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F76 Make a routine by speaking | Idea | Members say "push day: bench, incline dumbbell, flyes" in Hindi, English or Hinglish and get a routine (R-134). About 5 paise each with the phone's free speech-to-text and a small AI. | The member taps a mic on the routines screen and speaks. The phone writes the words down for free, a small AI turns them into a routine with our exercise names, and the member checks it before saving. A daily limit keeps the cost tiny; the AI key stays on our server. |
 | F186 Guided first routine, in a folder | Live | Released in v0.64.0. Your idea, 31 Oct (R-251): a new member is walked step by step through making their first routine and putting it in a folder. Built 2 Nov; comes in 0.69.0. | A new member with no routines sees "Make your first routine" on the Workout tab. Step 1 names the folder (for example "My plan"), step 2 names the routine (for example "Push Day"), step 3 picks exercises, step 4 saves it. Each step shows one short hint, and Skip is always there. Before building, we check how Hevy and Strong guide a first routine and what their members complain about. |
 | F190 New welcome screen | Live | Released in 0.68.0 on 2 Nov 2026. Built (R-276/R-277): the real set card with "1,500 kg beaten" and RPE, Continue with Google, Join my gym and Bring workouts screens. |
+| F194 Machine and cable steps | Planned | You said yes 5 Nov (R-352). | One line in Settings > Plates and bars: "Machine and cable steps": Learn from my weights (today's guess), 2.5 kg or 5 kg. The app then suggests only weights your gym's machines really have. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
@@ -501,6 +504,14 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 90. A clean gym logo, and square logos on a round home-screen icon — 5 Nov 2026
+**Chat:** Mettle Up
+**Status:** Answered
+**You asked:** How do we help gym owners upload a good, clear logo with no background? And a square logo looks bad on the home screen, because your phone shows round icons.
+**My answer (5 Nov 2026):**
+- **Clear logo:** on 30 Oct you chose not to build our own background remover (F51). Instead, a tip under the logo upload on the Branding page tells owners how to remove the background free with ChatGPT or Google Gemini.
+- **Square logo:** Android cuts every home-screen icon into the phone's shape. On your phone that is a circle. A square logo with a white background then shows white corners, as in your picture. I am fixing it (T74): the app puts the logo in the middle of the icon, on the logo's own edge colour, so it looks clean in a circle, a square or any other shape. Members who already added the icon get the new one by themselves. The Branding page also shows a round preview, so the owner sees how it looks on a member's phone.
 
 ## 89. Apple developer account for the iPhone app — 5 Nov 2026
 **Chat:** Mettle Up
