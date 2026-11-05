@@ -95,7 +95,8 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: "1 of 2"
 - assertVisible: "Triceps Pushdown"
-- tapOn: "Chest Fly \\(Machine\\)"
+# R-335 (98ff8e0e): file imports show the library's name too ("Chest Fly (Machine) → Pec Deck Fly").
+- tapOn: "Chest Fly \\(Machine\\) → Pec Deck Fly"
 - takeScreenshot: 143-check-push-a
 - scrollUntilVisible:
     element: "^Next$"

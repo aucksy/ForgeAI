@@ -236,10 +236,11 @@ appId: com.mettleup.app
     # The rest countdown re-renders 4x a second, so "wait until the screen is still"
     # would sit out the whole 3.5 s the record toast is up.
     waitToSettleTimeoutMs: 300
-- extendedWaitUntil:
-    visible: "New record.*"
-    timeout: 3000
-- takeScreenshot: 09-new-record
+# R-362 (owner, 5 Nov 2026): one record pop-up per exercise per workout. Set 1 (the suggested 75 kg
+# over the demo's 72.5 kg) already took this exercise's pop-up (its medal shows on set 1), so 300 kg
+# gets the medal only. NEGATIVE: no second pop-up (T76: this flow still waited for one).
+- assertNotVisible: "New record.*"
+- takeScreenshot: 09-no-second-record-pop-up
 - runFlow: sub-inuse-close.yaml
 # D7: 300 kg is ~4x the demo bench best (72.5 kg), so the row asks "300 kg — that's 4× your
 # best. Keep it?" under the set (already saved; it never refuses). It is on purpose: Keep.

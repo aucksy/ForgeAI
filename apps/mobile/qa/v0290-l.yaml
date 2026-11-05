@@ -113,7 +113,8 @@ appId: com.mettleup.app
     visible: "1 of 6"
     timeout: 10000
 - assertVisible: "As saved in Hevy.*"
-- assertVisible: "Chin Up"
+# R-335 (98ff8e0e): the check screen names the library's name too ("Chin Up → Chin-Up").
+- assertVisible: "Chin Up → Chin-Up"
 - assertVisible: "3 sets · 9–12 reps"
 - takeScreenshot: 173-link-check-pull-2
 - scrollUntilVisible:
