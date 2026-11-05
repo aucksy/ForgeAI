@@ -28,3 +28,5 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Skip rest|In use\. .*'
     timeout: 8000
+    # The last set of the exercise starts no rest timer, so this wait may miss.
+    optional: true
