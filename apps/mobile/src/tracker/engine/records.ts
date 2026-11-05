@@ -262,7 +262,7 @@ export function addToLadder(ladder: RepLadder, s: Pick<RecordSet, 'weightKg' | '
   const r = Math.round(finite(s.reps));
   if (!(w > 0) || !(r > 0)) return;
   const cur = ladder.get(r);
-  if (cur == null || beats(w, cur)) ladder.set(r, w);
+  if (cur == null || beatsKg(w, cur)) ladder.set(r, w);
 }
 
 /**
@@ -282,8 +282,8 @@ export function repRecordOver(ladder: ReadonlyMap<number, number>, s: Pick<Recor
     if (reps >= r && (!atLeast || kg > atLeast.weightKg)) atLeast = { weightKg: kg, reps };
     if (!longest || reps > longest.reps) longest = { weightKg: kg, reps };
   }
-  if (atLeast) return beats(w, atLeast.weightKg) ? atLeast : null;
-  return longest && !beats(longest.weightKg, w) ? longest : null;
+  if (atLeast) return beatsKg(w, atLeast.weightKg) ? atLeast : null;
+  return longest && !beatsKg(longest.weightKg, w) ? longest : null;
 }
 
 /**
@@ -316,7 +316,7 @@ export function ladderEntries(ladder: ReadonlyMap<number, number>): [number, num
 export function overloadGated(kind: RecordKind, t: LogType, setWeightKg: number, holderKg: number | null | undefined): boolean {
   if (!overloadGatedKind(kind, t)) return false;
   if (holderKg == null || !Number.isFinite(holderKg)) return false;
-  return beats(holderKg, finite(setWeightKg));
+  return beatsKg(holderKg, finite(setWeightKg));
 }
 
 const finite = (n: number | null | undefined): number => (n != null && Number.isFinite(n) ? n : 0);
@@ -379,6 +379,47 @@ export function beats(v: number, best: number): boolean {
   // v0.27.0 review: 1 part in 10,000 is a tie. A pound weight stored by two roads (typed vs
   // imported or rounded) differs by a few thousandths of a kg; real weights differ by 0.25+.
   return v > best + Math.max(1e-6, Math.abs(best) * 1e-4);
+}
+
+/**
+ * T76 (owner's full test round, 5 Nov 2026): half of 0.1 lb in kg, the most a pound weight typed as
+ * the screen showed it can differ from the kilo weight it was shown for. After a switch to lb, last
+ * time's 60 kg shows as 132.3 lb, and 132.3 lb typed is stored as 60.0103 kg: that was "New record ·
+ * Heaviest weight 132.3 lb" (and three more kinds) for the same dumbbell. Real weights differ by
+ * 0.25 kg or more (a pound plate 0.45 kg), so no real record is lost.
+ */
+export const SHOWN_NOISE_KG = 0.0227;
+
+/** A weight strictly heavier than another, a pound weight typed as shown being the same weight. PURE. */
+export function beatsKg(w: number, than: number): boolean {
+  return w > than + Math.max(SHOWN_NOISE_KG, Math.abs(than) * 1e-4);
+}
+
+/**
+ * How much a record value can move when the set's weight is off by SHOWN_NOISE_KG (0 for kinds
+ * with no weight: reps, time, distance, pace). Worked out from the rule itself, so it is right for
+ * every kind (a best set moves by the noise times its reps and counting). PURE.
+ */
+export function shownNoise(kind: RecordKind, s: RecordSet, rule: RecordRule, bodyweightKg: number | null): number {
+  const w = finite(s.weightKg);
+  if (w === 0) return 0;
+  const v = setRecordValue(kind, s, rule, bodyweightKg);
+  const up = setRecordValue(kind, { ...s, weightKg: w + (w > 0 ? SHOWN_NOISE_KG : -SHOWN_NOISE_KG) }, rule, bodyweightKg);
+  return v != null && up != null ? Math.abs(up - v) : 0;
+}
+
+/** The same for one set's part of a workout total. PURE. */
+export function shownSessionNoise(s: RecordSet, rule: RecordRule, bodyweightKg: number | null): number {
+  const w = finite(s.weightKg);
+  if (w === 0) return 0;
+  const v = sessionContribution(s, rule, bodyweightKg);
+  const up = sessionContribution({ ...s, weightKg: w + (w > 0 ? SHOWN_NOISE_KG : -SHOWN_NOISE_KG) }, rule, bodyweightKg);
+  return Math.abs(up - v);
+}
+
+/** `beats`, with room for `noise` (a pound weight typed as shown). PURE. */
+export function beatsShown(v: number, best: number, noise: number): boolean {
+  return beats(v, best) && v > best + noise;
 }
 
 /** Is set `b` the better holder of a tie than `a`? Heaviest weight prefers more reps. */
@@ -503,7 +544,8 @@ function oneCountingRecords(sessions: readonly RecordSession[], rule: RecordRule
         raiseBar(kind, hit.set);
         continue;
       }
-      if (!beats(hit.value, prior.value)) continue;
+      const noise = hit.set ? shownNoise(kind, hit.set, rule, body) : session.sets.reduce((a, st) => a + shownSessionNoise(st, rule, body), 0);
+      if (!beatsShown(hit.value, prior.value, noise)) continue;
       // The overload gate: the news is the best set of this workout that beat the record at no
       // less weight than the bar — the heaviest announced holder's (a lighter set can still take
       // the best, unannounced, and never lowers the bar).
@@ -585,7 +627,7 @@ function gatedNews(kind: RecordKind, session: RecordSession, rule: RecordRule, b
   for (const st of session.sets) {
     if (overloadGated(kind, rule.logType, st.weightKg, gateKg)) continue;
     const v = setRecordValue(kind, st, rule, body);
-    if (v == null || !beats(v, prior.value)) continue;
+    if (v == null || !beatsShown(v, prior.value, shownNoise(kind, st, rule, body))) continue;
     if (!best || beats(v, best.value)) best = { kind, value: v, sessionId: session.sessionId, dateISO: session.dateISO, startedAt: session.startedAt, set: st };
   }
   return best;

@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2060,6 +2060,13 @@ qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
 qa_runs usel && ! qa_runs uat && { log "gate part USEL begins"; part_usel; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
+# T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,
+# Units switched to lb, the same weight typed as shown -> no "New record" (it said so before the fix),
+# one more rep -> a record. Runs alone with only=u76 (a fresh install with the demo). Pictures rel-t76-*.png.
+part_u76() {
+  uat_flow uatt76a uat-rel-t76-a-units.yaml || { status=1; return 1; }
+}
+qa_runs u76 && { log "gate part U76 begins"; part_u76; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

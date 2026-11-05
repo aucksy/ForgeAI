@@ -1,0 +1,86 @@
+# T76 (owner's full test round, 5 Nov 2026), part U76: no false record after a kg -> lb switch.
+# The round found it: last time 12.5 kg x 12; the member switches Units to "lb, miles"; 12.5 kg shows
+# as 27.6 lb; he types 27.6 lb (stored 12.519 kg) and ticks: the app said "New record" (heaviest
+# weight, best set, 1-rep max) for the same dumbbell. Fixed in engine/records (SHOWN_NOISE_KG).
+#  1. History: a fresh install with the demo, Dumbbell Preacher Curl "Weight as typed" 12.5 kg x 12.
+#  2. Settings -> Units -> "lb, miles" (a setting changed mid-history).
+#  3. NEGATIVE: 27.6 lb x 12 (as shown) -> no "New record", no "on last time" line.
+#  4. POSITIVE: 27.6 lb x 13 (one more rep) -> "New record" pops up (the net is not passed by silence).
+# Units go back to "kg, km" at the end. Pictures rel-t76-a-*.png.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "Weight as typed"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "12.5"
+      REPS: "12"
+- takeScreenshot: rel-t76-a-history-12-5-kg
+- runFlow: sub-uat-r358-finish.yaml
+- runFlow:
+    when:
+      visible: "Workout complete"
+    commands:
+      - scrollUntilVisible:
+          element: "^Done$"
+          timeout: 15000
+      - tapOn: "^Done$"
+# ---------------------------------------------------------------- units: lb, mid-history
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^lb, miles$"
+- tapOn: "^lb, miles$"
+- takeScreenshot: rel-t76-a-units-lb
+- runFlow: sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- the same dumbbell, typed in lb as shown
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "27.6"
+      REPS: "12"
+- assertNotVisible: "New record.*"
+- assertNotVisible: ".*on last time.*"
+- takeScreenshot: rel-t76-a-27-6-lb-no-record
+- runFlow: sub-uat-rest-clear.yaml
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "2"
+      KG: "27.6"
+      REPS: "13"
+- extendedWaitUntil:
+    visible: "New record.*"
+    timeout: 6000
+- takeScreenshot: rel-t76-a-one-more-rep-is-a-record
+- runFlow: sub-uat-r358-finish.yaml
+- takeScreenshot: rel-t76-a-finish
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 15000
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- units back to kg
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Units"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^kg, km$"
+- tapOn: "^kg, km$"
+- runFlow: sub-back-to-tabs.yaml

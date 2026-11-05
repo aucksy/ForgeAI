@@ -2,7 +2,8 @@
 # side at a time" (his switch), then exactly his sets: 10 x 13 (was "Most lifted in one set · 10 kg x
 # 13"), 10 x 18, 10 x 18, 10 x 15 (was "Most lifted in one workout · 1,020 kg"). NEGATIVE: no "New
 # record" after any tick - nothing has been logged one side at a time before. Also the edit he made:
-# set 1 changed 13 -> 18 after its tick, no pop-up. Pictures rel-r358-b-*.png.
+# set 1 changed 13 -> 18 after its tick, no pop-up. T76: no "on last time" line across Countings and no
+# kg comparison on the finish screen. Pictures rel-r358-b-*.png.
 appId: com.mettleup.app
 ---
 - runFlow:
@@ -41,6 +42,10 @@ appId: com.mettleup.app
       KG: "10"
       REPS: "18"
 - assertNotVisible: "New record.*"
+# T76 (R-358 family): last time's set 2 was 10 x 12 "as typed"; 10 x 18 per side is another Counting,
+# so no "+6 reps on last time" either (it said so before the T76 fix).
+- assertNotVisible: ".*on last time.*"
+- takeScreenshot: rel-r358-b-set2-no-last-time-line
 - runFlow: sub-uat-rest-clear.yaml
 - runFlow:
     file: sub-uat-r358-set.yaml
@@ -52,4 +57,14 @@ appId: com.mettleup.app
 - assertNotVisible: ".*1,020 kg.*"
 - takeScreenshot: rel-r358-b-1020-kg-no-record
 - runFlow: sub-uat-r358-finish.yaml
+# T76 (R-358 family): flow a's 270 kg was counted once, today's per-side sets twice, so the finish
+# screen does not compare them: no "+750 kg more than last time" (and the other way, no "Lighter than
+# last time" with a sleep or protein line under it). Today's total is the number to beat next time.
+- assertNotVisible: ".*more than last time.*"
+- assertNotVisible: "Lighter than last time.*"
+- assertNotVisible: ".*kg lifted than.*"
+- scrollUntilVisible:
+    element: "Your number to beat next time.*"
+    direction: DOWN
+    timeout: 15000
 - takeScreenshot: rel-r358-b-finish

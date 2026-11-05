@@ -23,12 +23,16 @@ import {
   RECORD_KINDS,
   addToLadder,
   beats,
+  beatsKg,
+  beatsShown,
   keepsRepRecords,
   overloadGated,
   recordKindsFor,
   repRecordOver,
   sessionContribution,
   setRecordValue,
+  shownNoise,
+  shownSessionNoise,
   type RecordKind,
   type RecordRule,
   type RecordSet,
@@ -144,6 +148,8 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
   const priorMode = ex.bests.mode;
   const sameCounting = (set: RecordSet): boolean => priorMode == null || set.loadMode === priorMode;
   let sessionTotal = 0;
+  /** T76: how far the total can be off when pound weights were typed as shown (a tie, not a record). */
+  let sessionNoise = 0;
   for (const card of earlier) {
     for (const s of card.sets) {
       if (!s.done || s.isWarmup) continue;
@@ -159,10 +165,11 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
       // Only a rep record raises the rep bar (a quiet lighter set never does; review fix).
       if (repLadder && repRecordOver(repLadder, set)) addToLadder(repLadder, set);
       sessionTotal += sessionContribution(set, rule, body);
+      sessionNoise += shownSessionNoise(set, rule, body);
     }
   }
   // Already passed on an earlier card: announced there, not again here.
-  let sessionBeaten = prior.best_session != null && beats(sessionTotal, prior.best_session);
+  let sessionBeaten = prior.best_session != null && beatsShown(sessionTotal, prior.best_session, sessionNoise);
   for (const s of ex.sets) {
     if (!s.done || s.isWarmup) continue;
     const set = storedSet(s, lt, mode);
@@ -182,13 +189,14 @@ export function liveRecordHits(ex: LiveExercise, earlier: readonly { sets: Draft
       const v = setRecordValue(kind, set, rule, body);
       if (v == null) continue;
       const best = running[kind];
-      if (prior[kind] != null && best != null && beats(v, best)) all.push({ kind, value: v, set });
+      if (prior[kind] != null && best != null && beatsShown(v, best, shownNoise(kind, set, rule, body))) all.push({ kind, value: v, set });
       running[kind] = best == null ? v : Math.max(best, v);
     }
     if (kinds.includes('best_session')) {
       sessionTotal += sessionContribution(set, rule, body);
+      sessionNoise += shownSessionNoise(set, rule, body);
       const p = prior.best_session;
-      if (!sessionBeaten && p != null && beats(sessionTotal, p)) {
+      if (!sessionBeaten && p != null && beatsShown(sessionTotal, p, sessionNoise)) {
         sessionBeaten = true;
         all.push({ kind: 'best_session', value: sessionTotal, set });
       }
@@ -245,11 +253,11 @@ export function toastHit<T extends LiveExercise & { key: string; exerciseId: str
         if (other.loadMode !== c.set.loadMode) continue;
         if (c.kind === 'rep_record') {
           // Another set this workout at least as heavy for at least as many reps.
-          if (!beats(c.set.weightKg, other.weightKg) && other.reps >= c.set.reps) return true;
+          if (!beatsKg(c.set.weightKg, other.weightKg) && other.reps >= c.set.reps) return true;
           continue;
         }
         const v = setRecordValue(c.kind, other, rule, body);
-        if (v != null && !beats(c.value, v)) return true;
+        if (v != null && !beatsShown(c.value, v, shownNoise(c.kind, c.set, rule, body))) return true;
       }
     }
     return false;

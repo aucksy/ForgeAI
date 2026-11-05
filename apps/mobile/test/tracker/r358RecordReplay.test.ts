@@ -52,6 +52,22 @@ function oValue(kind: OKind, s: OSet, lt: LogType): number | null {
 }
 const oSessionTotal = (sets: readonly OSet[], lt: LogType): number =>
   sets.reduce((a, s) => a + (lt === 'reps' ? s.r : s.w * s.r * MULT[s.mode]), 0);
+/**
+ * T76: a pound weight typed as the screen showed a kilo weight (60 kg shows 132.3 lb = 60.0103 kg)
+ * is the same weight: values may be off by what half of 0.1 lb (0.0227 kg) makes of them.
+ */
+const LB_HALF_STEP_KG = 0.0227;
+function oNoise(kind: OKind, s: OSet, lt: LogType): number {
+  if (lt === 'reps') return 0;
+  if (kind === 'weight') return LB_HALF_STEP_KG;
+  if (kind === 'best_set') return LB_HALF_STEP_KG * s.r * MULT[s.mode];
+  if (kind === 'e1rm') return s.r === 1 ? LB_HALF_STEP_KG : LB_HALF_STEP_KG * (1 + Math.min(s.r, 12) / 30);
+  return 0;
+}
+const oSessionNoise = (sets: readonly OSet[], lt: LogType): number =>
+  lt === 'reps' ? 0 : sets.reduce((a, s) => a + LB_HALF_STEP_KG * s.r * MULT[s.mode], 0);
+/** Better than `best` by more than float noise AND more than a pound weight typed as shown. */
+const aboveN = (v: number, best: number, noise: number): boolean => above(v, best) && v > best + noise;
 
 // ------------------------------------------------------------------ the year of workouts
 
@@ -178,10 +194,10 @@ export function replay(deps: Deps, workouts = 500): Result {
 
       const confirms = (kind: string, value: number): boolean => {
         if (set.isWarmup || pastSame.length === 0) return false;
-        if (kind === 'best_session') return pastSessions.length > 0 && above(total, bestPastSession) && !above(value, total);
+        if (kind === 'best_session') return pastSessions.length > 0 && aboveN(total, bestPastSession, oSessionNoise(doneSame, ex.lt)) && !above(value, total);
         if (kind === 'rep_record') {
           // Never dominated: no other same-counting set at least as heavy for at least as many reps.
-          return ![...pastSame, ...others].some((o) => o.w >= me.w && o.r >= me.r) && pastSame.some((o) => o.w > 0);
+          return ![...pastSame, ...others].some((o) => o.w >= me.w - LB_HALF_STEP_KG && o.r >= me.r) && pastSame.some((o) => o.w > 0);
         }
         const mine = oValue(kind as OKind, me, ex.lt);
         if (mine == null || Math.abs(mine - value) > 1e-6 * Math.max(1, mine)) return false;
@@ -192,7 +208,7 @@ export function replay(deps: Deps, workouts = 500): Result {
         // estimate is judged against sets at least as heavy; every other kind against all.
         const judged = (o: OSet): boolean => kind !== 'e1rm' || o.w >= me.w;
         const vs = [...pastSame, ...others].filter(judged).map((o) => oValue(kind as OKind, o, ex.lt)).filter((v): v is number => v != null);
-        return vs.every((v) => above(mine, v));
+        return vs.every((v) => aboveN(mine, v, oNoise(kind as OKind, me, ex.lt)));
       };
 
       // The oracle's own news, for "every record pops up": heaviest weight / best workout.
@@ -200,8 +216,8 @@ export function replay(deps: Deps, workouts = 500): Result {
         const wv = oValue('weight', me, ex.lt);
         const pw = pastSame.map((o) => oValue('weight', o, ex.lt)).filter((v): v is number => v != null);
         const ow = others.map((o) => oValue('weight', o, ex.lt)).filter((v): v is number => v != null);
-        if (wv != null && pw.length > 0 && [...pw, ...ow].every((v) => above(wv, v))) oracleNews.add(ex.id);
-        if (pastSessions.length > 0 && above(total, bestPastSession)) oracleNews.add(ex.id);
+        if (wv != null && pw.length > 0 && [...pw, ...ow].every((v) => aboveN(wv, v, LB_HALF_STEP_KG))) oracleNews.add(ex.id);
+        if (pastSessions.length > 0 && aboveN(total, bestPastSession, oSessionNoise(doneSame, ex.lt))) oracleNews.add(ex.id);
       }
 
       if (!hit) return;
@@ -238,7 +254,10 @@ export function replay(deps: Deps, workouts = 500): Result {
           const lb = w % 3 === 0;
           const base = 60 + lift * 2.5 + (rand() < 0.15 ? 2.5 : 0) - (rand() < 0.3 ? 5 : 0);
           // Pound weights: 135 lb typed, stored in kg unrounded (as a typed pound weight is).
-          const kg = lb ? Math.round(base / 0.45359237 / 2.5) * 2.5 * 0.45359237 : base;
+          // T76: every 7th workout (not a pound one) the member is in lb and types the kilo weight
+          // as the screen shows it (60 kg -> "132.3" lb -> 60.0103 kg): the same weight, never news.
+          const asShown = !lb && w % 7 === 3;
+          const kg = lb ? Math.round(base / 0.45359237 / 2.5) * 2.5 * 0.45359237 : asShown ? (Math.round((base / 0.45359237) * 10) / 10) * 0.45359237 : base;
           s.weightKg = s.isWarmup ? (w % 17 === 0 ? kg + 40 : kg / 2) : kg; // a warm-up heavier than any record
           s.reps = s.isWarmup ? 10 : int(4, 9);
         } else if (ex === PUSHUP) {
