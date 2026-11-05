@@ -48,7 +48,8 @@ export interface ForgePhone {
   gymShortcutSupported?(): boolean;
   /**
    * Draws the gym's logo as a home-screen shortcut and asks Android to pin it, or redraws the pinned
-   * one. ask=false only redraws a pinned one ('none' when there is none).
+   * one. ask=false only redraws a pinned one ('none' when there is none). `bg` (T74): the gym's
+   * colours "#rrggbb,#rrggbb" (may be ''), used only behind a see-through logo.
    */
   gymShortcutPin?(name: string, logoUrl: string, bg: string, ask: boolean): Promise<GymShortcutResult>;
   /** Left the gym: grey out the pinned shortcut with this line. */

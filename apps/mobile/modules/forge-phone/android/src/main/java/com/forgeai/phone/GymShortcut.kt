@@ -7,7 +7,6 @@ import android.content.pm.ShortcutManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.Icon
@@ -29,9 +28,8 @@ import java.net.URL
  */
 object GymShortcut {
   private const val ID = "gym"
-  /** Adaptive icon canvas: 108 dp at xxxhdpi. The logo sits inside the middle 60% (the safe zone is 66%). */
-  private const val SIZE = 432
-  private const val LOGO_SHARE = 0.60f
+  /** Adaptive icon canvas: 108 dp at xxxhdpi (4 px per dp). Where the logo goes: ShortcutArt. */
+  internal const val SIZE = 432
   private const val MAX_BYTES = 4 * 1024 * 1024
 
   fun supported(c: Context): Boolean {
@@ -43,7 +41,8 @@ object GymShortcut {
   /**
    * Draws the logo and asks Android to pin it (or redraws the one already pinned). With ask=false
    * (a new logo or another gym, app start) only a pinned one is redrawn: nothing is asked. Runs off
-   * the UI thread (it downloads). Returns "asked", "updated", "none", "unsupported", "no-logo" or "failed".
+   * the UI thread (it downloads). `bg`: the gym's colours as "#rrggbb,#rrggbb" (brand colour, then
+   * background tone; either may be missing), used only behind a see-through logo. Returns "asked", "updated", "none", "unsupported", "no-logo" or "failed".
    */
   fun pin(c: Context, name: String, logoUrl: String, bg: String, ask: Boolean): String {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return "unsupported"
@@ -53,7 +52,7 @@ object GymShortcut {
     // Joined again: the greyed-out one works again even if the new picture can't be had.
     if (pinned) sm.enableShortcuts(listOf(ID))
     val logo = download(logoUrl) ?: return "no-logo"
-    val icon = Icon.createWithAdaptiveBitmap(drawIcon(logo, parseColor(bg)))
+    val icon = Icon.createWithAdaptiveBitmap(drawIcon(logo, ShortcutArt.parseColours(bg)))
     val launch = c.packageManager.getLaunchIntentForPackage(c.packageName) ?: return "failed"
     launch.action = Intent.ACTION_MAIN
     launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -115,26 +114,31 @@ object GymShortcut {
     }
   }
 
-  /** The logo centred on the gym's background tone, scaled to fit the safe middle of the icon. */
-  private fun drawIcon(logo: Bitmap, bg: Int): Bitmap {
+  /**
+   * T74 (R-356): the logo laid by ShortcutArt's rules on the 108 dp adaptive canvas: the background
+   * is the logo's own edge colour (or, behind a see-through logo, the gym's colour it stands out
+   * on), and the logo's content stays inside the 66 dp circle no launcher mask cuts. `fills`: the
+   * gym's brand colour, then its background tone. Internal: the render test draws it too.
+   */
+  internal fun drawIcon(logo: Bitmap, fills: List<Int>): Bitmap {
+    val k = minOf(1f, ShortcutArt.ANALYSIS_EDGE.toFloat() / maxOf(logo.width, logo.height))
+    val aw = maxOf(1, Math.round(logo.width * k))
+    val ah = maxOf(1, Math.round(logo.height * k))
+    val small = if (aw == logo.width && ah == logo.height) logo else Bitmap.createScaledBitmap(logo, aw, ah, true)
+    val px = IntArray(aw * ah)
+    small.getPixels(px, 0, aw, 0, 0, aw, ah)
+    val plan = ShortcutArt.plan(px, aw, ah, fills)
     val out = Bitmap.createBitmap(SIZE, SIZE, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(out)
-    canvas.drawColor(bg)
-    val box = SIZE * LOGO_SHARE
-    val scale = minOf(box / logo.width, box / logo.height)
-    val w = logo.width * scale
-    val h = logo.height * scale
+    canvas.drawColor(plan.bg)
+    val dp = SIZE / ShortcutArt.CANVAS
+    // The plan's width is for the small copy; the full logo keeps its own aspect ratio.
+    val w = plan.width * dp
+    val h = w * logo.height / logo.width
     val left = (SIZE - w) / 2f
     val top = (SIZE - h) / 2f
     canvas.drawBitmap(logo, null, RectF(left, top, left + w, top + h), Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG))
+    if (small !== logo) small.recycle()
     return out
   }
-
-  private fun parseColor(hex: String): Int =
-    try {
-      Color.parseColor(hex)
-    } catch (_: IllegalArgumentException) {
-      // quiet: not a colour the app sent (it always sends #rrggbb); white keeps any logo readable
-      Color.WHITE
-    }
 }

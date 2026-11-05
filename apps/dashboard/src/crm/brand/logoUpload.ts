@@ -5,7 +5,7 @@
  * decode step as product photos (shop/photoUpload.ts). Rules live in `brandLogic.ts`.
  */
 
-import { suggestFromLogo } from '@forgeai/theme';
+import { ANALYSIS_EDGE, planShortcutIcon, suggestFromLogo, type ShortcutIconPlan } from '@forgeai/theme';
 
 import { savedPictureUrl, supabase } from '../../lib/supabase';
 import { photoTicket } from '../shop/api';
@@ -104,6 +104,33 @@ export async function readSavedLogoColours(url: string): Promise<ReturnType<type
   } catch (e) {
     console.warn('[branding] could not fetch the saved logo', e);
     return null;
+  }
+}
+
+/**
+ * T74 (R-356): how a saved logo sits on a member's home-screen icon, by the same rules the phone
+ * draws it with (packages/theme shortcutIcon.ts). Null when the logo can't be read; logged.
+ */
+export async function readShortcutPlan(url: string, gymColours: readonly string[]): Promise<ShortcutIconPlan | null> {
+  let pic: Awaited<ReturnType<typeof decode>> | null = null;
+  try {
+    const res = await fetch(url, { mode: 'cors', cache: 'force-cache' });
+    if (!res.ok) throw new Error(`logo fetch ${res.status}`);
+    pic = await decode(await res.blob());
+    const { width, height } = fitWithin(pic.width, pic.height, ANALYSIS_EDGE);
+    if (!width || !height) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(pic.source, 0, 0, width, height);
+    return planShortcutIcon(ctx.getImageData(0, 0, width, height).data, width, height, gymColours);
+  } catch (e) {
+    console.warn('[branding] could not plan the home-screen icon', e);
+    return null;
+  } finally {
+    pic?.close?.();
   }
 }
 

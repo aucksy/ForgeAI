@@ -21,12 +21,20 @@ import type { GymLink } from './types';
 export interface GymShortcutPlan {
   name: string;
   logoUrl: string;
+  /**
+   * T74 (R-356): the gym's colours as "#rrggbb,#rrggbb" (brand colour, then background tone; either
+   * may be missing, so possibly ''). The phone fills the icon with the logo's OWN edge colour; these
+   * are used only behind a see-through logo (rules: packages/theme shortcutIcon.ts).
+   */
   bg: string;
 }
 
 const HEX = /^#[0-9A-Fa-f]{6}$/;
-/** Behind a logo with no background tone of the gym's own: white keeps any logo readable. */
-export const SHORTCUT_PLAIN_BG = '#FFFFFF';
+
+/** The gym's colours the icon may sit on, best first (brand colour, then background tone). PURE. */
+export function shortcutColours(brand: { accent?: string | null; bg?: string | null } | null | undefined): string {
+  return [brand?.accent, brand?.bg].filter((c): c is string => typeof c === 'string' && HEX.test(c)).join(',');
+}
 
 /** The shortcut for this gym, or null with no gym or no logo (an https picture). PURE. */
 export function gymShortcutPlan(link: Pick<GymLink, 'gymName' | 'brand' | 'plan'> | null): GymShortcutPlan | null {
@@ -34,8 +42,7 @@ export function gymShortcutPlan(link: Pick<GymLink, 'gymName' | 'brand' | 'plan'
   if (link && !hasFeature(link, 'branding')) return null;
   const logo = link?.brand?.logoUrl;
   if (!link || !logo || !logo.startsWith('https://')) return null;
-  const bg = link.brand?.bg && HEX.test(link.brand.bg) ? link.brand.bg : SHORTCUT_PLAIN_BG;
-  return { name: link.gymName, logoUrl: logo, bg };
+  return { name: link.gymName, logoUrl: logo, bg: shortcutColours(link.brand) };
 }
 
 /** Did the shortcut's picture or name change between two links? PURE. */
@@ -120,6 +127,35 @@ export async function markShortcutOffered(joinCode: string): Promise<void> {
 
 // ------------------------------------------------------------------ a pinned one follows the gym
 
+/**
+ * T74 (R-356): bump when the way the icon is DRAWN changes. A shortcut pinned by an older app keeps
+ * its old picture until it is redrawn, so on the first start after an update the pinned one is
+ * redrawn once (Android's updateShortcuts, same id; nothing is asked, nothing pinned anew).
+ * 2: the logo's own edge colour fills the icon and the logo stays inside the circle every mask keeps.
+ */
+export const SHORTCUT_ART_VERSION = '2';
+/** The art version a pinned shortcut was last redrawn with. */
+export const SHORTCUT_ART_KEY = 'forgeai-gym-shortcut-art';
+
+/** Should this start redraw a pinned shortcut drawn by an older app? PURE. */
+export function needsArtRedraw(saved: string | null, hasPlan: boolean): boolean {
+  return hasPlan && saved !== SHORTCUT_ART_VERSION;
+}
+
+async function redrawOldArt(): Promise<void> {
+  try {
+    const link = useGymShop.getState().link;
+    const saved = await AsyncStorage.getItem(SHORTCUT_ART_KEY);
+    if (!needsArtRedraw(saved, gymShortcutPlan(link) !== null)) return;
+    if (phoneNative()?.gymShortcutSupported?.() !== true) return;
+    // ask=false: only a shortcut already on the home screen is redrawn ("none" when there is none).
+    const r = await addGymShortcut(link, false);
+    if (r === 'updated' || r === 'none') await AsyncStorage.setItem(SHORTCUT_ART_KEY, SHORTCUT_ART_VERSION);
+  } catch (e) {
+    console.warn('[ForgeErr] gym shortcut: redraw with the new art', e);
+  }
+}
+
 let syncing = false;
 
 /** Start once (root layout): leaving greys a pinned shortcut out; a new logo, name or gym redraws it. */
@@ -127,13 +163,18 @@ export function startGymShortcutSync(): void {
   if (syncing) return;
   syncing = true;
   // After the saved link is read: reading it is not a change (no download on every launch).
-  if (useGymShop.persist.hasHydrated()) watch();
+  if (useGymShop.persist.hasHydrated()) begin();
   else {
     const unsub = useGymShop.persist.onFinishHydration(() => {
       unsub();
-      watch();
+      begin();
     });
   }
+}
+
+function begin(): void {
+  watch();
+  void redrawOldArt();
 }
 
 function watch(): void {

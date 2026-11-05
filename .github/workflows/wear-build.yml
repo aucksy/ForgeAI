@@ -20,6 +20,11 @@ on:
     paths:
       - 'apps/mobile/android/wear/**'
       - 'apps/mobile/modules/forge-rest/**'
+      # T74 (R-356): the gym shortcut icon's tests and pictures (:forge-phone, ShortcutArt / GymShortcut).
+      - 'apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/ShortcutArt.kt'
+      - 'apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/GymShortcut.kt'
+      - 'apps/mobile/modules/forge-phone/android/src/test/**'
+      - 'apps/mobile/modules/forge-phone/android/build.gradle'
       - '.github/workflows/wear-build.yml'
       - 'scripts/ci/watch_keep_screen_uat.sh'
 
@@ -77,7 +82,18 @@ jobs:
         working-directory: apps/mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew -PwithWear=true :wear:testDebugUnitTest :forge-rest:testDebugUnitTest --no-daemon --stacktrace
+          ./gradlew -PwithWear=true :wear:testDebugUnitTest :forge-rest:testDebugUnitTest :forge-phone:testDebugUnitTest --no-daemon --stacktrace
+
+      # T74 (R-356): the gym's home-screen shortcut icon drawn through circle / squircle / rounded
+      # square / teardrop masks, before (top row) and after (bottom row) the fix.
+      - name: Upload the shortcut icons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shortcut-icons
+          path: apps/mobile/modules/forge-phone/android/build/outputs/shortcut-icons
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Upload the watch screens
         if: always()

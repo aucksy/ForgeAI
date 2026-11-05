@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-363. FEATURE FREEZE + a full end-to-end test round — 5 Nov 2026
+
+He said: "this is the biggest gap so far in our software development. After you are done building what you're building, you are going to perform an end-to-end UAT for regression and negative testing and all the other types of testing that you have not done yet. And any new feature that I send you now or improvement, you will build it later, you'll put that in the backlog."
+
+Standing until the test round is done: (1) helpers already building finish (rule A + kg to beat, records same-counting, In use journey + toast order, sleep + protein, watch text size, watch name after last set, watch dim after a call, round gym icon, update full screen, dial tick). (2) Every NEW feature or improvement he sends goes to the backlog as Planned with "after the test round"; not built. T75 machine steps moved there too (not started). Bugs he reports are still fixed, since the test round needs them fixed. (3) Then T76: the full test round (regression of every reported bug, negative "must not show", setting changes mid-history, edits/undo, interruptions (call, app killed, offline, background), phone<->watch, dates (midnight IST, Monday, 1st), install over the old version, 500-workout history, his phone size and font, every screen incl. admin panel and website), each with the result and run id.
+
 ## R-362. The repeated toast came on the same arm — 5 Nov 2026
 
 He said: the repeated achievement toast came on the same side (right arm); a different side would have made sense, not this.

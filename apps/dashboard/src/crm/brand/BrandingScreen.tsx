@@ -22,9 +22,10 @@ import { useCrm } from '../store';
 import { tickGetStarted } from '../ui/GetStartedCard';
 import { Button, Card, ErrorBanner, PageHeader, SectionTitle, Sheet, Toast, color, font, radius, space, useIsCompact } from '../ui/kit';
 import { navigate } from '../ui/router';
-import { CLEAR_ARGS, LOGO_WORDS, brandErrorWords, logoSuggestionLines, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, type BrandDraft } from './brandLogic';
+import { CLEAR_ARGS, LOGO_WORDS, brandErrorWords, logoSuggestionLines, draftChanged, draftFromBrand, hexError, previewPalette, saveArgs, shortcutColoursOf, type BrandDraft } from './brandLogic';
 import { LogoError, readLogoColours, readSavedLogoColours, uploadGymLogo } from './logoUpload';
 import { PhonePreview } from './PhonePreview';
+import { ShortcutPreview } from './ShortcutPreview';
 
 /**
  * What Save promises, exactly as the phone behaves (apps/mobile theme/gymTheme.ts): it checks
@@ -187,6 +188,8 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
           <LogoCard
             ownerKey={ownerKey}
             logoUrl={draft.logoUrl}
+            gymName={gymName}
+            gymColours={shortcutColoursOf(draft)}
             bg={palette.color.bg}
             disabled={saving}
             onBusy={setUploading}
@@ -494,6 +497,8 @@ function ColourField({ label, hint, value, onChange }: { label: string; hint: st
 function LogoCard({
   ownerKey,
   logoUrl,
+  gymName,
+  gymColours,
   bg,
   disabled,
   onBusy,
@@ -502,6 +507,8 @@ function LogoCard({
 }: {
   ownerKey: string;
   logoUrl: string | null;
+  gymName: string;
+  gymColours: readonly string[];
   bg: string;
   disabled: boolean;
   onBusy: (busy: boolean) => void;
@@ -604,6 +611,8 @@ function LogoCard({
           )}
         </div>
       </div>
+      {/* T74 (R-356): the logo as the round icon members can add to their phone's home screen. */}
+      {logoUrl && !busy && <ShortcutPreview logoUrl={logoUrl} gymName={gymName} gymColours={gymColours} />}
       <input
         ref={fileRef}
         type="file"

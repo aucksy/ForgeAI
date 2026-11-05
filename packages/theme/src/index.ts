@@ -14,3 +14,5 @@ export * from './gymHours';
 export * from './plans';
 // F137: the ready list of gym machines for "Busy machines" (admin app list, server keys, member app sends).
 export * from './busyMachines';
+// T74 (R-356): the gym's home-screen shortcut icon (logo edge colour, size inside the safe circle).
+export * from './shortcutIcon';

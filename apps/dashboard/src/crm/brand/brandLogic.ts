@@ -11,7 +11,7 @@
  * owner_photo_ticket, as product photos), PNG / JPEG / WebP up to 1 MB.
  */
 
-import { buildBrandPalette, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle, type LogoSuggestion } from '@forgeai/theme';
+import { buildBrandPalette, ICON_CANVAS, ICON_VIEWPORT, normalizeHex, type BrandPalette, type GymBrand, type HeadingStyle, type LogoSuggestion, type ShortcutIconPlan } from '@forgeai/theme';
 
 export const LOGO_BUCKET = 'gym-logos';
 /** The bucket's own limit (file_size_limit). */
@@ -144,6 +144,38 @@ export const LOGO_WORDS = {
   none: 'Your logo is only black, white or grey, so there is no colour to suggest. Type or pick your colour below.',
   afterSave: 'Members see it after you press Save.',
 } as const;
+
+// ---------------------------------------------------------------- home-screen icon preview (T74)
+
+/**
+ * T74 (R-356): the round preview under the logo of the gym's home-screen shortcut on a member's
+ * phone. Words: member-words skill (short lines; checked by a fresh reader, not Gemini).
+ */
+export const SHORTCUT_WORDS = {
+  title: 'How it looks on a member’s home screen',
+  body: 'Members can add your logo to their phone’s home screen. Most phones show it in a circle, like this. The app fills the space around your logo with a matching colour.',
+  reading: 'Making the preview…',
+  failed: 'We couldn’t make this preview. Members still see your logo on their phones.',
+} as const;
+
+/**
+ * The colours the phone may put behind a see-through logo, as the phone gets them (brand colour,
+ * then background tone; the phone's gymShortcut.ts `shortcutColours`). PURE.
+ */
+export function shortcutColoursOf(d: BrandDraft): string[] {
+  const args = saveArgs(d);
+  return [args.p_accent, args.p_bg].filter((c): c is string => c !== null);
+}
+
+/**
+ * Where the logo picture sits in the round preview, in % of the circle. The circle is the 72 dp a
+ * launcher shows of the 108 dp icon, so the canvas is 150 % of it, centred. PURE.
+ */
+export function shortcutPreviewBox(p: Pick<ShortcutIconPlan, 'left' | 'top' | 'width' | 'height'>): { left: number; top: number; width: number; height: number } {
+  const margin = (ICON_CANVAS - ICON_VIEWPORT) / 2;
+  const pct = (dp: number) => (dp / ICON_VIEWPORT) * 100;
+  return { left: pct(p.left - margin), top: pct(p.top - margin), width: pct(p.width), height: pct(p.height) };
+}
 
 /** The lines under the suggested colour: what we changed, and how it reads. PURE. */
 export function logoSuggestionLines(s: LogoSuggestion): { text: string; ok: boolean }[] {
