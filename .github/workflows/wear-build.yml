@@ -27,6 +27,7 @@ on:
       - 'apps/mobile/modules/forge-phone/android/build.gradle'
       - '.github/workflows/wear-build.yml'
       - 'scripts/ci/watch_keep_screen_uat.sh'
+      - 'scripts/ci/watch_dim_uat.sh'
 
 # A newer push replaces a run still going for the same branch (a hand-started run is never cut).
 concurrency:
