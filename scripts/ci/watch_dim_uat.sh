@@ -52,9 +52,17 @@ print(1 if lit < len(raw) * 0.002 else 0)
 PY
 }
 bring_app() {
+  # Android holds back an activity start for ~5 s after HOME ("app switch" protection): run 42012268965
+  # (API 35) dim-checked the watch face because of it. Start, then make sure MettleUp is in front.
+  local i
   adb shell input keyevent KEYCODE_WAKEUP
-  adb shell am start -W -n $ACT >/dev/null 2>&1 || true
-  sleep 4
+  for i in 1 2 3 4; do
+    adb shell am start -W -n $ACT >/dev/null 2>&1 || true
+    sleep 4
+    if front | grep -q "$PKG"; then return 0; fi
+    sleep 3
+  done
+  echo "MettleUp not in front after 4 starts: $(front)"
 }
 # Screen to sleep (as wrist down) and back: did MettleUp enter ambient? Sets AMB_OK and AMB_DARK.
 dim_check() { # phase
