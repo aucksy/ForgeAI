@@ -57,7 +57,7 @@ export function UpdatePrompt() {
   const kind = useAppUpdate((s) => s.kind);
   const playStatus = useAppUpdate((s) => s.playStatus);
   const busy = useAppUpdate((s) => s.busy);
-  const workout = useActiveWorkout((s) => s.active != null);
+  const workout = useActiveWorkout((s) => s.active);
   const lastCheck = useRef(0);
   // Review fix: only over the 4 main tabs, never over a screen opened on top (a summary, checkout, a scan).
   const onTabs = useSegments()[0] === '(tabs)';

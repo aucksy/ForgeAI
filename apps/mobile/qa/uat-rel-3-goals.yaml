@@ -6,7 +6,7 @@
 # The Target box's spoken label is "Target <weight> · <goals>[ · RPE <n>]. <kg line>. Tap for why." (RPE: effort on).
 # Launch audit 3 Nov 2026: the label above each exercise's sets reads "Previous: <day> · <workout>".
 # Then, with the workout started under Large (it stays open for flow 4):
-#  - Pec Deck Fly, stuck 4 workouts at 40 kg: "Stuck at 40 kg for 4 workouts. ... Try 35 kg today?"
+#  - Pec Deck Fly, stuck 4 workouts at 40 kg: "Stuck at 40 kg for 4 workouts. ... Try 35 kg today instead of 40 kg?" (R-335 words)
 #    with "Try 35 kg" / "Stay at 40 kg" (never 38: R-310, an odd 38 kg is in its history);
 #  - Leg Extension, stuck 4 workouts at 45 kg: the same card for 45 -> 40 kg.
 appId: com.mettleup.app
@@ -92,7 +92,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Stuck at 40 kg for 4 workouts\. .*Try 35 kg today\?'
+      FIND: 'Stuck at 40 kg for 4 workouts\. .*Try 35 kg today instead of 40 kg\?'
 - assertVisible: "^Try 35 kg$"
 - assertVisible: "^Stay at 40 kg$"
 - assertNotVisible: '.*\b38 kg.*'
@@ -100,7 +100,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: 'Stuck at 45 kg for 4 workouts\. .*Try 40 kg today\?'
+      FIND: 'Stuck at 45 kg for 4 workouts\. .*Try 40 kg today instead of 45 kg\?'
 - assertVisible: "^Try 40 kg$"
 - assertVisible: "^Stay at 45 kg$"
 - takeScreenshot: rel-24-leg-extension-step-back-card

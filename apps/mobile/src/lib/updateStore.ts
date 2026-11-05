@@ -94,7 +94,7 @@ async function readStandIn(): Promise<number> {
 }
 
 function workoutOpen(): boolean {
-  return useActiveWorkout.getState().active != null;
+  return useActiveWorkout.getState().active === true;
 }
 
 function isPlayCopy(): boolean {

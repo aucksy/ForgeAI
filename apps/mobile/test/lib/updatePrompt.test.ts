@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -166,5 +169,16 @@ describe('R-336 QA stand-in (test builds only)', () => {
     expect(standInVersion('0.72.1', 1)).toBe('0.73.0');
     expect(standInVersion('0.72.0', 0)).toBeNull();
     expect(standInVersion(null, 2)).toBeNull();
+  });
+});
+
+describe('R-336 UAT finding: "a workout is open" is the store true/false flag', () => {
+  it('never `active != null` (always true for a boolean: the pop-up could never show)', () => {
+    const src = join(__dirname, '..', '..', 'src');
+    for (const f of ['components/UpdatePrompt.tsx', 'components/UpdateLine.tsx', 'lib/updateStore.ts']) {
+      const text = readFileSync(join(src, f), 'utf8');
+      expect(text, f).not.toMatch(/\.active\s*!==?\s*null/);
+      expect(text, f).toMatch(/useActiveWorkout/);
+    }
   });
 });

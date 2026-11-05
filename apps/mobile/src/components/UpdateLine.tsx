@@ -33,7 +33,7 @@ export function UpdateLine() {
   const kind = useAppUpdate((s) => s.kind);
   const playStatus = useAppUpdate((s) => s.playStatus);
   const busy = useAppUpdate((s) => s.busy);
-  const workout = useActiveWorkout((s) => s.active != null);
+  const workout = useActiveWorkout((s) => s.active);
   const line = lineFor({ kind, playStatus, workout });
   if (!line) return null;
   // Read when drawn: a gym's own colour repaints the accent (theme/gymTheme.ts).
