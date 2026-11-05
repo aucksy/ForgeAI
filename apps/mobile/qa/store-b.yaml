@@ -38,7 +38,8 @@ appId: com.mettleup.app
     timeout: 12000
     optional: true
 - scrollUntilVisible:
-    element: 'Previous: .*'
+    # R-359 fix (ad3fe56b): the short form drops "Previous: " when the full line does not fit.
+    element: '(Previous: .*|\d{1,2} [A-Z][a-z]{2}( \d{4})? · .*)'
     direction: UP
     timeout: 15000
     optional: true

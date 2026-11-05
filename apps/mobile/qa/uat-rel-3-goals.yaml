@@ -35,7 +35,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})? · .*'
+      # R-359 fix (ad3fe56b): on a narrow row the line drops "Previous: " (still never "Last:").
+      FIND: '^(Previous: )?\d{1,2} [A-Z][a-z]{2}( \d{4})? · .*'
 - assertNotVisible: '^Last: \d.*'
 - takeScreenshot: rel-20b-previous-not-last
 - assertNotVisible: '(?i).*add a set.*'
