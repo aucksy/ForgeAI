@@ -668,15 +668,16 @@ private fun ExerciseDoneScreen(
   ) {
     TopBar(px, now, heart, ambient, ink.grey, ink)
     // R-368 (owner, 5 Nov 2026: "remove the 4 sets done line, then space everything equally"): "Next exercise",
-    // the name, Previous and the goal share the room between the time row and Go with equal gaps (each line
-    // carries 3 px above and below, so the gaps never close up at the largest text). The 32 px name stays 32 px
+    // the name, Previous and the goal share the room between the time row and Go with equal gaps. The boxes are
+    // spread evenly; the padding below evens out what the eye sees (a 32 px name and the 44 px goal carry more
+    // empty line space than the 20 px lines; measured on the 5 Nov render), and keeps 14 px above Go at the
+    // largest text. The 32 px name stays 32 px
     // at every text size (a headline, like the big numbers) and only steps down for a name too long for two lines.
     val k = px.labelScale
     val small = LogLayout.grown(20f, 18f, k)
     val top = LogLayout.topBarBottom(k)
     val tight = LogLayout.tight(k)
     val lh = 1.05f
-    val gap = Modifier.padding(vertical = px.dp(3f))
     // Go sits in the same column: at its usual 304 px unless the words reach it, then right under them.
     Column(Modifier.fillMaxWidth().padding(top = px.dp(top)), horizontalAlignment = Alignment.CenterHorizontally) {
     Column(
@@ -684,12 +685,12 @@ private fun ExerciseDoneScreen(
       verticalArrangement = Arrangement.SpaceEvenly,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      Line(WatchCopy.NEXT_EXERCISE, px, small, FontWeight.SemiBold, ink.grey, gap, lineHeight = lh)
-      Line(card.exercise, px, 32f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, gap, spacing = -0.02f, lineHeight = if (tight) 1f else 1.05f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "exercise", minSize = 16f)
-      card.previous?.let { Line(it, px, small, FontWeight.Medium, ink.grey, gap, lineHeight = lh, tabular = true, maxWidth = 330f, tag = "previous") }
+      Line(WatchCopy.NEXT_EXERCISE, px, small, FontWeight.SemiBold, ink.grey, Modifier.padding(top = px.dp(7f)), lineHeight = lh)
+      Line(card.exercise, px, 32f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.ink, Modifier.padding(top = px.dp(1f)), spacing = -0.02f, lineHeight = if (tight) 1f else 1.05f, maxWidth = 300f, maxLines = 2, balanced = true, tag = "exercise", minSize = 16f)
+      card.previous?.let { Line(it, px, small, FontWeight.Medium, ink.grey, lineHeight = lh, tabular = true, maxWidth = 330f, tag = "previous") }
       val goal = snap.next.goal.trim()
       if (goal.isNotEmpty()) {
-        Row(gap, verticalAlignment = Alignment.Bottom) {
+        Row(Modifier.padding(top = px.dp(5f), bottom = px.dp(14f)), verticalAlignment = Alignment.Bottom) {
           Line(WatchCopy.NEXT, px, small, FontWeight.Bold, ink.acc, Modifier.alignByBaseline())
           Spacer(Modifier.width(px.dp(10f)))
           Line(goal, px, if (goal.length > 10) 32f else 44f, if (ambient) FontWeight.SemiBold else FontWeight.ExtraBold, ink.acc, Modifier.alignByBaseline(), spacing = -0.03f, lineHeight = 1f, tabular = true, maxWidth = 300f, tag = "next")
