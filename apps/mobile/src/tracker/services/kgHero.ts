@@ -54,7 +54,18 @@ export interface KgHero {
 export const SHORT_SHARE = 0.6;
 
 /** Today's numbers against last time's (null = no last time). null = nothing to show (no weight, no reps). PURE. */
-export function kgHero(today: HeroTotals, last: HeroLast | null, units: UnitSystem, easyWeek = false): KgHero | null {
+export function kgHero(
+  today: HeroTotals,
+  last: HeroLast | null,
+  units: UnitSystem,
+  easyWeek = false,
+  /**
+   * T76: kg the two totals can differ by only because weights were typed as the other unit showed
+   * them (kg last time, lb today: 22.0 lb for a 10 kg dumbbell read "Lighter than last time" and
+   * put a sleep line under it). Within it, the two are the same. 0 for nearly everyone.
+   */
+  noiseKg = 0,
+): KgHero | null {
   const kgMode = today.kg > 0.5;
   if (!kgMode && !(today.reps > 0)) return null;
   const unit = weightUnitOf(units);
@@ -75,7 +86,7 @@ export function kgHero(today: HeroTotals, last: HeroLast | null, units: UnitSyst
     return { ...base, tone: 'first', line: 'A shorter workout than last time. Every workout counts.', lastLine: null, shareLine: null };
   }
   const then = shown(kgMode ? last.kg : last.reps);
-  const diff = now - then;
+  const diff = kgMode && noiseKg > 0 && Math.abs(today.kg - last.kg) <= noiseKg ? 0 : now - then;
   const lastLine = `Last time: ${word(then)}${last.against ? ` in ${last.against}` : ''}`;
   if (diff >= 1) {
     const plus = `+${word(diff)} more than last time`;

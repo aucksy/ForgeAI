@@ -17,6 +17,24 @@
  * and "20 of 45 reps · next 12, 13" during the workout. Each rep counts as one, so the same math runs.
  */
 import { liftsUp, liftUpOf, OFF_MAIN_SHARE, type ProgressionTarget } from '../engine/progression';
+import { SHOWN_NOISE_KG } from '../engine/records';
+
+/** A weight off the 0.25 kg grid: typed in lb (132.3 lb = 60.0103 kg), or in kg from an lb weight. PURE. */
+export function offKgGrid(kg: number): boolean {
+  return Number.isFinite(kg) && Math.abs(kg * 4 - Math.round(kg * 4)) > 1e-6;
+}
+
+/**
+ * T76 (owner's full test round, 5 Nov 2026): how far a total can be off only because weights were
+ * typed as the other unit showed them (last time 60 kg x 10 x 3 = 1,800 kg; in lb today 132.3 lb as
+ * shown = 1,800.3 kg read "Today's 3,968 lb beaten (3,969 lb done)", and 22.0 lb dumbbells for 10 kg
+ * ones read "1 lb short"). Only sets off the kg grid add to it, so a kg member's lines never move. PURE.
+ */
+export function shownTotalNoise(sets: readonly KgSet[]): number {
+  let n = 0;
+  for (const s of sets) if (offKgGrid(s.weightKg) && Number.isFinite(s.reps) && s.reps > 0) n += SHOWN_NOISE_KG * s.reps;
+  return n;
+}
 
 export interface KgSet {
   weightKg: number;
@@ -213,6 +231,8 @@ export interface KgProgress {
   next: KgSet[];
   /** The open sets can't reach it even with the extra reps: say so, never push further. */
   short: boolean;
+  /** T76: kg the total can be off only from weights typed as the other unit showed them (0 for most). */
+  noise?: number;
 }
 
 /**
@@ -227,6 +247,8 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   const open: KgSet[] = [];
   const noExtra: boolean[] = [];
   let ordinal = 0;
+  /** T76: ticked sets and the plan's own, for the unit-switch allowance (kilo plans only). */
+  const ticked: KgSet[] = [];
   for (const r of rows) {
     if (r.isWarmup) continue;
     const drop = r.setType === 'drop';
@@ -236,7 +258,10 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
       // R-60: a rep plan counts every rep once, whatever the row's weight (blank on a "Reps only" move).
       if (plan.reps) {
         if (r.reps != null && r.reps > 0) done += r.reps;
-      } else if (r.weightKg != null && r.reps != null && r.weightKg > 0 && r.reps > 0) done += r.weightKg * r.reps;
+      } else if (r.weightKg != null && r.reps != null && r.weightKg > 0 && r.reps > 0) {
+        done += r.weightKg * r.reps;
+        ticked.push({ weightKg: r.weightKg, reps: r.reps });
+      }
       continue;
     }
     if (drop) continue;
@@ -249,7 +274,9 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
     }
   }
   const left = Math.max(0, plan.total - done);
-  if (left <= 1e-9 || open.length === 0) return { done, left, next: [], short: left > 1e-9 };
+  const noise = plan.reps ? 0 : shownTotalNoise([...ticked, ...plan.sets]);
+  const room = Math.max(1e-9, noise);
+  if (left <= room || open.length === 0) return { done, left, next: [], short: left > room, ...(noise > 0 ? { noise } : {}) };
   // R-351: the open sets aim for the planned sets (`planned`, when last time's total is the number
   // to pass), so the line never asks more than the rows show; `left` stays the kg still to pass.
   const aim = Math.max(0, (plan.planned ?? plan.total) - done);
@@ -258,7 +285,7 @@ export function kgProgress(plan: KgPlan, rows: readonly KgRow[]): KgProgress {
   for (let extra = 1; extra <= MAX_EXTRA_REPS && sum() < aim - 1e-9; extra++) {
     for (let i = 0; i < next.length && sum() < aim - 1e-9; i++) if (!noExtra[i]) next[i].reps = open[i].reps + extra;
   }
-  return { done, left, next, short: sum() < aim - 1e-9 };
+  return { done, left, next, short: sum() < aim - 1e-9, ...(noise > 0 ? { noise } : {}) };
 }
 
 /**
@@ -374,7 +401,7 @@ export function kgSetLines(p: KgPlan, weight: WeightFmt): string[] {
  * plan, R-146) or "beaten" (more). PURE.
  */
 export function kgBeaten(g: KgProgress): boolean {
-  return g.left <= 1e-9;
+  return g.left <= Math.max(1e-9, g.noise ?? 0);
 }
 
 /**
@@ -387,7 +414,8 @@ export function kgBeaten(g: KgProgress): boolean {
 export function kgLiveLine(p: KgPlan, g: KgProgress, total: TotalFmt, weight: WeightFmt): string {
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
   if (kgBeaten(g)) {
-    if (total(g.done) === total(p.total)) return `Today's ${total(p.total)} reached`;
+    // T76: within the unit-switch allowance it is the same total ("reached"), never "beaten" by a hair.
+    if (total(g.done) === total(p.total) || g.done <= p.total + (g.noise ?? 0)) return `Today's ${total(p.total)} reached`;
     return `Today's ${total(p.total)} beaten (${total(g.done)} done)`;
   }
   // Release review: only the number before "of" ("410 of 765 kg each", never "410 kg of 765 kg each").

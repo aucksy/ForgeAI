@@ -99,6 +99,18 @@ describe('T76: the finish screen after a Counting change', () => {
     expect(note.hero?.line).toMatch(/more than last time/);
   });
 
+  it('units switched to lb, the same dumbbells typed as shown (22.0 lb for 10 kg): never "Lighter than last time"', async () => {
+    const { KG_PER_LB, setDisplayUnits } = await import('@/lib/units');
+    await logPull(3, [[10, 10], [10, 10], [10, 10]]);
+    setDisplayUnits('imperial');
+    const w = 22 * KG_PER_LB;
+    const today = await logPull(2, [[w, 10], [w, 10], [w, 10]]);
+    const note = await noteOf(today);
+    expect(note.hero?.tone).toBe('same');
+    expect(note.hero?.line).toBe('Same as last time');
+    setDisplayUnits('metric');
+  });
+
   it('positive control: no Counting change at all is compared as before (a real lighter day says so)', async () => {
     const first = await logPull(3, [[10, 15], [10, 12], [10, 12]]);
     const second = await logPull(2, [[10, 8], [10, 8], [10, 8]]);

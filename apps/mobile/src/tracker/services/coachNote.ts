@@ -37,6 +37,7 @@ import { getTrackerExercisesByIds } from '../db/exerciseInfo';
 import { countingChangedNames, exerciseDeltas, mainCause, type CompareExercise, type ExerciseDelta } from '../lib/workoutCompare';
 import { dayTypeLabel } from './finishSummary';
 import { kgHero, workingReps, type KgHero } from './kgHero';
+import { offKgGrid, shownTotalNoise } from '../lib/kgTarget';
 import { recordValueText } from './recordText';
 import { getSetModesForSessions, withVolume } from './volumeService';
 import type { SessionSummaryData } from './finishSummary';
@@ -213,6 +214,7 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
   // on one side and twice on the other, so the totals are not compared at all (no "+340 kg more",
   // no "Lighter than last time" and so no sleep or protein line under it). Like a first workout
   // after the change: today's total is the number to beat next time.
+  let noiseKg = 0;
   if (cmp) {
     try {
       const ids = [...new Set([...data.session.exercises, ...cmp.detail.exercises].map((e) => e.exercise.id))];
@@ -223,6 +225,16 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
       const current = new Map<string, string>();
       for (const [id, info] of infos) current.set(id, info.loadMode);
       const changed = countingChangedNames(data.session, cmp.detail, setModes, current);
+      // T76: weights typed as the other unit showed them (off the kg grid) may differ by a hair.
+      const MULT: Record<string, number> = { one: 1, both: 2, side: 2, both_side: 4 };
+      for (const d of [data.session, cmp.detail]) {
+        for (const e of d.exercises) {
+          for (const s of e.sets) {
+            if (s.isWarmup || !offKgGrid(s.weightKg)) continue;
+            noiseKg += shownTotalNoise([{ weightKg: s.weightKg, reps: s.reps }]) * (MULT[setModes.get(s.id) ?? current.get(e.exercise.id) ?? 'one'] ?? 1);
+          }
+        }
+      }
       if (changed.length > 0) {
         console.log(`[ForgeQA] finish: not compared with last time, Counting changed on ${changed.join(', ')}`);
         cmp = null;
@@ -239,6 +251,7 @@ export async function getSessionCoachNote(data: SessionSummaryData): Promise<Coa
     cmp ? { kg: cmp.detail.totalVolumeKg, reps: workingReps(cmp.detail), against: cmp.against } : null,
     units,
     data.easyWeek,
+    noiseKg,
   );
   const againstId = cmp?.detail.id ?? null;
   if (!text || !cmp || data.easyWeek) return { text, source: 'engine', hero, againstId };
