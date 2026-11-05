@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-357. In use screen covers the record toast — 5 Nov 2026
+
+He said (screenshot, Dumbbell Preacher Curl): the In use banner messes up the achievement toast; let the banner start after the toast is done. The toast also sat on the status bar (clock drawn through it).
+
+What I did: sent to the In use helper (R-345/R-346 work): In use waits until the toast has fully left (toast time never shortened); the toast respects the top safe area; tests and a UAT flow for the order.
+
 ## R-356. Gym logo: clean upload answer into the tracker; square logos look bad on round home-screen icons; yes to machine steps — 5 Nov 2026
 
 He said: put my answer about helping owners upload a good transparent logo into the tracker Q&A. A square logo looks bad on his round home-screen icon (screenshot: round badge on a white square, white corners). And "Yes for machine and cable steps".
@@ -339,30 +345,3 @@ phone tracks done (482-char notes). Watch upload failed: Play 403 "You must let 
 Service permissions". Opening Play Console shows NEW Terms of Service to accept: needs the owner (accepting terms = his yes).
 After he accepts: App content -> Foreground service permissions -> Health (heart rate during a workout on the watch), then
 re-run the failed play-upload job of run 41719678247.
-
-## R-315. Overnight: finish UAT, then release, then a 360 launch-readiness analysis and fix — 3 Nov 2026
-
-He said (going to sleep): "Make all decisions yourself and complete all browser actions yourself. Don't stop until all is done. Once this part is done you can actually release the changes and then I want you to conduct another end-to-end independent new analysis for the whole system to actually prepare the system for launch... we will onboard the first gym for trial and have real users test them. ... a 360 analysis from every angle ... add that missing polish ... gaps in the user experiences ... features that we could add to really realize the value of something that we already have to increase convenience or save time or to increase revenue for the gym owner. ... Whatever we find, we fix that and then we start building the iPhone app and we will talk more about that."
-This is his "release" for ONE version: the current waiting list (R-297 watch service, R-298..R-311 rest bar / In use / rep goals / step-back / machine grid / chart + finish links, watch logging) once UAT and the full gate are green. Then: independent 360 audit (member app, watch, owner dashboard, website, admin; UX polish, gaps, value-adding features, owner revenue), fix what it finds (each fix through UAT), then iPhone app planning with him. Limits that still hold: no LIVE database changes, no money, no privacy/legal wording, no emails/messages sent, no public posts without his yes.
-
-## R-313. Play "What's new" every release, in simple complete sentences — 3 Nov 2026
-
-He said: going forward, update the release notes on Google Play under What's new as well; the rule about simple, complete sentences still holds.
-Found: already automatic since the Play upload step: 0.70.0 sent its 4 in-app What's new lines (381 of 500 characters) to internal + closed testing and the watch track. Saved as a rule (CLAUDE.md + brain note play-whats-new-every-release): every release quotes the Play notes in chat; lines are complete sentences, most useful first, all within 500 characters. Next release has about 8 draft lines: they must be trimmed to fit.
-
-Also 3 Nov: he asked for UAT before release. Cloud: a new opt-in qa-device part for every waiting phone feature, plus qa-journeys and qa-conditions on main. Not testable in the cloud: watch-to-phone round trip (pairing needs a Google sign-in); his watch after release.
-
-## R-312. Step-back card words OK; watch logging design arrived — 3 Nov 2026
-
-He said: "card OK" (the step-back card: "Stuck at 45 kg for 4 workouts. Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). Try 40 kg today?"). Release blocker cleared.
-He said: the Claude Design result for watch logging + rest -15/+15 is in D:/Apps/ForgeAI/Wear OS/Designs/MettleUp Wear OS watch app New/mettleup_watch_logging (12 screens: Next set, crown-adjust weight / reps, optional effort 6-10 with 4 s auto-skip, Saved, rest ring with -15/+15, orange Rest over 5 s then back to Next set, Exercise done, Not saved, warm-up, long name, largest text).
-My view: good and close to how the best watch apps do it: one big Done logs the suggested set, the crown fixes a number. Heart rate shows only when the member allowed it (no new prompt mid-set). Building it now with a helper; it waits for release like the rest.
-
-## R-311. Tap a chart point or the finish-screen line to open that workout; no In use after the last set — 3 Nov 2026
-
-He said: (1) on an exercise's history chart, the kg label from a tap must stay after the finger lifts and be tappable to jump to that workout ("very, very crucial": All time showed a much higher total 3 years ago, he wants to see why). (2) The finish screen's "higher/lower than <date>" line must open that workout. (3) The In use banner must not open by itself after the last set of an exercise.
-My view: all three good. (1)+(2) one helper building now. (3) passed to the rest-bar helper; tapping the clock still opens it by hand.
-
-## R-310. Pec Deck Fly suggested 38 kg — 3 Nov 2026
-
-He said: "its suggesting weight of 38. Thats trash. Weight increments should only be 2.5 or 5 kg. For this machine I only have 5 kg increments." Cause: the F74 "very hard, go lighter" step picks a rung about 5% below from his own weights; any weight he ever typed (38) was a rung. Fix (weightLadder.ts stackGrid): a kg machine or cable moves on a 5 kg grid (catalogue step 5 and 80% of his weights on 5) or 2.5 kg (80% on 2.5); off-grid weights are not suggested; a learned step is a whole number of the grid. An odd stack (7 kg plates) keeps his own weights. Pec deck now: 40 -> 35, never 38. Tests: machineStackGrid.test.ts. Later idea: a per-exercise "weight step" choice if a member's machine differs.
