@@ -53,7 +53,8 @@ appId: com.mettleup.app
     waitToSettleTimeoutMs: 1
     retryTapIfNoChange: false
 - inputText: " 100"
-- assertNotVisible: "^00$|^0$|18100|10018|1800"
+- assertNotVisible: "^00$|18100|10018|1800"
+# (Not "^0$": the keyboard's own 0 key matched it, runs 42065160321 and 42065165356, box read 100.)
 - assertVisible: "^100$"
 - takeScreenshot: rel-usel-b-fast-100
 - tapOn: "Dumbbell Preacher Curl set 1 reps.*"
