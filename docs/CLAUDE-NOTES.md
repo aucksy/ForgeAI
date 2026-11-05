@@ -17,7 +17,7 @@ Fix (with R-350): the kg to beat is never under last time's total at the weight 
 
 He said: "I feel like you may have complicated the logic behind the suggested weights ... we only have to consider two things ... the user selected increase in weight in percentage and what is the user selected rep range, and then we only have to increase either the weight or the rep by 1 from the previous one. And just like you do today for some, if there are 3 sets, then we don't increase it for the first set and then increase by 1 and increase it by the number or weight to achieve those two factors."
 Done: stopped the R-349 helper (its effort-based estimate draft saved at $TEMP/r349-e1rm-draft.patch, not committed). Agreed he is mostly right: today's rules (effort credit, big-jump, fast lane, stall, range-moved) are too many to explain.
-Proposed simple rule (waiting for his pick of A/B): each set vs the same set last time: under the range top -> same kg, +1 rep; every set at the top -> next weight by his jump %, and each set's reps = what keeps that set's kg about the same, inside the range. One safety kept: under the range bottom twice -> one step lighter. A: +1 rep on every set each workout. B: +1 rep on one set per workout (gentler).
+**DECIDED (5 Nov 2026): A** ("I pick A"): +1 rep on every set each workout. Simple rule: each set vs the same set last time: under the range top -> same kg, +1 rep; every set at the top -> next weight by his jump %, and each set's reps = what keeps that set's kg about the same, inside the range. One safety kept: under the range bottom twice -> one step lighter. A: +1 rep on every set each workout. B: +1 rep on one set per workout (gentler).
 
 ## R-349. T-Bar Row: 32.5 kg x 6 on every set after 30 x 13, 12, 10 - 5 Nov 2026
 
