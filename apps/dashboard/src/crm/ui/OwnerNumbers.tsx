@@ -16,7 +16,7 @@ import { riskReason, riskReasonShort, hourLabel } from '../logic/attendance';
 import { AGING_LABEL } from '../logic/collections';
 import { csvDocument, csvFilename, type CsvValue } from '../logic/csv';
 import { addDays, diffDays, formatDay, formatDayShort, isValidDateISO, relativeDay } from '../logic/dates';
-import { formatINR, formatINRShort, paiseToRupees } from '../logic/money';
+import { formatINR, paiseToRupees } from '../logic/money';
 import { formatPhone, initials, phoneForExport, validateE164 } from '../logic/members';
 import {
   backWindow,
@@ -383,8 +383,7 @@ export function NumbersSection() {
           <NumberTile
             key={id}
             id={id}
-            value={formatINRShort(f.owed.totalP)}
-            fullValue={formatINR(f.owed.totalP)}
+            value={formatINR(f.owed.totalP)}
             sub={`${countOf(f.owed.people, 'member')} · ${moneyChangeWords(f.owed.totalP, f.owed.beforeP, moneySince)}`}
             tone={f.owed.totalP > 0 ? 'warn' : 'plain'}
             onOpen={open}
@@ -496,10 +495,10 @@ function GrowthLink() {
   );
 }
 
-/** "up ₹4k in 30 days"/ "down ₹1.2k since 29 Sep" / "no change in 30 days"; short money, so it fits a tile. */
+/** "up ₹4,000 in 30 days" / "down ₹1,250 since 29 Sep" / "no change in 30 days": full rupees, like the rest of Today (31 Oct). */
 function moneyChangeWords(now: number, before: number, since: string): string {
   if (now === before) return `no change ${since}`;
-  return `${now > before ? 'up' : 'down'} ${formatINRShort(Math.abs(now - before))} ${since}`;
+  return `${now > before ? 'up' : 'down'} ${formatINR(Math.abs(now - before))} ${since}`;
 }
 
 /** What a screen reader hears for a line: where it started, where it ended, and its highest point. */
@@ -537,7 +536,7 @@ export function NumbersScreen({ which, rangeSeg }: { which: string | undefined; 
     return () => window.clearTimeout(t);
   }, [toast]);
 
-  // Money owed is the owner's: the front desk is sent home (canOpen already closes the address).
+  // Fees due is the owner's: the front desk is sent home (canOpen already closes the address).
   const id: NumberId | null = isNumberId(which) && (seeTotals || !isMoneyNumber(which)) ? which : null;
   const figures = useMemo(
     () => (id ? tileFigures(snapshot, range, today, isMoneyNumber(id)) : null),
@@ -761,7 +760,7 @@ function BigTrend({ id, figures }: { id: NumberId; figures: ReturnType<typeof ti
     id === 'renewals' ? figures.renewals.trend : id === 'owed' ? figures.owed.trend : id === 'stopped' ? figures.stopped.trend : figures.newcomers.trend;
   const say = (v: number) => (id === 'owed' ? formatINR(v) : String(v));
   const unit =
-    id === 'renewals' ? 'Plans ending' : id === 'owed' ? 'Money owed' : id === 'stopped' ? 'Members away' : 'Members joined';
+    id === 'renewals' ? 'Plans ending' : id === 'owed' ? 'Fees due' : id === 'stopped' ? 'Members away' : 'Members joined';
   if (points.length === 0) return null;
   const high = points.reduce((a, b) => (b.value > a.value ? b : a), points[0]);
   // The newest point is always a whole step (trendSpans cuts from the end): 1, 7 or 30 days.

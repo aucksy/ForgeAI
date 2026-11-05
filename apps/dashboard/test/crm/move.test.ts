@@ -60,7 +60,7 @@ describe('when the old address moves a desk', () => {
     expect(moveWords({ kind: 'waiting', n: 3 })).toContain('3 items');
     expect(moveWords({ kind: 'held', n: 2 })).toContain('First fix the 2 items shown in yellow');
     expect(moveWords({ kind: 'signIn', n: 2 })).toContain('Sign in here first');
-    expect(moveWords({ kind: 'browserOnly' })).toContain('Settings → “Put your gym online”');
+    expect(moveWords({ kind: 'browserOnly' })).toContain('Settings → Sign-in & data and put your gym online');
     for (const k of ['waiting', 'held', 'signIn', 'browserOnly', 'go'] as const) {
       expect(moveWords({ kind: k, n: 1 } as never)).toContain('app.mettleup.fit');
       expect(moveWords({ kind: k, n: 1 } as never)).not.toMatch(/ForgeAI|sync|outbox/i);

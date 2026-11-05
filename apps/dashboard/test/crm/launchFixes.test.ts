@@ -8,7 +8,9 @@ import { describe, expect, it } from 'vitest';
 import { cameInWithProblem } from '../../src/crm/logic/cameInToday';
 import { joinedBySource, sourceRowWords } from '../../src/crm/logic/enquiries';
 import { longerPlanOffer, renewAmountP } from '../../src/crm/logic/renewOffer';
-import { cleanUpiId, payLines, upiIdError, upiPayLink } from '../../src/crm/logic/upiPay';
+import { cleanUpiId, gymDetailsForm, gymFormKey, payLines, upiIdError, upiPayLink } from '../../src/crm/logic/upiPay';
+import { demoSnapshot } from '../../src/crm/data/demo';
+import { emptySnapshot } from '../../src/crm/data/local';
 import { isMonday, lastWeek, weekNumbers, weekSummaryText } from '../../src/crm/logic/weekSummary';
 import { buildMessage, receiptMessage } from '../../src/crm/logic/whatsapp';
 import { lastDownloadWords } from '../../src/crm/logic/gymExport';
@@ -176,5 +178,18 @@ describe('data download', () => {
   it('says when this browser last downloaded', () => {
     expect(lastDownloadWords(null)).toBe('Not downloaded from this browser yet.');
     expect(lastDownloadWords(Date.parse('2026-11-03T10:00:00+05:30'))).toBe('Last downloaded on 3 Nov 2026 from this browser.');
+  });
+});
+
+describe('UAT 5 Nov 2026 (money): a gym never keeps another gym’s UPI ID in Settings', () => {
+  it('a different gym under Settings is a new form, filled from that gym only', () => {
+    const demo = { ...demoSnapshot(TODAY).gym, upiId: 'irontemple@okhdfc' };
+    const fresh = emptySnapshot(Date.parse('2026-11-05T10:00:00Z'), 'Shakti Gym').gym;
+    // Erase and start fresh (or Load demo gym) opens a different gym: the boxes must start again.
+    expect(gymFormKey(fresh)).not.toBe(gymFormKey(demo));
+    expect(gymDetailsForm(fresh)).toEqual({ name: 'Shakti Gym', phone: '', address: '', gstin: '', upiId: '' });
+    expect(gymDetailsForm(demo).upiId).toBe('irontemple@okhdfc');
+    // The same gym saved again (a new UPI ID) is the same form: what the owner typed stays.
+    expect(gymFormKey({ ...demo, upiId: 'other@okaxis' })).toBe(gymFormKey(demo));
   });
 });

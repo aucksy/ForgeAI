@@ -29,6 +29,7 @@ import { dateISOFromEpoch, formatDay } from '../../logic/dates';
 import { checkGymDetails } from '../../logic/gst';
 import { countOf } from '../../logic/plural';
 import { unreadableCopy } from '../../data/local';
+import { isDemoGym } from '../../data/demo';
 import { downloadSavedData } from '../../store';
 import {
   Button,
@@ -52,7 +53,7 @@ import { useBranches } from '../../branches/context';
 import { useTerms } from '../../auth/TermsGate';
 import { acceptedLine } from '../../auth/terms';
 import { DownloadDataCard, GymDataActions } from '../GymDataActions';
-import { cleanUpiId, upiIdError } from '../../logic/upiPay';
+import { cleanUpiId, gymDetailsForm, gymFormKey, upiIdError } from '../../logic/upiPay';
 import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
 import { BringAFriendCard } from './BringAFriend';
@@ -97,6 +98,20 @@ export function SettingsScreen({ section }: { section?: string }) {
   // Launch audit 3 Nov 2026: the gym's UPI ID, for the pay link in fee and renewal messages.
   const [upiId, setUpiId] = useState(gym.upiId ?? '');
   const [upiError, setUpiError] = useState<string | null>(null);
+  // UAT 5 Nov 2026 (money): another gym opened under this screen (Load demo gym, Erase and start
+  // fresh): its boxes start again from that gym, so Save never gives it the old gym's UPI ID.
+  const formKey = gymFormKey(gym);
+  const [formFor, setFormFor] = useState(formKey);
+  if (formFor !== formKey) {
+    const f = gymDetailsForm(gym);
+    setFormFor(formKey);
+    setName(f.name);
+    setPhone(f.phone);
+    setAddress(f.address);
+    setGstin(f.gstin);
+    setUpiId(f.upiId);
+    setUpiError(null);
+  }
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -327,7 +342,9 @@ export function SettingsScreen({ section }: { section?: string }) {
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>
           {online
             ? 'Saved online. Safe if a phone or computer breaks. The same on every phone or computer you sign in on.'
-            : 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'}
+            : isDemoGym(gym) || cloud?.demo
+              ? 'Saved in this browser only. A demo gym is never put online.'
+              : 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'}
         </p>
         {termsLine && (
           <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkMuted }}>

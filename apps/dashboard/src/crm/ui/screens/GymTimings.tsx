@@ -110,7 +110,7 @@ export function GymTimingsScreen() {
       />
       {!online || !key ? (
         <Card>
-          <EmptyState title="Gym timings need your gym online" body="Members’ phones read the timings from your gym’s server. Put your gym online first (Settings → Put your gym online)." />
+          <EmptyState title="Gym timings need your gym online" body="Members’ phones read the timings from your gym’s server. Put your gym online first (Settings → Sign-in & data)." />
         </Card>
       ) : load.state === 'missing' ? (
         <Card>

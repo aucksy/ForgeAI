@@ -27,7 +27,7 @@ export function getStartedSteps(s: Pick<CrmSnapshot, 'plans' | 'members'>, ticke
   const active = s.members.filter((m) => !m.archived);
   return [
     { key: 'plans', title: 'Add your plans', hint: 'Set the price of each plan and the joining fee.', path: '/plans', done: s.plans.some((p) => p.active), manual: false },
-    { key: 'members', title: 'Bring in your members', hint: 'Add them one by one, or bring them in from Excel or GGMS.', path: '/members', done: active.length > 0, manual: false },
+    { key: 'members', title: 'Bring in your members', hint: 'Add them one by one, or bring in an Excel list, like one saved from your old gym software (GGMS or another).', path: '/members', done: active.length > 0, manual: false },
     // R-190 (owner, 30 Oct 2026): before the app link, so members first see the gym's own look.
     { key: 'brand', title: 'Add your logo and colours', hint: 'Members see your logo and colours in their app.', path: '/settings/branding', done: ticked.has('brand'), manual: true },
     { key: 'staff', title: 'Add your desk staff', hint: 'They sign in with their own mobile number and a code.', path: '/settings/people', done: ticked.has('staff'), manual: true },

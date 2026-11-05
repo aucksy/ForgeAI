@@ -62,6 +62,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Busy machines: switch it on in Settings → Member app, and members see when each machine is usually busy, so they can pick a quieter time.',
         go: { label: 'Open Settings', path: '/settings/app' },
       },
+      {
+        // UAT fresh-eyes fixes, 5 Nov 2026.
+        text: 'Small fixes: Today’s numbers now say "Fees due" in full rupees, a pass member’s page no longer asks you to sell a membership twice, and pages that send you to Settings name the right tab.',
+      },
     ],
   },
   {

@@ -129,7 +129,7 @@ export function ChallengesScreen() {
         <Card>
           <EmptyState
             title="Challenges need your gym online"
-            body="Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Put your gym online)."
+            body="Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
           />
         </Card>
       ) : load.state === 'missing' ? (

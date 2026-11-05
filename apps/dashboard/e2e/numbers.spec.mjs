@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
 
 import { DESK, addDeskPerson, addMember, expectFitsPhone, openApp, signIn, sheet, startDemo, startOnlineGym, tile, toast } from './support.mjs';
 
-const TILES = ['Renewals due', 'Money owed', 'Stopped coming', 'New members', 'Busy hours'];
+const TILES = ['Renewals due', 'Fees due', 'Stopped coming', 'New members', 'Busy hours'];
 
 function keep(testInfo, name) {
   const path = testInfo.outputPath(name);
@@ -89,9 +89,9 @@ test('J-N1 owner: five numbers with lines; a tile opens its people; days change;
   await expectFitsPhone(page, 'on Busy hours');
   await shoot(page, testInfo, 'busy-phone.png');
 
-  // Money owed: the same total as Money -> Dues.
+  // Fees due: the same total as Money -> Dues.
   await page.goto('./#/numbers/owed/30');
-  await expect(page.getByRole('heading', { level: 1, name: 'Money owed' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Fees due' })).toBeVisible();
   await shoot(page, testInfo, 'owed-phone.png');
 
   // Back on Today the days picked last are remembered.
@@ -131,11 +131,11 @@ test('J-N2 front desk: no money tile, and the money list is closed to them', asy
   const section = page.getByRole('region', { name: 'Your numbers' });
   await section.scrollIntoViewIfNeeded();
   for (const label of ['Renewals due', 'Stopped coming', 'New members', 'Busy hours']) await expect(tile(page, label)).toBeVisible();
-  await expect(section.getByText('Money owed', { exact: true })).toHaveCount(0);
+  await expect(section.getByText('Fees due', { exact: true })).toHaveCount(0);
   await expectFitsPhone(page, 'on the desk’s Today');
 
   await page.goto('./#/numbers/owed/30');
-  await expect(page.getByRole('heading', { level: 1, name: 'Money owed' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1, name: 'Fees due' })).toHaveCount(0);
   await page.goto('./#/numbers/new/30');
   await expect(page.getByRole('heading', { level: 1, name: 'New members' })).toBeVisible();
 });

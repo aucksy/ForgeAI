@@ -3,7 +3,7 @@
  *
  * Five tiles on Today, each with a small trend line, each opening the list behind it:
  *  - Renewals due    members whose plan runs out inside the window and is not renewed back-to-back
- *  - Money owed      what members still owe the gym (OWNER ONLY: a money total, permissions.ts)
+ *  - Fees due        what members still owe the gym (OWNER ONLY: a money total, permissions.ts)
  *  - Stopped coming  members with a running plan who stopped visiting (the Visits "Losing the habit" rule)
  *  - New members     members who joined inside the range
  *  - Busy hours      check-ins by hour of the day (attendance.hourHistogram, so a register row imported
@@ -60,7 +60,8 @@ export function numberLabel(id: NumberId): string {
     case 'renewals':
       return 'Renewals due';
     case 'owed':
-      return 'Money owed';
+      // UAT 5 Nov 2026: the same money is "Fees due" in the Today tile above; one name for one number.
+      return 'Fees due';
     case 'stopped':
       return 'Stopped coming';
     case 'new':

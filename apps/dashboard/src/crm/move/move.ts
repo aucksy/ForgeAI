@@ -80,7 +80,7 @@ export function moveWords(s: MoveState): string | null {
     case 'signIn':
       return `${head} Sign in here first, so the ${items(s.n)} saved on this device can be sent. Then this page moves by itself.`;
     case 'browserOnly':
-      return `${head} Your gym's records are only in this browser. Go to Settings → “Put your gym online” first, or they stay behind here. Then this page moves by itself.`;
+      return `${head} Your gym's records are only in this browser. Go to Settings → Sign-in & data and put your gym online first, or they stay behind here. Then this page moves by itself.`;
     case 'go':
       return `Opening MettleUp at its new address, ${NEW_ADDRESS}…`;
     default:

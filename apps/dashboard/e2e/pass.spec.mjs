@@ -89,7 +89,7 @@ for (const size of ['phone', 'computer']) {
 
       await main.getByRole('button', { name: 'Pass visit', exact: true }).tap();
       await expect(page.getByText('Pass visit counted for FITPASS.')).toBeVisible();
-      await expect(main.getByRole('button', { name: 'Pass visit counted today' })).toBeDisabled();
+      await expect(main.getByRole('button', { name: 'Pass counted today' })).toBeDisabled();
       await expect(tile(page, 'Pass visits this month')).toContainText('1');
       await expect(tile(page, 'Total visits')).toContainText('1');
       await expectFitsPhone(page, 'on a pass member');

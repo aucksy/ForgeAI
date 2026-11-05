@@ -81,3 +81,23 @@ export function payLines(
     ? [`UPI से ${amount} इस UPI ID पर भेजें: ${id}। या पेमेंट के लिए यह लिंक दबाएँ:`, link]
     : [`Pay ${amount} on UPI to ${id}. Or tap this link to pay:`, link];
 }
+
+/**
+ * UAT 5 Nov 2026 (money): Settings -> Gym details keeps what is typed in its own boxes. When a
+ * different gym opens under it (Load demo gym, Erase and start fresh), the boxes must start again from
+ * THAT gym, or "Save details" would put the old gym's UPI ID (and name) on the new one. PURE.
+ */
+export function gymFormKey(gym: { gymId: string; createdAt: number }): string {
+  return `${gym.gymId}:${gym.createdAt}`;
+}
+
+/** The Gym details boxes, filled from one gym's saved details. PURE. */
+export function gymDetailsForm(gym: {
+  name: string;
+  phone: string | null;
+  address: string | null;
+  gstin: string | null;
+  upiId?: string | null;
+}): { name: string; phone: string; address: string; gstin: string; upiId: string } {
+  return { name: gym.name, phone: gym.phone ?? '', address: gym.address ?? '', gstin: gym.gstin ?? '', upiId: gym.upiId ?? '' };
+}

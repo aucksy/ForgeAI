@@ -48,7 +48,7 @@ export function BranchesCard() {
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Branches</SectionTitle>
         <p style={body}>
-          Have more than one gym? Put your gym online first (above). Then you can add each branch here, with its own
+          Have more than one gym? Put your gym online first (Settings → Sign-in & data). Then you can add each branch here, with its own
           front desk, receipts and member list.
         </p>
       </Card>

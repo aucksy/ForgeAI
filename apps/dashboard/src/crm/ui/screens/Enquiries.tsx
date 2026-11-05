@@ -372,7 +372,8 @@ function EnquiryRow({
             <Button wrap variant="ghost" needsInternet onClick={onReschedule} ariaLabel={`Change follow-up date for ${e.name}`}>
               Follow-up date
             </Button>
-            <Button wrap variant="quiet" tone="danger" needsInternet onClick={onLost} ariaLabel={`${e.name} is not interested`}>
+            {/* UAT 5 Nov 2026: an outlined button like its neighbours, not bare red words. */}
+            <Button wrap variant="ghost" tone="danger" needsInternet onClick={onLost} ariaLabel={`${e.name} is not interested`}>
               Not interested
             </Button>
           </>
@@ -389,7 +390,8 @@ function EnquiryRow({
         )}
         {reward.kind === 'ready' && canReward && (
           <Button wrap needsInternet onClick={onReward} ariaLabel={`Give ${reward.by} free days for bringing ${e.name}`}>
-            {`Thank ${reward.by}: give free days`}
+            {/* UAT 5 Nov 2026: the name made it 3 lines; "Referred by" above already names them. */}
+            Give free days
           </Button>
         )}
       </div>

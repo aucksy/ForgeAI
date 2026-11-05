@@ -85,7 +85,7 @@ import { WorkoutOfTheDayCard } from './WorkoutOfTheDay';
 /** The line every builder and list shows: when the member gets it. */
 export const MEMBERS_SEE_IT = 'Members see it in the MettleUp app after one check-in at the gym.';
 /** Review fix: a browser-only gym's plans never reach a phone (member_gym_plans reads online records). */
-export const NOT_ONLINE_YET = 'Members get these plans only once your gym is online (Settings → Put your gym online).';
+export const NOT_ONLINE_YET = 'Members get these plans only once your gym is online (Settings → Sign-in & data).';
 
 export function membersSeeIt(online: boolean): string {
   return online ? MEMBERS_SEE_IT : NOT_ONLINE_YET;

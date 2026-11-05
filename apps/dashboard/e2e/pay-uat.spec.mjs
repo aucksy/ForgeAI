@@ -34,6 +34,16 @@ const FIELDS = {
     { name: 'appId', label: 'App ID', secret: false, placeholder: '' },
     { name: 'secretKey', label: 'Secret Key', secret: true, placeholder: '' },
   ],
+  // The real server offers all four (deploy/panel/payProviders.js PROVIDER_ORDER): the pictures show all four.
+  payu: [
+    { name: 'key', label: 'Merchant key', secret: false, placeholder: '' },
+    { name: 'salt', label: 'Salt', secret: true, placeholder: '' },
+  ],
+  phonepe: [
+    { name: 'clientId', label: 'Client ID', secret: false, placeholder: '' },
+    { name: 'clientVersion', label: 'Client version', secret: false, placeholder: '1' },
+    { name: 'clientSecret', label: 'Client secret', secret: true, placeholder: '' },
+  ],
 };
 
 /** A pretend /api/pay that answers like deploy/panel/pay.js in test mode. */
@@ -66,6 +76,8 @@ async function payServer(page) {
         providers: [
           { id: 'razorpay', name: 'Razorpay', fields: FIELDS.razorpay, oauth: false, connection: conn() },
           { id: 'cashfree', name: 'Cashfree', fields: FIELDS.cashfree, oauth: false, connection: null },
+          { id: 'payu', name: 'PayU', fields: FIELDS.payu, oauth: false, connection: null },
+          { id: 'phonepe', name: 'PhonePe', fields: FIELDS.phonepe, oauth: false, connection: null },
         ],
       });
     }
@@ -128,14 +140,14 @@ for (const size of ['phone', 'computer']) {
       // The gym's UPI ID (Settings -> Gym details).
       await go('/settings');
       await expect(page.getByLabel('Gym UPI ID (optional)')).toBeVisible();
-      await page.getByLabel('Gym UPI ID (optional)').fill('irontemple@okhdfc');
+      await page.getByLabel('Gym UPI ID (optional)').fill('shaktigym@okhdfc');
       await page.getByRole('button', { name: 'Save details' }).tap();
       await expect(page.getByText('Saved.')).toBeVisible();
 
       // 1. Settings -> Payments, server part not live: says so, no connect buttons.
       await main.getByRole('button', { name: 'Open payments' }).tap();
       await expect(page.getByRole('heading', { name: 'Payments', exact: true })).toBeVisible();
-      await expect(main).toContainText('Your UPI ID irontemple@okhdfc is ready.');
+      await expect(main).toContainText('Your UPI ID shaktigym@okhdfc is ready.');
       await expect(main.getByRole('status').filter({ hasText: 'Online payments are not switched on yet.' })).toBeVisible();
       await expect(main.getByRole('button', { name: 'Paste keys' })).toHaveCount(0);
       await expectFitsPhone(page, 'on Settings -> Payments (off)');
@@ -172,7 +184,7 @@ for (const size of ['phone', 'computer']) {
       await c.getByRole('button', { name: 'Show UPI QR for ₹1,000' }).tap();
       await expect(c.getByRole('img', { name: 'UPI QR code to pay ₹1,000' })).toBeVisible();
       await expect(c).toContainText(`Pay ₹1,000 to ${OWNER.gym}`);
-      await expect(c).toContainText('irontemple@okhdfc');
+      await expect(c).toContainText('shaktigym@okhdfc');
       await expect(c).toContainText('Scan with any UPI app: Google Pay, PhonePe, Paytm or BHIM.');
       await expect(c.getByLabel('Paid by')).toHaveValue('upi');
       await expectFitsPhone(page, 'in Collect payment with the UPI QR');

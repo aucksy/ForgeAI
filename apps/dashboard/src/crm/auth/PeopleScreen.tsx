@@ -179,7 +179,7 @@ export function PeopleScreen() {
         />
         <Card>
           <p style={bodyText}>
-            Put your gym online first (Settings → Put your gym online). Then you and your staff can sign in with a mobile number, on any phone or computer.
+            Put your gym online first (Settings → Sign-in & data). Then you and your staff can sign in with a mobile number, on any phone or computer.
           </p>
           <div style={{ marginTop: space.lg }}>
             <Button onClick={() => navigate('/settings')}>Go to Settings</Button>

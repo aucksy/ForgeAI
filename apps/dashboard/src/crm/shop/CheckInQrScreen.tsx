@@ -47,7 +47,7 @@ export function CheckInQrScreen() {
         <Card>
           <EmptyState
             title="Put your gym online first"
-            body="Members check in from their own phone, so your gym must be online first. Go to Settings → Put your gym online. Then come back here for the poster."
+            body="Members check in from their own phone, so your gym must be online first. Go to Settings → Sign-in & data. Then come back here for the poster."
             action={<Button onClick={() => navigate('/settings')}>Open Settings</Button>}
           />
         </Card>

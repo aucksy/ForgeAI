@@ -73,6 +73,10 @@ for (const [name, size] of [['phone', { width: 390, height: 844 }], ['computer',
     await line.locator('xpath=ancestor::div[contains(@class,"panel")][1]').screenshot({ path: `${DIR}/gyms-member-facts-${name}.png` });
 
     await noSideways(page);
+    // UAT 5 Nov 2026: sections fade in as a visitor scrolls to them, so a whole-page picture showed them
+    // as empty gaps. Reduced motion shows every section at once (the page's own rule), for an honest picture.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(300);
     await page.screenshot({ path: `${DIR}/gyms-page-${name}.png`, fullPage: true });
 
     // Each footer link opens its real page.

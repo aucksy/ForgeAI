@@ -156,7 +156,7 @@ export function DietPlansScreen() {
 
       {!online ? (
         <Card>
-          <EmptyState title="Diet plans need your gym online" body="Members’ phones read the plans from your gym’s server. Put your gym online first (Settings → Put your gym online)." />
+          <EmptyState title="Diet plans need your gym online" body="Members’ phones read the plans from your gym’s server. Put your gym online first (Settings → Sign-in & data)." />
         </Card>
       ) : server === 'no' ? (
         <Card>
@@ -535,7 +535,7 @@ export function MemberDietCard({ memberId, memberName }: { memberId: string; mem
         Diet plan
       </SectionTitle>
       {!online ? (
-        <p style={quiet}>Diet plans are kept on your gym’s server. Put your gym online first (Settings → Put your gym online).</p>
+        <p style={quiet}>Diet plans are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data).</p>
       ) : server === 'no' ? (
         <p style={quiet}>Diet plans are not switched on for your gym yet.</p>
       ) : error && plans == null ? (

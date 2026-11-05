@@ -87,7 +87,7 @@ export function MemberMeasurementsCard({ memberId, memberName, onSaved }: { memb
       <section aria-label="Body measurements">
       <SectionTitle action={addButton}>Body measurements</SectionTitle>
       {!online ? (
-        <p style={quiet}>Measurements are kept on your gym’s server. Put your gym online first (Settings → Put your gym online).</p>
+        <p style={quiet}>Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data).</p>
       ) : server === 'no' ? (
         <p style={quiet}>Measurements are not switched on for your gym yet.</p>
       ) : error && list == null ? (

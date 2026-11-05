@@ -1120,7 +1120,8 @@ export async function openMember(page, name) {
  */
 export function tile(page, label) {
   // The label is a <div> (a page title of the same words is an <h1>, so it is never picked).
-  return page.getByRole('main').getByText(label, { exact: true }).locator('xpath=self::div/..');
+  // "Fees due" names both the top tile and the one in Your numbers (UAT 5 Nov 2026): the first, top one.
+  return page.getByRole('main').getByText(label, { exact: true }).locator('xpath=self::div/..').first();
 }
 
 /**

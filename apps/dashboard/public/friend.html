@@ -46,6 +46,7 @@
   .times input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
   .times label:has(input:checked) { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
   .err { color:var(--bad); font-size:14px; font-weight:600; margin:6px 0 0; }
+  .err small { display:block; font-weight:500; }
   .btn { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:60px; border:0; border-radius:16px; background:var(--accent); color:var(--on-accent); font:inherit; font-size:18px; font-weight:800; text-decoration:none; padding:10px 16px; cursor:pointer; }
   .btn small { font-size:14px; font-weight:600; opacity:.85; }
   .btn[disabled] { opacity:.6; cursor:wait; }
@@ -73,7 +74,7 @@
         <p class="err hide" id="name-err" role="alert"></p>
       </div>
       <div>
-        <label for="phone">Mobile number<small>Mobile number</small></label>
+        <label for="phone">Mobile number</label>
         <div class="phone"><span>+91</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="98765 43210" required></div>
         <p class="err hide" id="phone-err" role="alert"></p>
       </div>

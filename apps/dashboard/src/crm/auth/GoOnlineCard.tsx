@@ -95,7 +95,7 @@ function DemoGymCard({ browserOnly = false }: { browserOnly?: boolean }) {
       <p style={bodyText}>
         {browserOnly
           ? 'Its members are made up, and they are kept only in this browser. They can’t be put online. To set up your real gym, tap “Erase and start fresh” at the bottom of this page. Then add your members and put your gym online.'
-          : 'Its members are made up, and they are kept only in this browser. To set up your real gym, tap “Start over with a new demo gym” at the bottom of this page. Then tap “New here? Set up your gym”.'}
+          : 'Its members are made up, and they are kept only in this browser. To set up your real gym, tap “Start over with a new demo gym” at the bottom of this page. It takes you back to the first screen. There, tap “New here? Set up your gym”, not Start demo.'}
       </p>
       <div style={{ marginTop: space.md }}>
         {/* UAT U-A15: `wrap`, as U-A9. In a wider font (before the web font loads, or offline) this

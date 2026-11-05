@@ -287,6 +287,10 @@ describe('who sees what', () => {
 });
 
 describe('words', () => {
+  it('the money still owed has one name on Today: "Fees due", like the tile above it (UAT 5 Nov 2026)', () => {
+    expect(numberLabel('owed')).toBe('Fees due');
+  });
+
   it('plain, and never the banned words', () => {
     const range: NumbersRange = { kind: '30' };
     const words = [

@@ -25,11 +25,12 @@ import { PayRefused, connectKeys, disconnect, oauthStart, type DeskPay, type Pay
 import { KEYS_HELP, connectProblem, connectionLine } from './payWords';
 import { setDeskPay, useDeskPay } from './useDeskPay';
 
-/** What the screen says when the server part is not on. PURE. */
+/** What the screen says when the server part is not on. PURE. UAT 5 Nov 2026: with the next step. */
 export function offWords(state: DeskPay | null): string | null {
   if (!state) return null;
-  if (!state.on) return state.why === 'OFFLINE' ? t('Turn on the member app and sign in to connect a payment company.') : t('Online payments are not switched on yet.');
-  if (!state.connectOn) return t('Online payments are not switched on yet.');
+  const notYet = t('Online payments are not switched on yet. Until then, members can pay by the UPI QR above.');
+  if (!state.on) return state.why === 'OFFLINE' ? t('Turn on the member app and sign in to connect a payment company.') : notYet;
+  if (!state.connectOn) return notYet;
   return null;
 }
 

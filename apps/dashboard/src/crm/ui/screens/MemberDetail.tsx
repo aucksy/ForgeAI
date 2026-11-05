@@ -336,7 +336,7 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
         {/* F123: for a pass member the same check-in is their pass visit. */}
         {visitedToday
           ? passCompany
-            ? t('Pass visit counted today')
+            ? t('Pass counted today')
             : 'Checked in today'
           : busy
             ? 'Saving…'
@@ -577,7 +577,14 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Memberships</SectionTitle>
-        {memberships.length === 0 ? (
+        {memberships.length === 0 && passCompany ? (
+          // UAT 5 Nov 2026: a pass member needs no plan (F123), so no second "Sell membership" here:
+          // the one at the top stays for a pass member who also buys a plan.
+          <EmptyState
+            title="No membership needed"
+            body={t('{company} pays for each visit. Sell a membership only if they also want a plan of their own.', { company: passCompany })}
+          />
+        ) : memberships.length === 0 ? (
           <EmptyState
             title="No memberships yet"
             body="Sell one. Then they show in the renewals list when their plan is ending."

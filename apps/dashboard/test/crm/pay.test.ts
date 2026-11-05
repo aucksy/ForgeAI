@@ -118,9 +118,10 @@ describe('Settings -> Payments words', () => {
   });
 
   it('with the server part off, the screen says "not switched on yet" (no buttons, no crash)', () => {
-    expect(offWords({ on: false, why: 'NOT_READY' })).toBe('Online payments are not switched on yet.');
-    expect(offWords({ on: false, why: 'NO_MASTER_KEY' })).toBe('Online payments are not switched on yet.');
-    expect(offWords({ on: true, connectOn: false, testMode: true, canManage: true, providers: [] })).toBe('Online payments are not switched on yet.');
+    const notYet = 'Online payments are not switched on yet. Until then, members can pay by the UPI QR above.';
+    expect(offWords({ on: false, why: 'NOT_READY' })).toBe(notYet);
+    expect(offWords({ on: false, why: 'NO_MASTER_KEY' })).toBe(notYet);
+    expect(offWords({ on: true, connectOn: false, testMode: true, canManage: true, providers: [] })).toBe(notYet);
     expect(offWords({ on: true, connectOn: true, testMode: true, canManage: true, providers: [] })).toBeNull();
     expect(offWords(null)).toBeNull();
   });

@@ -145,7 +145,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Add your plans': 'Apne plans daalo',
   'Set the price of each plan and the joining fee.': 'Har plan ka daam aur joining fee set karo.',
   'Bring in your members': 'Apne members jodo',
-  'Add them one by one, or bring them in from Excel or GGMS.': 'Ek ek karke jodo, ya Excel ya GGMS se laao.',
+  'Add them one by one, or bring in an Excel list, like one saved from your old gym software (GGMS or another).':
+    'Ek ek karke jodo, ya Excel list laao, jaise purane gym software (GGMS ya koi aur) se save ki hui.',
   'Add your logo and colours': 'Apna logo aur rang daalo',
   'Members see your logo and colours in their app.': 'Members ko unki app mein aapka logo aur rang dikhta hai.',
   'Add your desk staff': 'Desk staff jodo',
@@ -414,7 +415,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Pass company name': 'Pass company ka naam',
   'Pick or type the pass company.': 'Pass company chuno ya naam likho.',
   'Pass visit': 'Pass visit',
-  'Pass visit counted today': 'Aaj ki pass visit gin li',
+  'Pass counted today': 'Aaj ka pass gin liya',
+  '{company} pays for each visit. Sell a membership only if they also want a plan of their own.':
+    '{company} har visit ka paisa deta hai. Membership tabhi becho jab inhe apna plan bhi chahiye.',
   'Pass visit counted for {company}.': '{company} ke liye pass visit gin li.',
   'Pass visits this month': 'Is mahine ki pass visits',
   'For {company}': '{company} ke liye',
@@ -461,6 +464,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Test mode: no real money moves. Use your test keys.': 'Test mode: asli paisa nahi jaata. Apni test keys lagao.',
   'Test mode: no real money moves.': 'Test mode: asli paisa nahi jaata.',
   'Online payments are not switched on yet.': 'Online payments abhi chalu nahi hue hain.',
+  'Online payments are not switched on yet. Until then, members can pay by the UPI QR above.':
+    'Online payments abhi chalu nahi hue hain. Tab tak members upar wale UPI QR se pay kar sakte hain.',
   'Turn on the member app and sign in to connect a payment company.': 'Payment company jodne ke liye member app chalu karo aur sign in karo.',
   'Loading…': 'Load ho raha hai…',
   'Connected. Members can now pay you online.': 'Jud gaya. Ab members aapko online pay kar sakte hain.',
