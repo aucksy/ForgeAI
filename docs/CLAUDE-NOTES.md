@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-355. Watch rest screen loses the exercise name after the last set; dim screen follow-up — 5 Nov 2026
+
+He said: the name goes missing, he thinks after the last set of an exercise; maybe show the NEXT exercise's name. He also said the dim screen worked earlier today, so it is not a watch setting (do not ask him to check settings again; saved as Brain note it-worked-earlier-so-find-the-bug). He believes Plates and bars already has machine steps: it does not, it lists only plates and bars. Help credit: he will add it about 12 Nov.
+
+What I did: one helper traces what the phone sends after an exercise's last set and makes the rest screen name the exercise of the next set, with tests for the last-set case. A second helper finds why the dim screen stops after a call or leaving the app, with a diagnostic log if no single cause is proven.
+
 ## R-354. Watch: bigger small text, top time and heart rate 5% lower — 5 Nov 2026
 
 He said: ask Claude Design to check if the smaller fonts on the watch can be a bit bigger by moving things around, still symmetrical and pleasing. And push the time and heart rate at the very top a bit lower, maybe 5%.
