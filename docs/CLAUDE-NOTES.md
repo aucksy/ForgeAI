@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-359. "Last: date · routine" up into the muscle and rest row — 5 Nov 2026
+
+He said: he asked long ago to move the last workout date one row up, to the right of the rest timer; there is lots of space on the right of that row. Just fix it.
+
+Cause: R-61 (22 Oct) put it at the right end of that row, but the row lived inside the name column beside the ⋯ button, so on his large display it ran out of width and wrapped to its own line. Fix: the tag row now sits under the whole header (name and ⋯), aligned with the name, running to the card's right edge; it still wraps only when truly too long. ExerciseLogCard.tsx.
+
 ## R-358. False "Most lifted in one set" after changing Counting to one side at a time — 5 Nov 2026
 
 He said (screenshot): Dumbbell Preacher Curl, changed Counting to "One side at a time"; 10 kg × 13 showed a new record though he did 10 × 15 last time (22 Oct, Pull 1). "Its wrong...its not most lifted in one set".

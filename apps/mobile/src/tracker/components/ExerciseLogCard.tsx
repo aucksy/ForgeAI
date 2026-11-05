@@ -448,50 +448,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               {exercise.name}
             </Text>
           </Pressable>
-          {/* 16 Oct 2026 audit (C1-9): the tags wrap onto a second line (360 dp at font 1.3 is
-              about 188 dp for ~311 dp of tags), so the rest pill is never pushed under the ⋯. */}
-          <View style={{ marginTop: 6, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space.sm, rowGap: 6 }}>
-            <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
-            {group != null ? (
-              <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset">
-                <Badge label={`Superset ${supersetLabel(group)}`} tone="neutral" />
-              </Pressable>
-            ) : null}
-            {editing ? null : (
-            <Pressable
-              onPress={() => setSheet('rest')}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel={restSec > 0 ? `Rest timer ${fmtRest(restSec)}. Change` : 'Rest timer off. Change'}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
-            >
-              <Icon name="clock" size={13} color={restIsCustom ? color.accent : color.inkMuted} />
-              <Text
-                style={{
-                  fontFamily: type.bodySemi,
-                  fontSize: type.size.caption,
-                  color: restIsCustom ? color.accent : color.inkMuted,
-                }}
-              >
-                {restSec > 0 ? fmtRest(restSec) : 'Off'}
-              </Text>
-            </Pressable>
-            )}
-            {/* 13 Oct 2026: where PREVIOUS comes from. R-61 (owner, 22 Oct 2026): at the right end of
-                the muscle and rest row, where there is room; a long one wraps under it. */}
-            {sourceLine && !compact ? (
-              <Text
-                accessibilityLabel={sourceLine.spoken}
-                onLayout={(e) => {
-                  const wrapped = e.nativeEvent.layout.y > 4;
-                  if (wrapped !== sourceWrapped) setSourceWrapped(wrapped);
-                }}
-                style={{ marginLeft: sourceWrapped ? 0 : 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
-              >
-                {sourceLine.text}
-              </Text>
-            ) : null}
-          </View>
         </View>
         <Pressable
           onPress={() => setSheet('menu')}
@@ -511,6 +467,51 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
         >
           <Glyph name="more" size={20} color={color.inkSecondary} />
         </Pressable>
+      </View>
+      {/* R-359 (owner, 5 Nov 2026: "move the last session date one row up, to the right of the rest timer; there is a lot of space on the right"): the tag row sits under the name AND the ⋯ button, so it runs to the card's right edge and "Last: …" fits beside the rest time. */}
+      {/* 16 Oct 2026 audit (C1-9): the tags wrap onto a second line (360 dp at font 1.3 is
+          about 188 dp for ~311 dp of tags), so the rest pill is never pushed under the ⋯. */}
+      <View style={{ marginTop: 6, marginLeft: 44 + space.sm, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space.sm, rowGap: 6 }}>
+        <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
+        {group != null ? (
+          <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset">
+            <Badge label={`Superset ${supersetLabel(group)}`} tone="neutral" />
+          </Pressable>
+        ) : null}
+        {editing ? null : (
+        <Pressable
+          onPress={() => setSheet('rest')}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={restSec > 0 ? `Rest timer ${fmtRest(restSec)}. Change` : 'Rest timer off. Change'}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+        >
+          <Icon name="clock" size={13} color={restIsCustom ? color.accent : color.inkMuted} />
+          <Text
+            style={{
+              fontFamily: type.bodySemi,
+              fontSize: type.size.caption,
+              color: restIsCustom ? color.accent : color.inkMuted,
+            }}
+          >
+            {restSec > 0 ? fmtRest(restSec) : 'Off'}
+          </Text>
+        </Pressable>
+        )}
+        {/* 13 Oct 2026: where PREVIOUS comes from. R-61 (owner, 22 Oct 2026): at the right end of
+            the muscle and rest row, where there is room; a long one wraps under it. */}
+        {sourceLine && !compact ? (
+          <Text
+            accessibilityLabel={sourceLine.spoken}
+            onLayout={(e) => {
+              const wrapped = e.nativeEvent.layout.y > 4;
+              if (wrapped !== sourceWrapped) setSourceWrapped(wrapped);
+            }}
+            style={{ marginLeft: sourceWrapped ? 0 : 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
+          >
+            {sourceLine.text}
+          </Text>
+        ) : null}
       </View>
       </View>,
       )}
