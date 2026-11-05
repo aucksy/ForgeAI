@@ -1865,6 +1865,14 @@ part_uat() {
   # R-336 (5 Nov 2026): the full-screen update and the Workout tab's orange line, on a made-up update
   # (the QA build's 'updateOffer' stand-in, mettleup://qa-update?behind=N). Pictures rel-r336-*.png.
   uat_flow uatr336 uat-rel-r336-update.yaml
+  part_u344
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
+    | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
+}
+# R-344: also runs alone with only=u344 (flow a starts from a fresh install with the demo, gate-demo.yaml).
+part_u344() {
   # R-344 (5 Nov 2026): "Sleep and workouts" in Settings -> Health apps, then the finish screen's one line on
   # a lighter day. Flow a turns the switch on (Health Connect's own Allow) and finishes workout A (bench
   # 40 kg x 10). The phone's date then moves ONE day on (a lighter workout compares with an earlier day of
@@ -1883,12 +1891,9 @@ part_uat() {
     adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
     log "UAT R-344: phone date back to $(adb shell date +%F | tr -d '\r')"
   fi
-  mkdir -p "$OUT/uat-release"
-  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
-    | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
-  log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
 }
 qa_runs uat && { log "gate part UAT begins"; part_uat; }
+qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

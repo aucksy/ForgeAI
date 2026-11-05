@@ -7,7 +7,8 @@
 #    one day on, so flow 2's lighter workouts compare with this one ("Lighter than last time").
 appId: com.mettleup.app
 ---
-- launchApp
+# Starts afresh (a fresh install with the demo), so it runs alone (only=u344) or after the whole UAT.
+- runFlow: gate-demo.yaml
 - runFlow:
     file: sub-settings-page.yaml
     env:
