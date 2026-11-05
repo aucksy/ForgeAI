@@ -110,6 +110,11 @@ appId: com.mettleup.app
     env:
       FIELD: "Leg Extension set 1 reps"
       VALUE: " 12"
+# The Lateral Raise card is ABOVE (sub-type only scrolls down): bring it into view first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Lateral Raise set 1 weight, kilograms"
 - runFlow:
     file: sub-type.yaml
     env:
@@ -339,6 +344,10 @@ appId: com.mettleup.app
 - assertVisible: "^In use opens after each set$"
 - takeScreenshot: rel-345-09-machine-bar-after-close
 # ---------------------------------------------------------------- R-364 edit a set during the rest
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Leg Extension set 2 reps"
 - runFlow:
     file: sub-type.yaml
     env:
