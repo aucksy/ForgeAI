@@ -26,8 +26,9 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: '^Target 60 kg · .*Tap for why\.$'
-# R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg.
-- assertVisible: '^Target 60 kg · 10, 9, 7( · RPE \d+)?\. 1,560 kg to beat · .*'
+# R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg. With the
+# workout open the label carries the live line (run 41988716247 read it).
+- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Next set: 60 kg × 10 · Done: 0 of today's 1,560 kg\\. Tap for why\\.$"
 - takeScreenshot: rel-20-bench-goals-standard
 # Launch audit 3 Nov 2026 (#7): the line above the sets says where PREVIOUS comes from as "Previous:
 # <day> · <workout>", never "Last:" (owner rule: "Previous", never "Last", where the sets are).
@@ -86,14 +87,15 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: '^Target 60 kg · .*Tap for why\.$'
-# R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg.
-- assertVisible: '^Target 60 kg · 10, 9, 7( · RPE \d+)?\. 1,560 kg to beat · .*'
+# R-351: the kg to beat is 60 x (10 + 9 + 7) = 1,560 kg, over last time's 60 x 24 = 1,440 kg. With the
+# workout open the label carries the live line (run 41988716247 read it).
+- assertVisible: "^Target 60 kg · 10, 9, 7( · RPE \\d+)?\\. Next set: 60 kg × 10 · Done: 0 of today's 1,560 kg\\. Tap for why\\.$"
 - takeScreenshot: rel-22-bench-goals-large
 # ---------------------------------------------------------------- R-350: no step-back cards, +1 a set
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Target 40 kg · 11, 10, 9( · RPE \d+)?\. 1,200 kg to beat · .*'
+      FIND: "^Target 40 kg · 11, 10, 9( · RPE \\d+)?\\. Next set: 40 kg × 11 · Done: 0 of today's 1,200 kg\\. Tap for why\\.$"
 - assertNotVisible: '.*Stuck at 40 kg.*'
 - assertNotVisible: "^Try 35 kg$"
 - assertNotVisible: '.*\b38 kg.*'
