@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-342. Long-term vision: a muscle-growth ecosystem that explains a bad day - 5 Nov 2026
+
+He said: "my long-term vision for this app is to be a complete ecosystem of muscle growth, which also has sleep data, calorie data, so the algorithm can understand or try to understand why someone is not progressing. If my session today fell short, then you would immediately check if the person slept fine or if they're eating protein fine and suggest them corrections. ... Put this into idea and one day in future we'll build it. Sleep data we can get from the devices. Calorie, I think we'll build that AI calorie tracker."
+Done: backlog row F193 (Idea), linked to F53 (AI food photo), F49 (food log), F41 (Health Connect). Not building now.
+My view: strong and rare (Hevy/Strong log lifts only; Whoop/Oura know sleep but not lifts; MacroFactor knows food but not lifts). Cheapest first step when we start: READ sleep from Health Connect (we already write to it), then the protein line from F53. Words must never sound medical: "you slept 5 h, a weaker day is normal", not a diagnosis.
+
 ## R-341. Watch dim screen: show the real rest countdown - 5 Nov 2026
 
 He said: "In the watch, in the dim mode, it's not showing the real counter. I think we need to show that."
@@ -339,15 +345,3 @@ He said: incline dumbbell press 80 kg short with the same sets; the app said "80
 Found in code: kgTarget.ts kgLiveLine/repLiveLine say "add a set if you have it in you" when every planned set is done and the total is short. Next time perSetGoals takes the SHORT day's reps as the floor (+1 rep on one set), so a bad day lowers the next goal and the missed kg are forgotten; only a miss under the rep range repeats it.
 
 Research: extra sets have diminishing returns past ~10-20 weekly sets a muscle, steeper for strength (Pelland et al. preprint, via summaries); sleep loss cuts multi-joint strength (Knowles 2018 review); standard double progression repeats the weight until the target is hit. My view (agreed with him, one change): drop the add-a-set line; do not pile the missed kg ON TOP of the normal step (two hard asks after a bad day); instead next time aims again for the goal that was missed (the better of last time's reps and last time's goal, set by set), with one line saying so. Short twice in a row at the same weight: keep the goal, no extra. Build in the next batch, after 0.70.0.
-
-## R-299. "In use" after every set: make the switch on the workout screen easy to find — 3 Nov 2026
-
-He asked: an option on the active workout screen to turn on the "In use" screen that pops up when a set is ticked and the rest starts.
-
-Checked: it exists (R-70) but is hidden: tap the rest clock during a rest, the big In use screen opens, and its tick box "Show after every set" turns on the pop-up after every set (same setting as Settings, Workouts). Nothing on the bar says the clock can be tapped. My view: no second switch on the busy rest bar (one row: -15, clock, +15, Skip, tight at his font size); instead, while the setting is off, a small line under the clock, "Tap: In use", so the existing 2-tap path is visible. Next batch, after 0.70.0.
-
-## R-298. Hide the red "rest over" counter; keep the quiet long-rest rule — 3 Nov 2026
-
-He said: when the rest ends he just starts the next set without telling the app, so the red count-up keeps going and looks like he is resting longer. He does not think members need to see it, and members must not do any extra task beyond ticking the set. Also: be his product expert and give an opinion on every request (saved as a preference + global CLAUDE.md rule 7).
-
-Checked: the long-rest rule (F73) never uses the red counter. It measures tick to tick minus about 3 s a rep (15-60 s), marks a set only past 2x the planned rest AND 90 s over it, and then only stops the goal going up (never lowers it, never asks anything). My view: agree, remove the red counter row (and its Hide button); keep the quiet rule. Build in the next batch, after 0.70.0 ships (a code change now would restart the 2-hour phone tests).
