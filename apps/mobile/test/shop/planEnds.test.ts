@@ -40,6 +40,10 @@ describe('when the card shows', () => {
     expect(planEndsInDays({ ok: false, problem: 'NO_PHONE', gymName: 'Iron Temple' }, TODAY)).toBeNull();
     expect(planEndsInDays({ ...answer('2026-11-06'), current: null } as MembershipAnswer, TODAY)).toBeNull();
   });
+  it('never for a pass member (F123), even with an old plan still running: there is nothing to renew', () => {
+    expect(planEndsInDays({ ...answer('2026-11-06'), pass: 'FITPASS' } as MembershipAnswer, TODAY)).toBeNull();
+    expect(planEndsInDays({ ...answer('2026-11-06'), pass: null } as MembershipAnswer, TODAY)).toBe(3);
+  });
 });
 
 describe('the words', () => {

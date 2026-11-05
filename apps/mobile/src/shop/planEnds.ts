@@ -12,7 +12,8 @@ import { RENEW_SOON_DAYS, type MembershipAnswer } from './membership';
 
 /** Days from `today` to the plan's end, when the card should show; null otherwise. PURE. */
 export function planEndsInDays(a: MembershipAnswer | null | undefined, today: string): number | null {
-  if (!a || !a.ok || !a.current || a.next) return null;
+  // F123: a pass member (FITPASS, cultpass...) has nothing to renew, even with an old plan still running.
+  if (!a || !a.ok || a.pass || !a.current || a.next) return null;
   const left = daysBetween(today, a.current.endsOn);
   if (!Number.isFinite(left) || left < 0 || left > RENEW_SOON_DAYS) return null;
   return left;

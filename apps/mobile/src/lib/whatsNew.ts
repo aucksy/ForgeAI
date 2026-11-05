@@ -56,6 +56,20 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // R-331 (owner's release, 5 Nov 08:24 IST, "Release all" 08:3x): member-words, short complete sentences, names as
+    // the screens show them. Pay your gym (test mode) and pass members are left out: few members see them yet.
+    // With Play's "• " each line, 486 of 500 characters (R-313).
+    version: '0.72.0',
+    date: '5 Nov',
+    lines: [
+      { text: 'On the Workout tab, "Muscles ready today" shows which muscles have rested enough to train.', go: { label: 'Open Workout', href: '/workout' } },
+      { text: 'Short on time? Tap "Quick workout for the time you have" on the Workout tab. The app picks the exercises.' },
+      { text: 'Ask your own AI app about your workouts: open Settings, then "Ask an AI about your workouts".', go: { label: 'Ask an AI', href: '/settings/ask-ai' } },
+      { text: 'If you train at a gym, your share pictures can show its logo. In Progress photos, tap "Share before and after".' },
+      { text: 'Tap "Invite a friend" on the Gym tab to send a friend a link to your gym.', go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' } },
+    ],
+  },
+  {
     // R-315 (owner's release, 3 Nov 22:34 IST): member-words, short complete sentences; fresh-reader pass on the watch
     // words (R-312..R-314). Together these fit Play's 500 characters (R-313).
     version: '0.71.0',
