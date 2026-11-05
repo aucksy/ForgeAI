@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2005,6 +2005,21 @@ part_u358() {
 # No watch in the cloud: the phone's own log of what it tells the watch ("watch next: <exercise> |
 # <set> | <text>", WearSync) and the rest card are read. Also runs alone with only=u355. The watch's
 # own screen is checked by the watch render pictures (WatchLogRenderTest) and on his watch after release.
+# T74 (R-356, 5 Nov 2026): the gym part alone (only=ugym): seed the member (flow 1), then the test gym,
+# its check-in and plan flows, F146 and T74 (the round home-screen icon and its redraw after a logo change).
+# Inside part UAT it only runs when flows 1-13 all pass, so a failure there hid it.
+part_ugym() {
+  local today lastday
+  today=$(adb shell date +%Y-%m-%d | tr -d '')
+  lastday=$(python3 "$QA_DIR/tools/make_uat_hevy.py" "$OUT/qa-uat-hevy.csv" --today "$today")
+  adb shell rm -f /sdcard/Download/qa-uat-hevy.csv >/dev/null 2>&1 || true
+  push_fixture "$OUT/qa-uat-hevy.csv" /sdcard/Download/qa-uat-hevy.csv
+  adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
+  log "downloads: $(wait_media qa-uat-hevy 1 20 downloads) UAT Hevy history file"
+  uat_flow uat1 uat-rel-1-seed.yaml || return 1
+  part_uat_gym "$today"
+}
+
 part_u355() {
   local rc=0 a b
   adb logcat -c >/dev/null 2>&1 || true
@@ -2038,6 +2053,7 @@ part_u355() {
 }
 qa_runs uat && { log "gate part UAT begins"; part_uat; }
 qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
+qa_runs ugym && ! qa_runs uat && { log "gate part UGYM begins"; part_ugym || status=1; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
 qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
