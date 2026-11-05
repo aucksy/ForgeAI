@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-352. A gym setting for machine weight steps (2.5 or 5 kg)? — 5 Nov 2026
+
+He said: Plates and bars lets members pick plates and bars. Add an option for machines with a built-in stack (pin moves). Some gyms step 2.5, his steps 5. What do I think?
+
+My answer: today the app guesses each machine's step from his logged weights (stackGrid: 5 if most weights sit on 5, else 2.5). Weak spots: a new machine, and a 2.5 kg stack where he only ever logged multiples of 5. My view: add ONE line in Plates and bars, "Machine and cable steps": Learn from my weights (default) / 2.5 kg / 5 kg. The chosen value overrides the guess. Per-machine settings: not now (too much setup). Waiting for his yes before building; build after rule A (T73) lands.
+
 ## R-351. '585 kg beaten' after 2 sets, still under last time's 1,050 kg - 5 Nov 2026
 
 He said (screenshot, T-Bar Row 30x13, 30x13 done, set 3 open): "Also check this calculation. It says I have beaten last weight".
@@ -334,13 +340,3 @@ My view: all three good. (1)+(2) one helper building now. (3) passed to the rest
 ## R-310. Pec Deck Fly suggested 38 kg — 3 Nov 2026
 
 He said: "its suggesting weight of 38. Thats trash. Weight increments should only be 2.5 or 5 kg. For this machine I only have 5 kg increments." Cause: the F74 "very hard, go lighter" step picks a rung about 5% below from his own weights; any weight he ever typed (38) was a rung. Fix (weightLadder.ts stackGrid): a kg machine or cable moves on a 5 kg grid (catalogue step 5 and 80% of his weights on 5) or 2.5 kg (80% on 2.5); off-grid weights are not suggested; a learned step is a whole number of the grid. An odd stack (7 kg plates) keeps his own weights. Pec deck now: 40 -> 35, never 38. Tests: machineStackGrid.test.ts. Later idea: a per-exercise "weight step" choice if a member's machine differs.
-
-## R-309. "Are you still releasing yourself?" — 3 Nov 2026
-
-He asked if I am releasing without his word, and said this must be in CLAUDE.md. Checked the transcript: 0.70.0 was tagged on his own message "Release" at 09:39 IST today (04:09 UTC, 3 Nov), the answer to my "Say release when you want members to get the trainer view...". 0.69.0 was his 2 Nov "build F52 and F186 and then release everything once done". No release without his word. Still, the proof was not shown to him. Added to both CLAUDE.md files: before any tag, quote his release message with date and time; one release = one version.
-
-## R-308. A weight step back must be the member's choice — 3 Nov 2026
-
-He said: the decrease in weight should be opted in by the user, off by default. When the stall is detected, a pop-up asks to opt in, with simple reasoning backed by research, naming the research if possible. "You can decide if this is good."
-
-My view (decided, building): yes, but not a pop-up during the workout and not a buried setting first. When R4 fires, the weight stays and a small card on that exercise asks: "Stuck at 45 kg for 4 workouts. Studies show a lighter weight with more reps builds about the same muscle (Schoenfeld and others, 2017). Try 40 kg today?" [Try 40 kg] [Stay at 45 kg]. Stay = not asked again until 4 more stalled workouts. Settings -> More workout choices: "When I'm stuck at a weight": Ask me (default) / Step back by itself / Never suggest it. Research note: Schoenfeld, Grgic, Ogborn, Krieger 2017 (J Strength Cond Res) meta-analysis: low and high loads build similar muscle when sets are hard; strength gains favour heavy loads, so the card says muscle, not strength. Coleman et al. 2024 (PeerJ) is about a week off, not a lighter weight: not cited. The exact card words need his OK before release (a research claim).
