@@ -33,16 +33,6 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
-    // T74 (R-356): the home-screen icon preview under the logo. Not deployed yet: set `id` to the deploy day.
-    id: '2026-11-06',
-    lines: [
-      {
-        text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
-        go: { label: 'Open Branding', path: '/settings/branding' },
-      },
-    ],
-  },
-  {
     // R-333 (owner, 5 Nov 2026: "why did I not see any notification for this new functionality?"): the 1-5 Nov
     // deploys went out with no entry. One entry for all of them; only what is live (0053 Ask a trainer is not).
     id: '2026-11-05',
@@ -282,3 +272,20 @@ function notifyNewsSeen(): void {
     console.warn('[whats new] could not tell the page', e);
   }
 }
+
+/**
+ * Owner-visible changes built but NOT deployed yet. They move to the top of ADMIN_NEWS (with `id` set to
+ * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
+ */
+export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
+  {
+    // T74 (R-356): the home-screen icon preview under the logo. Not deployed yet: set `id` to the deploy day.
+    id: '2026-11-06',
+    lines: [
+      {
+        text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+    ],
+  },
+];
