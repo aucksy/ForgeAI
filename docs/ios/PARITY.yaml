@@ -94,6 +94,17 @@ features:
                     android.permission.health.READ_WEIGHT, android.permission.health.READ_STEPS]
       gradle: [androidx.health.connect:connect-client, androidx.activity:activity]
 
+  - id: sleep-link
+    name: Sleep and workouts - last night's sleep after a lighter workout (R-344, F193 step 1) [1a]
+    android: done
+    ios: todo
+    reason: Read last night's sleep from Apple Health (HKCategoryTypeIdentifierSleepAnalysis, asleep stages) with the same pure rules in sleepLink.ts. Until then the switch is hidden on iPhone and the finish screen shows only the protein tips.
+    blocking: false
+    covers:
+      functions: [forge-phone.healthReadSleep]
+      permissions: [android.permission.health.READ_SLEEP]
+      files: [src/tracker/phone/sleepLink.ts]
+
   - id: home-widgets
     name: Home-screen widgets Today, Week, Gym [1a]
     android: done

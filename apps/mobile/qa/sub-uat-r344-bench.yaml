@@ -1,0 +1,71 @@
+# Sub-flow (called with runFlow; not a part of its own): R-344 UAT. An empty workout with ONE ticked set of
+# Barbell Bench Press at KG kg x 10 (any other sets the bench starts with are left out), finished; ends on
+# "Workout complete". KG is passed by the caller (no `env:` default here, trap 22).
+appId: com.mettleup.app
+---
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: ".* set 1 weight, (kilograms|pounds)"
+    timeout: 20000
+- tapOn: ".* set 1 weight, (kilograms|pounds)"
+- eraseText
+- inputText: "${KG}"
+- tapOn: ".* set 1 reps"
+- eraseText
+- inputText: "10"
+- hideKeyboard
+- tapOn:
+    text: "Mark .* set 1 complete"
+    waitToSettleTimeoutMs: 300
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- runFlow: sub-uat-rest-clear.yaml
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000

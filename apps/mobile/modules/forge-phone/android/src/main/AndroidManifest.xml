@@ -7,6 +7,9 @@
        Each is asked only when the member says yes on the Health Connect page. -->
   <uses-permission android:name="android.permission.health.READ_WEIGHT"/>
   <uses-permission android:name="android.permission.health.READ_STEPS"/>
+  <!-- R-344 (5 Nov 2026): last night's sleep, read only after the member turns on "Sleep and workouts"
+       (Settings, Health apps). Never stored or sent; used for one line after a lighter workout. -->
+  <uses-permission android:name="android.permission.health.READ_SLEEP"/>
   <queries>
     <package android:name="com.google.android.apps.healthdata"/>
   </queries>

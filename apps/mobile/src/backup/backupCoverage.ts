@@ -129,6 +129,9 @@ export const FIELDS_LEFT_OUT: Readonly<Record<string, Readonly<Record<string, st
     healthWeightSeen: 'F55 bookkeeping: Health Connect records this phone already looked at',
     healthStepsOn: 'F62: a Health Connect permission is per phone; asked again on the new phone',
     healthRevoked: "bookkeeping: MettleUp's Health Connect access was removed on this phone",
+    sleepLinkOn: 'R-344: a Health Connect permission is per phone; asked again on the new phone',
+    proteinTipDay: 'R-344 bookkeeping: when this phone last showed a protein tip',
+    proteinTipNext: 'R-344 bookkeeping: which protein tip this phone shows next',
   },
   'forgeai-muscle-tips': {
     snoozedUntil: 'a tip snoozed for a few days',

@@ -8,6 +8,7 @@
  *  - gymRemindersOn (R-86): the gym's automatic reminders; on by default.
  *  - gymMessagesOn: a pop-up for the gym's new notices; on by default.
  *  - healthWeightOn / healthStepsOn (F55 / F62): read weigh-ins and today's steps from Health Connect.
+ *  - sleepLinkOn (R-344): "Sleep and workouts": after a lighter workout, last night's sleep is read.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -103,6 +104,17 @@ export interface PhonePrefsState {
    * until the app restarts, so until the member connects again the page shows everything off.
    */
   healthRevoked: boolean;
+  /**
+   * R-344 (owner, 5 Nov 2026, F193 step 1): "Sleep and workouts" (Settings → Health apps). Off by default;
+   * on asks Health Connect for sleep. When a workout is lighter than last time, last night's sleep is read
+   * (in memory only, never stored or sent) for one calm line on the finish screen.
+   */
+  sleepLinkOn: boolean;
+  /** R-344: the day (YYYY-MM-DD) a protein tip last showed on the finish screen; null = never. Caps how often. */
+  proteinTipDay: string | null;
+  /** R-344: which protein tip comes next (they take turns). */
+  proteinTipNext: number;
+  setSleepLink: (p: Partial<Pick<PhonePrefsState, 'sleepLinkOn' | 'proteinTipDay' | 'proteinTipNext'>>) => void;
   setHealthRead: (p: Partial<Pick<PhonePrefsState, 'healthWeightOn' | 'healthWeightRead' | 'healthWeightDays' | 'healthWeightSeen' | 'healthStepsOn' | 'healthRevoked'>>) => void;
   setHealthConnect: (on: boolean) => void;
   setHealthLast: (last: HealthLast | null) => void;
@@ -164,6 +176,10 @@ export const usePhonePrefs = create<PhonePrefsState>()(
       healthWeightSeen: {},
       healthStepsOn: false,
       healthRevoked: false,
+      sleepLinkOn: false,
+      proteinTipDay: null,
+      proteinTipNext: 0,
+      setSleepLink: (p) => set(p),
       setHealthRead: (p) => set(p),
       setHealthConnect: (healthConnect) => set({ healthConnect }),
       setHealthLast: (healthLast) => set({ healthLast }),
@@ -184,6 +200,9 @@ export const usePhonePrefs = create<PhonePrefsState>()(
           healthWeightSeen: {},
           healthStepsOn: false,
           healthRevoked: false,
+          sleepLinkOn: false,
+          proteinTipDay: null,
+          proteinTipNext: 0,
           gymRemindersOn: true,
           gymMessagesOn: true,
           showNameOnBoard: false,

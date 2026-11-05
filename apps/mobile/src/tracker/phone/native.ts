@@ -14,12 +14,17 @@ export interface ForgePhone {
    * 24 Oct 2026: each of ForgeAI's two Health Connect permissions on its own (null = no Health
    * Connect). Rejects when Health Connect could not be asked. Absent on builds before it.
    */
-  healthAccess?(): Promise<{ exercise: boolean; calories: boolean; weight?: boolean; steps?: boolean } | null>;
+  healthAccess?(): Promise<{ exercise: boolean; calories: boolean; weight?: boolean; steps?: boolean; sleep?: boolean } | null>;
   healthRequest(): boolean;
-  /** F55 / F62: ask only for reading weight and/or steps. Absent on builds before it. */
-  healthRequestRead?(kinds: ('weight' | 'steps')[]): boolean;
+  /** F55 / F62 / R-344: ask only for reading weight, steps and/or sleep. Absent on builds before it. */
+  healthRequestRead?(kinds: ('weight' | 'steps' | 'sleep')[]): boolean;
   /** F55: weigh-ins from `sinceMs` on, oldest first; null = not allowed. Rejects on a failure. */
   healthReadWeights?(sinceMs: number): Promise<HealthWeightRecord[] | null>;
+  /**
+   * R-344: sleep sessions that ENDED between the two times (epoch ms), oldest first; null = not allowed.
+   * Rejects on a failure. Absent on builds before it. Kept in memory only: never stored or sent.
+   */
+  healthReadSleep?(fromMs: number, toMs: number): Promise<HealthSleepSession[] | null>;
   /** F62: today's steps in the phone's time zone; null = not allowed. Rejects on a failure. */
   healthStepsToday?(): Promise<number | null>;
   /** Take back every Health Connect permission MettleUp holds. False = nothing could be removed. */
@@ -74,6 +79,14 @@ export interface HealthWeightRecord {
   /** The record's offset from UTC in seconds; null when Health Connect has none. */
   offsetSec: number | null;
   kg: number;
+}
+
+/** R-344: one sleep session read from Health Connect (times in epoch ms). */
+export interface HealthSleepSession {
+  startMs: number;
+  endMs: number;
+  /** Health Connect's stages, when the tracker records them (stage = SleepSessionRecord.STAGE_TYPE_*). */
+  stages: { startMs: number; endMs: number; stage: number }[];
 }
 
 export type PlayUpdateStatus = 'none' | 'pending' | 'downloading' | 'downloaded' | 'installing' | 'installed' | 'failed' | 'canceled';

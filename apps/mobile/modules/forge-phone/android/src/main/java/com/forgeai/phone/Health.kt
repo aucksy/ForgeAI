@@ -13,6 +13,7 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.Record
+import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.metadata.Device
@@ -32,7 +33,8 @@ import java.time.ZoneId
  * as a strength-training session with its estimated active calories, so Google Fit and Samsung
  * Health (which read Health Connect) show it. Workouts are never read back. Since 1 Nov 2026
  * (F55 / F62), with the member's separate yes, MettleUp also reads weigh-ins (added to the
- * body-weight log) and today's step count (shown on the Health Connect page).
+ * body-weight log) and today's step count (shown on the Health Connect page). Since R-344 (5 Nov 2026),
+ * with its own yes, last night's sleep (read-only, kept in memory for the finish screen, never sent).
  *
  * Records carry a client id ("forgeai-<session id>") and the time of sending as their version,
  * so sending an edited workout again replaces it instead of adding a second one, and a deleted
@@ -50,6 +52,12 @@ object Health {
   // Health Connect page (never together with the write switches above).
   private val READ_WEIGHT = HealthPermission.getReadPermission(WeightRecord::class)
   private val READ_STEPS = HealthPermission.getReadPermission(StepsRecord::class)
+  // R-344 (5 Nov 2026, F193 step 1): last night's sleep, asked only when the member turns on "Sleep and
+  // workouts". Read-only; nothing is stored or sent anywhere.
+  private val READ_SLEEP = HealthPermission.getReadPermission(SleepSessionRecord::class)
+
+  /** The most sleep sessions one read returns (a day and a half of naps and split nights fits easily). */
+  private const val SLEEP_READ_MAX = 200
 
   /** The most weigh-ins one read returns (a month of a scale used several times a day fits easily). */
   private const val WEIGHT_READ_MAX = 2000
@@ -88,6 +96,7 @@ object Health {
       "calories" to g.contains(CALORIES),
       "weight" to g.contains(READ_WEIGHT),
       "steps" to g.contains(READ_STEPS),
+      "sleep" to g.contains(READ_SLEEP),
     )
   }
 
@@ -114,6 +123,7 @@ object Health {
       when (it) {
         "weight" -> READ_WEIGHT
         "steps" -> READ_STEPS
+        "sleep" -> READ_SLEEP
         else -> null
       }
     }.toSet()
@@ -194,6 +204,53 @@ object Health {
         ),
       )
       res[StepsRecord.COUNT_TOTAL] ?: 0L
+    }
+  }
+
+  /**
+   * R-344: sleep sessions that END between `fromMs` and `toMs`, oldest first: { startMs, endMs,
+   * stages: [{ startMs, endMs, stage }] } (stage = Health Connect's STAGE_TYPE_* number). Null when
+   * sleep may not be read (or no Health Connect). The app works out "last night" and the minutes
+   * asleep (pure TS, sleepLink.ts); nothing here is saved.
+   */
+  fun readSleep(ctx: Context, fromMs: Long, toMs: Long): List<Map<String, Any?>>? {
+    val c = client(ctx) ?: return null
+    return runBlocking {
+      if (!c.permissionController.getGrantedPermissions().contains(READ_SLEEP)) return@runBlocking null
+      val out = mutableListOf<Map<String, Any?>>()
+      var token: String? = null
+      do {
+        // A session that started the evening before `fromMs` still counts: start the window 18 h
+        // earlier and keep only the sessions that END inside it.
+        val res = c.readRecords(
+          ReadRecordsRequest(
+            recordType = SleepSessionRecord::class,
+            timeRangeFilter = TimeRangeFilter.between(Instant.ofEpochMilli(fromMs - 18L * 3600_000L), Instant.ofEpochMilli(toMs)),
+            ascendingOrder = true,
+            pageSize = 100,
+            pageToken = token,
+          ),
+        )
+        for (r in res.records) {
+          val end = r.endTime.toEpochMilli()
+          if (end < fromMs || end > toMs) continue
+          out.add(
+            mapOf(
+              "startMs" to r.startTime.toEpochMilli().toDouble(),
+              "endMs" to end.toDouble(),
+              "stages" to r.stages.map {
+                mapOf(
+                  "startMs" to it.startTime.toEpochMilli().toDouble(),
+                  "endMs" to it.endTime.toEpochMilli().toDouble(),
+                  "stage" to it.stage,
+                )
+              },
+            ),
+          )
+        }
+        token = res.pageToken
+      } while (!token.isNullOrEmpty() && out.size < SLEEP_READ_MAX)
+      out
     }
   }
 

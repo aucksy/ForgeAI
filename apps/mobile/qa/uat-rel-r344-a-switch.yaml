@@ -1,0 +1,54 @@
+# Part UAT, R-344 (owner, 5 Nov 2026) "Sleep and workouts", flow 1 of 2.
+#  - Settings -> Health apps: the new switch, OFF by default, with its one line saying the sleep stays on
+#    this phone. Turning it on opens Health Connect's own screen asking for "Sleep" only; after Allow the
+#    line says it is on (if the emulator's Health Connect refuses, the "not allowed" line and its "Open
+#    Health Connect" button are the result: both are accepted and photographed).
+#  - Then workout A: Barbell Bench Press 40 kg x 10, today. run-device-qa.sh then moves the phone's date
+#    one day on, so flow 2's lighter workouts compare with this one ("Lighter than last time").
+appId: com.mettleup.app
+---
+- launchApp
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Health apps"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'When a workout is lighter than last time, MettleUp can check how long you slept last night, from your watch or sleep app through Health Connect\. Your sleep stays on this phone\.'
+- assertVisible:
+    text: "Sleep and workouts"
+    checked: false
+- takeScreenshot: rel-r344-01-switch-off
+- tapOn:
+    text: "Sleep and workouts"
+    checked: false
+- extendedWaitUntil:
+    visible: '(?i)^(allow all|allow|get started)$'
+    timeout: 20000
+    optional: true
+- tapOn:
+    text: '(?i)^(get started|continue|next)$'
+    optional: true
+- takeScreenshot: rel-r344-02-health-connect-asks
+- tapOn:
+    text: '(?i)^allow all$'
+    optional: true
+- tapOn:
+    text: '(?i)^allow$'
+    optional: true
+- extendedWaitUntil:
+    visible: 'On\. After a lighter workout, MettleUp checks last night''s sleep\. Your sleep stays on this phone and is never sent anywhere\.|Health Connect isn''t letting MettleUp read your sleep yet\..*'
+    timeout: 20000
+- assertVisible:
+    text: "Sleep and workouts"
+    checked: true
+- takeScreenshot: rel-r344-03-switch-on
+- back
+- back
+# ---------------------------------------------------------------- workout A, the one to beat
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "40"
+- takeScreenshot: rel-r344-04-workout-a

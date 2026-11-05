@@ -1,0 +1,58 @@
+# Part UAT, R-344 flow 2 of 2. The phone's date is one day after flow 1 (run-device-qa.sh), so each
+# workout here compares with flow 1's 40 kg x 10 and is "Lighter than last time" at 20 kg x 10.
+# The cloud emulator has no sleep tracker: this QA build's 'sleepSample' stand-in (qa-device.yml) lets
+# mettleup://qa-sleep?min=N make last night N minutes (N < 0 = unknown), and the line then says
+# "Test build: made-up sleep." Store builds ignore the link.
+#  B: 5 h 10 min of sleep -> the sleep line under the big card.
+#  C: sleep unknown -> the first protein tip.
+#  D: sleep unknown, same day -> nothing (one protein tip every 3 days at most).
+appId: com.mettleup.app
+---
+- launchApp
+- openLink: "mettleup://qa-sleep?min=310"
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: '.*Lighter than last time\. Every workout counts\..*'
+    timeout: 15000
+- extendedWaitUntil:
+    visible: 'You slept 5 h 10 min last night\. A weaker day after short sleep is normal\. Aim for 7 hours or more tonight\.'
+    timeout: 15000
+- assertVisible: 'Test build: made-up sleep\.'
+- assertNotVisible: ".*protein.*"
+- takeScreenshot: rel-r344-05-sleep-line
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- C: unknown sleep -> a protein tip
+- openLink: "mettleup://qa-sleep?min=-1"
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: '.*Lighter than last time\. Every workout counts\..*'
+    timeout: 15000
+- extendedWaitUntil:
+    visible: 'Was today lighter than last time\? Check that you eat enough protein\. A palm-sized portion with each meal helps your muscles recover\.'
+    timeout: 15000
+- assertNotVisible: "You slept .*"
+- assertNotVisible: 'Test build: made-up sleep\.'
+- takeScreenshot: rel-r344-06-protein-tip
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- D: same day again -> no second tip
+- runFlow:
+    file: sub-uat-r344-bench.yaml
+    env:
+      KG: "20"
+- extendedWaitUntil:
+    visible: '.*Lighter than last time\. Every workout counts\..*'
+    timeout: 15000
+- extendedWaitUntil:
+    visible: ".*protein.*|You slept .*"
+    timeout: 5000
+    optional: true
+- assertNotVisible: ".*protein.*"
+- assertNotVisible: "You slept .*"
+- takeScreenshot: rel-r344-07-no-second-tip
+- tapOn: "^Done$"

@@ -70,6 +70,7 @@ import {
   type StepsResult,
 } from './healthRead';
 import { usePhonePrefs } from './phonePrefs';
+import { askSleep, canReadSleep, SLEEP_ABOUT, SLEEP_NOT_ALLOWED, SLEEP_ON, SLEEP_TITLE, sleepAccess } from './sleepLink';
 import { openFixFor } from '../services/restAlertAccess';
 import {
   fmtNextReminder,
@@ -761,21 +762,23 @@ function RemoveAccessRow() {
   const sending = usePhonePrefs((s) => s.healthConnect);
   const weightOn = usePhonePrefs((s) => s.healthWeightOn);
   const stepsOn = usePhonePrefs((s) => s.healthStepsOn);
+  const sleepOn = usePhonePrefs((s) => s.sleepLinkOn);
   const revoked = usePhonePrefs((s) => s.healthRevoked);
   const [held, setHeld] = useState(false);
   const [done, setDone] = useState<'removed' | 'failed' | null>(null);
   const [busy, setBusy] = useState(false);
 
   const check = useCallback(async () => {
-    const [c, r] = await Promise.all([
+    const [c, r, sl] = await Promise.all([
       healthCheck().catch((e: unknown) => {
         console.warn('[ForgeErr] health: Health Connect could not be checked', e);
         return null;
       }),
       healthReadAccess(),
+      sleepAccess(),
     ]);
     const write = c != null && (c.state === 'on' || c.state === 'allowed');
-    const read = r != null && r !== 'error' && (r.weight || r.steps);
+    const read = (r != null && r !== 'error' && (r.weight || r.steps)) || sl === true;
     setHeld(write || read);
   }, []);
 
@@ -785,7 +788,7 @@ function RemoveAccessRow() {
       if (a === 'active') void check();
     });
     return () => sub.remove();
-  }, [check, sending, weightOn, stepsOn, revoked]);
+  }, [check, sending, weightOn, stepsOn, sleepOn, revoked]);
 
   if (!canRemoveHealthAccess()) return null;
   if (done === 'removed') {
@@ -1047,6 +1050,66 @@ function StepsRow() {
   );
 }
 
+/**
+ * R-344 (owner, 5 Nov 2026), F193 step 1: "Sleep and workouts". Off by default; turning it on asks Health
+ * Connect for sleep only. After a lighter workout the finish screen may then name last night's short sleep.
+ * The sleep is read on this phone for that one line and never stored or sent.
+ */
+function SleepRow() {
+  const on = usePhonePrefs((s) => s.sleepLinkOn);
+  const revoked = usePhonePrefs((s) => s.healthRevoked);
+  const setSleepLink = usePhonePrefs((s) => s.setSleepLink);
+  const [access, setAccess] = useState<boolean | 'error' | null | undefined>(undefined);
+  const [openFailed, setOpenFailed] = useState(false);
+  const looks = useRef(0);
+  const recheck = useCallback(async () => {
+    const mine = ++looks.current;
+    const got = await sleepAccess();
+    // Could not ask this time: keep what was shown (never flip to Off on a hiccup).
+    if (mine === looks.current) setAccess((prev) => (got === 'error' && prev != null ? prev : got));
+  }, []);
+  useEffect(() => {
+    void recheck();
+    const sub = AppState.addEventListener('change', (a) => {
+      if (a === 'active') void recheck();
+    });
+    return () => sub.remove();
+  }, [recheck, on, revoked]);
+
+  if (access === undefined || access === null) return null;
+  const allowed = access === true || access === 'error';
+  const refused = on && !allowed;
+
+  const turn = (v: boolean): void => {
+    setOpenFailed(false);
+    setSleepLink({ sleepLinkOn: v });
+    // Already allowed (from before a switch-off): nothing to ask.
+    if (v && access !== true) askSleep();
+  };
+  const openHc = (): void => {
+    tap();
+    const opened = openHealthConnect();
+    if (!opened) console.warn('[ForgeErr] Health Connect did not open');
+    setOpenFailed(!opened);
+  };
+
+  return (
+    <View>
+      <ToggleRow icon="clock" title={SLEEP_TITLE} caption={!on ? SLEEP_ABOUT : refused ? SLEEP_NOT_ALLOWED : SLEEP_ON} value={on} onChange={turn} divider={false} />
+      {refused ? (
+        <View style={{ paddingBottom: space.sm }}>
+          <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />
+        </View>
+      ) : null}
+      {openFailed ? (
+        <Text accessibilityLiveRegion="polite" style={{ ...CAPTION(), color: color.criticalText, textAlign: 'center', paddingBottom: space.sm }}>
+          {HC_OPEN_FAILED}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
 export function HealthCard() {
   return (
     <>
@@ -1062,6 +1125,11 @@ export function HealthCard() {
           <Card style={{ paddingVertical: space.xs }}>
             <StepsRow />
           </Card>
+          {canReadSleep() ? (
+            <Card style={{ paddingVertical: space.xs }}>
+              <SleepRow />
+            </Card>
+          ) : null}
         </>
       ) : null}
     </>

@@ -1865,6 +1865,24 @@ part_uat() {
   # R-336 (5 Nov 2026): the full-screen update and the Workout tab's orange line, on a made-up update
   # (the QA build's 'updateOffer' stand-in, mettleup://qa-update?behind=N). Pictures rel-r336-*.png.
   uat_flow uatr336 uat-rel-r336-update.yaml
+  # R-344 (5 Nov 2026): "Sleep and workouts" in Settings -> Health apps, then the finish screen's one line on
+  # a lighter day. Flow a turns the switch on (Health Connect's own Allow) and finishes workout A (bench
+  # 40 kg x 10). The phone's date then moves ONE day on (a lighter workout compares with an earlier day of
+  # the same kind), flow b finishes three 20 kg workouts: made-up 5 h 10 min sleep (the QA build's
+  # 'sleepSample' stand-in) -> the sleep line; unknown sleep -> the first protein tip; again -> nothing (one
+  # tip every 3 days). The date is put back afterwards. Pictures rel-r344-*.png.
+  if uat_flow uatr344a uat-rel-r344-a-switch.yaml; then
+    local now
+    now=$(adb shell date +%s | tr -d '\r')
+    adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+    adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || adb shell "su 0 date $(adb shell date -d @$((now + 86400)) +%m%d%H%M%Y.%S | tr -d '\r')" >/dev/null 2>&1 || true
+    log "UAT R-344: phone date moved from $(date -u -d @"$now" +%F) to $(adb shell date +%F | tr -d '\r') for flow b"
+    uat_flow uatr344b uat-rel-r344-b-line.yaml
+    now=$(adb shell date +%s | tr -d '\r')
+    adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || adb shell "su 0 date $(adb shell date -d @$((now - 86400)) +%m%d%H%M%Y.%S | tr -d '\r')" >/dev/null 2>&1 || true
+    adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+    log "UAT R-344: phone date back to $(adb shell date +%F | tr -d '\r')"
+  fi
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done

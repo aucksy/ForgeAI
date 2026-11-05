@@ -29,6 +29,7 @@ import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { CompareNote } from '@/tracker/components/CompareNote';
 import { KgHeroCard } from '@/tracker/components/KgHeroCard';
 import { SessionSummary } from '@/tracker/components/SessionSummary';
+import { ShortDayLine } from '@/tracker/components/ShortDayLine';
 import { ShareSheet } from '@/tracker/components/ShareSheet';
 import { WorkoutPhotos } from '@/tracker/components/WorkoutPhotos';
 import { SHARE_TEXT_HINT, SHARE_TEXT_LABEL, shareTextNow } from '@/tracker/components/ShareTextRow';
@@ -276,6 +277,10 @@ export default function FinishScreen() {
         <View style={{ gap: space.lg }}>
           {/* R-147: kg lifted today against last time, the screen's headline. */}
           {hero?.hero ? <KgHeroCard hero={hero.hero} exercises={heroCompared ? hero.exercises : undefined} cause={hero.cause} onOpenLast={openLast} /> : null}
+          {/* R-344 (owner, 5 Nov 2026): a lighter day gets one calm line: last night's short sleep, or now and then a protein tip. */}
+          {hero?.hero ? (
+            <ShortDayLine workoutId={data.session.id} startedAt={data.session.startedAt} dateISO={data.session.dateISO} tone={hero.hero.tone} easyWeek={!!data.easyWeek} />
+          ) : null}
 
           <HeroCard gradient={gradients.ember}>
             {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole

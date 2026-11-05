@@ -186,6 +186,7 @@ export async function removeHealthAccess(): Promise<boolean> {
   p.setHealthConnect(false);
   p.setHealthUnsent([]);
   p.setHealthRead({ healthWeightOn: false, healthStepsOn: false, healthRevoked: true });
+  p.setSleepLink({ sleepLinkOn: false });
   return true;
 }
 

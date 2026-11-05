@@ -76,7 +76,7 @@ export async function healthReadAccess(): Promise<HealthReadAccess | 'error' | n
 }
 
 /** Open Health Connect's screen asking only for these read permissions. False = nothing opened. */
-export function askHealthRead(kinds: ('weight' | 'steps')[]): boolean {
+export function askHealthRead(kinds: ('weight' | 'steps' | 'sleep')[]): boolean {
   const n = phoneNative();
   if (!n?.healthRequestRead) return false;
   usePhonePrefs.getState().setHealthRead({ healthRevoked: false });

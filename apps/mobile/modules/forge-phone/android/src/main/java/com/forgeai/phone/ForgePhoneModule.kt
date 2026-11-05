@@ -135,7 +135,7 @@ class ForgePhoneModule : Module() {
       true
     }
 
-    // F55 / F62: ask only for reading weight and/or steps ("weight", "steps").
+    // F55 / F62 / R-344: ask only for reading weight, steps and/or sleep ("weight", "steps", "sleep").
     Function("healthRequestRead") { kinds: List<String> ->
       val a = appContext.currentActivity ?: return@Function false
       a.runOnUiThread {
@@ -167,6 +167,18 @@ class ForgePhoneModule : Module() {
         Health.stepsToday(c)?.toDouble()
       } catch (e: Throwable) {
         android.util.Log.w("ForgeErr", "Health Connect steps read failed", e)
+        throw e
+      }
+    }
+
+    // R-344 (F193 step 1): sleep sessions that ended between two times; null = not allowed. Read-only:
+    // the app keeps them in memory for one screen and never stores or sends them. A failure rejects (logged).
+    AsyncFunction("healthReadSleep") { fromMs: Double, toMs: Double ->
+      val c = ctx ?: return@AsyncFunction null
+      try {
+        Health.readSleep(c, fromMs.toLong(), toMs.toLong())
+      } catch (e: Throwable) {
+        android.util.Log.w("ForgeErr", "Health Connect sleep read failed", e)
         throw e
       }
     }
