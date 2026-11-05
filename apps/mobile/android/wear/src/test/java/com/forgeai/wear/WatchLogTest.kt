@@ -184,10 +184,10 @@ class WatchLogTest {
     assertTrue(LogMath.confirmed(ns.sentKey, "set-5", true))
   }
 
-  @Test fun restClockDimShowsMinutesOnly() {
+  @Test fun restClockDimShowsTheRealSeconds() {
     assertEquals("1:23", LogMath.restClock(83L, false))
-    assertEquals("2 min", LogMath.restClock(83L, true))
-    assertEquals("1 min", LogMath.restClock(5L, true))
+    assertEquals("1:23", LogMath.restClock(83L, true))
+    assertEquals("0:05", LogMath.restClock(5L, true))
   }
 
   @Test fun memberWordsStayPlain() {

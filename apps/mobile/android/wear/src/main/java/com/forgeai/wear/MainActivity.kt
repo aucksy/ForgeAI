@@ -163,14 +163,15 @@ class MainActivity : ComponentActivity() {
           return@LaunchedEffect
         }
         if (ambient) {
-          // Ambient: no ticking (the screen redraws once a minute).
-          // 0.60.0 review: without "Alarms & reminders" the end alarm is inexact and the wrist is
-          // usually down (ambient) when a rest ends, so wait here under a short partial wake lock and
-          // buzz on time. With exact alarms on, the alarm does it.
-          if (exactAllowed) return@LaunchedEffect
+          // Ambient during a rest. R-341 (owner, 5 Nov 2026: "in the dim mode, it's not showing the real
+          // counter"): the dimmed rest screen now counts down each second, like the bright one. The CPU
+          // sleeps in ambient, so a short partial wake lock (only until the rest ends, at most the rest's
+          // length + 5 s) keeps the one-second redraw going; after the rest it drops at once.
+          // 0.60.0 review: without "Alarms & reminders" the end alarm is inexact, so the buzz also comes
+          // from here on time. With exact alarms on, the alarm does it.
           val wait = endsAt + 300L - System.currentTimeMillis()
           if (wait <= 0L) {
-            WatchState.onAlarm(this@MainActivity, endsAt)
+            if (!exactAllowed) WatchState.onAlarm(this@MainActivity, endsAt)
             return@LaunchedEffect
           }
           val lock = (getSystemService(POWER_SERVICE) as PowerManager)
@@ -178,8 +179,15 @@ class MainActivity : ComponentActivity() {
           lock.setReferenceCounted(false)
           lock.acquire(wait + 5_000L)
           try {
-            delay(wait)
-            WatchState.onAlarm(this@MainActivity, endsAt)
+            while (true) {
+              now = System.currentTimeMillis()
+              if (now >= endsAt + 300L) break
+              // Wake on the next whole second of the countdown, so the digits change in step.
+              val toNextSecond = ((endsAt - now) % 1000L).let { if (it <= 0L) 1000L + it else it }
+              delay(minOf(toNextSecond + 20L, endsAt + 300L - now))
+            }
+            now = System.currentTimeMillis()
+            if (!exactAllowed) WatchState.onAlarm(this@MainActivity, endsAt)
           } finally {
             if (lock.isHeld) lock.release()
           }

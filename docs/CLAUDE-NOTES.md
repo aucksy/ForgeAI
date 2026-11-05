@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-341. Watch dim screen: show the real rest countdown - 5 Nov 2026
+
+He said: "In the watch, in the dim mode, it's not showing the real counter. I think we need to show that."
+Cause: the dimmed (ambient) rest screen showed "2 min" (logging flow) or a clock frozen between the once-a-minute ambient redraws.
+My view: yes. A rest is short (1-3 min) and the seconds are what the member glances at; Apple Watch and Garmin show them dimmed too. Cost: a partial wake lock only while a rest runs.
+Done: WatchLog.restClock shows m:ss always; MainActivity ticks each second in ambient during a rest under a wake lock bounded to the rest end. Waiting list for the next version; needs a check on his paired watch after release (the cloud cannot test a dimmed real watch).
+
 ## R-340. Apple account: his own Apple ID + a second-hand iPhone under 20K - 5 Nov 2026
 
 He asked: can he enrol with simpleapps108@gmail.com on his brother's iPhone, then said a second-hand iPhone is worth buying; find one under 20K.

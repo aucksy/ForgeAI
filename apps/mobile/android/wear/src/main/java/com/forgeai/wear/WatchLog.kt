@@ -196,9 +196,12 @@ object LogMath {
   /** "4 sets done" / "1 set done". */
   fun setsDone(n: Int): String = if (n == 1) "1 set done" else "$n sets done"
 
-  /** The rest clock: "1:23"; dimmed (no seconds): "2 min" (rounded up, at least 1). */
-  fun restClock(secondsLeft: Long, ambient: Boolean): String =
-    if (ambient) "${maxOf(1L, (secondsLeft + 59L) / 60L)} min" else RestText.clock(secondsLeft)
+  /**
+   * The rest clock: "1:23", bright or dimmed. R-341 (owner, 5 Nov 2026: "in the dim mode, it's not showing the
+   * real counter"): the dimmed screen said "2 min"; it now shows the same seconds, ticking each second (MainActivity).
+   */
+  @Suppress("UNUSED_PARAMETER")
+  fun restClock(secondsLeft: Long, ambient: Boolean): String = RestText.clock(secondsLeft)
 }
 
 /** The flow's steps, as pure functions of [LogUi] (MainActivity keeps the state and the timers). */
