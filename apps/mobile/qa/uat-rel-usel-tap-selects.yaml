@@ -1,0 +1,184 @@
+# Part USEL (owner bug, 5 Nov 2026): every tap on a weight or reps box selects the whole number, so typing
+# replaces it. Before the fix only the FIRST tap (the box gaining focus) selected; a tap on the box the
+# cursor was already in, or one that reopened the keyboard after Back closed it, kept the cursor where the
+# finger landed: "13" then "8" saved 183 (u358 flow b, run 41999585893).
+# NO eraseText anywhere below on purpose: the erase is what hid the bug. Each tap is followed straight
+# by typing, as he does. VALUE starts with a space (trap 5: the emulator can drop the first key; a typed
+# space is dropped by the box). Run with the owner profile (360 dp, font 1.3, India time).
+# Types (R-364): happy path (ticked set, reps 13 -> 18), negative (no 183 / 1813 / 138), keyboard closed
+# then reopened, cursor already in the box with the keyboard open, weight box, an unticked set, the app
+# sent to the background and opened again, the plate calculator's Target box, regression (the first tap
+# and a normal typed set still work). Pictures rel-usel-*.png.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+# Set 1: 10 x 13 typed and ticked. Regression: the first tap on a box still selects (sub-type).
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "13"
+- runFlow: sub-uat-rest-clear.yaml
+- takeScreenshot: rel-usel-0-ticked-10x13
+# ---- A. HIS CASE: the ticked set's reps box kept focus, the keyboard is closed. Tap, type 18.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Dumbbell Preacher Curl set 1 reps.*"
+- tapOn: "Dumbbell Preacher Curl set 1 reps.*"
+- inputText: " 18"
+- assertNotVisible: "183|1813|1183|138|1318"
+- assertVisible: "^18$"
+- takeScreenshot: rel-usel-a-ticked-reps-18
+# ---- B. The cursor is in the box and the keyboard is open: tap the same box again, type 16, then 18.
+- tapOn: "Dumbbell Preacher Curl set 1 reps.*"
+- inputText: " 16"
+- assertNotVisible: "1816|1618|186|168"
+- assertVisible: "^16$"
+- tapOn: "Dumbbell Preacher Curl set 1 reps.*"
+- inputText: " 18"
+- assertNotVisible: "1618|1816|168|186"
+- assertVisible: "^18$"
+- hideKeyboard
+- takeScreenshot: rel-usel-b-reps-again-18
+# ---- C. The weight box of the ticked set: first tap, a second tap with the keyboard open, a third after
+# Back closed the keyboard.
+- tapOn: "Dumbbell Preacher Curl set 1 weight, .*"
+- inputText: " 12.5"
+- assertVisible: "^12.5$"
+- tapOn: "Dumbbell Preacher Curl set 1 weight, .*"
+- inputText: " 11"
+- assertNotVisible: "12.511|1112.5|12.11|112.5"
+- assertVisible: "^11$"
+- hideKeyboard
+- tapOn: "Dumbbell Preacher Curl set 1 weight, .*"
+- inputText: " 10"
+- hideKeyboard
+- assertNotVisible: "1011|1110|101|110"
+- assertVisible: "^10$"
+- assertVisible: "^18$"
+- takeScreenshot: rel-usel-c-weight-back-to-10
+# ---- D. An unticked set: set 2 typed 10 x 15 the normal way, then its reps box tapped again with the
+# keyboard closed, 14 typed.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add set$"
+- tapOn:
+    text: "^Add set$"
+    index: 0
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set 2 weight, .*"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Dumbbell Preacher Curl set 2 reps.*"
+      VALUE: " 15"
+- tapOn: "Dumbbell Preacher Curl set 2 reps.*"
+- inputText: " 14"
+- hideKeyboard
+- assertNotVisible: "1514|1415|154|145"
+- assertVisible: "^14$"
+- takeScreenshot: rel-usel-d-unticked-reps-14
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Dumbbell Preacher Curl set 2"
+- runFlow: sub-uat-rest-clear.yaml
+# ---- E. Interruption: the app goes to the background and comes back; a tap on set 2's reps, type 12.
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Dumbbell Preacher Curl set 2 reps.*"
+- tapOn: "Dumbbell Preacher Curl set 2 reps.*"
+- inputText: " 12"
+- hideKeyboard
+- assertNotVisible: "1412|1214|142|124"
+- assertVisible: "^12$"
+- tapOn: "Dumbbell Preacher Curl set 2 reps.*"
+- inputText: " 12"
+- hideKeyboard
+- assertNotVisible: "1212|122"
+- assertVisible: "^12$"
+- assertVisible: "^18$"
+- takeScreenshot: rel-usel-e-after-background-12
+# ---- F. The plate calculator's Target box (a barbell exercise): first tap, again with the keyboard open,
+# again after Back closed it.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " bench press"
+- tapOn:
+    text: "Select Barbell Bench Press"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Barbell Bench Press set 1 weight, .*"
+    timeout: 20000
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Barbell Bench Press set 1 weight, .*"
+      VALUE: " 60"
+- tapOn:
+    text: "More for Barbell Bench Press.*"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Plate calculator$"
+- tapOn: "^Plate calculator$"
+- extendedWaitUntil:
+    visible: "Close the plate calculator"
+    timeout: 10000
+- takeScreenshot: rel-usel-f-plates-open-60
+- tapOn:
+    text: "^60$"
+    rightOf: "^Target$"
+- inputText: " 80"
+- assertVisible:
+    text: "^80$"
+    rightOf: "^Target$"
+- tapOn:
+    text: "^80$"
+    rightOf: "^Target$"
+- inputText: " 100"
+- assertNotVisible: "80100|10080|8100|1080"
+- assertVisible:
+    text: "^100$"
+    rightOf: "^Target$"
+- hideKeyboard
+- tapOn:
+    text: "^100$"
+    rightOf: "^Target$"
+- inputText: " 70"
+- hideKeyboard
+- assertNotVisible: "10070|70100|1070|7100"
+- assertVisible:
+    text: "^70$"
+    rightOf: "^Target$"
+- takeScreenshot: rel-usel-f-plates-70
+- tapOn: "Close the plate calculator"
+- extendedWaitUntil:
+    notVisible: "Close the plate calculator"
+    timeout: 10000
+# ---- Finish: set 1 = 10 x 18, set 2 = 10 x 12 saved (the bench row is left out, unticked).
+- runFlow: sub-uat-r358-finish.yaml
+- takeScreenshot: rel-usel-finish

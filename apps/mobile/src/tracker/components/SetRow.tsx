@@ -114,6 +114,7 @@ export function useRowLayout(logType: LogType = 'weight_reps'): RowLayout {
 
 /** After a tick lands in the store (moved to services/tickFollowUp so it can be tested). */
 import { afterTick } from '../services/tickFollowUp';
+import { selectAllSoon } from '../lib/selectAllOnTap';
 
 export { afterTick };
 
@@ -404,12 +405,18 @@ export const SetRow = memo(function SetRow({
     // 2 dp above or below still lands in the box. The input stays the spoken element.
     <Pressable
       accessible={false}
-      onPress={() => p.inputRef.current?.focus()}
+      onPress={() => {
+        p.inputRef.current?.focus();
+        selectAllSoon(() => p.inputRef.current, () => p.value.length);
+      }}
       style={{ flex: 1, minHeight: SET_ROW.touch, justifyContent: 'center' }}
     >
       <TextInput
         ref={p.inputRef}
         value={p.value}
+        // Tap-selects-all: a tap on the box the cursor is already in (or one that reopens the keyboard)
+        // gets no focus event, so selectTextOnFocus misses it; select the whole number anyway.
+        onPress={() => selectAllSoon(() => p.inputRef.current, () => p.value.length)}
         onChangeText={(t) => p.onChangeText(t.replace(/[\r\n]/g, ''))}
         onFocus={p.onFocus}
         onBlur={p.onBlur}

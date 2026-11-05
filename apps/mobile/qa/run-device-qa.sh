@@ -131,7 +131,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1921,10 +1921,18 @@ part_uat() {
   part_u355
   part_u358
   part_u366
+  part_usel
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
+}
+# Owner bug (5 Nov 2026, u358 flow b saved 10 x 183): every tap on a weight or reps box selects the whole
+# number, ticked or not, with the keyboard closed or open, after the app went to the background, and in
+# the plate calculator's Target box. Also runs alone with only=usel (a fresh install with the demo).
+# Pictures rel-usel-*.png.
+part_usel() {
+  uat_flow uatusel uat-rel-usel-tap-selects.yaml || return 1
 }
 # R-366 (owner, 5 Nov 2026): a reps-only Pull-Up names last time's total when beaten. Also runs alone
 # with only=u366 (a fresh install with the demo). Pictures rel-r366-*.png.
@@ -2033,6 +2041,7 @@ qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
 qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
+qa_runs usel && ! qa_runs uat && { log "gate part USEL begins"; part_usel; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

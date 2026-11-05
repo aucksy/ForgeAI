@@ -7,8 +7,9 @@
  * nearest load below and above; "Change plates" opens that page.
  */
 import { useRouter, type Href } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
+import type { TextInput as TextInputType } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { hitSlopFor } from '@/components/ui/a11y';
@@ -20,6 +21,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import { computePlates, gymBarChoicesKg, gymBarKg, gymPlatesKg } from '../services/plateMath';
 import { usePlateSetupFor } from '../store/plateSetupStore';
 import { kgToTyped, parseTyped, showW } from './unitText';
+import { selectAllSoon } from '../lib/selectAllOnTap';
 
 export function PlateCalcSheet({
   visible,
@@ -33,6 +35,7 @@ export function PlateCalcSheet({
   const units = useUnits();
   const unit = weightUnitOf(units);
   const [text, setText] = useState('');
+  const targetRef = useRef<TextInputType>(null);
   const setup = usePlateSetupFor(units);
   const router = useRouter();
   const [barKg, setBarKg] = useState<number>(() => gymBarKg(setup, units));
@@ -119,8 +122,11 @@ export function PlateCalcSheet({
             Target
           </Text>
           <TextInput
+            ref={targetRef}
             value={text}
             onChangeText={setText}
+            // Tap-selects-all: a second tap selects the whole number too (selectTextOnFocus only fires once).
+            onPress={() => selectAllSoon(() => targetRef.current, () => text.length)}
             keyboardType="decimal-pad"
             selectTextOnFocus
             placeholder={unit}
