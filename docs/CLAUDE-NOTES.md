@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-365. At most 6 helpers at once (global) — 5 Nov 2026
+
+He said: 16 tasks running at once will chew through his limits; limit token-using tasks to about 6 to begin with; he may raise it later. Global rule. What runs now may finish; it applies going forward.
+
+Done: Brain note protect-his-weekly-usage-limit (cap 6, replaces the old one-at-a-time line I had broken) and the global CLAUDE.md. Running now: 10 helpers; no new helper until fewer than 6 run; new work goes to a helper already on those files or waits. The T76 test round will run at most 6 at a time.
+
 ## R-364. Global rule: standard tests + UAT of all types for every feature and fix — 5 Nov 2026
 
 He said: "going forward, our project rule, in fact the global rule is, for any new feature or fix that we put in, you will do your standard testing that you do, as well as UAT of all types. Period. They should not be missed."
