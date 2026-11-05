@@ -12,6 +12,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { lineFor } from '@/lib/updatePrompt';
 import { useAppUpdate } from '@/lib/updateStore';
+import { accentTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
@@ -26,8 +27,6 @@ const BAR = {
   paddingHorizontal: space.md + 2,
   borderRadius: radius.md,
   borderWidth: 1,
-  borderColor: 'rgba(255, 122, 59, 0.45)',
-  backgroundColor: 'rgba(255, 122, 59, 0.15)',
 };
 
 export function UpdateLine() {
@@ -37,6 +36,8 @@ export function UpdateLine() {
   const workout = useActiveWorkout((s) => s.active != null);
   const line = lineFor({ kind, playStatus, workout });
   if (!line) return null;
+  // Read when drawn: a gym's own colour repaints the accent (theme/gymTheme.ts).
+  const bar = [BAR, { borderColor: accentTint(0.45), backgroundColor: accentTint(0.15) }];
   const words = (
     <>
       <DownloadMark size={18} stroke={color.accentBright} />
@@ -46,7 +47,7 @@ export function UpdateLine() {
   );
   if (!line.action) {
     return (
-      <View accessible accessibilityLabel={line.text} style={BAR}>
+      <View accessible accessibilityLabel={line.text} style={bar}>
         {words}
       </View>
     );
@@ -58,7 +59,7 @@ export function UpdateLine() {
       accessibilityRole="button"
       accessibilityState={{ busy }}
       accessibilityLabel={`${line.text}. ${line.action}`}
-      style={({ pressed }) => [BAR, pressed ? { opacity: 0.8 } : null]}
+      style={({ pressed }) => [...bar, pressed ? { opacity: 0.8 } : null]}
     >
       {words}
     </Pressable>

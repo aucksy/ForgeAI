@@ -19,6 +19,7 @@ import Svg, { Path } from 'react-native-svg';
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
 import { earlierLine, kickerFor } from '@/lib/updatePrompt';
 import { installDownloadedQuietly, useAppUpdate } from '@/lib/updateStore';
+import { accentTint } from '@/theme/tint';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import { phoneNative } from '@/tracker/phone/native';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -141,7 +142,7 @@ export function UpdateFullScreen({ onLater }: { onLater: () => void }) {
     <View role="dialog" aria-modal accessibilityViewIsModal style={{ flex: 1, backgroundColor: color.bg }}>
       {/* The warm glow at the top (the design's radial wash), behind everything. */}
       <LinearGradient
-        colors={['#4A2C15', gradients.backdrop[0], color.bg]}
+        colors={[accentTint(0.22), accentTint(0.05), color.bg]}
         locations={[0, 0.5, 1]}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
         pointerEvents="none"

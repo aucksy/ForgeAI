@@ -36,6 +36,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   first_run_at: 'when the app first ran on this phone',
   update_seen: 'app update prompt (seen flag)',
   update_later: 'app update prompt ("Later" pressed)',
+  update_whats_new: "app update screen: the newest release's What's new lines (R-336; asked again on each phone)",
   feedback_sender: 'this phone\'s anonymous feedback id',
   help_questions: 'this phone\'s help questions with their answers and replies (R-319; each reply is read with this phone\'s anonymous id, which a backup does not carry)',
   feedback_button: 'floating feedback button on/off (R-149; on by default, a phone preference)',
