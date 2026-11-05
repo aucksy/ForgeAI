@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IN_USE_WORDS, cleanInUseChoices, inUseAutoOn, inUseClockHint, inUseDefault, inUseHasOpenWorkingSet, inUseSetLines, machineName } from '@/tracker/lib/inUse';
+import { IN_USE_WORDS, cleanInUseChoices, inUseAutoOn, inUseAutoStep, inUseClockHint, setPopupUp, inUseDefault, inUseHasOpenWorkingSet, inUseSetLines, machineName } from '@/tracker/lib/inUse';
 
 describe('Machine in use (backlog, 21 Oct)', () => {
   it('names the machine, not the set', () => {
@@ -138,5 +138,25 @@ describe('R-345: the line under the rest clock never vanishes (owner, 5 Nov 2026
     expect(inUseClockHint(inUseAutoOn(true, undefined, { name: 'Leg Extension', key: 'leg_extension', equipment: 'machine' }))).toBe(IN_USE_WORDS.autoHint);
     // Settings' switch off: In use never opens by itself, and the line offers the tap.
     expect(inUseClockHint(inUseAutoOn(false, true, ex))).toBe(IN_USE_WORDS.tapHint);
+  });
+});
+
+describe('R-357: the set pop-up first, then In use (owner, 5 Nov 2026)', () => {
+  const record = { id: 1, exercise: 'Dumbbell Preacher Curl', label: 'Most lifted in one set · 10 kg × 13' };
+  it('the reported case: a record pop-up is up, so In use waits; it opens once the pop-up has gone', () => {
+    const ui = { record, lastTime: null };
+    expect(setPopupUp(ui)).toBe(true);
+    expect(inUseAutoStep({ restRunning: true, question: false, popup: setPopupUp(ui) })).toBe('wait');
+    ui.record = null as never; // the pop-up's own 6.2 s ran out (or the member tapped its ×)
+    expect(inUseAutoStep({ restRunning: true, question: false, popup: setPopupUp(ui) })).toBe('open');
+  });
+  it('the quieter "+2.5 kg on last time" line holds it too', () => {
+    expect(setPopupUp({ record: null, lastTime: { id: 2, exercise: 'Leg Extension', text: '+2.5 kg on last time' } })).toBe(true);
+    expect(setPopupUp({ record: null, lastTime: null })).toBe(false);
+  });
+  it('never opens after the rest ended or over a question the tick asked', () => {
+    expect(inUseAutoStep({ restRunning: false, question: false, popup: false })).toBe('drop');
+    expect(inUseAutoStep({ restRunning: false, question: false, popup: true })).toBe('drop');
+    expect(inUseAutoStep({ restRunning: true, question: true, popup: false })).toBe('drop');
   });
 });

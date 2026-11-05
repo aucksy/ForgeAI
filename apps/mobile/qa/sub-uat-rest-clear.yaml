@@ -7,6 +7,8 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Skip rest|In use\. .*'
     timeout: 8000
+# R-357: In use waits for a set's pop-up to go first.
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 2500

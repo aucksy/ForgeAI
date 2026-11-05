@@ -10,6 +10,8 @@
 # The UAT part (uat-rel-4-workout.yaml) checks the screen itself; this only gets it out of the way.
 appId: com.mettleup.app
 ---
+# R-357: In use waits for a set's pop-up to go first.
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 2000

@@ -1,0 +1,11 @@
+# Sub-flow (called with runFlow; not a part of its own): wait until a set's pop-up has gone (the
+# "New record" one, 6.2 s, or "+2.5 kg on last time", 5 s; RecordToast testID "set-popup").
+# R-357 (5 Nov 2026): In use that opens by itself now waits for that pop-up and opens 0.3 s after it
+# has faded, so a flow that checks or closes In use after a tick calls this first. Returns at once
+# when no pop-up is up.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    notVisible:
+      id: "set-popup"
+    timeout: 10000

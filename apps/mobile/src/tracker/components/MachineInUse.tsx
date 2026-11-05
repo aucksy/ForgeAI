@@ -130,8 +130,10 @@ export function MachineInUse({
         </View>
       ) : null}
       {/* The set's own pop-up (a record, better than last time) stays readable over this screen, below
-          the status bar (this screen draws behind it). */}
-      <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, top: 0, paddingTop: insets.top }}>
+          the status bar (this screen draws behind it). R-357: the pop-up is drawn at its holder's top
+          edge (position absolute ignores padding), so the holder itself starts below the status bar;
+          with paddingTop it was drawn under the phone's clock. */}
+      <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, top: insets.top + space.sm }}>
         <RecordToast />
       </View>
     </Modal>

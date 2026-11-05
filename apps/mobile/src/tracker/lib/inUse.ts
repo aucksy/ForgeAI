@@ -109,3 +109,27 @@ export function inUseSetLines(w: { last: string; goal: string } | null | undefin
 export function inUseHasOpenWorkingSet(sets: readonly { done: boolean; isWarmup: boolean; setType?: string | null }[] | null | undefined): boolean {
   return (sets ?? []).some((s) => !s.done && !s.isWarmup && s.setType !== 'drop');
 }
+
+/**
+ * R-357 (owner, 5 Nov 2026: a record's pop-up and In use opened together, the pop-up drawn over the
+ * phone's clock and In use's confetti fighting it; "Let the banner start after the toast is done"):
+ * In use that opens BY ITSELF waits while a set's pop-up is on screen (the "New record" one, or the
+ * quieter "+2.5 kg on last time" line in the same place), and opens once it has gone and its fade-out
+ * is over. The pop-ups keep their own full time (never shortened). A tap on the clock opens In use at
+ * once: the member asked for it. PURE.
+ *  - 'drop': the rest ended, or a question the tick asked is on screen ("Is 300 kg right?"): stay closed.
+ *  - 'wait': a pop-up is up: check again when it goes.
+ *  - 'open': nothing in the way.
+ */
+export function inUseAutoStep(s: { restRunning: boolean; question: boolean; popup: boolean }): 'drop' | 'wait' | 'open' {
+  if (!s.restRunning || s.question) return 'drop';
+  return s.popup ? 'wait' : 'open';
+}
+
+/** R-357: is a set pop-up on screen (workoutUiStore `record` / `lastTime`)? PURE. */
+export function setPopupUp(ui: { record: unknown; lastTime: unknown }): boolean {
+  return ui.record != null || ui.lastTime != null;
+}
+
+/** R-357: the pop-up's fade-out (RecordToast: 200 ms) is over before In use fades in. */
+export const POPUP_EXIT_MS = 300;

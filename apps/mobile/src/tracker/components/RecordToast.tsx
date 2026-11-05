@@ -55,6 +55,7 @@ export function RecordToast() {
         entering={reduced ? undefined : FadeIn.duration(180)}
         exiting={reduced ? undefined : FadeOut.duration(160)}
         accessibilityLabel={`${lastTime.exercise}. ${lastTime.text}`}
+        testID="set-popup"
         style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 10, alignItems: 'center' }}
         pointerEvents="box-none"
       >
@@ -97,6 +98,7 @@ export function RecordToast() {
         entering={reduced ? undefined : FadeInUp.duration(220)}
         exiting={reduced ? undefined : FadeOutUp.duration(200)}
         accessibilityLiveRegion="polite"
+        testID="set-popup"
         accessibilityLabel={`New record, ${record.exercise}. ${lines ? lines.map((l) => `${l.title}: ${l.value}`).join('. ') : record.label}`}
         style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 10, alignItems: 'center' }}
         pointerEvents="box-none"

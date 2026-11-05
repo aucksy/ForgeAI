@@ -8,7 +8,7 @@
 #   3. Opened again, a tap ON the tick ("Show after every set of this exercise"): the screen must stay
 #      open, the tick shows ticked, and the rest bar then says In use now opens after every set.
 #   4. A tap on "I'm back" (the nearest thing to the tick) closes it; the tick turned off again.
-#   5. Leg Extension set 1 ticked: In use opens by itself with the watch's lines (R-346: "Previous ..."
+#   5. Leg Extension set 1 ticked (70 kg, a record): R-357 the "New record" pop-up first, then In use opens by itself with the watch's lines (R-346: "Previous ..."
 #      and "Next ...", no kg to beat); a middle tap closes it; the bar says In use opens after each set.
 # Pictures rel-345-*.png (qa-out/uat-release/).
 appId: com.mettleup.app
@@ -102,12 +102,12 @@ appId: com.mettleup.app
     file: sub-type.yaml
     env:
       FIELD: "Leg Extension set 1 weight, kilograms"
-      VALUE: " 40"
+      VALUE: " 70"
 - runFlow:
     file: sub-type.yaml
     env:
       FIELD: "Leg Extension set 1 reps"
-      VALUE: " 10"
+      VALUE: " 12"
 - runFlow:
     file: sub-type.yaml
     env:
@@ -130,6 +130,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "Not now"
     optional: true
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 3000
@@ -237,14 +238,24 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: "Skip rest"
     timeout: 5000
-# ---------------------------------------------------------------- 5. machine: opens by itself
+# ---------------------------------------------------------------- 5. machine: a record first, then In use by itself
 - runFlow:
     file: sub-uat-tick.yaml
     env:
       WHO: ".*Leg Extension set 1"
+# R-357 (owner, 5 Nov 2026: "Let the banner start after the toast is done"): 70 kg beats the demo's
+# best, so the "New record" pop-up shows first, alone, for its full time; In use opens after it.
+- extendedWaitUntil:
+    visible: 'New record, Leg Extension\..*'
+    timeout: 5000
+- assertNotVisible: 'In use\. .*Tap to close'
+- takeScreenshot: rel-357-01-record-pop-up-first
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
-    timeout: 8000
+    timeout: 14000
+- assertNotVisible:
+    id: "set-popup"
+- takeScreenshot: rel-357-02-in-use-after-the-pop-up
 - assertVisible:
     text: "Show after every set of this exercise"
     checked: true

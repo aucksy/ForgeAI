@@ -3,6 +3,8 @@
 # Same as sub-inuse-close.yaml, but waits up to 6 s, as the app may still be coming to the front.
 appId: com.mettleup.app
 ---
+# R-357: In use waits for a set's pop-up to go first.
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 6000

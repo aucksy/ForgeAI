@@ -19,7 +19,7 @@ appId: com.mettleup.app
       WHO: ".*Bench Press set 1"
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
-    timeout: 8000
+    timeout: 14000
 - assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-30-in-use-bench-set-1
 - runFlow: sub-uat-rest-clear.yaml
@@ -36,6 +36,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 8000
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 3000
@@ -85,7 +86,7 @@ appId: com.mettleup.app
 # The RPE tap ticks the set: a machine with sets still open -> In use by itself, with the beat line.
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
-    timeout: 8000
+    timeout: 14000
 - assertVisible: 'In use\. (Previous .+\. )?Next .+\. Back in .*'
 - takeScreenshot: rel-33-in-use-pec-deck-beat-line
 - runFlow: sub-uat-rest-clear.yaml
@@ -113,6 +114,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 8000
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 3000
@@ -170,6 +172,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 8000
+- runFlow: sub-popup-gone.yaml
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
     timeout: 3000
@@ -183,7 +186,7 @@ appId: com.mettleup.app
     waitToSettleTimeoutMs: 300
 - extendedWaitUntil:
     visible: 'In use\. .*Tap to close'
-    timeout: 8000
+    timeout: 14000
 - takeScreenshot: rel-39-in-use-by-hand
 - back
 - extendedWaitUntil:

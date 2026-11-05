@@ -22,7 +22,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { MachineInUse, machineName, type InUseExercise } from './MachineInUse';
-import { inUseAutoOn, inUseClockHint, inUseHasOpenWorkingSet, inUseSetLines } from '../lib/inUse';
+import { POPUP_EXIT_MS, inUseAutoOn, inUseAutoStep, inUseClockHint, inUseHasOpenWorkingSet, inUseSetLines, setPopupUp } from '../lib/inUse';
 
 import { ConfirmSheet, Icon } from '@/components/ui';
 import { tap } from '@/lib/haptics';
@@ -178,6 +178,8 @@ export function RestTimerBar() {
   const askingRef = useRef(false);
   askingRef.current = checks.asking;
   const [inUse, setInUse] = useState(false);
+  /** R-357: In use is due to open by itself, once no set pop-up is on screen. */
+  const [autoPending, setAutoPending] = useState(false);
   // R-346 (owner, 5 Nov 2026): the In use screen shows the watch's rest lines, from the very row the
   // phone sends the watch (liveCard `watch`), and only while that row is this lift's next set (after
   // its last set the next one belongs to another exercise: no lines, the name stays this machine's).
@@ -189,7 +191,10 @@ export function RestTimerBar() {
   }, [inUse, exercises, startedBy]);
   // The rest ended (or was skipped): the in-use screen closes and stays closed for the next rest.
   useEffect(() => {
-    if (endsAt == null) setInUse(false);
+    if (endsAt == null) {
+      setInUse(false);
+      setAutoPending(false);
+    }
   }, [endsAt]);
   // R-70: with "Show after every set" on (R-304: for THIS exercise), a rest that starts now opens it by
   // itself. A rest already running when the screen opens (an app restart, coming back to the workout)
@@ -208,10 +213,36 @@ export function RestTimerBar() {
     const card = startedBy ? useActiveWorkout.getState().exercises.find((e) => e.key === startedBy) : undefined;
     if (!inUseHasOpenWorkingSet(card?.sets)) return undefined;
     const t = setTimeout(() => {
-      if (useWorkoutUi.getState().typoAsk == null && !askingRef.current && useRestTimer.getState().endsAt != null) setInUse(true);
+      if (useWorkoutUi.getState().typoAsk == null && !askingRef.current && useRestTimer.getState().endsAt != null) setAutoPending(true);
     }, IN_USE_DELAY_MS);
     return () => clearTimeout(t);
   }, [startedAt, endsAt, autoInUse, nextLabel, startedBy]);
+  // R-357 (owner, 5 Nov 2026: "Let the banner start after the toast is done"): a set's pop-up (a new
+  // record, "+2.5 kg on last time") shows its full time first; In use opens once it has faded out.
+  const popupUp = useWorkoutUi((s) => setPopupUp(s));
+  const sawPopup = useRef(false);
+  useEffect(() => {
+    if (!autoPending) return undefined;
+    if (popupUp) {
+      sawPopup.current = true;
+      return undefined;
+    }
+    const t = setTimeout(
+      () => {
+        sawPopup.current = false;
+        setAutoPending(false);
+        const step = inUseAutoStep({
+          restRunning: useRestTimer.getState().endsAt != null,
+          question: useWorkoutUi.getState().typoAsk != null || askingRef.current,
+          popup: setPopupUp(useWorkoutUi.getState()),
+        });
+        if (step === 'open') setInUse(true);
+        else if (step === 'wait') setAutoPending(true);
+      },
+      sawPopup.current ? POPUP_EXIT_MS : 0,
+    );
+    return () => clearTimeout(t);
+  }, [autoPending, popupUp]);
 
   const ask = (
     <ConfirmSheet
@@ -256,6 +287,7 @@ export function RestTimerBar() {
             onPress={() => {
               // Review: a screen Android dropped can't leave this tap dead: close, then open again.
               setInUse(false);
+              setAutoPending(false);
               setTimeout(() => setInUse(true), 0);
             }}
             accessibilityRole="button"
