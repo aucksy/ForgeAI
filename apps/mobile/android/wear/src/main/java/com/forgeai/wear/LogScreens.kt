@@ -179,14 +179,14 @@ internal object LogLayout {
 
   fun effortSkipTop(k: Float): Float = effortScaleTop(k) + grown(18f, 16f, k) * 1.2f + 8f
 
-  /** R-368 rest screen: the countdown's line top (78 px digits centred between the name and Previous). */
-  const val REST_CLOCK_TOP = 111f + REST_SHIFT
-
   /**
    * R-370 (owner, 5 Nov 2026: too much empty space under Skip): the rest screen's whole stack (name, timer with
    * −15 / +15, Previous, Next, Skip) sits this much lower than in R-368; the time row and the ring stay put.
    */
   const val REST_SHIFT = 14f
+
+  /** R-368 rest screen: the countdown's line top (78 px digits centred between the name and Previous). */
+  const val REST_CLOCK_TOP = 111f + REST_SHIFT
 
   /** R-368 rest screen: −15 / +15, centred level with the digits, 96 px in from each side. */
   const val STEP_CENTRE_X = 96f
