@@ -43,7 +43,7 @@ appId: com.mettleup.app
     env:
       N: "3"
       REPS: "5"
-- runFlow: sub-uat-rest-clear.yaml
+# The last set starts no rest timer, so no rest to clear here.
 # Happy path: the exact words, last time named.
 - runFlow:
     file: sub-find.yaml
