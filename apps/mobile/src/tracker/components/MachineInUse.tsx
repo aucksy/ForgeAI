@@ -30,6 +30,12 @@ import { RecordToast } from './RecordToast';
 
 export { IN_USE_WORDS, machineName } from '../lib/inUse';
 
+/**
+ * R-364 edge check (5 Nov 2026, font 2.0 on a 360 dp phone): every word here is already large, so it
+ * grows at most 1.3x with the phone's text size; at 2.0 the IN USE box rode up under the status bar.
+ */
+const TEXT_MAX = 1.3;
+
 /** Drawn by RestTimerBar, which owns the clock (no import back, so no module cycle). */
 export function MachineInUse({
   visible,
@@ -60,7 +66,7 @@ export function MachineInUse({
         onPress={onClose}
         accessibilityRole="button"
         accessibilityLabel={`In use. ${previous ? `${previous}. ` : ''}${next ? `${next}. ` : ''}Back in ${remaining} seconds. Tap to close`}
-        style={{ flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', padding: space.xl, gap: space.lg }}
+        style={{ flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', padding: space.xl, paddingTop: insets.top + space.md, gap: space.lg }}
       >
         <View style={{ borderWidth: 6, borderColor: color.accent, borderRadius: radius.xl, paddingVertical: space.lg, paddingHorizontal: space.xl }}>
           <Text
@@ -73,26 +79,26 @@ export function MachineInUse({
           </Text>
         </View>
         {machine ? (
-          <Text numberOfLines={2} style={{ fontFamily: type.displaySemi, fontSize: 26, color: color.ink, textAlign: 'center' }}>
+          <Text numberOfLines={2} maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.displaySemi, fontSize: 26, color: color.ink, textAlign: 'center' }}>
             {machine}
           </Text>
         ) : null}
         {previous || next ? (
           <View style={{ alignItems: 'center', gap: space.xs }}>
             {previous ? (
-              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.bodySemi, fontSize: 20, color: color.inkSecondary, textAlign: 'center', fontVariant: ['tabular-nums'] }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: 20, color: color.inkSecondary, textAlign: 'center', fontVariant: ['tabular-nums'] }}>
                 {previous}
               </Text>
             ) : null}
             {next ? (
-              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontFamily: type.bodyBold, fontSize: 26, color: color.accentBright, textAlign: 'center', fontVariant: ['tabular-nums'] }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodyBold, fontSize: 26, color: color.accentBright, textAlign: 'center', fontVariant: ['tabular-nums'] }}>
                 {next}
               </Text>
             ) : null}
           </View>
         ) : null}
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontFamily: type.bodySemi, fontSize: 22, color: color.inkSecondary, textAlign: 'center' }}>{IN_USE_WORDS.back}</Text>
+          <Text maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: 22, color: color.inkSecondary, textAlign: 'center' }}>{IN_USE_WORDS.back}</Text>
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
@@ -103,7 +109,7 @@ export function MachineInUse({
           </Text>
         </View>
         <View style={{ marginTop: space.lg, minHeight: 56, paddingHorizontal: space.xl, borderRadius: radius.pill, borderWidth: 1, borderColor: color.borderStrong, justifyContent: 'center' }}>
-          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IN_USE_WORDS.close}</Text>
+          <Text maxFontSizeMultiplier={TEXT_MAX} style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>{IN_USE_WORDS.close}</Text>
         </View>
         <View style={{ opacity: 0.85 }}>
           <MettleUpLogo height={22} />
