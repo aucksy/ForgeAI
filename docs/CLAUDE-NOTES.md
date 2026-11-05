@@ -13,6 +13,8 @@ He said (screenshot, Pull-Up: last 7, 5, 4; today 7, 5, 5): the green bar shows 
 
 Fix (sent to the rule A / kg-to-beat helper, which owns that bar): the reps-only bar mirrors the kg bar: names last time's total (16) and what was done (17), one check mark; tests incl. negative and regression; UAT text check.
 
+BUILT (progression helper): kgTarget repLiveLine / repsBeatLast / repPlan (never under last time), ExerciseLogCard green flag. "Beat last time's 16 reps (17 done)"; equal = "Last time's 16 reps reached"; never "beat" at or under last time or with a set open. Assisted: no line (help changes); weighted: the kg line. UAT uat-rel-r366-reps.yaml.
+
 ## R-365. At most 6 helpers at once (global) — 5 Nov 2026
 
 He said: 16 tasks running at once will chew through his limits; limit token-using tasks to about 6 to begin with; he may raise it later. Global rule. What runs now may finish; it applies going forward.

@@ -52,7 +52,7 @@ import { HoldTimerSheet } from './HoldTimerSheet';
 import { PlateCalcSheet } from './PlateCalcSheet';
 import { RestPickerSheet } from './RestPickerSheet';
 import { cardSourceLine } from '../lib/previousSource';
-import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine } from '../lib/kgTarget';
+import { beatPlan, kgBeaten, kgLiveLine, kgProgress, kgTickKey, repLiveLine, repsBeatLast } from '../lib/kgTarget';
 import { afterTick, SetRow, useRowLayout } from './SetRow';
 import { DragGrip } from './DragGrip';
 import { MachineDetailsRow } from './MachineDetailsRow';
@@ -300,7 +300,8 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       text: kgPlanned.reps
         ? repLiveLine(kgPlanned, g)
         : kgLiveLine(kgPlanned, g, (kg) => `${fmtInt(Math.round(kgToDisplay(kg, units)))} ${weightUnit(units)}${each}`, (kg) => fmtWeight(kg, units)),
-      beaten: kgBeaten(g),
+      // R-366: a reps move that beat last time is green too ("Beat last time's 16 reps (17 done)").
+      beaten: kgBeaten(g) || repsBeatLast(kgPlanned, g),
     };
     // rows are read through the ref on purpose: only tickKey (ticks, adds, removes) moves the line.
     // eslint-disable-next-line react-hooks/exhaustive-deps

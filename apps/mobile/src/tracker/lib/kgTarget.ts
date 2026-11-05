@@ -141,12 +141,16 @@ export function kgPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null {
   // R-351 (owner, 5 Nov 2026): the kg to beat is never under last time's total. After a weight step
   // the plan (32.5 kg x 10, 10, 9 = 942.5) can be under it (30 x 13, 12, 10 = 1,050): the number to
   // pass is then last time's, and "beaten" means more than that.
+  return atLeastLast(sets, total, cmp);
+}
+
+/** R-351: a plan whose total is under last time's (over the same sets) aims at last time's. PURE. */
+function atLeastLast(sets: KgPlanSet[], total: number, cmp: ReturnType<typeof compare>): KgPlan {
   const short = cmp.last != null ? cmp.last - (cmp.comparedTotal ?? total) : 0;
   if (short > 1e-9 && cmp.last != null) {
-    const beat = total + short;
     return {
       sets,
-      total: beat,
+      total: total + short,
       planned: total,
       atLast: true,
       ...cmp,
@@ -172,7 +176,8 @@ export function repPlan(t: TargetIn, lastSets: readonly KgSet[]): KgPlan | null 
   const last = lastSets.filter((s) => Number.isFinite(s.reps) && s.reps > 0);
   // A difference never against a different number of sets (2 of 3 done last time is not "+20");
   // R-138: set for set over the sets both have, the extra sets named apart.
-  return { reps: true, sets, total, ...compare(sets.map((s) => s.reps), last.map((s) => s.reps), total) };
+  // R-366: as the kg (R-351), the reps to beat are never under last time's.
+  return { reps: true, ...atLeastLast(sets, total, compare(sets.map((s) => s.reps), last.map((s) => s.reps), total)) };
 }
 
 /** The kilos to beat, else (R-60) the reps to beat; null when the exercise gets neither. PURE. */
@@ -275,6 +280,8 @@ export type WeightFmt = (kg: number) => string;
 /** R-60: "+3 on last time", "same as last time", "fewer than last time", or null. PURE. */
 export function repDiffWords(p: KgPlan): string | null {
   if (p.last == null) return null;
+  // R-366: aiming at last time's own total reads as such ("16 reps to beat · your previous total").
+  if (p.atLast && !p.setDiff) return 'your previous total';
   const d = Math.round((p.comparedTotal ?? p.total) - p.last);
   if (d === 0) return 'same as last time';
   return d < 0 ? 'fewer than last time' : `+${d} on last time`;
@@ -314,13 +321,29 @@ export function repSetLines(p: KgPlan): string[] {
  */
 export function repLiveLine(p: KgPlan, g: KgProgress): string {
   // Fresh-eyes review (5 Nov 2026): the box already shows a green tick, so no second "✓" in the words.
+  // R-366 (owner, 5 Nov 2026: Pull-Up 7, 5, 4 last time, 7, 5, 5 today read "17 reps reached", no
+  // word of last time): with last time's same sets to compare, the line names last time's total.
+  const done = Math.round(g.done);
+  const last = p.last != null && !p.setDiff ? Math.round(p.last) : null;
   if (kgBeaten(g)) {
-    if (Math.round(g.done) === Math.round(p.total)) return `Today's ${repsText(p.total)} reached`;
-    return `Today's ${repsText(p.total)} beaten (${Math.round(g.done)} done)`;
+    if (last != null && done > last) return `Beat last time's ${repsText(last)} (${done} done)`;
+    if (last != null && done === last) return `Last time's ${repsText(last)} reached`;
+    if (done === Math.round(p.total)) return `Today's ${repsText(p.total)} reached`;
+    return `Today's ${repsText(p.total)} beaten (${done} done)`;
   }
+  // R-366: every set done, under today's goal but past last time: that is still a win, said so.
+  if (repsBeatLast(p, g)) return `Beat last time's ${repsText(last ?? 0)} (${done} done)`;
   // R-300 (owner, 3 Nov 2026): never "add a set" (extra sets cost recovery and sleep); next time aims again.
   if (g.next.length === 0) return `Done: ${Math.round(g.done)} of ${repsText(p.total)} · ${repsText(g.left)} short, fine for today`;
   return `Next sets: ${g.next.map((s) => s.reps).join(', ')} reps · Done: ${Math.round(g.done)} of today's ${repsText(p.total)}${g.short ? ' (a little short is fine)' : ''}`;
+}
+
+/**
+ * R-366: a reps plan, every set done, more reps than last time's same sets: the bar turns green and
+ * says "Beat last time's 16 reps (17 done)" even when today's goal (+1 a set) was not all reached. PURE.
+ */
+export function repsBeatLast(p: KgPlan, g: KgProgress): boolean {
+  return !!p.reps && p.last != null && !p.setDiff && g.next.length === 0 && Math.round(g.done) > Math.round(p.last);
 }
 
 /** "+6% on last time", "same as last time", "lighter than last time", or null. PURE. */

@@ -52,8 +52,9 @@ describe('R-60: reps to beat', () => {
     expect(repsToBeatLine(two)).toBe('45 reps to beat · +1 set · first 2 sets +1 on last time');
     expect(repPlan(pushUps, [])!.last).toBeNull();
     expect(repsToBeatLine(repPlan(pushUps, [])!)).toBe('45 reps to beat');
+    // R-366: never under last time's 48 (as R-351 for kg).
     expect(repsToBeatLine(repPlan(pushUps, [{ weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }, { weightKg: 0, reps: 16 }])!)).toBe(
-      '45 reps to beat · fewer than last time',
+      '48 reps to beat · your previous total',
     );
   });
 
@@ -69,7 +70,7 @@ describe('R-60: reps to beat', () => {
       { weightKg: null, reps: 14, done: true, isWarmup: false },
     ]);
     expect(kgBeaten(g2)).toBe(true);
-    expect(repLiveLine(p, g2)).toBe("Today's 45 reps beaten (47 done)");
+    expect(repLiveLine(p, g2)).toBe("Beat last time's 42 reps (47 done)"); // R-366
     // A warm-up never counts.
     expect(kgProgress(p, [{ weightKg: null, reps: 20, done: true, isWarmup: true }]).done).toBe(0);
   });

@@ -1,0 +1,30 @@
+# Sub-flow (called with runFlow; not a part of its own): R-366 UAT. Pull-Up set N at REPS, typed and
+# ticked (a row is added first when the card has fewer than N). No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    when:
+      notVisible: "Pull[- ][Uu]p set ${N} reps.*"
+    commands:
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^Add set$"
+      - tapOn:
+          text: "^Add set$"
+          index: 0
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Pull[- ][Uu]p set ${N} reps.*"
+      VALUE: " ${REPS}"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Pull[- ][Uu]p set ${N}"
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- extendedWaitUntil:
+    visible: 'Skip rest|In use\. .*'
+    timeout: 8000

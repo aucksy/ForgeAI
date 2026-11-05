@@ -1,0 +1,26 @@
+# Sub-flow (called with runFlow; not a part of its own): R-366 UAT. An empty workout with the Pull-Up
+# (reps only; the demo's own name is "Pull Up", the library's "Pull-Up").
+appId: com.mettleup.app
+---
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " pull-up"
+- hideKeyboard
+- tapOn:
+    text: "Select Pull[- ][Uu]p"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "More for Pull[- ][Uu]p"
+    timeout: 20000

@@ -1896,10 +1896,18 @@ part_uat() {
   part_u344
   part_u355
   part_u358
+  part_u366
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   log "UAT: $(find "$OUT/uat-release" -name "rel-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/uat-release/"
+}
+# R-366 (owner, 5 Nov 2026): a reps-only Pull-Up names last time's total when beaten. Also runs alone
+# with only=u366 (a fresh install with the demo). Pictures rel-r366-*.png.
+part_u366() {
+  uat_flow uatr366 uat-rel-r366-reps.yaml && return 0
+  status=1
+  return 1
 }
 # R-344: also runs alone with only=u344 (flow a starts from a fresh install with the demo, gate-demo.yaml).
 part_u344() {
@@ -1989,6 +1997,7 @@ qa_runs uat && { log "gate part UAT begins"; part_uat; }
 qa_runs u355 && ! qa_runs uat && { log "gate part U355 begins"; part_u355; }
 qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
+qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
 
 qa_runs dnd && { log "gate part DND begins"; part_dnd; }
 qa_runs clip && { log "gate part CLIP begins"; part_clip; }

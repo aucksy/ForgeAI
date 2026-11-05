@@ -1,0 +1,68 @@
+# Part UAT, R-366 (owner, 5 Nov 2026). Pull-Up, reps only: last time 7, 5, 4 = 16 reps, today 7, 5, 5
+# = 17. The green bar said "17 reps reached" with no word of last time. Now it says
+# "Beat last time's 16 reps (17 done)" (one tick: the box's icon; no "✓" in the words).
+# Types (R-364): happy path (the exact words), negative (no "Beat" with a set to go, none at 16 = last
+# time: unit test r366RepsLastTime), regression (the old "17 reps reached" never comes back).
+# A fresh install with the demo, then two empty workouts with the Pull-Up. Pictures rel-r366-*.png.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+# ---------------------------------------------------------------- workout 1: last time 7, 5, 4
+- runFlow: sub-uat-r366-start.yaml
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "1"
+      REPS: "7"
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "2"
+      REPS: "5"
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "3"
+      REPS: "4"
+- takeScreenshot: rel-r366-a-last-time-16
+- runFlow: sub-uat-r358-finish.yaml
+# ---------------------------------------------------------------- workout 2: today 7, 5, 5
+- runFlow: sub-uat-r366-start.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Target .*reps to beat.*Tap for why\.$'
+- takeScreenshot: rel-r366-b-target
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "1"
+      REPS: "7"
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "2"
+      REPS: "5"
+- runFlow: sub-uat-rest-clear.yaml
+# Negative: 12 done with a set to go, never "Beat" yet; the line reads like the kg line.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Next sets?: .* · Done: 12 of today's \\d+ reps.*"
+- assertNotVisible: "^Beat last time.*"
+- takeScreenshot: rel-r366-c-two-sets-not-yet
+- runFlow:
+    file: sub-uat-r366-set.yaml
+    env:
+      N: "3"
+      REPS: "5"
+- runFlow: sub-uat-rest-clear.yaml
+# Happy path: the exact words, last time named.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Beat last time's 16 reps \\(17 done\\)$"
+- assertNotVisible: ".*17 reps reached.*"
+- assertNotVisible: ".*reached ✓.*"
+- takeScreenshot: rel-r366-d-beat-last-time
+- runFlow: sub-uat-r358-finish.yaml

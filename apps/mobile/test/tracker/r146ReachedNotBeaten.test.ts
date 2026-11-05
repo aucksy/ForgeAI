@@ -32,7 +32,7 @@ describe('R-146: reached vs beaten', () => {
     expect(kgLiveLine(plan, g, total, weight)).toBe("Today's 1,925 kg beaten (1,970 kg done)");
   });
   it('reps: exactly the plan is "reached", more is "beaten"', () => {
-    const reps: KgPlan = { reps: true, sets: [1, 2, 3].map(() => ({ weightKg: 1, reps: 15, asLast: false })), total: 45, last: 42, pct: null };
+    const reps: KgPlan = { reps: true, sets: [1, 2, 3].map(() => ({ weightKg: 1, reps: 15, asLast: false })), total: 45, last: null, pct: null }; // R-366: with a last time, the words name it (r366RepsLastTime)
     const at = (n: number[]) => kgProgress(reps, n.map((r) => row(1, r)));
     expect(repLiveLine(reps, at([15, 15, 15]))).toBe("Today's 45 reps reached");
     expect(repLiveLine(reps, at([15, 16, 16]))).toBe("Today's 45 reps beaten (47 done)");
