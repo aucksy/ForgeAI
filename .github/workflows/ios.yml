@@ -143,7 +143,12 @@ jobs:
         run: |
           export MAESTRO_CLI_NO_ANALYTICS=1
           maestro --device "$UDID" test "$GITHUB_WORKSPACE/apps/mobile/qa/ios-first-screens.yaml" \
-            --debug-output "$OUT/maestro" 2>&1 | tee "$OUT/maestro.log"
+            --test-output-dir "$OUT/maestro" --debug-output "$OUT/maestro" 2>&1 | tee "$OUT/maestro.log"
+          # Run 41974730387: the flow passed but its pictures were not in the working folder.
+          # Gather them from wherever this Maestro version wrote them.
+          find "$GITHUB_WORKSPACE" "$HOME/.maestro" "$OUT/maestro" -name 'ios-0*.png' \
+            -not -path "$OUT/shots/*" -exec cp {} "$OUT/shots/" \; 2>/dev/null || true
+          ls -la "$OUT/shots"
 
       - name: Crash reports and logs
         if: always()
@@ -154,7 +159,7 @@ jobs:
           ls -la "$OUT/shots" "$OUT/crashes" || true
           if [ -f "$OUT/simulator.log" ]; then
             echo "----- JS errors and warnings in the simulator log -----"
-            grep -iE "error|exception|fatal|unhandled|warn" "$OUT/simulator.log" | head -80 || true
+            grep -E "ReactNativeJS|RCTLog|com.facebook.react.log" "$OUT/simulator.log" | grep -iE "error|exception|fatal|unhandled|warn" | head -80 || true
           fi
           [ "${CRASHED:-0}" = "1" ] && exit 1 || true
 
