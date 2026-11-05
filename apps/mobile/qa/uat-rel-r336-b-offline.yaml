@@ -1,0 +1,27 @@
+# Part UAT, R-336 interruption (R-364): no internet. run-device-qa.sh turns airplane mode on before this
+# flow and off after it. The made-up update (the QA build's 'updateOffer' stand-in) still opens the full
+# screen offline, "Later" closes it, and the app neither hangs nor crashes. Picture rel-r336-12.
+appId: com.mettleup.app
+---
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- openLink: "mettleup://qa-update?behind=5"
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 30000
+- assertVisible: "(?i)you are 5 versions behind"
+- takeScreenshot: rel-r336-12-offline
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
+- tapOn: "^Later$"
+- extendedWaitUntil:
+    notVisible: "A new MettleUp is here"
+    timeout: 10000
+- openLink: "mettleup://qa-update?behind=0"
+- extendedWaitUntil:
+    notVisible: "A new version of MettleUp is ready.*"
+    timeout: 30000

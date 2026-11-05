@@ -1795,6 +1795,27 @@ part_uat_f146() {
   [ "$n" -ge 1 ] || { log "PART UATF146: no saved share picture could be pulled (cache/share/)"; rc=1; }
   return $rc
 }
+# T74 (R-356, 5 Nov 2026): the gym's logo as a home-screen icon (after F146 gave the test gym its logo).
+# Flow uat-rel-t74 pins it through Android's own question and photographs the home screen; then
+# `dumpsys shortcut` must hold a pinned "gym" shortcut, and the icon picture Android saved for it
+# (system shortcut_service bitmaps, read as root) is pulled into qa-out/uat-release/rel-t74-icon-*.png.
+part_uat_t74() {
+  local rc=0 f n=0 dir=/data/system_ce/0/shortcut_service/bitmaps/$PKG
+  uat_flow uatt74 uat-rel-t74-gym-icon.yaml -e "GYM=QA UAT Gym" || rc=1
+  mkdir -p "$OUT/uat-release"
+  adb shell dumpsys shortcut > "$OUT/uat-release/t74-dumpsys-shortcut.txt" 2>/dev/null || true
+  if grep -E "ShortcutInfo \{id=gym," "$OUT/uat-release/t74-dumpsys-shortcut.txt" | grep "packageName=$PKG" | grep -q "Pin"; then
+    log "UAT T74: Android holds the pinned \"gym\" shortcut"
+  else
+    log "PART UATT74: no pinned \"gym\" shortcut in dumpsys shortcut (uat-release/t74-dumpsys-shortcut.txt)"
+    rc=1
+  fi
+  for f in $(adb shell "su 0 ls $dir" 2>/dev/null | tr -d '' | grep -E '\.(png|webp)$'); do
+    adb exec-out "su 0 cat $dir/$f" > "$OUT/uat-release/rel-t74-icon-$f" 2>/dev/null && n=$((n + 1))
+  done
+  log "UAT T74: $n icon picture(s) Android saved pulled into qa-out/uat-release/rel-t74-icon-*"
+  return $rc
+}
 # Launch polish (3 Nov 2026), the gym half: a FRESH online test gym (qa/uat_gym.py on the xj/xc helpers,
 # as qa-journeys does every run; never FORGE1 / RAMS01) with "Uma Desk" (98765 00031) on its desk list
 # and a plan ending 4 days after the phone's today. Flow 7 joins it and checks in by its poster link;
@@ -1831,6 +1852,8 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
     uat_flow uat14 uat-rel-14-pass-member.yaml -e "CODE=$code" -e "GYM=QA UAT Gym" || rc=1
     # F146: the gym's logo and name on share pictures, and the before/after picture.
     part_uat_f146 || rc=1
+    # T74 (R-356): the gym's logo pinned as a home-screen icon; Android's own copy of the icon pulled.
+    part_uat_t74 || rc=1
   fi
   python3 "$QA_DIR/uat_gym.py" sign-out U 2>&1 | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   return $rc
@@ -1865,6 +1888,11 @@ part_uat() {
   # R-336 (5 Nov 2026): the full-screen update and the Workout tab's orange line, on a made-up update
   # (the QA build's 'updateOffer' stand-in, mettleup://qa-update?behind=N). Pictures rel-r336-*.png.
   uat_flow uatr336 uat-rel-r336-update.yaml
+  # R-364 interruption: no internet. Airplane mode on for one flow, then always back off.
+  adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 1
+  log "R336 offline: airplane_mode_on=$(adb shell settings get global airplane_mode_on | tr -d '\r')"
+  uat_flow uatr336b uat-rel-r336-b-offline.yaml
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
   part_u344
   part_u355
   mkdir -p "$OUT/uat-release"

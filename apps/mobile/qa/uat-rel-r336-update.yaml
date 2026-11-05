@@ -3,9 +3,15 @@
 # made-up update N versions ahead (a GitHub copy, three made-up What's new lines; the screen says
 # "Test build: a made-up update."). Pictures: the full screen (1 version ahead), the Workout tab's orange
 # line after "Later", the full screen 3 versions behind (rows + "And the changes from 2 earlier updates."),
-# Android's back closes it like "Later", then behind=0 takes the line away again.
+# Android's back closes it like "Later"; R-364 negatives (a workout open, a relaunch after "Later", up to
+# date) and the app killed on the screen; then behind=0 takes the line away again.
 appId: com.mettleup.app
 ---
+# The full screen shows only over the 4 tabs: flow f61 ends on "Ask an AI" (UAT run 41979611551).
+- runFlow: sub-back-to-tabs.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
 # ---------------------------------------------------------------- 1. the full screen, one version ahead
 - openLink: "mettleup://qa-update?behind=1"
 - extendedWaitUntil:
@@ -51,9 +57,96 @@ appId: com.mettleup.app
     timeout: 10000
 - assertVisible: "A new version of MettleUp is ready\\. Update"
 - takeScreenshot: rel-r336-05-after-back
+# ---------------------------------------------------------------- 5. negative (R-364): never during a workout
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 20000
+- openLink: "mettleup://qa-update?behind=2"
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 12000
+    optional: true
+- assertNotVisible: "A new MettleUp is here"
+- takeScreenshot: rel-r336-07-workout-no-screen
+# Throw the workout away; the next launch then shows it (proves the link worked and only the workout held it).
+- runFlow: sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 30000
+- assertVisible: "(?i)you are 2 versions behind"
+- takeScreenshot: rel-r336-08-after-workout-next-launch
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
+- tapOn: "^Later$"
+# ---------------------------------------------------------------- 6. negative: never twice in a row after "Later"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 12000
+    optional: true
+- assertNotVisible: "A new MettleUp is here"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "A new version of MettleUp is ready.*"
+    direction: UP
+    timeout: 15000
+- takeScreenshot: rel-r336-09-relaunch-after-later
+# ---------------------------------------------------------------- 7. interruption: the app killed on the screen
+- openLink: "mettleup://qa-update?behind=4"
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 30000
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 12000
+    optional: true
+- assertNotVisible: "A new MettleUp is here"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "A new version of MettleUp is ready.*"
+    direction: UP
+    timeout: 15000
+- takeScreenshot: rel-r336-10-relaunch-after-kill
 # ---------------------------------------------------------------- 4. up to date: the line goes
 - openLink: "mettleup://qa-update?behind=0"
 - extendedWaitUntil:
     notVisible: "A new version of MettleUp is ready.*"
     timeout: 30000
 - takeScreenshot: rel-r336-06-up-to-date
+- assertNotVisible: "A new MettleUp is here"
+# Negative: up to date, a fresh launch shows neither the screen nor the line.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 12000
+    optional: true
+- assertNotVisible: "A new MettleUp is here"
+- assertNotVisible: "A new version of MettleUp is ready.*"
+- takeScreenshot: rel-r336-11-up-to-date-relaunch
