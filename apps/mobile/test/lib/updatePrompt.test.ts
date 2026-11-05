@@ -12,6 +12,7 @@ import {
   markShown,
   newsFor,
   popupDue,
+  qaStandInBehind,
   readMark,
   standInVersion,
   versionsBehind,
@@ -153,6 +154,12 @@ describe('R-336 QA stand-in (test builds only)', () => {
     expect(hasUpdateStandIn({ qaStandIns: ['friendInvite', 'updateOffer'] })).toBe(true);
     expect(hasUpdateStandIn({ qaStandIns: ['friendInvite'] })).toBe(false);
     expect(hasUpdateStandIn(undefined)).toBe(false);
+  });
+  it('reads N from the test link only', () => {
+    expect(qaStandInBehind('mettleup://qa-update?behind=3')).toBe(3);
+    expect(qaStandInBehind('mettleup:///qa-update?behind=0')).toBe(0);
+    expect(qaStandInBehind('mettleup://workout?behind=3')).toBeNull();
+    expect(qaStandInBehind(null)).toBeNull();
   });
   it('a made-up version N steps ahead', () => {
     expect(standInVersion('0.72.0', 3)).toBe('0.75.0');

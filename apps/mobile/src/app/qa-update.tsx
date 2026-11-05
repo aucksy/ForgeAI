@@ -1,27 +1,10 @@
 /**
- * R-336 device UAT, QA builds only: mettleup://qa-update?behind=3 makes this phone see a made-up update
- * 3 versions ahead (behind=0 turns it off), counts as a launch, and opens the Workout tab, so the uat part
- * can photograph the full screen and the orange line. Store and GitHub release builds never carry the
- * 'updateOffer' stand-in (qa-device.yml adds it to app.json), so there this only opens the Workout tab.
+ * R-336 device UAT link, mettleup://qa-update?behind=N: only opens the Workout tab. On a QA build (the
+ * 'updateOffer' stand-in) the full screen's own component (components/UpdatePrompt.tsx) reads the link
+ * and shows a made-up update N versions ahead; store and GitHub release builds ignore it.
  */
-import { Redirect, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-
-import { setUpdateStandIn, useAppUpdate } from '@/lib/updateStore';
+import { Redirect } from 'expo-router';
 
 export default function QaUpdate() {
-  const { behind } = useLocalSearchParams<{ behind?: string }>();
-  const [done, setDone] = useState(false);
-  useEffect(() => {
-    const n = Number(behind ?? '0');
-    void setUpdateStandIn(Number.isFinite(n) ? n : 0)
-      .catch((e: unknown) => console.warn('[update] QA stand-in not saved', e))
-      .then(() => {
-        useAppUpdate.getState().laterPopup();
-        return useAppUpdate.getState().check({ launch: true });
-      })
-      .catch((e: unknown) => console.warn('[update] QA check failed', e))
-      .finally(() => setDone(true));
-  }, [behind]);
-  return done ? <Redirect href="/workout" /> : null;
+  return <Redirect href="/workout" />;
 }

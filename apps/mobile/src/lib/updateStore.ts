@@ -65,6 +65,8 @@ export interface UpdateState {
   laterPopup: () => void;
   /** The full screen is really on screen now: start counting launches (not when it was only due). */
   shown: () => void;
+  /** QA builds only (mettleup://qa-update?behind=N): a made-up update, then a launch check. */
+  qaStandIn: (behind: number) => Promise<void>;
 }
 
 export const QA_STAND_IN_NEWS = [
@@ -245,6 +247,15 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
   },
 
   laterPopup: () => set({ popup: false }),
+
+  qaStandIn: async (behind) => {
+    if (!hasUpdateStandIn(Constants.expoConfig?.extra)) return;
+    await setUpdateStandIn(behind);
+    // A check already running read the phone before the stand-in: wait for it, then check afresh.
+    while (checking) await checking;
+    set({ popup: false });
+    await get().check({ launch: true });
+  },
 
   shown: () => {
     const key = get().key;

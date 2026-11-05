@@ -170,3 +170,9 @@ export function newsFor(o: { kind: UpdateKind; version: string | null; current: 
   const behind = Math.max(1, versionsBehind(version, o.current));
   return { version, behind, lines: fits ? n.lines : [] };
 }
+
+/** QA builds only: N from "mettleup://qa-update?behind=N", else null. PURE. */
+export function qaStandInBehind(url: string | null | undefined): number | null {
+  const m = /^(?:mettleup|forgeai):\/\/\/?qa-update\/?\?(?:.*&)?behind=(\d+)/.exec(url ?? '');
+  return m ? Number(m[1]) : null;
+}

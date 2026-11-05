@@ -9,15 +9,16 @@
  * It scrolls: on a short phone (an iPhone SE, a 360 dp phone at large text) the buttons are below the
  * fold, never cut off (lesson: a full-screen card with overflow hidden lost its own button).
  */
+import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSegments } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { AppState, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { AppState, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
-import { earlierLine, kickerFor } from '@/lib/updatePrompt';
+import { earlierLine, hasUpdateStandIn, kickerFor, qaStandInBehind } from '@/lib/updatePrompt';
 import { installDownloadedQuietly, useAppUpdate } from '@/lib/updateStore';
 import { accentTint } from '@/theme/tint';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
@@ -88,6 +89,21 @@ export function UpdatePrompt() {
       sub.remove();
       play?.remove();
     };
+  }, []);
+
+  // R-336 device UAT, QA builds only: mettleup://qa-update?behind=N (the route itself only opens the
+  // Workout tab). Handled here, where the full screen lives, so no screen change can lose it.
+  useEffect(() => {
+    if (!hasUpdateStandIn(Constants.expoConfig?.extra)) return;
+    const onUrl = (url: string | null) => {
+      const n = qaStandInBehind(url);
+      if (n != null) void useAppUpdate.getState().qaStandIn(n).catch((e: unknown) => console.warn('[update] QA stand-in failed', e));
+    };
+    Linking.getInitialURL()
+      .then(onUrl)
+      .catch((e: unknown) => console.warn('[update] could not read the opening link', e));
+    const sub = Linking.addEventListener('url', (e) => onUrl(e.url));
+    return () => sub.remove();
   }, []);
 
   // A workout opened while the pop-up was up (a shortcut, the watch): it gives way.
