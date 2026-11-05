@@ -210,7 +210,12 @@ appId: com.mettleup.app
     timeout: 1500
     optional: true
 - takeScreenshot: rel-345-11-shade-down
-- back
+# Close the shade with Back only when it really opened (a Back on the workout screen leaves it).
+- runFlow:
+    when:
+      notVisible: "Skip rest"
+    commands:
+      - back
 - extendedWaitUntil:
     visible: "Skip rest"
     timeout: 10000
