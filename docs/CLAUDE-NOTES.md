@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-348. Stop the iPhone app; perfect Android first - 5 Nov 2026
+
+He said: "Lets stop building iPhone app. We gotta perfect android first" (with a screenshot of T-Bar Row suggestions: "These suggestions look good to you?").
+Done: iPhone step 2 helper stopped; its unpushed edits (reminders.ts, restSounds.ts) reverted. Step 1 stays in main (builds only by hand now: ios.yml push trigger removed; the parity check in ci.yml only warns). F185 back to Idea (paused). Apple account (#89) is no longer urgent.
+
 ## R-347. Help and feedback: where is the AI answer? - 5 Nov 2026
 
 He said: "In the feedback and help section, if I'm sending a question, where is user getting the AI written answer back? I tried it today also, it's not there. If this is a feature in a backlog that is yet to be built, build it, please."
@@ -333,25 +338,3 @@ He sent a screenshot: previous 45x12 @9, 45x9 @9.5, 45x7 @9.5 (20 Oct); suggeste
 Found: matches rule R4 exactly (progression.ts): 4+ workouts at 45 kg with no better total than the oldest -> one weight step back (45 -> 40) and ONE goal for every set, the middle of the 10-15 range (12.5 -> 13). The reason is only behind the (i).
 
 My view: a step back after a real stall is a standard, sound method. Two faults: (1) the drop has no visible reason, so it looks like a bug; show one short line on the card when the weight goes down ("Stuck at 45 kg, so a small step back to 40 kg"). (2) Same flat-goal fault as R-301: 13 on every set is easy for set 1 (45x12 @9 means about 18 at 40 kg) and hard for set 3 (45x7 @9.5 means about 12 at 40 kg). Goals per set from his own pattern instead. Next batch with R-301/R-303.
-
-## R-305. In use screen: "300 kg more to beat the previous total" + logo; watch rest +/- — 3 Nov 2026
-
-He said: put how many kg more beat the previous total on the In use banner, in simple words ("300 kg more to beat previous total"). A marketing move: people see the phone and ask which app. Build it.
-My view: good, cheap, and it also motivates the member. Added the MettleUp logo at the foot so people can find the app. Words say "previous", never "last". Built: lib/inUse.ts inUseBeatLine (tested), store/kgLeftStore.ts (each exercise card hands its kg left to the In use screen), MachineInUse beatLine + logo. Dumbbells per hand: "80 kg more per hand"; a reps-only move: "6 more reps"; reached: "Previous total beaten ✓". Waiting for release.
-
-He said (2): the watch also needs - / + buttons to change the rest timer, small, either side of the running timer. Wait for Claude Design, or give a prompt to update it. Gave a short add-on prompt in chat (the main R-302 prompt already asked for -15 / +15).
-
-## R-304. In use per exercise by equipment; live reps keep chasing the total — 3 Nov 2026
-
-He said (1): the In use banner option shows on the active workout screen. ON by default for exercises on machines or benches (the bigger equipment), OFF for dumbbell or bodyweight exercises; think through the rest.
-My view: catalogue equipment is barbell 69, bodyweight 90, cable 63, dumbbell 88, machine 66, other 26. ON: machine, cable, barbell (rack or bench). OFF: bodyweight, and other (bands, kettlebells) unless the name says bench, rack or station. Dumbbell: OFF, EXCEPT a dumbbell move on a bench (name has bench, incline, decline, seated, chest-supported): the bench is what people wait for. The member's own switch per exercise wins and is remembered for that exercise; the global Settings switch becomes the default for 'other'. Replaces R-299's single global switch. Next batch.
-
-He said (2): keep changing the suggested reps or weight for the next set when the member is not on track to beat the total. Checked: kgProgress does this for reps after every tick (open sets get up to +2 reps each, from the last set back; capped at the row above). It never lowers reps below the plan when ahead, and never changes weight mid-exercise. My view: keep reps-only (a weight change mid-exercise means re-racking and guesswork); add the extra reps to the NEXT set first, not the last (the last set is the most tired); when ahead, keep the plan (a good day stays a good day); when it cannot be reached, R-300 (no add-a-set line).
-
-## R-303. Rep goals should follow his "Weight jumps" choice — 3 Nov 2026
-
-He asked about R-301's +1.5%: "We also have to consider the user choice from settings... 1.5 for each set so total comes out to match user choice approx right".
-
-Answered: 1.5% was the whole workout (+1 rep on one set), not each set. Settings "Weight jumps" (Small 2.5%, Standard 5%, Large 10%) today sets only the size of a WEIGHT step; rep goals ignore it (+1 rep on one set, about 1-2%).
-
-My view (proposed, waiting for his yes): rep goals use the same choice. The workout's kg to beat aims for about that % more than last time, made of whole reps, added to the sets with the most left in the tank first (earlier set, lower RPE), at most +1 rep a set (+2 when the set was RPE 7 or easier), never past the cap. So a choice can be cut short in one workout; say so. Applies to R2b and R5 alike. Lateral raise example (1,280 kg last time): Small 19,17,16,14 = 1,320 (+3%); Standard 19,17,16,15 = 1,340 (+5%); Large same as Standard this time (capped at +1 a set).

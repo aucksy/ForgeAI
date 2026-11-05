@@ -7,15 +7,10 @@ name: iPhone build (simulator)
 # The ios/ folder is never committed: `expo prebuild --platform ios --clean` makes it here on every
 # run from app.json and the config plugins, so nothing hand-edited can drift (inventory section 8.6).
 # Artifact "iphone-screens": the PNGs, the xcodebuild log, the simulator log and any crash report.
+# R-348 (owner, 5 Nov 2026: "Lets stop building iPhone app. We gotta perfect android first"): paused.
+# Runs only when started by hand; put the push trigger back when iPhone work starts again.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/mobile/**'
-      - 'packages/**'
-      - 'package-lock.json'
-      - '.github/workflows/ios.yml'
 
 # Other work pushes to main often: a running build always finishes (40 min of Mac time is not
 # thrown away); only the newest waiting one is kept.

@@ -40,6 +40,9 @@ jobs:
       # permission, plugin, Gradle library, Android switch in TS, the Wear app) needs its iPhone twin
       # or a line in docs/ios/PARITY.yaml saying what iPhone does instead. Seconds; pyyaml is above.
       - name: iPhone parity gate
+        # R-348: iPhone work is paused, so a gap only warns (it never blocks Android work). Remove
+        # continue-on-error when iPhone work starts again.
+        continue-on-error: true
         run: |
           python3 -m unittest discover -s scripts/ci -p 'test_ios_parity.py'
           python3 scripts/ci/ios_parity.py
