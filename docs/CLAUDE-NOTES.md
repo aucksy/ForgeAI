@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-347. Help and feedback: where is the AI answer? - 5 Nov 2026
+
+He said: "In the feedback and help section, if I'm sending a question, where is user getting the AI written answer back? I tried it today also, it's not there. If this is a feature in a backlog that is yet to be built, build it, please."
+Found: built and live (F189, #83): the answer shows in the same Help sheet at once, then 'Did this solve it?', and stays under 'Your questions'. It is silent because the Anthropic API account has $0.00 credit (checked in his Chrome, platform.claude.com/settings/billing, 5 Nov) and no payment method; the server then gives the plain thanks. The '$100 credit at plan reset (~12 Nov)' from #83 has not arrived and may never: the API console is billed apart from a Claude plan.
+Options given: A buy $5-10 credit (approved privacy line names Anthropic, works the same minute); B Cloudflare Workers AI free tier (needs a new privacy line, lower quality). Recommended A.
+
 ## R-346. In use screen: show the previous and next set (like the watch) instead of the total kg - 5 Nov 2026
 
 He said: "on the in-use banner, instead of showing the total kg, we can replicate the previous and next set thing that is being shown on the watch as well."
