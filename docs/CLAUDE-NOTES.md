@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-374. Fresh-eyes review before the release (R-335) - 6 Nov 2026, night
+
+A fresh reviewer saw only 24 UAT pictures (member + gym owner roles). Fixed now (cca7107c): protein tip no longer asks "Was today lighter?" under a card that says so; record pop-up keeps "70 kg" together and no line starts with "·".
+Left as is, for his morning read (by design, his earlier picks, or older than this batch; none is a wrong number):
+- Column heading differs per exercise (KG / REPS/SIDE vs LB / REPS): follows each exercise's Counting setting.
+- Record pop-up lists matching records (Heaviest + Rep record + Most lifted) and covers the set headings; "Rep record ... (was 55 kg)" mixes forms. Idea: merge matching lines, one "was" form, auto-close. Backlog idea, not built (freeze).
+- Update screen's numbered What's new rows look like install steps (R-336 design B, his pick). Idea: a "What's new" heading.
+- "In use" name reads oddly to second-language readers (his term).
+- Medal on a set row for a reps-total win (R-366 bodyweight).
+- Share buttons say "Picture" / "Text" only.
+- R-359 short form shows a bare "2 Nov" on the rest row (his request: one row).
+- In use cuts a very long name; no Previous line when there is no history.
+
 ## R-373. RELEASE approved for tonight's batch - 5 Nov 2026, 22:48 IST
 
 His words (verbatim): "I'm going to sleep actually so I don't need to see the before after of the watch screen anymore you can actually consider my previous alignment final since the last change I requested was just very little and I trust you to just get it right So I can read the test round results in the morning but once you have tested and fixed everything you can actually release."
