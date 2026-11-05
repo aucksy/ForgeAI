@@ -88,8 +88,9 @@ appId: com.mettleup.app
     file: sub-uat-tick.yaml
     env:
       WHO: ".*Leg Extension set 1"
+# The rest starts; on a machine In use may cover the rest bar at once (run 42006104824).
 - extendedWaitUntil:
-    visible: "Skip rest"
+    visible: 'Skip rest|In use\. .*Tap to close'
     timeout: 8000
 - tapOn:
     text: "Not now"
@@ -133,7 +134,7 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 2"
       - extendedWaitUntil:
-          visible: "Skip rest|All sets done|Finish workout"
+          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
@@ -167,7 +168,7 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 3"
       - extendedWaitUntil:
-          visible: "Skip rest|All sets done|Finish workout"
+          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
@@ -201,7 +202,7 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 4"
       - extendedWaitUntil:
-          visible: "Skip rest|All sets done|Finish workout"
+          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
@@ -235,7 +236,7 @@ appId: com.mettleup.app
           env:
             WHO: ".*Leg Extension set 5"
       - extendedWaitUntil:
-          visible: "Skip rest|All sets done|Finish workout"
+          visible: 'Skip rest|All sets done|Finish workout|In use\. .*Tap to close'
           timeout: 8000
 # In use opens a moment after the tick (after any record toast, R-357): wait for it, then close it.
 - extendedWaitUntil:
