@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -46,6 +45,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -289,14 +290,13 @@ internal fun Line(
   label: Boolean = false,
   minSize: Float = 0f,
 ) {
-  val outlinePx = with(LocalDensity.current) { px.dp(OUTLINE_PX).toPx() }
-  // R-368 (owner, 5 Nov 2026: a long exercise name must never be cut off): with [minSize] set, text that does
-  // not fit its lines steps down 1 px at a time to [minSize]; only past that does "…" appear.
-  val fit = remember(text, size, minSize) { mutableFloatStateOf(size) }
-  val shown = if (minSize > 0f) fit.floatValue else size
+  val density = LocalDensity.current
+  val outlinePx = with(density) { px.dp(OUTLINE_PX).toPx() }
+  var shown = size
+  fun styleAt(s: Float): TextStyle {
   var style = TextStyle(
     color = if (outlined) OutlineInk else color,
-    fontSize = if (label) px.label(shown) else px.sp(shown),
+    fontSize = if (label) px.label(s) else px.sp(s),
     fontWeight = weight,
     fontFamily = Manrope,
     letterSpacing = spacing.em,
@@ -312,6 +312,23 @@ internal fun Line(
   }
   if (outlined) style = style.copy(drawStyle = Stroke(width = outlinePx))
   if (balanced) style = style.copy(lineBreak = LineBreak.Heading)
+  return style
+  }
+  // R-368 (owner, 5 Nov 2026: a long exercise name must never be cut off): with [minSize] and [maxWidth] set,
+  // text that does not fit its lines is measured 1 px smaller at a time, down to [minSize], before it is drawn
+  // (no extra frame); only past that does "…" appear.
+  if (minSize > 0f && maxWidth > 0f) {
+    val measurer = rememberTextMeasurer()
+    val limit = Constraints(maxWidth = with(density) { px.dp(maxWidth).roundToPx() })
+    shown = remember(text, size, minSize, maxWidth, maxLines, weight, lineHeight, spacing, label, density, px) {
+      var s = size
+      while (s > minSize && measurer.measure(text, styleAt(s), overflow = TextOverflow.Ellipsis, softWrap = maxLines > 1, maxLines = maxLines, constraints = limit).hasVisualOverflow) {
+        s = maxOf(minSize, s - 1f)
+      }
+      s
+    }
+  }
+  val style = styleAt(shown)
   var m = modifier
   if (maxWidth > 0f) m = m.widthIn(max = px.dp(maxWidth))
   if (tag.isNotEmpty()) m = m.testTag(tag)
@@ -322,13 +339,7 @@ internal fun Line(
     overflow = TextOverflow.Ellipsis,
     softWrap = maxLines > 1,
     maxLines = maxLines,
-    onTextLayout = { r ->
-      if (minSize > 0f && r.hasVisualOverflow && fit.floatValue > minSize) {
-        fit.floatValue = maxOf(minSize, fit.floatValue - 1f)
-      } else if (tag.isNotEmpty()) {
-        TextFit.cut[tag] = r.hasVisualOverflow
-      }
-    },
+    onTextLayout = { r -> if (tag.isNotEmpty()) TextFit.cut[tag] = r.hasVisualOverflow },
   )
 }
 
