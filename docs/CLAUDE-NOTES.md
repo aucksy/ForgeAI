@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-346. In use screen: show the previous and next set (like the watch) instead of the total kg - 5 Nov 2026
+
+He said: "on the in-use banner, instead of showing the total kg, we can replicate the previous and next set thing that is being shown on the watch as well."
+My view: yes. During rest the member looks at the phone to know what comes next; 'Next: 80 kg x 8' is something they can act on, the total-kg line (R-305) is not. The big IN USE word and clock still do the job for people nearby. Same words as the watch, so phone and watch agree.
+Done: given to the In use journey helper (same screen, R-345), next version.
+
 ## R-345. In use: one touch closed it and the rest bar's 'tap' hint vanished too - 5 Nov 2026
 
 He said: "I just touched the banner that shows in use and it went away, and that little button on the rest hammer that says tap in use went away too. You need to check this journey."
