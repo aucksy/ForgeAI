@@ -203,4 +203,14 @@ class WatchLogTest {
       assertFalse(w, low.contains("volume") || low.contains("session") || Regex("\\bpr\\b").containsMatchIn(low) || Regex("\\blast\\b").containsMatchIn(low))
     }
   }
+
+  // R-360: one dial tick per value, only right after a dial turn.
+  @Test
+  fun dialTicksOnlyRightAfterADialTurn() {
+    assertFalse(LogMath.dialTicks(0L, 10_000L))
+    assertTrue(LogMath.dialTicks(10_000L, 10_000L))
+    assertTrue(LogMath.dialTicks(10_000L, 10_499L))
+    assertFalse(LogMath.dialTicks(10_000L, 10_500L))
+    assertFalse(LogMath.dialTicks(10_000L, 9_000L))
+  }
 }

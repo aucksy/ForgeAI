@@ -74,6 +74,12 @@ object LogMath {
   /** The crown's change ends after this long untouched (design: "3 s idle"). */
   const val ADJUST_IDLE_MS = 3_000L
 
+  /** R-360: a weight or reps change this soon after a dial turn came from the dial, so it ticks once. */
+  const val CROWN_TICK_MS = 500L
+
+  /** R-360: does this change of the shown value tick? Only right after a dial turn (never at start, a tap or a phone update). PURE. */
+  fun dialTicks(crownAt: Long, now: Long): Boolean = crownAt > 0L && now - crownAt in 0L until CROWN_TICK_MS
+
   /** The effort ring empties over this long, then the set is saved without effort. */
   const val EFFORT_MS = 4_000L
 

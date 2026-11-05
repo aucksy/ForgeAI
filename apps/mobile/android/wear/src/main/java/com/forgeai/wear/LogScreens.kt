@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -313,13 +315,24 @@ private fun NextSetScreen(
   val sending = ui.phase == LogPhase.SENDING
   val requester = remember { FocusRequester() }
   var carry by remember { mutableFloatStateOf(0f) }
+  // R-360 (owner, 5 Nov 2026: "add vibration when someone increases or decreases the values using the rotating
+  // dial, and one vibration per value"): one light tick each time the dial changes the shown weight or reps.
+  // Only right after a dial turn (a tap or the phone changing the set never ticks); no tick at a limit (no change).
+  val view = LocalView.current
+  var crownAt by remember { mutableLongStateOf(0L) }
+  LaunchedEffect(w, r) {
+    if (LogMath.dialTicks(crownAt, android.os.SystemClock.uptimeMillis())) DialTick.tick(view)
+  }
   Box(
     Modifier
       .fillMaxSize()
       .onRotaryScrollEvent { ev ->
         val (steps, rest) = LogMath.crownSteps(carry, ev.verticalScrollPixels)
         carry = rest
-        if (steps != 0) actions.onCrown(steps)
+        if (steps != 0) {
+          crownAt = android.os.SystemClock.uptimeMillis()
+          actions.onCrown(steps)
+        }
         true
       }
       .focusRequester(requester)
@@ -707,5 +720,13 @@ private fun NotSavedScreen(heart: WatchCopy.HeartLine?, ambient: Boolean, px: Px
     ) {
       Line(WatchCopy.OK, px, 22f, if (ambient) FontWeight.Medium else FontWeight.Bold, ink.ink, label = true)
     }
+  }
+}
+
+/** R-360: the dial's one light tick per value (the watch's own touch-vibration setting is respected). */
+internal object DialTick {
+  fun tick(view: android.view.View) {
+    val c = if (android.os.Build.VERSION.SDK_INT >= 34) android.view.HapticFeedbackConstants.SEGMENT_FREQUENT_TICK else android.view.HapticFeedbackConstants.CLOCK_TICK
+    view.performHapticFeedback(c)
   }
 }

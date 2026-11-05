@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-360. Watch: one vibration per value when turning the dial — 5 Nov 2026
+
+He said: add vibration in the watch app when the rotating dial increases or decreases the values, one vibration per value.
+
+Built: LogScreens.kt LogScreen: a light tick (SEGMENT_FREQUENT_TICK on API 34+, else CLOCK_TICK) each time the shown weight or reps changes within 500 ms of a dial turn (LogMath.dialTicks); no tick at a limit, on a tap or on a phone update. Test dialTicksOnlyRightAfterADialTurn. The watch's own touch-vibration setting applies. Only his watch can confirm the feel.
+
 ## R-359. "Last: date · routine" up into the muscle and rest row — 5 Nov 2026
 
 He said: he asked long ago to move the last workout date one row up, to the right of the rest timer; there is lots of space on the right of that row. Just fix it.
