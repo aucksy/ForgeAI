@@ -190,6 +190,7 @@ describe('UAT 5 Nov 2026 (money): a gym never keeps another gym’s UPI ID in Se
     expect(gymDetailsForm(fresh)).toEqual({ name: 'Shakti Gym', phone: '', address: '', gstin: '', upiId: '' });
     expect(gymDetailsForm(demo).upiId).toBe('irontemple@okhdfc');
     // The same gym saved again (a new UPI ID) is the same form: what the owner typed stays.
-    expect(gymFormKey({ ...demo, upiId: 'other@okaxis' })).toBe(gymFormKey(demo));
+    const resaved = { ...demo, upiId: 'other@okaxis' };
+    expect(gymFormKey(resaved)).toBe(gymFormKey(demo));
   });
 });
