@@ -65,3 +65,6 @@ com.sonyericsson.home.permission.BROADCAST_BADGE
 com.sonymobile.home.permission.PROVIDER_INSERT_BADGE
 me.everything.badger.permission.BADGE_COUNT_READ
 me.everything.badger.permission.BADGE_COUNT_WRITE
+# R-344/R-367 (5 Nov 2026, owner approved the privacy sentence): read last night's sleep, on the phone only;
+# Play's Health apps form declares Sleep.
+android.permission.health.READ_SLEEP

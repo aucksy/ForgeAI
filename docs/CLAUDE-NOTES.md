@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-368. Watch redesign feedback on the 4 pictures (R-354) - 5 Nov 2026
+
+He said: next set screen is good, but plan for a long exercise name. Rest screen: make the timer about 15% smaller and move it up a bit; make the -15 and +15 taps bigger (he had trouble tapping them today); do NOT move the Previous and Next lines; keep it symmetric. Exercise done screen: keep "Next exercise", remove the "4 sets done" line, then space everything equally. Effort screen not mentioned (keep). "Redesign these and show me all 4 again."
+
+Done: watch helper resumed with this brief; send all 4 before/after again.
+
+## R-367. Sleep privacy sentence approved - 5 Nov 2026
+
+He said: "Approving the sleep privacy sentence". Done: sentence added to privacy.html (English + Hindi, Last updated 5 Nov); READ_SLEEP added to approved-permissions.txt; Play Health apps declaration: add Sleep (Claude does it in the simpleapps108 Chrome window).
+
 ## R-366. Bodyweight goal bar says "17 reps reached" without last time — 5 Nov 2026
 
 He said (screenshot, Pull-Up: last 7, 5, 4; today 7, 5, 5): the green bar shows "17 reps reached" but not last time; probably a bodyweight exercise issue.
