@@ -1,0 +1,258 @@
+# Part UAT, flow 15 (R-345, owner 5 Nov 2026: "I just touched the banner that shows in use and it went
+# away, and that little button on the rest timer that says tap in use went away too"). Starts afresh
+# (gate-demo: clearState + demo), so it runs first in the part, whatever the other flows do.
+# The journey as a member walks it, on a dumbbell move (In use does not open by itself, so the rest
+# bar says "Tap to show In use") and on a machine (it opens by itself):
+#   1. Lateral Raise set 1 ticked: the rest bar and its hint; the clock opens In use by hand.
+#   2. A tap in the MIDDLE of In use closes it: the rest bar stays, the hint stays, the clock counts.
+#   3. Opened again, a tap ON the tick ("Show after every set of this exercise"): the screen must stay
+#      open, the tick shows ticked, and the rest bar then says In use now opens after every set.
+#   4. A tap on "I'm back" (the nearest thing to the tick) closes it; the tick turned off again.
+#   5. Leg Extension set 1 ticked: In use opens by itself; a middle tap closes it; the bar says so.
+# Pictures rel-345-*.png (qa-out/uat-release/).
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start empty workout$"
+- tapOn: "^Start empty workout$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout|^Add exercise$"
+    timeout: 30000
+# ---------------------------------------------------------------- two exercises: dumbbell + machine
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Lateral Raise"
+- tapOn:
+    text: "Select Lateral Raise"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Lateral Raise set 1 weight, kilograms"
+    timeout: 20000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn: "^Add exercise$"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Leg Extension"
+- tapOn:
+    text: "Select Leg Extension"
+    index: 0
+- tapOn: "Add 1"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Leg Extension set 1 weight, kilograms"
+# A long rest (5:00) on both, so nothing below races the end of the rest (suspect (b)).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Lateral Raise.*"
+- tapOn:
+    text: "More for .*Lateral Raise.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 5:00"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Leg Extension.*"
+- tapOn:
+    text: "More for .*Leg Extension.*"
+    index: 0
+- tapOn: "Rest timer"
+- tapOn: "Rest 5:00"
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+# The machine needs a set still open after set 1, or In use stays closed by design (last set).
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Leg Extension set 1 weight, kilograms"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "Leg Extension set 1 weight, kilograms"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 weight, kilograms"
+      VALUE: " 40"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Leg Extension set 1 reps"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 1 weight, kilograms"
+      VALUE: " 10"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Lateral Raise set 1 reps"
+      VALUE: " 12"
+# ---------------------------------------------------------------- 1. dumbbell: the bar and its hint
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Lateral Raise set 1"
+- extendedWaitUntil:
+    visible: "Skip rest"
+    timeout: 8000
+# The first rest may ask about on-time alerts (Android 14); answer it so nothing sits on top.
+- tapOn:
+    text: "Not now"
+    optional: true
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 3000
+    optional: true
+- assertNotVisible: 'In use\. .*Tap to close'
+- assertVisible: "^Tap to show In use$"
+- takeScreenshot: rel-345-01-dumbbell-rest-bar-hint
+- tapOn:
+    text: 'Rest, \d+ seconds left\. Show machine in use'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: false
+- takeScreenshot: rel-345-02-in-use-open
+# ---------------------------------------------------------------- 2. a tap in the middle closes it
+- tapOn:
+    point: "50%,50%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
+- takeScreenshot: rel-345-03-after-middle-tap
+- assertVisible: "Skip rest"
+- assertVisible: "^Tap to show In use$"
+- copyTextFrom: 'Rest, \d+ seconds left\. Show machine in use'
+- evalScript: ${output.restA = maestro.copiedText}
+- extendedWaitUntil:
+    visible: "never shown, a 2.5 s wait"
+    timeout: 2500
+    optional: true
+- copyTextFrom: 'Rest, \d+ seconds left\. Show machine in use'
+- assertTrue: ${maestro.copiedText != output.restA}
+# ---------------------------------------------------------------- 3. a tap ON the tick
+- tapOn:
+    text: 'Rest, \d+ seconds left\. Show machine in use'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- tapOn:
+    text: "Show after every set of this exercise"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 2500
+    optional: true
+- takeScreenshot: rel-345-04-after-tick-tap
+# Observation for the report: did the tap on the tick close the screen?
+- runFlow:
+    when:
+      notVisible: 'In use\. .*Tap to close'
+    commands:
+      - takeScreenshot: rel-345-04b-OBS-tick-tap-CLOSED-the-screen
+      - tapOn:
+          text: 'Rest, \d+ seconds left\. Show machine in use'
+          waitToSettleTimeoutMs: 300
+      - extendedWaitUntil:
+          visible: 'In use\. .*Tap to close'
+          timeout: 8000
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: true
+- takeScreenshot: rel-345-05-tick-on-screen-open
+# ---------------------------------------------------------------- 4. "I'm back" closes; the bar says the new state
+- tapOn:
+    text: "^I'm back$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
+- assertVisible: "Skip rest"
+- takeScreenshot: rel-345-06-bar-after-tick-on
+- runFlow:
+    when:
+      notVisible: "^Tap to show In use$"
+    commands:
+      - takeScreenshot: rel-345-06b-OBS-hint-GONE-after-tick
+# The bar names the new state (R-345 fix): In use now opens by itself after this exercise's sets.
+- assertVisible: "^In use: on after each set$"
+# Turn it back off from the In use screen: the bar's hint comes back.
+- tapOn:
+    text: 'Rest, \d+ seconds left\. Show machine in use'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- tapOn:
+    text: "Show after every set of this exercise"
+    waitToSettleTimeoutMs: 300
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: false
+- back
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
+- assertVisible: "^Tap to show In use$"
+- takeScreenshot: rel-345-07-bar-after-tick-off
+- tapOn: "Skip rest"
+- extendedWaitUntil:
+    notVisible: "Skip rest"
+    timeout: 5000
+# ---------------------------------------------------------------- 5. machine: opens by itself
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: ".*Leg Extension set 1"
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 8000
+- assertVisible:
+    text: "Show after every set of this exercise"
+    checked: true
+- takeScreenshot: rel-345-08-machine-in-use-by-itself
+- tapOn:
+    point: "50%,50%"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    notVisible: 'In use\. .*Tap to close'
+    timeout: 5000
+- assertVisible: "Skip rest"
+- assertVisible: "^In use: on after each set$"
+- takeScreenshot: rel-345-09-machine-bar-after-close
+- tapOn: "Skip rest"

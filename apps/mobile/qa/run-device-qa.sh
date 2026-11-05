@@ -1844,6 +1844,9 @@ part_uat() {
   push_fixture "$OUT/qa-uat-hevy.csv" /sdcard/Download/qa-uat-hevy.csv
   adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
   log "downloads: $(wait_media qa-uat-hevy 1 20 downloads) UAT Hevy history file"
+  # R-345 (5 Nov 2026): the In use journey (a tap closes it, the tick never does, the rest bar keeps its
+  # hint and says what the tick changed). Starts afresh (demo), so it goes first. Pictures rel-345-*.png.
+  uat_flow uat15 uat-rel-15-inuse-journey.yaml || true
   adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
   uat_flow uat1 uat-rel-1-seed.yaml \
     && uat_flow uat2 uat-rel-2-settings.yaml \
