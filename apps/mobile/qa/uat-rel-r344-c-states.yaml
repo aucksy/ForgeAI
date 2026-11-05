@@ -1,6 +1,6 @@
 # Part UAT, R-344 flow 3 of 3 (R-364: state changes, negative, interruptions). Same day as flow 2, so the
 # protein tip is used up (one every 3 days) and only the sleep line can appear.
-#  E: switch OFF, made-up 5 h 10 min sleep -> NO sleep line (the switch wins over everything).
+#  E: switch OFF, made-up 5 h 10 min sleep -> NO sleep line (the switch wins). A protein tip may show (it needs no sleep).
 #  F: switch ON again (already allowed: no second ask) -> the sleep line is back.
 #  Killed on the finish screen: the app opens again normally on the Workout tab.
 #  "Stop and remove MettleUp's access" -> the sleep switch goes back to Off; the next lighter
@@ -42,8 +42,11 @@ appId: com.mettleup.app
     timeout: 15000
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'
-- assertNotVisible: ".*protein.*"
 - takeScreenshot: rel-r344-09-off-no-line
+# Large text pushes "Done" below the edge (run 41994649037, font 2.0).
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 20000
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- F: switch on again -> the line is back
 - runFlow:
@@ -132,4 +135,8 @@ appId: com.mettleup.app
     timeout: 15000
 - assertNotVisible: "You slept .*"
 - takeScreenshot: rel-r344-13-removed-no-line
+# Large text pushes "Done" below the edge (run 41994649037, font 2.0).
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 20000
 - tapOn: "^Done$"

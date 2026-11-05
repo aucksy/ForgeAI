@@ -28,6 +28,10 @@ appId: com.mettleup.app
 - assertVisible: 'Test build: made-up sleep\.'
 - assertNotVisible: ".*protein.*"
 - takeScreenshot: rel-r344-05-sleep-line
+# Large text pushes "Done" below the edge (run 41994649037, font 2.0).
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 20000
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- C: unknown sleep -> a protein tip
 - openLink: "mettleup://qa-sleep?min=-1"
@@ -44,6 +48,10 @@ appId: com.mettleup.app
 - assertNotVisible: "You slept .*"
 - assertNotVisible: 'Test build: made-up sleep\.'
 - takeScreenshot: rel-r344-06-protein-tip
+# Large text pushes "Done" below the edge (run 41994649037, font 2.0).
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 20000
 - tapOn: "^Done$"
 # ---------------------------------------------------------------- D: same day again -> no second tip
 - runFlow:
@@ -60,4 +68,8 @@ appId: com.mettleup.app
 - assertNotVisible: ".*protein.*"
 - assertNotVisible: "You slept .*"
 - takeScreenshot: rel-r344-07-no-second-tip
+# Large text pushes "Done" below the edge (run 41994649037, font 2.0).
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 20000
 - tapOn: "^Done$"
