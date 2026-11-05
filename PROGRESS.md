@@ -1,6 +1,7 @@
 # ForgeAI progress
 
 ## Waiting for release (R-266: tag only when the owner says "release")
+- 0.73.0 RELEASE COMMIT 57f1c3fe (6 Nov 2026, 01:35 IST; owner release R-373 of 5 Nov 22:48 IST): app.json 0.73.0, WHATS_NEW_LOG 0.73.0 (6 lines below), the 0.72.0 F59/F60 lines dropped. Before the tag: full qa-device (owner + default, extra uat) and qa-journeys on it (phone_gate: partial runs never count). Green before it: u344/u358/u15 42088838551 + 42088843263 (cca7107c), usel 42073553387 + 42073559715 (e3cadbff, number box), uk 42069450475, first shard 42066788907.
 - NEXT VERSION What's new (member-words + Gemini 3.8 Flash pass 5 Nov 22:5x; 474/500 Play chars; each line <=120):
   1 Suggested weights are simpler: 1 more rep on each set until all sets reach the top of your rep range, then more weight.
   2 Bodyweight exercises: the green line says when you beat last time's total reps.
