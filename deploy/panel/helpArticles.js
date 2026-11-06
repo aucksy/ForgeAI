@@ -803,6 +803,7 @@ export const HELP_ARTICLES = [
  * member or a gym could ask about it.
  */
 export const NO_HELP_SCREENS = {
+  'apps/dashboard/src/crm/ui/screens/EntryMachines.tsx': 'Not live yet (F103 entry machines: server 0059 and the gate are not switched on); the screen says so itself. Its help article is written when it goes live.',
   'apps/mobile/src/app/_layout.tsx': 'The app frame around every screen; nothing to tap.',
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',
   'apps/mobile/src/app/+not-found.tsx': 'Shown only for a broken link; it sends the member back into the app.',

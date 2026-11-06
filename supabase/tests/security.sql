@@ -72,6 +72,8 @@ declare
     'owner_questions','owner_question_count','owner_answer_question','member_trainer_share2','owner_member_progress',
     -- 0056: Bring a friend (a member key; the public invite page checks an invite code and writes only into that gym's enquiries; the gym its owner or desk key).
     'member_friend_invite','friend_invite_preview','friend_invite_send','owner_friend_summary',
+    -- 0059: entry machines (each checks the owner or desk key first; adding and removing a machine: the owner only).
+    'owner_entry_machines','owner_add_entry_machine','owner_remove_entry_machine','owner_set_machine_numbers','owner_queue_machine_commands',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',
