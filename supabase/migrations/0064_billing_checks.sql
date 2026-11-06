@@ -121,7 +121,7 @@ begin
                                                        'createdAt', c.created_at) order by c.created_at)
                      from (select * from public.gym_checkouts x
                             where x.provider = p_provider and x.status = 'open' and x.link_id is not null
-                              and x.created_at > p_now - make_interval(hours => hrs) and x.created_at <= p_now
+                              and x.created_at > p_now - make_interval(hours => hrs)
                             order by x.created_at limit 100) c), '[]'::jsonb);
 end $$;
 
