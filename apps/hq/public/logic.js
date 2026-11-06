@@ -668,6 +668,15 @@ export function paymentWords(p) {
   return `${plan} · ${rupees(p.amountPaise)} by ${PAY_METHOD_WORDS[p.method] || p.method}${off} · reference ${p.reference} · sent ${dateWords(p.reportedAt)}`;
 }
 
+/**
+ * A payment below the plan's price, in words (fresh eyes, 6 Nov 2026: one tap must not give a year for half
+ * the money unnoticed): "Underpaid: ₹4,990 less than the price of Starter, yearly (₹9,990)." '' otherwise. PURE.
+ */
+export function underpaidWords(p) {
+  if (!Number.isInteger(p.pricePaise) || !Number.isInteger(p.amountPaise) || p.amountPaise >= p.pricePaise) return '';
+  return `Underpaid: ${rupees(p.pricePaise - p.amountPaise)} less than the price of ${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing} (${rupees(p.pricePaise)}).`;
+}
+
 /** What Confirm will do, in words, before the tap. PURE. */
 export function confirmWords(p, now = Date.now()) {
   if (p.gymBilling === 'lifetime') return 'This gym has a lifetime plan: nothing to add.';
@@ -679,7 +688,9 @@ export function confirmWords(p, now = Date.now()) {
   const was = paidLater && Date.parse(p.gymPaidUntil) > now
     ? ` (now paid until ${dateWords(p.gymPaidUntil)})`
     : trialOn ? ` (it starts when the free trial ends on ${dateWords(p.gymTrialEndsAt)})` : '';
-  return `Confirm sets ${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing}, paid until ${dateWords(to)}${was}.`;
+  // Fresh eyes (6 Nov 2026): a different plan than the gym has now is said, never silent.
+  const change = p.gymPlan && p.gymPlan !== p.plan ? ` This changes the gym from ${PLAN_WORDS[p.gymPlan] || p.gymPlan} to ${PLAN_WORDS[p.plan] || p.plan}.` : '';
+  return `Confirm sets ${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing}, paid until ${dateWords(to)}${was}.${change}`;
 }
 
 /** One payment's outcome in words, for the Confirmed / Not confirmed lists. PURE. */

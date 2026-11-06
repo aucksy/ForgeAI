@@ -44,6 +44,7 @@ import {
   confirmWords,
   outcomeWords,
   paymentWords,
+  underpaidWords,
   megabytes,
   planWords,
   recordCells,
@@ -1010,16 +1011,18 @@ function paymentCard(p, status) {
   const out = h('div');
   const why = h('input', { maxlength: '300', placeholder: 'Why not (the gym owner reads this): for example, no payment with this reference arrived' });
   const noteBox = h('input', { maxlength: '300', placeholder: 'Note for the log (optional)' });
+  const under = p.status === 'pending' ? underpaidWords(p) : '';
   return h('div', { class: 'card' },
     h('p', {}, h('strong', {}, p.gymName || 'Gym'), p.gymCode ? ` · ${p.gymCode}` : '', p.gymId ? [' · ', h('a', { href: `#gym/${p.gymId}` }, 'Open gym')] : null),
     h('p', {}, paymentWords(p)),
     p.status === 'pending'
       ? h('div', { class: 'stack' },
+          under ? note(under, 'warn') : null,
           h('p', { class: 'muted' }, confirmWords(p)),
           h('div', { class: 'row wrap' }, noteBox, action('Confirm', async () => {
             await api('/api/payments/confirm', { paymentId: p.id, note: noteBox.value });
             await paymentsPage(status);
-          }, { out, sure: () => `${confirmWords(p)} Only confirm when the money is in the bank. Go ahead?` })),
+          }, { out, sure: () => `${under ? `${under} ` : ''}${confirmWords(p)} Only confirm when the money is in the bank. Go ahead?` })),
           h('div', { class: 'row wrap' }, why, action('Not confirmed', async () => {
             await api('/api/payments/reject', { paymentId: p.id, reason: why.value });
             await paymentsPage(status);

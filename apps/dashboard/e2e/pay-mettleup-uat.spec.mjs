@@ -135,6 +135,7 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   await expect(page.getByText('Sent. MettleUp will check the payment and confirm it here.')).toBeVisible();
   const status = main.getByTestId('pay-status').first();
   await expect(status).toContainText('Waiting for confirmation');
+  await expect(status).toBeInViewport();
   await expect(status).toContainText(`${inr(PRICE.starterMonth)} for Starter, monthly, reference 123456789012`);
   expect(server.mettlePayments[0]).toMatchObject({ plan: 'starter', billing: 'monthly', amountPaise: PRICE.starterMonth * 100, reference: '123456789012', method: 'upi' });
   await shot(page, 'phone-pay-5-waiting');

@@ -156,6 +156,8 @@ test('T79 HQ: payments waiting, confirm (plan + paid until move on), not confirm
   await expect(upi).toContainText('Confirm sets Pro, monthly, paid until 17 Nov 2026.');
   await expect(bank).toContainText('Starter, yearly · ₹5,000 by bank transfer (the price is ₹9,990) · reference UTRBANK000000000001 · sent 17 Oct 2026');
   await expect(bank).toContainText('Confirm sets Starter, yearly, paid until 17 Oct 2027.');
+  await expect(bank.getByRole('status')).toHaveText('Underpaid: ₹4,990 less than the price of Starter, yearly (₹9,990).');
+  await expect(upi.getByRole('status')).toHaveCount(0);
   // Online buying is off: its card does not show at all.
   await expect(main).not.toContainText('Online payments to check');
   await expect(main).not.toContainText('0064');

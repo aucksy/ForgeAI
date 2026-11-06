@@ -204,6 +204,8 @@ export function PayMettleUpScreen() {
       setReference('');
       setToast('Sent. MettleUp will check the payment and confirm it here.');
       await refresh();
+      // Fresh eyes (6 Nov 2026): the new "Waiting for confirmation" line is at the top; show it.
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e: unknown) {
       console.warn('[ForgeErr] pay mettleup: owner_report_mettleup_payment failed', e);
       setSendError(payErrorWords(e) ?? errorWords(e));
@@ -287,7 +289,7 @@ export function PayMettleUpScreen() {
                 </p>
               )}
               <p style={small}>
-                The price for one branch. More than one branch? Message MettleUp for your total before you pay. Pro + AI is not on sale yet.
+                The price for one branch. More than one branch? Message MettleUp for your total before you pay.
               </p>
             </div>
           </Card>

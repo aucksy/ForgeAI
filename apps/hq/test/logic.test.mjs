@@ -11,6 +11,7 @@ import {
   checkWords,
   codeMessage,
   confirmWords,
+  underpaidWords,
   daysLeft,
   extendPaidUntil,
   outcomeWords,
@@ -362,6 +363,13 @@ test('payments in words: the facts, what Confirm will do, and the outcome', () =
   assert.equal(confirmWords({ ...p, gymPaidUntil: null }, now), 'Confirm sets Pro, monthly, paid until 6 Dec 2026.');
   assert.equal(confirmWords({ ...p, gymPaidUntil: '2026-11-20T18:29:59Z', extendsTo: '2026-12-20T18:29:59Z' }, now), 'Confirm sets Pro, monthly, paid until 20 Dec 2026 (now paid until 20 Nov 2026).');
   assert.equal(confirmWords({ ...p, gymBilling: 'lifetime' }, now), 'This gym has a lifetime plan: nothing to add.');
+  // A different plan than the gym has now is said; the same plan says nothing more.
+  assert.equal(confirmWords({ ...p, gymPlan: 'pro', gymPaidUntil: null }, now), 'Confirm sets Pro, monthly, paid until 6 Dec 2026.');
+  assert.equal(confirmWords({ ...p, plan: 'starter', gymPlan: 'pro', gymPaidUntil: null }, now), 'Confirm sets Starter, monthly, paid until 6 Dec 2026. This changes the gym from Pro to Starter.');
+  // Underpaid: said in words; paid in full or more: nothing.
+  assert.equal(underpaidWords({ ...p, plan: 'starter', billing: 'yearly', pricePaise: 999000, amountPaise: 500000 }), 'Underpaid: ₹4,990 less than the price of Starter, yearly (₹9,990).');
+  assert.equal(underpaidWords(p), '');
+  assert.equal(underpaidWords({ ...p, amountPaise: 150000 }), '');
   assert.equal(outcomeWords({ status: 'rejected', decidedAt: '2026-11-07T06:00:00Z', rejectReason: 'No money arrived' }), 'Not confirmed 7 Nov 2026. Reason: No money arrived');
   assert.equal(outcomeWords({ status: 'confirmed', decidedAt: '2026-11-07T06:00:00Z', paidUntil: '2026-12-06T18:29:59Z' }), 'Confirmed 7 Nov 2026: paid until 6 Dec 2026.');
   assert.deepEqual(needsLines({ paymentsWaiting: 2 }).map((l) => [l.key, l.words, l.href]), [['payments', '2 payments to confirm', '#payments']]);
