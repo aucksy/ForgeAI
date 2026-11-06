@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-380. Yes to entry machine server changes; no test machine; MAIN GOAL NOW = earn money - 6 Nov 2026
+He said: yes to switching on the entry machine server changes (0058 + 0059). No buying: the first gym that onboards with a machine is where we test it, using their machine. His costs now: the Apple yearly fee plus Rs 12,000 a month for Claude, so "start really earning money" is the primary goal. Quickly unblock the main issues that would stop onboarding real customers, then focus on making money.
+
 ## R-379. The 5 weak points vs rivals: add the missing ones to the tracker with a way to solve each - 6 Nov 2026
 He said: the 5 items that make us weaker than others; add the ones not in the plan and document a way to solve each in the tracker; he reads it later.
 Did: entry machines (F103), class booking (F139) and iPhone (F185) were already rows; each got a "way to solve" (F103 = the R-378 family plan; F139 = ask at the first 10 visits, build if 3+ say yes; F185 = a web version for iPhone members first, no Apple fee). New rows: F195 proof (client gym live, owner video, first 5 gyms trade a video or review for the founding price, Google profile) and F196 the "what if you shut down?" promise (90 days notice, full Excel export, code escrow for lifetime gyms on request, registered business). Promises and prices wait for his yes.
@@ -253,15 +256,3 @@ Done: WatchLog.restClock shows m:ss always; MainActivity ticks each second in am
 He asked: can he enrol with simpleapps108@gmail.com on his brother's iPhone, then said a second-hand iPhone is worth buying; find one under 20K.
 Answered: India enrols only in the Apple Developer app (iPhone/iPad/Apple Silicon Mac). Use a new Apple ID on simpleapps108@gmail.com with his own mobile number, sign in only inside the Developer app, Individual.
 Prices read live on Cashify 5 Nov (6-month warranty, 'Fair' = visible marks): iPhone 11 64 GB Rs 16,799; iPhone 12 64 GB Rs 21,199. iOS 27 supports iPhone 11 and later (Apple, WWDC 2026). Recommended iPhone 12 (one more year of updates), iPhone 11 if 20K is firm. He buys (payment is his).
-
-## R-339. Start building the iPhone app now, alongside the 0.72.0 ship - 5 Nov 2026
-
-He said: "Ok, let's start building the iPhone app after you have shipped this batch with all the connections and then simultaneously let's start doing that first and I'll come back from the gym and start applying for the Apple developer account."
-Read as: go on the iPhone build now in parallel (it does not touch the 0.72.0 release commit, which is off main); he enrols in Apple's programme after the gym.
-My view: start with steps 2-3 of docs/ios/RESEARCH.md (parity gate + PARITY.yaml, then a free macOS CI job that builds the iPhone app in the simulator and photographs every screen). No Apple account is needed for these; the account is needed only for TestFlight and the store. Native twins (rest timer, HealthKit, watch link) and the SwiftUI watch app follow.
-Done: helper started on steps 2-3. 0.72.0 phone tests re-running on qa-072-fix (243f6986 = v0.72.0 + test-script fixes only).
-
-## R-338. iPhone + Apple Watch: questions and parity framework research - 5 Nov 2026
-
-He said: "we need to start working on the iPhone app and the Apple Watch app ... how much time it's going to take to get the app published ... I don't have an iPhone ... figure out a way to clone this Android app so accurately and lay out a framework that anytime you make a change in Android app ... it automatically gets replicated to the iPhone app or the watch app ... Do not start any work right now. Well, you can start the research on this framework".
-Done: research only, no code. docs/ios/RESEARCH.md (Apple times, costs, testing without an iPhone, payment rules) and docs/ios/ANDROID-ONLY-INVENTORY.md (every Android-only part, the watch protocol, the parity gates). Tracker F185 -> Waiting for you. Plan given in chat; waits for his go and the Apple account.
