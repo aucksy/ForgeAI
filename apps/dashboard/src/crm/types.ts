@@ -288,7 +288,8 @@ export interface Visit extends GymScoped {
   visitedOn: DateISO;
   /** Epoch ms of the first check-in that day, for peak-hour reporting. */
   checkedInAt: number;
-  source: 'desk' | 'app' | 'import';
+  /** 'machine' (F103): an entry machine at the door (eSSL / ZKTeco ADMS; crm/machines). */
+  source: 'desk' | 'app' | 'import' | 'machine';
   /**
    * F123: the pass company of a pass member's visit, written when the desk checks them in (the QR
    * check-in on the server leaves it out; logic/passMembers.ts then reads the member's own). Absent =

@@ -768,11 +768,13 @@ function groupBy<T>(rows: readonly T[], key: (row: T) => string): Map<string, T[
 
 /**
  * The small tag beside a register row: "App" for a member who checked themselves in by scanning
- * the gym's QR (QR self check-in, 0015), "Imported" for a row from a paper register; nothing for
+ * the gym's QR (QR self check-in, 0015), "Imported" for a row from a paper register, "Machine" for
+ * an entry machine at the door (F103); nothing for
  * the desk's own check-ins, which are most of them. PURE.
  */
 export function visitSourceTag(source: Visit['source']): string | null {
   if (source === 'app') return 'App';
   if (source === 'import') return 'Imported';
+  if (source === 'machine') return 'Machine';
   return null;
 }

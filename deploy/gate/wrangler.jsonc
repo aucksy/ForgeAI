@@ -1,0 +1,18 @@
+// MettleUp "gate" (F103 / T77 step 1): the address eSSL / ZKTeco entry machines call. NOT DEPLOYED:
+// waits for the owner's yes, migration 0058 on the gym server, and a test machine. See worker.ts.
+// Before the first deploy:
+//   1. Apply supabase/migrations/0058_entry_machines.sql (owner's yes).
+//   2. Make a Supabase secret key named "gate"; `npx wrangler secret put SUPABASE_GATE_KEY`.
+//   3. Uncomment the route below (sub-domain gate.mettleup.fit, to be agreed).
+//   4. Cloudflare: a Configuration Rule for that host only with "Always Use HTTPS" OFF, so machines that
+//      cannot do HTTPS can call on port 80. Every other MettleUp address stays HTTPS-only.
+{
+  "name": "mettleup-gate",
+  "compatibility_date": "2026-10-01",
+  "main": "worker.ts",
+  "workers_dev": false,
+  "preview_urls": false,
+  // "routes": [{ "pattern": "gate.mettleup.fit", "custom_domain": true }],
+  "vars": { "SUPABASE_URL": "https://hdxzqbdiokjklnypfisq.supabase.co" },
+  "observability": { "enabled": true }
+}
