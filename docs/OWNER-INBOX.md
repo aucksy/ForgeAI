@@ -429,7 +429,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F112 Several branches | Live | One owner runs 2 or more branches from one sign-in. Server live 24 Oct (0031, your yes in #59); admin app live 24 Oct. |  |
 | F113 Own sign-in PIN for owners and staff | Live | Your pick A (24 Oct): sign in with mobile + your own 6-digit PIN every time; chosen at "Create my gym"; 5 wrong tries lock it for 15 minutes. Server 0034 live with your yes (68 checks pass). |  |
 | F114 Hinglish in the admin app | Live | Live 1 Nov 2026 (R-269): an "English / Hinglish" switch on the sign-in page and in Settings → Language. First-day screens are in Hinglish; the rest stay in English for now. | A switch "English / Hinglish" on the sign-in page and in Settings. Hinglish is Hindi in English letters, the way owners type on WhatsApp. First the sign-in, Create my gym, Get started, Today, Members, Plans and Invite screens; more screens follow. |
-| F187 Forgot PIN: a reset code by WhatsApp or text | Idea | You added it 1 Nov 2026 (R-269) and said: later. Today an owner with no other signed-in device emails contact@mettleup.fit. | The owner taps "Forgot your PIN?" and types his mobile number. MettleUp sends a 6-digit code by WhatsApp (or text). He types the code and picks a new PIN. It needs a paid WhatsApp or SMS service, so it waits for your go. |
+| F187 Forgot PIN: a reset code by WhatsApp or text | Waiting for you | 6 Nov: built and switched off (Forgot PIN + phone check at sign-up, with cost limits: per phone 1 a minute, 3 an hour, 5 a day; 200 a day for everyone). Waits for your Meta billing info and the permanent WhatsApp key (#92). You added it 1 Nov 2026 (R-269) and said: later. Today an owner with no other signed-in device emails contact@mettleup.fit. | The owner taps "Forgot your PIN?" and types his mobile number. MettleUp sends a 6-digit code by WhatsApp (or text). He types the code and picks a new PIN. It needs a paid WhatsApp or SMS service, so it waits for your go. |
 
 ### Gym ↔ member links
 | Feature | Status | Details | How it will work |
@@ -518,7 +518,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Chat:** Mettle Up
 **Status:** WAITING FOR YOU
 **Why:** You said earning money is now the main goal (R-380). I checked what stops a real gym from joining and paying. These 3 things only you can do. Everything else is on my list (Claude's tasks T78, T79).
-**Your task:** Pick the promises to gyms: A (all 5: free set-up and data move, Hindi WhatsApp reply in 1 hour, 60-day money back on yearly, app launch day, price for life) or B (only free set-up, 60-day money back, price for life). I recommend B while you are alone.
+**DECIDED (6 Nov 2026):** Promises: free set-up and data move, 60-day money back on yearly plans, free training for your trainers, same price for life for founding gyms. No promise about support reply times and no "launch day help". When a gym stops paying: 7 extra days with everything on, then 30 days basic mode (desk works for existing members, no new members, Pro extras off), then read-only. Data is never deleted. Still open: does the money back cover the 29,999 founding payment? (I recommend no.)
 **Your task:** Give me the date of your visit to the client gym, and ask the owner for the GGMS data export (Excel), so his gym goes live first (F182). His gym is our proof for every other gym.
 **Done (6 Nov 2026):** You sent your UPI ID and bank account. I keep them out of the public code; they go only into the live server, behind sign-in.
 
