@@ -58,6 +58,8 @@ declare
     'owner_report_requests','owner_request_report','owner_report_file',
     -- 0046: which pack the gym is on (an owner/desk key or a member key, checked by each; read only, no money fields).
     'owner_gym_pack','member_gym_pack',
+    -- 0062: the gym's plan state for the owner's banner (an owner/desk key, checked by _owner_gym; read only).
+    'owner_gym_state',
     -- 0048: typed check-in numbers the desk confirms (owner/desk key), and challenge winners the owner confirms (owners only).
     'owner_phone_links','owner_decide_phone_link','owner_confirm_challenge_reward',
     -- 0049: busy machines by day and hour (members check their member key and get only proven gym-level levels; the gym its owner or desk key, saving: owners only).
