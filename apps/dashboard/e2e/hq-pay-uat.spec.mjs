@@ -169,7 +169,7 @@ test('T79 HQ: payments waiting, confirm (plan + paid until move on), not confirm
   await computerShot(page, 'computer-hq-pay-2-waiting');
 
   // 3. Confirm the UPI one.
-  await upi.getByRole('button', { name: 'Confirm' }).click();
+  await upi.getByRole('button', { name: 'Confirm', exact: true }).click();
   await expect(cards).toHaveCount(1);
   expect(asked.at(-1)).toBe('Confirm sets Pro, monthly, paid until 17 Nov 2026. Only confirm when the money is in the bank. Go ahead?');
   expect(hq.gym).toMatchObject({ plan: 'pro', billing: 'monthly', paidUntil: MONTH_ON });
