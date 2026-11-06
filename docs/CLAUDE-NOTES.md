@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-381. He gave the account for gym payments; build "Pay MettleUp" (T79) - 6 Nov 2026
+He sent his UPI ID and bank account in chat (his personal savings account; he asked if that is okay while income is under 20 lakh). He will read the promises (A/B, #92) later: keep asking him under "Needs you" until he answers.
+Rules I set: the UPI ID holds his phone number and this repo is PUBLIC, so the account details NEVER go into git, code, tests or docs. They live only in the live database behind sign-in, added after his yes. The details are in this chat's transcript only.
+Done: an agent builds T79 (owner screen with a UPI QR and amount, "I have paid" with the UPI reference number, a list in HQ to confirm, confirm sets paid-until). A new server change is needed; it waits for his yes like the others.
+
 ## R-380. Yes to entry machine server changes; no test machine; MAIN GOAL NOW = earn money - 6 Nov 2026
 He said: yes to switching on the entry machine server changes (0058 + 0059). No buying: the first gym that onboards with a machine is where we test it, using their machine. His costs now: the Apple yearly fee plus Rs 12,000 a month for Claude, so "start really earning money" is the primary goal. Quickly unblock the main issues that would stop onboarding real customers, then focus on making money.
 
