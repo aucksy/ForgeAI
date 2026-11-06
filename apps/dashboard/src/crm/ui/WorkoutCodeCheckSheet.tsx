@@ -13,7 +13,7 @@ import { formatDay } from '../logic/dates';
 import type { Visit } from '../types';
 import { Button, Sheet, TextField, color, font, space } from './kit';
 
-const CHECK_IN_WORDS: Record<Visit['source'], string> = { desk: 'Checked in at the desk', app: 'Checked in on the app', import: 'Checked in (imported)' };
+const CHECK_IN_WORDS: Record<Visit['source'], string> = { desk: 'Checked in at the desk', app: 'Checked in on the app', import: 'Checked in (imported)', machine: 'Checked in at the entry machine' };
 
 export function WorkoutCodeCheckSheet({
   visits,
