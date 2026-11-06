@@ -7,7 +7,7 @@ the Terms page. One place is still marked **[TO CONFIRM]** (the founding payment
 ## 1. Refunds and cancellation (refund.html)
 - Who pays: only gym owners. Members never pay MettleUp; member refunds are between them and their gym.
 - 3 months free first, no card (same words as the sign-up screen), so nothing to refund during the trial.
-- 60-day money back on the first payment of a yearly plan. Monthly payments are not refunded for the current month.
+- No money back on any payment (DECIDED 6 Nov 2026, R-387); only a double or too-high payment made by mistake is refunded. Money back is kept as an Idea in the backlog.
 - Cancel any time, no lock-in; the plan stays on until the paid date ends. Refunds go back the way you paid, in 5-7 working days (Monday to Saturday) after approval.
 - If a gym stops paying: 7 extra days with everything on, then 30 days basic mode, then read-only. Data is never deleted.
 - At the bottom: the 4 promises to gyms (decided 6 Nov 2026, R-384).
@@ -30,7 +30,7 @@ the Terms page. One place is still marked **[TO CONFIRM]** (the founding payment
 
 ## The 4 promises to gyms (decided 6 Nov 2026, R-384)
 1. Free set-up and moving your data from your old software or Excel.
-2. 60-day money back on the first payment of a yearly plan.
+2. No money back (the 3 free months are the way to try it).
 3. Free training for your trainers and desk staff (when the gym asks).
 4. The same price for life for founding gyms (the first 25 gyms).
 
@@ -54,6 +54,6 @@ No support-time promise anywhere. Reach us by email; signed-in gyms find the fou
 - About page: the "why I started MettleUp" line is left out. Add one in your own words later if you want.
 
 ## The one question left for you ([TO CONFIRM] in refund.html)
-- Does the 60-day money back also cover the ₹29,999 founding payment? (Recommended: no.)
+- (Settled 6 Nov 2026: no money back at all, so the founding question is gone.) Final step, done LAST (R-387): an expert check that every page is accurate, legally correct for India, on par with how Indian SaaS companies write them, and easy to read; then the owner approves.
 
 When you approve, the pages move to the live website, get added to the website footer, and the "draft" lines are removed.

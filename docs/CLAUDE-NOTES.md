@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-387. Policy approval last; yes 0060; no money back; research IDFC myself — 6 Nov 2026
+He said: (1) keep the policy-page approval for the very end, since they keep changing; he has no experience with
+policy pages, so I must make sure they are accurate, industry standard, legally correct, on par with the industry and
+easy to read. (2) "yes you can put the 0060 server change live". (3) No 60-day money back; put the money-back idea in
+the backlog as an Idea, he is not sure. (4) Do not send him to IDFC: research their rules and how it works for
+proprietorships online, and tell him if no answer is found.
+Did: (1) T80 in Claude's tasks: final expert check before his approval, done last. (2) 0060 applied live through the
+Supabase dashboard (Browser 1 = personal account), live test RESULT PASS (47 checks); security test shows only items
+from migrations not yet live. His payment details saved live with hq_set_payment_details (never in git). A helper
+runs UAT + fresh-eyes + ADMIN_NEWS for the Pay MettleUp screen before the admin-app deploy. (3) Refund page: no
+refunds once a paid plan is on, except a double or too-high payment by mistake; F197 Idea row. (4) IDFC research:
+no public IDFC rule found on business money into a savings account; RBI has no outright ban; the real risk is a
+freeze or questions if many business payments arrive. Plan: keep the savings account while volume is small; open an
+IDFC current account for MettleUp with the Udyam certificate once regular payments start (Silver needs about Rs 10,000
+average monthly balance).
+
 ## R-386. Policy-page skill? Is my name required? Apply for production on 9 Nov — 6 Nov 2026
 He asked: find an online skill for writing policy pages; must his name appear, or only the business name? And: "Yes, on
 November 9th, please apply for production access".

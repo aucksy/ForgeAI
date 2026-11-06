@@ -29,7 +29,7 @@ Not tax advice: a CA should confirm the tax lines once money comes in.
 - **Monthly plans:** one payment per month at launch. Automatic monthly charging (UPI AutoPay or card) comes in phase 2, once Razorpay confirms it is switched on for an individual account.
 - **Yearly plans and the founding lifetime offer:** always a single payment. Indian bank rules (RBI, Apr 2026) make the customer approve every automatic charge above ₹15,000, so automatic yearly renewal would fail anyway.
 - **Upgrade (Starter to Pro):** works at once; they pay only the difference for the days left.
-- **Downgrade:** takes effect when the current period ends. No money back for the days left (except under the 60-day money back on the first yearly payment).
+- **Downgrade:** takes effect when the current period ends. No money back for the days left. No money back on any payment (DECIDED 6 Nov 2026, R-387), except a double or too-high payment made by mistake.
 - **Free trial:** 3 months with Pro features (AI extras are not sold until they exist). One trial per verified phone.
 - **Pro + AI:** not for sale until the AI features are built (the website says "Coming").
 - **Extra branches at half price:** phase 2.
@@ -48,7 +48,7 @@ Data is never deleted.
 
 1. Sign up on Razorpay as "Individual" (PAN, Aadhaar, video check, the ₹1 bank test) and on Cashfree. Needs his ID.
 2. Ask IDFC First in writing whether business payments into his savings account are fine.
-3. Approve the policy pages the payment companies require: refund and cancellation, contact, about, delivery ("you get access online at once"). Terms and privacy exist. The refund page carries the 4 decided promises (R-384); one question is left: does the 60-day money back cover the ₹29,999 founding payment (recommended: no).
+3. Approve the policy pages the payment companies require: refund and cancellation, contact, about, delivery ("you get access online at once"). Terms and privacy exist. The refund page says payments are not refunded (R-387); the 3 other promises stay (free set-up and data move, free trainer training, same price for life for founding gyms).
 
 ## Build order
 
