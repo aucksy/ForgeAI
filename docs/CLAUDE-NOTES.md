@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-385. "Continue now: build anything that does not need me" — 6 Nov 2026
+He said (evening, before wrapping up): "you continue those right now - anything that does not need me.. you can build".
+What I do: start billing step 1 now (prices in one place + plan-feature table enforced on the server + lapse states:
+7 days grace, 30 days basic, then read-only; switch stays off; new migrations NOT applied live), and finish the 4
+policy page drafts (dates, payment methods, trial wording) for his approval. Nothing goes live without his yes.
+
 ## R-384. DECIDED: promises to gyms and what happens when a gym stops paying - 6 Nov 2026
 He said: basic mode is good, but with a limit, "maybe one more month until everything shuts down". Promises: YES free set-up and data move; YES 60-day money back; YES free training for the gym's trainers; YES same price for life (the founding offer). NO support-time promise of any kind (no "WhatsApp reply in 1 hour", no language marketing: support will be AI in the app/WhatsApp and detects the language); NO "help on app launch day". At first gyms get his phone number to call him. Keep his tasks under "Needs you" until he does them.
 My design (BILLING-DESIGN.md): plan ends -> 7 extra days with everything on -> 30 days basic mode (desk works for existing members: check-in, fees, member list; no new members; Pro extras off) -> read-only (look and export only, pay to reopen). Data never deleted. His phone number is shown only inside the app to signed-in gyms (stored in the database, never in this public repo or on public pages); the public contact page shows the email.
