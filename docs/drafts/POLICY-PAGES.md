@@ -2,11 +2,11 @@
 
 Razorpay and Cashfree check that the website has these pages before they approve a seller. Terms and
 Privacy already exist. These 4 are drafts in `docs/drafts/` and are NOT live. They look exactly like
-the Terms page. Every place marked **[TO CONFIRM]** needs a word from you; every promise is listed below.
+the Terms page. One place is still marked **[TO CONFIRM]** (the founding payment question at the bottom); every promise is listed below. All pages say "Last updated: 6 Nov 2026".
 
 ## 1. Refunds and cancellation (refund.html)
 - Who pays: only gym owners. Members never pay MettleUp; member refunds are between them and their gym.
-- 3 months free first, no card, so nothing to refund during the trial.
+- 3 months free first, no card (same words as the sign-up screen), so nothing to refund during the trial.
 - 60-day money back on the first payment of a yearly plan. Monthly payments are not refunded for the current month.
 - Cancel any time, no lock-in; the plan stays on until the paid date ends. Refunds go back the way you paid, in 5-7 working days (Monday to Saturday) after approval.
 - If a gym stops paying: 7 extra days with everything on, then 30 days basic mode, then read-only. Data is never deleted.
@@ -23,7 +23,8 @@ the Terms page. Every place marked **[TO CONFIRM]** needs a word from you; every
 - "Not registered under GST; no GST is charged."
 
 ## 4. Delivery (delivery.html)
-- Nothing is shipped. It is online software; access starts at once after payment, usually within seconds.
+- Nothing is shipped. It is online software.
+- How you pay: UPI or bank transfer today (same as the home page and the Pay MettleUp screen; the plan turns on once you see the payment). Card and net banking "coming soon", on the payment company's page; those turn the plan on at once.
 - You get a receipt for each payment; no GST on it.
 - Reminders 7, 3 and 1 days before a plan ends, then 7 extra days, 30 days basic mode, then read-only. Data is never deleted.
 
@@ -46,10 +47,13 @@ No support-time promise anywhere. Reach us by email; signed-in gyms find the fou
 8. Reminders 7, 3 and 1 days before a plan ends.
 9. Founding offer: ₹29,999 once, Pro for life for one branch, first 25 gyms, until 31 Mar 2027. (already on the website)
 
-## Questions for you ([TO CONFIRM] in the drafts)
+## Settled on 6 Nov 2026 (from what the app and website already say)
+- Dates: every page says "Last updated: 6 Nov 2026".
+- How gyms pay: "UPI or bank transfer today; card and net banking coming soon". This matches the home page and the Pay MettleUp screen, so the home page did not need a change.
+- Free trial: the same words as the sign-up screen, "Free for 3 months. No card." The "one free trial per phone number" line was taken out, because the sign-up screen does not say it.
+- About page: the "why I started MettleUp" line is left out. Add one in your own words later if you want.
+
+## The one question left for you ([TO CONFIRM] in refund.html)
 - Does the 60-day money back also cover the ₹29,999 founding payment? (Recommended: no.)
-- The home page says "pay by UPI or bank transfer"; the delivery page says UPI, card or net banking on the payment page. They must match once Razorpay or Cashfree approves.
-- One free trial per gym phone number: same wording as the sign-up screen?
-- Optional: one line in your own words on why you started MettleUp (About page).
 
 When you approve, the pages move to the live website, get added to the website footer, and the "draft" lines are removed.
