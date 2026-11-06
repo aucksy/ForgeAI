@@ -61,7 +61,7 @@ begin
   end if;
   -- The audit row names which parts are set, never the values.
   checks := checks + 1;
-  if not exists (select 1 from public.hq_audit where action = 'set_pay_details' and actor = 'hq-test@example.com' and detail = '{"upi": true, "bank": true}'::jsonb)
+  if not exists (select 1 from public.hq_audit where action = 'set_pay_details' and hq_audit.actor = 'hq-test@example.com' and detail = '{"upi": true, "bank": true}'::jsonb)
      or exists (select 1 from public.hq_audit where action = 'set_pay_details' and detail::text like '%test@upi%') then
     fails := fails || ' 2e';
   end if;
