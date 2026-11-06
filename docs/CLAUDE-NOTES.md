@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-378. Entry machines: find every brand used in India and its connection contract; build ready-made links - 6 Nov 2026
+He said: a fingerprint or face machine link cannot be one standard; each company has its own API. Find all the companies used in India and their API contracts, and build something so a gym has a ready-made link and only does a little fiddling.
+My view: right, there is no one standard, but most machines sold in India fall into a few families (many brands resell ZKTeco machines that speak the same "push" protocol). Plan: one MettleUp entry interface + one small driver per family. Started research (docs/overhaul/research/R-entry-machines-india.md), building on R-entry-machines.md (Matrix COSEC push, ZKTeco/eSSL ADMS, Realtime RS20 at the client gym) and R-face-camera.md. Building waits for the research and his pick (a test machine costs money).
+
 ## R-377. Save the AI assistant idea; next: money potential, being better than every gym software, then marketing - 6 Nov 2026
 He said: save the analysis and update the AI assistant idea and the tracker; "we will build it, that's why the AI plan is there", decide later. First he wants to find his footing on marketing to start earning: research the money-earning potential, anything we can add or offer to be better than every other gym software, then start marketing to make money.
 Did: F110 row updated (Idea, with the 5 tasks, cost, testing cost). Research started (docs/overhaul/research/R-market-and-marketing.md), building on R-pricing-jaipur.md and R-ggms-competitor.md. Marketing that publishes or messages anyone waits for his yes on each piece.
@@ -257,24 +261,3 @@ Done: helper started on steps 2-3. 0.72.0 phone tests re-running on qa-072-fix (
 
 He said: "we need to start working on the iPhone app and the Apple Watch app ... how much time it's going to take to get the app published ... I don't have an iPhone ... figure out a way to clone this Android app so accurately and lay out a framework that anytime you make a change in Android app ... it automatically gets replicated to the iPhone app or the watch app ... Do not start any work right now. Well, you can start the research on this framework".
 Done: research only, no code. docs/ios/RESEARCH.md (Apple times, costs, testing without an iPhone, payment rules) and docs/ios/ANDROID-ONLY-INVENTORY.md (every Android-only part, the watch protocol, the parity gates). Tracker F185 -> Waiting for you. Plan given in chat; waits for his go and the Apple account.
-
-## R-337. Tracker after every release: hard rule + hook - 5 Nov 2026
-
-He said: "Are you updating the tracker after each release? If not, make it a hard rule to do that. Because yesterday I saw that the feature about dim screen on the watch and the fit pass thing was still there and you later told me that it was already released in version 71 ... I think it may not just be after release so your tasks for example those should be updated regularly as well".
-Cause: the inbox file was fixed but the page was not republished; "Waiting for you" rows (F123, F147) never moved after his live yes; Claude's tasks (T17, T54) were days old.
-Done: Stop hook ~/.claude/hooks/tracker_guard.py (+ PostToolUse stamp on Artifact): blocks the reply once when a release tag or an inbox change is newer than the last tracker publish. Swept every row: F123 and F147 to Next release, F79 details, T17 and T54 updated, T69 (update pop-up) and T70 (review fixes) added. Page republished (version 336). Rule in CLAUDE.md and the brain note tracker-matches-what-shipped.
-
-## R-336. Update pop-up: option B (full screen) + top line + 7th launch - 5 Nov 2026
-
-He said (5 Nov 2026, on the design canvas): "B (full screen) - We can do the full screen thing but we have to ensure that we are not showing this every time the user launches the app. So once someone has tapped on the later button on this full screen notification, then there can be one simple line at the top of the homepage that update to latest version. that may be visible enough with a different color or something. And then we can probably show this again on, let's say, the seventh launch of the app. Also consider what happens if someone has not updated the app and we have rolled out quite a few different versions. Yeah, I don't know, you decide the best implementation."
-
-My view / decision (he delegated it):
-- First launch that finds a newer version: the full-screen pop-up (design B). Never during a workout, only over the 4 main tabs.
-- "Later": a slim orange line at the top of the Workout tab ("A new version is ready. Update"). One tap starts the update. No close button; it goes when the app is updated. It replaces the old Workout-tab card.
-- The full screen comes back on the 7th launch after it last showed (a launch = app start, or a return after 6+ hours). Never twice in one day.
-- Far behind (2+ versions, or the update is 14+ days old): every 3rd launch instead of the 7th, and the screen says "You are N versions behind". Its list shows the newest version's What's new (3 lines), plus "and the changes from N earlier updates".
-- The list comes from a small whats-new.json that each release attaches (built from whatsNew.ts). No list when it cannot be read.
-- Never a forced update: "Later" always works. A minimum-version switch only if a server change ever breaks old versions.
-- Ships in the next release (waiting list), with UAT and a fresh-eyes review.
-- Built 5 Nov 2026 (helper): full screen + orange line + 7th/3rd-launch rule + whats-new.json release asset + UAT flow uat-rel-r336-update.yaml; waiting list in PROGRESS.md. The restart after a Play download stays the small sheet.
-- UAT passed 5 Nov 2026, runs 41987822659 (default) + 41987826057 (owner 360 dp/font 1.3), parts UATR336 + UATR336B (airplane mode): happy path, 3 behind, back = Later, never during a workout (shows next launch after discard), never twice after Later, killed on the screen, up to date, offline. Not testable on the emulator: a real Play download, Play unreachable (unit tests only), install over the old version (release update-proof job). Bug found by UAT: the pop-up never showed since R-260 (workout check `active != null` on a boolean).
