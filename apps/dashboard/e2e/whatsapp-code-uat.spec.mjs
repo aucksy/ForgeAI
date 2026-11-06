@@ -86,6 +86,12 @@ async function fakeResetPin(page, server) {
   return calls;
 }
 
+/** The Forgot PIN form's own PIN boxes ("Choose a new 6-digit PIN"). */
+async function fillForgotPin(scope, pin) {
+  await scope.getByLabel('Choose a new 6-digit PIN').fill(pin);
+  await scope.getByLabel('Type the PIN again').fill(pin);
+}
+
 async function signOutHere(page) {
   await open(page, 'Staff & sign-in');
   await page.getByRole('button', { name: 'Sign out of this device' }).tap();
@@ -164,15 +170,15 @@ for (const size of ['phone', 'computer']) {
     await expect(alert).toHaveText('A code was sent a moment ago. Wait 42 seconds, then ask again.');
 
     // A missing code, an easy PIN (caught here, no call), a wrong code (the Worker counts it).
-    await fillNewPin(forgot, '314159');
+    await fillForgotPin(forgot, '314159');
     await forgot.getByRole('button', { name: 'Set new PIN and sign in' }).tap();
     await expect(alert).toHaveText('Type the 6-digit code from WhatsApp.');
     await forgot.getByLabel('Code from WhatsApp').fill('000000');
-    await fillNewPin(forgot, '123456');
+    await fillForgotPin(forgot, '123456');
     await forgot.getByRole('button', { name: 'Set new PIN and sign in' }).tap();
     await expect(alert).toHaveText('Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess.');
     expect(w.verifies).toEqual([]);
-    await fillNewPin(forgot, '314159');
+    await fillForgotPin(forgot, '314159');
     await forgot.getByRole('button', { name: 'Set new PIN and sign in' }).tap();
     await expect(alert).toHaveText('That code is wrong. 4 tries left.');
     expect(resets).toEqual([]);

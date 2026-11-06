@@ -89,7 +89,7 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
       </div>
       {whatsApp ? (
         <div style={{ marginTop: space.sm }}>
-          <Button variant="quiet" full onClick={() => setForgot(true)}>
+          <Button variant="quiet" full wrap onClick={() => setForgot(true)}>
             {t('Forgot your PIN? Get a code on WhatsApp')}
           </Button>
         </div>

@@ -143,13 +143,13 @@ export function ForgotPinForm({ startPhone = '', onBack }: { startPhone?: string
         </div>
       )}
       <div style={{ marginTop: space.lg }}>
-        <Button type="submit" full disabled={busy}>
+        <Button type="submit" full wrap disabled={busy}>
           {busy ? t('Please wait…') : sentTo ? t('Set new PIN and sign in') : t('Send code on WhatsApp')}
         </Button>
       </div>
       {sentTo && !proof && (
         <div style={{ marginTop: space.sm }}>
-          <Button variant="quiet" full disabled={busy} onClick={() => void ask()}>
+          <Button variant="quiet" full wrap disabled={busy} onClick={() => void ask()}>
             {t('Send a new code')}
           </Button>
         </div>
