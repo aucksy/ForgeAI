@@ -103,6 +103,7 @@ const NEEDS_A_REAL_GYM: Record<string, { title: string; body: string }> = {
   'settings/timings': { title: 'Gym timings', body: 'Set when your gym is open, morning and evening or 24 hours. Members see it in the MettleUp app.' },
   'settings/entry': { title: 'Entry machines', body: 'Connect your eSSL or ZKTeco finger or face machine. Members come in with a finger or face, and MettleUp keeps the register.' },
   'settings/machines': { title: 'Busy machines', body: 'Tell members when a machine is usually busy, so they can pick a quieter day.' },
+  'settings/mettleup': { title: 'Pay MettleUp', body: 'Pay for your MettleUp plan by UPI or bank transfer, and see when it is confirmed.' },
   'settings/invite': { title: 'The invite link', body: 'A link and a QR poster for members to join your gym in the app.' },
 };
 

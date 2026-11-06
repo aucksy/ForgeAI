@@ -53,6 +53,7 @@ import { GymTimingsScreen } from './ui/screens/GymTimings';
 import { PaymentsScreen } from './pay/PaymentsScreen';
 import { BusyMachinesScreen } from './ui/screens/BusyMachines';
 import { EntryMachinesScreen } from './ui/screens/EntryMachines';
+import { PayMettleUpScreen } from './ui/screens/PayMettleUp';
 import { EntryMachineJob } from './ui/EntryMachineJob';
 import { MyMembersScreen } from './ui/screens/MyMembers';
 import { useTrainerAccess } from './ui/TrainerParts';
@@ -287,6 +288,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'settings' && id === 'timings') return 'Gym timings';
   if (head === 'settings' && id === 'machines') return 'Busy machines';
   if (head === 'settings' && id === 'entry') return 'Entry machines';
+  if (head === 'settings' && id === 'mettleup') return 'Paying MettleUp';
   if (head === 'settings' && id === 'invite') return 'The invite link';
   return null;
 }
@@ -375,6 +377,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'machines') return <BusyMachinesScreen />;
       // F103 step 2: Settings -> Entry machines (says plainly when the gym's server is not ready, 0059).
       if (id === 'entry') return <EntryMachinesScreen />;
+      // T79: Settings -> Pay MettleUp (the owner pays for the plan; says plainly when the server is not ready, 0060).
+      if (id === 'mettleup') return <PayMettleUpScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.

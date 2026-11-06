@@ -1,6 +1,6 @@
 /**
  * The free-trial line on the owner's Today screen (R-97, migration 0030). Calm while there is time;
- * stronger in the last 14 days, with "See prices"; after the end, says so and that the members' app
+ * stronger in the last 14 days, with "Pay MettleUp" (T79) and "See prices"; after the end, says so and that the members' app
  * keeps working. Words only: nothing in the admin app is locked when a trial ends.
  *
  * Shown only to the OWNER of an ONLINE gym (not a demo gym, not a browser-only gym), and only when
@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import { loadHqAccess, notLiveYet } from '../auth/hqAccess';
-import { PLANS_URL, SEE_PLANS, trialBanner, type GymTrial } from '../logic/trial';
+import { PAY_METTLEUP, PAY_PATH, PLANS_URL, SEE_PLANS, trialBanner, type GymTrial } from '../logic/trial';
 import { color, font, radius, space } from './kit';
 
 function useGymTrial(): GymTrial | null {
@@ -61,6 +61,15 @@ export function TrialBanner() {
       }}
     >
       <span style={{ flex: '1 1 240px', minWidth: 0 }}>{words.text}</span>
+      {words.showPlans && (
+        // T79: pay in the admin app (Settings -> Pay MettleUp); the price list stays one tap away.
+        <a
+          href={`#${PAY_PATH}`}
+          style={{ color: color.accentBright, fontWeight: 700, textDecoration: 'underline', whiteSpace: 'nowrap' }}
+        >
+          {PAY_METTLEUP}
+        </a>
+      )}
       {words.showPlans && (
         <a
           href={PLANS_URL}

@@ -36,6 +36,10 @@ import {
   needsRose,
   needsTotal,
   NOT_CHECKED_WORDS,
+  PAY_STATUS_CHOICES,
+  confirmWords,
+  outcomeWords,
+  paymentWords,
   megabytes,
   planWords,
   recordCells,
@@ -920,6 +924,94 @@ function messageCard(r) {
     out);
 }
 
+// ------------------------------------------------------------------ Payments to MettleUp (T79, 0060)
+// Gym owners pay by UPI or bank transfer from their admin app (Settings -> Pay MettleUp) and send the
+// reference number. Check it in the bank app, then Confirm (the gym's plan and paid-until move on) or
+// say why not (the owner reads the reason). Below: MettleUp's own payment details that owners see.
+async function paymentsPage(status = 'pending') {
+  loading();
+  let d;
+  try {
+    d = await api(`/api/payments?status=${encodeURIComponent(status)}`);
+  } catch (e) {
+    if (e instanceof HqError && e.code === 'PAY_NOT_READY') {
+      show(h('h1', {}, 'Payments'), note(errorWords('PAY_NOT_READY'), 'warn'));
+      return;
+    }
+    throw e;
+  }
+  const pick = select(PAY_STATUS_CHOICES, d.status);
+  pick.addEventListener('change', () => void paymentsPage(pick.value).catch((e) => fail(main, e)));
+  const detailsBox = h('div', { class: 'card' }, h('h2', {}, 'Your payment details'), h('p', { class: 'muted' }, 'Loading…'));
+  show(
+    h('h1', {}, 'Payments'),
+    h('p', { class: 'muted' }, 'What gym owners say they paid MettleUp. Find the payment in your bank or UPI app by its reference number and amount, then confirm it. Nothing is locked for a gym while a payment waits.'),
+    field('Show', pick),
+    d.rows.length ? h('div', { class: 'stack' }, d.rows.map((p) => paymentCard(p, d.status))) : h('p', {}, d.status === 'pending' ? 'No payments waiting.' : 'None.'),
+    detailsBox,
+  );
+  void payDetailsCard(detailsBox);
+}
+
+function paymentCard(p, status) {
+  const out = h('div');
+  const why = h('input', { maxlength: '300', placeholder: 'Why not (the gym owner reads this): for example, no payment with this reference arrived' });
+  const noteBox = h('input', { maxlength: '300', placeholder: 'Note for the log (optional)' });
+  return h('div', { class: 'card' },
+    h('p', {}, h('strong', {}, p.gymName || 'Gym'), p.gymCode ? ` · ${p.gymCode}` : '', p.gymId ? [' · ', h('a', { href: `#gym/${p.gymId}` }, 'Open gym')] : null),
+    h('p', {}, paymentWords(p)),
+    p.status === 'pending'
+      ? h('div', { class: 'stack' },
+          h('p', { class: 'muted' }, confirmWords(p)),
+          h('div', { class: 'row wrap' }, noteBox, action('Confirm', async () => {
+            await api('/api/payments/confirm', { paymentId: p.id, note: noteBox.value });
+            await paymentsPage(status);
+          }, { out, sure: () => `${confirmWords(p)} Only confirm when the money is in the bank. Go ahead?` })),
+          h('div', { class: 'row wrap' }, why, action('Not confirmed', async () => {
+            await api('/api/payments/reject', { paymentId: p.id, reason: why.value });
+            await paymentsPage(status);
+          }, { out, tone: 'danger', sure: 'Tell the gym owner this payment is not confirmed, with your reason?' })))
+      : h('p', { class: 'muted' }, outcomeWords(p)),
+    out);
+}
+
+async function payDetailsCard(box) {
+  let d;
+  try {
+    d = await api('/api/pay-details');
+  } catch (e) {
+    fail(box, e);
+    return;
+  }
+  const v = d.details || {};
+  const input = (value, attrs = {}) => h('input', { value: value || '', ...attrs });
+  const upi = input(v.upiId, { maxlength: '120', autocomplete: 'off' });
+  const payee = input(v.payeeName, { maxlength: '60', autocomplete: 'off' });
+  const aname = input(v.accountName, { maxlength: '80', autocomplete: 'off' });
+  const acc = input(v.accountNumber, { maxlength: '24', inputmode: 'numeric', autocomplete: 'off' });
+  const ifsc = input(v.ifsc, { maxlength: '11', autocomplete: 'off' });
+  const bank = input(v.bankName, { maxlength: '60', autocomplete: 'off' });
+  const out = h('div');
+  box.replaceChildren(
+    h('h2', {}, 'Your payment details'),
+    h('p', { class: 'muted' }, d.details
+      ? `Gym owners see these on Pay MettleUp (a UPI QR code with the amount, and the bank details). Last changed ${when(d.updatedAt)}.`
+      : 'Not set: gym owners see “Payment is not available yet” and no QR code. Fill these in to start taking payments.'),
+    h('p', { class: 'muted' }, 'Kept only in the gym server, never in the code. Any signed-in gym owner can read them, so a UPI ID without your mobile number is safer.'),
+    h('div', { class: 'stack' },
+      field('UPI ID', upi, 'Like name@bank.'),
+      field('Name on UPI', payee, 'The name UPI apps show when paying.'),
+      field('Account name', aname),
+      field('Account number', acc),
+      field('IFSC', ifsc),
+      field('Bank (optional)', bank),
+      action('Save payment details', async () => {
+        await api('/api/pay-details', { upiId: upi.value, payeeName: payee.value, accountName: aname.value, accountNumber: acc.value, ifsc: ifsc.value, bankName: bank.value });
+        out.replaceChildren(note('Saved. Gym owners see the new details the next time they open Pay MettleUp.', 'good'));
+      }, { out, sure: 'Change where gym owners send money?' }),
+      out));
+}
+
 // ------------------------------------------------------------------ Log
 async function logPage(before = null, list = null) {
   if (!list) loading();
@@ -942,7 +1034,7 @@ async function logPage(before = null, list = null) {
 }
 
 // ------------------------------------------------------------------ router
-const ROUTES = { needs: () => needsPage(), gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
+const ROUTES = { needs: () => needsPage(), payments: () => paymentsPage(), gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
 
 async function route() {
   const hash = location.hash.replace(/^#/, '') || 'gyms';

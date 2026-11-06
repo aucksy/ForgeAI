@@ -67,6 +67,8 @@ const TIMINGS_FNS = ['owner_gym_timings', 'owner_save_gym_timings'];
 const FRIEND_FNS = ['owner_friend_summary'];
 /** F103 step 2 (0059, NOT APPLIED): entry machines, answered only when `entryServer` is on. */
 const ENTRY_FNS = ['owner_entry_machines', 'owner_add_entry_machine', 'owner_remove_entry_machine', 'owner_set_machine_numbers', 'owner_queue_machine_commands'];
+/** T79 (0060, NOT APPLIED): Pay MettleUp, answered only when `payServer` is on. */
+const PAY_FNS = ['owner_pay_mettleup', 'owner_report_mettleup_payment'];
 const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
 
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
@@ -187,6 +189,12 @@ export class FakeServer {
     this.entryNumbers = new Map();
     /** 0058 entry_machine_commands: {machineId, command, status}. */
     this.entryQueue = [];
+    /** T79: does this server have 0060 (Pay MettleUp)? Off by default (PGRST202, like the live server today). */
+    this.payServer = false;
+    /** 0060 platform_payment_details as owner_pay_mettleup sends it (null = not set). Fake values only. */
+    this.payTo = null;
+    /** 0060 mettleup_payments of this gym, newest first. */
+    this.mettlePayments = [];
   }
 
   /** 0035 _roster_member_ok: a live member record of this gym. */
@@ -428,6 +436,9 @@ export class FakeServer {
     if (!this.friendServer && FRIEND_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    if (!this.payServer && PAY_FNS.includes(fn)) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     if (!this.entryServer && ENTRY_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
@@ -490,6 +501,32 @@ export class FakeServer {
           this.terms = { version: args.p_terms_version, at: NOW.toISOString(), by: args.p_name, how: 'create' };
         }
         return this.signedIn(this.people.get(args.p_phone) ?? { staffId });
+      }
+      case 'owner_pay_mettleup': {
+        this.ownerOnly(args.p_key);
+        return {
+          ok: true, payTo: this.payTo, gymName: this.gym.name, gymCode: this.gym.joinCode,
+          plan: null, billing: null, paidUntil: null, trialEndsAt: '2027-01-17T04:30:00Z',
+          payments: this.mettlePayments.map((p) => ({ ...p })),
+        };
+      }
+      case 'owner_report_mettleup_payment': {
+        this.ownerOnly(args.p_key);
+        const prices = { 'starter/monthly': 99900, 'starter/yearly': 999000, 'pro/monthly': 149900, 'pro/yearly': 1499000 };
+        const price = prices[`${args.p_plan}/${args.p_billing}`];
+        const ref = String(args.p_reference ?? '').replace(/[\s-]/g, '').toUpperCase();
+        if (!price) throw new Refusal('BAD_PLAN');
+        if (!/^[A-Z0-9]{6,30}$/.test(ref)) throw new Refusal('BAD_REFERENCE');
+        if (!(args.p_amount_paise >= 100)) throw new Refusal('BAD_AMOUNT');
+        if (!this.payTo) throw new Refusal('NOT_OPEN');
+        if (this.mettlePayments.some((p) => p.reference === ref && p.status !== 'rejected')) throw new Refusal('DUPLICATE_REFERENCE');
+        const row = {
+          id: `pay-${this.mettlePayments.length + 1}`, plan: args.p_plan, billing: args.p_billing, pricePaise: price,
+          amountPaise: args.p_amount_paise, reference: ref, method: args.p_method, status: 'pending',
+          reportedAt: NOW.toISOString(), decidedAt: null, rejectReason: null, paidUntil: null,
+        };
+        this.mettlePayments.unshift(row);
+        return row;
       }
       case 'owner_entry_machines': {
         const p = this.anyone(args.p_key);

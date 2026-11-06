@@ -67,6 +67,17 @@ const moment = (v) => (typeof v === 'string' && v.length <= 40 && !Number.isNaN(
 /** The gym row came from a database with 0030 (free trial and plan). Before it, the page says so. */
 const plansReady = (g) => Boolean(g) && typeof g === 'object' && Object.prototype.hasOwnProperty.call(g, 'trialEndsAt');
 const PLANS = ['starter', 'pro', 'ai'];
+const PAY_STATUSES = ['pending', 'confirmed', 'rejected', 'all'];
+
+/** A 0060 call; before 0060 is applied the page gets PAY_NOT_READY ("needs the database update"). */
+async function payDb(run) {
+  try {
+    return await run();
+  } catch (e) {
+    if (e instanceof DbError && e.code === 'NOT_READY') throw new DbError('PAY_NOT_READY', 503);
+    throw e;
+  }
+}
 const BILLINGS = ['monthly', 'yearly', 'lifetime'];
 
 /**
@@ -168,12 +179,32 @@ export async function handleApi(request, env, who, deps = {}) {
       } catch (e) {
         console.error('[hq-api] needs: gyms not readable', e instanceof Error ? e.message : 'error');
       }
+      // T79 (0060): payments waiting to be confirmed (a count only; null before 0060 or on a failure).
+      let paymentsWaiting = null;
+      try {
+        const n = await db('hq_mettleup_payments_waiting', {});
+        paymentsWaiting = typeof n === 'number' ? n : null;
+      } catch (e) {
+        if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments not readable', e instanceof Error ? e.message : 'error');
+      }
       return json(200, {
         leadsNew: web ? web.leadsNew : null,
         feedbackNew: web ? web.feedbackNew : null,
         helpNeedsReply: web ? web.helpNeedsReply : null,
         gymsNew,
+        paymentsWaiting,
       });
+    }
+
+    // T79 (0060): what gym owners say they paid MettleUp (UPI / bank transfer), to confirm or not.
+    if (route === 'GET /api/payments') {
+      const status = PAY_STATUSES.includes(q.get('status')) ? q.get('status') : 'pending';
+      return json(200, { status, rows: await payDb(() => db('hq_mettleup_payments', { p_status: status })) });
+    }
+
+    // T79: MettleUp's own payment details (UPI ID, bank account), shown to gym owners on Pay MettleUp.
+    if (route === 'GET /api/pay-details') {
+      return json(200, await payDb(() => db('hq_payment_details', {})));
     }
 
     if (route === 'GET /api/leads') {
@@ -305,6 +336,18 @@ export async function handleApi(request, env, who, deps = {}) {
       return json(200, await db('hq_set_plan', { p_gym: b.gymId, p_plan: plan, p_billing: billing, p_paid_until: paidUntil, p_reason: text(b.reason, 500) }));
     }
 
+    // T79 (0060): Confirm applies the payment through apply_gym_payment (source 'manual'): the gym's plan and
+    // paid-until move on 1 or 12 months. Not confirming needs a reason; the gym owner reads it.
+    if (route === 'POST /api/payments/confirm') {
+      if (!isUuid(b.paymentId)) return refuse('BAD_REQUEST');
+      return json(200, await payDb(() => db('hq_confirm_mettleup_payment', { p_payment: b.paymentId, p_note: text(b.note, 500) || null })));
+    }
+
+    if (route === 'POST /api/payments/reject') {
+      if (!isUuid(b.paymentId)) return refuse('BAD_REQUEST');
+      return json(200, await payDb(() => db('hq_reject_mettleup_payment', { p_payment: b.paymentId, p_reason: text(b.reason, 500) })));
+    }
+
     // "Export gyms (CSV)": the page builds the file from the gym list it already has (gym-level facts
     // only); it is written down here first, and the page downloads only after this answered.
     if (route === 'POST /api/gyms/export-log') {
@@ -335,6 +378,20 @@ export async function handleApi(request, env, who, deps = {}) {
 
     // A new owner code and a gym delete need a sign-in from the last 15 minutes, like support access.
     const fresh = isFresh(who, Math.floor(now.getTime() / 1000));
+
+    // T79: where gym owners send money changes only with a sign-in from the last 15 minutes. The values go
+    // straight to the database (never logged here; the audit row says only which parts are set).
+    if (route === 'POST /api/pay-details') {
+      if (!fresh) return refuse('FRESH', 401);
+      return json(200, await payDb(() => db('hq_set_payment_details', {
+        p_upi_id: text(b.upiId, 300),
+        p_payee_name: text(b.payeeName, 80),
+        p_account_name: text(b.accountName, 100),
+        p_account_number: text(b.accountNumber, 40),
+        p_ifsc: text(b.ifsc, 20),
+        p_bank_name: text(b.bankName, 80),
+      })));
+    }
 
     if (route === 'POST /api/gym/reset-signin') {
       if (!fresh) return refuse('FRESH', 401);

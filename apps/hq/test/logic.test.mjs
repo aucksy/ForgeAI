@@ -7,7 +7,11 @@ import {
   actionWords,
   ago,
   codeMessage,
+  confirmWords,
   daysLeft,
+  extendPaidUntil,
+  outcomeWords,
+  paymentWords,
   errorWords,
   flags,
   gymByCode,
@@ -330,3 +334,36 @@ test('new gyms to check: trial, made in the last 14 days, not a test or demo gym
   ];
   assert.deepEqual(newGymsToCheck(gyms, now).map((g) => g.name), ['Iron Den']);
 });
+
+// T79 (0060): payments to MettleUp. Same maths as the database's _mettleup_extend (supabase/tests/0060).
+test('a confirmed payment extends from the later of today and the current paid-until, to the end of an India day', () => {
+  const at = (iso) => Date.parse(iso);
+  // No paid-until yet: today (India) + 1 month.
+  assert.equal(extendPaidUntil(null, 'monthly', at('2026-11-06T12:00:00+05:30')), '2026-12-06T18:29:59.000Z');
+  // 19:00 UTC on 6 Nov is already 7 Nov in India.
+  assert.equal(extendPaidUntil(null, 'monthly', at('2026-11-06T19:00:00Z')), '2026-12-07T18:29:59.000Z');
+  // Lapsed: counts from today, not from the old date.
+  assert.equal(extendPaidUntil('2020-01-01T00:00:00+05:30', 'monthly', at('2027-03-10T12:00:00+05:30')), '2027-04-10T18:29:59.000Z');
+  // Still paid: counts from that day; 31 Jan + 1 month = 28 Feb; a year from a leap day.
+  assert.equal(extendPaidUntil('2027-01-31T23:59:59+05:30', 'monthly', at('2027-01-20T09:00:00+05:30')), '2027-02-28T18:29:59.000Z');
+  assert.equal(extendPaidUntil('2028-02-29T23:59:59+05:30', 'yearly', at('2028-02-01T09:00:00+05:30')), '2029-02-28T18:29:59.000Z');
+  assert.equal(extendPaidUntil(null, 'yearly', at('2026-12-15T10:00:00+05:30')), '2027-12-15T18:29:59.000Z');
+  assert.equal(extendPaidUntil(null, 'lifetime', at('2026-12-15T10:00:00+05:30')), null);
+});
+
+test('payments in words: the facts, what Confirm will do, and the outcome', () => {
+  const p = { plan: 'pro', billing: 'monthly', amountPaise: 149900, pricePaise: 149900, method: 'upi', reference: '123456789012', reportedAt: '2026-11-06T06:00:00Z' };
+  assert.equal(paymentWords(p), 'Pro, monthly · ₹1,499 by UPI · reference 123456789012 · sent 6 Nov 2026');
+  assert.equal(paymentWords({ ...p, amountPaise: 100000, method: 'bank' }), 'Pro, monthly · ₹1,000 by bank transfer (the price is ₹1,499) · reference 123456789012 · sent 6 Nov 2026');
+  const now = Date.parse('2026-11-06T12:00:00+05:30');
+  assert.equal(confirmWords({ ...p, gymPaidUntil: null }, now), 'Confirm sets Pro, monthly, paid until 6 Dec 2026.');
+  assert.equal(confirmWords({ ...p, gymPaidUntil: '2026-11-20T18:29:59Z', extendsTo: '2026-12-20T18:29:59Z' }, now), 'Confirm sets Pro, monthly, paid until 20 Dec 2026 (now paid until 20 Nov 2026).');
+  assert.equal(confirmWords({ ...p, gymBilling: 'lifetime' }, now), 'This gym has a lifetime plan: nothing to add.');
+  assert.equal(outcomeWords({ status: 'rejected', decidedAt: '2026-11-07T06:00:00Z', rejectReason: 'No money arrived' }), 'Not confirmed 7 Nov 2026. Reason: No money arrived');
+  assert.equal(outcomeWords({ status: 'confirmed', decidedAt: '2026-11-07T06:00:00Z', paidUntil: '2026-12-06T18:29:59Z' }), 'Confirmed 7 Nov 2026: paid until 6 Dec 2026.');
+  assert.deepEqual(needsLines({ paymentsWaiting: 2 }).map((l) => [l.key, l.words, l.href]), [['payments', '2 payments to confirm', '#payments']]);
+  assert.equal(needsTotal({ paymentsWaiting: 2, leadsNew: 1 }), 3);
+  assert.equal(actionWords('confirm_payment'), 'Confirmed a gym’s payment');
+  assert.equal(errorWords('PAY_NOT_READY'), 'Payments need the database update 0060 (waiting for your yes).');
+});
+

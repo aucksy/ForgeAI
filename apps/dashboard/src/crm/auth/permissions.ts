@@ -113,6 +113,8 @@ export function canOpen(role: Role, path: string): boolean {
   // R-86: Automatic reminders (`/messages/reminders`) too: the desk can look; only the owner changes them.
   if (head === 'messages') return sub === 'offer' || sub === 'reminders' || can(role, 'manageGym');
   if (head === 'settings' && sub === 'branding') return can(role, 'manageGym');
+  // T79: paying MettleUp for the plan is the owner's (the server answers only an owner's key, 0060).
+  if (head === 'settings' && sub === 'mettleup') return can(role, 'manageGym');
   // #41: every branch's totals together: the owner's (the desk works at one branch).
   if (head === 'branches') return can(role, 'seeTotals');
   // R-168: the "Money owed" list behind its Today tile is a money total (the other numbers are people).

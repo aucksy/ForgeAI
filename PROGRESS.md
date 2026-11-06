@@ -3030,3 +3030,20 @@
     update, whatsNew, watch, backup); Settings -> Reminders and phone -> "Your watch" (Installed / Install on watch; left out
     with no watch or no answer). Every failure shows "Open Play Store on your watch and search MettleUp." The watch app is
     not on Play yet: the link is right for when it is.
+- 2026-11-06: **T79 Pay MettleUp built, NOT live.** Owner dashboard Settings -> "Pay MettleUp" (/settings/mettleup, owner only; also a
+  "Pay MettleUp" link on the trial line, and a plan-due line 7 days before paidUntil): pick Starter/Pro and month/year (approved
+  #30 A prices only), UPI QR + "Pay with a UPI app" (upi://pay ... tn=MettleUp <gym code>), bank details, "I have paid" (UTR +
+  amount) saved as pending; status Waiting / Confirmed until <date> / Not confirmed (reason). HQ (apps/hq + deploy/hq Worker):
+  new Payments page (pending/confirmed/rejected list, Confirm, Not confirmed with a reason, payment-details form) and a
+  "payments to confirm" needs line.
+  - Migration 0060_pay_mettleup.sql (NOT APPLIED; needs the owner's yes): platform_payment_details (one row, created EMPTY; the
+    real UPI/bank details are never in git, HQ or the SQL editor fills them live), mettleup_payments, gym_payment_ledger
+    (unique source+reference). ALL plan activation goes through ONE function, apply_gym_payment(gym, plan, billing, source,
+    reference, amount, actor): writes the ledger row and sets plan + billing + paid_until (later of today or current paidUntil,
+    + 1 or 12 months, end of IST day). HQ Confirm calls it with source 'manual'; a future gateway webhook calls it with its own
+    source, and the same payment can never apply twice (ALREADY_APPLIED). No plan-based feature gating built (separate design).
+  - Tests: supabase/tests/0060_pay_mettleup.sql, security.sql allow-list, dashboard payMettleUp.test.ts, hq logic + Worker
+    tests, e2e/pay-mettleup-uat.spec.mjs (fake values only: test@upi / 000000000000 / TEST0000000).
+  - Gaps: no receipt or GST invoice; multi-branch totals say "message MettleUp"; Pro + AI and the lifetime pack not payable
+    here; any owner key (demo gyms too) can read the payment details, so use a UPI handle without the phone number.
+  - TODO at deploy: add the ADMIN_NEWS entry (whatsNew.ts) for Pay MettleUp; apply 0060; deploy the HQ Worker; save the details.

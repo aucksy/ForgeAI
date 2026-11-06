@@ -480,6 +480,43 @@ test('trial and plan: bad input is refused before the database is asked', async 
   assert.equal(net.calls.length, 0);
 });
 
+// ------------------------------------------------------------------ payments to MettleUp (0060, T79)
+test('payments: before 0060 the page is told it needs the update; after it, list, confirm and reject go to the database', async () => {
+  const before = fakeNet({ dbMissing: ['hq_mettleup_payments', 'hq_payment_details', 'hq_mettleup_payments_waiting'], db: { hq_gyms: [] } });
+  const res = await api('GET', '/api/payments', null, env(), before);
+  assert.equal(res.status, 503);
+  assert.deepEqual(await res.json(), { error: 'PAY_NOT_READY' });
+  assert.deepEqual(await (await api('GET', '/api/pay-details', null, env(), before)).json(), { error: 'PAY_NOT_READY' });
+  assert.equal((await (await api('GET', '/api/needs', null, env(), before)).json()).paymentsWaiting, null);
+
+  const PAY = '99999999-2222-4333-8444-555555555555';
+  const net = fakeNet({ db: { hq_gyms: [], hq_mettleup_payments: [{ id: PAY }], hq_mettleup_payments_waiting: 2, hq_confirm_mettleup_payment: { id: PAY, status: 'confirmed' }, hq_reject_mettleup_payment: { id: PAY, status: 'rejected' } } });
+  const list = await (await api('GET', '/api/payments?status=weird', null, env(), net)).json();
+  assert.equal(list.status, 'pending', 'an unknown filter is the waiting list');
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_mettleup_payments')[0].init.body), { p_actor: OWNER, p_status: 'pending' });
+  assert.equal((await (await api('GET', '/api/needs', null, env(), net)).json()).paymentsWaiting, 2);
+  await api('POST', '/api/payments/confirm', { paymentId: PAY, note: ' Seen in the bank ' }, env(), net);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_confirm_mettleup_payment')[0].init.body), { p_actor: OWNER, p_payment: PAY, p_note: 'Seen in the bank' });
+  await api('POST', '/api/payments/reject', { paymentId: PAY, reason: 'No money arrived' }, env(), net);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_reject_mettleup_payment')[0].init.body), { p_actor: OWNER, p_payment: PAY, p_reason: 'No money arrived' });
+  assert.equal((await api('POST', '/api/payments/confirm', { paymentId: 'x' }, env(), net)).status, 400);
+  const twice = fakeNet({ dbFail: { hq_confirm_mettleup_payment: 'NOT_PENDING' } });
+  assert.deepEqual(await (await api('POST', '/api/payments/confirm', { paymentId: PAY }, env(), twice)).json(), { error: 'NOT_PENDING' });
+});
+
+test('payment details: changed only with a fresh sign-in, sent to the database as typed (fake values)', async () => {
+  const net = fakeNet({ db: { hq_set_payment_details: { details: null } } });
+  const body = { upiId: 'test@upi', payeeName: 'Test Payee', accountName: 'Test Account', accountNumber: '000000000000', ifsc: 'TEST0000000', bankName: 'Test Bank' };
+  const stale = await quiet(() => handleApi(new Request(`${ORIGIN}/api/pay-details`, { method: 'POST', body: JSON.stringify(body) }), env(), { email: OWNER, authAt: NOW - FRESH_SECONDS - 5 }, { fetchImpl: net.fetchImpl, now: new Date(NOW * 1000) }));
+  assert.deepEqual(await stale.json(), { error: 'FRESH' });
+  assert.equal(net.rpcCalls('hq_set_payment_details').length, 0);
+  assert.equal((await api('POST', '/api/pay-details', body, env(), net)).status, 200);
+  assert.deepEqual(JSON.parse(net.rpcCalls('hq_set_payment_details')[0].init.body), {
+    p_actor: OWNER, p_upi_id: 'test@upi', p_payee_name: 'Test Payee', p_account_name: 'Test Account',
+    p_account_number: '000000000000', p_ifsc: 'TEST0000000', p_bank_name: 'Test Bank',
+  });
+});
+
 test('Export gyms (CSV) is written to the audit log first', async () => {
   const net = fakeNet({ db: { hq_log: null } });
   const res = await api('POST', '/api/gyms/export-log', { gyms: 12, withTestGyms: false, filter: 'trial' }, env(), net);
@@ -785,7 +822,7 @@ test('Feedback shows the AI answer, the tap and "Needs reply"; a reply is saved,
 
   const needs = await (await api('GET', '/api/needs', null, e, n2)).json();
   // 2 help questions waiting; the answered one is the only other new feedback; 1 real new gym (not QA, not old).
-  assert.deepEqual(needs, { leadsNew: 1, feedbackNew: 1, helpNeedsReply: 2, gymsNew: 1 });
+  assert.deepEqual(needs, { leadsNew: 1, feedbackNew: 1, helpNeedsReply: 2, gymsNew: 1, paymentsWaiting: null });
 
   assert.equal((await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: ' ' }, e, n2)).status, 400);
   const sent = await api('POST', '/api/feedback/reply', { id: rows[0].id, reply: 'Yes, up to 30 days. Ask at the desk.' }, e, n2);
@@ -815,5 +852,5 @@ test('before panel migration 0009: Feedback still lists, a reply says it needs t
   assert.equal(res.status, 503);
   assert.deepEqual(await res.json(), { error: 'REPLY_NOT_READY' });
   const needs = await (await api('GET', '/api/needs', null, e, net)).json();
-  assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0 });
+  assert.deepEqual(needs, { leadsNew: 0, feedbackNew: 1, helpNeedsReply: null, gymsNew: 0, paymentsWaiting: null });
 });

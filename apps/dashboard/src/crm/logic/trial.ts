@@ -31,6 +31,11 @@ export const PLANS_URL = 'https://gyms.mettleup.fit/#pricing';
 export const SEE_PLANS = 'See prices';
 /** From this many days left, the banner gets stronger and offers the plans. */
 export const STRONG_FROM_DAYS = 14;
+/** T79: from this many days before a paid plan runs out, the line asks for the next payment. */
+export const PLAN_DUE_DAYS = 7;
+/** T79: the in-app page where the owner pays MettleUp (Settings -> Pay MettleUp). */
+export const PAY_PATH = '/settings/mettleup';
+export const PAY_METTLEUP = 'Pay MettleUp';
 
 const IST_MS = 5.5 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -62,8 +67,23 @@ export function trialDaysLeft(endsAt: string, nowMs: number): number {
 /** The banner's words, or null for no banner. PURE. */
 export function trialBanner(trial: GymTrial | null, nowMs: number): TrialBannerWords | null {
   if (!trial || !trial.endsAt) return null;
-  // A gym with a plan is not on a free trial any more.
-  if (trial.plan) return null;
+  // A gym with a plan is not on a free trial any more. T79: in the last PLAN_DUE_DAYS of a paid month or
+  // year, and after it, the line asks for the next payment (words only: nothing is locked).
+  if (trial.plan) {
+    if (trial.billing === 'lifetime' || !trial.paidUntil) return null;
+    const paidOn = trialDate(trial.paidUntil);
+    if (Date.parse(trial.paidUntil) <= nowMs) {
+      return {
+        tone: 'ended',
+        text: `Your MettleUp plan was paid until ${paidOn}. Pay to keep going. Your members’ app keeps working.`,
+        showPlans: true,
+      };
+    }
+    if (trialDaysLeft(trial.paidUntil, nowMs) <= PLAN_DUE_DAYS) {
+      return { tone: 'strong', text: `Your MettleUp plan is paid until ${paidOn}. Pay for the next month or year to keep going.`, showPlans: true };
+    }
+    return null;
+  }
   const end = Date.parse(trial.endsAt);
   const on = trialDate(trial.endsAt);
   if (end <= nowMs) {

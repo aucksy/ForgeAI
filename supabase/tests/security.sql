@@ -74,6 +74,8 @@ declare
     'member_friend_invite','friend_invite_preview','friend_invite_send','owner_friend_summary',
     -- 0059: entry machines (each checks the owner or desk key first; adding and removing a machine: the owner only).
     'owner_entry_machines','owner_add_entry_machine','owner_remove_entry_machine','owner_set_machine_numbers','owner_queue_machine_commands',
+    -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
+    'owner_pay_mettleup','owner_report_mettleup_payment',
     -- 0032: the free plan's switch (answers one config row, nothing else).
     'app_limits',
     'owner_add_person','owner_add_stock','owner_app_members','owner_delete_product','owner_go_online',

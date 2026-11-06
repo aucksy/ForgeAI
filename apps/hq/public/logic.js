@@ -134,6 +134,15 @@ const ERRORS = {
   BAD_TITLE: 'Write a title (at least 3 letters).',
   BAD_BODY: 'Write the message (at least 3 letters).',
   REPLY_NOT_READY: 'Replies need the database update (waiting for your yes).',
+  NOT_PENDING: 'That payment is already confirmed or not confirmed. The page was refreshed.',
+  LIFETIME: 'This gym has a lifetime plan: nothing more to pay.',
+  ALREADY_APPLIED: 'This payment was already added to the gym’s plan.',
+  BAD_UPI: 'That does not look like a UPI ID (like name@bank).',
+  BAD_NAME: 'A name needs 2 to 60 letters.',
+  BAD_ACCOUNT: 'An account number has 6 to 20 digits.',
+  BAD_IFSC: 'An IFSC has 11 letters and numbers, like ABCD0123456.',
+  INCOMPLETE: 'Fill in the payee name with a UPI ID, and the account name and IFSC with an account number.',
+  PAY_NOT_READY: 'Payments need the database update 0060 (waiting for your yes).',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
@@ -176,6 +185,11 @@ const ACTIONS = {
   nightly_cleanup: 'Nightly clean-up',
   set_trial: 'Changed a gym’s free trial',
   set_plan: 'Set a gym’s plan',
+  view_payments: 'Looked at payments to MettleUp',
+  confirm_payment: 'Confirmed a gym’s payment',
+  reject_payment: 'Did not confirm a gym’s payment',
+  view_pay_details: 'Looked at MettleUp’s payment details',
+  set_pay_details: 'Changed MettleUp’s payment details',
   export_gyms: 'Exported the gym list (CSV)',
   hq_message_sent: 'Sent a message to every gym',
   hq_message_removed: 'Took back a message to the gyms',
@@ -595,6 +609,7 @@ export function needsLines(d) {
     ['leads', d && d.leadsNew, (n) => `${count(n, 'new lead')} to call`, '#leads'],
     ['gyms', d && d.gymsNew, (n) => `${count(n, 'new gym')} to check`, '#gyms'],
     ['feedback', d && d.feedbackNew, (n) => `${count(n, 'new feedback message')} to read`, '#feedback/new'],
+    ['payments', d && d.paymentsWaiting, (n) => `${count(n, 'payment')} to confirm`, '#payments'],
   ];
   return lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
 }
@@ -603,7 +618,7 @@ export function needsLines(d) {
 export function needsTotal(d) {
   if (!d) return 0;
   // feedbackNew already leaves out the help questions counted in helpNeedsReply (deploy/hq/web.js webNeeds).
-  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew].reduce((a, n) => a + (Number(n) || 0), 0);
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew, d.paymentsWaiting].reduce((a, n) => a + (Number(n) || 0), 0);
 }
 
 /** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */
@@ -616,5 +631,47 @@ export function titleWithCount(base, n) {
 /** Which counts went UP since the last look (for the sound and the pop-up). First look: none. PURE. */
 export function needsRose(before, now) {
   if (!before || !now) return [];
-  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew' }[l.key]]) || 0));
+  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting' }[l.key]]) || 0));
+}
+
+// ------------------------------------------------------------------ Payments to MettleUp (T79, 0060)
+/**
+ * The new paid-until after a confirmed payment, as the database counts it (0060 _mettleup_extend): from the
+ * LATER of today and the current paid-until (India days), 1 or 12 months on (31 Jan + 1 = 28/29 Feb), to the
+ * end of that India day. ISO; null for a billing that is not monthly or yearly. PURE.
+ */
+export function extendPaidUntil(paidUntil, billing, now = Date.now()) {
+  if (billing !== 'monthly' && billing !== 'yearly') return null;
+  const today = indiaDayOf(new Date(now).toISOString());
+  const current = indiaDayOf(paidUntil);
+  const base = current && current > today ? current : today;
+  const [y, m, d] = base.split('-').map(Number);
+  const month = m - 1 + (billing === 'yearly' ? 12 : 1);
+  const last = new Date(Date.UTC(y, month + 1, 0)).getUTCDate();
+  return endOfIndiaDay(new Date(Date.UTC(y, month, Math.min(d, last))).toISOString().slice(0, 10));
+}
+
+export const PAY_STATUS_CHOICES = [['pending', 'Waiting'], ['confirmed', 'Confirmed'], ['rejected', 'Not confirmed'], ['all', 'All']];
+const PAY_METHOD_WORDS = { upi: 'UPI', bank: 'bank transfer' };
+
+/** One payment's facts in words: "Pro, monthly · ₹1,499 by UPI · reference 123456789012 · sent 6 Nov 2026". PURE. */
+export function paymentWords(p) {
+  const plan = `${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing}`;
+  const off = p.pricePaise && p.amountPaise !== p.pricePaise ? ` (the price is ${rupees(p.pricePaise)})` : '';
+  return `${plan} · ${rupees(p.amountPaise)} by ${PAY_METHOD_WORDS[p.method] || p.method}${off} · reference ${p.reference} · sent ${dateWords(p.reportedAt)}`;
+}
+
+/** What Confirm will do, in words, before the tap. PURE. */
+export function confirmWords(p, now = Date.now()) {
+  if (p.gymBilling === 'lifetime') return 'This gym has a lifetime plan: nothing to add.';
+  const to = p.extendsTo || extendPaidUntil(p.gymPaidUntil, p.billing, now);
+  const was = p.gymPaidUntil && Date.parse(p.gymPaidUntil) > now ? ` (now paid until ${dateWords(p.gymPaidUntil)})` : '';
+  return `Confirm sets ${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing}, paid until ${dateWords(to)}${was}.`;
+}
+
+/** One payment's outcome in words, for the Confirmed / Not confirmed lists. PURE. */
+export function outcomeWords(p) {
+  if (p.status === 'confirmed') return `Confirmed ${dateWords(p.decidedAt)}: paid until ${dateWords(p.paidUntil)}.`;
+  if (p.status === 'rejected') return `Not confirmed ${dateWords(p.decidedAt)}. Reason: ${p.rejectReason || ''}`;
+  return 'Waiting for you.';
 }

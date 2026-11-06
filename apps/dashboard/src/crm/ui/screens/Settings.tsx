@@ -58,6 +58,7 @@ import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
 import { BringAFriendCard } from './BringAFriend';
 import { EntryMachinesCard } from './EntryMachines';
+import { PayMettleUpCard } from './PayMettleUp';
 
 export type SettingsTab = 'gym' | 'app' | 'data';
 
@@ -207,6 +208,9 @@ export function SettingsScreen({ section }: { section?: string }) {
           </div>
         </Card>
       )}
+
+      {/* T79: the owner pays MettleUp for the plan (online owners only; the screen says if it is not ready). */}
+      <PayMettleUpCard />
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>{multi ? 'This branch’s details' : 'Gym details'}</SectionTitle>
