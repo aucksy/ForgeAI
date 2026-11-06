@@ -282,6 +282,8 @@ export type AuthErrorCode =
   | 'NO_PERSON'
   // F187 (0061): Create my gym with a number that was not checked by a WhatsApp code.
   | 'PHONE_CHECK'
+  // Billing step 1 (0062): the plan ran out (basic mode, read-only) or the plan lacks a Pro extra.
+  | PlanRefusal
   // UAT work package 3 (0021): the server's receipt rules.
   | ReceiptRefusal
   | 'OFFLINE'
@@ -308,10 +310,14 @@ export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
   'RECEIPT_LOCKED', 'NEED_REASON', 'BAD_PRICE',
 ];
 
+/** Billing step 1 (0062): the server's plan refusals (only once its switch is on). */
+export type PlanRefusal = 'PLAN_READ_ONLY' | 'PLAN_BASIC' | 'PLAN_NO_NEW_MEMBERS' | 'PLAN_PRO_ONLY';
+export const PLAN_REFUSALS: readonly PlanRefusal[] = ['PLAN_READ_ONLY', 'PLAN_BASIC', 'PLAN_NO_NEW_MEMBERS', 'PLAN_PRO_ONLY'];
+
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
   'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE',
-  'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', 'PHONE_CHECK', ...RECEIPT_REFUSALS,
+  'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', 'PHONE_CHECK', ...RECEIPT_REFUSALS, ...PLAN_REFUSALS,
 ];
 
 /** Launch audit 3 Nov 2026: MettleUp's support email, shown wherever a gym is told to contact us. */
@@ -448,6 +454,14 @@ export function authErrorWords(err: unknown): string {
       return 'Sign in with your mobile number first. Then you can set a PIN.';
     case 'PHONE_CHECK':
       return PHONE_CHECK_WORDS;
+    case 'PLAN_READ_ONLY':
+      return 'Your MettleUp plan has run out, so nothing can be changed or added. You can still look at everything and download your data. The owner can pay in Settings, under Pay MettleUp.';
+    case 'PLAN_BASIC':
+      return 'Your MettleUp plan has run out, so only check-in, fees and the member list work for now. The owner can pay in Settings, under Pay MettleUp, to switch everything back on.';
+    case 'PLAN_NO_NEW_MEMBERS':
+      return 'Your MettleUp plan has run out, so new members can’t be added for now. Check-in and fees still work. The owner can pay in Settings, under Pay MettleUp.';
+    case 'PLAN_PRO_ONLY':
+      return 'This is not in your gym’s MettleUp plan right now. The owner can change the plan in Settings, under Pay MettleUp.';
     case 'PHONE_TAKEN':
       return 'This mobile number is already on the list.';
     case 'OWNER_ONLY':

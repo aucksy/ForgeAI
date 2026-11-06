@@ -47,7 +47,7 @@ import {
   type ImportTermsResult,
   type UndoImportResult,
 } from './adapter';
-import { authErrorCode, authErrorWords, RECEIPT_REFUSALS, SUSPENDED_WORDS } from '../auth/signin';
+import { authErrorCode, authErrorWords, PLAN_REFUSALS, RECEIPT_REFUSALS, SUSPENDED_WORDS } from '../auth/signin';
 import type { Role } from '../logic/receiptRules';
 import { todayISO, type DateISO } from '../logic/dates';
 import { LocalCrmData, memoryStore, normalizeMember, SCHEMA_VERSION } from './local';
@@ -407,7 +407,8 @@ export interface DeskState {
 
 /** A refusal is final: kept as "pending" it would be sent again before every later action. */
 // SUSPENDED (#51): MettleUp paused the gym; sending the same save again cannot help.
-const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|SUSPENDED|${RECEIPT_REFUSALS.join('|')})($|[^A-Z_])`);
+// Billing step 1 (0062): a plan refusal stays until the owner pays; resending cannot help either.
+const FINAL_REFUSAL = new RegExp(`(^|[^A-Z_])(BAD_KEY|INVALID|OWNER_ONLY|SUSPENDED|${RECEIPT_REFUSALS.join('|')}|${PLAN_REFUSALS.join('|')})($|[^A-Z_])`);
 
 const MAX_TRIES = 4;
 
@@ -766,7 +767,8 @@ export class CloudCrmData implements CrmData {
           continue;
         }
         const msg = messageOf(e);
-        if (e instanceof BusyError || isSuspended(e) || /\bBAD_KEY\b/.test(msg) || !FINAL_REFUSAL.test(msg)) {
+        // Billing step 1 (0062): the plan ran out (basic mode, read-only): kept, sent once the owner pays.
+        if (e instanceof BusyError || isSuspended(e) || /\bBAD_KEY\b/.test(msg) || /\bPLAN_(READ_ONLY|BASIC|NO_NEW_MEMBERS)\b/.test(msg) || !FINAL_REFUSAL.test(msg)) {
           // #51 paused, signed out, busy, or not a refusal at all (503, 429, a wifi login page):
           // it really happened; it waits for the next look.
           console.warn('[offline desk] not sent now; kept to send later', item.kind, item.id, e);

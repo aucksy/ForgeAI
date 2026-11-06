@@ -12,7 +12,9 @@
  * PURE: no React, no network.
  */
 
-import { formatINR, type Paise } from './money';
+import { PACK_PRICES } from '@forgeai/theme';
+
+import { formatINR, rupeesToPaise, type Paise } from './money';
 import { upiPayLink, validUpiId } from './upiPay';
 
 export type PayPlan = 'starter' | 'pro';
@@ -21,12 +23,18 @@ export type PayMethod = 'upi' | 'bank';
 export type PayStatus = 'pending' | 'confirmed' | 'rejected';
 
 /**
- * The approved prices (OWNER-INBOX #30 A, 30 Oct 2026; the website's price list), for ONE branch, in paise.
- * The server keeps the same list (0060 _mettleup_price). Pro + AI is not on sale yet, so it is not here.
+ * The approved prices for ONE branch, in paise. Billing step 1 (R-385): read from the one price list,
+ * packages/theme/src/plans.ts (PACK_PRICES); never typed here. The server keeps the same list (0060
+ * _mettleup_price) and a test checks they agree (test/crm/pricesOneSource.test.ts). Pro + AI is not on
+ * sale yet, so it is not here.
  */
+const paiseOf = (p: PayPlan): Readonly<Record<PayBilling, Paise>> => ({
+  monthly: rupeesToPaise(PACK_PRICES[p].monthly),
+  yearly: rupeesToPaise(PACK_PRICES[p].yearly),
+});
 export const PRICES: Readonly<Record<PayPlan, Readonly<Record<PayBilling, Paise>>>> = {
-  starter: { monthly: 99_900, yearly: 999_000 },
-  pro: { monthly: 149_900, yearly: 1_499_000 },
+  starter: paiseOf('starter'),
+  pro: paiseOf('pro'),
 };
 
 export const PLAN_NAMES: Readonly<Record<PayPlan, string>> = { starter: 'Starter', pro: 'Pro' };

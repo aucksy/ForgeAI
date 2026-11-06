@@ -17,6 +17,7 @@ import { PhoneLinksCard } from '../PhoneLinksCard';
 import { PlanRequestsCard } from '../PlanRequestsCard';
 import { NeedsYouCard } from '../NeedsYou';
 import { TrialBanner } from '../TrialBanner';
+import { LapseBanner, useLapseWords } from '../LapseBanner';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
 import { endingSoon } from '../../logic/audience';
@@ -67,6 +68,8 @@ export function TodayScreen() {
   const { snapshot, memberViews, allMemberViews, today, desk } = useCrm();
   const compact = useIsCompact();
   const numbersOn = useHasFeature('yourNumbers');
+  // Billing step 1 (R-384): grace / basic mode / read-only, only once PLAN_GATE_ON is on.
+  const lapse = useLapseWords();
   // Staff (front desk) sees counts of people, never the gym's money totals (permissions.ts).
   const seeTotals = useCan()('seeTotals');
 
@@ -148,7 +151,8 @@ export function TodayScreen() {
       {/* R-319 item 8a: everything waiting for the desk or the owner, at the top (hidden when nothing waits). */}
       <NeedsYouCard />
 
-      <TrialBanner />
+      {/* Billing step 1: when the plan has run out, that line replaces the trial line. */}
+      {lapse ? <LapseBanner words={lapse} /> : <TrialBanner />}
 
       {/* Offline front desk, step 3: money taken on this device that is not on the server yet. */}
       <WaitingMoneyLine state={desk} />

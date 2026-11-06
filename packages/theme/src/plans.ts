@@ -30,6 +30,9 @@
  * 0046_gym_pack.sql to the live gym server, (2) check in HQ which gyms already have a pack written
  * ('starter' there closes the Pro features at once), (3) set this to true, ship the member app and
  * deploy the admin app. Turned on before step 1, the apps just see no pack (every feature on).
+ *
+ * The SERVER has the same check behind its own switch (0062_plan_features.sql: app_config 'plan_gate',
+ * gym_has_feature, gym_state), also OFF. Billing step 4 turns both on together (BILLING-DESIGN.md).
  */
 export const PLAN_GATE_ON = false;
 
@@ -71,4 +74,62 @@ export function hasFeature(gym: { plan?: unknown } | null | undefined, feature: 
 /** The Pro features this gym does NOT have (empty when it has them all). PURE. */
 export function lockedFeatures(gym: { plan?: unknown } | null | undefined, gateOn: boolean = PLAN_GATE_ON): ProFeature[] {
   return PRO_FEATURES.filter((f) => !hasFeature(gym, f, gateOn));
+}
+
+// ---------------------------------------------------------------------------------------------------
+// PRICES: THE ONE LIST (billing step 1, docs/overhaul/BILLING-DESIGN.md, R-385, 6 Nov 2026).
+// Every other place that shows or charges a price must agree with this list, and a test fails when one
+// does not (apps/dashboard/test/crm/pricesOneSource.test.ts): the website's price cards
+// (apps/dashboard/public/home/index.html), the admin app's Pay MettleUp (it imports this list), HQ's
+// branch prices (apps/hq/public/logic.js) and the server's price function (_mettleup_price, 0060).
+// Changing a price = change it here, then in those places, and the test says when they agree again.
+
+/** One pack's price for ONE branch, in whole rupees. */
+export interface PackPrice {
+  monthly: number;
+  yearly: number;
+}
+
+/** The approved prices (OWNER-INBOX #30 A, 30 Oct 2026), per branch, in rupees. */
+export const PACK_PRICES: Readonly<Record<GymPack, PackPrice>> = {
+  starter: { monthly: 999, yearly: 9_990 },
+  pro: { monthly: 1_499, yearly: 14_990 },
+  // Pro + AI: shown on the website as "Coming"; nobody can buy it until its AI parts exist.
+  ai: { monthly: 2_499, yearly: 24_990 },
+};
+
+/** The packs a gym can pay for today (Pro + AI is "Coming"). */
+export const PACKS_FOR_SALE: readonly GymPack[] = ['starter', 'pro'];
+
+/** The founding offer: Pro for life for one branch, one payment, first 25 gyms, until 31 Mar 2027. */
+export const FOUNDING_OFFER = { rupees: 29_999, gyms: 25, lastDay: '2027-03-31' } as const;
+
+// ---------------------------------------------------------------------------------------------------
+// WHEN A GYM STOPS PAYING (DECIDED 6 Nov 2026, R-384). The server decides (gym_state, 0062); the
+// admin app only shows it. Data is never deleted; paying reopens everything at once.
+//   active    -> paid (or on the free trial)
+//   grace     -> 7 extra days after the paid-until date (or the trial end), everything on
+//   basic     -> the next 30 days: the desk keeps check-in, fee entry and the member list; no new
+//                members; Pro extras off
+//   read_only -> after that: look and download only
+
+export type GymState = 'active' | 'grace' | 'basic' | 'read_only';
+export const PLAN_GRACE_DAYS = 7;
+export const PLAN_BASIC_DAYS = 30;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** The gym's state from its dates, exactly as the server's gym_state (0062) works it out. PURE. */
+export function gymStateAt(
+  gym: { billing?: string | null; paidUntil?: string | null; trialEndsAt?: string | null },
+  nowMs: number,
+): GymState {
+  if (gym.billing === 'lifetime') return 'active';
+  const ends = [gym.paidUntil, gym.trialEndsAt].map((d) => (d ? Date.parse(d) : NaN)).filter((n) => !Number.isNaN(n));
+  if (ends.length === 0) return 'active';
+  const end = Math.max(...ends);
+  if (nowMs <= end) return 'active';
+  if (nowMs <= end + PLAN_GRACE_DAYS * DAY_MS) return 'grace';
+  if (nowMs <= end + (PLAN_GRACE_DAYS + PLAN_BASIC_DAYS) * DAY_MS) return 'basic';
+  return 'read_only';
 }
