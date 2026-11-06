@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-379. The 5 weak points vs rivals: add the missing ones to the tracker with a way to solve each - 6 Nov 2026
+He said: the 5 items that make us weaker than others; add the ones not in the plan and document a way to solve each in the tracker; he reads it later.
+Did: entry machines (F103), class booking (F139) and iPhone (F185) were already rows; each got a "way to solve" (F103 = the R-378 family plan; F139 = ask at the first 10 visits, build if 3+ say yes; F185 = a web version for iPhone members first, no Apple fee). New rows: F195 proof (client gym live, owner video, first 5 gyms trade a video or review for the founding price, Google profile) and F196 the "what if you shut down?" promise (90 days notice, full Excel export, code escrow for lifetime gyms on request, registered business). Promises and prices wait for his yes.
+
 ## R-378. Entry machines: find every brand used in India and its connection contract; build ready-made links - 6 Nov 2026
 He said: a fingerprint or face machine link cannot be one standard; each company has its own API. Find all the companies used in India and their API contracts, and build something so a gym has a ready-made link and only does a little fiddling.
 My view: right, there is no one standard, but most machines sold in India fall into a few families (many brands resell ZKTeco machines that speak the same "push" protocol). Plan: one MettleUp entry interface + one small driver per family. Started research (docs/overhaul/research/R-entry-machines-india.md), building on R-entry-machines.md (Matrix COSEC push, ZKTeco/eSSL ADMS, Realtime RS20 at the client gym) and R-face-camera.md. Building waits for the research and his pick (a test machine costs money).
