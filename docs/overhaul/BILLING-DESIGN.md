@@ -56,3 +56,16 @@ Data is never deleted.
 2. Policy pages (drafts for his approval).
 3. Checkout + webhook in test mode, both companies behind one adapter; renewal reminders; receipts.
 4. Full UAT (happy path, failed payment, duplicate webhook, wrong amount, upgrade, downgrade, lapse, grace, renewal), fresh-eyes review, then he says "payments live".
+
+## Step 3 built (6 Nov 2026, test mode, switched off, NOT applied)
+
+- Database: `supabase/migrations/0063_gym_checkout.sql` (checkouts, receipts, plan changes, reminders; switch
+  `app_config 'billing_checkout'` off; the receipt's legal name from `app_config 'receipt_issuer'`). Test:
+  `supabase/tests/0063_gym_checkout.sql`.
+- Checkout and webhook: the HQ Worker (`deploy/hq/billing.js`), because only it holds the server key that
+  `apply_gym_payment` needs. The admin app's "Pay online" goes through the gym panel (`/api/billing/checkout`),
+  which forwards to HQ. Webhook: `https://hq.mettleup.fit/billing/hook/razorpay` (or `/cashfree`).
+- Admin app: "Pay online" and "Your receipts" on Pay MettleUp, a printable receipt, and the plan-end reminder on
+  Today (only when the switch is on). Reminders by WhatsApp/SMS: a stub that sends nothing.
+- To switch on in test mode: HQ var `BILLING` = `test`, `BILLING_PROVIDER`, the test keys as Worker secrets
+  (listed in `deploy/hq/wrangler.jsonc`), 0063 applied, the switch row on, the legal name row filled.

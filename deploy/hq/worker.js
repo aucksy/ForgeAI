@@ -13,6 +13,7 @@
 //   everything else                             the static page (apps/hq/public), signed in only
 // A Cron Trigger runs the nightly backup (backup.js) and then the clean-up at 03:00 India time (scheduled() below).
 // /backup/status (no sign-in) says only whether last night's backup worked; the watch workflow reads it.
+// /billing/* (billing.js, billing step 3): online buying of MettleUp plans and the payment webhook; off until set up.
 // Phone pop-ups for the gym's messages and offers (push.js, R-153 step 2): a second Cron Trigger every
 // minute, and POST /push/run (no sign-in: it only sends what is already due, at most once every 3 s).
 // Strict headers on every answer (the install files too): a Content-Security-Policy that allows only this address
@@ -24,6 +25,7 @@ import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
 import { backupStatus, runBackup } from './backup.js';
+import { handleBilling, runBillingDaily } from './billing.js';
 
 export const CSP = [
   "default-src 'self'",
@@ -205,11 +207,15 @@ export default {
     if (url.pathname === '/push/run') return secure(handlePushKick(request, env, ctx));
     // The nightly backup's health, no sign-in: only whether it is fresh and when (backup.js). The watch reads it.
     if (url.pathname === '/backup/status' && request.method === 'GET') return secure(await backupStatus(env));
+    // Billing step 3 (billing.js, OFF until its settings exist): the owner's online purchase (forwarded by the
+    // gym panel) and the payment company's webhook. No HQ sign-in: a signature or the owner's key proves them.
+    if (url.pathname.startsWith('/billing/')) return secure(await handleBilling(request, env));
     return secure(await handle(request, env));
   },
   async scheduled(event, env, ctx) {
     // The backup first (backup.js; it never throws), so the copy still holds what the clean-up removes.
-    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)));
+    // Then billing (billing.js; off until set up, never throws): due downgrades and plan-end reminders.
+    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)));
     else ctx.waitUntil(runPush(env));
   },
 };

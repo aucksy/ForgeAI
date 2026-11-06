@@ -108,6 +108,14 @@ describe('prices: one list, every place agrees', () => {
     ]);
     expect(rows).toEqual(want);
   });
+
+  it("the server's founding offer (0063) has the same price, places and last day", () => {
+    const start = lastDefinition('hq_billing_checkout_start');
+    expect(start).toContain(`amt := ${FOUNDING_OFFER.rupees * 100};`);
+    expect(start).toContain(`>= ${FOUNDING_OFFER.gyms} then raise exception 'FOUNDING_FULL'`);
+    expect(lastDefinition('_founding_open')).toContain(`date '${FOUNDING_OFFER.lastDay}'`);
+    expect(lastDefinition('owner_billing')).toContain(`taken < ${FOUNDING_OFFER.gyms}`);
+  });
 });
 
 describe('plan features: the server table matches the app map', () => {

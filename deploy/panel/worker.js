@@ -21,6 +21,7 @@
 //  - /api/phone-code/status|send|verify  a 6-digit code by WhatsApp: Forgot PIN and the new-gym number check (phoneCode.js, F187).
 // Every day at 03:00 India time (Cron Trigger, wrangler.jsonc) crash reports older than 90 days are
 // deleted (#72, the privacy notice says so).
+//  - /api/billing/checkout  "Pay online" for a MettleUp plan, forwarded to the HQ Worker (billing.js, billing step 3).
 //  - /api/lead      the landing page's "free demo" form (leads.js, launch I3; the page is /home/).
 //  - /api/ai/match-columns  "Ask AI to match the columns" in the member import (aiMatch.js, #47).
 //  - /sb/...    the gym server (Supabase) at our own address, so a block of supabase.co cannot stop
@@ -39,6 +40,7 @@ import { deleteOldFriendAsks, handleFriend } from './friend.js';
 import { deleteOldVoiceCounts, handleVoice } from './voice.js';
 import { handleMatchColumns } from './aiMatch.js';
 import { handlePay, scheduledPay } from './pay.js';
+import { handleBillingCheckout } from './billing.js';
 import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
@@ -100,6 +102,8 @@ export default {
     if (url.pathname === '/api/ai/match-columns') return handleMatchColumns(request, env);
     // F79 (R-328): online payments for gyms (pay.js). Off ("not switched on yet") until 0011 is applied.
     if (url.pathname.startsWith('/api/pay/')) return handlePay(request, env, url);
+    // Billing step 3: a gym owner buys a MettleUp plan online; forwarded to the HQ Worker (billing.js). Off until HQ is set up.
+    if (url.pathname === '/api/billing/checkout') return handleBillingCheckout(request, env);
     // F187 (R-383): sign-in codes by WhatsApp (phoneCode.js). Off ("available: false") until the token is in place.
     if (url.pathname.startsWith('/api/phone-code/')) return handlePhoneCode(request, env, url, rpc, { ctx });
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });

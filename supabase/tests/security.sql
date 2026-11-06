@@ -78,6 +78,8 @@ declare
     'owner_entry_machines','owner_add_entry_machine','owner_remove_entry_machine','owner_set_machine_numbers','owner_queue_machine_commands',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_pay_mettleup','owner_report_mettleup_payment',
+    -- 0063: online buying (each checks the key first: the gym OWNER only; read only, the owner's own gym and receipts).
+    'owner_billing','owner_receipt',
     -- 0061: sign-in codes by WhatsApp (the account check needs the Worker's HMAC signature; the PIN reset a one-use signed proof).
     'phone_code_has_account','staff_reset_pin_with_proof',
     -- 0032: the free plan's switch (answers one config row, nothing else).

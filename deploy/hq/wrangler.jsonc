@@ -56,5 +56,10 @@
   // The nightly backup (backup.js, launch audit 3 Nov 2026) runs in the 21:30 trigger above, before the clean-up.
   // Its store: free KV namespace forgeai-backups (made 4 Nov 2026 with the owner's yes). Docs: docs/BACKUP-RESTORE.md.
   "kv_namespaces": [{ "binding": "BACKUP", "id": "998066b50d4f403b99883b30f83f06cb" }],
+  // Billing step 3 (billing.js): a gym owner buys a MettleUp plan online; the payment company's webhook is
+  // https://hq.mettleup.fit/billing/hook/razorpay (or /cashfree). OFF: var BILLING is not set. To switch on in
+  // TEST mode: vars BILLING "test" and BILLING_PROVIDER "razorpay" | "cashfree", and the secrets
+  // RAZORPAY_KEY_ID (rzp_test_...), RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, or CASHFREE_APP_ID and
+  // CASHFREE_SECRET_KEY (sandbox); plus supabase 0063 applied and app_config 'billing_checkout' on.
   "observability": { "enabled": true }
 }

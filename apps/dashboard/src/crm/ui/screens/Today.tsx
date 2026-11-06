@@ -18,6 +18,7 @@ import { PlanRequestsCard } from '../PlanRequestsCard';
 import { NeedsYouCard } from '../NeedsYou';
 import { TrialBanner } from '../TrialBanner';
 import { LapseBanner, useLapseWords } from '../LapseBanner';
+import { RenewReminder, useRenewWords } from '../BillingOnline';
 import { useCan, useRole } from '../../auth/AuthProvider';
 import { canOpen } from '../../auth/permissions';
 import { endingSoon } from '../../logic/audience';
@@ -70,6 +71,8 @@ export function TodayScreen() {
   const numbersOn = useHasFeature('yourNumbers');
   // Billing step 1 (R-384): grace / basic mode / read-only, only once PLAN_GATE_ON is on.
   const lapse = useLapseWords();
+  // Billing step 3 (0063): the last 7 days of a paid plan, owner only, while online buying is switched on.
+  const renew = useRenewWords();
   // Staff (front desk) sees counts of people, never the gym's money totals (permissions.ts).
   const seeTotals = useCan()('seeTotals');
 
@@ -152,7 +155,7 @@ export function TodayScreen() {
       <NeedsYouCard />
 
       {/* Billing step 1: when the plan has run out, that line replaces the trial line. */}
-      {lapse ? <LapseBanner words={lapse} /> : <TrialBanner />}
+      {lapse ? <LapseBanner words={lapse} /> : renew ? <RenewReminder text={renew} /> : <TrialBanner />}
 
       {/* Offline front desk, step 3: money taken on this device that is not on the server yet. */}
       <WaitingMoneyLine state={desk} />

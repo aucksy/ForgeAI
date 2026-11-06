@@ -54,6 +54,7 @@ import { PaymentsScreen } from './pay/PaymentsScreen';
 import { BusyMachinesScreen } from './ui/screens/BusyMachines';
 import { EntryMachinesScreen } from './ui/screens/EntryMachines';
 import { PayMettleUpScreen } from './ui/screens/PayMettleUp';
+import { MettleUpReceiptScreen } from './ui/screens/MettleUpReceipt';
 import { EntryMachineJob } from './ui/EntryMachineJob';
 import { MyMembersScreen } from './ui/screens/MyMembers';
 import { useTrainerAccess } from './ui/TrainerParts';
@@ -378,6 +379,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       // F103 step 2: Settings -> Entry machines (says plainly when the gym's server is not ready, 0059).
       if (id === 'entry') return <EntryMachinesScreen />;
       // T79: Settings -> Pay MettleUp (the owner pays for the plan; says plainly when the server is not ready, 0060).
+      // Billing step 3: one MettleUp receipt, /settings/mettleup/receipt/<number> (owner only, like the screen).
+      if (id === 'mettleup' && segments[2] === 'receipt') return <MettleUpReceiptScreen receiptNo={segments[3] ?? ''} />;
       if (id === 'mettleup') return <PayMettleUpScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;

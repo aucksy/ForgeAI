@@ -133,3 +133,58 @@ export function gymStateAt(
   if (nowMs <= end + (PLAN_GRACE_DAYS + PLAN_BASIC_DAYS) * DAY_MS) return 'basic';
   return 'read_only';
 }
+
+// ---------------------------------------------------------------------------------------------------
+// BUYING ONLINE (billing step 3, BILLING-DESIGN.md). The SERVER decides every amount (0063
+// hq_billing_checkout_start); these copies only let the admin app show the same number before the tap,
+// and tests keep the two in step (apps/dashboard/test/crm/billingMaths.test.ts and
+// supabase/tests/0063_gym_checkout.sql use the same cases).
+
+/** Days in one paid period, for working out an upgrade's price per day. */
+export const PERIOD_DAYS: Readonly<Record<'monthly' | 'yearly', number>> = { monthly: 30, yearly: 365 };
+
+const IST_MS = 330 * 60 * 1000;
+/** The India calendar day of a moment, as a day number (days since 1 Jan 1970). PURE. */
+export function indiaDayNumber(ms: number): number {
+  return Math.floor((ms + IST_MS) / DAY_MS);
+}
+
+/**
+ * Days left to pay the difference for when Starter moves up to Pro: the India days from today to the
+ * paid-until day, both counted (a plan ending tonight has 1 day left). 0 when the paid time is over
+ * (then it is a new purchase, not an upgrade). PURE.
+ */
+export function upgradeDaysLeft(paidUntilIso: string | null | undefined, nowMs: number): number {
+  const pu = paidUntilIso ? Date.parse(paidUntilIso) : NaN;
+  if (Number.isNaN(pu) || pu < nowMs) return 0;
+  return indiaDayNumber(pu) - indiaDayNumber(nowMs) + 1;
+}
+
+/**
+ * What moving from Starter up to Pro costs now, in paise: the price difference per day for the days
+ * left, rounded UP to a whole rupee, never under Rs 1. null when there are no days left. PURE.
+ * Same sum as the server's _upgrade_paise (0063).
+ */
+export function upgradePaise(billing: 'monthly' | 'yearly', paidUntilIso: string | null | undefined, nowMs: number): number | null {
+  const days = upgradeDaysLeft(paidUntilIso, nowMs);
+  if (days <= 0) return null;
+  const diffPaise = (PACK_PRICES.pro[billing] - PACK_PRICES.starter[billing]) * 100;
+  // One division of two whole numbers: exact when the answer is whole, so ceil never adds a rupee by mistake.
+  const rupees = Math.ceil((diffPaise * days) / (PERIOD_DAYS[billing] * 100));
+  return Math.max(1, rupees) * 100;
+}
+
+/**
+ * Is the founding offer still open: on or before its last India day, and fewer than its gyms taken
+ * (gyms already paid for life + founding payments in progress). PURE. Same rule as the server's.
+ */
+export function foundingOpen(nowMs: number, taken: number): boolean {
+  const lastDay = indiaDayNumber(Date.parse(`${FOUNDING_OFFER.lastDay}T00:00:00+05:30`));
+  return indiaDayNumber(nowMs) <= lastDay && taken < FOUNDING_OFFER.gyms;
+}
+
+/** The plan-end reminders, in days before the plan ends (in the app; messages later). */
+export const RENEW_REMINDER_DAYS: readonly number[] = [7, 3, 1];
+
+/** The words every MettleUp receipt carries (MettleUp is not registered under GST). */
+export const RECEIPT_GST_LINE = 'Not registered under GST; no GST charged.';

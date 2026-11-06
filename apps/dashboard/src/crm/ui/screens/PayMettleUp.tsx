@@ -31,6 +31,7 @@ import {
   type PayPlan,
 } from '../../logic/payMettleUp';
 import { PayQr } from '../../pay/PayQr';
+import { PayOnline } from '../BillingOnline';
 import { loadPayMettleUp, payNotLiveYet, reportMettleUpPayment } from '../../shop/payMettleUpApi';
 import { errorWords } from '../../shop/logic';
 import { Button, Card, ChipToggle, EmptyState, ErrorBanner, PageHeader, Pill, SectionTitle, TextField, Toast, color, font, space } from '../kit';
@@ -215,6 +216,9 @@ export function PayMettleUpScreen() {
           {planNow(data, Date.now())}
         </p>
       </Card>
+
+      {/* Billing step 3 (0063): "Pay online" while the server's switch is on, and the gym's receipts. */}
+      <PayOnline ownerKey={key} />
 
       {data.payments.length > 0 && (
         <Card style={{ marginBottom: space.lg }}>
