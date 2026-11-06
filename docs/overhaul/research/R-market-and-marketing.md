@@ -30,12 +30,13 @@ dates and fees. No Indian rival we found does both.
 automatic SMS or WhatsApp (free phone pop-ups do the job), no class booking, no iPhone app; UPI collection is built (F79) but waits for the payment account, no paying customers
 and no reviews yet. We are one person; owners will ask "what if you disappear?"
 
-**What would make us the clear best choice:** sell a service, not just software.
-1. We set it up at your desk and move your records, free, in one visit.
-2. Hindi WhatsApp support with a reply inside 1 hour, 9 am to 9 pm.
-3. 60-day money back on yearly plans. No lock-in, your data leaves with you any time.
-4. "App launch day": we come and help 50 members install the app.
-5. Price locked for life for early gyms.
+**What would make us the clear best choice:** sell a service, not just software. The 4 promises
+to gyms (decided 6 Nov 2026, R-384):
+1. Free set-up, and we move your data from your old software or Excel.
+2. 60-day money back on the first payment of a yearly plan.
+3. Free training for your trainers and desk staff, when the gym asks.
+4. The same price for life for founding gyms (the first 25 gyms).
+No support-time promise. Gyms reach us by email; signed-in gyms find the founder's phone number in the app.
 
 **Correction by Claude (6 Nov):** the first client gym is not live yet (F182 launch plan). Get it live first: the pitch "[Client gym] uses it" and the owner video both need it.
 
@@ -170,20 +171,18 @@ current software?"** and write it down. That is better data than any website.
 ### 3.4 Things to add or OFFER to be the clear best choice
 
 These are mostly service and promises, not features. All cheap for us; all rare among rivals.
+The promises are exactly these 4 (decided 6 Nov 2026, R-384):
 
-1. **"We set it up, you just say yes."** In Jaipur: one visit, we move the records (AI import),
-   print the QR poster, train the desk person. Outside Jaipur: same on a video call within 48 hours.
-2. **Hindi WhatsApp support, reply within 1 hour, 9 am to 9 pm, 7 days.** Put it in writing.
-   It answers "what if you disappear?" better than any feature. Cost: your time (guess: 15-30
-   minutes a day per 10 gyms).
-3. **60-day money back on yearly plans. No lock-in. Your data in Excel any time.** Rivals tie
-   owners in; we say "leave whenever you want". Risk is low: a gym that leaves in 60 days costs us
-   only the trial.
-4. **"App launch day."** We come on a busy evening with a standee and help members install the app.
-   The free member app is our edge, and it only works if members install it. Target 50 installs on
-   day 1 (guess).
-5. **Price locked for life** for the first 50 gyms. Removes the fear of a price jump next year.
-6. **Monthly "members kept" report on WhatsApp**: "This month MettleUp helped bring back 7 members
+1. **Free set-up and data move.** We move the records from the old software or Excel (AI import). <!-- PROMISE -->
+2. **60-day money back on the first payment of a yearly plan.** Rivals tie owners in; we say
+   "leave whenever you want". Risk is low: a gym that leaves in 60 days costs us only the trial. <!-- PROMISE -->
+3. **Free training for the gym's trainers and desk staff**, when the gym asks. <!-- PROMISE -->
+4. **The same price for life for founding gyms** (the first 25 gyms). Removes the fear of a price
+   jump next year. <!-- PROMISE -->
+
+No reply-time promise for support.
+
+Feature idea (not a promise): **Monthly "members kept" report on WhatsApp**: "This month MettleUp helped bring back 7 members
    = ₹10,500 in fees." Turns the bill into a clear saving. (The "Your growth" page already has the
    data, R-business-growth.)
 
@@ -231,7 +230,7 @@ per customer [M27] (one unverified source), so it must be the owner's own time a
 - Goal: 5 owners who agree to a free set-up.
 
 **Week 3: set-ups and partners**
-- Set up the 5 trial gyms in person; run an "App launch day" in each.
+- Set up the 5 trial gyms in person and train their desk staff if they ask.
 - Meet 3 equipment dealers and 2 supplement distributors; agree the ₹2,000 reward in writing.
 - 20 more visits.
 
