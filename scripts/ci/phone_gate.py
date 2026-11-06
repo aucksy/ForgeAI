@@ -24,6 +24,10 @@ Each phone passes when ONE of these is true:
          (apps/dashboard/e2e-live/**: Playwright code that drives the admin app; never in the APK)
        - apps/mobile/app.json, where every changed line is the "version" line
      (e.g. a unit-test fix, then "bump the version, update PROGRESS", on top of the tested one).
+     R-375 (owner, 6 Nov 2026, option A): phone-test files (apps/mobile/qa/**: Maestro flows and their
+     scripts, never in the APK) may change too, when a PARTIAL run on API 34 on the same phone passed on
+     the release commit itself (the fixed parts, rerun). The journeys accept such a change only when no
+     file they use changed (xj-*, run-journeys*, the shared sub-* flows).
   3. A MANUAL run (workflow_dispatch) with the input skip_phone_gate=true. Tag pushes never skip.
 
 AND (14 Oct 2026) the build check (ci.yml: typecheck + unit tests + silent-catch ratchet) must have
@@ -56,6 +60,9 @@ PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
 # journey tests (Playwright for the admin app).
 PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/", "apps/dashboard/e2e-live/")
 MAX_WALK = 8
+QA_DIR = "apps/mobile/qa/"
+# R-375: what the release run says when a phone-test fix still needs its partial run (kind -> text).
+PARTIAL_NEEDED = {}
 APP_JSON = "apps/mobile/app.json"
 VERSION_LINE = re.compile(r'^\s*"version"\s*:\s*"[^"]*"\s*,?\s*$')
 
@@ -151,8 +158,38 @@ def green_runs(sha, kind):
             and counts(r)]
 
 
+def partial_kind(title):
+    """PURE. Which phone a PARTIAL qa-device.yml run on API 34 proved ("Device QA (partial u344 u15, api 34,
+    profile owner)"), or None. Used only for R-375 below: never on its own."""
+    t = title or ""
+    if "(partial" not in t or "api 34" not in t or journey_run(t):
+        return None
+    return "owner" if "profile owner" in t else "default" if "profile default" in t else None
+
+
+def green_partials(sha, kind):
+    data = api(f"/repos/{REPO}/actions/workflows/{QA_WORKFLOW}/runs?head_sha={sha}&status=success&per_page=50")
+    return [r for r in data.get("workflow_runs", []) if r.get("conclusion") == "success" and r.get("head_sha") == sha
+            and partial_kind(r.get("display_title")) == kind]
+
+
+def is_qa_flow_path(name):
+    """The phone test's own files (Maestro flows, its scripts and sample data). Never built into the APK."""
+    return name.startswith(QA_DIR)
+
+
+def is_journey_flow(name):
+    """A phone-test file the cross-role journeys also use (xj-* flows, their runner and server helper, the
+    shared sub-flows). Changing one needs a fresh journeys run."""
+    base = name.rsplit("/", 1)[-1]
+    return base.startswith(("xj", "run-journeys", "sub-"))
+
+
 def only_paperwork(base, head):
-    """True when base...head changes only release paperwork. Strict: anything unclear is a no."""
+    """True when base...head changes only release paperwork. Strict: anything unclear is a no.
+    R-375 (owner, 6 Nov 2026, option A): when the rest is paperwork and phone-test files (QA_DIR) changed
+    too, the list of those files is returned instead of True; cover() then asks for a green partial run of
+    the fixed parts on the release commit itself."""
     cmp = api(f"/repos/{REPO}/compare/{base}...{head}")
     if cmp.get("status") != "ahead" or not (1 <= (cmp.get("ahead_by") or 0) <= MAX_WALK):
         say(f"tested commit -> tag is not a short straight line (status {cmp.get('status')}, ahead_by {cmp.get('ahead_by')})")
@@ -162,8 +199,13 @@ def only_paperwork(base, head):
         say(f"compare returned {len(files)} files; cannot prove the change is paperwork only")
         return False
     ok = True
+    flows = []
     for f in files:
         name, status = f.get("filename", ""), f.get("status", "")
+        if is_qa_flow_path(name) and (status != "renamed" or is_qa_flow_path(f.get("previous_filename") or "")):
+            say(f"phone-test file: {name} ({status})")
+            flows.append(name)
+            continue
         if status == "renamed" and f.get("previous_filename") and not is_paperwork_path(f["previous_filename"]):
             say(f"NOT paperwork: {name} (renamed from {f['previous_filename']})")
             ok = False
@@ -188,7 +230,7 @@ def only_paperwork(base, head):
             continue
         say(f"NOT paperwork: {name} ({status})")
         ok = False
-    return ok
+    return (flows or True) if ok else False
 
 
 def ci_verdict(runs):
@@ -271,6 +313,9 @@ def main():
     if "journeys" in missing:
         parts.append(f"Run the cross-role journeys on this commit: Actions > '{JOURNEY_WORKFLOW}' > Run workflow "
                      f"on {sha[:12]} (or on the commit before a version-bump-only commit).")
+    for k in phones:
+        if k in PARTIAL_NEEDED:
+            parts.append(f"Or, quicker (R-375): {PARTIAL_NEEDED[k]}.")
     msg = " ".join(parts) + " Then re-run this release."
     print("::error::" + msg, flush=True)
     lines.append(msg)
@@ -301,7 +346,29 @@ def cover(sha, kind):
             continue
         r = prun[0]
         say(f"{kind}: phone test passed on {cur[:12]} ({step} back): run {r['id']} ({r['html_url']}); checking the diff")
-        if only_paperwork(cur, sha):
+        paper = only_paperwork(cur, sha)
+        if isinstance(paper, list):
+            # R-375: only phone-test files changed besides paperwork. The whole run on `cur` still proves the
+            # app; the fixed checks must pass on THIS commit in a partial run on the same phone.
+            if kind == "journeys":
+                hit = [f for f in paper if is_journey_flow(f)]
+                if hit:
+                    say(f"journeys: files the journeys use changed after {cur[:12]} ({', '.join(hit[:5])}); run them again")
+                    return None
+                say(f"journeys: only phone-test files the journeys never use changed after {cur[:12]}")
+                return cur, r
+            parts = green_partials(sha, kind)
+            if parts:
+                p = parts[0]
+                say(f"{kind}: phone-test files changed after {cur[:12]} ({', '.join(paper[:5])}); the partial run "
+                    f"{p['id']} ({p.get('display_title')}) passed on this commit, so the whole run on {cur[:12]} still counts")
+                return cur, r
+            PARTIAL_NEEDED[kind] = (f"phone-test files changed after the whole run on {cur[:12]} ({', '.join(paper[:5])}): "
+                                    f"run '{QA_WORKFLOW}' on {sha[:12]} with `only` = the parts those files belong to, "
+                                    f"`profile` = {kind}")
+            say(f"{kind}: no passing partial run on this commit for the changed phone-test files")
+            return None
+        if paper:
             say(f"{kind}: everything after {cur[:12]} changes only notes, unit tests, CI scripts or the version")
             return cur, r
         say(f"{kind}: the commits after it change the app itself, so that pass does not cover this release")

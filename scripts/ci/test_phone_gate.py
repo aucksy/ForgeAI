@@ -124,5 +124,38 @@ class Gate(unittest.TestCase):
         self.paper = False
         self.assertEqual(pg.main(), 1)
 
+    # R-375 (owner, 6 Nov 2026, option A): a fix to a phone-test file after a whole run needs only a
+    # partial run of the fixed parts on the release commit, on each phone.
+    FLOW = ["apps/mobile/qa/real-workout-w1.yaml"]
+    P_OWNER = "Device QA (partial w, api 34, profile owner)"
+    P_DEFAULT = "Device QA (partial w, api 34, profile default)"
+
+    def test_partial_kind(self):
+        self.assertEqual(pg.partial_kind(self.P_OWNER), "owner")
+        self.assertEqual(pg.partial_kind(self.P_DEFAULT), "default")
+        self.assertIsNone(pg.partial_kind("Device QA (partial w, api 35, profile owner)"))
+        self.assertIsNone(pg.partial_kind(OWNER))
+
+    def test_a_test_fix_is_covered_by_partial_runs_on_the_release_commit(self):
+        self.runs = {"A": [DEFAULT, OWNER, JOURNEYS], "B": [self.P_OWNER, self.P_DEFAULT]}
+        self.paper = self.FLOW
+        self.assertEqual(pg.main(), 0)
+
+    def test_a_test_fix_without_its_partial_run_blocks_and_says_how(self):
+        pg.PARTIAL_NEEDED.clear()
+        self.runs = {"A": [DEFAULT, OWNER, JOURNEYS], "B": [self.P_DEFAULT]}
+        self.paper = self.FLOW
+        self.assertEqual(pg.main(), 1)
+        self.assertTrue(any("R-375" in l and "profile` = owner" in l for l in pg.lines))
+
+    def test_a_shared_sub_flow_change_needs_the_journeys_again(self):
+        self.runs = {"A": [DEFAULT, OWNER, JOURNEYS], "B": [self.P_OWNER, self.P_DEFAULT]}
+        self.paper = ["apps/mobile/qa/sub-find.yaml"]
+        self.assertEqual(pg.main(), 1)
+
+    def test_partial_runs_alone_still_never_count(self):
+        self.runs = {"B": [self.P_OWNER, self.P_DEFAULT, JOURNEYS]}
+        self.assertEqual(pg.main(), 1)
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-375. Fewer full test rounds after a test fix - 6 Nov 2026, morning
+
+He asked: most failures come from how the tests are written, true? The split? I said about 55% test-written faults, 25% cloud faults, 20% real app bugs (the 4 T76 bugs), and the bigger cost is that any test-file fix forces a new 3-hour full round on both phones. Options A (retry cloud faults once; gate accepts the old full round + a green partial run of the fixed parts on the release commit) or B (keep). He said: "Alright lets go with A".
+
+Done: run-device-qa.sh retries a part once when the Maestro driver dies OR does not start (console words checked too; real failed steps never retried); qa-device.yml + qa-journeys.yml install the emulator first with 3 tries; phone_gate.py accepts apps/mobile/qa/** changes after a whole run when a partial run (api 34, same profile) passed on the release commit; journeys must rerun if xj-*, run-journeys* or sub-* files changed. 5 new gate tests (17 pass). My own lesson: before removing a screen or flow, grep every flow that leans on it (f61 needed f59).
+
 ## R-374. Fresh-eyes review before the release (R-335) - 6 Nov 2026, night
 
 A fresh reviewer saw only 24 UAT pictures (member + gym owner roles). Fixed now (cca7107c): protein tip no longer asks "Was today lighter?" under a card that says so; record pop-up keeps "70 kg" together and no line starts with "·".

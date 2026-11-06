@@ -83,6 +83,17 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
+      # R-375 (6 Nov 2026): the emulator runner downloads the emulator itself and gave up on one bad
+      # download ("Error on ZipFile unknown archive", run 42099510423 shard 2-gym-backup). Install it here
+      # first, up to 3 tries, so the runner finds it ready.
+      - name: Install the Android emulator (3 tries)
+        run: |
+          for i in 1 2 3; do
+            sdkmanager --install emulator --channel=0 > /dev/null && exit 0
+            echo "emulator download failed (try $i); waiting 20 s"; sleep 20
+          done
+          echo "::warning::emulator download failed 3 times; the runner will try once more"
+
       - name: Run the cross-role journeys
         uses: reactivecircus/android-emulator-runner@v2
         with:

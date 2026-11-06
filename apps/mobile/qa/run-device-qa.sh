@@ -35,14 +35,28 @@ push_fixture() {
 maestro() {
   local out="" prev="" a rc
   for a in "$@"; do [ "$prev" = "--output" ] && out="$a"; prev="$a"; done
+  local said
+  said=$(mktemp)
   exact_on
-  command maestro "$@"; rc=$?
-  if [ "$rc" -ne 0 ] && [ -n "$out" ] && grep -q "DeviceServerDiedException" "$out" 2>/dev/null \
-     && ! grep -q "Assertion is false\|Element not found" "$out" 2>/dev/null; then
-    log "Maestro's phone driver died before the flow ran ($(basename "$out")); freeing it and running the part once more"
+  # R-375 (6 Nov 2026, owner chose A): the driver can also fail to START ("MaestroDriverStartupException ...
+  # did not start up in time", run 42099510423 part UAT12) and then leaves no junit report, so the console
+  # words are checked too. A real failed step (an assertion, a missing element) is still never retried.
+  # Only `maestro test` is copied: `maestro hierarchy > file 2> file.err` must keep its JSON clean.
+  if [ "$1" = test ]; then
+    command maestro "$@" 2>&1 | tee "$said"; rc=${PIPESTATUS[0]}
+  else
+    command maestro "$@"; rc=$?
+  fi
+  if [ "$rc" -ne 0 ] \
+     && { grep -q "DeviceServerDiedException\|MaestroDriverStartupException" "$said" 2>/dev/null \
+          || { [ -n "$out" ] && grep -q "DeviceServerDiedException" "$out" 2>/dev/null; }; } \
+     && ! grep -q "Assertion is false\|Element not found\|No visible element" "$said" 2>/dev/null \
+     && ! { [ -n "$out" ] && grep -q "Assertion is false\|Element not found" "$out" 2>/dev/null; }; then
+    log "Maestro's phone driver died or did not start before the flow ran ($(basename "${out:-maestro}")); freeing it and running the part once more"
     free_maestro
     command maestro "$@"; rc=$?
   fi
+  rm -f "$said"
   return "$rc"
 }
 # Print how many media-store rows (content://media/external/$4) have $1 in their name, waiting
