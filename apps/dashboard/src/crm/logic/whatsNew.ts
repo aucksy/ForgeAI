@@ -33,6 +33,22 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // T74 (R-356): the home-screen icon preview under the logo. Deployed 6 Nov 2026.
+    id: '2026-11-06',
+    lines: [
+      {
+        text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+      {
+        // T79 (0060 live and admin panel deployed 6 Nov 2026). Online buying, receipts and
+        // plan-end reminders are switched off and are NOT mentioned (R-333).
+        text: 'Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until when your plan is paid.',
+        go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
+      },
+    ],
+  },
+  {
     // R-333 (owner, 5 Nov 2026: "why did I not see any notification for this new functionality?"): the 1-5 Nov
     // deploys went out with no entry. One entry for all of them; only what is live (0053 Ask a trainer is not).
     id: '2026-11-05',
@@ -278,20 +294,4 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // T74 (R-356): the home-screen icon preview under the logo. Not deployed yet: set `id` to the deploy day.
-    id: '2026-11-06',
-    lines: [
-      {
-        text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
-        go: { label: 'Open Branding', path: '/settings/branding' },
-      },
-      {
-        // T79 (0060 live 6 Nov 2026; the admin-panel deploy is still to come). Online buying, receipts and
-        // plan-end reminders are switched off and are NOT mentioned (R-333).
-        text: 'Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until when your plan is paid.',
-        go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
-      },
-    ],
-  },
 ];
