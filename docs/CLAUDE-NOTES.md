@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-382. Fully automatic buying and plan switching; research first, no mistakes - 6 Nov 2026
+He said: anyone on the website buys a plan and can start at once with what they bought; the plan's features switch on or off by themselves, "the whole automated system that all the businesses use". Money is sensitive now: do total research, make no mistakes.
+What I did: research (Indian payment companies for a single person with a savings account, fees, UPI AutoPay limits, how SaaS handles trial, renewal, failed payment, upgrade, downgrade, lapse) and a code check of today's plans, trial and paid-until run first; then a written design for him; then the build. The manual UPI path (R-381) stays as the backup way to pay and goes through the same "apply a payment" step. Payments stay in test mode until he says "payments live". Opening the payment company account (KYC) is his.
+
 ## R-381. He gave the account for gym payments; build "Pay MettleUp" (T79) - 6 Nov 2026
 He sent his UPI ID and bank account in chat (his personal savings account; he asked if that is okay while income is under 20 lakh). He will read the promises (A/B, #92) later: keep asking him under "Needs you" until he answers.
 Rules I set: the UPI ID holds his phone number and this repo is PUBLIC, so the account details NEVER go into git, code, tests or docs. They live only in the live database behind sign-in, added after his yes. The details are in this chat's transcript only.
