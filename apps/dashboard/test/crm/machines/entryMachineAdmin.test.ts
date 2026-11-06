@@ -383,7 +383,7 @@ describe('the nightly sweep', () => {
 
   it('a machine just added: every member who may come in today, nobody removed', () => {
     const out = sweepCommands(members, ms, numbers, TA, null, TODAY);
-    expect(out.map((c) => c.memberNo)).toEqual(['1002', '1003']);
+    expect(out.map((c) => ('memberNo' in c ? c.memberNo : null))).toEqual(['1002', '1003']);
     expect(out.every((c) => c.type === 'upsert_member')).toBe(true);
     // A machine that holds dates also gets the member whose plan starts later, switched off until then.
     const ac = sweepCommands(members, ms, numbers, AC, null, TODAY);
