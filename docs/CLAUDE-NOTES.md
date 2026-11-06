@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-386. Policy-page skill? Is my name required? Apply for production on 9 Nov — 6 Nov 2026
+He asked: find an online skill for writing policy pages; must his name appear, or only the business name? And: "Yes, on
+November 9th, please apply for production access".
+What I did: searched. Only community skills exist (US/EU/Australia focus, none for Indian payment-company rules); not
+installed. Name: a sole proprietorship has no legal name apart from its owner; Razorpay puts his name as the legal name
+with "MettleUp" as the trade name, and the Consumer Protection (E-Commerce) Rules 2020 need a named grievance officer.
+So his name now shows only on the Contact page (legal owner + grievance officer); About and Refund say MettleUp only
+(commit f171ae82). A scheduled task runs on 9 Nov 10:00 to apply for Play production in the simpleapps108 window.
+
 ## R-385. "Continue now: build anything that does not need me" — 6 Nov 2026
 He said (evening, before wrapping up): "you continue those right now - anything that does not need me.. you can build".
 What I do: start billing step 1 now (prices in one place + plan-feature table enforced on the server + lapse states:
