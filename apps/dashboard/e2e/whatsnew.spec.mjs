@@ -48,7 +48,7 @@ test('J149 Notifications bell: counts new updates, opens with a short What is ne
   const news = list.getByRole('region', { name: CARD });
   await expect(news).toContainText('Update of 6 Nov 2026');
   await expect(news).toContainText('Branding');
-  await expect(news).toContainText(/\d+ more changes/);
+  await expect(news).toContainText('Pay MettleUp'); // a 2-line update shows both lines, so no "more changes" count
   await expect(news).toContainText(/\d+ updates since you last looked/);
   await expect(news.getByText('New', { exact: true })).toBeVisible();
   await expectFitsPhone(page, 'with the notifications list open');
