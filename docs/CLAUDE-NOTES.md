@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-383. WhatsApp login codes: Meta set-up done by him; build it with a cost limit - 6 Nov 2026
+He said (pasted): Meta portfolio "Aakash Pahuja's Business" (311148619497419) verified; WhatsApp account "MettleUp" WABA 1007126462431898, number +91 86905 60741, display name approved; template login_code (en, Authentication, copy-code button, 10-min expiry) Active. Check for a permanent system-user token and a payment method first; add a limit per person so nobody can run up the bill.
+Checked in Chrome 6 Nov: NO system user exists, so no permanent token. Payment method: a Mastercard is on the WhatsApp billing account, BUT Meta shows "Business info missing: you need to add business information before you can pay for messages" (legal name, full address, a confirm tick, "business purpose" answer; GST optional). The phone number (ID 1410811765454726) shows status "Pending": it must be registered with the Cloud API (needs the token and a 6-digit PIN). Meta app "MettleUp" id 1118531290784840 exists.
+Done: an agent builds the code-by-WhatsApp sign-in in test mode (switched off until the token is in place), with limits per phone, per IP and a daily cap for all.
+
 ## R-382. Fully automatic buying and plan switching; research first, no mistakes - 6 Nov 2026
 He said: anyone on the website buys a plan and can start at once with what they bought; the plan's features switch on or off by themselves, "the whole automated system that all the businesses use". Money is sensitive now: do total research, make no mistakes.
 What I did: research (Indian payment companies for a single person with a savings account, fees, UPI AutoPay limits, how SaaS handles trial, renewal, failed payment, upgrade, downgrade, lapse) and a code check of today's plans, trial and paid-until run first; then a written design for him; then the build. The manual UPI path (R-381) stays as the backup way to pay and goes through the same "apply a payment" step. Payments stay in test mode until he says "payments live". Opening the payment company account (KYC) is his.
