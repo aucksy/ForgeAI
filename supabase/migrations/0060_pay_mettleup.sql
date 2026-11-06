@@ -63,7 +63,7 @@ set lock_timeout = '3s';
 -- One row at most (id = 1). Empty here: the real values are put in live, never in git.
 create table if not exists public.platform_payment_details (
   id             smallint primary key default 1 check (id = 1),
-  upi_id         text check (upi_id is null or upi_id ~ '^[a-z0-9._-]{2,256}@[a-z][a-z0-9.-]{1,63}$'),
+  upi_id         text check (upi_id is null or upi_id ~ '^[a-z0-9._-]{2,255}@[a-z][a-z0-9.-]{1,63}$'),
   payee_name     text check (payee_name is null or length(payee_name) between 2 and 60),
   account_name   text check (account_name is null or length(account_name) between 2 and 80),
   account_number text check (account_number is null or account_number ~ '^[0-9]{6,20}$'),
@@ -348,7 +348,7 @@ declare
   a text;
 begin
   perform public._hq_guard();
-  if upi is not null and upi !~ '^[a-z0-9._-]{2,256}@[a-z][a-z0-9.-]{1,63}$' then raise exception 'BAD_UPI'; end if;
+  if upi is not null and upi !~ '^[a-z0-9._-]{2,255}@[a-z][a-z0-9.-]{1,63}$' then raise exception 'BAD_UPI'; end if;
   if (payee is not null and length(payee) not between 2 and 60) or (aname is not null and length(aname) not between 2 and 80)
      or (bank is not null and length(bank) not between 2 and 60) then
     raise exception 'BAD_NAME';
