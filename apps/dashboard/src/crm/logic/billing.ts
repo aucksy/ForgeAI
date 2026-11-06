@@ -157,6 +157,10 @@ export const UPGRADE_NOTE = 'You pay only the difference for the days left. Your
 export function scheduledLine(info: BillingInfo): string | null {
   if (!info.scheduled) return null;
   const name = info.scheduled.plan === 'starter' ? 'Starter' : info.scheduled.plan === 'pro' ? 'Pro' : info.scheduled.plan;
+  // Starter bought during the free trial (0063): it starts when the trial ends.
+  if (info.trialEndsAt && Date.parse(info.trialEndsAt) === Date.parse(info.scheduled.from)) {
+    return `${name} starts when your free trial ends on ${payDate(info.scheduled.from)}.`;
+  }
   return `${name} starts when your paid Pro days end on ${payDate(info.scheduled.from)}. No money back for the days left.`;
 }
 

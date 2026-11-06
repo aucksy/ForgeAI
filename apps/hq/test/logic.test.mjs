@@ -6,6 +6,9 @@ import { test } from 'node:test';
 import {
   actionWords,
   ago,
+  checkDoneWords,
+  checkReasonWords,
+  checkWords,
   codeMessage,
   confirmWords,
   daysLeft,
@@ -365,5 +368,24 @@ test('payments in words: the facts, what Confirm will do, and the outcome', () =
   assert.equal(needsTotal({ paymentsWaiting: 2, leadsNew: 1 }), 3);
   assert.equal(actionWords('confirm_payment'), 'Confirmed a gym’s payment');
   assert.equal(errorWords('PAY_NOT_READY'), 'Payments need the database update 0060 (waiting for your yes).');
+  // 0063: during a running free trial the paid month starts when the trial ends.
+  assert.equal(confirmWords({ ...p, gymPaidUntil: null, gymTrialEndsAt: '2026-11-26T12:30:00Z' }, now),
+    'Confirm sets Pro, monthly, paid until 26 Dec 2026 (it starts when the free trial ends on 26 Nov 2026).');
+  assert.equal(confirmWords({ ...p, gymPaidUntil: null, gymTrialEndsAt: '2026-11-01T12:30:00Z' }, now), 'Confirm sets Pro, monthly, paid until 6 Dec 2026.');
+});
+
+test('online payments to check (0064): the facts, why, what was done, and the Needs you line', () => {
+  const c = { provider: 'razorpay', paidPaise: 100, askedPaise: 149900, paidCurrency: 'INR', paymentId: 'pay_TEST1', paidAt: '2026-11-06T06:00:00Z', reason: 'AMOUNT_MISMATCH' };
+  assert.equal(checkWords(c), '₹1 by Razorpay (asked ₹1,499) · payment pay_TEST1 · paid 6 Nov 2026');
+  assert.equal(checkWords({ ...c, paidPaise: 149900, provider: 'cashfree' }), '₹1,499 by Cashfree · payment pay_TEST1 · paid 6 Nov 2026');
+  assert.equal(checkReasonWords('AMOUNT_MISMATCH'), 'the amount paid is not the price we asked for');
+  assert.equal(checkReasonWords('LIFETIME'), 'the gym already has a lifetime plan');
+  assert.equal(checkReasonWords('SOMETHING'), 'it could not be added to the plan');
+  assert.equal(checkDoneWords({ ...c, checkedAt: '2026-11-07T06:00:00Z', checkedHow: 'refunded', checkedBy: 'hq@example.com', checkedNote: 'rfnd_TEST' }),
+    'Refunded 7 Nov 2026 by hq@example.com. Note: rfnd_TEST');
+  assert.deepEqual(needsLines({ paymentsToCheck: 1 }).map((l) => [l.key, l.words, l.href]), [['checks', '1 online payment to check (paid, but not added to a plan)', '#payments']]);
+  assert.equal(needsTotal({ paymentsWaiting: 2, paymentsToCheck: 1 }), 3);
+  assert.equal(actionWords('billing_refunded'), 'Marked an online payment as refunded');
+  assert.equal(errorWords('CHECKS_NOT_READY'), 'Payments to check need the database update 0064 (waiting for your yes).');
 });
 

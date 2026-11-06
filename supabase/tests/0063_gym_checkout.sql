@@ -8,6 +8,7 @@
 do $$
 declare
   g_new uuid; g_up uuid; g_down uuid; g_life uuid; g_rem uuid; g_f1 uuid; g_f2 uuid; s_own uuid; s_dsk uuid;
+  g_tr uuid; g_tr2 uuid; k_tr text := 't63-trial-key'; tr_end timestamptz; tr_pu timestamptz;
   k_a text := 't63-owner-session'; k_desk text := 't63-desk-session'; k_up text := 't63-up-key'; k_down text := 't63-down-key';
   k_life text := 't63-life-key'; k_f1 text := 't63-f1-key'; k_f2 text := 't63-f2-key';
   today_ist date := (now() at time zone 'Asia/Kolkata')::date;
@@ -32,7 +33,15 @@ begin
   update public.gyms set plan = 'pro', billing = 'monthly', paid_until = pu_down where gym_id = g_down;
   update public.gyms set plan = 'pro', billing = 'lifetime', paid_until = null where gym_id = g_life;
   update public.gyms set plan = 'pro', billing = 'monthly', paid_until = pu_rem where gym_id = g_rem;
+  -- These gyms' free trials are over (a running trial is checked in 16).
+  update public.gyms set trial_starts_at = now() - interval '100 days', trial_ends_at = now() - interval '1 day'
+   where gym_id in (g_new, g_up, g_down, g_life, g_rem, g_f1, g_f2);
+  -- Two gyms still on the free trial: it ends in 20 days.
+  tr_end := ((today_ist + 20) + time '18:00:00') at time zone 'Asia/Kolkata';
+  insert into public.gyms(name, join_code, trial_ends_at) values ('T63 Trial', 'T63TR1', tr_end) returning gym_id into g_tr;
+  insert into public.gyms(name, join_code, trial_ends_at) values ('T63 Trial2', 'T63TR2', tr_end) returning gym_id into g_tr2;
   perform set_config('forgeai.hq', 'off', true);
+  insert into public.gym_owner_keys(gym_id, key_hash) values (g_tr, public._hash_key(k_tr));
   insert into public.gym_staff(gym_id, name, phone, role) values (g_new, 'Owner Test', '9876563001', 'owner') returning staff_id into s_own;
   insert into public.gym_staff(gym_id, name, phone, role) values (g_new, 'Desk Test', '9876563002', 'staff') returning staff_id into s_dsk;
   insert into public.gym_sessions(staff_id, key_hash) values (s_own, public._hash_key(k_a)), (s_dsk, public._hash_key(k_desk));
@@ -296,6 +305,44 @@ begin
      or has_table_privilege('authenticated', 'public.gym_receipts', 'select') then
     fails := fails || ' 15';
   end if;
+
+  -- 16. Paid during the free trial: no trial day is lost. The paid month starts when the trial ends, online
+  --     and by HQ's manual confirm alike; Starter bought during the trial starts when the trial ends.
+  tr_pu := public._mettleup_extend(tr_end, 'monthly', now());
+  checks := checks + 1;
+  if public._paid_from(null, tr_end, now()) <> tr_end or public._paid_from(null, now() - interval '1 day', now()) is not null
+     or public._paid_from(tr_end + interval '5 days', tr_end, now()) <> tr_end + interval '5 days'
+     or tr_pu <> (((today_ist + 20) + interval '1 month')::date + time '23:59:59') at time zone 'Asia/Kolkata' then
+    fails := fails || ' 16a:' || tr_pu::text;
+  end if;
+  r := public.hq_billing_checkout_start(k_tr, 'pro', 'monthly', 'razorpay');
+  perform public.hq_billing_checkout_link((r->>'checkoutId')::uuid, 'plink_T63TR', 'https://rzp.io/i/t63tr');
+  r2 := public.hq_billing_paid('razorpay', 'plink_T63TR', 'pay_T63TR1', 149900, 'INR');
+  checks := checks + 1;
+  if not coalesce((r2->>'applied')::boolean, false) or (r2->>'paidUntil')::timestamptz <> tr_pu
+     or (select x.paid_until from public.gyms x where x.gym_id = g_tr) <> tr_pu
+     or (select x.plan from public.gyms x where x.gym_id = g_tr) <> 'pro'
+     or (public.owner_receipt(k_tr, r2->>'receiptNo')->>'periodFrom')::timestamptz <> tr_end then
+    fails := fails || ' 16b:' || r2::text;
+  end if;
+  -- HQ's manual confirm (the 0060 form), Starter during the trial: the trial's Pro features run on, then Starter.
+  r := public.apply_gym_payment(g_tr2, 'starter', 'monthly', 'manual', 'UTR63TRIAL1', 99900);
+  checks := checks + 1;
+  if (r->>'paidUntil')::timestamptz <> tr_pu or r->>'scheduledPlan' <> 'starter'
+     or (select x.plan from public.gyms x where x.gym_id = g_tr2) <> 'pro'
+     or (select pc.from_at from public.gym_plan_changes pc where pc.gym_id = g_tr2) <> tr_end then
+    fails := fails || ' 16c:' || r::text;
+  end if;
+  -- A second Starter month adds paid time; the switch day stays the trial's end.
+  r := public.apply_gym_payment(g_tr2, 'starter', 'monthly', 'manual', 'UTR63TRIAL2', 99900);
+  checks := checks + 1;
+  if (r->>'paidUntil')::timestamptz <> public._mettleup_extend(tr_pu, 'monthly', now())
+     or (select pc.from_at from public.gym_plan_changes pc where pc.gym_id = g_tr2) <> tr_end then
+    fails := fails || ' 16d:' || r::text;
+  end if;
+  r := public.hq_billing_daily(tr_end + interval '1 minute');
+  checks := checks + 1;
+  if (select x.plan from public.gyms x where x.gym_id = g_tr2) <> 'starter' then fails := fails || ' 16e'; end if;
 
   if fails = '' then raise exception 'RESULT PASS (% checks)', checks;
   else raise exception 'RESULT FAIL:%', fails; end if;

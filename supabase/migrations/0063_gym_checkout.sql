@@ -21,7 +21,12 @@
 -- WHAT A GYM CAN BUY (prices from _mettleup_price, 0060 = packages/theme/src/plans.ts; the browser never
 -- sends a price):
 --   renew     Starter or Pro, monthly or yearly: paid-until moves one month / twelve months on from the
---             later of today and the current paid-until (0060 _mettleup_extend).
+--             later of today, the current paid-until and, WHILE THE FREE TRIAL IS STILL RUNNING, the trial's
+--             end (_paid_from, then 0060 _mettleup_extend): a gym that pays during its trial keeps every unused
+--             trial day; the paid month starts when the trial ends. Both ways of paying (online and HQ's
+--             manual confirm) go through apply_gym_payment, so both count it the same way.
+--             Starter bought during the trial: the trial's Pro features run to its end (as plan 'pro'), then
+--             Starter starts (gym_plan_changes, like a downgrade).
 --             Pro (or Pro + AI) still paid for and Starter bought: Pro stays until the paid days end, then
 --             Starter starts (gym_plan_changes; hq_billing_daily switches it). No money back for the days left.
 --   upgrade   Starter with paid days left and Pro asked for: Pro at once, the paid-until stays; the price is
@@ -63,7 +68,7 @@
 --   public.hq_billing_checkout_failed(uuid), public.hq_billing_order(text, text),
 --   public.hq_billing_paid(text, text, text, int, text), public.hq_billing_daily(timestamptz),
 --   public.apply_gym_payment(uuid, text, text, text, text, int, text, text), public._billing_on(),
---   public._upgrade_paise(text, timestamptz, timestamptz), public._founding_open(timestamptz),
+--   public._upgrade_paise(text, timestamptz, timestamptz), public._paid_from(timestamptz, timestamptz, timestamptz), public._founding_open(timestamptz),
 --   public._founding_taken(timestamptz, uuid), public._days_left(timestamptz, timestamptz),
 --   public._ledger_receipt() cascade, public._plan_word(text), public._receipt_json(public.gym_receipts);
 --   drop table public.gym_receipts, public.receipt_counters, public.gym_checkouts, public.gym_plan_changes,
@@ -164,6 +169,14 @@ alter table public.gym_billing_reminders enable row level security;
 revoke all on public.gym_billing_reminders from public, anon, authenticated;
 
 -- ------------------------------------------------------------------ pure helpers (no grants)
+-- Where a new paid month or year starts counting from: the later of the current paid-until and, while the
+-- free trial is still running, the trial's end (unused trial days are never lost). null = from today.
+-- The admin app's copy: paidFrom in apps/dashboard/src/crm/logic/payMettleUp.ts. PURE.
+create or replace function public._paid_from(p_paid_until timestamptz, p_trial_ends_at timestamptz, p_now timestamptz)
+  returns timestamptz language sql immutable set search_path = public as $$
+  select greatest(p_paid_until, case when p_trial_ends_at > p_now then p_trial_ends_at end)
+$$;
+
 create or replace function public._plan_word(p_plan text) returns text
   language sql immutable set search_path = public as $$
   select case p_plan when 'starter' then 'Starter' when 'pro' then 'Pro' when 'ai' then 'Pro + AI' else coalesce(p_plan, '') end
@@ -211,7 +224,7 @@ create or replace function public.apply_gym_payment(p_gym uuid, p_plan text, p_b
     p_reference text, p_amount_paise int, p_actor text, p_kind text)
   returns jsonb language plpgsql volatile security definer set search_path = public as $$
 declare
-  g public.gyms; pu timestamptz; pfrom timestamptz; lid uuid; payref text := btrim(coalesce(p_reference, ''));
+  g public.gyms; pu timestamptz; pfrom timestamptz; base_at timestamptz; dear_end timestamptz; lid uuid; payref text := btrim(coalesce(p_reference, ''));
   pay_kind text := coalesce(p_kind, 'renew'); new_plan text; new_billing text; later boolean := false;
 begin
   perform public._hq_guard();
@@ -232,13 +245,20 @@ begin
   if g.billing = 'lifetime' then raise exception 'LIFETIME'; end if;
 
   if pay_kind = 'renew' then
-    pu := public._mettleup_extend(g.paid_until, p_billing, now());
+    -- Paid during the free trial: the paid time starts when the trial ends (no trial day is lost).
+    base_at := public._paid_from(g.paid_until, g.trial_ends_at, now());
+    pu := public._mettleup_extend(base_at, p_billing, now());
     if pu > now() + interval '3 years' then raise exception 'BAD_DATE'; end if;
-    pfrom := greatest(now(), coalesce(g.paid_until, now()));
+    pfrom := greatest(now(), coalesce(base_at, now()));
     new_plan := p_plan; new_billing := p_billing;
-    -- Starter bought while Pro (or Pro + AI) is still paid for: Pro until those days end, then Starter.
-    if g.plan in ('pro', 'ai') and p_plan = 'starter' and g.paid_until > now() then
-      new_plan := g.plan; later := true;
+    -- Starter bought while Pro (or Pro + AI, or the trial's Pro features: plan null) is still running:
+    -- that runs to its end, then Starter starts. A Starter switch already planned keeps its day (a second
+    -- Starter payment adds paid time; it does not push the switch later).
+    dear_end := coalesce((select pc.from_at from public.gym_plan_changes pc where pc.gym_id = p_gym and pc.plan = 'starter'),
+                         case when g.plan is null or g.plan in ('pro', 'ai') then base_at end);
+    -- (A gym with a plan must have one, 0030: the trial's Pro features are kept as plan 'pro' until then.)
+    if p_plan = 'starter' and g.plan is distinct from 'starter' and dear_end > now() then
+      new_plan := coalesce(g.plan, 'pro'); later := true;
     end if;
   elsif pay_kind = 'founding' then
     pu := null; pfrom := now(); new_plan := 'pro'; new_billing := 'lifetime';
@@ -257,7 +277,7 @@ begin
   update public.gyms set plan = new_plan, billing = new_billing, paid_until = pu where gym_id = p_gym;
   perform set_config('forgeai.hq', 'off', true);  -- only for this one write
   if later then
-    insert into public.gym_plan_changes(gym_id, plan, from_at, ledger_id) values (p_gym, 'starter', g.paid_until, lid)
+    insert into public.gym_plan_changes(gym_id, plan, from_at, ledger_id) values (p_gym, 'starter', dear_end, lid)
       on conflict (gym_id) do update set plan = excluded.plan, from_at = excluded.from_at, ledger_id = excluded.ledger_id,
                                          created_at = now();
   else
@@ -389,7 +409,9 @@ begin
   else
     pay_kind := 'renew';
     amt := public._mettleup_price(pay_plan, pay_billing);
-    if public._mettleup_extend(g.paid_until, pay_billing, p_now) > p_now + interval '3 years' then raise exception 'BAD_DATE'; end if;
+    if public._mettleup_extend(public._paid_from(g.paid_until, g.trial_ends_at, p_now), pay_billing, p_now) > p_now + interval '3 years' then
+      raise exception 'BAD_DATE';
+    end if;
     what := 'MettleUp ' || public._plan_word(pay_plan) || ', ' || case when pay_billing = 'yearly' then '12 months' else '1 month' end;
   end if;
   if amt is null or amt < 100 then raise exception 'BAD_PLAN'; end if;
@@ -528,6 +550,7 @@ end $$;
 -- ------------------------------------------------------------------ grants
 revoke all on function public._billing_on()                                         from public, anon, authenticated;
 revoke all on function public._plan_word(text)                                      from public, anon, authenticated;
+revoke all on function public._paid_from(timestamptz, timestamptz, timestamptz)     from public, anon, authenticated;
 revoke all on function public._days_left(timestamptz, timestamptz)                  from public, anon, authenticated;
 revoke all on function public._upgrade_paise(text, timestamptz, timestamptz)        from public, anon, authenticated;
 revoke all on function public._founding_open(timestamptz)                           from public, anon, authenticated;

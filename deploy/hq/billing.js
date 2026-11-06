@@ -12,6 +12,10 @@
 //   POST /billing/hook/razorpay   Razorpay webhook (X-Razorpay-Signature = hex HMAC-SHA256(raw body, secret))
 //   POST /billing/hook/cashfree   Cashfree webhook (x-webhook-signature = base64 HMAC-SHA256(timestamp + raw body))
 //   nightly (worker.js scheduled) runBillingDaily: due downgrades + plan-end reminders (messages: a stub, off)
+//   nightly, its own Cron Trigger (worker.js BILLING_CRON) runBillingReconcile: asks the company about every
+//     link we opened in the last 48 hours that is still open here; one it says is paid goes through
+//     hq_billing_paid, the same single path as the webhook (0064; a payment already applied is a harmless
+//     duplicate). Catches a webhook that never arrived.
 //
 // SETTINGS (none exist yet; while any is missing every route answers 503 NOT_SET_UP and does nothing):
 //   var    BILLING                 "test" switches this on (test mode). Unset or anything else = off.
@@ -24,7 +28,10 @@
 //   secret CASHFREE_APP_ID         MettleUp's own Cashfree TEST app id (sandbox)
 //   secret CASHFREE_SECRET_KEY     its secret key (also signs Cashfree's webhooks; a _prod_ key is refused)
 //   secret SUPABASE_HQ_KEY         already there (HQ's server key)
-//   var    BILLING_MESSAGES        "on" would send plan-end reminders by WhatsApp/SMS: NOT BUILT, a stub that
+//   var    BILLING_RECONCILE_MAX   optional: at most this many links asked about per night (default 20 for
+//                                  Razorpay, 10 for Cashfree, which needs 3 calls a link; the free plan allows
+//                                  50 calls per run). The oldest open links go first.
+//   var    BILLING_MESSAGES       "on" would send plan-end reminders by WhatsApp/SMS: NOT BUILT, a stub that
 //                                  sends nothing either way. The admin app shows its own reminder.
 // And the database's own switch: app_config 'billing_checkout' (0063), off.
 //
@@ -121,6 +128,14 @@ export const BILLING_PROVIDERS = {
       if (r.status !== 200 || !r.body.id || !r.body.short_url) return { error: 'LINK_REFUSED' };
       return { linkId: str(r.body.id), url: str(r.body.short_url) };
     },
+    /** The nightly check: what Razorpay says about one of our links. -> readRazorpayLink's answer | {error}. */
+    async fetchPaid(env, linkId, f = fetch) {
+      const auth = `Basic ${btoa(`${str(env.RAZORPAY_KEY_ID).trim()}:${str(env.RAZORPAY_KEY_SECRET).trim()}`)}`;
+      const r = await companyCall(f, `${RZP}/payment_links/${encodeURIComponent(linkId)}`, { headers: { Authorization: auth } });
+      if (r.status === 0 || r.status >= 500) return { error: 'UNREACHABLE' };
+      if (r.status !== 200) return { error: 'REFUSED' };
+      return readRazorpayLink(r.body);
+    },
     async verify(env, raw, headers) {
       const got = str(headers.get('x-razorpay-signature'));
       const secret = str(env.RAZORPAY_WEBHOOK_SECRET);
@@ -165,6 +180,35 @@ export const BILLING_PROVIDERS = {
       if (r.status !== 200 || !r.body.link_url) return { error: 'LINK_REFUSED' };
       return { linkId: str(r.body.link_id || body.link_id), url: str(r.body.link_url) };
     },
+    /** The nightly check: the link, then its paid order, then that order's successful payment (the same id the
+     *  webhook sends as transaction_id). Up to 3 calls. -> readCashfreeLink's answer | {error}. */
+    async fetchPaid(env, linkId, f = fetch) {
+      const headers = {
+        'x-api-version': CF_VERSION,
+        'x-client-id': str(env.CASHFREE_APP_ID).trim(),
+        'x-client-secret': str(env.CASHFREE_SECRET_KEY).trim(),
+      };
+      const get = async (path) => {
+        const r = await companyCall(f, `${CF}${path}`, { headers });
+        if (r.status === 0 || r.status >= 500) return { error: 'UNREACHABLE' };
+        if (r.status !== 200) return { error: 'REFUSED' };
+        return { body: r.body };
+      };
+      const link = await get(`/links/${encodeURIComponent(linkId)}`);
+      if (link.error) return link;
+      if (str(link.body && link.body.link_status).toUpperCase() !== 'PAID') return readCashfreeLink(link.body, [], []);
+      const orders = await get(`/links/${encodeURIComponent(linkId)}/orders`);
+      if (orders.error) return orders;
+      const list = Array.isArray(orders.body) ? orders.body : [];
+      const order = list.find((o) => str(o && o.order_status).toUpperCase() === 'PAID');
+      let pays = [];
+      if (order && order.order_id) {
+        const p = await get(`/orders/${encodeURIComponent(str(order.order_id))}/payments`);
+        if (p.error) return p;
+        pays = Array.isArray(p.body) ? p.body : [];
+      }
+      return readCashfreeLink(link.body, list, pays);
+    },
     async verify(env, raw, headers) {
       const got = str(headers.get('x-webhook-signature'));
       const ts = str(headers.get('x-webhook-timestamp'));
@@ -187,6 +231,37 @@ export const BILLING_PROVIDERS = {
     },
   },
 };
+
+/**
+ * Razorpay's answer for one payment link (GET /v1/payment_links/:id), in the webhook's shape. Paid only when
+ * the link says "paid" AND one of its payments was captured. PURE.
+ * -> {paid: true, paymentId, amountPaise, currency} | {paid: false}
+ */
+export function readRazorpayLink(body) {
+  const b = body || {};
+  if (str(b.status).toLowerCase() !== 'paid') return { paid: false };
+  const pays = Array.isArray(b.payments) ? b.payments : [];
+  const pay = pays.find((p) => str(p && p.status).toLowerCase() === 'captured');
+  if (!pay || !str(pay.payment_id)) return { paid: false };
+  const amount = Number(b.amount_paid != null ? b.amount_paid : pay.amount);
+  return { paid: true, paymentId: str(pay.payment_id), amountPaise: amount, currency: str(b.currency).toUpperCase() };
+}
+
+/**
+ * Cashfree's answer for one link (the link, its orders, the paid order's payments), in the webhook's shape:
+ * the payment id is the successful payment's cf_payment_id (the webhook's transaction_id), else the order id,
+ * as the webhook falls back to. PURE. -> {paid: true, paymentId, amountPaise, currency} | {paid: false}
+ */
+export function readCashfreeLink(link, orders, payments) {
+  const l = link || {};
+  if (str(l.link_status).toUpperCase() !== 'PAID') return { paid: false };
+  const order = (Array.isArray(orders) ? orders : []).find((o) => str(o && o.order_status).toUpperCase() === 'PAID');
+  if (!order) return { paid: false };
+  const pay = (Array.isArray(payments) ? payments : []).find((p) => str(p && p.payment_status).toUpperCase() === 'SUCCESS');
+  const paymentId = str((pay && pay.cf_payment_id) || order.order_id);
+  if (!paymentId) return { paid: false };
+  return { paid: true, paymentId, amountPaise: Math.round(Number(l.link_amount_paid) * 100), currency: str(l.link_currency).toUpperCase() };
+}
 
 /**
  * Does the paid amount and currency match what we asked for? Whole paise, INR only. PURE.
@@ -347,4 +422,72 @@ export async function runBillingDaily(env, { fetchImpl = fetch, call = rpc } = {
     console.error('[billing-cron] failed', code);
     return { error: code };
   }
+}
+
+// ------------------------------------------------------------------------------ nightly reconciliation (0064)
+
+/** How many links one night asks about: the free plan allows 50 calls per run. PURE. */
+export function reconcileLimit(env, provider) {
+  const own = Number(env && env.BILLING_RECONCILE_MAX);
+  const top = provider === 'cashfree' ? 10 : 20;
+  return Number.isInteger(own) && own > 0 ? Math.min(own, top) : top;
+}
+
+/**
+ * The nightly check for webhooks that never came (0064). Asks the payment company about every link opened in
+ * the last 48 hours that is still open in the database; a paid one goes through hq_billing_paid, the same one
+ * path the webhook takes (it checks the amount again, applies once, and keeps a wrong amount for HQ's
+ * "Payments to check"). Off unless online buying is set up (billingSettings): with keys missing it asks
+ * nobody and changes nothing. Never throws.
+ * -> {asked, paid, applied, duplicate, kept, unpaid, failed} | {skipped} | {error}
+ */
+export async function runBillingReconcile(env, { fetchImpl = fetch, call = rpc } = {}) {
+  const s = billingSettings(env);
+  if (!s.on) return { skipped: 'not set up' };
+  let rows;
+  try {
+    rows = await call(env, 'hq_billing_open_links', { p_provider: s.provider, p_hours: 48 }, { fetchImpl });
+  } catch (e) {
+    const code = e instanceof DbError ? e.code : 'UNKNOWN';
+    if (code === 'NOT_READY') return { skipped: 'migration 0064 not applied' };
+    console.error('[billing-reconcile] open links not read', code);
+    return { error: code };
+  }
+  const list = (Array.isArray(rows) ? rows : []).filter((r) => r && str(r.linkId)).slice(0, reconcileLimit(env, s.provider));
+  const out = { asked: 0, paid: 0, applied: 0, duplicate: 0, kept: 0, unpaid: 0, failed: 0 };
+  for (const row of list) {
+    out.asked += 1;
+    let got;
+    try {
+      got = await BILLING_PROVIDERS[s.provider].fetchPaid(env, str(row.linkId), fetchImpl);
+    } catch {
+      got = { error: 'UNKNOWN' };
+    }
+    if (got.error) {
+      out.failed += 1;
+      continue;
+    }
+    if (!got.paid) {
+      out.unpaid += 1;
+      continue;
+    }
+    out.paid += 1;
+    try {
+      const r = await call(env, 'hq_billing_paid', {
+        p_provider: s.provider,
+        p_link_id: str(row.linkId),
+        p_payment_id: got.paymentId,
+        p_amount_paise: Number.isFinite(got.amountPaise) ? Math.round(got.amountPaise) : null,
+        p_currency: got.currency,
+      }, { fetchImpl });
+      if (r && r.duplicate) out.duplicate += 1;
+      else if (r && r.error) out.kept += 1;
+      else out.applied += 1;
+    } catch (e) {
+      out.failed += 1;
+      console.error('[billing-reconcile] payment not applied', e instanceof DbError ? e.code : 'UNKNOWN');
+    }
+  }
+  console.log('[billing-reconcile]', JSON.stringify(out));
+  return out;
 }

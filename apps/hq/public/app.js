@@ -37,6 +37,10 @@ import {
   needsTotal,
   NOT_CHECKED_WORDS,
   PAY_STATUS_CHOICES,
+  CHECK_LIST_CHOICES,
+  checkDoneWords,
+  checkReasonWords,
+  checkWords,
   confirmWords,
   outcomeWords,
   paymentWords,
@@ -943,14 +947,62 @@ async function paymentsPage(status = 'pending') {
   const pick = select(PAY_STATUS_CHOICES, d.status);
   pick.addEventListener('change', () => void paymentsPage(pick.value).catch((e) => fail(main, e)));
   const detailsBox = h('div', { class: 'card' }, h('h2', {}, 'Your payment details'), h('p', { class: 'muted' }, 'Loading…'));
+  const checksBox = h('div', { class: 'card' }, h('h2', {}, 'Online payments to check'), h('p', { class: 'muted' }, 'Loading…'));
   show(
     h('h1', {}, 'Payments'),
+    checksBox,
     h('p', { class: 'muted' }, 'What gym owners say they paid MettleUp. Find the payment in your bank or UPI app by its reference number and amount, then confirm it. Nothing is locked for a gym while a payment waits.'),
     field('Show', pick),
     d.rows.length ? h('div', { class: 'stack' }, d.rows.map((p) => paymentCard(p, d.status))) : h('p', {}, d.status === 'pending' ? 'No payments waiting.' : 'None.'),
     detailsBox,
   );
   void payDetailsCard(detailsBox);
+  void checksCard(checksBox);
+}
+
+// 0064: money the payment company took that did not become a plan (the amount was not the price we asked
+// for, or the gym changed in between). Refund it in the company's dashboard, or set the plan by hand on the
+// gym's page, then mark it here with a note (one line in the Log).
+async function checksCard(box, which = 'open') {
+  let d;
+  try {
+    d = await api(`/api/billing-checks?which=${encodeURIComponent(which)}`);
+  } catch (e) {
+    if (e instanceof HqError && e.code === 'CHECKS_NOT_READY') {
+      box.replaceChildren(h('h2', {}, 'Online payments to check'), note(errorWords('CHECKS_NOT_READY'), 'warn'));
+      return;
+    }
+    fail(box, e);
+    return;
+  }
+  const pick = select(CHECK_LIST_CHOICES, d.which);
+  pick.addEventListener('change', () => void checksCard(box, pick.value));
+  box.replaceChildren(
+    h('h2', {}, 'Online payments to check'),
+    h('p', { class: 'muted' }, 'Money a gym paid online that did not become a plan. Refund it in the payment company’s dashboard, or set the plan by hand on the gym’s page. Then mark it here with a note.'),
+    field('Show', pick),
+    d.rows.length
+      ? h('div', { class: 'stack' }, d.rows.map((c) => checkCard(c, () => checksCard(box, d.which))))
+      : h('p', {}, d.which === 'open' ? 'Nothing to check.' : 'None.'));
+}
+
+function checkCard(c, reload) {
+  const out = h('div');
+  const noteBox = h('input', { maxlength: '300', placeholder: 'Note for the log: the refund id, or the plan you set' });
+  const mark = (how, label, sure) => action(label, async () => {
+    await api('/api/billing-checks/done', { id: c.id, how, note: noteBox.value });
+    await reload();
+  }, { out, sure });
+  return h('div', { class: 'card' },
+    h('p', {}, h('strong', {}, c.gymName || 'Gym'), c.gymCode ? ` · ${c.gymCode}` : '', c.gymId ? [' · ', h('a', { href: `#gym/${c.gymId}` }, 'Open gym')] : null),
+    h('p', {}, checkWords(c)),
+    h('p', { class: 'muted' }, `Not added to a plan: ${checkReasonWords(c.reason)}.`),
+    c.checkedAt
+      ? h('p', { class: 'muted' }, checkDoneWords(c))
+      : h('div', { class: 'row wrap' }, noteBox,
+          mark('refunded', 'Mark refunded', 'Only mark it when the money has been sent back. Go ahead?'),
+          mark('applied_by_hand', 'Mark added by hand', 'Only mark it when you have set the gym’s plan yourself. Go ahead?')),
+    out);
 }
 
 function paymentCard(p, status) {

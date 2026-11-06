@@ -68,6 +68,18 @@ const moment = (v) => (typeof v === 'string' && v.length <= 40 && !Number.isNaN(
 const plansReady = (g) => Boolean(g) && typeof g === 'object' && Object.prototype.hasOwnProperty.call(g, 'trialEndsAt');
 const PLANS = ['starter', 'pro', 'ai'];
 const PAY_STATUSES = ['pending', 'confirmed', 'rejected', 'all'];
+const CHECK_LISTS = ['open', 'done', 'all'];
+const CHECK_HOWS = ['refunded', 'applied_by_hand'];
+
+/** A 0064 call; before 0064 is applied the page gets CHECKS_NOT_READY. */
+async function checksDb(run) {
+  try {
+    return await run();
+  } catch (e) {
+    if (e instanceof DbError && e.code === 'NOT_READY') throw new DbError('CHECKS_NOT_READY', 503);
+    throw e;
+  }
+}
 
 /** A 0060 call; before 0060 is applied the page gets PAY_NOT_READY ("needs the database update"). */
 async function payDb(run) {
@@ -187,12 +199,21 @@ export async function handleApi(request, env, who, deps = {}) {
       } catch (e) {
         if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments not readable', e instanceof Error ? e.message : 'error');
       }
+      // 0064: online payments taken but not applied (a count only; null before 0064 or on a failure).
+      let paymentsToCheck = null;
+      try {
+        const n = await db('hq_billing_checks_waiting', {});
+        paymentsToCheck = typeof n === 'number' ? n : null;
+      } catch (e) {
+        if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments to check not readable', e instanceof Error ? e.message : 'error');
+      }
       return json(200, {
         leadsNew: web ? web.leadsNew : null,
         feedbackNew: web ? web.feedbackNew : null,
         helpNeedsReply: web ? web.helpNeedsReply : null,
         gymsNew,
         paymentsWaiting,
+        paymentsToCheck,
       });
     }
 
@@ -200,6 +221,12 @@ export async function handleApi(request, env, who, deps = {}) {
     if (route === 'GET /api/payments') {
       const status = PAY_STATUSES.includes(q.get('status')) ? q.get('status') : 'pending';
       return json(200, { status, rows: await payDb(() => db('hq_mettleup_payments', { p_status: status })) });
+    }
+
+    // 0064: online payments the company took that did not become a plan (wrong amount, the gym changed).
+    if (route === 'GET /api/billing-checks') {
+      const which = CHECK_LISTS.includes(q.get('which')) ? q.get('which') : 'open';
+      return json(200, { which, rows: await checksDb(() => db('hq_billing_checks', { p_which: which })) });
     }
 
     // T79: MettleUp's own payment details (UPI ID, bank account), shown to gym owners on Pay MettleUp.
@@ -341,6 +368,12 @@ export async function handleApi(request, env, who, deps = {}) {
     if (route === 'POST /api/payments/confirm') {
       if (!isUuid(b.paymentId)) return refuse('BAD_REQUEST');
       return json(200, await payDb(() => db('hq_confirm_mettleup_payment', { p_payment: b.paymentId, p_note: text(b.note, 500) || null })));
+    }
+
+    // 0064: HQ marks a payment to check as refunded or applied by hand (one audit row, with the note).
+    if (route === 'POST /api/billing-checks/done') {
+      if (!isUuid(b.id) || !CHECK_HOWS.includes(b.how)) return refuse('BAD_REQUEST');
+      return json(200, await checksDb(() => db('hq_billing_check_done', { p_checkout: b.id, p_how: b.how, p_note: text(b.note, 500) })));
     }
 
     if (route === 'POST /api/payments/reject') {

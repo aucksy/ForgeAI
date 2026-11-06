@@ -69,3 +69,22 @@ Data is never deleted.
   Today (only when the switch is on). Reminders by WhatsApp/SMS: a stub that sends nothing.
 - To switch on in test mode: HQ var `BILLING` = `test`, `BILLING_PROVIDER`, the test keys as Worker secrets
   (listed in `deploy/hq/wrangler.jsonc`), 0063 applied, the switch row on, the legal name row filled.
+
+## Gaps closed (6 Nov 2026, NOT applied, switched off)
+
+- **No trial day is lost.** A gym that pays during its free trial gets its paid month or year counted from the
+  day the trial ends, not the day it pays. Same for "Pay online" and for HQ's manual UPI confirm (both go
+  through `apply_gym_payment`; helper `_paid_from` in `0063_gym_checkout.sql`). Starter bought during the
+  trial: the trial's Pro features run to its end, then Starter starts. Founding (for life) is unchanged.
+  The owner sees the real dates before paying: "Your paid plan starts when your free trial ends on <date> and
+  runs until <date>." (admin app `trialStartLine`). HQ's Confirm line says the same.
+- **Payments to check.** Money the company took that did not become a plan (wrong amount, or the gym changed
+  in between) is listed in HQ (Payments page, "Online payments to check", and a "Needs you" line): gym, amount
+  paid and asked, reason, date, payment id. HQ refunds it in the company's dashboard (or sets the plan by
+  hand), then marks it "refunded" or "added by hand" with a note; each mark is one line in HQ's log.
+  `supabase/migrations/0064_billing_checks.sql`.
+- **Nightly check for missed webhooks.** HQ Worker cron `15 22 * * *` (03:45 India time) asks the company
+  about every link we opened in the last 48 hours that is still open; a paid one goes through
+  `hq_billing_paid`, the same path as the webhook, so a duplicate changes nothing (`runBillingReconcile` in
+  `deploy/hq/billing.js`). Off unless `BILLING` is set and the keys exist. At most 20 links a night (10 for
+  Cashfree) to stay inside the free plan's 50 calls per run.

@@ -22,7 +22,7 @@ import {
   runPush,
   signedJwt,
 } from './push.js';
-import { cronJob, NIGHTLY_CRON } from './worker.js';
+import { BILLING_CRON, cronJob, NIGHTLY_CRON } from './worker.js';
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
 const PEM = privateKey.export({ type: 'pkcs8', format: 'pem' });
@@ -357,4 +357,5 @@ test('sendOne sends one pop-up now, and says when there is no key', async () => 
 test('the nightly cron still runs the clean-up; the minute one sends pop-ups', () => {
   assert.equal(cronJob(NIGHTLY_CRON), 'nightly');
   assert.equal(cronJob('* * * * *'), 'push');
+  assert.equal(cronJob(BILLING_CRON), 'billing');
 });

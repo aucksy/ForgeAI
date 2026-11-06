@@ -92,6 +92,9 @@ describe('buttons and lines', () => {
     const b = billingFromRow({ ...base, scheduled: { plan: 'starter', from: '2026-12-09T23:59:59+05:30' } });
     expect(scheduledLine(b)).toBe('Starter starts when your paid Pro days end on 9 Dec 2026. No money back for the days left.');
     expect(scheduledLine(billingFromRow(base))).toBeNull();
+    // Starter bought during the free trial (0063): it starts when the trial ends.
+    const tr = billingFromRow({ ...base, trialEndsAt: '2027-02-06T18:00:00+05:30', scheduled: { plan: 'starter', from: '2027-02-06T18:00:00+05:30' } });
+    expect(scheduledLine(tr)).toBe('Starter starts when your free trial ends on 6 Feb 2027.');
     expect(downgradeNote(billingFromRow(base))).toContain('No money back for the days left.');
     expect(downgradeNote(billingFromRow({ ...base, plan: 'starter' }))).toBeNull();
   });

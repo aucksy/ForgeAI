@@ -250,3 +250,60 @@ export function payErrorWords(err: unknown): string | null {
   if (/\bOWNER_ONLY\b/.test(t)) return 'Only the gym owner can pay MettleUp.';
   return null;
 }
+
+// ---------------------------------------------------------------- paying during the free trial (0063)
+
+/** "2026-11-06": the India day of a moment. PURE. */
+function indiaDay(ms: number): string {
+  return new Date(ms + 330 * 60000).toISOString().slice(0, 10);
+}
+
+/**
+ * Where a new paid month or year starts counting from, as the server counts it (0063 _paid_from): the later
+ * of the current paid-until and, while the free trial is still running, the trial's end. null = from today.
+ * PURE.
+ */
+export function paidFrom(paidUntil: string | null, trialEndsAt: string | null, nowMs: number): string | null {
+  const pu = paidUntil && !Number.isNaN(Date.parse(paidUntil)) ? Date.parse(paidUntil) : null;
+  const te = trialEndsAt && !Number.isNaN(Date.parse(trialEndsAt)) && Date.parse(trialEndsAt) > nowMs ? Date.parse(trialEndsAt) : null;
+  if (pu === null && te === null) return null;
+  return new Date(Math.max(pu ?? -Infinity, te ?? -Infinity)).toISOString();
+}
+
+/**
+ * The paid-until after one payment, as the server counts it (0060 _mettleup_extend): from the later of today
+ * and `from` (India days), 1 or 12 months on (31 Jan + 1 month = 28/29 Feb), to the end of that India day.
+ * PURE.
+ */
+export function paidUntilAfter(from: string | null, billing: PayBilling, nowMs: number): string {
+  const today = indiaDay(nowMs);
+  const fromDay = from && !Number.isNaN(Date.parse(from)) ? indiaDay(Date.parse(from)) : today;
+  const base = fromDay > today ? fromDay : today;
+  const [y, m, d] = base.split('-').map(Number);
+  const month = m - 1 + (billing === 'yearly' ? 12 : 1);
+  const last = new Date(Date.UTC(y, month + 1, 0)).getUTCDate();
+  const day = new Date(Date.UTC(y, month, Math.min(d, last))).toISOString().slice(0, 10);
+  return new Date(`${day}T23:59:59+05:30`).toISOString();
+}
+
+/**
+ * The line the owner reads before paying during the free trial: no trial day is lost, the paid plan starts
+ * when the trial ends. null when the trial is over (or already paid past its end). One billing:
+ *   "Your paid plan starts when your free trial ends on 6 Feb 2027 and runs until 6 Mar 2027."
+ * Both (the "Pay online" buttons):
+ *   "... and runs until 6 Mar 2027 (1 month) or 6 Feb 2028 (1 year)." PURE.
+ */
+export function trialStartLine(
+  o: { paidUntil: string | null; trialEndsAt: string | null; billing?: string | null },
+  billing: PayBilling | 'both',
+  nowMs: number,
+): string | null {
+  if (o.billing === 'lifetime' || !o.trialEndsAt) return null;
+  const from = paidFrom(o.paidUntil, o.trialEndsAt, nowMs);
+  if (!from || from !== new Date(Date.parse(o.trialEndsAt)).toISOString()) return null;
+  const start = `Your paid plan starts when your free trial ends on ${payDate(o.trialEndsAt)}`;
+  if (billing === 'both') {
+    return `${start} and runs until ${payDate(paidUntilAfter(from, 'monthly', nowMs))} (1 month) or ${payDate(paidUntilAfter(from, 'yearly', nowMs))} (1 year).`;
+  }
+  return `${start} and runs until ${payDate(paidUntilAfter(from, billing, nowMs))}.`;
+}

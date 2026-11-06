@@ -4,7 +4,18 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { test } from 'node:test';
 
-import { BILLING_PROVIDERS, billingSettings, handleBilling, orderMismatch, runBillingDaily, sendRenewalMessage } from './billing.js';
+import {
+  BILLING_PROVIDERS,
+  billingSettings,
+  handleBilling,
+  orderMismatch,
+  readCashfreeLink,
+  readRazorpayLink,
+  reconcileLimit,
+  runBillingDaily,
+  runBillingReconcile,
+  sendRenewalMessage,
+} from './billing.js';
 import { DbError } from './db.js';
 
 const RZP_HOOK_SECRET = 'made-up-webhook-secret-123';
@@ -293,4 +304,144 @@ test('nightly billing: off = nothing asked; before 0063 = skipped quietly; messa
   assert.deepEqual(out, { downgraded: 1, reminders: 2, sent: 0 });
   assert.equal(sendRenewalMessage({}, { daysBefore: 3 }).sent, false);
   assert.equal(sendRenewalMessage({ BILLING_MESSAGES: 'on' }, { daysBefore: 3 }).link, 'https://app.mettleup.fit/#/settings/mettleup');
+});
+
+// ---------------------------------------------------------------- nightly reconciliation (0064)
+
+test('a Razorpay link counts as paid only when it says paid and a payment was captured', () => {
+  assert.deepEqual(
+    readRazorpayLink({ status: 'paid', amount_paid: 149900, currency: 'inr', payments: [{ payment_id: 'pay_F1', amount: 149900, status: 'failed' }, { payment_id: 'pay_OK1', amount: 149900, status: 'captured' }] }),
+    { paid: true, paymentId: 'pay_OK1', amountPaise: 149900, currency: 'INR' },
+  );
+  assert.deepEqual(readRazorpayLink({ status: 'created', payments: [] }), { paid: false });
+  assert.deepEqual(readRazorpayLink({ status: 'paid', payments: [{ payment_id: 'pay_F1', status: 'failed' }] }), { paid: false });
+  assert.deepEqual(readRazorpayLink(null), { paid: false });
+  // The amount actually paid goes to the database (it compares it with what we asked for).
+  assert.equal(readRazorpayLink({ status: 'paid', amount_paid: 100, currency: 'INR', payments: [{ payment_id: 'pay_X', status: 'captured', amount: 100 }] }).amountPaise, 100);
+});
+
+test('a Cashfree link: the paid order and its successful payment id (the webhook sends the same id)', () => {
+  const link = { link_status: 'PAID', link_amount_paid: 1499, link_currency: 'INR' };
+  assert.deepEqual(
+    readCashfreeLink(link, [{ order_id: 'o1', order_status: 'ACTIVE' }, { order_id: 'o2', order_status: 'PAID' }], [{ cf_payment_id: 5550001, payment_status: 'SUCCESS' }]),
+    { paid: true, paymentId: '5550001', amountPaise: 149900, currency: 'INR' },
+  );
+  assert.equal(readCashfreeLink(link, [{ order_id: 'o2', order_status: 'PAID' }], []).paymentId, 'o2');
+  assert.deepEqual(readCashfreeLink({ link_status: 'ACTIVE' }, [], []), { paid: false });
+  assert.deepEqual(readCashfreeLink(link, [{ order_id: 'o1', order_status: 'ACTIVE' }], []), { paid: false });
+});
+
+test('reconciliation is off without the settings: it asks nobody and changes nothing', async () => {
+  let asked = 0;
+  const f = async () => {
+    asked += 1;
+    return new Response('{}');
+  };
+  const call = async () => {
+    asked += 1;
+  };
+  assert.deepEqual(await runBillingReconcile({}, { fetchImpl: f, call }), { skipped: 'not set up' });
+  assert.deepEqual(await runBillingReconcile({ ...ENV_RZP, RAZORPAY_KEY_SECRET: '' }, { fetchImpl: f, call }), { skipped: 'not set up' });
+  assert.equal(asked, 0);
+  assert.deepEqual(
+    await runBillingReconcile(ENV_RZP, { fetchImpl: f, call: async () => { throw new DbError('NOT_READY', 400); } }),
+    { skipped: 'migration 0064 not applied' },
+  );
+});
+
+/** Fake Razorpay: each link id -> its GET /payment_links/:id answer (or an HTTP status number). */
+function fakeRazorpay(links) {
+  const seen = [];
+  async function f(url, init) {
+    const id = decodeURIComponent(String(url).split('/payment_links/')[1] || '');
+    seen.push({ id, auth: init && init.headers && init.headers.Authorization });
+    const v = links[id];
+    if (typeof v === 'number') return new Response('{}', { status: v });
+    if (!v) return new Response('{"error":{}}', { status: 404 });
+    return new Response(JSON.stringify(v), { status: 200 });
+  }
+  return { f, seen };
+}
+
+test('reconciliation applies a paid link the webhook missed, through hq_billing_paid; duplicates are harmless', async () => {
+  const applied = new Set();
+  const calls = [];
+  const call = async (_env, fn, args) => {
+    calls.push({ fn, args });
+    if (fn === 'hq_billing_open_links') {
+      assert.equal(args.p_provider, 'razorpay');
+      assert.equal(args.p_hours, 48);
+      return [
+        { checkoutId: 'c1', linkId: 'plink_MISSED', amountPaise: 149900, currency: 'INR' },
+        { checkoutId: 'c2', linkId: 'plink_UNPAID', amountPaise: 99900, currency: 'INR' },
+        { checkoutId: 'c3', linkId: 'plink_DUP', amountPaise: 99900, currency: 'INR' },
+        { checkoutId: 'c4', linkId: 'plink_WRONG', amountPaise: 149900, currency: 'INR' },
+        { checkoutId: 'c5', linkId: 'plink_DOWN', amountPaise: 149900, currency: 'INR' },
+      ];
+    }
+    if (fn === 'hq_billing_paid') {
+      // The database's own rules (0063): a paid link again is a duplicate; a wrong amount is kept for HQ.
+      if (args.p_link_id === 'plink_DUP' || applied.has(args.p_link_id)) return { duplicate: true };
+      if (args.p_link_id === 'plink_WRONG') return { error: 'AMOUNT_MISMATCH', checkoutId: 'c4' };
+      applied.add(args.p_link_id);
+      return { applied: true, receiptNo: 'MU-2026-0007' };
+    }
+    throw new Error(`unexpected ${fn}`);
+  };
+  const paid = (id, amount) => ({ status: 'paid', amount_paid: amount, currency: 'INR', payments: [{ payment_id: id, amount, status: 'captured' }] });
+  const rzp = fakeRazorpay({
+    plink_MISSED: paid('pay_MISSED1', 149900),
+    plink_UNPAID: { status: 'created', payments: [] },
+    plink_DUP: paid('pay_DUP1', 99900),
+    plink_WRONG: paid('pay_WRONG1', 100),
+    plink_DOWN: 503,
+  });
+  const out = await runBillingReconcile(ENV_RZP, { fetchImpl: rzp.f, call });
+  assert.deepEqual(out, { asked: 5, paid: 3, applied: 1, duplicate: 1, kept: 1, unpaid: 1, failed: 1 });
+  const paidCalls = calls.filter((c) => c.fn === 'hq_billing_paid');
+  assert.deepEqual(paidCalls.map((c) => c.args.p_link_id), ['plink_MISSED', 'plink_DUP', 'plink_WRONG']);
+  assert.deepEqual(paidCalls[0].args, { p_provider: 'razorpay', p_link_id: 'plink_MISSED', p_payment_id: 'pay_MISSED1', p_amount_paise: 149900, p_currency: 'INR' });
+  assert.equal(paidCalls[2].args.p_amount_paise, 100, 'the paid amount, never the asked one: the database keeps a mismatch');
+  assert.ok(rzp.seen.every((x) => /^Basic /.test(x.auth)));
+  // The next night: the one applied is now a duplicate; nothing is applied twice.
+  const again = await runBillingReconcile(ENV_RZP, { fetchImpl: rzp.f, call });
+  assert.equal(again.applied, 0);
+  assert.equal(applied.size, 1);
+});
+
+test('reconciliation asks about at most the per-night limit, oldest first', async () => {
+  const rows = Array.from({ length: 30 }, (_, i) => ({ checkoutId: `c${i}`, linkId: `plink_N${i}` }));
+  const rzp = fakeRazorpay({});
+  const out = await runBillingReconcile(ENV_RZP, { fetchImpl: rzp.f, call: async () => rows });
+  assert.equal(out.asked, 20);
+  assert.equal(rzp.seen[0].id, 'plink_N0');
+  assert.equal(reconcileLimit({}, 'cashfree'), 10);
+  assert.equal(reconcileLimit({ BILLING_RECONCILE_MAX: '5' }, 'razorpay'), 5);
+  assert.equal(reconcileLimit({ BILLING_RECONCILE_MAX: '500' }, 'razorpay'), 20);
+});
+
+test('reconciliation with Cashfree: link, then order, then payment; the same payment id as the webhook', async () => {
+  const got = [];
+  const f = async (url, init) => {
+    const u = String(url);
+    got.push(u);
+    assert.equal(init.headers['x-client-id'], ENV_CF.CASHFREE_APP_ID);
+    if (u.endsWith('/links/mu_cf_link_1')) return new Response(JSON.stringify({ link_status: 'PAID', link_amount_paid: 1499, link_currency: 'INR' }));
+    if (u.endsWith('/links/mu_cf_link_1/orders')) return new Response(JSON.stringify([{ order_id: 'CF_ORD_1', order_status: 'PAID' }]));
+    if (u.endsWith('/orders/CF_ORD_1/payments')) return new Response(JSON.stringify([{ cf_payment_id: 9990001, payment_status: 'SUCCESS' }]));
+    return new Response('{}', { status: 404 });
+  };
+  const args = [];
+  const out = await runBillingReconcile(ENV_CF, {
+    fetchImpl: f,
+    call: async (_env, fn, a) => {
+      if (fn === 'hq_billing_open_links') return [{ checkoutId: 'c1', linkId: 'mu_cf_link_1' }];
+      args.push(a);
+      return { applied: true };
+    },
+  });
+  assert.equal(out.applied, 1);
+  assert.equal(got.length, 3);
+  assert.ok(got.every((u) => u.startsWith('https://sandbox.cashfree.com/pg/')));
+  assert.deepEqual(args[0], { p_provider: 'cashfree', p_link_id: 'mu_cf_link_1', p_payment_id: '9990001', p_amount_paise: 149900, p_currency: 'INR' });
 });

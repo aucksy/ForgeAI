@@ -19,6 +19,12 @@ begin
 
   insert into public.gyms(name, join_code) values ('PM60 Gym', 'PM60A1') returning gym_id into gid;
   insert into public.gyms(name, join_code) values ('PM60 Other', 'PM60B1') returning gym_id into gid2;
+  -- Their free trials are over (0063: a payment during a running trial starts when the trial ends; that
+  -- case is checked in the 0063 test).
+  perform set_config('forgeai.hq', 'on', true);
+  update public.gyms set trial_starts_at = now() - interval '100 days', trial_ends_at = now() - interval '1 day'
+   where gym_id in (gid, gid2);
+  perform set_config('forgeai.hq', 'off', true);
   insert into public.gym_staff(gym_id, name, phone, role) values (gid, 'Ownername Pay', '9876560001', 'owner') returning staff_id into s_owner;
   insert into public.gym_staff(gym_id, name, phone, role) values (gid, 'Deskname Pay', '9876560002', 'staff') returning staff_id into s_desk;
   insert into public.gym_sessions(staff_id, key_hash) values (s_owner, public._hash_key(k_owner)), (s_desk, public._hash_key(k_desk));

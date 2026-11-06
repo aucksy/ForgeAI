@@ -25,7 +25,7 @@ import { rpc } from './db.js';
 import { nightlyWeb } from './web.js';
 import { handlePushKick, runPush } from './push.js';
 import { backupStatus, runBackup } from './backup.js';
-import { handleBilling, runBillingDaily } from './billing.js';
+import { handleBilling, runBillingDaily, runBillingReconcile } from './billing.js';
 
 export const CSP = [
   "default-src 'self'",
@@ -195,11 +195,15 @@ export async function nightly(env, { fetchImpl = fetch, now = new Date() } = {})
   }
 }
 
-/** Which Cron Trigger fired: the nightly clean-up, or the every-minute phone pop-ups. PURE. */
+/** Which Cron Trigger fired: the nightly clean-up, the nightly billing check, or the every-minute phone pop-ups. PURE. */
 export function cronJob(cron) {
-  return cron === NIGHTLY_CRON ? 'nightly' : 'push';
+  if (cron === NIGHTLY_CRON) return 'nightly';
+  if (cron === BILLING_CRON) return 'billing';
+  return 'push';
 }
 export const NIGHTLY_CRON = '30 21 * * *';
+// 03:45 India time (22:15 UTC), on its own so the payment company's calls get their own per-run allowance.
+export const BILLING_CRON = '15 22 * * *';
 
 export default {
   async fetch(request, env, ctx) {
@@ -215,7 +219,10 @@ export default {
   async scheduled(event, env, ctx) {
     // The backup first (backup.js; it never throws), so the copy still holds what the clean-up removes.
     // Then billing (billing.js; off until set up, never throws): due downgrades and plan-end reminders.
-    if (cronJob(event.cron) === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)));
+    const job = cronJob(event.cron);
+    if (job === 'nightly') ctx.waitUntil(runBackup(env).then(() => nightly(env)).finally(() => runBillingDaily(env)));
+    // The payment company's paid links that no webhook brought (billing.js; off until set up, never throws).
+    else if (job === 'billing') ctx.waitUntil(runBillingReconcile(env));
     else ctx.waitUntil(runPush(env));
   },
 };

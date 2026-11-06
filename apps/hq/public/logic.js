@@ -143,6 +143,9 @@ const ERRORS = {
   BAD_IFSC: 'An IFSC has 11 letters and numbers, like ABCD0123456.',
   INCOMPLETE: 'Fill in the payee name with a UPI ID, and the account name and IFSC with an account number.',
   PAY_NOT_READY: 'Payments need the database update 0060 (waiting for your yes).',
+  CHECKS_NOT_READY: 'Payments to check need the database update 0064 (waiting for your yes).',
+  NOT_TO_CHECK: 'That payment does not need checking. The page was refreshed.',
+  ALREADY_DONE: 'That payment was already marked. The page was refreshed.',
   BAD_LINK: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.',
 };
 
@@ -190,6 +193,9 @@ const ACTIONS = {
   reject_payment: 'Did not confirm a gym’s payment',
   view_pay_details: 'Looked at MettleUp’s payment details',
   set_pay_details: 'Changed MettleUp’s payment details',
+  view_billing_checks: 'Looked at online payments to check',
+  billing_refunded: 'Marked an online payment as refunded',
+  billing_applied_by_hand: 'Marked an online payment as added to the plan by hand',
   export_gyms: 'Exported the gym list (CSV)',
   hq_message_sent: 'Sent a message to every gym',
   hq_message_removed: 'Took back a message to the gyms',
@@ -610,6 +616,7 @@ export function needsLines(d) {
     ['gyms', d && d.gymsNew, (n) => `${count(n, 'new gym')} to check`, '#gyms'],
     ['feedback', d && d.feedbackNew, (n) => `${count(n, 'new feedback message')} to read`, '#feedback/new'],
     ['payments', d && d.paymentsWaiting, (n) => `${count(n, 'payment')} to confirm`, '#payments'],
+    ['checks', d && d.paymentsToCheck, (n) => `${count(n, 'online payment')} to check (paid, but not added to a plan)`, '#payments'],
   ];
   return lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
 }
@@ -618,7 +625,7 @@ export function needsLines(d) {
 export function needsTotal(d) {
   if (!d) return 0;
   // feedbackNew already leaves out the help questions counted in helpNeedsReply (deploy/hq/web.js webNeeds).
-  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew, d.paymentsWaiting].reduce((a, n) => a + (Number(n) || 0), 0);
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew, d.paymentsWaiting, d.paymentsToCheck].reduce((a, n) => a + (Number(n) || 0), 0);
 }
 
 /** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */
@@ -631,7 +638,7 @@ export function titleWithCount(base, n) {
 /** Which counts went UP since the last look (for the sound and the pop-up). First look: none. PURE. */
 export function needsRose(before, now) {
   if (!before || !now) return [];
-  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting' }[l.key]]) || 0));
+  return needsLines(now).filter((l) => l.n > (Number(before[{ help: 'helpNeedsReply', leads: 'leadsNew', gyms: 'gymsNew', feedback: 'feedbackNew', payments: 'paymentsWaiting', checks: 'paymentsToCheck' }[l.key]]) || 0));
 }
 
 // ------------------------------------------------------------------ Payments to MettleUp (T79, 0060)
@@ -664,8 +671,14 @@ export function paymentWords(p) {
 /** What Confirm will do, in words, before the tap. PURE. */
 export function confirmWords(p, now = Date.now()) {
   if (p.gymBilling === 'lifetime') return 'This gym has a lifetime plan: nothing to add.';
-  const to = p.extendsTo || extendPaidUntil(p.gymPaidUntil, p.billing, now);
-  const was = p.gymPaidUntil && Date.parse(p.gymPaidUntil) > now ? ` (now paid until ${dateWords(p.gymPaidUntil)})` : '';
+  // 0063: during a running free trial the paid time starts when the trial ends (no trial day is lost).
+  const trialOn = p.gymTrialEndsAt && Date.parse(p.gymTrialEndsAt) > now;
+  const paidLater = p.gymPaidUntil && (!trialOn || Date.parse(p.gymPaidUntil) >= Date.parse(p.gymTrialEndsAt));
+  const base = trialOn && !paidLater ? p.gymTrialEndsAt : p.gymPaidUntil;
+  const to = p.extendsTo || extendPaidUntil(base, p.billing, now);
+  const was = paidLater && Date.parse(p.gymPaidUntil) > now
+    ? ` (now paid until ${dateWords(p.gymPaidUntil)})`
+    : trialOn ? ` (it starts when the free trial ends on ${dateWords(p.gymTrialEndsAt)})` : '';
   return `Confirm sets ${PLAN_WORDS[p.plan] || p.plan}, ${BILLING_WORDS[p.billing] || p.billing}, paid until ${dateWords(to)}${was}.`;
 }
 
@@ -674,4 +687,36 @@ export function outcomeWords(p) {
   if (p.status === 'confirmed') return `Confirmed ${dateWords(p.decidedAt)}: paid until ${dateWords(p.paidUntil)}.`;
   if (p.status === 'rejected') return `Not confirmed ${dateWords(p.decidedAt)}. Reason: ${p.rejectReason || ''}`;
   return 'Waiting for you.';
+}
+
+// ------------------------------------------------------------------ Online payments to check (0064)
+export const CHECK_LIST_CHOICES = [['open', 'To check'], ['done', 'Done'], ['all', 'All']];
+const CHECK_REASON_WORDS = {
+  AMOUNT_MISMATCH: 'the amount paid is not the price we asked for',
+  LIFETIME: 'the gym already has a lifetime plan',
+  BAD_DATE: 'the plan would run more than 3 years ahead',
+  GONE: 'the gym no longer exists',
+  NOT_UPGRADABLE: 'the gym’s plan changed before the payment came',
+  BAD_PLAN: 'that plan cannot be bought',
+};
+const PROVIDER_WORDS = { razorpay: 'Razorpay', cashfree: 'Cashfree' };
+
+/** Why an online payment did not become a plan, in words. PURE. */
+export function checkReasonWords(code) {
+  return CHECK_REASON_WORDS[code] || 'it could not be added to the plan';
+}
+
+/** One payment to check: "₹100 by Razorpay (asked ₹1,499) · payment pay_X · paid 6 Nov 2026". PURE. */
+export function checkWords(c) {
+  const asked = Number.isInteger(c.askedPaise) && c.askedPaise !== c.paidPaise ? ` (asked ${rupees(c.askedPaise)})` : '';
+  const paid = Number.isInteger(c.paidPaise) ? rupees(c.paidPaise) : 'An amount';
+  const cur = c.paidCurrency && c.paidCurrency !== 'INR' ? ` ${c.paidCurrency}` : '';
+  return `${paid}${cur} by ${PROVIDER_WORDS[c.provider] || c.provider}${asked} · payment ${c.paymentId || 'unknown'} · paid ${dateWords(c.paidAt) || 'unknown'}`;
+}
+
+/** What was done about it, for the Done list. PURE. */
+export function checkDoneWords(c) {
+  if (!c.checkedAt) return 'Not checked yet.';
+  const how = c.checkedHow === 'refunded' ? 'Refunded' : 'Added to the plan by hand';
+  return `${how} ${dateWords(c.checkedAt)} by ${c.checkedBy || 'HQ'}. Note: ${c.checkedNote || ''}`;
 }

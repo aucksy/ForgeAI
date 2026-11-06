@@ -27,7 +27,7 @@ import {
 } from '../logic/billing';
 import { PAY_NOW } from '../logic/gymState';
 import { formatINR } from '../logic/money';
-import { payDate } from '../logic/payMettleUp';
+import { payDate, trialStartLine } from '../logic/payMettleUp';
 import { PAY_PATH } from '../logic/trial';
 import { billingNotLiveYet, loadBilling, startCheckout } from '../shop/billingApi';
 import { Button, Card, ErrorBanner, SectionTitle, color, font, radius, space } from './kit';
@@ -85,6 +85,8 @@ export function PayOnline({ ownerKey }: { ownerKey: string }) {
   const showBuy = info.checkoutOn && !lifetime;
   const sched = scheduledLine(info);
   const down = sched ? null : downgradeNote(info);
+  // Paying during the free trial: the paid plan starts when the trial ends (0063), shown before the tap.
+  const trialLine = trialStartLine(info, 'both', Date.now());
 
   return (
     <>
@@ -95,6 +97,11 @@ export function PayOnline({ ownerKey }: { ownerKey: string }) {
             <div style={{ display: 'grid', gap: space.md }}>
               <p style={quiet}>Pay by UPI, card or net banking on the payment company’s secure page. Your plan changes within seconds.</p>
               {error && <ErrorBanner>{error}</ErrorBanner>}
+              {trialLine && (
+                <p data-testid="pay-online-trial" style={{ ...quiet, color: color.ink }}>
+                  {trialLine}
+                </p>
+              )}
               {sched && (
                 <p data-testid="pay-scheduled" style={{ ...quiet, color: color.ink }}>
                   {sched}

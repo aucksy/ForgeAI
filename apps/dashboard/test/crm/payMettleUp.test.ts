@@ -16,6 +16,9 @@ import {
   planNow,
   priceOf,
   referenceError,
+  paidFrom,
+  paidUntilAfter,
+  trialStartLine,
   type MettleUpPayment,
 } from '../../src/crm/logic/payMettleUp';
 import { trialBanner, type GymTrial } from '../../src/crm/logic/trial';
@@ -178,5 +181,34 @@ describe('what the owner sees', () => {
       'Your MettleUp plan was paid until 5 Nov 2026. Pay to keep going. Your members’ app keeps working.',
     );
     expect(trialBanner(t({ billing: 'lifetime' }), NOW)).toBeNull();
+  });
+});
+
+describe('paying during the free trial (0063): no trial day is lost', () => {
+  const NOW_MS = Date.parse('2026-11-06T12:00:00+05:30');
+  const TRIAL = '2027-02-06T18:00:00+05:30';
+
+  it('counts from the trial end while the trial runs, as the server does', () => {
+    expect(paidFrom(null, TRIAL, NOW_MS)).toBe(new Date(TRIAL).toISOString());
+    expect(paidFrom(null, '2026-11-01T10:00:00+05:30', NOW_MS)).toBeNull();
+    expect(paidFrom('2027-03-01T23:59:59+05:30', TRIAL, NOW_MS)).toBe(new Date('2027-03-01T23:59:59+05:30').toISOString());
+    expect(paidUntilAfter(TRIAL, 'monthly', NOW_MS)).toBe(new Date('2027-03-06T23:59:59+05:30').toISOString());
+    expect(paidUntilAfter(TRIAL, 'yearly', NOW_MS)).toBe(new Date('2028-02-06T23:59:59+05:30').toISOString());
+    expect(paidUntilAfter(null, 'monthly', NOW_MS)).toBe(new Date('2026-12-06T23:59:59+05:30').toISOString());
+    // 31 Jan + 1 month = 28 Feb.
+    expect(paidUntilAfter('2027-01-31T10:00:00+05:30', 'monthly', NOW_MS)).toBe(new Date('2027-02-28T23:59:59+05:30').toISOString());
+  });
+
+  it('tells the owner the real dates before paying', () => {
+    const o = { paidUntil: null, trialEndsAt: TRIAL, billing: null };
+    expect(trialStartLine(o, 'monthly', NOW_MS)).toBe('Your paid plan starts when your free trial ends on 6 Feb 2027 and runs until 6 Mar 2027.');
+    expect(trialStartLine(o, 'yearly', NOW_MS)).toBe('Your paid plan starts when your free trial ends on 6 Feb 2027 and runs until 6 Feb 2028.');
+    expect(trialStartLine(o, 'both', NOW_MS)).toBe(
+      'Your paid plan starts when your free trial ends on 6 Feb 2027 and runs until 6 Mar 2027 (1 month) or 6 Feb 2028 (1 year).',
+    );
+    // Trial over, already paid past the trial, or lifetime: no line.
+    expect(trialStartLine({ ...o, trialEndsAt: '2026-11-01T10:00:00+05:30' }, 'monthly', NOW_MS)).toBeNull();
+    expect(trialStartLine({ ...o, paidUntil: '2027-03-06T23:59:59+05:30', billing: 'monthly' }, 'monthly', NOW_MS)).toBeNull();
+    expect(trialStartLine({ ...o, billing: 'lifetime' }, 'monthly', NOW_MS)).toBeNull();
   });
 });
