@@ -57,6 +57,7 @@ import { cleanUpiId, gymDetailsForm, gymFormKey, upiIdError } from '../../logic/
 import { ClearDeviceCard } from '../offline';
 import { BusyMachinesCard } from './BusyMachines';
 import { BringAFriendCard } from './BringAFriend';
+import { EntryMachinesCard } from './EntryMachines';
 
 export type SettingsTab = 'gym' | 'app' | 'data';
 
@@ -260,6 +261,9 @@ export function SettingsScreen({ section }: { section?: string }) {
 
       {/* #41: the gym's branches and "Add a branch". */}
       <BranchesCard />
+
+      {/* F103 step 2: the gym's finger or face machines at the door. */}
+      {online && <EntryMachinesCard />}
 
       {/* R-124: when the gym is open; members see "Open now · closes 10:00 pm" in the app. */}
       <Card style={{ marginBottom: space.lg }}>

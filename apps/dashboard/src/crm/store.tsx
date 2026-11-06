@@ -38,6 +38,7 @@ import { demoSnapshot } from './data/demo';
 import { downloadTextFile } from './ui/download';
 import { emptySnapshot, LocalCrmData } from './data/local';
 import { todayISO, type DateISO } from './logic/dates';
+import { noteAccessChange } from './machines/accessChanges';
 import { color } from '../theme';
 import { buildMemberView } from './logic/membership';
 import type {
@@ -398,12 +399,27 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       importTerms: (items, importId) => mutate((a) => a.importTerms(items, importId)),
       undoImport: (importId) => mutate((a) => a.undoImport(importId)),
       updateMember: (id, patch) => mutate((a) => a.updateMember(id, patch)),
-      setMemberArchived: async (id, archived) => void (await mutate((a) => a.setMemberArchived(id, archived))),
+      // F103 step 2 (entry machines): each act that can change who may come in tells the machine job
+      // (ui/EntryMachineJob.tsx), which does nothing while the gym has no machine.
+      setMemberArchived: async (id, archived) => {
+        await mutate((a) => a.setMemberArchived(id, archived));
+        noteAccessChange({ memberId: id });
+      },
       createPlan: async (draft) => void (await mutate((a) => a.createPlan(draft))),
       updatePlan: async (id, patch) => void (await mutate((a) => a.updatePlan(id, patch))),
-      sellMembership: (input) => mutate((a) => a.sellMembership(input)),
-      cancelMembership: async (id, reason) => void (await mutate((a) => a.cancelMembership(id, reason))),
-      uncancelMembership: async (id) => void (await mutate((a) => a.uncancelMembership(id))),
+      sellMembership: async (input) => {
+        const r = await mutate((a) => a.sellMembership(input));
+        noteAccessChange({ memberId: input.memberId });
+        return r;
+      },
+      cancelMembership: async (id, reason) => {
+        await mutate((a) => a.cancelMembership(id, reason));
+        noteAccessChange({ membershipId: id });
+      },
+      uncancelMembership: async (id) => {
+        await mutate((a) => a.uncancelMembership(id));
+        noteAccessChange({ membershipId: id });
+      },
       recordPayment: (input) => mutate((a) => a.recordPayment(input)),
       voidPayment: async (id, reason) => void (await mutate((a) => a.voidPayment(id, reason))),
       checkIn: async (memberId, source, day) =>
@@ -414,8 +430,14 @@ export function CrmProvider({ data, children }: { data?: CrmBackend; children: R
       updateEnquiry: async (id, patch) => void (await mutate((a) => a.updateEnquiry(id, patch))),
       addExpense: async (draft) => void (await mutate((a) => a.addExpense(draft))),
       removeExpense: async (id) => void (await mutate((a) => a.removeExpense(id))),
-      extendMembership: async (id, days, reason) => void (await mutate((a) => a.extendMembership(id, days, reason))),
-      moveMembershipStart: async (id, newStart) => void (await mutate((a) => a.moveMembershipStart(id, newStart))),
+      extendMembership: async (id, days, reason) => {
+        await mutate((a) => a.extendMembership(id, days, reason));
+        noteAccessChange({ membershipId: id });
+      },
+      moveMembershipStart: async (id, newStart) => {
+        await mutate((a) => a.moveMembershipStart(id, newStart));
+        noteAccessChange({ membershipId: id });
+      },
       markPtSession: async (membershipId, day) =>
         void (await mutate((a) => a.markPtSession(membershipId, day ?? today, today))),
       undoPtSession: async (membershipId, day) => void (await mutate((a) => a.undoPtSession(membershipId, day))),

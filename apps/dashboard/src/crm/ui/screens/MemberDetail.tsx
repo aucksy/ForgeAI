@@ -87,6 +87,7 @@ import { WaitingPill } from '../offline';
 import { NEEDS_INTERNET_WORDS, useOffline } from '../offlineContext';
 import { DeskCameraSheet } from '../DeskCameraSheet';
 import { GymReportCard } from '../GymReportCard';
+import { MachineNumberCard } from './EntryMachines';
 import { MemberTrainerCard } from '../TrainerParts';
 import { MemberProgressCard } from '../QuestionParts';
 import { MemberAvatar, useDeskPhotoKey, useMemberPhoto } from '../MemberPhoto';
@@ -565,6 +566,9 @@ export function MemberDetailScreen({ memberId }: { memberId: string }) {
           </div>
         </Card>
       )}
+
+      {/* F103 step 2: the member's machine number (the PIN typed on the entry machine); only when the gym has a machine. */}
+      <MachineNumberCard memberId={memberId} />
 
       {/* R-319 item 11: live Progress for the owner and the member's own trainer while the member shares; hidden until 0053. */}
       <MemberProgressCard memberId={memberId} />

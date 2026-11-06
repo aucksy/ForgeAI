@@ -65,6 +65,8 @@ const BODY_FNS = [
 const TIMINGS_FNS = ['owner_gym_timings', 'owner_save_gym_timings'];
 /** F147 (0056): the Settings card's count. The friends' enquiries come through crm_pull like any record. */
 const FRIEND_FNS = ['owner_friend_summary'];
+/** F103 step 2 (0059, NOT APPLIED): entry machines, answered only when `entryServer` is on. */
+const ENTRY_FNS = ['owner_entry_machines', 'owner_add_entry_machine', 'owner_remove_entry_machine', 'owner_set_machine_numbers', 'owner_queue_machine_commands'];
 const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
 
 /** #49 step 2 (0025): the calls only a server with the workout offer answers. */
@@ -177,6 +179,14 @@ export class FakeServer {
     this.friendServer = false;
     /** 0056 gym_friend_invites: how many members opened their invite. */
     this.friendLinks = 0;
+    /** F103 step 2: does this server have 0059 (entry machines)? Off by default (PGRST202, like the live server today). */
+    this.entryServer = false;
+    /** 0058 entry_machines rows as 0059 owner_entry_machines answers them (tests set lastSeenAt, refusedToday...). */
+    this.entryMachines = [];
+    /** 0058 entry_machine_members: member id -> machine number. */
+    this.entryNumbers = new Map();
+    /** 0058 entry_machine_commands: {machineId, command, status}. */
+    this.entryQueue = [];
   }
 
   /** 0035 _roster_member_ok: a live member record of this gym. */
@@ -418,6 +428,9 @@ export class FakeServer {
     if (!this.friendServer && FRIEND_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    if (!this.entryServer && ENTRY_FNS.includes(fn)) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     if (!this.timingsServer && TIMINGS_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
@@ -477,6 +490,77 @@ export class FakeServer {
           this.terms = { version: args.p_terms_version, at: NOW.toISOString(), by: args.p_name, how: 'create' };
         }
         return this.signedIn(this.people.get(args.p_phone) ?? { staffId });
+      }
+      case 'owner_entry_machines': {
+        const p = this.anyone(args.p_key);
+        return {
+          ok: true,
+          canEdit: p.role === 'owner',
+          machines: this.entryMachines.map((m) => ({ ...m })),
+          numbers: Object.fromEntries(this.entryNumbers),
+        };
+      }
+      case 'owner_add_entry_machine': {
+        this.ownerLike(args.p_key);
+        const serial = String(args.p_serial ?? '').trim();
+        if (!/^[A-Za-z0-9_-]{1,32}$/.test(serial)) throw new Refusal('BAD_SERIAL');
+        if ((args.p_family ?? 'zk-adms') !== 'zk-adms') throw new Refusal('NOT_YET');
+        if (this.entryMachines.some((m) => m.serial.toUpperCase() === serial.toUpperCase()) || serial.toUpperCase() === 'OTHERGYM1') {
+          throw new Refusal('DUPLICATE_SERIAL');
+        }
+        const id = `mac-${this.entryMachines.length + 1}`;
+        this.entryMachines.push({
+          id, name: String(args.p_name || 'Entry machine').slice(0, 40), family: 'zk-adms', serial, firmware: 'ta',
+          caps: { canHoldExpiry: false, canDisable: false, canOpenDoor: false, canEnrollRemotely: false, canFetchMissed: true },
+          paused: false, lastSeenAt: null, sweptOn: null, refusedToday: 0, unknownToday: 0, lastRefused: null,
+        });
+        return id;
+      }
+      case 'owner_remove_entry_machine': {
+        this.ownerLike(args.p_key);
+        const before = this.entryMachines.length;
+        this.entryMachines = this.entryMachines.filter((m) => m.id !== args.p_machine);
+        if (this.entryMachines.length === before) throw new Refusal('NO_MACHINE');
+        this.entryQueue = this.entryQueue.filter((q) => q.machineId !== args.p_machine);
+        return null;
+      }
+      case 'owner_set_machine_numbers': {
+        this.anyone(args.p_key);
+        const items = Array.isArray(args.p_numbers) ? args.p_numbers : [];
+        for (const { memberId, memberNo } of items) {
+          if (!/^[1-9]\d{0,8}$/.test(String(memberNo))) throw new Refusal('BAD_NUMBER');
+          for (const [mid, no] of this.entryNumbers) if (no === memberNo && mid !== memberId) throw new Refusal('NUMBER_TAKEN');
+        }
+        for (const { memberId, memberNo } of items) {
+          const old = this.entryNumbers.get(memberId);
+          if (old && old !== memberNo) {
+            for (const m of this.entryMachines) this.entryQueue.push({ machineId: m.id, command: { type: 'remove_member', memberNo: old }, status: 'pending' });
+          }
+          this.entryNumbers.set(memberId, memberNo);
+        }
+        return items.length;
+      }
+      case 'owner_queue_machine_commands': {
+        this.anyone(args.p_key);
+        const skip = new Set();
+        if (args.p_sweep_day) {
+          for (const m of this.entryMachines) {
+            if (!(args.p_sweep_machines ?? []).includes(m.id)) continue;
+            if (m.sweptOn && m.sweptOn >= args.p_sweep_day) skip.add(m.id);
+            else m.sweptOn = args.p_sweep_day;
+          }
+        }
+        let n = 0;
+        for (const it of args.p_items ?? []) {
+          if (skip.has(it.machineId)) continue;
+          if (!this.entryMachines.some((m) => m.id === it.machineId)) throw new Refusal('NO_MACHINE');
+          this.entryQueue = this.entryQueue.filter(
+            (q) => !(q.machineId === it.machineId && q.status === 'pending' && q.command.memberNo === it.command.memberNo),
+          );
+          this.entryQueue.push({ machineId: it.machineId, command: it.command, status: 'pending' });
+          n += 1;
+        }
+        return n;
       }
       case 'owner_friend_summary': {
         const asked = this.rows('enquiry').filter((e) => e.referral);

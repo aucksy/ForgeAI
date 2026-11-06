@@ -52,6 +52,8 @@ import { DietPlansScreen } from './ui/screens/DietPlans';
 import { GymTimingsScreen } from './ui/screens/GymTimings';
 import { PaymentsScreen } from './pay/PaymentsScreen';
 import { BusyMachinesScreen } from './ui/screens/BusyMachines';
+import { EntryMachinesScreen } from './ui/screens/EntryMachines';
+import { EntryMachineJob } from './ui/EntryMachineJob';
 import { MyMembersScreen } from './ui/screens/MyMembers';
 import { useTrainerAccess } from './ui/TrainerParts';
 import { useQuestionCount } from './ui/QuestionParts';
@@ -256,6 +258,8 @@ export function Routes({ online }: { online: boolean }) {
       {/* Owner, 1 Nov 2026: "Next step" on a screen opened from Get started; the gym code once after "Create my gym". */}
       <NextStepBar path={route.path} />
       <NewGymReady />
+      {/* F103 step 2: keeps entry machines in step with sales, renewals and the nightly sweep; nothing without a machine. */}
+      {online && !demo && <EntryMachineJob />}
       {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} role={role} /> : <OwnerOnly />}
     </AppShell>
   );
@@ -282,6 +286,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'settings' && id === 'branding') return 'Branding';
   if (head === 'settings' && id === 'timings') return 'Gym timings';
   if (head === 'settings' && id === 'machines') return 'Busy machines';
+  if (head === 'settings' && id === 'entry') return 'Entry machines';
   if (head === 'settings' && id === 'invite') return 'The invite link';
   return null;
 }
@@ -368,6 +373,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'payments') return <PaymentsScreen />;
       // F137: Settings -> Member app -> Busy machines (hidden until the gym's server has 0049).
       if (id === 'machines') return <BusyMachinesScreen />;
+      // F103 step 2: Settings -> Entry machines (says plainly when the gym's server is not ready, 0059).
+      if (id === 'entry') return <EntryMachinesScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;
       // Staff & sign-in: people who may sign in, and the codes the owner makes for them.
