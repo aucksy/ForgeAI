@@ -114,6 +114,26 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Type your name.': 'Apna naam daalo.',
   'Tick the box to agree to the terms. Then tap “Create my gym” again.':
     'Terms maanne ke liye box par tick karo. Phir “Gym banao” dobara dabao.',
+  // F187 (R-383): a code on WhatsApp for Forgot PIN and the new-gym number check.
+  'Forgot your PIN? Get a code on WhatsApp': 'PIN bhool gaye? WhatsApp par code lo',
+  'Forgot your PIN?': 'PIN bhool gaye?',
+  'We send a 6-digit code to your mobile number on WhatsApp. Then you choose a new PIN.':
+    'Hum aapke mobile number par WhatsApp se 6 number ka code bhejenge. Phir aap naya PIN chuno.',
+  'If {phone} has an account, a code is on its way on WhatsApp. It works for 10 minutes.':
+    'Agar {phone} ka account hai, to WhatsApp par code aa raha hai. Yeh 10 minute tak chalega.',
+  'Code from WhatsApp': 'WhatsApp wala code',
+  'Type the 6-digit code from WhatsApp.': 'WhatsApp wala 6 number ka code daalo.',
+  'Choose a new 6-digit PIN': 'Naya 6 number ka PIN chuno',
+  'Please wait…': 'Thoda ruko…',
+  'Set new PIN and sign in': 'Naya PIN rakho aur sign in karo',
+  'Send code on WhatsApp': 'WhatsApp par code bhejo',
+  'Send a new code': 'Naya code bhejo',
+  'Back to sign in': 'Wapas sign in par jao',
+  'You sign in with this number. We check it with a code on WhatsApp.':
+    'Aap is number se sign in karoge. Hum WhatsApp par code bhejkar ise check karte hain.',
+  'We sent a 6-digit code to {phone} on WhatsApp. It works for 10 minutes.':
+    'Humne {phone} par WhatsApp se 6 number ka code bheja hai. Yeh 10 minute tak chalega.',
+  'Get code on WhatsApp': 'WhatsApp par code lo',
   'Sign in instead': 'Iske badle sign in karo',
   'Setting up…': 'Gym ban raha hai…',
   'Create my gym': 'Gym banao',

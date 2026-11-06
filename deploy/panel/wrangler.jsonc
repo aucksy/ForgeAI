@@ -54,7 +54,12 @@
   // RAZORPAY_PARTNER_WEBHOOK_SECRET; PAY_OAUTH_CASHFREE "on" + CASHFREE_PARTNER_KEY, CASHFREE_CLIENT_ID,
   // CASHFREE_CLIENT_SECRET (after MettleUp's partner approval).
   "triggers": { "crons": ["30 21 * * *", "*/10 * * * *"] },
-  "vars": { "LANDING": "live", "MOVE": "on" },
+  // F187 (R-383): sign-in codes by WhatsApp (phoneCode.js, docs/WHATSAPP-SETUP.md). OFF until the secrets
+  // WHATSAPP_TOKEN and PHONE_CODE_SECRET exist (and D1 migrations/0012 + supabase 0061 are applied).
+  // WHATSAPP_PHONE_NUMBER_ID = MettleUp's business number +91 86905 60741 (public business info).
+  // PHONE_CODE_DAILY_CAP: codes a day for everyone (each costs money); PHONE_CODES "off" = kill switch.
+  // Optional: WHATSAPP_GRAPH_VERSION (default v27.0), WHATSAPP_TEMPLATE (login_code), WHATSAPP_TEMPLATE_LANG (en).
+  "vars": { "LANDING": "live", "MOVE": "on", "WHATSAPP_PHONE_NUMBER_ID": "1410811765454726", "PHONE_CODE_DAILY_CAP": "200", "PHONE_CODES": "on" },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go
   // within a minute anyway (HQ's own Cron Trigger).

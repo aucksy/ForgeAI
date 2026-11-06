@@ -1042,6 +1042,11 @@ export class FakeServer {
     await context.route('**/api/pay/**', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ on: false, why: 'NOT_READY' }) }),
     );
+    // F187: WhatsApp codes live on the Worker too (deploy/panel/phoneCode.js): switched off by default;
+    // whatsapp-code-uat.spec.mjs routes /api/phone-code/** on its page (a page route wins).
+    await context.route('**/api/phone-code/**', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ available: false }) }),
+    );
     await context.route(/\/rest\/v1\/rpc\/([a-z_]+)/, async (route) => {
       const fn = /rpc\/([a-z_]+)/.exec(route.request().url())?.[1] ?? '';
       if (this.dropped(fn)) {

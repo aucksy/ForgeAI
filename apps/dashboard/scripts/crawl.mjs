@@ -112,6 +112,10 @@ try {
     await context.route('**/api/pay/**', (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ on: false, why: 'NOT_READY' }) }),
     );
+    // F187: WhatsApp codes come from the live Worker too (deploy/panel/phoneCode.js): switched off.
+    await context.route('**/api/phone-code/**', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ available: false }) }),
+    );
     // CRAWL_SELFTEST=1 makes every page too wide, to prove the check can fail.
     if (process.env.CRAWL_SELFTEST) {
       await context.addInitScript(() => {

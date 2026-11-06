@@ -1,0 +1,109 @@
+# F187 sign-in codes by WhatsApp (R-383, 6 Nov 2026): one-time set-up of MettleUp's WhatsApp number.
+# Run by hand (Actions -> "WhatsApp set-up" -> Run workflow) after the owner added the GitHub secrets
+# WHATSAPP_TOKEN (a permanent Meta system-user token) and WHATSAPP_PIN (a 6-digit PIN he picks for the number).
+# docs/WHATSAPP-SETUP.md says how.
+#
+#  (a) registers the number +91 86905 60741 (phone number ID 1410811765454726) with the WhatsApp Cloud API,
+#  (b) prints the number's status and the login_code template's status,
+#  (c) puts WHATSAPP_TOKEN into the panel Worker (forgeai-panel) as a secret, with wrangler, using the
+#      Cloudflare token CI already holds (CLOUDFLARE_API_TOKEN; it needs "Workers Scripts: Edit"). When the
+#      GitHub secret PHONE_CODE_SECRET exists it is put in too (the same value goes into supabase 0061's
+#      phone_code_settings row). Putting a secret does not change the Worker's code.
+#
+# THIS REPO IS PUBLIC: the token and the PIN are never printed (GitHub also masks them), only Meta's answers.
+name: WhatsApp set-up
+
+on:
+  workflow_dispatch:
+    inputs:
+      register:
+        description: Register the number with the Cloud API (uses WHATSAPP_PIN)
+        type: boolean
+        default: true
+      put_secret:
+        description: Put WHATSAPP_TOKEN into the panel Worker as a secret
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: whatsapp-setup
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GRAPH: v27.0
+      # Public business ids (not secrets): MettleUp's number and WhatsApp Business Account.
+      PHONE_ID: '1410811765454726'
+      WABA_ID: '1007126462431898'
+      WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+      WHATSAPP_PIN: ${{ secrets.WHATSAPP_PIN }}
+    steps:
+      - name: Check the secrets are there
+        run: |
+          if [ -z "$WHATSAPP_TOKEN" ]; then
+            echo "::error::The GitHub secret WHATSAPP_TOKEN is missing. See docs/WHATSAPP-SETUP.md step 3."
+            exit 1
+          fi
+          if [ "${{ inputs.register }}" = "true" ] && ! printf '%s' "$WHATSAPP_PIN" | grep -Eq '^[0-9]{6}$'; then
+            echo "::error::The GitHub secret WHATSAPP_PIN is missing or is not exactly 6 digits. See docs/WHATSAPP-SETUP.md step 3."
+            exit 1
+          fi
+          echo "Secrets present (values not shown)."
+
+      - name: (a) Register the number with the Cloud API
+        if: ${{ inputs.register }}
+        run: |
+          body=$(jq -cn --arg pin "$WHATSAPP_PIN" '{messaging_product: "whatsapp", pin: $pin}')
+          code=$(curl -sS -o reply.json -w '%{http_code}' -X POST "https://graph.facebook.com/$GRAPH/$PHONE_ID/register" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" -H 'Content-Type: application/json' -d "$body")
+          echo "Meta answered HTTP $code:"
+          jq '{success, error: (.error | if . then {code, error_subcode, type, message} else null end)}' reply.json
+          rm -f reply.json
+          if [ "$code" != "200" ]; then
+            echo "::error::Registering the number failed (see Meta's answer above)."
+            exit 1
+          fi
+
+      - name: (b) The number's status and the login_code template's status
+        if: ${{ always() }}
+        run: |
+          echo "== Phone number $PHONE_ID =="
+          curl -sS "https://graph.facebook.com/$GRAPH/$PHONE_ID?fields=display_phone_number,verified_name,name_status,status,code_verification_status,quality_rating,platform_type,messaging_limit_tier" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq 'del(.access_token)'
+          echo "== Template login_code (WhatsApp account $WABA_ID) =="
+          curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID/message_templates?name=login_code&fields=name,status,language,category,rejected_reason" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq '{templates: .data, error: (.error | if . then {code, message} else null end)}'
+
+      - name: Set up Node (wrangler)
+        if: ${{ inputs.put_secret }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: (c) Put WHATSAPP_TOKEN into the panel Worker
+        if: ${{ inputs.put_secret }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # Not a secret: the Cloudflare account that holds the panel Worker (as in watch.yml).
+          CLOUDFLARE_ACCOUNT_ID: 1dc428a67de48b96bf13fb430da7a9e8
+          PHONE_CODE_SECRET: ${{ secrets.PHONE_CODE_SECRET }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::The GitHub secret CLOUDFLARE_API_TOKEN is missing."
+            exit 1
+          fi
+          if ! printf '%s' "$WHATSAPP_TOKEN" | npx --yes wrangler@4 secret put WHATSAPP_TOKEN --name forgeai-panel; then
+            echo "::error::Cloudflare refused. The CLOUDFLARE_API_TOKEN secret may be read-only: it needs 'Workers Scripts: Edit' on the account."
+            exit 1
+          fi
+          if [ -n "$PHONE_CODE_SECRET" ]; then
+            printf '%s' "$PHONE_CODE_SECRET" | npx --yes wrangler@4 secret put PHONE_CODE_SECRET --name forgeai-panel
+          else
+            echo "No PHONE_CODE_SECRET GitHub secret: skipped (Claude puts it in at switch-on)."
+          fi

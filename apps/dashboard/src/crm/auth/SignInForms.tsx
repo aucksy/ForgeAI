@@ -13,9 +13,21 @@ import { Button, CheckField, ErrorBanner, TextField, color, font, space } from '
 import { replace } from '../ui/router';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
+import { BotTrap, ForgotPinForm, usePhoneCodeAvailable } from './ForgotPin';
+import { phoneCodeWords, sendPhoneCode, verifyPhoneCode } from './phoneCode';
 import { PinFields } from './PinForms';
 import { rememberAskPin, shouldOfferPin } from './pinPrompt';
-import { authErrorWords, cleanCode, createGymErrorWords, createGymUnsure, FORGOT_PIN_WORDS, newPinError, normalizeMobile } from './signin';
+import {
+  authErrorCode,
+  authErrorWords,
+  cleanCode,
+  createGymErrorWords,
+  createGymUnsure,
+  formatMobile,
+  FORGOT_PIN_WORDS,
+  newPinError,
+  normalizeMobile,
+} from './signin';
 import { TermsWords, TERMS_VERSION } from './TermsGate';
 
 const badPhone = () => t('Type a 10-digit mobile number, like 98290 12345.');
@@ -26,6 +38,9 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // F187: "Forgot your PIN?" by WhatsApp, only while the WhatsApp code is switched on.
+  const whatsApp = usePhoneCodeAvailable();
+  const [forgot, setForgot] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -45,6 +60,10 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
       setBusy(false);
     }
   };
+
+  if (forgot && whatsApp) {
+    return <ForgotPinForm startPhone={phone} onBack={() => setForgot(false)} />;
+  }
 
   return (
     <form onSubmit={(e) => void submit(e)} noValidate>
@@ -68,7 +87,15 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
           {busy ? t('Signing in…') : (submitLabel ?? t('Sign in'))}
         </Button>
       </div>
-      <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t(FORGOT_PIN_WORDS)}</p>
+      {whatsApp ? (
+        <div style={{ marginTop: space.sm }}>
+          <Button variant="quiet" full onClick={() => setForgot(true)}>
+            {t('Forgot your PIN? Get a code on WhatsApp')}
+          </Button>
+        </div>
+      ) : (
+        <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t(FORGOT_PIN_WORDS)}</p>
+      )}
     </form>
   );
 }
@@ -88,6 +115,31 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
   const [error, setError] = useState<string | null>(null);
   // UAT 1 Nov 2026: no answer from the server: the gym may exist, so offer Sign in before a second try.
   const [unsure, setUnsure] = useState(false);
+  // F187: while the WhatsApp code is on, a code to the mobile proves the number before the gym is made.
+  const whatsApp = usePhoneCodeAvailable();
+  const [trap, setTrap] = useState('');
+  const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
+  const [checkCode, setCheckCode] = useState('');
+  const [proof, setProof] = useState<{ phone: string; proof: string } | null>(null);
+
+  const askCode = async (ten: string) => {
+    setBusy(true);
+    setError(null);
+    try {
+      if (trap.trim()) {
+        // The Worker drops a bot's ask; say nothing different here either.
+        console.warn('[phone-code] hidden box filled; no code asked');
+      } else {
+        await sendPhoneCode(ten, 'signup');
+      }
+      setCodeSentTo(ten);
+      setCheckCode('');
+    } catch (err) {
+      setError(phoneCodeWords(err));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -99,10 +151,30 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
     const pinBad = newPinError(pin, pinAgain, ten);
     if (pinBad) return setError(t(pinBad));
     if (!agreed) return setError(t('Tick the box to agree to the terms. Then tap “Create my gym” again.'));
+    let phoneProof: string | undefined;
+    if (whatsApp) {
+      if (proof && proof.phone === ten) {
+        phoneProof = proof.proof;
+      } else {
+        // First tap: the code goes out. The number was changed after that: a new code for the new number.
+        if (codeSentTo !== ten) return askCode(ten);
+        if (checkCode.length !== 6) return setError(t('Type the 6-digit code from WhatsApp.'));
+        setBusy(true);
+        setError(null);
+        try {
+          phoneProof = await verifyPhoneCode(ten, 'signup', checkCode);
+          setProof({ phone: ten, proof: phoneProof });
+        } catch (err) {
+          setError(phoneCodeWords(err));
+          setBusy(false);
+          return;
+        }
+      }
+    }
     setBusy(true);
     setError(null);
     try {
-      const signed = await authApi.createOnlineGym(gymName, name, ten, TERMS_VERSION, pin);
+      const signed = await authApi.createOnlineGym(gymName, name, ten, TERMS_VERSION, pin, phoneProof);
       // A server without 0034 made the gym but kept no PIN (the panel goes live after 0034, so this
       // is only a safety net): Staff & sign-in offers "Set my PIN" once the server has PINs.
       if (signed.hasPin !== true) console.warn('[ForgeErr] gym_create_online: the PIN was not kept (server before 0034)');
@@ -114,11 +186,18 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
       replace('/');
       adopt(signed, { online: true });
     } catch (err) {
+      // F187: the server did not take the number check (used or expired proof): start the code again.
+      if (authErrorCode(err) === 'PHONE_CHECK') {
+        setProof(null);
+        setCodeSentTo(null);
+      }
       setError(createGymErrorWords(err));
       setUnsure(createGymUnsure(err));
       setBusy(false);
     }
   };
+
+  const waitingForCode = whatsApp && codeSentTo !== null && codeSentTo === normalizeMobile(phone) && proof?.phone !== codeSentTo;
 
   return (
     <form onSubmit={(e) => void submit(e)} noValidate>
@@ -131,12 +210,24 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
         value={phone}
         onChange={setPhone}
         placeholder="98290 12345"
-        hint={t('You sign in with this number on any phone or computer.')}
+        hint={whatsApp ? t('You sign in with this number. We check it with a code on WhatsApp.') : t('You sign in with this number on any phone or computer.')}
       />
+      {whatsApp && <BotTrap value={trap} onChange={setTrap} />}
       <PinFields pin={pin} again={pinAgain} onPin={setPin} onAgain={setPinAgain} />
       <CheckField checked={agreed} onChange={setAgreed}>
         <TermsWords />
       </CheckField>
+      {waitingForCode && codeSentTo && (
+        <div style={{ marginTop: space.md }}>
+          <p role="status" style={{ margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+            {t('We sent a 6-digit code to {phone} on WhatsApp. It works for 10 minutes.', { phone: `+91 ${formatMobile(codeSentTo)}` })}
+          </p>
+          <TextField label={t('Code from WhatsApp')} inputMode="numeric" value={checkCode} onChange={(v) => setCheckCode(cleanCode(v))} placeholder="000000" />
+          <Button variant="quiet" full disabled={busy} onClick={() => void askCode(codeSentTo)}>
+            {t('Send a new code')}
+          </Button>
+        </div>
+      )}
       {error && (
         <div style={{ marginTop: space.md }}>
           <ErrorBanner>{error}</ErrorBanner>
@@ -152,7 +243,11 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
       <div style={{ marginTop: space.lg }}>
         {/* UAT 1 Nov 2026: the main button of this form (it was an outline, under a bright "Start demo"). */}
         <Button type="submit" full disabled={busy}>
-          {busy ? t('Setting up…') : t('Create my gym')}
+          {busy
+            ? t('Setting up…')
+            : whatsApp && !waitingForCode && proof?.phone !== normalizeMobile(phone)
+              ? t('Get code on WhatsApp')
+              : t('Create my gym')}
         </Button>
       </div>
       <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>

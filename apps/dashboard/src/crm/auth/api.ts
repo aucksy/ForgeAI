@@ -44,6 +44,7 @@ export async function createOnlineGym(
   phone: string,
   termsVersion?: string,
   pin?: string,
+  phoneProof?: string,
 ): Promise<SignedIn> {
   const base = {
     p_gym_name: gymName.trim(),
@@ -54,6 +55,8 @@ export async function createOnlineGym(
   const withTerms = termsVersion ? { ...base, p_terms_version: termsVersion } : base;
   // Newest server first; each older shape only when the server says it has no such function.
   const tries: Record<string, unknown>[] = [];
+  // F187 (0061): the proof that a WhatsApp code reached this number.
+  if (phoneProof) tries.push({ ...withTerms, ...(pin ? { p_pin: pin } : {}), p_phone_proof: phoneProof });
   if (pin) tries.push({ ...withTerms, p_pin: pin });
   tries.push(withTerms);
   if (termsVersion) tries.push(base);

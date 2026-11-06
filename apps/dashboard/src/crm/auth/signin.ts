@@ -280,6 +280,8 @@ export type AuthErrorCode =
   | 'NEED_CURRENT'
   | 'WRONG_PIN'
   | 'NO_PERSON'
+  // F187 (0061): Create my gym with a number that was not checked by a WhatsApp code.
+  | 'PHONE_CHECK'
   // UAT work package 3 (0021): the server's receipt rules.
   | ReceiptRefusal
   | 'OFFLINE'
@@ -309,7 +311,7 @@ export const RECEIPT_REFUSALS: readonly ReceiptRefusal[] = [
 const CODES: readonly AuthErrorCode[] = [
   'BAD_PHONE', 'NO_CODE', 'WRONG_CODE', 'TOO_MANY_TRIES', 'PHONE_TAKEN', 'OWNER_ONLY', 'SELF',
   'LAST_OWNER', 'TOO_MANY', 'GONE', 'BAD_KEY', 'EMPTY', 'BUSY', 'SUSPENDED', 'STAFF_ELSEWHERE',
-  'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', ...RECEIPT_REFUSALS,
+  'BAD_PIN', 'WEAK_PIN', 'NEED_CURRENT', 'WRONG_PIN', 'NO_PERSON', 'PHONE_CHECK', ...RECEIPT_REFUSALS,
 ];
 
 /** Launch audit 3 Nov 2026: MettleUp's support email, shown wherever a gym is told to contact us. */
@@ -405,6 +407,9 @@ export function createGymErrorWords(err: unknown): string {
 export const FORGOT_PIN_WORDS =
   'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.';
 
+/** F187 (0061): the number check by WhatsApp code failed or is missing. */
+export const PHONE_CHECK_WORDS = 'We could not check your mobile number. Ask for a new code on WhatsApp and try again.';
+
 /** Plain words for a failed sign-in, people change or code. PURE. */
 export function authErrorWords(err: unknown): string {
   const code = err instanceof SignInError ? err.code : authErrorCode(err);
@@ -441,6 +446,8 @@ export function authErrorWords(err: unknown): string {
     }
     case 'NO_PERSON':
       return 'Sign in with your mobile number first. Then you can set a PIN.';
+    case 'PHONE_CHECK':
+      return PHONE_CHECK_WORDS;
     case 'PHONE_TAKEN':
       return 'This mobile number is already on the list.';
     case 'OWNER_ONLY':

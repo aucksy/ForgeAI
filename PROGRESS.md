@@ -3047,3 +3047,32 @@
   - Gaps: no receipt or GST invoice; multi-branch totals say "message MettleUp"; Pro + AI and the lifetime pack not payable
     here; any owner key (demo gyms too) can read the payment details, so use a UPI handle without the phone number.
   - TODO at deploy: add the ADMIN_NEWS entry (whatsNew.ts) for Pay MettleUp; apply 0060; deploy the HQ Worker; save the details.
+- 2026-11-06: **F187 sign-in codes by WhatsApp built, SWITCHED OFF (no token yet), NOT live.** (R-383)
+  - Worker (deploy/panel/phoneCode.js, routes /api/phone-code/status|send|verify in worker.js): 6-digit crypto-random
+    codes kept only as HMAC-SHA256(PHONE_CODE_SECRET, id+code) in D1 (migrations/0012_phone_codes.sql, NOT applied),
+    10 minutes, 5 wrong tries then dead, one use, constant-time compare. Sends Meta's copy-code authentication template
+    login_code (en) via Graph v27.0 /<WHATSAPP_PHONE_NUMBER_ID>/messages. Limits on the server: per number 1/min, 3/h,
+    5/day; per IP 10/h; PHONE_CODE_DAILY_CAP (200) per India day, logs "DAILY CAP REACHED" and hides the option;
+    Indian mobiles only; hidden "website" bot box. Forgot PIN: same neutral answer for every number, asks counted
+    whether sent or not, a never-sent code stored for numbers with no account (wrong-code answers look the same), the
+    WhatsApp call runs after the answer (ctx.waitUntil) so timing says nothing. Off unless WHATSAPP_TOKEN,
+    WHATSAPP_PHONE_NUMBER_ID, PHONE_CODE_SECRET and D1 exist and PHONE_CODES != off. Logs never hold the code, number or token.
+  - A right code gives a proof "v1.<purpose>.<phone>.<exp>.<nonce>.<hmac>" (15 min). Supabase 0061_phone_codes.sql
+    (NOT APPLIED, needs his yes) checks it itself with the same secret (phone_code_settings row, set live, never in
+    git): staff_reset_pin_with_proof(proof, pin) sets the PIN for every staff row of that number (clears tries, lock,
+    lock_streak); phone_code_has_account(phone, at, sig) is the Worker's HMAC-signed "has an account?" question;
+    gym_create_online gains p_phone_proof: a checked number gets a free trial only once (trial_phones) and never when it
+    already owns a gym (trial ends at once; 0030: nothing locks); signup_check_required (default false) makes the check
+    compulsory. Re-running 0034 puts back the old gym_create_online: re-run 0061 after it.
+  - Admin app: Sign in shows "Forgot your PIN? Get a code on WhatsApp" (auth/ForgotPin.tsx: number -> code + new PIN
+    -> signed in) only when /api/phone-code/status says available; Set up a new gym asks "Get code on WhatsApp" first,
+    then the code box, then makes the gym with the proof (PHONE_CHECK from the server -> ask again). Hinglish lines
+    added. Off = the screens are exactly as before (e2e support + crawl stub the status as off).
+  - Set-up: .github/workflows/whatsapp-setup.yml (register the number with WHATSAPP_PIN, print number + template
+    status, wrangler secret put WHATSAPP_TOKEN [+ PHONE_CODE_SECRET] into forgeai-panel with CLOUDFLARE_API_TOKEN,
+    which may be read-only today). Owner steps: docs/WHATSAPP-SETUP.md.
+  - Tests: deploy/panel/phoneCode.test.mjs (16, run locally: pass), supabase/tests/0061_phone_codes.sql, security.sql
+    allow-list, e2e/whatsapp-code-uat.spec.mjs (off / forgot PIN / sign-up, phone + computer, Worker faked).
+  - Gaps: members' app sign-in (join by gym code + name, member_join 0020) not changed; "no free trial for this number"
+    is not explained on screen (only the trial line says it ended); device QA makes gyms without a code, so it breaks
+    when signup_check_required is on; no SMS fallback; ADMIN_NEWS entry to add at the deploy that switches it on.
