@@ -8,7 +8,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 
-import { FOUNDING_OFFER } from '@forgeai/theme';
+import { BILLING_ONLINE_ON, FOUNDING_OFFER } from '@forgeai/theme';
 
 import { useAuth, useRole } from '../auth/AuthProvider';
 import {
@@ -173,7 +173,8 @@ export function PayOnline({ ownerKey }: { ownerKey: string }) {
 export function useRenewWords(): string | null {
   const { session } = useAuth();
   const role = useRole();
-  const key = session && session.online && !session.demo && role === 'owner' ? session.ownerKey : '';
+  // Off (BILLING_ONLINE_ON false): Today asks the server nothing.
+  const key = BILLING_ONLINE_ON && session && session.online && !session.demo && role === 'owner' ? session.ownerKey : '';
   const info = useBilling(key);
   return key ? reminderText(info) : null;
 }

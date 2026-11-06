@@ -183,6 +183,13 @@ export function foundingOpen(nowMs: number, taken: number): boolean {
   return indiaDayNumber(nowMs) <= lastDay && taken < FOUNDING_OFFER.gyms;
 }
 
+/**
+ * THE APP'S SWITCH for online buying on Today: while false, Today never asks the server about the plan
+ * end (no call to a function that is not on the server yet). Pay MettleUp asks anyway and follows the
+ * server's own switch (0063 app_config 'billing_checkout'). Billing step 4 turns both on with his yes.
+ */
+export const BILLING_ONLINE_ON = false;
+
 /** The plan-end reminders, in days before the plan ends (in the app; messages later). */
 export const RENEW_REMINDER_DAYS: readonly number[] = [7, 3, 1];
 
