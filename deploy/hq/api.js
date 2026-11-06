@@ -72,13 +72,21 @@ const CHECK_LISTS = ['open', 'done', 'all'];
 const CHECK_HOWS = ['refunded', 'applied_by_hand'];
 
 /** A 0064 call; before 0064 is applied the page gets CHECKS_NOT_READY. */
-async function checksDb(run) {
+async function checksDb(run, env) {
+  // Off while var BILLING is not set (0063/0064 are applied only when online buying is switched on): the
+  // page is told "not ready" without calling a database function that may not exist yet.
+  if (!checksOn(env)) throw new DbError('CHECKS_NOT_READY', 503);
   try {
     return await run();
   } catch (e) {
     if (e instanceof DbError && e.code === 'NOT_READY') throw new DbError('CHECKS_NOT_READY', 503);
     throw e;
   }
+}
+
+/** Online payments to check (0064) are asked for only while online buying is set up (var BILLING). */
+function checksOn(env) {
+  return Boolean(env && String(env.BILLING || '').trim());
 }
 
 /** A 0060 call; before 0060 is applied the page gets PAY_NOT_READY ("needs the database update"). */
@@ -199,13 +207,16 @@ export async function handleApi(request, env, who, deps = {}) {
       } catch (e) {
         if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments not readable', e instanceof Error ? e.message : 'error');
       }
-      // 0064: online payments taken but not applied (a count only; null before 0064 or on a failure).
+      // 0064: online payments taken but not applied (a count only; null while switched off, before 0064 or
+      // on a failure). Switched off (no var BILLING): the database is not asked.
       let paymentsToCheck = null;
-      try {
-        const n = await db('hq_billing_checks_waiting', {});
-        paymentsToCheck = typeof n === 'number' ? n : null;
-      } catch (e) {
-        if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments to check not readable', e instanceof Error ? e.message : 'error');
+      if (checksOn(env)) {
+        try {
+          const n = await db('hq_billing_checks_waiting', {});
+          paymentsToCheck = typeof n === 'number' ? n : null;
+        } catch (e) {
+          if (!(e instanceof DbError && e.code === 'NOT_READY')) console.error('[hq-api] needs: payments to check not readable', e instanceof Error ? e.message : 'error');
+        }
       }
       return json(200, {
         leadsNew: web ? web.leadsNew : null,
@@ -226,7 +237,7 @@ export async function handleApi(request, env, who, deps = {}) {
     // 0064: online payments the company took that did not become a plan (wrong amount, the gym changed).
     if (route === 'GET /api/billing-checks') {
       const which = CHECK_LISTS.includes(q.get('which')) ? q.get('which') : 'open';
-      return json(200, { which, rows: await checksDb(() => db('hq_billing_checks', { p_which: which })) });
+      return json(200, { which, rows: await checksDb(() => db('hq_billing_checks', { p_which: which }), env) });
     }
 
     // T79: MettleUp's own payment details (UPI ID, bank account), shown to gym owners on Pay MettleUp.
@@ -373,7 +384,7 @@ export async function handleApi(request, env, who, deps = {}) {
     // 0064: HQ marks a payment to check as refunded or applied by hand (one audit row, with the note).
     if (route === 'POST /api/billing-checks/done') {
       if (!isUuid(b.id) || !CHECK_HOWS.includes(b.how)) return refuse('BAD_REQUEST');
-      return json(200, await checksDb(() => db('hq_billing_check_done', { p_checkout: b.id, p_how: b.how, p_note: text(b.note, 500) })));
+      return json(200, await checksDb(() => db('hq_billing_check_done', { p_checkout: b.id, p_how: b.how, p_note: text(b.note, 500) }), env));
     }
 
     if (route === 'POST /api/payments/reject') {

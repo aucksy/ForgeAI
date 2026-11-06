@@ -969,7 +969,8 @@ async function checksCard(box, which = 'open') {
     d = await api(`/api/billing-checks?which=${encodeURIComponent(which)}`);
   } catch (e) {
     if (e instanceof HqError && e.code === 'CHECKS_NOT_READY') {
-      box.replaceChildren(h('h2', {}, 'Online payments to check'), note(errorWords('CHECKS_NOT_READY'), 'warn'));
+      // Switched off (no online buying yet, or 0064 not applied): the card is not shown at all.
+      box.remove();
       return;
     }
     fail(box, e);

@@ -25,7 +25,7 @@ import {
   planNow,
   priceOf,
   referenceError,
-  trialStartLine,
+  trialPayLine,
   type PayBilling,
   type PayMethod,
   type PayOverview,
@@ -186,8 +186,9 @@ export function PayMettleUpScreen() {
   const data = load.data;
   const link = mettleUpUpiLink(data.payTo, price, data.gymCode);
   const lifetime = data.billing === 'lifetime';
-  // Paying during the free trial: the paid plan starts when the trial ends (0063), shown before paying.
-  const trialLine = trialStartLine(data, billing, Date.now());
+  // Paying during the free trial: when the paid time starts, as the LIVE server counts it (0060: the day
+  // MettleUp confirms; 0063: when the trial ends), shown before paying.
+  const trialLine = trialPayLine(data, billing, Date.now());
 
   const send = async () => {
     const rErr = referenceError(reference, method);

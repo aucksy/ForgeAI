@@ -61,7 +61,8 @@ function useBilling(key: string): BillingInfo | null {
 // ---------------------------------------------------------------- Pay MettleUp screen
 
 export function PayOnline({ ownerKey }: { ownerKey: string }) {
-  const info = useBilling(ownerKey);
+  // Off (BILLING_ONLINE_ON false): asks the server nothing, so a server without 0063 is never called.
+  const info = useBilling(BILLING_ONLINE_ON ? ownerKey : '');
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 

@@ -15,6 +15,8 @@ import { MoreScreen } from './ui/screens/More';
 import { isTileFilter } from './logic/homeTiles';
 import { useEffect, useMemo, useRef } from 'react';
 
+import { BILLING_ONLINE_ON } from '@forgeai/theme';
+
 import { cloudApi } from './auth/api';
 import { AuthProvider, useAuth, useRole } from './auth/AuthProvider';
 import { OwnerOnly } from './auth/OwnerOnly';
@@ -380,7 +382,8 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
       if (id === 'entry') return <EntryMachinesScreen />;
       // T79: Settings -> Pay MettleUp (the owner pays for the plan; says plainly when the server is not ready, 0060).
       // Billing step 3: one MettleUp receipt, /settings/mettleup/receipt/<number> (owner only, like the screen).
-      if (id === 'mettleup' && segments[2] === 'receipt') return <MettleUpReceiptScreen receiptNo={segments[3] ?? ''} />;
+      // Off (BILLING_ONLINE_ON false): no receipt screen, so owner_receipt (0063) is never called.
+      if (id === 'mettleup' && segments[2] === 'receipt' && BILLING_ONLINE_ON) return <MettleUpReceiptScreen receiptNo={segments[3] ?? ''} />;
       if (id === 'mettleup') return <PayMettleUpScreen />;
       // Invite link + front-desk QR poster.
       if (id === 'invite') return <InviteScreen />;

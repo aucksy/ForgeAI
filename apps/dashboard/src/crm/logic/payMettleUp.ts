@@ -307,3 +307,32 @@ export function trialStartLine(
   }
   return `${start} and runs until ${payDate(paidUntilAfter(from, billing, nowMs))}.`;
 }
+
+/**
+ * Does the LIVE gym server keep the rest of a free trial when a payment is confirmed (0063 _paid_from)?
+ * false while only 0060 is live (6 Nov 2026): HQ's Confirm counts the paid month or year from the day it
+ * confirms. Set to true in the same change that applies 0063, never before.
+ */
+export const TRIAL_KEPT_ON_PAY = false;
+
+/**
+ * The line the owner reads before paying during a running free trial, true to what the live server does.
+ * With 0063 (kept): trialStartLine. With only 0060: the paid time starts the day MettleUp confirms it:
+ *   "Your paid month starts on the day MettleUp confirms your payment, not when your free trial ends on
+ *    17 Jan 2027. To keep every free day, pay nearer that date."
+ * null when no trial is running, the gym is paid up, or lifetime. PURE.
+ */
+export function trialPayLine(
+  o: { paidUntil: string | null; trialEndsAt: string | null; billing?: string | null },
+  billing: PayBilling,
+  nowMs: number,
+  kept: boolean = TRIAL_KEPT_ON_PAY,
+): string | null {
+  if (kept) return trialStartLine(o, billing, nowMs);
+  if (o.billing === 'lifetime' || !o.trialEndsAt) return null;
+  const te = Date.parse(o.trialEndsAt);
+  if (Number.isNaN(te) || te <= nowMs) return null;
+  if (o.paidUntil && Date.parse(o.paidUntil) > nowMs) return null;
+  const what = billing === 'yearly' ? 'year' : 'month';
+  return `Your paid ${what} starts on the day MettleUp confirms your payment, not when your free trial ends on ${payDate(o.trialEndsAt)}. To keep every free day, pay nearer that date.`;
+}

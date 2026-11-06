@@ -18,6 +18,7 @@ import {
   referenceError,
   paidFrom,
   paidUntilAfter,
+  trialPayLine,
   trialStartLine,
   type MettleUpPayment,
 } from '../../src/crm/logic/payMettleUp';
@@ -210,5 +211,22 @@ describe('paying during the free trial (0063): no trial day is lost', () => {
     expect(trialStartLine({ ...o, trialEndsAt: '2026-11-01T10:00:00+05:30' }, 'monthly', NOW_MS)).toBeNull();
     expect(trialStartLine({ ...o, paidUntil: '2027-03-06T23:59:59+05:30', billing: 'monthly' }, 'monthly', NOW_MS)).toBeNull();
     expect(trialStartLine({ ...o, billing: 'lifetime' }, 'monthly', NOW_MS)).toBeNull();
+  });
+});
+
+describe('trialPayLine: true to the live server (only 0060 live: paid time starts the day it is confirmed)', () => {
+  const NOW_MS = Date.parse('2026-11-06T06:30:00Z');
+  const o = { paidUntil: null, trialEndsAt: '2027-02-06T10:00:00+05:30', billing: null };
+  it('says the paid time starts on the confirm day while 0063 is not live, and never promises the trial end', () => {
+    expect(trialPayLine(o, 'monthly', NOW_MS, false)).toBe(
+      'Your paid month starts on the day MettleUp confirms your payment, not when your free trial ends on 6 Feb 2027. To keep every free day, pay nearer that date.',
+    );
+    expect(trialPayLine(o, 'yearly', NOW_MS, false)).toContain('Your paid year starts on the day MettleUp confirms');
+    expect(trialPayLine({ ...o, trialEndsAt: '2026-11-01T10:00:00+05:30' }, 'monthly', NOW_MS, false)).toBeNull();
+    expect(trialPayLine({ ...o, paidUntil: '2026-12-06T23:59:59+05:30', billing: 'monthly' }, 'monthly', NOW_MS, false)).toBeNull();
+    expect(trialPayLine({ ...o, billing: 'lifetime' }, 'monthly', NOW_MS, false)).toBeNull();
+  });
+  it('with 0063 live (kept) it is the trial-end line', () => {
+    expect(trialPayLine(o, 'monthly', NOW_MS, true)).toBe(trialStartLine(o, 'monthly', NOW_MS));
   });
 });

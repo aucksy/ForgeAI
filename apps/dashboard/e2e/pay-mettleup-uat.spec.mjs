@@ -1,5 +1,5 @@
 // T79 "Pay MettleUp" (6 Nov 2026), UAT of Settings -> Pay MettleUp and the free-trial line's link, on a phone
-// (375 x 812) with one computer picture (1280 x 900). Every step taps the real screen; pictures go to
+// (390 x 844, the config's phone) with computer pictures (1280 x 900) of the main steps. Every step taps the real screen; pictures go to
 // e2e/.results/uat (CI uploads them as "dashboard-uat-pictures"). The gym's server is the pretend one
 // (support.mjs); every payment detail is an obviously fake test value.
 //
@@ -12,11 +12,15 @@
 //     "Waiting for confirmation"; the same reference again is refused.
 //  5. Confirmed (paid until a date) and not confirmed (with the reason) as the owner reads them.
 //  6. The free-trial line on Today links to Pay MettleUp; the desk cannot open it.
-import { mkdirSync } from 'node:fs';
+//  7. First deploy (live server: 0060 only): nothing switched off (0061-0064: online buying, receipts, plan
+//     gate, lapse banners) shows or asks the server; the line before paying says the paid time starts the
+//     day MettleUp confirms it (0060), never "when the free trial ends" (0063).
+// Prices are read from packages/theme/src/plans.ts (the one list), never typed here.
+import { mkdirSync, readFileSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
-import { expectFitsPhone, open, openApp, openSettings, startOnlineGym } from './support.mjs';
+import { DESK, addDeskPerson, expectFitsPhone, open, openApp, openSettings, secondPhone, signIn, startOnlineGym } from './support.mjs';
 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
@@ -26,14 +30,37 @@ async function shot(page, name, fullPage = true) {
   await page.screenshot({ path: `${DIR}/${name}.png`, fullPage });
 }
 
+/** The same screen on a computer (1280 x 900), then back to the phone. */
+async function computerShot(page, name) {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await shot(page, name);
+  await page.setViewportSize({ width: 390, height: 844 });
+}
+
+// The one price list (plans.ts), read as text: "starter: { monthly: 999, yearly: 9_990 }".
+const PLANS_TS = readFileSync(new URL('../../../packages/theme/src/plans.ts', import.meta.url), 'utf8');
+function planPrice(plan, billing) {
+  const m = new RegExp(`\\b${plan}:\\s*\\{\\s*monthly:\\s*([\\d_]+),\\s*yearly:\\s*([\\d_]+)`).exec(PLANS_TS);
+  if (!m) throw new Error(`no ${plan} price in plans.ts`);
+  return Number((billing === 'yearly' ? m[2] : m[1]).replace(/_/g, ''));
+}
+const inr = (rupees) => `₹${rupees.toLocaleString('en-IN')}`;
+const PRICE = {
+  proMonth: planPrice('pro', 'monthly'),
+  proYear: planPrice('pro', 'yearly'),
+  starterMonth: planPrice('starter', 'monthly'),
+  starterYear: planPrice('starter', 'yearly'),
+};
+
+// Server functions of 0061-0064 (NOT live): the deployed build must never ask for them.
+const NOT_LIVE_FNS = ['owner_billing', 'owner_receipt', 'owner_gym_state', 'gym_has_feature', 'gym_state', 'phone_code_has_account', 'staff_reset_pin_with_proof'];
+
 const go = (page, path) =>
   page.evaluate((p) => {
     window.location.hash = p;
   }, path);
 
 const FAKE = { upiId: 'test@upi', payeeName: 'Test Payee', accountName: 'Test Account', accountNumber: '000000000000', ifsc: 'TEST0000000', bankName: 'Test Bank' };
-
-test.use({ viewport: { width: 375, height: 812 } });
 
 test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, confirmed, not confirmed', async ({ page }) => {
   const server = await openApp(page);
@@ -45,6 +72,8 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   await openSettings(page);
   const card = main.locator('div').filter({ has: page.getByText('Your MettleUp plan', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Pay MettleUp' }) }).last();
   await expect(card).toContainText('Pay for MettleUp by UPI or bank transfer');
+  await card.scrollIntoViewIfNeeded();
+  await shot(page, 'phone-pay-0-settings-card', false);
   await card.getByRole('button', { name: 'Pay MettleUp' }).tap();
   await expect(page.getByRole('heading', { name: 'Pay MettleUp', exact: true })).toBeVisible();
   await expect(main.getByTestId('pay-not-ready')).toContainText('Paying MettleUp here is not ready yet');
@@ -66,23 +95,34 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   server.payTo = FAKE;
   await page.reload();
   await go(page, '/settings/mettleup');
-  await expect(main.getByTestId('pay-amount')).toContainText('₹1,499');
+  await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.proMonth));
+  // Only 0060 is live: the paid time starts the day MettleUp confirms it, never "when the free trial ends".
+  await expect(main.getByTestId('pay-trial-start')).toHaveText(
+    'Your paid month starts on the day MettleUp confirms your payment, not when your free trial ends on 17 Jan 2027. To keep every free day, pay nearer that date.',
+  );
+  await expect(main).not.toContainText('starts when your free trial ends');
+  await expect(main.getByTestId('pay-online')).toHaveCount(0);
+  await expect(main.getByTestId('pay-receipts')).toHaveCount(0);
   await main.getByRole('group', { name: 'Pay for' }).getByRole('button', { name: '1 year' }).tap();
-  await expect(main.getByTestId('pay-amount')).toContainText('₹14,990');
+  await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.proYear));
+  await expect(main.getByTestId('pay-trial-start')).toContainText('Your paid year starts on the day MettleUp confirms your payment');
   await main.getByRole('group', { name: 'Plan' }).getByRole('button', { name: 'Starter' }).tap();
-  await expect(main.getByTestId('pay-amount')).toContainText('₹9,990');
+  await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.starterYear));
   await main.getByRole('group', { name: 'Pay for' }).getByRole('button', { name: '1 month' }).tap();
-  await expect(main.getByTestId('pay-amount')).toContainText('₹999');
-  await expect(main.getByTestId('pay-qr').getByRole('img')).toHaveAttribute('aria-label', 'UPI QR code to pay ₹999 to MettleUp');
-  await expect(main.getByTestId('pay-upi-link')).toHaveAttribute('href', `upi://pay?pa=test@upi&pn=Test%20Payee&am=999.00&cu=INR&tn=MettleUp%20${code}`);
+  await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.starterMonth));
+  await expect(main.getByText(`2. Pay ${inr(PRICE.starterMonth)}`, { exact: true })).toBeVisible();
+  await expect(main.getByTestId('pay-qr').getByRole('img')).toHaveAttribute('aria-label', `UPI QR code to pay ${inr(PRICE.starterMonth)} to MettleUp`);
+  await expect(main.getByTestId('pay-upi-link')).toHaveAttribute('href', `upi://pay?pa=test@upi&pn=Test%20Payee&am=${PRICE.starterMonth}.00&cu=INR&tn=MettleUp%20${code}`);
   const bank = main.getByTestId('pay-bank');
   for (const v of ['Test Account', '000000000000', 'TEST0000000', 'Test Bank']) await expect(bank).toContainText(v);
   await expect(main).not.toContainText(/GST invoice/i);
   await expectFitsPhone(page, 'on Pay MettleUp with the QR code');
+  await expect(main).toContainText(`In the payment note, write your gym code ${code} so we know it is you.`);
   await shot(page, 'phone-pay-3-qr-and-bank');
+  await computerShot(page, 'computer-pay-3-qr-and-bank');
 
   // 4. I have paid.
-  await expect(main.getByLabel('Amount paid')).toHaveValue('999');
+  await expect(main.getByLabel('Amount paid')).toHaveValue(String(PRICE.starterMonth));
   await main.getByRole('button', { name: 'Send for confirmation' }).tap();
   await expect(main).toContainText('Type the UPI reference number (UTR) from your UPI app.');
   await main.getByLabel('Reference number (UTR)').fill('12#4');
@@ -95,14 +135,16 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   await expect(page.getByText('Sent. MettleUp will check the payment and confirm it here.')).toBeVisible();
   const status = main.getByTestId('pay-status').first();
   await expect(status).toContainText('Waiting for confirmation');
-  await expect(status).toContainText('₹999 for Starter, monthly, reference 123456789012');
-  expect(server.mettlePayments[0]).toMatchObject({ plan: 'starter', billing: 'monthly', amountPaise: 99900, reference: '123456789012', method: 'upi' });
+  await expect(status).toContainText(`${inr(PRICE.starterMonth)} for Starter, monthly, reference 123456789012`);
+  expect(server.mettlePayments[0]).toMatchObject({ plan: 'starter', billing: 'monthly', amountPaise: PRICE.starterMonth * 100, reference: '123456789012', method: 'upi' });
   await shot(page, 'phone-pay-5-waiting');
+  await computerShot(page, 'computer-pay-5-waiting');
   // The same reference again.
   await main.getByLabel('Reference number (UTR)').fill('123456789012');
   await main.getByRole('button', { name: 'Send for confirmation' }).tap();
   await expect(main).toContainText('This reference number was already sent.');
   expect(server.mettlePayments).toHaveLength(1);
+  await shot(page, 'phone-pay-5b-double-report', false);
 
   // 5. Confirmed and not confirmed, as HQ would leave them.
   server.mettlePayments[0] = { ...server.mettlePayments[0], status: 'confirmed', decidedAt: '2026-10-18T05:00:00Z', paidUntil: '2026-11-17T18:29:59Z' };
@@ -128,4 +170,39 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   await shot(page, 'phone-pay-7-trial-line', false);
   await payLink.tap();
   await expect(page.getByRole('heading', { name: 'Pay MettleUp', exact: true })).toBeVisible();
+
+  // 7. Switched off: a receipt address shows nothing of 0063, and no 0061-0064 function was ever asked for.
+  await go(page, '/settings/mettleup/receipt/MU-2026-0001');
+  await expect(page.getByRole('heading', { name: 'Pay MettleUp', exact: true })).toBeVisible();
+  await expect(main).not.toContainText(/receipt/i);
+  await expect(main.getByTestId('renew-reminder')).toHaveCount(0);
+  const asked = server.calls.filter((c) => NOT_LIVE_FNS.some((fn) => c === fn || c.startsWith(`${fn} `)));
+  expect(asked, 'the build must not ask the live server for a 0061-0064 function').toEqual([]);
+});
+
+test('T79: the front desk has no way into Pay MettleUp', async ({ page, browser }) => {
+  const server = await openApp(page);
+  await startOnlineGym(page);
+  server.payServer = true;
+  server.payTo = FAKE;
+  await addDeskPerson(page);
+  const desk = await secondPhone(browser, server);
+  await signIn(desk, DESK.phone);
+  const main = desk.getByRole('main');
+  const before = server.calls.filter((c) => c.startsWith('owner_pay_mettleup')).length;
+  // No card on the desk's Settings.
+  await openSettings(desk);
+  await expect(main.getByRole('button', { name: 'Pay MettleUp' })).toHaveCount(0);
+  await expect(main.getByText('Your MettleUp plan', { exact: true })).toHaveCount(0);
+  // Typing the address: the owner-only page, no QR code, no bank details, no form.
+  await go(desk, '/settings/mettleup');
+  await expect(main).toContainText('Only an owner can see this');
+  await expect(main.getByTestId('pay-qr')).toHaveCount(0);
+  await expect(main.getByTestId('pay-bank')).toHaveCount(0);
+  await expect(main.getByRole('button', { name: 'Send for confirmation' })).toHaveCount(0);
+  await expect(main).not.toContainText('test@upi');
+  await expectFitsPhone(desk, 'desk on the Pay MettleUp address');
+  await shot(desk, 'phone-pay-8-desk-blocked', false);
+  expect(server.calls.filter((c) => c.startsWith('owner_pay_mettleup')).length, 'the desk never asks for the payment details').toBe(before);
+  await desk.context().close();
 });

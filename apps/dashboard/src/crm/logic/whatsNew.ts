@@ -286,6 +286,12 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
         text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
         go: { label: 'Open Branding', path: '/settings/branding' },
       },
+      {
+        // T79 (0060 live 6 Nov 2026; the admin-panel deploy is still to come). Online buying, receipts and
+        // plan-end reminders are switched off and are NOT mentioned (R-333).
+        text: 'Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until when your plan is paid.',
+        go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
+      },
     ],
   },
 ];

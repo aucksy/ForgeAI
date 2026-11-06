@@ -505,23 +505,31 @@ test('payments: before 0060 the page is told it needs the update; after it, list
 });
 
 // ------------------------------------------------------------------ payments to check (0064)
-test('payments to check: before 0064 the page is told; after it, the list and the mark go to the database', async () => {
+test('payments to check: off (no var BILLING) the database is not asked; before 0064 the page is told; after it, the list and the mark go to the database', async () => {
+  const off = fakeNet({ db: { hq_gyms: [], hq_billing_checks: [], hq_billing_checks_waiting: 3 } });
+  const offRes = await api('GET', '/api/billing-checks', null, env(), off);
+  assert.equal(offRes.status, 503);
+  assert.deepEqual(await offRes.json(), { error: 'CHECKS_NOT_READY' });
+  assert.equal((await (await api('GET', '/api/needs', null, env(), off)).json()).paymentsToCheck, null);
+  assert.equal(off.rpcCalls('hq_billing_checks').length, 0, 'switched off: hq_billing_checks is never called');
+  assert.equal(off.rpcCalls('hq_billing_checks_waiting').length, 0, 'switched off: hq_billing_checks_waiting is never called');
+  const on = { BILLING: 'test' };
   const before = fakeNet({ dbMissing: ['hq_billing_checks', 'hq_billing_check_done', 'hq_billing_checks_waiting'], db: { hq_gyms: [] } });
-  const res = await api('GET', '/api/billing-checks', null, env(), before);
+  const res = await api('GET', '/api/billing-checks', null, env(on), before);
   assert.equal(res.status, 503);
   assert.deepEqual(await res.json(), { error: 'CHECKS_NOT_READY' });
-  assert.equal((await (await api('GET', '/api/needs', null, env(), before)).json()).paymentsToCheck, null);
+  assert.equal((await (await api('GET', '/api/needs', null, env(on), before)).json()).paymentsToCheck, null);
 
   const CHK = '99999999-3333-4333-8444-555555555555';
   const net = fakeNet({ db: { hq_gyms: [], hq_billing_checks: [{ id: CHK }], hq_billing_checks_waiting: 1, hq_billing_check_done: { id: CHK, checkedHow: 'refunded' } } });
-  const list = await (await api('GET', '/api/billing-checks?which=weird', null, env(), net)).json();
+  const list = await (await api('GET', '/api/billing-checks?which=weird', null, env(on), net)).json();
   assert.equal(list.which, 'open', 'an unknown filter is the open list');
   assert.deepEqual(JSON.parse(net.rpcCalls('hq_billing_checks')[0].init.body), { p_actor: OWNER, p_which: 'open' });
-  assert.equal((await (await api('GET', '/api/needs', null, env(), net)).json()).paymentsToCheck, 1);
-  await api('POST', '/api/billing-checks/done', { id: CHK, how: 'refunded', note: ' Refund id rfnd_TEST ' }, env(), net);
+  assert.equal((await (await api('GET', '/api/needs', null, env(on), net)).json()).paymentsToCheck, 1);
+  await api('POST', '/api/billing-checks/done', { id: CHK, how: 'refunded', note: ' Refund id rfnd_TEST ' }, env(on), net);
   assert.deepEqual(JSON.parse(net.rpcCalls('hq_billing_check_done')[0].init.body), { p_actor: OWNER, p_checkout: CHK, p_how: 'refunded', p_note: 'Refund id rfnd_TEST' });
-  assert.equal((await api('POST', '/api/billing-checks/done', { id: CHK, how: 'forgot' }, env(), net)).status, 400);
-  assert.equal((await api('POST', '/api/billing-checks/done', { id: 'x', how: 'refunded' }, env(), net)).status, 400);
+  assert.equal((await api('POST', '/api/billing-checks/done', { id: CHK, how: 'forgot' }, env(on), net)).status, 400);
+  assert.equal((await api('POST', '/api/billing-checks/done', { id: 'x', how: 'refunded' }, env(on), net)).status, 400);
 });
 
 test('payment details: changed only with a fresh sign-in, sent to the database as typed (fake values)', async () => {
