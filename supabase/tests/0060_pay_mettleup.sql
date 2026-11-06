@@ -168,7 +168,10 @@ begin
   r := public.hq_confirm_mettleup_payment(actor, p2, null);
   pu := ((((want at time zone 'Asia/Kolkata')::date + interval '12 months')::date) + time '23:59:59') at time zone 'Asia/Kolkata';
   checks := checks + 1;
-  if (r->>'paidUntil')::timestamptz <> pu or (select plan || '/' || billing from public.gyms where gym_id = gid) <> 'starter/yearly' then
+  -- Since 0063 a Starter payment made while Pro is still paid for starts when the Pro days end (the gym
+  -- stays Pro until then; 0063's own test checks the switch), so either plan word is right here.
+  if (r->>'paidUntil')::timestamptz <> pu
+     or (select plan || '/' || billing from public.gyms where gym_id = gid) not in ('starter/yearly', 'pro/yearly') then
     fails := fails || ' 7:' || r::text;
   end if;
 

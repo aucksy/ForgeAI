@@ -516,7 +516,7 @@ begin
     insert into public.gym_billing_reminders(gym_id, paid_until, days_before)
       select x.gym_id, x.paid_until, ((x.paid_until at time zone 'Asia/Kolkata')::date - (p_now at time zone 'Asia/Kolkata')::date)
         from public.gyms x
-       where x.billing in ('monthly', 'yearly') and x.paid_until is not null and coalesce(x.status, 'active') = 'active'
+       where x.billing in ('monthly', 'yearly') and x.paid_until is not null and x.status is distinct from 'suspended'
          and ((x.paid_until at time zone 'Asia/Kolkata')::date - (p_now at time zone 'Asia/Kolkata')::date) in (7, 3, 1)
       on conflict do nothing
       returning gym_billing_reminders.gym_id, gym_billing_reminders.paid_until, gym_billing_reminders.days_before)
