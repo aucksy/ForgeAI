@@ -92,6 +92,7 @@ const NEEDS_A_REAL_GYM: Record<string, { title: string; body: string }> = {
   },
   shop: { title: 'The shop', body: 'Members order from your shop in the MettleUp app. Their orders land here for your front desk.' },
   challenges: { title: 'Challenges', body: 'Give members a monthly goal. Everyone who reaches it wins free days, and a leaderboard shows the top 10 in the MettleUp app.' },
+  trainers: { title: 'Trainers', body: 'Give each trainer a page with their photo and hours, and book members for personal training with a free trainer.' },
   workouts: { title: 'Workout plans', body: 'Send each member their routine. It shows up in their MettleUp app.' },
   feedback: { title: 'Help and feedback', body: 'Ask a question, or tell MettleUp about a problem or an idea.' },
   branches: { title: 'All branches', body: 'If you run more than one gym, see every branch’s numbers together.' },

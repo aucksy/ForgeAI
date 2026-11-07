@@ -805,6 +805,7 @@ export const HELP_ARTICLES = [
 export const NO_HELP_SCREENS = {
   'apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx': 'Not live yet (billing step 3: one MettleUp receipt, opened from Pay MettleUp; server 0063 is not applied). Its help goes in the Pay MettleUp article when that goes live.',
   'apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx': 'Not live yet (T79 Pay MettleUp: server 0060 is not applied and MettleUp has not added its payment details); the screen says so itself. Its help article is written when it goes live.',
+  'apps/dashboard/src/crm/ui/screens/Trainers.tsx': 'Not live yet (F105 trainer pages and personal-training bookings: server 0065 is not applied); the screen says so itself. Its help article is written when it goes live.',
   'apps/dashboard/src/crm/ui/screens/EntryMachines.tsx': 'Not live yet (F103 entry machines: server 0059 and the gate are not switched on); the screen says so itself. Its help article is written when it goes live.',
   'apps/mobile/src/app/_layout.tsx': 'The app frame around every screen; nothing to tap.',
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',

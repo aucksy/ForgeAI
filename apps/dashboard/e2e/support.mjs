@@ -67,6 +67,8 @@ const TIMINGS_FNS = ['owner_gym_timings', 'owner_save_gym_timings'];
 const FRIEND_FNS = ['owner_friend_summary'];
 /** F103 step 2 (0059, NOT APPLIED): entry machines, answered only when `entryServer` is on. */
 const ENTRY_FNS = ['owner_entry_machines', 'owner_add_entry_machine', 'owner_remove_entry_machine', 'owner_set_machine_numbers', 'owner_queue_machine_commands'];
+/** F105 (0065, NOT APPLIED): trainer pages and personal-training bookings, answered only when `scheduleServer` is on. */
+const SCHEDULE_FNS = ['owner_trainer_schedule', 'owner_save_trainer_profile', 'owner_book_pt', 'owner_cancel_pt'];
 /** T79 (0060, NOT APPLIED): Pay MettleUp, answered only when `payServer` is on. */
 const PAY_FNS = ['owner_pay_mettleup', 'owner_report_mettleup_payment'];
 const TAPE = ['neck', 'shoulders', 'chest', 'arm', 'forearm', 'waist', 'hips', 'thigh', 'calf'];
@@ -189,6 +191,16 @@ export class FakeServer {
     this.entryNumbers = new Map();
     /** 0058 entry_machine_commands: {machineId, command, status}. */
     this.entryQueue = [];
+    /** F105: does this server have 0065 (trainer pages, bookings)? Off by default (PGRST202, like the live server today). */
+    this.scheduleServer = false;
+    /** 0050 gym_trainers as 0065 answers them: {id, name} (tests add them; a person's staffId may be one). */
+    this.ptTrainers = [];
+    /** 0065 gym_trainer_profiles: trainer id -> {teaches, hours, photo}. */
+    this.ptProfiles = new Map();
+    /** 0050 gym_trainer_members: list member id -> trainer id. */
+    this.ptAssigned = {};
+    /** 0065 gym_pt_bookings: {id, trainerId, memberId, day, start, length, byName, requestId, cancelled}. */
+    this.ptBookings = [];
     /** T79: does this server have 0060 (Pay MettleUp)? Off by default (PGRST202, like the live server today). */
     this.payServer = false;
     /** 0060 platform_payment_details as owner_pay_mettleup sends it (null = not set). Fake values only. */
@@ -439,6 +451,9 @@ export class FakeServer {
     if (!this.payServer && PAY_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
+    if (!this.scheduleServer && SCHEDULE_FNS.includes(fn)) {
+      throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
+    }
     if (!this.entryServer && ENTRY_FNS.includes(fn)) {
       throw new NoSuchFunction(`Could not find the function public.${fn} in the schema cache`);
     }
@@ -527,6 +542,65 @@ export class FakeServer {
         };
         this.mettlePayments.unshift(row);
         return row;
+      }
+      // ---- F105 (0065): trainer pages and personal-training bookings, with 0065's rules.
+      case 'owner_trainer_schedule': {
+        const p = this.anyone(args.p_key);
+        const mon = String(args.p_week);
+        const sun = plusDays(mon, 6);
+        const ahead = {};
+        for (const b of this.ptBookings) {
+          if (b.cancelled || b.day < TODAY) continue;
+          ahead[b.memberId] = (ahead[b.memberId] ?? 0) + 1;
+        }
+        return {
+          ok: true, me: p.staffId, owner: p.role === 'owner', week: mon,
+          trainers: this.ptTrainers.map((t) => ({ id: t.id, name: t.name, teaches: null, hours: {}, photo: null, ...(this.ptProfiles.get(t.id) ?? {}) })),
+          assigned: Object.entries(this.ptAssigned).map(([memberId, trainerId]) => ({ memberId, trainerId })),
+          bookings: this.ptBookings.filter((b) => !b.cancelled && b.day >= mon && b.day <= sun).map(({ requestId, cancelled, ...b }) => ({ ...b })),
+          ahead,
+        };
+      }
+      case 'owner_save_trainer_profile': {
+        const p = this.anyone(args.p_key);
+        if (p.role !== 'owner' && p.staffId !== args.p_staff) throw new Refusal('OWNER_ONLY');
+        if (!this.ptTrainers.some((t) => t.id === args.p_staff)) throw new Refusal('NOT_TRAINER');
+        const old = this.ptProfiles.get(args.p_staff) ?? { photo: null };
+        const photo = args.p_photo === null ? old.photo : args.p_photo || null;
+        if (photo && !photo.startsWith('/9j/')) throw new Refusal('BAD_PHOTO');
+        const row = { teaches: String(args.p_teaches ?? '').trim().slice(0, 80) || null, hours: args.p_hours ?? {}, photo };
+        this.ptProfiles.set(args.p_staff, row);
+        return { id: args.p_staff, ...row };
+      }
+      case 'owner_book_pt': {
+        const p = this.anyone(args.p_key);
+        const done = args.p_request && this.ptBookings.find((b) => b.requestId === args.p_request);
+        if (done) return { ...done };
+        if (!this.ptTrainers.some((t) => t.id === args.p_staff)) throw new Refusal('NOT_TRAINER');
+        this.rosterMember(args.p_member);
+        const { p_day: day, p_start: start, p_length: length } = args;
+        if (![30, 45, 60, 90].includes(length) || start % 30 !== 0 || start < 300 || start + length > 1380) throw new Refusal('BAD_TIME');
+        if (day < TODAY || (day === TODAY && start <= 600)) throw new Refusal('PAST');
+        const live = this.ptBookings.filter((b) => !b.cancelled && b.day === day && b.start < start + length && start < b.start + b.length);
+        if (live.some((b) => b.trainerId === args.p_staff)) throw new Refusal('TRAINER_BUSY');
+        if (live.some((b) => b.memberId === args.p_member)) throw new Refusal('MEMBER_BUSY');
+        const hours = this.ptProfiles.get(args.p_staff)?.hours ?? {};
+        const dow = ((new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
+        if (!args.p_outside_ok && Object.keys(hours).length && !(hours[String(dow)] ?? []).some(([a, b]) => a <= start && start + length <= b)) {
+          throw new Refusal('OUTSIDE_HOURS');
+        }
+        const b = { id: `pt-${this.ptBookings.length + 1}`, trainerId: args.p_staff, memberId: args.p_member, day, start, length, byName: p.name, requestId: args.p_request, cancelled: false };
+        this.ptBookings.push(b);
+        const { requestId, cancelled, ...out } = b;
+        return out;
+      }
+      case 'owner_cancel_pt': {
+        const p = this.anyone(args.p_key);
+        const b = this.ptBookings.find((x) => x.id === args.p_booking && !x.cancelled);
+        if (!b) throw new Refusal('NOT_FOUND');
+        if (p.role !== 'owner' && (b.day < TODAY || (b.day === TODAY && b.start <= 600))) throw new Refusal('OWNER_ONLY');
+        b.cancelled = true;
+        return { ok: true, id: b.id };
       }
       case 'owner_entry_machines': {
         const p = this.anyone(args.p_key);

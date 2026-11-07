@@ -76,6 +76,8 @@ declare
     'member_friend_invite','friend_invite_preview','friend_invite_send','owner_friend_summary',
     -- 0059: entry machines (each checks the owner or desk key first; adding and removing a machine: the owner only).
     'owner_entry_machines','owner_add_entry_machine','owner_remove_entry_machine','owner_set_machine_numbers','owner_queue_machine_commands',
+    -- 0065: trainer pages and personal-training bookings (each checks the owner, desk or trainer key first; a trainer edits only their own page).
+    'owner_trainer_schedule','owner_save_trainer_profile','owner_book_pt','owner_cancel_pt',
     -- 0060: Pay MettleUp (each checks the key first: the gym OWNER only; a desk key gets OWNER_ONLY).
     'owner_pay_mettleup','owner_report_mettleup_payment',
     -- 0063: online buying (each checks the key first: the gym OWNER only; read only, the owner's own gym and receipts).

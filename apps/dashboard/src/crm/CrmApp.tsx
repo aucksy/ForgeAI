@@ -60,6 +60,7 @@ import { PayMettleUpScreen } from './ui/screens/PayMettleUp';
 import { MettleUpReceiptScreen } from './ui/screens/MettleUpReceipt';
 import { EntryMachineJob } from './ui/EntryMachineJob';
 import { MyMembersScreen } from './ui/screens/MyMembers';
+import { TrainersScreen } from './ui/screens/Trainers';
 import { useTrainerAccess } from './ui/TrainerParts';
 import { useQuestionCount } from './ui/QuestionParts';
 import { QuestionsScreen } from './ui/screens/Questions';
@@ -227,6 +228,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/diet', label: t('Diet plans'), icon: 'diet' },
       // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
       ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth' } as NavItem] : []),
+      // F105 (7 Nov 2026): trainer pages and personal-training bookings (the page says plainly when the server has no 0065).
+      { path: '/trainers', label: t('Trainers'), icon: 'workouts' },
       // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
       ...(trainerNav && questionsOpen !== null
         ? [{ path: '/questions', label: t('Questions'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
@@ -286,6 +289,7 @@ function offlinePage(head: string | undefined, id: string | undefined): string |
   if (head === 'diet') return 'Diet plans';
   if (head === 'challenges') return 'Challenges';
   if (head === 'questions') return 'Questions';
+  if (head === 'trainers') return 'Trainers';
   if (head === 'feedback') return 'Help and feedback';
   if (head === 'branches') return 'All branches';
   if (head === 'members' && id === 'import') return 'Importing members';
@@ -355,6 +359,9 @@ function Screen({ segments, role }: { segments: string[]; role: Role }) {
     case 'trainer':
       // F109: the server decides who may read it (owner, ticked trainer); the page says so to anyone else.
       return <MyMembersScreen />;
+    case 'trainers':
+      // F105: trainer pages and the week of personal-training bookings (NOT LIVE until 0065; the page says so).
+      return <TrainersScreen key={id ?? 'all'} trainerId={id} />;
     case 'questions':
       // R-319 item 1: the server shows each person only the questions addressed to them; others are told so.
       return <QuestionsScreen />;
