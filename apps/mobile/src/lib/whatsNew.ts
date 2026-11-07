@@ -62,6 +62,15 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 7 Nov 2026 15:2x IST ("first build the dot functionality and release it"). F198 only;
+    // member-words + Gemini 3.8 Flash pass (location first).
+    version: '0.74.0',
+    date: '7 Nov',
+    lines: [
+      { text: 'New features now have a small dot. Start on the Profile tab and follow the dots to find them.' },
+    ],
+  },
+  {
     // R-373 (owner's release, 5 Nov 2026 22:48 IST): member-words + Gemini 3.8 Flash pass; with Play's "• " each
     // line, 474 of 500 characters (R-313).
     version: '0.73.0',
