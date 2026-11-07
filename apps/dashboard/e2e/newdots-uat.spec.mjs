@@ -17,7 +17,10 @@ import { DESK, PHONE, addDeskPerson, bottomBar, expectFitsPhone, open, openApp, 
 const DIR = 'e2e/.results/uat';
 mkdirSync(DIR, { recursive: true });
 
-const NOV7 = new Date('2026-11-07T10:00:00+05:30');
+// The Pay MettleUp / Branding / pass-members trail runs on the evening of 6 Nov: from 7 Nov 00:00 the F105 Trainers
+// feature is the newest, and MAX_DOTS (3) pushes pass members out (its own test is at the end).
+const NOV7 = new Date('2026-11-06T22:00:00+05:30');
+const TRAINERS_DAY = new Date('2026-11-07T10:00:00+05:30');
 const DOTS_KEY = 'forgeai.adminNews.dotsSeen.v1';
 
 async function shot(page, name, fullPage = false) {
@@ -163,7 +166,7 @@ test('F198 computer: dots in the left menu, on the Settings row and beside the h
   await shot(page, 'computer-4-after-reload');
 });
 
-test('F198 time: 5 Nov features end on 5 Dec, every dot ends on day 31 (6 Dec), though the 7 Nov fix is newer', async ({ page }) => {
+test('F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers (7 Nov) on 7 Dec', async ({ page }) => {
   // 5 Dec: the 6 Nov features are on day 30 (still lit); pass members (5 Nov) is on day 31 (gone).
   await openApp(page, { time: new Date('2026-12-05T10:00:00+05:30') });
   await startOnlineGym(page);
@@ -172,18 +175,26 @@ test('F198 time: 5 Nov features end on 5 Dec, every dot ends on day 31 (6 Dec), 
   await shot(page, 'time-1-day30');
 
   // Day 31 of the 6 Nov features, 00:00 India time. The 7 Nov Branding fix is still under 30 days: a fix lights nothing.
-  // (the dots read the clock on each page change, so the next tap is enough).
+  // Only Trainers (a 7 Nov feature, day 30) is still lit. (The dots read the clock on each page change.)
   await page.clock.setSystemTime(new Date('2026-12-06T00:00:30+05:30'));
   await barItem(page, 'More').tap();
   await expect(page.getByRole('heading', { name: 'More', exact: true })).toBeVisible();
-  await expect(dot(page.locator('body'))).toHaveCount(0);
+  await expect(dot(moreRow(page, 'Trainers'))).toHaveCount(1);
+  await expect(dot(page.getByRole('main'))).toHaveCount(1);
   await moreRow(page, 'Settings').tap();
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  await expect(dot(page.locator('body'))).toHaveCount(0);
+  await expect(dot(page.getByRole('main'))).toHaveCount(0);
   await go(page, '/settings/branding');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(headingDot(page)).toHaveCount(0);
-  await shot(page, 'time-2-day31-none');
+  await shot(page, 'time-2-day31-only-trainers');
+
+  // 7 Dec 00:00 India time: day 31 of Trainers too, so nothing is lit anywhere.
+  await page.clock.setSystemTime(new Date('2026-12-07T00:00:30+05:30'));
+  await barItem(page, 'Today').tap();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await expect(dot(page.locator('body'))).toHaveCount(0);
+  await shot(page, 'time-3-day31-none');
 });
 
 test('F198 before the day, the desk and the demo gym: no dots', async ({ page, browser }) => {
@@ -233,4 +244,31 @@ test('F198 edge: a broken saved value shows the dots again and is mended on the 
   await expect(headingDot(page)).toHaveCount(1);
   await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), DOTS_KEY)).toBe('["2026-11-06|/settings/mettleup"]');
   await shot(page, 'edge-1-mended');
+});
+
+test('F198 + F105, 7 Nov: the dots lead to Trainers; pass members is pushed out (three at most)', async ({ page }) => {
+  await openApp(page, { time: TRAINERS_DAY });
+  await startOnlineGym(page);
+  await expect(dot(barItem(page, 'More'))).toHaveCount(1);
+  await expect(dot(barItem(page, 'Members'))).toHaveCount(0);
+  await barItem(page, 'More').tap();
+  await expect(page.getByRole('heading', { name: 'More', exact: true })).toBeVisible();
+  await expect(dot(moreRow(page, 'Trainers'))).toHaveCount(1);
+  await expect(dot(moreRow(page, 'Settings'))).toHaveCount(1);
+  await expect(dot(moreRow(page, 'Branding'))).toHaveCount(1);
+  await expect(dot(page.getByRole('main'))).toHaveCount(3);
+  await expectFitsPhone(page, 'on More with the Trainers dot');
+  await shot(page, 'phone-9-more-trainers', true);
+
+  await moreRow(page, 'Trainers').tap();
+  await expect(page.getByRole('heading', { name: 'Trainers', exact: true })).toBeVisible();
+  await expect(headingDot(page)).toHaveCount(1);
+  await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), DOTS_KEY)).toContain('2026-11-07|/trainers');
+  await shot(page, 'phone-10-trainers-heading');
+
+  // Back on More: Trainers is dark, the other two keep theirs.
+  await barItem(page, 'More').tap();
+  await expect(dot(moreRow(page, 'Trainers'))).toHaveCount(0);
+  await expect(dot(moreRow(page, 'Settings'))).toHaveCount(1);
+  await expect(dot(moreRow(page, 'Branding'))).toHaveCount(1);
 });

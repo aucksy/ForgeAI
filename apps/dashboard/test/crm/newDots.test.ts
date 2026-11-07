@@ -190,7 +190,7 @@ describe('seen on this device', () => {
 });
 
 describe('the real list', () => {
-  it('every feature line has a page the owner can open, and the newest fix line is not a feature', () => {
+  it('every feature line has a page the owner can open, and 7 Nov carries only the Trainers feature', () => {
     for (const e of ADMIN_NEWS) {
       for (const l of e.lines) {
         if (l.feature) {
@@ -199,11 +199,18 @@ describe('the real list', () => {
         }
       }
     }
-    expect(ADMIN_NEWS.find((e) => e.id === '2026-11-07')!.lines.some((l) => l.feature)).toBe(false);
+    // F105 Trainers landed in the 7 Nov entry; its other lines stay fixes.
+    expect(ADMIN_NEWS.find((e) => e.id === '2026-11-07')!.lines.filter((l) => l.feature).map((l) => l.go!.path)).toEqual(['/trainers']);
   });
 
-  it('on 7 Nov the three dots are the icon preview, Pay MettleUp and pass members', () => {
+  it('on 7 Nov the three dots are Trainers, the icon preview and Pay MettleUp (MAX_DOTS pushes pass members out)', () => {
     expect(dotFeatures(at('2026-11-07T12:00:00+05:30')).map((f) => f.key)).toEqual([
+      '2026-11-07|/trainers',
+      '2026-11-06|/settings/branding',
+      '2026-11-06|/settings/mettleup',
+    ]);
+    // On 6 Nov (before the Trainers day) the old three still hold.
+    expect(dotFeatures(at('2026-11-06T12:00:00+05:30')).map((f) => f.key)).toEqual([
       '2026-11-06|/settings/branding',
       '2026-11-06|/settings/mettleup',
       '2026-11-05|/members',
