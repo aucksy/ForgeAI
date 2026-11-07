@@ -40,7 +40,7 @@ import type { GymPlates } from '@/tracker/services/plateMath';
 import type { Exercise, OverloadTarget, UserProfile } from '@/types/models';
 
 import { fmtDurationWords, isBodyweightFamily, type LoadMode, type LogType } from './logTypes';
-import { buildLadder, downRungKg, jumpRungKg, ladderKind, pairsUp, rackStep, sameRungKg, upRungsKg } from './weightLadder';
+import { buildLadder, downRungKg, jumpRungKg, ladderKind, machineStepKg, pairsUp, rackStep, sameRungKg, upRungsKg, type MachineStep } from './weightLadder';
 
 /**
  * Settings → Workouts → Weight jumps (Oct 2026, owner): how much a Target adds when every main
@@ -304,6 +304,12 @@ export interface ProgressionInput {
    */
   gym?: GymPlates | null;
   /**
+   * F194 (owner R-352): Settings -> Plates and bars -> "Machine and cable steps". Read for machine
+   * and cable lifts logged as weight x reps only; free weights keep their own rules. Absent = learn
+   * from his weights (today's behaviour).
+   */
+  machineStep?: MachineStep;
+  /**
    * R-61 (owner, 22 Oct 2026): a two-dumbbell move whose weight is typed as the total of both
    * (Counting "Weight as typed", as a Hevy history is): every suggested total must be two equal
    * dumbbells from the rack. 10 kg typed is 5 + 5, so warm-up-style halves like 7.5 (3.75 each)
@@ -450,6 +456,10 @@ function computeAt(input: ProgressionInput, depth: number): ProgressionTarget {
       catalogStepKg: exercise.incrementKg,
       // The gym's plates make a bar's weights (a belt on a pull-up keeps the usual step).
       ...(gym ? { gym } : {}),
+      // F194: a machine's or cable's stack moves in the member's chosen steps.
+      ...((exercise.equipment === 'machine' || exercise.equipment === 'cable') && logType === 'weight_reps' && !assisted && per === 1
+        ? { stackStepKg: machineStepKg(input.machineStep) }
+        : {}),
     },
   );
   const both = (kg: number | null): number | null => (kg == null ? null : kg * per);

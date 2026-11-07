@@ -1,0 +1,28 @@
+# Sub-flow (called with runFlow; not a part of its own): F194 UAT. From the tabs, the Workout tab's
+# "Resume workout" opens the minimised workout again (its Close-Grip Lat Pulldown card on screen).
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "Resume workout"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "Resume workout"
+    commands:
+      - scrollUntilVisible:
+          element: "Resume workout"
+          centerElement: true
+          timeout: 15000
+- tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "More for Close-Grip Lat Pulldown"
+    timeout: 30000

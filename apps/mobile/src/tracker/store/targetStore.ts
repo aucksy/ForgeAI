@@ -17,6 +17,7 @@ import type { LoadMode } from '@/tracker/engine/logTypes';
 import { applyStepBack, withoutStepBack, type ProgressionTarget, type StuckChoice, type WeightJump } from '@/tracker/engine/progression';
 import { todayISO } from '@/lib/date';
 import type { RepRangeChoice } from '@/tracker/engine/repRanges';
+import { DEFAULT_MACHINE_STEP, isMachineStep, type MachineStep } from '@/tracker/engine/weightLadder';
 import { getTargetsForCards, type TargetCard } from '@/tracker/services/coachTargets';
 import { gymKey, gymPlatesFor, type GymPlates } from '@/tracker/services/plateMath';
 import { usePlateSetup } from '@/tracker/store/plateSetupStore';
@@ -52,6 +53,8 @@ export interface TargetQuery {
    * (his own steps, as before) or no plate on (review fix).
    */
   gym: GymPlates | null;
+  /** F194: Settings -> Plates and bars -> "Machine and cable steps" (absent = learn from my weights). */
+  machineStep?: MachineStep;
   /** R-308: "When I'm stuck at a weight" (absent = ask). */
   stuck?: StuckChoice;
 }
@@ -78,6 +81,7 @@ export function targetQuery(
     jump?: WeightJump;
     repRange?: RepRangeChoice;
     gym?: GymPlates | null;
+    machineStep?: MachineStep;
   },
 ): TargetQuery {
   const units = opts.units ?? displayUnits();
@@ -101,6 +105,7 @@ export function targetQuery(
     repRange: opts.repRange ?? prefs.repRange,
     gym: opts.gym !== undefined ? opts.gym : gymPlatesNow(units),
     stuck: prefs.stuckChoice,
+    machineStep: isMachineStep(opts.machineStep) ? opts.machineStep : isMachineStep(prefs.machineStep) ? prefs.machineStep : DEFAULT_MACHINE_STEP,
   };
 }
 
@@ -109,7 +114,7 @@ export function querySignature(q: TargetQuery): string {
   const cards = q.cards
     .map((c) => `${c.key}:${c.exerciseId}:${c.planExerciseId ?? ''}:${c.loadMode ?? ''}:${c.card ?? ''}:${c.planCard ?? ''}:${c.splitFrom ?? ''}`)
     .join(',');
-  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${gymKey(q.gym)}|${q.stuck ?? 'ask'}|${cards}`;
+  return `${q.planDayId ?? ''}|${q.easy ? 1 : 0}|${q.effort ? 1 : 0}|${q.units}|${q.previousFrom ?? 'any'}|${q.jump}|${q.repRange}|${gymKey(q.gym)}|${q.stuck ?? 'ask'}|${q.machineStep ?? DEFAULT_MACHINE_STEP}|${cards}`;
 }
 
 interface TargetState {
@@ -139,6 +144,7 @@ export async function loadTargets(q: TargetQuery): Promise<void> {
           repRange: q.repRange,
           gym: q.gym,
           ...(q.stuck ? { stuck: q.stuck } : {}),
+          ...(q.machineStep ? { machineStep: q.machineStep } : {}),
         })
       : new Map();
   } catch {

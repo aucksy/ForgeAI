@@ -38,6 +38,7 @@ import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { isShareLook, isShareSize, type ShareLook, type ShareSize } from '../share/frame';
 import { DEFAULT_JUMP, DEFAULT_STUCK, isStuckChoice, isWeightJump, type StuckChoice, type WeightJump } from '../engine/progression';
 import { isRepRangeChoice, type RepRangeChoice } from '../engine/repRanges';
+import { DEFAULT_MACHINE_STEP, isMachineStep, type MachineStep } from '../engine/weightLadder';
 import { DEFAULT_REST_SOUND, isRestSoundId, type RestSoundId } from '../services/restSounds';
 import { DEFAULT_METRIC, DEFAULT_RANGE, isChartMetric, isChartRange, type ChartMetric, type ChartRange } from '../engine/historyChart';
 import { cleanInUseChoices } from '../lib/inUse';
@@ -101,6 +102,8 @@ export interface TrackerPrefsState {
   weightJump: WeightJump;
   /** Settings → Workouts → Rep range. */
   repRange: RepRangeChoice;
+  /** F194 (owner R-352): Settings → Plates and bars → "Machine and cable steps" (learn = the app guesses). */
+  machineStep: MachineStep;
   /**
    * R-70 (owner, 22 Oct 2026): "In use" fills the screen by itself the moment a set's rest starts,
    * so people nearby see the machine is taken while the member walks away.
@@ -135,6 +138,7 @@ export interface TrackerPrefsState {
   setShareLook: (value: ShareLook) => void;
   setShareGym: (value: boolean) => void;
   setWeightJump: (value: WeightJump) => void;
+  setMachineStep: (value: MachineStep) => void;
   setInUseAfterSet: (value: boolean) => void;
   setInUseFor: (exerciseId: string, on: boolean) => void;
   setRepRange: (value: RepRangeChoice) => void;
@@ -199,6 +203,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       shareGym: true,
       weightJump: DEFAULT_JUMP,
       repRange: 'goal',
+      machineStep: DEFAULT_MACHINE_STEP,
       inUseAfterSet: true,
       inUseByExercise: {},
       stuckChoice: DEFAULT_STUCK,
@@ -217,6 +222,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
       setShareLook: (value) => set({ shareLook: isShareLook(value) ? value : 'dark' }),
       setShareGym: (value) => set({ shareGym: value !== false }),
       setWeightJump: (value) => set({ weightJump: isWeightJump(value) ? value : DEFAULT_JUMP }),
+      setMachineStep: (value) => set({ machineStep: isMachineStep(value) ? value : DEFAULT_MACHINE_STEP }),
       setRepRange: (value) => set({ repRange: isRepRangeChoice(value) ? value : 'goal' }),
       setInUseAfterSet: (inUseAfterSet) => set({ inUseAfterSet: inUseAfterSet === true }),
       setStuckChoice: (value) => set({ stuckChoice: isStuckChoice(value) ? value : DEFAULT_STUCK }),
@@ -252,6 +258,7 @@ export const useTrackerPrefs = create<TrackerPrefsState>()(
           shareGym: typeof p.shareGym === 'boolean' ? p.shareGym : current.shareGym,
           weightJump: isWeightJump(p.weightJump) ? p.weightJump : current.weightJump,
           repRange: isRepRangeChoice(p.repRange) ? p.repRange : current.repRange,
+          machineStep: isMachineStep(p.machineStep) ? p.machineStep : current.machineStep,
           restSound: isRestSoundId(p.restSound) ? p.restSound : current.restSound,
           inUseAfterSet: typeof p.inUseAfterSet === 'boolean' ? p.inUseAfterSet : current.inUseAfterSet,
           inUseByExercise: cleanInUseChoices(p.inUseByExercise),

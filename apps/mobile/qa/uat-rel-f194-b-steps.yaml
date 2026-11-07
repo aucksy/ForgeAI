@@ -1,0 +1,71 @@
+# Part UAT, F194 flow b: the day after flow a (50 kg x 20 on all 3 sets of the Close-Grip Lat Pulldown, a
+# cable). Types (R-364): happy path (5 kg -> the Target says 55 kg), negative (no 52.5 kg on a 5 kg stack),
+# setting changed mid-workout (the open workout's Target follows at once), regression (Learn from my
+# weights = today's guess, 52.5 kg, before and after), interruption (the workout minimised and resumed).
+# Free weights untouched: unit test f194MachineSteps. Pictures rel-f194-b..h-*.png.
+appId: com.mettleup.app
+---
+# Flow a left the saved routine open: start it today (the part moved the clock one day on).
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Close-Grip Lat Pulldown"
+    timeout: 30000
+# Regression: Learn from my weights (the default) = today's guess, the library's 2.5 kg step.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Target 52\\.5 kg.*Tap for why\\.$"
+- assertNotVisible: "^Target 55 kg.*"
+- takeScreenshot: rel-f194-b-target-learn-52-5
+# Interruption + setting changed mid-workout: minimise (Back), choose 5 kg, resume.
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-uat-f194-choose.yaml
+    env:
+      CHOICE: "^5 kg\\. .*"
+      SHOWN: "5 kg"
+      PIC: "c-5kg"
+- runFlow: sub-uat-f194-resume.yaml
+# Happy path + negative: a 5 kg jump, never 2.5.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Target 55 kg.*Tap for why\\.$"
+- assertNotVisible: ".*52\\.5 kg.*"
+- takeScreenshot: rel-f194-d-target-5kg-55
+# 2.5 kg: 52.5 (one 2.5 kg step).
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-uat-f194-choose.yaml
+    env:
+      CHOICE: "^2\\.5 kg\\. .*"
+      SHOWN: "2\\.5 kg"
+      PIC: "e-2-5kg"
+- runFlow: sub-uat-f194-resume.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Target 52\\.5 kg.*Tap for why\\.$"
+- assertNotVisible: "^Target 55 kg.*"
+- takeScreenshot: rel-f194-f-target-2-5kg
+# Regression: back to Learn from my weights gives today's guess again.
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow:
+    file: sub-uat-f194-choose.yaml
+    env:
+      CHOICE: "^Learn from my weights, recommended\\. .*"
+      SHOWN: "Learn from my weights"
+      PIC: "g-learn"
+- runFlow: sub-uat-f194-resume.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Target 52\\.5 kg.*Tap for why\\.$"
+- takeScreenshot: rel-f194-h-target-learn-again

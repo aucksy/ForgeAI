@@ -48,6 +48,7 @@ import {
   type WeightJump,
 } from '@/tracker/engine/progression';
 import { isRepRangeChoice, rangeForRow, type RepRangeChoice } from '@/tracker/engine/repRanges';
+import { DEFAULT_MACHINE_STEP, isMachineStep, type MachineStep } from '@/tracker/engine/weightLadder';
 import { EASY_REASON, easySets } from '@/tracker/plans/easyWeek';
 import { effortReason, STALL_RULES } from '@/tracker/plans/effort';
 import { getPlanNow, planNowOf } from '@/tracker/services/planState';
@@ -99,6 +100,8 @@ export interface TargetPrefs {
    * null = his own steps from his history, as before (review fix).
    */
   gym: GymPlates | null;
+  /** F194: Settings -> Plates and bars -> "Machine and cable steps" (absent = learn from my weights). */
+  machineStep?: MachineStep;
   /** R-308: "When I'm stuck at a weight" (absent = ask). */
   stuck?: StuckChoice;
   /** R-308: each exercise's Try / Stay answer to a step-back offer (absent = none). */
@@ -112,11 +115,13 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
   let gym: GymPlates | null = null;
   let stuck: StuckChoice = DEFAULT_STUCK;
   let stepBack: Readonly<Record<string, StepBackChoice>> = {};
+  let machineStep: MachineStep = DEFAULT_MACHINE_STEP;
   try {
     const p = useTrackerPrefs.getState();
     if (isWeightJump(p.weightJump)) jump = p.weightJump;
     if (isRepRangeChoice(p.repRange)) repRange = p.repRange;
     if (isStuckChoice(p.stuckChoice)) stuck = p.stuckChoice;
+    if (isMachineStep(p.machineStep)) machineStep = p.machineStep;
     if (p.stepBackByExercise && typeof p.stepBackByExercise === 'object') stepBack = p.stepBackByExercise;
   } catch {
     // quiet: an unreadable settings store means the defaults; nothing the member typed is lost
@@ -135,6 +140,7 @@ export function targetPrefs(given: Partial<TargetPrefs> = {}): TargetPrefs {
     jump: given.jump && isWeightJump(given.jump) ? given.jump : jump,
     repRange: given.repRange && isRepRangeChoice(given.repRange) ? given.repRange : repRange,
     gym: given.gym !== undefined ? given.gym : gym,
+    machineStep: given.machineStep && isMachineStep(given.machineStep) ? given.machineStep : machineStep,
     stuck: given.stuck && isStuckChoice(given.stuck) ? given.stuck : stuck,
     stepBack: given.stepBack ?? stepBack,
   };
@@ -260,6 +266,7 @@ async function targetsFor(
       ...(ladder ? { ladder } : {}),
       jump: prefs.jump,
       gym: prefs.gym,
+      machineStep: prefs.machineStep ?? DEFAULT_MACHINE_STEP,
       // R-61: a two-dumbbell move (the library's counting) typed as one total.
       pair: (entry?.loadMode === 'both' || entry?.loadMode === 'both_side') && !weightIsEach(mode),
       ...(breakFrom?.[i] ? { breakFromISO: breakFrom[i] } : {}),
@@ -377,6 +384,8 @@ function memoKey(
     prefs.jump,
     prefs.repRange,
     gymKey(prefs.gym),
+    // F194: "Machine and cable steps" changes a machine's or cable's Target.
+    prefs.machineStep ?? DEFAULT_MACHINE_STEP,
     // R-308: the stuck choice and the Try / Stay answers change the Target too.
     prefs.stuck ?? DEFAULT_STUCK,
     prefs.stepBack ?? {},
@@ -477,7 +486,7 @@ export async function getTargetsForCards(
   }
   if (items.length === 0) return out;
   const scope = await historyScopeOrAll(planDayId, opts.previousFrom);
-  const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, gym: opts.gym });
+  const prefs = targetPrefs({ jump: opts.jump, repRange: opts.repRange, gym: opts.gym, ...(opts.machineStep ? { machineStep: opts.machineStep } : {}) });
   const [targets, rir] = await Promise.all([scopedTargets(items, true, scope, prefs), effortRir(planDayId, opts)]);
   targets.forEach((t, i) => {
     if (t.free) return; // no line for distance work and timed cardio

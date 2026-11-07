@@ -323,6 +323,8 @@ export default function ActiveWorkoutScreen() {
   // fix: the plates count only once the member set up Plates and bars (the default = his own steps).
   const weightJump = useTrackerPrefs((s) => s.weightJump);
   const repRangeChoice = useTrackerPrefs((s) => s.repRange);
+  // F194: "Machine and cable steps" (Plates and bars) changes a machine's or cable's Target at once.
+  const machineStep = useTrackerPrefs((s) => s.machineStep);
   const plateSetup = usePlateSetupFor(units);
   const targetQ = targetQuery(planDayId, exercises, {
     easy: easyWeek,
@@ -332,6 +334,7 @@ export default function ActiveWorkoutScreen() {
     jump: weightJump,
     repRange: repRangeChoice,
     gym: gymPlatesFor(plateSetup, units),
+    machineStep,
   });
   const targetSig = querySignature(targetQ);
   const targetQRef = useRef(targetQ);

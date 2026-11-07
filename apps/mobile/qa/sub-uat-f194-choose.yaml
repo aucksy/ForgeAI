@@ -1,0 +1,30 @@
+# Sub-flow (called with runFlow; not a part of its own): F194 UAT. Settings -> Plates and bars ->
+# "Machine and cable steps": open its sheet, check its three choices, tap CHOICE (a regex for the
+# choice's spoken label, "<label>[, recommended]. <detail>"), then require the row reads SHOWN
+# ("Machine and cable steps, <SHOWN>. Change"; SHOWN is a regex too). Pictures rel-f194-<PIC>-*.png.
+# Call it with the tab bar on screen; ends back on the tabs. No `env:` default (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Plates and bars"
+- extendedWaitUntil:
+    visible: "^Machine and cable steps, .*Change$"
+    timeout: 15000
+- tapOn: "^Machine and cable steps, .*Change$"
+- extendedWaitUntil:
+    visible: "How much the weight goes up on your gym.s machines and cables\\."
+    timeout: 10000
+- assertVisible: "^Learn from my weights, recommended\\. .*"
+- assertVisible: "^2\\.5 kg\\. Your gym.s machines and cables go up 2\\.5 kg at a time\\.$"
+- assertVisible: "^5 kg\\. Your gym.s machines and cables go up 5 kg at a time\\.$"
+- takeScreenshot: rel-f194-${PIC}-sheet
+- tapOn: "${CHOICE}"
+- extendedWaitUntil:
+    visible: "^Machine and cable steps, ${SHOWN}\\. Change$"
+    timeout: 10000
+# The plates list is still on the page under it.
+- assertVisible: "Turn off the plates your gym doesn.t have.*"
+- takeScreenshot: rel-f194-${PIC}-row
+- runFlow: xc-sub-back-to-tabs.yaml

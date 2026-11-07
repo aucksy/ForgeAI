@@ -145,7 +145,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1937,6 +1937,7 @@ part_uat() {
   part_u366
   part_usel
   part_u198
+  part_u194
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1963,6 +1964,26 @@ part_u198() {
   uat_flow uatf198b uat-rel-f198-b-big-text.yaml || rc=1
   adb shell settings put system font_scale "${font:-1.0}" >/dev/null 2>&1 || true
   log "UAT F198: font scale back to $(adb shell settings get system font_scale | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
+# lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
+# clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
+# with each choice mid-workout: Learn 52.5 kg, 5 kg 55 kg (never 52.5), 2.5 kg 52.5 kg, Learn again.
+# Also runs alone with only=u194 (a fresh install with the demo). Pictures rel-f194-*.png.
+part_u194() {
+  local rc=0 now
+  uat_flow uatf194 uat-rel-f194-a-history.yaml || { status=1; return 1; }
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || true
+  log "UAT F194 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (one day on)"
+  uat_flow uatf194b uat-rel-f194-b-steps.yaml || rc=1
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT F194: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2042,7 +2063,7 @@ part_u358() {
 # Inside part UAT it only runs when flows 1-13 all pass, so a failure there hid it.
 part_ugym() {
   local today lastday
-  today=$(adb shell date +%Y-%m-%d | tr -d '')
+  today=$(adb shell date +%Y-%m-%d | tr -d '\r')
   lastday=$(python3 "$QA_DIR/tools/make_uat_hevy.py" "$OUT/qa-uat-hevy.csv" --today "$today")
   adb shell rm -f /sdcard/Download/qa-uat-hevy.csv >/dev/null 2>&1 || true
   push_fixture "$OUT/qa-uat-hevy.csv" /sdcard/Download/qa-uat-hevy.csv
@@ -2091,6 +2112,7 @@ qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
 qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
 qa_runs usel && ! qa_runs uat && { log "gate part USEL begins"; part_usel; }
 qa_runs u198 && ! qa_runs uat && { log "gate part U198 begins"; part_u198; }
+qa_runs u194 && ! qa_runs uat && { log "gate part U194 begins"; part_u194; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

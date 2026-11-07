@@ -130,6 +130,8 @@ export const SETTINGS_KEYS: Readonly<Record<string, readonly string[]>> = {
     // R-308: "When I'm stuck at a weight", and each exercise's Try / Stay answer.
     'stuckChoice',
     'stepBackByExercise',
+    // F194: Plates and bars -> "Machine and cable steps".
+    'machineStep',
   ],
   'forgeai-plate-setup': ['metric', 'imperial'],
   'forgeai-rest-alert-prefs': ['ringThroughDnd', 'watchOpen'],

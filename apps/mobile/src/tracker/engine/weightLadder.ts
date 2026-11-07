@@ -30,6 +30,25 @@ import type { Exercise } from '@/types/models';
 
 import type { LogType } from './logTypes';
 
+/**
+ * F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". `learn` =
+ * the app guesses each stack's steps from the weights logged on it (R-310, the default); `kg2_5` /
+ * `kg5` = the gym's machines and cables move in 2.5 kg / 5 kg steps, so a machine or cable Target
+ * only ever names a weight on that grid, and a jump up is at least one such step.
+ */
+export type MachineStep = 'learn' | 'kg2_5' | 'kg5';
+export const DEFAULT_MACHINE_STEP: MachineStep = 'learn';
+
+/** A choice this version knows. PURE. */
+export function isMachineStep(v: unknown): v is MachineStep {
+  return v === 'learn' || v === 'kg2_5' || v === 'kg5';
+}
+
+/** The chosen step in kg, or null for "Learn from my weights" (and anything unknown). PURE. */
+export function machineStepKg(v: unknown): number | null {
+  return v === 'kg2_5' ? 2.5 : v === 'kg5' ? 5 : null;
+}
+
 /** How the weights of an exercise come: plates on a bar or belt, a dumbbell rack, a stack. */
 export type LadderKind = 'plates' | 'dumbbell' | 'own';
 
@@ -161,6 +180,12 @@ export function buildLadder(
      * member's own steps and the fixed 2.5 kg / 5 lb grid, as before.
      */
     gym?: GymPlates | null;
+    /**
+     * F194: the member's "Machine and cable steps" (kg), passed ONLY for a machine or cable lift
+     * (`machineStepKg`). Absent / null = learn the stack's grid from his weights (R-310). Used on an
+     * `own` ladder in kg only (a pound history keeps its own steps).
+     */
+    stackStepKg?: number | null;
   } = {},
 ): Ladder {
   const u = opts.units ?? displayUnits();
@@ -171,7 +196,9 @@ export function buildLadder(
   // machine only has 5 kg"): a machine or cable in kg moves on its stack's grid, never an odd weight
   // typed once. The grid is 5 kg when the catalogue says 5 and nearly all his weights sit on it,
   // else 2.5 kg; weights off the grid are not rungs.
-  const stack = kind === 'own' && !imperial(u) ? stackGrid(seen, opts.catalogStepKg) : null;
+  // F194: the member's own "Machine and cable steps" wins over the guess.
+  const chosen = kind === 'own' && !imperial(u) && opts.stackStepKg != null && opts.stackStepKg > EPS ? r3(opts.stackStepKg) : null;
+  const stack = chosen ?? (kind === 'own' && !imperial(u) ? stackGrid(seen, opts.catalogStepKg) : null);
   const own = stack == null ? seen : seen.filter((v) => isMultiple(v, stack));
   const thin = own.length < THIN_LADDER;
   const plates = kind === 'plates' && opts.gym && opts.gym.platesKg.some((p) => p > EPS) ? opts.gym : null;
@@ -197,6 +224,9 @@ export function buildLadder(
   }
   // R-310: the step is a whole number of the stack's grid (a learned 2 kg on a 5 kg stack is 5).
   if (stack != null && step != null && !isMultiple(step, stack)) step = r3(Math.max(1, Math.round(step / stack)) * stack);
+  // F194: a chosen step IS the stack's smallest jump ("Weight jumps" can still pick a bigger one
+  // from the rungs below).
+  if (chosen != null) step = chosen;
 
   // Review fix: with the gym's plates, each of his own weights is put on a weight they can load
   // (61 kg with no 0.5 kg plates → 62.5), and nothing under the bar is a rung.
@@ -217,6 +247,14 @@ export function buildLadder(
             for (let v = from; v <= top + EPS; v += g) out.push(r3(v));
             return out;
           })();
+    rungs = [...new Set([...rungs, ...grid])].sort((a, b) => a - b);
+  }
+  // F194: with a chosen step every weight on the stack's grid is a rung (the gym really has them),
+  // so Up, "Weight jumps" and Lighter pick from the grid and never from an odd weight typed once.
+  if (chosen != null) {
+    const top = Math.max(seen[seen.length - 1] ?? 0, 0) * 2 + 20 * chosen;
+    const grid: number[] = [];
+    for (let v = chosen; v <= top + EPS; v += chosen) grid.push(r3(v));
     rungs = [...new Set([...rungs, ...grid])].sort((a, b) => a - b);
   }
   // Wave-2 review: the gym's smallest plates count only with a custom Plates and bars setup (owner

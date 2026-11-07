@@ -12,6 +12,7 @@
  */
 import type { StuckChoice, WeightJump } from '../engine/progression';
 import type { RepRangeChoice } from '../engine/repRanges';
+import type { MachineStep } from '../engine/weightLadder';
 
 export interface PrefChoice<T extends string> {
   value: T;
@@ -55,6 +56,21 @@ export const STUCK_HELP = 'Stuck means 4 workouts at the same weight with no pro
  * cut ("with more r…"). It now sits under the choices, where it wraps in full.
  */
 export const STUCK_WHY = 'A slightly lighter weight with more reps often gets you moving again.';
+
+/**
+ * F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Learn =
+ * today's guess from the weights logged on each machine or cable; 2.5 kg / 5 kg = the gym's stacks.
+ */
+export const MACHINE_STEP_CHOICES: readonly PrefChoice<MachineStep>[] = [
+  { value: 'learn', label: 'Learn from my weights', detail: "The app learns each machine's steps from the weights you log.", recommended: true },
+  { value: 'kg2_5', label: '2.5 kg', detail: "Your gym's machines and cables go up 2.5 kg at a time." },
+  { value: 'kg5', label: '5 kg', detail: "Your gym's machines and cables go up 5 kg at a time." },
+];
+
+/** The line under the sheet's title: what the choice is about. */
+export const MACHINE_STEP_HELP = "How much the weight goes up on your gym's machines and cables.";
+/** Said under the choices: what the app does with it, and what it leaves alone. */
+export const MACHINE_STEP_WHY = 'The app then suggests only weights your machines and cables really have. Barbells and dumbbells keep their own steps.';
 
 /** The line under "Rep range" (the row and the sheet). */
 export const REP_RANGE_HELP = 'Muscle grows in any of these if you finish close to your limit. Strength likes fewer reps.';

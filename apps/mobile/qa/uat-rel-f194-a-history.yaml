@@ -1,0 +1,104 @@
+# Part UAT, F194 (owner R-352, 5 Nov 2026; scored 8 on 7 Nov): Settings -> Plates and bars -> "Machine and
+# cable steps" (Learn from my weights / 2.5 kg / 5 kg). Flow a: a fresh install with the demo (it has no
+# Close-Grip Lat Pulldown, so this cable's only weight is ours), then a workout: Close-Grip Lat Pulldown
+# (a cable; the library's step is 2.5 kg) 50 kg x 20 on all 3 sets = every set at the top. The new line
+# is checked on its page with the default (Learn) untouched, and the workout is saved as a routine. The
+# part then moves the phone clock one day on (the Target reads only workouts before today); flow b
+# (uat-rel-f194-b-steps.yaml) checks the Target with each choice. Pictures rel-f194-a*.png.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " close grip pulldown"
+- hideKeyboard
+- tapOn:
+    text: "Select Close-Grip Lat Pulldown.*"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "More for Close-Grip Lat Pulldown"
+    timeout: 20000
+- runFlow:
+    file: sub-uat-f194-set.yaml
+    env:
+      N: "1"
+      KG: "50"
+      REPS: "20"
+- runFlow:
+    file: sub-uat-f194-set.yaml
+    env:
+      N: "2"
+      KG: "50"
+      REPS: "20"
+- runFlow:
+    file: sub-uat-f194-set.yaml
+    env:
+      N: "3"
+      KG: "50"
+      REPS: "20"
+- takeScreenshot: rel-f194-a-last-time-50kg
+- runFlow: sub-uat-r358-finish.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+- runFlow: xc-sub-back-to-tabs.yaml
+# The new line, first on Plates and bars, on its default (a fresh install never chose).
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Plates and bars"
+- extendedWaitUntil:
+    visible: "^Machine and cable steps, Learn from my weights\\. Change$"
+    timeout: 15000
+- assertVisible: "The app learns each machine.s steps from the weights you log\\."
+- takeScreenshot: rel-f194-a2-plates-page-default
+- runFlow: xc-sub-back-to-tabs.yaml
+# Save this workout as a routine from the Profile feed (a card added on the spot gets no Target), and open it.
+- tapOn: "^Profile$"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- tapOn: "Save as routine"
+- extendedWaitUntil:
+    visible: "Your plan only changes if you pick it."
+    timeout: 10000
+- tapOn:
+    text: "^My routines.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Saved as a routine"
+    timeout: 15000
+- tapOn: "^Open routine$"
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+- assertVisible: "Close-Grip Lat Pulldown"
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-f194-a3-routine-saved
