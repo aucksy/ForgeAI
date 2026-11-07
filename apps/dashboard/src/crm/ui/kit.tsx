@@ -15,7 +15,9 @@
 
 import {
   Children,
+  createContext,
   isValidElement,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -94,6 +96,32 @@ export function Card({
   );
 }
 
+/**
+ * F198 (R-389): the small "new feature" dot (8 px, the accent colour, never a number). Screen readers
+ * hear "New". `data-new-dot` lets the journeys find it.
+ */
+export function NewDot() {
+  return (
+    <span
+      data-new-dot=""
+      style={{
+        display: 'inline-block',
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: color.accent,
+        flexShrink: 0,
+        verticalAlign: 'middle',
+      }}
+    >
+      <span style={visuallyHidden}>New</span>
+    </span>
+  );
+}
+
+/** F198: what sits beside this page's heading (a NewDot on a new feature's page; set by the app shell). */
+export const PageMarkContext = createContext<ReactNode>(null);
+
 export function PageHeader({
   title,
   subtitle,
@@ -104,6 +132,21 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   const compact = useIsCompact();
+  const mark = useContext(PageMarkContext);
+  const heading = (
+    <h1
+      style={{
+        margin: 0,
+        fontFamily: font.display,
+        fontSize: 24,
+        fontWeight: 700,
+        color: color.ink,
+        letterSpacing: -0.3,
+      }}
+    >
+      {title}
+    </h1>
+  );
   return (
     <header
       style={{
@@ -116,18 +159,15 @@ export function PageHeader({
       }}
     >
       <div style={{ minWidth: 0 }}>
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: font.display,
-            fontSize: 24,
-            fontWeight: 700,
-            color: color.ink,
-            letterSpacing: -0.3,
-          }}
-        >
-          {title}
-        </h1>
+        {mark ? (
+          // Beside the heading, outside the h1: the heading's name stays the page's name.
+          <div style={{ display: 'flex', alignItems: 'center', gap: space.sm }}>
+            {heading}
+            {mark}
+          </div>
+        ) : (
+          heading
+        )}
         {subtitle && (
           <p style={{ margin: '4px 0 0', color: color.inkSecondary, fontFamily: font.body, fontSize: 14 }}>
             {subtitle}
@@ -690,7 +730,8 @@ export function ChipToggle({
   variant = 'filter',
   wrap = false,
 }: {
-  options: { value: string; label: string; count?: number }[];
+  /** `dot` (F198, tabs only): a new feature sits behind this tab. */
+  options: { value: string; label: string; count?: number; dot?: boolean }[];
   value: string;
   onChange: (v: string) => void;
   label: string;
@@ -753,6 +794,11 @@ export function ChipToggle({
               {o.count !== undefined && (
                 <span style={{ marginLeft: 6, color: selected ? color.accentBright : color.inkMuted }}>{o.count}</span>
               )}
+              {o.dot ? (
+                <span style={{ marginLeft: 6 }}>
+                  <NewDot />
+                </span>
+              ) : null}
             </button>
           );
         })}

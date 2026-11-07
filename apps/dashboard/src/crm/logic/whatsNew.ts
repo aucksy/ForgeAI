@@ -22,6 +22,11 @@
 export interface AdminNewsLine {
   text: string;
   go?: { label: string; path: string };
+  /**
+   * F198 (R-389): a NEW feature, never a fix. With a `go` path it puts small dots on the way to that page
+   * (menu, Settings row, page heading) for 30 days, until the owner opens it (logic/newDots.ts).
+   */
+  feature?: true;
 }
 
 export interface AdminNewsEntry {
@@ -54,12 +59,14 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       {
         text: 'Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.',
         go: { label: 'Open Branding', path: '/settings/branding' },
+        feature: true,
       },
       {
         // T79 (0060 live and admin panel deployed 6 Nov 2026). Online buying, receipts and
         // plan-end reminders are switched off and are NOT mentioned (R-333).
         text: 'Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until when your plan is paid.',
         go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
+        feature: true,
       },
     ],
   },
@@ -72,26 +79,31 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         // F123 (0055 live 5 Nov).
         text: 'FITPASS, cultpass and other pass members: open a member and turn on "Comes with a pass". They get no plan and no dues, and each check-in counts as a pass visit under Visits → Pass visits.',
         go: { label: 'Open Members', path: '/members' },
+        feature: true,
       },
       {
         // F147 (0056 + D1 0010 live 5 Nov).
         text: 'Bring a friend: members can now send a friend a link to your gym from the MettleUp app. The friend shows in Enquiries with the member’s name. In Settings → Member app, choose free days for the member when a friend joins.',
         go: { label: 'Open Settings', path: '/settings/app' },
+        feature: true,
       },
       {
         // F79 (D1 0011 live 5 Nov, test mode).
         text: 'Settings → Payments: add your UPI ID, and the desk can show a UPI QR code for each payment. Online payment links work in test mode only for now: no real money moves.',
         go: { label: 'Open Payments', path: '/settings/payments' },
+        feature: true,
       },
       {
         // F109 (0050 live 3 Nov).
         text: 'Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "Training progress". This page was called "My members" before.',
         go: { label: 'Open People', path: '/settings/people' },
+        feature: true,
       },
       {
         // F137 (0049 live 3 Nov).
         text: 'Busy machines: switch it on in Settings → Member app, and members see when each machine is usually busy, so they can pick a quieter time.',
         go: { label: 'Open Settings', path: '/settings/app' },
+        feature: true,
       },
       {
         // UAT fresh-eyes fixes, 5 Nov 2026.

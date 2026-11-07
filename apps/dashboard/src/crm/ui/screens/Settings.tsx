@@ -37,6 +37,7 @@ import {
   ChipToggle,
   ErrorBanner,
   Grid,
+  NewDot,
   PageHeader,
   Row,
   SectionTitle,
@@ -59,6 +60,8 @@ import { BusyMachinesCard } from './BusyMachines';
 import { BringAFriendCard } from './BringAFriend';
 import { EntryMachinesCard } from './EntryMachines';
 import { PayMettleUpCard } from './PayMettleUp';
+import { useNewFeatures } from '../NewDots';
+import { settingsRowLit, settingsTabLit } from '../../logic/newDots';
 
 export type SettingsTab = 'gym' | 'app' | 'data';
 
@@ -92,6 +95,8 @@ export function SettingsScreen({ section }: { section?: string }) {
   const { multi } = useBranches();
   // #38: when the gym's owner accepted the terms (null for a browser-only gym or an older server).
   const termsLine = acceptedLine(useTerms());
+  // F198: dots on the tab and the row that lead to a new feature.
+  const lit = useNewFeatures();
 
   const [name, setName] = useState(gym.name);
   const [phone, setPhone] = useState(gym.phone ?? '');
@@ -183,9 +188,9 @@ export function SettingsScreen({ section }: { section?: string }) {
           value={tab}
           onChange={(v) => navigate(TAB_PATH[v as SettingsTab])}
           options={[
-            { value: 'gym', label: 'Gym' },
-            { value: 'app', label: 'Member app' },
-            { value: 'data', label: 'Sign-in & data' },
+            { value: 'gym', label: 'Gym', dot: settingsTabLit(lit, 'gym') },
+            { value: 'app', label: 'Member app', dot: settingsTabLit(lit, 'app') },
+            { value: 'data', label: 'Sign-in & data', dot: settingsTabLit(lit, 'data') },
           ]}
         />
       </div>
@@ -256,10 +261,11 @@ export function SettingsScreen({ section }: { section?: string }) {
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           Show a UPI QR with the amount at the desk, or connect your own payment company so members can pay by link and the receipt is made by itself.
         </p>
-        <div style={{ marginTop: space.lg }}>
+        <div style={{ marginTop: space.lg, display: 'flex', alignItems: 'center', gap: space.sm }}>
           <Button variant="ghost" onClick={() => navigate('/settings/payments')}>
             Open payments
           </Button>
+          {settingsRowLit(lit, '/settings/payments') ? <NewDot /> : null}
         </div>
       </Card>
 

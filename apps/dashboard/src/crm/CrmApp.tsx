@@ -40,6 +40,7 @@ import { NeedsYouProvider, useNeedsYou } from './ui/NeedsYou';
 import { ShopScreen } from './shop/ShopScreen';
 import { CrmProvider, useCrm } from './store';
 import { AppShell, type NavItem } from './ui/AppShell';
+import { NewDotsProvider } from './ui/NewDots';
 import { AttendanceScreen } from './ui/screens/Attendance';
 import { ImportMembersScreen } from './ui/screens/ImportMembers';
 import { MemberDetailScreen } from './ui/screens/MemberDetail';
@@ -258,6 +259,8 @@ export function Routes({ online }: { online: boolean }) {
   if (isNewGym) return <Welcome />;
 
   return (
+    // F198 (R-389): new-feature dots, for the owner of a real online gym only (the features are the owner's pages).
+    <NewDotsProvider enabled={role === 'owner' && online && !demo}>
     <AppShell gymName={snapshot.gym.name} nav={nav} phoneNav={phoneNav}>
       {/* Owner, 1 Nov 2026: "Next step" on a screen opened from Get started; the gym code once after "Create my gym". */}
       <NextStepBar path={route.path} />
@@ -266,6 +269,7 @@ export function Routes({ online }: { online: boolean }) {
       {online && !demo && <EntryMachineJob />}
       {canOpen(role, `/${route.segments.join('/')}`) ? <Screen segments={route.segments} role={role} /> : <OwnerOnly />}
     </AppShell>
+    </NewDotsProvider>
   );
 }
 

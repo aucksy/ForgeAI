@@ -35,7 +35,9 @@ import { PayQr } from '../../pay/PayQr';
 import { PayOnline } from '../BillingOnline';
 import { loadPayMettleUp, payNotLiveYet, reportMettleUpPayment } from '../../shop/payMettleUpApi';
 import { errorWords } from '../../shop/logic';
-import { Button, Card, ChipToggle, EmptyState, ErrorBanner, PageHeader, Pill, SectionTitle, TextField, Toast, color, font, space } from '../kit';
+import { Button, Card, ChipToggle, EmptyState, ErrorBanner, NewDot, PageHeader, Pill, SectionTitle, TextField, Toast, color, font, space } from '../kit';
+import { useNewFeatures } from '../NewDots';
+import { settingsRowLit } from '../../logic/newDots';
 import { navigate } from '../router';
 
 const quiet = { margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary } as const;
@@ -55,15 +57,18 @@ function useOwnerKey(): string {
 /** Settings -> Gym: the owner's way in (the screen says itself when paying here is not ready). */
 export function PayMettleUpCard() {
   const key = useOwnerKey();
+  // F198: a dot beside the button while Pay MettleUp is a new feature this owner has not opened.
+  const dot = settingsRowLit(useNewFeatures(), '/settings/mettleup');
   if (!key) return null;
   return (
     <Card style={{ marginBottom: space.lg }}>
       <SectionTitle>Your MettleUp plan</SectionTitle>
       <p style={quiet}>Pay for MettleUp by UPI or bank transfer, and see when your payment is confirmed.</p>
-      <div style={{ marginTop: space.lg }}>
+      <div style={{ marginTop: space.lg, display: 'flex', alignItems: 'center', gap: space.sm }}>
         <Button variant="ghost" needsInternet onClick={() => navigate('/settings/mettleup')}>
           Pay MettleUp
         </Button>
+        {dot ? <NewDot /> : null}
       </div>
     </Card>
   );

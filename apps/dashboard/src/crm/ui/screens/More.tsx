@@ -11,7 +11,9 @@ import { dueCount } from '../../logic/enquiries';
 import { useShop } from '../../shop/ShopProvider';
 import { useCrm } from '../../store';
 import { Icon, type IconName } from '../icons';
-import { Card, PageHeader, TOUCH, color, font, radius, space } from '../kit';
+import { Card, NewDot, PageHeader, TOUCH, color, font, radius, space } from '../kit';
+import { useNewFeatures } from '../NewDots';
+import { linkLit } from '../../logic/newDots';
 import { Link } from '../router';
 import { useTrainerAccess } from '../TrainerParts';
 import { useQuestionCount } from '../QuestionParts';
@@ -94,6 +96,9 @@ export function MoreScreen() {
     // Launch H7 (21 Oct 2026).
     { path: '/feedback', group: 'setup', label: 'Help and feedback', hint: 'Ask a question, or tell MettleUp a problem or an idea', icon: 'feedback' },
   ]);
+  // F198: a dot on the row that leads to a new feature (Settings for Pay MettleUp, Branding for its icon preview).
+  const lit = useNewFeatures();
+  const rowPaths = rows.map((r) => r.path);
   return (
     <>
       <PageHeader title={t('More')} />
@@ -145,7 +150,10 @@ export function MoreScreen() {
                   <Icon name={r.icon} size={22} />
                 </span>
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontFamily: font.body, fontSize: 16, fontWeight: 700 }}>{t(r.label)}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 16, fontWeight: 700 }}>
+                    {t(r.label)}
+                    {linkLit(lit, rowPaths, r.path) ? <NewDot /> : null}
+                  </span>
                   <span style={{ display: 'block', fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>{t(r.hint)}</span>
                 </span>
                 {r.badge ? (

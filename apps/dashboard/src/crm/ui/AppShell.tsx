@@ -14,7 +14,9 @@ import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
-import { color, font, radius, space, useIsCompact } from './kit';
+import { NewDot, color, font, radius, space, useIsCompact } from './kit';
+import { useNewFeatures } from './NewDots';
+import { barLit, linkLit } from '../logic/newDots';
 import { Link, useRoute } from './router';
 import { t } from '../lang/lang';
 
@@ -102,6 +104,9 @@ export function AppShell({
 }
 
 function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]; activePath: string }) {
+  // F198: a dot on the menu item that leads to a new feature (Settings for Pay MettleUp).
+  const lit = useNewFeatures();
+  const paths = nav.map((n) => n.path);
   return (
     <nav
       aria-label="Main"
@@ -146,7 +151,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
               {t('Set up and help').toUpperCase()}
             </div>
           ) : null}
-          <SidebarLink item={item} active={item.path === activePath} />
+          <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} />
         </Fragment>
       ))}
 
@@ -170,7 +175,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   );
 }
 
-function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
+function SidebarLink({ item, active, dot }: { item: NavItem; active: boolean; dot: boolean }) {
   return (
     <Link to={item.path}>
       <span
@@ -192,7 +197,10 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
         }}
       >
         <Icon name={item.icon} size={20} />
-        <span style={{ flex: 1 }}>{item.label}</span>
+        <span style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+          {item.label}
+          {dot ? <NewDot /> : null}
+        </span>
         {item.badge ? <Badge count={item.badge} /> : null}
       </span>
     </Link>
@@ -225,6 +233,9 @@ function CompactHeader({ gymName }: { gymName: string }) {
 }
 
 function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) {
+  // F198: a feature behind one of the bar's own pages lights it; anything else lights More.
+  const lit = useNewFeatures();
+  const paths = nav.map((n) => n.path);
   return (
     <nav
       aria-label="Main"
@@ -280,6 +291,19 @@ function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) 
               {item.badge ? (
                 <span style={{ position: 'absolute', top: 2, right: '50%', marginRight: -22 }}>
                   <Badge count={item.badge} />
+                </span>
+              ) : null}
+              {barLit(lit, paths, item.path) ? (
+                // Top right of the icon; top left when a number badge sits on the right.
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 6,
+                    lineHeight: 0,
+                    ...(item.badge ? { left: '50%', marginLeft: -18 } : { right: '50%', marginRight: -16 }),
+                  }}
+                >
+                  <NewDot />
                 </span>
               ) : null}
             </span>

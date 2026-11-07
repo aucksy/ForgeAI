@@ -21,7 +21,9 @@ import { isDemoGym } from '../data/demo';
 import { normalizeSnapshot, STORAGE_KEY } from '../data/local';
 import { readCloudGym, writeCloudGym } from '../shop/cloudGym';
 import { useCrm } from '../store';
-import { Button, Card, ErrorBanner, SectionTitle, Sheet, TextField, color, font, space } from '../ui/kit';
+import { Button, Card, ErrorBanner, NewDot, SectionTitle, Sheet, TextField, color, font, space } from '../ui/kit';
+import { useNewFeatures } from '../ui/NewDots';
+import { settingsRowLit } from '../logic/newDots';
 import { navigate } from '../ui/router';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
@@ -40,6 +42,8 @@ export function SignInCard() {
 function SignedInCard() {
   const { session } = useAuth();
   const me = session?.person;
+  // F198: a dot beside the button while Staff & sign-in has a new feature (trainers) not opened yet.
+  const dot = settingsRowLit(useNewFeatures(), '/settings/people');
   if (!me) return null;
   return (
     <Card style={{ marginBottom: space.lg }}>
@@ -50,10 +54,11 @@ function SignedInCard() {
         {me.role === 'owner' ? 'owner' : 'staff'}
         ). Your gym is online. Open it on any phone or computer.
       </p>
-      <div style={{ marginTop: space.lg }}>
+      <div style={{ marginTop: space.lg, display: 'flex', alignItems: 'center', gap: space.sm }}>
         <Button onClick={() => navigate('/settings/people')}>
           {me.role === 'owner' ? 'Staff & sign-in codes' : 'Your sign-in, or sign out'}
         </Button>
+        {dot ? <NewDot /> : null}
       </div>
     </Card>
   );
