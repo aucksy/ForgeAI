@@ -44,7 +44,7 @@ export function isMachineStep(v: unknown): v is MachineStep {
   return v === 'learn' || v === 'kg2_5' || v === 'kg5';
 }
 
-/** The chosen step in kg, or null for "Learn from my weights" (and anything unknown). PURE. */
+/** The chosen step in kg, or null for "Automatic" (and anything unknown). PURE. */
 export function machineStepKg(v: unknown): number | null {
   return v === 'kg2_5' ? 2.5 : v === 'kg5' ? 5 : null;
 }

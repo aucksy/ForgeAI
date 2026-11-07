@@ -16,7 +16,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "How much the weight goes up on your gym.s machines and cables\\."
     timeout: 10000
-- assertVisible: "^Learn from my weights, recommended\\. .*"
+- assertVisible: "^Automatic, recommended\\. .*"
 - assertVisible: "^2\\.5 kg\\. Your gym.s machines and cables go up 2\\.5 kg at a time\\.$"
 - assertVisible: "^5 kg\\. Your gym.s machines and cables go up 5 kg at a time\\.$"
 - takeScreenshot: rel-f194-${PIC}-sheet

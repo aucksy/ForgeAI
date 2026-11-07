@@ -1,6 +1,6 @@
 /**
  * F194 (owner R-352, 5 Nov 2026; scored 8 on 7 Nov): Settings -> Plates and bars -> "Machine and
- * cable steps". One row, a choice sheet like "Weight step": Learn from my weights (the default, the
+ * cable steps". One row, a choice sheet like "Weight step": Automatic (the default, the
  * app's guess from the weights logged on each machine or cable, R-310), 2.5 kg or 5 kg. A machine's
  * or cable's Target then names only weights on that grid (`engine/weightLadder.ts` `stackStepKg`);
  * barbells and dumbbells keep their own rules.
@@ -32,7 +32,8 @@ export function MachineStepCard() {
             title="Machine and cable steps"
             caption={choiceDetail(MACHINE_STEP_CHOICES, machineStep)}
             right={
-              <Text numberOfLines={2} style={ROW_VALUE()}>
+              // Fresh-eyes 7 Nov: "Learn from my weights" squeezed the title to one word a line; now "Automatic", one line.
+              <Text numberOfLines={1} style={ROW_VALUE()}>
                 {label}
               </Text>
             }

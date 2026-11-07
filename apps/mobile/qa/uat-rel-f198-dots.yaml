@@ -164,8 +164,40 @@ appId: com.mettleup.app
     id: "new-dot-row-ask-ai"
 - takeScreenshot: rel-f198-10-day-29-and-30
 - back
-# 6 Dec 00:00 IST: Sleep's day 30, no dots anywhere.
+# 6 Dec 00:00 IST: Sleep's day 30, its dot gone. 0.75.0's "Machine and cable steps" (8 Nov, day 28) is the
+# only feature still lit (R-400): its trail leads to Plates and bars, and opening that page clears every dot.
 - openLink: "mettleup://qa-dots?at=2026-12-05T18:30:00Z&reset=1"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-row-health"
+- scrollUntilVisible:
+    element: "^Plates and bars$"
+    centerElement: true
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-row-plates"
+    timeout: 20000
+- takeScreenshot: rel-f198-11-day-30-only-steps
+- tapOn: "^Plates and bars$"
+- extendedWaitUntil:
+    visible: "^Machine and cable steps, .*Change$"
+    timeout: 15000
+- takeScreenshot: rel-f198-12-steps-page
+- back
+- extendedWaitUntil:
+    visible: "^Plates and bars$"
+    timeout: 15000
+- assertNotVisible:
+    id: "new-dot-row-plates"
+- back
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 30000
@@ -173,4 +205,4 @@ appId: com.mettleup.app
     id: "new-dot-gear"
 - assertNotVisible:
     id: "new-dot-tab-profile"
-- takeScreenshot: rel-f198-11-day-30-none
+- takeScreenshot: rel-f198-13-all-dots-gone

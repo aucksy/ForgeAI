@@ -17,7 +17,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "More for Close-Grip Lat Pulldown"
     timeout: 30000
-# Regression: Learn from my weights (the default) = today's guess, the library's 2.5 kg step.
+# Regression: Automatic (the default) = today's guess, the library's 2.5 kg step.
 - runFlow:
     file: sub-find.yaml
     env:
@@ -55,13 +55,13 @@ appId: com.mettleup.app
       FIND: "^Target 52\\.5 kg.*Tap for why\\.$"
 - assertNotVisible: "^Target 55 kg.*"
 - takeScreenshot: rel-f194-f-target-2-5kg
-# Regression: back to Learn from my weights gives today's guess again.
+# Regression: back to Automatic gives today's guess again.
 - runFlow: xc-sub-back-to-tabs.yaml
 - runFlow:
     file: sub-uat-f194-choose.yaml
     env:
-      CHOICE: "^Learn from my weights, recommended\\. .*"
-      SHOWN: "Learn from my weights"
+      CHOICE: "^Automatic, recommended\\. .*"
+      SHOWN: "Automatic"
       PIC: "g-learn"
 - runFlow: sub-uat-f194-resume.yaml
 - runFlow:

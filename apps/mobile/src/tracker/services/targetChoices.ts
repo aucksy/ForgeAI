@@ -62,7 +62,7 @@ export const STUCK_WHY = 'A slightly lighter weight with more reps often gets yo
  * today's guess from the weights logged on each machine or cable; 2.5 kg / 5 kg = the gym's stacks.
  */
 export const MACHINE_STEP_CHOICES: readonly PrefChoice<MachineStep>[] = [
-  { value: 'learn', label: 'Learn from my weights', detail: "The app learns each machine's steps from the weights you log.", recommended: true },
+  { value: 'learn', label: 'Automatic', detail: "The app learns each machine's steps from the weights you log.", recommended: true },
   { value: 'kg2_5', label: '2.5 kg', detail: "Your gym's machines and cables go up 2.5 kg at a time." },
   { value: 'kg5', label: '5 kg', detail: "Your gym's machines and cables go up 5 kg at a time." },
 ];

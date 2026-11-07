@@ -1,5 +1,5 @@
 # Part UAT, F194 (owner R-352, 5 Nov 2026; scored 8 on 7 Nov): Settings -> Plates and bars -> "Machine and
-# cable steps" (Learn from my weights / 2.5 kg / 5 kg). Flow a: a fresh install with the demo (it has no
+# cable steps" (Automatic / 2.5 kg / 5 kg). Flow a: a fresh install with the demo (it has no
 # Close-Grip Lat Pulldown, so this cable's only weight is ours), then a workout: Close-Grip Lat Pulldown
 # (a cable; the library's step is 2.5 kg) 50 kg x 20 on all 3 sets = every set at the top. The new line
 # is checked on its page with the default (Learn) untouched, and the workout is saved as a routine. The
@@ -62,7 +62,7 @@ appId: com.mettleup.app
     env:
       PAGE: "Plates and bars"
 - extendedWaitUntil:
-    visible: "^Machine and cable steps, Learn from my weights\\. Change$"
+    visible: "^Machine and cable steps, Automatic\\. Change$"
     timeout: 15000
 - assertVisible: "The app learns each machine.s steps from the weights you log\\."
 - takeScreenshot: rel-f194-a2-plates-page-default

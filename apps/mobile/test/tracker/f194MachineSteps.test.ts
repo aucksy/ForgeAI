@@ -56,7 +56,7 @@ const onGrid = (kg: number, g: number): boolean => Math.abs(kg / g - Math.round(
 
 describe('F194: the setting and its words', () => {
   it('knows its three choices, Learn first and recommended', () => {
-    expect(MACHINE_STEP_CHOICES.map((c) => c.label)).toEqual(['Learn from my weights', '2.5 kg', '5 kg']);
+    expect(MACHINE_STEP_CHOICES.map((c) => c.label)).toEqual(['Automatic', '2.5 kg', '5 kg']);
     expect(MACHINE_STEP_CHOICES[0].value).toBe('learn');
     expect(MACHINE_STEP_CHOICES[0].recommended).toBe(true);
     expect(isMachineStep('kg5')).toBe(true);
@@ -77,7 +77,7 @@ describe('F194: the setting and its words', () => {
 describe('F194 happy path: a cable at the top of its reps (rule A)', () => {
   const last = [sess(day(2), three(50, 12))];
 
-  it('Learn from my weights = today: 50 -> 52.5 kg (the catalogue step)', () => {
+  it('Automatic = today: 50 -> 52.5 kg (the catalogue step)', () => {
     const t = run(last, 'learn');
     expect(t.rule).toBe('R2');
     expect(t.targetWeightKg).toBe(52.5);

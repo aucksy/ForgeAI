@@ -62,6 +62,21 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 7 Nov 2026 ~23:3x IST ("Okay you can release next 2 features", R-400): F194 + R-398 + R-397.
+    // member-words: Gemini timed out twice, so a fresh-reader helper checked the lines (clearer "add up", "dot").
+    version: '0.75.0',
+    date: '8 Nov',
+    lines: [
+      {
+        text: 'In Settings, Plates and bars, pick 2.5 kg or 5 kg steps for machines and cables, so suggested weights match your gym.',
+        go: { label: 'Machine and cable steps', href: '/settings/plates' },
+        feature: true,
+      },
+      { text: 'Exercise charts now add up your total for the time you pick, for example all-time kg lifted.' },
+      { text: "On an exercise chart, tap a dot, then tap its date to open that day's workout." },
+    ],
+  },
+  {
     // Owner's release, 7 Nov 2026 15:2x IST ("first build the dot functionality and release it"). F198 only;
     // member-words + Gemini 3.8 Flash pass (location first).
     version: '0.74.0',
