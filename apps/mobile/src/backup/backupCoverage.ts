@@ -68,6 +68,7 @@ export const STORAGE_LEFT_OUT: Readonly<Record<string, string>> = {
   'forgeai.anthropic_api_key': 'AI key (never leaves the phone)',
   'forgeai.groq_api_key': 'AI key (never leaves the phone)',
   'forgeai.pendingPick': 'a photo pick in progress',
+  'mettleup.newDotsSeen.v1': 'which new-feature dots this phone has cleared (F198; a new phone shows them again, still inside their 30 days)',
   'forgeai.askTrainer.seenReplies': 'which trainer replies this phone has already shown (R-319; the replies live with the gym)',
   'forgeai-free-limits': 'gym server flag',
   'forgeai-shop': 'gym shop cart',
