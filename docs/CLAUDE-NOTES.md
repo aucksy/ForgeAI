@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-392. No WhatsApp code on a new gym; "yes, fill Meta business info" — 7 Nov 2026
+He made a new test gym with his real number and got no WhatsApp code. D1 showed our Worker sent it (sent=1),
+but WhatsApp Manager showed 0 messages sent and the alert "Missing valid payment method". The billing account
+(payment account 2132245717397020) still said "Business info missing": the confirm tick box had never been ticked,
+so the earlier save did not hold. With his yes I ticked it and saved (MettleUp, Jaipur address already filled,
+Business purpose Yes, no GST/TAN). "Business info missing" is gone; the WABA settings show Approved + Mastercard 2664.
+The Overview alert still showed right after (may lag, or belong to the 2 unused MettleUp accounts). Next: he retries;
+I check Insights "All message deliveries". Product gap: we never learn delivery failures (no Meta status webhook).
+
 ## R-391. "yes 0061" — 7 Nov 2026
 He said yes to server change 0061 (WhatsApp sign-in codes). Also done before: Meta billing info, the system-user
 WhatsApp key and WHATSAPP_PIN in GitHub; the number is registered (CONNECTED), login_code APPROVED. Plan: apply
