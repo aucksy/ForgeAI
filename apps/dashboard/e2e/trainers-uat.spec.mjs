@@ -52,6 +52,19 @@ function ptPack(server, memberName, { classes, used, trainer }) {
   });
 }
 
+/** The chosen day's button in the day row is pressed and wholly inside the phone's width. */
+async function expectDayInView(page, label) {
+  const btn = page.getByRole('main').getByTestId('pt-days').getByRole('button', { name: new RegExp(`^${label}`) });
+  await expect(btn).toHaveAttribute('aria-pressed', 'true');
+  await expect
+    .poll(async () => {
+      const b = await btn.boundingBox();
+      const w = page.viewportSize().width;
+      return b !== null && b.x >= 0 && b.x + b.width <= w;
+    }, { message: `${label} is inside the ${page.viewportSize().width}px screen` })
+    .toBe(true);
+}
+
 const go = (page, path) =>
   page.evaluate((p) => {
     window.location.hash = p;
@@ -107,6 +120,8 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   // Before 10 am today is over: no free slot at 9:30 am, free from 10:30.
   await expect(main.getByRole('button', { name: 'Book Rohit Sharma at 9:30 am' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Book Rohit Sharma at 10:30 am' })).toBeVisible();
+  // The chosen day (today, Saturday: far right of the row) is scrolled into view on a phone.
+  await expectDayInView(page, 'Sat 17 Oct');
   await expectFitsPhone(page, 'on Trainers with two trainers');
   await shot(page, 'phone-trainers-3-list-and-week');
 
@@ -195,6 +210,13 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   expect(booked()).toHaveLength(2);
   expect(booked()[1]).toMatchObject({ trainerId: 'st-rohit', start: 660, length: 60 });
   await expect(main.getByRole('button', { name: 'Bilal Khan with Rohit Sharma, 11:00 am to 12:00 pm' })).toBeVisible();
+  // Changing the day scrolls the row too: Monday back into view, then Sunday.
+  await main.getByTestId('pt-days').getByRole('button', { name: /^Mon 12 Oct/ }).tap();
+  await expectDayInView(page, 'Mon 12 Oct');
+  await main.getByTestId('pt-days').getByRole('button', { name: /^Sun 18 Oct/ }).tap();
+  await expectDayInView(page, 'Sun 18 Oct');
+  await main.getByTestId('pt-days').getByRole('button', { name: /^Sat 17 Oct/ }).tap();
+  await expectDayInView(page, 'Sat 17 Oct');
   await expectFitsPhone(page, 'on Trainers with bookings');
   await shot(page, 'phone-trainers-10-week-with-bookings');
   await page.setViewportSize({ width: 1280, height: 900 });

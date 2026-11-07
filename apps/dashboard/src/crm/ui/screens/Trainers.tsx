@@ -352,16 +352,24 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
   const [open, setOpen] = useState<PtBooking | null>(null);
   const { nameOf } = useMemberInfo(schedule);
   const rows = dayGrid(day, schedule.trainers, schedule.bookings, today, nowMin);
+  // On a phone the day row scrolls sideways: keep the chosen day in view when the page opens and when it changes.
+  const dayRow = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const picked = dayRow.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    picked?.scrollIntoView({ inline: 'center', block: 'nearest' });
+  }, [day, week]);
 
   return (
     <Card>
       <WeekNav week={week} setWeek={setWeek} title={TRAINER_WORDS.weekTitle} />
+      <div ref={dayRow} data-testid="pt-days">
       <ChipToggle
         label="Pick a day"
         value={day}
         onChange={(v) => setDay(v as DateISO)}
         options={days.map((d, i) => ({ value: d, label: dayChip(d), count: counts[i] || undefined }))}
       />
+      </div>
       <p style={{ ...small, margin: `${space.sm}px 0` }}>{`${dayName(isoWeekday(day))}: ${bookingsWords(counts[days.indexOf(day)] ?? 0)}. Tap a free time to book.`}</p>
       <div data-testid="pt-grid" style={{ overflowX: 'auto', maxWidth: '100%', border: `1px solid ${color.border}`, borderRadius: 10 }}>
         <table style={{ borderCollapse: 'collapse', fontFamily: font.body, fontSize: 13, minWidth: 80 + schedule.trainers.length * 128 }}>
