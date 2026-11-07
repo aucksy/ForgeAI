@@ -135,24 +135,37 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   const edit = sheet(page, 'Edit Rohit Sharma’s page');
   await edit.getByLabel('What they teach').fill('Strength and weight loss');
   for (const d of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) await edit.getByRole('button', { name: d, exact: true }).tap();
-  await edit.getByLabel('Shift starts', { exact: true }).fill('10:00');
-  await edit.getByLabel('Shift ends', { exact: true }).fill('06:00');
+  // Shift times are picked in the app's own words ("6:00 am"), not typed.
+  await edit.getByLabel('Shift starts', { exact: true }).selectOption({ label: '10:00 am' });
+  await edit.getByLabel('Shift ends', { exact: true }).selectOption({ label: '6:00 am' });
   await edit.getByRole('button', { name: 'Save page' }).tap();
   await expect(edit.getByTestId('edit-problem')).toContainText('Each shift must end after it starts.');
   await expectFitsPhone(page, 'in Edit trainer page');
   await shot(page, 'phone-trainers-4-edit-error', false);
   expect(server.log.filter((c) => c.fn === 'owner_save_trainer_profile')).toHaveLength(0);
-  await edit.getByLabel('Shift starts', { exact: true }).fill('06:00');
-  await edit.getByLabel('Shift ends', { exact: true }).fill('10:00');
-  await edit.getByLabel('Second shift starts').fill('17:00');
-  await edit.getByLabel('Second shift ends').fill('21:00');
+  await edit.getByLabel('Shift starts', { exact: true }).selectOption({ label: '6:00 am' });
+  await edit.getByLabel('Shift ends', { exact: true }).selectOption({ label: '10:00 am' });
+  await edit.getByLabel('Second shift starts').selectOption({ label: '5:00 pm' });
+  await edit.getByLabel('Second shift ends').selectOption({ label: '9:00 pm' });
   await edit.getByRole('button', { name: 'Save page' }).tap();
   await expect(edit).toBeHidden();
   await expect(page.getByText('Saved Rohit Sharma’s page.')).toBeVisible();
   await expect(page.getByRole('main').getByTestId('trainer-profile')).toContainText('Teaches: Strength and weight loss');
+  // "Teaches" once on the page (the card), not again under the name.
+  await expect(main.getByText(/Teaches:/)).toHaveCount(1);
   const hours = main.getByTestId('trainer-hours');
   await expect(hours).toContainText('Saturday6:00 am to 10:00 am, 5:00 pm to 9:00 pm');
   await expect(hours).toContainText('SundayDay off');
+  // Each day is one row: Saturday's times sit level with "Saturday", above Sunday's line.
+  const sat = await hours.getByText('Saturday', { exact: true }).boundingBox();
+  const satTimes = await hours.getByText('6:00 am to 10:00 am, 5:00 pm to 9:00 pm').last().boundingBox();
+  const sun = await hours.getByText('Sunday', { exact: true }).boundingBox();
+  expect(Math.abs(satTimes.y - sat.y)).toBeLessThan(4);
+  expect(satTimes.y + satTimes.height).toBeLessThanOrEqual(sun.y);
+  await expectFitsPhone(page, 'on Rohit’s page (375 px)');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectFitsPhone(page, 'on Rohit’s page (390 px)');
+  await page.setViewportSize({ width: 375, height: 812 });
   await shot(page, 'phone-trainers-5-rohit-page');
 
   // 5. Book Asha with Rohit at 5 pm today, from the grid.
@@ -172,10 +185,12 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   expect(booked()).toHaveLength(1);
   await expect(main.getByRole('button', { name: 'Asha Verma with Rohit Sharma, 5:00 pm to 6:00 pm' })).toBeVisible();
 
-  // Member busy: Asha with Meena at 5 pm.
+  // Member busy: Asha with Meena at 5 pm. Opening the sheet clears the "Booked: ..." note so it covers nothing.
   await main.getByRole('button', { name: 'Book Meena at 5:00 pm' }).tap();
   book = sheet(page, 'Book personal training');
+  await expect(page.getByText('Booked: Asha Verma with Rohit Sharma, Sat 17 Oct, 5:00 pm to 6:00 pm.')).toHaveCount(0);
   await book.getByRole('button', { name: /^Asha Verma/ }).tap();
+  await expect(book.getByTestId('book-member')).toContainText('1 class already booked');
   await book.getByRole('button', { name: 'Book', exact: true }).tap();
   await expect(book.getByTestId('book-problem')).toContainText('Asha Verma is already booked at 5:00 pm that day. Pick another time.');
   await shot(page, 'phone-trainers-7-member-busy', false);
@@ -217,6 +232,11 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   await expectDayInView(page, 'Sun 18 Oct');
   await main.getByTestId('pt-days').getByRole('button', { name: /^Sat 17 Oct/ }).tap();
   await expectDayInView(page, 'Sat 17 Oct');
+  // Past half hours (before 10 am today) read differently from "Off" (not working), and the key says which is which.
+  await expect(main.getByTestId('pt-grid').getByLabel('Already over').first()).toBeVisible();
+  await expect(main.getByTestId('pt-grid').getByLabel('Not working').first()).toHaveText('Off');
+  await expect(main.getByTestId('pt-grid')).not.toContainText('–');
+  await expect(main.getByTestId('pt-key')).toHaveText(/Free to book.*Booked.*Not working.*Already over/);
   await expectFitsPhone(page, 'on Trainers with bookings');
   await shot(page, 'phone-trainers-10-week-with-bookings');
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -238,7 +258,7 @@ test('F105: trainers, not ready, profiles, the week, booking clashes, cancel, th
   // Rohit's page shows the booking and Asha's classes booked.
   await go(page, `/trainers/st-rohit`);
   await expect(main.getByTestId('trainer-bookings')).toContainText('Sat 17 Oct, 5:00 pm to 6:00 pm');
-  await expect(main.getByTestId('trainer-members')).toContainText('6 personal-training classes left · 1 booked');
+  await expect(main.getByTestId('trainer-members')).toContainText('6 personal-training classes left · 1 class already booked');
   await page.setViewportSize({ width: 1280, height: 900 });
   await shot(page, 'computer-trainers-12-rohit-page');
   await page.setViewportSize({ width: 375, height: 812 });

@@ -6,7 +6,7 @@
  * tick was a hairline next to a solid Money block.
  */
 
-export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell';
+export type IconName = 'today' | 'members' | 'shop' | 'visits' | 'money' | 'plans' | 'settings' | 'more' | 'workouts' | 'messages' | 'branches' | 'brand' | 'clock' | 'trophy' | 'growth' | 'diet' | 'enquiries' | 'key' | 'invite' | 'news' | 'feedback' | 'bell' | 'trainer';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   // #41: two buildings side by side: "every branch".
@@ -130,6 +130,15 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
       <path d="M10 9.2a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.3v.4" />
       <path d="M12 15.6v.1M10.5 18.5h3" />
+    </>
+  ),
+  // F105: a person beside a calendar: Trainers (their hours and personal-training bookings).
+  trainer: (
+    <>
+      <circle cx="8" cy="7.5" r="3" />
+      <path d="M2.5 19.5c0-3.3 2.5-5.5 5.5-5.5 1.6 0 3 .6 4 1.6" />
+      <rect x="13.5" y="11" width="8" height="8.5" rx="1.5" />
+      <path d="M13.5 14h8M16 9.5v2.5M19 9.5v2.5" />
     </>
   ),
   // A key: Staff & sign-in.

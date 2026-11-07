@@ -134,12 +134,12 @@ export function hoursFromForm(
 ): { ok: true; hours: WeekHours } | { ok: false; words: string } {
   const filled = shifts.filter((s) => s.from.trim() || s.to.trim());
   if (days.length === 0) return { ok: true, hours: {} };
-  if (filled.length === 0) return { ok: false, words: 'Type the start and end time of the shift.' };
+  if (filled.length === 0) return { ok: false, words: 'Pick the start and end time of the shift.' };
   const out: Shift[] = [];
   for (const s of filled) {
     const a = minutesFromInput(s.from);
     const b = minutesFromInput(s.to);
-    if (a === null || b === null) return { ok: false, words: 'Type the start and end time of each shift.' };
+    if (a === null || b === null) return { ok: false, words: 'Pick the start and end time of each shift.' };
     if (a % SLOT_MIN !== 0 || b % SLOT_MIN !== 0) return { ok: false, words: 'Use times on the hour or half hour, like 6:00 or 6:30.' };
     if (a < DAY_FIRST_MIN || b > DAY_LAST_MIN) return { ok: false, words: 'Working hours can be from 5:00 am to 11:00 pm.' };
     if (a >= b) return { ok: false, words: 'Each shift must end after it starts.' };
@@ -344,7 +344,8 @@ export function classesLeftWords(n: number): string {
 
 /** "2 booked" next to the classes left, or ''. */
 export function bookedWords(n: number): string {
-  return n > 0 ? `${n} booked` : '';
+  if (n <= 0) return '';
+  return n === 1 ? '1 class already booked' : `${n} classes already booked`;
 }
 
 // ---------------------------------------------------------------- the clash rules
@@ -421,7 +422,9 @@ export function scheduleErrorWords(err: unknown, trainerName = 'This trainer'): 
 export type GridCell =
   | { kind: 'booked'; booking: PtBooking; first: boolean }
   | { kind: 'free' }
-  | { kind: 'off' };
+  | { kind: 'off' }
+  /** Already over (today before now, or an earlier day): nothing to book. Not the same as "not working". */
+  | { kind: 'past' };
 
 export interface GridRow {
   min: number;
@@ -454,7 +457,7 @@ export function dayGrid(day: DateISO, trainers: readonly TrainerProfile[], booki
     const cells = trainers.map((t): GridCell => {
       const b = mine.find((x) => x.trainerId === t.id && overlaps(x.start, x.length, min, SLOT_MIN));
       if (b) return { kind: 'booked', booking: b, first: b.start >= min && b.start < min + SLOT_MIN };
-      if (day < today || (day === today && min <= nowMin)) return { kind: 'off' };
+      if (day < today || (day === today && min <= nowMin)) return { kind: 'past' };
       return workingAt(t.hours, day, min) ? { kind: 'free' } : { kind: 'off' };
     });
     rows.push({ min, cells });

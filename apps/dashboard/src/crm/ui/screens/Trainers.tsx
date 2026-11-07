@@ -11,7 +11,7 @@
  * NOT LIVE: needs supabase/migrations/0065 (NOT APPLIED). Until then the screen says plainly "Trainer pages are
  * not ready for your gym yet", and nothing is saved or pretended. Rules and words: logic/trainerSchedule.ts.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 import { ptLeftRunning } from '../../logic/pt';
 import { initials } from '../../logic/members';
@@ -40,6 +40,7 @@ import {
   hoursFromForm,
   hoursLine,
   indiaMinutes,
+  inputFromMinutes,
   isoWeekday,
   mondayOf,
   rangeWords,
@@ -339,6 +340,41 @@ function WeekNav({ week, setWeek, title }: { week: DateISO; setWeek: (w: DateISO
 
 type BookStart = { trainerId: string; day: DateISO; start: number };
 
+const OFF_CELL = { padding: '4px 8px', background: color.surfaceSunken, color: color.inkFaint, fontSize: 12 } as const;
+const PAST_CELL = {
+  padding: 0,
+  background: `repeating-linear-gradient(135deg, transparent 0 6px, ${color.grid} 6px 8px)`,
+} as const;
+
+/** What the grid's cells mean: Free / Booked / Off (not working) / Already over. */
+function GridKey() {
+  const item = (swatch: CSSProperties, word: string, text?: string) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span
+        aria-hidden
+        style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 20, borderRadius: 4,
+          border: `1px solid ${color.border}`, fontSize: 11, ...swatch, padding: 0,
+        }}
+      >
+        {text}
+      </span>
+      {word}
+    </span>
+  );
+  return (
+    <div
+      data-testid="pt-key"
+      style={{ display: 'flex', flexWrap: 'wrap', gap: `${space.xs}px ${space.md}px`, marginTop: space.sm, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}
+    >
+      {item({ color: color.goodText }, 'Free to book', 'Free')}
+      {item({ background: color.accentSoft }, 'Booked')}
+      {item(OFF_CELL, 'Not working', 'Off')}
+      {item(PAST_CELL, 'Already over')}
+    </div>
+  );
+}
+
 function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: WeekProps) {
   const { today } = useCrm();
   const nowMin = useNowMin();
@@ -352,23 +388,28 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
   const [open, setOpen] = useState<PtBooking | null>(null);
   const { nameOf } = useMemberInfo(schedule);
   const rows = dayGrid(day, schedule.trainers, schedule.bookings, today, nowMin);
-  // On a phone the day row scrolls sideways: keep the chosen day in view when the page opens and when it changes.
-  const dayRow = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const picked = dayRow.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
-    picked?.scrollIntoView({ inline: 'center', block: 'nearest' });
-  }, [day, week]);
+  // A new sheet hides the last "Booked: ..." note, which would otherwise sit over the sheet's own words.
+  const openBook = (b: BookStart) => {
+    toast('');
+    setBooking(b);
+  };
+  const openBooking = (b: PtBooking) => {
+    toast('');
+    setOpen(b);
+  };
 
   return (
     <Card>
       <WeekNav week={week} setWeek={setWeek} title={TRAINER_WORDS.weekTitle} />
-      <div ref={dayRow} data-testid="pt-days">
-      <ChipToggle
-        label="Pick a day"
-        value={day}
-        onChange={(v) => setDay(v as DateISO)}
-        options={days.map((d, i) => ({ value: d, label: dayChip(d), count: counts[i] || undefined }))}
-      />
+      {/* All seven days wrap onto lines on a phone: none is cut at the edge or hidden off-screen. */}
+      <div data-testid="pt-days">
+        <ChipToggle
+          wrap
+          label="Pick a day"
+          value={day}
+          onChange={(v) => setDay(v as DateISO)}
+          options={days.map((d, i) => ({ value: d, label: dayChip(d), count: counts[i] || undefined }))}
+        />
       </div>
       <p style={{ ...small, margin: `${space.sm}px 0` }}>{`${dayName(isoWeekday(day))}: ${bookingsWords(counts[days.indexOf(day)] ?? 0)}. Tap a free time to book.`}</p>
       <div data-testid="pt-grid" style={{ overflowX: 'auto', maxWidth: '100%', border: `1px solid ${color.border}`, borderRadius: 10 }}>
@@ -386,7 +427,7 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
           <tbody>
             {rows.map((r) => (
               <tr key={r.min} style={{ borderTop: `1px solid ${color.grid}` }}>
-                <td style={{ position: 'sticky', left: 0, background: color.surface, padding: '4px 8px', color: color.inkMuted, whiteSpace: 'nowrap' }}>{timeWords(r.min)}</td>
+                <td style={{ position: 'sticky', left: 0, background: color.surface, padding: '4px 8px', color: r.cells.every((c) => c.kind === 'past') ? color.inkFaint : color.inkMuted, whiteSpace: 'nowrap' }}>{timeWords(r.min)}</td>
                 {r.cells.map((c, i) => {
                   const t = schedule.trainers[i]!;
                   if (c.kind === 'booked') {
@@ -395,7 +436,7 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
                         {c.first ? (
                           <button
                             type="button"
-                            onClick={() => setOpen(c.booking)}
+                            onClick={() => openBooking(c.booking)}
                             aria-label={`${nameOf(c.booking.memberId)} with ${t.name}, ${rangeWords(c.booking.start, c.booking.length)}`}
                             style={{ all: 'unset', cursor: 'pointer', display: 'block', minHeight: 36, padding: '4px 6px', color: color.accentBright, fontWeight: 700, overflowWrap: 'anywhere' }}
                           >
@@ -405,10 +446,11 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
                       </td>
                     );
                   }
+                  if (c.kind === 'past') return <td key={t.id} style={PAST_CELL} aria-label="Already over" />;
                   if (c.kind === 'off') {
                     return (
-                      <td key={t.id} style={{ padding: '4px 8px', background: color.surfaceSunken, color: color.inkFaint }} aria-label="Not working">
-                        –
+                      <td key={t.id} style={OFF_CELL} aria-label="Not working">
+                        Off
                       </td>
                     );
                   }
@@ -416,7 +458,7 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
                     <td key={t.id} style={{ padding: 2 }}>
                       <button
                         type="button"
-                        onClick={() => setBooking({ trainerId: t.id, day, start: r.min })}
+                        onClick={() => openBook({ trainerId: t.id, day, start: r.min })}
                         aria-label={`Book ${t.name} at ${timeWords(r.min)}`}
                         style={{ all: 'unset', cursor: 'pointer', display: 'block', minHeight: 36, padding: '4px 6px', color: color.goodText }}
                       >
@@ -430,8 +472,9 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
           </tbody>
         </table>
       </div>
+      <GridKey />
       <div style={{ marginTop: space.md }}>
-        <Button needsInternet onClick={() => setBooking({ trainerId: schedule.trainers[0]!.id, day: day >= today ? day : today, start: -1 })}>
+        <Button needsInternet onClick={() => openBook({ trainerId: schedule.trainers[0]!.id, day: day >= today ? day : today, start: -1 })}>
           Book personal training
         </Button>
       </div>
@@ -467,6 +510,15 @@ function WeekCalendar({ schedule, ownerKey, week, setWeek, reload, toast }: Week
 }
 
 // ---------------------------------------------------------------- book
+
+/** Shift times in the app's "6:00 am" words, every half hour from 5 am to 11 pm; "Not set" leaves a shift empty. */
+const SHIFT_TIMES: { value: string; label: string }[] = [
+  { value: '', label: 'Not set' },
+  ...Array.from({ length: (DAY_LAST_MIN - DAY_FIRST_MIN) / SLOT_MIN + 1 }, (_, i) => DAY_FIRST_MIN + i * SLOT_MIN).map((m) => ({
+    value: inputFromMinutes(m),
+    label: timeWords(m),
+  })),
+];
 
 function timeOptions(): { value: string; label: string }[] {
   const out: { value: string; label: string }[] = [];
@@ -753,7 +805,7 @@ function TrainerPage({ schedule, trainer, ownerKey, week, setWeek, reload, toast
     <>
       <PageHeader
         title={trainer.name}
-        subtitle={trainer.teaches ? `Teaches: ${trainer.teaches}` : 'Trainer'}
+        subtitle="Trainer"
         actions={
           <Button variant="ghost" onClick={() => navigate('/trainers')}>
             All trainers
@@ -767,7 +819,14 @@ function TrainerPage({ schedule, trainer, ownerKey, week, setWeek, reload, toast
             <p style={quiet}>{trainer.teaches ? `Teaches: ${trainer.teaches}` : 'What they teach is not added yet'}</p>
             {mayEdit && (
               <div>
-                <Button variant="ghost" needsInternet onClick={() => setEditing(true)}>
+                <Button
+                  variant="ghost"
+                  needsInternet
+                  onClick={() => {
+                    toast('');
+                    setEditing(true);
+                  }}
+                >
                   Edit page
                 </Button>
               </div>
@@ -778,11 +837,18 @@ function TrainerPage({ schedule, trainer, ownerKey, week, setWeek, reload, toast
 
       <Card style={{ marginBottom: space.lg }}>
         <SectionTitle>Working hours</SectionTitle>
-        <div data-testid="trainer-hours" style={{ display: 'grid', gap: 4 }}>
-          {WEEKDAYS.map((d) => (
-            <div key={d} style={{ display: 'flex', justifyContent: 'space-between', gap: space.md, flexWrap: 'wrap', fontFamily: font.body, fontSize: 14 }}>
-              <span style={{ color: color.ink, fontWeight: 600 }}>{dayName(d)}</span>
-              <span style={{ color: color.inkSecondary }}>{hoursLine(trainer.hours, d)}</span>
+        {/* One row per day: the day on the left, its times on the right (wrapping inside their own column), a line between days. */}
+        <div data-testid="trainer-hours" style={{ display: 'grid' }}>
+          {WEEKDAYS.map((d, i) => (
+            <div
+              key={d}
+              style={{
+                display: 'grid', gridTemplateColumns: '96px minmax(0, 1fr)', gap: space.sm, alignItems: 'baseline', padding: '8px 0',
+                borderTop: i === 0 ? 'none' : `1px solid ${color.grid}`, fontFamily: font.body, fontSize: 14,
+              }}
+            >
+              <span style={{ color: color.ink, fontWeight: 700 }}>{dayName(d)}</span>
+              <span style={{ color: color.inkSecondary, textAlign: 'right', overflowWrap: 'anywhere' }}>{hoursLine(trainer.hours, d)}</span>
             </div>
           ))}
         </div>
@@ -813,10 +879,13 @@ function TrainerPage({ schedule, trainer, ownerKey, week, setWeek, reload, toast
             <button
               key={b.id}
               type="button"
-              onClick={() => setOpen(b)}
+              onClick={() => {
+                toast('');
+                setOpen(b);
+              }}
               style={{
-                all: 'unset', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', gap: space.sm, flexWrap: 'wrap',
-                minHeight: 44, padding: '6px 10px', borderRadius: 8, border: `1px solid ${color.border}`, fontFamily: font.body, fontSize: 14,
+                all: 'unset', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', gap: space.sm, flexWrap: 'wrap',
+                boxSizing: 'border-box', width: '100%', minHeight: 44, padding: '6px 10px', borderRadius: 8, border: `1px solid ${color.border}`, fontFamily: font.body, fontSize: 14,
                 color: bookingStarted(b, today, nowMin) ? color.inkMuted : color.ink,
               }}
             >
@@ -826,7 +895,13 @@ function TrainerPage({ schedule, trainer, ownerKey, week, setWeek, reload, toast
           ))}
         </div>
         <div style={{ marginTop: space.md }}>
-          <Button needsInternet onClick={() => setBooking({ trainerId: trainer.id, day: days.includes(today) ? today : days[0]!, start: -1 })}>
+          <Button
+            needsInternet
+            onClick={() => {
+              toast('');
+              setBooking({ trainerId: trainer.id, day: days.includes(today) ? today : days[0]!, start: -1 });
+            }}
+          >
             {`Book with ${trainer.name}`}
           </Button>
         </div>
@@ -970,7 +1045,9 @@ function EditTrainerSheet({
       </div>
       <TextField label="What they teach" value={teaches} onChange={setTeaches} placeholder="Weight loss, strength, yoga" hint="Members and the desk see this. At most 80 letters." />
 
-      <SectionTitle>Working days</SectionTitle>
+      <div style={{ marginTop: space.xl }}>
+        <SectionTitle>Working days</SectionTitle>
+      </div>
       <div role="group" aria-label="Working days" style={{ display: 'flex', flexWrap: 'wrap', gap: space.xs }}>
         {WEEKDAYS.map((d) => {
           const on = days.includes(d);
@@ -996,8 +1073,8 @@ function EditTrainerSheet({
       </div>
       {shifts.map((s, i) => (
         <div key={i} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: space.sm }}>
-          <TextField label={i === 0 ? 'Shift starts' : 'Second shift starts'} type="time" value={s.from} onChange={(v) => setShift(i, 'from', v)} />
-          <TextField label={i === 0 ? 'Shift ends' : 'Second shift ends'} type="time" value={s.to} onChange={(v) => setShift(i, 'to', v)} />
+          <SelectField label={i === 0 ? 'Shift starts' : 'Second shift starts'} value={s.from} onChange={(v) => setShift(i, 'from', v)} options={SHIFT_TIMES} />
+          <SelectField label={i === 0 ? 'Shift ends' : 'Second shift ends'} value={s.to} onChange={(v) => setShift(i, 'to', v)} options={SHIFT_TIMES} />
         </div>
       ))}
       <p style={{ ...small, marginTop: space.sm }}>

@@ -58,10 +58,10 @@ export function MoreScreen() {
       badge: enquiriesDue,
     },
     { path: '/expenses', group: 'run', label: 'Expenses', hint: 'Money going out, and profit', icon: 'money' },
+    // F105: trainers' hours and bookings are running the gym day to day, so here, not under "Talk to members".
+    { path: '/trainers', group: 'run', label: 'Trainers', hint: 'Their hours, and personal-training bookings', icon: 'trainer' },
     { path: '/workouts', group: 'talk', label: 'Workout plans', hint: 'Send members their routines', icon: 'workouts' },
     { path: '/diet', group: 'talk', label: 'Diet plans', hint: 'Send members what to eat', icon: 'diet' },
-    // F105: trainer pages and personal-training bookings (the page says plainly when the server has no 0065).
-    { path: '/trainers', group: 'talk', label: 'Trainers', hint: 'Their hours, and personal-training bookings', icon: 'workouts' },
     // F109 (#46): hidden until the gym's server has the trainer view (0050), and for the desk without the Trainer tick.
     ...(trainerNav
       ? [{ path: '/trainer', group: 'talk', label: 'Training progress', hint: owner ? 'Members’ workout progress, and their trainer' : 'Your members’ workout progress', icon: 'growth' } as Row]

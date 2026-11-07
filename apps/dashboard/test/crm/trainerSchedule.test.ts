@@ -190,8 +190,10 @@ describe('the day grid', () => {
     const rows = dayGrid(TODAY, [meena], [], TODAY, 600);
     expect(rows[0]!.min).toBe(360);
     expect(rows.at(-1)!.min).toBe(1290);
-    expect(rows.find((r) => r.min === 600)!.cells[0]!.kind).toBe('off');
+    expect(rows.find((r) => r.min === 600)!.cells[0]!.kind).toBe('past');
     expect(rows.find((r) => r.min === 630)!.cells[0]!.kind).toBe('free');
+    // An earlier day is all past, never "not working".
+    expect(dayGrid('2026-10-12', [rohit], [], TODAY, 600).every((r) => r.cells[0]!.kind === 'past')).toBe(true);
   });
 
   it('shows 6 am to 10 pm on a day off, widened to show a booking made anyway', () => {

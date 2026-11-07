@@ -222,14 +222,14 @@ export function Routes({ online }: { online: boolean }) {
       // Step 5 (15 Oct 2026): people who asked about joining, and money going out.
       { path: '/enquiries', label: t('Enquiries'), icon: 'enquiries', badge: enquiriesDue || undefined },
       { path: '/expenses', label: t('Expenses'), icon: 'money' },
+      // F105 (7 Nov 2026): trainer pages and personal-training bookings, with the other run-the-gym pages.
+      { path: '/trainers', label: t('Trainers'), icon: 'trainer' },
       // 18 Oct 2026: routines the gym or a trainer sends to members' MettleUp app (owner and Staff).
       { path: '/workouts', label: t('Workout plans'), icon: 'workouts' },
       // R-120 (24 Oct 2026): what to eat, from the trainer (owner and Staff; on the gym's server, 0035).
       { path: '/diet', label: t('Diet plans'), icon: 'diet' },
       // F109 (#46): members' workout progress, for trainers and the owner (hidden until 0050, and for the plain desk).
       ...(trainerNav ? [{ path: '/trainer', label: t('Training progress'), icon: 'growth' } as NavItem] : []),
-      // F105 (7 Nov 2026): trainer pages and personal-training bookings (the page says plainly when the server has no 0065).
-      { path: '/trainers', label: t('Trainers'), icon: 'workouts' },
       // R-319 item 1 (4 Nov 2026): members' "Ask a trainer" questions, badged with the ones waiting (hidden until 0053).
       ...(trainerNav && questionsOpen !== null
         ? [{ path: '/questions', label: t('Questions'), icon: 'feedback', badge: questionsOpen || undefined } as NavItem]
