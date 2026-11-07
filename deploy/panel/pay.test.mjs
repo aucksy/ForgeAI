@@ -268,7 +268,7 @@ test('Cashfree: link with notify_url; its signed webhook marks paid once; a bad 
   const ts = '1730700000';
   const sig = createHmac('sha256', 'cfsk_ma_test_secret123').update(ts + raw).digest('base64');
   const url = `https://app.mettleup.fit/api/pay/hook/cashfree/${hookRow.hook}`;
-  const bad = new Request(url, { method: 'POST', body: raw, headers: { 'x-webhook-signature': sig.replace(/^./, 'A'), 'x-webhook-timestamp': ts } });
+  const bad = new Request(url, { method: 'POST', body: raw, headers: { 'x-webhook-signature': sig.replace(/^./, (c) => (c === 'A' ? 'B' : 'A')), 'x-webhook-timestamp': ts } });
   assert.equal((await handlePay(bad, e, new URL(url), { fetch: n.f })).status, 401);
   for (let i = 0; i < 2; i++) {
     const good = new Request(url, { method: 'POST', body: raw, headers: { 'x-webhook-signature': sig, 'x-webhook-timestamp': ts } });
