@@ -14,6 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
+| 93 | One MettleUp login for all services? | A: yes, add it as owner everywhere |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
@@ -25,6 +26,7 @@ Done, built and "Not doing" items have no rating. The page sorts by these (Best 
 
 | Item | Impact | Effort |
 |---|---|---|
+| #93 | Medium | Low |
 | Feature: Monthly gym challenge with a ranking | High | Low |
 | Feature: How busy the gym is right now | High | Low |
 | Feature: Gym's logo on share pictures and a before/after share | High | Low |
@@ -248,6 +250,24 @@ On the page: the "Claude's tasks" tab. Status: Done / Doing / To do / Blocked (w
 | T63 Terms of use | Done | 20 Oct FINAL: docs/launch/TERMS.md (members + staff) (D2). |
 | T64 Remove the unused microphone permission | Done | 20 Oct in the code + approved-permissions list; reaches phones with task 4 (C5). |
 ---
+
+## Accounts map
+Which login owns each outside service MettleUp uses. Checked live on 7 Nov 2026 (consoles in your Chrome, server key list, Gmail). Claude keeps it current: every new service or move adds or edits a row here. Full email addresses are left out on purpose (this file is public).
+
+| Service | What it runs for MettleUp | Signed in with | Move to a MettleUp account |
+|---|---|---|---|
+| Cloudflare | The websites (mettleup.fit, app., gyms., hq.), the app server, its small database, the domains' DNS, the HQ login gate | Your personal Gmail (checked 7 Nov) | Easy: add the new account as Super Administrator. Nothing is rebuilt. |
+| Supabase | The gym database and member sign-in | Your personal Gmail, user aucksy (checked 7 Nov) | Easy: a new organisation owned by the new account, then Supabase's built-in project transfer. No downtime. |
+| GitHub (aucksy/ForgeAI) | All code, cloud builds and tests, app files, the app signing key (kept as a secret) | Your personal Gmail (checked 7 Nov) | Medium: a "mettleup" organisation, then transfer the repo. Old links redirect. Re-check the 12 build secrets after. |
+| Google Cloud + Firebase (project forgeai-d7eea) | Google sign-in, push notifications, Firebase Test Lab | simpleapps108, the only owner (checked 7 Nov; an old note said personal: wrong) | Easy: add the new account as Owner. |
+| Google Play Console | The MettleUp app listing and releases (same account as your other apps) | simpleapps108 (checked 7 Nov) | Easy: add the new account as an admin user. Moving the app itself to a new developer account is a slow formal transfer: not needed now. |
+| Meta (WhatsApp sign-in codes) | Business portfolio "Aakash Pahuja's Business", WhatsApp number +91 86905 60741, app MettleUp | Your personal Facebook; business email = your live.in email (checked 7 Nov) | Easy: add the new account as portfolio admin, rename the portfolio to MettleUp. The number stays. |
+| Namecheap | Where the domains were bought (order of 24 Oct) | Your personal Gmail (Gmail order email, 7 Nov) | Easy: change the account email, or a free "push" to a new Namecheap account. DNS stays at Cloudflare. |
+| Anthropic (Claude) | The help-chat replies and the backup AI for member import | Your personal Gmail, "Aakash's Individual Org" (checked 7 Nov). Balance shows $0.00; 3 of its keys expire on 17, 22 and 24 Nov | Easy: new keys on the new account, swap them on the server. |
+| Google AI Studio (Gemini) | The first AI for member import (masked column names and sample rows) | Your personal Gmail, project ForgeAI, free tier (checked 7 Nov) | Easy: a new key on the new account, on a paid tier, so Google does not use the data. |
+| Groq | Turns spoken feedback into text | Not confirmed: the console is signed out. Probably your personal Gmail | Easy: a new key on the new account. |
+| Razorpay / Cashfree | Gym payments (code ready, test mode) | No account yet (checked 7 Nov: only shop receipts in Gmail) | Open it on the MettleUp account from day one. |
+| Expo | Only a name ("aucksy") in the app settings; builds do not use Expo's servers | Not signed in | Nothing to move. |
 
 ## Your scores
 His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds 9-10 first, then 7-8, then the rest; unscored items come after those scored 7 or more.
@@ -516,6 +536,17 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F188 Big banner at the top of the Play listing | Idea | Parked (owner, 1 Nov: "add it to backlog for now"). Our 1024x500 banner picture is already on the listing; Play shows it at the top only when the listing has a YouTube video. | I make a 30-second video from the real app screens, for free. You watch it first. After your yes, it goes on YouTube as Unlisted (only people with the link see it) and its link goes in the listing, so the banner shows on top. Best done when the app goes public. |
 
 ---
+
+## 93. One MettleUp login for all services, or keep two? — 7 Nov 2026
+**Chat:** Mettle Up
+**Status:** WAITING FOR YOU
+**You asked:** Map which login owns each service (done: Home → "Accounts and services"), and should we make one MettleUp Gmail and move everything there, now that we have no real customers?
+**What I found (7 Nov, checked live):** 3 logins own MettleUp today. Your personal Gmail owns Cloudflare, Supabase, GitHub, Namecheap and the 2 AI keys. simpleapps108 owns Play Console and Google Cloud/Firebase. Your personal Facebook owns the Meta/WhatsApp portfolio. One old note was wrong: Google Cloud is on simpleapps108, not your personal Gmail.
+**My view:** Yes, do it, and now is the right time. A buyer, a co-founder, an accountant or a future employee should get MettleUp access without your personal Gmail. It also stops one lost password from locking you out of everything. But "move" here means ADD, not rebuild. In each service the new MettleUp login becomes a second owner. Nothing goes down. Later we remove your personal login where it makes sense. Effort: about 2 hours of my browser work, spread over 1-2 days. Your part: about 15 minutes. Risk: low, because every step is reversible and the app, website and data never move. Two things I would NOT move now: the Play app itself (it shares the simpleapps108 developer account with your other apps, and a formal transfer is slow) and the WhatsApp number (it stays; only its admin changes).
+**Your part if you pick A:** make the Gmail (I cannot create accounts), switch on its 2-step check with your phone, and sign in to it once in your Chrome. Also: the Claude (Anthropic) account shows a $0.00 balance and 3 of its keys expire on 17, 22 and 24 Nov. I will make fresh keys on the new account, so the help chat and member import keep working.
+**Decide:** One MettleUp login for all services?
+- A: Yes: make a MettleUp Gmail, I add it as owner everywhere, then remove the personal ones (recommended)
+- B: No: keep the 3 logins as they are; the Accounts map on Home is enough
 
 ## 92. To start earning: 3 things only you can do — 6 Nov 2026
 **Chat:** Mettle Up

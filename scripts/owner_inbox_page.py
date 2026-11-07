@@ -179,7 +179,30 @@ def parse(text):
         f["prio"] = prio.get("Feature: " + f["name"])
     for t in mine:
         t["prio"] = prio.get("Task: " + t["task"])
-    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine, "ratings": parse_ratings(text), "scores": parse_scores(text)}
+    return {"decisions": decisions, "entries": entries, "backlog": backlog, "mine": mine, "ratings": parse_ratings(text), "scores": parse_scores(text), "accounts": parse_accounts(text)}
+
+
+ACCOUNTS_RE = re.compile(r"^## Accounts map[^\n]*\n(.*?)(?=^## |^---[ \t]*$|\Z)", re.M | re.S)
+
+
+def parse_accounts(text):
+    """R-393 (owner, 7 Nov 2026): the permanent "Accounts map" on Home: which login owns each outside service.
+    {intro, rows: [{service, what, login, move}]} from the .md's "## Accounts map" table (empty without one)."""
+    m = ACCOUNTS_RE.search(text)
+    if not m:
+        return {"intro": "", "rows": []}
+    intro, rows = [], []
+    for line in m.group(1).splitlines():
+        s = line.strip()
+        if not s.startswith("|"):
+            if s:
+                intro.append(s)
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if len(cells) != 4 or cells[0] in ("Service", "") or set(cells[0]) <= set("-: "):
+            continue
+        rows.append({"service": cells[0], "what": cells[1], "login": cells[2], "move": cells[3]})
+    return {"intro": " ".join(intro), "rows": rows}
 
 
 RATINGS_HEAD = "## Feature ratings"
@@ -1227,10 +1250,24 @@ function homeHtml() {
     (fresh.length ? '<h3 class="grp">New answers to read <span class="cnt">' + fresh.length + "</span></h3>" + rows(fresh.map((e) => rowEntry(e)), 6) : "") +
     // R-196 (owner, 30 Oct 2026): the feature-rating module lives on Home, always, as its own section.
     '<h3 class="grp" id="sec-rate">Rate features for marketing</h3>' + rateHtml() +
+    accountsHtml() +
     '<h3 class="grp">Claude is working on</h3>' +
     (doing.length ? rows(doing.map((x) => rowTask(x, esc(x.t.details.length > 160 ? x.t.details.slice(0, 157).replace(/\s+\S*$/, "") + "…" : x.t.details)))) : empty("Nothing marked Doing right now.")) +
     (blocked.length ? '<p class="hint"><a href="#" data-tab="mine">' + blocked.length + " of Claude's tasks wait for you</a>: each names the # it waits on.</p>" : "") +
     '<p class="foot">Updated ' + esc(updatedText()) + ". Type a number in the box at the top (for example 51) to jump to it, or a word to search everything.</p></div>";
+}
+// R-393 (owner, 7 Nov 2026): a permanent section on Home: which login owns each outside service.
+function accountsHtml() {
+  const a = DATA.accounts || { intro: "", rows: [] };
+  if (!a.rows.length) return "";
+  const card = (r) => '<div class="rcard"><div class="fh"><h4 class="name">' + esc(r.service) + "</h4></div>" +
+    '<p class="det"><b>Runs:</b> ' + esc(r.what) + "</p>" +
+    '<p class="det"><b>Signed in with:</b> ' + esc(r.login) + "</p>" +
+    '<p class="det"><b>Move to a MettleUp account:</b> ' + esc(r.move) + "</p></div>";
+  return '<h3 class="grp" id="sec-acc">Accounts and services <span class="cnt">' + a.rows.length + "</span></h3>" +
+    (a.intro ? '<p class="hint">' + esc(a.intro) + "</p>" : "") +
+    '<details class="ratebox" data-box="acc"' + (doneOpen.acc ? " open" : "") + "><summary><span>See which login owns each service</span>" + CHEV + "</summary>" +
+    a.rows.map(card).join("") + "</details>";
 }
 // R-176 (owner, 29 Oct 2026): rate the features we build, for marketing. Two scores, 1-5: Convenience (how much
 // easier it makes the user's day) and Value (how much a buyer cares). Taps stay on this phone until "Save my

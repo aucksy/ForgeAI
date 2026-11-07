@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-393. Accounts map on tracker Home; one MettleUp login? — 7 Nov 2026
+His ask: a permanent Home section mapping each service to its login, plus my view on a MettleUp brand Gmail. Done: OWNER-INBOX.md "## Accounts map" (table Service | What | Signed in with | Move; parse_accounts + accountsHtml in scripts/owner_inbox_page.py; no full emails, file is public). Checked live 7 Nov: personal Gmail = Cloudflare, Supabase (user aucksy), GitHub, Namecheap, Anthropic (balance $0.00; keys expire 17/22/24 Nov), AI Studio Gemini (free tier); simpleapps108 = Play Console AND Google Cloud/Firebase forgeai-d7eea (sole owner; the 28 Oct note saying personal was wrong); personal Facebook = Meta portfolio; Groq unconfirmed (signed out); no Razorpay/Cashfree account yet; Expo unused. Entry #93 asks A (brand Gmail, ADD as owner everywhere, keep Play app + WhatsApp number in place; recommended) or B (keep 3 logins). Keep the map current: every new service or move edits a row.
+
 ## R-392. No WhatsApp code on a new gym; "yes, fill Meta business info" — 7 Nov 2026
 He made a new test gym with his real number and got no WhatsApp code. D1 showed our Worker sent it (sent=1),
 but WhatsApp Manager showed 0 messages sent and the alert "Missing valid payment method". The billing account
