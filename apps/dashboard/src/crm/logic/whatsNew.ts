@@ -42,6 +42,12 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     id: '2026-11-07',
     lines: [
       {
+        // F105 (0065 applied live 7 Nov 2026, owner yes). Lands with the 7 Nov deploy: the dots lead to /trainers.
+        text: 'More → Trainers: each trainer gets a page with their photo, hours and personal-training members. Book members with a free trainer for personal training.',
+        go: { label: 'Open Trainers', path: '/trainers' },
+        feature: true,
+      },
+      {
         text: 'Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.',
         go: { label: 'Open Branding', path: '/settings/branding' },
       },

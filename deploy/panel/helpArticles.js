@@ -236,6 +236,18 @@ export const HELP_ARTICLES = [
     screens: ['apps/dashboard/src/crm/ui/screens/DietPlans.tsx'],
   },
   {
+    id: 'trainers-and-personal-training',
+    who: 'owner',
+    title: 'Trainer pages and personal-training bookings',
+    text:
+      'Open Trainers (on a phone, under More). Each trainer ticked "Trainer" in Staff & sign-in has a card. ' +
+      'Tap "Open page" to see their working hours and their personal-training members with classes left. "Edit page" adds a photo, what they teach and their hours (the owner for anyone, a trainer for themself). ' +
+      'To book: under "Personal training this week", pick the day, tap "Free" next to the time, pick the member and tap "Book". ' +
+      'A member with no classes left, or a trainer or member already booked then, is refused. Outside working hours, tap "Book anyway". ' +
+      'Tap a booking to cancel it. Booking does not use up a class.',
+    screens: ['apps/dashboard/src/crm/ui/screens/Trainers.tsx'],
+  },
+  {
     id: 'my-members-trainers',
     who: 'owner',
     title: 'See your members\' workout progress (My members)',
@@ -805,7 +817,6 @@ export const HELP_ARTICLES = [
 export const NO_HELP_SCREENS = {
   'apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx': 'Not live yet (billing step 3: one MettleUp receipt, opened from Pay MettleUp; server 0063 is not applied). Its help goes in the Pay MettleUp article when that goes live.',
   'apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx': 'Not live yet (T79 Pay MettleUp: server 0060 is not applied and MettleUp has not added its payment details); the screen says so itself. Its help article is written when it goes live.',
-  'apps/dashboard/src/crm/ui/screens/Trainers.tsx': 'Not live yet (F105 trainer pages and personal-training bookings: server 0065 is not applied); the screen says so itself. Its help article is written when it goes live.',
   'apps/dashboard/src/crm/ui/screens/EntryMachines.tsx': 'Not live yet (F103 entry machines: server 0059 and the gate are not switched on); the screen says so itself. Its help article is written when it goes live.',
   'apps/mobile/src/app/_layout.tsx': 'The app frame around every screen; nothing to tap.',
   'apps/mobile/src/app/(tabs)/_layout.tsx': 'The bottom tab bar frame; each tab has its own article.',
