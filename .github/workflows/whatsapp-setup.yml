@@ -24,6 +24,10 @@ on:
         description: Put WHATSAPP_TOKEN into the panel Worker as a secret
         type: boolean
         default: true
+      subscribe:
+        description: Connect our Meta app to the WhatsApp account (needed for the delivery webhook, R-392)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -87,6 +91,10 @@ jobs:
           echo "== Health: phone number $PHONE_ID =="
           curl -sS "https://graph.facebook.com/$GRAPH/$PHONE_ID?fields=health_status,throughput" \
             -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq 'del(.access_token)'
+          if [ "${{ inputs.subscribe }}" = "true" ]; then
+            echo "== Connect our app to $WABA_ID (webhook news) =="
+            curl -sS -X POST "https://graph.facebook.com/$GRAPH/$WABA_ID/subscribed_apps"               -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq '{success, error: (.error | if . then {code, message} else null end)}'
+          fi
           echo "== Apps subscribed to $WABA_ID =="
           curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID/subscribed_apps" \
             -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq '{apps: [.data[]?.whatsapp_business_api_data | {id, name}], error: (.error | if . then {code, message} else null end)}'
