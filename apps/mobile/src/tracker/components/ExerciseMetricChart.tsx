@@ -184,12 +184,13 @@ export function ExerciseMetricChart({
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
             {shown ? tinyDateWithYear(shown.x) : 'Nothing in this range yet'}
           </Text>
-          {total ? (
-            <Text testID="chart-range-total" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: space.xs }}>
-              {rangeTotalText(metric, total, range, units, distUnit)}
-            </Text>
-          ) : null}
         </View>
+        {/* R-398: outside the readout box, which reads as one block to TalkBack and tests. */}
+        {total ? (
+          <Text testID="chart-range-total" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginBottom: space.sm }}>
+            {rangeTotalText(metric, total, range, units, distUnit)}
+          </Text>
+        ) : null}
         {data.length > 0 ? (
           // resetKey: switching to a metric (or range) with the same numbers still clears the
           // picked point, as it clears the readout above (13 Oct 2026 audit).

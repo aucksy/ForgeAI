@@ -68,6 +68,28 @@ appId: com.mettleup.app
       id: "date-line-chart"
     centerElement: true
     timeout: 15000
+# R-398 (owner, 7 Nov 2026): a total for the picked range under the chart's big number.
+# Negative first: "Heaviest weight" has no total, so no line.
+- assertNotVisible:
+    id: "chart-range-total"
+- tapOn: "Heaviest weight"
+- extendedWaitUntil:
+    visible: "Chart shows"
+    timeout: 5000
+- tapOn: "^Kg lifted$"
+- extendedWaitUntil:
+    visible:
+      id: "chart-range-total"
+      text: 'Total, (last 3 months|last 12 months|all time): [0-9,]+ kg in [0-9]+ workouts?'
+    timeout: 5000
+- takeScreenshot: rel-398a-range-total
+- tapOn: "^All time$"
+- extendedWaitUntil:
+    visible:
+      id: "chart-range-total"
+      text: 'Total, all time: [0-9,]+ kg in [0-9]+ workouts?'
+    timeout: 5000
+- takeScreenshot: rel-398b-range-total-all-time
 - tapOn:
     id: "date-line-chart"
 - copyTextFrom:
