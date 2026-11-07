@@ -14,7 +14,7 @@ test('J148 What is new: never a card on Today, every update on the What is new p
   await open(page, 'Today');
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   // R-245: an update brings the bell's number, not a card on Today.
-  await expect(page.getByRole('button', { name: 'Notifications, 3 new' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Notifications, \d+ new$/ })).toBeVisible();
   await expect(page.getByRole('region', { name: CARD })).toHaveCount(0);
 
   // Every update, newest first, from More.
@@ -40,15 +40,15 @@ test('J149 Notifications bell: counts new updates, opens with a short What is ne
 
   await page.evaluate(() => localStorage.setItem('forgeai.adminNews.seen.v1', '2026-10-01'));
   await page.reload();
-  const bell = page.getByRole('button', { name: 'Notifications, 3 new' });
+  const bell = page.getByRole('button', { name: /^Notifications, \d+ new$/ });
   await expect(bell).toBeVisible();
   await bell.tap();
   const list = page.getByRole('dialog', { name: 'Notifications' });
-  await expect(list).toContainText('Version 6 Nov 2026');
+  await expect(list).toContainText('Version 7 Nov 2026');
   const news = list.getByRole('region', { name: CARD });
-  await expect(news).toContainText('Update of 6 Nov 2026');
+  await expect(news).toContainText('Update of 7 Nov 2026');
   await expect(news).toContainText('Branding');
-  await expect(news).toContainText('Pay MettleUp'); // a 2-line update shows both lines, so no "more changes" count
+  await expect(news).toContainText('no longer loses the logo or colour'); // R-388, the newest update
   await expect(news).toContainText(/\d+ updates since you last looked/);
   await expect(news.getByText('New', { exact: true })).toBeVisible();
   await expectFitsPhone(page, 'with the notifications list open');

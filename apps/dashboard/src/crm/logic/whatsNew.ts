@@ -33,6 +33,16 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // R-388 (owner, 7 Nov 2026): Branding reloaded itself every few seconds and lost the owner's unsaved pick.
+    id: '2026-11-07',
+    lines: [
+      {
+        text: 'Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.',
+        go: { label: 'Open Branding', path: '/settings/branding' },
+      },
+    ],
+  },
+  {
     // T74 (R-356): the home-screen icon preview under the logo. Deployed 6 Nov 2026.
     id: '2026-11-06',
     lines: [
