@@ -127,6 +127,11 @@ appId: com.mettleup.app
 - stopApp
 - launchApp:
     clearState: false
+# Wait until the app has started: a link sent while it starts is dropped (7 Nov run: the real clock, 8 Nov, lit
+# 0.75.0's new dot and the test failed).
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
 - openLink: "mettleup://qa-dots?at=2026-11-07T06:30:00Z"
 - extendedWaitUntil:
     visible: "^Profile$"
