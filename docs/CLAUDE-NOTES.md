@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-399. "Try these steps once to resolve the WhatsApp issue" (Udyam verification guide) — 7 Nov 2026
+He pasted a guide: align Business Info, confirm the admin email, verify the business with Udyam. Found in Business
+Settings: Udyam already the Tax ID and business "Verified, 6 Nov 2026"; the billing "Business info missing / Verify
+your tax info" banners stayed, so verification is not the 131042 cause. Only open step: admin email
+aakashpahuja@live.in "Pending confirmation"; I sent the code, but Outlook needs his passkey/PIN. Lesson updated
+(D:\Brain\Lessons\whatsapp-131042-india-no-gst-is-a-meta-side-block.md).
+
 ## R-398. "No way to see All Time Total for the exercise" — 7 Nov 2026
 He said it with a screenshot of Incline Dumbbell Curl, History, Kg lifted, All time. Did: a line under the chart's
 big number, "Total, all time: X kg in N workouts", following the range pills (kg lifted, reps, time, distance;
