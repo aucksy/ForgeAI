@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-389. New-feature dots that lead to the feature (Samsung style), admin + member app — 7 Nov 2026
+He said: when a new FEATURE (not a fix) comes, show a small dot on each entry point on the way to it: the left
+menu (Settings), the row on the page (Pay MettleUp), and beside the heading of that section, so people follow the
+dots. Both the admin panel and the member app. "Plan it properly". Show them live in the admin panel for the
+recent features; the member app too (only he uses it). Did: web research (Shopify Polaris New badge, dot-fatigue
+advice), plan docs/plans/R-389-new-feature-dots.md (one source: What's new lines with feature: true; trail from
+the go path; clears on opening the page; 30-day expiry; max 3), backlog row F198. Asked him: build now despite
+the T76 feature freeze (R-363), or after it.
+
 ## R-388. Branding page keeps wiping my logo and colour (installed app) — 7 Nov 2026
 He said: during a client demo, Settings -> Branding "refreshed" every 3-4 seconds, so the logo or colour he picked
 went away. Seen in the installed desktop app (not sure about the Chrome tab).
