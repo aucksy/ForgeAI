@@ -92,12 +92,13 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 30000
 - tapOn: "^Ask an AI about your workouts$"
-# Ask an AI draws no dot of its own: the page's dot sits on its title row.
+# Ask an AI IS the feature: no page dot (a corner dot pointed at nothing; fresh-eyes review, 7 Nov 2026).
 - extendedWaitUntil:
-    visible:
-      id: "new-dot-page-ask-ai"
+    visible: "Share to an AI app"
     timeout: 20000
-- takeScreenshot: rel-f198-06-ask-ai-page-dot
+- assertNotVisible:
+    id: "new-dot-page-ask-ai"
+- takeScreenshot: rel-f198-06-ask-ai-page-no-dot
 - back
 - back
 - extendedWaitUntil:

@@ -16,7 +16,9 @@ export interface SettingRowProps {
   right?: ReactNode;
   /** Draw a hairline above the row (use for every row but the first). */
   divider?: boolean;
-  /** F198: this row is a new feature the member was led to: a small dot after the title (this visit only). */
+  /** F198: this row is a new feature the member was led to: a small dot just before the title (this visit only).
+   *  Before, not after: a title that wraps to two lines takes the full width on Android, which pushed an
+   *  after-dot out next to the switch (fresh-eyes review, 7 Nov 2026). */
   dot?: DotSpot | null;
 }
 
@@ -50,10 +52,10 @@ export function SettingRow({ icon, title, caption, right, divider, dot }: Settin
       <View style={{ flex: 1 }}>
         {dot ? (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+            <NewDot spot={dot} />
             <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, flexShrink: 1 }}>
               {title}
             </Text>
-            <NewDot spot={dot} />
           </View>
         ) : (
           <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
