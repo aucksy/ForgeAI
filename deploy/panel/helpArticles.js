@@ -812,6 +812,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/index.tsx': 'Redirect: opens the Workout tab.',
   'apps/mobile/src/app/qa-update.tsx': 'Redirect: a test-build link for the update screen pictures; opens the Workout tab.',
   'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
+  'apps/mobile/src/app/qa-dots.tsx': 'Redirect: a test-build link for the new-feature dot pictures (F198); goes straight back.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',
   'apps/mobile/src/app/library/index.tsx': 'Redirect: an old link that opens Exercises.',
