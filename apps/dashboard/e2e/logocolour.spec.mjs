@@ -111,3 +111,37 @@ test('J-LOGO-b a black-and-white logo says there is no colour to suggest', async
   await expect(page.getByText('Your logo is only black, white or grey, so there is no colour to suggest.', { exact: false })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('button', { name: 'Use this colour' })).toHaveCount(0);
 });
+
+// 7 Nov 2026 (owner, client demo, installed app): Branding wiped the chosen logo and colour every
+// few seconds. Each data refresh (every 15 s, and each time the window got focus back, e.g. after
+// the colour or file picker closed) made the page load the saved look again. The owner's unsaved
+// choice must survive focus and refreshes, and the saved look is loaded only once.
+test('J-LOGO-d an unsaved colour survives the window getting focus back and the 15 s refresh', async ({ page }) => {
+  await openApp(page);
+  await startOnlineGym(page);
+  await fakeBranding(page, await logoPng(page));
+  let loads = 0;
+  page.on('request', (r) => {
+    if (/\/rest\/v1\/rpc\/owner_gym$/.test(r.url())) loads += 1;
+  });
+  await page.goto('./#/settings/branding');
+  const field = page.getByLabel('Your brand colour', { exact: true });
+  await expect(field).toBeVisible();
+  await expect.poll(() => loads).toBeGreaterThan(0);
+  await page.waitForTimeout(1_000);
+  const before = loads;
+
+  await field.fill('#12AB34');
+  // What closing the colour picker or file picker does to the installed app's window.
+  for (let i = 0; i < 3; i += 1) {
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await page.waitForTimeout(700);
+  }
+  // And one full background refresh.
+  await page.waitForTimeout(16_000);
+
+  await expect(page.getByText('Loading your gym’s look…')).toHaveCount(0);
+  await expect(field).toHaveValue('#12AB34');
+  await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeEnabled();
+  expect(loads - before).toBeLessThanOrEqual(1); // at most the page's own one-time name check
+});

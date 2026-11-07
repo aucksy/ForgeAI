@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-388. Branding page keeps wiping my logo and colour (installed app) — 7 Nov 2026
+He said: during a client demo, Settings -> Branding "refreshed" every 3-4 seconds, so the logo or colour he picked
+went away. Seen in the installed desktop app (not sure about the Chrome tab).
+Cause: the gym's data refreshes every 15 s and each time the window gets focus back (closing the colour picker
+or file picker gives focus back, so in the installed app it happens after every pick). Each refresh made a new
+startEmptyGym -> new keyLost -> new handleError -> BrandingForm's fetchBrand changed -> its effect re-ran ->
+"Loading..." and the draft reset to the saved look. Fix: ShopProvider reads startEmptyGym/lost through refs
+(handleError is now stable for every screen), and BrandingForm loads once per gym key. Test: e2e J-LOGO-d
+(focus x3 + a 16 s refresh; the typed colour stays; owner_gym not re-read). Pushed the test alone first to
+prove it fails on the old code, then the fix.
+
 ## R-387. Policy approval last; yes 0060; no money back; research IDFC myself — 6 Nov 2026
 He said: (1) keep the policy-page approval for the very end, since they keep changing; he has no experience with
 policy pages, so I must make sure they are accurate, industry standard, legally correct, on par with the industry and
