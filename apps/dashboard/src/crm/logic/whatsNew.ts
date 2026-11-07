@@ -50,6 +50,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Settings → Pay MettleUp: if you pay during your free trial, you keep every free day. Your paid plan starts when the trial ends.',
         go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
       },
+      {
+        // F198 (R-389/R-390): the new-feature dots, deployed 7 Nov 2026. Not itself marked as a feature (no page to lead to).
+        text: 'A small orange dot now shows the way to each new feature: on the menu, on the button, and next to the page title. Open the feature and its dot goes away.',
+      },
     ],
   },
   {
