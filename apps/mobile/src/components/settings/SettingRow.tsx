@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
 import { Switch, Text, View } from 'react-native';
 
+import { NewDot } from '@/components/NewDot';
 import { Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { tap } from '@/lib/haptics';
+import type { DotSpot } from '@/lib/newDots';
 import { color, space, type } from '@/theme/tokens';
 
 export interface SettingRowProps {
@@ -14,10 +16,12 @@ export interface SettingRowProps {
   right?: ReactNode;
   /** Draw a hairline above the row (use for every row but the first). */
   divider?: boolean;
+  /** F198: this row is a new feature the member was led to: a small dot after the title (this visit only). */
+  dot?: DotSpot | null;
 }
 
 /** One settings line: tinted icon dot, title + caption, right-docked control. */
-export function SettingRow({ icon, title, caption, right, divider }: SettingRowProps) {
+export function SettingRow({ icon, title, caption, right, divider, dot }: SettingRowProps) {
   return (
     <View
       style={{
@@ -44,9 +48,18 @@ export function SettingRow({ icon, title, caption, right, divider }: SettingRowP
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
-        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
-          {title}
-        </Text>
+        {dot ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink, flexShrink: 1 }}>
+              {title}
+            </Text>
+            <NewDot spot={dot} />
+          </View>
+        ) : (
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+            {title}
+          </Text>
+        )}
         {caption ? (
           <Text
             style={{
@@ -75,16 +88,18 @@ export interface ToggleRowProps {
   /** Render the switch immovable (dark mode stays on — forever). */
   locked?: boolean;
   divider?: boolean;
+  dot?: DotSpot | null;
 }
 
 /** SettingRow with an ember-tracked RN Switch. */
-export function ToggleRow({ icon, title, caption, value, onChange, locked, divider }: ToggleRowProps) {
+export function ToggleRow({ icon, title, caption, value, onChange, locked, divider, dot }: ToggleRowProps) {
   return (
     <SettingRow
       icon={icon}
       title={title}
       caption={caption}
       divider={divider}
+      dot={dot}
       right={
         <Switch
           value={value}

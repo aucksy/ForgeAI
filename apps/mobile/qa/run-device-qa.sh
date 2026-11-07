@@ -145,7 +145,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1936,6 +1936,7 @@ part_uat() {
   part_u358
   part_u366
   part_usel
+  part_u198
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1947,6 +1948,23 @@ part_uat() {
 # Pictures rel-usel-*.png.
 part_usel() {
   uat_flow uatusel uat-rel-usel-tap-selects.yaml || return 1
+}
+# F198 (owner R-389/R-390, 7 Nov 2026): new-feature dots. Flow a walks the Sleep and workouts trail (Profile tab,
+# Settings button, Health apps row, beside the switch), clears it, keeps Ask an AI's parents, restarts, and
+# checks India midnight on day 30 (the QA build's 'newDots' stand-in, mettleup://qa-dots). Flow b repeats the
+# trail at the largest text size (font 2.0), then puts the font back. Also runs alone with only=u198 (a fresh
+# install with the demo). Pictures rel-f198-*.png.
+part_u198() {
+  local rc=0 font
+  uat_flow uatf198 uat-rel-f198-dots.yaml || rc=1
+  font=$(adb shell settings get system font_scale | tr -d '\r')
+  adb shell settings put system font_scale 2.0 >/dev/null 2>&1 || true
+  log "UAT F198 b: font scale $(adb shell settings get system font_scale | tr -d '\r') (was ${font:-1.0})"
+  uat_flow uatf198b uat-rel-f198-b-big-text.yaml || rc=1
+  adb shell settings put system font_scale "${font:-1.0}" >/dev/null 2>&1 || true
+  log "UAT F198: font scale back to $(adb shell settings get system font_scale | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
 }
 # R-366 (owner, 5 Nov 2026): a reps-only Pull-Up names last time's total when beaten. Also runs alone
 # with only=u366 (a fresh install with the demo). Pictures rel-r366-*.png.
@@ -2072,6 +2090,7 @@ qa_runs u344 && ! qa_runs uat && { log "gate part U344 begins"; part_u344; }
 qa_runs u358 && ! qa_runs uat && { log "gate part U358 begins"; part_u358; }
 qa_runs u366 && ! qa_runs uat && { log "gate part U366 begins"; part_u366; }
 qa_runs usel && ! qa_runs uat && { log "gate part USEL begins"; part_usel; }
+qa_runs u198 && ! qa_runs uat && { log "gate part U198 begins"; part_u198; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

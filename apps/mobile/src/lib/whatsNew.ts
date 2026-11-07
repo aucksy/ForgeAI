@@ -26,6 +26,12 @@ import { isNewer } from './appUpdate';
 export interface WhatsNewLine {
   text: string;
   go?: { label: string; href: WhatsNewTab | `/settings/${string}`; section?: GymSection };
+  /**
+   * F198 (R-389/R-390, 7 Nov 2026): a NEW feature (never a fix) with a `go` place. Small dots then lead the
+   * member to it from the tab, Settings and the row (lib/newDots.ts derives the trail from `go`), for 30 days
+   * from the entry's date, until the member opens the page.
+   */
+  feature?: true;
 }
 
 /** The tabs a line's button can switch to (0.56.0: the new Progress tab too). */
@@ -63,7 +69,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     lines: [
       { text: 'Suggested weights are simpler: 1 more rep on each set until all sets reach the top of your rep range, then more weight.' },
       { text: "Bodyweight exercises: the green line says when you beat last time's total reps." },
-      { text: 'Turn on "Sleep and workouts" in Settings to see if you slept under 6 hours before a lighter workout.', go: { label: 'Sleep and workouts', href: '/settings/health' } },
+      { text: 'Turn on "Sleep and workouts" in Settings to see if you slept under 6 hours before a lighter workout.', go: { label: 'Sleep and workouts', href: '/settings/health' }, feature: true },
       { text: 'Watch: bigger -15 and +15 buttons on the rest timer, and long names fit.' },
       { text: '"Muscles ready today" and Quick workout are gone from the Workout tab.' },
       { text: 'Many small fixes.' },
@@ -77,7 +83,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     version: '0.72.0',
     date: '5 Nov',
     lines: [
-      { text: 'Ask your own AI app about your workouts: open Settings, then "Ask an AI about your workouts".', go: { label: 'Ask an AI', href: '/settings/ask-ai' } },
+      { text: 'Ask your own AI app about your workouts: open Settings, then "Ask an AI about your workouts".', go: { label: 'Ask an AI', href: '/settings/ask-ai' }, feature: true },
       { text: 'If you train at a gym, your share pictures can show its logo. In Progress photos, tap "Share before and after".' },
       { text: 'Tap "Invite a friend" on the Gym tab to send a friend a link to your gym.', go: { label: 'Open the Gym tab', href: '/shop', section: 'gym' } },
     ],

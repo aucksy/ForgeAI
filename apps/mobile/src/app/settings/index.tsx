@@ -30,6 +30,7 @@ import { getProfile } from '@/db/repos/userRepo';
 import { FEATURES, profileParts } from '@/lib/features';
 import { goBack } from '@/lib/goBack';
 import { navigateOnce } from '@/lib/guardedAction';
+import { useLitSpots } from '@/lib/newDotsStore';
 import { onIphone } from '@/lib/onIphone';
 import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
@@ -135,6 +136,8 @@ export default function SettingsScreen() {
   const [watch, setWatch] = useState<WatchState>('unknown');
   // UAT U-G2: the gym joined in the app (the old typed "Your gym" answer is no longer asked, A2).
   const link = useGymShop((s) => s.link);
+  // F198: the rows on the way to a new feature carry a small dot.
+  const dots = useLitSpots();
   // One page per tap, however fast the taps.
   const busy = useRef(false);
 
@@ -222,6 +225,7 @@ export default function SettingsScreen() {
                     title={r.title}
                     sub={lines[r.key] ?? undefined}
                     leading={<Dot icon={ICON[r.key]} />}
+                    dot={dots.has(`row:${r.href}`) ? `row:${r.href}` : undefined}
                     onPress={() => open(r.href as string)}
                   />
                 ) : null,

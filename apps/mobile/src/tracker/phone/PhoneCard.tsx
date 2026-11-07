@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, Text, View } from 'react-native';
 
 import { SettingRow, ToggleRow } from '@/components/settings/SettingRow';
+import { useNewHere } from '@/components/settings/SettingsPage';
 import { Card, GhostButton, PrimaryButton, Sheet } from '@/components/ui';
 import { askConfirm } from '@/components/ui/confirmStore';
 import { useGymShop } from '@/shop/gymStore';
@@ -1059,6 +1060,8 @@ function SleepRow() {
   const on = usePhonePrefs((s) => s.sleepLinkOn);
   const revoked = usePhonePrefs((s) => s.healthRevoked);
   const setSleepLink = usePhonePrefs((s) => s.setSleepLink);
+  // F198: led here by the new-feature dots: the dot beside "Sleep and workouts" for this visit.
+  const newHere = useNewHere();
   const [access, setAccess] = useState<boolean | 'error' | null | undefined>(undefined);
   const [openFailed, setOpenFailed] = useState(false);
   const looks = useRef(0);
@@ -1095,7 +1098,7 @@ function SleepRow() {
 
   return (
     <View>
-      <ToggleRow icon="clock" title={SLEEP_TITLE} caption={!on ? SLEEP_ABOUT : refused ? SLEEP_NOT_ALLOWED : SLEEP_ON} value={on} onChange={turn} divider={false} />
+      <ToggleRow icon="clock" title={SLEEP_TITLE} caption={!on ? SLEEP_ABOUT : refused ? SLEEP_NOT_ALLOWED : SLEEP_ON} value={on} onChange={turn} divider={false} dot={newHere} />
       {refused ? (
         <View style={{ paddingBottom: space.sm }}>
           <GhostButton label="Open Health Connect" icon="heart" onPress={openHc} />

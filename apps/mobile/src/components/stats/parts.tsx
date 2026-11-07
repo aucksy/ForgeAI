@@ -7,9 +7,11 @@ import type { Href } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
+import { NEW_DOT_SPOKEN, NewDot } from '@/components/NewDot';
 import { Chip, Icon } from '@/components/ui';
 import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { PressScale } from '@/components/ui/PressScale';
+import type { DotSpot } from '@/lib/newDots';
 import { color, radius, space, type } from '@/theme/tokens';
 
 interface Nav {
@@ -70,13 +72,15 @@ export function ChoiceRow<T extends string>({ options, value, onChange, label }:
 }
 
 /** A tappable row: title, a grey line, a value on the right and a chevron — 56 dp or taller. */
-export function LinkRow({ title, sub, value, onPress, leading, spoken, danger }: { title: string; sub?: string; value?: string; onPress: () => void; leading?: ReactNode; spoken?: string; /** R-284: a row that removes something (Leave gym): red title. */ danger?: boolean }) {
+export function LinkRow({ title, sub, value, onPress, leading, spoken, danger, dot }: { title: string; sub?: string; value?: string; onPress: () => void; leading?: ReactNode; spoken?: string; /** R-284: a row that removes something (Leave gym): red title. */ danger?: boolean; /** F198: a new feature waits behind this row: a small dot after the title. */ dot?: DotSpot }) {
+  const said = spoken ?? [title, sub, value].filter(Boolean).join(', ');
+  const titleText = <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: danger ? color.criticalText : color.ink, flexShrink: 1 }}>{title}</Text>;
   return (
     <PressScale
       onPress={onPress}
       scaleTo={0.98}
       accessibilityRole="button"
-      accessibilityLabel={spoken ?? [title, sub, value].filter(Boolean).join(', ')}
+      accessibilityLabel={dot ? `${said}, ${NEW_DOT_SPOKEN}` : said}
       style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -92,7 +96,14 @@ export function LinkRow({ title, sub, value, onPress, leading, spoken, danger }:
     >
       {leading}
       <View style={{ flex: 1 }}>
-        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: danger ? color.criticalText : color.ink }}>{title}</Text>
+        {dot ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+            {titleText}
+            <NewDot spot={dot} />
+          </View>
+        ) : (
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: danger ? color.criticalText : color.ink }}>{title}</Text>
+        )}
         {sub ? <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkMuted, marginTop: 2 }}>{sub}</Text> : null}
       </View>
       {value ? <Text style={{ fontFamily: type.monoBold, fontSize: type.size.body, color: color.inkSecondary }}>{value}</Text> : null}

@@ -1,0 +1,175 @@
+# Part UAT, F198 "follow the dots" (owner R-389/R-390, 7 Nov 2026). A NEW feature puts one small dot on every
+# place on the way to it. Trail checked here: "Sleep and workouts" (0.73.0, 6 Nov) -> the Profile tab, the
+# Settings button on Profile, the "Health apps" row on Settings, and beside "Sleep and workouts" on that page.
+# "Ask an AI" (0.72.0, 5 Nov) is a second feature behind Settings.
+# The QA build's 'newDots' stand-in lets mettleup://qa-dots?at=<UTC time>&reset=1 set the dots' clock and
+# forget what was seen (times in UTC: a '+' in a link turns into a space).
+# Types (R-364): happy path (dot on tab, button, row, beside the heading), state (Health apps opened -> its row
+# dot gone, the button and tab dots stay for Ask an AI; both opened -> none; the page's own dot gone on the
+# next visit), negative (no dot on the Gym tab: nothing new there for a member without a gym; no dot after
+# both are opened), interruption (app killed and opened: still none), time (India midnight: 5 Dec 23:59 IST
+# Sleep lit and Ask an AI gone (its day 30); 6 Dec 00:00 IST none). Largest text: uat-rel-f198-b-big-text.yaml.
+# Pictures rel-f198-*.png. Runs alone with only=u198.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+# 7 Nov 2026, 12:00 India time; nothing seen yet.
+- openLink: "mettleup://qa-dots?at=2026-11-07T06:30:00Z&reset=1"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+# ---------------------------------------------------------------- the trail
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-tab-profile"
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-tab-shop"
+- assertNotVisible:
+    id: "new-dot-tab-progress"
+- takeScreenshot: rel-f198-01-tab-dot
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertVisible:
+    id: "new-dot-gear"
+- takeScreenshot: rel-f198-02-settings-button-dot
+- tapOn: "Settings"
+- extendedWaitUntil:
+    visible: "^Your profile$|^Your details$"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-row-health"
+    timeout: 20000
+# A row without a new feature has no dot.
+- assertNotVisible:
+    id: "new-dot-row-rest"
+- takeScreenshot: rel-f198-03-row-dot
+- tapOn: "^Health apps$"
+- scrollUntilVisible:
+    element: "^Sleep and workouts$"
+    centerElement: true
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-page-health"
+    timeout: 20000
+- takeScreenshot: rel-f198-04-beside-sleep-and-workouts
+# ---------------------------------------------------------------- opened: its dots go, Ask an AI keeps the parents
+- back
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-row-health"
+- scrollUntilVisible:
+    element:
+      id: "new-dot-row-ask-ai"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "^Ask an AI about your workouts$"
+- takeScreenshot: rel-f198-05-health-row-clear-ask-ai-still
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertVisible:
+    id: "new-dot-gear"
+- assertVisible:
+    id: "new-dot-tab-profile"
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "^Ask an AI about your workouts$"
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Ask an AI about your workouts$"
+# Ask an AI draws no dot of its own: the page's dot sits on its title row.
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-page-ask-ai"
+    timeout: 20000
+- takeScreenshot: rel-f198-06-ask-ai-page-dot
+- back
+- back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-gear"
+- assertNotVisible:
+    id: "new-dot-tab-profile"
+- takeScreenshot: rel-f198-07-all-clear
+# ---------------------------------------------------------------- next visit: the page's own dot is gone too
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Health apps$"
+- scrollUntilVisible:
+    element: "^Sleep and workouts$"
+    centerElement: true
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-page-health"
+- takeScreenshot: rel-f198-08-next-visit-no-dot
+# ---------------------------------------------------------------- app killed and opened: still none
+- stopApp
+- launchApp:
+    clearState: false
+- openLink: "mettleup://qa-dots?at=2026-11-07T06:30:00Z"
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- assertNotVisible:
+    id: "new-dot-tab-profile"
+- takeScreenshot: rel-f198-09-after-restart
+# ---------------------------------------------------------------- time: India midnight on day 30
+# 5 Dec 23:59 IST: Sleep (6 Nov) is on its day 29, Ask an AI (5 Nov) on day 30.
+- openLink: "mettleup://qa-dots?at=2026-12-05T18:29:00Z&reset=1"
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-tab-profile"
+    timeout: 30000
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-row-health"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "^Ask an AI about your workouts$"
+    centerElement: true
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-row-ask-ai"
+- takeScreenshot: rel-f198-10-day-29-and-30
+- back
+# 6 Dec 00:00 IST: Sleep's day 30, no dots anywhere.
+- openLink: "mettleup://qa-dots?at=2026-12-05T18:30:00Z&reset=1"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-gear"
+- assertNotVisible:
+    id: "new-dot-tab-profile"
+- takeScreenshot: rel-f198-11-day-30-none

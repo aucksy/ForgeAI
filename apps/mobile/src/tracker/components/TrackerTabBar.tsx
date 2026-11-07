@@ -10,6 +10,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } fr
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
+import { NEW_DOT_SPOKEN, NewDot } from '@/components/NewDot';
 import { Icon, askConfirm } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { TEXT_SCALE_CAP } from '@/components/ui/a11y';
@@ -20,6 +21,7 @@ import { confirmAndRemoveDemo } from '@/onboarding/demoRemoval';
 import { useOnboarding } from '@/onboarding/store/onboardingStore';
 import { color, motion, radius, shadow, space, type } from '@/theme/tokens';
 import { HIDDEN_TAB_ROUTES, isShownTab, tabTitle } from '@/lib/appTabs';
+import { useLitSpots } from '@/lib/newDotsStore';
 import { useGymShop } from '@/shop/gymStore';
 import { unreadCount } from '@/shop/inbox';
 import { inboxFor, useGymInbox } from '@/shop/inboxStore';
@@ -55,6 +57,8 @@ function TabItem({
   onPress,
   onLayout,
   badge = 0,
+  route,
+  dot = false,
 }: {
   label: string;
   icon: TabIcon;
@@ -64,7 +68,11 @@ function TabItem({
   onLayout: (e: LayoutChangeEvent) => void;
   /** Gym messages: the Gym tab's unread count (0 = no badge). */
   badge?: number;
+  route: string;
+  /** F198: a new feature waits under this tab (never together with a number). */
+  dot?: boolean;
 }) {
+  const showDot = dot && badge <= 0;
   // Audit Phase 7: the lift stays still when the phone asks for less motion.
   const rm = motionMode(useReduceMotion());
   const lift = useAnimatedStyle(() => ({
@@ -74,7 +82,7 @@ function TabItem({
   return (
     <Pressable
       accessibilityRole="tab"
-      accessibilityLabel={badge > 0 ? `${label}, ${badge} new ${badge === 1 ? 'message' : 'messages'}` : label}
+      accessibilityLabel={badge > 0 ? `${label}, ${badge} new ${badge === 1 ? 'message' : 'messages'}` : showDot ? `${label}, ${NEW_DOT_SPOKEN}` : label}
       accessibilityState={{ selected: focused }}
       onPress={onPress}
       onLayout={onLayout}
@@ -106,6 +114,7 @@ function TabItem({
             </Text>
           </View>
         ) : null}
+        {showDot ? <NewDot spot={`tab:${route}`} style={{ position: 'absolute', top: 2, right: 12 }} /> : null}
       </View>
       {/* Audit Phase 7 (SH-21): labels share one row — grow less, and shrink to fit rather than split. */}
       <Text
@@ -246,6 +255,8 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
   // Gym messages: unread messages from the member's gym badge the Gym tab.
   const memberId = useGymShop((s) => s.link?.memberId ?? null);
   const unread = useGymInbox((s) => unreadCount(inboxFor(s, memberId)));
+  // F198: the tabs on the way to a new feature carry a small dot.
+  const dots = useLitSpots();
   // R-78: each tab's place in the bar (its left edge and width), for the sliding highlight.
   const [places, setPlaces] = useState<Record<string, { x: number; w: number }>>({});
   const place = (key: string) => (e: LayoutChangeEvent) => {
@@ -286,6 +297,8 @@ export function TrackerTabBar({ state, descriptors, navigation }: TabBarProps) {
             icon={ROUTE_ICON[route.name] ?? { icon: 'sparkle' }}
             focused={focused}
             badge={route.name === 'shop' ? unread : 0}
+            route={route.name}
+            dot={dots.has(`tab:${route.name}`)}
             onLayout={place(route.key)}
             onPress={() => {
               tap();

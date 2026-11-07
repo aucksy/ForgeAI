@@ -21,6 +21,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'react-native';
 
 import { GymBrandMark } from '@/components/GymBrandMark';
+import { NewDot } from '@/components/NewDot';
 import { Card, GhostButton, Icon, LoadError, Screen, Skeleton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { quietSince, writeQueueMark } from '@/db/writeQueue';
@@ -28,6 +29,7 @@ import { todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
 import { tap } from '@/lib/haptics';
 import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
+import { useLitSpots } from '@/lib/newDotsStore';
 import { readWithRetry } from '@/lib/retryRead';
 import { tell } from '@/lib/tell';
 import { useRereadWhenFailed } from '@/lib/useRereadWhenFailed';
@@ -78,6 +80,20 @@ function HeaderButton({ glyph, icon, label, onPress }: { glyph?: GlyphName; icon
     >
       {glyph ? <Glyph name={glyph} size={24} color={color.ink} /> : <Icon name={icon ?? 'settings'} size={24} color={color.ink} />}
     </Pressable>
+  );
+}
+
+/**
+ * F198: the Settings button, with a small dot while a new feature waits behind it. The dot sits beside the
+ * button, not inside it: the button keeps its spoken name "Settings", and the dot says "New" on its own.
+ */
+function SettingsButton({ onPress }: { onPress: () => void }) {
+  const dot = useLitSpots().has('gear');
+  return (
+    <View>
+      <HeaderButton icon="settings" label="Settings" onPress={onPress} />
+      {dot ? <NewDot spot="gear" style={{ position: 'absolute', top: 9, right: 9 }} /> : null}
+    </View>
   );
 }
 
@@ -492,7 +508,7 @@ export default function ProfileScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <HeaderButton glyph="pencil" label="Edit profile" onPress={() => router.push('/edit-profile')} />
           <HeaderButton glyph="share" label="Share this month as a picture" onPress={onShareMonth} />
-          <HeaderButton icon="settings" label="Settings" onPress={() => router.push('/settings')} />
+          <SettingsButton onPress={() => router.push('/settings')} />
         </View>
       }
     >

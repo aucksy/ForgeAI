@@ -1,0 +1,47 @@
+# Part UAT, F198 "follow the dots", flow 2 of 2: the same trail at the phone's largest text size
+# (run-device-qa.sh part_u198 sets font_scale 2.0 before it and puts it back after). Edge (R-364): the dot
+# never pushes "Health apps" or "Sleep and workouts" off their row, and stays round and visible.
+# Pictures rel-f198-big-*.png.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: false
+- openLink: "mettleup://qa-dots?at=2026-11-07T06:30:00Z&reset=1"
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-tab-profile"
+    timeout: 60000
+- takeScreenshot: rel-f198-big-01-tab-dot
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- assertVisible:
+    id: "new-dot-gear"
+- takeScreenshot: rel-f198-big-02-settings-button-dot
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element:
+      id: "new-dot-row-health"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "^Health apps$"
+- takeScreenshot: rel-f198-big-03-row-dot
+- tapOn: "^Health apps$"
+- scrollUntilVisible:
+    element:
+      id: "new-dot-page-health"
+    centerElement: true
+    timeout: 30000
+- assertVisible: "^Sleep and workouts$"
+- takeScreenshot: rel-f198-big-04-beside-sleep-and-workouts
+- back
+- scrollUntilVisible:
+    element: "^Health apps$"
+    centerElement: true
+    timeout: 30000
+- assertNotVisible:
+    id: "new-dot-row-health"
+- takeScreenshot: rel-f198-big-05-row-clear
