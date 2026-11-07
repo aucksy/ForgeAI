@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-394. "first build the dot functionality and release it" (0.74.0); build F194 + F105 next — 7 Nov 2026
+He said (7 Nov 2026, ~15:2x IST): "I rated 3 features as 8 just now... but first build the dot functionality and
+release it so I can test rest 2 in the next release". This IS his "release" (R-309) for ONE version, 0.74.0,
+covering the member-app F198 dots only. The 3 at 8: F198 (dots), F194 Machine and cable steps (member app),
+F105 Trainer profiles and schedules (admin panel); F194 + F105 go in the version after.
+Did: release commit e07d44ba (app.json 0.74.0, one What's new line, member-words + Gemini). Adversarial review:
+no blocking bugs (follow-up: What's new dates have no year, so an old feature line could light again a year later).
+Fresh-eyes review found 2 real problems, fixed in 38127d29 (row dot before the title; no corner page dot on Ask
+an AI). Pinned tag rc-0.74.0 = 38127d29; whole qa-device owner + default (+uat), qa-journeys and u198 run on it.
+The v0.74.0 tag goes on 38127d29 when they pass. Helpers building F194 and F105 (no release, no live DB change).
+
 ## R-393. Accounts map on tracker Home; one MettleUp login? — 7 Nov 2026
 **Update 1 (7 Nov):** He said: Groq is on his personal Gmail; the server's Claude key is probably a no-expiry one (not proven); no move now, no hires, Claude runs everything; keep it in Waiting for you with the impact of each move and the long-term risks. Done: entry #93 rewritten (status WAITING FOR YOU, impact table for 11 services, 6 risks, options A/B/C, A recommended); map rows for Groq and Anthropic updated.
 His ask: a permanent Home section mapping each service to its login, plus my view on a MettleUp brand Gmail. Done: OWNER-INBOX.md "## Accounts map" (table Service | What | Signed in with | Move; parse_accounts + accountsHtml in scripts/owner_inbox_page.py; no full emails, file is public). Checked live 7 Nov: personal Gmail = Cloudflare, Supabase (user aucksy), GitHub, Namecheap, Anthropic (balance $0.00; keys expire 17/22/24 Nov), AI Studio Gemini (free tier); simpleapps108 = Play Console AND Google Cloud/Firebase forgeai-d7eea (sole owner; the 28 Oct note saying personal was wrong); personal Facebook = Meta portfolio; Groq unconfirmed (signed out); no Razorpay/Cashfree account yet; Expo unused. Entry #93 asks A (brand Gmail, ADD as owner everywhere, keep Play app + WhatsApp number in place; recommended) or B (keep 3 logins). Keep the map current: every new service or move edits a row.
