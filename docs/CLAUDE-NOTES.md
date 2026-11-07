@@ -16,6 +16,8 @@ Business purpose Yes, no GST/TAN). "Business info missing" is gone; the WABA set
 The Overview alert still showed right after (may lag, or belong to the 2 unused MettleUp accounts). Next: he retries;
 I check Insights "All message deliveries". Product gap: we never learn delivery failures (no Meta status webhook).
 
+R-392 update 3 (7 Nov): webhook WORKS. His retry failed with Meta 131042 "Business eligibility payment issue: ... incomplete tax information". The billing form saves (tax_id empty, type NONE) but "Business info missing" returns after reload; portfolio has Udyam RJ-17 as tax ID, no GSTIN. Meta India seems to need a GST number. Asked him: GSTIN (he types it, a government ID) or another code route (a WhatsApp partner that bills us, or SMS).
+
 R-392 update 2 (7 Nov): his "yes, publish the Meta app". Added privacy/terms/delete-account links + category Business and pages; published app 1118531290784840 (status Published, no required actions). Waiting for his retry after the hourly limit.
 
 R-392 update (7 Nov): his "yes, connect the webhook". Meta health check (whatsapp-setup run 42341228919): can_send_message
