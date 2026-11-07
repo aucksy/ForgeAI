@@ -16,6 +16,13 @@ Business purpose Yes, no GST/TAN). "Business info missing" is gone; the WABA set
 The Overview alert still showed right after (may lag, or belong to the 2 unused MettleUp accounts). Next: he retries;
 I check Insights "All message deliveries". Product gap: we never learn delivery failures (no Meta status webhook).
 
+R-392 update (7 Nov): his "yes, connect the webhook". Meta health check (whatsapp-setup run 42341228919): can_send_message
+AVAILABLE for number, WABA, business, app. Built /api/whatsapp/hook (whatsappHook.js, logs only), panel deployed
+8b7def18; webhook saved in the Meta app (messages + account_alerts subscribed); app subscribed to WABA (run 42346589978).
+FOUND: the Meta app 1118531290784840 is UNPUBLISHED. Meta says production webhooks never arrive while unpublished, and
+forum reports say an unpublished app gets "accepted" but silently undelivered sends. Publishing needs only the privacy URL
+(https://mettleup.fit/privacy exists) and his yes (publishing = his call). Asked him.
+
 ## R-391. "yes 0061" — 7 Nov 2026
 He said yes to server change 0061 (WhatsApp sign-in codes). Also done before: Meta billing info, the system-user
 WhatsApp key and WHATSAPP_PIN in GitHub; the number is registered (CONNECTED), login_code APPROVED. Plan: apply
