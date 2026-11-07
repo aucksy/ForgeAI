@@ -14,7 +14,7 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 93 | One MettleUp login for all services? | A: yes, add it as owner everywhere |
+| 93 | One MettleUp login: when? (impact of each move inside) | A: not now; harden your Gmail; look again before the first gym pays |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
@@ -263,9 +263,9 @@ Which login owns each outside service MettleUp uses. Checked live on 7 Nov 2026 
 | Google Play Console | The MettleUp app listing and releases (same account as your other apps) | simpleapps108 (checked 7 Nov) | Easy: add the new account as an admin user. Moving the app itself to a new developer account is a slow formal transfer: not needed now. |
 | Meta (WhatsApp sign-in codes) | Business portfolio "Aakash Pahuja's Business", WhatsApp number +91 86905 60741, app MettleUp | Your personal Facebook; business email = your live.in email (checked 7 Nov) | Easy: add the new account as portfolio admin, rename the portfolio to MettleUp. The number stays. |
 | Namecheap | Where the domains were bought (order of 24 Oct) | Your personal Gmail (Gmail order email, 7 Nov) | Easy: change the account email, or a free "push" to a new Namecheap account. DNS stays at Cloudflare. |
-| Anthropic (Claude) | The help-chat replies and the backup AI for member import | Your personal Gmail, "Aakash's Individual Org" (checked 7 Nov). Balance shows $0.00; 3 of its keys expire on 17, 22 and 24 Nov | Easy: new keys on the new account, swap them on the server. |
+| Anthropic (Claude API, not your subscription) | The help-chat replies and the backup AI for member import | Your personal Gmail, "Aakash's Individual Org" (checked 7 Nov). Keys with no end date: "MettleUp Admin Supper" and "ClaudeCLI"; 3 others end on 17, 22 and 24 Nov. You say the server uses a key with no end date (not yet proven) | Easy: new keys on the new account, swap them on the server. |
 | Google AI Studio (Gemini) | The first AI for member import (masked column names and sample rows) | Your personal Gmail, project ForgeAI, free tier (checked 7 Nov) | Easy: a new key on the new account, on a paid tier, so Google does not use the data. |
-| Groq | Turns spoken feedback into text | Not confirmed: the console is signed out. Probably your personal Gmail | Easy: a new key on the new account. |
+| Groq | Turns spoken feedback into text | Your personal Gmail (you confirmed, 7 Nov) | Easy: a new key on the new account. |
 | Razorpay / Cashfree | Gym payments (code ready, test mode) | No account yet (checked 7 Nov: only shop receipts in Gmail) | Open it on the MettleUp account from day one. |
 | Expo | Only a name ("aucksy") in the app settings; builds do not use Expo's servers | Not signed in | Nothing to move. |
 
@@ -537,16 +537,45 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ---
 
-## 93. One MettleUp login for all services, or keep two? — 7 Nov 2026
+## 93. One MettleUp login for all services: what moving each one would change — 7 Nov 2026
 **Chat:** Mettle Up
 **Status:** WAITING FOR YOU
-**You asked:** Map which login owns each service (done: Home → "Accounts and services"), and should we make one MettleUp Gmail and move everything there, now that we have no real customers?
-**What I found (7 Nov, checked live):** 3 logins own MettleUp today. Your personal Gmail owns Cloudflare, Supabase, GitHub, Namecheap and the 2 AI keys. simpleapps108 owns Play Console and Google Cloud/Firebase. Your personal Facebook owns the Meta/WhatsApp portfolio. One old note was wrong: Google Cloud is on simpleapps108, not your personal Gmail.
-**My view:** Yes, do it, and now is the right time. A buyer, a co-founder, an accountant or a future employee should get MettleUp access without your personal Gmail. It also stops one lost password from locking you out of everything. But "move" here means ADD, not rebuild. In each service the new MettleUp login becomes a second owner. Nothing goes down. Later we remove your personal login where it makes sense. Effort: about 2 hours of my browser work, spread over 1-2 days. Your part: about 15 minutes. Risk: low, because every step is reversible and the app, website and data never move. Two things I would NOT move now: the Play app itself (it shares the simpleapps108 developer account with your other apps, and a formal transfer is slow) and the WhatsApp number (it stays; only its admin changes).
-**Your part if you pick A:** make the Gmail (I cannot create accounts), switch on its 2-step check with your phone, and sign in to it once in your Chrome. Also: the Claude (Anthropic) account shows a $0.00 balance and 3 of its keys expire on 17, 22 and 24 Nov. I will make fresh keys on the new account, so the help chat and member import keep working.
-**Decide:** One MettleUp login for all services?
-- A: Yes: make a MettleUp Gmail, I add it as owner everywhere, then remove the personal ones (recommended)
-- B: No: keep the 3 logins as they are; the Accounts map on Home is enough
+**You said (7 Nov):** Do not move anything now. You do not plan to hire; Claude runs everything. Keep it here to decide later, with the impact of each move and the long-term risks of not moving. Your Claude subscription and the Play Store stay where they are.
+**Who owns what today:** see Home → "Accounts and services". In short: your personal Gmail owns Cloudflare, Supabase, GitHub, Namecheap and the 3 AI keys (Claude API, Gemini, Groq); simpleapps108 owns Play and Google Cloud/Firebase; your personal Facebook owns Meta/WhatsApp.
+
+**Two ways to "move", very different in risk:**
+- **Add a co-owner (light):** the new login becomes a second owner. Nothing changes for gyms or members. Every step can be undone. About 2 hours of my browser work.
+- **Full move (heavy):** the service is rebuilt or transferred under the new login, and the old one is removed. Some moves change web links or keys, and one has a short risk of the site going down.
+
+**Each service: what we use, why, and what a move changes**
+
+| Service | What we use it for | Why we use it | Add a co-owner: impact | Full move: impact |
+|---|---|---|---|---|
+| Cloudflare | The 4 websites (mettleup.fit, app., gyms., hq.), the 2 app servers, their small databases, the domain settings (DNS), the HQ login gate | Free, fast in India, one place for site + server + domain | None | Heavy. Servers, databases and sites are rebuilt in the new account, the domain is re-added (a few minutes where the site can be down), and the build key in GitHub is replaced. Your personal site aakashpahuja.in stays where it is. About a day of work. |
+| Supabase | The gym database: members, fees, workouts, sign-in | Holds all customer data; free tier fits our size | None | Light. Supabase has a built-in "transfer project" between organisations. Same web address, same keys, no downtime. Billing then goes to the new login. |
+| GitHub | All code, cloud builds and tests, app files for download, the app signing key (kept as a secret) | Free cloud builds for a public repo; the laptop builds nothing | None | Medium. The repo moves to a "mettleup" organisation. Old links redirect, but 3 settings must change: HQ's repo setting, the server's GitHub key, and any download links in the app or website. Re-check the 12 build secrets. About 2 hours. |
+| Google Cloud + Firebase | Google sign-in, push notifications, Firebase Test Lab | Needed for "Sign in with Google" and alerts on phones | None | Never rebuild: a new project would break Google sign-in and every phone's push. If ever needed: add the new owner, then remove simpleapps108. Same project, zero impact. |
+| Meta (WhatsApp) | Sign-in codes by WhatsApp: the business portfolio, the number +91 86905 60741, the code template, the billing card | The cheapest way to send codes in India | None (do it only after Meta clears the current tax block) | Do not move the number: a new portfolio means registering it again, getting the template approved again and losing its quality history. Rename the portfolio to MettleUp instead. |
+| Namecheap | Holds the domains (bought 24 Oct) and their yearly renewals | Domain seller; the DNS itself is at Cloudflare | Light: change the account email | Light. A free "push" to a new Namecheap account. Sites keep working. |
+| Claude API (not your subscription) | Help-chat replies, and the backup AI for member import | Best answers for the help chat | None | Light. A new key on the new account, swapped on the server (1 minute, no downtime). The new account needs its own credit. Your Claude subscription is separate and stays. |
+| Gemini | The first AI for member import (column names and masked sample rows) | Cheapest AI for that job | None | Light. New key, 1-minute swap. Today it is on the free tier, where Google may use the data. A paid tier fixes that, whether or not we move. |
+| Groq | Turns spoken feedback into text | Fast and almost free speech-to-text | None | Light. New key, 1-minute swap. |
+| Razorpay / Cashfree | Gym payments (code ready, no account yet) | To take money from gyms | Not open yet | Nothing to move. But the account is tied to a business ID and bank account at sign-up, and changing that later is slow. Choose its login email before opening it. |
+| Expo | Only a name in the app settings | Not used for builds | None | Nothing to move. |
+
+**Long-term risks of keeping things as they are:**
+1. **One lock-out stops everything.** If your personal Gmail is hacked, locked or loses its phone, Cloudflare, Supabase, GitHub and the domains all go with it. You can lower this risk without moving anything: 2-step check on, backup codes saved offline, a recovery phone and email set.
+2. **A missed renewal.** Domain renewal and billing emails land in your busy personal inbox. If a domain expires, every site and the app's server go dark. Auto-renew plus a card that does not expire covers it.
+3. **Harder later.** Moving is easiest now, with no paying gyms. After payments start, Razorpay and invoices are tied to whatever login opened them.
+4. **Money mixed with personal.** Bills for Cloudflare, Meta, the AI keys and domains go to personal logins and cards. That makes GST and accounts harder once MettleUp earns.
+5. **If you ever sell, partner or bring in an investor,** they will ask who controls the member data and the domains. Moving everything then, under time pressure, is the riskiest way to do it.
+6. **Keys tied to a person.** The Claude API keys act as you. If that user is ever removed, they stop at once. A "workspace" key does not have this problem.
+
+**My view:** not moving is fine for now, because you run it alone and risk 1 can be fixed without moving. Do these 2 things now: (a) 2-step check and backup codes on your personal Gmail and Facebook; (b) open Razorpay under the login you want long term. Look at this again before the first gym pays.
+**Decide:** One MettleUp login: when?
+- A: Not now: keep the map current, harden the personal Gmail, look again before the first gym pays (recommended)
+- B: Now: make the MettleUp Gmail and add it as co-owner everywhere (no full moves)
+- C: Now, full move of everything except Play, Google Cloud and the WhatsApp number
 
 ## 92. To start earning: 3 things only you can do — 6 Nov 2026
 **Chat:** Mettle Up
