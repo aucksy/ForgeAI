@@ -310,10 +310,10 @@ export function trialStartLine(
 
 /**
  * Does the LIVE gym server keep the rest of a free trial when a payment is confirmed (0063 _paid_from)?
- * false while only 0060 is live (6 Nov 2026): HQ's Confirm counts the paid month or year from the day it
- * confirms. Set to true in the same change that applies 0063, never before.
+ * true since 7 Nov 2026 (R-390: 0062, 0063 and 0064 applied live, their tests passed): a payment made
+ * during the free trial starts its paid month or year when the trial ends.
  */
-export const TRIAL_KEPT_ON_PAY = false;
+export const TRIAL_KEPT_ON_PAY = true;
 
 /**
  * The line the owner reads before paying during a running free trial, true to what the live server does.

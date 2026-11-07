@@ -96,16 +96,16 @@ test('T79: Pay MettleUp, not ready, not available, pay by UPI or bank, waiting, 
   await page.reload();
   await go(page, '/settings/mettleup');
   await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.proMonth));
-  // Only 0060 is live: the paid time starts the day MettleUp confirms it, never "when the free trial ends".
+  // 0063 is live (7 Nov 2026): a payment during the free trial keeps every free day.
   await expect(main.getByTestId('pay-trial-start')).toHaveText(
-    'Your paid month starts on the day MettleUp confirms your payment, not when your free trial ends on 17 Jan 2027. To keep every free day, pay nearer that date.',
+    'Your paid plan starts when your free trial ends on 17 Jan 2027 and runs until 17 Feb 2027.',
   );
-  await expect(main).not.toContainText('starts when your free trial ends');
+  await expect(main).not.toContainText('starts on the day MettleUp confirms');
   await expect(main.getByTestId('pay-online')).toHaveCount(0);
   await expect(main.getByTestId('pay-receipts')).toHaveCount(0);
   await main.getByRole('group', { name: 'Pay for' }).getByRole('button', { name: '1 year' }).tap();
   await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.proYear));
-  await expect(main.getByTestId('pay-trial-start')).toContainText('Your paid year starts on the day MettleUp confirms your payment');
+  await expect(main.getByTestId('pay-trial-start')).toHaveText('Your paid plan starts when your free trial ends on 17 Jan 2027 and runs until 17 Jan 2028.');
   await main.getByRole('group', { name: 'Plan' }).getByRole('button', { name: 'Starter' }).tap();
   await expect(main.getByTestId('pay-amount')).toContainText(inr(PRICE.starterYear));
   await main.getByRole('group', { name: 'Pay for' }).getByRole('button', { name: '1 month' }).tap();
