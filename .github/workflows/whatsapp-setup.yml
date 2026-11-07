@@ -79,6 +79,17 @@ jobs:
           echo "== Template login_code (WhatsApp account $WABA_ID) =="
           curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID/message_templates?name=login_code&fields=name,status,language,category,rejected_reason" \
             -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq '{templates: .data, error: (.error | if . then {code, message} else null end)}'
+          # R-392 (7 Nov 2026): codes were "accepted" but never delivered. Meta's health check names the
+          # exact block (payment, business, app) for the account and the number. Public ids only, no token printed.
+          echo "== Health: WhatsApp account $WABA_ID =="
+          curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID?fields=name,health_status,account_review_status,primary_funding_id,currency,business_verification_status" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq 'del(.access_token)'
+          echo "== Health: phone number $PHONE_ID =="
+          curl -sS "https://graph.facebook.com/$GRAPH/$PHONE_ID?fields=health_status,throughput" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq 'del(.access_token)'
+          echo "== Apps subscribed to $WABA_ID =="
+          curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID/subscribed_apps" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq '{apps: [.data[]?.whatsapp_business_api_data | {id, name}], error: (.error | if . then {code, message} else null end)}'
 
       - name: Set up Node (wrangler)
         if: ${{ inputs.put_secret }}
