@@ -16,6 +16,8 @@ Business purpose Yes, no GST/TAN). "Business info missing" is gone; the WABA set
 The Overview alert still showed right after (may lag, or belong to the 2 unused MettleUp accounts). Next: he retries;
 I check Insights "All message deliveries". Product gap: we never learn delivery failures (no Meta status webhook).
 
+R-392 update 2 (7 Nov): his "yes, publish the Meta app". Added privacy/terms/delete-account links + category Business and pages; published app 1118531290784840 (status Published, no required actions). Waiting for his retry after the hourly limit.
+
 R-392 update (7 Nov): his "yes, connect the webhook". Meta health check (whatsapp-setup run 42341228919): can_send_message
 AVAILABLE for number, WABA, business, app. Built /api/whatsapp/hook (whatsappHook.js, logs only), panel deployed
 8b7def18; webhook saved in the Meta app (messages + account_alerts subscribed); app subscribed to WABA (run 42346589978).
