@@ -81,18 +81,24 @@ function BrandingForm({ ownerKey, gymName }: { ownerKey: string; gymName: string
     toastTimer.current = window.setTimeout(() => setToast(null), 3000);
   };
 
+  // 7 Nov 2026: load the saved look ONCE per gym key. It used to reload (and wipe the owner's
+  // unsaved logo and colour) each time the gym's data refreshed. Refs keep the latest helpers.
+  const handleErrorRef = useRef(handleError);
+  handleErrorRef.current = handleError;
+  const gymIdRef = useRef(gymId);
+  gymIdRef.current = gymId;
   const fetchBrand = useCallback(async () => {
     setLoad({ state: 'loading' });
     try {
       const g = await api.ownerGym(ownerKey);
       const saved = g.brand ?? null;
-      if (saved) tickGetStarted(gymId, 'brand');
+      if (saved) tickGetStarted(gymIdRef.current, 'brand');
       setDraft(draftFromBrand(saved));
       setLoad({ state: 'ready', saved });
     } catch (e) {
-      setLoad({ state: 'error', message: handleError(e) });
+      setLoad({ state: 'error', message: handleErrorRef.current(e) });
     }
-  }, [ownerKey, handleError, gymId]);
+  }, [ownerKey]);
 
   useEffect(() => {
     void fetchBrand();

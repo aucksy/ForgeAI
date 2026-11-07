@@ -157,12 +157,21 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     sig.current = '';
   }, []);
 
+  // 7 Nov 2026 (Branding wiped every few seconds): startEmptyGym is a NEW function each time the
+  // gym's data refreshes (every 15 s, and each time the window gets focus back, e.g. after the
+  // colour or file picker closes). Read it through a ref, so keyLost and handleError stay the same
+  // function for the page's life: screens that load with handleError must not reload on each refresh.
+  const startEmptyRef = useRef(startEmptyGym);
+  startEmptyRef.current = startEmptyGym;
+  const lostRef = useRef(lost);
+  lostRef.current = lost;
+
   /** The key no longer opens a gym. Drop it; a demo CRM goes with it. */
   const keyLost = useCallback(
     async (gym: CloudGym) => {
       // A signed-in person's key: the whole panel goes back to the sign-in door.
       if (gym.person) {
-        lost();
+        lostRef.current();
         return;
       }
       clearCloudGym();
@@ -170,11 +179,11 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       resetOrders();
       if (gym.demo) {
         setNotice('That demo gym is no longer available. Start a new one below.');
-        await startEmptyGym('My Gym');
+        await startEmptyRef.current('My Gym');
         replace('/');
       }
     },
-    [resetOrders, startEmptyGym, lost],
+    [resetOrders],
   );
 
   const cloudRef = useRef(cloud);
