@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-390. "You can build it" (dots, option A); yes 0062-0064; open the Meta and WhatsApp pages — 7 Nov 2026
+He said: build the new-feature dots now (option A: admin live after tests, member app in the next version after his
+"release"). "yes to 0062-0064" (live server changes: plan checks + online checkout stay switched off; trial days
+kept on pay). Open the Meta billing "Add info" page and the WhatsApp permanent-key page in his Chrome for him.
+
 ## R-389. New-feature dots that lead to the feature (Samsung style), admin + member app — 7 Nov 2026
 He said: when a new FEATURE (not a fix) comes, show a small dot on each entry point on the way to it: the left
 menu (Settings), the row on the page (Pay MettleUp), and beside the heading of that section, so people follow the
