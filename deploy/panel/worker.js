@@ -42,6 +42,7 @@ import { handleMatchColumns } from './aiMatch.js';
 import { handlePay, scheduledPay } from './pay.js';
 import { handleBillingCheckout } from './billing.js';
 import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
+import { handleWhatsAppHook } from './whatsappHook.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
 
@@ -106,6 +107,8 @@ export default {
     if (url.pathname === '/api/billing/checkout') return handleBillingCheckout(request, env);
     // F187 (R-383): sign-in codes by WhatsApp (phoneCode.js). Off ("available: false") until the token is in place.
     if (url.pathname.startsWith('/api/phone-code/')) return handlePhoneCode(request, env, url, rpc, { ctx });
+    // R-392: Meta's news about each WhatsApp message (delivered / failed + why). Logs only (whatsappHook.js).
+    if (url.pathname === '/api/whatsapp/hook') return handleWhatsAppHook(request, env, url);
     if (url.pathname === '/api/lead') return env.LANDING === 'live' ? handleLead(request, env) : new Response('Not found', { status: 404 });
     // Launch I2: the landing page goes public only when the owner says yes (wrangler.jsonc vars.LANDING).
     if (url.pathname === '/home' || url.pathname.startsWith('/home/') || url.pathname === '/member-site' || url.pathname.startsWith('/member-site/')) {
