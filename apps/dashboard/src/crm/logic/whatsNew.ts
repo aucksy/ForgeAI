@@ -40,6 +40,11 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.',
         go: { label: 'Open Branding', path: '/settings/branding' },
       },
+      {
+        // R-390: 0063 live 7 Nov 2026, TRIAL_KEPT_ON_PAY on.
+        text: 'Settings → Pay MettleUp: if you pay during your free trial, you keep every free day. Your paid plan starts when the trial ends.',
+        go: { label: 'Open Pay MettleUp', path: '/settings/mettleup' },
+      },
     ],
   },
   {
