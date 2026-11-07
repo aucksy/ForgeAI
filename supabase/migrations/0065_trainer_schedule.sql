@@ -1,4 +1,4 @@
--- (NOT APPLIED) - needs the owner's yes (paste into the Supabase SQL Editor). Needs 0050 (live).
+-- APPLIED LIVE 7 Nov 2026 (owner: "yes 0065"); live test RESULT PASS (38 checks). Needs 0050 (live).
 -- 0065: F105 trainer profiles and personal-training bookings (plan: docs/plans/F105-trainer-profiles.md, 7 Nov 2026).
 -- ADDITIVE and re-runnable: two new tables, one private helper and four owner_* functions. Changes nothing that
 -- exists. Test: supabase/tests/0065_trainer_schedule.sql (CI runs it after every migration; pasted into the SQL

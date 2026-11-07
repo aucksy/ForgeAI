@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-395. "yes 0065" (F105 trainer tables live) — 7 Nov 2026
+He said: "yes 0065". Did: applied supabase/migrations/0065_trainer_schedule.sql in the Supabase SQL Editor
+(Browser 1): "Success. No rows returned"; then supabase/tests/0065 pasted live: RESULT PASS (38 checks), changes
+nothing. The admin panel is NOT deployed with the Trainers screen yet: next a fresh-eyes review of its pictures,
+the ADMIN_NEWS entry and the help article, then the panel deploy. Decided myself: booking outside working hours =
+warn + "Book anyway" (kept).
+
 ## R-394. "first build the dot functionality and release it" (0.74.0); build F194 + F105 next — 7 Nov 2026
 He said (7 Nov 2026, ~15:2x IST): "I rated 3 features as 8 just now... but first build the dot functionality and
 release it so I can test rest 2 in the next release". This IS his "release" (R-309) for ONE version, 0.74.0,
