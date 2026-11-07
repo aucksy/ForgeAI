@@ -187,11 +187,18 @@ test('F198 time: 5 Nov features end on 5 Dec, every dot ends on day 31 (6 Dec), 
 });
 
 test('F198 before the day, the desk and the demo gym: no dots', async ({ page, browser }) => {
-  // 5 Nov 23:59 India time: the 6 Nov features are not live yet; only pass members (5 Nov) lights.
+  // 5 Nov 23:58 India time: the 6 Nov features (Branding icon preview, Pay MettleUp) are not live yet; the 5 Nov
+  // ones are (pass members on Members; Bring a friend and Payments behind Settings).
   const server = await openApp(page, { time: new Date('2026-11-05T23:58:00+05:30') });
   await startOnlineGym(page);
   await expect(dot(barItem(page, 'Members'))).toHaveCount(1);
-  await expect(dot(barItem(page, 'More'))).toHaveCount(0);
+  await barItem(page, 'More').tap();
+  await expect(dot(moreRow(page, 'Branding'))).toHaveCount(0);
+  await expect(dot(moreRow(page, 'Settings'))).toHaveCount(1);
+  await moreRow(page, 'Settings').tap();
+  await expect(dot(tab(page, 'Member app'))).toHaveCount(1);
+  await expect(dot(payRow(page))).toHaveCount(0);
+  await shot(page, 'time-0-before-6-nov');
 
   // The front desk on its own phone, 7 Nov: the dots are for the owner's pages.
   await page.clock.setSystemTime(NOV7);
