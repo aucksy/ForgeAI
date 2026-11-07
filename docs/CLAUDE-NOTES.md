@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-391. "yes 0061" — 7 Nov 2026
+He said yes to server change 0061 (WhatsApp sign-in codes). Also done before: Meta billing info, the system-user
+WhatsApp key and WHATSAPP_PIN in GitHub; the number is registered (CONNECTED), login_code APPROVED. Plan: apply
+0061 live + its test, the Worker table 0012 (D1), make PHONE_CODE_SECRET (same value in the Worker and the
+phone_code_settings row, never in git), then once his Cloudflare key is in GitHub, put WHATSAPP_TOKEN into the
+Worker, deploy, test one real code to his phone; signup_check_required stays false until a sign-up works.
+
 ## R-390. "You can build it" (dots, option A); yes 0062-0064; open the Meta and WhatsApp pages — 7 Nov 2026
 He said: build the new-feature dots now (option A: admin live after tests, member app in the next version after his
 "release"). "yes to 0062-0064" (live server changes: plan checks + online checkout stay switched off; trial days
