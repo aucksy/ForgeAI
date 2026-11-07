@@ -44,6 +44,8 @@ import {
   metricValueText,
   openingRange,
   pointsInRange,
+  rangeTotal,
+  rangeTotalText,
   workoutForPoint,
   type ChartMetric,
   type ChartRange,
@@ -110,6 +112,8 @@ export function ExerciseMetricChart({
 
   const all = useMemo(() => bestPerDay(metric, metricSeries(metric, history, bestSet, units, distUnit)), [metric, history, bestSet, units, distUnit]);
   const data = useMemo(() => pointsInRange(all, range, today), [all, range, today]);
+  // R-398: what the range adds up to (kg lifted, reps, time, distance), easy weeks included.
+  const total = useMemo(() => rangeTotal(metric, history, range, today, units, distUnit), [metric, history, range, today, units, distUnit]);
   const shown = inspect ?? data[data.length - 1] ?? null;
   const unit = metricUnit(metric);
   // 13 Oct 2026: axis labels and the readout grouped the phone's way ("1,330"), as elsewhere.
@@ -180,6 +184,11 @@ export function ExerciseMetricChart({
           <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.inkMuted }}>
             {shown ? tinyDateWithYear(shown.x) : 'Nothing in this range yet'}
           </Text>
+          {total ? (
+            <Text testID="chart-range-total" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary, marginTop: space.xs }}>
+              {rangeTotalText(metric, total, range, units, distUnit)}
+            </Text>
+          ) : null}
         </View>
         {data.length > 0 ? (
           // resetKey: switching to a metric (or range) with the same numbers still clears the

@@ -32,7 +32,7 @@ import { AXIS_FONT, areaPath, monotonePath, niceTicks, padDomain, r2, xLabel } f
 import { clamp, fmtCompact } from '@/lib/format';
 import { chart, color as palette, radius, type } from '@/theme/tokens';
 
-import { chartDataKey, chartTap, coveringTicks, dateXs, lastLabelY, nearestIndex } from '../lib/chartTime';
+import { chartDataKey, chartTakesMove, chartTap, coveringTicks, dateXs, lastLabelY, nearestIndex } from '../lib/chartTime';
 
 /** The frozen `niceTicks`' step for a range (its first gap), for `coveringTicks`. */
 const niceStep = (lo: number, hi: number): number => {
@@ -85,6 +85,8 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
   activeRef.current = active;
   const viewRef = useRef<View>(null);
   const alive = useRef(true);
+  // R-397: the finger went down on the picked point's box: the chart leaves that touch to the box.
+  const onBox = useRef(false);
   useEffect(
     () => () => {
       alive.current = false;
@@ -284,6 +286,12 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
             testID="chart-open-workout"
             onLayout={(e) => setTipW(e.nativeEvent.layout.width)}
             onPress={() => onOpenPicked(activeDatum)}
+            onPressIn={() => {
+              onBox.current = true;
+            }}
+            onPressOut={() => {
+              onBox.current = false;
+            }}
             accessibilityRole="button"
             accessibilityLabel={`Open the workout from ${(pickedDate ?? xLabel)(activeDatum.x)}. ${fmt(activeDatum.y)}`} // member-words
             hitSlop={6}
@@ -347,7 +355,7 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
       style={{ width: '100%', height }}
       onLayout={(e) => setW(e.nativeEvent.layout.width)}
       onStartShouldSetResponder={() => Boolean(onInspect)}
-      onMoveShouldSetResponder={() => Boolean(onInspect)}
+      onMoveShouldSetResponder={() => chartTakesMove({ inspecting: Boolean(onInspect), onBox: onBox.current })}
       onResponderTerminationRequest={() => false}
       onResponderGrant={onDown}
       onResponderMove={onMove}

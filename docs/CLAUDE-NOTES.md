@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-398. "No way to see All Time Total for the exercise" — 7 Nov 2026
+He said it with a screenshot of Incline Dumbbell Curl, History, Kg lifted, All time. Did: a line under the chart's
+big number, "Total, all time: X kg in N workouts", following the range pills (kg lifted, reps, time, distance;
+easy weeks counted). Next version (after 0.74.0). My view to him: it follows the pills, so one line covers
+3 months, 12 months and all time.
+
+## R-397. Tapping the chart's "13 / 15 Aug >" box does not open the workout — 7 Nov 2026
+He said it with a Chin-Up History screenshot (Most reps). Cause: a real tap wobbles a few px; the chart's
+move-responder took the touch and cancelled the box's press; Maestro taps never move, so R-311's UAT passed.
+Fix: chartTakesMove + onBox ref. Next version; he checks on his phone after the release.
+
 ## R-396. "once you have released the dot functionality you can start working on the other two" — 7 Nov 2026
 He said: he is out for a few hours; after the dots release, work on the other two (F194, F105). Status then: F194
 built and tested (waits for his next "release", he wants to test it in the next version); F105 live in the admin

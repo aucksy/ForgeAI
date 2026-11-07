@@ -385,3 +385,64 @@ export function openingRange(dates: readonly string[], today: string): ChartRang
   }
   return 'all';
 }
+
+/**
+ * R-398 (owner, 7 Nov 2026: "No way to see All Time Total for the exercise"): the total of a metric that adds
+ * up (kg lifted, reps, time, distance) over the chosen range, with how many workouts made it. Every workout
+ * counts, easy weeks too (the chart leaves them out of its line, a total must not). null = this metric does
+ * not add up (heaviest, best set, most reps ...) or nothing in the range. PURE.
+ */
+export function rangeTotal(
+  m: ChartMetric,
+  history: readonly ExerciseHistoryEntry[],
+  range: ChartRange,
+  today: string,
+  units: UnitSystem,
+  distUnit: DistUnit,
+): { total: number; workouts: number } | null {
+  const from = rangeStart(range, today);
+  let total = 0;
+  let workouts = 0;
+  for (const h of history) {
+    if (h.sets.length === 0 || (from && h.dateISO < from)) continue;
+    let y = 0;
+    switch (m) {
+      case 'workoutLifted':
+        y = Math.max(0, h.volumeKg);
+        break;
+      case 'totalReps':
+      case 'workoutReps':
+        y = sumOf(h.sets.map((s) => Math.max(0, s.reps)));
+        break;
+      case 'workoutTime':
+        y = sumOf(h.sets.map((s) => Math.max(0, s.durationSec ?? 0)));
+        break;
+      case 'workoutDistance':
+        y = sumOf(h.sets.map((s) => Math.max(0, s.distanceM ?? 0)));
+        break;
+      default:
+        return null;
+    }
+    if (y > 0) {
+      total += y;
+      workouts += 1;
+    }
+  }
+  if (workouts === 0) return null;
+  if (m === 'workoutLifted') total = Math.round(kgToDisplay(total, units));
+  else if (m === 'workoutDistance') total = distanceToUnit(total, distUnit);
+  return { total, workouts };
+}
+
+/** R-398: the words for the total line, e.g. "Total, all time: 52,310 kg in 76 workouts". PURE. */
+export function rangeTotalText(
+  m: ChartMetric,
+  t: { total: number; workouts: number },
+  range: ChartRange,
+  units: UnitSystem,
+  distUnit: DistUnit,
+): string {
+  const when = range === '3m' ? 'last 3 months' : range === '1y' ? 'last 12 months' : 'all time';
+  const value = m === 'workoutLifted' ? `${fmtInt(t.total)} ${weightUnit(units)}` : metricValueText(m, t.total, units, distUnit);
+  return `Total, ${when}: ${value} in ${t.workouts} ${t.workouts === 1 ? 'workout' : 'workouts'}`; // member-words
+}

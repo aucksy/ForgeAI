@@ -150,3 +150,13 @@ export function chartDataKey(data: readonly { x: string; y: number }[], reset = 
   for (let i = 0; i < data.length; i++) sum = (sum * 31 + Math.round(data[i].y * 1000) + i) % 2147483647;
   return `${data.length}|${data[0]?.x ?? ''}|${data[data.length - 1]?.x ?? ''}|${sum}|${reset}`;
 }
+
+/**
+ * R-397 (owner, 7 Nov 2026: tapping the picked point's box did not open the workout): may the chart take
+ * a touch that is already moving? Never while the finger went down on the box (`onBox`): a real finger
+ * always moves a few pixels in a tap, and the chart taking the touch then cancelled the box's press (the
+ * cloud tests tap without any movement, so they never saw it). PURE.
+ */
+export function chartTakesMove(t: { inspecting: boolean; onBox: boolean }): boolean {
+  return t.inspecting && !t.onBox;
+}
