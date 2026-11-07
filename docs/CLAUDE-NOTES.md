@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-400. "Okay you can release next 2 features" (0.75.0) — 7 Nov 2026
+He said (7 Nov 2026, ~23:3x IST): "Okay you can release next 2 features". This IS his "release" (R-309) for ONE
+version, 0.75.0. The 2 features (R-394): F194 Machine and cable steps (member app) and F105 Trainer profiles
+(admin panel, already live since R-396, nothing to ship). The member-app version also carries the two fixes
+already on main: R-397 (chart box tap) and R-398 (range total). Also asked before (same day): dots must vanish
+once the member reaches the new page; checked, they already do (SettingsPage marks seen; UAT u198 asserts it).
+Gemini timed out twice on the What's new lines; a fresh-reader helper checked them instead.
+
 ## R-399. "Try these steps once to resolve the WhatsApp issue" (Udyam verification guide) — 7 Nov 2026
 He pasted a guide: align Business Info, confirm the admin email, verify the business with Udyam. Found in Business
 Settings: Udyam already the Tax ID and business "Verified, 6 Nov 2026"; the billing "Business info missing / Verify
