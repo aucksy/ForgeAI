@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-396. "once you have released the dot functionality you can start working on the other two" — 7 Nov 2026
+He said: he is out for a few hours; after the dots release, work on the other two (F194, F105). Status then: F194
+built and tested (waits for his next "release", he wants to test it in the next version); F105 live in the admin
+panel (fresh-eyes fixes 7006903d, deployed from CI build of run 42370273388, Worker version 38bdafa8, live bundle
+checked for "Already over" / "Book personal training"). 0.74.0: u198 + journeys green on 38127d29; the two whole
+phone runs still running; tag v0.74.0 on 38127d29 when they pass.
+
 ## R-395. "yes 0065" (F105 trainer tables live) — 7 Nov 2026
 He said: "yes 0065". Did: applied supabase/migrations/0065_trainer_schedule.sql in the Supabase SQL Editor
 (Browser 1): "Success. No rows returned"; then supabase/tests/0065 pasted live: RESULT PASS (38 checks), changes
