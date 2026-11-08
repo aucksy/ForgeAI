@@ -145,7 +145,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1940,6 +1940,7 @@ part_uat() {
   part_u194
   part_u401
   part_u199
+  part_u404
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1995,7 +1996,18 @@ part_u199() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
-# F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
+# R-404 (owner rule, 8 Nov 2026: every chart behaves the same): the two bar charts a member sees (Charts ->
+# "Sets per muscle group"; Year in review -> "Workouts each month") pick a bar with one tap, show the box,
+# and the box opens that week's or month's workouts (one workout: that workout); an empty month's box has
+# no arrow and opens nothing; the app killed and opened again still taps. From a fresh install with the
+# demo. Also runs alone with only=u404. Pictures rel-r404-*.png.
+part_u404() {
+  local rc=0
+  gate_flow u404_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr404 uat-rel-r404-bar-charts.yaml || rc=1
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}# F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
 # clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
 # with each choice mid-workout: Learn 52.5 kg, 5 kg 55 kg (never 52.5), 2.5 kg 52.5 kg, Learn again.
@@ -2143,6 +2155,7 @@ qa_runs u198 && ! qa_runs uat && { log "gate part U198 begins"; part_u198; }
 qa_runs u194 && ! qa_runs uat && { log "gate part U194 begins"; part_u194; }
 qa_runs u401 && ! qa_runs uat && { log "gate part U401 begins"; part_u401; }
 qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
+qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

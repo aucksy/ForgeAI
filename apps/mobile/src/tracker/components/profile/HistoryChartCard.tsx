@@ -32,6 +32,7 @@ import { color, radius, space, type } from '@/theme/tokens';
 import {
   barValue,
   CHART_RANGES,
+  chartAxisDateText,
   chartAxisText,
   chartBackText,
   chartBigNumberText,
@@ -265,6 +266,12 @@ export function HistoryChartCard({
                 const b = list.find((l) => l.start === x);
                 return b ? chartPeriodText(b, today) : x;
               }}
+              // R-404 (owner, 8 Nov 2026): a month point's axis label is its month ("Nov 2025"), not
+              // the day it starts ("9 Nov"); weeks keep the day ("17 Aug").
+              xAxisLabel={list.some((b) => b.kind === 'month') ? (x) => {
+                const b = list.find((l) => l.start === x);
+                return b ? chartAxisDateText(b) : x;
+              } : undefined}
             />
           </View>
           {/* One screen-reader button per point ("5–11 Oct: 4,200 kg"). Touches pass through to

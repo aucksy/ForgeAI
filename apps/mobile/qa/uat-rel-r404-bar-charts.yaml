@@ -1,0 +1,156 @@
+# R-404 (owner rule, 8 Nov 2026: "every chart behaves the same"): the two bar charts a member sees tap,
+# pick and open like the Profile line chart. Starts from gate-demo (fresh install + demo: 13 weeks of
+# workouts ending yesterday).
+#  1. Charts page, "Sets per muscle group": tap a week bar -> its box (chart-open-workout, a "›") -> tap
+#     the box -> that week's workouts ("Your workouts") or its one workout (Share) -> Back to Charts.
+#  2. Interruption: the app killed and opened again, back to the Charts page; the chart still taps.
+#  3. Year in review, "Workouts each month": negative first, an empty month (0) shows its box with no "›"
+#     (chart-picked) and opens nothing; then a month with workouts opens that month's workouts -> Back.
+# Bars are tapped by their screen-reader words ("5–11 Oct: 12 sets", "Oct 2026: 9 workouts"): the touch
+# passes through to the chart under it. A tap on the picked bar again would put it away, so taps that may
+# repeat run only when the box is not already there. Pictures rel-r404-*.png.
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. the sets chart on the Charts page
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "bar-chart"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-r404-01-sets-chart
+# Negative: no box before a tap.
+- assertNotVisible:
+    id: "chart-open-workout"
+- tapOn:
+    text: ".*: [1-9][0-9.]* sets?$"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible: ".*[0-9.]+ sets?"
+- takeScreenshot: rel-r404-02-week-bar-box
+- tapOn:
+    id: "chart-open-workout"
+# A week with exactly one workout opens that workout (Share); more opens "Your workouts".
+- extendedWaitUntil:
+    visible: "^Your workouts$|^Share$"
+    timeout: 10000
+- runFlow:
+    when:
+      visible: "^Your workouts$"
+    commands:
+      - assertVisible: ".*\\d+ workouts?.*"
+- takeScreenshot: rel-r404-03-week-opened
+- back
+- extendedWaitUntil:
+    visible:
+      id: "bar-chart"
+    timeout: 15000
+- takeScreenshot: rel-r404-04-back-on-charts
+# ---------------------------------------------------------------- 2. interruption: app killed, chart still taps
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "bar-chart"
+    centerElement: true
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible:
+        id: "chart-open-workout"
+    commands:
+      - tapOn:
+          text: ".*: [1-9][0-9.]* sets?$"
+          index: 0
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- takeScreenshot: rel-r404-05-after-restart-box
+# ---------------------------------------------------------------- 3. Year in review: workouts each month
+- scrollUntilVisible:
+    element: "^\\d{4} so far$|^\\d{4} in review$"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "^\\d{4} so far$|^\\d{4} in review$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Share as a picture"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "bar-chart"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-r404-06-year-bars
+# Negative: an empty month (the demo starts in late summer, so January to July are empty) shows its box
+# without a "›" and opens nothing.
+- runFlow:
+    when:
+      visible: ".*: 0 workouts$"
+    commands:
+      - tapOn:
+          text: ".*: 0 workouts$"
+          index: 0
+      - extendedWaitUntil:
+          visible:
+            id: "chart-picked"
+          timeout: 5000
+      - assertNotVisible:
+          id: "chart-open-workout"
+      - takeScreenshot: rel-r404-07-empty-month-no-open
+      - tapOn:
+          id: "chart-picked"
+      - assertVisible:
+          id: "bar-chart"
+      - assertNotVisible: "^Your workouts$"
+# A month with workouts: its box has a "›" and opens that month's workouts.
+- runFlow:
+    when:
+      notVisible:
+        id: "chart-open-workout"
+    commands:
+      - tapOn:
+          text: ".*: [1-9]\\d* workouts?$"
+          index: 0
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible: ".*\\d+ workouts?"
+- takeScreenshot: rel-r404-08-month-bar-box
+- tapOn:
+    id: "chart-open-workout"
+- extendedWaitUntil:
+    visible: "^Your workouts$|^Share$"
+    timeout: 10000
+- takeScreenshot: rel-r404-09-month-opened
+- back
+- extendedWaitUntil:
+    visible:
+      id: "bar-chart"
+    timeout: 15000
+- takeScreenshot: rel-r404-10-back-on-year

@@ -45,7 +45,9 @@ import {
   type StatGrouping,
   type StatRange,
 } from '@/tracker/engine/statistics';
-import { fmtSets } from '@/tracker/engine/volume';
+import { fmtSets, setsText } from '@/tracker/engine/volume';
+import { useOpenPeriod } from '@/tracker/components/useOpenPeriod';
+import { barRange, historyRangeText } from '@/tracker/lib/historyRange';
 import { monthOf } from '@/tracker/lib/months';
 import { getFirstWorkoutDate } from '@/tracker/services/historyFeed';
 import { recordValueText } from '@/tracker/services/recordText';
@@ -67,6 +69,7 @@ export default function StatisticsScreen() {
   const units = useUnits();
   const router = useRouter();
   const openExercise = (id: string) => router.push({ pathname: '/exercise/[id]', params: { id } });
+  const openPeriod = useOpenPeriod();
 
   // The parts that do not follow a range, read each time the page comes into view.
   const top = useLoad(
@@ -176,13 +179,17 @@ export default function StatisticsScreen() {
               No sets for these muscles in this range.
             </Text>
           ) : (
-            <View
-              accessible
-              accessibilityLabel={`Sets per ${grouping}: ${series
-                .slice(-6)
-                .map((p) => `${bucketLabel(p.bucket, grouping, crossesYear)} ${fmtSets(p.sets)}`)
-                .join(', ')}`}
-            >
+            <View>
+              {/* The summary for a screen reader sits beside the chart (not around it), so the box over a
+                  picked bar stays a button of its own (R-404). */}
+              <View
+                accessible
+                accessibilityLabel={`Sets per ${grouping}: ${series
+                  .slice(-6)
+                  .map((p) => `${bucketLabel(p.bucket, grouping, crossesYear)} ${fmtSets(p.sets)}`)
+                  .join(', ')}`}
+                style={{ position: 'absolute', left: 0, top: 0, width: 1, height: 1 }}
+              />
               <BarChart
                 data={series.map((p) => ({ x: bucketLabel(p.bucket, grouping, crossesYear), y: p.sets }))}
                 height={180}
@@ -191,6 +198,16 @@ export default function StatisticsScreen() {
                 // This week or month with nothing in it yet (a Monday morning) is not the bar to
                 // light up and label: then the chart labels its biggest bar instead.
                 highlightLast={series[series.length - 1].sets > 0}
+                // R-404 (owner rule, every chart behaves the same): a tapped bar shows its box; the box
+                // opens that week's or month's workouts, or the one workout in it. An empty bar opens nothing.
+                resetKey={`${range}|${grouping}|${picked.join(',')}`}
+                pickedValue={(p) => setsText(p.y)}
+                pickedDate={(_p, i) => historyRangeText(barRange(series[i].bucket, grouping), today)}
+                openLabel={(p, i) => `See your workouts from ${historyRangeText(barRange(series[i].bucket, grouping), today)}. ${setsText(p.y)}`} // member-words
+                onOpenPicked={(_p, i) => {
+                  const r = barRange(series[i].bucket, grouping);
+                  openPeriod(r.from, r.to);
+                }}
               />
             </View>
           )}

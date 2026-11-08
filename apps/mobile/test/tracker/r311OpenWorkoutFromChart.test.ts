@@ -75,7 +75,9 @@ describe('R-311: the screens are wired', () => {
   it('the chart label is a button that opens the workout', () => {
     const chart = read('tracker/components/DateLineChart.tsx');
     expect(chart).toContain('onOpenPicked');
-    expect(chart).toContain('minHeight: 44');
+    // R-404: the box is shared with the bar chart.
+    expect(chart).toContain('<PickedBox');
+    expect(read('components/charts/PickedBox.tsx')).toContain('minHeight: 44');
     expect(chart).toContain('measureInWindow');
     const ex = read('tracker/components/ExerciseMetricChart.tsx');
     expect(ex).toContain('workoutForPoint(metric, p, history, units, distUnit)');

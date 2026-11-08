@@ -36,6 +36,21 @@ const lastDayOfMonth = (iso: string): string => {
   return `${iso.slice(0, 7)}-${String(d).padStart(2, '0')}`;
 };
 
+/**
+ * R-404: the days one bar of a week or month bar chart covers. `start` is the bar's first day (a
+ * Monday, or the 1st of a month; a 'YYYY-MM' month works too): a week runs 7 days, a month to its
+ * last day. PURE.
+ */
+export function barRange(start: string, kind: 'week' | 'month'): HistoryRange {
+  if (kind === 'month') {
+    const first = `${start.slice(0, 7)}-01`;
+    return { from: first, to: lastDayOfMonth(first) };
+  }
+  const d = new Date(Date.UTC(Number(start.slice(0, 4)), Number(start.slice(5, 7)) - 1, Number(start.slice(8, 10)) + 6));
+  const end = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  return { from: start, to: end };
+}
+
 /** The period in words, as the chart says it: "5–11 Oct", "Oct 2026", "12 Oct". */
 export function historyRangeText(r: HistoryRange, today: string): string {
   const wholeMonth = r.from.slice(0, 7) === r.to.slice(0, 7) && r.from.endsWith('-01') && r.to === lastDayOfMonth(r.from);

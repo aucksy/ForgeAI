@@ -28,6 +28,8 @@ import { changeText, emptyReportText, heroLine, type MonthReport, type YearRevie
 import { setsText } from '@/tracker/engine/volume';
 import { countWord } from '@/lib/words';
 import { compareValueSize } from '@/tracker/lib/compareTiles';
+import { useOpenPeriod } from '@/tracker/components/useOpenPeriod';
+import { barRange, historyRangeText } from '@/tracker/lib/historyRange';
 import { isMonthKey, monthDays, monthName, monthOf, monthTitle, shiftMonth, yearDays } from '@/tracker/lib/months';
 import { recordValueText } from '@/tracker/services/recordText';
 import { getMonthReport, getTrainedMonths, getYearReview, type MonthReportData } from '@/tracker/services/reportsService';
@@ -276,9 +278,10 @@ function MonthBody({
   );
 }
 
-function YearBody({ y }: { y: YearReview }) {
+function YearBody({ y, today }: { y: YearReview; today: string }) {
   const units = useUnits(); // v0.27.0: kg or lb
   const wu = weightUnitOf(units);
+  const openPeriod = useOpenPeriod();
   const t = y.totals;
   if (t.workouts === 0) {
     const e = emptyReportText('year', y.complete, String(y.year));
@@ -296,7 +299,22 @@ function YearBody({ y }: { y: YearReview }) {
       <View>
         <SectionHeader title="Workouts each month" />
         <Card>
-          <BarChart data={bars} height={150} yFormat={(n) => `${Math.round(n)}`} labelEvery={bars.length > 6 ? 2 : 1} />
+          {/* R-404 (owner rule, every chart behaves the same): a tapped month shows its box; the box opens
+              that month's workouts, or the one workout in it. A month with none shows its box, no "›". */}
+          <BarChart
+            data={bars}
+            height={150}
+            yFormat={(n) => `${Math.round(n)}`}
+            labelEvery={bars.length > 6 ? 2 : 1}
+            resetKey={String(y.year)}
+            pickedValue={(p) => countWord(p.y, 'workout')}
+            pickedDate={(_p, i) => historyRangeText(barRange(y.byMonth[i].month, 'month'), today)}
+            openLabel={(p, i) => `See your workouts from ${historyRangeText(barRange(y.byMonth[i].month, 'month'), today)}. ${countWord(p.y, 'workout')}`} // member-words
+            onOpenPicked={(_p, i) => {
+              const r = barRange(y.byMonth[i].month, 'month');
+              openPeriod(r.from, r.to);
+            }}
+          />
         </Card>
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
@@ -434,7 +452,7 @@ export default function ReportScreen() {
           onOpenExercise={(id) => router.push({ pathname: '/exercise/[id]', params: { id } })}
         />
       ) : (
-        <YearBody y={loaded.data} />
+        <YearBody y={loaded.data} today={today} />
       )}
 
       {/* The period as plain text, for any AI chat (the picture is the header's share button). */}

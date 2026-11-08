@@ -261,6 +261,16 @@ const mon = (iso: string) => MON[Number(iso.slice(5, 7)) - 1];
  * What period a bar is, beside the big number: a week "5–11 Oct" (or "28 Sep–4 Oct"), a month
  * "Oct" — with its year when it isn't this year. PURE.
  */
+/**
+ * R-404 (owner, 8 Nov 2026): the x-axis end label of one point. A month point reads as its month and
+ * year ("Nov 2025", the box's words), never the day it starts ("9 Nov" on Last 12 months, whose first
+ * month starts mid-month); a week reads as its Monday ("17 Aug"). PURE.
+ */
+export function chartAxisDateText(b: ChartBar): string {
+  if (b.kind === 'month') return `${mon(b.start)} ${b.start.slice(0, 4)}`;
+  return `${day(b.start)} ${mon(b.start)}`;
+}
+
 export function chartPeriodText(b: ChartBar, today: string): string {
   const year = b.end.slice(0, 4) !== today.slice(0, 4) ? ` ${b.end.slice(0, 4)}` : '';
   // A month always says its year: on Year and All time the bars run across years, and a bare

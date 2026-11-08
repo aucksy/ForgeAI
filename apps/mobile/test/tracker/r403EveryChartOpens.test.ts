@@ -20,8 +20,10 @@ const walk = (dir: string): string[] =>
 const NOT_SHOWN = new Set([
   'components/analytics/BodyWeightSection.tsx',
   'components/analytics/CaloriesSection.tsx',
+  'components/analytics/FrequencySection.tsx',
   'components/analytics/LiftsSection.tsx',
   'components/analytics/ProteinSection.tsx',
+  'components/analytics/VolumeSection.tsx',
   'components/exercise/ExerciseCharts.tsx',
 ]);
 
@@ -61,6 +63,28 @@ describe('[source-text check] every dated chart on a screen has a box that opens
       expect(imports, f).toEqual([]);
       expect(barrel.includes(name) || f.startsWith('components/exercise/'), f).toBe(true);
     }
+  });
+  // R-404: the bar charts too. Every `<BarChart` a member can see passes onOpenPicked.
+  const barUsers = walk(SRC)
+    .map((p) => ({ f: relative(SRC, p).replace(/\\/g, '/'), s: readFileSync(p, 'utf8') }))
+    .filter(({ f, s }) => s.includes('<BarChart') && !f.startsWith('components/charts/'));
+  it('finds the bar charts', () => {
+    expect(barUsers.map((u) => u.f)).toEqual(expect.arrayContaining(['app/stats.tsx', 'app/report/[period].tsx']));
+  });
+  it('each bar chart on a screen passes onOpenPicked, once per chart', () => {
+    const missing = barUsers.filter(({ f, s }) => !NOT_SHOWN.has(f) && (s.match(/onOpenPicked=/g)?.length ?? 0) < (s.match(/<BarChart\b/g)?.length ?? 0));
+    expect(missing.map((u) => u.f)).toEqual([]);
+  });
+  it('the bar charts open their week or month with the shared opener', () => {
+    for (const f of ['stats.tsx', join('report', '[period].tsx')]) {
+      const s = readFileSync(join(SRC, 'app', f), 'utf8');
+      expect(s, f).toContain('useOpenPeriod()');
+      expect(s, f).toMatch(/openPeriod\(r\.from, r\.to\)/);
+    }
+  });
+  it('the line and the bars share one box', () => {
+    expect(readFileSync(join(SRC, 'components', 'charts', 'BarChart.tsx'), 'utf8')).toContain('<PickedBox');
+    expect(readFileSync(join(SRC, 'tracker', 'components', 'DateLineChart.tsx'), 'utf8')).toContain('<PickedBox');
   });
   it('the strength line opens its day with the shared opener', () => {
     const s = readFileSync(join(SRC, 'components', 'analytics', 'StrengthSection.tsx'), 'utf8');

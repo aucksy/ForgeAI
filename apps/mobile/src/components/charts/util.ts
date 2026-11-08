@@ -120,3 +120,18 @@ export function barTopPath(x: number, yTop: number, w: number, h: number, rMax =
     ` V${r2(bottom)} Z`
   );
 }
+
+/**
+ * R-404: which bar a finger at `x` is on. The bars share the plot (from `padL` to `w - padR`) in equal
+ * slots, so a finger anywhere in a bar's slot (not only on its thin column) picks it. A finger more than
+ * 4 px outside the plot (on the axis labels) is `null`: the chart then puts the picked bar away, as the
+ * line chart does. PURE.
+ */
+export function barIndexAt(x: number, w: number, n: number, padL: number, padR: number): number | null {
+  if (n <= 0 || w <= 0) return null;
+  if (x < padL - 4 || x > w - padR + 4) return null;
+  const plotW = w - padL - padR;
+  if (plotW <= 0) return null;
+  const i = Math.floor(((x - padL) / plotW) * n);
+  return Math.max(0, Math.min(n - 1, i));
+}

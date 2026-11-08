@@ -23,14 +23,14 @@
  * is a button (at least 44 dp tall, a chevron) that opens the workout behind the point.
  */
 import { useEffect, useId, useRef, useState } from 'react';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { View } from 'react-native';
 import type { GestureResponderEvent } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient as SvgGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
-import { Icon } from '@/components/ui';
+import { PickedBox } from '@/components/charts/PickedBox';
 import { AXIS_FONT, areaPath, monotonePath, niceTicks, padDomain, r2, xLabel } from '@/components/charts/util';
-import { clamp, fmtCompact } from '@/lib/format';
-import { chart, color as palette, radius, type } from '@/theme/tokens';
+import { fmtCompact } from '@/lib/format';
+import { chart, color as palette } from '@/theme/tokens';
 
 import { chartDataKey, chartTakesMove, chartTap, coveringTicks, dateXs, lastLabelY, nearestIndex } from '../lib/chartTime';
 
@@ -67,6 +67,8 @@ export interface DateLineChartProps {
   onOpenPicked?: (p: { x: string; y: number }) => void;
   /** How the picked point's day reads (default `xLabel`, "12 Mar"); the exercise chart adds the year. */
   pickedDate?: (x: string) => string;
+  /** R-404: how the x-axis end labels read (default `xLabel`, "12 Mar"); a chart of months says "Nov 2025". */
+  xAxisLabel?: (x: string) => string;
 }
 
 const PAD_L = 40;
@@ -76,7 +78,7 @@ export const DATE_CHART_PAD = { left: PAD_L, right: PAD_R } as const;
 const PAD_T = 16;
 const PAD_B = 20;
 
-export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect, resetKey, onOpenPicked, pickedDate }: DateLineChartProps) {
+export function DateLineChart({ data, height = 180, color, fillGradient, yFormat, target, onInspect, resetKey, onOpenPicked, pickedDate, xAxisLabel }: DateLineChartProps) {
   const [w, setW] = useState(0);
   const [active, setActive] = useState<number | null>(null);
   // R-311: the picked index for the delayed "did the page really scroll?" check, and the chart's
@@ -93,8 +95,6 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
     },
     [],
   );
-  // The label's own width, so it centres on the point and never leaves the chart.
-  const [tipW, setTipW] = useState(98);
   const gradId = `dl${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const stroke = color ?? chart.series[0];
@@ -271,78 +271,31 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
           ) : null}
 
           <SvgText x={PAD_L} y={height - 5} fill={palette.inkMuted} textAnchor="start" {...AXIS_FONT}>
-            {xLabel(data[0].x)}
+            {(xAxisLabel ?? xLabel)(data[0].x)}
           </SvgText>
           {n > 1 ? (
             <SvgText x={w - PAD_R} y={height - 5} fill={palette.inkMuted} textAnchor="end" {...AXIS_FONT}>
-              {xLabel(last.x)}
+              {(xAxisLabel ?? xLabel)(last.x)}
             </SvgText>
           ) : null}
         </Svg>
 
-        {activePt && activeDatum && onOpenPicked ? (
-          // R-311: the label stays and is a button: it opens the workout behind the point.
-          <Pressable
-            testID="chart-open-workout"
-            onLayout={(e) => setTipW(e.nativeEvent.layout.width)}
-            onPress={() => onOpenPicked(activeDatum)}
+        {activePt && activeDatum ? (
+          // R-311: with onOpenPicked the label stays and is a button (minHeight: 44, a "›"): it opens
+          // the workout behind the point. R-404: the box is shared with BarChart (`PickedBox`).
+          <PickedBox
+            x={activePt.x}
+            chartW={w}
+            value={fmt(activeDatum.y)}
+            date={onOpenPicked ? (pickedDate ?? xLabel)(activeDatum.x) : xLabel(activeDatum.x)}
+            onOpen={onOpenPicked ? () => onOpenPicked(activeDatum) : undefined}
             onPressIn={() => {
               onBox.current = true;
             }}
             onPressOut={() => {
               onBox.current = false;
             }}
-            accessibilityRole="button"
-            accessibilityLabel={`Open the workout from ${(pickedDate ?? xLabel)(activeDatum.x)}. ${fmt(activeDatum.y)}`} // member-words
-            hitSlop={6}
-            style={({ pressed }) => ({
-              position: 'absolute',
-              top: 0,
-              left: clamp(activePt.x - tipW / 2, 2, Math.max(2, w - tipW - 2)),
-              minHeight: 44,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 4,
-              backgroundColor: palette.surfaceRaised,
-              borderWidth: 1,
-              borderColor: palette.accent,
-              borderRadius: radius.sm,
-              paddingLeft: 10,
-              paddingRight: 6,
-              paddingVertical: 4,
-              opacity: pressed ? 0.7 : 1,
-            })}
-          >
-            <View style={{ alignItems: 'flex-start' }}>
-              <RNText style={{ fontFamily: type.monoBold, fontSize: type.size.sub, color: palette.ink }}>{fmt(activeDatum.y)}</RNText>
-              <RNText style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: palette.inkMuted }}>
-                {(pickedDate ?? xLabel)(activeDatum.x)}
-              </RNText>
-            </View>
-            <Icon name="chevron-right" size={18} color={palette.accent} />
-          </Pressable>
-        ) : activePt && activeDatum ? (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: clamp(activePt.x - 48, 2, Math.max(2, w - 98)),
-              backgroundColor: palette.surfaceRaised,
-              borderWidth: 1,
-              borderColor: palette.borderStrong,
-              borderRadius: radius.sm,
-              paddingHorizontal: 9,
-              paddingVertical: 5,
-              alignItems: 'center',
-              minWidth: 72,
-            }}
-          >
-            <RNText style={{ fontFamily: type.monoBold, fontSize: type.size.sub, color: palette.ink }}>{fmt(activeDatum.y)}</RNText>
-            <RNText style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: palette.inkMuted }}>
-              {xLabel(activeDatum.x)}
-            </RNText>
-          </View>
+          />
         ) : null}
       </>
     );
