@@ -320,6 +320,9 @@ test('Needs you: lines in order of urgency, one number, the tab title, and what 
   ]);
   assert.equal(needsTotal(d), 3);
   assert.equal(needsTotal(null), 0);
+  // Feedback to read is listed but never counted in the red number (fresh eyes, 8 Nov 2026).
+  assert.equal(needsTotal({ leadsNew: 1, feedbackNew: 51 }), 1);
+  assert.deepEqual(needsLines({ feedbackNew: 51 }).map((l) => l.key), ['feedback']);
   assert.equal(titleWithCount('MettleUp HQ', 3), '(3) MettleUp HQ');
   assert.equal(titleWithCount('(3) MettleUp HQ', 0), 'MettleUp HQ');
   assert.equal(titleWithCount('MettleUp HQ', 150), '(99+) MettleUp HQ');

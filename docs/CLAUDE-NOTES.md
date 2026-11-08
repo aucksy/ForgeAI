@@ -7,6 +7,17 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-406. HQ overhaul: "awesome looking UI/UX for HQ ... treat me as end user", "Should be optimized for mobile" — 8 Nov 2026
+He asked to overhaul HQ to perfection, find gaps, phone first. Audit (live, read only) found: a cramped top menu, a
+narrow column on a wide screen, developer text on screen ("docs/plans/R-319-alerts.md", "tracker #34"), a raw log
+word ("view_groups"), the long payment-details form always open, "GitHub did not answer", and the "Needs you"
+warning. That warning is real: D1 migration 0009_help_replies was never applied to forgeai-web (0010-0013 were
+applied by hand), so "help questions waiting for a reply" cannot be counted and HQ replies do not work. Needs his yes
+(live database). Built: phone bottom bar (Needs you, Gyms, Payments, Feedback, More) + "More" sheet; computer side
+menu; new look (tokens, cards, tinted buttons, icons from an inline sprite, light mode); Needs you as tappable rows
+with icons and an "All clear" state; gym list cards on the phone; payment details folded; plain words for the
+developer text and the log. UAT on a local copy with made-up data (python mock server in the scratchpad).
+
 ## R-405. Verify with WhatsApp live; "WhatsApp can send back a response" — 8 Nov 2026
 He said: "es, go live with WhatsApp verify"; the number people send to is 91 86905 60741; he set
 WHATSAPP_APP_SECRET himself (first two tries put the secret in the NAME; then right). D1 0013 applied, var set,

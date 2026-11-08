@@ -67,20 +67,25 @@ function setup() {
   }
   refresh();
 
-  // The phone menu: the page links fold away behind one button on a narrow screen (style.css).
+  // The phone "More" sheet: the bottom bar's last button slides the full menu up (style.css).
   const toggle = document.getElementById('menu-toggle');
-  const top = document.querySelector('.top');
-  if (toggle && top) {
-    const close = () => {
-      top.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    };
-    toggle.addEventListener('click', () => {
-      const open = top.classList.toggle('open');
+  const scrim = document.getElementById('scrim');
+  if (toggle) {
+    const set = (open) => {
+      document.body.classList.toggle('menu-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+      if (scrim) scrim.hidden = !open;
+      if (!open) toggle.blur();
+    };
+    toggle.addEventListener('click', () => set(!document.body.classList.contains('menu-open')));
+    scrim?.addEventListener('click', () => set(false));
+    document.getElementById('menu')?.addEventListener('click', (e) => {
+      if (e.target instanceof Element && e.target.closest('a')) set(false);
     });
-    document.querySelector('nav')?.addEventListener('click', close);
-    window.addEventListener('hashchange', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') set(false);
+    });
+    window.addEventListener('hashchange', () => set(false));
   }
 }
 

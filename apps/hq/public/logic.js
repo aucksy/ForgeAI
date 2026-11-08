@@ -197,6 +197,7 @@ const ACTIONS = {
   billing_refunded: 'Marked an online payment as refunded',
   billing_applied_by_hand: 'Marked an online payment as added to the plan by hand',
   export_gyms: 'Exported the gym list (CSV)',
+  view_groups: 'Looked at gyms with branches',
   hq_message_sent: 'Sent a message to every gym',
   hq_message_removed: 'Took back a message to the gyms',
 };
@@ -621,11 +622,14 @@ export function needsLines(d) {
   return lines.filter(([, n]) => Number(n) > 0).map(([key, n, words, href]) => ({ key, n: Number(n), words: words(Number(n)), href }));
 }
 
-/** The number on the menu: every waiting thing once. PURE. */
+/**
+ * The red number on the menu: only what needs the owner to DO something (reply, call, check, confirm).
+ * New feedback to read is listed on Needs you but not counted (fresh eyes, 8 Nov 2026: 51 messages to read
+ * buried the 6 real jobs in "57"). PURE.
+ */
 export function needsTotal(d) {
   if (!d) return 0;
-  // feedbackNew already leaves out the help questions counted in helpNeedsReply (deploy/hq/web.js webNeeds).
-  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.feedbackNew, d.paymentsWaiting, d.paymentsToCheck].reduce((a, n) => a + (Number(n) || 0), 0);
+  return [d.helpNeedsReply, d.leadsNew, d.gymsNew, d.paymentsWaiting, d.paymentsToCheck].reduce((a, n) => a + (Number(n) || 0), 0);
 }
 
 /** "(3) MettleUp HQ" - the number first in the browser tab, nothing when 0. PURE. */

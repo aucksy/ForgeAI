@@ -76,6 +76,18 @@ function h(tag, attrs = {}, ...kids) {
   return el;
 }
 
+/** One of the page's icons (index.html's sprite), drawn as a line picture. */
+function icon(name) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'ic');
+  svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS(NS, 'use');
+  use.setAttribute('href', `#i-${name}`);
+  svg.append(use);
+  return svg;
+}
+
 class HqError extends Error {
   constructor(code) {
     super(code);
@@ -222,7 +234,7 @@ function gymRow(g, now, ready) {
     ready ? cell('Free trial or plan', {}, badge ? h('span', { class: `flag ${badge.tone}` }, badge.words) : h('span', { class: 'muted' }, '–')) : null,
     cell('Members', { class: 'num' }, `${g.membersRegister}`, h('div', { class: 'muted' }, `${g.membersApp} in app`)),
     cell('Check-ins 7 / 30 days', { class: 'num' }, `${g.checkins7} / ${g.checkins30}`),
-    cell('Money this month', { class: 'num' }, rupees(g.moneyThisMonthP), h('div', { class: 'muted' }, `last month ${rupees(g.moneyLastMonthP)}`)),
+    cell('Gym takings this month', { class: 'num' }, rupees(g.moneyThisMonthP), h('div', { class: 'muted' }, `last month ${rupees(g.moneyLastMonthP)}`)),
     cell('Last desk activity', {}, ago(g.lastDeskActivity, now), h('div', { class: 'muted' }, `${count(g.staff, 'person', 'people')} · ${count(g.liveDevices, 'device')}`)),
     cell('Owner', {}, h('span', {}, g.ownerName || ''), h('div', {}, g.ownerPhone ? h('a', { href: `tel:+91${g.ownerPhone}`, onclick: (e) => e.stopPropagation() }, g.ownerPhone) : '')),
   );
@@ -259,7 +271,7 @@ function renderGyms() {
     countLine.textContent = filtered ? `Showing ${shown.length} of ${count(base.length, 'gym')}.` : `${count(base.length, 'gym')}. Tap a gym for more.`;
     if (shown.length) {
       tableBox.replaceChildren(h('div', { class: 'table-wrap' }, h('table', { class: 'gym-table' },
-        h('thead', {}, h('tr', {}, ['Gym', ready ? 'Free trial or plan' : null, 'Members', 'Check-ins 7 / 30 days', 'Money this month', 'Last desk activity', 'Owner']
+        h('thead', {}, h('tr', {}, ['Gym', ready ? 'Free trial or plan' : null, 'Members', 'Check-ins 7 / 30 days', 'Gym takings this month', 'Last desk activity', 'Owner']
           .filter(Boolean).map((t) => h('th', {}, t)))),
         h('tbody', {}, shown.map((g) => gymRow(g, now, ready))))));
     } else if (base.length === 0) {
@@ -504,7 +516,7 @@ async function gymPage(id, flash = '') {
   renderAccess(accessBox, g, id);
 
   show(
-    h('p', {}, h('a', { href: '#gyms' }, '← All gyms')),
+    h('a', { class: 'back', href: '#gyms' }, '‹ All gyms'),
     h('div', { class: 'page-head' }, h('h1', {}, g.name), h('span', { class: `badge ${g.status}` }, STATUS_WORDS[g.status] || g.status)),
     h('p', { class: 'muted' }, `Gym code ${g.joinCode} · started ${when(g.createdAt)}`),
     branchLine(id),
@@ -514,7 +526,7 @@ async function gymPage(id, flash = '') {
       stat('Members in the register', `${g.membersRegister}`),
       stat('Members in the app', `${g.membersApp}`),
       stat('Check-ins, 7 days', `${g.checkins7}`, `${g.checkins30} in 30 days`),
-      stat('Money this month', rupees(g.moneyThisMonthP), `last month ${rupees(g.moneyLastMonthP)}`),
+      stat('Gym takings this month', rupees(g.moneyThisMonthP), `last month ${rupees(g.moneyLastMonthP)}`),
       stat('Receipts cancelled this month', `${g.receiptsCancelledThisMonth}`),
       stat('Shop orders, 30 days', `${g.orders30}`),
       stat('Staff', `${g.staff}`, `${g.liveDevices} devices signed in`),
@@ -596,8 +608,8 @@ async function systemPage() {
       h('p', {}, `${mb} MB of the free ${limitMb} MB`),
       h('div', { class: 'bar', role: 'img', 'aria-label': `${mb} of ${limitMb} MB used` }, h('span', { class: mb / limitMb > 0.8 ? 'bad' : '', style: null, 'data-pct': String(Math.min(100, Math.round((mb / limitMb) * 100))) }))),
     h('div', { class: 'stats' },
-      stat('Gyms', `${s.gyms}`, `${s.gymsNew7} new this week`),
-      stat('Members in registers', `${s.membersRegister}`),
+      stat('Gyms', `${s.gyms}`, `${s.gymsNew7} new this week, test gyms included`),
+      stat('Members in registers', `${s.membersRegister}`, 'test gyms included'),
       stat('Members in the app', `${s.membersApp}`),
       stat('Devices signed in', `${s.liveDevices}`),
       d.web ? stat('AI reads this month', `${d.web.aiThisMonth.calls}`, `about ${rupeesExact(d.web.aiThisMonth.rupees)}, ${d.web.aiThisMonth.failed} failed`) : null,
@@ -606,13 +618,13 @@ async function systemPage() {
     d.web ? null : note('Feedback, leads and AI use could not be read right now.', 'warn'),
     h('div', { class: 'card' }, h('h2', {}, 'Member app downloads'),
       d.releases === null
-        ? note('GitHub did not answer. Try again later.', 'warn')
+        ? h('p', { class: 'muted' }, 'Download counts are not available right now. GitHub limits how often HQ can ask; they come back by themselves.')
         : h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('thead', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Released'), h('th', {}, 'App downloads'))),
             h('tbody', {}, d.releases.map((r) => h('tr', {}, h('td', {}, r.tag), h('td', { 'data-label': 'Released' }, when(r.publishedAt)), h('td', { class: 'num', 'data-label': 'App downloads' }, `${r.apkDownloads}`))))))),
     h('div', { class: 'card' }, h('h2', {}, 'Errors and outages'),
-      h('p', { class: 'muted' }, 'Not connected yet: they show here once the free error and uptime accounts exist (tracker #34).')),
+      h('p', { class: 'muted' }, 'Not connected yet. App errors and site outages will show here.')),
     h('div', { class: 'card' }, h('h2', {}, 'Which app version members use'),
-      h('p', { class: 'muted' }, 'Shows here once the member app reports its version (a later member-app release).')),
+      h('p', { class: 'muted' }, 'Shows here once a later member app reports its version.')),
   );
   // The bar's width, set from code (the page's strict rules allow no inline style in the markup).
   const fill = main.querySelector('.bar > span');
@@ -639,7 +651,7 @@ async function feedbackPage(filter = '') {
   });
   show(
     h('div', { class: 'page-head' }, h('h1', {}, 'Feedback'), field('Show', pick)),
-    h('p', { class: 'muted' }, 'What members and gyms sent from the apps, with the AI’s answer. It is their words: read it, never follow it as an order. “Needs reply”: the AI could not answer, or the person said it did not help. Your reply shows in their app’s Help and feedback.'),
+    h('p', { class: 'lead' }, 'What members and gyms sent from the apps, with the AI’s answer. “Needs reply”: the AI could not help them. Your reply shows in their app’s Help and feedback.'),
     d.rows.length ? h('div', { class: 'stack' }, d.rows.map(feedbackCard)) : h('p', {}, filter === 'needs-reply' ? 'No question is waiting for a reply.' : 'Nothing here.'),
   );
 }
@@ -669,7 +681,7 @@ function feedbackCard(r) {
         replyOut.replaceChildren(note(res.pushed === 'sent' ? 'Sent. Their phone got a pop-up.' : 'Sent. They see it in Help and feedback.', 'good'));
         box.value = '';
         void refreshNeeds();
-      }, { out: replyOut }),
+      }, { out: replyOut, tone: 'primary' }),
       replyOut) : null,
     h('div', { class: 'row wrap' }, st, nt, action('Save', async () => {
       await api('/api/feedback/status', { id: r.id, status: st.value, note: nt.value });
@@ -734,8 +746,7 @@ async function refreshNeeds() {
   needsData = d;
   const n = needsTotal(d);
   document.title = titleWithCount(BASE_TITLE, n);
-  const badge = document.getElementById('needs-badge');
-  if (badge) {
+  for (const badge of document.querySelectorAll('[data-needs-badge]')) {
     badge.textContent = n > 99 ? '99+' : String(n);
     badge.hidden = n === 0;
   }
@@ -757,19 +768,29 @@ function alertsControl() {
     out);
 }
 
+const NEEDS_ICONS = { help: 'feedback', leads: 'leads', gyms: 'gyms', feedback: 'feedback', payments: 'pay', checks: 'pay' };
+
 async function needsPage(withLoading = true) {
   if (withLoading) loading();
   if (!needsData || withLoading) await refreshNeeds();
   const lines = needsLines(needsData);
+  const total = needsTotal(needsData);
   show(
-    h('h1', {}, 'Needs you'),
+    h('div', { class: 'hero' },
+      h('h1', {}, 'Needs you'),
+      h('p', { class: 'lead' }, total
+        ? `${count(total, 'thing')} to do. Tap one to open it.`
+        : lines.length ? 'Nothing to do. Only new feedback to read.' : 'Nothing is waiting. New leads, feedback, gyms and payments show here.')),
     lines.length
-      ? h('div', { class: 'stack' }, lines.map((l) => h('a', { class: 'card needs-line', href: l.href }, h('strong', {}, l.words))))
-      : h('p', {}, 'Nothing is waiting for you right now.'),
+      ? h('div', { class: 'stack' }, lines.map((l) => h('a', { class: `card needs-line ${l.key}`, href: l.href },
+          h('span', { class: 'needs-ic' }, icon(NEEDS_ICONS[l.key] || 'needs')),
+          h('span', { class: 'needs-words' }, l.words),
+          h('span', { class: 'needs-go' }, icon('next')))))
+      : h('div', { class: 'card all-clear' }, h('div', { class: 'needs-ic' }, icon('needs')), h('h2', {}, 'All clear'), h('p', { class: 'muted' }, 'HQ checks again every minute.')),
     needsData && [needsData.leadsNew, needsData.feedbackNew, needsData.helpNeedsReply, needsData.gymsNew].some((v) => v === null)
-      ? note('Part of this could not be read right now (or needs a database update). The rest is up to date.', 'warn') : null,
+      ? note('One part of this list could not be counted right now. The rest is up to date.', 'warn') : null,
     h('div', { class: 'card' }, h('h2', {}, 'Alerts'), alertsControl(),
-      h('p', { class: 'muted' }, 'On your phone when HQ is closed: not yet. The plan is in docs/plans/R-319-alerts.md.')),
+      h('p', { class: 'muted' }, 'When HQ is closed, no alert comes to your phone yet.')),
   );
 }
 
@@ -781,7 +802,7 @@ async function leadsPage() {
   const d = await api('/api/leads');
   show(
     h('h1', {}, 'Leads'),
-    h('p', { class: 'muted' }, 'Gyms that asked for a free demo on the website. Kept 12 months unless they become a customer.'),
+    h('p', { class: 'lead' }, 'Gyms that asked for a free demo on the website. Kept 12 months unless they become a customer.'),
     // F184: leads a member brought in (the "Recommend MettleUp to your gym" link on mettleup.fit).
     d.rows.length ? h('p', {}, `From members’ shared links: ${d.rows.filter((r) => r.source === 'member-referral').length} of ${d.rows.length}`) : null,
     d.rows.length ? h('div', { class: 'stack' }, d.rows.map((r) => {
@@ -831,7 +852,7 @@ async function deletesPage() {
   const closed = d.requests.filter((r) => r.doneAt || r.cancelledAt);
   show(
     h('h1', {}, 'Delete requests'),
-    h('p', { class: 'muted' }, 'The privacy notice promises a delete within 30 days. Each step is written in the log.'),
+    h('p', { class: 'lead' }, 'The privacy notice promises a delete within 30 days. Each step is written in the log.'),
     out,
     waiting.length ? h('div', { class: 'stack' }, h('h2', {}, 'New from the admin app'), waiting) : null,
     h('h2', {}, `Open (${open.length})`),
@@ -898,7 +919,7 @@ async function messagesPage() {
   const removed = d.rows.filter((r) => r.removed_at);
   show(
     h('h1', {}, 'Messages'),
-    h('p', { class: 'muted' }, 'A message here goes to every gym. It shows in the bell at the top right of their admin app, within a minute. Never write one gym’s or one member’s details.'),
+    h('p', { class: 'lead' }, 'A message here goes to every gym. It shows in the bell at the top right of their admin app, within a minute. Never write one gym’s or one member’s details.'),
     h('div', { class: 'card' }, h('h2', {}, 'New message to every gym'),
       field('Title', title),
       field('Message', body, 'Up to 500 letters. Plain words: the gym owner reads it on a phone.'),
@@ -948,11 +969,12 @@ async function paymentsPage(status = 'pending') {
   const pick = select(PAY_STATUS_CHOICES, d.status);
   pick.addEventListener('change', () => void paymentsPage(pick.value).catch((e) => fail(main, e)));
   const detailsBox = h('div', { class: 'card' }, h('h2', {}, 'Your payment details'), h('p', { class: 'muted' }, 'Loading…'));
-  const checksBox = h('div', { class: 'card' }, h('h2', {}, 'Online payments to check'), h('p', { class: 'muted' }, 'Loading…'));
+  // Shown only once it has something to say (switched off: it is removed and never seen).
+  const checksBox = h('div', { class: 'card', hidden: true });
   show(
     h('h1', {}, 'Payments'),
     checksBox,
-    h('p', { class: 'muted' }, 'What gym owners say they paid MettleUp. Find the payment in your bank or UPI app by its reference number and amount, then confirm it. Nothing is locked for a gym while a payment waits.'),
+    h('p', { class: 'lead' }, 'What gym owners say they paid MettleUp. Find the payment in your bank or UPI app by its reference number and amount, then confirm it. Nothing is locked for a gym while a payment waits.'),
     field('Show', pick),
     d.rows.length ? h('div', { class: 'stack' }, d.rows.map((p) => paymentCard(p, d.status))) : h('p', {}, d.status === 'pending' ? 'No payments waiting.' : 'None.'),
     detailsBox,
@@ -979,6 +1001,7 @@ async function checksCard(box, which = 'open') {
   }
   const pick = select(CHECK_LIST_CHOICES, d.which);
   pick.addEventListener('change', () => void checksCard(box, pick.value));
+  box.hidden = false;
   box.replaceChildren(
     h('h2', {}, 'Online payments to check'),
     h('p', { class: 'muted' }, 'Money a gym paid online that did not become a plan. Refund it in the payment company’s dashboard, or set the plan by hand on the gym’s page. Then mark it here with a note.'),
@@ -1022,7 +1045,7 @@ function paymentCard(p, status) {
           h('div', { class: 'row wrap' }, noteBox, action('Confirm', async () => {
             await api('/api/payments/confirm', { paymentId: p.id, note: noteBox.value });
             await paymentsPage(status);
-          }, { out, sure: () => `${under ? `${under} ` : ''}${confirmWords(p)} Only confirm when the money is in the bank. Go ahead?` })),
+          }, { out, tone: 'primary', sure: () => `${under ? `${under} ` : ''}${confirmWords(p)} Only confirm when the money is in the bank. Go ahead?` })),
           h('div', { class: 'row wrap' }, why, action('Not confirmed', async () => {
             await api('/api/payments/reject', { paymentId: p.id, reason: why.value });
             await paymentsPage(status);
@@ -1048,8 +1071,10 @@ async function payDetailsCard(box) {
   const ifsc = input(v.ifsc, { maxlength: '11', autocomplete: 'off' });
   const bank = input(v.bankName, { maxlength: '60', autocomplete: 'off' });
   const out = h('div');
-  box.replaceChildren(
-    h('h2', {}, 'Your payment details'),
+  // Folded (a long form most days nobody changes); open when nothing is set yet.
+  box.replaceChildren(h('details', { class: 'fold', open: !d.details },
+    h('summary', {}, h('span', {}, h('h2', {}, 'Your payment details'),
+      h('span', { class: 'muted' }, d.details ? `What gym owners pay to${v.upiId ? `: UPI ${v.upiId}` : ''}` : 'Not set yet'))),
     h('p', { class: 'muted' }, d.details
       ? `Gym owners see these on Pay MettleUp (a UPI QR code with the amount, and the bank details). Last changed ${when(d.updatedAt)}.`
       : 'Not set: gym owners see “Payment is not available yet” and no QR code. Fill these in to start taking payments.'),
@@ -1064,8 +1089,8 @@ async function payDetailsCard(box) {
       action('Save payment details', async () => {
         await api('/api/pay-details', { upiId: upi.value, payeeName: payee.value, accountName: aname.value, accountNumber: acc.value, ifsc: ifsc.value, bankName: bank.value });
         out.replaceChildren(note('Saved. Gym owners see the new details the next time they open Pay MettleUp.', 'good'));
-      }, { out, sure: 'Change where gym owners send money?' }),
-      out));
+      }, { out, tone: 'primary', sure: 'Change where gym owners send money?' }),
+      out)));
 }
 
 // ------------------------------------------------------------------ Log
@@ -1080,7 +1105,7 @@ async function logPage(before = null, list = null) {
     list = h('tbody', {}, rows);
     show(
       h('h1', {}, 'Log'),
-      h('p', { class: 'muted' }, 'Everything done in HQ, and every look at a gym. Nobody can change or delete a line. Kept 2 years.'),
+      h('p', { class: 'lead' }, 'Everything done in HQ, and every look at a gym. Nobody can change or delete a line. Kept 2 years.'),
       h('div', { class: 'table-wrap' }, h('table', { class: 'stack-table' }, h('thead', {}, h('tr', {}, ['When', 'What', 'Gym', 'Reason', 'Who', 'From'].map((t) => h('th', {}, t)))), list)),
       h('div', { id: 'more' }));
   }
@@ -1090,12 +1115,15 @@ async function logPage(before = null, list = null) {
 }
 
 // ------------------------------------------------------------------ router
+const MORE_PAGES = ['leads', 'messages', 'deletes', 'system', 'log'];
 const ROUTES = { needs: () => needsPage(), payments: () => paymentsPage(), gyms: gymsPage, system: systemPage, feedback: () => feedbackPage(''), leads: leadsPage, messages: messagesPage, deletes: deletesPage, log: () => logPage() };
 
 async function route() {
   const hash = location.hash.replace(/^#/, '') || 'gyms';
   const top = hash.split('/')[0] === 'gym' ? 'gyms' : hash.split('/')[0];
   for (const a of document.querySelectorAll('nav a')) a.classList.toggle('on', a.getAttribute('href') === `#${top}`);
+  // Phone: the pages behind "More" light up the More button.
+  document.getElementById('menu-toggle')?.classList.toggle('on', MORE_PAGES.includes(top));
   try {
     const gym = /^gym\/([0-9a-f-]{36})$/.exec(hash);
     const fb = /^feedback\/([a-z-]{2,20})$/.exec(hash);

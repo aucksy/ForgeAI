@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#F0662A">
+  <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f4f5f8" media="(prefers-color-scheme: light)">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="MettleUp HQ">
@@ -19,26 +20,60 @@
   <script type="module" src="/pwa.js"></script>
 </head>
 <body>
+  <!-- One set of icons, used by the side menu (computer) and the bottom bar (phone). -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-needs" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-gyms" viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></symbol>
+    <symbol id="i-pay" viewBox="0 0 24 24"><path d="M6 4h12M6 9h12M6 4c5 0 8 1 8 5s-3 5-8 5l8 6"/></symbol>
+    <symbol id="i-feedback" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-leads" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+    <symbol id="i-messages" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-deletes" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-system" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+    <symbol id="i-log" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  </svg>
+
+  <!-- Phone: a slim bar on top. Computer: hidden (the side menu carries the name). -->
   <header class="top">
-    <a class="brand" href="#gyms">MettleUp <span>HQ</span></a>
+    <a class="brand" href="#needs"><span class="brand-mark" aria-hidden="true">M</span>MettleUp <span class="brand-hq">HQ</span></a>
     <button id="install" class="button install" type="button" hidden>Install app</button>
-    <button id="menu-toggle" class="button menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
-    <div id="menu" class="menu">
-      <nav aria-label="HQ pages">
-        <a href="#needs">Needs you <span id="needs-badge" class="nav-badge" hidden></span></a>
-        <a href="#gyms">All gyms</a>
-        <a href="#payments">Payments</a>
-        <a href="#system">System</a>
-        <a href="#feedback">Feedback</a>
-        <a href="#leads">Leads</a>
-        <a href="#messages">Messages</a>
-        <a href="#deletes">Delete requests</a>
-        <a href="#log">Log</a>
-      </nav>
-      <div class="me"><span id="who"></span> <a href="/auth/logout">Sign out</a></div>
-    </div>
     <p id="install-hint" class="install-hint" role="status" hidden></p>
   </header>
+
+  <div id="scrim" class="scrim" hidden></div>
+
+  <!-- Computer: the side menu. Phone: the "More" sheet that slides up from the bottom. -->
+  <aside id="menu" class="side" aria-label="HQ pages">
+    <a class="brand side-brand" href="#needs"><span class="brand-mark" aria-hidden="true">M</span>MettleUp <span class="brand-hq">HQ</span></a>
+    <nav class="side-nav" aria-label="HQ pages">
+      <p class="nav-group in-tabs">Today</p>
+      <a class="in-tabs" href="#needs"><svg class="ic" aria-hidden="true"><use href="#i-needs"/></svg><span>Needs you</span><span class="nav-badge" data-needs-badge hidden></span></a>
+      <a class="in-tabs" href="#gyms"><svg class="ic" aria-hidden="true"><use href="#i-gyms"/></svg><span>All gyms</span></a>
+      <a class="in-tabs" href="#payments"><svg class="ic" aria-hidden="true"><use href="#i-pay"/></svg><span>Payments</span></a>
+      <a class="in-tabs" href="#feedback"><svg class="ic" aria-hidden="true"><use href="#i-feedback"/></svg><span>Feedback</span></a>
+      <p class="nav-group phone-only">Pages</p>
+      <a href="#leads"><svg class="ic" aria-hidden="true"><use href="#i-leads"/></svg><span>Leads</span></a>
+      <p class="nav-group">Tools</p>
+      <a href="#messages"><svg class="ic" aria-hidden="true"><use href="#i-messages"/></svg><span>Messages</span></a>
+      <a href="#deletes"><svg class="ic" aria-hidden="true"><use href="#i-deletes"/></svg><span>Delete requests</span></a>
+      <a href="#system"><svg class="ic" aria-hidden="true"><use href="#i-system"/></svg><span>System</span></a>
+      <a href="#log"><svg class="ic" aria-hidden="true"><use href="#i-log"/></svg><span>Log</span></a>
+    </nav>
+    <div class="me"><span id="who"></span><a href="/auth/logout"><svg class="ic" aria-hidden="true"><use href="#i-out"/></svg>Sign out</a></div>
+  </aside>
+
   <main id="main"><p class="muted">Loading…</p></main>
+
+  <!-- Phone only: the bottom bar, in thumb reach. -->
+  <nav class="tabs" aria-label="Main pages">
+    <a href="#needs"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-needs"/></svg><span class="nav-badge" data-needs-badge hidden></span></span><span>Needs you</span></a>
+    <a href="#gyms"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-gyms"/></svg></span><span>Gyms</span></a>
+    <a href="#payments"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-pay"/></svg></span><span>Payments</span></a>
+    <a href="#feedback"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-feedback"/></svg></span><span>Feedback</span></a>
+    <button id="menu-toggle" class="tab-more" type="button" aria-expanded="false" aria-controls="menu"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></span><span>More</span></button>
+  </nav>
 </body>
 </html>
