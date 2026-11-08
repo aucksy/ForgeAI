@@ -182,8 +182,10 @@ appId: com.mettleup.app
     timeout: 30000
 - assertNotVisible:
     id: "new-dot-row-health"
+# Plates and bars sits ABOVE Health apps (owner-phone run 42416381134 scrolled down past it).
 - scrollUntilVisible:
     element: "^Plates and bars$"
+    direction: UP
     centerElement: true
     timeout: 30000
 - extendedWaitUntil:
