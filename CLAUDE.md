@@ -104,9 +104,10 @@ every rest, notification shade after ticks); every interaction tried (tap, hold,
 every number on a screenshot read against its label. Lesson: D:/Brain/Lessons/forgeai-audits-missed-what-a-real-workout-shows.md
 
 ## Frozen files (read-only — import and TEST them, never edit)
-`src/engine/*`, `src/components/ui/*`, `src/components/charts/*`, `src/db/schema.ts`, and existing
+`src/engine/*`, `src/components/ui/*`, `src/db/schema.ts`, and existing
 `src/db/repos/*` / `src/services/*` signatures. Any schema change is **additive only** (a new
 `initTracker…`-style migration; never edit `schema.ts`). See `docs/CONTRACTS.md`.
+**Unlocked 8 Nov 2026 (owner said "Yes"): `src/components/charts/*` may be edited** so every chart taps, picks and opens the same way (D:/Brain/How I Like Things/every-chart-behaves-the-same.md). Any chart change must be checked on every screen that uses that chart.
 
 ## Build & ship
 - **⭐ Owner rule (3 Nov 2026, R-309): proof before any release.** Before bumping, tagging or starting a release run, quote in chat HIS message that said "release", with its date and time, and name what it covers (the waiting list at that moment). One "release" = one version. No quoted message from this conversation = no release. A summary line or a note saying "he said release" is not proof.
