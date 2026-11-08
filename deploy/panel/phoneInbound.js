@@ -25,7 +25,7 @@
 // LIMITS: the same as asking for a code (phoneCode.js limitFor, counted in phone_code_asks): per number 1 a minute,
 // 3 an hour, 5 a day; per network address 10 an hour. Codes last 10 minutes; a verified one never works again.
 
-import { CODE_MINUTES, MAX_WRONG, PURPOSES, hmacHex, indianMobile, ipKey, limitFor, makeProof, newCode, phoneKey, sameText } from './phoneCode.js';
+import { CODE_MINUTES, GRAPH_VERSION, MAX_WRONG, PURPOSES, hmacHex, indianMobile, ipKey, limitFor, makeProof, newCode, phoneKey, sameText } from './phoneCode.js';
 
 export const WA_PREFIX = 'MettleUp code';
 
@@ -251,19 +251,57 @@ export function incomingTexts(body) {
  * taps. Returns what happened per message (for the test): 'verified' | 'wrong_number' | 'no_code' | 'none'.
  * Never throws (Meta must always get its 200); never logs the number, the code or the text.
  */
-export async function inboundMessages(env, body, now = Date.now(), log = console) {
+export async function inboundMessages(env, body, now = Date.now(), log = console, fetcher = fetch) {
   const results = [];
   if (!inboundConfigured(env)) return results;
   const secret = env.PHONE_CODE_SECRET;
   for (const { from, text } of incomingTexts(body)) {
     try {
-      results.push(await oneMessage(env, secret, from, text, now, log));
+      const result = await oneMessage(env, secret, from, text, now, log);
+      results.push(result);
+      if (REPLY[result]) await replyText(env, from, REPLY[result], log, fetcher);
     } catch (e) {
       log.error(`[phone-inbound] message from=${tail(from)} could not be checked`, e instanceof Error ? e.message : e);
       results.push('none');
     }
   }
   return results;
+}
+
+/**
+ * Owner, 8 Nov 2026: "WhatsApp can send back a response saying ... the verification is complete". The person just
+ * wrote to us, so this is a free reply inside Meta's 24-hour service window (no template). Best try only: if Meta
+ * refuses (for example its 131042 billing block), the page still turns green by itself. Never logs the number or text.
+ */
+export const REPLY = {
+  verified: 'Done. Your number is checked for MettleUp. Go back to the MettleUp page to finish.',
+  no_code: 'We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.',
+};
+
+export async function replyText(env, to, text, log = console, fetcher = fetch) {
+  if (!env.WHATSAPP_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID || !/^\d{8,15}$/.test(String(to))) return false;
+  const url = `https://graph.facebook.com/${env.WHATSAPP_GRAPH_VERSION || GRAPH_VERSION}/${env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+  try {
+    const r = await fetcher(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${env.WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messaging_product: 'whatsapp', recipient_type: 'individual', to: String(to), type: 'text', text: { preview_url: false, body: text } }),
+    });
+    if (r.ok) {
+      log.log(`[phone-inbound] reply sent to=${tail(to)}`);
+      return true;
+    }
+    let code = null;
+    try {
+      code = (await r.json())?.error?.code ?? null;
+    } catch {
+      code = null;
+    }
+    log.warn(`[phone-inbound] reply refused by Meta status=${r.status} code=${code} to=${tail(to)}`);
+  } catch (e) {
+    log.warn(`[phone-inbound] reply could not be sent to=${tail(to)}`, e instanceof Error ? e.message : e);
+  }
+  return false;
 }
 
 async function oneMessage(env, secret, from, text, now, log) {

@@ -7,7 +7,7 @@ import { createHmac } from 'node:crypto';
 import { test } from 'node:test';
 
 import { MAX_WRONG, handlePhoneCode, hmacHex } from './phoneCode.js';
-import { deleteOldInbound, inboundMessages, inboundNumber, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
+import { REPLY, deleteOldInbound, inboundMessages, inboundNumber, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 import { handleWhatsAppHook } from './whatsappHook.js';
 
@@ -257,4 +257,41 @@ test('clean-up: rows older than 2 days go', quiet(async () => {
   await startFor(s, OWNER);
   await startFor(s, OTHER, 'pin', { now: T0 + 3 * 86_400_000 });
   assert.equal(await deleteOldInbound(s.WEB, T0 + 3 * 86_400_000), 1);
+}));
+
+test('reply (owner 8 Nov 2026): a checked message gets "Done" back on WhatsApp; a changed one gets help; a wrong number gets nothing', quiet(async () => {
+  const s = setup({ WHATSAPP_TOKEN: 'fake-token', WHATSAPP_PHONE_NUMBER_ID: '111' });
+  const sent = [];
+  const fake = async (url, init) => {
+    sent.push({ url, body: JSON.parse(init.body) });
+    return new Response(JSON.stringify({ messages: [{ id: 'wamid.r' }] }), { status: 200 });
+  };
+  const r = await startFor(s, OWNER);
+  const text = `MettleUp code ${r.body.code}`;
+  // Wrong number: no reply (that phone is not the person who is waiting).
+  assert.equal((await inboundMessages(s.env, hookBody('919000000002', text), T0 + 1000, silent, fake))[0], 'wrong_number');
+  assert.equal(sent.length, 0);
+  // A changed message from the waiting number: the help line.
+  assert.equal((await inboundMessages(s.env, hookBody('919000000001', 'hello'), T0 + 1500, silent, fake))[0], 'no_code');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].body.text.body, REPLY.no_code);
+  // The right message: "Done", as plain text (free inside the 24-hour window), to the sender.
+  assert.equal((await inboundMessages(s.env, hookBody('919000000001', text), T0 + 2000, silent, fake))[0], 'verified');
+  assert.equal(sent.length, 2);
+  assert.equal(sent[1].url, 'https://graph.facebook.com/v27.0/111/messages');
+  assert.deepEqual(sent[1].body, { messaging_product: 'whatsapp', recipient_type: 'individual', to: '919000000001', type: 'text', text: { preview_url: false, body: REPLY.verified } });
+  assert.match(REPLY.verified, /Go back to the MettleUp page/);
+}));
+
+test('reply: Meta refusing it (131042) or no send key changes nothing; the page still turns green', quiet(async () => {
+  const s = setup({ WHATSAPP_TOKEN: 'fake-token', WHATSAPP_PHONE_NUMBER_ID: '111' });
+  const refuse = async () => new Response(JSON.stringify({ error: { code: 131042 } }), { status: 400 });
+  const r = await startFor(s, OWNER);
+  assert.equal((await inboundMessages(s.env, hookBody('919000000001', `MettleUp code ${r.body.code}`), T0 + 1000, silent, refuse))[0], 'verified');
+  assert.ok((await statusOf(s, r.body.id, { now: T0 + 2000 })).body.proof);
+  const s2 = setup();
+  let calls = 0;
+  const r2 = await startFor(s2, OWNER);
+  assert.equal((await inboundMessages(s2.env, hookBody('919000000001', `MettleUp code ${r2.body.code}`), T0 + 1000, silent, async () => { calls++; return new Response('{}'); }))[0], 'verified');
+  assert.equal(calls, 0);
 }));
