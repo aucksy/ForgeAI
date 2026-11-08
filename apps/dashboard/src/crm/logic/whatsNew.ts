@@ -38,6 +38,15 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // Verify with WhatsApp (owner yes 8 Nov 2026): inbound mode, number 918690560741. Sign-in page only, so no `go`.
+    id: '2026-11-08',
+    lines: [
+      {
+        text: 'Forgot your PIN? On the sign-in page, tap "Verify with WhatsApp" and send MettleUp one free WhatsApp message. Then choose a new PIN.',
+      },
+    ],
+  },
+  {
     // R-388 (owner, 7 Nov 2026): Branding reloaded itself every few seconds and lost the owner's unsaved pick.
     id: '2026-11-07',
     lines: [
