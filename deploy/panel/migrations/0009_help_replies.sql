@@ -1,4 +1,4 @@
--- NOT APPLIED - needs owner yes. Cloudflare D1 `forgeai-web` (our web server's own small database),
+-- APPLIED LIVE 9 Nov 2026 (owner: "yes, apply 0009"); recorded in d1_migrations. Cloudflare D1 `forgeai-web` (our web server's own small database),
 -- NOT the gym server: no gym or member records are in it.
 -- Apply with: npx wrangler d1 migrations apply forgeai-web --remote   (from deploy/panel)
 --

@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-409. "yes, apply 0009"; the cut-off "Also" was nothing — 9 Nov 2026
+- He said: "yes, apply 0009" and the "Also" message meant only "Should be optimized for mobile" (nothing new).
+- Ran ONLY migrations/0009_help_replies.sql with `wrangler d1 execute --file` (not `migrations apply`, which would also run 0010-0013 that were applied by hand), then inserted '0009_help_replies.sql' into d1_migrations. Live check: 5 new feedback columns present, 58 rows kept; HQ "could not be counted" warning gone. 0010-0013 stay unrecorded in d1_migrations: never run `migrations apply` there without recording them first.
+
 ## R-408. 0.76.0 gate re-run; HQ redesign live — 8 Nov 2026
 - HQ redesign deployed (forgeai-hq version 115a1521) after CI 42488760193 passed on 620c33f1. Live check in his Chrome: new side menu, Needs you badge 3 (was 56). Phone layout proven by the 390 px cloud test.
 - Gate runs on 0bb3870f failed on TEST steps, not the app: big-text tour swiped past "Your progress" (both profiles), and the F199 UAT waited for "Reps in" that sat above the screen on the owner phone. Both flows fixed.
