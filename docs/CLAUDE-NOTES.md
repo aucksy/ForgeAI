@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-405. Verify with WhatsApp live; "WhatsApp can send back a response" — 8 Nov 2026
+He said: "es, go live with WhatsApp verify"; the number people send to is 91 86905 60741; he set
+WHATSAPP_APP_SECRET himself (first two tries put the secret in the NAME; then right). D1 0013 applied, var set,
+deployed 7b4c5eac. His first real sign-up said "This check has run out": the Worker PHONE_CODE_SECRET had a
+trailing line break (PowerShell pipe, 7 Nov), so Supabase refused every proof. Re-put with no newline; his next
+try made a new gym. Then he said: the person must come back to the page to know it worked; can WhatsApp reply
+"verification complete, go back to the app"? Did: a free plain-text reply inside the 24-hour window after a
+checked message ("Done. Your number is checked...") and after a changed message (help line). Best try only:
+Meta 131042 may block it; the page still turns green. Not a template, no cost. Commit cf2af202.
+
 ## R-403. Progress tab moves into Profile; every chart point opens something (F199) — 8 Nov 2026
 He said (8 Nov 2026): "The charts behavior need to be the same. I have told you this before. And the profile one
 is actually more important. I feel like we don't even need two separate sections for similar information ... move
