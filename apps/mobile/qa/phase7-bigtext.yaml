@@ -187,8 +187,11 @@ appId: com.mettleup.app
     index: 0
 # Big text (8 Nov 2026 run 42488638823): a fast swipe jumped over the rows into the workout feed.
 # Stop at the short "Your progress" title first, then move slowly onto the row.
+# Run 42506481894: Profile is still scrolled down to the feed from the Calendar step above, so the
+# title is ABOVE the screen: scroll UP to it.
 - scrollUntilVisible:
     element: "(?i)^your progress$"
+    direction: UP
     centerElement: true
     speed: 20
     visibilityPercentage: 50
