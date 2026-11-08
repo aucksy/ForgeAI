@@ -225,8 +225,10 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Duration$"
-- extendedWaitUntil:
-    visible: "Time trained in .*"
+# On his phone size (large text) the line sits above the screen edge after the tap: scroll up to it.
+- scrollUntilVisible:
+    element: "Time trained in .*"
+    direction: UP
     timeout: 15000
 - scrollUntilVisible:
     element:
