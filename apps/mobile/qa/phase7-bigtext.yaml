@@ -185,11 +185,20 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Profile$"
     index: 0
+# Big text (8 Nov 2026 run 42488638823): a fast swipe jumped over the rows into the workout feed.
+# Stop at the short "Your progress" title first, then move slowly onto the row.
+- scrollUntilVisible:
+    element: "(?i)^your progress$"
+    centerElement: true
+    speed: 20
+    visibilityPercentage: 50
+    timeout: 30000
 - scrollUntilVisible:
     element:
       id: "progress-row-Charts"
-    centerElement: true
-    timeout: 30000
+    speed: 20
+    visibilityPercentage: 50
+    timeout: 15000
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-07b-progress

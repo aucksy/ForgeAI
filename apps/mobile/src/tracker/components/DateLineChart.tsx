@@ -287,7 +287,8 @@ export function DateLineChart({ data, height = 180, color, fillGradient, yFormat
             x={activePt.x}
             chartW={w}
             value={fmt(activeDatum.y)}
-            date={onOpenPicked ? (pickedDate ?? xLabel)(activeDatum.x) : xLabel(activeDatum.x)}
+            // Review 8 Nov: an empty week or month names its period too (not only its first day).
+            date={(pickedDate ?? xLabel)(activeDatum.x)}
             onOpen={onOpenPicked ? () => onOpenPicked(activeDatum) : undefined}
             onPressIn={() => {
               onBox.current = true;

@@ -95,6 +95,18 @@ describe('F199 back targets', () => {
   });
 });
 
+describe('F199 review fixes (8 Nov 2026)', () => {
+  it('the exercise picker names Profile, not the removed Progress tab', () => {
+    const s = readFileSync(join(APP, 'progress', 'pick-lift.tsx'), 'utf8');
+    expect(s).toContain('subtitle="See its trend on your Profile"');
+    expect(s).not.toMatch(/(subtitle|title)="[^"]*Progress/);
+  });
+  it('a picked point with no workouts still names its week or month', () => {
+    const s = readFileSync(join(APP, '..', 'tracker', 'components', 'DateLineChart.tsx'), 'utf8');
+    expect(s).toContain('date={(pickedDate ?? xLabel)(activeDatum.x)}');
+  });
+});
+
 describe('F199 What is new buttons and new feature dots', () => {
   it('an older Open Progress button opens Profile with the right words', () => {
     const olds = WHATS_NEW_LOG.flatMap((e) => e.lines).filter((l) => l.go?.href === '/progress');

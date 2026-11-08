@@ -13,14 +13,14 @@ import { useProgressPick } from '@/tracker/store/progressPickStore';
 export default function PickLiftScreen() {
   const router = useRouter();
   const pick = useProgressPick((s) => s.pick);
-  // A double tap never picks twice or pops past Progress.
+  // A double tap never picks twice or pops past Profile.
   const done = useRef(false);
 
   return (
     <Screen
       scroll={false}
       title="Any exercise"
-      subtitle="See its trend on Progress"
+      subtitle="See its trend on your Profile"
       onBack={() => goBack(router, '/profile')}
     >
       <ExercisePickerList
