@@ -7,6 +7,13 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-407. Release 0.76.0: "You can also release whatever other changes are pending" — 8 Nov 2026
+He said it in the HQ-overhaul chat on 8 Nov 2026 (evening IST). One release = 0.76.0. Covers the waiting list: F199
+(Progress inside Profile), R-401 (no old What's new next to the update screen), R-402/R-403 (chart boxes open their
+workouts), R-404 (bar charts tap/pick/open + month labels). What's new: 4 lines (member-words; Gemini silent 90 s,
+fresh-reader helper wording). Gate: CI, whole qa-device owner + default (+uat), qa-journeys on the release commit,
+adversarial review, then tag v0.76.0. After the release: panel deploy with the real F199 help articles.
+
 ## R-406. HQ overhaul: "awesome looking UI/UX for HQ ... treat me as end user", "Should be optimized for mobile" — 8 Nov 2026
 He asked to overhaul HQ to perfection, find gaps, phone first. Audit (live, read only) found: a cramped top menu, a
 narrow column on a wide screen, developer text on screen ("docs/plans/R-319-alerts.md", "tracker #34"), a raw log

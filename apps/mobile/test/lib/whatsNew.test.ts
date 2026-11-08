@@ -84,7 +84,7 @@ describe('R-98: short lines, each try-it button opens a real screen', () => {
   it('every button opens a screen that exists, with a short label', () => {
     const app = join(__dirname, '..', '..', 'src', 'app');
     const screen = (href: string) =>
-      href === '/workout' || href === '/progress' || href === '/shop'
+      href === '/workout' || href === '/progress' || href === '/shop' || href === '/profile'
         ? join(app, '(tabs)', `${href.slice(1)}.tsx`)
         : join(app, `${href.slice(1)}.tsx`);
     for (const e of WHATS_NEW_LOG) {

@@ -70,6 +70,18 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 8 Nov 2026 ("You can also release whatever other changes are pending", R-407): F199 + R-402 +
+    // R-403 + R-404 + R-401. member-words: Gemini gave no answer in 90 s, so a fresh-reader helper checked the lines.
+    version: '0.76.0',
+    date: '8 Nov',
+    lines: [
+      { text: 'Your progress is now on the Profile tab: Charts, Exercises, Records, Body and Reports.', go: { label: 'Open Profile', href: '/profile' } },
+      { text: 'On any chart, tap a dot or bar, then tap the date to see those workouts.' },
+      { text: 'Bar charts now show month names along the bottom.' },
+      { text: 'Small fixes.' },
+    ],
+  },
+  {
     // Owner's release, 7 Nov 2026 ~23:3x IST ("Okay you can release next 2 features", R-400): F194 + R-398 + R-397.
     // member-words: Gemini timed out twice, so a fresh-reader helper checked the lines (clearer "add up", "dot").
     version: '0.75.0',
