@@ -19,6 +19,7 @@
 //  - /api/crash     both apps' uncaught errors, no personal data (crash.js, #34 alerts).
 //  - /api/hq-news   messages from MettleUp HQ for the admin app's bell (hqNews.js, R-243).
 //  - /api/phone-code/status|send|verify  a 6-digit code by WhatsApp: Forgot PIN and the new-gym number check (phoneCode.js, F187).
+//  - /api/phone-code/inbound/start|status  "Verify with WhatsApp": the person sends US the code (phoneInbound.js, 8 Nov 2026).
 // Every day at 03:00 India time (Cron Trigger, wrangler.jsonc) crash reports older than 90 days are
 // deleted (#72, the privacy notice says so).
 //  - /api/billing/checkout  "Pay online" for a MettleUp plan, forwarded to the HQ Worker (billing.js, billing step 3).
@@ -42,6 +43,7 @@ import { handleMatchColumns } from './aiMatch.js';
 import { handlePay, scheduledPay } from './pay.js';
 import { handleBillingCheckout } from './billing.js';
 import { deleteOldPhoneCodes, handlePhoneCode } from './phoneCode.js';
+import { deleteOldInbound } from './phoneInbound.js';
 import { handleWhatsAppHook } from './whatsappHook.js';
 import { handleProxy, isProxyPath, pushAfter } from './proxy.js';
 import { APP_HOST, APP_ORIGIN, handleMove, routeFor } from './hosts.js';
@@ -152,6 +154,13 @@ export default {
       deleteOldPhoneCodes(env.WEB).then(
         (n) => console.log('[phone-code] clean-up: deleted', n, 'rows older than 2 days'),
         (e) => console.warn('[phone-code] clean-up skipped (D1 migration 0012 applied?)', e),
+      ),
+    );
+    // "Verify with WhatsApp": its waiting taps are kept 2 days (phoneInbound.js).
+    ctx.waitUntil(
+      deleteOldInbound(env.WEB).then(
+        (n) => console.log('[phone-inbound] clean-up: deleted', n, 'rows older than 2 days'),
+        (e) => console.warn('[phone-inbound] clean-up skipped (D1 migration 0013 applied?)', e),
       ),
     );
     // F147: the friend page's address hashes are kept 2 days (friend.js).

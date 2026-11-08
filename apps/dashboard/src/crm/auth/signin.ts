@@ -414,6 +414,8 @@ export const FORGOT_PIN_WORDS =
   'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.';
 
 /** F187 (0061): the number check by WhatsApp code failed or is missing. */
+/** "Verify with WhatsApp" (8 Nov 2026): the gym server did not take the check (used, or over 15 minutes old). */
+export const CHECK_RAN_OUT = 'This check has run out. Tap "Verify with WhatsApp" to check your number again.';
 export const PHONE_CHECK_WORDS = 'We could not check your mobile number. Ask for a new code on WhatsApp and try again.';
 
 /** Plain words for a failed sign-in, people change or code. PURE. */

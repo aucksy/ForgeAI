@@ -2,7 +2,7 @@
 //   - Forgot PIN (purpose 'pin'): an owner or desk person gets a code, types it, and picks a new PIN.
 //   - Set up a new gym (purpose 'signup'): the code proves the number is real; one free trial per number.
 // Routes on the panel's own address (app.mettleup.fit):
-//   GET  /api/phone-code/status  -> {available}           false = the screens hide the WhatsApp way
+//   GET  /api/phone-code/status  -> {available, mode}     false = the screens hide the WhatsApp way; mode 'send' | 'inbound'
 //   POST /api/phone-code/send    {phone, purpose, website} -> {ok: true} (always the same for 'pin')
 //   POST /api/phone-code/verify  {phone, purpose, code}   -> {ok: true, proof, expiresAt} | {error, triesLeft}
 //
@@ -25,6 +25,11 @@
 // one use, compared in constant time. A right code gives a PROOF the gym server checks itself (0061):
 // "v1.<purpose>.<phone>.<expires>.<nonce>.<hmac>", 15 minutes, one use. The app never just says "verified".
 // LOGS: every send result and error, never the code, the number or the token.
+//
+// 8 Nov 2026: "Verify with WhatsApp" (phoneInbound.js) flips the direction: the person sends US the code, which is
+// free and not blocked by Meta. /status then answers {available: true, mode: 'inbound'}; this file's send path stays.
+
+import { handleInbound, inboundAvailable } from './phoneInbound.js';
 
 export const CODE_MINUTES = 10;
 export const MAX_WRONG = 5;
@@ -221,8 +226,12 @@ export async function handlePhoneCode(request, env, url, rpc, { fetcher = fetch,
   const path = url.pathname.replace(/\/+$/, '');
   if (path === '/api/phone-code/status') {
     if (request.method !== 'GET') return answer(405, { error: 'BAD_REQUEST' });
-    return answer(200, { available: await isAvailable(env, now) });
+    // 8 Nov 2026: "Verify with WhatsApp" (the person sends US a message, phoneInbound.js) wins when it is on;
+    // the old "we send you a code" stays as it was underneath.
+    if (await inboundAvailable(env)) return answer(200, { available: true, mode: 'inbound' });
+    return answer(200, (await isAvailable(env, now)) ? { available: true, mode: 'send' } : { available: false });
   }
+  if (path.startsWith('/api/phone-code/inbound/')) return handleInbound(request, env, path, url, { now });
   if (path === '/api/phone-code/send') return send(request, env, rpc, fetcher, now, ctx);
   if (path === '/api/phone-code/verify') return verify(request, env, now);
   return answer(404, { error: 'NOT_FOUND' });

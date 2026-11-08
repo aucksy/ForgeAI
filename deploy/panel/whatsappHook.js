@@ -8,6 +8,10 @@
 // (only its last 2 digits), nor any message text. The verify token is not a secret: the GET only echoes a number,
 // so it lives in wrangler.jsonc vars (WHATSAPP_HOOK_VERIFY). When the secret WHATSAPP_APP_SECRET exists, a POST
 // must carry Meta's X-Hub-Signature-256 or it is dropped; without it the lines are marked "unsigned".
+// 8 Nov 2026: a SIGNED message TO our number is also checked for a "Verify with WhatsApp" code (phoneInbound.js).
+// An unsigned one never verifies anything (anybody could post a fake "message from your number").
+
+import { inboundMessages } from './phoneInbound.js';
 
 const MAX_BODY = 64 * 1024;
 
@@ -48,7 +52,7 @@ export function statusLines(body) {
   return lines;
 }
 
-export async function handleWhatsAppHook(request, env, url, log = console) {
+export async function handleWhatsAppHook(request, env, url, log = console, now = Date.now()) {
   if (request.method === 'GET') {
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token') || '';
@@ -85,6 +89,15 @@ export async function handleWhatsAppHook(request, env, url, log = console) {
   const lines = statusLines(body);
   for (const line of lines) (line.includes('status=failed') || line.includes('error') ? log.error : log.log)(`${line} (${mark})`);
   if (lines.length === 0) log.log(`[whatsapp] webhook POST with no statuses (${mark})`);
+  if (mark === 'signed') {
+    try {
+      await inboundMessages(env, body, now, log);
+    } catch (e) {
+      log.error('[phone-inbound] messages could not be checked', e instanceof Error ? e.message : e);
+    }
+  } else if (lines.some((l) => l.includes('message in'))) {
+    log.warn('[phone-inbound] message in ignored for verifying: the webhook is unsigned (set WHATSAPP_APP_SECRET)');
+  }
   // Meta retries anything that is not a 200, so always 200 once read.
   return new Response('OK', { status: 200 });
 }

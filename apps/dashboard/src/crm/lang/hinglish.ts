@@ -135,6 +135,53 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'We sent a 6-digit code to {phone} on WhatsApp. It works for 10 minutes.':
     'Humne {phone} par WhatsApp se 6 number ka code bheja hai. Yeh 10 minute tak chalega.',
   'Get code on WhatsApp': 'WhatsApp par code lo',
+  // "Verify with WhatsApp" (8 Nov 2026): the person sends us one WhatsApp message (auth/WhatsAppVerify.tsx).
+  'Verify with WhatsApp': 'WhatsApp se check karo',
+  'Tick the box to agree to the terms. Then tap “Verify with WhatsApp”.': 'Terms maanne ke liye box par tick karo. Phir “WhatsApp se check karo” dabao.',
+  'First we check that this mobile number is yours. You send us one WhatsApp message. It is free.':
+    'Pehle hum check karte hain ki yeh mobile number aapka hai. Aap humein ek WhatsApp message bhejo. Yeh free hai.',
+  'What happens': 'Kya hoga',
+  '1. WhatsApp opens with a message ready to send.': '1. WhatsApp khulega, message pehle se likha hoga.',
+  '2. Tap Send. Do not change the message.': '2. Send dabao. Message mein kuch mat badlo.',
+  '3. Come back here. We check it in a few seconds.': '3. Yahan wapas aao. Hum kuch second mein check kar lenge.',
+  'Send it from the WhatsApp on this number. A message from another number does not work.':
+    'Isi number wale WhatsApp se bhejo. Doosre number se aaya message nahi chalega.',
+  'Send the message in WhatsApp': 'WhatsApp mein message bhejo',
+  'Send it from {phone} to the MettleUp number. Then come back here.': '{phone} se MettleUp number par bhejo. Phir yahan wapas aao.',
+  'The message': 'Message',
+  'To: MettleUp, {number}': 'Kisko: MettleUp, {number}',
+  'Waiting for your message': 'Aapke message ka intezaar hai',
+  'This code works for {time} more minutes.': 'Yeh code {time} minute aur chalega.',
+  'Waiting for your message. The code works for {time} more minutes.': 'Aapke message ka intezaar hai. Code {time} minute aur chalega.',
+  'Open WhatsApp again': 'WhatsApp dobara kholo',
+  'Open WhatsApp': 'WhatsApp kholo',
+  'WhatsApp did not open? Send the message above to {number} yourself. Type it exactly.':
+    'WhatsApp nahi khula? Upar wala message khud {number} par bhejo. Bilkul waisa hi likho.',
+  'Use a different number': 'Doosra number daalo',
+  'QR code that opens WhatsApp with the message ready': 'QR code jo WhatsApp mein likha hua message kholta hai',
+  'Scan with the phone that has {phone}': 'Us phone se scan karo jismein {phone} hai',
+  '1. Open the camera on that phone and point it at the code.': '1. Us phone ka camera kholo aur code ki taraf rakho.',
+  '2. WhatsApp opens with the message ready. Tap Send.': '2. WhatsApp mein message likha hua khulega. Send dabao.',
+  '3. This page turns green by itself.': '3. Yeh page apne aap green ho jayega.',
+  'No camera? Send "{text}" to {number} on WhatsApp.': 'Camera nahi hai? WhatsApp par {number} ko "{text}" bhejo.',
+  'Number checked': 'Number check ho gaya',
+  '{phone} is yours.': '{phone} aapka hi hai.',
+  'Save new PIN': 'Naya PIN save karo',
+  'We got your message from a different number. Send it from the WhatsApp on {phone}.':
+    'Aapka message doosre number se aaya. {phone} wale WhatsApp se bhejo.',
+  'This code has run out. Tap "Verify with WhatsApp" to get a new one.':
+    'Yeh code khatam ho gaya. Naya code lene ke liye "WhatsApp se check karo" dabao.',
+  'We could not find the code in your message. Tap "Open WhatsApp again" and send it without changes.':
+    'Aapke message mein code nahi mila. "WhatsApp dobara kholo" dabao aur bina badle bhejo.',
+  'Too many tries for this number. Wait an hour, then try again.': 'Is number se bahut baar try hua. Ek ghanta ruko, phir try karo.',
+  'Can’t reach the internet. We keep checking when it is back.': 'Internet nahi mil raha. Internet aate hi hum check karte rahenge.',
+  'You tapped "Verify with WhatsApp" a moment ago. Wait {n} seconds, then try again.':
+    'Aapne abhi "WhatsApp se check karo" dabaya tha. {n} second ruko, phir try karo.',
+  'Checking by WhatsApp is not working right now. Please try again later.': 'WhatsApp se check abhi nahi chal raha. Thodi der baad try karo.',
+  'This check has run out. Tap "Verify with WhatsApp" to check your number again.':
+    'Yeh check khatam ho gaya. Number dobara check karne ke liye "WhatsApp se check karo" dabao.',
+  'You sign in with this number. You check it by sending us one WhatsApp message. It is free.':
+    'Aap is number se sign in karoge. Ise check karne ke liye humein ek WhatsApp message bhejo. Yeh free hai.',
   'Sign in instead': 'Iske badle sign in karo',
   'Setting up…': 'Gym ban raha hai…',
   'Create my gym': 'Gym banao',

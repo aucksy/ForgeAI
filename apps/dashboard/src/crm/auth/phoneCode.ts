@@ -99,16 +99,118 @@ async function post(path: string, body: Record<string, unknown>): Promise<Record
   return data as Record<string, unknown>;
 }
 
-/** Is the WhatsApp way switched on? Never throws: anything but a clear "yes" is no. */
-export async function phoneCodeAvailable(): Promise<boolean> {
+/**
+ * Which WhatsApp way is on: 'inbound' = "Verify with WhatsApp" (the person sends US a message, 8 Nov 2026),
+ * 'send' = the old "we send you a code" (kept, hidden while inbound is on), 'off' = neither. Never throws.
+ */
+export type PhoneCodeMode = 'off' | 'send' | 'inbound';
+
+export async function phoneCodeMode(): Promise<PhoneCodeMode> {
   try {
     const r = await fetch('/api/phone-code/status', { cache: 'no-store' });
-    if (!r.ok) return false;
-    const data = (await r.json()) as { available?: unknown };
-    return data?.available === true;
+    if (!r.ok) return 'off';
+    const data = (await r.json()) as { available?: unknown; mode?: unknown };
+    if (data?.available !== true) return 'off';
+    return data.mode === 'inbound' ? 'inbound' : 'send';
   } catch {
-    return false;
+    return 'off';
   }
+}
+
+/** Is the WhatsApp way switched on? Never throws: anything but a clear "yes" is no. */
+export async function phoneCodeAvailable(): Promise<boolean> {
+  return (await phoneCodeMode()) !== 'off';
+}
+
+// ---------------------------------------------------------------- "Verify with WhatsApp" (inbound)
+
+export interface InboundStart {
+  id: string;
+  code: string;
+  /** The business number, digits with the country code ("91…"). */
+  waNumber: string;
+  /** "MettleUp code 123456": the message the person sends. */
+  waText: string;
+  expiresAt: number;
+}
+
+export type InboundState = 'waiting' | 'verified' | 'wrong_number' | 'expired' | 'too_many';
+
+export interface InboundStatus {
+  state: InboundState;
+  proof?: string;
+  /** 'no_code': a message came from the typed number without the code (it was changed). */
+  hint?: 'no_code';
+}
+
+/** The Worker's start answer, checked. PURE. */
+export function inboundStartFrom(data: Record<string, unknown>): InboundStart {
+  const ok =
+    typeof data.id === 'string' &&
+    typeof data.code === 'string' &&
+    typeof data.waNumber === 'string' &&
+    /^\d{8,15}$/.test(data.waNumber) &&
+    typeof data.waText === 'string' &&
+    typeof data.expiresAt === 'number';
+  if (!ok) throw new PhoneCodeFailure('TRY_AGAIN');
+  return { id: data.id as string, code: data.code as string, waNumber: data.waNumber as string, waText: data.waText as string, expiresAt: data.expiresAt as number };
+}
+
+const STATES: readonly InboundState[] = ['waiting', 'verified', 'wrong_number', 'expired', 'too_many'];
+
+/** The Worker's status answer, checked; anything odd reads as "still waiting". PURE. */
+export function inboundStatusFrom(data: Record<string, unknown>): InboundStatus {
+  const state = (STATES as readonly unknown[]).includes(data.state) ? (data.state as InboundState) : 'waiting';
+  const out: InboundStatus = { state };
+  if (typeof data.proof === 'string') out.proof = data.proof;
+  if (data.hint === 'no_code') out.hint = 'no_code';
+  return out;
+}
+
+/** Start: a code to send us, and where to send it. */
+export async function startInbound(phone: string, purpose: CodePurpose, website = ''): Promise<InboundStart> {
+  return inboundStartFrom(await post('/api/phone-code/inbound/start', { phone, purpose, website }));
+}
+
+/** Has the message arrived? Throws PhoneCodeFailure('OFFLINE') when the Worker cannot be reached. */
+export async function inboundStatus(id: string): Promise<InboundStatus> {
+  let r: Response;
+  try {
+    r = await fetch(`/api/phone-code/inbound/status?id=${encodeURIComponent(id)}`, { cache: 'no-store' });
+  } catch (e) {
+    console.warn('[phone-inbound] no answer', e);
+    throw new PhoneCodeFailure('OFFLINE');
+  }
+  let data: unknown = null;
+  try {
+    data = await r.json();
+  } catch {
+    data = null;
+  }
+  const failed = failureFrom(r.status, data);
+  if (failed) {
+    console.warn('[phone-inbound] status refused', r.status, failed.code);
+    throw failed;
+  }
+  return inboundStatusFrom(data as Record<string, unknown>);
+}
+
+/** wa.me to the business number with the message typed in. PURE. */
+export function inboundLink(start: Pick<InboundStart, 'waNumber' | 'waText'>): string {
+  return `https://wa.me/${start.waNumber}?text=${encodeURIComponent(start.waText)}`;
+}
+
+/** "+91 90000 99999" from "919000099999" (other countries: "+" and the digits). PURE. */
+export function formatWaNumber(digits: string): string {
+  const d = digits.replace(/\D/g, '');
+  if (/^91\d{10}$/.test(d)) return `+91 ${d.slice(2, 7)} ${d.slice(7)}`;
+  return `+${d}`;
+}
+
+/** "9:41" from milliseconds left (never below 0:00). PURE. */
+export function minutesLeft(ms: number): string {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 /** Ask for a code on WhatsApp. For 'pin' the answer is the same whether the number has an account or not. */

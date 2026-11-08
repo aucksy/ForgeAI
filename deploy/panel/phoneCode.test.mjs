@@ -139,7 +139,7 @@ test('switched off without the token, the secret or the number id: status false,
   const off = setup({ PHONE_CODES: 'off' });
   assert.equal(await isAvailable(off.env, T0), false);
   const on = setup();
-  assert.deepEqual((await call(on, '/api/phone-code/status')).body, { available: true });
+  assert.deepEqual((await call(on, '/api/phone-code/status')).body, { available: true, mode: 'send' });
 }));
 
 test('forgot PIN: an account gets a real WhatsApp; no account gets the SAME answer and nothing is sent', quiet(async () => {

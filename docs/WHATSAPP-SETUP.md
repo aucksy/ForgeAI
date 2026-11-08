@@ -61,3 +61,21 @@ Then **tell Claude**: "WhatsApp secrets are in".
 - New-gym check required or not: `update phone_code_settings set signup_check_required = true|false;`
   (gym server SQL editor). Note: while it is on, the cloud phone tests that make gyms without a code
   get "PHONE_CHECK".
+
+## "Verify with WhatsApp" (8 Nov 2026): the person sends US the code
+
+Meta blocks every message we send (131042), but messages people send to us are free and still arrive. So the
+panel can ask the person to send "MettleUp code 123456" to our business number instead (deploy/panel/phoneInbound.js,
+apps/dashboard/src/crm/auth/WhatsAppVerify.tsx). It gives the same proof as before; the gym server needs no change.
+OFF until the owner says yes. To switch it on (all live steps, in this order):
+
+1. D1: `npx wrangler d1 execute forgeai-web --remote --file migrations/0013_phone_inbound.sql` (from deploy/panel).
+2. Secret `WHATSAPP_APP_SECRET` (Meta app -> App settings -> Basic -> App secret): `npx wrangler secret put
+   WHATSAPP_APP_SECRET`. Required: without Meta's signature anybody could post a fake "message from your number".
+   `PHONE_CODE_SECRET` must exist too (it does if the old way was set up).
+3. Meta app -> WhatsApp -> Configuration -> Webhook fields: subscribe to `messages` (the callback is already
+   https://app.mettleup.fit/api/whatsapp/hook).
+4. wrangler.jsonc var `WHATSAPP_INBOUND_NUMBER` = the business number people send to (digits, 91 + 10 digits), then
+   deploy the panel Worker. `/api/phone-code/status` then answers `{available: true, mode: "inbound"}`.
+Off again: empty `WHATSAPP_INBOUND_NUMBER` (the old "we send a code" way comes back if its token works), or
+`PHONE_CODES` = `off` for both.
