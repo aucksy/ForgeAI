@@ -2007,7 +2007,8 @@ part_u404() {
   uat_flow uatr404 uat-rel-r404-bar-charts.yaml || rc=1
   [ "$rc" = 0 ] || status=1
   return $rc
-}# F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
+}
+# F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
 # clock then moves one day on (the Target reads only workouts before today) and flow b checks the Target
 # with each choice mid-workout: Learn 52.5 kg, 5 kg 55 kg (never 52.5), 2.5 kg 52.5 kg, Learn again.
