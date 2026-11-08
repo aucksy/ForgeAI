@@ -62,7 +62,7 @@
   // "Verify with WhatsApp" (8 Nov 2026, phoneInbound.js): WHATSAPP_INBOUND_NUMBER = the business number people send
   // their code TO (digits, e.g. 91XXXXXXXXXX). EMPTY = off. Switch on only with the owner's yes, after D1
   // migrations/0013 is applied, the secret WHATSAPP_APP_SECRET is set and Meta's webhook gets the "messages" field.
-  "vars": { "WHATSAPP_INBOUND_NUMBER": "", "LANDING": "live", "MOVE": "on", "WHATSAPP_PHONE_NUMBER_ID": "1410811765454726", "PHONE_CODE_DAILY_CAP": "200", "PHONE_CODES": "on", "WHATSAPP_HOOK_VERIFY": "mettleup-wa-hook-7nov" },
+  "vars": { "WHATSAPP_INBOUND_NUMBER": "918690560741","LANDING": "live", "MOVE": "on", "WHATSAPP_PHONE_NUMBER_ID": "1410811765454726", "PHONE_CODE_DAILY_CAP": "200", "PHONE_CODES": "on", "WHATSAPP_HOOK_VERIFY": "mettleup-wa-hook-7nov" },
   // R-153 step 2: after the admin app sends a message or starts an offer, the proxy tells the HQ Worker
   // (deploy/hq/push.js) to send the phone pop-ups at once (proxy.js pushAfter). Without it they go
   // within a minute anyway (HQ's own Cron Trigger).
