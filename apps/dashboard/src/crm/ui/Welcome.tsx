@@ -55,13 +55,20 @@ export function Welcome() {
 
   const signInCard: ReactNode = (
     <Card>
-      <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-        {startFirst ? t('Already use MettleUp? Sign in') : t('Sign in')}
-      </h2>
-      <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
-        {t('Sign in with your mobile number and your 6-digit PIN.')}
-      </p>
-      <SignInForm key={signInPhone} startPhone={signInPhone} />
+      <SignInForm
+        key={signInPhone}
+        startPhone={signInPhone}
+        heading={
+          <>
+            <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
+              {startFirst ? t('Already use MettleUp? Sign in') : t('Sign in')}
+            </h2>
+            <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
+              {t('Sign in with your mobile number and your 6-digit PIN.')}
+            </p>
+          </>
+        }
+      />
     </Card>
   );
 

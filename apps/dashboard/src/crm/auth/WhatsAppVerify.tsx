@@ -326,7 +326,7 @@ export function WhatsAppWaiting({
     return (
       <section aria-label={t('Verify with WhatsApp')} style={{ marginTop: space.md }}>
         {!ended && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.xl, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.xl, alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ width: 220, maxWidth: '100%', flexShrink: 0, borderRadius: 14, overflow: 'hidden' }}>
               <PayQr text={link} label={t('QR code that opens WhatsApp with the message ready')} />
             </div>

@@ -4,7 +4,7 @@
  * on it at once — fewer steps for owners and desk staff who are not at home with apps.
  */
 
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 
 import { t } from '../lang/lang';
 import { rememberNewGym } from '../logic/newGymReady';
@@ -34,7 +34,11 @@ import { TermsWords, TERMS_VERSION } from './TermsGate';
 
 const badPhone = () => t('Type a 10-digit mobile number, like 98290 12345.');
 
-export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: string; startPhone?: string }) {
+/**
+ * `heading`: the card's "Sign in" title and line. Drawn here so it hides while "Forgot your PIN?" is open
+ * (fresh-eyes review, 8 Nov 2026: a "Sign in with your PIN" line above the forgot steps confused the reader).
+ */
+export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLabel?: string; startPhone?: string; heading?: ReactNode }) {
   const { adopt } = useAuth();
   const [phone, setPhone] = useState(startPhone);
   const [code, setCode] = useState('');
@@ -70,6 +74,8 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
   }
 
   return (
+    <>
+    {heading}
     <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <TextField
@@ -101,6 +107,7 @@ export function SignInForm({ submitLabel, startPhone = '' }: { submitLabel?: str
         <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t(FORGOT_PIN_WORDS)}</p>
       )}
     </form>
+    </>
   );
 }
 
