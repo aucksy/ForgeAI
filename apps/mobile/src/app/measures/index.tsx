@@ -19,7 +19,7 @@ import { CHIP_TOUCH_SLOP } from '@/components/ui/Chip';
 import { getBodyWeightHistory } from '@/db/repos/userRepo';
 import { dateWithYear, tinyDateWithYear, todayISO } from '@/lib/date';
 import { trimNum } from '@/lib/format';
-import { success } from '@/lib/haptics';
+import { success, tap } from '@/lib/haptics';
 import { kgToShown, shownToKg, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { chart, color, radius, space, type } from '@/theme/tokens';
@@ -37,7 +37,7 @@ import {
 import { deleteMeasurement, getMeasurements } from '@/tracker/db/measurementRepo';
 import { bodyWeightTypo, bodyWeightTypoText } from '@/tracker/engine/bodyCheck';
 import { MEASURE_LABEL, measureToShown, measureUnit, shownToMeasure, type MeasurementEntry } from '@/tracker/engine/measurements';
-import { MEASURE_CHIPS, changeSinceText, chipLabel, openingChip, type MeasureChip } from '@/tracker/lib/measuresView';
+import { MEASURE_CHIPS, changeSinceText, chipLabel, entryToOpen, openingChip, type MeasureChip } from '@/tracker/lib/measuresView';
 import { getProgressPhotos, type ProgressPhoto } from '@/tracker/services/progressPhotos';
 import { readGymMeasures, syncGymMeasures } from '@/tracker/services/gymBodySync';
 import { fromGymWords, gymPointsFor, type GymMeasuresStore, type GymPoint } from '@/shop/gymBody';
@@ -47,9 +47,6 @@ import { usePhonePrefs } from '@/tracker/phone/phonePrefs';
 import type { BodyWeightEntry } from '@/types/models';
 
 const STRIP_MAX = 12;
-const noopInspect = () => {
-  /* enables the chart's press-drag readout */
-};
 
 /** One dated row of the chosen measure, whichever table it lives in. */
 interface Row {
@@ -222,6 +219,15 @@ export default function MeasuresScreen() {
     return `Replaced the entry on ${tinyDateWithYear(u.item.replaced?.dateISO ?? u.item.before.dateISO)}`;
   };
 
+  // F199 / R-403: the chart's picked day, and the member's own entry on it (null = nothing to open).
+  const [pickedDay, setPickedDay] = useState<string | null>(null);
+  const pickedRow = pickedDay ? entryToOpen(rows, pickedDay) : null;
+  const openRow = (r: Row): void => {
+    tap();
+    setEditError(null);
+    setEditing(r);
+  };
+
   const add = () => router.push({ pathname: '/measures/add', params: { kind: chip } });
 
   return (
@@ -273,7 +279,10 @@ export default function MeasuresScreen() {
           contentContainerStyle={{ paddingHorizontal: space.screenX, gap: space.sm, paddingVertical: CHIP_TOUCH_SLOP }}
         >
           {MEASURE_CHIPS.map((c) => (
-            <Chip key={c} role="radio" label={chipLabel(c)} selected={c === chip} onPress={() => setChip(c)} />
+            <Chip key={c} role="radio" label={chipLabel(c)} selected={c === chip} onPress={() => {
+                setPickedDay(null);
+                setChip(c);
+              }} />
           ))}
         </ScrollView>
 
@@ -305,7 +314,18 @@ export default function MeasuresScreen() {
                 </Text>
               ) : null}
               {points.length >= 2 ? (
-                <DateLineChart data={points} color={chip === 'bodyweight' ? chart.series[0] : chart.series[1]} fillGradient yFormat={(n) => trimNum(n)} onInspect={noopInspect} resetKey={chip} />
+                <DateLineChart
+                  data={points}
+                  color={chip === 'bodyweight' ? chart.series[0] : chart.series[1]}
+                  fillGradient
+                  yFormat={(n) => trimNum(n)}
+                  onInspect={(p) => setPickedDay(p?.x ?? null)}
+                  resetKey={chip}
+                  // F199 / R-403: the picked point's box opens that day's entry to fix or delete it,
+                  // as a tap on its row does; a gym-recorded point is read-only, so its box is a label.
+                  onOpenPicked={pickedRow ? () => openRow(pickedRow) : undefined}
+                  pickedDate={(x) => tinyDateWithYear(x)}
+                />
               ) : (
                 <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>Add it again on another day to see a graph.</Text>
               )}

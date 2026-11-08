@@ -61,6 +61,17 @@ export function entryPlan(weightText: string, typed: Partial<Record<MeasureKind,
  * The line under a measure's latest value: "−4.2 kg since 12 Mar 2023" — with the year whenever it
  * is not this year (C2-6, 16 Oct 2026 audit: "since 12 Mar" read as this March). PURE.
  */
+/**
+ * F199 / R-403 (owner, 8 Nov 2026: "every chart behaves the same"): the Body chart's picked point
+ * opens the member's own entry for that day, in the same "Fix this" sheet as a tap on the list.
+ * A point the gym's trainer recorded is read-only here, so it opens nothing (null), as its row
+ * in the list. One own entry per day per measure (a second one replaces it), so the day is enough.
+ * PURE.
+ */
+export function entryToOpen<R extends { dateISO: string; gym?: unknown }>(rows: readonly R[], dayISO: string): R | null {
+  return rows.find((r) => r.dateISO === dayISO && !r.gym) ?? null;
+}
+
 export function changeSinceText(change: number, unit: string, fromISO: string, today: string = todayISO()): string {
   const signed = `${change > 0 ? '+' : change < 0 ? '−' : ''}${trimNum(Math.abs(change))}`;
   return `${signed} ${unit} since ${tinyDateWithYear(fromISO, today)}`;
