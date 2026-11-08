@@ -147,7 +147,7 @@ export function HistoryChartCard({
     opening.current = true;
     tap();
     const range = historyRangeParams(b.start, b.end);
-    getWorkoutIdsBetween(range.from, range.to)
+    void getWorkoutIdsBetween(range.from, range.to)
       .catch((e: unknown) => {
         console.warn('[history chart] could not read the workouts of the picked point', e);
         return null;
