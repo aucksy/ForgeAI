@@ -57,8 +57,9 @@ CI_WAIT_SECONDS = int(os.environ.get("CI_WAIT_SECONDS", "1500"))
 
 PAPERWORK_FILES = {"PROGRESS.md", "CONTEXT.md"}
 # None of these is built into the APK: notes, unit tests (vitest only), the CI check scripts and the
-# journey tests (Playwright for the admin app).
-PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/", "apps/dashboard/e2e-live/")
+# journey tests (Playwright for the admin app). R-407: HQ (the owner's own web panel, apps/hq + its Worker
+# deploy/hq) is never built into the APK either.
+PAPERWORK_DIRS = ("docs/", "apps/mobile/test/", "scripts/ci/", "apps/dashboard/e2e-live/", "apps/hq/", "deploy/hq/")
 MAX_WALK = 8
 QA_DIR = "apps/mobile/qa/"
 # R-375: what the release run says when a phone-test fix still needs its partial run (kind -> text).
