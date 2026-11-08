@@ -256,8 +256,11 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 15000
 - tapOn: "^Reps$"
-- extendedWaitUntil:
-    visible: "Reps in .*"
+# Owner phone (font 1.3, run 42488636547): the "Reps in" line sits above the screen after the tap.
+- scrollUntilVisible:
+    element: "Reps in .*"
+    direction: UP
+    centerElement: true
     timeout: 15000
 # Negative: no Today line on Reps.
 - assertNotVisible:
