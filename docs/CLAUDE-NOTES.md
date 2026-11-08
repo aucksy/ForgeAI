@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-402. "Why are we not able to Tap the dated figures on charts from profile section" — 8 Nov 2026
+He said (8 Nov 2026): "Why are we not able to Tap the dated figures on charts from profile section".
+Cause: the Profile tab's history chart (HistoryChartCard) used DateLineChart without `onOpenPicked`, so the
+picked week's box (number + date) was only a label; on exercise charts the same box is a button (R-311/R-397).
+Did: the box is now a button when that week or month has workouts; it opens "Your workouts" for that period
+(same as "See these workouts"); its date reads the period ("2-8 Nov"). UAT flow uat-rel-r402-profile-chart.yaml
+(part u401). Not released (waiting list).
+
+## R-401. "We are showing the new What's New full screen but didn't remove the old one" — 8 Nov 2026
+He said (8 Nov 2026): "We are showing the new What's New full screen but didn't remove the old one".
+Cause: R-336's full screen ("A new MettleUp is here", with the newest version's lines) and the Workout tab's
+orange line replaced the old update card, but the Workout tab's "New in this version (x)" card (about the
+INSTALLED version) still showed under them: two What's new at once. Decided (my call): (1) while an update
+waits, that card stays away; it comes back once the phone is up to date; (2) after an update, the card skips
+the lines the full screen already showed (meta whats_new_previewed); a phone that Play updated by itself never
+saw the full screen, so it still gets the card once. QA link qa-update?oldnews=1 for UAT; flow
+uat-rel-r401-whats-new.yaml (part u401). Not released (waiting list).
+
 ## R-400. "Okay you can release next 2 features" (0.75.0) — 7 Nov 2026
 He said (7 Nov 2026, ~23:3x IST): "Okay you can release next 2 features". This IS his "release" (R-309) for ONE
 version, 0.75.0. The 2 features (R-394): F194 Machine and cable steps (member app) and F105 Trainer profiles

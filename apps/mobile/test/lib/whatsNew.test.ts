@@ -14,6 +14,11 @@ describe("What's new after an update", () => {
     expect(whatsNewToShow(v, '0.49.0')).toEqual(WHATS_NEW[v]);
     expect(whatsNewToShow(v, v)).toBeNull(); // "Got it" pressed, or already remembered
   });
+  it('R-401: lines the update full screen already showed do not come back on the card', () => {
+    expect(whatsNewToShow(v, '0.49.0', v)).toBeNull(); // the full screen showed 0.50.0's lines, then the update
+    expect(whatsNewToShow(v, '0.49.0', '0.49.0')).toEqual(WHATS_NEW[v]); // it showed an older version's lines
+    expect(whatsNewToShow(v, '0.49.0', null)).toEqual(WHATS_NEW[v]); // Play updated by itself: the card still tells
+  });
   it('the first version an install meets is not announced (fresh installs, the cloud phone tests)', () => {
     expect(whatsNewToShow(v, null)).toBeNull();
   });

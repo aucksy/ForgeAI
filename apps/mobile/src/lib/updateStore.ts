@@ -29,6 +29,7 @@ import {
   standInVersion,
   type UpdateKind,
 } from '@/lib/updatePrompt';
+import { markWhatsNewPreviewed } from '@/lib/whatsNew';
 import { phoneNative, type PlayUpdateStatus } from '@/tracker/phone/native';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 
@@ -273,8 +274,10 @@ export const useAppUpdate = create<UpdateState>()((set, get) => ({
   },
 
   shown: () => {
-    const key = get().key;
+    const { key, version, news } = get();
     if (!key) return;
+    // R-401: after this update the Workout tab's card does not repeat the lines the member just read here.
+    if (version && news.length > 0) markWhatsNewPreviewed(version).catch((e: unknown) => console.warn('[update] could not save the previewed version', e));
     void (async () => {
       const now = Date.now();
       const mark = markFor(readMark(await readUpdateMeta(POPUP_KEY)), key, now);

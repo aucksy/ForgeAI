@@ -42,6 +42,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   feedback_button: 'floating feedback button on/off (R-149; on by default, a phone preference)',
   feedback_button_spot: 'where the floating feedback button was dragged to (screen-size dependent)',
   whats_new_seen: 'one-off "seen" flag',
+  whats_new_previewed: "one-off: the update screen showed this version's What's new (R-401)",
   notice_rest_day: 'one-off notice',
   redesign_tabs_notice: 'one-off "it moved" hint',
   watch_install_card: 'one-off "Install on watch" card (F67; about the watch paired to this phone)',

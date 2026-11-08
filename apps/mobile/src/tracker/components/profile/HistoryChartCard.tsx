@@ -234,6 +234,13 @@ export function HistoryChartCard({
               yFormat={(n) => chartAxisText(n, metric, units).replace(/ (kg|lb)$/, '')}
               onInspect={pickPoint}
               resetKey={`${range}|${metric}|${clears}`}
+              // R-402 (owner, 8 Nov 2026): the picked point's date box is a button here too, as on the
+              // exercise chart: it opens that week's or month's workouts ("See these workouts").
+              onOpenPicked={bar && bar.workouts > 0 ? () => openWorkouts(bar) : undefined}
+              pickedDate={(x) => {
+                const b = list.find((l) => l.start === x);
+                return b ? chartPeriodText(b, today) : x;
+              }}
             />
           </View>
           {/* One screen-reader button per point ("5–11 Oct: 4,200 kg"). Touches pass through to

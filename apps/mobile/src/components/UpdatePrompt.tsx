@@ -18,8 +18,9 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import Svg, { Path } from 'react-native-svg';
 
 import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
-import { earlierLine, hasUpdateStandIn, kickerFor, qaStandInBehind } from '@/lib/updatePrompt';
+import { earlierLine, hasUpdateStandIn, kickerFor, qaOldNews, qaStandInBehind } from '@/lib/updatePrompt';
 import { installDownloadedQuietly, useAppUpdate } from '@/lib/updateStore';
+import { qaForgetWhatsNew } from '@/lib/whatsNew';
 import { accentTint } from '@/theme/tint';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import { phoneNative } from '@/tracker/phone/native';
@@ -96,6 +97,8 @@ export function UpdatePrompt() {
   useEffect(() => {
     if (!hasUpdateStandIn(Constants.expoConfig?.extra)) return;
     const onUrl = (url: string | null) => {
+      // R-401 UAT: the Workout tab's "New in this version" card shows again after the next start.
+      if (qaOldNews(url)) void qaForgetWhatsNew().catch((e: unknown) => console.warn('[update] QA old news failed', e));
       const n = qaStandInBehind(url);
       if (n != null) void useAppUpdate.getState().qaStandIn(n).catch((e: unknown) => console.warn('[update] QA stand-in failed', e));
     };

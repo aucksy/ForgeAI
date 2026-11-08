@@ -595,10 +595,17 @@ export function updatesUpTo(current: string | null | undefined, max = SHOWN_UPDA
 }
 
 const SEEN_KEY = 'whats_new_seen'; // the last version whose news was shown (or skipped)
+/** R-401: the version whose lines the update full screen (UpdatePrompt.tsx) already showed. */
+const PREVIEWED_KEY = 'whats_new_previewed';
 
 /** The lines to show, or null. PURE. */
-export function whatsNewToShow(current: string | null | undefined, seen: string | null): readonly WhatsNewLine[] | null {
-  if (!current || seen == null || seen === current) return null;
+export function whatsNewToShow(
+  current: string | null | undefined,
+  seen: string | null,
+  previewed: string | null = null,
+): readonly WhatsNewLine[] | null {
+  // R-401 (owner, 8 Nov 2026): the update full screen already showed this version's lines: not twice.
+  if (!current || seen == null || seen === current || previewed === current) return null;
   const lines = WHATS_NEW[current];
   return lines && lines.length > 0 ? lines : null;
 }
@@ -608,7 +615,7 @@ export async function readWhatsNew(current: string | null | undefined): Promise<
   if (!current) return null;
   try {
     const seen = await getMeta(SEEN_KEY);
-    const lines = whatsNewToShow(current, seen);
+    const lines = whatsNewToShow(current, seen, await getMeta(PREVIEWED_KEY));
     if (!lines && seen !== current) await enqueueWrite(() => setMeta(SEEN_KEY, current));
     return lines;
   } catch (e) {
@@ -635,4 +642,17 @@ export async function installMetEarlierVersion(current: string | null | undefine
 
 export async function markWhatsNewSeen(current: string): Promise<void> {
   await enqueueWrite(() => setMeta(SEEN_KEY, current));
+}
+
+/** R-401 UAT, QA builds only (mettleup://qa-update?oldnews=1): as if this phone came from an older version. */
+export async function qaForgetWhatsNew(): Promise<void> {
+  await enqueueWrite(async () => {
+    await setMeta(SEEN_KEY, '0.0.1');
+    await setMeta(PREVIEWED_KEY, '');
+  });
+}
+
+/** R-401: the update full screen showed `version`'s lines; after that update the card stays away. */
+export async function markWhatsNewPreviewed(version: string): Promise<void> {
+  await enqueueWrite(() => setMeta(PREVIEWED_KEY, version));
 }

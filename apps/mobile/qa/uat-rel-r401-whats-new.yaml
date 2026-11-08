@@ -1,0 +1,77 @@
+# R-401 (owner, 8 Nov 2026): "We are showing the new What's New full screen but didn't remove the old one".
+# While a newer version waits (its full screen, then the orange line), the Workout tab's older "New in this
+# version" card stays away. Starts from gate-demo (a fresh install with the demo, on the Workout tab).
+# QA links: mettleup://qa-update?oldnews=1 (this phone "came from an older version": the card shows after a
+# start), mettleup://qa-update?behind=N (a made-up update N versions ahead), behind=0 (up to date again).
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. setup: the old card is due (positive)
+- openLink: "mettleup://qa-update?oldnews=1"
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 20000
+- stopApp
+- launchApp
+# A link sent while the app starts is dropped (F198 lesson): wait for the tabs first.
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- scrollUntilVisible:
+    element: "New in this version \\(0\\.\\d+\\.\\d+\\)"
+    direction: UP
+    timeout: 20000
+- takeScreenshot: rel-r401-01-card-before-update-offer
+# ---------------------------------------------------------------- 2. an update waits: full screen, no old card
+- openLink: "mettleup://qa-update?behind=1"
+- extendedWaitUntil:
+    visible: "A new MettleUp is here"
+    timeout: 30000
+- takeScreenshot: rel-r401-02-full-screen
+- tapOn: "^Later$"
+- extendedWaitUntil:
+    notVisible: "A new MettleUp is here"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "A new version of MettleUp is ready.*"
+    direction: UP
+    timeout: 15000
+- assertNotVisible: "New in this version \\(.*"
+- assertNotVisible: "Got it"
+- takeScreenshot: rel-r401-03-line-only-no-old-card
+# ---------------------------------------------------------------- 3. regression: a restart keeps it away
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- openLink: "mettleup://qa-update?behind=1"
+# The full screen may or may not come back this soon (the once-a-day rule): close it when it does.
+- extendedWaitUntil:
+    visible: "A new MettleUp is here|A new version of MettleUp is ready.*"
+    timeout: 30000
+- tapOn:
+    text: "^Later$"
+    optional: true
+- scrollUntilVisible:
+    element: "A new version of MettleUp is ready.*"
+    direction: UP
+    timeout: 15000
+- assertNotVisible: "New in this version \\(.*"
+- takeScreenshot: rel-r401-04-after-restart
+# ---------------------------------------------------------------- 4. up to date again: the card comes back
+- openLink: "mettleup://qa-update?behind=0"
+- extendedWaitUntil:
+    notVisible: "A new version of MettleUp is ready.*"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "New in this version \\(0\\.\\d+\\.\\d+\\)"
+    direction: UP
+    timeout: 20000
+- tapOn: "^Got it$"
+- extendedWaitUntil:
+    notVisible: "New in this version \\(.*"
+    timeout: 10000
+- takeScreenshot: rel-r401-05-up-to-date-card-closed

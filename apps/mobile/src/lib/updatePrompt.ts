@@ -172,6 +172,11 @@ export function newsFor(o: { kind: UpdateKind; version: string | null; current: 
 }
 
 /** QA builds only: N from "mettleup://qa-update?behind=N", else null. PURE. */
+/** R-401 UAT, QA builds only: mettleup://qa-update?oldnews=1 makes this phone forget it saw this version's What's new. PURE. */
+export function qaOldNews(url: string | null | undefined): boolean {
+  return /^(?:mettleup|forgeai):\/\/\/?qa-update\/?\?(?:.*&)?oldnews=1(?:&|$)/.test(url ?? '');
+}
+
 export function qaStandInBehind(url: string | null | undefined): number | null {
   const m = /^(?:mettleup|forgeai):\/\/\/?qa-update\/?\?(?:.*&)?behind=(\d+)/.exec(url ?? '');
   return m ? Number(m[1]) : null;

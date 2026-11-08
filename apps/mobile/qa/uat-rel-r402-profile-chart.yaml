@@ -1,0 +1,56 @@
+# R-402 (owner, 8 Nov 2026): "Why are we not able to Tap the dated figures on charts from profile section".
+# The Profile tab's history chart: one tap picks a week; its date box is now a button, as on the exercise
+# chart, and opens that week's workouts ("Your workouts"). Starts from gate-demo (fresh install + demo).
+appId: com.mettleup.app
+---
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-r402-01-profile-chart
+- tapOn:
+    id: "date-line-chart"
+# The picked week stays, with its box (a button) and "See these workouts" above the chart.
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible:
+    id: "chart-see-workouts"
+- takeScreenshot: rel-r402-02-week-picked-box
+- tapOn:
+    id: "chart-open-workout"
+- extendedWaitUntil:
+    visible: "^Your workouts$"
+    timeout: 10000
+- assertVisible: ".*\\d+ workouts?.*"
+- takeScreenshot: rel-r402-03-box-opened-week
+# Back: the Profile chart is still there (regression: "See these workouts" still works too).
+- back
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 10000
+# The week may still be picked (a second tap on the same week would clear it): tap only when it is not.
+- runFlow:
+    when:
+      notVisible:
+        id: "chart-see-workouts"
+    commands:
+      - tapOn:
+          id: "date-line-chart"
+- extendedWaitUntil:
+    visible:
+      id: "chart-see-workouts"
+    timeout: 5000
+- tapOn:
+    id: "chart-see-workouts"
+- extendedWaitUntil:
+    visible: "^Your workouts$"
+    timeout: 10000
+- takeScreenshot: rel-r402-04-see-these-workouts
+- back

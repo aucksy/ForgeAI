@@ -2,12 +2,14 @@
  * The Workout tab's one-time "New in this version" card (lib/whatsNew.ts).
  * R-56 (owner, 22 Oct 2026): "See earlier updates" opens the updates before this one, in the card.
  * R-98 (24 Oct 2026): the last 3 updates in all (this one + 2), each change with a button to try it where it has one.
+ * R-401 (8 Nov 2026): never next to the update full screen; not again for lines that screen already showed.
  */
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui';
+import { useAppUpdate } from '@/lib/updateStore';
 import { earlierUpdates, markWhatsNewSeen, readWhatsNew, type WhatsNewLine } from '@/lib/whatsNew';
 import { color, space, type } from '@/theme/tokens';
 
@@ -18,6 +20,9 @@ export function WhatsNewCard({ hidden = false, onWant, onDone }: NoticeSlotProps
   const version = Constants.expoConfig?.version ?? null;
   const [lines, setLines] = useState<readonly WhatsNewLine[] | null>(null);
   const [open, setOpen] = useState(false);
+  // R-401 (owner, 8 Nov 2026): while a newer version waits, its full screen and the orange line say what
+  // is new; this card about the installed version would be a second, older What's new.
+  const updateWaiting = useAppUpdate((s) => s.key != null);
   useEffect(() => {
     let live = true;
     readWhatsNew(version)
@@ -27,8 +32,8 @@ export function WhatsNewCard({ hidden = false, onWant, onDone }: NoticeSlotProps
       live = false;
     };
   }, [version]);
-  useReportWant(lines != null && version != null, onWant);
-  if (!lines || !version || hidden) return null;
+  useReportWant(lines != null && version != null && !updateWaiting, onWant);
+  if (!lines || !version || hidden || updateWaiting) return null;
 
   const earlier = earlierUpdates(version);
   const done = () => {
