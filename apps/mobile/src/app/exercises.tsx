@@ -27,7 +27,7 @@ export default function ExercisesScreen() {
     <Screen
       scroll={false}
       title="Exercises"
-      onBack={() => goBack(router, '/progress')}
+      onBack={() => goBack(router, '/profile')}
       right={
         <Pressable
           onPress={() => go(() => router.push('/library/new'))}

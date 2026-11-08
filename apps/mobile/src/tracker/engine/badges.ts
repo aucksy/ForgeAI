@@ -270,7 +270,7 @@ export function badgeHowTo(id: BadgeId, units: UnitSystem = 'metric'): string {
     case 'bar_100':
       return `Lift ${fmtVol(100, units)} or more on a barbell, for at least 1 rep.`;
     case 'bench_bodyweight':
-      return 'Bench press your own body weight or more on a barbell. Log your body weight in Progress, under Body, so the app can check.';
+      return 'Bench press your own body weight or more on a barbell. Log your body weight on your Profile, under Body, so the app can check.';
     case 'day_5000':
     case 'day_10000':
       return `Lift ${fmtVol(goalOf(id), units)} in one workout. Every set's weight × reps is added up.`;

@@ -37,9 +37,15 @@ appId: com.mettleup.app
     timeout: 90000
     optional: true
 - takeScreenshot: ios-03-workout-tab
+# F199 (R-403): no Progress tab any more; its rows are on Profile (photographed as ios-04 there).
 - tapOn:
-    text: "^Progress$"
+    text: "^Profile$"
     index: 0
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: "progress-row-Charts"
+    timeout: 15000
     optional: true
 - takeScreenshot: ios-04-progress-tab
 - tapOn:

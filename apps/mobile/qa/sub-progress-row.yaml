@@ -1,43 +1,39 @@
-# Sub-flow (called with runFlow; not a part of its own). Release A (A5, docs/ux/MEMBER-APP-MAP.md):
-# Charts (was Statistics), Exercises and Body (was Measures) left the Profile's tiles for the new
-# Progress tab (src/app/(tabs)/progress.tsx). Opens the Progress tab and taps the row passed in:
+# Sub-flow (called with runFlow; not a part of its own). Release A (A5) put Charts, Exercises, Records and
+# Body on a Progress tab; F199 (owner R-403, 8 Nov 2026) moved them into the Profile tab, under the chart and
+# the Today line, as "Your progress" (src/app/(tabs)/profile.tsx). Opens the Profile tab and taps the row:
 #   - runFlow:
 #       file: sub-progress-row.yaml
 #       env:
 #         ROW: "Charts"
-# ROW is a regex for the row's title ("Charts", "Exercises", "Records", "Body"). Call it with the
-# tab bar on screen. The tab is tapped with index 0: the top-most match (trap 18). At 200 % text the
-# rows can start below the screen's edge, so it scrolls to the row. No `env:` default (trap 22).
+# ROW is the row's title: "Charts", "Exercises", "Records" or "Body". The row is found by its test id
+# (progress-row-<ROW>): the Profile header's "Records" number has the same word. Call it with the tab bar
+# on screen. The tab is tapped with index 0: the top-most match (trap 18). The tab keeps its scroll
+# position (at 200 % text a row can sit above or below the screen's edge): look UP first, then down,
+# and centre the row so it is clear of the "Demo data · Remove" bar. No `env:` default (trap 22).
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "^Progress$"
+    visible: "^Profile$"
     timeout: 30000
 - tapOn:
-    text: "^Progress$"
+    text: "^Profile$"
     index: 0
-# R-132: the tabs, today's goal and the bars now sit above the rows, so on a normal phone a row can
-# rest at the very bottom, under the "Demo data · Remove" bar, still counted as visible (run
-# 40208458017: the tap on "Exercises" opened "Remove the demo?"). Scroll down to the Reports heading
-# (always drawn, below every row) first: the rows are then above it, clear of the bar.
 - scrollUntilVisible:
-    element: "(?i)^reports$"
-    timeout: 20000
-    optional: true
-# The tab keeps its scroll position (at 200 % text a row can sit above or below the screen's edge):
-# look UP first, then down.
-- scrollUntilVisible:
-    element: "^${ROW}$"
+    element:
+      id: "progress-row-${ROW}"
     direction: UP
     centerElement: true
     timeout: 8000
     optional: true
 - runFlow:
     when:
-      notVisible: "^${ROW}$"
+      notVisible:
+        id: "progress-row-${ROW}"
     commands:
       - scrollUntilVisible:
-          element: "^${ROW}$"
+          element:
+            id: "progress-row-${ROW}"
           centerElement: true
           timeout: 20000
-- tapOn: "^${ROW}$"
+- tapOn:
+    id: "progress-row-${ROW}"

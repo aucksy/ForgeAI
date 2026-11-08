@@ -8,17 +8,20 @@
  * launch of this version (the Workout tab opens first), and kept: 'due' shows the hint until the
  * member closes it, 'done' never shows it.
  *
- *  - progressTab: on Profile, "Your charts are now in the Progress tab."
+ *  - progressTab: on Profile, "Your charts are now in the Progress tab." (retired by F199: no longer shown)
  *  - shopInGym:   on the Gym tab above its shop, for a member whose tab used to say "Shop".
+ *  - progressInProfile (F199, owner R-403, 8 Nov 2026): on Profile, above the chart, for a member who had
+ *    the Progress tab: "Progress is now on your Profile, below the chart."
  */
 import { getMeta, setMeta } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
 
-export type LayoutHint = 'progressTab' | 'shopInGym';
+export type LayoutHint = 'progressTab' | 'shopInGym' | 'progressInProfile';
 
 export const HINT_TEXT: Readonly<Record<LayoutHint, string>> = {
   progressTab: 'Your charts are now in the Progress tab.',
   shopInGym: 'Your gym’s shop is now inside the Gym tab.',
+  progressInProfile: 'Progress is now on your Profile, below the chart.',
 };
 
 export type HintState = 'due' | 'done';
@@ -42,6 +45,14 @@ export function hintShows(stored: string | null): boolean {
 /** The Profile tiles were this member's: an earlier version, workouts of their own, not the demo. PURE. */
 export function hadOldTiles(o: { metEarlierVersion: boolean; hasWorkouts: boolean; demo: boolean }): boolean {
   return o.metEarlierVersion && o.hasWorkouts && !o.demo;
+}
+
+/**
+ * F199: this member had the Progress tab: an earlier version of the app (every version since 0.56.0 had
+ * it), not the demo. Workouts are not needed: the tab was in the bar for everyone. PURE.
+ */
+export function hadProgressTab(o: { metEarlierVersion: boolean; demo: boolean }): boolean {
+  return o.metEarlierVersion && !o.demo;
 }
 
 /** This member's third tab said "Shop": an earlier version, a gym joined, and its shop on. PURE. */

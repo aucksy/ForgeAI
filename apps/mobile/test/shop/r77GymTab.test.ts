@@ -25,7 +25,7 @@ describe('Release A: the Gym tab is always there, always "Gym"', () => {
     expect(gymShopOn(true, 1)).toBe(true);
   });
 
-  it('the tab bar shows the 4 tabs by the one list, never by the gym', () => {
+  it('the tab bar shows the 3 tabs by the one list, never by the gym', () => {
     const bar = read('src/tracker/components/TrackerTabBar.tsx');
     expect(bar).toMatch(/isShownTab\(name\)/);
     expect(bar).not.toMatch(/gymTab === 'none'|products\.length/);

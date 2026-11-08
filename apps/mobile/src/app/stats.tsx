@@ -295,7 +295,7 @@ export default function StatisticsScreen() {
   })();
 
   return (
-    <Screen title="Charts" onBack={() => leavePage(router, '/progress')}>
+    <Screen title="Charts" onBack={() => leavePage(router, '/profile')}>
       <View style={{ paddingBottom: space.xxl }}>{body}</View>
     </Screen>
   );

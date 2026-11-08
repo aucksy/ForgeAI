@@ -15,6 +15,7 @@
  *   /settings/details       → Your profile, the one profile editor    (A9)
  *   /settings/workouts      → Settings, whose Workouts group holds those rows now (A7/A8)
  *   /settings/gym, no gym   → the Gym tab's "Join your gym" screen     (A2)
+ *   /progress               → the Profile tab (F199, R-403: the Progress tab moved into Profile)
  */
 export type OldRouteTarget = '/profile' | '/calendar' | '/stats' | '/exercises';
 
@@ -34,6 +35,7 @@ export const MOVED_ROUTES: Readonly<Record<string, string>> = {
   '/measurements/log': '/measures/add',
   '/settings/details': '/edit-profile',
   '/settings/workouts': '/settings',
+  '/progress': '/profile',
 };
 
 /** The one value of a link's `kind` (a measure: "bodyweight", "waist"…), or undefined. PURE. */

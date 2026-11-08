@@ -226,7 +226,7 @@ export default function MeasuresScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Screen title="Body" onBack={() => leavePage(router, '/progress')} right={<IconButton icon="plus" onPress={add} accessibilityLabel="Add measures" />}>
+      <Screen title="Body" onBack={() => leavePage(router, '/profile')} right={<IconButton icon="plus" onPress={add} accessibilityLabel="Add measures" />}>
         {/* Progress photos */}
         <StatHeading
           title="Progress photos"

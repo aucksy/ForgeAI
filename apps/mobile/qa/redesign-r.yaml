@@ -1,7 +1,7 @@
 # Redesign device QA, part R — the 3-tab redesign, photographed screen by screen (runs after part
 # P9 and its shortcut check, before the P7 large-text tours and M). Normal text, gesture
 # navigation. Screenshots r-*.png (the script gathers them in qa-out/redesign/).
-#  1. Workout tab (R1/R4): the 4 tabs Workout · Progress · Gym · Profile (Release A); the Up next card; Start empty workout,
+#  1. Workout tab (R1/R4): the 3 tabs Workout · Gym · Profile (F199); the Up next card; Start empty workout,
 #     Routines with New folder, New routine and Find a plan; the followed folder "Jaipur (6)" open,
 #     tagged Following, its "Next" routine; a routine's ⋯ and a folder's ⋯; Find a plan.
 #  2. Profile (R2): header (Edit profile, share, Settings), stats, the history chart in each chip
@@ -52,10 +52,10 @@ appId: com.mettleup.app
           direction: UP
           centerElement: true
           timeout: 20000
-# Release A (A1/A5): 4 tabs, always the same 4, with or without a gym: Workout (opens first),
-# Progress, Gym, Profile. Home and History are gone (this part runs with gesture navigation, so no
+# Release A (A1/A5), then F199 (R-403): 3 tabs, always the same 3, with or without a gym: Workout
+# (opens first), Gym, Profile (Progress moved into Profile). Home and History are gone (this part runs with gesture navigation, so no
 # system "Home" button is on screen).
-- assertVisible: "^Progress$"
+- assertNotVisible: "^Progress$"
 - assertVisible: "^Gym$"
 - assertNotVisible: "^Shop$"
 - assertNotVisible: "^Home$"

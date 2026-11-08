@@ -224,6 +224,18 @@ export async function getHistoryBetween(fromISO: string, toISO: string): Promise
   return itemsFor(rows);
 }
 
+/**
+ * F199 (R-403): the ids of the workouts in a period (both days included), newest first, at most `limit`
+ * (default 2: the chart's box only needs to know "exactly one?", lib/historyRange periodTarget).
+ */
+export async function getWorkoutIdsBetween(fromISO: string, toISO: string, limit = 2): Promise<string[]> {
+  const rows = await getDb().getAllAsync<{ id: string }>(
+    'SELECT id FROM workout_sessions WHERE date_iso >= ? AND date_iso <= ? ORDER BY date_iso DESC, started_at DESC, id DESC LIMIT ?',
+    [fromISO, toISO, Math.max(1, Math.floor(limit))],
+  );
+  return rows.map((r) => r.id);
+}
+
 /** The day of the first workout ever logged (how far back the calendar goes), or null. */
 export async function getFirstWorkoutDate(): Promise<string | null> {
   const r = await getDb().getFirstAsync<{ d: string | null }>('SELECT MIN(date_iso) AS d FROM workout_sessions');

@@ -145,7 +145,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1939,6 +1939,7 @@ part_uat() {
   part_u198
   part_u194
   part_u401
+  part_u199
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -1979,6 +1980,18 @@ part_u401() {
   uat_flow uatr401 uat-rel-r401-whats-new.yaml || rc=1
   gate_flow u402_seed gate-demo.yaml || rc=1
   uat_flow uatr402 uat-rel-r402-profile-chart.yaml || rc=1
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# F199 (owner R-403, 8 Nov 2026): the Progress tab moved into Profile. From a fresh install with the demo:
+# no Progress tab; Profile's chart, Today line and "Your progress" rows (each opens its page, Back returns);
+# a picked week's box and a Last 12 months month's box open their workouts (one workout: that workout);
+# the Duration and Reps chips keep the chart tappable (no Today line on Reps); mettleup://progress lands
+# on Profile, also after a restart. Also runs alone with only=u199. Pictures rel-f199-*.png.
+part_u199() {
+  local rc=0
+  gate_flow u199_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatf199 uat-rel-f199-profile-progress.yaml || rc=1
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2129,6 +2142,7 @@ qa_runs usel && ! qa_runs uat && { log "gate part USEL begins"; part_usel; }
 qa_runs u198 && ! qa_runs uat && { log "gate part U198 begins"; part_u198; }
 qa_runs u194 && ! qa_runs uat && { log "gate part U194 begins"; part_u194; }
 qa_runs u401 && ! qa_runs uat && { log "gate part U401 begins"; part_u401; }
+qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

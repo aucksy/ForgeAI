@@ -1,0 +1,326 @@
+# F199 (owner R-403, 8 Nov 2026): "Let's remove the progress section, put it somewhere inside the profile ...
+# the profile will give them the high level overview"; "The charts behavior need to be the same."
+# Starts from gate-demo (a fresh install with the demo: 13 weeks of workouts ending yesterday).
+#  1. negative: the tab bar has no Progress tab (Workout, Gym, Profile only);
+#  2. happy path: Profile shows the chart, the Today line under it, and "Your progress" with Charts,
+#     Exercises, Records, Body and a report; each row opens its page and Back returns to Profile;
+#  3. a picked week: its box (chart-open-workout) and "See these workouts" (chart-see-workouts); the box opens
+#     "Your workouts" for that week (or, for a week with one workout, that workout: Share and More);
+#  4. Last 12 months: a month with workouts picked, its box opens that month's workouts;
+#  5. the chips: Duration keeps the Today line and a tappable chart; Reps keeps the chart tappable and has no
+#     Today line (negative);
+#  6. the old link mettleup://progress lands on Profile (never a blank screen), also after a restart.
+# The chart's range and chip are saved choices: the flow puts them back (Last 12 weeks, Kg lifted).
+# Pictures rel-f199-*.png.
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. negative: no Progress tab
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- assertVisible: "^Workout$"
+- assertVisible: "^Gym$"
+- assertNotVisible: "^Progress$"
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 30000
+- assertNotVisible: "^Progress$"
+- takeScreenshot: rel-f199-01-profile-top
+# ---------------------------------------------------------------- 2. happy path: chart, Today line, Your progress
+# Kg lifted first (the demo starts there; a saved Reps would hide the Today line).
+- tapOn:
+    text: "^Kg lifted$"
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: "today-goal"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Today: .*"
+- takeScreenshot: rel-f199-02-chart-and-today
+- scrollUntilVisible:
+    element: "(?i)^your progress$"
+    centerElement: true
+    timeout: 20000
+- assertVisible:
+    id: "progress-row-Charts"
+- assertVisible:
+    id: "progress-row-Exercises"
+- takeScreenshot: rel-f199-03-your-progress
+# Charts
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- takeScreenshot: rel-f199-04-charts
+- back
+- extendedWaitUntil:
+    visible:
+      id: "progress-row-Charts"
+    timeout: 15000
+- assertNotVisible: "^Progress$"
+# Exercises
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 30000
+- takeScreenshot: rel-f199-05-exercises
+- back
+- extendedWaitUntil:
+    visible:
+      id: "progress-row-Exercises"
+    timeout: 15000
+# Records (the header's "Records" number has the same word: the row is tapped by its id)
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Records"
+- extendedWaitUntil:
+    notVisible:
+      id: "progress-row-Records"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: "^Records$"
+    timeout: 15000
+- takeScreenshot: rel-f199-06-records
+- back
+- extendedWaitUntil:
+    visible:
+      id: "progress-row-Records"
+    timeout: 15000
+# Body
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Body"
+- extendedWaitUntil:
+    visible: "Add measures"
+    timeout: 30000
+- takeScreenshot: rel-f199-07-body
+- back
+- extendedWaitUntil:
+    visible:
+      id: "progress-row-Body"
+    timeout: 15000
+# Reports: the first report row (the latest month)
+- scrollUntilVisible:
+    element:
+      id: "progress-row-report-.*"
+    centerElement: true
+    timeout: 20000
+- assertVisible: "Monthly report|Year in review"
+- tapOn:
+    id: "progress-row-report-.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Share as a picture"
+    timeout: 30000
+- takeScreenshot: rel-f199-08-report
+- back
+- extendedWaitUntil:
+    visible:
+      id: "progress-row-Body"
+    timeout: 15000
+- takeScreenshot: rel-f199-09-back-on-profile
+# ---------------------------------------------------------------- 3. a picked week: its box opens that week
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    direction: UP
+    centerElement: true
+    timeout: 20000
+- runFlow:
+    when:
+      visible:
+        id: "chart-see-workouts"
+    commands:
+      # A week is still picked from before: back to the total first.
+      - tapOn: "Show 12-week total"
+- tapOn:
+    id: "date-line-chart"
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible:
+    id: "chart-see-workouts"
+- assertVisible: "Show 12-week total"
+- takeScreenshot: rel-f199-10-week-picked
+- tapOn:
+    id: "chart-open-workout"
+- extendedWaitUntil:
+    visible: "^Your workouts$|^Share$"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "^Your workouts$"
+    commands:
+      - assertVisible: ".*\\d+ workouts? in .*"
+- takeScreenshot: rel-f199-11-week-box-opened
+- back
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 15000
+# ---------------------------------------------------------------- 4. Last 12 months: a month opens its workouts
+- tapOn: "^Last 12 weeks$"
+- extendedWaitUntil:
+    visible: "^Last 12 months$"
+    timeout: 10000
+- tapOn: "^Last 12 months$"
+- extendedWaitUntil:
+    visible: "Tap a point to see one month"
+    timeout: 20000
+# The demo covers only the last 3 months: pick the first month with kilos by its screen-reader button
+# ("Sep 2026: 41,230 kg"); the tap reaches the line, which picks that month.
+- tapOn:
+    text: "[A-Z][a-z]{2} \\d{4}: [1-9][\\d,]* (kg|lb)"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible: "Show 12-month total"
+- assertVisible:
+    id: "chart-see-workouts"
+- takeScreenshot: rel-f199-12-month-picked
+- tapOn:
+    id: "chart-open-workout"
+- extendedWaitUntil:
+    visible: "^Your workouts$|^Share$"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "^Your workouts$"
+    commands:
+      - assertVisible: ".*\\d+ workouts? in [A-Z][a-z]{2} \\d{4}.*"
+- takeScreenshot: rel-f199-13-month-box-opened
+- back
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 15000
+# Back to Last 12 weeks (a saved choice).
+- tapOn: "^Last 12 months$"
+- extendedWaitUntil:
+    visible: "^Last 12 weeks$"
+    timeout: 10000
+- tapOn: "^Last 12 weeks$"
+- extendedWaitUntil:
+    visible: "Tap a point to see one week|Show 12-week total"
+    timeout: 20000
+# ---------------------------------------------------------------- 5. the chips keep the chart tappable
+- scrollUntilVisible:
+    element: "^Duration$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Duration$"
+- extendedWaitUntil:
+    visible: "Time trained in .*"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    id: "date-line-chart"
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- takeScreenshot: rel-f199-14-duration-picked
+# Duration: the Today line says how long the workout took last time.
+- scrollUntilVisible:
+    element:
+      id: "today-goal"
+    centerElement: true
+    timeout: 15000
+- assertVisible: "Today: .*"
+- scrollUntilVisible:
+    element: "^Reps$"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Reps$"
+- extendedWaitUntil:
+    visible: "Reps in .*"
+    timeout: 15000
+# Negative: no Today line on Reps.
+- assertNotVisible:
+    id: "today-goal"
+- scrollUntilVisible:
+    element:
+      id: "date-line-chart"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+- tapOn:
+    id: "date-line-chart"
+- extendedWaitUntil:
+    visible:
+      id: "chart-open-workout"
+    timeout: 5000
+- assertVisible:
+    id: "chart-see-workouts"
+- takeScreenshot: rel-f199-15-reps-picked
+- tapOn:
+    id: "chart-see-workouts"
+- extendedWaitUntil:
+    visible: "^Your workouts$"
+    timeout: 15000
+- back
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 15000
+# Back to Kg lifted (a saved choice): the Today line returns.
+- tapOn: "^Kg lifted$"
+- extendedWaitUntil:
+    visible:
+      id: "today-goal"
+    timeout: 15000
+# ---------------------------------------------------------------- 6. the old link lands on Profile
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
+    timeout: 20000
+- openLink: "mettleup://progress"
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 20000
+- assertNotVisible: "^Progress$"
+- takeScreenshot: rel-f199-16-old-link-profile
+# Interruption: the app killed, then the old link again (a link sent while the app starts is dropped:
+# wait for the tabs first).
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- openLink: "mettleup://progress"
+- extendedWaitUntil:
+    visible:
+      id: "date-line-chart"
+    timeout: 20000
+- assertNotVisible: "^Progress$"
+- scrollUntilVisible:
+    element:
+      id: "progress-row-Charts"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-f199-17-old-link-after-restart

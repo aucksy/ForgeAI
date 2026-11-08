@@ -5,7 +5,7 @@
 # Android's 3-button bar (NAV=3button). Each screen a member uses is photographed
 # (p7-big-<NAV>-*.png; the script gathers them in qa-out/p7-big/). Redesign (3 tabs): the Workout
 # tab (top, then its folders), an open workout with a set row, the Profile page (top, its chart,
-# its feed), Calendar, Progress and Charts, Settings, and the Gym tab's "Join your gym" screen.
+# its feed), Calendar, Your progress (F199: on Profile) and Charts, Settings, and the Gym tab's "Join your gym" screen.
 # R-77: no gym, no shop tab (sample shop removed): the Shop's join card, the sample shop's grid and
 # its product page are gone, so this tour checks the tab is absent instead.
 # Changes NOTHING: the workout is an empty one with one exercise and no ticked set, thrown away
@@ -179,13 +179,16 @@ appId: com.mettleup.app
     timeout: 3000
 - takeScreenshot: p7-big-${NAV}-07-calendar
 - back
-# ---------------------------------------------------------------- Progress (Release A) and Charts
+# ---------------------------------------------------------------- Your progress (F199: on Profile) and Charts
+# F199 (owner R-403, 8 Nov 2026): no Progress tab; its rows sit on Profile under the chart.
+- assertNotVisible: "^Progress$"
 - tapOn:
-    text: "^Progress$"
+    text: "^Profile$"
     index: 0
-# R-132: the tabs open the page; the Charts row is further down (sub-progress-row scrolls to it).
-- extendedWaitUntil:
-    visible: "^Kg lifted$"
+- scrollUntilVisible:
+    element:
+      id: "progress-row-Charts"
+    centerElement: true
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 3000

@@ -1,6 +1,6 @@
 # Sub-flow (called with runFlow; not a part of its own). Release A (A6): the Profile page keeps ONE
 # button of the old Dashboard, "Calendar" (src/app/(tabs)/profile.tsx); Charts, Exercises and Body
-# moved to the Progress tab (sub-progress-row.yaml). Opens the Profile tab and taps the button passed in:
+# sit under "Your progress" above it (F199; sub-progress-row.yaml). Opens the Profile tab and taps the button passed in:
 #   - runFlow:
 #       file: sub-profile-tile.yaml
 #       env:

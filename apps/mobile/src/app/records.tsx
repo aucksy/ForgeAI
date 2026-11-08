@@ -43,7 +43,7 @@ export default function RecordsScreen() {
           : undefined
       }
       scroll={false}
-      onBack={() => goBack(router, '/progress')}
+      onBack={() => goBack(router, '/profile')}
     >
       {state === 'error' ? (
         <LoadError what="your records" onRetry={retry} />

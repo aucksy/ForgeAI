@@ -49,3 +49,20 @@ export function historyRangeLine(count: number, r: HistoryRange, today: string):
   if (count === 0) return `You did not log a workout ${when}.`;
   return `${count} ${count === 1 ? 'workout' : 'workouts'} ${when}`;
 }
+
+/** Where a chart point's box goes: one workout's page, or the list of that period's workouts. */
+export type PeriodTarget =
+  | { pathname: '/session/[id]'; params: { id: string } }
+  | { pathname: '/history'; params: HistoryRange };
+
+/**
+ * F199 (owner R-403, 8 Nov 2026: "every chart behaves the same"): the box over a picked week or month
+ * opens that period's workouts ("Your workouts"); a period with exactly ONE workout opens that workout
+ * itself, as the exercise chart's box opens its day's workout. `ids` = the period's workout ids, read
+ * with a limit of 2 (`getWorkoutIdsBetween`): one id = open it; none, two, or a failed read = the list.
+ * PURE.
+ */
+export function periodTarget(range: HistoryRange, ids: readonly string[] | null): PeriodTarget {
+  if (ids && ids.length === 1 && ids[0]) return { pathname: '/session/[id]', params: { id: ids[0] } };
+  return { pathname: '/history', params: historyRangeParams(range.from, range.to) };
+}

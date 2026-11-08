@@ -88,7 +88,7 @@ export function PrListCard({ prs }: { prs: PrView[] }) {
               color: color.inkMuted,
             }}
           >
-            {`+ ${prs.length - MAX_ROWS} more in Progress`}
+            {`+ ${prs.length - MAX_ROWS} more in Records`}
           </Text>
         ) : null}
       </View>

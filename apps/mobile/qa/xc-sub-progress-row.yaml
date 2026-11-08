@@ -1,13 +1,26 @@
 # Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-progress-row.yaml, so a change to the
-# phone test parts never moves these flows. Same behaviour.
+# phone test parts never moves these flows. It runs on BOTH sides of an install-over: the released app (which
+# may still have a Progress tab) and the new one (F199, R-403: the rows are on the Profile tab, under "Your
+# progress"). It taps the Progress tab when the bar has one, else the Profile tab, then the row ROW.
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "^Progress$"
+    visible: "^Profile$"
     timeout: 30000
-- tapOn:
-    text: "^Progress$"
-    index: 0
+- runFlow:
+    when:
+      visible: "^Progress$"
+    commands:
+      - tapOn:
+          text: "^Progress$"
+          index: 0
+- runFlow:
+    when:
+      notVisible: "^Progress$"
+    commands:
+      - tapOn:
+          text: "^Profile$"
+          index: 0
 # The tab keeps its scroll position (at 200 % text a row can sit above or below the screen's edge):
 # look UP first, then down.
 - scrollUntilVisible:

@@ -111,7 +111,8 @@ describe('R-256 / R-259: the logo sits top-right on Workout, Progress and Gym, n
   const src = (p: string) => readFileSync(join(__dirname, '..', '..', 'src', ...p.split('/')), 'utf8');
   it('the 3 tabs pass the BrandCorner as the right side of the page header', () => {
     expect(src('app/(tabs)/workout.tsx')).toContain('<Screen title="Workout" right={<BrandCorner />}>');
-    expect(src('app/(tabs)/progress.tsx')).toContain('<Screen title="Progress" right={<BrandCorner />}>');
+    // F199 (R-403): the Progress tab is gone (its route only redirects to Profile, which has no corner logo).
+    expect(src('app/(tabs)/progress.tsx')).toContain('<Redirect href="/profile" />');
     const gym = src('shop/ShopScreen.tsx');
     // R-264: only the no-gym screen. A joined gym's corner is the bell and bag; loading shows none (no flash).
     expect(gym.match(/<BrandCorner/g)?.length).toBe(1);

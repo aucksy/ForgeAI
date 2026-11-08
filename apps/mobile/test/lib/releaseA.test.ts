@@ -38,19 +38,22 @@ function routeFile(href: string): string | null {
 const NO_GYM: SettingsContext = { gymName: null, canAddGymLogo: false, hasHealth: true, coach: false };
 const IN_GYM: SettingsContext = { gymName: 'RAM Fitness Club', canAddGymLogo: true, hasHealth: true, coach: false };
 
-describe('A1/A5: 4 tabs, always the same 4', () => {
-  it('Workout, Progress, Gym, Profile, in that order; Workout first', () => {
-    expect(APP_TABS.map((t) => t.title)).toEqual(['Workout', 'Progress', 'Gym', 'Profile']);
+describe('A1/A5 then F199: 3 tabs, always the same 3', () => {
+  it('F199 the tabs are Workout then Gym then Profile with Workout first', () => {
+    expect(APP_TABS.map((t) => t.title)).toEqual(['Workout', 'Gym', 'Profile']);
     expect(APP_TABS[0].route).toBe('workout');
   });
   it('the Gym tab keeps the /shop address (old links, notifications, What’s new buttons)', () => {
     expect(tabTitle('shop')).toBe('Gym');
     expect(isShownTab('shop')).toBe(true);
   });
-  it('Coach stays hidden; every tab has its route file', () => {
+  it('F199 Coach and Progress stay hidden and every tab has its route file', () => {
     expect(HIDDEN_TAB_ROUTES).toContain('coach');
+    expect(HIDDEN_TAB_ROUTES).toContain('progress');
     expect(isShownTab('coach')).toBe(false);
+    expect(isShownTab('progress')).toBe(false);
     expect(tabTitle('coach')).toBeNull();
+    expect(tabTitle('progress')).toBeNull();
     for (const t of APP_TABS) expect(existsSync(join(APP, '(tabs)', `${t.route}.tsx`)), t.route).toBe(true);
   });
   it('the tab layout and the tab bar both read the one list', () => {
@@ -116,6 +119,7 @@ describe('A7: Settings in 6 headed groups', () => {
 describe('A5: the one-time "it moved" hints', () => {
   it('the owner’s words', () => {
     expect(HINT_TEXT.progressTab).toBe('Your charts are now in the Progress tab.');
+    expect(HINT_TEXT.progressInProfile).toBe('Progress is now on your Profile, below the chart.');
     for (const t of Object.values(HINT_TEXT)) expect(t.length).toBeLessThanOrEqual(60);
   });
   it('settled once: due for a member who had the old layout, done for everyone else', () => {
@@ -140,8 +144,10 @@ describe('A5: the one-time "it moved" hints', () => {
     expect(hadShopTab({ metEarlierVersion: true, joined: true, productCount: 0 })).toBe(false);
     expect(hadShopTab({ metEarlierVersion: false, joined: true, productCount: 2 })).toBe(false);
   });
-  it('Profile and the Gym tab show them', () => {
-    expect(readFileSync(join(APP, '(tabs)', 'profile.tsx'), 'utf8')).toMatch(/hintDue\('progressTab'\)/);
+  it('F199 Profile shows the new hint and never the retired one while the Gym tab shows its own', () => {
+    const profile = readFileSync(join(APP, '(tabs)', 'profile.tsx'), 'utf8');
+    expect(profile).toMatch(/hintDue\('progressInProfile'\)/);
+    expect(profile).not.toMatch(/hintDue\('progressTab'\)/);
     expect(readFileSync(join(__dirname, '..', '..', 'src', 'shop', 'ShopScreen.tsx'), 'utf8')).toMatch(/hintDue\('shopInGym'\)/);
   });
 });

@@ -32,8 +32,8 @@ import { Glyph, type GlyphName } from './TrackerGlyph';
 import { WorkoutMiniBar } from './WorkoutMiniBar';
 
 /**
- * Release A (docs/ux/MEMBER-APP-MAP.md §3.1): 4 tabs, always the same 4 — Workout, Progress, Gym,
- * Profile (lib/appTabs.ts). The Gym tab (route `shop`) shows with or without a gym and is always
+ * Release A (docs/ux/MEMBER-APP-MAP.md §3.1), then F199 (R-403): 3 tabs, always the same 3 — Workout,
+ * Gym, Profile (lib/appTabs.ts; Progress moved into Profile, its icon stays for old states). The Gym tab (route `shop`) shows with or without a gym and is always
  * "Gym" (before, R-77, it was missing without a gym and became "Shop" with products).
  */
 type TabIcon = { icon: IconName } | { glyph: GlyphName };

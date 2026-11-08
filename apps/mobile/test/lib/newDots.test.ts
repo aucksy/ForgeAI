@@ -57,7 +57,9 @@ describe('the trail comes from the line’s go', () => {
     expect(trailOf({ label: 'x', href: '/settings/health' })).toEqual(['tab:profile', 'gear', 'row:/settings/health', 'page:/settings/health']);
   });
   it('a tab, and a part of the Gym tab', () => {
-    expect(trailOf({ label: 'x', href: '/progress' })).toEqual(['tab:progress', 'page:/progress']);
+    // F199 (R-403): the Progress tab moved into Profile, so an older '/progress' line leads to the Profile tab.
+    expect(trailOf({ label: 'x', href: '/progress' })).toEqual(['tab:profile', 'page:/progress']);
+    expect(trailOf({ label: 'x', href: '/profile' })).toEqual(['tab:profile', 'page:/profile']);
     expect(trailOf({ label: 'x', href: '/shop', section: 'gym' })).toEqual(['tab:shop', 'section:gym', 'page:/shop#gym']);
   });
   it('test ids the device flows look for', () => {

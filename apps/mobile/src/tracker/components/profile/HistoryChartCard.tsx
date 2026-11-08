@@ -21,7 +21,7 @@
  * every point is a button that says its period and number. Large text wraps the top line.
  */
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Chip, Skeleton } from '@/components/ui';
@@ -48,7 +48,8 @@ import {
   type ChartRange,
 } from '../../engine/historyChart';
 import { dateXs } from '../../lib/chartTime';
-import { historyRangeParams } from '../../lib/historyRange';
+import { historyRangeParams, periodTarget } from '../../lib/historyRange';
+import { getWorkoutIdsBetween } from '../../services/historyFeed';
 import { DATE_CHART_PAD, DateLineChart } from '../DateLineChart';
 import { Glyph } from '../TrackerGlyph';
 import { SheetRow, TrackerSheet } from '../TrackerSheet';
@@ -70,7 +71,7 @@ export function HistoryChartCard({
   onRetry,
   showChips = true,
 }: {
-  /** R-132: false on the Progress tab, whose tabs at the top choose what the chart counts. */
+  /** R-132: false hides the chips (the old Progress tab chose with its own tabs; F199: Profile shows them). */
   showChips?: boolean;
   bars: ChartBar[] | null;
   metric: ChartMetric;
@@ -136,6 +137,29 @@ export function HistoryChartCard({
   const openWorkouts = (b: ChartBar): void => {
     tap();
     router.push({ pathname: '/history', params: { ...historyRangeParams(b.start, b.end) } });
+  };
+  // F199 (owner R-403, 8 Nov 2026: every chart behaves the same): the box over the picked point opens
+  // that week's or month's workouts, or, when it holds exactly one, that workout (as on an exercise
+  // chart). One page per tap: a second tap while the ids are read is ignored.
+  const opening = useRef(false);
+  const openPicked = (b: ChartBar): void => {
+    if (opening.current) return;
+    opening.current = true;
+    tap();
+    const range = historyRangeParams(b.start, b.end);
+    getWorkoutIdsBetween(range.from, range.to)
+      .catch((e: unknown) => {
+        console.warn('[history chart] could not read the workouts of the picked point', e);
+        return null;
+      })
+      .then((ids) => {
+        const to = periodTarget(range, ids);
+        if (to.pathname === '/session/[id]') router.push({ pathname: '/session/[id]', params: { id: to.params.id } });
+        else router.push({ pathname: '/history', params: { ...to.params } });
+      })
+      .finally(() => {
+        opening.current = false;
+      });
   };
 
   return (
@@ -235,8 +259,8 @@ export function HistoryChartCard({
               onInspect={pickPoint}
               resetKey={`${range}|${metric}|${clears}`}
               // R-402 (owner, 8 Nov 2026): the picked point's date box is a button here too, as on the
-              // exercise chart: it opens that week's or month's workouts ("See these workouts").
-              onOpenPicked={bar && bar.workouts > 0 ? () => openWorkouts(bar) : undefined}
+              // exercise chart: it opens that week's or month's workouts; F199: one workout opens itself.
+              onOpenPicked={bar && bar.workouts > 0 ? () => openPicked(bar) : undefined}
               pickedDate={(x) => {
                 const b = list.find((l) => l.start === x);
                 return b ? chartPeriodText(b, today) : x;

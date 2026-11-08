@@ -103,8 +103,9 @@ describe('R-98 review: what a button does on this phone', () => {
     expect(goFor(offer, false)).toEqual({ label: 'Join your gym', href: '/shop', tab: true });
     expect(goFor(offer, true)).toEqual({ label: "See your gym's offer", href: '/shop', tab: true });
   });
-  it('0.56.0: the Progress tab button switches tabs, like Workout and Gym', () => {
-    expect(goFor({ text: 'x', go: { label: 'Open Progress', href: '/progress' } }, true)).toEqual({ label: 'Open Progress', href: '/progress', tab: true });
+  it('F199 an older Progress tab button now opens the Profile tab and says so', () => {
+    expect(goFor({ text: 'x', go: { label: 'Open Progress', href: '/progress' } }, true)).toEqual({ label: 'Open Profile', href: '/profile', tab: true });
+    expect(goFor({ text: 'x', go: { label: 'Open Progress', href: '/progress' } }, false)).toEqual({ label: 'Open Profile', href: '/profile', tab: true });
     expect(goFor({ text: 'x', go: { label: 'Open', href: '/settings/rest' } }, true)?.tab).toBe(false);
   });
   it('no button to the page it is on; none for a line without one', () => {

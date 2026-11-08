@@ -9,7 +9,7 @@ import { Card, Icon } from '@/components/ui';
 import type { UnitSystem } from '@/lib/units';
 import { color, space, type } from '@/theme/tokens';
 
-import { goalText, goalTitle, type ProgressMode, type TodayGoal } from '../../lib/todayGoal';
+import { goalText, goalTitle, todayLineWords, type ProgressMode, type TodayGoal } from '../../lib/todayGoal';
 
 export function TodayGoalCard({ goal, mode, units, onOpen }: { goal: TodayGoal; mode: ProgressMode; units: UnitSystem; onOpen: () => void }) {
   const t = goalText(goal, mode, units);
@@ -34,6 +34,42 @@ export function TodayGoalCard({ goal, mode, units, onOpen }: { goal: TodayGoal; 
         <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: lineColor, lineHeight: 20 }}>{t.line}</Text>
         {t.note ? <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{t.note}</Text> : null}
       </Card>
+    </Pressable>
+  );
+}
+
+/**
+ * F199 (owner R-403, 8 Nov 2026): the same goal as one short block under the Profile chart (the design's
+ * "Today: <Up next workout>." line), in the mode of the chart's chip. A tap opens the Workout tab.
+ */
+export function TodayGoalLine({ goal, mode, units, onOpen }: { goal: TodayGoal; mode: ProgressMode; units: UnitSystem; onOpen: () => void }) {
+  const t = goalText(goal, mode, units);
+  const lineColor = t.trend === 'up' ? color.goodText : color.inkSecondary;
+  const words = todayLineWords(t, mode);
+  return (
+    <Pressable
+      testID="today-goal"
+      onPress={onOpen}
+      accessibilityRole="button"
+      accessibilityLabel={`${goalTitle(goal)}. ${words}${t.note ? ` ${t.note}` : ''}`}
+      accessibilityHint="Opens the Workout tab"
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: space.sm,
+        minHeight: 48,
+        paddingVertical: space.sm,
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.ink, lineHeight: 20 }}>
+          {`${goalTitle(goal)}. `}
+          <Text style={{ fontFamily: type.bodyMedium, color: lineColor }}>{words}</Text>
+        </Text>
+        {t.note ? <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, lineHeight: 17 }}>{t.note}</Text> : null}
+      </View>
+      <Icon name="chevron-right" size={18} color={color.inkMuted} />
     </Pressable>
   );
 }

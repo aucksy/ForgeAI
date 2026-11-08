@@ -79,7 +79,7 @@ export default function OneRepMaxScreen() {
         : `Reps must be a whole number from 1 to ${MAX_REPS}.`; // member-words
 
   return (
-    <Screen title="1-rep max" subtitle={name ?? undefined} onBack={() => goBack(router, '/progress')}>
+    <Screen title="1-rep max" subtitle={name ?? undefined} onBack={() => goBack(router, '/profile')}>
       <Card style={{ gap: space.md, marginBottom: space.lg }}>
         <View style={{ flexDirection: 'row', gap: space.md }}>
           <Box

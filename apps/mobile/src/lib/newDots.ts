@@ -6,7 +6,8 @@
  *  - One source: the line's `go` (lib/whatsNew.ts). The trail is derived from `go.href` (+ `section`):
  *      '/settings/health' -> the Profile tab, the Settings button on Profile, the "Health apps" row on Settings,
  *      and the place on the page itself (beside the feature's heading);
- *      '/progress', '/shop', '/workout' -> that tab (+ the section of the Gym tab, when named).
+ *      '/shop', '/workout', '/profile' -> that tab (+ the section of the Gym tab, when named); '/progress'
+ *      (F199: the Progress tab moved into Profile) -> the Profile tab.
  *  - Clears: opening the page marks that feature seen on this phone. The page's own dot shows for that visit
  *    (so the member sees where it is) and is gone the next time. A parent dot (tab, button, row) goes at once,
  *    unless another unseen feature sits under it.
@@ -74,7 +75,9 @@ export function liveAtOf(date: string, now: number): number | null {
 function tabOf(href: string): string | null {
   if (href.startsWith('/settings/')) return 'profile';
   const tab = href.replace(/^\//, '');
-  return tab === 'workout' || tab === 'progress' || tab === 'shop' ? tab : null;
+  // F199 (R-403): an older line's '/progress' lives on the Profile tab now.
+  if (tab === 'progress' || tab === 'profile') return 'profile';
+  return tab === 'workout' || tab === 'shop' ? tab : null;
 }
 
 /** Every place on the way to a line's `go`, outermost first, ending at the page itself. PURE. */

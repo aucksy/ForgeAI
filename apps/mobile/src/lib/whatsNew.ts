@@ -34,9 +34,12 @@ export interface WhatsNewLine {
   feature?: true;
 }
 
-/** The tabs a line's button can switch to (0.56.0: the new Progress tab too). */
-export type WhatsNewTab = '/workout' | '/progress' | '/shop';
-const TABS: readonly string[] = ['/workout', '/progress', '/shop'] satisfies readonly WhatsNewTab[];
+/**
+ * The tabs a line's button can switch to (0.56.0: the new Progress tab too). F199 (R-403, 8 Nov 2026):
+ * the Progress tab moved into Profile; older lines keep '/progress' and their button opens Profile.
+ */
+export type WhatsNewTab = '/workout' | '/progress' | '/shop' | '/profile';
+const TABS: readonly string[] = ['/workout', '/progress', '/shop', '/profile'] satisfies readonly WhatsNewTab[];
 
 /**
  * What a line's button does on this phone, or null for no button. PURE.
@@ -47,7 +50,12 @@ const TABS: readonly string[] = ['/workout', '/progress', '/shop'] satisfies rea
  */
 export function goFor(line: WhatsNewLine, inGym: boolean, here?: string): { label: string; href: string; tab: boolean } | null {
   if (!line.go) return null;
-  const go = line.go.href === '/shop' && !inGym ? { label: 'Join your gym', href: '/shop' } : line.go;
+  const go =
+    line.go.href === '/shop' && !inGym
+      ? { label: 'Join your gym', href: '/shop' }
+      : line.go.href === '/progress'
+        ? { label: 'Open Profile', href: '/profile' }
+        : line.go;
   if (go.href === here) return null;
   return { label: go.label, href: go.href, tab: TABS.includes(go.href) };
 }

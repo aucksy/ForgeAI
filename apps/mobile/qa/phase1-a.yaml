@@ -104,9 +104,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 30000
-# The old tabs are gone. Release A (A1/A5): 4 tabs, always the same 4, with or without a gym:
-# Workout, Progress, Gym, Profile.
-- assertVisible: "^Progress$"
+# The old tabs are gone. Release A (A1/A5), then F199 (R-403): 3 tabs, always the same 3, with or
+# without a gym: Workout, Gym, Profile (Progress moved into Profile).
+- assertNotVisible: "^Progress$"
 - assertVisible: "^Gym$"
 - assertNotVisible: "^Shop$"
 - assertNotVisible: "^History$"

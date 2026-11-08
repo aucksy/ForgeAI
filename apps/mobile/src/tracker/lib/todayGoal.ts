@@ -23,6 +23,18 @@ import type { ProgressionTarget } from '../engine/progression';
 export type ProgressMode = Extract<ChartMetric, 'volume' | 'sets' | 'duration'>;
 export const PROGRESS_MODES: readonly ProgressMode[] = ['volume', 'sets', 'duration'];
 
+/**
+ * F199 (owner R-403, 8 Nov 2026): the Today line sits under the Profile chart and follows its chip.
+ * Kg lifted -> the kilos to beat; Duration -> how long it took last time. Reps has no Today line (the
+ * Targets give rep goals per exercise, not one total to beat, so the line is left out); the old
+ * Progress tab's Sets mode has no chip any more. PURE.
+ */
+export function todayModeFor(metric: ChartMetric): ProgressMode | null {
+  if (metric === 'volume') return 'volume';
+  if (metric === 'duration') return 'duration';
+  return null;
+}
+
 type TargetIn = Pick<
   ProgressionTarget,
   'targetWeightKg' | 'targetRepsMin' | 'targetSets' | 'repGoal' | 'setGoals' | 'last' | 'bodyweightOnly' | 'logType' | 'free'
@@ -116,7 +128,8 @@ export function goalText(g: TodayGoal, mode: ProgressMode, units: UnitSystem): G
   if (g.volumeKg <= 0) {
     // Done before but nothing to weigh (timed or body-weight work): point at Sets, never "do it once".
     if (g.last && g.uncounted === 0) {
-      return { big: '—', label: 'to lift today', line: 'This workout has no kilos to count. Tap Sets to see your goal.', trend: null, note: null };
+      // F199: no Sets mode any more to point at.
+      return { big: '—', label: 'to lift today', line: 'This workout has no kilos to count.', trend: null, note: null };
     }
     return { big: '—', label: 'to lift today', line: 'Finish this workout once to see your goal here.', trend: null, note };
   }
@@ -133,4 +146,15 @@ export function goalText(g: TodayGoal, mode: ProgressMode, units: UnitSystem): G
     trend: d > 0 ? 'up' : 'down',
     note,
   };
+}
+
+/**
+ * F199: the words of the Today line under the Profile chart (after "Today: Push A."). Kilos: the goal,
+ * then last time ("12,300 kg to lift today. 300 kg more than last time (12,000 kg)."); time: "Last time it
+ * took 52 min."; nothing to show yet: why. PURE.
+ */
+export function todayLineWords(t: Pick<GoalText, 'big' | 'label' | 'line'>, mode: ProgressMode): string {
+  if (t.big === '—') return t.line;
+  if (mode === 'duration') return `Last time it took ${t.big}.`;
+  return `${t.big} ${t.label}. ${t.line}`;
 }

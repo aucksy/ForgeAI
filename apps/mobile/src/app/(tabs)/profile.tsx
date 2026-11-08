@@ -4,12 +4,15 @@
  *     gear (Settings) top right;
  *  2. photo (or the first letter), full name, and Workouts · Weeks in a row · Records;
  *  3. bio and link, when set;
- *  4. the history chart — the range's total, Last 12 weeks / Last 12 months / All time, tap a bar,
- *     Duration · Kg lifted · Reps (Kg lifted the first time, then the last choice);
- *  5. Calendar (Release A, A6: Statistics, Exercises and Measures moved to the Progress tab as
- *     Charts, Exercises and Body; a member who had the tiles sees "Your charts are now in the
- *     Progress tab" once, above the chart);
- *  6. the Workouts feed, newest first, 30 at a time, a thin month line between months.
+ *  4. the history chart — the range's total, Last 12 weeks / Last 12 months / All time, tap a point,
+ *     then its box opens that week's or month's workouts (one workout: that workout), Duration ·
+ *     Kg lifted · Reps (Kg lifted the first time, then the last choice);
+ *  5. F199 (owner R-403, 8 Nov 2026: the Progress tab moved in here): under the chart, the Today line
+ *     (today's Up next and what to beat, following the chip: Kg lifted, Duration; none on Reps), then
+ *     "Your progress": Charts, Exercises, Records, Body and the Reports rows, as the Progress tab had
+ *     them. A member who had the Progress tab sees "Progress is now on your Profile" once, above the chart;
+ *  6. Calendar;
+ *  7. the Workouts feed, newest first, 30 at a time, a thin month line between months.
  *
  * Audit Phase 8 (years of data): coming back with nothing saved since (and the same day) reads
  * nothing; the chart keeps each range it read until the data changes.
@@ -22,11 +25,13 @@ import { ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'rea
 
 import { GymBrandMark } from '@/components/GymBrandMark';
 import { NewDot } from '@/components/NewDot';
-import { Card, GhostButton, Icon, LoadError, Screen, Skeleton } from '@/components/ui';
+import { LinkRow } from '@/components/stats/parts';
+import { Card, GhostButton, Icon, LoadError, Screen, Skeleton, type IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { quietSince, writeQueueMark } from '@/db/writeQueue';
 import { todayISO } from '@/lib/date';
 import { fmtInt } from '@/lib/format';
+import { navigateOnce } from '@/lib/guardedAction';
 import { tap } from '@/lib/haptics';
 import { dismissHint, hintDue, HINT_TEXT } from '@/lib/layoutHints';
 import { useLitSpots } from '@/lib/newDotsStore';
@@ -43,10 +48,13 @@ import { BadgeShelfRow } from '@/tracker/components/profile/BadgeShelf';
 import { FeedCard } from '@/tracker/components/profile/FeedCard';
 import { FeedMenu, type FeedMenuRequest } from '@/tracker/components/profile/FeedMenu';
 import { HistoryChartCard } from '@/tracker/components/profile/HistoryChartCard';
+import { TodayGoalLine } from '@/tracker/components/progress/TodayGoalCard';
 import { linkLabel } from '@/tracker/db/profileExtras';
 import { liftsBeatingBest } from '@/tracker/engine/headline';
 import { DEFAULT_METRIC, type ChartBar, type ChartRange } from '@/tracker/engine/historyChart';
 import { monthOf } from '@/tracker/lib/months';
+import { reportRows } from '@/tracker/lib/progressTab';
+import { todayModeFor, type TodayGoal } from '@/tracker/lib/todayGoal';
 import { feedMonthLine, feedRows, type FeedRow } from '@/tracker/services/feedCard';
 import { getMonthCounts, historyStamp, type HistoryCursor } from '@/tracker/services/historyFeed';
 import {
@@ -58,7 +66,8 @@ import {
   type FeedThumb,
   type ProfileHeader,
 } from '@/tracker/services/profileService';
-import { getMonthReport } from '@/tracker/services/reportsService';
+import { getMonthReport, getTrainedMonths } from '@/tracker/services/reportsService';
+import { getTodayGoal } from '@/tracker/services/todayGoalService';
 import type { Scene } from '@/tracker/share/scene';
 import { monthShareScene } from '@/tracker/share/reportCard';
 import { useTrackerPrefs } from '@/tracker/store/trackerPrefsStore';
@@ -97,6 +106,27 @@ function SettingsButton({ onPress }: { onPress: () => void }) {
   );
 }
 
+/** A "Your progress" row's round icon (as the Progress tab drew it). Read when drawn: gym branding repaints the tokens. */
+function RowIcon({ icon }: { icon: IconName }) {
+  return (
+    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+      <Icon name={icon} size={18} color={color.accent} />
+    </View>
+  );
+}
+
+/**
+ * F199: one "Your progress" row. The wrapper carries a test id (progress-row-Charts, ...): the header's
+ * "Records" number has the same word, so a phone test finds the row by its id.
+ */
+function ProgressRow({ id, title, sub, icon, onPress }: { id: string; title: string; sub: string; icon: IconName; onPress: () => void }) {
+  return (
+    <View testID={`progress-row-${id}`} collapsable={false}>
+      <LinkRow title={title} sub={sub} leading={<RowIcon icon={icon} />} onPress={onPress} />
+    </View>
+  );
+}
+
 /**
  * One of the three numbers beside the photo (Hevy's Workouts · Followers · Following row). The
  * three always share ONE row in equal columns: at a large phone font size the label and number
@@ -120,7 +150,7 @@ function Stat({ label, value, unit, spoken }: { label: string; value: string; un
 export default function ProfileScreen() {
   const router = useRouter();
   const units = useUnits();
-  // R-132: 'sets' is a Progress tab mode; Profile has no chip for it (a restored pref could hold it).
+  // R-132: 'sets' was an old Progress tab mode; Profile has no chip for it (a restored pref could hold it).
   const savedMetric = useTrackerPrefs((s) => s.chartMetric);
   const metric = savedMetric === 'sets' ? DEFAULT_METRIC : savedMetric;
   const range = useTrackerPrefs((s) => s.chartRange);
@@ -283,14 +313,32 @@ export default function ProfileScreen() {
     [items, counts],
   );
 
-  // Release A (A5, owner yes 24 Oct 2026): once, for a member who had the old tiles, where they went.
+  // F199 (owner R-403, 8 Nov 2026): once, for a member who had the Progress tab, where it went. (Release
+  // A's "Your charts are now in the Progress tab" is retired: that tab is gone.)
   const [progressHint, setProgressHint] = useState(false);
+  // F199: the old Progress tab's parts: today's goal and the months with a report. Read on every visit:
+  // a finished workout moves Up next on and changes "last time".
+  const [goal, setGoal] = useState<TodayGoal | null>(null);
+  const [months, setMonths] = useState<readonly string[] | null>(null);
   useFocusEffect(
     useCallback(() => {
       let live = true;
-      void hintDue('progressTab').then((due) => {
+      void hintDue('progressInProfile').then((due) => {
         if (live) setProgressHint(due);
       });
+      getTodayGoal()
+        .then((g) => {
+          if (live) setGoal(g);
+        })
+        .catch((e: unknown) => console.warn('[profile] today goal could not be read', e));
+      getTrainedMonths()
+        .then((m) => {
+          if (live) setMonths(m);
+        })
+        .catch((e: unknown) => {
+          console.warn('[profile] months could not be read', e);
+          if (live) setMonths((m) => m ?? []);
+        });
       return () => {
         live = false;
       };
@@ -298,8 +346,15 @@ export default function ProfileScreen() {
   );
   const closeHint = (): void => {
     setProgressHint(false);
-    dismissHint('progressTab').catch((e: unknown) => console.warn('[profile] could not save the hint', e));
+    dismissHint('progressInProfile').catch((e: unknown) => console.warn('[profile] could not save the hint', e));
   };
+  // One page per tap, however fast the taps.
+  const rowBusy = useRef(false);
+  const open = (href: Href): void => {
+    navigateOnce(rowBusy, () => router.push(href));
+  };
+  const todayMode = todayModeFor(metric);
+  const reports = months ? reportRows(months, today) : [];
 
   const shareBusy = useRef(false);
   const onShareMonth = (): void => {
@@ -371,20 +426,9 @@ export default function ProfileScreen() {
       {progressHint ? (
         <Card style={{ gap: space.sm }}>
           <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
-            {HINT_TEXT.progressTab}
+            {HINT_TEXT.progressInProfile}
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: space.xl }}>
-            <Pressable
-              onPress={() => {
-                closeHint();
-                router.navigate('/progress' as Href);
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Open the Progress tab"
-              style={{ minHeight: 48, minWidth: 48, justifyContent: 'center' }}
-            >
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.accent }}>Open Progress</Text>
-            </Pressable>
             <Pressable
               onPress={closeHint}
               accessibilityRole="button"
@@ -411,8 +455,39 @@ export default function ProfileScreen() {
         onRetry={() => void historyStamp().catch(() => null).then((stamp) => loadChart(rangeRef.current, stamp))}
       />
 
+      {/* F199: today's goal, in the chip's mode (none on Reps), then what the Progress tab held. */}
+      {goal && todayMode ? <TodayGoalLine goal={goal} mode={todayMode} units={units} onOpen={() => open('/(tabs)/workout')} /> : null}
+
+      <View style={{ gap: space.sm }}>
+        <Text
+          accessibilityRole="header"
+          style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: color.inkMuted, letterSpacing: 1.1, textTransform: 'uppercase' }}
+        >
+          Your progress
+        </Text>
+        <ProgressRow id="Charts" title="Charts" sub="Your last 7 days, sets for each muscle and your main lifts" icon="chart" onPress={() => open('/stats')} />
+        <ProgressRow id="Exercises" title="Exercises" sub="Every exercise, with its history and how to do it" icon="dumbbell" onPress={() => open('/exercises')} />
+        <ProgressRow id="Records" title="Records" sub="Your best weights and reps" icon="trophy" onPress={() => open('/records')} />
+        <ProgressRow id="Body" title="Body" sub="Body weight, measurements and progress photos" icon="scale" onPress={() => open('/measures')} />
+        {reports.map((r) => (
+          <ProgressRow
+            key={r.period}
+            id={`report-${r.period}`}
+            title={r.title}
+            sub={r.sub}
+            icon="calendar"
+            onPress={() => open({ pathname: '/report/[period]', params: { period: r.period } })}
+          />
+        ))}
+        {months && reports.length === 0 ? (
+          <Text style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkMuted }}>
+            Your monthly report and year in review show here after your first workout.
+          </Text>
+        ) : null}
+      </View>
+
       {/* Release A, A6: the Profile keeps Calendar (your past workouts by day, streak, rest days and
-          "Log a past workout"); Charts, Exercises and Body moved to the Progress tab. */}
+          "Log a past workout"). */}
       <Pressable
         onPress={() => {
           tap();

@@ -86,7 +86,7 @@ describe('what the Today card says (R-132)', () => {
     expect(goalText(goal({ uncounted: 2 }), 'volume', 'metric').note).toContain('Not counted: 2 exercises');
   });
   it('kilos: nothing known yet, or a first time', () => {
-    expect(goalText(goal({ volumeKg: 0 }), 'volume', 'metric').line).toBe('This workout has no kilos to count. Tap Sets to see your goal.');
+    expect(goalText(goal({ volumeKg: 0 }), 'volume', 'metric').line).toBe('This workout has no kilos to count.');
     expect(goalText(goal({ volumeKg: 0, last: null }), 'volume', 'metric').line).toBe('Finish this workout once to see your goal here.');
     expect(goalText(goal({ last: { volumeKg: 0, sets: 6, durationSec: 900, dateISO: '2026-10-20' } }), 'volume', 'metric').line).toContain('nothing to compare');
     expect(goalText(goal({ last: null }), 'volume', 'metric').line).toBe('Your first time doing this workout.');

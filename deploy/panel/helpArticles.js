@@ -574,7 +574,8 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'See your progress, records and reports',
     text:
-      'Open the Progress tab. ' +
+      'Open the Profile tab. On its chart, tap a point, then its date, to see the workouts of that week or month. ' +
+      'Below the chart, "Your progress" has Charts, Exercises, Records, Body and Reports. ' +
       '"Charts" shows your last 7 days, sets for each muscle group, and your main exercises. ' +
       '"Records" lists your best weights and reps, newest first. ' +
       '"Body" holds body weight, measurements and progress photos. ' +
@@ -594,7 +595,7 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'Look up an exercise, or make your own',
     text:
-      '1. Open the Progress tab and tap "Exercises". Search, or filter by equipment and muscle. ' +
+      '1. Open the Profile tab and tap "Exercises" under "Your progress". Search, or filter by equipment and muscle. ' +
       '2. Tap an exercise. "Summary" shows last time, your best and a chart. "History" shows every time you did it. "How to" shows how to do it. ' +
       'To make your own: on Exercises, tap "Create". Type the name, pick how you log it, the main muscle and the equipment, then tap "Save exercise". ' +
       'To hide one you never do, open it, open its menu and tap "Hide from my lists". "Hidden exercises", at the bottom of the list, brings it back with "Show".',
@@ -610,7 +611,7 @@ export const HELP_ARTICLES = [
     who: 'member',
     title: 'Log body weight, measurements and progress photos',
     text:
-      '1. Open the Progress tab and tap "Body". ' +
+      '1. Open the Profile tab and tap "Body" under "Your progress". ' +
       '2. Tap "+" at the top right. ' +
       '3. Pick the "Date", type your body weight and any measurements, and add a picture if you like. Blank boxes are skipped. ' +
       '4. Tap "Save". ' +

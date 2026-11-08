@@ -24,10 +24,16 @@ appId: com.mettleup.app
 - takeScreenshot: rel-r402-02-week-picked-box
 - tapOn:
     id: "chart-open-workout"
+# F199 (R-403): a week with exactly one workout opens that workout itself (its page has Share and More);
+# a week with more opens "Your workouts".
 - extendedWaitUntil:
-    visible: "^Your workouts$"
+    visible: "^Your workouts$|^Share$"
     timeout: 10000
-- assertVisible: ".*\\d+ workouts?.*"
+- runFlow:
+    when:
+      visible: "^Your workouts$"
+    commands:
+      - assertVisible: ".*\\d+ workouts?.*"
 - takeScreenshot: rel-r402-03-box-opened-week
 # Back: the Profile chart is still there (regression: "See these workouts" still works too).
 - back

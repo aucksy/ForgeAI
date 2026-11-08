@@ -31,7 +31,7 @@ import { Card, GhostButton, Screen, askConfirm } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { runGuarded } from '@/lib/guardedAction';
 import { thud } from '@/lib/haptics';
-import { hadOldTiles, hadShopTab, settleLayoutHint } from '@/lib/layoutHints';
+import { hadOldTiles, hadProgressTab, hadShopTab, settleLayoutHint } from '@/lib/layoutHints';
 import { takeLinkNotice } from '@/lib/linkNotice';
 import { installMetEarlierVersion } from '@/lib/whatsNew';
 import { pickNotice, readNoticeRestDay, restNoticesToday, upNextExtra, type NoticeKind } from '@/lib/workoutNotices';
@@ -74,7 +74,8 @@ const PUSH_GUARD_MS = 800;
 let hintsSettled = false;
 
 /**
- * Release A: who sees "Your charts are now in the Progress tab" (Profile) and "Your gym's shop is
+ * Release A: who sees "Your charts are now in the Progress tab" (Profile; F199: replaced by "Progress is
+ * now on your Profile") and "Your gym's shop is
  * here in the Gym tab now" (Gym tab): members who had the old layout. Never throws.
  */
 async function settleMovedHints(hasWorkouts: boolean): Promise<void> {
@@ -82,6 +83,8 @@ async function settleMovedHints(hasWorkouts: boolean): Promise<void> {
   hintsSettled = true;
   const met = await installMetEarlierVersion(Constants.expoConfig?.version);
   await settleLayoutHint('progressTab', hadOldTiles({ metEarlierVersion: met, hasWorkouts, demo: useOnboarding.getState().demo }));
+  // F199 (R-403): "Progress is now on your Profile" for a member who had the Progress tab.
+  await settleLayoutHint('progressInProfile', hadProgressTab({ metEarlierVersion: met, demo: useOnboarding.getState().demo }));
   // The saved gym must be read back first, or a member in a gym would look like one with none.
   if (useGymShop.persist.hasHydrated()) {
     const g = useGymShop.getState();
