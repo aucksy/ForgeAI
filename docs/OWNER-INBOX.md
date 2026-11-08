@@ -325,6 +325,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Member app
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
+| F199 Progress inside Profile; every chart point opens something | Planned | Your request, 8 Nov (R-403): one place for your progress, and every chart taps the same way. Design: https://claude.ai/artifact/Tk2cLeSdfqGKa1UdTpxu7s | The Progress tab goes away; the tab bar keeps Workout, Gym and Profile. Profile shows the overview chart (Duration, Kg lifted, Reps) with the detailed pages (Charts, Exercises, Records, Body, Reports) under it. Tap a week or month on the chart, then tap its date: that period's workouts open (one workout opens straight away). |
 | F1 Workout logging | Live | Log sets of weight and reps, time or distance, with last time's numbers shown beside each set. |
 | F2 Set types and effort (RPE) | Live | Mark warm-up, drop and failure sets; one tap on RPE ticks the set and starts the rest. |
 | F3 Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |

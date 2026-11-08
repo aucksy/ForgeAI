@@ -7,6 +7,23 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-403. Progress tab moves into Profile; every chart point opens something (F199) — 8 Nov 2026
+He said (8 Nov 2026): "The charts behavior need to be the same. I have told you this before. And the profile one
+is actually more important. I feel like we don't even need two separate sections for similar information ... move
+the progress tab itself inside the profile somewhere and the high level charts ... can behave the same way which
+means the user can choose between you know volume duration or reps and then whenever it is possible actually always
+they can tap ... last 12 weeks ... they tap it, they go to the exercise. If you're doing last 12 months ... the points
+on the graph are actually the first of the month. They can still tap it and go to that list ... Let's remove the
+progress section, put it somewhere inside the profile so that if they want to look at the detailed charts, they
+can, but the profile will give them the high level overview the same way I just mentioned."
+Saved rule: D:/Brain/How I Like Things/every-chart-behaves-the-same.md (hard).
+My view: right; Hevy has no Progress tab either (Profile = chart + Statistics/Exercises/Measures/Calendar).
+Decided: tab bar Workout · Gym · Profile. Profile: header, the overview chart (Duration · Kg lifted · Reps;
+12 weeks / 12 months / All time), the Today line under it, then "Your progress" (Charts, Exercises, Records,
+Body, Reports), Calendar, Workouts feed. Every point opens something: a week or month opens its workouts list; a
+period with ONE workout opens that workout. Old /progress links go to Profile. Design canvas:
+https://claude.ai/artifact/Tk2cLeSdfqGKa1UdTpxu7s . Backlog F199 (Planned -> building). Not released.
+
 ## R-402. "Why are we not able to Tap the dated figures on charts from profile section" — 8 Nov 2026
 He said (8 Nov 2026): "Why are we not able to Tap the dated figures on charts from profile section".
 Cause: the Profile tab's history chart (HistoryChartCard) used DateLineChart without `onOpenPicked`, so the
