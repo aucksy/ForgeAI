@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-408. 0.76.0 gate re-run; HQ redesign live — 8 Nov 2026
+- HQ redesign deployed (forgeai-hq version 115a1521) after CI 42488760193 passed on 620c33f1. Live check in his Chrome: new side menu, Needs you badge 3 (was 56). Phone layout proven by the 390 px cloud test.
+- Gate runs on 0bb3870f failed on TEST steps, not the app: big-text tour swiped past "Your progress" (both profiles), and the F199 UAT waited for "Reps in" that sat above the screen on the owner phone. Both flows fixed.
+- Also fixed review findings 1 (empty week/month box names its period) and 2 (pick-lift subtitle "See its trend on your Profile"), with tests. Commits e3bf7b8a, 543a22ed.
+- Re-run on 543a22ed: CI 42506476623, journeys 42506483720, default 42506481894, owner 42506479727. Tag v0.76.0 when all green.
+
 ## R-407. Release 0.76.0: "You can also release whatever other changes are pending" — 8 Nov 2026
 He said it in the HQ-overhaul chat on 8 Nov 2026 (evening IST). One release = 0.76.0. Covers the waiting list: F199
 (Progress inside Profile), R-401 (no old What's new next to the update screen), R-402/R-403 (chart boxes open their
