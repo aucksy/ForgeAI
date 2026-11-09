@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  UPDATE_LINE_NEWS,
   countLaunch,
   DAY_MS,
   earlierLine,
@@ -180,5 +181,20 @@ describe('R-336 UAT finding: "a workout is open" is the store true/false flag', 
       expect(text, f).not.toMatch(/\.active\s*!==?\s*null/);
       expect(text, f).toMatch(/useActiveWorkout/);
     }
+  });
+});
+
+describe('R-412: What is new link on the Workout tab update line', () => {
+  const src = readFileSync(join(__dirname, '../../src/components/UpdateLine.tsx'), 'utf8');
+  it('the link words', () => {
+    expect(UPDATE_LINE_NEWS).toEqual({ show: "What's new", hide: "Hide what's new" });
+  });
+  it('shows the link only when the lines are known (never an empty list)', () => {
+    expect(src).toMatch(/const hasNews = news\.length > 0;/);
+    expect(src).toMatch(/const link = hasNews \?/);
+    expect(src).toMatch(/hasNews && open \?/);
+  });
+  it('the Update word keeps the full label the device test reads', () => {
+    expect(src).toContain('accessibilityLabel={`${line.text}. ${line.action}`}');
   });
 });

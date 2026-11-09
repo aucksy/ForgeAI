@@ -41,6 +41,23 @@ appId: com.mettleup.app
     timeout: 15000
 - assertVisible: "A new version of MettleUp is ready\\. Update"
 - takeScreenshot: rel-r336-03-workout-line
+# R-412 (owner, 9 Nov 2026): "What's new" right after the words opens this version's lines inside the line.
+- assertNotVisible: "1\\. See which muscles are ready to train today\\."
+- tapOn: "^What's new$"
+- extendedWaitUntil:
+    visible: "1\\. See which muscles are ready to train today\\."
+    timeout: 5000
+- assertVisible: "3\\. Invite a friend to your gym\\."
+# Negative: opening the lines does not start the update (the line stays, no "Downloading").
+- assertVisible: "A new version of MettleUp is ready\\. Update"
+- assertNotVisible: "Downloading.*"
+- takeScreenshot: rel-r412-01-line-whats-new-open
+- tapOn: "^Hide what's new$"
+- extendedWaitUntil:
+    notVisible: "1\\. See which muscles are ready to train today\\."
+    timeout: 5000
+- assertVisible: "^What's new$"
+- takeScreenshot: rel-r412-02-line-whats-new-closed
 # ---------------------------------------------------------------- 3. three versions behind: rows + earlier line
 - openLink: "mettleup://qa-update?behind=3"
 - extendedWaitUntil:

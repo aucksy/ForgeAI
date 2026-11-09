@@ -122,6 +122,9 @@ export const LINE_WORDS = {
   afterWorkout: 'The new version is ready. It installs after your workout.',
 } as const;
 
+/** R-412: the link after the line's words that opens this version's What's new inside the bar. */
+export const UPDATE_LINE_NEWS = { show: "What's new", hide: "Hide what's new" } as const;
+
 export type LineState = { text: string; action: string | null };
 
 /** What the line says, or null for no line. PURE. */

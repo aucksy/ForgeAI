@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-412. "What's new" link on the update line after "Later" — 9 Nov 2026
+- He said: after "Later" on the full-screen update, the persistent line at the top should have a "What's new" link right after the word "ready", which expands to show what is new in that version.
+- My view: good; app stores do the same and it helps people decide to update. Built: the link sits right after the words (only when the lines are known), opens the same lines as the full screen inside the orange box, "Hide what's new" closes it; the rest of the row still starts the update. Tests + UAT steps in uat-rel-r336-update.yaml. Waits for a release.
+
 ## R-411. "Why there are no release notes here for the user" (update screen on 0.75.0) — 9 Nov 2026
 - He sent a picture of "A new MettleUp is here" with no lines, on 0.75.0 (Play).
 - Cause: the screen reads whats-new.json from GitHub's release download link; GitHub's India edge answered 504 for every release file (the file is fine: 3 lines, via the API). A failed answer was then kept 6 hours on a Play phone.
