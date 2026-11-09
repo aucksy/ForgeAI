@@ -1,0 +1,36 @@
+{
+  "_how": "The same words for every voice, so the samples can be compared fairly. {BRAND} becomes 'MettleUp' for sample 0 (exactly what the current ads send to Kokoro) and 'Mettle Up' for every new model, so the name is read as two clear words. Numbers are written as words ('three') because some models skip digits. Block 1 is ad 03-own-app word for word (src/copy.json). Hindi-capable models read the Hinglish line from its Devanagari spelling; the others read the Roman spelling.",
+  "blocks": [
+    {
+      "name": "ad-03-own-app",
+      "lang": "en",
+      "segments": [
+        "Big chains have their own app. Now your gym can too.",
+        "Every member gets a free workout app, in your gym's name.",
+        "It shows last time's weight on every set. On Pro, add your logo and colours.",
+        "Start free for three months. No card."
+      ]
+    },
+    {
+      "name": "progress-ad",
+      "lang": "en",
+      "segments": [
+        "Members keep coming when they see progress. And progress needs tracking.",
+        "So every member gets a free, modern workout app in your gym's name.",
+        "Your own shop, on Pro. Free messages to their phones.",
+        "{BRAND}. Modern gym software.",
+        "Free for three months. No card."
+      ]
+    },
+    {
+      "name": "hinglish",
+      "lang": "hi",
+      "segments": [
+        {
+          "roman": "Aapke gym ke naam ka app. Progress dikhe, toh member aate rahenge.",
+          "devanagari": "आपके जिम के नाम का ऐप। प्रोग्रेस दिखे, तो मेंबर आते रहेंगे।"
+        }
+      ]
+    }
+  ]
+}

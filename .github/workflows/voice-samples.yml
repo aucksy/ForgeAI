@@ -1,0 +1,190 @@
+# Voice samples for picking the owner-ad voiceover (marketing/voice-samples). Manual runs only.
+# Every voice reads the same lines (marketing/voice-samples/lines.json). Free open models only, no
+# keys, no paid API, no voice cloning of a real person (Chatterbox's Indian voices copy a SYNTHETIC
+# Kokoro clip made in this run). One job per model so one failure does not block the rest; the
+# last job joins the lines, evens loudness and pace, transcribes every line with Whisper and
+# uploads "voice-samples-final" (mp3s + report), kept 3 days. CPU runners: the laptop runs nothing.
+name: voice-samples
+
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: 'Models to run, comma-separated (kokoro,chatterbox,magpie,maya1)'
+        required: false
+        default: 'kokoro,chatterbox,magpie,maya1'
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_PROGRESS_BARS: '1'
+  TOKENIZERS_PARALLELISM: 'false'
+
+jobs:
+  kokoro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: marketing/voice-samples
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock --no-audit --no-fund kokoro-js@1.2.1
+      - run: node gen_kokoro.mjs out refs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vs-0-current-kokoro
+          path: marketing/voice-samples/out/0-current-kokoro
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: refs-kokoro
+          path: marketing/voice-samples/refs
+          retention-days: 3
+
+  chatterbox:
+    needs: kokoro
+    if: contains(inputs.models, 'chatterbox')
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: chatterbox-builtin
+            voice: builtin
+          - id: chatterbox-indian-female
+            voice: ref:refs/hf_beta.wav
+          - id: chatterbox-indian-male
+            voice: ref:refs/hm_omega.wav
+    defaults:
+      run:
+        working-directory: marketing/voice-samples
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: refs-kokoro
+          path: marketing/voice-samples/refs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Chatterbox (CPU)
+        run: |
+          pip install -q torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install -q "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git" faster-whisper
+      - name: English lines (Multilingual V3)
+        run: python gen_chatterbox.py ${{ matrix.id }} "${{ matrix.voice }}" en
+      - name: Hinglish line with the Hindi finetune (own environment)
+        continue-on-error: true
+        run: |
+          python -m venv /tmp/hi
+          /tmp/hi/bin/pip install -q torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/hi/bin/pip install -q numpy==1.26.0 librosa==0.10.0 s3tokenizer transformers==4.46.3 diffusers==0.29.0 \
+            omegaconf==2.3.0 resemble-perth==1.0.1 conformer==0.3.2 safetensors resampy==0.4.3 silero-vad==5.1.2 huggingface_hub
+          /tmp/hi/bin/python -c "from huggingface_hub import snapshot_download as s; print(s('ResembleAI/Chatterbox-Multilingual-TTS-hi', repo_type='space', allow_patterns=['chatterbox/**'], local_dir='/tmp/cbhi_space'))"
+          mkdir -p /tmp/cbhi_root && cp -r /tmp/cbhi_space/chatterbox /tmp/cbhi_root/cbhi
+          touch /tmp/cbhi_root/cbhi/__init__.py /tmp/cbhi_root/cbhi/src/__init__.py
+          CB_HI_ROOT=/tmp/cbhi_root /tmp/hi/bin/python gen_chatterbox.py ${{ matrix.id }} "${{ matrix.voice }}" hi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vs-${{ matrix.id }}
+          path: marketing/voice-samples/out/${{ matrix.id }}
+          retention-days: 3
+
+  magpie:
+    if: contains(inputs.models, 'magpie')
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: marketing/voice-samples
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install NeMo TTS (CPU)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q libsndfile1 ffmpeg
+          pip install -q torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -q Cython packaging
+          pip install -q "nemo_toolkit[tts] @ git+https://github.com/NVIDIA-NeMo/Speech.git@main" || pip install -q "nemo_toolkit[tts]"
+          pip install -q kaldialign faster-whisper
+      - run: python gen_magpie.py
+      - name: Upload each voice
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vs-magpie
+          path: marketing/voice-samples/out
+          retention-days: 3
+
+  maya1:
+    if: contains(inputs.models, 'maya1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        gender: [female, male]
+    defaults:
+      run:
+        working-directory: marketing/voice-samples
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install (CPU)
+        run: |
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -q transformers accelerate snac soundfile faster-whisper
+      - name: Free disk for the 6.6 GB model
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
+      - run: grep -o -m1 -E 'avx512_bf16|amx_bf16' /proc/cpuinfo || echo "no bf16 cpu"
+      - run: python gen_maya1.py maya1-${{ matrix.gender }} ${{ matrix.gender }}
+        env:
+          MAX_TRIES: '2'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vs-maya1-${{ matrix.gender }}
+          path: marketing/voice-samples/out/maya1-${{ matrix.gender }}
+          retention-days: 3
+
+  assemble:
+    needs: [kokoro, chatterbox, magpie, maya1]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: vs-*
+          path: in
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q numpy faster-whisper
+      - name: Flatten (the Magpie artifact holds several voices)
+        run: |
+          mkdir -p flat
+          for m in $(find in -name meta.json); do d=$(dirname "$m"); id=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['sample_id'])" "$m"); cp -r "$d" "flat/$id"; done
+          ls flat
+      - run: python marketing/voice-samples/assemble.py flat final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: voice-samples-final
+          path: final
+          retention-days: 3
+          compression-level: 0
