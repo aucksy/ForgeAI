@@ -113,7 +113,8 @@ export const Film: React.FC<{ id: string }> = ({ id }) => {
       <Headline lines={ad.payoff} accent={[1]} start={B + 4} end={D - 4} size={86} />
 
       {/* captions: low under the hook, then just under the payoff so the screens stay clear */}
-      <Captions lines={ad.lines} timing={t.lines} top={f < B ? 268 + ad.hook.length * 108 + 104 : 474} hideAfter={D + 6} />
+      {/* No captions under the hook: the headline already says line 1 (fewer words in the first 2 s). */}
+      {f >= B && <Captions lines={ad.lines} timing={t.lines} top={474} hideAfter={D + 6} />}
       <Streaks at={B - 4} />
       <Streaks at={Cc - 4} />
       <EndCard at={D} />

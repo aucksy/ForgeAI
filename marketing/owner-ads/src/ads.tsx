@@ -58,34 +58,9 @@ const PriceTag: React.FC<{ t: Timing }> = ({ t }) => {
           <div style={{ fontWeight: 700, fontSize: 30, color: C.grey, letterSpacing: '0.04em', textTransform: 'uppercase' }}>MettleUp Starter</div>
           <div style={{ fontWeight: 800, fontSize: 104, lineHeight: 1.05, letterSpacing: '-0.03em', color: C.molten, textShadow: '0 0 30px rgba(255,138,76,0.35)' }}>₹999</div>
           <div style={{ fontWeight: 700, fontSize: 34, color: C.iron }}>a month</div>
-          <div style={{ marginTop: 16, fontWeight: 600, fontSize: 25, lineHeight: 1.3, color: C.grey }}>Less than one member, if a member pays you more than ₹999 a month.</div>
+          <div style={{ marginTop: 16, fontWeight: 600, fontSize: 25, lineHeight: 1.3, color: C.grey }}>Less than one member's fee, when a member pays you over ₹999 a month.</div>
         </div>
       </div>
-    </Layer>
-  );
-};
-
-/* 03: the gym's own colours dropping into its app: swatches and a logo slot orbit the phone. */
-const Swatches: React.FC<{ t: Timing }> = ({ t }) => {
-  const f = useCurrentFrame();
-  const at = t.lines[1].from;
-  if (f < at || f > t.C + 20) return null;
-  const e = interpolate(f, [at, at + 24], [0, 1], easeOpts);
-  const out = interpolate(f, [t.C, t.C + 18], [1, 0], clampOpts);
-  const cols = ['#2E7DFF', '#16B364', '#E5484D', C.forge];
-  return (
-    <Layer>
-      {cols.map((c, i) => {
-        const ang = (i / cols.length) * Math.PI * 2 + f / 40;
-        const r = 420 * e;
-        return (
-          <div key={c} style={{
-            position: 'absolute', transform: `translate3d(${Math.cos(ang) * r}px, ${170 + Math.sin(ang) * r * 0.55}px, ${Math.sin(ang) * 260}px)`,
-            width: 104, height: 104, borderRadius: 30, background: c, opacity: e * out,
-            boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 40px ${c}66, inset 0 2px 0 rgba(255,255,255,0.35)`,
-          }} />
-        );
-      })}
     </Layer>
   );
 };
@@ -127,41 +102,6 @@ const Sheets: React.FC<{ t: Timing }> = ({ t }) => {
           </div>
         </div>
       </div>
-    </Layer>
-  );
-};
-
-/* 05: the gym's plans as forged cards, passing from the old screen to the new one. */
-const PlanCards: React.FC<{ t: Timing }> = ({ t }) => {
-  const f = useCurrentFrame();
-  const at = t.C + 10;
-  if (f < t.C - 8 || f > t.D + 6) return null;
-  const names = ['Beginner 3 days', 'Push Pull Legs', 'Upper / Lower'];
-  const show = interpolate(f, [t.C - 8, t.C + 8], [0, 1], easeOpts) * interpolate(f, [t.D - 6, t.D + 6], [1, 0], clampOpts);
-  return (
-    <Layer>
-      {names.map((n, i) => {
-        const go = interpolate(f, [at + i * 5, at + i * 5 + 26], [0, 1], easeOpts);
-        const p = {
-          x: -330 + 440 * go, y: -10 + i * 104 + go * 160, z: 260 + Math.sin(go * Math.PI) * 220 - go * 200,
-          rx: 0, ry: 18 - 30 * go, rz: -4 + 6 * go, s: 1,
-        };
-        return (
-          <div key={n} style={{ position: 'absolute', transform: `${tf(p)} scale(${1 - 0.45 * go})`, opacity: show * interpolate(go, [0.75, 1], [1, 0], clampOpts) }}>
-            <div style={{
-              width: 400, padding: '20px 26px', borderRadius: 22, display: 'flex', alignItems: 'center', gap: 18,
-              background: 'linear-gradient(160deg, #353A43, #1A1E24)', border: '1.5px solid rgba(255,255,255,0.16)',
-              boxShadow: '0 30px 70px rgba(0,0,0,0.7), 0 0 30px rgba(255,122,59,0.18)', fontFamily: MANROPE,
-            }}>
-              <div style={{ width: 54, height: 54, borderRadius: 14, background: `linear-gradient(180deg, #FFB07F, ${C.forge})` }} />
-              <div>
-                <div style={{ fontWeight: 800, fontSize: 32, color: C.iron }}>{n}</div>
-                <div style={{ fontWeight: 600, fontSize: 22, color: C.grey }}>Workout plan</div>
-              </div>
-            </div>
-          </div>
-        );
-      })}
     </Layer>
   );
 };
@@ -222,7 +162,7 @@ export const SPECS: AdSpec[] = [
         { line: 3, at: 0.02, until: 0.6, rect: { x: 0.03, y: 0.325, w: 0.94, h: 0.27 }, label: "Last time's weight", side: 'left' },
       ],
     },
-    motif: Swatches,
+    // No motif: loose colour squares read as leftover placeholders (fresh-eyes review, 9 Nov).
   },
   {
     id: '04-excel-move',
@@ -246,9 +186,9 @@ export const SPECS: AdSpec[] = [
     desk: 'screens/desk-today.jpg',
     first: {
       src: 'screens/phone-workouts.jpg',
-      tag: 'Example gym · Trainer plans: on Pro',
+      tag: 'Example gym · on Pro',
       spots: [
-        { line: 2, at: 0.1, until: 1.05, rect: { x: 0.08, y: 0.42, w: 0.84, h: 0.2 }, label: 'Plans live in your gym', side: 'right' },
+        { line: 2, at: 0.1, until: 1.05, rect: { x: 0.04, y: 0.31, w: 0.92, h: 0.55 }, label: 'Plans live in your gym', side: 'right' },
       ],
     },
     second: {
@@ -259,6 +199,6 @@ export const SPECS: AdSpec[] = [
         { line: 3, at: 0.2, until: 1.0, rect: { x: 0.03, y: 0.595, w: 0.94, h: 0.075 }, label: "Trainer's plans", side: 'left' },
       ],
     },
-    motif: PlanCards,
+    // No motif: floating plan cards read as ghost text over the member screen (fresh-eyes review, 9 Nov).
   },
 ];
