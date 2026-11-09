@@ -293,7 +293,7 @@ His 1-10 scores from the tracker's "Your score" drop-down (R-216). Claude builds
 | member-app/moving-exercise-demo-clips | F20 Moving exercise demo clips | 8 | 29 Oct, 10:37 pm |
 | member-app/treadmill-and-cycle-details | F64 Treadmill and cycle details | 8 | 29 Oct, 10:38 pm |
 | platform-and-quality/dots-that-lead-to-a-new-feature | F198 Dots that lead to a new feature | 8 | 7 Nov, 03:27 pm |
-| admin-app-gym-owner-and-staff/forgot-pin-a-reset-code-by-whatsapp-or-text | F187 Forgot PIN: a reset code by WhatsApp or text | 7 | 5 Nov, 10:45 pm |
+| admin-app-gym-owner-and-staff/forgot-pin-a-reset-code-by-whatsapp-or-text | ? | 7 | 5 Nov, 10:45 pm |
 | gym-member-links/busy-times-by-exercise | F137 Busy times by exercise | 7 | 29 Oct, 10:42 pm |
 | gym-member-links/challenge-rewards-given-out-by-themselves | F143 Challenge rewards given out by themselves | 7 | 29 Oct, 10:40 pm |
 | member-app/badge-shelf | F58 Badge shelf | 7 | 29 Oct, 10:35 pm |
@@ -325,7 +325,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 ### Member app
 | Feature | Status | Details | How it will work |
 |---|---|---|---|
-| F199 Progress inside Profile; every chart point opens something | Next release | Your request, 8 Nov (R-403): one place for your progress, and every chart taps the same way. Design: https://claude.ai/artifact/Tk2cLeSdfqGKa1UdTpxu7s 8 Nov: built and tested on both phone sizes (line charts and bar charts open the week or month); waits for your "release". | The Progress tab goes away; the tab bar keeps Workout, Gym and Profile. Profile shows the overview chart (Duration, Kg lifted, Reps) with the detailed pages (Charts, Exercises, Records, Body, Reports) under it. Tap a week or month on the chart, then tap its date: that period's workouts open (one workout opens straight away). |
+| F199 Progress inside Profile; every chart point opens something | Live | Released in 0.76.0 on 9 Nov 2026 (sent to Play). Your request, 8 Nov (R-403): one place for your progress, and every chart taps the same way. Design: https://claude.ai/artifact/Tk2cLeSdfqGKa1UdTpxu7s 8 Nov: built and tested on both phone sizes (line charts and bar charts open the week or month); waits for your "release". | The Progress tab goes away; the tab bar keeps Workout, Gym and Profile. Profile shows the overview chart (Duration, Kg lifted, Reps) with the detailed pages (Charts, Exercises, Records, Body, Reports) under it. Tap a week or month on the chart, then tap its date: that period's workouts open (one workout opens straight away). |
 | F1 Workout logging | Live | Log sets of weight and reps, time or distance, with last time's numbers shown beside each set. |
 | F2 Set types and effort (RPE) | Live | Mark warm-up, drop and failure sets; one tap on RPE ticks the set and starts the rest. |
 | F3 Supersets and exercise notes | Live | Pair exercises into supersets and keep a note on any exercise. |
@@ -620,7 +620,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 - **0053 Ask a trainer:** a member sends a question to the trainer they pick, and the trainer sees the member's weekly progress.
 - **0054 Gym pop-ups:** a member gets a phone pop-up when the gym approves a pause or renewal, asks for their workout report, or their shop order is ready.
 - **0009 Team replies:** when the MettleUp team answers a question from "Help and feedback", the member reads the reply in "Your questions" and gets a pop-up.
-**Your task:** Say "yes, apply 0053, 0054 and 0009" (or name the ones you want). I apply each, run its checks and tell you the result.
+**Done (9 Nov):** you said "yes, apply 0009". I applied it on the web server; its check passed (all 58 old questions kept). Team replies now work from HQ.
+**Your task:** Say "yes, apply 0053 and 0054" (or name the one you want). I apply each, run its checks and tell you the result.
 
 ## 87. Overnight build (5 Nov): 3 features wait for your yes to go live — 5 Nov 2026
 **Chat:** Mettle Up
