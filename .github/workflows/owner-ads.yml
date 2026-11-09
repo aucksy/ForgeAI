@@ -1,6 +1,7 @@
 # MettleUp owner ads: render the 9:16 videos and the 1:1 / 4:5 feed stills from marketing/owner-ads
 # (Remotion). Manual runs only. The laptop never renders full videos (owner rule); this does.
-# Output: one artifact "owner-ads" kept 3 days (artifact storage is small and shared).
+# One job per ad, side by side (one runner did ~12 min per ad and hit the hour limit doing all five).
+# Output: one artifact per ad, "owner-ads-<id>", kept 3 days (artifact storage is small and shared).
 name: owner-ads
 
 on:
@@ -15,9 +16,27 @@ permissions:
   contents: read
 
 jobs:
-  render:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    outputs:
+      ids: ${{ steps.ids.outputs.ids }}
+    steps:
+      - id: ids
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          all='01-pending-fee,02-one-member-fee,03-own-app,04-excel-move,05-trainer-leaves'
+          pick="${ONLY:-$all}"
+          echo "ids=$(echo "$pick" | tr -d ' ' | jq -Rc 'split(",") | map(select(length>0))')" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        id: ${{ fromJson(needs.plan.outputs.ids) }}
     defaults:
       run:
         working-directory: marketing/owner-ads
@@ -39,8 +58,8 @@ jobs:
         run: node scripts/synth-audio.mjs
       - name: Render videos and feed stills
         env:
-          ONLY: ${{ inputs.only }}
-          CONCURRENCY: '3'
+          ONLY: ${{ matrix.id }}
+          CONCURRENCY: '4'
         run: npx tsx scripts/render-all.ts
       - name: Probe lengths (video vs audio)
         run: |
@@ -51,7 +70,7 @@ jobs:
           done
       - uses: actions/upload-artifact@v4
         with:
-          name: owner-ads
+          name: owner-ads-${{ matrix.id }}
           path: |
             marketing/owner-ads/out/videos/*.mp4
             marketing/owner-ads/out/feed/*.png
