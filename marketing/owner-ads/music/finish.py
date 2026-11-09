@@ -11,7 +11,7 @@ For each option (files <option>-s<seed>.wav from ace_gen.py, or <option>.wav fro
   5. every option to -16 LUFS (EBU R128), so none wins by being louder
   6. <option>.mp3 to listen to, <option>.wav for the ad render (owner-ads.yml input `music`)
   7. with a voice dir: <option>-with-voice.mp3, the ad 06 sample lines laid over it the way the film mixes
-     them (music at 0.2 under a line, 0.42 between lines)
+     them (music at 0.22 under a line, 0.462 between lines)
 """
 import glob
 import json
@@ -142,7 +142,7 @@ def voice_track(total):
         v[i:i + n] += s[:n]
         on[max(0, i - int(0.13 * SR)):i + n + int(0.13 * SR)] = 1
         t += len(s) / SR + 0.3
-    gain = np.where(on > 0, 0.2, 0.42)
+    gain = np.where(on > 0, 0.22, 0.462)  # music +10% (owner, 10 Nov 2026), same as the film
     k = int(0.05 * SR)
     gain = np.convolve(gain, np.ones(k) / k, mode="same")
     return v, gain, len(segs)

@@ -121,7 +121,7 @@ export const Progress: React.FC = () => {
   const voOn = (fr: number) => voice && L.some((l) => fr >= l.from - 4 && fr <= l.from + l.dur + 4);
   const bed = music(total);
   const musicVol = (fr: number) =>
-    (voOn(fr) ? 0.2 : 0.42) * (bed.endsItself ? 1 : interpolate(fr, [total - 30, total - 2], [1, 0], clampOpts)) * interpolate(fr, [0, 6], [0.6, 1], clampOpts);
+    (voOn(fr) ? 0.22 : 0.462) /* music +10% (owner, 10 Nov 2026) */ * (bed.endsItself ? 1 : interpolate(fr, [total - 30, total - 2], [1, 0], clampOpts)) * interpolate(fr, [0, 6], [0.6, 1], clampOpts);
 
   const centre: React.CSSProperties = { display: 'grid', placeItems: 'center', transformStyle: 'preserve-3d' };
   return (
