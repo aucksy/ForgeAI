@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-431. Ads: voice 2 picked; background music options, upbeat, "feeling of metal" — 9 Nov 2026
+
+He picked voice sample "2-chatterbox-female-indian.mp3" (Chatterbox Multilingual V3 + Hindi, Indian-accent female, MIT). He asked: "can you also give me some background music options.. something upbeat and energetic - giving feeling of metal".
+
+What I did: the voice helper makes the final voice for ads 03 and 06 in that voice (fixing the "on Pro. Free messages" run-on). The ad helper makes 4-5 free music options (ad-safe licences only, e.g. ACE-Step Apache 2.0; no MusicGen, no paid services, no site logins) in the cloud, mixes them under the voice where quick, and wires music as a render input. He picks the music, then one cloud run renders the final 03 and 06.
+
 ## R-430. Ads: voice is too bad, give voice choices; keep only "own app"; new "progress" hook — 9 Nov 2026
 
 He said: "The voice over voice is just too bad... you should have give me some choices... There are free repos on github that has superb quality voices... give me some options". Then: of the 5 hooks he likes only "your own app" (ad 03): finalize it. Plan a second ad from the website hero: members keep coming when they see progress; consistent progress needs tracking; your members get a free app with your gym software; open your own shop; send free messages; plus what is really unique.
