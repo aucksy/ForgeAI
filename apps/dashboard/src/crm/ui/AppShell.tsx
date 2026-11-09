@@ -16,7 +16,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
 import { NewDot, color, font, radius, space, useIsCompact } from './kit';
 import { useNewFeatures } from './NewDots';
-import { barLit, linkLit } from '../logic/newDots';
+import { barLit, linkLit, reachable } from '../logic/newDots';
 import { Link, useRoute } from './router';
 import { t } from '../lang/lang';
 
@@ -98,7 +98,7 @@ export function AppShell({
         {children}
       </main>
 
-      {compact && <BottomNav nav={phoneNav ?? nav} activePath={activePath} />}
+      {compact && <BottomNav nav={phoneNav ?? nav} menuPaths={nav.map((n) => n.path)} activePath={activePath} />}
     </div>
   );
 }
@@ -232,9 +232,10 @@ function CompactHeader({ gymName }: { gymName: string }) {
   );
 }
 
-function BottomNav({ nav, activePath }: { nav: NavItem[]; activePath: string }) {
-  // F198: a feature behind one of the bar's own pages lights it; anything else lights More.
-  const lit = useNewFeatures();
+function BottomNav({ nav, menuPaths, activePath }: { nav: NavItem[]; menuPaths: string[]; activePath: string }) {
+  // F198: a feature behind one of the bar's own pages lights it; anything else lights More. Only features
+  // this person can reach count, or More would show a dot that leads nowhere (9 Nov: Questions, hidden).
+  const lit = reachable(useNewFeatures(), menuPaths);
   const paths = nav.map((n) => n.path);
   return (
     <nav

@@ -14,6 +14,7 @@ import {
   linkFor,
   linkLit,
   liveFrom,
+  reachable,
   readSeen,
   saveSeen,
   settingsRowLit,
@@ -219,5 +220,20 @@ describe('the real list', () => {
 
   it('every Settings spot is a real Settings address', () => {
     for (const p of Object.keys(SETTINGS_SPOTS)) expect(p.startsWith('/settings')).toBe(true);
+  });
+});
+
+describe('9 Nov: a dot never leads to a page this person cannot see', () => {
+  const q = { key: '2026-11-09|/questions', id: '2026-11-09', path: '/questions' };
+  const pay = { key: '2026-11-06|/settings/mettleup', id: '2026-11-06', path: '/settings/mettleup' };
+  const menu = ['/', '/members', '/settings', '/more'];
+  it('negative: Questions hidden (desk, or before 0053) = no dot, and More stays dark for it', () => {
+    expect(reachable([q, pay], menu)).toEqual([pay]);
+    expect(barLit(reachable([q], menu), ['/', '/members', '/more'], '/more')).toBe(false);
+  });
+  it('happy path: Questions in the menu = More lights on the phone', () => {
+    const withQ = [...menu, '/questions'];
+    expect(reachable([q], withQ)).toEqual([q]);
+    expect(barLit(reachable([q], withQ), ['/', '/members', '/more'], '/more')).toBe(true);
   });
 });

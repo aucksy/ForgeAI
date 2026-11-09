@@ -189,7 +189,8 @@ test('F198 time: 5 Nov features end on 5 Dec, the 6 Nov ones on 6 Dec, Trainers 
   await expect(headingDot(page)).toHaveCount(0);
   await shot(page, 'time-2-day31-only-trainers');
 
-  // 7 Dec 00:00 India time: day 31 of Trainers too, so nothing is lit anywhere.
+  // 7 Dec 00:00 India time: day 31 of Trainers too, so nothing is lit anywhere. Negative (9 Nov): the Questions
+  // feature is still live, but this gym has no Questions page, so it must light nothing (not even More).
   await page.clock.setSystemTime(new Date('2026-12-07T00:00:30+05:30'));
   await barItem(page, 'Today').tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();

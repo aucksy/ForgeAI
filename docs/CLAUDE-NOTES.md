@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-413. A new-feature dot must never lead to a hidden page — 9 Nov 2026
+Found by CI (newdots-uat time test, run 42566535419): the 9 Nov "Questions" news line lit the phone's More button even in
+a gym where Questions is hidden (plain desk, or no 0053). The owner would follow a dot to nothing. Fix: the bottom bar
+only counts features the person's full menu can reach (newDots.reachable). Unit tests (negative + happy) added; the e2e
+7 Dec step now also proves a hidden Questions lights nothing.
+
 ## R-412. "What's new" link on the update line after "Later" — 9 Nov 2026
 - He said: after "Later" on the full-screen update, the persistent line at the top should have a "What's new" link right after the word "ready", which expands to show what is new in that version.
 - My view: good; app stores do the same and it helps people decide to update. Built: the link sits right after the words (only when the lines are known), opens the same lines as the full screen inside the orange box, "Hide what's new" closes it; the rest of the row still starts the update. Tests + UAT steps in uat-rel-r336-update.yaml. Waits for a release.

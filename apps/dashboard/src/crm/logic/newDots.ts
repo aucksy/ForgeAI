@@ -99,6 +99,14 @@ export function linkLit(features: readonly NewFeature[], siblings: readonly stri
 }
 
 /**
+ * The features this person can reach: a link in their full menu leads to each one. A page they cannot see
+ * (Questions for the plain desk, or before 0053) lights nothing, so no dot leads to a page that is not there. PURE.
+ */
+export function reachable(features: readonly NewFeature[], menuPaths: readonly string[]): NewFeature[] {
+  return features.filter((f) => linkFor(menuPaths, f.path) !== null);
+}
+
+/**
  * The phone's bottom bar: a feature behind one of its own items lights that item; anything else is
  * reached through More. `barPaths` are the bar's items, `/more` among them. PURE.
  */
