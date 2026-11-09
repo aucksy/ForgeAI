@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/ui';
+import { isLightLook } from '@/theme/brandTokens';
 import { color } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
@@ -97,6 +98,8 @@ export function ExerciseThumb({
           borderColor: color.border,
         }}
         contentFit={bundled ? 'contain' : 'cover'}
+        // Light mode: the clip drawings are white lines on nothing; on the light look they are drawn in ink.
+        tintColor={bundled && isLightLook() ? color.inkSecondary : undefined}
         accessibilityIgnoresInvertColors
       />
     );

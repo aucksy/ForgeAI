@@ -15,6 +15,7 @@ import type { ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/ui';
+import { isLightLook } from '@/theme/brandTokens';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { catalogEntry } from '../catalog/exerciseCatalog';
@@ -38,6 +39,7 @@ export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePro
     return () => loop.stop();
   }, [end]);
   const box = { position: 'absolute' as const, left: 0, right: 0, top: 0, height };
+  const ink = isLightLook() ? color.inkSecondary : undefined;
   return (
     <View
       style={{
@@ -51,9 +53,10 @@ export function FrameLoop({ frames, height }: { frames: readonly [ImageSourcePro
       accessibilityRole="image"
       accessibilityLabel="Moving demo of the exercise"
     >
-      <Image source={frames[0]} style={box} contentFit="contain" />
+      {/* Light mode: the white line drawings are drawn in ink on the light look. */}
+      <Image source={frames[0]} style={box} contentFit="contain" tintColor={ink} />
       <Animated.View style={[box, { opacity: end }]}>
-        <Image source={frames[1]} style={{ width: '100%', height }} contentFit="contain" />
+        <Image source={frames[1]} style={{ width: '100%', height }} contentFit="contain" tintColor={ink} />
       </Animated.View>
     </View>
   );

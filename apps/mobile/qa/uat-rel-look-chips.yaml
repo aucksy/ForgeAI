@@ -3,6 +3,13 @@
 # light again; "Same as phone": stays light (the phone is light). Pictures rel-look-chips-*.png.
 appId: com.mettleup.app
 ---
+# A flow that stopped early (or the light run's end) can leave a page above the tabs open: go back.
+- repeat:
+    times: 4
+    while:
+      notVisible: "^Workout$"
+    commands:
+      - back
 - runFlow:
     file: sub-settings-page.yaml
     env:

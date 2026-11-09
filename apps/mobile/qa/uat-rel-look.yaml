@@ -6,6 +6,13 @@
 # Pictures rel-look-<LOOK>-*.png. LOOK is passed by the caller (-e LOOK=...), no default here (trap 22).
 appId: com.mettleup.app
 ---
+# A flow that stopped early (or the light run's end) can leave a page above the tabs open: go back.
+- repeat:
+    times: 4
+    while:
+      notVisible: "^Workout$"
+    commands:
+      - back
 - extendedWaitUntil:
     visible: "^Workout$"
     timeout: 60000
@@ -52,11 +59,13 @@ appId: com.mettleup.app
 - tapOn: "Search exercises"
 - inputText: "Barbell Bench Press"
 - hideKeyboard
+# The search box holds the same words: tap the row in the list below the filters.
 - tapOn:
     text: "^Barbell Bench Press$"
-    index: 0
+    below:
+      text: "All muscles"
 - extendedWaitUntil:
-    notVisible: "Search exercises"
+    notVisible: "All muscles"
     timeout: 15000
 - takeScreenshot: rel-look-${LOOK}-04-exercise
 - back
