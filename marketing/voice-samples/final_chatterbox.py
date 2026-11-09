@@ -29,7 +29,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import wer, write_wav  # noqa: E402
 
-REF, OUT, ADS = sys.argv[1], Path(sys.argv[2]), sys.argv[3].split(",")
+REF, OUT, ADS = sys.argv[1], Path(sys.argv[2]).resolve(), sys.argv[3].split(",")
 NAME = "chatterbox-female-indian"
 EXAG, CFG, TEMP = 0.6, 0.5, 0.8
 TRIES, MIN_STOP, JOIN_GAP = 3, 0.18, 0.3
@@ -148,7 +148,7 @@ for ad_id in ADS:
             secs = w.getnframes() / w.getframerate()
         report.append(dict(ad=ad_id, line=n, say=say, spoken_as=text, how=how, tries=tries, word_error=round(score, 3),
                            shortest_stop_s=None if stop >= 9 else round(stop, 2), whisper_heard=heard, seconds=round(secs, 2)))
-        preview.append(str(f))
+        preview.append(str(f.resolve()))
         print(f"  -> {f.relative_to(OUT)} {secs:.2f}s, {how}, heard: {heard}", flush=True)
     # listening preview: the lines with 0.6 s between them
     lst = OUT / "concat.txt"
