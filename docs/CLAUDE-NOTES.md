@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-419. Chat with Meta's AI assistant to find the WhatsApp tax-block cause; read the support-case replies — 9 Nov 2026
+He asked me to keep chatting with the Meta AI business assistant (billing hub tab) to find the exact cause, and to read
+the "Support Case Update" chats too: Meta answers there, not by email.
+Found: cases 1630788875089352 and 1669951024497356 closed with no fix. Assistant diagnostics: WABA billing account INR,
+card healthy, flag INELIGIBLE_INCOMPLETE_TAX_INFO. Old closed USD ad account 1430608280601523 has
+CURRENCY_COUNTRY_MISMATCH + MISSING_PAYMENT_METHOD but "technically" does not block the WABA. Human billing specialist:
+"currently unavailable". Its named causes: billing name saved "Akash Pahuja" vs PAN "Aakash Pahuja", and PAN typed in
+the TAN field. Proposed fix (needs his yes, account settings): correct the name to "Aakash Pahuja", empty the TAN field.
+Caveat: the block existed before the PAN went into TAN, so only the name fix is a real candidate. Lesson file updated.
+
 ## R-418. Clean slate: delete every gym except DAB8DE (LIVE); no WhatsApp partner — 9 Nov 2026
 He said: "I want all other GYMs removed from database except DAB8DE. All other test GYMS and I need clean slate."
 I listed first (690 gyms: 684 hidden QA gyms + 037069, RAMS01, 8CE07A, ED0BA6, FORGE1) and asked. His yes, 9 Nov 2026:
