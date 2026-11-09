@@ -75,6 +75,11 @@ His ask: of the first five he liked only 03; a second hook from the gym site's h
 - **Renders:** music-only review runs 42661674464 (first) and 42666000676 (bigger message pop-up), files in
   `D:\Apps\ForgeAI\Marketing\owner-ads-v2\`. Voice-swap test: run 42666237473 rendered ad 03 with a sample voice
   (voice-samples run 42660871346, chatterbox-indian-male): lines found, re-timed, 17.6 s, picture and sound lengths match.
+- **Music (R-431):** he picked Chatterbox Indian female for the voice and asked for upbeat "metal" music options.
+  music-choices run 42673939468 made 5 options (4 from ACE-Step 1.5, MIT, outputs free for commercial use with no
+  credit; 1 written in code), all 21 s, -16 LUFS, with a shared steel-hit ending. The files and a table are in
+  `D:\Apps\ForgeAI\Marketing\music-choices\`. The final render adds `music=42673939468, music_name=<n>` to the voice
+  dispatch. That run's files expire on 13 Nov 2026 at 00:10 IST. After that, re-run music-choices.yml: it uses the same seeds, so the music should be nearly the same, and the final dispatch then uses the new run id.
 
 ## Hinglish lines: Aakash reads each aloud before anything runs
 Shown on screen under the hook (not spoken). Roman letters only. The apps' screens stay English and no ad implies Hindi screens.
