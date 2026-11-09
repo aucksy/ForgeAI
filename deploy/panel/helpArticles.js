@@ -685,7 +685,7 @@ export const HELP_ARTICLES = [
       'The gear opens Settings. ' +
       'Units: in Settings, tap "Units" and pick "kg, km" or "lb, miles". ' +
       'Weekly goal: in Settings, tap "Weekly goal" and use + and − to set how many workouts a week you aim for. ' +
-      'Light or dark (in the newest version of the app): in Settings, tap "Light or dark" and pick "Same as phone", "Light" or "Dark". "Same as phone" is how the app starts: it turns light or dark when your phone does. ' +
+      'Light or dark (newest app): in Settings, tap "Light or dark" and pick "Same as phone", "Light" or "Dark". "Same as phone" follows your phone. ' +
       'To share this month as a picture, tap the share button on Profile.',
     screens: [
       'apps/mobile/src/app/(tabs)/profile.tsx',
