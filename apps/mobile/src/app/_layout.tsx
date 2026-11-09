@@ -33,6 +33,8 @@ import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingIn
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
 let launchLinkRead = false;
+import { followLook, startAppearance, useAppearance } from '@/theme/appearance';
+import { tokenScheme } from '@/theme/brandTokens';
 import { dismissOpening, setWorkoutCheck, showWaitingLook, startGymTheme, useGymTheme } from '@/theme/gymTheme';
 import { color } from '@/theme/tokens';
 import { useAppFonts } from '@/theme/fonts';
@@ -50,6 +52,13 @@ setWorkoutCheck(() => {
   return w.active || !w.hydrated;
 });
 startGymTheme();
+// Light or dark (9 Nov 2026): the member's choice, else the phone's setting, followed live
+// (theme/appearance.ts). A change the member did not make waits while a workout is open.
+startAppearance();
+// A look that waited for the workout is shown once it ends.
+useActiveWorkout.subscribe((s, prev) => {
+  if (prev.active && !s.active) followLook(false);
+});
 // A gym logo pinned on the home screen follows the gym (OWNER-INBOX #11).
 startGymShortcutSync();
 // The gym's new notices pop up on the phone: the background check follows the gym link and the
@@ -69,7 +78,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   }, [error]);
   return (
     <View style={{ flex: 1, backgroundColor: color.bg }}>
-      <StatusBar style="light" />
+      <StatusBar style={tokenScheme() === 'light' ? 'dark' : 'light'} />
       <ScreenCrashFallback onRetry={() => void retry()} noNavigation />
     </View>
   );
@@ -140,6 +149,8 @@ export default function RootLayout() {
       const away = awaySince == null ? 0 : Date.now() - awaySince;
       awaySince = null;
       showWaitingLook(away);
+      // Light or dark: a phone change that waited for a workout is shown now if none is open.
+      followLook(false);
       void refreshGymIfDue().catch(() => undefined);
     });
     // A new look once the app is up (join, Leave, an owner's change shown): the home-screen
@@ -207,6 +218,8 @@ export default function RootLayout() {
  * RootLayout), so nothing keeps a colour from before.
  */
 function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
+  // The status bar's icons: dark on the light look, light on the dark one.
+  const bar = useAppearance((s) => s.scheme) === 'light' ? 'dark' : 'light';
   if (!ready) return <View style={{ flex: 1, backgroundColor: color.bg }} />;
 
   // Rendered INSTEAD of the navigator (not pushed onto it) so the tabs never mount
@@ -216,7 +229,7 @@ function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
   if (status === 'welcome' || status === 'error') {
     return (
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
-        <StatusBar style="light" />
+        <StatusBar style={bar} />
         <KeyboardRoom>{status === 'welcome' ? (
             <IntroGate>
               <WelcomeScreen />
@@ -230,7 +243,7 @@ function RootFrame({ ready, status }: { ready: boolean; status: BootStatus }) {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
-      <StatusBar style="light" />
+      <StatusBar style={bar} />
       <KeyboardRoom>
         <Stack
           screenLayout={screenLayout}

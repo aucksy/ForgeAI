@@ -1,5 +1,5 @@
 /**
- * Gym branding: runs FIRST, before any screen file loads (apps/mobile/index.js imports it ahead of
+ * Light or dark, then gym branding: runs FIRST, before any screen file loads (apps/mobile/index.js imports it ahead of
  * expo-router). It reads the gym's look this phone last showed (theme/themeMirror.ts, a
  * synchronous read) and writes it into the theme tokens, so:
  *  - the first frame after the splash is already in the gym's colours, and
@@ -7,9 +7,20 @@
  *    the consistency heatmap's ramp, which may not be edited) is the gym's too.
  * Within one run, a join or a Leave repaints by re-drawing the app (theme/gymTheme.ts); those
  * load-time copies catch up on the next launch.
+ *
+ * Light mode (9 Nov 2026): before the gym's colours, the member's light/dark choice (or the phone's
+ * setting, the default) picks the look the tokens start in (theme/lookChoice.ts), for the same
+ * reason: the first frame and every load-time copy are already in the right look.
  */
-import { applyBrandToTokens } from './brandTokens';
+import { applyBrandToTokens, setTokenScheme } from './brandTokens';
+import { phoneScheme, readLookChoiceSync, resolveScheme } from './lookChoice';
 import { readMirrorSync, type ThemeMirror } from './themeMirror';
+
+try {
+  setTokenScheme(resolveScheme(readLookChoiceSync(), phoneScheme()));
+} catch {
+  // The dark look stays.
+}
 
 let boot: ThemeMirror | null = null;
 try {

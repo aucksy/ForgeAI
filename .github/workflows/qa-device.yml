@@ -108,13 +108,14 @@ jobs:
       # R-336 (5 Nov 2026): 'updateOffer' lets mettleup://qa-update?behind=N show a made-up update (qa/uat-rel-r336-update.yaml).
       # R-344 (5 Nov 2026): 'sleepSample' lets mettleup://qa-sleep?min=N make last night N minutes (qa/uat-rel-r344-b-line.yaml).
       # F198 (7 Nov 2026): 'newDots' lets mettleup://qa-dots?at=<UTC>&reset=1 set the new-feature dots' clock (qa/uat-rel-f198-dots.yaml).
+      # Light mode (9 Nov 2026): 'gymLook' lets mettleup://qa-look?accent=F7D411 show a gym's colour for one run (qa/uat-rel-look-*.yaml).
       - name: QA-only stand-ins in app.json
         run: |
           python3 - <<'PY'
           import json
           f = 'apps/mobile/app.json'
           j = json.load(open(f, encoding='utf-8'))
-          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots']
+          j['expo'].setdefault('extra', {})['qaStandIns'] = ['friendInvite', 'passMember', 'updateOffer', 'sleepSample', 'newDots', 'gymLook']
           open(f, 'w', encoding='utf-8').write(json.dumps(j, indent=2, ensure_ascii=False) + chr(10))
           print('qaStandIns', j['expo']['extra']['qaStandIns'])
           PY

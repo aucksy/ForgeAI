@@ -44,6 +44,8 @@ export interface ForgePhone {
    * Android 13+; absent on older builds.
    */
   splashPlain?(plain: boolean): 'set' | 'reset' | 'unsupported';
+  /** Light mode (9 Nov 2026): the navigation bar's buttons dark (light look) or light. Absent on older builds. */
+  systemBars?(light: boolean): boolean;
   /** OWNER-INBOX #11: Android can pin a shortcut on the home screen (8.0+, a launcher that allows it). */
   gymShortcutSupported?(): boolean;
   /**

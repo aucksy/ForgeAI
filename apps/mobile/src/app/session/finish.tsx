@@ -25,6 +25,7 @@ import {
 import { fmtInt } from '@/lib/format';
 import { useUnits } from '@/lib/useUnits';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
+import { inkTint } from '@/theme/tint';
 
 import { CompareNote } from '@/tracker/components/CompareNote';
 import { KgHeroCard } from '@/tracker/components/KgHeroCard';
@@ -78,7 +79,7 @@ function ShareButton({
         borderRadius: radius.pill,
         borderWidth: 1,
         borderColor: color.borderStrong,
-        backgroundColor: pressed ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+        backgroundColor: pressed ? inkTint(0.08) : inkTint(0.03),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -286,8 +287,8 @@ export default function FinishScreen() {
             {/* Oct 2026: the tick sits ON the title's line (it used to float beside the whole
                 block); the lines below start where the title's words start. */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-              <Icon name="check" size={TICK} color={color.onAccent} />
-              <Text style={{ flex: 1, fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.onAccent }}>
+              <Icon name="check" size={TICK} color={color.onEmber} />
+              <Text style={{ flex: 1, fontFamily: type.displaySemi, fontSize: type.size.h2, color: color.onEmber }}>
                 {workoutName(data)} done
               </Text>
             </View>
@@ -296,22 +297,22 @@ export default function FinishScreen() {
               {milestone ? (
                 <Text
                   accessibilityRole="header"
-                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.onAccent, marginBottom: 2 }}
+                  style={{ fontFamily: type.bodySemi, fontSize: type.size.body, color: color.onEmber, marginBottom: 2 }}
                 >
                   {milestone}
                 </Text>
               ) : null}
               {badgeLine ? (
-                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onAccent, marginBottom: 2 }}>
+                <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onEmber, marginBottom: 2 }}>
                   {badgeLine}
                 </Text>
               ) : null}
               {/* UAT A-07 (30 Oct 2026): faded brown on orange was hard to read in sunlight; full strength now. */}
-              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onAccent }}>
+              <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.onEmber }}>
                 {finishAnswer(withoutFirstWorkoutRecords(data, milestone))}
               </Text>
               {comparison ? (
-                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.onAccent, marginTop: 2 }}>
+                <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.caption, color: color.onEmber, marginTop: 2 }}>
                   That's about {comparison}.
                 </Text>
               ) : null}

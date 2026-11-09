@@ -9,6 +9,7 @@ import Constants from 'expo-constants';
 import { useFocusEffect, useRouter, type Href } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Text, View } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 import { JoinedGymRows } from '@/components/settings/GymSettings';
 import {
@@ -36,6 +37,8 @@ import { useUnits } from '@/lib/useUnits';
 import { canAddGymShortcut } from '@/shop/gymShortcut';
 import { useGymShop } from '@/shop/gymStore';
 import { useSettings } from '@/store/settingsStore';
+import { useAppearance } from '@/theme/appearance';
+import { LOOK_WORDS } from '@/theme/lookChoice';
 import { color, space, type } from '@/theme/tokens';
 import { PREVIOUS_FROM_CHOICES } from '@/tracker/db/historyScope';
 import { healthState, type HealthState } from '@/tracker/phone/healthConnect';
@@ -57,6 +60,8 @@ const PARTS = new Set(profileParts(FEATURES));
 const ICON: Record<SettingsRowKey, IconName> = {
   profile: 'person',
   units: 'scale',
+  // Drawn as a half-filled circle by Dot (no sun or moon in the icon set); this is its fallback.
+  look: 'globe',
   coach: 'sparkle',
   weeklyGoal: 'target',
   rest: 'clock',
@@ -86,11 +91,21 @@ const ICON: Record<SettingsRowKey, IconName> = {
   about: 'globe',
 };
 
-function Dot({ icon }: { icon: IconName }) {
+function Dot({ icon, look }: { icon: IconName; look?: boolean }) {
   return (
     <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
-      <Icon name={icon} size={16} color={color.accent} />
+      {look ? <HalfCircle /> : <Icon name={icon} size={16} color={color.accent} />}
     </View>
+  );
+}
+
+/** "Light or dark": a circle, half filled — the usual light/dark sign. */
+function HalfCircle() {
+  return (
+    <Svg width={16} height={16} viewBox="0 0 24 24">
+      <Circle cx={12} cy={12} r={8.5} fill="none" stroke={color.accent} strokeWidth={2} />
+      <Path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill={color.accent} />
+    </Svg>
   );
 }
 
@@ -117,6 +132,7 @@ function GroupHeading({ title }: { title: string }) {
 export default function SettingsScreen() {
   const router = useRouter();
   const units = useSettings((s) => s.unitSystem);
+  const lookChoice = useAppearance((s) => s.choice);
   const shownUnits = useUnits();
   const remindersOn = usePhonePrefs((s) => s.remindersOn);
   const reminderMinutes = usePhonePrefs((s) => s.reminderMinutes);
@@ -174,6 +190,7 @@ export default function SettingsScreen() {
   const lines: Partial<Record<SettingsRowKey, string | null>> = {
     profile: name,
     units: unitsLine(units),
+    look: LOOK_WORDS[lookChoice],
     weeklyGoal: weeklyGoalLine(weeklyGoal),
     rest: workoutsLine(fmtRest(restSec)),
     nextWeight: nextWeightLine(choiceLabel(WEIGHT_JUMP_CHOICES, weightJump), choiceLabel(REP_RANGE_CHOICES, repRange)),
@@ -224,7 +241,7 @@ export default function SettingsScreen() {
                     key={r.key}
                     title={r.title}
                     sub={lines[r.key] ?? undefined}
-                    leading={<Dot icon={ICON[r.key]} />}
+                    leading={<Dot icon={ICON[r.key]} look={r.key === 'look'} />}
                     dot={dots.has(`row:${r.href}`) ? `row:${r.href}` : undefined}
                     onPress={() => open(r.href as string)}
                   />

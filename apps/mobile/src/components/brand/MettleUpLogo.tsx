@@ -17,18 +17,23 @@ import {
   MARK_BOX,
   MARK_FACES,
   WORDMARK_BOX,
+  WORDMARK_FORGE_ON_LIGHT_STOPS,
   WORDMARK_FORGE_STOPS,
   WORDMARK_METTLE_D,
+  WORDMARK_STEEL_ON_LIGHT_STOPS,
   WORDMARK_STEEL_STOPS,
   WORDMARK_UP_D,
   type WordmarkStop,
 } from './mettleUpMark';
+import { isLightLook } from '@/theme/brandTokens';
 
 export interface MettleUpLogoProps {
   /** The mark's height (and width) in px; the name follows. Default 28, as the old Logo. */
   height?: number;
   /** The name's cap height in px (default `height` x CAP). */
   cap?: number;
+  /** Light mode: the stops for a light background. Default: the app's look now (read when drawn). */
+  onLight?: boolean;
 }
 
 /** The name's cap height as a share of the mark (the old "FORGEAI" in Sora at 0.64 x height). */
@@ -58,7 +63,8 @@ function Shine({ id, stops }: { id: string; stops: readonly WordmarkStop[] }) {
   );
 }
 
-export function MettleUpLogo({ height = 28, cap: capPx }: MettleUpLogoProps) {
+export function MettleUpLogo({ height = 28, cap: capPx, onLight }: MettleUpLogoProps) {
+  const light = onLight ?? isLightLook();
   const uid = `mu${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const cap = capPx ?? height * CAP;
   const wordH = (cap * WORDMARK_BOX.h) / 100;
@@ -73,8 +79,8 @@ export function MettleUpLogo({ height = 28, cap: capPx }: MettleUpLogoProps) {
         style={{ marginLeft: height * GAP }}
       >
         <Defs>
-          <Shine id={`${uid}s`} stops={WORDMARK_STEEL_STOPS} />
-          <Shine id={`${uid}f`} stops={WORDMARK_FORGE_STOPS} />
+          <Shine id={`${uid}s`} stops={light ? WORDMARK_STEEL_ON_LIGHT_STOPS : WORDMARK_STEEL_STOPS} />
+          <Shine id={`${uid}f`} stops={light ? WORDMARK_FORGE_ON_LIGHT_STOPS : WORDMARK_FORGE_STOPS} />
         </Defs>
         <Path d={WORDMARK_METTLE_D} fill={`url(#${uid}s)`} />
         <Path d={WORDMARK_UP_D} fill={`url(#${uid}f)`} />

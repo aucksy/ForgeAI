@@ -24,7 +24,8 @@
  * white. MettleUp's own mark and its steel name (paths, brand.ts) keep their colours, and a number
  * sitting on an ember dot keeps its ink.
  */
-import { color } from '@/theme/tokens';
+// Share pictures are posted images: always the dark look (with the gym's colours), whatever the app shows.
+import { darkColor as color } from '@/theme/tokens';
 
 import { FORGE_MARK } from './brand';
 import { CLEAR_BACKGROUND, textShadows, type Scene, type SceneNode } from './scene';

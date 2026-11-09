@@ -261,6 +261,22 @@ class ForgePhoneModule : Module() {
       }
     }
 
+    // ---------------------------------------------------------------- light or dark (9 Nov 2026)
+    // The app draws under see-through system bars. Android picks the navigation bar's button colour
+    // once, when the screen opens, from the PHONE's setting; when the member's light/dark look differs
+    // (or changes while the app is open) the buttons follow the app's look: dark buttons on light.
+    Function("systemBars") { light: Boolean ->
+      val a = appContext.currentActivity ?: return@Function false
+      a.runOnUiThread {
+        try {
+          androidx.core.view.WindowInsetsControllerCompat(a.window, a.window.decorView).isAppearanceLightNavigationBars = light
+        } catch (e: Throwable) {
+          android.util.Log.w("ForgeErr", "navigation bar look could not be set", e)
+        }
+      }
+      true
+    }
+
     // ---------------------------------------------------------------- start-up screen (15 Oct 2026)
     // A phone in a branded gym starts on a plain screen (no ForgeAI logo) so the gym's logo is the
     // first one shown; out of a gym, ForgeAI's own. Android 13+ only (setSplashScreenTheme picks the

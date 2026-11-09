@@ -180,7 +180,7 @@ export function fitText(text: string, font: FontToken, size: number, maxWidth: n
 export function bodyPaths(node: Extract<SceneNode, { t: 'body' }>): { d: string; fill: string }[] {
   const view = bodyView(node);
   const levels = new Map(node.levels);
-  return view.parts.map((p) => ({ d: p.d, fill: regionFill(p.region, levels) }));
+  return view.parts.map((p) => ({ d: p.d, fill: regionFill(p.region, levels, undefined, true) }));
 }
 
 export function bodyView(node: Extract<SceneNode, { t: 'body' }>): BodyView {
@@ -268,7 +268,7 @@ export function sceneToSvg(scene: Scene): string {
           .map((p) => `<path d="${p.d}" fill="${p.fill}"/>`)
           .join('');
         parts.push(
-          `<g transform="translate(${n.x} ${n.y}) scale(${s}) translate(${-view.viewBox.x} ${-view.viewBox.y})">${inner}<path d="${view.outline}" fill="none" stroke="${mapOutline()}" stroke-width="${(1.5 / s).toFixed(2)}"/></g>`,
+          `<g transform="translate(${n.x} ${n.y}) scale(${s}) translate(${-view.viewBox.x} ${-view.viewBox.y})">${inner}<path d="${view.outline}" fill="none" stroke="${mapOutline(true)}" stroke-width="${(1.5 / s).toFixed(2)}"/></g>`,
         );
         break;
       }

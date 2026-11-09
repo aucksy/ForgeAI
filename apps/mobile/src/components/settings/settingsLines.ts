@@ -13,6 +13,7 @@ import type { UnitSystem } from '@/lib/units';
 export type SettingsRowKey =
   | 'profile'
   | 'units'
+  | 'look'
   | 'coach'
   | 'weeklyGoal'
   | 'rest'
@@ -88,6 +89,8 @@ export function settingsGroups(ctx: SettingsContext): SettingsGroup[] {
   const you: SettingsRow[] = [
     { key: 'profile', title: 'Your profile', href: '/edit-profile' },
     { key: 'units', title: 'Units', href: '/settings/units' },
+    // Light mode (owner, 9 Nov 2026): follows the phone unless the member picks Light or Dark.
+    { key: 'look', title: 'Light or dark', href: '/settings/look' }, // member-words
   ];
   if (!ctx.iphone) you.push({ key: 'reminders', title: 'Reminders', href: '/settings/notifications' });
   if (ctx.coach) you.push({ key: 'coach', title: 'AI coach', href: '/settings/coach' });

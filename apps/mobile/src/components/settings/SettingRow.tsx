@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui';
 import type { IconName } from '@/components/ui';
 import { tap } from '@/lib/haptics';
 import type { DotSpot } from '@/lib/newDots';
+import { isLightLook } from '@/theme/brandTokens';
 import { color, space, type } from '@/theme/tokens';
 
 export interface SettingRowProps {
@@ -113,9 +114,10 @@ export function ToggleRow({ icon, title, caption, value, onChange, locked, divid
             tap();
             onChange?.(v);
           }}
-          trackColor={{ false: color.inkDisabled, true: color.accentDeep }}
-          thumbColor={value ? color.accentBright : color.inkSecondary}
-          ios_backgroundColor={color.inkDisabled}
+          // Light mode: a white knob on an orange (on) or grey (off) track, as light apps draw it.
+          trackColor={isLightLook() ? { false: '#C4C7CE', true: color.accent } : { false: color.inkDisabled, true: color.accentDeep }}
+          thumbColor={isLightLook() ? '#FAFAFA' : value ? color.accentBright : color.inkSecondary}
+          ios_backgroundColor={isLightLook() ? '#C4C7CE' : color.inkDisabled}
         />
       }
     />

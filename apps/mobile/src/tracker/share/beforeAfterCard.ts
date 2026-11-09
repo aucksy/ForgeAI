@@ -14,7 +14,8 @@
  * its day under it. The photos stay on the phone: the picture is made here and leaves only when
  * the member taps Share.
  */
-import { color } from '@/theme/tokens';
+// Share pictures are posted images: always the dark look (with the gym's colours), whatever the app shows.
+import { darkColor as color } from '@/theme/tokens';
 
 import { apartText } from '../lib/months';
 import { fitText, textWidth, type Scene, type SceneNode } from './scene';

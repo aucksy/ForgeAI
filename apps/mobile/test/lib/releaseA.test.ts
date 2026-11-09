@@ -76,7 +76,7 @@ describe('A7: Settings in 6 headed groups', () => {
   it('the rows the review named (labels in plain words)', () => {
     const rows = Object.fromEntries(settingsGroups(NO_GYM).map((g) => [g.title, g.rows.map((r) => r.title)]));
     // R-284 (2 Nov 2026 UAT): reminders under You; the rare workout choices behind one row; one backup row.
-    expect(rows.You).toEqual(['Your profile', 'Units', 'Reminders']);
+    expect(rows.You).toEqual(['Your profile', 'Units', 'Light or dark', 'Reminders']);
     expect(rows.Workouts).toEqual(['Rest timer and sounds', 'Weekly goal', 'Plates and bars', 'Rate how hard each set felt', 'More workout choices']);
     expect(MORE_WORKOUT_ROWS.map((r) => r.title)).toEqual(['How the app picks your next weight', "Last time's numbers", 'Muscle tips']);
     expect(rows['Phone and watch']).toEqual(['Health apps', 'Widgets']);

@@ -62,6 +62,7 @@ import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { success, thud } from '@/lib/haptics';
 import { useSettings } from '@/store/settingsStore';
 import { chart, color, motion, radius, space, type } from '@/theme/tokens';
+import { tint } from '@/theme/tint';
 import type { Goal, UnitSystem } from '@/types/models';
 
 import { choosePendingImport, type SwitchApp } from '@/tracker/components/SwitcherCard';
@@ -532,7 +533,7 @@ export function WelcomeScreen() {
                 <BringRow
                   tile="H"
                   tileFg={chart.series[1]}
-                  tileBg="#1A2233"
+                  tileBg={tint(chart.series[1], 0.16)}
                   label={START_WORDS.fromHevy}
                   hint={START_WORDS.fromHevyHint}
                   picked={switchApp === 'hevy'}
@@ -541,7 +542,7 @@ export function WelcomeScreen() {
                 <BringRow
                   tile="S"
                   tileFg={chart.series[4]}
-                  tileBg="#2A2010"
+                  tileBg={tint(chart.series[4], 0.16)}
                   label={START_WORDS.fromStrong}
                   hint={START_WORDS.fromStrongHint}
                   picked={switchApp === 'strong'}

@@ -187,7 +187,7 @@ function AutoTick({ exercise }: { exercise: InUseExercise }) {
           justifyContent: 'center',
         }}
       >
-        {on ? <Icon name="check" size={16} color={color.bg} /> : null}
+        {on ? <Icon name="check" size={16} color={color.onAccent} /> : null}
       </View>
       <Text style={{ flexShrink: 1, fontFamily: type.bodyMedium, fontSize: type.size.sub, color: on ? color.ink : color.inkSecondary }}>{IN_USE_WORDS.auto}</Text>
     </Pressable>

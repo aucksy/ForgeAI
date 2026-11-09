@@ -20,7 +20,8 @@ import { describe, expect, it } from 'vitest';
 
 const SRC = resolve(__dirname, '../../src');
 const FROZEN = [/^components\/ui\//, /^components\/charts\//, /^engine\//];
-const TOKEN_OBJECTS = new Set(['color', 'chart', 'gradients', 'shadow']);
+// Light mode (9 Nov 2026): the always-dark copies (share pictures, widgets) are rewritten in place too.
+const TOKEN_OBJECTS = new Set(['color', 'chart', 'gradients', 'shadow', 'darkColor', 'darkChart', 'darkGradients']);
 
 function files(dir: string): string[] {
   const out: string[] = [];
@@ -140,6 +141,7 @@ describe('no token colour is copied at load time (gym branding repaints the app)
       'tracker/components/SetRow.tsx #FFFFFF': '"Delete" on the red swipe action',
       'tracker/components/DoneSheet.tsx #1A0F08': 'fixed in its own change (out of this one)',
       'components/brand/mettleUpMark.ts #FFFFFF': 'a stop in the MettleUp steel-shine gradient (the brand name), not an ink colour (R-426)',
+      'components/brand/mettleUpMark.ts #16191F': 'the darkest stop of the steel name on light pages (a brand gradient, not an ink colour; 9 Nov 2026)',
     };
     const lum = (hex: string) => {
       const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((s) => (s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4));
@@ -204,9 +206,10 @@ describe('no token colour is copied at load time (gym branding repaints the app)
     // the gym's colours; only within the run in which the member joins or leaves do they keep
     // the previous look:
     //  - components/ui/Badge.tsx: the badge tints (record badge = accent tint + bright accent);
-    //  - components/charts/Heatmap.tsx: the consistency heatmap's four ramp steps;
+    //  (components/charts/Heatmap.tsx read its ramp at load time until light mode, 9 Nov 2026: charts
+    //  may be edited since 8 Nov, and it now reads when drawn.)
     //  - components/ui/Logo.tsx: ForgeAI's own wordmark (ink + ember).
     const files = [...new Set(hits.map((h) => h.split(':')[0]))].sort();
-    expect(files).toEqual(['components/charts/Heatmap.tsx', 'components/ui/Badge.tsx', 'components/ui/Logo.tsx']);
+    expect(files).toEqual(['components/ui/Badge.tsx', 'components/ui/Logo.tsx']);
   });
 });

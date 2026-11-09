@@ -186,7 +186,7 @@ export function UpdateFullScreen({ onLater }: { onLater: () => void }) {
             end={{ x: 0, y: 1 }}
             style={{ width: 96, height: 96, borderRadius: 30, alignItems: 'center', justifyContent: 'center', ...shadow.glow }}
           >
-            <DownloadMark size={44} stroke={color.onAccent} />
+            <DownloadMark size={44} stroke={color.onEmber} />
           </LinearGradient>
           <Text
             style={{

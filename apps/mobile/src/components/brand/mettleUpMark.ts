@@ -155,3 +155,22 @@ export const WORDMARK_FORGE_STOPS: readonly WordmarkStop[] = [
   { offset: 0.56, color: '#E0581F' },
   { offset: 1, color: '#FF8A4C' },
 ];
+/**
+ * Light mode (9 Nov 2026): the same shine for a LIGHT background — gunmetal "METTLE" and a deeper
+ * orange metal "UP" (branding/mettleup/_src/steel_wordmark.py STEEL_ON_LIGHT / FORGE_ON_LIGHT), as
+ * white-topped steel vanishes on an off-white page. Share pictures stay dark and keep the stops above.
+ */
+export const WORDMARK_STEEL_ON_LIGHT_STOPS: readonly WordmarkStop[] = [
+  { offset: 0, color: '#6E7580' },
+  { offset: 0.44, color: '#454B55' },
+  { offset: 0.5, color: '#16191F' },
+  { offset: 0.56, color: '#2F343C' },
+  { offset: 1, color: '#5F6670' },
+];
+export const WORDMARK_FORGE_ON_LIGHT_STOPS: readonly WordmarkStop[] = [
+  { offset: 0, color: '#F0662A' },
+  { offset: 0.44, color: '#E0581F' },
+  { offset: 0.5, color: '#9E3510' },
+  { offset: 0.56, color: '#C9481A' },
+  { offset: 1, color: '#E0581F' },
+];

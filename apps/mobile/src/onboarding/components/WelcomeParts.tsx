@@ -17,7 +17,7 @@ import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 /** Google's "G", one colour (the design draws it in the button's ink: the ink on the accent). */
 export function GoogleG({ size = 20, fill: fillProp }: { size?: number; fill?: string }) {
   // Read when drawn: gym branding repaints the tokens.
-  const fill = fillProp ?? color.onAccent;
+  const fill = fillProp ?? color.onEmber;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z" fill={fill} />
@@ -79,8 +79,8 @@ export function OrangePill({
           gap: 10,
         }}
       >
-        {loading ? <ActivityIndicator size="small" color={color.onAccent} /> : glyph ?? null}
-        <Text style={{ fontFamily: type.bodyBold, fontSize: 17, color: color.onAccent, textAlign: 'center', flexShrink: 1 }}>{label}</Text>
+        {loading ? <ActivityIndicator size="small" color={color.onEmber} /> : glyph ?? null}
+        <Text style={{ fontFamily: type.bodyBold, fontSize: 17, color: color.onEmber, textAlign: 'center', flexShrink: 1 }}>{label}</Text>
       </LinearGradient>
     </PressScale>
   );

@@ -203,6 +203,19 @@ export function showWaitingLook(awayMs: number = Number.POSITIVE_INFINITY): bool
 /** How long the app must have been away before a waiting look is shown on its return. */
 export const WAITING_LOOK_AWAY_MS = 60_000;
 
+/**
+ * Light or dark (theme/appearance.ts): the tokens already hold the new look; re-draw the app from
+ * its root (the same key a gym's look uses). A branded gym's logo opening is not shown for it.
+ */
+export function redrawForLook(): void {
+  useGymTheme.setState((s) => ({ epoch: s.epoch + 1 }));
+}
+
+/** A workout is open now (or not read back yet): a look the member did not ask for waits. */
+export function workoutIsOpen(): boolean {
+  return workoutOpen();
+}
+
 /** The root layout tells the theme how to see an open workout (never re-draw during one). */
 export function setWorkoutCheck(check: () => boolean): void {
   workoutOpen = check;

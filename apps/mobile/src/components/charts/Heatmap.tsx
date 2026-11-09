@@ -12,14 +12,13 @@ export interface HeatmapProps {
   weeks: number;
 }
 
-/** level 0 recedes into the surface; 1..4 climb the ember ramp. */
-const LEVEL_FILL: Record<ConsistencyCell['level'], string> = {
-  0: palette.surfaceSunken,
-  1: chart.ramp[1],
-  2: chart.ramp[3],
-  3: chart.ramp[4],
-  4: chart.ramp[5],
-};
+/**
+ * level 0 recedes into the surface; 1..4 climb the ember ramp. Read when drawn (light mode and gym
+ * branding rewrite the tokens; a copy taken when the file loads kept the old look).
+ */
+function levelFill(level: ConsistencyCell['level']): string {
+  return level === 0 ? palette.surfaceSunken : chart.ramp[([0, 1, 3, 4, 5] as const)[level]];
+}
 
 const GAP = 3;
 const DAY_GUTTER = 18;
@@ -80,7 +79,7 @@ export function Heatmap({ cells, weeks }: HeatmapProps) {
                 width={cell}
                 height={cell}
                 rx={rx}
-                fill={LEVEL_FILL[c.level]}
+                fill={levelFill(c.level)}
               />
             );
           })}
@@ -114,7 +113,7 @@ export function Heatmap({ cells, weeks }: HeatmapProps) {
         {([0, 1, 2, 3, 4] as const).map((lvl) => (
           <View
             key={lvl}
-            style={{ width: 9, height: 9, borderRadius: 2.5, backgroundColor: LEVEL_FILL[lvl] }}
+            style={{ width: 9, height: 9, borderRadius: 2.5, backgroundColor: levelFill(lvl) }}
           />
         ))}
         <Text

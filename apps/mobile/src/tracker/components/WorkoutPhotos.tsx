@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { askConfirm, GhostButton, Icon, IconButton } from '@/components/ui';
 import { hitSlopFor } from '@/components/ui/a11y';
+import { inkTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { getWorkoutPhotos } from '../db/workoutPhotoRepo';
@@ -230,7 +231,7 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
 
       <Modal visible={viewing != null} animationType="fade" onRequestClose={() => setViewing(null)} statusBarTranslucent>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <View style={{ flex: 1, backgroundColor: '#000', paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.md }}>
+          <View style={{ flex: 1, backgroundColor: color.bg, paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, gap: space.md }}>
               <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>Workout photo</Text>
               <IconButton icon="close" onPress={() => setViewing(null)} accessibilityLabel="Close photo" />
@@ -248,7 +249,7 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
                   alignItems: 'center',
                   gap: space.sm,
                   borderRadius: radius.md,
-                  backgroundColor: pressed ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  backgroundColor: pressed ? inkTint(0.08) : 'transparent',
                 })}
               >
                 <Glyph name="trash" size={20} color={color.criticalText} />

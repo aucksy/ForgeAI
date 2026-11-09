@@ -94,7 +94,7 @@ export default function ComparePhotosScreen() {
 
       <Modal visible={zoomed != null} animationType="fade" onRequestClose={() => setZoomed(null)} statusBarTranslucent>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <View style={{ flex: 1, backgroundColor: '#000', paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.lg }}>
+          <View style={{ flex: 1, backgroundColor: color.bg, paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.lg }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, gap: space.md }}>
               <Text style={{ flex: 1, fontFamily: type.heading, fontSize: type.size.h3, color: color.ink }}>
                 {zoomed ? `${zoomed.label} · ${dateWithYear(zoomed.photo.dateISO)}` : ''}

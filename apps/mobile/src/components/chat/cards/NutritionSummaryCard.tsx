@@ -78,6 +78,7 @@ export function NutritionSummaryCard({ data }: { data: NutritionSummaryView }) {
           label={fmtInt(day.calories)}
           sublabel={`/ ${fmtInt(targets.calories)} kcal`}
           color={color.accent}
+          trackColor={color.border}
         />
         <RingGauge
           value={day.proteinG}
@@ -86,6 +87,7 @@ export function NutritionSummaryCard({ data }: { data: NutritionSummaryView }) {
           label={`${Math.round(day.proteinG)}g`}
           sublabel={`/ ${Math.round(targets.proteinG)}g protein`}
           color={chart.series[2]}
+          trackColor={color.border}
         />
       </View>
 

@@ -32,7 +32,8 @@ import { getSessionsBetween } from '@/db/repos/workoutRepo';
 import { followedFolder } from '@/tracker/db/folderRepo';
 import { planDaysPerWeek } from '@/tracker/services/planState';
 import { getTodayPlan } from '@/tracker/services/todayService';
-import { color } from '@/theme/tokens';
+// The dark look's colours (with the gym's): the widgets and the reminder's tint do not change with the app's light/dark look.
+import { darkColor as color } from '@/theme/tokens';
 
 import { nativeNotificationsEnabled } from '../services/restCard';
 import { ensureAlertPermission, notificationsGranted } from '../services/workoutAlerts';

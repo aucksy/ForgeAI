@@ -21,6 +21,8 @@ import {
   WORDMARK_FORGE_STOPS,
   WORDMARK_METTLE_D,
   WORDMARK_STEEL_STOPS,
+  WORDMARK_STEEL_ON_LIGHT_STOPS,
+  WORDMARK_FORGE_ON_LIGHT_STOPS,
   WORDMARK_UP_D,
 } from '@/components/brand/mettleUpMark';
 
@@ -87,8 +89,9 @@ describe('the welcome screen shows MettleUp, not the frozen FORGEAI Logo', () =>
   it('the lockup is read out as MettleUp; the name has the splash shine at every size, never flat (9 Nov 2026)', () => {
     const logo = src('components/brand/MettleUpLogo.tsx');
     expect(logo).toContain('accessibilityLabel="MettleUp"');
-    expect(logo).toContain('stops={WORDMARK_STEEL_STOPS}');
-    expect(logo).toContain('stops={WORDMARK_FORGE_STOPS}');
+    // Light mode (9 Nov 2026): on a light page the name takes the generator's on-light stops.
+    expect(logo).toContain('stops={light ? WORDMARK_STEEL_ON_LIGHT_STOPS : WORDMARK_STEEL_STOPS}');
+    expect(logo).toContain('stops={light ? WORDMARK_FORGE_ON_LIGHT_STOPS : WORDMARK_FORGE_STOPS}');
     expect(logo).toContain('gradientUnits="userSpaceOnUse"');
     expect(logo).toContain('<Path d={WORDMARK_METTLE_D} fill={`url(#${uid}s)`} />');
     expect(logo).toContain('<Path d={WORDMARK_UP_D} fill={`url(#${uid}f)`} />');
@@ -110,6 +113,8 @@ describe('R-259: the "steel plate" name (branding/mettleup/_src/steel_wordmark.p
     };
     expect(list('STEEL_FILL')).toEqual(WORDMARK_STEEL_STOPS);
     expect(list('FORGE_FILL')).toEqual(WORDMARK_FORGE_STOPS);
+    expect(list('STEEL_ON_LIGHT')).toEqual(WORDMARK_STEEL_ON_LIGHT_STOPS);
+    expect(list('FORGE_ON_LIGHT')).toEqual(WORDMARK_FORGE_ON_LIGHT_STOPS);
     expect(WORDMARK_STEEL_STOPS).toHaveLength(5);
     expect(WORDMARK_STEEL_STOPS[2]).toEqual({ offset: 0.5, color: '#7A818C' });
   });

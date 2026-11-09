@@ -16,7 +16,7 @@ import { goBack } from '@/lib/goBack';
 import { fmtInt, trimNum } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
-import { onAccentTint } from '@/theme/tint';
+import { onEmberTint } from '@/theme/tint';
 import { color, gradients, radius, space, type } from '@/theme/tokens';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
 import { MonthGrid } from '@/tracker/components/MonthGrid';
@@ -41,9 +41,9 @@ type Loaded = { kind: 'month'; data: MonthReportData } | { kind: 'year'; data: Y
 function Hero({ big, label, line }: { big: string; label: string; line: string }) {
   return (
     <HeroCard gradient={gradients.ember}>
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onAccentTint(0.72) }}>{label}</Text>
-      <Text style={{ fontFamily: type.display, fontSize: type.size.hero, color: color.onAccent, marginTop: 2 }}>{big}</Text>
-      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onAccentTint(0.72), marginTop: 2 }}>{line}</Text>
+      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onEmberTint(0.72) }}>{label}</Text>
+      <Text style={{ fontFamily: type.display, fontSize: type.size.hero, color: color.onEmber, marginTop: 2 }}>{big}</Text>
+      <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: onEmberTint(0.72), marginTop: 2 }}>{line}</Text>
     </HeroCard>
   );
 }

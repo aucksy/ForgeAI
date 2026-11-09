@@ -17,6 +17,24 @@ export function accentTint(alpha: number): string {
   return withAlpha(color.accent, alpha);
 }
 
+/** The ink drawn ON the ember gradient at `alpha` — a quieter line on the big ember card. */
+export function onEmberTint(alpha: number): string {
+  return withAlpha(color.onEmber, alpha);
+}
+
+/**
+ * The main text colour at `alpha`: a faint wash that shows on BOTH looks (near-white on the dark
+ * look, near-black on the light one) — a pressed row, a quiet fill. Never a hand-typed white.
+ */
+export function inkTint(alpha: number): string {
+  return withAlpha(color.ink, alpha);
+}
+
+/** Any '#RRGGBB' colour at `alpha` (e.g. a status colour's soft background). */
+export function tint(hex: string, alpha: number): string {
+  return withAlpha(hex, alpha);
+}
+
 /** The ink drawn ON the accent at `alpha` — a quieter line on an accent card. */
 export function onAccentTint(alpha: number): string {
   return withAlpha(color.onAccent, alpha);

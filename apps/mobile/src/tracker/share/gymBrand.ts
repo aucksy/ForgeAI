@@ -15,7 +15,8 @@
  *  - Only words are added: the gym's name. No number, so nothing new can be divided back into a
  *    private one (D:/Brain/Lessons/public-numbers-can-divide-back-to-private-data.md).
  */
-import { color } from '@/theme/tokens';
+// Share pictures are posted images: always the dark look (with the gym's colours), whatever the app shows.
+import { darkColor as color } from '@/theme/tokens';
 
 import { MIN_CAP, wordmark } from './brand';
 import { fitSize, fitText, textWidth, type Scene, type SceneNode } from './scene';

@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 
 import { trimNum } from '@/lib/format';
 import { color as palette, radius, type } from '@/theme/tokens';
+import { tint } from '@/theme/tint';
 
 export interface DeltaPillProps {
   value: number;
@@ -20,7 +21,8 @@ export function DeltaPill({ value, suffix = '%', tone }: DeltaPillProps) {
   const negative = value < 0;
   const t = tone ?? (positive ? 'good' : negative ? 'bad' : 'neutral');
   const fg = t === 'good' ? palette.goodText : t === 'bad' ? palette.criticalText : palette.inkMuted;
-  const bg = t === 'good' ? 'rgba(61, 203, 108, 0.12)' : t === 'bad' ? 'rgba(240, 113, 111, 0.12)' : palette.surfaceRaised;
+  // Light mode: a soft wash of the text's own colour, so it reads on both looks.
+  const bg = t === 'good' ? tint(palette.goodText, 0.12) : t === 'bad' ? tint(palette.criticalText, 0.12) : palette.surfaceRaised;
   const text = `${positive ? '+' : ''}${trimNum(value)}${suffix}`;
 
   return (

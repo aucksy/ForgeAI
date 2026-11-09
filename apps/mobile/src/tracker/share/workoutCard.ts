@@ -7,7 +7,8 @@
  * no gym, nothing about the member's body — only the workout.
  */
 import { weightUnitOf } from '@/lib/units';
-import { color } from '@/theme/tokens';
+// Share pictures are posted images: always the dark look (with the gym's colours), whatever the app shows.
+import { darkColor as color } from '@/theme/tokens';
 
 import type { BodyFigure } from '../catalog/bodyMapPaths';
 import { MUSCLE_LABEL } from '../catalog/muscles';

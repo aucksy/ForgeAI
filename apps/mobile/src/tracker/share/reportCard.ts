@@ -6,7 +6,8 @@
 import { fmtInt } from '@/lib/format';
 import { kgToShown, weightUnitOf } from '@/lib/units';
 import { countWord } from '@/lib/words';
-import { color } from '@/theme/tokens';
+// Share pictures are posted images: always the dark look (with the gym's colours), whatever the app shows.
+import { darkColor as color } from '@/theme/tokens';
 
 import { MUSCLE_LABEL } from '../catalog/muscles';
 import { fmtTotalDistance } from '../engine/logTypes';

@@ -162,7 +162,7 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
                 {bodyPaths(n).map((p, k) => (
                   <Path key={k} d={p.d} fill={p.fill} />
                 ))}
-                <Path d={view.outline} fill="none" stroke={mapOutline()} strokeWidth={1.5 / s} />
+                <Path d={view.outline} fill="none" stroke={mapOutline(true)} strokeWidth={1.5 / s} />
               </G>
             );
           }

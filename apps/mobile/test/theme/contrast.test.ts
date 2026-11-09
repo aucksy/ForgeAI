@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { color, gradients } from '@/theme/tokens';
+import { color as darkLook, gradients as darkGradients, LIGHT } from '@/theme/tokens';
 
 /**
  * SH-19 / LW-14: every colour the app uses for TEXT must reach WCAG AA (4.5:1) against
  * every plane text sits on. Measured in a gym, on a bench, under bright lights — so the
  * hint numbers in a set row (what a tick will save) count as text, not as "disabled".
+ *
+ * Light mode (9 Nov 2026): the same tests, every one, on BOTH looks — the dark one (the live tokens
+ * as the app loads) and the light one (tokens.ts `LIGHT`).
  */
 
 type Rgb = [number, number, number];
@@ -38,61 +41,74 @@ function contrast(a: Rgb, b: Rgb): number {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
-/** Every plane text sits on: page, cards, sheets, input wells, glass, the light top of a hero card. */
-const planes: Record<string, Rgb> = {
-  bg: parse(color.bg).rgb,
-  surface: parse(color.surface).rgb,
-  surfaceRaised: parse(color.surfaceRaised).rgb,
-  surfaceSunken: parse(color.surfaceSunken).rgb,
-  glassOnBg: over(color.glass, color.bg),
-  heroTop: parse(gradients.steel[0]).rgb,
-};
+function suite(look: 'dark' | 'light', color: Record<string, string>, gradients: { steel: readonly string[]; ember: readonly string[] }): void {
+  /** Every plane text sits on: page, cards, sheets, input wells, glass, the light top of a hero card. */
+  const planes: Record<string, Rgb> = {
+    bg: parse(color.bg).rgb,
+    surface: parse(color.surface).rgb,
+    surfaceRaised: parse(color.surfaceRaised).rgb,
+    surfaceSunken: parse(color.surfaceSunken).rgb,
+    glassOnBg: over(color.glass, color.bg),
+    heroTop: parse(gradients.steel[0]).rgb,
+  };
 
-/**
- * Text colours. `inkFaint` is here on purpose: it is the placeholder colour of every input,
- * including the set-row hints. Only `inkDisabled` is left out — WCAG 1.4.3 exempts inactive
- * controls, and it is never to be used for information (see docs/DESIGN-LANGUAGE.md).
- */
-const textTokens = {
-  ink: color.ink,
-  inkSecondary: color.inkSecondary,
-  inkMuted: color.inkMuted,
-  inkFaint: color.inkFaint,
-  accent: color.accent,
-  accentBright: color.accentBright,
-  goodText: color.goodText,
-  criticalText: color.criticalText,
-  warning: color.warning,
-} as const;
+  /**
+   * Text colours. `inkFaint` is here on purpose: it is the placeholder colour of every input,
+   * including the set-row hints. Only `inkDisabled` is left out — WCAG 1.4.3 exempts inactive
+   * controls, and it is never to be used for information (see docs/DESIGN-LANGUAGE.md).
+   */
+  const textTokens = {
+    ink: color.ink,
+    inkSecondary: color.inkSecondary,
+    inkMuted: color.inkMuted,
+    inkFaint: color.inkFaint,
+    accent: color.accent,
+    accentBright: color.accentBright,
+    goodText: color.goodText,
+    criticalText: color.criticalText,
+    warning: color.warning,
+  } as const;
 
-describe('text contrast (WCAG AA 4.5:1)', () => {
-  for (const [name, fg] of Object.entries(textTokens)) {
-    for (const [plane, bg] of Object.entries(planes)) {
-      it(`${name} on ${plane}`, () => {
-        expect(contrast(parse(fg).rgb, bg)).toBeGreaterThanOrEqual(4.5);
-      });
+  describe(`text contrast (WCAG AA 4.5:1), ${look} look`, () => {
+    for (const [name, fg] of Object.entries(textTokens)) {
+      for (const [plane, bg] of Object.entries(planes)) {
+        it(`${name} on ${plane}`, () => {
+          expect(contrast(parse(fg).rgb, bg)).toBeGreaterThanOrEqual(4.5);
+        });
+      }
     }
-  }
 
-  it('accent text on an accent-tinted chip still passes', () => {
-    for (const base of [color.surface, color.surfaceRaised]) {
-      const chip = over(color.accentSoft, base);
-      expect(contrast(parse(color.accent).rgb, chip)).toBeGreaterThanOrEqual(4.5);
-      expect(contrast(parse(color.ink).rgb, chip)).toBeGreaterThanOrEqual(4.5);
-    }
-  });
+    it('accent text on an accent-tinted chip still passes', () => {
+      for (const base of [color.surface, color.surfaceRaised]) {
+        const chip = over(color.accentSoft, base);
+        expect(contrast(parse(color.accent).rgb, chip)).toBeGreaterThanOrEqual(4.5);
+        // The record badge (frozen Badge, tone accent) writes accentBright on the same tint.
+        expect(contrast(parse(color.accentBright).rgb, chip)).toBeGreaterThanOrEqual(4.5);
+        expect(contrast(parse(color.ink).rgb, chip)).toBeGreaterThanOrEqual(4.5);
+      }
+    });
 
-  it('the grey ladder still reads as a ladder (ink > secondary > muted > faint)', () => {
-    const l = (c: string) => luminance(parse(c).rgb);
-    expect(l(color.ink)).toBeGreaterThan(l(color.inkSecondary));
-    expect(l(color.inkSecondary)).toBeGreaterThan(l(color.inkMuted));
-    expect(l(color.inkMuted)).toBeGreaterThan(l(color.inkFaint));
-    expect(l(color.inkFaint)).toBeGreaterThan(l(color.inkDisabled));
-  });
+    it('the grey ladder still reads as a ladder (ink > secondary > muted > faint, away from the page)', () => {
+      // Dark look: each step darker; light look: each step lighter (closer to the page either way).
+      const l = (c: string) => (look === 'dark' ? 1 : -1) * luminance(parse(c).rgb);
+      expect(l(color.ink)).toBeGreaterThan(l(color.inkSecondary));
+      expect(l(color.inkSecondary)).toBeGreaterThan(l(color.inkMuted));
+      expect(l(color.inkMuted)).toBeGreaterThan(l(color.inkFaint));
+      expect(l(color.inkFaint)).toBeGreaterThan(l(color.inkDisabled));
+    });
 
-  it('disabled ink is dim but still visible (>= 3:1 on the page and on cards)', () => {
-    for (const plane of ['bg', 'surface', 'surfaceSunken'] as const) {
-      expect(contrast(parse(color.inkDisabled).rgb, planes[plane])).toBeGreaterThanOrEqual(3);
-    }
+    it('words on the accent (onAccent) and on the ember button (onEmber) read at 4.5:1', () => {
+      expect(contrast(parse(color.onAccent).rgb, parse(color.accent).rgb)).toBeGreaterThanOrEqual(4.5);
+      for (const stop of gradients.ember) expect(contrast(parse(color.onEmber).rgb, parse(stop).rgb)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it('disabled ink is dim but still visible (>= 3:1 on the page and on cards)', () => {
+      for (const plane of ['bg', 'surface', 'surfaceSunken'] as const) {
+        expect(contrast(parse(color.inkDisabled).rgb, planes[plane])).toBeGreaterThanOrEqual(3);
+      }
+    });
   });
-});
+}
+
+suite('dark', darkLook, darkGradients);
+suite('light', LIGHT.color, LIGHT.gradients);

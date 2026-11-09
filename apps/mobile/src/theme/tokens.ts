@@ -1,5 +1,12 @@
 /**
- * ForgeAI design tokens — premium dark-first theme.
+ * ForgeAI design tokens — dark and light (light mode, 9 Nov 2026).
+ *
+ * `color`, `chart`, `gradients` and `shadow` are the LIVE look: their values are rewritten in place
+ * (never the objects themselves) when the member's light/dark choice or the phone's setting changes,
+ * and when a gym's colours come in (theme/brandTokens.ts), then the app re-draws from its root
+ * (theme/appearance.ts, theme/gymTheme.ts). The values written here are the DARK look; the LIGHT
+ * look is `LIGHT` below. `darkColor` / `darkChart` / `darkGradients` always hold the dark look (with
+ * the gym's colours): share pictures and home-screen widgets stay dark whatever the app shows.
  *
  * Chart series palette is CVD-validated (dataviz six-checks) against
  * `color.surface` (#10131C): lightness band, chroma floor, adjacent-pair
@@ -38,7 +45,17 @@ export const color = {
   onAccent: '#1F0D05',
   /** Keyboard / switch-access focus outline. */
   focusRing: '#FFA043',
+  /**
+   * Text and icons ON the ember gradient (the big finish card, the report's headline card, the
+   * welcome button). The primary button's frozen ink (#1F0D05): the ember stays bright in both
+   * looks, so this dark ink reads on it in both, while `onAccent` follows the accent (white on the
+   * light look's deeper orange).
+   */
+  onEmber: '#1F0D05',
 } as const;
+
+/** Every colour key of the look (the light look must name each one). */
+export type ColorKey = keyof typeof color;
 
 export const chart = {
   /** Categorical slots, fixed order (validated): ember, blue, aqua, violet, yellow. */
@@ -55,6 +72,81 @@ export const chart = {
   markerRadius: 4,
   barRadius: 4,
   barGap: 2, // px surface gap between adjacent/stacked fills
+} as const;
+
+/**
+ * The LIGHT look (9 Nov 2026, owner: "it should be system default"). Designed, not inverted: a warm
+ * off-white page, white cards with crisp hairlines and a soft shadow, light warm-grey fills for
+ * controls and wells, near-black ink. The forge orange stays the brand: the big ember gradient
+ * (buttons, the finish card) keeps its bright colours, and where orange is TEXT it is a deeper
+ * burnt orange that reads at 4.5:1 on every light plane (test/theme/contrast.test.ts measures both
+ * looks). Chart series are the dark slots darkened in lightness only (same hues, same order), each
+ * >= 3:1 on a white card with the colour-blind pair distances kept (test/theme/lightPalette.test.ts).
+ */
+export const LIGHT = {
+  color: {
+    // Planes: page, card (white), filled controls and sheets, wells (inputs), frosted bars.
+    bg: '#F6F4F0',
+    surface: '#FFFFFF',
+    surfaceRaised: '#F1EFEB',
+    surfaceSunken: '#EEEBE6',
+    glass: 'rgba(255, 255, 255, 0.88)',
+    // Ink: near-black down to a placeholder grey; every one >= 4.5:1 on every plane.
+    ink: '#17181C',
+    inkSecondary: '#474C57',
+    inkMuted: '#555B69',
+    inkFaint: '#5E6472',
+    inkDisabled: '#7F8591',
+    // Brand: burnt orange for text and fills (white reads on it), the bright ember kept for the button.
+    accent: '#AD420D',
+    accentBright: '#A8400B',
+    accentDeep: '#933A0B',
+    accentSoft: 'rgba(232, 100, 31, 0.10)',
+    onAccent: '#FFFFFF',
+    onEmber: '#1F0D05',
+    focusRing: '#AD420D',
+    // Hairlines and chart chrome.
+    border: 'rgba(28, 25, 20, 0.10)',
+    borderStrong: 'rgba(28, 25, 20, 0.17)',
+    grid: '#ECE9E4',
+    axis: '#D3CFC8',
+    // Status: fills keep their hue; the text ones are deep enough to read on white.
+    good: '#11A23A',
+    warning: '#875A00',
+    serious: '#C2410C',
+    critical: '#C9302C',
+    goodText: '#0D7232',
+    criticalText: '#B42318',
+  } satisfies Record<ColorKey, string>,
+  chart: {
+    /** Same hues and order as the dark slots (ember, blue, aqua, violet, yellow), darker for white. */
+    series: ['#D4561A', '#2F6FCB', '#11875F', '#7366D6', '#A86E00'],
+    /** Near-zero recedes toward the white card; the top is the deepest ember. */
+    ramp: ['#F4ECE5', '#F7D0B4', '#F2A672', '#E77C3F', '#D4561A', '#A8410F'],
+    diverging: { neg: '#2F6FCB', mid: '#D5D1CA', pos: '#D4561A' },
+  },
+  gradients: {
+    ember: ['#FF8B4A', '#F0570F'],
+    emberSubtle: ['rgba(232, 100, 31, 0.08)', 'rgba(232, 100, 31, 0)'],
+    steel: ['#FFFFFF', '#FBF9F6'],
+    backdrop: ['#FBF9F6', '#F6F4F0'],
+  },
+  shadow: {
+    card: {
+      shadowColor: '#2B2118',
+      shadowOpacity: 0.07,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 2,
+    },
+    glow: {
+      shadowColor: '#E8641F',
+      shadowOpacity: 0.22,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    },
+  },
 } as const;
 
 export const type = {
@@ -107,6 +199,19 @@ export const shadow = {
     elevation: 8,
   },
 } as const;
+
+/**
+ * The DARK look with the gym's colours, whatever the app shows (theme/brandTokens.ts keeps these in
+ * step). Share pictures are posted images and stay dark; the home-screen widgets and reminders
+ * keep the dark look's accent.
+ */
+export const darkColor: Record<ColorKey, string> = { ...color };
+export const darkChart = {
+  series: [...chart.series] as string[],
+  ramp: [...chart.ramp] as string[],
+  diverging: { ...chart.diverging } as { neg: string; mid: string; pos: string },
+};
+export const darkGradients = Object.fromEntries(Object.entries(gradients).map(([k, v]) => [k, [...v]])) as Record<keyof typeof gradients, string[]>;
 
 export const motion = {
   fast: 160,

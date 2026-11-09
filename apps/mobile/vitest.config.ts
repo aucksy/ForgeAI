@@ -25,6 +25,8 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: /^@\/(.*)$/, replacement: resolve(__dirname, 'src/$1') },
+      // Light mode: the light/dark choice's synchronous store (device-only; reads fall back to "Same as phone").
+      { find: 'expo-sqlite/kv-store', replacement: nativeStub },
       { find: 'expo-sqlite', replacement: sqliteStub },
       { find: 'expo-secure-store', replacement: nativeStub },
       { find: 'expo-crypto', replacement: cryptoStub },

@@ -37,7 +37,8 @@ import { countWord } from '@/lib/words';
 import { getTodayPlan } from '@/tracker/services/todayService';
 import { followedFolder } from '@/tracker/db/folderRepo';
 import { planDaysPerWeek } from '@/tracker/services/planState';
-import { color } from '@/theme/tokens';
+// The dark look's colours (with the gym's): the widgets and the reminder's tint do not change with the app's light/dark look.
+import { darkColor as color } from '@/theme/tokens';
 
 import { aboutLine, levelLine, type BusyLevel, type GymBusy } from '@/shop/gymBusy';
 

@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": ["mettleup", "forgeai"],
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "backgroundColor": "#07080C",
     "ios": {
       "bundleIdentifier": "com.mettleup.app",
