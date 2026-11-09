@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-425. The steel-plate name goes everywhere the brand name is drawn — 9 Nov 2026
+He said: "You remember how we created a new basically design for how we are writing the name of the brand on the splash
+screen of the app and you're not using that anywhere else except for the splash screen and that's a problem. So you need
+to go through every place in the app or any of the admin app or the edge queue [HQ] and use the correct design for the
+name of the brand. It's like part of the logo now, so please don't make that mistake." Then: "this will not be part of
+the app logo or the display pic ... wherever the display pics are applicable I don't think we can put it in there but
+everywhere else ... places where you are already mentioning the brand name in some kind of design that design has to be
+the way the design that we have built".
+Why it happened: R-259 (31 Oct) put style A on the splash, the app's tab corner and Welcome; R-269 on both websites; the
+notes even listed store, share pictures as "still old" and nobody finished. Rule saved in the brain
+(new-brand-everywhere-never-the-old-name, "Also the look").
+Scope: every place that draws the NAME as a design (headers, sign-in pages, HQ, admin sidebar, share pictures, watch,
+posters, emails, feature graphic, social preview picture). NOT the app icons, favicons or profile/display pictures (mark
+only). Plain sentences that just say "MettleUp" stay text.
 ## R-424. Play production access applied — 9 Nov 2026
 He said: "Also our 14 day testing is complete, the app is ready for production, you can actually submit. Ensure all the
 images, information and the logo is all basically accurate."
