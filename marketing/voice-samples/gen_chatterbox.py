@@ -11,7 +11,8 @@ voice:
 "hi" mode: runs in its own Python environment (the Hindi finetune's loader code, from Resemble AI's
 own Hindi demo Space, needs older library versions than the pip package) and replaces the Hinglish
 line with the official finetune ResembleAI/Chatterbox-Multilingual-hi. If it fails, the V3 take stays.
-Settings: exaggeration 0.6 (a little livelier than neutral 0.5, for an ad), cfg_weight 0.5, temp 0.8.
+Settings: exaggeration 0.6 (a little livelier than neutral 0.5, for an ad), cfg_weight 0.5 (CB_CFG; lower =
+slower, steadier read: the built-in voice reads fast, so it gets 0.3), temp 0.8.
 """
 import json
 import os
@@ -27,7 +28,7 @@ torch.manual_seed(7)
 
 sample_id, voice, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 ref = voice.split(":", 1)[1] if voice.startswith("ref:") else None
-EXAG, CFG, TEMP = 0.6, 0.5, 0.8
+EXAG, CFG, TEMP = 0.6, float(os.environ.get("CB_CFG", "0.5")), 0.8
 segments = load_segments("Mettle Up", "devanagari")
 
 if mode == "en":

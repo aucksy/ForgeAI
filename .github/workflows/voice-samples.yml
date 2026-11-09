@@ -63,6 +63,7 @@ jobs:
         include:
           - id: chatterbox-builtin
             voice: builtin
+            cfg: '0.3'
           - id: chatterbox-indian-female
             voice: ref:refs/hf_beta.wav
           - id: chatterbox-indian-male
@@ -84,6 +85,8 @@ jobs:
           pip install -q torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
           pip install -q "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git" faster-whisper
       - name: English lines (Multilingual V3)
+        env:
+          CB_CFG: ${{ matrix.cfg || '0.5' }}
         run: python gen_chatterbox.py ${{ matrix.id }} "${{ matrix.voice }}" en
       - name: Hinglish line with the Hindi finetune (own environment)
         continue-on-error: true
@@ -95,7 +98,7 @@ jobs:
           /tmp/hi/bin/python -c "from huggingface_hub import snapshot_download as s; print(s('ResembleAI/Chatterbox-Multilingual-TTS-hi', repo_type='space', allow_patterns=['chatterbox/**'], local_dir='/tmp/cbhi_space'))"
           mkdir -p /tmp/cbhi_root && cp -r /tmp/cbhi_space/chatterbox /tmp/cbhi_root/cbhi
           touch /tmp/cbhi_root/cbhi/__init__.py /tmp/cbhi_root/cbhi/src/__init__.py
-          CB_HI_ROOT=/tmp/cbhi_root /tmp/hi/bin/python gen_chatterbox.py ${{ matrix.id }} "${{ matrix.voice }}" hi
+          CB_CFG=${{ matrix.cfg || '0.5' }} CB_HI_ROOT=/tmp/cbhi_root /tmp/hi/bin/python gen_chatterbox.py ${{ matrix.id }} "${{ matrix.voice }}" hi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
