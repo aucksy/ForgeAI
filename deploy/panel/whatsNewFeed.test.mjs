@@ -48,7 +48,10 @@ test('GitHub down after one good answer: the kept copy is served', async () => {
   let up = true;
   const f = async (url) => (!up ? json({}, 504) : url.startsWith('https://github.com/') ? json(NEWS) : json({}, 403));
   const req = () => new Request('https://app.mettleup.fit/app/whats-new.json');
-  assert.equal((await handleWhatsNew(req(), ctx, { cache, fetch: f })).status, 200);
+  const pending = [];
+  const wait = { waitUntil: (p) => pending.push(p) };
+  assert.equal((await handleWhatsNew(req(), wait, { cache, fetch: f })).status, 200);
+  await Promise.all(pending); // the cache writes finish in the background; wait for them (flaky in CI otherwise)
   // the fresh copy expires (simulated by deleting it); GitHub is down
   up = false;
   const store = cache;
