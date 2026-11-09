@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-429. Splash screen follows light mode — 9 Nov 2026
+He asked: "How does the splash screen looks in the light mode... show me". It was always dark (#1B1F26), so a light-mode phone saw a dark flash, then the light app. I showed him now vs a light splash; he picked "Light splash (Recommended)".
+Done: values/ = light splash (#F6F4F0, gunmetal steel name, make_assets.py splash_svg(light=True)); values-night/ + drawable-night-*/ = the old dark splash; activity background follows too. app.json expo-splash-screen gets a "dark" variant. Native: reaches phones only with the next release build. The gym "plain" splash (Android 13+) follows the same colours.
+
 ## R-428. Marketing material next: many hooks, pro-quality videos, small spend — 9 Nov 2026
 He said: "once you are done with all of this I'll have you start with building the marketing material as well. I will not start spending too much money in it but I do want to give it a shot just to experience it. I want different variations with different hooks and let's see how it goes. and if you're going to make videos please do not do a poor job. Make those videos as if it's designed by some professional video artist."
 Plan: starts after the steel-name deploy and light mode. Use the mettleup-marketing skill + the Remotion reel pipeline (free: own render + Kokoro voice; no paid generation without his yes on count and rupees). Several hooks, each as a short reel + a still, real app screens in a lit 3D scene (never a slideshow). Small test budget; he runs/approves any ad spend.

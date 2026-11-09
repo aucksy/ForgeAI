@@ -164,19 +164,23 @@ ADAPTIVE_XML = '''<?xml version="1.0" encoding="utf-8"?>
 
 
 # ------------------------------------------------------------------ android
-def splash_svg():
+def splash_svg(light=False):
     """Android 12+ splash (R-259): the mark over the "steel plate" name, all inside the 192 dp circle
-    that Android shows of the 288 dp canvas (the name's bottom corners sit ~93 dp from the middle)."""
+    that Android shows of the 288 dp canvas (the name's bottom corners sit ~93 dp from the middle).
+    `light` (owner, 9 Nov 2026, R-429): the gunmetal name for the light splash (phone in light mode);
+    the dark splash goes in the -night folders."""
     cap = 144 / SW.width() * SW.H
-    word, ww = SW.svg_body(144 - 72, 179, cap, 'spw', steel=True)
+    word, ww = SW.svg_body(144 - 72, 179, cap, 'spw', steel=True, light=light)
     return B.svg(288, 288, B.mark(144, 124, 44, 'sp') + word)
 
 
 def build_splash():
     for d, k in DENS:
         sp = int(288 * k)
-        out(B.render(splash_svg(), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+        out(B.render(splash_svg(light=True), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+        out(B.render(splash_svg(), os.path.join(RES, f'drawable-night-{d}', 'splashscreen_logo.png'), sp, sp))
     out(B.render(splash_svg(), os.path.join(AND, 'expo', 'splash-icon.png'), 1024, 1024))
+    out(B.render(splash_svg(light=True), os.path.join(AND, 'expo', 'splash-icon-light.png'), 1024, 1024))
 
 
 def build_android():
@@ -196,7 +200,8 @@ def build_android():
         out(B.render(tile_svg(s, 'round'), os.path.join(folder, 'ic_launcher_round.png'), s, s))
         # Android 12+ splash: 288 dp canvas, only the middle 192 dp circle is shown.
         sp = int(288 * k)
-        out(B.render(splash_svg(), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+        out(B.render(splash_svg(light=True), os.path.join(RES, f'drawable-{d}', 'splashscreen_logo.png'), sp, sp))
+        out(B.render(splash_svg(), os.path.join(RES, f'drawable-night-{d}', 'splashscreen_logo.png'), sp, sp))
         ni = int(24 * k)
         out(B.render(notif_svg(), os.path.join(AND, 'notification', f'notification_icon-{d}-{ni}px.png'), ni, ni))
     for nm in ('ic_launcher.xml', 'ic_launcher_round.xml'):
@@ -209,6 +214,7 @@ def build_android():
     out(B.render(mono, os.path.join(M, 'android-icon-monochrome.png'), 1024, 1024))
     out(B.render(tile_svg(1024, bleed=True), os.path.join(M, 'icon.png'), 1024, 1024, 'RGB'))
     out(B.render(splash_svg(), os.path.join(M, 'splash-icon.png'), 1024, 1024))
+    out(B.render(splash_svg(light=True), os.path.join(M, 'splash-icon-light.png'), 1024, 1024))
     out(B.render(notif_svg(), os.path.join(M, 'notification-icon.png'), 96, 96))
     out(B.render(favicon_svg(), os.path.join(M, 'favicon.png'), 48, 48))
     out(B.render(fg, os.path.join(AND, 'adaptive-foreground-432.png'), 432, 432))

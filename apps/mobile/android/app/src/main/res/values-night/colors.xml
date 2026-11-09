@@ -1,1 +1,5 @@
-<resources/>
+<resources>
+  <!-- R-429 (9 Nov 2026): a phone in dark mode keeps the dark splash; values/ holds the light one. -->
+  <color name="splashscreen_background">#1B1F26</color>
+  <color name="activityBackground">#07080C</color>
+</resources>
