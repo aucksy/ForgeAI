@@ -35,7 +35,8 @@ qa_gym() {  # $1 = shop | brand: sets TCODE/TGYM or BCODE/BGYM (made the first t
     *) return 1 ;;
   esac
   said=$(python3 "$QA_DIR/qa_gyms.py" make "$1" "$1" "$name" 2>&1)
-  echo "$said" | grep -vE '^(CODE|NAME)=' | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
+  # Never a "::add-mask::" line into the timeline: it carries the key (run 42588121791).
+  echo "$said" | grep -vE '^(CODE=|NAME=|::add-mask::)' | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
   code=$(echo "$said" | sed -n 's/^CODE=//p' | tail -1)
   name=$(echo "$said" | sed -n 's/^NAME=//p' | tail -1)
   if [ -z "$code" ] || [ -z "$name" ]; then

@@ -22,7 +22,7 @@ cannot delete; instead every gym made here is named "QA ..." so HQ's list hides 
 gyms (apps/hq/public/logic.js testKind: names starting "QA ") and qa-gyms-left.txt lists what to sweep.
 
 Security: owner keys and session keys live only in the state files under $XJ_STATE_DIR (mode 600,
-outside the evidence) and are masked in the Actions log; nothing here prints one.
+outside the evidence); nothing here prints one, not even as a mask line.
 """
 import json
 import os
@@ -56,7 +56,8 @@ def make(slot, kind, name):
         safe = {k: v for k, v in g.items() if k != "ownerKey"}
         print(f"MAKE FAILED ({slot}): demo_start_gym answered {json.dumps(safe)[:160]}")
         return 1
-    xj.mask(key)
+    # No mask line: the key is never printed, and a mask line would itself carry the key into the
+    # timeline (run 42588121791 printed two that way, prefixed so the runner did not hide them).
     st = {"slot": slot, "gymId": g["gymId"], "name": g.get("name") or name, "joinCode": g["joinCode"],
           "key": key, "kind": kind, "session": False, "orders": {}}
     xj.save(slot, st)
