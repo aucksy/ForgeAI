@@ -117,7 +117,7 @@ export function Welcome() {
         <div style={{ textAlign: 'center', marginBottom: space.xxl }}>
           {/* R-259: the steel-plate lockup (mark + name), 48 px: the name's cap height is 21 px. */}
           <h1 style={{ margin: 0, display: 'flex', justifyContent: 'center' }}>
-            <SteelLockup height={48} />
+            <SteelLockup height={56} />
           </h1>
           <div style={{ marginTop: 2, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.inkSecondary, letterSpacing: 0.4 }}>
             {t('for Gyms')}

@@ -57,7 +57,7 @@ export function Login() {
         <div style={{ textAlign: 'center', marginBottom: space.xl }}>
           {/* R-259: the steel-plate lockup (mark + name), 48 px: the name's cap height is 21 px. */}
           <h1 style={{ margin: 0, display: 'flex', justifyContent: 'center' }}>
-            <SteelLockup height={48} />
+            <SteelLockup height={56} />
           </h1>
           <div style={{ color: color.inkMuted, fontSize: 13, marginTop: 4 }}>Owner dashboard</div>
         </div>

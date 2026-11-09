@@ -30,7 +30,7 @@ FORGE_FILL = [(0, '#FFC08F'), (0.44, '#FF8A4C'), (0.5, '#C9481A'), (0.56, '#E058
 # The same shine on LIGHT backgrounds, in gunmetal (owner, 9 Nov 2026, R-425): the bright top of
 # STEEL_FILL vanishes into a white page, so the same shape (bright top, dark middle band, lighter
 # bottom) is set darker so every part of every letter reads on #FFFFFF.
-STEEL_ON_LIGHT = [(0, '#8E959F'), (0.44, '#5F6670'), (0.5, '#2A2F37'), (0.56, '#454B55'), (1, '#7A818C')]
+STEEL_ON_LIGHT = [(0, '#6E7580'), (0.44, '#454B55'), (0.5, '#16191F'), (0.56, '#2F343C'), (1, '#5F6670')]
 FORGE_ON_LIGHT = [(0, '#F0662A'), (0.44, '#E0581F'), (0.5, '#9E3510'), (0.56, '#C9481A'), (1, '#E0581F')]
 
 

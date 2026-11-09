@@ -133,7 +133,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.4 }}
         >
           {t('Powered by')}
-          <SteelLockup height={9} mark={false} />
+          <SteelLockup height={12} mark={false} />
         </div>
         <div style={{ marginTop: space.md }}>
           <ThemeToggle compact />
