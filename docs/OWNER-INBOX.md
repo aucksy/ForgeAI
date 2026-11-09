@@ -573,7 +573,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 6. **Keys tied to a person.** The Claude API keys act as you. If that user is ever removed, they stop at once. A "workspace" key does not have this problem.
 
 **My view:** not moving is fine for now, because you run it alone and risk 1 can be fixed without moving. Do these 2 things now: (a) 2-step check and backup codes on your personal Gmail and Facebook; (b) open Razorpay under the login you want long term. Look at this again before the first gym pays.
-**DECIDED (9 Nov 2026):** You said: "I have decided that we will have to move all our different services to a new Gmail ID for this brand". Way: B, the light way. The brand Gmail becomes a second owner everywhere; the old owner is never removed. Plan with the safe steps: the Growth Plan page (https://claude.ai/artifact/WJZgHmjrPWVzuzKRi1U8q7), section "The brand Gmail move".
+**DECIDED (9 Nov 2026), changed the same day:** You said: "if I'm not able to really move or fix the meta issue with this move, then I am not inclined to really move anything else as of yet." So the brand Gmail is for Meta only, for now: a fresh business portfolio under your own Facebook, with the brand Gmail as its business email. Everything else stays where it is until the Meta test works.
 **Your task (only you: your phone and password):** Create the brand Gmail. Turn on 2-step sign-in and save its backup codes offline. Then tell Claude the address. Claude does every other step.
 
 ## 92. To start earning: 3 things only you can do — 6 Nov 2026

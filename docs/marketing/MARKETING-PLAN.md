@@ -30,6 +30,9 @@ Add the brand Gmail as a SECOND owner everywhere. Never remove the old owner (lo
   Instagram and ad account go in THIS verified business (Click-to-WhatsApp ads need the number linked to the
   Page). Never a second Facebook account.
 - WhatsApp: check the billing currency now; rupees by 31 Dec.
+- R-416 (9 Nov): brand Gmail for Meta ONLY for now. Free test first: a new business portfolio under his same
+  Facebook, a new WhatsApp account there with rupee billing + card; if its billing page has no tax banner, move the
+  number; if it has one, the flag follows the person -> partner company. Other services stay put.
 
 ## Gym software (owners)
 Rivals (Okfit from Rs500) already include a member app, automatic reminders and data-move help.
@@ -80,7 +83,7 @@ A qualified chat costs about Rs800-2,500 (research). If 30% start a trial and 25
 one paying gym costs about Rs8,000-33,000 = 5-33 months of fees. The first test buys learning, not customers.
 
 ## His decisions
-1. Trial: keep 3 months for now; review after 20 trials (recommended). Or change it now.
+1. Trial: DECIDED 9 Nov 2026 (R-416): keep 3 months; review after 20 trials.
 2. WhatsApp: a partner company by 1 Dec if Meta has not cleared the block, about Rs1,500-3,500 a month plus
    message charges and GST (recommended). Or keep waiting on Meta.
 3. Ads: Rs0 until 3 gyms are live, then about Rs15,000 for a 3-week test (recommended); plus the most he

@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-416. Trial stays 3 months; Meta fresh start questions; Gmail move only if it fixes Meta — 9 Nov 2026
+He said: trial yes, keep 3 months, look again later. He did not understand the WhatsApp partner company or "Rs0 ads until
+3 gyms are live". He asked why he cannot make a new Meta/Facebook account for the business. His theory: an old DISABLED
+ad account (India, but USD currency) in his current Meta business is why the business info never clears. He wanted a
+fresh Meta start with the brand email; "if I'm not able to really move or fix the meta issue with this move, then I am
+not inclined to really move anything else as of yet."
+What I did: explained in chat. Facts: Meta needs a real person's profile as owner; a 2nd Facebook profile breaks Meta's
+rules (ban risk to everything). The fresh start Meta allows = a NEW business portfolio made by his same Facebook, with the
+brand Gmail as its business email, new INR ad account, new WhatsApp account. Business verification already passed
+(Verified 6 Nov, Udyam); the block is the WhatsApp BILLING tax flag (TAX_INFO_PROBLEM_HARD). Unknown whether it follows
+the portfolio (then a new one clears it) or the person. Free test proposed: new portfolio, new WhatsApp account with
+rupee billing + card, read its billing page for the tax banner BEFORE moving the number. INR billing may need a new
+WhatsApp account by 31 Dec anyway. Partner company only if the test fails. Gmail move narrowed: brand Gmail for Meta
+only; other services wait (his words). AI keys before 17 Nov still happen in the existing accounts.
+Decision 1 (trial) DECIDED: keep 3 months, review after 20 trials.
+
 ## R-415. Re-assess the growth plan and the marketing skill with a fresh Opus helper, max effort — 9 Nov 2026
 He said: "re-assess the growth plan and skill that you wrote with a new helper with Opus 5.5. Max effort".
 What I did: one fresh Opus 5.5 reviewer at max effort, given only the files (plan, research, skill, page, landing
