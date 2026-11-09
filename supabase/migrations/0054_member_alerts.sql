@@ -1,4 +1,4 @@
--- NOT APPLIED LIVE - needs the owner's yes (a live database change).
+-- APPLIED LIVE 9 Nov 2026 (owner: "yes, apply 0053 and 0054"; live test PASS 23).
 --
 -- 0054: the gym's answers pop up on the member's phone (R-319 item 8: "whenever there is a new action
 -- required by the owner or by the member in the app, there has to be a notification"). Until now a

@@ -38,6 +38,20 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // 0053 + 0054 applied live 9 Nov 2026 (owner: "yes, apply 0053 and 0054"); live tests PASS 68 and 23.
+    id: '2026-11-09',
+    lines: [
+      {
+        text: 'New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on their phone.',
+        go: { label: 'Open Questions', path: '/questions' },
+        feature: true,
+      },
+      {
+        text: 'Members now get a notification on their phone when you approve their pause or renewal, send the workout report they asked for, or have their shop order ready.',
+      },
+    ],
+  },
+  {
     // Verify with WhatsApp (owner yes 8 Nov 2026): inbound mode, number 918690560741. Sign-in page only, so no `go`.
     id: '2026-11-08',
     lines: [

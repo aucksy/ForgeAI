@@ -1,4 +1,4 @@
--- NOT APPLIED LIVE YET (needs the owner's yes; R-319 items 1 and 11, 4 Nov 2026).
+-- APPLIED LIVE 9 Nov 2026 (owner: "yes, apply 0053 and 0054"; live test PASS 68).
 --
 -- 0053: "Ask a trainer" (R-319 item 1) and the gym's live "Progress" on a member's page (R-319 item 11).
 -- Additive and re-runnable: one new table (trainer_questions), one new column (gym_progress_summaries.recent),

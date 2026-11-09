@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-410. "yes, apply 0053 and 0054"; 0.76.0 released; panel deployed — 9 Nov 2026
+- 0.76.0 tagged on 6f0ff8f5 after CI 42521870984, journeys 42521877296, default 42521874882, owner 42521872640 all green. Release run 42539100130: build + publish OK; play-upload failed ("would clobber existing tag": the tag is annotated). Fixed play-upload.yml (force-fetch the tag, a9ed1042) and re-ran play-upload 42542335599.
+- Panel deployed (version 3971750b) with the F199 help articles; no owner news needed (member help only).
+- He said "yes, apply 0053 and 0054". Applied both in the Supabase SQL Editor (files from GitHub raw at a9ed1042, sizes matched). Live tests: 0053 PASS 68, 0054 PASS 23. security.sql FAIL only on member_gym_pack/owner_gym_pack (0046, Starter/Pro, deliberately not applied: T66 waits for his yes).
+- Owner news 2026-11-09 (Questions page + member pop-ups); panel deploy after CI.
+
 ## R-409. "yes, apply 0009"; the cut-off "Also" was nothing — 9 Nov 2026
 - He said: "yes, apply 0009" and the "Also" message meant only "Should be optimized for mobile" (nothing new).
 - Ran ONLY migrations/0009_help_replies.sql with `wrangler d1 execute --file` (not `migrations apply`, which would also run 0010-0013 that were applied by hand), then inserted '0009_help_replies.sql' into d1_migrations. Live check: 5 new feedback columns present, 58 rows kept; HQ "could not be counted" warning gone. 0010-0013 stay unrecorded in d1_migrations: never run `migrations apply` there without recording them first.
