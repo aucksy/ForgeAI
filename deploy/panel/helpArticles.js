@@ -685,12 +685,14 @@ export const HELP_ARTICLES = [
       'The gear opens Settings. ' +
       'Units: in Settings, tap "Units" and pick "kg, km" or "lb, miles". ' +
       'Weekly goal: in Settings, tap "Weekly goal" and use + and − to set how many workouts a week you aim for. ' +
+      'Light or dark (in the newest version of the app): in Settings, tap "Light or dark" and pick "Same as phone", "Light" or "Dark". "Same as phone" is how the app starts: it turns light or dark when your phone does. ' +
       'To share this month as a picture, tap the share button on Profile.',
     screens: [
       'apps/mobile/src/app/(tabs)/profile.tsx',
       'apps/mobile/src/app/edit-profile.tsx',
       'apps/mobile/src/app/settings/index.tsx',
       'apps/mobile/src/app/settings/units.tsx',
+      'apps/mobile/src/app/settings/look.tsx',
       'apps/mobile/src/app/settings/weekly-goal.tsx',
     ],
   },
@@ -825,6 +827,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/index.tsx': 'Redirect: opens the Workout tab.',
   'apps/mobile/src/app/qa-update.tsx': 'Redirect: a test-build link for the update screen pictures; opens the Workout tab.',
   'apps/mobile/src/app/qa-sleep.tsx': 'Redirect: a test-build link for the sleep line pictures (R-344); goes straight back.',
+  'apps/mobile/src/app/qa-look.tsx': 'Redirect: a test-build link for the gym colour pictures on the light and dark looks; goes straight back.',
   'apps/mobile/src/app/qa-dots.tsx': 'Redirect: a test-build link for the new-feature dot pictures (F198); goes straight back.',
   'apps/mobile/src/app/analytics.tsx': 'Redirect: an old link that opens Charts.',
   'apps/mobile/src/app/bodyweight.tsx': 'Redirect: an old link that opens Body.',

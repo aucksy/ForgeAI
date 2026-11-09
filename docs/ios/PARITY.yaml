@@ -29,6 +29,16 @@ features:
       permissions: [android.permission.POST_NOTIFICATIONS, android.permission.VIBRATE, android.permission.RECEIVE_BOOT_COMPLETED]
       files: [src/tracker/services/restCard.ts, src/tracker/services/workoutAlerts.ts, src/tracker/services/workoutSounds.ts]
 
+  - id: light-dark-system-bars
+    name: Light or dark look - the navigation bar's buttons follow the app's look [light mode]
+    android: done
+    ios: n-a
+    reason: iPhone has no navigation bar; the status bar follows the look through expo-status-bar (JS), the same on both.
+    blocking: false
+    covers:
+      functions: [forge-phone.systemBars]
+      gradle: [androidx.core:core]
+
   - id: workout-card
     name: Live workout card with "Complete set" in the notification shade [1b]
     android: done
