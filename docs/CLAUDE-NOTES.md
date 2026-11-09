@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-422. GST later; keep the current WhatsApp verification — 9 Nov 2026
+He said: "GST will be later.. we are okay to proceed with current verification process.. I dont like it... but it is
+what it is". Decision: no GST now; no partner company; phone checks stay on the current free route (the person sends
+US the code on WhatsApp, inbound = free). Do not re-pitch GST until gyms pay; do not re-open the Meta tax chat.
+
 ## R-421. QA gyms deleted; never suggest a partner company; GST questions; AI keys — 9 Nov 2026
 He said: "yes, delete the QA test gyms". Asked why the 1 Dec WhatsApp decision helps; whether GST means yearly
 returns, its cost, and whether it would fix Meta. "you can stop suggesting me to use a partner company I will not do

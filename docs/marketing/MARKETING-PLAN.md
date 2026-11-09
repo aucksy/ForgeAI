@@ -84,7 +84,7 @@ one paying gym costs about Rs8,000-33,000 = 5-33 months of fees. The first test 
 
 ## His decisions
 1. Trial: DECIDED 9 Nov 2026 (R-416): keep 3 months; review after 20 trials.
-2. WhatsApp: DECIDED 9 Nov 2026 (R-419/R-421): no partner company, ever. Open: GST registration (his call).
+2. WhatsApp: DECIDED 9 Nov 2026 (R-419/R-421): no partner company, ever. GST later (R-422); phone checks stay on the free inbound WhatsApp code.
 3. Ads: DECIDED 9 Nov 2026 (R-417): Rs0 ads; he onboards gyms in person first. Still open: the most he
    will pay for one paying gym, asked when ads come up.
 4. Rewards: a free month per referred gym that pays; a one-time payment to partners per gym that pays.
