@@ -15,7 +15,7 @@ Today there are 0 paying gyms and 0 live gyms, so the first job is PROOF, not ad
 - Weeks 1-4: client gym live; about 20 Jaipur gym visits a week with the live demo; ask every live gym for a
   referral; Facebook Page + Instagram.
 - After 3 live gyms and 1 owner video: a 3-week Click-to-WhatsApp ad test.
-- 1 Dec: WhatsApp decision. 31 Dec: WhatsApp billing in rupees, or messages stop on 1 Jan 2027.
+- WhatsApp: billing is already in rupees. Paid sends stay blocked by Meta's tax flag; GST is his call (R-421).
 
 ## Accounts (in parallel, not a gate)
 Add the brand Gmail as a SECOND owner everywhere. Never remove the old owner (logins and keys made by it would break).
@@ -32,7 +32,7 @@ Add the brand Gmail as a SECOND owner everywhere. Never remove the old owner (lo
 - WhatsApp: check the billing currency now; rupees by 31 Dec.
 - R-417 (9 Nov): brand Gmail move ON HOLD (a new portfolio likely keeps the no-GST block). Was R-416: brand Gmail for Meta ONLY. Free test first: a new business portfolio under his same
   Facebook, a new WhatsApp account there with rupee billing + card; if its billing page has no tax banner, move the
-  number; if it has one, the flag follows the person -> partner company. Other services stay put.
+  number. Other services stay put. NEVER a partner company (his hard rule, 9 Nov).
 
 ## Gym software (owners)
 Rivals (Okfit from Rs500) already include a member app, automatic reminders and data-move help.
@@ -84,8 +84,7 @@ one paying gym costs about Rs8,000-33,000 = 5-33 months of fees. The first test 
 
 ## His decisions
 1. Trial: DECIDED 9 Nov 2026 (R-416): keep 3 months; review after 20 trials.
-2. WhatsApp: a partner company by 1 Dec if Meta has not cleared the block, about Rs1,500-3,500 a month plus
-   message charges and GST (recommended). Or keep waiting on Meta.
+2. WhatsApp: DECIDED 9 Nov 2026 (R-419/R-421): no partner company, ever. Open: GST registration (his call).
 3. Ads: DECIDED 9 Nov 2026 (R-417): Rs0 ads; he onboards gyms in person first. Still open: the most he
    will pay for one paying gym, asked when ads come up.
 4. Rewards: a free month per referred gym that pays; a one-time payment to partners per gym that pays.
