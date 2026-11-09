@@ -2,16 +2,11 @@
   color-scheme: dark;
 }
 
-/* R-259 "steel plate" name (components/SteelLockup.tsx): the flat small-size colours from BRAND.md.
-   Dark: METTLE Iron, UP Forge. Light: METTLE Steel, UP Ember. */
-:root {
-  --mu-mettle: #E8EAEE;
-  --mu-up: #F0662A;
-}
-:root[data-theme='light'] {
-  --mu-mettle: #1B1F26;
-  --mu-up: #E0581F;
-}
+/* R-425 (components/SteelLockup.tsx): the name's shine is steel on Dark, the same shine in gunmetal on
+   Light (the bright steel top would vanish into a white page). Never flat. */
+.mu-name-light { display: none; }
+:root[data-theme='light'] .mu-name-dark { display: none; }
+:root[data-theme='light'] .mu-name-light { display: inline; }
 
 /* body and scrollbars follow the dark | light switch (src/theme.ts applyTheme). The fallbacks are
    the dark colours, for the instant before the script runs. */

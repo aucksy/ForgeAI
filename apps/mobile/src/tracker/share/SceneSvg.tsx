@@ -119,10 +119,23 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
           }
           case 'path': {
             const moved = n.x != null || n.y != null || n.scale != null;
+            // The METTLEUP name's shine: a vertical gradient in the path's own coordinates.
+            const shineId = n.shine ? `sg${gid++}` : null;
+            const shine =
+              n.shine && shineId ? (
+                <Defs>
+                  <LinearGradient id={shineId} gradientUnits="userSpaceOnUse" x1={0} y1={n.shine.y1} x2={0} y2={n.shine.y2}>
+                    {n.shine.stops.map((s) => (
+                      <Stop key={s.offset} offset={s.offset} stopColor={s.color} />
+                    ))}
+                  </LinearGradient>
+                </Defs>
+              ) : null;
             const path = (
               <Path
                 d={n.d}
-                fill={n.fill ?? 'none'}
+                fill={shineId ? `url(#${shineId})` : n.fill ?? 'none'}
+                opacity={n.opacity}
                 stroke={n.stroke}
                 strokeWidth={n.stroke ? n.strokeWidth ?? 1 : undefined}
                 strokeLinecap={n.stroke ? 'round' : undefined}
@@ -131,10 +144,14 @@ export const SceneSvg = forwardRef<Svg, SceneSvgProps>(function SceneSvg({ scene
             );
             return moved ? (
               <G key={i} transform={`translate(${n.x ?? 0} ${n.y ?? 0}) scale(${n.scale ?? 1})`}>
+                {shine}
                 {path}
               </G>
             ) : (
-              <G key={i}>{path}</G>
+              <G key={i}>
+                {shine}
+                {path}
+              </G>
             );
           }
           case 'body': {

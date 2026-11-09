@@ -1,8 +1,9 @@
 """
 The "steel plate" wordmark (owner pick, R-259, 31 Oct 2026): METTLEUP drawn from straight strokes,
 wide and heavy, one even stroke, small machined corner cuts at the hexagon's 30-degree angle, tight
-spacing. Big sizes get a polished-steel fill (light top, a hard dark horizon, lighter bottom; "UP" in
-orange metal); small sizes are flat Iron + Forge.
+spacing. Every size gets the polished-steel fill (light top, a hard dark horizon, lighter bottom; "UP" in
+orange metal): owner, 9 Nov 2026, never flat in the app or its share pictures. (The --android
+VectorDrawable below is still flat; it is the watch app's, not part of this change.)
 
 Exact polygons on a grid with cap height 100. This file is the one source: the app's lockup
 (apps/mobile/src/components/brand/mettleUpMark.ts, written by `python steel_wordmark.py --ts`), the
@@ -26,6 +27,11 @@ SPLIT = 6               # "METTLE" | "UP"
 
 STEEL_FILL = [(0, '#FFFFFF'), (0.44, '#C6CBD3'), (0.5, '#7A818C'), (0.56, '#9BA2AD'), (1, '#D9DDE3')]
 FORGE_FILL = [(0, '#FFC08F'), (0.44, '#FF8A4C'), (0.5, '#C9481A'), (0.56, '#E0581F'), (1, '#FF8A4C')]
+# The same shine on LIGHT backgrounds, in gunmetal (owner, 9 Nov 2026, R-425): the bright top of
+# STEEL_FILL vanishes into a white page, so the same shape (bright top, dark middle band, lighter
+# bottom) is set darker so every part of every letter reads on #FFFFFF.
+STEEL_ON_LIGHT = [(0, '#8E959F'), (0.44, '#5F6670'), (0.5, '#2A2F37'), (0.56, '#454B55'), (1, '#7A818C')]
+FORGE_ON_LIGHT = [(0, '#F0662A'), (0.44, '#E0581F'), (0.5, '#9E3510'), (0.56, '#C9481A'), (1, '#E0581F')]
 
 
 def letters():
@@ -94,13 +100,14 @@ def _grad(uid, stops, y0, y1):
             f'y2="{_n(y1)}">{s}</linearGradient>')
 
 
-def svg_body(x, top, cap, uid, steel=True, ink='#E8EAEE', accent='#F0662A'):
+def svg_body(x, top, cap, uid, steel=True, ink='#E8EAEE', accent='#F0662A', light=False):
     """The wordmark at (x, top) with cap height `cap`: SVG markup (defs included). Returns (markup, width)."""
     mettle, up, w = paths()
     k = cap / H
     tf = f'translate({_n(x)} {_n(top)}) scale({k:.6g})'
     if steel:
-        defs = '<defs>' + _grad(f'{uid}s', STEEL_FILL, 0, H) + _grad(f'{uid}f', FORGE_FILL, 0, H) + '</defs>'
+        sf, ff = (STEEL_ON_LIGHT, FORGE_ON_LIGHT) if light else (STEEL_FILL, FORGE_FILL)  # light = on a light page
+        defs = '<defs>' + _grad(f'{uid}s', sf, 0, H) + _grad(f'{uid}f', ff, 0, H) + '</defs>'
         f1, f2 = f'url(#{uid}s)', f'url(#{uid}f)'
     else:
         defs, f1, f2 = '', ink, accent
@@ -115,7 +122,16 @@ def ts_block():
             f"export const WORDMARK_METTLE_D =\n  '{mettle}';\n"
             f"export const WORDMARK_UP_D =\n  '{up}';\n"
             '/** The wordmark\'s ink box: the M\'s left edge to the P\'s right edge, cap line to baseline. */\n'
-            f'export const WORDMARK_BOX = {{ x: 0, y: 0, w: {_n(w)}, h: {H} }} as const;\n')
+            f'export const WORDMARK_BOX = {{ x: 0, y: 0, w: {_n(w)}, h: {H} }} as const;\n'
+            + _ts_stops('WORDMARK_STEEL_STOPS', '"METTLE": polished steel', STEEL_FILL)
+            + _ts_stops('WORDMARK_FORGE_STOPS', '"UP": orange metal', FORGE_FILL))
+
+
+def _ts_stops(name, what, stops):
+    """A stop list as TypeScript (offsets: cap line 0, baseline 1)."""
+    rows = ''.join(f"  {{ offset: {o}, color: '{c}' }},\n" for o, c in stops)
+    return (f'/** {what}, every size (owner, 9 Nov 2026: never flat). Vertical, cap line (0) to baseline (1). */\n'
+            f'export const {name}: readonly WordmarkStop[] = [\n{rows}];\n')
 
 
 def android_vector(cap_dp=16, ink='#E8EAEE', accent='#F0662A'):

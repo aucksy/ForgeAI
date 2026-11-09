@@ -18,7 +18,9 @@ import {
   METTLEUP_COLOURS,
   signedArea2,
   WORDMARK_BOX,
+  WORDMARK_FORGE_STOPS,
   WORDMARK_METTLE_D,
+  WORDMARK_STEEL_STOPS,
   WORDMARK_UP_D,
 } from '@/components/brand/mettleUpMark';
 
@@ -82,10 +84,17 @@ describe('the welcome screen shows MettleUp, not the frozen FORGEAI Logo', () =>
     expect(src('onboarding/components/WelcomeScreen.tsx')).not.toMatch(/components\/ui\/Logo/);
     expect(src('onboarding/components/WelcomeScreen.tsx')).toContain('<MettleUpLogo height={26} />');
   });
-  it('the lockup is read out as MettleUp, its "UP" in Forge orange', () => {
+  it('the lockup is read out as MettleUp; the name has the splash shine at every size, never flat (9 Nov 2026)', () => {
     const logo = src('components/brand/MettleUpLogo.tsx');
     expect(logo).toContain('accessibilityLabel="MettleUp"');
-    expect(logo).toContain('fill={METTLEUP_COLOURS.forge}');
+    expect(logo).toContain('stops={WORDMARK_STEEL_STOPS}');
+    expect(logo).toContain('stops={WORDMARK_FORGE_STOPS}');
+    expect(logo).toContain('gradientUnits="userSpaceOnUse"');
+    expect(logo).toContain('<Path d={WORDMARK_METTLE_D} fill={`url(#${uid}s)`} />');
+    expect(logo).toContain('<Path d={WORDMARK_UP_D} fill={`url(#${uid}f)`} />');
+    // Its own gradient ids per lockup, so two logos on one screen never clash.
+    expect(logo).toContain('useId()');
+    expect(logo).not.toContain('METTLEUP_COLOURS.forge');
   });
 });
 
@@ -93,6 +102,17 @@ describe('R-259: the "steel plate" name (branding/mettleup/_src/steel_wordmark.p
   const word = `<svg xmlns="http://www.w3.org/2000/svg" width="675" height="100" viewBox="0 0 675 100"><path d="${WORDMARK_METTLE_D}" fill="#FFFFFF"/><path d="${WORDMARK_UP_D}" fill="#FFFFFF"/></svg>`;
   const w = new Resvg(word, { fitTo: { mode: 'width', value: 675 } }).render().pixels;
   const alpha = (x: number, y: number) => w[(y * 675 + x) * 4 + 3];
+  it("the shine stops are the generator's STEEL_FILL / FORGE_FILL (the splash screen's)", () => {
+    const py = readFileSync(join(__dirname, '..', '..', '..', '..', 'branding', 'mettleup', '_src', 'steel_wordmark.py'), 'utf8');
+    const list = (name: string) => {
+      const line = py.split(/\r?\n/).find((l) => l.startsWith(`${name} = [`)) ?? '';
+      return [...line.matchAll(/\(([0-9.]+), '(#[0-9A-F]{6})'\)/g)].map((m) => ({ offset: Number(m[1]), color: m[2] }));
+    };
+    expect(list('STEEL_FILL')).toEqual(WORDMARK_STEEL_STOPS);
+    expect(list('FORGE_FILL')).toEqual(WORDMARK_FORGE_STOPS);
+    expect(WORDMARK_STEEL_STOPS).toHaveLength(5);
+    expect(WORDMARK_STEEL_STOPS[2]).toEqual({ offset: 0.5, color: '#7A818C' });
+  });
   it('straight strokes only: no curves in either path', () => {
     for (const d of [WORDMARK_METTLE_D, WORDMARK_UP_D]) expect(d).toMatch(/^[MLZ0-9 .]+$/);
   });

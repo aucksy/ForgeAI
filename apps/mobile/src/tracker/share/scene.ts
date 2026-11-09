@@ -54,7 +54,12 @@ export type SceneNode = (
   | { t: 'glow'; cx: number; cy: number; r: number; color: string; opacity: number }
   /** `shadow` (15 Oct 2026, See-through pictures): a soft dark shadow under the words (`textShadows`). */
   | { t: 'text'; x: number; y: number; text: string; font: FontToken; size: number; fill: string; anchor?: 'start' | 'middle' | 'end'; opacity?: number; shadow?: boolean }
-  | { t: 'path'; d: string; fill?: string; stroke?: string; strokeWidth?: number; x?: number; y?: number; scale?: number }
+  /**
+   * `shine` (9 Nov 2026, the METTLEUP name): fill with a vertical linear gradient instead of `fill`,
+   * its stops running from y = `y1` to y = `y2` in the path's own coordinates (userSpaceOnUse, before
+   * x/y/scale), so the band sits on the letters exactly as on the splash screen.
+   */
+  | { t: 'path'; d: string; fill?: string; stroke?: string; strokeWidth?: number; x?: number; y?: number; scale?: number; shine?: PathShine; opacity?: number }
   /** v0.25.1: `figure` is the member's choice in Profile (absent = male). */
   | { t: 'body'; x: number; y: number; height: number; view: 'front' | 'back'; levels: readonly (readonly [Muscle, MapLevel])[]; figure?: BodyFigure }
   /**
@@ -64,6 +69,13 @@ export type SceneNode = (
    */
   | { t: 'image'; x: number; y: number; w: number; h: number; href: string; fit: 'contain' | 'cover'; align?: 'start' | 'middle'; r?: number }
 ) & { role?: NodeRole };
+
+/** A path's vertical gradient fill (see the `path` node). */
+export interface PathShine {
+  y1: number;
+  y2: number;
+  stops: readonly { offset: number; color: string }[];
+}
 
 export interface Scene {
   width: number;
@@ -227,8 +239,17 @@ export function sceneToSvg(scene: Scene): string {
       }
       case 'path': {
         const tr = n.x != null || n.y != null || n.scale != null ? ` transform="translate(${n.x ?? 0} ${n.y ?? 0}) scale(${n.scale ?? 1})"` : '';
+        let fill = n.fill ?? 'none';
+        if (n.shine) {
+          const id = `g${gid++}`;
+          const stops = n.shine.stops.map((s) => `<stop offset="${s.offset}" stop-color="${s.color}"/>`).join('');
+          parts.push(
+            `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${n.shine.y1}" x2="0" y2="${n.shine.y2}">${stops}</linearGradient></defs>`,
+          );
+          fill = `url(#${id})`;
+        }
         parts.push(
-          `<path d="${n.d}" fill="${n.fill ?? 'none'}"${n.stroke ? ` stroke="${n.stroke}" stroke-width="${n.strokeWidth ?? 1}" stroke-linecap="round" stroke-linejoin="round"` : ''}${tr}/>`,
+          `<path d="${n.d}" fill="${fill}"${n.stroke ? ` stroke="${n.stroke}" stroke-width="${n.strokeWidth ?? 1}" stroke-linecap="round" stroke-linejoin="round"` : ''}${n.opacity != null ? ` opacity="${n.opacity}"` : ''}${tr}/>`,
         );
         break;
       }

@@ -126,6 +126,12 @@ export const MARK_FACES: readonly { d: string; fill: string }[] = FACES.map((f) 
 /** The square that holds the hex exactly (its points touch the top and bottom). */
 export const MARK_BOX = { x: 52, y: 52, size: 408 } as const;
 
+/** One stop of the name's shine: `offset` 0 = the cap line, 1 = the baseline. */
+export interface WordmarkStop {
+  offset: number;
+  color: string;
+}
+
 /** "METTLE" and "UP", the "steel plate" wordmark (R-259), cap height 100 on this grid. */
 export const WORDMARK_METTLE_D =
   'M0 95L0 5L9 0L34 0L54 52L74 0L99 0L108 5L108 95L99 100L83 100L83 42L61 90L47 90L25 42L25 100L9 100ZM124 0L187 0L187 25L140 25L140 38.5L179 38.5L179 61.5L140 61.5L140 75L187 75L187 100L124 100L115 95L115 5ZM203 0L261 0L270 5L270 25L244.5 25L244.5 100L219.5 100L219.5 25L194 25L194 5ZM286 0L344 0L353 5L353 25L327.5 25L327.5 100L302.5 100L302.5 25L277 25L277 5ZM369 0L385 0L385 75L426 75L426 100L369 100L360 95L360 5ZM442 0L505 0L505 25L458 25L458 38.5L497 38.5L497 61.5L458 61.5L458 75L505 75L505 100L442 100L433 95L433 5Z';
@@ -133,3 +139,19 @@ export const WORDMARK_UP_D =
   'M512 0L537 0L537 75L567 75L567 0L592 0L592 91L577 100L527 100L512 91ZM599 95L599 5L608 0L660 0L675 9L675 51L660 60L624 60L624 100L608 100ZM624 35L650 35L650 25L624 25Z';
 /** The wordmark's ink box: the M's left edge to the P's right edge, cap line to baseline. */
 export const WORDMARK_BOX = { x: 0, y: 0, w: 675, h: 100 } as const;
+/** "METTLE": polished steel, every size (owner, 9 Nov 2026: never flat). Vertical, cap line (0) to baseline (1). */
+export const WORDMARK_STEEL_STOPS: readonly WordmarkStop[] = [
+  { offset: 0, color: '#FFFFFF' },
+  { offset: 0.44, color: '#C6CBD3' },
+  { offset: 0.5, color: '#7A818C' },
+  { offset: 0.56, color: '#9BA2AD' },
+  { offset: 1, color: '#D9DDE3' },
+];
+/** "UP": orange metal, every size (owner, 9 Nov 2026: never flat). Vertical, cap line (0) to baseline (1). */
+export const WORDMARK_FORGE_STOPS: readonly WordmarkStop[] = [
+  { offset: 0, color: '#FFC08F' },
+  { offset: 0.44, color: '#FF8A4C' },
+  { offset: 0.5, color: '#C9481A' },
+  { offset: 0.56, color: '#E0581F' },
+  { offset: 1, color: '#FF8A4C' },
+];

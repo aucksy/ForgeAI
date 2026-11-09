@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-427. Member app light mode, following the phone's setting — 9 Nov 2026
+He said: "Does our member app has a light or a dark mode? Man, we have to have that. And it should be system default. If someone has their phone set to light mode, the app should be in the light mode as well. And if you don't have the light mode yet, just carefully design it and test it to ensure it's looking professional and good."
+Found: the member app is dark only (app.json userInterfaceStyle "dark", one static palette in src/theme/tokens.ts used by ~280 files, status bar fixed "light"). T76 freeze is done, so this is built now: a light palette (contrast-tested like the dark one), the app follows the phone setting (and switches live), a Settings choice System / Light / Dark, the brand name uses the gunmetal light stops. Waits for his "release"; UAT on both themes before then.
+
+## R-426. WhatsApp verify reply text + steel name must SHINE everywhere — 9 Nov 2026
+He asked: change the WhatsApp verify reply to "Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish." Done in phoneInbound.js (69bcbd38); live with the next panel deploy.
+He then showed a screenshot: the small steel names were FLAT (plain grey + orange), not the splash's polished steel. "show me which design you are putting everywhere". BRAND.md had said "small sizes are flat": wrong. Fixed: the polished steel gradient (and the forge-orange gradient on UP) on every drawn name: admin sign-in/sign-up page, admin menu "Powered by", HQ header, website svgs, og picture, member app logo, share pictures. On light backgrounds a darker gunmetal set of stops is used, because the white top vanished on white. Also: "the sign up screen for the gym does not seem to have a logo or the right design": the admin Welcome page now carries the steel lockup; live with the next panel deploy.
+
 ## R-425. The steel-plate name goes everywhere the brand name is drawn — 9 Nov 2026
 He said: "You remember how we created a new basically design for how we are writing the name of the brand on the splash
 screen of the app and you're not using that anywhere else except for the splash screen and that's a problem. So you need

@@ -14,3 +14,10 @@ export const NAME_BOX = { w: 675, h: 100 } as const;
 /** The lockup: the name's cap height and the gap, as parts of the mark's height (MettleUpLogo). */
 export const LOCKUP_CAP = 0.44;
 export const LOCKUP_GAP = 0.32;
+/** The splash's shine on the name, every size, Dark and Light (owner, 9 Nov 2026, R-425): vertical
+ *  gradients from the cap line (0) to the baseline (1). METTLE polished steel, UP orange metal. */
+export const NAME_STEEL_STOPS: ReadonlyArray<readonly [number, string]> = [[0, "#FFFFFF"], [0.44, "#C6CBD3"], [0.5, "#7A818C"], [0.56, "#9BA2AD"], [1, "#D9DDE3"]];
+export const NAME_FORGE_STOPS: ReadonlyArray<readonly [number, string]> = [[0, "#FFC08F"], [0.44, "#FF8A4C"], [0.5, "#C9481A"], [0.56, "#E0581F"], [1, "#FF8A4C"]];
+/** The same shine in gunmetal, for the Light theme: the bright steel top would vanish into a white page. */
+export const NAME_STEEL_ON_LIGHT_STOPS: ReadonlyArray<readonly [number, string]> = [[0, "#8E959F"], [0.44, "#5F6670"], [0.5, "#2A2F37"], [0.56, "#454B55"], [1, "#7A818C"]];
+export const NAME_FORGE_ON_LIGHT_STOPS: ReadonlyArray<readonly [number, string]> = [[0, "#F0662A"], [0.44, "#E0581F"], [0.5, "#9E3510"], [0.56, "#C9481A"], [1, "#E0581F"]];

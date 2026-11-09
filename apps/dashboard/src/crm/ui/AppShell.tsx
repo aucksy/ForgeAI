@@ -128,7 +128,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       <div style={{ padding: `0 ${space.md}px ${space.lg}px` }}>
         {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
         <BranchSwitch gymName={gymName} />
-        {/* R-259: "Powered by" + the steel-plate name, flat and small, so it stays quiet under the gym's name. */}
+        {/* R-259: "Powered by" + the steel-plate name, small (in the splash's shine, R-425), so it stays quiet under the gym's name. */}
         <div
           style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.4 }}
         >

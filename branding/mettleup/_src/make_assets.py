@@ -358,18 +358,18 @@ def build_web():
     build_web_wordmarks()
 
 
-# The name's flat colours (R-259 small sizes): dark pages Iron + Forge, light pages Steel + Ember.
-NAME_INK = {'dark': (B.IRON, B.FORGE), 'light': (B.STEEL, B.EMBER)}
+# The name is never flat (owner, 9 Nov 2026, R-425): every size, dark and light, wears the splash's
+# polished-steel shine with "UP" in orange metal (steel_wordmark.STEEL_FILL / FORGE_FILL); the light
+# files use the same shine in gunmetal (STEEL_ON_LIGHT / FORGE_ON_LIGHT) so it reads on white.
 
 
 def steel_lockup(scheme, uid):
-    """Mark + the "steel plate" name, flat, laid out as the app's MettleUpLogo (web_steel_lockup.py):
+    """Mark + the "steel plate" name in the splash's shine, laid out as the app's MettleUpLogo (web_steel_lockup.py):
     the name's cap height 0.44 x the mark box, 0.32 x the box apart, centred on it. Name cap = 100.
     Returns (viewBox, body)."""
     s = SW.H / 0.44                      # the mark box (hex height)
     pad = 4
-    ink, acc = NAME_INK[scheme]
-    word, ww = SW.svg_body(s * 1.32, (s - SW.H) / 2, SW.H, uid, steel=False, ink=ink, accent=acc)
+    word, ww = SW.svg_body(s * 1.32, (s - SW.H) / 2, SW.H, uid, steel=True, light=scheme == 'light')
     body = B.mark(s / 2, s / 2, s / 2, uid + 'm') + word
     return f'{-pad} {-pad} {n(s * 1.32 + ww + 2 * pad)} {n(s + 2 * pad)}', body
 
@@ -380,8 +380,7 @@ def build_web_wordmarks():
         doc = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" role="img" aria-label="MettleUp">'
                f'<title>MettleUp</title>{body}</svg>\n')
         B.write(out(os.path.join(WEB, f'wordmark-{scheme}.svg')), doc)
-        ink, acc = NAME_INK[scheme]
-        body, w = SW.svg_body(0, 0, SW.H, 'wt', steel=False, ink=ink, accent=acc)
+        body, w = SW.svg_body(0, 0, SW.H, f'wt{scheme}', steel=True, light=scheme == 'light')
         doc = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 {n(w + 8)} {SW.H + 8}" role="img" '
                f'aria-label="MettleUp"><title>MettleUp</title>{body}</svg>\n')
         B.write(out(os.path.join(WEB, f'wordmark-text-{scheme}.svg')), doc)

@@ -27,7 +27,7 @@
 import { color } from '@/theme/tokens';
 
 import { FORGE_MARK } from './brand';
-import { CLEAR_BACKGROUND, type Scene, type SceneNode } from './scene';
+import { CLEAR_BACKGROUND, textShadows, type Scene, type SceneNode } from './scene';
 
 export type ShareSize = 'post' | 'story';
 export type ShareLook = 'dark' | 'clear';
@@ -97,6 +97,23 @@ function lightness(fill: string): number | null {
 const BRAND = new Set<string>(Object.values(FORGE_MARK).map((c) => c.toUpperCase()));
 const WHITE = '#FFFFFF';
 
+/**
+ * See-through: the shining METTLEUP name may land on a light photo, where the bright top of the
+ * steel would vanish. Like the other words, it gets a soft dark shadow (two dark copies of its
+ * letters a little lower) and keeps its splash shine exactly. (The app itself never draws the name
+ * on a light page: a gym's light tone is always brought down to a dark one.) PURE.
+ */
+function nameShadow(n: SceneNode): SceneNode[] {
+  if (n.t !== 'path' || !n.shine) return [n];
+  const scale = n.scale ?? 1;
+  const cap = (n.shine.y2 - n.shine.y1) * scale;
+  // textShadows is sized by font size; a cap height is about 0.7 of it.
+  const shadows = textShadows(cap / 0.7).map(
+    (sh): SceneNode => ({ t: 'path', d: n.d, fill: '#000000', opacity: sh.opacity, x: n.x ?? 0, y: (n.y ?? 0) + sh.dy, scale, role: n.role }),
+  );
+  return [...shadows, n];
+}
+
 function seeThrough(n: SceneNode): SceneNode | null {
   // F146: a progress photo and its label stay as they are (the photo is its own background).
   if (n.role === 'photo') return n;
@@ -131,7 +148,10 @@ export function framedScene(card: Scene, size: ShareSize, look: ShareLook): Scen
   const { width, height, dy } = frameLayout(card, size);
   let nodes = card.nodes.map((n) => moved(n, dy));
   if (look === 'clear') {
-    nodes = nodes.map(seeThrough).filter((n): n is SceneNode => n != null);
+    nodes = nodes
+      .map(seeThrough)
+      .filter((n): n is SceneNode => n != null)
+      .flatMap(nameShadow);
   } else if (dy > 0) {
     // Dark story: a faint ember glow in the bottom corner balances the top one.
     nodes = [{ t: 'glow', cx: 60, cy: height - 40, r: 520, color: color.accent, opacity: 0.08 }, ...nodes];

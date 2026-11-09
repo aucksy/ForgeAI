@@ -52,12 +52,14 @@ and Forge both work.
 
 - **Wordmark (owner pick, R-259, 31 Oct 2026)**: the "steel plate" letters: METTLEUP drawn from
   straight strokes, wide and heavy, small corner cuts at the hexagon's 30-degree angle, tight
-  spacing. One source: `_src/steel_wordmark.py` (exact polygons). Big sizes (splash, hero) use the
-  polished-steel fill, "UP" in orange metal; small sizes are flat: "METTLE" in Iron, "UP" in Forge.
+  spacing. One source: `_src/steel_wordmark.py` (exact polygons). Every size uses the polished-steel
+  shine ("UP" in orange metal), on dark and light, exactly as the splash (owner, 9 Nov 2026, R-425);
+  never flat. On light backgrounds the same shine in gunmetal so it reads (`STEEL_ON_LIGHT` /
+  `FORGE_ON_LIGHT` next to the dark stops in `_src/steel_wordmark.py`).
   In use: the Android splash (mark over the name), the app's lockup (Welcome screen, and top-right
   on the Workout, Progress and Gym tabs), the websites' header (`lockup-steel.svg`), the Play
   feature graphic and the link-preview picture `web/og-1200x630.png` (both polished steel), and the
-  flat lockup and name files `web/wordmark-*.svg` (dark: Iron + Forge; light: Steel + Ember).
+  lockup and name files `web/wordmark-*.svg` (polished steel on dark, gunmetal on light).
   `make_assets.py --name` rebuilds only these. The store screenshots draw no name (headline only).
   The app's share pictures draw the flat steel name too (`apps/mobile/src/tracker/share/brand.ts`).
   Owner rule (R-425, 9 Nov 2026): the name design is part of the logo. Every place that draws the

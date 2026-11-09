@@ -63,11 +63,11 @@ p { margin: 6px 0; }
 /* ---------------------------------------------------------------- the frame */
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
 /* R-259 "steel plate" lockup (mark + METTLEUP), inline in index.html from branding/mettleup/_src/web_steel_lockup.py.
-   Flat small-size colours: METTLE Iron and UP Forge on dark; Steel and Ember on light (BRAND.md). */
+   The name wears the splash's shine (its own gradients, inline); never flat (R-425). On a light page the
+   same shine in gunmetal (.lk-on-light), so the bright steel top does not vanish into white. */
 .brand-lockup { display: block; height: 30px; width: auto; flex: none; }
-.lk-mettle { fill: #E8EAEE; }
-.lk-up { fill: #F0662A; }
-@media (prefers-color-scheme: light) { .lk-mettle { fill: #1B1F26; } .lk-up { fill: #E0581F; } }
+.lk-on-light { display: none; }
+@media (prefers-color-scheme: light) { .lk-on-dark { display: none; } .lk-on-light { display: inline; } }
 .brand-hq { color: var(--accent); font-size: 13px; font-weight: 800; letter-spacing: 0.08em; padding: 2px 7px; border: 1.5px solid currentColor; border-radius: 6px; line-height: 1.2; }
 
 .top {

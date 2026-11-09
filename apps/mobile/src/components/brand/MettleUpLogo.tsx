@@ -1,19 +1,28 @@
 /**
  * MettleUp's lockup for the app's own screens (first MettleUp release, 0.56.0): the Forged
- * hex-dumbbell mark + "METTLEUP" in the "steel plate" letters (R-259), "UP" in Forge orange. Replaces the frozen components/ui/Logo
+ * hex-dumbbell mark + "METTLEUP" in the "steel plate" letters (R-259) with the splash screen's shine
+ * at every size (owner, 9 Nov 2026: never flat): polished steel on "METTLE", orange metal on "UP". Replaces the frozen components/ui/Logo
  * (it still draws "FORGEAI" and may not be edited) at the same sizes: `height` is the mark's
  * square, as it was the old mark's, and the name sits to its right at the old name's size.
  *
  * Drawn with plain <Path>s (the M is cut out in the geometry, see mettleUpMark.ts), so it needs no
- * mask or clip support. Colours are read when it draws, never at load time (gym looks repaint the
- * tokens in place); the mark and "UP" are MettleUp's own and never take a gym's colour.
+ * mask or clip support. The mark and the name are MettleUp's own colours and never take a gym's.
+ * Each lockup's gradients get their own ids, so two logos on one screen never share (or clash on) one.
  */
+import { useId } from 'react';
 import { View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 
-import { color } from '@/theme/tokens';
-
-import { MARK_BOX, MARK_FACES, METTLEUP_COLOURS, WORDMARK_BOX, WORDMARK_METTLE_D, WORDMARK_UP_D } from './mettleUpMark';
+import {
+  MARK_BOX,
+  MARK_FACES,
+  WORDMARK_BOX,
+  WORDMARK_FORGE_STOPS,
+  WORDMARK_METTLE_D,
+  WORDMARK_STEEL_STOPS,
+  WORDMARK_UP_D,
+  type WordmarkStop,
+} from './mettleUpMark';
 
 export interface MettleUpLogoProps {
   /** The mark's height (and width) in px; the name follows. Default 28, as the old Logo. */
@@ -38,7 +47,19 @@ export function MettleUpMark({ size = 28 }: { size?: number }) {
   );
 }
 
+/** The name's shine: vertical, from the letters' cap line to their baseline (userSpaceOnUse). */
+function Shine({ id, stops }: { id: string; stops: readonly WordmarkStop[] }) {
+  return (
+    <LinearGradient id={id} gradientUnits="userSpaceOnUse" x1={0} y1={WORDMARK_BOX.y} x2={0} y2={WORDMARK_BOX.y + WORDMARK_BOX.h}>
+      {stops.map((s) => (
+        <Stop key={s.offset} offset={s.offset} stopColor={s.color} />
+      ))}
+    </LinearGradient>
+  );
+}
+
 export function MettleUpLogo({ height = 28, cap: capPx }: MettleUpLogoProps) {
+  const uid = `mu${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const cap = capPx ?? height * CAP;
   const wordH = (cap * WORDMARK_BOX.h) / 100;
   const wordW = (cap * WORDMARK_BOX.w) / 100;
@@ -51,8 +72,12 @@ export function MettleUpLogo({ height = 28, cap: capPx }: MettleUpLogoProps) {
         viewBox={`${WORDMARK_BOX.x} ${WORDMARK_BOX.y} ${WORDMARK_BOX.w} ${WORDMARK_BOX.h}`}
         style={{ marginLeft: height * GAP }}
       >
-        <Path d={WORDMARK_METTLE_D} fill={color.ink} />
-        <Path d={WORDMARK_UP_D} fill={METTLEUP_COLOURS.forge} />
+        <Defs>
+          <Shine id={`${uid}s`} stops={WORDMARK_STEEL_STOPS} />
+          <Shine id={`${uid}f`} stops={WORDMARK_FORGE_STOPS} />
+        </Defs>
+        <Path d={WORDMARK_METTLE_D} fill={`url(#${uid}s)`} />
+        <Path d={WORDMARK_UP_D} fill={`url(#${uid}f)`} />
       </Svg>
     </View>
   );

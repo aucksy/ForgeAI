@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { WORDMARK_METTLE_D, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
+import { WORDMARK_FORGE_STOPS, WORDMARK_METTLE_D, WORDMARK_STEEL_STOPS, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
 import { activeProxy, FALLBACK_MS, PROBE_PATH, proxyList, resetAddressSwitch, routedFetch, STAMP, usingDirect, viaOurAddress } from '@/cloud/address';
 import { FEEDBACK_URLS, postToBox, tryNextBox } from '@/lib/feedback';
 import { isExportFile, isPrivateCacheEntry } from '@/onboarding/eraseDevice';
@@ -237,11 +237,12 @@ describe('Send feedback: the new box address first, the old one when it gives no
 });
 
 describe('what members see with the new name', () => {
-  it('share pictures carry METTLEUP in the steel letters (R-259; "UP" in the brand ember)', () => {
+  it('share pictures carry METTLEUP in the steel letters (R-259) with the splash shine (9 Nov 2026: never flat)', () => {
     const nodes = wordmark(0, 0, 56).nodes;
     expect(nodes.filter((n) => n.t === 'text')).toEqual([]);
-    const name = nodes.filter((n) => n.t === 'path' && (n.d === WORDMARK_METTLE_D || n.d === WORDMARK_UP_D)).map((n) => (n as { fill: string }).fill);
-    expect(name).toEqual(['#E8EAEE', '#F0662A']);
+    const name = nodes.filter((n) => n.t === 'path' && (n.d === WORDMARK_METTLE_D || n.d === WORDMARK_UP_D)) as { fill?: string; shine?: { stops: unknown } }[];
+    expect(name.map((n) => n.fill)).toEqual([undefined, undefined]);
+    expect(name.map((n) => n.shine?.stops)).toEqual([WORDMARK_STEEL_STOPS, WORDMARK_FORGE_STOPS]);
   });
 
   it('"Erase all data" still finds files saved under either name', () => {

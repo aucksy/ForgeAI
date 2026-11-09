@@ -9,10 +9,10 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { WORDMARK_METTLE_D, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
+import { WORDMARK_FORGE_STOPS, WORDMARK_METTLE_D, WORDMARK_STEEL_STOPS, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
 import { color } from '@/theme/tokens';
 import { buildMonthReport, buildYearReview, type ReportSession } from '@/tracker/engine/reports';
-import { FORGE_MARK, IRON } from '@/tracker/share/brand';
+import { FORGE_MARK } from '@/tracker/share/brand';
 import {
   frameLayout,
   framedFileName,
@@ -182,9 +182,14 @@ describe('the background', () => {
       }
       // The mark is still there, in its own colours (0.56.0: the Forged hex, its faces are paths).
       for (const face of Object.values(FORGE_MARK)) expect(scene.nodes.some((n) => n.t === 'path' && n.fill === face), `${name}: ${face}`).toBe(true);
-      // R-259: the steel name (paths, not words) keeps its own Iron + Forge.
-      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_METTLE_D && n.fill === IRON), `${name}: METTLE`).toBe(true);
-      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_UP_D && n.fill === FORGE_MARK.forge), `${name}: UP`).toBe(true);
+      // R-259 + 9 Nov 2026: the steel name (paths, not words) keeps its splash shine, never flat.
+      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_METTLE_D && n.shine?.stops === WORDMARK_STEEL_STOPS), `${name}: METTLE`).toBe(true);
+      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_UP_D && n.shine?.stops === WORDMARK_FORGE_STOPS), `${name}: UP`).toBe(true);
+      expect(sceneToSvg(scene)).toContain('gradientUnits="userSpaceOnUse"');
+      // ... with a soft dark shadow under it (a light photo would swallow the steel's bright top).
+      const shadows = scene.nodes.filter((n) => n.t === 'path' && n.d === WORDMARK_METTLE_D && n.fill === '#000000');
+      expect(shadows.length, `${name}: name shadow`).toBe(2);
+      for (const s of shadows) expect((s as { opacity?: number }).opacity).toBeLessThan(0.5);
       // Its SVG draws the shadow copies under the words.
       expect(sceneToSvg(scene)).toContain('fill="#000000"');
     }
