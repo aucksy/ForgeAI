@@ -7,8 +7,9 @@
  *   VOICE=none      music only for every ad in ONLY (lines timed by the lengths in vo.json).
  *   VOICE=<run id>  take the voice from that GitHub Actions run's artifacts (e.g. a voice-samples run):
  *                   any file named <ad-id>/vo-<n>.wav (or .mp3 .flac .ogg .m4a) inside them, one per
- *                   line of the ad's `say` text in src/copy.json. VOICE_NAME narrows to paths that
- *                   contain it (the chosen voice's folder) when the run holds several voices.
+ *                   line of the ad's `say` text in src/copy.json, or the voice-samples layout
+ *                   seg-ad-<ad-id>-<n>.wav (marketing/voice-samples, block "ad-<ad-id>"). VOICE_NAME
+ *                   narrows to paths that contain it (the chosen voice's artifact or folder name).
  *
  * Env: ONLY (comma-separated ad ids), GH_TOKEN + GITHUB_REPOSITORY (for a run id).
  * Each imported line becomes mono 16-bit PCM WAV, trimmed of edge silence and peak-levelled, written to
@@ -134,7 +135,7 @@ for (const id of ids) {
   if (!ad) throw new Error(`no ad ${id} in copy.json`);
   const lens = [];
   for (let n = 1; n <= ad.lines.length; n++) {
-    const re = new RegExp(`(^|/)${id}/vo-${n}\\.(wav|mp3|flac|ogg|m4a)$`, 'i');
+    const re = new RegExp(`((^|/)${id}/vo-${n}|(^|/)seg-ad-${id}-${n})\\.(wav|mp3|flac|ogg|m4a)$`, 'i');
     const hits = files.filter((p) => re.test(rel(p)) && (!NAME || rel(p).toLowerCase().includes(NAME)));
     if (hits.length !== 1) {
       throw new Error(`${id} line ${n} ("${ad.lines[n - 1].say}"): ${hits.length ? 'several files, set voice_name: ' + hits.map(rel).join(', ') : `no file */${id}/vo-${n}.wav${NAME ? ` under "${NAME}"` : ''} in run ${VOICE}`}`);
