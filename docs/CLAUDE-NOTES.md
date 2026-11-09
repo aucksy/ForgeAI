@@ -17,6 +17,8 @@ What I did: replaced on the live gym site (home/index.html, English + Hindi): "O
 Result (9 Nov): CI had been red on 4 commits from a flaky What's-new feed test (43a238cc fixes it; CI 42589297688
 green). Site deployed from deploy/panel (version 8f6ae19d) with that run's dashboard-dist. UAT: gyms.mettleup.fit
 desktop + 375 px phone, English + Hindi: 3 new lines show, old lines gone, no sideways scroll.
+Fresh-eyes review (haiku): tag repeated "free"; "column names" is tech talk. Tags now "Included in every plan" and
+"AI never sees member details" (f5eed3af, CI 42592016762, live b530ae5d, phone + Hindi checked).
 Meta: billing Tax ID now "-". The Business info form has NO PAN / Tax ID / Business type field (only GST and TAN,
 both optional). The assistant keeps telling him to "enter PAN in Tax ID" and invented a Business type setting; its
 hand-over to a billing specialist returned "a specific block for this account". No case, no human. Status still
