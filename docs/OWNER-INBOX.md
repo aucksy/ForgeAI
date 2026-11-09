@@ -540,7 +540,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 93. One MettleUp login for all services: what moving each one would change — 7 Nov 2026
 **Chat:** Mettle Up
-**Status:** WAITING FOR YOU
+**Status:** DECIDED (9 Nov): nothing moves for now
 **You said (7 Nov):** Do not move anything now. You do not plan to hire; Claude runs everything. Keep it here to decide later, with the impact of each move and the long-term risks of not moving. Your Claude subscription and the Play Store stay where they are.
 **Who owns what today:** see Home → "Accounts and services". In short: your personal Gmail owns Cloudflare, Supabase, GitHub, Namecheap and the 3 AI keys (Claude API, Gemini, Groq); simpleapps108 owns Play and Google Cloud/Firebase; your personal Facebook owns Meta/WhatsApp.
 
@@ -573,8 +573,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 6. **Keys tied to a person.** The Claude API keys act as you. If that user is ever removed, they stop at once. A "workspace" key does not have this problem.
 
 **My view:** not moving is fine for now, because you run it alone and risk 1 can be fixed without moving. Do these 2 things now: (a) 2-step check and backup codes on your personal Gmail and Facebook; (b) open Razorpay under the login you want long term. Look at this again before the first gym pays.
-**DECIDED (9 Nov 2026), changed the same day:** You said: "if I'm not able to really move or fix the meta issue with this move, then I am not inclined to really move anything else as of yet." So the brand Gmail is for Meta only, for now: a fresh business portfolio under your own Facebook, with the brand Gmail as its business email. Everything else stays where it is until the Meta test works.
-**Your task (only you: your phone and password):** Create the brand Gmail. Turn on 2-step sign-in and save its backup codes offline. Then tell Claude the address. Claude does every other step.
+**DECIDED (9 Nov 2026), changed the same day:** You said: "if I'm not able to really move or fix the meta issue with this move, then I am not inclined to really move anything else as of yet." A new Meta business under your same Facebook probably hits the same WhatsApp tax block (other Indian businesses without GST got the identical error), so nothing moves for now. Look again only if a way to fix Meta needs the brand Gmail.
 
 ## 92. To start earning: 3 things only you can do — 6 Nov 2026
 **Chat:** Mettle Up

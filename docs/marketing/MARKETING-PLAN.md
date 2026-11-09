@@ -30,7 +30,7 @@ Add the brand Gmail as a SECOND owner everywhere. Never remove the old owner (lo
   Instagram and ad account go in THIS verified business (Click-to-WhatsApp ads need the number linked to the
   Page). Never a second Facebook account.
 - WhatsApp: check the billing currency now; rupees by 31 Dec.
-- R-416 (9 Nov): brand Gmail for Meta ONLY for now. Free test first: a new business portfolio under his same
+- R-417 (9 Nov): brand Gmail move ON HOLD (a new portfolio likely keeps the no-GST block). Was R-416: brand Gmail for Meta ONLY. Free test first: a new business portfolio under his same
   Facebook, a new WhatsApp account there with rupee billing + card; if its billing page has no tax banner, move the
   number; if it has one, the flag follows the person -> partner company. Other services stay put.
 
@@ -86,7 +86,7 @@ one paying gym costs about Rs8,000-33,000 = 5-33 months of fees. The first test 
 1. Trial: DECIDED 9 Nov 2026 (R-416): keep 3 months; review after 20 trials.
 2. WhatsApp: a partner company by 1 Dec if Meta has not cleared the block, about Rs1,500-3,500 a month plus
    message charges and GST (recommended). Or keep waiting on Meta.
-3. Ads: Rs0 until 3 gyms are live, then about Rs15,000 for a 3-week test (recommended); plus the most he
-   will pay for one paying gym.
+3. Ads: DECIDED 9 Nov 2026 (R-417): Rs0 ads; he onboards gyms in person first. Still open: the most he
+   will pay for one paying gym, asked when ads come up.
 4. Rewards: a free month per referred gym that pays; a one-time payment to partners per gym that pays.
 5. His sales days and hours for gym visits.

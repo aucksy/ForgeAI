@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-417. A new Meta business probably hits the same wall; no ads until he onboards gyms himself — 9 Nov 2026
+He asked: a new business portfolio under the same personal Facebook plus a new ad account, how is that different from
+today, and what are the chances the same issue comes back? And: "no ad money. I will physically try to onboard a few gyms
+before I start running ads."
+My answer: different = a fresh billing account (no TAX_INFO_PROBLEM_HARD flag yet), rupees from day 1, no old disabled
+USD ad account. Same = same person, same Udyam, same PAN, no GST. Evidence: other Indian businesses WITHOUT GST got the
+identical 131042 (dev-community threads 1454015106612115, 3256415637883526), so the likely cause is "Indian business,
+no GST", which a new portfolio keeps. My estimate: about 1 in 4 that a new portfolio fixes it (a guess, not proven), and
+a fresh portfolio + ad account carries its own new-account risk. My view: skip the new portfolio; use a partner company
+(BSP) that pays Meta for us, only with his yes on the monthly fee. So the brand Gmail move is ON HOLD entirely (his rule:
+no move unless it fixes Meta).
+Decision 3 (ads) DECIDED: Rs0 ads; he onboards gyms in person first.
+
 ## R-416. Trial stays 3 months; Meta fresh start questions; Gmail move only if it fixes Meta — 9 Nov 2026
 He said: trial yes, keep 3 months, look again later. He did not understand the WhatsApp partner company or "Rs0 ads until
 3 gyms are live". He asked why he cannot make a new Meta/Facebook account for the business. His theory: an old DISABLED
