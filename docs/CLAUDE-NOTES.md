@@ -7,6 +7,12 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-430. Ads: voice is too bad, give voice choices; keep only "own app"; new "progress" hook — 9 Nov 2026
+
+He said: "The voice over voice is just too bad... you should have give me some choices... There are free repos on github that has superb quality voices... give me some options". Then: of the 5 hooks he likes only "your own app" (ad 03): finalize it. Plan a second ad from the website hero: members keep coming when they see progress; consistent progress needs tracking; your members get a free app with your gym software; open your own shop; send free messages; plus what is really unique.
+
+What I did: saved the preference (D:\Brain "let-me-hear-taste-choices-first"). Voice: a helper renders the same ad lines in several free voices with ad-safe licences (Chatterbox multilingual MIT, Indic Parler-TTS Apache 2.0, NVIDIA Magpie multilingual open model licence), in the cloud, for him to pick; Sarvam (paid, his key, a few rupees) only if he says yes. Claims check on the new hook: shop is Pro only (say "on Pro"); "free messages" = the gym's in-app messages and phone pop-ups (F128, F132), not WhatsApp; no "others don't" line (a rival also gives a free member app), so the unique part is the depth: a real workout tracker in the gym's name. Both ads promise the member app, which is not public on Play until Google gives production access: build now, run after.
+
 ## R-429. Splash screen follows light mode — 9 Nov 2026
 He asked: "How does the splash screen looks in the light mode... show me". It was always dark (#1B1F26), so a light-mode phone saw a dark flash, then the light app. I showed him now vs a light splash; he picked "Light splash (Recommended)".
 Done: values/ = light splash (#F6F4F0, gunmetal steel name, make_assets.py splash_svg(light=True)); values-night/ + drawable-night-*/ = the old dark splash; activity background follows too. app.json expo-splash-screen gets a "dark" variant. Native: reaches phones only with the next release build. The gym "plain" splash (Android 13+) follows the same colours.
