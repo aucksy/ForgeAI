@@ -68,7 +68,13 @@ His ask: of the first five he liked only 03; a second hook from the gym site's h
   "MettleUp gives every member..." (says who gives it); "Your own shop, on Pro. Free messages to their phones." ->
   two full sentences (owner rule: complete sentences). Gemini's longer versions were not taken (too long for a 2 s hook).
 - **Voice:** none yet (he rejected the Kokoro voice). Renders music-only until he picks a voice; then one dispatch of
-  `owner-ads.yml` with only=03-own-app,06-progress, voice=<voice run id>, voice_name=<chosen voice>.
+  `owner-ads.yml` with only=03-own-app,06-progress, voice=<voice run id>, voice_name=<chosen voice>. The voice run must
+  hold every line of each ad's `say` text (src/copy.json) as `seg-ad-<ad-id>-<n>.wav` (the voice-samples layout) or
+  `<ad-id>/vo-<n>.wav`. Ad 03's sample block already matches; the samples' "progress-ad" block is the draft wording, so
+  06's final 5 lines need one voice run in the chosen voice first.
+- **Renders:** music-only review runs 42661674464 (first) and 42666000676 (bigger message pop-up), files in
+  `D:\Apps\ForgeAI\Marketing\owner-ads-v2\`. Voice-swap test: run 42666237473 rendered ad 03 with a sample voice
+  (voice-samples run 42660871346, chatterbox-indian-male): lines found, re-timed, 17.6 s, picture and sound lengths match.
 
 ## Hinglish lines: Aakash reads each aloud before anything runs
 Shown on screen under the hook (not spoken). Roman letters only. The apps' screens stay English and no ad implies Hindi screens.
