@@ -159,7 +159,9 @@ export const Progress: React.FC = () => {
 
       <Headline lines={ad.hook} accent={ad.accent} start={A} end={B - 4} />
       <HiChip text={ad.hi} at={A + 30} end={B - 4} top={268 + ad.hook.length * 108 + 34} />
-      <Headline lines={ad.payoff} accent={[1]} start={B + 4} end={D - 4} size={86} />
+      {/* one message at a time: beat 2's own heading, then the payoff from beat 3 */}
+      <Headline lines={['Progress needs', 'tracking.']} accent={[1]} start={B + 4} end={Cc - 4} size={86} />
+      <Headline lines={ad.payoff} accent={[1]} start={Cc + 4} end={D - 4} size={86} />
 
       {f >= B && <Captions lines={ad.lines} timing={L} top={474} hideAfter={D + 6} />}
       <Streaks at={B - 4} />
