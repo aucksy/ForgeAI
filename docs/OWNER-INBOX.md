@@ -592,7 +592,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 **Status:** Answered
 **You asked:** (1) Ask your trainer: is it easy now, and what does it cost in storage, upkeep and growth? (2) Follow gym mates: why is the effort high? (3) Log sets on the watch: already done. (4) AI assistant for the owner: you want it to DO things ("send a Diwali offer to everyone", "add this member with this phone, plan and date"). Effort, cost, and does the Pro + AI price cover it?
 **My answer (6 Nov 2026):**
-- **1. Ask your trainer:** most of it is already built. "Ask a trainer" (a member sends a question to a trainer, and the trainer sees the member's weekly progress) is in the app, hidden until you say yes to server change 0053 (#88). Storage: tiny. A question is a few lines of text, so even 1,000 members asking every day uses less than 1 MB a month. Upkeep: low. Growth: fine on the current server. A full back-and-forth chat (typing dots, photos) would be the next step; photos are the only part that needs real storage.
+- **1. Ask your trainer:** most of it is already built. "Ask a trainer" (a member sends a question to a trainer, and the trainer sees the member's weekly progress) is in the app and on since 9 Nov (server change 0053, #88). Storage: tiny. A question is a few lines of text, so even 1,000 members asking every day uses less than 1 MB a month. Upkeep: low. Growth: fine on the current server. A full back-and-forth chat (typing dots, photos) would be the next step; photos are the only part that needs real storage.
 - **2. Follow gym mates:** the effort is high because today every workout stays only on the member's phone. A feed needs each workout copied to our server, a "who can see my workouts" choice, likes, a way to report and block, and someone to remove bad posts. Server storage then grows with every workout of every member. My view: wait until gyms ask for it.
 - **3. Log sets on the watch:** correct, it is done. I moved it to Live.
 - **4. AI assistant that does things:** a good idea, and doable. How it works: the owner types or says "send a Diwali offer to all members". The AI writes the message and shows a preview: who gets it, and what it says. Nothing happens until the owner taps "Send". Every action is logged, and only the owner (not desk staff) can use it. **Effort:** about 2 to 3 weeks, plus the full test round. **Cost:** about ₹0.5 per command on Claude Haiku (the AI we already pay for). 20 commands a day = about ₹300 a month per gym. Pro + AI is ₹1,000 a month more than Pro, so the price covers it with room left. Phone pop-ups to members are free. SMS or WhatsApp messages cost extra per message, paid to the message company. **My view:** build it after the AI plan is live, starting with 3 commands: send a message to a group, add a member, renew a plan.
@@ -615,13 +615,13 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 
 ## 88. 3 more server changes wait for your yes: Ask a trainer, gym pop-ups, team replies — 5 Nov 2026
 **Chat:** Mettle Up
-**Status:** WAITING FOR YOU
+**Status:** DONE (9 Nov) — all 3 applied live
 **Why:** You asked for these on 4 Nov (R-319). The app part is built, tested and in version 0.72.0, but it stays hidden until its server change is on. I found today that nobody asked you for these 3 yeses.
 - **0053 Ask a trainer:** a member sends a question to the trainer they pick, and the trainer sees the member's weekly progress.
 - **0054 Gym pop-ups:** a member gets a phone pop-up when the gym approves a pause or renewal, asks for their workout report, or their shop order is ready.
 - **0009 Team replies:** when the MettleUp team answers a question from "Help and feedback", the member reads the reply in "Your questions" and gets a pop-up.
 **Done (9 Nov):** you said "yes, apply 0009". I applied it on the web server; its check passed (all 58 old questions kept). Team replies now work from HQ.
-**Your task:** Say "yes, apply 0053 and 0054" (or name the one you want). I apply each, run its checks and tell you the result.
+**Done (9 Nov):** you said "yes, apply 0053 and 0054". I applied both on the gym server; their live checks passed (68 and 23). Ask a trainer and the gym pop-ups are now on. Gym owners see a "Questions" page in the admin app.
 
 ## 87. Overnight build (5 Nov): 3 features wait for your yes to go live — 5 Nov 2026
 **Chat:** Mettle Up
