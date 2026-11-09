@@ -1,0 +1,9 @@
+node_modules/
+out/
+# made by scripts/synth-audio.mjs in the cloud render (deterministic, 4 MB)
+public/audio/music.wav
+public/audio/whoosh.wav
+public/audio/hit.wav
+public/audio/tick.wav
+public/audio/shine.wav
+*.log

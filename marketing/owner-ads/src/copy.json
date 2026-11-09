@@ -1,0 +1,214 @@
+{
+  "_how": "One entry per ad. `lines`: what the voice says (`say`) and the caption shows (`show`). `hi`: the one Hinglish line shown on screen (Aakash reads every one aloud before anything runs). `proof`: the backlog rows that make each claim true (see docs/marketing/ads/first-test.md).",
+  "ads": [
+    {
+      "id": "01-pending-fee",
+      "hook": [
+        "How much fee",
+        "is pending",
+        "in your gym",
+        "right now?"
+      ],
+      "accent": [
+        3
+      ],
+      "hi": "Kitni fees baaki hai? Ek nazar mein dekhiye.",
+      "lines": [
+        {
+          "say": "How much fee is still pending in your gym, right now?",
+          "show": "How much fee is still pending in your gym, right now?"
+        },
+        {
+          "say": "MettleUp shows who owes, how much, and for how long.",
+          "show": "MettleUp shows who owes, how much, and for how long."
+        },
+        {
+          "say": "When they pay, tap Collect. Or send a ready WhatsApp reminder, one tap each.",
+          "show": "When they pay, tap Collect. Or send a ready WhatsApp reminder, one tap each."
+        },
+        {
+          "say": "Start free for three months. No card.",
+          "show": "Start free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "Every rupee due,",
+        "in one list."
+      ],
+      "proof": [
+        "F82",
+        "F92",
+        "F88"
+      ]
+    },
+    {
+      "id": "02-one-member-fee",
+      "hook": [
+        "Gym software",
+        "for less than",
+        "one member's",
+        "monthly fee."
+      ],
+      "accent": [
+        2,
+        3
+      ],
+      "hi": "Ek member ki fees se bhi kam.",
+      "lines": [
+        {
+          "say": "Your gym software can cost less than one member's monthly fee.",
+          "show": "Your gym software can cost less than one member's monthly fee."
+        },
+        {
+          "say": "MettleUp Starter is nine hundred and ninety nine rupees a month.",
+          "show": "MettleUp Starter is ₹999 a month."
+        },
+        {
+          "say": "Members, fees, renewals, check-ins, and a free app for every member.",
+          "show": "Members, fees, renewals, check-ins, and a free app for every member."
+        },
+        {
+          "say": "Start free for three months. No card.",
+          "show": "Start free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "₹999 a month.",
+        "Your members pay nothing."
+      ],
+      "proof": [
+        "Gym site price",
+        "F81",
+        "F82",
+        "F88",
+        "F120",
+        "F116"
+      ]
+    },
+    {
+      "id": "03-own-app",
+      "hook": [
+        "Big chains",
+        "have their own app.",
+        "Now your gym",
+        "does too."
+      ],
+      "accent": [
+        2,
+        3
+      ],
+      "hi": "Aapke gym ke naam ka app.",
+      "lines": [
+        {
+          "say": "Big chains have their own app. Now your gym can too.",
+          "show": "Big chains have their own app. Now your gym can too."
+        },
+        {
+          "say": "Every member gets a free workout app, in your gym's name.",
+          "show": "Every member gets a free workout app, in your gym's name."
+        },
+        {
+          "say": "It shows last time's weight on every set. On Pro, add your logo and colours.",
+          "show": "It shows last time's weight on every set. On Pro, add your logo and colours."
+        },
+        {
+          "say": "Start free for three months. No card.",
+          "show": "Start free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "Your gym's name.",
+        "On every member's phone."
+      ],
+      "proof": [
+        "F116",
+        "F118",
+        "F98",
+        "F1",
+        "Gym site Starter list"
+      ]
+    },
+    {
+      "id": "04-excel-move",
+      "hook": [
+        "Send your Excel",
+        "or register.",
+        "We move your",
+        "members, free."
+      ],
+      "accent": [
+        2,
+        3
+      ],
+      "hi": "Excel ya register bhejiye. Baaki hum karenge.",
+      "lines": [
+        {
+          "say": "Still keeping members in an Excel sheet, or a register?",
+          "show": "Still keeping members in an Excel sheet, or a register?"
+        },
+        {
+          "say": "Send it to us. We move your members into MettleUp, free.",
+          "show": "Send it to us. We move your members into MettleUp, free."
+        },
+        {
+          "say": "Or do it yourself. Choose the file, check the list, tap Add.",
+          "show": "Or do it yourself. Choose the file, check the list, tap Add."
+        },
+        {
+          "say": "Start free for three months. No card.",
+          "show": "Start free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "Your old list,",
+        "moved for you."
+      ],
+      "proof": [
+        "F97",
+        "Free set-up and data move (promised)"
+      ]
+    },
+    {
+      "id": "05-trainer-leaves",
+      "hook": [
+        "When a trainer",
+        "leaves, his plans",
+        "stay with",
+        "your gym."
+      ],
+      "accent": [
+        2,
+        3
+      ],
+      "hi": "Trainer jaaye, plans gym mein hi rahenge.",
+      "lines": [
+        {
+          "say": "When a trainer leaves, do his plans leave with him?",
+          "show": "When a trainer leaves, do his plans leave with him?"
+        },
+        {
+          "say": "On the Pro plan, trainer plans live in your gym's account, not on his phone.",
+          "show": "On the Pro plan, trainer plans live in your gym's account, not on his phone."
+        },
+        {
+          "say": "The next trainer opens the same plans, and sends them to members.",
+          "show": "The next trainer opens the same plans, and sends them to members."
+        },
+        {
+          "say": "Start free for three months. No card.",
+          "show": "Start free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "Trainers change.",
+        "Your plans stay."
+      ],
+      "proof": [
+        "F99",
+        "F105",
+        "F109",
+        "Gym site Pro list"
+      ]
+    }
+  ]
+}

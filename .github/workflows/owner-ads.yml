@@ -1,0 +1,59 @@
+# MettleUp owner ads: render the 9:16 videos and the 1:1 / 4:5 feed stills from marketing/owner-ads
+# (Remotion). Manual runs only. The laptop never renders full videos (owner rule); this does.
+# Output: one artifact "owner-ads" kept 3 days (artifact storage is small and shared).
+name: owner-ads
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Ad ids, comma-separated (blank = all five)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: marketing/owner-ads
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: System libraries and fonts for headless Chrome
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libnss3 libdbus-1-3 libatk1.0-0 libgbm-dev libxrandr2 libxkbcommon-dev \
+            libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0 libpango-1.0-0 libcairo2 libcups2 \
+            fonts-noto-core fonts-dejavu-core || true
+          sudo apt-get install -y -q libasound2t64 || sudo apt-get install -y -q libasound2 || true
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Music bed and sound effects (procedural, deterministic)
+        run: node scripts/synth-audio.mjs
+      - name: Render videos and feed stills
+        env:
+          ONLY: ${{ inputs.only }}
+          CONCURRENCY: '3'
+        run: npx tsx scripts/render-all.ts
+      - name: Probe lengths (video vs audio)
+        run: |
+          for f in out/videos/*.mp4; do
+            v=$(ffprobe -v error -select_streams v:0 -show_entries stream=duration -of csv=p=0 "$f")
+            a=$(ffprobe -v error -select_streams a:0 -show_entries stream=duration -of csv=p=0 "$f")
+            echo "$f video=${v}s audio=${a}s size=$(du -h "$f" | cut -f1)"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: owner-ads
+          path: |
+            marketing/owner-ads/out/videos/*.mp4
+            marketing/owner-ads/out/feed/*.png
+          retention-days: 3
+          compression-level: 0
