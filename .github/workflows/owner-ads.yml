@@ -62,13 +62,16 @@ jobs:
           CONCURRENCY: '4'
         run: npx tsx scripts/render-all.ts
       - name: Probe lengths (video vs audio)
+        continue-on-error: true
         run: |
+          ffprobe() { npx --no-install remotion ffprobe "$@"; }
           for f in out/videos/*.mp4; do
             v=$(ffprobe -v error -select_streams v:0 -show_entries stream=duration -of csv=p=0 "$f")
             a=$(ffprobe -v error -select_streams a:0 -show_entries stream=duration -of csv=p=0 "$f")
             echo "$f video=${v}s audio=${a}s size=$(du -h "$f" | cut -f1)"
           done
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: owner-ads-${{ matrix.id }}
           path: |
