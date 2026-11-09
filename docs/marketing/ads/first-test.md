@@ -50,6 +50,26 @@ Voice: Kokoro (free), Hindi voice `hf_alpha` reading English (an Indian accent).
 
 **Button (all):** Sign up -> `https://app.mettleup.fit/start` (live: opens "Start my gym"). Not "Message us on WhatsApp": Click-to-WhatsApp needs a Facebook Page linked to the number, and the plan holds it until 3 live gyms.
 
+### 6. Progress (`06-progress`), added 9 Nov 2026 (R-430)
+His ask: of the first five he liked only 03; a second hook from the gym site's hero, with the word "modern".
+- **Spoken + captions:** Members keep coming back when they see progress. / Progress needs tracking, set by set. /
+  MettleUp gives every member a free, modern workout app, in your gym's name. / Open your own shop, on Pro. Send free
+  messages to their phones. / MettleUp. Modern gym software. Free for 3 months. No card.
+- **Primary text (draft):** Members keep coming back when they see progress. MettleUp gives every member a free, modern
+  workout app in your gym's name: a weight to beat on every set, records and progress charts. On Pro, open your own shop
+  in the app. Send free messages that pop up on their phones. Free for 3 months, no card.
+- **Headline:** A modern workout app in your gym's name
+- **Description:** Shop on Pro. Free messages.
+- **Screens (real member app, example gym):** Bench press progress chart; a workout with last time's numbers on each
+  set; the Gym tab with "Iron Temple Fitness" on top and the shop; a gym message popping up ("Iron Temple Fitness / New
+  gym timings", a ready message's title). Tags: "Example gym", then "Example gym · shop on Pro"; callout "Your shop, on Pro".
+- **member-words (Gemini 3.6 Flash pass):** "keep coming" -> "keep coming back" (clearer idiom); "And progress needs
+  tracking." -> "Progress needs tracking, set by set." (concrete, ties to the screen); "So every member gets..." ->
+  "MettleUp gives every member..." (says who gives it); "Your own shop, on Pro. Free messages to their phones." ->
+  two full sentences (owner rule: complete sentences). Gemini's longer versions were not taken (too long for a 2 s hook).
+- **Voice:** none yet (he rejected the Kokoro voice). Renders music-only until he picks a voice; then one dispatch of
+  `owner-ads.yml` with only=03-own-app,06-progress, voice=<voice run id>, voice_name=<chosen voice>.
+
 ## Hinglish lines: Aakash reads each aloud before anything runs
 Shown on screen under the hook (not spoken). Roman letters only. The apps' screens stay English and no ad implies Hindi screens.
 | Ad | Line | Means |
@@ -59,6 +79,7 @@ Shown on screen under the hook (not spoken). Roman letters only. The apps' scree
 | 3 | Aapke gym ke naam ka app. | An app in your gym's name. |
 | 4 | Excel ya register bhejiye. Baaki hum karenge. | Send the Excel or register. We do the rest. |
 | 5 | Trainer jaaye, plans gym mein hi rahenge. | If a trainer goes, the plans stay in the gym. |
+| 6 | Progress dikhe, toh member aate rahenge. | If they see progress, members keep coming. |
 
 ## Claims check (every line against the backlog in docs/OWNER-INBOX.md and the live gym site)
 | Claim | Proof | OK? |
@@ -78,6 +99,11 @@ Shown on screen under the hook (not spoken). Roman letters only. The apps' scree
 | Choose the file, check the list, tap Add | Live Import screen: "Nothing is saved until you check the list and tap Add" | Yes |
 | Trainer plans live in your gym's account | F99 Gym workout plans (Live), Pro only (gym site Pro list) | Yes, "on Pro" in voice, copy and on screen |
 | The next trainer opens the same plans, sends them | F99 (plans belong to the gym; any trainer login can send them) | Yes |
+| Members keep coming back when they see progress (06) | General statement from the gym site's hero; not a promise about his gym or MettleUp's results | Yes, kept general |
+| Weight to beat on each set (06) | F1 (last time's numbers on each set), F46 (reps to beat) | Yes |
+| Free, modern workout app in your gym's name (06) | F116; gym site "Included in every plan" | Yes. Android, English; not public on Play until production access: build now, run after |
+| Your own shop, on Pro (06) | F126 (Live), Pro only on the gym site | Yes, "on Pro" spoken, captioned, tagged and called out |
+| Free messages to their phones (06) | F128 inbox + F132 phone pop-ups (Live); gym site "Free messages to everyone, ₹0 per message" | Yes. In-app only; WhatsApp is never shown or implied |
 Not claimed anywhere: members stay / more renewals (no pilot numbers in proof/), reply times, "best", "#1", "only us", rival names, automatic reminders, Hindi screens, iPhone.
 
 ## Test setup (suggested, his yes needed for every rupee)

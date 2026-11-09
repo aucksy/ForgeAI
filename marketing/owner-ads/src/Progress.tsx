@@ -35,7 +35,7 @@ const R = {
   sets: { x: 0.1, y: 0.255, w: 0.88, h: 0.39 },
   name: { x: 0.03, y: 0.075, w: 0.55, h: 0.085 },
   shop: { x: 0.03, y: 0.36, w: 0.94, h: 0.53 },
-  notice: { x: 0.03, y: 0.03, w: 0.94, h: 0.115 },
+  notice: { x: 0.03, y: 0.03, w: 0.94, h: 0.15 },
 };
 
 /** A gym message arriving: an Android pop-up at the top of the screen, as F132 shows it. */
@@ -47,17 +47,17 @@ const Notice: React.FC<{ at: number }> = ({ at }) => {
   return (
     <div style={{
       position: 'absolute', left: '3%', right: '3%', top: '3%', transform: `translateY(${(1 - s) * -140}%)`, opacity: Math.min(1, s * 2),
-      background: 'rgba(46,50,58,0.97)', borderRadius: 26, padding: '14px 18px 16px', boxShadow: '0 14px 30px rgba(0,0,0,0.55)',
+      background: 'rgba(46,50,58,0.97)', borderRadius: 30, padding: '18px 22px 20px', boxShadow: '0 14px 30px rgba(0,0,0,0.55)',
       fontFamily: MANROPE, color: '#F1F3F6',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 15, fontWeight: 600, color: '#C3C8D0' }}>
-        <div style={{ width: 24, height: 24, borderRadius: 12, background: C.forge, display: 'grid', placeItems: 'center' }}>
-          <Img src={staticFile('brand/mark.svg')} style={{ width: 15, height: 15, filter: 'brightness(0) invert(1)' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 11, fontSize: 20, fontWeight: 600, color: '#C3C8D0' }}>
+        <div style={{ width: 30, height: 30, borderRadius: 15, background: C.forge, display: 'grid', placeItems: 'center' }}>
+          <Img src={staticFile('brand/mark.svg')} style={{ width: 19, height: 19, filter: 'brightness(0) invert(1)' }} />
         </div>
         MettleUp · now
       </div>
-      <div style={{ marginTop: 8, fontSize: 21, fontWeight: 800, letterSpacing: '-0.01em' }}>Iron Temple Fitness</div>
-      <div style={{ marginTop: 2, fontSize: 19, fontWeight: 600, color: '#D5D9DF' }}>New gym timings</div>
+      <div style={{ marginTop: 10, fontSize: 28, fontWeight: 800, letterSpacing: '-0.01em' }}>Iron Temple Fitness</div>
+      <div style={{ marginTop: 3, fontSize: 25, fontWeight: 600, color: '#D5D9DF' }}>New gym timings</div>
     </div>
   );
 };
