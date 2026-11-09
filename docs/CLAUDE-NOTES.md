@@ -7,6 +7,10 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-428. Marketing material next: many hooks, pro-quality videos, small spend — 9 Nov 2026
+He said: "once you are done with all of this I'll have you start with building the marketing material as well. I will not start spending too much money in it but I do want to give it a shot just to experience it. I want different variations with different hooks and let's see how it goes. and if you're going to make videos please do not do a poor job. Make those videos as if it's designed by some professional video artist."
+Plan: starts after the steel-name deploy and light mode. Use the mettleup-marketing skill + the Remotion reel pipeline (free: own render + Kokoro voice; no paid generation without his yes on count and rupees). Several hooks, each as a short reel + a still, real app screens in a lit 3D scene (never a slideshow). Small test budget; he runs/approves any ad spend.
+
 ## R-427. Member app light mode, following the phone's setting — 9 Nov 2026
 He said: "Does our member app has a light or a dark mode? Man, we have to have that. And it should be system default. If someone has their phone set to light mode, the app should be in the light mode as well. And if you don't have the light mode yet, just carefully design it and test it to ensure it's looking professional and good."
 Found: the member app is dark only (app.json userInterfaceStyle "dark", one static palette in src/theme/tokens.ts used by ~280 files, status bar fixed "light"). T76 freeze is done, so this is built now: a light palette (contrast-tested like the dark one), the app follows the phone setting (and switches live), a Settings choice System / Light / Dark, the brand name uses the gunmetal light stops. Waits for his "release"; UAT on both themes before then.
