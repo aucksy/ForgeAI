@@ -158,7 +158,7 @@ test('the Cron Trigger at 03:00 runs the backup first, then the clean-up', async
   } finally {
     globalThis.fetch = realFetch;
   }
-  assert.deepEqual(order, ['hq_backup_snapshot', 'hq_nightly_cleanup']);
+  assert.deepEqual(order, ['hq_backup_snapshot', 'hq_nightly_cleanup', 'hq_purge_qa_gyms']); // the test-gym purge last (R-423)
   assert.equal(indiaDay(new Date('2026-11-03T18:29:00Z')), '2026-11-03');
   assert.equal(indiaDay(new Date('2026-11-03T18:31:00Z')), '2026-11-04');
 });
