@@ -14,7 +14,6 @@ Page: https://claude.ai/artifact/9dAdwmTA8rNXiw5BHX1SJT (private to your account
 
 | # | Decision | My pick |
 |---|---|---|
-| 93 | One MettleUp login: when? (impact of each move inside) | A: not now; harden your Gmail; look again before the first gym pays |
 | 78 | Turn on the Starter and Pro split now? | A: not yet, until the first gym pays |
 
 ---
@@ -574,10 +573,8 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 6. **Keys tied to a person.** The Claude API keys act as you. If that user is ever removed, they stop at once. A "workspace" key does not have this problem.
 
 **My view:** not moving is fine for now, because you run it alone and risk 1 can be fixed without moving. Do these 2 things now: (a) 2-step check and backup codes on your personal Gmail and Facebook; (b) open Razorpay under the login you want long term. Look at this again before the first gym pays.
-**Decide:** One MettleUp login: when?
-- A: Not now: keep the map current, harden the personal Gmail, look again before the first gym pays (recommended)
-- B: Now: make the MettleUp Gmail and add it as co-owner everywhere (no full moves)
-- C: Now, full move of everything except Play, Google Cloud and the WhatsApp number
+**DECIDED (9 Nov 2026):** You said: "I have decided that we will have to move all our different services to a new Gmail ID for this brand". Way: B, the light way. The brand Gmail becomes a second owner everywhere; the old owner is never removed. Plan with the safe steps: the Growth Plan page (https://claude.ai/artifact/WJZgHmjrPWVzuzKRi1U8q7), section "The brand Gmail move".
+**Your task (only you: your phone and password):** Create the brand Gmail. Turn on 2-step sign-in and save its backup codes offline. Then tell Claude the address. Claude does every other step.
 
 ## 92. To start earning: 3 things only you can do — 6 Nov 2026
 **Chat:** Mettle Up
