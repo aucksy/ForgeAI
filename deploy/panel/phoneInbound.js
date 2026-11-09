@@ -274,7 +274,7 @@ export async function inboundMessages(env, body, now = Date.now(), log = console
  * refuses (for example its 131042 billing block), the page still turns green by itself. Never logs the number or text.
  */
 export const REPLY = {
-  verified: 'Done. Your number is checked for MettleUp. Go back to the MettleUp page to finish.',
+  verified: 'Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish.',
   no_code: 'We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.',
 };
 
