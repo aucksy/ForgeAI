@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { WORDMARK_METTLE_D, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
 import { beforeAfterScene, defaultPair, inOrder, PHOTO_H, PHOTO_W, photoDayText } from '@/tracker/share/beforeAfterCard';
 import { framedScene } from '@/tracker/share/frame';
 import { cleanGymName, LOGO_H, logoBox, shareSheetNote, withGym, type ShareGym } from '@/tracker/share/gymBrand';
@@ -51,12 +52,21 @@ describe('F146 gym on the workout picture', () => {
     expect(logo.y + logo.h / 2).toBe(92);
     const name = texts(s).find((t) => t.text === 'Iron Temple Gym');
     expect(name?.x).toBe(72 + 160 + 22);
-    // MettleUp's header wordmark is gone; the foot says "Logged with" + METTLE UP.
+    // MettleUp's header wordmark is gone; the foot says "Logged with" + the mark and the steel name.
     const header = texts(s).filter((t) => t.y < 140).map((t) => t.text);
     expect(header).toEqual(['Iron Temple Gym', 'Tue, 6 Oct 2026']);
+    expect(s.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_METTLE_D && n.role === 'brand')).toBe(false);
     expect(sceneTexts(s)).not.toContain('Logged with MettleUp');
-    const foot = texts(s).filter((t) => t.y > 1250).map((t) => t.text);
-    expect(foot).toEqual(['Logged with', 'METTLE', 'UP']);
+    const foot = texts(s).filter((t) => t.y > 1250);
+    expect(foot.map((t) => t.text)).toEqual(['Logged with']);
+    const steel = s.nodes.filter((n): n is Extract<SceneNode, { t: 'path' }> => n.t === 'path' && n.role === 'footer' && (n.d === WORDMARK_METTLE_D || n.d === WORDMARK_UP_D));
+    expect(steel).toHaveLength(2);
+    // R-259: the steel name at its smallest lockup size (20 px cap), standing on the label's baseline.
+    for (const p of steel) {
+      expect(100 * p.scale!).toBeCloseTo(20);
+      expect(p.y! + 100 * p.scale!).toBeCloseTo(foot[0].y);
+      expect(p.x!).toBeGreaterThan(foot[0].x + textWidth('Logged with', 'bodyMedium', 26));
+    }
     // The rest of the picture is untouched.
     const middle = (x: Scene) => texts(x).filter((t) => t.y > 140 && t.y < 1250).map((t) => t.text);
     expect(middle(s)).toEqual(middle(plain));
@@ -122,7 +132,7 @@ describe('F146 before/after picture', () => {
   });
 
   it('says only Before, After, the two days and how far apart', () => {
-    expect(sceneTexts(s)).toEqual(['METTLE', 'UP', 'Progress photos', '12 weeks apart', 'Before and after', 'Before', '6 Aug 2026', 'After', '29 Oct 2026', 'Logged with MettleUp']);
+    expect(sceneTexts(s)).toEqual(['Progress photos', '12 weeks apart', 'Before and after', 'Before', '6 Aug 2026', 'After', '29 Oct 2026', 'Logged with MettleUp']);
   });
 
   it('never body weight: no kg, lb or measurement, and the only numbers are the days and the gap', () => {

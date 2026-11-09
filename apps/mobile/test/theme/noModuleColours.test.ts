@@ -118,7 +118,7 @@ const LOAD_TIME_OK: Record<string, string> = {
 /** Hand-typed colours that are deliberately NOT the theme. Each says why. */
 const HAND_TYPED_OK: Record<string, string> = {
   'theme/tokens.ts': 'the defaults themselves',
-  'tracker/share/brand.ts': "ForgeAI's own logo mark on share pictures stays ForgeAI's",
+  'tracker/share/brand.ts': "MettleUp's own mark and steel name on share pictures (Iron, BRAND.md) stay MettleUp's",
 };
 
 describe('no token colour is copied at load time (gym branding repaints the app)', () => {

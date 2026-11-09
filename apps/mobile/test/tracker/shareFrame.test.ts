@@ -9,9 +9,10 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { WORDMARK_METTLE_D, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
 import { color } from '@/theme/tokens';
 import { buildMonthReport, buildYearReview, type ReportSession } from '@/tracker/engine/reports';
-import { FORGE_MARK, WORD_EMBER } from '@/tracker/share/brand';
+import { FORGE_MARK, IRON } from '@/tracker/share/brand';
 import {
   frameLayout,
   framedFileName,
@@ -177,11 +178,13 @@ describe('the background', () => {
       for (const t of texts(scene)) {
         if (t.fill === color.onAccent) continue; // a day number on its ember dot
         expect(t.shadow, `${name}: ${t.text}`).toBe(true);
-        if (t.text === WORD_EMBER) expect(brand.has(t.fill as never), `${name}: the wordmark's UP`).toBe(true);
-        else expect(t.fill, `${name}: ${t.text}`).toBe('#FFFFFF');
+        expect(t.fill, `${name}: ${t.text}`).toBe('#FFFFFF');
       }
       // The mark is still there, in its own colours (0.56.0: the Forged hex, its faces are paths).
       for (const face of Object.values(FORGE_MARK)) expect(scene.nodes.some((n) => n.t === 'path' && n.fill === face), `${name}: ${face}`).toBe(true);
+      // R-259: the steel name (paths, not words) keeps its own Iron + Forge.
+      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_METTLE_D && n.fill === IRON), `${name}: METTLE`).toBe(true);
+      expect(scene.nodes.some((n) => n.t === 'path' && n.d === WORDMARK_UP_D && n.fill === FORGE_MARK.forge), `${name}: UP`).toBe(true);
       // Its SVG draws the shadow copies under the words.
       expect(sceneToSvg(scene)).toContain('fill="#000000"');
     }

@@ -54,9 +54,14 @@ and Forge both work.
   straight strokes, wide and heavy, small corner cuts at the hexagon's 30-degree angle, tight
   spacing. One source: `_src/steel_wordmark.py` (exact polygons). Big sizes (splash, hero) use the
   polished-steel fill, "UP" in orange metal; small sizes are flat: "METTLE" in Iron, "UP" in Forge.
-  In use: the Android splash (mark over the name) and the app's lockup (Welcome screen, and top-right
-  on the Workout, Progress and Gym tabs). Still on the older Manrope wordmark until switched: the
-  website files in `web/`, the store pictures and the share pictures.
+  In use: the Android splash (mark over the name), the app's lockup (Welcome screen, and top-right
+  on the Workout, Progress and Gym tabs), the websites' header (`lockup-steel.svg`), the Play
+  feature graphic and the link-preview picture `web/og-1200x630.png` (both polished steel), and the
+  flat lockup and name files `web/wordmark-*.svg` (dark: Iron + Forge; light: Steel + Ember).
+  `make_assets.py --name` rebuilds only these. The store screenshots draw no name (headline only).
+  The app's share pictures draw the flat steel name too (`apps/mobile/src/tracker/share/brand.ts`).
+  Owner rule (R-425, 9 Nov 2026): the name design is part of the logo. Every place that draws the
+  NAME as a design uses the steel letters; app icons, favicons and profile pictures keep the mark only.
 - **Store and marketing headlines**: Manrope ExtraBold, sentence case, -0.02 em, line height 1.04,
   max two lines, accent words in Molten.
 - **Sub lines**: Manrope SemiBold.

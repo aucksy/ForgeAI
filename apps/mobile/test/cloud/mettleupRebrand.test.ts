@@ -8,6 +8,7 @@ import { join } from 'node:path';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { WORDMARK_METTLE_D, WORDMARK_UP_D } from '@/components/brand/mettleUpMark';
 import { activeProxy, FALLBACK_MS, PROBE_PATH, proxyList, resetAddressSwitch, routedFetch, STAMP, usingDirect, viaOurAddress } from '@/cloud/address';
 import { FEEDBACK_URLS, postToBox, tryNextBox } from '@/lib/feedback';
 import { isExportFile, isPrivateCacheEntry } from '@/onboarding/eraseDevice';
@@ -236,9 +237,11 @@ describe('Send feedback: the new box address first, the old one when it gives no
 });
 
 describe('what members see with the new name', () => {
-  it('share pictures carry METTLEUP ("UP" in the brand ember)', () => {
-    const texts = wordmark(0, 0, 56).nodes.filter((n) => n.t === 'text').map((n) => (n as { text: string }).text);
-    expect(texts).toEqual(['METTLE', 'UP']);
+  it('share pictures carry METTLEUP in the steel letters (R-259; "UP" in the brand ember)', () => {
+    const nodes = wordmark(0, 0, 56).nodes;
+    expect(nodes.filter((n) => n.t === 'text')).toEqual([]);
+    const name = nodes.filter((n) => n.t === 'path' && (n.d === WORDMARK_METTLE_D || n.d === WORDMARK_UP_D)).map((n) => (n as { fill: string }).fill);
+    expect(name).toEqual(['#E8EAEE', '#F0662A']);
   });
 
   it('"Erase all data" still finds files saved under either name', () => {

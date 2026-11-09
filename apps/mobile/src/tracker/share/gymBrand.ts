@@ -17,7 +17,7 @@
  */
 import { color } from '@/theme/tokens';
 
-import { wordmark } from './brand';
+import { MIN_CAP, wordmark } from './brand';
 import { fitSize, fitText, textWidth, type Scene, type SceneNode } from './scene';
 
 /** The gym on a share picture. `logo` only once its size is known (so its box keeps its shape). */
@@ -89,13 +89,14 @@ export function madeWithFooter(cx: number, baseline: number): SceneNode[] {
   const markSize = 34;
   const gap = 14;
   const labelW = textWidth(label, 'bodyMedium', size);
-  // wordmark(): its words sit at y + 0.5·size + 0.36·(0.64·size) — put that on the footer's baseline.
-  const top = baseline - markSize * (0.5 + 0.36 * 0.64);
-  const probe = wordmark(0, top, markSize);
+  // The steel name at its smallest lockup size (BRAND.md: 20 px cap height), standing on the
+  // label's baseline; wordmark() centres the name's cap box on the mark's middle.
+  const top = baseline - MIN_CAP / 2 - markSize / 2;
+  const probe = wordmark(0, top, markSize, MIN_CAP);
   const x0 = Math.round(cx - (labelW + gap + probe.width) / 2);
   return [
     { t: 'text', x: x0, y: baseline, text: label, font: 'bodyMedium', size, fill: color.inkMuted, role: 'footer' },
-    ...wordmark(x0 + labelW + gap, top, markSize).nodes.map((n) => ({ ...n, role: 'footer' as const })),
+    ...wordmark(x0 + labelW + gap, top, markSize, MIN_CAP).nodes.map((n) => ({ ...n, role: 'footer' as const })),
   ];
 }
 

@@ -3,6 +3,8 @@ Build every MettleUp brand asset from the chosen logo, E "Forged".
 
     python branding/mettleup/_src/make_assets.py            # everything (about 3 minutes)
     python branding/mettleup/_src/make_assets.py --fast     # skip the store screenshots
+    python branding/mettleup/_src/make_assets.py --name     # only what draws the name (feature graphic,
+                                                            # og, web wordmarks, listing mock, contact sheet)
 
 Writes only under branding/mettleup/. Nothing in apps/ is touched; install.py does that.
 """
@@ -224,9 +226,13 @@ TAGLINE = 'Stronger every week.'
 
 
 def hero_svg(w, h, R, cap, tag_size, uid):
+    """Mark, then the R-259 "steel plate" name (polished steel, "UP" in orange metal) over the tagline.
+    `cap` is the old Manrope wordmark's cap height: the steel name is set to the SAME width, so the
+    layout (mark, gap, name block, margins) is exactly what it was."""
     hw = R * 0.8660254
     gap = R * 0.42
     ww = B.wordmark_w(cap)
+    cap = ww / SW.width() * SW.H        # steel letters are narrower per cap: same width, taller
     total = 2 * hw + gap + ww
     x0 = (w - total) / 2
     mcx, mcy = x0 + hw, h / 2
@@ -239,7 +245,7 @@ def hero_svg(w, h, R, cap, tag_size, uid):
              f'<path d="{poly(B.hex_pts(mcx, mcy + R * 0.12, R))}" fill="#05060A" opacity="0.5" filter="url(#ms{uid})"/>')
     body += B.mark(mcx, mcy, R, uid + 'm')
     tx = x0 + 2 * hw + gap
-    wm, _ = B.wordmark_text(tx, top + cap, cap, 'dark')
+    wm, _ = SW.svg_body(tx, top, cap, uid + 'w', steel=True)
     body += wm
     d, _ = B.text_d(TAGLINE, tag_size, tx + cap * 0.02, top + cap + tag_size * 0.95 + tag_cap, B.MAN_SB, 0)
     body += f'<path d="{d}" fill="#D3D7DE"/>'
@@ -349,16 +355,36 @@ def build_web():
     B.write(out(os.path.join(WEB, 'mark.svg')), mark_svg.replace(' width="512" height="512"', '', 1))  # only the root's size: the mask needs its own
     mono = B.svg(512, 512, B.mark(256, 256, 204 * 0.98, 'mm', mode='mono', colour='currentColor'), title='MettleUp')
     B.write(out(os.path.join(WEB, 'mark-mono.svg')), mono.replace(' width="512" height="512"', ''))
-    for scheme, nm in (('light', 'wordmark-light.svg'), ('dark', 'wordmark-dark.svg')):
-        vb, body = B.lockup(scheme, uid='web')
+    build_web_wordmarks()
+
+
+# The name's flat colours (R-259 small sizes): dark pages Iron + Forge, light pages Steel + Ember.
+NAME_INK = {'dark': (B.IRON, B.FORGE), 'light': (B.STEEL, B.EMBER)}
+
+
+def steel_lockup(scheme, uid):
+    """Mark + the "steel plate" name, flat, laid out as the app's MettleUpLogo (web_steel_lockup.py):
+    the name's cap height 0.44 x the mark box, 0.32 x the box apart, centred on it. Name cap = 100.
+    Returns (viewBox, body)."""
+    s = SW.H / 0.44                      # the mark box (hex height)
+    pad = 4
+    ink, acc = NAME_INK[scheme]
+    word, ww = SW.svg_body(s * 1.32, (s - SW.H) / 2, SW.H, uid, steel=False, ink=ink, accent=acc)
+    body = B.mark(s / 2, s / 2, s / 2, uid + 'm') + word
+    return f'{-pad} {-pad} {n(s * 1.32 + ww + 2 * pad)} {n(s + 2 * pad)}', body
+
+
+def build_web_wordmarks():
+    for scheme in ('light', 'dark'):
+        vb, body = steel_lockup(scheme, f'web{scheme}')
         doc = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" role="img" aria-label="MettleUp">'
                f'<title>MettleUp</title>{body}</svg>\n')
-        B.write(out(os.path.join(WEB, nm)), doc)
-    for scheme, nm in (('light', 'wordmark-text-light.svg'), ('dark', 'wordmark-text-dark.svg')):
-        body, end = B.wordmark_text(0, 100, 100, scheme)
-        doc = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 {n(end + 8)} 108" role="img" aria-label="MettleUp">'
-               f'<title>MettleUp</title>{body}</svg>\n')
-        B.write(out(os.path.join(WEB, nm)), doc)
+        B.write(out(os.path.join(WEB, f'wordmark-{scheme}.svg')), doc)
+        ink, acc = NAME_INK[scheme]
+        body, w = SW.svg_body(0, 0, SW.H, 'wt', steel=False, ink=ink, accent=acc)
+        doc = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 {n(w + 8)} {SW.H + 8}" role="img" '
+               f'aria-label="MettleUp"><title>MettleUp</title>{body}</svg>\n')
+        B.write(out(os.path.join(WEB, f'wordmark-text-{scheme}.svg')), doc)
 
 
 # ------------------------------------------------------------------ previews
@@ -534,17 +560,30 @@ def contact_sheet():
     S.row(fav + favz + [(O('web/apple-touch-icon-180.png'), 'apple-touch 180'),
                         (O('web/icon-192.png'), 'icon 192'),
                         (mkc.resize((256, 256), Image.LANCZOS), 'maskable 512 in the 80 % min mask')])
-    S.row([(O('web/og-1200x630.png').resize((900, 472), Image.LANCZOS), 'og 1200x630 (shown 900)'),
-           (B.raster(B.svg(966.67 * 0.6, 167 * 0.6, '<rect width="100%" height="100%" fill="#FFFFFF"/>'
-                           + open(os.path.join(WEB, 'wordmark-light.svg'), encoding='utf-8').read()
-                           .replace('<svg ', f'<svg width="{n(966.67 * 0.6)}" height="{n(167 * 0.6)}" ', 1)),
-                     int(966.67 * 0.6), int(167 * 0.6)), 'wordmark-light.svg')])
+    wm_tiles = []
+    for nm, bgc in (('wordmark-light.svg', '#FFFFFF'), ('wordmark-dark.svg', B.STEEL)):
+        src = open(os.path.join(WEB, nm), encoding='utf-8').read()
+        vw, vh = (float(v) for v in src.split('viewBox="', 1)[1].split('"', 1)[0].split()[2:4])
+        tw, th = 600, round(600 * vh / vw)
+        wm_tiles.append((B.raster(B.svg(tw, th, f'<rect width="100%" height="100%" fill="{bgc}"/>'
+                                        + src.replace('<svg ', f'<svg width="{tw}" height="{th}" ', 1)), tw, th), nm))
+    S.row([(O('web/og-1200x630.png').resize((900, 472), Image.LANCZOS), 'og 1200x630 (shown 900)')] + wm_tiles)
     S.render(os.path.join(PREV, 'contact-sheet.png'))
 
 
 def main():
     if '--splash' in sys.argv:   # only the splash pictures (R-259)
         build_splash()
+        for p in MADE:
+            print(' ', rel(p))
+        return
+    if '--name' in sys.argv:     # only the pictures that draw the name (R-259), plus the review sheets
+        out(B.render(hero_svg(1024, 500, 150, 64, 34, 'fg'), os.path.join(STORE, 'feature-graphic-1024x500.png'),
+                     1024, 500, 'RGB'))
+        out(B.render(hero_svg(1200, 630, 180, 76, 40, 'og'), os.path.join(WEB, 'og-1200x630.png'), 1200, 630, 'RGB'))
+        build_web_wordmarks()
+        listing_mock()
+        contact_sheet()
         for p in MADE:
             print(' ', rel(p))
         return

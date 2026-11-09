@@ -21,11 +21,12 @@
  * See-through: no background at all (the PNG keeps its alpha — react-native-svg's Android
  * `toDataURL` draws into a transparent ARGB_8888 bitmap and saves a PNG), white words with a soft
  * shadow so they read on any photo, the dark boxes and glows dropped, lines and bar tracks faint
- * white. ForgeAI's own mark (and the "AI" of its name) keeps its ember, and a number sitting on an ember dot keeps its ink.
+ * white. MettleUp's own mark and its steel name (paths, brand.ts) keep their colours, and a number
+ * sitting on an ember dot keeps its ink.
  */
 import { color } from '@/theme/tokens';
 
-import { FORGE_MARK, WORD_EMBER } from './brand';
+import { FORGE_MARK } from './brand';
 import { CLEAR_BACKGROUND, type Scene, type SceneNode } from './scene';
 
 export type ShareSize = 'post' | 'story';
@@ -115,10 +116,9 @@ function seeThrough(n: SceneNode): SceneNode | null {
     case 'text': {
       // A day number on its ember dot keeps the dot's ink, with no shadow.
       if (n.fill === color.onAccent) return n;
-      // The wordmark's ember half ("UP" of METTLEUP, brand.ts) stays the brand's ember; every other
-      // word turns white — even ember headings, whose colour is the same hex by default.
-      const fill = n.text === WORD_EMBER && BRAND.has(n.fill.toUpperCase()) ? n.fill : WHITE;
-      return { ...n, fill, shadow: true };
+      // Every word turns white — even ember headings, whose colour is the same hex by default. (The
+      // name METTLEUP is not a word here: it is the steel letters' paths, which keep their colours.)
+      return { ...n, fill: WHITE, shadow: true };
     }
     default:
       return n;
