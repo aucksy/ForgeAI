@@ -5,7 +5,9 @@
 # Voice (scripts/voice-pack.mjs): blank = the voice files in the repo (01-05: Kokoro; 06 has none yet, so
 # it renders with music only); "none" = music only; a run id = the voice from that run's artifacts, one file
 # <ad-id>/vo-<n>.wav (or .mp3) per line of copy.json's `say` text; voice_name picks the voice's folder.
-# Final render with the chosen voice: only=03-own-app,06-progress  voice=<run id>  voice_name=<voice>.
+# Music (scripts/music-pack.mjs): blank = the procedural bed; a music-choices run id + music_name (option number)
+# = that option, timed so its own ending lands on the ad's last frame.
+# Final render: only=03-own-app,06-progress  voice=<run id>  voice_name=<voice>  music=<run id>  music_name=<n>.
 name: owner-ads
 
 on:
@@ -21,6 +23,14 @@ on:
         default: ''
       voice_name:
         description: "With a run id: the chosen voice's folder name in that run (blank = the only one)"
+        required: false
+        default: ''
+      music:
+        description: 'Music: blank = the procedural bed, or a music-choices run id'
+        required: false
+        default: ''
+      music_name:
+        description: 'With a music run: the option number (e.g. 2)'
         required: false
         default: ''
 
@@ -76,6 +86,12 @@ jobs:
           VOICE_NAME: ${{ inputs.voice_name }}
           GH_TOKEN: ${{ github.token }}
         run: node scripts/voice-pack.mjs
+      - name: Music
+        env:
+          MUSIC: ${{ inputs.music }}
+          MUSIC_NAME: ${{ inputs.music_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/music-pack.mjs
       - name: Render videos and feed stills
         env:
           ONLY: ${{ matrix.id }}

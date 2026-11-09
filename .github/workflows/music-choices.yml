@@ -1,0 +1,136 @@
+# Background music options for the owner ads (R-431): upbeat, energetic, "a feeling of metal".
+# Manual runs only; everything runs here, never on the laptop.
+#   ace (4 jobs): ACE-Step 1.5 (MIT, outputs free for commercial use), DiT turbo on CPU, no language model,
+#                 one style each, two seeds each. Source pinned to a commit; weights from huggingface.co/ACE-Step/Ace-Step1.5
+#                 (public, no login, no key).
+#   own:          option 5, our own music written in code (marketing/owner-ads/music/forge_synth.py).
+#   finish:       stronger take, clean 20 s ending, voice-band dip, -16 LUFS, mp3 + wav, previews under the ad 06
+#                 sample voice. Artifact "music-choices" (3 days). The ad render takes one with
+#                 owner-ads.yml inputs music=<this run id>, music_name=<option number>.
+name: music-choices
+
+on:
+  workflow_dispatch:
+    inputs:
+      voice_run:
+        description: 'Run id with the sample voice for the previews (blank = music only)'
+        required: false
+        default: '42660871346'
+      voice_artifact:
+        description: 'Artifact holding seg-progress-ad-<n>.wav in that run'
+        required: false
+        default: 'vs-chatterbox-indian-female'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  ACE_SHA: ca1e85fe9430179831e6bc6be790c332190a3866
+
+jobs:
+  ace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        style: [1-metal-riff, 2-steel-industrial, 3-trailer-hybrid, 4-gym-drive]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: marketing/owner-ads/music
+      - name: Free disk (the weights are 10 GB)
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          df -h /
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ACE-Step 1.5 source (pinned)
+        run: |
+          mkdir -p "$RUNNER_TEMP/ace"
+          curl -sL "https://codeload.github.com/ace-step/ACE-Step-1.5/tar.gz/$ACE_SHA" | tar -xz -C "$RUNNER_TEMP/ace" --strip-components=1
+          head -3 "$RUNNER_TEMP/ace/LICENSE"
+      - name: Install (CPU PyTorch)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          python -m pip install -q --upgrade pip
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.10.0 torchaudio==2.10.0 torchvision==0.25.0
+          # versions from the project's own uv.lock at ACE_SHA
+          printf '%s\n' torch==2.10.0 torchaudio==2.10.0 torchvision==0.25.0 torchcodec==0.10.0 transformers==4.57.6 \
+            diffusers==0.37.1 accelerate==1.12.0 vector-quantize-pytorch==1.27.20 peft==0.18.1 numba==0.63.1 \
+            einops==0.8.2 lightning==2.6.1 huggingface-hub==0.36.0 torchao==0.16.0 > c.txt
+          pip install -q -c c.txt --extra-index-url https://download.pytorch.org/whl/cpu \
+            "transformers>=4.51.0,<4.58.0" "diffusers>=0.37.0" matplotlib scipy soundfile loguru einops \
+            "accelerate>=1.12.0" numba "vector-quantize-pytorch>=1.27.15" torchcodec torchao toml \
+            peft lycoris-lora lightning modelscope typer-slim pytorch-wavelets pywavelets "setuptools<72" diskcache \
+            huggingface_hub "gradio==6.2.0" fastapi "uvicorn[standard]" python-multipart
+          python -c "import torch; print('torch', torch.__version__, 'threads', torch.get_num_threads())"
+      - name: Generate
+        working-directory: ${{ runner.temp }}/ace
+        env:
+          ACESTEP_PROJECT_ROOT: ${{ runner.temp }}/ace
+          TOKENIZERS_PARALLELISM: 'false'
+        run: python "$GITHUB_WORKSPACE/marketing/owner-ads/music/ace_gen.py" "$RUNNER_TEMP/ace" "${{ matrix.style }}" "$GITHUB_WORKSPACE/raw"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raw-${{ matrix.style }}
+          path: raw/*.wav
+          retention-days: 3
+
+  own:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: marketing/owner-ads/music
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -q numpy scipy
+      - run: mkdir -p raw && python marketing/owner-ads/music/forge_synth.py raw/5-own-forge.wav
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raw-5-own-forge
+          path: raw/*.wav
+          retention-days: 3
+
+  finish:
+    needs: [ace, own]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: marketing/owner-ads/music
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q numpy scipy soundfile pyloudnorm
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: raw-*
+          path: raw
+      - name: Sample voice for the previews
+        if: ${{ inputs.voice_run != '' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.voice_artifact }}
+          run-id: ${{ inputs.voice_run }}
+          github-token: ${{ github.token }}
+          path: voice
+      - run: |
+          ls -R raw
+          V=voice; [ -d voice ] || V=-
+          python marketing/owner-ads/music/finish.py raw "$V" out
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: music-choices
+          path: out
+          retention-days: 3
+          compression-level: 0

@@ -17,7 +17,7 @@ import { AbsoluteFill, Audio, Img, Sequence, interpolate, spring, staticFile, us
 import { C, MANROPE, clampOpts } from './theme';
 import { Desk, Phone, Room, Space, Spot, tf } from './stage';
 import { Captions, EndCard, Headline, HiChip, Sfx, Streaks } from './kit';
-import { ADS, hasVoice, timing } from './timing';
+import { ADS, hasVoice, music, timing } from './timing';
 import { kf } from './Film';
 import type { PhoneShot } from './Film';
 
@@ -119,8 +119,9 @@ export const Progress: React.FC = () => {
 
   const voice = hasVoice(PROGRESS_ID);
   const voOn = (fr: number) => voice && L.some((l) => fr >= l.from - 4 && fr <= l.from + l.dur + 4);
+  const bed = music(total);
   const musicVol = (fr: number) =>
-    (voOn(fr) ? 0.2 : 0.42) * interpolate(fr, [total - 30, total - 2], [1, 0], clampOpts) * interpolate(fr, [0, 6], [0.6, 1], clampOpts);
+    (voOn(fr) ? 0.2 : 0.42) * (bed.endsItself ? 1 : interpolate(fr, [total - 30, total - 2], [1, 0], clampOpts)) * interpolate(fr, [0, 6], [0.6, 1], clampOpts);
 
   const centre: React.CSSProperties = { display: 'grid', placeItems: 'center', transformStyle: 'preserve-3d' };
   return (
@@ -168,7 +169,7 @@ export const Progress: React.FC = () => {
       <Streaks at={Cc - 4} />
       <EndCard at={D} tagline="Modern gym software." line="Every member gets a free app in your gym's name." />
 
-      <Audio src={staticFile('audio/music.wav')} volume={musicVol} />
+      <Audio src={staticFile('audio/music.wav')} volume={musicVol} trimBefore={bed.trimBefore || undefined} />
       {voice && L.map((l, i) => (
         <Sequence key={i} from={l.from} layout="none">
           <Audio src={staticFile(`audio/${PROGRESS_ID}/vo-${i + 1}.wav`)} volume={1} />

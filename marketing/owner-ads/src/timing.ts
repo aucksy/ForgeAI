@@ -43,6 +43,17 @@ export function hasVoice(id: string): boolean {
   return !off.includes(id);
 }
 
+/**
+ * A chosen music track (owner-ads.yml input `music`, scripts/music-pack.mjs) has its own ending: the
+ * film starts it late enough that the track ends exactly when the ad does, and does not fade it.
+ * Without one (the procedural bed), it starts at 0 and fades over the last second, as before.
+ */
+export function music(totalFrames: number): { trimBefore: number; endsItself: boolean } {
+  const secs = (vo as unknown as { _music_seconds?: number })._music_seconds;
+  if (!secs) return { trimBefore: 0, endsItself: false };
+  return { trimBefore: Math.max(0, Math.round(secs * 30) - totalFrames), endsItself: true };
+}
+
 export function timing(id: string): Timing {
   const lens = (vo as unknown as Record<string, number[]>)[id];
   if (!lens) throw new Error(`no voice lengths for ${id}: run scripts/generate-vo.mjs`);
