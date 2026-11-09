@@ -5,7 +5,7 @@ female, copied from the SYNTHETIC Kokoro hf_beta clip (no real person), exaggera
 
 Reads each ad's `say` lines from marketing/owner-ads/src/copy.json (read only) and writes the layout
 marketing/owner-ads/scripts/voice-pack.mjs expects:
-    <out>/chatterbox-female-indian/<ad id>/vo-<n>.wav   one per line, 24 kHz mono 16-bit, -16 LUFS
+    <out>/chatterbox-female-indian/<ad id>/vo-<n>.wav   one per line, 24 kHz mono 16-bit, -16 LUFS (level.py)
     <out>/chatterbox-female-indian/report.json           what was said and what Whisper heard, per line
     <out>/chatterbox-female-indian/preview-<ad id>.mp3   the lines joined, for listening
 "MettleUp" is fed as "Mettle Up" so it is said as two clear words.
@@ -28,6 +28,7 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import wer, write_wav  # noqa: E402
+from level import level  # noqa: E402
 
 REF, OUT, ADS = sys.argv[1], Path(sys.argv[2]).resolve(), sys.argv[3].split(",")
 NAME = "chatterbox-female-indian"
@@ -136,18 +137,12 @@ for ad_id in ADS:
         f = root / ad_id / f"vo-{n}.wav"
         raw = OUT / "raw.wav"
         write_wav(raw, audio, SR)
-        m = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(raw), "-af",
-                            "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"], capture_output=True, text=True)
-        js = json.loads(m.stderr[m.stderr.rindex("{"):m.stderr.rindex("}") + 1])
-        ln = (f"loudnorm=I=-16:TP=-1.5:LRA=11:measured_I={js['input_i']}:measured_TP={js['input_tp']}:"
-              f"measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true")
         f.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(raw), "-af", ln,
-                        "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(f)], check=True)
+        lufs_out = level(raw, f, SR)  # -16 LUFS, peaks held at -1.5 dBFS (level.py)
         with wave.open(str(f)) as w:
             secs = w.getnframes() / w.getframerate()
         report.append(dict(ad=ad_id, line=n, say=say, spoken_as=text, how=how, tries=tries, word_error=round(score, 3),
-                           shortest_stop_s=None if stop >= 9 else round(stop, 2), whisper_heard=heard, seconds=round(secs, 2)))
+                           shortest_stop_s=None if stop >= 9 else round(stop, 2), whisper_heard=heard, seconds=round(secs, 2), lufs=lufs_out))
         preview.append(str(f.resolve()))
         print(f"  -> {f.relative_to(OUT)} {secs:.2f}s, {how}, heard: {heard}", flush=True)
     # listening preview: the lines with 0.6 s between them
