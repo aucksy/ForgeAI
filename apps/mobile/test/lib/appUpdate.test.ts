@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { isNewer, phoneApkName, readReleaseNews, releaseUpdate, updateToShow, versionParts, WHATS_NEW_URL } from '@/lib/appUpdate';
+import { isNewer, phoneApkName, readReleaseNews, releaseUpdate, updateToShow, versionParts, WHATS_NEW_URL, WHATS_NEW_URLS } from '@/lib/appUpdate';
 
 describe('appUpdate (launch C6)', () => {
   it('reads plain versions only', () => {
@@ -58,6 +60,14 @@ describe('appUpdate (launch C6)', () => {
 describe('R-336: whats-new.json of the newest release', () => {
   it('is a plain file download (no API rate limit)', () => {
     expect(WHATS_NEW_URL).toBe('https://github.com/aucksy/ForgeAI/releases/latest/download/whats-new.json');
+  });
+  it('R-411: our own server first, GitHub second (GitHub India answered 504 on 9 Nov 2026)', () => {
+    expect(WHATS_NEW_URLS).toEqual(['https://app.mettleup.fit/app/whats-new.json', WHATS_NEW_URL]);
+  });
+  it('R-411: a failed answer is asked again after 30 minutes, also on a Play phone', () => {
+    const src = readFileSync(resolve(__dirname, '../../src/lib/appUpdate.ts'), 'utf8');
+    expect(src).toMatch(/saved\?\.version === ''/);
+    expect(src).toMatch(/for \(const url of WHATS_NEW_URLS\)/);
   });
   it('reads a version and up to 3 short, non-empty lines', () => {
     expect(readReleaseNews({ version: '0.73.0', lines: ['  One.  ', '', 'Two.', 7, 'Three.', 'Four.'] })).toEqual({

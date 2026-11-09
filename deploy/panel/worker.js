@@ -33,6 +33,7 @@
 // Android's link check (/.well-known/assetlinks.json) is a plain static file.
 
 import { deleteOldCrashes, handleCrash } from './crash.js';
+import { handleWhatsNew } from './whatsNewFeed.js';
 import { handleFeedback } from './feedback.js';
 import { handleHelp, handleHelpRate, handleHelpReplies } from './help.js';
 import { handleHqNews } from './hqNews.js';
@@ -89,6 +90,8 @@ export default {
     if (friend) return joinPage(request, env, ctx, url, friend[1].toUpperCase(), FRIEND);
     if (url.pathname.startsWith('/f/')) return joinPage(request, env, ctx, url, null, FRIEND);
     if (url.pathname === '/api/friend') return handleFriend(request, env, rpc);
+    // R-411: the update screen's What's new lines, from our own server (GitHub's India download edge failed).
+    if (url.pathname === '/app/whats-new.json') return handleWhatsNew(request, ctx);
     if (url.pathname === '/app' || url.pathname === '/app/') return latestApk(ctx);
     const bundle = /^\/dl\/(v[0-9]+\.[0-9]+\.[0-9]+)\.aab$/.exec(url.pathname);
     if (bundle) return playBundle(request, bundle[1], `mettleup-${bundle[1]}.aab`, 'application/octet-stream');

@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-411. "Why there are no release notes here for the user" (update screen on 0.75.0) — 9 Nov 2026
+- He sent a picture of "A new MettleUp is here" with no lines, on 0.75.0 (Play).
+- Cause: the screen reads whats-new.json from GitHub's release download link; GitHub's India edge answered 504 for every release file (the file is fine: 3 lines, via the API). A failed answer was then kept 6 hours on a Play phone.
+- Fix: our own copy at app.mettleup.fit/app/whats-new.json (panel Worker, GitHub API first, download link second, cached); the app asks it first, GitHub second, and retries a failed answer after 30 min. Server part deployed now; app part waits for the next release. Phones on 0.75.0 still read GitHub only, so they show lines again only when GitHub's link works.
+
 ## R-410. "yes, apply 0053 and 0054"; 0.76.0 released; panel deployed — 9 Nov 2026
 - 0.76.0 tagged on 6f0ff8f5 after CI 42521870984, journeys 42521877296, default 42521874882, owner 42521872640 all green. Release run 42539100130: build + publish OK; play-upload failed ("would clobber existing tag": the tag is annotated). Fixed play-upload.yml (force-fetch the tag, a9ed1042) and re-ran play-upload 42542335599.
 - Panel deployed (version 3971750b) with the F199 help articles; no owner news needed (member help only).

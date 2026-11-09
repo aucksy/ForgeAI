@@ -119,6 +119,10 @@ export async function findLatest(current: string | null | undefined, now = Date.
  * from lib/whatsNew.ts). The /releases/latest/download/ link is a plain file download: no API rate limit.
  */
 export const WHATS_NEW_URL = 'https://github.com/aucksy/ForgeAI/releases/latest/download/whats-new.json';
+/** R-411 (9 Nov 2026): GitHub's India download edge answered 504, so the screen showed no lines. Our own server
+ * (deploy/panel/whatsNewFeed.js) keeps a copy; it is asked first, GitHub second. */
+export const WHATS_NEW_OWN_URL = 'https://app.mettleup.fit/app/whats-new.json';
+export const WHATS_NEW_URLS: readonly string[] = [WHATS_NEW_OWN_URL, WHATS_NEW_URL];
 const NEWS_KEY = 'update_whats_new'; // JSON: { at, version, lines }
 /** Ask again when the saved answer is for another version and at least this old. */
 const NEWS_RECHECK_MS = 30 * 60 * 1000;
@@ -163,17 +167,28 @@ function readSavedNews(raw: string | null): (ReleaseNews & { at: number }) | nul
 export async function findReleaseNews(want: string | null, now = Date.now()): Promise<ReleaseNews | null> {
   const saved = readSavedNews(await readMeta(NEWS_KEY));
   const age = saved ? now - saved.at : Infinity;
-  const stale = age < 0 || age > CHECK_EVERY_MS || (want != null && saved?.version !== want && age > NEWS_RECHECK_MS);
+  // R-411: a failed answer (no version) is asked again after 30 minutes, not 6 hours: a Play phone (want = null)
+  // kept a GitHub 504 for 6 hours and showed the update screen with no lines.
+  const stale =
+    age < 0 ||
+    age > CHECK_EVERY_MS ||
+    ((saved?.version === '' || (want != null && saved?.version !== want)) && age > NEWS_RECHECK_MS);
   if (saved && !stale) return saved.version ? { version: saved.version, lines: saved.lines } : null;
   let found: ReleaseNews | null = null;
-  try {
-    const res = await fetchWithTimeout(WHATS_NEW_URL, { headers: { Accept: 'application/json' } }, NEWS_TIMEOUT_MS);
-    if (res.ok) found = readReleaseNews(await res.json());
-    else console.warn('[update] whats-new.json answered', res.status);
-  } catch (e) {
-    console.warn('[update] whats-new.json could not be read', e);
-    if (saved?.version) return { version: saved.version, lines: saved.lines }; // offline: keep the last answer
+  let reached = false;
+  for (const url of WHATS_NEW_URLS) {
+    try {
+      const res = await fetchWithTimeout(url, { headers: { Accept: 'application/json' } }, NEWS_TIMEOUT_MS);
+      reached = true;
+      if (res.ok) found = readReleaseNews(await res.json());
+      else console.warn('[update] whats-new.json answered', res.status, url);
+    } catch (e) {
+      console.warn('[update] whats-new.json could not be read', url, e);
+    }
+    if (found) break;
   }
+  // Nothing answered (offline): keep the last answer.
+  if (!found && !reached && saved?.version) return { version: saved.version, lines: saved.lines };
   const next = { at: now, version: found?.version ?? '', lines: found?.lines ?? [] };
   await enqueueWrite(() => setMeta(NEWS_KEY, JSON.stringify(next))).catch((e: unknown) =>
     console.warn('[update] could not save the What\'s new answer', e),
