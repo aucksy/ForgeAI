@@ -25,9 +25,20 @@ appId: com.mettleup.app
 - tapOn:
     text: 'Mark .*Bench Press warm-up 1 complete'
     index: 0
+# R-424: the "In use" screen (R-304) now covers the workout after a bench tick. Untick "Show after every
+# set of this exercise" once, so it stays away for the record pop-up shot, then close it.
+- extendedWaitUntil:
+    visible: 'In use\. .*Tap to close'
+    timeout: 3000
+    optional: true
+- tapOn:
+    text: 'Show after every set of this exercise'
+    optional: true
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: 'Mark .*Bench Press warm-up 2 complete'
     index: 0
+- runFlow: sub-inuse-close.yaml
 - tapOn:
     text: 'Mark .*Bench Press set 1 complete'
     index: 0
@@ -37,6 +48,7 @@ appId: com.mettleup.app
     notVisible: "New record.*"
     timeout: 12000
     optional: true
+- runFlow: sub-inuse-close.yaml
 - scrollUntilVisible:
     # R-359 fix (ad3fe56b): the short form drops "Previous: " when the full line does not fit.
     element: '(Previous: .*|\d{1,2} [A-Z][a-z]{2}( \d{4})? · .*)'
@@ -78,6 +90,7 @@ appId: com.mettleup.app
           index: 0
           optional: true
           waitToSettleTimeoutMs: 300
+      - runFlow: sub-inuse-close.yaml
 - tapOn:
     text: "Finish workout"
     index: 0
