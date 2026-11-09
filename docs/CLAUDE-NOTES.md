@@ -14,6 +14,14 @@ with Meta's assistant. He said "yes, fix the 3 lines".
 What I did: replaced on the live gym site (home/index.html, English + Hindi): "Others count fees. We keep members."
 -> "Collect fees. Help members stay."; tag "Others charge extra" -> "No extra charge"; tag "Only on MettleUp" ->
 "AI sees only column names". Then continued the Meta assistant chat.
+Result (9 Nov): CI had been red on 4 commits from a flaky What's-new feed test (43a238cc fixes it; CI 42589297688
+green). Site deployed from deploy/panel (version 8f6ae19d) with that run's dashboard-dist. UAT: gyms.mettleup.fit
+desktop + 375 px phone, English + Hindi: 3 new lines show, old lines gone, no sideways scroll.
+Meta: billing Tax ID now "-". The Business info form has NO PAN / Tax ID / Business type field (only GST and TAN,
+both optional). The assistant keeps telling him to "enter PAN in Tax ID" and invented a Business type setting; its
+hand-over to a billing specialist returned "a specific block for this account". No case, no human. Status still
+INELIGIBLE_INCOMPLETE_TAX_INFO. Helper (QA gyms) done: runs now make 3-5 "QA ..." gyms on LIVE per run, no delete;
+run 42588121791 printed 2 throwaway QA gym owner keys (6CF7B9, C7CA5F) in its public log; fix 5cbf5591.
 
 ## R-419. Chat with Meta's AI assistant to find the WhatsApp tax-block cause; read the support-case replies — 9 Nov 2026
 He asked me to keep chatting with the Meta AI business assistant (billing hub tab) to find the exact cause, and to read
