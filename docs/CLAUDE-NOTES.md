@@ -11,6 +11,8 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 He said: "auto-delete QA gyms" (his yes for the live migration and HQ deploy). Did: 0066 hq_purge_qa_gyms() deletes
 gyms named exactly "QA ..." older than 1 day (never DAB8DE, max 100 a night, audit row); HQ nightly() calls it after
 hq_nightly_cleanup in its own try. Tests: supabase/tests/0066 (look-alike real names stay), hq.test.mjs 44/44.
+LIVE 9 Nov: 0066 applied in the SQL Editor, live test RESULT PASS (7 checks), rolled back (only DAB8DE left);
+HQ Worker deployed 45fb15ff. First real purge: tonight 03:00 India time (gyms older than 1 day).
 
 ## R-422. GST later; keep the current WhatsApp verification — 9 Nov 2026
 He said: "GST will be later.. we are okay to proceed with current verification process.. I dont like it... but it is

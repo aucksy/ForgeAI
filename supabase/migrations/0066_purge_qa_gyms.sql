@@ -1,3 +1,4 @@
+-- APPLIED LIVE 9 Nov 2026 (owner: "auto-delete QA gyms"); live test RESULT PASS (7 checks).
 -- 0066: the phone tests' own gyms are deleted every night (owner: "auto-delete QA gyms", 9 Nov 2026, R-423).
 -- ADDITIVE and re-runnable: one new hq_* function. Changes nothing that exists.
 -- Test: supabase/tests/0066_purge_qa_gyms.sql (CI runs it after every migration; pasted into the SQL Editor it
