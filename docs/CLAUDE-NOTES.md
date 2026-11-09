@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-421. QA gyms deleted; never suggest a partner company; GST questions; AI keys — 9 Nov 2026
+He said: "yes, delete the QA test gyms". Asked why the 1 Dec WhatsApp decision helps; whether GST means yearly
+returns, its cost, and whether it would fix Meta. "you can stop suggesting me to use a partner company I will not do
+that" (saved as Brain rule no-whatsapp-partner-company, hard). Asked why new AI keys are needed and whether the key
+expiring 17 Nov is used anywhere.
+Did: LIVE delete (his yes) in one transaction: gyms named 'QA %' made 9 Nov (6CF7B9, C7CA5F, 72CF64); trigger
+off/on, check exactly 1 gym (DAB8DE) left; tgenabled O. The 2 leaked QA owner keys now open nothing.
+Keys: Claude console has 3 expiring keys: EmergencyCoding (17 Nov, not used by any live tool), ForgeAI-DataMigration
+(22 Nov, made 23 Oct = the day ANTHROPIC_API_KEY was set: AI import), OpenCode (24 Nov, his OpenCode app).
+CLAUDE_HELP_KEY = "MettleUp Admin Supper" (no expiry, file ~/.forgeai/anthropic-help.key). Set ANTHROPIC_API_KEY on
+forgeai-panel from that same file (version fa864699). No new keys needed; Gemini and Groq keys do not expire.
+Console balance shows $0.00: AI import and help answers fail until credit lands.
+Open: QA runs still leave 3-5 gyms each; an automatic clean-up needs a delete path for CI.
+
 ## R-420. Meta: PAN has one A; TAN emptied; fix 3 website lines — 9 Nov 2026
 He said: his PAN card spells "Akash" (one A), so the Meta billing name already matches; he will not change it. He
 removed the PAN from the TAN field himself. He asks how Meta can check a PAN it was never given; continue the chat
