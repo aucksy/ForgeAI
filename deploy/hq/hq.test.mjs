@@ -673,6 +673,12 @@ test('the Cron Trigger: Cloudflare clean-up first, then the gym server, which wr
   const out = await quiet(() => nightly(env({ WEB: fakeWeb }), { fetchImpl: net.fetchImpl, now: new Date('2026-10-23T21:30:00Z') }));
   assert.deepEqual(out.web, { feedback: 2, leads: 2, aiUsage: 2 });
   assert.equal(net.rpcCalls('hq_nightly_cleanup')[0].init.headers.apikey, HQ_KEY);
+  // The test-gym purge runs after it (R-423); its failure never fails the clean-up.
+  assert.equal(net.rpcCalls('hq_purge_qa_gyms').length, 1);
+  const purgeDown = fakeNet({ db: { hq_nightly_cleanup: { ok: true } }, dbFail: { hq_purge_qa_gyms: 'boom' } });
+  const kept = await quiet(() => nightly(env(), { fetchImpl: purgeDown.fetchImpl }));
+  assert.equal(kept.ok, true);
+  assert.deepEqual(kept.qaGyms, { error: 'failed' });
   const down = fakeNet({ dbFail: { hq_nightly_cleanup: 'boom' } });
   await assert.rejects(quiet(() => nightly(env(), { fetchImpl: down.fetchImpl })));
   assert.equal(indiaDay(new Date('2026-10-23T18:31:00Z')), '2026-10-24');

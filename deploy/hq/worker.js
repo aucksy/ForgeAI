@@ -188,6 +188,15 @@ export async function nightly(env, { fetchImpl = fetch, now = new Date() } = {})
   try {
     const out = await rpc(env, 'hq_nightly_cleanup', { p_detail: web }, { fetchImpl });
     console.log('[hq-cron] clean-up done', JSON.stringify(out));
+    // The phone tests' own "QA ..." gyms older than a day (0066, owner R-423). Its own try: a failure here
+    // (or 0066 not applied yet) never fails the clean-up above.
+    try {
+      out.qaGyms = await rpc(env, 'hq_purge_qa_gyms', {}, { fetchImpl });
+      console.log('[hq-cron] test gyms deleted', JSON.stringify(out.qaGyms));
+    } catch (e) {
+      console.error('[hq-cron] test-gym purge failed', e instanceof Error ? e.message : 'error');
+      out.qaGyms = { error: 'failed' };
+    }
     return out;
   } catch (e) {
     console.error('[hq-cron] gym server clean-up failed', e instanceof Error ? e.message : 'error');
