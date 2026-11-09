@@ -14,6 +14,10 @@ I listed first (690 gyms: 684 hidden QA gyms + 037069, RAMS01, 8CE07A, ED0BA6, F
 Plan: one transaction; gym_terms_acceptance append-only trigger off for the delete only, then on; check DAB8DE intact.
 Follow-ups: phone invite flows (invite-a/b/c) used FORGE1/RAMS01 -> make their own gym; every QA run deletes its own gym.
 WhatsApp partner: NO. Paid WhatsApp templates stay blocked; plan around it (inbound-only or other sign-in).
+RESULT (9 Nov, SQL Editor, one transaction): 690 -> 1 gym (DAB8DE). DAB8DE rows identical before/after (members 2,
+crm_records 7, member_days 10, staff 2, ...). Terms trigger back on. Left on purpose: hq_audit and gym_access_log rows
+(no FK, audit trail), 1 hq_delete_requests, 1 trial_phones row. HQ shows 1 gym. A helper is moving the phone QA flows
+off FORGE1/RAMS01 to run-made gyms that are deleted at the end of each run.
 
 ## R-417. A new Meta business probably hits the same wall; no ads until he onboards gyms himself — 9 Nov 2026
 He asked: a new business portfolio under the same personal Facebook plus a new ad account, how is that different from
