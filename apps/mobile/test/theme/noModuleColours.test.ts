@@ -139,6 +139,7 @@ describe('no token colour is copied at load time (gym branding repaints the app)
       'tracker/components/SetRow.tsx #05140A': 'the tick on the green "done" fill (color.good)',
       'tracker/components/SetRow.tsx #FFFFFF': '"Delete" on the red swipe action',
       'tracker/components/DoneSheet.tsx #1A0F08': 'fixed in its own change (out of this one)',
+      'components/brand/mettleUpMark.ts #FFFFFF': 'a stop in the MettleUp steel-shine gradient (the brand name), not an ink colour (R-426)',
     };
     const lum = (hex: string) => {
       const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((s) => (s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4));
