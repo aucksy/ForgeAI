@@ -78,7 +78,8 @@ jobs:
       - name: The tag's What's new file
         run: |
           set -euo pipefail
-          git fetch --no-tags --depth=1 origin "refs/tags/$TAG:refs/tags/$TAG"
+          # "+": the checkout already made a plain local tag; an annotated tag (v0.76.0) is "rejected ... would clobber".
+          git fetch --no-tags --depth=1 origin "+refs/tags/$TAG:refs/tags/$TAG"
           git show "refs/tags/$TAG:apps/mobile/src/lib/whatsNew.ts" > "$RUNNER_TEMP/whatsNew.ts"
           wc -c "$RUNNER_TEMP/whatsNew.ts"
 
