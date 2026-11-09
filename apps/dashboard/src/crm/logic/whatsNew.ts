@@ -42,6 +42,10 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
     id: '2026-11-09',
     lines: [
       {
+        // R-425 (9 Nov 2026): the steel-plate name on the sign-in page, the Welcome page and the menu.
+        text: 'The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.',
+      },
+      {
         text: 'New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on their phone.',
         go: { label: 'Open Questions', path: '/questions' },
         feature: true,

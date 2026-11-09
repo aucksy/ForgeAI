@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { supabase } from '../lib/supabase';
-import { color, font, gradients, space } from '../theme';
+import { color, font, space } from '../theme';
+import { SteelLockup } from './SteelLockup';
 import { Button, Card, ErrorText, TextField } from './ui';
 
 /**
@@ -54,19 +55,10 @@ export function Login() {
     <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: space.xl }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
         <div style={{ textAlign: 'center', marginBottom: space.xl }}>
-          <div
-            style={{
-              fontFamily: font.display,
-              fontSize: 30,
-              fontWeight: 700,
-              background: gradients.ember,
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            MettleUp
-          </div>
+          {/* R-259: the steel-plate lockup (mark + name), 48 px: the name's cap height is 21 px. */}
+          <h1 style={{ margin: 0, display: 'flex', justifyContent: 'center' }}>
+            <SteelLockup height={48} />
+          </h1>
           <div style={{ color: color.inkMuted, fontSize: 13, marginTop: 4 }}>Owner dashboard</div>
         </div>
 

@@ -25,6 +25,7 @@ import { useShop } from '../shop/ShopProvider';
 import { useCrm } from '../store';
 import { Button, Card, ErrorBanner, color, font, radius, space } from './kit';
 import { SupportLine } from './SupportLine';
+import { SteelLockup } from '../../components/SteelLockup';
 
 export function Welcome() {
   // R-97: the direct sign-up link (https://app.mettleup.fit/start) puts "Start my gym" first.
@@ -114,18 +115,10 @@ export function Welcome() {
           <ThemeToggle />
         </div>
         <div style={{ textAlign: 'center', marginBottom: space.xxl }}>
-          <div
-            style={{
-              fontFamily: font.display,
-              fontSize: 30,
-              fontWeight: 800,
-              color: color.ink,
-              letterSpacing: -0.5,
-            }}
-          >
-            {/* R-105: a plain text wordmark until the logo is picked (#61). */}
-            Mettle<span style={{ color: color.accent }}>Up</span>
-          </div>
+          {/* R-259: the steel-plate lockup (mark + name), 48 px: the name's cap height is 21 px. */}
+          <h1 style={{ margin: 0, display: 'flex', justifyContent: 'center' }}>
+            <SteelLockup height={48} />
+          </h1>
           <div style={{ marginTop: 2, fontFamily: font.body, fontSize: 14, fontWeight: 600, color: color.inkSecondary, letterSpacing: 0.4 }}>
             {t('for Gyms')}
           </div>

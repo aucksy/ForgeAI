@@ -62,8 +62,13 @@ p { margin: 6px 0; }
 
 /* ---------------------------------------------------------------- the frame */
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
-.brand-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #ff9a4d, #f0662a 55%, #c9431a); color: #fff; font-size: 16px; font-weight: 900; box-shadow: 0 4px 14px rgb(240 102 42 / 0.35); }
-.brand-hq { color: var(--accent); }
+/* R-259 "steel plate" lockup (mark + METTLEUP), inline in index.html from branding/mettleup/_src/web_steel_lockup.py.
+   Flat small-size colours: METTLE Iron and UP Forge on dark; Steel and Ember on light (BRAND.md). */
+.brand-lockup { display: block; height: 30px; width: auto; flex: none; }
+.lk-mettle { fill: #E8EAEE; }
+.lk-up { fill: #F0662A; }
+@media (prefers-color-scheme: light) { .lk-mettle { fill: #1B1F26; } .lk-up { fill: #E0581F; } }
+.brand-hq { color: var(--accent); font-size: 13px; font-weight: 800; letter-spacing: 0.08em; padding: 2px 7px; border: 1.5px solid currentColor; border-radius: 6px; line-height: 1.2; }
 
 .top {
   position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;

@@ -68,6 +68,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
 
   // ── Start page, sign in, Create my gym ─────────────────────────────────
   'for Gyms': 'Gyms ke liye',
+  // R-259: the side menu's quiet line before the steel MettleUp name.
+  'Powered by': 'Powered by',
   'Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the MettleUp app.':
     'Apna gym chalao: members, renewal, baaki fees aur hazri. Saath mein ek shop, jahan se members MettleUp app mein order karte hain.',
   'Sign in or set up': 'Sign in karo ya naya gym banao',

@@ -94,8 +94,10 @@ put in place by `python branding/mettleup/install.py --apply --only dashboard`. 
 | `brand/apple-touch-icon-180.png` | 180 x 180 | iPhone home screen |
 | `brand/og-1200x630.png` | 1200 x 630 | link preview of mettleup.fit (WhatsApp, Google) |
 | `brand/mark.svg` | 26 x 26 shown | landing page header, beside the words "MettleUp for Gyms" |
-| `brand/wordmark-light.svg`, `brand/wordmark-dark.svg` | vector | spare lockups (not shown yet) |
-The admin sign-in page shows the name as text. The old `public/icons/admin-*.png` stay on disk for
+| `brand/lockup-steel.svg` | 26 px high | website headers: mark + the steel-plate name (R-259) |
+| `brand/wordmark-light.svg`, `brand/wordmark-dark.svg` | vector | spare steel-plate lockups (light: Steel + Ember; dark: Iron + Forge) |
+The admin app draws the steel-plate lockup itself (`src/components/SteelLockup.tsx`, shapes in the generated
+`src/brand/steelLockup.ts`; run `python branding/mettleup/_src/web_steel_lockup.py` after a logo change). The old `public/icons/admin-*.png` stay on disk for
 pages cached before the change. HQ (`apps/hq/public/`) has its own `favicon.svg` copy.
 
 **Roll back** (a deploy broke the panel): from `deploy/panel`,

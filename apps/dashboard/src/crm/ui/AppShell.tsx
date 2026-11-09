@@ -19,6 +19,7 @@ import { useNewFeatures } from './NewDots';
 import { barLit, linkLit, reachable } from '../logic/newDots';
 import { Link, useRoute } from './router';
 import { t } from '../lang/lang';
+import { SteelLockup } from '../../components/SteelLockup';
 
 export interface NavItem {
   path: string;
@@ -127,8 +128,12 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       <div style={{ padding: `0 ${space.md}px ${space.lg}px` }}>
         {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
         <BranchSwitch gymName={gymName} />
-        <div style={{ fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.6 }}>
-          POWERED BY METTLEUP
+        {/* R-259: "Powered by" + the steel-plate name, flat and small, so it stays quiet under the gym's name. */}
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: font.body, fontSize: 11, color: color.inkMuted, letterSpacing: 0.4 }}
+        >
+          {t('Powered by')}
+          <SteelLockup height={9} mark={false} />
         </div>
         <div style={{ marginTop: space.md }}>
           <ThemeToggle compact />
