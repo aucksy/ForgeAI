@@ -1,5 +1,7 @@
 # Marketing research, November 2026 (R-414)
 
+**R-415 review (9 Nov): see MARKETING-PLAN.md v2. Also: muscles-ready (F59) is switched off, register PHOTO import is not built, automatic WhatsApp reminders are Not doing (F104), Okfit already gives a free member app, so 'nobody shows a branded app' is wrong as a public claim.**
+
 Digest of 4 research helpers + my own Meta Ad Library check, 9 Nov 2026. Vendor and agency numbers are rough; each is labelled in the helper reports. Key sources are listed at the end.
 
 
@@ -8,11 +10,11 @@ Digest of 4 research helpers + my own Meta Ad Library check, 9 Nov 2026. Vendor 
 - FITTR: WhatsApp group 2014, transformation stories, ~zero CAC. HealthifyMe: Meta lookalikes + video, 5x monthly installs (Meta case study).
 - Influencer: 500k views -> 200 installs (Airbridge). Need deep link, matching store page, judge on lift.
 - ASO: first 3 screenshots, captions ~+25% (vendor). <4.0 stars converts 10-20% worse (vendor est). Use Play Store Listing Experiments.
-- Through gym: Xercise4Less up to 90% downloads at best sites with in-gym roadshow + staff training + check-in/challenges; email launch failed (Virtuagym case study). Trainerize: first plan in 3 days, day-7 check-in.
+- Through gym: Xercise4Less app DOWNLOADS reached up to 90% at its best sites (not '90% of members') with in-gym roadshow + staff training + check-in/challenges; email launch failed (Virtuagym case study). Trainerize: first plan in 3 days, day-7 check-in.
 - India CPI health/fitness ~Rs31 (Linkrunner, low confidence). My est Rs15-40/install, Rs60-150 per first workout. Retention D1/7/30 ~20-28/7-18/3-9%; Braze H&F Android D30 3.4%.
 - Hindi ads 18-40% cheaper (Think with Google); Khatabook vernacular +60% installs, -20% CPI.
 - Micro-influencer Reel India Rs8-35k typical.
-- WATCH: Wear OS-class watches only 3.2% of 28.9M India smartwatches 2025 (IDC). Watch = side point, not a hook.
+- WATCH: CORRECTED by R-415 review: IDC's 3.2% is advanced watches (Apple + Wear OS) as a share of ALL 114.2M wearables, about 13% of smartwatches; Wear OS is only part. Watch = side point, not a hook.
 - Hooks: know what to lift today; never forget last week's weight; trainer's plan in pocket (Hindi/English, gym name); muscles ready today; free everything no limits (Strong 3 routines, Hevy ~4); watch yourself get stronger; beat your gym (leaderboard); watch (niche).
 - Complaints to use: lost workouts/crashes (Strong), paywalls, abandoned apps.
 - Top: gym launch ritual (QR desk, trainer installs first visit, plan in 3 days, day-7 check-in, challenge in first 2 weeks); north-star = first workout logged at first visit; share cards; Play listing fix; rating 4.5+; trainer micro-influencers; Rs20-30k paid test optimised for first workout; switch-from content; transformation pipeline.
@@ -26,7 +28,7 @@ Digest of 4 research helpers + my own Meta Ad Library check, 9 Nov 2026. Vendor 
 - CPL: CTWA Rs200-800 (qualified B2B Rs800-2500, 15-25% qualify); instant forms Rs400-1500 (5-12% qualify); landing Rs600-2500 (agency, rough). WhatsApp marketing msg ~Rs0.78-0.86, utility ~Rs0.12-0.15 + GST.
 - Channel rank: referrals; field visits w/ live demo on his phone; CTWA ads Hindi+English; dealer/academy partners; Google Search high-intent + competitor names; instant forms Higher Intent with questions; Reels/YouTube owner-to-owner Hindi; trade shows (visit first); SEO vs-pages; webinars weak.
 - Hooks: members leaving (needs OWN pilot proof - unproven today); fee leakage "how much pending right now"; register/Excel -> "send a photo, ready same day"; your brand vs Cult; WhatsApp reminders autopilot; trainer leaves, clients stay; "one extra renewal pays for it".
-- Offer: 90-day trial too long - length barely matters, commitment does (card-required 30-49% vs no-card 8-18%, ChartMogul). Suggest 30 days extendable to 90 on milestones, or 90 with UPI AutoPay mandate. Done-for-you import headline. Send branded mock-up of HIS gym within 10 min (nobody does). Founding offer real cap. Guarantee only after proof. Public pricing keep.
+- Offer: trial length barely matters (weak 2018 data). CORRECTED by R-415: ChartMogul 2026 = card-required ~30%, no-card typical 4-6% (best 10-15%), and asking for a card cuts sign-ups ~22%. A card/AutoPay trial is a 'subscription trap' dark pattern under India's CCPA 2023 guidelines: NOT an option. Done-for-you import headline. Send branded mock-up of HIS gym within 10 min (nobody does). Founding offer real cap. Guarantee only after proof. Public pricing keep.
 - Speed to lead: <5 min = ~21x qualify (MIT/InsideSales via HBR, secondhand).
 - WA sequence: 0 min auto (gym name, members) -> 10 min mock-up + call link -> D1 testimonial -> D3 register photo offer -> D7 fee maths -> D14 breakup. Stop.
 - Trial milestones: import D1, first reminder D3, 10 members on app D7, first plan D10, Rs collected D30. Call trials missing step 1 by D2.

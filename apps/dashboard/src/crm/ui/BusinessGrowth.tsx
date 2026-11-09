@@ -116,7 +116,7 @@ export function GrowthScreen() {
             {report.mode === 'firstLatest'
               ? 'Until then, this page compares your first months on MettleUp with your latest months. '
               : ''}
-            Add your old member list and fee records from an Excel file or a photo of your register, and this page shows how the gym did before you started.
+            Add your old member list and fee records from an Excel or CSV file, and this page shows how the gym did before you started.
           </p>
           <Button onClick={() => navigate(IMPORT_PATH)}>Add old records</Button>
         </Card>

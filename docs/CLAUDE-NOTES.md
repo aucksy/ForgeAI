@@ -11,6 +11,12 @@ Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept her
 He said: "re-assess the growth plan and skill that you wrote with a new helper with Opus 5.5. Max effort".
 What I did: one fresh Opus 5.5 reviewer at max effort, given only the files (plan, research, skill, page, landing
 page, product docs), told to fact-check with its own searches and propose fixes. I apply the real findings after.
+Result (9 Nov): review was right (checked: F59 off, F104 Not doing, photo import not built, live site lines). Applied: skill
+rewritten with a claims check + India/Meta/Play/ASCI/dark-pattern/WhatsApp rules; plan v2 (proof first, client gym and
+Jaipur visits before ads; safe Gmail move: second owner only, never remove old, no 2nd GitHub/Facebook account, Namecheap
+login email only, Meta display name only, keys inside existing accounts before 17 Nov; WhatsApp rupee billing by 31 Dec);
+research corrected (watch ~13% not 3.2%, ChartMogul numbers, card/AutoPay trial = dark pattern); admin app "photo of your
+register" line fixed. Live gym-site false lines ("Others charge extra", "Only on MettleUp", "We keep members") wait for his yes.
 
 ## R-414. Marketing research + plan, automated lead system, move to a brand Gmail — 9 Nov 2026
 He said: do deep research on marketing; find the most effective ways to market the member app and the gym software
