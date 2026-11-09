@@ -1,0 +1,62 @@
+# FINAL ad voice in the voice the owner picked (R-431: sample 2, Chatterbox Indian-accent female).
+# Manual runs only. Makes one WAV per line of each ad (marketing/voice-samples/final_chatterbox.py) in the
+# layout owner-ads.yml reads: render with  voice=<this run id>  voice_name=chatterbox-female-indian.
+# The voice copies the SYNTHETIC Kokoro hf_beta clip from voice-samples run 42660871346 (or remakes it the
+# same way, Kokoro is deterministic). No keys, no paid API, CPU runner; the laptop runs nothing.
+name: final-voice
+
+on:
+  workflow_dispatch:
+    inputs:
+      ads:
+        description: 'Ad ids, comma-separated'
+        required: false
+        default: '03-own-app,06-progress'
+      ref_run:
+        description: 'voice-samples run whose refs-kokoro artifact holds the reference clip'
+        required: false
+        default: '42660871346'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: marketing/voice-samples
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reference clip (synthetic Kokoro hf_beta)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "${{ inputs.ref_run }}" -R "${{ github.repository }}" -n refs-kokoro -D refs || true
+          ls -l refs || true
+      - uses: actions/setup-node@v4
+        if: hashFiles('marketing/voice-samples/refs/hf_beta.wav') == ''
+        with:
+          node-version: 22
+      - name: Remake the reference clip if the old one expired
+        if: hashFiles('marketing/voice-samples/refs/hf_beta.wav') == ''
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund kokoro-js@1.2.1
+          node gen_kokoro.mjs /tmp/kokoro-out refs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Chatterbox (CPU), Whisper, ffmpeg
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install -q "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git" faster-whisper
+      - run: sha256sum refs/hf_beta.wav
+      - run: python final_chatterbox.py refs/hf_beta.wav final "${{ inputs.ads }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voice-chatterbox-female-indian
+          path: marketing/voice-samples/final
+          retention-days: 30
