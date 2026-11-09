@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-420. Meta: PAN has one A; TAN emptied; fix 3 website lines — 9 Nov 2026
+He said: his PAN card spells "Akash" (one A), so the Meta billing name already matches; he will not change it. He
+removed the PAN from the TAN field himself. He asks how Meta can check a PAN it was never given; continue the chat
+with Meta's assistant. He said "yes, fix the 3 lines".
+What I did: replaced on the live gym site (home/index.html, English + Hindi): "Others count fees. We keep members."
+-> "Collect fees. Help members stay."; tag "Others charge extra" -> "No extra charge"; tag "Only on MettleUp" ->
+"AI sees only column names". Then continued the Meta assistant chat.
+
 ## R-419. Chat with Meta's AI assistant to find the WhatsApp tax-block cause; read the support-case replies — 9 Nov 2026
 He asked me to keep chatting with the Meta AI business assistant (billing hub tab) to find the exact cause, and to read
 the "Support Case Update" chats too: Meta answers there, not by email.
