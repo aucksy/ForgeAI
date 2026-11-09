@@ -23,7 +23,7 @@ Voice: Kokoro (free), Hindi voice `hf_alpha` reading English (an Indian accent).
 ### 2. Less than one member's fee (`02-one-member-fee`)
 - **Primary text:** Gym software for less than one member's monthly fee: MettleUp Starter is ₹999 a month.
   Members, plans, renewals, check-ins and dues, plus a free workout app for every member in your gym's name. Free for 3 months, no card.
-- **Headline:** ₹999 a month. Members pay nothing.
+- **Headline:** ₹999 a month. Free app for members.
 - **Description:** If a member pays you more than ₹999 a month, it costs less than one member.
 - **Screens:** Plans (example monthly plan ₹1,200), Today, Dues. A price tag carries the condition in writing.
 
@@ -46,7 +46,7 @@ Voice: Kokoro (free), Hindi voice `hf_alpha` reading English (an Indian accent).
   The next trainer opens the same plans and sends them to members. Free for 3 months, no card.
 - **Headline:** Trainers change. Your plans stay.
 - **Description:** Trainer plans are on Pro.
-- **Screens:** Workout plans (admin), the member app's Gym tab ("Your trainer's workout plans, right on your Workout tab"). "Trainer plans: on Pro" is on screen.
+- **Screens:** Workout plans (admin, the example gym with three plans sent to its Monthly and Quarterly members), the member app's Gym tab ("Your trainer's workout plans, right on your Workout tab"). "On Pro" is on screen and spoken.
 
 **Button (all):** Sign up -> `https://app.mettleup.fit/start` (live: opens "Start my gym"). Not "Message us on WhatsApp": Click-to-WhatsApp needs a Facebook Page linked to the number, and the plan holds it until 3 live gyms.
 
@@ -91,3 +91,11 @@ Not claimed anywhere: members stay / more renewals (no pilot numbers in proof/),
 - **Tracking:** MISSING. Sign-ups do not record which ad they came from. Before spending, give each ad its own link (`app.mettleup.fit/start?src=meta-01` etc.) or ask every new gym "how did you hear about us". Leads get the skill's follow-up (0 min reply, his gym's app picture by 10 min, day 3 "send your Excel or register").
 - **Log:** results go in `docs/marketing/RESULTS.md`, ending with cost per paid gym.
 - **Before launch (his steps):** Facebook Page + Instagram for MettleUp in his verified business; ad account; card on the ad account; his read-aloud of the Hinglish lines; his yes on the budget.
+
+## Renders and checks (9 Nov 2026)
+
+- **Files:** `D:\Apps\ForgeAI\Marketing\owner-ads-v1\` on his PC (not in git): `01-pending-fee.mp4` ... `05-trainer-leaves.mp4`, plus `-1x1.png` and `-4x5.png` for each. 1080x1920, 30 fps, 17-19 s, about 6-7 MB each.
+- **Cloud runs (`owner-ads.yml`):** 42630737525 (one runner, hit the hour limit), 42640821172 (rendered, lost to a missing ffprobe), 42645656694 (first good set), 42650612913 (final, after the review fixes).
+- **Checked:** frames at 0.5 s, 2 s, 35%, 55%, 75% and the end of every video; sound and picture lengths match to within 0.06 s; feed pictures read.
+- **Fresh-eyes review (one helper, pictures only, as a Jaipur gym owner):** ranked 2 (price) > 1 (pending fee) > 4 (Excel move) > 5 (trainer leaves) > 3 (own app). Fixed: ad 05 showed an empty plan list and a cut-off tag; loose colour squares (03) and floating plan names (05) read as placeholders; too many words in the first 2 s; "Members pay nothing" was unclear.
+- **Not fixed, on purpose:** the example gym's dues look heavy (most over 60 days, one at 711 days) because that is the live demo's data; the short blur into the end card reads as a glitch in a still, not in motion; "on Pro" stays on screen in 03 and 05 because it is true.
