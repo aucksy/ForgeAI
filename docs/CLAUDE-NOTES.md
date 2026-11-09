@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-414. Marketing research + plan, automated lead system, move to a brand Gmail — 9 Nov 2026
+He said: do deep research on marketing; find the most effective ways to market the member app and the gym software
+SEPARATELY, with a few different hooks; plan the types of media to create; find established well-known marketing skills,
+then make our own after accurate research. Goal: the highest possible lead conversion. Then an end-to-end automated system
+that connects to the HQ panels so he gets reports and notifications. He has decided to move all the brand's services to a
+NEW Gmail ID, because marketing needs a new Meta account (his current ad account and WhatsApp messaging do not work with his
+personal email). Start with that move: plan it.
+What I did: 4 research helpers (member app, gym software, skills + media + automation, account move); a plan page for him;
+our own marketing skill. Building waits for his yes on the plan. Creating the Gmail is his (account creation).
+
 ## R-413. A new-feature dot must never lead to a hidden page — 9 Nov 2026
 Found by CI (newdots-uat time test, run 42566535419): the 9 Nov "Questions" news line lit the phone's More button even in
 a gym where Questions is hidden (plain desk, or no 0053). The owner would follow a dot to nothing. Fix: the bottom bar
