@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-418. Clean slate: delete every gym except DAB8DE (LIVE); no WhatsApp partner — 9 Nov 2026
+He said: "I want all other GYMs removed from database except DAB8DE. All other test GYMS and I need clean slate."
+I listed first (690 gyms: 684 hidden QA gyms + 037069, RAMS01, 8CE07A, ED0BA6, FORGE1) and asked. His yes, 9 Nov 2026:
+"yes, delete all gyms except DAB8DE". Also: "No to WhatsApp Partner".
+Plan: one transaction; gym_terms_acceptance append-only trigger off for the delete only, then on; check DAB8DE intact.
+Follow-ups: phone invite flows (invite-a/b/c) used FORGE1/RAMS01 -> make their own gym; every QA run deletes its own gym.
+WhatsApp partner: NO. Paid WhatsApp templates stay blocked; plan around it (inbound-only or other sign-in).
+
 ## R-417. A new Meta business probably hits the same wall; no ads until he onboards gyms himself — 9 Nov 2026
 He asked: a new business portfolio under the same personal Facebook plus a new ad account, how is that different from
 today, and what are the chances the same issue comes back? And: "no ad money. I will physically try to onboard a few gyms
