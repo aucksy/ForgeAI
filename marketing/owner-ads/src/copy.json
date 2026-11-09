@@ -209,6 +209,54 @@
         "F109",
         "Gym site Pro list"
       ]
+    },
+    {
+      "id": "06-progress",
+      "hook": [
+        "Members keep",
+        "coming back",
+        "when they see",
+        "progress."
+      ],
+      "accent": [
+        3
+      ],
+      "hi": "Progress dikhe, toh member aate rahenge.",
+      "lines": [
+        {
+          "say": "Members keep coming back when they see progress.",
+          "show": "Members keep coming back when they see progress."
+        },
+        {
+          "say": "Progress needs tracking, set by set.",
+          "show": "Progress needs tracking, set by set."
+        },
+        {
+          "say": "MettleUp gives every member a free, modern workout app, in your gym's name.",
+          "show": "MettleUp gives every member a free, modern workout app, in your gym's name."
+        },
+        {
+          "say": "Open your own shop, on Pro. Send free messages to their phones.",
+          "show": "Open your own shop, on Pro. Send free messages to their phones."
+        },
+        {
+          "say": "MettleUp. Modern gym software. Free for three months. No card.",
+          "show": "MettleUp. Modern gym software. Free for 3 months. No card."
+        }
+      ],
+      "payoff": [
+        "A modern app,",
+        "in your gym's name."
+      ],
+      "proof": [
+        "F1",
+        "F46",
+        "F116",
+        "F126 (Pro)",
+        "F128",
+        "F132",
+        "Gym site hero and member-app list"
+      ]
     }
   ]
 }

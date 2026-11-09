@@ -34,6 +34,15 @@ export type Timing = {
   total: number;
 };
 
+/**
+ * Ads with no voice files (yet): the render plays music only and times the lines by the planned
+ * lengths in vo.json. scripts/voice-pack.mjs fills it in the cloud render (`voice` input).
+ */
+export function hasVoice(id: string): boolean {
+  const off = (vo as unknown as { _novoice?: string[] })._novoice ?? [];
+  return !off.includes(id);
+}
+
 export function timing(id: string): Timing {
   const lens = (vo as unknown as Record<string, number[]>)[id];
   if (!lens) throw new Error(`no voice lengths for ${id}: run scripts/generate-vo.mjs`);

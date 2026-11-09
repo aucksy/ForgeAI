@@ -2,18 +2,31 @@
 # (Remotion). Manual runs only. The laptop never renders full videos (owner rule); this does.
 # One job per ad, side by side (one runner did ~12 min per ad and hit the hour limit doing all five).
 # Output: one artifact per ad, "owner-ads-<id>", kept 3 days (artifact storage is small and shared).
+# Voice (scripts/voice-pack.mjs): blank = the voice files in the repo (01-05: Kokoro; 06 has none yet, so
+# it renders with music only); "none" = music only; a run id = the voice from that run's artifacts, one file
+# <ad-id>/vo-<n>.wav (or .mp3) per line of copy.json's `say` text; voice_name picks the voice's folder.
+# Final render with the chosen voice: only=03-own-app,06-progress  voice=<run id>  voice_name=<voice>.
 name: owner-ads
 
 on:
   workflow_dispatch:
     inputs:
       only:
-        description: 'Ad ids, comma-separated (blank = all five)'
+        description: 'Ad ids, comma-separated (blank = all six)'
+        required: false
+        default: ''
+      voice:
+        description: 'Voice: blank = files in the repo, none = music only, or a run id whose artifacts hold <ad-id>/vo-<n>.wav'
+        required: false
+        default: ''
+      voice_name:
+        description: "With a run id: the chosen voice's folder name in that run (blank = the only one)"
         required: false
         default: ''
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   plan:
@@ -25,7 +38,7 @@ jobs:
         env:
           ONLY: ${{ inputs.only }}
         run: |
-          all='01-pending-fee,02-one-member-fee,03-own-app,04-excel-move,05-trainer-leaves'
+          all='01-pending-fee,02-one-member-fee,03-own-app,04-excel-move,05-trainer-leaves,06-progress'
           pick="${ONLY:-$all}"
           echo "ids=$(echo "$pick" | tr -d ' ' | jq -Rc 'split(",") | map(select(length>0))')" >> "$GITHUB_OUTPUT"
 
@@ -56,6 +69,13 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Music bed and sound effects (procedural, deterministic)
         run: node scripts/synth-audio.mjs
+      - name: Voice
+        env:
+          ONLY: ${{ matrix.id }}
+          VOICE: ${{ inputs.voice }}
+          VOICE_NAME: ${{ inputs.voice_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/voice-pack.mjs
       - name: Render videos and feed stills
         env:
           ONLY: ${{ matrix.id }}

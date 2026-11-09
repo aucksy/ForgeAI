@@ -113,7 +113,9 @@ const CalloutLayer: React.FC<{ spots: Spot[]; sw: number; sh: number }> = ({ spo
 /** A phone: dark titanium frame, the real screen inside, glass glare, side keys, a soft floor shadow. */
 export const Phone: React.FC<{
   src: string; width?: number; aspect?: number; spots?: Spot[]; tag?: string; glare?: number; dim?: number; scrollY?: number;
-}> = ({ src, width = 470, aspect = 1170 / 2532, spots = [], tag, glare = 0.5, dim = 0, scrollY = 0 }) => {
+  /** drawn on the screen above the spotlight (ad 06: a gym message popping up) */
+  children?: React.ReactNode;
+}> = ({ src, width = 470, aspect = 1170 / 2532, spots = [], tag, glare = 0.5, dim = 0, scrollY = 0, children }) => {
   const sw = width, sh = width / aspect;
   const bez = 16;
   const f = useCurrentFrame();
@@ -135,6 +137,7 @@ export const Phone: React.FC<{
       <div style={{ position: 'absolute', left: bez, top: bez, width: sw, height: sh, borderRadius: 64, overflow: 'hidden', background: '#000' }}>
         <Img src={staticFile(src)} style={{ width: sw, display: 'block', transform: `translateY(${-scrollY * sh}px)` }} />
         <SpotLayer spots={spots} sw={sw} sh={sh} />
+        {children}
         {dim > 0 && <div style={{ position: 'absolute', inset: 0, background: `rgba(0,0,0,${dim})` }} />}
         {/* glass glare: a soft diagonal band that drifts */}
         <div style={{

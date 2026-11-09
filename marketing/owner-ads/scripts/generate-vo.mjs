@@ -79,6 +79,7 @@ for (const ad of copy.ads) {
     lens[ad.id].push(Math.round(s * 1000) / 1000);
     console.log(ad.id, i + 1, s.toFixed(2), 's');
   }
+  if (lens._novoice) lens._novoice = lens._novoice.filter((x) => x !== ad.id);
 }
 lens._voice = VOICE;
 lens._speed = SPEED;

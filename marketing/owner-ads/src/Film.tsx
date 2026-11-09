@@ -11,7 +11,7 @@ import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame
 import { C, EASE, MANROPE, clampOpts, easeOpts } from './theme';
 import { Desk, Phone, Pose, Rect, Room, Space, Spot, mix, tf } from './stage';
 import { Captions, EndCard, Headline, HiChip, Sfx, Streaks } from './kit';
-import { ADS, Timing, timing } from './timing';
+import { ADS, Timing, hasVoice, timing } from './timing';
 import { SPECS } from './ads';
 
 export type SpotSpec = { line: 1 | 2 | 3; at: number; until: number; rect: Rect; label?: string; side?: 'left' | 'right'; below?: boolean };
@@ -77,7 +77,8 @@ export const Film: React.FC<{ id: string }> = ({ id }) => {
   const Motif = spec.motif;
 
   // music: under the voice, louder between lines, out over the last second
-  const voOn = (fr: number) => t.lines.some((l) => fr >= l.from - 4 && fr <= l.from + l.dur + 4);
+  const voice = hasVoice(spec.id);
+  const voOn = (fr: number) => voice && t.lines.some((l) => fr >= l.from - 4 && fr <= l.from + l.dur + 4);
   const musicVol = (fr: number) =>
     (voOn(fr) ? 0.2 : 0.42) * interpolate(fr, [total - 30, total - 2], [1, 0], clampOpts) * interpolate(fr, [0, 6], [0.6, 1], clampOpts);
 
@@ -121,7 +122,7 @@ export const Film: React.FC<{ id: string }> = ({ id }) => {
 
       {/* sound */}
       <Audio src={staticFile('audio/music.wav')} volume={musicVol} />
-      {t.lines.map((l, i) => (
+      {voice && t.lines.map((l, i) => (
         <Sequence key={i} from={l.from} layout="none">
           <Audio src={staticFile(`audio/${spec.id}/vo-${i + 1}.wav`)} volume={1} />
         </Sequence>

@@ -135,13 +135,14 @@ export const Lockup: React.FC<{ width: number; sweepAt?: number; still?: boolean
 };
 
 /** The last 3 seconds: the steel name lands, light sweeps it, the offer and the address. */
-export const EndCard: React.FC<{ at: number; line?: string }> = ({ at, line = "Gym software + a free member app in your gym's name." }) => {
+export const EndCard: React.FC<{ at: number; line?: string; tagline?: string }> = ({ at, line = "Gym software + a free member app in your gym's name.", tagline }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (f < at) return null;
   const s = spring({ frame: f - at, fps, config: { damping: 15, stiffness: 120, mass: 0.9 } });
   const veil = interpolate(f, [at, at + 12], [0, 1], clampOpts);
   const txt = (d: number) => interpolate(f, [at + d, at + d + 14], [0, 1], easeOpts);
+  const dy = tagline ? 96 : 0; // a tagline under the name pushes the offer down
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{ background: `rgba(7,8,10,${0.72 * veil})`, backdropFilter: `blur(${14 * veil}px)` }} />
@@ -151,11 +152,17 @@ export const EndCard: React.FC<{ at: number; line?: string }> = ({ at, line = "G
           <Lockup width={880} sweepAt={at + 16} />
         </div>
       </div>
-      <div style={{ position: 'absolute', top: 760, left: 0, right: 0, textAlign: 'center', fontFamily: MANROPE, fontWeight: 800, fontSize: 80, lineHeight: 1.08, letterSpacing: '-0.025em' }}>
+      {tagline && (
+        <div style={{
+          position: 'absolute', top: 708, left: 0, right: 0, textAlign: 'center', fontFamily: MANROPE, fontWeight: 700, fontSize: 56,
+          letterSpacing: '-0.015em', color: C.iron, opacity: txt(6), transform: `translateY(${(1 - txt(6)) * 24}px)`,
+        }}>{tagline}</div>
+      )}
+      <div style={{ position: 'absolute', top: 760 + dy, left: 0, right: 0, textAlign: 'center', fontFamily: MANROPE, fontWeight: 800, fontSize: 80, lineHeight: 1.08, letterSpacing: '-0.025em' }}>
         <div style={{ opacity: txt(10), transform: `translateY(${(1 - txt(10)) * 30}px)`, ...ACCENT_TEXT }}>Free for 3 months.</div>
         <div style={{ opacity: txt(14), transform: `translateY(${(1 - txt(14)) * 30}px)`, ...STEEL_TEXT }}>No card.</div>
       </div>
-      <div style={{ position: 'absolute', top: 1000, left: 0, right: 0, display: 'flex', justifyContent: 'center', opacity: txt(20), transform: `scale(${0.9 + 0.1 * txt(20)})` }}>
+      <div style={{ position: 'absolute', top: 1000 + dy, left: 0, right: 0, display: 'flex', justifyContent: 'center', opacity: txt(20), transform: `scale(${0.9 + 0.1 * txt(20)})` }}>
         <div style={{
           fontFamily: MANROPE, fontWeight: 800, fontSize: 50, color: C.steel, padding: '24px 46px', borderRadius: 999,
           background: `linear-gradient(180deg, #FF9A5F, ${C.forge})`, boxShadow: '0 20px 50px rgba(240,102,42,0.45), inset 0 2px 0 rgba(255,255,255,0.35)',
@@ -165,7 +172,7 @@ export const EndCard: React.FC<{ at: number; line?: string }> = ({ at, line = "G
           <svg width="42" height="42" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" stroke={C.steel} strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
       </div>
-      <div style={{ position: 'absolute', top: 1150, left: 40, right: 40, textAlign: 'center', fontFamily: MANROPE, fontWeight: 600, fontSize: 31, color: C.grey, opacity: txt(26) }}>{line}</div>
+      <div style={{ position: 'absolute', top: 1150 + dy, left: 40, right: 40, textAlign: 'center', fontFamily: MANROPE, fontWeight: 600, fontSize: 31, color: C.grey, opacity: txt(26) }}>{line}</div>
     </AbsoluteFill>
   );
 };

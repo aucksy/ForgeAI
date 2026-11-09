@@ -6,11 +6,12 @@ import { Desk, Phone, Room, tf, mix } from './stage';
 import { Headline, Lockup } from './kit';
 import { ADS } from './timing';
 import { SPECS } from './ads';
+import { PROGRESS_FEED } from './Progress';
 import { C, MANROPE } from './theme';
 
 export const Feed: React.FC<{ id: string; h: number }> = ({ id, h }) => {
-  const spec = SPECS.find((x) => x.id === id) as AdSpec;
-  const ad = ADS.find((a) => a.id === spec.id)!;
+  const spec = (SPECS.find((x) => x.id === id) ?? PROGRESS_FEED) as Pick<AdSpec, 'desk' | 'first'>;
+  const ad = ADS.find((a) => a.id === id)!;
   const tall = h > 1100;
   const size = tall ? 84 : 74;
   const shot = spec.first;
