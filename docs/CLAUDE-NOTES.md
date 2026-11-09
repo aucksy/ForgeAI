@@ -7,6 +7,11 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-415. Re-assess the growth plan and the marketing skill with a fresh Opus helper, max effort — 9 Nov 2026
+He said: "re-assess the growth plan and skill that you wrote with a new helper with Opus 5.5. Max effort".
+What I did: one fresh Opus 5.5 reviewer at max effort, given only the files (plan, research, skill, page, landing
+page, product docs), told to fact-check with its own searches and propose fixes. I apply the real findings after.
+
 ## R-414. Marketing research + plan, automated lead system, move to a brand Gmail — 9 Nov 2026
 He said: do deep research on marketing; find the most effective ways to market the member app and the gym software
 SEPARATELY, with a few different hooks; plan the types of media to create; find established well-known marketing skills,
