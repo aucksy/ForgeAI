@@ -11,7 +11,7 @@
 #  3. Settings (Release A: 6 headed groups) and 4 pages (Units, Rest timer and sounds, How the app
 #     picks your next weight, About); Your profile (the one profile editor).
 #  4. The gym's real shop (S2) on the LIVE server: the Gym tab's "Join your gym" screen (Release A:
-#     the Gym tab is always there), join the test gym FORGE1 as "QA Member" (sub-join-gym.yaml), its
+#     the Gym tab is always there), join the run's own shop gym (TCODE / TGYM) as "QA Member" (sub-join-gym.yaml), its
 #     products, the shaker, Add to bag, the Bag, Place order, "Order N placed",
 #     My orders (Ordered: "The gym is getting it ready"), Cancel order ("You cancelled this order",
 #     the placed line gone), Leave; then (UAT U-G1) join again, order the shaker and Leave WITH it
@@ -528,8 +528,9 @@ appId: com.mettleup.app
 - back
 # ---------------------------------------------------------------- 4. the gym (S2: the gym's real shop)
 # Not joined yet: the Gym tab is its one "Join your gym" screen (Release A, A2:
-# the code, Next, then the gym's invite screen). Join the fixed test gym (code FORGE1, "ForgeAI Test
-# Gym", supabase/migrations/0002_shop.sql, with the sample products) as "QA Member" — this talks to
+# the code, Next, then the gym's invite screen). Join the run's own shop gym (9 Nov 2026: made by
+# run-device-qa.sh qa_gym shop with the sample products; its code and name come in as TCODE / TGYM;
+# was the fixed FORGE1 "ForgeAI Test Gym") as "QA Member" — this talks to
 # the LIVE server, so every wait after a tap that calls it is long. The shaker is ordered, then
 # cancelled (its stock goes back), and the phone leaves the gym at the end so later parts meet no gym.
 - runFlow: sub-gym-none.yaml
@@ -548,16 +549,16 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-join-gym.yaml
     env:
-      CODE: "FORGE1"
+      CODE: "${TCODE}"
       NAME: "QA Member"
-      GYM: "ForgeAI Test Gym"
+      GYM: "${TGYM}"
 # A join lands on the Workout tab; the gym's tab is there now.
 - takeScreenshot: r-21b-joined-on-workout
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
-    visible: "^ForgeAI Test Gym$"
+    visible: "^${TGYM}$"
     timeout: 45000
 # Release A: the Gym tab, membership first, then Check in (A3); no Leave at its foot (A4).
 - assertVisible: "Pay at the desk"
@@ -576,7 +577,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Shop$"
     index: 0
-# FORGE1 lists products, so the Gym tab shows its "Shop" part once the list arrives.
+# the run's shop gym lists products, so the Gym tab shows its "Shop" part once the list arrives.
 - scrollUntilVisible:
     element: 'Whey protein 1 kg, .*'
     timeout: 45000
@@ -666,18 +667,18 @@ appId: com.mettleup.app
 - back
 - runFlow:
     when:
-      notVisible: "^ForgeAI Test Gym$"
+      notVisible: "^${TGYM}$"
     commands:
       - back
 - extendedWaitUntil:
-    visible: "^ForgeAI Test Gym$"
+    visible: "^${TGYM}$"
     timeout: 15000
 # Leave the gym: the app's own question, then no gym (the Gym tab shows "Join your gym" again).
 # Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
 - assertNotVisible: "^Leave$"
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym\?'
+    visible: 'Leave ${TGYM}\?'
     timeout: 10000
 - takeScreenshot: r-27-leave-question
 - tapOn: "^Leave gym$"
@@ -695,9 +696,9 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-join-gym.yaml
     env:
-      CODE: "FORGE1"
+      CODE: "${TCODE}"
       NAME: "QA Member"
-      GYM: "ForgeAI Test Gym"
+      GYM: "${TGYM}"
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0
@@ -721,7 +722,7 @@ appId: com.mettleup.app
       FIND: '(\d+ in stock|Only \d+ left)'
 - copyTextFrom:
     text: '(\d+ in stock|Only \d+ left)'
-# Run 41042338951 (owner): the shared FORGE1 gym is used by the other QA runs at the same time, and
+# Run 41042338951 (owner): the shared FORGE1 gym was used by the other QA runs at the same time, and
 # one of them held a shaker order while this count was read (24, then 25 at the end). So the end
 # check accepts this count or up to 3 more; a LOWER count (an order left behind) still fails.
 # (No braces inside ${...}: Maestro ends the script at the first one; run 41058073501.)
@@ -758,17 +759,17 @@ appId: com.mettleup.app
 - back
 - runFlow:
     when:
-      notVisible: "^ForgeAI Test Gym$"
+      notVisible: "^${TGYM}$"
     commands:
       - back
 - extendedWaitUntil:
-    visible: "^ForgeAI Test Gym$"
+    visible: "^${TGYM}$"
     timeout: 15000
 # Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
 - assertNotVisible: "^Leave$"
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym\?'
+    visible: 'Leave ${TGYM}\?'
     timeout: 15000
 - assertVisible: 'You have 1 open order \(₹[0-9,.]+\)\. Leaving cancels it\. .*'
 - assertVisible: "Cancel order and leave"
@@ -784,9 +785,9 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-join-gym.yaml
     env:
-      CODE: "FORGE1"
+      CODE: "${TCODE}"
       NAME: "QA Member"
-      GYM: "ForgeAI Test Gym"
+      GYM: "${TGYM}"
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0
@@ -818,13 +819,13 @@ appId: com.mettleup.app
 # And out again: nothing open now, so the plain question and its "Leave gym".
 - back
 - extendedWaitUntil:
-    visible: "^ForgeAI Test Gym$"
+    visible: "^${TGYM}$"
     timeout: 15000
 # Release A (A4): no Leave at the Gym tab's foot; Leave is in Settings → Your gym only.
 - assertNotVisible: "^Leave$"
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
-    visible: 'Leave ForgeAI Test Gym\?'
+    visible: 'Leave ${TGYM}\?'
     timeout: 15000
 - assertVisible: "Your workouts stay on this phone. You can join again with the code."
 - tapOn: "^Leave gym$"
@@ -833,7 +834,7 @@ appId: com.mettleup.app
     visible: "^Join your gym$"
     timeout: 45000
 - runFlow: sub-gym-none.yaml
-- assertNotVisible: "^ForgeAI Test Gym$"
+- assertNotVisible: "^${TGYM}$"
 - takeScreenshot: r-28-no-gym-join-again
 - runFlow: sub-back-to-tabs.yaml
 - tapOn:

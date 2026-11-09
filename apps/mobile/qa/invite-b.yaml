@@ -5,10 +5,10 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "You're already in .*"
     timeout: 30000
-- assertVisible: 'You''re already in ForgeAI Test Gym\. Nothing to do\.'
+- assertVisible: 'You''re already in ${TGYM}\. Nothing to do\.'
 - takeScreenshot: inv-03-already-in
 - tapOn: "^Open your gym$"
-# FORGE1 lists products, so its page is its shop.
+# the run's shop gym lists products, so its page is its shop.
 - extendedWaitUntil:
     visible: "Pay at the desk"
     timeout: 20000

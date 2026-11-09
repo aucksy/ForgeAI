@@ -3,8 +3,8 @@
 #   1. "Scan the poster at your gym" and the "Gym code" box are both there (the scanner itself needs a
 #      real poster, so it is not opened here).
 #   2. A code no gym has (ZZZZZ9, as part INV-d) -> "No gym has the code ZZZZZ9. ..." under the box.
-#   3. The test gym's real code (FORGE1, "ForgeAI Test Gym", as parts INV and R) -> "ForgeAI Test Gym
-#      found. Its join screen opens right after setup." and the button "Join ForgeAI Test Gym".
+#   3. The run's own shop gym's real code (TCODE / TGYM, qa_gym shop, as parts INV and R) -> "<TGYM>
+#      found. Its join screen opens right after setup." and the button "Join <TGYM>".
 #   4. "Change the code" lets it go again, and Back returns to the start view. uat-bk.yaml then starts
 #      from a fresh install (clearState), so nothing here is left for it.
 # The check is the live gym_preview (WelcomeGymCode.tsx, welcomeGymChecked): the box losing focus
@@ -77,31 +77,31 @@ appId: com.mettleup.app
       FIND: "Gym code"
 - tapOn: "Gym code"
 - eraseText: 10
-- inputText: "FORGE1"
+- inputText: "${TCODE}"
 # The last letter checks the code by itself; the box closes once the gym answers. Only if a key was
 # dropped (trap 5) is the box still open without the answer: type it again.
 - extendedWaitUntil:
-    visible: "ForgeAI Test Gym found.*"
+    visible: "${TGYM} found.*"
     timeout: 20000
     optional: true
 - runFlow:
     when:
-      notVisible: "ForgeAI Test Gym found.*"
+      notVisible: "${TGYM} found.*"
     commands:
       - tapOn: "Gym code"
       - eraseText: 10
-      - inputText: "FORGE1"
+      - inputText: "${TCODE}"
 # No hideKeyboard here: the found gym closes the keyboard itself, and hideKeyboard on a closed
 # keyboard is Android's Back, which left "Join my gym" (run 41392839160). The 6th letter checks the code.
 - extendedWaitUntil:
-    visible: "ForgeAI Test Gym found.*"
+    visible: "${TGYM} found.*"
     timeout: 30000
-- assertVisible: 'ForgeAI Test Gym found\. Its join screen opens right after setup\.'
+- assertVisible: '${TGYM} found\. Its join screen opens right after setup\.'
 # R-277: the bottom button names the gym (it keeps the code and goes on to the setup questions).
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: "^Join ForgeAI Test Gym$"
+      FIND: "^Join ${TGYM}$"
 # A wrong code's line has gone with it.
 - assertNotVisible: "No gym has the code.*"
 - takeScreenshot: wg-03-gym-found
@@ -112,7 +112,7 @@ appId: com.mettleup.app
       FIND: "^Change the code$"
 - tapOn: "^Change the code$"
 - extendedWaitUntil:
-    notVisible: "ForgeAI Test Gym found.*"
+    notVisible: "${TGYM} found.*"
     timeout: 10000
 # Back on the start view (the code is let go, so no "saved" line there).
 - scrollUntilVisible:
@@ -136,4 +136,4 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Get stronger every week"
     timeout: 15000
-- assertNotVisible: "Gym code .* saved.*|ForgeAI Test Gym found.*"
+- assertNotVisible: "Gym code .* saved.*|${TGYM} found.*"

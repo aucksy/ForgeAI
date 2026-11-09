@@ -4,8 +4,8 @@
 #      everything" lands on the welcome; the app stopped and opened again still opens on it.
 #   2. U-M2: on that welcome, "From Hevy" -> ... -> "Start training": the Hevy import MUST open by
 #      itself (no way round through Settings: if it does not open, that is an app bug).
-#   3. Gym member: join the test gym FORGE1 on the LIVE server (as part R: from the Gym tab's "Join
-#      your gym" screen), then Erase: the question names "ForgeAI Test Gym"; after it (and the demo
+#   3. Gym member: join the run's own shop gym (TCODE / TGYM, qa_gym shop) on the LIVE server (as part R: from the Gym tab's "Join
+#      your gym" screen), then Erase: the question names the gym (TGYM); after it (and the demo
 #      loaded to reach the tabs) the Gym tab offers "Join your gym" again.
 # Needs some data to erase: after part UD (its 12 imported workouts) or, alone, the script seeds the
 # demo first.
@@ -143,18 +143,18 @@ appId: com.mettleup.app
 - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 3. erase, gym member
 # The join is on the Gym tab's "Join your gym" screen (sub-join-gym.yaml), and it lands on the
-# Workout tab. FORGE1 is unbranded, so the Gym tab's title is its name.
+# Workout tab. the run's shop gym is unbranded, so the Gym tab's title is its name.
 - runFlow:
     file: sub-join-gym.yaml
     env:
-      CODE: "FORGE1"
+      CODE: "${TCODE}"
       NAME: "QA Member"
-      GYM: "ForgeAI Test Gym"
+      GYM: "${TGYM}"
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
-    visible: "^ForgeAI Test Gym$"
+    visible: "^${TGYM}$"
     timeout: 45000
 - takeScreenshot: ue-05-joined-forge1
 - runFlow:
@@ -169,7 +169,7 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: 'Erase all data\?'
     timeout: 10000
-- assertVisible: '.*You also leave ForgeAI Test Gym\. With no internet, the gym is told the next time the app is online\.'
+- assertVisible: '.*You also leave ${TGYM}\. With no internet, the gym is told the next time the app is online\.'
 - takeScreenshot: ue-06-erase-gym-question
 - tapOn: "^Erase everything$"
 # R-248: the intro screens (2-3, before the welcome) come first on a fresh install or after an
@@ -206,6 +206,6 @@ appId: com.mettleup.app
 - scrollUntilVisible:
     element: "Gym code"
     timeout: 20000
-- assertNotVisible: "^ForgeAI Test Gym$"
-- assertNotVisible: "Gym: ForgeAI Test Gym"
+- assertNotVisible: "^${TGYM}$"
+- assertNotVisible: "Gym: ${TGYM}"
 - takeScreenshot: ue-07-your-gym-join-card-after-erase

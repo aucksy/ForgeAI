@@ -1,7 +1,7 @@
 # Gym branding device QA, part BR — join a branded gym and photograph the app in its look.
 # Talks to the LIVE server: needs supabase/migrations/0005_gym_theme.sql applied there (the
 # runner skips this part when it is not — run-device-qa.sh probes owner_set_brand first).
-#  1. Settings → Your gym → join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT, yellow
+#  1. Settings → Your gym → join the run's own branded test gym (BCODE / BGYM, made by run-device-qa.sh qa_gym brand; yellow
 #     #F7D411 on #0A0A0C) as "QA Member" (sub-join-gym.yaml: the Gym tab's "Join your gym" screen).
 #     The app re-draws in the gym's colours behind the gym's "Welcome to" opening (logo, or its
 #     name while the test gym has no logo) and lands on the Workout tab. The opening and the
@@ -22,11 +22,11 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Profile$"
     timeout: 90000
-# brand-welcome.yaml (just before) leaves RAMS01 at its end; if it failed before that, leave here
+# brand-welcome.yaml (just before) leaves the run's brand gym at its end; if it failed before that, leave here
 # (Release A: Leave is in Settings → Your gym) so this join starts from no gym.
 - runFlow:
     when:
-      visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+      visible: "Your gym: ${BGYM}"
     commands:
       - runFlow: sub-leave-gym.yaml
       - extendedWaitUntil:
@@ -34,7 +34,7 @@ appId: com.mettleup.app
           timeout: 15000
       - tapOn: "^(Leave gym|Leave anyway|Cancel orders? and leave)$"
       - extendedWaitUntil:
-          notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+          notVisible: "Your gym: ${BGYM}"
           timeout: 45000
       - runFlow: sub-back-to-tabs.yaml
 # ---------------------------------------------------------------- 1. join the branded gym
@@ -45,12 +45,12 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-join-gym.yaml
     env:
-      CODE: "RAMS01"
+      CODE: "${BCODE}"
       NAME: "QA Member"
-      GYM: "RAM'S FITNESS CLUB IMPACT"
+      GYM: "${BGYM}"
 # ---------------------------------------------------------------- 2. the app in the gym's look
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    visible: "Your gym: ${BGYM}"
     timeout: 30000
 - extendedWaitUntil:
     notVisible:
@@ -65,7 +65,7 @@ appId: com.mettleup.app
     timeout: 20000
 # The tab keeps its scroll; the gym's name is at its top.
 - scrollUntilVisible:
-    element: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    element: "Your gym: ${BGYM}"
     direction: UP
     timeout: 15000
 - takeScreenshot: br-02-workout
@@ -73,17 +73,17 @@ appId: com.mettleup.app
     text: "^Profile$"
     index: 0
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    visible: "Your gym: ${BGYM}"
     timeout: 15000
 - takeScreenshot: br-03-profile
-# RAMS01 lists products, so the Gym tab shows its "Shop" part (once the list arrives).
+# the run's brand gym lists products, so the Gym tab shows its "Shop" part (once the list arrives).
 - tapOn:
     text: "^Gym$"
     index: 0
 - extendedWaitUntil:
     visible: "Pay at the desk"
     timeout: 30000
-- assertVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+- assertVisible: "Your gym: ${BGYM}"
 # Owner profile (360 dp, font 1.3): membership, Check in and My orders come first, so the "Shop"
 # heading is below the screen's edge (run 40107401680): scroll down to it (trap 27).
 - scrollUntilVisible:
@@ -116,21 +116,21 @@ appId: com.mettleup.app
     optional: true
 - takeScreenshot: br-06-opening-at-launch
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    visible: "Your gym: ${BGYM}"
     timeout: 30000
 - takeScreenshot: br-07-workout-after-relaunch
 # ---------------------------------------------------------------- 4. leave: ForgeAI's look again
 # Release A (A4): Leave is in Settings → Your gym only.
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
-    visible: "Leave RAM'S FITNESS CLUB IMPACT\\?"
+    visible: "Leave ${BGYM}\\?"
     timeout: 10000
 - assertVisible: ".*goes back to MettleUp's colours.*"
 - tapOn: "^Leave gym$"
 # The app re-draws in ForgeAI's look (it may come back on the Workout tab). Release A: no gym, so
 # the Gym tab is its "Join your gym" screen.
 - extendedWaitUntil:
-    notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    notVisible: "Your gym: ${BGYM}"
     timeout: 15000
 # Release A: Leave is on Settings, and the redraw brings Settings back at its TOP ("Your profile",
 # its first row): no tab bar there, so wait for either (run 40097554901); sub-gym-none goes Back

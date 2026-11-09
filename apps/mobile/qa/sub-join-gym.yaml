@@ -6,9 +6,9 @@
 #   - runFlow:
 #       file: sub-join-gym.yaml
 #       env:
-#         CODE: "FORGE1"
+#         CODE: "${TCODE}"
 #         NAME: "QA Member"
-#         GYM: "ForgeAI Test Gym"
+#         GYM: "${TGYM}"
 # CODE, NAME and GYM are also matched as regexes (GYM = the invite screen's heading, exactly).
 # No `env:` default here: a flow-level default would override the caller's (trap 22).
 # Call it with the phone in NO gym and the app's tab bar on screen (any tab).

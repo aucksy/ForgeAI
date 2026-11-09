@@ -14,6 +14,43 @@ export PATH="$PATH:$HOME/.maestro/bin"
 status=0
 
 log() { echo "[qa] $*" | tee -a "$OUT/timeline.txt"; }
+# ---------------------------------------------------------------- the run's OWN gyms (9 Nov 2026)
+# The fixed test gyms FORGE1 ("ForgeAI Test Gym") and RAMS01 ("RAM'S FITNESS CLUB IMPACT") are gone
+# (deleted with every other test gym, 9 Nov 2026). A part that needs a gym asks qa_gym for one: made
+# ONCE per run on the live server by qa/qa_gyms.py (the sample shop, as FORGE1 had; the brand gym is
+# also yellow on black with a logo, as RAMS01 was) and shared by the parts after it. The flows get
+# its code and name as TCODE/TGYM (shop gym) and BCODE/BGYM (brand gym). At the end, pass or fail
+# (the EXIT trap), qa_gyms.py cleanup ends every session the run opened and lists every gym it made
+# in qa-gyms-left.txt: the server has no delete path a test may use (only HQ's hq_delete_gym), so the
+# gyms are named "QA ..." and HQ hides them as test gyms. Keys stay in $XJ_STATE_DIR only.
+export XJ_STATE_DIR="${XJ_STATE_DIR:-$(mktemp -d "${RUNNER_TEMP:-/tmp}/qa-gyms.XXXXXX")}"
+mkdir -p "$XJ_STATE_DIR"
+chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
+TCODE=""; TGYM=""; BCODE=""; BGYM=""
+qa_gym() {  # $1 = shop | brand: sets TCODE/TGYM or BCODE/BGYM (made the first time only)
+  local said code name
+  case "$1" in
+    shop) [ -n "$TCODE" ] && return 0; name="QA Test Gym" ;;
+    brand) [ -n "$BCODE" ] && return 0; name="QA BRAND GYM" ;;
+    *) return 1 ;;
+  esac
+  said=$(python3 "$QA_DIR/qa_gyms.py" make "$1" "$1" "$name" 2>&1)
+  echo "$said" | grep -vE '^(CODE|NAME)=' | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
+  code=$(echo "$said" | sed -n 's/^CODE=//p' | tail -1)
+  name=$(echo "$said" | sed -n 's/^NAME=//p' | tail -1)
+  if [ -z "$code" ] || [ -z "$name" ]; then
+    status=1
+    log "QA GYM FAILED: the run's own $1 gym could not be made on the server (qa_gyms.py make)"
+    return 1
+  fi
+  if [ "$1" = shop ]; then TCODE=$code; TGYM=$name; else BCODE=$code; BGYM=$name; fi
+  return 0
+}
+qa_gyms_cleanup() {
+  python3 "$QA_DIR/qa_gyms.py" cleanup "$OUT" 2>&1 | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
+}
+trap qa_gyms_cleanup EXIT
+trap 'status=1; exit 143' TERM INT HUP
 now_ms() { adb shell date +%s%3N | tr -d '\r'; }
 # A part's Maestro driver can still hold its port right after the part ends; the next session
 # then fails "Failed to bind to address" before its first step. Stop it and let it go.
@@ -942,15 +979,16 @@ fi  # part p9
 # Workout tab (Up next, folders, a routine's and a folder's ⋯, Explore), Profile (header, the
 # chart in each chip and range, a bar tapped, the 4 tiles' screens, a feed card and its ⋯, a
 # workout page, an exercise page's 3 tabs), Settings and 3 of its pages, Edit profile, and the
-# gym's real shop on the LIVE server: join the test gym FORGE1 from Settings → Your gym (R-77: in
-# no gym there is no third tab), order the shaker, see it Ordered, cancel it, leave; the sample
+# gym's real shop on the LIVE server: join the run's own shop gym (qa_gym shop, "QA Test Gym") from
+# the Gym tab (R-77: in no gym there is no third tab), order the shaker, see it Ordered, cancel it, leave; the sample
 # shop is gone (R-77) (redesign-r.yaml). Saves no workout. Its screenshots
 # (r-*.png) are gathered in qa-out/redesign/ (Maestro writes them into the part's output folder,
 # or on an older Maestro the working folder).
 if qa_runs r; then
 free_maestro
-log "part R start"
-maestro test --format junit --output "$OUT/part-r.xml" --test-output-dir "$OUT/part-r" "$QA_DIR/redesign-r.yaml" \
+qa_gym shop || true
+log "part R start (shop gym $TCODE)"
+maestro test -e "TCODE=$TCODE" -e "TGYM=$TGYM" --format junit --output "$OUT/part-r.xml" --test-output-dir "$OUT/part-r" "$QA_DIR/redesign-r.yaml" \
   > "$OUT/part-r.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/r-failed.png"; log "PART R FAILED (part-r.log, r-failed.png)"; }
 mkdir -p "$OUT/redesign"
 { find "$OUT/part-r" -name "r-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "r-*.png" 2>/dev/null; } \
@@ -959,11 +997,11 @@ log "REDESIGN TOUR: $(find "$OUT/redesign" -name "r-*.png" 2>/dev/null | wc -l |
 fi  # part r
 
 # ---------------------------------------------------------------- part BR (gym branding, Level 1)
-# R-77 first (brand-welcome.yaml): RAMS01's invite link opened at the app, join it, its "Welcome to"
+# R-77 first (brand-welcome.yaml): the brand gym's invite link opened at the app, join it, its "Welcome to"
 # opening, the home-screen icon pop-up (checked and closed with "Not now" when the gym has a logo),
 # Workout, Settings → Your gym's "Leave <gym>" row, and Leave from there. Then brand-theme.yaml:
-# join the branded test gym RAMS01 (RAM'S FITNESS CLUB IMPACT) on the LIVE server from Settings →
-# Your gym, photograph Workout, Profile, Shop and a product in the gym's colours, relaunch (the
+# join the run's own brand gym (qa_gym brand, "QA BRAND GYM"; was RAMS01 until 9 Nov 2026) on the
+# LIVE server from the Gym tab, photograph Workout, Profile, Shop and a product in the gym's colours, relaunch (the
 # opening again), leave (ForgeAI's look back). brand-welcome runs first: the pop-up shows once per
 # gym, and the start-up screen check below reads brand-theme's join + relaunch as the last two
 # "plain" lines before its Leave. Needs supabase/migrations/0005_gym_theme.sql on
@@ -984,22 +1022,24 @@ if ! qa_runs br; then
 elif [ "$BR_PROBE" = "404" ] || [ "$BR_PROBE" = "no-config" ]; then
   qa_server_missing BR "gym branding is not on the server yet (owner_set_brand probe: $BR_PROBE) — apply 0005_gym_theme.sql"
 else
+  # The run's own brand gym (qa_gym brand: "QA BRAND GYM", yellow on black, a logo, the sample shop).
+  qa_gym brand || true
   # R-77: the gym's link, opened at the app as Android does once the link is verified (as part INV).
-  adb shell am start -W -a android.intent.action.VIEW -d "https://forgeai.aakashpahuja.in/j/RAMS01" -p "$PKG" >/dev/null 2>&1 || true
+  adb shell am start -W -a android.intent.action.VIEW -d "https://forgeai.aakashpahuja.in/j/$BCODE" -p "$PKG" >/dev/null 2>&1 || true
   sleep 3
   free_maestro
-  log "part BR-welcome start (owner_set_brand probe: $BR_PROBE)"
-  maestro test --format junit --output "$OUT/part-br-welcome.xml" --test-output-dir "$OUT/part-br-welcome" "$QA_DIR/brand-welcome.yaml" \
+  log "part BR-welcome start (owner_set_brand probe: $BR_PROBE, brand gym $BCODE)"
+  maestro test -e "BCODE=$BCODE" -e "BGYM=$BGYM" --format junit --output "$OUT/part-br-welcome.xml" --test-output-dir "$OUT/part-br-welcome" "$QA_DIR/brand-welcome.yaml" \
     > "$OUT/part-br-welcome.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/br-welcome-failed.png"; log "PART BR-WELCOME FAILED (part-br-welcome.log, br-welcome-failed.png)"; }
   free_maestro
-  log "part BR start (owner_set_brand probe: $BR_PROBE)"
-  maestro test --format junit --output "$OUT/part-br.xml" --test-output-dir "$OUT/part-br" "$QA_DIR/brand-theme.yaml" \
+  log "part BR start (owner_set_brand probe: $BR_PROBE, brand gym $BCODE)"
+  maestro test -e "BCODE=$BCODE" -e "BGYM=$BGYM" --format junit --output "$OUT/part-br.xml" --test-output-dir "$OUT/part-br" "$QA_DIR/brand-theme.yaml" \
     > "$OUT/part-br.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/br-failed.png"; log "PART BR FAILED (part-br.log, br-failed.png)"; }
   mkdir -p "$OUT/brand"
   { find "$OUT/part-br" "$OUT/part-br-welcome" -name "br-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "br-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/brand/" 2>/dev/null; done
   log "BRAND TOUR: $(find "$OUT/brand" -name "br-*.png" 2>/dev/null | wc -l | tr -d ' ') screenshots in qa-out/brand/"
-  # Start-up screen (15 Oct 2026): joining RAMS01 must ask Android 13+ for the plain start-up screen
+  # Start-up screen (15 Oct 2026): joining the brand gym must ask Android 13+ for the plain start-up screen
   # (no ForgeAI logo before the gym's), and Leave must give ForgeAI's back — in that order.
   BR_SDK=$(adb shell getprop ro.build.version.sdk 2>/dev/null | tr -d '\r')
   adb logcat -d -s ForgeSplash:I > "$OUT/br-splash-log.txt" 2>/dev/null
@@ -1026,7 +1066,7 @@ sys.exit(0 if plain_run >= 2 else 1)
   elif [ "$BR_SDK" -lt 33 ]; then
     log "BR start-up screen: SKIPPED (Android API $BR_SDK; needs 33+)"
   elif br_splash_order; then
-    log "BR start-up screen: OK (plain while in RAMS01, ForgeAI's after Leave; br-splash-log.txt)"
+    log "BR start-up screen: OK (plain while in the brand gym $BCODE, ForgeAI's after Leave; br-splash-log.txt)"
   else
     status=1
     log "PART BR FAILED: the start-up screen was not switched (br-splash-log.txt)"
@@ -1034,8 +1074,9 @@ sys.exit(0 if plain_run >= 2 else 1)
 fi
 
 # ---------------------------------------------------------------- part INV (v0.38.0: invite link)
-# The gym's invite link opens the app on "Join <gym>" (invite-a..d.yaml): join FORGE1 from its link;
-# the same link again says "already in"; RAMS01's link switches gyms (then Leave); a code no gym has
+# The gym's invite link opens the app on "Join <gym>" (invite-a..d.yaml): join the run's shop gym
+# (qa_gym shop) from its link; the same link again says "already in"; the run's brand gym's link
+# (qa_gym brand, the "second gym") switches gyms (then Leave); a code no gym has
 # says so and offers "Type a gym code" (Settings → Your gym). R-77: a join lands on the Workout tab
 # and the third tab ("Shop" / "Gym") shows only while in a gym; Leave takes it away.
 # Each link is opened at the app by adb with the package named, as Android does once the
@@ -1046,7 +1087,8 @@ inv_probe() {
   url=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)
   key=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)
   [ -n "$url" ] && [ -n "$key" ] || { echo "no-config"; return; }
-  curl -s -o /dev/null -w '%{http_code}' -X POST "$url/rest/v1/rpc/gym_preview"     -H "apikey: $key" -H "Content-Type: application/json" -d '{"p_code":"FORGE1"}' 2>/dev/null || true
+  # Any code: gym_preview answers 200 (null for a code no gym has) once 0007 is live.
+  curl -s -o /dev/null -w '%{http_code}' -X POST "$url/rest/v1/rpc/gym_preview"     -H "apikey: $key" -H "Content-Type: application/json" -d '{"p_code":"ZZZZZ9"}' 2>/dev/null || true
 }
 inv_open() {
   adb shell am start -W -a android.intent.action.VIEW -d "$1" -p "$PKG" >/dev/null 2>&1 || true
@@ -1063,15 +1105,19 @@ else
   inv_url=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabaseUrl'])" "$QA_DIR/../app.json" 2>/dev/null)
   inv_key=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['expo']['extra']['supabasePublishableKey'])" "$QA_DIR/../app.json" 2>/dev/null)
   inv_rpc() { curl -s -X POST "$inv_url/rest/v1/rpc/$1" -H "apikey: $inv_key" -H "Content-Type: application/json" -d "$2"; }
+  # The run's own two gyms: A/B join the shop gym, C switches to the brand gym (the "other gym").
+  qa_gym shop || true
+  qa_gym brand || true
   for step in a b c d e; do
     case $step in
-      a|b) inv_open "https://forgeai.aakashpahuja.in/j/FORGE1" ;;
-      c) inv_open "https://forgeai.aakashpahuja.in/j/RAMS01" ;;
+      a|b) inv_open "https://forgeai.aakashpahuja.in/j/$TCODE" ;;
+      c) inv_open "https://forgeai.aakashpahuja.in/j/$BCODE" ;;
       d) inv_open "forgeai://j/ZZZZZ9" ;;
       e)
         demo=$(inv_rpc demo_start_gym '{"p_name":"QA Inbox Gym"}')
         demo_key=$(printf '%s' "$demo" | python3 -c "import json,sys;print(json.load(sys.stdin).get('ownerKey',''))" 2>/dev/null)
         demo_code=$(printf '%s' "$demo" | python3 -c "import json,sys;print(json.load(sys.stdin).get('joinCode',''))" 2>/dev/null)
+        [ -n "$demo_code" ] && python3 "$QA_DIR/qa_gyms.py" register INVE "$demo_code" "QA Inbox Gym" 2>&1 | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
         sent=$(inv_rpc owner_send_message "{\"p_key\":\"$demo_key\",\"p_kind\":\"closed\",\"p_title\":\"QA: gym closed on Sunday\",\"p_body\":\"Sent by the phone test.\"}")
         log "INV-e: demo gym $demo_code, message: $(printf '%s' "$sent" | head -c 80)"
         inv_open "https://forgeai.aakashpahuja.in/j/$demo_code"
@@ -1079,7 +1125,7 @@ else
     esac
     free_maestro
     log "part INV-$step start (gym_preview probe: $INV_PROBE)"
-    maestro test --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/invite-$step.yaml"       > "$OUT/part-inv-$step.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/inv-$step-failed.png"; log "PART INV-$step FAILED (part-inv-$step.log, inv-$step-failed.png)"; }
+    maestro test -e "TCODE=$TCODE" -e "TGYM=$TGYM" -e "BCODE=$BCODE" -e "BGYM=$BGYM" --format junit --output "$OUT/part-inv-$step.xml" --test-output-dir "$OUT/part-inv-$step" "$QA_DIR/invite-$step.yaml"       > "$OUT/part-inv-$step.log" 2>&1 || { status=1; adb exec-out screencap -p > "$OUT/inv-$step-failed.png"; log "PART INV-$step FAILED (part-inv-$step.log, inv-$step-failed.png)"; }
   done
   mkdir -p "$OUT/invite"
   { find "$OUT"/part-inv-* -name "inv-*.png" 2>/dev/null; find "$PWD" -maxdepth 1 -name "inv-*.png" 2>/dev/null; }     | while read -r f; do cp "$f" "$OUT/invite/" 2>/dev/null; done
@@ -1129,6 +1175,8 @@ print(json.dumps({'p_key': key, 'p_base': 0, 'p_records': [{'k': 'member', 'id':
   else
     # The test gym's owner key goes to Maestro (F2's desk yes): masked in the Actions log.
     [ -n "${GITHUB_ACTIONS:-}" ] && echo "::add-mask::$ci_session"
+    # 9 Nov 2026: listed for the end-of-run clean-up, which also ends this owner session.
+    printf '%s' "$ci_session" | python3 "$QA_DIR/qa_gyms.py" register INVF "$ci_code" "QA Check-in Gym" session 2>&1 | sed 's/^/[qa gyms] /' | tee -a "$OUT/timeline.txt"
     for step in f1 f2 f3; do
       case $step in
         f1) inv_open "https://forgeai.aakashpahuja.in/j/$ci_code" ;;
@@ -1560,18 +1608,20 @@ print(len({(r.get('title'), r.get('start_time'), r.get('end_time')) for r in row
 fi
 
 # UE: Erase all data as a solo member (and the app reopens on the welcome), the welcome's "From Hevy"
-# opening the import by itself (U-M2), Erase as a member of the test gym FORGE1 (uat-e.yaml).
+# opening the import by itself (U-M2), Erase as a member of the run's own shop gym (qa_gym shop) (uat-e.yaml).
 if qa_runs ue; then
   uat_passed ud || gate_flow ue_seed gate-demo.yaml || true
-  uat_part ue uat-e.yaml && log "UAT UE: erase (solo, then as a FORGE1 member) and the Hevy import opening by itself, each checked on screen"
+  qa_gym shop || true
+  uat_part ue uat-e.yaml -e "TCODE=$TCODE" -e "TGYM=$TGYM" && log "UAT UE: erase (solo, then as a member of $TGYM $TCODE) and the Hevy import opening by itself, each checked on screen"
 fi
 # UBK (R-123): restore qa-backup.zip (qa/tools/make_backup_zip.py, as ForgeAI 0.55.2 writes one)
 # from a fresh install's welcome screen, check the routines' order and the settings, then "Save a
 # backup": the share sheet is in front and the app's cache holds mettleup-backup-<date>.zip.
 if qa_runs ubk; then
   # 1 Nov 2026: first, the welcome's gym code is checked with the live gym at once: ZZZZZ9 -> "No gym
-  # has the code", FORGE1 -> "ForgeAI Test Gym found" (welcome-gym.yaml). uat-bk.yaml starts afresh.
-  gate_flow ubk_gym welcome-gym.yaml && log "UAT UBK GYM: welcome gym code ZZZZZ9 -> 'No gym has the code', FORGE1 -> 'ForgeAI Test Gym found', 'Scan the poster' shown"
+  # has the code", the run's shop gym's code -> "<its name> found" (welcome-gym.yaml). uat-bk.yaml starts afresh.
+  qa_gym shop || true
+  gate_flow ubk_gym welcome-gym.yaml -e "TCODE=$TCODE" -e "TGYM=$TGYM" && log "UAT UBK GYM: welcome gym code ZZZZZ9 -> 'No gym has the code', $TCODE -> '$TGYM found', 'Scan the poster' shown"
   push_fixture "$QA_DIR/fixtures/qa-backup.zip" /sdcard/Download/qa-backup.zip
   adb shell content call --uri content://media --method scan_volume --arg external_primary >/dev/null 2>&1 || true
   log "downloads: $(wait_media qa-backup 1 20 downloads) backup file for UBK"
@@ -1865,7 +1915,10 @@ part_uat_gym() {  # $1 = the phone's today (YYYY-MM-DD)
   mkdir -p "$XJ_STATE_DIR"
   chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
   setup=$(python3 "$QA_DIR/uat_gym.py" setup U "$1" 4 "Uma Desk" 9876500031 2>&1)
-  echo "$setup" | grep -v '^CODE=' | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
+  # The session key's mask line goes to the Actions log only (it hides the key there), never into the
+  # timeline file that is uploaded as evidence.
+  echo "$setup" | grep '^::add-mask::' || true
+  echo "$setup" | grep -vE '^(CODE=|::add-mask::)' | sed 's/^/[uat gym] /' | tee -a "$OUT/timeline.txt"
   code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
   ends=$(echo "$setup" | sed -n 's/^ENDS=//p' | tail -1)
   if [ -z "$code" ] || [ -z "$ends" ]; then

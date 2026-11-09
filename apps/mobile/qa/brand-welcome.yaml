@@ -1,18 +1,19 @@
 # Gym branding device QA, part BR, first flow (R-77, 22 Oct 2026): what a member sees right after
-# joining a branded gym. run-device-qa.sh opened RAMS01's invite link
-# (https://forgeai.aakashpahuja.in/j/RAMS01) at the app, with the phone in no gym. (The gym's link is
+# joining a branded gym. run-device-qa.sh made the run's own brand gym (qa_gym brand: code BCODE,
+# name BGYM, given to this flow with -e; RAMS01 until 9 Nov 2026) and opened its invite link
+# (https://forgeai.aakashpahuja.in/j/<BCODE>) at the app, with the phone in no gym. (The gym's link is
 # one way in; brand-theme.yaml, next, joins the other way: the Gym tab's "Join your gym" screen.)
-#  1. The invite screen: RAM'S FITNESS CLUB IMPACT, the new intro line, "Join this gym".
+#  1. The invite screen: BGYM, the new intro line, "Join this gym".
 #  2. The welcome opening: "Welcome to" above the gym's name (spoken "Welcome to <gym>"), held ~1.8 s
 #     longer than the opening at launch. Photographed best effort: it can be gone before the photo.
-#  3. The home-screen icon pop-up "Put RAM'S FITNESS CLUB IMPACT on your home screen" ("Add to home
-#     screen", "Not now"): once per gym, and only when the gym has a logo (RAMS01's is uploaded by
-#     hand, supabase/README.md) and the phone can pin shortcuts. When it comes, its words are checked
+#  3. The home-screen icon pop-up "Put BGYM on your home screen" ("Add to home
+#     screen", "Not now"): once per gym, and only when the gym has a logo (qa_gyms.py uploads a sample
+#     one) and the phone can pin shortcuts. When it comes, its words are checked
 #     and it is closed with "Not now" — never "Add to home screen" (Android's own question would
 #     come up). No logo: no pop-up, and that passes.
 #  4. The app lands on Workout in the gym's look; the Gym tab is there (it always is, Release A).
-#  5. Settings, "Your gym" group: "Leave RAM'S FITNESS CLUB IMPACT" is its own row and "Shop and leave"
-#     is gone. That row leaves: "Leave RAM'S FITNESS CLUB IMPACT?" → "Leave gym" → the Gym tab shows
+#  5. Settings, "Your gym" group: "Leave BGYM" is its own row and "Shop and leave"
+#     is gone. That row leaves: "Leave BGYM?" → "Leave gym" → the Gym tab shows
 #     "Join your gym" again.
 # Runs BEFORE brand-theme.yaml: the pop-up shows once per gym, and part BR's start-up screen check
 # needs brand-theme's join + relaunch as the last two "plain" lines before its Leave.
@@ -21,10 +22,10 @@ appId: com.mettleup.app
 ---
 # ---------------------------------------------------------------- 1. the invite screen
 - extendedWaitUntil:
-    visible: "Gym code RAMS01"
+    visible: "Gym code ${BCODE}"
     timeout: 30000
 - assertVisible: "^Join your gym$"
-- assertVisible: "^RAM'S FITNESS CLUB IMPACT$"
+- assertVisible: "^${BGYM}$"
 - runFlow:
     file: sub-find.yaml
     env:
@@ -48,7 +49,7 @@ appId: com.mettleup.app
     notVisible: "Your name"
     timeout: 45000
 - extendedWaitUntil:
-    visible: "Welcome to RAM'S FITNESS CLUB IMPACT"
+    visible: "Welcome to ${BGYM}"
     timeout: 3000
     optional: true
 - takeScreenshot: br-w01-welcome-opening
@@ -65,7 +66,7 @@ appId: com.mettleup.app
     when:
       visible: "Put .* on your home screen"
     commands:
-      - assertVisible: "^Put RAM'S FITNESS CLUB IMPACT on your home screen$"
+      - assertVisible: "^Put ${BGYM} on your home screen$"
       - assertVisible: "^Add to home screen$"
       - assertVisible: "^Not now$"
       - takeScreenshot: br-w02-icon-offer
@@ -84,7 +85,7 @@ appId: com.mettleup.app
     visible: "Up next: .*|Done today: .*|Workout in progress|Start empty workout"
     timeout: 30000
 - scrollUntilVisible:
-    element: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    element: "Your gym: ${BGYM}"
     direction: UP
     timeout: 15000
 - assertVisible: "^Gym$"
@@ -93,7 +94,7 @@ appId: com.mettleup.app
 - runFlow: sub-settings-open.yaml
 # Release A: the gym's rows sit on the Settings page itself. Not centred (U-Q5).
 - scrollUntilVisible:
-    element: "^Leave RAM'S FITNESS CLUB IMPACT$"
+    element: "^Leave ${BGYM}$"
     timeout: 20000
 # Run 39758056150: at the owner's text size the row's second line sat under the bottom edge. The
 # R-133 (0.58.0): the line has a second sentence about the leaderboard numbers.
@@ -104,9 +105,9 @@ appId: com.mettleup.app
 - assertVisible: '.*Your workouts stay on this phone\. Your leaderboard numbers are removed from the gym\.$'
 - assertNotVisible: "^Shop and leave$"
 - takeScreenshot: br-w04-settings-your-gym
-- tapOn: "^Leave RAM'S FITNESS CLUB IMPACT$"
+- tapOn: "^Leave ${BGYM}$"
 - extendedWaitUntil:
-    visible: '^Leave RAM''S FITNESS CLUB IMPACT\?$'
+    visible: '^Leave ${BGYM}\?$'
     timeout: 15000
 - assertVisible: '.*goes back to MettleUp''s colours\. Your workouts stay on this phone\. You can join again with the code\.'
 - takeScreenshot: br-w05-leave-question
@@ -121,5 +122,5 @@ appId: com.mettleup.app
     timeout: 30000
 - runFlow: sub-back-to-tabs.yaml
 - runFlow: sub-gym-none.yaml
-- assertNotVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+- assertNotVisible: "Your gym: ${BGYM}"
 - takeScreenshot: br-w06-left-no-gym-tab

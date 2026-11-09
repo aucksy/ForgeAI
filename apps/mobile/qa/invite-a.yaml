@@ -1,11 +1,11 @@
 # Invite link device QA, part INV (v0.38.0), step A. run-device-qa.sh opened the gym's link
-# https://forgeai.aakashpahuja.in/j/FORGE1 at the app (am start -d … -p com.mettleup.app), with the
+# https://forgeai.aakashpahuja.in/j/<TCODE> (the run's own shop gym, qa_gym shop; FORGE1 until 9 Nov 2026) at the app (am start -d … -p com.mettleup.app), with the
 # phone in no gym. The "Join your gym" screen shows the gym (from the live gym_preview) and ONE
 # button. Joining lands on the Workout tab (no longer the shop); the Gym tab then shows the gym.
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "Gym code FORGE1"
+    visible: "Gym code ${TCODE}"
     timeout: 30000
 - assertVisible: "^Join your gym$"
 # R-77: the intro no longer talks about ordering (the shop shows only when the gym has one).
@@ -16,7 +16,7 @@ appId: com.mettleup.app
 - inputText: "QA Member"
 - hideKeyboard
 # The gym's name is the heading (audit C9-34: the button never repeats it).
-- assertVisible: "^ForgeAI Test Gym$"
+- assertVisible: "^${TGYM}$"
 # The button by its full words: "Join your gym" (title) and "Join to see…" (intro) also start with Join.
 # Owner profile (360 dp, font 1.3): the button can be below the form.
 - runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
@@ -32,7 +32,7 @@ appId: com.mettleup.app
     timeout: 30000
 - runFlow: sub-after-join.yaml
 - takeScreenshot: inv-02-joined-workout
-# FORGE1 lists products: the Gym tab shows its shop part once the list arrives.
+# the run's shop gym lists products: the Gym tab shows its shop part once the list arrives.
 - tapOn:
     text: "^(Shop|Gym)$"
     index: 0

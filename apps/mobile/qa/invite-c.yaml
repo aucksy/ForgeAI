@@ -1,13 +1,13 @@
-# Part INV, step C: another gym's link (RAMS01) while in FORGE1 — "Switch to this gym" joins the new
-# gym first and only then lets FORGE1 go; then Leave, so the phone ends in no gym as it started.
+# Part INV, step C: another gym's link (the run's brand gym) while in the run's shop gym — "Switch to this gym" joins the new
+# gym first and only then lets the run's shop gym go; then Leave, so the phone ends in no gym as it started.
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
-    visible: "Gym code RAMS01"
+    visible: "Gym code ${BCODE}"
     timeout: 30000
 - assertVisible: 'You''re in .* now\. Switching .*'
 - takeScreenshot: inv-04-switch
-- assertVisible: "^RAM'S FITNESS CLUB IMPACT$"
+- assertVisible: "^${BGYM}$"
 - runFlow: sub-agree.yaml  # launch D5/D6: tick 18+ / terms before joining
 # The tick box pushes the button ~100 dp lower: bring it on screen before the tap.
 - scrollUntilVisible:
@@ -16,7 +16,7 @@ appId: com.mettleup.app
 - tapOn: "^Switch to this gym$"
 # Switched = the branded gym's mark is up (the third tab was there before, so it proves nothing).
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    visible: "Your gym: ${BGYM}"
     timeout: 30000
 # R-77: the welcome opening, then the home-screen icon pop-up (closed with "Not now"), on Workout.
 - runFlow: sub-after-join.yaml
@@ -24,20 +24,20 @@ appId: com.mettleup.app
     text: "^(Shop|Gym)$"
     index: 0
 - extendedWaitUntil:
-    visible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    visible: "Your gym: ${BGYM}"
     timeout: 30000
 - takeScreenshot: inv-05-switched
 
 # Release A (A4): Leave is in Settings → Your gym only.
 - runFlow: sub-leave-gym.yaml
 - extendedWaitUntil:
-    visible: 'Leave RAM''S FITNESS CLUB IMPACT\?'
+    visible: 'Leave ${BGYM}\?'
     timeout: 10000
 - tapOn: "^Leave gym$"
 # Leaving a branded gym redraws the app in ForgeAI's colours (it may land on the Workout tab, or stay
 # on Settings, now offering "Join your gym"; as in part BR). Release A: the Gym tab is its join screen.
 - extendedWaitUntil:
-    notVisible: "Your gym: RAM'S FITNESS CLUB IMPACT"
+    notVisible: "Your gym: ${BGYM}"
     timeout: 20000
 - extendedWaitUntil:
     # Release A: Leave is on Settings, and the new look redraws the whole app (RootFrame keyed

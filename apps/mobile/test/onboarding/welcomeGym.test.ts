@@ -66,20 +66,24 @@ describe('the phone test of the welcome gym code (qa/welcome-gym.yaml)', () => {
   // A Windows checkout (autocrlf) has CRLF line ends; CI's has LF. Read both the same.
   const flow = readFileSync(path.resolve(__dirname, '../../qa/welcome-gym.yaml'), 'utf8').replace(/\r\n/g, '\n');
   const unescape = (re: string) => re.replace(/\\./g, '.').replace(/''/g, "'");
+  // 9 Nov 2026: the run makes its own gym (run-device-qa.sh qa_gym shop) and hands the flow its code and
+  // name as TCODE / TGYM, so the flow's lines carry the name as Maestro's ${TGYM}.
+  const GYM = '${TGYM}';
   it('looks for the exact lines the app says', () => {
     const lines = [...flow.matchAll(/assertVisible: '([^\n]+)'\n/g)].map((m) => unescape(m[1]));
     const wrong = welcomeGymChecked('ZZZZZ9', null);
-    const found = welcomeGymChecked('FORGE1', { gymName: 'ForgeAI Test Gym' });
+    const found = welcomeGymChecked('ABC123', { gymName: GYM });
     expect(lines).toContain(wrong.keep ? '' : wrong.error);
     expect(lines).toContain(found.keep ? found.line : '');
     // R-277: the "Join my gym" screen and its poster box.
     expect(flow).toContain(`"^${START_WORDS.joinGym}$"`);
     expect(flow).toContain(`"^${START_WORDS.scanTitle}$"`);
-    expect(flow).toContain(`"^${welcomeJoinLabel('ForgeAI Test Gym')}$"`);
+    expect(flow).toContain(`"^${welcomeJoinLabel(GYM)}$"`);
+    expect(flow).not.toMatch(/FORGE1|ForgeAI Test Gym/);
   });
-  it('is run by the whole phone test (part UBK)', () => {
+  it('is run by the whole phone test (part UBK), with the run\'s own gym', () => {
     const script = readFileSync(path.resolve(__dirname, '../../qa/run-device-qa.sh'), 'utf8');
-    expect(script).toMatch(/gate_flow ubk_gym welcome-gym\.yaml/);
+    expect(script).toMatch(/gate_flow ubk_gym welcome-gym\.yaml -e "TCODE=\$TCODE" -e "TGYM=\$TGYM"/);
   });
 });
 describe('welcome gym code is checked by itself (release QA, 1 Nov 2026)', () => {
