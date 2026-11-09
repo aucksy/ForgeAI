@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, Icon } from '@/components/ui';
+import { EmptyState, Icon } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { tinyDateWithYear } from '@/lib/date';
 import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';

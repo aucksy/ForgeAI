@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 
-import { AnimatedNumber, Badge } from '@/components/ui';
+import { AnimatedNumber } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { relativeDay } from '@/lib/date';
 import { cw } from '@/ai/unitText';
 import { fmtCompact, fmtInt } from '@/lib/format';

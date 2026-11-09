@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { Badge, Card, Icon } from '@/components/ui';
+import { Card, Icon } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { dateWithYear } from '@/lib/date';
 import { color, radius, space, type } from '@/theme/tokens';
 import { StatsRow } from '@/tracker/components/StatsRow';

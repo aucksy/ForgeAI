@@ -180,3 +180,27 @@ describe('the member’s choice', () => {
     expect(LOOK_WORDS).toEqual({ system: 'Same as phone', light: 'Light', dark: 'Dark' });
   });
 });
+
+describe('chips follow a look change made with the app open', () => {
+  // Cloud run 42633581292: the frozen components/ui Badge copies its colours at load, so after the
+  // phone turned dark its "Chest" chip kept the light look's dark orange. Screens use LookBadge.
+  it('no screen draws the frozen Badge; LookBadge reads its colours when drawn', async () => {
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const root = join(__dirname, '..', '..', 'src');
+    const walk = (d: string): string[] =>
+      readdirSync(d).flatMap((n) => {
+        const p = join(d, n);
+        return statSync(p).isDirectory() ? walk(p) : /\.tsx?$/.test(n) ? [p] : [];
+      });
+    const bad = walk(root).filter((p) => {
+      if (/components[\/]ui[\/]/.test(p)) return false;
+      const m = readFileSync(p, 'utf8').match(/import\s*\{([^}]*)\}\s*from '@\/components\/ui';/);
+      return m != null && /(^|[\s,])Badge([\s,]|$)/.test(m[1]);
+    });
+    expect(bad).toEqual([]);
+    const src = readFileSync(join(root, 'components', 'LookBadge.tsx'), 'utf8');
+    expect(src).toContain('const t = badgeTone(tone);');
+    expect(src).not.toMatch(/^const TONES/m);
+  });
+});

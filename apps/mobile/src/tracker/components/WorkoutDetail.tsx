@@ -8,7 +8,8 @@
 import { Pressable, Text, View } from 'react-native';
 
 import { HBarList } from '@/components/charts';
-import { Badge, Card } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { liftedWords, weightUnitOf } from '@/lib/units';
 import { useUnits } from '@/lib/useUnits';
 import { color, space, type } from '@/theme/tokens';

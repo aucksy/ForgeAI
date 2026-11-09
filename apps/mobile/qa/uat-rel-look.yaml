@@ -111,7 +111,8 @@ appId: com.mettleup.app
       N: "2"
       KG: "10"
       REPS: "10"
-- runFlow: sub-uat-rest-clear.yaml
+- runFlow: sub-inuse-close.yaml
+# The rest after set 2 is left running: the finish sub-flow clears it (it waits for "Skip rest").
 - scrollUntilVisible:
     element: "Dumbbell Preacher Curl set 1 weight, .*"
     direction: UP

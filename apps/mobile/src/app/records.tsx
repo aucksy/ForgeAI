@@ -7,7 +7,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-import { Badge, EmptyState, GhostButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { EmptyState, GhostButton, LoadError, Screen, Skeleton } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { useLoad } from '@/lib/useLoad';
 import { goBack } from '@/lib/goBack';
 import { tinyDateWithYear } from '@/lib/date';

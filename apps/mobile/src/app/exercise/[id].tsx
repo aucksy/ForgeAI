@@ -23,7 +23,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SessionHistory } from '@/components/exercise/SessionHistory';
-import { askConfirm, Badge, Card, EmptyState, Icon, IconButton, LoadError, Screen, Sheet, SheetRow, Skeleton } from '@/components/ui';
+import { askConfirm, Card, EmptyState, Icon, IconButton, LoadError, Screen, Sheet, SheetRow, Skeleton } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { InlineError } from '@/components/ui/InlineError';
 import { relativeDay, tinyDateWithYear } from '@/lib/date';
 import { goBack } from '@/lib/goBack';

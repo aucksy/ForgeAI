@@ -9,7 +9,8 @@ import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
 
-import { Badge, EmptyState, GhostButton, Screen, askConfirm } from '@/components/ui';
+import { EmptyState, GhostButton, Screen, askConfirm } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { InlineError } from '@/components/ui/InlineError';
 import { useAnnounce } from '@/components/ui/useAnnounce';
 import { color, radius, space, type } from '@/theme/tokens';

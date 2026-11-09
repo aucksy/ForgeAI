@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 
-import { Badge, Icon } from '@/components/ui';
+import { Icon } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { tinyDate } from '@/lib/date';
 import { cw } from '@/ai/unitText';
 import { useUnits } from '@/lib/useUnits';

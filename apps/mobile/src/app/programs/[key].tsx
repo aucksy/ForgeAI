@@ -7,7 +7,8 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { Badge, Card, EmptyState, GhostButton, Icon, PrimaryButton, Screen, SectionHeader } from '@/components/ui';
+import { Card, EmptyState, GhostButton, Icon, PrimaryButton, Screen, SectionHeader } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { countWord } from '@/lib/words';
 import { goBack } from '@/lib/goBack';

@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { BarChart, HBarList } from '@/components/charts';
-import { Badge, Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { Card, EmptyState, GlassCard, HeroCard, Icon, IconButton, LoadError, Screen, SectionHeader, Skeleton, StatTile } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { deltaDirection, statLabel } from '@/components/ui/a11y';
 import { todayISO } from '@/lib/date';
 import { goBack } from '@/lib/goBack';

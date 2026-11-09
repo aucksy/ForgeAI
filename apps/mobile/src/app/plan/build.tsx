@@ -13,7 +13,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, Pressable, Text, View } from 'react-native';
 
-import { Badge, Card, Chip, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { Card, Chip, GhostButton, Icon, IconButton, PrimaryButton, Screen } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { ChipGroup, type ChipOption } from '@/components/settings/ChipGroup';
 import { ToggleRow } from '@/components/settings/SettingRow';
 import { getProfile } from '@/db/repos/userRepo';

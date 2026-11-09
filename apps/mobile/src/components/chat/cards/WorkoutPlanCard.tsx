@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-import { Badge } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import type { BadgeProps } from '@/components/ui';
 import { cw } from '@/ai/unitText';
 import { useUnits } from '@/lib/useUnits';

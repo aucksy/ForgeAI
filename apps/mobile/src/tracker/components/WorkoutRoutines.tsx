@@ -25,7 +25,8 @@ import { useCallback, useState, type MutableRefObject } from 'react';
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { Badge, Icon, LoadError, Skeleton, askConfirm, type IconName } from '@/components/ui';
+import { Icon, LoadError, Skeleton, askConfirm, type IconName } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { InlineError } from '@/components/ui/InlineError';
 import { todayISO } from '@/lib/date';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';

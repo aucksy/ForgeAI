@@ -18,7 +18,8 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import type { TextInput as TextInputType } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 
-import { Badge, GhostButton, Icon, askConfirm } from '@/components/ui';
+import { GhostButton, Icon, askConfirm } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import type { BadgeProps } from '@/components/ui';
 import { getExerciseById } from '@/db/repos/exerciseRepo';
 import { tap } from '@/lib/haptics';

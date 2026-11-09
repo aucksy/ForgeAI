@@ -20,7 +20,8 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { DangerLink } from '@/components/DangerLink';
-import { Badge, Card, GhostButton, askConfirm } from '@/components/ui';
+import { Card, GhostButton, askConfirm } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { FEATURES } from '@/lib/features';
 import { success, thud, warn } from '@/lib/haptics';
 import { countOwnWorkouts } from '@/onboarding/db/dataActions';

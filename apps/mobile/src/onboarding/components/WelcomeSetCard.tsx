@@ -11,7 +11,8 @@
  */
 import { Text, View } from 'react-native';
 
-import { Badge, Icon } from '@/components/ui';
+import { Icon } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { rpeColor } from '@/tracker/lib/rpe';
 import { Glyph } from '@/tracker/components/TrackerGlyph';
 import { color, radius, space, type } from '@/theme/tokens';

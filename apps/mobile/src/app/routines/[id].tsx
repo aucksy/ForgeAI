@@ -14,7 +14,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import {
-  Badge,
   Chip,
   EmptyState,
   GhostButton,
@@ -26,6 +25,7 @@ import {
   Skeleton,
   askConfirm,
 } from '@/components/ui';
+import { Badge } from '@/components/LookBadge';
 import { InlineError } from '@/components/ui/InlineError';
 import { START_FAILED, runGuarded } from '@/lib/guardedAction';
 import { goBack } from '@/lib/goBack';
