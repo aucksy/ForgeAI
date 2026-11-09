@@ -13,9 +13,14 @@ on:
         description: 'Models to run, comma-separated (kokoro,chatterbox,magpie,maya1)'
         required: false
         default: 'kokoro,chatterbox,magpie,maya1'
+      reuse_runs:
+        description: 'Earlier run ids whose voice artifacts the final mp3 set should also include (comma-separated)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
+  actions: read
 
 env:
   HF_HUB_DISABLE_PROGRESS_BARS: '1'
@@ -23,6 +28,7 @@ env:
 
 jobs:
   kokoro:
+    if: contains(inputs.models, 'kokoro') || contains(inputs.models, 'chatterbox')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -115,7 +121,14 @@ jobs:
           pip install -q torch torchaudio --index-url https://download.pytorch.org/whl/cpu
           pip install -q Cython packaging
           pip install -q "nemo_toolkit[tts] @ git+https://github.com/NVIDIA-NeMo/Speech.git@main" || pip install -q "nemo_toolkit[tts]"
-          pip install -q kaldialign faster-whisper
+          pip install -q kaldialign faster-whisper peft
+          # NeMo main imports a few optional packages on load; install whatever it still asks for
+          for i in 1 2 3 4 5 6 7 8; do
+            out=$(python -c "from nemo.collections.tts.models import MagpieTTSModel" 2>&1) && break
+            mod=$(echo "$out" | grep -oP "No module named '\K[^'.]+" | head -1)
+            if [ -z "$mod" ]; then echo "$out" | tail -20; exit 1; fi
+            echo "installing missing module $mod"; pip install -q "$mod"
+          done
       - run: python gen_magpie.py
       - name: Upload each voice
         if: always()
@@ -169,6 +182,15 @@ jobs:
         with:
           pattern: vs-*
           path: in
+      - name: Voices from earlier runs
+        if: inputs.reuse_runs != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUNS: ${{ inputs.reuse_runs }}
+        run: |
+          for r in $(echo "$RUNS" | tr ',' ' '); do
+            gh run download "$r" -R "${{ github.repository }}" -p 'vs-*' -D "in/run-$r" || echo "run $r: nothing downloaded"
+          done
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -178,7 +200,11 @@ jobs:
       - name: Flatten (the Magpie artifact holds several voices)
         run: |
           mkdir -p flat
-          for m in $(find in -name meta.json); do d=$(dirname "$m"); id=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['sample_id'])" "$m"); cp -r "$d" "flat/$id"; done
+          # earlier runs first, this run last, so this run's take of a voice wins
+          for m in $(find in -path 'in/run-*' -name meta.json | sort) $(find in -path 'in/vs-*' -name meta.json | sort); do
+            d=$(dirname "$m"); id=$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['sample_id'])" "$m")
+            rm -rf "flat/$id"; cp -r "$d" "flat/$id"
+          done
           ls flat
       - run: python marketing/voice-samples/assemble.py flat final
       - uses: actions/upload-artifact@v4
