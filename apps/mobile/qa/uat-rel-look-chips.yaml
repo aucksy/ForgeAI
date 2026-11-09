@@ -1,0 +1,32 @@
+# Light mode: the member's own choice beats the phone. Runs with the phone set to LIGHT (part ulook).
+# Settings -> Light or dark -> "Dark": the app turns dark at once although the phone is light; "Light":
+# light again; "Same as phone": stays light (the phone is light). Pictures rel-look-chips-*.png.
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Light or dark"
+- extendedWaitUntil:
+    visible: "Same as phone: the app turns light or dark when your phone does."
+    timeout: 15000
+- tapOn: "^Dark$"
+- extendedWaitUntil:
+    visible: "Same as phone: the app turns light or dark when your phone does."
+    timeout: 15000
+- takeScreenshot: rel-look-chips-1-dark-on-a-light-phone
+- tapOn: "^Light$"
+- extendedWaitUntil:
+    visible: "Same as phone: the app turns light or dark when your phone does."
+    timeout: 15000
+- takeScreenshot: rel-look-chips-2-light
+- tapOn: "^Same as phone$"
+- extendedWaitUntil:
+    visible: "Same as phone: the app turns light or dark when your phone does."
+    timeout: 15000
+- takeScreenshot: rel-look-chips-3-same-as-phone
+- back
+- back
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000

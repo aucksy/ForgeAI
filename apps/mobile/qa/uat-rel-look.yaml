@@ -1,0 +1,143 @@
+# Light mode (owner, 9 Nov 2026: "it should be system default ... carefully design it and test it to
+# ensure it's looking professional and good"). Photographs the main screens in one look; part ulook in
+# run-device-qa.sh runs it twice: LOOK=light with the phone set to light (cmd uimode night no), then
+# LOOK=dark after the phone is switched to dark WITH THE APP OPEN (cmd uimode night yes), which proves
+# "Same as phone" follows the phone live. Starts on the tab bar (gate-demo, or the light run's end).
+# Pictures rel-look-<LOOK>-*.png. LOOK is passed by the caller (-e LOOK=...), no default here (trap 22).
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 60000
+# The first picture is taken before anything is tapped: on the dark run it shows the switch was live.
+- takeScreenshot: rel-look-${LOOK}-00-as-opened
+- runFlow: sub-workout-fresh.yaml
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-look-${LOOK}-01-workout-tab
+# ---------------------------------------------------------------- Profile, charts, exercises, history
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- takeScreenshot: rel-look-${LOOK}-02-profile
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Charts"
+- extendedWaitUntil:
+    visible: "Last 7 days"
+    timeout: 30000
+- takeScreenshot: rel-look-${LOOK}-03-charts
+- scrollUntilVisible:
+    element:
+      id: "bar-chart"
+    centerElement: true
+    timeout: 20000
+    optional: true
+- takeScreenshot: rel-look-${LOOK}-03b-charts-lower
+- back
+- runFlow:
+    file: sub-progress-row.yaml
+    env:
+      ROW: "Exercises"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 30000
+- tapOn: "Search exercises"
+- inputText: "Barbell Bench Press"
+- hideKeyboard
+- tapOn:
+    text: "^Barbell Bench Press$"
+    index: 0
+- extendedWaitUntil:
+    notVisible: "Search exercises"
+    timeout: 15000
+- takeScreenshot: rel-look-${LOOK}-04-exercise
+- back
+- back
+- openLink: "mettleup://history"
+- extendedWaitUntil:
+    visible: "^Your workouts$|^[0-9]+ workouts?$"
+    timeout: 30000
+- takeScreenshot: rel-look-${LOOK}-05-history
+- back
+# ---------------------------------------------------------------- Settings: the new row and its page
+- runFlow: sub-settings-open.yaml
+- scrollUntilVisible:
+    element: "^Light or dark$"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-look-${LOOK}-06-settings
+- tapOn: "^Light or dark$"
+- extendedWaitUntil:
+    visible: "Same as phone: the app turns light or dark when your phone does."
+    timeout: 15000
+- takeScreenshot: rel-look-${LOOK}-07-light-or-dark
+- back
+- back
+# ---------------------------------------------------------------- a workout: ticked sets, rest, finish
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "12"
+- runFlow: sub-inuse-close.yaml
+- takeScreenshot: rel-look-${LOOK}-08-rest-timer
+- runFlow: sub-uat-rest-clear.yaml
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "2"
+      KG: "10"
+      REPS: "10"
+- runFlow: sub-uat-rest-clear.yaml
+- scrollUntilVisible:
+    element: "Dumbbell Preacher Curl set 1 weight, .*"
+    direction: UP
+    centerElement: true
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-look-${LOOK}-09-ticked-sets
+- runFlow: sub-uat-r358-finish.yaml
+- takeScreenshot: rel-look-${LOOK}-10-workout-complete
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 15000
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- a gym's colour (QA stand-in, not saved)
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- openLink: "mettleup://qa-look?accent=F7D411"
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000
+- runFlow: sub-workout-fresh.yaml
+- scrollUntilVisible:
+    element: "Start empty workout"
+    direction: UP
+    timeout: 15000
+    optional: true
+- takeScreenshot: rel-look-${LOOK}-11-gym-workout-tab
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 30000
+- takeScreenshot: rel-look-${LOOK}-12-gym-profile
+- openLink: "mettleup://qa-look?accent=none"
+- extendedWaitUntil:
+    visible: "^Workout$"
+    timeout: 30000

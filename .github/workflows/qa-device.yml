@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "Run only these parts, comma separated: any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey), clip (exercise demo clips), uat (release UAT of the waiting features), u198 (new-feature dots), u194 (machine and cable steps), u401 (old What's new card + Profile chart box), u199 (Progress inside Profile), u404 (bar charts open their workouts). Empty = the whole phone test. A partial run never opens the release gate."
+        description: "Run only these parts, comma separated: any of the whole run's (a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 p0 m) and w (real workout), dnd, longrest, anim, mk (Monkey), clip (exercise demo clips), uat (release UAT of the waiting features), u198 (new-feature dots), u194 (machine and cable steps), u401 (old What's new card + Profile chart box), u199 (Progress inside Profile), u404 (bar charts open their workouts), ulook (light and dark looks). Empty = the whole phone test. A partial run never opens the release gate."
         required: false
         default: ""
       extra:

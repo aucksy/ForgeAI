@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 ulook"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1995,6 +1995,7 @@ part_uat() {
   part_u401
   part_u199
   part_u404
+  part_ulook
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
@@ -2047,6 +2048,33 @@ part_u199() {
   local rc=0
   gate_flow u199_seed gate-demo.yaml || { status=1; return 1; }
   uat_flow uatf199 uat-rel-f199-profile-progress.yaml || rc=1
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# Light mode (owner, 9 Nov 2026: "it should be system default"): the main screens photographed in
+# both looks, and "Same as phone" shown following the phone LIVE. The phone is set to light (cmd uimode
+# night no): the welcome screens of a fresh install, then the demo, the main screens (uat-rel-look.yaml,
+# LOOK=light) and the member's own choice beating the phone (uat-rel-look-chips.yaml). Then the phone
+# turns dark with the app open (cmd uimode night yes) and the same screens are photographed again
+# (LOOK=dark; its first picture is taken before any tap). The phone's own setting is put back after.
+# Runs alone with only=ulook (not part of the whole run). Pictures rel-look-*.png.
+part_ulook() {
+  local rc=0 was
+  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '' | sed 's/.*: //')
+  log "UAT LOOK: phone night mode was '$was'; setting it to light"
+  adb shell cmd uimode night no >/dev/null 2>&1 || true
+  uat_flow ulookw1 uat-rel-look-welcome.yaml -e LOOK=light || rc=1
+  gate_flow ulook_seed gate-demo.yaml || { status=1; adb shell cmd uimode night "${was:-no}" >/dev/null 2>&1; return 1; }
+  uat_flow ulookl uat-rel-look.yaml -e LOOK=light || rc=1
+  uat_flow ulookc uat-rel-look-chips.yaml || rc=1
+  log "UAT LOOK: phone set to dark with the app open"
+  adb shell cmd uimode night yes >/dev/null 2>&1 || true
+  sleep 4
+  uat_flow ulookd uat-rel-look.yaml -e LOOK=dark || rc=1
+  uat_flow ulookw2 uat-rel-look-welcome.yaml -e LOOK=dark || rc=1
+  adb shell cmd uimode night "${was:-no}" >/dev/null 2>&1 || true
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-look-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-look-*.png" 2>/dev/null; }     | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
   [ "$rc" = 0 ] || status=1
   return $rc
 }
@@ -2211,6 +2239,7 @@ qa_runs u194 && ! qa_runs uat && { log "gate part U194 begins"; part_u194; }
 qa_runs u401 && ! qa_runs uat && { log "gate part U401 begins"; part_u401; }
 qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
+qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

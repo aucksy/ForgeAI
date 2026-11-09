@@ -1,0 +1,23 @@
+# Light mode: the first screens of a fresh install (intro, then the welcome start view) in the look the
+# phone is set to. LOOK is passed by the caller (part ulook). Pictures rel-look-<LOOK>-welcome-*.png.
+# Leaves the app on the welcome screen: the caller seeds again with gate-demo.yaml.
+appId: com.mettleup.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Skip$|Start fresh|Get stronger every week|Welcome to MettleUp|Load demo data instead"
+    timeout: 90000
+- takeScreenshot: rel-look-${LOOK}-welcome-1
+- tapOn:
+    text: "^Skip$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start fresh|Get stronger every week|Welcome to MettleUp|Your name|Load demo data instead"
+    timeout: 90000
+- takeScreenshot: rel-look-${LOOK}-welcome-2
