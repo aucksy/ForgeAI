@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-424. Play production access applied — 9 Nov 2026
+He said: "Also our 14 day testing is complete, the app is ready for production, you can actually submit. Ensure all the
+images, information and the logo is all basically accurate."
+Did: filled the 3-page "Apply for access to production" form in Play Console (simpleapps108 window) and pressed Apply.
+Play shows "We have your application for production access ... Applied today, 4.30 PM" (review usually 7 days or less;
+Google emails the account owner). Answers were built only from facts: paid testing provider for 12+ testers over 14 days
+plus a Google Group; ease "Neither difficult nor easy"; 61 in-app feedback rows (24 Oct-8 Nov, mostly our QA checks; real
+ones: "clean UI" praise, how to share history, how to make more folders, the voice-note upload error still seen on 0.71);
+one 5-star Play test review; audience adults 18+ who lift, India first; expected installs 0-10K; changes made during the
+test (watch auto-open, Progress in Profile, What's new screen, voice fallback, bug fixes); readiness = cloud tests + UAT +
+real gym workouts. Checked the listing: title, short and full text match the app (verified earlier), icon and feature
+graphic are the current MettleUp brand. Screenshots 4 and 7 still showed the old 4-tab bar: fresh captures from the
+store-shots run go up next. This is NOT a release: no version bump, no tag. Promoting a build to production is a separate
+step that waits for his "release".
+
 ## R-423. Auto-delete the QA test gyms every night — 9 Nov 2026
 He said: "auto-delete QA gyms" (his yes for the live migration and HQ deploy). Did: 0066 hq_purge_qa_gyms() deletes
 gyms named exactly "QA ..." older than 1 day (never DAB8DE, max 100 a night, audit row); HQ nightly() calls it after
