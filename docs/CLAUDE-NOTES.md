@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-434. WhatsApp: a plain reply gets past the 131042 block; watch update card = design 2 — 10 Nov 2026
+
+He said: "I hate it... give it another shot and try new things we have not tried". Also: the phone app must tell members when the WATCH app has an update (watch auto-opens, nobody sees its updates); open the Play Store on the watch, the member taps Update there. He picked design 2 "Watch in hand" (a drawn watch showing the new version, notes + buttons in a bottom sheet) from 3 options.
+
+New test (workflow whatsapp-probe.yml, his phone in the GitHub secret PROBE_TO):
+- login_code template to his phone: accepted, NOT delivered (131042 still on, though health_status says AVAILABLE for WABA and business).
+- He sent "hi" to +91 86905 60741, then a PLAIN text (no template) from us: DELIVERED (run 42765251805). First proof that free replies inside the 24-hour window work.
+- So the built-but-off "Verify with WhatsApp" flow (deploy/panel/phoneInbound.js: the person sends "MettleUp code 123456", the page turns green, we reply) will work end to end, reply included. Switch-on steps: docs/WHATSAPP-SETUP.md (D1 0013, WHATSAPP_APP_SECRET, webhook "messages", WHATSAPP_INBOUND_NUMBER + panel deploy with ADMIN_NEWS). Needs his yes (live).
+- Watch update: helper building watch->phone version report + JS state (no card yet); card = design 2 next.
+
 ## R-433. Play trader status declared; organisation account not possible today — 10 Nov 2026
 
 He said: declare the account as a trader with the full address (option A; he will not pay for a business address); phone = the MettleUp WhatsApp number; ColorCloset and every other app are free, so non-trader.
