@@ -11,17 +11,17 @@ class AmbientDiagTest {
   // R-353: the screen went OFF mid-workout where it dimmed earlier: that is the fault we rebuild for.
   @Test
   fun blackoutOnlyWhenTheScreenWentOffInsteadOfDimming() {
-    assertTrue(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = true, finishing = false))
+    assertTrue(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = true, finishing = false, saverOn = false))
     // The member left the app (button, call screen on top): the screen is still on.
-    assertFalse(heal.blackout(screenOn = true, ambient = false, ambientWorked = true, workoutOpen = true, finishing = false))
+    assertFalse(heal.blackout(screenOn = true, ambient = false, ambientWorked = true, workoutOpen = true, finishing = false, saverOn = false))
     // Stopped from the dim state (Wear OS returning to the watch face): not this fault.
-    assertFalse(heal.blackout(screenOn = false, ambient = true, ambientWorked = true, workoutOpen = true, finishing = false))
+    assertFalse(heal.blackout(screenOn = false, ambient = true, ambientWorked = true, workoutOpen = true, finishing = false, saverOn = false))
     // Never dimmed since the app started: the watch's always-on screen may simply be off.
-    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = false, workoutOpen = true, finishing = false))
+    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = false, workoutOpen = true, finishing = false, saverOn = false))
     // No workout open: going dark is allowed.
-    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = false, finishing = false))
+    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = false, finishing = false, saverOn = false))
     // Closing or already rebuilding.
-    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = true, finishing = true))
+    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = true, finishing = true, saverOn = false))
   }
 
   @Test
@@ -31,6 +31,36 @@ class AmbientDiagTest {
     // A rebuild that did not help twice: the cause is not this app; only log from then on.
     assertFalse(heal.shouldRebuild(blackoutSeen = true, tries = heal.MAX_TRIES))
     assertFalse(heal.shouldRebuild(blackoutSeen = false, tries = 0))
+  }
+
+  // R-437: Battery Saver turned the dim screen off itself (Google: it "disables the Always-on Display but
+  // keeps Tilt-to-wake"): not a fault a rebuild can fix, so none is tried.
+  @Test
+  fun batterySaverBlackScreenIsTheWatchsNotARebuild() {
+    assertFalse(heal.blackout(screenOn = false, ambient = false, ambientWorked = true, workoutOpen = true, finishing = false, saverOn = true))
+  }
+
+  // R-437: a workout that used up both tries no longer leaves the heal off for the next workouts.
+  @Test
+  fun eachWorkoutGetsItsOwnTries() {
+    assertEquals(heal.MAX_TRIES, heal.triesFor(seenWorkout = 3, workout = 3, tries = heal.MAX_TRIES))
+    assertEquals(0, heal.triesFor(seenWorkout = 3, workout = 4, tries = heal.MAX_TRIES))
+    assertTrue(heal.shouldRebuild(blackoutSeen = true, tries = heal.triesFor(3, 4, heal.MAX_TRIES)))
+    val before = AmbientDiag.workoutCount
+    AmbientDiag.newWorkout()
+    assertEquals(before + 1, AmbientDiag.workoutCount)
+  }
+
+  // R-437: the diary names the watch's own reason for a black screen.
+  @Test
+  fun watchCauseNamesBatterySaverThenAlwaysOnOff() {
+    assertEquals("battery-saver", AmbientDiag.watchCause(saverOn = true, aodGlobal = "1"))
+    assertEquals("battery-saver", AmbientDiag.watchCause(saverOn = true, aodGlobal = "0"))
+    assertEquals("always-on-off", AmbientDiag.watchCause(saverOn = false, aodGlobal = "0"))
+    assertEquals("", AmbientDiag.watchCause(saverOn = false, aodGlobal = "1"))
+    // Unreadable on this watch ("?", "-", unknown saver): no reason claimed.
+    assertEquals("", AmbientDiag.watchCause(saverOn = null, aodGlobal = "?"))
+    assertEquals("", AmbientDiag.watchCause(saverOn = false, aodGlobal = "-"))
   }
 
   @Test

@@ -10,7 +10,7 @@
 # AmbientDiag.note), and from the screen picture (a dimmed app is not all black).
 #
 # Required (exit 1 if not): H-timeout, H-sleep, I-leave, I-over, I-call, I-notify, I-link, X-heal,
-# X-noloop, R-tick, N-wakelock, N-quiet. INFO lines are recorded only.
+# X-noloop, R-tick, R-end, N-wakelock, N-quiet, S-saver. INFO lines are recorded only.
 #
 # Usage: watch_dim_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -300,6 +300,8 @@ bring_app
 shot "R-rest-bright"
 adb shell input keyevent KEYCODE_SLEEP
 sleep 4
+# R-437: the end of a rest while dimmed (the buzz, the "Rest is over" card) must not end the dim state.
+EXIT_B="$(count 'ambient-exit| stop ')"
 shot "R-tick-1"
 sleep 2
 shot "R-tick-2"
@@ -323,6 +325,15 @@ while :; do
 done
 # Only the wake locks HELD now (the "Wake Locks: size=" list: "PARTIAL_WAKE_LOCK 'tag' ACQ=..."), not
 # the history lines (ACQ/REL events), which every rest leaves behind.
+shot "R-end-dim"
+EXIT_A="$(count 'ambient-exit| stop ')"
+DE="$(dark "$OUT/shots/R-end-dim.png")"
+if [ "$EXIT_A" = "$EXIT_B" ] && [ "$DE" = "0" ]; then
+  result R-end PASS "the rest ended while dimmed (buzz + Rest is over): still dimmed 12 s later, no exit or stop"
+else
+  result R-end FAIL "after the rest ended while dimmed: ambient-exit/stop lines $EXIT_B -> $EXIT_A, black=$DE"
+fi
+result R-end-card INFO "the Rest is over card: $(adb logcat -d 2>/dev/null | tr -d '\r' | grep -E 'alerting' | grep -E '51002|rest-over' | tail -1 | cut -c1-200)"
 adb shell dumpsys power 2>/dev/null | tr -d '\r' > "$OUT/N-power.txt" || true
 grep -E "^ *PARTIAL_WAKE_LOCK +'(mettleup:rest-end|ForgeAI:restOver)'" "$OUT/N-power.txt" > "$OUT/N-wakelocks-after-rest.txt" || true
 LAST="$(grep -E " (ACQ|REL) (mettleup:rest-end|ForgeAI:restOver)" "$OUT/N-power.txt" | tail -2 | tr '\n' ' ')"
@@ -345,6 +356,37 @@ fi
 adb shell input keyevent KEYCODE_WAKEUP
 sleep 3
 shot "N-wake"
+
+# ---- S: R-437, Battery Saver (Pixel Watch: it switches the dim screen off and turns on by itself at 15 %) ----
+# A black screen under Battery Saver is the watch's own: the diary names it (cause=battery-saver) and the
+# app does not rebuild (it cannot help). If this emulator keeps dimming under Battery Saver, the check
+# still requires that no rebuild happened, and says so.
+log "S-saver: Battery Saver on, the screen goes off"
+adb shell cmd power set-mode 1 >/dev/null 2>&1 || adb shell settings put global low_power 1 >/dev/null 2>&1 || true
+sleep 3
+RB="$(count ' rebuild ')"
+SB="$(count 'cause=battery-saver')"
+AB="$(count 'ambient-enter')"
+adb shell input keyevent KEYCODE_SLEEP
+sleep 6
+shot "S-saver-off"
+adb shell input keyevent KEYCODE_WAKEUP
+sleep 6
+shot "S-saver-wake"
+RA="$(count ' rebuild ')"
+SA="$(count 'cause=battery-saver')"
+AA="$(count 'ambient-enter')"
+SAVER="$(diag | grep -oE 'saver=[01?]' | tail -1)"
+if [ "$RA" != "$RB" ]; then
+  result S-saver FAIL "Battery Saver black screen: $((RA - RB)) rebuild(s) (none wanted; $SAVER)"
+elif [ "$SA" -gt "$SB" ]; then
+  result S-saver PASS "Battery Saver black screen named in the diary (cause=battery-saver), no rebuild"
+elif [ "$AA" -gt "$AB" ]; then
+  result S-saver PASS "this emulator kept dimming under Battery Saver ($SAVER); no rebuild"
+else
+  result S-saver FAIL "neither named nor dimmed under Battery Saver ($SAVER, front: $(front))"
+fi
+adb shell cmd power set-mode 0 >/dev/null 2>&1 || adb shell settings put global low_power 0 >/dev/null 2>&1 || true
 
 adb logcat -d > "$OUT/logcat.txt" || true
 diag > "$OUT/diary.txt"

@@ -321,7 +321,11 @@ object WatchState {
     if (!active) WorkoutStarted.cancel(ctx)
     // R-236: the whole workout keeps the app on the watch (dim, bright on a wrist raise).
     WorkoutLive.sync(ctx, active)
-    if (began) WorkoutStarted.onWorkoutBegan(ctx)
+    if (began) {
+      // R-437: the screen's self-heal starts over for each workout.
+      AmbientDiag.newWorkout()
+      WorkoutStarted.onWorkoutBegan(ctx)
+    }
     if (!active) {
       // Workout finished or discarded: no rest may buzz after it, and (C5-9) a "Rest is over ·
       // Next: …" still up goes too (it stayed until its 2-minute timeout).

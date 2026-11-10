@@ -58,13 +58,58 @@ object AmbientDiag {
      * onStop (true = the member left the app, which is not this). [ambient]: in ambient at that moment
      * (the system can stop the app from the dim state, e.g. Wear OS 5+'s return to the watch face).
      * [ambientWorked]: ambient was entered before in this process, so the watch's always-on screen is
-     * on. [workoutOpen]: only mid-workout does MettleUp have to stay dim.
+     * on. [workoutOpen]: only mid-workout does MettleUp have to stay dim. [saverOn]: R-437, Battery
+     * Saver is on: it switched the dim screen off itself ([watchCause]), so a rebuild cannot help.
      */
-    fun blackout(screenOn: Boolean, ambient: Boolean, ambientWorked: Boolean, workoutOpen: Boolean, finishing: Boolean): Boolean =
-      !screenOn && !ambient && ambientWorked && workoutOpen && !finishing
+    fun blackout(screenOn: Boolean, ambient: Boolean, ambientWorked: Boolean, workoutOpen: Boolean, finishing: Boolean, saverOn: Boolean): Boolean =
+      !screenOn && !ambient && ambientWorked && workoutOpen && !finishing && !saverOn
 
     /** Rebuild on the next start? [tries]: rebuilds since ambient last worked. */
     fun shouldRebuild(blackoutSeen: Boolean, tries: Int): Boolean = blackoutSeen && tries < MAX_TRIES
+
+    /**
+     * R-437 (10 Nov 2026): the rebuild count belongs to ONE workout. Before, it only reset when the dim
+     * screen came back, so a workout that used both tries left the heal off for every later workout
+     * until Android ended the app. [seenWorkout]/[workout]: [workoutCount] when the count was last
+     * kept, and now. PURE.
+     */
+    fun triesFor(seenWorkout: Int, workout: Int, tries: Int): Int = if (seenWorkout != workout) 0 else tries
+  }
+
+  /**
+   * R-437: new workouts since the app started ([WatchState.onWorkout] counts one when the phone opens a
+   * workout the watch did not have). MainActivity starts the rebuild count over on each.
+   */
+  @Volatile
+  var workoutCount = 0
+    private set
+
+  fun newWorkout() {
+    workoutCount += 1
+  }
+
+  /**
+   * R-437 (10 Nov 2026, owner: "the screen is turning off instead of dimming"): the watch's own reasons
+   * for a black screen, named in the diary line of each black screen. Google (Pixel Watch help, "Battery
+   * life"): Battery Saver "disables the Always-on Display but keeps Tilt-to-wake enabled" and turns on by
+   * itself at 15 %: the screen goes off and a wrist raise brings the app back bright, the owner's exact
+   * report. [saverOn]: PowerManager.isPowerSaveMode. [aodGlobal]: the always-on setting as read
+   * ("0" = off, anything else = on or unreadable). "" = none of these. PURE.
+   */
+  fun watchCause(saverOn: Boolean?, aodGlobal: String): String = when {
+    saverOn == true -> "battery-saver"
+    aodGlobal == "0" -> "always-on-off"
+    else -> ""
+  }
+
+  /** [watchCause] for this watch now. */
+  fun watchCause(ctx: Context): String {
+    val saver = try {
+      (ctx.getSystemService(Context.POWER_SERVICE) as PowerManager).isPowerSaveMode
+    } catch (e: Exception) {
+      null
+    }
+    return watchCause(saver, setting(ctx, "ambient_enabled", global = true))
   }
 
   /** The diary's text. PURE. */

@@ -7,6 +7,24 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-437. Watch screen turns off instead of dimming (again) — 10 Nov 2026
+
+He said: "The watch app screen is turning off instead of dimming itself. This is a feature we built and it worked. The first time I tried it (only once), it worked, but it has not worked the last two times." Pixel Watch, Play app (wear:internal). No adb.
+
+Built so far: R-166 ambient (AmbientLifecycleObserver in MainActivity, 0.56), R-236 Ongoing Activity for the whole workout (WorkoutLive, 0.63.0), R-297 WorkoutService health foreground service (0.71.0), R-341 dimmed rest counts each second (0.73.0), R-353 self-heal rebuild + on-watch diary (0.73.0). Only ONE activity: every watch screen (next set, effort, rest, rest over, exercise done, saved) is a Compose state of MainActivity, so no screen lacks the dim mode. No FLAG_KEEP_SCREEN_ON anywhere.
+
+Reasons counted (cloud proof: wear-build run 42765416663, watch UAT on Wear OS 5 API 34 and 5.1 API 35-ext15, diary + logcat read):
+- In the app, all PASS on the emulator: timeout dims, wrist down dims, leaving and coming back, another app on top, a real incoming call, another app's notification, phone link lost, dim rest countdown. NEW evidence read in that run: the rest ending while dimmed (buzz + our "Rest is over" card) did NOT end the dim state (diary: ambient-enter 06:28:13, no exit or stop until the wake 06:30:02) and Wear OS logged "Not alerting: Notification is not noisy" for the card (its channel has no sound or vibration), so the card never pops over the app. The workout Ongoing Activity was listed by SysUI the whole time.
+- On the watch itself (not reachable from code): Battery Saver (Pixel Watch help "Battery life": it "disables the Always-on Display but keeps Tilt-to-wake enabled" and turns on by itself at 15 %) = screen goes black and a wrist raise brings the app back bright, his exact report; Always-on display switched off (Settings > Display > Always-on display); Bedtime mode (screen and tilt-to-wake off: a wrist raise would NOT wake it); Theatre mode (same, stays off); off the wrist (full doze).
+- Cause: LIKELY the watch's Battery Saver (or Always-on display off), NOT proven. The on-watch diary records saver= and aod= at every screen-off, but nothing reads it off the watch yet (the phone receives /forge/diag and ignores it).
+
+Fixed in code (watch only, AmbientDiag.kt, MainActivity.kt, WatchState.kt one line):
+1. The self-heal's two tries belonged to the whole app run: a workout that used both left the heal off for every later workout until Android ended the app. Now each new workout (WatchState.onWorkout "began") starts the count over (AmbientDiag.newWorkout / Heal.triesFor).
+2. A black screen while Battery Saver is on is the watch's own: no rebuild (it cannot help), and the diary line says cause=battery-saver (or cause=always-on-off when the setting reads 0).
+Tests: AmbientDiagTest (saver no rebuild, tries per workout, watchCause names). Watch UAT (scripts/ci/watch_dim_uat.sh) gained R-end (rest ends while dimmed: still dimmed, no exit/stop, the card's alerting line logged) and S-saver (Battery Saver on: no rebuild; named in the diary, or the emulator keeps dimming).
+Needs him: check the watch battery (Battery Saver at 15 %) and Settings > Display > Always-on display, then a 2-minute check on his watch after the next release. Waiting list: PROGRESS.md (no release, no version bump).
+Next (my view): make the diary readable (the phone's feedback screen attaches the watch's /forge/diag), so the next report is proven, and consider a one-line watch hint when Battery Saver switched the dim screen off.
+
 ## R-436. Remember my empty workouts — 10 Nov 2026
 
 He said: "Start remembering my empty workouts. There can be just one save in the backend for now; no settings needed. The exercises I do in an empty workout get saved, and next time I start an empty workout the same exercises are automatically pulled up again. You decide the best implementation. Think about a versatile version for all users, but this is something I need, so it has to be there."

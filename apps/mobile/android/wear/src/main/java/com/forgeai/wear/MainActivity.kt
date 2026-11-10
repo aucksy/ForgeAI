@@ -379,6 +379,9 @@ class MainActivity : ComponentActivity() {
     AmbientDiag.note(this, "resume", AmbientDiag.state(this))
     // R-353: last time the screen went OFF where it should have dimmed (AmbientDiag.Heal). Rebuild this
     // screen once, which registers it for the dim state again (the observer does that only in onCreate).
+    // R-437: each new workout gets its own tries.
+    rebuilds = AmbientDiag.Heal.triesFor(rebuildsWorkout, AmbientDiag.workoutCount, rebuilds)
+    rebuildsWorkout = AmbientDiag.workoutCount
     if (AmbientDiag.Heal.shouldRebuild(blackoutSeen && WatchState.workoutOpen(this), rebuilds)) {
       blackoutSeen = false
       rebuilds += 1
@@ -420,14 +423,17 @@ class MainActivity : ComponentActivity() {
       true
     }
     val open = WatchState.workoutOpen(this)
-    if (AmbientDiag.Heal.blackout(screenOn, ambient, ambientWorked, open, isFinishing || isChangingConfigurations)) {
+    // R-437: Battery Saver (or Always-on off) is the watch's own reason for a black screen: named in the
+    // diary, and with Battery Saver no rebuild (it cannot bring the dim screen back).
+    val cause = if (!screenOn && !ambient && open) AmbientDiag.watchCause(this) else ""
+    if (AmbientDiag.Heal.blackout(screenOn, ambient, ambientWorked, open, isFinishing || isChangingConfigurations, saverOn = cause == "battery-saver")) {
       blackoutSeen = true
     }
     AmbientDiag.note(
       this,
       "stop",
       "ambient=${if (ambient) 1 else 0} workout=${if (open) 1 else 0} blackout=${if (blackoutSeen) 1 else 0} " +
-        AmbientDiag.state(this),
+        (if (cause.isNotEmpty()) "cause=$cause " else "") + AmbientDiag.state(this),
     )
     AmbientDiag.push(this)
     super.onStop()
@@ -676,6 +682,9 @@ class MainActivity : ComponentActivity() {
 
     /** R-353: rebuilds since the dim screen last worked (capped by [AmbientDiag.Heal.MAX_TRIES]). */
     private var rebuilds = 0
+
+    /** R-437: [AmbientDiag.workoutCount] when [rebuilds] was last kept (a new workout starts it over). */
+    private var rebuildsWorkout = 0
 
     /** R-353: the logging flow's state, carried across one rebuild. */
     private var keptLogUi: LogUi? = null
