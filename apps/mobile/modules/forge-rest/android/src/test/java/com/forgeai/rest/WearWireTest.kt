@@ -312,4 +312,33 @@ class WearWireTest {
     assertEquals("", WearWire.watchTitle("Push Day", WatchLines.NONE, ""))
     assertEquals("", WearWire.watchTitle("Workout in progress", WearWire.watchLines(null), ""))
   }
+
+  // ------------------------------------------------------------------ R-441: the watch's screen diary
+  @Test
+  fun theWatchDiaryAnswerIsNewestFirstWithoutNamesOrEmptyLogs() {
+    val json = WearWire.watchDiagJson(
+      listOf(
+        WearWire.WatchDiag(100L, "11-10 09:00:00.000 create"),
+        WearWire.WatchDiag(300L, "11-10 10:00:00.000 stop ambient=0"),
+        WearWire.WatchDiag(200L, "  "),
+      ),
+    )
+    val o = JSONObject(json)
+    assertTrue(o.getBoolean("ok"))
+    val w = o.getJSONArray("watches")
+    assertEquals(2, w.length())
+    assertEquals(300L, w.getJSONObject(0).getLong("at"))
+    assertEquals("11-10 10:00:00.000 stop ambient=0", w.getJSONObject(0).getString("log"))
+    // Only the time and the lines go to the app: no node id, no watch name.
+    assertEquals(setOf("at", "log"), w.getJSONObject(0).keySet())
+  }
+
+  @Test
+  fun aHugeWatchDiaryIsCutToItsNewestEnd() {
+    val log = "x".repeat(WearWire.MAX_DIAG_CHARS) + "NEWEST"
+    val got = JSONObject(WearWire.watchDiagJson(listOf(WearWire.WatchDiag(1L, log)))).getJSONArray("watches").getJSONObject(0).getString("log")
+    assertEquals(WearWire.MAX_DIAG_CHARS, got.length)
+    assertTrue(got.endsWith("NEWEST"))
+    assertEquals("""{"ok":true,"watches":[]}""", WearWire.watchDiagJson(emptyList()))
+  }
 }

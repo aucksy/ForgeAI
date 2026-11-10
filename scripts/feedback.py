@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Read and sort "Send feedback" messages (launch plan H7; runbook docs/launch/FEEDBACK.md).
 
-  python scripts/feedback.py new                      -> the unsorted messages, oldest first
+  python scripts/feedback.py new                      -> the unsorted messages, oldest first (no watch logs)
+  python scripts/feedback.py watch [N]                -> the last N watch screen logs (default 5; R-441)
   python scripts/feedback.py all [N]                  -> the last N messages (default 50)
   python scripts/feedback.py mark <id> <status> <note> -> status: bug | idea | question | praise | spam | done
   python scripts/feedback.py purge                    -> delete messages older than 1 year (privacy notice)
@@ -48,7 +49,14 @@ def show(rows):
 def main(argv):
     cmd = argv[1] if len(argv) > 1 else "new"
     if cmd == "new":
-        show(d1("SELECT * FROM feedback WHERE status = 'new' ORDER BY id"))
+        # R-441: watch screen logs ride with a member's message; they are read with `watch`, not sorted.
+        show(d1("SELECT * FROM feedback WHERE status = 'new' AND screen <> 'watch-diary' ORDER BY id"))
+    elif cmd == "watch":
+        # R-441: "Add my watch's screen log" (member app, Help and feedback). Each log is its own row,
+        # screen 'watch-diary', sent right after the member's message (same sender, same minute).
+        # Read the message next to it with `all`. Legend: the log's third line.
+        n = int(argv[2]) if len(argv) > 2 else 5
+        show(d1(f"SELECT * FROM feedback WHERE screen = 'watch-diary' ORDER BY id DESC LIMIT {n}"))
     elif cmd == "all":
         n = int(argv[2]) if len(argv) > 2 else 50
         show(d1(f"SELECT * FROM feedback ORDER BY id DESC LIMIT {n}"))

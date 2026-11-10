@@ -14,9 +14,11 @@ import { SettingsPage } from '@/components/settings/SettingsPage';
 import { Card, PrimaryButton } from '@/components/ui';
 import { FEEDBACK_WORDS, sendFeedback } from '@/lib/feedback';
 import { HelpQuestions } from '@/components/feedback/HelpQuestions';
+import { useWatchLog, WatchLogSwitch } from '@/components/feedback/WatchLogSwitch';
 import { HELP_HISTORY_WORDS } from '@/lib/helpHistory';
 import { FEEDBACK_BUTTON_WORDS } from '@/lib/feedbackButton';
 import { useFeedbackButton } from '@/lib/feedbackButtonStore';
+import { sendWatchLog, WATCH_LOG_WORDS } from '@/lib/watchDiag';
 import { useGymShop } from '@/shop/gymStore';
 import { color, type } from '@/theme/tokens';
 
@@ -30,6 +32,8 @@ export default function FeedbackPage() {
   const busy = useRef(false);
   // R-149: the floating feedback button on every screen is switched here (on by default, owner 4 Nov 2026).
   const buttonOn = useFeedbackButton((s) => s.enabled);
+  // R-441: "Add my watch's screen log" (only with a MettleUp watch log on this phone).
+  const watchLog = useWatchLog(true);
   useEffect(() => {
     void useFeedbackButton.getState().load();
   }, []);
@@ -40,13 +44,18 @@ export default function FeedbackPage() {
     setSending(true);
     setNote(null);
     const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen: 'settings/feedback', input });
+    // R-441: the watch screen log goes as its own message, after the member's own was taken.
+    const log = r.ok && watchLog.on ? await sendWatchLog(Constants.expoConfig?.version ?? '') : 'none';
     busy.current = false;
     setSending(false);
     if (r.ok) {
       setText('');
       setInput('typed');
+      if (log === 'sent') watchLog.setOn(false);
       // The answer itself shows in Your questions below (it is kept there).
-      setNote(r.reply ? null : { ok: true, words: FEEDBACK_WORDS.sent });
+      if (log === 'failed') setNote({ ok: false, words: WATCH_LOG_WORDS.notSent });
+      else if (log === 'sent') setNote({ ok: true, words: r.reply ? WATCH_LOG_WORDS.sent : `${FEEDBACK_WORDS.sent} ${WATCH_LOG_WORDS.sent}` });
+      else setNote(r.reply ? null : { ok: true, words: FEEDBACK_WORDS.sent });
     } else {
       setNote({ ok: false, words: r.words });
     }
@@ -67,6 +76,11 @@ export default function FeedbackPage() {
           minHeight={140}
         />
       </Card>
+      {watchLog.available ? (
+        <Card>
+          <WatchLogSwitch available={watchLog.available} on={watchLog.on} onChange={watchLog.setOn} />
+        </Card>
+      ) : null}
       {sending ? (
         <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
           {HELP_HISTORY_WORDS.sending}

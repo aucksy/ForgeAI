@@ -34,7 +34,7 @@ IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 # The one query this script sends. Fixed text: no message, id or argument is ever put into it.
 NEW_SQL = (
     "SELECT id, at, source, text, app, device, screen, gym, sender, input "
-    "FROM feedback WHERE status = 'new' ORDER BY id LIMIT 500"
+    "FROM feedback WHERE status = 'new' AND screen <> 'watch-diary' ORDER BY id LIMIT 500"
 )
 
 BUCKETS = ("bug", "idea", "question", "praise", "spam")

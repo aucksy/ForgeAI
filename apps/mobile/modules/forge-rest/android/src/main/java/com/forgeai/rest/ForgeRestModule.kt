@@ -341,6 +341,16 @@ class ForgeRestModule : Module() {
       WearSync.updateOnWatch(c, nodeId.ifEmpty { null }) { s -> promise.resolve(s) }
     }
 
+    // R-441: every watch's screen diary, as JSON {"ok":bool,"watches":[{at,log}]} (lib/watchDiag.ts).
+    AsyncFunction("watchDiag") { promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(WearWire.WATCH_DIAG_UNKNOWN)
+        return@AsyncFunction
+      }
+      WearSync.watchDiag(c) { s -> promise.resolve(s) }
+    }
+
     Function("clearWorkoutCard") {
       val c = ctx ?: return@Function false
       WorkoutCard.clear(c)

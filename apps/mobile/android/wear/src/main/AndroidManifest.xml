@@ -100,6 +100,14 @@
           android:path="/forge/watch-version-ask"
           android:scheme="wear" />
       </intent-filter>
+      <!-- R-441: the phone's Help and feedback asks for the screen diary (DiagSend.kt). -->
+      <intent-filter>
+        <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+        <data
+          android:host="*"
+          android:path="/forge/diag-ask"
+          android:scheme="wear" />
+      </intent-filter>
       <!-- A workout was just started on the phone (/forge/open, WorkoutStarted.kt). -->
       <intent-filter>
         <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />

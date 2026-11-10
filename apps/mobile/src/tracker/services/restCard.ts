@@ -101,6 +101,8 @@ interface Native {
   installOnWatch?(): Promise<string>;
   /** Watch update ready (10 Nov 2026): JSON of every connected watch's app version (watchUpdate.ts). Older native pieces lack it. */
   watchVersions?(): Promise<string>;
+  /** R-441: every watch's screen diary as JSON (lib/watchDiag.ts). */
+  watchDiag?(): Promise<string>;
   /** Watch update ready: the watch's Play Store on MettleUp ("" = every watch with the app): "opened" | "none" | "missing" | "failed" | "unknown". */
   updateOnWatch?(nodeId: string): Promise<string>;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
@@ -286,6 +288,18 @@ export async function nativeWatchVersions(): Promise<string | null> {
     return await n.watchVersions();
   } catch (e) {
     console.warn('[ForgeErr] the watch versions could not be read', e);
+    return null;
+  }
+}
+
+/** R-441: every watch's screen diary (JSON, lib/watchDiag.ts); null with no native piece. Never throws. */
+export async function nativeWatchDiag(): Promise<string | null> {
+  const n = N();
+  if (!n?.watchDiag) return null;
+  try {
+    return await n.watchDiag();
+  } catch (e) {
+    console.warn('[ForgeErr] the watch screen log could not be read', e);
     return null;
   }
 }

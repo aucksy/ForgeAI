@@ -29,6 +29,8 @@ class ForgeListenerService : WearableListenerService() {
     if (event.path == WatchActions.PATH_NACK_DONE) WatchActions.refused(applicationContext)
     // Watch update ready (10 Nov 2026): the phone asks for this app's version (it has no item yet).
     if (event.path == WatchVersion.PATH_ASK) WatchVersion.publish(applicationContext, "asked", force = true)
+    // R-441: the phone's Help and feedback asks for the screen diary (DiagSend.kt).
+    if (event.path == DiagSend.PATH_ASK) DiagSend.answer(applicationContext)
     // A workout was just started on the phone: open the app, or post "Workout started".
     if (event.path == WatchSync.PATH_OPEN) {
       // R-269: only MettleUp on the phone sends this: the phone app is there.

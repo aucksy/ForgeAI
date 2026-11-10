@@ -17,6 +17,25 @@
   `input`, migrations/0005, blank from older apps), gym code, a random install id, a one-way
   hash of the network address. No name, no mobile number. 1 year (privacy notice table).
 
+## Watch screen logs (R-441, 10 Nov 2026; next release after 0.76.0)
+- **Member app:** Help and feedback (the Settings page and the floating button's sheet) shows a switch
+  "Add my watch's screen log" ONLY when the phone holds a MettleUp watch screen log (a paired watch with
+  the app). Off by default; it turns itself off again after a log was sent.
+- **What goes:** the watch's screen diary (android/wear AmbientDiag.kt), read off the watch through the
+  Wear Data Layer (the phone asks the watch for a fresh copy first, DiagSend.kt) and cut to 2000 letters
+  in src/lib/watchDiag.ts: a head (when the watch wrote it, counts over the whole diary: screen off instead
+  of dim, Battery Saver / always-on causes, dims, rebuilds, the last Battery Saver and always-on values, a
+  legend), then the newest lines by day (focus/pause lines dropped first). Only known events and settings;
+  no watch name, workout, heart rate or gym code.
+- **Where it lands:** its own row in the same `feedback` table (no server or database change): source
+  `member`, screen `watch-diary`, same `sender` as the message sent a few seconds before it.
+- **How Claude reads it:** `python scripts/feedback.py watch [N]` (newest N logs, default 5). The member's
+  own words are the row just before it with the same sender: `python scripts/feedback.py all 20`.
+  `new` and `scripts/feedback_inbox.py` skip watch logs (they are evidence, not messages to sort).
+- **Reading a log:** `bo1` on a `stop` line = the screen went OFF where it should have dimmed; `cause=saver`
+  / `cause=aod-off` = Battery Saver on / Always-on display off at that moment; `DIM` = the dimmed screen
+  was entered; `REBUILD try N` = the R-353 self-heal; `aodA/B` = the always-on setting (global/secure).
+
 ## Sorting (every run, from the PC, which has the Cloudflare sign-in)
 0. `python scripts/feedback_inbox.py` — READ-ONLY: writes `docs/feedback/inbox-YYYY-MM-DD.md` (kept out
    of git) with the new messages pre-sorted by a word list (a guess), repeats joined, screens counted,

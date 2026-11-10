@@ -15,6 +15,8 @@ import { Animated, PanResponder, Pressable, Text, View, useWindowDimensions } fr
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FeedbackComposer } from '@/components/feedback/FeedbackComposer';
+import { useWatchLog, WatchLogSwitch } from '@/components/feedback/WatchLogSwitch';
+import { sendWatchLog, WATCH_LOG_WORDS } from '@/lib/watchDiag';
 import { useKeyboardFrame } from '@/components/KeyboardRoom';
 import { Icon, PrimaryButton, Sheet } from '@/components/ui';
 import { FEEDBACK_WORDS, sendFeedback, type HelpReply as HelpReplyData } from '@/lib/feedback';
@@ -165,11 +167,15 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
   const [note, setNote] = useState<{ ok: boolean; words: string; reply?: HelpReplyData } | null>(null);
   const gym = useGymShop((s) => s.link?.joinCode ?? '');
   const busy = useRef(false);
+  // R-441: "Add my watch's screen log" (only with a MettleUp watch log on this phone), looked up when it opens.
+  const watchLog = useWatchLog(screen != null);
+  const [logNote, setLogNote] = useState<{ ok: boolean; words: string } | null>(null);
 
   // A fresh sheet each time it opens; an unsent message stays while it is closed and opened again.
   useEffect(() => {
     if (screen == null) return;
     setNote(null);
+    setLogNote(null);
   }, [screen]);
 
   const send = async () => {
@@ -177,13 +183,18 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
     busy.current = true;
     setSending(true);
     setNote(null);
+    setLogNote(null);
     const r = await sendFeedback(text, { app: Constants.expoConfig?.version, gym, screen, input });
+    // R-441: the watch screen log goes as its own message, after the member's own was taken.
+    const log = r.ok && watchLog.on ? await sendWatchLog(Constants.expoConfig?.version ?? '') : 'none';
     busy.current = false;
     setSending(false);
     if (r.ok) {
       setText('');
       setInput('typed');
+      if (log === 'sent') watchLog.setOn(false);
       setNote({ ok: true, words: FEEDBACK_WORDS.sent, reply: r.reply });
+      setLogNote(log === 'sent' ? { ok: true, words: WATCH_LOG_WORDS.sent } : log === 'failed' ? { ok: false, words: WATCH_LOG_WORDS.notSent } : null);
     } else {
       setNote({ ok: false, words: r.words });
     }
@@ -207,6 +218,7 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
           onSpoke={() => setInput('voice')}
           placeholder={FEEDBACK_BUTTON_WORDS.placeholder}
         />
+        <WatchLogSwitch available={watchLog.available} on={watchLog.on} onChange={watchLog.setOn} />
         {sending ? (
           <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, lineHeight: 20, color: color.inkSecondary }}>
             {HELP_HISTORY_WORDS.sending}
@@ -224,6 +236,14 @@ function FeedbackSheet({ screen, onClose }: { screen: string | null; onClose: ()
             style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: note.ok ? color.goodText : color.criticalText }}
           >
             {note.words}
+          </Text>
+        ) : null}
+        {logNote ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, lineHeight: 20, color: logNote.ok ? color.goodText : color.criticalText }}
+          >
+            {logNote.words}
           </Text>
         ) : null}
         <Text style={{ fontFamily: type.body, fontSize: type.size.caption, lineHeight: 18, color: color.inkMuted }}>{FEEDBACK_BUTTON_WORDS.hideHow}</Text>

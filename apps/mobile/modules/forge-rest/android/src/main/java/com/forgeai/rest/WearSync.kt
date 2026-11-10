@@ -543,6 +543,89 @@ object WearSync {
     }
   }
 
+  // ------------------------------------------------------------------ R-441: the watch's screen diary
+  /** After asking the watches for a fresh diary, read the items after this. */
+  private const val DIAG_REREAD_MS = 2_500L
+
+  /**
+   * R-441 (10 Nov 2026): every watch's screen diary as JSON (WearWire.watchDiagJson), for "Add my
+   * watch's screen log" in Help and feedback. Connected watches with the app are asked to write it
+   * now ([WearWire.PATH_WATCH_DIAG_ASK]; an older watch build ignores the message and its last copy,
+   * written at each screen-off, is read instead). The items are read [DIAG_REREAD_MS] later, with or
+   * without a watch in reach (the phone keeps the last copy). [WearWire.WATCH_DIAG_UNKNOWN] when Wear
+   * OS cannot say within [ASK_TIMEOUT_MS]. Never throws; [done] is called once.
+   */
+  fun watchDiag(ctx: Context, done: (String) -> Unit) {
+    val app = ctx.applicationContext
+    val once = Once(done)
+    main.postDelayed({
+      if (once.pending()) Log.w(TAG, "watch diary: Wear OS did not answer in time")
+      once.answer(WearWire.WATCH_DIAG_UNKNOWN)
+    }, ASK_TIMEOUT_MS)
+    if (unavailable()) {
+      once.answer(WearWire.WATCH_DIAG_UNKNOWN)
+      return
+    }
+    val read = {
+      readWatchDiag(app, { once.answer(WearWire.WATCH_DIAG_UNKNOWN) }) { items ->
+        Log.i(TAG, "watch diary: ${items.size} watch(es)")
+        once.answer(WearWire.watchDiagJson(items))
+      }
+    }
+    try {
+      Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
+        .addOnSuccessListener { info ->
+          for (node in info.nodes) {
+            try {
+              Wearable.getMessageClient(app).sendMessage(node.id, WearWire.PATH_WATCH_DIAG_ASK, ByteArray(0))
+                .addOnFailureListener { e -> Log.w(TAG, "watch diary ask not sent", e) }
+            } catch (e: Exception) {
+              Log.w(TAG, "watch diary ask not sent", e)
+            }
+          }
+          if (info.nodes.isEmpty()) read() else main.postDelayed({ read() }, DIAG_REREAD_MS)
+        }
+        .addOnFailureListener { e ->
+          // No watch to ask: the last copies on this phone still count.
+          Log.w(TAG, "watch app not looked up (diary)", e)
+          read()
+        }
+    } catch (e: Exception) {
+      Log.w(TAG, "watch diary not looked up", e)
+      once.answer(WearWire.WATCH_DIAG_UNKNOWN)
+    }
+  }
+
+  /** Every watch's diary item on this phone; [onFail] when the Data Layer cannot say. */
+  private fun readWatchDiag(app: Context, onFail: () -> Unit, then: (List<WearWire.WatchDiag>) -> Unit) {
+    try {
+      val uri = Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(WearWire.PATH_WATCH_DIAG).build()
+      Wearable.getDataClient(app).getDataItems(uri)
+        .addOnSuccessListener { buf ->
+          val out = ArrayList<WearWire.WatchDiag>()
+          try {
+            for (item in buf) {
+              val m = DataMapItem.fromDataItem(item).dataMap
+              val log = m.getString(WearWire.KEY_DIAG_LOG) ?: continue
+              out.add(WearWire.WatchDiag(m.getLong(WearWire.KEY_DIAG_AT, 0L), log))
+            }
+          } catch (e: Exception) {
+            Log.w(TAG, "a watch diary item not read", e)
+          } finally {
+            buf.release()
+          }
+          then(out)
+        }
+        .addOnFailureListener { e ->
+          Log.w(TAG, "watch diary items not read", e)
+          onFail()
+        }
+    } catch (e: Exception) {
+      Log.w(TAG, "watch diary items not read", e)
+      onFail()
+    }
+  }
+
   /**
    * Watch update ready (10 Nov 2026): opens the Play Store on the MettleUp page on the connected
    * watch [nodeId] (null, or a watch not connected / without the app = every connected watch WITH

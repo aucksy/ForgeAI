@@ -209,6 +209,40 @@ internal object WearWire {
   /** watchVersions() when Wear OS could not say. */
   const val WATCH_VERSIONS_UNKNOWN = """{"ok":false,"nodes":[]}"""
 
+  // ------------------------------------------------------------------ R-441: the watch's screen diary
+  /**
+   * R-441 (10 Nov 2026): the watch keeps a short screen diary (android/wear AmbientDiag.kt: screen
+   * on / off / dim, Battery Saver, the always-on setting, times) in the Data Layer item
+   * [PATH_WATCH_DIAG] (keys [KEY_DIAG_LOG], [KEY_DIAG_AT]); [PATH_WATCH_DIAG_ASK] asks a watch to write
+   * it now (android/wear DiagSend.kt). Must match those files.
+   */
+  const val PATH_WATCH_DIAG = "/forge/diag"
+  const val PATH_WATCH_DIAG_ASK = "/forge/diag-ask"
+  const val KEY_DIAG_LOG = "log"
+  const val KEY_DIAG_AT = "at"
+
+  /** The most diary text passed to the app per watch (the watch keeps about 150 lines, ~14 000). */
+  const val MAX_DIAG_CHARS = 20_000
+
+  /** One watch's diary item: [at] when the watch wrote it (its clock, ms), [log] its lines. */
+  data class WatchDiag(val at: Long, val log: String)
+
+  /**
+   * The phone's answer to watchDiag() (lib/watchDiag.ts parses it): {"ok":true,"watches":[{at, log}]},
+   * newest first. No node id or watch name (a name can carry the member's own). PURE.
+   */
+  fun watchDiagJson(items: Collection<WatchDiag>): String {
+    val arr = org.json.JSONArray()
+    for (d in items.sortedByDescending { it.at }) {
+      if (d.log.isBlank()) continue
+      arr.put(JSONObject().put("at", d.at).put("log", d.log.takeLast(MAX_DIAG_CHARS)))
+    }
+    return JSONObject().put("ok", true).put("watches", arr).toString()
+  }
+
+  /** watchDiag() when Wear OS could not say. */
+  const val WATCH_DIAG_UNKNOWN = """{"ok":false,"watches":[]}"""
+
   /**
    * "Update on watch": the connected watches WITH the app whose Play Store page opens; only [only]
    * when it names one of them (null or a watch not connected / without the app = all of them).
