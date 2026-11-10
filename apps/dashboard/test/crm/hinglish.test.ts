@@ -20,7 +20,7 @@ import { QUICK_ACTIONS } from '../../src/crm/logic/quickActions';
 import { TILE_FILTERS, tileLabel } from '../../src/crm/logic/homeTiles';
 import { STATE_LABEL } from '../../src/crm/logic/membership';
 import { START_PROMISE } from '../../src/crm/logic/trial';
-import { CHECK_RAN_OUT, FORGOT_PIN_WORDS, PIN_HINT } from '../../src/crm/auth/signin';
+import { CHECK_RAN_OUT, OTHER_WAYS, PIN_HINT } from '../../src/crm/auth/signin';
 
 const ROOT = fileURLToPath(new URL('../../src/crm', import.meta.url));
 const DICT = join('lang', 'hinglish.ts');
@@ -107,7 +107,7 @@ describe('the translated screens are complete', () => {
       ...TILE_FILTERS.filter((f) => f !== 'visited-today').map(tileLabel),
       ...Object.values(STATE_LABEL),
       START_PROMISE,
-      FORGOT_PIN_WORDS,
+      ...Object.values(OTHER_WAYS),
       PIN_HINT,
       CHECK_RAN_OUT,
     ];

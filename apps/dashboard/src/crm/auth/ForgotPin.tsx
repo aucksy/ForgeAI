@@ -21,7 +21,7 @@ import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { PinFields } from './PinForms';
 import { PhoneCodeFailure, phoneCodeMode, phoneCodeWords, resetPinWithProof, sendPhoneCode, verifyPhoneCode, type PhoneCodeMode } from './phoneCode';
-import { authErrorWords, CHECK_RAN_OUT, cleanCode, formatMobile, newPinError, normalizeMobile } from './signin';
+import { authErrorWords, CHECK_RAN_OUT, cleanCode, formatMobile, newPinError, normalizeMobile, OTHER_WAYS, SUPPORT_EMAIL } from './signin';
 import { NumberChecked, SameNumberNote, WhatsAppButton, WhatsAppSteps, WhatsAppWaiting, beginInbound, inboundWords, type Begun } from './WhatsAppVerify';
 
 /** Which WhatsApp way is on: 'off' until the Worker says otherwise (asked once per screen). */
@@ -63,6 +63,63 @@ export function BotTrap({ value, onChange }: { value: string; onChange: (v: stri
 }
 
 const note = { margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary } as const;
+
+/**
+ * R-448 (10 Nov 2026): the ways back in besides WhatsApp: a code made on another signed-in device, another owner,
+ * or MettleUp after a call (signin.ts OTHER_WAYS). Shown under "Can’t use WhatsApp?", and as the whole card when
+ * the WhatsApp way is off.
+ */
+export function OtherWaysIn() {
+  const line = { margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: '21px', color: color.ink } as const;
+  const [before, after] = t(OTHER_WAYS.email).split(SUPPORT_EMAIL);
+  return (
+    <section aria-label={t(OTHER_WAYS.title)} style={{ display: 'grid', gap: space.sm, marginTop: space.md, padding: space.md, borderRadius: 10, background: color.surfaceSunken }}>
+      <h4 style={{ margin: 0, fontFamily: font.display, fontSize: 15, fontWeight: 700, color: color.ink }}>{t(OTHER_WAYS.title)}</h4>
+      <p style={line}>{t(OTHER_WAYS.device)}</p>
+      <p style={line}>{t(OTHER_WAYS.owner)}</p>
+      <p style={line}>
+        {before}
+        {after !== undefined ? (
+          <>
+            <a href={`mailto:${SUPPORT_EMAIL}`} style={{ color: color.accentBright, fontWeight: 600 }}>
+              {SUPPORT_EMAIL}
+            </a>
+            {after}
+          </>
+        ) : null}
+      </p>
+      <p style={{ ...line, fontSize: 13, color: color.inkSecondary }}>{t(OTHER_WAYS.after)}</p>
+    </section>
+  );
+}
+
+/** "Can’t use WhatsApp? Other ways back in": opens the box above inside a WhatsApp card. */
+function OtherWaysToggle({ disabled }: { disabled?: boolean }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ marginTop: space.sm }}>
+      <Button variant="quiet" full wrap disabled={disabled} onClick={() => setOpen((v) => !v)}>
+        {t('Can’t use WhatsApp? Other ways back in')}
+      </Button>
+      {open && <OtherWaysIn />}
+    </div>
+  );
+}
+
+/** "Forgot your PIN?" while the WhatsApp way is off: the other ways, and back to Sign in. */
+export function ForgotPinOther({ onBack }: { onBack: () => void }) {
+  return (
+    <section aria-label={t('Forgot your PIN?')}>
+      <h3 style={{ margin: `${space.md}px 0 0`, fontFamily: font.display, fontSize: 16, fontWeight: 600, color: color.ink }}>{t('Forgot your PIN?')}</h3>
+      <OtherWaysIn />
+      <div style={{ marginTop: space.lg }}>
+        <Button variant="ghost" full onClick={onBack}>
+          {t('Back to sign in')}
+        </Button>
+      </div>
+    </section>
+  );
+}
 
 export function ForgotPinForm({ startPhone = '', onBack, mode = 'send' }: { startPhone?: string; onBack: () => void; mode?: PhoneCodeMode }) {
   if (mode === 'inbound') return <ForgotPinInbound startPhone={startPhone} onBack={onBack} />;
@@ -187,6 +244,7 @@ function ForgotPinInbound({ startPhone, onBack }: { startPhone: string; onBack: 
           </Button>
         </div>
       )}
+      {!begun && !checked && <OtherWaysToggle disabled={busy} />}
     </form>
   );
 }
@@ -300,6 +358,7 @@ function ForgotPinByCode({ startPhone, onBack }: { startPhone: string; onBack: (
           {t('Back to sign in')}
         </Button>
       </div>
+      {!proof && <OtherWaysToggle disabled={busy} />}
     </form>
   );
 }

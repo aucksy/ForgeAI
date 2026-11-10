@@ -144,11 +144,11 @@ test('Verify with WhatsApp, phone: Forgot PIN from the message to a new PIN', as
   await expect(forgot).toContainText('Send it from +91 90000 00001 to the MettleUp number. Then come back here.');
   await expect(forgot).toContainText(`MettleUp code ${CODE}`);
   await expect(forgot).toContainText('To: MettleUp, +91 90000 99999');
-  await expect(forgot.getByRole('status')).toContainText('Waiting for your message');
+  await expect(forgot.getByRole('status')).toContainText(/Waiting for your message|Checking your message…/);
   await expect(forgot.getByRole('status')).toContainText(/This code works for (10:00|9:\d\d) more minutes\./);
   const again = forgot.getByRole('link', { name: 'Open WhatsApp again' });
   await expect(again).toHaveAttribute('href', WA_LINK);
-  await expect(forgot).toContainText('WhatsApp did not open? Send the message above to +91 90000 99999 yourself. Type it exactly.');
+  await expect(forgot).toContainText(`WhatsApp did not open? Send "MettleUp code ${CODE}" to +91 90000 99999 yourself.`);
   await expect(alert).toHaveCount(0);
   await expect.poll(() => w.polls, { timeout: 10_000 }).toBeGreaterThan(0);
   await shot(page, 'verify-phone-waiting');

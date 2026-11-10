@@ -409,9 +409,21 @@ export function createGymErrorWords(err: unknown): string {
   return createGymUnsure(err) ? CREATE_UNSURE_WORDS : authErrorWords(err);
 }
 
-/** UAT 1 Nov 2026: the sign-in box said what staff do with a forgotten PIN, but not an owner with no other device. */
-export const FORGOT_PIN_WORDS =
-  'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.';
+/**
+ * R-448 (10 Nov 2026): "Forgot your PIN?" ways back in besides WhatsApp. Was one small grey line (FORGOT_PIN_WORDS,
+ * UAT 1 Nov 2026) that told an owner only to email. The server already lets a signed-in owner make a one-time code
+ * for himself (0010 owner_make_signin_code), another owner make one for him, and MettleUp make one after a call
+ * (0034 hq_reset_owner_signin); a code sign-in may then set a new PIN without the old one for 15 minutes (0034).
+ * Same idea as Telegram (a code on your other signed-in device first) and Square (the owner resets a passcode).
+ */
+export const OTHER_WAYS = {
+  title: 'Other ways back in',
+  device:
+    '1. Signed in on another phone, computer or browser? Open Staff & sign-in there (on a phone it is under More). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.',
+  owner: '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.',
+  email: '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.',
+  after: 'After you sign in with a code, you can choose a new PIN straight away.',
+} as const;
 
 /** F187 (0061): the number check by WhatsApp code failed or is missing. */
 /** "Verify with WhatsApp" (8 Nov 2026): the gym server did not take the check (used, or over 15 minutes old). */

@@ -380,8 +380,9 @@ export const HELP_ARTICLES = [
       '1. Open More, then "Staff & sign-in". On a computer: Settings, the "Sign-in & data" tab, then "Staff & sign-in". ' +
       '2. Tap "Add a person". Type the name and mobile number, and pick "What can they do?": Owner or Staff. Staff can add members, collect fees and check people in. ' +
       '3. Tap "Make sign-in code", then "Copy the code" or "Send on WhatsApp". The code works once, for a few minutes. ' +
-      'The same code lets you use a new phone yourself. ' +
-      '"Set my PIN" lets you sign in with your mobile number and a PIN. "Sign out other devices" signs you out everywhere else.',
+      'The same code lets you use a new phone. ' +
+      '"Set my PIN" lets you sign in with your mobile number and a PIN. "Sign out other devices" signs you out elsewhere. ' +
+      'Forgot your PIN? Where you are still signed in, make yourself a code and sign in with it.',
     screens: ['apps/dashboard/src/crm/auth/PeopleScreen.tsx'],
   },
   {

@@ -247,9 +247,41 @@ export function WaitingMoneyLine({ state }: { state: DeskState | null }) {
 }
 
 /**
- * Review nit, owner only (Settings -> Your data): "Clear this device's saved data": the copy of the
- * gym kept for offline use and anything still waiting to be sent. Nothing waiting: one confirm.
- * Something waiting: the confirm lists it, and says it will never reach the gym's records.
+ * R-448 (10 Nov 2026, owner "okay go ahead" to a fresh-eyes finding): "Clear this device's saved data" sat under
+ * "Danger zone: these can't be undone" and read as if it could delete the gym. What it really does (unchanged):
+ * deletes this device's offline copy of the gym AND anything still waiting to send from this device. The gym's
+ * records on the server are never touched, and the copy downloads again the next time this device is online.
+ * The words below say that, what it does NOT delete, and when to use it. PURE.
+ */
+export const CLEAR_DEVICE_WORDS = {
+  title: 'Offline copy on this device',
+  what: 'This phone or computer keeps a copy of your gym, so the desk still works when the internet is down. Clearing it deletes only that copy. Your gym’s records online stay safe, and a fresh copy downloads the next time this device is online.',
+  when: 'Use it only if this device shows old details that do not update, or if MettleUp support asks you to.',
+  button: 'Clear offline copy',
+  askNothingWaiting: 'Clear the offline copy on this device? Nothing is deleted from your gym’s records online.',
+  yes: 'Yes, clear it',
+  keep: 'Keep it',
+  done: 'Offline copy cleared. Your gym’s records online are safe. A fresh copy downloads while this device is online.',
+} as const;
+
+/**
+ * The confirm when something on this device has not reached the gym's records yet: what it is, and that clearing
+ * deletes it for good while everything else stays safe online. PURE.
+ */
+export function clearDeviceWaitingWords(n: number, payments: number, paidP: number): string {
+  const money = payments > 0 ? `, including ${payments === 1 ? '1 payment' : `${payments} payments`} of ${formatINR(paidP)}` : '';
+  const them = n === 1 ? 'It is' : 'They are';
+  return `${waitingWords(n)} from this device${money}. ${them} not in your gym’s records yet. Clearing deletes ${n === 1 ? 'it' : 'them'} for good. Everything else in your gym’s records stays safe online.`;
+}
+
+/** The confirm's red button: names what goes. PURE. */
+export function clearDeviceYes(n: number): string {
+  return n === 0 ? CLEAR_DEVICE_WORDS.yes : `Delete ${n === 1 ? 'it' : `all ${n}`} and clear`;
+}
+
+/**
+ * Owner only (Settings -> Sign-in & data): the offline copy of the gym on this device, and anything still waiting
+ * to be sent. Nothing waiting: one calm confirm. Something waiting: the confirm lists it and says it is lost.
  */
 export function ClearDeviceCard() {
   const { desk, deskAction } = useCrm();
@@ -273,33 +305,36 @@ export function ClearDeviceCard() {
       setBusy(false);
     }
   };
+  const small = { margin: 0, fontFamily: font.body, fontSize: 13, color: color.inkSecondary } as const;
   return (
-    <div style={{ display: 'grid', gap: space.sm, fontFamily: font.body, fontSize: 14 }}>
-      {done && <div role="status">This device's saved data is cleared. Everything saved online for your gym stays as it is.</div>}
+    <section aria-label={CLEAR_DEVICE_WORDS.title} style={{ display: 'grid', gap: space.sm, fontFamily: font.body, fontSize: 14 }}>
+      <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.ink }}>{CLEAR_DEVICE_WORDS.title}</p>
+      <p style={small}>{CLEAR_DEVICE_WORDS.what}</p>
+      <p style={small}>{CLEAR_DEVICE_WORDS.when}</p>
+      {done && <div role="status">{CLEAR_DEVICE_WORDS.done}</div>}
       {failed && <div role="alert" style={{ color: color.criticalText }}>{failed}</div>}
       {!asking ? (
         <span>
-          <Button variant="ghost" tone="danger" needsInternet={n > 0} onClick={() => setAsking(true)}>
-            Clear this device's saved data
+          {/* Red only while something would be lost (R-448). */}
+          <Button variant="ghost" tone={n > 0 ? 'danger' : undefined} needsInternet={n > 0} onClick={() => setAsking(true)}>
+            {CLEAR_DEVICE_WORDS.button}
           </Button>
         </span>
       ) : (
-        <div role="group" aria-label="Clear this device's saved data?" style={{ display: 'grid', gap: space.sm }}>
-          <span>
-            {n === 0
-              ? "This removes the copy of your gym kept on this device for use without internet. Everything saved online for your gym stays as it is."
-              : `${waitingWords(n)} on this device${desk.payments > 0 ? `, including ${desk.payments === 1 ? '1 payment' : `${desk.payments} payments`} of ${formatINR(desk.paidP)}` : ''}. Clearing deletes ${n === 1 ? 'it' : 'them'} for good: ${n === 1 ? 'it will' : 'they will'} never reach your gym online.`}
+        <div role="group" aria-label={`${CLEAR_DEVICE_WORDS.button}?`} style={{ display: 'grid', gap: space.sm }}>
+          <span style={n > 0 ? { color: color.criticalText, fontWeight: 600 } : undefined}>
+            {n === 0 ? CLEAR_DEVICE_WORDS.askNothingWaiting : clearDeviceWaitingWords(n, desk.payments, desk.paidP)}
           </span>
           <span style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
-            <Button tone="danger" disabled={busy} onClick={() => void clear()}>
-              {n === 0 ? 'Clear it' : `Delete ${n === 1 ? 'it' : `all ${n}`} and clear`}
+            <Button tone={n > 0 ? 'danger' : undefined} disabled={busy} onClick={() => void clear()}>
+              {clearDeviceYes(n)}
             </Button>
             <Button variant="ghost" onClick={() => setAsking(false)}>
-              Keep it
+              {CLEAR_DEVICE_WORDS.keep}
             </Button>
           </span>
         </div>
       )}
-    </div>
+    </section>
   );
 }

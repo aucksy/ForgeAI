@@ -8,10 +8,10 @@ import {
   CREATE_UNSURE_WORDS,
   createGymErrorWords,
   createGymUnsure,
-  FORGOT_PIN_WORDS,
   formatCode,
   formatMobile,
   normalizeMobile,
+  OTHER_WAYS,
   peopleFromRows,
   SignInError,
   keyStatusFromRow,
@@ -128,8 +128,18 @@ describe('UAT 1 Nov 2026: "Create my gym" with no answer', () => {
     expect(createGymUnsure(new SignInError('WEAK_PIN'))).toBe(false);
   });
 
-  it('the sign-in box says what an owner with no other signed-in device does', () => {
-    expect(FORGOT_PIN_WORDS).toMatch(/owner/);
-    expect(FORGOT_PIN_WORDS).toMatch(/contact@mettleup\.fit/);
+  it('R-448: Forgot your PIN? names every way back in besides WhatsApp, in order, with the exact button names', () => {
+    // 1. a code made on another signed-in device (0010 owner_make_signin_code allows yourself), named as on screen
+    expect(OTHER_WAYS.device).toMatch(/^1\. /);
+    expect(OTHER_WAYS.device).toContain('Staff & sign-in');
+    expect(OTHER_WAYS.device).toContain('“Make sign-in code”');
+    expect(OTHER_WAYS.device).toContain('PIN box');
+    // 2. another owner; desk staff ask the owner
+    expect(OTHER_WAYS.owner).toMatch(/^2\. Another owner/);
+    // 3. MettleUp, after a call (0034 hq_reset_owner_signin needs the call)
+    expect(OTHER_WAYS.email).toMatch(/^3\. /);
+    expect(OTHER_WAYS.email).toContain('contact@mettleup.fit');
+    expect(OTHER_WAYS.email).toMatch(/call you/);
+    expect(OTHER_WAYS.after).toMatch(/new PIN/);
   });
 });

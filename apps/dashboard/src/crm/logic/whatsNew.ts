@@ -77,6 +77,17 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".',
         go: { label: 'Open Settings', path: '/settings/data' },
       },
+      {
+        // R-448 (owner "okay go ahead", 10 Nov 2026): deployed after this day's update had gone live; merged into it.
+        text: 'Forgot your PIN? Under the WhatsApp button, tap "Can’t use WhatsApp? Other ways back in". For example, make a sign-in code on another phone or computer where you are signed in. After you sign in with it, you can choose a new PIN straight away.',
+      },
+      {
+        text: 'Checking your number on WhatsApp: the message now tells you to come back to the MettleUp page after you tap Send. Back on the page, it says "Checking your message…".',
+      },
+      {
+        text: 'In Settings → Sign-in & data, the button "Clear this device’s saved data" is now "Clear offline copy", with a note on what it does. It never deletes your gym’s records online.',
+        go: { label: 'Open Settings', path: '/settings/data' },
+      },
     ],
   },
   {

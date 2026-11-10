@@ -104,8 +104,6 @@ export const HINGLISH: Readonly<Record<string, string>> = {
     'Abhi PIN nahi hai? Gym owner ka diya hua ek baar wala code daalo (Settings → Staff aur sign-in).',
   'Signing in…': 'Sign in ho raha hai…',
   'Need help? Email MettleUp at': 'Madad chahiye? MettleUp ko is email par likho:',
-  'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.':
-    'PIN bhool gaye? Gym owner se sign-in code maango. Agar aap hi owner ho aur kisi aur phone ya computer par sign in nahi hai, to madad ke liye contact@mettleup.fit par email karo.',
   'Type a 10-digit mobile number, like 98290 12345.': '10 number ka mobile number daalo, jaise 98290 12345.',
   'Type your 6-digit PIN, or the code your gym owner gave you.': 'Apna 6 number ka PIN daalo, ya gym owner ka diya hua code daalo.',
   'Gym name': 'Gym ka naam',
@@ -128,6 +126,16 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // F187 (R-383): a code on WhatsApp for Forgot PIN and the new-gym number check.
   'Forgot your PIN? Get a code on WhatsApp': 'PIN bhool gaye? WhatsApp par code lo',
   'Forgot your PIN?': 'PIN bhool gaye?',
+  // R-448: the ways back in besides WhatsApp (auth/signin.ts OTHER_WAYS).
+  'Other ways back in': 'Wapas aane ke aur tareeke',
+  '1. Signed in on another phone, computer or browser? Open Staff & sign-in there (on a phone it is under More). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.':
+    '1. Kisi aur phone, computer ya browser par sign in ho? Wahan Staff & sign-in kholo (phone par yeh More mein hai). Apne naam ke aage “Make sign-in code” dabao. Phir woh code Sign in par PIN wale box mein likho.',
+  '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.':
+    '2. Aapke gym ka koi aur owner bhi isi tarah aapke liye code bana sakta hai. Front desk staff: gym owner se code maango.',
+  '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.':
+    '3. Kahin bhi sign in nahi ho? Apne gym ka naam aur mobile number contact@mettleup.fit par email karo. Hum aapko call karke check karenge ki aap hi ho, phir sign-in code denge.',
+  'After you sign in with a code, you can choose a new PIN straight away.': 'Code se sign in karne ke baad aap turant naya PIN chun sakte ho.',
+  'Can’t use WhatsApp? Other ways back in': 'WhatsApp nahi chal raha? Wapas aane ke aur tareeke',
   'We send a 6-digit code to your mobile number on WhatsApp. Then you choose a new PIN.':
     'Hum aapke mobile number par WhatsApp se 6 number ka code bhejenge. Phir aap naya PIN chuno.',
   'If {phone} has an account, a code is on its way on WhatsApp. It works for 10 minutes.':
@@ -165,8 +173,14 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Waiting for your message. The code works for {time} more minutes.': 'Aapke message ka intezaar hai. Code {time} minute aur chalega.',
   'Open WhatsApp again': 'WhatsApp dobara kholo',
   'Open WhatsApp': 'WhatsApp kholo',
-  'WhatsApp did not open? Send the message above to {number} yourself. Type it exactly.':
-    'WhatsApp nahi khula? Upar wala message khud {number} par bhejo. Bilkul waisa hi likho.',
+  'WhatsApp did not open? Send "{text}" to {number} yourself.': 'WhatsApp nahi khula? "{text}" khud {number} par bhejo.',
+  // R-448: back on the page after WhatsApp.
+  'Checking your message…': 'Aapka message check ho raha hai…',
+  'Checking your message… The code works for {time} more minutes.': 'Aapka message check ho raha hai… Code {time} minute aur chalega.',
+  'We have not got your message yet. In WhatsApp, check that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send.':
+    'Aapka message abhi tak nahi mila. WhatsApp mein dekho ki MettleUp ko message gaya ya nahi. Agar nahi gaya, to “WhatsApp dobara kholo” dabao aur Send dabao.',
+  'We have not got your message yet. On your phone, check that the message to MettleUp was sent in WhatsApp. If it was not, scan the code again and tap Send.':
+    'Aapka message abhi tak nahi mila. Apne phone par WhatsApp mein dekho ki MettleUp ko message gaya ya nahi. Agar nahi gaya, to code dobara scan karo aur Send dabao.',
   'Use a different number': 'Doosra number daalo',
   'QR code that opens WhatsApp with the message ready': 'QR code jo WhatsApp mein likha hua message kholta hai',
   'Scan with the phone that has {phone}': 'Us phone se scan karo jismein {phone} hai',

@@ -3,7 +3,8 @@
 // stuck on Meta's side), but messages people send to us are free and still arrive.
 //
 //   POST /api/phone-code/inbound/start  {phone, purpose: 'pin'|'signup', website}
-//        -> {ok, id, code, waNumber, waText: "MettleUp code 123456", expiresAt}
+//        -> {ok, id, code, waNumber, waText: "MettleUp code 123456. After you send this, go back to the MettleUp page.", expiresAt}
+//        (R-448: an optional `lang: 'hinglish'` gives the next step in Hinglish)
 //   GET  /api/phone-code/inbound/status?id=<id>
 //        -> {ok, state: 'waiting'|'verified'|'wrong_number'|'expired'|'too_many', expiresAt?, hint?, proof?}
 //   Meta's webhook (whatsappHook.js) hands each incoming message to inboundMessages() below.
@@ -36,8 +37,17 @@ const LIVE = "('waiting','wrong_number')";
 
 // ------------------------------------------------------------------ pure helpers
 
-/** The message the person sends. PURE. */
-export const inboundText = (code) => `${WA_PREFIX} ${code}`;
+/**
+ * The message the person sends. R-448 (10 Nov 2026): after tapping Send people stayed in WhatsApp waiting for an
+ * answer (our reply is refused by Meta while 131042 lasts), so the message itself now says what to do next. Only
+ * "MettleUp code 123456" is read (parseCode finds it anywhere in the text), so a short message still works.
+ * `lang` 'hinglish' when the page is in Hinglish. PURE.
+ */
+export const NEXT_STEP = {
+  en: 'After you send this, go back to the MettleUp page.',
+  hinglish: 'Yeh bhejne ke baad MettleUp page par wapas jao.',
+};
+export const inboundText = (code, lang = 'en') => `${WA_PREFIX} ${code}. ${lang === 'hinglish' ? NEXT_STEP.hinglish : NEXT_STEP.en}`;
 
 /** The business number from the var, as digits with the country code ("91XXXXXXXXXX"), or null. PURE. */
 export function inboundNumber(env) {
@@ -153,11 +163,12 @@ async function start(request, env, now) {
   if (!inboundConfigured(env)) return refused(503, { error: 'NOT_AVAILABLE' }, 'switched off (number, secrets or D1 missing)');
   const waNumber = inboundNumber(env);
   const expiresAt = now + CODE_MINUTES * MIN;
+  const lang = body.lang === 'hinglish' ? 'hinglish' : 'en';
   if (typeof body.website === 'string' && body.website.trim()) {
     // A bot: a normal-looking answer whose id is never stored (its status says "expired").
     console.warn('[phone-inbound] dropped: the hidden "website" box was filled (a bot, or a browser autofill)');
     const code = newCode();
-    return answer(200, { ok: true, id: crypto.randomUUID(), code, waNumber, waText: inboundText(code), expiresAt });
+    return answer(200, { ok: true, id: crypto.randomUUID(), code, waNumber, waText: inboundText(code, lang), expiresAt });
   }
 
   const secret = env.PHONE_CODE_SECRET;
@@ -187,7 +198,7 @@ async function start(request, env, now) {
       .bind(await idKey(secret, id), pk, purpose, ck, now, expiresAt)
       .run();
     console.log(`[phone-inbound] started purpose=${purpose}`);
-    return answer(200, { ok: true, id, code, waNumber, waText: inboundText(code), expiresAt });
+    return answer(200, { ok: true, id, code, waNumber, waText: inboundText(code, lang), expiresAt });
   } catch (e) {
     console.error('[phone-inbound] D1 could not be used (apply D1 migration 0013)', e instanceof Error ? e.message : e);
     return answer(503, { error: 'NOT_AVAILABLE' });

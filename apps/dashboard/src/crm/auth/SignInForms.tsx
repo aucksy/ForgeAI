@@ -14,11 +14,11 @@ import { replace } from '../ui/router';
 import { platformOf, runningAsApp } from '../install';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
-import { BotTrap, ForgotPinForm, usePhoneCodeMode } from './ForgotPin';
+import { BotTrap, ForgotPinForm, ForgotPinOther, usePhoneCodeMode } from './ForgotPin';
 import { phoneCodeWords, sendPhoneCode, verifyPhoneCode } from './phoneCode';
 import { PinFields } from './PinForms';
 import { NumberChecked, SameNumberNote, WhatsAppButton, WhatsAppWaiting, beginInbound, inboundWords, type Begun } from './WhatsAppVerify';
-import { rememberAskPin, shouldOfferPin } from './pinPrompt';
+import { rememberAskPin, shouldOfferNewPin, shouldOfferPin } from './pinPrompt';
 import {
   authErrorCode,
   authErrorWords,
@@ -27,7 +27,6 @@ import {
   createGymErrorWords,
   createGymUnsure,
   formatMobile,
-  FORGOT_PIN_WORDS,
   newPinError,
   normalizeMobile,
 } from './signin';
@@ -62,6 +61,9 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
       const signed = await authApi.signIn(ten, code);
       // R-117: came in with a one-time code and has no PIN yet: offer one, once, on the next screen.
       if (shouldOfferPin(signed)) rememberAskPin(signed.person.staffId);
+      // R-448: came in with a one-time code but HAS a PIN (forgot it?): offer a new one at once, while no old PIN
+      // is needed (15 minutes after a code sign-in, 0034).
+      else if (shouldOfferNewPin(signed)) rememberAskPin(signed.person.staffId, undefined, 'new');
       replace('/');
       adopt(signed, { online: true });
     } catch (err) {
@@ -73,6 +75,8 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
   if (forgot && whatsApp) {
     return <ForgotPinForm startPhone={phone} mode={mode} onBack={() => setForgot(false)} />;
   }
+  // R-448: with the WhatsApp way off, "Forgot your PIN?" still opens the other ways back in.
+  if (forgot) return <ForgotPinOther onBack={() => setForgot(false)} />;
 
   // R-446 (owner, 10 Nov 2026: "after I relaunched the admin app from the installed app, the user was logged
   // out"): iPhone keeps a home-screen web app's storage apart from Safari's, so the first open always needs
@@ -127,15 +131,12 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
           {busy ? t('Signing in…') : (submitLabel ?? t('Sign in'))}
         </Button>
       </div>
-      {whatsApp ? (
-        <div style={{ marginTop: space.sm }}>
-          <Button variant="quiet" full wrap onClick={() => setForgot(true)}>
-            {mode === 'inbound' ? t('Forgot your PIN?') : t('Forgot your PIN? Get a code on WhatsApp')}
-          </Button>
-        </div>
-      ) : (
-        <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>{t(FORGOT_PIN_WORDS)}</p>
-      )}
+      {/* R-448: always a button (was one small grey line while the WhatsApp way is off). */}
+      <div style={{ marginTop: space.sm }}>
+        <Button variant="quiet" full wrap onClick={() => setForgot(true)}>
+          {mode === 'send' ? t('Forgot your PIN? Get a code on WhatsApp') : t('Forgot your PIN?')}
+        </Button>
+      </div>
     </form>
     </>
   );

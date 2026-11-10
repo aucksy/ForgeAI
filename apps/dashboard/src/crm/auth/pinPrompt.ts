@@ -26,22 +26,43 @@ export function shouldOfferPin(s: Pick<SignedIn, 'via' | 'hasPin'>): boolean {
   return s.via === 'code' && s.hasPin === false;
 }
 
-export function rememberAskPin(staffId: string, s?: KeyValueStore | null): void {
+/**
+ * R-448: they came in with a one-time code but already HAVE a PIN: most likely they forgot it, so offer a new one
+ * at once (for 15 minutes after a code sign-in the old PIN is not needed, 0034). "Keep my old PIN" ends it. PURE.
+ */
+export function shouldOfferNewPin(s: Pick<SignedIn, 'via' | 'hasPin'>): boolean {
+  return s.via === 'code' && s.hasPin === true;
+}
+
+/** 'set' = no PIN yet ("Set your own PIN"); 'new' = has one, came in with a code ("Choose a new PIN?"). */
+export type AskPinKind = 'set' | 'new';
+
+const NEW_MARK = 'new:';
+
+export function rememberAskPin(staffId: string, s?: KeyValueStore | null, kind: AskPinKind = 'set'): void {
   try {
-    store(s)?.setItem(ASK_PIN_KEY, staffId);
+    store(s)?.setItem(ASK_PIN_KEY, kind === 'new' ? `${NEW_MARK}${staffId}` : staffId);
   } catch (e) {
     console.warn('[ForgeErr] askPin: not remembered, the prompt will not show', e);
   }
 }
 
-export function askPinFor(staffId: string | null | undefined, s?: KeyValueStore | null): boolean {
-  if (!staffId) return false;
+/** Which prompt to show this person on this device, or null for none. */
+export function askPinKind(staffId: string | null | undefined, s?: KeyValueStore | null): AskPinKind | null {
+  if (!staffId) return null;
   try {
-    return store(s)?.getItem(ASK_PIN_KEY) === staffId;
+    const v = store(s)?.getItem(ASK_PIN_KEY);
+    if (v === staffId) return 'set';
+    if (v === `${NEW_MARK}${staffId}`) return 'new';
+    return null;
   } catch (e) {
     console.warn('[ForgeErr] askPin: not read', e);
-    return false;
+    return null;
   }
+}
+
+export function askPinFor(staffId: string | null | undefined, s?: KeyValueStore | null): boolean {
+  return askPinKind(staffId, s) !== null;
 }
 
 export function forgetAskPin(s?: KeyValueStore | null): void {

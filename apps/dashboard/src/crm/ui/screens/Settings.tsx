@@ -375,15 +375,20 @@ export function SettingsScreen({ section }: { section?: string }) {
 
         {/* UAT A-18 / B-17 (30 Oct 2026): Delete and Clear sat right under the harmless Download, at
             the same size. They now sit apart under their own heading, with a line and space above. */}
+        {/* R-448: the offline copy on this device has its own block with its own plain words, apart from
+            "Danger zone": clearing it never touches the gym's records online (owner only). */}
+        {canErase && online && (
+          <div style={{ marginTop: space.xl, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
+            <ClearDeviceCard />
+          </div>
+        )}
         {canErase && online && (
           <div style={{ marginTop: space.xl, paddingTop: space.lg, borderTop: `1px solid ${color.border}` }}>
             <p style={{ margin: 0, fontFamily: font.body, fontSize: 13, fontWeight: 700, color: color.criticalText }}>
-              Danger zone: these can’t be undone
+              Danger zone: this can’t be undone
             </p>
             {/* Launch D8: an online gym can ask to be deleted (the download is its own card above). */}
             <GymDataActions online={online} />
-            {/* Offline front desk: the copy and the waiting list kept on this device (owner only). */}
-            <ClearDeviceCard />
           </div>
         )}
 

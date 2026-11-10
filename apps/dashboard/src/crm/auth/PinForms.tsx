@@ -16,7 +16,7 @@ import { t } from '../lang/lang';
 import { Button, ErrorBanner, Sheet, TextField, Toast, color, font } from '../ui/kit';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
-import { askPinFor, forgetAskPin } from './pinPrompt';
+import { askPinKind, forgetAskPin } from './pinPrompt';
 import { PIN_HINT, authErrorCode, authErrorWords, cleanCode, newPinError } from './signin';
 
 export function PinFields({
@@ -146,13 +146,26 @@ export function SetPinSheet({
 }
 
 /**
- * Once, after a sign-in with a one-time code by someone with no PIN (SignInForm remembers to ask).
- * "Not now" and "Save my PIN" both end it; Staff & sign-in still offers "Set my PIN" later.
+ * R-448: the words of "Choose a new PIN?", offered once after a code sign-in by someone who already has a PIN
+ * (most likely they forgot it). PURE.
+ */
+export const NEW_PIN_PROMPT = {
+  title: 'Choose a new PIN?',
+  intro: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now. You don’t need the old PIN for the next 15 minutes.',
+  keep: 'Keep my old PIN',
+  saved: 'New PIN saved. Next time, sign in with your mobile number and this PIN.',
+} as const;
+
+/**
+ * Once, after a sign-in with a one-time code (SignInForm remembers to ask): "Set your own PIN" for someone with no
+ * PIN; R-448: "Choose a new PIN?" for someone who has one. Both buttons end it; Staff & sign-in still offers
+ * "Set my PIN" / "Change my PIN" later.
  */
 export function PinPrompt() {
   const { session, lost } = useAuth();
   const person = session?.online ? (session.person ?? null) : null;
-  const [open, setOpen] = useState(() => askPinFor(person?.staffId));
+  const [kind] = useState(() => askPinKind(person?.staffId));
+  const [open, setOpen] = useState(() => kind !== null);
   const [saved, setSaved] = useState(false);
   useEffect(() => {
     if (!saved) return;
@@ -160,7 +173,7 @@ export function PinPrompt() {
     return () => window.clearTimeout(t);
   }, [saved]);
 
-  if (saved) return <Toast message="PIN saved. Next time, sign in with your mobile number and this PIN." />;
+  if (saved) return <Toast message={kind === 'new' ? NEW_PIN_PROMPT.saved : 'PIN saved. Next time, sign in with your mobile number and this PIN.'} />;
   if (!open || !session || !person) return null;
   const done = () => {
     forgetAskPin();
@@ -171,9 +184,13 @@ export function PinPrompt() {
       sessionKey={session.ownerKey}
       phone={person.phone}
       needsCurrent={false}
-      title="Set your own PIN"
-      intro="Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner."
-      cancelLabel="Not now"
+      title={kind === 'new' ? NEW_PIN_PROMPT.title : 'Set your own PIN'}
+      intro={
+        kind === 'new'
+          ? NEW_PIN_PROMPT.intro
+          : 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+      }
+      cancelLabel={kind === 'new' ? NEW_PIN_PROMPT.keep : 'Not now'}
       onClose={done}
       onSaved={() => {
         done();

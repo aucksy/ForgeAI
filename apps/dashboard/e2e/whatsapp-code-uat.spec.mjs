@@ -22,9 +22,6 @@ const OWNER_PHONE = '90000 00001';
 const OWNER_TEN = '9000000001';
 const NOBODY_TEN = '9000000009';
 const RIGHT = '135790';
-// auth/signin.ts FORGOT_PIN_WORDS: the words Sign in has shown since UAT 1 Nov 2026.
-const FORGOT_PIN_WORDS =
-  'Forgot your PIN? Ask your gym owner for a sign-in code. If you are the owner and no other phone or computer is signed in, email contact@mettleup.fit for help.';
 
 async function shot(page, name) {
   await page.waitForTimeout(300);
@@ -106,7 +103,8 @@ test('F187 switched off: Sign in and Set up a new gym are exactly as before', as
   const server = await openApp(page);
   server.pinServer = true;
   const signInForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
-  await expect(signInForm).toContainText(FORGOT_PIN_WORDS);
+  // R-448: a "Forgot your PIN?" button (was a small grey line); it opens the other ways back in.
+  await expect(signInForm.getByRole('button', { name: 'Forgot your PIN?', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /Get a code on WhatsApp/ })).toHaveCount(0);
   await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click();
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
@@ -133,7 +131,7 @@ for (const size of ['phone', 'computer']) {
 
     // The old "email us" line gives way to a button.
     const signInForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
-    await expect(signInForm).not.toContainText(FORGOT_PIN_WORDS);
+    await expect(signInForm.getByRole('button', { name: 'Forgot your PIN?', exact: true })).toHaveCount(0);
     await shot(page, `f187-${size}-signin`);
     await page.getByRole('button', { name: 'Forgot your PIN? Get a code on WhatsApp' }).tap();
     const forgot = page.getByRole('form', { name: 'Forgot your PIN?' });

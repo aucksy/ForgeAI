@@ -14,7 +14,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { t } from '../lang/lang';
+import { getLang, t } from '../lang/lang';
 import { PayQr } from '../pay/PayQr';
 import { ErrorBanner, color, font, radius, space } from '../ui/kit';
 import {
@@ -24,6 +24,7 @@ import {
   inboundStatus,
   minutesLeft,
   phoneCodeWords,
+  shortInboundText,
   startInbound,
   type CodePurpose,
   type InboundStart,
@@ -32,6 +33,21 @@ import {
 import { formatMobile } from './signin';
 
 export const POLL_MS = 2500;
+
+/**
+ * R-448 (owner, 10 Nov 2026): after Send in WhatsApp nothing happened there (Meta refuses our reply while 131042
+ * lasts) and the spinner here was out of sight. So: coming back to this page says "Checking your message…" for
+ * CHECK_MS, then, if the message has still not arrived, a calm line on what to do.
+ */
+export const CHECK_MS = 20_000;
+
+export type WaitPhase = 'waiting' | 'checking' | 'slow';
+
+/** Where the waiting line is: `backAt` = when the person came back to this page (null = never left). PURE. */
+export function waitPhase(backAt: number | null, now: number): WaitPhase {
+  if (backAt === null) return 'waiting';
+  return now - backAt < CHECK_MS ? 'checking' : 'slow';
+}
 
 const GREEN = '#25D366';
 const ON_GREEN = '#07240F';
@@ -81,7 +97,7 @@ export interface Begun {
 
 /** Start: get the code, and on a phone open WhatsApp straight away. Throws PhoneCodeFailure. */
 export async function beginInbound(ten: string, purpose: CodePurpose, phone: boolean, website = ''): Promise<Begun> {
-  const start = await startInbound(ten, purpose, website);
+  const start = await startInbound(ten, purpose, website, getLang());
   return { ten, start, opened: phone ? openWhatsApp(start) : false };
 }
 
@@ -202,6 +218,8 @@ export function WhatsAppWaiting({
   const [status, setStatus] = useState<InboundStatus>({ state: 'waiting' });
   const [offline, setOffline] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  // R-448: when the person came back from WhatsApp (or their phone's camera), for "Checking your message…".
+  const [backAt, setBackAt] = useState<number | null>(null);
   const verified = useRef(onVerified);
   useEffect(() => {
     verified.current = onVerified;
@@ -256,12 +274,26 @@ export function WhatsAppWaiting({
       schedule();
     };
     // Back from WhatsApp: ask at once. Hidden: no asking (the timer is not set again).
+    // R-448: a return after the page was hidden or lost focus also shows "Checking your message…".
+    let away = false;
+    const leave = () => {
+      away = true;
+    };
     const wake = () => {
-      if (document.hidden) return stop();
+      if (document.hidden) {
+        away = true;
+        return stop();
+      }
+      if (away && !finished) {
+        away = false;
+        console.info('[phone-inbound] back on the page: checking the message');
+        setBackAt(Date.now());
+      }
       stop();
       void ask().catch(fail);
     };
     document.addEventListener('visibilitychange', wake);
+    window.addEventListener('blur', leave);
     window.addEventListener('focus', wake);
     window.addEventListener('online', wake);
     schedule();
@@ -271,6 +303,7 @@ export function WhatsAppWaiting({
       stop();
       clearInterval(tick);
       document.removeEventListener('visibilitychange', wake);
+      window.removeEventListener('blur', leave);
       window.removeEventListener('focus', wake);
       window.removeEventListener('online', wake);
     };
@@ -281,19 +314,37 @@ export function WhatsAppWaiting({
   const left = minutesLeft(start.expiresAt - now);
   const problem = problemWords(status, offline, ten);
   const link = inboundLink(start);
+  const short = shortInboundText(start.code);
+  // A problem line says what is wrong; then the waiting line just waits.
+  const phase: WaitPhase = problem ? 'waiting' : waitPhase(backAt, now);
 
   const waitingLine = !ended && (
     <div role="status" style={{ display: 'flex', alignItems: 'center', gap: space.md, padding: space.md, borderRadius: radius.sm, background: color.accentSoft }}>
       <Spinner />
       {phone ? (
         <div style={{ display: 'grid', gap: 2 }}>
-          <span style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>{t('Waiting for your message')}</span>
+          <span style={{ fontFamily: font.body, fontSize: 15, fontWeight: 600, color: color.ink }}>
+            {phase === 'checking' ? t('Checking your message…') : t('Waiting for your message')}
+          </span>
           <span style={small}>{t('This code works for {time} more minutes.', { time: left })}</span>
         </div>
       ) : (
-        <span style={{ ...small, fontSize: 14, color: color.ink }}>{t('Waiting for your message. The code works for {time} more minutes.', { time: left })}</span>
+        <span style={{ ...small, fontSize: 14, color: color.ink }}>
+          {phase === 'checking'
+            ? t('Checking your message… The code works for {time} more minutes.', { time: left })
+            : t('Waiting for your message. The code works for {time} more minutes.', { time: left })}
+        </span>
       )}
     </div>
+  );
+
+  // R-448: back on the page for 20 seconds and still no message: what to do, calmly (not a red error).
+  const slowNote = !ended && phase === 'slow' && (
+    <p role="note" style={{ ...small, padding: space.md, borderRadius: radius.sm, border: `1px solid ${color.borderStrong}`, color: color.ink }}>
+      {phone
+        ? t('We have not got your message yet. In WhatsApp, check that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send.')
+        : t('We have not got your message yet. On your phone, check that the message to MettleUp was sent in WhatsApp. If it was not, scan the code again and tap Send.')}
+    </p>
   );
 
   const problemBox = problem && (
@@ -338,7 +389,8 @@ export function WhatsAppWaiting({
               <div style={small}>{t('2. WhatsApp opens with the message ready. Tap Send.')}</div>
               <div style={small}>{t('3. This page turns green by itself.')}</div>
               {waitingLine}
-              <p style={tiny}>{t('No camera? Send "{text}" to {number} on WhatsApp.', { text: start.waText, number })}</p>
+              {slowNote}
+              <p style={tiny}>{t('No camera? Send "{text}" to {number} on WhatsApp.', { text: short, number })}</p>
             </div>
           </div>
         )}
@@ -361,6 +413,7 @@ export function WhatsAppWaiting({
             <span style={tiny}>{t('To: MettleUp, {number}', { number })}</span>
           </div>
           {waitingLine}
+          {slowNote}
         </>
       )}
       {problemBox}
@@ -370,7 +423,7 @@ export function WhatsAppWaiting({
             <WhatsAppMark />
             {begun.opened ? t('Open WhatsApp again') : t('Open WhatsApp')}
           </a>
-          <p style={tiny}>{t('WhatsApp did not open? Send the message above to {number} yourself. Type it exactly.', { number })}</p>
+          <p style={tiny}>{t('WhatsApp did not open? Send "{text}" to {number} yourself.', { text: short, number })}</p>
         </>
       )}
       {restart}

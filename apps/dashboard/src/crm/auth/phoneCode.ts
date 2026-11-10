@@ -167,9 +167,17 @@ export function inboundStatusFrom(data: Record<string, unknown>): InboundStatus 
   return out;
 }
 
-/** Start: a code to send us, and where to send it. */
-export async function startInbound(phone: string, purpose: CodePurpose, website = ''): Promise<InboundStart> {
-  return inboundStartFrom(await post('/api/phone-code/inbound/start', { phone, purpose, website }));
+/**
+ * Start: a code to send us, and where to send it. R-448: `lang` 'hinglish' asks the Worker for the message's
+ * "go back to the MettleUp page" line in Hinglish (an older Worker ignores it).
+ */
+export async function startInbound(phone: string, purpose: CodePurpose, website = '', lang: 'en' | 'hinglish' = 'en'): Promise<InboundStart> {
+  return inboundStartFrom(await post('/api/phone-code/inbound/start', { phone, purpose, website, ...(lang === 'hinglish' ? { lang } : {}) }));
+}
+
+/** R-448: the part of the message the Worker reads ("MettleUp code 482913"), for anyone typing it by hand. PURE. */
+export function shortInboundText(code: string): string {
+  return `MettleUp code ${code}`;
 }
 
 /** Has the message arrived? Throws PhoneCodeFailure('OFFLINE') when the Worker cannot be reached. */

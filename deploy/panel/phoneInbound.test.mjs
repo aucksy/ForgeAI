@@ -7,7 +7,7 @@ import { createHmac } from 'node:crypto';
 import { test } from 'node:test';
 
 import { MAX_WRONG, handlePhoneCode, hmacHex } from './phoneCode.js';
-import { REPLY, deleteOldInbound, inboundMessages, inboundNumber, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
+import { NEXT_STEP, REPLY, deleteOldInbound, inboundMessages, inboundNumber, inboundText, openPhone, parseCode, sealPhone, stateOf } from './phoneInbound.js';
 import { sqliteD1 } from './sqliteD1.mjs';
 import { handleWhatsAppHook } from './whatsappHook.js';
 
@@ -77,6 +77,23 @@ test('the code parser: "MettleUp code 123456", any case, spaces, ":" or "-", not
   }
 });
 
+test('R-448: the message carries the next step, and the code is still found in it (English, Hinglish, old short)', quiet(async () => {
+  assert.equal(inboundText('482913'), 'MettleUp code 482913. After you send this, go back to the MettleUp page.');
+  assert.equal(inboundText('482913', 'hinglish'), 'MettleUp code 482913. Yeh bhejne ke baad MettleUp page par wapas jao.');
+  assert.equal(inboundText('482913', 'xx'), inboundText('482913'));
+  for (const text of [inboundText('482913'), inboundText('482913', 'hinglish'), 'MettleUp code 482913']) assert.equal(parseCode(text), '482913', text);
+  assert.ok(!/\d/.test(NEXT_STEP.en + NEXT_STEP.hinglish), 'no digit in the next step (it could be read as the code)');
+  const s = setup();
+  const hi = await call(s, '/api/phone-code/inbound/start', { phone: '90000 00002', purpose: 'pin', website: '', lang: 'hinglish' });
+  assert.equal(hi.body.waText, `MettleUp code ${hi.body.code}. ${NEXT_STEP.hinglish}`);
+  // The whole long message, sent as it was typed in, verifies; so does an old short one.
+  const r = await startFor(s, '90000 00001', 'pin');
+  await metaSays(s, '919000000001', r.body.waText, { now: T0 + 5000 });
+  assert.equal((await statusOf(s, r.body.id, { now: T0 + 6000 })).body.state, 'verified');
+  await metaSays(s, '919000000002', `MettleUp code ${hi.body.code}`, { now: T0 + 7000 });
+  assert.equal((await statusOf(s, hi.body.id, { now: T0 + 8000 })).body.state, 'verified');
+}));
+
 test('the business number: digits with the country code, or off', () => {
   assert.equal(inboundNumber({ WHATSAPP_INBOUND_NUMBER: '+91 90000 99999' }), '919000099999');
   assert.equal(inboundNumber({ WHATSAPP_INBOUND_NUMBER: '9000099999' }), '919000099999');
@@ -106,7 +123,8 @@ test('start: an id, a 6-digit code, the wa.me number and text, 10 minutes; nothi
   assert.match(r.body.id, /^[0-9a-f-]{36}$/);
   assert.match(r.body.code, /^\d{6}$/);
   assert.equal(r.body.waNumber, '919000099999');
-  assert.equal(r.body.waText, `MettleUp code ${r.body.code}`);
+  // R-448: the message says what to do after Send (the code comes first; only it is read).
+  assert.equal(r.body.waText, `MettleUp code ${r.body.code}. After you send this, go back to the MettleUp page.`);
   assert.equal(r.body.expiresAt, T0 + 10 * 60_000);
   const dump = JSON.stringify(s.WEB.sqlite.prepare('SELECT * FROM phone_inbound').all()) + JSON.stringify(s.WEB.sqlite.prepare('SELECT * FROM phone_code_asks').all());
   assert.ok(!dump.includes(OWNER) && !dump.includes(r.body.code) && !dump.includes(r.body.id), 'no number, code or id in D1');
