@@ -1,0 +1,61 @@
+# WhatsApp probe (R-434, 10 Nov 2026): one test send to the owner's own phone, to learn what Meta's 131042 tax
+# block really stops. Run by hand. Sends to the number in the GitHub secret PROBE_TO (91 + 10 digits), never an input,
+# because this repo is PUBLIC. Prints only Meta's answers (no token, no number).
+#
+#  mode=text      a plain message (no template). Works only inside the 24-hour window: the owner must first send any
+#                 WhatsApp message to +91 86905 60741. Never tried before: if it arrives, the tax block hits only
+#                 paid templates, and we can answer "send us a message" with the code at once, for free.
+#  mode=template  the login_code template again (to see if Meta lifted the block since 9 Nov).
+#  mode=both      both of the above.
+name: WhatsApp probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: text | template | both
+        type: choice
+        options: [both, text, template]
+        default: both
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GRAPH: v27.0
+      PHONE_ID: '1410811765454726'
+      WABA_ID: '1007126462431898'
+      WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+      PROBE_TO: ${{ secrets.PROBE_TO }}
+    steps:
+      - name: Check secrets
+        run: |
+          [ -n "$WHATSAPP_TOKEN" ] || { echo "::error::WHATSAPP_TOKEN missing"; exit 1; }
+          printf '%s' "$PROBE_TO" | grep -Eq '^91[0-9]{10}$' || { echo "::error::PROBE_TO missing or not 91+10 digits"; exit 1; }
+          echo "Secrets present (values not shown)."
+
+      - name: Account health now
+        run: |
+          curl -sS "https://graph.facebook.com/$GRAPH/$WABA_ID?fields=health_status" -H "Authorization: Bearer $WHATSAPP_TOKEN" | jq 'del(.access_token)'
+
+      - name: Send a plain text message
+        if: ${{ inputs.mode != 'template' }}
+        run: |
+          body=$(jq -cn --arg to "$PROBE_TO" '{messaging_product:"whatsapp", recipient_type:"individual", to:$to, type:"text",
+            text:{body:"MettleUp test 1 of 2 (plain message). Your MettleUp code is 482913. If you can read this, tell Claude: TEXT ARRIVED."}}')
+          curl -sS -X POST "https://graph.facebook.com/$GRAPH/$PHONE_ID/messages" -H "Authorization: Bearer $WHATSAPP_TOKEN" \
+            -H 'Content-Type: application/json' -d "$body" | jq '{accepted: (.messages[0].message_status // (if .messages then "accepted" else null end)), error: (.error | if . then {code, error_subcode, message, details: .error_data.details} else null end)}'
+
+      - name: Send the login_code template
+        if: ${{ inputs.mode != 'text' }}
+        run: |
+          body=$(jq -cn --arg to "$PROBE_TO" '{messaging_product:"whatsapp", recipient_type:"individual", to:$to, type:"template",
+            template:{name:"login_code", language:{code:"en"}, components:[{type:"body", parameters:[{type:"text", text:"735104"}]},
+            {type:"button", sub_type:"url", index:"0", parameters:[{type:"text", text:"735104"}]}]}}')
+          curl -sS -X POST "https://graph.facebook.com/$GRAPH/$PHONE_ID/messages" -H "Authorization: Bearer $WHATSAPP_TOKEN" \
+            -H 'Content-Type: application/json' -d "$body" | jq '{accepted: (if .messages then "accepted" else null end), error: (.error | if . then {code, error_subcode, message, details: .error_data.details} else null end)}'
+          echo "Accepted is not delivered: Meta reports 131042 later, by webhook. The owner's phone is the real answer (code 735104)."
