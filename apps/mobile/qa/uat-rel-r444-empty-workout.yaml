@@ -1,0 +1,51 @@
+# R-436 + R-444 (10 Nov 2026): "Start empty workout" remembers the exercises of the last finished empty
+# workout, and (R-444) opens the workout screen at once, the cards following. Starts from gate-demo.
+# Happy path: finish an empty workout with Dumbbell Preacher Curl, start a new empty one: the screen is up
+# ("Add exercise"), then the curl card and the line "We added the exercises from your last empty
+# workout." arrive. "Start blank" takes the pre-added card away (negative: no card, no line). Pictures
+# rel-r444-1x-*.png. Part u444 (run-device-qa.sh).
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- 1. an empty workout, finished
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+- runFlow:
+    file: sub-uat-r358-set.yaml
+    env:
+      N: "1"
+      KG: "10"
+      REPS: "10"
+- runFlow: sub-uat-r358-finish.yaml
+- scrollUntilVisible:
+    element: "^Done$"
+    timeout: 15000
+- tapOn: "^Done$"
+# ---------------------------------------------------------------- 2. the next empty workout: open at once, then the card
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertVisible: "Start blank"
+- takeScreenshot: rel-r444-11-remembered-card
+# ---------------------------------------------------------------- 3. "Start blank" (negative: nothing pre-added stays)
+- tapOn: "Start blank"
+- extendedWaitUntil:
+    notVisible: "We added the exercises from your last empty workout\\."
+    timeout: 10000
+- assertNotVisible: "Dumbbell Preacher Curl set 1 weight, .*"
+- takeScreenshot: rel-r444-12-start-blank
+- runFlow: sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
