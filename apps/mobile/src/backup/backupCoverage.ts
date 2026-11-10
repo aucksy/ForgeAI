@@ -25,6 +25,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   cloud_copy_last_at: 'gym sign-in: cloud copy bookkeeping',
   cloud_copy_full: 'gym sign-in: cloud copy bookkeeping',
   member_account: 'gym sign-in of this phone',
+  terms_agreed: 'D7: the 18+ / terms tick given on this phone (a restore on another phone asks again)',
   cloud_identity: 'gym membership key of this phone',
   cloud_client_version: 'gym server bookkeeping',
   drive_linked: 'Google Drive link of this phone',
