@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-433. Play trader status declared; organisation account not possible today — 10 Nov 2026
+
+He said: declare the account as a trader with the full address (option A; he will not pay for a business address); phone = the MettleUp WhatsApp number; ColorCloset and every other app are free, so non-trader.
+- Account: Trader, legal name and address from the Payments profile, phone +91 86905 60741 verified by his SMS code. He ticked the two consent boxes himself (the safety check blocks me from giving legal consent in his name; same for saving a "No, not a trader app" answer).
+- MettleUp: "Yes, trader", terms link https://mettleup.fit/terms, sent for review 10 Nov (only this change; no app update).
+- ColorCloset, Spends, Pause, Brag Buddy, Notifications Digest: "No" ticked by me, saved and sent by him.
+- Organisation account (skips the 12-testers rule): "Change account type" is greyed out until an organisation website is added and verified; he has no D-U-N-S. Not worth it: the 14-day test is done and production access is in review since 9 Nov.
+
 ## R-432. Pause the ads; finish Play production; iPhone App Store guide PDF — 10 Nov 2026
 
 He said: "Lets pause this effort and continue completing the production submission of android app and lets research the correct latest way of creating apple dev account and submitting the app and build me a PDF for the same so I can follow when I have an iPhone... also tell me seperately here if I will be able to submit my iphone app using an iPhone or will I need another apple device".
