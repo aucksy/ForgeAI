@@ -339,6 +339,9 @@ class WearWireTest {
     val got = JSONObject(WearWire.watchDiagJson(listOf(WearWire.WatchDiag(1L, log)))).getJSONArray("watches").getJSONObject(0).getString("log")
     assertEquals(WearWire.MAX_DIAG_CHARS, got.length)
     assertTrue(got.endsWith("NEWEST"))
-    assertEquals("""{"ok":true,"watches":[]}""", WearWire.watchDiagJson(emptyList()))
+    // No watch: ok, an empty list (org.json does not keep key order, so compare the values).
+    val none = JSONObject(WearWire.watchDiagJson(emptyList()))
+    assertTrue(none.getBoolean("ok"))
+    assertEquals(0, none.getJSONArray("watches").length())
   }
 }
