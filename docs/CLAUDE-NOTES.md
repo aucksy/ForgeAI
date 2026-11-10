@@ -22,6 +22,13 @@ Done:
 - Owner news 2026-11-10 (three legal lines + the steel name line moved from 2026-11-09, which was added after that update went live). Fresh-reader check fixed two lines.
 
 Live steps (filled in below as they happen):
+- Database (D3), 10 Nov 2026, Supabase SQL Editor, production: before, _terms_versions() = {2026-10-24} and 1 acceptance row (2026-10-24). Ran the exact 0067 text from bbf04f06: "Success. No rows returned". Live test 0067: RESULT PASS (7 checks), rolled back. After: {2026-10-24,2026-11-10}, still 1 acceptance row, no test gym left. Nothing else changed. 0067's header now says APPLIED LIVE (20a5ad41).
+- CI: 42805005447 green (D7 + terms_agreed backup class, 89695a88); 42810419039 on bbf04f06 red only on J149 (the 10 Nov update became the newest); fixed in 20a5ad41, CI 42813830910 green (J70-J75 pass).
+- Deploy: dashboard-dist from run 42813830910, `wrangler deploy` from deploy/panel, Worker forgeai-panel version 4b698c07-51fe-4b8a-80f7-2840666cabdc. Also shipped what was waiting since f5eed3af (steel name look, help article lines, WhatsApp verify reply wording).
+- curl after deploy: mettleup.fit /privacy /terms /data-agreement /delete-account, app.mettleup.fit *.html, gyms.mettleup.fit/terms and forgeai.aakashpahuja.in/privacy.html all show "Last updated: 10 Nov 2026."; privacy has the Hindi with "English wins"; data agreement says Version 2026-11-10; delete page says 7 days; the admin app bundle carries 2026-11-10.
+- UAT (built-in browser): all four pages at 375 px and desktop, no sideways page scroll (the first privacy table scrolls 15 px inside its own box), Hindi readable, sign-up form links open /terms.html and /data-agreement.html in a new tab. The "Before you go on" card for an owner of a real gym was not driven live (no owner sign-in); J75 covers it in CI.
+- D2 BLOCKED: the private repo's first run got Cloudflare 403 (7403): the CLOUDFLARE_API_TOKEN is a Workers deploy token without D1 read (the old public crash job was always skipped, so crash alerts never ran). The copied secret was deleted from aucksy/mettleup-crashes (no broad token in a second place); the job now says "alerts off" (run 42811346377 green). Needs him: a Cloudflare API token with only Account > D1 > Read, saved as CLOUDFLARE_API_TOKEN in aucksy/mettleup-crashes.
+- Still open (not this job): Play Console privacy URL and Data safety to mettleup.fit/privacy.html (R-443, main session); privacy section 4A should mention the Google sign-in 18+ tick once D7 ships.
 
 ## R-444. Six fixes from a fresh-eyes review of v0.76.0..main — 10 Nov 2026
 
