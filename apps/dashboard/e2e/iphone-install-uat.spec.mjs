@@ -231,7 +231,9 @@ test.describe('Android Chrome', () => {
 
     // The Today banner on Android: the same button, and "Not now".
     await bottomBar(page).getByRole('link', { name: /^Today/ }).tap();
+    await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
     const banner = installCard(page);
+    await expect(banner).toBeVisible();
     await banner.scrollIntoViewIfNeeded();
     await expect(banner.getByRole('button')).toHaveText(['Install the admin app', 'Not now']);
     await banner.screenshot({ path: `${DIR}/r446-android-today-banner.png` });
