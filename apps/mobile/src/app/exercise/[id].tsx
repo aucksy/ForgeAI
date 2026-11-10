@@ -32,6 +32,7 @@ import { navigateOnce } from '@/lib/guardedAction';
 import { liftedWords } from '@/lib/units';
 import { countWord } from '@/lib/words';
 import { useSettings } from '@/store/settingsStore';
+import { popupBarsFollowLook } from '@/theme/appearance';
 import { color, motion, radius, space, type } from '@/theme/tokens';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
 import { mediaFor } from '@/tracker/catalog/media';
@@ -667,7 +668,7 @@ function MergePicker({
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose} onShow={popupBarsFollowLook}>
       <View style={{ flex: 1, backgroundColor: color.bg, paddingTop: insets.top + space.md, paddingHorizontal: space.lg, paddingBottom: insets.bottom }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, marginBottom: space.md }}>
           <View style={{ flex: 1 }}>

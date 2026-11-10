@@ -277,6 +277,14 @@ class ForgePhoneModule : Module() {
       true
     }
 
+    // R-440: a full-page pop-up (React Native Modal = its own window) gets its status-bar icons from
+    // the app's look; React Native's StatusBar only reaches the main window. See PopupBars.kt.
+    Function("modalBars") { light: Boolean ->
+      val a = appContext.currentActivity ?: return@Function false
+      a.runOnUiThread { PopupBars.apply(a, light) }
+      true
+    }
+
     // ---------------------------------------------------------------- start-up screen (15 Oct 2026)
     // A phone in a branded gym starts on a plain screen (no ForgeAI logo) so the gym's logo is the
     // first one shown; out of a gym, ForgeAI's own. Android 13+ only (setSplashScreenTheme picks the

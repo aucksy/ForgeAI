@@ -51,6 +51,26 @@ function syncSystemBars(scheme: Scheme): void {
   }
 }
 
+/**
+ * R-440: give to a full-page pop-up's `onShow` (a React Native Modal drawn in the page colour).
+ * Android draws a Modal in its own window, and the status bar's icons follow that window, not the
+ * app's <StatusBar> (React Native's StatusBar only sets the main window, so one inside the Modal does
+ * nothing). Without this the light look's cream pop-up kept WHITE clock and battery icons (UAT, R-438).
+ * Sets the pop-up window's icons from the look: dark on light, light on dark; once more shortly after,
+ * in case the window was still settling. Not for bottom sheets over a dark backdrop (white reads best there).
+ */
+export function popupBarsFollowLook(): void {
+  const set = () => {
+    try {
+      phoneNative()?.modalBars?.(tokenScheme() === 'light');
+    } catch (e) {
+      console.warn('[ForgeErr] pop-up status bar look', e);
+    }
+  };
+  set();
+  setTimeout(set, 400);
+}
+
 /** Show `next` now: tokens, re-draw, system bars. */
 function show(next: Scheme): void {
   if (setTokenScheme(next)) redrawForLook();

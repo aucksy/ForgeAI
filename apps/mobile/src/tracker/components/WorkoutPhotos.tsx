@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { askConfirm, GhostButton, Icon, IconButton } from '@/components/ui';
 import { hitSlopFor } from '@/components/ui/a11y';
+import { popupBarsFollowLook } from '@/theme/appearance';
 import { inkTint } from '@/theme/tint';
 import { color, radius, space, type } from '@/theme/tokens';
 
@@ -229,7 +230,7 @@ export const WorkoutPhotos = memo(function WorkoutPhotos({ sessionId, onChanged 
         </View>
       </TrackerSheet>
 
-      <Modal visible={viewing != null} animationType="fade" onRequestClose={() => setViewing(null)} statusBarTranslucent>
+      <Modal visible={viewing != null} animationType="fade" onRequestClose={() => setViewing(null)} onShow={popupBarsFollowLook} statusBarTranslucent>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={{ flex: 1, backgroundColor: color.bg, paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, gap: space.md }}>

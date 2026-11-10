@@ -18,6 +18,7 @@ import { EmptyState, GhostButton, IconButton, LoadError, Screen, Skeleton } from
 import { useLoad } from '@/lib/useLoad';
 import { goBack } from '@/lib/goBack';
 import { dateWithYear } from '@/lib/date';
+import { popupBarsFollowLook } from '@/theme/appearance';
 import { color, radius, space, type } from '@/theme/tokens';
 import { BeforeAfterShare } from '@/tracker/components/BeforeAfterShare';
 import { ZoomImage } from '@/tracker/components/ZoomImage';
@@ -92,7 +93,7 @@ export default function ComparePhotosScreen() {
       )}
       {loaded ? <BeforeAfterShare visible={sharing} photos={loaded.all} start={loaded.pair} onClose={() => setSharing(false)} /> : null}
 
-      <Modal visible={zoomed != null} animationType="fade" onRequestClose={() => setZoomed(null)} statusBarTranslucent>
+      <Modal visible={zoomed != null} animationType="fade" onRequestClose={() => setZoomed(null)} onShow={popupBarsFollowLook} statusBarTranslucent>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={{ flex: 1, backgroundColor: color.bg, paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.lg }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, gap: space.md }}>

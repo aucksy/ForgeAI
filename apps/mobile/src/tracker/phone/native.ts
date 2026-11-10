@@ -46,6 +46,11 @@ export interface ForgePhone {
   splashPlain?(plain: boolean): 'set' | 'reset' | 'unsupported';
   /** Light mode (9 Nov 2026): the navigation bar's buttons dark (light look) or light. Absent on older builds. */
   systemBars?(light: boolean): boolean;
+  /**
+   * R-440: the newest pop-up window's (React Native Modal's) status-bar and navigation-bar icons follow
+   * the app's look (dark on light). React Native's StatusBar only reaches the main window. Absent on older builds.
+   */
+  modalBars?(light: boolean): boolean;
   /** OWNER-INBOX #11: Android can pin a shortcut on the home screen (8.0+, a launcher that allows it). */
   gymShortcutSupported?(): boolean;
   /**

@@ -2101,6 +2101,11 @@ part_u438() {
   local rc=0 now was
   gate_flow u438_seed gate-demo.yaml || { status=1; return 1; }
   uat_flow uatr438a uat-rel-r438-a-watch-update.yaml || rc=1
+  # R-440: the status-bar icons over both full-page pop-ups, light look (dark icons), and what the
+  # pop-up window had before the fix set it (ForgeBars lines).
+  adb logcat -c 2>/dev/null || true
+  uat_flow uatr440l uat-rel-r440-popup-bars.yaml -e LOOK=light || rc=1
+  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '' | grep ForgeBars | sed 's/^.*ForgeBars[^:]*: /UAT R440 ForgeBars light: /' | head -12 | while read -r l; do log "$l"; done
   now=$(adb shell date +%s | tr -d '')
   adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
   adb shell "su 0 date @$((now + 90000))" >/dev/null 2>&1 || true
@@ -2115,6 +2120,9 @@ part_u438() {
   log "UAT R438 c: phone night mode was '$was'; flipped for the other look"
   sleep 4
   uat_flow uatr438c uat-rel-r438-c-look.yaml || rc=1
+  adb logcat -c 2>/dev/null || true
+  uat_flow uatr440d uat-rel-r440-popup-bars.yaml -e LOOK=dark || rc=1
+  adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '' | grep ForgeBars | sed 's/^.*ForgeBars[^:]*: /UAT R440 ForgeBars dark: /' | head -12 | while read -r l; do log "$l"; done
   adb shell cmd uimode night "${was:-no}" >/dev/null 2>&1 || true
   [ "$rc" = 0 ] || status=1
   return $rc

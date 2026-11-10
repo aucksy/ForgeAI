@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-440. Light look: white clock and battery icons over the watch update card — 10 Nov 2026
+
+Asked (10 Nov 2026, via the R-438 UAT pictures): on the light look the status bar's clock and battery stayed WHITE on the cream "Your watch app has an update" card (rel-r438-02-offer); the fix in b36e0d99 (a <StatusBar> inside the pop-up) did nothing. The phone's own update screen is built the same way.
+
+Cause: a React Native Modal is its own Android window (a Dialog) and the status bar takes its icon colour from the top window. React Native 0.85's StatusBar (expo-status-bar wraps it) only ever sets the app's MAIN window (StatusBarModule.setStyle -> activity.window), so a <StatusBar> inside the Modal changed only the window underneath. The Modal copies the main window's icons once when it opens (ReactModalHostView.updateSystemAppearance); on the cloud phone (API 34) the pop-up window still drew white icons. Upstream fixed StatusBar for Modal windows after 0.85 (facebook/react-native PR #56059).
+
+Fix: native forge-phone `modalBars(light)` (PopupBars.kt): finds the newest window that is not the app's own (WindowInspector, Android 10+) and sets its status-bar and navigation-bar icons from the look (dark on light, light on dark), logging before/after under ForgeBars. JS `popupBarsFollowLook()` (theme/appearance.ts) calls it from the Modal's onShow and again 400 ms later. Wired on every full-page pop-up drawn in the page colour: WatchUpdatePrompt, UpdatePrompt, MachineInUse ("In use"), WorkoutPhotos viewer, photos/index viewer, photos/compare zoom, exercise/[id] picker. Bottom sheets over the 55 % black backdrop (Sheet, DoneSheet, HoldTimerSheet, ExerciseDemoSheet, PlateCalcSheet) keep white icons: white reads better on the dimmed backdrop. The useless <StatusBar> in WatchUpdatePrompt is gone. Test: test/theme/popupBars.test.ts (9). UAT: qa/uat-rel-r440-popup-bars.yaml in part u438 (light after flow a, dark after flow c; pictures rel-r440-*.png; ForgeBars lines in the summary).
+Not released (waiting list).
+
 ## R-438. Watch update ready card, design 2 "Watch in hand" — 10 Nov 2026
 
 He said (10 Nov 2026): when the watch app is older than the phone app, the phone app shows a notice with what is new; "Update on watch" opens the Play Store on the watch, where the member taps Update. He picked design 2, "Watch in hand" (a drawn round watch showing the new version; the what's-new and buttons in a bottom sheet), in the app's own style, light and dark.

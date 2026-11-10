@@ -22,6 +22,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MettleUpLogo } from '@/components/brand/MettleUpLogo';
 import { Icon } from '@/components/ui';
+import { popupBarsFollowLook } from '@/theme/appearance';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import { IN_USE_WORDS, inUseAutoOn, type InUseEquipment } from '../lib/inUse';
@@ -61,7 +62,7 @@ export function MachineInUse({
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
+    <Modal visible={visible} animationType="fade" onRequestClose={onClose} onShow={popupBarsFollowLook} statusBarTranslucent>
       <Pressable
         onPress={onClose}
         accessibilityRole="button"

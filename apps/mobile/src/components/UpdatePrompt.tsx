@@ -21,6 +21,7 @@ import { GhostButton, PrimaryButton, Sheet } from '@/components/ui';
 import { earlierLine, hasUpdateStandIn, kickerFor, qaOldNews, qaStandInBehind } from '@/lib/updatePrompt';
 import { installDownloadedQuietly, useAppUpdate } from '@/lib/updateStore';
 import { qaForgetWhatsNew } from '@/lib/whatsNew';
+import { popupBarsFollowLook } from '@/theme/appearance';
 import { accentTint } from '@/theme/tint';
 import { color, gradients, radius, shadow, space, type } from '@/theme/tokens';
 import { phoneNative } from '@/tracker/phone/native';
@@ -140,7 +141,7 @@ export function UpdatePrompt() {
     );
   }
   return (
-    <Modal visible={visible} animationType="fade" onRequestClose={close} statusBarTranslucent navigationBarTranslucent>
+    <Modal visible={visible} animationType="fade" onRequestClose={close} onShow={popupBarsFollowLook} statusBarTranslucent navigationBarTranslucent>
       {/* UAT finding: the insets outside a Modal window missed the gesture bar ("Later" sat on it). */}
       <SafeAreaProvider>
         <UpdateFullScreen onLater={close} />
