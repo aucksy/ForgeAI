@@ -23,6 +23,27 @@ below that box, never over it; a shadow shows when there are more rows below; th
 them changes too. Hinglish for every new line on translated screens (the Settings data tab has none). Cloud UAT at 375
 px, 1366x768, 1280x720 and a real laptop window (1366x609), pictures read; fresh eyes; admin panel deploy with news.
 
+**Done (10 Nov, helper):** commits 8727a489 (the three fixes, news, UAT spec e2e/r447-uat.spec.mjs), 47855f18 + 5ae4aff1
+(sign-up test helper: /start has no link; a computer shows the gym name in the menu, not a header), 92c92a22, e97161c5.
+CI: 42840252114 red (helper), 42843574461 red (a variable clash in the helper), 42845470113 green, 42849780303 green,
+42853061844 green (167 passed). UAT pictures r447-*.png in dashboard-uat-pictures (375 px phone with Hinglish and 1.3x
+text; 1366x768, 1280x720, 1366x609, 1920x1080), all read. Pictures of 42845470113 showed the first menu fix was not
+enough: at 1366x768 the menu ended at "SET UP AND HELP" with its 4 rows out of sight (only a faint shadow). Fixed in
+92c92a22: 30 px rows up to 820 px high, 28 px up to 740 px, Dark | Light moved beside the bell (as on a phone), so an
+owner's whole menu fits 1366x768 and 1280x720 (asserted); a real laptop window (1366x609) shows "More below" (Hinglish
+"Neeche aur hai"), each click scrolls on, it goes at the end. Fresh eyes (owner role, 13 pictures only) found, fixed in
+e97161c5: "Set up a new gym" as a small text link looked weaker than the big "Start demo" (both doors are now outlined
+full-width buttons, still quieter than the bright "Sign in"); a row cut at the menu's edge looked covered (soft fades
+at each edge with more, never taking a click); "Invite members" was in the phone's More but not the computer menu
+(added; 19 rows still fit). Not fixed (outside R-447, his call): "Clear this device's saved data" under Danger zone
+reads scary; Install and MettleUp access cards under a tab named "Sign-in & data"; the owner's forgot-PIN line says
+email support; "0 members · 0 memberships" reads alike; demo text "You get a real gym code". Help article
+(gym-settings-admin) names the new card names. News: three lines merged into ADMIN_NEWS 2026-11-10 (browsers that
+already saw today's update get no card; the lines are on the What's new page). Deploy: dashboard-dist from CI
+42853061844 (e97161c5), `npx wrangler deploy` from deploy/panel, forgeai-panel version
+952b96bc-6ce0-4a14-bf89-9062f14c4326; app.mettleup.fit and forgeai.aakashpahuja.in serve index-Datuaa43.js with the new
+words (curl + built-in browser: "New to MettleUp?" / "Set up a new gym" live).
+
 ## R-446. iPhone install steps, iPhone sign-in note, "new" dots only for news after the gym joined — 10 Nov 2026
 
 **He said (10 Nov, iPhone Safari):** tapping "Install the admin app" "did not do anything"; the one hint line was very
