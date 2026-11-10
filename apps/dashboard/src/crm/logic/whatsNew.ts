@@ -56,6 +56,16 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         // from 2026-11-09: it was added after that update went live, and goes live with this one.
         text: 'The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.',
       },
+      {
+        // R-446 (owner, 10 Nov 2026): iPhone install steps were one hard-to-see line naming a Share button iOS 26
+        // hides; the home-screen app opened signed out; "new" dots showed to brand-new gyms. Deployed 10 Nov 2026,
+        // after this day's first update had gone live, so merged into it (one id per day).
+        text: 'On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.',
+        go: { label: 'Open Settings', path: '/settings/data' },
+      },
+      {
+        text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',
+      },
     ],
   },
   {
@@ -374,19 +384,4 @@ function notifyNewsSeen(): void {
  * Owner-visible changes built but NOT deployed yet. They move to the top of ADMIN_NEWS (with `id` set to
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
-export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
-  {
-    // R-446 (owner, 10 Nov 2026): iPhone install steps were one hard-to-see line naming a Share button iOS 26 hides;
-    // the home-screen app opened signed out; "new" dots showed to brand-new gyms.
-    id: 'PENDING',
-    lines: [
-      {
-        text: 'On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.',
-        go: { label: 'Open Settings', path: '/settings/data' },
-      },
-      {
-        text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',
-      },
-    ],
-  },
-];
+export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [];
