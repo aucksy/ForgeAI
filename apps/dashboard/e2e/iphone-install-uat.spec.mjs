@@ -48,11 +48,12 @@ const installCard = (page) =>
     .filter({ has: page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true }) })
     .filter({ hasText: 'Put the admin app on your home screen.' })
     .last();
-const stepsList = (card) => card.getByRole('list');
+// The list carries role="status" (so a screen reader reads it out when it opens), so it is found as an <ol>.
+const stepsList = (card) => card.locator('ol');
 
 /** Every step, word for word, in order. */
 async function expectSteps(card, steps) {
-  const items = stepsList(card).getByRole('listitem');
+  const items = stepsList(card).locator('li');
   await expect(items).toHaveText(steps);
 }
 
@@ -242,8 +243,15 @@ test.describe('computer', () => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await openApp(page);
     await expect(page.getByRole('note')).toHaveCount(0);
+    await shot(page, 'computer-signin-no-note');
+    // Create my gym on the phone-size page (support.mjs reads the phone's top bar), then the computer width.
+    await page.setViewportSize({ width: 390, height: 844 });
     await startOnlineGym(page);
-    await openSettings(page, 'Sign-in & data');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.evaluate(() => {
+      window.location.hash = '/settings/data';
+    });
+    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expect(card.getByRole('button', { name: 'Install the admin app' })).toBeVisible();
