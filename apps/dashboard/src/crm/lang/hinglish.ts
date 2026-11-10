@@ -80,6 +80,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   // R-446: inside the iPhone home-screen app (iPhone keeps its storage apart from Safari).
   'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.':
     'Admin app mein aapka swagat hai. Yahan ek baar phir sign in karo. iPhone is app ko Safari se alag rakhta hai. Iske baad aap sign in hi rahoge.',
+  'Owner and forgot your PIN? Open MettleUp in Safari, where you are still signed in. Go to More → Staff & sign-in, tap “Make sign-in code” and type that code here.':
+    'Owner ho aur PIN bhool gaye? Safari mein MettleUp kholo, wahan aap abhi bhi sign in ho. More → Staff & sign-in par jao, “Make sign-in code” dabao aur woh code yahan likho.',
   'Start your gym': 'Apna gym shuru karo',
   'New here? Set up your gym': 'Naye ho? Apna gym banao',
   'Free for 3 months. No card. Your members’ app is free, always.':

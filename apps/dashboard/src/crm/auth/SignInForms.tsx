@@ -84,10 +84,10 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
     <>
     {heading}
     {iphoneApp && (
-      <p
+      <div
         role="note"
         style={{
-          margin: `0 0 ${space.md}px`,
+          margin: `${space.sm}px 0 ${space.md}px`,
           padding: space.md,
           background: color.accentSoft,
           borderRadius: 10,
@@ -96,8 +96,15 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
           color: color.ink,
         }}
       >
-        {t('Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.')}
-      </p>
+        <p style={{ margin: 0 }}>
+          {t('Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.')}
+        </p>
+        {/* R-446 fresh-eyes: an owner who forgot the PIN was told to ask "the gym owner", but Safari on this same
+            phone is still signed in and can make a one-time code. */}
+        <p style={{ margin: `${space.sm}px 0 0` }}>
+          {t('Owner and forgot your PIN? Open MettleUp in Safari, where you are still signed in. Go to More → Staff & sign-in, tap “Make sign-in code” and type that code here.')}
+        </p>
+      </div>
     )}
     <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />

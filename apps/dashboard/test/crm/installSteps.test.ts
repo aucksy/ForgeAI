@@ -8,10 +8,15 @@ const SAFARI = 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_1 like Mac OS X) AppleWebK
 const CHROME_IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/142.0 Mobile/15E148 Safari/604.1';
 
 describe('install steps', () => {
-  it('iPhone Safari: dots, Share, Add to Home Screen, then sign in once more', () => {
+  it('iPhone Safari: dots then Share in one step, Add to Home Screen, then sign in once more', () => {
     const s = installSteps(platformOf(SAFARI), SAFARI);
     expect(s[0]).toContain('•••');
-    expect(s[1]).toContain('Share');
+    // Fresh-eyes (R-446): Share is in the same step, so someone who tapped the Share square never meets a lone
+    // "Tap Share" step they cannot find; the bar's place is not named (it can be at the top).
+    expect(s[0]).toContain('“Share”');
+    expect(s.filter((x) => x.includes('Share'))).toHaveLength(1);
+    expect(s.join(' ')).not.toContain('bottom');
+    expect(s.join(' ')).toContain('If you see “Open as Web App”');
     expect(s.join(' ')).toContain('Add to Home Screen');
     expect(s[s.length - 1]).toContain('Sign in once more');
   });

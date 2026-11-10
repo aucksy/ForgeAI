@@ -102,14 +102,16 @@ export function platformOf(userAgent: string, touchPoints = 0): Platform {
 export function installSteps(platform: Platform, userAgent: string): string[] {
   const ua = userAgent.toLowerCase();
   if (platform === 'iphone') {
+    // R-446 fresh-eyes (10 Nov 2026): one step for "••• then Share" (a separate "Tap Share" step read as wrong to
+    // someone who had tapped the Share square directly); no "at the bottom" (Safari's bar can sit at the top);
+    // "Open as Web App" is iOS 26 only, so it is conditional.
     const otherBrowser = /crios|edgios|fxios/.test(ua);
     return [
       otherBrowser
-        ? 'Tap the Share icon (a square with an arrow up) at the top, in the address bar.'
-        : 'Tap the 3 dots ••• in the address bar at the bottom of Safari. (If you see a square with an arrow up, tap that instead.)',
-      ...(otherBrowser ? [] : ['Tap “Share”.']),
+        ? 'Tap the Share icon (a square with an arrow up) in the address bar.'
+        : 'In Safari’s address bar, tap the 3 dots •••, then tap “Share”. (If you see a square with an arrow up there, tap that instead.)',
       'Scroll down the list. Tap “Add to Home Screen”.',
-      'Keep “Open as Web App” on. Tap “Add”.',
+      'If you see “Open as Web App”, keep it on. Tap “Add”.',
       'Open MettleUp Admin from your home screen. Sign in once more there. (iPhone keeps it apart from Safari.)',
     ];
   }

@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 
-import { installSteps, useInstall } from '../install';
+import { installSteps, runningAsApp, useInstall } from '../install';
 import { Button, Card, SectionTitle, color, font, radius, space, useIsCompact } from './kit';
 
 const DISMISS_KEY = 'forgeai.installBanner.closed';
@@ -35,9 +35,14 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
     if (variant === 'banner') return null;
     return (
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Admin app on your phone</SectionTitle>
+        <SectionTitle>{platform === 'computer' ? 'Admin app on this computer' : 'Admin app on your phone'}</SectionTitle>
         <p style={body}>
-          The admin app is on your home screen. Open it from the MettleUp Admin icon.
+          {/* R-446 fresh-eyes: inside the home-screen app, "open it from the icon" told the owner to open what he was in. */}
+          {platform === 'computer'
+            ? 'The admin app is installed on this computer. It opens in its own window.'
+            : runningAsApp()
+              ? 'You are using the admin app from your home screen. It stays here, ready in one tap.'
+              : 'The admin app is on your home screen. Open it from the MettleUp Admin icon.'}
         </p>
       </Card>
     );
@@ -49,6 +54,11 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
   // reveals a hint read as "nothing happened" to the owner).
   // The slim Today banner keeps one button ("Show me how") so it stays small.
   const stepsOpen = showSteps || (platform === 'iphone' && variant === 'full');
+  // R-446 fresh-eyes (10 Nov 2026): "Install the admin app" only when Chrome can really open its install sheet;
+  // otherwise the button only shows the steps, so it says "Show me how" and goes once they are open (it stayed
+  // and did nothing on a second tap). If Chrome offers its sheet later, the Install button comes back.
+  const showButton = canPrompt || !stepsOpen;
+  const computer = platform === 'computer';
 
   const install = async () => {
     if (canPrompt) {
@@ -60,9 +70,12 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>Put the admin app on your phone</SectionTitle>
+      {/* Fresh-eyes: the line under the title repeated it, and a computer was told "on your phone". */}
+      <SectionTitle>{computer ? 'Install the admin app on this computer' : 'Put the admin app on your phone'}</SectionTitle>
       <p style={body}>
-        Put the admin app on your home screen. It opens full screen, in one tap.
+        {computer
+          ? 'It opens in its own window, like any other program.'
+          : 'It sits on your home screen and opens full screen, in one tap.'}
       </p>
       {stepsOpen && (
         <ol
@@ -88,9 +101,7 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
         </ol>
       )}
       <div style={{ marginTop: space.lg, display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-        {!(platform === 'iphone' && stepsOpen) && (
-          <Button onClick={() => void install()}>{platform === 'iphone' ? 'Show me how' : 'Install the admin app'}</Button>
-        )}
+        {showButton && <Button onClick={() => void install()}>{canPrompt ? 'Install the admin app' : 'Show me how'}</Button>}
         {variant === 'banner' && (
           <Button
             variant="quiet"

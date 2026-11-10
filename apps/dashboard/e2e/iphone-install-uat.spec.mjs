@@ -25,28 +25,32 @@ const ANDROID_CHROME =
   'Mozilla/5.0 (Linux; Android 15; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36';
 
 const SAFARI_STEPS = [
-  'Tap the 3 dots ••• in the address bar at the bottom of Safari. (If you see a square with an arrow up, tap that instead.)',
-  'Tap “Share”.',
+  'In Safari’s address bar, tap the 3 dots •••, then tap “Share”. (If you see a square with an arrow up there, tap that instead.)',
   'Scroll down the list. Tap “Add to Home Screen”.',
-  'Keep “Open as Web App” on. Tap “Add”.',
+  'If you see “Open as Web App”, keep it on. Tap “Add”.',
   'Open MettleUp Admin from your home screen. Sign in once more there. (iPhone keeps it apart from Safari.)',
 ];
 const ANDROID_STEPS = ['In Chrome, tap ⋮ at the top right.', 'Tap “Add to Home screen” or “Install app”.', 'Tap “Install”.'];
 const NOTE =
-  'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.';
+  'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.' +
+  'Owner and forgot your PIN? Open MettleUp in Safari, where you are still signed in. Go to More → Staff & sign-in, tap “Make sign-in code” and type that code here.';
+const PHONE_LINE = 'It sits on your home screen and opens full screen, in one tap.';
 
 async function shot(page, name, fullPage = false) {
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${DIR}/r446-${name}.png`, fullPage });
 }
 
+const PHONE_TITLE = 'Put the admin app on your phone';
+const COMPUTER_TITLE = 'Install the admin app on this computer';
+
 /** The install card (the innermost box holding its title and its first line). */
-const installCard = (page) =>
+const installCard = (page, title = PHONE_TITLE) =>
   page
     .getByRole('main')
     .locator('div')
-    .filter({ has: page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true }) })
-    .filter({ hasText: 'Put the admin app on your home screen.' })
+    .filter({ has: page.getByRole('heading', { name: title, exact: true }) })
+    .filter({ hasText: title === PHONE_TITLE ? PHONE_LINE : 'It opens in its own window' })
     .last();
 // The list carries role="status" (so a screen reader reads it out when it opens), so it is found as an <ol>.
 const stepsList = (card) => card.locator('ol');
@@ -98,7 +102,7 @@ test.describe('iPhone Safari', () => {
     await openSettings(page, 'Sign-in & data');
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
-    await expect(card).toContainText('Put the admin app on your home screen. It opens full screen, in one tap.');
+    await expect(card).toContainText(PHONE_LINE);
     await expectSteps(card, SAFARI_STEPS);
     // No dead button: nothing to tap in the card (the steps ARE the way on an iPhone).
     await expect(card.getByRole('button')).toHaveCount(0);
@@ -124,7 +128,7 @@ test.describe('iPhone Safari', () => {
     await startOnlineGym(page);
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
-    await expect(card).toContainText('Put the admin app on your home screen. It opens full screen, in one tap.');
+    await expect(card).toContainText(PHONE_LINE);
     await expect(stepsList(card)).toHaveCount(0);
     await expect(card.getByRole('button')).toHaveText(['Show me how', 'Not now']);
     await expectCardFits(page, card, 'Today banner before');
@@ -177,7 +181,8 @@ test.describe('iPhone Safari', () => {
     await startOnlineGym(page);
     await expect(page.getByRole('heading', { name: 'Put the admin app on your phone', exact: true })).toHaveCount(0);
     await openSettings(page, 'Sign-in & data');
-    await expect(page.getByText('The admin app is on your home screen. Open it from the MettleUp Admin icon.')).toBeVisible();
+    // Fresh-eyes: inside the app it no longer says "open it from the icon" (the owner is already in it).
+    await expect(page.getByText('You are using the admin app from your home screen. It stays here, ready in one tap.')).toBeVisible();
     await shot(page, 'iphone-app-settings-installed');
   });
 });
@@ -192,9 +197,9 @@ test.describe('iPhone Chrome', () => {
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expectSteps(card, [
-      'Tap the Share icon (a square with an arrow up) at the top, in the address bar.',
+      'Tap the Share icon (a square with an arrow up) in the address bar.',
       'Scroll down the list. Tap “Add to Home Screen”.',
-      'Keep “Open as Web App” on. Tap “Add”.',
+      'If you see “Open as Web App”, keep it on. Tap “Add”.',
       'Open MettleUp Admin from your home screen. Sign in once more there. (iPhone keeps it apart from Safari.)',
     ]);
     await expect(card.getByRole('button')).toHaveCount(0);
@@ -212,19 +217,22 @@ test.describe('Android Chrome', () => {
     await shot(page, 'android-app-signin-no-note');
   });
 
-  test('R446-f Android Settings card: button first, the 3 steps after a tap (button stays: Chrome may open its sheet)', async ({ page }) => {
+  // Headless Chromium never gets Chrome's install offer (beforeinstallprompt), like an Android phone where Chrome has
+  // not offered it yet: the button only shows the steps, so it says "Show me how" and goes once they are open
+  // (fresh-eyes, R-446: "Install the admin app" that stayed and did nothing looked broken).
+  test('R446-f Android Settings card: "Show me how" first, the 3 steps after a tap, then no dead button', async ({ page }) => {
     await openApp(page);
     await startOnlineGym(page);
     await openSettings(page, 'Sign-in & data');
     const card = installCard(page);
     await card.scrollIntoViewIfNeeded();
     await expect(stepsList(card)).toHaveCount(0);
-    await expect(card.getByRole('button', { name: 'Install the admin app' })).toBeVisible();
+    await expect(card.getByRole('button')).toHaveText(['Show me how']);
     await expectCardFits(page, card, 'Android before');
     await card.screenshot({ path: `${DIR}/r446-android-settings-card-before.png` });
-    await card.getByRole('button', { name: 'Install the admin app' }).tap();
+    await card.getByRole('button', { name: 'Show me how' }).tap();
     await expectSteps(card, ANDROID_STEPS);
-    await expect(card.getByRole('button', { name: 'Install the admin app' })).toBeVisible();
+    await expect(card.getByRole('button')).toHaveCount(0);
     await expectFitsPhone(page, 'on Settings, Android, steps open');
     await expectCardFits(page, card, 'Android after');
     await card.screenshot({ path: `${DIR}/r446-android-settings-card-after.png` });
@@ -235,13 +243,13 @@ test.describe('Android Chrome', () => {
     const banner = installCard(page);
     await expect(banner).toBeVisible();
     await banner.scrollIntoViewIfNeeded();
-    await expect(banner.getByRole('button')).toHaveText(['Install the admin app', 'Not now']);
+    await expect(banner.getByRole('button')).toHaveText(['Show me how', 'Not now']);
     await banner.screenshot({ path: `${DIR}/r446-android-today-banner.png` });
   });
 });
 
 test.describe('computer', () => {
-  test('R446-g a computer: no iPhone note at sign-in; Settings keeps its install button', async ({ page }) => {
+  test('R446-g a computer: no iPhone note at sign-in; Settings says "this computer", not "your phone"', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await openApp(page);
     await expect(page.getByRole('note')).toHaveCount(0);
@@ -254,11 +262,16 @@ test.describe('computer', () => {
       window.location.hash = '/settings/data';
     });
     await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-    const card = installCard(page);
+    const card = installCard(page, COMPUTER_TITLE);
     await card.scrollIntoViewIfNeeded();
-    await expect(card.getByRole('button', { name: 'Install the admin app' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: PHONE_TITLE })).toHaveCount(0);
+    await expect(card).toContainText('It opens in its own window, like any other program.');
     await expect(stepsList(card)).toHaveCount(0);
     await shot(page, 'computer-settings');
+    await card.getByRole('button', { name: 'Show me how' }).click();
+    await expectSteps(card, ['In Chrome or Edge, click the install icon at the right end of the address bar.', 'Click “Install”.']);
+    await expect(card.getByRole('button')).toHaveCount(0);
+    await shot(page, 'computer-settings-steps');
   });
 });
 
