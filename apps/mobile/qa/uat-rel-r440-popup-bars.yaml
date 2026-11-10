@@ -1,9 +1,11 @@
 # R-440 (10 Nov 2026): the status bar's clock and battery over the full-page pop-ups. On the light look
 # they stayed WHITE on the cream page (rel-r438-02-offer): a Modal is its own window and React Native's
 # StatusBar only reaches the main one. Each pop-up now sets its window's icons when it shows (ForgeBars
-# lines in the run summary). Run by part_u438 twice: after flow a (light look: dark icons) and after
-# flow c (phone's dark mode flipped: the dark look, light icons). LOOK = light | dark (picture names).
-# The phone's "A new MettleUp is here" (QA link behind=1), then the watch card (watch=forget brings it back).
+# lines in the run summary). Run by part_u438 twice after flow c: in flow c's look, then with the phone's
+# dark mode put back (light look: dark icons; dark look: light icons). LOOK = light | dark (picture names).
+# The phone's "A new MettleUp is here" (QA link behind=BEHIND: a different made-up version each run, since
+# "Later" keeps the same version's full screen away), then the watch card (watch=forget brings it back).
+# Ends with the made-up watch off and the phone up to date.
 appId: com.mettleup.app
 ---
 - extendedWaitUntil:
@@ -13,7 +15,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "^Got it$"
     optional: true
-- openLink: "mettleup://qa-update?watch=off&behind=1"
+- openLink: "mettleup://qa-update?watch=off&behind=${BEHIND}"
 - extendedWaitUntil:
     visible: "A new MettleUp is here"
     timeout: 30000
@@ -46,3 +48,4 @@ appId: com.mettleup.app
 # After the pop-up: the app's own page keeps the icons the look gives it.
 - takeScreenshot: rel-r440-03-after-${LOOK}
 - openLink: "mettleup://qa-update?watch=off"
+- openLink: "mettleup://qa-update?behind=0"
