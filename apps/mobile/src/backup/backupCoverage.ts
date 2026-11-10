@@ -7,8 +7,8 @@
  * in neither list — so a new setting can't be added and forgotten by the backup.
  */
 
-/** `meta` table keys a backup carries (besides SETTINGS_KEYS.meta). */
-export const META_IN_BACKUP: readonly string[] = ['hidden_exercises', 'importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'strength_standard', 'balance_check'];
+/** `meta` table keys a backup carries (besides SETTINGS_KEYS.meta). R-436: last_empty_workout_v1 rides in the packed 'p' item 'empty'. */
+export const META_IN_BACKUP: readonly string[] = ['hidden_exercises', 'importOriginalStarts', 'import_clock_real_v1', 'routine_import_marks', 'strength_standard', 'balance_check', 'last_empty_workout_v1'];
 
 /** `meta` keys left out, and why. */
 export const META_LEFT_OUT: Readonly<Record<string, string>> = {

@@ -48,7 +48,8 @@ export async function startShownWorkout(
   const fresh = mode === 'start' || (mode === 'ask' && (await askAboutOpenWorkout()) === 'replaced');
   if (fresh) {
     if (routineId) await useActiveWorkout.getState().startFromPlanDay(routineId);
-    else useActiveWorkout.getState().startEmpty();
+    // R-436: an empty workout starts with the exercises of the last one (none remembered: blank).
+    else await useActiveWorkout.getState().startEmptyRemembered();
   }
   show();
 }

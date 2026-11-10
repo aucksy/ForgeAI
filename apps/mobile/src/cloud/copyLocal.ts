@@ -19,11 +19,15 @@ import { enqueueWrite } from '@/db/writeQueue';
 import { uuid } from '@/lib/uuid';
 import { COARSE_OF } from '@/tracker/catalog/muscles';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
+import { LAST_EMPTY_KEY, parseRemembered, serializeRemembered } from '@/tracker/services/emptyWorkoutMemory';
 
 import type { LocalItem, MergeApply, MergePlan, QueueOp, ScanPlan, StateRow } from './copyPlan';
 import {
+  EMPTY_WORKOUT_ID,
   exerciseRef,
   measurementId,
+  packEmptyWorkout,
+  unpackEmptyWorkout,
   packBodyWeight,
   packExercise,
   packFolder,
@@ -142,6 +146,14 @@ export async function readLocalItems(db: Tx = getDb()): Promise<LocalItem[]> {
   const prefRows = prefs.filter((p) => refs.has(p.exercise_id) && (p.rest_sec != null || p.records_from != null));
   if (prefRows.length > 0) {
     out.push(item('p', 'all', packPrefs(prefRows.map((p) => ({ ref: refOf(p.exercise_id), rest_sec: p.rest_sec, records_from: p.records_from })))));
+  }
+
+  // R-436: the last empty workout's exercises (only those this phone still has).
+  const lastEmpty = await db.getFirstAsync<{ value: string }>('SELECT value FROM meta WHERE key = ?', [LAST_EMPTY_KEY]);
+  const remembered = parseRemembered(lastEmpty?.value);
+  if (remembered) {
+    const kept = remembered.items.filter((i) => refs.has(i.id)).map((i) => ({ ref: refOf(i.id), sets: i.sets }));
+    if (kept.length > 0) out.push(item('p', EMPTY_WORKOUT_ID, packEmptyWorkout(kept), remembered.at));
   }
 
   for (const b of await db.getAllAsync<{ date_iso: string; weight_kg: number }>('SELECT date_iso, weight_kg FROM body_weight')) {
@@ -496,6 +508,7 @@ async function applyOne(
       return 'ok';
     }
     case 'p': {
+      if (a.id === EMPTY_WORKOUT_ID) return applyEmptyWorkout(tx, a, sameAs);
       const rows = unpackPrefs(a.data);
       if (!rows) return 'skip';
       for (const p of rows) {
@@ -546,6 +559,32 @@ async function applyOne(
     default:
       return 'skip';
   }
+}
+
+/**
+ * R-436: the last empty workout comes back as this phone's list. Never makes an exercise: one the
+ * phone does not have (deleted, or not in the copy) is left out, as at the start of a workout.
+ */
+async function applyEmptyWorkout(tx: Tx, a: MergeApply, sameAs: Map<string, string>): Promise<'ok' | 'skip'> {
+  const refs = unpackEmptyWorkout(a.data);
+  if (!refs) return 'skip';
+  const items: { id: string; sets: number }[] = [];
+  for (const r of refs) {
+    const p = parseRef(r.ref);
+    if (!p) continue;
+    const row = p.library
+      ? await tx.getFirstAsync<{ id: string }>('SELECT id FROM exercises WHERE catalog_key = ? ORDER BY rowid LIMIT 1', [p.key])
+      : await tx.getFirstAsync<{ id: string }>('SELECT id FROM exercises WHERE id = ?', [sameAs.get(p.id) ?? p.id]);
+    if (row) items.push({ id: row.id, sets: r.sets });
+  }
+  const parsed = parseRemembered(serializeRemembered({ items, at: a.editedAt }));
+  if (!parsed) return 'ok';
+  await tx.runAsync(
+    `INSERT INTO meta(key, value) VALUES(?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    [LAST_EMPTY_KEY, serializeRemembered(parsed)],
+  );
+  return 'ok';
 }
 
 async function removeOne(tx: Tx, kind: ItemKind, id: string, touched: Set<string>): Promise<boolean> {

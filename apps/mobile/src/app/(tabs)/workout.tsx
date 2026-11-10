@@ -102,7 +102,7 @@ export default function WorkoutScreen() {
   const countsLine = useActiveWorkout((s) => liveCountsLine(s.exercises));
   const workoutName = useActiveWorkout((s) => s.workoutName);
   const hydrate = useActiveWorkout((s) => s.hydrate);
-  const startEmpty = useActiveWorkout((s) => s.startEmpty);
+  const startEmptyRemembered = useActiveWorkout((s) => s.startEmptyRemembered);
   const discard = useActiveWorkout((s) => s.discard);
   // Phase W4: the same draft slot holds an in-progress EDIT of a saved workout.
   const editingSessionId = useActiveWorkout((s) => s.editingSessionId);
@@ -329,7 +329,8 @@ export default function WorkoutScreen() {
       startGuard,
       async () => {
         await hydrate();
-        if (!useActiveWorkout.getState().active) startEmpty();
+        // R-436: with the exercises of the last empty workout (none remembered: blank).
+        if (!useActiveWorkout.getState().active) await startEmptyRemembered();
         goActive();
       },
       startFailed,

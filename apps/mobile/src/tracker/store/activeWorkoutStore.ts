@@ -69,6 +69,7 @@ import { NO_PAUSE, pauseAt, pauseFromDraft, resumeAt, savedEnd, type PauseSpan }
 import { reconcilePrsForExercises } from '@/tracker/services/prRebuild';
 import { checkMinutes, checkStartTime } from '@/tracker/services/editFields';
 import { draftToRichSets, hasWorkingSet, isCommittable, withoutUntickedSaved } from '@/tracker/services/draftSets';
+import { cardsToRestore, readRemembered, rememberFromCards, withoutPrefill, writeRemembered } from '@/tracker/services/emptyWorkoutMemory';
 import { tickValues, type TickMissing } from '@/tracker/services/setTick';
 import {
   applyCopy,
@@ -340,6 +341,10 @@ interface DraftSnapshot {
   autoSpan?: PauseSpan | null;
   /** C1-2: the end of the last auto-pause the member counted (absent on older drafts). */
   countedUntil?: number | null;
+  /** R-436: started as an empty workout (absent on older drafts = no). */
+  startedEmpty?: boolean;
+  /** R-436: the cards pre-added from the last empty workout (absent = none). */
+  emptyPrefill?: string[] | null;
 }
 
 /** "Log a past workout": the routine it was (its id, name and day type). */
@@ -428,10 +433,27 @@ export interface ActiveWorkoutState {
    * minute later from the same old tick and took the counted hour back.
    */
   countedUntil: number | null;
+  /**
+   * R-436: this workout was started empty ("Start empty workout", or Start with no routine). Its
+   * Finish remembers its exercises for the next empty workout (emptyWorkoutMemory.ts).
+   */
+  startedEmpty: boolean;
+  /** R-436: the keys of the cards pre-added from the last empty workout, until "Start blank". */
+  emptyPrefill: string[] | null;
 
   /** Load a persisted draft (call once on launch / when entering the Workout tab). */
   hydrate: () => Promise<void>;
+  /** A blank workout (no exercises). Its Finish is remembered as the last empty workout (R-436). */
   startEmpty: () => void;
+  /**
+   * R-436: an empty workout pre-filled with the exercises of the last finished empty workout, in
+   * their order (each with its number of sets, filled from last time like an added exercise). With
+   * nothing remembered (or a failed read) it stays blank. The blank workout starts at once; the
+   * cards follow when read.
+   */
+  startEmptyRemembered: () => Promise<void>;
+  /** R-436 "Start blank": the pre-added cards without a ticked set go; the line goes. */
+  clearEmptyPrefill: () => void;
   /** Seed from the coach's rotated plan day (full-body fallback when no plan / rest). */
   startFromPlan: () => Promise<void>;
   /** Start a workout from a SPECIFIC routine (plan day) chosen by the user. */
@@ -599,6 +621,9 @@ function scopeOfWorkout(s: Pick<ActiveWorkoutState, 'planDayId' | 'routineId'> &
   return historyScopeOrAll(historyRoutineOf(s), s.previousFrom ?? undefined);
 }
 
+/** R-436: every start, finish and discard resets the empty-workout marks (startEmpty sets its own). */
+const NOT_EMPTY: Pick<ActiveWorkoutState, 'startedEmpty' | 'emptyPrefill'> = { startedEmpty: false, emptyPrefill: null };
+
 /** The "Previous values" choice a workout starting now freezes (the setting as it is). */
 function previousFromNow(): PreviousFrom {
   return useTrackerPrefs.getState().previousFrom;
@@ -629,6 +654,8 @@ async function persistDraft(s: ActiveWorkoutState): Promise<void> {
     pausedAuto: s.pausedAt != null && s.pausedAuto,
     autoSpan: s.autoSpan,
     countedUntil: s.countedUntil,
+    startedEmpty: s.startedEmpty,
+    emptyPrefill: s.emptyPrefill,
   };
   await setMeta(DRAFT_KEY, JSON.stringify(snap));
 }
@@ -1671,6 +1698,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
         lastSaveReconciled: reconciled,
       });
       clearAllSaveProblems();
@@ -1709,6 +1737,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
     pausedAuto: false,
     autoSpan: null,
     countedUntil: null,
+    startedEmpty: false,
+    emptyPrefill: null,
     lastSaveReconciled: true,
 
     hydrate: async () => {
@@ -1767,6 +1797,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
                 typeof snap.countedUntil === 'number' && Number.isFinite(snap.countedUntil) && snap.countedUntil >= snap.startedAt
                   ? snap.countedUntil
                   : null,
+              startedEmpty: snap.startedEmpty === true,
+              emptyPrefill: Array.isArray(snap.emptyPrefill) ? snap.emptyPrefill.filter((k): k is string => typeof k === 'string') : null,
             });
           }
         } catch (e) {
@@ -1799,8 +1831,59 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
+        startedEmpty: true,
       });
       persistNow();
+    },
+
+    startEmptyRemembered: async () => {
+      get().startEmpty();
+      const started = get().startedAt;
+      // Still the blank workout just started (nothing added, not replaced, not finished)?
+      const untouched = (): boolean => {
+        const s = get();
+        return s.active && s.startedEmpty && s.startedAt === started && s.exercises.length === 0 && !isCorrecting(s) && !s.committing;
+      };
+      try {
+        const saved = await readRemembered();
+        if (!saved || !untouched()) return;
+        const have = await getTrackerExercisesByIds(saved.items.map((i) => i.id));
+        // An exercise deleted since is left out (cardsToRestore).
+        const items = cardsToRestore(saved, have);
+        if (items.length === 0 || !untouched()) return;
+        const scope = await scopeOfWorkout(get());
+        const numbered: Pick<DraftExercise, 'exerciseId' | 'card'>[] = [];
+        const cards = items.map(({ exercise }) => {
+          const card = nextCardNumber(numbered, exercise.id);
+          numbered.push({ exerciseId: exercise.id, card });
+          return card;
+        });
+        const facts = await prefetchCardFacts(items.map(({ exercise }, i) => ({ exerciseId: exercise.id, card: cards[i] })), null, scope);
+        const built = await Promise.all(items.map(({ exercise, sets }, i) => buildDraftExercise(exercise, sets, { card: cards[i], facts, scope })));
+        // The member added an exercise (or left) while these were read: theirs wins, nothing is added.
+        if (!untouched()) return;
+        set({ exercises: built, emptyPrefill: built.map((e) => e.key) });
+        persistNow();
+      } catch (e) {
+        // The workout stays blank; the member adds exercises as before.
+        console.warn('[ForgeErr] The last empty workout could not be read, so this one starts blank.', e);
+      }
+    },
+
+    clearEmptyPrefill: () => {
+      const s = get();
+      if (!s.emptyPrefill) return;
+      const kept = withoutPrefill(s.exercises, s.emptyPrefill);
+      const keptKeys = new Set(kept.map((e) => e.key));
+      const gone = s.exercises.filter((e) => !keptKeys.has(e.key));
+      // As removeExercise does for each card: its rest and its Undo bars go with it.
+      for (const ex of gone) for (const st of ex.sets) useRestTimer.getState().cancelIfStartedBy(ex.key, st.key);
+      const goneKeys = new Set(gone.map((e) => e.key));
+      if (s.lastDeleted && goneKeys.has(s.lastDeleted.exKey)) set({ lastDeleted: null });
+      if (s.lastCopy && goneKeys.has(s.lastCopy.exKey)) set({ lastCopy: null });
+      set({ emptyPrefill: null });
+      mutate(() => tidySupersets(kept), true);
     },
 
     startFromPlan: async () => {
@@ -1844,6 +1927,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       persistNow();
     },
@@ -1879,6 +1963,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       persistNow();
     },
@@ -1930,6 +2015,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       persistNow();
     },
@@ -1968,6 +2054,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       persistNow();
     },
@@ -2489,6 +2576,15 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           await setMeta(DRAFT_KEY, '');
         });
         endDraftInJob();
+        // R-436: a finished empty workout is remembered for the next one (never a discarded one,
+        // never a routine's). A failed write never fails the saved workout.
+        if (s.startedEmpty) {
+          try {
+            await writeRemembered(rememberFromCards(s.exercises, opts.keepUnticked !== true), Date.now());
+          } catch (e) {
+            console.warn('[ForgeErr] The empty workout was saved, but its exercises were not remembered for next time.', e);
+          }
+        }
         set({
           active: false,
           committing: false,
@@ -2504,6 +2600,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           lastDeleted: null,
           lastCopy: null,
           ...NO_PAUSE,
+          ...NOT_EMPTY,
         });
         return id;
         });
@@ -2621,6 +2718,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editEndedAt: session.endedAt,
         editOriginalDateISO: session.dateISO,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       persistNow();
     },
@@ -2702,6 +2800,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: dateISO,
         pastLog: true,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
       return null;
     },
@@ -2771,6 +2870,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
           editOriginalDateISO: null,
           pastLog: false,
           ...NO_PAUSE,
+          ...NOT_EMPTY,
         });
         });
         clearAllSaveProblems();
@@ -2816,6 +2916,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         editOriginalDateISO: null,
         pastLog: false,
         ...NO_PAUSE,
+        ...NOT_EMPTY,
       });
     },
 

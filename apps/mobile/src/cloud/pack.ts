@@ -22,6 +22,7 @@
  *   'x' own exercise  [name, muscleGroup, equipment, isCompound, incrementKg, aliases, secondary,
  *                      logType, loadMode, bwShare, muscles, distUnit]
  *   'p' preferences   [[ref, restSec, recordsFrom], …] (one item, id 'all', sorted by ref)
+ *                     id 'empty' (R-436): the last empty workout [1, [ref, sets], …] (packEmptyWorkout)
  *   'b' body weight   [kg]                 id = the day
  *   'm' measurement   [value]              id = 'day|kind'
  *   'f' photo record  [day, createdAt]     id = the photo's id (the picture stays on the phone)
@@ -363,6 +364,37 @@ export function unpackPrefs(json: string): PrefRow[] | null {
   for (const r of a) {
     if (!Array.isArray(r) || typeof r[0] !== 'string') return null;
     out.push({ ref: r[0], rest_sec: num(at(r, 1)), records_from: text(at(r, 2)) });
+  }
+  return out;
+}
+
+// ------------------------------------------------------------------ 'p' id 'empty': the last empty workout
+
+/**
+ * R-436: the exercises of the member's last finished empty workout, as a 'p' item with id
+ * EMPTY_WORKOUT_ID (the server's kind list already holds 'p': no server change).
+ *   [1, [ref, sets], [ref, sets], …]   in the workout's order
+ * The leading 1 (the format's version, never an array) makes an OLDER app's unpackPrefs refuse it,
+ * so an older phone leaves it out instead of reading it as rest lengths.
+ */
+export const EMPTY_WORKOUT_ID = 'empty';
+
+export interface EmptyWorkoutRef {
+  ref: string;
+  sets: number;
+}
+
+export function packEmptyWorkout(items: readonly EmptyWorkoutRef[]): string {
+  return JSON.stringify([1, ...items.map((i) => [i.ref, i.sets])]);
+}
+
+export function unpackEmptyWorkout(json: string): EmptyWorkoutRef[] | null {
+  const a = parseArray(json);
+  if (!a || a[0] !== 1) return null;
+  const out: EmptyWorkoutRef[] = [];
+  for (const r of a.slice(1)) {
+    if (!Array.isArray(r) || typeof r[0] !== 'string' || r[0] === '') return null;
+    out.push({ ref: r[0], sets: num(at(r, 1)) ?? 1 });
   }
   return out;
 }

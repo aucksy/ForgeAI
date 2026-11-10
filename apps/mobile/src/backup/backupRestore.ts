@@ -23,7 +23,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { applyInTransaction, forgetCopiedState, readLocalItems } from '@/cloud/copyLocal';
 import type { LocalItem, MergeApply, MergePlan } from '@/cloud/copyPlan';
-import { packHash, parseRef, unpackPrefs, unpackProfile, unpackWorkout } from '@/cloud/pack';
+import { EMPTY_WORKOUT_ID, packHash, parseRef, unpackPrefs, unpackProfile, unpackWorkout } from '@/cloud/pack';
 import { RERUN_AFTER_RESTORE } from '@/cloud/snapshot';
 import { getDb } from '@/db';
 import { enqueueWrite } from '@/db/writeQueue';
@@ -68,6 +68,11 @@ export function planAdd(items: readonly BackupItem[], local: readonly LocalItem[
   for (const it of items) {
     const [kind, id] = it;
     if (kind === 'u') continue; // the phone's own profile stays
+    // R-436: the last empty workout comes in only when this phone has none of its own.
+    if (kind === 'p' && id === EMPTY_WORKOUT_ID) {
+      if (!here.has(`p:${id}`)) out.apply.push(it);
+      continue;
+    }
     if (kind === 'p') {
       // Only the rest times and record starts of exercises the phone has none for.
       const rows = (it[2] as unknown[]).filter((r) => Array.isArray(r) && typeof r[0] === 'string' && !localPrefs.has(r[0]));

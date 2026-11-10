@@ -7,6 +7,19 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-436. Remember my empty workouts — 10 Nov 2026
+
+He said: "Start remembering my empty workouts. There can be just one save in the backend for now; no settings needed. The exercises I do in an empty workout get saved, and next time I start an empty workout the same exercises are automatically pulled up again. You decide the best implementation. Think about a versatile version for all users, but this is something I need, so it has to be there."
+
+What I built (for every member, no setting):
+- Finishing an empty workout ("Start empty workout", or Start with no routine) saves its exercises, in order, with how many working sets each saved. Never weights or reps (each card already shows last time). Cards with nothing saved are left out. Discard saves nothing; a routine, Repeat or quick workout never overwrites it. One list per member; each finish replaces it.
+- The next empty workout starts with those exercises (normal empty rows, last-time hints and targets as for an added exercise). Exercises deleted since are skipped. Nothing saved yet: blank as before.
+- One line at the top: "We added the exercises from your last empty workout." with a "Start blank" button (removes the pre-added exercises with no ticked set; ones the member added stay). The line goes at the first tick.
+- Stored: phone `meta` key last_empty_workout_v1 (works offline) + the member's cloud copy as a 'p' item with id 'empty' (exercise refs, so it comes back on a new phone or reinstall). No server change: the server already accepts kind 'p'. The format starts with a version number so older app versions refuse it instead of reading it as rest times. Drive backups carry it too ("Add" restore keeps the phone's own list).
+- Watch: it cannot start a workout (it says "Start a workout on your phone"), so it just shows the pre-filled exercises the phone sends. No watch change.
+- Code: tracker/services/emptyWorkoutMemory.ts; activeWorkoutStore startEmptyRemembered / clearEmptyPrefill / startedEmpty / emptyPrefill; cloud/pack.ts packEmptyWorkout; cloud/copyLocal.ts. Tests: test/db/emptyWorkoutMemoryReal.test.ts (8, real SQL).
+- Waits for his "release" (PROGRESS.md waiting list). UAT still to do on a real phone + watch.
+
 ## R-434. WhatsApp: a plain reply gets past the 131042 block; watch update card = design 2 — 10 Nov 2026
 
 He said: "I hate it... give it another shot and try new things we have not tried". Also: the phone app must tell members when the WATCH app has an update (watch auto-opens, nobody sees its updates); open the Play Store on the watch, the member taps Update there. He picked design 2 "Watch in hand" (a drawn watch showing the new version, notes + buttons in a bottom sheet) from 3 options.

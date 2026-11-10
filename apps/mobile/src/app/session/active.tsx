@@ -38,6 +38,7 @@ import { SheetRow, TrackerSheet } from '@/tracker/components/TrackerSheet';
 import { PAUSE_WORDS, type PauseState } from '@/tracker/services/workoutPause';
 import { getRoutine } from '@/tracker/db/routineRepo';
 import { autoSpanText, COUNT_IT, defaultWorkoutName, editLeftOutText, idlePauseNote, untickedSavedCounts } from '@/tracker/services/finishCheck';
+import { PREFILL_LINE, showPrefillLine, START_BLANK, START_BLANK_A11Y } from '@/tracker/services/emptyWorkoutMemory';
 import { copiedText } from '@/tracker/services/setEntry';
 import { bounceEmptyWorkout } from '@/tracker/services/workoutStart';
 import { holdRoutineOffer, routineUpdateOffer } from '@/tracker/services/routineOffer';
@@ -128,6 +129,9 @@ export default function ActiveWorkoutScreen() {
   const pausedAuto = useActiveWorkout((s) => s.pausedAuto);
   const autoSpan = useActiveWorkout((s) => s.autoSpan);
   const countAutoPause = useActiveWorkout((s) => s.countAutoPause);
+  // R-436: the "Start blank" line (emptyWorkoutMemory.showPrefillLine).
+  const prefillShown = useActiveWorkout((s) => showPrefillLine(s));
+  const clearEmptyPrefill = useActiveWorkout((s) => s.clearEmptyPrefill);
   const pauseNote = pausedAuto && pausedAt != null ? idlePauseNote(pausedAt, Date.now(), phoneUses24Hour()) : PAUSE_WORDS.note;
   const pauseWorkout = useActiveWorkout((s) => s.pauseWorkout);
   const resumeWorkout = useActiveWorkout((s) => s.resumeWorkout);
@@ -698,6 +702,26 @@ export default function ActiveWorkoutScreen() {
 
           {/* Phase 4: the followed plan's easy week — the fact on screen, the why behind the i */}
           {easyWeek && !isEditing ? <EasyWeekNote /> : null}
+
+          {/* R-436: pre-filled from the last empty workout — one line and a way back to blank,
+              until the first tick. */}
+          {prefillShown && !isEditing ? (
+            <View
+              testID="empty-prefill-line"
+              style={{
+                paddingHorizontal: space.md,
+                paddingVertical: space.sm,
+                gap: space.sm,
+                borderRadius: radius.md,
+                backgroundColor: color.surfaceRaised,
+                borderWidth: 1,
+                borderColor: color.border,
+              }}
+            >
+              <Text style={{ fontFamily: type.bodyMedium, fontSize: type.size.sub, color: color.inkSecondary }}>{PREFILL_LINE}</Text>
+              <GhostButton label={START_BLANK} accessibilityLabel={START_BLANK_A11Y} onPress={clearEmptyPrefill} />
+            </View>
+          ) : null}
 
           {!active ? null : exercises.length === 0 ? (
             <EmptyState
