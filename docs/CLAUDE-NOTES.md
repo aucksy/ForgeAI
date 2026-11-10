@@ -56,6 +56,7 @@ Fixed in code (watch only, AmbientDiag.kt, MainActivity.kt, WatchState.kt one li
 2. A black screen while Battery Saver is on is the watch's own: no rebuild (it cannot help), and the diary line says cause=battery-saver (or cause=always-on-off when the setting reads 0).
 Tests: AmbientDiagTest (saver no rebuild, tries per workout, watchCause names). Watch UAT (scripts/ci/watch_dim_uat.sh) gained R-end (rest ends while dimmed: still dimmed, no exit/stop, the card's alerting line logged) and S-saver (Battery Saver on: no rebuild; named in the diary, or the emulator keeps dimming).
 Needs him: check the watch battery (Battery Saver at 15 %) and Settings > Display > Always-on display, then a 2-minute check on his watch after the next release. Waiting list: PROGRESS.md (no release, no version bump).
+CI (commits 0a0d87d7 + e3c1480c): wear-build 42776493892 green: build, unit tests, watch UAT API 34 and API 35-ext15 all 14 dim checks PASS incl. new R-end and S-saver (the emulator does not switch Always-on off under Battery Saver, so S-saver proves only "no rebuild"). First run 42770521482 failed H-timeout on API 35 twice: the emulator had reset its screen timeout to "never" (mScreenOffTimeoutSetting=2147483647), a test fault; the script now sets it again before H-timeout and logs it.
 Next (my view): make the diary readable (the phone's feedback screen attaches the watch's /forge/diag), so the next report is proven, and consider a one-line watch hint when Battery Saver switched the dim screen off.
 
 ## R-436. Remember my empty workouts — 10 Nov 2026
