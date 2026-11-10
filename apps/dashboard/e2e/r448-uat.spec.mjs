@@ -240,8 +240,8 @@ test.describe('R448-2 Forgot your PIN: WhatsApp first, then the other ways', () 
   });
 
   test('the backup way end to end: a code from the other phone, then "Choose a new PIN?"', async ({ page, browser }) => {
-    // Phone A: the owner, signed in (he set a PIN at Create my gym).
-    const w = await fakeWorker(page, { on: true });
+    // Phone A: the owner, signed in (he set a PIN at Create my gym). WhatsApp checking off: not needed here.
+    const w = await fakeWorker(page, { on: false });
     const server = await openApp(page);
     server.pinServer = true;
     await startOnlineGym(page);
@@ -371,10 +371,11 @@ test.describe('R448-3 Verify with WhatsApp: coming back to the page', () => {
     expect(w.starts.at(-1).lang).toBe('hinglish');
     await expect(page.getByText(`MettleUp code ${CODE}. Yeh bhejne ke baad MettleUp page par wapas jao.`)).toBeVisible();
     await leaveAndComeBack(page);
-    await expect(page.getByRole('status').first()).toContainText('Aapka message check ho raha hai…');
+    const hiForm = page.getByRole('form', { name: 'PIN bhool gaye?' });
+    await expect(hiForm.getByRole('status')).toContainText('Aapka message check ho raha hai…');
     await shot(page, 'phone-verify-checking-hinglish');
     await wait(page, 21_000);
-    await expect(page.getByRole('note')).toContainText('Aapka message abhi tak nahi mila.');
+    await expect(hiForm.getByRole('note')).toContainText('Aapka message abhi tak nahi mila.');
     await shot(page, 'phone-verify-still-nothing-hinglish', true);
   });
 
