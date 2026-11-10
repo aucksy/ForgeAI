@@ -479,10 +479,14 @@ elif [ "$WI0" != "Awake" ]; then
 else
   result D-idle-touch FAIL "tap after the let-go: self-dim-on touch=$GT, KEEP_SCREEN_ON=$KT"
 fi
-# Untouched again: let go again, then the watch's own 90 s timeout (from the tap) turns the screen fully off.
+# Untouched again: let go again, then the watch's own timeout turns the screen fully off. Android counts that
+# timeout from the let-go itself (the keep-screen-on hold is released with ON_AFTER_RELEASE, which counts as a
+# touch), not from the tap: with 90 s the screen was still on 85 s after the let-go (run 42803353941). So the
+# timeout goes back to 15 s while the screen is held (a member's watch: one screen timeout after the let-go).
+TO2="$(set_timeout 15000)"
 B="$(count 'self-dim-off idle')"
 G2="$(wait_for 'self-dim-off idle' "$B" 60)"
-for i in $(seq 1 70); do
+for i in $(seq 1 40); do
   [ "$(awake)" != "Awake" ] && break
   sleep 1
 done
@@ -493,7 +497,7 @@ DI="$(dark "$OUT/shots/D-idle-off.png")"
 if [ "$G2" = "1" ] && [ "$(keep_on)" = "0" ] && [ "$WI" != "Awake" ] && [ "$DI" = "1" ]; then
   result D-idle-off PASS "let go again after the idle wait, and the watch's own timeout turned the screen fully off (power $WI, black)"
 else
-  result D-idle-off FAIL "second let-go: self-dim-off idle=$G2, keep=$(keep_on); then power=$WI black=$DI"
+  result D-idle-off FAIL "second let-go: self-dim-off idle=$G2, keep=$(keep_on); then power=$WI black=$DI (timeout $TO2)"
 fi
 # The watch's own wake (tilt-to-wake, a tap on the black screen): MettleUp comes back and holds the screen again.
 B="$(count 'self-dim-on (resume|state)')"

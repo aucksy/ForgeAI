@@ -542,7 +542,9 @@ class MainActivity : ComponentActivity() {
       SelfDim.releaseWhy(
         now = System.currentTimeMillis(),
         inputAt = inputAt,
-        paused = WatchCopy.paused(WatchState.snapshot.text),
+        // Read from the saved state, not the snapshot: on opening, the snapshot is still the old one, and a
+        // paused workout was held for half a second (cloud watch check D-paused, run 42803353941).
+        paused = WatchCopy.paused(WatchState.setLine(this)),
         idleMs = idleReleaseMs(),
       )
     } else {

@@ -153,6 +153,12 @@ object WatchState {
   fun workoutAt(ctx: Context): Long = prefs(ctx).getLong("workoutAt", 0L)
 
   /**
+   * R-444: the saved set line ("Paused · ..." while the phone's workout timer is paused), read now. [snapshot]
+   * catches up a moment later (posted to the main thread), too late for the first screen-hold check on opening.
+   */
+  fun setLine(ctx: Context): String = prefs(ctx).getString("text", "") ?: ""
+
+  /**
    * After a reboot, an app update or a force-stop the rest's alarm and countdown are gone: a rest
    * still in the future gets them back; one already over is dropped (no late buzz).
    */
