@@ -7,6 +7,7 @@ import android.content.Intent
 /**
  * Watch restarted or the app updated: a rest still running gets its alarm and countdown back.
  * R-167: also when "Alarms & reminders" is switched on (the alarm is set again, now exact).
+ * 10 Nov 2026: boot and update also write this app's version for the phone (WatchVersion).
  */
 class BootReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
@@ -15,6 +16,8 @@ class BootReceiver : BroadcastReceiver() {
     val app = context.applicationContext
     WatchState.recover(app)
     Bridging.sync(app)
+    // Watch update ready (10 Nov 2026): after an update the phone must see the new version.
+    if (a != EXACT_CHANGED) WatchVersion.publish(app, a ?: "boot", force = true)
   }
 
   private companion object {

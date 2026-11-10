@@ -242,6 +242,53 @@ class WearWireTest {
     assertEquals(emptyList<String>(), WearWire.installTargets(emptyList(), emptyList()))
   }
 
+  // ------------------------------------------------------------------ watch update ready (10 Nov 2026)
+  @Test
+  fun watchVersionKeepsOnlySaneValues() {
+    assertEquals(WearWire.WatchVersion("0.76.0", 1_000_000_123L), WearWire.watchVersion(" 0.76.0 ", 1_000_000_123L))
+    assertNull(WearWire.watchVersion(null, 5L))
+    assertNull(WearWire.watchVersion("", 5L))
+    assertNull(WearWire.watchVersion("0.76.0", 0L))
+  }
+
+  @Test
+  fun versionsToAskAreWatchesWithTheAppAndNoItem() {
+    val v = mapOf("w1" to WearWire.WatchVersion("0.76.0", 1L))
+    assertEquals(listOf("w2"), WearWire.versionsToAsk(listOf("w1", "w2", "w3"), listOf("w1", "w2"), v))
+    assertEquals(emptyList<String>(), WearWire.versionsToAsk(listOf("w1"), listOf("w1"), v))
+  }
+
+  @Test
+  fun watchVersionsJsonListsEveryConnectedWatch() {
+    val v = mapOf("w1" to WearWire.WatchVersion("0.76.0", 1_000_000_076L), "w3" to WearWire.WatchVersion("0.70.0", 9L))
+    val o = JSONObject(WearWire.watchVersionsJson(listOf("w1" to "Pixel Watch 3", "w2" to "Galaxy", "w3" to "Old"), listOf("w1", "w2"), v))
+    assertTrue(o.getBoolean("ok"))
+    val n = o.getJSONArray("nodes")
+    assertEquals(3, n.length())
+    assertEquals("w1", n.getJSONObject(0).getString("nodeId"))
+    assertEquals("Pixel Watch 3", n.getJSONObject(0).getString("displayName"))
+    assertTrue(n.getJSONObject(0).getBoolean("hasApp"))
+    assertEquals("0.76.0", n.getJSONObject(0).getString("versionName"))
+    assertEquals(1_000_000_076L, n.getJSONObject(0).getLong("versionCode"))
+    // The app with no item: an older watch build (null version).
+    assertTrue(n.getJSONObject(1).getBoolean("hasApp"))
+    assertTrue(n.getJSONObject(1).isNull("versionName"))
+    assertTrue(n.getJSONObject(1).isNull("versionCode"))
+    // No app: a stale item left behind is not reported.
+    assertTrue(!n.getJSONObject(2).getBoolean("hasApp"))
+    assertTrue(n.getJSONObject(2).isNull("versionName"))
+    assertTrue(!JSONObject(WearWire.WATCH_VERSIONS_UNKNOWN).getBoolean("ok"))
+  }
+
+  @Test
+  fun updateTargetsAreWatchesWithTheApp() {
+    assertEquals(listOf("w1", "w3"), WearWire.updateTargets(listOf("w1", "w2", "w3"), listOf("w1", "w3"), null))
+    assertEquals(listOf("w3"), WearWire.updateTargets(listOf("w1", "w2", "w3"), listOf("w1", "w3"), "w3"))
+    // A watch named that lacks the app or is gone: every watch with the app.
+    assertEquals(listOf("w1"), WearWire.updateTargets(listOf("w1", "w2"), listOf("w1"), "w2"))
+    assertEquals(emptyList<String>(), WearWire.updateTargets(listOf("w2"), emptyList(), null))
+  }
+
   @Test
   fun playStoreUriNamesThePackage() {
     assertEquals("market://details?id=com.mettleup.app", WearWire.playStoreUri("com.mettleup.app"))

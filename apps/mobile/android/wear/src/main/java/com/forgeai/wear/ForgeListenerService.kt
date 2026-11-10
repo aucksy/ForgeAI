@@ -13,6 +13,8 @@ class ForgeListenerService : WearableListenerService() {
   override fun onDataChanged(dataEvents: DataEventBuffer) {
     // The notification permission may have changed in Settings since: keep the bridging right.
     Bridging.sync(applicationContext)
+    // Watch update ready (10 Nov 2026): once per process, so a build installed and never opened is seen.
+    WatchVersion.publish(applicationContext, "listener")
     for (event in dataEvents) {
       if (event.type == DataEvent.TYPE_CHANGED) WatchSync.apply(applicationContext, event.dataItem)
     }
@@ -25,6 +27,8 @@ class ForgeListenerService : WearableListenerService() {
    */
   override fun onMessageReceived(event: MessageEvent) {
     if (event.path == WatchActions.PATH_NACK_DONE) WatchActions.refused(applicationContext)
+    // Watch update ready (10 Nov 2026): the phone asks for this app's version (it has no item yet).
+    if (event.path == WatchVersion.PATH_ASK) WatchVersion.publish(applicationContext, "asked", force = true)
     // A workout was just started on the phone: open the app, or post "Workout started".
     if (event.path == WatchSync.PATH_OPEN) {
       // R-269: only MettleUp on the phone sends this: the phone app is there.

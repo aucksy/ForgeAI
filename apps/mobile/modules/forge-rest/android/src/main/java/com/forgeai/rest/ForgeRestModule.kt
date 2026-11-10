@@ -51,6 +51,9 @@ import expo.modules.kotlin.modules.ModuleDefinition
  *  - watchAppState()               — "none" | "installed" | "missing" | "unknown" (WearSync.watchAppState);
  *  - installOnWatch()              — opens the watch's Play Store on MettleUp: "opened" | "installed" |
  *                                    "none" | "failed" | "unknown" (WearSync.installOnWatch).
+ * Watch update ready (10 Nov 2026), async:
+ *  - watchVersions()               — JSON of every connected watch's app version (WearSync.watchVersions);
+ *  - updateOnWatch(nodeId)         — the watch's Play Store on MettleUp ("" = every watch with the app).
  * Events: onRestChange { kind: "add" | "skip" | "end" | "done", endsAt, startedAt }, onOpenWorkout.
  */
 class ForgeRestModule : Module() {
@@ -314,6 +317,28 @@ class ForgeRestModule : Module() {
         return@AsyncFunction
       }
       WearSync.installOnWatch(c) { s -> promise.resolve(s) }
+    }
+
+    // Watch update ready (10 Nov 2026): every connected watch and its app version, as JSON
+    // {"ok":bool,"nodes":[{nodeId,displayName,hasApp,versionName|null,versionCode|null}]} (watchUpdate.ts).
+    AsyncFunction("watchVersions") { promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(WearWire.WATCH_VERSIONS_UNKNOWN)
+        return@AsyncFunction
+      }
+      WearSync.watchVersions(c) { s -> promise.resolve(s) }
+    }
+
+    // Watch update ready: open the watch's Play Store on MettleUp for an update ("" = every watch with
+    // the app): "opened" | "none" | "missing" | "failed" | "unknown".
+    AsyncFunction("updateOnWatch") { nodeId: String, promise: Promise ->
+      val c = ctx
+      if (c == null) {
+        promise.resolve(WearSync.INSTALL_FAILED)
+        return@AsyncFunction
+      }
+      WearSync.updateOnWatch(c, nodeId.ifEmpty { null }) { s -> promise.resolve(s) }
     }
 
     Function("clearWorkoutCard") {

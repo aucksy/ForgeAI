@@ -11,7 +11,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataMap
+import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicLong
@@ -401,26 +403,172 @@ object WearSync {
         once.answer(state)
         return@askWatches
       }
-      val left = java.util.concurrent.atomic.AtomicInteger(targets.size)
-      val uri = Uri.parse(WearWire.playStoreUri(app.packageName))
-      for (node in targets) {
-        try {
-          val intent = Intent(Intent.ACTION_VIEW).addCategory(Intent.CATEGORY_BROWSABLE).setData(uri)
-          val f = RemoteActivityHelper(app).startRemoteActivity(intent, node)
-          f.addListener({
-            try {
-              f.get()
-              Log.i(TAG, "watch Play Store opened on MettleUp")
-              once.answer(INSTALL_OPENED)
-            } catch (e: Exception) {
-              Log.w(TAG, "watch did not open its Play Store", e)
-              if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+      openPlayStoreOn(app, targets, once)
+    }
+  }
+
+  /**
+   * F67 / watch update (10 Nov 2026): asks each of [targets] to open its Play Store on the MettleUp
+   * page; [once] gets "opened" when one took it, "failed" when all refused or threw.
+   */
+  private fun openPlayStoreOn(app: Context, targets: List<String>, once: Once) {
+    val left = java.util.concurrent.atomic.AtomicInteger(targets.size)
+    val uri = Uri.parse(WearWire.playStoreUri(app.packageName))
+    for (node in targets) {
+      try {
+        val intent = Intent(Intent.ACTION_VIEW).addCategory(Intent.CATEGORY_BROWSABLE).setData(uri)
+        val f = RemoteActivityHelper(app).startRemoteActivity(intent, node)
+        f.addListener({
+          try {
+            f.get()
+            Log.i(TAG, "watch Play Store opened on MettleUp")
+            once.answer(INSTALL_OPENED)
+          } catch (e: Exception) {
+            Log.w(TAG, "watch did not open its Play Store", e)
+            if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+          }
+        }, { r -> r.run() })
+      } catch (e: Exception) {
+        Log.w(TAG, "watch Play Store request not sent", e)
+        if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+      }
+    }
+  }
+
+  // ------------------------------------------------------------------ watch update ready (10 Nov 2026)
+  /** A watch that has the app but no version item is asked to write it; read again after this. */
+  private const val VERSION_REREAD_MS = 2_500L
+
+  /**
+   * Watch update ready (10 Nov 2026): every connected watch as JSON (WearWire.watchVersionsJson:
+   * nodeId, displayName, hasApp, versionName|null, versionCode|null), or
+   * [WearWire.WATCH_VERSIONS_UNKNOWN] when Wear OS cannot say within [ASK_TIMEOUT_MS]. The version
+   * is the watch's own Data Layer item (WatchVersion.kt on the watch), readable with the watch app
+   * closed. A watch with the app but no item is sent [WearWire.PATH_WATCH_VERSION_ASK] (a new build
+   * installed and never opened writes it then) and read once more; an older watch build ignores the
+   * message, so its version stays null = "an update is ready". Never throws; [done] is called once.
+   */
+  fun watchVersions(ctx: Context, done: (String) -> Unit) {
+    val app = ctx.applicationContext
+    val once = Once(done)
+    main.postDelayed({
+      if (once.pending()) Log.w(TAG, "watch versions: Wear OS did not answer in time")
+      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+    }, ASK_TIMEOUT_MS)
+    if (unavailable()) {
+      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+      return
+    }
+    try {
+      Wearable.getNodeClient(app).connectedNodes
+        .addOnSuccessListener { nodes ->
+          val connected = nodes.map { it.id to (it.displayName ?: "") }
+          if (connected.isEmpty()) {
+            once.answer(WearWire.watchVersionsJson(connected, emptyList(), emptyMap()))
+            return@addOnSuccessListener
+          }
+          Wearable.getCapabilityClient(app).getCapability(CAP_WATCH_APP, CapabilityClient.FILTER_REACHABLE)
+            .addOnSuccessListener { info ->
+              val withApp = info.nodes.map { it.id }
+              readWatchVersions(app, { once.answer(WearWire.WATCH_VERSIONS_UNKNOWN) }) { versions ->
+                val ask = WearWire.versionsToAsk(connected.map { it.first }, withApp, versions)
+                if (ask.isEmpty()) {
+                  once.answer(WearWire.watchVersionsJson(connected, withApp, versions))
+                } else {
+                  askForVersions(app, ask)
+                  main.postDelayed({
+                    // A failed second read keeps the first (the asked watches stay without a version).
+                    readWatchVersions(app, { once.answer(WearWire.watchVersionsJson(connected, withApp, versions)) }) { again ->
+                      once.answer(WearWire.watchVersionsJson(connected, withApp, again))
+                    }
+                  }, VERSION_REREAD_MS)
+                }
+              }
             }
-          }, { r -> r.run() })
-        } catch (e: Exception) {
-          Log.w(TAG, "watch Play Store request not sent", e)
-          if (left.decrementAndGet() == 0) once.answer(INSTALL_FAILED)
+            .addOnFailureListener { e ->
+              failed(e, "watch app not looked up (versions)")
+              once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+            }
         }
+        .addOnFailureListener { e ->
+          failed(e, "connected watches not read (versions)")
+          once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+        }
+    } catch (e: Exception) {
+      Log.w(TAG, "watch versions not looked up", e)
+      once.answer(WearWire.WATCH_VERSIONS_UNKNOWN)
+    }
+  }
+
+  /** Asks [nodes] to write their version item now (an older watch build has no listener: dropped). */
+  private fun askForVersions(app: Context, nodes: List<String>) {
+    for (node in nodes) {
+      try {
+        Wearable.getMessageClient(app).sendMessage(node, WearWire.PATH_WATCH_VERSION_ASK, ByteArray(0))
+          .addOnFailureListener { e -> Log.w(TAG, "watch version ask not sent", e) }
+      } catch (e: Exception) {
+        Log.w(TAG, "watch version ask not sent", e)
+      }
+    }
+  }
+
+  /** Every watch's version item on this phone, by node id; [onFail] when the Data Layer cannot say. */
+  private fun readWatchVersions(app: Context, onFail: () -> Unit, then: (Map<String, WearWire.WatchVersion>) -> Unit) {
+    try {
+      // No host: the item at this path of every node.
+      val uri = Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(WearWire.PATH_WATCH_VERSION).build()
+      Wearable.getDataClient(app).getDataItems(uri)
+        .addOnSuccessListener { buf ->
+          val out = HashMap<String, WearWire.WatchVersion>()
+          try {
+            for (item in buf) {
+              val node = item.uri.host ?: continue
+              val m = DataMapItem.fromDataItem(item).dataMap
+              WearWire.watchVersion(m.getString(WearWire.KEY_NAME), m.getLong(WearWire.KEY_CODE, 0L))?.let { out[node] = it }
+            }
+          } catch (e: Exception) {
+            Log.w(TAG, "a watch version item not read", e)
+          } finally {
+            buf.release()
+          }
+          then(out)
+        }
+        .addOnFailureListener { e ->
+          Log.w(TAG, "watch version items not read", e)
+          onFail()
+        }
+    } catch (e: Exception) {
+      Log.w(TAG, "watch version items not read", e)
+      onFail()
+    }
+  }
+
+  /**
+   * Watch update ready (10 Nov 2026): opens the Play Store on the MettleUp page on the connected
+   * watch [nodeId] (null, or a watch not connected / without the app = every connected watch WITH
+   * the app), where Play shows "Update" when a newer watch build is out. Answers "opened", "none"
+   * (no watch connected), "missing" (no connected watch has the app: installOnWatch is the way),
+   * "failed" (refused, error, or [OPEN_TIMEOUT_MS]) or "unknown". Never throws; [done] once.
+   */
+  fun updateOnWatch(ctx: Context, nodeId: String?, done: (String) -> Unit) {
+    val app = ctx.applicationContext
+    val once = Once(done)
+    main.postDelayed({
+      if (once.pending()) Log.w(TAG, "watch Play Store (update) request timed out")
+      once.answer(INSTALL_FAILED)
+    }, OPEN_TIMEOUT_MS)
+    askWatches(
+      app,
+      { why ->
+        Log.w(TAG, "watch Play Store (update) not opened: $why")
+        once.answer(WATCH_UNKNOWN)
+      },
+    ) { connected, withApp ->
+      val targets = WearWire.updateTargets(connected, withApp, nodeId)
+      when {
+        connected.isEmpty() -> once.answer(WearWire.WATCH_NONE)
+        targets.isEmpty() -> once.answer(WearWire.WATCH_MISSING)
+        else -> openPlayStoreOn(app, targets, once)
       }
     }
   }

@@ -119,6 +119,8 @@ class MainActivity : ComponentActivity() {
     keptLogUi?.let { logUi = it }
     keptLogUi = null
     AmbientDiag.note(this, "create", if (savedInstanceState != null) "restored" else "")
+    // Watch update ready (10 Nov 2026): the phone reads this app's version from the Data Layer.
+    WatchVersion.publish(this, "start")
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot

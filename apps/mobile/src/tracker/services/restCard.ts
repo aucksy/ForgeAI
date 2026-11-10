@@ -99,6 +99,10 @@ interface Native {
   watchAppState?(): Promise<string>;
   /** F67: open the watch's Play Store on MettleUp: "opened" | "installed" | "none" | "failed" | "unknown". */
   installOnWatch?(): Promise<string>;
+  /** Watch update ready (10 Nov 2026): JSON of every connected watch's app version (watchUpdate.ts). Older native pieces lack it. */
+  watchVersions?(): Promise<string>;
+  /** Watch update ready: the watch's Play Store on MettleUp ("" = every watch with the app): "opened" | "none" | "missing" | "failed" | "unknown". */
+  updateOnWatch?(nodeId: string): Promise<string>;
   addListener(event: string, cb: (e: Record<string, unknown>) => void): { remove: () => void };
 }
 
@@ -267,6 +271,33 @@ export async function nativeInstallOnWatch(): Promise<string | null> {
     return await n.installOnWatch();
   } catch (e) {
     console.warn('[ForgeErr] the watch Play Store could not be opened', e);
+    return null;
+  }
+}
+
+/**
+ * Watch update ready (10 Nov 2026): the raw JSON of every connected watch and its app version, or
+ * null with no native piece (web, tests, an older build). Read by watchUpdate.ts; never throws.
+ */
+export async function nativeWatchVersions(): Promise<string | null> {
+  const n = N();
+  if (!n?.watchVersions) return null;
+  try {
+    return await n.watchVersions();
+  } catch (e) {
+    console.warn('[ForgeErr] the watch versions could not be read', e);
+    return null;
+  }
+}
+
+/** Watch update ready: ask the watch to open its Play Store on MettleUp; null with no native piece. Never throws. */
+export async function nativeUpdateOnWatch(nodeId: string | null): Promise<string | null> {
+  const n = N();
+  if (!n?.updateOnWatch) return null;
+  try {
+    return await n.updateOnWatch(nodeId ?? '');
+  } catch (e) {
+    console.warn('[ForgeErr] the watch Play Store could not be opened for an update', e);
     return null;
   }
 }

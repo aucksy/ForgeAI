@@ -154,6 +154,71 @@ internal object WearWire {
    */
   fun playStoreUri(pkg: String): String = "market://details?id=$pkg"
 
+  // ------------------------------------------------------------------ watch update ready (10 Nov 2026)
+  /**
+   * Watch builds from 10 Nov 2026 on keep their own versionName / versionCode in the Data Layer item
+   * [PATH_WATCH_VERSION] (keys [KEY_NAME], [KEY_CODE]; android/wear WatchVersion.kt). A watch with
+   * the app and no item is an older build. [PATH_WATCH_VERSION_ASK] is the phone's message asking a
+   * watch to write it now (a watch app installed and never opened). Must match WatchVersion.kt.
+   */
+  const val PATH_WATCH_VERSION = "/forge/watch-version"
+  const val PATH_WATCH_VERSION_ASK = "/forge/watch-version-ask"
+  const val KEY_NAME = "versionName"
+  const val KEY_CODE = "versionCode"
+
+  /** One watch's version as its item says; [name] "" or [code] <= 0 are not sane and never stored. */
+  data class WatchVersion(val name: String, val code: Long)
+
+  /** A version item's values, or null when they are not sane (empty name, no code). */
+  fun watchVersion(name: String?, code: Long): WatchVersion? {
+    val n = name?.trim().orEmpty()
+    if (n.isEmpty() || n.length > 40 || code <= 0L) return null
+    return WatchVersion(n, code)
+  }
+
+  /** The connected watches that have the app but no version item yet (the ones to ask). */
+  fun versionsToAsk(connected: Collection<String>, withApp: Collection<String>, versions: Map<String, WatchVersion>): List<String> {
+    val has = withApp.toSet()
+    return connected.filter { it in has && it !in versions }.distinct()
+  }
+
+  /**
+   * The phone's answer to watchVersions() (watchUpdate.ts parses it): {"ok":true,"nodes":[{nodeId,
+   * displayName, hasApp, versionName|null, versionCode|null}]} for every connected watch, in order.
+   * [connected] pairs are (node id, display name).
+   */
+  fun watchVersionsJson(connected: List<Pair<String, String>>, withApp: Collection<String>, versions: Map<String, WatchVersion>): String {
+    val has = withApp.toSet()
+    val arr = org.json.JSONArray()
+    val seen = HashSet<String>()
+    for ((id, label) in connected) {
+      if (!seen.add(id)) continue
+      val app = id in has
+      val v = if (app) versions[id] else null
+      val o = JSONObject()
+      o.put("nodeId", id)
+      o.put("displayName", label.take(MAX_LINE))
+      o.put("hasApp", app)
+      o.put("versionName", v?.name ?: JSONObject.NULL)
+      o.put("versionCode", v?.code ?: JSONObject.NULL)
+      arr.put(o)
+    }
+    return JSONObject().put("ok", true).put("nodes", arr).toString()
+  }
+
+  /** watchVersions() when Wear OS could not say. */
+  const val WATCH_VERSIONS_UNKNOWN = """{"ok":false,"nodes":[]}"""
+
+  /**
+   * "Update on watch": the connected watches WITH the app whose Play Store page opens; only [only]
+   * when it names one of them (null or a watch not connected / without the app = all of them).
+   */
+  fun updateTargets(connected: Collection<String>, withApp: Collection<String>, only: String?): List<String> {
+    val has = withApp.toSet()
+    val all = connected.filter { it in has }.distinct()
+    return if (only != null && only in all) listOf(only) else all
+  }
+
   private val HEX6 = Regex("^#[0-9A-F]{6}$")
 
   /**
