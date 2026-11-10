@@ -30,13 +30,13 @@ features:
       files: [src/tracker/services/restCard.ts, src/tracker/services/workoutAlerts.ts, src/tracker/services/workoutSounds.ts]
 
   - id: light-dark-system-bars
-    name: Light or dark look - the navigation bar's buttons follow the app's look [light mode]
+    name: Light or dark look - the navigation bar's buttons and a full-page pop-up's status bar follow the app's look [light mode, R-440]
     android: done
     ios: n-a
-    reason: iPhone has no navigation bar; the status bar follows the look through expo-status-bar (JS), the same on both.
+    reason: iPhone has no navigation bar; the status bar follows the look through expo-status-bar (JS), the same on both. A pop-up (Modal) on iPhone is no separate window, so modalBars (an Android pop-up window's icons) has nothing to do there.
     blocking: false
     covers:
-      functions: [forge-phone.systemBars]
+      functions: [forge-phone.systemBars, forge-phone.modalBars]
       gradle: [androidx.core:core]
 
   - id: workout-card
