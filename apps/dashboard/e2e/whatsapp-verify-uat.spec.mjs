@@ -284,7 +284,7 @@ for (const size of ['phone', 'computer']) {
     const w = await fakeWorker(page);
     const server = await openApp(page);
     server.pinServer = true;
-    await page.getByRole('tab', { name: 'Set up a new gym' }).click();
+    await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click();
     const start = page.locator('form').filter({ has: page.getByRole('checkbox') });
     await start.getByLabel('Gym name').fill('Shakti Gym');
     await start.getByLabel('Your name').fill('Ramesh Sharma');

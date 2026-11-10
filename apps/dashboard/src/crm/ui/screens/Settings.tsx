@@ -349,7 +349,8 @@ export function SettingsScreen({ section }: { section?: string }) {
       {canErase && <DownloadDataCard />}
 
       <Card style={{ marginBottom: space.lg }}>
-        <SectionTitle>Your data</SectionTitle>
+        {/* R-447: was "Your data", too close to the backup card above it ("Keep a copy of your data"). */}
+        <SectionTitle>Your gym’s records</SectionTitle>
         <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
           {`${countOf(counts.members, 'member')} · ${countOf(counts.memberships, 'membership')} · ${countOf(counts.payments, 'payment')} · ${countOf(counts.visits, 'check-in')}. Set up ${formatDay(dateISOFromEpoch(gym.createdAt))}.`}
         </p>

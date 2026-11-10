@@ -608,7 +608,7 @@ function DamagedData({
         ) : (
           <div role="group" aria-label="Start a new gym?" style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
             <span>
-              Start a new, empty gym in this browser? The data that couldn’t be read stays here. You can still download it from Settings → Your data.
+              Start a new, empty gym in this browser? The data that couldn’t be read stays here. You can still download it from Settings → Sign-in & data.
             </span>
             <button
               type="button"

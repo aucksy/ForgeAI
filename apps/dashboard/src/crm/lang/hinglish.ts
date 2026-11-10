@@ -72,10 +72,11 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Powered by': 'Powered by',
   'Run your gym: members, renewals, dues and attendance. Plus a shop your members order from in the MettleUp app.':
     'Apna gym chalao: members, renewal, baaki fees aur hazri. Saath mein ek shop, jahan se members MettleUp app mein order karte hain.',
-  'Sign in or set up': 'Sign in karo ya naya gym banao',
   'Sign in': 'Sign in karo',
   'Set up a new gym': 'Naya gym banao',
-  'Already use MettleUp? Sign in': 'Pehle se MettleUp use karte ho? Sign in karo',
+  // R-447: the quiet line under the sign-in form (and under the set-up form).
+  'New to MettleUp?': 'MettleUp pe naye ho?',
+  'Already use MettleUp?': 'Pehle se MettleUp use karte ho?',
   'Sign in with your mobile number and your 6-digit PIN.': 'Apne mobile number aur 6 number ke PIN se sign in karo.',
   // R-446: inside the iPhone home-screen app (iPhone keeps its storage apart from Safari).
   'Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.':

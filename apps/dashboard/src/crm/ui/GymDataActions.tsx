@@ -50,7 +50,7 @@ function keepLastDownload(gymId: string, at: number) {
   }
 }
 
-/** Settings -> Sign-in & data: "Keep a copy of your data", its own card, never under Danger zone. */
+/** Settings -> Sign-in & data: "Download a backup" (was "Keep a copy of your data", R-447), its own card, never under Danger zone. */
 export function DownloadDataCard() {
   const { snapshot } = useCrm();
   const gymId = snapshot.gym.gymId;
@@ -77,7 +77,7 @@ export function DownloadDataCard() {
 
   return (
     <Card style={{ marginBottom: space.lg }}>
-      <SectionTitle>Keep a copy of your data</SectionTitle>
+      <SectionTitle>Download a backup</SectionTitle>
       <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>
         Download every member, plan, payment and check-in as an Excel file. Keep it on your phone or computer. We suggest once a month.
       </p>

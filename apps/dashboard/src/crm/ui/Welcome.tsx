@@ -62,7 +62,7 @@ export function Welcome() {
         heading={
           <>
             <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
-              {startFirst ? t('Already use MettleUp? Sign in') : t('Sign in')}
+              {t('Sign in')}
             </h2>
             <p style={{ margin: `6px 0 0`, fontFamily: font.body, fontSize: 13, color: color.inkSecondary }}>
               {t('Sign in with your mobile number and your 6-digit PIN.')}
@@ -144,36 +144,18 @@ export function Welcome() {
           </div>
         )}
 
-        <div role="tablist" aria-label={t('Sign in or set up')} style={{ display: 'flex', gap: space.sm, marginBottom: space.md }}>
-          {([
-            ['signin', t('Sign in')],
-            ['start', t('Set up a new gym')],
-          ] as const).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={tab === id}
-              onClick={() => setTab(id)}
-              style={{
-                flex: 1,
-                minHeight: 44,
-                borderRadius: radius.pill,
-                border: `1px solid ${tab === id ? color.accent : color.borderStrong}`,
-                background: tab === id ? color.accentSoft : 'transparent',
-                color: tab === id ? color.accentBright : color.inkSecondary,
-                fontFamily: font.body,
-                fontSize: 15,
-                fontWeight: tab === id ? 700 : 500,
-                cursor: 'pointer',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div role="tabpanel">{tab === 'start' ? startCard : signInCard}</div>
+        {/* R-447 (10 Nov 2026): two equal tabs side by side let an owner with a gym tap "Set up a new gym" by
+            mistake. Sign in is the one form and the one bright button; the other door is a quiet line under it. */}
+        {tab === 'start' ? startCard : signInCard}
+        <OtherDoor
+          question={tab === 'start' ? t('Already use MettleUp?') : t('New to MettleUp?')}
+          label={tab === 'start' ? t('Sign in') : t('Set up a new gym')}
+          onClick={() => {
+            setTab(tab === 'start' ? 'signin' : 'start');
+            // The other form starts at the top of the page, not where the finger was.
+            window.scrollTo({ top: 0 });
+          }}
+        />
 
         <Card style={{ marginTop: space.lg }}>
           <h2 style={{ margin: 0, fontFamily: font.display, fontSize: 17, fontWeight: 600, color: color.ink }}>
@@ -190,8 +172,8 @@ export function Welcome() {
           )}
 
           <div style={{ marginTop: space.lg }}>
-            {/* UAT 1 Nov 2026: on "Set up a new gym" the bright button is "Create my gym", not the demo. */}
-            <Button full variant={tab === 'start' ? 'ghost' : 'primary'} disabled={busy !== null} onClick={() => run('demo', startDemo)}>
+            {/* R-447: never bright. The bright button on this page is "Sign in" (or "Create my gym"). */}
+            <Button full variant="ghost" disabled={busy !== null} onClick={() => run('demo', startDemo)}>
               {busy === 'demo'
                 ? t('Starting your demo gym…')
                 : demoFailed
@@ -214,6 +196,40 @@ export function Welcome() {
         {/* Launch audit 3 Nov 2026: a locked-out owner can reach MettleUp from the first screen. */}
         <SupportLine center />
       </div>
+    </div>
+  );
+}
+
+/** R-447: the way to the other form, set apart under a line: "New to MettleUp?" -> "Set up a new gym". */
+function OtherDoor({ question, label, onClick }: { question: string; label: string; onClick: () => void }) {
+  const line = <span aria-hidden style={{ flex: 1, height: 1, background: color.border }} />;
+  return (
+    <div style={{ marginTop: space.lg, display: 'grid', justifyItems: 'center', gap: space.xs }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: space.md, width: '100%' }}>
+        {line}
+        <span style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>{question}</span>
+        {line}
+      </div>
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          appearance: 'none',
+          minHeight: 44,
+          padding: `0 ${space.md}px`,
+          border: 'none',
+          background: 'transparent',
+          color: color.accentBright,
+          fontFamily: font.body,
+          fontSize: 15,
+          fontWeight: 700,
+          textDecoration: 'underline',
+          textUnderlineOffset: 3,
+          cursor: 'pointer',
+        }}
+      >
+        {label}
+      </button>
     </div>
   );
 }

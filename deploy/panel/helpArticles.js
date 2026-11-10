@@ -343,7 +343,7 @@ export const HELP_ARTICLES = [
       'Open Settings (on a phone, under More). It has three tabs. ' +
       '"Gym": under "Gym details", your gym name, phone, address, GSTIN and UPI ID. Tap "Save details". ' +
       '"Member app": your gym code, and links to branding, gym timings, challenges and busy machines. ' +
-      '"Sign-in & data": "Staff & sign-in", "Download the saved data", and a danger zone that can erase everything. ' +
+      '"Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, payments and visits are saved, and where), and a danger zone that can erase everything. ' +
       'Settings also has Language (English or Hinglish) and "Dark or light".',
     screens: ['apps/dashboard/src/crm/ui/screens/Settings.tsx'],
   },

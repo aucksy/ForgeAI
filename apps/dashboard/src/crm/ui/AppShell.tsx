@@ -8,7 +8,7 @@
  * app. Neither is a squashed version of the other.
  */
 
-import { Fragment, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
@@ -108,24 +108,46 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   // F198: a dot on the menu item that leads to a new feature (Settings for Pay MettleUp).
   const lit = useNewFeatures();
   const paths = nav.map((n) => n.path);
+  // R-447 (10 Nov 2026): about 20 rows do not fit a 1366x768 or 1280x720 window. The rows scroll in their own box
+  // and "What's new" sits under that box (it used to be stuck over the bottom rows, half hiding "Help and
+  // feedback"). A shadow over the line says more rows are below; the open page's row scrolls into view.
+  const list = useRef<HTMLDivElement>(null);
+  const [moreBelow, setMoreBelow] = useState(false);
+  useEffect(() => {
+    const el = list.current;
+    if (!el) return undefined;
+    const check = () => setMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+    check();
+    el.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    const seen = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(check);
+    seen?.observe(el);
+    return () => {
+      el.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+      seen?.disconnect();
+    };
+  }, [nav.length]);
+  useEffect(() => {
+    list.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest' });
+  }, [activePath]);
+
   return (
     <nav
       aria-label="Main"
       style={{
         borderRight: `1px solid ${color.border}`,
-        padding: `${space.xl}px ${space.md}px`,
+        padding: `${space.xl}px ${space.md}px 0`,
         position: 'sticky',
         top: UNDER_DEMO_BAR,
         alignSelf: 'start',
         height: `calc(100vh - ${UNDER_DEMO_BAR})`,
-        overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
         background: color.surfaceSunken,
       }}
     >
-      <div style={{ padding: `0 ${space.md}px ${space.lg}px` }}>
+      <div style={{ padding: `0 ${space.md}px ${space.lg}px`, flexShrink: 0 }}>
         {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
         <BranchSwitch gymName={gymName} />
         {/* R-259: "Powered by" + the steel-plate name, small (in the splash's shine, R-425), so it stays quiet under the gym's name. */}
@@ -140,38 +162,51 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         </div>
       </div>
 
-      {nav.map((item, i) => (
-        <Fragment key={item.path}>
-          {item.group === 'setup' && nav[i - 1]?.group !== 'setup' ? (
-            <div
-              style={{
-                margin: `${space.md}px ${space.md}px ${space.xs}px`,
-                fontFamily: font.body,
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: 0.6,
-                color: color.inkMuted,
-              }}
-            >
-              {t('Set up and help').toUpperCase()}
-            </div>
-          ) : null}
-          <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} />
-        </Fragment>
-      ))}
-
-      {/* R-239: What's new and the version, at the bottom left. */}
       <div
+        ref={list}
+        data-sidebar-rows=""
         style={{
-          // Stuck to the bottom: the sidebar scrolls on a short window, and this row must stay in view.
-          marginTop: 'auto',
-          position: 'sticky',
-          bottom: -space.xl,
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          paddingBottom: space.sm,
+        }}
+      >
+        {nav.map((item, i) => (
+          <Fragment key={item.path}>
+            {item.group === 'setup' && nav[i - 1]?.group !== 'setup' ? (
+              <div
+                style={{
+                  margin: `${space.md}px ${space.md}px ${space.xs}px`,
+                  fontFamily: font.body,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: 0.6,
+                  color: color.inkMuted,
+                }}
+              >
+                {t('Set up and help').toUpperCase()}
+              </div>
+            ) : null}
+            <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} />
+          </Fragment>
+        ))}
+      </div>
+
+      {/* R-239: What's new and the version, at the bottom left: under the rows, never over them (R-447). */}
+      <div
+        data-sidebar-foot=""
+        style={{
+          flexShrink: 0,
           paddingTop: space.sm,
-          paddingBottom: space.xl,
-          marginBottom: -space.xl,
+          paddingBottom: space.lg,
           borderTop: `1px solid ${color.border}`,
           background: color.surfaceSunken,
+          boxShadow: moreBelow ? '0 -10px 12px -8px rgba(0, 0, 0, 0.35)' : 'none',
+          position: 'relative',
         }}
       >
         <NewsSidebarLink active={activePath === '/news'} />

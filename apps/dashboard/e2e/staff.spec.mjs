@@ -10,7 +10,7 @@ test('J11 front desk: what staff cannot see or do', async ({ page }) => {
   const server = await openApp(page);
 
   // The owner starts the gym online.
-  await page.getByRole('tab', { name: 'Set up a new gym' }).click(); // UAT B-11: one form at a time
+  await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click(); // R-447: the quiet link under Sign in
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill('Shakti Gym');
   await start.getByLabel('Your name').fill('Ramesh Sharma');

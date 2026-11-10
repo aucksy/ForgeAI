@@ -108,12 +108,12 @@ test('F187 switched off: Sign in and Set up a new gym are exactly as before', as
   const signInForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Sign in' }) });
   await expect(signInForm).toContainText(FORGOT_PIN_WORDS);
   await expect(page.getByRole('button', { name: /Get a code on WhatsApp/ })).toHaveCount(0);
-  await page.getByRole('tab', { name: 'Set up a new gym' }).click();
+  await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click();
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await expect(start).toContainText('You sign in with this number on any phone or computer.');
   await expect(page.getByRole('button', { name: 'Get code on WhatsApp' })).toHaveCount(0);
   await shot(page, 'f187-off-start');
-  await page.getByRole('tab', { name: 'Sign in' }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click(); // R-447: the quiet link under the set-up form
   await startOnlineGym(page, { phone: OWNER_PHONE });
   expect(w.sends).toEqual([]);
   expect('p_phone_proof' in server.log.find((c) => c.fn === 'gym_create_online').args).toBe(false);
@@ -208,7 +208,7 @@ for (const size of ['phone', 'computer']) {
       refuseOnce = false;
       await route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ message: 'PHONE_CHECK', code: 'P0001', details: null, hint: null }) });
     });
-    await page.getByRole('tab', { name: 'Set up a new gym' }).click();
+    await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click();
     const start = page.locator('form').filter({ has: page.getByRole('checkbox') });
     await start.getByLabel('Gym name').fill('Shakti Gym');
     await start.getByLabel('Your name').fill('Ramesh Sharma');

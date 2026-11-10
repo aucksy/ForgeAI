@@ -7,7 +7,7 @@
 //  2. Settings: Gym UPI ID (checked), and fee / renewal / receipt messages carry it with a pay link.
 //  3. Today: "Came in today with an ended plan or fees due", with the ready WhatsApp message.
 //  4. Enquiries: where they heard about us, why they did not join, joined out of asked per source.
-//  5. Settings -> Sign-in & data: "Keep a copy of your data" on its own, with the last download day.
+//  5. Settings -> Sign-in & data: "Download a backup" (R-447; was "Keep a copy of your data") on its own, with the last download day.
 //  6. The sign-in screen: MettleUp's support email.
 import { mkdirSync } from 'node:fs';
 
@@ -102,10 +102,13 @@ for (const size of ['phone', 'computer']) {
       // A phone goes through More; a computer has no bottom bar, so it opens the address.
       if (size === 'phone') await openSettings(page, 'Sign-in & data');
       else await page.goto('./#/settings/data');
-      await expect(page.getByRole('heading', { name: 'Keep a copy of your data' })).toBeVisible();
+      // R-447: renamed from "Keep a copy of your data" and "Your data" (too alike).
+      await expect(page.getByRole('heading', { name: 'Download a backup', exact: true })).toBeVisible();
       await expect(page.getByText('Not downloaded from this browser yet.')).toBeVisible();
-      const copyTop = await topOf(page, 'Keep a copy of your data');
-      expect(copyTop).toBeLessThan(await topOf(page, 'Your data'));
+      const copyTop = await topOf(page, 'Download a backup');
+      expect(copyTop).toBeLessThan(await topOf(page, 'Your gym’s records'));
+      await expect(page.getByRole('heading', { name: 'Keep a copy of your data' })).toHaveCount(0);
+      await expect(page.getByRole('heading', { name: 'Your data', exact: true })).toHaveCount(0);
       await page.getByRole('button', { name: 'Download all your gym’s data' }).tap();
       await expect(page.getByText('Last downloaded on 2 Nov 2026 from this browser.')).toBeVisible();
       await shot(page, `${size}-2-settings-data`);

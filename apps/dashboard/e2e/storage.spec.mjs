@@ -115,7 +115,7 @@ test('J23c a save cut off half-way (damaged data): "We couldn’t read the gym",
   // Start a new gym asks first, and says the old data can still be downloaded. Cancel changes nothing.
   await page.getByRole('button', { name: 'Start a new gym' }).tap();
   const ask = page.getByRole('group', { name: 'Start a new gym?' });
-  await expect(ask).toContainText('The data that couldn’t be read stays here. You can still download it from Settings → Your data.');
+  await expect(ask).toContainText('The data that couldn’t be read stays here. You can still download it from Settings → Sign-in & data.');
   await ask.getByRole('button', { name: 'Cancel' }).tap();
   await expect(page.getByRole('button', { name: 'Start a new gym' })).toBeVisible();
   await page.getByRole('button', { name: 'Start a new gym' }).tap();

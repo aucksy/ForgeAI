@@ -1374,9 +1374,9 @@ export async function secondPhone(browser, server, time = NOW) {
 export const OWNER = { name: 'Ramesh Sharma', phone: '98290 12345', gym: 'Shakti Gym', pin: '271828' };
 export const DESK = { name: 'Sunita Verma', phone: '98290 54321' };
 
-/** Welcome -> "New here? Set up your gym" -> Create my gym. Ends on Today, signed in as the owner. */
+/** Welcome -> "Set up a new gym" (R-447: the quiet link under Sign in) -> Create my gym. Ends on Today, signed in as the owner. */
 export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name, phone = OWNER.phone, pin = OWNER.pin } = {}) {
-  await page.getByRole('tab', { name: 'Set up a new gym' }).click(); // UAT B-11: one form at a time
+  await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click(); // R-447: the quiet link under Sign in
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill(gym);
   await start.getByLabel('Your name').fill(name);

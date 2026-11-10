@@ -66,6 +66,17 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       {
         text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',
       },
+      {
+        // R-447 (10 Nov 2026, fresh-eyes findings): deployed after this day's update had gone live; merged into it.
+        text: 'On the sign-in page, "Sign in" is now the main button. To start a new gym, tap "Set up a new gym" under "New to MettleUp?".',
+      },
+      {
+        text: 'On a computer, the menu on the left now shows every item in full, including "Help and feedback". On a small screen, scroll the menu to see the rest.',
+      },
+      {
+        text: 'In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".',
+        go: { label: 'Open Settings', path: '/settings/data' },
+      },
     ],
   },
   {
