@@ -15,7 +15,8 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Pinned 10 Nov 2026: ubuntu-latest moved to 26.04, where Playwright cannot install Chrome (panel crawl red).
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
