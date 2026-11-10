@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-432. Pause the ads; finish Play production; iPhone App Store guide PDF — 10 Nov 2026
+
+He said: "Lets pause this effort and continue completing the production submission of android app and lets research the correct latest way of creating apple dev account and submitting the app and build me a PDF for the same so I can follow when I have an iPhone... also tell me seperately here if I will be able to submit my iphone app using an iPhone or will I need another apple device".
+
+Ads PAUSED: voice 2 picked, music +10% done (commit c7d5edf3), music choice not made yet; final 03 + 06 render waits (music files in run 42673939468 expire 13 Nov; re-run is free).
+Play (checked 10 Nov in the simpleapps108 window): production access application still "We're reviewing your application form" (applied 9 Nov 4.30 PM). Store screenshots are the fresh 3-tab ones (checked 4 and 7). Nothing else to submit until Google answers; going live in production waits for his "release". Account banner: "Declare your trader status" by Feb 2027 (his details; may make his address and phone public) — his decision.
+iPhone: a helper researches and writes D:\Apps\ForgeAI\Docs\iPhone-App-Store-Guide.pdf. Answer given: iPhone alone is enough with cloud builds (EAS Build / GitHub macOS runners) and EAS Submit; no Mac needed.
+
 ## R-431. Ads: voice 2 picked; background music options, upbeat, "feeling of metal" — 9 Nov 2026
 
 He picked voice sample "2-chatterbox-female-indian.mp3" (Chatterbox Multilingual V3 + Hindi, Indian-accent female, MIT). He asked: "can you also give me some background music options.. something upbeat and energetic - giving feeling of metal".
