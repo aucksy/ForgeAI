@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 ulook"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 ulook uage"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1996,6 +1996,7 @@ part_uat() {
   part_u199
   part_u404
   part_u438
+  part_uage
   part_ulook
   mkdir -p "$OUT/uat-release"
   { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-*.png" 2>/dev/null; } \
@@ -2130,6 +2131,13 @@ part_u438() {
   adb logcat -d -s ForgeBars:I 2>/dev/null | tr -d '' | grep ForgeBars | sed "s/^.*ForgeBars[^:]*: /UAT R440 ForgeBars $look2: /" | head -12 | while read -r l; do log "$l"; done
   [ "$rc" = 0 ] || status=1
   return $rc
+}
+# D7 (owner, 10 Nov 2026, privacy audit, "all as recommended"): the "I'm 18 or older, and I agree to MettleUp's
+# terms and privacy notice" box before "Continue with Google" on the welcome screen and in Settings -> "Backup and
+# restore": the message without it, tick/untick, remembered after the app is killed, asked again after the demo
+# starts the phone afresh. Its own fresh install (clearState). Also runs alone with only=uage. Pictures rel-d7-*.png.
+part_uage() {
+  uat_flow uatd7 uat-rel-d7-age-tick.yaml || return 1
 }
 # F194 (owner R-352, 5 Nov 2026): Settings -> Plates and bars -> "Machine and cable steps". Flow a: a cable
 # lift at the top of its reps (50 kg x 20 x 3), the new line on its default, saved as a routine. The phone
@@ -2282,6 +2290,7 @@ qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
 qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
+qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.
 qa_runs u15 && ! qa_runs uat && { log "gate part U15 begins"; uat_flow uat15 uat-rel-15-inuse-journey.yaml || status=1; }
 # T76 (owner's full test round, 5 Nov 2026): negative checks found by the round. Flow a: kg history,

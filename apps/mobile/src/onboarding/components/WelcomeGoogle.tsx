@@ -17,6 +17,11 @@
  * to bring back (or a backup without a profile, or a gym member signed in), "Next" goes on to the 3 setup
  * questions (`onContinue`), as "Start fresh" did before.
  *
+ * D7 (owner, 10 Nov 2026, "all as recommended"): above the button, the same "I'm 18 or older, and I agree to
+ * MettleUp's terms and privacy notice" box as a gym join (shop/JoinAgreement). Google's sign-in starts only
+ * with it ticked; a tap without it says "Please tick the box above...". Once ticked on this phone it is remembered
+ * (shop/useTermsAgreement.ts), so the box is not shown again.
+ *
  * 0.57.1 review: one sign-in and one restore at a time (a ref, not the drawn phase: two taps in one frame
  * both saw "found"); the welcome around it is held while a restore runs (`onBusy`, cleared on unmount).
  */
@@ -32,6 +37,8 @@ import { ConfirmSheet, GhostButton, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { success, thud } from '@/lib/haptics';
 import { useGymShop } from '@/shop/gymStore';
+import { JoinAgreement } from '@/shop/JoinAgreement';
+import { useTermsAgreement } from '@/shop/useTermsAgreement';
 import { useAccount } from '@/store/accountStore';
 import { useBackup } from '@/store/backupStore';
 import { color, space, type } from '@/theme/tokens';
@@ -96,6 +103,8 @@ export function WelcomeGoogle({
   };
   const [error, setError] = useState<string | null>(null);
   const [askReplace, setAskReplace] = useState(false);
+  // D7: 18 or older + the terms, ticked before Google's sign-in (remembered once given).
+  const agreement = useTermsAgreement();
   // One sign-in or restore at a time, however fast the taps.
   const inFlight = useRef(false);
 
@@ -155,6 +164,12 @@ export function WelcomeGoogle({
     setError(null);
     setLine(null);
     try {
+      const notAgreed = await agreement.check();
+      if (notAgreed) {
+        thud();
+        setError(notAgreed);
+        return;
+      }
       await (serverCopy ? goServer() : goDrive());
     } finally {
       inFlight.current = false;
@@ -226,6 +241,16 @@ export function WelcomeGoogle({
 
   return (
     <View style={{ gap: space.md }}>
+      {/* D7: the 18+ / terms box, before the button, until it has been ticked once on this phone. */}
+      {(phase.kind === 'idle' || phase.kind === 'looking') && agreement.ask ? (
+        <JoinAgreement
+          agreed={agreement.ticked}
+          onChange={(v) => {
+            agreement.tick(v);
+            setError(null);
+          }}
+        />
+      ) : null}
       {/* R-277: the welcome's one orange button. Double taps wait on `inFlight` / `working` inside go(). */}
       {phase.kind === 'idle' || phase.kind === 'looking' ? (
         <OrangePill

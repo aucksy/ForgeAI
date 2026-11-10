@@ -1,7 +1,8 @@
 /**
  * The one box a member ticks before joining a gym (launch plan D5/D6; words and links in
- * joinTerms.ts). A real checkbox for TalkBack, a 48 dp row, and "Read them" opening the
- * terms and privacy notice in the browser.
+ * joinTerms.ts), and (D7, 10 Nov 2026) before "Continue with Google" on the welcome screen and in
+ * Settings → Backup and restore. A real checkbox for TalkBack, a 48 dp row, and "Terms" /
+ * "Privacy notice" opening them in the browser.
  */
 import { Linking, Pressable, Text, View } from 'react-native';
 

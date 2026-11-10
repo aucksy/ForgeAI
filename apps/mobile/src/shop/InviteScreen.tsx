@@ -29,6 +29,7 @@ import { GymNotFoundCard } from './GymNotFoundCard';
 import { joinFromInvite } from './gymActions';
 import { JoinAgreement } from './JoinAgreement';
 import { agreementWords } from './joinTerms';
+import { saveTermsAgreed } from './useTermsAgreement';
 import { BOARD_WORDS } from './boardWords';
 import { TRAINER_WORDS } from './trainerShare';
 import { askAndSwitchGym } from './leaveFlow';
@@ -115,6 +116,8 @@ export function InviteScreen() {
       setError(notAgreed);
       return;
     }
+    // D7: the same tick as "Continue with Google": remembered, so a later sign-in does not ask again.
+    void saveTermsAgreed(true);
     setBusy(true);
     setError(null);
     // UAT U-G1: a switch leaves the old gym, so its open orders are asked about and cancelled first.

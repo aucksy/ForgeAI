@@ -28,6 +28,6 @@ class HealthRationaleActivity : Activity() {
   }
 
   companion object {
-    const val PRIVACY_URL = "https://forgeai.aakashpahuja.in/privacy.html"
+    const val PRIVACY_URL = "https://mettleup.fit/privacy.html"
   }
 }
