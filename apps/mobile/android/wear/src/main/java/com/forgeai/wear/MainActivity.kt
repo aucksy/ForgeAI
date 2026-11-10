@@ -5,12 +5,23 @@ import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.ContentObserver
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,6 +75,24 @@ class MainActivity : ComponentActivity() {
   private lateinit var heart: HeartRate
   /** Watch logging (3 Nov 2026): the logging screens' state ([LogFlow]); kept while the app runs. */
   private var logUi by mutableStateOf(LogUi())
+
+  /**
+   * R-442: the app keeps the screen on and dims it itself ([SelfDim]: workout open, Always-on display off,
+   * Battery Saver off, MettleUp in front).
+   */
+  private var selfDimOn by mutableStateOf(false)
+
+  /** R-442: dimmed by the app itself (the same dim screens as the watch's own dim state). */
+  private var selfDim by mutableStateOf(false)
+
+  /** R-442: the last tap, crown turn, button or wrist raise (the dim wait starts from it). */
+  private var inputAt by mutableLongStateOf(0L)
+
+  /** R-442: the tap that woke the dimmed screen is eaten to its end (it never presses a button). */
+  private var swallowTouch = false
+  private val wrist = SelfDim.Wrist()
+  private var accel: SensorEventListener? = null
+  private var aodObserver: ContentObserver? = null
 
   private val ambientObserver = AmbientLifecycleObserver(
     this,
@@ -124,8 +153,32 @@ class MainActivity : ComponentActivity() {
     heart = HeartRate(this, { bpm = it }, { hrStatus = it })
     setContent {
       val snap = WatchState.snapshot
+      // R-442: dimmed by the watch (ambient) or by the app itself (Always-on display off): drawn the same.
+      val dimmed = ambient || selfDim
+      // R-442: is the app to keep the screen on and dim it itself? Checked when the screen or the workout
+      // changes, then every few seconds while a workout is up (it may end by the phone's silence alone).
+      LaunchedEffect(onScreen, snap.workoutActive) {
+        refreshSelfDim("state")
+        while (onScreen && (snap.workoutActive || selfDimOn)) {
+          delay(SelfDim.RECHECK_MS)
+          refreshSelfDim("check")
+        }
+      }
+      // R-442: the watch's own screen timeout without a touch: dim (instead of the screen going black).
+      LaunchedEffect(selfDimOn, selfDim, inputAt) {
+        if (!selfDimOn || selfDim) return@LaunchedEffect
+        delay(SelfDim.idleLeft(System.currentTimeMillis(), inputAt, SelfDim.timeoutMs(this@MainActivity)))
+        dimNow("timeout")
+      }
+      // R-442: while the app dims itself, the clock moves once a minute (as the watch's dim state redraws).
+      LaunchedEffect(selfDim) {
+        while (selfDim) {
+          delay(60_050L - System.currentTimeMillis() % 60_000L)
+          ambientTick = System.currentTimeMillis()
+        }
+      }
       // Not in ambient: the dimmed screen shows no live bpm, so the sensor rests too (battery; 0.60.0 review).
-      val measure = onScreen && !ambient && hrAllowed && (snap.workoutActive || snap.rest != null)
+      val measure = onScreen && !dimmed && hrAllowed && (snap.workoutActive || snap.rest != null)
       DisposableEffect(measure) {
         if (measure) heart.start()
         onDispose {
@@ -136,8 +189,8 @@ class MainActivity : ComponentActivity() {
       // R-207: is the phone there? Checked while the screen is up and not dimmed.
       // UAT 1 Nov 2026: after one empty answer the second check comes in 3 s, not 15 s, so a watch
       // with no phone says "Phone not connected" quickly instead of "Start a workout on your phone".
-      LaunchedEffect(onScreen, ambient) {
-        if (!onScreen || ambient) return@LaunchedEffect
+      LaunchedEffect(onScreen, dimmed) {
+        if (!onScreen || dimmed) return@LaunchedEffect
         var lastCheck = 0L
         while (true) {
           val t = System.currentTimeMillis()
@@ -161,11 +214,11 @@ class MainActivity : ComponentActivity() {
       }
       val endsAt = snap.rest?.endsAt
       val overAt = snap.overAt
-      LaunchedEffect(endsAt, overAt, ambient, ambientTick, exactAllowed) {
+      LaunchedEffect(endsAt, overAt, ambient, selfDim, ambientTick, exactAllowed) {
         now = System.currentTimeMillis()
         if (endsAt == null) {
-          // "Rest is over" counts up (live only; ambient redraws once a minute).
-          var counting = overAt > 0L && !ambient
+          // "Rest is over" counts up (live only; ambient redraws once a minute, and so does R-442's own dim).
+          var counting = overAt > 0L && !ambient && !selfDim
           while (counting) {
             delay(250L)
             now = System.currentTimeMillis()
@@ -209,12 +262,13 @@ class MainActivity : ComponentActivity() {
           // R-167 (Play: no USE_EXACT_ALARM): with "Alarms & reminders" off the end alarm can come
           // late; while this screen is up the buzz comes on time from here (onAlarm runs once).
           if (now >= endsAt + 300L) WatchState.onAlarm(this@MainActivity, endsAt)
-          delay(200L)
+          // R-442: dimmed by the app itself (screen kept on, so no wake lock): one redraw a second, in step.
+          delay(if (selfDim && now < endsAt) SelfDim.toNextSecond(endsAt, now) + 20L else 200L)
         }
       }
       // Watch logging: the clock and the effort ring move while a workout is open on screen.
       val ui = logUi
-      val logging = snap.logFlow && snap.workoutActive && !ambient
+      val logging = snap.logFlow && snap.workoutActive && !dimmed
       LaunchedEffect(logging, ui.phase, ambientTick) {
         now = System.currentTimeMillis()
         while (logging) {
@@ -268,7 +322,7 @@ class MainActivity : ComponentActivity() {
         bpm,
         hrStatus,
         hrAllowed,
-        ambient,
+        dimmed,
         now,
         askHeartRate = askHeartRate,
         askAlerts = askAlerts,
@@ -369,6 +423,7 @@ class MainActivity : ComponentActivity() {
     visible = true
     // The app is open: a "Workout started" card has done its job.
     WorkoutStarted.cancel(this)
+    watchAodSetting(true)
   }
 
   override fun onResume() {
@@ -377,6 +432,9 @@ class MainActivity : ComponentActivity() {
     // workout gets WorkoutService, which keeps MettleUp up instead of the watch face to the end.
     WorkoutLive.onScreenUp(this)
     AmbientDiag.note(this, "resume", AmbientDiag.state(this))
+    // R-442: back in front: bright, and the app dims itself again if Always-on display is off.
+    inputAt = System.currentTimeMillis()
+    refreshSelfDim("resume")
     // R-353: last time the screen went OFF where it should have dimmed (AmbientDiag.Heal). Rebuild this
     // screen once, which registers it for the dim state again (the observer does that only in onCreate).
     // R-437: each new workout gets its own tries.
@@ -436,7 +494,164 @@ class MainActivity : ComponentActivity() {
         (if (cause.isNotEmpty()) "cause=$cause " else "") + AmbientDiag.state(this),
     )
     AmbientDiag.push(this)
+    // R-442: a black screen where it should have dimmed, on a watch whose Always-on setting cannot be read:
+    // from the next wake of this workout the app dims itself.
+    if (!screenOn && !ambient && open && !isFinishing && !isChangingConfigurations && cause != "battery-saver" &&
+      SelfDim.aodOn(this) == null
+    ) {
+      blackedWorkout = AmbientDiag.workoutCount
+    }
+    // R-442: out of sight: the screen is the watch's again (a forced screen-off, e.g. a palm over it, shows as
+    // "self-dim-off stop screen=0" in the diary).
+    watchAodSetting(false)
+    refreshSelfDim("stop")
+    if (selfDim) brighten("stop")
     super.onStop()
+  }
+
+  // ---- R-442: the app's own dim screen (SelfDim) ----
+
+  /** Turns the app's own dimming on or off to match the workout, the screen and the watch's settings. */
+  private fun refreshSelfDim(why: String) {
+    val want = SelfDim.wanted(
+      workoutOpen = WatchState.workoutOpen(this),
+      onScreen = onScreen,
+      aodOn = SelfDim.aodOn(this),
+      saverOn = SelfDim.saverOn(this),
+      blackedOut = blackedWorkout >= 0 && blackedWorkout == AmbientDiag.workoutCount,
+    )
+    if (want == selfDimOn) return
+    selfDimOn = want
+    try {
+      if (want) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        inputAt = System.currentTimeMillis()
+        startWrist()
+      } else {
+        // The workout ended (or Always-on came back): the screen is let go. Left dimmed, the watch's own
+        // timeout now turns it off; a touch makes it bright first.
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        stopWrist()
+      }
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "self dim not switched", e)
+    }
+    AmbientDiag.note(this, if (want) "self-dim-on" else "self-dim-off", "$why ${AmbientDiag.state(this)}")
+  }
+
+  /** Dims the screen (the app's own dim state): lowest brightness, the dim screens. */
+  private fun dimNow(why: String) {
+    if (!selfDimOn || selfDim || ambient) return
+    selfDim = true
+    setBrightness(SelfDim.DIM_BRIGHTNESS)
+    AmbientDiag.note(this, "self-dim-enter", why)
+  }
+
+  /** Bright again (a tap, the crown, a wrist raise), and the dim wait starts over. */
+  private fun brighten(why: String) {
+    inputAt = System.currentTimeMillis()
+    if (!selfDim) return
+    selfDim = false
+    setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+    AmbientDiag.note(this, "self-dim-exit", why)
+  }
+
+  private fun setBrightness(v: Float) {
+    try {
+      val lp = window.attributes
+      lp.screenBrightness = v
+      window.attributes = lp
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "brightness not set", e)
+    }
+  }
+
+  /** The wrist, while the app dims itself: down dims, a raise toward the eyes brightens. */
+  private fun startWrist() {
+    if (accel != null) return
+    val sm = getSystemService(SENSOR_SERVICE) as? SensorManager ?: return
+    val sensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) ?: return
+    wrist.reset()
+    val l = object : SensorEventListener {
+      override fun onSensorChanged(e: SensorEvent) {
+        if (e.values.size < 3) return
+        when (wrist.feed(e.values[2], SystemClock.elapsedRealtime())) {
+          SelfDim.Wrist.Move.RAISED -> if (selfDim) brighten("wrist-up")
+          SelfDim.Wrist.Move.LOWERED ->
+            if (System.currentTimeMillis() - inputAt > SelfDim.QUIET_AFTER_INPUT_MS) dimNow("wrist-down")
+          SelfDim.Wrist.Move.NONE -> Unit
+        }
+      }
+
+      override fun onAccuracyChanged(s: Sensor?, accuracy: Int) = Unit
+    }
+    try {
+      if (sm.registerListener(l, sensor, SelfDim.SENSOR_PERIOD_US)) accel = l
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "wrist sensor not started", e)
+    }
+  }
+
+  private fun stopWrist() {
+    val l = accel ?: return
+    accel = null
+    try {
+      (getSystemService(SENSOR_SERVICE) as SensorManager).unregisterListener(l)
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "wrist sensor not stopped", e)
+    }
+  }
+
+  /** Always-on display switched while MettleUp is up: the watch's dim state or the app's own takes over at once. */
+  private fun watchAodSetting(on: Boolean) {
+    try {
+      if (on && aodObserver == null) {
+        val o = object : ContentObserver(Handler(Looper.getMainLooper())) {
+          override fun onChange(selfChange: Boolean) {
+            refreshSelfDim("setting")
+          }
+        }
+        contentResolver.registerContentObserver(Settings.Global.getUriFor("ambient_enabled"), false, o)
+        contentResolver.registerContentObserver(Settings.Secure.getUriFor("doze_always_on"), false, o)
+        aodObserver = o
+      } else if (!on) {
+        aodObserver?.let { contentResolver.unregisterContentObserver(it) }
+        aodObserver = null
+      }
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "always-on setting not watched", e)
+    }
+  }
+
+  override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+    // R-442: the first touch on the app's own dim screen only makes it bright (never a button press).
+    if (selfDim || swallowTouch) {
+      when (ev.actionMasked) {
+        MotionEvent.ACTION_DOWN -> {
+          swallowTouch = true
+          brighten("touch")
+        }
+        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> swallowTouch = false
+      }
+      return true
+    }
+    if (selfDimOn && ev.actionMasked == MotionEvent.ACTION_DOWN) inputAt = System.currentTimeMillis()
+    return super.dispatchTouchEvent(ev)
+  }
+
+  override fun dispatchGenericMotionEvent(ev: MotionEvent): Boolean {
+    // R-442: a crown turn on the dim screen makes it bright (and changes nothing); otherwise it restarts the wait.
+    if (selfDim) {
+      brighten("crown")
+      return true
+    }
+    if (selfDimOn) inputAt = System.currentTimeMillis()
+    return super.dispatchGenericMotionEvent(ev)
+  }
+
+  override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+    if (selfDim || selfDimOn) brighten("key")
+    return super.dispatchKeyEvent(event)
   }
 
   override fun onDestroy() {
@@ -688,5 +903,11 @@ class MainActivity : ComponentActivity() {
 
     /** R-353: the logging flow's state, carried across one rebuild. */
     private var keptLogUi: LogUi? = null
+
+    /**
+     * R-442: [AmbientDiag.workoutCount] of the workout that had a black screen while the Always-on setting could
+     * not be read (-1 = none): the app dims itself for the rest of that workout.
+     */
+    private var blackedWorkout = -1
   }
 }

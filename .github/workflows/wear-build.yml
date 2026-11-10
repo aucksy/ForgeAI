@@ -28,6 +28,7 @@ on:
       - '.github/workflows/wear-build.yml'
       - 'scripts/ci/watch_keep_screen_uat.sh'
       - 'scripts/ci/watch_dim_uat.sh'
+      - 'scripts/ci/watch_dim_aod_off_uat.sh'
 
 # A newer push replaces a run still going for the same branch (a hand-started run is never cut).
 concurrency:
@@ -235,7 +236,7 @@ jobs:
   uat:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 70
     strategy:
       fail-fast: false
       matrix:
@@ -280,6 +281,21 @@ jobs:
           profile: wearos_large_round
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/ci/watch_dim_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/dim"
+
+      # R-442: the owner's real watch: Always-on display OFF. The workout still DIMS (the app keeps the screen
+      # on and dims it itself), after the timeout, a wrist down, a rest ending and leaving the app; a tap, the
+      # crown or a wrist raise makes it bright; the screen turns fully off once the workout ends
+      # (scripts/ci/watch_dim_aod_off_uat.sh).
+      - name: Workout dims with Always-on display OFF (the app dims itself)
+        if: always()
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: android-wear
+          arch: x86_64
+          profile: wearos_large_round
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/ci/watch_dim_aod_off_uat.sh "$(ls $GITHUB_WORKSPACE/apk/*.apk | head -1)" "$GITHUB_WORKSPACE/watch-uat/dim-aod-off"
 
       - name: Upload the UAT pictures and dumps
         if: always()
