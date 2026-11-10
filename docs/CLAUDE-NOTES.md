@@ -7,6 +7,30 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-448. "Clear this device's saved data" reworded; a forgotten PIN gets a real way back in — 10 Nov 2026
+
+**He said (10 Nov, "okay go ahead" to two R-447 fresh-eyes findings):** (1) Settings -> Sign-in & data, "Clear this
+device's saved data" under Danger zone reads scary: say what it does, what it does NOT delete, and when to use it; the
+action stays the same. (2) An owner who forgets the PIN is only told to email support (the WhatsApp "Forgot your PIN?"
+is off while Meta blocks WhatsApp codes, error 131042): find a better way back in that works today, with NO live
+database change; if the clearly better way needs one, build and test it but stop before the live step.
+
+**Found in the code:** (1) the button deletes this device's offline copy of the gym AND anything still waiting to send
+from this device; the gym's records on the server are never touched, and the copy downloads again next time online.
+(2) The server already lets any signed-in owner make a one-time code for HIMSELF (0010 owner_make_signin_code: "yourself
+too, for a new phone"); another owner can make one for him; MettleUp HQ can reset after a call (0034
+hq_reset_owner_signin). A code sign-in lets that device set a new PIN without the old one for 15 minutes (0034). So the
+way back in exists, but the sign-in screen only shows a tiny grey line, and after a code sign-in nobody offers the new
+PIN (only people with NO PIN are asked). Same idea as Telegram (code sent to your other signed-in device first) and
+Square (the owner resets a team passcode).
+
+**Plan:** (1) the card gets its own plain heading and a line on what it does and does not delete and when to use it;
+the confirm says the same; out from under "Danger zone" wording where nothing is lost. (2) Sign in (WhatsApp off): a
+"Forgot your PIN?" button opens a short card with the three ways in order (another signed-in phone, computer or browser
+makes a code; another owner; email MettleUp, who call to check), English + Hinglish. After a code sign-in by someone
+who already has a PIN: "Choose a new PIN?" right away (no old PIN needed). No server or database change. Tests, cloud
+UAT at 375 px and 1366x768 with pictures, fresh eyes (owner), admin panel deploy with ADMIN_NEWS.
+
 ## R-447. Sign in is the main door; every menu item visible on a laptop; the two data cards renamed — 10 Nov 2026
 
 **Found (fresh-eyes review in R-446, outside that change):** (1) the sign-in page showed "Sign in" and "Set up a new
