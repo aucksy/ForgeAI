@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-438. Watch update ready card, design 2 "Watch in hand" — 10 Nov 2026
+
+He said (10 Nov 2026): when the watch app is older than the phone app, the phone app shows a notice with what is new; "Update on watch" opens the Play Store on the watch, where the member taps Update. He picked design 2, "Watch in hand" (a drawn round watch showing the new version; the what's-new and buttons in a bottom sheet), in the app's own style, light and dark.
+
+Built (phone only; plumbing was 47731b26):
+- components/WatchUpdatePrompt.tsx, mounted under the tabs next to UpdatePrompt. A drawn watch (strap, steel case, crown, orange ring; black in both looks like a real watch) shows the new version ("0.77"); the sheet says "New version: 0.77", "Your watch app has an update", then "New on your watch:" (numbered rows) and "Update on watch" / "Later".
+- When (tracker/services/watchUpdateCard.ts, pure + tested): only on 'update-ready', never 'unknown'/'none'; checked 4 s after the app opens (the phone's own update check speaks first) and on a return after 6+ hours; only over the 3 tabs; never in a workout (a workout opened while it is up closes it until the next open); while a newer PHONE version waits, the watch card stays away (my call: the phone goes first, or the watch would only fall behind again).
+- "Later" (and Android back, and "Got it"): not again for 24 hours on this phone version (meta watch_update_later = {version, at}); a newer phone version asks at once; a clock set back asks rather than blocking.
+- "New on your watch": the What's new lines about the watch ("Watch: ...", "On your watch ...", "Your watch ...") from every version newer than the watch's, up to the phone's, newest first, max 3. None: "Update it so your watch and phone work well together." A watch too old to say its version: the last 3 versions.
+- After "Update on watch" (updateOnWatch, the one stale watch, or every watch when several): 'opened' -> the drawn watch shows the Play Store's blue Update button with an orange "Tap this on your watch" tag; "Check your watch" / "Look at your watch and tap Update there. If its screen is dark, tap it first." / "Got it" / "Nothing on your watch? Try again". 'none' -> "Your watch is not connected" + "Check that Bluetooth is on, then tap Try again. Or open Play Store on your watch, search for MettleUp and tap Update." 'failed'/'missing'/'unknown' -> "The update did not start" + "Open Play Store on your watch, search for MettleUp and tap Update." Every failure is logged ([watch update] ...).
+- Words: member-words; Gemini timed out (100 s), so a fresh-reader helper checked them; changed because of it: the kicker (was "Watch app · version", "old or new?"), the fallback title (did not say it failed), the not-connected line (now says Bluetooth), the opened line and the Try again link.
+- QA builds only: mettleup://qa-update?watch=old|same|off|forget and watchtap=opened|failed|none|missing (a cloud phone has no watch). UAT part u438 (qa/uat-rel-r438-a/b/c): up-to-date shows nothing, offer, Later, back, restart within 24 h shows nothing, clock +25 h asks again, each tap answer, Try again, never in a workout, the other look. Also in the uat part.
+- Tests: test/tracker/watchUpdateCard.test.ts (24).
+Not released (waiting list). Needs a real paired phone + watch check after release.
+
 ## R-439. Air Squat set 2 suggested 66 after 66 (last time 65 then 40) — 10 Nov 2026
 
 He said (screenshot, Air Squat, reps only): "I did 66 in this set, my next set has a previous of 40, and the app is suggesting 66, which is way too much for squats. For body weight exercises I wonder if the algorithm should be different, and I wonder if this calculation is even correct."

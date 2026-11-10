@@ -1,0 +1,19 @@
+# R-438 flow c: the pop-up and "Check your watch" in the OTHER look (run-device-qa.sh part_u438 flips the
+# phone's dark mode first). The watch stays black in both looks; the sheet follows the look.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- openLink: "mettleup://qa-update?watchtap=opened&watch=forget"
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 20000
+- takeScreenshot: rel-r438-12-offer-other-look
+- tapOn: "Update on watch"
+- extendedWaitUntil:
+    visible: "Check your watch"
+    timeout: 20000
+- takeScreenshot: rel-r438-13-check-your-watch-other-look
+- tapOn: "^Got it$"
+- openLink: "mettleup://qa-update?watch=off"

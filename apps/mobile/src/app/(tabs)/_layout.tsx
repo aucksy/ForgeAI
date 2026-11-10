@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 
 import { UpdatePrompt } from '@/components/UpdatePrompt';
+import { WatchUpdatePrompt } from '@/components/WatchUpdatePrompt';
 import { APP_TABS, HIDDEN_TAB_ROUTES } from '@/lib/appTabs';
 import { TrackerTabBar } from '@/tracker/components/TrackerTabBar';
 
@@ -30,6 +31,8 @@ export default function TabsLayout() {
       </Tabs>
       {/* R-260: "Update MettleUp" when a newer version exists (lib/updatePrompt.ts says when). */}
       <UpdatePrompt />
+      {/* R-438: "Your watch app has an update" when the watch app is older (tracker/services/watchUpdateCard.ts says when). */}
+      <WatchUpdatePrompt />
     </>
   );
 }

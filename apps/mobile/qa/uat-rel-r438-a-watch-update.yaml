@@ -1,0 +1,58 @@
+# R-438 (owner, 10 Nov 2026, design 2 "Watch in hand"): the phone's "Your watch app has an update" pop-up.
+# A cloud phone has no watch, so the QA build's stand-in makes one up (tracker/services/watchUpdateCard.ts):
+# mettleup://qa-update?watch=old (one watch, one version behind), watch=same (up to date), watch=forget
+# (forget "Later"), watchtap=opened|failed|none (what the next "Update on watch" gets). Starts from gate-demo.
+# Flow a: happy path, "Later", Android's back, a restart within 24 hours keeps it away (negative), and an
+# up-to-date watch never shows it (negative). Flow b runs after the phone clock moved 25 hours on.
+appId: com.mettleup.app
+---
+# A link sent while the app starts is dropped (F198 lesson): wait for the tabs first.
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- 1. negative: an up-to-date watch, no pop-up
+- openLink: "mettleup://qa-update?watch=same&watchtap=opened"
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 10000
+    optional: true
+- assertNotVisible: "Your watch app has an update"
+- takeScreenshot: rel-r438-01-up-to-date-no-popup
+# ---------------------------------------------------------------- 2. happy path: an older watch
+- openLink: "mettleup://qa-update?watch=old"
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 20000
+- assertVisible: "(?i)new version: 0\\.\\d+(\\.\\d+)?"
+- assertVisible: "Update on watch"
+- assertVisible: "^Later$"
+- takeScreenshot: rel-r438-02-offer
+# ---------------------------------------------------------------- 3. "Later" closes it
+- tapOn: "^Later$"
+- extendedWaitUntil:
+    notVisible: "Your watch app has an update"
+    timeout: 10000
+- takeScreenshot: rel-r438-03-after-later
+# ---------------------------------------------------------------- 4. negative: a restart within 24 hours, no pop-up
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 12000
+    optional: true
+- assertNotVisible: "Your watch app has an update"
+- takeScreenshot: rel-r438-04-restart-after-later
+# ---------------------------------------------------------------- 5. Android's back is "Later" too
+- openLink: "mettleup://qa-update?watch=forget"
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 20000
+- back
+- extendedWaitUntil:
+    notVisible: "Your watch app has an update"
+    timeout: 10000
+- assertVisible: "^Profile$"
+- takeScreenshot: rel-r438-05-after-back
