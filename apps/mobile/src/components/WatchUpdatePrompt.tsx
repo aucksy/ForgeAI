@@ -14,6 +14,7 @@
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSegments } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +22,7 @@ import Svg, { Circle, Defs, Rect, Stop, LinearGradient as SvgGradient } from 're
 
 import { PrimaryButton } from '@/components/ui';
 import { hasUpdateStandIn } from '@/lib/updatePrompt';
+import { tokenScheme } from '@/theme/brandTokens';
 import { useAppUpdate } from '@/lib/updateStore';
 import { color, darkColor, gradients, radius, space, type } from '@/theme/tokens';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
@@ -172,6 +174,8 @@ export function WatchUpdatePrompt() {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={later} statusBarTranslucent navigationBarTranslucent>
       <SafeAreaProvider>
+        {/* UAT 10 Nov: the Modal's own window kept light status-bar icons on the light look's page. */}
+        <StatusBar style={tokenScheme() === 'light' ? 'dark' : 'light'} />
         <WatchUpdateScreen version={phoneVersion} news={news} step={step} busy={busy} onUpdate={update} onLater={later} />
       </SafeAreaProvider>
     </Modal>

@@ -2,8 +2,10 @@
 # phone's dark mode first). The watch stays black in both looks; the sheet follows the look.
 appId: com.mettleup.app
 ---
+# The phone clock was just put back 25 hours, so "Later" from flow b reads as in the future and the pop-up
+# may already be up (a clock set back asks rather than blocking): either is a ready app.
 - extendedWaitUntil:
-    visible: "^Profile$"
+    visible: "^Profile$|Your watch app has an update"
     timeout: 60000
 - openLink: "mettleup://qa-update?watchtap=opened&watch=forget"
 - extendedWaitUntil:
