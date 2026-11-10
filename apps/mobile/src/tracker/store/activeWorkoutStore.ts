@@ -36,7 +36,8 @@ import {
 } from '@/tracker/db/exerciseInfo';
 import type { MachineDetails } from '@/tracker/engine/cardioMachine';
 import { typedWeight, type DistUnit, type LoadMode, type LogType } from '@/tracker/engine/logTypes';
-import { liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
+import { HOLD_STEP_SEC, liftsUp, OFF_MAIN_SHARE, type LiftUp, type TargetFill } from '@/tracker/engine/progression';
+import { sameSetHint } from '@/tracker/lib/sameSetHint';
 import { isLongRest, restsOfCard, type RestTaken } from '@/tracker/engine/restTaken';
 import { rpeNudge, type RpeNudge } from '@/tracker/engine/rpeNudge';
 import { MUSCLE_LABEL } from '@/tracker/catalog/muscles';
@@ -1354,6 +1355,12 @@ const present = (v: number | null | undefined): number | null => (v != null && N
  * R-61 (owner, 22 Oct 2026): a warm-up row is last time's warm-up as it was, weight and reps, even
  * when the Target moves the working weight (it used to scale with it: 10 kg for 20 became 7.5 for 15).
  *
+ * R-439 (owner, 10 Nov 2026): with no Target goal for the row (a bodyweight move past its rep cap,
+ * a pyramid, a timed hold), rule 1 no longer copies the row above once a set is ticked: a row with
+ * a same set last time hints that set, scaled by today's ticked sets against last time (at most one
+ * step more; never above last time after an RPE 9+ set; never above the set just done). See
+ * `lib/sameSetHint`.
+ *
  * F74 (R-144): after a set ticked with its effort, the blank rows after it may carry a suggestion
  * from it (one more rep, one weight step, or lighter: `nudgeForSet`). It is a hint like any
  * other: a number the member typed is never changed.
@@ -1431,6 +1438,37 @@ function fillAndNudge(
   if (!nudge) return { fill, nudge: null };
   if (nudge.kind === 'hold') return { fill, nudge };
   return { fill: { weightKg: lt === 'reps' ? 0 : nudge.weightKg, reps: nudge.reps }, nudge };
+}
+
+/**
+ * R-439: the same-set hint for the working row at `idx` (`sameSetHint`), or null = keep the old rule.
+ * Compares the plain working sets ticked above today with their own last-time sets (at `kg` when
+ * given: a set at another weight says nothing about this one). PURE.
+ */
+function sameSetOf(
+  ex: DraftExercise,
+  idx: number,
+  kg: number | null,
+  todayOf: (s: DraftSet) => number | null,
+  lastOf: (p: PrevSet | null | undefined) => number | null,
+  own: number | null,
+  step: number,
+): number | null {
+  if (own == null) return null;
+  const at = (w: number | null | undefined): boolean => kg == null || (w != null && Math.abs(w - kg) < 1e-6);
+  const pairs: { today: number; last: number }[] = [];
+  let justDone: { value: number; rpe: number | null | undefined } | null = null;
+  for (let i = idx - 1; i >= 0; i--) {
+    const s = ex.sets[i];
+    if (s.isWarmup || s.setType === 'drop' || !s.done || !at(s.weightKg)) continue;
+    const today = todayOf(s);
+    if (today == null) continue;
+    if (!justDone) justDone = { value: today, rpe: s.rpe };
+    const p = prevForSet(ex, s.key);
+    const last = lastOf(p);
+    if (last != null && p && at(p.weightKg)) pairs.push({ today, last });
+  }
+  return sameSetHint({ own, pairs, justDone, step });
 }
 
 function baseFillForSet(
@@ -1521,7 +1559,12 @@ function baseFillForSet(
   if (lt === 'time' || lt === 'distance' || lt === 'time_distance') {
     // OWNER-INBOX #19: the routine's hold time only fills what the rows above, Target and PREVIOUS leave empty.
     const planSec = !warmup && !drop ? positive(row.plan?.durationSec) : null;
-    const durationSec = lt === 'distance' ? null : pick((s) => positive(s.durationSec), (p) => positive(p?.durationSec)) ?? planSec;
+    // R-439: a timed hold after a tick follows last time's same hold too (scaled, +5 s at most).
+    const sameSec =
+      lt === 'time' && !warmup && !drop
+        ? sameSetOf(ex, idx, null, (s) => positive(s.durationSec), (p) => positive(p?.durationSec), positive(own?.durationSec), HOLD_STEP_SEC)
+        : null;
+    const durationSec = lt === 'distance' ? null : sameSec ?? pick((s) => positive(s.durationSec), (p) => positive(p?.durationSec)) ?? planSec;
     const distanceM = lt === 'time' ? null : pick((s) => positive(s.distanceM), (p) => positive(p?.distanceM));
     if (durationSec == null && distanceM == null) return null;
     const out: SetFill = { weightKg: 0, reps: 0 };
@@ -1552,7 +1595,13 @@ function baseFillForSet(
     );
     reps = done?.reps != null ? Math.min(goal, done.reps) : goal;
   } else {
-    reps = pick((s) => positive(s.reps), (p) => positive(p?.reps));
+    // R-439: after a tick, a set with a same set last time follows that set (scaled by today's
+    // form), never a copy of the row above (66 after 65, 40 last time -> 41, not 66).
+    const same =
+      !warmup && !drop && own != null && (lt === 'reps' || (weightKg != null && Math.abs(own.weightKg - weightKg) < 1e-6))
+        ? sameSetOf(ex, idx, lt === 'reps' ? null : weightKg, (s) => positive(s.reps), (p) => positive(p?.reps), positive(own.reps), 1)
+        : null;
+    reps = same ?? pick((s) => positive(s.reps), (p) => positive(p?.reps));
   }
   // C3-20: off the main weight a plan's single number sets that one; on it, the plan only fills
   // what the row above, the Target and PREVIOUS left empty.

@@ -7,6 +7,15 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-439. Air Squat set 2 suggested 66 after 66 (last time 65 then 40) — 10 Nov 2026
+
+He said (screenshot, Air Squat, reps only): "I did 66 in this set, my next set has a previous of 40, and the app is suggesting 66, which is way too much for squats. For body weight exercises I wonder if the algorithm should be different, and I wonder if this calculation is even correct."
+
+Where 66 came from (proven, test r439SameSetHint): a copy of the row above. Air Squat's catalogue cap is 20 reps; he is past it (65, 40), so its Target is "try a harder version" (Pistol Squat), and such a Target gives the rows no numbers (targetFill null). With no Target goal, the row hint rule 1 ("the number done in a working set above") copied set 1's 66 into set 2. RPE 8.5 played no part. Weighted lifts: with a Target (the usual case) each set already has its own goal (last time's same set + 1), capped at the set just done, so no bug there; with no Target (pyramids, a harder/easier version suggested, timed holds after the first set) they copied the row above too.
+
+My view / fix (decided, R-18): every set follows the SAME set last time, adjusted by how today compares on the sets already ticked: set 2 = 40 x 66/65 = 41. Never more than last time's same set + 1 rep (+5 s on a hold), the app's own step (R-350); +1 only when today matched or beat last time and the set just done was RPE 8 or easier; after an RPE 9-10 set never above last time; never above the set just done; with no same set last time (an extra set) the old rule stays. Bodyweight past its cap gets no extra progression push: the harder version is the way up.
+Code: tracker/lib/sameSetHint.ts (pure) + activeWorkoutStore baseFillForSet (reps rows with no Target goal, and timed holds). No words on screen changed. Target engine (tracker/engine/progression.ts) and frozen src/engine untouched. Tests: test/tracker/r439SameSetHint.test.ts (16). Waits for his "release".
+
 ## R-437. Watch screen turns off instead of dimming (again) — 10 Nov 2026
 
 He said: "The watch app screen is turning off instead of dimming itself. This is a feature we built and it worked. The first time I tried it (only once), it worked, but it has not worked the last two times." Pixel Watch, Play app (wear:internal). No adb.
