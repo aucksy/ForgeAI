@@ -261,6 +261,12 @@ object WatchCopy {
   private const val PAUSED = "Paused · "
 
   /**
+   * The phone's workout timer is paused: its live card's line ([WatchState.Snapshot.text]) starts "Paused · "
+   * (liveCard.ts). The app's own dim screen lets the screen go then (SelfDim.releaseWhy).
+   */
+  fun paused(text: String): Boolean = text.trimStart().startsWith(PAUSED.trimEnd())
+
+  /**
    * The line shown when the phone named no set ([text] = its live card's set line, liveCard.ts):
    * "All sets done · Finish" and "Add an exercise to start" in watch words, an older phone app's
    * "Set 3 of 5 · 62.5 kg × 8" as it is; null when there is nothing to say.

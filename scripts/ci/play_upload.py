@@ -24,6 +24,16 @@ release run 40838435757), so the live list wins. Its versionCode is the watch's 
 (release_checks.wear_version_code_for). In --wear mode only "wear:" tracks are accepted, and the
 phone mode refuses every form-factor track, so neither run can touch the other's releases.
 Production (any form factor) is always refused.
+
+R-444 (10 Nov 2026, fresh-eyes review): the watch also goes to the Wear OS CLOSED testing track, so a
+member on the phone's closed test ("alpha") gets the watch build too (else the phone's "Your watch app
+has an update" card pointed at a Play Store with no watch update). Wear OS closed tracks are made by
+hand in Play Console ("Test and release > Closed testing", form factor "Wear OS only") with custom
+names, so --tracks takes the stand-in "wear:closed": after listing Play's tracks it becomes the Wear OS
+closed track named like the phone's ("wear:alpha") or, failing that, the only custom Wear OS track. None
+(the case on 10 Nov 2026: Play Console showed no Wear OS closed track) or several unnamed ones: a
+warning, and wear:internal still goes out. Like the phone's closed track, a problem there never stops
+internal.
 """
 import argparse
 import os
@@ -46,6 +56,10 @@ WEAR_INTERNAL = "wear:internal"
 # Closed tracks are made by hand in Play Console with custom names, so any other "wear:" name must already
 # be listed on Play.
 WEAR_BUILTIN = {"wear:internal", "wear:beta"}
+# R-444: "the Wear OS closed testing track, whatever Play calls it" (resolved after listing the tracks).
+WEAR_CLOSED = "wear:closed"
+# Names Play gives its own Wear OS tracks (open, internal, production; "qa" in Google's docs): never a closed one.
+WEAR_NOT_CLOSED = {"wear:internal", "wear:beta", "wear:qa", "wear:production"}
 # Names that look right but are NOT this app's Wear OS internal track on Play.
 WEAR_LOOKALIKES = {"wear:qa", "wear:internal-testing", "wear:internaltesting", "wear:test"}
 
@@ -72,6 +86,48 @@ def check_tracks(tracks, wear):
         if not wear and ":" in t:
             raise ValueError(f"the phone bundle never goes to a form-factor track ('{t}')")
     return tracks
+
+def wear_closed_track(listed):
+    """(track or None, why) for the stand-in 'wear:closed', from the names of every track Play lists. PURE.
+    The Wear OS closed track named like the phone's closed one wins; else the only custom Wear OS track."""
+    custom = sorted(n for n in listed if is_wear_closed(n))
+    same = WEAR_PREFIX + CLOSED
+    if same in custom:
+        return same, f"Wear OS closed testing track '{same}' (named like the phone's '{CLOSED}')"
+    if len(custom) == 1:
+        return custom[0], f"Wear OS closed testing track '{custom[0]}' (the only one on Play)"
+    if not custom:
+        return None, ("Play has no Wear OS closed testing track, so members on the phone's closed test get no "
+                      "watch update from Play (the watch went to wear:internal only). Create one in Play Console: "
+                      "Test and release > Closed testing > form factor 'Wear OS only' > Create track, with the "
+                      "same testers as 'Closed testing - Alpha'.")
+    return None, (f"Play lists several Wear OS closed testing tracks {custom} and none is '{same}': not guessing. "
+                  f"Name the one that matches the phone's closed test '{same}'.")
+
+
+def is_wear_closed(name):
+    """A custom (closed testing) Wear OS track name, as Play lists it. PURE."""
+    return name.startswith(WEAR_PREFIX) and name not in WEAR_NOT_CLOSED and name != WEAR_CLOSED
+
+
+def resolve_tracks(tracks, listed):
+    """(tracks to set, closed-track names, warning or None): 'wear:closed' becomes Play's real Wear OS
+    closed track, or is dropped with a warning. Order kept, no repeats. PURE."""
+    closed = {CLOSED}
+    note = None
+    out = []
+    for t in tracks:
+        if t == WEAR_CLOSED:
+            real, why = wear_closed_track(listed)
+            if real is None:
+                note = why
+                continue
+            closed.add(real)
+            t = real
+        if t not in out:
+            out.append(t)
+    return out, closed, note
+
 
 _STR = r"'(?:[^'\\\n]|\\.)*'|\"(?:[^\"\\\n]|\\.)*\""
 
@@ -193,6 +249,13 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
         log(f"  {describe_track(t)}")
     by_name = {t["track"]: t for t in all_tracks}
 
+    # R-444: the stand-in "wear:closed" becomes Play's real Wear OS closed track (or is dropped, with a warning).
+    tracks, closed, note = resolve_tracks(tracks, by_name)
+    if note:
+        warn(note)
+    for t in sorted(closed - {CLOSED}):
+        log(f"wear:closed = '{t}' (Wear OS closed testing)")
+
     changed = []
     for name in tracks:
         if is_production(name):
@@ -223,7 +286,7 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
             changed.append(name)
             log(f"Set on '{name}': {version} ({code}) completed")
         except HttpError as e:
-            if name == CLOSED:
+            if name in closed:
                 warn(f"Could not set the closed track '{name}' (in review or blocked?): {http_error_text(e)}. "
                      "Internal testing still goes out.")
                 continue
@@ -240,7 +303,7 @@ def upload_and_assign(api, aab, version, code, notes, tracks, language, dry_run)
     try:
         return finish_edit(api, edit_id, dry_run, what), changed
     except HttpError as e:
-        if CLOSED in changed:
+        if closed & set(changed):
             warn(f"Play refused the edit with the closed track in it: {http_error_text(e)}")
             return "retry-without-closed", changed
         raise
@@ -251,7 +314,7 @@ def main():
     ap.add_argument("--tag", required=True, help="the release tag, e.g. v0.57.0")
     ap.add_argument("--aab", required=True, help="the release's mettleup-<tag>.aab")
     ap.add_argument("--whats-new", default="apps/mobile/src/lib/whatsNew.ts")
-    ap.add_argument("--tracks", default=None, help=f"default {INTERNAL},{CLOSED}; with --wear {WEAR_INTERNAL}")
+    ap.add_argument("--tracks", default=None, help=f"default {INTERNAL},{CLOSED}; with --wear {WEAR_INTERNAL},{WEAR_CLOSED}")
     ap.add_argument("--wear", action="store_true", help="the WATCH app's bundle (Wear OS tracks, the watch's versionCode)")
     ap.add_argument("--language", default="en-US")
     ap.add_argument("--dry-run", action="store_true", help="validate the edit, never commit it")
@@ -270,7 +333,7 @@ def main():
     if not notes:
         warn(f"No What's new lines for {version}; using '{FALLBACK_NOTES}'.")
         notes = FALLBACK_NOTES
-    default_tracks = WEAR_INTERNAL if a.wear else f"{INTERNAL},{CLOSED}"
+    default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED}" if a.wear else f"{INTERNAL},{CLOSED}"
     try:
         tracks = check_tracks([t.strip() for t in (a.tracks or default_tracks).split(",") if t.strip()], a.wear)
     except ValueError as e:
@@ -282,7 +345,7 @@ def main():
     api = service()
     result, changed = upload_and_assign(api, a.aab, version, code, notes, tracks, a.language, a.dry_run)
     if result == "retry-without-closed":
-        rest = [t for t in tracks if t != CLOSED]
+        rest = [t for t in tracks if t not in (CLOSED, WEAR_CLOSED) and not is_wear_closed(t)]
         log(f"Trying again with {rest} only.")
         result, changed = upload_and_assign(api, a.aab, version, code, notes, rest, a.language, a.dry_run)
     log(f"RESULT: {result}; tracks changed: {changed or 'none'}")

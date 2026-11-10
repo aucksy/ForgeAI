@@ -3,7 +3,8 @@
  * watch (strap, case, crown) shows the new version; the words, "New on your watch" and the buttons sit
  * in a sheet at the bottom, styled like the phone's own "A new MettleUp is here" (UpdatePrompt.tsx).
  * When: tracker/services/watchUpdateCard.ts (only 'update-ready'; app open or back after 6 h; the 3
- * main tabs; never in a workout; the phone's own update first; "Later" = 24 h). The watch stays black
+ * main tabs; never in a workout; the phone's own update first; "Later" = 24 h; after "Update on watch" never
+ * again for this phone version, R-444). The watch stays black
  * in both looks, like a real watch screen; everything else follows the light or dark look.
  *
  * "Update on watch" opens the watch's Play Store on MettleUp (watchUpdate.ts updateOnWatch). Then the
@@ -39,6 +40,7 @@ import {
   qaWriteWatchTap,
   readWatchSnooze,
   shortVersion,
+  snoozeMark,
   snoozeWatchCard,
   stepAfter,
   stepWords,
@@ -145,15 +147,19 @@ export function WatchUpdatePrompt() {
   const visible = !closed && onTabs && !workout && found != null && (step !== 'offer' || due);
   if (!found || !phoneVersion) return null;
 
+  // R-444: after "Update on watch" (step past 'offer'), "Got it" / back closes it for this phone version for good.
+  const tapped = step !== 'offer';
   const later = () => {
     setClosed(true);
     const now = Date.now();
-    setSnooze({ version: phoneVersion, at: now });
-    void snoozeWatchCard(phoneVersion, now);
+    setSnooze(snoozeMark(phoneVersion, now, tapped));
+    void snoozeWatchCard(phoneVersion, now, tapped);
   };
   const update = () => {
     if (busy) return;
     setBusy(true);
+    // R-444: saved at the tap, so an app closed before "Got it" does not ask again for this version either.
+    void snoozeWatchCard(phoneVersion, Date.now(), true);
     void (async (): Promise<UpdateResult> => {
       const fakeTap = qa ? await qaReadWatchTap() : null;
       if (fakeTap) {

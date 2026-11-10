@@ -37,6 +37,95 @@ class SelfDimTest {
     assertFalse(SelfDim.wanted(workoutOpen = true, onScreen = true, aodOn = true, saverOn = false, blackedOut = true))
   }
 
+  /** What MainActivity does: held only when the mode wants it and nothing lets it go. */
+  private fun holds(
+    now: Long,
+    inputAt: Long,
+    paused: Boolean = false,
+    aodOn: Boolean? = false,
+    workoutOpen: Boolean = true,
+    idleMs: Long = SelfDim.IDLE_RELEASE_MS,
+  ): Boolean =
+    SelfDim.wanted(workoutOpen = workoutOpen, onScreen = true, aodOn = aodOn, saverOn = false, blackedOut = false) &&
+      SelfDim.releaseWhy(now, inputAt, paused, idleMs) == null
+
+  @Test
+  fun idleScreenIsLetGoAfterTwelveMinutesNotBefore() {
+    assertEquals(12 * 60_000L, SelfDim.IDLE_RELEASE_MS)
+    val t0 = 1_000_000L
+    // 11:59 without a touch: still held.
+    assertNull(SelfDim.releaseWhy(now = t0 + 11 * 60_000L + 59_000L, inputAt = t0, paused = false))
+    assertTrue(holds(now = t0 + 11 * 60_000L + 59_999L, inputAt = t0))
+    // 12:00: let go, for "idle".
+    assertEquals("idle", SelfDim.releaseWhy(now = t0 + 12 * 60_000L, inputAt = t0, paused = false))
+    assertFalse(holds(now = t0 + 12 * 60_000L, inputAt = t0))
+    // Four hours later (the walked-away member): still let go.
+    assertEquals("idle", SelfDim.releaseWhy(now = t0 + 4 * 3_600_000L, inputAt = t0, paused = false))
+  }
+
+  @Test
+  fun anInputHoldsTheScreenAgain() {
+    val t0 = 1_000_000L
+    val late = t0 + 13 * 60_000L
+    assertFalse(holds(now = late, inputAt = t0))
+    // A tap, crown turn, button, wrist raise or the watch's own wake at `late` starts the wait over.
+    assertTrue(holds(now = late, inputAt = late))
+    assertTrue(holds(now = late + 11 * 60_000L, inputAt = late))
+    assertFalse(holds(now = late + 12 * 60_000L, inputAt = late))
+  }
+
+  @Test
+  fun aPausedWorkoutLetsTheScreenGoAtOnce() {
+    val t0 = 1_000_000L
+    // Just touched, but paused on the phone: let go.
+    assertEquals("paused", SelfDim.releaseWhy(now = t0, inputAt = t0, paused = true))
+    assertFalse(holds(now = t0, inputAt = t0, paused = true))
+    // Paused and idle: named "paused" (the member's choice, not forgetting).
+    assertEquals("paused", SelfDim.releaseWhy(now = t0 + 30 * 60_000L, inputAt = t0, paused = true))
+    // Resumed (the app then starts the idle wait over): held again.
+    assertTrue(holds(now = t0 + 30 * 60_000L, inputAt = t0 + 30 * 60_000L, paused = false))
+  }
+
+  @Test
+  fun aClockThatWentBackIsNotIdle() {
+    assertNull(SelfDim.releaseWhy(now = 0L, inputAt = 50_000L, paused = false))
+  }
+
+  @Test
+  fun idleAndPauseNeverMakeTheAppHoldTheScreen() {
+    val t0 = 1_000_000L
+    // Always-on ON: never held, used or idle, paused or not (negative).
+    assertFalse(holds(now = t0, inputAt = t0, aodOn = true))
+    assertFalse(holds(now = t0 + 13 * 60_000L, inputAt = t0, aodOn = true))
+    assertFalse(holds(now = t0, inputAt = t0, aodOn = true, paused = true))
+    // No workout: never held (negative).
+    assertFalse(holds(now = t0, inputAt = t0, workoutOpen = false))
+    assertFalse(holds(now = t0, inputAt = t0, workoutOpen = false, paused = true))
+  }
+
+  @Test
+  fun theShortQaIdleWaitCountsOnlyOnATestSystem() {
+    // A member's watch (system build "user"): always 12 minutes, whatever the key says.
+    assertEquals(SelfDim.IDLE_RELEASE_MS, SelfDim.idleReleaseMs(qaOverride = 40_000L, testOs = false))
+    assertEquals(SelfDim.IDLE_RELEASE_MS, SelfDim.idleReleaseMs(qaOverride = 0L, testOs = false))
+    // The cloud emulator (adb root, a test system): the key shortens it, never below 30 s or above 12 min.
+    assertEquals(40_000L, SelfDim.idleReleaseMs(qaOverride = 40_000L, testOs = true))
+    assertEquals(SelfDim.QA_IDLE_MIN_MS, SelfDim.idleReleaseMs(qaOverride = 1_000L, testOs = true))
+    assertEquals(SelfDim.IDLE_RELEASE_MS, SelfDim.idleReleaseMs(qaOverride = 99 * 60_000L, testOs = true))
+    assertEquals(SelfDim.IDLE_RELEASE_MS, SelfDim.idleReleaseMs(qaOverride = 0L, testOs = true))
+    assertEquals(SelfDim.IDLE_RELEASE_MS, SelfDim.idleReleaseMs(qaOverride = -5L, testOs = true))
+  }
+
+  @Test
+  fun pausedIsReadFromThePhonesLine() {
+    assertTrue(WatchCopy.paused("Paused · Set 3 of 5 · 62.5 kg × 8"))
+    assertTrue(WatchCopy.paused("Paused · All sets done · Finish"))
+    assertTrue(WatchCopy.paused("  Paused · Rest · next set at 9:41 pm"))
+    assertFalse(WatchCopy.paused("Set 3 of 5 · 62.5 kg × 8"))
+    assertFalse(WatchCopy.paused(""))
+    assertFalse(WatchCopy.paused("Rest · next set at 9:41 pm"))
+  }
+
   @Test
   fun dimWaitFollowsTheWatchTimeoutWithinBounds() {
     assertEquals(15_000L, SelfDim.timeoutMs(null))

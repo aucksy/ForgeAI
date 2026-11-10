@@ -26,6 +26,14 @@ import android.provider.Settings
  * Battery Saver: left alone on purpose (the watch is low, at 15 % on a Pixel Watch, and switches its own dim
  * screen off to last longer); the diary names it.
  *
+ * Battery guard (review of R-442, 10 Nov 2026): a workout counts as open for 4 h after the phone last spoke of
+ * it, so a member who walked away, left the workout paused or forgot to finish kept the screen on (dimmed, the
+ * processor awake, the wrist sensor running) for up to 4 h. Now the screen is let go ([releaseWhy]) after
+ * [IDLE_RELEASE_MS] with no tap, crown turn, button or wrist raise ("idle"), and at once while the phone's
+ * workout timer is paused ("paused", [WatchCopy.paused]). Let go = keep-screen-on cleared and the wrist sensor
+ * stopped; the watch's own timeout then turns the screen fully off. The next tap, crown turn or the watch's own
+ * wake (tilt-to-wake brings MettleUp back) holds it again, and so does the workout being resumed on the phone.
+ *
  * Everything here that decides is PURE and JVM-tested (SelfDimTest); [MainActivity] does the Android side.
  */
 object SelfDim {
@@ -70,6 +78,37 @@ object SelfDim {
    */
   fun wanted(workoutOpen: Boolean, onScreen: Boolean, aodOn: Boolean?, saverOn: Boolean?, blackedOut: Boolean): Boolean =
     workoutOpen && onScreen && saverOn != true && (aodOn == false || (aodOn == null && blackedOut))
+
+  /** Battery guard: no tap, crown turn, button or wrist raise for this long and the screen is let go. */
+  const val IDLE_RELEASE_MS = 12 * 60_000L
+
+  /**
+   * QA only: a shorter idle wait for the cloud watch check (watch_dim_aod_off_uat.sh), kept in the app's private
+   * preferences under this key. Only adb root can write it there (no backup, app-private), and it counts only on
+   * a test build of the watch's own system ([idleReleaseMs], testOs), never on a member's watch.
+   */
+  const val QA_IDLE_KEY = "qaIdleReleaseMs"
+
+  /** The shortest idle wait the QA key can set. */
+  const val QA_IDLE_MIN_MS = 30_000L
+
+  /**
+   * The idle wait: [IDLE_RELEASE_MS], or the QA key's [qaOverride] (kept between [QA_IDLE_MIN_MS] and
+   * [IDLE_RELEASE_MS]) when [testOs] (the watch's system is a test build, Build.TYPE not "user"). PURE.
+   */
+  fun idleReleaseMs(qaOverride: Long, testOs: Boolean): Long =
+    if (testOs && qaOverride > 0L) qaOverride.coerceIn(QA_IDLE_MIN_MS, IDLE_RELEASE_MS) else IDLE_RELEASE_MS
+
+  /**
+   * Why a screen [wanted] is let go anyway: "paused" while the phone's workout timer is paused, "idle" when the
+   * last tap, crown turn, button or wrist raise ([inputAt]) is [idleMs] or more ago; null = keep holding it. A
+   * clock that went back (now before [inputAt]) is not idle. PURE.
+   */
+  fun releaseWhy(now: Long, inputAt: Long, paused: Boolean, idleMs: Long = IDLE_RELEASE_MS): String? = when {
+    paused -> "paused"
+    now - inputAt >= idleMs -> "idle"
+    else -> null
+  }
 
   /** The dim wait: the watch's own screen timeout, kept between [MIN_TIMEOUT_MS] and [MAX_TIMEOUT_MS]. PURE. */
   fun timeoutMs(setting: Long?): Long =

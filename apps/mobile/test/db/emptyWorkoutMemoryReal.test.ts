@@ -8,7 +8,7 @@
  *  - "Start blank" removes the pre-added cards that have no ticked set (the member's own stay);
  *  - the cloud copy carries it as the 'p' item 'empty', and an older app's prefs reader refuses it.
  */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { OnboardingInput } from '@/onboarding/form';
 import { bootRealApp, type RealDb } from '../helpers/realDb';
@@ -130,6 +130,49 @@ describe('R-436 remembering the last empty workout', () => {
     expect(m.showPrefillLine(aw.getState())).toBe(false);
   });
 
+  it('R-444: Start opens the workout at once and the cards are filled after (start resolves before the fill)', async () => {
+    await finishFirst();
+    const aw = await store();
+    const { startShownWorkout } = await import('@/tracker/services/todayStart');
+    const nav = { push: () => undefined, replace: () => undefined };
+    let atShow: { active: boolean; cards: number } | null = null;
+    await startShownWorkout(nav, null, () => {
+      atShow = { active: aw.getState().active, cards: aw.getState().exercises.length };
+    });
+    // The screen was opened while the workout was already open and still blank: the fill had not run.
+    expect(atShow).toEqual({ active: true, cards: 0 });
+    // Then the remembered cards arrive, with the line.
+    await vi.waitFor(() => expect(aw.getState().exercises.map((e) => e.exerciseId)).toEqual([ids[0], ids[1]]), { timeout: 5000 });
+    expect(aw.getState().emptyPrefill).toHaveLength(2);
+  });
+
+  it('R-444: the workout is open as soon as startEmptyRemembered returns; the member acting first still wins', async () => {
+    await finishFirst();
+    const aw = await store();
+    // A real card of the member's own (built the normal way), kept for below.
+    aw.getState().startEmpty();
+    await aw.getState().addExercise(await exercise(ids[3]));
+    const theirs = aw.getState().exercises[0];
+    await aw.getState().discard();
+
+    const filling = aw.getState().startEmptyRemembered();
+    expect(aw.getState().active).toBe(true);
+    expect(aw.getState().exercises).toEqual([]);
+    // The member's card lands before the fill is done (addExercise's own set): theirs wins, nothing is pre-added.
+    aw.setState({ exercises: [theirs] });
+    await filling;
+    expect(aw.getState().exercises.map((e) => e.exerciseId)).toEqual([ids[3]]);
+    expect(aw.getState().emptyPrefill).toBeNull();
+  });
+
+  it('R-444: the Workout tab and Home do not wait for the fill (read as text)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const root = resolve(__dirname, '../..');
+    expect(readFileSync(resolve(root, 'src/app/(tabs)/workout.tsx'), 'utf8')).toMatch(/void startEmptyRemembered\(\);\s*goActive\(\);/);
+    expect(readFileSync(resolve(root, 'src/tracker/services/todayStart.ts'), 'utf8')).toMatch(/else void useActiveWorkout\.getState\(\)\.startEmptyRemembered\(\);/);
+  });
+
   it('nothing remembered: the empty workout stays blank', async () => {
     const aw = await store();
     await aw.getState().startEmptyRemembered();
@@ -193,5 +236,85 @@ describe('R-436 remembering the last empty workout', () => {
       { id: ids[0], sets: 2 },
       { id: ids[1], sets: 1 },
     ]);
+  });
+});
+
+// R-444 (fresh-eyes review): bringing back a list whose exercises this phone does not (all) have must
+// never delete or shorten the member's cloud copy.
+describe('R-444 the cloud copy of the empty-workout list survives a bring-back', () => {
+  async function cloud() {
+    return {
+      local: await import('@/cloud/copyLocal'),
+      pack: await import('@/cloud/pack'),
+      plan: await import('@/cloud/copyPlan'),
+      m: await memory(),
+    };
+  }
+  const opsFor = (ops: readonly { kind: string; id: string }[], id: string) => ops.filter((o) => o.kind === 'p' && o.id === id);
+
+  it('NOTHING matched: left out (skipped, not remembered), and the next scan does not delete the copy', async () => {
+    const { local, pack, plan, m } = await cloud();
+    const data = pack.packEmptyWorkout([
+      { ref: 'x:on-another-phone-1', sets: 2 },
+      { ref: 'c:no_such_catalog_key', sets: 3 },
+    ]);
+    const res = await local.applyExclusive({
+      apply: [{ kind: 'p', id: pack.EMPTY_WORKOUT_ID, data, editedAt: 5 }],
+      remove: [],
+      remember: [{ kind: 'p', id: pack.EMPTY_WORKOUT_ID, hash: pack.packHash(data), editedAt: 5 }],
+      serverDeletes: [],
+      keptLocal: 0,
+    });
+    expect(res.skipped).toContain(`p:${pack.EMPTY_WORKOUT_ID}`);
+    expect(res.other).toBe(0);
+    expect(metaValue(m.LAST_EMPTY_KEY)).toBeNull();
+    const state = await local.readState();
+    expect(state.find((s) => s.kind === 'p' && s.id === pack.EMPTY_WORKOUT_ID)).toBeUndefined();
+    const scan = plan.planScan(await local.readLocalItems(), state, 10_000);
+    expect(opsFor(scan.ops, pack.EMPTY_WORKOUT_ID)).toEqual([]);
+  });
+
+  it('SOME matched: the phone keeps the ones it has, and the next scan sends nothing (the copy keeps the full list)', async () => {
+    await finishFirst();
+    const { local, pack, plan, m } = await cloud();
+    const mine = (await local.readLocalItems()).find((i) => i.kind === 'p' && i.id === pack.EMPTY_WORKOUT_ID)!;
+    const refs = pack.unpackEmptyWorkout(mine.data)!;
+    // The server's (newer) list: this phone's two exercises with one it never had in between.
+    const full = pack.packEmptyWorkout([refs[0], { ref: 'x:made-on-another-phone', sets: 4 }, refs[1]]);
+    await db.runAsync('DELETE FROM meta WHERE key = ?', [m.LAST_EMPTY_KEY]);
+    const res = await local.applyExclusive({
+      apply: [{ kind: 'p', id: pack.EMPTY_WORKOUT_ID, data: full, editedAt: 7 }],
+      remove: [],
+      remember: [{ kind: 'p', id: pack.EMPTY_WORKOUT_ID, hash: pack.packHash(full), editedAt: 7 }],
+      serverDeletes: [],
+      keptLocal: 0,
+    });
+    expect(res.skipped).toEqual([]);
+    expect(m.parseRemembered(metaValue(m.LAST_EMPTY_KEY))?.items).toEqual([
+      { id: ids[0], sets: 2 },
+      { id: ids[1], sets: 1 },
+    ]);
+    const items = await local.readLocalItems();
+    const state = await local.readState();
+    const row = state.find((s) => s.kind === 'p' && s.id === pack.EMPTY_WORKOUT_ID)!;
+    expect(row.hash).toBe(items.find((i) => i.kind === 'p' && i.id === pack.EMPTY_WORKOUT_ID)!.hash);
+    expect(row.hash).not.toBe(pack.packHash(full));
+    expect(opsFor(plan.planScan(items, state, 10_000).ops, pack.EMPTY_WORKOUT_ID)).toEqual([]);
+  });
+
+  it('regression: a later finished empty workout still replaces the whole list in the copy (product rule)', async () => {
+    await finishFirst();
+    const { local, pack, plan } = await cloud();
+    // As if the earlier list was already copied.
+    const before = await local.readLocalItems();
+    const p = before.find((i) => i.kind === 'p' && i.id === pack.EMPTY_WORKOUT_ID)!;
+    const state = [{ kind: 'p' as const, id: pack.EMPTY_WORKOUT_ID, hash: p.hash, editedAt: 1 }];
+    const aw = await store();
+    aw.getState().startEmpty();
+    await addAndTick(ids[3], 1);
+    expect(await aw.getState().finish(null)).toBeTruthy();
+    const sent = opsFor(plan.planScan(await local.readLocalItems(), state, 10_000).ops, pack.EMPTY_WORKOUT_ID) as { data: string | null }[];
+    expect(sent).toHaveLength(1);
+    expect(pack.unpackEmptyWorkout(sent[0].data!)!.map((r) => r.sets)).toEqual([1]);
   });
 });

@@ -45,12 +45,64 @@ describe('one diary line, short and safe', () => {
   });
 });
 
+// R-444: lines exactly as R-442/R-444 MainActivity writes them (AmbientDiag.note: "self-dim-on <why> <state>",
+// "self-dim-enter <why>", ...), from the R-442 cloud watch run's diary and the R-444 idle/paused release.
+const AOD_OFF = 'screen=1 saver=0 idle=0 aod=0/0 theatre=0';
+const R442 = [
+  `11-10 06:27:58.101 resume ${AOD_OFF}`,
+  `11-10 06:27:58.140 self-dim-on resume ${AOD_OFF}`,
+  '11-10 06:28:13.150 self-dim-enter timeout',
+  '11-10 06:28:20.002 self-dim-exit touch',
+  '11-10 06:28:23.420 self-dim-enter wrist-down',
+  '11-10 06:28:27.910 self-dim-exit wrist-up',
+  '11-10 06:28:30.000 self-dim-exit crown',
+  `11-10 06:40:30.000 self-dim-off idle ${AOD_OFF}`,
+  `11-10 06:41:02.000 self-dim-on touch ${AOD_OFF}`,
+  `11-10 06:45:00.000 self-dim-off paused ${AOD_OFF}`,
+  `11-10 06:50:00.000 self-dim-on resume ${AOD_OFF}`,
+  `11-10 06:55:00.000 self-dim-off check ${AOD_OFF}`,
+  `11-10 06:55:01.000 stop ambient=0 workout=0 blackout=0 screen=0 saver=0 idle=0 aod=0/0 theatre=0`,
+].join('\n');
+
+describe("the app's own dim lines (R-442, Always-on OFF; R-444)", () => {
+  it('keeps every self-dim line with its why word and settings', () => {
+    expect(compactLine(`11-10 06:27:58.140 self-dim-on resume ${AOD_OFF}`)?.text).toBe('06:27:58 hold resume sc1 bs0 id0 aod0/0 th0');
+    expect(compactLine('11-10 06:28:13.150 self-dim-enter timeout')?.text).toBe('06:28:13 ADIM timeout');
+    expect(compactLine('11-10 06:28:23.420 self-dim-enter wrist-down')?.text).toBe('06:28:23 ADIM wrist-down');
+    expect(compactLine('11-10 06:28:27.910 self-dim-exit wrist-up')?.text).toBe('06:28:27 aundim wrist-up');
+    expect(compactLine(`11-10 06:40:30.000 self-dim-off idle ${AOD_OFF}`)?.text).toBe('06:40:30 letgo idle sc1 bs0 id0 aod0/0 th0');
+    expect(compactLine(`11-10 06:45:00.000 self-dim-off paused ${AOD_OFF}`)?.text).toBe('06:45:00 letgo paused sc1 bs0 id0 aod0/0 th0');
+  });
+
+  it('only the known why words pass; anything else in a self-dim line is dropped', () => {
+    expect(compactLine('11-10 06:28:13.150 self-dim-enter Aakash leg-day timeout')?.text).toBe('06:28:13 ADIM timeout');
+    expect(compactLine('11-10 06:28:13.150 self-dim-off https://x.in idle')?.text).toBe('06:28:13 letgo idle');
+    // The why words stay self-dim only: a stop line never carries them.
+    expect(compactLine('11-10 06:28:13.150 stop touch screen=0')?.text).toBe('06:28:13 stop sc0');
+    expect(compactLine('11-10 06:28:13.150 self-dim-sideways timeout')).toBeNull();
+  });
+
+  it("the head counts the app's dim apart, so 'Dimmed by the watch: 0' is not read as 'never dimmed'", () => {
+    const text = watchLogText([{ at: 1, log: R442 }]);
+    const lines = text.split('\n');
+    expect(lines[1]).toBe(
+      '13 lines on the watch. Off instead of dim: 0 (saver 0, aod-off 0). Dimmed by the watch (Always-on on): 0. Dimmed by the app (Always-on off): 2; screen held 3, let go 3 (idle 1, paused 1). Rebuild: 0. Last: bs0 aod0/0.',
+    );
+    expect(lines[2]).toContain('ADIM/aundim the app dims');
+    expect(text).toContain('06:28:20 aundim touch');
+    expect(text).toContain('06:40:30 letgo idle');
+    expect(text.length).toBeLessThanOrEqual(FEEDBACK_MAX);
+  });
+});
+
 describe('the log that goes to the feedback box', () => {
   it('says what it is, counts over the whole diary and carries the newest lines', () => {
     const text = watchLogText([{ at: Date.UTC(2026, 10, 10, 15, 30), log: diary(9) }]);
     const lines = text.split('\n');
     expect(lines[0]).toBe('Watch screen log (R-441), written 11-10 15:30 UTC.');
-    expect(lines[1]).toBe('9 lines on the watch. Off instead of dim: 0 (saver 3, aod-off 0). Dim: 3. Rebuild: 0. Last: bs1 aod1/1.');
+    expect(lines[1]).toBe(
+      '9 lines on the watch. Off instead of dim: 0 (saver 3, aod-off 0). Dimmed by the watch (Always-on on): 3. Dimmed by the app (Always-on off): 0; screen held 0, let go 0 (idle 0, paused 0). Rebuild: 0. Last: bs1 aod1/1.',
+    );
     expect(lines[2]).toMatch(/^Key: /);
     expect(lines[3]).toBe('[11-10]');
     expect(lines[4]).toBe('09:00:00 resume sc1 bs0 id0 aod1/1 th0');

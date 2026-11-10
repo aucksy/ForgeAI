@@ -10,9 +10,14 @@
  *   pop-up, UpdatePrompt.tsx). Only over the 3 main tabs, never while a workout is open.
  * - The phone's own update goes first: while a newer PHONE version waits, the watch pop-up stays
  *   away (the watch would only fall behind again).
- * - "Later" (and "Got it" after the watch's Play Store opened): not again for 24 hours, so the next
- *   app open after a day asks again. A NEW phone version asks at once (its watch app is newer still).
- *   A clock set back skips the 24-hour wait rather than blocking for ever.
+ * - "Later" (before any "Update on watch"): not again for 24 hours, so the next app open after a day
+ *   asks again. A NEW phone version asks at once (its watch app is newer still). A clock set back skips
+ *   the 24-hour wait rather than blocking for ever.
+ * - R-444 (fresh-eyes review, 10 Nov 2026): once the member tapped "Update on watch" (then "Got it",
+ *   back, or nothing), it never asks again for THIS phone version, even if the watch stays old. Play
+ *   may simply have no newer watch build for them (a watch on a test track the phone is not on, or a
+ *   watch release that lags the phone's): asking every day would nag about something they cannot do.
+ *   A newer phone version asks once more.
  * No phone notification: Play already notifies, and more alerts push members to turn ours off.
  */
 import { getMeta, setMeta } from '@/db';
@@ -81,13 +86,15 @@ export function shortVersion(v: string): string {
 export interface Snooze {
   version: string;
   at: number;
+  /** R-444: the member tapped "Update on watch" for this phone version: never again for it. */
+  tapped?: true;
 }
 export function readSnooze(raw: string | null | undefined): Snooze | null {
   if (!raw) return null;
   try {
     const v = JSON.parse(raw) as Partial<Snooze>;
     if (typeof v.version !== 'string' || typeof v.at !== 'number' || !Number.isFinite(v.at)) return null;
-    return { version: v.version, at: v.at };
+    return v.tapped === true ? { version: v.version, at: v.at, tapped: true } : { version: v.version, at: v.at };
   } catch {
     return null; // quiet: a broken mark is the same as none; the next "Later" rewrites it
   }
@@ -96,6 +103,7 @@ export function readSnooze(raw: string | null | undefined): Snooze | null {
 /** Whether a "Later" still holds for this phone version at `now`. PURE. */
 export function snoozed(s: Snooze | null, phoneVersion: string | null | undefined, now: number): boolean {
   if (!s || !phoneVersion || s.version !== phoneVersion) return false;
+  if (s.tapped) return true; // R-444: already tried "Update on watch" for this phone version
   if (now < s.at) return false; // a clock set back: ask rather than block for ever
   return now - s.at < SNOOZE_MS;
 }
@@ -208,10 +216,18 @@ export async function readWatchSnooze(): Promise<Snooze | null> {
   }
 }
 
-/** "Later" (or "Got it"): not again for 24 hours on this phone version. Never throws. */
-export async function snoozeWatchCard(phoneVersion: string, now: number = Date.now()): Promise<void> {
+/** The mark to store: "Later" before any tap (24 h), or "tapped" once "Update on watch" was tapped (R-444). PURE. */
+export function snoozeMark(phoneVersion: string, now: number, tapped: boolean): Snooze {
+  return tapped ? { version: phoneVersion, at: now, tapped: true } : { version: phoneVersion, at: now };
+}
+
+/**
+ * "Later": not again for 24 hours on this phone version. [tapped] (R-444: "Update on watch" was tapped,
+ * then "Got it" or back): never again for this phone version. Never throws.
+ */
+export async function snoozeWatchCard(phoneVersion: string, now: number = Date.now(), tapped = false): Promise<void> {
   try {
-    await enqueueWrite(() => setMeta(SNOOZE_KEY, JSON.stringify({ version: phoneVersion, at: now } satisfies Snooze)));
+    await enqueueWrite(() => setMeta(SNOOZE_KEY, JSON.stringify(snoozeMark(phoneVersion, now, tapped))));
   } catch (e) {
     console.warn('[watch update] could not save "Later"', e);
   }

@@ -19,7 +19,7 @@ import { enqueueWrite } from '@/db/writeQueue';
 import { uuid } from '@/lib/uuid';
 import { COARSE_OF } from '@/tracker/catalog/muscles';
 import { catalogEntry } from '@/tracker/catalog/exerciseCatalog';
-import { LAST_EMPTY_KEY, parseRemembered, serializeRemembered } from '@/tracker/services/emptyWorkoutMemory';
+import { LAST_EMPTY_KEY, parseRemembered, serializeRemembered, type RememberedWorkout } from '@/tracker/services/emptyWorkoutMemory';
 
 import type { LocalItem, MergeApply, MergePlan, QueueOp, ScanPlan, StateRow } from './copyPlan';
 import {
@@ -97,6 +97,20 @@ function item(kind: ItemKind, id: string, data: string, guess = 0): LocalItem {
   return { kind, id, data, hash: packHash(data), guess };
 }
 
+/**
+ * R-436: the phone's 'p:empty' item: the remembered exercises this phone has, by ref; null for none.
+ * The scan (readLocalItems) and the bring-back (applyEmptyWorkout, R-444) both use it, so their hashes agree.
+ */
+function emptyWorkoutItem(remembered: RememberedWorkout | null, refs: ReadonlyMap<string, string>): LocalItem | null {
+  if (!remembered) return null;
+  const kept: { ref: string; sets: number }[] = [];
+  for (const i of remembered.items) {
+    const ref = refs.get(i.id);
+    if (ref) kept.push({ ref, sets: i.sets });
+  }
+  return kept.length > 0 ? item('p', EMPTY_WORKOUT_ID, packEmptyWorkout(kept), remembered.at) : null;
+}
+
 /** Everything the member keeps, packed (pack.ts). Demo data is the caller's to refuse. */
 export async function readLocalItems(db: Tx = getDb()): Promise<LocalItem[]> {
   const refs = await refMap(db);
@@ -150,11 +164,8 @@ export async function readLocalItems(db: Tx = getDb()): Promise<LocalItem[]> {
 
   // R-436: the last empty workout's exercises (only those this phone still has).
   const lastEmpty = await db.getFirstAsync<{ value: string }>('SELECT value FROM meta WHERE key = ?', [LAST_EMPTY_KEY]);
-  const remembered = parseRemembered(lastEmpty?.value);
-  if (remembered) {
-    const kept = remembered.items.filter((i) => refs.has(i.id)).map((i) => ({ ref: refOf(i.id), sets: i.sets }));
-    if (kept.length > 0) out.push(item('p', EMPTY_WORKOUT_ID, packEmptyWorkout(kept), remembered.at));
-  }
+  const emptyItem = emptyWorkoutItem(parseRemembered(lastEmpty?.value), refs);
+  if (emptyItem) out.push(emptyItem);
 
   for (const b of await db.getAllAsync<{ date_iso: string; weight_kg: number }>('SELECT date_iso, weight_kg FROM body_weight')) {
     out.push(item('b', b.date_iso, packBodyWeight(b.weight_kg)));
@@ -341,9 +352,12 @@ export async function applyInTransaction(tx: Tx, plan: MergePlan): Promise<Apply
     return ensureExercise(tx, 'Exercise from your copy', { id });
   };
 
+  /** R-444: items whose state row must carry the PHONE's hash, not the server's (a partial empty-workout list). */
+  const localHash = new Map<string, string>();
+
   for (const kind of ORDER) {
     for (const a of plan.apply.filter((x) => x.kind === kind)) {
-      const ok = await applyOne(tx, a, resolve, sameAs, touched);
+      const ok = await applyOne(tx, a, resolve, sameAs, touched, localHash);
       if (ok === 'skip') {
         result.skipped.push(`${a.kind}:${a.id}`);
         notRemembered.add(`${a.kind}:${a.id}`);
@@ -360,7 +374,15 @@ export async function applyInTransaction(tx: Tx, plan: MergePlan): Promise<Apply
   }
   // 'f' never comes back as a row (see ORDER): nothing to remember for it either.
   for (const a of plan.apply) if (a.kind === 'f') notRemembered.add(`f:${a.id}`);
-  await remember(tx, plan.remember.filter((s) => !notRemembered.has(`${s.kind}:${s.id}`)));
+  await remember(
+    tx,
+    plan.remember
+      .filter((s) => !notRemembered.has(`${s.kind}:${s.id}`))
+      .map((s) => {
+        const hash = localHash.get(`${s.kind}:${s.id}`);
+        return hash ? { ...s, hash } : s;
+      }),
+  );
   await forget(tx, plan.remove);
   await queueOps(tx, plan.serverDeletes);
   result.exerciseIds = [...touched];
@@ -410,6 +432,7 @@ async function applyOne(
   resolve: (ref: string) => Promise<string>,
   sameAs: Map<string, string>,
   touched: Set<string>,
+  localHash: Map<string, string>,
 ): Promise<'ok' | 'skip' | 'mapped'> {
   switch (a.kind) {
     case 'w': {
@@ -508,7 +531,7 @@ async function applyOne(
       return 'ok';
     }
     case 'p': {
-      if (a.id === EMPTY_WORKOUT_ID) return applyEmptyWorkout(tx, a, sameAs);
+      if (a.id === EMPTY_WORKOUT_ID) return applyEmptyWorkout(tx, a, sameAs, localHash);
       const rows = unpackPrefs(a.data);
       if (!rows) return 'skip';
       for (const p of rows) {
@@ -564,8 +587,18 @@ async function applyOne(
 /**
  * R-436: the last empty workout comes back as this phone's list. Never makes an exercise: one the
  * phone does not have (deleted, or not in the copy) is left out, as at the start of a workout.
+ *
+ * R-444 (fresh-eyes review, 10 Nov 2026):
+ * - NOTHING matched: 'skip' (listed as left out, no state row), and the phone keeps whatever it had.
+ *   Before, it said 'ok', so the item was remembered as received while the phone had no list: the next
+ *   scan saw "gone from the phone" and DELETED the member's cloud copy.
+ * - SOME matched: the phone keeps the exercises it has, and its state row carries the PHONE's hash
+ *   ([localHash]), so the next scan sends nothing and the server keeps the FULL list (a newer phone or a
+ *   later restore still gets every exercise). Before, the shorter list was sent back over the full one.
+ *   My call over merging: the server list already is the newest, and a merge would invent ids this phone
+ *   does not have. The product rule stays: the next finished empty workout replaces the whole list.
  */
-async function applyEmptyWorkout(tx: Tx, a: MergeApply, sameAs: Map<string, string>): Promise<'ok' | 'skip'> {
+async function applyEmptyWorkout(tx: Tx, a: MergeApply, sameAs: Map<string, string>, localHash: Map<string, string>): Promise<'ok' | 'skip'> {
   const refs = unpackEmptyWorkout(a.data);
   if (!refs) return 'skip';
   const items: { id: string; sets: number }[] = [];
@@ -578,12 +611,20 @@ async function applyEmptyWorkout(tx: Tx, a: MergeApply, sameAs: Map<string, stri
     if (row) items.push({ id: row.id, sets: r.sets });
   }
   const parsed = parseRemembered(serializeRemembered({ items, at: a.editedAt }));
-  if (!parsed) return 'ok';
+  if (!parsed) {
+    console.warn(`[cloud copy] the last empty workout has none of this phone's exercises (${refs.length} in the copy): left out, the copy keeps it`);
+    return 'skip';
+  }
   await tx.runAsync(
     `INSERT INTO meta(key, value) VALUES(?, ?)
      ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
     [LAST_EMPTY_KEY, serializeRemembered(parsed)],
   );
+  const mine = emptyWorkoutItem(parsed, await refMap(tx));
+  if (mine) localHash.set(`p:${EMPTY_WORKOUT_ID}`, mine.hash);
+  if (parsed.items.length < refs.length) {
+    console.warn(`[cloud copy] the last empty workout: ${parsed.items.length} of ${refs.length} exercises are on this phone; the copy keeps all ${refs.length}`);
+  }
   return 'ok';
 }
 

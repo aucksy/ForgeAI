@@ -88,6 +88,12 @@ class MainActivity : ComponentActivity() {
   /** R-442: the last tap, crown turn, button or wrist raise (the dim wait starts from it). */
   private var inputAt by mutableLongStateOf(0L)
 
+  /**
+   * Battery guard: why the screen is let go although the workout would have it held ("idle": no input for
+   * [SelfDim.IDLE_RELEASE_MS]; "paused": the phone's workout timer is paused); null = not let go.
+   */
+  private var released: String? = null
+
   /** R-442: the tap that woke the dimmed screen is eaten to its end (it never presses a button). */
   private var swallowTouch = false
   private val wrist = SelfDim.Wrist()
@@ -157,8 +163,16 @@ class MainActivity : ComponentActivity() {
       val dimmed = ambient || selfDim
       // R-442: is the app to keep the screen on and dim it itself? Checked when the screen or the workout
       // changes, then every few seconds while a workout is up (it may end by the phone's silence alone).
-      LaunchedEffect(onScreen, snap.workoutActive) {
-        refreshSelfDim("state")
+      // Battery guard: a pause on the phone lets the screen go; the workout resumed holds it again (a fresh
+      // start for the idle wait: the member was busy on the phone).
+      val paused = WatchCopy.paused(snap.text)
+      LaunchedEffect(onScreen, snap.workoutActive, paused) {
+        if (!paused && released == "paused") {
+          inputAt = System.currentTimeMillis()
+          refreshSelfDim("resume")
+        } else {
+          refreshSelfDim("state")
+        }
         while (onScreen && (snap.workoutActive || selfDimOn)) {
           delay(SelfDim.RECHECK_MS)
           refreshSelfDim("check")
@@ -419,6 +433,9 @@ class MainActivity : ComponentActivity() {
     WatchSync.refresh(this)
     hrAllowed = hasHeartPermission()
     afterNotificationChange()
+    // Battery guard: coming on screen (the watch's own wake, tilt-to-wake or a tap, after a let-go screen)
+    // is a fresh look: the idle wait starts here, before anything checks it.
+    inputAt = System.currentTimeMillis()
     onScreen = true
     visible = true
     // The app is open: a "Workout started" card has done its job.
@@ -513,30 +530,71 @@ class MainActivity : ComponentActivity() {
 
   /** Turns the app's own dimming on or off to match the workout, the screen and the watch's settings. */
   private fun refreshSelfDim(why: String) {
-    val want = SelfDim.wanted(
+    val mode = SelfDim.wanted(
       workoutOpen = WatchState.workoutOpen(this),
       onScreen = onScreen,
       aodOn = SelfDim.aodOn(this),
       saverOn = SelfDim.saverOn(this),
       blackedOut = blackedWorkout >= 0 && blackedWorkout == AmbientDiag.workoutCount,
     )
-    if (want == selfDimOn) return
-    selfDimOn = want
-    try {
-      if (want) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        inputAt = System.currentTimeMillis()
-        startWrist()
-      } else {
-        // The workout ended (or Always-on came back): the screen is let go. Left dimmed, the watch's own
-        // timeout now turns it off; a touch makes it bright first.
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        stopWrist()
-      }
-    } catch (e: Exception) {
-      Log.w("ForgeWear", "self dim not switched", e)
+    // Battery guard: held only while someone uses the watch and the workout is not paused on the phone.
+    val rel = if (mode) {
+      SelfDim.releaseWhy(
+        now = System.currentTimeMillis(),
+        inputAt = inputAt,
+        paused = WatchCopy.paused(WatchState.snapshot.text),
+        idleMs = idleReleaseMs(),
+      )
+    } else {
+      null
     }
-    AmbientDiag.note(this, if (want) "self-dim-on" else "self-dim-off", "$why ${AmbientDiag.state(this)}")
+    val want = mode && rel == null
+    // A new reason to let go is written in the diary even when the screen was not held (a workout that came
+    // up already paused shows "self-dim-off paused", so a black screen there is explained).
+    val newlyReleased = rel != null && rel != released
+    released = rel
+    if (want == selfDimOn && !newlyReleased) return
+    if (want != selfDimOn) {
+      selfDimOn = want
+      try {
+        if (want) {
+          window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+          inputAt = System.currentTimeMillis()
+          startWrist()
+        } else {
+          // The workout ended, was paused or nobody used the watch for 12 minutes (or Always-on came back):
+          // the screen is let go. Left dimmed, the watch's own timeout now turns it off; a touch makes it
+          // bright first (and, after "idle", holds it again).
+          window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+          stopWrist()
+        }
+      } catch (e: Exception) {
+        Log.w("ForgeWear", "self dim not switched", e)
+      }
+    }
+    AmbientDiag.note(this, if (want) "self-dim-on" else "self-dim-off", "${rel ?: why} ${AmbientDiag.state(this)}")
+  }
+
+  /**
+   * Battery guard: the idle wait ([SelfDim.IDLE_RELEASE_MS]); the cloud watch check shortens it with the QA key,
+   * which counts only on a test build of the watch's system (never on a member's watch).
+   */
+  private fun idleReleaseMs(): Long {
+    val qa = try {
+      prefs().getLong(SelfDim.QA_IDLE_KEY, 0L)
+    } catch (e: Exception) {
+      0L
+    }
+    return SelfDim.idleReleaseMs(qa, testOs = Build.TYPE != "user")
+  }
+
+  /**
+   * A tap, crown turn, button or wrist raise: the dim wait and the idle wait start over. After an "idle"
+   * let-go the screen is held again ([why] names the input in the diary's self-dim-on line).
+   */
+  private fun input(why: String) {
+    inputAt = System.currentTimeMillis()
+    if (released == "idle") refreshSelfDim(why)
   }
 
   /** Dims the screen (the app's own dim state): lowest brightness, the dim screens. */
@@ -549,7 +607,7 @@ class MainActivity : ComponentActivity() {
 
   /** Bright again (a tap, the crown, a wrist raise), and the dim wait starts over. */
   private fun brighten(why: String) {
-    inputAt = System.currentTimeMillis()
+    input(why)
     if (!selfDim) return
     selfDim = false
     setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
@@ -576,7 +634,8 @@ class MainActivity : ComponentActivity() {
       override fun onSensorChanged(e: SensorEvent) {
         if (e.values.size < 3) return
         when (wrist.feed(e.values[2], SystemClock.elapsedRealtime())) {
-          SelfDim.Wrist.Move.RAISED -> if (selfDim) brighten("wrist-up")
+          // A raise is an input: bright again when dimmed; the idle wait starts over either way.
+          SelfDim.Wrist.Move.RAISED -> if (selfDim) brighten("wrist-up") else input("wrist-up")
           SelfDim.Wrist.Move.LOWERED ->
             if (System.currentTimeMillis() - inputAt > SelfDim.QUIET_AFTER_INPUT_MS) dimNow("wrist-down")
           SelfDim.Wrist.Move.NONE -> Unit
@@ -635,7 +694,8 @@ class MainActivity : ComponentActivity() {
       }
       return true
     }
-    if (selfDimOn && ev.actionMasked == MotionEvent.ACTION_DOWN) inputAt = System.currentTimeMillis()
+    // Battery guard: a touch also holds a let-go ("idle") screen again.
+    if ((selfDimOn || released != null) && ev.actionMasked == MotionEvent.ACTION_DOWN) input("touch")
     return super.dispatchTouchEvent(ev)
   }
 
@@ -645,12 +705,12 @@ class MainActivity : ComponentActivity() {
       brighten("crown")
       return true
     }
-    if (selfDimOn) inputAt = System.currentTimeMillis()
+    if (selfDimOn || released != null) input("crown")
     return super.dispatchGenericMotionEvent(ev)
   }
 
   override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-    if (selfDim || selfDimOn) brighten("key")
+    if (selfDim || selfDimOn || released != null) brighten("key")
     return super.dispatchKeyEvent(event)
   }
 

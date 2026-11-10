@@ -19,6 +19,7 @@ import {
   qaWatchRead,
   readSnooze,
   shortVersion,
+  snoozeMark,
   snoozed,
   stepAfter,
   stepWords,
@@ -73,6 +74,43 @@ describe('cardShows', () => {
 
   it('a clock set back asks rather than blocking for ever', () => {
     expect(snoozed({ version: '0.77.0', at: NOW }, '0.77.0', NOW - 1000)).toBe(false);
+  });
+});
+
+// R-444 (fresh-eyes review): Play may have no watch build for this member (the watch went only to the
+// internal track), so after "Update on watch" the watch stays old. Asking every day would nag.
+describe('after "Update on watch" (R-444)', () => {
+  const tapped = snoozeMark('0.77.0', NOW, true);
+
+  it('never asks again for the same phone version, even days later with the watch still old', () => {
+    expect(tapped).toEqual({ version: '0.77.0', at: NOW, tapped: true });
+    for (const later of [60_000, SNOOZE_MS, 30 * SNOOZE_MS]) expect(cardShows({ ...due, snooze: tapped, now: NOW + later })).toBe(false);
+  });
+
+  it('a NEWER phone version asks once more', () => {
+    expect(cardShows({ ...due, phoneVersion: '0.78.0', snooze: tapped, now: NOW + 1000 })).toBe(true);
+  });
+
+  it('a clock set back does not bring it back either', () => {
+    expect(snoozed(tapped, '0.77.0', NOW - SNOOZE_MS)).toBe(true);
+  });
+
+  it('plain "Later" (no tap) still asks again after 24 hours (regression)', () => {
+    const later = snoozeMark('0.77.0', NOW, false);
+    expect(later).toEqual({ version: '0.77.0', at: NOW });
+    expect(cardShows({ ...due, snooze: later, now: NOW + SNOOZE_MS })).toBe(true);
+  });
+
+  it('the stored mark keeps "tapped" through a restart; anything else is not tapped', () => {
+    expect(readSnooze(JSON.stringify(tapped))).toEqual(tapped);
+    expect(readSnooze(JSON.stringify({ version: '0.77.0', at: NOW, tapped: 'yes' }))).toEqual({ version: '0.77.0', at: NOW });
+  });
+
+  it('the pop-up saves the mark at the tap and on "Got it" after it (read as text)', () => {
+    const src = readFileSync(resolve(__dirname, '../../src/components/WatchUpdatePrompt.tsx'), 'utf8');
+    expect(src).toMatch(/const tapped = step !== 'offer'/);
+    expect(src).toMatch(/snoozeWatchCard\(phoneVersion, now, tapped\)/);
+    expect(src).toMatch(/setBusy\(true\);[\s\S]{0,200}snoozeWatchCard\(phoneVersion, Date\.now\(\), true\)/);
   });
 });
 

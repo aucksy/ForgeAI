@@ -13,7 +13,9 @@
 #
 # Required (exit 1 if not): C-aod-off (control: Always-on really off here), D-keep, D-timeout, D-touch,
 # D-tap-safe, D-wrist-down, D-wrist-up, D-rest-end, D-leave, D-setting, D-saver (when the emulator enters
-# Battery Saver; INFO when it cannot), D-end, D-no-workout.
+# Battery Saver; INFO when it cannot), D-end, D-no-workout, and the battery guard: D-idle, D-idle-touch,
+# D-idle-off, D-idle-wake (no input for the idle wait lets the screen go; QA-only key shortens 12 min to 40 s),
+# D-paused, D-paused-resume (a workout paused on the phone never holds the screen).
 #
 # Usage: watch_dim_aod_off_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -123,19 +125,24 @@ write_prefs() { # file-on-host name
   adb push "$1" "/data/local/tmp/$2" >/dev/null
   adb shell "cp /data/local/tmp/$2 $DATA/shared_prefs/$2 && chown $OWNER $DATA/shared_prefs/$2 && chmod 660 $DATA/shared_prefs/$2 && chcon $CTX $DATA/shared_prefs/$2"
 }
-cat > /tmp/forgeai_watch_ui.xml <<EOF
-<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
-<map>
-    <boolean name="askedHr" value="true" />
-    <boolean name="askedNotif" value="true" />
-    <boolean name="askedExact" value="true" />
-</map>
-EOF
-write_prefs /tmp/forgeai_watch_ui.xml forgeai_watch_ui.xml
+ui_prefs() { # [qa-idle-ms]: the first-launch screens answered; + the QA-only short idle wait (SelfDim.QA_IDLE_KEY)
+  {
+    echo "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>"
+    echo "<map>"
+    echo "    <boolean name=\"askedHr\" value=\"true\" />"
+    echo "    <boolean name=\"askedNotif\" value=\"true\" />"
+    echo "    <boolean name=\"askedExact\" value=\"true\" />"
+    if [ -n "${1:-}" ]; then echo "    <long name=\"qaIdleReleaseMs\" value=\"$1\" />"; fi
+    echo "</map>"
+  } > /tmp/forgeai_watch_ui.xml
+  write_prefs /tmp/forgeai_watch_ui.xml forgeai_watch_ui.xml
+}
+ui_prefs
 
 now_ms() { echo $(( $(adb shell date +%s | tr -d '\r') * 1000 )); }
 # The saved workout (as the phone's message leaves it). $1 rest end ms (0 = none); $2 when the phone last
-# spoke (ms); $3 "log" = the watch-logging screens (the rest has a Skip button), else the glance screens.
+# spoke (ms); $3 "log" = the watch-logging screens (the rest has a Skip button), else the glance screens;
+# $4 the phone's set line (default "Set 3 of 4"; "Paused · ..." = the workout timer paused on the phone).
 workout_state() {
   local now
   now="$(now_ms)"
@@ -147,7 +154,7 @@ workout_state() {
     echo "    <long name=\"workoutSeq\" value=\"1\" />"
     echo "    <long name=\"restSeq\" value=\"1\" />"
     echo "    <string name=\"title\">Bench Press</string>"
-    echo "    <string name=\"text\">Set 3 of 4</string>"
+    echo "    <string name=\"text\">${4:-Set 3 of 4}</string>"
     echo "    <string name=\"done\"></string>"
     echo "    <string name=\"set\">Set 3 of 4</string>"
     echo "    <string name=\"last\">60 kg × 8</string>"
@@ -167,10 +174,10 @@ workout_state() {
   write_prefs /tmp/forgeai_watch.xml forgeai_watch.xml
 }
 rest_saved() { if adb shell cat $DATA/shared_prefs/forgeai_watch.xml 2>/dev/null | grep -q 'name="endsAt"'; then echo 1; else echo 0; fi; }
-fresh_workout() { # rest-end-ms workoutAt-ms [log]
+fresh_workout() { # rest-end-ms workoutAt-ms [log] [set line]
   adb shell am force-stop $PKG
   sleep 1
-  workout_state "$1" "$2" "${3:-}"
+  workout_state "$1" "$2" "${3:-}" "${4:-}"
   face_up
   bring_app
 }
@@ -413,6 +420,137 @@ if [ "$KN" = "0" ] && [ "$WN" != "Awake" ] && [ "$DN" = "1" ]; then
   result D-no-workout PASS "no workout: no keep-on, the screen turned fully off by the 15 s timeout (power $WN)"
 else
   result D-no-workout FAIL "no workout: keep=$KN, after 22 s power=$WN black=$DN"
+fi
+
+# ---- D-idle: battery guard. A workout left open with nobody using the watch (walked away, forgot to finish):
+# after the idle wait (12 min on a member's watch) the screen is let go: no keep-screen-on, wrist sensor
+# stopped, and the watch's own timeout turns it fully off. A tap holds it again; so does the watch's own wake.
+# The emulator cannot wait 12 real minutes, so the QA-only key qaIdleReleaseMs (app-private preferences, only
+# adb root can write it; the app honours it only on a test system build, ro.build.type not "user") makes it
+# 40 s. The watch's screen timeout is 90 s here (the dim wait is capped at 30 s), so the screen is still on
+# when the let-go happens and a tap can be tried before the watch turns it off.
+set_timeout() { # ms
+  local i to=""
+  for i in 1 2 3 4 5; do
+    adb shell settings put system screen_off_timeout "$1" || true
+    sleep 1
+    to="$(adb shell dumpsys power 2>/dev/null | tr -d '\r' | grep -oE 'mScreenOffTimeoutSetting=[0-9]+' | head -1)"
+    [ "$to" = "mScreenOffTimeoutSetting=$1" ] && break
+  done
+  echo "$to"
+}
+mine_sensors() { adb shell dumpsys sensorservice 2>/dev/null | tr -d '\r' | grep -c "$PKG" || true; }
+log "D-idle"
+BTYPE="$(adb shell getprop ro.build.type | tr -d '\r')"
+adb shell am force-stop $PKG
+sleep 1
+ui_prefs 40000
+adb shell input keyevent KEYCODE_WAKEUP
+TO="$(set_timeout 90000)"
+result D-idle-setup INFO "system build type $BTYPE (the QA idle key counts only when not \"user\"); screen timeout: $TO; QA idle wait 40 s"
+NOW="$(now_ms)"
+fresh_workout $((NOW + 25 * 60 * 1000)) $((NOW - 60000))
+sleep 3
+K0="$(keep_on)"
+S0="$(mine_sensors)"
+B="$(count 'self-dim-off idle')"
+G="$(wait_for 'self-dim-off idle' "$B" 75)"
+KI="$(keep_on)"
+WI0="$(awake)"
+shot "D-idle-let-go"
+if [ "$K0" = "1" ] && [ "$G" = "1" ] && [ "$KI" = "0" ]; then
+  result D-idle PASS "nobody used the watch for the idle wait: screen let go (diary self-dim-off idle, KEEP_SCREEN_ON cleared; it was held before)"
+else
+  result D-idle FAIL "idle wait: held before=$K0, self-dim-off idle=$G, KEEP_SCREEN_ON after=$KI ($(diag | tail -3 | tr '\n' ' '))"
+fi
+result D-idle-sensor INFO "MettleUp lines in dumpsys sensorservice: $S0 while held -> $(mine_sensors) after the let-go (wrist sensor stopped)"
+# A tap on the (still dimmed) let-go screen holds it again, before the watch's 90 s timeout turns it off.
+SIZE="$(adb shell wm size | tr -d '\r' | grep -oE '[0-9]+x[0-9]+' | tail -1)"
+WPX="${SIZE%x*}"
+B="$(count 'self-dim-on touch')"
+adb shell input tap $((WPX / 2)) $((WPX / 2))
+GT="$(wait_for 'self-dim-on touch' "$B" 4)"
+KT="$(keep_on)"
+shot "D-idle-touch"
+if [ "$WI0" = "Awake" ] && [ "$GT" = "1" ] && [ "$KT" = "1" ]; then
+  result D-idle-touch PASS "a tap on the let-go screen held it again (diary self-dim-on touch, KEEP_SCREEN_ON back)"
+elif [ "$WI0" != "Awake" ]; then
+  result D-idle-touch FAIL "the screen was already off ($WI0) right after the let-go: the tap could not be tried (watch timeout $TO)"
+else
+  result D-idle-touch FAIL "tap after the let-go: self-dim-on touch=$GT, KEEP_SCREEN_ON=$KT"
+fi
+# Untouched again: let go again, then the watch's own 90 s timeout (from the tap) turns the screen fully off.
+B="$(count 'self-dim-off idle')"
+G2="$(wait_for 'self-dim-off idle' "$B" 60)"
+for i in $(seq 1 70); do
+  [ "$(awake)" != "Awake" ] && break
+  sleep 1
+done
+sleep 3
+shot "D-idle-off"
+WI="$(awake)"
+DI="$(dark "$OUT/shots/D-idle-off.png")"
+if [ "$G2" = "1" ] && [ "$(keep_on)" = "0" ] && [ "$WI" != "Awake" ] && [ "$DI" = "1" ]; then
+  result D-idle-off PASS "let go again after the idle wait, and the watch's own timeout turned the screen fully off (power $WI, black)"
+else
+  result D-idle-off FAIL "second let-go: self-dim-off idle=$G2, keep=$(keep_on); then power=$WI black=$DI"
+fi
+# The watch's own wake (tilt-to-wake, a tap on the black screen): MettleUp comes back and holds the screen again.
+B="$(count 'self-dim-on (resume|state)')"
+adb shell input keyevent KEYCODE_WAKEUP
+GW="$(wait_for 'self-dim-on (resume|state)' "$B" 6)"
+if [ "$GW" = "0" ]; then
+  result D-idle-wake-front INFO "MettleUp not back by itself after the wake (front: $(front)); opened"
+  bring_app
+  GW="$(wait_for 'self-dim-on (resume|state)' "$B" 6)"
+fi
+sleep 1
+KW="$(keep_on)"
+shot "D-idle-woken"
+DW="$(dark "$OUT/shots/D-idle-woken.png")"
+if [ "$GW" = "1" ] && [ "$KW" = "1" ] && [ "$(awake)" = "Awake" ] && [ "$DW" = "0" ]; then
+  result D-idle-wake PASS "the watch's wake brought MettleUp back and it holds the screen again (diary self-dim-on, KEEP_SCREEN_ON)"
+else
+  result D-idle-wake FAIL "after the wake: self-dim-on=$GW, KEEP_SCREEN_ON=$KW, power=$(awake), black=$DW, front: $(front)"
+fi
+adb shell am force-stop $PKG
+sleep 1
+ui_prefs
+TO="$(set_timeout 15000)"
+result D-idle-restore INFO "QA idle key removed; screen timeout: $TO"
+
+# ---- D-paused: the workout timer is paused on the phone: the app never holds the screen; it turns fully off by
+# the watch's 15 s timeout (negative), and the diary says why (self-dim-off paused). ----
+log "D-paused"
+NOW="$(now_ms)"
+B="$(count 'self-dim-off paused')"
+BON="$(count 'self-dim-on')"
+fresh_workout 0 $((NOW - 60000)) "" "Paused · Set 3 of 4"
+G="$(wait_for 'self-dim-off paused' "$B" 8)"
+KP="$(keep_on)"
+shot "D-paused-open"
+sleep 20
+shot "D-paused-off"
+WP="$(awake)"
+DP="$(dark "$OUT/shots/D-paused-off.png")"
+ONP="$(count 'self-dim-on')"
+if [ "$G" = "1" ] && [ "$KP" = "0" ] && [ "$ONP" = "$BON" ] && [ "$WP" != "Awake" ] && [ "$DP" = "1" ]; then
+  result D-paused PASS "paused workout: never held (diary self-dim-off paused, no keep-on), fully off by the watch's timeout (power $WP)"
+else
+  result D-paused FAIL "paused workout: self-dim-off paused=$G, keep=$KP, self-dim-on $BON -> $ONP, after 20 s power=$WP black=$DP"
+fi
+# Resumed on the phone (its next message drops "Paused · "; the emulator has no phone, so the app is reopened
+# on that state): held again. The live switch (LaunchedEffect on the paused line) is covered by SelfDimTest.
+B="$(count 'self-dim-on (resume|state)')"
+NOW="$(now_ms)"
+fresh_workout 0 $((NOW - 60000))
+G="$(wait_for 'self-dim-on (resume|state)' "$B" 8)"
+KR="$(keep_on)"
+shot "D-paused-resumed"
+if [ "$G" = "1" ] && [ "$KR" = "1" ]; then
+  result D-paused-resume PASS "workout no longer paused: MettleUp holds the screen again (self-dim-on, KEEP_SCREEN_ON)"
+else
+  result D-paused-resume FAIL "not paused any more: self-dim-on=$G, KEEP_SCREEN_ON=$KR"
 fi
 
 adb shell dumpsys power 2>/dev/null | tr -d '\r' > "$OUT/power-end.txt" || true

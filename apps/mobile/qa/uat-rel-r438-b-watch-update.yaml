@@ -1,6 +1,7 @@
 # R-438 flow b: the phone clock is 25 hours on from flow a's "Later" (run-device-qa.sh part_u438), so the
 # next app open asks again. Then each answer to "Update on watch": opened ("Check your watch" + the drawn
 # watch's Update button), failed (the search-for-it fallback), no watch; Try again; and never in a workout.
+# R-444: after "Update on watch" it never asks again for the same phone version (watch=forget resets it).
 appId: com.mettleup.app
 ---
 - stopApp
@@ -23,6 +24,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     notVisible: "Check your watch"
     timeout: 10000
+# R-444 (negative): after "Update on watch" + "Got it" the watch is still old (Play may have no watch
+# update for this member), yet the next app open does NOT ask again for this phone version.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Your watch app has an update"
+    timeout: 15000
+    optional: true
+- assertNotVisible: "Your watch app has an update"
+- takeScreenshot: rel-r444-01-no-ask-after-update-tap
 # ---------------------------------------------------------------- 3. negative: it did not open on the watch
 - openLink: "mettleup://qa-update?watchtap=failed&watch=forget"
 - extendedWaitUntil:

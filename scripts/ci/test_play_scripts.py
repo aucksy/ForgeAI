@@ -184,14 +184,64 @@ class WearTracks(unittest.TestCase):
     def test_watch_version_code(self):
         self.assertEqual(pu.wear_version_code_for("0.60.0"), 1_000_060_000)
 
-    def test_workflow_uploads_the_watch_bundle_to_wear_internal_only(self):
+    def test_workflow_uploads_the_watch_bundle_to_the_phones_testing_tracks(self):
+        # R-444: the watch goes to the same tracks as the phone (internal + closed), never open testing or production.
         with open(os.path.join(ROOT, ".github", "workflows", "play-upload.yml"), encoding="utf-8") as f:
             wf = f.read()
         self.assertIn('--pattern "mettleup-$TAG-wear.aab"', wf)
         self.assertIn("--wear", wf)
-        self.assertIn("--tracks wear:internal", wf)
+        self.assertIn("--tracks wear:internal,wear:closed)", wf)
+        self.assertIn("--tracks internal,alpha)", wf)
         self.assertNotIn("wear:qa", wf)
         self.assertNotIn("wear:production", wf)
+        self.assertNotIn("--tracks wear:beta", wf)
+
+
+class WearClosedTrack(unittest.TestCase):
+    """R-444: 'wear:closed' becomes the Wear OS closed testing track Play lists (custom name), or is dropped."""
+
+    def test_the_stand_in_passes_the_watch_check_and_never_the_phone_one(self):
+        self.assertEqual(pu.check_tracks(["wear:internal", pu.WEAR_CLOSED], wear=True), ["wear:internal", "wear:closed"])
+        with self.assertRaises(ValueError):
+            pu.check_tracks(["internal", pu.WEAR_CLOSED], wear=False)
+
+    def test_named_like_the_phones_closed_track_wins(self):
+        listed = ["internal", "alpha", "wear:internal", "wear:beta", "wear:production", "wear:friends", "wear:alpha"]
+        self.assertEqual(pu.wear_closed_track(listed)[0], "wear:alpha")
+
+    def test_the_only_custom_wear_track(self):
+        self.assertEqual(pu.wear_closed_track(["alpha", "wear:internal", "wear:closed-testing"])[0], "wear:closed-testing")
+
+    def test_none_on_play_is_a_warning_and_internal_still_goes(self):
+        listed = ["internal", "alpha", "production", "wear:internal", "wear:beta", "wear:production"]
+        real, why = pu.wear_closed_track(listed)
+        self.assertIsNone(real)
+        self.assertIn("no Wear OS closed testing track", why)
+        tracks, closed, note = pu.resolve_tracks(["wear:internal", "wear:closed"], listed)
+        self.assertEqual(tracks, ["wear:internal"])
+        self.assertEqual(note, why)
+        self.assertEqual(closed, {pu.CLOSED})
+
+    def test_several_unnamed_is_not_guessed(self):
+        real, why = pu.wear_closed_track(["wear:a", "wear:b", "wear:internal"])
+        self.assertIsNone(real)
+        self.assertIn("not guessing", why)
+
+    def test_never_open_testing_internal_or_production(self):
+        for name in ("wear:beta", "wear:internal", "wear:production", "wear:qa", "alpha", "internal", "production"):
+            self.assertFalse(pu.is_wear_closed(name), name)
+            self.assertIsNone(pu.wear_closed_track([name])[0], name)
+
+    def test_resolved_track_is_closed_and_order_kept(self):
+        tracks, closed, note = pu.resolve_tracks(["wear:internal", "wear:closed"], ["wear:internal", "wear:alpha"])
+        self.assertEqual(tracks, ["wear:internal", "wear:alpha"])
+        self.assertIn("wear:alpha", closed)
+        self.assertIsNone(note)
+
+    def test_the_watch_run_defaults_to_both(self):
+        with open(os.path.join(ROOT, "scripts", "ci", "play_upload.py"), encoding="utf-8") as f:
+            src = f.read()
+        self.assertIn('default_tracks = f"{WEAR_INTERNAL},{WEAR_CLOSED}" if a.wear', src)
 
 
 class ReviewRefusals(unittest.TestCase):

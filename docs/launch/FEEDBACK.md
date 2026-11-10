@@ -27,6 +27,10 @@
   of dim, Battery Saver / always-on causes, dims, rebuilds, the last Battery Saver and always-on values, a
   legend), then the newest lines by day (focus/pause lines dropped first). Only known events and settings;
   no watch name, workout, heart rate or gym code.
+- **R-444: two kinds of dim.** "Dimmed by the watch" (DIM/undim) is the watch's own dim state, used only
+  with Always-on display ON. With Always-on OFF the app dims itself (R-442): ADIM/aundim lines, and
+  hold/letgo when it keeps the screen on or lets go, each with why (letgo idle = 12 minutes untouched,
+  letgo paused = workout paused). So "Dimmed by the watch: 0" with ADIM lines is normal for Always-on off.
 - **Where it lands:** its own row in the same `feedback` table (no server or database change): source
   `member`, screen `watch-diary`, same `sender` as the message sent a few seconds before it.
 - **How Claude reads it:** `python scripts/feedback.py watch [N]` (newest N logs, default 5). The member's

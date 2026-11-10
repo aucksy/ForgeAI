@@ -66,7 +66,18 @@ const EVENTS: Record<string, string> = {
   focus: 'focus',
   'focus-lost': 'unfocus',
   'new-intent': 'intent',
+  // R-442/R-444: with Always-on display OFF the app keeps the screen on and dims it itself.
+  'self-dim-on': 'hold',
+  'self-dim-off': 'letgo',
+  'self-dim-enter': 'ADIM',
+  'self-dim-exit': 'aundim',
 };
+
+/** R-444: the app's own dim lines (self-dim-*), whose first word says why (MainActivity: refreshSelfDim, dimNow, brighten, input). */
+const SELF_DIM = new Set(['hold', 'letgo', 'ADIM', 'aundim']);
+
+/** The only "why" words a self-dim line may carry: what happened, never anything the member typed. */
+const SELF_DIM_WHY = new Set(['stop', 'state', 'check', 'resume', 'setting', 'idle', 'paused', 'touch', 'crown', 'key', 'wrist-up', 'wrist-down', 'timeout']);
 
 /** Events dropped first when the log is too long (they say least about a black screen). */
 const MINOR = new Set(['focus', 'unfocus', 'pause', 'intent']);
@@ -104,7 +115,7 @@ export function compactLine(line: string): { day: string; event: string; text: s
     for (const token of m[4].split(/\s+/)) {
       const eq = token.indexOf('=');
       if (eq < 0) {
-        if (WORDS.has(token) || /^\d{1,2}$/.test(token)) parts.push(token);
+        if (WORDS.has(token) || /^\d{1,2}$/.test(token) || (SELF_DIM.has(event) && SELF_DIM_WHY.has(token))) parts.push(token);
         continue;
       }
       const key = KEYS[token.slice(0, eq)];
@@ -145,14 +156,20 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX)
   const saver = stops.filter((l) => l.text.includes('cause=saver')).length;
   const aodOff = stops.filter((l) => l.text.includes('cause=aod-off')).length;
   const dims = lines.filter((l) => l.event === 'DIM').length;
+  // R-444: with Always-on OFF the watch never dims (Dim stays 0); the app's own dim is counted apart.
+  const selfDims = lines.filter((l) => l.event === 'ADIM').length;
+  const holds = lines.filter((l) => l.event === 'hold').length;
+  const letGo = lines.filter((l) => l.event === 'letgo');
+  const idle = letGo.filter((l) => / idle( |$)/.test(l.text)).length;
+  const paused = letGo.filter((l) => / paused( |$)/.test(l.text)).length;
   const rebuilds = lines.filter((l) => l.event === 'REBUILD').length;
   const lastState = [...lines].reverse().find((l) => / bs[01?]/.test(l.text));
   const bs = lastState ? (/ (bs[01?])/.exec(lastState.text)?.[1] ?? '') : '';
   const aod = lastState ? (/ (aod[0-9?/-]+)/.exec(lastState.text)?.[1] ?? '') : '';
   const head = [
     `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.`,
-    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}). Dim: ${dims}. Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
-    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo off instead of dim. Times are the watch clock.',
+    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}, paused ${paused}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
+    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo off instead of dim; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why). Times are the watch clock.',
   ].join('\n');
 
   const budget = max - head.length - 1;

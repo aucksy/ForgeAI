@@ -124,7 +124,12 @@ jobs:
       # the bundle) turns this job RED with an error annotation so it is never missed; the phone's tracks
       # were committed by the step above in their own edit and stay out. Track name: Play's own list for
       # this app shows "wear:internal"; Google's docs say "qa" but Play answered "Track not found" (v0.60.0).
-      - name: Upload the watch app to Play (Wear OS internal testing)
+      # R-444 (10 Nov 2026): also the Wear OS CLOSED testing track, the same tracks as the phone (internal +
+      # closed), so a member on the phone's closed test gets the watch build too and the phone's "Your watch
+      # app has an update" card has something to point at. "wear:closed" is resolved by play_upload.py to the
+      # Wear OS closed track Play lists ("wear:alpha", else the only custom one); none on Play = a warning
+      # annotation and wear:internal still goes out. Never production, never open testing (wear:beta).
+      - name: Upload the watch app to Play (Wear OS internal + closed testing)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -138,6 +143,6 @@ jobs:
           fi
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "mettleup-$TAG-wear.aab" --dir "$RUNNER_TEMP/wear-aab"
           ls -la "$RUNNER_TEMP/wear-aab"
-          ARGS=(--wear --tag "$TAG" --aab "$RUNNER_TEMP/wear-aab/$WEAR_AAB" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks wear:internal)
+          ARGS=(--wear --tag "$TAG" --aab "$RUNNER_TEMP/wear-aab/$WEAR_AAB" --whats-new "$RUNNER_TEMP/whatsNew.ts" --tracks wear:internal,wear:closed)
           if [ "$DRY_RUN" = true ]; then ARGS+=(--dry-run); fi
           python scripts/ci/play_upload.py "${ARGS[@]}" || { echo "::error title=Watch app not on Play::The watch bundle did not reach Play's Wear OS internal track wear:internal. The phone's tracks are already done and unaffected. See the log above."; exit 1; }

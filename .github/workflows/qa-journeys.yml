@@ -23,7 +23,9 @@ run-name: Cross-role journeys (owner phone, api 34)
 
 jobs:
   journeys:
-    runs-on: ubuntu-latest
+    # Pinned 10 Nov 2026 (R-444), like ci.yml's check job (056beba5): ubuntu-latest moved to 26.04, where
+    # "npx playwright install --with-deps chromium" (the admin app's browser, below) cannot install Chrome.
+    runs-on: ubuntu-24.04
     timeout-minutes: 150
     steps:
       - name: Checkout

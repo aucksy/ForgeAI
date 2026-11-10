@@ -49,7 +49,8 @@ export async function startShownWorkout(
   if (fresh) {
     if (routineId) await useActiveWorkout.getState().startFromPlanDay(routineId);
     // R-436: an empty workout starts with the exercises of the last one (none remembered: blank).
-    else await useActiveWorkout.getState().startEmptyRemembered();
+    // R-444: opened at once; the cards are filled after (not awaited; the fill never rejects).
+    else void useActiveWorkout.getState().startEmptyRemembered();
   }
   show();
 }

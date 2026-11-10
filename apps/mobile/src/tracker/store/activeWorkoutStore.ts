@@ -451,6 +451,8 @@ export interface ActiveWorkoutState {
    * their order (each with its number of sets, filled from last time like an added exercise). With
    * nothing remembered (or a failed read) it stays blank. The blank workout starts at once; the
    * cards follow when read.
+   * R-444: the workout is open when this RETURNS (synchronously; a failed start throws here). The
+   * promise is only the fill: callers open the screen without awaiting it. It never rejects.
    */
   startEmptyRemembered: () => Promise<void>;
   /** R-436 "Start blank": the pre-added cards without a ticked set go; the line goes. */
@@ -1886,7 +1888,10 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
       persistNow();
     },
 
-    startEmptyRemembered: async () => {
+    startEmptyRemembered: () => {
+      // R-444 (fresh-eyes review): NOT async. The blank workout starts here, synchronously, so the caller
+      // opens the workout screen at once; the cards are filled after (the returned promise). Before, Start
+      // waited for every card's last-time facts, which on a long history held the screen back.
       get().startEmpty();
       const started = get().startedAt;
       // Still the blank workout just started (nothing added, not replaced, not finished)?
@@ -1894,7 +1899,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         const s = get();
         return s.active && s.startedEmpty && s.startedAt === started && s.exercises.length === 0 && !isCorrecting(s) && !s.committing;
       };
-      try {
+      // The cards, after: every read checks first that the member has not acted (added, left, finished).
+      const fill = async (): Promise<void> => {
         const saved = await readRemembered();
         if (!saved || !untouched()) return;
         const have = await getTrackerExercisesByIds(saved.items.map((i) => i.id));
@@ -1914,10 +1920,11 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         if (!untouched()) return;
         set({ exercises: built, emptyPrefill: built.map((e) => e.key) });
         persistNow();
-      } catch (e) {
+      };
+      return fill().catch((e: unknown) => {
         // The workout stays blank; the member adds exercises as before.
         console.warn('[ForgeErr] The last empty workout could not be read, so this one starts blank.', e);
-      }
+      });
     },
 
     clearEmptyPrefill: () => {

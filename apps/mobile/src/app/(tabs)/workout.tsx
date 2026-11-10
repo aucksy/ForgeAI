@@ -330,7 +330,8 @@ export default function WorkoutScreen() {
       async () => {
         await hydrate();
         // R-436: with the exercises of the last empty workout (none remembered: blank).
-        if (!useActiveWorkout.getState().active) await startEmptyRemembered();
+        // R-444: the workout opens at once; its cards are filled after (never awaited here, never rejects).
+        if (!useActiveWorkout.getState().active) void startEmptyRemembered();
         goActive();
       },
       startFailed,
