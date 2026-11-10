@@ -12,7 +12,8 @@
 # The wrist is moved with the emulator's accelerometer (adb emu sensor set acceleration x:y:z).
 #
 # Required (exit 1 if not): C-aod-off (control: Always-on really off here), D-keep, D-timeout, D-touch,
-# D-tap-safe, D-wrist-down, D-wrist-up, D-rest-end, D-leave, D-setting, D-saver, D-end, D-no-workout.
+# D-tap-safe, D-wrist-down, D-wrist-up, D-rest-end, D-leave, D-setting, D-saver (when the emulator enters
+# Battery Saver; INFO when it cannot), D-end, D-no-workout.
 #
 # Usage: watch_dim_aod_off_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -351,17 +352,30 @@ else
 fi
 
 # ---- D-saver: Battery Saver on: the app leaves the screen to the watch (negative: no keep-on) ----
+# Run 42785832942: "cmd power set-mode 1" alone left the emulator out of Battery Saver (the app read saver=0),
+# so every way is tried, and the app's own reading (its resume line) decides whether the check can be judged.
 log "D-saver"
-adb shell cmd power set-mode 1 >/dev/null 2>&1 || adb shell settings put global low_power 1 >/dev/null 2>&1 || true
+adb shell cmd battery unplug >/dev/null 2>&1 || true
+adb shell settings put global low_power 1 >/dev/null 2>&1 || true
+adb shell cmd power set-mode 1 >/dev/null 2>&1 || true
+adb shell cmd power set-adaptive-power-saver-enabled true >/dev/null 2>&1 || true
+sleep 3
+adb shell input keyevent KEYCODE_HOME
+sleep 4
+bring_app
 sleep 7
 KS="$(keep_on)"
-SAVER="$(diag | grep -oE 'saver=[01?]' | tail -1)"
-if [ "$KS" = "0" ]; then
-  result D-saver PASS "Battery Saver on: no keep-screen-on ($SAVER); the watch saves its battery"
+SAVER="$(diag | grep -E ' resume ' | grep -oE 'saver=[01?]' | tail -1)"
+result D-saver-state INFO "low_power=$(adb shell settings get global low_power | tr -d '\r'); $(adb shell dumpsys power 2>/dev/null | tr -d '\r' | grep -m2 -oiE '(mIsPowerSaveMode|mBatterySaverEnabled|mLowPowerModeEnabled)[=:] ?[a-z]+' | tr '\n' ' '); app read $SAVER"
+if [ "$SAVER" = "saver=1" ] && [ "$KS" = "0" ]; then
+  result D-saver PASS "Battery Saver on: no keep-screen-on (the app read saver=1); the watch saves its battery"
+elif [ "$SAVER" = "saver=1" ]; then
+  result D-saver FAIL "Battery Saver on (the app read saver=1) but the screen is still held on"
 else
-  result D-saver FAIL "Battery Saver on but the screen is still held on ($SAVER)"
+  result D-saver INFO "this emulator did not enter Battery Saver ($SAVER): not judged here (SelfDimTest covers the rule)"
 fi
-adb shell cmd power set-mode 0 >/dev/null 2>&1 || adb shell settings put global low_power 0 >/dev/null 2>&1 || true
+adb shell settings put global low_power 0 >/dev/null 2>&1 || true
+adb shell cmd power set-mode 0 >/dev/null 2>&1 || true
 sleep 7
 result D-saver-off INFO "Battery Saver off again: keep-screen-on=$(keep_on)"
 
