@@ -3,68 +3,431 @@
 :root{color-scheme:light dark;--bg:#fff;--ink:#1b1f27;--muted:#5b6372;--line:#dde1e8;--accent:#c4501a}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1218;--ink:#e9ebf0;--muted:#a0a7b5;--line:#2c313b;--accent:#f08a4b}}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.6em}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.8em}h3{font-size:1rem;margin-top:1.4em}
 .t{overflow-x:auto}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 a{color:var(--accent)}nav{font-size:.9rem;color:var(--muted)}hr{border:0;border-top:1px solid var(--line);margin:40px 0}
-</style></head><body><main><nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a></nav>
+blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
+.sum{border-left:4px solid var(--accent);padding:4px 0 4px 14px}.sum li{margin:4px 0}.muted{color:var(--muted);font-size:.92rem}
+.toc{font-size:.92rem;columns:2;column-gap:24px;padding-left:20px}@media (max-width:520px){.toc{columns:1}}
+</style></head><body><main>
+<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/delete-account.html">Delete your account</a></nav>
 <h1>MettleUp privacy notice</h1>
-<p><strong>Who we are.</strong> MettleUp is a workout app for members and a desk app for gyms, run by Aakash Pahuja, Jaipur, India. <strong>Grievance Officer:</strong> Aakash Pahuja, contact@mettleup.fit. We reply within 30 days, usually within a week.</p>
-<h2>Who is responsible for what</h2>
-<ul><li><strong>Your gym's records about you</strong> (membership, payments, receipts, visits, shop orders, messages with the desk, body measurements your trainer takes at the gym, and diet plans your trainer sends you): your <strong>gym</strong> is responsible (its name and contact are in the app under Settings → Your gym, and at its desk). MettleUp stores and processes them for the gym, under a written agreement.</li><li><strong>Your MettleUp account and our technical logs:</strong> <strong>MettleUp</strong> is responsible.</li><li><strong>The workouts and measurements you log yourself</strong> (exercises, sets, weights, body weight, measurements, progress photos) stay <strong>on your phone</strong> unless you sign in with Google. Your gym does not see them, except the leaderboard numbers below.</li><li>If you are in a gym, the app sends your gym's leaderboard how many workouts you logged and how many kg you lifted on each of the last 31 days. Nothing else: no exercises, sets, weights of a lift, body weight or photos. Your gym's staff see these totals with your name, to run challenges and give rewards. Other members see your place only as "A member", unless you switch on "Show my name on my gym's leaderboard" (Settings → Your gym → What my gym can see); then they see your first name and the first letter of your last name. Your gym can hide you from the leaderboard. Your gym is responsible for its challenges and rewards; MettleUp keeps the numbers for the gym.</li><li>If you are in a gym, the app shows how busy your gym is right now and at each hour of a usual week. It is worked out from the check-in times your gym already keeps. Members see only how busy the whole gym is, never who checked in or when. A number of people is shown only when it is 5 or more.</li><li><strong>Only if you switch on "Let my gym mates see my workouts"</strong> (Settings → Your gym → What my gym can see; it is off unless you turn it on), the app sends your bio and a short summary of each of your workouts from the last 60 days (at most 30): its name, date, how long it took, kg lifted, and the best set of up to 8 exercises. Never your sets, body weight, photos, notes or mobile number. Members of your gym can open it from the leaderboard, only while your name shows there and your gym has not hidden you. Nobody outside your gym can see it, and your gym's staff have no screen for it. MettleUp keeps it for you, not for your gym.</li><li><strong>If you sign in with Google</strong>, MettleUp saves a copy of your workouts on our server so you can get them back on a new phone. <strong>MettleUp</strong> is responsible for that copy, not your gym. Only you can see it. See "Your saved workouts" below.</li><li>If you join your gym's workout offer, the app sends your gym only the dates of the workouts that count, and only while you are in the offer. Your gym is responsible for its offers and rewards; MettleUp keeps the dates for the gym.</li><li>Only while "Share my workouts with my trainers" is on (Settings → Your gym → What my gym can see; it is on unless you turn it off), the app sends your gym: how many workouts you did and how many kg you lifted each week for the last 12 weeks, your best lifts, your new heaviest weights, the day of your last workout, and up to 30 workouts from the last 3 months (each one's date, name, and each exercise's best set and number of sets). Never your body weight, photos, notes, food or mobile number. Your gym's owner and the trainer your gym gave you can see it, on your page in the gym's admin app; the front desk cannot, unless the owner made them a trainer. Turn the switch off and the gym's copy is deleted at once. The gym's copy is also deleted when you leave the gym, or when your app has not sent anything for 90 days. Your gym is responsible for how its staff use it; MettleUp keeps it for the gym.</li><li>If you use "Ask a trainer" (Gym tab), the app sends your question to your gym, with your name. Only the person you pick can read it and reply: a trainer, or the gym's owner. If you pick "Any trainer", every trainer and the owner can read it. The reply is kept with your question. Your gym keeps your questions and replies for up to 180 days, and deletes them when you leave the gym. You can take back a question that has no reply yet. Your gym is responsible for its replies; MettleUp keeps the questions for the gym.</li></ul>
-<h2>What we keep on our server, why, and for how long</h2>
-<div class="t"><table><thead><tr><th>Data</th><th>Why</th><th>How long</th></tr></thead><tbody><tr><td>When you join a gym in the app: your name, mobile number, the gym, the date you joined, when you last used the app, the date you left</td><td>So the gym knows who checked in, ordered or wrote</td><td>Until you leave the gym (your mobile number is then erased); the rest stays with the gym's records</td></tr><tr><td>Check-ins (date and time), shop orders, messages with the desk</td><td>To run your membership and the gym's shop, and to show members how busy the gym usually is (no names)</td><td>As long as the gym keeps its records</td></tr><tr><td>Body measurements your trainer takes at the gym (the date, body weight, body fat, tape measurements, who measured, and the desk's own note), and diet plans your trainer sends you</td><td>So your trainer can follow your progress and you see it in the app (Progress → Body, Gym → Diet plan)</td><td>As long as the gym keeps its records. Only your gym's staff and you can see them. A measurement the gym deletes also goes from your app; the numbers already on your phone stay there if you leave the gym, until you erase the app's data</td></tr><tr><td>The gym's records listed above</td><td>So the gym can run memberships, receipts and check-ins</td><td>While the gym uses MettleUp; deleted within 30 days after it leaves (backups expire within 7 more days)</td></tr><tr><td>Gym staff: name and mobile</td><td>Staff sign-in</td><td>While they work there</td></tr><tr><td>Workout offers you join: the offer, when you joined or left, the words you agreed to, the dates of workouts that counted (only days you checked in), and the reward</td><td>To give you the reward</td><td>Dates: deleted when you leave the offer or the gym, or 90 days after the offer ends. The reward stays on your membership record. When you joined and left: 1 year after the offer ends</td></tr><tr><td>Leaderboard numbers (only if you are in a gym): workouts logged and kg lifted per day, for the last 31 days, and your name switch</td><td>So your gym can run its leaderboard and challenges</td><td>Each day's numbers are deleted after 62 days, and all of them as soon as you leave the gym. When a challenge ends, the list of who reached the goal (name, mobile number and total) stays with the gym's records, so the gym can give the rewards; your mobile number is erased from it when you leave the gym</td></tr><tr><td>Workouts you share with gym mates (only if you switch it on): your bio, and for each workout its name, date, length, kg lifted and up to 8 exercises with their best set</td><td>So members of your gym can see your workouts from the leaderboard</td><td>Each workout is deleted after 60 days (at most 30 are kept). Everything is deleted at once when you switch it off or leave the gym</td></tr><tr><td>Only if your phone is in a gym with "Messages from my gym" on: a push address for this phone (made by Google's Firebase), so your gym's messages and offers can pop up</td><td>So your gym's messages can pop up on your phone</td><td>Deleted when you leave the gym or turn messages off (or turn off the app's notifications), and when the phone has not used it for 60 days</td></tr><tr><td>Feedback and help questions you choose to send (Settings → Help and feedback): your message, the app version, the phone model, your gym's code, a random number for this install, and a scrambled (one-way) form of your network address. No name or mobile number. When you ask for help in the app, your question goes to Anthropic (Claude) to write an answer. Anthropic does not use it to train its AI. We keep it for 1 year.</td><td>To fix problems and decide what to build next</td><td>1 year</td></tr><tr><td>Crash reports, sent by the app when it crashes: a short error message, the place in the app where it broke, and the app version. They hold no workouts, name, mobile number, gym or phone details. A copy of the error text goes to our private bug list on GitHub</td><td>Only to fix the problem</td><td>90 days</td></tr><tr><td>Spoken feedback (only when you tap Speak in Settings → Help and feedback, then Stop): your recording goes through our server to Groq, a speech-to-text service in the USA, to turn it into text. The text comes back to your phone, and reaches us only if you tap Send. We count how many recordings each phone, and each network address (in a scrambled form), makes a day</td><td>To turn your voice into text; the counts are only to stop misuse</td><td>The recording: neither we nor Groq keep it. The counts: 7 days</td></tr><tr><td>Only if you sign in with Google: your saved workouts and the other items listed under "Your saved workouts"</td><td>So you can get them back on a new phone</td><td>Until you delete your account. Deleted from our server at once when you do; backup copies expire within 7 more days</td></tr><tr><td>Only if you sign in with Google: your MettleUp account (your Google email address, and the name and picture link Google shares)</td><td>So only you can open your saved workouts</td><td>Until you delete your account (one exception, explained below)</td></tr><tr><td>Technical logs (sign-ins, errors, the network address of requests)</td><td>To keep the service working and safe</td><td>Up to 7 days today (our provider's limit); from May 2027, 1 year, as the law then requires</td></tr></tbody></table></div>
-<p>We do not sell your data, show ads, or use your data to profile you. The only AI feature today is your gym owner's optional member-list import (see "Where it is kept"). It only works out which column is which; the AI sends back no member details. If we ever add an AI feature that uses your own workouts, we ask you first.</p>
-<h2>Your saved workouts (only if you sign in with Google)</h2>
-<p>Signing in is your choice. If you never tap <strong>Continue with Google</strong>, none of this is sent and your workouts stay only on your phone.</p>
-<p><strong>What we save.</strong> When you sign in with Google (on the welcome screen, or in Settings → Backup), the app saves these on our server:</p>
-<ul><li>your workouts, with each exercise and set (weight, reps, time);</li><li>your routine folders and routines, and the exercises you made yourself;</li><li>your rest-timer lengths and where your personal records start;</li><li>your body weight and body measurements, with their dates;</li><li>the <strong>dates</strong> of your progress photos. The photos themselves stay on your phone;</li><li>your profile: name, age, height, goal, experience, gym name, member-since date, food targets, units, language, bio and link. <strong>Never your phone number.</strong></li></ul>
-<p>From Google we get your email address and, if Google shares them, your name and picture link.</p>
-<p><strong>Why.</strong> Only so you can get your workouts back on a new phone, or after reinstalling the app, by signing in again. We do not sell it, show ads with it, or use it to profile you.</p>
-<p><strong>Who can see it.</strong> Only you, when you are signed in. <strong>Your gym cannot</strong>: not the owner, the trainers or the desk. Other members cannot. MettleUp's people do not look at it, except when needed to keep the service running or fix a fault, or when the law makes us.</p>
-<p><strong>Where.</strong> In our main database in Mumbai, India (Supabase). Google handles the sign-in.</p>
-<p><strong>How long.</strong> Until you delete your account. When you delete a workout or another item in the app, it is deleted on our server too. We keep only an empty marker (no workout details) so another phone of yours does not bring it back.</p>
-<p><strong>Sign out</strong> (Settings → Backup → Sign out): the app stops saving new workouts. What is already saved stays until you delete your account.</p>
-<p><strong>Delete it</strong> (Settings → Backup → <strong>Delete my account</strong>): this deletes everything saved on our server and your MettleUp account, at once. The workouts on your phone stay. One exception: if you also use the same Google account to sign in for a gym (for example as a trainer or owner), we delete your saved workouts but keep that sign-in, so the gym's app keeps working. Backup copies at our provider expire within 7 more days. You can also ask us by email (contact@mettleup.fit); we do it within 30 days.</p>
-<p><strong>Old Google Drive backups.</strong> Earlier versions of the app could put a backup file in your own Google Drive. The app no longer makes new ones. If you have one, Settings → Backup → Bring back a Google Drive backup can read it from your Drive and put your workouts back on this phone. It does not go through our server, and we cannot open it. Google's own privacy terms apply to it. You can delete the file from your Google Drive at any time.</p><p><strong>Download my data</strong> (Settings → Backup) makes one file with your workouts, routines and body weight. It stays on your phone until you choose where to keep it (Files, Google Drive, WhatsApp). It does not go through our server.</p>
-<p><strong>Health Connect</strong> (Settings → Health Connect) is also optional. With your permission, MettleUp reads your weight from Health Connect to add it to your body-weight log, and today's step count to show it to you. It also saves each finished workout to Health Connect. This data stays on your phone and is not shared. You can stop it at any time with <strong>Stop and remove MettleUp's access</strong>.</p>
-<p>If you turn on <strong>Sleep and workouts</strong>, MettleUp reads your sleep sessions (start, end and sleep stages) from Health Connect on your phone, only to tell you after a lighter workout whether you slept less than 6 hours the night before. Sleep data is used only on your phone: MettleUp does not store it, include it in backups, or send it to MettleUp's servers, your gym, advertisers or any AI service. Use of information received from Health Connect follows the Health Connect Permissions Policy, including the Limited Use requirements.</p>
-<h2>Where it is kept</h2>
-<p>Our main database is in <strong>Mumbai, India</strong> (Supabase). Some service providers may process limited data outside India: Cloudflare (delivers the desk app and passes both apps' requests on to our database), Google (sign-in with Google, and Google Drive only if you bring back an old Drive backup), Google Play GitHub (app downloads, and our private bug list for crash reports), Groq in the USA (turns spoken feedback into text and keeps nothing), Anthropic (Claude) in the USA (writes the answer to a help question; does not use it to train its AI), and, only when your gym's owner imports an old member list, Google Gemini or Anthropic Claude (they see the list's column names, 5 example rows and simple counts per column, with names, addresses, mobile numbers, emails and ID numbers hidden). Google's Firebase Cloud Messaging carries each pop-up to your phone: your gym's name and the first line of the message or offer; nothing about your workouts goes with it. They process it only to provide their service to us. So that the desk can keep working when the internet drops, the desk app keeps a copy of the gym's records on each device a staff member signs in on; signing that device out deletes the copy.</p>
-<h2>Your rights</h2>
-<p>You can:</p>
-<ul><li>ask for a <strong>summary</strong> of the data we hold about you and who we shared it with;</li><li>ask us to <strong>correct</strong> or <strong>complete</strong> it;</li><li>ask us to <strong>erase</strong> it, where the law allows (your gym may have to keep payment records);</li><li><strong>delete your saved workouts and account</strong> yourself at any time: Settings → Backup → Delete my account;</li><li><strong>withdraw consent</strong>: tap <strong>Leave gym</strong> in the app, or email contact@mettleup.fit. It is as easy as giving it. It stops future use only; some features then stop working. To stop sharing workout dates, open the Gym tab, then Workout offer, then Leave the offer. Leaving the gym in the app does the same;</li><li><strong>name another person</strong> to use these rights for you if you die or cannot act;</li><li><strong>complain</strong> to our Grievance Officer above. If we do not resolve it, you can complain to the <strong>Data Protection Board of India</strong>.</li></ul>
-<h2>Under 18</h2>
-<p>The member app is only for people aged <strong>18 or over</strong>. If we learn we hold data of someone under 18 without a parent's consent, we delete it.</p>
-<h2>Security and breaches</h2>
-<p>Data travels encrypted; each gym can only reach its own records; staff sign in with single-use codes; every receipt records who took the money. If your data is exposed, we tell your gym within 24 hours and report it to the Data Protection Board as the law requires, and you are told directly (in the app or by message) what happened, what it means and what to do. For your saved workouts, MettleUp is responsible, so we report a breach to the Data Protection Board ourselves and tell you directly.</p>
-<h2>Changes</h2>
-<p>We tell you in the app before a change that affects you. The date below is the latest version.</p>
-<p>Last updated: 5 Nov 2026. What changed: if you turn on "Sleep and workouts", the app reads last night's sleep from Health Connect on your phone to explain a lighter workout; it is never stored or sent anywhere. Before that, 4 Nov 2026: your trainers can now see a summary of your recent workouts while you share them, and you can ask a trainer a question in the app (both listed above); backups now go to your MettleUp account, and the app no longer makes Google Drive backups. Before that, 2 Nov 2026: help questions are now listed (they go to Anthropic (Claude) to write an answer, and are kept 1 year). Before that, 1 Nov 2026: Health Connect is now listed (with your permission the app reads your weight and today's steps, and saves each workout there; it stays on your phone). Before that, 30 Oct 2026: spoken feedback is now listed (your recording goes to Groq in the USA to become text, and nobody keeps it), and crash reports (what they hold, and that they are deleted after 90 days).</p>
-<hr><section lang="hi"><h1>गोपनीयता सूचना (हिंदी)</h1>
-<p># MettleUp गोपनीयता सूचना (Hindi) — 20 अक्टूबर 2026, बदला 1 नवंबर 2026</p>
-<p>यह docs/launch/PRIVACY-NOTICE.md का हिंदी रूप है। दोनों में फर्क हो तो अंग्रेज़ी वाला मान्य है। खाली जगह: Aakash Pahuja, contact@mettleup.fit, [GYM NAME]।</p>
-<p><strong>हम कौन हैं।</strong> MettleUp सदस्यों के लिए वर्कआउट ऐप और जिम के डेस्क के लिए ऐप है, जिसे Aakash Pahuja, जयपुर, भारत चलाते हैं। <strong>शिकायत अधिकारी:</strong> Aakash Pahuja, contact@mettleup.fit। हम 30 दिन के अंदर जवाब देते हैं, आमतौर पर एक हफ्ते में।</p>
-<p><strong>कौन किसके लिए ज़िम्मेदार है</strong></p>
-<ul><li><strong>आपके जिम के रिकॉर्ड</strong> (मेंबरशिप, भुगतान, रसीदें, विज़िट, शॉप ऑर्डर, डेस्क से संदेश, जिम में ट्रेनर के लिए आपके शरीर के नाप, और ट्रेनर के भेजे डाइट प्लान): ज़िम्मेदार <strong>आपका जिम</strong> है (उसका नाम और संपर्क ऐप में Settings → Your gym और जिम के डेस्क पर)। MettleUp इन्हें जिम के लिए, लिखित समझौते के तहत रखता है।</li><li><strong>आपका MettleUp खाता और तकनीकी लॉग:</strong> ज़िम्मेदार <strong>MettleUp</strong> है।</li><li><strong>जो वर्कआउट और नाप आप ख़ुद लिखते हैं</strong> (एक्सरसाइज़, सेट, वज़न, शरीर का वज़न, नाप, फोटो) <strong>आपके फोन पर ही</strong> रहते हैं, जब तक आप Google से साइन इन नहीं करते। जिम इन्हें नहीं देखता, सिवाय नीचे लिखे लीडरबोर्ड के नंबरों के।</li><li>अगर आप किसी जिम में हैं, तो ऐप आपके जिम के लीडरबोर्ड को पिछले 31 दिनों के हर दिन के दो नंबर भेजता है: आपने कितने वर्कआउट लिखे और कितने किलो उठाए। इसके अलावा कुछ नहीं: न एक्सरसाइज़, न सेट, न किसी लिफ़्ट का वज़न, न शरीर का वज़न, न फोटो। चैलेंज चलाने और इनाम देने के लिए जिम का स्टाफ़ ये कुल नंबर आपके नाम के साथ देखता है। बाकी मेंबर आपकी जगह सिर्फ़ "A member" के रूप में देखते हैं, जब तक आप "Show my name on my gym's leaderboard" चालू न करें (Settings → Your gym → What my gym can see); तब वे आपका पहला नाम और आख़िरी नाम का पहला अक्षर देखते हैं। जिम आपको लीडरबोर्ड से छिपा सकता है। चैलेंज और इनाम की ज़िम्मेदारी जिम की है; MettleUp जिम के लिए ये नंबर रखता है।</li><li>अगर आप किसी जिम में हैं, तो ऐप दिखाता है कि आपका जिम अभी कितना भरा है और आम हफ़्ते में हर घंटे कितना भरा रहता है। यह उन्हीं चेक-इन के समय से निकाला जाता है जो आपका जिम पहले से रखता है। मेंबर सिर्फ़ पूरे जिम की भीड़ देखते हैं, कभी यह नहीं कि किसने या कब चेक-इन किया। लोगों की गिनती तभी दिखती है जब वह 5 या ज़्यादा हो।</li><li><strong>सिर्फ़ तब जब आप "Let my gym mates see my workouts" चालू करें</strong> (Settings → Your gym → What my gym can see; यह तब तक बंद रहता है जब तक आप इसे चालू न करें), ऐप आपका बायो और पिछले 60 दिनों के आपके हर वर्कआउट का छोटा सार भेजता है (ज़्यादा से ज़्यादा 30): उसका नाम, तारीख़, कितनी देर चला, कितने किलो उठाए, और ज़्यादा से ज़्यादा 8 एक्सरसाइज़ का सबसे अच्छा सेट। आपके सेट, शरीर का वज़न, फोटो, नोट्स या मोबाइल नंबर कभी नहीं। आपके जिम के मेंबर इसे लीडरबोर्ड से खोल सकते हैं, सिर्फ़ तब तक जब तक वहाँ आपका नाम दिखता है और जिम ने आपको छिपाया नहीं है। जिम के बाहर कोई इसे नहीं देख सकता, और जिम के स्टाफ़ के पास इसकी कोई स्क्रीन नहीं है। MettleUp इसे आपके लिए रखता है, जिम के लिए नहीं।</li><li><strong>अगर आप Google से साइन इन करते हैं</strong>, तो MettleUp आपके वर्कआउट की एक कॉपी अपने सर्वर पर सेव करता है, ताकि नए फोन पर वे वापस मिल सकें। इस कॉपी की ज़िम्मेदारी <strong>MettleUp</strong> की है, जिम की नहीं। इसे सिर्फ़ आप देख सकते हैं। नीचे "आपके सेव किए गए वर्कआउट" देखें।</li><li>अगर आप जिम के वर्कआउट ऑफ़र से जुड़ते हैं, तो ऐप जिम को सिर्फ़ गिने गए वर्कआउट की तारीख़ें भेजता है, और सिर्फ़ तब तक जब तक आप ऑफ़र में हैं। ऑफ़र और इनाम की ज़िम्मेदारी जिम की है; MettleUp जिम के लिए तारीख़ें रखता है।</li><li>सिर्फ़ तब तक जब तक "Share my workouts with my trainers" चालू है (Settings → Your gym → What my gym can see; यह चालू रहता है जब तक आप इसे बंद न करें), ऐप आपके जिम को भेजता है: पिछले 12 हफ़्तों में हर हफ़्ते कितने वर्कआउट किए और कितने kg उठाए, आपकी सबसे अच्छी लिफ़्ट, आपके नए सबसे भारी वज़न, आख़िरी वर्कआउट का दिन, और पिछले 3 महीनों के ज़्यादा से ज़्यादा 30 वर्कआउट (हर एक की तारीख़, नाम, और हर एक्सरसाइज़ का सबसे अच्छा सेट और सेट की गिनती)। आपके शरीर का वज़न, फ़ोटो, नोट्स, खाना या मोबाइल नंबर कभी नहीं। जिम के मालिक और जिम ने जो ट्रेनर आपको दिया है, वे इसे जिम के एडमिन ऐप में आपके पेज पर देख सकते हैं; डेस्क नहीं देख सकता, जब तक मालिक उन्हें ट्रेनर न बनाए। स्विच बंद करते ही जिम की कॉपी तुरंत डिलीट हो जाती है। जिम छोड़ने पर, या 90 दिन तक ऐप से कुछ न आने पर भी जिम की कॉपी डिलीट हो जाती है। स्टाफ़ इसका कैसे इस्तेमाल करे, इसकी ज़िम्मेदारी आपके जिम की है; MettleUp इसे जिम के लिए रखता है।</li><li>अगर आप "Ask a trainer" (Gym टैब) इस्तेमाल करते हैं, तो ऐप आपका सवाल आपके नाम के साथ आपके जिम को भेजता है। सिर्फ़ वही व्यक्ति इसे पढ़ और जवाब दे सकता है जिसे आप चुनते हैं: कोई ट्रेनर, या जिम का मालिक। अगर आप "Any trainer" चुनते हैं, तो हर ट्रेनर और मालिक इसे पढ़ सकते हैं। जवाब आपके सवाल के साथ रखा जाता है। आपका जिम आपके सवाल और जवाब ज़्यादा से ज़्यादा 180 दिन रखता है, और आपके जिम छोड़ने पर उन्हें डिलीट कर देता है। जिस सवाल का जवाब अभी नहीं आया, उसे आप वापस ले सकते हैं। जवाबों की ज़िम्मेदारी आपके जिम की है; MettleUp सवालों को जिम के लिए रखता है।</li></ul>
-<p><strong>हम सर्वर पर क्या रखते हैं</strong></p>
-<p>हम आपका डेटा बेचते नहीं, विज्ञापन नहीं दिखाते, आपकी प्रोफाइलिंग नहीं करते। आज AI सिर्फ़ एक जगह है: जिम मालिक की वैकल्पिक सदस्य-सूची इम्पोर्ट। AI सिर्फ़ बताता है कि कौन-सा कॉलम क्या है; वह सदस्यों की कोई जानकारी वापस नहीं भेजता। अगर हम कभी आपके अपने वर्कआउट पर AI लगाएँगे, तो पहले आपसे पूछेंगे।</p>
-<ul><li>जिम जॉइन करने पर: नाम, मोबाइल नंबर, जिम, जॉइन की तारीख, आखिरी बार ऐप इस्तेमाल, जिम छोड़ने की तारीख। जिम छोड़ने पर मोबाइल नंबर मिटा दिया जाता है; बाकी जिम के रिकॉर्ड के साथ रहता है।</li><li>चेक-इन (तारीख और समय), शॉप ऑर्डर, डेस्क से संदेश: जब तक जिम अपने रिकॉर्ड रखता है। चेक-इन के समय से (बिना नाम के) मेंबर्स को यह भी दिखता है कि जिम आमतौर पर कितना भरा रहता है।</li><li>जिम में ट्रेनर के लिए आपके शरीर के नाप (तारीख़, वज़न, बॉडी फ़ैट, फीते से नाप, किसने नापा, और डेस्क का अपना नोट) और ट्रेनर के भेजे डाइट प्लान: ताकि ट्रेनर आपकी प्रोग्रेस देख सके और आप उसे ऐप में देखें (Progress → Body, Gym → Diet plan)। जब तक जिम अपने रिकॉर्ड रखता है। इन्हें सिर्फ़ आपके जिम का स्टाफ़ और आप देख सकते हैं। जिम कोई नाप मिटाए तो वह आपके ऐप से भी हट जाता है; जिम छोड़ने पर आपके फोन पर आ चुके नाप तब तक रहते हैं, जब तक आप ऐप का डेटा न मिटाएँ।</li><li>जिम के रिकॉर्ड: जब तक जिम MettleUp इस्तेमाल करता है; छोड़ने के 30 दिन में मिटाए जाते हैं।</li><li>लीडरबोर्ड के नंबर (सिर्फ़ अगर आप किसी जिम में हैं): पिछले 31 दिनों के हर दिन के वर्कआउट और उठाए गए किलो, और नाम वाला स्विच, ताकि जिम लीडरबोर्ड और चैलेंज चला सके। हर दिन के नंबर 62 दिन बाद मिटा दिए जाते हैं, और जिम छोड़ते ही सारे मिटा दिए जाते हैं। चैलेंज ख़त्म होने पर, लक्ष्य तक पहुँचे मेंबरों की सूची (नाम, मोबाइल नंबर और कुल) इनाम देने के लिए जिम के रिकॉर्ड में रहती है; जिम छोड़ने पर उसमें से आपका मोबाइल नंबर मिटा दिया जाता है।</li><li>जिम के साथियों के साथ साझा किए गए वर्कआउट (सिर्फ़ अगर आप चालू करें): आपका बायो, और हर वर्कआउट का नाम, तारीख़, अवधि, उठाए गए किलो और ज़्यादा से ज़्यादा 8 एक्सरसाइज़ का सबसे अच्छा सेट: ताकि आपके जिम के मेंबर लीडरबोर्ड से आपके वर्कआउट देख सकें। हर वर्कआउट 60 दिन बाद मिटा दिया जाता है (ज़्यादा से ज़्यादा 30 रखे जाते हैं)। स्विच बंद करने या जिम छोड़ने पर सब कुछ उसी समय मिटा दिया जाता है।</li><li>सिर्फ़ अगर आपका फोन किसी जिम में है और "Messages from my gym" चालू है: इस फोन का एक पुश पता (Google के Firebase से बना), ताकि आपके जिम के संदेश और ऑफ़र फोन पर पॉप-अप हो सकें। जिम छोड़ने या संदेश बंद करने पर (या ऐप की सूचनाएँ बंद करने पर) मिटा दिया जाता है, और 60 दिन तक फोन इसे इस्तेमाल न करे तो भी।</li><li>आपका भेजा फीडबैक या मदद का सवाल (Settings → Help and feedback): संदेश, ऐप वर्ज़न, फोन मॉडल, जिम कोड, इस इंस्टॉल का एक रैंडम नंबर और नेटवर्क पते का एक-तरफ़ा बदला हुआ रूप; नाम या मोबाइल नंबर नहीं: 1 साल। जब आप ऐप में मदद माँगते हैं, तो जवाब लिखने के लिए आपका सवाल Anthropic (Claude) के पास जाता है। Anthropic इसे अपने AI को सिखाने के लिए इस्तेमाल नहीं करता। हम इसे 1 साल रखते हैं।</li><li>क्रैश रिपोर्ट (ऐप क्रैश होने पर ऐप ख़ुद भेजता है): एक छोटा एरर संदेश, ऐप में वह जगह जहाँ गड़बड़ी हुई, और ऐप वर्ज़न। इसमें कोई वर्कआउट, नाम, मोबाइल नंबर, जिम या फोन की जानकारी नहीं होती। हम इसे सिर्फ़ गड़बड़ी ठीक करने के लिए इस्तेमाल करते हैं। एरर का टेक्स्ट GitHub पर हमारी निजी बग-सूची में भी जाता है: 90 दिन।</li><li>बोलकर फीडबैक (सिर्फ़ तब जब आप Settings → Help and feedback में Speak और फिर Stop दबाएँ): आपकी रिकॉर्डिंग हमारे सर्वर से होकर Groq के पास जाती है, जो अमेरिका की एक स्पीच-टू-टेक्स्ट सेवा है, ताकि उसे टेक्स्ट में बदला जा सके। न हम रिकॉर्डिंग रखते हैं, न Groq। टेक्स्ट आपके फोन पर वापस आता है, और हम तक तभी पहुँचता है जब आप Send दबाएँ। गलत इस्तेमाल रोकने के लिए हम गिनते हैं कि हर फोन, और हर नेटवर्क पता (एक-तरफ़ा बदले हुए रूप में), दिन में कितनी रिकॉर्डिंग भेजता है: यह गिनती 7 दिन।</li><li>सिर्फ़ Google से साइन इन करने पर: आपके सेव किए गए वर्कआउट (नीचे की सूची): जब तक आप अपना खाता डिलीट नहीं करते। डिलीट करते ही सर्वर से तुरंत मिटा दिए जाते हैं; बैकअप कॉपी 7 दिन के अंदर ख़त्म हो जाती है।</li><li>सिर्फ़ Google से साइन इन करने पर: आपका MettleUp खाता (आपका Google ईमेल, और Google जो नाम और फोटो लिंक देता है): जब तक आप खाता डिलीट नहीं करते (एक अपवाद नीचे लिखा है)।</li><li>आपके जुड़े वर्कआउट ऑफ़र: ऑफ़र, जुड़ने या छोड़ने का समय, जिन शब्दों पर आपने हाँ कहा, गिने गए वर्कआउट की तारीख़ें (सिर्फ़ चेक-इन वाले दिन), और इनाम। तारीख़ें: ऑफ़र या जिम छोड़ने पर, या ऑफ़र ख़त्म होने के 90 दिन बाद मिटा दी जाती हैं। इनाम मेंबरशिप रिकॉर्ड पर रहता है। जुड़ने और छोड़ने का समय: ऑफ़र ख़त्म होने के 1 साल बाद तक।</li><li>तकनीकी लॉग: अभी लगभग 7 दिन; मई 2027 से कानून के अनुसार 1 साल।</li></ul>
-<p><strong>आपके सेव किए गए वर्कआउट (सिर्फ़ Google से साइन इन करने पर)</strong> साइन इन करना आपकी मर्ज़ी है। अगर आप कभी <strong>Continue with Google</strong> नहीं दबाते, तो इसमें से कुछ नहीं भेजा जाता और आपके वर्कआउट सिर्फ़ आपके फोन पर रहते हैं।</p>
-<p><strong>हम क्या सेव करते हैं।</strong> Google से साइन इन करने पर (शुरुआती स्क्रीन पर, या Settings → Backup में), ऐप हमारे सर्वर पर ये सेव करता है:</p>
-<ul><li>आपके वर्कआउट, हर एक्सरसाइज़ और सेट के साथ (वज़न, रेप्स, समय);</li><li>आपके रूटीन फ़ोल्डर और रूटीन, और आपकी बनाई एक्सरसाइज़;</li><li>आराम के टाइमर की लंबाई, और आपके पर्सनल रिकॉर्ड कहाँ से शुरू होते हैं;</li><li>आपके शरीर का वज़न और शरीर के नाप, तारीख़ के साथ;</li><li>आपकी प्रोग्रेस फोटो की <strong>तारीख़ें</strong>। फोटो ख़ुद आपके फोन पर ही रहती हैं;</li><li>आपकी प्रोफ़ाइल: नाम, उम्र, लंबाई, लक्ष्य, अनुभव, जिम का नाम, कब से सदस्य, खाने के लक्ष्य, यूनिट, भाषा, बायो और लिंक। <strong>आपका फोन नंबर कभी नहीं।</strong></li></ul>
-<p>Google से हमें आपका ईमेल मिलता है, और अगर Google दे तो आपका नाम और फोटो लिंक।</p>
-<p><strong>क्यों।</strong> सिर्फ़ इसलिए कि नए फोन पर, या ऐप दोबारा इंस्टॉल करने पर, फिर से साइन इन करके आपको अपने वर्कआउट वापस मिल जाएँ। हम इसे बेचते नहीं, इससे विज्ञापन नहीं दिखाते, इससे आपकी प्रोफ़ाइलिंग नहीं करते।</p>
-<p><strong>कौन देख सकता है।</strong> सिर्फ़ आप, साइन इन होने पर। <strong>आपका जिम नहीं देख सकता</strong>: न मालिक, न ट्रेनर, न डेस्क। दूसरे सदस्य भी नहीं। MettleUp के लोग इसे नहीं देखते, सिवाय तब जब सेवा चलाने या कोई खराबी ठीक करने के लिए ज़रूरी हो, या कानून ऐसा कहे।</p>
-<p><strong>कहाँ।</strong> हमारे मुख्य डेटाबेस में, <strong>मुंबई, भारत</strong> (Supabase)। साइन इन Google संभालता है।</p>
-<p><strong>कितने समय तक।</strong> जब तक आप अपना खाता डिलीट नहीं करते। ऐप में कोई वर्कआउट या दूसरी चीज़ डिलीट करने पर वह हमारे सर्वर से भी डिलीट हो जाती है। हम सिर्फ़ एक ख़ाली निशान रखते हैं (उसमें वर्कआउट की कोई जानकारी नहीं), ताकि आपका कोई दूसरा फोन उसे वापस न ले आए।</p>
-<p><strong>साइन आउट</strong> (Settings → Backup → Sign out): ऐप नए वर्कआउट सेव करना बंद कर देता है। जो पहले से सेव है, वह खाता डिलीट करने तक रहता है।</p>
-<p><strong>डिलीट करें</strong> (Settings → Backup → <strong>Delete my account</strong>): इससे हमारे सर्वर पर सेव सब कुछ और आपका MettleUp खाता तुरंत डिलीट हो जाता है। आपके फोन के वर्कआउट रहते हैं। एक अपवाद: अगर आप इसी Google खाते से किसी जिम के लिए भी साइन इन करते हैं (जैसे ट्रेनर या मालिक के तौर पर), तो हम आपके सेव किए वर्कआउट डिलीट करते हैं पर वह साइन इन रखते हैं, ताकि जिम का ऐप चलता रहे। हमारी सेवा देने वाली कंपनी की बैकअप कॉपी 7 दिन के अंदर ख़त्म हो जाती है। आप ईमेल (contact@mettleup.fit) से भी कह सकते हैं; हम 30 दिन के अंदर डिलीट करते हैं।</p>
-<p><strong>पुराने Google Drive बैकअप।</strong> ऐप के पुराने वर्ज़न आपकी अपनी Google Drive में एक बैकअप फ़ाइल रख सकते थे। अब ऐप नए बैकअप नहीं बनाता। अगर आपके पास ऐसी फ़ाइल है, तो Settings → Backup → Bring back a Google Drive backup से ऐप उसे आपकी Drive से पढ़कर आपके वर्कआउट इस फोन पर वापस ला सकता है। यह हमारे सर्वर से होकर नहीं जाती, और हम इसे खोल नहीं सकते। इस पर Google की अपनी गोपनीयता शर्तें लागू होती हैं। आप यह फ़ाइल अपनी Google Drive से कभी भी डिलीट कर सकते हैं।</p><p><strong>Download my data</strong> (Settings → Backup) आपके वर्कआउट, रूटीन और शरीर के वज़न की एक फ़ाइल बनाता है। यह आपके फोन पर रहती है, जब तक आप ख़ुद न चुनें कि इसे कहाँ रखना है (Files, Google Drive, WhatsApp)। यह हमारे सर्वर से होकर नहीं जाती।</p>
-<p><strong>Health Connect</strong> (Settings → Health Connect) भी आपकी मर्ज़ी है। आपकी permission से MettleUp, Health Connect से आपका वज़न पढ़कर आपके body-weight log में जोड़ता है, और आज के steps पढ़कर आपको दिखाता है। हर पूरा हुआ वर्कआउट भी Health Connect में सेव होता है। यह डेटा आपके फोन पर ही रहता है और किसी के साथ शेयर नहीं होता। आप इसे कभी भी <strong>Stop and remove MettleUp's access</strong> से बंद कर सकते हैं।</p>
-<p>अगर आप <strong>Sleep and workouts</strong> चालू करते हैं, तो MettleUp आपके फोन पर Health Connect से आपकी नींद (कब सोए, कब उठे, और नींद के चरण) पढ़ता है। यह सिर्फ़ इसलिए, ताकि हल्के वर्कआउट के बाद बता सके कि पिछली रात आप 6 घंटे से कम सोए थे या नहीं। नींद का डेटा सिर्फ़ आपके फोन पर इस्तेमाल होता है: MettleUp इसे सेव नहीं करता, बैकअप में नहीं रखता, और MettleUp के सर्वर, आपके जिम, विज्ञापन देने वालों या किसी AI सेवा को नहीं भेजता। Health Connect से मिली जानकारी का इस्तेमाल Health Connect Permissions Policy के अनुसार होता है, Limited Use नियमों समेत।</p>
-<p><strong>कहाँ रखा जाता है।</strong> मुख्य डेटाबेस <strong>मुंबई, भारत</strong> में है। कुछ सेवा देने वाली कंपनियाँ सीमित डेटा भारत के बाहर संभाल सकती हैं, सिर्फ़ अपनी सेवा देने के लिए: Cloudflare, Google (Google से साइन इन, और Google Drive सिर्फ़ तब जब आप पुराना Drive बैकअप वापस लाएँ), Google Play, GitHub (क्रैश रिपोर्ट के लिए हमारी निजी बग-सूची भी), Groq, अमेरिका (बोलकर दिया फीडबैक टेक्स्ट में बदलता है और कुछ नहीं रखता), और सिर्फ़ तब जब आपके जिम का मालिक पुरानी सदस्य-सूची इम्पोर्ट करे, Google Gemini या Anthropic Claude (वे सूची के कॉलम के नाम, 5 नमूना पंक्तियाँ और हर कॉलम की सरल गिनती देखते हैं; नाम, पते, मोबाइल नंबर, ईमेल और ID नंबर छिपे रहते हैं)। इंटरनेट बंद होने पर भी डेस्क का काम चलता रहे, इसलिए डेस्क ऐप जिम के रिकॉर्ड की एक कॉपी उस हर डिवाइस पर रखता है जिस पर स्टाफ साइन इन करता है; उस डिवाइस से साइन आउट करने पर कॉपी मिट जाती है। हर पॉप-अप Google के Firebase Cloud Messaging के ज़रिए आपके फोन तक पहुँचता है: आपके जिम का नाम और संदेश या ऑफ़र की पहली लाइन। आपके वर्कआउट की कोई जानकारी इसके साथ नहीं जाती।</p>
-<p><strong>आपके अधिकार।</strong> आप: अपने डेटा का सारांश माँग सकते हैं; उसे सही या पूरा करवा सकते हैं; मिटाने को कह सकते हैं (जिम को भुगतान रिकॉर्ड कानूनन रखने पड़ सकते हैं); अपने सेव किए वर्कआउट और खाता कभी भी ख़ुद डिलीट कर सकते हैं (Settings → Backup → Delete my account); सहमति वापस ले सकते हैं (ऐप में <strong>Leave gym</strong> दबाएँ या ईमेल करें; वर्कआउट की तारीख़ें भेजना बंद करने के लिए Gym टैब → Workout offer → Leave the offer दबाएँ, ऐप में जिम छोड़ने से भी यही होता है); मृत्यु या असमर्थता की स्थिति के लिए किसी को नामित कर सकते हैं; शिकायत अधिकारी से शिकायत कर सकते हैं, और हल न हो तो <strong>डेटा प्रोटेक्शन बोर्ड ऑफ इंडिया</strong> से।</p>
-<p><strong>18 साल से कम।</strong> सदस्य ऐप सिर्फ 18 साल या उससे ऊपर के लोगों के लिए है।</p>
-<p><strong>सुरक्षा।</strong> डेटा एन्क्रिप्टेड जाता है; हर जिम सिर्फ अपने रिकॉर्ड देख सकता है। डेटा लीक होने पर हम 24 घंटे में जिम को बताते हैं, कानून के अनुसार बोर्ड को रिपोर्ट करते हैं, और आपको सीधे बताया जाता है। आपके सेव किए वर्कआउट की ज़िम्मेदारी MettleUp की है, इसलिए उनके लीक होने पर हम ख़ुद बोर्ड को रिपोर्ट करते हैं और आपको सीधे बताते हैं।</p>
-<p><strong>बदलाव।</strong> आप पर असर डालने वाले बदलाव से पहले हम ऐप में बताते हैं। आख़िरी बदलाव: 5 Nov 2026। क्या बदला: अगर आप "Sleep and workouts" चालू करते हैं, तो ऐप हल्के वर्कआउट की वजह बताने के लिए आपके फोन पर Health Connect से पिछली रात की नींद पढ़ता है; यह कभी सेव नहीं होती और कहीं नहीं भेजी जाती। इससे पहले, 4 Nov 2026: जब तक आप अपने वर्कआउट शेयर करते हैं, आपके ट्रेनर अब आपके हाल के वर्कआउट का सारांश देख सकते हैं, और आप ऐप में ट्रेनर से सवाल पूछ सकते हैं (दोनों ऊपर लिखे हैं); बैकअप अब आपके MettleUp खाते में जाता है, और ऐप अब Google Drive बैकअप नहीं बनाता। इससे पहले, 1 Nov 2026: Health Connect अब लिखा है (आपकी permission से ऐप आपका वज़न और आज के steps पढ़ता है, और हर वर्कआउट वहाँ सेव करता है; यह आपके फोन पर ही रहता है)। इससे पहले, 30 Oct 2026: बोलकर फीडबैक अब लिखा है (रिकॉर्डिंग टेक्स्ट बनने के लिए अमेरिका में Groq के पास जाती है, और कोई उसे नहीं रखता), और क्रैश रिपोर्ट भी। इससे पहले, 24 Oct 2026: अब आप Google से साइन इन करके अपने वर्कआउट हमारे सर्वर पर सेव कर सकते हैं (वैकल्पिक; सिर्फ़ आप देख सकते हैं); AI इम्पोर्ट और Google साइन इन अब "कहाँ रखा जाता है" में लिखे हैं।</p></section>
+<p class="muted">Last updated: 10 Nov 2026. What changed is at the end.</p>
+
+<h2>In short</h2>
+<ul class="sum">
+<li>What you log stays on your phone, unless you sign in with Google to keep a copy, or you are in a gym.</li>
+<li>If you are in a gym, some things go to it: your check-ins, your daily workout totals for its leaderboard, and a summary of your workouts for your trainers unless you switch that off. The table in section 4B shows each one and how to stop it.</li>
+<li>Your gym also keeps its own records about you in MettleUp, such as your membership and payments. Your gym is in charge of those records. We only store them for it.</li>
+<li>We never sell your data or show ads. Data from Health Connect never goes to your gym or to any AI.</li>
+<li>You can see, correct or delete your data at any time. Write to contact@mettleup.fit.</li>
+</ul>
+
+<p><strong>On this page:</strong></p>
+<ol class="toc">
+<li><a href="#who">Who we are</a></li>
+<li><a href="#charge">Who is in charge of your data</a></li>
+<li><a href="#phone">What stays on your phone</a></li>
+<li><a href="#collect">What we collect, and why</a></li>
+<li><a href="#others">Who else gets it</a></li>
+<li><a href="#keep">How long we keep it</a></li>
+<li><a href="#delete">Delete your data</a></li>
+<li><a href="#rights">Your choices and rights</a></li>
+<li><a href="#kids">Under 18</a></li>
+<li><a href="#safe">How we protect it</a></li>
+<li><a href="#where">Where it is kept</a></li>
+<li><a href="#changes">Changes</a></li>
+</ol>
+
+<h2 id="who">1. Who we are</h2>
+<p>MettleUp is a workout app for gym members, on Android phones and Wear OS watches. Gyms also use a MettleUp web app, the admin app, to run their gym. In this notice, "we" means MettleUp. MettleUp is run by Aakash Pahuja, a sole proprietor in Jaipur, Rajasthan, India.</p>
+<p>This notice covers the MettleUp app, the watch app, the admin app, and our websites mettleup.fit, gyms.mettleup.fit and app.mettleup.fit.</p>
+<p><strong>Questions and complaints:</strong> our Grievance Officer is Aakash Pahuja, <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a>. We answer within 30 days.</p>
+
+<h2 id="charge">2. Who is in charge of your data</h2>
+<ul>
+<li><strong>MettleUp is in charge of</strong> your MettleUp account and the copy of your workouts saved with it. We are also in charge of help and feedback messages, crash reports, workouts you share with gym mates, and our technical logs. (Under India's data law, we are the "Data Fiduciary" for these.)</li>
+<li><strong>Your gym is in charge of</strong> its own records about you. These are your membership, payments, receipts, check-ins, shop orders and messages. They also include your photo taken at the desk, measurements and diet plans from your trainer, and your personal training bookings. The things the app sends your gym (section 4B) are the gym's records too. We only store these records for your gym, under a written agreement. (Your gym is the "Data Fiduciary" and we are its "Data Processor".) Ask your gym first about these records. Its name is in the app under Settings → Your gym. If you write to us instead, we pass your request to your gym and help it answer.</li>
+</ul>
+
+<h2 id="phone">3. What stays on your phone</h2>
+<p>Everything you log stays on your phone unless this notice says otherwise. That means your workouts, routines, notes, body weight, measurements and profile. <strong>Your progress photos never leave your phone.</strong></p>
+<p>"Download my data" (Settings → Your data → Backup and restore) makes one file of your data. The file stays on your phone until you choose where to keep it. "Ask an AI about your workouts" (Settings → Your data) only opens your phone's share menu. You pick the app, and MettleUp itself sends nothing.</p>
+
+<h2 id="collect">4. What we collect, and why</h2>
+
+<h3>A. If you sign in with Google</h3>
+<p>Signing in is your choice. You sign in with "Continue with Google", on the welcome screen or in Settings → Your data → Backup and restore.</p>
+<ul>
+<li><strong>From Google:</strong> your email address. If Google shares them, also your name and a link to your profile picture.</li>
+<li><strong>A copy of what you log:</strong>
+  <ul>
+  <li>your workouts: every exercise and set, with weights, reps, times, distances, effort ratings and notes;</li>
+  <li>your routines, the exercises you made yourself, and your settings for rest timers and personal records;</li>
+  <li>the exercises of your last "empty workout", so the next one starts with them;</li>
+  <li>your body weight and measurements, including weigh-ins brought in from Health Connect;</li>
+  <li>the dates of your progress photos, but never the photos;</li>
+  <li>your profile: name, age, height, goal, experience, gym name, member-since date, food targets, units, language, bio and link.</li>
+  </ul>
+  This copy never holds your mobile number.</li>
+<li><strong>Why:</strong> so your workouts come back on a new phone, or after you reinstall the app.</li>
+<li><strong>Who can see it:</strong> only you. Your gym and other members cannot. We look at it only to fix a fault, or when the law makes us.</li>
+</ul>
+
+<h3>B. If you join a gym</h3>
+<p>You join with your gym's code or invite link. You first tick that you are 18 or older and agree to this notice and our terms. This table shows what then goes to your gym, and who sees it. The switches are in Settings → Your gym, most of them under "What my gym can see".</p>
+<div class="t"><table>
+<thead><tr><th>What goes to your gym</th><th>Who sees it</th><th>On or off?</th><th>How to stop it</th></tr></thead>
+<tbody>
+<tr><td>Your name, the date you joined, when you last opened the app, and the date you leave</td><td>Gym staff</td><td>Always</td><td>Leave the gym</td></tr>
+<tr><td>Check-ins: the date and time you scan the gym's QR poster</td><td>Gym staff. Members see only how busy the gym is, never who came</td><td>Always</td><td>Leave the gym</td></tr>
+<tr><td>Leaderboard numbers: how many workouts you logged and kg you lifted, each day of the last 31 days. Nothing else</td><td>Gym staff, with your name. Members see "A member"</td><td>Always</td><td>Leave the gym. Your gym can also hide you</td></tr>
+<tr><td>Your name on the leaderboard (first name and last initial)</td><td>Members of your gym</td><td>Off</td><td>"Show my name on my gym's leaderboard"</td></tr>
+<tr><td>A summary of your workouts for your trainers (details below)</td><td>The owner and your trainer. Not the front desk</td><td><strong>On</strong></td><td>"Share my workouts with my trainers"</td></tr>
+<tr><td>Which machines you used, and when (only if your gym turned on busy machines)</td><td>Nobody by name. Members see how busy each machine usually is</td><td><strong>On</strong></td><td>"Share which machines I use"</td></tr>
+<tr><td>Pop-ups from your gym: a code from Google Firebase lets them reach this phone</td><td>Only you</td><td><strong>On</strong></td><td>"Messages from my gym"</td></tr>
+<tr><td>Your bio and recent workouts for gym mates (details below)</td><td>Members of your gym, while your name shows on the leaderboard</td><td>Off</td><td>"Let my gym mates see my workouts"</td></tr>
+<tr><td>What you send yourself: shop orders, messages to the desk, requests to pause or renew your plan, questions to a trainer</td><td>Gym staff; a question goes to the person you pick</td><td>When you send one</td><td>Do not send</td></tr>
+<tr><td>Your mobile number, if you type it at a check-in (the desk confirms it, then it links you to the gym's list)</td><td>Gym staff</td><td>When you type it</td><td>Leave the gym</td></tr>
+<tr><td>Workout offer: the dates of workouts that count</td><td>Gym staff</td><td>When you join an offer</td><td>Gym tab → Workout offer → "Leave the offer"</td></tr>
+<tr><td>Workout report: a spreadsheet of your workouts since you joined that gym</td><td>Gym staff</td><td>Only if the gym asks and you tap yes</td><td>Tap no</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Trainer summary:</strong> your workouts and kg lifted per week for 12 weeks, your best lifts, your new heaviest weights and the day of your last workout. It also holds up to 30 workouts from the last 3 months: each one's date and name, and each exercise's best set and number of sets. It never includes your body weight, photos, notes, food or mobile number.</li>
+<li><strong>Machine use:</strong> for each workout of the last 35 days, the date, the hour it started, and which of the gym's machines you used. No name, sets or weights.</li>
+<li><strong>Gym mates:</strong> your bio and up to 30 workouts from the last 60 days: each one's name, date, length, kg lifted and best set of up to 8 exercises. Your gym's staff have no screen for it.</li>
+<li><strong>Pop-ups</strong> show your gym's name and the message, a trainer's reply, or a short note such as "your order is ready".</li>
+<li><strong>Challenges:</strong> when a challenge ends, the gym keeps the list of winners (name, mobile number and total) to give the rewards. Your mobile number is erased from that list when you leave the gym.</li>
+<li><strong>Bring a friend:</strong> you can share an invite link. Your friend types their name, mobile number and best time to train. These go to your gym, marked as referred by you. You see only how many friends joined.</li>
+<li><strong>Paying your gym online:</strong> if your gym asks you to pay in the app, you pay through your gym's own payment company (Razorpay, Cashfree, PayU or PhonePe). We pass the company your name, mobile number and the amount. We never see your card, UPI or bank details. The money goes to your gym.</li>
+</ul>
+
+<h3>C. Health Connect and your watch</h3>
+<p>In Settings → Phone and watch → "Health apps", you choose what MettleUp may do. Health Connect asks for your permission first, each time:</p>
+<ul>
+<li><strong>Save workouts:</strong> each finished workout (the exercise, its start and end, and active calories) goes to Health Connect. Google Health, Samsung Health and other apps can then show it.</li>
+<li><strong>Body weight:</strong> weigh-ins from a smart scale or another app are added to your body-weight log. Like the rest of that log, they are in your MettleUp copy if you signed in.</li>
+<li><strong>Steps:</strong> today's steps are shown on that page and are not stored.</li>
+<li><strong>"Sleep and workouts":</strong> the app reads last night's sleep (its start, end and stages) on your phone. After a lighter workout, it tells you if you slept under 6 hours. Sleep data is not stored, not backed up and not sent anywhere.</li>
+</ul>
+<p>Data from Health Connect never goes to your gym, to advertisers or to any AI. MettleUp's use of information received from Health Connect follows the Health Connect Permissions Policy, including the Limited Use requirements. To stop, tap "Stop and remove MettleUp's access" on that page, or change it in Health Connect.</p>
+<p><strong>Your watch:</strong> the phone and watch apps send your workout to each other directly, through Google Play services on your own devices. During a workout, the watch shows your heart rate from its own sensor. Your heart rate is not saved or sent. The phone reads the watch app's version, so it can tell you when an update is ready.</p>
+
+<h3>D. Help, feedback and crash reports</h3>
+<ul>
+<li><strong>Help and feedback</strong> (Settings → Help and feedback): we get your message, the app and its version, your phone model, the screen you were on and your gym's code. We also get a random number for this install and a coded form of your internet (IP) address, used only to stop misuse. We do not get your name or mobile number, unless you type them.</li>
+<li><strong>Help questions:</strong> to write an instant answer, Anthropic's Claude AI reads your message, the app, the screen and the app version. Anthropic does not use it to train its AI. Our own reply is saved with your question.</li>
+<li><strong>Spoken feedback (the "Speak" button):</strong> your recording goes through our server to Groq, which turns it into text. Neither we nor Groq keep the recording. To stop misuse, we count how many recordings each phone and each coded internet address makes a day.</li>
+<li><strong>"Add my watch's screen log"</strong> (off unless you switch it on): the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.</li>
+<li><strong>Crash reports:</strong> when the app crashes, it sends a short error message, where in the app it broke, the screen and the app version. Anything that looks like an email, phone number or long number is removed first. A report never holds your workouts, name, gym or phone details. The error text is copied to our private bug list on GitHub.</li>
+</ul>
+
+<h3>E. Gym owners and staff (the admin app)</h3>
+<ul>
+<li>Your name, mobile number and role in the gym. Your PIN is kept only in a coded form that cannot be turned back into the PIN.</li>
+<li>Sign-in records: who signed in, on which device, from which internet address, and when. Wrong attempts are recorded too.</li>
+<li>WhatsApp checks: to start a gym or reset a PIN, you may send a WhatsApp message with a code to MettleUp's WhatsApp number. WhatsApp (Meta) tells us which number sent it. We check that it is your number, and keep only a coded form of it.</li>
+<li>Your acceptance of our terms: who accepted, when, which version, and a coded form of the internet address. Someone could still match that code to an address, so we protect it like other personal data.</li>
+<li>The internet address a gym was created from, to stop misuse.</li>
+<li>Payments to MettleUp: the plan, the amount, the date, and the UPI or bank reference number you send.</li>
+<li>The gym's own records (members, plans, payments, check-ins, shop, staff, messages and photos) belong to the gym (section 2). So the desk works without internet, the admin app keeps a copy on each device a staff member signs in on. Signing that device out deletes the copy.</li>
+<li>Importing an old member list: to work out which column is which, Google Gemini (or Anthropic's Claude if Gemini fails) sees the column names, 5 example rows and simple counts. Names, addresses, mobile numbers, emails and ID numbers are hidden before they are sent. Plan names, amounts and dates are not hidden. The AI sends back no member details.</li>
+<li>MettleUp support looks at a gym's records only in a short window. Usually the gym's owner opens it, for 1 hour. In an emergency, such as a fault that stops the desk, we open it for up to 1 hour and write down why. We can only read the records, never change them. Every look is recorded, and the owner can see each one in the admin app.</li>
+</ul>
+
+<h3>F. Our websites</h3>
+<ul>
+<li>Our websites use no cookies, no ads and no analytics. A page may remember your light or dark choice, on your device only.</li>
+<li>The demo form on gyms.mettleup.fit asks for your mobile number. You may also give your gym's name, city, size and the software you use now. We use it only to call you back about MettleUp.</li>
+<li>A friend's invite page sends your details only to that friend's gym (section 4B).</li>
+<li>To stop spam, our forms keep a coded form of your internet address.</li>
+</ul>
+
+<h2 id="others">5. Who else gets your data</h2>
+<p>Your gym and, if you choose, other members get the things described in section 4. We never sell your data. These companies help us run MettleUp. They may use the data only to do that work for us:</p>
+<div class="t"><table>
+<thead><tr><th>Company</th><th>What it does for us</th><th>What it gets</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>Supabase</td><td>Our main database</td><td>Everything we keep on our server</td><td>Mumbai, India</td></tr>
+<tr><td>Cloudflare</td><td>Runs our websites and web server, and passes the apps' requests to the database. Keeps feedback, help questions, crash reports and website forms. Keeps a backup copy of our database each night.</td><td>What passes through, and what it keeps</td><td>Many countries, including India</td></tr>
+<tr><td>Google</td><td>Sign-in with Google. Firebase carries pop-ups to your phone. Google Play delivers the app. Gemini helps with a gym's member-list import. Google Drive is used only to bring back an old Drive backup.</td><td>Your Google email; the pop-up text; the member-list sample with personal details hidden</td><td>Many countries, including the USA</td></tr>
+<tr><td>Anthropic (Claude)</td><td>Writes answers to help questions. Second choice for the member-list import.</td><td>The help message; the member-list sample with personal details hidden</td><td>USA</td></tr>
+<tr><td>Groq</td><td>Turns spoken feedback into text</td><td>The recording, for a moment</td><td>USA</td></tr>
+<tr><td>Meta (WhatsApp)</td><td>Number checks for gym owners and staff</td><td>The message and the number that sent it</td><td>Many countries</td></tr>
+<tr><td>GitHub</td><td>Our private bug list</td><td>Crash error text, with personal details removed</td><td>USA</td></tr>
+<tr><td>Your gym's payment company</td><td>Takes your payment to your gym, only when you pay online</td><td>Your name, mobile number and the amount</td><td>India</td></tr>
+</tbody></table></div>
+<p>We also share data when Indian law requires it, for example with a court or the police.</p>
+
+<h2 id="keep">6. How long we keep it</h2>
+<div class="t"><table>
+<thead><tr><th>What</th><th>How long</th></tr></thead>
+<tbody>
+<tr><td>Your MettleUp account and saved copy</td><td>Until you delete your account. When you delete an item in the app, it is deleted on our server too. We keep only an empty marker, so another phone of yours does not bring it back.</td></tr>
+<tr><td>Your link to a gym, and the gym's records about you</td><td>As long as your gym keeps them. When you leave, your mobile number is erased from your app's link to the gym; your gym decides about the rest. If the gym leaves MettleUp, we delete its records within 30 days of its request.</td></tr>
+<tr><td>Leaderboard numbers</td><td>62 days. All of them are deleted when you leave the gym.</td></tr>
+<tr><td>Trainer summary</td><td>Deleted at once when you switch it off or leave the gym, or after 90 days with no update.</td></tr>
+<tr><td>Questions to a trainer</td><td>180 days. Deleted at once when you leave the gym.</td></tr>
+<tr><td>Machine use</td><td>63 days. Deleted at once when you leave the gym.</td></tr>
+<tr><td>Workouts shared with gym mates</td><td>60 days each. All of them are deleted at once when you switch it off or leave the gym.</td></tr>
+<tr><td>Workout offer dates</td><td>Until you leave the offer or the gym, or 90 days after the offer ends. The record of when you joined and left the offer is kept until 1 year after the offer ends.</td></tr>
+<tr><td>A workout report you sent</td><td>30 days</td></tr>
+<tr><td>The code that lets pop-ups reach your phone</td><td>Until you leave the gym or turn messages off, or after 60 days unused. The pop-up notes: 30 days.</td></tr>
+<tr><td>Feedback, help questions and watch screen logs</td><td>1 year</td></tr>
+<tr><td>Voice recordings</td><td>Not kept. The daily counts: 7 days.</td></tr>
+<tr><td>Crash reports</td><td>90 days. The error text on GitHub has no personal details and stays with the record of the fix.</td></tr>
+<tr><td>Demo form on our website</td><td>12 months, unless you become a customer</td></tr>
+<tr><td>WhatsApp number checks</td><td>2 days</td></tr>
+<tr><td>Sign-in records and technical logs</td><td>7 days until 12 May 2027. From 13 May 2027, 1 year, as the law then requires.</td></tr>
+<tr><td>The internet address a gym was created from</td><td>1 year</td></tr>
+<tr><td>Records of support looks and gym deletion requests</td><td>2 years, as proof</td></tr>
+<tr><td>Records of terms a gym accepted</td><td>While the gym uses MettleUp</td></tr>
+<tr><td>Payments to MettleUp</td><td>As long as tax law requires</td></tr>
+<tr><td>Nightly backup copies</td><td>7 days</td></tr>
+</tbody></table></div>
+<p>From 13 May 2027, the law also asks us to keep sign-in and technical logs for 1 year, even after an account is deleted. We use them only to look into security problems.</p>
+
+<h2 id="delete">7. Delete your data</h2>
+<ol>
+<li><strong>From this phone:</strong> Settings → Your data → Erase or start over → "Erase all data". This removes everything the app holds on this phone, including progress photos.</li>
+<li><strong>Your saved copy and MettleUp account:</strong> Settings → Your data → Backup and restore → "Delete my account". Both are deleted from our server at once; backup copies expire within 7 days. No app any more? Follow the steps at <a href="https://mettleup.fit/delete-account">mettleup.fit/delete-account</a>, or email us from your Google email address. If your Google account is also used for another MettleUp sign-in, we delete your saved workouts but keep that other sign-in working.</li>
+<li><strong>What your gym has:</strong> leave the gym (Settings → Your gym → "Leave gym"). Your leaderboard numbers, trainer summary, machine use, shared workouts and questions are then deleted. Your membership, payments and visits stay with your gym, which may have to keep payment records by law. Ask your gym to erase the rest.</li>
+</ol>
+
+<h2 id="rights">8. Your choices and rights</h2>
+<p>You can switch off any sharing at any time, as easily as you switched it on (the switches are in the table in section 4B). Switching off stops new sharing. Where section 6 says so, what was shared is deleted at once too. Some features then stop working.</p>
+<p>You can also ask us:</p>
+<ul>
+<li>for a summary of the data we hold about you, and who we shared it with;</li>
+<li>to correct or complete it;</li>
+<li>to erase it, where the law allows;</li>
+<li>to let a person you name use these rights for you, if you die or cannot act yourself.</li>
+</ul>
+<p>Write to <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a>. Tell us the Google email or mobile number your data is linked to, so we can find it. We answer within 30 days. For your gym's records, you can also ask your gym directly. If we do not solve your complaint, you can complain to the Data Protection Board of India.</p>
+<p>This notice is also in Hindi, below. Ask us if you need it in another Indian language.</p>
+
+<h2 id="kids">9. Under 18</h2>
+<p>MettleUp is only for people aged 18 or over. If we learn that we hold data of someone under 18, we delete it.</p>
+
+<h2 id="safe">10. How we protect it</h2>
+<p>Data travels encrypted. Each gym can reach only its own records. Only people the gym's owner adds can sign in to its admin app. MettleUp support can look only in a recorded window (section 4E). We keep backup copies so data is not lost.</p>
+<p><strong>If your data leaks,</strong> we tell you without delay, in the app or by message. We tell you what happened, what it means for you and what you can do. We report it to the Data Protection Board as the law requires. If it involves a gym's records, we also tell that gym within 24 hours.</p>
+
+<h2 id="where">11. Where your data is kept</h2>
+<p>Our main database is in Mumbai, India. Some of the companies in section 5 work outside India, mostly in the USA. They get only what the table in section 5 says.</p>
+
+<h2 id="changes">12. Changes to this notice</h2>
+<p>Before a change that affects you, we tell you in the app. The date at the top shows the latest version.</p>
+<p>Last updated: 10 Nov 2026. What changed: we rewrote the whole notice in simpler words, with a summary and a table of what goes to your gym. Newly listed: busy machines, workout reports, pause and renew requests, Bring a friend, paying your gym online, your watch, every company that helps us, gym staff sign-in and our websites. Corrected: help questions are answered by an AI; weigh-ins from Health Connect are in your saved copy when you sign in; pop-ups can carry a trainer's reply; the Settings paths. Changed: crash reports now go to a private bug list on GitHub. Earlier changes: 5 Nov 2026 (sleep), 4 Nov 2026 (trainer summary, Ask a trainer, backups to your MettleUp account), 2 Nov 2026 (help questions), 1 Nov 2026 (Health Connect), 30 Oct 2026 (spoken feedback, crash reports).</p>
+
+<hr>
+<section lang="hi"><h1>MettleUp गोपनीयता सूचना (हिंदी)</h1>
+<p class="muted">यह ऊपर दी गई अंग्रेज़ी सूचना का हिंदी रूप है। दोनों में फर्क हो तो अंग्रेज़ी वाला मान्य है। आखिरी बदलाव: 10 नवंबर 2026।</p>
+
+<h2>संक्षेप में</h2>
+<ul class="sum">
+<li>आप ऐप में जो लिखते हैं, वह आपके फोन पर ही रहता है। यह सिर्फ़ दो हालात में बाहर जाता है: जब आप उसकी कॉपी रखने के लिए Google से साइन इन करें, या जब आप किसी जिम में हों।</li>
+<li>अगर आप किसी जिम में हैं, तो कुछ चीज़ें उसके पास जाती हैं: आपके चेक-इन, उसके लीडरबोर्ड के लिए हर दिन के आपके वर्कआउट के कुल नंबर, और आपके ट्रेनरों के लिए आपके वर्कआउट का सार, जब तक आप उसे बंद न करें। सेक्शन 4B की टेबल में हर चीज़ और उसे रोकने का तरीका लिखा है।</li>
+<li>आपका जिम MettleUp में आपके बारे में अपने रिकॉर्ड भी रखता है, जैसे आपकी मेंबरशिप और भुगतान। इन रिकॉर्ड की ज़िम्मेदारी आपके जिम की है। हम इन्हें सिर्फ़ जिम के लिए रखते हैं।</li>
+<li>हम आपका डेटा कभी नहीं बेचते और विज्ञापन नहीं दिखाते। Health Connect का डेटा कभी आपके जिम या किसी AI के पास नहीं जाता।</li>
+<li>आप अपना डेटा कभी भी देख सकते हैं, सही करवा सकते हैं या मिटवा सकते हैं। contact@mettleup.fit पर लिखें।</li>
+</ul>
+
+<p><strong>इस पेज पर:</strong></p>
+<ol class="toc">
+<li><a href="#hi-who">हम कौन हैं</a></li>
+<li><a href="#hi-charge">आपके डेटा का ज़िम्मेदार कौन है</a></li>
+<li><a href="#hi-phone">क्या आपके फोन पर ही रहता है</a></li>
+<li><a href="#hi-collect">हम क्या लेते हैं, और क्यों</a></li>
+<li><a href="#hi-others">और किसे मिलता है</a></li>
+<li><a href="#hi-keep">हम कितने समय तक रखते हैं</a></li>
+<li><a href="#hi-delete">अपना डेटा मिटाएँ</a></li>
+<li><a href="#hi-rights">आपकी पसंद और अधिकार</a></li>
+<li><a href="#hi-kids">18 साल से कम</a></li>
+<li><a href="#hi-safe">हम इसे कैसे सुरक्षित रखते हैं</a></li>
+<li><a href="#hi-where">यह कहाँ रखा जाता है</a></li>
+<li><a href="#hi-changes">बदलाव</a></li>
+</ol>
+
+<h2 id="hi-who">1. हम कौन हैं</h2>
+<p>MettleUp जिम मेंबरों के लिए एक वर्कआउट ऐप है, Android फोन और Wear OS घड़ियों पर। जिम अपना काम चलाने के लिए MettleUp का एक वेब ऐप भी इस्तेमाल करते हैं, जिसे एडमिन ऐप कहते हैं। इस सूचना में "हम" का मतलब MettleUp है। MettleUp को Aakash Pahuja चलाते हैं। वे जयपुर, राजस्थान, भारत में यह काम अकेले मालिक (sole proprietor) के रूप में करते हैं।</p>
+<p>यह सूचना MettleUp ऐप, घड़ी वाले ऐप, एडमिन ऐप, और हमारी वेबसाइटों mettleup.fit, gyms.mettleup.fit और app.mettleup.fit पर लागू होती है।</p>
+<p><strong>सवाल और शिकायतें:</strong> हमारे शिकायत अधिकारी (Grievance Officer) Aakash Pahuja हैं, <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a>। हम 30 दिन के अंदर जवाब देते हैं।</p>
+
+<h2 id="hi-charge">2. आपके डेटा का ज़िम्मेदार कौन है</h2>
+<ul>
+<li><strong>MettleUp की ज़िम्मेदारी:</strong> आपका MettleUp खाता, और उसके साथ सेव आपके वर्कआउट की कॉपी। मदद और फीडबैक के संदेश, क्रैश रिपोर्ट, जिम के साथियों के साथ शेयर किए गए आपके वर्कआउट, और हमारे तकनीकी लॉग भी हमारी ज़िम्मेदारी हैं। (भारत के डेटा कानून के तहत इनके लिए हम "Data Fiduciary" हैं।)</li>
+<li><strong>आपके जिम की ज़िम्मेदारी:</strong> आपके बारे में उसके अपने रिकॉर्ड। ये हैं आपकी मेंबरशिप, भुगतान, रसीदें, चेक-इन, शॉप ऑर्डर और संदेश। इनमें डेस्क पर ली गई आपकी फोटो, आपका ट्रेनर जो नाप लेता है और जो डाइट प्लान देता है, और आपकी पर्सनल ट्रेनिंग की बुकिंग भी आती हैं। ऐप जो चीज़ें आपके जिम को भेजता है (सेक्शन 4B), वे भी जिम के रिकॉर्ड हैं। हम ये रिकॉर्ड सिर्फ़ आपके जिम के लिए, एक लिखित समझौते के तहत रखते हैं। (आपका जिम "Data Fiduciary" है और हम उसके "Data Processor" हैं।) इन रिकॉर्ड के बारे में पहले अपने जिम से पूछें। उसका नाम ऐप में Settings → Your gym में लिखा है। अगर आप जिम की जगह हमें लिखते हैं, तो हम आपकी बात आपके जिम तक पहुँचाते हैं और जवाब देने में उसकी मदद करते हैं।</li>
+</ul>
+
+<h2 id="hi-phone">3. क्या आपके फोन पर ही रहता है</h2>
+<p>आप ऐप में जो कुछ भी लिखते हैं, वह आपके फोन पर ही रहता है, जब तक यह सूचना कुछ और न कहे। यानी आपके वर्कआउट, रूटीन, नोट्स, शरीर का वज़न, नाप और प्रोफ़ाइल। <strong>आपकी प्रोग्रेस फोटो कभी आपके फोन से बाहर नहीं जातीं।</strong></p>
+<p>"Download my data" (Settings → Your data → Backup and restore) आपके डेटा की एक फ़ाइल बनाता है। यह फ़ाइल तब तक आपके फोन पर रहती है, जब तक आप ख़ुद न चुनें कि उसे कहाँ रखना है। "Ask an AI about your workouts" (Settings → Your data) सिर्फ़ आपके फोन का शेयर मेन्यू खोलता है। ऐप आप ख़ुद चुनते हैं, और MettleUp ख़ुद कुछ नहीं भेजता।</p>
+
+<h2 id="hi-collect">4. हम क्या लेते हैं, और क्यों</h2>
+
+<h3>A. अगर आप Google से साइन इन करते हैं</h3>
+<p>साइन इन करना आपकी मर्ज़ी है। आप "Continue with Google" से साइन इन करते हैं, शुरुआती स्क्रीन पर या Settings → Your data → Backup and restore में।</p>
+<ul>
+<li><strong>Google से:</strong> आपका ईमेल पता। अगर Google दे, तो आपका नाम और आपकी प्रोफ़ाइल फोटो का लिंक भी।</li>
+<li><strong>आप जो लिखते हैं, उसकी एक कॉपी:</strong>
+  <ul>
+  <li>आपके वर्कआउट: हर एक्सरसाइज़ और सेट, वज़न, रेप्स, समय, दूरी, मेहनत की रेटिंग और नोट्स के साथ;</li>
+  <li>आपके रूटीन, आपकी ख़ुद बनाई एक्सरसाइज़, और आराम के टाइमर और पर्सनल रिकॉर्ड की आपकी सेटिंग;</li>
+  <li>आपके पिछले "empty workout" की एक्सरसाइज़, ताकि अगला उन्हीं से शुरू हो;</li>
+  <li>आपके शरीर का वज़न और नाप, Health Connect से आए वज़न समेत;</li>
+  <li>आपकी प्रोग्रेस फोटो की तारीख़ें, पर फोटो कभी नहीं;</li>
+  <li>आपकी प्रोफ़ाइल: नाम, उम्र, लंबाई, लक्ष्य, अनुभव, जिम का नाम, कब से मेंबर हैं, खाने के लक्ष्य, यूनिट, भाषा, बायो और लिंक।</li>
+  </ul>
+  इस कॉपी में आपका मोबाइल नंबर कभी नहीं होता।</li>
+<li><strong>क्यों:</strong> ताकि नए फोन पर, या ऐप दोबारा इंस्टॉल करने के बाद, आपके वर्कआउट वापस मिल जाएँ।</li>
+<li><strong>कौन देख सकता है:</strong> सिर्फ़ आप। आपका जिम और दूसरे मेंबर इसे नहीं देख सकते। हम इसे सिर्फ़ कोई खराबी ठीक करने के लिए देखते हैं, या जब कानून हमें ऐसा करने को मजबूर करे।</li>
+</ul>
+
+<h3>B. अगर आप किसी जिम से जुड़ते हैं</h3>
+<p>आप अपने जिम के कोड या इनवाइट लिंक से जुड़ते हैं। पहले आप टिक करते हैं कि आपकी उम्र 18 साल या उससे ज़्यादा है, और आप इस सूचना और हमारी शर्तों से सहमत हैं। यह टेबल बताती है कि उसके बाद आपके जिम को क्या जाता है, और उसे कौन देखता है। स्विच Settings → Your gym में हैं, ज़्यादातर "What my gym can see" के नीचे।</p>
+<div class="t"><table>
+<thead><tr><th>आपके जिम को क्या जाता है</th><th>कौन देखता है</th><th>चालू या बंद?</th><th>कैसे रोकें</th></tr></thead>
+<tbody>
+<tr><td>आपका नाम, जुड़ने की तारीख़, आपने आख़िरी बार ऐप कब खोला, और जिम छोड़ने की तारीख़</td><td>जिम का स्टाफ़</td><td>हमेशा</td><td>जिम छोड़ दें</td></tr>
+<tr><td>चेक-इन: जिम का QR पोस्टर स्कैन करने की तारीख़ और समय</td><td>जिम का स्टाफ़। मेंबर सिर्फ़ यह देखते हैं कि जिम कितना भरा है, कभी यह नहीं कि कौन आया</td><td>हमेशा</td><td>जिम छोड़ दें</td></tr>
+<tr><td>लीडरबोर्ड के नंबर: पिछले 31 दिनों में हर दिन आपने कितने वर्कआउट लिखे और कितने किलो उठाए। और कुछ नहीं</td><td>जिम का स्टाफ़, आपके नाम के साथ। मेंबर "A member" देखते हैं</td><td>हमेशा</td><td>जिम छोड़ दें। आपका जिम भी आपको छिपा सकता है</td></tr>
+<tr><td>लीडरबोर्ड पर आपका नाम (पहला नाम और आख़िरी नाम का पहला अक्षर)</td><td>आपके जिम के मेंबर</td><td>बंद</td><td>"Show my name on my gym's leaderboard"</td></tr>
+<tr><td>आपके ट्रेनरों के लिए आपके वर्कआउट का सार (पूरी जानकारी नीचे)</td><td>मालिक और आपका ट्रेनर। फ्रंट डेस्क नहीं</td><td><strong>चालू</strong></td><td>"Share my workouts with my trainers"</td></tr>
+<tr><td>आपने कौन-सी मशीनें इस्तेमाल कीं, और कब (सिर्फ़ अगर आपके जिम ने मशीनों की भीड़ दिखाने वाला फ़ीचर चालू किया हो)</td><td>आपके नाम के साथ कोई नहीं देखता। मेंबर देखते हैं कि हर मशीन आमतौर पर कितनी व्यस्त रहती है</td><td><strong>चालू</strong></td><td>"Share which machines I use"</td></tr>
+<tr><td>आपके जिम के पॉप-अप: Google Firebase का एक कोड उन्हें इस फोन तक पहुँचाता है</td><td>सिर्फ़ आप</td><td><strong>चालू</strong></td><td>"Messages from my gym"</td></tr>
+<tr><td>जिम के साथियों के लिए आपका बायो और हाल के वर्कआउट (पूरी जानकारी नीचे)</td><td>आपके जिम के मेंबर, जब तक लीडरबोर्ड पर आपका नाम दिखता है</td><td>बंद</td><td>"Let my gym mates see my workouts"</td></tr>
+<tr><td>जो आप ख़ुद भेजते हैं: शॉप ऑर्डर, डेस्क को संदेश, अपना प्लान रोकने या रिन्यू करने की रिक्वेस्ट, ट्रेनर से सवाल</td><td>जिम का स्टाफ़; सवाल उसी के पास जाता है जिसे आप चुनते हैं</td><td>जब आप कुछ भेजें</td><td>न भेजें</td></tr>
+<tr><td>आपका मोबाइल नंबर, अगर आप उसे चेक-इन पर टाइप करें (डेस्क उसकी पुष्टि करता है, फिर वह नंबर आपको जिम की सूची से जोड़ देता है)</td><td>जिम का स्टाफ़</td><td>जब आप उसे टाइप करें</td><td>जिम छोड़ दें</td></tr>
+<tr><td>वर्कआउट ऑफ़र: गिने जाने वाले वर्कआउट की तारीख़ें</td><td>जिम का स्टाफ़</td><td>जब आप किसी ऑफ़र से जुड़ें</td><td>Gym टैब → Workout offer → "Leave the offer"</td></tr>
+<tr><td>वर्कआउट रिपोर्ट: उस जिम से जुड़ने के बाद से आपके वर्कआउट की एक स्प्रेडशीट</td><td>जिम का स्टाफ़</td><td>सिर्फ़ तब, जब जिम माँगे और आप हाँ दबाएँ</td><td>ना दबाएँ</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>ट्रेनर के लिए सार:</strong> 12 हफ़्तों तक हर हफ़्ते के आपके वर्कआउट और उठाए गए किलो, आपकी सबसे अच्छी लिफ़्ट, आपके नए सबसे भारी वज़न, और आपके आख़िरी वर्कआउट का दिन। इसमें पिछले 3 महीनों के ज़्यादा से ज़्यादा 30 वर्कआउट भी होते हैं: हर एक की तारीख़ और नाम, और हर एक्सरसाइज़ का सबसे अच्छा सेट और कितने सेट हुए। इसमें आपके शरीर का वज़न, फोटो, नोट्स, खाना या मोबाइल नंबर कभी नहीं होता।</li>
+<li><strong>मशीनों का इस्तेमाल:</strong> पिछले 35 दिनों के हर वर्कआउट के लिए तारीख़, वह किस घंटे शुरू हुआ, और आपने जिम की कौन-सी मशीनें इस्तेमाल कीं। न नाम, न सेट, न वज़न।</li>
+<li><strong>जिम के साथी:</strong> आपका बायो और पिछले 60 दिनों के ज़्यादा से ज़्यादा 30 वर्कआउट: हर एक का नाम, तारीख़, कितनी देर चला, उठाए गए किलो, और ज़्यादा से ज़्यादा 8 एक्सरसाइज़ का सबसे अच्छा सेट। आपके जिम के स्टाफ़ के पास इसे देखने की कोई स्क्रीन नहीं है।</li>
+<li><strong>पॉप-अप</strong> में आपके जिम का नाम और संदेश, ट्रेनर का जवाब, या कोई छोटा नोट दिखता है, जैसे "आपका ऑर्डर तैयार है"।</li>
+<li><strong>चैलेंज:</strong> चैलेंज ख़त्म होने पर, इनाम देने के लिए जिम जीतने वालों की सूची (नाम, मोबाइल नंबर और कुल नंबर) रखता है। जिम छोड़ने पर उस सूची से आपका मोबाइल नंबर मिटा दिया जाता है।</li>
+<li><strong>Bring a friend:</strong> आप एक इनवाइट लिंक शेयर कर सकते हैं। आपका दोस्त अपना नाम, मोबाइल नंबर और ट्रेनिंग के लिए अपना सबसे अच्छा समय टाइप करता है। ये आपके जिम के पास जाते हैं, इस निशान के साथ कि दोस्त को आपने भेजा है। आप सिर्फ़ यह देखते हैं कि कितने दोस्त जुड़े।</li>
+<li><strong>जिम को ऑनलाइन भुगतान:</strong> अगर आपका जिम आपसे ऐप में भुगतान करने को कहे, तो आप अपने जिम की अपनी पेमेंट कंपनी (Razorpay, Cashfree, PayU या PhonePe) से भुगतान करते हैं। हम उस कंपनी को आपका नाम, मोबाइल नंबर और रकम देते हैं। हम आपके कार्ड, UPI या बैंक की जानकारी कभी नहीं देखते। पैसा आपके जिम के पास जाता है।</li>
+</ul>
+
+<h3>C. Health Connect और आपकी घड़ी</h3>
+<p>Settings → Phone and watch → "Health apps" में आप चुनते हैं कि MettleUp क्या कर सकता है। Health Connect हर बार पहले आपसे इजाज़त माँगता है:</p>
+<ul>
+<li><strong>वर्कआउट सेव करना:</strong> हर पूरा हुआ वर्कआउट (एक्सरसाइज़, उसके शुरू और ख़त्म होने का समय, और एक्टिव कैलोरी) Health Connect में जाता है। फिर Google Health, Samsung Health और दूसरे ऐप उसे दिखा सकते हैं।</li>
+<li><strong>शरीर का वज़न:</strong> स्मार्ट वज़न मशीन या किसी दूसरे ऐप से आए वज़न आपके शरीर के वज़न वाले लॉग में जुड़ जाते हैं। उस लॉग के बाकी हिस्से की तरह, अगर आपने साइन इन किया है तो ये आपकी MettleUp कॉपी में होते हैं।</li>
+<li><strong>कदम (steps):</strong> आज के कदम उसी पेज पर दिखते हैं और रखे नहीं जाते।</li>
+<li><strong>"Sleep and workouts":</strong> ऐप आपके फोन पर पिछली रात की नींद (वह कब शुरू हुई, कब ख़त्म हुई, और नींद के अलग-अलग हिस्से) पढ़ता है। हल्के वर्कआउट के बाद, अगर आप 6 घंटे से कम सोए हों, तो ऐप आपको यह बताता है। नींद का डेटा न रखा जाता है, न उसका बैकअप होता है, न वह कहीं भेजा जाता है।</li>
+</ul>
+<p>Health Connect का डेटा कभी आपके जिम, विज्ञापन देने वालों या किसी AI के पास नहीं जाता। MettleUp, Health Connect से मिली जानकारी का इस्तेमाल Health Connect Permissions Policy के हिसाब से करता है, जिसमें Limited Use की शर्तें भी शामिल हैं। बंद करने के लिए उसी पेज पर "Stop and remove MettleUp's access" दबाएँ, या Health Connect में इसे बदलें।</p>
+<p><strong>आपकी घड़ी:</strong> फोन और घड़ी के ऐप आपके अपने डिवाइसों पर Google Play services के ज़रिए आपका वर्कआउट सीधे एक-दूसरे को भेजते हैं। वर्कआउट के दौरान घड़ी अपने सेंसर से आपकी धड़कन (heart rate) दिखाती है। आपकी धड़कन न सेव होती है, न कहीं भेजी जाती है। फोन घड़ी वाले ऐप का वर्ज़न पढ़ता है, ताकि अपडेट तैयार होने पर आपको बता सके।</p>
+
+<h3>D. मदद, फीडबैक और क्रैश रिपोर्ट</h3>
+<ul>
+<li><strong>मदद और फीडबैक</strong> (Settings → Help and feedback): हमें आपका संदेश, ऐप और उसका वर्ज़न, आपके फोन का मॉडल, आप जिस स्क्रीन पर थे, और आपके जिम का कोड मिलता है। हमें इस इंस्टॉल का एक रैंडम नंबर और आपके इंटरनेट (IP) पते का कोड में बदला हुआ रूप भी मिलता है, जो सिर्फ़ गलत इस्तेमाल रोकने के लिए है। हमें आपका नाम या मोबाइल नंबर नहीं मिलता, जब तक आप उन्हें ख़ुद टाइप न करें।</li>
+<li><strong>मदद के सवाल:</strong> तुरंत जवाब लिखने के लिए Anthropic का Claude AI आपका संदेश, ऐप, स्क्रीन और ऐप का वर्ज़न पढ़ता है। Anthropic इसे अपने AI को सिखाने (train करने) के लिए इस्तेमाल नहीं करता। हमारा अपना जवाब आपके सवाल के साथ सेव होता है।</li>
+<li><strong>बोलकर फीडबैक ("Speak" बटन):</strong> आपकी रिकॉर्डिंग हमारे सर्वर से होकर Groq के पास जाती है, जो उसे टेक्स्ट में बदलता है। न हम रिकॉर्डिंग रखते हैं, न Groq। गलत इस्तेमाल रोकने के लिए हम गिनते हैं कि हर फोन, और कोड में बदला हुआ हर इंटरनेट पता, दिन में कितनी रिकॉर्डिंग करता है।</li>
+<li><strong>"Add my watch's screen log"</strong> (तब तक बंद, जब तक आप इसे चालू न करें): आपकी घड़ी की स्क्रीन कब चालू, बंद या धीमी (dim) हुई, और आपकी घड़ी की Battery Saver और स्क्रीन की सेटिंग।</li>
+<li><strong>क्रैश रिपोर्ट:</strong> ऐप क्रैश होने पर वह एक छोटा एरर संदेश, ऐप में गड़बड़ी की जगह, स्क्रीन और ऐप का वर्ज़न भेजता है। जो कुछ भी ईमेल, फोन नंबर या लंबे नंबर जैसा दिखे, उसे पहले हटा दिया जाता है। रिपोर्ट में आपके वर्कआउट, नाम, जिम या फोन की जानकारी कभी नहीं होती। एरर का टेक्स्ट GitHub पर हमारी निजी बग-सूची में कॉपी होता है।</li>
+</ul>
+
+<h3>E. जिम के मालिक और स्टाफ़ (एडमिन ऐप)</h3>
+<ul>
+<li>जिम में आपका नाम, मोबाइल नंबर और आपकी भूमिका। आपका PIN सिर्फ़ कोड में बदले हुए रूप में रखा जाता है, जिससे PIN वापस नहीं निकाला जा सकता।</li>
+<li>साइन इन के रिकॉर्ड: किसने साइन इन किया, किस डिवाइस पर, किस इंटरनेट पते से, और कब। गलत कोशिशें भी दर्ज होती हैं।</li>
+<li>WhatsApp से जाँच: जिम शुरू करने या PIN रीसेट करने के लिए, आप MettleUp के WhatsApp नंबर पर कोड वाला एक WhatsApp संदेश भेज सकते हैं। WhatsApp (Meta) हमें बताता है कि वह किस नंबर से आया। हम जाँचते हैं कि वह आपका नंबर है, और उसका सिर्फ़ कोड में बदला हुआ रूप रखते हैं।</li>
+<li>हमारी शर्तें मानने का रिकॉर्ड: किसने मानीं, कब, कौन-सा वर्ज़न, और इंटरनेट पते का कोड में बदला हुआ रूप। फिर भी कोई इस कोड का किसी पते से मिलान कर सकता है, इसलिए हम इसे बाकी निजी डेटा की तरह सुरक्षित रखते हैं।</li>
+<li>वह इंटरनेट पता जिससे कोई जिम बनाया गया, गलत इस्तेमाल रोकने के लिए।</li>
+<li>MettleUp को भुगतान: प्लान, रकम, तारीख़, और आपका भेजा UPI या बैंक रेफ़रेंस नंबर।</li>
+<li>जिम के अपने रिकॉर्ड (मेंबर, प्लान, भुगतान, चेक-इन, शॉप, स्टाफ़, संदेश और फोटो) जिम के हैं (सेक्शन 2)। इंटरनेट के बिना भी डेस्क चलता रहे, इसलिए एडमिन ऐप हर उस डिवाइस पर इनकी एक कॉपी रखता है जिस पर कोई स्टाफ़ मेंबर साइन इन करता है। उस डिवाइस से साइन आउट करने पर कॉपी मिट जाती है।</li>
+<li>पुरानी मेंबर-सूची इम्पोर्ट करना: कौन-सा कॉलम क्या है, यह समझने के लिए Google Gemini (या Gemini न चले तो Anthropic का Claude) कॉलम के नाम, 5 नमूना पंक्तियाँ और सरल गिनतियाँ देखता है। भेजने से पहले नाम, पते, मोबाइल नंबर, ईमेल और ID नंबर छिपा दिए जाते हैं। प्लान के नाम, रकम और तारीख़ें नहीं छिपाई जातीं। AI मेंबरों की कोई जानकारी वापस नहीं भेजता।</li>
+<li>MettleUp सपोर्ट किसी जिम के रिकॉर्ड सिर्फ़ थोड़े समय के लिए मिली पहुँच में देखता है। आमतौर पर जिम का मालिक इसे 1 घंटे के लिए खोलता है। किसी इमरजेंसी में, जैसे कोई खराबी जो डेस्क का काम रोक दे, हम इसे ज़्यादा से ज़्यादा 1 घंटे के लिए खोलते हैं और कारण लिख लेते हैं। हम रिकॉर्ड सिर्फ़ पढ़ सकते हैं, कभी बदल नहीं सकते। हर बार देखना दर्ज होता है, और मालिक एडमिन ऐप में हर एक को देख सकता है।</li>
+</ul>
+
+<h3>F. हमारी वेबसाइटें</h3>
+<ul>
+<li>हमारी वेबसाइटें कोई कुकी, विज्ञापन या एनालिटिक्स इस्तेमाल नहीं करतीं। कोई पेज आपकी लाइट या डार्क पसंद याद रख सकता है, सिर्फ़ आपके डिवाइस पर।</li>
+<li>gyms.mettleup.fit पर डेमो फ़ॉर्म आपका मोबाइल नंबर माँगता है। आप अपने जिम का नाम, शहर, साइज़ और अभी इस्तेमाल हो रहा सॉफ़्टवेयर भी बता सकते हैं। हम इसे सिर्फ़ MettleUp के बारे में आपको वापस कॉल करने के लिए इस्तेमाल करते हैं।</li>
+<li>दोस्त के इनवाइट वाला पेज आपकी जानकारी सिर्फ़ उस दोस्त के जिम को भेजता है (सेक्शन 4B)।</li>
+<li>स्पैम रोकने के लिए हमारे फ़ॉर्म आपके इंटरनेट पते का कोड में बदला हुआ रूप रखते हैं।</li>
+</ul>
+
+<h2 id="hi-others">5. आपका डेटा और किसे मिलता है</h2>
+<p>सेक्शन 4 में लिखी चीज़ें आपके जिम को, और अगर आप चुनें तो दूसरे मेंबरों को, मिलती हैं। हम आपका डेटा कभी नहीं बेचते। ये कंपनियाँ MettleUp चलाने में हमारी मदद करती हैं। वे डेटा का इस्तेमाल सिर्फ़ हमारे लिए यही काम करने में कर सकती हैं:</p>
+<div class="t"><table>
+<thead><tr><th>कंपनी</th><th>हमारे लिए क्या करती है</th><th>उसे क्या मिलता है</th><th>कहाँ</th></tr></thead>
+<tbody>
+<tr><td>Supabase</td><td>हमारा मुख्य डेटाबेस</td><td>जो कुछ हम अपने सर्वर पर रखते हैं</td><td>मुंबई, भारत</td></tr>
+<tr><td>Cloudflare</td><td>हमारी वेबसाइटें और वेब सर्वर चलाता है, और ऐप की रिक्वेस्ट डेटाबेस तक पहुँचाता है। फीडबैक, मदद के सवाल, क्रैश रिपोर्ट और वेबसाइट के फ़ॉर्म रखता है। हर रात हमारे डेटाबेस की एक बैकअप कॉपी रखता है।</td><td>जो उससे होकर गुज़रता है, और जो वह रखता है</td><td>कई देश, भारत समेत</td></tr>
+<tr><td>Google</td><td>Google से साइन इन। Firebase पॉप-अप आपके फोन तक पहुँचाता है। Google Play ऐप पहुँचाता है। Gemini जिम की मेंबर-सूची इम्पोर्ट में मदद करता है। Google Drive सिर्फ़ पुराना Drive बैकअप वापस लाने के लिए इस्तेमाल होता है।</td><td>आपका Google ईमेल; पॉप-अप का टेक्स्ट; मेंबर-सूची का नमूना, निजी जानकारी छिपाकर</td><td>कई देश, अमेरिका (USA) समेत</td></tr>
+<tr><td>Anthropic (Claude)</td><td>मदद के सवालों के जवाब लिखता है। मेंबर-सूची इम्पोर्ट के लिए दूसरा विकल्प।</td><td>मदद का संदेश; मेंबर-सूची का नमूना, निजी जानकारी छिपाकर</td><td>अमेरिका</td></tr>
+<tr><td>Groq</td><td>बोलकर दिए गए फीडबैक को टेक्स्ट में बदलता है</td><td>रिकॉर्डिंग, बस एक पल के लिए</td><td>अमेरिका</td></tr>
+<tr><td>Meta (WhatsApp)</td><td>जिम मालिकों और स्टाफ़ के नंबर की जाँच</td><td>संदेश, और वह नंबर जिससे वह भेजा गया</td><td>कई देश</td></tr>
+<tr><td>GitHub</td><td>हमारी निजी बग-सूची</td><td>क्रैश का एरर टेक्स्ट, निजी जानकारी हटाकर</td><td>अमेरिका</td></tr>
+<tr><td>आपके जिम की पेमेंट कंपनी</td><td>आपका भुगतान आपके जिम तक पहुँचाती है, सिर्फ़ जब आप ऑनलाइन भुगतान करें</td><td>आपका नाम, मोबाइल नंबर और रकम</td><td>भारत</td></tr>
+</tbody></table></div>
+<p>जब भारतीय कानून ज़रूरी बनाए, तब भी हम डेटा देते हैं, जैसे किसी अदालत या पुलिस को।</p>
+
+<h2 id="hi-keep">6. हम कितने समय तक रखते हैं</h2>
+<div class="t"><table>
+<thead><tr><th>क्या</th><th>कितने समय तक</th></tr></thead>
+<tbody>
+<tr><td>आपका MettleUp खाता और सेव की गई कॉपी</td><td>जब तक आप अपना खाता डिलीट न करें। ऐप में कोई चीज़ डिलीट करने पर वह हमारे सर्वर से भी डिलीट हो जाती है। हम सिर्फ़ एक ख़ाली निशान रखते हैं कि वह चीज़ डिलीट हो चुकी है, ताकि आपका कोई दूसरा फोन उसे वापस न ले आए।</td></tr>
+<tr><td>जिम से आपका जुड़ाव, और आपके बारे में जिम के रिकॉर्ड</td><td>जब तक आपका जिम उन्हें रखे। जिम छोड़ने पर, आपके ऐप और जिम के बीच के जुड़ाव से आपका मोबाइल नंबर मिटा दिया जाता है; बाकी के बारे में आपका जिम तय करता है। अगर जिम MettleUp छोड़ दे, तो उसकी रिक्वेस्ट के 30 दिन के अंदर हम उसके रिकॉर्ड मिटा देते हैं।</td></tr>
+<tr><td>लीडरबोर्ड के नंबर</td><td>62 दिन। जिम छोड़ने पर सारे मिटा दिए जाते हैं।</td></tr>
+<tr><td>ट्रेनर के लिए सार</td><td>इसे बंद करते ही या जिम छोड़ते ही तुरंत मिटा दिया जाता है, या 90 दिन तक कोई अपडेट न होने पर।</td></tr>
+<tr><td>ट्रेनर से सवाल</td><td>180 दिन। जिम छोड़ते ही तुरंत मिटा दिए जाते हैं।</td></tr>
+<tr><td>मशीनों का इस्तेमाल</td><td>63 दिन। जिम छोड़ते ही तुरंत मिटा दिया जाता है।</td></tr>
+<tr><td>जिम के साथियों के साथ शेयर किए गए वर्कआउट</td><td>हर एक 60 दिन। इसे बंद करते ही या जिम छोड़ते ही सारे तुरंत मिटा दिए जाते हैं।</td></tr>
+<tr><td>वर्कआउट ऑफ़र की तारीख़ें</td><td>जब तक आप ऑफ़र या जिम न छोड़ें, या ऑफ़र ख़त्म होने के 90 दिन बाद तक। आप ऑफ़र से कब जुड़े और कब छोड़ा, इसका रिकॉर्ड ऑफ़र ख़त्म होने के 1 साल बाद तक रखा जाता है।</td></tr>
+<tr><td>आपकी भेजी हुई वर्कआउट रिपोर्ट</td><td>30 दिन</td></tr>
+<tr><td>वह कोड जिससे पॉप-अप आपके फोन तक पहुँचते हैं</td><td>जब तक आप जिम न छोड़ें या संदेश बंद न करें, या 60 दिन तक इस्तेमाल न होने पर। पॉप-अप के नोट: 30 दिन।</td></tr>
+<tr><td>फीडबैक, मदद के सवाल और घड़ी की स्क्रीन के लॉग</td><td>1 साल</td></tr>
+<tr><td>आवाज़ की रिकॉर्डिंग</td><td>नहीं रखी जातीं। रोज़ कितनी रिकॉर्डिंग हुईं, उसकी गिनती: 7 दिन।</td></tr>
+<tr><td>क्रैश रिपोर्ट</td><td>90 दिन। GitHub पर एरर टेक्स्ट में कोई निजी जानकारी नहीं होती, और वह गड़बड़ी ठीक करने के रिकॉर्ड के साथ रहता है।</td></tr>
+<tr><td>हमारी वेबसाइट का डेमो फ़ॉर्म</td><td>12 महीने, सिवाय तब जब आप हमारे ग्राहक बन जाएँ</td></tr>
+<tr><td>WhatsApp से नंबर की जाँच</td><td>2 दिन</td></tr>
+<tr><td>साइन इन के रिकॉर्ड और तकनीकी लॉग</td><td>12 मई 2027 तक 7 दिन। 13 मई 2027 से 1 साल, क्योंकि तब कानून यही कहेगा।</td></tr>
+<tr><td>वह इंटरनेट पता जिससे जिम बनाया गया</td><td>1 साल</td></tr>
+<tr><td>सपोर्ट के हर बार देखने के रिकॉर्ड, और जिम मिटाने की रिक्वेस्ट के रिकॉर्ड</td><td>2 साल, सबूत के तौर पर</td></tr>
+<tr><td>जिम ने जो शर्तें मानीं, उनके रिकॉर्ड</td><td>जब तक जिम MettleUp इस्तेमाल करता है</td></tr>
+<tr><td>MettleUp को भुगतान</td><td>जब तक टैक्स कानून ज़रूरी बनाए</td></tr>
+<tr><td>हर रात की बैकअप कॉपी</td><td>7 दिन</td></tr>
+</tbody></table></div>
+<p>13 मई 2027 से कानून हमसे यह भी कहता है कि साइन इन और तकनीकी लॉग 1 साल तक रखें, खाता डिलीट होने के बाद भी। हम इन्हें सिर्फ़ सुरक्षा की गड़बड़ियों की जाँच के लिए इस्तेमाल करते हैं।</p>
+
+<h2 id="hi-delete">7. अपना डेटा मिटाएँ</h2>
+<ol>
+<li><strong>इस फोन से:</strong> Settings → Your data → Erase or start over → "Erase all data"। इससे ऐप का इस फोन पर रखा सब कुछ हट जाता है, प्रोग्रेस फोटो समेत।</li>
+<li><strong>आपकी सेव की गई कॉपी और MettleUp खाता:</strong> Settings → Your data → Backup and restore → "Delete my account"। दोनों हमारे सर्वर से तुरंत डिलीट हो जाते हैं; बैकअप कॉपी 7 दिन के अंदर ख़त्म हो जाती हैं। ऐप अब फोन में नहीं है? <a href="https://mettleup.fit/delete-account">mettleup.fit/delete-account</a> पर दिए गए कदम पूरे करें, या अपने Google ईमेल पते से हमें ईमेल करें। अगर आपका Google खाता MettleUp में किसी दूसरे साइन इन के लिए भी इस्तेमाल होता है, तो हम आपके सेव किए वर्कआउट डिलीट कर देते हैं, पर वह दूसरा साइन इन चालू रखते हैं।</li>
+<li><strong>आपके जिम के पास जो है:</strong> जिम छोड़ दें (Settings → Your gym → "Leave gym")। तब आपके लीडरबोर्ड के नंबर, ट्रेनर के लिए सार, मशीनों का इस्तेमाल, शेयर किए गए वर्कआउट और सवाल डिलीट हो जाते हैं। आपकी मेंबरशिप, भुगतान और विज़िट आपके जिम के पास रहते हैं, और जिम को कानून के हिसाब से भुगतान के रिकॉर्ड रखने पड़ सकते हैं। बाकी मिटवाने के लिए अपने जिम से कहें।</li>
+</ol>
+
+<h2 id="hi-rights">8. आपकी पसंद और अधिकार</h2>
+<p>आप कोई भी शेयरिंग कभी भी बंद कर सकते हैं, उतनी ही आसानी से जितनी आसानी से आपने उसे चालू किया था (स्विच सेक्शन 4B की टेबल में हैं)। बंद करने से नई शेयरिंग रुक जाती है। जहाँ सेक्शन 6 ऐसा कहता है, वहाँ जो पहले शेयर हो चुका है, वह भी तुरंत मिटा दिया जाता है। उसके बाद कुछ फ़ीचर काम करना बंद कर देते हैं।</p>
+<p>आप हमसे यह भी कह सकते हैं कि हम:</p>
+<ul>
+<li>हमारे पास आपके बारे में जो डेटा है, उसका सारांश दें, और बताएँ कि हमने उसे किसके साथ शेयर किया;</li>
+<li>उसे सही या पूरा करें;</li>
+<li>कानून जहाँ इजाज़त दे, वहाँ उसे मिटा दें;</li>
+<li>अगर आपकी मृत्यु हो जाए या आप ख़ुद कुछ न कर सकें, तो आपके चुने हुए किसी व्यक्ति को आपकी जगह ये अधिकार इस्तेमाल करने दें।</li>
+</ul>
+<p><a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a> पर लिखें। हमें वह Google ईमेल या मोबाइल नंबर बताएँ जिससे आपका डेटा जुड़ा है, ताकि हम उसे ढूँढ सकें। हम 30 दिन के अंदर जवाब देते हैं। अपने जिम के रिकॉर्ड के लिए आप सीधे अपने जिम से भी कह सकते हैं। अगर हम आपकी शिकायत हल न करें, तो आप भारत के डेटा संरक्षण बोर्ड (Data Protection Board of India) से शिकायत कर सकते हैं।</p>
+<p>यह सूचना ऊपर अंग्रेज़ी में भी है। अगर आपको यह किसी दूसरी भारतीय भाषा में चाहिए, तो हमसे कहें।</p>
+
+<h2 id="hi-kids">9. 18 साल से कम</h2>
+<p>MettleUp सिर्फ़ 18 साल या उससे ज़्यादा उम्र के लोगों के लिए है। अगर हमें पता चले कि हमारे पास 18 साल से कम उम्र के किसी व्यक्ति का डेटा है, तो हम उसे मिटा देते हैं।</p>
+
+<h2 id="hi-safe">10. हम इसे कैसे सुरक्षित रखते हैं</h2>
+<p>डेटा एन्क्रिप्ट होकर (encrypted) भेजा जाता है। हर जिम सिर्फ़ अपने रिकॉर्ड तक पहुँच सकता है। किसी जिम के एडमिन ऐप में सिर्फ़ वही लोग साइन इन कर सकते हैं, जिन्हें जिम का मालिक जोड़ता है। MettleUp सपोर्ट सिर्फ़ थोड़े समय के लिए मिली पहुँच में देख सकता है, और यह दर्ज होता है (सेक्शन 4E)। हम बैकअप कॉपी रखते हैं, ताकि डेटा खो न जाए।</p>
+<p><strong>अगर आपका डेटा लीक हो जाए,</strong> तो हम बिना देर किए आपको ऐप में या संदेश से बताते हैं। हम बताते हैं कि क्या हुआ, आपके लिए इसका क्या मतलब है, और आप क्या कर सकते हैं। कानून के अनुसार हम इसकी रिपोर्ट डेटा संरक्षण बोर्ड को करते हैं। अगर इसमें किसी जिम के रिकॉर्ड शामिल हों, तो हम उस जिम को भी 24 घंटे के अंदर बताते हैं।</p>
+
+<h2 id="hi-where">11. आपका डेटा कहाँ रखा जाता है</h2>
+<p>हमारा मुख्य डेटाबेस मुंबई, भारत में है। सेक्शन 5 की कुछ कंपनियाँ भारत के बाहर काम करती हैं, ज़्यादातर अमेरिका (USA) में। उन्हें सिर्फ़ वही मिलता है जो सेक्शन 5 की टेबल में लिखा है।</p>
+
+<h2 id="hi-changes">12. इस सूचना में बदलाव</h2>
+<p>आप पर असर डालने वाले किसी बदलाव से पहले हम आपको ऐप में बताते हैं। ऊपर लिखी तारीख़ सबसे नया वर्ज़न दिखाती है।</p>
+<p>आखिरी बदलाव: 10 नवंबर 2026। क्या बदला: हमने पूरी सूचना आसान शब्दों में फिर से लिखी, एक सारांश के साथ और एक टेबल के साथ कि आपके जिम को क्या जाता है। नया जोड़ा गया: मशीनों की भीड़, वर्कआउट रिपोर्ट, प्लान रोकने और रिन्यू करने की रिक्वेस्ट, Bring a friend, जिम को ऑनलाइन भुगतान, आपकी घड़ी, हमारी मदद करने वाली हर कंपनी, जिम स्टाफ़ का साइन इन, और हमारी वेबसाइटें। सुधारा गया: मदद के सवालों के जवाब एक AI देता है; साइन इन करने पर Health Connect से आए वज़न आपकी सेव की गई कॉपी में होते हैं; पॉप-अप में ट्रेनर का जवाब भी आ सकता है; Settings में जाने के रास्ते। बदला गया: क्रैश रिपोर्ट अब GitHub पर एक निजी बग-सूची में जाती हैं। पहले के बदलाव: 5 नवंबर 2026 (नींद), 4 नवंबर 2026 (ट्रेनर के लिए सार, Ask a trainer, आपके MettleUp खाते में बैकअप), 2 नवंबर 2026 (मदद के सवाल), 1 नवंबर 2026 (Health Connect), 30 अक्टूबर 2026 (बोलकर फीडबैक, क्रैश रिपोर्ट)।</p>
+</section>
 </main></body></html>

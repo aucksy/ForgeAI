@@ -8,7 +8,7 @@ import { CHECKS, backupOk, main as outageMain, plan, reportBody, runCheck, title
 const quiet = { tries: 2, gapMs: 0, timeoutMs: 1000, wait: async () => undefined };
 
 /** A fake internet: the sites answer as told; GitHub keeps issues in memory. */
-function world({ downUrls = [], issues = [], d1Rows = [] } = {}) {
+function world({ downUrls = [], issues = [], d1Rows = [], isPrivate = true } = {}) {
   const calls = [];
   const state = { issues: issues.map((i) => ({ ...i })), next: 100, labels: new Set() };
   const json = (status, body) => new Response(body == null ? null : JSON.stringify(body), { status });
@@ -19,6 +19,7 @@ function world({ downUrls = [], issues = [], d1Rows = [] } = {}) {
       assert.equal(init.headers.Authorization, 'Bearer gh-token');
       const path = url.slice('https://api.github.com/repos/o/r'.length);
       const body = init.body ? JSON.parse(init.body) : null;
+      if (path === '' && method === 'GET') return json(200, { private: isPrivate });
       if (path.startsWith('/issues?')) {
         const q = new URL(`https://x${path}`).searchParams;
         return json(200, state.issues.filter((i) => i.labels.includes(q.get('labels')) && (q.get('state') === 'all' || i.state === q.get('state'))));
@@ -114,7 +115,9 @@ test('crash kinds: signature from a title, safe text, only new kinds, at most 5'
   assert.equal(fresh[0].sig, '111111111111');
   const issue = issueFor({ ...fresh[0], app: '0.59.0', screen: 'screen', first: 'a', last: 'b', text: 'TypeError: x\n  at `A` @evil' });
   assert.equal(issue.title, 'Crash [111111111111] Member app');
-  assert.ok(!issue.body.includes('TypeError'));
+  // R-445: the repo is private, so the scrubbed error text is in the body (never the title), fenced.
+  assert.ok(!issue.title.includes('TypeError'));
+  assert.ok(issue.body.includes("TypeError: x\n  at 'A' (at)evil"));
   assert.ok(!issue.body.includes('@evil'));
   assert.match(issue.body, /@aucksy/);
 });
@@ -134,6 +137,11 @@ test('crash alerts stay off without the Cloudflare token, and open issues for ne
     const r = await crashMain({ env: { ...env, CLOUDFLARE_API_TOKEN: 'cf-token', CLOUDFLARE_ACCOUNT_ID: 'acc' }, fetchImpl: w.fetchImpl });
     assert.equal(r.opened, 1);
     assert.match(w.state.issues.at(-1).title, /^Crash \[aaaaaaaaaaaa\] Admin app/);
+    // R-445 (D2): never to a repo that is not private.
+    const pub = world({ d1Rows: rows, isPrivate: false });
+    const no = await crashMain({ env: { ...env, CLOUDFLARE_API_TOKEN: 'cf-token', CLOUDFLARE_ACCOUNT_ID: 'acc' }, fetchImpl: pub.fetchImpl });
+    assert.deepEqual(no, { opened: 0, refused: true });
+    assert.ok(!pub.calls.some((c) => c.startsWith('POST https://api.github.com')));
   } finally {
     console.log = log;
   }

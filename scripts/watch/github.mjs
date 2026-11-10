@@ -36,6 +36,8 @@ export function github({ token, repo, fetchImpl = fetch }) {
         await call('POST', '/labels', { name, color, description });
       }
     },
+    /** The repo itself (R-445: crash issues check it is private). */
+    info: () => call('GET', ''),
     create: (title, body, labels) => call('POST', '/issues', { title, body, labels }),
     comment: (number, body) => call('POST', `/issues/${number}/comments`, { body }),
     update: (number, fields) => call('PATCH', `/issues/${number}`, fields),

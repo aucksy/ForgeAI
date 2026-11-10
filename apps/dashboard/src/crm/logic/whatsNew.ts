@@ -38,13 +38,30 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // R-445 (owner: "all as recommended", 10 Nov 2026): new terms, data agreement and privacy notice live; 0067
+    // (terms version 2026-11-10) applied live, so every owner is asked once more at sign-in (TermsGate).
+    id: '2026-11-10',
+    lines: [
+      {
+        text: 'We updated the MettleUp terms and the data agreement for gyms. The next time you sign in as the owner, please read them and tick "I agree" again. Your staff are not asked.',
+      },
+      {
+        text: 'The data agreement now ends with a short notice for your members. It tells them your gym keeps their membership, payments and visits in MettleUp. Copy it from mettleup.fit/data-agreement.',
+      },
+      {
+        text: 'We rewrote the MettleUp privacy notice in simpler words. It now lists every company that helps run MettleUp. Read it at mettleup.fit/privacy.',
+      },
+      {
+        // R-425 (9 Nov 2026): the steel-plate name on the sign-in page, the Welcome page and the menu. Moved here
+        // from 2026-11-09: it was added after that update went live, and goes live with this one.
+        text: 'The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.',
+      },
+    ],
+  },
+  {
     // 0053 + 0054 applied live 9 Nov 2026 (owner: "yes, apply 0053 and 0054"); live tests PASS 68 and 23.
     id: '2026-11-09',
     lines: [
-      {
-        // R-425 (9 Nov 2026): the steel-plate name on the sign-in page, the Welcome page and the menu.
-        text: 'The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.',
-      },
       {
         text: 'New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on their phone.',
         go: { label: 'Open Questions', path: '/questions' },

@@ -111,8 +111,8 @@ no database change. Then fix the cause on `main` and deploy again with the steps
   must be added there, or the browser blocks it; J29 fails on any block. The invite and check-in
   pages (`/join`, `/checkin`) go without it: the Worker writes the gym's name into them as a small
   script, and they hold no sign-in.
-- **Privacy and terms pages** come from `scripts/legal_pages.py`; while the contact blanks are
-  empty they go to `docs/launch/preview/`, never to `public/`.
+- **Privacy notice, terms and data agreement** are built by `scripts/legal_pages.py` from their one
+  source, `docs/legal/*.body.html` (R-445); never hand-edit them in `public/` (legalPages.test.ts checks).
 - Every read and write is row-level-security scoped to the person's own gym (server tests:
   security, uat_access_matrix).
 - **AI import (#47):** "Ask AI to match the columns" calls the Worker's `/api/ai/match-columns`

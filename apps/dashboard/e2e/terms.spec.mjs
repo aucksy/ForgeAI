@@ -6,6 +6,7 @@
 //      continue" the panel opens and is never asked again. The front desk is never asked.
 // J72: a server without 0033 asks nothing (the older journeys' world).
 // J74: the data agreement link opens its own page (#59).
+// J75 (R-445, D3, 10 Nov 2026): a gym that accepted the 24 Oct 2026 version is asked once more, told why.
 import { expect, test } from '@playwright/test';
 
 import { SIGN_IN_CODE, expectFitsPhone, fillNewPin, open, openApp, typeSignIn, openSettings, closeGymReady } from './support.mjs';
@@ -35,12 +36,12 @@ test('J70 Create my gym: the terms box must be ticked, and the acceptance is kep
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await closeGymReady(page);
   const made = server.log.find((c) => c.fn === 'gym_create_online');
-  expect(made.args.p_terms_version).toBe('2026-10-24');
+  expect(made.args.p_terms_version).toBe('2026-11-10');
   // Not asked again: the box at "Create my gym" was the acceptance.
   await expect(page.getByText('Before you go on')).toHaveCount(0);
 
   await openSettings(page, 'Sign-in & data');
-  await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-10-24).');
+  await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-11-10).');
 });
 
 test('J71 an existing gym: the owner is asked once at sign-in; the desk never', async ({ page }) => {
@@ -58,14 +59,14 @@ test('J71 an existing gym: the owner is asked once at sign-in; the desk never', 
   await page.getByRole('checkbox', { name: BOX }).check();
   await page.getByRole('button', { name: 'Agree and continue' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
-  expect(server.terms).toMatchObject({ version: '2026-10-24', by: 'Ramesh Sharma', how: 'sign_in' });
+  expect(server.terms).toMatchObject({ version: '2026-11-10', by: 'Ramesh Sharma', how: 'sign_in' });
 
   // Opening the app again: not asked again.
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('Before you go on')).toHaveCount(0);
   await openSettings(page, 'Sign-in & data');
-  await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-10-24).');
+  await expect(page.getByRole('main')).toContainText('You accepted the terms on 17 Oct 2026 (version 2026-11-10).');
 });
 
 test('J71b the front desk is never asked, even before the owner accepted', async ({ page }) => {
@@ -115,10 +116,33 @@ test('J74 the data agreement link opens its own page with the version the box re
   const res = await page.goto('/data-agreement.html');
   expect(res?.status()).toBe(200);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('MettleUp data agreement for gyms');
-  await expect(page.locator('main')).toContainText('Version 2026-10-24.');
+  await expect(page.locator('main')).toContainText('Version 2026-11-10.');
   await expect(page.locator('#root')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Privacy notice' })).toHaveAttribute('href', '/privacy.html');
   const wide = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(wide).toBeLessThanOrEqual(0);
   expect(errors).toEqual([]);
+});
+
+test('J75 a gym that accepted the old version is asked once more, and told why; the desk still never', async ({ page }) => {
+  const server = await openApp(page);
+  server.termsServer = true;
+  server.gym.name = 'Shakti Gym';
+  server.terms = { version: '2026-10-24', at: '2026-10-24T06:30:00Z', by: 'Ramesh Sharma', how: 'create' };
+  server.addPerson({ name: 'Ramesh Sharma', phone: '9829012345', role: 'owner', code: SIGN_IN_CODE });
+  await typeSignIn(page, '98290 12345', SIGN_IN_CODE);
+
+  await expect(page.getByRole('heading', { name: 'Before you go on' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('main')).toContainText(
+    'We updated the MettleUp terms and the data agreement on 10 Nov 2026. Please read them and accept the new version. Each page has a short "What changed" line near the bottom. Your staff are not asked.',
+  );
+  await expect(page.getByRole('main')).not.toContainText('You do this once.');
+  await expectFitsPhone(page, 'on the updated terms card');
+  await page.getByRole('checkbox', { name: BOX }).check();
+  await page.getByRole('button', { name: 'Agree and continue' }).tap();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  expect(server.terms).toMatchObject({ version: '2026-11-10', by: 'Ramesh Sharma', how: 'sign_in' });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText('Before you go on')).toHaveCount(0);
 });

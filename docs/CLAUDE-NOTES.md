@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-445. New privacy notice, terms and gym data agreement published (D1-D8 "all as recommended") — 10 Nov 2026
+
+He said (10 Nov 2026), on the R-443 review page: "all as recommended". That is: D1 publish the three texts as written; D2 crash reports to a PRIVATE GitHub repo; D3 ask every gym owner to accept the new gym terms at the next sign-in (the live database change for that, nothing else); D4 no 48-hour promise, keep "within 30 days"; D5 cap a gym's claims at 12 months' fees; D6 Hindi rewritten from the new English; D7 an 18+ tick at Google sign-in in the next app version; D8 mention paying the gym online now (test mode). Plus the approved watch screen log line.
+
+Done:
+- One source of truth: docs/legal/privacy.body.html, privacy-hi.body.html, terms.body.html, data-agreement.body.html (the approved drafts; drafts removed). scripts/legal_pages.py builds apps/dashboard/public/privacy.html, terms.html, data-agreement.html from them; `--check` says if a page differs; legalPages.test.ts fails if a published page does not hold its source word for word. docs/launch/PRIVACY-NOTICE.md, -HI.md, TERMS.md, DATA-AGREEMENT.md are now pointers (old text: git show ec4e50e1:<path>); docs/launch/preview/ removed.
+- Changes to the approved drafts, only as the decisions say: "our private bug list on GitHub" (D2) in the crash line, the GitHub row and the "What changed" line; the data agreement gained its "Last updated: 10 Nov 2026. What changed: ..." line.
+- Hindi (D6): a fresh translation of the whole new English (Devanagari, app labels in English like the old Hindi), "दोनों में फर्क हो तो अंग्रेज़ी वाला मान्य है" kept; checked by a fresh reader.
+- Delete-account page: 15 days -> 7 days for backups, path Settings -> Your data -> Backup and restore, a Last updated line.
+- D2: private repo aucksy/mettleup-crashes made (API). Its workflow .github/workflows/crashes.yml runs this repo's scripts/watch/crashes.mjs daily 09:00 IST with its own GITHUB_TOKEN. The app never talks to GitHub (it posts to /api/crash on our server), so no token is in any app. The D1-read-only CLOUDFLARE_API_TOKEN was copied as a sealed box (one throw-away branch workflow printed only the sealed value; branch and run deleted). crashes.mjs now refuses to post to a repo that is not private and puts the server's scrubbed error text in the private issue. The public watch.yml no longer runs crashes.
+- D3: supabase/migrations/0067_terms_version_2026_11_10.sql (only _terms_versions() gains '2026-11-10'), test supabase/tests/0067 (7 checks); 0033's test checks the first entry only. TERMS_VERSION = '2026-11-10'. TermsGate tells an owner who accepted the old version why ("We updated the MettleUp terms and the data agreement on 10 Nov 2026. ..."). J75 (e2e) covers it; J70-J74 use the new version.
+- D7 (app, waits for release): by a helper, bbed14af + 89695a88 (see PROGRESS.md Waiting for release).
+- Owner news 2026-11-10 (three legal lines + the steel name line moved from 2026-11-09, which was added after that update went live). Fresh-reader check fixed two lines.
+
+Live steps (filled in below as they happen):
+
 ## R-444. Six fixes from a fresh-eyes review of v0.76.0..main — 10 Nov 2026
 
 Asked (main session, 10 Nov 2026): fix six review findings; verify each first; no release, no version bump, no tag.

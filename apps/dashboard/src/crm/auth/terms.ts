@@ -14,11 +14,13 @@ import { isMissingFunction } from '../branches/api';
 
 /**
  * The version of /terms.html and /data-agreement.html an owner agrees to: the date they were last
- * changed. Change it (and the "Version" line in docs/launch/DATA-AGREEMENT.md, then run
- * scripts/legal_pages.py) when the words change: every owner is then asked once more.
- * test/crm/legalPages.test.ts fails when the two differ.
+ * changed. Change it (and the "Version" line in docs/legal/data-agreement.body.html, then run
+ * scripts/legal_pages.py, and add the date to _terms_versions() in a new supabase migration, applied
+ * live BEFORE this admin app is deployed) when the words change: every owner is then asked once more.
+ * test/crm/legalPages.test.ts and terms.test.ts fail when they differ.
+ * 2026-11-10 (R-445, owner "all as recommended", D3): the rewritten terms and data agreement (0067).
  */
-export const TERMS_VERSION = '2026-10-24';
+export const TERMS_VERSION = '2026-11-10';
 
 export const TERMS_URL = '/terms.html';
 export const PRIVACY_URL = '/privacy.html';
@@ -53,6 +55,15 @@ export function termsFromRow(raw: unknown): TermsState {
 export function needsTerms(state: TermsState | null, current: string = TERMS_VERSION): boolean {
   if (!state || !state.canAccept) return false;
   return state.acceptedVersion === null || state.acceptedVersion < current;
+}
+
+/**
+ * R-445 (D3): an owner who accepted an older version is asked again; the card says why. PURE.
+ * (A gym that never accepted keeps the first-time words in TermsGate.)
+ */
+export function updatedTermsWords(version: string = TERMS_VERSION): string {
+  const day = new Date(`${version}T12:00:00+05:30`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+  return `We updated the MettleUp terms and the data agreement on ${day}. Please read them and accept the new version. Each page has a short "What changed" line near the bottom. Your staff are not asked.`;
 }
 
 /** The line in Settings -> Your data. PURE. */

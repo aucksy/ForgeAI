@@ -4,7 +4,7 @@ Owner's ask (10 Nov 2026): "Redo or reassess the whole privacy notice and terms 
 accurate and the language is simpler and on par with how everyone does it." Plus his approved Feedback line for
 "Add my watch's screen log" (R-441).
 
-**Status: audit + DRAFTS only. Nothing live changed.** Live pages untouched: `apps/dashboard/public/privacy.html`,
+**Status (10 Nov 2026, R-445): PUBLISHED.** The owner approved D1-D8 "all as recommended". The drafts became the one source, `docs/legal/*.body.html` (built by `scripts/legal_pages.py`); the draft files were removed. Original status: **audit + DRAFTS only. Nothing live changed.** Live pages untouched: `apps/dashboard/public/privacy.html`,
 `terms.html`, `data-agreement.html`, `delete-account.html`, and the in-app texts. Drafts: `docs/legal/privacy-draft.html`,
 `docs/legal/terms-draft.html`, `docs/legal/data-agreement-draft.html`. Publishing needs the owner's explicit yes
 (privacy and legal wording are his call; R-387: "keep the policy-page approval for the very end").

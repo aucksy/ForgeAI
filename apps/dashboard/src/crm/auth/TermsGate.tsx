@@ -19,7 +19,7 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import { Button, Card, CheckField, ErrorBanner, SectionTitle, color, font, space } from '../ui/kit';
 import { useAuth } from './AuthProvider';
 import { authErrorWords } from './signin';
-import { acceptTerms, DATA_AGREEMENT_URL, getTerms, needsTerms, TERMS_URL, TERMS_VERSION, type TermsState } from './terms';
+import { acceptTerms, DATA_AGREEMENT_URL, getTerms, needsTerms, TERMS_URL, TERMS_VERSION, updatedTermsWords, type TermsState } from './terms';
 
 export { TERMS_VERSION } from './terms';
 
@@ -94,7 +94,7 @@ export function TermsGate({ children }: { children: ReactNode }) {
   const accepted = useCallback((s: TermsState) => setState(s), []);
 
   if (key && checkedFor === key && needsTerms(state)) {
-    return <AskTerms sessionKey={key} onAccepted={accepted} onSignOut={() => void signOut()} />;
+    return <AskTerms sessionKey={key} updated={state?.acceptedVersion != null} onAccepted={accepted} onSignOut={() => void signOut()} />;
   }
   if (key && readyFor !== key) {
     return (
@@ -106,7 +106,7 @@ export function TermsGate({ children }: { children: ReactNode }) {
   return <TermsContext.Provider value={state}>{children}</TermsContext.Provider>;
 }
 
-function AskTerms({ sessionKey, onAccepted, onSignOut }: { sessionKey: string; onAccepted: (s: TermsState) => void; onSignOut: () => void }) {
+function AskTerms({ sessionKey, updated, onAccepted, onSignOut }: { sessionKey: string; updated: boolean; onAccepted: (s: TermsState) => void; onSignOut: () => void }) {
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,8 +130,12 @@ function AskTerms({ sessionKey, onAccepted, onSignOut }: { sessionKey: string; o
         <Card>
           <SectionTitle>Before you go on</SectionTitle>
           <p style={{ margin: 0, fontFamily: font.body, fontSize: 14, lineHeight: 1.5, color: color.inkSecondary }}>
-            Please read and accept the MettleUp terms and the data agreement. They say how MettleUp keeps your gym’s
-            records and your members’ details safe. You do this once. Your staff are not asked.
+            {updated ? updatedTermsWords() : (
+              <>
+                Please read and accept the MettleUp terms and the data agreement. They say how MettleUp keeps your gym’s
+                records and your members’ details safe. You do this once. Your staff are not asked.
+              </>
+            )}
           </p>
           <CheckField checked={agreed} onChange={setAgreed}>
             <TermsWords />

@@ -3,12 +3,12 @@
  * supabase/tests/0033_terms_acceptance.sql.
  */
 
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { acceptedLine, needsTerms, PRIVACY_URL, termsFromRow, TERMS_URL, TERMS_VERSION } from '../../src/crm/auth/terms';
+import { acceptedLine, needsTerms, PRIVACY_URL, termsFromRow, TERMS_URL, TERMS_VERSION, updatedTermsWords } from '../../src/crm/auth/terms';
 
 describe('terms acceptance', () => {
   it('reads owner_terms; anything broken reads as nothing accepted, and nobody to ask', () => {
@@ -34,6 +34,16 @@ describe('terms acceptance', () => {
     expect(needsTerms(null)).toBe(false);
   });
 
+  it('R-445 D3: a gym that accepted the 24 Oct version is asked once more, and told why', () => {
+    expect(TERMS_VERSION).toBe('2026-11-10');
+    const old = { acceptedVersion: '2026-10-24', acceptedAt: Date.parse('2026-10-24T06:30:00Z'), acceptedByName: 'R', how: 'create', canAccept: true } as const;
+    expect(needsTerms(old)).toBe(true);
+    expect(needsTerms({ ...old, canAccept: false })).toBe(false); // the desk is still never asked
+    expect(updatedTermsWords()).toBe(
+      'We updated the MettleUp terms and the data agreement on 10 Nov 2026. Please read them and accept the new version. Each page has a short "What changed" line near the bottom. Your staff are not asked.',
+    );
+  });
+
   it('Settings says when and which version, in India time', () => {
     expect(acceptedLine({ acceptedVersion: '2026-10-24', acceptedAt: Date.parse('2026-10-24T20:00:00Z'), acceptedByName: 'R', how: 'sign_in', canAccept: true })).toBe(
       'You accepted the terms on 25 Oct 2026 (version 2026-10-24).',
@@ -50,8 +60,12 @@ describe('terms acceptance', () => {
     }
   });
 
-  it("the admin app's version is the newest in the server's one list of versions (0033 _terms_versions)", () => {
-    const sql = readFileSync(join(__dirname, '../../../../supabase/migrations/0033_terms_acceptance.sql'), 'utf8');
+  it("the admin app's version is the newest in the server's one list of versions (_terms_versions, 0033 then 0067)", () => {
+    // The newest migration that (re)defines _terms_versions() is the list the server has.
+    const dir = join(__dirname, '../../../../supabase/migrations');
+    const file = readdirSync(dir).filter((f) => f.endsWith('.sql')).sort()
+      .filter((f) => /function public\._terms_versions\(\)/.test(readFileSync(join(dir, f), 'utf8'))).at(-1)!;
+    const sql = readFileSync(join(dir, file), 'utf8');
     const m = /function public\._terms_versions\(\)[\s\S]*?select array\[([^\]]*)\]/.exec(sql);
     expect(m, '_terms_versions not found').not.toBeNull();
     const list = [...m![1]!.matchAll(/'(\d{4}-\d{2}-\d{2})'/g)].map((x) => x[1]);

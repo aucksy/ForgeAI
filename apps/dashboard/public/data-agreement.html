@@ -3,28 +3,81 @@
 :root{color-scheme:light dark;--bg:#fff;--ink:#1b1f27;--muted:#5b6372;--line:#dde1e8;--accent:#c4501a}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1218;--ink:#e9ebf0;--muted:#a0a7b5;--line:#2c313b;--accent:#f08a4b}}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.6em}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.15rem;margin-top:1.8em}h3{font-size:1rem;margin-top:1.4em}
 .t{overflow-x:auto}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 a{color:var(--accent)}nav{font-size:.9rem;color:var(--muted)}hr{border:0;border-top:1px solid var(--line);margin:40px 0}
-</style></head><body><main><nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a></nav>
+blockquote{border-left:4px solid var(--line);margin:0;padding:4px 14px}
+.sum{border-left:4px solid var(--accent);padding:4px 0 4px 14px}.sum li{margin:4px 0}.muted{color:var(--muted);font-size:.92rem}
+.toc{font-size:.92rem;columns:2;column-gap:24px;padding-left:20px}@media (max-width:520px){.toc{columns:1}}
+</style></head><body><main>
+<nav><a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms</a> · <a href="/data-agreement.html">Data agreement</a> · <a href="/delete-account.html">Delete your account</a></nav>
 <h1>MettleUp data agreement for gyms</h1>
-<p><strong>Version 2026-10-24.</strong> Between MettleUp, run by Aakash Pahuja, Jaipur, India ("we"), and the gym whose owner ticks "I agree" ("you"). It is part of the MettleUp terms.</p>
-<p><strong>1. Your records are yours.</strong> Your members' details, memberships, payments, receipts, check-ins, shop orders, staff and messages are your gym's records. Under India's data law (DPDP Act 2023) <strong>you are the Data Fiduciary</strong> for them and <strong>we are your Data Processor</strong>.</p>
-<p><strong>2. What we do with them.</strong> We store and process them only to run MettleUp for your gym, and only as the app's features and your staff's actions direct. We do not sell them, show ads with them, use them for our own marketing, or share them with other gyms. We may count them in totals that name no gym or person (for example, how many check-ins MettleUp handled).</p>
-<p><strong>3. Who else handles them (our service providers).</strong></p>
-<ul><li><strong>Supabase</strong>: our database, in Mumbai, India.</li><li><strong>Cloudflare</strong>: delivers the admin app and passes requests to the database; it also keeps our feedback box and daily AI-use counts.</li><li><strong>Google Gemini, then Anthropic Claude if Gemini fails</strong>: only when your owner imports a member list. They see the column names, the first 5 rows of the file and simple counts per column. Names, addresses, mobile numbers, emails, PAN and ID numbers, and any run of 7 or more digits are hidden first, twice (in your browser and again on our server): a column of names or addresses shows only "[name]" or "[address]". Plan names, amounts and dates in those 5 rows are <strong>not</strong> hidden. The AI only answers which column is which; we keep nothing from the file. These companies are outside India.</li></ul>
-<p>We tell you before we add a new provider that sees your records.</p>
-<p><strong>4. Security.</strong> Data travels encrypted. Each gym can reach only its own records. Staff sign in with single-use codes, and only people the owner adds can sign in. Every receipt records who took the money. The admin app keeps a copy of your records on each device a staff member signs in on, so the desk works without internet; signing that device out deletes the copy.</p>
-<p><strong>5. If something leaks.</strong> We tell you in writing <strong>within 24 hours</strong> of finding out: what happened, what data, what we did, and what comes next. We help you send the Data Protection Board your first notice straight away and the full report within 72 hours, and tell the members affected.</p>
-<p><strong>6. Your duties.</strong></p>
-<ul><li>Tell your members that you keep their records in MettleUp (a short notice you can copy is in our privacy notice), and have a lawful reason or their consent to keep them.</li><li>Keep the records accurate, and correct them when a member asks.</li><li>Add only people who need access, and remove staff who leave (Settings → people).</li><li>Use members' details only for your gym's work.</li><li>Tell us at once if a phone or computer with the app is lost, or data looks exposed.</li><li>Only import a member list you are allowed to use.</li></ul>
-<p><strong>7. Members' own requests.</strong> If a member asks you to see, correct or erase their details, you handle it. We help when you ask. If a member asks us, we pass it to you.</p>
-<p><strong>8. Getting your data out.</strong> At any time, the owner can download everything: <strong>Settings → Your data → Download all your gym's data</strong> (an Excel file and a full copy). If that does not work for you, we send you the same within 7 days of asking.</p>
-<p><strong>9. Deleting your gym.</strong> The owner asks in <strong>Settings → Your data → Delete our gym from MettleUp</strong>, or by email. We call the gym's own number to confirm, remind you to download first, then delete every member, payment, check-in and shop order of your gym from our server <strong>within 30 days</strong> of the request. Backup copies expire within 7 more days. We keep the request itself, and the record that you accepted this agreement, for 2 years, as proof.</p>
-<p><strong>10. Members' own saved workouts are not your records.</strong> A member who signs in with Google can save their own workouts, body weight and measurements on MettleUp. That copy belongs to the member; <strong>MettleUp</strong> is responsible for it, not your gym. You, your trainers and your desk cannot see it, and deleting your gym does not delete it.</p>
-<p><strong>11. Our record of your acceptance.</strong> When your owner ticks "I agree", we keep: the gym, who ticked it (their name as signed in), when, which version, whether it was at "Create my gym" or at a later sign-in, and a one-way scrambled form of the internet address it came from. That scrambled form can still be traced back, so we protect it like any other personal data.</p>
-<p><strong>12. Term and ending.</strong> This agreement runs while your gym uses MettleUp. You can stop at any time and ask us to delete your gym (point 9). We may end it with 30 days' written notice, or at once for serious misuse; you can still download your data during the notice. Points 5, 9 and 10 continue after it ends, until your records are deleted.</p>
-<p><strong>13. Liability.</strong> MettleUp is a beta.</p>
-<p><strong>14. Changes.</strong> We tell the owner in the admin app before a new version applies, and ask the owner to accept it again. The version date is at the top.</p>
-<p><strong>15. Law.</strong> Indian law; courts in Jaipur. Contact: Aakash Pahuja, contact@mettleup.fit.</p>
+<p><strong>Version 2026-11-10.</strong> This agreement is between MettleUp, run by Aakash Pahuja, Jaipur, India ("we"), and the gym whose owner ticks "I agree" ("you"). It is part of the <a href="/terms.html">MettleUp terms</a>.</p>
+
+<h2>1. Your records are yours</h2>
+<p>Your members' details are your gym's records. So are memberships, payments, receipts, check-ins, shop orders, staff, messages, member photos, trainer measurements, diet plans and bookings. The same goes for what members' apps send you (the list is in section 4B of our privacy notice). Under India's data law (the DPDP Act 2023), <strong>you are the Data Fiduciary</strong> for them and <strong>we are your Data Processor</strong>.</p>
+
+<h2>2. What we do with them</h2>
+<p>We store and process your records only to run MettleUp for your gym, as the app's features and your staff direct. We do not sell them, use them for ads or for our own marketing, or share them with other gyms. We may count them in totals that name no gym and no person (for example, how many check-ins MettleUp handled).</p>
+
+<h2>3. Who else handles them</h2>
+<ul>
+<li><strong>Supabase:</strong> our database, in Mumbai, India.</li>
+<li><strong>Cloudflare:</strong> runs the admin app and passes requests to the database. It keeps a backup copy of the database each night for 7 days.</li>
+<li><strong>Google Firebase:</strong> carries your messages, offers and trainers' replies to members' phones as pop-ups.</li>
+<li><strong>Google Gemini, then Anthropic Claude if Gemini fails:</strong> only when you import a member list. They see the column names, 5 example rows and simple counts. Names, addresses, mobile numbers, emails, PAN and ID numbers, and any run of 7 or more digits are hidden twice before they leave: in your browser and again on our server. Plan names, amounts and dates are not hidden. The AI only says which column is which, and we keep nothing from the file. These companies are outside India.</li>
+<li><strong>Meta (WhatsApp):</strong> checks the mobile number of an owner or staff member who verifies by WhatsApp.</li>
+<li><strong>Your own payment company</strong> (if you connect one): makes payment links for your members, under your own agreement with it.</li>
+</ul>
+<p>We tell you in the admin app before we add a new company that sees your records.</p>
+
+<h2>4. Security</h2>
+<p>Data travels encrypted. Each gym can reach only its own records. Only people the owner adds can sign in, with their own PIN or a one-time code. PINs are kept only in scrambled form. Every receipt records who took the money. So the desk works without internet, the admin app keeps a copy of your records on each signed-in device. Signing that device out deletes the copy.</p>
+<p><strong>Support access.</strong> We look at your records only in a window that you open (in Settings, for 1 hour). In an emergency, such as a fault that stops your desk, we open it for up to 1 hour and write down why. We can only read, never change. Every look is recorded, and you can see each one in the admin app.</p>
+
+<h2>5. If something leaks</h2>
+<p>We tell you in writing <strong>within 24 hours</strong> of finding out. We say what happened, what data, what we did and what comes next. We help you tell the Data Protection Board straight away and send the full report within 72 hours, and we help tell the members affected.</p>
+
+<h2>6. Your duties</h2>
+<ul>
+<li>Tell your members that you keep their records in MettleUp. You can copy the short notice at the end of this page. Keep only what you need to run their membership, or what they agreed to.</li>
+<li>Keep the records accurate, and correct them when a member asks.</li>
+<li>Add only people who need access, and remove staff who leave.</li>
+<li>Use members' details only for your gym's work. Take a member's photo only with their agreement. Messages your desk sends on WhatsApp go from your own WhatsApp, and you are responsible for them.</li>
+<li>Only import a member list you are allowed to use.</li>
+<li>Tell us at once if a phone or computer with the admin app is lost, or data looks exposed.</li>
+</ul>
+
+<h2>7. Members' requests</h2>
+<p>If a member asks you to see, correct or erase their details, you handle it, and we help when you ask. If a member asks us, we pass it to you.</p>
+
+<h2>8. Getting your data out</h2>
+<p>The owner can download everything at any time from Settings in the admin app (an Excel file and a full copy). If that does not work for you, we send you the same within 7 days of asking.</p>
+
+<h2>9. Deleting your gym</h2>
+<p>The owner asks in Settings in the admin app, or by email. We call the gym's number to confirm and remind you to download first. Then we delete every member, payment, check-in and shop order of your gym from our server <strong>within 30 days</strong> of the request. Backup copies expire within 7 more days. We keep the deletion request itself for 2 years, as proof.</p>
+
+<h2>10. Members' own saved workouts are not your records</h2>
+<p>A member who signs in with Google can save their own workouts, body weight and measurements on MettleUp. That copy belongs to the member, and MettleUp is responsible for it. You, your trainers and your desk cannot see it, and deleting your gym does not delete it.</p>
+
+<h2>11. Our record of your acceptance</h2>
+<p>When your owner ticks "I agree", we keep: the gym, who ticked it (their name as signed in), when, which version, how (at "Create my gym" or at a later sign-in), and a scrambled form of the internet address it came from. That scrambled form can still be traced back, so we protect it like other personal data. We keep this record while your gym uses MettleUp.</p>
+
+<h2>12. Term and ending</h2>
+<p>This agreement runs while your gym uses MettleUp. You can stop at any time and ask us to delete your gym (point 9). We may end it with 30 days' notice, or at once for serious misuse. You can still download your data during the notice. Even after it ends, points 5, 9 and 10 (leaks, deleting your gym, and members' own workouts) still apply until your records are deleted.</p>
+
+<h2>13. Responsibility</h2>
+<p>Section B11 of the <a href="/terms.html">terms</a> (the limit on responsibility) applies to this agreement too.</p>
+
+<h2>14. Changes</h2>
+<p>Before a new version applies, we tell the owner in the admin app and ask them to accept it again. The version date is at the top.</p>
+
+<h2>15. Law</h2>
+<p>Indian law applies; courts in Jaipur. Contact: Aakash Pahuja, <a href="mailto:contact@mettleup.fit">contact@mettleup.fit</a>.</p>
+
+<p>Last updated: 10 Nov 2026. What changed: we rewrote the agreement in simpler words. Newly listed: every company that handles your records, the nightly backup copy, support access, member photos, trainer records and bookings, getting your data out, and a short notice for your members. Corrected: staff sign in with their own PIN or a one-time code, and we keep the record of your acceptance while your gym uses MettleUp. The limit on responsibility is now in the terms (section B11). Before that: 24 Oct 2026, the first version.</p>
+
+<h2>Short notice for your members</h2>
+<p>Copy this, put in your gym's name and contact, and give it to your members (on the wall, at the desk or on WhatsApp):</p>
+<blockquote><p>[Gym name] keeps your membership, payments, receipts and visits in MettleUp, a gym software with servers in Mumbai, India. We use them only to run your membership. If you use the MettleUp app, it also sends us a few things, such as your workout totals for our leaderboard. You can switch most of them off in the app. You can ask our desk to see, correct or erase your details. We must keep payment records as the law requires. Questions: [gym contact]. MettleUp's privacy notice: mettleup.fit/privacy</p></blockquote>
 </main></body></html>

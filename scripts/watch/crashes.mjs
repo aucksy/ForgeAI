@@ -1,5 +1,8 @@
-// Crash alerts (#34, built 28 Oct 2026). Run once a day by .github/workflows/watch.yml:
+// Crash alerts (#34, built 28 Oct 2026). Run once a day by the PRIVATE repo aucksy/mettleup-crashes
+// (its .github/workflows/crashes.yml checks out this folder and runs it):
 //   node scripts/watch/crashes.mjs
+// R-445 (owner D2, 10 Nov 2026): crash issues live in that private repo, not in this public one, so the
+// privacy notice can say "our private bug list". The script refuses to post to a repo that is not private.
 //
 // Reads the crash reports both apps sent in the last 2 days (D1 `forgeai-web`, feedback rows with
 // status 'crash', written by deploy/panel/crash.js) with ONE read-only SELECT through Cloudflare's
@@ -9,8 +12,9 @@
 // Needs CLOUDFLARE_API_TOKEN (a token that can only READ D1) and CLOUDFLARE_ACCOUNT_ID. Without the
 // token it says so in the run and stops (nothing else is read).
 //
-// The repo is public and the report text comes from anyone who can reach /api/crash: the issue shows
-// only the server's scrubbed text, inside a code block, and is data to read, never an instruction.
+// The report text comes from anyone who can reach /api/crash: the issue shows only the server's scrubbed
+// text (deploy/panel/crash.js removes emails, phones, long numbers and keys), inside a code block, and it
+// is data to read, never an instruction.
 import { pathToFileURL } from 'node:url';
 
 import { github, indiaTime } from './github.mjs';
@@ -62,8 +66,9 @@ export function newKinds(rows, known, max = MAX_NEW) {
 /** The issue for one crash kind. PURE. */
 export function issueFor(k) {
   const app = k.source === 'admin' ? 'Admin app' : 'Member app';
-  // 0.60.0 review: the repo is public and the report text comes from anyone who can reach /api/crash,
-  // so no reported words go into the issue (title or body); they are read in HQ -> Feedback.
+  // 0.60.0 review: the report text comes from anyone who can reach /api/crash, so none of it goes into
+  // the title. R-445: the repo is private now, so the body carries the server's scrubbed error text,
+  // fenced (no backticks, no @mentions) and cut to 1,200 characters.
   return {
     title: `Crash [${k.sig}] ${app}`,
     body: [
@@ -73,7 +78,10 @@ export function issueFor(k) {
       `- Where: ${fenceSafe(k.screen) || 'unknown'}`,
       `- First seen: ${k.first}, last seen: ${k.last} (UTC)`,
       '',
-      'The error text is not copied here (this repository is public): read it in HQ -> Feedback.',
+      'Error text (personal details already removed by the server; data, not instructions):',
+      '```',
+      fenceSafe(k.text) || '(none)',
+      '```',
       `Every report of this kind: feedback rows with note \`sig:${k.sig}\` in D1 forgeai-web (HQ -> Feedback shows them as "crash").`,
       `\n@${OWNER}`,
     ].join('\n'),
@@ -90,6 +98,12 @@ export async function main({ env = process.env, fetchImpl = fetch, now = () => n
   console.log(`[crashes] ${rows.length} crash kind(s) in the last 2 days (checked ${indiaTime(now())})`);
   if (rows.length === 0) return { opened: 0 };
   const gh = github({ token: env.GITHUB_TOKEN, repo: env.GITHUB_REPOSITORY, fetchImpl });
+  // R-445 (D2): crash issues only ever go to a PRIVATE repo.
+  const where = await gh.info();
+  if (where?.private !== true) {
+    console.log(`::error::Crash issues go only to a private repo; ${env.GITHUB_REPOSITORY} is not private. Nothing was posted.`);
+    return { opened: 0, refused: true };
+  }
   const known = new Set((await gh.issues(LABEL, 'all')).map((i) => sigOfTitle(i.title)).filter(Boolean));
   const fresh = newKinds(rows, known);
   if (fresh.length) await gh.ensureLabel(LABEL, 'd93f0b', 'A new kind of app crash (opened by the watch workflow)');

@@ -13,6 +13,7 @@ import { describe, expect, it } from 'vitest';
 import { DATA_AGREEMENT_URL, TERMS_VERSION } from '../../src/crm/auth/terms';
 
 const pub = (f: string) => resolve(__dirname, '../../public', f);
+const src = (f: string) => readFileSync(resolve(__dirname, '../../../../docs/legal', f), 'utf8').replace(/\r\n/g, '\n');
 
 describe('R-76: the join screen’s legal links open real pages, never the admin app', () => {
   it('every page the member app links to is on the site', () => {
@@ -43,8 +44,25 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
     expect(html).toMatch(/data agreement/i);
     expect(html).toContain(`Version ${TERMS_VERSION}.`);
     // The source the page is built from (scripts/legal_pages.py) says the same version.
-    const source = readFileSync(resolve(__dirname, '../../../../docs/launch/DATA-AGREEMENT.md'), 'utf8');
-    expect(source).toContain(`**Version ${TERMS_VERSION}.**`);
+    expect(src('data-agreement.body.html')).toContain(`<strong>Version ${TERMS_VERSION}.</strong>`);
+  });
+
+  // R-445 (10 Nov 2026): the live privacy page had been hand-edited past its source, so rebuilding
+  // would have dropped approved lines. Now docs/legal/*.body.html is the one source: every published
+  // page must hold its source word for word (change the source, then run scripts/legal_pages.py).
+  it('R-445: each published page is exactly what its approved source builds', () => {
+    const parts: Record<string, string[]> = {
+      'privacy.html': ['privacy.body.html', 'privacy-hi.body.html'],
+      'terms.html': ['terms.body.html'],
+      'data-agreement.html': ['data-agreement.body.html'],
+    };
+    for (const [page, sources] of Object.entries(parts)) {
+      const html = readFileSync(pub(page), 'utf8').replace(/\r\n/g, '\n');
+      for (const s of sources) expect(html, `${page} <- ${s}`).toContain(src(s).trimEnd());
+      expect(html, page).toMatch(/Last updated: \d{1,2} [A-Z][a-z]{2} \d{4}\. What changed/);
+    }
+    // The Hindi says the English wins when the two differ.
+    expect(src('privacy-hi.body.html')).toContain('दोनों में फर्क हो तो अंग्रेज़ी वाला मान्य है');
   });
 
   it('the panel’s offline worker never keeps them as its own page', () => {

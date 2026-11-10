@@ -72,7 +72,7 @@ begin
   fails := fails || pg_temp.t33_is('3 unknown version', pg_temp.t33_try(format('select public.owner_accept_terms(%L, %L)', kold, '2026-01-01')), 'INVALID');
   fails := fails || pg_temp.t33_is('3 unknown at Create my gym', pg_temp.t33_try(
     'select public.gym_create_online(''T33 Future'', ''Future'', ''9876533008'', null, ''2099-01-01'')'), 'INVALID');
-  fails := fails || pg_temp.t33_is('3 the list', array_to_string(public._terms_versions(), ','), '2026-10-24');
+  fails := fails || pg_temp.t33_is('3 the list starts with it', (public._terms_versions())[1], '2026-10-24'); -- 0067 adds 2026-11-10 after it
   checks := checks + 12;
 
   -- 4. The business accepts once for every branch (0031).
