@@ -330,7 +330,7 @@ class WearWireTest {
     assertEquals(300L, w.getJSONObject(0).getLong("at"))
     assertEquals("11-10 10:00:00.000 stop ambient=0", w.getJSONObject(0).getString("log"))
     // Only the time and the lines go to the app: no node id, no watch name.
-    assertEquals(setOf("at", "log"), w.getJSONObject(0).keySet())
+    assertEquals(setOf("at", "log"), w.getJSONObject(0).keys().asSequence().toSet())
   }
 
   @Test
