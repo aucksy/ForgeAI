@@ -71,7 +71,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
         text: 'On the sign-in page, "Sign in" is now the main button. To start a new gym, tap "Set up a new gym" under "New to MettleUp?".',
       },
       {
-        text: 'On a computer, the menu on the left now shows every item in full, including "Help and feedback". On a small screen, scroll the menu to see the rest.',
+        text: 'On a computer, the whole menu on the left now fits most screens, "Help and feedback" too. "Dark" and "Light" moved to the top right. In a small window, tap "More below".',
       },
       {
         text: 'In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".',

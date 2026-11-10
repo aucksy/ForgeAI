@@ -76,6 +76,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Set up a new gym': 'Naya gym banao',
   // R-447: the quiet line under the sign-in form (and under the set-up form).
   'New to MettleUp?': 'MettleUp pe naye ho?',
+  // R-447: under the computer's side menu when it is longer than the window.
+  'More below': 'Neeche aur hai',
   'Already use MettleUp?': 'Pehle se MettleUp use karte ho?',
   'Sign in with your mobile number and your 6-digit PIN.': 'Apne mobile number aur 6 number ke PIN se sign in karo.',
   // R-446: inside the iPhone home-screen app (iPhone keeps its storage apart from Safari).

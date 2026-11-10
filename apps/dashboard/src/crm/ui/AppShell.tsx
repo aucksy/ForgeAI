@@ -14,7 +14,7 @@ import { BranchSwitch } from '../branches/BranchSwitch';
 import { Icon, type IconName } from './icons';
 import { ThemeToggle } from './ThemeToggle';
 import { NewsBell, NewsSidebarLink } from './WhatsNew';
-import { NewDot, color, font, radius, space, useIsCompact } from './kit';
+import { NewDot, color, font, radius, space, useIsCompact, useMediaQuery } from './kit';
 import { useNewFeatures } from './NewDots';
 import { barLit, linkLit, reachable } from '../logic/newDots';
 import { Link, useRoute } from './router';
@@ -92,8 +92,10 @@ export function AppShell({
       >
         {/* R-239: the bell, top right on a computer (a phone has it in the header). */}
         {compact ? null : (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -space.lg, marginBottom: space.sm }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: space.sm, marginTop: -space.lg, marginBottom: space.sm }}>
             <NewsBell />
+            {/* R-447: Dark | Light moved here from the side menu (as on a phone's header), so the menu has room. */}
+            <ThemeToggle compact />
           </div>
         )}
         {children}
@@ -108,15 +110,23 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   // F198: a dot on the menu item that leads to a new feature (Settings for Pay MettleUp).
   const lit = useNewFeatures();
   const paths = nav.map((n) => n.path);
-  // R-447 (10 Nov 2026): about 20 rows do not fit a 1366x768 or 1280x720 window. The rows scroll in their own box
-  // and "What's new" sits under that box (it used to be stuck over the bottom rows, half hiding "Help and
-  // feedback"). A shadow over the line says more rows are below; the open page's row scrolls into view.
+  // R-447 (10 Nov 2026): "Help and feedback" sat half under the pinned "What's new" at 1366x768 and 1280x720. Now:
+  // shorter rows on a short window, so an owner's whole menu fits a 720-px-high window; Dark | Light sits beside the
+  // bell instead; the rows scroll in their own box and "What's new" sits under it, never over it. When a window is
+  // too short even so, "More below" says so and scrolls the menu on.
+  const short = useMediaQuery('(max-height: 820px)');
+  const shorter = useMediaQuery('(max-height: 740px)');
+  const rowHeight = shorter ? 28 : short ? 30 : 36;
   const list = useRef<HTMLDivElement>(null);
-  const [moreBelow, setMoreBelow] = useState(false);
+  const [scroll, setScroll] = useState({ overflows: false, moreBelow: false });
   useEffect(() => {
     const el = list.current;
     if (!el) return undefined;
-    const check = () => setMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+    const check = () => {
+      const overflows = el.scrollHeight > el.clientHeight + 1;
+      const moreBelow = overflows && el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+      setScroll((s) => (s.overflows === overflows && s.moreBelow === moreBelow ? s : { overflows, moreBelow }));
+    };
     check();
     el.addEventListener('scroll', check, { passive: true });
     window.addEventListener('resize', check);
@@ -127,17 +137,21 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
       window.removeEventListener('resize', check);
       seen?.disconnect();
     };
-  }, [nav.length]);
+  }, [nav.length, rowHeight]);
   useEffect(() => {
     list.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest' });
   }, [activePath]);
+  const showMore = () => {
+    const el = list.current;
+    if (el) el.scrollBy({ top: Math.max(el.clientHeight - rowHeight * 2, rowHeight), behavior: 'smooth' });
+  };
 
   return (
     <nav
       aria-label="Main"
       style={{
         borderRight: `1px solid ${color.border}`,
-        padding: `${space.xl}px ${space.md}px 0`,
+        padding: `${short ? space.lg : space.xl}px ${space.md}px 0`,
         position: 'sticky',
         top: UNDER_DEMO_BAR,
         alignSelf: 'start',
@@ -147,7 +161,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         background: color.surfaceSunken,
       }}
     >
-      <div style={{ padding: `0 ${space.md}px ${space.lg}px`, flexShrink: 0 }}>
+      <div style={{ padding: `0 ${space.md}px ${short ? space.md : space.lg}px`, flexShrink: 0 }}>
         {/* #41: an owner with 2 or more branches picks the branch here; everyone else sees the name. */}
         <BranchSwitch gymName={gymName} />
         {/* R-259: "Powered by" + the steel-plate name, small (in the splash's shine, R-425), so it stays quiet under the gym's name. */}
@@ -156,9 +170,6 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         >
           {t('Powered by')}
           <SteelLockup height={12} mark={false} />
-        </div>
-        <div style={{ marginTop: space.md }}>
-          <ThemeToggle compact />
         </div>
       </div>
 
@@ -171,8 +182,8 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
           overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: 2,
-          paddingBottom: space.sm,
+          gap: short ? 0 : 2,
+          paddingBottom: space.xs,
         }}
       >
         {nav.map((item, i) => (
@@ -180,7 +191,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
             {item.group === 'setup' && nav[i - 1]?.group !== 'setup' ? (
               <div
                 style={{
-                  margin: `${space.md}px ${space.md}px ${space.xs}px`,
+                  margin: short ? `${space.sm}px ${space.md}px 2px` : `${space.md}px ${space.md}px ${space.xs}px`,
                   fontFamily: font.body,
                   fontSize: 11,
                   fontWeight: 700,
@@ -191,31 +202,54 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
                 {t('Set up and help').toUpperCase()}
               </div>
             ) : null}
-            <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} />
+            <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} height={rowHeight} />
           </Fragment>
         ))}
       </div>
 
       {/* R-239: What's new and the version, at the bottom left: under the rows, never over them (R-447). */}
-      <div
-        data-sidebar-foot=""
-        style={{
-          flexShrink: 0,
-          paddingTop: space.sm,
-          paddingBottom: space.lg,
-          borderTop: `1px solid ${color.border}`,
-          background: color.surfaceSunken,
-          boxShadow: moreBelow ? '0 -10px 12px -8px rgba(0, 0, 0, 0.35)' : 'none',
-          position: 'relative',
-        }}
-      >
-        <NewsSidebarLink active={activePath === '/news'} />
+      <div data-sidebar-foot="" style={{ flexShrink: 0, background: color.surfaceSunken }}>
+        {/* The room for "More below" stays while the menu is longer than the window, so nothing jumps when it goes. */}
+        {scroll.overflows ? (
+          <div style={{ height: 32, display: 'grid', placeItems: 'center' }}>
+            {scroll.moreBelow ? (
+              <button
+                type="button"
+                onClick={showMore}
+                style={{
+                  appearance: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  minHeight: 28,
+                  padding: '0 12px',
+                  borderRadius: radius.pill,
+                  border: `1px solid ${color.borderStrong}`,
+                  background: color.surfaceSunken,
+                  color: color.inkSecondary,
+                  fontFamily: font.body,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                {t('More below')}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        <div style={{ paddingTop: space.xs, paddingBottom: short ? space.sm : space.lg, borderTop: `1px solid ${color.border}` }}>
+          <NewsSidebarLink active={activePath === '/news'} />
+        </div>
       </div>
     </nav>
   );
 }
 
-function SidebarLink({ item, active, dot }: { item: NavItem; active: boolean; dot: boolean }) {
+function SidebarLink({ item, active, dot, height }: { item: NavItem; active: boolean; dot: boolean; height: number }) {
   return (
     <Link to={item.path}>
       <span
@@ -225,8 +259,8 @@ function SidebarLink({ item, active, dot }: { item: NavItem; active: boolean; do
           alignItems: 'center',
           gap: space.md,
           // UAT A-19 (30 Oct 2026): 44px rows pushed Settings and Send feedback below a 1280x800 window. The
-          // sidebar only shows on a computer (a mouse), so 36px is enough.
-          minHeight: 36,
+          // sidebar only shows on a computer (a mouse), so 36px is enough. R-447: 30 or 28 on a short window.
+          minHeight: height,
           padding: `0 ${space.md}px`,
           borderRadius: radius.md,
           background: active ? color.accentSoft : 'transparent',

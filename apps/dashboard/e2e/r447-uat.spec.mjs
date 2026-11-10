@@ -1,9 +1,9 @@
 // R-447 (10 Nov 2026) UAT: three findings of the R-446 fresh-eyes review.
 //  1. Sign-in page: "Sign in" is the one form and the one bright button. "Set up a new gym" is a quiet link under a
 //     line "New to MettleUp?"; the set-up form has "Already use MettleUp?" -> "Sign in" under it.
-//  2. Computer menu: every row can be seen whole and clicked at 1366x768, 1280x720 and a real laptop window
-//     (1366x609: a 768-px screen minus the browser bar and the Windows taskbar). "What's new" sits under the rows,
-//     never over them. Phone: More shows "Help and feedback" above the bottom bar.
+//  2. Computer menu: an owner's whole menu fits at 1366x768 and 1280x720 (shorter rows, Dark | Light beside the
+//     bell); a real laptop window (1366x609: a 768-px screen minus the browser bar and the taskbar) shows "More
+//     below". Every row can be seen whole and clicked; "What's new" sits under the rows, never over them. Phone: More shows "Help and feedback" above the bottom bar.
 //  3. Settings -> Sign-in & data: "Download a backup" and "Your gym’s records" (were "Keep a copy of your data" and
 //     "Your data").
 // Pictures go to e2e/.results/uat (CI uploads them as "dashboard-uat-pictures"), named r447-*.png.
@@ -174,20 +174,32 @@ for (const { name, size } of [...DESKTOPS, { name: '1920x1080', size: { width: 1
       const foot = menu.locator('[data-sidebar-foot]');
       await expect(foot.getByRole('link', { name: /What's new/ })).toBeVisible();
       const scrolls = await rows.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
+      const more = foot.getByRole('button', { name: 'More below' });
       await shot(page, `computer-${name}-menu-top`);
-      if (name === '1920x1080') {
-        // A tall screen: every row fits, so no shadow and nothing to scroll.
-        expect(scrolls, 'every row fits a 1920x1080 screen').toBe(false);
-        await expect(foot).toHaveCSS('box-shadow', 'none');
-      } else {
-        // A short window: the shadow over the line says there is more below.
+      if (name === '1366x609') {
+        // A real laptop window (768-px screen minus the browser bar and the taskbar): too short for 18 rows even
+        // with the shorter rows, so "More below" says so; each tap scrolls the menu on, and it goes at the end.
         expect(scrolls, `the menu scrolls at ${name}`).toBe(true);
-        await expect(foot).not.toHaveCSS('box-shadow', 'none');
+        await expect(more).toBeVisible();
+        for (let i = 0; i < 6 && (await more.count()); i++) {
+          await more.click();
+          await page.waitForTimeout(500);
+        }
+        await expect(more).toHaveCount(0);
+        await expect(menu.getByRole('link', { name: 'Help and feedback' })).toBeInViewport({ ratio: 1 });
+        await shot(page, `computer-${name}-menu-after-more-below`);
+      } else {
+        // 1366x768, 1280x720 and 1920x1080: the whole menu fits; nothing to scroll and no "More below".
+        expect(scrolls, `every row fits at ${name}`).toBe(false);
+        await expect(more).toHaveCount(0);
       }
+      // Dark | Light now sits beside the bell, not in the menu.
+      await expect(menu.getByRole('radiogroup', { name: 'Screen colours' })).toHaveCount(0);
+      await expect(page.getByRole('main').getByRole('radiogroup', { name: 'Screen colours' })).toBeVisible();
 
       const names = await expectEveryRowClickable(page, `at ${name}`);
-      // Scrolled to the end: no shadow, and "Help and feedback" sits whole above What's new.
-      await expect(foot).toHaveCSS('box-shadow', 'none');
+      // Scrolled to the end: no "More below", and "Help and feedback" sits whole above What's new.
+      await expect(more).toHaveCount(0);
       await shot(page, `computer-${name}-menu-end`);
       console.log(`[r447] ${name}: ${names.length} rows: ${names.join(', ')}`);
 
