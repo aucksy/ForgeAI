@@ -382,7 +382,7 @@ export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
     lines: [
       {
         text: 'On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.',
-        go: { label: 'Open Settings', path: '/settings' },
+        go: { label: 'Open Settings', path: '/settings/data' },
       },
       {
         text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',
