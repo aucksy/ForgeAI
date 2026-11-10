@@ -14,7 +14,7 @@ He said: "I hate it... give it another shot and try new things we have not tried
 New test (workflow whatsapp-probe.yml, his phone in the GitHub secret PROBE_TO):
 - login_code template to his phone: accepted, NOT delivered (131042 still on, though health_status says AVAILABLE for WABA and business).
 - He sent "hi" to +91 86905 60741, then a PLAIN text (no template) from us: DELIVERED (run 42765251805). First proof that free replies inside the 24-hour window work.
-- So the built-but-off "Verify with WhatsApp" flow (deploy/panel/phoneInbound.js: the person sends "MettleUp code 123456", the page turns green, we reply) will work end to end, reply included. Switch-on steps: docs/WHATSAPP-SETUP.md (D1 0013, WHATSAPP_APP_SECRET, webhook "messages", WHATSAPP_INBOUND_NUMBER + panel deploy with ADMIN_NEWS). Needs his yes (live).
+- CORRECTION (he caught it): "Verify with WhatsApp" (the person sends US the code) is LIVE since 8 Nov (R-405); nothing to switch on. His goal is the normal journey: WE send the code. That needs Meta's 131042 tax flag cleared; he wants the block fixed, not workarounds. Full tried-list + status: D:/Brain/Lessons/whatsapp-131042-india-no-gst-is-a-meta-side-block.md. A research helper is looking for untried routes.
 - Watch update: helper building watch->phone version report + JS state (no card yet); card = design 2 next.
 
 ## R-433. Play trader status declared; organisation account not possible today — 10 Nov 2026

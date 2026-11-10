@@ -67,7 +67,7 @@ Then **tell Claude**: "WhatsApp secrets are in".
 Meta blocks every message we send (131042), but messages people send to us are free and still arrive. So the
 panel can ask the person to send "MettleUp code 123456" to our business number instead (deploy/panel/phoneInbound.js,
 apps/dashboard/src/crm/auth/WhatsAppVerify.tsx). It gives the same proof as before; the gym server needs no change.
-OFF until the owner says yes. To switch it on (all live steps, in this order):
+LIVE since 8 Nov 2026 (owner yes, R-405). How it was switched on (all live steps, in this order):
 
 1. D1: `npx wrangler d1 execute forgeai-web --remote --file migrations/0013_phone_inbound.sql` (from deploy/panel).
 2. Secret `WHATSAPP_APP_SECRET` (Meta app -> App settings -> Basic -> App secret): `npx wrangler secret put
