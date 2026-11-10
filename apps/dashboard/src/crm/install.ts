@@ -93,6 +93,32 @@ export function platformOf(userAgent: string, touchPoints = 0): Platform {
   return 'computer';
 }
 
+/**
+ * The taps to install by hand, one short step each (R-446, owner 10 Nov 2026: on his iPhone the old
+ * one-line hint named a Share square that iOS 26 Safari hides behind "•••", and the line was easy to miss).
+ * iPhone Safari (iOS 26 default "Compact" bar): ••• -> Share -> Add to Home Screen. iPhone Chrome/Edge/Firefox
+ * keep a Share icon in the address bar. PURE.
+ */
+export function installSteps(platform: Platform, userAgent: string): string[] {
+  const ua = userAgent.toLowerCase();
+  if (platform === 'iphone') {
+    const otherBrowser = /crios|edgios|fxios/.test(ua);
+    return [
+      otherBrowser
+        ? 'Tap the Share icon (a square with an arrow up) at the top, in the address bar.'
+        : 'Tap the 3 dots ••• in the address bar at the bottom of Safari. (If you see a square with an arrow up, tap that instead.)',
+      ...(otherBrowser ? [] : ['Tap “Share”.']),
+      'Scroll down the list. Tap “Add to Home Screen”.',
+      'Keep “Open as Web App” on. Tap “Add”.',
+      'Open MettleUp Admin from your home screen. Sign in once more there. (iPhone keeps it apart from Safari.)',
+    ];
+  }
+  if (platform === 'android') {
+    return ['In Chrome, tap ⋮ at the top right.', 'Tap “Add to Home screen” or “Install app”.', 'Tap “Install”.'];
+  }
+  return ['In Chrome or Edge, click the install icon at the right end of the address bar.', 'Click “Install”.'];
+}
+
 /** Opened from the home-screen icon (already installed). */
 export function runningAsApp(): boolean {
   try {

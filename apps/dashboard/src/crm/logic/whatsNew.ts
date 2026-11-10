@@ -375,4 +375,18 @@ function notifyNewsSeen(): void {
  * the deploy day) in the same commit as the admin-panel deploy (R-333). Never shown before the change is live.
  */
 export const ADMIN_NEWS_PENDING: readonly AdminNewsEntry[] = [
+  {
+    // R-446 (owner, 10 Nov 2026): iPhone install steps were one hard-to-see line naming a Share button iOS 26 hides;
+    // the home-screen app opened signed out; "new" dots showed to brand-new gyms.
+    id: 'PENDING',
+    lines: [
+      {
+        text: 'On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you stay signed in.',
+        go: { label: 'Open Settings', path: '/settings' },
+      },
+      {
+        text: 'The small "new" dots in the menu now only show for things added after your gym joined MettleUp.',
+      },
+    ],
+  },
 ];

@@ -11,6 +11,7 @@ import { rememberNewGym } from '../logic/newGymReady';
 import { isStartLink } from '../logic/trial';
 import { Button, CheckField, ErrorBanner, TextField, color, font, space, useIsCompact } from '../ui/kit';
 import { replace } from '../ui/router';
+import { platformOf, runningAsApp } from '../install';
 import * as authApi from './api';
 import { useAuth } from './AuthProvider';
 import { BotTrap, ForgotPinForm, usePhoneCodeMode } from './ForgotPin';
@@ -73,9 +74,31 @@ export function SignInForm({ submitLabel, startPhone = '', heading }: { submitLa
     return <ForgotPinForm startPhone={phone} mode={mode} onBack={() => setForgot(false)} />;
   }
 
+  // R-446 (owner, 10 Nov 2026: "after I relaunched the admin app from the installed app, the user was logged
+  // out"): iPhone keeps a home-screen web app's storage apart from Safari's, so the first open always needs
+  // one more sign-in. Say so, so it does not read as a bug.
+  const iphoneApp =
+    typeof navigator !== 'undefined' && platformOf(navigator.userAgent, navigator.maxTouchPoints) === 'iphone' && runningAsApp();
+
   return (
     <>
     {heading}
+    {iphoneApp && (
+      <p
+        role="note"
+        style={{
+          margin: `0 0 ${space.md}px`,
+          padding: space.md,
+          background: color.accentSoft,
+          borderRadius: 10,
+          fontFamily: font.body,
+          fontSize: 15,
+          color: color.ink,
+        }}
+      >
+        {t('Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in.')}
+      </p>
+    )}
     <form onSubmit={(e) => void submit(e)} noValidate>
       <TextField label={t('Your mobile number')} prefix="+91" inputMode="tel" value={phone} onChange={setPhone} placeholder="98290 12345" />
       <TextField

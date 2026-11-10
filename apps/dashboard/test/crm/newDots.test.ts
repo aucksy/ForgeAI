@@ -237,3 +237,27 @@ describe('9 Nov: a dot never leads to a page this person cannot see', () => {
     expect(barLit(reachable([q], withQ), ['/', '/members', '/more'], '/more')).toBe(true);
   });
 });
+
+// R-446 (owner, 10 Nov 2026: "we are showing these new update dots to even new users"): a feature that was
+// already there when the gym was set up is not new to it.
+describe('only news for this gym', () => {
+  const log: AdminNewsEntry[] = [
+    { id: '2026-11-01', lines: [{ text: 'Old feature', feature: true, go: { path: '/plans', label: 'Open' } }] },
+    { id: '2026-11-09', lines: [{ text: 'New feature', feature: true, go: { path: '/shop', label: 'Open' } }] },
+  ] as unknown as AdminNewsEntry[];
+  const now = at('2026-11-10T12:00:00+05:30');
+  it('a gym set up today sees no dots', () => {
+    expect(dotFeatures(now, log, MAX_DOTS, at('2026-11-10T09:00:00+05:30'))).toEqual([]);
+  });
+  it('a gym set up between the two sees only the later one', () => {
+    expect(dotFeatures(now, log, MAX_DOTS, at('2026-11-05T09:00:00+05:30')).map((f) => f.path)).toEqual(['/shop']);
+  });
+  it('a feature dated the same day the gym was set up is not new to it', () => {
+    expect(dotFeatures(now, log, MAX_DOTS, at('2026-11-09T18:00:00+05:30')).map((f) => f.path)).toEqual([]);
+  });
+  it('an older gym, or no set-up date, sees both', () => {
+    expect(dotFeatures(now, log, MAX_DOTS, at('2026-10-01T09:00:00+05:30')).length).toBe(2);
+    expect(dotFeatures(now, log, MAX_DOTS, null).length).toBe(2);
+    expect(dotFeatures(now, log, MAX_DOTS, 0).length).toBe(2);
+  });
+});

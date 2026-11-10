@@ -263,7 +263,7 @@ export function Routes({ online }: { online: boolean }) {
 
   return (
     // F198 (R-389): new-feature dots, for the owner of a real online gym only (the features are the owner's pages).
-    <NewDotsProvider enabled={role === 'owner' && online && !demo}>
+    <NewDotsProvider enabled={role === 'owner' && online && !demo} since={snapshot.gym.createdAt}>
     <AppShell gymName={snapshot.gym.name} nav={nav} phoneNav={phoneNav}>
       {/* Owner, 1 Nov 2026: "Next step" on a screen opened from Get started; the gym code once after "Create my gym". */}
       <NextStepBar path={route.path} />

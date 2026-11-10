@@ -25,7 +25,16 @@ export function useNewFeatures(): readonly NewFeature[] {
  * `enabled`: dots are for the gym's owner on the real, online gym (the features are the owner's pages);
  * never the demo gym or the front desk.
  */
-export function NewDotsProvider({ enabled, children }: { enabled: boolean; children: ReactNode }) {
+export function NewDotsProvider({
+  enabled,
+  since,
+  children,
+}: {
+  enabled: boolean;
+  /** When the gym was set up (epoch ms): features from before then are not new to it (R-446). */
+  since?: number | null;
+  children: ReactNode;
+}) {
   const path = cleanPath(useRoute().path);
   const store = useMemo(() => browserStore(), []);
   const [seen, setSeen] = useState<ReadonlySet<string>>(() => readSeen(store));
@@ -36,7 +45,7 @@ export function NewDotsProvider({ enabled, children }: { enabled: boolean; child
   // Read once per page: the clock only matters to the day.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const now = useMemo(() => Date.now(), [path]);
-  const lit = useMemo(() => (enabled ? unseen(dotFeatures(now), seen) : []), [enabled, now, seen]);
+  const lit = useMemo(() => (enabled ? unseen(dotFeatures(now, undefined, undefined, since), seen) : []), [enabled, now, seen, since]);
   const here = featuresAt(lit, path);
   const hereKeys = here.map((f) => f.key).join(',');
 

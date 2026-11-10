@@ -9,8 +9,8 @@
 
 import { useState } from 'react';
 
-import { useInstall } from '../install';
-import { Button, Card, SectionTitle, color, font, space, useIsCompact } from './kit';
+import { installSteps, useInstall } from '../install';
+import { Button, Card, SectionTitle, color, font, radius, space, useIsCompact } from './kit';
 
 const DISMISS_KEY = 'forgeai.installBanner.closed';
 
@@ -44,12 +44,11 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
   }
   if (variant === 'banner' && (closed || !compact)) return null;
 
-  const steps =
-    platform === 'iphone'
-      ? 'Tap the Share button (the square with an arrow), then “Add to Home Screen”.'
-      : platform === 'android'
-        ? 'In Chrome, tap ⋮ at the top right, then “Add to Home screen” or “Install app”.'
-        : 'In Chrome or Edge, click the install icon at the right end of the address bar.';
+  const steps = installSteps(platform, typeof navigator !== 'undefined' ? navigator.userAgent : '');
+  // R-446: an iPhone has no install sheet a button could open, so the steps show at once (a button that only
+  // reveals a hint read as "nothing happened" to the owner).
+  // The slim Today banner keeps one button ("Show me how") so it stays small.
+  const stepsOpen = showSteps || (platform === 'iphone' && variant === 'full');
 
   const install = async () => {
     if (canPrompt) {
@@ -65,13 +64,33 @@ export function InstallCard({ variant = 'full' }: { variant?: 'full' | 'banner' 
       <p style={body}>
         Put the admin app on your home screen. It opens full screen, in one tap.
       </p>
-      {showSteps && (
-        <p style={{ ...body, marginTop: space.md, color: color.ink }} role="status">
-          {steps}
-        </p>
+      {stepsOpen && (
+        <ol
+          role="status"
+          style={{
+            margin: `${space.md}px 0 0`,
+            padding: `${space.md}px ${space.md}px ${space.md}px 32px`,
+            background: color.accentSoft,
+            border: `2px solid ${color.accent}`,
+            borderRadius: radius.md,
+            fontFamily: font.body,
+            fontSize: 16,
+            lineHeight: 1.45,
+            color: color.ink,
+            fontWeight: 600,
+          }}
+        >
+          {steps.map((s) => (
+            <li key={s} style={{ marginBottom: 6 }}>
+              {s}
+            </li>
+          ))}
+        </ol>
       )}
       <div style={{ marginTop: space.lg, display: 'flex', gap: space.sm, flexWrap: 'wrap' }}>
-        <Button onClick={() => void install()}>Install the admin app</Button>
+        {!(platform === 'iphone' && stepsOpen) && (
+          <Button onClick={() => void install()}>{platform === 'iphone' ? 'Show me how' : 'Install the admin app'}</Button>
+        )}
         {variant === 'banner' && (
           <Button
             variant="quiet"

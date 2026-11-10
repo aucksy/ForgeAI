@@ -7,6 +7,26 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-446. iPhone install steps, iPhone sign-in note, "new" dots only for news after the gym joined — 10 Nov 2026
+
+**He said (10 Nov, iPhone Safari):** tapping "Install the admin app" "did not do anything"; the one hint line was very
+hard to notice and "this square with an arrow is nowhere to be found"; the install process "has to be more clear";
+after installing and opening from the home screen "the user was logged out". Also: "we are showing these new update
+dots to even new users... for any recent update, you're showing dots to everyone. That can't be correct."
+
+**Causes:** iOS 26 Safari (Compact bar) hides Share behind •••; the hint was one grey line. iPhone gives a home-screen
+web app its own storage, apart from Safari, so the session key (localStorage) is not there: one more sign-in is
+unavoidable without a server hand-off. Dots: dotFeatures had no idea when the gym started.
+
+**Did:** install.ts `installSteps()` (pure, tested): numbered steps per browser (Safari: ••• -> Share -> Add to Home
+Screen -> keep "Open as Web App" -> open it and sign in once more; Chrome/Edge/Firefox on iPhone: Share icon in the
+address bar). InstallCard: a bold bordered numbered box; on iPhone the Settings card shows it at once (no dead
+button); the Today banner says "Show me how". Sign-in form: inside the iPhone home-screen app, a note "sign in once
+more here... after this, you stay signed in". newDots: `since` = gym createdAt; an entry whose day starts on or before
+it never lights. ADMIN_NEWS_PENDING has the two owner lines. Tests: test/crm/installSteps.test.ts, newDots "only news
+for this gym". Not yet: deploy (needs UAT at iPhone size + fresh-eyes first). Option not built: a one-time server
+hand-off so the home-screen app opens signed in (needs a LIVE DB change and his yes).
+
 ## R-445. New privacy notice, terms and gym data agreement published (D1-D8 "all as recommended") — 10 Nov 2026
 
 He said (10 Nov 2026), on the R-443 review page: "all as recommended". That is: D1 publish the three texts as written; D2 crash reports to a PRIVATE GitHub repo; D3 ask every gym owner to accept the new gym terms at the next sign-in (the live database change for that, nothing else); D4 no 48-hour promise, keep "within 30 days"; D5 cap a gym's claims at 12 months' fees; D6 Hindi rewritten from the new English; D7 an 18+ tick at Google sign-in in the next app version; D8 mention paying the gym online now (test mode). Plus the approved watch screen log line.

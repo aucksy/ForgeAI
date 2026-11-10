@@ -10,6 +10,9 @@
  *   (a test clock, a wrong device clock) it is not live yet, so no dot.
  * - Limit: the MAX_DOTS newest live features are the only ones that can carry dots. Seeing one does NOT
  *   pull an older one in: the dots go down to zero instead of a new dot popping up after each visit.
+ * - Only news for this gym (R-446, owner 10 Nov 2026: "we are showing these new update dots to even new users"):
+ *   a feature dated on or before the day the gym was set up was already there when they joined, so it is not
+ *   "new" to them. `since` = the gym's set-up time; an entry counts only if its day starts after it.
  * - Seen: opening the destination marks it seen on this device (localStorage). A browser that never saw
  *   any (a new computer, a new person) sees the dots, still only inside the DOT_DAYS days.
  *
@@ -49,12 +52,19 @@ export function cleanPath(path: string): string {
  * The features that may carry dots at `now`: lines marked `feature` with a `go` path, live (from their day,
  * for DOT_DAYS days), newest first, at most `max`. Fixes (no `feature`) never count. PURE.
  */
-export function dotFeatures(now: number, log: readonly AdminNewsEntry[] = ADMIN_NEWS, max = MAX_DOTS): NewFeature[] {
+export function dotFeatures(
+  now: number,
+  log: readonly AdminNewsEntry[] = ADMIN_NEWS,
+  max = MAX_DOTS,
+  since?: number | null,
+): NewFeature[] {
+  const joined = typeof since === 'number' && Number.isFinite(since) && since > 0 ? since : null;
   const out: NewFeature[] = [];
   const sorted = [...log].sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0));
   for (const entry of sorted) {
     const from = liveFrom(entry.id);
     if (from === null || now < from || now >= from + DOT_DAYS * DAY_MS) continue;
+    if (joined !== null && from <= joined) continue; // already there when this gym joined
     for (const line of entry.lines) {
       if (line.feature !== true || !line.go) continue;
       const path = cleanPath(line.go.path);
