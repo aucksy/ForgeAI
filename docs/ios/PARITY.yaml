@@ -78,7 +78,7 @@ features:
     reason: WatchConnectivity inside forge-rest plus HKHealthStore.startWatchApp; written with the Apple Watch app.
     blocking: false
     covers:
-      functions: [forge-rest.setWatchAccent, forge-rest.openWatch, forge-rest.watchAppState, forge-rest.installOnWatch]
+      functions: [forge-rest.setWatchAccent, forge-rest.openWatch, forge-rest.watchAppState, forge-rest.installOnWatch, forge-rest.watchVersions, forge-rest.updateOnWatch]
       gradle: [com.google.android.gms:play-services-wearable, androidx.wear:wear-remote-interactions, com.google.guava:listenablefuture]
 
   - id: watch-app

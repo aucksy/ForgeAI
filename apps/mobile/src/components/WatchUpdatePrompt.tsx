@@ -22,20 +22,20 @@ import Svg, { Circle, Defs, Rect, Stop, LinearGradient as SvgGradient } from 're
 import { PrimaryButton } from '@/components/ui';
 import { hasUpdateStandIn } from '@/lib/updatePrompt';
 import { useAppUpdate } from '@/lib/updateStore';
-import { color, gradients, radius, space, type } from '@/theme/tokens';
+import { color, darkColor, gradients, radius, space, type } from '@/theme/tokens';
 import { useActiveWorkout } from '@/tracker/store/activeWorkoutStore';
 import { readWatchUpdate, updateOnWatch, watchUpdateState, watchesNeedingUpdate, type UpdateResult, type WatchNode, type WatchUpdateState } from '@/tracker/services/watchUpdate';
 import {
-  QA_TAP_KEY,
-  QA_WATCH_KEY,
   WATCH_UPDATE_WORDS as W,
   cardShows,
   oldestWatchVersion,
   qaForgetWatchSnooze,
-  qaReadMeta,
+  qaReadWatchStandIn,
+  qaReadWatchTap,
   qaWatchLink,
   qaWatchRead,
-  qaWriteMeta,
+  qaWriteWatchStandIn,
+  qaWriteWatchTap,
   readWatchSnooze,
   shortVersion,
   snoozeWatchCard,
@@ -82,7 +82,7 @@ export function WatchUpdatePrompt() {
   const check = useCallback(async () => {
     lastCheck.current = Date.now();
     const s = await readWatchSnooze();
-    const fake = qa ? qaWatchRead(await qaReadMeta(QA_WATCH_KEY), phoneVersion) : null;
+    const fake = qa ? qaWatchRead(await qaReadWatchStandIn(), phoneVersion) : null;
     const r = fake
       ? { state: watchUpdateState(phoneVersion, fake), stale: watchesNeedingUpdate(phoneVersion, fake) }
       : await readWatchUpdate(phoneVersion);
@@ -112,9 +112,9 @@ export function WatchUpdatePrompt() {
       const l = qaWatchLink(url);
       if (!l.watch && !l.tap) return;
       void (async () => {
-        if (l.tap) await qaWriteMeta(QA_TAP_KEY, l.tap);
+        if (l.tap) await qaWriteWatchTap(l.tap);
         if (l.watch === 'forget') await qaForgetWatchSnooze();
-        else if (l.watch) await qaWriteMeta(QA_WATCH_KEY, l.watch === 'off' ? '' : l.watch);
+        else if (l.watch) await qaWriteWatchStandIn(l.watch === 'off' ? '' : l.watch);
         if (l.watch) await check();
       })().catch((e: unknown) => console.warn('[watch update] QA stand-in failed', e));
     };
@@ -154,7 +154,7 @@ export function WatchUpdatePrompt() {
     if (busy) return;
     setBusy(true);
     void (async (): Promise<UpdateResult> => {
-      const fakeTap = qa ? await qaReadMeta(QA_TAP_KEY) : null;
+      const fakeTap = qa ? await qaReadWatchTap() : null;
       if (fakeTap) {
         console.warn('[watch update] QA stand-in answer for "Update on watch":', fakeTap);
         return fakeTap as UpdateResult;
@@ -320,10 +320,8 @@ function Callout() {
   );
 }
 
-// The watch is a picture of a real watch: its colours are fixed (black screen, steel case) in both looks.
-const WATCH_INK = '#F4F5F7';
-const WATCH_GREY = '#A9AFBD';
-const WATCH_ORANGE = '#FFA043';
+// The watch is a picture of a real watch: black screen and steel case in both looks. Its words use the
+// DARK look's colours (darkColor, with a gym's own accent), read when drawn, like the real watch app.
 const WATCH_W = 210;
 const WATCH_H = 330;
 
@@ -333,6 +331,9 @@ export function DrawnWatch({ version, store }: { version: string; store: boolean
   const cy = WATCH_H / 2;
   const arcR = 80;
   const arcLen = 2 * Math.PI * arcR;
+  const ink = darkColor.ink;
+  const grey = darkColor.inkSecondary;
+  const accent = darkColor.accentBright;
   return (
     <View
       accessible
@@ -401,10 +402,10 @@ export function DrawnWatch({ version, store }: { version: string; store: boolean
         {store ? (
           <View style={{ alignItems: 'center', gap: 6 }}>
             <LinearGradient colors={gradients.ember} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: type.display, fontSize: 17, color: '#1F0D05' }}>M</Text>
+              <Text style={{ fontFamily: type.display, fontSize: 17, color: color.onEmber }}>M</Text>
             </LinearGradient>
-            <Text style={{ fontFamily: type.bodySemi, fontSize: 12, color: WATCH_INK }}>{W.faceApp}</Text>
-            <View style={{ marginTop: 6, padding: 3, borderRadius: 999, borderWidth: 2, borderColor: WATCH_ORANGE }}>
+            <Text style={{ fontFamily: type.bodySemi, fontSize: 12, color: ink }}>{W.faceApp}</Text>
+            <View style={{ marginTop: 6, padding: 3, borderRadius: 999, borderWidth: 2, borderColor: accent }}>
               <View style={{ backgroundColor: '#A8C7FA', borderRadius: 999, paddingHorizontal: 22, paddingVertical: 7 }}>
                 <Text style={{ fontFamily: type.bodySemi, fontSize: 13, color: '#062E6F' }}>{W.faceUpdate}</Text>
               </View>
@@ -412,18 +413,18 @@ export function DrawnWatch({ version, store }: { version: string; store: boolean
           </View>
         ) : (
           <>
-            <Text maxFontSizeMultiplier={1.2} style={{ fontFamily: type.bodySemi, fontSize: 11, color: WATCH_GREY }}>{W.faceApp}</Text>
+            <Text maxFontSizeMultiplier={1.2} style={{ fontFamily: type.bodySemi, fontSize: 11, color: grey }}>{W.faceApp}</Text>
             <Text
               maxFontSizeMultiplier={1.1}
               adjustsFontSizeToFit
               numberOfLines={1}
-              style={{ fontFamily: type.monoBold, fontSize: 36, lineHeight: 42, color: WATCH_INK, marginVertical: 2 }}
+              style={{ fontFamily: type.monoBold, fontSize: 36, lineHeight: 42, color: ink, marginVertical: 2 }}
             >
               {version}
             </Text>
             <Text
               maxFontSizeMultiplier={1.2}
-              style={{ fontFamily: type.bodyBold, fontSize: 10, letterSpacing: 1.2, textTransform: 'uppercase', color: WATCH_ORANGE }}
+              style={{ fontFamily: type.bodyBold, fontSize: 10, letterSpacing: 1.2, textTransform: 'uppercase', color: accent }}
             >
               {W.faceReady}
             </Text>

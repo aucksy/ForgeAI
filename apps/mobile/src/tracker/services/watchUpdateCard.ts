@@ -222,15 +222,30 @@ export async function qaForgetWatchSnooze(): Promise<void> {
   await enqueueWrite(() => setMeta(SNOOZE_KEY, ''));
 }
 
-export async function qaReadMeta(key: string): Promise<string | null> {
+/** QA builds: the saved made-up watch ('old' / 'same' / ''), or null. Never throws. */
+export async function qaReadWatchStandIn(): Promise<string | null> {
   try {
-    return await getMeta(key);
+    return await getMeta(QA_WATCH_KEY);
   } catch (e) {
     console.warn('[watch update] QA stand-in not read', e);
     return null;
   }
 }
 
-export async function qaWriteMeta(key: string, value: string): Promise<void> {
-  await enqueueWrite(() => setMeta(key, value));
+/** QA builds: the saved made-up answer to "Update on watch", or null. Never throws. */
+export async function qaReadWatchTap(): Promise<string | null> {
+  try {
+    return await getMeta(QA_TAP_KEY);
+  } catch (e) {
+    console.warn('[watch update] QA tap stand-in not read', e);
+    return null;
+  }
+}
+
+export async function qaWriteWatchStandIn(value: string): Promise<void> {
+  await enqueueWrite(() => setMeta(QA_WATCH_KEY, value));
+}
+
+export async function qaWriteWatchTap(value: string): Promise<void> {
+  await enqueueWrite(() => setMeta(QA_TAP_KEY, value));
 }
