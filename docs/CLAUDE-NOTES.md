@@ -7,6 +7,22 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-447. Sign in is the main door; every menu item visible on a laptop; the two data cards renamed — 10 Nov 2026
+
+**Found (fresh-eyes review in R-446, outside that change):** (1) the sign-in page showed "Sign in" and "Set up a new
+gym" as two equal tabs side by side, so an owner who already has a gym could tap the wrong one; the demo's "Start
+demo" was also a bright button under it. (2) On a computer the menu's last row, "Help and feedback", sat half under
+the pinned "What's new" row (that row was stuck over the bottom of the scrolling menu; 20 rows do not fit a 1366x768
+or 1280x720 window). (3) Settings -> Sign-in & data had "Keep a copy of your data" right above "Your data".
+
+**Doing:** (1) Sign in is the only form and the only bright button on the first screen; under it a line "New to
+MettleUp?" with a quiet "Set up a new gym"; on the set-up form the same line says "Already use MettleUp?" with a quiet
+"Sign in". "Start demo" is a plain (outlined) button. (2) The menu rows scroll in their own box and "What's new" sits
+below that box, never over it; a shadow shows when there are more rows below; the open page's row scrolls into view.
+(3) "Keep a copy of your data" -> "Download a backup"; "Your data" -> "Your gym's records". Every place that names
+them changes too. Hinglish for every new line on translated screens (the Settings data tab has none). Cloud UAT at 375
+px, 1366x768, 1280x720 and a real laptop window (1366x609), pictures read; fresh eyes; admin panel deploy with news.
+
 ## R-446. iPhone install steps, iPhone sign-in note, "new" dots only for news after the gym joined — 10 Nov 2026
 
 **He said (10 Nov, iPhone Safari):** tapping "Install the admin app" "did not do anything"; the one hint line was very
