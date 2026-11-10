@@ -43,6 +43,7 @@ Built:
 - Words: member-words rules (short lines, no Gemini pass per the skill); no "ambient"/"session". Switch caption: "It helps us fix a watch screen that goes dark. It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings."
 - Tests: test/lib/watchDiag.test.ts (13: line privacy, the 2000 cap keeps the newest lines, minor lines dropped first, the second message's body, watch and phone agree on paths/keys/manifest).
 Needs the owner before release: one privacy-notice line (his call): the Feedback row gains "If you switch on "Add my watch's screen log": the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings." UAT: a cloud phone has no paired watch, so only "no switch without a watch" can run there; the real check is his phone + watch after release.
+CI: commits 5a5f6828 (feature), 134b05b8 + acba7c12 (test fixes: android.jar JSONObject has no keySet; org.json does not keep key order; watchDiag added to docs/ios/PARITY.yaml). CI 42783196629: typecheck + all mobile unit tests green incl. watchDiag.test.ts (13); its only red step is the Panel crawl, red on the 3 commits before mine too. wear-build 42785832942 (acba7c12, includes R-442): build, :wear + :forge-rest unit tests green; the watch UAT jobs failed only R-442's new "Workout dims with Always-on display OFF" step (the other helper's), the R-437 dim checks passed.
 Not released (waiting list).
 
 ## R-440. Light look: white clock and battery icons over the watch update card — 10 Nov 2026
