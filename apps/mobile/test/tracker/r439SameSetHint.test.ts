@@ -74,7 +74,7 @@ const squatCard = (sets: DraftSet[], previous = [65, 40]): DraftExercise =>
     previousWarmups: [{ weightKg: 0, reps: 25 }],
     prevTyped: true,
     sets,
-  }) as DraftExercise;
+  }) as unknown as DraftExercise;
 
 /** His screen: W 25 done, set 1 66 at RPE 8.5 done, set 2 blank. */
 const hisScreen = (rpe: number | undefined = 8.5): DraftSet[] => [
@@ -173,7 +173,7 @@ describe('R-439 weighted lifts', () => {
       previousSets: previous.map(([w, r]) => ({ weightKg: w, reps: r })),
       prevTyped: true,
       sets,
-    }) as DraftExercise;
+    }) as unknown as DraftExercise;
 
   it('no Target (same flaw): last 100 x 8, 100 x 5; today set 1 100 x 8 -> set 2 hints 100 x 5, not 8', () => {
     const c = bench([row('a', { weightKg: 100, reps: 8, rpe: 8.5, done: true }), row('b')], [
@@ -223,7 +223,7 @@ describe('R-439 timed holds', () => {
       ],
       prevTyped: true,
       sets,
-    }) as DraftExercise;
+    }) as unknown as DraftExercise;
 
   it('last 60 s then 40 s; today 66 s: set 2 hints 44 s at most (40 + 5 cap), never 66 s', () => {
     const c = plank([row('a', { weightKg: 0, reps: 0, durationSec: 66, done: true }), row('b')]);
