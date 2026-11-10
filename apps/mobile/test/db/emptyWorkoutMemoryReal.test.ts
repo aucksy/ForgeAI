@@ -250,7 +250,7 @@ describe('R-444 the cloud copy of the empty-workout list survives a bring-back',
       m: await memory(),
     };
   }
-  const opsFor = (ops: readonly { kind: string; id: string }[], id: string) => ops.filter((o) => o.kind === 'p' && o.id === id);
+  const opsFor = <T extends { kind: string; id: string }>(ops: readonly T[], id: string): T[] => ops.filter((o) => o.kind === 'p' && o.id === id);
 
   it('NOTHING matched: left out (skipped, not remembered), and the next scan does not delete the copy', async () => {
     const { local, pack, plan, m } = await cloud();
@@ -313,7 +313,7 @@ describe('R-444 the cloud copy of the empty-workout list survives a bring-back',
     aw.getState().startEmpty();
     await addAndTick(ids[3], 1);
     expect(await aw.getState().finish(null)).toBeTruthy();
-    const sent = opsFor(plan.planScan(await local.readLocalItems(), state, 10_000).ops, pack.EMPTY_WORKOUT_ID) as { data: string | null }[];
+    const sent = opsFor(plan.planScan(await local.readLocalItems(), state, 10_000).ops, pack.EMPTY_WORKOUT_ID);
     expect(sent).toHaveLength(1);
     expect(pack.unpackEmptyWorkout(sent[0].data!)!.map((r) => r.sets)).toEqual([1]);
   });
