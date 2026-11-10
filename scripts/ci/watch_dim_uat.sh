@@ -180,6 +180,17 @@ bring_app
 shot "0-workout-open"
 
 # ---- H: happy path ----
+# R-437: on the API 35 image something set the timeout back to "never" (2147483647) after the put above
+# (run 42770521482, both attempts: dumpsys power mScreenOffTimeoutSetting=2147483647, so the screen
+# never timed out and H-timeout failed with nothing to do with the app). Set it again and confirm.
+for i in 1 2 3 4 5; do
+  adb shell settings put system screen_off_timeout 15000 || true
+  sleep 2
+  TO="$(adb shell dumpsys power 2>/dev/null | tr -d '\r' | grep -oE 'mScreenOffTimeoutSetting=[0-9]+' | head -1)"
+  [ "$TO" = "mScreenOffTimeoutSetting=15000" ] && break
+done
+result H-timeout-setting INFO "screen timeout before H-timeout: $TO"
+bring_app
 log "H-timeout: the screen times out by itself (15 s) and must dim"
 B="$(count 'ambient-enter')"
 sleep 22
