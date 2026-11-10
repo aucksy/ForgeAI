@@ -1,5 +1,6 @@
--- NOT APPLIED YET (owner said yes on 10 Nov 2026: D3 "all as recommended"; apply in the SQL Editor, then this
--- header says when).
+-- APPLIED LIVE 10 Nov 2026 (owner said yes on 10 Nov 2026: D3 "all as recommended"), in the SQL Editor, this exact
+-- text from bbf04f06. Before: _terms_versions() = {2026-10-24}, 1 acceptance row. After: {2026-10-24,2026-11-10},
+-- still 1 row. Live test supabase/tests/0067: RESULT PASS (7 checks), rolled back.
 -- 0067: a new version of the MettleUp terms and the gym data agreement, 2026-11-10 (R-443 / R-445).
 -- ADDITIVE and re-runnable: replaces ONE helper, _terms_versions() (0033), so its list also holds '2026-11-10'.
 -- Nothing else changes: no table, no grant, no other function. Old acceptances stay as they are.
