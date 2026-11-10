@@ -31,6 +31,43 @@ makes a code; another owner; email MettleUp, who call to check), English + Hingl
 who already has a PIN: "Choose a new PIN?" right away (no old PIN needed). No server or database change. Tests, cloud
 UAT at 375 px and 1366x768 with pictures, fresh eyes (owner), admin panel deploy with ADMIN_NEWS.
 
+**Correction + added scope (10 Nov, coordinator for the owner):** "Forgot your PIN?" by WhatsApp works today (the owner
+sends US the code; 131042 does not block that), so item 2 is a BACKUP way in, with WhatsApp first. New item 3: after
+Send in WhatsApp nothing happens there. (a) The pre-filled message now carries the next step (Worker, no DB change);
+(b) back on the page it says "Checking your message…", and after ~20 s a calm line on what to do; (c) reply unchanged.
+
+**Built (commits 2246c79a notes, 331d94af, 833ce232, f82d7469, 0875dcd4):**
+- Settings → Sign-in & data: "Clear this device’s saved data" is now its own block "Offline copy on this device", button
+  "Clear offline copy" (red only when unsent items would be lost), confirm "Clear the offline copy on this device?
+  Nothing is deleted from your gym’s records online." / "Yes, clear it" / "Keep it". Danger zone now holds only "Delete
+  our gym from MettleUp". Same action as before.
+- PIN: WhatsApp check stays first. Under it "Can’t use WhatsApp? Other ways back in" (also while waiting for the
+  message): 1. make a sign-in code yourself where you are still signed in, 2. another owner makes one, 3. email
+  contact@mettleup.fit, we call to check. After a code sign-in by someone who has a PIN: "Choose a new PIN?" at once
+  (0034's 15-minute no-old-PIN window). With WhatsApp off, "Forgot your PIN?" opens the same three ways. No server change.
+- WhatsApp message: "MettleUp code 482913. After you send this, go back to the MettleUp page." (Hinglish: "Yeh bhejne ke
+  baad MettleUp page par wapas jao."). parseCode still finds the code in long and old short messages (Worker tests).
+  Back on the page: "Checking your message…"; after 20 s a note: "We have not got your message yet. In WhatsApp, check
+  that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send." (computer: "scan the
+  code again"). Hinglish for every line. ADMIN_NEWS 2026-11-11 (three lines). Help article line added.
+
+**CI / UAT:** 42866659416 red (a news line over 220 characters, fixed 833ce232); 42877404691 red (3 e2e locators,
+fixed f82d7469); 42881488973 green; 42885120814 green on 0875dcd4. Pictures r448-*.png in dashboard-uat-pictures
+(375 px phone and 1366x768), all read: offline-copy card, confirm and cleared; forgot card with WhatsApp first and the
+other ways (English, Hinglish, computer, WhatsApp off); own code → code sign-in → "Choose a new PIN?" → saved; WhatsApp
+page before, checking, still nothing (with the other ways open), checked, Hinglish and computer QR.
+
+**Fresh eyes (owner, pictures only), fixed in 0875dcd4:** no way out while waiting (the other-ways link now stays until
+checked); computer path to Staff & sign-in missing (now "on a phone: More; on a computer: Settings → Sign-in & data");
+clearing while offline unclear (now "Use it only while the internet is working…"); the 15-minute line puzzled (removed);
+own code said "On your new phone" (now "On the phone or computer where you want to sign in"). Not changed: support
+reply time (a promise only the owner can make), "You are signed out of this device." is English in Hinglish (older,
+outside R-448), no reason shown when WhatsApp checking is off (rare).
+
+**Deploy (11 Nov):** dashboard-dist from CI 42885120814 (0875dcd4), `npx wrangler deploy` from deploy/panel (also ships
+the phoneInbound.js message change), forgeai-panel version 43a98872-f0e7-4b71-9163-df35de04c4cd. app.mettleup.fit and
+forgeai.aakashpahuja.in serve index-CcAS__vM.js with the new words (curl).
+
 ## R-447. Sign in is the main door; every menu item visible on a laptop; the two data cards renamed — 10 Nov 2026
 
 **Found (fresh-eyes review in R-446, outside that change):** (1) the sign-in page showed "Sign in" and "Set up a new
