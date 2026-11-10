@@ -7,6 +7,20 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-443. Privacy notice and terms redone, as drafts for his yes — 10 Nov 2026
+
+He said (10 Nov 2026): "Redo or reassess the whole privacy notice and terms and conditions, ensure everything is accurate and the language is simpler and on par with how everyone does it." He also said "Yes" to the Feedback line for the watch screen log (R-441): "If you switch on 'Add my watch's screen log': the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings."
+
+Done (drafts only, nothing live changed; privacy and legal wording wait for his yes, R-387):
+- Audit: docs/legal/PRIVACY-AUDIT-2026-11-10.md. Every claim of the live privacy.html, terms.html and data-agreement.html was checked against the code, with research on 5 peers (Hevy, Strong, Fitbod, HealthifyMe, Zenoti), DPDP Act and Rules 2025, Play User Data and Health Connect policy, and the Play Data safety rows that must change.
+- Wrong today: (1) Health Connect weigh-ins are said to "stay on your phone", but they are in the signed-in copy; (2) crash text goes to a "private" GitHub list, but crashes.mjs posts to the PUBLIC aucksy/ForgeAI (0 issues so far); (3) "the only AI feature is the import" (help answers use Claude); (4) pop-ups carry more than the first line (trainer replies, 0053; alerts, 0054); (5) old Settings paths; (6) the data agreement has "single-use codes", a half-sentence liability point, a broken "tell you before a new provider" promise (Firebase, KV backup), and a 2-year acceptance record that the code deletes with the gym; (7) the delete-account page says 15 days for backups, but the code keeps 7.
+- Missing today: busy machines (0049, on by default), workout reports (0045), pause and renew requests (0044), Bring a friend (0056), online payments to the gym (F79, test mode), desk photos (0043), trainer profiles (0065), support access (0028), WhatsApp staff checks (0061), Pay MettleUp (0060), website forms, the watch (heart rate shown but never saved), and the approved watch-log line.
+- The live privacy.html was hand-edited after 2 Nov, so docs/launch/PRIVACY-NOTICE.md is older than the live page. Never run scripts/legal_pages.py before the approved text is copied into the .md files.
+- New texts: docs/legal/privacy-draft.html, terms-draft.html, data-agreement-draft.html. Each has a 5-line summary, plain words, and one table of what goes to the gym (on or off, how to stop). The terms add trial, payment, no refunds except a double payment or a payment above the price (his 6 Nov decision), unpaid gyms, export, and a cap of 12 months' fees. The gym notice for members is now in the data agreement. A fresh-reader helper checked the words (as a member and as a gym owner), and its top 5 fixes were applied. The Gemini pass timed out.
+- Review page for him (scratchpad): legal-review/legal-review.html.
+- His decisions (D1-D8 in the audit): publish; move crash issues to a private repo; ask gyms to accept again (a new terms version needs a live server change); no 48-hour promise; the 12-month cap; Hindi after his yes; an 18+ tick at Google sign-in; mention online payments now.
+- Not done until his yes: copy the text into docs/launch/*.md, Hindi, the delete page 15 to 7 days, the terms version migration plus TERMS_VERSION, the admin deploy with ADMIN_NEWS and UAT, Play Data safety (the main session), and the app links moving to mettleup.fit/privacy.
+
 ## R-442. Watch dims during a workout with Always-on display OFF — 10 Nov 2026
 
 He said: during a workout the watch screen turns fully OFF instead of dimming. It dimmed the FIRST time he used the feature; the last two workouts it went black. Battery was never near 15 %. He keeps "Always-on display" OFF on purpose, and it was off the first time too. The watch's own exercise feature works without Always-on, so ours must: dim during a workout with Always-on OFF. Never ask members to change a watch setting.
