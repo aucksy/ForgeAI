@@ -1376,7 +1376,9 @@ export const DESK = { name: 'Sunita Verma', phone: '98290 54321' };
 
 /** Welcome -> "Set up a new gym" (R-447: the quiet link under Sign in) -> Create my gym. Ends on Today, signed in as the owner. */
 export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name, phone = OWNER.phone, pin = OWNER.pin } = {}) {
-  await page.getByRole('button', { name: 'Set up a new gym', exact: true }).click(); // R-447: the quiet link under Sign in
+  // R-447: the quiet link under Sign in. The sign-up link (/start) already opens on the set-up form, with no link.
+  const setUp = page.getByRole('button', { name: 'Set up a new gym', exact: true });
+  if (await setUp.count()) await setUp.click();
   const start = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create my gym' }) });
   await start.getByLabel('Gym name').fill(gym);
   await start.getByLabel('Your name').fill(name);
@@ -1388,7 +1390,9 @@ export async function startOnlineGym(page, { gym = OWNER.gym, name = OWNER.name,
   await start.getByRole('button', { name: 'Create my gym' }).tap();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
   await closeGymReady(page);
-  await expect(page.getByRole('banner')).toContainText(gym);
+  // A phone shows the gym's name in the header; a computer (wider than 860 px) at the top of the side menu.
+  const phone = (page.viewportSize()?.width ?? 390) <= 860;
+  await expect(phone ? page.getByRole('banner') : page.getByRole('navigation', { name: 'Main' })).toContainText(gym);
 }
 
 /** R-269: right after Create my gym, "Your gym is ready" shows the gym code once; Done closes it. */
