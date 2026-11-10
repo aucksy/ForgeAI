@@ -244,7 +244,7 @@ function ForgotPinInbound({ startPhone, onBack }: { startPhone: string; onBack: 
           </Button>
         </div>
       )}
-      {!begun && !checked && <OtherWaysToggle disabled={busy} />}
+      {!checked && <OtherWaysToggle disabled={busy} />}
     </form>
   );
 }

@@ -256,7 +256,7 @@ export function WaitingMoneyLine({ state }: { state: DeskState | null }) {
 export const CLEAR_DEVICE_WORDS = {
   title: 'Offline copy on this device',
   what: 'This phone or computer keeps a copy of your gym, so the desk still works when the internet is down. Clearing it deletes only that copy. Your gym’s records online stay safe, and a fresh copy downloads the next time this device is online.',
-  when: 'Use it only if this device shows old details that do not update, or if MettleUp support asks you to.',
+  when: 'Use it only while the internet is working, and only if this device shows old details that do not update, or if MettleUp support asks you to.',
   button: 'Clear offline copy',
   askNothingWaiting: 'Clear the offline copy on this device? Nothing is deleted from your gym’s records online.',
   yes: 'Yes, clear it',

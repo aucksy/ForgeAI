@@ -128,8 +128,8 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'Forgot your PIN?': 'PIN bhool gaye?',
   // R-448: the ways back in besides WhatsApp (auth/signin.ts OTHER_WAYS).
   'Other ways back in': 'Wapas aane ke aur tareeke',
-  '1. Signed in on another phone, computer or browser? Open Staff & sign-in there (on a phone it is under More). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.':
-    '1. Kisi aur phone, computer ya browser par sign in ho? Wahan Staff & sign-in kholo (phone par yeh More mein hai). Apne naam ke aage “Make sign-in code” dabao. Phir woh code Sign in par PIN wale box mein likho.',
+  '1. Signed in on another phone, computer or browser? There, open Staff & sign-in (on a phone: More; on a computer: Settings → Sign-in & data). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.':
+    '1. Kisi aur phone, computer ya browser par sign in ho? Wahan Staff & sign-in kholo (phone par: More; computer par: Settings → Sign-in & data). Apne naam ke aage “Make sign-in code” dabao. Phir woh code Sign in par PIN wale box mein likho.',
   '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.':
     '2. Aapke gym ka koi aur owner bhi isi tarah aapke liye code bana sakta hai. Front desk staff: gym owner se code maango.',
   '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.':

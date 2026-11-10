@@ -19,7 +19,7 @@ describe('the offline copy on this device (was "Clear this device\'s saved data"
     expect(CLEAR_DEVICE_WORDS.what).toContain('deletes only that copy');
     expect(CLEAR_DEVICE_WORDS.what).toContain('Your gym’s records online stay safe');
     expect(CLEAR_DEVICE_WORDS.what).toContain('fresh copy downloads');
-    expect(CLEAR_DEVICE_WORDS.when).toMatch(/^Use it only if/);
+    expect(CLEAR_DEVICE_WORDS.when).toMatch(/^Use it only while the internet is working/);
     expect(CLEAR_DEVICE_WORDS.askNothingWaiting).toContain('Nothing is deleted from your gym’s records online.');
     expect(CLEAR_DEVICE_WORDS.button).toBe('Clear offline copy');
     // The old scary name is gone from every line.

@@ -51,7 +51,7 @@ const WA_NUMBER = '919000099999';
 
 const OTHER = {
   device:
-    '1. Signed in on another phone, computer or browser? Open Staff & sign-in there (on a phone it is under More). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.',
+    '1. Signed in on another phone, computer or browser? There, open Staff & sign-in (on a phone: More; on a computer: Settings → Sign-in & data). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.',
   owner: '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.',
   email: '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.',
   after: 'After you sign in with a code, you can choose a new PIN straight away.',
@@ -141,7 +141,7 @@ test.describe('R448-1 Settings: the offline copy on this device', () => {
     await expect(card).toContainText(
       'This phone or computer keeps a copy of your gym, so the desk still works when the internet is down. Clearing it deletes only that copy. Your gym’s records online stay safe, and a fresh copy downloads the next time this device is online.',
     );
-    await expect(card).toContainText('Use it only if this device shows old details that do not update, or if MettleUp support asks you to.');
+    await expect(card).toContainText('Use it only while the internet is working, and only if this device shows old details that do not update, or if MettleUp support asks you to.');
     // Negative: the old name is gone, and the card is not under "Danger zone" any more.
     await expect(page.getByText('Clear this device', { exact: false })).toHaveCount(0);
     await expect(page.getByText('Danger zone: this can’t be undone', { exact: true })).toBeVisible();
@@ -265,7 +265,7 @@ test.describe('R448-2 Forgot your PIN: WhatsApp first, then the other ways', () 
     await typeSignIn(b, OWNER.phone, SIGN_IN_CODE);
     await expect(b.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 15_000 });
     const choose = sheet(b, 'Choose a new PIN?');
-    await expect(choose).toContainText('You signed in with a one-time code. If you forgot your PIN, choose a new one now. You don’t need the old PIN for the next 15 minutes.');
+    await expect(choose).toContainText('You signed in with a one-time code. If you forgot your PIN, choose a new one now.');
     await expect(choose.getByLabel('Your current PIN')).toHaveCount(0);
     await expect(choose.getByRole('button', { name: 'Keep my old PIN' })).toBeVisible();
     await expectFitsPhone(b, 'in Choose a new PIN?');
@@ -346,7 +346,12 @@ test.describe('R448-3 Verify with WhatsApp: coming back to the page', () => {
     await expect(status).toContainText('Waiting for your message');
     await expect(forgot.getByRole('alert')).toHaveCount(0);
     await expectFitsPhone(page, 'with the no-message-yet line');
+    // Fresh-eyes finding: a way out stays on screen while we wait.
+    await forgot.getByRole('button', { name: 'Can’t use WhatsApp? Other ways back in' }).click();
+    await expect(otherWays(page)).toBeVisible();
     await shot(page, 'phone-verify-still-nothing', true);
+    await forgot.getByRole('button', { name: 'Can’t use WhatsApp? Other ways back in' }).click();
+    await expect(otherWays(page)).toHaveCount(0);
     // A real problem replaces the calm line.
     w.hint = 'no_code';
     await expect(forgot.getByRole('alert')).toHaveText('We could not find the code in your message. Tap "Open WhatsApp again" and send it without changes.', { timeout: 10_000 });
@@ -356,6 +361,7 @@ test.describe('R448-3 Verify with WhatsApp: coming back to the page', () => {
     w.state = 'verified';
     await leaveAndComeBack(page);
     await expect(forgot.getByRole('status')).toContainText('Number checked', { timeout: 10_000 });
+    await expect(forgot.getByRole('button', { name: 'Can’t use WhatsApp? Other ways back in' })).toHaveCount(0);
     await shot(page, 'phone-verify-checked');
   });
 

@@ -151,7 +151,7 @@ export function SetPinSheet({
  */
 export const NEW_PIN_PROMPT = {
   title: 'Choose a new PIN?',
-  intro: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now. You don’t need the old PIN for the next 15 minutes.',
+  intro: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now.',
   keep: 'Keep my old PIN',
   saved: 'New PIN saved. Next time, sign in with your mobile number and this PIN.',
 } as const;

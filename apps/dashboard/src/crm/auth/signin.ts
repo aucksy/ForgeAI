@@ -419,7 +419,7 @@ export function createGymErrorWords(err: unknown): string {
 export const OTHER_WAYS = {
   title: 'Other ways back in',
   device:
-    '1. Signed in on another phone, computer or browser? Open Staff & sign-in there (on a phone it is under More). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.',
+    '1. Signed in on another phone, computer or browser? There, open Staff & sign-in (on a phone: More; on a computer: Settings → Sign-in & data). Next to your name, tap “Make sign-in code”. Then type that code on Sign in, in the PIN box.',
   owner: '2. Another owner of your gym can make a code for you the same way. Front desk staff: ask your gym owner for a code.',
   email: '3. Not signed in anywhere? Email contact@mettleup.fit with your gym name and mobile number. We call you to check it is you, then give you a sign-in code.',
   after: 'After you sign in with a code, you can choose a new PIN straight away.',
