@@ -206,6 +206,8 @@ export function Routes({ online }: { online: boolean }) {
       { path: '/shop', label: t('Shop'), icon: 'shop', badge: newCount },
       // 22 Oct 2026: notices, offers and wishes to members, moved out of Shop (owner only).
       { path: '/messages', label: t('Messages & offers'), icon: 'messages' },
+      // Fresh eyes (R-447): the link and QR poster were under More on a phone but missing from a computer's menu.
+      { path: '/settings/invite', label: t('Invite members'), icon: 'invite' },
       // #49 step 2: the front desk sees only the workout offer (to give earned rewards). The owner
       // reaches it inside Messages & offers.
       ...(role === 'staff' ? [{ path: '/messages/offer', label: t('Workout offer'), icon: 'messages' } as NavItem] : []),

@@ -118,14 +118,17 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
   const shorter = useMediaQuery('(max-height: 740px)');
   const rowHeight = shorter ? 28 : short ? 30 : 36;
   const list = useRef<HTMLDivElement>(null);
-  const [scroll, setScroll] = useState({ overflows: false, moreBelow: false });
+  const [scroll, setScroll] = useState({ overflows: false, moreBelow: false, moreAbove: false });
   useEffect(() => {
     const el = list.current;
     if (!el) return undefined;
     const check = () => {
       const overflows = el.scrollHeight > el.clientHeight + 1;
       const moreBelow = overflows && el.scrollTop + el.clientHeight < el.scrollHeight - 1;
-      setScroll((s) => (s.overflows === overflows && s.moreBelow === moreBelow ? s : { overflows, moreBelow }));
+      const moreAbove = overflows && el.scrollTop > 1;
+      setScroll((s) =>
+        s.overflows === overflows && s.moreBelow === moreBelow && s.moreAbove === moreAbove ? s : { overflows, moreBelow, moreAbove },
+      );
     };
     check();
     el.addEventListener('scroll', check, { passive: true });
@@ -173,6 +176,11 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         </div>
       </div>
 
+      {/* Fresh eyes (R-447): a row cut at the edge looked covered. A soft fade at each edge that has more says
+          "the list goes on"; it never takes a click (pointer-events: none). */}
+      <div style={{ position: 'relative', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+      {scroll.moreAbove ? <EdgeFade at="top" /> : null}
+      {scroll.moreBelow ? <EdgeFade at="bottom" /> : null}
       <div
         ref={list}
         data-sidebar-rows=""
@@ -205,6 +213,7 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
             <SidebarLink item={item} active={item.path === activePath} dot={linkLit(lit, paths, item.path)} height={rowHeight} />
           </Fragment>
         ))}
+      </div>
       </div>
 
       {/* R-239: What's new and the version, at the bottom left: under the rows, never over them (R-447). */}
@@ -246,6 +255,26 @@ function Sidebar({ gymName, nav, activePath }: { gymName: string; nav: NavItem[]
         </div>
       </div>
     </nav>
+  );
+}
+
+/** R-447: a soft fade over one edge of the side menu's rows while more rows are that way. */
+function EdgeFade({ at }: { at: 'top' | 'bottom' }) {
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: at === 'top' ? 0 : undefined,
+        bottom: at === 'bottom' ? 0 : undefined,
+        height: 28,
+        zIndex: 1,
+        pointerEvents: 'none',
+        background: `linear-gradient(to ${at}, transparent, ${color.surfaceSunken})`,
+      }}
+    />
   );
 }
 

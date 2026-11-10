@@ -204,32 +204,17 @@ export function Welcome() {
 function OtherDoor({ question, label, onClick }: { question: string; label: string; onClick: () => void }) {
   const line = <span aria-hidden style={{ flex: 1, height: 1, background: color.border }} />;
   return (
-    <div style={{ marginTop: space.lg, display: 'grid', justifyItems: 'center', gap: space.xs }}>
+    <div style={{ marginTop: space.lg, display: 'grid', justifyItems: 'center', gap: space.sm }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: space.md, width: '100%' }}>
         {line}
         <span style={{ fontFamily: font.body, fontSize: 14, color: color.inkSecondary }}>{question}</span>
         {line}
       </div>
-      <button
-        type="button"
-        onClick={onClick}
-        style={{
-          appearance: 'none',
-          minHeight: 44,
-          padding: `0 ${space.md}px`,
-          border: 'none',
-          background: 'transparent',
-          color: color.accentBright,
-          fontFamily: font.body,
-          fontSize: 15,
-          fontWeight: 700,
-          textDecoration: 'underline',
-          textUnderlineOffset: 3,
-          cursor: 'pointer',
-        }}
-      >
+      {/* Fresh eyes (R-447): a small text link looked weaker than "Start demo", so a new owner might take the demo for
+          the way in. Outlined and full width like "Start demo": as easy to find, still quieter than the bright "Sign in". */}
+      <Button full variant="ghost" onClick={onClick}>
         {label}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -159,6 +159,8 @@ async function expectEveryRowClickable(page, where) {
     expect(hit, `"${name}" is the thing under the pointer ${where}`).toBe(true);
   }
   expect(names).toContain('Help and feedback');
+  // Fresh eyes (R-447): the link and QR poster are in a computer's menu too, as under More on a phone.
+  expect(names).toContain('Invite members');
   return names;
 }
 
