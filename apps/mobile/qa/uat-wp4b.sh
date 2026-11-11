@@ -286,6 +286,12 @@ part_uk() {
   if uat_shortcut weight '^Log body weight$'; then
     sleep 3
     uat_part uk5 uat-k5.yaml && log "UAT UK: shortcuts Resume, Start (keyed, at once), the spent Start (asks first) and Log body weight each landed right"
+    # 12 Nov 2026 (run 43106098012: UK5 opened the previous link). When React Native answers with the
+    # old app screen's link, the app now opens this launch's own link and logs it; say so when seen.
+    sleep 10
+    if cat "$OUT"/uk-logcat-*.txt 2>/dev/null | grep -q 'launch link taken from this launch'; then
+      log "UAT UK: the old-link race happened this run and the app opened this launch's link instead: $(cat "$OUT"/uk-logcat-*.txt | grep -h 'launch link taken' | sed 's/.*last screen: //' | tr '\n' ';' | cut -c1-300)"
+    fi
   else
     uat_fail UK "no 'Log body weight' shortcut (uk-shortcuts-weight.txt)"
   fi

@@ -128,7 +128,7 @@ features:
     name: App-icon long-press shortcuts [1a]
     android: done
     ios: todo
-    reason: UIApplication.shortcutItems (Quick Actions).
+    reason: UIApplication.shortcutItems (Quick Actions). The link a shortcut opens is read through src/app/+native-intent.tsx (shared JS, 12 Nov 2026 UK5 fix), which prefers expo-linking's own record of this launch's link over React Native's Android answer (that one can be the previous app screen's link). iPhone already reads expo-linking's record, so the same rule holds there with no extra work.
     blocking: false
     covers:
       functions: [forge-phone.shortcutsSave]

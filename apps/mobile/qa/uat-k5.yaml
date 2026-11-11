@@ -1,6 +1,6 @@
 # UAT WP4b, part UK (M-110), step 5 of 5: the app-icon shortcut "Log body weight" (opened as the
 # launcher does) lands on Measures, on Body weight: its "Add measures" form starts with the body
-# weight box.
+# weight box. Regression (12 Nov 2026): never the previous link's "Start <routine>?" question.
 appId: com.mettleup.app
 ---
 - tapOn:
@@ -9,6 +9,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Add measures"
     timeout: 30000
+# 12 Nov 2026 (run 43106098012): the new app screen once opened the PREVIOUS link (the spent Start
+# link of step 4) and showed "Start Push Day A?". Never the old link's question here.
+- assertNotVisible: 'Start .+\?'
 - runFlow:
     file: sub-find.yaml
     env:
