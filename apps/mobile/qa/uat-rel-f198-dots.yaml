@@ -169,8 +169,8 @@ appId: com.mettleup.app
     id: "new-dot-row-ask-ai"
 - takeScreenshot: rel-f198-10-day-29-and-30
 - back
-# 6 Dec 00:00 IST: Sleep's day 30, its dot gone. 0.75.0's "Machine and cable steps" (8 Nov, day 28) is the
-# only feature still lit (R-400): its trail leads to Plates and bars, and opening that page clears every dot.
+# 6 Dec 00:00 IST: Sleep's day 30, its dot gone. 0.75.0's "Machine and cable steps" (8 Nov, day 28) and 0.77.0's
+# "Light or dark" (11 Nov, day 25) are still lit: Plates and bars, then Light or dark; then every dot is gone.
 - openLink: "mettleup://qa-dots?at=2026-12-05T18:30:00Z&reset=1"
 - extendedWaitUntil:
     visible: "Edit profile"
@@ -204,6 +204,28 @@ appId: com.mettleup.app
     timeout: 15000
 - assertNotVisible:
     id: "new-dot-row-plates"
+# 0.77.0's "Light or dark" (11 Nov, day 25) is still lit on 6 Dec: its row sits above, under You. Opening its
+# page clears the last dot.
+- scrollUntilVisible:
+    element: "^Light or dark$"
+    direction: UP
+    centerElement: true
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: "new-dot-row-look"
+    timeout: 20000
+- takeScreenshot: rel-f198-12b-light-or-dark-dot
+- tapOn: "^Light or dark$"
+- extendedWaitUntil:
+    visible: "^Same as phone.*"
+    timeout: 15000
+- back
+- extendedWaitUntil:
+    visible: "^Light or dark$"
+    timeout: 15000
+- assertNotVisible:
+    id: "new-dot-row-look"
 - back
 - extendedWaitUntil:
     visible: "Edit profile"

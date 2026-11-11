@@ -70,6 +70,27 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 11 Nov 2026 ~12:28 IST ("Release"): light mode + R-429, R-411, R-412, R-436..R-442, R-444, R-445.
+    // member-words: short lines, so no Gemini pass; a fresh-reader helper checked them (empty workout, watch "stays on,
+    // dimmed", "same set last time", the 18+ tick reworded). Left out to fit Play's 500 characters: R-412's What's new
+    // link, R-411 and R-440 (fixes), R-441 (the switch explains itself). The watch line starts "Your watch" so the
+    // phone's watch update card lists it under "New on your watch".
+    version: '0.77.0',
+    date: '11 Nov',
+    lines: [
+      {
+        text: "Light mode is here: the app now follows your phone's light or dark setting.",
+        go: { label: 'Light or dark', href: '/settings/look' },
+        feature: true,
+      },
+      { text: 'Tap "Start empty workout" to get the exercises of your last one. "Start blank" removes them.' },
+      { text: 'Suggested reps now follow the same set last time, not the set you just did.' },
+      { text: 'Your watch screen now stays on dimmed during a workout, even with Always-on display off.' },
+      { text: 'The phone now tells you when your watch app has an update.' },
+      { text: 'Before Google sign-in, tick once to confirm you are 18 or older and accept our terms.' },
+    ],
+  },
+  {
     // Owner's release, 8 Nov 2026 ("You can also release whatever other changes are pending", R-407): F199 + R-402 +
     // R-403 + R-404 + R-401. member-words: Gemini gave no answer in 90 s, so a fresh-reader helper checked the lines.
     version: '0.76.0',
