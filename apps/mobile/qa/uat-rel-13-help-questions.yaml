@@ -44,9 +44,12 @@ appId: com.mettleup.app
     env:
       FIND: "^QA check: how do I pause my plan$"
 - assertVisible: "^Your questions$|^QA check: how do I pause my plan$"
-- extendedWaitUntil:
-    visible: "^Did this solve it\\?$|^The MettleUp team will reply here\\.$|^Waiting for the answer\\. It usually takes a few seconds\\.$"
-    timeout: 20000
+# The answer's last line sits below the screen's edge when the help box answers at length (gate run
+# 43001735779, owner phone: an 8-line AI answer, "Did this solve it?" off screen): scroll to it.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Did this solve it\\?$|^The MettleUp team will reply here\\.$|^Waiting for the answer\\. It usually takes a few seconds\\.$"
 - takeScreenshot: rel-131-your-questions-after-send
 # Kept on the phone: still listed after a restart.
 - stopApp

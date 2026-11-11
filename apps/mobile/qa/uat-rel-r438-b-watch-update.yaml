@@ -95,4 +95,9 @@ appId: com.mettleup.app
     visible: "Your watch app has an update"
     timeout: 60000
 - takeScreenshot: rel-r438-11-after-workout-next-open
+# "Later" can sit below the screen's edge (more lines, a bigger font): scroll to it first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
 - tapOn: "^Later$"

@@ -30,6 +30,11 @@ appId: com.mettleup.app
     visible: "A new MettleUp is here"
     timeout: 30000
 - takeScreenshot: rel-r401-02-full-screen
+# "Later" can sit below the screen's edge (more lines, a bigger font): scroll to it first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
 - tapOn: "^Later$"
 - extendedWaitUntil:
     notVisible: "A new MettleUp is here"

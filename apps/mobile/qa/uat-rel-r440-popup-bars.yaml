@@ -22,6 +22,12 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-r440-01-phone-update-${LOOK}
+# Two versions behind (BEHIND=2) adds "And the changes from 1 earlier update.", which pushes "Later" below
+# the screen's edge on the default phone (gate run 43001739741, flow y): scroll to it first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
 - tapOn: "^Later$"
 - extendedWaitUntil:
     notVisible: "A new MettleUp is here"
@@ -41,6 +47,10 @@ appId: com.mettleup.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: rel-r440-02-watch-card-${LOOK}
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Later$"
 - tapOn: "^Later$"
 - extendedWaitUntil:
     notVisible: "Your watch app has an update"
