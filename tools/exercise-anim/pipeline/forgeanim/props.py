@@ -125,3 +125,13 @@ def incline_bench(incline_deg=35.0, name="FA_Bench"):
          loc=(0, 0, -pad_t / 2 - 0.012))
     _box(name + "_Hinge", (0.2, 0.05, 0.05), loc=(0, 0.0, seat_h - pad_t - 0.02), mat=M["frame"], bevel=0.006, parent=root)
     return {"root": root, "seat_h": seat_h, "hinge": hinge, "incline": a, "back_len": back_len, "pad_t": pad_t}
+
+
+def box(size=(0.6, 0.4, 0.3), name="FA_Box"):
+    """Plain gym box / step / wall block (11 Nov 2026, exercise pictures). Origin = floor point under its centre.
+    size = (x width, y depth, z height) in metres. Returns the root empty."""
+    M = _mats()
+    root = _empty(name)
+    w, d, h = size
+    _box(name + "_Body", (w, d, h), loc=(0, 0, h / 2), mat=M["pad"], bevel=0.015, parent=root)
+    return root

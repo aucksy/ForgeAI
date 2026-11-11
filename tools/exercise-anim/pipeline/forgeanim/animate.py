@@ -70,6 +70,13 @@ class Clip:
             b = sc["bench"]
             self.bench = P.incline_bench(b.get("deg", 35.0))
             self.bench["root"].location = Vector(b.get("loc", (0, 0, 0)))
+            if b.get("rot_z"):
+                self.bench["root"].rotation_euler = (0, 0, math.radians(b["rot_z"]))
+        # "box": {"size": [x, y, z], "loc": [x, y, 0]} -> a plain step / plyo box / wall block (exercise pictures)
+        for i, bx in enumerate(sc.get("boxes", [sc["box"]] if "box" in sc else [])):
+            ob = P.box(tuple(bx.get("size", (0.6, 0.4, 0.3))), name=f"FA_Box{i}")
+            ob.location = Vector(bx.get("loc", (0, 0, 0)))
+            self.boxes = getattr(self, "boxes", []) + [ob]
         for name, p in self.spec.get("props", {}).items():
             if p["type"] == "dumbbell":
                 self.props[name] = P.dumbbell("FA_" + name)

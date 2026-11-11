@@ -4,6 +4,8 @@ blender -b --addons bl_ext.user_default.mpfb --python make_clip.py -- <spec.json
   preview : the key poses only, small and fast, from the clip camera (+ a side view with --side;
             --frames=8,16,24 previews those frames instead of the key poses)
   full    : every frame at clip quality into out/<key>/frames (resumable: existing frames are skipped)
+  stills  : exercise pictures: <key>__start.png / __end.png (transparent, floor shadow) + QA side views
+
 Then run encode.py (plain Python) to make the WebP / MP4 / poster.
 """
 import sys, os, json, math, time
@@ -38,6 +40,8 @@ cam = bpy.data.objects.new("FA_Cam", bpy.data.cameras.new("FA_Cam")); scene.coll
 objs = [ch["body"], ch["shorts"]] + [c for p in clip.props.values() for c in p.children]
 if hasattr(clip, "bench"):
     objs += list(clip.bench["root"].children)
+for bx in getattr(clip, "boxes", []):
+    objs += list(bx.children)
 fps, keys, _ = clip.timeline()
 key_frames = sorted({min(n - 1, int(round(k[0] * fps))) for k in keys})
 center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), cam_spec.get("pitch", 12),
@@ -45,7 +49,36 @@ center, d = RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30), cam_spec
                             target_offset=cam_spec.get("offset", (0, 0, 0)))
 look.setup_lights(scene, center, cam_spec.get("yaw", -30) + cam_spec.get("light_yaw", 0))
 
-if mode == "preview":
+if mode == "stills":
+    # Exercise pictures (11 Nov 2026): the start and end poses (one pose = a hold) as big transparent PNGs with a
+    # soft floor shadow. The look (background, framing, size) is NOT baked in: export_pictures.py adds it later,
+    # so a new look never needs a new render. Plus small side views and floor numbers for QA.
+    look.setup_world_and_render(scene, res=cam_spec.get("still_res", 768), samples=cam_spec.get("still_samples", 32), transparent=True)
+    bpy.ops.mesh.primitive_plane_add(size=40, location=(0, 0, 0))
+    floor = bpy.context.active_object; floor.name = "FA_ShadowFloor"; floor.is_shadow_catcher = True
+    order = []
+    for k in keys:
+        if k[1] not in [p for p, _ in order]:
+            order.append((k[1], min(n - 1, int(round(k[0] * fps)))))
+    names = ["start", "end"] if len(order) > 1 else ["start"]
+    dg = bpy.context.evaluated_depsgraph_get()
+    stills = {}
+    for (pose, f), tag in zip(order, names):
+        scene.frame_set(f); dg.update()
+        ev = ch["body"].evaluated_get(dg); me = ev.to_mesh()
+        low = min((ev.matrix_world @ v.co).z for v in me.vertices); ev.to_mesh_clear()
+        pl = [min((o.matrix_world @ Vector(c)).z for c in o.bound_box) for p in clip.props.values() for o in p.children if o.type == "MESH"]
+        print(f"[still] {tag} pose={pose} frame={f} lowest_body_z={low:.4f} lowest_prop_z={(min(pl) if pl else 0):.4f}")
+        p = os.path.join(out, f"{key}__{tag}.png"); scene.render.filepath = p
+        bpy.ops.render.render(write_still=True); stills[tag] = {"pose": pose, "frame": f, "lowest_body_z": round(low, 4)}
+    scene.render.resolution_x = scene.render.resolution_y = 400; scene.cycles.samples = 12
+    RD.frame_camera(scene, cam, objs, cam_spec.get("yaw", -30) + 90, 5, 50, 0.9, sample_frames=[f for _, f in order])
+    for (pose, f), tag in zip(order, names):
+        scene.frame_set(f)
+        scene.render.filepath = os.path.join(out, f"{key}__qa_side_{tag}.png"); bpy.ops.render.render(write_still=True)
+    json.dump({"key": key, "stills": stills, "yaw": cam_spec.get("yaw", -30)}, open(os.path.join(out, f"{key}__stills.json"), "w"), indent=1)
+    print(f"[clip] stills done in {time.time() - t0:.1f}s")
+elif mode == "preview":
     paths = []
     views = [("cam", None)] + ([("side", 90)] if side else [])
     for tag, yaw in views:

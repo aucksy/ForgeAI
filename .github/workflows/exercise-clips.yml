@@ -18,6 +18,11 @@ on:
         description: 'Upload the finished clips to the exercise-clips release'
         type: boolean
         default: true
+      mode:
+        description: 'clip = moving clip; stills = start/end exercise pictures (transparent PNG + QA views, artifact only, never published)'
+        type: choice
+        options: [clip, stills]
+        default: clip
 
 permissions:
   contents: write
@@ -84,14 +89,38 @@ jobs:
           python3 tools/exercise-anim/pipeline/make_maps.py
 
       - name: Render ${{ matrix.key }}
+        if: ${{ inputs.mode != 'stills' }}
         working-directory: tools/exercise-anim/pipeline
         run: BLENDER=~/blender/blender sh render_all.sh ../specs/${{ matrix.key }}.json
 
+      - name: Stills ${{ matrix.key }} (exercise pictures + checks)
+        if: ${{ inputs.mode == 'stills' }}
+        working-directory: tools/exercise-anim/pipeline
+        run: |
+          set -o pipefail
+          K=${{ matrix.key }}; S=../specs/$K.json; B=~/blender/blender; A="-b --addons bl_ext.user_default.mpfb --python"
+          mkdir -p ../out/$K
+          $B $A make_clip.py -- $S stills 2>&1 | tee ../out/$K/$K.stills.log | grep -E "\[still\]|\[clip\]|Error|rror:"
+          { echo "== measure_twist"; $B $A measure_twist.py -- $S 10 2>&1 | grep -vE "^(Blender|Read|Warning|Fra:)" | tail -40 || true
+            echo "== probe_feet"; $B $A probe_feet.py -- $S 2>&1 | grep -E "LOWEST|REST" || true; } > ../out/$K/$K.checks.txt
+          ls ../out/$K/${K}__start.png
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'stills' }}
+        with:
+          name: stills-${{ matrix.key }}
+          path: |
+            tools/exercise-anim/out/${{ matrix.key }}/${{ matrix.key }}__*
+            tools/exercise-anim/out/${{ matrix.key }}/${{ matrix.key }}.*
+          retention-days: 14
+
       - name: Encode ${{ matrix.key }}
+        if: ${{ inputs.mode != 'stills' }}
         working-directory: tools/exercise-anim/pipeline
         run: python3 encode.py ${{ matrix.key }} ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode != 'stills' }}
         with:
           name: clip-${{ matrix.key }}
           path: tools/exercise-anim/out/${{ matrix.key }}/${{ matrix.key }}.v*
@@ -99,7 +128,7 @@ jobs:
 
   publish:
     needs: render
-    if: ${{ inputs.publish && !cancelled() }}
+    if: ${{ inputs.publish && inputs.mode != 'stills' && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
