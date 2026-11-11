@@ -27,8 +27,9 @@ export { TERMS_VERSION } from './terms';
 /**
  * The tick-box line. `{terms}` and `{agreement}` become the two links, whose words stay "terms" and "data
  * agreement" in both languages (the pages they open are in English).
- * R-450 (R-449 fresh eyes): the Hinglish set-up form showed this line in English. The Hinglish is a translation
- * only, same meaning (legal wording: the owner says yes to it).
+ * R-450 (R-449 fresh eyes): the Hinglish set-up form shows this line in English. Legal wording: its Hinglish waits
+ * for the owner's yes, so the dictionary has no entry yet and the set-up form does not pass `translated`.
+ * Proposed (translation only, same meaning): "Main MettleUp ke {terms} aur {agreement} se sehmat hoon."
  */
 export const TERMS_LINE = 'I agree to the MettleUp {terms} and the {agreement}.';
 

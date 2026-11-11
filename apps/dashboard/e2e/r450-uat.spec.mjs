@@ -2,7 +2,8 @@
 // them as "dashboard-uat-pictures"), named r450-*.png. The five R-449 fresh-eyes leftovers:
 //  1. The sign-in PIN hint said "(Settings → Staff & sign-in)", a page staff cannot open (only an owner makes codes):
 //     now "No PIN yet? Ask your gym owner for a sign-in code, and type it here."
-//  2. The set-up form's terms tick line has Hinglish (a translation only; the two links keep their words).
+//  2. The set-up form's terms tick line STAYS ENGLISH on the Hinglish page until the owner says yes to its Hinglish
+//     (legal wording; coordinator, 11 Nov). Checked here so it cannot slip out early.
 //  3. Hinglish talks to the owner one way: "aap ... karenge / hain" (was "karoge", "sakte ho", "naye ho?").
 //  4. "Import from Excel" on Members: at the top and in the empty list (it was already there; pictured, and the
 //     button opens the same import as Settings).
@@ -53,7 +54,6 @@ const ANDROID_CHROME =
 const HINT = 'No PIN yet? Ask your gym owner for a sign-in code, and type it here.';
 const HINT_HI = 'Abhi PIN nahi hai? Gym owner se sign-in code maango aur yahan daalo.';
 const TERMS_EN = 'I agree to the MettleUp terms and the data agreement.';
-const TERMS_HI = 'Main MettleUp ke terms aur data agreement se sehmat hoon.';
 const CASUAL = /\b[a-z]+oge\b|\bsakte ho\b|\bnaye ho\?|\bkarte ho\?/i;
 const BARE_COUNT = /^\d+ memberships?$/;
 
@@ -82,7 +82,7 @@ const OWE = [
 test.describe('R450 phone (375 px, Android Chrome)', () => {
   test.use({ viewport: PHONE, userAgent: ANDROID_CHROME });
 
-  test('1+2+3 sign-in page and set-up form: the PIN hint, the Hinglish terms line, "aap ... karenge"', async ({ page }) => {
+  test('1+2+3 sign-in page and set-up form: the PIN hint, the terms line still English, "aap ... karenge"', async ({ page }) => {
     await openApp(page);
     // 1. English: who to ask, and no page named.
     const hint = page.getByText(HINT, { exact: true });
@@ -102,18 +102,19 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await shot(page, 'phone-signin-hint-hinglish');
     await shot(page, 'phone-signin-hinglish-full', true);
 
-    // 2+3. Set up a new gym, in Hinglish: the tick line in Hinglish with both links; the "karenge" lines.
+    // 2+3. Set up a new gym, in Hinglish: the tick line stays English (waits for the owner's yes) with both links;
+    // the "karenge" lines.
     await page.getByRole('button', { name: 'Naya gym banao' }).click();
     const form = setUpForm(page);
-    const box = form.getByRole('checkbox', { name: TERMS_HI });
+    const box = form.getByRole('checkbox', { name: TERMS_EN });
     await expect(box).toBeVisible();
     await expect(form.getByRole('link', { name: 'terms', exact: true })).toHaveAttribute('href', /terms/);
     await expect(form.getByRole('link', { name: 'data agreement', exact: true })).toHaveAttribute('href', /data-agreement/);
-    await expect(form).not.toContainText('I agree to');
+    await expect(form).not.toContainText('sehmat');
     await expect(page.getByText('Aap mobile number aur is PIN se sign in karenge. Ise kisi ko mat batao.', { exact: true })).toBeVisible();
     await expect(page.getByText('Pehle se MettleUp use karte hain?', { exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toContainText(CASUAL);
-    // Regression: the Hinglish box still ticks.
+    // Regression: the box still ticks on the Hinglish page.
     await box.check();
     await expect(box).toBeChecked();
     await expectFitsPhone(page, 'on the set-up form in Hinglish');
@@ -121,7 +122,7 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await shot(page, 'phone-setup-terms-hinglish');
     await shot(page, 'phone-setup-hinglish-full', true);
 
-    // English again: the tick line in English, exactly as before (the gate card for older gyms says the same).
+    // English again: the same tick line (the gate card for older gyms says the same).
     await page.getByRole('radio', { name: 'English' }).click();
     await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_EN })).toBeVisible();
     await centre(setUpForm(page).getByRole('checkbox', { name: TERMS_EN }));
@@ -239,7 +240,7 @@ test.describe('R450 computer (1366x768)', () => {
     await shot(page, 'computer-signin');
     await page.getByRole('radio', { name: 'Hinglish' }).click();
     await page.getByRole('button', { name: 'Naya gym banao' }).click();
-    await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_HI })).toBeVisible();
+    await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_EN })).toBeVisible();
     await shot(page, 'computer-setup-hinglish-full', true);
   });
 
