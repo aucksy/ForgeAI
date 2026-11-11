@@ -271,6 +271,7 @@ appId: com.mettleup.app
 # ---------------------------------------------------------------- "Create “…”" inside a workout
 - runFlow: sub-workout-fresh.yaml
 - tapOn: "Start empty workout"
+- runFlow: sub-start-blank.yaml
 - scrollUntilVisible:
     element: "Add exercise"
     centerElement: true

@@ -1,0 +1,20 @@
+# R-436 (0.77.0): "Start empty workout" now brings back the exercises of the last empty workout, filled a
+# moment after the screen opens, under the line "We added the exercises from your last empty workout." and a
+# "Start blank" button. A flow that wants a blank workout runs this right after its tap (and its "Allow"):
+# it waits up to 5 s for "Start blank" and taps it (nothing remembered: no button, 5 s spent).
+# Gate runs 43001735779 / 43001739741: parts E, F, H1, I started on the pre-filled cards and failed.
+# The flows that test the memory itself (uat-rel-r436-*, uat-rel-r444-empty-workout) do not use it.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Start blank$"
+    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: "^Start blank$"
+    commands:
+      - tapOn: "^Start blank$"
+      - extendedWaitUntil:
+          notVisible: "^Start blank$"
+          timeout: 10000

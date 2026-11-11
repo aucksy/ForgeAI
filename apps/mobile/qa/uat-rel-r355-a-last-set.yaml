@@ -22,6 +22,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "(?i)^allow$"
     optional: true
+- runFlow: sub-start-blank.yaml
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout|^Add exercise$"
     timeout: 30000

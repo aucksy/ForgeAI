@@ -17,6 +17,7 @@ appId: com.mettleup.app
 - tapOn:
     text: "(?i)^allow$"
     optional: true
+- runFlow: sub-start-blank.yaml
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000
@@ -76,6 +77,7 @@ appId: com.mettleup.app
       - tapOn:
           text: "(?i)^allow$"
           optional: true
+      - runFlow: sub-start-blank.yaml
       - extendedWaitUntil:
           visible: "Add exercise"
           timeout: 20000

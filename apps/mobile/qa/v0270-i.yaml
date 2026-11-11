@@ -400,6 +400,7 @@ appId: com.mettleup.app
     centerElement: true
     timeout: 30000
 - tapOn: "Start empty workout"
+- runFlow: sub-start-blank.yaml
 - extendedWaitUntil:
     visible: "Add exercise"
     timeout: 20000

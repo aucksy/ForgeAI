@@ -26,6 +26,7 @@ appId: com.mettleup.app
       visible: "Start empty workout"
     commands:
       - tapOn: "Start empty workout"
+      - runFlow: sub-start-blank.yaml
 - extendedWaitUntil:
     visible: 'Workout duration .*Tap to pause\.'
     timeout: 20000
