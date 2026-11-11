@@ -69,7 +69,7 @@ const ageChip = (page, label) =>
 
 /** R-450 fresh eyes: every age chip's number is the number of people it lists, and "All" matches "Total due". */
 async function chipsCountPeople(page) {
-  const collect = page.getByRole('main').getByRole('button', { name: 'Collect' });
+  const collect = page.getByRole('main').getByRole('button', { name: 'Collect', exact: true });
   const everyone = await collect.count();
   expect(everyone).toBeGreaterThan(0);
   const countOn = async (label) => Number(((await ageChip(page, label).textContent()) ?? '').match(/(\d+)\s*$/)?.[1] ?? -1);
@@ -314,8 +314,8 @@ test.describe('R450 computer (1366x768)', () => {
     await page.getByRole('button', { name: 'Dues' }).click();
     await expect(tile(page, 'Up to 30 days')).toContainText(/\d+ memberships? not fully paid/);
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
-    await expect(page.getByRole('columnheader', { name: 'Due for', exact: true })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: 'Due since', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('columnheader', { name: /^due for$/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /^due since$/i })).toHaveCount(0);
     await chipsCountPeople(page);
     await shot(page, 'computer-demo-dues');
     await shot(page, 'computer-demo-dues-full', true);
