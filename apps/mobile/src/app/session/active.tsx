@@ -223,7 +223,11 @@ export default function ActiveWorkoutScreen() {
     const keys = exercises.map((e) => e.key);
     const known = knownKeys.current;
     if (known) {
-      const added = keys.filter((k) => !known.has(k));
+      // R-436/R-444 (0.77.0 UAT pictures rel-r444-11, rel-r436-a1): the remembered empty-workout cards land
+      // just after the screen opens; they are not the member's own add, so the list stays at the top with
+      // "We added the exercises from your last empty workout." in view (it scrolled to the last card).
+      const pre = new Set(useActiveWorkout.getState().emptyPrefill ?? []);
+      const added = keys.filter((k) => !known.has(k) && !pre.has(k));
       if (added.length > 0) scrollToNew.current = added[added.length - 1];
     }
     knownKeys.current = new Set(keys);

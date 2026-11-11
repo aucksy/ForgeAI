@@ -115,6 +115,12 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "Mark Air Squat set 2 complete"
+# 0.77.0 fresh eyes: a reps-only row has no weight, so the reason line speaks of reps.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: '^Set 1 was very hard, so do not try for more reps\.$'
+- assertNotVisible: '.*keep the same weight.*'
 - takeScreenshot: rel-r439-e-rpe-10-hint-40
 - runFlow:
     file: sub-uat-tick.yaml

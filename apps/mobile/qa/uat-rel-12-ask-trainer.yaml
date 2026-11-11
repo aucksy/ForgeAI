@@ -67,6 +67,12 @@ appId: com.mettleup.app
       - extendedWaitUntil:
           visible: "^Who should answer\\?$"
           timeout: 30000
+      # On his phone (360 dp, font 1.3) the taken-back card's last line can sit below the screen's edge (uat
+      # run 42976574875: the card's first lines showed, its status line was off screen): scroll to it first.
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "^You took this question back\\.$"
       - assertVisible: "^You took this question back\\.$"
       - takeScreenshot: rel-123-ask-taken-back
       - back

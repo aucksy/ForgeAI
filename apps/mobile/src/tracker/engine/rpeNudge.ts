@@ -127,6 +127,8 @@ export function nudgeLine(n: RpeNudge, kg: (kg: number) => string): string {
     case 'lighter':
       return `${set} was very hard, so try ${kg(n.weightKg)}.`;
     case 'hold':
-      return `${set} was very hard, so keep the same weight.`;
+      // 0.77.0 fresh-eyes review: a reps-only or bodyweight row has no weight to keep (Air Squat said
+      // "keep the same weight" under a reps hint).
+      return n.weightKg > 0 ? `${set} was very hard, so keep the same weight.` : `${set} was very hard, so do not try for more reps.`;
   }
 }
