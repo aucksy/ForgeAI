@@ -1,0 +1,12 @@
+# Sub-flow (called with runFlow; not a part of its own): R-436 UAT. Bring the open workout's page back to
+# its top, where the "We added the exercises from your last empty workout." line sits. Swipes from the
+# left (the PREVIOUS column side, never a number box: a drag that starts on a box does not scroll).
+appId: com.mettleup.app
+---
+- repeat:
+    times: 4
+    commands:
+      - swipe:
+          start: 15%, 30%
+          end: 15%, 85%
+          duration: 400

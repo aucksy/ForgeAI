@@ -1,0 +1,12 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 UAT. The number a ticked box SAVED (a tick
+# on an empty row saves its grey hint) must be exactly WANT. Read from the box itself (its text), found
+# by its spoken label FIELD. No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${FIELD}"
+- copyTextFrom:
+    text: "${FIELD}"
+- assertTrue: ${maestro.copiedText == WANT}

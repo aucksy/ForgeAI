@@ -1,0 +1,24 @@
+# Part UAT, R-436 flow b, interruption: no internet. run-device-qa.sh turns airplane mode on before this flow
+# and off after it. After flow a the remembered list is Dumbbell Preacher Curl: "Start empty workout" still
+# pre-fills it (the list lives on the phone) with its line. Picture rel-r436-b1-offline-prefilled.png.
+appId: com.mettleup.app
+---
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 30000
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertVisible: "Start blank"
+- assertNotVisible: "More for Goblet Squat"
+- takeScreenshot: rel-r436-b1-offline-prefilled
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml

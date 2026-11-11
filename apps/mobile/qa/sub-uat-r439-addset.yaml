@@ -1,0 +1,16 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. "Add set" on the card EX,
+# whose last row is set PREV, so set N appears. The card's own "Add set" is the one nearest below its
+# last row (another card's sits further down). No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${EX} set ${PREV} reps"
+- tapOn:
+    text: "^Add set$"
+    below:
+      text: "${EX} set ${PREV} reps"
+- extendedWaitUntil:
+    visible: "${EX} set ${N} reps"
+    timeout: 10000

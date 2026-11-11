@@ -1,0 +1,129 @@
+# Part UAT, R-439 flow a (owner, 10 Nov 2026: Air Squat set 2 suggested 66 after 66; last time 65 then 40).
+# From a fresh install with the demo (the part runs gate-demo.yaml first): "Rate how hard each set felt" on
+# (RPE is part of the rule), then yesterday's workout: Air Squat (reps only, past its 20-rep cap, so its
+# Target only says "try a harder version") 65 then 40, and Goblet Squat (weighted) 20 kg x 8 then 20 kg x 5.
+# Saved as a routine from the Profile feed (a card added on the spot gets no Target; a routine's rows do),
+# and left open. The part then moves the phone clock one day on and runs flow b. Pictures rel-r439-a*.png.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- effort on (as the owner has it)
+- runFlow:
+    file: sub-settings-page.yaml
+    env:
+      PAGE: "Rate how hard each set felt"
+- extendedWaitUntil:
+    visible: "Adds a box to each set.*"
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        text: "Rate how hard each set felt"
+        checked: false
+    commands:
+      - tapOn:
+          text: "Rate how hard each set felt"
+          checked: false
+- assertVisible:
+    text: "Rate how hard each set felt"
+    checked: true
+- back
+- runFlow: xc-sub-back-to-tabs.yaml
+# ---------------------------------------------------------------- yesterday: Air Squat 65, 40; Goblet Squat 20 x 8, 20 x 5
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Add exercise"
+    timeout: 30000
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "air squat"
+      EX: "Air Squat"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Air Squat"
+      N: "1"
+      KG: "none"
+      REPS: "65"
+- runFlow:
+    file: sub-uat-r439-addset.yaml
+    env:
+      EX: "Air Squat"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Air Squat"
+      N: "2"
+      KG: "none"
+      REPS: "40"
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "goblet squat"
+      EX: "Goblet Squat"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Goblet Squat"
+      N: "1"
+      KG: "20"
+      REPS: "8"
+- runFlow:
+    file: sub-uat-r439-addset.yaml
+    env:
+      EX: "Goblet Squat"
+      PREV: "1"
+      N: "2"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Goblet Squat"
+      N: "2"
+      KG: "20"
+      REPS: "5"
+- takeScreenshot: rel-r439-a-last-time
+- runFlow: sub-uat-r439-finish.yaml
+# ---------------------------------------------------------------- saved as a routine (as R-366's flow a)
+- tapOn: "^Profile$"
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Save as routine"
+    timeout: 10000
+- tapOn: "Save as routine"
+- extendedWaitUntil:
+    visible: "Your plan only changes if you pick it."
+    timeout: 10000
+- tapOn:
+    text: "^My routines.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Saved as a routine"
+    timeout: 15000
+- tapOn: "^Open routine$"
+- extendedWaitUntil:
+    visible: "Edit routine"
+    timeout: 15000
+- assertVisible: "Air Squat"
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 20000
+- takeScreenshot: rel-r439-a2-routine-saved

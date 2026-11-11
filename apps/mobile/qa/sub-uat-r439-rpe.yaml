@@ -1,0 +1,17 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 UAT. Open a set's RPE sheet by its button
+# BUTTON ("Add RPE for X set 1", or "X set 1 RPE 8.5. Change") and pick PICK ("RPE 8\.5: .*"). On a set not
+# ticked yet the pick also ticks it (owner, 15 Oct 2026). No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "${BUTTON}"
+- tapOn: "${BUTTON}"
+- extendedWaitUntil:
+    visible: 'How hard was it\? \(RPE\)'
+    timeout: 10000
+- tapOn: "${PICK}"
+- extendedWaitUntil:
+    notVisible: 'How hard was it\? \(RPE\)'
+    timeout: 10000

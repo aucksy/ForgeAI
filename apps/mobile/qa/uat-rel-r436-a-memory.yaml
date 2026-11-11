@@ -1,0 +1,179 @@
+# Part UAT, R-436 flow a (owner, 10 Nov 2026: "Start remembering my empty workouts"). The types u444's flow
+# (uat-rel-r444-empty-workout.yaml: finish, the next one pre-filled at once, "Start blank") does not cover.
+# From a fresh install with the demo (the part runs gate-demo.yaml first). Types (R-364):
+#   negative: a DISCARDED empty workout (with Goblet Squat added and ticked) does not change the list;
+#   negative: a REPEAT workout (not started empty) with Goblet Squat finished does not change it, and shows
+#     no "We added..." line;
+#   edit: the line goes at the first tick (and "Start blank" with it);
+#   interruptions: the app sent to the background and back, then killed and opened again mid-workout: the
+#     pre-filled workout comes back with its line.
+# Offline is flow b (the part turns airplane mode on). An exercise deleted since: unit test
+# emptyWorkoutMemoryReal "an exercise that no longer exists is skipped" (the app has no delete for a
+# library exercise). New phone / reinstall via the cloud copy needs a signed-in account: unit test only.
+# Pictures rel-r436-a*.png.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: "^Profile$"
+    timeout: 60000
+# ---------------------------------------------------------------- 1. an empty workout (Dumbbell Preacher Curl), finished
+- runFlow:
+    file: sub-uat-r358-start.yaml
+    env:
+      COUNTING: "keep"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Dumbbell Preacher Curl"
+      N: "1"
+      KG: "10"
+      REPS: "10"
+- runFlow: sub-uat-r439-finish.yaml
+# ---------------------------------------------------------------- 2. pre-filled; Goblet Squat added + ticked -> the line goes; Discard
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertVisible: "Start blank"
+- takeScreenshot: rel-r436-a1-prefilled
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "goblet squat"
+      EX: "Goblet Squat"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Goblet Squat"
+      N: "1"
+      KG: "20"
+      REPS: "8"
+- runFlow: sub-uat-r436-top.yaml
+- assertVisible: "More for Dumbbell Preacher Curl"
+- assertNotVisible: "We added the exercises from your last empty workout\\."
+- assertNotVisible: "Start blank"
+- takeScreenshot: rel-r436-a2-first-tick-line-gone
+# Discard it (the Workout tab's "Discard workout"): a discarded workout saves nothing.
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
+# ---------------------------------------------------------------- 3. after Discard: still the curl only, never Goblet Squat
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertNotVisible: "More for Goblet Squat"
+- assertNotVisible: "Goblet Squat set 1 weight, .*"
+- takeScreenshot: rel-r436-a3-after-discard-curl-only
+# ---------------------------------------------------------------- 4. interruptions: background, then the app killed
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- takeScreenshot: rel-r436-a4-back-from-background
+# launchApp stops the app first (am force-stop), then opens it.
+- launchApp
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "^Profile$|Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 60000
+- runFlow:
+    when:
+      notVisible: "Dumbbell Preacher Curl set 1 weight, .*"
+    commands:
+      - tapOn:
+          text: "^Workout$"
+          index: 0
+      - runFlow:
+          file: sub-find.yaml
+          env:
+            FIND: "Resume workout"
+      - tapOn: "Resume workout"
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- runFlow: sub-uat-r436-top.yaml
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertVisible: "Start blank"
+- assertNotVisible: "More for Goblet Squat"
+- takeScreenshot: rel-r436-a5-after-app-killed
+# ---------------------------------------------------------------- 5. the first tick on a pre-added card: the line goes
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Dumbbell Preacher Curl"
+      N: "1"
+      KG: "10"
+      REPS: "10"
+- runFlow: sub-uat-r436-top.yaml
+- assertVisible: "More for Dumbbell Preacher Curl"
+- assertNotVisible: "We added the exercises from your last empty workout\\."
+- assertNotVisible: "Start blank"
+- takeScreenshot: rel-r436-a6-tick-on-prefilled-line-gone
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml
+# ---------------------------------------------------------------- 6. Repeat workout (not started empty) + Goblet Squat, finished
+- tapOn:
+    text: "^Profile$"
+    index: 0
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "More for .*"
+    centerElement: true
+    timeout: 30000
+- tapOn:
+    text: "More for .*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Repeat workout"
+    timeout: 10000
+- tapOn: "Repeat workout"
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 30000
+- assertNotVisible: "We added the exercises from your last empty workout\\."
+- runFlow:
+    file: sub-uat-r439-add.yaml
+    env:
+      SEARCH: "goblet squat"
+      EX: "Goblet Squat"
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Goblet Squat"
+      N: "1"
+      KG: "20"
+      REPS: "8"
+- takeScreenshot: rel-r436-a7-repeat-with-goblet
+# Only Goblet Squat is ticked: the curl's row is left out, so a wrong save would remember Goblet Squat alone.
+- runFlow: sub-uat-r439-finish.yaml
+# ---------------------------------------------------------------- 7. after the Repeat: still the curl only
+- runFlow: sub-workout-fresh.yaml
+- tapOn: "Start empty workout"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Dumbbell Preacher Curl set 1 weight, .*"
+    timeout: 20000
+- assertVisible: "We added the exercises from your last empty workout\\."
+- assertNotVisible: "More for Goblet Squat"
+- assertNotVisible: "Goblet Squat set 1 weight, .*"
+- takeScreenshot: rel-r436-a8-after-repeat-curl-only
+- runFlow: xc-sub-back-to-tabs.yaml
+- runFlow: sub-workout-fresh.yaml

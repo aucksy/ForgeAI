@@ -1,0 +1,27 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Type and tick set N of the
+# card EX (its row must exist): KG (or "none" on a reps-only move) and REPS, then clear the rest.
+# No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- runFlow:
+    when:
+      true: ${KG != 'none'}
+    commands:
+      - runFlow:
+          file: sub-type.yaml
+          env:
+            FIELD: "${EX} set ${N} weight, .*"
+            VALUE: " ${KG}"
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "${EX} set ${N} reps"
+      VALUE: " ${REPS}"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "${EX} set ${N}"
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- runFlow: sub-uat-r439-clear.yaml

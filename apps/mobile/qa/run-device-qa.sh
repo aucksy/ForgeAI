@@ -183,7 +183,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage"
+GATE_PARTS="w dnd longrest anim mk clip uat u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -1997,6 +1997,8 @@ part_uat() {
   part_u404
   part_u438
   part_u444
+  part_u439
+  part_u436
   part_uage
   part_ulook
   mkdir -p "$OUT/uat-release"
@@ -2139,6 +2141,73 @@ part_u438() {
 part_u444() {
   gate_flow u444_seed gate-demo.yaml || { status=1; return 1; }
   uat_flow uatr444 uat-rel-r444-empty-workout.yaml || { status=1; return 1; }
+}
+# R-439 (owner, 10 Nov 2026: Air Squat set 2 suggested 66 after 66, last time 65 then 40). From a fresh install
+# with the demo: flow a turns effort (RPE) on and logs yesterday's Air Squat 65, 40 and Goblet Squat 20 x 8,
+# 20 x 5, saved as a routine. The phone clock then moves one day on (the Target reads only workouts before
+# today) and flow b checks the set hints: set 2 = 41 after 66 at RPE 8.5 (never 66), the extra set 3 = the row
+# above, RPE 10 -> 40, and the weighted Goblet Squat keeps its Target rule. The watch's copy of the hint needs a
+# paired watch (not in the cloud). Also runs alone with only=u439. Pictures rel-r439-*.png.
+part_u439() {
+  local rc=0 now
+  gate_flow u439_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr439a uat-rel-r439-a-history.yaml || { status=1; return 1; }
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell settings put global auto_time 0 >/dev/null 2>&1 || true
+  adb shell "su 0 date @$((now + 86400))" >/dev/null 2>&1 || true
+  log "UAT R439 b: phone clock moved to $(adb shell date '+%F %T %z' | tr -d '\r') (one day on)"
+  uat_flow uatr439b uat-rel-r439-b-same-set.yaml || rc=1
+  now=$(adb shell date +%s | tr -d '\r')
+  adb shell "su 0 date @$((now - 86400))" >/dev/null 2>&1 || true
+  adb shell settings put global auto_time 1 >/dev/null 2>&1 || true
+  log "UAT R439: phone clock back to $(adb shell date '+%F %T' | tr -d '\r')"
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
+# R-429 (start-up splash follows the phone's light/dark): the app is stopped, opened cold, and the screen is
+# photographed a few moments after the launch, with the phone in light mode, then in dark mode; the phone's own
+# setting is put back after. Pictures only (rel-r429-splash-<look>-<seconds>s.png), read by a person: light =
+# #F6F4F0 with the gunmetal name, dark = #1B1F26. Never fails the part (the splash may be gone too soon).
+r429_splash() {
+  local was act look name d
+  was=$(adb shell cmd uimode night 2>/dev/null | tr -d '\r' | sed 's/.*: //')
+  act=$(adb shell cmd package resolve-activity --brief -c android.intent.category.LAUNCHER "$PKG" 2>/dev/null | tr -d '\r' | tail -1)
+  mkdir -p "$OUT/uat-release"
+  log "UAT R429: phone night mode was '$was'; launcher activity '$act'"
+  for look in no yes; do
+    name=light; [ "$look" = yes ] && name=dark
+    adb shell cmd uimode night "$look" >/dev/null 2>&1 || true
+    sleep 3
+    for d in 0.1 0.3 0.6 1.0; do
+      adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 2
+      adb shell "am start -n $act >/dev/null 2>&1; sleep $d; screencap -p /sdcard/r429.png" >/dev/null 2>&1 || true
+      adb pull /sdcard/r429.png "$OUT/uat-release/rel-r429-splash-$name-${d}s.png" >/dev/null 2>&1 || true
+      log "UAT R429: $name look, picture ${d} s after the launch: $(ls -l "$OUT/uat-release/rel-r429-splash-$name-${d}s.png" 2>/dev/null | awk '{print $5}') bytes"
+    done
+  done
+  adb shell rm -f /sdcard/r429.png >/dev/null 2>&1 || true
+  adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  adb shell cmd uimode night "${was:-no}" >/dev/null 2>&1 || true
+  log "UAT R429: phone night mode back to '$(adb shell cmd uimode night 2>/dev/null | tr -d '\r' | sed 's/.*: //')'"
+}
+# R-436 (owner, 10 Nov 2026: remember the last empty workout), the types part u444 does not cover. From a fresh
+# install with the demo, flow a: a discarded empty workout and a finished Repeat workout never change the
+# remembered list; the "We added..." line goes at the first tick; background and app killed mid-workout keep the
+# pre-filled workout. Flow b with airplane mode on: still pre-filled offline. Then the R-429 splash pictures.
+# Also runs alone with only=u436. Pictures rel-r436-*.png, rel-r429-*.png.
+part_u436() {
+  local rc=0
+  gate_flow u436_seed gate-demo.yaml || { status=1; return 1; }
+  uat_flow uatr436a uat-rel-r436-a-memory.yaml || rc=1
+  adb shell cmd connectivity airplane-mode enable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 1
+  log "UAT R436 b offline: airplane_mode_on=$(adb shell settings get global airplane_mode_on | tr -d '\r')"
+  uat_flow uatr436b uat-rel-r436-b-offline.yaml || rc=1
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || adb shell settings put global airplane_mode_on 0
+  log "UAT R436: airplane_mode_on=$(adb shell settings get global airplane_mode_on | tr -d '\r') (back on line)"
+  r429_splash
+  [ "$rc" = 0 ] || status=1
+  return $rc
 }
 # D7 (owner, 10 Nov 2026, privacy audit, "all as recommended"): the "I'm 18 or older, and I agree to MettleUp's
 # terms and privacy notice" box before "Continue with Google" on the welcome screen and in Settings -> "Backup and
@@ -2298,6 +2367,8 @@ qa_runs u199 && ! qa_runs uat && { log "gate part U199 begins"; part_u199; }
 qa_runs u404 && ! qa_runs uat && { log "gate part U404 begins"; part_u404; }
 qa_runs u438 && ! qa_runs uat && { log "gate part U438 begins"; part_u438; }
 qa_runs u444 && ! qa_runs uat && { log "gate part U444 begins"; part_u444; }
+qa_runs u439 && ! qa_runs uat && { log "gate part U439 begins"; part_u439; }
+qa_runs u436 && ! qa_runs uat && { log "gate part U436 begins"; part_u436; }
 qa_runs ulook && ! qa_runs uat && { log "gate part ULOOK begins"; part_ulook; }
 qa_runs uage && ! qa_runs uat && { log "gate part UAGE begins"; part_uage; }
 # R-359/R-345 (5 Nov 2026): the In use journey alone (pictures rel-345/357/359), with only=u15.

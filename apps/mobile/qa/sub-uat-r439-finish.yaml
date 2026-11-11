@@ -1,0 +1,43 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Finish the open workout (rows
+# never ticked are left out), Done on the finish screen, back to the tabs. Like sub-uat-r358-finish.yaml,
+# but the rest clear is optional (the last set of a workout may start no rest).
+appId: com.mettleup.app
+---
+- runFlow: sub-uat-r439-clear.yaml
+- scrollUntilVisible:
+    element: "Finish workout"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    text: "Finish workout"
+    index: 0
+- extendedWaitUntil:
+    visible: 'Finish workout\?'
+    timeout: 10000
+- tapOn:
+    text: "Leave them out"
+    optional: true
+- tapOn:
+    text: "Finish workout"
+    above:
+      text: "Keep going"
+- extendedWaitUntil:
+    visible: "Update routine|Workout complete"
+    timeout: 30000
+- runFlow:
+    when:
+      visible: "Update routine"
+    commands:
+      - tapOn:
+          text: "Keep original"
+          below:
+            text: "Update routine"
+- extendedWaitUntil:
+    visible: "Workout complete"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Done$"
+- tapOn: "^Done$"
+- runFlow: xc-sub-back-to-tabs.yaml

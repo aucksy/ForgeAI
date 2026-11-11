@@ -1,0 +1,158 @@
+# Part UAT, R-439 flow b: the day after flow a (the part moved the phone clock one day on), the routine
+# from flow a started. Air Squat last time 65 then 40 reps; today set 1 = 66 at RPE 8.5.
+# Types (R-364):
+#   happy path: set 2's grey hint is 41 (40 x 66/65), and a tick on the empty row saves exactly 41, never 66;
+#   negative: an extra set 3 (no same set last time) keeps the old rule, the number done in the row above;
+#   setting changed mid-workout: set 2 emptied again and set 1's effort changed to RPE 10 -> set 2 hints and
+#     saves 40 (a very hard set never raises the next one above last time);
+#   regression: Goblet Squat (weighted, with a Target): last time 20 x 8, 20 x 5, today set 1 20 x 3 -> set 2
+#     keeps the Target's own rule (its goal, capped at the set just done = 3), never the same-set rule's 2
+#     (5 x 3/8). Unit tests: test/tracker/r439SameSetHint.test.ts.
+# The grey hint itself is drawn hidden from the screen reader, so the pictures show it and the TICK proves it
+# (a tick on an empty row saves the hint; the box's own text is read back). Pictures rel-r439-b..h-*.png.
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element: "^Start routine$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Start routine$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "More for Air Squat"
+    timeout: 30000
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Air Squat set 2 reps"
+- takeScreenshot: rel-r439-b0-air-squat-before
+# ---------------------------------------------------------------- set 1: 66 at RPE 8.5 (the RPE pick ticks it)
+- runFlow:
+    file: sub-type.yaml
+    env:
+      FIELD: "Air Squat set 1 reps"
+      VALUE: " 66"
+- runFlow:
+    file: sub-uat-r439-rpe.yaml
+    env:
+      BUTTON: "Add RPE for Air Squat set 1"
+      PICK: 'RPE 8\.5: .*'
+- extendedWaitUntil:
+    visible: 'Air Squat set 1 complete\. Tap to undo'
+    timeout: 10000
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Air Squat set 1 RPE 8\.5\. Change'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Air Squat set 2 reps"
+- takeScreenshot: rel-r439-b-hint-41
+# ---------------------------------------------------------------- happy path: the empty set 2 ticked saves 41, never 66
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Air Squat set 2"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "Air Squat set 2 reps"
+      WANT: "41"
+- assertTrue: ${maestro.copiedText != '66'}
+- takeScreenshot: rel-r439-c-set-2-saved-41
+# ---------------------------------------------------------------- negative: an extra set 3 (none last time) = the row above
+- runFlow:
+    file: sub-uat-r439-addset.yaml
+    env:
+      EX: "Air Squat"
+      PREV: "2"
+      N: "3"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Air Squat set 3"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "Air Squat set 3 reps"
+      WANT: "41"
+- takeScreenshot: rel-r439-d-extra-set-3-row-above
+# ---------------------------------------------------------------- effort changed mid-workout: RPE 10 -> set 2 = 40
+# Set 2 back to an empty, unticked row first.
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Air Squat set 2 complete\. Tap to undo'
+- tapOn: 'Air Squat set 2 complete\. Tap to undo'
+- extendedWaitUntil:
+    visible: "Mark Air Squat set 2 complete"
+    timeout: 10000
+- runFlow: sub-uat-r439-clear.yaml
+- scrollUntilVisible:
+    element: "Air Squat set 2 reps"
+    centerElement: true
+    timeout: 15000
+- tapOn: "Air Squat set 2 reps"
+- eraseText
+- hideKeyboard
+- runFlow:
+    file: sub-uat-r439-rpe.yaml
+    env:
+      BUTTON: 'Air Squat set 1 RPE 8\.5\. Change'
+      PICK: "RPE 10: .*"
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: 'Air Squat set 1 RPE 10\. Change'
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Mark Air Squat set 2 complete"
+- takeScreenshot: rel-r439-e-rpe-10-hint-40
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Air Squat set 2"
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "Air Squat set 2 reps"
+      WANT: "40"
+- takeScreenshot: rel-r439-f-rpe-10-saved-40
+# ---------------------------------------------------------------- regression: a weighted lift with a Target keeps its rule
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Goblet Squat set 1 reps"
+- takeScreenshot: rel-r439-g-goblet-target
+- runFlow:
+    file: sub-uat-r439-set.yaml
+    env:
+      EX: "Goblet Squat"
+      N: "1"
+      KG: "20"
+      REPS: "3"
+- runFlow:
+    file: sub-uat-tick.yaml
+    env:
+      WHO: "Goblet Squat set 2"
+- tapOn:
+    text: "Keep [0-9].*"
+    optional: true
+- runFlow: sub-uat-r439-clear.yaml
+- runFlow:
+    file: sub-uat-r439-saved.yaml
+    env:
+      FIELD: "Goblet Squat set 2 reps"
+      WANT: "3"
+- assertTrue: ${maestro.copiedText != '2'}
+- takeScreenshot: rel-r439-h-goblet-set-2-target-rule
+- runFlow: sub-uat-r439-finish.yaml

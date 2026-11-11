@@ -1,0 +1,26 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. After a tick, let any set
+# pop-up go, close "In use" if it opened (Android Back = "I'm back"), and skip the rest if one started.
+# Unlike sub-uat-rest-clear.yaml every step is optional: an RPE change on a ticked set, an untick and
+# some last sets start no rest at all.
+appId: com.mettleup.app
+---
+- extendedWaitUntil:
+    visible: 'Skip rest|In use\. .*'
+    timeout: 5000
+    optional: true
+- runFlow: sub-popup-gone.yaml
+- runFlow:
+    when:
+      visible: 'In use\. .*Tap to close'
+    commands:
+      - back
+      - extendedWaitUntil:
+          notVisible: 'In use\. .*Tap to close'
+          timeout: 5000
+- runFlow:
+    when:
+      visible: "Skip rest"
+    commands:
+      - tapOn:
+          text: "Skip rest"
+          waitToSettleTimeoutMs: 300

@@ -1,0 +1,22 @@
+# Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Add the exercise EX (found
+# by typing SEARCH) to the open workout, below the cards already there (tapOn never scrolls, trap 9).
+# No `env:` default here (trap 22).
+appId: com.mettleup.app
+---
+- scrollUntilVisible:
+    element:
+      text: "Add exercise"
+    timeout: 20000
+- tapOn: "Add exercise"
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " ${SEARCH}"
+- tapOn:
+    text: "Select ${EX}"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "More for ${EX}"
+    timeout: 20000
