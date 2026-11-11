@@ -314,8 +314,8 @@ test.describe('R450 computer (1366x768)', () => {
     await page.getByRole('button', { name: 'Dues' }).click();
     await expect(tile(page, 'Up to 30 days')).toContainText(/\d+ memberships? not fully paid/);
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
-    await expect(page.getByRole('columnheader', { name: /^due for$/i })).toBeVisible();
-    await expect(page.getByRole('columnheader', { name: /^due since$/i })).toHaveCount(0);
+    await expect(page.getByRole('row').first().getByRole('cell', { name: 'Due for', exact: true })).toBeVisible();
+    await expect(page.getByRole('row').first().getByRole('cell', { name: 'Due since', exact: true })).toHaveCount(0);
     await chipsCountPeople(page);
     await shot(page, 'computer-demo-dues');
     await shot(page, 'computer-demo-dues-full', true);
