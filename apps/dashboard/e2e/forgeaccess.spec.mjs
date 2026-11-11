@@ -12,7 +12,7 @@ test('J51a the owner lets MettleUp support look for an hour, sees it listed, and
   await startOnlineGym(page);
   // R-449: an owner who looks under Settings → Sign-in & data is told where it is now.
   await openSettings(page, 'Sign-in & data');
-  await expect(page.getByText('To let them, or to see when they looked: Help and feedback → MettleUp access.')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Help and feedback → MettleUp access' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'MettleUp access' })).toHaveCount(0);
   await open(page, 'Help and feedback');
   await expect(page.getByRole('heading', { name: 'MettleUp access' })).toBeVisible();
