@@ -54,7 +54,7 @@ jobs:
         working-directory: apps/dashboard
         run: |
           npx vite build
-          npx playwright install --with-deps chromium
+          bash ../../scripts/ci/install_playwright.sh
 
       - name: Build an emulator APK (x86_64)
         working-directory: apps/mobile/android
