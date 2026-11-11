@@ -18,7 +18,55 @@ is a membership vs a member?): make it plain; (3) demo text "real gym code" conf
 tests, cloud UAT (375 px, 1366x768) with pictures read, fresh eyes (owner), deploy the admin panel the usual way,
 ADMIN_NEWS only if owners would notice. No live database change, no release, no reply-time promise.
 
-**Status:** started.
+**Decided (my call after looking at the screens):** moved the two cards rather than renaming the tab (about 20 lines
+across the app say "Settings → Sign-in & data"; the tab's other cards fit its name). Install card -> Settings' first
+tab, Gym (the tab Settings opens on; the menu row already says "Gym details, screen colours, app"). MettleUp access ->
+Help and feedback, under "Your questions" (where an owner goes when support needs to look), with a linked line left
+under "Your gym's records" saying where it went.
+
+**Done (commits f914364a, ea9b0fb1, ab0ffbbc):**
+- Settings → Gym: "Put the admin app on your phone" / "Install the admin app on this computer" sits under "Gym details"
+  (fresh eyes: above them it pushed the form down). Subtitle "Gym details, opening times, screen language and the admin
+  app". Sign-in & data subtitle "Your sign-in, staff, backups and your gym’s records".
+- "Your gym’s records": "0 members · 0 memberships sold (new and renewals) · 0 payments · 0 check-ins." (was
+  "0 memberships"; first "plans sold", changed after fresh eyes: owners say "membership", and the button is "Sell
+  membership"). New line: "MettleUp support can look at your records only if you let them. To let them, or to see when
+  they looked, open Help and feedback → MettleUp access." (the last part is a link; online owners only).
+- Help and feedback: the "MettleUp access" card (owner of an online gym only, as before), unchanged inside.
+- Demo card: "Opens a sample gym with made-up members, payments and a shop. To try the member side too, open “Invite
+  members” in the demo and scan its QR with the MettleUp app on a phone. Order something there, and the order shows up
+  in the demo’s Shop." Hinglish: "Ek sample gym khulta hai, jismein dummy members, payments aur shop hain. Member wala
+  hissa bhi dekhna hai? Demo mein “Members ko bulao” kholo aur uska QR phone par MettleUp app se scan karo. Wahan kuch
+  order karo, order demo ki Shop mein dikhega."
+- Hinglish digits, one way everywhere: "6-digit PIN" (sign in, choose, new PIN), "PIN (6 digit)", "PIN 6 digit ka hona
+  chahiye.", "Ek hi digit 6 baar mat daalo, jaise 111111.", "Ek ke baad ek digit mat daalo", "aakhri 6 digit",
+  "6-digit code", "10-digit mobile number", "aakhri 4 digit". A test now fails any "6 number ka" or a "digit" line
+  without "digit".
+- Sign-in page notices now go through t(): "You are signed out of this device." -> "Aap is device se sign out ho gaye
+  hain."; the "signed out of this gym" and "no longer have access" lines and the old-demo line have Hinglish too.
+- ADMIN_NEWS 2026-11-11 (merged into today's update, already live from R-448): two lines (install card on the Gym
+  tab; MettleUp access on Help and feedback); the R-446 iPhone line's button now opens /settings. Help articles
+  (gym-settings-admin, send-feedback) name the new places.
+- Tests: plural recordsLine, Hinglish digit rule and notice lines; e2e moved to the new places; e2e/r449-uat.spec.mjs.
+
+**CI / UAT:** 42949929499 green on f914364a; 42952925484 red (forgeaccess.spec still looked for the pointer as plain
+text after it became a link; fixed ab0ffbbc); 42955296371 green on ab0ffbbc. Pictures r449-*.png in
+dashboard-uat-pictures (375 px Android phone, 1366x768 computer), all read: Settings Gym with the install card and its
+steps, Sign-in & data with the records line and the link, Help and feedback with MettleUp access (closed and open),
+the demo gym's records (128 members · 223 memberships sold) and its Invite members QR, sign-in page and set-up form in
+English and Hinglish, signed out in English and Hinglish, the same on a computer.
+
+**Fresh eyes (owner role, pictures only), fixed in ea9b0fb1:** demo card did not say how to join or where the order
+shows; install card above Gym details pushed the form down; the MettleUp access line should be a link; "plans sold" ->
+"memberships sold"; "Aap ... ho" -> "hain" in the new lines; "nakli" -> "dummy"; "Going online" in the tab subtitle.
+Not changed (outside R-449, his call): "Support access was open 10:00-10:00" (the test's frozen clock, not real);
+the staff "No PIN yet? ... (Settings → Staff & sign-in)" hint; the terms tick line stays English in Hinglish (legal
+words); older Hinglish lines use "aap ... karoge"; "Import members from Excel" only in Settings; Money's dues tiles
+still say "N memberships".
+
+**Deploy (11 Nov):** dashboard-dist from CI 42955296371 (ab0ffbbc), `npx wrangler deploy` from deploy/panel (also
+ships the help-article lines), forgeai-panel version 1bb7495a-372b-47e5-be46-ac44e9619bc1. app.mettleup.fit and
+forgeai.aakashpahuja.in serve index-DxJBiQK-.js with the new words (curl).
 
 ## R-448. "Clear this device's saved data" reworded; a forgotten PIN gets a real way back in — 10 Nov 2026
 
