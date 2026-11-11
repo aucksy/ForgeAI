@@ -173,9 +173,8 @@ export function UpdateFullScreen({ onLater }: { onLater: () => void }) {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
-          flexGrow: 1,
           paddingTop: insets.top + space.xxxl,
-          paddingBottom: Math.max(insets.bottom, space.xl) + space.lg,
+          paddingBottom: space.lg,
           paddingHorizontal: space.xl + 4,
           gap: space.xl + 4,
         }}
@@ -237,21 +236,35 @@ export function UpdateFullScreen({ onLater }: { onLater: () => void }) {
             ) : null}
           </View>
         ) : null}
-        <View style={{ marginTop: 'auto', gap: space.sm }}>
-          <PrimaryButton label={UPDATE_WORDS.updateNow} loading={busy} onPress={() => void useAppUpdate.getState().update()} />
-          <Pressable
-            onPress={onLater}
-            accessibilityRole="button"
-            accessibilityLabel={UPDATE_WORDS.later}
-            style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkMuted }}>{UPDATE_WORDS.later}</Text>
-          </Pressable>
-          {standIn ? (
-            <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>{UPDATE_WORDS.standIn}</Text>
-          ) : null}
-        </View>
       </ScrollView>
+      {/* 0.77.0 gate (run 43001739741, default phone, two versions behind): with the buttons inside the scroll,
+          three lines plus "And the changes from 1 earlier update." left "Update now" half shown and "Later"
+          below the edge, so a member saw no way out but updating. The buttons now stay at the bottom; only
+          the words above them scroll. */}
+      <View
+        style={{
+          paddingHorizontal: space.xl + 4,
+          paddingTop: space.md,
+          paddingBottom: Math.max(insets.bottom, space.xl) + space.lg,
+          gap: space.sm,
+          borderTopWidth: 1,
+          borderTopColor: color.border,
+          backgroundColor: color.bg,
+        }}
+      >
+        <PrimaryButton label={UPDATE_WORDS.updateNow} loading={busy} onPress={() => void useAppUpdate.getState().update()} />
+        <Pressable
+          onPress={onLater}
+          accessibilityRole="button"
+          accessibilityLabel={UPDATE_WORDS.later}
+          style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.sub, color: color.inkMuted }}>{UPDATE_WORDS.later}</Text>
+        </Pressable>
+        {standIn ? (
+          <Text style={{ fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted, textAlign: 'center' }}>{UPDATE_WORDS.standIn}</Text>
+        ) : null}
+      </View>
     </View>
   );
 }

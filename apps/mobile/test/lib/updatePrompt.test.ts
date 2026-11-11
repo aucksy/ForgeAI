@@ -198,3 +198,16 @@ describe('R-412: What is new link on the Workout tab update line', () => {
     expect(src).toContain('accessibilityLabel={`${line.text}. ${line.action}`}');
   });
 });
+
+describe('0.77.0 gate: the update screen keeps "Update now" and "Later" on screen', () => {
+  // Run 43001739741 (default phone, two versions behind): the buttons scrolled with the words, "Later" sat below
+  // the edge and a member saw no way out but updating. They now sit in a footer after the scroll.
+  const src = readFileSync(join(__dirname, '../../src/components/UpdatePrompt.tsx'), 'utf8');
+  const screen = src.slice(src.indexOf('export function UpdateFullScreen'));
+  it('both buttons come after the end of the scroll', () => {
+    const scrollEnd = screen.indexOf('</ScrollView>');
+    expect(scrollEnd).toBeGreaterThan(0);
+    expect(screen.indexOf('UPDATE_WORDS.updateNow')).toBeGreaterThan(scrollEnd);
+    expect(screen.indexOf('accessibilityLabel={UPDATE_WORDS.later}')).toBeGreaterThan(scrollEnd);
+  });
+});
