@@ -63,7 +63,7 @@ export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
       {
         // R-450 (R-449 fresh eyes): the dues filters counted memberships, so "All 26" sat over 24 people; deployed the
         // same day, merged.
-        text: 'Money → Dues: each filter ("Up to 30 days" and the others) now shows how many people it lists, so the numbers match the list. Each tile says how many memberships are not fully paid.',
+        text: 'Money → Dues: each filter ("Up to 30 days" and the others) now shows how many people are in its list. Each tile says how many memberships are not fully paid.',
         go: { label: 'Open Dues', path: '/money/dues' },
       },
     ],

@@ -740,6 +740,13 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
             })),
           ]}
         />
+        {/* R-450 (fresh eyes): a tile counts memberships, a filter counts people ("23" over "21"). Say why, only
+            when it can differ: someone with two unpaid memberships is listed once, by the oldest one. */}
+        {allPeople.some((p) => p.terms.length > 1) && (
+          <p style={{ margin: `${space.sm}px 0 0`, fontFamily: font.body, fontSize: 12, color: color.inkMuted }}>
+            A member with more than one unpaid membership is listed once, in the group of the oldest one.
+          </p>
+        )}
 
         {people.length === 0 ? (
           <EmptyState title="Nothing in this age group" />

@@ -245,6 +245,8 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await expect(tile(page, 'Not started yet')).toContainText('0 memberships not fully paid');
     // Negative: no bare "N memberships" anywhere on the page.
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
+    // One membership each: tiles and filters cannot differ, so no extra line.
+    await expect(page.getByText('A member with more than one unpaid membership is listed once, in the group of the oldest one.', { exact: true })).toHaveCount(0);
     await expectFitsPhone(page, 'on Money → Dues');
     await shot(page, 'phone-dues');
     await shot(page, 'phone-dues-full', true);
@@ -267,12 +269,16 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await expect(tile(page, 'Up to 30 days')).toContainText(/\d+ memberships? not fully paid/);
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
     await chipsCountPeople(page);
+    // Fresh eyes: "Over 60 days" tile 23 memberships vs the filter's 21 people: the line says why.
+    await expect(page.getByText('A member with more than one unpaid membership is listed once, in the group of the oldest one.', { exact: true })).toBeVisible();
     await expectFitsPhone(page, 'on the demo Dues');
     await shot(page, 'phone-demo-dues');
+    await centre(page.getByText('A member with more than one unpaid membership is listed once, in the group of the oldest one.', { exact: true }));
+    await shot(page, 'phone-demo-dues-filters');
 
     // What's new tells owners why the filter numbers changed; its button opens Dues.
     await open(page, "What's new");
-    const line = page.getByText(/^Money → Dues: each filter \("Up to 30 days" and the others\) now shows how many people it lists/);
+    const line = page.getByText(/^Money → Dues: each filter \("Up to 30 days" and the others\) now shows how many people are in its list/);
     await expect(line).toBeVisible();
     await centre(line);
     await shot(page, 'phone-whats-new');
