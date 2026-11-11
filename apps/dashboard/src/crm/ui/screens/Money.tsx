@@ -729,8 +729,15 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
           value={bucket}
           onChange={(v) => setBucket(v as AgingBucket | 'all')}
           options={[
-            { value: 'all', label: 'All', count: totals.reduce((n, t) => n + t.countN, 0) },
-            ...totals.map((t) => ({ value: t.bucket, label: AGING_LABEL[t.bucket], count: t.countN })),
+            // R-450 (fresh eyes): each chip counts the PEOPLE it lists (a person sits in the age group of their oldest
+            // due), so "All" agrees with the rows and with "Total due ... members". It counted memberships: "All 26"
+            // over a list of 24.
+            { value: 'all', label: 'All', count: allPeople.length },
+            ...totals.map((t) => ({
+              value: t.bucket,
+              label: AGING_LABEL[t.bucket],
+              count: allPeople.filter((p) => p.bucket === t.bucket).length,
+            })),
           ]}
         />
 
@@ -783,7 +790,8 @@ function Dues({ onToast }: { onToast: (msg: string) => void }) {
                 <tr>
                   <Th>Member</Th>
                   <Th>Mobile</Th>
-                  <Th>Due since</Th>
+                  {/* R-450 (fresh eyes): the column shows "711 days", a length of time, not a date. */}
+                  <Th>Due for</Th>
                   <Th>Age</Th>
                   <Th align="right">Due</Th>
                   <Th align="right">Actions</Th>

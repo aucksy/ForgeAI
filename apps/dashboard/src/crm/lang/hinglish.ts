@@ -129,6 +129,9 @@ export const HINGLISH: Readonly<Record<string, string>> = {
   'The two PINs are not the same. Type the same PIN in both boxes.': 'Dono PIN alag hain. Dono box mein ek hi PIN daalo.',
   'Type your gym’s name.': 'Apne gym ka naam daalo.',
   'Type your name.': 'Apna naam daalo.',
+  // R-450: the tick-box line on the set-up form ({terms} and {agreement} are the two links, kept in English).
+  // Legal wording, a translation only: the owner said "yes" to these exact words on 11 Nov 2026.
+  'I agree to the MettleUp {terms} and the {agreement}.': 'Main MettleUp ke {terms} aur {agreement} se sehmat hoon.',
   'Tick the box to agree to the terms. Then tap “Create my gym” again.':
     'Terms maanne ke liye box par tick karo. Phir “Gym banao” dobara dabao.',
   // F187 (R-383): a code on WhatsApp for Forgot PIN and the new-gym number check.

@@ -297,8 +297,8 @@ export function StartGymForm({ onSignInInstead }: { onSignInInstead?: (phone: st
       {whatsApp && <BotTrap value={trap} onChange={setTrap} />}
       <PinFields pin={pin} again={pinAgain} onPin={setPin} onAgain={setPinAgain} />
       <CheckField checked={agreed} onChange={setAgreed}>
-        {/* R-450: stays English until the owner says yes to its Hinglish (legal wording); then `translated`. */}
-        <TermsWords />
+        {/* R-450: in Hinglish too (the owner said yes to the words on 11 Nov 2026). */}
+        <TermsWords translated />
       </CheckField>
       {checkedHere && proof && <NumberChecked ten={proof.phone} />}
       {waitingForMessage && begun && (

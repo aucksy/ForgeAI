@@ -2,12 +2,13 @@
 // them as "dashboard-uat-pictures"), named r450-*.png. The five R-449 fresh-eyes leftovers:
 //  1. The sign-in PIN hint said "(Settings → Staff & sign-in)", a page staff cannot open (only an owner makes codes):
 //     now "No PIN yet? Ask your gym owner for a sign-in code, and type it here."
-//  2. The set-up form's terms tick line STAYS ENGLISH on the Hinglish page until the owner says yes to its Hinglish
-//     (legal wording; coordinator, 11 Nov). Checked here so it cannot slip out early.
+//  2. The set-up form's terms tick line has Hinglish (legal wording, a translation only; the owner said yes to the
+//     words on 11 Nov 2026). The two links keep their words; the gym can be made from the Hinglish form.
 //  3. Hinglish talks to the owner one way: "aap ... karenge / hain" (was "karoge", "sakte ho", "naye ho?").
 //  4. "Import from Excel" on Members: at the top and in the empty list (it was already there; pictured, and the
 //     button opens the same import as Settings).
-//  5. Money → Dues tiles and rows: "3 memberships not fully paid" (was "3 memberships").
+//  5. Money → Dues tiles and rows: "3 memberships not fully paid" (was "3 memberships"). Fresh eyes: the age chips
+//     now count the people the list shows (they counted memberships: "All 26" over 24 rows); "Due since" → "Due for".
 // The gym server is support.mjs FakeServer. Fake numbers only.
 //
 // UAT types: happy path (each new line where it shows), negative (the old words gone: no "Settings →" in the hint,
@@ -54,6 +55,7 @@ const ANDROID_CHROME =
 const HINT = 'No PIN yet? Ask your gym owner for a sign-in code, and type it here.';
 const HINT_HI = 'Abhi PIN nahi hai? Gym owner se sign-in code maango aur yahan daalo.';
 const TERMS_EN = 'I agree to the MettleUp terms and the data agreement.';
+const TERMS_HI = 'Main MettleUp ke terms aur data agreement se sehmat hoon.';
 const CASUAL = /\b[a-z]+oge\b|\bsakte ho\b|\bnaye ho\?|\bkarte ho\?/i;
 const BARE_COUNT = /^\d+ memberships?$/;
 
@@ -61,6 +63,26 @@ const heading = (page, name) => page.getByRole('heading', { name, exact: true })
 const setUpForm = (page) => page.locator('form').filter({ has: page.getByRole('button', { name: /^(Create my gym|Gym banao)$/ }) });
 /** Scroll a line to the middle of the screen (clear of the phone's bottom bar) before a picture. */
 const centre = (loc) => loc.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+
+const ageChip = (page, label) =>
+  page.getByRole('group', { name: 'Filter by how long it is due' }).getByRole('button', { name: new RegExp(`^${label}`) });
+
+/** R-450 fresh eyes: every age chip's number is the number of people it lists, and "All" matches "Total due". */
+async function chipsCountPeople(page) {
+  const collect = page.getByRole('main').getByRole('button', { name: 'Collect' });
+  const everyone = await collect.count();
+  expect(everyone).toBeGreaterThan(0);
+  const countOn = async (label) => Number(((await ageChip(page, label).textContent()) ?? '').match(/(\d+)\s*$/)?.[1] ?? -1);
+  expect(await countOn('All')).toBe(everyone);
+  await expect(tile(page, 'Total due')).toContainText(everyone === 1 ? '1 member' : `${everyone} members`);
+  for (const group of ['Up to 30 days', '31–60 days', 'Over 60 days']) {
+    const n = await countOn(group);
+    await ageChip(page, group).click();
+    await expect(collect).toHaveCount(n);
+  }
+  await ageChip(page, 'All').click();
+  await expect(collect).toHaveCount(everyone);
+}
 
 /** One person's row in Money -> Dues (phone layout). */
 function duesRow(page, name) {
@@ -82,7 +104,7 @@ const OWE = [
 test.describe('R450 phone (375 px, Android Chrome)', () => {
   test.use({ viewport: PHONE, userAgent: ANDROID_CHROME });
 
-  test('1+2+3 sign-in page and set-up form: the PIN hint, the terms line still English, "aap ... karenge"', async ({ page }) => {
+  test('1+2+3 sign-in page and set-up form: the PIN hint, the Hinglish terms line, "aap ... karenge"', async ({ page }) => {
     await openApp(page);
     // 1. English: who to ask, and no page named.
     const hint = page.getByText(HINT, { exact: true });
@@ -102,15 +124,15 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await shot(page, 'phone-signin-hint-hinglish');
     await shot(page, 'phone-signin-hinglish-full', true);
 
-    // 2+3. Set up a new gym, in Hinglish: the tick line stays English (waits for the owner's yes) with both links;
+    // 2+3. Set up a new gym, in Hinglish: the tick line in Hinglish (the owner's approved words) with both links;
     // the "karenge" lines.
     await page.getByRole('button', { name: 'Naya gym banao' }).click();
     const form = setUpForm(page);
-    const box = form.getByRole('checkbox', { name: TERMS_EN });
+    const box = form.getByRole('checkbox', { name: TERMS_HI });
     await expect(box).toBeVisible();
     await expect(form.getByRole('link', { name: 'terms', exact: true })).toHaveAttribute('href', /terms/);
     await expect(form.getByRole('link', { name: 'data agreement', exact: true })).toHaveAttribute('href', /data-agreement/);
-    await expect(form).not.toContainText('sehmat');
+    await expect(form).not.toContainText('I agree to');
     await expect(page.getByText('Aap mobile number aur is PIN se sign in karenge. Ise kisi ko mat batao.', { exact: true })).toBeVisible();
     await expect(page.getByText('Pehle se MettleUp use karte hain?', { exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toContainText(CASUAL);
@@ -122,11 +144,30 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await shot(page, 'phone-setup-terms-hinglish');
     await shot(page, 'phone-setup-hinglish-full', true);
 
-    // English again: the same tick line (the gate card for older gyms says the same).
+    // English again: the English tick line, as before (the gate card for older gyms says the same).
     await page.getByRole('radio', { name: 'English' }).click();
     await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_EN })).toBeVisible();
     await centre(setUpForm(page).getByRole('checkbox', { name: TERMS_EN }));
     await shot(page, 'phone-setup-terms-english');
+  });
+
+  test('2 regression: a gym is made from the Hinglish set-up form after ticking the Hinglish line', async ({ page }) => {
+    await openApp(page);
+    await page.getByRole('radio', { name: 'Hinglish' }).click();
+    await page.getByRole('button', { name: 'Naya gym banao' }).click();
+    const form = setUpForm(page);
+    await form.getByLabel('Gym ka naam').fill('Shakti Gym');
+    await form.getByLabel('Aapka naam').fill('Ramesh Sharma');
+    await form.getByLabel('Aapka mobile number').fill('98290 12345');
+    await form.getByLabel('6-digit PIN chuno').fill('271828');
+    await form.getByLabel('PIN dobara daalo').fill('271828');
+    // Negative first: without the tick the gym is not made, and the Hinglish error says so.
+    await form.getByRole('button', { name: 'Gym banao' }).tap();
+    await expect(page.getByText('Terms maanne ke liye box par tick karo. Phir “Gym banao” dobara dabao.', { exact: true })).toBeVisible();
+    await form.getByRole('checkbox', { name: TERMS_HI }).check();
+    await form.getByRole('button', { name: 'Gym banao' }).tap();
+    await expect(sheet(page, 'Aapka gym taiyaar hai')).toBeVisible({ timeout: 15_000 });
+    await shot(page, 'phone-hinglish-gym-made');
   });
 
   test('1 a desk phone: the hint, the code from the owner, then Staff & sign-in says only an owner makes codes', async ({ page, browser }) => {
@@ -225,6 +266,7 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await page.getByRole('button', { name: 'Dues' }).tap();
     await expect(tile(page, 'Up to 30 days')).toContainText(/\d+ memberships? not fully paid/);
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
+    await chipsCountPeople(page);
     await expectFitsPhone(page, 'on the demo Dues');
     await shot(page, 'phone-demo-dues');
   });
@@ -240,7 +282,7 @@ test.describe('R450 computer (1366x768)', () => {
     await shot(page, 'computer-signin');
     await page.getByRole('radio', { name: 'Hinglish' }).click();
     await page.getByRole('button', { name: 'Naya gym banao' }).click();
-    await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_EN })).toBeVisible();
+    await expect(setUpForm(page).getByRole('checkbox', { name: TERMS_HI })).toBeVisible();
     await shot(page, 'computer-setup-hinglish-full', true);
   });
 
@@ -263,6 +305,9 @@ test.describe('R450 computer (1366x768)', () => {
     await page.getByRole('button', { name: 'Dues' }).click();
     await expect(tile(page, 'Up to 30 days')).toContainText(/\d+ memberships? not fully paid/);
     await expect(page.getByRole('main').getByText(BARE_COUNT)).toHaveCount(0);
+    await expect(page.getByRole('columnheader', { name: 'Due for', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Due since', exact: true })).toHaveCount(0);
+    await chipsCountPeople(page);
     await shot(page, 'computer-demo-dues');
     await shot(page, 'computer-demo-dues-full', true);
   });

@@ -111,11 +111,10 @@ describe('the Hinglish dictionary', () => {
     expect(HINGLISH[NO_PIN_HINT]).toBe('Abhi PIN nahi hai? Gym owner se sign-in code maango aur yahan daalo.');
   });
 
-  // R-450: legal wording goes live only after the owner's yes. Until then the terms tick line has NO Hinglish, so it
-  // stays English on the Hinglish page. When he says yes: add the line to the dictionary, pass `translated` to
-  // TermsWords on the set-up form, and turn this into a check of his approved words.
-  it('the terms tick line stays English until the owner approves its Hinglish', () => {
-    expect(TERMS_LINE in HINGLISH).toBe(false);
+  // R-450: legal wording. The owner said "yes" to these exact words on 11 Nov 2026; a change needs his yes again.
+  it('the terms tick line is exactly the Hinglish the owner approved', () => {
+    expect(TERMS_LINE).toBe('I agree to the MettleUp {terms} and the {agreement}.');
+    expect(HINGLISH[TERMS_LINE]).toBe('Main MettleUp ke {terms} aur {agreement} se sehmat hoon.');
   });
 
   it('a sentence stays a sentence: an English line ending in a full stop ends in one in Hinglish', () => {
@@ -143,8 +142,9 @@ describe('the translated screens are complete', () => {
       START_PROMISE,
       ...Object.values(OTHER_WAYS),
       PIN_HINT,
-      // R-450: the PIN box's hint.
+      // R-450: the PIN box's hint and the set-up form's terms tick line.
       NO_PIN_HINT,
+      TERMS_LINE,
       CHECK_RAN_OUT,
       // R-449: the sign-in page's notice line after a sign-out (drawn through t(notice)).
       'You are signed out of this device.',
