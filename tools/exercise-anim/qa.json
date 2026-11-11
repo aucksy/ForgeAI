@@ -75,10 +75,10 @@
  },
  "hollow_hold": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "body floats 12 cm above the floor",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry (floor height / flat-bench fix)"
  },
  "incline_bench_preacher_curl": {
   "rendered": "2026-11-11",
@@ -107,24 +107,24 @@
  },
  "knee_plank": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "forearms sink 5 cm into the floor",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry; forearm 1 cm into the floor"
  },
  "neutral_grip_dumbbell_press": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
+  "run": "43082982264",
   "qa": "fail",
-  "reason": "body arches off the end of the flat bench; dumbbells not in the hands",
-  "tries": 1
+  "reason": "head hangs off the end of the flat pad and the back arches (flat-bench lying pose needs a probe_bench fit)",
+  "tries": 2
  },
  "plank_shoulder_tap": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
+  "run": "43082982264",
   "qa": "fail",
-  "reason": "hands sink 5 cm into the floor",
-  "tries": 1
+  "reason": "hands sink 5 cm into the floor; moving the body did not help (the hands follow the arm angles)",
+  "tries": 2
  },
  "reverse_hyperextension": {
   "rendered": "2026-11-11",
@@ -135,10 +135,10 @@
  },
  "rkc_plank": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
+  "run": "43082982264",
   "qa": "fail",
-  "reason": "forearms sink 5 cm into the floor",
-  "tries": 1
+  "reason": "forearms sink 5 cm into the floor; moving the body did not help (arm angles put the forearms below the floor)",
+  "tries": 2
  },
  "seated_dumbbell_calf_raise": {
   "rendered": "2026-11-11",
@@ -155,10 +155,10 @@
  },
  "seated_knee_tuck": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "seat sinks 3-8 cm into the floor",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry (floor height / flat-bench fix)"
  },
  "seated_rear_delt_fly": {
   "rendered": "2026-11-11",
@@ -188,10 +188,10 @@
  },
  "single_arm_lying_dumbbell_extension": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "body arches off the end of the flat bench",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry (floor height / flat-bench fix)"
  },
  "single_leg_calf_raise": {
   "rendered": "2026-11-11",
@@ -216,17 +216,17 @@
  },
  "tate_press": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "body arches off the end of the flat bench",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry (floor height / flat-bench fix)"
  },
  "toe_touch_crunch": {
   "rendered": "2026-11-11",
-  "run": "43079162675",
-  "qa": "fail",
-  "reason": "back floats 8-12 cm above the floor",
-  "tries": 1
+  "run": "43082982264",
+  "qa": "pass",
+  "tries": 2,
+  "note": "passed on the retry (floor height / flat-bench fix)"
  },
  "two_arm_dumbbell_kickback": {
   "rendered": "2026-11-11",
