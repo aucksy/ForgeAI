@@ -7,6 +7,23 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-451. Release 0.77.0 (member app, phone + watch) — 11 Nov 2026
+
+He said "Release" in chat on 11 Nov 2026 at about 12:28 IST (proof, R-309). It covers every item in PROGRESS.md
+"Waiting for release" at that moment: LIGHT MODE, R-411, R-412, R-436, R-437, R-438, R-439, R-440, R-441, R-442,
+R-444, R-445 (D7 18+ tick + legal links), plus R-429 splash. One "release" = one version: 0.77.0.
+R-441's watch screen log switch ships ON: the main session checked his "Yes" (R-443, 10 Nov) and the live
+mettleup.fit/privacy.html already holds the line and the 1-year row. R-445's privacy section 4A (Google sign-in)
+does not mention the new tick yet: NEW wording, not published, proposed to the main session (legal words = his yes).
+
+Steps and results (filled in as they happen):
+- What's new 0.77.0 (6 lines, 490 of Play's 500 characters): fresh-reader check (short lines, no Gemini pass).
+- Adversarial review (v0.76.0..main): (1) the 'p' item 'empty' rows were [ref, sets]; 0.76.0's backup "Add"
+  kept them as rest lengths (3-4 s rests): now [sets, ref] (old shape still read); (2) "Find my Drive backup"
+  opened Google's sign-in without the 18+ tick: the same box now sits above it (UAT uage 5b). (3) the watch card
+  can point closed testers at a watch build Play does not offer them until a Wear OS closed track exists (R-444):
+  a Play Console step, reported. Commit 324e58df.
+
 ## R-450. Five R-449 review leftovers in the admin panel: staff PIN hint, Hinglish terms tick, "aap … karoge", Import members on Members, dues tiles wording — 11 Nov 2026
 
 **Asked (11 Nov, coordinator for the owner):** fix the 5 leftovers R-449's fresh eyes found in the owner web app:
