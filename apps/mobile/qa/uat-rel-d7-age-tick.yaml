@@ -125,7 +125,9 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "^Please tick the box above\\. You need to be 18 or older and agree to the terms and privacy notice\\.$"
     timeout: 10000
-- assertVisible: "^Keep your workouts on MettleUp$"
+# Google's sign-in did not open: still on the page, the button right above the line (the card's title is
+# scrolled off the top on his phone, run 42992878027).
+- assertVisible: "^Continue with Google$"
 - takeScreenshot: rel-d7-5-settings-not-ticked
 # 5b. "Find my Drive backup" opens Google's sign-in too (0.77.0 review): the same box, and no sign-in without it.
 - runFlow:
@@ -149,7 +151,7 @@ appId: com.mettleup.app
 - takeScreenshot: rel-d7-5b-drive-not-ticked
 - back
 - extendedWaitUntil:
-    visible: "^Keep your workouts on MettleUp$"
+    visible: "^Bring back a Google Drive backup$"
     timeout: 15000
 - scrollUntilVisible:
     element: "^Continue with Google$"
