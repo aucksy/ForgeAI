@@ -7,6 +7,21 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-450. Five R-449 review leftovers in the admin panel: staff PIN hint, Hinglish terms tick, "aap … karoge", Import members on Members, dues tiles wording — 11 Nov 2026
+
+**Asked (11 Nov, coordinator for the owner):** fix the 5 leftovers R-449's fresh eyes found in the owner web app:
+(1) the staff hint "No PIN yet? … (Settings → Staff & sign-in)" sends staff to a page they cannot open: point them to
+what they can really do (ask the owner for a sign-in code), checked against permissions.ts; (2) the terms tick box
+stays English on the Hinglish page: translate only, same meaning, and list the exact Hinglish line for his yes (legal
+wording); (3) older Hinglish lines say "aap … karoge": make them "aap … karenge/kariye" like R-449's "hain" fixes;
+(4) "Import members from Excel" is only in Settings: add an entry where a new owner looks (Members), same flow;
+(5) Money's dues tiles say "N memberships": plain, matching "memberships sold" (say what the number counts).
+Member-words rules, Hinglish wherever the app has it, tests, cloud UAT (375 px, 1366x768) with pictures read, fresh
+eyes (owner), deploy the admin panel the usual way, ADMIN_NEWS only if owners would notice. No live database change,
+no release, no reply-time promise.
+
+**Status:** started.
+
 ## R-449. Four R-447 review leftovers in the admin panel: where the Install and MettleUp access cards sit, "members · memberships", demo "real gym code", Hinglish "6-digit PIN" — 11 Nov 2026
 
 **Asked (11 Nov, coordinator for the owner):** fix the 4 open R-447 fresh-eyes findings in the owner web app:
