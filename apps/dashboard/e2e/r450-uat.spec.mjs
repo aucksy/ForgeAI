@@ -269,6 +269,15 @@ test.describe('R450 phone (375 px, Android Chrome)', () => {
     await chipsCountPeople(page);
     await expectFitsPhone(page, 'on the demo Dues');
     await shot(page, 'phone-demo-dues');
+
+    // What's new tells owners why the filter numbers changed; its button opens Dues.
+    await open(page, "What's new");
+    const line = page.getByText(/^Money → Dues: each filter \("Up to 30 days" and the others\) now shows how many people it lists/);
+    await expect(line).toBeVisible();
+    await centre(line);
+    await shot(page, 'phone-whats-new');
+    await page.getByRole('button', { name: 'Open Dues ›' }).first().tap();
+    await expect(page).toHaveURL(/#\/money\/dues$/);
   });
 });
 
