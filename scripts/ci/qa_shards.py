@@ -34,8 +34,11 @@ SCRIPT = os.path.join(ROOT, "apps", "mobile", "qa", "run-device-qa.sh")
 SHARDS = [
     ("1-history-routines", "a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r"),
     ("2-gym-backup", "br inv invf p7 p0 m uh ur"),
-    ("3-uat-a", "un ud ue ubk ub uf"),
-    ("4-uat-b-workout", "ua uv ug uk w"),
+    ("3-uat-a", "un ud ue ubk ub uf ua uv ug uk"),
+    # 11 Nov 2026 (gate run 43020416051): with the 0.77.0 UAT parts the opt-in "uat" chain alone runs ~3 h 25 min
+    # in the W shard; with ua..uk (~26 min) before it the shard hit the 240-min limit inside W. ua..uk start
+    # from a fresh install, so they moved to shard 3 (~65 min before).
+    ("4-uat-b-workout", "w"),
 ]
 
 

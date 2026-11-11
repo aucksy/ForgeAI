@@ -153,8 +153,9 @@ jobs:
     needs: [plan, build]
     runs-on: ubuntu-latest
     # A shard is up to ~1 h 40 min of parts (the longest, 1-history-routines); a partial run of many
-    # parts can still be long (was 240 for the whole run in one piece).
-    timeout-minutes: 240
+    # parts can still be long (was 240 for the whole run in one piece). 11 Nov 2026: the W shard carries the
+    # opt-in "uat" chain (~3 h 25 min with 0.77.0's parts) and hit 240 inside W (run 43020416051): 330 now.
+    timeout-minutes: 330
     strategy:
       # Every shard runs to its end even when another fails: the evidence of all of them is kept.
       fail-fast: false
